@@ -1,1 +1,0 @@
-{"kind":"FederatedServiceStatus","apiVersion":"v1alpha1","displayName":"Federated Service Status","format":"JSON","metadata":{},"model":{"name":"kubefed","version":"0.5.2","modelDisplayName":"kubefed","category":"","subCategory":""}}

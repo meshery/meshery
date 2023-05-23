@@ -311,7 +311,7 @@ func GetProviderInfo(mctCfg *config.MesheryCtlConfig) (map[string]Provider, erro
 }
 
 // initiateLocalProviderAuth initiates login process for the local provider
-func initiateLocalProviderAuth(provider Provider) (string, error) {
+func initiateLocalProviderAuth(_ Provider) (string, error) {
 	return "", nil
 }
 

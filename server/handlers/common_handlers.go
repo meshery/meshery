@@ -59,14 +59,14 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, p mode
 // Handle GET request for tokens
 //
 // Returns token from the actual provider in a file
-// resposese:
+// response:
 // 	200:
 
 // swagger:route POST /api/user/token UserAPI idPostTokenProvider
 // Handle POST request for tokens
 //
 // Receives token from the actual provider
-// resposese:
+// response:
 // 	200:
 
 // TokenHandler Receives token from the actual provider

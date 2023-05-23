@@ -7,9 +7,12 @@
     "model":{
       "name": "core",
       "version": "v1.0.0",
-      "modelDisplayName": "Core",
-      "category": "Cloud Native Application",
-      "subCategory": "Not Found"
+      "displayName": "Core",
+      "category": {
+        "name":"Cloud Native Application",
+        "metadata": null
+      },
+      "metadata": {}
     },
     "subType": "MatchLabels",
     "selectors": {

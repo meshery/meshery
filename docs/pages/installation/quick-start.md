@@ -58,6 +58,11 @@ Use the Meshery command line interface, [mesheryctl]({{ site.baseurl }}/guides/m
  </div>
  </pre>
 
+ OR
+
+You can visit the [Docker Hub](https://hub.docker.com/extensions/meshery/docker-extension-meshery) marketplace to directly install Meshery extension in your Docker Desktop.
+
+
 _Download, install, and run Meshery in a single command. See all [installation methods]({{ site.baseurl }}/installation/platforms)._
 
 ## Access Meshery

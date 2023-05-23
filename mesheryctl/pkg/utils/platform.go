@@ -186,7 +186,7 @@ func GetDeploymentVersion(filePath string) (string, error) {
 }
 
 // CanUseCachedOperatorManifests returns an error if it is not possible to use cached operator manifests
-func CanUseCachedOperatorManifests(currCtx *(config.Context)) error {
+func CanUseCachedOperatorManifests(_ *config.Context) error {
 	if _, err := os.Stat(filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperator)); os.IsNotExist(err) {
 		return errors.New("operator manifest file does not exist")
 	}

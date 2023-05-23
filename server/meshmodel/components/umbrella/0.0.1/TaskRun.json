@@ -1,1 +1,1 @@
-{"kind":"TaskRun","apiVersion":"v1alpha1","displayName":"Task Run","format":"JSON","metadata":{},"model":{"name":"umbrella","version":"0.0.1","modelDisplayName":"umbrella","category":"","subCategory":""}}
+{"kind":"TaskRun","apiVersion":"tekton.dev/v1alpha1","displayName":"Task Run","format":"JSON","metadata":{},"model":{"name":"umbrella","version":"0.0.1","displayName":"umbrella","category":{"name":"","metadata":null},"metadata":null}}

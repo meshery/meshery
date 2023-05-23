@@ -318,6 +318,11 @@ swagger-docs-build:
 	swagger generate spec -o ./docs/_data/swagger.yml --scan-models; \
 	swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
 
+
+## Building Meshery docs with redocly
+redocly-docs-build:
+	npx @redocly/cli build-docs ./docs/_data/swagger.yml --config='redocly.yaml' -t custom.hbs
+
 ## Build Meshery GraphQL API documentation
 graphql-docs:
 	cd docs; build-docs; bundle exec rake graphql:compile_docs
@@ -338,11 +343,11 @@ dep-check:
 	
 ifeq (,$(findstring $(GOVERSION), $(INSTALLED_GO_VERSION)))
 # Only send a warning.
-# @echo "Dependency missing: go$(GOVERSION). Ensure 'go$(GOVERSION).x' is installed and available in your 'PATH'"	
+	@echo "Dependency missing: go$(GOVERSION). Ensure 'go$(GOVERSION).x' is installed and available in your 'PATH'"	
 	@echo "GOVERSION: " $(GOVERSION)
 	@echo "INSTALLED_GO_VERSION: " $(INSTALLED_GO_VERSION) 
 # Force error and stop.
-	$(error Found $(INSTALLED_GO_VERSION). \
-	 Required golang version is: 'go$(GOVERSION).x'. \
-	 Ensure go '$(GOVERSION).x' is installed and available in your 'PATH'.)
+#	$(error Found $(INSTALLED_GO_VERSION). \
+#	 Required golang version is: 'go$(GOVERSION).x'. \
+#	 Ensure go '$(GOVERSION).x' is installed and available in your 'PATH'.)
 endif

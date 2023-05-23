@@ -97,11 +97,7 @@ func resetMesheryConfig() error {
 		return ErrSettingDefaultContextToConfig(err)
 	}
 
-	if err = fetchManifests(mctlCfg); err != nil {
-		return err
-	}
-
-	return nil
+	return fetchManifests(mctlCfg)
 }
 
 // Fetches manifests for meshery components based on the current context

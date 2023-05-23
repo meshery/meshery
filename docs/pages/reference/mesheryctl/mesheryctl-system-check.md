@@ -97,6 +97,7 @@ mesheryctl system check --report
       --adapters         Check status of meshery adapters
       --components       Check status of Meshery components
   -h, --help             help for check
+      --operator         Verify the health of Meshery Operator's deployment with MeshSync and Broker
       --pre              Verify environment readiness to deploy Meshery
       --preflight        Verify environment readiness to deploy Meshery
 

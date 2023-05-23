@@ -1,1 +1,0 @@
-{"kind":"Template","apiVersion":"v1alpha1","displayName":"Template","format":"JSON","metadata":{},"model":{"name":"stakater","version":"0.7.13","modelDisplayName":"stakater","category":"","subCategory":""},"schema":"{\n \"title\": \"Template\",\n \"type\": \"object\"\n}"}

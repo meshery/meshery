@@ -1,1 +1,1 @@
-{"kind":"FederatedServiceStatus","apiVersion":"v1alpha1","displayName":"Federated Service Status","format":"JSON","metadata":{},"model":{"name":"kommander","version":"0.39.2","modelDisplayName":"kommander","category":"","subCategory":""}}
+{"kind":"FederatedServiceStatus","apiVersion":"core.kubefed.io/v1alpha1","displayName":"Federated Service Status","format":"JSON","metadata":{},"model":{"name":"kommander","version":"0.39.2","displayName":"kommander","category":{"name":"","metadata":null},"metadata":null}}

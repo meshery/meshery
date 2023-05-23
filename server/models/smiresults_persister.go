@@ -80,7 +80,7 @@ func (s *SMIResultsPersister) DeleteResult(key uuid.UUID) error {
 	return s.DB.Model(&SmiResultWithID{}).Where("id = ?", key).Delete(&SmiResultWithID{}).Error
 }
 
-func (s *SMIResultsPersister) GetResult(page, pageSize uint64, key uuid.UUID) ([]byte, error) {
+func (s *SMIResultsPersister) GetResult(key uuid.UUID) ([]byte, error) {
 	if s.DB == nil {
 		return nil, ErrDBConnection
 	}

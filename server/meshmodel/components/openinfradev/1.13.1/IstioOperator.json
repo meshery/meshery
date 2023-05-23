@@ -1,1 +1,0 @@
-{"kind":"IstioOperator","apiVersion":"v1alpha1","displayName":"Istio Operator","format":"JSON","metadata":{},"model":{"name":"openinfradev","version":"1.13.1","modelDisplayName":"openinfradev","category":"","subCategory":""},"schema":""}

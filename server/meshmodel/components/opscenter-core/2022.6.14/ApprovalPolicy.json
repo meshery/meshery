@@ -1,1 +1,0 @@
-{"kind":"ApprovalPolicy","apiVersion":"v1alpha1","displayName":"Approval Policy","format":"JSON","metadata":{},"model":{"name":"opscenter-core","version":"2022.6.14","modelDisplayName":"opscenter-core","category":"","subCategory":""}}

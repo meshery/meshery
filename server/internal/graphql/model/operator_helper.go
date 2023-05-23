@@ -101,7 +101,7 @@ func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn broker
 	return controllers, nil
 }
 
-func GetBrokerInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *mesherykube.Client, brokerConn brokerpkg.Handler) (OperatorControllerStatus, error) {
+func GetBrokerInfo(_ operatorClient.Interface, mesheryKubeClient *mesherykube.Client, _ brokerpkg.Handler) (OperatorControllerStatus, error) {
 	broker := controllers.NewMesheryBrokerHandler(mesheryKubeClient)
 	brokerStatus := broker.GetStatus().String()
 
@@ -119,7 +119,7 @@ func GetBrokerInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *me
 	return brokerControllerStatus, nil
 }
 
-func GetMeshSyncInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *mesherykube.Client) (OperatorControllerStatus, error) {
+func GetMeshSyncInfo(_ operatorClient.Interface, mesheryKubeClient *mesherykube.Client) (OperatorControllerStatus, error) {
 	meshsync := controllers.NewMeshsyncHandler(mesheryKubeClient)
 	meshsyncStatus := meshsync.GetStatus().String()
 
@@ -139,7 +139,7 @@ func GetMeshSyncInfo(mesheryclient operatorClient.Interface, mesheryKubeClient *
 	return meshsyncControllerStatus, nil
 }
 
-func SubscribeToBroker(provider models.Provider, mesheryKubeClient *mesherykube.Client, datach chan *brokerpkg.Message, brokerConn brokerpkg.Handler, ct *K8sConnectionTracker) (string, error) {
+func SubscribeToBroker(_ models.Provider, mesheryKubeClient *mesherykube.Client, datach chan *brokerpkg.Message, brokerConn brokerpkg.Handler, ct *K8sConnectionTracker) (string, error) {
 	var broker *operatorv1alpha1.Broker
 	var endpoints []string
 	if ct != nil {

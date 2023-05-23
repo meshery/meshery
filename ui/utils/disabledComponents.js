@@ -1,7 +1,7 @@
 import _ from "lodash"
 
 function recursivelySearchObjKey(obj, arr, index) {
-  if (index == arr.length) {
+  if (index === arr.length) {
     return obj;
   }
 

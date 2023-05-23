@@ -864,7 +864,7 @@ class MesheryAdapterPlayComponent extends React.Component {
             }, 500);
             break;
           case "sort":
-            if (sortInfo.length == 2) {
+            if (sortInfo.length === 2) {
               if (sortInfo[1] === "ascending") {
                 order = `${smi_columns[tableState.activeColumn].name} asc`;
               } else {

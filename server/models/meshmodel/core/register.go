@@ -68,20 +68,48 @@ func RegisterMeshmodelComponentsForCRDS(reg meshmodel.RegistryManager, k8sYaml [
 				Name:        "kubernetes",
 				Version:     version,
 				DisplayName: "Kubernetes",
-				Category:    "Orchestration & Management",
-				SubCategory: "Scheduling & Orchestration",
+				Category: v1alpha1.Category{
+					Name: "Orchestration & Management",
+				},
 			},
 		})
 	}
 }
 
+type OpenAPIV3Response struct {
+	Paths map[string]Entry `json:"paths"`
+}
+
+type Entry struct {
+	URL string `json:"serverRelativeURL"`
+}
+
+func mergeAllAPIResults(content []byte, cli *kubernetes.Client) [][]byte {
+	var res OpenAPIV3Response
+	_ = json.Unmarshal(content, &res)
+	m := make([][]byte, 0)
+	for k, path := range res.Paths {
+		if !strings.HasPrefix(k, "api") {
+			continue
+		}
+		req := cli.KubeClient.RESTClient().Get().RequestURI(path.URL)
+		res := req.Do(context.Background())
+		content, err := res.Raw()
+		if err != nil {
+			return nil
+		}
+		m = append(m, content)
+	}
+	return m
+}
+
 // move to meshmodel
-func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]v1alpha1.ComponentDefinition, error) {
+func GetK8sMeshModelComponents(kubeconfig []byte) ([]v1alpha1.ComponentDefinition, error) {
 	cli, err := kubernetes.New(kubeconfig)
 	if err != nil {
 		return nil, ErrGetK8sComponents(err)
 	}
-	req := cli.KubeClient.RESTClient().Get().RequestURI("/openapi/v2")
+	req := cli.KubeClient.RESTClient().Get().RequestURI("/openapi/v3")
 	k8version, err := cli.KubeClient.ServerVersion()
 	if err != nil {
 		return nil, ErrGetK8sComponents(err)
@@ -105,6 +133,7 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]v1alph
 	if err != nil {
 		return nil, ErrGetK8sComponents(err)
 	}
+	contents := mergeAllAPIResults(content, cli)
 	apiResources, err := getAPIRes(cli)
 	if err != nil {
 		return nil, ErrGetK8sComponents(err)
@@ -116,8 +145,10 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]v1alph
 		kindToNamespace[api.Kind] = api.Namespaced
 		arrAPIResources = append(arrAPIResources, res)
 	}
-	manifest := string(content)
-	crds := getCRDsFromManifest(manifest, arrAPIResources)
+	var crds []crdResponse
+	for _, content := range contents {
+		crds = append(crds, getCRDsFromManifest(string(content), arrAPIResources)...)
+	}
 	components := make([]v1alpha1.ComponentDefinition, 0)
 	for _, crd := range crds {
 		m := make(map[string]interface{})
@@ -137,8 +168,9 @@ func GetK8sMeshModelComponents(ctx context.Context, kubeconfig []byte) ([]v1alph
 				Version:     k8version.String(),
 				Name:        "kubernetes",
 				DisplayName: "Kubernetes",
-				Category:    "Orchestration & Management",
-				SubCategory: "Scheduling & Orchestration",
+				Category: v1alpha1.Category{
+					Name: "Orchestration & Management",
+				},
 			},
 		}
 		components = append(components, c)
@@ -153,12 +185,13 @@ func getResolvedManifest(manifest string) (string, error) {
 	cuectx := cuecontext.New()
 	cueParsedManExpr, err := cueJson.Extract("", []byte(manifest))
 	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
-	definitions := parsedManifest.LookupPath(cue.ParsePath("definitions"))
+	definitions := parsedManifest.LookupPath(cue.ParsePath("components.schemas"))
 	if err != nil {
 		return "", err
 	}
 	resol := manifests.ResolveOpenApiRefs{}
-	resolved, err := resol.ResolveReferences([]byte(manifest), definitions)
+	cache := make(map[string][]byte)
+	resolved, err := resol.ResolveReferences([]byte(manifest), definitions, cache)
 	if err != nil {
 		return "", err
 	}
@@ -184,9 +217,8 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 	cuectx := cuecontext.New()
 	cueParsedManExpr, err := cueJson.Extract("", []byte(manifest))
 	parsedManifest := cuectx.BuildExpr(cueParsedManExpr)
-	definitions := parsedManifest.LookupPath(cue.ParsePath("definitions"))
+	definitions := parsedManifest.LookupPath(cue.ParsePath("components.schemas"))
 	if err != nil {
-		fmt.Printf("%v", err)
 		return nil
 	}
 	for _, name := range arrAPIResources {
@@ -220,17 +252,43 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 				if g, _ := groupCue.String(); g != "" {
 					apiVersion = g + "/" + apiVersion
 				}
+				modified := make(map[string]interface{}) //Remove the given fields which is either not required by End user (like status) or is prefilled by system (like apiVersion, kind and metadata)
+				err = json.Unmarshal(crd, &modified)
+				if err != nil {
+					fmt.Printf("%v", err)
+					continue
+				}
+				deleteProperties(modified)
+				crd, err = json.Marshal(modified)
+				if err != nil {
+					fmt.Printf("%v", err)
+					continue
+				}
 				res = append(res, crdResponse{
 					name:       resource,
 					kind:       name,
 					schema:     string(crd),
 					apiVersion: apiVersion, //add apiVersion
 				})
-				// resourceToName[resource] = manifests.FormatToReadableString(name)
 			}
 		}
 	}
 	return res
+}
+
+var fieldsToDelete = [4]string{"apiVersion", "kind", "status", "metadata"}
+
+func deleteProperties(m map[string]interface{}) {
+	key := "properties"
+	if m[key] == nil {
+		return
+	}
+	if prop, ok := m[key].(map[string]interface{}); ok && prop != nil {
+		for _, f := range fieldsToDelete {
+			delete(prop, f)
+		}
+		m[key] = prop
+	}
 }
 
 type k8sMetadata struct {

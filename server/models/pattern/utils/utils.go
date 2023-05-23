@@ -49,6 +49,11 @@ func ConvertMapInterfaceMapString(v interface{}) interface{} {
 
 	return v
 }
+func MergeMaps(mergeInto, toMerge map[string]interface{}) {
+	for k, v := range toMerge {
+		mergeInto[k] = v
+	}
+}
 
 // FlattenMap flattens the given map and writes the flattened map in the dest
 func FlattenMap(prefix string, src map[string]interface{}, dest map[string]interface{}) {

@@ -1,1 +1,0 @@
-{"kind":"ConstraintTemplatePodStatus","apiVersion":"v1beta1","displayName":"Constraint Template Pod Status","format":"JSON","metadata":{},"model":{"name":"mesosphere","version":"0.6.10","modelDisplayName":"mesosphere","category":"","subCategory":""},"schema":""}

@@ -68,7 +68,6 @@ RUN apk update && apk add ca-certificates; update-ca-certificates && rm -rf /var
 RUN update-ca-certificates
 RUN apk upgrade --no-cache && \
     apk add --no-cache libstdc++
-COPY ./server/oam /app/server/oam
 COPY ./server/meshmodel/components /app/server/meshmodel/components
 COPY ./server/meshmodel/relationships /app/server/meshmodel/relationships
 COPY --from=meshery-server /meshery /app/server/cmd/

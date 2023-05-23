@@ -1,1 +1,0 @@
-{"kind":"Configuration","apiVersion":"v1","displayName":"Configuration","format":"JSON","metadata":{},"model":{"name":"knative-serving","version":"0.19.12","modelDisplayName":"knative-serving","category":"","subCategory":""}}

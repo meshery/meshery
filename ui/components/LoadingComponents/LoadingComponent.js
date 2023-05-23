@@ -55,7 +55,7 @@ function LoadingScreen(props) {
   const theme = useTheme();
   return (
     <div className={clsx(classes.loadingWrapper, className)} {...other}>
-      {theme.palette.type == 'light' ? animatedIconList[animatedIcon] : animatedLightIconList[animatedIcon]}
+      {theme.palette.type === 'light' ? animatedIconList[animatedIcon] : animatedLightIconList[animatedIcon]}
       <Typography variant="caption" component="div">
         {message}
       </Typography>

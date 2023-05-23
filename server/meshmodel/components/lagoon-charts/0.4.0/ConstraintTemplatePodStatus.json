@@ -1,1 +1,0 @@
-{"kind":"ConstraintTemplatePodStatus","apiVersion":"v1beta1","displayName":"Constraint Template Pod Status","format":"JSON","metadata":{},"model":{"name":"lagoon-charts","version":"0.4.0","modelDisplayName":"lagoon-charts","category":"","subCategory":""},"schema":""}

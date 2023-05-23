@@ -1,11 +1,14 @@
+import { Button, Grid, IconButton, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import CloseIcon from '@material-ui/icons/Close';
+import { useRouter } from 'next/router';
 import React, {
   useEffect,
   useState
 } from 'react';
+import { connect } from 'react-redux';
 import Cookies from 'universal-cookie';
-import { makeStyles } from '@material-ui/core/styles';
-import { Typography, Grid, Button, IconButton } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
+import { mesheryExtensionRoute } from '../pages/_app';
 
 const styles = makeStyles((theme) => ({
   paper : {
@@ -33,11 +36,16 @@ const styles = makeStyles((theme) => ({
   header : {
     paddingBottom : "0.5rem",
     paddingTop : "0.6rem",
-    position : "absolute",
     fontWeight : "bold",
     ["@media (max-width: 455px)"] : {
       fontSize : "1rem"
     },
+  },
+  closeButtonContainer : {
+    display : "flex",
+    justifyContent : "flex-end",
+    whiteSpace : "nowrap",
+    alignItems : "center"
   },
   caption : {
     lineHeight : "1.2",
@@ -50,46 +58,81 @@ const styles = makeStyles((theme) => ({
     display : "flex"
   },
   headerWrapper : {
-    marginBottom : 12
+    marginBottom : 12,
+    display : "flex"
   }
 }));
 
-function MeshMapEarlyAccessCardPopup() {
-  const [isOpen, setIsOpen] = useState(true);
+const isMeshMapRegisteredUser = (capabilitiesRegistry) => {
+  if (!capabilitiesRegistry) {
+    return false;
+  }
+
+  return capabilitiesRegistry.extensions?.navigator?.length > 0 && capabilitiesRegistry.extensions.navigator.find(ext => ext.title === "MeshMap")
+}
+
+function MeshMapEarlyAccessCardPopup({ capabilitiesRegistry }) {
+  const [isOpen, setIsOpen] = useState(false);
   const cookies = new Cookies('registered');
 
-  const handleOpen = () => {
-    const timer = setTimeout(() => {
-      setIsOpen(true);
-    }, 10000)
-    return () => clearTimeout(timer);
+  const closeCallback = () => {
+    cookies.set("registered", "true", { path : "/" })
   }
 
   useEffect(() => {
-    if (cookies.get('registered')) {
-      setIsOpen(false);
-    } else if (!cookies.get('registered')) {
-      cookies.set('registered', 'true', {
-        path : '/',
-      });
-      handleOpen();
+    // cookies return string and not boolean thus truthy,falsy doesnt work as intended
+    const isAlreadyRegistered = cookies.get('registered') && cookies.get("registered") === "true";
+
+    if (isAlreadyRegistered) {
+      return;
     }
+
+    const timer = setTimeout(() => {
+      setIsOpen(true);
+    }, 10000) // 10sec waiting time
+
+    return () => clearTimeout(timer);
   }, [])
 
   if (isOpen) {
-    return <MeshMapEarlyAccessCard closeForm={() => setIsOpen(false)} />
+    return <MeshMapEarlyAccessCard closeForm={() => {
+      setIsOpen(false);
+      closeCallback();
+    }}
+    capabilitiesRegistry={capabilitiesRegistry}
+    />
   } else {
     return <></>
   }
 }
 
-export function MeshMapEarlyAccessCard({ rootStyle = {}, closeForm = () => {} }) {
+export function MeshMapEarlyAccessCard({ rootStyle = {}, closeForm = () => { }, capabilitiesRegistry }) {
+  const signUpText = "Sign up";
+  const signupHeader = "Get early access to MeshMap!";
   const classes = styles();
+  const [buttonText, setButtonText] = useState(signUpText);
+  const [title, setTitle] = useState(signupHeader)
+  const { push } = useRouter()
 
-  const handleSignUp = (e) => {
-    window.open("https://layer5.io/meshmap", "_blank")
+  const handleButtonClick = (e) => {
+    if (buttonText === signUpText) {
+      window.open("https://layer5.io/meshmap", "_blank")
+    } else {
+      push(mesheryExtensionRoute);
+    }
     e.stopPropagation();
   };
+
+  useState(() => {
+    const isMeshMapUser = isMeshMapRegisteredUser(capabilitiesRegistry);
+    if (isMeshMapUser) {
+      setTitle("Your access to collaborative cloud native management is enabled!")
+      setButtonText("Open MeshMap")
+    } else {
+      setTitle(signupHeader);
+      setButtonText(signUpText)
+    }
+  }, [capabilitiesRegistry])
 
   return (
     <div
@@ -97,11 +140,11 @@ export function MeshMapEarlyAccessCard({ rootStyle = {}, closeForm = () => {} })
       style={rootStyle}
     >
       <div className={classes.headerWrapper}>
-        <Typography className={classes.header} variant="h6">Get early access to MeshMap!
+        <Typography className={classes.header} variant="h6">{title}
         </Typography>
 
-        <div style={{ display : "flex", justifyContent : "flex-end", whiteSpace : "nowrap", position : "relative" }}>
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={closeForm}>
+        <div className={classes.closeButtonContainer}>
+          <IconButton key="close" aria-label="Close" color="inherit" onClick={closeForm} style={{ height : "2.5rem" }}>
             <CloseIcon />
           </IconButton>
         </div>
@@ -113,12 +156,16 @@ export function MeshMapEarlyAccessCard({ rootStyle = {}, closeForm = () => {} })
       <Typography className={classes.caption} variant="subtitle1"><i>Friends dont let friends GitOps alone.
         Visually design and collaborate in real-time with other MeshMap users.</i></Typography>
       <div style={{ display : "flex", justifyContent : "flex-end" }}>
-        <Grid item xs={3}>
-          <Button fullWidth variant="contained" color="primary" onClick={(e) => handleSignUp(e)}>Sign up</Button>
+        <Grid>
+          <Button fullWidth variant="contained" color="primary" onClick={(e) => handleButtonClick(e)}>{buttonText}</Button>
         </Grid>
       </div>
     </div>
   )
 }
 
-export default MeshMapEarlyAccessCardPopup;
+const mapStateToProps = (state) => ({
+  capabilitiesRegistry : state.get("capabilitiesRegistry")
+})
+
+export default connect(mapStateToProps)(MeshMapEarlyAccessCardPopup);

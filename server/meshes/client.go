@@ -15,7 +15,7 @@ type MeshClient struct {
 }
 
 // CreateClient creates a MeshClient for the given params
-func CreateClient(ctx context.Context, meshLocationURL string) (*MeshClient, error) {
+func CreateClient(_ context.Context, meshLocationURL string) (*MeshClient, error) {
 	var opts []grpc.DialOption
 	// creds, err := credentials.NewClientTLSFromFile(*caFile, *serverHostOverride)
 	// 	if err != nil {

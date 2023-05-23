@@ -1,1 +1,0 @@
-{"kind":"ClusterPropagatedVersion","apiVersion":"v1alpha1","displayName":"Cluster Propagated Version","format":"JSON","metadata":{},"model":{"name":"mesosphere","version":"0.5.2","modelDisplayName":"mesosphere","category":"","subCategory":""},"schema":""}

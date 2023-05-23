@@ -199,11 +199,12 @@ var TemplateContext = config.Context{
 	Components: ListOfComponents,
 	Channel:    "stable",
 	Version:    "latest",
+	Provider:   "Meshery",
 }
 
 // TemplateToken is the template token provided when creating a config file
 var TemplateToken = config.Token{
-	Name:     "Default",
+	Name:     "default",
 	Location: AuthConfigFile,
 }
 
@@ -948,6 +949,15 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[stri
 		valueOverrides["env"] = map[string]interface{}{
 			"PROVIDER": ctx.GetProvider(),
 		}
+	}
+
+	// disable the operator
+	if ctx.GetOperatorStatus() == "disabled" {
+		if _, ok := valueOverrides["env"]; !ok {
+			valueOverrides["env"] = map[string]interface{}{}
+		}
+		envOverrides := valueOverrides["env"].(map[string]interface{})
+		envOverrides["DISABLE_OPERATOR"] = "'true'"
 	}
 
 	return valueOverrides

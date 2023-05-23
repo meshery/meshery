@@ -32,8 +32,11 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
+	dockerCmd "github.com/docker/cli/cli/command"
+	cliconfig "github.com/docker/cli/cli/config"
+	cliflags "github.com/docker/cli/cli/flags"
 	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/client"
+	dockerconfig "github.com/docker/docker/cli/config"
 
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -51,7 +54,7 @@ var (
 var startCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Start Meshery",
-	Long:  `Start Meshery and each of its service mesh components.`,
+	Long:  `Start Meshery and each of its cloud native components.`,
 	Args:  cobra.NoArgs,
 	Example: `
 // Start meshery
@@ -159,7 +162,7 @@ func start() error {
 			currCtx.SetPlatform(utils.PlatformFlag)
 
 			// update the context to config
-			err = config.UpdateContextInConfig(viper.GetViper(), currCtx, mctlCfg.GetCurrentContextName())
+			err = config.UpdateContextInConfig(currCtx, mctlCfg.GetCurrentContextName())
 			if err != nil {
 				return err
 			}
@@ -286,7 +289,7 @@ func start() error {
 			endpoint.Address = utils.EndpointProtocol + "://localhost"
 			currCtx.SetEndpoint(endpoint.Address + ":" + userPort[len(userPort)-1])
 
-			err = config.UpdateContextInConfig(viper.GetViper(), currCtx, mctlCfg.GetCurrentContextName())
+			err = config.UpdateContextInConfig(currCtx, mctlCfg.GetCurrentContextName())
 			if err != nil {
 				return err
 			}
@@ -311,10 +314,16 @@ func start() error {
 
 		checkFlag := 0 //flag to check
 
-		//connection to docker-client
-		cli, err := client.NewClientWithOpts(client.FromEnv)
+		// Get the Docker configuration
+		dockerCfg, err := cliconfig.Load(dockerconfig.Dir())
 		if err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to create new env client"))
+			return ErrCreatingDockerClient(err)
+		}
+
+		//connection to docker-client
+		cli, err := dockerCmd.NewAPIClientFromFlags(cliflags.NewCommonOptions(), dockerCfg)
+		if err != nil {
+			return ErrCreatingDockerClient(err)
 		}
 
 		containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{})
@@ -336,9 +345,9 @@ func start() error {
 				//check flag to check successful deployment
 				checkFlag = 0
 				break
-			} else {
-				checkFlag = 1
 			}
+
+			checkFlag = 1
 		}
 
 		//if meshery_meshery_1 failed to start showing logs

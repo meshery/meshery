@@ -8,7 +8,7 @@ import (
 	"github.com/layer5io/meshery/server/models"
 )
 
-func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		http.Error(w, "failed to get token", http.StatusInternalServerError)
@@ -35,7 +35,7 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, prefO
 	}
 }
 
-func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	// if req.URL.Query().Get("current") != "" {
 	// 	context, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
 	// 	if !ok || context == nil {
@@ -69,7 +69,7 @@ func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, prefObj *
 	}
 }
 
-func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		http.Error(w, "failed to get token", http.StatusInternalServerError)

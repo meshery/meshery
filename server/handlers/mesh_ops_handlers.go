@@ -19,6 +19,24 @@ func init() {
 	gob.Register([]*models.Adapter{})
 }
 
+// swagger:route GET /api/system/adapters/available SystemAPI idGetAvailableAdapters
+// Handle GET request for available adapters
+//
+// Fetches and returns all the adapters available for deployment
+// Responses:
+//  200: systemAdaptersRespWrapper
+
+// AdaptersHandler is used to fetch all the adapters
+func (h *Handler) AvailableAdaptersHandler(w http.ResponseWriter, _ *http.Request) {
+	err := json.NewEncoder(w).Encode(models.ListAvailableAdapters)
+	if err != nil {
+		obj := "data"
+		h.log.Error(ErrMarshal(err, obj))
+		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 // swagger:route GET /api/system/adapters SystemAPI idGetSystemAdapters
 // Handle GET request for adapters
 //
@@ -51,7 +69,7 @@ func (h *Handler) AdaptersHandler(w http.ResponseWriter, req *http.Request, pref
 }
 
 // AdapterPingHandler is used to ping a given adapter
-func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) AdapterPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, _ models.Provider) {
 	// if req.Method != http.MethodGet {
 	// 	w.WriteHeader(http.StatusNotFound)
 	// 	return
@@ -162,7 +180,7 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	}
 }
 
-func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter, prefObj *models.Preference, meshLocationURL string, provider models.Provider) ([]*models.Adapter, error) {
+func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter, _ *models.Preference, meshLocationURL string, _ models.Provider) ([]*models.Adapter, error) {
 	alreadyConfigured := false
 	for _, adapter := range meshAdapters {
 		if adapter.Location == meshLocationURL {
@@ -296,7 +314,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 	opName := req.PostFormValue("query")
 	customBody := req.PostFormValue("customBody")
 	namespace := req.PostFormValue("namespace")
-	delete := req.PostFormValue("deleteOp")
+	deleteOp := req.PostFormValue("deleteOp")
 	if namespace == "" {
 		namespace = "default"
 	}
@@ -335,7 +353,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 		Username:    user.UserID,
 		Namespace:   namespace,
 		CustomBody:  customBody,
-		DeleteOp:    (delete != ""),
+		DeleteOp:    (deleteOp != ""),
 		KubeConfigs: configs,
 	})
 	if err != nil {

@@ -4,12 +4,15 @@
     "metadata": {
       "description": "A relationship that represents volume mounts between components"
     },
-    "model": {
+    "model":{
       "name": "core",
       "version": "v1.0.0",
-      "modelDisplayName": "Core",
-      "category": "Cloud Native Application",
-      "subCategory": "Not Found"
+      "displayName": "Core",
+      "category": {
+        "name":"Cloud Native Application",
+        "metadata": null
+      },
+      "metadata": {}
     },
     "subType": "Mount",
     "selectors": {

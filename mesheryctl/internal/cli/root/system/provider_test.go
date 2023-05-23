@@ -33,7 +33,7 @@ func TestViewProviderCmd(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			SetupFunc(t)
+			SetupFunc()
 			SystemCmd.SetArgs(tt.Args)
 			err = SystemCmd.Execute()
 			if err != nil {
@@ -46,12 +46,12 @@ func TestViewProviderCmd(t *testing.T) {
 			if expectedResponse != actualResponse {
 				t.Errorf("\nExpected response\n\n%v\n\nActual response\n\n%v\n\nMismatch between expected and actual response\n", expectedResponse, actualResponse)
 			}
-			BreakupFunc(t)
+			BreakupFunc()
 		})
 	}
 }
 func TestRunProviderWithNoCmdOrFlag(t *testing.T) {
-	SetupFunc(t)
+	SetupFunc()
 	SystemCmd.SetArgs([]string{"provider"})
 	err = SystemCmd.Execute()
 
@@ -63,5 +63,5 @@ func TestRunProviderWithNoCmdOrFlag(t *testing.T) {
 	if expectedResponse != actualResponse {
 		t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
 	}
-	BreakupFunc(t)
+	BreakupFunc()
 }

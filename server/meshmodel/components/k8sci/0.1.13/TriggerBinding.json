@@ -1,1 +1,0 @@
-{"kind":"TriggerBinding","apiVersion":"v1alpha1","displayName":"Trigger Binding","format":"JSON","metadata":{},"model":{"name":"k8sci","version":"0.1.13","modelDisplayName":"k8sci","category":"","subCategory":""}}

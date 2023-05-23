@@ -319,7 +319,7 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 	return nil
 }
 
-func (r *Resolver) deployMeshsync(ctx context.Context, provider models.Provider, ctxID string) (model.Status, error) {
+func (r *Resolver) deployMeshsync(_ context.Context, _ models.Provider, _ string) (model.Status, error) {
 	//err := model.RunMeshSync(r.Config.KubeClient, false)
 	return model.StatusProcessing, nil
 }

@@ -1,1 +1,0 @@
-{"kind":"ClusterPolicyReport","apiVersion":"v1alpha2","displayName":"Cluster Policy Report","format":"JSON","metadata":{},"model":{"name":"jspolicy","version":"0.2.1","modelDisplayName":"jspolicy","category":"","subCategory":""}}

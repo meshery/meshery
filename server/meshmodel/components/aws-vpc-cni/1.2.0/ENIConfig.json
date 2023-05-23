@@ -1,1 +1,0 @@
-{"kind":"ENIConfig","apiVersion":"v1alpha1","displayName":"ENI Config","format":"JSON","metadata":{},"model":{"name":"aws-vpc-cni","version":"1.2.0","modelDisplayName":"aws-vpc-cni","category":"","subCategory":""}}

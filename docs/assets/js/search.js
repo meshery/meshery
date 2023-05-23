@@ -94,11 +94,14 @@ excluded_in_search: true
 	var query = decodeURIComponent((getQueryVariable("q") || "").replace(/\+/g, "%20")),
 		searchQueryContainerEl = document.getElementById("search-query-container"),
 		searchQueryEl = document.getElementById("search-query");
+		searchInput = document.getElementById("sidebar-search-input");
 
 	searchQueryEl.innerText = query;
         if (query != ""){
    		searchQueryContainerEl.style.display = "inline";
         }
+	searchInput.value = query;
+	searchInput.focus();
 
 	for (var key in window.data) {
 		window.index.add(window.data[key]);

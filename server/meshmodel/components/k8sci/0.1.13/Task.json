@@ -1,1 +1,1 @@
-{"kind":"Task","apiVersion":"v1alpha1","displayName":"Task","format":"JSON","metadata":{},"model":{"name":"k8sci","version":"0.1.13","modelDisplayName":"k8sci","category":"","subCategory":""}}
+{"kind":"Task","apiVersion":"tekton.dev/v1alpha1","displayName":"Task","format":"JSON","metadata":{},"model":{"name":"k8sci","version":"0.1.13","displayName":"k8sci","category":{"name":"","metadata":null},"metadata":null}}

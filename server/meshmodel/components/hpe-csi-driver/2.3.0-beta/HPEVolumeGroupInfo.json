@@ -1,1 +1,0 @@
-{"kind":"HPEVolumeGroupInfo","apiVersion":"v1","displayName":"HPE Volume Group Info","format":"JSON","metadata":{},"model":{"name":"hpe-csi-driver","version":"2.3.0-beta","modelDisplayName":"hpe-csi-driver","category":"","subCategory":""}}

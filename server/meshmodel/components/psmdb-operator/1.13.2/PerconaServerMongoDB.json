@@ -1,1 +1,0 @@
-{"kind":"PerconaServerMongoDB","apiVersion":"v1-2-0","displayName":"Percona Server Mongo DB","format":"JSON","metadata":{},"model":{"name":"psmdb-operator","version":"1.13.2","modelDisplayName":"psmdb-operator","category":"","subCategory":""},"schema":"{\n \"title\": \"Percona Server Mongo DB\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

@@ -15,6 +15,7 @@
 - [Intel](https://www.intel.com)
   - "We are working on the acceleration and security of open source Service Mesh projects. Meshery is the best tool for managing and operating different Service Mesh projects, it greatly helped us compare the functions and performance of them, and demonstrate the results of our efforts. We also love Meshery's community where we can connect with Service Mesh talents and enthusiasts from all over the world!"
 - [Red Hat](https://www.redhat.com)
+- [Metabit Trading](https://www.metabit-trading.com/)
 
 ---
 

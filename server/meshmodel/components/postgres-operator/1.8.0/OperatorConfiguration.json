@@ -1,1 +1,0 @@
-{"kind":"OperatorConfiguration","apiVersion":"v1","displayName":"Operator Configuration","format":"JSON","metadata":{},"model":{"name":"postgres-operator","version":"1.8.0","modelDisplayName":"postgres-operator","category":"","subCategory":""}}

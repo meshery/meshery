@@ -1,1 +1,1 @@
-{"kind":"Template","apiVersion":"v1alpha1","displayName":"Template","format":"JSON","metadata":{},"model":{"name":"tenant-operator","version":"0.7.0","modelDisplayName":"tenant-operator","category":"","subCategory":""}}
+{"kind":"Template","apiVersion":"tenantoperator.stakater.com/v1alpha1","displayName":"Template","format":"JSON","metadata":{},"model":{"name":"tenant-operator","version":"0.7.0","displayName":"tenant-operator","category":{"name":"","metadata":null},"metadata":null}}

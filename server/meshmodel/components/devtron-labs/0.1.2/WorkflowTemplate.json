@@ -1,1 +1,0 @@
-{"kind":"WorkflowTemplate","apiVersion":"v1alpha1","displayName":"Workflow Template","format":"JSON","metadata":{},"model":{"name":"devtron-labs","version":"0.1.2","modelDisplayName":"devtron-labs","category":"","subCategory":""},"schema":"{\n \"title\": \"Workflow Template\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

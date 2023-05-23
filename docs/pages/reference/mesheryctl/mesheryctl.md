@@ -16,7 +16,7 @@ Meshery Command Line tool
 
 ## Synopsis
 
-Meshery is the service mesh management plane, providing lifecycle, performance, and configuration management of service meshes and their workloads.
+As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>

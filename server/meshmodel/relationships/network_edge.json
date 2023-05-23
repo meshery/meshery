@@ -4,12 +4,15 @@
   "metadata": {
     "description": "A relationship that defines network edges between components"
   },
-  "model":{
+	"model":{
 		"name": "core",
 		"version": "v1.0.0",
-		"modelDisplayName": "Core",
-		"category": "Cloud Native Application",
-		"subCategory": "Not Found"
+		"displayName": "Core",
+		"category": {
+      "name":"Cloud Native Application",
+      "metadata": null
+    },
+    "metadata": {}
   },
   "subType": "Network",
   "selectors": {
@@ -17,6 +20,10 @@
       "from": [
         {
           "kind": "Service",
+          "model": "Kubernetes"
+        },
+        {
+          "kind": "Ingress",
           "model": "Kubernetes"
         }
       ],
@@ -32,12 +39,34 @@
         {
           "kind": "Deployment",
           "model": "Kubernetes"
+        },
+        {
+          "kind": "Service",
+          "model": "Kubernetes"
         }
       ]
     },
     "deny": {
-      "from": [],
-      "deny": []
+      "from": [
+        {
+          "kind": "Ingress",
+          "model": "Kubernetes"
+        }
+      ],
+      "deny": [
+        {
+          "kind": "Endpoints",
+          "model": "Kubernetes"
+        },
+        {
+          "kind": "Pod",
+          "model": "Kubernetes"
+        },
+        {
+          "kind": "Deployment",
+          "model": "Kubernetes"
+        }
+      ]
     }
   }
 }

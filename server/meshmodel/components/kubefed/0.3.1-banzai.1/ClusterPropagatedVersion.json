@@ -1,1 +1,0 @@
-{"kind":"ClusterPropagatedVersion","apiVersion":"v1alpha1","displayName":"Cluster Propagated Version","format":"JSON","metadata":{},"model":{"name":"kubefed","version":"0.3.1-banzai.1","modelDisplayName":"kubefed","category":"","subCategory":""}}

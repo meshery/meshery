@@ -1,7 +1,7 @@
 {
   "$id": "https://schema.meshery.io/relationship.json",
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "description": "Relationships offer context-awareness as to how a particular Component is related to the other Component. There are many types of Relationships.",
+  "description": "`Relationships` define the genealogy between one or more `Components` interconnected `Components`. Just as in familial relationships, MeshModel `Relationships` are represented in a variety of forms very much resembling familiar ancestral lineage, including `hierarchical` relationships such as direct parent and child relationship as well as any number of layers of indirect grandparent and grandchild relationships. Peer relationships like that of `sibling`s take on different types such as `network` and `dependency`.  Each type of `Relationship` has `metadata`, `selectors` and some optional parameters.",
   "required": [
     "apiVersion",
     "kind",

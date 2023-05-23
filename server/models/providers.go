@@ -217,9 +217,9 @@ const (
 
 	PersistResult Feature = "persist-result" // /result
 
-	PersistSMIResults Feature = "persist-smi-results" // /smi/results
+	// PersistSMIResults Feature = "persist-smi-results" // /smi/results
 
-	PersistSMIResult Feature = "persist-smi-result" // /smi/result
+	PersistSMIResults Feature = "persist-smi-results" // /smi/results
 
 	PersistMetrics Feature = "persist-metrics" // /result/metrics
 
@@ -248,6 +248,12 @@ const (
 	ShareDesigns Feature = "share-designs"
 
 	PersistConnection Feature = "persist-connection"
+
+	PersistCredentials Feature = "persist-credentials"
+
+	UsersProfile Feature = "users-profile"
+
+	UsersIdentity Feature = "users-identity"
 )
 
 const (
@@ -332,6 +338,7 @@ type Provider interface {
 	GetSession(req *http.Request) error
 	GetUserDetails(*http.Request) (*User, error)
 	GetUserByID(req *http.Request, userID string) ([]byte, error)
+	GetUsers(token, page, pageSize, search, order, filter string) ([]byte, error)
 	GetProviderToken(req *http.Request) (string, error)
 	UpdateToken(http.ResponseWriter, *http.Request) string
 	Logout(http.ResponseWriter, *http.Request) error
@@ -412,4 +419,9 @@ type Provider interface {
 
 	SaveConnection(req *http.Request, conn *Connection, token string, skipTokenCheck bool) error
 	DeleteMesheryConnection() error
+
+	SaveUserCredential(req *http.Request, credential *Credential) error
+	GetUserCredentials(req *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error)
+	UpdateUserCredential(req *http.Request, credential *Credential) (*Credential, error)
+	DeleteUserCredential(req *http.Request, credentialID uuid.UUID) (*Credential, error)
 }

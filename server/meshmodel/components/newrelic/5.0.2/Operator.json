@@ -1,1 +1,0 @@
-{"kind":"Operator","apiVersion":"v1","displayName":"Operator","format":"JSON","metadata":{},"model":{"name":"newrelic","version":"5.0.2","modelDisplayName":"newrelic","category":"","subCategory":""},"schema":"{\n \"description\": \"OperatorSpec defines the desired state of Operator\",\n \"title\": \"Operator\",\n \"type\": \"object\"\n}"}

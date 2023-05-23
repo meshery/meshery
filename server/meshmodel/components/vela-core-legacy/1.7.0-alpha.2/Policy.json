@@ -1,1 +1,0 @@
-{"kind":"Policy","apiVersion":"v1alpha1","displayName":"Policy","format":"JSON","metadata":{},"model":{"name":"vela-core-legacy","version":"1.7.0-alpha.2","modelDisplayName":"vela-core-legacy","category":"","subCategory":""}}

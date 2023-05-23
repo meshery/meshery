@@ -881,7 +881,7 @@ class DashboardComponent extends React.Component {
     const options = {
       filter : false,
       selectableRows : "none",
-      responsive : "scrollMaxHeight",
+      responsive : "standard",
       print : false,
       download : false,
       viewColumns : false,
@@ -1003,7 +1003,7 @@ class DashboardComponent extends React.Component {
     const options = {
       filter : false,
       selectableRows : "none",
-      responsive : "scrollMaxHeight",
+      responsive : "standard",
       print : false,
       download : false,
       viewColumns : false,
@@ -1030,7 +1030,7 @@ class DashboardComponent extends React.Component {
     if (Array.isArray(resources) && resources.length)
       return (
         <Paper elevation={1} style={{ padding : "2rem" }}>
-          <MuiThemeProvider theme={theme.palette.type == "dark" ? configurationTableThemeDark() : configurationTableTheme()}>
+          <MuiThemeProvider theme={theme.palette.type === "dark" ? configurationTableThemeDark() : configurationTableTheme()}>
             <MUIDataTable
               title={
                 <>

@@ -11,6 +11,8 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
+	"github.com/layer5io/meshkit/models/meshmodel"
+	meshmodelv1alpha1 "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils/manifests"
 	"github.com/sirupsen/logrus"
@@ -21,19 +23,22 @@ import (
 
 type prettifier bool
 
-// prettifyEndString will be true in cases of schema prettification where we want to prettify everything and will be false in
-// cases of YAML inputs from users where we want the end input as it is before sending to external systems such as kubernetes.
-// NOTE: For clients which want a complete prettified version, prettifyEndString will be passed true.
-func (p prettifier) Prettify(m map[string]interface{}, prettifyEndString bool) map[string]interface{} {
-	res := ConvertMapInterfaceMapString(m, true, prettifyEndString)
+/*
+The logic and principle for prettification/deprettification.
+1. Specific considerations are made when schema is passed to be prettified like handling kubernetes specific fields.
+2. A general rule of thumb is to never prettify or deprettify the end-user fields, the ones which are entered by USER.
+For non schema files, it would be all end string fields (user input) and for schema files it would be ENUMS as they are the only system defined fields that are used at end user input.
+*/
+func (p prettifier) Prettify(m map[string]interface{}, isSchema bool) map[string]interface{} {
+	res := ConvertMapInterfaceMapString(m, true, isSchema)
 	out, ok := res.(map[string]interface{})
 	if !ok {
 		fmt.Println("failed to cast")
 	}
 	return out
 }
-func (p prettifier) DePrettify(m map[string]interface{}, deprettifyEndString bool) map[string]interface{} {
-	res := ConvertMapInterfaceMapString(m, false, deprettifyEndString)
+func (p prettifier) DePrettify(m map[string]interface{}, isSchema bool) map[string]interface{} {
+	res := ConvertMapInterfaceMapString(m, false, isSchema)
 	out, ok := res.(map[string]interface{})
 	if !ok {
 		fmt.Println("failed to cast")
@@ -45,20 +50,27 @@ func (p prettifier) DePrettify(m map[string]interface{}, deprettifyEndString boo
 // ConvertMapInterfaceMapString converts map[interface{}]interface{} => map[string]interface{}
 //
 // It will also convert []interface{} => []string
-func ConvertMapInterfaceMapString(v interface{}, prettify bool, endString bool) interface{} {
+func ConvertMapInterfaceMapString(v interface{}, prettify bool, isSchema bool) interface{} {
 	switch x := v.(type) {
 	case map[interface{}]interface{}:
 		m := map[string]interface{}{}
 		for k, v2 := range x {
 			switch k2 := k.(type) {
 			case string:
-				if prettify {
-					m[manifests.FormatToReadableString(k2)] = ConvertMapInterfaceMapString(v2, prettify, endString)
+				if isSchema && k2 == "enum" { //While schema prettification, ENUMS are end system defined end user input and therefore should not be prettified/deprettified
+					m[k2] = v2
+					continue
+				}
+				newmap := ConvertMapInterfaceMapString(v2, prettify, isSchema)
+				if isSchema && isSpecialKey(k2) { //Few special keys in schema should not be prettified
+					m[k2] = newmap
+				} else if prettify {
+					m[manifests.FormatToReadableString(k2)] = newmap
 				} else {
-					m[manifests.DeFormatReadableString(k2)] = ConvertMapInterfaceMapString(v2, prettify, endString)
+					m[manifests.DeFormatReadableString(k2)] = newmap
 				}
 			default:
-				m[fmt.Sprint(k)] = ConvertMapInterfaceMapString(v2, prettify, endString)
+				m[fmt.Sprint(k)] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
 			}
 		}
 		return m
@@ -66,29 +78,29 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, endString bool) 
 	case []interface{}:
 		x2 := make([]interface{}, len(x))
 		for i, v2 := range x {
-			x2[i] = ConvertMapInterfaceMapString(v2, prettify, endString)
+			x2[i] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
 		}
 		return x2
 	case map[string]interface{}:
 		m := map[string]interface{}{}
-		foundFormatIntOrString := false
+		// foundFormatIntOrString := false
 		for k, v2 := range x {
-			if prettify {
-				m[manifests.FormatToReadableString(k)] = ConvertMapInterfaceMapString(v2, prettify, endString)
+			if isSchema && k == "enum" { //While schema prettification, ENUMS are end system defined end user input and therefore should not be prettified/deprettified
+				m[k] = v2
+				continue
+			}
+			newmap := ConvertMapInterfaceMapString(v2, prettify, isSchema)
+			if isSchema && isSpecialKey(k) {
+				m[k] = newmap
+			} else if prettify {
+				m[manifests.FormatToReadableString(k)] = newmap
 			} else {
-				m[manifests.DeFormatReadableString(k)] = ConvertMapInterfaceMapString(v2, prettify, endString)
+				m[manifests.DeFormatReadableString(k)] = newmap
 			}
-			//Apply this fix only when the format specifies string|int and type specifies string therefore when there is a contradiction
-			if k == "format" && v2 == "int-or-string" {
-				foundFormatIntOrString = true
-			}
-		}
-		if x["type"] == "string" && foundFormatIntOrString {
-			m["type"] = "integer"
 		}
 		return m
 	case string:
-		if endString {
+		if isSchema {
 			if prettify {
 				return manifests.FormatToReadableString(x) //Whitespace formatting should be done at the time of prettification only
 			}
@@ -96,6 +108,18 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, endString bool) 
 		}
 	}
 	return v
+}
+
+// These keys should not be prettified to "any Of", "all Of" and "one Of"
+var keysToNotPrettifyOnSchema = []string{"anyOf", "allOf", "oneOf"}
+
+func isSpecialKey(k string) bool {
+	for _, k0 := range keysToNotPrettifyOnSchema {
+		if k0 == k {
+			return true
+		}
+	}
+	return false
 }
 
 // In case of any breaking change or bug caused by this, set this to false and the whitespace addition in schema generated/consumed would be removed(will go back to default behavior)
@@ -320,7 +344,7 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 	eleToSvc := make(map[string]string)          //used to map cyto element ID uniquely to the name of the service created.
 	countDuplicates := make(map[string]int)
 	//store the names of services and their count
-	err := processCytoElementsWithPattern(cy.Elements, &pf, func(svc Service, ele cytoscapejs.Element) error {
+	err := processCytoElementsWithPattern(cy.Elements, func(svc Service, ele cytoscapejs.Element) error {
 		name := svc.Name
 		countDuplicates[name]++
 		return nil
@@ -330,7 +354,7 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 	}
 
 	//Populate the dependsOn field with appropriate unique service names
-	err = processCytoElementsWithPattern(cy.Elements, &pf, func(svc Service, ele cytoscapejs.Element) error {
+	err = processCytoElementsWithPattern(cy.Elements, func(svc Service, ele cytoscapejs.Element) error {
 		//Extract parents, if present
 		m, ok := svc.Traits["meshmap"].(map[string]interface{})
 		if ok {
@@ -382,7 +406,7 @@ func getRandomAlphabetsOfDigit(length int) (s string) {
 }
 
 // processCytoElementsWithPattern iterates over all the cyto elements, convert each into a patternfile service and exposes a callback to handle that service
-func processCytoElementsWithPattern(eles []cytoscapejs.Element, pf *Pattern, callback func(svc Service, ele cytoscapejs.Element) error) error {
+func processCytoElementsWithPattern(eles []cytoscapejs.Element, callback func(svc Service, ele cytoscapejs.Element) error) error {
 	for _, elem := range eles {
 		// Try to create Service object from the elem.scratch's _data field
 		// if this fails then immediately fail the process and return an error
@@ -441,7 +465,7 @@ func manifestIsEmpty(manifests []string) bool {
 }
 
 // Note: If modified, make sure this function always returns a meshkit error
-func NewPatternFileFromK8sManifest(data string, ignoreErrors bool) (Pattern, error) {
+func NewPatternFileFromK8sManifest(data string, ignoreErrors bool, reg *meshmodel.RegistryManager) (Pattern, error) {
 	pattern := Pattern{
 		Name:     "Autogenerated",
 		Services: map[string]*Service{},
@@ -474,7 +498,7 @@ func NewPatternFileFromK8sManifest(data string, ignoreErrors bool) (Pattern, err
 			return pattern, ErrParseK8sManifest(fmt.Errorf("failed to parse manifest into an internal representation"))
 		}
 
-		name, svc, err := createPatternServiceFromK8s(manifest)
+		name, svc, err := createPatternServiceFromK8s(manifest, reg)
 		if err != nil {
 			if ignoreErrors {
 				continue
@@ -488,7 +512,7 @@ func NewPatternFileFromK8sManifest(data string, ignoreErrors bool) (Pattern, err
 	return pattern, nil
 }
 
-func createPatternServiceFromK8s(manifest map[string]interface{}) (string, Service, error) {
+func createPatternServiceFromK8s(manifest map[string]interface{}, regManager *meshmodel.RegistryManager) (string, Service, error) {
 	apiVersion, _ := manifest["apiVersion"].(string)
 	kind, _ := manifest["kind"].(string)
 	metadata, _ := manifest["metadata"].(map[string]interface{})
@@ -519,12 +543,20 @@ func createPatternServiceFromK8s(manifest map[string]interface{}) (string, Servi
 	if apiVersion == "" || kind == "" {
 		return "", Service{}, ErrCreatePatternService(fmt.Errorf("empty apiVersion or kind in manifest"))
 	}
-	w := GetWorkloadsByK8sAPIVersionKind(apiVersion, kind)
 
-	if len(w) == 0 {
+	// Get MeshModel entity with the selectors
+	componentList := regManager.GetEntities(&meshmodelv1alpha1.ComponentFilter{
+		Name:       kind,
+		APIVersion: apiVersion,
+	})
+	if componentList == nil || len(componentList) == 0 {
 		return "", Service{}, ErrCreatePatternService(fmt.Errorf("no resources found for APIVersion: %s Kind: %s", apiVersion, kind))
 	}
-
+	// just needs the first entry to grab meshmodel-metadata and other model requirements
+	comp, ok := componentList[0].(meshmodelv1alpha1.ComponentDefinition)
+	if !ok {
+		return "", Service{}, ErrCreatePatternService(fmt.Errorf("cannot cast to the component-definition for APIVersion: %s Kind: %s", apiVersion, kind))
+	}
 	// Setup labels
 	castedLabel := map[string]string{}
 	for k, v := range labels {
@@ -543,15 +575,22 @@ func createPatternServiceFromK8s(manifest map[string]interface{}) (string, Servi
 		}
 	}
 	rest = Format.Prettify(rest, false)
+	uuidV4, _ := uuid.NewV4()
 	svc := Service{
 		Name:        name,
-		Type:        w[0].OAMDefinition.Name,
-		APIVersion:  apiVersion,
+		Type:        comp.Kind,
+		APIVersion:  comp.APIVersion,
 		Namespace:   namespace,
-		Model:       "kubernetes",
+		Model:       comp.Model.Name,
 		Labels:      castedLabel,
 		Annotations: castedAnnotation,
 		Settings:    rest,
+		Traits: map[string]interface{}{
+			"meshmap": map[string]interface{}{
+				"id":                 uuidV4,
+				"meshmodel-metadata": comp.Metadata,
+			},
+		},
 	}
 
 	return id, svc, nil

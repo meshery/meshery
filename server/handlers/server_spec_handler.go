@@ -27,7 +27,7 @@ type Version struct {
 // 	200: mesheryVersionRespWrapper
 
 // ServerVersionHandler handles the version api request for the server
-func (h *Handler) ServerVersionHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) ServerVersionHandler(w http.ResponseWriter, _ *http.Request) {
 	// Default values incase any errors
 	version := &Version{
 		Build:          viper.GetString("BUILD"),

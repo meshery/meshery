@@ -38,6 +38,7 @@ type HandlerInterface interface {
 	LogoutHandler(w http.ResponseWriter, req *http.Request, provider Provider)
 	UserHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetUserByIDHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetUsers(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	K8SConfigHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request)
 	KubernetesPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -62,6 +63,7 @@ type HandlerInterface interface {
 	MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	AdaptersHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	AvailableAdaptersHandler(w http.ResponseWriter, req *http.Request)
 	EventStreamHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	AdapterPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
@@ -98,28 +100,28 @@ type HandlerInterface interface {
 	SessionSyncHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	PatternFileHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
-	GETOAMRegisterHandler(rw http.ResponseWriter, r *http.Request)
-	OAMRegisterHandler(rw http.ResponseWriter, r *http.Request)
-	ComponentTypesHandler(rw http.ResponseWriter, r *http.Request)
-	ComponentsForTypeHandler(rw http.ResponseWriter, r *http.Request)
-	GetAllComponents(rw http.ResponseWriter, r *http.Request)
-	ComponentVersionsHandler(rw http.ResponseWriter, r *http.Request)
-	ComponentsByNameHandler(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, r *http.Request)
 	ValidationHandler(rw http.ResponseWriter, r *http.Request)
 	MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelModels(rw http.ResponseWriter, r *http.Request)
 	RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Request)
 
-	GetMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request)
-	GetMeshmodelEntititiesByModel(rw http.ResponseWriter, r *http.Request)
-
+	GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelComponentsByNameByModelByCategory(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r *http.Request)
+	GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Request)
+	GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request)
 	GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http.Request)
 	RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)
 
-	OAMComponentDetailsHandler(rw http.ResponseWriter, r *http.Request)
-	OAMComponentDetailByIDHandler(rw http.ResponseWriter, r *http.Request)
 	PatternFileRequestHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteMesheryPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	CloneMesheryPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -155,6 +157,12 @@ type HandlerInterface interface {
 	DeleteScheduleHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	ExtensionsHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+
+	SaveUserCredential(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetUserCredentials(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	UpdateUserCredential(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	DeleteUserCredential(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetRegoPolicyForDesignFile(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 }
 
 // HandlerConfig holds all the config pieces needed by handler methods

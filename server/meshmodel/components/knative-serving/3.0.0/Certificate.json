@@ -1,1 +1,0 @@
-{"kind":"Certificate","apiVersion":"v1alpha1","displayName":"Certificate","format":"JSON","metadata":{},"model":{"name":"knative-serving","version":"3.0.0","modelDisplayName":"knative-serving","category":"","subCategory":""}}

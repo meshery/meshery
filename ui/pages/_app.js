@@ -71,13 +71,13 @@ async function fetchContexts(number = 10, search = "") {
   return await promisifiedDataFetch(`/api/system/kubernetes/contexts?pageSize=${number}&search=${encodeURIComponent(search)}`)
 }
 
-const playgroundExtensionRoute = "/extension/meshmap";
+export const mesheryExtensionRoute = "/extension/meshmap";
 function isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry) {
-  return !window.location.pathname.startsWith(playgroundExtensionRoute) && capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted
+  return !window.location.pathname.startsWith(mesheryExtensionRoute) && capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted
 }
 
 export function isExtensionOpen() {
-  return window.location.pathname.startsWith(playgroundExtensionRoute);
+  return window.location.pathname.startsWith(mesheryExtensionRoute);
 }
 
 class MesheryApp extends App {
@@ -181,7 +181,7 @@ class MesheryApp extends App {
 
     // in case the meshery-ui is restricted, the user will be redirected to signup/extension page
     if (isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry)) {
-      Router.push(playgroundExtensionRoute);
+      Router.push(mesheryExtensionRoute);
     }
 
     if (!_.isEqual(prevProps.k8sConfig, k8sConfig)) {
@@ -257,7 +257,7 @@ class MesheryApp extends App {
         let ids = [...(state.activeK8sContexts || [])];
         //pop event
         if (ids.includes(id)) {
-          ids = ids.filter(id => id != "all")
+          ids = ids.filter(id => id !== "all")
           return { activeK8sContexts : ids.filter(cid => cid !== id) }
         }
 

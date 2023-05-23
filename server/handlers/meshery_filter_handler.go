@@ -31,8 +31,8 @@ type MesheryFilterRequestBody struct {
 func (h *Handler) GetMesheryFilterFileHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	filterID := mux.Vars(r)["id"]
@@ -86,8 +86,8 @@ func (h *Handler) FilterFileRequestHandler(
 func (h *Handler) handleFilterPOST(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	defer func() {
@@ -184,8 +184,8 @@ func (h *Handler) handleFilterPOST(
 func (h *Handler) GetMesheryFiltersHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	q := r.URL.Query()
@@ -212,8 +212,8 @@ func (h *Handler) GetMesheryFiltersHandler(
 func (h *Handler) GetCatalogMesheryFiltersHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	q := r.URL.Query()
@@ -242,8 +242,8 @@ func (h *Handler) GetCatalogMesheryFiltersHandler(
 func (h *Handler) DeleteMesheryFilterHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	filterID := mux.Vars(r)["id"]
@@ -272,8 +272,8 @@ func (h *Handler) DeleteMesheryFilterHandler(
 func (h *Handler) CloneMesheryFilterHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	filterID := mux.Vars(r)["id"]
@@ -308,8 +308,8 @@ func (h *Handler) CloneMesheryFilterHandler(
 func (h *Handler) PublishCatalogFilterHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	defer func() {
@@ -346,8 +346,8 @@ func (h *Handler) PublishCatalogFilterHandler(
 func (h *Handler) GetMesheryFilterHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	filterID := mux.Vars(r)["id"]
@@ -363,7 +363,7 @@ func (h *Handler) GetMesheryFilterHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, format string, res *meshes.EventsResponse) {
+func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, _ string, res *meshes.EventsResponse) {
 	contentMesheryFilterSlice := make([]models.MesheryFilter, 0)
 	names := []string{}
 	if err := json.Unmarshal(content, &contentMesheryFilterSlice); err != nil {

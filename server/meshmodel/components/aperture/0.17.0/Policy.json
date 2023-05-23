@@ -1,1 +1,0 @@
-{"kind":"Policy","apiVersion":"v1alpha1","displayName":"Policy","format":"JSON","metadata":{},"model":{"name":"aperture","version":"0.17.0","modelDisplayName":"aperture","category":"","subCategory":""},"schema":"{\n \"title\": \"Policy\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

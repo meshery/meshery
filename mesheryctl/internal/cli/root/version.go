@@ -157,6 +157,7 @@ mesheryctl version
 			utils.Log.Error(ErrUnmarshallingAPIData(err))
 			return
 		}
+
 		rows[1][1] = version.GetBuild()
 		rows[1][2] = version.GetCommitSHA()
 		utils.PrintToTable(header, rows)
@@ -179,8 +180,8 @@ func checkMesheryctlClientVersion(build string) {
 	r := res[len(res)-1]
 	// If user is running an outdated release, let them know.
 	if r != build {
-		utils.Log.Info("\n  ", build, " is not the latest release. Update to ", res, ".")
+		utils.Log.Info("\n  ", build, " is not the latest release. Update to ", r, ".")
 	} else { // If user is running the latest release, let them know.
-		utils.Log.Info("\n  ", res, " is the latest release.")
+		utils.Log.Info("\n  ", r, " is the latest release.")
 	}
 }

@@ -1,1 +1,0 @@
-{"kind":"FluentdConfig","apiVersion":"v1beta1","displayName":"Fluentd Config","format":"JSON","metadata":{},"model":{"name":"statcan","version":"0.5.1","modelDisplayName":"statcan","category":"","subCategory":""},"schema":"{\n \"properties\": {\n  \"fluentconf\": {\n   \"type\": \"string\"\n  }\n },\n \"title\": \"Fluentd Config\",\n \"type\": \"object\"\n}"}

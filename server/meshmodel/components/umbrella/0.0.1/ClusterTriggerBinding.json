@@ -1,1 +1,0 @@
-{"kind":"ClusterTriggerBinding","apiVersion":"v1alpha1","displayName":"Cluster Trigger Binding","format":"JSON","metadata":{},"model":{"name":"umbrella","version":"0.0.1","modelDisplayName":"umbrella","category":"","subCategory":""}}

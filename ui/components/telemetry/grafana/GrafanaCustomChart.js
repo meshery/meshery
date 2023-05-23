@@ -403,7 +403,7 @@ class GrafanaCustomChart extends Component {
     if (templateVars && templateVars !== null && templateVars.length > 0) {
       templateVars.forEach((tv) => {
         const tvrs = tv.split('=');
-        if (tvrs.length == 2) {
+        if (tvrs.length === 2) {
             expr = expr.replace(new RegExp(`$${tvrs[0]}`.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'), 'g'), tvrs[1]); //eslint-disable-line
         }
       });
@@ -439,7 +439,7 @@ class GrafanaCustomChart extends Component {
           const newData = [];
 
           // if (typeof cd.labels[datasetInd] === 'undefined' || typeof cd.datasets[datasetInd] === 'undefined'){
-          let legend = typeof target.legendFormat !== undefined ? target.legendFormat
+          let legend = typeof target.legendFormat !== "undefined" ? target.legendFormat
             : '';
           if (legend === '') {
             legend = Object.keys(metric).length > 0 ? JSON.stringify(metric)

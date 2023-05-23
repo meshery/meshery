@@ -1,1 +1,0 @@
-{"kind":"Logging","apiVersion":"v1alpha1","displayName":"Logging","format":"JSON","metadata":{},"model":{"name":"banzaicloud-stable","version":"3.17.10","modelDisplayName":"banzaicloud-stable","category":"","subCategory":""},"schema":"{\n \"title\": \"Logging\",\n \"type\": \"object\"\n}"}

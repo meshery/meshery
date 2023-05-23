@@ -1,1 +1,0 @@
-{"kind":"ConfigAuditReport","apiVersion":"v1alpha1","displayName":"Config Audit Report","format":"JSON","metadata":{},"model":{"name":"starboard-operator","version":"0.10.4","modelDisplayName":"starboard-operator","category":"","subCategory":""}}

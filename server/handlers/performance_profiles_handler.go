@@ -20,8 +20,8 @@ import (
 func (h *Handler) SavePerformanceProfileHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	defer func() {
@@ -76,8 +76,8 @@ func (h *Handler) SavePerformanceProfileHandler(
 func (h *Handler) GetPerformanceProfilesHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	q := r.URL.Query()
@@ -108,8 +108,8 @@ func (h *Handler) GetPerformanceProfilesHandler(
 func (h *Handler) DeletePerformanceProfileHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	performanceProfileID := mux.Vars(r)["id"]
@@ -139,8 +139,8 @@ func (h *Handler) DeletePerformanceProfileHandler(
 func (h *Handler) GetPerformanceProfileHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	performanceProfileID := mux.Vars(r)["id"]

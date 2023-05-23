@@ -11,6 +11,8 @@ import DataTable from "mui-datatables";
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import _ from "lodash";
+
 import dataFetch from '../lib/data-fetch';
 import PromptComponent from './PromptComponent';
 import MeshsyncStatusQuery from './graphql/queries/MeshsyncStatusQuery';
@@ -19,7 +21,7 @@ import changeOperatorState from './graphql/mutations/OperatorStatusMutation';
 import resetDatabase from "./graphql/queries/ResetDatabaseQuery";
 import { updateProgress } from "../lib/store";
 import fetchMesheryOperatorStatus from "./graphql/queries/OperatorStatusQuery";
-import _ from "lodash";
+import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 import { DEPLOYMENT_TYPE } from '../utils/Enum';
 import { iconMedium } from '../css/icons.styles';
 
@@ -51,6 +53,11 @@ const styles = (theme) => ({
     flexWrap : "noWrap",
   },
   fileInputStyle : { display : "none", },
+  topToolbar : {
+    margin : "1rem 0",
+    paddingLeft : "1rem",
+    maxWidth : "90%"
+  },
   button : {
     padding : theme.spacing(1),
     borderRadius : 5
@@ -86,13 +93,6 @@ const styles = (theme) => ({
   uploadCluster : {
     overflow : "hidden"
   },
-  MenuItem : {
-    backgroundColor : theme.palette.common.white,
-    "&:hover" : {
-      backgroundColor : theme.palette.common.white
-    },
-    pointerEvents : "none"
-  },
   OperatorSwitch : {
     pointerEvents : "auto"
   }
@@ -109,7 +109,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   const [NATSState, setNATSState] = useState(["UNKNOWN"]);
   const [NATSVersion, setNATSVersion] = useState(["N/A"]);
   const [contexts, setContexts] = useState([]);
-  const [k8sVersion, setK8sVersion] = useState(["N/A"]);
   const [discover, setLastDiscover] = useState(['']);
   const [_operatorState, _setOperatorState] = useState(operatorState || []);
   const deleteCtxtRef = useRef(null);
@@ -159,7 +158,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           error : (err) => console.log("error at operator scan: " + err),
         })
     })
-    getKubernetesVersion(); // change to per context and also ping return server version. no need to check workload
   }, [])
 
   useEffect(() => {
@@ -255,20 +253,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     let newData = [...discover];
     newData[index] = newDate;
     setLastDiscover(newData);
-  }
-
-  const getKubernetesVersion = () => {
-    dataFetch(
-      "/api/oam/workload/APIService.K8s",
-      { credentials : "same-origin" },
-      (result) => {
-        if (result) {
-          let version = result[0]?.oam_definition?.spec?.metadata?.version;
-          setK8sVersion(version);
-        }
-      },
-      handleError("Failed to get Kubernetes version")
-    )
   }
 
   const handleKubernetesClick = (context, index) => {
@@ -626,8 +610,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         handleConfigDelete(data[item.index].id, data[item.index].context)
       })
     },
-
-
     renderExpandableRow : (rowData, rowMetaData) => {
       const contextId = contexts[rowMetaData.rowIndex].id;
       const { meshSyncState, meshSyncVersion, natsState, natsVersion, operatorState, operatorVersion } = getContextStatus(contextId);
@@ -665,7 +647,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                               <ListItemText primary="Name" secondary={contexts[rowMetaData.rowIndex].name} />
                             </ListItem>
                             <ListItem>
-                              <ListItemText primary="K8s Version" secondary={k8sVersion} />
+                              <ListItemText primary="K8s Version" secondary={contexts[rowMetaData.rowIndex].version} />
                             </ListItem>
                           </List>
                         </Grid>
@@ -964,6 +946,9 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
   return (
     <div style={{ display : 'table', tableLayout : 'fixed', width : '100%' }}>
+      <div className={classes.topToolbar}>
+        < MesherySettingsEnvButtons/>
+      </div>
       <DataTable
         columns={columns}
         data={data}

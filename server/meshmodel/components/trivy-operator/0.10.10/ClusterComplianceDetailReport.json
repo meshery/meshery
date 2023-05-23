@@ -1,1 +1,0 @@
-{"kind":"ClusterComplianceDetailReport","apiVersion":"v1alpha1","displayName":"Cluster Compliance Detail Report","format":"JSON","metadata":{},"model":{"name":"trivy-operator","version":"0.10.10","modelDisplayName":"trivy-operator","category":"","subCategory":""},"schema":""}

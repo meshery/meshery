@@ -1,0 +1,1 @@
+{"kind":"KopfPeering","apiVersion":"kopf.dev/v1","displayName":"Kopf Peering","format":"JSON","metadata":{},"model":{"name":"gooddata-cn","version":"2.3.0","displayName":"gooddata-cn","category":{"name":"","metadata":null},"metadata":null}}

@@ -1,1 +1,0 @@
-{"kind":"WorkloadDefinition","apiVersion":"core.oam.dev/v1alpha1","metadata":{"name":"TokenReview.K8s","creationTimestamp":null},"spec":{"definitionRef":{"name":"tokenreview.k8s.meshery.layer5.io"},"metadata":{"@type":"pattern.meshery.io/k8s","isCustomResource":"false","k8sAPIVersion":"authentication.k8s.io/v1","k8sKind":"TokenReview","namespaced":"false","version":"v1.25.0"}}}

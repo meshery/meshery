@@ -170,7 +170,7 @@ func applyYaml(client *mesherykube.Client, delete bool, file string) error {
 
 // installs operator
 // To be depricated
-func installUsingHelm(client *mesherykube.Client, delete bool, adapterTracker models.AdaptersTrackerInterface) error {
+func installUsingHelm(client *mesherykube.Client, delete bool, _ models.AdaptersTrackerInterface) error {
 	// retrieving meshery's version to apply the appropriate chart
 	mesheryReleaseVersion := viper.GetString("BUILD")
 	if mesheryReleaseVersion == "" || mesheryReleaseVersion == "Not Set" || mesheryReleaseVersion == "edge-latest" {

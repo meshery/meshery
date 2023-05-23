@@ -207,7 +207,7 @@ mesheryctl system dashboard --port-forward
 			}
 
 			if err == nil {
-				err = config.UpdateContextInConfig(viper.GetViper(), currCtx, mctlCfg.GetCurrentContextName())
+				err = config.UpdateContextInConfig(currCtx, mctlCfg.GetCurrentContextName())
 				if err != nil {
 					return err
 				}

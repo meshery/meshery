@@ -1,1 +1,0 @@
-{"kind":"PodAutoscaler","apiVersion":"v1alpha1","displayName":"Pod Autoscaler","format":"JSON","metadata":{},"model":{"name":"knative-serving","version":"0.19.12","modelDisplayName":"knative-serving","category":"","subCategory":""}}

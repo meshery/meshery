@@ -198,8 +198,8 @@ func ErrAttachAuthToken(err error) error {
 }
 
 func ErrFailRequest(err error) error {
-	return errors.New(ErrFailRequestCode, errors.Alert, []string{},
-		[]string{"Failed to make a request"}, []string{}, []string{})
+	return errors.New(ErrFailRequestCode, errors.Alert, []string{"Failed to make a request"},
+		[]string{err.Error()}, []string{}, []string{})
 }
 
 func ErrUnauthenticated() error {

@@ -19,7 +19,7 @@ type operatorStatusK8sContext struct {
 }
 
 func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Provider, status model.Status, ctxID string) (model.Status, error) {
-	delete := true
+	deleteOperator := true
 
 	// Tell operator status subscription that operation is starting
 	r.Broadcast.Submit(broadcast.BroadcastMessage{
@@ -33,7 +33,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 
 	if status == model.StatusEnabled {
 		r.Log.Info("Installing Operator")
-		delete = false
+		deleteOperator = false
 	} else {
 		r.Log.Info("Uninstalling Operator in context ", ctxID)
 	}
@@ -160,12 +160,12 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		// r.operatorChannel <- &model.OperatorStatus{
 		// 	Status: status,
 		// }
-	}(delete, kubeclient)
+	}(deleteOperator, kubeclient)
 
 	return model.StatusProcessing, nil
 }
 
-func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provider, ctxID string) (*model.OperatorStatus, error) {
+func (r *Resolver) getOperatorStatus(ctx context.Context, _ models.Provider, ctxID string) (*model.OperatorStatus, error) {
 	status := model.StatusUnknown
 	version := string(model.StatusUnknown)
 
@@ -234,7 +234,7 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, provider models.Provid
 	}, nil
 }
 
-func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provider, k8scontextID string) (*model.OperatorControllerStatus, error) {
+func (r *Resolver) getMeshsyncStatus(ctx context.Context, _ models.Provider, k8scontextID string) (*model.OperatorControllerStatus, error) {
 	var kubeclient *mesherykube.Client
 	var err error
 	if k8scontextID != "" {
@@ -276,7 +276,7 @@ func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provid
 	return &status, nil
 }
 
-func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider, k8scontextID string) (*model.OperatorControllerStatus, error) {
+func (r *Resolver) getNatsStatus(ctx context.Context, _ models.Provider, k8scontextID string) (*model.OperatorControllerStatus, error) {
 	var kubeclient *mesherykube.Client
 	var err error
 	if k8scontextID != "" {
@@ -379,22 +379,21 @@ func (r *Resolver) listenToOperatorsState(ctx context.Context, provider models.P
 						case operatorStatusK8sContext:
 							if processing.Data.(operatorStatusK8sContext).ctxID != k8scontext.ID {
 								continue
-							} else {
-								switch processing.Data.(operatorStatusK8sContext).processing.(type) {
-								case bool:
-									if processing.Data.(operatorStatusK8sContext).processing.(bool) {
-										status.Status = model.StatusProcessing
-									}
-								case *errors.Error:
-									status.Error = &model.Error{
-										Code:        "",
-										Description: processing.Data.(operatorStatusK8sContext).processing.(*errors.Error).Error(),
-									}
-								case error:
-									status.Error = &model.Error{
-										Code:        "",
-										Description: processing.Data.(operatorStatusK8sContext).processing.(error).Error(),
-									}
+							}
+							switch processing.Data.(operatorStatusK8sContext).processing.(type) {
+							case bool:
+								if processing.Data.(operatorStatusK8sContext).processing.(bool) {
+									status.Status = model.StatusProcessing
+								}
+							case *errors.Error:
+								status.Error = &model.Error{
+									Code:        "",
+									Description: processing.Data.(operatorStatusK8sContext).processing.(*errors.Error).Error(),
+								}
+							case error:
+								status.Error = &model.Error{
+									Code:        "",
+									Description: processing.Data.(operatorStatusK8sContext).processing.(error).Error(),
 								}
 							}
 						}

@@ -1,1 +1,0 @@
-{"kind":"ConfigAuditReport","apiVersion":"v1alpha1","displayName":"Config Audit Report","format":"JSON","metadata":{},"model":{"name":"kube-enforcer","version":"2022.4.13","modelDisplayName":"kube-enforcer","category":"","subCategory":""}}

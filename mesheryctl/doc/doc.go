@@ -31,6 +31,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root"
 )
 
+// GenMarkdownTreeCustom is a modified version of GenMarkdownTree from spf13/cobra
 const markdownTemplateCommand = `---
 layout: default
 title: %s
@@ -45,6 +46,7 @@ subcommand: %s
 
 `
 
+// cmdDoc is a struct to hold the data for a command
 type cmdDoc struct {
 	Name        string `yaml:"name"`
 	Description string `yaml:"description"`
@@ -52,6 +54,7 @@ type cmdDoc struct {
 	Example     string `yaml:"example"`
 }
 
+// prepender is a function to prepend the frontmatter to the markdown file
 func prepender(filename string) string {
 	file := strings.Split(filename, ".md")
 	title := filepath.Base(file[0])
@@ -87,6 +90,7 @@ func linkHandler(name string) string {
 	return strings.ToLower(words[1])
 }
 
+// doc is a function to generate the markdown docs for mesheryctl
 func doc() {
 	markDownPath := "../../docs/pages/reference/mesheryctl/" // Path for docs
 	//yamlPath := "./internal/cli/root/testDoc/"
@@ -105,18 +109,11 @@ func doc() {
 		log.Fatal(err)
 	}
 
-	//fmt.Println("Generating yaml docs...")
-
-	// Generates YAML for whole tree
-	//err = GenYamlTreeCustom(cmd, markDownPath, subprepender, linkHandler)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-
 	fmt.Println("Documentation generated at " + markDownPath)
 }
 
-func printOptions(buf *bytes.Buffer, cmd *cobra.Command, name string) error {
+// printOptions prints the options for a command
+func printOptions(buf *bytes.Buffer, cmd *cobra.Command) error {
 	flags := cmd.NonInheritedFlags()
 	flags.SetOutput(buf)
 	if flags.HasAvailableFlags() {
@@ -136,11 +133,14 @@ func printOptions(buf *bytes.Buffer, cmd *cobra.Command, name string) error {
 }
 
 // GenMarkdownCustom creates custom markdown output.
-func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string) string) error {
+func GenMarkdownCustom(cmd *cobra.Command, w io.Writer) error {
+	// InitDefaultHelpCmd add the help command to the command tree.
 	cmd.InitDefaultHelpCmd()
+	// InitDefaultHelpFlag add the help flag to the command tree.
 	cmd.InitDefaultHelpFlag()
 
 	buf := new(bytes.Buffer)
+	// CommandPath returns the full path to this command.
 	name := cmd.CommandPath()
 
 	buf.WriteString("# " + name + "\n\n")
@@ -150,20 +150,22 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string)
 		buf.WriteString(cmd.Long + "\n\n")
 	}
 
+	// check if the command is runnable
 	if cmd.Runnable() {
 		buf.WriteString(fmt.Sprintf("<pre class='codeblock-pre'>\n<div class='codeblock'>\n%s\n\n</div>\n</pre> \n\n", cmd.UseLine()))
 	}
 
+	// check cmd has annotations link and caption
 	picLine, ok := cmd.Annotations["link"]
 	if !ok {
 		picLine = ""
 	}
-
 	picComment, ok := cmd.Annotations["caption"]
 	if !ok {
 		picComment = ""
 	}
 
+	// check if cmd has example
 	if len(cmd.Example) > 0 {
 		buf.WriteString("## Examples\n\n")
 		var examples = strings.Split(cmd.Example, "\n")
@@ -180,7 +182,7 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string)
 		}
 	}
 
-	if err := printOptions(buf, cmd, name); err != nil {
+	if err := printOptions(buf, cmd); err != nil {
 		return err
 	}
 
@@ -214,6 +216,7 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string)
 	return err
 }
 
+// hasSeeAlso checks if the command has any subcommands
 func hasSeeAlso(cmd *cobra.Command) bool {
 	if cmd.HasParent() {
 		return true
@@ -227,7 +230,7 @@ func hasSeeAlso(cmd *cobra.Command) bool {
 	return false
 }
 
-// Custom function to generate markdown docs with '-' as separator
+// GenMarkdownTreeCustom creates custom markdown output.
 func GenMarkdownTreeCustom(cmd *cobra.Command, dir string, filePrepender, linkHandler func(string) string) error {
 	for _, c := range cmd.Commands() {
 		if !c.IsAvailableCommand() || c.IsAdditionalHelpTopicCommand() {
@@ -251,13 +254,14 @@ func GenMarkdownTreeCustom(cmd *cobra.Command, dir string, filePrepender, linkHa
 		return err
 	}
 
-	err = GenMarkdownCustom(cmd, f, linkHandler)
+	err = GenMarkdownCustom(cmd, f)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
+// GenYamlTreeCustom creates custom yaml output.
 func GenYamlTreeCustom(cmd *cobra.Command, dir string, filePrepender, linkHandler func(string) string) error {
 	for _, c := range cmd.Commands() {
 		if !c.IsAvailableCommand() || c.IsAdditionalHelpTopicCommand() {
@@ -274,27 +278,35 @@ func GenYamlTreeCustom(cmd *cobra.Command, dir string, filePrepender, linkHandle
 	if err != nil {
 		return err
 	}
-	defer f.Close()
 
 	_, err = io.WriteString(f, filePrepender(filename))
 	if err != nil {
 		return err
 	}
 
-	err = GenYamlCustom(cmd, f, linkHandler)
+	err = GenYamlCustom(cmd, f)
 	if err != nil {
 		return err
 	}
+
+	// check error before defer
+	if err = f.Close(); err != nil {
+		return err
+	}
+	defer f.Close()
+
 	return nil
 }
 
-func GenYamlCustom(cmd *cobra.Command, w io.Writer, linkHandler func(string) string) error {
+// GenYamlCustom generates yaml docs for the command
+func GenYamlCustom(cmd *cobra.Command, w io.Writer) error {
+	// init default help command and flag
 	cmd.InitDefaultHelpCmd()
 	cmd.InitDefaultHelpFlag()
-
 	yamlDoc := cmdDoc{}
 
 	yamlDoc.Name = cmd.CommandPath()
+	// cmd.Short is the short description of the command
 	yamlDoc.Description = cmd.Short
 	yamlDoc.Usage = cmd.UseLine()
 	if len(cmd.Example) > 0 {

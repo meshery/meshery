@@ -1,1 +1,0 @@
-{"kind":"Group","apiVersion":"v1alpha2","displayName":"Group","format":"JSON","metadata":{},"model":{"name":"kubesphere-test","version":"0.2.0","modelDisplayName":"kubesphere-test","category":"","subCategory":""},"schema":"{\n \"description\": \"GroupSpec defines the desired state of Group\",\n \"title\": \"Group\",\n \"type\": \"object\"\n}"}

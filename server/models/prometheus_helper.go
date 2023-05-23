@@ -84,7 +84,7 @@ func (p *PrometheusClient) QueryRange(ctx context.Context, promURL string, query
 }
 
 // GetClusterStaticBoard retrieves the cluster static board config
-func (p *PrometheusClient) GetClusterStaticBoard(ctx context.Context, promURL string) (*GrafanaBoard, error) {
+func (p *PrometheusClient) GetClusterStaticBoard(ctx context.Context, _ string) (*GrafanaBoard, error) {
 	return p.ImportGrafanaBoard(ctx, []byte(staticBoardCluster))
 }
 
@@ -152,7 +152,7 @@ func (p *PrometheusClient) QueryRangeUsingClient(ctx context.Context, promURL, q
 }
 
 // ComputeStep computes the step size for a window
-func (p *PrometheusClient) ComputeStep(ctx context.Context, start, end time.Time) time.Duration {
+func (p *PrometheusClient) ComputeStep(_ context.Context, start, end time.Time) time.Duration {
 	step := 5 * time.Second
 	diff := end.Sub(start)
 	// all calc. here are approx.

@@ -7,7 +7,8 @@ contexts:
       - meshery-istio
     channel: stable
     version: v0.5.10
+    provider: Meshery
 current-context: local
 tokens:
   - location: auth.json
-    name: Default
+    name: default

@@ -1,1 +1,0 @@
-{"kind":"FederatedServiceStatus","apiVersion":"v1alpha1","displayName":"Federated Service Status","format":"JSON","metadata":{},"model":{"name":"banzaicloud-stable","version":"0.3.1-banzai.1","modelDisplayName":"banzaicloud-stable","category":"","subCategory":""},"schema":""}

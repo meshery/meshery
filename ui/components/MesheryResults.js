@@ -315,7 +315,7 @@ class MesheryResults extends Component {
       sort : !(user && user.user_id === 'meshery'),
       search : !(user && user.user_id === 'meshery'),
       filterType : 'textField',
-      responsive : 'scrollFullHeight',
+      responsive : 'standard',
       resizableColumns : true,
       selectableRows : true,
       serverSide : true,
@@ -372,7 +372,7 @@ class MesheryResults extends Component {
             }, 500);
             break;
           case 'sort':
-            if (sortInfo.length == 2) {
+            if (sortInfo.length === 2) {
               if (sortInfo[1] === 'ascending') {
                 order = `${columns[tableState.activeColumn].name} asc`;
               } else {

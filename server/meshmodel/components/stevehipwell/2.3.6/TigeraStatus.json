@@ -1,1 +1,0 @@
-{"kind":"TigeraStatus","apiVersion":"v1","displayName":"Tigera Status","format":"JSON","metadata":{},"model":{"name":"stevehipwell","version":"2.3.6","modelDisplayName":"stevehipwell","category":"","subCategory":""},"schema":"{\n \"description\": \"TigeraStatusSpec defines the desired state of TigeraStatus\",\n \"title\": \"Tigera Status\",\n \"type\": \"object\"\n}"}
