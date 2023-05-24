@@ -13,6 +13,7 @@ services:
             - $HOME/.minikube:$HOME/.minikube:ro
         ports:
             - 9081:9081
+        restart: always
     nginx:
         image: nginx:latest
         ports:
@@ -20,30 +21,35 @@ services:
         volumes:
             - /etc/letsencrypt/:/etc/letsencrypt/
             - /etc/meshery-nginx.conf:/etc/nginx/conf.d/default.conf
+        restart: always
     meshery-istio:
         image: layer5/meshery-istio:stable-latest
         labels:
             - "com.centurylinklabs.watchtower.enable=true"
         ports:
             - 10000:10000
+        restart: always
     meshery-linkerd:
        image: layer5/meshery-linkerd:stable-latest
        labels:
             - "com.centurylinklabs.watchtower.enable=true"
        ports:
             - 10001:10001
+       restart: always
     meshery-consul:
        image: layer5/meshery-consul:stable-latest
        labels:
             - "com.centurylinklabs.watchtower.enable=true"
        ports:
             - 10002:10002
+       restart: always
     meshery-nsm:
        image: layer5/meshery-nsm:stable-latest
        labels:
             - "com.centurylinklabs.watchtower.enable=true"
        ports:
             - 10004:10004
+       restart: always
     meshery-app-mesh:
        image: layer5/meshery-app-mesh:stable-latest
        labels:
@@ -56,6 +62,7 @@ services:
             - "com.centurylinklabs.watchtower.enable=true"
        ports:
             - 10006:10006
+       restart: always
     meshery-kuma:
        image: layer5/meshery-kuma:stable-latest
        labels:
@@ -68,12 +75,14 @@ services:
             - "com.centurylinklabs.watchtower.enable=true"
        ports:
             - 10009:10009
+       restart: always
     meshery-nginx-sm:
        image: layer5/meshery-nginx-sm:stable-latest
        labels:
             - "com.centurylinklabs.watchtower.enable=true"
        ports:
             - 10010:10010
+       restart: always
     meshery-cilium:
        image: layer5/meshery-cilium:stable-latest
        labels:
@@ -89,5 +98,5 @@ services:
        volumes:
             - /var/run/docker.sock:/var/run/docker.sock
        command: --label-enable
-
+       restart: always
 version: "3"
