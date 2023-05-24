@@ -31,7 +31,7 @@ import { isExtensionOpen } from "../pages/_app";
 
 const styles = (theme) => ({
   statsWrapper : {
-    padding : theme.spacing(2),
+    // padding : theme.spacing(2),
     maxWidth : "100%",
     height : 'auto',
     borderTopLeftRadius : 0,
@@ -80,10 +80,8 @@ const styles = (theme) => ({
   formGrp : {
     padding : 20,
     border : '1.5px solid #969696',
-    // margin : 20,
     display : 'flex',
-    'flex-direction' : 'column',
-    width : "90%",
+    width : "70%",
   },
   formLegend : { fontSize : 20, },
   formLegendSmall : { fontSize : 16 },
@@ -437,17 +435,26 @@ class UserPreference extends React.Component {
               </FormControl>
             </div>
 
-            <div className={classes.formGrp} style={{ marginLeft : '20px' }}>
-              <FormLabel component="span" className={classes.formLegendSmall}>
+            <div className={classes.formContainer} >
+              <FormControl component="fieldset" className={classes.formGrp}>
+                <FormLabel component="legend" className={classes.formLegend}>
                     Theme
-              </FormLabel>
-              <FormControl component="fieldset">
+                </FormLabel>
+
                 <FormGroup>
-                  <ThemeToggler
-                    classes={classes}
-                    theme={this.props.theme}
-                    themeSetter={this.props.themeSetter}
-                    enqueueSnackbar={this.props.enqueueSnackbar}
+                  <FormControlLabel
+                    key="ThemePreference"
+                    control={(
+                      <ThemeToggler
+                        classes={classes}
+                        theme={this.props.theme}
+                        themeSetter={this.props.themeSetter}
+                        enqueueSnackbar={this.props.enqueueSnackbar}
+
+                      />
+                    )}
+                    labelPlacement="end"
+                    // label="Theme"
                   />
                 </FormGroup>
               </FormControl>

@@ -32,37 +32,7 @@ const styles = () => ({
   },
 });
 
-// function ThemeToggler({
-//   theme, themeSetter
-// }) {
-//   const [themeToggle, setthemeToggle] = useState(false);
-//   const defaultTheme = "light";
-//   const handle = () => {
-//     theme === "dark" ? setthemeToggle(true) : setthemeToggle(false);
-//     localStorage.setItem("Theme", theme);
-//   };
 
-//   useLayoutEffect(() => {
-//     if (localStorage.getItem("Theme") === null) {
-//       themeSetter(defaultTheme);
-//     } else {
-//       themeSetter(localStorage.getItem("Theme"));
-//     }
-
-//   }, []);
-
-//   useLayoutEffect(handle, [theme]);
-
-//   const themeToggler = () => {
-//     theme === "light" ? themeSetter("dark") : themeSetter("light");
-//   };
-
-//   return (
-//     <div onClick={themeToggler}>
-//       Dark Mode <Checkbox color="success" checked={themeToggle} onChange={themeToggler}/>
-//     </div>
-//   )
-// }
 
 
 function exportToJsonFile(jsonData, filename) {
