@@ -349,7 +349,6 @@ func processAndRateLimitTheResponseOnGqlChannel(publishChannel chan *model.MeshS
 
 	processMap := syncedProcessMap{processMap: make(map[string]*model.MeshSyncEvent)}
 
-	// processMap := make(map[string]*model.MeshSyncEvent)
 	isLast := false
 
 	return func(meshsyncEvent *model.MeshSyncEvent) {
@@ -371,10 +370,8 @@ func processAndRateLimitTheResponseOnGqlChannel(publishChannel chan *model.MeshS
 		processMap.mu.Unlock()
 
 		if !shouldWait {
-			// fmt.Println("starting to publish......")
 			shouldWait = true
 			isLast = false
-			// push the entry
 
 			go func() {
 				<-time.After(d)
