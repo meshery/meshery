@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from  "prop-types";
-import { Avatar as MuiAvatar } from '@material-ui/core';
+import { Avatar as MuiAvatar } from '@mui/material';
 
 export const Avatar = ({ ...rest }) => {
   return <MuiAvatar  {...rest} />

@@ -250,6 +250,10 @@ const (
 	PersistConnection Feature = "persist-connection"
 
 	PersistCredentials Feature = "persist-credentials"
+
+	UsersProfile Feature = "users-profile"
+
+	UsersIdentity Feature = "users-identity"
 )
 
 const (
@@ -334,6 +338,7 @@ type Provider interface {
 	GetSession(req *http.Request) error
 	GetUserDetails(*http.Request) (*User, error)
 	GetUserByID(req *http.Request, userID string) ([]byte, error)
+	GetUsers(token, page, pageSize, search, order, filter string) ([]byte, error)
 	GetProviderToken(req *http.Request) (string, error)
 	UpdateToken(http.ResponseWriter, *http.Request) string
 	Logout(http.ResponseWriter, *http.Request) error

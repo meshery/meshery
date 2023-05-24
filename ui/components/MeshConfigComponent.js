@@ -11,6 +11,8 @@ import DataTable from "mui-datatables";
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import _ from "lodash";
+
 import dataFetch from '../lib/data-fetch';
 import PromptComponent from './PromptComponent';
 import MeshsyncStatusQuery from './graphql/queries/MeshsyncStatusQuery';
@@ -19,7 +21,7 @@ import changeOperatorState from './graphql/mutations/OperatorStatusMutation';
 import resetDatabase from "./graphql/queries/ResetDatabaseQuery";
 import { updateProgress } from "../lib/store";
 import fetchMesheryOperatorStatus from "./graphql/queries/OperatorStatusQuery";
-import _ from "lodash";
+import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 import { DEPLOYMENT_TYPE } from '../utils/Enum';
 import { iconMedium } from '../css/icons.styles';
 
@@ -51,6 +53,11 @@ const styles = (theme) => ({
     flexWrap : "noWrap",
   },
   fileInputStyle : { display : "none", },
+  topToolbar : {
+    margin : "1rem 0",
+    paddingLeft : "1rem",
+    maxWidth : "90%"
+  },
   button : {
     padding : theme.spacing(1),
     borderRadius : 5
@@ -603,8 +610,6 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         handleConfigDelete(data[item.index].id, data[item.index].context)
       })
     },
-
-
     renderExpandableRow : (rowData, rowMetaData) => {
       const contextId = contexts[rowMetaData.rowIndex].id;
       const { meshSyncState, meshSyncVersion, natsState, natsVersion, operatorState, operatorVersion } = getContextStatus(contextId);
@@ -941,6 +946,9 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
   return (
     <div style={{ display : 'table', tableLayout : 'fixed', width : '100%' }}>
+      <div className={classes.topToolbar}>
+        < MesherySettingsEnvButtons/>
+      </div>
       <DataTable
         columns={columns}
         data={data}

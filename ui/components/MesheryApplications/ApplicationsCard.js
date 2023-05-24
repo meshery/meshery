@@ -3,8 +3,6 @@ import React, { useState } from "react";
 import {
   Divider, Grid, IconButton, Typography, Tooltip
 } from "@material-ui/core";
-import { useTheme} from '@material-ui/core';
-
 import DeleteIcon from "@material-ui/icons/Delete";
 import Save from "@material-ui/icons/Save";
 import Fullscreen from "@material-ui/icons/Fullscreen";
@@ -17,6 +15,7 @@ import DoneAllIcon from '@material-ui/icons/DoneAll';
 import useStyles from "../MesheryPatterns/Cards.styles";
 import YAMLDialog from "../YamlDialog";
 import TooltipButton from '../../utils/TooltipButton.js'
+import { useTheme } from '@material-ui/core/styles';
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -92,7 +91,7 @@ function MesheryApplicationCard({
               <div>
                 {updated_at
                   ? (
-                    <Typography color="primary" variant="caption" style={{ fontStyle : "italic" }}>
+                    <Typography variant="caption" style={{ fontStyle : "italic", color : `${theme.palette.type === "dark" ? "rgba(255, 255, 255, 0.7)" : "#647881"}` }}>
                       Modified On: <Moment format="LLL">{updated_at}</Moment>
                     </Typography>
                   )

@@ -23,7 +23,6 @@ import { withSnackbar } from "notistack";
 import PromptComponent from './PromptComponent';
 import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 import { iconMedium } from '../css/icons.styles';
-import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 import MeshModelComponent from './MeshModelComponent';
 
 
@@ -71,7 +70,7 @@ const styles = (theme) => ({
   container : {
     display : "flex",
     justifyContent : "center",
-    margin : theme.spacing(2),
+    marginTop : theme.spacing(2),
   },
   paper : {
     maxWidth : '90%',
@@ -369,10 +368,7 @@ class MesherySettings extends React.Component {
     }
     return (
       <div className={classes.wrapperClss}>
-        {tabVal === 0 && <div className={classes.topToolbar}>
-          <MesherySettingsEnvButtons/>
-        </div>
-        }
+
         <Paper square className={classes.wrapperClss}>
           <Tabs
             value={tabVal}
@@ -498,18 +494,20 @@ class MesherySettings extends React.Component {
         {tabVal === 3 && (
           <TabContainer>
             <div className={classes.container}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={this.handleResetDatabase()}
-                className={classes.DBBtn}
-                data-cy="btnResetDatabase"
+              <Paper square style={{ width : '100%', display : 'flex', justifyContent : 'center' }}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={this.handleResetDatabase()}
+                  className={classes.DBBtn}
+                  data-cy="btnResetDatabase"
 
-              >
-                <Typography> System Reset </Typography>
-              </Button>
+                >
+                  <Typography align="center"> System Reset </Typography>
+                </Button>
+              </Paper>
             </div>
           </TabContainer>
         )}
@@ -597,3 +595,4 @@ MesherySettings.propTypes = { classes : PropTypes.object, };
 export default withStyles(styles, { withTheme : true })(
   connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(MesherySettings)))
 );
+

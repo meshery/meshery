@@ -46,6 +46,27 @@ type userInfo struct {
 	Body models.User
 }
 
+// Returns all users info
+// swagger:response users
+type users struct {
+	// in: body
+	Body models.AllUsers
+}
+
+// swagger:parameters idGetAllUsersHandler
+type usersParameterWrapper struct {
+	// in: query
+	Page int64 `json:"page"`
+	// in: query
+	PageSize int64 `json:"pageSize"`
+	// in: query
+	Search string `json:"search"`
+	// in: order
+	Order string `json:"order"`
+	// in: filter
+	Filter string `json:"filter"`
+}
+
 // Returns all meshery patterns
 // swagger:response mesheryPatternsResponseWrapper
 type mesheryPatternsResponseWrapper struct {
@@ -379,4 +400,22 @@ type mesheryFiltersResponseWrapper struct {
 type filterFilesResponseWrapper struct {
 	// in: body
 	Body *models.MesheryFilter
+}
+
+// Returns all meshmodel models
+// swagger:response meshmodelModelsResponseWrapper
+type meshmodelModelsResponseWrapper struct {
+	Body *models.MeshmodelsAPIResponse
+}
+
+// Returns all meshmodel components across all models and categories
+// swagger:response allMeshmodelComponentsResponseWrapper
+type allMeshmodelComponentsResponseWrapper struct {
+	Body *models.MeshmodelComponentsAPIResponse
+}
+
+// Returns all meshmodel relationships of a specific model
+// swagger:response allMeshmodelRelationshipsResponseWrapper
+type allMeshmodelRelationshipsResponseWrapper struct {
+	Body *models.MeshmodelRelationshipsAPIResponse
 }

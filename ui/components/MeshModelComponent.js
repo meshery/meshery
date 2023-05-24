@@ -34,13 +34,15 @@ const meshmodelStyles = (theme) => ({
 const MeshModelComponent = ({ view, classes }) => {
   const [resourcesDetail, setResourcesDetail] = useState();
   const [isRequestCancelled, setRequestCancelled] = useState(false);
+  const [count, setCount] = useState();
   const [page, setPage] = useState(1);
 
   const getModels = async (page) => {
     try {
-      const data = await getModelsDetail(page);
+      const { total_count, models } = await getModelsDetail(page);
+      setCount(total_count);
       if (!isRequestCancelled) {
-        setResourcesDetail(data);
+        setResourcesDetail(models);
       }
     } catch (error) {
       console.error('Failed to fetch models:', error);
@@ -49,9 +51,10 @@ const MeshModelComponent = ({ view, classes }) => {
 
   const getComponents = async (page) => {
     try {
-      const data = await getComponentsDetail(page);
+      const { total_count, components } = await getComponentsDetail(page);
+      setCount(total_count);
       if (!isRequestCancelled) {
-        setResourcesDetail(data);
+        setResourcesDetail(components);
       }
     } catch (error) {
       console.error('Failed to fetch components:', error);
@@ -83,7 +86,6 @@ const MeshModelComponent = ({ view, classes }) => {
       label : `Name`,
       options : {
         sort : true,
-        search : true,
         sortDescFirst : true,
         sortThirdClickReset : true,
         customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
@@ -107,7 +109,6 @@ const MeshModelComponent = ({ view, classes }) => {
       label : view === 'components' ? 'Api Version' : 'Version',
       options : {
         sort : true,
-        search : true,
         sortDescFirst : true,
         sortThirdClickReset : true,
         customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
@@ -131,7 +132,6 @@ const MeshModelComponent = ({ view, classes }) => {
       label : view === 'components' ? 'Model' : 'Category Name',
       options : {
         sort : false,
-        search : true,
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell align={"start"} key={index}>
@@ -157,7 +157,6 @@ const MeshModelComponent = ({ view, classes }) => {
       label : 'Sub Category',
       options : {
         sort : false,
-        search : true,
         display : view === 'components' ? 'true' : 'false',
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
@@ -184,13 +183,13 @@ const MeshModelComponent = ({ view, classes }) => {
 
   const meshmodel_options = {
     rowsPerPage : 25,
-    count : 500,
+    count : count,
     sort : true,
     download : false,
     print : false,
     filter : false,
+    search : false,
     selectableRows : false,
-    search : true,
     serverSide : true,
     onChangePage : (p) =>  setPage(p+1),
   }
