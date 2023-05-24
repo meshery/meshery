@@ -58,6 +58,7 @@ type Context struct {
 	Channel    string   `yaml:"channel,omitempty" mapstructure:"channel,omitempty"`
 	Version    string   `yaml:"version,omitempty" mapstructure:"version,omitempty"`
 	Provider   string   `yaml:"provider,omitempty" mapstructure:"provider,omitempty"`
+	Operator   string   `yaml:"operator,omitempty" mapstructure:"operator,omitempty"`
 }
 
 // GetMesheryCtl returns a reference to the mesheryctl configuration object
@@ -279,6 +280,16 @@ func (ctx *Context) GetProvider() string {
 // SetProvider sets the provider of the current context
 func (ctx *Context) SetProvider(provider string) {
 	ctx.Provider = provider
+}
+
+// GetOperatorStatus returns a string that denotes the operator status
+func (ctx *Context) GetOperatorStatus() string {
+	return ctx.Operator
+}
+
+// SetOperatorStatus can be used to set operator status
+func (ctx *Context) SetOperatorStatus(status string) {
+	ctx.Operator = status
 }
 
 // GetName returns the token name

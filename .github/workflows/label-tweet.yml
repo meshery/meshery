@@ -1,0 +1,43 @@
+name: "Tweet when Labeled"
+
+on:
+  issues:
+    types: labeled
+  pull_request:
+    types: labeled
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  action:
+    if: ${{ github.event.label.name == 'issue/tweet' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if organization maintainer
+        uses: tspascoal/get-user-teams-membership@v2
+        id: checkUserMember
+        with:
+          username: ${{ github.actor }}
+          organization: "meshery"
+          team: "maintainers"
+          GITHUB_TOKEN: ${{ secrets.GLOBAL_TOKEN }}
+      - name: Check if it is issue
+        if: ${{ github.event.issue && steps.checkUserMember.outputs.isTeamMember == 'true' }}
+        uses: ethomson/send-tweet-action@v1
+        with:
+          status: 'Help Wanted: "${{ github.event.issue.title }}" - ${{ github.event.issue.html_url }} #opensource'
+          consumer-key: ${{ secrets.TWITTER_CONSUMER_API_KEY_MESHERY }}
+          consumer-secret: ${{ secrets.TWITTER_CONSUMER_API_SECRET_MESHERY }}
+          access-token: ${{ secrets.TWITTER_ACCESS_TOKEN_MESHERY }}
+          access-token-secret: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET_MESHERY }}
+      - name: Check if it is PR
+        if: ${{ github.event.pull_request && steps.checkUserMember.outputs.isTeamMember == 'true' }}
+        uses: ethomson/send-tweet-action@v1
+        with:
+          status: 'Help Wanted: "${{ github.event.pull_request.title }}" - ${{ github.event.pull_request.html_url }} #opensource'
+          consumer-key: ${{ secrets.TWITTER_CONSUMER_API_KEY_MESHERY }}
+          consumer-secret: ${{ secrets.TWITTER_CONSUMER_API_SECRET_MESHERY }}
+          access-token: ${{ secrets.TWITTER_ACCESS_TOKEN_MESHERY }}
+          access-token-secret: ${{ secrets.TWITTER_ACCESS_TOKEN_SECRET_MESHERY }}
