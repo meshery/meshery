@@ -249,7 +249,6 @@ export function getComponentIsBetaFromPath(extensions, path) {
   path = normalizeURI(path);
 
   if (Array.isArray(extensions)) {
-    console.log("refasfasfasd",extensions);
     const extension = extensions.find((item) => item?.href === path);
     if (extension) return extension.isBeta ?? false
   }
