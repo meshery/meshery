@@ -6,6 +6,7 @@ import React, { useEffect } from "react";
 import { iconSmall } from "../../css/icons.styles";
 import { pSBCr } from "../../utils/lightenOrDarkenColor";
 import PatternServiceFormCore from "./PatternServiceFormCore";
+import { useTheme } from "@material-ui/core/styles";
 
 const useStyles = makeStyles(() => ({
 
@@ -51,6 +52,7 @@ const useStyles = makeStyles(() => ({
 function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, scroll = false, color }) {
   console.log({ schemaSet })
   const classes = useStyles();
+  const theme = useTheme();
 
   useEffect(() => {
     schemaSet.workload.properties.name = {
@@ -95,7 +97,7 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
           <div className={classes.formWrapper}>
             <AppBar style={{
               boxShadow : `0px 2px 4px -1px "#677E88"`,
-              background : "#677E88",
+              background : `${theme.palette.type === "dark" ? "#202020" : "#647881"}`,
               position : "sticky",
               zIndex : 'auto',
             }}>
