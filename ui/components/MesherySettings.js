@@ -151,7 +151,7 @@ class MesherySettings extends React.Component {
 
     if (splittedPath.length >= 2 && splittedPath[1]) {
       const subTabPath = splittedPath[1].split('/');
-      console.log('subTabPath', subTabPath[0])
+
       switch (subTabPath[0]) {
 
         case 'environment':
@@ -247,10 +247,10 @@ class MesherySettings extends React.Component {
 
     const self = this;
     return (event, newVal) => {
-      console.log('newVal', newVal);
+
       if (val === 'tabVal') {
         let newRoute = this.props.router.route;
-        console.log('newRoute', newRoute);
+
         switch (newVal) {
           case 0:
             newRoute += '#environment'
