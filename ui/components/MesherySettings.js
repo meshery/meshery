@@ -28,7 +28,6 @@ import { iconMedium } from '../css/icons.styles';
 import subscribeMeshModelSummary from "./graphql/subscriptions/MeshModelSummarySubscription";
 import fetchMeshModelSummary from "./graphql/queries/MeshModelSummaryQuery";
 import { MuiThemeProvider } from '@material-ui/core/styles';
-import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 import MeshModelComponent from './MeshModelComponent';
 import DataTable from "mui-datatables";
 import { configurationTableTheme, configurationTableThemeDark } from '../themes/configurationTableTheme';
@@ -355,7 +354,7 @@ class MesherySettings extends React.Component {
     const options = {
       filter : false,
       selectableRows : "none",
-      responsive : "scrollMaxHeight",
+      responsive : "standard",
       print : false,
       download : false,
       viewColumns : false,
@@ -555,10 +554,6 @@ class MesherySettings extends React.Component {
     }
     return (
       <div className={classes.wrapperClss}>
-        {tabVal ===0 && <div className={classes.topToolbar}>
-          <MesherySettingsEnvButtons/>
-        </div>
-        }
         <Paper square className={classes.wrapperClss}>
           <Tabs
             value={tabVal}
