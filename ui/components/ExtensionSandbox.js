@@ -241,10 +241,9 @@ export function getComponentTitleFromPath(extensions, path) {
  * getComponentIsBetaFromPath takes in the extensions and the current
  * path and searches for the matching component and returns isBeta
  *
- * If there are duplicate uris then the component for first match will be returned
  * @param {import("../utils/ExtensionPointSchemaValidator").FullPageExtensionSchema[]} extensions
  * @param {string} path
- * @returns {string}
+ * @returns {boolean}
  */
 export function getComponentIsBetaFromPath(extensions, path) {
   path = normalizeURI(path);
