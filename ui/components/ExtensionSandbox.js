@@ -236,6 +236,28 @@ export function getComponentTitleFromPath(extensions, path) {
   return "";
 }
 
+
+/**
+ * getComponentIsBetaFromPath takes in the extensions and the current
+ * path and searches for the matching component and returns isBeta
+ *
+ * If there are duplicate uris then the component for first match will be returned
+ * @param {import("../utils/ExtensionPointSchemaValidator").FullPageExtensionSchema[]} extensions
+ * @param {string} path
+ * @returns {string}
+ */
+export function getComponentIsBetaFromPath(extensions, path) {
+  path = normalizeURI(path);
+
+  if (Array.isArray(extensions)) {
+    console.log("refasfasfasd",extensions);
+    const extension = extensions.find((item) => item?.href === path);
+    if (extension) return extension.isBeta ?? false
+  }
+
+  return false;
+}
+
 /**
  * getComponentURIFromPathForUserPrefs takes in the user_prefs extensions and returns
  * an array of all the component mappings
