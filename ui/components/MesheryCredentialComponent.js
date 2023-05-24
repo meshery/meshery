@@ -8,7 +8,7 @@ import dataFetch from "../lib/data-fetch";
 import AddIconCircleBorder from "../assets/icons/AddIconCircleBorder";
 import EditIcon from '@material-ui/icons/Edit';
 import CloseIcon from "@material-ui/icons/Close";
-import DeleteIcon from "../assets/icons/DeleteIcon";
+import DeleteIcon from "@material-ui/icons/Delete";
 import Moment from "react-moment";
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import { connect } from "react-redux";
@@ -264,9 +264,7 @@ const MesheryCredentialComponent = ({
                   onClick={() => handleSubmit({ type : "delete", id : rowData["id"] })}
                 >
 
-                  <DeleteIcon
-                    width="1.25rem"
-                  />
+                  <DeleteIcon />
                 </IconButton>
               </Tooltip>
             </div>
