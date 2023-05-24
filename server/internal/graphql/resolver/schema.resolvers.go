@@ -306,7 +306,7 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 			continue
 		}
 		go func(ctxID string, brokerEventsChan chan *broker.Message) {
-			publishHandlerWithProcessing := processAndRateLimitTheResponseOnGqlChannel(resChan, 5*time.Second)
+			publishHandlerWithProcessing := processAndRateLimitTheResponseOnGqlChannel(resChan, r, 5*time.Second)
 			for event := range brokerEventsChan {
 				if event.EventType == broker.ErrorEvent || isSubscriptionFlushed { // better close the parent channel, but it is throwing panic
 					// TODO: Handle errors accordingly
@@ -320,7 +320,6 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 					Object:    event.Object,
 				}
 				publishHandlerWithProcessing(res)
-				// go r.Config.DashboardK8sResourcesChan.PublishDashboardK8sResources()
 			}
 		}(ctxID, brokerEventsChan)
 	}
@@ -341,7 +340,7 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 	return resChan, nil
 }
 
-func processAndRateLimitTheResponseOnGqlChannel(publishChannel chan *model.MeshSyncEvent, d time.Duration) func(meshsyncEvent *model.MeshSyncEvent) {
+func processAndRateLimitTheResponseOnGqlChannel(publishChannel chan *model.MeshSyncEvent, r *subscriptionResolver, d time.Duration) func(meshsyncEvent *model.MeshSyncEvent) {
 	shouldWait := false
 	type syncedProcessMap struct {
 		mu         sync.Mutex
@@ -357,7 +356,7 @@ func processAndRateLimitTheResponseOnGqlChannel(publishChannel chan *model.MeshS
 		// create a key to uniquely identify meshsync objects with its type, purpose, ctx and resource uniqueId
 		var key string
 		key += meshsyncEvent.Type
-		key = (meshsyncEvent.Object).(map[string]interface{})["kind"].(string)
+		key += (meshsyncEvent.Object).(map[string]interface{})["kind"].(string)
 		key += meshsyncEvent.ContextID
 		metadata := (meshsyncEvent.Object).(map[string]interface{})["metadata"]
 		// the metadata.uid could alone be used as key, but has a danger that it may not be avaiable
@@ -384,6 +383,7 @@ func processAndRateLimitTheResponseOnGqlChannel(publishChannel chan *model.MeshS
 				processMap.mu.Lock()
 				for k, v := range processMap.processMap {
 					publishChannel <- v
+					go r.Config.DashboardK8sResourcesChan.PublishDashboardK8sResources()
 
 					// delete the key once processed to collect new entries
 					delete(processMap.processMap, k)
@@ -399,6 +399,7 @@ func processAndRateLimitTheResponseOnGqlChannel(publishChannel chan *model.MeshS
 					processMap.mu.Lock()
 					for k, v := range processMap.processMap {
 						publishChannel <- v
+						go r.Config.DashboardK8sResourcesChan.PublishDashboardK8sResources()
 
 						// delete the key once processed to collect new entries
 						delete(processMap.processMap, k)
