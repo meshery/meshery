@@ -85,7 +85,7 @@ const ObjectFieldTemplate = ({
               onClick={onAddClick(schema)}
               disabled={disabled || readonly}
             >
-              <AddIcon style={{ backgroundColor : "#647881", width : "1rem", height : "1rem", color : "#ffffff", borderRadius : ".2rem" }} />
+              <AddIcon style={{ backgroundColor : `${theme.palette.type === 'dark' ? "#00b39F" : "#647881"}`, width : "1rem", height : "1rem", color : "#ffffff", borderRadius : ".2rem" }} />
             </IconButton>
           </Grid>
         ) : (
