@@ -7,30 +7,23 @@ import { bindActionCreators } from "redux";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import {
-  AppBar, Paper, Tooltip, Button, IconButton, MenuItem, Select, TableCell, TableSortLabel, Typography
+  AppBar, Paper, Tooltip, Button, IconButton, Typography
 } from '@material-ui/core';
 import CloseIcon from "@material-ui/icons/Close";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faCloud, faPoll, faDatabase, faFileInvoice } from '@fortawesome/free-solid-svg-icons';
-// import {faTachometerAlt} from '@fortawesome/free-solid-svg-icons';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import Link from 'next/link';
 import MeshConfigComponent from './MeshConfigComponent';
 import GrafanaComponent from './telemetry/grafana/GrafanaComponent';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
 import PrometheusComponent from './telemetry/prometheus/PrometheusComponent';
-// import MesherySettingsPerformanceComponent from "../components/MesherySettingsPerformanceComponent";
 import { updateProgress } from "../lib/store";
 import { withSnackbar } from "notistack";
 import PromptComponent from './PromptComponent';
 import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 import { iconMedium } from '../css/icons.styles';
-import subscribeMeshModelSummary from "./graphql/subscriptions/MeshModelSummarySubscription";
-import fetchMeshModelSummary from "./graphql/queries/MeshModelSummaryQuery";
-import { MuiThemeProvider } from '@material-ui/core/styles';
 import MeshModelComponent from './MeshModelComponent';
-import DataTable from "mui-datatables";
-import { configurationTableTheme, configurationTableThemeDark } from '../themes/configurationTableTheme';
 
 
 const styles = (theme) => ({
@@ -77,8 +70,7 @@ const styles = (theme) => ({
   container : {
     display : "flex",
     justifyContent : "center",
-    margin : theme.spacing(2),
-    // backgroundColor : "#fff",
+    marginTop : theme.spacing(2),
   },
   paper : {
     maxWidth : '90%',
@@ -104,6 +96,33 @@ const styles = (theme) => ({
     marginTop : theme.spacing(2),
   },
   cardContent : { height : "100%", },
+  boxWrapper : {
+    display : "flex",
+    justifyContent : "center",
+    alignItems : "end",
+    flexDirection : "row",
+    flexWrap : "wrap",
+    height : "60vh",
+    borderRadius : 0,
+    color : 'white',
+    ["@media (max-width: 455px)"] : {
+      width : "100%"
+    },
+    zIndex : 5
+  },
+  box : {
+    display : "flex",
+    justifyContent : "center",
+    alignItems : "center",
+    flexDirection : "column",
+    width : 300,
+    height : 300,
+    backgroundColor : theme.palette.secondary.dark,
+    border : '0px solid #000',
+    boxShadow : theme.shadows[5],
+    margin : theme.spacing(2),
+    cursor : 'pointer',
+  }
 });
 
 function TabContainer(props) {
@@ -129,9 +148,12 @@ class MesherySettings extends React.Component {
     this._isMounted = false;
     let tabVal = 0, subTabVal = 0;
     const splittedPath = asPath.split('#');
+
     if (splittedPath.length >= 2 && splittedPath[1]) {
       const subTabPath = splittedPath[1].split('/');
+
       switch (subTabPath[0]) {
+
         case 'environment':
           tabVal = 0;
           break;
@@ -179,12 +201,6 @@ class MesherySettings extends React.Component {
       scannedPrometheus : [],
       // Array of scanned grafan urls
       scannedGrafana : [],
-
-      meshmodelSummarySelector : { type : "components" },
-      meshmodelSummarySelectorList : ["components", "relationships"],
-      meshmodelSummary : [],
-      meshmodelSummarySubscription : null,
-      meshmodelSummaryQuery : null,
     };
 
     this.systemResetRef = React.createRef();
@@ -213,220 +229,6 @@ class MesherySettings extends React.Component {
     return st;
   }
 
-  disposeMeshModelSummarySubscriptions = () => {
-    this.state.meshmodelSummarySubscription && this.state.meshmodelSummarySubscription.dispose();
-    this.state.meshmodelSummaryQuery && this.state.meshmodelSummaryQuery.unsubscribe();
-  }
-
-  initDashboardMeshModelSummaryQuery = () => {
-    const self = this;
-    let selector = self.state.meshmodelSummarySelector;
-
-    if (self._isMounted) {
-      // @ts-ignore
-      const meshmodelSummaryQuery = fetchMeshModelSummary(selector).subscribe({
-        next : (res) => {
-          this.setState({ meshmodelSummary : res?.meshmodelSummary })
-        },
-        error : (err) => console.log(err),
-      })
-
-      this.setState({ meshmodelSummaryQuery });
-    }
-  }
-
-  initDashboardMeshModelSummarySubscription = () => {
-    const self = this;
-    let selector = self.state.meshmodelSummarySelector;
-
-    if (self._isMounted) {
-      // @ts-ignore
-      const meshmodelSummarySubscription = subscribeMeshModelSummary((res) => {
-        this.setState({ meshmodelSummary : res?.meshmodelSummary })
-      }, {
-        selector : selector
-      });
-      this.setState({ meshmodelSummarySubscription });
-    }
-  }
-
-  disposeSubscriptions = () => {
-    this.disposeMeshModelSummarySubscriptions()
-  }
-
-  componentDidMount() {
-    this._isMounted = true
-
-    this.disposeSubscriptions()
-
-    if (this._isMounted) {
-      this.initDashboardMeshModelSummaryQuery();
-      this.initDashboardMeshModelSummarySubscription();
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState?.meshmodelSummarySelector !== this.state?.meshmodelSummarySelector) {
-      this.disposeMeshModelSummarySubscriptions();
-      this.initDashboardMeshModelSummaryQuery();
-      this.initDashboardMeshModelSummarySubscription();
-    }
-  }
-
-  emptyStateMessageForMeshModelSummary = () => {
-    return "No MeshModel registered."
-  }
-
-  /**
-   * MeshModelSummaryCard takes in the meshmodel related data
-   * and renders a table with registered meshmodel information of
-   * the selected type of model (like relationships, components etc)
-   * @param {
-   * {
-   *   kind, count
-   * }[]
-   * } meshmodelSummary
-   */
-  MeshModelSummaryCard = (meshmodelSummary = []) => {
-    const self = this;
-    let kindSort = "asc";
-    let countSort = "asc";
-    const { theme } = this.props;
-    const switchSortOrder = (type) => {
-      if (type === "kindSort") {
-        kindSort = (kindSort === "asc") ? "desc" : "asc";
-        countSort = "asc";
-      } else if (type === "countSort") {
-        countSort = (countSort === "asc") ? "desc" : "asc";
-        kindSort = "asc";
-      }
-    }
-
-    const columns = [
-      {
-        name : "name",
-        label : "Name",
-        options : {
-          filter : false,
-          sort : true,
-          searchable : true,
-          setCellProps : () => ({ style : { textAlign : "center" } }),
-          customHeadRender : ({ index, ...column }, sortColumn) => {
-            return (
-              <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
-                sortColumn(index); switchSortOrder("kindSort");
-              }}>
-                <TableSortLabel active={column.sortDirection != null} direction={kindSort} >
-                  <b>{column.label}</b>
-                </TableSortLabel>
-              </TableCell>
-
-            )
-          }
-        },
-      },
-      {
-        name : "count",
-        label : "Count",
-        options : {
-          filter : false,
-          sort : true,
-          searchable : true,
-          setCellProps : () => ({ style : { textAlign : "center" } }),
-          customHeadRender : ({ index, ...column }, sortColumn) => {
-            return (
-              <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
-                sortColumn(index); switchSortOrder("countSort");
-              }}>
-                <TableSortLabel active={column.sortDirection != null} direction={countSort} >
-                  <b>{column.label}</b>
-                </TableSortLabel>
-              </TableCell>
-
-            )
-          }
-        },
-      },
-    ]
-
-    const options = {
-      filter : false,
-      selectableRows : "none",
-      responsive : "standard",
-      print : false,
-      download : false,
-      viewColumns : false,
-      pagination : false,
-      fixedHeader : true,
-      customToolbar : () => {
-        return (
-          <>
-            {self.state.meshmodelSummarySelectorList && (
-              <Select
-                value={self.state.meshmodelSummarySelector.type}
-                onChange={(e) =>
-                  self.setState({ meshmodelSummarySelector : { type : e.target.value } })
-                }
-              >
-                {self.state.meshmodelSummarySelectorList && self.state.meshmodelSummarySelectorList.map((opts) => <MenuItem key={opts} value={opts}>{opts}</MenuItem>)}
-              </Select>
-            )}
-          </>
-        )
-      }
-    }
-
-    if (Array.isArray(meshmodelSummary) && meshmodelSummary?.length)
-      return (
-        <Paper elevation={1} style={{ padding : "2rem" }}>
-          <MuiThemeProvider theme={ theme.palette.type == "dark" ?  configurationTableThemeDark() : configurationTableTheme() }>
-            <DataTable
-              title={
-                <>
-                  <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
-                    <img src={"/static/img/all_mesh.svg"} className={this.props.classes.icon} style={{ marginRight : "0.75rem" }} />
-                    <Typography variant="h6">Registered MeshModel</Typography>
-                  </div>
-                </>
-              }
-              data={meshmodelSummary}
-              options={options}
-              columns={columns}
-            />
-          </MuiThemeProvider>
-        </Paper>
-      );
-
-    return null;
-  };
-
-  showMeshModelSummary = () => {
-    const self = this;
-    return (
-      <>
-        {self?.state?.meshmodelSummary[self?.state?.meshmodelSummarySelector?.type] && self?.state?.meshmodelSummary[self?.state?.meshmodelSummarySelector?.type].length > 0
-          ? (
-            self.MeshModelSummaryCard(self?.state?.meshmodelSummary[self?.state?.meshmodelSummarySelector?.type])
-          )
-          : (
-            <div
-              style={{
-                padding : "2rem",
-                display : "flex",
-                justifyContent : "center",
-                alignItems : "center",
-                flexDirection : "column",
-              }}
-            >
-              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
-                {this.emptyStateMessageForMeshModelSummary()}
-              </Typography>
-            </div>
-          )}
-      </>
-    );
-  };
-
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress : false });
     const self = this;
@@ -442,10 +244,13 @@ class MesherySettings extends React.Component {
   };
 
   handleChange = (val) => {
+
     const self = this;
     return (event, newVal) => {
+
       if (val === 'tabVal') {
         let newRoute = this.props.router.route;
+
         switch (newVal) {
           case 0:
             newRoute += '#environment'
@@ -476,12 +281,24 @@ class MesherySettings extends React.Component {
               newRoute += '#environment/outclusterconfig'
             else if (self.state.tabVal == 2)
               newRoute += '#metrics/grafana'
+            else if (self.state.tabVal == 4)
+              newRoute += '#metrics/models'
             break;
           case 1:
             if (self.state.tabVal == 0)
               newRoute += '#environment/inclusterconfig'
             else if (self.state.tabVal == 2)
               newRoute += '#metrics/prometheus'
+            else if (self.state.tabVal == 4)
+              newRoute += '#metrics/components'
+            break;
+          case 2:
+            if (self.state.tabVal == 0)
+              newRoute += '#environment/inclusterconfig'
+            else if (self.state.tabVal == 2)
+              newRoute += '#metrics/prometheus'
+            else if (self.state.tabVal == 4)
+              newRoute += '#metrics/relationship'
             break;
         }
         if (this.props.router.route != newRoute)
@@ -543,7 +360,6 @@ class MesherySettings extends React.Component {
           <Link href="/management">
             <div className={classes.link}>
               <FontAwesomeIcon icon={faArrowLeft} transform="grow-4" fixedWidth />
-              {' '}
               You are ready to manage cloud native infrastructure
             </div>
           </Link>
@@ -552,6 +368,7 @@ class MesherySettings extends React.Component {
     }
     return (
       <div className={classes.wrapperClss}>
+
         <Paper square className={classes.wrapperClss}>
           <Tabs
             value={tabVal}
@@ -615,15 +432,15 @@ class MesherySettings extends React.Component {
             {/*NOTE: Functionality of performance tab will be modified, until then keeping it and the related code commented */}
 
             {/* <Tooltip title="Choose Performance Test Defaults" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={
-                  <FontAwesomeIcon icon={faTachometerAlt} transform={mainIconScale} fixedWidth />
-                }
-                label="Performance"
-                tab="tabPerformance"
-              />
-            </Tooltip> */}
+                <Tab
+                  className={classes.tab}
+                  icon={
+                    <FontAwesomeIcon icon={faTachometerAlt} transform={mainIconScale} fixedWidth />
+                  }
+                  label="Performance"
+                  tab="tabPerformance"
+                />
+              </Tooltip> */}
           </Tabs>
         </Paper>
         {tabVal === 0 && (
@@ -677,26 +494,69 @@ class MesherySettings extends React.Component {
         {tabVal === 3 && (
           <TabContainer>
             <div className={classes.container}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={this.handleResetDatabase()}
-                className={classes.DBBtn}
-                data-cy="btnResetDatabase"
+              <Paper square style={{ width : '100%', display : 'flex', justifyContent : 'center' }}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={this.handleResetDatabase()}
+                  className={classes.DBBtn}
+                  data-cy="btnResetDatabase"
 
-              >
-                <Typography> System Reset </Typography>
-              </Button>
+                >
+                  <Typography align="center"> System Reset </Typography>
+                </Button>
+              </Paper>
             </div>
           </TabContainer>
         )}
-        {tabVal === 4 && (
+        {(tabVal === 4) && (
           <TabContainer>
-            <MeshModelComponent  showMeshModelSummary={this.showMeshModelSummary} />
+            <TabContainer>
+              <AppBar position="static" color="default">
+                <Tabs
+                  value={subTabVal}
+                  className={classes.tabs}
+                  onChange={this.handleChange('subTabVal')}
+                  indicatorColor="primary"
+                  textColor="primary"
+                  variant="fullWidth"
+                >
+                  <Tab className={classes.tab} label={(
+                    <div className={classes.iconText}>
+                      Models <span style={{ fontWeight : 'bold' }}></span>
+                    </div>
+                  )}
+                  />
+                  <Tab className={classes.tab} label={(
+                    <div className={classes.iconText}>
+                      Components <span style={{ fontWeight : 'bold' }}></span>
+                    </div>
+                  )}
+                  />
+                </Tabs>
+              </AppBar>
+              {subTabVal === 0 && (
+                <TabContainer>
+                  <MeshModelComponent view="models"  />
+                </TabContainer>
+              )}
+              {subTabVal === 1 && (
+                <TabContainer>
+                  <MeshModelComponent view="components" />
+                </TabContainer>
+              )}
+              {subTabVal === 2 && (
+                <TabContainer>
+                  <MeshModelComponent   />
+                </TabContainer>
+              )}
+            </TabContainer>
+            {/* </div> */}
           </TabContainer>
         )}
+
         {/* {tabVal === 3 && (
           <TabContainer>
             <MesherySettingsPerformanceComponent />
@@ -735,3 +595,4 @@ MesherySettings.propTypes = { classes : PropTypes.object, };
 export default withStyles(styles, { withTheme : true })(
   connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(MesherySettings)))
 );
+
