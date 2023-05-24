@@ -23,6 +23,7 @@ type EntityRegistrationHelper struct {
 	regManager       *meshmodel.RegistryManager
 	componentChan    chan v1alpha1.ComponentDefinition
 	relationshipChan chan v1alpha1.RelationshipDefinition
+	policyChan			 chan v1alpha1.PolicyDefinition
 	errorChan        chan error
 	log              logger.Handler
 }
@@ -33,6 +34,7 @@ func NewEntityRegistrationHelper(hc *models.HandlerConfig, rm *meshmodel.Registr
 		regManager:       rm,
 		componentChan:    make(chan v1alpha1.ComponentDefinition, 1),
 		relationshipChan: make(chan v1alpha1.RelationshipDefinition, 1),
+		policyChan:			  make(chan v1alpha1.PolicyDefinition, 1),
 		errorChan:        make(chan error),
 		log:              log,
 	}
@@ -49,6 +51,7 @@ func (erh *EntityRegistrationHelper) SeedComponents() {
 	// Read component and relationship definitions from files and send them to respective channels
 	erh.generateComponents("../meshmodel/components")
 	erh.generateRelationships("../meshmodel/relationships")
+	erh.generatePolicies("../meshmodel/policies")
 }
 
 // reads component definitions from files and sends them to the component channel
@@ -126,6 +129,39 @@ func (erh *EntityRegistrationHelper) generateRelationships(pathToComponents stri
 	return
 }
 
+// reads policies definitions from files and sends them to the policy channel
+func (erh *EntityRegistrationHelper) generatePolicies(pathToPolicies string) {
+	path, err := filepath.Abs(pathToPolicies)
+	if err != nil {
+		erh.errorChan <- errors.Wrapf(err, "error while getting absolute path for generating policies")
+		return
+	}
+
+	err = filepath.Walk(path, func(path string, info fs.FileInfo, err error) error {
+		if info == nil {
+			return nil
+		}
+		if !info.IsDir() {
+			var pol v1alpha1.PolicyDefinition
+			byt, err := os.ReadFile(path)
+			if err != nil {
+				erh.errorChan <- errors.Wrapf(err, fmt.Sprintf("unable to read file at %s", path))
+				return nil
+			}
+			err = json.Unmarshal(byt, &pol)
+			if err != nil {
+				erh.errorChan <- errors.Wrapf(err, fmt.Sprintf("unmarshal json failed for %s", path))
+				return nil
+			}
+			erh.policyChan <- pol
+		}
+		return nil
+	})
+	if err != nil {
+		erh.errorChan <- errors.Wrapf(err, "error while generating relationships")
+	}
+}
+
 // watches the component and relationship channels for incoming definitions and registers them with the registry manager
 // If an error occurs, it logs the error
 func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
@@ -140,6 +176,10 @@ func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
 			err = erh.regManager.RegisterEntity(meshmodel.Host{
 				Hostname: ArtifactHubComponentsHandler,
 			}, rel)
+		case pol := <-erh.policyChan:
+			err = erh.regManager.RegisterEntity(meshmodel.Host{
+				Hostname: ArtifactHubComponentsHandler,
+			}, pol)
 
 		//Watching and logging errors from error channel
 		case mhErr := <-erh.errorChan:
