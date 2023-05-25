@@ -254,6 +254,10 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 	if hc.Options.PrintLogs {
 		log.Info("\nDocker \n--------------")
 	}
+	endpointParts := strings.Split(hc.context.Endpoint, ":")
+	if !strings.HasSuffix(endpointParts[1], "localhost") {
+		return errors.Errorf("Unsupported command `mesherctl system %s` for platform Docker on remote endpoint `%s`", hc.Options.Subcommand, hc.context.Endpoint)
+	}
 	//Check whether docker daemon is running or not
 	err := exec.Command("docker", "ps").Run()
 	if err != nil {
