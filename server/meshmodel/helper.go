@@ -23,7 +23,7 @@ type EntityRegistrationHelper struct {
 	regManager       *meshmodel.RegistryManager
 	componentChan    chan v1alpha1.ComponentDefinition
 	relationshipChan chan v1alpha1.RelationshipDefinition
-	policyChan			 chan v1alpha1.PolicyDefinition
+	policyChan       chan v1alpha1.PolicyDefinition
 	errorChan        chan error
 	log              logger.Handler
 }
@@ -34,7 +34,7 @@ func NewEntityRegistrationHelper(hc *models.HandlerConfig, rm *meshmodel.Registr
 		regManager:       rm,
 		componentChan:    make(chan v1alpha1.ComponentDefinition, 1),
 		relationshipChan: make(chan v1alpha1.RelationshipDefinition, 1),
-		policyChan:			  make(chan v1alpha1.PolicyDefinition, 1),
+		policyChan:       make(chan v1alpha1.PolicyDefinition, 1),
 		errorChan:        make(chan error),
 		log:              log,
 	}
