@@ -298,7 +298,7 @@ class MesherySettings extends React.Component {
             else if (self.state.tabVal == 2)
               newRoute += '#metrics/prometheus'
             else if (self.state.tabVal == 4)
-              newRoute += '#metrics/relationship'
+              newRoute += '#metrics/relationships'
             break;
         }
         if (this.props.router.route != newRoute)
@@ -535,6 +535,12 @@ class MesherySettings extends React.Component {
                     </div>
                   )}
                   />
+                  <Tab className={classes.tab} label={(
+                    <div className={classes.iconText}>
+                      Relationships <span style={{ fontWeight : 'bold' }}></span>
+                    </div>
+                  )}
+                  />
                 </Tabs>
               </AppBar>
               {subTabVal === 0 && (
@@ -549,7 +555,7 @@ class MesherySettings extends React.Component {
               )}
               {subTabVal === 2 && (
                 <TabContainer>
-                  <MeshModelComponent   />
+                  <MeshModelComponent view="relationships"/>
                 </TabContainer>
               )}
             </TabContainer>
