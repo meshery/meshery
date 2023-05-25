@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 
 	"github.com/layer5io/meshkit/models/meshmodel/core/policies"
 	"github.com/sirupsen/logrus"
@@ -37,8 +38,28 @@ func (h *Handler) GetRegoPolicyForDesignFile(
 		return
 	}
 
+	// TODO: remove this hardcoding. get this from API request params
+   res, _ := h.registryManager.GetEntities(&v1alpha1.PolicyFilter{
+		Kind: "Network",
+		SubType: "OPA",
+	})
+	logrus.Debug("res: ", res)
+
+	// var policies []v1alpha1.PolicyDefinition
+	var policy v1alpha1.PolicyDefinition
+	for _, r := range res {
+		policy, _ = r.(v1alpha1.PolicyDefinition)
+		// if ok {
+		// 	m := make(map[string]interface{})
+		// 	_ = json.Unmarshal([]byte(policy.M))
+		// }
+	}
+
+	logrus.Debugf("policy: %+v", policy)
+
+
 	// evaluate all the rego policies in the policies directory
-	networkPolicy, err := policies.RegoPolicyHandler(context.Background(), []string{"../meshmodel/policies"}, "data.network_policy", body)
+	networkPolicy, err := policies.RegoPolicyHandler(context.Background(), policy.Expression, "data.network_policy", body)
 	if err != nil {
 		h.log.Error(ErrResolvingRegoRelationship(err))
 		http.Error(rw, ErrResolvingRegoRelationship(err).Error(), http.StatusInternalServerError)
