@@ -4854,8 +4854,8 @@ paths:
             operationId: idGetAllMeshmodelRelationships
             responses:
                 "200":
-                    $ref: '#/responses/RelationshipDefinition'
-            summary: Handle GET request for getting meshmodel relationships of a specific model.
+                    $ref: '#/responses/allMeshmodelRelationshipsResponseWrapper'
+            summary: Handle GET request for getting meshmodel relationships of a specific model and their total count.
             tags:
                 - GetAllMeshmodelRelationships
     /api/meshmodel/model/{model}/relationship/{name}:
@@ -5102,8 +5102,8 @@ paths:
             operationId: idGetAllMeshmodelComponents
             responses:
                 "200":
-                    $ref: '#/responses/ComponentDefinition'
-            summary: Handle GET request for getting meshmodel components across all models and categories.
+                    $ref: '#/responses/allMeshmodelComponentsResponseWrapper'
+            summary: Handle GET request for getting meshmodel components across all models and categories and their total count.
             tags:
                 - GetAllMeshmodelComponents
     /api/meshmodels/components/{name}:
@@ -6137,6 +6137,14 @@ responses:
             $ref: '#/definitions/Model'
             additionalProperties: {}
             type: object
+    allMeshmodelComponentsResponseWrapper:
+        description: Returns all meshmodel components across all models and categories
+        headers:
+            Body: {}
+    allMeshmodelRelationshipsResponseWrapper:
+        description: Returns all meshmodel relationships of a specific model
+        headers:
+            Body: {}
     applicationFilesResponseWrapper:
         description: Returns the response of the application files
         schema:
@@ -6199,6 +6207,10 @@ responses:
         description: Returns Meshery version
         schema:
             $ref: '#/definitions/Version'
+    meshmodelModelsResponseWrapper:
+        description: Returns all meshmodel models
+        headers:
+            Body: {}
     noContentWrapper:
         description: ""
     perfSingleResultRespWrapper:
