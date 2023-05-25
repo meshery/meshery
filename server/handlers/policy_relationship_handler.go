@@ -43,20 +43,12 @@ func (h *Handler) GetRegoPolicyForDesignFile(
 		Kind: "Network",
 		SubType: "OPA",
 	})
-	logrus.Debug("res: ", res)
 
 	// var policies []v1alpha1.PolicyDefinition
 	var policy v1alpha1.PolicyDefinition
 	for _, r := range res {
 		policy, _ = r.(v1alpha1.PolicyDefinition)
-		// if ok {
-		// 	m := make(map[string]interface{})
-		// 	_ = json.Unmarshal([]byte(policy.M))
-		// }
 	}
-
-	logrus.Debugf("policy: %+v", policy)
-
 
 	// evaluate all the rego policies in the policies directory
 	networkPolicy, err := policies.RegoPolicyHandler(context.Background(), policy.Expression, "data.network_policy", body)
