@@ -112,7 +112,8 @@ const (
 	ErrPublishCatalogFilterCode         = "2256"
 	ErrGetMeshModelsCode                = "2257"
 	ErrGetUserDetailsCode               = "2258"
-	ErrResolvingRelationship            = "2259"
+	ErrResolvingRelationshipCode        = "2259"
+	ErrNoPoliciesFoundCode              = "2260"
 )
 
 var (
@@ -490,5 +491,9 @@ func ErrGetUserDetails(err error) error {
 }
 
 func ErrResolvingRegoRelationship(err error) error {
-	return errors.New(ErrResolvingRelationship, errors.Alert, []string{"could not resolve rego relationship"}, []string{err.Error()}, []string{"The rego evaluation engine failed to resolve policies", "Design-File/Application-File is in incorrect format", "The policy query is invalid", "The evaluation engine response is unexpected for the code written"}, []string{"Make sure the design-file/application-file is a valid yaml", "Make sure you're proving correct rego query", "Make sure the server is evaluating the query correctly, add some logs"})
+	return errors.New(ErrResolvingRelationshipCode, errors.Alert, []string{"could not resolve rego relationship"}, []string{err.Error()}, []string{"The rego evaluation engine failed to resolve policies", "Design-File/Application-File is in incorrect format", "The policy query is invalid", "The evaluation engine response is unexpected for the code written"}, []string{"Make sure the design-file/application-file is a valid yaml", "Make sure you're proving correct rego query", "Make sure the server is evaluating the query correctly, add some logs"})
+}
+
+func ErrNoPoliciesFound(err error) error {
+	return errors.New(ErrNoPoliciesFoundCode, errors.Alert, []string{"no policies found"}, []string{err.Error()}, []string{"No policies found for the given query", "query is invalid"}, []string{"Make sure the query is valid", "Make sure yours Policies were registered successfully in Meshery DB"})
 }

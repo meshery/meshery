@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"strconv"
@@ -56,8 +57,7 @@ func (h *Handler) GetRegoPolicyForDesignFile(
 	}
 	offset := (page - 1) * limit
 
-	// TODO: remove this hardcoding. get this from API request params
-	res, _ := h.registryManager.GetEntities(&v1alpha1.PolicyFilter{
+	res, c := h.registryManager.GetEntities(&v1alpha1.PolicyFilter{
 		Kind:       name,
 		SubType:    r.URL.Query().Get("subtype"),
 		Version:    r.URL.Query().Get("version"),
@@ -71,9 +71,13 @@ func (h *Handler) GetRegoPolicyForDesignFile(
 
 	// var policies []v1alpha1.PolicyDefinition
 	var policy v1alpha1.PolicyDefinition
-	for _, r := range res {
-		policy, _ = r.(v1alpha1.PolicyDefinition)
+
+	if *c == 0 {
+		h.log.Error(ErrNoPoliciesFound(fmt.Errorf("0 policies found for given filters")))
+		http.Error(rw, ErrNoPoliciesFound(fmt.Errorf("0 policies found for given filters")).Error(), http.StatusInternalServerError)
+		return
 	}
+	policy, _ = res[0].(v1alpha1.PolicyDefinition)
 
 	// evaluate all the rego policies in the policies directory
 	networkPolicy, err := policies.RegoPolicyHandler(context.Background(), policy.Expression, "data.network_policy", body)
