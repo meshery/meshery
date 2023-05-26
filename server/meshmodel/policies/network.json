@@ -3,7 +3,8 @@
   "kind": "Network",
   "metadata": {
     "description": "This policy validates the network configuration in a Kubernetes environment, ensuring that service and container ports, protocols, and mappings are correctly defined and consistent. It helps maintain secure and reliable network communication between services and pods, preventing misconfigurations and potential vulnerabilities",
-    "name": "Kubernetes Network Policy Validato"
+    "name": "Kubernetes Network Policy Validator",
+    "version": "v1.0.0"
   },
   "model": {
     "name": "core",
