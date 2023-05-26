@@ -262,31 +262,30 @@ function MesheryPatternCard({
             </Grid>
 
             <Grid item xs={12}>
-              {visibility === VISIBILITY.PRIVATE?
-                <div className={classes.updateDeleteButtons} >
+              <div className={classes.updateDeleteButtons} >
 
-                  {/* Save button */}
-                  <Tooltip
-                    title="Save" arrow interactive placement="bottom"
-                  >
-                    <IconButton onClick={(ev) =>
-                      genericClickHandler(ev, updateHandler)
-                    }>
-                      <Save color="primary" />
-                    </IconButton>
-                  </Tooltip>
+                {/* Save button */}
+                <Tooltip
+                  title="Save" arrow interactive placement="bottom"
+                >
+                  <IconButton onClick={(ev) =>
+                    genericClickHandler(ev, updateHandler)
+                  }>
+                    <Save color="primary" />
+                  </IconButton>
+                </Tooltip>
 
-                  {/* Delete Button */}
-                  <Tooltip
-                    title="Delete" arrow interactive placement="bottom"
-                  >
-                    <IconButton onClick={(ev) =>
-                      genericClickHandler(ev, deleteHandler)
-                    }>
-                      <DeleteIcon color="primary" />
-                    </IconButton>
-                  </Tooltip>
-                </div> : null}
+                {/* Delete Button */}
+                <Tooltip
+                  title="Delete" arrow interactive placement="bottom"
+                >
+                  <IconButton onClick={(ev) =>
+                    genericClickHandler(ev, deleteHandler)
+                  }>
+                    <DeleteIcon color="primary" />
+                  </IconButton>
+                </Tooltip>
+              </div>
             </Grid>
           </Grid>
         </>

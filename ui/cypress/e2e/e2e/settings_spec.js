@@ -15,13 +15,12 @@ describe('Settings', () => {
       cy.intercept('POST', '/api/system/adapter/manage').as('postMeshManage');
       cy.intercept('GET', '/api/system/adapters').as('getMeshAdapters');
 
-      cy.get('[data-cy=chipAdapterLocation]')
-        .contains('.MuiChip-label', 'localhost:10002')
+      cy.get('[data-cy=chipAdapterLocation]', { timeout: 30_000 }).contains('.MuiChip-label', 'localhost:10002')
         .click();
 
       cy.wait('@getAdapterPing');
 
-      cy.get('.MuiInputBase-input')
+      cy.get("[data-cy='mesh-adapter-url']")
         .type('localhost:10002{enter}');
 
       cy.get('[data-cy=btnSubmitMeshAdapter]')
@@ -36,13 +35,12 @@ describe('Settings', () => {
       cy.intercept('POST', '/api/system/adapter/manage').as('postMeshManage');
       cy.intercept('GET', '/api/system/adapters').as('getMeshAdapters');
 
-      cy.get('[data-cy=chipAdapterLocation]')
-        .contains('.MuiChip-label', 'localhost:10000')
+      cy.get('[data-cy=chipAdapterLocation]', {timeout: 30_000}).contains('.MuiChip-label', 'localhost:10000')
         .click();
 
       cy.wait('@getAdapterPing');
 
-      cy.get('.MuiInputBase-input')
+      cy.get("[data-cy='mesh-adapter-url']")
         .type('localhost:10000{enter}');
 
       cy.get('[data-cy=btnSubmitMeshAdapter]')
