@@ -178,6 +178,9 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/meshmodels/relationships", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelRelationships), models.NoAuth))).Methods("POST") //This should also be left with NoAuth
 	gMux.Handle("/api/meshmodels/models/{model}/components", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelComponentByModel), models.NoAuth))).Methods("GET")
 
+	gMux.Handle("/api/meshmodels/models/{model}/policies/{name}/run", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetRegoPolicyForDesignFile), models.ProviderAuth))).
+		Methods("POST")
+
 	gMux.Handle("/api/filter/deploy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.FilterFileHandler)), models.ProviderAuth))).
 		Methods("POST", "DELETE")
 	gMux.Handle("/api/filter", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.FilterFileRequestHandler), models.ProviderAuth))).
@@ -234,8 +237,6 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/user/schedules/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteScheduleHandler), models.ProviderAuth))).
 		Methods("DELETE")
 	gMux.Handle("/api/user/schedules", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveScheduleHandler), models.ProviderAuth))).
-		Methods("POST")
-	gMux.Handle("/api/policies/run_policy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetRegoPolicyForDesignFile), models.ProviderAuth))).
 		Methods("POST")
 
 	gMux.PathPrefix("/api/extensions").

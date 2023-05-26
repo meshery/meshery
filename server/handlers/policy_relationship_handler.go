@@ -5,11 +5,12 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"strconv"
 
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
-
 	"github.com/layer5io/meshkit/models/meshmodel/core/policies"
+	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 )
 
@@ -38,10 +39,35 @@ func (h *Handler) GetRegoPolicyForDesignFile(
 		return
 	}
 
+	name := mux.Vars(r)["name"]
+	typ := mux.Vars(r)["model"]
+	limitstr := r.URL.Query().Get("pagesize")
+	var limit int
+	if limitstr != "all" {
+		limit, _ = strconv.Atoi(limitstr)
+		if limit == 0 { //If limit is unspecified then it defaults to 25
+			limit = DefaultPageSizeForMeshModelComponents
+		}
+	}
+	pagestr := r.URL.Query().Get("page")
+	page, _ := strconv.Atoi(pagestr)
+	if page == 0 {
+		page = 1
+	}
+	offset := (page - 1) * limit
+
 	// TODO: remove this hardcoding. get this from API request params
    res, _ := h.registryManager.GetEntities(&v1alpha1.PolicyFilter{
-		Kind: "Network",
-		SubType: "OPA",
+		Kind: name,
+		SubType: r.URL.Query().Get("subtype"),
+		Version:  r.URL.Query().Get("version"),
+		ModelName: typ,
+		APIVersion:  r.URL.Query().Get("apiversion"),
+		Limit:    limit,
+		Offset:   offset,
+		OrderOn:  r.URL.Query().Get("order"),
+		Sort:     r.URL.Query().Get("sort"),
+
 	})
 
 	// var policies []v1alpha1.PolicyDefinition
