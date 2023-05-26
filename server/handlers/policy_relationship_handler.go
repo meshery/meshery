@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
-	"github.com/layer5io/meshkit/models/meshmodel/core/policies"
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/models/meshmodel/core/policies"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/sirupsen/logrus"
 )
 
@@ -57,17 +57,16 @@ func (h *Handler) GetRegoPolicyForDesignFile(
 	offset := (page - 1) * limit
 
 	// TODO: remove this hardcoding. get this from API request params
-   res, _ := h.registryManager.GetEntities(&v1alpha1.PolicyFilter{
-		Kind: name,
-		SubType: r.URL.Query().Get("subtype"),
-		Version:  r.URL.Query().Get("version"),
-		ModelName: typ,
-		APIVersion:  r.URL.Query().Get("apiversion"),
-		Limit:    limit,
-		Offset:   offset,
-		OrderOn:  r.URL.Query().Get("order"),
-		Sort:     r.URL.Query().Get("sort"),
-
+	res, _ := h.registryManager.GetEntities(&v1alpha1.PolicyFilter{
+		Kind:       name,
+		SubType:    r.URL.Query().Get("subtype"),
+		Version:    r.URL.Query().Get("version"),
+		ModelName:  typ,
+		APIVersion: r.URL.Query().Get("apiversion"),
+		Limit:      limit,
+		Offset:     offset,
+		OrderOn:    r.URL.Query().Get("order"),
+		Sort:       r.URL.Query().Get("sort"),
 	})
 
 	// var policies []v1alpha1.PolicyDefinition
