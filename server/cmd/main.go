@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"path"
 	"time"
+	"log"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/handlers"
