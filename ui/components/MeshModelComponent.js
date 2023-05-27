@@ -3,7 +3,9 @@ import { withSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react'
 import MUIDataTable from 'mui-datatables';
 import { TableCell, Tooltip, TableSortLabel } from '@material-ui/core';
-import { getComponentsDetail, getModelsDetail } from '../api/meshmodel'
+import { getComponentsDetail, getModelsDetail, getRelationshipsDetail, searchModels, searchComponents } from '../api/meshmodel'
+import debounce from '../utils/debounce';
+import { MODELS, COMPONENTS, RELATIONSHIPS } from '../constants/navigator';
 
 const meshmodelStyles = (theme) => ({
   wrapperClss : {
@@ -36,6 +38,8 @@ const MeshModelComponent = ({ view, classes }) => {
   const [isRequestCancelled, setRequestCancelled] = useState(false);
   const [count, setCount] = useState();
   const [page, setPage] = useState(1);
+  const [searchText, setSearchText] = useState(null);
+
 
   const getModels = async (page) => {
     try {
@@ -61,33 +65,71 @@ const MeshModelComponent = ({ view, classes }) => {
     }
   };
 
-  useEffect(() => {
+  const getRelationships = async (page) => {
+    try {
+      const { total_count, relationships } = await getRelationshipsDetail(page);
+      setCount(total_count);
+      if (!isRequestCancelled) {
+        setResourcesDetail(relationships);
+      }
+    } catch (error) {
+      console.error('Failed to fetch relationships:', error);
+    }
+  };
 
+  const getSearchedModels =  async (searchText) => {
+    try {
+      const { total_count, models } = await searchModels(searchText);
+      setCount(total_count);
+      if (!isRequestCancelled) {
+        setResourcesDetail(models ? models : []);
+      }
+    } catch (error) {
+      console.error('Failed to fetch components:', error);
+    }
+
+  };
+  const getSearchedComponents = async (searchText) => {
+    try {
+      const { total_count, components } = await searchComponents(searchText);
+      setCount(total_count);
+      if (!isRequestCancelled) {
+        setResourcesDetail(components ? components : []);
+      }
+    } catch (error) {
+      console.error('Failed to fetch components:', error);
+    }
+  };
+
+  useEffect(() => {
     setRequestCancelled(false);
 
-
-    if (view === 'models') {
+    if (view === MODELS && searchText === null) {
       getModels(page);
-    } else if (view === 'components') {
+    } else if (view === COMPONENTS && searchText === null) {
       getComponents(page);
+    } else if (view === RELATIONSHIPS) {
+      getRelationships(page);
+    } else if (view === MODELS && searchText) {
+      getSearchedModels(searchText);
+    } else if (view === COMPONENTS && searchText) {
+      getSearchedComponents(searchText);
     }
 
     return () => {
       setRequestCancelled(true);
     };
-  }, [view, page]);
-
-
-
+  }, [view, page, searchText]);
 
   const meshmodel_columns = [
     {
-      name : view === 'components' ? 'kind' : 'displayName',
+      name : (view === COMPONENTS || view === RELATIONSHIPS) ? 'kind' : 'displayName',
       label : `Name`,
       options : {
         sort : true,
         sortDescFirst : true,
         sortThirdClickReset : true,
+        searchable : view === RELATIONSHIPS ? false : true,
         customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
           return (
             <TableCell align={"start"} key={index} onClick={() => sortColumn(index)}>
@@ -105,12 +147,13 @@ const MeshModelComponent = ({ view, classes }) => {
       },
     },
     {
-      name : view === 'components' ? 'apiVersion' : 'version',
-      label : view === 'components' ? 'Api Version' : 'Version',
+      name : (view === COMPONENTS || view === RELATIONSHIPS) ? 'apiVersion' : 'version',
+      label : (view === COMPONENTS || view === RELATIONSHIPS) ? 'Api Version' : 'Version',
       options : {
         sort : true,
         sortDescFirst : true,
         sortThirdClickReset : true,
+        searchable : view === RELATIONSHIPS ?  false : true,
         customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
           return (
             <TableCell align={"start"} key={index} onClick={() => sortColumn(index)}>
@@ -128,10 +171,12 @@ const MeshModelComponent = ({ view, classes }) => {
       },
     },
     {
-      name : view === 'components' ? 'metadata' : 'category',
-      label : view === 'components' ? 'Model' : 'Category Name',
+      name : 'category',
+      label : 'Category Name',
       options : {
         sort : false,
+        display : view === MODELS ? 'true' : 'false',
+        searchable : true,
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell align={"start"} key={index}>
@@ -142,13 +187,43 @@ const MeshModelComponent = ({ view, classes }) => {
           );
         },
         customBodyRender : (value) => {
-          const { modelDisplayName, name } = value;
-          return (
-            <Tooltip title={view === 'models' ? name : modelDisplayName} placement="top">
-              <div>{view === 'models' ? name : modelDisplayName}</div>
-            </Tooltip>
-          )
+          if (!(view === RELATIONSHIPS || view === COMPONENTS)) {
+            const { modelDisplayName, name } = value;
+            return (
+              <Tooltip title={view === MODELS ? name : modelDisplayName} placement="top">
+                <div>{view === MODELS ? name : modelDisplayName}</div>
+              </Tooltip>
+            )
+          }
 
+        },
+      },
+    },
+    {
+      name : 'metadata',
+      label : 'Model',
+      options : {
+        sort : false,
+        display : view === COMPONENTS ? 'true' : 'false',
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }) {
+          return (
+            <TableCell align={"start"} key={index}>
+              <TableSortLabel>
+                <b>{column.label}</b>
+              </TableSortLabel>
+            </TableCell>
+          );
+        },
+        customBodyRender : (value) => {
+          if (!(view === MODELS || view === RELATIONSHIPS)) {
+            const { modelDisplayName } = value
+            return (
+              <Tooltip title={modelDisplayName} placement="top">
+                <div>{modelDisplayName}</div>
+              </Tooltip>
+            )
+          }
         },
       },
     },
@@ -157,7 +232,8 @@ const MeshModelComponent = ({ view, classes }) => {
       label : 'Sub Category',
       options : {
         sort : false,
-        display : view === 'components' ? 'true' : 'false',
+        display : view === COMPONENTS ? 'true' : 'false',
+        searchable : true,
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell align={"start"} key={index}>
@@ -177,7 +253,34 @@ const MeshModelComponent = ({ view, classes }) => {
         },
       },
     },
-
+    {
+      name : 'model',
+      label : 'Model',
+      options : {
+        sort : false,
+        display : view === RELATIONSHIPS ? 'true' : 'false',
+        searchable : false,
+        customHeadRender : function CustomHead({ index, ...column }) {
+          return (
+            <TableCell align={"start"} key={index}>
+              <TableSortLabel>
+                <b>{column.label}</b>
+              </TableSortLabel>
+            </TableCell>
+          );
+        },
+        customBodyRender : (value) => {
+          if (view === RELATIONSHIPS) {
+            const { displayName } = value
+            return (
+              <Tooltip title={displayName} placement="top">
+                <div>{displayName}</div>
+              </Tooltip>
+            )
+          }
+        },
+      },
+    },
 
   ]
 
@@ -188,23 +291,22 @@ const MeshModelComponent = ({ view, classes }) => {
     download : false,
     print : false,
     filter : false,
-    search : false,
     selectableRows : false,
+    search : view === RELATIONSHIPS ? false : true,
     serverSide : true,
-    onChangePage : (p) =>  setPage(p+1),
+    onChangePage : debounce((p) =>  setPage(p+1), 200),
+    onSearchChange : debounce((searchText) => (setSearchText(searchText))),
   }
 
   return (
     <div >
       <div data-test="workloads">
-        {resourcesDetail && (
-          <MUIDataTable
-            title={<div className={classes.tableHeader}></div>}
-            data={resourcesDetail}
-            columns={meshmodel_columns}
-            options={meshmodel_options}
-          />
-        )}
+        <MUIDataTable
+          title={<div className={classes.tableHeader}></div>}
+          data={resourcesDetail && resourcesDetail}
+          columns={meshmodel_columns}
+          options={meshmodel_options}
+        />
       </div>
     </div>
   )
