@@ -16,7 +16,13 @@ import { iconMedium } from "../css/icons.styles";
 import changeAdapterState from './graphql/mutations/AdapterStatusMutation';
 
 const styles = (theme) => ({
-  wrapperClass : { padding : theme.spacing(5),backgroundColor : theme.palette.secondary.elevatedComponents,borderBottomLeftRadius : theme.spacing(1),borderBottomRightRadius : theme.spacing(1), },
+  wrapperClass : {
+    padding : theme.spacing(5),
+    backgroundColor : theme.palette.secondary.elevatedComponents,
+    borderBottomLeftRadius : theme.spacing(1),
+    borderBottomRightRadius : theme.spacing(1),
+    marginTop : theme.spacing(2),
+  },
   buttons : { display : "flex",
     justifyContent : "flex-end", paddingTop : "2rem" },
   button : {
@@ -364,7 +370,7 @@ class MeshAdapterConfigComponent extends React.Component {
               <Tooltip
                 key={adapter.uniqueID}
                 title={
-                        `Meshery Adapter for 
+                        `Meshery Adapter for
                         ${adapter.name
                           .toLowerCase()
                           .split(" ")
@@ -392,7 +398,7 @@ class MeshAdapterConfigComponent extends React.Component {
           {showAdapters}
 
           <Grid container spacing={1} alignItems="flex-end">
-            <Grid item xs={12}>
+            <Grid item xs={12} data-cy="mesh-adapter-url">
               <ReactSelectWrapper
                 onChange={this.handleMeshLocURLChange}
                 options={setAdapterURLs}

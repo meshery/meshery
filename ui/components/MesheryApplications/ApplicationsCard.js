@@ -15,6 +15,7 @@ import DoneAllIcon from '@material-ui/icons/DoneAll';
 import useStyles from "../MesheryPatterns/Cards.styles";
 import YAMLDialog from "../YamlDialog";
 import TooltipButton from '../../utils/TooltipButton.js'
+import { useTheme } from '@material-ui/core/styles';
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -45,7 +46,7 @@ function MesheryApplicationCard({
   const toggleFullScreen = () => {
     setFullScreen(!fullScreen);
   };
-
+  const theme = useTheme();
   const classes = useStyles()
 
   return (
@@ -59,7 +60,6 @@ function MesheryApplicationCard({
           setYaml={setYaml}
           updateHandler={updateHandler}
           deleteHandler={deleteHandler}
-          type={"application"}
         />
       }
       <FlipCard
@@ -74,7 +74,7 @@ function MesheryApplicationCard({
         {/* FRONT PART */}
         <>
           <div>
-            <div style={{ display : "flex", justifyContent : "space-between" }}>
+            <div className="helm" style={{ display : "flex", justifyContent : "space-between" }}>
               <Typography variant="h6" component="div">
                 {name}
               </Typography>
@@ -84,14 +84,14 @@ function MesheryApplicationCard({
                   e.stopPropagation(); handleAppDownload(id ,source_type, name)
                 }}
               >
-                <img src={`/static/img/${(source_type).replaceAll(" ", "_").toLowerCase()}.svg`} width="45px" height="45px" />
+                <img src={`/static/img/${(source_type).replaceAll(" ", "_").toLowerCase()}${(theme.palette.type)==='dark'?"-light":''}.svg`} width="45px" height="45px" />
               </IconButton>
             </div>
             <div className={classes.lastRunText} >
               <div>
                 {updated_at
                   ? (
-                    <Typography color="primary" variant="caption" style={{ fontStyle : "italic" }}>
+                    <Typography variant="caption" style={{ fontStyle : "italic", color : `${theme.palette.type === "dark" ? "rgba(255, 255, 255, 0.7)" : "#647881"}` }}>
                       Modified On: <Moment format="LLL">{updated_at}</Moment>
                     </Typography>
                   )
