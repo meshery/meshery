@@ -9,7 +9,7 @@ import (
 )
 
 func (r *Resolver) changeAdapterStatus(_ context.Context, _ models.Provider, targetStatus model.Status, adapterName, targetPort string) (model.Status, error) {
-	platform, _ := utils.GetPlatform()
+	platform := utils.GetPlatform()
 	if platform == "kubernetes" {
 		r.Log.Info("Feature for kuberenetes disabled")
 		return model.StatusDisabled, nil
