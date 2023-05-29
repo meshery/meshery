@@ -397,7 +397,7 @@ func (hc *HealthChecker) runKubernetesVersionHealthCheck() error {
 			} else { // else we gotta catch the error
 				return err
 			}
-		} else {                      // if not error we check if we are supposed to print logs
+		} else { // if not error we check if we are supposed to print logs
 			if hc.Options.PrintLogs { // log if we're supposed to
 				log.Info("✓ running the minimum Kubernetes version")
 			}
@@ -414,7 +414,7 @@ func (hc *HealthChecker) runKubernetesVersionHealthCheck() error {
 		} else { // else we gotta catch the error
 			return err
 		}
-	} else {                      // if not error we check if we are supposed to print logs
+	} else { // if not error we check if we are supposed to print logs
 		if hc.Options.PrintLogs { // log if we're supposed to
 			log.Info("✓ running the minimum kubectl version")
 		}
@@ -634,7 +634,7 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 				} else { // or we're supposed to grab the errors
 					return fmt.Errorf("!! Meshery Adapter for %s is running, but not reachable", name)
 				}
-			} else {                      // if status == 200 we check if we are supposed to print logs
+			} else { // if status == 200 we check if we are supposed to print logs
 				if hc.Options.PrintLogs { // incase we're printing logs
 					log.Infof("✓ %s adapter is running and reachable", name)
 				}
