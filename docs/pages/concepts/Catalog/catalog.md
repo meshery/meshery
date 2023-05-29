@@ -11,7 +11,7 @@ list: include
 
 # Meshery Catalog
 
-Meshery Catalog functions much like a cloud marketplace, providing a user-friendly interface for browsing, discovering, and sharing configurations and patterns for cloud native infrastructure. With Meshery Catalog, you can easily find and deploy Kubernetes-based infrastructure and tools, making it easy to streamline your cloud native development and operations processes.
+[Meshery Catalog](https://meshery.io/catalog) functions much like a cloud marketplace, providing a user-friendly interface for browsing, discovering, and sharing configurations and patterns for cloud native infrastructure. With Meshery Catalog, you can easily find and deploy Kubernetes-based infrastructure and tools, making it easy to streamline your cloud native development and operations processes.
 
 ### Simplify Your Cloud Native Infrastructure Deployment and Management
 
@@ -30,7 +30,7 @@ To add your content to the Cloud Native Catalog -
 4. That's it! You're good to go. Create a PR for your change and sit tight till a maintainer gets a chance to review it.
 
 
-## To create catalog using Meshery UI
+### To create catalog using Meshery UI
 
 1. Open the Meshery UI in your web browser.
 2. Navigate to the configuration section, usually located in the main navigation menu.
@@ -39,7 +39,7 @@ To add your content to the Cloud Native Catalog -
 5. Voilà, You can publish or deploy you design.
 
 
-## To Create catalog uisng Meshery CLI
+### To Create catalog uisng Meshery CLI
 
 1. Ensure that you have Meshery CLI installed on your machine and it is configured to connect to your desired Meshery instance.
 2. Open a terminal or command prompt.
@@ -51,6 +51,7 @@ To add your content to the Cloud Native Catalog -
 * List all patterns: `mesheryctl pattern list`
 5. Onboarding an application. `mesheryctl app onboard -f [file-path]`
 6. Applying WASM Filter. `mesheryctl exp filter apply --file [GitHub Link]`
+
 
 
 If you have any questions or need assistance, please refer to the [Meshery Documentation](https://docs.meshery.io/) or reach out to our discussion form [layer5.io](https://discuss.layer5.io/).
