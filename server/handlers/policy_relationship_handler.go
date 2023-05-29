@@ -18,6 +18,7 @@ import (
 // swagger:route POST /api/meshmodels/models/{model}/policies/name/{name}/run GetRegoPolicyForDesignFile idGetRegoPolicyForDesignFile
 // Handle POST request for running the a meshmodel policiess on the design file
 //
+// Returns the result of the policy evaluation
 // responses:
 // 200: networkPolicyEvalResponseWrapper
 func (h *Handler) GetRegoPolicyForDesignFile(
@@ -98,6 +99,7 @@ func (h *Handler) GetRegoPolicyForDesignFile(
 // swagger:route GET /api/meshmodels/policies GetMeshmodelPolicies idGetMeshmodelPolicies
 // Handle GET request for getting all meshmodel policies
 //
+// Returns the meshmodel policies
 // responses:
 // 200: []meshmodelPoliciesResponseWrapper
 
@@ -163,6 +165,7 @@ func (h *Handler) GetAllMeshmodelPolicies(
 // swagger:route GET /api/meshmodels/models/{model}/policies GetMeshmodelPoliciesByModel idGetMeshmodelPoliciesByModel
 // Handle GET request for getting all meshmodel policies for a given model
 //
+// Returns the meshmodel policies by model name
 // responses:
 // 200: []meshmodelPoliciesResponseWrapper
 
@@ -231,6 +234,7 @@ func (h *Handler) GetMeshmodelPoliciesByModel(
 // swagger:route GET /api/meshmodels/models/{model}/policies/{name} GetMeshmodelPoliciesByModelByName idGetMeshmodelPoliciesByModelByName
 // Handle GET request for getting all meshmodel policies for a given model and Kind
 //
+// Returns the meshmodel policies by model name and kind
 // responses:
 // 200: []meshmodelPoliciesResponseWrapper
 

@@ -777,7 +777,7 @@ paths:
                 - GetMeshmodelComponentsByNameByModel
     /api/meshmodels/models/{model}/policies:
         get:
-            description: Handle GET request for getting all meshmodel policies for a given model
+            description: Returns the meshmodel policies by model name
             operationId: idGetMeshmodelPoliciesByModel
             parameters:
                 - format: int64
@@ -819,11 +819,12 @@ paths:
             responses:
                 "200":
                     $ref: '#/responses/meshmodelPoliciesResponseWrapper'
+            summary: Handle GET request for getting all meshmodel policies for a given model
             tags:
                 - GetMeshmodelPoliciesByModel
     /api/meshmodels/models/{model}/policies/{name}:
         get:
-            description: Handle GET request for getting all meshmodel policies for a given model and Kind
+            description: Returns the meshmodel policies by model name and kind
             operationId: idGetMeshmodelPoliciesByModelByName
             parameters:
                 - format: int64
@@ -870,11 +871,12 @@ paths:
             responses:
                 "200":
                     $ref: '#/responses/meshmodelPoliciesResponseWrapper'
+            summary: Handle GET request for getting all meshmodel policies for a given model and Kind
             tags:
                 - GetMeshmodelPoliciesByModelByName
     /api/meshmodels/models/{model}/policies/name/{name}/run:
         post:
-            description: Handle POST request for running the a meshmodel policiess on the design file
+            description: Returns the result of the policy evaluation
             operationId: idGetRegoPolicyForDesignFile
             parameters:
                 - format: int64
@@ -921,11 +923,12 @@ paths:
             responses:
                 "200":
                     $ref: '#/responses/networkPolicyEvalResponseWrapper'
+            summary: Handle POST request for running the a meshmodel policiess on the design file
             tags:
                 - GetRegoPolicyForDesignFile
     /api/meshmodels/policies:
         get:
-            description: Handle GET request for getting all meshmodel policies
+            description: Returns the meshmodel policies
             operationId: idGetMeshmodelPolicies
             parameters:
                 - format: int64
@@ -962,6 +965,7 @@ paths:
             responses:
                 "200":
                     $ref: '#/responses/meshmodelPoliciesResponseWrapper'
+            summary: Handle GET request for getting all meshmodel policies
             tags:
                 - GetMeshmodelPolicies
     /api/pattern:
