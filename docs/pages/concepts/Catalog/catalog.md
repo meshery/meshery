@@ -11,27 +11,24 @@ list: include
 
 # Meshery Catalog
 
-Welcome to the Meshery Catalog, where you can explore a variety of service mesh implementations and related tools. The catalog offers a collection of services that you can integrate with Meshery to enhance your service mesh management experience.
+Meshery Catalog functions much like a cloud marketplace, providing a user-friendly interface for browsing, discovering, and sharing configurations and patterns for cloud native infrastructure. With Meshery Catalog, you can easily find and deploy Kubernetes-based infrastructure and tools, making it easy to streamline your cloud native development and operations processes.
 
-## Service Mesh Implementations
+### Simplify Your Cloud Native Infrastructure Deployment and Management
 
-### Istio
+Meshery Catalog functions much like a cloud marketplace, providing a user-friendly interface for browsing, discovering, and sharing configurations and patterns for cloud native infrastructure. With Meshery Catalog, you can easily find and deploy Kubernetes-based infrastructure and tools, making it easy to streamline your cloud native development and operations processes.
 
-Istio is a popular and feature-rich service mesh implementation. It provides powerful traffic management, security, and observability capabilities for your microservices architecture.
+It also supports a collaborative environment, where DevOps engineers can share their experiences, feedback, and best practices with others in the community. Import cloud native patterns published by others into your Meshery Server. Benefit from and build upon each pattern by incorporating your own tips and tricks, then publish and share with the community at-large. This facilitates knowledge-sharing and helps to build a strong ecosystem of cloud native infrastructure experts.
 
-Learn more about Istio and how to integrate it with Meshery:
+## Add your content to the catalog
 
-- [Istio Documentation](https://istio.io/docs/)
-- [Integrating Istio with Meshery](/catalog/istio)
+To add your content to the Cloud Native Catalog -
 
-### Linkerd
+1. Head over [meshery](https://github.com/meshery/meshery.io/blob/master/README.md#add-your-content-to-the-cloud-native-catalog) repository and set up your local enviroment.
+1. Create a new file in the catalog collection, under the respective type.
+2. Follow the template in the [_defaults.md](https://github.com/meshery/meshery.io/blob/master/collections/_catalog/_defaults.md) and fill out the details.
+3. Add your pattern file to the [catalog](https://github.com/meshery/meshery.io/tree/master/catalog) folder so that others can download the file.
+4. That's it! You're good to go. Create a PR for your change and sit tight till a maintainer gets a chance to review it.
 
-Linkerd is a lightweight and transparent service mesh designed for reliability and observability. It focuses on simplicity and ease of use while providing essential service mesh functionalities.
-
-Discover more about Linkerd and its integration with Meshery:
-
-- [Linkerd Documentation](https://linkerd.io/documentation/)
-- [Integrating Linkerd with Meshery](/catalog/linkerd)
 
 ## Additional Tools
 
@@ -40,9 +37,7 @@ Apart from service mesh implementations, the catalog also includes a range of to
 - [Prometheus](https://prometheus.io/): A popular monitoring and alerting system often used with service meshes.
 - [Grafana](https://grafana.com/): A flexible and powerful visualization tool that works seamlessly with Prometheus.
 
-Browse the Meshery catalog to find more tools and services that can extend your service mesh management capabilities.
 
-If you have any questions or need assistance, please refer to the [Meshery Documentation](/documentation) or reach out to our community for support.
 
-Happy exploring!
-You can customize this template by adding more service mesh implementations, tools, or any other relevant content to showcase in your catalog.
+If you have any questions or need assistance, please refer to the [Meshery Documentation](/documentation) or reach out to our discussion form [layer5.io](https://discuss.layer5.io/).
+
