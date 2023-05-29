@@ -151,7 +151,7 @@ function MesheryPatternCard({
                   genericClickHandler(ev, handleUnDeploy)
                 }
               >
-                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
+                <UndeployIcon className={classes.iconPatt} />
                 <span className={classes.btnText}>Undeploy</span>
               </TooltipButton>
 
