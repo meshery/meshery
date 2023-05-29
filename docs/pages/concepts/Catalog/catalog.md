@@ -30,13 +30,27 @@ To add your content to the Cloud Native Catalog -
 4. That's it! You're good to go. Create a PR for your change and sit tight till a maintainer gets a chance to review it.
 
 
-## Additional Tools
+## To create catalog using Meshery UI
 
-Apart from service mesh implementations, the catalog also includes a range of tools that complement Meshery and enhance its capabilities:
+1. Open the Meshery UI in your web browser.
+2. Navigate to the configuration section, usually located in the main navigation menu.
+3. Head over to Designs and click on import or create design.
+4. Select the category and Model as per your need and configure the application.
+5. Voilà, You can publish or deploy you design.
 
-- [Prometheus](https://prometheus.io/): A popular monitoring and alerting system often used with service meshes.
-- [Grafana](https://grafana.com/): A flexible and powerful visualization tool that works seamlessly with Prometheus.
 
+## To Create catalog uisng Meshery CLI
+
+1. Ensure that you have Meshery CLI installed on your machine and it is configured to connect to your desired Meshery instance.
+2. Open a terminal or command prompt.
+3. Use the Meshery CLI commands to interact with the catalog. `mesheryctl pattern`
+4. Follow the prompts or instructions provided by the Meshery CLI help.
+* Apply pattern file:  `mesheryctl pattern apply --file [path to pattern file | URL of the file]`
+* Delete pattern file:  `mesheryctl pattern delete --file [path to pattern file]`
+* View pattern file:  `mesheryctl pattern view [pattern name | ID]`
+* List all patterns: `mesheryctl pattern list`
+5. Onboarding an application. `mesheryctl app onboard -f [file-path]`
+6. Applying WASM Filter. `mesheryctl exp filter apply --file [GitHub Link]`
 
 
 If you have any questions or need assistance, please refer to the [Meshery Documentation](https://docs.meshery.io/) or reach out to our discussion form [layer5.io](https://discuss.layer5.io/).
