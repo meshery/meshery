@@ -15,11 +15,11 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// swagger:route POST /api/policies/run_policy GetRegoPolicyForDesignFile idGetRegoPolicyForDesignFile
-// Handle POST request for running the set of policies on the design file, the policies are picked from the policies directory and query is sent to find all the relationships around the services in the given design file
+// swagger:route POST /api/meshmodels/models/{model}/policies/name/{name}/run GetRegoPolicyForDesignFile idGetRegoPolicyForDesignFile
+// Handle POST request for running the a meshmodel policiess on the design file
 //
 // responses:
-// 200
+// 200: networkPolicyEvalResponseWrapper
 func (h *Handler) GetRegoPolicyForDesignFile(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -95,6 +95,11 @@ func (h *Handler) GetRegoPolicyForDesignFile(
 	}
 }
 
+// swagger:route GET /api/meshmodels/policies GetMeshmodelPolicies idGetMeshmodelPolicies
+// Handle GET request for getting all meshmodel policies
+//
+// responses:
+// 200: []meshmodelPoliciesResponseWrapper
 
 func (h *Handler) GetAllMeshmodelPolicies(
 	rw http.ResponseWriter,
@@ -149,13 +154,17 @@ func (h *Handler) GetAllMeshmodelPolicies(
 	ec := json.NewEncoder(rw)
 	err := ec.Encode(res)
 	if err != nil {
-		h.log.Error(ErrEncoding(err, "policies response"))
-		http.Error(rw, ErrEncoding(err, "policies response").Error(), http.StatusInternalServerError)
+		h.log.Error(ErrGetMeshModels(err)) 
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
-
+// swagger:route GET /api/meshmodels/models/{model}/policies GetMeshmodelPoliciesByModel idGetMeshmodelPoliciesByModel
+// Handle GET request for getting all meshmodel policies for a given model
+//
+// responses:
+// 200: []meshmodelPoliciesResponseWrapper
 
 func (h *Handler) GetMeshmodelPoliciesByModel(
 	rw http.ResponseWriter,
@@ -212,12 +221,18 @@ func (h *Handler) GetMeshmodelPoliciesByModel(
 	ec := json.NewEncoder(rw)
 	err := ec.Encode(res)
 	if err != nil {
-		h.log.Error(ErrEncoding(err, "policies response"))
-		http.Error(rw, ErrEncoding(err, "policies response").Error(), http.StatusInternalServerError)
+		h.log.Error(ErrGetMeshModels(err)) 
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
+
+// swagger:route GET /api/meshmodels/models/{model}/policies/{name} GetMeshmodelPoliciesByModelByName idGetMeshmodelPoliciesByModelByName
+// Handle GET request for getting all meshmodel policies for a given model and Kind
+//
+// responses:
+// 200: []meshmodelPoliciesResponseWrapper
 
 func (h *Handler) GetMeshmodelPoliciesByModelByName(
 	rw http.ResponseWriter,
@@ -276,8 +291,8 @@ func (h *Handler) GetMeshmodelPoliciesByModelByName(
 	ec := json.NewEncoder(rw)
 	err := ec.Encode(res)
 	if err != nil {
-		h.log.Error(ErrEncoding(err, "policies response"))
-		http.Error(rw, ErrEncoding(err, "policies response").Error(), http.StatusInternalServerError)
+		h.log.Error(ErrGetMeshModels(err))
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 		return
 	}
 }
