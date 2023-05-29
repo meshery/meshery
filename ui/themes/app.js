@@ -59,7 +59,7 @@ export var darkTheme = createTheme({
       modalTabs : '#1e1e1e',
       tabHover : '#212121',
       confirmationModal : '#111111',
-      focused: '#00b39f'
+      focused : '#00b39f'
     },
   },
   p : {
