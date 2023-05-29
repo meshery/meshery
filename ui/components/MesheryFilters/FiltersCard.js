@@ -12,11 +12,7 @@ import FullscreenExit from "@material-ui/icons/FullscreenExit";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import useStyles from "../MesheryPatterns/Cards.styles";
 import YAMLDialog from "../YamlDialog";
-<<<<<<< HEAD
 import UndeployIcon from "../../public/static/img/UndeployIcon"
-=======
-import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
->>>>>>> 2343b2e2eb6bc3e885e4348962905f724fd03619
 import CloneIcon from "../../public/static/img/CloneIcon";
 import TooltipButton from '../../utils/TooltipButton.js'
 import { VISIBILITY } from "../../utils/Enum";
@@ -107,7 +103,7 @@ function FiltersCard({
                   genericClickHandler(ev, handleUndeploy)
                 }
               >
-                <RemoveDoneIcon className={classes.iconPatt} />
+                <UndeployIcon fill="#F91313" className={classes.iconPatt} />
                 Undeploy
               </TooltipButton>
               <TooltipButton

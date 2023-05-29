@@ -10,7 +10,7 @@ import Moment from "react-moment";
 import FlipCard from "../FlipCard";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import FullscreenExit from "@material-ui/icons/FullscreenExit";
-import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
+import UndeployIcon from "../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import useStyles from "../MesheryPatterns/Cards.styles";
 import YAMLDialog from "../YamlDialog";
@@ -110,7 +110,7 @@ function MesheryApplicationCard({
                   genericClickHandler(ev, handleUnDeploy)
                 }
               >
-                <RemoveDoneIcon className={classes.iconPatt} />
+                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
                 Undeploy
               </TooltipButton>
               <TooltipButton

@@ -38,7 +38,7 @@ import FiltersGrid from "./MesheryFilters/FiltersGrid";
 import { trueRandom } from "../lib/trueRandom";
 import { ctxUrl } from "../utils/multi-ctx";
 import ConfirmationMsg from "./ConfirmationModal";
-import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
+import UndeployIcon from "../public/static/img/UndeployIcon";
 import { getComponentsinFile } from "../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
@@ -740,7 +740,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                 title="Undeploy"
                 onClick={(e) => handleModalOpen(e, rowData.filter_file, rowData.name, false)}
               >
-                <RemoveDoneIcon data-cy="undeploy-button" />
+                <UndeployIcon fill="#F91313" data-cy="undeploy-button" />
               </TooltipIcon>
             </>
           );
