@@ -259,26 +259,24 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 	err := exec.Command("docker", "ps").Run()
 	if err != nil {
 		if endpointParts[1] != "//localhost" {
-			return errors.Wrapf(err, "Please ensure that the appropriate Docker context is selected for the %s endpoint.", hc.context.GetEndpoint())
-		} else {
-			if hc.Options.IsPreRunE { // if this is PreRunExec we trigger self installation
-				log.Warn("!! Docker is not running")
-				//If preRunExecution and the current platform is docker then we trigger docker installation
-				//No auto installation of docker for windows
-				if runtime.GOOS == "windows" {
-					return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started ", hc.Options.Subcommand)
-				}
-				err = utils.Startdockerdaemon(hc.Options.Subcommand)
-				if err != nil {
-					return errors.Wrapf(err, "failed to start Docker ")
-				}
-			} else if hc.Options.PrintLogs { // warn incase of printing logs
-				log.Warn("!! Docker is not running")
-			} else { // else we're supposed to grab errors
-				return err
-			}
+			return errors.Wrapf(err, "please ensure that the appropriate Docker context is selected for the %s endpoint", hc.context.GetEndpoint())
 		}
-
+		if hc.Options.IsPreRunE { // if this is PreRunExec we trigger self installation
+			log.Warn("!! Docker is not running")
+			//If preRunExecution and the current platform is docker then we trigger docker installation
+			//No auto installation of docker for windows
+			if runtime.GOOS == "windows" {
+				return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started ", hc.Options.Subcommand)
+			}
+			err = utils.Startdockerdaemon(hc.Options.Subcommand)
+			if err != nil {
+				return errors.Wrapf(err, "failed to start Docker ")
+			}
+		} else if hc.Options.PrintLogs { // warn incase of printing logs
+			log.Warn("!! Docker is not running")
+		} else { // else we're supposed to grab errors
+			return err
+		}
 		if hc.context.Platform == "docker" {
 			failure++
 		}
@@ -399,7 +397,7 @@ func (hc *HealthChecker) runKubernetesVersionHealthCheck() error {
 			} else { // else we gotta catch the error
 				return err
 			}
-		} else { // if not error we check if we are supposed to print logs
+		} else {                      // if not error we check if we are supposed to print logs
 			if hc.Options.PrintLogs { // log if we're supposed to
 				log.Info("✓ running the minimum Kubernetes version")
 			}
@@ -416,7 +414,7 @@ func (hc *HealthChecker) runKubernetesVersionHealthCheck() error {
 		} else { // else we gotta catch the error
 			return err
 		}
-	} else { // if not error we check if we are supposed to print logs
+	} else {                      // if not error we check if we are supposed to print logs
 		if hc.Options.PrintLogs { // log if we're supposed to
 			log.Info("✓ running the minimum kubectl version")
 		}
@@ -636,7 +634,7 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 				} else { // or we're supposed to grab the errors
 					return fmt.Errorf("!! Meshery Adapter for %s is running, but not reachable", name)
 				}
-			} else { // if status == 200 we check if we are supposed to print logs
+			} else {                      // if status == 200 we check if we are supposed to print logs
 				if hc.Options.PrintLogs { // incase we're printing logs
 					log.Infof("✓ %s adapter is running and reachable", name)
 				}
