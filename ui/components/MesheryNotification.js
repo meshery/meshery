@@ -76,9 +76,21 @@ const styles = (theme) => ({
   },
   fullView : {
     right : 0,
+    transition : '0.3s ease-in-out !important'
   },
   peekView : {
-    right : "-26.1rem"
+    right : "-26.1rem",
+    transition : '0.3s ease-in-out !important'
+  },
+  tabs : {
+    "& .MuiTabs-indicator" : {
+      backgroundColor : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
+    },
+  },
+  tab : {
+    "&.Mui-selected" : {
+      color : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
+    },
   }
 });
 
@@ -404,13 +416,14 @@ class MesheryNotification extends React.Component {
                       value={this.state.tabValue}
                       onChange={this.handleTabChange}
                       indicatorColor="primary"
+                      className={classes.tabs}
                       textColor="primary"
                       variant="fullWidth"
                     >
-                      <Tab label="All" onClick={this.handleNotifFiltering('*')} style={{ minWidth : "15%" }} />
-                      <Tab label="Error" onClick={this.handleNotifFiltering('error')} style={{ minWidth : "15%" }} />
-                      <Tab label="Warning" onClick={this.handleNotifFiltering('warning')} style={{ minWidth : "15%" }} />
-                      <Tab label="Success" onClick={this.handleNotifFiltering('success')} style={{ minWidth : "15%" }} />
+                      <Tab label="All" className={classes.tab} onClick={this.handleNotifFiltering('*')} style={{ minWidth : "15%" }} />
+                      <Tab label="Error" className={classes.tab} onClick={this.handleNotifFiltering('error')} style={{ minWidth : "15%" }} />
+                      <Tab label="Warning" className={classes.tab} onClick={this.handleNotifFiltering('warning')} style={{ minWidth : "15%" }} />
+                      <Tab label="Success" className={classes.tab} onClick={this.handleNotifFiltering('success')} style={{ minWidth : "15%" }} />
                     </Tabs>
                     {getNotifications(this.props.events, this.state.displayEventType).map((event, ind) => (
                       <MesheryEventViewer

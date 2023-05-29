@@ -7,10 +7,9 @@ language: en
 type: project
 ---
 
-#### Question: What is service mesh?
-**Answer:** _A service mesh is a way to control how different parts of an application share data with one another. Unlike other systems for managing this communication, a service mesh is a dedicated infrastructure layer built right into an app. This visible infrastructure layer can document how well (or not) different parts of an app interact, so it becomes easier to optimize communication and avoid downtime as an app grows._ 
 #### Question: What is Meshery?
-**Answer:** _Meshery is the open source, cloud native management plane that enables the adoption, operation, and management of any service mesh and their workloads._
+**Answer:** _As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure._
+
 
 #### Question: Why was Meshery created?
 
@@ -18,17 +17,17 @@ type: project
 
 #### Question: What does Meshery do?
 **Answer:** 
- - _Operates service meshes with confidence,_
-   - _with operational best practices._ 
- - _Compare apples-to-apples performance across service meshes._
- - _Understand behavioral differences between service meshes._
+ - _Enables you to design and operate cloud native infrastructure with confidence,_
+   - _using a catalog of operational best practices._
+ - _Compare apples-to-apples performance across different infrastructure configurations._
+ - _Understand behavioral differences between service deployments._
  - _Track your application performance from version to version._
 
 #### Question: What is mesheryctl?
 
 **Answer:** _A command line interface to manage Meshery._
 
-#### Question: How to install Meshery?
+#### Question: How do I install Meshery?
 
 **Answer:** _Meshery runs on a number of platforms._
 _Popular Installers:_
@@ -42,9 +41,15 @@ _Popular Installers:_
 
   **Answer:** _Yes, both of them do run Meshery on your local machine. `make server` builds Meshery from source and runs it on your local OS, while `mesheryctl system start` runs Meshery as a set of containers in Docker or in Kubernetes on your local machine._ 
 
-#### Question: What systems is Meshery compatible with?
+#### Question: What systems can I deploy Meshery onto?
 
   **Answer:** _Many. See Meshery's [Compatibility Matrix]({{site.baseurl}}/installation/platforms)._
+
+#### Question: What systems does Meshery manage?
+
+  **Answer:** _Many. See Meshery's [Integrations](https://meshery.io/integrations)._
+
+
 
 #### Question: Why is Meshery Server only receiving MeshSync updates from one of my Kubernetes Clusters?
 

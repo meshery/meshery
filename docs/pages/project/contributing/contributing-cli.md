@@ -48,6 +48,7 @@ For logs, `mesheryctl` uses [Logrus](https://github.com/sirupsen/logrus). Going 
 Unit test code coverage reports can be found in the [CodeCov logs](https://app.codecov.io/gh/meshery/meshery/). _Note: GitHub login may be required for access._
 
 **Documentation**
+
 The documentation pages for `mesheryctl` reference are made with the help of the Cobra Golang framework and use of GitHub Actions. Refer to [Contributing to mesheryctl documentation](#contributing-to-mesheryctl-documentation) for details.
 
 # Meshery CLI Style Guide
@@ -119,18 +120,18 @@ When designing for the command line interface, ask and consider the following qu
 - What is the default behavior? What flags might you need to change that behavior?
 - What might people try and fail to do and how can you anticipate that?
 
-###### What the command is called
+##### What the command is called
 
 - What should be the command language? (`mesheryctl <command> <subcommand> [args] [flags] [value]`)
 - What should be a command vs a flag?
 - How can you align the language of the new command with the existing commands?
 
-##### What the command outputs
+##### What are the command outputs
 
 - How can you make the GUI and the CLI outputs similar?
 - What should be outputted normally and what falls into debug logs?
 
-##### How you explain your command
+##### How you would explain your command
 
 You will need to provide a short and long description of the command for the help pages and also for the Meshery Documentation.
 
@@ -156,38 +157,47 @@ Use:   "start",
 Short: "Start Meshery",
 Long:  'Start Meshery and each of its service mesh components.',
 Args:  cobra.NoArgs,
-Example:
+Example:```
 // Start meshery
 mesheryctl system start
 
 // To create a new context for in-cluster Kubernetes deployments and set the new context as your current-context
 mesheryctl system context create k8s -p kubernetes -s
+```,
+Annotations: linkScreenshot,
 ...{% endcapture %}
 
 {% include code.html code=code_content %}
 
   The variables present in above sample will be used in creating the doc pages for the specific command
 
-Also, if the screenshot is present in the command, the respective field has to be added at the bottom of the `Examples` field in the command file. The image file has to be included in the `docs/assets` folder in **PNG** format. The screenshot field is given for reference below
+Also, if the screenshot is present in the command, an `Annotation` macro variable (of `map[string]string` type) containing the `link` and the `caption` has to be added at the bottom of the `Examples` field in the command file. The image file has to be included in the `docs/assets` folder in **PNG** format. The screenshot field is given for reference below
 
-{% capture code_content %}Example:
+{% capture code_content %}var linkDocPatternApply = map[string]string{
+	"link":    "![pattern-apply-usage](/assets/img/mesheryctl/patternApply.png)",
+	"caption": "Usage of mesheryctl pattern apply",
+}
+...
+Example:```
 // apply a pattern file
 mesheryctl pattern apply -f [file | URL]
 
 // deploy a saved pattern
 mesheryctl pattern apply [pattern-name]
-
-! Refer below image link for usage
-* Usage of mesheryctl pattern apply
-# ![pattern-apply-usage](/assets/img/mesheryctl/patternApply.png){% endcapture %}
+```,
+Annotations: linkDocPatternApply,
+...
+{% endcapture %}
 {% include code.html code=code_content %}
-Certain symbols are used in the screenshot section, each having it's own function
-
-- `!` - Used to denote as comment and the line will be ignored by the script
-- `*` - Caption for the screenshot
-- `#` - Markdown code for adding the screenshot in the doc page
 
 **NOTE: It is advised not to modify the changes in `docs` folder, rather should be done in `mesheryctl` folder as the changes will get overwritten by the script.**
+
+## Adding New/Removing Existing commands in the reference index
+
+Though the command page is generated automatically by the Cobra CLI library, there are chances where the command does not appear in the [reference index page](https://docs.meshery.io/reference/mesheryctl). In such cases, the command details must be manually added to the reference index YAML file. This is generally done by editing the below two files:
+
+- [cmds.yml](https://github.com/meshery/meshery/blob/master/docs/_data/mesheryctlcommands/cmds.yml) - The YAML file containing the data about the commands
+- [mesheryctl-commands.md](https://github.com/meshery/meshery/blob/master/docs/pages/reference/mesheryctl-commands.md) - The markdown page of the command reference documentation
 
 ### References
 

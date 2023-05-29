@@ -67,7 +67,7 @@
       url: concepts/architecture
     - title: Adapters
       url: concepts/architecture/adapters
-- title: ⚙️ Tasks
+- title: ⚙️ Tasks (all)
   url: tasks
   links:
     - title: Application Management
@@ -78,44 +78,46 @@
       url: tasks/pattern-management
     - title: Performance Management
       url: tasks/performance-management
-    - title: Service Mesh Interface (SMI) Conformance
-      url: tasks/service-mesh-interface
-- title: 🦾 Service Meshes
-  url: service-meshes
-  links:
-    - title: App Mesh
-      url: service-meshes/adapters/app-mesh
-    # - title: Citrix Service Mesh
-    #   url: service-meshes/adapters/cpx
-    - title: Cilium Service Mesh
-      url: service-meshes/adapters/cilium
-    - title: Consul
-      url: service-meshes/adapters/consul
-    - title: Istio
-      url: service-meshes/adapters/istio
-    - title: Kuma
-      url: service-meshes/adapters/kuma
-    - title: Linkerd
-      url: service-meshes/adapters/linkerd
-    - title: Network Service Mesh
-      url: service-meshes/adapters/nsm
-    - title: NGINX Service Mesh
-      url: service-meshes/adapters/nginx-sm
-    - title: Open Service Mesh
-      url: service-meshes/adapters/osm
-    - title: Tanzu
-      url: service-meshes/adapters/tanzu-sm
-    - title: Traefik Mesh
-      url: service-meshes/adapters/traefik-mesh
-- title: 📚 Guides
+    # - title: Service Mesh Interface (SMI) Conformance
+    #   url: tasks/service-mesh-interface
+# - title: 🦾 Service Meshes
+#   url: service-meshes
+#   links:
+#     - title: App Mesh
+#       url: service-meshes/adapters/app-mesh
+#     # - title: Citrix Service Mesh
+#     #   url: service-meshes/adapters/cpx
+#     - title: Cilium Service Mesh
+#       url: service-meshes/adapters/cilium
+#     - title: Consul
+#       url: service-meshes/adapters/consul
+#     - title: Istio
+#       url: service-meshes/adapters/istio
+#     - title: Kuma
+#       url: service-meshes/adapters/kuma
+#     - title: Linkerd
+#       url: service-meshes/adapters/linkerd
+#     - title: Network Service Mesh
+#       url: service-meshes/adapters/nsm
+#     - title: NGINX Service Mesh
+#       url: service-meshes/adapters/nginx-sm
+#     - title: Open Service Mesh
+#       url: service-meshes/adapters/osm
+#     - title: Tanzu
+#       url: service-meshes/adapters/tanzu-sm
+#     - title: Traefik Mesh
+#       url: service-meshes/adapters/traefik-mesh
+- title: 📚 Guides (all)
   url: guides
   links:
     - title: Deploying Sample Applications
       url: guides/sample-apps
-    - title: Running SMI Conformance Tests
-      url: guides/smi-conformance
+    # - title: Running SMI Conformance Tests
+    #   url: guides/smi-conformance
     - title: Integrating Prometheus and Grafana
       url: guides/meshery-metrics
+    - title: Importing Applications
+      url: guides/importing-apps
     - title: Troubleshooting Guide
       url: guides/troubleshooting
     - title: Upgrading Meshery

@@ -712,6 +712,7 @@ Data Plane for a particular Mesh.
 | <a id="k8scontextowner"></a>`owner` | [`ID!`](#id) |  |
 | <a id="k8scontextserver"></a>`server` | [`String!`](#string) |  |
 | <a id="k8scontextupdated_at"></a>`updated_at` | [`String!`](#string) |  |
+| <a id="k8scontextversion"></a>`version` | [`String!`](#string) |  |
 
 ### `K8sContextsPage`
 

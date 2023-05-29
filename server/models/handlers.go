@@ -38,6 +38,7 @@ type HandlerInterface interface {
 	LogoutHandler(w http.ResponseWriter, req *http.Request, provider Provider)
 	UserHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetUserByIDHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetUsers(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	K8SConfigHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request)
 	KubernetesPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -166,6 +167,8 @@ type HandlerInterface interface {
 	GetConnections(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	UpdateConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+
+  GetRegoPolicyForDesignFile(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 }
 
 // HandlerConfig holds all the config pieces needed by handler methods

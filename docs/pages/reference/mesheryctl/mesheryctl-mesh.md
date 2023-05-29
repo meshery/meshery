@@ -12,7 +12,7 @@ subcommand: nil
 
 # mesheryctl mesh
 
-Service Mesh Lifecycle Management
+Cloud Native Lifecycle Management
 
 ## Synopsis
 

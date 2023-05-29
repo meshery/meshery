@@ -442,7 +442,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : DESIGN,
         icon : <PatternIcon style={{ ...drawerIconsStyle }} />,
-        href : "/configuration/patterns",
+        href : "/configuration/designs",
         title : "Designs",
         show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, DESIGN]),
         link : true,
@@ -586,6 +586,7 @@ class Navigator extends React.Component {
             navigatorComponents
           });
           //global state
+          result.extensions.navigator = result.extensions.navigator.map((item) => item.title==="MeshMap" ? { ...item, isBeta : true } :item  )
           this.props.updateCapabilities({ capabilitiesRegistry : result })
         }
       },

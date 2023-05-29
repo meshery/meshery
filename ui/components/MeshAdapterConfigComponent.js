@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import { NoSsr, Chip, IconButton, Button, TextField } from "@material-ui/core";
+import { NoSsr, Chip, IconButton, Button, TextField, Tooltip } from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -16,7 +16,13 @@ import { iconMedium } from "../css/icons.styles";
 import changeAdapterState from './graphql/mutations/AdapterStatusMutation';
 
 const styles = (theme) => ({
-  wrapperClass : { padding : theme.spacing(5),backgroundColor : theme.palette.secondary.elevatedComponents,borderBottomLeftRadius : theme.spacing(1),borderBottomRightRadius : theme.spacing(1), },
+  wrapperClass : {
+    padding : theme.spacing(5),
+    backgroundColor : theme.palette.secondary.elevatedComponents,
+    borderBottomLeftRadius : theme.spacing(1),
+    borderBottomRightRadius : theme.spacing(1),
+    marginTop : theme.spacing(2),
+  },
   buttons : { display : "flex",
     justifyContent : "flex-end", paddingTop : "2rem" },
   button : {
@@ -64,7 +70,7 @@ class MeshAdapterConfigComponent extends React.Component {
     // if(meshAdapters.sort().join(',') !== state.meshAdapters.sort().join(',')){
     if (meshAdaptersts > state.ts) {
       return { meshAdapters,
-        ts : meshAdaptersts, };
+        ts : meshAdaptersts };
     }
     return {};
   }
@@ -351,6 +357,7 @@ class MeshAdapterConfigComponent extends React.Component {
     if (meshAdapters.length > 0) {
       showAdapters = (
         <div className={classes.alignRight}>
+
           {meshAdapters.map((adapter) => {
             let image = "/static/img/meshery-logo.png";
             let logoIcon = <img src={image} className={classes.icon} />;
@@ -360,16 +367,25 @@ class MeshAdapterConfigComponent extends React.Component {
             }
 
             return (
-              <Chip
+              <Tooltip
                 key={adapter.uniqueID}
-                className={classes.chip}
-                label={adapter.adapter_location}
-                onDelete={self.handleDelete(adapter.adapter_location)}
-                onClick={self.handleClick(adapter.adapter_location)}
-                icon={logoIcon}
-                variant="outlined"
-                data-cy="chipAdapterLocation"
-              />
+                title={
+                        `Meshery Adapter for
+                        ${adapter.name
+                          .toLowerCase()
+                          .split(" ")
+                          .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+                          .join(" ")} (${adapter.version})`}>
+                <Chip
+                  className={classes.chip}
+                  label={adapter.adapter_location}
+                  onDelete={self.handleDelete(adapter.adapter_location)}
+                  onClick={self.handleClick(adapter.adapter_location)}
+                  icon={logoIcon}
+                  variant="outlined"
+                  data-cy="chipAdapterLocation"
+                />
+              </Tooltip>
             );
           })}
         </div>
@@ -382,7 +398,7 @@ class MeshAdapterConfigComponent extends React.Component {
           {showAdapters}
 
           <Grid container spacing={1} alignItems="flex-end">
-            <Grid item xs={12}>
+            <Grid item xs={12} data-cy="mesh-adapter-url">
               <ReactSelectWrapper
                 onChange={this.handleMeshLocURLChange}
                 options={setAdapterURLs}
@@ -402,7 +418,6 @@ class MeshAdapterConfigComponent extends React.Component {
                 size="large"
                 onClick={this.handleAdapterUndeploy}
                 className={classes.button}
-                data-cy="btnSubmitMeshAdapter"
               >
                 Undeploy
               </Button>
@@ -451,7 +466,6 @@ class MeshAdapterConfigComponent extends React.Component {
                   size="large"
                   onClick={this.handleAdapterDeploy}
                   className={classes.button}
-                  data-cy="btnSubmitMeshAdapter"
                 >
                 Deploy
                 </Button>

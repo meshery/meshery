@@ -9,19 +9,22 @@ list: include
 
 <a name="lifecycle-management"></a>
 
-Meshery supports a number of [different service meshes]({{ site.baseurl }}/service-meshes), so that you can learn and compare different service mesh functionality. Once you have selected to operate a given service mesh, Meshery will assist you with ongoing activities.
+Meshery manages hundreds of different types of cloud native infrastructure. See [full the set of integrations](https://meshery.io/integrations).
 
-{% include alert.html type="info" title="Meshery's Capabilities Registry" content="See <a href='/concepts/architecture'>Architecture</a> for a description of Meshery's Capabilities Registry for an understanding of how Meshery Adapters deliver service mesh-specific functionality." %}
 
-## Service Mesh Lifecycle Management
+{% include alert.html type="info" title="Meshery's Capabilities Registry" content="See <a href='/concepts/architecture'>Architecture</a> for a description of Meshery's Capabilities Registry for an understanding of how Meshery Adapters deliver infrastructure-specific functionality." %}
+
+## Cloud Native Infrastructure Lifecycle Management
+
+Meshery Adapters can optionally be deployed to provide deep support of different types of infrastructure including [service meshes]({{ site.baseurl }}/service-meshes), so that you can learn and compare different service mesh functionality. Once you have selected to operate a given service mesh, Meshery will assist you with ongoing operations.
 
 Meshery automates the provisioning of various service meshes, allowing users to select different configuration profiles in order to support a variety of deployment models.
 
 Meshery adapters will dynamically retrieve the specific service mesh's release package upon initial deployment of a given service mesh. Meshery adapters cache (in `.meshery/bin`) the service mesh installation package.
 
-#### Deleting a service mesh
+#### Deprovisioning infrastructure
 
-Just as Meshery automates the provisioning of various service meshes, so does it facilitate the deprovisioning of service meshes.
+Just as Meshery automates the provisioning of various cloud native infrastructure, so too does it facilitate the deprovisioning of infrastructure. Find the "Undeploy" button in Meshery UI or the `--undeploy` flag in Meshery CLI.
 
 ## Workload Lifecycle Management
 

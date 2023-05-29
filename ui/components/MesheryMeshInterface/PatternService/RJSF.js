@@ -13,6 +13,7 @@ import { CustomFieldTemplate } from './RJSFCustomComponents/FieldTemplate';
 import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
 import MesheryWrapIfAdditionalTemplate from './RJSFCustomComponents/WrapIfAdditionalTemplate';
 import _ from "lodash"
+import { CustomCheckboxWidget } from './RJSFCustomComponents/CustomCheckboxWidget';
 
 const MuiRJSFForm = withTheme(MaterialUITheme);
 
@@ -75,7 +76,7 @@ function RJSFForm({
           // Custom components to be added here
           DateTimeWidget : CustomDateTimeWidget,
           // SelectWidget: CustomSelectWidget,
-          // CheckboxWidget: CustomBooleanWidget,
+          CheckboxWidget : CustomCheckboxWidget,
         }}
         liveValidate
         showErrorList={false}

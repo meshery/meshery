@@ -20,7 +20,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
 import { toggleCatalogContent, updateProgress } from "../lib/store";
-import DesignConfigurator from "../components/configuratorComponents/patternConfigurator";
+import DesignConfigurator from "../components/configuratorComponents/MeshModel";
 import UploadImport from "./UploadImport";
 import { ctxUrl } from "../utils/multi-ctx";
 import { generateValidatePayload, getComponentsinFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
@@ -34,14 +34,13 @@ import PublicIcon from '@material-ui/icons/Public';
 import ConfirmationModal from "./ConfirmationModal";
 import PublishIcon from "@material-ui/icons/Publish";
 import PromptComponent from "./PromptComponent";
-import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
-import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import { SchemaContext } from "../utils/context/schemaSet";
 import Validation from "./Validation";
 import { ACTIONS, FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from "../utils/Enum";
 import PublishModal from "./PublishModal";
 import CloneIcon from "../public/static/img/CloneIcon";
+import { useRouter } from "next/router";
 
 const styles = (theme) => ({
   grid : {
@@ -249,6 +248,7 @@ function MesheryPatterns({
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
   const [extensionPreferences, setExtensionPreferences] = useState({});
+  const router = useRouter()
 
   const [patternErrors, setPatternErrors] = useState(new Map());
 
@@ -283,9 +283,7 @@ function MesheryPatterns({
   });
   const [loading, stillLoading] = useState(true);
 
-  const catalogContentRef = useRef();
   const catalogVisibilityRef = useRef(false);
-  const disposeConfSubscriptionRef = useRef(null);
 
   const { workloadTraitSet } = useContext(SchemaContext);
 
@@ -411,72 +409,22 @@ function MesheryPatterns({
 
   useEffect(() => {
     fetchUserPrefs();
-    catalogVisibilityRef.current = catalogVisibility
-    const fetchCatalogPatterns = fetchCatalogPattern({
-      selector : {
-        search : "",
-        order : ""
-      }
-    }).subscribe({
-      next : (result) => {
-        catalogContentRef.current = result?.catalogPatterns;
-        initPatternsSubscription();
-      },
-      error : (err) => console.log("There was an error fetching Catalog Pattern: ", err)
-    });
-    return () => {
-      if (disposeConfSubscriptionRef.current) {
-        disposeConfSubscriptionRef.current.dispose();
-      }
-      fetchCatalogPatterns.unsubscribe();
-    }
   }, [])
 
   useEffect(() => {
     handleSetPatterns(patterns)
   }, [catalogVisibility])
 
-  const handleSetPatterns = (patterns) => {
-    if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
-      setPatterns([...catalogContentRef.current, ...patterns.filter(content => content.visibility !== VISIBILITY.PUBLISHED)])
-      return
-    }
-    setPatterns(patterns.filter(content => content.visibility !== VISIBILITY.PUBLISHED))
+  const handleSetPatterns = (pattern) => {
+    setPatterns(pattern)
   }
 
-  const initPatternsSubscription = (pageNo = page.toString(), pagesize = pageSize.toString(), searchText = search, order = sortOrder) => {
-    if (disposeConfSubscriptionRef.current) {
-      disposeConfSubscriptionRef.current.dispose();
-    }
-    const configurationSubscription = ConfigurationSubscription((result) => {
-      setPage(result.configuration?.patterns?.page || 0);
-      setPageSize(result.configuration?.patterns?.page_size || 0);
-      setCount(result.configuration?.patterns?.total_count || 0);
-      handleSetPatterns(result.configuration?.patterns?.patterns ?? [] );
-      stillLoading(false);
-    },
-    {
-      applicationSelector : {
-        pageSize : pagesize,
-        page : pageNo,
-        search : searchText,
-        order : order
-      },
-      patternSelector : {
-        pageSize : pagesize,
-        page : pageNo,
-        search : searchText,
-        order : order
-      },
-      filterSelector : {
-        pageSize : pagesize,
-        page : pageNo,
-        search : searchText,
-        order : order
-      }
-    });
-    disposeConfSubscriptionRef.current = configurationSubscription
-  }
+  useEffect(() => {
+    setPage(0);
+    setPageSize(10);
+    setCount(0);
+    fetchPatterns(0, 10, search, sortOrder)
+  }, [viewType])
 
   const handleModalClose = () => {
     // @ts-ignore
@@ -682,6 +630,7 @@ function MesheryPatterns({
       (result) => {
         console.log("PatternFile API", `/api/pattern${query}`);
         updateProgress({ showProgress : false });
+        page === 0 && stillLoading(false);
         if (result) {
           setPage(result.page || 0);
           setPageSize(result.page_size || 0);
@@ -1034,7 +983,7 @@ function MesheryPatterns({
     sort : !(user && user.user_id === "meshery"),
     search : !(user && user.user_id === "meshery"),
     filterType : "textField",
-    responsive : "scrollFullHeight",
+    responsive : "standard",
     resizableColumns : true,
     serverSide : true,
     count,
@@ -1078,10 +1027,10 @@ function MesheryPatterns({
 
       switch (action) {
         case "changePage":
-          initPatternsSubscription(tableState.page.toString(), pageSize.toString(), search, sortOrder);
+          fetchPatterns(tableState.page.toString(), pageSize.toString(), search, sortOrder);
           break;
         case "changeRowsPerPage":
-          initPatternsSubscription(page.toString(), tableState.rowsPerPage.toString(), search, sortOrder);
+          fetchPatterns(page.toString(), tableState.rowsPerPage.toString(), search, sortOrder);
           break;
         case "search":
           if (searchTimeout.current) {
@@ -1105,7 +1054,7 @@ function MesheryPatterns({
             }
           }
           if (order !== sortOrder) {
-            initPatternsSubscription(page.toString(), pageSize.toString(), search, order);
+            fetchPatterns(page.toString(), pageSize.toString(), search, order);
           }
           break;
       }
@@ -1144,10 +1093,7 @@ function MesheryPatterns({
                 color="primary"
                 size="large"
                 // @ts-ignore
-                onClick={() => setSelectedPattern({
-                  pattern : { id : null, name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
-                  show : true,
-                })}
+                onClick={() => router.push("designs/configurator")}
                 style={{ marginRight : "2rem" }}
               >
                 <AddIcon className={classes.addIcon} />

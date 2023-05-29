@@ -315,7 +315,7 @@ class MesheryResults extends Component {
       sort : !(user && user.user_id === 'meshery'),
       search : !(user && user.user_id === 'meshery'),
       filterType : 'textField',
-      responsive : 'scrollFullHeight',
+      responsive : 'standard',
       resizableColumns : true,
       selectableRows : true,
       serverSide : true,

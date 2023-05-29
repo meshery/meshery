@@ -21,6 +21,7 @@ export function getRefinedJsonSchema(jsonSchema, hideTitle = true, handleError) 
   try {
     refinedSchema = hideTitle ? deleteTitleFromJSONSchema(jsonSchema) : jsonSchema
     refinedSchema = deleteDescriptionFromJSONSchema(refinedSchema)
+    refinedSchema.properties = sortProperties(refinedSchema.properties)
     recursivelyParseJsonAndCheckForNonRJSFCompliantFields(refinedSchema);
   } catch (e) {
     console.trace(e)
@@ -75,6 +76,138 @@ function getXKubenetesToRJSFCompatibleFieldType(schema) {
 
   return returnedType || false;
 }
+
+// Order of properties in the form
+const sortOrder = [
+  "string",
+  "integer",
+  "number",
+  "boolean",
+  "array",
+  "object"
+];
+// Reversed keys to handle oneof, anyof and allof fields
+export const userPromptKeys = ["allOf", "anyOf", "oneOf"];
+
+/**
+ * Sorts the properties of the jsonSchema in the order of the sortOrder.
+ * @param {*} properties
+ * @returns
+ */
+const sortProperties = (properties) => {
+  const sortedProperties = {};
+  Object.keys(properties)
+    .sort((a, b) => {
+      // when we have properties[a or b], if we have allOf, oneOf, anyOf, we need to handle them
+      let a_type = properties[a]?.type;
+      let b_type = properties[b]?.type;
+      // if we have oneOf, anyOf, allOf, we need to handle them
+      userPromptKeys.forEach(key => {
+        if (properties[a]?.[key]) {
+          a_type = properties[a]?.[key][0]?.type;
+        }
+        if (properties[b]?.[key]) {
+          b_type = properties[b]?.[key][0]?.type;
+        }
+      })
+      return (
+        sortOrder.indexOf(a_type) - sortOrder.indexOf(b_type) // sort by type
+      );
+    })
+    .forEach(key => {
+      sortedProperties[key] = properties[key];
+      if (properties[key]?.properties) { // Handles the Objects in the schema
+        sortedProperties[key].properties = sortProperties(
+          properties[key].properties,
+          sortOrder
+        );
+      }
+
+      if (properties[key].items?.properties) { // Handles Arrays in the schema
+        sortedProperties[key].items.properties = sortProperties(
+          properties[key].items.properties,
+          sortOrder
+        );
+      }
+
+
+      if (properties[key] || properties[key].items) { // Handles oneOf, anyOf, allOf
+        const handleReserve = properties[key]?.oneOf ||
+                              properties[key]?.anyOf ||
+                              properties[key]?.allOf ||
+                              properties[key]?.items?.oneOf ||
+                              properties[key]?.items?.anyOf ||
+                              properties[key]?.items?.allOf;
+        if (!handleReserve) return;
+        handleReserve.forEach((item, index) => {
+          if (item.properties) { // Handles the Objects in the schema
+            handleReserve[index].properties = sortProperties(
+              item.properties,
+              sortOrder
+            );
+          }
+          if (item.items?.properties) { // Handles Arrays in the schema
+            handleReserve[index].items.properties = sortProperties(
+              item.items.properties,
+              sortOrder
+            );
+          }
+        })
+      }
+
+    });
+  return sortedProperties;
+};
+
+/**
+ * Provides us the hyper link text.
+ * @param {*} description
+ * @returns
+ */
+const getHyperLinkWithDescription = description => {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  return description?.replace(
+    urlRegex,
+    url =>
+      `<a href="${url}" style="color: #00B39F;" target="_blank" rel="noreferrer">${url}</a>`
+  );
+};
+
+export const getHyperLinkDiv = text => (
+  <div dangerouslySetInnerHTML={{ __html : getHyperLinkWithDescription(text) }} />
+);
+
+/**
+ * Calculates the grid for the object field template.
+ * @param {*} element
+ * @returns
+ */
+export const calculateGrid = element => {
+  let type = element.type;
+  let __additional_property = element.__additional_property;
+  if (!type) {
+    // handle anyOf, oneOf, allOf
+    const schema = element?.content?.props?.schema;
+    userPromptKeys.forEach(key => {
+      if (schema[key]) {
+        type = schema[key][0].type;
+      }
+    });
+  }
+  const grid = {
+    xs : 12,
+    md : 12,
+    lg : 6
+  };
+
+  if (type === "object" || type === "array" || __additional_property) {
+    grid.lg = 12;
+  }
+
+  return grid;
+};
+
+
 
 /**
  * An inline object mutating function that could detect and handle the

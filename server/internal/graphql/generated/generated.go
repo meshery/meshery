@@ -186,6 +186,7 @@ type ComplexityRoot struct {
 		Owner              func(childComplexity int) int
 		Server             func(childComplexity int) int
 		UpdatedAt          func(childComplexity int) int
+		Version            func(childComplexity int) int
 	}
 
 	K8sContextsPage struct {
@@ -1099,6 +1100,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.K8sContext.UpdatedAt(childComplexity), true
+
+	case "K8sContext.version":
+		if e.complexity.K8sContext.Version == nil {
+			break
+		}
+
+		return e.complexity.K8sContext.Version(childComplexity), true
 
 	case "K8sContextsPage.contexts":
 		if e.complexity.K8sContextsPage.Contexts == nil {
@@ -2629,6 +2637,7 @@ type K8sContext {
   meshery_instance_id: ID!,
   kubernetes_server_id: ID!,
   deployment_type: String!,
+  version: String!,
   updated_at: String!,
   created_at: String!
 }
@@ -7752,6 +7761,50 @@ func (ec *executionContext) fieldContext_K8sContext_deployment_type(ctx context.
 	return fc, nil
 }
 
+func (ec *executionContext) _K8sContext_version(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8sContext_version(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Version, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8sContext_version(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8sContext",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _K8sContext_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_K8sContext_updated_at(ctx, field)
 	if err != nil {
@@ -7943,6 +7996,8 @@ func (ec *executionContext) fieldContext_K8sContextsPage_contexts(ctx context.Co
 				return ec.fieldContext_K8sContext_kubernetes_server_id(ctx, field)
 			case "deployment_type":
 				return ec.fieldContext_K8sContext_deployment_type(ctx, field)
+			case "version":
+				return ec.fieldContext_K8sContext_version(ctx, field)
 			case "updated_at":
 				return ec.fieldContext_K8sContext_updated_at(ctx, field)
 			case "created_at":
@@ -17905,6 +17960,13 @@ func (ec *executionContext) _K8sContext(ctx context.Context, sel ast.SelectionSe
 		case "deployment_type":
 
 			out.Values[i] = ec._K8sContext_deployment_type(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "version":
+
+			out.Values[i] = ec._K8sContext_version(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++

@@ -1,24 +1,4 @@
 /**
- * Filter array of workloads by mesh-type
- *
- * @param {Array.<Object>} workloads array of raw workloads
- *
- * @returns {Array.Array.<Object>} filteredWorkloads: workloads filtered by Mesh Type
- */
-export function groupWorkloadByType(workloads) {
-  let filteredWorkloads = {};
-  workloads.map((wtSet) => {
-    if (wtSet.workload.metadata != null) {
-      const adapterName = wtSet.workload.metadata["adapter.meshery.io/name"];
-      let wl = filteredWorkloads[adapterName] || [];
-      wl.push(wtSet);
-      filteredWorkloads[adapterName] = wl;
-    }
-  });
-  return filteredWorkloads;
-}
-
-/**
  * Filter-workloads by versions
  *
  * @param {Object} meshfilteredWorkloads array of mesh-filtered-workloads

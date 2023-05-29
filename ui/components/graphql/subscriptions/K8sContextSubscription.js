@@ -17,7 +17,8 @@ subscription K8sContextSubscription($selector: PageFilter!) {
         kubernetes_server_id
         deployment_type
         updated_at
-        created_at 
+        created_at
+        version
       }  
     }
 }
