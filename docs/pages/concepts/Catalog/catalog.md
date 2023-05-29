@@ -1,6 +1,6 @@
 ---
 layout: default
-title: catalog
+title: Catalog
 permalink: concepts/catalog
 redirect_from: catalog
 type: concepts
@@ -39,5 +39,5 @@ Apart from service mesh implementations, the catalog also includes a range of to
 
 
 
-If you have any questions or need assistance, please refer to the [Meshery Documentation](/documentation) or reach out to our discussion form [layer5.io](https://discuss.layer5.io/).
+If you have any questions or need assistance, please refer to the [Meshery Documentation](https://docs.meshery.io/) or reach out to our discussion form [layer5.io](https://discuss.layer5.io/).
 
