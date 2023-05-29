@@ -139,7 +139,7 @@ function MesheryPatternCard({
                 }
                 className={classes.testsButton}
               >
-                <UndeployIcon className={classes.iconPatt} />
+                <DoneAllIcon className={classes.iconPatt} />
                 <span className={classes.btnText}>Deploy</span>
               </TooltipButton>
 
