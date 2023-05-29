@@ -23,7 +23,7 @@ import { ctxUrl } from "../utils/multi-ctx";
 import { getComponentsinFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
 import PromptComponent from "./PromptComponent";
 import UploadImport from "./UploadImport";
-import UndeployIcon from "../public/static/img/UndeployIcon";
+import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import ConfirmationMsg from "./ConfirmationModal";
 import ViewSwitch from "./ViewSwitch";
@@ -695,7 +695,7 @@ function MesheryApplications({
                 title="Undeploy"
                 onClick={() => handleModalOpen(rowData.application_file, rowData.name, false)}
               >
-                <UndeployIcon fill="#F91313" data-cy="undeploy-button" />
+                <RemoveDoneIcon data-cy="undeploy-button" />
               </TooltipIcon>
             </>
           );
