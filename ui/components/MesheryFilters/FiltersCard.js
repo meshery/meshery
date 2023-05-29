@@ -103,7 +103,7 @@ function FiltersCard({
                   genericClickHandler(ev, handleUndeploy)
                 }
               >
-                <UndeployIcon fill="#F91313" className={classes.iconPatt} />
+                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
                 Undeploy
               </TooltipButton>
               <TooltipButton
