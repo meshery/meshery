@@ -11,7 +11,6 @@ import FlipCard from "../FlipCard";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import FullscreenExit from "@material-ui/icons/FullscreenExit";
 import UndeployIcon from "../../public/static/img/UndeployIcon";
-import DoneAllIcon from '@material-ui/icons/DoneAll';
 import DoneIcon from '@material-ui/icons/Done';
 import useStyles from "./Cards.styles";
 import YAMLDialog from "../YamlDialog";
@@ -137,7 +136,7 @@ function MesheryPatternCard({
                 }
                 className={classes.testsButton}
               >
-                <DoneAllIcon className={classes.iconPatt} />
+                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
                 <span className={classes.btnText}>Deploy</span>
               </TooltipButton>
 

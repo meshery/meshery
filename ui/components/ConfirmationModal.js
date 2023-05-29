@@ -14,7 +14,7 @@ import { getK8sConfigIdsFromK8sConfig } from "../utils/multi-ctx";
 import { bindActionCreators } from "redux";
 import { useEffect, useState } from "react";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
-import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
+import UndeployIcon from "../public/static/img/UndeployIcon";
 import AddIcon from '@material-ui/icons/Add';
 import DoneIcon from "@material-ui/icons/Done";
 import Link from 'next/link';
@@ -62,7 +62,7 @@ const styles = (theme) => ({
     // minWidth : 300,
     padding : theme.spacing(1),
     color : '#fff',
-    backgroundColor : theme.palette.type == "light"? 'rgb(57, 102, 121)': 'none',
+    backgroundColor : theme.palette.type == "light"? theme.palette.secondary.mainBackground: theme.palette.secondary.confirmationModal,
     fontSize : "1rem",
 
   },
@@ -333,7 +333,7 @@ function ConfirmationMsg(props) {
               className={classes.tab}
               onClick={(event) => handleTabValChange(event,1)}
               label={<div style={{ display : "flex" }}
-              ><div style={{ margin : "2px" }}> <RemoveDoneIcon style={iconSmall} /> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
+              ><div style={{ margin : "2px" }}> <UndeployIcon style={iconSmall} fill={theme.palette.secondary.icon} width="20" height="20" /> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
             />
             <Tab
               data-cy="deploy-btn-modal"

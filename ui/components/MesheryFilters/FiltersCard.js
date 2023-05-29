@@ -12,7 +12,7 @@ import FullscreenExit from "@material-ui/icons/FullscreenExit";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import useStyles from "../MesheryPatterns/Cards.styles";
 import YAMLDialog from "../YamlDialog";
-import UndeployIcon from "../../public/static/img/UndeployIcon";
+import UndeployIcon from "../../public/static/img/UndeployIcon"
 import CloneIcon from "../../public/static/img/CloneIcon";
 import TooltipButton from '../../utils/TooltipButton.js'
 import { VISIBILITY } from "../../utils/Enum";

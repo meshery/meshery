@@ -54,7 +54,7 @@ export var darkTheme = createTheme({
       honeyComb : '#202020',
       filterChipBackground : '#222222',
       tabs : '#20202087',
-      modalTabs : '#1e1e1e',
+      modalTabs : '#363636',
       tabHover : '#212121',
       confirmationModal : '#111111'
     },
