@@ -419,3 +419,59 @@ type allMeshmodelComponentsResponseWrapper struct {
 type allMeshmodelRelationshipsResponseWrapper struct {
 	Body *models.MeshmodelRelationshipsAPIResponse
 }
+
+// Returns all meshmodel relationships of a specific model based on meshmodel policy
+// swagger:response networkPolicyEvalResponseWrapper
+type networkPolicyEvalResponseWrapper struct {
+	// in: body
+	Body *models.NetworkPolicyEvalResultAPIResponse
+}
+
+// Returns all meshmodel policies
+// swagger:response meshmodelPoliciesResponseWrapper
+type meshmodelPoliciesResponseWrapper struct {
+	// in: body
+	Body *models.MeshmodelPoliciesAPIResponse
+}
+
+// reusable meshmodel query parameters
+type meshmodelQueryParameters struct {
+	// in: query
+	PageSize int64 `json:"pagesize"`
+	// in: query
+	Page int64 `json:"page"`
+	// in: query
+	SubType string `json:"subtype"`
+	// in: query
+	Version string `json:"version"`
+	// in: query
+	APIVersion string `json:"apiversion"`
+	// in: query
+	Sort string `json:"sort"`
+	// in: order
+	Order string `json:"order"`
+}
+
+// swagger:parameters idGetRegoPolicyForDesignFile idGetMeshmodelPoliciesByModelByName
+type meshmodelPoliciesByModelByNameParameters struct {
+	// in: path
+	Model string `json:"model"`
+	// in: path
+	Name string `json:"name"`
+
+	meshmodelQueryParameters
+}
+
+// swagger:parameters idGetMeshmodelPoliciesByModel
+type meshmodelPoliciesByModelParameters struct {
+	// in: path
+	Model string `json:"model"`
+
+	meshmodelQueryParameters
+}
+
+// swagger:parameters idGetMeshmodelPolicies
+type meshmodelPoliciesParameters struct {
+	meshmodelQueryParameters
+}
+
