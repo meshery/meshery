@@ -255,27 +255,28 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 		log.Info("\nDocker \n--------------")
 	}
 	endpointParts := strings.Split(hc.context.GetEndpoint(), ":")
-	if !strings.HasSuffix(endpointParts[1], "localhost") {
-		return errors.Errorf("Unsupported command `mesheryctl system %s` for platform Docker on remote endpoint `%s`", hc.Options.Subcommand, hc.context.Endpoint)
-	}
 	//Check whether docker daemon is running or not
 	err := exec.Command("docker", "ps").Run()
 	if err != nil {
-		if hc.Options.IsPreRunE { // if this is PreRunExec we trigger self installation
-			log.Warn("!! Docker is not running")
-			//If preRunExecution and the current platform is docker then we trigger docker installation
-			//No auto installation of docker for windows
-			if runtime.GOOS == "windows" {
-				return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started ", hc.Options.Subcommand)
+		if endpointParts[1] != "//localhost" {
+			return errors.Wrapf(err, "Please ensure that the appropriate Docker context is selected for the %s endpoint.", hc.context.GetEndpoint())
+		} else {
+			if hc.Options.IsPreRunE { // if this is PreRunExec we trigger self installation
+				log.Warn("!! Docker is not running")
+				//If preRunExecution and the current platform is docker then we trigger docker installation
+				//No auto installation of docker for windows
+				if runtime.GOOS == "windows" {
+					return errors.Wrapf(err, "Please start Docker. Run `mesheryctl system %s` once Docker is started ", hc.Options.Subcommand)
+				}
+				err = utils.Startdockerdaemon(hc.Options.Subcommand)
+				if err != nil {
+					return errors.Wrapf(err, "failed to start Docker ")
+				}
+			} else if hc.Options.PrintLogs { // warn incase of printing logs
+				log.Warn("!! Docker is not running")
+			} else { // else we're supposed to grab errors
+				return err
 			}
-			err = utils.Startdockerdaemon(hc.Options.Subcommand)
-			if err != nil {
-				return errors.Wrapf(err, "failed to start Docker ")
-			}
-		} else if hc.Options.PrintLogs { // warn incase of printing logs
-			log.Warn("!! Docker is not running")
-		} else { // else we're supposed to grab errors
-			return err
 		}
 
 		if hc.context.Platform == "docker" {
