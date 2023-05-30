@@ -578,6 +578,10 @@ func (l *DefaultLocalProvider) PublishCatalogPattern(_ *http.Request, _ *Meshery
 	return []byte(""), ErrLocalProviderSupport
 }
 
+func (l *DefaultLocalProvider) UnPublishCatalogPattern(_ *http.Request, _ *MesheryCatalogPatternRequestBody) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
 // GetMesheryPattern gets pattern for the given patternID
 func (l *DefaultLocalProvider) GetMesheryPattern(_ *http.Request, patternID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(patternID)
