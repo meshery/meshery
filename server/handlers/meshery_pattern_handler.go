@@ -475,6 +475,35 @@ func (h *Handler) PublishCatalogPatternHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
+func (h *Handler) UnPublishCatalogPatternHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	_ *models.Preference,
+	_ *models.User,
+	provider models.Provider,
+) {
+	defer func() {
+		_ = r.Body.Close()
+	}()
+
+	var parsedBody *models.MesheryCatalogPatternRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+		return
+	}
+	resp, err := provider.UnPublishCatalogPattern(r, parsedBody)
+	if err != nil {
+		h.log.Error(ErrPublishCatalogPattern(err))
+		http.Error(rw, ErrPublishCatalogPattern(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	go h.config.ConfigurationChannel.PublishPatterns()
+	rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(rw, string(resp))
+}
+
 // swagger:route DELETE /api/patterns PatternsAPI idDeleteMesheryPattern
 // Handle Delete for multiple Meshery Patterns
 //
