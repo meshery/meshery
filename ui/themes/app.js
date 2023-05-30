@@ -60,7 +60,7 @@ export var darkTheme = createTheme({
       tabHover : '#212121',
       confirmationModal : '#111111',
       focused : '#00b39f',
-      primaryModalText: '#FFF'
+      primaryModalText : '#FFF'
     },
   },
   p : {
@@ -254,8 +254,8 @@ let theme = createTheme({
       modalTabs : '#dddddd',
       tabHover : '#e3e3e3',
       confirmationModal : 'rgb(234, 235, 236)',
-      focused: '#607d8b',
-      primaryModalText: '#FFF'
+      focused : '#607d8b',
+      primaryModalText : '#FFF'
     },
   },
   shape : { borderRadius : 8, },
