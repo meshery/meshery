@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withRouter } from 'next/router';
@@ -182,8 +182,6 @@ class MesherySettings extends React.Component {
       // Array of scanned grafan urls
       scannedGrafana : [],
 
-      databaseSummary : { tables : [], totalRecords : 0, totalSize : 0, totalTables : 0 },
-
       meshmodelSummarySelector : { type : "components" },
       meshmodelSummarySelectorList : ["components", "relationships"],
       meshmodelSummary : [],
@@ -254,22 +252,6 @@ class MesherySettings extends React.Component {
     }
   }
 
-  initDatabaseSummary = () => {
-    dataFetch(
-      "/api/system/database",
-      {
-        method : "GET",
-        credentials : "include",
-      },
-      (result) => {
-        if (typeof result !== "undefined") {
-          this.setState({ databaseSummary : result })
-        }
-      },
-      this.handleError("Unable to fetch database summary.")
-    );
-  }
-
   disposeSubscriptions = () => {
     this.disposeMeshModelSummarySubscriptions()
   }
@@ -282,7 +264,6 @@ class MesherySettings extends React.Component {
     if (this._isMounted) {
       this.initDashboardMeshModelSummaryQuery();
       this.initDashboardMeshModelSummarySubscription();
-      this.initDatabaseSummary();
     }
   }
 
@@ -448,18 +429,41 @@ class MesherySettings extends React.Component {
     );
   };
 
-  showDatabaseSummary = () => {
+  DatabaseSummary = () => {
+    const [databaseSummary, setDatabaseSummary] = useState({ tables : [], totalRecords : 0, totalSize : 0, totalTables : 0 })
+
+    useEffect(() => {
+      dataFetch(
+        "/api/system/database",
+        {
+          method : "GET",
+          credentials : "include",
+        },
+        (result) => {
+          if (typeof result !== "undefined") {
+            setDatabaseSummary({
+              tables : result?.tables,
+              totalRecords : result?.totalRecords,
+              totalSize : result?.totalSize,
+              totalTables : result?.totalTables
+            })
+          }
+        },
+        this.handleError("Unable to fetch database summary.")
+      );
+    }, [])
+
     return (<>
       <Paper elevation={1} style={{ padding : "2rem" }}>
         <Typography variant="h6" style={{ textAlign : "center" }}>Database Overview</Typography>
-        <Typography style={{ textAlign : "end" }}>Total Records : {this.state.databaseSummary?.totalRecords}</Typography>
-        <Typography style={{ textAlign : "end", paddingBottom : "0.5rem" }}>Total Size : {this.state.databaseSummary?.totalSize}</Typography>
+        <Typography style={{ textAlign : "end", paddingBottom : "0.5rem" }}>Total Records : {databaseSummary?.totalRecords}</Typography>
+        <Typography style={{ textAlign : "end", paddingBottom : "0.5rem" }}>Total Size : {databaseSummary?.totalSize}</Typography>
         <DataTable
           title={<>
             <Typography>Tables</Typography>
           </>
           }
-          data={this.state.databaseSummary?.tables}
+          data={databaseSummary?.tables}
           options={{
             filter : false,
             selectableRows : "none",
@@ -738,7 +742,7 @@ class MesherySettings extends React.Component {
           )}
         {tabVal === 3 && (
           <TabContainer>
-            {this.showDatabaseSummary()}
+            <this.DatabaseSummary />
             <div className={classes.container}>
               <Button
                 type="submit"
