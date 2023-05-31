@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withRouter } from 'next/router';
@@ -32,7 +32,7 @@ import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 import MeshModelComponent from './MeshModelComponent';
 import DataTable from "mui-datatables";
 import { configurationTableTheme, configurationTableThemeDark } from '../themes/configurationTableTheme';
-import dataFetch from '../lib/data-fetch';
+import DatabaseSummary from './DatabaseSummary';
 
 
 const styles = (theme) => ({
@@ -429,80 +429,6 @@ class MesherySettings extends React.Component {
     );
   };
 
-  DatabaseSummary = () => {
-    const [databaseSummary, setDatabaseSummary] = useState({ tables : [], totalRecords : 0, totalSize : 0, totalTables : 0 })
-
-    useEffect(() => {
-      dataFetch(
-        "/api/system/database",
-        {
-          method : "GET",
-          credentials : "include",
-        },
-        (result) => {
-          if (typeof result !== "undefined") {
-            setDatabaseSummary({
-              tables : result?.tables,
-              totalRecords : result?.totalRecords,
-              totalSize : result?.totalSize,
-              totalTables : result?.totalTables
-            })
-          }
-        },
-        this.handleError("Unable to fetch database summary.")
-      );
-    }, [])
-
-    return (<>
-      <Paper elevation={1} style={{ padding : "2rem" }}>
-        <Typography variant="h6" style={{ textAlign : "center" }}>Database Overview</Typography>
-        <Typography style={{ textAlign : "end", paddingBottom : "0.5rem" }}>Total Records : {databaseSummary?.totalRecords}</Typography>
-        <Typography style={{ textAlign : "end", paddingBottom : "0.5rem" }}>Total Size : {databaseSummary?.totalSize}</Typography>
-        <DataTable
-          title={<>
-            <Typography>Tables</Typography>
-          </>
-          }
-          data={databaseSummary?.tables}
-          options={{
-            filter : false,
-            selectableRows : "none",
-            responsive : "scrollMaxHeight",
-            print : false,
-            download : false,
-            viewColumns : false,
-            pagination : false,
-            fixedHeader : true,
-          }}
-          columns={[
-            {
-              name : "name",
-              label : "Name"
-            },
-            {
-              name : "count",
-              label : "Count"
-            }
-          ]}
-        />
-      </Paper>
-    </>)
-  };
-
-  handleError = (msg) => (error) => {
-    this.props.updateProgress({ showProgress : false });
-    const self = this;
-    this.props.enqueueSnackbar(`${msg}: ${error}`, {
-      variant : "error",
-      action : (key) => (
-        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-          <CloseIcon />
-        </IconButton>
-      ),
-      autoHideDuration : 7000,
-    });
-  };
-
   handleChange = (val) => {
     const self = this;
     return (event, newVal) => {
@@ -742,7 +668,7 @@ class MesherySettings extends React.Component {
           )}
         {tabVal === 3 && (
           <TabContainer>
-            <this.DatabaseSummary />
+            <DatabaseSummary />
             <div className={classes.container}>
               <Button
                 type="submit"
