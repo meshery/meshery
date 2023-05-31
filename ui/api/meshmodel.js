@@ -55,6 +55,24 @@ export async function getVersionedComponentFromModel(
   );
 }
 
+export async function getComponentsDetail(page) {
+  return await promisifiedDataFetch(
+    `api/meshmodels/components?page=${page}`
+  );
+}
+
+export async function getModelsDetail(page) {
+  return await promisifiedDataFetch(
+    `${MESHMODEL_ENDPOINT}?page=${page}`
+  );
+}
+
+export async function getRelationshipsDetail(page) {
+  return await promisifiedDataFetch(
+    `api/meshmodels/relationships?page=${page}`
+  );
+}
+
 export async function getMeshModelComponent(model, component, version, apiVersion) {
   const versionQueryString = !version ? "" : `?version=${version}`;
   const apiVersionQueryString = !apiVersion

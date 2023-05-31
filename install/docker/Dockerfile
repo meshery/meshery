@@ -70,6 +70,7 @@ RUN apk upgrade --no-cache && \
     apk add --no-cache libstdc++
 COPY ./server/meshmodel/components /app/server/meshmodel/components
 COPY ./server/meshmodel/relationships /app/server/meshmodel/relationships
+COPY ./server/meshmodel/policies /app/server/meshmodel/policies
 COPY --from=meshery-server /meshery /app/server/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd
 COPY --from=meshery-server /github.com/meshery/meshery/server/helpers/swagger.yaml /app/server/helpers/swagger.yaml
