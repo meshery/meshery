@@ -7,7 +7,7 @@ import { bindActionCreators } from "redux";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import {
-  AppBar, Paper, Tooltip, Button, IconButton, Typography
+  AppBar, Paper, Tooltip, IconButton, Typography
 } from '@material-ui/core';
 import CloseIcon from "@material-ui/icons/Close";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -21,7 +21,6 @@ import PrometheusComponent from './telemetry/prometheus/PrometheusComponent';
 import { updateProgress } from "../lib/store";
 import { withSnackbar } from "notistack";
 import PromptComponent from './PromptComponent';
-import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 import { iconMedium } from '../css/icons.styles';
 import MeshModelComponent from './MeshModelComponent';
 import DatabaseSummary from './DatabaseSummary';
@@ -59,15 +58,6 @@ const styles = (theme) => ({
   },
   backToPlay : { margin : theme.spacing(2), },
   link : { cursor : 'pointer', },
-  DBBtn : {
-    margin : theme.spacing(0.5),
-    padding : theme.spacing(1),
-    borderRadius : 5,
-    backgroundColor : "#8F1F00",
-    "&:hover" : {
-      backgroundColor : "#B32700",
-    },
-  },
   container : {
     display : "flex",
     justifyContent : "center",
@@ -204,7 +194,7 @@ class MesherySettings extends React.Component {
       scannedGrafana : [],
     };
 
-    this.systemResetRef = React.createRef();
+    this.systemResetPromptRef = React.createRef();
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -308,45 +298,6 @@ class MesherySettings extends React.Component {
       }
     };
   }
-
-  handleResetDatabase = () => {
-    return async () => {
-      let responseOfResetDatabase = await this.systemResetRef.current.show({
-        title : "Reset Meshery Database?",
-        subtitle : "Are you sure that you want to purge all data?",
-        options : ["RESET", "CANCEL"]
-      });
-      if (responseOfResetDatabase === "RESET") {
-        this.props.updateProgress({ showProgress : true });
-        const self = this;
-        resetDatabase({
-          selector : {
-            clearDB : "true",
-            ReSync : "true",
-            hardReset : "true",
-          },
-          k8scontextID : ""
-        }).subscribe({
-          next : (res) => {
-            self.props.updateProgress({ showProgress : false });
-            if (res.resetStatus === "PROCESSING") {
-              this.props.enqueueSnackbar(`Database reset successful.`, {
-                variant : "success",
-                action : (key) => (
-                  <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                    <CloseIcon />
-                  </IconButton>
-                ),
-                autohideduration : 3000,
-              })
-            }
-          },
-          error : self.handleError("Database is not reachable, try restarting server.")
-        });
-      }
-    }
-  }
-
 
   render() {
     const { classes } = this.props;
@@ -494,20 +445,7 @@ class MesherySettings extends React.Component {
           )}
         {tabVal === 3 && (
           <TabContainer>
-            <DatabaseSummary />
-            <div className={classes.container}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={this.handleResetDatabase()}
-                className={classes.DBBtn}
-                data-cy="btnResetDatabase"
-              >
-                <Typography align="center" variant="body2"> RESET DATABASE </Typography>
-              </Button>
-            </div>
+            <DatabaseSummary promptRef={this.systemResetPromptRef} />
           </TabContainer>
         )}
         {(tabVal === 4) && (
@@ -570,7 +508,7 @@ class MesherySettings extends React.Component {
         )} */}
 
         {backToPlay}
-        <PromptComponent ref={this.systemResetRef} />
+        <PromptComponent ref={this.systemResetPromptRef} />
       </div>
     );
   }
