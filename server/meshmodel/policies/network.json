@@ -7,11 +7,11 @@
     "version": "v1.0.0"
   },
   "model": {
-    "name": "core",
-    "version": "v1.0.0",
-    "displayName": "Core",
+    "name": "kubernetes",
+    "version": "*",
+    "displayName": "Kubernetes",
     "category": {
-      "name": "Cloud Native Application",
+      "name": "Orchestration Management",
       "metadata": null
     },
     "metadata": {}
