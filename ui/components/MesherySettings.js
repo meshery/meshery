@@ -496,17 +496,17 @@ class MesherySettings extends React.Component {
           <TabContainer>
             <DatabaseSummary />
             <div className={classes.container}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  onClick={this.handleResetDatabase()}
-                  className={classes.DBBtn}
-                  data-cy="btnResetDatabase"
-                >
-                  <Typography align="center" variant='body2'> RESET DATABASE </Typography>
-                </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={this.handleResetDatabase()}
+                className={classes.DBBtn}
+                data-cy="btnResetDatabase"
+              >
+                <Typography align="center" variant="body2"> RESET DATABASE </Typography>
+              </Button>
             </div>
           </TabContainer>
         )}
