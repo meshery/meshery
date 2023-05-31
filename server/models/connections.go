@@ -7,6 +7,7 @@ import (
 	"github.com/gofrs/uuid"
 )
 
+// swagger:response Connection
 type Connection struct {
 	ID           uuid.UUID              `json:"id,omitempty" db:"id"`
 	Name         string                 `json:"name,omitempty" db:"name"`
@@ -21,6 +22,7 @@ type Connection struct {
 	DeletedAt    sql.NullTime           `json:"deleted_at,omitempty" db:"deleted_at"`
 }
 
+// swagger:response ConnectionPage
 type ConnectionPage struct {
 	Connection []Connection `json:"connection"`
 	TotalCount int          `json:"total_count"`

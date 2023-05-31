@@ -12,6 +12,11 @@ import (
 	"github.com/layer5io/meshery/server/models"
 )
 
+// swagger:route POST /api/integrations/connection PostConnection idPostConnection
+// Handle POST request for creating a new connection
+//
+// responses:
+// 201:
 func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
@@ -39,13 +44,25 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 	w.WriteHeader(http.StatusCreated)
 }
 
+// swagger:route GET /api/integrations/connections/{connectionKind} GetConnectionsByKind idGetConnectionsByKind
+// Handle GET request for getting all connections for a given kind.
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?search={modelname}``` If search is non empty then a greedy search is performed
+//
+// ```?page={page-number}``` Default page number is 1
+//
+// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+// responses:
+// 200: ConnectionPage
 func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	q := req.URL.Query()
 	connectionKind := mux.Vars(req)["connectionKind"]
 	page, _ := strconv.Atoi(q.Get("page"))
 	order := q.Get("order")
 	search := q.Get("search")
-	pageSize, _ := strconv.Atoi(q.Get("page_size"))
+	pageSize, _ := strconv.Atoi(q.Get("pagesize"))
 
 	if pageSize > 25 {
 		pageSize = 25
@@ -76,6 +93,11 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, _ *mo
 	}
 }
 
+// swagger:route PUT /api/integrations/connection/{connectionKind}/edit PUtConnection idPUtConnection
+// Handle PUT request for updating an existing connection
+//
+// responses:
+// 200:
 func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
@@ -103,6 +125,11 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 	w.WriteHeader(http.StatusOK)
 }
 
+// swagger:route DELETE /api/integrations/connection/{connectionId}/delete DeleteConnection idDeleteConnection
+// Handle DELETE request for deleting an existing connection by connection ID
+//
+// responses:
+// 200:
 func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	q := req.URL.Query()
 
