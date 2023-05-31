@@ -16,7 +16,7 @@ import (
 // Handle POST request for creating a new connection
 //
 // responses:
-// 201:
+// 201: noContentWrapper
 func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
@@ -97,7 +97,7 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, _ *mo
 // Handle PUT request for updating an existing connection
 //
 // responses:
-// 200:
+// 200: noContentWrapper
 func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
@@ -129,7 +129,7 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 // Handle DELETE request for deleting an existing connection by connection ID
 //
 // responses:
-// 200:
+// 200: noContentWrapper
 func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	q := req.URL.Query()
 

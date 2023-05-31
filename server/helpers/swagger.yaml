@@ -408,7 +408,7 @@ paths:
             operationId: idPostConnection
             responses:
                 "201":
-                    description: ""
+                    $ref: '#/responses/noContentWrapper'
             tags:
                 - PostConnection
     /api/integrations/connection/{connectionId}/delete:
@@ -417,7 +417,7 @@ paths:
             operationId: idDeleteConnection
             responses:
                 "200":
-                    description: ""
+                    $ref: '#/responses/noContentWrapper'
             tags:
                 - DeleteConnection
     /api/integrations/connection/{connectionKind}/edit:
@@ -426,7 +426,7 @@ paths:
             operationId: idPUtConnection
             responses:
                 "200":
-                    description: ""
+                    $ref: '#/responses/noContentWrapper'
             tags:
                 - PUtConnection
     /api/integrations/connections/{connectionKind}:
