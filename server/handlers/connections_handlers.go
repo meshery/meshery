@@ -15,6 +15,7 @@ import (
 // swagger:route POST /api/integrations/connection PostConnection idPostConnection
 // Handle POST request for creating a new connection
 //
+// Creates a new connection
 // responses:
 // 201: noContentWrapper
 func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -93,9 +94,10 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, _ *mo
 	}
 }
 
-// swagger:route PUT /api/integrations/connection/{connectionKind}/edit PUtConnection idPUtConnection
+// swagger:route PUT /api/integrations/connection/{connectionKind}/edit PutConnection idPUtConnection
 // Handle PUT request for updating an existing connection
 //
+// Updates existing connection
 // responses:
 // 200: noContentWrapper
 func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
@@ -128,6 +130,7 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 // swagger:route DELETE /api/integrations/connection/{connectionId}/delete DeleteConnection idDeleteConnection
 // Handle DELETE request for deleting an existing connection by connection ID
 //
+// Deletes existing connection
 // responses:
 // 200: noContentWrapper
 func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {

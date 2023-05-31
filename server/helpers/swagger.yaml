@@ -404,31 +404,34 @@ paths:
                 - UserAPI
     /api/integrations/connection:
         post:
-            description: Handle POST request for creating a new connection
+            description: Creates a new connection
             operationId: idPostConnection
             responses:
                 "201":
                     $ref: '#/responses/noContentWrapper'
+            summary: Handle POST request for creating a new connection
             tags:
                 - PostConnection
     /api/integrations/connection/{connectionId}/delete:
         delete:
-            description: Handle DELETE request for deleting an existing connection by connection ID
+            description: Deletes existing connection
             operationId: idDeleteConnection
             responses:
                 "200":
                     $ref: '#/responses/noContentWrapper'
+            summary: Handle DELETE request for deleting an existing connection by connection ID
             tags:
                 - DeleteConnection
     /api/integrations/connection/{connectionKind}/edit:
         put:
-            description: Handle PUT request for updating an existing connection
+            description: Updates existing connection
             operationId: idPUtConnection
             responses:
                 "200":
                     $ref: '#/responses/noContentWrapper'
+            summary: Handle PUT request for updating an existing connection
             tags:
-                - PUtConnection
+                - PutConnection
     /api/integrations/connections/{connectionKind}:
         get:
             description: |-
