@@ -1,24 +1,12 @@
 package system
 
 import (
-	"fmt"
 	"testing"
 )
 
 func TestViewProviderCmd(t *testing.T) {
 	SetupContextEnv(t)
-	expectedResponseForAll := ""
-	for k, v := range mctlCfg.Contexts {
-		expectedResponseForAll += PrintProviderToStdout(v, k) + "\n\n"
-	}
-	expectedResponseForAll += fmt.Sprintf("Current Context: %v\n", mctlCfg.CurrentContext)
-
 	tests := []CmdTestInput{
-		// {
-		// 	Name:             "view with all flag",
-		// 	Args:             []string{"provider", "view", "--all"},
-		// 	ExpectedResponse: expectedResponseForAll,
-		// },
 		{
 			Name:             "view without any parameter",
 			Args:             []string{"provider", "view"},
