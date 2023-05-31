@@ -545,7 +545,7 @@ func createPatternServiceFromK8s(manifest map[string]interface{}, regManager *me
 	}
 
 	// Get MeshModel entity with the selectors
-	componentList := regManager.GetEntities(&meshmodelv1alpha1.ComponentFilter{
+	componentList, _ := regManager.GetEntities(&meshmodelv1alpha1.ComponentFilter{
 		Name:       kind,
 		APIVersion: apiVersion,
 	})

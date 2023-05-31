@@ -59,7 +59,7 @@ class UserPref extends React.Component {
         </Head>
         <Paper className={this.props.classes.paper}>
           {/* {should meshmap specific user preferences be placed along with general preferences or from the remote provider} */}
-          <UserPreferences anonymousStats={anonymousStats} perfResultStats={perfResultStats}/>
+          <UserPreferences anonymousStats={anonymousStats} perfResultStats={perfResultStats}  theme={this.props.theme} themeSetter={this.props.themeSetter}/>
         </Paper>
       </NoSsr>
     );
