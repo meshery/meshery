@@ -7,6 +7,7 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
+import GetAppIcon from '@material-ui/icons/GetApp';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import SaveIcon from '@material-ui/icons/Save';
 import MUIDataTable from "mui-datatables";
@@ -32,7 +33,7 @@ import DoneAllIcon from '@material-ui/icons/DoneAll';
 import DoneIcon from '@material-ui/icons/Done';
 import PublicIcon from '@material-ui/icons/Public';
 import ConfirmationModal from "./ConfirmationModal";
-import PublishIcon from "@material-ui/icons/Publish";
+import PublishIcon from "@material-ui/icons/Publisnameh";
 import PromptComponent from "./PromptComponent";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
@@ -43,6 +44,7 @@ import { ACTIONS, FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from "../utils/
 import PublishModal from "./PublishModal";
 import CloneIcon from "../public/static/img/CloneIcon";
 import { useRouter } from "next/router";
+import downloadFile from "../utils/fileDownloader";
 
 const styles = (theme) => ({
   grid : {
@@ -797,6 +799,27 @@ function MesheryPatterns({
     }
   }
 
+  const handleDownload = (e, id, name) => {
+    e.stopPropagation();
+    updateProgress({ showProgress : true });
+    try {
+      downloadFile({ id, name, type : "pattern" })
+      updateProgress({ showProgress : false });
+      enqueueSnackbar(`"${name}" Design downloaded`, {
+        variant : "success",
+        action : function Action(key) {
+          return (
+            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+              <CloseIcon />
+            </IconButton>
+          );
+        }
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   function uploadHandler(ev) {
     if (!ev.target.files?.length) return;
 
@@ -962,6 +985,13 @@ function MesheryPatterns({
               >
                 <DoneAllIcon data-cy="deploy-button" />
               </TooltipIcon>
+              <TooltipIcon
+                title="Download"
+                onClick={(e) => handleDownload(e, rowData.id, rowData.name)}
+              >
+                <GetAppIcon data-cy="download-button" />
+              </TooltipIcon>
+
               {canPublishPattern &&
                 (<TooltipIcon
                   title="Publish"

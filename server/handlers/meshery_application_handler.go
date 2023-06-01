@@ -671,14 +671,6 @@ func (h *Handler) GetMesheryApplicationFile(
 		return
 	}
 
-	var mimeType string
-	switch filepath.Ext(applicationID) {
-	case ".json":
-		mimeType = "text/plain"
-	default:
-		mimeType = "application/x-yaml"
-	}
-
 	application := &models.MesheryApplication{}
 
 	err = json.Unmarshal(resp, &application)
@@ -687,7 +679,8 @@ func (h *Handler) GetMesheryApplicationFile(
 		http.Error(rw, ErrApplicationFailure(err, "parse failure").Error(), http.StatusInternalServerError)
 		return
 	}
-	rw.Header().Set("Content-Type", mimeType)
+
+	rw.Header().Set("Content-Type", "application/x-yaml")
 	if _, err := io.Copy(rw, strings.NewReader(application.ApplicationFile)); err != nil {
 		h.log.Error(ErrApplicationSourceContent(err, "download"))
 		http.Error(rw, ErrApplicationSourceContent(err, "download").Error(), http.StatusInternalServerError)
