@@ -683,8 +683,8 @@ func (h *Handler) GetMesheryApplicationFile(
 
 	err = json.Unmarshal(resp, &application)
 	if err != nil {
-		h.log.Error(ErrApplicationFailure(err, "error parsing response"))
-		http.Error(rw, ErrApplicationFailure(err, "error parsing response").Error(), http.StatusInternalServerError)
+		h.log.Error(ErrApplicationFailure(err, "parse failure"))
+		http.Error(rw, ErrApplicationFailure(err, "parse failure").Error(), http.StatusInternalServerError)
 		return
 	}
 	rw.Header().Set("Content-Type", mimeType)
