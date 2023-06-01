@@ -123,7 +123,7 @@
     "@babel/types": "^7.20.7",
     "@next/eslint-plugin-next": "^13.1.2",
     "@storybook/addon-interactions": "^6.5.16",
-    "@storybook/addon-styling": "^0.3.2",
+    "@storybook/addon-styling": "^1.0.8",
     "@storybook/manager-webpack5": "^6.5.16",
     "@storybook/react": "^7.0.7",
     "@storybook/testing-library": "^0.0.13",
