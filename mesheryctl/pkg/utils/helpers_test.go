@@ -11,7 +11,42 @@ import (
 	"testing"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/pkg/errors"
+	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/test"
 )
+
+type mockCloser struct {
+	closeFunc func() error
+}
+
+func (m mockCloser) Close() error {
+	return m.closeFunc()
+
+}
+
+func TestSafeClose(t *testing.T) {
+
+	log := logrus.New()
+	hook := test.NewGlobal()
+	log.AddHook(hook)
+
+	// testcases for SafeClose(co io.Closer)
+	t.Run("SafeClose", func(t *testing.T) {
+		// define a io.Closer for testing
+		expectedErr := errors.New("close error")
+		mc := &mockCloser{
+			closeFunc: func() error {
+				return expectedErr
+			},
+		}
+		SafeClose(mc)
+
+		if len(hook.Entries) != 1 {
+			t.Fatal("expected 1 log entry")
+		}
+	})
+}
 
 func getFixturesDirectory() string {
 	_, filename, _, ok := runtime.Caller(0)
