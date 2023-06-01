@@ -26,21 +26,16 @@ jobs:
       - uses: actions/checkout@master
       - uses: actions/setup-go@master
         with:
-          check-latest: "true"
           go-version: "1.19.x"
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          # Required: the version of golangci-lint is required and must be specified without patch version: we always use the latest patch version.
-          version: latest
-          # Optional: working directory, useful for monorepos
+          version: "latest"
           working-directory: mesheryctl
-
-          # Optional: golangci-lint command line arguments.
-          # args: --issues-exit-code=0
-
-          # Optional: show only new issues if it's a pull request. The default value is `false`.
-          # only-new-issues: true
+          args: --timeout 5m --verbose
+          skip-cache: true
+          skip-pkg-cache: true
+          skip-build-cache: true
   mesheryctl_build:
     name: Mesheryctl build & release
     if: github.repository == 'meshery/meshery'
