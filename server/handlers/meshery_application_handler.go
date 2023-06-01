@@ -679,23 +679,19 @@ func (h *Handler) GetMesheryApplicationFile(
 		mimeType = "application/x-yaml"
 	}
 
-	var appResp struct {
-		ApplicationFile string `json:"application_file"`
-	}
+	application := &models.MesheryApplication{}
 
-	err = json.Unmarshal(resp, &appResp)
+	err = json.Unmarshal(resp, &application)
 	if err != nil {
 		h.log.Error(ErrApplicationFailure(err, "error parsing response"))
 		http.Error(rw, ErrApplicationFailure(err, "error parsing response").Error(), http.StatusInternalServerError)
 		return
 	}
-
-	reader := strings.NewReader(appResp.ApplicationFile)
 	rw.Header().Set("Content-Type", mimeType)
-	_, err = io.Copy(rw, reader)
-	if err != nil {
+	if _, err := io.Copy(rw, strings.NewReader(application.ApplicationFile)); err != nil {
 		h.log.Error(ErrApplicationSourceContent(err, "download"))
 		http.Error(rw, ErrApplicationSourceContent(err, "download").Error(), http.StatusInternalServerError)
+		return
 	}
 }
 
