@@ -6,25 +6,7 @@ import (
 	"os/exec"
 )
 
-// GenerateConfigMinikube generates kube config file in ~/.meshery/kubeconfig.yaml for a Minikube cluster
-func GenerateConfigMinikube(configPath string) error {
-	script := fmt.Sprintf(`
-	set -e
-	set -o pipefail
-
-	TARGET_FILE="%s"
-
-	kubectl config view --minify --flatten > ${TARGET_FILE}
-	`, configPath)
-
-	generateCFG := exec.Command("bash", "-c", script)
-	generateCFG.Stdout = os.Stdout
-	generateCFG.Stderr = os.Stderr
-
-	return generateCFG.Run()
-}
-
-// GenerateConfigGKE generates kube config file in ~/.meshery/kubeconfig.yaml for a GKE cluster
+// TODO@Aisuko this function is so hard to read and maintain, please refactor it
 func GenerateConfigGKE(configPath, SAName, namespc string) error {
 	script := fmt.Sprintf(`
 	set -e
@@ -110,62 +92,6 @@ func GenerateConfigGKE(configPath, SAName, namespc string) error {
 	echo "you should not have any permissions by default - you have just created the authentication part"
 	echo "You will need to create RBAC permissions"
 	`, configPath, SAName, namespc)
-
-	generateCFG := exec.Command("sh", "-c", script)
-	generateCFG.Stdout = os.Stdout
-	generateCFG.Stderr = os.Stderr
-
-	return generateCFG.Run()
-}
-
-// GenerateConfigAKS generates kube config file in ~/.meshery/kubeconfig.yaml for a AKS cluster
-func GenerateConfigAKS(configPath, resourceGroup, clusterName string) error {
-	script := fmt.Sprintf(`
-	set -e
-	set -o pipefail
-
-	TARGET_FILE="%s"
-	Resource_Group="%s"
-	Cluster_Name="%s"
-
-	fetch_aks_script() {
-		printf "\n"
-		az aks get-credentials --resource-group "${Resource_Group}" --name "${Cluster_Name}" --file "${TARGET_FILE}"
-	}
-
-	fetch_aks_script
-	"
-	`, configPath, resourceGroup, clusterName)
-
-	generateCFG := exec.Command("bash", "-c", script)
-	generateCFG.Stdout = os.Stdout
-	generateCFG.Stderr = os.Stderr
-
-	return generateCFG.Run()
-}
-
-// GenerateConfigEKS generates kube config file in .meshery/kubeconfig.yaml for an EKS cluster
-func GenerateConfigEKS(configPath, region, cluster string) error {
-	script := fmt.Sprintf(`
-	set -e
-	set -o pipefail
-
-	KUBECFG_FILE_NAME="%s"
-	REGION_NAME=%s
-	CLUSTER_NAME="%s"
-	KUBECONFIG=${KUBECFG_FILE_NAME}
-
-	create_update_kubeconfig() {
-		echo -e "\\nGenerating kubeconfig for EKS cluster ${CLUSTER_NAME}..."
-		aws eks --region ${REGION_NAME} update-kubeconfig --name ${CLUSTER_NAME} --kubeconfig ${KUBECONFIG} >/dev/null 2>&1 || \
-		(echo -e "\\naws CLI is not available on the system.\nInstall aws CLI and run 'mesheryctl system config eks' command again" && \
-		aws --version >/dev/null 2>&1)
-	}
-
-	create_update_kubeconfig
-
-	echo -e "\\nEKS kubeconfig ready for use by Meshery: "${KUBECFG_FILE_NAME}
-	`, configPath, region, cluster)
 
 	generateCFG := exec.Command("sh", "-c", script)
 	generateCFG.Stdout = os.Stdout

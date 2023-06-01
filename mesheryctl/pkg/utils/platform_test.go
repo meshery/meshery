@@ -28,62 +28,13 @@ func init() {
 	}
 }
 
-func TestGetManifestURL(t *testing.T) {
-	type args struct {
-		manifest        Manifest
-		rawManifestsURL string
-	}
-
-	rawMfestsURL := "https://testurl.com/k8s/"
-
-	tests := []struct {
-		name    string
-		args    args
-		fixture string
-		golden  string
-	}{
-		{
-			name: "Get Manifest URL (blob)",
-			args: args{
-				rawManifestsURL: rawMfestsURL,
-			},
-			fixture: "getmanifesturl.blob.golden",
-			golden:  "getmanifesturl.expect.blob.golden",
-		},
-		{
-			name: "Get Manifest URL (non-blob)",
-			args: args{
-				rawManifestsURL: rawMfestsURL,
-			},
-			fixture: "getmanifesturl.other.golden",
-			golden:  "getmanifesturl.expect.other.golden",
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			// Read fixture
-			file, _ := os.ReadFile("fixtures/platform/" + tt.fixture)
-			manifest := Manifest{}
-			_ = json.Unmarshal([]byte(file), &manifest)
-
-			tt.args.manifest = manifest
-
-			got := GetManifestURL(tt.args.manifest, tt.args.rawManifestsURL)
-
-			// Read golden file
-			golden := NewGoldenFile(t, tt.golden, "testdata/platform/")
-			if *update {
-				golden.Write(got)
-			}
-
-			want := golden.Load()
-
-			if got != want {
-				t.Fatalf("GetManifestURL() = %v, want %v", got, want)
-			}
-		})
-	}
+func TestPlatform(t *testing.T) {
+	t.Run("GetManifestTreeURL", func(t *testing.T) {
+		_, err := GetManifestTreeURL("master")
+		if err != nil {
+			t.Fatal(err)
+		}
+	})
 }
 
 func TestDownloadManifests(t *testing.T) {
