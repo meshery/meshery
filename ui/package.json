@@ -108,7 +108,7 @@
     "react-slick": "^0.29.0",
     "redux": "^4.2.0",
     "redux-thunk": "^2.4.0",
-    "relay-runtime": "^14.0.0",
+    "relay-runtime": "^15.0.0",
     "set-value": "^4.0.1",
     "styled-jsx": "^4.0.1",
     "tar": "^6.1.12",
