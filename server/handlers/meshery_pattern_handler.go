@@ -401,6 +401,47 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
+// swagger:route GET /api/pattern/{id} PatternsAPI idGetMesheryPattern
+// Handle GET request for Meshery Pattern with the given id
+//
+// Get the pattern with the given id
+// responses:
+//  200:
+
+// GetMesheryPatternHandler returns the pattern file with the given id
+
+func (h *Handler) DownloadMesheryPatternHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	_ *models.Preference,
+	_ *models.User,
+	provider models.Provider,
+) {
+	patternID := mux.Vars(r)["id"]
+	resp, err := provider.GetMesheryPattern(r, patternID)
+	if err != nil {
+		h.log.Error(ErrGetPattern(err))
+		http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)
+		return
+	}
+
+	pattern := &models.MesheryPattern{}
+
+	err = json.Unmarshal(resp, &pattern)
+	if err != nil {
+		obj := "download pattern"
+		h.log.Error(ErrUnmarshal(err, obj))
+		http.Error(rw, ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	rw.Header().Set("Content-Type", "application/x-yaml")
+	if _, err := io.Copy(rw, strings.NewReader(pattern.PatternFile)); err != nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 // swagger:route POST /api/pattern/clone/{id} PatternsAPI idCloneMesheryPattern
 // Handle Clone for a Meshery Pattern
 //
