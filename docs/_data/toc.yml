@@ -35,8 +35,6 @@
       url: project/security-vulnerabilities
     - title: FAQ
       url: project/faq
-    - title: Meshery Playground
-      url: project/playground
     - title: Supported Platforms ↆ
       url: installation/platforms
       children:
@@ -80,6 +78,13 @@
       url: tasks/pattern-management
     - title: Performance Management
       url: tasks/performance-management
+- title: 📑 Features
+  url: features
+  links:
+    - title: Meshery Playground
+      url: features/playground
+
+
     # - title: Service Mesh Interface (SMI) Conformance
     #   url: tasks/service-mesh-interface
 # - title: 🦾 Service Meshes
