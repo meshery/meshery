@@ -24,6 +24,7 @@ type HandlerInterface interface {
 	AuthMiddleware(http.Handler, AuthenticationMechanism) http.Handler
 	KubernetesMiddleware(func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)) func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)
 	MesheryControllersMiddleware(func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)) func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)
+	AuthorizationMiddleware(func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)) func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)
 	SessionInjectorMiddleware(func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)) http.Handler
 	GraphqlMiddleware(http.Handler) func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)
 
@@ -165,6 +166,7 @@ type HandlerInterface interface {
 	UpdateUserCredential(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteUserCredential(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetRegoPolicyForDesignFile(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	// GetUserRole(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 }
 
 // HandlerConfig holds all the config pieces needed by handler methods

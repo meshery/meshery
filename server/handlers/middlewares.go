@@ -3,16 +3,42 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
 
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/models/meshmodel/core/policies"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
 const providerQParamName = "provider"
+
+func (h *Handler) AuthorizationMiddleware(next func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider)) func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider) {
+	return func(w http.ResponseWriter, req *http.Request, prefsObj *models.Preference, user *models.User, provider models.Provider) {
+		respbody, err := json.Marshal(user)
+		if err != nil {
+			h.log.Error(ErrMarshal(err, "Marshaling user error"))
+			http.Error(w, ErrMarshal(err, "Marshaling user error").Error(), http.StatusBadRequest)
+		}
+		authorizationPolicy, err := policies.RegoPolicyHandler(context.Background(), []string{"../meshmodel/policies"}, "data.user_authorization", respbody)
+		if err != nil {
+			h.log.Error(ErrResolvingRegoRelationship(err))
+			http.Error(w, ErrResolvingRegoRelationship(err).Error(), http.StatusInternalServerError)
+		}
+		if authorizationPolicy["allow"] == true {
+			w.WriteHeader(http.StatusAccepted)
+			logrus.Debug("You are Authorized")
+			next(w, req, prefsObj, user, provider)
+		} else {
+			w.WriteHeader(http.StatusForbidden)
+			logrus.Debug("You are Unauthorized")
+			return
+		}
+	}
+}
 
 // ProviderMiddleware is a middleware to validate if a provider is set
 func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
