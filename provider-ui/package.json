@@ -25,7 +25,7 @@
     "@emotion/cache": "^11.10.5",
     "@emotion/react": "^11.10.8",
     "@emotion/server": "^11.10.0",
-    "@emotion/styled": "^11.10.6",
+    "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.11.15",
     "babel-plugin-istanbul": "^6.1.1",
@@ -41,7 +41,7 @@
     "eslint": "^8.39.0",
     "eslint-config-next": "^13.2.4",
     "eslint-plugin-cypress": "^2.13.2",
-    "start-server-and-test": "^1.15.3"
+    "start-server-and-test": "^2.0.0"
   },
   "engines": {
     "node": "^16 || ^18"
