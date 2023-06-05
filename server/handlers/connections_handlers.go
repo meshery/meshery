@@ -136,7 +136,7 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	q := req.URL.Query()
 
-	connectionID := uuid.FromStringOrNil(q.Get("connection_id"))
+	connectionID := uuid.FromStringOrNil(q.Get("connectionId"))
 	_, err := provider.DeleteConnection(req, connectionID)
 	if err != nil {
 		h.log.Error(fmt.Errorf("error deleting user connection: %v", err))
