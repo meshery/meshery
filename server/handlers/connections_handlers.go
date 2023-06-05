@@ -94,7 +94,7 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, _ *mo
 	}
 }
 
-// swagger:route PUT /api/integrations/connection/{connectionKind}/edit PutConnection idPUtConnection
+// swagger:route PUT /api/integrations/connection/{connectionKind}/edit PutConnection idPutConnection
 // Handle PUT request for updating an existing connection
 //
 // Updates existing connection

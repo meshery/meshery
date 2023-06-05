@@ -425,7 +425,7 @@ paths:
     /api/integrations/connection/{connectionKind}/edit:
         put:
             description: Updates existing connection
-            operationId: idPUtConnection
+            operationId: idPutConnection
             responses:
                 "200":
                     $ref: '#/responses/noContentWrapper'

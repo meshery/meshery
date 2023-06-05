@@ -26,7 +26,7 @@ paths:
             tags:
                 - PutConnection
             summary: Handle PUT request for updating an existing connection
-            operationId: idPUtConnection
+            operationId: idPutConnection
             responses:
                 "200":
                     description: ""
