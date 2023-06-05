@@ -20,7 +20,7 @@ func ErrParseK8sManifest(err error) error {
 }
 
 func ErrCreatePatternService(err error) error {
-	return errors.New(ErrParseK8sManifestCode, errors.Alert, []string{"Failed to create pattern service from Manifest"}, []string{err.Error()}, []string{"Invalid Manifest", "Meshery doesn't identifies the Resource mentioned in the Manifest"}, []string{"Check if all of the meshery adapters are running", "Check if Meshery has successfully identified and registered Kubernetes components"})
+	return errors.New(ErrCreatePatternServiceCode, errors.Alert, []string{"Failed to create pattern service from Manifest"}, []string{err.Error()}, []string{"Invalid Manifest", "Meshery doesn't identifies the Resource mentioned in the Manifest"}, []string{"Check if all of the meshery adapters are running", "Check if Meshery has successfully identified and registered Kubernetes components"})
 }
 
 func ErrPatternFromCytoscape(err error) error {
