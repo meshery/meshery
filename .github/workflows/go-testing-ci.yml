@@ -18,9 +18,28 @@ on:
         default: "warning"
 
 jobs:
+  golangci:
+    strategy:
+      matrix:
+        go: [1.19]
+        os: [ubuntu-22.04]
+    name: golangci-lint
+    if: github.repository == 'meshery/meshery'
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go }}
+      - uses: actions/checkout@v3
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.52.0
+          args: --timeout 5m --verbose
   unit-tests:
     name: Unit tests
     runs-on: ubuntu-22.04
+    needs: golangci
     steps:
       - uses: actions/checkout@master
         with:
@@ -42,6 +61,7 @@ jobs:
   integration-tests:
     name: Integration tests
     runs-on: ubuntu-22.04
+    needs: golangci
     steps:
       - uses: actions/checkout@master
         with:
