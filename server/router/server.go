@@ -309,6 +309,16 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/integrations/credentials", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteUserCredential), models.ProviderAuth))).
 		Methods("DELETE")
 
+	// Handlers for User Connections
+	gMux.Handle("/api/integrations/connection", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveConnection), models.ProviderAuth))).
+		Methods("POST")
+	gMux.Handle("/api/integrations/connections/{connectionKind}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetConnections), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/integrations/connection/{connectionKind}/edit", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateConnection), models.ProviderAuth))).
+		Methods("PUT")
+	gMux.Handle("/api/integrations/connection/{connectionId}/delete", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteConnection), models.ProviderAuth))).
+		Methods("DELETE")
+
 	return &Router{
 		S:    gMux,
 		port: port,
