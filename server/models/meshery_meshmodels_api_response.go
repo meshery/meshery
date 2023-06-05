@@ -19,3 +19,14 @@ type MeshmodelRelationshipsAPIResponse struct {
 	Count         int64                             `json:"total_count"`
 	Relationships []v1alpha1.RelationshipDefinition `json:"relationships"`
 }
+
+// API response for relationships between components/services based on policy
+type NetworkPolicyEvalResultAPIResponse struct {
+	Relationships map[string]interface{}   `json:"relationships"`
+}
+
+// API reponse for meshmodel policies API
+type MeshmodelPoliciesAPIResponse struct {
+	Count    int64                          `json:"total_count"`
+	Policies []v1alpha1.PolicyDefinition    `json:"policies"`
+}
