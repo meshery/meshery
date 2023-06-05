@@ -18,7 +18,7 @@ import MeshConfigComponent from './MeshConfigComponent';
 import GrafanaComponent from './telemetry/grafana/GrafanaComponent';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
 import PrometheusComponent from './telemetry/prometheus/PrometheusComponent';
-import { updateProgress } from "../lib/store";
+import { updateProgress, updatepagetitle } from "../lib/store";
 import { withSnackbar } from "notistack";
 import PromptComponent from './PromptComponent';
 import resetDatabase from './graphql/queries/ResetDatabaseQuery';
@@ -204,6 +204,10 @@ class MesherySettings extends React.Component {
     };
 
     this.systemResetRef = React.createRef();
+  }
+
+  componentDidMount() {
+    this.props.updatepagetitle({ title : "Settings" })
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -594,7 +598,10 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
+const mapDispatchToProps = (dispatch) => ({
+  updateProgress : bindActionCreators(updateProgress, dispatch),
+  updatepagetitle : bindActionCreators(updatepagetitle, dispatch),
+});
 
 MesherySettings.propTypes = { classes : PropTypes.object, };
 
