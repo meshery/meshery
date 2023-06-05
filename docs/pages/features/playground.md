@@ -21,7 +21,7 @@ Meshery Playground also has pre-built scenarios that demonstrate how to implemen
 
 ## Meshery Playground FAQ
 #### Question: Why do I need to sign-up/register to use the Cloud Native Playground?
-**Answer** _The Playground is connected to live Kubernetes clusters, and while these clusters are refreshed on a daily basis, the clusters do need to be protected from nefarious actors, who might use these clusters for cryptomining, for example._
+**Answer:** _The Playground is connected to live Kubernetes clusters, and while these clusters are refreshed on a daily basis, the clusters do need to be protected from nefarious actors, who might use these clusters for cryptomining, for example._
 
 _Sign-up to receive a user account, entitled with perpetually free and full access the Playground environment._
 
@@ -29,18 +29,18 @@ _The Meshery Playground is connected to live Kubernetes cluster(s) and allows us
 
 
 #### Question: Will I lose my Meshery designs in the Cloud Native Playground?
-**Answer**_No, all of the designs that you have created in the Meshery Playground are saved to your user account and will be available to you each time that you sign into your account. Your designs will be available in the Meshery Playground and any your other Meshery deployments, too._
+**Answer:** _No, all of the designs that you have created in the Meshery Playground are saved to your user account and will be available to you each time that you sign into your account. Your designs will be available in the Meshery Playground and any your other Meshery deployments, too._
 
 _In other words, all work done in MeshMap Designer is persisted to your user account._
 
 
 #### Question: Will I lose my Meshery deployments in the Cloud Native Playground?
-**Answer**_Yes, the Meshery Playground clusters are reset on a daily basis. However, only deployments (not designs) that you may have created will be lost._
+**Answer:** _Yes, the Meshery Playground clusters are reset on a daily basis. However, only deployments (not designs) that you may have created will be lost._
 
 _In other words, only MeshMap Visualizer is reset. All of your work in Meshery UI and MeshMap Designer will remain in your user account._
 
 #### Question: Is there a demo user account that everyone can use? 
-**Answer**_It is imperative that each user has their own account to ensure seamless real-time collaboration within the Playground. The use of individual accounts is critical to enable multiple people to access and utilize the powerful collaboration features._
+**Answer:** _It is imperative that each user has their own account to ensure seamless real-time collaboration within the Playground. The use of individual accounts is critical to enable multiple people to access and utilize the powerful collaboration features._
 
 _Creating your own account ensures that any designs you create or save will be stored and accessible across sessions, preventing any loss of work._
 
