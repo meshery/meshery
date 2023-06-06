@@ -163,6 +163,15 @@ func (h *Handler) handlePatternPOST(
 	}
 	// If Content is not empty then assume it's a local upload
 	if parsedBody.PatternData != nil {
+		// Check if the pattern is valid
+		err := pCore.IsValidPattern(parsedBody.PatternData.PatternFile)
+		if err != nil {
+			h.log.Error(ErrInvalidPattern(err))
+			http.Error(rw, ErrInvalidPattern(err).Error(), http.StatusBadRequest)
+			addMeshkitErr(&res, ErrInvalidPattern(err))
+			go h.EventsBuffer.Publish(&res)
+			return
+		}
 		// Assign a name if no name is provided
 		if parsedBody.PatternData.Name == "" {
 			patternName, err := models.GetPatternName(parsedBody.PatternData.PatternFile)
