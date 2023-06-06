@@ -183,9 +183,8 @@ class MesheryApp extends App {
 
   componentDidUpdate(prevProps) {
     const { k8sConfig, capabilitiesRegistry } = this.props;
-    console.log(this.state.capabilitiesRegistry,"sssssss")
+
     if (capabilitiesRegistry !== prevProps.capabilitiesRegistry) {
-      // Perform necessary actions or update the state accordingly
       this.updateCapabilitiesRegistry(capabilitiesRegistry);
     }
 
