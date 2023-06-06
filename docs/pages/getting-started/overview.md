@@ -42,7 +42,7 @@ Meshery helps users weigh the value of their cloud native deployments against th
 
 Anytime performance questions are to be answered, they are subjective to the specific workload and infrastructure used for measurement. Given this challenge, many projects refuse to publish their own performance data, because such tests can be quite invovled and misinterpreted.
 
-Beyond the need for performance and overhead data under a permutation of different workloads (applications) and types and sizes of infrastructure resources, the need for cross-project, apple-to-apple comparisons are also desired in order to facilitate a comparison of behavioral differences between cloud antive  and selection of their use. Individual projects shy from publishing test results of other, competing service meshes. An independent, unbiased, credible analysis is needed.
+Beyond the need for performance and overhead data under a permutation of different workloads (applications) and types and sizes of infrastructure resources, the need for cross-project, apple-to-apple comparisons are also desired in order to facilitate a comparison of behavioral differences between cloud native and selection of their use. Individual projects shy from publishing test results of other, competing service meshes. An independent, unbiased, credible analysis is needed.
 
 Meshery is intended to be a vendor and project-neutral utility for uniformly benchmarking the performance of cloud native infrastructure. Between service mesh and proxy projects (and surprisingly, within a single project), a number of different tools and results exist. Meshery allows you to pick an efficient set of tools for your ecosystem by providing performance evaluation and metrics.
 
