@@ -176,9 +176,9 @@ class MesheryApp extends App {
     const disposeK8sContextSubscription = k8sContextSubscription();
     this.setState({ disposeK8sContextSubscription })
   }
-  
+
   updateCapabilitiesRegistry = (newCapabilitiesRegistry) => {
-    this.setState({ capabilitiesRegistry: newCapabilitiesRegistry });
+    this.setState({ capabilitiesRegistry : newCapabilitiesRegistry });
   };
 
   componentDidUpdate(prevProps) {
@@ -295,9 +295,9 @@ class MesheryApp extends App {
   }
 
   async loadConfigFromServer() {
-    const { store,capabilitiesRegistry} = this.props;
+    const { store } = this.props;
 
-    
+
     dataFetch('/api/system/sync',
       {
         method : 'GET',
@@ -457,14 +457,14 @@ class MesheryApp extends App {
                   >
                     <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
                       {this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? "ACCESS LIMITED IN MESHERY PLAYGROUND. DEPLOY MESHERY TO ACCESS ALL FEATURES." : (
-                      <span style={{ display: 'flex', justifyContent: 'center' }}>
-                        <span>
+                        <span style={{ display : 'flex', justifyContent : 'center' }}>
+                          <span>
                         Built with <FavoriteIcon className={classes.footerIcon} /> by the Layer5 Community
-                        </span>
-                        <span style={{marginTop: "0.29rem"}} >
+                          </span>
+                          <span style={{ marginTop : "0.29rem" }} >
                           &nbsp; &nbsp;{this.state.capabilitiesRegistry?.package_version}
-                        </span>
-                      </span>)} 
+                          </span>
+                        </span>)}
                     </span>
                   </Typography>
                 </footer>
