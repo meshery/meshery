@@ -2,7 +2,6 @@ package system
 
 import (
 	"bytes"
-	"fmt"
 	"os"
 	"testing"
 
@@ -58,12 +57,6 @@ type CmdTestInput struct {
 
 func TestViewCmd(t *testing.T) {
 	SetupContextEnv(t)
-	expectedResponseForAll := ""
-	for k, v := range mctlCfg.Contexts {
-		expectedResponseForAll += PrintChannelAndVersionToStdout(v, k) + "\n\n"
-	}
-	expectedResponseForAll += fmt.Sprintf("Current Context: %v\n", mctlCfg.CurrentContext)
-
 	tests := []CmdTestInput{
 		{
 			Name:             "view without any parameter",
@@ -75,11 +68,6 @@ func TestViewCmd(t *testing.T) {
 			Args:             []string{"channel", "view", "-c", "gke"},
 			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["gke"], "gke") + "\n\n",
 		},
-		// {
-		// 	Name:             "view with all flag",
-		// 	Args:             []string{"channel", "view", "--all"},
-		// 	ExpectedResponse: expectedResponseForAll,
-		// },
 	}
 
 	for _, tt := range tests {
