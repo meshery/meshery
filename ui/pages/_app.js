@@ -97,6 +97,7 @@ class MesheryApp extends App {
       theme : 'light',
       isOpen : false,
       relayEnvironment : createRelayEnvironment(),
+      capabilitiesRegistry : {}
     };
   }
 
@@ -175,9 +176,18 @@ class MesheryApp extends App {
     const disposeK8sContextSubscription = k8sContextSubscription();
     this.setState({ disposeK8sContextSubscription })
   }
+  
+  updateCapabilitiesRegistry = (newCapabilitiesRegistry) => {
+    this.setState({ capabilitiesRegistry: newCapabilitiesRegistry });
+  };
 
   componentDidUpdate(prevProps) {
     const { k8sConfig, capabilitiesRegistry } = this.props;
+    console.log(this.state.capabilitiesRegistry,"sssssss")
+    if (capabilitiesRegistry !== prevProps.capabilitiesRegistry) {
+      // Perform necessary actions or update the state accordingly
+      this.updateCapabilitiesRegistry(capabilitiesRegistry);
+    }
 
     // in case the meshery-ui is restricted, the user will be redirected to signup/extension page
     if (isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry)) {
@@ -285,7 +295,9 @@ class MesheryApp extends App {
   }
 
   async loadConfigFromServer() {
-    const { store } = this.props;
+    const { store,capabilitiesRegistry} = this.props;
+
+    
     dataFetch('/api/system/sync',
       {
         method : 'GET',
@@ -444,7 +456,15 @@ class MesheryApp extends App {
                     style={this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? { color : "#000" } : {}}
                   >
                     <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
-                      {this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? "ACCESS LIMITED IN MESHERY PLAYGROUND. DEPLOY MESHERY TO ACCESS ALL FEATURES." : (<> Built with <FavoriteIcon className={classes.footerIcon} /> by the Layer5 Community</>)}
+                      {this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? "ACCESS LIMITED IN MESHERY PLAYGROUND. DEPLOY MESHERY TO ACCESS ALL FEATURES." : (
+                      <span style={{ display: 'flex', justifyContent: 'center' }}>
+                        <span>
+                        Built with <FavoriteIcon className={classes.footerIcon} /> by the Layer5 Community
+                        </span>
+                        <span style={{marginTop: "0.29rem"}} >
+                          &nbsp; &nbsp;{this.state.capabilitiesRegistry?.package_version}
+                        </span>
+                      </span>)} 
                     </span>
                   </Typography>
                 </footer>
