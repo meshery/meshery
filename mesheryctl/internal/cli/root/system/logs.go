@@ -23,6 +23,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"sync"
 
 	"github.com/pkg/errors"
 
@@ -45,6 +46,17 @@ func IsPodRequired(requiredPods []string, pod string) bool {
 		}
 	}
 	return false
+}
+
+var (
+	follow bool
+)
+
+const BYTE_SIZE = 2000
+
+type logChanStruct struct {
+	PodName string
+	Message []byte
 }
 
 // logsCmd represents the logs command
@@ -167,7 +179,6 @@ mesheryctl system logs meshery-istio
 				return err
 			}
 
-			var data []string
 			var requiredPods []string
 
 			// If the user specified logs from any particular pods, then show only that
@@ -182,6 +193,26 @@ mesheryctl system logs meshery-istio
 			}
 
 			log.Info("Starting Meshery logging...")
+
+			logChan := make(chan logChanStruct)
+			wg := &sync.WaitGroup{}
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				for {
+					value, ok := <-logChan
+					if ok {
+						for _, msg := range strings.Split(string(value.Message), "\n") {
+							logStr := fmt.Sprintf("%s\t|\t%s", value.PodName, msg)
+
+							log.Print(logStr)
+						}
+					} else {
+						break
+					}
+				}
+			}()
+
 			// List all the pods similar to kubectl get pods -n MesheryNamespace
 			for _, pod := range podList.Items {
 
@@ -202,6 +233,7 @@ mesheryctl system logs meshery-istio
 					// Get the logs from a container within the pod
 					podLogOpts := apiCorev1.PodLogOptions{
 						Container: containerName,
+						Follow:    follow,
 					}
 
 					req := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace).GetLogs(name, &podLogOpts)
@@ -212,27 +244,45 @@ mesheryctl system logs meshery-istio
 					}
 					defer logs.Close()
 
-					buf := new(bytes.Buffer)
-					_, err = io.Copy(buf, logs)
-					if err != nil {
-						return fmt.Errorf("error in copy information from logs to buf")
-					}
+					if follow {
+						go func() {
+							for {
+								buf := make([]byte, BYTE_SIZE)
+								numBytes, err := logs.Read(buf)
+								if numBytes == 0 {
+									continue
+								}
+								if err == io.EOF {
+									break
+								}
+								if err != nil {
+									break
+								}
+								logChan <- logChanStruct{PodName: name, Message: buf[0:numBytes]}
+							}
+						}()
+					} else {
+						buf := new(bytes.Buffer)
+						_, err = io.Copy(buf, logs)
+						if err != nil {
+							return fmt.Errorf("error in copy information from logs to buf")
+						}
 
-					// Append this to data to be printed
-					for _, str := range strings.Split(buf.String(), "\n") {
-						data = append(data, fmt.Sprintf("%s\t|\t%s", name, str))
+						logChan <- logChanStruct{PodName: name, Message: buf.Bytes()}
 					}
-					data = append(data, "\n")
 				}
 			}
-
-			// Print the data
-			for _, str := range data {
-				log.Print(str)
+			if !follow {
+				close(logChan)
 			}
 
+			wg.Wait()
 		}
 
 		return nil
 	},
+}
+
+func init() {
+	logsCmd.Flags().BoolVarP(&follow, "follow", "f", false, "(Optional) Follow the stream of the Meshery's logs. Defaults to false.")
 }
