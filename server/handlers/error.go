@@ -110,7 +110,7 @@ const (
 	ErrGetMeshModelsCode                = "2257"
 	ErrGetUserDetailsCode               = "2258"
 	ErrResolvingRelationship            = "2259"
-	ErrGetLatestVersionCode             = ""
+	ErrGetLatestVersionCode             = "2257"
 )
 
 var (
