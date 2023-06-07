@@ -291,12 +291,6 @@ func deleteProperties(m map[string]interface{}) {
 	}
 }
 
-type k8sMetadata struct {
-	K8sAPIVersion string `json:"k8sAPIVersion"`
-	K8sKind       string `json:"k8sKind"`
-	Namespaced    bool   `json:"namespaced"`
-}
-
 // TODO: To be moved in meshkit
 // getAPIRes gets all the available api resources from kube-api server. It is equivalent to the output of `kubectl api-resources`
 // Returns a map of api resources with key as api-resource kind and value as api-resource object
@@ -323,55 +317,55 @@ type kind string
 type groupversion string
 
 // TODO: To be moved in meshkit
-func getGroupsFromResource(cli *kubernetes.Client) (hgv map[kind][]groupversion, err error) {
-	hgv = make(map[kind][]groupversion)
-	var gl v1.APIGroupList
-	gs, err := cli.KubeClient.RESTClient().Get().RequestURI("/apis").Do(context.Background()).Raw()
-	if err != nil {
-		return nil, err
-	}
-	err = json.Unmarshal(gs, &gl)
-	if err != nil {
-		return nil, err
-	}
+// func getGroupsFromResource(cli *kubernetes.Client) (hgv map[kind][]groupversion, err error) {
+// 	hgv = make(map[kind][]groupversion)
+// 	var gl v1.APIGroupList
+// 	gs, err := cli.KubeClient.RESTClient().Get().RequestURI("/apis").Do(context.Background()).Raw()
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	err = json.Unmarshal(gs, &gl)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	for _, g := range gl.Groups {
-		groupName := g.Name
-		var apig v1.APIGroup
-		apigbytes, err := cli.KubeClient.RESTClient().Get().RequestURI("/apis/" + groupName).Do(context.Background()).Raw()
-		if err != nil {
-			return nil, err
-		}
-		err = json.Unmarshal(apigbytes, &apig)
-		if err != nil {
-			return nil, err
-		}
-		for _, v := range apig.Versions {
-			apiRes, err := cli.KubeClient.DiscoveryClient.ServerResourcesForGroupVersion(v.GroupVersion)
-			if err != nil {
-				return nil, err
-			}
-			if err != nil {
-				return nil, err
-			}
-			for _, res := range apiRes.APIResources {
-				if v.GroupVersion != "" {
-					hgv[kind(res.Kind)] = append(hgv[kind(res.Kind)], groupversion(v.GroupVersion))
-				} else {
-					hgv[kind(res.Kind)] = append(hgv[kind(res.Kind)], groupversion(v.Version))
-				}
-			}
-		}
-		apiRes, err := cli.KubeClient.DiscoveryClient.ServerResourcesForGroupVersion("v1")
-		if err != nil {
-			return nil, err
-		}
-		if err != nil {
-			return nil, err
-		}
-		for _, res := range apiRes.APIResources {
-			hgv[kind(res.Kind)] = append(hgv[kind(res.Kind)], groupversion("v1"))
-		}
-	}
-	return
-}
+// 	for _, g := range gl.Groups {
+// 		groupName := g.Name
+// 		var apig v1.APIGroup
+// 		apigbytes, err := cli.KubeClient.RESTClient().Get().RequestURI("/apis/" + groupName).Do(context.Background()).Raw()
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		err = json.Unmarshal(apigbytes, &apig)
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		for _, v := range apig.Versions {
+// 			apiRes, err := cli.KubeClient.DiscoveryClient.ServerResourcesForGroupVersion(v.GroupVersion)
+// 			if err != nil {
+// 				return nil, err
+// 			}
+// 			if err != nil {
+// 				return nil, err
+// 			}
+// 			for _, res := range apiRes.APIResources {
+// 				if v.GroupVersion != "" {
+// 					hgv[kind(res.Kind)] = append(hgv[kind(res.Kind)], groupversion(v.GroupVersion))
+// 				} else {
+// 					hgv[kind(res.Kind)] = append(hgv[kind(res.Kind)], groupversion(v.Version))
+// 				}
+// 			}
+// 		}
+// 		apiRes, err := cli.KubeClient.DiscoveryClient.ServerResourcesForGroupVersion("v1")
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		if err != nil {
+// 			return nil, err
+// 		}
+// 		for _, res := range apiRes.APIResources {
+// 			hgv[kind(res.Kind)] = append(hgv[kind(res.Kind)], groupversion("v1"))
+// 		}
+// 	}
+// 	return
+// }
