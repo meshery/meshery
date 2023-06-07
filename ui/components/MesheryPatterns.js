@@ -238,7 +238,7 @@ function resetSelectedPattern() {
 }
 
 function MesheryPatterns({
-  updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts, catalogVisibility, toggleCatalogContent, capabilitiesRegistry
+  updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts, catalogVisibility, toggleCatalogContent
 }) {
   const [page, setPage] = useState(0);
   const [search,setSearch] = useState("");
@@ -250,6 +250,7 @@ function MesheryPatterns({
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
   const [extensionPreferences, setExtensionPreferences] = useState({});
+  const [capabilitiesRegistry, setCapabilitiesRegistry] = useState({});
   const router = useRouter()
 
   const [patternErrors, setPatternErrors] = useState(new Map());
@@ -330,10 +331,21 @@ function MesheryPatterns({
    * publish pattern capability and setting the canPublishPattern state accordingly
    */
   useEffect(() => {
-    const patternsCatalogueCapability = capabilitiesRegistry?.capabilities.filter(
-      (val) => val.feature === MesheryPatternsCatalog
+    dataFetch(
+      "/api/provider/capabilities",
+      {
+        method: "GET",
+        credentials: "include",
+      },
+      (result) => {
+        if (result) {
+          const capabilitiesRegistry = result;        
+          const patternsCatalogueCapability = capabilitiesRegistry?.capabilities.filter((val) => val.feature === MesheryPatternsCatalog);
+        if (patternsCatalogueCapability?.length > 0) setCanPublishPattern(true);
+        }
+      },
+      (err) => console.error(err)
     );
-    if (patternsCatalogueCapability?.length) setCanPublishPattern(true);
   }, [])
 
   const searchTimeout = useRef(null);
@@ -439,7 +451,6 @@ function MesheryPatterns({
   }
 
   const handleModalOpen = (e, pattern_file, name, errors, action) => {
-    console.log("errors...//./././././", errors)
     e.stopPropagation();
     const compCount = getComponentsinFile(pattern_file);
     const validationBody = (
@@ -485,6 +496,43 @@ function MesheryPatterns({
       });
     }
   };
+
+  const handleUnpublishModal = (ev, pattern) => {
+    if (canPublishPattern) {
+      ev.stopPropagation();
+      return async () => {
+            let response = await modalRef.current.show({
+              title: `Unpublish Catalog item ?`,
+              subtitle: `Are you sure you want to unpublish?`,
+              options: ["Yes", "No"]
+            });
+            if (response === "Yes") {
+              updateProgress({ showProgress: true });
+              dataFetch(
+                `/api/pattern/catalog/unpublish`,
+                { credentials: "include", method: "DELETE", body: JSON.stringify({ "id": pattern?.id }) },
+                () => {
+                  updateProgress({ showProgress: false });
+                  enqueueSnackbar("Design UnPublished", {
+                    variant: "success",
+                    action: function Action(key) {
+                      return (
+                        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                          <CloseIcon />
+                        </IconButton>
+                      );
+                    },
+                    autoHideDuration: 2000,
+                  });
+                },
+                handleError(ACTION_TYPES.PUBLISH_CATALOG),
+              );
+            }
+          }
+    };
+  };
+
+
   const handlePublishModalClose = () => {
     setPublishModal({
       open : false,
@@ -892,9 +940,9 @@ function MesheryPatterns({
             </TableCell>
           );
         },
-        customBodyRender : function CustomBody(_, tableMeta) {
+        customBodyRender: function CustomBody(_, tableMeta) {
           const rowData = patterns[tableMeta.rowIndex];
-          const visibility = patterns[tableMeta.rowIndex].visibility
+          const visibility = patterns[tableMeta.rowIndex]?.visibility
           return (
             <>
               { visibility === VISIBILITY.PUBLISHED ? <IconButton onClick={(e) => {
@@ -940,12 +988,20 @@ function MesheryPatterns({
               </TooltipIcon>
 
               {canPublishPattern &&
+                (visibility !== VISIBILITY.PUBLISHED) ?
                 (<TooltipIcon
                   title="Publish"
                   onClick={(ev) => handlePublishModal(ev,rowData)}
                 >
                   <PublicIcon fill="#F91313" data-cy="publish-button" />
-                </TooltipIcon>)}
+                </TooltipIcon>)
+                : (<TooltipIcon
+                  title="Unpublish"
+                  onClick={(ev) => handleUnpublishModal(ev, rowData)()}
+                >
+                  <PublicIcon fill="#F91313" data-cy="unpublish-button" />
+                </TooltipIcon>)
+              }
             </>
           );
         },
@@ -1218,13 +1274,11 @@ function MesheryPatterns({
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), toggleCatalogContent : bindActionCreators(toggleCatalogContent, dispatch) });
 
-const mapStateToProps = (state) => {
-  return {
-    user : state.get("user")?.toObject(), selectedK8sContexts : state.get("selectedK8sContexts"),
+const mapStateToProps = (state) => ({
+    user: state.get("user")?.toObject(),
+    selectedK8sContexts: state.get("selectedK8sContexts"),
     catalogVisibility : state.get("catalogVisibility"),
-    capabilitiesRegistry : state.get("capabilitiesRegistry")
-  };
-};
+  });
 
 // @ts-ignore
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MesheryPatterns)));
