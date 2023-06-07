@@ -123,14 +123,14 @@ function MesheryPatternCard({
                 </TooltipButton>)
                 : (
                   <TooltipButton
-                  variant="contained"
-                  title="Unpublish"
-                  className={classes.testsButton}
-                  onClick={(ev) => genericClickHandler(ev, handleUnpublishModal)}
-                >
-                  <PublicIcon className={classes.iconPatt} />
-                  <span className={classes.btnText}> Unpublish </span>
-                </TooltipButton>
+                    variant="contained"
+                    title="Unpublish"
+                    className={classes.testsButton}
+                    onClick={(ev) => genericClickHandler(ev, handleUnpublishModal)}
+                  >
+                    <PublicIcon className={classes.iconPatt} />
+                    <span className={classes.btnText}> Unpublish </span>
+                  </TooltipButton>
                 )
               }
 

@@ -288,7 +288,7 @@ function MesheryPatterns({
   const [loading, stillLoading] = useState(true);
 
   const catalogVisibilityRef = useRef(false);
-  const catalogContentRef = useRef();;
+  const catalogContentRef = useRef();
   const disposeConfSubscriptionRef = useRef(null);
 
   const { workloadTraitSet } = useContext(SchemaContext);
@@ -421,7 +421,7 @@ function MesheryPatterns({
     )
   }
 
-   const initPatternsSubscription = (pageNo = page.toString(), pagesize = pageSize.toString(), searchText = search, order = sortOrder) => {
+  const initPatternsSubscription = (pageNo = page.toString(), pagesize = pageSize.toString(), searchText = search, order = sortOrder) => {
     if (disposeConfSubscriptionRef.current) {
       disposeConfSubscriptionRef.current.dispose();
     }
@@ -568,8 +568,8 @@ function MesheryPatterns({
       ev.stopPropagation();
       return async () => {
         let response = await modalRef.current.show({
-          title : `Unpublish Catalog item ?`,
-          subtitle : `Are you sure you want to unpublish?`,
+          title : `Unpublish Catalog item?`,
+          subtitle : `Are you sure you want to unpublish ${pattern?.name}?`,
           options : ["Yes", "No"]
         });
         if (response === "Yes") {
