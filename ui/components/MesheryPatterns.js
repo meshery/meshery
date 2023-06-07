@@ -43,6 +43,8 @@ import PublishModal from "./PublishModal";
 import CloneIcon from "../public/static/img/CloneIcon";
 import { useRouter } from "next/router";
 import downloadFile from "../utils/fileDownloader";
+import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
+import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 
 const styles = (theme) => ({
   grid : {
@@ -286,6 +288,8 @@ function MesheryPatterns({
   const [loading, stillLoading] = useState(true);
 
   const catalogVisibilityRef = useRef(false);
+  const catalogContentRef = useRef();;
+  const disposeConfSubscriptionRef = useRef(null);
 
   const { workloadTraitSet } = useContext(SchemaContext);
 
@@ -417,6 +421,40 @@ function MesheryPatterns({
     )
   }
 
+   const initPatternsSubscription = (pageNo = page.toString(), pagesize = pageSize.toString(), searchText = search, order = sortOrder) => {
+    if (disposeConfSubscriptionRef.current) {
+      disposeConfSubscriptionRef.current.dispose();
+    }
+    const configurationSubscription = ConfigurationSubscription((result) => {
+      stillLoading(false);
+      setPage(result.configuration?.patterns?.page || 0);
+      setPageSize(result.configuration?.patterns?.page_size || 0);
+      setCount(result.configuration?.patterns?.total_count || 0);
+      handleSetPatterns(result.configuration?.patterns?.patterns);
+    },
+    {
+      applicationSelector : {
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
+        order : order
+      },
+      patternSelector : {
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
+        order : order
+      },
+      filterSelector : {
+        pageSize : pagesize,
+        page : pageNo,
+        search : searchText,
+        order : order
+      }
+    });
+    disposeConfSubscriptionRef.current = configurationSubscription
+  }
+
 
   const handleCatalogVisibility = () => {
     handleCatalogPreference(!catalogVisibilityRef.current);
@@ -429,11 +467,36 @@ function MesheryPatterns({
   }, [])
 
   useEffect(() => {
+    catalogVisibilityRef.current = catalogVisibility
+    const fetchCatalogPatterns = fetchCatalogPattern({
+      selector : {
+        search : "",
+        order : ""
+      }
+    }).subscribe({
+      next : (result) => {
+        catalogContentRef.current = result?.catalogPatterns;
+        initPatternsSubscription();
+      },
+      error : (err) => console.log("There was an error fetching Catalog Filter: ", err)
+    });
+
+    return () => {
+      fetchCatalogPatterns.unsubscribe();
+      disposeConfSubscriptionRef.current.dispose();
+    }
+  }, [])
+
+  useEffect(() => {
     handleSetPatterns(patterns)
   }, [catalogVisibility])
 
-  const handleSetPatterns = (pattern) => {
-    setPatterns(pattern)
+  const handleSetPatterns = (patterns) => {
+    if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
+      setPatterns([...catalogContentRef.current, ...patterns.filter(content => content.visibility !== VISIBILITY.PUBLISHED)])
+      return
+    }
+    setPatterns(patterns.filter(content => content.visibility !== VISIBILITY.PUBLISHED))
   }
 
   useEffect(() => {
@@ -1116,10 +1179,10 @@ function MesheryPatterns({
 
       switch (action) {
         case "changePage":
-          fetchPatterns(tableState.page.toString(), pageSize.toString(), search, sortOrder);
+          initPatternsSubscription(tableState.page.toString(), pageSize.toString(), search, sortOrder);
           break;
         case "changeRowsPerPage":
-          fetchPatterns(page.toString(), tableState.rowsPerPage.toString(), search, sortOrder);
+          initPatternsSubscription(page.toString(), tableState.rowsPerPage.toString(), search, sortOrder);
           break;
         case "search":
           if (searchTimeout.current) {
@@ -1143,7 +1206,7 @@ function MesheryPatterns({
             }
           }
           if (order !== sortOrder) {
-            fetchPatterns(page.toString(), pageSize.toString(), search, order);
+            initPatternsSubscription(page.toString(), pageSize.toString(), search, order);
           }
           break;
       }
