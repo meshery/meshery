@@ -138,7 +138,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("POST", "GET")
 	gMux.Handle("/api/pattern/catalog", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetCatalogMesheryPatternsHandler), models.ProviderAuth))).
 		Methods("GET")
-	gMux.Handle("/api/pattern/catalog/publish", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UnPublishCatalogPatternHandler), models.ProviderAuth))).
+	gMux.Handle("/api/pattern/catalog/unpublish", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UnPublishCatalogPatternHandler), models.ProviderAuth))).
 		Methods("DELETE")
 	gMux.Handle("/api/pattern/catalog/publish", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PublishCatalogPatternHandler), models.ProviderAuth))).
 		Methods("POST")
