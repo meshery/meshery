@@ -97,7 +97,8 @@ class MesheryApp extends App {
       theme : 'light',
       isOpen : false,
       relayEnvironment : createRelayEnvironment(),
-      capabilitiesRegistry : {}
+      capabilitiesRegistry : {},
+      pathName : ""
     };
   }
 
@@ -181,13 +182,20 @@ class MesheryApp extends App {
     this.setState({ capabilitiesRegistry : newCapabilitiesRegistry });
   };
 
+  updatePath = (newPath) => {
+    this.setState({ pathName : newPath })
+  }
+
   componentDidUpdate(prevProps) {
-    const { k8sConfig, capabilitiesRegistry } = this.props;
+    const { k8sConfig, capabilitiesRegistry, router } = this.props;
 
     if (capabilitiesRegistry !== prevProps.capabilitiesRegistry) {
       this.updateCapabilitiesRegistry(capabilitiesRegistry);
     }
 
+    if (this.state.pathName !== router.state.asPath) {
+      this.updatePath(router.state.asPath);
+    }
     // in case the meshery-ui is restricted, the user will be redirected to signup/extension page
     if (isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry)) {
       Router.push(mesheryExtensionRoute);
@@ -295,8 +303,6 @@ class MesheryApp extends App {
 
   async loadConfigFromServer() {
     const { store } = this.props;
-
-
     dataFetch('/api/system/sync',
       {
         method : 'GET',
@@ -455,7 +461,7 @@ class MesheryApp extends App {
                     style={this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? { color : "#000" } : {}}
                   >
                     <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
-                      {this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? "ACCESS LIMITED IN MESHERY PLAYGROUND. DEPLOY MESHERY TO ACCESS ALL FEATURES." : (
+                      {this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? "ACCESS LIMITED IN MESHERY PLAYGROUND. DEPLOY MESHERY TO ACCESS ALL FEATURES." : (this.state.pathName.includes("meshmap")?(
                         <span style={{ display : 'flex', justifyContent : 'center' }}>
                           <span>
                         Built with <FavoriteIcon className={classes.footerIcon} /> by the Layer5 Community
@@ -463,7 +469,12 @@ class MesheryApp extends App {
                           <span style={{ marginTop : "0.29rem" }} >
                           &nbsp; &nbsp;{this.state.capabilitiesRegistry?.package_version}
                           </span>
-                        </span>)}
+                        </span>):
+                        (<span style={{ display : 'flex', justifyContent : 'center' }}>
+                          <span>
+                        Built with <FavoriteIcon className={classes.footerIcon} /> by the Layer5 Community
+                          </span>
+                        </span>))}
                     </span>
                   </Typography>
                 </footer>
