@@ -91,7 +91,9 @@ function MesheryPatternCard({
               <Typography style={{ overflow : "hidden", textOverflow : "ellipsis", width : '20rem' }} variant="h6" component="div">
                 {name}
               </Typography>
-              <img  className={classes.img} src={`/static/img/${visibility}.svg`} />
+              <div style={{ border : "1px solid rgb(118 118 118)",color : "rgb(118 118 118)",marginTop : "auto",fontSize : "0.6rem",padding : "0.2rem 0.5rem",borderRadius : "0.2rem" }}>
+                PUBLISHED
+               </div>
             </div>
             <div className={classes.lastRunText} >
               <div>
