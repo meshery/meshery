@@ -13,10 +13,10 @@ import (
 	"net/http"
 	"net/url"
 	"time"
-	
-	"github.com/spf13/viper"
+
 	"github.com/golang-jwt/jwt"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
 )
 
