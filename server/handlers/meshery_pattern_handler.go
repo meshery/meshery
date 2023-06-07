@@ -525,6 +525,15 @@ func (h *Handler) PublishCatalogPatternHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
+// swagger:route DELETE /api/pattern/catalog/unpublish PatternsAPI idUnPublishCatalogPatternHandler
+// Handle Publish for a Meshery Pattern
+//
+// Unpublishes pattern from Meshery Catalog by setting visibility to private and removing catalog data from website
+// responses:
+//
+//	200: noContentWrapper
+//
+// UnPublishCatalogPatternHandler sets visibility of pattern with given id as private
 func (h *Handler) UnPublishCatalogPatternHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
