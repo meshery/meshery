@@ -6,7 +6,7 @@ on:
 
 jobs:
   reset:
-    name: Reset
+    name: reset
     runs-on: ubuntu-latest
     steps:
     - name: Cluster cleanup by running the cleanup script inside VM
@@ -20,6 +20,7 @@ jobs:
 
   reboot:
     name: Reboot Metal servers
+    needs: reset 
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest 
     steps:
@@ -32,5 +33,4 @@ jobs:
           env:
             METAL_AUTH_TOKEN: ${{ secrets.METAL_AUTH_TOKEN }}
           run: |
-            METAL_AUTH_TOKEN=$METAL_AUTH_TOKEN metal device reboot -i ${{ secrets.METAL_SERVER1 }} 
             METAL_AUTH_TOKEN=$METAL_AUTH_TOKEN metal device reboot -i ${{ secrets.METAL_SERVER2 }} 
