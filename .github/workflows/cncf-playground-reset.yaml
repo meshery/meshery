@@ -6,14 +6,18 @@ on:
 
 jobs:
   reset:
-    name: Cluster cleanup by running the cleanup script inside VM
-    uses: appleboy/ssh-action@master
-    with:
-        host: 147.75.47.9
-        username: root
-        key: ${{ secrets.METAL_SSH_KEY }}
-        script: |
-          ./playground-cleanup.sh 
+    name: Reset
+    runs-on: ubuntu-latest
+    steps:
+    - name: Cluster cleanup by running the cleanup script inside VM
+      uses: appleboy/ssh-action@master
+      with:
+          host: 147.75.47.9
+          username: root
+          key: ${{ secrets.METAL_SSH_KEY }}
+          script: |
+            ./playground-cleanup.sh 
+
   reboot:
     name: Reboot Metal servers
     if: github.repository == 'meshery/meshery'
