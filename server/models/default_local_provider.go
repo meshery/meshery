@@ -930,8 +930,20 @@ func (l *DefaultLocalProvider) ExtensionProxy(_ *http.Request) (*ExtensionProxyR
 	return nil, ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) SaveConnection(_ *http.Request, _ *Connection, _ string, _ bool) error {
+func (l *DefaultLocalProvider) SaveConnection(_ *http.Request, _ *ConnectionPayload, _ string, _ bool) error {
 	return ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) GetConnections(_ *http.Request, _ string, _, _ int, _, _, _ string) (*ConnectionPage, error) {
+	return nil, ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) UpdateConnection(_ *http.Request, _ *Connection) (*Connection, error) {
+	return nil, ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) DeleteConnection(_ *http.Request, _ uuid.UUID) (*Connection, error) {
+	return nil, ErrLocalProviderSupport
 }
 
 func (l *DefaultLocalProvider) DeleteMesheryConnection() error {

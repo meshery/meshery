@@ -56,11 +56,11 @@ export var darkTheme = createTheme({
       honeyComb : '#202020',
       filterChipBackground : '#222222',
       tabs : '#20202087',
-      modalTabs : '#1e1e1e',
+      modalTabs : '#363636',
       tabHover : '#212121',
       confirmationModal : '#111111',
       focused : '#00b39f',
-      primaryModalText: '#FFF'
+      primaryModalText : '#FFF'
     },
   },
   p : {
@@ -119,6 +119,7 @@ darkTheme = {
       root : { marginLeft : darkTheme.spacing(1), },
       indicator : {
         height : 3,
+        backgroundColor : "#00B39F",
         borderTopLeftRadius : 3,
         borderTopRightRadius : 3,
       },
@@ -138,6 +139,9 @@ darkTheme = {
         //   padding: 0,
         // },
       },
+      selected : {
+        color : "#00B39F !important"
+      }
     },
     MuiPaper : { root : { backgroundColor : '#363636' }, elevation2 : { boxShadow : "0px 4px 0px -2px rgb(0 179 159 / 10%), 0px 4px 0px 0px rgb(0 179 159 / 10%), 0px 2px 0px 0px rgb(0 179 159 / 20%)" } },
     MuiIconButton : { root : { padding : darkTheme.spacing(1), }, colorPrimary : { color : "#FFF" }, },
@@ -254,8 +258,8 @@ let theme = createTheme({
       modalTabs : '#dddddd',
       tabHover : '#e3e3e3',
       confirmationModal : 'rgb(234, 235, 236)',
-      focused: '#607d8b',
-      primaryModalText: '#FFF'
+      focused : '#607d8b',
+      primaryModalText : '#FFF'
     },
   },
   shape : { borderRadius : 8, },
