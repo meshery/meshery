@@ -7,6 +7,7 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
+import GetAppIcon from '@material-ui/icons/GetApp';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import SaveIcon from '@material-ui/icons/Save';
 import MUIDataTable from "mui-datatables";
@@ -34,8 +35,6 @@ import PublicIcon from '@material-ui/icons/Public';
 import ConfirmationModal from "./ConfirmationModal";
 import PublishIcon from "@material-ui/icons/Publish";
 import PromptComponent from "./PromptComponent";
-import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
-import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import { SchemaContext } from "../utils/context/schemaSet";
 import Validation from "./Validation";
@@ -43,6 +42,7 @@ import { ACTIONS, FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from "../utils/
 import PublishModal from "./PublishModal";
 import CloneIcon from "../public/static/img/CloneIcon";
 import { useRouter } from "next/router";
+import downloadFile from "../utils/fileDownloader";
 
 const styles = (theme) => ({
   grid : {
@@ -285,9 +285,7 @@ function MesheryPatterns({
   });
   const [loading, stillLoading] = useState(true);
 
-  const catalogContentRef = useRef();
   const catalogVisibilityRef = useRef(false);
-  const disposeConfSubscriptionRef = useRef(null);
 
   const { workloadTraitSet } = useContext(SchemaContext);
 
@@ -413,72 +411,22 @@ function MesheryPatterns({
 
   useEffect(() => {
     fetchUserPrefs();
-    catalogVisibilityRef.current = catalogVisibility
-    const fetchCatalogPatterns = fetchCatalogPattern({
-      selector : {
-        search : "",
-        order : ""
-      }
-    }).subscribe({
-      next : (result) => {
-        catalogContentRef.current = result?.catalogPatterns;
-        initPatternsSubscription();
-      },
-      error : (err) => console.log("There was an error fetching Catalog Pattern: ", err)
-    });
-    return () => {
-      if (disposeConfSubscriptionRef.current) {
-        disposeConfSubscriptionRef.current.dispose();
-      }
-      fetchCatalogPatterns.unsubscribe();
-    }
   }, [])
 
   useEffect(() => {
     handleSetPatterns(patterns)
   }, [catalogVisibility])
 
-  const handleSetPatterns = (patterns) => {
-    if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
-      setPatterns([...catalogContentRef.current, ...patterns.filter(content => content.visibility !== VISIBILITY.PUBLISHED)])
-      return
-    }
-    setPatterns(patterns.filter(content => content.visibility !== VISIBILITY.PUBLISHED))
+  const handleSetPatterns = (pattern) => {
+    setPatterns(pattern)
   }
 
-  const initPatternsSubscription = (pageNo = page.toString(), pagesize = pageSize.toString(), searchText = search, order = sortOrder) => {
-    if (disposeConfSubscriptionRef.current) {
-      disposeConfSubscriptionRef.current.dispose();
-    }
-    const configurationSubscription = ConfigurationSubscription((result) => {
-      setPage(result.configuration?.patterns?.page || 0);
-      setPageSize(result.configuration?.patterns?.page_size || 0);
-      setCount(result.configuration?.patterns?.total_count || 0);
-      handleSetPatterns(result.configuration?.patterns?.patterns ?? [] );
-      stillLoading(false);
-    },
-    {
-      applicationSelector : {
-        pageSize : pagesize,
-        page : pageNo,
-        search : searchText,
-        order : order
-      },
-      patternSelector : {
-        pageSize : pagesize,
-        page : pageNo,
-        search : searchText,
-        order : order
-      },
-      filterSelector : {
-        pageSize : pagesize,
-        page : pageNo,
-        search : searchText,
-        order : order
-      }
-    });
-    disposeConfSubscriptionRef.current = configurationSubscription
-  }
+  useEffect(() => {
+    setPage(0);
+    setPageSize(10);
+    setCount(0);
+    fetchPatterns(0, 10, search, sortOrder)
+  }, [viewType])
 
   const handleModalClose = () => {
     // @ts-ignore
@@ -684,6 +632,7 @@ function MesheryPatterns({
       (result) => {
         console.log("PatternFile API", `/api/pattern${query}`);
         updateProgress({ showProgress : false });
+        page === 0 && stillLoading(false);
         if (result) {
           setPage(result.page || 0);
           setPageSize(result.page_size || 0);
@@ -794,6 +743,27 @@ function MesheryPatterns({
         },
         handleError(ACTION_TYPES.UPLOAD_PATTERN)
       );
+    }
+  }
+
+  const handleDownload = (e, id, name) => {
+    e.stopPropagation();
+    updateProgress({ showProgress : true });
+    try {
+      downloadFile({ id, name, type : "pattern" })
+      updateProgress({ showProgress : false });
+      enqueueSnackbar(`"${name}" Design downloaded`, {
+        variant : "success",
+        action : function Action(key) {
+          return (
+            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+              <CloseIcon />
+            </IconButton>
+          );
+        }
+      });
+    } catch (e) {
+      console.error(e);
     }
   }
 
@@ -962,6 +932,13 @@ function MesheryPatterns({
               >
                 <DoneAllIcon data-cy="deploy-button" />
               </TooltipIcon>
+              <TooltipIcon
+                title="Download"
+                onClick={(e) => handleDownload(e, rowData.id, rowData.name)}
+              >
+                <GetAppIcon data-cy="download-button" />
+              </TooltipIcon>
+
               {canPublishPattern &&
                 (<TooltipIcon
                   title="Publish"
@@ -1080,10 +1057,10 @@ function MesheryPatterns({
 
       switch (action) {
         case "changePage":
-          initPatternsSubscription(tableState.page.toString(), pageSize.toString(), search, sortOrder);
+          fetchPatterns(tableState.page.toString(), pageSize.toString(), search, sortOrder);
           break;
         case "changeRowsPerPage":
-          initPatternsSubscription(page.toString(), tableState.rowsPerPage.toString(), search, sortOrder);
+          fetchPatterns(page.toString(), tableState.rowsPerPage.toString(), search, sortOrder);
           break;
         case "search":
           if (searchTimeout.current) {
@@ -1107,7 +1084,7 @@ function MesheryPatterns({
             }
           }
           if (order !== sortOrder) {
-            initPatternsSubscription(page.toString(), pageSize.toString(), search, order);
+            fetchPatterns(page.toString(), pageSize.toString(), search, order);
           }
           break;
       }

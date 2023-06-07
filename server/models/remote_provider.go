@@ -373,7 +373,7 @@ func (l *RemoteProvider) GetUserByID(req *http.Request, userID string) ([]byte, 
 	return nil, err
 }
 
-func (l *RemoteProvider) GetUsers(req *http.Request) ([]byte, error) {
+func (l *RemoteProvider) GetUsers(token, page, pageSize, search, order, filter string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(UsersIdentity) {
 		logrus.Warn("operation not available")
 		return []byte{}, ErrInvalidCapability("UsersIdentity", l.ProviderName)
@@ -381,11 +381,25 @@ func (l *RemoteProvider) GetUsers(req *http.Request) ([]byte, error) {
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(UsersIdentity)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
-	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
-	token, err := l.GetToken(req)
-	if err != nil {
-		return nil, err
+	q := remoteProviderURL.Query()
+	if page != "" {
+		q.Set("page", page)
 	}
+	if pageSize != "" {
+		q.Set("pageSize", pageSize)
+	}
+	if search != "" {
+		q.Set("search", search)
+	}
+	if order != "" {
+		q.Set("order", order)
+	}
+	if filter != "" {
+		q.Set("filter", filter)
+	}
+	remoteProviderURL.RawQuery = q.Encode()
+
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
@@ -3110,7 +3124,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 		var temp *uuid.UUID
 		cred["token"] = temp
 
-		conn := &Connection{
+		conn := &ConnectionPayload{
 			Kind:             "meshery",
 			Type:             "platform",
 			SubType:          "management",
@@ -3404,7 +3418,7 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 	return nil, ErrFetch(fmt.Errorf("failed to request to remote provider"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
-func (l *RemoteProvider) SaveConnection(req *http.Request, conn *Connection, token string, skipTokenCheck bool) error {
+func (l *RemoteProvider) SaveConnection(req *http.Request, conn *ConnectionPayload, token string, skipTokenCheck bool) error {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -3447,6 +3461,131 @@ func (l *RemoteProvider) SaveConnection(req *http.Request, conn *Connection, tok
 	}
 
 	return ErrFetch(fmt.Errorf("failed to save the connection"), fmt.Sprint(bdr), resp.StatusCode)
+}
+
+// GetConnections - to get saved credentials
+func (l *RemoteProvider) GetConnections(req *http.Request, _ string, page, pageSize int, search, order, connectionKind string) (*ConnectionPage, error) {
+	if !l.Capabilities.IsSupported(PersistConnection) {
+		logrus.Error("operation not available")
+		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
+	}
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + connectionKind)
+
+	q := remoteProviderURL.Query()
+	q.Add("page", strconv.Itoa(page))
+	q.Add("pageSize", strconv.Itoa(pageSize))
+	q.Add("search", search)
+	q.Add("order", order)
+
+	remoteProviderURL.RawQuery = q.Encode()
+	logrus.Debugf("Making request to : %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		return nil, ErrFetch(err, "Connections Page", resp.StatusCode)
+	}
+	defer resp.Body.Close()
+
+	bdr, _ := io.ReadAll(resp.Body)
+	if resp.StatusCode != http.StatusOK {
+		return nil, ErrFetch(fmt.Errorf("could not retrieve list of connections: %d", resp.StatusCode), fmt.Sprint(bdr), resp.StatusCode)
+	}
+
+	var cp ConnectionPage
+	if err = json.Unmarshal(bdr, &cp); err != nil {
+		return nil, err
+	}
+	return &cp, nil
+}
+
+// UpdateConnection - to update an existing connection
+func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *Connection) (*Connection, error) {
+	if !l.Capabilities.IsSupported(PersistConnection) {
+		logrus.Error("operation not available")
+		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
+	}
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
+	_creds, err := json.Marshal(connection)
+	if err != nil {
+		return nil, err
+	}
+	bf := bytes.NewBuffer(_creds)
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s/edit", l.RemoteProviderURL, ep, connection.Kind))
+	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
+	tokenString, _ := l.GetToken(req)
+	if err != nil {
+		logrus.Error("error getting token: ", err)
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		return nil, ErrFetch(err, "Update Connection", resp.StatusCode)
+	}
+	defer resp.Body.Close()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, ErrDataRead(err, "Update Connection")
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		var conn Connection
+		if err = json.Unmarshal(bdr, &conn); err != nil {
+			return nil, err
+		}
+		return &conn, nil
+	}
+
+	return nil, ErrFetch(fmt.Errorf("failed to update the connection"), fmt.Sprint(bdr), resp.StatusCode)
+}
+
+// DeleteConnection - to delete a saved connection
+func (l *RemoteProvider) DeleteConnection(req *http.Request, connectionID uuid.UUID) (*Connection, error) {
+	if !l.Capabilities.IsSupported(PersistConnection) {
+		logrus.Error("operation not available")
+		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
+
+	logrus.Infof("attempting to delete connection from cloud for id: %s", connectionID)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s/delete", l.RemoteProviderURL, ep, connectionID))
+	logrus.Debugf("constructed connection url: %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		logrus.Errorf("unable to delete connection: %v", err)
+		return nil, ErrDelete(err, "Connection: "+connectionID.String(), resp.StatusCode)
+	}
+	defer resp.Body.Close()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, ErrDataRead(err, "Connection: "+connectionID.String())
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("connection successfully deleted from remote provider")
+		var conn Connection
+		if err = json.Unmarshal(bdr, &conn); err != nil {
+			return nil, err
+		}
+		return &conn, nil
+	}
+	logrus.Errorf("error while deleting connection: %s", bdr)
+	return nil, ErrDelete(fmt.Errorf("error while deleting connection: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 func (l *RemoteProvider) DeleteMesheryConnection() error {

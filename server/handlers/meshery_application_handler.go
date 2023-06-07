@@ -646,6 +646,48 @@ func (h *Handler) GetMesheryApplicationTypesHandler(
 	fmt.Fprint(rw, string(b))
 }
 
+// swagger: route GET /api/application/download/{id} ApplicationsAPI idGetApplication
+// Handle GET request for Meshery Application with the given id
+//
+// Get the application file with the given id
+// responses:
+//  200
+
+// GetMesheryApplicationFile returns the application file with the given id
+func (h *Handler) GetMesheryApplicationFile(
+	rw http.ResponseWriter,
+	r *http.Request,
+	_ *models.Preference,
+	_ *models.User,
+	provider models.Provider,
+) {
+	applicationID := mux.Vars(r)["id"]
+	resp, err := provider.GetMesheryApplication(r, applicationID)
+
+	if err != nil {
+		obj := "download"
+		h.log.Error(ErrApplicationFailure(err, obj))
+		http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusNotFound)
+		return
+	}
+
+	application := &models.MesheryApplication{}
+
+	err = json.Unmarshal(resp, &application)
+	if err != nil {
+		h.log.Error(ErrApplicationFailure(err, "parse failure"))
+		http.Error(rw, ErrApplicationFailure(err, "parse failure").Error(), http.StatusInternalServerError)
+		return
+	}
+
+	rw.Header().Set("Content-Type", "application/x-yaml")
+	if _, err := io.Copy(rw, strings.NewReader(application.ApplicationFile)); err != nil {
+		h.log.Error(ErrApplicationSourceContent(err, "download"))
+		http.Error(rw, ErrApplicationSourceContent(err, "download").Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 // swagger:route GET /api/application/download/{id}/{sourcetype} ApplicationsAPI typeGetApplication
 // Handle GET request for Meshery Application with of source content
 //

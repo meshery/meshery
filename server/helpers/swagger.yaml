@@ -402,6 +402,53 @@ paths:
             summary: Handles GET for all Users
             tags:
                 - UserAPI
+    /api/integrations/connection:
+        post:
+            description: Creates a new connection
+            operationId: idPostConnection
+            responses:
+                "201":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle POST request for creating a new connection
+            tags:
+                - PostConnection
+    /api/integrations/connection/{connectionId}/delete:
+        delete:
+            description: Deletes existing connection
+            operationId: idDeleteConnection
+            responses:
+                "200":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle DELETE request for deleting an existing connection by connection ID
+            tags:
+                - DeleteConnection
+    /api/integrations/connection/{connectionKind}/edit:
+        put:
+            description: Updates existing connection
+            operationId: idPutConnection
+            responses:
+                "200":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle PUT request for updating an existing connection
+            tags:
+                - PutConnection
+    /api/integrations/connections/{connectionKind}:
+        get:
+            description: |-
+                ```?order={field}``` orders on the passed field
+
+                ```?search={modelname}``` If search is non empty then a greedy search is performed
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetConnectionsByKind
+            responses:
+                "200":
+                    $ref: '#/responses/ConnectionPage'
+            summary: Handle GET request for getting all connections for a given kind.
+            tags:
+                - GetConnectionsByKind
     /api/meshmodel/components/register:
         post:
             description: Validate the given value with the given schema
@@ -441,8 +488,8 @@ paths:
             operationId: idGetAllMeshmodelRelationships
             responses:
                 "200":
-                    $ref: '#/responses/RelationshipDefinition'
-            summary: Handle GET request for getting meshmodel relationships of a specific model.
+                    $ref: '#/responses/allMeshmodelRelationshipsResponseWrapper'
+            summary: Handle GET request for getting meshmodel relationships of a specific model and their total count.
             tags:
                 - GetAllMeshmodelRelationships
     /api/meshmodel/model/{model}/relationship/{name}:
@@ -689,8 +736,8 @@ paths:
             operationId: idGetAllMeshmodelComponents
             responses:
                 "200":
-                    $ref: '#/responses/ComponentDefinition'
-            summary: Handle GET request for getting meshmodel components across all models and categories.
+                    $ref: '#/responses/allMeshmodelComponentsResponseWrapper'
+            summary: Handle GET request for getting meshmodel components across all models and categories and their total count.
             tags:
                 - GetAllMeshmodelComponents
     /api/meshmodels/components/{name}:
@@ -949,6 +996,13 @@ paths:
             summary: Handles GET requests for perf result
             tags:
                 - PerfAPI
+    /api/policies/run_policy:
+        post:
+            description: Handle POST request for running the set of policies on the design file, the policies are picked from the policies directory and query is sent to find all the relationships around the services in the given design file
+            operationId: idGetRegoPolicyForDesignFile
+            responses: {}
+            tags:
+                - GetRegoPolicyForDesignFile
     /api/provider:
         get:
             description: Update the choice of provider in system
@@ -1641,6 +1695,46 @@ responses:
         schema:
             additionalProperties: {}
             type: object
+    Connection:
+        description: ""
+        headers:
+            created_at:
+                format: date-time
+                type: string
+            credential_id: {}
+            deleted_at: {}
+            id: {}
+            kind:
+                type: string
+            metadata: {}
+            name:
+                type: string
+            sub_type:
+                type: string
+            type:
+                type: string
+            updated_at:
+                format: date-time
+                type: string
+            user_id: {}
+        schema:
+            additionalProperties: {}
+            type: object
+    ConnectionPage:
+        description: ""
+        headers:
+            connection:
+                items: {}
+                type: array
+            page:
+                format: int64
+                type: integer
+            page_size:
+                format: int64
+                type: integer
+            total_count:
+                format: int64
+                type: integer
     EventsResponse:
         description: ""
         headers:
@@ -1703,6 +1797,14 @@ responses:
         schema:
             additionalProperties: {}
             type: object
+    allMeshmodelComponentsResponseWrapper:
+        description: Returns all meshmodel components across all models and categories
+        headers:
+            Body: {}
+    allMeshmodelRelationshipsResponseWrapper:
+        description: Returns all meshmodel relationships of a specific model
+        headers:
+            Body: {}
     applicationFilesResponseWrapper:
         description: Returns the response of the application files
     grafanaBoardsResponseWrapper:
@@ -1742,6 +1844,10 @@ responses:
         description: Returns all meshery patterns
     mesheryVersionRespWrapper:
         description: Returns Meshery version
+    meshmodelModelsResponseWrapper:
+        description: Returns all meshmodel models
+        headers:
+            Body: {}
     noContentWrapper:
         description: ""
     perfSingleResultRespWrapper:
