@@ -34,7 +34,7 @@ Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Mesher
 
 ### Meshery is for cloud native patterns
 
-Through MeshModel, Meshery describes infrastructure under management, enabling you to define cloud native designs and patterns and then to export those designs and share within the <a href="https://meshery.io">Meshery Catalog</a>. 
+Through MeshModel, Meshery describes infrastructure under management, enabling you to define cloud native designs and patterns and then to export those designs and share within the <a href="https://meshery.io" target="_blank">Meshery Catalog</a>. 
 
 ### Meshery is for performance management
 
