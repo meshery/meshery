@@ -20,7 +20,7 @@
   "repository": "https://github.com/meshery/meshery",
   "license": "Apache-2.0",
   "dependencies": {
-    "@babel/eslint-parser": "^7.19.1",
+    "@babel/eslint-parser": "^7.21.8",
     "@cypress/code-coverage": "^3.10.7",
     "@emotion/cache": "^11.10.5",
     "@emotion/react": "^11.11.0",
