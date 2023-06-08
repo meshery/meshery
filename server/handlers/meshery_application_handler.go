@@ -394,7 +394,6 @@ func (h *Handler) handleApplicationPOST(
 	}
 
 	h.formatApplicationOutput(rw, byt, format, &res)
-	return
 }
 
 func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
