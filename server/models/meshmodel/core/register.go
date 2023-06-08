@@ -17,6 +17,14 @@ import (
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
+type kind string
+type groupversion string
+type helperGV struct {
+	group   string
+	version string
+	isCRD   bool
+}
+
 type crd struct {
 	Items []crdhelper `json:"items"`
 }
@@ -313,14 +321,6 @@ func getAPIRes(cli *kubernetes.Client) (map[string]v1.APIResource, error) {
 	}
 	return apiRes, nil
 }
-
-type helperGV struct {
-	group   string
-	version string
-	isCRD   bool
-}
-type kind string
-type groupversion string
 
 // TODO: To be moved in meshkit
 func getGroupsFromResource(cli *kubernetes.Client) (hgv map[kind][]groupversion, err error) {
