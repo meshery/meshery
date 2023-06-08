@@ -4,19 +4,19 @@
   "metadata": {
     "description": "A relationship that defines whether a component can be a parent of other components. It is read like: `from` can be a parent of `to`, where from and to are any components that match the from and to selectors respectively"
   },
-	"model":{
-		"name": "core",
-		"version": "v1.0.0",
-		"displayName": "Core",
-		"category": {
-      "name":"Cloud Native Application",
+  "model": {
+    "name": "kubernetes",
+    "version": "v1.25.2",
+    "displayName": "Kubernetes",
+    "category": {
+      "name": "Orchestration \u0026 Management",
       "metadata": null
     },
     "metadata": {}
   },
   "subType": "Parent",
   "selectors": {
-    "allow":{
+    "allow": {
       "from": [
         {
           "kind": "Namespace",
@@ -25,12 +25,12 @@
         {
           "kind": "Node",
           "model": "Kubernetes"
-        }      
+        }
       ],
       "to": [
         {
           "model": "*"
-        }    
+        }
       ]
     },
     "deny": {
