@@ -45,6 +45,6 @@ var ExpCmd = &cobra.Command{
 }
 
 func init() {
-	availableSubcommands = []*cobra.Command{mesh.MeshCmd, filter.FilterCmd}
+	availableSubcommands = []*cobra.Command{filter.FilterCmd}
 	ExpCmd.AddCommand(availableSubcommands...)
 }
