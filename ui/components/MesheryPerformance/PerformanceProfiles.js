@@ -119,7 +119,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
     fetchTestProfiles(page, pageSize, search, sortOrder);
     const subscription = subscribePerformanceProfiles((res) => {
       // @ts-ignore
-      console.log(res);
+      console.log("res from performance profiles", res);
       let result = res?.subscribePerfProfiles;
       if (typeof result !== "undefined") {
         if (result) {
@@ -167,6 +167,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
       },
     }).subscribe({
       next : (res) => {
+        console.log("fetch performance profiles", res)
         // @ts-ignore
         let result = res?.getPerformanceProfiles;
         updateProgress({ showProgress : false });

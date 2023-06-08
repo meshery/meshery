@@ -1,7 +1,7 @@
 //@ts-check
 import React, { useState } from "react";
 import {
-  Button, Grid, IconButton, Typography
+  Button, Grid, IconButton, Table, TableCell, TableRow, Typography
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
@@ -11,44 +11,45 @@ import FlipCard from "../FlipCard";
 import { makeStyles } from "@material-ui/core/styles";
 import { iconMedium } from "../../css/icons.styles";
 import { useTheme } from '@material-ui/core/styles';
+import moment from "moment";
 
 const useStyles = makeStyles((theme) => ({
-  cardButtons: {
-    display: "flex",
-    justifyContent: "flex-end",
-    alignItems: "center"
+  cardButtons : {
+    display : "flex",
+    justifyContent : "flex-end",
+    alignItems : "center"
   },
-  testsButton: {
-    marginRight: "0.5rem"
+  testsButton : {
+    marginRight : "0.5rem"
   },
-  perfResultsContainer: {
-    marginTop: "0.5rem"
+  perfResultsContainer : {
+    marginTop : "0.5rem"
   },
-  backGrid: {
-    marginBottom: "0.25rem",
-    minHeight: "6rem"
+  backGrid : {
+    marginBottom : "0.25rem",
+    minHeight : "6rem"
   },
-  deleteEditButton: {
-    width: "fit-content",
-    margin: "0 0 0 auto"
+  deleteEditButton : {
+    width : "fit-content",
+    margin : "0 0 0 auto"
   },
-  noOfResultsContainer: {
-    margin: "0 0 1rem",
-    '& div': {
-      display: "flex",
-      alignItems: "center"
+  noOfResultsContainer : {
+    margin : "0 0 1rem",
+    '& div' : {
+      display : "flex",
+      alignItems : "center"
     },
   },
-  bottomPart: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
+  bottomPart : {
+    display : "flex",
+    justifyContent : "space-between",
+    alignItems : "center",
   },
-  lastRunText: {
-    marginRight: "0.5rem"
+  lastRunText : {
+    marginRight : "0.5rem"
   },
-  resultText: {
-    color: theme.palette.secondary.lightText,
+  resultText : {
+    color : theme.palette.secondary.lightText,
   },
 }))
 
@@ -61,25 +62,85 @@ function PerformanceCard({
   requestSizeRestore,
 }) {
 
-  console.log({ s: profile })
+  console.log({ s : profile })
 
   const {
     id,
     name,
     endpoints,
-    load_generators: loadGenerators,
-    total_results: results,
+    load_generators : loadGenerators,
+    total_results : results,
     testRunDuration,
-    concurrent_request: concurrentRequest,
+    concurrent_request : concurrentRequest,
     qps,
-    service_mesh: serviceMesh,
-    content_type: contentType,
-    request_body: requestBody,
-    request_cookies: requestCookies,
-    request_headers: requestHeaders,
-    last_run: lastRun
+    service_mesh : serviceMesh,
+    content_type : contentType,
+    request_body : requestBody,
+    request_cookies : requestCookies,
+    request_headers : requestHeaders,
+    last_run : lastRun
   } = profile
   const [renderTable, setRenderTable] = useState(false);
+
+
+  const tableData = [
+    {
+      name : "Endpoints",
+      value : endpoints?.join(", ")
+    },
+    {
+      name : "Load Generators",
+      value : loadGenerators?.join(", ")
+    },
+    {
+      name : "Running Duration",
+      value : testRunDuration
+    },
+    {
+      name : "Concurrent Requests",
+      value : concurrentRequest
+    },
+    {
+      name : "queries/second",
+      value : qps
+    },
+    {
+      name : "Service Mesh",
+      value : serviceMesh
+    },
+    {
+      name : "Content Type",
+      value : contentType,
+      omitEmpty : true
+    },
+    {
+      name : "Request Body",
+      value : requestBody,
+      omitEmpty : true
+    },
+    {
+      name : "Cookies",
+      value : requestCookies,
+      omitEmpty : true
+    },
+    {
+      name : "Request Headers",
+      value : requestHeaders,
+      omitEmpty : true
+    },
+    {
+      name : "Created At",
+      value : profile.created_at ? moment(profile.created_at).format("LLL"): "unknown"
+    },
+    {
+      name : "Last Updated",
+      value : profile.updated_at ? moment(profile.updated_at).format("LLL") : "unknown"
+    },
+    {
+      name : "Last Run",
+      value : profile.last_run ? moment(profile.last_run).format("LLL") : "unknown"
+    }
+  ]
 
   function genericClickHandler(ev, fn) {
     ev.stopPropagation();
@@ -99,7 +160,7 @@ function PerformanceCard({
       {/* FRONT PART */}
       <>
         <div>
-          <div style={{display: "flex", justifyContent: "space-between"}}>
+          <div style={{ display : "flex", justifyContent : "space-between" }}>
             <Typography variant="h6" component="div">
               {name}
             </Typography>
@@ -107,7 +168,7 @@ function PerformanceCard({
           </div>
           <div className={classes.noOfResultsContainer} >
             <div >
-              <Typography variant="h2" component="div" style={{ marginRight: "0.75rem", color: `${theme.palette.type === "dark" ? "#fff" : "#647881"}` }}>
+              <Typography variant="h2" component="div" style={{ marginRight : "0.75rem", color : `${theme.palette.type === "dark" ? "#fff" : "#647881"}` }}>
                 {(results || "0").toLocaleString('en')}
               </Typography>
               <Typography variant="body1" className={classes.resultText} component="div">
@@ -121,7 +182,7 @@ function PerformanceCard({
             <div>
               {lastRun
                 ? (
-                  <Typography variant="caption" style={{ fontStyle: "italic", color: `${theme.palette.type === "dark" ? "rgba(255, 255, 255, 0.7)" : "#647881"}` }}>
+                  <Typography variant="caption" style={{ fontStyle : "italic", color : `${theme.palette.type === "dark" ? "rgba(255, 255, 255, 0.7)" : "#647881"}` }}>
                     Last Run: <Moment format="LLL">{lastRun}</Moment>
                   </Typography>
                 )
@@ -197,81 +258,18 @@ function PerformanceCard({
             </div>
           </Grid>
         </Grid>
-        {Array.isArray(endpoints)
-          ? (
-            <div>
-              <b>Endpoints:</b> {endpoints.join(", ")}
-            </div>
-          )
-          : null}
-        {Array.isArray(loadGenerators)
-          ? (
-            <div>
-              <b>Load Generators:</b> {loadGenerators.join(", ")}
-            </div>
-          )
-          : null}
-        {testRunDuration
-          ? (
-            <div>
-              <b>Test Run Duration:</b> {testRunDuration}
-            </div>
-          )
-          : null}
-        {concurrentRequest
-          ? (
-            <div>
-              <b>Concurrent Request:</b> <code>{concurrentRequest}</code>
-            </div>
-          )
-          : null}
-        {qps
-          ? (
-            <div>
-              <b>Queries Per Second:</b> <code>{qps}</code>
-            </div>
-          )
-          : null}
-        {serviceMesh
-          ? (
-            <div>
-              <b>Service Mesh:</b> <code>{serviceMesh}</code>
-            </div>
-          )
-          : null}
-        {
-          contentType || requestBody || requestCookies || requestHeaders
-            ? (<h4>Advanced Options</h4>)
-            : (null)
-        }
-        {contentType
-          ? (
-            <div>
-              <b>Content Type:</b> <code>{contentType}</code>
-            </div>
-          )
-          : null}
-        {requestBody
-          ? (
-            <div>
-              <b>Request Body:</b> <code>{requestBody}</code>
-            </div>
-          )
-          : null}
-        {requestCookies
-          ? (
-            <div>
-              <b>Request Cookies:</b> <code>{requestCookies}</code>
-            </div>
-          )
-          : null}
-        {requestHeaders
-          ? (
-            <div>
-              <b>Request Headers:</b> <code>{requestHeaders}</code>
-            </div>
-          )
-          : null}
+        <Table size="small" dense >
+          {
+          // tableData.map(function renderDesignTableRow(({name, value, omitEmpty}), idx) {
+          //   return <DetailsTable rowKey={} />
+          // })
+            tableData.map(function renderDesignTableRow(data) {
+              const { name, value, omitEmpty } = data;
+              return  <DetailsTable key={name} rowKey={name} value={value} omitEmpty={omitEmpty} />
+            })
+          }
+        </Table>
+
       </>
     </FlipCard >
   );
@@ -279,3 +277,16 @@ function PerformanceCard({
 
 // @ts-ignore
 export default PerformanceCard;
+
+function DetailsTable({ rowKey, value, omitEmpty }) {
+  if (omitEmpty && (value === undefined || value === null)) {
+    return null
+  }
+
+  return (
+    <TableRow>
+      <TableCell><b>{rowKey}</b></TableCell>
+      <TableCell>{value || "none"}</TableCell>
+    </TableRow>
+  )
+}

@@ -528,7 +528,9 @@ function MesheryResults({
   useEffect(() => {
     fetchResults(page, pageSize, search, sortOrder);
 
+    //TODO: remove this
     const subscription = subscribePerformanceProfiles((res) => {
+      console.log("performance results....", res)
       // @ts-ignore
       console.log(res);
       let result = res?.subscribePerfResults
@@ -592,6 +594,7 @@ function MesheryResults({
       profileID : endpoint.split("/")[endpoint.split("/").length - 2]
     }).subscribe({
       next : (res) => {
+        console.log("performance results fetch", res,  { pageSize, page, search, sortOrder })
         // @ts-ignore
         let result = res?.fetchResults
         if (typeof result !== "undefined") {
