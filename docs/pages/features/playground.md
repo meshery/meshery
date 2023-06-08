@@ -6,7 +6,7 @@ description: Details of the cloud native playground.
 language: en
 type: project
 ---
-Meshery Playground is a web-based interactive learning environment for service mesh. It provides a sandboxed environment to experiment with different service meshes and includes various tools, tutorials, and examples that help users learn about the features of different service meshes.
+Meshery Playground is a web-based interactive exploring not only Meshery as a cloud native manager, but for exploring all of the infrastructure that Meshery manages including multiple Kubernetes clusters and every CNCF project - almost 200 projects in all. The Meshery Playground provides a sandboxed environment to experiment with different infrastructure configurations and deployment options. It's mutli-player plugins allow you to collaborate in real-time with your teammates on infrastructure configuration and operation.
 
 With Meshery Playground, you can:
 
@@ -17,7 +17,7 @@ With Meshery Playground, you can:
 
 It allows users to interactively explore some service meshes like Istio, Linkerd, Consul Connect etc., without having to install them on their local machines. Users can create virtual services and deploy sample applications using these meshes and observe their behavior in real-time.
 
-Meshery Playground also has pre-built scenarios that demonstrate how to implement specific use-cases such as traffic splitting or circuit breaking across multiple Service Meshes.
+Meshery Playground also has pre-built scenarios that demonstrate how to implement specific use-cases such as traffic splitting, circuit breaking, and other cloud native patterns.
 
 ## Meshery Playground FAQ
 #### Question: Why do I need to sign-up/register to use the Cloud Native Playground?
