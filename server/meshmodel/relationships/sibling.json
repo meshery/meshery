@@ -36,14 +36,3 @@
     }
   }
 }
-  
-
-  "model": {
-  "name": "kubernetes",
-  "version": "v1.25.2",
-  "displayName": "Kubernetes",
-  "category": {
-    "name": "Orchestration \u0026 Management",
-    "metadata": null
-  },
-}
