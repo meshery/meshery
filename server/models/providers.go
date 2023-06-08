@@ -198,7 +198,7 @@ type ConnectionPayload struct {
 	SubType          string                 `json:"sub_type,omitempty"`
 	Type             string                 `json:"type,omitempty"`
 	MetaData         map[string]interface{} `json:"metadata,omitempty"`
-	Status 			 string 				`json:"status,omitempty"`
+	Status 			 ConnectionStatus 		`json:"status,omitempty"`
 	CredentialSecret map[string]interface{} `json:"credential_secret,omitempty"`
 }
 
