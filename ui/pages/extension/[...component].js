@@ -94,7 +94,7 @@ class RemoteExtension extends React.Component {
             capabilitiesRegistryObj : result,
           });
           //global state
-          if (result?.extensions?.navigator) { 
+          if (result?.extensions?.navigator) {
             result.extensions.navigator = result.extensions?.navigator.map((item) => item.title==="MeshMap" ? { ...item, isBeta : true } :item  )
           }
           this.props.updateCapabilities({ capabilitiesRegistry : result })
