@@ -42,7 +42,7 @@ require (
 	github.com/layer5io/meshery-operator v0.6.8
 	github.com/layer5io/meshkit v0.6.45
 	github.com/layer5io/meshsync v0.6.9
-	github.com/layer5io/nighthawk-go v0.6.0
+	github.com/layer5io/nighthawk-go v0.7.0
 	github.com/layer5io/service-mesh-performance v0.3.4
 	github.com/lib/pq v1.10.7
 	github.com/manifoldco/promptui v0.9.0
