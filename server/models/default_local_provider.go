@@ -109,17 +109,6 @@ func (l *DefaultLocalProvider) InitiateLogin(_ http.ResponseWriter, _ *http.Requ
 	// l.issueSession(w, r, fromMiddleWare)
 }
 
-// issueSession issues a cookie session after successful login
-func (l *DefaultLocalProvider) issueSession(w http.ResponseWriter, req *http.Request, fromMiddleWare bool) {
-	if !fromMiddleWare {
-		returnURL := "/"
-		if req.RequestURI != "" {
-			returnURL = req.RequestURI
-		}
-		http.Redirect(w, req, returnURL, http.StatusFound)
-	}
-}
-
 func (l *DefaultLocalProvider) fetchUserDetails() *User {
 	return &User{
 		UserID:    "meshery",
@@ -1438,41 +1427,6 @@ func downloadContent(comp string, downloadpath string) error {
 	return nil
 }
 
-func downloadApplicationsFromURL(downloadpath string, appname string, url string) error {
-	path := filepath.Join(downloadpath, appname)
-	res, err := http.Get(url)
-	if err != nil {
-		return err
-	}
-	content, err := io.ReadAll(res.Body)
-	if err != nil {
-		return err
-	}
-	f, err := os.Create(path)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	fmt.Fprintf(f, "%s", content)
-	return nil
-}
-
-// DownloadYAMLSintoSingleFile takes a slice of URL's which each returns a YAML body on get request. Then combines all the yamls into one yaml
-func downloadYAMLSintoSingleFile(f io.Writer, URLs []string) error {
-	for _, url := range URLs {
-		res, err := http.Get(url)
-		if err != nil {
-			return err
-		}
-		content, err := io.ReadAll(res.Body)
-		if err != nil {
-			return err
-		}
-		fmt.Fprintf(f, "%s\n---\n", string(content))
-	}
-	return nil
-}
-
 func getFiltersFromWasmFiltersRepo(downloadPath string) error {
 	// releaseName, err := getLatestStableReleaseTag()
 	// if err != nil {
@@ -1495,7 +1449,7 @@ func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 
 	tarReader := tar.NewReader(uncompressedStream)
 
-	for true {
+	for {
 		header, err := tarReader.Next()
 		if err == io.EOF {
 			break
@@ -1518,23 +1472,6 @@ func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 		}
 	}
 	return nil
-}
-
-func getSeededAppLocation(path string) (map[string][]string, error) {
-	var applicationsAndURLS map[string][]string
-	f, err := os.Open(path)
-	if err != nil {
-		return applicationsAndURLS, err
-	}
-	content, err := io.ReadAll(f)
-	if err != nil {
-		return applicationsAndURLS, err
-	}
-	err = json.Unmarshal(content, &applicationsAndURLS)
-	if err != nil {
-		return applicationsAndURLS, err
-	}
-	return applicationsAndURLS, nil
 }
 
 // // GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub

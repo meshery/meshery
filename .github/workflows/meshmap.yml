@@ -1,0 +1,30 @@
+"on":
+  pull_request_target:
+    types:
+    - opened
+    - synchronize
+    - reopened
+  pullrequest: ""
+name: MeshMap Screenshot Service
+jobs:
+  meshmap:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    name: Run the MeshMap screenshot service
+    steps:
+    - name: Set PR number
+      run: |
+        export pull_number=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+        echo "PULL_NO=$pull_number" >> $GITHUB_ENV
+    - uses: actions/checkout@v3
+      with:
+        repository: layer5labs/meshmap-snapshot
+    - id: test_result
+      uses: ./
+      with:
+        applicationId: 35e32646-71a2-4d55-a4fa-dfc18a079f56
+        cypressRecordKey: ${{ secrets.CYPRESS_RECORD_KEY }}
+        githubToken: ${{ secrets.GITHUB_TOKEN }}
+        path: /install/deployment_yamls/k8s
+        prNumber: ${{ env.PULL_NO }}
+        providerToken: ${{ secrets.MESHERY_PROVIDER_TOKEN }}

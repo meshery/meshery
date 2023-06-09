@@ -189,7 +189,7 @@ func RemoveStaleObjects(dbHandler database.Handler) error {
 		&meshsyncmodel.ResourceObjectMeta{},
 	)
 	if err != nil {
-		return err.(error)
+		return err
 	}
 	err = dbHandler.Migrator().CreateTable(
 		&meshsyncmodel.KeyValue{},
@@ -199,7 +199,7 @@ func RemoveStaleObjects(dbHandler database.Handler) error {
 		&meshsyncmodel.ResourceObjectMeta{},
 	)
 	if err != nil {
-		return err.(error)
+		return err
 	}
 
 	return nil
