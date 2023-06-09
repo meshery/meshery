@@ -73,18 +73,18 @@ You can onboard ImageHub to an installed service mesh as shown below.
 
 You can also manage WASM filters through Meshery's CLI, mesheryctl.
 
-The `mesheryctl filter` subcommand lets you import and configure filters in your service meshes.
+The `mesheryctl exp filter` subcommand lets you import and configure filters in your service meshes.
 
 For example,
 
 ```
-mesheryctl filter apply -f metrics_collector_bg.wasm
+mesheryctl exp filter apply -f metrics_collector_bg.wasm
 ```
 
 If you already have a filter imported into Meshery, you can configure the filter by name.
 
 ```
-mesheryctl filter apply metrics_collector_bg
+mesheryctl exp filter apply metrics_collector_bg
 ```
 
 ## Applications
