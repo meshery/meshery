@@ -185,7 +185,7 @@ function Dashboard({ updateProgress, enqueueSnackbar, closeSnackbar, grafana, ro
                       {(tests.count).toLocaleString('en')}
                     </Typography>
                     <Typography variant="body1" className={classes.resultText} component="div">
-                      Results
+                      Total Tests Run
                     </Typography>
                   </div>
                   <div style={{ margin : "2rem 0 0 auto", width : "fit-content" }}>
