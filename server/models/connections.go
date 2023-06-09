@@ -18,7 +18,7 @@ const (
 	MAINTENANCE 	ConnectionStatus = "maintenance"
 	DISCONNECTED 	ConnectionStatus = "disconnected"
 	DELETED 		ConnectionStatus = "deleted"
-	NOT_FOUND 		ConnectionStatus = "not_found"
+	NOTFOUND 		ConnectionStatus = "not found"
 )
 
 // swagger:response Connection
