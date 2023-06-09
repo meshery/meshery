@@ -23,6 +23,7 @@ import {
   ExpansionPanel,
   ExpansionPanelSummary,
   ExpansionPanelDetails,
+  DialogTitle,
 } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import { withSnackbar } from "notistack";
@@ -118,7 +119,14 @@ const infoloadGenerators = (
   </>
 );
 const styles = (theme) => ({
-  wrapperClss : { padding : theme.spacing(10), position : "relative" },
+  title : {
+    textAlign : 'center',
+    minWidth : 400,
+    padding : '10px',
+    color : '#fff',
+    backgroundColor : theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : '#396679',
+  },
+  wrapperClss : { padding : theme.spacing(10), position : "relative", paddingTop: theme.spacing(5) },
   buttons : { display : "flex", justifyContent : "flex-end" },
   button : { marginTop : theme.spacing(3), marginLeft : theme.spacing(1) },
   expansionPanel : { boxShadow : "none", border : "1px solid rgb(196,196,196)" },
@@ -756,22 +764,31 @@ class MesheryPerformanceComponent extends React.Component {
     return (
       <NoSsr>
         <React.Fragment>
+          <DialogTitle className={classes.title} >Performance Profile Wizard</DialogTitle>
           <div className={classes.wrapperClss} style={this.props.style || {}}>
             <Grid container spacing={1}>
               <Grid item xs={12} md={6}>
-                <Tooltip title="If a profile name is not provided, a random one will be generated for you.">
-                  <TextField
-                    id="profileName"
-                    name="profileName"
-                    label="Profile Name"
-                    fullWidth
-                    value={profileName}
-                    margin="normal"
-                    variant="outlined"
-                    onChange={this.handleChange("profileName")}
-                    inputProps={{ maxLength : 300 }}
-                  />
-                </Tooltip>
+
+                <TextField
+                  id="profileName"
+                  name="profileName"
+                  label="Profile Name"
+                  fullWidth
+                  value={profileName}
+                  margin="normal"
+                  variant="outlined"
+                  onChange={this.handleChange("profileName")}
+                  inputProps={{
+                    maxLength: 300,
+                  }}
+                  InputProps={{
+                    endAdornment: (
+                      <Tooltip title="Create a profile providing a name, if a profile name is not provided, a random one will be generated for you.">
+                        <HelpOutlineOutlinedIcon style={{color: "#929292" }} />
+                      </Tooltip>
+                    )
+                  }}
+                />
               </Grid>
 
               <Grid item xs={12} md={6}>
@@ -818,6 +835,13 @@ class MesheryPerformanceComponent extends React.Component {
                   margin="normal"
                   variant="outlined"
                   onChange={this.handleChange("url")}
+                  InputProps={{
+                    endAdornment: (
+                      <Tooltip title="The Endpoint where the load will be generated and the perfromance test will run against.">
+                        <HelpOutlineOutlinedIcon style={{color: "#929292" }} />
+                      </Tooltip>
+                    )
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -834,6 +858,13 @@ class MesheryPerformanceComponent extends React.Component {
                   variant="outlined"
                   onChange={this.handleChange("c")}
                   InputLabelProps={{ shrink : true }}
+                  InputProps={{
+                    endAdornment: (
+                      <Tooltip title="Load Testing tool will create this many concurrent request against the endpoint.">
+                        <HelpOutlineOutlinedIcon style={{color: "#929292" }} />
+                      </Tooltip>
+                    )
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -850,6 +881,13 @@ class MesheryPerformanceComponent extends React.Component {
                   variant="outlined"
                   onChange={this.handleChange("qps")}
                   InputLabelProps={{ shrink : true }}
+                  InputProps={{
+                    endAdornment: (
+                      <Tooltip title="The Number of queries/second. If not provided then the MAX number of queries/second will be  requested">
+                        <HelpOutlineOutlinedIcon style={{color: "#929292" }} />
+                      </Tooltip>
+                    )
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -871,6 +909,13 @@ class MesheryPerformanceComponent extends React.Component {
                     options={durationOptions}
                     style={{ marginTop : "16px", marginBottom : "8px" }}
                     renderInput={(params) => <TextField {...params} label="Duration*" variant="outlined" />}
+                    InputProps={{
+                      endAdornment: (
+                        <Tooltip title="Default duration is 30 seconds">
+                          <HelpOutlineOutlinedIcon style={{color: "#929292" }} />
+                        </Tooltip>
+                      )
+                    }}
                   />
                 </Tooltip>
               </Grid>
