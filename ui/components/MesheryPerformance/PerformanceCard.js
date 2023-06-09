@@ -1,7 +1,8 @@
 //@ts-check
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Button, Grid, IconButton, Table, TableCell, TableRow, Typography
+  Avatar,
+  Button, Grid, IconButton, Link, Table, TableCell, TableRow, Typography
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
@@ -12,6 +13,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { iconMedium } from "../../css/icons.styles";
 import { useTheme } from '@material-ui/core/styles';
 import moment from "moment";
+import dataFetch from "../../lib/data-fetch";
 
 const useStyles = makeStyles((theme) => ({
   cardButtons : {
@@ -46,12 +48,44 @@ const useStyles = makeStyles((theme) => ({
     alignItems : "center",
   },
   lastRunText : {
-    marginRight : "0.5rem"
+    marginRight : "0.5rem",
+    marginLeft : "0.5rem",
   },
   resultText : {
     color : theme.palette.secondary.lightText,
   },
 }))
+
+const avatarHandler = (function AvatarHandler() {
+const idToAvatarMap = {}
+
+function fetchUserAvatarLink(userId, setterCallbackFunction) {
+  if (!userId) return null
+  dataFetch(`/api/user/profile/${userId}`, {
+    credentials : "include"
+  },
+  function assignAvatarLinkToId(result) {
+    if (result.avatar_url) {
+      idToAvatarMap[userId] = result.avatar_url
+      setterCallbackFunction(result.avatar_url)
+    }
+  },
+  function handleProfileFetchError(error) {
+    console.error("failed to fetch user profile with ID", userId, error)
+  }
+  )
+}
+
+return {
+  getAvatar : async function _getAvatar(userId, setterFn) {
+    if (idToAvatarMap[userId]) {
+      return setterFn(idToAvatarMap[userId])
+    }
+
+    fetchUserAvatarLink(userId, setterFn)
+  }
+}
+})()
 
 function PerformanceCard({
   profile,
@@ -61,8 +95,13 @@ function PerformanceCard({
   requestFullSize,
   requestSizeRestore,
 }) {
+  const classes = useStyles()
+  const theme = useTheme()
+  const [userAvatar, setUserAvatar] = useState(null)
 
-  console.log({ s : profile })
+  useEffect(() => {
+    avatarHandler.getAvatar(profile.user_id, setUserAvatar)
+  }, [])
 
   const {
     id,
@@ -70,7 +109,7 @@ function PerformanceCard({
     endpoints,
     load_generators : loadGenerators,
     total_results : results,
-    testRunDuration,
+    duration : testRunDuration,
     concurrent_request : concurrentRequest,
     qps,
     service_mesh : serviceMesh,
@@ -146,8 +185,6 @@ function PerformanceCard({
     ev.stopPropagation();
     fn();
   }
-  const classes = useStyles()
-  const theme = useTheme()
 
   return (
     <FlipCard
@@ -177,16 +214,21 @@ function PerformanceCard({
             </div>
           </div>
         </div>
-        <div className={classes.bottomPart} >
-          <div className={classes.lastRunText} >
-            <div>
-              {lastRun
-                ? (
-                  <Typography variant="caption" style={{ fontStyle : "italic", color : `${theme.palette.type === "dark" ? "rgba(255, 255, 255, 0.7)" : "#647881"}` }}>
-                    Last Run: <Moment format="LLL">{lastRun}</Moment>
-                  </Typography>
-                )
-                : null}
+        <div style={{ display : "flex", justifyContent : "space-between" }}>
+          <div className={classes.bottomPart} >
+            <Link href={`https://meshery.layer5.io/user/${profile.user_id}`} target="_blank">
+              <Avatar alt="profile-avatar" src={userAvatar} />
+            </Link>
+            <div className={classes.lastRunText} >
+              <div>
+                {lastRun
+                  ? (
+                    <Typography variant="caption" style={{ fontStyle : "italic", color : `${theme.palette.type === "dark" ? "rgba(255, 255, 255, 0.7)" : "#647881"}` }}>
+                      Last Run: <Moment format="LLL">{lastRun}</Moment>
+                    </Typography>
+                  )
+                  : null}
+              </div>
             </div>
           </div>
           <div className={classes.cardButtons} >
