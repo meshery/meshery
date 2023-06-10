@@ -51,6 +51,7 @@
 }
 
 .sidebar-container {
+  scroll-behavior: contains;
   padding: 1rem min(2vh, 2vw);
   overflow-y: scroll;
   height: calc(100vh - var(--navbar-height));
@@ -67,6 +68,7 @@
   }
 
   &::-webkit-scrollbar-track {
+  	scroll-behavior: contains;
     width: 0.5rem;
     border-radius: 11px;
     overflow: hidden;
@@ -115,6 +117,7 @@
     }
 
     & .sidebar-nav {
+
       & > *:not(:last-child) {
         border-bottom: 1px solid var(--color-grey-medium);
       }
@@ -134,7 +137,7 @@
         }
 
         & a {
-          color: var(--color-secondary-medium) !important;
+          color: var(--color-secondary-medium);
           letter-spacing: 0.2px;
           &:hover {
             color: var(--sidenav-hover) !important;
@@ -146,6 +149,12 @@
           color: var(--color-secondary-medium);
           position: relative;
           width: fit-content;
+
+		  &.active,
+		  &.active a{
+			scroll-margin-bottom: 8rem;
+            color: var(--sidenav-hover) ;
+		  }
 
           & a:hover {
             text-decoration: none;
@@ -187,4 +196,3 @@
     }
   }
 }
-
