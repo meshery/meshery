@@ -3129,6 +3129,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 			Type:             "platform",
 			SubType:          "management",
 			MetaData:         metadata,
+			Status: 		  DISCOVERED,
 			CredentialSecret: cred,
 		}
 
@@ -3599,6 +3600,7 @@ func (l *RemoteProvider) DeleteMesheryConnection() error {
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/meshery/%s/delete", l.RemoteProviderURL, ep, mesheryServerID))
 	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
 	cReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
+	cReq.Header.Set("SystemID", viper.GetString("INSTANCE_ID")) // Adds the system id to the header for event tracking
 	c := &http.Client{}
 	resp, err := c.Do(cReq)
 	if err != nil {

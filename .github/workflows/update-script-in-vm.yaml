@@ -4,7 +4,7 @@ on:
       branches:
         - 'master'
       paths:
-        - '$GITHUB_WORKSPACE/.github/playground-cleanup.sh'
+        - '$GITHUB_WORKSPACE/.github/scripts/playground-cleanup.sh'
 jobs:
     update_script:
         runs-on: ubuntu-latest
