@@ -17,6 +17,5 @@ jobs:
             username: root
             key: ${{ secrets.METAL_SSH_KEY }}
             script: |
-                cd
                 curl -O https://raw.githubusercontent.com/meshery/meshery/master/.github/scripts/playground-cleanup.sh
           
