@@ -1709,6 +1709,7 @@ responses:
             metadata: {}
             name:
                 type: string
+            status: {}
             sub_type:
                 type: string
             type:
@@ -1735,6 +1736,9 @@ responses:
             total_count:
                 format: int64
                 type: integer
+    ConnectionStatus:
+        description: ""
+        schema: {}
     EventsResponse:
         description: ""
         headers:
