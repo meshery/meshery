@@ -1,6 +1,6 @@
 <p style="text-align:center;" align="center"><a href="https://layer5.io/meshery"><picture align="center">
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/layer5io/layer5/master/src/assets/images/meshery/full-logo/meshery-logo-tag-light-white-text-side.png"  width="70%" align="center" style="margin-bottom:20px;">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/meshery/meshery-logo-tag-light-text-side.png" width="70%" align="center" style="margin-bottom:20px;">
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/meshery/meshery/blob/master/.github/assets/images/meshery/meshery-logo-dark-text-side.svg"  width="70%" align="center" style="margin-bottom:20px;">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/meshery/meshery/blob/master/.github/assets/images/meshery/meshery-logo-light-text-side.svg" width="70%" align="center" style="margin-bottom:20px;">
   <img alt="Shows an illustrated light mode meshery logo in light color mode and a dark mode meshery logo dark color mode." src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/meshery/meshery-logo-tag-light-text-side.png" width="70%" align="center" style="margin-bottom:20px;">
 </picture></a><br /><br /></p>
 
@@ -59,6 +59,26 @@ The Docker Extension for Meshery deploys Meshery to your local Docker host as a 
 
 <p align="center"><a href="https://raw.githubusercontent.com/meshery/meshery/master/install/docker-extension/docs/img/docker-extension-for-meshery-architecture.png"><img src="https://raw.githubusercontent.com/meshery/meshery/master/install/docker-extension/docs/img/docker-extension-for-meshery-architecture.png" width="90%" align="center" /></a></p>
 Learn more about <a href="https://docs.meshery.io/architecture">Meshery's architecture</a>.
+
+## Docker Extension for Meshery
+
+From `/install/docker-extension`, familiarize with available `make` targets by executing:
+
+```
+make
+```
+Review the available targets and their purpose. In general, follow this sequence when building and testing changes:
+
+```
+make extension
+```
+
+Once build is complete:
+
+```
+docker extension install meshery/docker-extension-meshery:edge-latest
+```
+
 
 <p style="text-align:center; width:100%;" align="center">
 <a href ="https://layer5.io/community"><img alt="MeshMates" src="https://docs.meshery.io/assets/img/readme/layer5-community-sign.png" style="margin-right:10px; margin-bottom:7px;" width="28%" align="center" /></a>
