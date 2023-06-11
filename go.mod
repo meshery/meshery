@@ -52,8 +52,8 @@ require (
 	github.com/onsi/gomega v1.27.7
 	github.com/pkg/browser v0.0.0-20210706143420-7d21f8c997e2
 	github.com/pkg/errors v0.9.1
-	github.com/prometheus/client_golang v1.15.0
-	github.com/prometheus/common v0.42.0
+	github.com/prometheus/client_golang v1.15.1
+	github.com/prometheus/common v0.44.0
 	github.com/qri-io/jsonschema v0.2.1
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.7.0
@@ -61,7 +61,7 @@ require (
 	github.com/spf13/viper v1.15.0
 	github.com/vektah/gqlparser/v2 v2.5.1
 	github.com/vmihailenco/taskq/v3 v3.2.9
-	golang.org/x/oauth2 v0.6.0
+	golang.org/x/oauth2 v0.8.0
 	golang.org/x/text v0.9.0
 	gonum.org/v1/gonum v0.12.0
 	google.golang.org/grpc v1.54.0
@@ -217,7 +217,7 @@ require (
 	github.com/openshift/api v3.9.0+incompatible // indirect
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
-	github.com/prometheus/client_model v0.3.0 // indirect
+	github.com/prometheus/client_model v0.4.0 // indirect
 	github.com/prometheus/procfs v0.9.0 // indirect
 	github.com/qri-io/jsonpointer v0.1.1 // indirect
 	github.com/rubenv/sql-migrate v1.2.0 // indirect
