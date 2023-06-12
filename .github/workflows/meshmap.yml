@@ -1,7 +1,6 @@
 name: MeshMap Screenshot Service
 on: # rebuild any PRs and main branch changes
-  pull_request:
-    types: [opened, synchronize, reopened]
+  pull_request_target:  
 
 permissions: "read-all"
 
@@ -9,15 +8,15 @@ jobs:
   MeshMapScreenshot:
     runs-on: ubuntu-latest
     steps:
-      # - name: Set PR number # To comment the final status on the Pull-request opened in any repository
-      #   run: |
-      #     export pull_number=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
-      #     echo "PULL_NO=$pull_number" >> $GITHUB_ENV
-      # - uses: actions/checkout@v3
-      # - uses: actions/checkout@v3 #this step would go away
-      #   with:
-      #     path: action
-      #     repository: layer5labs/meshmap-snapshot
+      - name: Set PR number # To comment the final status on the Pull-request opened in any repository
+        run: |
+          export pull_number=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          echo "PULL_NO=$pull_number" >> $GITHUB_ENV
+      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3 #this step would go away
+        with:
+          path: action
+          repository: layer5labs/meshmap-snapshot
       - id: test_result
         uses: layer5labs/MeshMap-Snapshot@v0.0.4
         with:
