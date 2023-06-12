@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { updateProgress } from '../lib/store';
-import { Button, IconButton, Paper, Typography, withStyles } from '@material-ui/core';
+import { Button, IconButton, Typography, withStyles } from '@material-ui/core';
 import CloseIcon from "@material-ui/icons/Close";
 import dataFetch from '../lib/data-fetch';
 import DataTable from "mui-datatables";
@@ -9,6 +9,7 @@ import { withSnackbar } from 'notistack';
 import { bindActionCreators } from 'redux';
 import PropTypes from "prop-types";
 import resetDatabase from './graphql/queries/ResetDatabaseQuery';
+import debounce from '../utils/debounce';
 
 const styles = (theme) => ({
   textCenter : {
@@ -40,6 +41,10 @@ const DatabaseSummary = (props) => {
   const { classes } = props
   const [databaseSummary, setDatabaseSummary] = useState({ tables : [], totalRecords : 0, totalSize : 0, totalTables : 0 })
 
+  const [page, setPage] = useState(0)
+  const [rowsPerPage, setRowsPerPage] = useState(10)
+  const [searchText, setSearchText] = useState("")
+
   const handleError = (msg) => (error) => {
     props.updateProgress({ showProgress : false });
     const self = this;
@@ -54,9 +59,12 @@ const DatabaseSummary = (props) => {
     });
   };
 
-  const getDatabaseSummary = () => {
+  const getDatabaseSummary = (page, rowsPerPage, searchText) => {
     dataFetch(
-      "/api/system/database",
+      "/api/system/database?" + new URLSearchParams({ 
+        page: page, 
+        pagesize: rowsPerPage, 
+        search: searchText }).toString(),
       {
         method : "GET",
         credentials : "include",
@@ -76,8 +84,8 @@ const DatabaseSummary = (props) => {
   }
 
   useEffect(() => {
-    getDatabaseSummary()
-  }, [])
+    getDatabaseSummary(page, rowsPerPage, searchText)
+  }, [page, rowsPerPage, searchText])
 
   const handleResetDatabase = () => {
     return async () => {
@@ -119,45 +127,56 @@ const DatabaseSummary = (props) => {
     }
   }
 
+  const table_options = {
+    filter : false,
+    sort: false,
+    selectableRows : "none",
+    responsive : "scrollMaxHeight",
+    print : false,
+    download : false,
+    viewColumns : false,
+    fixedHeader : true,
+    serverSide : true,
+    rowsPerPage : rowsPerPage,
+    count : databaseSummary?.totalTables,
+    onChangePage : debounce((p) =>  setPage(p), 200),
+    onChangeRowsPerPage: debounce((p) =>  setRowsPerPage(p), 200),
+    onSearchChange : debounce((searchText) => {
+      if (searchText) setPage(0);
+      setSearchText(searchText != null ? searchText : "")
+    }),
+    customToolbar : () => (<Button
+      type="submit"
+      variant="contained"
+      color="primary"
+      size="medium"
+      onClick={handleResetDatabase()}
+      className={classes.DBBtn}
+      data-cy="btnResetDatabase"
+    >
+      <Typography align="center" variant="subtitle2"> RESET DATABASE </Typography>
+    </Button>)
+  }
+
   return (<>
-      <DataTable
-        title={<>
-          <Typography>Database Overview</Typography>
-        </>
+    <DataTable
+      title={<>
+        <Typography>Database Overview</Typography>
+      </>
+      }
+      data={databaseSummary?.tables}
+      options={table_options}
+      columns={[
+        {
+          name : "name",
+          label : "Name"
+        },
+        {
+          name : "count",
+          label : "Count"
         }
-        data={databaseSummary?.tables}
-        options={{
-          filter : false,
-          selectableRows : "none",
-          responsive : "scrollMaxHeight",
-          print : false,
-          download : false,
-          viewColumns : false,
-          pagination : false,
-          fixedHeader : true,
-          customToolbar: () => (<Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            size="medium"
-            onClick={handleResetDatabase()}
-            className={classes.DBBtn}
-            data-cy="btnResetDatabase"
-          >
-            <Typography align="center" variant="subtitle2"> RESET DATABASE </Typography>
-          </Button>)
-        }}
-        columns={[
-          {
-            name : "name",
-            label : "Name"
-          },
-          {
-            name : "count",
-            label : "Count"
-          }
-        ]}
-      />
+      ]}
+    />
   </>)
 };
 
