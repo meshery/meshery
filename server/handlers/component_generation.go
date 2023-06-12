@@ -68,7 +68,7 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 			response = append(response, responseItem)
 			continue
 		}
-		if gpi.Register == true {
+		if gpi.Register {
 			if len(comps) != 0 {
 				for _, comp := range comps {
 					utils.WriteSVGsOnFileSystem(&comp)
