@@ -907,6 +907,16 @@ paths:
             summary: Handle Publish for a Meshery Pattern
             tags:
                 - PatternsAPI
+    /api/pattern/catalog/unpublish:
+        delete:
+            description: Unpublishes pattern from Meshery Catalog by setting visibility to private and removing catalog data from website
+            operationId: idUnPublishCatalogPatternHandler
+            responses:
+                "200":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle Publish for a Meshery Pattern
+            tags:
+                - PatternsAPI
     /api/pattern/clone/{id}:
         post:
             description: 'Creates a local copy of a published pattern with id: id'
