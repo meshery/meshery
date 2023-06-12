@@ -8,6 +8,7 @@ permissions:
   contents: read
   security-events: write
   statuses: write
+  pull-requests: write
 
 jobs:
   MeshMapScreenshot:
