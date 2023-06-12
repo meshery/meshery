@@ -16,7 +16,6 @@ package system
 
 import (
 	"bufio"
-	"bytes"
 	"context"
 	"fmt"
 	"io"
@@ -48,16 +47,19 @@ func IsPodRequired(requiredPods []string, pod string) bool {
 	return false
 }
 
+func printLogs(logs string, podName string) {
+	for _, logMsg := range strings.Split(logs, "\n") {
+		logStr := fmt.Sprintf("%s\t|\t%s", podName, logMsg)
+
+		log.Print(logStr)
+	}
+}
+
 var (
 	follow bool
 )
 
 const BYTE_SIZE = 2000
-
-type logChanStruct struct {
-	PodName string
-	Message []byte
-}
 
 // logsCmd represents the logs command
 var logsCmd = &cobra.Command{
@@ -193,25 +195,7 @@ mesheryctl system logs meshery-istio
 			}
 
 			log.Info("Starting Meshery logging...")
-
-			logChan := make(chan logChanStruct)
 			wg := &sync.WaitGroup{}
-			wg.Add(1)
-			go func() {
-				defer wg.Done()
-				for {
-					value, ok := <-logChan
-					if ok {
-						for _, msg := range strings.Split(string(value.Message), "\n") {
-							logStr := fmt.Sprintf("%s\t|\t%s", value.PodName, msg)
-
-							log.Print(logStr)
-						}
-					} else {
-						break
-					}
-				}
-			}()
 
 			// List all the pods similar to kubectl get pods -n MesheryNamespace
 			for _, pod := range podList.Items {
@@ -243,9 +227,17 @@ mesheryctl system logs meshery-istio
 						return err
 					}
 					defer logs.Close()
-
-					if follow {
+					var logBuf []byte
+					if !follow {
+						logBuf, err = io.ReadAll(logs)
+						if err != nil {
+							return fmt.Errorf("error occurred while processing logs")
+						}
+						printLogs(string(logBuf), name)
+					} else {
+						wg.Add(1)
 						go func() {
+							defer wg.Done()
 							for {
 								buf := make([]byte, BYTE_SIZE)
 								numBytes, err := logs.Read(buf)
@@ -256,29 +248,18 @@ mesheryctl system logs meshery-istio
 									break
 								}
 								if err != nil {
+									log.Println("error occurred while processing logs", err)
 									break
 								}
-								logChan <- logChanStruct{PodName: name, Message: buf[0:numBytes]}
+								logBuf = buf[0:numBytes]
+								printLogs(string(logBuf), name)
 							}
 						}()
-					} else {
-						buf := new(bytes.Buffer)
-						_, err = io.Copy(buf, logs)
-						if err != nil {
-							return fmt.Errorf("error in copy information from logs to buf")
-						}
-
-						logChan <- logChanStruct{PodName: name, Message: buf.Bytes()}
 					}
 				}
 			}
-			if !follow {
-				close(logChan)
-			}
-
 			wg.Wait()
 		}
-
 		return nil
 	},
 }
