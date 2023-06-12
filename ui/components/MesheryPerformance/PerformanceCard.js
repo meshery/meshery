@@ -14,6 +14,7 @@ import { iconMedium } from "../../css/icons.styles";
 import { useTheme } from '@material-ui/core/styles';
 import moment from "moment";
 import dataFetch from "../../lib/data-fetch";
+import { MESHERY_CLOUD_PROD } from "../../constants/endpoints";
 
 const useStyles = makeStyles((theme) => ({
   cardButtons : {
@@ -196,39 +197,34 @@ function PerformanceCard({
     >
       {/* FRONT PART */}
       <>
-        <div>
-          <div style={{ display : "flex", justifyContent : "space-between" }}>
-            <Typography variant="h6" component="div">
-              {name}
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <Typography variant="h6" component="div">
+            {name}
+          </Typography>
+          <img src={`/static/img/load-test/${loadGenerators[0]}.svg`} alt="load-generator" height="24px" />
+        </div>
+        <div className={classes.noOfResultsContainer} >
+          <div >
+            <Typography variant="h2" component="div" style={{ marginRight: "0.75rem", color: `${theme.palette.type === "dark" ? "#fff" : "#647881"}` }}>
+              {(results || "0").toLocaleString('en')}
             </Typography>
-            <img src={`/static/img/load-test/${loadGenerators[0]}.svg`} height="24px" />
-          </div>
-          <div className={classes.noOfResultsContainer} >
-            <div >
-              <Typography variant="h2" component="div" style={{ marginRight : "0.75rem", color : `${theme.palette.type === "dark" ? "#fff" : "#647881"}` }}>
-                {(results || "0").toLocaleString('en')}
-              </Typography>
-              <Typography variant="body1" className={classes.resultText} component="div">
-                Results
-              </Typography>
-            </div>
+            <Typography variant="body1" className={classes.resultText} component="div">
+              Results
+            </Typography>
           </div>
         </div>
         <div style={{ display : "flex", justifyContent : "space-between" }}>
           <div className={classes.bottomPart} >
-            <Link href={`https://meshery.layer5.io/user/${profile.user_id}`} target="_blank">
+            <Link href={`${MESHERY_CLOUD_PROD}/user/${profile.user_id}`} target="_blank">
               <Avatar alt="profile-avatar" src={userAvatar} />
             </Link>
             <div className={classes.lastRunText} >
-              <div>
-                {lastRun
-                  ? (
-                    <Typography variant="caption" style={{ fontStyle : "italic", color : `${theme.palette.type === "dark" ? "rgba(255, 255, 255, 0.7)" : "#647881"}` }}>
-                      Last Run: <Moment format="LLL">{lastRun}</Moment>
-                    </Typography>
-                  )
-                  : null}
-              </div>
+              {lastRun && (
+                <Typography variant="caption" style={{ fontStyle: "italic", color: `${theme.palette.type === "dark" ? "rgba(255, 255, 255, 0.7)" : "#647881"}` }}>
+                  Last Run: <Moment format="LLL">{lastRun}</Moment>
+                </Typography>
+              )
+              }
             </div>
           </div>
           <div className={classes.cardButtons} >
@@ -302,9 +298,6 @@ function PerformanceCard({
         </Grid>
         <Table size="small" dense >
           {
-          // tableData.map(function renderDesignTableRow(({name, value, omitEmpty}), idx) {
-          //   return <DetailsTable rowKey={} />
-          // })
             tableData.map(function renderDesignTableRow(data) {
               const { name, value, omitEmpty } = data;
               return  <DetailsTable key={name} rowKey={name} value={value} omitEmpty={omitEmpty} />

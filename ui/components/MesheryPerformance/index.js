@@ -883,7 +883,7 @@ class MesheryPerformanceComponent extends React.Component {
                   InputLabelProps={{ shrink : true }}
                   InputProps={{
                     endAdornment: (
-                      <Tooltip title="The Number of queries/second. If not provided then the MAX number of queries/second will be  requested">
+                      <Tooltip title="The Number of queries/second. If not provided then the MAX number of queries/second will be requested">
                         <HelpOutlineOutlinedIcon style={{color: "#929292" }} />
                       </Tooltip>
                     )
