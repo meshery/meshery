@@ -126,7 +126,7 @@ const styles = (theme) => ({
     color : '#fff',
     backgroundColor : theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : '#396679',
   },
-  wrapperClss : { padding : theme.spacing(10), position : "relative", paddingTop: theme.spacing(5) },
+  wrapperClss : { padding : theme.spacing(10), position : "relative", paddingTop : theme.spacing(5) },
   buttons : { display : "flex", justifyContent : "flex-end" },
   button : { marginTop : theme.spacing(3), marginLeft : theme.spacing(1) },
   expansionPanel : { boxShadow : "none", border : "1px solid rgb(196,196,196)" },
@@ -779,12 +779,12 @@ class MesheryPerformanceComponent extends React.Component {
                   variant="outlined"
                   onChange={this.handleChange("profileName")}
                   inputProps={{
-                    maxLength: 300,
+                    maxLength : 300,
                   }}
                   InputProps={{
-                    endAdornment: (
+                    endAdornment : (
                       <Tooltip title="Create a profile providing a name, if a profile name is not provided, a random one will be generated for you.">
-                        <HelpOutlineOutlinedIcon style={{color: "#929292" }} />
+                        <HelpOutlineOutlinedIcon style={{ color : "#929292" }} />
                       </Tooltip>
                     )
                   }}
@@ -836,9 +836,9 @@ class MesheryPerformanceComponent extends React.Component {
                   variant="outlined"
                   onChange={this.handleChange("url")}
                   InputProps={{
-                    endAdornment: (
+                    endAdornment : (
                       <Tooltip title="The Endpoint where the load will be generated and the perfromance test will run against.">
-                        <HelpOutlineOutlinedIcon style={{color: "#929292" }} />
+                        <HelpOutlineOutlinedIcon style={{ color : "#929292" }} />
                       </Tooltip>
                     )
                   }}
@@ -859,9 +859,9 @@ class MesheryPerformanceComponent extends React.Component {
                   onChange={this.handleChange("c")}
                   InputLabelProps={{ shrink : true }}
                   InputProps={{
-                    endAdornment: (
+                    endAdornment : (
                       <Tooltip title="Load Testing tool will create this many concurrent request against the endpoint.">
-                        <HelpOutlineOutlinedIcon style={{color: "#929292" }} />
+                        <HelpOutlineOutlinedIcon style={{ color : "#929292" }} />
                       </Tooltip>
                     )
                   }}
@@ -882,9 +882,9 @@ class MesheryPerformanceComponent extends React.Component {
                   onChange={this.handleChange("qps")}
                   InputLabelProps={{ shrink : true }}
                   InputProps={{
-                    endAdornment: (
+                    endAdornment : (
                       <Tooltip title="The Number of queries/second. If not provided then the MAX number of queries/second will be requested">
-                        <HelpOutlineOutlinedIcon style={{color: "#929292" }} />
+                        <HelpOutlineOutlinedIcon style={{ color : "#929292" }} />
                       </Tooltip>
                     )
                   }}
@@ -910,9 +910,9 @@ class MesheryPerformanceComponent extends React.Component {
                     style={{ marginTop : "16px", marginBottom : "8px" }}
                     renderInput={(params) => <TextField {...params} label="Duration*" variant="outlined" />}
                     InputProps={{
-                      endAdornment: (
+                      endAdornment : (
                         <Tooltip title="Default duration is 30 seconds">
-                          <HelpOutlineOutlinedIcon style={{color: "#929292" }} />
+                          <HelpOutlineOutlinedIcon style={{ color : "#929292" }} />
                         </Tooltip>
                       )
                     }}
