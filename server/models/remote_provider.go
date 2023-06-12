@@ -3516,7 +3516,7 @@ func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *Connect
 		return nil, err
 	}
 	bf := bytes.NewBuffer(_creds)
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s/edit", l.RemoteProviderURL, ep, connection.Kind))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connection.Kind))
 	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
 	tokenString, _ := l.GetToken(req)
 	if err != nil {
@@ -3557,7 +3557,7 @@ func (l *RemoteProvider) DeleteConnection(req *http.Request, connectionID uuid.U
 
 	logrus.Infof("attempting to delete connection from cloud for id: %s", connectionID)
 
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s/delete", l.RemoteProviderURL, ep, connectionID))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connectionID))
 	logrus.Debugf("constructed connection url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
 
