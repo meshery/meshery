@@ -1,8 +1,15 @@
 name: MeshMap Screenshot Service
 on: # rebuild any PRs and main branch changes
-  pull_request_target:  
+  pull_request_target:
+    types: [opened, synchronize, reopened]
 
-permissions: read-all
+permissions: 
+  actions: read
+  contents: write
+  security-events: write
+  statuses: write
+  pull-requests: write
+  id-token: write
 
 jobs:
   MeshMapScreenshot:
