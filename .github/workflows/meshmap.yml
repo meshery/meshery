@@ -2,7 +2,7 @@ name: MeshMap Screenshot Service
 on: # rebuild any PRs and main branch changes
   pull_request_target:  
 
-permissions: "read-all"
+permissions: read-all
 
 jobs:
   MeshMapScreenshot:
