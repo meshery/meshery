@@ -29,7 +29,7 @@ It also supports a collaborative environment, where DevOps engineers can share t
 5. Voilà, You can publish or deploy you design.
 
 
-### To Create catalog uisng Meshery CLI
+### To create catalog uisng Meshery CLI
 
 1. Ensure that you have [Meshery CLI](https://docs.meshery.io/installation/mesheryctl) installed on your machine and it is configured to connect to your desired Meshery instance.
 2. Open a terminal or command prompt.
