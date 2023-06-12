@@ -10,7 +10,7 @@ permissions:
   statuses: write
   pull-requests: write
   id-token: write
-
+ 
 jobs:
   MeshMapScreenshot:
     runs-on: ubuntu-latest
