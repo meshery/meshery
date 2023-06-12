@@ -43,7 +43,9 @@ To contribute to this project, you must agree to the Developer Certificate of
 Origin (DCO) for each commit you make. The DCO is a simple statement that you,
 as a contributor, have the legal right to make the contribution.
 
-See the [DCO](https://developercertificate.org) file for the full text of what you must agree to
+<details>
+  <summary>Read more</summary>
+  See the [DCO](https://developercertificate.org) file for the full text of what you must agree to
 and how it works [here](https://github.com/probot/dco#how-it-works).
 To signify that you agree to the DCO for contributions, you simply add a line to each of your
 git commit messages:
@@ -75,6 +77,8 @@ Or you may configure your IDE, for example, Visual Studio Code to automatically 
 
 <a href="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" ><img src="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" width="50%"><a>
 
+</details>
+
 ### Meshery Contribution Flow
 
 Meshery is written in `Go` (Golang) and leverages Go Modules. UI is built on React and Next.js. To make building and packaging easier a `Makefile` is included in the main repository folder.
@@ -84,6 +88,9 @@ Practices for Production Environments](https://peter.bourgon.org/go-in-productio
 
 **Please note**: All `make` commands should be run in a terminal from within the Meshery's main folder.
 
+<details>
+  <summary>Prerequisites</summary>
+  
 #### Prerequisites for building Meshery in your development environment:
 
 1. `Go` version 1.19 must be installed if you want to build and/or make changes to the existing code. The binary `go1.19` should be available in your path. If you don't want to disturb your existing version of Go, then follow these [instructions](https://go.dev/doc/manage-install#:~:text=and%20run%20them.-,Installing%20multiple%20Go%20versions,-You%20can%20install) to keep multiple versions of Go in your system.
@@ -91,3 +98,5 @@ Practices for Production Environments](https://peter.bourgon.org/go-in-productio
 1. `npm` and `node` should be installed on your machine, `node` version 19 or higher is not supported right now.
 1. Fork this repository (`git clone https://github.com/meshery/meshery.git`), and clone your forked version of Meshery to your development environment, preferably outside `GOPATH`.
 1. `golangci-lint` should be installed if you want to test Go code, for MacOS and linux users.
+</details>
+
