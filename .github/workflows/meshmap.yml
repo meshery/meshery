@@ -3,7 +3,11 @@ on: # rebuild any PRs and main branch changes
   pull_request_target:
     types: [opened, synchronize, reopened]
 
-permissions: "read-all"
+permissions: 
+  actions: read
+  contents: read
+  security-events: write
+  statuses: write
 
 jobs:
   MeshMapScreenshot:
