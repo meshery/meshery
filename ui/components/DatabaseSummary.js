@@ -120,13 +120,9 @@ const DatabaseSummary = (props) => {
   }
 
   return (<>
-    <Paper elevation={1} style={{ padding : "2rem" }}>
-      <Typography variant="h6" className={classes.textCenter}>Database Overview</Typography>
-      <Typography className={`${classes.textEnd} ${classes.gapBottom}`}>Total Records : {databaseSummary?.totalRecords}</Typography>
-      <Typography className={`${classes.textEnd} ${classes.gapBottom}`}>Total Size : {databaseSummary?.totalSize}</Typography>
       <DataTable
         title={<>
-          <Typography>Tables</Typography>
+          <Typography>Database Overview</Typography>
         </>
         }
         data={databaseSummary?.tables}
@@ -139,6 +135,17 @@ const DatabaseSummary = (props) => {
           viewColumns : false,
           pagination : false,
           fixedHeader : true,
+          customToolbar: () => (<Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            size="medium"
+            onClick={handleResetDatabase()}
+            className={classes.DBBtn}
+            data-cy="btnResetDatabase"
+          >
+            <Typography align="center" variant="subtitle2"> RESET DATABASE </Typography>
+          </Button>)
         }}
         columns={[
           {
@@ -151,20 +158,6 @@ const DatabaseSummary = (props) => {
           }
         ]}
       />
-    </Paper>
-    <div className={classes.container}>
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
-        size="large"
-        onClick={handleResetDatabase()}
-        className={classes.DBBtn}
-        data-cy="btnResetDatabase"
-      >
-        <Typography align="center" variant="body2"> RESET DATABASE </Typography>
-      </Button>
-    </div>
   </>)
 };
 
