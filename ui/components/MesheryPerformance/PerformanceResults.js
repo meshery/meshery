@@ -22,7 +22,6 @@ import GenericModal from "../GenericModal";
 import BarChartIcon from '@material-ui/icons/BarChart';
 import InfoIcon from '@material-ui/icons/Info';
 import fetchPerformanceResults from "../graphql/queries/PerformanceResultQuery";
-import subscribePerformanceProfiles from "../graphql/subscriptions/PerformanceResultSubscription";
 import NodeDetails from "../NodeDetails";
 import ReplyIcon from '@material-ui/icons/Reply';
 import FacebookIcon from "./assets/facebookIcon";
@@ -61,7 +60,7 @@ function generateResultsForDisplay(results) {
         name : record.name,
         mesh : record.mesh,
         test_start_time : record.runner_results.StartTime,
-        qps : record.runner_results.ActualQPS.toFixed(1),
+        qps : record.runner_results.ActualQPS?.toFixed(1) || "unavailable",
         duration : (record.runner_results.ActualDuration / 1000000000).toFixed(1),
         threads : record.runner_results.NumThreads,
       };
@@ -419,7 +418,6 @@ function ResultChart({ result, handleTabChange, tabValue }) {
 }
 
 function ResultNodeDetails({ result, handleTabChange, tabValue }) {
-  console.log("results: ", result)
   if (!result) return <div />
   const chartData = result.runner_results;
 
@@ -527,37 +525,6 @@ function MesheryResults({
 
   useEffect(() => {
     fetchResults(page, pageSize, search, sortOrder);
-
-    //TODO: remove this
-    const subscription = subscribePerformanceProfiles((res) => {
-      console.log("performance results....", res)
-      // @ts-ignore
-      console.log(res);
-      let result = res?.subscribePerfResults
-      if (typeof result !== "undefined") {
-        updateProgress({ showProgress : false })
-
-        if (result) {
-          setCount(result.total_count);
-          setPageSize(result.page_size);
-          setSortOrder(sortOrder);
-          setSearch(search);
-          setResults(result.results);
-          setPageSize(result.page_size);
-        }
-      }
-    }, {
-      selector : {
-        pageSize : `${pageSize}`,
-        page : `${page}`,
-        search : `${encodeURIComponent(search)}`,
-        order : `${encodeURIComponent(sortOrder)}`
-      },
-      profileID : endpoint.split("/")[endpoint.split("/").length - 2]
-    })
-    return () => {
-      subscription.dispose();
-    };
   }, [page, pageSize, search, sortOrder]);
 
 
@@ -594,7 +561,6 @@ function MesheryResults({
       profileID : endpoint.split("/")[endpoint.split("/").length - 2]
     }).subscribe({
       next : (res) => {
-        console.log("performance results fetch", res,  { pageSize, page, search, sortOrder })
         // @ts-ignore
         let result = res?.fetchResults
         if (typeof result !== "undefined") {
