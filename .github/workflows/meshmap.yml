@@ -2,7 +2,10 @@ name: MeshMap Screenshot Service
 on: # rebuild any PRs and main branch changes
   pull_request:
 
+permissions: "read-all"
+
 jobs:
+  secrets: inherit
   MeshMapScreenshot:
     runs-on: ubuntu-latest
     steps:
@@ -19,7 +22,8 @@ jobs:
         uses: layer5labs/MeshMap-Snapshot@v0.0.4
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }} # github's personal access token example: "ghp_...."
-          providerToken: ${{ secrets.GLOBAL_TOKEN }} # Meshery Cloud Authentication token, signin to meshery-cloud to get one, example: ey.....
+          providerToken: ${{ secrets.PROVIDER_TOKEN }} # Meshery Cloud Authentication token, signin to meshery-cloud to get one, example: ey.....
           prNumber: ${{ env.PULL_NO }} # auto-filled from the above step
           application_type: "Kubernetes Manifest" # your application type, could be any of three: "Kubernetes Manifest", "Docker Compose", "Helm Chart"
           filePath: "install/deployment_yamls/k8s" # relative file-path from the root directory in the github-runner env, you might require to checkout the repository as described in step 2
+        
