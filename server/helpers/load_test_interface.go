@@ -408,7 +408,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		}
 	}
 
-	d, err := nighthawk_client.Transform(res1)
+	d, err := nighthawk_client.Transform(res1, "transform")
 	if err != nil {
 		return nil, nil, ErrTransformingData(err)
 	}
