@@ -11,50 +11,55 @@
   </form>
 
   <script type="text/javascript">
-		<!--Ref: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView-->
-		<!--Ref: https://stackoverflow.com/questions/11039885/scrollintoview-causing-the-whole-page-to-move-->
-		window.addEventListener('load', function () {
-			let scrollElem = document.getElementsByClassName("sidebar-nav__section-link active").item(0);
-			scrollElem.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start'});
-		})
+    <!--Ref: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView-->
+    <!--Ref: https://stackoverflow.com/questions/11039885/scrollintoview-causing-the-whole-page-to-move-->
+    (() => {
+      window.addEventListener("load", function () {
+        let scrollElem = document.getElementsByClassName("sidebar-nav__section-link active").item(0);
+        scrollElem.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+      });
+    })();
   </script>
 
   <nav class="sidebar-nav" id="td-section-nav">
     {% for section in site.data.toc %}
     <ul class="sidebar-nav__section">
-      {% capture sectionUrl %}{{ section.url | replace: "/", "" | strip}}{% endcapture %} {% capture pageUrl %}{{ page.url |
-      replace: "/", "" }}{% endcapture %}
-	  <li class="sidebar-nav__section-title {% if pageUrl == sectionUrl %} active {% endif %}">
-        <a href="{% if section.url %}{{ site.baseurl }}{{linkUrlSelected}}/{{ section.url }}{% else %}{{
+      {% capture sectionUrl %}{{ section.url | replace: "/", "" | strip}}{% endcapture %} {% capture pageUrl %}{{
+      page.url | replace: "/", "" }}{% endcapture %}
+      <li class="sidebar-nav__section-title {% if pageUrl == sectionUrl %} active {% endif %}">
+        <a
+          href="{% if section.url %}{{ site.baseurl }}{{linkUrlSelected}}/{{ section.url }}{% else %}{{
 		  section.external_url }}{% endif %}"
           class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
-		  >{{ section.title }}
-		</a>
-       </li>
+          >{{ section.title }}
+        </a>
+      </li>
       {% if section.links %}
       <ul>
         <li id="{{ section.title | slugify }}">
           <ul class="td-sidebar-nav__section">
-            {% for entry in section.links %}
-			{% capture entryUrl %}{{ entry.url | replace: "/", "" | strip }}{% endcapture %}
-			<li class="sidebar-nav__section-link {% if entryUrl == pageUrl %} active {% endif %}">
-              <a  href="{% if entry.url %}{{ site.baseurl }}{{linkUrlSelected}}/{{ entry.url }}{% else %}{{
+            {% for entry in section.links %} {% capture entryUrl %}{{ entry.url | replace: "/", "" | strip }}{%
+            endcapture %}
+            <li class="sidebar-nav__section-link {% if entryUrl == pageUrl %} active {% endif %}">
+              <a
+                href="{% if entry.url %}{{ site.baseurl }}{{linkUrlSelected}}/{{ entry.url }}{% else %}{{
 				entry.external_url }}{% endif %}"
                 class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
-				>{{ entry.title }}</a>
+                >{{ entry.title }}</a
+              >
             </li>
-				  {% if page.url contains entry.url or pageUrl == sectionUrl %}  {% if entry.children %}
+            {% if page.url contains entry.url or pageUrl == sectionUrl %} {% if entry.children %}
             <ul>
               <li id="{{ child.title | slugify }}">
-                {% for child in entry.children %}
-				{% capture childUrl %}{% if child.url %}{{ site.baseurl }}{{linkUrlSelected}}/{{ child.url }}{% else %}{{
-				child.external_url }}{% endif %} {% endcapture %}
-				{% capture childUrl %}{{childUrl | strip}}{% endcapture %}
-				{% capture childTitle %}{{ childUrl | replace: "/", "" | strip}}{% endcapture %}
-				<a class="sidebar-nav__section-link {% if pageUrl contains childTitle %}  active {% endif %}"
-					 id="m-{{ section.title | slugify }}-{{ entry.title | slugify }}-{{ child.title | slugify
+                {% for child in entry.children %} {% capture childUrl %}{% if child.url %}{{ site.baseurl
+                }}{{linkUrlSelected}}/{{ child.url }}{% else %}{{ child.external_url }}{% endif %} {% endcapture %} {%
+                capture childUrl %}{{childUrl | strip}}{% endcapture %} {% capture childTitle %}{{ childUrl | replace:
+                "/", "" | strip}}{% endcapture %}
+                <a
+                  class="sidebar-nav__section-link {% if pageUrl contains childTitle %} active {% endif %}"
+                  id="m-{{ section.title | slugify }}-{{ entry.title | slugify }}-{{ child.title | slugify
 					 }}"
-				  href="{{childUrl}}"
+                  href="{{childUrl}}"
                   >{{ child.title }}</a
                 >
                 {% endfor %}
