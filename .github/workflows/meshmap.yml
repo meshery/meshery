@@ -5,7 +5,6 @@ on: # rebuild any PRs and main branch changes
 permissions: "read-all"
 
 jobs:
-  secrets: inherit
   MeshMapScreenshot:
     runs-on: ubuntu-latest
     steps:
