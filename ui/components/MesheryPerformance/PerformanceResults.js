@@ -23,6 +23,7 @@ import BarChartIcon from '@material-ui/icons/BarChart';
 import InfoIcon from '@material-ui/icons/Info';
 import fetchPerformanceResults from "../graphql/queries/PerformanceResultQuery";
 import NodeDetails from "../NodeDetails";
+import subscribePerformanceResults from "../graphql/subscriptions/PerformanceResultSubscription";
 import ReplyIcon from '@material-ui/icons/Reply';
 import FacebookIcon from "./assets/facebookIcon";
 import LinkedinIcon from "./assets/linkedinIcon"
@@ -34,7 +35,6 @@ import {
   FacebookShareButton,
 
 } from "react-share"
-import subscribePerformanceProfiles from "../graphql/subscriptions/PerformanceResultSubscription";
 
 const COL_MAPPING = {
   QPS : 3,
@@ -528,7 +528,7 @@ function MesheryResults({
     fetchResults(page, pageSize, search, sortOrder);
 
     //TODO: remove this
-    const subscription = subscribePerformanceProfiles((res) => {
+    const subscription = subscribePerformanceResults((res) => {
       // @ts-ignore
       let result = res?.subscribePerfResults
       if (typeof result !== "undefined") {

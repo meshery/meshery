@@ -19,8 +19,8 @@ import MesheryPerformanceComponent from "./index";
 import { Paper, Typography, Button } from "@material-ui/core";
 import fetchPerformanceProfiles from "../graphql/queries/PerformanceProfilesQuery";
 import { withStyles } from "@material-ui/core/styles";
-import { iconMedium, iconXLarge } from "../../css/icons.styles";
 import subscribePerformanceProfiles from "../graphql/subscriptions/PerformanceProfilesSubscription";
+import { iconMedium, iconXLarge } from "../../css/icons.styles";
 
 const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 const styles = () => ({
