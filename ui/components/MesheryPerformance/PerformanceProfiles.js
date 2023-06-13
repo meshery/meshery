@@ -117,7 +117,6 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
     fetchTestProfiles(page, pageSize, search, sortOrder);
     const subscription = subscribePerformanceProfiles((res) => {
       // @ts-ignore
-      console.log("res from performance profile subscription....", res);
       let result = res?.subscribePerfProfiles;
       if (typeof result !== "undefined") {
         if (result) {
