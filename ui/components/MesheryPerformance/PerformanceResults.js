@@ -1,40 +1,43 @@
 //@ts-check
-import React, { useEffect, useState, useRef } from "react";
 import {
-  NoSsr, TableCell, IconButton, Paper, Popper, ClickAwayListener, Fade
+  ClickAwayListener, Fade,
+  IconButton,
+  NoSsr,
+  Paper, Popper,
+  TableCell
 } from "@material-ui/core";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import MUIDataTable from "mui-datatables";
-import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import Moment from "react-moment";
-import { withSnackbar } from "notistack";
+import TableSortLabel from "@material-ui/core/TableSortLabel";
+import Tabs from '@material-ui/core/Tabs';
 import { withStyles } from '@material-ui/core/styles';
 import CloseIcon from "@material-ui/icons/Close";
-import { updateResultsSelection, clearResultsSelection, updateProgress } from "../../lib/store";
-import TableSortLabel from "@material-ui/core/TableSortLabel";
+import MUIDataTable from "mui-datatables";
+import { withSnackbar } from "notistack";
+import React, { useEffect, useRef, useState } from "react";
+import Moment from "react-moment";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { clearResultsSelection, updateProgress, updateResultsSelection } from "../../lib/store";
 // import dataFetch from "../../lib/data-fetch";
-import CustomToolbarSelect from "../CustomToolbarSelect";
-import MesheryChart from "../MesheryChart";
-import GrafanaCustomCharts from "../telemetry/grafana/GrafanaCustomCharts";
-import GenericModal from "../GenericModal";
 import BarChartIcon from '@material-ui/icons/BarChart';
 import InfoIcon from '@material-ui/icons/Info';
-import fetchPerformanceResults from "../graphql/queries/PerformanceResultQuery";
-import NodeDetails from "../NodeDetails";
-import subscribePerformanceResults from "../graphql/subscriptions/PerformanceResultSubscription";
 import ReplyIcon from '@material-ui/icons/Reply';
-import FacebookIcon from "./assets/facebookIcon";
-import LinkedinIcon from "./assets/linkedinIcon"
-import TwitterIcon from "./assets/twitterIcon";
-import { iconMedium, iconLarge } from "../../css/icons.styles";
 import {
-  TwitterShareButton,
-  LinkedinShareButton,
   FacebookShareButton,
-
-} from "react-share"
+  LinkedinShareButton,
+  TwitterShareButton,
+} from "react-share";
+import { iconLarge, iconMedium } from "../../css/icons.styles";
+import CustomToolbarSelect from "../CustomToolbarSelect";
+import GenericModal from "../GenericModal";
+import MesheryChart from "../MesheryChart";
+import NodeDetails from "../NodeDetails";
+import fetchPerformanceResults from "../graphql/queries/PerformanceResultQuery";
+import {subscribePerformanceResults} from "../graphql/subscriptions/PerformanceResultSubscription";
+import GrafanaCustomCharts from "../telemetry/grafana/GrafanaCustomCharts";
+import FacebookIcon from "./assets/facebookIcon";
+import LinkedinIcon from "./assets/linkedinIcon";
+import TwitterIcon from "./assets/twitterIcon";
 
 const COL_MAPPING = {
   QPS : 3,

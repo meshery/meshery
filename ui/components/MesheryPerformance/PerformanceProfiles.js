@@ -1,26 +1,26 @@
 //@ts-check
-import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
-import React, { useEffect, useState, useRef } from "react";
-import PromptComponent from "../PromptComponent";
-import GridOnIcon from "@material-ui/icons/GridOn";
-import CloseIcon from "@material-ui/icons/Close";
-import TableChartIcon from "@material-ui/icons/TableChart";
-import PerformanceProfileTable from "./PerformanceProfileTable";
-import PerformanceProfileGrid from "./PerformanceProfileGrid";
-import dataFetch from "../../lib/data-fetch";
+import { Button, Paper, Typography } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
-import AddIcon from "@material-ui/icons/AddCircleOutline";
-import { bindActionCreators } from "redux";
-import { connect } from "react-redux";
-import { updateProgress } from "../../lib/store";
-import { withSnackbar } from "notistack";
-import GenericModal from "../GenericModal";
-import MesheryPerformanceComponent from "./index";
-import { Paper, Typography, Button } from "@material-ui/core";
-import fetchPerformanceProfiles from "../graphql/queries/PerformanceProfilesQuery";
 import { withStyles } from "@material-ui/core/styles";
-import subscribePerformanceProfiles from "../graphql/subscriptions/PerformanceProfilesSubscription";
+import AddIcon from "@material-ui/icons/AddCircleOutline";
+import CloseIcon from "@material-ui/icons/Close";
+import GridOnIcon from "@material-ui/icons/GridOn";
+import TableChartIcon from "@material-ui/icons/TableChart";
+import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
+import { withSnackbar } from "notistack";
+import React, { useEffect, useRef, useState } from "react";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import { iconMedium, iconXLarge } from "../../css/icons.styles";
+import dataFetch from "../../lib/data-fetch";
+import { updateProgress } from "../../lib/store";
+import GenericModal from "../GenericModal";
+import PromptComponent from "../PromptComponent";
+import fetchPerformanceProfiles from "../graphql/queries/PerformanceProfilesQuery";
+import { subscribePerformanceProfiles } from "../graphql/subscriptions/PerformanceProfilesSubscription";
+import PerformanceProfileGrid from "./PerformanceProfileGrid";
+import PerformanceProfileTable from "./PerformanceProfileTable";
+import MesheryPerformanceComponent from "./index";
 
 const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 const styles = () => ({

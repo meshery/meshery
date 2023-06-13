@@ -23,7 +23,7 @@ subscription PerformanceResultSubscription($selector: PageFilter!, $profileID: S
         }
     }
 `;
-export default function subscribePerformanceProfiles(dataCB, variables) {
+export function subscribePerformanceResults(dataCB, variables) {
   const environment = createRelayEnvironment({});
   return requestSubscription(environment, {
     subscription : performanceResultSubscription,
