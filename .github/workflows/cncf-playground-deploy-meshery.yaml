@@ -4,16 +4,16 @@ on:
   workflow_dispatch:
 jobs:
     cncf-playground-rollout:
-        name: Rollout Meshery on CNCF playground
+        name: Update Meshery on CNCF playground
         if: github.repository == 'meshery/meshery'
         runs-on: ubuntu-latest 
         steps:
         - name: Pull latest images and restart containers
           uses: appleboy/ssh-action@master
           with:
-              host: 147.75.47.9
+              host: METAL_SERVER1
               username: root
-              key: ${{ secrets.METAL_SSH_KEY }}
+              key: ${{ secrets.METAL_AUTH_TOKEN }}
               script: |
                 cd meshery
                 git pull
