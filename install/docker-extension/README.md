@@ -79,6 +79,11 @@ Once build is complete:
 docker extension install meshery/docker-extension-meshery:edge-latest
 ```
 
+Or reinstall with:
+
+```
+docker extension update meshery/docker-extension-meshery:edge-latest
+```
 
 <p style="text-align:center; width:100%;" align="center">
 <a href ="https://layer5.io/community"><img alt="MeshMates" src="https://docs.meshery.io/assets/img/readme/layer5-community-sign.png" style="margin-right:10px; margin-bottom:7px;" width="28%" align="center" /></a>
