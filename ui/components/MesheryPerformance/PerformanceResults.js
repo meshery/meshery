@@ -34,6 +34,7 @@ import {
   FacebookShareButton,
 
 } from "react-share"
+import subscribePerformanceProfiles from "../graphql/subscriptions/PerformanceResultSubscription";
 
 const COL_MAPPING = {
   QPS : 3,
@@ -525,6 +526,35 @@ function MesheryResults({
 
   useEffect(() => {
     fetchResults(page, pageSize, search, sortOrder);
+
+    //TODO: remove this
+    const subscription = subscribePerformanceProfiles((res) => {
+      // @ts-ignore
+      let result = res?.subscribePerfResults
+      if (typeof result !== "undefined") {
+        updateProgress({ showProgress : false })
+
+        if (result) {
+          setCount(result.total_count);
+          setPageSize(result.page_size);
+          setSortOrder(sortOrder);
+          setSearch(search);
+          setResults(result.results);
+          setPageSize(result.page_size);
+        }
+      }
+    }, {
+      selector : {
+        pageSize : `${pageSize}`,
+        page : `${page}`,
+        search : `${encodeURIComponent(search)}`,
+        order : `${encodeURIComponent(sortOrder)}`
+      },
+      profileID : endpoint.split("/")[endpoint.split("/").length - 2]
+    })
+    return () => {
+      subscription.dispose();
+    };
   }, [page, pageSize, search, sortOrder]);
 
 
