@@ -1,7 +1,8 @@
 //@ts-check
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Button, Grid, IconButton, Typography
+  Avatar,
+  Button, Grid, IconButton, Link, Table, TableCell, TableRow, Typography
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import EditIcon from "@material-ui/icons/Edit";
@@ -11,8 +12,11 @@ import FlipCard from "../FlipCard";
 import { makeStyles } from "@material-ui/core/styles";
 import { iconMedium } from "../../css/icons.styles";
 import { useTheme } from '@material-ui/core/styles';
+import moment from "moment";
+import dataFetch from "../../lib/data-fetch";
+import { MESHERY_CLOUD_PROD } from "../../constants/endpoints";
 
-const useStyles= makeStyles((theme) => ({
+const useStyles = makeStyles((theme) => ({
   cardButtons : {
     display : "flex",
     justifyContent : "flex-end",
@@ -45,43 +49,143 @@ const useStyles= makeStyles((theme) => ({
     alignItems : "center",
   },
   lastRunText : {
-    marginRight : "0.5rem"
+    marginRight : "0.5rem",
+    marginLeft : "0.5rem",
   },
   resultText : {
     color : theme.palette.secondary.lightText,
   },
 }))
 
+const avatarHandler = (function AvatarHandler() {
+const idToAvatarMap = {}
+
+function fetchUserAvatarLink(userId, setterCallbackFunction) {
+  if (!userId) return null
+  dataFetch(`/api/user/profile/${userId}`, {
+    credentials : "include"
+  },
+  function assignAvatarLinkToId(result) {
+    if (result.avatar_url) {
+      idToAvatarMap[userId] = result.avatar_url
+      setterCallbackFunction(result.avatar_url)
+    }
+  },
+  function handleProfileFetchError(error) {
+    console.error("failed to fetch user profile with ID", userId, error)
+  }
+  )
+}
+
+return {
+  getAvatar : async function _getAvatar(userId, setterFn) {
+    if (idToAvatarMap[userId]) {
+      return setterFn(idToAvatarMap[userId])
+    }
+
+    fetchUserAvatarLink(userId, setterFn)
+  }
+}
+})()
+
 function PerformanceCard({
-  id,
-  name,
-  endpoints,
-  loadGenerators,
-  testRunDuration,
-  lastRun,
-  reqHeaders,
-  results,
+  profile,
   handleDelete,
   handleEdit,
   handleRunTest,
   requestFullSize,
   requestSizeRestore,
-  concurrentRequest,
-  qps,
-  serviceMesh,
-  contentType,
-  requestBody,
-  requestCookies,
-  requestHeaders,
 }) {
+  const classes = useStyles()
+  const theme = useTheme()
+  const [userAvatar, setUserAvatar] = useState(null)
+
+  useEffect(() => {
+    avatarHandler.getAvatar(profile.user_id, setUserAvatar)
+  }, [])
+
+  const {
+    id,
+    name,
+    endpoints,
+    load_generators : loadGenerators,
+    total_results : results,
+    duration : testRunDuration,
+    concurrent_request : concurrentRequest,
+    qps,
+    service_mesh : serviceMesh,
+    content_type : contentType,
+    request_body : requestBody,
+    request_cookies : requestCookies,
+    request_headers : requestHeaders,
+    last_run : lastRun
+  } = profile
   const [renderTable, setRenderTable] = useState(false);
+
+
+  const tableData = [
+    {
+      name : "Endpoints",
+      value : endpoints?.join(", ")
+    },
+    {
+      name : "Load Generators",
+      value : loadGenerators?.join(", ")
+    },
+    {
+      name : "Running Duration",
+      value : testRunDuration
+    },
+    {
+      name : "Concurrent Requests",
+      value : concurrentRequest
+    },
+    {
+      name : "queries/second",
+      value : qps
+    },
+    {
+      name : "Service Mesh",
+      value : serviceMesh
+    },
+    {
+      name : "Content Type",
+      value : contentType,
+      omitEmpty : true
+    },
+    {
+      name : "Request Body",
+      value : requestBody,
+      omitEmpty : true
+    },
+    {
+      name : "Cookies",
+      value : requestCookies,
+      omitEmpty : true
+    },
+    {
+      name : "Request Headers",
+      value : requestHeaders,
+      omitEmpty : true
+    },
+    {
+      name : "Created At",
+      value : profile.created_at ? moment(profile.created_at).format("LLL"): "unknown"
+    },
+    {
+      name : "Last Updated",
+      value : profile.updated_at ? moment(profile.updated_at).format("LLL") : "unknown"
+    },
+    {
+      name : "Last Run",
+      value : profile.last_run ? moment(profile.last_run).format("LLL") : "unknown"
+    }
+  ]
 
   function genericClickHandler(ev, fn) {
     ev.stopPropagation();
     fn();
   }
-  const classes=useStyles()
-  const theme = useTheme()
 
   return (
     <FlipCard
@@ -93,31 +197,34 @@ function PerformanceCard({
     >
       {/* FRONT PART */}
       <>
-        <div>
+        <div style={{ display : "flex", justifyContent : "space-between" }}>
           <Typography variant="h6" component="div">
             {name}
           </Typography>
-          <div className={classes.noOfResultsContainer} >
-            <div >
-              <Typography variant="h2" component="div" style={{ marginRight : "0.75rem", color : `${theme.palette.type === "dark" ? "#fff" : "#647881"}` }}>
-                {(results).toLocaleString('en')}
-              </Typography>
-              <Typography variant="body1" className={classes.resultText} component="div">
-                Results
-              </Typography>
-            </div>
+          <img src={`/static/img/load-test/${loadGenerators[0]}.svg`} alt="load-generator" height="24px" />
+        </div>
+        <div className={classes.noOfResultsContainer} >
+          <div >
+            <Typography variant="h2" component="div" style={{ marginRight : "0.75rem", color : `${theme.palette.type === "dark" ? "#fff" : "#647881"}` }}>
+              {(results || "0").toLocaleString('en')}
+            </Typography>
+            <Typography variant="body1" className={classes.resultText} component="div">
+              Results
+            </Typography>
           </div>
         </div>
-        <div className={classes.bottomPart} >
-          <div className={classes.lastRunText} >
-            <div>
-              {lastRun
-                ? (
-                  <Typography variant="caption" style={{ fontStyle : "italic", color : `${theme.palette.type === "dark" ? "rgba(255, 255, 255, 0.7)" : "#647881"}` }}>
+        <div style={{ display : "flex", justifyContent : "space-between" }}>
+          <div className={classes.bottomPart} >
+            <Link href={`${MESHERY_CLOUD_PROD}/user/${profile.user_id}`} target="_blank">
+              <Avatar alt="profile-avatar" src={userAvatar} />
+            </Link>
+            <div className={classes.lastRunText} >
+              {lastRun && (
+                <Typography variant="caption" style={{ fontStyle : "italic", color : `${theme.palette.type === "dark" ? "rgba(255, 255, 255, 0.7)" : "#647881"}` }}>
                   Last Run: <Moment format="LLL">{lastRun}</Moment>
-                  </Typography>
-                )
-                : null}
+                </Typography>
+              )
+              }
             </div>
           </div>
           <div className={classes.cardButtons} >
@@ -189,88 +296,15 @@ function PerformanceCard({
             </div>
           </Grid>
         </Grid>
-        {Array.isArray(endpoints)
-          ? (
-            <div>
-              <b>Endpoints:</b> {endpoints.join(", ")}
-            </div>
-          )
-          : null}
-        {Array.isArray(loadGenerators)
-          ? (
-            <div>
-              <b>Load Generators:</b> {loadGenerators.join(", ")}
-            </div>
-          )
-          : null}
-        {testRunDuration
-          ? (
-            <div>
-              <b>Test Run Duration:</b> {testRunDuration}
-            </div>
-          )
-          : null}
-        {reqHeaders
-          ? (
-            <div>
-              <b>Request Headers:</b> <code>{reqHeaders}</code>
-            </div>
-          )
-          : null}
-        {concurrentRequest
-          ? (
-            <div>
-              <b>Concurrent Request:</b> <code>{concurrentRequest}</code>
-            </div>
-          )
-          : null}
-        {qps
-          ? (
-            <div>
-              <b>Queries Per Second:</b> <code>{qps}</code>
-            </div>
-          )
-          : null}
-        {serviceMesh
-          ? (
-            <div>
-              <b>Service Mesh:</b> <code>{serviceMesh}</code>
-            </div>
-          )
-          : null}
-        {
-          contentType||requestBody||requestCookies||requestHeaders
-            ?(<h4>Advanced Options</h4>)
-            :(null)
-        }
-        {contentType
-          ? (
-            <div>
-              <b>Content Type:</b> <code>{contentType}</code>
-            </div>
-          )
-          : null}
-        {requestBody
-          ? (
-            <div>
-              <b>Request Body:</b> <code>{requestBody}</code>
-            </div>
-          )
-          : null}
-        {requestCookies
-          ? (
-            <div>
-              <b>Request Cookies:</b> <code>{requestCookies}</code>
-            </div>
-          )
-          : null}
-        {requestHeaders
-          ? (
-            <div>
-              <b>Request Headers:</b> <code>{requestHeaders}</code>
-            </div>
-          )
-          : null}
+        <Table size="small" dense >
+          {
+            tableData.map(function renderDesignTableRow(data) {
+              const { name, value, omitEmpty } = data;
+              return  <DetailsTable key={name} rowKey={name} value={value} omitEmpty={omitEmpty} />
+            })
+          }
+        </Table>
+
       </>
     </FlipCard >
   );
@@ -278,3 +312,16 @@ function PerformanceCard({
 
 // @ts-ignore
 export default PerformanceCard;
+
+function DetailsTable({ rowKey, value, omitEmpty }) {
+  if (omitEmpty && (value === undefined || value === null)) {
+    return null
+  }
+
+  return (
+    <TableRow>
+      <TableCell><b>{rowKey}</b></TableCell>
+      <TableCell>{value || "none"}</TableCell>
+    </TableRow>
+  )
+}

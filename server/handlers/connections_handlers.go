@@ -12,7 +12,7 @@ import (
 	"github.com/layer5io/meshery/server/models"
 )
 
-// swagger:route POST /api/integrations/connection PostConnection idPostConnection
+// swagger:route POST /api/integrations/connections PostConnection idPostConnection
 // Handle POST request for creating a new connection
 //
 // Creates a new connection
@@ -94,7 +94,7 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, _ *mo
 	}
 }
 
-// swagger:route PUT /api/integrations/connection/{connectionKind}/edit PutConnection idPutConnection
+// swagger:route PUT /api/integrations/connections/{connectionKind} PutConnection idPutConnection
 // Handle PUT request for updating an existing connection
 //
 // Updates existing connection
@@ -127,7 +127,7 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 	w.WriteHeader(http.StatusOK)
 }
 
-// swagger:route DELETE /api/integrations/connection/{connectionId}/delete DeleteConnection idDeleteConnection
+// swagger:route DELETE /api/integrations/connections/{connectionId} DeleteConnection idDeleteConnection
 // Handle DELETE request for deleting an existing connection by connection ID
 //
 // Deletes existing connection

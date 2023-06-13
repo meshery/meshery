@@ -19,7 +19,6 @@ import MesheryPerformanceComponent from "./index";
 import { Paper, Typography, Button } from "@material-ui/core";
 import fetchPerformanceProfiles from "../graphql/queries/PerformanceProfilesQuery";
 import { withStyles } from "@material-ui/core/styles";
-import subscribePerformanceProfiles from "../graphql/subscriptions/PerformanceProfilesSubscription";
 import { iconMedium, iconXLarge } from "../../css/icons.styles";
 
 const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
@@ -94,8 +93,6 @@ function ViewSwitch({ view, changeView }) {
   );
 }
 
-
-
 function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, classes }) {
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
@@ -117,29 +114,6 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
    */
   useEffect(() => {
     fetchTestProfiles(page, pageSize, search, sortOrder);
-    const subscription = subscribePerformanceProfiles((res) => {
-      // @ts-ignore
-      console.log(res);
-      let result = res?.subscribePerfProfiles;
-      if (typeof result !== "undefined") {
-        if (result) {
-          setCount(result.total_count || 0);
-          setPageSize(result.page_size || 0);
-          setTestProfiles(result.profiles || []);
-          setPage(result.page || 0);
-        }
-      }
-    }, {
-      selector : {
-        pageSize : `${pageSize}`,
-        page : `${page}`,
-        search : `${encodeURIComponent(search)}`,
-        order : `${encodeURIComponent(sortOrder)}`,
-      }
-    })
-    return () => {
-      subscription.dispose();
-    };
   }, [page, pageSize, search, sortOrder]);
 
   /**
