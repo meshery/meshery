@@ -8,11 +8,18 @@ list: exclude
 type: project
 ---
 
-# <img style="height: 4rem; width: 4rem;" src="{{site.baseurl}}/assets/img/meshmap-icon-color.svg" /> MeshMap <sup style="font-size: 1.8rem; vertical-align: top;">beta</sup>
+# <img style="height: 4rem; width: 4rem;" src="{{site.baseurl}}/assets/img/meshmap-icon-color.svg" /> MeshMap <sup style="font-size: 1.8rem; vertical-align: top;">BETA</sup>
 
 MeshMap is a GitOps-infused cloud native <b>visual designer</b> for Kubernetes and cloud native applications. MeshMap works with your Kubernetes clusters so that you design and manage your infrastructure and applications between members of your team. MeshMap has two modes: <a>Designer</a> and <a>Visualizer</a>. Create and share your own Kubernetes deployments and patterns in MeshMap Designer. Deploy your designs and manage your infrastructure using MeshMap Visualizer. It combines with feature of multi-user <a>collaboration</a> for cloud native infrastructure so you can team up to move design work forwared, faster. MeshMap removes all the challenging work of collaboration and gets everyone on the same page.
 
-<a href="{{site.baseurl}}/project/extensions/how-meshmap-works">Learn how MeshMap works</a> &emsp; <a href="{{site.baseurl}}/project/extensions/meshmap-features">Explore the features</a> &emsp; <a href="https://meshery.io/integrations">Explore 220+ Built-in integrations &emsp;</a>
+### Guide to use MeshMap's features
+
+- <a href="{{site.baseurl}}/project/extensions/publishing-a-design">Publishing a Design</a> - Publish your first design.
+- <a href="{{site.baseurl}}/project/extensions/sharing-a-design">Sharing a Design</a> - Share your design with friends.
+- <a href="{{site.baseurl}}/project/extensions/design-visibilites">Design Visibilities</a> - Learn about design visiilities.
+- <a href="{{site.baseurl}}/project/extensions/cloning-a-design">Cloning a Design</a> - Clone a design from Catalog.
+- <a href="{{site.baseurl}}/project/extensions/cloning-a-design">Import a Design</a> - Importing a design from catalog or locally.
+- <a href="{{site.baseurl}}/project/extensions/cloning-a-design">Import an application</a> - Importing an application of different types.
 
 
 ### MeshMap For GitOps
