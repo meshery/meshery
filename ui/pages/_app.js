@@ -10,6 +10,7 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 // import 'billboard.js/dist/theme/insight.min.css';
 // import 'billboard.js/dist/theme/graph.min.css';
+import { createMongoAbility } from '@casl/ability';
 import 'billboard.js/dist/billboard.min.css';
 import 'codemirror/addon/lint/lint.css';
 // codemirror + js-yaml imports when added to a page was preventing to navigating to that page using nextjs
@@ -25,6 +26,8 @@ import { SnackbarProvider } from 'notistack';
 import PropTypes from 'prop-types';
 import React from 'react';
 import { connect, Provider } from "react-redux";
+
+import { AbilityContext } from '../components/Can';
 import Header from '../components/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import Navigator from '../components/Navigator';
@@ -97,6 +100,7 @@ class MesheryApp extends App {
       theme : 'light',
       isOpen : false,
       relayEnvironment : createRelayEnvironment(),
+      keys: [],
     };
   }
 
@@ -393,52 +397,55 @@ class MesheryApp extends App {
                 </Hidden>
               </nav>
               <div className={classes.appContent}>
-                <SnackbarProvider
-                  anchorOrigin={{
-                    vertical : 'bottom',
-                    horizontal : 'right',
-                  }}
-                  iconVariant={{
-                    success : <CheckCircle style={{ marginRight : "0.5rem" }} />,
-                    error : <Error style={{ marginRight : "0.5rem" }} />,
-                    warning : <Warning style={{ marginRight : "0.5rem" }} />,
-                    info : <Info style={{ marginRight : "0.5rem" }} />
-                  }}
-                  classes={{
-                    variantSuccess : this.state.theme === "dark" ? classes.darknotifSuccess : classes.notifSuccess,
-                    variantError : this.state.theme === "dark" ? classes.darknotifError : classes.notifError,
-                    variantWarning : this.state.theme === "dark" ? classes.darknotifWarn : classes.notifWarn,
-                    variantInfo : this.state.theme === "dark" ? classes.darknotifInfo : classes.notifInfo,
-                  }}
-                  maxSnack={10}
-                >
-                  <MesheryProgressBar />
-                  <Header
-                    onDrawerToggle={this.handleDrawerToggle}
-                    onDrawerCollapse={isDrawerCollapsed}
-                    contexts={this.state.k8sContexts}
-                    activeContexts={this.state.activeK8sContexts}
-                    setActiveContexts={this.setActiveContexts}
-                    searchContexts={this.searchContexts}
-                    updateExtensionType={this.updateExtensionType}
-                    theme={this.state.theme}
-                    themeSetter={this.themeSetter}
-                  />
-                  <main className={classes.mainContent}>
-                    <MuiPickersUtilsProvider utils={MomentUtils}>
-                      <Component
-                        pageContext={this.pageContext}
-                        contexts={this.state.k8sContexts}
-                        activeContexts={this.state.activeK8sContexts}
-                        setActiveContexts={this.setActiveContexts}
-                        searchContexts={this.searchContexts}
-                        theme={this.state.theme}
-                        themeSetter={this.themeSetter}
-                        {...pageProps}
-                      />
-                    </MuiPickersUtilsProvider>
-                  </main>
-                </SnackbarProvider>
+                <AbilityContext.Provider value={createMongoAbility(abilities)}>
+                  <SnackbarProvider
+                    anchorOrigin={{
+                      vertical : 'bottom',
+                      horizontal : 'right',
+                    }}
+                    iconVariant={{
+                      success : <CheckCircle style={{ marginRight : "0.5rem" }} />,
+                      error : <Error style={{ marginRight : "0.5rem" }} />,
+                      warning : <Warning style={{ marginRight : "0.5rem" }} />,
+                      info : <Info style={{ marginRight : "0.5rem" }} />
+                    }}
+                    classes={{
+                      variantSuccess : this.state.theme === "dark" ? classes.darknotifSuccess : classes.notifSuccess,
+                      variantError : this.state.theme === "dark" ? classes.darknotifError : classes.notifError,
+                      variantWarning : this.state.theme === "dark" ? classes.darknotifWarn : classes.notifWarn,
+                      varvariantWarning : this.state.theme === "dark" ? classes.darknotifWarn : classes.notifWarn,
+                      variantInfo : this.state.theme === "dark" ? classes.darknotifInfo : classes.notifInfo,
+                    }}
+                    maxSnack={10}
+                  >
+                    <MesheryProgressBar />
+                    <Header
+                      onDrawerToggle={this.handleDrawerToggle}
+                      onDrawerCollapse={isDrawerCollapsed}
+                      contexts={this.state.k8sContexts}
+                      activeContexts={this.state.activeK8sContexts}
+                      setActiveContexts={this.setActiveContexts}
+                      searchContexts={this.searchContexts}
+                      updateExtensionType={this.updateExtensionType}
+                      theme={this.state.theme}
+                      themeSetter={this.themeSetter}
+                    />
+                    <main className={classes.mainContent}>
+                      <MuiPickersUtilsProvider utils={MomentUtils}>
+                        <Component
+                          pageContext={this.pageContext}
+                          contexts={this.state.k8sContexts}
+                          activeContexts={this.state.activeK8sContexts}
+                          setActiveContexts={this.setActiveContexts}
+                          searchContexts={this.searchContexts}
+                          theme={this.state.theme}
+                          themeSetter={this.themeSetter}
+                          {...pageProps}
+                        />
+                      </MuiPickersUtilsProvider>
+                    </main>
+                  </SnackbarProvider>
+                </AbilityContext.Provider>
                 <footer className={this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? classes.playgroundFooter : (this.state.theme === "dark" ? classes.footerDark : classes.footer )}>
                   <Typography variant="body2" align="center" color="textSecondary" component="p"
                     style={this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? { color : "#000" } : {}}
