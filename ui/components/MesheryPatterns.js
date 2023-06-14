@@ -45,6 +45,7 @@ import { useRouter } from "next/router";
 import downloadFile from "../utils/fileDownloader";
 import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
+import ReusableTooltip from "./reusable-tooltip";
 
 const styles = (theme) => ({
   grid : {
@@ -177,16 +178,16 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
         <Typography variant="h6" className={classes.yamlDialogTitleText}>
           {pattern.name}
         </Typography>
-        <TooltipIcon
+        <ReusableTooltip
           placement ="top"
           title={fullScreen ? "Exit Fullscreen" : "Enter Fullscreen"}
           onClick={toggleFullScreen}>
           {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
-        </TooltipIcon>
-        <TooltipIcon
+        </ReusableTooltip>
+        <ReusableTooltip
           placement ="top" title="Exit" onClick={onClose}>
           <CloseIcon />
-        </TooltipIcon>
+        </ReusableTooltip>
       </DialogTitle>
       <Divider variant="fullWidth" light />
       <DialogContent>
@@ -207,7 +208,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
       </DialogContent>
       <Divider variant="fullWidth" light />
       <DialogActions>
-        <Tooltip title="Update Pattern">
+        <ReusableTooltip title="Update Pattern">
           <IconButton
             aria-label="Update"
             color="primary"
@@ -217,8 +218,8 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           >
             <SaveIcon />
           </IconButton>
-        </Tooltip>
-        <Tooltip title="Delete Pattern">
+        </ReusableTooltip>
+        <ReusableTooltip title="Delete Pattern">
           <IconButton
             aria-label="Delete"
             color="primary"
@@ -231,7 +232,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           >
             <DeleteIcon />
           </IconButton>
-        </Tooltip>
+        </ReusableTooltip>
       </DialogActions>
     </Dialog>
   );

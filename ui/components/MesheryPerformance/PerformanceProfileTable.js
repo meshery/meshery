@@ -15,7 +15,7 @@ import PerformanceResults from "./PerformanceResults";
 import EditIcon from '@material-ui/icons/Edit';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { iconMedium } from "../../css/icons.styles";
-import Tooltip from '@mui/material/Tooltip';
+import ReusableTooltip from "../reusable-tooltip";
 
 
 const styles = (theme) => ({
@@ -178,7 +178,7 @@ function MesheryTestProfiles({
         customBodyRender : function CustomBody(_, tableMeta) {
           return (
             <div>
-              <Tooltip title="Edit">
+              <ReusableTooltip title="Edit">
                 <IconButton
                   style={iconMedium}
                   onClick={(ev) => {
@@ -191,9 +191,9 @@ function MesheryTestProfiles({
                 >
                   <EditIcon style={iconMedium}/>
                 </IconButton>
-              </Tooltip>
+              </ReusableTooltip>
 
-              <Tooltip title="Run test">
+              <ReusableTooltip title="Run test">
                 <IconButton
                   style={iconMedium}
                   onClick={(ev) => {
@@ -206,7 +206,7 @@ function MesheryTestProfiles({
                 >
                   <PlayArrowIcon style={iconMedium} />
                 </IconButton>
-              </Tooltip>
+              </ReusableTooltip>
             </div>
           );
         },
