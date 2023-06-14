@@ -48,12 +48,12 @@ require (
 	github.com/manifoldco/promptui v0.9.0
 	github.com/nsf/termbox-go v1.1.1
 	github.com/olekukonko/tablewriter v0.0.5
-	github.com/onsi/ginkgo/v2 v2.4.0
-	github.com/onsi/gomega v1.23.0
+	github.com/onsi/ginkgo/v2 v2.9.5
+	github.com/onsi/gomega v1.27.7
 	github.com/pkg/browser v0.0.0-20210706143420-7d21f8c997e2
 	github.com/pkg/errors v0.9.1
-	github.com/prometheus/client_golang v1.15.0
-	github.com/prometheus/common v0.42.0
+	github.com/prometheus/client_golang v1.15.1
+	github.com/prometheus/common v0.44.0
 	github.com/qri-io/jsonschema v0.2.1
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/cobra v1.7.0
@@ -61,7 +61,7 @@ require (
 	github.com/spf13/viper v1.15.0
 	github.com/vektah/gqlparser/v2 v2.5.1
 	github.com/vmihailenco/taskq/v3 v3.2.9
-	golang.org/x/oauth2 v0.6.0
+	golang.org/x/oauth2 v0.8.0
 	golang.org/x/text v0.9.0
 	gonum.org/v1/gonum v0.12.0
 	google.golang.org/grpc v1.54.0
@@ -146,6 +146,7 @@ require (
 	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/go-redis/redis_rate/v9 v9.1.2 // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
+	github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
@@ -153,6 +154,7 @@ require (
 	github.com/google/gnostic v0.5.7-v3refs // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
+	github.com/google/pprof v0.0.0-20210720184732-4bb14d4b1be1 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/gosuri/uitable v0.0.4 // indirect
@@ -215,7 +217,7 @@ require (
 	github.com/openshift/api v3.9.0+incompatible // indirect
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
-	github.com/prometheus/client_model v0.3.0 // indirect
+	github.com/prometheus/client_model v0.4.0 // indirect
 	github.com/prometheus/procfs v0.9.0 // indirect
 	github.com/qri-io/jsonpointer v0.1.1 // indirect
 	github.com/rubenv/sql-migrate v1.2.0 // indirect
@@ -240,13 +242,13 @@ require (
 	go.opencensus.io v0.24.0 // indirect
 	go.starlark.net v0.0.0-20200306205701-8dd3e2ee1dd5 // indirect
 	golang.org/x/crypto v0.7.0 // indirect
-	golang.org/x/mod v0.8.0 // indirect
-	golang.org/x/net v0.9.0 // indirect
-	golang.org/x/sync v0.1.0 // indirect
-	golang.org/x/sys v0.7.0 // indirect
-	golang.org/x/term v0.7.0 // indirect
+	golang.org/x/mod v0.10.0 // indirect
+	golang.org/x/net v0.10.0 // indirect
+	golang.org/x/sync v0.2.0 // indirect
+	golang.org/x/sys v0.8.0 // indirect
+	golang.org/x/term v0.8.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
-	golang.org/x/tools v0.6.0 // indirect
+	golang.org/x/tools v0.9.1 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20230110181048-76db0878b65f // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect

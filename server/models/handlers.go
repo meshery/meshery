@@ -129,6 +129,7 @@ type HandlerInterface interface {
 	DeleteMultiMesheryPatternsHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetCatalogMesheryPatternsHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	PublishCatalogPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	UnPublishCatalogPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetMesheryPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	FilterFileHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -164,6 +165,12 @@ type HandlerInterface interface {
 	GetUserCredentials(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	UpdateUserCredential(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteUserCredential(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+
+	SaveConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetConnections(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	UpdateConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	DeleteConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+
 	GetRegoPolicyForDesignFile(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 }
 

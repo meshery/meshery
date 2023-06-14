@@ -3,6 +3,7 @@ package core
 import (
 	"crypto/rand"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math/big"
 	mathrand "math/rand"
@@ -204,6 +205,26 @@ func NewPatternFile(yml []byte) (af Pattern, err error) {
 		}
 	}
 
+	return
+}
+
+// isValidPattern checks if the pattern file is valid or not
+func IsValidPattern(stringifiedFile string) (err error) {
+	pattern := Pattern{}
+
+	if err = yaml.Unmarshal([]byte(stringifiedFile), &pattern); err != nil {
+		return err
+	}
+
+	if pattern.Services == nil {
+		return errors.New("invalid design-file format: missing services field")
+	}
+
+	// for serviceName, service := range pattern.Services {
+	// 	if service.Traits == nil {
+	// 		return errors.New("missing traits field for:" + serviceName)
+	// 	}
+	// }
 	return
 }
 
@@ -549,7 +570,7 @@ func createPatternServiceFromK8s(manifest map[string]interface{}, regManager *me
 		Name:       kind,
 		APIVersion: apiVersion,
 	})
-	if componentList == nil || len(componentList) == 0 {
+	if len(componentList) == 0 {
 		return "", Service{}, ErrCreatePatternService(fmt.Errorf("no resources found for APIVersion: %s Kind: %s", apiVersion, kind))
 	}
 	// just needs the first entry to grab meshmodel-metadata and other model requirements
