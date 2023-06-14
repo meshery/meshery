@@ -29,19 +29,13 @@ assignees: ''
 
 
 ---
-### Contributors are encouraged to follow these guidelines to maintain an up-to-date and accurate Test plan sheet for test scenarios.
+### Test Plan Sheet Contributing Guidelines:
 
 - Adding New Rows:
-  - Create a new row in the v0.7.0 sheet when a new test scenario is implemented or merged into the **'master'** branch.
-    Include the combination of Test Group, Component Under Test, Platform, Service Mesh, Action, and Expected Outcome in the new row.
-    Specify if the new test scenario is related to recently started existing features or upcoming new features/enhancements.
-
+  - Create a new row in the v0.7.0 sheet when a new test scenario is implemented.The test scenario should
+    include the combination of Test Group, Component Under Test, Platform, Service Mesh, Action, and Expected Outcome.
 - Updating Existing Rows:
-  - Modify an existing row in the v0.7.0 sheet if a test scenario has changed in a significant or relevant way.
-    Update the relevant fields (such as Component) in the existing row to reflect the changes.
-    Updating **"Actual Outcome"** and/or **"Additional Remarks"**:
-
-When using Meshery UI, Mesheryctl CLI, Meshery Docker Extension, specific Meshery adapters, or the Meshmap extension, update the "Actual Outcome" and/or "Additional Remarks" fields if any issues, abnormal behavior, or unexpected behavior are encountered.
-Update the fields based on the user's experience with a recent release or when building from source.
+  - Modify an existing row in the v0.7.0 sheet if a test scenario has modified.
+  - Update should be based on the user's experience with a recent release or when building from source and should include the relevant fields in existing rows.
 
 
