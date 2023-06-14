@@ -329,6 +329,7 @@ function ConfirmationMsg(props) {
               }
             />}
             <Tab
+              disabled={disabled}
               data-cy="Undeploy-btn-modal"
               className={classes.tab}
               onClick={(event) => handleTabValChange(event,1)}
@@ -336,6 +337,7 @@ function ConfirmationMsg(props) {
               ><div style={{ margin : "2px" }}> <UndeployIcon style={iconSmall} fill={theme.palette.secondary.icon} width="20" height="20" /> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
             />
             <Tab
+              disabled={disabled}
               data-cy="deploy-btn-modal"
               className={classes.tab}
               onClick={(event) => handleTabValChange(event, 2)}
