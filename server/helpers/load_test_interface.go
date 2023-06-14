@@ -8,7 +8,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -408,7 +407,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		}
 	}
 
-	d, err := nighthawk_client.Transform(res1)
+	d, err := nighthawk_client.Transform(res1, "transform")
 	if err != nil {
 		return nil, nil, ErrTransformingData(err)
 	}
@@ -422,7 +421,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		}
 		result = gres.Result()
 	} else {
-		hres := &HTTPRunnerResults{}
+		hres := &fhttp.HTTPRunnerResults{}
 		err := json.Unmarshal(d, hres)
 		if err != nil {
 			return nil, nil, ErrUnmarshal(err, "data to object")
@@ -440,43 +439,6 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 	}
 	logrus.Debugf("Mapped version of the test: %+#v", resultsMap)
 	return resultsMap, result, nil
-}
-type HTTPRunnerResults fhttp.HTTPRunnerResults
-
-func  (r *HTTPRunnerResults) UnmarshalJSON(data []byte) error {
-	type HTTPRunnerResultsAlias HTTPRunnerResults
-	rr := &struct {
-		*HTTPRunnerResultsAlias
-		RequestedQPS int
-		ActualDuration interface{}
-		RetCodes interface{}
-		Sizes interface{}
-		HeaderSizes interface{}
-		DurationHistogram interface{}
-	}{
-		HTTPRunnerResultsAlias: (*HTTPRunnerResultsAlias)(r),
-	}
-
-	if err := json.Unmarshal(data, &rr); err != nil {
-		return err
-	}
-	r.RequestedQPS = fmt.Sprint(rr.RequestedQPS)
-
-	updatedMap := make(map[int]int64)
-	marshalledMap := rr.RetCodes.(map[string]interface{})
-
-	for k, v := range marshalledMap {
-		key, _ := strconv.Atoi(k)
-		val, ok := v.(uint64)
-		if ok {
-			updatedMap[key] = int64(val)
-		}
-	}
-
-	duration := rr.ActualDuration.(float64)
-	r.ActualDuration = time.Duration(duration * 1e9)
-	r.RetCodes = updatedMap
-	return nil
 }
 
 // sharedHTTPOptions is the flag->httpoptions transfer code shared between

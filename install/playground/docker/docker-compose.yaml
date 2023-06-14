@@ -25,7 +25,7 @@ services:
             - 80:80
         volumes:
             - /etc/letsencrypt/:/etc/letsencrypt/
-            - /etc/meshery-nginx.conf:/etc/nginx/nginx.conf
+            - /root/meshery/install/playground/docker/nginx.conf:/etc/nginx/nginx.conf
         restart: always
     meshery-istio:
         image: layer5/meshery-istio:stable-latest

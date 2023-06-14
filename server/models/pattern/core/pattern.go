@@ -220,11 +220,11 @@ func IsValidPattern(stringifiedFile string) (err error) {
 		return errors.New("invalid design-file format: missing services field")
 	}
 
-	for serviceName, service := range pattern.Services {
-		if service.Traits == nil {
-			return errors.New("missing traits field for:" + serviceName)
-		}
-	}
+	// for serviceName, service := range pattern.Services {
+	// 	if service.Traits == nil {
+	// 		return errors.New("missing traits field for:" + serviceName)
+	// 	}
+	// }
 	return
 }
 

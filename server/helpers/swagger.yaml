@@ -402,7 +402,7 @@ paths:
             summary: Handles GET for all Users
             tags:
                 - UserAPI
-    /api/integrations/connection:
+    /api/integrations/connections:
         post:
             description: Creates a new connection
             operationId: idPostConnection
@@ -412,7 +412,7 @@ paths:
             summary: Handle POST request for creating a new connection
             tags:
                 - PostConnection
-    /api/integrations/connection/{connectionId}/delete:
+    /api/integrations/connections/{connectionId}:
         delete:
             description: Deletes existing connection
             operationId: idDeleteConnection
@@ -422,16 +422,6 @@ paths:
             summary: Handle DELETE request for deleting an existing connection by connection ID
             tags:
                 - DeleteConnection
-    /api/integrations/connection/{connectionKind}/edit:
-        put:
-            description: Updates existing connection
-            operationId: idPutConnection
-            responses:
-                "200":
-                    $ref: '#/responses/noContentWrapper'
-            summary: Handle PUT request for updating an existing connection
-            tags:
-                - PutConnection
     /api/integrations/connections/{connectionKind}:
         get:
             description: |-
@@ -449,6 +439,15 @@ paths:
             summary: Handle GET request for getting all connections for a given kind.
             tags:
                 - GetConnectionsByKind
+        put:
+            description: Updates existing connection
+            operationId: idPutConnection
+            responses:
+                "200":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle PUT request for updating an existing connection
+            tags:
+                - PutConnection
     /api/meshmodel/components/register:
         post:
             description: Validate the given value with the given schema
@@ -902,6 +901,16 @@ paths:
         post:
             description: Publishes pattern to Meshery Catalog by setting visibility to published and setting catalog data
             operationId: idPublishCatalogPatternHandler
+            responses:
+                "200":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle Publish for a Meshery Pattern
+            tags:
+                - PatternsAPI
+    /api/pattern/catalog/unpublish:
+        delete:
+            description: Unpublishes pattern from Meshery Catalog by setting visibility to private and removing catalog data from website
+            operationId: idUnPublishCatalogPatternHandler
             responses:
                 "200":
                     $ref: '#/responses/noContentWrapper'
