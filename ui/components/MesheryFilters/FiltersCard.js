@@ -59,6 +59,7 @@ function FiltersCard({
           config_file={filter_file}
           setYaml={setYaml}
           deleteHandler={deleteHandler}
+          type={"filter"}
         />
       }
       <FlipCard
@@ -180,7 +181,7 @@ function FiltersCard({
                     gutters : ["CodeMirror-lint-markers"],
                     // @ts-ignore
                     lint : true,
-                    mode : "text/x-yaml",
+                    mode : "text/plain",
                   }}
                   onChange={(_, data, val) => setYaml(val)}
                 />

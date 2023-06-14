@@ -61,7 +61,7 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 		filter.Greedy = true
 		filter.Name = r.URL.Query().Get("search")
 	}
-	res := h.registryManager.GetModels(h.dbHandler, filter)
+	res, _ := h.registryManager.GetModels(h.dbHandler, filter)
 
 	if err := enc.Encode(res); err != nil {
 		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
@@ -104,7 +104,7 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 		page = 1
 	}
 	offset := (page - 1) * limit
-	res := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
+	res, _ := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
 		Category: cat,
 		Name:     model,
 		Version:  r.URL.Query().Get("version"),
@@ -121,7 +121,7 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 }
 
 // swagger:route GET ```/api/meshmodels/models``` GetMeshmodelModels idGetMeshmodelModels
-// Handle GET request for getting all meshmodel models.
+// Handle GET request for getting all meshmodel models and their total count.
 //
 // # Returns a list of registered models across all categories
 //
@@ -137,7 +137,8 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-// 200: []Model
+//
+//	200: meshmodelModelsResponseWrapper
 func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -164,10 +165,18 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		Sort:    r.URL.Query().Get("sort"),
 	}
 	if r.URL.Query().Get("search") != "" {
-		filter.Name = r.URL.Query().Get("search")
+		filter.DisplayName = r.URL.Query().Get("search")
 		filter.Greedy = true
 	}
-	res := h.registryManager.GetModels(h.dbHandler, filter)
+	models, count := h.registryManager.GetModels(h.dbHandler, filter)
+
+	res := struct {
+		Count  int64            `json:"total_count"`
+		Models []v1alpha1.Model `json:"models"`
+	}{
+		Count:  count,
+		Models: models,
+	}
 
 	if err := enc.Encode(res); err != nil {
 		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
@@ -211,7 +220,7 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 		page = 1
 	}
 	offset := (page - 1) * limit
-	res := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
+	res, _ := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
 		Name:    name,
 		Version: v,
 		Limit:   limit,
@@ -363,7 +372,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 		page = 1
 	}
 	offset := (page - 1) * limit
-	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	res, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		Name:         name,
 		CategoryName: cat,
 		ModelName:    typ,
@@ -433,7 +442,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 		page = 1
 	}
 	offset := (page - 1) * limit
-	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	res, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		Name:         name,
 		CategoryName: cat,
 		APIVersion:   r.URL.Query().Get("apiVersion"),
@@ -503,7 +512,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 		page = 1
 	}
 	offset := (page - 1) * limit
-	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	res, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		Name:       name,
 		ModelName:  typ,
 		APIVersion: r.URL.Query().Get("apiVersion"),
@@ -573,7 +582,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 		page = 1
 	}
 	offset := (page - 1) * limit
-	res := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	res, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		Name:       name,
 		Trim:       r.URL.Query().Get("trim") == "true",
 		APIVersion: r.URL.Query().Get("apiVersion"),
@@ -602,7 +611,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 }
 
 // swagger:route GET /api/meshmodels/models/{model}/components GetMeshmodelComponentByModel idGetMeshmodelComponentByModel
-// Handle GET request for getting meshmodel components of a specific specific. The component type/model name should be lowercase like "kubernetes", "istio"
+// Handle GET request for getting meshmodel components of a specific model. The component type/model name should be lowercase like "kubernetes", "istio"
 //
 // Example: ```/api/meshmodels/models/kubernetes/components```
 // Components can be further filtered through query parameter
@@ -657,7 +666,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		filter.Greedy = true
 		filter.Name = r.URL.Query().Get("search")
 	}
-	res := h.registryManager.GetEntities(filter)
+	res, _ := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range res {
 		comp, ok := r.(v1alpha1.ComponentDefinition)
@@ -733,7 +742,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		filter.Greedy = true
 		filter.Name = r.URL.Query().Get("search")
 	}
-	res := h.registryManager.GetEntities(filter)
+	res, _ := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range res {
 		comp, ok := r.(v1alpha1.ComponentDefinition)
@@ -807,7 +816,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		filter.Greedy = true
 		filter.Name = r.URL.Query().Get("search")
 	}
-	res := h.registryManager.GetEntities(filter)
+	res, _ := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range res {
 		comp, ok := r.(v1alpha1.ComponentDefinition)
@@ -827,7 +836,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 }
 
 // swagger:route GET /api/meshmodels/components GetAllMeshmodelComponents idGetAllMeshmodelComponents
-// Handle GET request for getting meshmodel components across all models and categories.
+// Handle GET request for getting meshmodel components across all models and categories and their total count.
 //
 // # Components can be further filtered through query parameter
 //
@@ -847,7 +856,8 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-// 200: []ComponentDefinition
+//  200: allMeshmodelComponentsResponseWrapper
+
 func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -878,11 +888,11 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	}
 	if r.URL.Query().Get("search") != "" {
 		filter.Greedy = true
-		filter.Name = r.URL.Query().Get("search")
+		filter.DisplayName = r.URL.Query().Get("search")
 	}
-	res := h.registryManager.GetEntities(filter)
+	entities, count := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
-	for _, r := range res {
+	for _, r := range entities {
 		comp, ok := r.(v1alpha1.ComponentDefinition)
 		if ok {
 			m := make(map[string]interface{})
@@ -893,7 +903,16 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 			comps = append(comps, comp)
 		}
 	}
-	if err := enc.Encode(comps); err != nil {
+
+	res := struct {
+		Count      int64                          `json:"total_count"`
+		Components []v1alpha1.ComponentDefinition `json:"components"`
+	}{
+		Count:      *count,
+		Components: comps,
+	}
+
+	if err := enc.Encode(res); err != nil {
 		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
@@ -932,16 +951,4 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 		return
 	}
 	go h.config.MeshModelSummaryChannel.Publish()
-}
-
-func filterUniqueElementsArray(s []string) []string {
-	m := make(map[string]bool)
-	for _, ele := range s {
-		m[ele] = true
-	}
-	ans := make([]string, 0)
-	for a := range m {
-		ans = append(ans, a)
-	}
-	return ans
 }

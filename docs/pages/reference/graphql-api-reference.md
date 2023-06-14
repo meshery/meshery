@@ -286,6 +286,22 @@ The `Mutation` type contains all the mutations you can execute.
 
 All mutations receive their arguments in a single input object named `input`.
 
+### `Mutation.changeAdapterStatus`
+
+Change the Adapter Status.
+
+###### **Input type:** `AdapterStatusInput`
+
+#### **Arguments**
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| <a id="mutationchangeadapterstatusadapter"></a>`adapter` | [`String!`](#string) | Name of the adapter to be deployed. |
+| <a id="mutationchangeadapterstatustargetport"></a>`targetPort` | [`String!`](#string) | The port on which adapter will be deployed. |
+| <a id="mutationchangeadapterstatustargetstatus"></a>`targetStatus` | [`Status!`](#status) | Desired status for Meshery Operator. |
+
+###### **Returns** [`Status!`](#status).
+
 ### `Mutation.changeOperatorStatus`
 
 Change the Operator Status.
@@ -696,6 +712,7 @@ Data Plane for a particular Mesh.
 | <a id="k8scontextowner"></a>`owner` | [`ID!`](#id) |  |
 | <a id="k8scontextserver"></a>`server` | [`String!`](#string) |  |
 | <a id="k8scontextupdated_at"></a>`updated_at` | [`String!`](#string) |  |
+| <a id="k8scontextversion"></a>`version` | [`String!`](#string) |  |
 
 ### `K8sContextsPage`
 

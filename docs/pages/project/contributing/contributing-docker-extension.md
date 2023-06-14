@@ -79,7 +79,7 @@ If you want to work on the Docker UI, it will be a good idea to use the included
 Now the meshery docker-extension is up and running.
 
 ### Linking the docker extension locally
-To see the changes reflected in the docker extension locally we can run the command:
+To see the changes reflected in the docker extension locally and open the devTools window, we can run the command:
  {% capture code_content %}make link{% endcapture %}
 {% include code.html code=code_content %}
 

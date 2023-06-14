@@ -20,7 +20,9 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root"
 )
 
+// main is the entrypoint of the mesheryctl command-line tool
 func main() {
+	// Execute the root command
 	err := root.Execute()
 	if err != nil {
 		os.Exit(1)

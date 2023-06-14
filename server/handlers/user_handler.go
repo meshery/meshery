@@ -15,11 +15,6 @@ import (
 
 // UserHandler returns info about the logged in user
 func (h *Handler) UserHandler(w http.ResponseWriter, _ *http.Request, _ *models.Preference, user *models.User, _ models.Provider) {
-	// if req.Method != http.MethodGet {
-	// 	w.WriteHeader(http.StatusNotFound)
-	// 	return
-	// }
-
 	if err := json.NewEncoder(w).Encode(user); err != nil {
 		obj := "user data"
 		h.log.Error(ErrEncoding(err, obj))
@@ -38,6 +33,33 @@ func (h *Handler) UserHandler(w http.ResponseWriter, _ *http.Request, _ *models.
 func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	userID := mux.Vars(r)["id"]
 	resp, err := provider.GetUserByID(r, userID)
+	if err != nil {
+		h.log.Error(ErrGetResult(err))
+		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, string(resp))
+}
+
+// swagger:route GET /api/identity/users UserAPI idGetAllUsersHandler
+// Handles GET for all Users
+//
+// Returns all Users
+// responses:
+// 	200: users
+
+func (h *Handler) GetUsers(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	token, ok := req.Context().Value(models.TokenCtxKey).(string)
+	if !ok {
+		http.Error(w, "failed to get token", http.StatusInternalServerError)
+		return
+	}
+
+	q := req.URL.Query()
+
+	resp, err := provider.GetUsers(token, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
 		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)

@@ -1,0 +1,32 @@
+name: OpenAPI Specification and Documentation
+on:
+  push:
+    branches:
+      - "master"
+    paths:
+      - "handlers/**"
+jobs:
+  redocly:
+    if: github.repository == 'meshery/meshery'
+    name: Generate Redocly docs
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Install dependencies
+        run: npm install -g @redocly/openapi-cli
+      - name: Generate documentation
+        run: npx @redocly/cli build-docs ./docs/_data/swagger.yml --config='redocly.yaml'
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          file_pattern: docs
+          commit_user_name: l5io
+          commit_user_email: ci@layer5.io
+          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          commit_options: "--signoff"
+          commit_message: "[Docs] Updated Redocly docs for REST API"

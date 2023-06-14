@@ -1,10 +1,21 @@
 
 # Meshery Playground Bare Metal Configuration 
 
+![Deployment Topology](../docker/meshery-playground-deployment.png)
+
+
 ### DNS
 playground.meshery.io - 147.28.141.9
 
-### Host: meshery02
+### Hosts
+- c3-medium-x86-01-meshery - docker host with Meshery Server
+- c3-medium-x86-02-meshery - single node k8s cluster
+
+#### Access
+```
+ssh -i ~/.ssh/equinix-metal root@c3-medium-x86-01-meshery
+ssh -i ~/.ssh/equinix-metal root@c3-medium-x86-02-meshery
+```
 
 #### Static IP address configuration
 File: `/etc/netplan/00-elastic.yaml`
@@ -36,6 +47,25 @@ iptables -I INPUT -s 192.210.143.199 -j DROP
 ```
 > protect-kubelet
 chmod +x protect-kubelet
+
+## Reinstalling Meshery after a clean Meshery uninstall
+If mistakenly or for some reason Meshery is uninstalled (along with `meshery` namespace) then follow the below steps to bring it back up.
+1. `helm install meshery meshery/meshery --namespace meshery --set env.PROVIDER=Meshery`
+2. `kubectl create secret tls -n meshery tls-secret-meshery --cert=/etc/letsencrypt/live/playground.meshery.io-0001/fullchain.pem --key=/etc/letsencrypt/live/playground.meshery.io-0001/privkey.pem`  Make sure to have private and public keys generated for `playground.meshery.io` in appropriate directories.
+3. kubectl apply -f contour-http-proxy.yaml 
+## Prometheus deployment
+For monitoring the playground deployment we have a node exporter running on both the nodes.
+Node exporter can be installed by following the below commands after doing an SSH on the node.
+```
+wget https://github.com/prometheus/node_exporter/releases/download/v1.5.0/node_exporter-1.5.0.linux-amd64.tar.gz
+tar xvfz  node_exporter-1.5.0.linux-amd64.tar.gz
+cd node_exporter-1.5.0.linux-amd64/
+./node_exporter &
+```
+Make sure to add nodeexporter.service inside /etc/systemd/system so that node exporter automatically starts when server boots up.
+
+After this create the namespace `monitoring` and apply `prometheus.yaml`.
+Notice the job_name: `prometheus` configured with two targets. It is the address of node exporter running on each node.
 
 
 ### Nginx Configuration for websocket (until annotations issue is solved)

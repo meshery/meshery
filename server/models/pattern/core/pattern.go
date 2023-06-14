@@ -3,6 +3,7 @@ package core
 import (
 	"crypto/rand"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math/big"
 	mathrand "math/rand"
@@ -61,12 +62,13 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, isSchema bool) i
 					m[k2] = v2
 					continue
 				}
-				var newmap interface{}
-				newmap = ConvertMapInterfaceMapString(v2, prettify, isSchema)
-				if isSchema && (k2 == "anyOf" || k2 == "allOf" || k2 == "oneOf") {
+				newmap := ConvertMapInterfaceMapString(v2, prettify, isSchema)
+				if isSchema && isSpecialKey(k2) { //Few special keys in schema should not be prettified
 					m[k2] = newmap
-				} else {
+				} else if prettify {
 					m[manifests.FormatToReadableString(k2)] = newmap
+				} else {
+					m[manifests.DeFormatReadableString(k2)] = newmap
 				}
 			default:
 				m[fmt.Sprint(k)] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
@@ -88,12 +90,13 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, isSchema bool) i
 				m[k] = v2
 				continue
 			}
-			var newmap interface{}
-			newmap = ConvertMapInterfaceMapString(v2, prettify, isSchema)
-			if isSchema && (k == "anyOf" || k == "allOf" || k == "oneOf") {
+			newmap := ConvertMapInterfaceMapString(v2, prettify, isSchema)
+			if isSchema && isSpecialKey(k) {
 				m[k] = newmap
-			} else {
+			} else if prettify {
 				m[manifests.FormatToReadableString(k)] = newmap
+			} else {
+				m[manifests.DeFormatReadableString(k)] = newmap
 			}
 		}
 		return m
@@ -106,6 +109,18 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, isSchema bool) i
 		}
 	}
 	return v
+}
+
+// These keys should not be prettified to "any Of", "all Of" and "one Of"
+var keysToNotPrettifyOnSchema = []string{"anyOf", "allOf", "oneOf"}
+
+func isSpecialKey(k string) bool {
+	for _, k0 := range keysToNotPrettifyOnSchema {
+		if k0 == k {
+			return true
+		}
+	}
+	return false
 }
 
 // In case of any breaking change or bug caused by this, set this to false and the whitespace addition in schema generated/consumed would be removed(will go back to default behavior)
@@ -190,6 +205,26 @@ func NewPatternFile(yml []byte) (af Pattern, err error) {
 		}
 	}
 
+	return
+}
+
+// isValidPattern checks if the pattern file is valid or not
+func IsValidPattern(stringifiedFile string) (err error) {
+	pattern := Pattern{}
+
+	if err = yaml.Unmarshal([]byte(stringifiedFile), &pattern); err != nil {
+		return err
+	}
+
+	if pattern.Services == nil {
+		return errors.New("invalid design-file format: missing services field")
+	}
+
+	// for serviceName, service := range pattern.Services {
+	// 	if service.Traits == nil {
+	// 		return errors.New("missing traits field for:" + serviceName)
+	// 	}
+	// }
 	return
 }
 
@@ -531,11 +566,11 @@ func createPatternServiceFromK8s(manifest map[string]interface{}, regManager *me
 	}
 
 	// Get MeshModel entity with the selectors
-	componentList := regManager.GetEntities(&meshmodelv1alpha1.ComponentFilter{
+	componentList, _ := regManager.GetEntities(&meshmodelv1alpha1.ComponentFilter{
 		Name:       kind,
 		APIVersion: apiVersion,
 	})
-	if componentList == nil || len(componentList) == 0 {
+	if len(componentList) == 0 {
 		return "", Service{}, ErrCreatePatternService(fmt.Errorf("no resources found for APIVersion: %s Kind: %s", apiVersion, kind))
 	}
 	// just needs the first entry to grab meshmodel-metadata and other model requirements
@@ -561,6 +596,7 @@ func createPatternServiceFromK8s(manifest map[string]interface{}, regManager *me
 		}
 	}
 	rest = Format.Prettify(rest, false)
+	uuidV4, _ := uuid.NewV4()
 	svc := Service{
 		Name:        name,
 		Type:        comp.Kind,
@@ -572,6 +608,7 @@ func createPatternServiceFromK8s(manifest map[string]interface{}, regManager *me
 		Settings:    rest,
 		Traits: map[string]interface{}{
 			"meshmap": map[string]interface{}{
+				"id":                 uuidV4,
 				"meshmodel-metadata": comp.Metadata,
 			},
 		},

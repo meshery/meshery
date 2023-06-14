@@ -249,11 +249,11 @@ func GetK8Components(ctxt context.Context, config []byte) (*manifests.Component,
 
 			referenceResolver := manifests.ResolveOpenApiRefs{}
 			cache := make(map[string][]byte)
-			new, err := referenceResolver.ResolveReferences(b, definitions, cache)
+			newResRef, err := referenceResolver.ResolveReferences(b, definitions, cache)
 			if err != nil {
 				return
 			}
-			b, _ = json.Marshal(new)
+			b, _ = json.Marshal(newResRef)
 			resolved := make(map[string]interface{})
 			err = json.Unmarshal(b, &resolved)
 			if err != nil {

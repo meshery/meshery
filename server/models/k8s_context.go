@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"net"
 	"os"
 	"time"
@@ -34,9 +35,9 @@ type K8sContext struct {
 	MesheryInstanceID  *uuid.UUID `json:"meshery_instance_id,omitempty" yaml:"meshery_instance_id,omitempty"`
 	KubernetesServerID *uuid.UUID `json:"kubernetes_server_id,omitempty" yaml:"kubernetes_server_id,omitempty"`
 	DeploymentType     string     `json:"deployment_type,omitempty" yaml:"deployment_type,omitempty" default:"out_cluster"`
-
-	UpdatedAt *time.Time `json:"updated_at,omitempty" yaml:"updated_at,omitempty"`
-	CreatedAt *time.Time `json:"created_at,omitempty" yaml:"created_at,omitempty"`
+	Version            string     `json:"version,omitempty" yaml:"version,omitempty"`
+	UpdatedAt          *time.Time `json:"updated_at,omitempty" yaml:"updated_at,omitempty"`
+	CreatedAt          *time.Time `json:"created_at,omitempty" yaml:"created_at,omitempty"`
 }
 
 type InternalKubeConfig struct {
@@ -49,7 +50,7 @@ type InternalKubeConfig struct {
 	Users          []map[string]interface{} `json:"users,omitempty" yaml:"users,omitempty"`
 }
 
-func (kcfg InternalKubeConfig) K8sContext(name string, instanceID *uuid.UUID) K8sContext {
+func (kcfg InternalKubeConfig) K8sContext(name string, instanceID *uuid.UUID) (K8sContext, string) {
 	cluster := map[string]interface{}{}
 	user := map[string]interface{}{}
 	context := map[string]interface{}{}
@@ -104,7 +105,7 @@ func NewK8sContextWithServerID(
 	server string,
 	instanceID *uuid.UUID,
 ) (*K8sContext, error) {
-	ctx := NewK8sContext(contextName, clusters, users, server, instanceID)
+	ctx, _ := NewK8sContext(contextName, clusters, users, server, instanceID)
 
 	// Perform Ping test on the cluster
 	if err := ctx.PingTest(); err != nil {
@@ -113,6 +114,11 @@ func NewK8sContextWithServerID(
 
 	// Get a kubernetes handler
 	handler, err := ctx.GenerateKubeHandler()
+	if err != nil {
+		return nil, err
+	}
+
+	err = ctx.AssignVersion(handler)
 	if err != nil {
 		return nil, err
 	}
@@ -132,31 +138,48 @@ func NewK8sContextWithServerID(
 
 // K8sContextsFromKubeconfig takes in a kubeconfig and meshery instance ID and generates
 // kubernetes contexts from it
-func K8sContextsFromKubeconfig(kubeconfig []byte, instanceID *uuid.UUID) []K8sContext {
+func K8sContextsFromKubeconfig(kubeconfig []byte, instanceID *uuid.UUID) ([]K8sContext, string) {
+	respMessage := ""
 	kcs := []K8sContext{}
 
 	parsed, err := clientcmd.Load(kubeconfig)
 	if err != nil {
-		return kcs
+		return kcs, respMessage
 	}
 
 	kcfg := InternalKubeConfig{}
 	if err := yaml.Unmarshal(kubeconfig, &kcfg); err != nil {
-		return kcs
+		return kcs, respMessage
 	}
 
 	for name := range parsed.Contexts {
-		kc := kcfg.K8sContext(name, instanceID)
-		if err := kc.AssignServerID(); err != nil {
-			logrus.Warn("Skipping context: Reason => ", err)
-
+		kc, msg := kcfg.K8sContext(name, instanceID)
+		respMessage += msg
+		handler, err := kc.GenerateKubeHandler()
+		if err != nil {
+			msg = fmt.Sprintf("error generating kubernetes handler: %v\n Skipping context", err)
+			logrus.Warnf(msg)
+			respMessage += msg
+			continue
+		}
+		err = kc.AssignVersion(handler)
+		if err != nil {
+			msg = fmt.Sprintf("error getting kubernetes version: %v\n Skipping context", err)
+			logrus.Warnf(msg)
+			respMessage += msg
+			continue
+		}
+		if err := kc.AssignServerID(handler); err != nil {
+			msg = fmt.Sprintf("Skipping context: Reason => %s\n", err)
+			logrus.Warn(msg)
+			respMessage += msg
 			continue
 		}
 
 		kcs = append(kcs, kc)
 	}
 
-	return kcs
+	return kcs, respMessage
 }
 
 func NewK8sContextFromInClusterConfig(contextName string, instanceID *uuid.UUID) (*K8sContext, error) {
@@ -213,7 +236,7 @@ func NewK8sContext(
 	user map[string]interface{},
 	server string,
 	instanceID *uuid.UUID,
-) K8sContext {
+) (K8sContext, string) {
 	ctx := K8sContext{
 		Name:              contextName,
 		Cluster:           cluster,
@@ -224,14 +247,15 @@ func NewK8sContext(
 
 	ID, err := K8sContextGenerateID(ctx)
 	if err != nil {
-		return ctx
+		return ctx, ""
 	}
 
 	ctx.ID = ID
+	msg := fmt.Sprintf("Generated context: %s\n", ctx.Name)
 
-	logrus.Infof("Generated context: %s\n", ctx.Name)
+	logrus.Infof(msg)
 
-	return ctx
+	return ctx, msg
 }
 
 // K8sContextGenerateID takes in a kubernetes context and generates an ID for it
@@ -291,6 +315,16 @@ func (kc K8sContext) GenerateKubeHandler() (*kubernetes.Client, error) {
 	return kubernetes.New(cfg)
 }
 
+func (kc *K8sContext) AssignVersion(handler *kubernetes.Client) error {
+	res, err := handler.KubeClient.DiscoveryClient.ServerVersion()
+	if err != nil {
+		return err
+	}
+
+	kc.Version = res.GitVersion
+	return nil
+}
+
 // PingTest uses the k8scontext to to "ping" the kubernetes cluster
 // if the return value is nil then the succeeds or else it has failed
 func (kc K8sContext) PingTest() error {
@@ -309,15 +343,9 @@ func (kc K8sContext) PingTest() error {
 
 // AssignServerID will attempt to assign kubernetes
 // server ID to the kubernetes context
-func (kc *K8sContext) AssignServerID() error {
+func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
 	// Perform Ping test on the cluster
 	if err := kc.PingTest(); err != nil {
-		return err
-	}
-
-	// Get a kubernetes handler
-	handler, err := kc.GenerateKubeHandler()
-	if err != nil {
 		return err
 	}
 
@@ -342,11 +370,14 @@ func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider, eb 
 	k8sctxs, ok := ctx.Value(AllKubeClusterKey).([]K8sContext)
 	if !ok || len(k8sctxs) == 0 {
 		req = meshes.EventsResponse{
-			Component:     "core",
-			ComponentName: "Meshery",
-			EventType:     meshes.EventType_ERROR,
-			Summary:       "No kubernetes context found",
-			OperationId:   id.String(),
+			Component:            "core",
+			ComponentName:        "Meshery",
+			EventType:            meshes.EventType_ERROR,
+			Summary:              "No Kubernetes context specified",
+			OperationId:          id.String(),
+			Details:              "Kubernetes operations require that one or more valid Kubernetes contexts be selected.",
+			ProbableCause:        "If you are using Meshery UI, likely there is no actively selected Kubernetes context in the Kubernetes context switcher (see upper right corner of the Meshery UI navigation bar).",
+			SuggestedRemediation: "If you are using Meshery UI, ensure one or more available Kubernetes contexts are checkmarked in your Kubernetes context switcher.",
 		}
 		eb.Publish(&req)
 		return

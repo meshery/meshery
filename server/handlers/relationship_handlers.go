@@ -54,7 +54,7 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 		page = 1
 	}
 	offset := (page - 1) * limit
-	res := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
+	res, _ := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
 		Kind:      name,
 		ModelName: typ,
 		Greedy:    greedy,
@@ -77,7 +77,7 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 }
 
 // swagger:route GET /api/meshmodel/model/{model}/relationship GetAllMeshmodelRelationships idGetAllMeshmodelRelationships
-// Handle GET request for getting meshmodel relationships of a specific model.
+// Handle GET request for getting meshmodel relationships of a specific model and their total count.
 //
 // Example: ```/api/meshmodel/model/kubernetes/relationship```
 //
@@ -93,7 +93,8 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-// 200: []RelationshipDefinition
+//
+//	200: allMeshmodelRelationshipsResponseWrapper
 func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -112,7 +113,7 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 		page = 1
 	}
 	offset := (page - 1) * limit
-	res := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
+	entities, count := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
 		Version:   r.URL.Query().Get("version"),
 		ModelName: typ,
 		Limit:     limit,
@@ -121,13 +122,22 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 		Sort:      r.URL.Query().Get("sort"),
 	})
 	var rels []v1alpha1.RelationshipDefinition
-	for _, r := range res {
+	for _, r := range entities {
 		rel, ok := r.(v1alpha1.RelationshipDefinition)
 		if ok {
 			rels = append(rels, rel)
 		}
 	}
-	if err := enc.Encode(rels); err != nil {
+
+	res := struct {
+		Count         int64                             `json:"total_count"`
+		Relationships []v1alpha1.RelationshipDefinition `json:"relationships"`
+	}{
+		Count:         *count,
+		Relationships: rels,
+	}
+
+	if err := enc.Encode(res); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}

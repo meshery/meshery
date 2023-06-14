@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import { useEffect } from 'react';
 import { Button, Grid, IconButton } from '@material-ui/core';
 // import { createTheme } from '@material-ui/core/styles';
 import validator from "@rjsf/validator-ajv8";
@@ -29,8 +30,7 @@ import CloseIcon from '@material-ui/icons/Close';
 //   }
 // })
 
-
-function PublishModal(props) {
+export default function PublishModal(props) {
   const { open, handleClose, pattern, handlePublish } = props;
   const classes = useStyles();
   const schema = {
@@ -81,10 +81,10 @@ function PublishModal(props) {
     "id" : pattern?.id,
     "catalog_data" : pattern?.catalog_data
   })
-  React.useEffect(() => {
-    setData(pattern.catalog_data)
+  useEffect(() => {
+    setData(pattern?.catalog_data)
   }, [pattern])
-  React.useEffect(() => {
+  useEffect(() => {
     setPayload({
       "id" : pattern?.id,
       "catalog_data" : data
@@ -132,5 +132,3 @@ function PublishModal(props) {
     </>
   )
 }
-
-export default PublishModal;

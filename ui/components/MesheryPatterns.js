@@ -7,6 +7,7 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
+import GetAppIcon from '@material-ui/icons/GetApp';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import SaveIcon from '@material-ui/icons/Save';
 import MUIDataTable from "mui-datatables";
@@ -20,7 +21,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
 import { toggleCatalogContent, updateProgress } from "../lib/store";
-import DesignConfigurator from "../components/configuratorComponents/patternConfigurator";
+import DesignConfigurator from "../components/configuratorComponents/MeshModel";
 import UploadImport from "./UploadImport";
 import { ctxUrl } from "../utils/multi-ctx";
 import { generateValidatePayload, getComponentsinFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
@@ -34,14 +35,16 @@ import PublicIcon from '@material-ui/icons/Public';
 import ConfirmationModal from "./ConfirmationModal";
 import PublishIcon from "@material-ui/icons/Publish";
 import PromptComponent from "./PromptComponent";
-import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
-import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import { SchemaContext } from "../utils/context/schemaSet";
 import Validation from "./Validation";
 import { ACTIONS, FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from "../utils/Enum";
 import PublishModal from "./PublishModal";
 import CloneIcon from "../public/static/img/CloneIcon";
+import { useRouter } from "next/router";
+import downloadFile from "../utils/fileDownloader";
+import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
+import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 
 const styles = (theme) => ({
   grid : {
@@ -239,7 +242,7 @@ function resetSelectedPattern() {
 }
 
 function MesheryPatterns({
-  updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts, catalogVisibility, toggleCatalogContent, capabilitiesRegistry
+  updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts, catalogVisibility, toggleCatalogContent
 }) {
   const [page, setPage] = useState(0);
   const [search,setSearch] = useState("");
@@ -251,6 +254,7 @@ function MesheryPatterns({
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
   const [extensionPreferences, setExtensionPreferences] = useState({});
+  const router = useRouter()
 
   const [patternErrors, setPatternErrors] = useState(new Map());
 
@@ -285,8 +289,8 @@ function MesheryPatterns({
   });
   const [loading, stillLoading] = useState(true);
 
-  const catalogContentRef = useRef();
   const catalogVisibilityRef = useRef(false);
+  const catalogContentRef = useRef();
   const disposeConfSubscriptionRef = useRef(null);
 
   const { workloadTraitSet } = useContext(SchemaContext);
@@ -324,6 +328,10 @@ function MesheryPatterns({
     PUBLISH_CATALOG : {
       name : "PUBLISH_CATALOG",
       error_msg : "Failed to publish catalog"
+    },
+    UNPUBLISH_CATALOG : {
+      name : "PUBLISH_CATALOG",
+      error_msg : "Failed to publish catalog"
     }
   };
 
@@ -332,10 +340,21 @@ function MesheryPatterns({
    * publish pattern capability and setting the canPublishPattern state accordingly
    */
   useEffect(() => {
-    const patternsCatalogueCapability = capabilitiesRegistry?.capabilities.filter(
-      (val) => val.feature === MesheryPatternsCatalog
+    dataFetch(
+      "/api/provider/capabilities",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      (result) => {
+        if (result) {
+          const capabilitiesRegistry = result;
+          const patternsCatalogueCapability = capabilitiesRegistry?.capabilities.filter((val) => val.feature === MesheryPatternsCatalog);
+          if (patternsCatalogueCapability?.length > 0) setCanPublishPattern(true);
+        }
+      },
+      (err) => console.error(err)
     );
-    if (patternsCatalogueCapability?.length) setCanPublishPattern(true);
   }, [])
 
   const searchTimeout = useRef(null);
@@ -404,58 +423,16 @@ function MesheryPatterns({
     )
   }
 
-
-  const handleCatalogVisibility = () => {
-    handleCatalogPreference(!catalogVisibilityRef.current);
-    catalogVisibilityRef.current = !catalogVisibility
-    toggleCatalogContent({ catalogVisibility : !catalogVisibility });
-  }
-
-  useEffect(() => {
-    fetchUserPrefs();
-    catalogVisibilityRef.current = catalogVisibility
-    const fetchCatalogPatterns = fetchCatalogPattern({
-      selector : {
-        search : "",
-        order : ""
-      }
-    }).subscribe({
-      next : (result) => {
-        catalogContentRef.current = result?.catalogPatterns;
-        initPatternsSubscription();
-      },
-      error : (err) => console.log("There was an error fetching Catalog Pattern: ", err)
-    });
-    return () => {
-      if (disposeConfSubscriptionRef.current) {
-        disposeConfSubscriptionRef.current.dispose();
-      }
-      fetchCatalogPatterns.unsubscribe();
-    }
-  }, [])
-
-  useEffect(() => {
-    handleSetPatterns(patterns)
-  }, [catalogVisibility])
-
-  const handleSetPatterns = (patterns) => {
-    if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
-      setPatterns([...catalogContentRef.current, ...patterns.filter(content => content.visibility !== VISIBILITY.PUBLISHED)])
-      return
-    }
-    setPatterns(patterns.filter(content => content.visibility !== VISIBILITY.PUBLISHED))
-  }
-
   const initPatternsSubscription = (pageNo = page.toString(), pagesize = pageSize.toString(), searchText = search, order = sortOrder) => {
     if (disposeConfSubscriptionRef.current) {
       disposeConfSubscriptionRef.current.dispose();
     }
     const configurationSubscription = ConfigurationSubscription((result) => {
+      stillLoading(false);
       setPage(result.configuration?.patterns?.page || 0);
       setPageSize(result.configuration?.patterns?.page_size || 0);
       setCount(result.configuration?.patterns?.total_count || 0);
-      handleSetPatterns(result.configuration?.patterns?.patterns ?? [] );
-      stillLoading(false);
+      handleSetPatterns(result.configuration?.patterns?.patterns);
     },
     {
       applicationSelector : {
@@ -480,6 +457,57 @@ function MesheryPatterns({
     disposeConfSubscriptionRef.current = configurationSubscription
   }
 
+
+  const handleCatalogVisibility = () => {
+    handleCatalogPreference(!catalogVisibilityRef.current);
+    catalogVisibilityRef.current = !catalogVisibility
+    toggleCatalogContent({ catalogVisibility : !catalogVisibility });
+  }
+
+  useEffect(() => {
+    fetchUserPrefs();
+  }, [])
+
+  useEffect(() => {
+    catalogVisibilityRef.current = catalogVisibility
+    const fetchCatalogPatterns = fetchCatalogPattern({
+      selector : {
+        search : "",
+        order : ""
+      }
+    }).subscribe({
+      next : (result) => {
+        catalogContentRef.current = result?.catalogPatterns;
+        initPatternsSubscription();
+      },
+      error : (err) => console.log("There was an error fetching Catalog Filter: ", err)
+    });
+
+    return () => {
+      fetchCatalogPatterns.unsubscribe();
+      disposeConfSubscriptionRef.current.dispose();
+    }
+  }, [])
+
+  useEffect(() => {
+    handleSetPatterns(patterns)
+  }, [catalogVisibility])
+
+  const handleSetPatterns = (patterns) => {
+    if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
+      setPatterns([...catalogContentRef.current, ...patterns.filter(content => content.visibility !== VISIBILITY.PUBLISHED)])
+      return
+    }
+    setPatterns(patterns.filter(content => content.visibility !== VISIBILITY.PUBLISHED))
+  }
+
+  useEffect(() => {
+    setPage(0);
+    setPageSize(10);
+    setCount(0);
+    fetchPatterns(0, 10, search, sortOrder)
+  }, [viewType])
+
   const handleModalClose = () => {
     // @ts-ignore
     setModalOpen({
@@ -491,7 +519,6 @@ function MesheryPatterns({
   }
 
   const handleModalOpen = (e, pattern_file, name, errors, action) => {
-    console.log("errors...//./././././", errors)
     e.stopPropagation();
     const compCount = getComponentsinFile(pattern_file);
     const validationBody = (
@@ -537,6 +564,43 @@ function MesheryPatterns({
       });
     }
   };
+
+  const handleUnpublishModal = (ev, pattern) => {
+    if (canPublishPattern) {
+      ev.stopPropagation();
+      return async () => {
+        let response = await modalRef.current.show({
+          title : `Unpublish Catalog item?`,
+          subtitle : `Are you sure you want to unpublish ${pattern?.name}?`,
+          options : ["Yes", "No"]
+        });
+        if (response === "Yes") {
+          updateProgress({ showProgress : true });
+          dataFetch(
+                `/api/pattern/catalog/unpublish`,
+                { credentials : "include", method : "DELETE", body : JSON.stringify({ "id" : pattern?.id }) },
+                () => {
+                  updateProgress({ showProgress : false });
+                  enqueueSnackbar("Design unpublished", {
+                    variant : "success",
+                    action : function Action(key) {
+                      return (
+                        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                          <CloseIcon />
+                        </IconButton>
+                      );
+                    },
+                    autoHideDuration : 2000,
+                  });
+                },
+                handleError(ACTION_TYPES.UNPUBLISH_CATALOG),
+          );
+        }
+      }
+    }
+  };
+
+
   const handlePublishModalClose = () => {
     setPublishModal({
       open : false,
@@ -684,6 +748,7 @@ function MesheryPatterns({
       (result) => {
         console.log("PatternFile API", `/api/pattern${query}`);
         updateProgress({ showProgress : false });
+        page === 0 && stillLoading(false);
         if (result) {
           setPage(result.page || 0);
           setPageSize(result.page_size || 0);
@@ -794,6 +859,27 @@ function MesheryPatterns({
         },
         handleError(ACTION_TYPES.UPLOAD_PATTERN)
       );
+    }
+  }
+
+  const handleDownload = (e, id, name) => {
+    e.stopPropagation();
+    updateProgress({ showProgress : true });
+    try {
+      downloadFile({ id, name, type : "pattern" })
+      updateProgress({ showProgress : false });
+      enqueueSnackbar(`"${name}" Design downloaded`, {
+        variant : "success",
+        action : function Action(key) {
+          return (
+            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+              <CloseIcon />
+            </IconButton>
+          );
+        }
+      });
+    } catch (e) {
+      console.error(e);
     }
   }
 
@@ -924,7 +1010,7 @@ function MesheryPatterns({
         },
         customBodyRender : function CustomBody(_, tableMeta) {
           const rowData = patterns[tableMeta.rowIndex];
-          const visibility = patterns[tableMeta.rowIndex].visibility
+          const visibility = patterns[tableMeta.rowIndex]?.visibility
           return (
             <>
               { visibility === VISIBILITY.PUBLISHED ? <TooltipIcon
@@ -971,14 +1057,29 @@ function MesheryPatterns({
               >
                 <DoneAllIcon data-cy="deploy-button" />
               </TooltipIcon>
+              <TooltipIcon
+                title="Download"
+                onClick={(e) => handleDownload(e, rowData.id, rowData.name)}
+              >
+                <GetAppIcon data-cy="download-button" />
+              </TooltipIcon>
+
               {canPublishPattern &&
+                (visibility !== VISIBILITY.PUBLISHED) ?
                 (<TooltipIcon
                   placement ="bottom"
                   title="Publish"
                   onClick={(ev) => handlePublishModal(ev,rowData)}
                 >
                   <PublicIcon fill="#F91313" data-cy="publish-button" />
-                </TooltipIcon>)}
+                </TooltipIcon>)
+                : (<TooltipIcon
+                  title="Unpublish"
+                  onClick={(ev) => handleUnpublishModal(ev, rowData)()}
+                >
+                  <PublicIcon fill="#F91313" data-cy="unpublish-button" />
+                </TooltipIcon>)
+              }
             </>
           );
         },
@@ -1046,7 +1147,7 @@ function MesheryPatterns({
     sort : !(user && user.user_id === "meshery"),
     search : !(user && user.user_id === "meshery"),
     filterType : "textField",
-    responsive : "scrollFullHeight",
+    responsive : "standard",
     resizableColumns : true,
     serverSide : true,
     count,
@@ -1156,10 +1257,7 @@ function MesheryPatterns({
                 color="primary"
                 size="large"
                 // @ts-ignore
-                onClick={() => setSelectedPattern({
-                  pattern : { id : null, name : "New Pattern", pattern_file : "name: New Pattern\nservices:" },
-                  show : true,
-                })}
+                onClick={() => router.push("designs/configurator")}
                 style={{ marginRight : "2rem" }}
               >
                 <AddIcon className={classes.addIcon} />
@@ -1214,6 +1312,7 @@ function MesheryPatterns({
               handleDeploy={handleDeploy}
               handleVerify={handleVerify}
               handlePublish={handlePublish}
+              handleUnpublishModal={handleUnpublishModal}
               handleUnDeploy={handleUnDeploy}
               handleClone={handleClone}
               urlUploadHandler={urlUploadHandler}
@@ -1254,13 +1353,11 @@ function MesheryPatterns({
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), toggleCatalogContent : bindActionCreators(toggleCatalogContent, dispatch) });
 
-const mapStateToProps = (state) => {
-  return {
-    user : state.get("user")?.toObject(), selectedK8sContexts : state.get("selectedK8sContexts"),
-    catalogVisibility : state.get("catalogVisibility"),
-    capabilitiesRegistry : state.get("capabilitiesRegistry")
-  };
-};
+const mapStateToProps = (state) => ({
+  user : state.get("user")?.toObject(),
+  selectedK8sContexts : state.get("selectedK8sContexts"),
+  catalogVisibility : state.get("catalogVisibility"),
+});
 
 // @ts-ignore
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MesheryPatterns)));

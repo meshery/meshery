@@ -133,7 +133,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
             lineWrapping : true,
             gutters : ["CodeMirror-lint-markers"],
             lint : true,
-            mode : "text/x-yaml",
+            mode : "text/plain",
           }}
           onChange={(val) => setYaml(val)}
         />
@@ -477,10 +477,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     }
     const configurationSubscription = ConfigurationSubscription((result) => {
       stillLoading(false);
-      setPage(result.configuration?.filters.page || 0);
-      setPageSize(result.configuration?.filters.page_size || 0);
-      setCount(result.configuration?.filters.total_count || 0);
-      handleSetFilters(result.configuration?.filters.filters);
+      setPage(result.configuration?.filters?.page || 0);
+      setPageSize(result.configuration?.filters?.page_size || 0);
+      setCount(result.configuration?.filters?.total_count || 0);
+      handleSetFilters(result.configuration?.filters?.filters);
     },
     {
       applicationSelector : {
@@ -593,7 +593,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   }
 
   function urlUploadHandler(link) {
-    console.log("handling things....")
     handleSubmit({
       data : link,
       name : "meshery_" + Math.floor(trueRandom() * 100),
@@ -798,7 +797,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     sort : !(user && user.user_id === "meshery"),
     search : !(user && user.user_id === "meshery"),
     filterType : "textField",
-    responsive : "scrollFullHeight",
+    responsive : "standard",
     resizableColumns : true,
     serverSide : true,
     count,
@@ -884,7 +883,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
   return (
     <>
-
       <NoSsr>
         {selectedRowData && Object.keys(selectedRowData).length > 0 && (
           <YAMLEditor filter={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} classes={classes} />

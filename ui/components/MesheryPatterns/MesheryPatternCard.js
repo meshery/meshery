@@ -19,6 +19,7 @@ import PublicIcon from '@material-ui/icons/Public';
 import TooltipButton from '../../utils/TooltipButton'
 import CloneIcon from "../../public/static/img/CloneIcon";
 import { VISIBILITY } from "../../utils/Enum";
+import { useTheme } from "@material-ui/core/styles";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -29,6 +30,7 @@ function MesheryPatternCard({
   pattern_file,
   handleVerify,
   handlePublishModal,
+  handleUnpublishModal,
   handleDeploy,
   handleUnDeploy,
   updateHandler,
@@ -41,7 +43,7 @@ function MesheryPatternCard({
   canPublishPattern = false
 }) {
 
-  function genericClickHandler(ev, fn) {
+  const genericClickHandler = (ev, fn) => {
     ev.stopPropagation();
     fn(ev);
   }
@@ -57,6 +59,7 @@ function MesheryPatternCard({
   const catalogContentKeys = Object.keys(description);
   const catalogContentValues = Object.values(description);
   const classes = useStyles()
+  const theme = useTheme()
 
   return (
     <>
@@ -69,6 +72,7 @@ function MesheryPatternCard({
           setYaml={setYaml}
           updateHandler={updateHandler}
           deleteHandler={deleteHandler}
+          type={"pattern"}
         />
       }
       <FlipCard
@@ -94,7 +98,7 @@ function MesheryPatternCard({
               <div>
                 {updated_at
                   ? (
-                    <Typography color="primary" variant="caption" style={{ fontStyle : "italic" }}>
+                    <Typography variant="caption" style={{ fontStyle : "italic", color : `${theme.palette.type === "dark" ? "rgba(255, 255, 255, 0.7)" : "#647881"}` }}>
                       Modified On: <Moment format="LLL">{updated_at}</Moment>
                     </Typography>
                   )
@@ -106,7 +110,9 @@ function MesheryPatternCard({
 
             <div className={classes.cardButtons} >
               {canPublishPattern &&
-                <TooltipButton
+                (visibility !== VISIBILITY.PUBLISHED)
+                ?
+                (<TooltipButton
                   variant="contained"
                   title="Publish"
                   className={classes.testsButton}
@@ -114,7 +120,19 @@ function MesheryPatternCard({
                 >
                   <PublicIcon className={classes.iconPatt} />
                   <span className={classes.btnText}> Publish </span>
-                </TooltipButton>}
+                </TooltipButton>)
+                : (
+                  <TooltipButton
+                    variant="contained"
+                    title="Unpublish"
+                    className={classes.testsButton}
+                    onClick={(ev) => genericClickHandler(ev, handleUnpublishModal)}
+                  >
+                    <PublicIcon className={classes.iconPatt} />
+                    <span className={classes.btnText}> Unpublish </span>
+                  </TooltipButton>
+                )
+              }
 
               <TooltipButton
                 title="Valildate"
@@ -249,7 +267,7 @@ function MesheryPatternCard({
                 <div>
                   {created_at
                     ? (
-                      <Typography color="primary" variant="caption" style={{ fontStyle : "italic" }}>
+                      <Typography variant="caption" style={{ fontStyle : "italic", color : `${theme.palette.type === "dark" ? "rgba(255, 255, 255, 0.7)" : "#647881"}` }}>
                         Created at: <Moment format="LLL">{created_at}</Moment>
                       </Typography>
                     )
@@ -259,31 +277,30 @@ function MesheryPatternCard({
             </Grid>
 
             <Grid item xs={12}>
-              {visibility === VISIBILITY.PRIVATE?
-                <div className={classes.updateDeleteButtons} >
+              <div className={classes.updateDeleteButtons} >
 
-                  {/* Save button */}
-                  <Tooltip
-                    title="Save" arrow interactive placement="bottom"
-                  >
-                    <IconButton onClick={(ev) =>
-                      genericClickHandler(ev, updateHandler)
-                    }>
-                      <Save color="primary" />
-                    </IconButton>
-                  </Tooltip>
+                {/* Save button */}
+                <Tooltip
+                  title="Save" arrow interactive placement="bottom"
+                >
+                  <IconButton onClick={(ev) =>
+                    genericClickHandler(ev, updateHandler)
+                  }>
+                    <Save color="primary" />
+                  </IconButton>
+                </Tooltip>
 
-                  {/* Delete Button */}
-                  <Tooltip
-                    title="Delete" arrow interactive placement="bottom"
-                  >
-                    <IconButton onClick={(ev) =>
-                      genericClickHandler(ev, deleteHandler)
-                    }>
-                      <DeleteIcon color="primary" />
-                    </IconButton>
-                  </Tooltip>
-                </div> : null}
+                {/* Delete Button */}
+                <Tooltip
+                  title="Delete" arrow interactive placement="bottom"
+                >
+                  <IconButton onClick={(ev) =>
+                    genericClickHandler(ev, deleteHandler)
+                  }>
+                    <DeleteIcon color="primary" />
+                  </IconButton>
+                </Tooltip>
+              </div>
             </Grid>
           </Grid>
         </>

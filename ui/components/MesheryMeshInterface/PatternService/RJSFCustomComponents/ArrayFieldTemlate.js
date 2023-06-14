@@ -12,6 +12,8 @@ import { isMultiSelect, getDefaultFormState } from "@rjsf/utils";
 import ErrorOutlineIcon from "../../../../assets/icons/ErrorOutlineIcon";
 import { ERROR_COLOR } from "../../../../constants/colors";
 import { iconSmall } from "../../../../css/icons.styles";
+import { getHyperLinkDiv } from "../helper";
+import pluralize from "pluralize";
 const styles = (theme) => ({
   typography : {
     fontSize : "0.8rem",
@@ -25,15 +27,7 @@ const styles = (theme) => ({
 function getTitleForItem(props) {
   const title = getTitle(props);
 
-  // remove plurals
-  if (title.endsWith("es")) {
-    return title.substring(0, title.length - 2);
-  }
-  if (title.endsWith("s")) {
-    return title.substring(0, title.length - 1);
-  }
-
-  return title;
+  return pluralize.singular(title);
 }
 
 function getTitle(props) {
@@ -53,21 +47,12 @@ const ArrayFieldTemplate = (props) => {
   }
 };
 
-const ArrayFieldTitle = ({ TitleField, idSchema, title, required, classes }) => {
+const ArrayFieldTitle = ({ title, classes }) => {
   if (!title) {
     return null;
   }
 
   return <Typography className={classes.typography} variant="body1" style={{ fontWeight : "bold", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>;
-};
-
-const ArrayFieldDescription = ({ DescriptionField, idSchema, description }) => {
-  if (!description) {
-    return null;
-  }
-
-  const id = `${idSchema.$id}__description`;
-  return <DescriptionField id={id} description={description} />;
 };
 
 // Used in the two templates
@@ -187,7 +172,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
 
             {
               (props.uiSchema["ui:description"] || props.schema.description) &&
-              <CustomTextTooltip backgroundColor="#3C494F" title={props.uiSchema["ui:description"] || props.schema.description}>
+              <CustomTextTooltip backgroundColor="#3C494F" title={getHyperLinkDiv(props.schema.description)}>
                 <IconButton  disableTouchRipple="true" disableRipple="true">
                   <HelpOutlineIcon width="14px" height="14px"  fill={theme.palette.type === 'dark' ? "white" : "gray"}  style={{ marginLeft : '4px', ...iconSmall }} />
                 </IconButton>

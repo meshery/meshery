@@ -242,6 +242,18 @@ paths:
             summary: Handle POST request for Sharing content
             tags:
                 - ShareContent
+    /api/events:
+        get:
+            description: |-
+                Listens for events across all of Meshery's components like adapters and server, streaming them to the UI via Server Side Events
+                This API call never terminates and establishes a persistent keep-alive connection over which `EventsResponse`s are pushed.
+            operationId: idGetEventStreamer
+            responses:
+                "200":
+                    $ref: '#/responses/EventsResponse'
+            summary: Handle GET request for events.
+            tags:
+                - EventsAPI
     /api/filter:
         get:
             description: Returns all the Meshery Filters saved by the current user
@@ -355,6 +367,87 @@ paths:
             summary: Handle GET request for filter file with given id
             tags:
                 - FiltersAPI
+    /api/identity/users:
+        get:
+            description: Returns all Users
+            operationId: idGetAllUsersHandler
+            parameters:
+                - format: int64
+                  in: query
+                  name: page
+                  type: integer
+                  x-go-name: Page
+                - format: int64
+                  in: query
+                  name: pageSize
+                  type: integer
+                  x-go-name: PageSize
+                - in: query
+                  name: search
+                  type: string
+                  x-go-name: Search
+                - description: 'in: order'
+                  in: query
+                  name: order
+                  type: string
+                  x-go-name: Order
+                - description: 'in: filter'
+                  in: query
+                  name: filter
+                  type: string
+                  x-go-name: Filter
+            responses:
+                "200":
+                    $ref: '#/responses/users'
+            summary: Handles GET for all Users
+            tags:
+                - UserAPI
+    /api/integrations/connections:
+        post:
+            description: Creates a new connection
+            operationId: idPostConnection
+            responses:
+                "201":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle POST request for creating a new connection
+            tags:
+                - PostConnection
+    /api/integrations/connections/{connectionId}:
+        delete:
+            description: Deletes existing connection
+            operationId: idDeleteConnection
+            responses:
+                "200":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle DELETE request for deleting an existing connection by connection ID
+            tags:
+                - DeleteConnection
+    /api/integrations/connections/{connectionKind}:
+        get:
+            description: |-
+                ```?order={field}``` orders on the passed field
+
+                ```?search={modelname}``` If search is non empty then a greedy search is performed
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetConnectionsByKind
+            responses:
+                "200":
+                    $ref: '#/responses/ConnectionPage'
+            summary: Handle GET request for getting all connections for a given kind.
+            tags:
+                - GetConnectionsByKind
+        put:
+            description: Updates existing connection
+            operationId: idPutConnection
+            responses:
+                "200":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle PUT request for updating an existing connection
+            tags:
+                - PutConnection
     /api/meshmodel/components/register:
         post:
             description: Validate the given value with the given schema
@@ -375,113 +468,12 @@ paths:
             summary: Handle POST request for component generation
             tags:
                 - MeshmodelComponentGenerate
-    /api/meshmodel/model:
-        get:
-            description: |-
-                Models can be further filtered through query parameter
-
-                ```?version={version}``` If version is unspecified then all models are returned
-
-                ```?order={field}``` orders on the passed field
-
-                ```?category={category of model}``` If category in unspecified then all models are returned
-
-                ```?sort={[asc/desc]}``` Default behavior is asc
-
-                ```?page={page-number}``` Default page number is 1
-
-                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-            operationId: idGetMeshmodelModels
-            responses:
-                "200":
-                    $ref: '#/responses/Model'
-            summary: Handle GET request for getting all meshmodel models. The component type/model name should be lowercase like "kubernetes", "istio"
-            tags:
-                - GetMeshmodelModels
-    /api/meshmodel/model/{model}:
-        get:
-            description: |-
-                Example: ```/api/meshmodel/model/kubernetes```
-                Models can be further filtered through query parameter
-
-                ```?version={version}```
-
-                ```?order={field}``` orders on the passed field
-
-                ```?sort={[asc/desc]}``` Default behavior is asc
-
-                ```?search={[true/false]}``` If search is true then a greedy search is performed on both model name and model display
-
-                ```?page={page-number}``` Default page number is 1
-
-                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-
-                ```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities
-            operationId: idGetMeshmodelEntititiesByModel
-            responses:
-                "200":
-                    $ref: '#/responses/ModelResponse'
-            summary: Handle GET request for getting all meshmodel entities of a specific model.
-            tags:
-                - GetMeshmodelEntititiesByModel
-    /api/meshmodel/model/{model}/component:
-        get:
-            description: |-
-                Example: ```/api/meshmodel/model/kubernetes/component```
-
-                Components can be further filtered through query parameter
-
-                ```?version={version}```
-
-                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
-
-                ```?order={field}``` orders on the passed field
-
-                ```?sort={[asc/desc]}``` Default behavior is asc
-
-                ```?page={page-number}``` Default page number is 1
-
-                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-            operationId: idMeshmodelGetByType
-            responses:
-                "200":
-                    $ref: '#/responses/ComponentDefinition'
-            summary: Handle GET request for getting meshmodel components of a specific type. The component type/model name should be lowercase like "kubernetes", "istio"
-            tags:
-                - MeshmodelGetByType
-    /api/meshmodel/model/{model}/component/{name}:
-        get:
-            description: |-
-                Example: ```/api/meshmodel/model/kubernetes/component/Namespace```
-
-                Components can be further filtered through query parameter
-
-                ```?version={version}``` If version is unspecified then all models are returned
-
-                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
-
-                ```?order={field}``` orders on the passed field
-
-                ```?sort={[asc/desc]}``` Default behavior is asc
-
-                ```?search={[true/false]}``` If search is true then a greedy search is performed
-
-                ```?page={page-number}``` Default page number is 1
-
-                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-            operationId: idMeshmodelGetByName
-            responses:
-                "200":
-                    $ref: '#/responses/ComponentDefinition'
-            summary: Handle GET request for getting meshmodel components of a specific type by name.
-            tags:
-                - MeshmodelGetByName
     /api/meshmodel/model/{model}/relationship:
         get:
             description: |-
                 Example: ```/api/meshmodel/model/kubernetes/relationship```
 
-                Relationships can be further filtered through query parameter
+                # Relationships can be further filtered through query parameter
 
                 ```?version={version}```
 
@@ -495,8 +487,8 @@ paths:
             operationId: idGetAllMeshmodelRelationships
             responses:
                 "200":
-                    $ref: '#/responses/RelationshipDefinition'
-            summary: Handle GET request for getting meshmodel relationships of a specific model.
+                    $ref: '#/responses/allMeshmodelRelationshipsResponseWrapper'
+            summary: Handle GET request for getting meshmodel relationships of a specific model and their total count.
             tags:
                 - GetAllMeshmodelRelationships
     /api/meshmodel/model/{model}/relationship/{name}:
@@ -504,7 +496,7 @@ paths:
             description: |-
                 Example: ```/api/meshmodel/model/kubernetes/relationship/Edge```
 
-                Relationships can be further filtered through query parameter
+                # Relationships can be further filtered through query parameter
 
                 ```?version={version}```
 
@@ -534,68 +526,305 @@ paths:
             summary: Handle POST request for validate
             tags:
                 - MeshmodelValidate
-    /api/oam/{type}:
-        get:
-            description: "Getting list of ```workloads/traits/scopes```\n\n```{type}``` being of either trait, scope, workload; registration of adapter capabilities. \n\nExample: ```/api/oam/workload``` => Here ```{type}``` is \"workload\""
-            operationId: idGETOAMMesheryPattern
-            responses:
-                "200":
-                    description: ""
-            summary: Handles the get requests for the OAM objects
-            tags:
-                - PatternsAPI
-        post:
-            description: |-
-                Adding a ```workload/trait/scope```
-
-                {type} being of either trait, scope, workload; registration of adapter capabilities.
-
-                Example: ```/api/oam/trait``` => Here ```{type}``` is "trait"
-            operationId: idPOSTOAMRegister
-            responses:
-                "200":
-                    description: ""
-            summary: Handles registering OMA objects
-            tags:
-                - PatternsAPI
-    /api/oam/{type}/{name}:
+    /api/meshmodels/categories:
         get:
             description: |-
-                Returns component details of a ```workload/trait/scope``` by given name in the URL
+                ```?order={field}``` orders on the passed field
 
-                ```{type}``` being of either trait, scope, workload; registration of adapter capabilities.
+                ```?sort={[asc/desc]}``` Default behavior is asc
 
-                Example: ```/api/oam/workload/Application``` => Here ```{type}``` is "workload" and ```{name}``` is "Application"
-                it should be noted that both ```{type}``` and ```{name}``` should be valid
-            operationId: idOAMComponentDetails
+                ```?search={categoryName}``` If search is non empty then a greedy search is performed
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetMeshmodelCategories
             responses:
                 "200":
-                    description: ""
-            summary: Handles GET requests for component details for OAM objects
+                    $ref: '#/responses/Category'
+            summary: Handle GET request for getting all meshmodel categories
             tags:
-                - PatternsAPI
-    /api/oam/{type}/{name}/{id}:
+                - GetMeshmodelCategories
+    /api/meshmodels/categories/{category}:
         get:
             description: |-
-                Returns details of a ```workload/trait/scope``` by given name and id in the URL
+                ```?order={field}``` orders on the passed field
 
-                ```{type}``` being of either trait, scope, workload; registration of adapter capabilities.
+                ```?sort={[asc/desc]}``` Default behavior is asc
 
-                Example: ```/api/oam/workload/Application/asdqe123sa275sasd``` => Here ```{type}``` is "workload"
-                ```{name}``` is "Application" and ```{id}``` is "asdqe123sa275sasd". It should be noted that all of three, i.e {type},
-                ```{name}``` and ```{id}``` must be valid
-            operationId: idOAMComponentDetailByID
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
+            operationId: idGetMeshmodelCategoriesByName
             responses:
                 "200":
-                    description: ""
-            summary: Handles GET requests for component details for OAM objects
+                    $ref: '#/responses/Category'
+            summary: Handle GET request for getting all meshmodel categories of a given name
             tags:
-                - PatternsAPI
+                - GetMeshmodelCategoriesByName
+    /api/meshmodels/categories/{category}/components:
+        get:
+            description: |-
+                Example: ```/api/meshmodels/categories/Orchestration``` and Management/models/kubernetes/components
+                Components can be further filtered through query parameter
+
+                ```?version={version}```
+
+                ```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities
+
+                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+
+                ```?order={field}``` orders on the passed field
+
+                ```?search={componentname}``` If search is non empty then a greedy search is performed
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetMeshmodelComponentByCategory
+            responses:
+                "200":
+                    $ref: '#/responses/ComponentDefinition'
+            summary: Handle GET request for getting meshmodel components of a specific model and category.
+            tags:
+                - GetMeshmodelComponentByCategory
+    /api/meshmodels/categories/{category}/components/{name}:
+        get:
+            description: |-
+                Example: ```/api/meshmodels/categories/Orchestration``` and Management/components/Namespace
+                Components can be further filtered through query parameter
+
+                ```?version={version}``` If version is unspecified then all models are returned
+
+                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetMeshmodelComponentsByNameByCategory
+            responses:
+                "200":
+                    $ref: '#/responses/ComponentDefinition'
+            summary: Handle GET request for getting meshmodel components of a specific type category.
+            tags:
+                - GetMeshmodelComponentsByNameByCategory
+    /api/meshmodels/categories/{category}/models:
+        get:
+            description: |-
+                ```?version={version}``` If version is unspecified then all models are returned
+
+                ```?order={field}``` orders on the passed field
+
+                ```?search={modelname}``` If search is non empty then a greedy search is performed
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetMeshmodelModelsByCategories
+            responses:
+                "200":
+                    $ref: '#/responses/Model'
+            summary: Handle GET request for getting all meshmodel models for a given category. The component type/model name should be lowercase like "kubernetes", "istio"
+            tags:
+                - GetMeshmodelModelsByCategories
+    /api/meshmodels/categories/{category}/models/{model}:
+        get:
+            description: |-
+                ```?version={version}``` If version is unspecified then all models are returned
+
+                ```?order={field}``` orders on the passed field
+
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetMeshmodelModelsByCategoriesByModel
+            responses:
+                "200":
+                    $ref: '#/responses/Model'
+            summary: Handle GET request for getting all meshmodel models for a given category. The component type/model name should be lowercase like "kubernetes", "istio"
+            tags:
+                - GetMeshmodelModelsByCategoriesByModel
+    /api/meshmodels/categories/{category}/models/{model}/components:
+        get:
+            description: |-
+                Example: ```/api/meshmodels/categories/Orchestration``` and Management/models/kubernetes/components
+                Components can be further filtered through query parameter
+
+                ```?version={version}```
+
+                ```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities
+
+                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+
+                ```?order={field}``` orders on the passed field
+
+                ```?search={componentname}``` If search is non empty then a greedy search is performed
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetMeshmodelComponentByModelByCategory
+            responses:
+                "200":
+                    $ref: '#/responses/ComponentDefinition'
+            summary: Handle GET request for getting meshmodel components of a specific model and category. The component type/model name should be lowercase like "kubernetes", "istio"
+            tags:
+                - GetMeshmodelComponentByModelByCategory
+    /api/meshmodels/categories/{category}/models/{model}/components/{name}:
+        get:
+            description: |-
+                Example: ```/api/meshmodels/categories/Orchestration``` and Management/models/kubernetes/components/Namespace
+                Components can be further filtered through query parameter
+
+                ```?version={version}``` If version is unspecified then all models are returned
+
+                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetMeshmodelComponentsByNameByModelByCategory
+            responses:
+                "200":
+                    $ref: '#/responses/ComponentDefinition'
+            summary: Handle GET request for getting meshmodel components of a specific type by model and category.
+            tags:
+                - GetMeshmodelComponentsByNameByModelByCategory
+    /api/meshmodels/components:
+        get:
+            description: |-
+                # Components can be further filtered through query parameter
+
+                ```?version={version}```
+
+                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+
+                ```?order={field}``` orders on the passed field
+
+                ```?search={componentname}``` If search is non empty then a greedy search is performed
+
+                ```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetAllMeshmodelComponents
+            responses:
+                "200":
+                    $ref: '#/responses/allMeshmodelComponentsResponseWrapper'
+            summary: Handle GET request for getting meshmodel components across all models and categories and their total count.
+            tags:
+                - GetAllMeshmodelComponents
+    /api/meshmodels/components/{name}:
+        get:
+            description: |-
+                Example: ```/api/meshmodels/components/Namespace```
+                Components can be further filtered through query parameter
+
+                ```?version={version}``` If version is unspecified then all models are returned
+
+                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities
+
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetAllMeshmodelComponentsByName
+            responses:
+                "200":
+                    $ref: '#/responses/ComponentDefinition'
+            summary: Handle GET request for getting meshmodel components of a specific type by name across all models and categories
+            tags:
+                - GetAllMeshmodelComponentsByName
+    /api/meshmodels/models/{model}/components:
+        get:
+            description: |-
+                Example: ```/api/meshmodels/models/kubernetes/components```
+                Components can be further filtered through query parameter
+
+                ```?version={version}```
+
+                ```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities
+
+                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+
+                ```?search={componentname}``` If search is non empty then a greedy search is performed
+
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetMeshmodelComponentByModel
+            responses:
+                "200":
+                    $ref: '#/responses/ComponentDefinition'
+            summary: Handle GET request for getting meshmodel components of a specific model. The component type/model name should be lowercase like "kubernetes", "istio"
+            tags:
+                - GetMeshmodelComponentByModel
+    /api/meshmodels/models/{model}/components/{name}:
+        get:
+            description: |-
+                Example: ```/api/meshmodels/models/kubernetes/components/Namespace```
+                Components can be further filtered through query parameter
+
+                ```?version={version}``` If version is unspecified then all models are returned
+
+                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetMeshmodelComponentsByNameByModel
+            responses:
+                "200":
+                    $ref: '#/responses/ComponentDefinition'
+            summary: Handle GET request for getting meshmodel components of a specific  model.
+            tags:
+                - GetMeshmodelComponentsByNameByModel
     /api/pattern:
         get:
             description: |-
                 Returns the list of all the patterns saved by the current user
-
                 This will return all the patterns with their details
 
                 ```?updated_after=<timestamp>``` timestamp should be of the format "YYYY-MM-DD HH:MM:SS"
@@ -672,6 +901,16 @@ paths:
         post:
             description: Publishes pattern to Meshery Catalog by setting visibility to published and setting catalog data
             operationId: idPublishCatalogPatternHandler
+            responses:
+                "200":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle Publish for a Meshery Pattern
+            tags:
+                - PatternsAPI
+    /api/pattern/catalog/unpublish:
+        delete:
+            description: Unpublishes pattern from Meshery Catalog by setting visibility to private and removing catalog data from website
+            operationId: idUnPublishCatalogPatternHandler
             responses:
                 "200":
                     $ref: '#/responses/noContentWrapper'
@@ -766,6 +1005,13 @@ paths:
             summary: Handles GET requests for perf result
             tags:
                 - PerfAPI
+    /api/policies/run_policy:
+        post:
+            description: Handle POST request for running the set of policies on the design file, the policies are picked from the policies directory and query is sent to find all the relationships around the services in the given design file
+            operationId: idGetRegoPolicyForDesignFile
+            responses: {}
+            tags:
+                - GetRegoPolicyForDesignFile
     /api/provider:
         get:
             description: Update the choice of provider in system
@@ -885,6 +1131,16 @@ paths:
                 "200":
                     $ref: '#/responses/systemAdaptersRespWrapper'
             summary: Handle GET request for adapters
+            tags:
+                - SystemAPI
+    /api/system/adapters/available:
+        get:
+            description: Fetches and returns all the adapters available for deployment
+            operationId: idGetAvailableAdapters
+            responses:
+                "200":
+                    $ref: '#/responses/systemAdaptersRespWrapper'
+            summary: Handle GET request for available adapters
             tags:
                 - SystemAPI
     /api/system/kubernetes:
@@ -1224,7 +1480,7 @@ paths:
                 - PerformanceAPI
     /api/user/performance/profiles/{id}/results:
         get:
-            description: Fetchs pages of results from Remote Provider for the given id
+            description: Fetches pages of results from Remote Provider for the given id
             operationId: idGETProfileResults
             parameters:
                 - description: id for a specific
@@ -1422,6 +1678,15 @@ paths:
 produces:
     - application/json
 responses:
+    Category:
+        description: ""
+        headers:
+            metadata: {}
+            name:
+                type: string
+        schema:
+            additionalProperties: {}
+            type: object
     ComponentDefinition:
         description: ""
         headers:
@@ -1439,40 +1704,95 @@ responses:
         schema:
             additionalProperties: {}
             type: object
+    Connection:
+        description: ""
+        headers:
+            created_at:
+                format: date-time
+                type: string
+            credential_id: {}
+            deleted_at: {}
+            id: {}
+            kind:
+                type: string
+            metadata: {}
+            name:
+                type: string
+            status: {}
+            sub_type:
+                type: string
+            type:
+                type: string
+            updated_at:
+                format: date-time
+                type: string
+            user_id: {}
+        schema:
+            additionalProperties: {}
+            type: object
+    ConnectionPage:
+        description: ""
+        headers:
+            connection:
+                items: {}
+                type: array
+            page:
+                format: int64
+                type: integer
+            page_size:
+                format: int64
+                type: integer
+            total_count:
+                format: int64
+                type: integer
+    ConnectionStatus:
+        description: ""
+        schema: {}
+    EventsResponse:
+        description: ""
+        headers:
+            component:
+                type: string
+            component_name:
+                type: string
+            details:
+                type: string
+            error_code:
+                type: string
+            event_type: {}
+            operation_id:
+                type: string
+            probable_cause:
+                type: string
+            sizeCache:
+                format: int32
+                type: integer
+            state: {}
+            suggested_remediation:
+                type: string
+            summary:
+                type: string
+            unknownFields:
+                items:
+                    format: uint8
+                    type: integer
+                type: array
     FilterFilesResponseWrapper:
         description: Returns the response of the Filter files
     Model:
         description: ""
         headers:
-            category:
+            category: {}
+            displayName:
                 type: string
-            modelDisplayName:
-                type: string
+            metadata: {}
             name:
-                type: string
-            subCategory:
                 type: string
             version:
                 type: string
-    ModelResponse:
-        description: ""
-        headers:
-            category:
-                type: string
-            components:
-                items: {}
-                type: array
-            modelDisplayName:
-                type: string
-            name:
-                type: string
-            relationships:
-                items: {}
-                type: array
-            subCategory:
-                type: string
-            version:
-                type: string
+        schema:
+            additionalProperties: {}
+            type: object
     RelationshipDefinition:
         description: |-
             https://docs.google.com/drawings/d/1_qzQ_YxvCWPYrOBcdqGMlMwfbsZx96SBuIkbn8TfKhU/edit?pli=1
@@ -1490,6 +1810,14 @@ responses:
         schema:
             additionalProperties: {}
             type: object
+    allMeshmodelComponentsResponseWrapper:
+        description: Returns all meshmodel components across all models and categories
+        headers:
+            Body: {}
+    allMeshmodelRelationshipsResponseWrapper:
+        description: Returns all meshmodel relationships of a specific model
+        headers:
+            Body: {}
     applicationFilesResponseWrapper:
         description: Returns the response of the application files
     grafanaBoardsResponseWrapper:
@@ -1529,6 +1857,10 @@ responses:
         description: Returns all meshery patterns
     mesheryVersionRespWrapper:
         description: Returns Meshery version
+    meshmodelModelsResponseWrapper:
+        description: Returns all meshmodel models
+        headers:
+            Body: {}
     noContentWrapper:
         description: ""
     perfSingleResultRespWrapper:
@@ -1563,6 +1895,8 @@ responses:
         description: Returns user info
     userLoadTestPrefsRespWrapper:
         description: Returns User Load Test Preferencee
+    users:
+        description: Returns all users info
     v1ServicesMapResponseWrapper:
         description: Returns a map for v1 services
         schema:
