@@ -51,7 +51,7 @@
 }
 
 .sidebar-container {
-  scroll-behavior: contains;
+  overscroll-behavior: contain;
   padding: 1rem min(2vh, 2vw);
   overflow-y: scroll;
   height: calc(100vh - var(--navbar-height));
@@ -63,12 +63,12 @@
   height: 100%;
 
   &::-webkit-scrollbar {
+    overscroll-behavior: contain;
     width: 5px;
     padding: 6px;
   }
 
   &::-webkit-scrollbar-track {
-  	scroll-behavior: contains;
     width: 0.5rem;
     border-radius: 11px;
     overflow: hidden;
@@ -149,11 +149,11 @@
           position: relative;
           width: fit-content;
 
-		  &.active,
-		  &.active a{
-			scroll-margin-bottom: 8rem;
-            color: var(--sidenav-hover) ;
-		  }
+          &.active,
+          &.active a {
+            scroll-margin-bottom: 8rem;
+            color: var(--sidenav-hover);
+          }
 
           & a:hover {
             text-decoration: none;
