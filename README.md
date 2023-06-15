@@ -234,6 +234,12 @@ Meshery provides tooling to validate any service mesh that claims to implement a
 <a href="https://docs.meshery.io/assets/img/readme/smi-conformance-with-meshery.png"><img alt="SMI Validation, Verification, and Conformance with Meshery" src="https://docs.meshery.io/assets/img/readme/smi-conformance-with-meshery.png" style="margin-right:10px;margin-bottom:10px;" width="100%" align="left" /></a>
 <br />
 <br /><br /><br /><br />
+<p style="clear:both;">
+
+<h3>Context-Aware Policies For Applications</h3>
+<img alt="OPA Logo" align="right" src=".github/assets/images/readme/meshery-policies-2.png" style="margin-right:10px;" width="50%" />
+<p>Leverage built-in relationships to enforce configuration best practices consistently from code to Kubernetes. Enhance development process by building custom rules in Open Policy Agent's Rego query language.
+</p>
 
 <p style="clear:both;">
 
@@ -299,7 +305,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 ## Join the Meshery community!
 
 <a name="contributing"></a><a name="community"></a>
-Our projects are community-built and welcome collaboration. 👍 Be sure to see the <a href="https://layer5.io/community/handbook">Community Welcome Guide</a> for a tour of resources available to you and see the <a href="https://layer5.io/community/handbook/repository-overview">Repository Overview</a> for a cursory description of repository by technology and programming language. Jump into community <a href="http://slack.meshery.io">Slack</a> or <a href="http://discuss.meshery.io">discussion forum</a> to participate.
+Our projects are community-built and welcome collaboration. 👍 Be sure to see the <a href="https://layer5.io/community/handbook">Contributor Journey Map</a> and <a href="https://layer5.io/community/handbook">Community Handbook</a> for a tour of resources available to you and the <a href="https://layer5.io/community/handbook/repository-overview">Repository Overview</a> for a cursory description of repository by technology and programming language. Jump into community <a href="https://slack.meshery.io">Slack</a> or <a href="http://discuss.meshery.io">discussion forum</a> to participate.
 
 <p style="clear:both;">
 <a href ="https://layer5.io/community"><img alt="MeshMates" src=".github/assets/images/readme/layer5-community-sign.png" style="margin-right:36px; margin-bottom:7px;" width="140px" align="left" /></a>
