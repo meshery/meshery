@@ -78,10 +78,10 @@ jobs:
     uses: meshery/meshery/.github/workflows/build-and-release-dde.yml@master
     secrets: inherit
   call-helm-chart-releaser:
-      needs: build
-      name: Release Helm Charts
-      uses: meshery/meshery/.github/workflows/helm-chart-releaser.yml@master
-      secrets: inherit        
+    needs: build
+    name: Release Helm Charts
+    uses: meshery/meshery/.github/workflows/helm-chart-releaser.yml@master
+    secrets: inherit        
   call-aks-playground-deploy-workflow:
     needs: build
     name: Deploy Meshery Playground
