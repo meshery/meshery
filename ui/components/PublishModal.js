@@ -39,16 +39,21 @@ export default function PublishModal(props) {
       "compatibility" : {
         "type" : "array",
         "items" : {
-          "enum" : [
-            "Istio",
-            "Linkerd",
-            "App Mesh",
-            "OSM",
-            "Nginx",
-            "Kuma",
+          "enum" : [            
+            "Kubernetes",
+            "Argo CD",
+            "AWS App Mesh",
             "Consul",
-            "NSM",
-            "Traefik"
+            "Fluentd",
+            "Istio",
+            "Jaeger",
+            "Kuma",
+            "Linkerd",
+            "Network Service Mesh",
+            "NGINX Service Mesh",
+            "Open Service Mesh",
+            "Prometheus",
+            "Traefik Mesh"
           ],
           "type" : "string"
         },
@@ -119,7 +124,7 @@ export default function PublishModal(props) {
                 className={classes.testsButton}
               >
                 <PublicIcon className={classes.iconPatt} />
-                <span className={classes.btnText}> Publish </span>
+                <span className={classes.btnText}> Submit for Approval </span>
               </Button>
             </Form>
           </Grid>
