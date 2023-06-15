@@ -1,6 +1,6 @@
 import React from 'react';
 import { useEffect } from 'react';
-import { Button, Grid, IconButton } from '@material-ui/core';
+import { Button, Grid } from '@material-ui/core';
 // import { createTheme } from '@material-ui/core/styles';
 import validator from "@rjsf/validator-ajv8";
 import {
@@ -11,7 +11,6 @@ import {
 import { Form } from '@rjsf/material-ui';
 import useStyles from "./MesheryPatterns/Cards.styles";
 import PublicIcon from '@material-ui/icons/Public';
-import CloseIcon from '@material-ui/icons/Close';
 // const getMuiTheme = () => createTheme({
 //   palette : {
 //     primary : {
@@ -39,7 +38,7 @@ export default function PublishModal(props) {
       "compatibility" : {
         "type" : "array",
         "items" : {
-          "enum" : [            
+          "enum" : [
             "Kubernetes",
             "Argo CD",
             "AWS App Mesh",
