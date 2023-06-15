@@ -181,7 +181,7 @@ Meshery also offers a [catalog of curated design templates](https://meshery.io/c
 
 Using a GitOps-centric approach, visually and collaboratively design and manage your infrastructure and microservices. Use Meshery to interoperate your various cloud native systems. With both REST and GraphQL APIs, integrating with Meshery as an extensible platform is facilitated through NATS, CloudEvents, and gRPC.
 
-<a href="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/readme/meshery_multi_mesh.png"><img alt="Layer5 Service Mesh Management" src="https://docs.meshery.io/assets/img/readme/meshery_multi_mesh.png"  style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" /></a>
+<a href="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshmap.gif"><img alt="Meshery cloud native management" src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshmap.gif"  style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" /></a>
 <br /><br />
 
 </p>
@@ -195,6 +195,25 @@ Assess your cloud native infrastructure configuration against deployment and ope
 <br /><br />
 
 </p>
+<br /><br />
+<p style="clear:both;">
+
+<img alt="OPA Logo" src=".github/assets/images/readme/opa-logo.svg" style="margin-right:10px;" width="10%" align="left" />
+<h3>Context-Aware Policies For Applications</h3>
+<p>Leverage built-in relationships to enforce configuration best practices consistently from code to Kubernetes. Enhance development process by building custom rules in Open Policy Agent's Rego query language.
+<img alt="Meshery and Open Policy Agent Integration" src=".github/assets/images/readme/meshery-policies-2.png" style="margin-right:10px;" width="70%" />
+</p>
+<br /><br />
+<p style="clear:both;">
+
+<img alt="WebAssembly Logo" src="https://docs.meshery.io/assets/img/readme/webassembly_logo.svg" style="margin-right:10px;" width="10%" align="left" />
+<h3> Manage data plane intelligence with WebAssembly filters </h3>
+<p>Dynamically load and manage your own WebAssembly filters in Envoy-based service meshes.</p>
+<a href=".github/assets/images/readme/meshery-wasm.png"><img alt="WebAssembly filters" src=".github/assets/images/readme/meshery-wasm.png"  style="margin-right:10px; margin-bottom:10px;" width="70%" /></a>
+See <a href="https://github.com/layer5io/image-hub">Image Hub</a>.
+</p>
+<br /><br />
+
 
 <h3>Adhering to Cloud Native Standards</h3>
 
@@ -205,7 +224,6 @@ Assess your cloud native infrastructure configuration against deployment and ope
 
 In an effort to produce service mesh agnostic tooling, Meshery uses the <a href="https://smp-spec.io">Service Mesh Performance</a> specification as a common format to capture and measure your infrasturcture's performance against a universal cloud native performance index. As an implementation of Service Mesh Interface (SMI), Meshery participates in advancing cloud native infrastructure adoption through the standardization of APIs.
 <br /><br />
-
 <p style="clear:both;">
 
 <!-- <a href="https://raw.githubusercontent.com/layer5io/meshery/master/assets/img/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="https://docs.meshery.io/assets/img/readme/Meshery-Grafana-Charts.png" style="padding-top:10px;margin-left:10px;" width="45%" align="right" /></a> -->
@@ -218,7 +236,6 @@ Meshery is the cloud native utility for uniformly managing the performance of mi
 <br /><br />
 
 </p>
-
 <h4>Conforming to Service Mesh Interface (SMI)</h4>
 
 <p style="clear:both;">
@@ -234,23 +251,6 @@ Meshery provides tooling to validate any service mesh that claims to implement a
 <a href="https://docs.meshery.io/assets/img/readme/smi-conformance-with-meshery.png"><img alt="SMI Validation, Verification, and Conformance with Meshery" src="https://docs.meshery.io/assets/img/readme/smi-conformance-with-meshery.png" style="margin-right:10px;margin-bottom:10px;" width="100%" align="left" /></a>
 <br />
 <br /><br /><br /><br />
-<p style="clear:both;">
-
-<h3>Context-Aware Policies For Applications</h3>
-<img alt="OPA Logo" align="right" src=".github/assets/images/readme/meshery-policies-2.png" style="margin-right:10px;" width="50%" />
-<p>Leverage built-in relationships to enforce configuration best practices consistently from code to Kubernetes. Enhance development process by building custom rules in Open Policy Agent's Rego query language.
-</p>
-
-<p style="clear:both;">
-
-<img alt="WebAssembly Logo" src="https://docs.meshery.io/assets/img/readme/webassembly_logo.svg" style="margin-right:10px;" width="10%" />
-<h3> Manage data plane intelligence with WebAssembly filters </h3>
-Dynamically load and manage your own WebAssembly filters in Envoy-based service meshes. 
-<br />
-<a href=".github/assets/images/readme/meshery-wasm.png"><img alt="WebAssembly filters" src=".github/assets/images/readme/meshery-wasm.png"  style="margin-right:10px; margin-bottom:10px;" width="100%" align="center"/></a>
-See <a href="https://github.com/layer5io/image-hub">Image Hub</a>.
-</p>
-<br /><br />
 <div>&nbsp;</div>
 
 ## Meshery Architecture
