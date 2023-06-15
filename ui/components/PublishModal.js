@@ -78,22 +78,13 @@ export default function PublishModal(props) {
     "required": ["compatibility", "pattern_caveats", "pattern_info", "type"]
   }
 
-  const [data, setData] = React.useState(null)
-  const [payload, setPayload] = React.useState({
-    "id": pattern?.id,
-    "catalog_data": pattern?.catalog_data
-  });
+  const [data, setData] = React.useState(null);
 
   useEffect(() => {
-    setData(pattern?.catalog_data)
-  }, [pattern]);
-
-  useEffect(() => {
-    setPayload({
-      "id": pattern?.id,
-      "catalog_data": data
-    })
-  }, [data])
+    if(pattern?.catalog_data) {
+      setData(pattern.catalog_data)
+    }
+  }, []);
 
   return (
     <>
@@ -111,11 +102,13 @@ export default function PublishModal(props) {
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={24} alignItems="center">
-            <Form schema={schema} formData={data} validator={validator} onChange={(e) => setData(e.formData)}
+            <Form schema={schema} formData={data} validator={validator}
               onSubmit={(data) => {
-                console.log("submitted", payload, data)
-                // handleClose();
-                // handlePublish(payload)
+                handleClose();
+                handlePublish({
+                  id: pattern.id,
+                  catalog_data: data.formData
+                })
               }}
             >
               <Button
