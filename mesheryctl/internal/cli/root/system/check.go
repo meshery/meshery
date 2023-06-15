@@ -609,7 +609,7 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 		return fmt.Errorf("!! Invalid adapter name provided")
 	}
 	for _, adapter := range adapters {
-		name := strings.Split(adapter.Location, ":")[0]
+		name := adapter.Location
 		skipAdapter := false
 		req, err := utils.NewRequest("GET", fmt.Sprintf("%s/api/system/adapters?adapter=%s", url, name), nil)
 		if err != nil {
