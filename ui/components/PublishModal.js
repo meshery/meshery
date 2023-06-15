@@ -34,12 +34,12 @@ export default function PublishModal(props) {
   const { open, handleClose, pattern, handlePublish } = props;
   const classes = useStyles();
   const schema = {
-    "type" : "object",
-    "properties" : {
-      "compatibility" : {
-        "type" : "array",
-        "items" : {
-          "enum" : [
+    "type": "object",
+    "properties": {
+      "compatibility": {
+        "type": "array",
+        "items": {
+          "enum": [
             "Istio",
             "Linkerd",
             "App Mesh",
@@ -50,20 +50,20 @@ export default function PublishModal(props) {
             "NSM",
             "Traefik"
           ],
-          "type" : "string"
+          "type": "string"
         },
-        "uniqueItems" : true,
+        "uniqueItems": true,
 
       },
-      "pattern_caveats" : {
-        "type" : "string"
+      "pattern_caveats": {
+        "type": "string"
       },
-      "pattern_info" : {
-        "type" : "string"
+      "pattern_info": {
+        "type": "string"
       },
-      "type" : {
-        "type" : "string",
-        "examples" : [
+      "type": {
+        "type": "string",
+        "examples": [
           "deployment",
           "observability",
           "resiliency",
@@ -74,22 +74,25 @@ export default function PublishModal(props) {
           "workloads"
         ]
       }
-    }
+    },
+    "required": ["compatibility", "pattern_caveats", "pattern_info", "type"]
   }
+
   const [data, setData] = React.useState(null)
   const [payload, setPayload] = React.useState({
-    "id" : pattern?.id,
-    "catalog_data" : pattern?.catalog_data
-  })
+    "id": pattern?.id,
+    "catalog_data": pattern?.catalog_data
+  });
+
   useEffect(() => {
     setData(pattern?.catalog_data)
-  }, [pattern])
+  }, [pattern]);
+
   useEffect(() => {
     setPayload({
-      "id" : pattern?.id,
-      "catalog_data" : data
+      "id": pattern?.id,
+      "catalog_data": data
     })
-    console.log(payload)
   }, [data])
 
   return (
@@ -100,7 +103,7 @@ export default function PublishModal(props) {
         <DialogTitle>
           <div className={classes.publishTitle}>
 
-            <b id="simple-modal-title" style={{ textAlign : "center" }} > {pattern?.name}</b>
+            <b id="simple-modal-title" style={{ textAlign: "center" }} > {pattern?.name}</b>
             <IconButton aria-label="close" className={classes.closeButton} onClick={handleClose}>
               <CloseIcon />
             </IconButton>
@@ -108,24 +111,29 @@ export default function PublishModal(props) {
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={24} alignItems="center">
-            <Form schema={schema} formData={data} validator={validator} onChange={(e) => setData(e.formData)} ><></></Form>
+            <Form schema={schema} formData={data} validator={validator} onChange={(e) => setData(e.formData)}
+              onSubmit={(data) => {
+                console.log("submitted", payload, data)
+                // handleClose();
+                // handlePublish(payload)
+              }}
+            >
+              <Button
+                title="Publish"
+                variant="contained"
+                color="primary"
+                type='submit'
+                className={classes.testsButton}
+              >
+                <PublicIcon className={classes.iconPatt} />
+                <span className={classes.btnText}> Publish </span>
+              </Button>
+            </Form>
           </Grid>
 
         </DialogContent>
         <DialogActions>
-          <Button
-            title="Publish"
-            variant="contained"
-            color="primary"
-            className={classes.testsButton}
-            onClick={() => {
-              handleClose();
-              handlePublish(payload)
-            }}
-          >
-            <PublicIcon className={classes.iconPatt} />
-            <span className={classes.btnText}> Publish </span>
-          </Button>
+
         </DialogActions>
 
       </Dialog>
