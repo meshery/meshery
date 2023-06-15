@@ -34,12 +34,12 @@ export default function PublishModal(props) {
   const { open, handleClose, pattern, handlePublish } = props;
   const classes = useStyles();
   const schema = {
-    "type": "object",
-    "properties": {
-      "compatibility": {
-        "type": "array",
-        "items": {
-          "enum": [
+    "type" : "object",
+    "properties" : {
+      "compatibility" : {
+        "type" : "array",
+        "items" : {
+          "enum" : [
             "Istio",
             "Linkerd",
             "App Mesh",
@@ -50,20 +50,20 @@ export default function PublishModal(props) {
             "NSM",
             "Traefik"
           ],
-          "type": "string"
+          "type" : "string"
         },
-        "uniqueItems": true,
+        "uniqueItems" : true,
 
       },
-      "pattern_caveats": {
-        "type": "string"
+      "pattern_caveats" : {
+        "type" : "string"
       },
-      "pattern_info": {
-        "type": "string"
+      "pattern_info" : {
+        "type" : "string"
       },
-      "type": {
-        "type": "string",
-        "examples": [
+      "type" : {
+        "type" : "string",
+        "examples" : [
           "deployment",
           "observability",
           "resiliency",
@@ -75,13 +75,13 @@ export default function PublishModal(props) {
         ]
       }
     },
-    "required": ["compatibility", "pattern_caveats", "pattern_info", "type"]
+    "required" : ["compatibility", "pattern_caveats", "pattern_info", "type"]
   }
 
   const [data, setData] = React.useState(null);
 
   useEffect(() => {
-    if(pattern?.catalog_data) {
+    if (pattern?.catalog_data) {
       setData(pattern.catalog_data)
     }
   }, []);
@@ -94,7 +94,7 @@ export default function PublishModal(props) {
         <DialogTitle>
           <div className={classes.publishTitle}>
 
-            <b id="simple-modal-title" style={{ textAlign: "center" }} > {pattern?.name}</b>
+            <b id="simple-modal-title" style={{ textAlign : "center" }} > {pattern?.name}</b>
             <IconButton aria-label="close" className={classes.closeButton} onClick={handleClose}>
               <CloseIcon />
             </IconButton>
@@ -106,8 +106,8 @@ export default function PublishModal(props) {
               onSubmit={(data) => {
                 handleClose();
                 handlePublish({
-                  id: pattern.id,
-                  catalog_data: data.formData
+                  id : pattern.id,
+                  catalog_data : data.formData
                 })
               }}
             >
@@ -115,7 +115,7 @@ export default function PublishModal(props) {
                 title="Publish"
                 variant="contained"
                 color="primary"
-                type='submit'
+                type="submit"
                 className={classes.testsButton}
               >
                 <PublicIcon className={classes.iconPatt} />
