@@ -1,6 +1,13 @@
 import { makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
+  dialogTitle: {
+    textAlign : 'center',
+    minWidth : 400,
+    padding : '10px',
+    color : '#fff',
+    backgroundColor : theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : '#396679',
+  },
   cardButtons : {
     display : "grid",
     gridTemplateColumns : "repeat(5,1fr)",
@@ -112,11 +119,6 @@ const useStyles = makeStyles((theme) => ({
     justifyContent : "center",
     alignItems : "center",
     flexDirection : "column",
-  },
-  publishTitle : {
-    display : 'flex',
-    justifyContent : 'space-between',
-    alignItems : 'center',
   },
   noText : {
     fontSize : "2rem",

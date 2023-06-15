@@ -91,14 +91,8 @@ export default function PublishModal(props) {
       <Dialog
         open={open}
         onClose={handleClose}>
-        <DialogTitle>
-          <div className={classes.publishTitle}>
-
-            <b id="simple-modal-title" style={{ textAlign : "center" }} > {pattern?.name}</b>
-            <IconButton aria-label="close" className={classes.closeButton} onClick={handleClose}>
-              <CloseIcon />
-            </IconButton>
-          </div>
+        <DialogTitle className={classes.dialogTitle}>
+          Request To Publish: {pattern?.name}
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={24} alignItems="center">
