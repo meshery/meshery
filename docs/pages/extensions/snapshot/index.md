@@ -1,14 +1,14 @@
 ---
 layout: default
-title: Publishing a Design
-permalink: project/extensions/publishing-a-design
+title: Snapshot
+permalink: extensions/snapshot
 language: en
 display-title: "false"
-list: exclude
-type: project
+list: include
+type: extensions
 ---
 
-# Publishing a Design
+# MeshMap Snapshot
 
 Publishing a design lets you make your content visible to any anonymous visitior of meshery.io/catalog and any Meshery Cloud user. Anyone with the link can view the design.
 

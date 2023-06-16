@@ -1,14 +1,14 @@
 ---
 layout: default
-title: Cloning a Design
-permalink: project/extensions/cloning-a-design
+title: Design Visibilities
+permalink: extensions/design-visibilites
 language: en
 display-title: "false"
 list: exclude
-type: project
+type: extensions
 ---
 
-# Cloning a Design
+# Design Visibilities
 
 Publishing a design lets you make your content visible to any anonymous visitior of meshery.io/catalog and any Meshery Cloud user. Anyone with the link can view the design.
 

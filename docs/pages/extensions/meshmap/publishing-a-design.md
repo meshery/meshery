@@ -1,16 +1,16 @@
 ---
 layout: default
-title: Sharing a Design
-permalink: project/extensions/sharing-a-design
+title: Publishing a Design
+permalink: extensions/publishing-a-design
 language: en
 display-title: "false"
 list: exclude
-type: project
+type: extensions
 ---
 
-# Sharing a Design
+# Publishing a Design
 
-Sharing a design lets you make your content visible to any anonymous visitior of meshery.io/catalog and any Meshery Cloud user. Anyone with the link can view the design.
+Publishing a design lets you make your content visible to any anonymous visitior of meshery.io/catalog and any Meshery Cloud user. Anyone with the link can view the design.
 
 You can publish design into Meshery's Catalog using Extensions. Let's discuss the process below.
 
@@ -32,21 +32,24 @@ Once you have accessed the Extension's UI, navigate to the Designs tab. In this 
 
 To select actions, hover over your design in the table and choose <b>publish</b>. 
 
-<a href="{{ site.baseurl }}/assets/img/meshmap/action-publish.png"><img style="border-radius: 0.5%;" alt="Import-Application" style="width:800px;height:auto;" src="{{ site.baseurl }}/assets/img/meshmap/action-share.png" /></a>
+<a href="{{ site.baseurl }}/assets/img/meshmap/action-publish.png"><img style="border-radius: 0.5%;" alt="Import-Application" style="width:800px;height:auto;" src="{{ site.baseurl }}/assets/img/meshmap/action-publish.png" /></a>
 
 
 **Step 4: Add details to publish**
 
 Add details about your design. Select compatibility, add caveats and considerations, add pattern info and select type, and hit Publish. 
 
-<a href="{{ site.baseurl }}/assets/img/meshmap/share-modal.png"><img style="border-radius: 0.5%;" alt="Import-Application" style="width:800px;height:auto;" src="{{ site.baseurl }}/assets/img/meshmap/share-modal.png" /></a>
+<a href="{{ site.baseurl }}/assets/img/meshmap/publish-modal.png"><img style="border-radius: 0.5%;" alt="Import-Application" style="width:800px;height:auto;" src="{{ site.baseurl }}/assets/img/meshmap/publish-modal.png" /></a>
 
 **Step 5: Congratulations on publishing your first design**
 
 You are all set, Your request to publish this design is sent to Meshery Cloud admins. Create more designs!
 
-<div class="alert alert-dark" role="alert">
-<h4 class="alert-heading">Discussion Forum</h4>
-Not finding what you're looking for? Ask on the <a href="https://discuss.layer5.io">Discussion Forum</a>.
-</div>
+### OR
+
+### Watch a turorial on how to publish a design
+<video class="videoTest" width="750" height="auto" autoplay="" muted ="" loop="">
+  <source src="{{ site.baseurl }}/assets/img/meshmap/how-to-publish-your-design.mp4" type="video/mp4" />
+ Your browser does not support the video tag
+</video>
 

@@ -107,6 +107,21 @@ language: en
     </ul>
   </div>
 
+ <!-- Extensions -->
+  <div class="section">
+    <a href="{{ site.baseurl }}/extensions">
+        <div class="btn-primary">Extensions</div>
+    </a>
+    <h6><a href="{{ site.baseurl }}/extensions" class="text-black section-title">Extensions</a></h6>
+    <ul>
+      {% for item in sorted_pages %}
+      {% if item.type=="extensions" and item.list!="exclude" and item.language!="es" -%}
+        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+        </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+
   <!-- GUIDES -->
   <div class="section">
     <a href="{{ site.baseurl }}/guides">

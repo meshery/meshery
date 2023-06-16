@@ -1,11 +1,11 @@
 ---
 layout: default
-title: Extensions
-permalink: project/extensions
+title: MeshMap
+permalink: extensions/
 language: en
 display-title: "false"
-list: exclude
-type: project
+list: include
+type: extensions
 ---
 
 # <img style="height: 4rem; width: 4rem;" src="{{site.baseurl}}/assets/img/meshmap-icon-color.svg" /> MeshMap <sup style="font-size: 1.8rem; vertical-align: top;">BETA</sup>
@@ -14,12 +14,13 @@ MeshMap is a GitOps-infused cloud native <b>visual designer</b> for Kubernetes a
 
 ### Guide to use MeshMap's features
 
-- <a href="{{site.baseurl}}/project/extensions/publishing-a-design">Publishing a Design</a> - Publish your first design.
-- <a href="{{site.baseurl}}/project/extensions/sharing-a-design">Sharing a Design</a> - Share your design with friends.
-- <a href="{{site.baseurl}}/project/extensions/design-visibilites">Design Visibilities</a> - Learn about design visiilities.
-- <a href="{{site.baseurl}}/project/extensions/cloning-a-design">Cloning a Design</a> - Clone a design from Catalog.
-- <a href="{{site.baseurl}}/project/extensions/cloning-a-design">Import a Design</a> - Importing a design from catalog or locally.
-- <a href="{{site.baseurl}}/project/extensions/cloning-a-design">Import an application</a> - Importing an application of different types.
+- <a href="{{site.baseurl}}/extensions/publishing-a-design">Publishing a Design</a> - Publish your first design.
+- <a href="{{site.baseurl}}/extensions/sharing-a-design">Sharing a Design</a> - Share your design with friends.
+- <a href="{{site.baseurl}}/extensions/design-visibilites">Design Visibilities</a> - Learn about design visiilities.
+- <a href="{{site.baseurl}}/extensions/cloning-a-design">Cloning a Design</a> - Clone a design from Catalog.
+- <a href="{{site.baseurl}}/extensions/cloning-a-design">Import a Design</a> - Importing a design from catalog or locally.
+- <a href="{{site.baseurl}}/extensions/merging-a-design">Merge Designs</a> - Merging multiple designs.
+- <a href="{{site.baseurl}}/extensions/cloning-a-design">Import an application</a> - Importing an application of different types.
 
 
 ### MeshMap For GitOps
@@ -30,8 +31,11 @@ MeshMap is a valuable GitOps tool for DevOps teams as it allows them to configur
 
 For developers, MeshMap is valuable as it enables them to manage their infrastructure in an effortless manner. This allows developers to concentrate on coding and delivering features instead of infrastructure management. Furthermore, MeshMap offers efficient management of multiple Kubernetes clusters  and manifests, guaranteeing consistency and up-to-dateness across development, staging, and production environments. This minimizes the potential for errors, workloads, and inconsistencies in the configurations, as it detects clusters automatically. This ensures the infrastructure is always available.
 
-<a href="{{site.baseurl}}/assets/img/meshmap/meshmap-design.png"><img style="border-radius: 0.5%;" alt="MeshMap Designer" src="{{site.baseurl}}/assets/img/meshmap/meshmap-design.png"  width="100%" align="center"/></a>
+<h5>MeshMap Designer Walkthrough:</h5>
 
+<iframe class="container" width="560" height="460" src="https://www.youtube.com/embed/qaoYRP3oLok?rel=0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+See on YouTube: [MeshMap Designer Walkthrough](https://www.youtube.com/watch?v=qaoYRP3oLok)
 
 
 <div class="alert alert-dark" role="alert">
