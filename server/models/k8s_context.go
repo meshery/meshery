@@ -370,11 +370,14 @@ func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider, eb 
 	k8sctxs, ok := ctx.Value(AllKubeClusterKey).([]K8sContext)
 	if !ok || len(k8sctxs) == 0 {
 		req = meshes.EventsResponse{
-			Component:     "core",
-			ComponentName: "Meshery",
-			EventType:     meshes.EventType_ERROR,
-			Summary:       "No kubernetes context found",
-			OperationId:   id.String(),
+			Component:            "core",
+			ComponentName:        "Meshery",
+			EventType:            meshes.EventType_ERROR,
+			Summary:              "No Kubernetes context specified",
+			OperationId:          id.String(),
+			Details:              "Kubernetes operations require that one or more valid Kubernetes contexts be selected.",
+			ProbableCause:        "If you are using Meshery UI, likely there is no actively selected Kubernetes context in the Kubernetes context switcher (see upper right corner of the Meshery UI navigation bar).",
+			SuggestedRemediation: "If you are using Meshery UI, ensure one or more available Kubernetes contexts are checkmarked in your Kubernetes context switcher.",
 		}
 		eb.Publish(&req)
 		return

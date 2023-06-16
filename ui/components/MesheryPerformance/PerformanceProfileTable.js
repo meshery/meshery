@@ -141,7 +141,7 @@ function MesheryTestProfiles({
     //   },
     // },
     {
-      name : "updated_on",
+      name : "updated_at",
       label : "Updated On",
       options : {
         filter : false,

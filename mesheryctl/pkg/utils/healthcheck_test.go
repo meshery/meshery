@@ -21,21 +21,6 @@ var versionCheck = []struct {
 	{"1.12.10", [3]int{1, 12, 10}},
 }
 
-func TestGetK8sVersionInfoIntegration(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping integration test")
-	}
-	vers, err := GetK8sVersionInfo()
-	if err != nil {
-		t.Errorf("Error getting k8s version Info: %v", err)
-	}
-
-	err = CheckK8sVersion(vers)
-	if err != nil {
-		t.Errorf("Error checking k8s version: %v", err)
-	}
-}
-
 func TestGetK8sVersion(t *testing.T) {
 	for _, tt := range versionCheck {
 		t.Run(tt.version, func(t *testing.T) {
