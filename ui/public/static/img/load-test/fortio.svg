@@ -1,0 +1,12 @@
+<svg viewBox="0 0 167 109" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <path id="sail" d="M422 561l-292 79-118-79 411 0Zm-282-350v280l-138 45 138-325ZM173 11l0 480 250 47-250-527Z"/>
+  <linearGradient id="fortio-gradient" x1="0" x2="100%" gradientUnits="userSpaceOnUse">
+    <stop offset="10%" stop-color="#d8aa20" />
+    <stop offset="90%" stop-color="#c75228" />
+  </linearGradient>
+</defs>
+<g transform="scale(.1666)" fill="url(#fortio-gradient)"><use href="#sail"/></g>
+<g transform="translate(69) scale(.1333)" fill="url(#fortio-gradient)"><use href="#sail"/></g>
+<g transform="translate(124) scale(.1)" fill="url(#fortio-gradient)"><use href="#sail"/></g>
+</svg>

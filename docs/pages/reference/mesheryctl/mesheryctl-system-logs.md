@@ -48,7 +48,8 @@ mesheryctl system logs meshery-istio
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help   help for logs
+  -f, --follow   (Optional) Follow the stream of the Meshery's logs. Defaults to false.
+  -h, --help     help for logs
 
 </div>
 </pre>

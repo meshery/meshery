@@ -16,6 +16,7 @@ import (
 
 	"github.com/golang-jwt/jwt"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
 )
 
@@ -96,6 +97,7 @@ func (l *RemoteProvider) doRequestHelper(req *http.Request, tokenString string) 
 	}
 	c := &http.Client{}
 	req.Header.Set("Authorization", fmt.Sprintf("bearer %s", token.AccessToken))
+	req.Header.Set("SystemID", viper.GetString("INSTANCE_ID")) // Adds the system id to the header for event tracking
 	resp, err := c.Do(req)
 	if err != nil {
 		return nil, ErrTokenClientCheck(err)

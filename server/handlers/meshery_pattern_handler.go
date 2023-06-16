@@ -163,6 +163,15 @@ func (h *Handler) handlePatternPOST(
 	}
 	// If Content is not empty then assume it's a local upload
 	if parsedBody.PatternData != nil {
+		// Check if the pattern is valid
+		err := pCore.IsValidPattern(parsedBody.PatternData.PatternFile)
+		if err != nil {
+			h.log.Error(ErrInvalidPattern(err))
+			http.Error(rw, ErrInvalidPattern(err).Error(), http.StatusBadRequest)
+			addMeshkitErr(&res, ErrInvalidPattern(err))
+			go h.EventsBuffer.Publish(&res)
+			return
+		}
 		// Assign a name if no name is provided
 		if parsedBody.PatternData.Name == "" {
 			patternName, err := models.GetPatternName(parsedBody.PatternData.PatternFile)
@@ -401,6 +410,47 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
+// swagger:route GET /api/pattern/{id} PatternsAPI idGetMesheryPattern
+// Handle GET request for Meshery Pattern with the given id
+//
+// Get the pattern with the given id
+// responses:
+//  200:
+
+// GetMesheryPatternHandler returns the pattern file with the given id
+
+func (h *Handler) DownloadMesheryPatternHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	_ *models.Preference,
+	_ *models.User,
+	provider models.Provider,
+) {
+	patternID := mux.Vars(r)["id"]
+	resp, err := provider.GetMesheryPattern(r, patternID)
+	if err != nil {
+		h.log.Error(ErrGetPattern(err))
+		http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)
+		return
+	}
+
+	pattern := &models.MesheryPattern{}
+
+	err = json.Unmarshal(resp, &pattern)
+	if err != nil {
+		obj := "download pattern"
+		h.log.Error(ErrUnmarshal(err, obj))
+		http.Error(rw, ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	rw.Header().Set("Content-Type", "application/x-yaml")
+	if _, err := io.Copy(rw, strings.NewReader(pattern.PatternFile)); err != nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 // swagger:route POST /api/pattern/clone/{id} PatternsAPI idCloneMesheryPattern
 // Handle Clone for a Meshery Pattern
 //
@@ -464,6 +514,44 @@ func (h *Handler) PublishCatalogPatternHandler(
 		return
 	}
 	resp, err := provider.PublishCatalogPattern(r, parsedBody)
+	if err != nil {
+		h.log.Error(ErrPublishCatalogPattern(err))
+		http.Error(rw, ErrPublishCatalogPattern(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	go h.config.ConfigurationChannel.PublishPatterns()
+	rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(rw, string(resp))
+}
+
+// swagger:route DELETE /api/pattern/catalog/unpublish PatternsAPI idUnPublishCatalogPatternHandler
+// Handle Publish for a Meshery Pattern
+//
+// Unpublishes pattern from Meshery Catalog by setting visibility to private and removing catalog data from website
+// responses:
+//
+//	200: noContentWrapper
+//
+// UnPublishCatalogPatternHandler sets visibility of pattern with given id as private
+func (h *Handler) UnPublishCatalogPatternHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	_ *models.Preference,
+	_ *models.User,
+	provider models.Provider,
+) {
+	defer func() {
+		_ = r.Body.Close()
+	}()
+
+	var parsedBody *models.MesheryCatalogPatternRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+		return
+	}
+	resp, err := provider.UnPublishCatalogPattern(r, parsedBody)
 	if err != nil {
 		h.log.Error(ErrPublishCatalogPattern(err))
 		http.Error(rw, ErrPublishCatalogPattern(err).Error(), http.StatusInternalServerError)

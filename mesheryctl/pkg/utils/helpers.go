@@ -209,19 +209,17 @@ var TemplateToken = config.Token{
 }
 
 func BackupConfigFile(cfgFile string) {
-	// extracting file and folder name from the meshconfig path
 	dir, file := filepath.Split(cfgFile)
-	// extracting extension
 	extension := filepath.Ext(file)
 	bakLocation := filepath.Join(dir, file[:len(file)-len(extension)]+".bak.yaml")
-
-	log.Println("Backing up " + cfgFile + " to " + bakLocation)
 	err := os.Rename(cfgFile, bakLocation)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	log.Println(errors.New("outdated config file found. Please re-run the command"))
+	_, err = os.Create(cfgFile)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 const tokenName = "token"

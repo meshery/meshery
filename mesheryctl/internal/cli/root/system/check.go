@@ -254,9 +254,13 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 	if hc.Options.PrintLogs {
 		log.Info("\nDocker \n--------------")
 	}
+	endpointParts := strings.Split(hc.context.GetEndpoint(), ":")
 	//Check whether docker daemon is running or not
 	err := exec.Command("docker", "ps").Run()
 	if err != nil {
+		if endpointParts[1] != "//localhost" {
+			return errors.Wrapf(err, "Meshery is not running locally, please ensure that the appropriate Docker context is selected for Meshery endpoint: %s. To list all configured contexts use `docker context ls`", hc.context.GetEndpoint())
+		}
 		if hc.Options.IsPreRunE { // if this is PreRunExec we trigger self installation
 			log.Warn("!! Docker is not running")
 			//If preRunExecution and the current platform is docker then we trigger docker installation
@@ -273,7 +277,6 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 		} else { // else we're supposed to grab errors
 			return err
 		}
-
 		if hc.context.Platform == "docker" {
 			failure++
 		}
@@ -606,7 +609,7 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 		return fmt.Errorf("!! Invalid adapter name provided")
 	}
 	for _, adapter := range adapters {
-		name := strings.Split(adapter.Location, ":")[0]
+		name := adapter.Location
 		skipAdapter := false
 		req, err := utils.NewRequest("GET", fmt.Sprintf("%s/api/system/adapters?adapter=%s", url, name), nil)
 		if err != nil {

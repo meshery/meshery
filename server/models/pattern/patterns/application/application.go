@@ -14,10 +14,6 @@ import (
 
 type serviceMesh string
 
-const (
-	istio serviceMesh = "istio"
-)
-
 type rolloutEngine string
 
 const (

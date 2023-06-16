@@ -952,15 +952,3 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 	}
 	go h.config.MeshModelSummaryChannel.Publish()
 }
-
-func filterUniqueElementsArray(s []string) []string {
-	m := make(map[string]bool)
-	for _, ele := range s {
-		m[ele] = true
-	}
-	ans := make([]string, 0)
-	for a := range m {
-		ans = append(ans, a)
-	}
-	return ans
-}

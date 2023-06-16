@@ -1,6 +1,6 @@
 import UserPreferences from "../../components/UserPreferences";
 import { NoSsr, Paper, withStyles } from "@material-ui/core";
-import { updatepagepath } from "../../lib/store";
+import { updatepagepath, updatepagetitle } from "../../lib/store";
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
 import { getPath } from "../../lib/path";
@@ -22,6 +22,7 @@ class UserPref extends React.Component {
   async componentDidMount() {
     console.log(`path: ${getPath()}`);
     this.props.updatepagepath({ path : getPath() });
+    this.props.updatepagetitle({ title : "User Preferences" });
 
     await new Promise(resolve => {
       dataFetch(
@@ -66,7 +67,10 @@ class UserPref extends React.Component {
   }
 }
 
-const mapDispatchToProps = dispatch => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch) })
+const mapDispatchToProps = dispatch => ({
+  updatepagepath : bindActionCreators(updatepagepath, dispatch),
+  updatepagetitle : bindActionCreators(updatepagetitle, dispatch),
+})
 const mapStateToProps = (state) => {
   const selectedK8sContexts = state.get('selectedK8sContexts');
 
