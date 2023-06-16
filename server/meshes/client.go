@@ -3,7 +3,6 @@ package meshes
 import (
 	context "context"
 
-	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -27,7 +26,7 @@ func CreateClient(_ context.Context, meshLocationURL string) (*MeshClient, error
 	// }
 	conn, err := grpc.Dial(meshLocationURL, opts...)
 	if err != nil {
-		logrus.Errorf("fail to dial: %v", err)
+		return nil, err
 	}
 
 	mClient := NewMeshServiceClient(conn)
