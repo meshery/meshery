@@ -1160,7 +1160,7 @@ class DashboardComponent extends React.Component {
                 title={
                   isDisabled
                     ? "Inactive Meshery Adapter"
-                    : `Meshery Adapter for 
+                    : `Meshery Adapter for
                       ${adapterType
                       .toLowerCase()
                       .split(" ")
@@ -1350,32 +1350,20 @@ class DashboardComponent extends React.Component {
         <Popup />
         <div className={classes.rootClass}>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
-              <Grid item xs={12} md={12}>
-                <div className={classes.dashboardSection} data-test="workloads">
-                  <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-                    Workloads
-                  </Typography>
-                  {showClusterResources}
-                </div>
-              </Grid>
-              <Grid item xs={12} md={12}>
-                <div className={classes.dashboardSection} data-test="service-mesh">
-                  <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-                    Service Mesh
-                  </Typography>
-                  {showServiceMesh}
-                </div>
-              </Grid>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <div className={classes.dashboardSection} data-test="connection-status">
+            <Grid item xs={12} md={12}>
+              <div className={classes.dashboardSection} data-test="workloads">
                 <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-                  Connection Status
+                  Workloads
                 </Typography>
-                <div>{self.showCard("Kubernetes", showConfigured)}</div>
-                <div>{self.showCard("Adapters", showAdapters)}</div>
-                <div>{self.showCard("Metrics", showMetrics)}</div>
+                {showClusterResources}
+              </div>
+            </Grid>
+            <Grid item xs={12} md={12}>
+              <div className={classes.dashboardSection} data-test="service-mesh">
+                <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+                  Service Mesh
+                </Typography>
+                {showServiceMesh}
               </div>
             </Grid>
           </Grid>
