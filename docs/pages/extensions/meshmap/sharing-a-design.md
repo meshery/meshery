@@ -41,6 +41,11 @@ Add email address and choose access type. Access type can be Public or Private, 
 
 <a href="{{ site.baseurl }}/assets/img/meshmap/share-modal.png"><img style="border-radius: 0.5%;" alt="Import-Application" style="width:800px;height:auto;" src="{{ site.baseurl }}/assets/img/meshmap/share-modal.png" /></a>
 
+### OR
+
+### Watch a turorial on how to share a design
+
+<iframe class="container" width="560" height="460" src="https://www.youtube.com/embed/Tew2BET6d_U?rel=0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 <div class="alert alert-dark" role="alert">
 <h4 class="alert-heading">Discussion Forum</h4>

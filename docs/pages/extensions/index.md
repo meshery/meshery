@@ -16,9 +16,8 @@ MeshMap is a GitOps-infused cloud native <b>visual designer</b> for Kubernetes a
 
 - <a href="{{site.baseurl}}/extensions/publishing-a-design">Publishing a Design</a> - Publish your first design.
 - <a href="{{site.baseurl}}/extensions/sharing-a-design">Sharing a Design</a> - Share your design with friends.
-- <a href="{{site.baseurl}}/extensions/cloning-a-design">Cloning a Design</a> - Clone a design from Catalog.
-- <a href="{{site.baseurl}}/extensions/cloning-a-design">Import a Design</a> - Importing a design from catalog or locally.
-- <a href="{{site.baseurl}}/extensions/merging-a-design">Merge Designs</a> - Merging multiple designs.
+- <a href="{{site.baseurl}}/extensions/importing-a-design">Import a Design</a> - Importing a design from catalog or locally.
+- <a href="{{site.baseurl}}/extensions/merging-design">Merge Designs</a> - Merging designs.
 - <a href="{{site.baseurl}}/extensions/importing-an-application">Import an application</a> - Importing an application of different types.
 
 

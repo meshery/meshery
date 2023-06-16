@@ -28,17 +28,9 @@ Once you have accessed the Extension's UI, navigate to the Applications tab. In 
 
 **Step 3: Import the Application**
 
-You can import your application by select File Type from the options and clicking on the “Browse” button and selecting the file from your local machine or import in through URL Once you have selected the file, click on the “Import” button to import app into Meshery. When you import a app into Extensions, it will create a Meshery App based on definition. This Meshery App will include all of the services, ports, and other parameters defined in the File.
+You can import your application by select File Type from the options and clicking on the “Browse” button and selecting the file from your local machine or import in through URL Once you have selected the file, click on the “Import” button to import app into Meshery Extension. When you import a app into Extensions, it will create a Meshery App based on definition. This Meshery App will include all of the services, ports, and other parameters defined in the File.
 
 <a href="{{ site.baseurl }}/assets/img/meshmap/apps-modal.png"><img style="border-radius: 0.5%;" alt="Import-Application" style="width:800px;height:auto;" src="{{ site.baseurl }}/assets/img/meshmap/apps-modal.png" /></a>
 
-Once the Meshery App has been created, you can use Meshery to manage, operate and observe your service mesh. You can also use Meshery to deploy your Meshery App to your service mesh.
-
-### OR
-
-### Watch a turorial on how to import an aplication
-<video class="videoTest" width="750" height="auto" autoplay="" muted ="" loop="">
-  <source src="{{ site.baseurl }}/assets/img/meshmap/how-to-publish-your-design.mp4" type="video/mp4" />
- Your browser does not support the video tag
-</video>
+Once the Meshery Application has been created, you can use Meshery Extension to manage, operate and observe your cloud native infrastructure. You can also use Meshery Extension to deploy your Meshery Application to your infrastructure.
 
