@@ -26,6 +26,7 @@ import { withSnackbar } from 'notistack'
 import { bindActionCreators } from "redux";
 import { updateEvents } from "../lib/store";
 import { iconMedium } from "../css/icons.styles";
+import { cursorNotAllowed } from "../css/disableComponent.styles";
 
 const styles = (theme) => ({
   sidelist : { width : 450, },
@@ -303,7 +304,7 @@ class MesheryNotification extends React.Component {
 
   render() {
     const { classes, events } = this.props;
-    const { anchorEl, showFullNotificationCenter } = this.state;
+    const { anchorEl, showFullNotificationCenter, show } = this.state;
     const self = this;
     let open = Boolean(anchorEl);
     if (showFullNotificationCenter) {
@@ -332,10 +333,9 @@ class MesheryNotification extends React.Component {
     });
 
     return (
-      <div>
         <NoSsr>
+            <div style={ show ? cursorNotAllowed : {}}>
           <Tooltip title={toolTipMsg}>
-            <>
               <IconButton
                 id="notification-button"
                 className={classes.notificationButton}
@@ -343,9 +343,8 @@ class MesheryNotification extends React.Component {
                   this.anchorEl = node;
                 }}
                 color="inherit"
-
                 onClick={this.handleToggle}
-
+                
                 onMouseOver={(e) => {
                   e.preventDefault();
                   this.setState({ anchorEl : true })
@@ -360,8 +359,8 @@ class MesheryNotification extends React.Component {
                   <NotificationIcon  style={iconMedium}  type={badgeColorVariant} />
                 </Badge>
               </IconButton>
-            </>
           </Tooltip>
+            </div>
 
           <ClickAwayListener onClickAway={(e) => {
             if (e.target.className.baseVal !== "" && e.target.className.baseVal !== "MuiSvgIcon-root" &&
@@ -446,7 +445,6 @@ class MesheryNotification extends React.Component {
             </Drawer>
           </ClickAwayListener>
         </NoSsr>
-      </div>
     );
   }
 }
