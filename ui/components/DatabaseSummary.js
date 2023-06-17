@@ -61,10 +61,10 @@ const DatabaseSummary = (props) => {
 
   const getDatabaseSummary = (page, rowsPerPage, searchText) => {
     dataFetch(
-      "/api/system/database?" + new URLSearchParams({ 
-        page: page, 
-        pagesize: rowsPerPage, 
-        search: searchText }).toString(),
+      "/api/system/database?" + new URLSearchParams({
+        page : page,
+        pagesize : rowsPerPage,
+        search : searchText }).toString(),
       {
         method : "GET",
         credentials : "include",
@@ -129,7 +129,7 @@ const DatabaseSummary = (props) => {
 
   const table_options = {
     filter : false,
-    sort: false,
+    sort : false,
     selectableRows : "none",
     responsive : "scrollMaxHeight",
     print : false,
@@ -140,7 +140,7 @@ const DatabaseSummary = (props) => {
     rowsPerPage : rowsPerPage,
     count : databaseSummary?.totalTables,
     onChangePage : debounce((p) =>  setPage(p), 200),
-    onChangeRowsPerPage: debounce((p) =>  setRowsPerPage(p), 200),
+    onChangeRowsPerPage : debounce((p) =>  setRowsPerPage(p), 200),
     onSearchChange : debounce((searchText) => {
       if (searchText) setPage(0);
       setSearchText(searchText != null ? searchText : "")
