@@ -333,118 +333,118 @@ class MesheryNotification extends React.Component {
     });
 
     return (
-        <NoSsr>
-            <div style={ show ? cursorNotAllowed : {}}>
+      <NoSsr>
+        <div style={ show ? cursorNotAllowed : {}}>
           <Tooltip title={toolTipMsg}>
-              <IconButton
-                id="notification-button"
-                className={classes.notificationButton}
-                buttonRef={(node) => {
-                  this.anchorEl = node;
-                }}
-                color="inherit"
-                onClick={this.handleToggle}
-                
-                onMouseOver={(e) => {
-                  e.preventDefault();
-                  this.setState({ anchorEl : true })
-                }}
+            <IconButton
+              id="notification-button"
+              className={classes.notificationButton}
+              buttonRef={(node) => {
+                this.anchorEl = node;
+              }}
+              color="inherit"
+              onClick={this.handleToggle}
 
-                onMouseLeave={(e) => {
-                  e.preventDefault();
-                  this.setState({ anchorEl : false })
-                }}
-              >
-                <Badge id="notification-badge" badgeContent={getNotificationCount(events)} color={badgeColorVariant}>
-                  <NotificationIcon  style={iconMedium}  type={badgeColorVariant} />
-                </Badge>
-              </IconButton>
-          </Tooltip>
-            </div>
+              onMouseOver={(e) => {
+                e.preventDefault();
+                this.setState({ anchorEl : true })
+              }}
 
-          <ClickAwayListener onClickAway={(e) => {
-            if (e.target.className.baseVal !== "" && e.target.className.baseVal !== "MuiSvgIcon-root" &&
-              ((typeof e.target.className === "string")? !e.target.className?.includes("MesheryNotification"): null)) {
-              this.handleClose();
-            }
-          }}>
-            <Drawer
-              anchor="right"
-              variant="persistent"
-              open={open}
-              classes={{
-                paper : classes.notificationDrawer,
-                paperAnchorRight : showFullNotificationCenter? classes.fullView : classes.peekView,
+              onMouseLeave={(e) => {
+                e.preventDefault();
+                this.setState({ anchorEl : false })
               }}
             >
+              <Badge id="notification-badge" badgeContent={getNotificationCount(events)} color={badgeColorVariant}>
+                <NotificationIcon  style={iconMedium}  type={badgeColorVariant} />
+              </Badge>
+            </IconButton>
+          </Tooltip>
+        </div>
+
+        <ClickAwayListener onClickAway={(e) => {
+          if (e.target.className.baseVal !== "" && e.target.className.baseVal !== "MuiSvgIcon-root" &&
+              ((typeof e.target.className === "string")? !e.target.className?.includes("MesheryNotification"): null)) {
+            this.handleClose();
+          }
+        }}>
+          <Drawer
+            anchor="right"
+            variant="persistent"
+            open={open}
+            classes={{
+              paper : classes.notificationDrawer,
+              paperAnchorRight : showFullNotificationCenter? classes.fullView : classes.peekView,
+            }}
+          >
+            <div>
               <div>
-                <div>
-                  <div className={classes.sidelist}>
-                    <div className={classes.listTop}>
-                      <div className={classes.notifSelector}>
-                        <Tooltip title="Show all notifications">
-                          <IconButton
-                            color="inherit"
-                            className={classes.drawerButton}
-                            onClick={this.handleBellButtonClick}
-                          >
-                            <BellIcon  style={iconMedium}  />
-                          </IconButton>
-                        </Tooltip>
-                      </div>
-                      <div className={classes.notificationTitle}>
-                        <Typography variant="subtitle1" align="center">
-                            Notifications
-                        </Typography>
-                      </div>
-                      <div
-                        className={classes.clearAllButton}>
-                        <Tooltip title="Clear all notifications">
-                          <IconButton
-                            color="inherit"
-                            className={classes.drawerButton}
-                            onClick={this.handleClearAllNotifications()}
-                          >
-                            <ClearIcon width={'1em'} height={'1em'} fill={'white'}/>
-                          </IconButton>
-                        </Tooltip>
-                      </div>
+                <div className={classes.sidelist}>
+                  <div className={classes.listTop}>
+                    <div className={classes.notifSelector}>
+                      <Tooltip title="Show all notifications">
+                        <IconButton
+                          color="inherit"
+                          className={classes.drawerButton}
+                          onClick={this.handleBellButtonClick}
+                        >
+                          <BellIcon  style={iconMedium}  />
+                        </IconButton>
+                      </Tooltip>
                     </div>
-                    <Divider light />
-                    <Tabs
-                      value={this.state.tabValue}
-                      onChange={this.handleTabChange}
-                      indicatorColor="primary"
-                      className={classes.tabs}
-                      textColor="primary"
-                      variant="fullWidth"
-                    >
-                      <Tab label="All" className={classes.tab} onClick={this.handleNotifFiltering('*')} style={{ minWidth : "15%" }} />
-                      <Tab label="Error" className={classes.tab} onClick={this.handleNotifFiltering('error')} style={{ minWidth : "15%" }} />
-                      <Tab label="Warning" className={classes.tab} onClick={this.handleNotifFiltering('warning')} style={{ minWidth : "15%" }} />
-                      <Tab label="Success" className={classes.tab} onClick={this.handleNotifFiltering('success')} style={{ minWidth : "15%" }} />
-                    </Tabs>
-                    {getNotifications(this.props.events, this.state.displayEventType).map((event, ind) => (
-                      <MesheryEventViewer
-                        key={ind}
-                        eventVariant={event.event_type}
-                        eventSummary={event.summary}
-                        deleteEvent={self.deleteEvent(ind)}
-                        eventDetails={event.details || "Details Unavailable"}
-                        eventCause={event.probable_cause}
-                        eventRemediation={event.suggested_remediation}
-                        eventErrorCode={event.error_code}
-                        componentType={event.component}
-                        componentName={event.component_name}
-                        expand={(this.state.eventIdToOpenInNotification && this.state.eventIdToOpenInNotification === event.operation_id) ? true : false}
-                      />
-                    ))}
+                    <div className={classes.notificationTitle}>
+                      <Typography variant="subtitle1" align="center">
+                            Notifications
+                      </Typography>
+                    </div>
+                    <div
+                      className={classes.clearAllButton}>
+                      <Tooltip title="Clear all notifications">
+                        <IconButton
+                          color="inherit"
+                          className={classes.drawerButton}
+                          onClick={this.handleClearAllNotifications()}
+                        >
+                          <ClearIcon width={'1em'} height={'1em'} fill={'white'}/>
+                        </IconButton>
+                      </Tooltip>
+                    </div>
                   </div>
+                  <Divider light />
+                  <Tabs
+                    value={this.state.tabValue}
+                    onChange={this.handleTabChange}
+                    indicatorColor="primary"
+                    className={classes.tabs}
+                    textColor="primary"
+                    variant="fullWidth"
+                  >
+                    <Tab label="All" className={classes.tab} onClick={this.handleNotifFiltering('*')} style={{ minWidth : "15%" }} />
+                    <Tab label="Error" className={classes.tab} onClick={this.handleNotifFiltering('error')} style={{ minWidth : "15%" }} />
+                    <Tab label="Warning" className={classes.tab} onClick={this.handleNotifFiltering('warning')} style={{ minWidth : "15%" }} />
+                    <Tab label="Success" className={classes.tab} onClick={this.handleNotifFiltering('success')} style={{ minWidth : "15%" }} />
+                  </Tabs>
+                  {getNotifications(this.props.events, this.state.displayEventType).map((event, ind) => (
+                    <MesheryEventViewer
+                      key={ind}
+                      eventVariant={event.event_type}
+                      eventSummary={event.summary}
+                      deleteEvent={self.deleteEvent(ind)}
+                      eventDetails={event.details || "Details Unavailable"}
+                      eventCause={event.probable_cause}
+                      eventRemediation={event.suggested_remediation}
+                      eventErrorCode={event.error_code}
+                      componentType={event.component}
+                      componentName={event.component_name}
+                      expand={(this.state.eventIdToOpenInNotification && this.state.eventIdToOpenInNotification === event.operation_id) ? true : false}
+                    />
+                  ))}
                 </div>
               </div>
-            </Drawer>
-          </ClickAwayListener>
-        </NoSsr>
+            </div>
+          </Drawer>
+        </ClickAwayListener>
+      </NoSsr>
     );
   }
 }
