@@ -585,10 +585,6 @@ class Navigator extends React.Component {
             capabilitiesRegistryObj,
             navigatorComponents
           });
-          //global state
-          if (result?.extensions?.navigator) {
-            result.extensions.navigator = result.extensions?.navigator.map((item) => item.title==="MeshMap" ? { ...item, isBeta : true } :item  )
-          }
           this.props.updateCapabilities({ capabilitiesRegistry : result })
         }
       },

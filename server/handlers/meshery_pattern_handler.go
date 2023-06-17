@@ -353,13 +353,13 @@ func (h *Handler) GetMesheryPatternsHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-// swagger:route POST /api/pattern/catalog PatternsAPI idGetCatalogMesheryPatternsHandler
+// swagger:route GET /api/pattern/catalog PatternsAPI idGetCatalogMesheryPatternsHandler
 // Handle GET request for catalog patterns
 //
 // Used to get catalog patterns
 // responses:
 //
-//	200: mesheryPatternResponseWrapper
+//	200: mesheryPatternsResponseWrapper
 func (h *Handler) GetCatalogMesheryPatternsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
