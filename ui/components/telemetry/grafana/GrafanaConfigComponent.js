@@ -56,7 +56,7 @@ class GrafanaConfigComponent extends Component {
                   margin="normal"
                   variant="outlined"
                   onKeyDown={(e) => {
-                    if (e.keyCode == 13) {
+                    if (e.key == 'Enter') {
                       handleGrafanaConfigure();
                     }
                   }}

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import CreateTable from 'react-select';
+import CreateSelect from 'react-select/creatable';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import NoSsr from '@material-ui/core/NoSsr';
@@ -155,7 +155,7 @@ class ReactSelectWrapper extends React.Component {
     return (
       <div className={classes.root}>
         <NoSsr>
-          <CreateTable
+          <CreateSelect
             classes={classes}
             styles={selectStyles}
             textFieldProps={{ label,
@@ -187,5 +187,4 @@ ReactSelectWrapper.propTypes = {
   error : PropTypes.bool.isRequired,
   noOptionsMessage : PropTypes.string
 };
-
 export default withStyles(styles, { withTheme : true })(ReactSelectWrapper);
