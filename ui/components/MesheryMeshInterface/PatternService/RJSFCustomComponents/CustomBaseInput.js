@@ -24,10 +24,10 @@ const BaseInput = (props) => {
       backgroundColor : theme.palette.background.default,
       padding : "0.2rem",
       height : "1rem",
-      borderRadius: "3px",
+      borderRadius : "3px",
     },
   }));
-  
+
   const theme = useTheme();
   console.log(theme)
   const classes = styles();
