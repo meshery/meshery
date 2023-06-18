@@ -85,7 +85,11 @@ Practices for Production Environments](https://peter.bourgon.org/go-in-productio
 **Please note**: All `make` commands should be run in a terminal from within the Meshery's main folder.
 
 <details>
-  <summary>Prerequisites</summary>
+<summary>
+  
+Prerequisites
+  
+</summary>
 
 #### Prerequisites for building Meshery in your development environment:
 
@@ -94,5 +98,6 @@ Practices for Production Environments](https://peter.bourgon.org/go-in-productio
 1. `npm` and `node` should be installed on your machine, `node` version 19 or higher is not supported right now.
 1. Fork this repository (`git clone https://github.com/meshery/meshery.git`), and clone your forked version of Meshery to your development environment, preferably outside `GOPATH`.
 1. `golangci-lint` should be installed if you want to test Go code, for MacOS and linux users.
+
 </details>
 
