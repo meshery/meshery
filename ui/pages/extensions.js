@@ -31,8 +31,6 @@ const styles = (theme) => ({
   a : {
     textDecoration : "none",
   },
-
-
   img : {
     paddingRight : "1rem",
     height : "auto",
@@ -59,7 +57,6 @@ const styles = (theme) => ({
   track : { backgroundColor : 'rgba(100,120,129,0.5)', },
   checked : {},
 });
-
 
 const INITIAL_GRID_SIZE = { lg : 6, md : 12, xs : 12 };
 
