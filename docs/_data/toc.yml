@@ -116,6 +116,8 @@
 - title: 📚 Guides (all)
   url: guides
   links:
+    - title: Configure your Deployment
+      url: guides/configuration-management
     - title: Deploying Sample Applications
       url: guides/sample-apps
     # - title: Running SMI Conformance Tests
@@ -124,10 +126,18 @@
       url: guides/meshery-metrics
     - title: Importing Applications
       url: guides/importing-apps
+    - title: Pipelining service mesh specifications
+      url: guides/pipelining-service-mesh-specifications
+    - title: Performance Management with Meshery
+      url: guides/performance-management
+    - title: Running SMI Conformance Tests
+      url: guides/smi-conformance
     - title: Troubleshooting Guide
       url: guides/troubleshooting
     - title: Upgrading Meshery
       url: guides/upgrade
+    - title: Using metrics in meshery
+      url: guides/meshery-metrics
     - title: Using mesheryctl ↆ
       url: guides/mesheryctl
       children:
