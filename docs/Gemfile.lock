@@ -388,7 +388,6 @@ GEM
     unf_ext (0.0.8.2)
     unf_ext (0.0.8.2-x64-mingw32)
     unicode-display_width (1.8.0)
-    webrick (1.8.1)
     websocket-driver (0.7.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
@@ -405,7 +404,6 @@ DEPENDENCIES
   haml
   rails
   rake
-  webrick (~> 1.8)
 
 RUBY VERSION
    ruby 2.7.5p203

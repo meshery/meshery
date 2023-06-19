@@ -177,5 +177,3 @@
       url: reference/graphql-apis
     - title: "REST API Reference"
       url: reference/rest-apis
-    - title: "MesheryCTL App Import "
-      url: reference/mesheryctl/app/import

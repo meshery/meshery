@@ -100,6 +100,7 @@ If you still wish to continue, follow the instructions for <button class="toggle
 <b>Warning</b>: Docker Toolbox is a deprecated version. It is recommended to update your system and install the Docker Desktop application with WSL2. <br/><br />
 
 Docker Toolbox uses Linux-specific kernel features, and can’t run natively on Windows. Instead, it creates and uses a small Linux VM on your machine along with <a href="https://docs.docker.com/machine/overview/"><b>docker-machine</b></a>, and uses VirtualBox to run Docker. <br />
+
 <ul>
 <li> Go to <a href="https://github.com/docker/toolbox/releases">Toolbox Releases</a> and download the latest release <b>.exe</b> file </li>
 <li> Follow these <a href="https://docs.docker.com/toolbox/toolbox_install_windows/#step-2-install-docker-toolbox">instructions</a> to successfully set up the Docker Toolbox application. </li>
@@ -142,7 +143,7 @@ In this how-to, [K3d](https://github.com/rancher/k3d) will be used as it relies 
   <pre class="codeblock-pre">
   <div class="codeblock"><div class="clipboardjs">curl -s https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
 k3d cluster create
-$env:KUBECONFIG = "$(k3d.exe kubeconfig get 'k3s-default')"</div></div>
+export KUBECONFIG="$(k3d kubeconfig get 'k3s-default')"</div></div></div></div>
   </pre>
 
 If using Scoop, run the following in the PowerShell to install a Kubernetes cluster :
