@@ -642,7 +642,7 @@ app:
           description: Path/URL to app file
         source-file:
           name: --source-type, -s
-          description: Type of source file (ex. manifest / compose / helm)
+          description: Type of source file
 
 filter:
   name: filter
