@@ -633,6 +633,19 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
           <td>{{ flag.description }}</td>
       </tr>
       {% endfor %}
+      {% assign subcommand5 = command8.subcommands.import %}
+      <tr>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/app/import">{{ subcommand5.name }}</a></td>
+        <td></td>
+        <td>{{ subcommand5.description }}</td>
+      </tr>
+      {% for flag_hash in subcommand4.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td></td>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+      </tr>
+      {% endfor %}
 </thead>
 </table>
 
@@ -708,4 +721,3 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
 </thead>
 </table>
 {% include related-discussions.html tag="mesheryctl" %}
-
