@@ -27,9 +27,9 @@ Currently, Meshery only requires a valid token in order to allow clients to invo
 
 ### Endpoints
 
-Each of the API endpoints are exposed through [server.go](https://github.com/layer5io/meshery/blob/master/router/server.go). Endpoints are grouped by function (e.g. /api/mesh or /api/perf).
+Each of the API endpoints are exposed through [server.go](../../../server/router/server.go). Endpoints are grouped by function (e.g. /api/mesh or /api/perf).
 
-Alternatively, [Remote Providers](./providers) can extend Meshery's endpoints behind the `/api/extensions/` endpoint.
+Alternatively, [Remote Providers](./providers.md) can extend Meshery's endpoints behind the `/api/extensions/` endpoint.
 
 ### How to get your token
 
