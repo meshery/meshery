@@ -639,7 +639,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
         <td></td>
         <td>{{ subcommand5.description }}</td>
       </tr>
-      {% for flag_hash in subcommand4.flags %}{% assign flag = flag_hash[1] %}
+      {% for flag_hash in subcommand5.flags %}{% assign flag = flag_hash[1] %}
         <tr>
           <td></td>
           <td>{{ flag.name }}</td>
