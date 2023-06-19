@@ -27,3 +27,5 @@ group :graphqlDocs_plugins do
  gem "haml"
 
 end
+
+gem "webrick", "~> 1.8"

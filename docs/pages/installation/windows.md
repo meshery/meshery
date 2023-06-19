@@ -12,7 +12,8 @@ image: /assets/img/platforms/wsl2.png
 {% include installation_prerequisites.html %}
 
 # Overview
-To set up and run Meshery on Windows 
+
+To set up and run Meshery on Windows
 
 1. <a href="#step1">Configure Windows and enable Docker </a>
 2. <a href="#step4">Install a Kubernetes cluster on top </a>
@@ -21,6 +22,7 @@ To set up and run Meshery on Windows
 ### Compatibility
 
 The following minimum Windows build versions are required:
+
 <table id="compatibility-table">
   <tr>
     <th id="model">Name</th>
@@ -46,13 +48,16 @@ The following minimum Windows build versions are required:
 
 Note
 <br />Run the following command on Powershell to check your Windows build and version:
+
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">[System.Environment]::OSVersion.Version</div></div>
  </pre>
+
 ### Steps
+
 Perform the following steps in order:
 
-### 1. <a name="step1" href="https://docs.microsoft.com/en-us/windows/wsl/install-win10"><b>Install Windows Subsystem for Linux (WSL)</b></a> 
+### 1. <a name="step1" href="https://docs.microsoft.com/en-us/windows/wsl/install-win10"><b>Install Windows Subsystem for Linux (WSL)</b></a>
 
 Open Powershell in administrator mode and run:
 
@@ -82,7 +87,7 @@ Set WSL2 as the default version:
 <h6><b><a href="https://docs.microsoft.com/en-us/windows/wsl/install-win10" name="wsl1"> WSL1 </a></b></h6>
 
 <b>Warning:</b>
-It is recommended to update to <a href="#wsl2">WSL2</a> as WSL1 doesn't support the Docker Desktop application for Windows. Instead, it only supports the deprecated version, [Docker Toolbox](https://docs.docker.com/toolbox/toolbox_install_windows/). 
+It is recommended to update to <a href="#wsl2">WSL2</a> as WSL1 doesn't support the Docker Desktop application for Windows. Instead, it only supports the deprecated version, [Docker Toolbox](https://docs.docker.com/toolbox/toolbox_install_windows/).
 
 If you still wish to continue, follow the instructions for <button class="toggle-button" onclick="HideToggleFunction()"><b>WSL1</b></button>
 
@@ -95,16 +100,16 @@ If you still wish to continue, follow the instructions for <button class="toggle
 <b>Warning</b>: Docker Toolbox is a deprecated version. It is recommended to update your system and install the Docker Desktop application with WSL2. <br/><br />
 
 Docker Toolbox uses Linux-specific kernel features, and can’t run natively on Windows. Instead, it creates and uses a small Linux VM on your machine along with <a href="https://docs.docker.com/machine/overview/"><b>docker-machine</b></a>, and uses VirtualBox to run Docker. <br />
-    <ul>
-       <li>  Go to <a href="https://github.com/docker/toolbox/releases">Toolbox Releases</a> and download the latest release <b>.exe</b> file </li>
-       <li> Follow these <a href="https://docs.docker.com/toolbox/toolbox_install_windows/#step-2-install-docker-toolbox">instructions</a> to successfully set up the Docker Toolbox application. </li>
-    </ul>
+<ul>
+<li> Go to <a href="https://github.com/docker/toolbox/releases">Toolbox Releases</a> and download the latest release <b>.exe</b> file </li>
+<li> Follow these <a href="https://docs.docker.com/toolbox/toolbox_install_windows/#step-2-install-docker-toolbox">instructions</a> to successfully set up the Docker Toolbox application. </li>
+</ul>
 
 </p>
 </div>
 
-
 ### 2. <b>[Install a new distro](https://docs.microsoft.com/en-us/windows/wsl/install-win10#install-your-linux-distribution-of-choice)</b>
+
 In this tutorial, [Ubuntu 18.04](https://www.microsoft.com/en-us/p/ubuntu-1804-lts/9n9tngvndl3q?activetab=pivot:overviewtab) will be the distro used. Feel free to use any distro of your choice.
 
 <strong>Note:</strong> If you choose to run Meshery without installing a distro, skip [step 2](#2-install-a-new-distro).
@@ -131,13 +136,13 @@ The Docker Desktop application for Windows includes a comprehensive set of tools
 ### 4. <a name="step4"> <b>Install a Kubernetes cluster</b></a>
 
 Once Docker is installed, the next step will be to install a Kubernetes cluster.
-Under "Settings" in the Docker Desktop application, enable *Kubernetes*.
+Under "Settings" in the Docker Desktop application, enable _Kubernetes_.
 In this how-to, [K3d](https://github.com/rancher/k3d) will be used as it relies only on Docker.
 
   <pre class="codeblock-pre">
   <div class="codeblock"><div class="clipboardjs">curl -s https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
 k3d cluster create
-export KUBECONFIG="$(k3d kubeconfig get 'k3s-default')"</div></div>
+$env:KUBECONFIG = "$(k3d.exe kubeconfig get 'k3s-default')"</div></div>
   </pre>
 
 If using Scoop, run the following in the PowerShell to install a Kubernetes cluster :
@@ -145,17 +150,19 @@ If using Scoop, run the following in the PowerShell to install a Kubernetes clus
   <pre class="codeblock-pre">
   <div class="codeblock"><div class="clipboardjs">scoop install k3d
 k3d cluster create
-export KUBECONFIG="$(k3d kubeconfig get 'k3s-default')"</div></div>
+$env:KUBECONFIG = "$(k3d.exe kubeconfig get 'k3s-default')"</div></div>
   </pre>
 
 ### 5. <a name="step5"><b>Set up Meshery</b></a>
 
 Follow the [installation steps]({{ site.baseurl }}/installation#windows) to install the mesheryctl CLI. Then, execute:
+
   <pre class="codeblock-pre">
   <div class="codeblock"><div class="clipboardjs">./mesheryctl system start</div></div>
   </pre>
 
-  Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
+Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
+
   <pre class="codeblock-pre">
   <div class="codeblock"><div class="clipboardjs">MESHERY_SERVER_CALLBACK_URL=https://custom-host ./mesheryctl system start</div></div>
   </pre>
