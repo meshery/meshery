@@ -51,6 +51,7 @@
 }
 
 .sidebar-container {
+  overscroll-behavior: contain;
   padding: 1rem min(2vh, 2vw);
   overflow-y: scroll;
   height: calc(100vh - var(--navbar-height));
@@ -62,6 +63,7 @@
   height: 100%;
 
   &::-webkit-scrollbar {
+    overscroll-behavior: contain;
     width: 5px;
     padding: 6px;
   }
@@ -134,7 +136,7 @@
         }
 
         & a {
-          color: var(--color-secondary-medium) !important;
+          color: var(--color-secondary-medium);
           letter-spacing: 0.2px;
           &:hover {
             color: var(--sidenav-hover) !important;
@@ -146,6 +148,12 @@
           color: var(--color-secondary-medium);
           position: relative;
           width: fit-content;
+
+          &.active,
+          &.active a {
+            scroll-margin-bottom: 8rem;
+            color: var(--sidenav-hover);
+          }
 
           & a:hover {
             text-decoration: none;
@@ -187,4 +195,3 @@
     }
   }
 }
-
