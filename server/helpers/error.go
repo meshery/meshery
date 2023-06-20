@@ -31,7 +31,6 @@ const (
 	ErrRestConfigFromKubeConfigCode        = "2200"
 	ErrNewKubeClientCode                   = "2201"
 	ErrAdapterAdministrationCode           = "2259"
-	ErrDockerHostCode                      = "2260"
 )
 
 func ErrNewDynamicClientGenerator(err error) error {

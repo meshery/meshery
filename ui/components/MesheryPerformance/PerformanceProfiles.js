@@ -19,8 +19,8 @@ import MesheryPerformanceComponent from "./index";
 import { Paper, Typography, Button } from "@material-ui/core";
 import fetchPerformanceProfiles from "../graphql/queries/PerformanceProfilesQuery";
 import { withStyles } from "@material-ui/core/styles";
-import subscribePerformanceProfiles from "../graphql/subscriptions/PerformanceProfilesSubscription";
 import { iconMedium, iconXLarge } from "../../css/icons.styles";
+import subscribePerformanceProfiles from "../graphql/subscriptions/PerformanceProfilesSubscription";
 
 const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 const styles = () => ({
@@ -94,8 +94,6 @@ function ViewSwitch({ view, changeView }) {
   );
 }
 
-
-
 function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, classes }) {
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
@@ -119,7 +117,6 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
     fetchTestProfiles(page, pageSize, search, sortOrder);
     const subscription = subscribePerformanceProfiles((res) => {
       // @ts-ignore
-      console.log(res);
       let result = res?.subscribePerfProfiles;
       if (typeof result !== "undefined") {
         if (result) {
