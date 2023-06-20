@@ -30,6 +30,7 @@ function MesheryPatternCard({
   pattern_file,
   handleVerify,
   handlePublishModal,
+  handleUnpublishModal,
   handleDeploy,
   handleUnDeploy,
   updateHandler,
@@ -42,7 +43,7 @@ function MesheryPatternCard({
   canPublishPattern = false
 }) {
 
-  function genericClickHandler(ev, fn) {
+  const genericClickHandler = (ev, fn) => {
     ev.stopPropagation();
     fn(ev);
   }
@@ -111,7 +112,9 @@ function MesheryPatternCard({
 
             <div className={classes.cardButtons} >
               {canPublishPattern &&
-                <TooltipButton
+                (visibility !== VISIBILITY.PUBLISHED)
+                ?
+                (<TooltipButton
                   variant="contained"
                   title="Publish"
                   className={classes.testsButton}
@@ -119,7 +122,19 @@ function MesheryPatternCard({
                 >
                   <PublicIcon className={classes.iconPatt} />
                   <span className={classes.btnText}> Publish </span>
-                </TooltipButton>}
+                </TooltipButton>)
+                : (
+                  <TooltipButton
+                    variant="contained"
+                    title="Unpublish"
+                    className={classes.testsButton}
+                    onClick={(ev) => genericClickHandler(ev, handleUnpublishModal)}
+                  >
+                    <PublicIcon className={classes.iconPatt} />
+                    <span className={classes.btnText}> Unpublish </span>
+                  </TooltipButton>
+                )
+              }
 
               <TooltipButton
                 title="Valildate"

@@ -6,24 +6,21 @@ on:
 
 jobs:
   reset:
-    name: Cluster Reset
-    if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest 
+    name: reset
+    runs-on: ubuntu-latest
     steps:
-    - uses: azure/setup-kubectl@v3
-    - name: Extract kubeconfig
-      run: mkdir ~/.kube; touch ~/.kube/config ;echo "${{ secrets.PLAYGROUND_CONFIG }}" | base64 --decode > ~/.kube/config
-    - name: Delete namespaces except the ones which are whitelisted in the if statement
-      run: |
-        for ns in $(kubectl get ns -o jsonpath="{.items[*].metadata.name}");
-        do
-        if [[ "$ns" != "kube-system" && "$ns" != "default" && "$ns" != "monitoring" && "$ns" != "kube-flannel" && "$ns" != "kube-node-lease" && "$ns" != "kube-public" && "$ns" != "meshery" && "$ns" != "metallb-system" && "$ns" != "projectcontour" ]];then
-          echo "Deleting namespace $ns"
-          kubectl delete ns "$ns"
-        fi
-        done
+    - name: Cluster cleanup by running the cleanup script inside VM
+      uses: appleboy/ssh-action@master
+      with:
+          host: 147.75.47.9
+          username: root
+          key: ${{ secrets.METAL_SSH_KEY }}
+          script: |
+            ./playground-cleanup.sh 
+
   reboot:
     name: Reboot Metal servers
+    needs: reset 
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest 
     steps:
@@ -36,5 +33,4 @@ jobs:
           env:
             METAL_AUTH_TOKEN: ${{ secrets.METAL_AUTH_TOKEN }}
           run: |
-            METAL_AUTH_TOKEN=$METAL_AUTH_TOKEN metal device reboot -i ${{ secrets.METAL_SERVER1 }} 
             METAL_AUTH_TOKEN=$METAL_AUTH_TOKEN metal device reboot -i ${{ secrets.METAL_SERVER2 }} 

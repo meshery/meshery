@@ -71,12 +71,17 @@ jobs:
           formula-name: mesheryctl
           download-url: https://github.com/meshery/meshery.git
         env:
-          COMMITTER_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+          COMMITTER_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}  
   call-dde-release-workflow:
     needs: ctlrelease
     name: Build and Release Docker Extension
     uses: meshery/meshery/.github/workflows/build-and-release-dde.yml@master
     secrets: inherit
+  call-helm-chart-releaser:
+    needs: build
+    name: Release Helm Charts
+    uses: meshery/meshery/.github/workflows/helm-chart-releaser.yml@master
+    secrets: inherit        
   call-aks-playground-deploy-workflow:
     needs: build
     name: Deploy Meshery Playground
@@ -92,3 +97,4 @@ jobs:
     name: Deploy CNCF Playground
     uses: meshery/meshery/.github/workflows/cncf-playground-deploy-meshery.yaml@master
     secrets: inherit
+

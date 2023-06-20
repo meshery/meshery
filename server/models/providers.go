@@ -152,6 +152,7 @@ type NavigatorExtension struct {
 	Children        NavigatorExtensions `json:"children,omitempty"`
 	Type            string              `json:"type,omitempty"`
 	AllowedTo       MeshMapComponentSet `json:"allowedTo,omitempty"`
+	IsBeta          *bool               `json:"isBeta,omitempty"`
 }
 
 // AccountExtension describes the Account extension point in the UI
@@ -198,6 +199,7 @@ type ConnectionPayload struct {
 	SubType          string                 `json:"sub_type,omitempty"`
 	Type             string                 `json:"type,omitempty"`
 	MetaData         map[string]interface{} `json:"metadata,omitempty"`
+	Status           ConnectionStatus       `json:"status,omitempty"`
 	CredentialSecret map[string]interface{} `json:"credential_secret,omitempty"`
 }
 
@@ -377,6 +379,7 @@ type Provider interface {
 	GetMesheryPatterns(tokenString, page, pageSize, search, order string, updatedAfter string) ([]byte, error)
 	GetCatalogMesheryPatterns(tokenString string, search, order string) ([]byte, error)
 	PublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error)
+	UnPublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error)
 	DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error)
 	DeleteMesheryPatterns(req *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error)
 	CloneMesheryPattern(req *http.Request, patternID string, clonePatternRequest *MesheryClonePatternRequestBody) ([]byte, error)

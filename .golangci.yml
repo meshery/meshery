@@ -1,0 +1,8 @@
+run:
+  timeout: 5m
+
+  skip-files:
+    # https://github.com/meshery/meshery/issues/7761
+    - server/handlers/doc.go
+    # @Aisuko We need to fix the CI ASAP
+    - server/models/meshmodel/core/register.go

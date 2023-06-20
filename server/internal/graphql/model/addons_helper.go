@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/layer5io/meshery/server/models"
-	"gorm.io/gorm"
 
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 )
@@ -31,8 +30,7 @@ func GetAddonsState(ctx context.Context, selectors []MeshType, provider models.P
 	for _, selector := range selectors {
 		//subquery1 := r.DBHandler.Select("id").Where("kind = ? AND key = ? AND value = ?", meshsyncmodel.KindAnnotation, "meshery/component-type", "control-plane").Table("key_values")
 		//subquery2 := r.DBHandler.Select("id").Where("id IN (?) AND kind = ? AND key = ? AND value IN (?)", subquery1, meshsyncmodel.KindAnnotation, "meshery/maintainer", selectors).Table("key_values")
-		var result *gorm.DB
-		result = provider.GetGenericPersister().
+		result := provider.GetGenericPersister().
 			Where("cluster_id IN ?", cid).
 			Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[selector]).
 			Preload("ObjectMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).

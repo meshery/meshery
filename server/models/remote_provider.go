@@ -1784,7 +1784,7 @@ func (l *RemoteProvider) CloneMesheryPattern(req *http.Request, patternID string
 	return nil, fmt.Errorf("error while cloning pattern - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
-// CloneMesheryPattern publishes a meshery pattern with the given id to catalog
+// PublishMesheryPattern publishes a meshery pattern with the given id to catalog
 func (l *RemoteProvider) PublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error) {
 	if !l.Capabilities.IsSupported(MesheryPatternsCatalog) {
 		logrus.Error("operation not available")
@@ -1834,6 +1834,59 @@ func (l *RemoteProvider) PublishCatalogPattern(req *http.Request, publishPattern
 	}
 	logrus.Errorf("error while publishing pattern file to catalog with id %s: %s", publishPatternRequest.ID, bdr)
 	return nil, fmt.Errorf("error while publishing pattern file to catalog - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+
+// UnPublishMesheryPattern publishes a meshery pattern with the given id to catalog
+func (l *RemoteProvider) UnPublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error) {
+	if !l.Capabilities.IsSupported(MesheryPatternsCatalog) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not suppported by provider: %s", MesheryPatternsCatalog, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(MesheryPatternsCatalog)
+
+	logrus.Infof("attempting to unpubish pattern with id: %s", publishPatternRequest.ID)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
+	logrus.Debugf("constructed pattern url: %s", remoteProviderURL.String())
+
+	data, err := json.Marshal(publishPatternRequest)
+	if err != nil {
+		return nil, ErrMarshal(err, "pattern request to unpublish from catalog")
+	}
+	bf := bytes.NewBuffer(data)
+
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), bf)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to unpublish pattern from catalog: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		logrus.Errorf("unable to unpublish pattern from catalog: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("pattern successfully unpublished from catalog")
+		return bdr, nil
+	}
+	logrus.Errorf("error while unpublishing pattern file from catalog with id %s: %s", publishPatternRequest.ID, bdr)
+	return nil, fmt.Errorf("error while unpublishing pattern file from catalog - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
 // DeleteMesheryPatterns deletes meshery patterns with the given ids and names
@@ -3129,6 +3182,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 			Type:             "platform",
 			SubType:          "management",
 			MetaData:         metadata,
+			Status: 		  DISCOVERED,
 			CredentialSecret: cred,
 		}
 
@@ -3515,7 +3569,7 @@ func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *Connect
 		return nil, err
 	}
 	bf := bytes.NewBuffer(_creds)
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s/edit", l.RemoteProviderURL, ep, connection.Kind))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connection.Kind))
 	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
 	tokenString, _ := l.GetToken(req)
 	if err != nil {
@@ -3556,7 +3610,7 @@ func (l *RemoteProvider) DeleteConnection(req *http.Request, connectionID uuid.U
 
 	logrus.Infof("attempting to delete connection from cloud for id: %s", connectionID)
 
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s/delete", l.RemoteProviderURL, ep, connectionID))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connectionID))
 	logrus.Debugf("constructed connection url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
 
@@ -3596,9 +3650,10 @@ func (l *RemoteProvider) DeleteMesheryConnection() error {
 
 	mesheryServerID := viper.GetString("INSTANCE_ID")
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/meshery/%s/delete", l.RemoteProviderURL, ep, mesheryServerID))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/meshery/%s", l.RemoteProviderURL, ep, mesheryServerID))
 	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
 	cReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
+	cReq.Header.Set("SystemID", viper.GetString("INSTANCE_ID")) // Adds the system id to the header for event tracking
 	c := &http.Client{}
 	resp, err := c.Do(cReq)
 	if err != nil {

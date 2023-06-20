@@ -26,9 +26,7 @@ const (
 	ErrParseBoolCode                    = "2016"
 	ErrStreamEventsCode                 = "2017"
 	ErrStreamClientCode                 = "2018"
-	ErrUnmarshalEventCode               = "2019"
 	ErrPublishSmiResultsCode            = "2020"
-	ErrMarshalEventCode                 = "2021"
 	ErrPluginOpenCode                   = "2022"
 	ErrPluginLookupCode                 = "2023"
 	ErrPluginRunCode                    = "2024"
@@ -65,7 +63,6 @@ const (
 	ErrPanicRecoveryCode                = "2210"
 	ErrBlankNameCode                    = "2211"
 	ErrInvalidLTURLCode                 = "2053"
-	ErrDataSendCode                     = "2137"
 	ErrVersionCompareCode               = "2138"
 	ErrSaveSessionCode                  = "2136"
 	ErrKubeClientCode                   = "2139"
@@ -113,6 +110,7 @@ const (
 	ErrGetMeshModelsCode                = "2257"
 	ErrGetUserDetailsCode               = "2258"
 	ErrResolvingRelationship            = "2259"
+	ErrGetLatestVersionCode             = "2257"
 )
 
 var (
@@ -165,7 +163,7 @@ func ErrGrafanaBoards(err error) error {
 }
 
 func ErrPrometheusBoards(err error) error {
-	return errors.New(ErrGrafanaBoardsCode, errors.Alert, []string{"unable to get Prometheus boards"}, []string{err.Error()}, []string{"Prometheus endpoint might not be reachable from meshery", "Prometheus endpoint is incorrect"}, []string{"Check if your Prometheus endpoint is correct", "Connect to Prometheus from the settings page in the UI"})
+	return errors.New(ErrPrometheusBoardsCode, errors.Alert, []string{"unable to get Prometheus boards"}, []string{err.Error()}, []string{"Prometheus endpoint might not be reachable from meshery", "Prometheus endpoint is incorrect"}, []string{"Check if your Prometheus endpoint is correct", "Connect to Prometheus from the settings page in the UI"})
 }
 
 func ErrRecordPreferences(err error) error {
@@ -201,7 +199,7 @@ func ErrExecutionPlan(err error) error {
 }
 
 func ErrCompConfigPairs(err error) error {
-	return errors.New(ErrRequestBodyCode, errors.Alert, []string{"unable to Create Comp Config.", err.Error()}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrCompConfigPairsCode, errors.Alert, []string{"unable to Create Comp Config.", err.Error()}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrRequestBody(err error) error {
@@ -339,7 +337,7 @@ func ErrLoadTest(err error, obj string) error {
 }
 
 func ErrFetchKubernetes(err error) error {
-	return errors.New(ErrLoadTestCode, errors.Alert, []string{"unable to ping kubernetes", "unable to scan"}, []string{err.Error()}, []string{"Kubernetes might not be reachable from meshery"}, []string{"Make sure meshery has connectivity to kubernetes"})
+	return errors.New(ErrFetchKubernetesCode, errors.Alert, []string{"unable to ping kubernetes", "unable to scan"}, []string{err.Error()}, []string{"Kubernetes might not be reachable from meshery"}, []string{"Make sure meshery has connectivity to kubernetes"})
 }
 
 func ErrPanicRecovery(r interface{}) error {
@@ -359,7 +357,7 @@ func ErrVersionCompare(err error) error {
 }
 
 func ErrGetLatestVersion(err error) error {
-	return errors.New(ErrVersionCompareCode, errors.Alert, []string{"failed to get latest version of Meshery"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrGetLatestVersionCode, errors.Alert, []string{"failed to get latest version of Meshery"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrSaveSession(err error) error {
@@ -371,11 +369,11 @@ func ErrCreateDir(err error, obj string) error {
 }
 
 func ErrInvalidRequestObject(fields ...string) error {
-	return errors.New(ErrCreateDirCode, errors.Alert, append([]string{"Error invalid request object:"}, fields...), []string{}, []string{}, []string{})
+	return errors.New(ErrInvalidRequestObjectCode, errors.Alert, append([]string{"Error invalid request object:"}, fields...), []string{}, []string{}, []string{})
 }
 
 func ErrChangeK8sContext(err error) error {
-	return errors.New(ErrCreateDirCode, errors.Alert, []string{"Error changing context"}, []string{err.Error()}, []string{"Context Name might be invalid or not present in the uploaded kubeconfig"}, []string{"Check the context name, if the context name is correct and is present in the kubeconfig then try uploading the kubeconfig again"})
+	return errors.New(ErrChangeK8sContextCode, errors.Alert, []string{"Error changing context"}, []string{err.Error()}, []string{"Context Name might be invalid or not present in the uploaded kubeconfig"}, []string{"Check the context name, if the context name is correct and is present in the kubeconfig then try uploading the kubeconfig again"})
 }
 
 func ErrInvalidKubeConfig(err error, content string) error {

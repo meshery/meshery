@@ -353,13 +353,13 @@ func (h *Handler) GetMesheryPatternsHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-// swagger:route POST /api/pattern/catalog PatternsAPI idGetCatalogMesheryPatternsHandler
+// swagger:route GET /api/pattern/catalog PatternsAPI idGetCatalogMesheryPatternsHandler
 // Handle GET request for catalog patterns
 //
 // Used to get catalog patterns
 // responses:
 //
-//	200: mesheryPatternResponseWrapper
+//	200: mesheryPatternsResponseWrapper
 func (h *Handler) GetCatalogMesheryPatternsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -514,6 +514,44 @@ func (h *Handler) PublishCatalogPatternHandler(
 		return
 	}
 	resp, err := provider.PublishCatalogPattern(r, parsedBody)
+	if err != nil {
+		h.log.Error(ErrPublishCatalogPattern(err))
+		http.Error(rw, ErrPublishCatalogPattern(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	go h.config.ConfigurationChannel.PublishPatterns()
+	rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(rw, string(resp))
+}
+
+// swagger:route DELETE /api/pattern/catalog/unpublish PatternsAPI idUnPublishCatalogPatternHandler
+// Handle Publish for a Meshery Pattern
+//
+// Unpublishes pattern from Meshery Catalog by setting visibility to private and removing catalog data from website
+// responses:
+//
+//	200: noContentWrapper
+//
+// UnPublishCatalogPatternHandler sets visibility of pattern with given id as private
+func (h *Handler) UnPublishCatalogPatternHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	_ *models.Preference,
+	_ *models.User,
+	provider models.Provider,
+) {
+	defer func() {
+		_ = r.Body.Close()
+	}()
+
+	var parsedBody *models.MesheryCatalogPatternRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+		return
+	}
+	resp, err := provider.UnPublishCatalogPattern(r, parsedBody)
 	if err != nil {
 		h.log.Error(ErrPublishCatalogPattern(err))
 		http.Error(rw, ErrPublishCatalogPattern(err).Error(), http.StatusInternalServerError)
