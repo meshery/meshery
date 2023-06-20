@@ -1,4 +1,4 @@
-package network_policy
+package meshmodel_policy
 
 # playground with this policy: https://play.openpolicyagent.org/p/ttJQwNEGQ8
 

@@ -38,19 +38,19 @@ func (h *Handler) GetRegoPolicyForDesignFile(
 	}
 
 	// evaluate all the rego policies in the policies directory
-	networkPolicy, err := policies.RegoPolicyHandler(context.Background(), []string{"../meshmodel/policies"}, "data.network_policy", body)
+	meshmodelPolicy, err := policies.RegoPolicyHandler(context.Background(), []string{"../meshmodel/policies", "../meshmodel/relationships/hierarchical_parent.json"}, "data.meshmodel_policy", body)
 	if err != nil {
 		h.log.Error(ErrResolvingRegoRelationship(err))
 		http.Error(rw, ErrResolvingRegoRelationship(err).Error(), http.StatusInternalServerError)
 		return
-	}
+	}           
 
 	// write the response
 	ec := json.NewEncoder(rw)
-	err = ec.Encode(networkPolicy)
+	err = ec.Encode(meshmodelPolicy)
 	if err != nil {
-		h.log.Error(ErrEncoding(err, "networkPolicy response"))
-		http.Error(rw, ErrEncoding(err, "networkPolicy response").Error(), http.StatusInternalServerError)
+		h.log.Error(ErrEncoding(err, "meshmodel policy response"))
+		http.Error(rw, ErrEncoding(err, "meshmodel policy response").Error(), http.StatusInternalServerError)
 		return
 	}
 }
