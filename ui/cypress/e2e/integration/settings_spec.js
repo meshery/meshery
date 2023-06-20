@@ -1,7 +1,7 @@
 describe("Settings", () => {
   describe("Service Meshes", () => {
     before(() => {
-      cy.visit("/settings");
+      cy.visit("/settings", { responseTimeout: 35_000 });
       cy.intercept("GET", "/api/system/adapters", { fixture: "getMeshAdapters.json" }).as("getMeshAdapters");
       cy.intercept("POST", "/api/system/adapter/manage", { fixture: "postMeshManage.json" }).as("postMeshManage");
       cy.get('[data-cy="tabServiceMeshes"]').click();

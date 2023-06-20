@@ -1,6 +1,6 @@
 import React from 'react';
 import { useEffect } from 'react';
-import { Button, Grid, IconButton } from '@material-ui/core';
+import { Button, Grid } from '@material-ui/core';
 // import { createTheme } from '@material-ui/core/styles';
 import validator from "@rjsf/validator-ajv8";
 import {
@@ -11,7 +11,6 @@ import {
 import { Form } from '@rjsf/material-ui';
 import useStyles from "./MesheryPatterns/Cards.styles";
 import PublicIcon from '@material-ui/icons/Public';
-import CloseIcon from '@material-ui/icons/Close';
 // const getMuiTheme = () => createTheme({
 //   palette : {
 //     primary : {
@@ -40,15 +39,20 @@ export default function PublishModal(props) {
         "type" : "array",
         "items" : {
           "enum" : [
-            "Istio",
-            "Linkerd",
-            "App Mesh",
-            "OSM",
-            "Nginx",
-            "Kuma",
+            "Kubernetes",
+            "Argo CD",
+            "AWS App Mesh",
             "Consul",
-            "NSM",
-            "Traefik"
+            "Fluentd",
+            "Istio",
+            "Jaeger",
+            "Kuma",
+            "Linkerd",
+            "Network Service Mesh",
+            "NGINX Service Mesh",
+            "Open Service Mesh",
+            "Prometheus",
+            "Traefik Mesh"
           ],
           "type" : "string"
         },
@@ -74,58 +78,53 @@ export default function PublishModal(props) {
           "workloads"
         ]
       }
-    }
+    },
+    "required" : ["compatibility", "pattern_caveats", "pattern_info", "type"]
   }
-  const [data, setData] = React.useState(null)
-  const [payload, setPayload] = React.useState({
-    "id" : pattern?.id,
-    "catalog_data" : pattern?.catalog_data
-  })
+
+  const [data, setData] = React.useState(null);
+
   useEffect(() => {
-    setData(pattern?.catalog_data)
-  }, [pattern])
-  useEffect(() => {
-    setPayload({
-      "id" : pattern?.id,
-      "catalog_data" : data
-    })
-    console.log(payload)
-  }, [data])
+    if (pattern?.catalog_data) {
+      setData(pattern.catalog_data)
+    }
+  }, []);
 
   return (
     <>
       <Dialog
         open={open}
         onClose={handleClose}>
-        <DialogTitle>
-          <div className={classes.publishTitle}>
-
-            <b id="simple-modal-title" style={{ textAlign : "center" }} > {pattern?.name}</b>
-            <IconButton aria-label="close" className={classes.closeButton} onClick={handleClose}>
-              <CloseIcon />
-            </IconButton>
-          </div>
+        <DialogTitle className={classes.dialogTitle}>
+          Request To Publish: {pattern?.name}
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={24} alignItems="center">
-            <Form schema={schema} formData={data} validator={validator} onChange={(e) => setData(e.formData)} ><></></Form>
+            <Form schema={schema} formData={data} validator={validator}
+              onSubmit={(data) => {
+                handleClose();
+                handlePublish({
+                  id : pattern.id,
+                  catalog_data : data.formData
+                })
+              }}
+            >
+              <Button
+                title="Publish"
+                variant="contained"
+                color="primary"
+                type="submit"
+                className={classes.testsButton}
+              >
+                <PublicIcon className={classes.iconPatt} />
+                <span className={classes.btnText}> Submit for Approval </span>
+              </Button>
+            </Form>
           </Grid>
 
         </DialogContent>
         <DialogActions>
-          <Button
-            title="Publish"
-            variant="contained"
-            color="primary"
-            className={classes.testsButton}
-            onClick={() => {
-              handleClose();
-              handlePublish(payload)
-            }}
-          >
-            <PublicIcon className={classes.iconPatt} />
-            <span className={classes.btnText}> Publish </span>
-          </Button>
+
         </DialogActions>
 
       </Dialog>

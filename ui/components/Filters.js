@@ -477,10 +477,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     }
     const configurationSubscription = ConfigurationSubscription((result) => {
       stillLoading(false);
-      setPage(result.configuration?.filters.page || 0);
-      setPageSize(result.configuration?.filters.page_size || 0);
-      setCount(result.configuration?.filters.total_count || 0);
-      handleSetFilters(result.configuration?.filters.filters);
+      setPage(result.configuration?.filters?.page || 0);
+      setPageSize(result.configuration?.filters?.page_size || 0);
+      setCount(result.configuration?.filters?.total_count || 0);
+      handleSetFilters(result.configuration?.filters?.filters);
     },
     {
       applicationSelector : {
@@ -593,7 +593,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   }
 
   function urlUploadHandler(link) {
-    console.log("handling things....")
     handleSubmit({
       data : link,
       name : "meshery_" + Math.floor(trueRandom() * 100),

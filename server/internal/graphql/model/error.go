@@ -5,19 +5,14 @@ import (
 )
 
 const (
-	ErrInvalidRequestCode                       = "1000"
 	ErrNilClientCode                            = "1001"
 	ErrCreateDataCode                           = "1002"
 	ErrQueryCode                                = "1003"
 	ErrMeshsyncSubscriptionCode                 = "1004"
-	ErrOperatorSubscriptionCode                 = "1005"
-	ErrAddonSubscriptionCode                    = "1006"
-	ErrControlPlaneSubscriptionCode             = "1007"
 	ErrMesheryClientCode                        = "1008"
 	ErrSubscribeChannelCode                     = "1009"
 	ErrPublishBrokerCode                        = "1010"
 	ErrNoMeshSyncCode                           = "1011"
-	ErrNoExternalEndpointCode                   = "1012"
 	ErrApplyHelmChartCode                       = "2155"
 	ErrMesheryControllersStatusSubscriptionCode = "2239"
 	ErrMeshSyncEventsSubscriptionCode           = "2240"

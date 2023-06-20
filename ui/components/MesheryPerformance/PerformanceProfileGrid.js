@@ -14,21 +14,7 @@ function PerformanceCardGridItem({ profile, deleteHandler, setProfileForModal })
   return (
     <Grid item {...gridProps}>
       <PerformanceCard
-        id={profile.id}
-        name={profile.name}
-        endpoints={profile.endpoints}
-        loadGenerators={profile.load_generators}
-        reqHeaders={profile.request_headers}
-        results={profile.total_results || 0}
-        testRunDuration={profile.duration}
-        concurrentRequest={profile.concurrent_request}
-        qps={profile.qps}
-        serviceMesh={profile.service_mesh}
-        contentType={profile.content_type}
-        requestBody={profile.request_body}
-        requestCookies={profile.request_cookies}
-        requestHeaders={profile.request_headers}
-        lastRun={profile.last_run}
+        profile={profile}
         handleEdit={() => setProfileForModal(profile)}
         handleDelete={() => deleteHandler(profile.id)}
         handleRunTest={() => setProfileForModal({ ...profile, runTest : true })}
