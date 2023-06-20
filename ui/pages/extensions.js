@@ -105,7 +105,7 @@ const LogoStyles = () => ({
   },
 })
 
-const MeshMapSnapShotLogo = withStyles(LogoStyles)((classes) => {
+const MeshMapSnapShotLogo = withStyles(LogoStyles)(({ classes }) => {
   return <img className={classes.img} src="/static/img/meshmap-snapshot-logo.svg" />
 })
 
