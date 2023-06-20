@@ -163,6 +163,11 @@ const styles = (theme) => ({
     marginBottom : theme.spacing(1),
     marginLeft : theme.spacing(0.3),
   },
+  radio: {
+    '&.Mui-checked': {
+      color: "#00b39f!important",
+    },
+  },
 });
 
 class MesheryPerformanceComponent extends React.Component {
@@ -764,7 +769,7 @@ class MesheryPerformanceComponent extends React.Component {
     return (
       <NoSsr>
         <React.Fragment>
-          <DialogTitle className={classes.title} >Performance Profile Wizard</DialogTitle>
+          <DialogTitle className={classes.title} >Performance Profile Wizard </DialogTitle>
           <div className={classes.wrapperClss} style={this.props.style || {}}>
             <Grid container spacing={1}>
               <Grid item xs={12} md={6}>
@@ -1003,7 +1008,7 @@ class MesheryPerformanceComponent extends React.Component {
                     row
                   >
                     {loadGenerators.map((lg, index) => (
-                      <FormControlLabel key={index} value={lg} control={<Radio color="primary" />} label={lg} />
+                      <FormControlLabel key={index} value={lg} control={<Radio className={classes.radio} />} label={lg} />
                     ))}
                   </RadioGroup>
                 </FormControl>

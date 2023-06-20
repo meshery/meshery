@@ -311,7 +311,9 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
         <GenericModal
           open={!!profileForModal}
           Content={
+            <>
             <Paper className={classes.addProfileModal} >
+            <span onClick={()=> setProfileForModal(undefined)}>Close</span>
               <MesheryPerformanceComponent
                 // @ts-ignore
                 loadAsPerformanceProfile
@@ -343,6 +345,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
                 runTestOnMount={!!profileForModal?.runTest}
               />
             </Paper>
+            </>
           }
           handleClose={() => {
             setProfileForModal(undefined);
