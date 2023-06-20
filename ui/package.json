@@ -58,7 +58,7 @@
     "@paciolan/remote-component": "^2.11.0",
     "@redux-devtools/extension": "^3.2.3",
     "@rjsf/core": "^5.5.0",
-    "@rjsf/material-ui": "^5.5.0",
+    "@rjsf/material-ui": "^5.8.1",
     "@rjsf/utils": "^5.5.0",
     "@rjsf/validator-ajv8": "^5.5.0",
     "autoprefixer": "^10.4.13",
