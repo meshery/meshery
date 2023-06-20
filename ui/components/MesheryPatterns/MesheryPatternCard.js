@@ -92,7 +92,7 @@ function MesheryPatternCard({
                 {name}
               </Typography>
               <div style={{ border : "1px solid rgb(118 118 118)",color : "rgb(118 118 118)",marginTop : "auto",fontSize : "0.6rem",padding : "0.2rem 0.5rem",borderRadius : "0.2rem" }}>
-                PUBLISHED
+               PUBLISHED
                </div>
             </div>
             <div className={classes.lastRunText} >
