@@ -3524,7 +3524,7 @@ func (l *RemoteProvider) GetConnections(req *http.Request, _ string, page, pageS
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
 	}
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + connectionKind)
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connectionKind))
 
 	q := remoteProviderURL.Query()
 	q.Add("page", strconv.Itoa(page))
