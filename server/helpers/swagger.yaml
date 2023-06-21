@@ -369,7 +369,18 @@ paths:
                 - FiltersAPI
     /api/identity/users:
         get:
-            description: Returns all Users
+            description: |-
+                # Users can be further filtered through query parameters
+
+                ```?order={field}``` orders on the passed field
+
+                ```?page={page-number}``` Default page number is 0
+
+                ```?pagesize={pagesize}``` Default pagesize is 20. Max pagesize returned is 100
+
+                ```?search={username|email|first_name|last_name}``` If search is non empty then a greedy search is performed
+
+                ```?filter={condition}```
             operationId: idGetAllUsersHandler
             parameters:
                 - format: int64
