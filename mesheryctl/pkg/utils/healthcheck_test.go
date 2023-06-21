@@ -174,7 +174,7 @@ func TestAreMesheryComponentsRunning(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		t.Run("Mesher Components Running", func(t *testing.T) {
+		t.Run("Meshery Components Running", func(t *testing.T) {
 			if got, _ := AreMesheryComponentsRunning(tt.platform); got != tt.expected {
 				t.Errorf("Meshery Components Running got %v, want %v", got, tt.expected)
 			}
