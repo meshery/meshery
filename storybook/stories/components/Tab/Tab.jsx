@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from  "prop-types";
 import { Tab as MuiTab, Box } from "@mui/material";
 import Tabs from '@mui/material/Tabs';
@@ -32,7 +32,7 @@ function a11yProps(index) {
 }
 
 export const Tab = ({ textColor, disabled, ...rest }) => {
-  const [value, setValue] = React.useState(0);
+  const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
