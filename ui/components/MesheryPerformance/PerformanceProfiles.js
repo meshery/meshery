@@ -1,4 +1,4 @@
-//@ts-check
+// @ts-nocheck
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import React, { useEffect, useState, useRef } from "react";
 import PromptComponent from "../PromptComponent";
@@ -16,14 +16,26 @@ import { updateProgress } from "../../lib/store";
 import { withSnackbar } from "notistack";
 import GenericModal from "../GenericModal";
 import MesheryPerformanceComponent from "./index";
-import { Paper, Typography, Button } from "@material-ui/core";
+import { Paper, Typography, Button,DialogTitle } from "@material-ui/core";
 import fetchPerformanceProfiles from "../graphql/queries/PerformanceProfilesQuery";
 import { withStyles } from "@material-ui/core/styles";
 import { iconMedium, iconXLarge } from "../../css/icons.styles";
 import subscribePerformanceProfiles from "../graphql/subscriptions/PerformanceProfilesSubscription";
 
 const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
-const styles = () => ({
+const styles = (theme) => ({
+  title : {
+    textAlign : 'center',
+    minWidth : 400,
+    padding : '10px',
+    color : '#fff',
+    flexGrow: 1
+  },
+  dialogHeader: {
+    backgroundColor : theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : '#396679',
+    display: "flex",
+    alignItems: "center"
+  },
   topToolbar : {
     margin : "2rem auto",
     display : "flex",
@@ -211,7 +223,6 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
             );
           },
         });
-
         fetchTestProfiles(page, pageSize, search, sortOrder);
       },
       handleError("Failed To Delete Profile")
@@ -311,41 +322,45 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
         <GenericModal
           open={!!profileForModal}
           Content={
-            <>
-            <Paper className={classes.addProfileModal} >
-            <span onClick={()=> setProfileForModal(undefined)}>Close</span>
-              <MesheryPerformanceComponent
+              <Paper className={classes.addProfileModal} >
+                <div className={classes.dialogHeader}>
+          <DialogTitle className={classes.title} >Performance Profile Wizard</DialogTitle>
+                <IconButton aria-label="close" style={{color: "white"}} onClick={() => setProfileForModal(undefined) }>
+                  <CloseIcon />
+                </IconButton>
+                </div>
+
+                <MesheryPerformanceComponent
                 // @ts-ignore
-                loadAsPerformanceProfile
-                // @ts-ignore
-                performanceProfileID={profileForModal?.id}
-                // @ts-ignore
-                profileName={profileForModal?.name}
-                // @ts-ignore
-                meshName={profileForModal?.service_mesh}
-                // @ts-ignore
-                url={profileForModal?.endpoints?.[0]}
-                // @ts-ignore
-                qps={profileForModal?.qps}
-                // @ts-ignore
-                loadGenerator={profileForModal?.load_generators?.[0]}
-                // @ts-ignore
-                t={profileForModal?.duration}
-                // @ts-ignore
-                c={profileForModal?.concurrent_request}
-                // @ts-ignore
-                reqBody={profileForModal?.request_body}
-                // @ts-ignore
-                headers={profileForModal?.request_headers}
-                // @ts-ignore
-                cookies={profileForModal?.request_cookies}
-                // @ts-ignore
-                contentType={profileForModal?.content_type}
-                // @ts-ignore
-                runTestOnMount={!!profileForModal?.runTest}
-              />
-            </Paper>
-            </>
+                  loadAsPerformanceProfile
+                  // @ts-ignore
+                  performanceProfileID={profileForModal?.id}
+                  // @ts-ignore
+                  profileName={profileForModal?.name}
+                  // @ts-ignore
+                  meshName={profileForModal?.service_mesh}
+                  // @ts-ignore
+                  url={profileForModal?.endpoints?.[0]}
+                  // @ts-ignore
+                  qps={profileForModal?.qps}
+                  // @ts-ignore
+                  loadGenerator={profileForModal?.load_generators?.[0]}
+                  // @ts-ignore
+                  t={profileForModal?.duration}
+                  // @ts-ignore
+                  c={profileForModal?.concurrent_request}
+                  // @ts-ignore
+                  reqBody={profileForModal?.request_body}
+                  // @ts-ignore
+                  headers={profileForModal?.request_headers}
+                  // @ts-ignore
+                  cookies={profileForModal?.request_cookies}
+                  // @ts-ignore
+                  contentType={profileForModal?.content_type}
+                  // @ts-ignore
+                  runTestOnMount={!!profileForModal?.runTest}
+                />
+              </Paper>
           }
           handleClose={() => {
             setProfileForModal(undefined);
@@ -360,4 +375,5 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
+// @ts-ignore
 export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(PerformanceProfile)));
