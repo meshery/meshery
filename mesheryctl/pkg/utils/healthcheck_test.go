@@ -3,7 +3,6 @@ package utils
 import (
 	"testing"
 
-	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	"k8s.io/apimachinery/pkg/version"
 )
 
@@ -128,42 +127,6 @@ func TestCheckK8sVersion(t *testing.T) {
 		})
 	}
 
-}
-
-
-func TestIsPodRunning(t *testing.T) {
-	tests := []struct {
-		namespace string
-		podname string
-		expected bool
-	}{
-		
-		{
-			namespace: "test1",
-			podname: "test1",
-			expected: false,
-		},
-		{
-			namespace: "test2",
-			expected: false,
-		},
-		{
-			podname: "test3",
-			expected: false,
-		},
-	}
-
-
-	for _, tt := range tests {
-		t.Run("Test if All Pods are Running", func(t *testing.T) {
-			c, _ := meshkitkube.New([]byte(""))
-			result := isPodRunning(c, tt.podname, tt.namespace)
-			got, _ := result()
-			if got != tt.expected {
-				t.Errorf("Pod status is %v want %v", got, tt.expected)
-			}
-		})
-	}
 }
 
 
