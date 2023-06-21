@@ -18,7 +18,7 @@ const styles = (theme) => ({
   },
   content : { backfaceVisibility : "hidden", },
   frontContent : {},
-  backContent : { transform : "scale(-1, 1)",maxWidth : "inherit" },
+  backContent : { transform : "scale(-1, 1)",maxWidth : "50vw", wordBreak : "break-word" }
 });
 
 function GetChild(children, key) {
