@@ -419,3 +419,9 @@ type allMeshmodelComponentsResponseWrapper struct {
 type allMeshmodelRelationshipsResponseWrapper struct {
 	Body *models.MeshmodelRelationshipsAPIResponse
 }
+
+// Returns database summary
+// swagger:response systemDatabaseResponseWrapper
+type systemDatabaseResponseWrapper struct {
+	Body *models.DatabaseSummary
+}

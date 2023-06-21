@@ -1143,6 +1143,27 @@ paths:
             summary: Handle GET request for available adapters
             tags:
                 - SystemAPI
+    /api/system/database:
+        get:
+            description: |-
+                # Tables can be further filtered through query parameter
+
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 10. To return all results: ```pagesize=all```
+
+                ```?search={tablename}``` If search is non empty then a greedy search is performed
+            operationId: idGetSystemDatabase
+            responses:
+                "200":
+                    $ref: '#/responses/systemDatabaseResponseWrapper'
+            summary: Handle GET request for getting summary about the system database.
+            tags:
+                - GetSystemDatabase
     /api/system/kubernetes:
         delete:
             description: Used to delete kubernetes config to System
@@ -1891,6 +1912,10 @@ responses:
         schema:
             items: {}
             type: array
+    systemDatabaseResponseWrapper:
+        description: Returns database summary
+        headers:
+            Body: {}
     userInfo:
         description: Returns user info
     userLoadTestPrefsRespWrapper:
