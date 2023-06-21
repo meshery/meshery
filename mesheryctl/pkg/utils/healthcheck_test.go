@@ -194,3 +194,50 @@ func TestIsCompatibleVersion(t *testing.T){
 	}
 }
 
+func TestIsMesheryRunning(t *testing.T) {
+	tests := []struct {
+		platform string
+		expected bool
+	}{
+		{
+			platform: "docker",
+			expected: true,
+		},
+		{
+			platform: "",
+			expected: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run("Test Running Meshery", func(t *testing.T) {
+			if got, _ := IsMesheryRunning(tt.platform); got != tt.expected {
+				t.Errorf("Meshery not running got %v, want %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestAreMesheryComponentsRunning(t *testing.T) {
+	tests := []struct {
+		platform string
+		expected bool
+	}{
+		{
+			platform: "docker",
+			expected: false,
+		},
+		{
+			platform: "kubernetes",
+			expected: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run("Mesher Components Running", func(t *testing.T) {
+			if got, _ := AreMesheryComponentsRunning(tt.platform); got != tt.expected {
+				t.Errorf("Meshery Components Running got %v, want %v", got, tt.expected)
+			}
+		})
+	}
+}
