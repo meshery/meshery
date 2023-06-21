@@ -7,7 +7,7 @@ language: en
 type: feature
 list: include
 ---
-Meshery Playground is a web-based interactive environment that provides users with the ability to explore not only Meshery as a cloud native manager but also all of the infrastructure that it manages, including multiple Kubernetes clusters and various Service Mesh implementations as Meshery offers supports for more service meshes than any other project in the world.The Meshery Playground provides a sandboxed environment to experiment with different infrastructure configurations and deployment options. It's multi-player plugins allow you to collaborate in real-time with your teammates on infrastructure configuration and operation.
+Meshery Playground is a web-based interactive environment that provides users with the ability to explore not only Meshery as a cloud native manager but also all of the infrastructure that it manages, including multiple Kubernetes clusters and various Service Mesh implementations as Meshery offers supports for more service meshes than any other project in the world. The Meshery Playground provides a sandboxed environment to experiment with different infrastructure configurations and deployment options. It's multi-player plugins allow you to collaborate in real-time with your teammates on infrastructure configuration and operation.
 
 With Meshery Playground, you can:
 

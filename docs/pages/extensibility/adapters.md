@@ -58,6 +58,8 @@ The main purpose of the meshery-adapter-library is to:
 [![Meshery Adapter Library]({{ site.baseurl }}/assets/img/adapters/meshery-adapter-library.svg
 )]({{ site.baseurl }}/assets/img/adapters/meshery-adapter-library.svg)
 
+_Figure: Displaying Meshery Adapter library architecture along with an example of integration_
+
 #### Overview and Usage
 
 The library consists of interfaces and default implementations for the main and common functionality of an adapter. It also provides a mini-framework that runs the gRPC adapter service, calling the functions of handlers injected by the adapter code. This is represented in an UML-ish style in the figure below. The library is used in all of Meshery's adapters.

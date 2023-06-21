@@ -8,10 +8,9 @@ type: project
 category: contributing
 ---
 
-Meshery Adapters are the Extension Points in Meshery's architecture. Their design, the process of creating a new adapter and guidelines for contributing to an existing adapter is documented in [Extensibility: Service Mesh Adapters]({{site.baseurl}}/extensibility/adapters).
 
+Meshery Adapters are the Extension Points in Meshery's architecture. Their design, the process of creating a new adapter is documented in [Extensibility: Service Mesh Adapters]({{site.baseurl}}/extensibility/adapters).
 
-## Contributing to Meshery Adapters
 With the [CONTRIBUTING.md](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md#adapter) in mind, understand that development follows the usual fork-and-pull request workflow described here, see also GitHub Process. On forking GitHub deactivates all workflows. It is safe and good practice to activate them such that the code is validated on each push. This requires that branches filter for “on push” is set to ‘**’ to be triggered also on branches containing ‘/’  in their name.  The actions are parameterized using secrets (see Build & Release Strategy). The Docker image is only built and pushed to Docker Hub if a tag is pushed and the corresponding authentication information is configured. The only secret that should be set in each fork is GO_VERSION, specified in Build & Release Strategy, otherwise, the corresponding action’s default version is used.
 
 Each commit has to be signed off, see [Contributing Overview]({{site.baseurl}}/project/contributing).
