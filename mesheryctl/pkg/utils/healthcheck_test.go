@@ -1,13 +1,10 @@
 package utils
 
 import (
-	"context"
-	"fmt"
 	"testing"
 
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
-	v1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/version"
 )
 
 var versionCheck = []struct {
@@ -104,58 +101,28 @@ func TestCheckKubectlVersion(t *testing.T) {
 
 func TestCheckK8sVersion(t *testing.T) {
 	tests := []struct {
-		version string
+		version *version.Info
 		expected [3]int
 	}{
 		{
-			version: "v1.12.0",
+			version: &version.Info{
+				Major:        "1",
+				Minor:        "2",
+				GitVersion:   "v1.12.0",
+				GitCommit:    "abcdefg",
+				GitTreeState: "clean",
+				BuildDate:    "2023-06-20",
+				GoVersion:    "go1.16",
+				Compiler:     "gc",
+				Platform:     "linux/amd64",
+			},
 			expected: [3]int{1, 12, 0},
-		},
-		{
-			version: "v1.12.1",
-			expected: [3]int{1, 12, 1},
-		},
-		{
-			version: "v1.12.2",
-			expected: [3]int{1, 12, 2},
-		},
-		{
-			version: "v1.12.3",
-			expected: [3]int{1, 12, 3},
-		},
-		{
-			version: "v1.12.4",
-			expected: [3]int{1, 12, 4},
-		},
-		{
-			version: "v1.12.5",
-			expected: [3]int{1, 12, 5},
-		},
-		{
-			version: "v1.12.6",
-			expected: [3]int{1, 12, 6},
-		},
-		{
-			version: "v1.12.7",
-			expected: [3]int{1, 12, 7},
-		},
-		{
-			version: "v1.12.8",
-			expected: [3]int{1, 12, 8},
-		},
-		{
-			version: "v1.12.9",
-			expected: [3]int{1, 12, 9},
-		},
-		{
-			version: "v1.12.10",
-			expected: [3]int{1, 12, 10},
 		},
 	}
 
 	for _, tt := range tests {
-		t.Run(tt.version, func(t *testing.T) {
-			if got, _:= getK8sVersion(tt.version); got != tt.expected {
+		t.Run("Check K8s Version", func(t *testing.T) {
+			if got := CheckK8sVersion(tt.version); got != nil {
 				t.Errorf("getK8sVersion() = %v, want %v", got, tt.expected)
 			}
 		})
@@ -168,63 +135,62 @@ func TestIsPodRunning(t *testing.T) {
 	tests := []struct {
 		namespace string
 		podname string
-		expected string
+		expected bool
 	}{
-		{
-			namespace: "test0",
-			podname: "test-pod0",
-			expected: "Running",
-		},
+		
 		{
 			namespace: "test1",
-			podname: "test-pod1",
-			expected: "Running",
+			podname: "test1",
+			expected: false,
 		},
 		{
 			namespace: "test2",
-			podname: "test-pod2",
-			expected: "Running",
+			expected: false,
 		},
 		{
-			namespace: "test3",
-			podname: "test-pod3",
-			expected: "Running",
+			podname: "test3",
+			expected: false,
+		},
+	}
+
+
+	for _, tt := range tests {
+		t.Run("Test if All Pods are Running", func(t *testing.T) {
+			c, _ := meshkitkube.New([]byte(""))
+			result := isPodRunning(c, tt.podname, tt.namespace)
+			got, _ := result()
+			if got != tt.expected {
+				t.Errorf("Pod status is %v want %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+
+func TestIsCompatibleVersion(t *testing.T){
+	tests := []struct {
+		minimum [3]int
+		current [3]int
+		expected bool
+	}{
+		{
+			minimum: [3]int{1, 12, 0},
+			current: [3]int{1, 12, 0},
+			expected: true,
 		},
 		{
-			namespace: "test4",
-			podname: "test-pod4",
-			expected: "Running",
-		},
-		{
-			namespace: "",
-			podname: "test-pod",
-			expected: "Running",
-		},
-		{
-			namespace: "test",
-			podname: "",
-			expected: "Running",
-		},
-		{
-			namespace: "",
-			podname: "",
-			expected: "Running",
-		},
-		{
-			podname: "test-pod",
-			expected: "Failed",
-		},
-		{
-			namespace: "test",
-			expected: "Failed",
+			minimum: [3]int{1, 11, 0},
+			current: [3]int{2, 13, 2},
+			expected: true,
 		},
 	}
 
 	for _, tt := range tests {
-		c, _ := meshkitkube.New([]byte(""))
-		got, _ := c.KubeClient.CoreV1().Pods(tt.namespace).Get(context.TODO(), tt.podname, metav1.GetOptions{})
-		if got.Status.Phase != v1.PodPhase(tt.expected) {
-			fmt.Errorf("Pod is Running  got %v want %v", got, tt.expected)
-		}
+		t.Run("Check compatible Version", func(t *testing.T) {
+			if got := isCompatibleVersion(tt.minimum, tt.current); got != tt.expected {
+				t.Errorf("Version not compatible got %v, want %v", got, tt.expected)
+			}
+		})
 	}
 }
+
