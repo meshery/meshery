@@ -8,16 +8,13 @@ const (
 	ErrResolverInvalidRequestCode           = "2222"
 	ErrResolverNilClientCode                = "2223"
 	ErrResolverCreateDataCode               = "2224"
-	ErrResolverQueryCode                    = "2225"
 	ErrResolverMeshsyncSubscriptionCode     = "2226"
 	ErrResolverOperatorSubscriptionCode     = "2227"
 	ErrResolverAddonSubscriptionCode        = "2228"
 	ErrResolverControlPlaneSubscriptionCode = "2229"
 	ErrResolverMesheryClientCode            = "2230"
-	ErrResolverSubscribeChannelCode         = "2231"
 	ErrResolverPublishBrokerCode            = "2232"
 	ErrResolverNoMeshSyncCode               = "2233"
-	ErrResolverNoExternalEndpointCode       = "2234"
 	ErrDataPlaneSubscriptionCode            = "1013"
 	ErrBrokerNotConnectedCode               = "2221"
 	ErrGettingNamespaceCode                 = "1014"
@@ -105,7 +102,7 @@ func ErrInvalidOAMType() error {
 		errors.Alert,
 		[]string{"invalid oam type is requested"},
 		[]string{"invalid oam type requested, supported types are workload, scope, trait "},
-		nil, nil,
+		[]string{}, []string{},
 	)
 }
 
@@ -115,7 +112,7 @@ func ErrKubectlDescribe(err error) error {
 		errors.Alert,
 		[]string{"failed to find the resource", "invalid resource type", "resource doens't exists"},
 		[]string{err.Error(), "invalid kubernetes resource type or couldn't find the specified resource"},
-		nil, nil,
+		[]string{}, []string{},
 	)
 }
 

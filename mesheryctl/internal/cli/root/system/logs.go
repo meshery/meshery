@@ -16,13 +16,13 @@ package system
 
 import (
 	"bufio"
-	"bytes"
 	"context"
 	"fmt"
 	"io"
 	"os"
 	"os/exec"
 	"strings"
+	"sync"
 
 	"github.com/pkg/errors"
 
@@ -46,6 +46,20 @@ func IsPodRequired(requiredPods []string, pod string) bool {
 	}
 	return false
 }
+
+func printLogs(logs string, podName string) {
+	for _, logMsg := range strings.Split(logs, "\n") {
+		logStr := fmt.Sprintf("%s\t|\t%s", podName, logMsg)
+
+		log.Print(logStr)
+	}
+}
+
+var (
+	follow bool
+)
+
+const BYTE_SIZE = 2000
 
 // logsCmd represents the logs command
 var logsCmd = &cobra.Command{
@@ -167,7 +181,6 @@ mesheryctl system logs meshery-istio
 				return err
 			}
 
-			var data []string
 			var requiredPods []string
 
 			// If the user specified logs from any particular pods, then show only that
@@ -182,6 +195,8 @@ mesheryctl system logs meshery-istio
 			}
 
 			log.Info("Starting Meshery logging...")
+			wg := &sync.WaitGroup{}
+
 			// List all the pods similar to kubectl get pods -n MesheryNamespace
 			for _, pod := range podList.Items {
 
@@ -202,6 +217,7 @@ mesheryctl system logs meshery-istio
 					// Get the logs from a container within the pod
 					podLogOpts := apiCorev1.PodLogOptions{
 						Container: containerName,
+						Follow:    follow,
 					}
 
 					req := client.KubeClient.CoreV1().Pods(utils.MesheryNamespace).GetLogs(name, &podLogOpts)
@@ -211,28 +227,43 @@ mesheryctl system logs meshery-istio
 						return err
 					}
 					defer logs.Close()
-
-					buf := new(bytes.Buffer)
-					_, err = io.Copy(buf, logs)
-					if err != nil {
-						return fmt.Errorf("error in copy information from logs to buf")
+					var logBuf []byte
+					if !follow {
+						logBuf, err = io.ReadAll(logs)
+						if err != nil {
+							return fmt.Errorf("error occurred while processing logs")
+						}
+						printLogs(string(logBuf), name)
+					} else {
+						wg.Add(1)
+						go func() {
+							defer wg.Done()
+							for {
+								buf := make([]byte, BYTE_SIZE)
+								numBytes, err := logs.Read(buf)
+								if numBytes == 0 {
+									continue
+								}
+								if err == io.EOF {
+									break
+								}
+								if err != nil {
+									log.Println("error occurred while processing logs", err)
+									break
+								}
+								logBuf = buf[0:numBytes]
+								printLogs(string(logBuf), name)
+							}
+						}()
 					}
-
-					// Append this to data to be printed
-					for _, str := range strings.Split(buf.String(), "\n") {
-						data = append(data, fmt.Sprintf("%s\t|\t%s", name, str))
-					}
-					data = append(data, "\n")
 				}
 			}
-
-			// Print the data
-			for _, str := range data {
-				log.Print(str)
-			}
-
+			wg.Wait()
 		}
-
 		return nil
 	},
+}
+
+func init() {
+	logsCmd.Flags().BoolVarP(&follow, "follow", "f", false, "(Optional) Follow the stream of the Meshery's logs. Defaults to false.")
 }

@@ -1,5 +1,6 @@
 name: Meshery Build and Releaser (edge)
 on:
+  workflow_dispatch:
   push:
     branches:
       - "master"

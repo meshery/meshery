@@ -45,7 +45,7 @@ service_pod_relationships[service_name] {
 	service_port := service_spec.ports[_]
 
 	# Extract the Service protocol
-	service_protocol := service_port.protocol
+	service_protocol := get_port_protocol(service_port)
 
 	# Select a Pod resource with the same name as the Service
 	pod := input.services[_]
@@ -87,7 +87,7 @@ service_deployment_relationships[service_name] {
     service_port := service_spec.ports[_]
     
     # Extract the Service protocol
-    service_protocol := service_port.protocol
+    service_protocol := get_port_protocol(service_port)
 
     # Select a Pod resource with the same name as the Service
     deployment := input.services[_]

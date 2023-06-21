@@ -35,5 +35,4 @@ func TestSMap(t *testing.T) {
 	if m["foo"] != "bar" {
 		t.Errorf("UnmarshalJSON error: expected %v, got %v", "bar", m["foo"])
 	}
-
 }
