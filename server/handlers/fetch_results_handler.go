@@ -45,16 +45,38 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 // swagger:route GET /api/perf/profile/result PerfAPI idGetAllPerfResults
 // Handles GET requests for perf results
 //
-// Returns pages of all the perf results from Remote Provider
+// # Results can be further filtered through query parameter
 //
+// ```?order={field}``` orders on the passed field
+//
+// ```?page={page-number}``` Default page number is 0
+//
+// ```?pagesize={pagesize}``` Default pagesize is 10. Max pagesize returned is 25
+// 
+// ```?search={}``` If search is non empty then a greedy search is performed
+//
+//  ```?from={date}``` Date must be in yyyy-mm-dd format
+//
+// ```?to={date}``` Date must be in yyyy-mm-dd format
 // responses:
 // 	200: performanceResultsResponseWrapper
 
 // swagger:route GET /api/user/performance/profiles/results PerformanceAPI idGetAllPerformanceResults
 // Handles GET requests for performance results
 //
-// Returns pages of all the performance results from Remote Provider
+// # Results can be further filtered through query parameter
 //
+// ```?order={field}``` orders on the passed field
+//
+// ```?page={page-number}``` Default page number is 0
+//
+// ```?pagesize={pagesize}``` Default pagesize is 10. Max pagesize returned is 25
+// 
+// ```?search={}``` If search is non empty then a greedy search is performed
+//
+//  ```?from={date}``` Date must be in yyyy-mm-dd format
+//
+// ```?to={date}``` Date must be in yyyy-mm-dd format
 // responses:
 // 	200: performanceResultsResponseWrapper
 
@@ -70,7 +92,7 @@ func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Reques
 
 	tokenString := req.Context().Value(models.TokenCtxKey).(string)
 
-	bdr, err := p.FetchAllResults(tokenString, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), q.Get("from"), q.Get("to"))
+	bdr, err := p.FetchAllResults(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("from"), q.Get("to"))
 	if err != nil {
 		http.Error(w, "error while getting load test results", http.StatusInternalServerError)
 		return
