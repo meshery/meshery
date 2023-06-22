@@ -30,7 +30,7 @@ export const extensionStyles = (theme) => ({
     },
   },
   card : {
-    padding : theme.spacing(3),
+    padding : theme.spacing(4),
     borderRadius : theme.spacing(1),
     transformStyle : "preserve-3d",
     boxShadow : "0 4px 8px 0 rgba(0,0,0,0.2)",
@@ -43,10 +43,8 @@ export const extensionStyles = (theme) => ({
   },
   img : {
     paddingRight : "1rem",
-    height : "auto",
-    width : "auto",
-    maxWidth : "120px",
-    maxHeight : "120px",
+    height : "80px",
+    width : "80px",
   },
   frontSideDescription : {
     paddingTop : "1rem",
