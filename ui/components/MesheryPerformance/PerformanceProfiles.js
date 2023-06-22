@@ -128,7 +128,6 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
   useEffect(() => {
     fetchTestProfiles(page, pageSize, search, sortOrder);
     const subscription = subscribePerformanceProfiles((res) => {
-      // @ts-ignore
       let result = res?.subscribePerfProfiles;
       if (typeof result !== "undefined") {
         if (result) {
@@ -176,7 +175,6 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
       },
     }).subscribe({
       next : (res) => {
-        // @ts-ignore
         let result = res?.getPerformanceProfiles;
         updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
@@ -259,7 +257,6 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
                 variant="contained"
                 color="primary"
                 size="large"
-                // @ts-ignore
                 onClick={() => setProfileForModal({})}
               >
                 <AddIcon style={iconMedium} className={classes.addIcon} />
@@ -310,7 +307,6 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
                 variant="contained"
                 color="primary"
                 size="large"
-                // @ts-ignore
                 onClick={() => setProfileForModal({})}
               >
 
@@ -331,33 +327,19 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
                 </div>
 
                 <MesheryPerformanceComponent
-                // @ts-ignore
                   loadAsPerformanceProfile
-                  // @ts-ignore
                   performanceProfileID={profileForModal?.id}
-                  // @ts-ignore
                   profileName={profileForModal?.name}
-                  // @ts-ignore
                   meshName={profileForModal?.service_mesh}
-                  // @ts-ignore
                   url={profileForModal?.endpoints?.[0]}
-                  // @ts-ignore
                   qps={profileForModal?.qps}
-                  // @ts-ignore
                   loadGenerator={profileForModal?.load_generators?.[0]}
-                  // @ts-ignore
                   t={profileForModal?.duration}
-                  // @ts-ignore
                   c={profileForModal?.concurrent_request}
-                  // @ts-ignore
                   reqBody={profileForModal?.request_body}
-                  // @ts-ignore
                   headers={profileForModal?.request_headers}
-                  // @ts-ignore
                   cookies={profileForModal?.request_cookies}
-                  // @ts-ignore
                   contentType={profileForModal?.content_type}
-                  // @ts-ignore
                   runTestOnMount={!!profileForModal?.runTest}
                 />
               </Paper>
@@ -375,5 +357,4 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
-// @ts-ignore
 export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(PerformanceProfile)));
