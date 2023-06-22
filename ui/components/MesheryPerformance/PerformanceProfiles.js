@@ -29,12 +29,12 @@ const styles = (theme) => ({
     minWidth : 400,
     padding : '10px',
     color : '#fff',
-    flexGrow: 1
+    flexGrow : 1
   },
-  dialogHeader: {
+  dialogHeader : {
     backgroundColor : theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : '#396679',
-    display: "flex",
-    alignItems: "center"
+    display : "flex",
+    alignItems : "center"
   },
   topToolbar : {
     margin : "2rem auto",
@@ -309,7 +309,6 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
                 size="large"
                 onClick={() => setProfileForModal({})}
               >
-
                 <Typography className="addIcon">Add Performance Profile</Typography>
               </Button>
             </div>
@@ -318,31 +317,31 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
         <GenericModal
           open={!!profileForModal}
           Content={
-              <Paper className={classes.addProfileModal} >
-                <div className={classes.dialogHeader}>
-          <DialogTitle className={classes.title} >Performance Profile Wizard</DialogTitle>
-                <IconButton aria-label="close" style={{color: "white"}} onClick={() => setProfileForModal(undefined) }>
+            <Paper className={classes.addProfileModal} >
+              <div className={classes.dialogHeader}>
+                <DialogTitle className={classes.title} >Performance Profile Wizard</DialogTitle>
+                <IconButton aria-label="close" style={{ color : "white" }} onClick={() => setProfileForModal(undefined) }>
                   <CloseIcon />
                 </IconButton>
-                </div>
+              </div>
 
-                <MesheryPerformanceComponent
-                  loadAsPerformanceProfile
-                  performanceProfileID={profileForModal?.id}
-                  profileName={profileForModal?.name}
-                  meshName={profileForModal?.service_mesh}
-                  url={profileForModal?.endpoints?.[0]}
-                  qps={profileForModal?.qps}
-                  loadGenerator={profileForModal?.load_generators?.[0]}
-                  t={profileForModal?.duration}
-                  c={profileForModal?.concurrent_request}
-                  reqBody={profileForModal?.request_body}
-                  headers={profileForModal?.request_headers}
-                  cookies={profileForModal?.request_cookies}
-                  contentType={profileForModal?.content_type}
-                  runTestOnMount={!!profileForModal?.runTest}
-                />
-              </Paper>
+              <MesheryPerformanceComponent
+                loadAsPerformanceProfile
+                performanceProfileID={profileForModal?.id}
+                profileName={profileForModal?.name}
+                meshName={profileForModal?.service_mesh}
+                url={profileForModal?.endpoints?.[0]}
+                qps={profileForModal?.qps}
+                loadGenerator={profileForModal?.load_generators?.[0]}
+                t={profileForModal?.duration}
+                c={profileForModal?.concurrent_request}
+                reqBody={profileForModal?.request_body}
+                headers={profileForModal?.request_headers}
+                cookies={profileForModal?.request_cookies}
+                contentType={profileForModal?.content_type}
+                runTestOnMount={!!profileForModal?.runTest}
+              />
+            </Paper>
           }
           handleClose={() => {
             setProfileForModal(undefined);
