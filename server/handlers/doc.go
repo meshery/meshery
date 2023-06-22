@@ -425,3 +425,9 @@ type allMeshmodelRelationshipsResponseWrapper struct {
 type systemDatabaseResponseWrapper struct {
 	Body *models.DatabaseSummary
 }
+
+// Returns K8s contexts
+// swagger:response systemK8sContextsResponseWrapper
+type systemK8sContextsResponseWrapper struct {
+	Body *models.MesheryK8sContextPage
+}

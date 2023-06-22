@@ -1195,6 +1195,24 @@ paths:
             tags:
                 - SystemAPI
     /api/system/kubernetes/contexts:
+        get:
+            description: |-
+                # Contexts can be further filtered through query parameter
+
+                ```?order={field}``` orders on the passed field
+
+                ```?page={page-number}``` Default page number is 0
+
+                ```?pagesize={pagesize}``` Default pagesize is 10. Max pagesize is 25
+
+                ```?search={contextname}``` If search is non empty then a greedy search is performed
+            operationId: idGetAllContexts
+            responses:
+                "200":
+                    $ref: '#/responses/systemK8sContextsResponseWrapper'
+            summary: Handle GET request for all kubernetes contexts.
+            tags:
+                - GetAllContexts
         post:
             description: Returns the context list for a given k8s config
             operationId: idPostK8SContexts
@@ -1925,6 +1943,10 @@ responses:
             type: array
     systemDatabaseResponseWrapper:
         description: Returns database summary
+        headers:
+            Body: {}
+    systemK8sContextsResponseWrapper:
+        description: Returns K8s contexts
         headers:
             Body: {}
     userInfo:
