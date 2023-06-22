@@ -256,12 +256,21 @@ paths:
                 - EventsAPI
     /api/filter:
         get:
-            description: Returns all the Meshery Filters saved by the current user
-            operationId: idGetFilterFile
+            description: |-
+                Returns the list of all the filters saved by the current user
+
+                ```?order={field}``` orders on the passed field
+
+                ```?search=<filter name>``` A string matching is done on the specified filter name
+
+                ```?page={page-number}``` Default page number is 0
+
+                ```?pagesize={pagesize}``` Default pagesize is 10
+            operationId: idGetFilterFiles
             responses:
                 "200":
                     $ref: '#/responses/mesheryFiltersResponseWrapper'
-            summary: Handle GET request for all filters
+            summary: Handle GET request for filters
             tags:
                 - FiltersAPI
         post:
@@ -360,7 +369,7 @@ paths:
     /api/filter/file/{id}:
         get:
             description: Returns the Meshery Filter file saved by the current user with the given id
-            operationId: idGetFilterFiles
+            operationId: idGetFilterFile
             responses:
                 "200":
                     $ref: '#/responses/mesheryFilterResponseWrapper'
@@ -838,8 +847,6 @@ paths:
                 Returns the list of all the patterns saved by the current user
                 This will return all the patterns with their details
 
-                ```?updated_after=<timestamp>``` timestamp should be of the format "YYYY-MM-DD HH:MM:SS"
-
                 ```?order={field}``` orders on the passed field
 
                 ```?search=<design name>``` A string matching is done on the specified design name
@@ -907,7 +914,7 @@ paths:
 
                 ```?page={page-number}``` Default page number is 0
 
-                ```?pagesize={pagesize}``` Default pagesize is 10. Max pagesize is 25
+                ```?pagesize={pagesize}``` Default pagesize is 10.
 
                 ```?search={patternname}``` If search is non empty then a greedy search is performed
             operationId: idGetCatalogMesheryPatternsHandler

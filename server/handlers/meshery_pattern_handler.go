@@ -308,8 +308,6 @@ func (h *Handler) handlePatternPOST(
 // Returns the list of all the patterns saved by the current user
 // This will return all the patterns with their details
 //
-// ```?updated_after=<timestamp>``` timestamp should be of the format "YYYY-MM-DD HH:MM:SS"
-//
 // ```?order={field}``` orders on the passed field
 //
 // ```?search=<design name>``` A string matching is done on the specified design name
@@ -319,8 +317,6 @@ func (h *Handler) handlePatternPOST(
 // ```?pagesize={pagesize}``` Default pagesize is 10
 // responses:
 // 	200: mesheryPatternsResponseWrapper
-
-// GetMesheryPatternsHandler returns the list of all the patterns saved by the current user
 func (h *Handler) GetMesheryPatternsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -362,7 +358,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 //
 // ```?page={page-number}``` Default page number is 0
 //
-// ```?pagesize={pagesize}``` Default pagesize is 10. Max pagesize is 25
+// ```?pagesize={pagesize}``` Default pagesize is 10.
 // 
 // ```?search={patternname}``` If search is non empty then a greedy search is performed
 // responses:

@@ -21,7 +21,7 @@ type MesheryFilterRequestBody struct {
 	FilterData *models.MesheryFilter `json:"filter_data,omitempty"`
 }
 
-// swagger:route GET /api/filter/file/{id} FiltersAPI idGetFilterFiles
+// swagger:route GET /api/filter/file/{id} FiltersAPI idGetFilterFile
 // Handle GET request for filter file with given id
 //
 // Returns the Meshery Filter file saved by the current user with the given id
@@ -48,14 +48,6 @@ func (h *Handler) GetMesheryFilterFileHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-// swagger:route GET /api/filter FiltersAPI idGetFilterFile
-// Handle GET request for all filters
-//
-// Returns all the Meshery Filters saved by the current user
-// responses:
-//
-//	200: mesheryFiltersResponseWrapper
-//
 // FilterFileRequestHandler will handle requests of both type GET and POST
 // on the route /api/filter
 func (h *Handler) FilterFileRequestHandler(
@@ -180,7 +172,20 @@ func (h *Handler) handleFilterPOST(
 	}
 }
 
-// GetMesheryFiltersHandler returns the list of all the filters saved by the current user
+// swagger:route GET /api/filter FiltersAPI idGetFilterFiles
+// Handle GET request for filters
+//
+// Returns the list of all the filters saved by the current user
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?search=<filter name>``` A string matching is done on the specified filter name
+//
+// ```?page={page-number}``` Default page number is 0
+//
+// ```?pagesize={pagesize}``` Default pagesize is 10
+// responses:
+// 	200: mesheryFiltersResponseWrapper
 func (h *Handler) GetMesheryFiltersHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -191,7 +196,7 @@ func (h *Handler) GetMesheryFiltersHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetMesheryFilters(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
+	resp, err := provider.GetMesheryFilters(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
 	if err != nil {
 		h.log.Error(ErrFetchFilter(err))
 		http.Error(rw, ErrFetchFilter(err).Error(), http.StatusInternalServerError)
