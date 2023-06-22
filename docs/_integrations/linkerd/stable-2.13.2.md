@@ -1,11 +1,10 @@
 ---
-component: stable-2.9.2
+component: stable-2.13.2
 integrations:
     - authorizationpolicy.Linkerd
     - jaegerlinkerdaddon_meshmodel.json
     - linkerdmesh_meshmodel.json
     - meshtlsauthentication.Linkerd
-    - multiclusterlinkerdaddon_meshmodel.json
     - networkauthentication.Linkerd
     - server.Linkerd
     - serverauthorization.Linkerd

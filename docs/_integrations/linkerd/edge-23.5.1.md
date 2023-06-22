@@ -1,11 +1,10 @@
 ---
-component: stable-2.9.2
+component: edge-23.5.1
 integrations:
     - authorizationpolicy.Linkerd
     - jaegerlinkerdaddon_meshmodel.json
     - linkerdmesh_meshmodel.json
     - meshtlsauthentication.Linkerd
-    - multiclusterlinkerdaddon_meshmodel.json
     - networkauthentication.Linkerd
     - server.Linkerd
     - serverauthorization.Linkerd
