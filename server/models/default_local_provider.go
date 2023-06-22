@@ -673,8 +673,8 @@ func (l *DefaultLocalProvider) GetMesheryFilters(_, page, pageSize, search, orde
 }
 
 // GetCatalogMesheryFilters gives the catalog filters stored with the provider
-func (l *DefaultLocalProvider) GetCatalogMesheryFilters(_ string, search, order string) ([]byte, error) {
-	return l.MesheryFilterPersister.GetMesheryCatalogFilters(search, order)
+func (l *DefaultLocalProvider) GetCatalogMesheryFilters(_ string, page, pageSize, search, order string) ([]byte, error) {
+	return l.MesheryFilterPersister.GetMesheryCatalogFilters(page, pageSize, search, order)
 }
 
 // PublishCatalogFilter publishes filter to catalog

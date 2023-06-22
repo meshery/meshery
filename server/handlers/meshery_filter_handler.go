@@ -210,7 +210,15 @@ func (h *Handler) GetMesheryFiltersHandler(
 // swagger:route GET /api/filter/catalog FiltersAPI idGetCatalogMesheryFiltersHandler
 // Handle GET request for catalog filters
 //
-// Used to get catalog filters
+// # Filters can be further filtered through query parameter
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?page={page-number}``` Default page number is 0
+//
+// ```?pagesize={pagesize}``` Default pagesize is 10. 
+// 
+// ```?search={filtername}``` If search is non empty then a greedy search is performed
 // responses:
 //
 //	200: mesheryFiltersResponseWrapper
@@ -224,7 +232,7 @@ func (h *Handler) GetCatalogMesheryFiltersHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetCatalogMesheryFilters(tokenString, q.Get("search"), q.Get("order"))
+	resp, err := provider.GetCatalogMesheryFilters(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
 	if err != nil {
 		h.log.Error(ErrFetchFilter(err))
 		http.Error(rw, ErrFetchFilter(err).Error(), http.StatusInternalServerError)

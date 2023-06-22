@@ -479,7 +479,7 @@ input PageFilter {
 
 input CatalogSelector {
   page: String!
-  pageSize: String!
+  page_size: String!
   search: String!
   order: String!
 }

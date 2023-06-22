@@ -319,7 +319,7 @@ paths:
                 - FiltersAPI
     /api/filter/catalog:
         get:
-            description: Used to get catalog filters
+            description: "# Filters can be further filtered through query parameter\n\n```?order={field}``` orders on the passed field\n\n```?page={page-number}``` Default page number is 0\n\n```?pagesize={pagesize}``` Default pagesize is 10. \n\n```?search={filtername}``` If search is non empty then a greedy search is performed"
             operationId: idGetCatalogMesheryFiltersHandler
             responses:
                 "200":

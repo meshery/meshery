@@ -2112,7 +2112,7 @@ func (l *RemoteProvider) GetMesheryFilters(tokenString string, page, pageSize, s
 }
 
 // GetCatalogMesheryFilters gives the catalog filters stored with the provider
-func (l *RemoteProvider) GetCatalogMesheryFilters(tokenString string, search, order string) ([]byte, error) {
+func (l *RemoteProvider) GetCatalogMesheryFilters(tokenString string, page, pageSize, search, order string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(MesheryFiltersCatalog) {
 		logrus.Error("operation not available")
 		return []byte{}, ErrInvalidCapability("MesheryFiltersCatalog", l.ProviderName)
@@ -2124,6 +2124,12 @@ func (l *RemoteProvider) GetCatalogMesheryFilters(tokenString string, search, or
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
+	if page != "" {
+		q.Set("page", page)
+	}
+	if pageSize != "" {
+		q.Set("pagesize", pageSize)
+	}
 	if search != "" {
 		q.Set("search", search)
 	}
