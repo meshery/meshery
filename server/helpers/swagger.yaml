@@ -1081,6 +1081,25 @@ paths:
             summary: Handle GET request for list of providers
             tags:
                 - ProvidersAPI
+    /api/smi/results:
+        get:
+            description: |-
+                # Results can be further filtered through query parameter
+
+                ```?order={field}``` orders on the passed field
+
+                ```?page={page-number}``` Default page number is 0
+
+                ```?pagesize={pagesize}``` Default pagesize is 10. Max page size returned is 25
+
+                ```?search={status|mesh_version|mesh_name|date|id}``` If search is non empty then a greedy search is performed
+            operationId: idFetchSmiResults
+            responses:
+                "200":
+                    $ref: '#/responses/smiResultsResponseWrapper'
+            summary: Handle GET request for the results of all the smi conformance tests
+            tags:
+                - Smi
     /api/system/adapter/manage:
         delete:
             description: Used to delete adapter configuration
@@ -1962,6 +1981,10 @@ responses:
         description: Returns List of saved schedules
     singleScheduleResponseWrapper:
         description: Returns a single schedules
+    smiResultsResponseWrapper:
+        description: Returns SMI results
+        headers:
+            Body: {}
     systemAdaptersRespWrapper:
         description: Return all the adapters
         schema:

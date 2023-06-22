@@ -431,3 +431,9 @@ type systemDatabaseResponseWrapper struct {
 type systemK8sContextsResponseWrapper struct {
 	Body *models.MesheryK8sContextPage
 }
+
+// Returns SMI results
+// swagger:response smiResultsResponseWrapper
+type smiResultsResponseWrapper struct {
+	Body *models.SmiResultPage
+}
