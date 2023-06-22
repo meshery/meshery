@@ -356,7 +356,15 @@ func (h *Handler) GetMesheryPatternsHandler(
 // swagger:route GET /api/pattern/catalog PatternsAPI idGetCatalogMesheryPatternsHandler
 // Handle GET request for catalog patterns
 //
-// Used to get catalog patterns
+// # Patterns can be further filtered through query parameter
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?page={page-number}``` Default page number is 0
+//
+// ```?pagesize={pagesize}``` Default pagesize is 10. Max pagesize is 25
+// 
+// ```?search={patternname}``` If search is non empty then a greedy search is performed
 // responses:
 //
 //	200: mesheryPatternsResponseWrapper
@@ -370,7 +378,7 @@ func (h *Handler) GetCatalogMesheryPatternsHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("search"), q.Get("order"))
+	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
