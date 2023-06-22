@@ -2,27 +2,14 @@
 component: stable-2.11.0
 integrations:
     - authorizationpolicy.Linkerd
-    - jaegerlinkerdaddon.meshery
-    - jaegerlinkerdaddon_definition.json
-    - linkerdmesh.meshery
-    - linkerdmesh_definition.json
+    - jaegerlinkerdaddon_meshmodel.json
+    - linkerdmesh_meshmodel.json
     - meshtlsauthentication.Linkerd
-    - multiclusterlinkerdaddon.meshery
-    - multiclusterlinkerdaddon_definition.json
+    - multiclusterlinkerdaddon_meshmodel.json
     - networkauthentication.Linkerd
     - server.Linkerd
-    - server.linkerd
-    - server.linkerd_definition
     - serverauthorization.Linkerd
-    - serverauthorization.linkerd
-    - serverauthorization.linkerd_definition
     - serviceprofile.Linkerd
-    - serviceprofile.linkerd
-    - serviceprofile.linkerd_definition
-    - smilinkerdaddon.meshery
-    - smilinkerdaddon_definition.json
-    - trafficsplit.linkerd
-    - trafficsplit.linkerd_definition
-    - vizlinkerdaddon.meshery
-    - vizlinkerdaddon_definition.json
+    - smilinkerdaddon_meshmodel.json
+    - vizlinkerdaddon_meshmodel.json
 ---
