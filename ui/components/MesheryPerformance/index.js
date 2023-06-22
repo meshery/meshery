@@ -123,7 +123,7 @@ const styles = (theme) => ({
     minWidth : 400,
     padding : '10px',
     color : '#fff',
-    backgroundColor : theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : '#396679',
+    backgroundColor : theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : theme.palette.secondary.mainBackground,
   },
   wrapperClss : { padding : theme.spacing(10), position : "relative", paddingTop : theme.spacing(5) },
   buttons : { display : "flex", justifyContent : "flex-end" },
@@ -164,7 +164,7 @@ const styles = (theme) => ({
   },
   radio : {
     '&.Mui-checked' : {
-      color : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary
+      color : theme.palette.type === 'dark' ? theme.palette.secondary.focused : theme.palette.primary
     },
   },
 });

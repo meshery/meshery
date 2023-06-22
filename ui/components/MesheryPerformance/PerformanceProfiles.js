@@ -32,7 +32,7 @@ const styles = (theme) => ({
     flexGrow : 1
   },
   dialogHeader : {
-    backgroundColor : theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : '#396679',
+    backgroundColor : theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : theme.palette.secondary.mainBackground,
     display : "flex",
     alignItems : "center"
   },
