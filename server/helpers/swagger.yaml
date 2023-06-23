@@ -309,12 +309,12 @@ paths:
             tags:
                 - FiltersAPI
     /api/filter/catalog:
-        post:
+        get:
             description: Used to get catalog filters
             operationId: idGetCatalogMesheryFiltersHandler
             responses:
                 "200":
-                    $ref: '#/responses/mesheryFilterResponseWrapper'
+                    $ref: '#/responses/mesheryFiltersResponseWrapper'
             summary: Handle GET request for catalog filters
             tags:
                 - FiltersAPI
@@ -888,12 +888,12 @@ paths:
             tags:
                 - PatternsAPI
     /api/pattern/catalog:
-        post:
+        get:
             description: Used to get catalog patterns
             operationId: idGetCatalogMesheryPatternsHandler
             responses:
                 "200":
-                    $ref: '#/responses/mesheryPatternResponseWrapper'
+                    $ref: '#/responses/mesheryPatternsResponseWrapper'
             summary: Handle GET request for catalog patterns
             tags:
                 - PatternsAPI

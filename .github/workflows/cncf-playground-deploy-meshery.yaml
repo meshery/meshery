@@ -11,9 +11,9 @@ jobs:
         - name: Pull latest images and restart containers
           uses: appleboy/ssh-action@master
           with:
-              host: METAL_SERVER1
+              host: ${{ secrets.METAL_SERVER1 }}
               username: root
-              key: ${{ secrets.METAL_AUTH_TOKEN }}
+              key: ${{ secrets.METAL_SSH_KEY }}
               script: |
                 cd meshery
                 git pull

@@ -36,13 +36,13 @@ require (
 	github.com/gorilla/websocket v1.5.0
 	github.com/gosimple/slug v1.12.0
 	github.com/grafana-tools/sdk v0.0.0-20220919052116-6562121319fc
-	github.com/jarcoal/httpmock v1.2.0
+	github.com/jarcoal/httpmock v1.3.0
 	github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
 	github.com/layer5io/meshery-operator v0.6.8
 	github.com/layer5io/meshkit v0.6.45
 	github.com/layer5io/meshsync v0.6.9
-	github.com/layer5io/nighthawk-go v1.0.3
+	github.com/layer5io/nighthawk-go v1.0.5
 	github.com/layer5io/service-mesh-performance v0.3.4
 	github.com/lib/pq v1.10.7
 	github.com/manifoldco/promptui v0.9.0
