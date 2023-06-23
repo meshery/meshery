@@ -15,7 +15,15 @@ import (
 // swagger:route GET /api/user/performance/profiles/{id}/results PerformanceAPI idGETProfileResults
 // Handle GET request for results of a profile
 //
-// Fetches pages of results from Remote Provider for the given id
+// Fetches pages of results from provider for the given id
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?page={page-number}``` Default page number is 0
+//
+// ```?pagesize={pagesize}``` Default pagesize is 10
+// 
+// ```?search={result_name|mesh|url}``` If search is non empty then a greedy search is performed
 // responses:
 // 	200:performanceResultsResponseWrapper
 
@@ -33,7 +41,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 
 	tokenString := req.Context().Value(models.TokenCtxKey).(string)
 
-	bdr, err := p.FetchResults(tokenString, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), profileID)
+	bdr, err := p.FetchResults(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), profileID)
 	if err != nil {
 		http.Error(w, "error while getting load test results", http.StatusInternalServerError)
 		return

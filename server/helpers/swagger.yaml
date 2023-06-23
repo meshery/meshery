@@ -1004,7 +1004,7 @@ paths:
 
                 ```?page={page-number}``` Default page number is 0
 
-                ```?pagesize={pagesize}``` Default pagesize is 10.
+                ```?pagesize={pagesize}``` Default pagesize is 10
 
                 ```?search={}``` If search is non empty then a greedy search is performed
 
@@ -1234,7 +1234,7 @@ paths:
 
                 ```?page={page-number}``` Default page number is 0
 
-                ```?pagesize={pagesize}``` Default pagesize is 10.
+                ```?pagesize={pagesize}``` Default pagesize is 10
 
                 ```?search={contextname}``` If search is non empty then a greedy search is performed
             operationId: idGetAllContexts
@@ -1570,7 +1570,16 @@ paths:
                 - PerformanceAPI
     /api/user/performance/profiles/{id}/results:
         get:
-            description: Fetches pages of results from Remote Provider for the given id
+            description: |-
+                Fetches pages of results from provider for the given id
+
+                ```?order={field}``` orders on the passed field
+
+                ```?page={page-number}``` Default page number is 0
+
+                ```?pagesize={pagesize}``` Default pagesize is 10
+
+                ```?search={result_name|mesh|url}``` If search is non empty then a greedy search is performed
             operationId: idGETProfileResults
             parameters:
                 - description: id for a specific

@@ -227,6 +227,12 @@ func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, e
 
 // FetchResults - fetches results from provider backend
 func (l *DefaultLocalProvider) FetchResults(_, page, pageSize, _, _, profileID string) ([]byte, error) {
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, ErrPageNumber(err)
