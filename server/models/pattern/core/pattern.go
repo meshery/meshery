@@ -403,7 +403,7 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 	if err != nil {
 		return pf, ErrPatternFromCytoscape(err)
 	}
-	//add depends-on field``
+	//add depends-on field
 	for child, parents := range dependsOnMap {
 		childSvc := eleToSvc[child]
 		if childSvc != "" {
