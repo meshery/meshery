@@ -115,10 +115,21 @@ info:
     title: Meshery API.
     version: 0.4.27
 paths:
-    /api/application/:
+    /api/application:
         get:
-            description: Returns requests for all Meshery Applications
-            operationId: idGetApplicationFileRequest
+            description: |-
+                Fetches the list of all applications saved by the current user
+
+                ```?updated_after=<timestamp>``` timestamp should be of the format "YYYY-MM-DD HH:MM:SS"
+
+                ```?order={field}``` orders on the passed field
+
+                ```?search=<application name>``` A string matching is done on the specified application name
+
+                ```?page={page-number}``` Default page number is 0
+
+                ```?pagesize={pagesize}``` Default pagesize is 10
+            operationId: idGetMesheryApplications
             responses:
                 "200":
                     $ref: '#/responses/mesheryApplicationsResponseWrapper'
@@ -141,34 +152,6 @@ paths:
                 "200":
                     $ref: '#/responses/noContentWrapper'
             summary: Handle Delete for a Meshery Application File
-            tags:
-                - ApplicationsAPI
-        get:
-            description: |-
-                Fetches the list of all applications saved by the current user
-
-                ```?updated_after=<timestamp>``` timestamp should be of the format "YYYY-MM-DD HH:MM:SS"
-
-                ```?order={field}``` orders on the passed field
-
-                ```?search=<application name>``` A string matching is done on the specified application name
-
-                ```?page={page-number}``` Default page number is 1
-
-                ```?pagesize={pagesize}``` Default pagesize is 10
-            operationId: idGetMesheryApplication
-            parameters:
-                - description: id for a specific
-                  format: uuid
-                  in: path
-                  name: id
-                  required: true
-                  type: string
-                  x-go-name: ID
-            responses:
-                "200":
-                    $ref: '#/responses/mesheryApplicationResponseWrapper'
-            summary: Handle GET request for Meshery Application with the given id
             tags:
                 - ApplicationsAPI
     /api/application/{sourcetype}:

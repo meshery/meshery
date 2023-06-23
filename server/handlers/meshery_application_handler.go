@@ -69,13 +69,6 @@ func (h *Handler) ApplicationFileHandler(
 // responses:
 //  200: mesheryApplicationResponseWrapper
 
-// swagger:route GET /api/application/ ApplicationsAPI idGetApplicationFileRequest
-// Handle GET request for Application Files
-//
-// Returns requests for all Meshery Applications
-// responses:
-//  200: mesheryApplicationsResponseWrapper
-
 // ApplicationFileRequestHandler will handle requests of both type GET and POST
 // on the route /api/application
 func (h *Handler) ApplicationFileRequestHandler(
@@ -526,8 +519,8 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 	h.formatApplicationOutput(rw, resp, format, &res)
 }
 
-// swagger:route GET /api/application/{id} ApplicationsAPI idGetMesheryApplication
-// Handle GET request for Meshery Application with the given id
+// swagger:route GET /api/application ApplicationsAPI idGetMesheryApplications
+// Handle GET request for Application Files
 //
 // Fetches the list of all applications saved by the current user
 //
@@ -537,13 +530,11 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 //
 // ```?search=<application name>``` A string matching is done on the specified application name
 //
-// ```?page={page-number}``` Default page number is 1
+// ```?page={page-number}``` Default page number is 0
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
-//
 // responses:
-//
-//  200: mesheryApplicationResponseWrapper
+//  200: mesheryApplicationsResponseWrapper
 
 // GetMesheryApplicationsHandler returns the list of all the applications saved by the current user
 func (h *Handler) GetMesheryApplicationsHandler(
@@ -556,7 +547,7 @@ func (h *Handler) GetMesheryApplicationsHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetMesheryApplications(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"), q.Get("updated_after"))
+	resp, err := provider.GetMesheryApplications(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("updated_after"))
 	if err != nil {
 		obj := "fetch"
 		h.log.Error(ErrApplicationFailure(err, obj))
