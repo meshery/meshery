@@ -202,13 +202,13 @@ func (h *Handler) GetMesheryFiltersHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-// swagger:route POST /api/filter/catalog FiltersAPI idGetCatalogMesheryFiltersHandler
+// swagger:route GET /api/filter/catalog FiltersAPI idGetCatalogMesheryFiltersHandler
 // Handle GET request for catalog filters
 //
 // Used to get catalog filters
 // responses:
 //
-//	200: mesheryFilterResponseWrapper
+//	200: mesheryFiltersResponseWrapper
 func (h *Handler) GetCatalogMesheryFiltersHandler(
 	rw http.ResponseWriter,
 	r *http.Request,

@@ -152,6 +152,7 @@ type NavigatorExtension struct {
 	Children        NavigatorExtensions `json:"children,omitempty"`
 	Type            string              `json:"type,omitempty"`
 	AllowedTo       MeshMapComponentSet `json:"allowedTo,omitempty"`
+	IsBeta          *bool               `json:"isBeta,omitempty"`
 }
 
 // AccountExtension describes the Account extension point in the UI
@@ -198,7 +199,7 @@ type ConnectionPayload struct {
 	SubType          string                 `json:"sub_type,omitempty"`
 	Type             string                 `json:"type,omitempty"`
 	MetaData         map[string]interface{} `json:"metadata,omitempty"`
-	Status 			 ConnectionStatus 		`json:"status,omitempty"`
+	Status           ConnectionStatus       `json:"status,omitempty"`
 	CredentialSecret map[string]interface{} `json:"credential_secret,omitempty"`
 }
 
