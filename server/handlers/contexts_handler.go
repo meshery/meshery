@@ -17,7 +17,7 @@ import (
 //
 // ```?page={page-number}``` Default page number is 0
 //
-// ```?pagesize={pagesize}``` Default pagesize is 10. Max pagesize is 25
+// ```?pagesize={pagesize}``` Default pagesize is 10
 // 
 // ```?search={contextname}``` If search is non empty then a greedy search is performed
 // responses:

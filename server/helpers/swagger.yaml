@@ -368,7 +368,7 @@ paths:
 
                 ```?page={page-number}``` Default page number is 0
 
-                ```?pagesize={pagesize}``` Default pagesize is 20. Max pagesize returned is 100
+                ```?pagesize={pagesize}``` Default pagesize is 20
 
                 ```?search={username|email|first_name|last_name}``` If search is non empty then a greedy search is performed
 
@@ -1004,7 +1004,7 @@ paths:
 
                 ```?page={page-number}``` Default page number is 0
 
-                ```?pagesize={pagesize}``` Default pagesize is 10. Max pagesize returned is 25
+                ```?pagesize={pagesize}``` Default pagesize is 10.
 
                 ```?search={}``` If search is non empty then a greedy search is performed
 
@@ -1089,7 +1089,7 @@ paths:
 
                 ```?page={page-number}``` Default page number is 0
 
-                ```?pagesize={pagesize}``` Default pagesize is 10. Max page size returned is 25
+                ```?pagesize={pagesize}``` Default pagesize is 10
 
                 ```?search={status|mesh_version|mesh_name|date|id}``` If search is non empty then a greedy search is performed
             operationId: idFetchSmiResults
@@ -1234,7 +1234,7 @@ paths:
 
                 ```?page={page-number}``` Default page number is 0
 
-                ```?pagesize={pagesize}``` Default pagesize is 10. Max pagesize is 25
+                ```?pagesize={pagesize}``` Default pagesize is 10.
 
                 ```?search={contextname}``` If search is non empty then a greedy search is performed
             operationId: idGetAllContexts
@@ -1503,7 +1503,16 @@ paths:
                 - UserAPI
     /api/user/performance/profiles:
         get:
-            description: Returns the list of all the performance profiles saved by the current user
+            description: |-
+                Returns the list of all the performance profiles saved by the current user
+
+                ```?order={field}``` orders on the passed field
+
+                ```?page={page-number}``` Default page number is 0
+
+                ```?pagesize={pagesize}``` Default pagesize is 10
+
+                ```?search={profilename}``` If search is non empty then a greedy search is performed
             operationId: idGetPerformanceProfiles
             responses:
                 "200":
@@ -1599,7 +1608,7 @@ paths:
 
                 ```?page={page-number}``` Default page number is 0
 
-                ```?pagesize={pagesize}``` Default pagesize is 10. Max pagesize returned is 25
+                ```?pagesize={pagesize}``` Default pagesize is 10
 
                 ```?search={}``` If search is non empty then a greedy search is performed
 

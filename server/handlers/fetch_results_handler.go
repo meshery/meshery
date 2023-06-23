@@ -51,7 +51,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 //
 // ```?page={page-number}``` Default page number is 0
 //
-// ```?pagesize={pagesize}``` Default pagesize is 10. Max pagesize returned is 25
+// ```?pagesize={pagesize}``` Default pagesize is 10
 // 
 // ```?search={}``` If search is non empty then a greedy search is performed
 //
@@ -70,7 +70,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 //
 // ```?page={page-number}``` Default page number is 0
 //
-// ```?pagesize={pagesize}``` Default pagesize is 10. Max pagesize returned is 25
+// ```?pagesize={pagesize}``` Default pagesize is 10
 // 
 // ```?search={}``` If search is non empty then a greedy search is performed
 //
@@ -163,7 +163,7 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 //
 // ```?page={page-number}``` Default page number is 0
 //
-// ```?pagesize={pagesize}``` Default pagesize is 10. Max page size returned is 25
+// ```?pagesize={pagesize}``` Default pagesize is 10
 // 
 // ```?search={status|mesh_version|mesh_name|date|id}``` If search is non empty then a greedy search is performed
 // responses:
