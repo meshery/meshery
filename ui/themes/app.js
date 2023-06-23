@@ -81,12 +81,12 @@ darkTheme = {
   ...darkTheme,
   overrides : {
     MuiOutlinedInput : {
-      root: {
-        "&:hover $notchedOutline": {
-          borderColor: "#00B39F",
+      root : {
+        "&:hover $notchedOutline" : {
+          borderColor : "#00B39F",
         },
-        "&$focused $notchedOutline": {
-          borderColor: "#00B39F",
+        "&$focused $notchedOutline" : {
+          borderColor : "#00B39F",
         },
       },
     },
