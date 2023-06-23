@@ -1,3 +1,4 @@
+.PHONY: docs build install docker graphql-docs-build
 jekyll=bundle exec jekyll
 
 docs: install
@@ -6,7 +7,7 @@ docs: install
 build: install
 	$(jekyll) build --drafts
 
-build-graphql-docs:
+graphql-docs-build:
 	bundle exec rake graphql:compile_docs
 
 install:
