@@ -402,21 +402,21 @@ type filterFilesResponseWrapper struct {
 	Body *models.MesheryFilter
 }
 
-// Returns all meshmodel models
+// Returns meshmodel models
 // swagger:response meshmodelModelsResponseWrapper
 type meshmodelModelsResponseWrapper struct {
 	Body *models.MeshmodelsAPIResponse
 }
 
-// Returns all meshmodel components across all models and categories
-// swagger:response allMeshmodelComponentsResponseWrapper
-type allMeshmodelComponentsResponseWrapper struct {
+// Return meshmodel components
+// swagger:response meshmodelComponentsResponseWrapper
+type meshmodelComponentsResponseWrapper struct {
 	Body *models.MeshmodelComponentsAPIResponse
 }
 
-// Returns all meshmodel relationships of a specific model
-// swagger:response allMeshmodelRelationshipsResponseWrapper
-type allMeshmodelRelationshipsResponseWrapper struct {
+// Returns meshmodel relationships
+// swagger:response meshmodelRelationshipsResponseWrapper
+type meshmodelRelationshipsResponseWrapper struct {
 	Body *models.MeshmodelRelationshipsAPIResponse
 }
 

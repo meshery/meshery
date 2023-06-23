@@ -490,7 +490,7 @@ paths:
             operationId: idGetAllMeshmodelRelationships
             responses:
                 "200":
-                    $ref: '#/responses/allMeshmodelRelationshipsResponseWrapper'
+                    $ref: '#/responses/meshmodelRelationshipsResponseWrapper'
             summary: Handle GET request for getting meshmodel relationships of a specific model and their total count.
             tags:
                 - GetAllMeshmodelRelationships
@@ -738,7 +738,7 @@ paths:
             operationId: idGetAllMeshmodelComponents
             responses:
                 "200":
-                    $ref: '#/responses/allMeshmodelComponentsResponseWrapper'
+                    $ref: '#/responses/meshmodelComponentsResponseWrapper'
             summary: Handle GET request for getting meshmodel components across all models and categories and their total count.
             tags:
                 - GetAllMeshmodelComponents
@@ -1929,14 +1929,6 @@ responses:
         schema:
             additionalProperties: {}
             type: object
-    allMeshmodelComponentsResponseWrapper:
-        description: Returns all meshmodel components across all models and categories
-        headers:
-            Body: {}
-    allMeshmodelRelationshipsResponseWrapper:
-        description: Returns all meshmodel relationships of a specific model
-        headers:
-            Body: {}
     applicationFilesResponseWrapper:
         description: Returns the response of the application files
     grafanaBoardsResponseWrapper:
@@ -1981,8 +1973,16 @@ responses:
         description: Returns all meshery patterns
     mesheryVersionRespWrapper:
         description: Returns Meshery version
+    meshmodelComponentsResponseWrapper:
+        description: Return meshmodel components
+        headers:
+            Body: {}
     meshmodelModelsResponseWrapper:
-        description: Returns all meshmodel models
+        description: Returns meshmodel models
+        headers:
+            Body: {}
+    meshmodelRelationshipsResponseWrapper:
+        description: Returns meshmodel relationships
         headers:
             Body: {}
     noContentWrapper:

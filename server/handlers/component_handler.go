@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/helpers/utils"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
@@ -856,7 +857,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-//  200: allMeshmodelComponentsResponseWrapper
+//  200: meshmodelComponentsResponseWrapper
 
 func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
@@ -903,12 +904,19 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 			comps = append(comps, comp)
 		}
 	}
+	
+	var pgSize int64
 
-	res := struct {
-		Count      int64                          `json:"total_count"`
-		Components []v1alpha1.ComponentDefinition `json:"components"`
-	}{
-		Count:      *count,
+	if limitstr == "all" {
+		pgSize = *count
+	} else {
+		pgSize = int64(limit)
+	} 
+
+	res := models.MeshmodelComponentsAPIResponse {
+		Page: page,
+		PageSize: int(pgSize),
+		Count: *count,
 		Components: comps,
 	}
 
