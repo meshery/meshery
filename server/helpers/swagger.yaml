@@ -1706,7 +1706,14 @@ paths:
                 - UserAPI
     /api/user/schedules:
         get:
-            description: Returns the list of all the schedules saved by the current user
+            description: |-
+                Returns the list of all the schedules saved by the current user
+
+                ```?order={field}``` orders on the passed field
+
+                ```?page={page-number}``` Default page number is 0
+
+                ```?pagesize={pagesize}``` Default pagesize is 10
             operationId: idGetSchedules
             responses:
                 "200":
