@@ -1647,7 +1647,7 @@ paths:
             responses:
                 "200":
                     $ref: '#/responses/userLoadTestPrefsRespWrapper'
-            summary: Handle GET Requests for User Load Test Preferences
+            summary: Handle POST Requests for User Load Test Preferences
             tags:
                 - UserAPI
     /api/user/prefs/perf:

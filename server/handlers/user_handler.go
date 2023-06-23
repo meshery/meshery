@@ -88,7 +88,7 @@ func (h *Handler) GetUsers(w http.ResponseWriter, req *http.Request, _ *models.P
 // 	200: userLoadTestPrefsRespWrapper
 
 // swagger:route POST /api/user/prefs UserAPI idPostUserTestPrefs
-// Handle GET Requests for User Load Test Preferences
+// Handle POST Requests for User Load Test Preferences
 //
 // Updates User Load Test Preferences
 // responses:
