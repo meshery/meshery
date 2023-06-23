@@ -423,17 +423,27 @@ type allMeshmodelRelationshipsResponseWrapper struct {
 // Returns database summary
 // swagger:response systemDatabaseResponseWrapper
 type systemDatabaseResponseWrapper struct {
+	// in: body
 	Body *models.DatabaseSummary
 }
 
 // Returns K8s contexts
 // swagger:response systemK8sContextsResponseWrapper
 type systemK8sContextsResponseWrapper struct {
+	// in: body
 	Body *models.MesheryK8sContextPage
 }
 
 // Returns SMI results
 // swagger:response smiResultsResponseWrapper
 type smiResultsResponseWrapper struct {
+	// in: body
 	Body *models.SmiResultPage
+}
+
+// Returns Meshery application types
+// swagger:response mesheryApplicationTypesResponseWrapper
+type mesheryApplicationTypesResponseWrapper struct {
+	// in: body
+	Body []models.ApplicationTypeResponse
 }

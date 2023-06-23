@@ -203,12 +203,12 @@ paths:
                 - ApplicationsAPI
     /api/application/types:
         get:
-            description: Get application file type
+            description: Get application file types
             operationId: typeGetMesheryApplication
             responses:
                 "200":
-                    $ref: '#/responses/mesheryApplicationResponseWrapper'
-            summary: Handle GET request for Meshery Application with the provided type
+                    $ref: '#/responses/mesheryApplicationTypesResponseWrapper'
+            summary: Handle GET request for Meshery Application types
             tags:
                 - ApplicationsAPI
     /api/content/design/share:
@@ -1939,6 +1939,11 @@ responses:
             type: array
     mesheryApplicationResponseWrapper:
         description: Fetches a single Meshery Application
+    mesheryApplicationTypesResponseWrapper:
+        description: Returns Meshery application types
+        schema:
+            items: {}
+            type: array
     mesheryApplicationsResponseWrapper:
         description: Returns all meshery applications
     mesheryFilterResponseWrapper:
@@ -1982,8 +1987,6 @@ responses:
         description: Returns a single schedules
     smiResultsResponseWrapper:
         description: Returns SMI results
-        headers:
-            Body: {}
     systemAdaptersRespWrapper:
         description: Return all the adapters
         schema:
@@ -1991,12 +1994,8 @@ responses:
             type: array
     systemDatabaseResponseWrapper:
         description: Returns database summary
-        headers:
-            Body: {}
     systemK8sContextsResponseWrapper:
         description: Returns K8s contexts
-        headers:
-            Body: {}
     userInfo:
         description: Returns user info
     userLoadTestPrefsRespWrapper:

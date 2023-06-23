@@ -610,13 +610,11 @@ func (h *Handler) GetMesheryApplicationHandler(
 }
 
 // swagger:route GET /api/application/types ApplicationsAPI typeGetMesheryApplication
-// Handle GET request for Meshery Application with the provided type
+// Handle GET request for Meshery Application types
 //
-// Get application file type
+// Get application file types
 // responses:
-//  200: mesheryApplicationResponseWrapper
-
-// GetMesheryApplicationHandler fetched the application with the given id
+//  200: mesheryApplicationTypesResponseWrapper
 func (h *Handler) GetMesheryApplicationTypesHandler(
 	rw http.ResponseWriter,
 	_ *http.Request,
