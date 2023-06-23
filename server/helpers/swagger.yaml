@@ -430,11 +430,11 @@ paths:
             description: |-
                 ```?order={field}``` orders on the passed field
 
-                ```?search={modelname}``` If search is non empty then a greedy search is performed
+                ```?search={}``` If search is non empty then a greedy search is performed
 
-                ```?page={page-number}``` Default page number is 1
+                ```?page={page-number}``` Default page number is 0
 
-                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+                ```?pagesize={pagesize}``` Default pagesize is 10
             operationId: idGetConnectionsByKind
             responses:
                 "200":

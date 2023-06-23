@@ -52,11 +52,11 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 //
 // ```?order={field}``` orders on the passed field
 //
-// ```?search={modelname}``` If search is non empty then a greedy search is performed
+// ```?search={}``` If search is non empty then a greedy search is performed
 //
-// ```?page={page-number}``` Default page number is 1
+// ```?page={page-number}``` Default page number is 0
 //
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+// ```?pagesize={pagesize}``` Default pagesize is 10
 // responses:
 // 200: ConnectionPage
 func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
@@ -82,7 +82,7 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, _ *mo
 
 	h.log.Debug(fmt.Sprintf("page: %d, page size: %d, search: %s, order: %s", page+1, pageSize, search, order))
 
-	connectionsPage, err := provider.GetConnections(req, user.ID, page, pageSize, order, search, connectionKind)
+	connectionsPage, err := provider.GetConnections(req, user.ID, page, pageSize, search, order, connectionKind)
 	obj := "connections"
 
 	if err != nil {
