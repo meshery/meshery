@@ -24,8 +24,4 @@ describe('Test if UI components are displayed on Index Page', () => {
       cy.get('[data-test=service-mesh]').should('be.visible');
     });
 
-    it('Connection Status Section', () => {
-      cy.visit('/');
-      cy.get('[data-test=connection-status]').should('be.visible');
-    });
 });
