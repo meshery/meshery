@@ -405,18 +405,21 @@ type filterFilesResponseWrapper struct {
 // Returns meshmodel models
 // swagger:response meshmodelModelsResponseWrapper
 type meshmodelModelsResponseWrapper struct {
+	// in: body
 	Body *models.MeshmodelsAPIResponse
 }
 
 // Return meshmodel components
 // swagger:response meshmodelComponentsResponseWrapper
 type meshmodelComponentsResponseWrapper struct {
+	// in: body
 	Body *models.MeshmodelComponentsAPIResponse
 }
 
 // Returns meshmodel relationships
 // swagger:response meshmodelRelationshipsResponseWrapper
 type meshmodelRelationshipsResponseWrapper struct {
+	// in: body
 	Body *models.MeshmodelRelationshipsAPIResponse
 }
 

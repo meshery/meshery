@@ -770,6 +770,52 @@ paths:
             summary: Handle GET request for getting meshmodel components of a specific type by name across all models and categories
             tags:
                 - GetAllMeshmodelComponentsByName
+    /api/meshmodels/models:
+        get:
+            description: |-
+                # Returns a list of registered models across all categories
+
+                ```?version={version}``` If version is unspecified then all models are returned
+
+                ```?order={field}``` orders on the passed field
+
+                ```?search={modelname}``` If search is non empty then a greedy search is performed
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetMeshmodelModels
+            responses:
+                "200":
+                    $ref: '#/responses/meshmodelModelsResponseWrapper'
+            summary: Handle GET request for getting all meshmodel models and their total count.
+            tags:
+                - GetMeshmodelModels
+    /api/meshmodels/models/{model}:
+        get:
+            description: |-
+                Returns a list of registered models across all categories
+
+                ```?version={version}``` If version is unspecified then all models are returned
+
+                ```?order={field}``` orders on the passed field
+
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetMeshmodelModelsByName
+            responses:
+                "200":
+                    $ref: '#/responses/meshmodelModelsResponseWrapper'
+            summary: Handle GET request for getting all meshmodel models. The component type/model name should be lowercase like "kubernetes", "istio"
+            tags:
+                - GetMeshmodelModelsByName
     /api/meshmodels/models/{model}/components:
         get:
             description: |-
@@ -1975,16 +2021,10 @@ responses:
         description: Returns Meshery version
     meshmodelComponentsResponseWrapper:
         description: Return meshmodel components
-        headers:
-            Body: {}
     meshmodelModelsResponseWrapper:
         description: Returns meshmodel models
-        headers:
-            Body: {}
     meshmodelRelationshipsResponseWrapper:
         description: Returns meshmodel relationships
-        headers:
-            Body: {}
     noContentWrapper:
         description: ""
     perfSingleResultRespWrapper:

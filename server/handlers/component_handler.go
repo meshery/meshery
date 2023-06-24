@@ -121,7 +121,7 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 	}
 }
 
-// swagger:route GET ```/api/meshmodels/models``` GetMeshmodelModels idGetMeshmodelModels
+// swagger:route GET /api/meshmodels/models GetMeshmodelModels idGetMeshmodelModels
 // Handle GET request for getting all meshmodel models and their total count.
 //
 // # Returns a list of registered models across all categories
@@ -138,7 +138,6 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-//
 //	200: meshmodelModelsResponseWrapper
 func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
@@ -192,8 +191,9 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// swagger:route GET ```/api/meshmodels/models/{model}``` GetMeshmodelModelsByName idGetMeshmodelModelsByName
+// swagger:route GET /api/meshmodels/models/{model} GetMeshmodelModelsByName idGetMeshmodelModelsByName
 // Handle GET request for getting all meshmodel models. The component type/model name should be lowercase like "kubernetes", "istio"
+//
 // Returns a list of registered models across all categories
 //
 // ```?version={version}``` If version is unspecified then all models are returned
@@ -208,7 +208,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-// 200: []Model
+//  200: []meshmodelModelsResponseWrapper
 func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -224,11 +224,11 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 	}
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page == 0 {
+	if page <= 0 {
 		page = 1
 	}
 	offset := (page - 1) * limit
-	res, _ := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
+	meshmodels, count := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
 		Name:    name,
 		Version: v,
 		Limit:   limit,
@@ -236,6 +236,20 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 		OrderOn: r.URL.Query().Get("order"),
 		Sort:    r.URL.Query().Get("sort"),
 	})
+
+	var pgSize int64
+	if limitstr == "all" {
+		pgSize = count
+	} else {
+		pgSize = int64(limit)
+	}
+
+	res := models.MeshmodelsAPIResponse {
+		Page: page,
+		PageSize: int(pgSize),
+		Count: count,
+		Models: meshmodels,
+	}
 
 	if err := enc.Encode(res); err != nil {
 		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
