@@ -753,15 +753,13 @@ paths:
 
                 ```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities
 
-                ```?search={[true/false]}``` If search is true then a greedy search is performed
-
                 ```?page={page-number}``` Default page number is 1
 
                 ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             operationId: idGetAllMeshmodelComponentsByName
             responses:
                 "200":
-                    $ref: '#/responses/ComponentDefinition'
+                    $ref: '#/responses/meshmodelComponentsResponseWrapper'
             summary: Handle GET request for getting meshmodel components of a specific type by name across all models and categories
             tags:
                 - GetAllMeshmodelComponentsByName
