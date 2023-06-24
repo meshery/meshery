@@ -810,7 +810,7 @@ paths:
             operationId: idGetMeshmodelComponentByModel
             responses:
                 "200":
-                    $ref: '#/responses/ComponentDefinition'
+                    $ref: '#/responses/meshmodelComponentsResponseWrapper'
             summary: Handle GET request for getting meshmodel components of a specific model. The component type/model name should be lowercase like "kubernetes", "istio"
             tags:
                 - GetMeshmodelComponentByModel

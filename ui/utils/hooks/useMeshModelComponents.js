@@ -140,7 +140,7 @@ export function useMeshModelComponents() {
           Object.assign(
             { ...meshmodelComponents },
             {
-              [modelName] : getProcessedComponentsData(modelData)
+              [modelName] : getProcessedComponentsData(modelData.components)
             }
           )
         );
@@ -159,7 +159,7 @@ export function useMeshModelComponents() {
         Object.assign(
           { ...meshmodelComponents },
           {
-            [modelName] : getProcessedComponentsData(modelData)
+            [modelName] : getProcessedComponentsData(modelData.components)
           }
         )
       );
