@@ -471,29 +471,6 @@ paths:
             summary: Handle POST request for component generation
             tags:
                 - MeshmodelComponentGenerate
-    /api/meshmodel/model/{model}/relationship:
-        get:
-            description: |-
-                Example: ```/api/meshmodel/model/kubernetes/relationship```
-
-                # Relationships can be further filtered through query parameter
-
-                ```?version={version}```
-
-                ```?order={field}``` orders on the passed field
-
-                ```?sort={[asc/desc]}``` Default behavior is asc
-
-                ```?page={page-number}``` Default page number is 1
-
-                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-            operationId: idGetAllMeshmodelRelationships
-            responses:
-                "200":
-                    $ref: '#/responses/meshmodelRelationshipsResponseWrapper'
-            summary: Handle GET request for getting meshmodel relationships of a specific model and their total count.
-            tags:
-                - GetAllMeshmodelRelationships
     /api/meshmodel/model/{model}/relationship/{name}:
         get:
             description: |-
@@ -863,6 +840,50 @@ paths:
             summary: Handle GET request for getting meshmodel components of a specific  model.
             tags:
                 - GetMeshmodelComponentsByNameByModel
+    /api/meshmodels/models/{model}/relationships:
+        get:
+            description: |-
+                Example: ```/api/meshmodel/model/kubernetes/relationship```
+
+                # Relationships can be further filtered through query parameter
+
+                ```?version={version}```
+
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetAllMeshmodelRelationshipsByModel
+            responses:
+                "200":
+                    $ref: '#/responses/meshmodelRelationshipsResponseWrapper'
+            summary: Handle GET request for getting meshmodel relationships of a specific model
+            tags:
+                - GetAllMeshmodelRelationships
+    /api/meshmodels/relationships:
+        get:
+            description: |-
+                # Relationships can be further filtered through query parameter
+
+                ```?version={version}```
+
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetAllMeshmodelRelationships
+            responses:
+                "200":
+                    $ref: '#/responses/meshmodelRelationshipsResponseWrapper'
+            summary: Handle GET request for getting all meshmodel relationships
+            tags:
+                - GetAllMeshmodelRelationships
     /api/pattern:
         get:
             description: |-
