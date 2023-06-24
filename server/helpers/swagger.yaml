@@ -675,6 +675,7 @@ paths:
                 ```?order={field}``` orders on the passed field
 
                 ```?search={componentname}``` If search is non empty then a greedy search is performed
+
                 ```?sort={[asc/desc]}``` Default behavior is asc
 
                 ```?page={page-number}``` Default page number is 1
@@ -683,7 +684,7 @@ paths:
             operationId: idGetMeshmodelComponentByModelByCategory
             responses:
                 "200":
-                    $ref: '#/responses/ComponentDefinition'
+                    $ref: '#/responses/meshmodelComponentsResponseWrapper'
             summary: Handle GET request for getting meshmodel components of a specific model and category. The component type/model name should be lowercase like "kubernetes", "istio"
             tags:
                 - GetMeshmodelComponentByModelByCategory
