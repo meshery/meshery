@@ -702,15 +702,13 @@ paths:
 
                 ```?sort={[asc/desc]}``` Default behavior is asc
 
-                ```?search={[true/false]}``` If search is true then a greedy search is performed
-
                 ```?page={page-number}``` Default page number is 1
 
                 ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             operationId: idGetMeshmodelComponentsByNameByModelByCategory
             responses:
                 "200":
-                    $ref: '#/responses/ComponentDefinition'
+                    $ref: '#/responses/meshmodelComponentsResponseWrapper'
             summary: Handle GET request for getting meshmodel components of a specific type by model and category.
             tags:
                 - GetMeshmodelComponentsByNameByModelByCategory
