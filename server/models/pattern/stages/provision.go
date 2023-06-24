@@ -27,7 +27,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 			return
 		}
 
-		processUndeployableComponents(data.Pattern, data.PatternSvcWorkloadCapabilities)		
+		processUndeployableComponents(data.Pattern, data.PatternSvcWorkloadCapabilities)
 
 		// Create provision plan
 		plan, err := planner.CreatePlan(*data.Pattern, prov.IsDelete())
@@ -105,8 +105,8 @@ func processUndeployableComponents(pattern *core.Pattern, patternSvcWorkloadCapa
 		if componentDef.IsNotDeployable {
 			delete(pattern.Services, name)
 		}
-		
-	} 
+
+	}
 }
 
 func generateHosts(wc meshmodelv1alpha1.ComponentDefinition, _ []core.TraitCapability, reg *meshmodel.RegistryManager) map[meshmodel.Host]bool {
