@@ -154,7 +154,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page == 0 {
+	if page <= 0 {
 		page = 1
 	}
 	offset := (page - 1) * limit
@@ -169,14 +169,21 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		filter.DisplayName = r.URL.Query().Get("search")
 		filter.Greedy = true
 	}
-	models, count := h.registryManager.GetModels(h.dbHandler, filter)
 
-	res := struct {
-		Count  int64            `json:"total_count"`
-		Models []v1alpha1.Model `json:"models"`
-	}{
-		Count:  count,
-		Models: models,
+	meshmodels, count := h.registryManager.GetModels(h.dbHandler, filter)
+
+	var pgSize int64
+	if limitstr == "all" {
+		pgSize = count
+	} else {
+		pgSize = int64(limit)
+	}
+
+	res := models.MeshmodelsAPIResponse {
+		Page: page,
+		PageSize: int(pgSize),
+		Count: count,
+		Models: meshmodels,
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -874,7 +881,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page == 0 {
+	if page <= 0 {
 		page = 1
 	}
 	offset := (page - 1) * limit
