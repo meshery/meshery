@@ -1,10 +1,15 @@
 describe("Settings", () => {
   describe("Service Meshes", () => {
-    before(() => {
+    beforeEach(() => {
       cy.visit("/settings", { responseTimeout: 35_000 });
       cy.intercept("GET", "/api/system/adapters", { fixture: "getMeshAdapters.json" }).as("getMeshAdapters");
       cy.intercept("POST", "/api/system/adapter/manage", { fixture: "postMeshManage.json" }).as("postMeshManage");
       cy.get('[data-cy="tabServiceMeshes"]').click();
+    });
+
+    it("Adapter Connection Status",()=> {
+      cy.wait("@getMeshAdapters");
+      cy.get("[data-cy='mesh-adapter-connections']").should("be.visible")
     });
 
     it("select, submit, and confirm", () => {
