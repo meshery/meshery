@@ -27,6 +27,7 @@ func DryRun(_ ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction
 			return
 		}
 		var comps []v1alpha1.Component
+		processUndeployableComponents(data.Pattern, data.PatternSvcWorkloadCapabilities)
 		for name, svc := range data.Pattern.Services {
 			if mesheryDefinedAPIVersions[svc.APIVersion] {
 				continue
