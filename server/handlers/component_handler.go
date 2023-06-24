@@ -87,13 +87,12 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 }
 
 // swagger:route GET /api/meshmodels/categories/{category}/models/{model} GetMeshmodelModelsByCategoriesByModel idGetMeshmodelModelsByCategoriesByModel
+//
 // Handle GET request for getting all meshmodel models for a given category. The component type/model name should be lowercase like "kubernetes", "istio"
 //
 // ```?version={version}``` If version is unspecified then all models are returned
 //
 // ```?order={field}``` orders on the passed field
-//
-// ```?search={[true/false]}``` If search is true then a greedy search is performed
 //
 // ```?sort={[asc/desc]}``` Default behavior is asc
 //
@@ -101,7 +100,7 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-// 200: []Model
+//  200: []meshmodelModelsResponseWrapper
 func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -117,11 +116,11 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 	}
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page == 0 {
+	if page <= 0 {
 		page = 1
 	}
 	offset := (page - 1) * limit
-	res, _ := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
+	meshmodels, count := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
 		Category: cat,
 		Name:     model,
 		Version:  r.URL.Query().Get("version"),
@@ -130,6 +129,20 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 		OrderOn:  r.URL.Query().Get("order"),
 		Sort:     r.URL.Query().Get("sort"),
 	})
+
+	var pgSize int64
+	if limitstr == "all" {
+		pgSize = count
+	} else {
+		pgSize = int64(limit)
+	}
+
+	res := models.MeshmodelsAPIResponse {
+		Page: page,
+		PageSize: int(pgSize),
+		Count: count,
+		Models: meshmodels,
+	}
 
 	if err := enc.Encode(res); err != nil {
 		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error

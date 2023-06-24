@@ -648,8 +648,6 @@ paths:
 
                 ```?order={field}``` orders on the passed field
 
-                ```?search={[true/false]}``` If search is true then a greedy search is performed
-
                 ```?sort={[asc/desc]}``` Default behavior is asc
 
                 ```?page={page-number}``` Default page number is 1
@@ -658,7 +656,7 @@ paths:
             operationId: idGetMeshmodelModelsByCategoriesByModel
             responses:
                 "200":
-                    $ref: '#/responses/Model'
+                    $ref: '#/responses/meshmodelModelsResponseWrapper'
             summary: Handle GET request for getting all meshmodel models for a given category. The component type/model name should be lowercase like "kubernetes", "istio"
             tags:
                 - GetMeshmodelModelsByCategoriesByModel
