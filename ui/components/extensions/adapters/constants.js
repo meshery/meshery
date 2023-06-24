@@ -2,6 +2,10 @@ const adaptersDescription = (adapterName) => {
   return `Deploy the Meshery Adapter for ${adapterName} in order to enable deeper lifecycle management of ${adapterName}.`;
 }
 
+/*
+ * adaptersList.name  -> name of the adapter to display on the card.
+ * adaptersList.label -> used as a payload for adapter deployment (like an adapterId).
+*/
 export const adaptersList = {
   "ISTIO" : {
     name : "Istio",

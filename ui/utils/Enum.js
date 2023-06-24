@@ -35,5 +35,3 @@ export const EXTENSIONS = {
 }
 
 export const MesheryPatternsCatalog = "meshery-patterns-catalog"
-
-export const INITIAL_GRID_SIZE = { lg : 6, md : 12, xs : 12 };

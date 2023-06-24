@@ -8,9 +8,10 @@ import { toggleCatalogContent } from "../lib/store";
 import Head from 'next/head';
 import { withSnackbar } from "notistack";
 import dataFetch from "../lib/data-fetch";
-import { EXTENSIONS, INITIAL_GRID_SIZE } from "../utils/Enum";
+import { EXTENSIONS } from "../utils/Enum";
 import { extensionStyles as styles } from "../css/icons.styles";
 import { AdaptersHOC as Adapters } from "../components/extensions"
+import { LARGE_6_MED_12_GRID_STYLE } from "../css/grid.styles";
 
 const MeshMapSignUpcard = ({ classes, hasAccessToMeshMap = false }) => {
 
@@ -20,7 +21,7 @@ const MeshMapSignUpcard = ({ classes, hasAccessToMeshMap = false }) => {
   };
 
   return (
-    <Grid item {...INITIAL_GRID_SIZE}>
+    <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
       <div className={classes.card}>
         <Typography className={classes.frontContent} variant="h5" component="div">
           MeshMap
@@ -125,7 +126,7 @@ const Extensions = ({ classes, toggleCatalogContent, enqueueSnackbar, closeSnack
       </Head>
       <Grid container spacing={1} >
         <WrappedMeshMapSignupCard hasAccessToMeshMap={hasAccessToMeshMap} />
-        <Grid item {...INITIAL_GRID_SIZE}>
+        <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
           <div className={classes.card} >
             <Typography className={classes.frontContent} variant="h5" component="div">
               {"Meshery Catalog"}
