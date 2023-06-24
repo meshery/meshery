@@ -94,6 +94,8 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 //
 // ```?order={field}``` orders on the passed field
 //
+// ```?search={[true/false]}``` If search is true then a greedy search is performed
+//
 // ```?sort={[asc/desc]}``` Default behavior is asc
 //
 // ```?page={page-number}``` Default page number is 1
@@ -106,6 +108,10 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 	enc := json.NewEncoder(rw)
 	cat := mux.Vars(r)["category"]
 	model := mux.Vars(r)["model"]
+	var greedy bool
+	if r.URL.Query().Get("search") == "true" {
+		greedy = true
+	}
 	limitstr := r.URL.Query().Get("pagesize")
 	var limit int
 	if limitstr != "all" {
@@ -126,6 +132,7 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 		Version:  r.URL.Query().Get("version"),
 		Limit:    limit,
 		Offset:   offset,
+		Greedy:   greedy,
 		OrderOn:  r.URL.Query().Get("order"),
 		Sort:     r.URL.Query().Get("sort"),
 	})
@@ -242,6 +249,10 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	name := mux.Vars(r)["model"]
+	var greedy bool
+	if r.URL.Query().Get("search") == "true" {
+		greedy = true
+	}
 	v := r.URL.Query().Get("version")
 	limitstr := r.URL.Query().Get("pagesize")
 	var limit int
@@ -262,6 +273,7 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 		Version: v,
 		Limit:   limit,
 		Offset:  offset,
+		Greedy:  greedy,
 		OrderOn: r.URL.Query().Get("order"),
 		Sort:    r.URL.Query().Get("sort"),
 	})
@@ -364,11 +376,15 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 //
 // ```?search={[true/false]}``` If search is true then a greedy search is performed
 // responses:
-// 200: []Category
+//  200: []meshmodelCategoriesResponseWrapper
 func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	name := mux.Vars(r)["category"]
+	var greedy bool
+	if r.URL.Query().Get("search") == "true" {
+		greedy = true
+	}
 	limitstr := r.URL.Query().Get("pagesize")
 	var limit int
 	if limitstr != "all" {
@@ -379,17 +395,33 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 	}
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page == 0 {
+	if page <= 0 {
 		page = 1
 	}
 	offset := (page - 1) * limit
-	res, _ := h.registryManager.GetCategories(h.dbHandler, &v1alpha1.CategoryFilter{
+	categories, count := h.registryManager.GetCategories(h.dbHandler, &v1alpha1.CategoryFilter{
 		Name:    name,
 		Limit:   limit,
+		Greedy:  greedy,
 		Offset:  offset,
 		OrderOn: r.URL.Query().Get("order"),
 		Sort:    r.URL.Query().Get("sort"),
 	})
+
+	var pgSize int64
+
+	if limitstr == "all" {
+		pgSize = count
+	} else {
+		pgSize = int64(limit)
+	} 
+
+	res := models.MeshmodelCategoriesAPIResponse {
+		Page: page,
+		PageSize: int(pgSize),
+		Count: count,
+		Categories: categories,
+	}
 
 	if err := enc.Encode(res); err != nil {
 		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
@@ -409,6 +441,8 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 //
 // ```?order={field}``` orders on the passed field
 //
+// ```?search={[true/false]}``` If search is true then a greedy search is performed
+//
 // ```?sort={[asc/desc]}``` Default behavior is asc
 //
 // ```?page={page-number}``` Default page number is 1
@@ -420,6 +454,10 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	name := mux.Vars(r)["name"]
+	var greedy bool
+	if r.URL.Query().Get("search") == "true" {
+		greedy = true
+	}
 	typ := mux.Vars(r)["model"]
 	cat := mux.Vars(r)["category"]
 	v := r.URL.Query().Get("version")
@@ -444,6 +482,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 		APIVersion:   r.URL.Query().Get("apiVersion"),
 		Version:      v,
 		Offset:       offset,
+		Greedy: 	  greedy,
 		Limit:        limit,
 		OrderOn:      r.URL.Query().Get("order"),
 		Sort:         r.URL.Query().Get("sort"),
@@ -493,6 +532,8 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 //
 // ```?order={field}``` orders on the passed field
 //
+// ```?search={[true/false]}``` If search is true then a greedy search is performed
+//
 // ```?sort={[asc/desc]}``` Default behavior is asc
 //
 // ```?page={page-number}``` Default page number is 1
@@ -504,6 +545,10 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	name := mux.Vars(r)["name"]
+	var greedy bool
+	if r.URL.Query().Get("search") == "true" {
+		greedy = true
+	}
 	cat := mux.Vars(r)["category"]
 	v := r.URL.Query().Get("version")
 	limitstr := r.URL.Query().Get("pagesize")
@@ -527,6 +572,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 		Version:      v,
 		Offset:       offset,
 		Limit:        limit,
+		Greedy: 	  greedy,
 		OrderOn:      r.URL.Query().Get("order"),
 		Sort:         r.URL.Query().Get("sort"),
 	})
@@ -577,6 +623,8 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 //
 // ```?sort={[asc/desc]}``` Default behavior is asc
 //
+// ```?search={[true/false]}``` If search is true then a greedy search is performed
+//
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
@@ -586,6 +634,10 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	name := mux.Vars(r)["name"]
+	var greedy bool
+	if r.URL.Query().Get("search") == "true" {
+		greedy = true
+	}
 	typ := mux.Vars(r)["model"]
 	v := r.URL.Query().Get("version")
 	limitstr := r.URL.Query().Get("pagesize")
@@ -608,6 +660,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 		APIVersion: r.URL.Query().Get("apiVersion"),
 		Version:    v,
 		Offset:     offset,
+		Greedy:     greedy,
 		Limit:      limit,
 		OrderOn:    r.URL.Query().Get("order"),
 		Sort:       r.URL.Query().Get("sort"),
@@ -661,6 +714,8 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 //
 // ```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities
 //
+// ```?search={[true/false]}``` If search is true then a greedy search is performed
+//
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
@@ -670,6 +725,10 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	name := mux.Vars(r)["name"]
+	var greedy bool
+	if r.URL.Query().Get("search") == "true" {
+		greedy = true
+	}
 	v := r.URL.Query().Get("version")
 	limitstr := r.URL.Query().Get("pagesize")
 	var limit int
@@ -692,6 +751,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 		Version:    v,
 		Offset:     offset,
 		Limit:      limit,
+		Greedy: 	greedy,
 		OrderOn:    r.URL.Query().Get("order"),
 		Sort:       r.URL.Query().Get("sort"),
 	})

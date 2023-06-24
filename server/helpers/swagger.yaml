@@ -515,7 +515,7 @@ paths:
             operationId: idGetMeshmodelCategoriesByName
             responses:
                 "200":
-                    $ref: '#/responses/Category'
+                    $ref: '#/responses/meshmodelCategoriesResponseWrapper'
             summary: Handle GET request for getting all meshmodel categories of a given name
             tags:
                 - GetMeshmodelCategoriesByName
@@ -558,6 +558,8 @@ paths:
 
                 ```?order={field}``` orders on the passed field
 
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
+
                 ```?sort={[asc/desc]}``` Default behavior is asc
 
                 ```?page={page-number}``` Default page number is 1
@@ -597,6 +599,8 @@ paths:
                 ```?version={version}``` If version is unspecified then all models are returned
 
                 ```?order={field}``` orders on the passed field
+
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
 
                 ```?sort={[asc/desc]}``` Default behavior is asc
 
@@ -649,6 +653,8 @@ paths:
                 ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
 
                 ```?order={field}``` orders on the passed field
+
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
 
                 ```?sort={[asc/desc]}``` Default behavior is asc
 
@@ -704,6 +710,8 @@ paths:
                 ```?sort={[asc/desc]}``` Default behavior is asc
 
                 ```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities
+
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
 
                 ```?page={page-number}``` Default page number is 1
 
@@ -802,6 +810,8 @@ paths:
                 ```?order={field}``` orders on the passed field
 
                 ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
 
                 ```?page={page-number}``` Default page number is 1
 
