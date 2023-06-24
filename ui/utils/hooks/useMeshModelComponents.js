@@ -119,12 +119,12 @@ export function useMeshModelComponents() {
     }
 
     getModelFromCategoryApi(category)
-      .then((modelsList) => {
+      .then((response) => {
         setModels(
           Object.assign(
             { ...models },
             {
-              [category] : sortAndGroupVersionsInModel(modelsList)
+              [category] : sortAndGroupVersionsInModel(response.models)
             }
           )
         );

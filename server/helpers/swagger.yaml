@@ -637,7 +637,7 @@ paths:
             operationId: idGetMeshmodelModelsByCategories
             responses:
                 "200":
-                    $ref: '#/responses/Model'
+                    $ref: '#/responses/meshmodelModelsResponseWrapper'
             summary: Handle GET request for getting all meshmodel models for a given category. The component type/model name should be lowercase like "kubernetes", "istio"
             tags:
                 - GetMeshmodelModelsByCategories
