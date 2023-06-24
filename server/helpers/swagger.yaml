@@ -471,31 +471,6 @@ paths:
             summary: Handle POST request for component generation
             tags:
                 - MeshmodelComponentGenerate
-    /api/meshmodel/model/{model}/relationship/{name}:
-        get:
-            description: |-
-                Example: ```/api/meshmodel/model/kubernetes/relationship/Edge```
-
-                # Relationships can be further filtered through query parameter
-
-                ```?version={version}```
-
-                ```?order={field}``` orders on the passed field
-
-                ```?sort={[asc/desc]}``` Default behavior is asc
-
-                ```?search={[true/false]}``` If search is true then a greedy search is performed
-
-                ```?page={page-number}``` Default page number is 1
-
-                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-            operationId: idGetMeshmodelRelationshipByName
-            responses:
-                "200":
-                    $ref: '#/responses/RelationshipDefinition'
-            summary: Handle GET request for getting meshmodel relationships of a specific model by name.
-            tags:
-                - GetMeshmodelRelationshipByName
     /api/meshmodel/validate:
         post:
             description: Validate the given value with the given schema
@@ -861,6 +836,31 @@ paths:
             summary: Handle GET request for getting meshmodel relationships of a specific model
             tags:
                 - GetAllMeshmodelRelationships
+    /api/meshmodels/models/{model}/relationships/{name}:
+        get:
+            description: |-
+                Example: ```/api/meshmodels/models/kubernetes/relationships/Edge```
+
+                # Relationships can be further filtered through query parameter
+
+                ```?version={version}```
+
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetMeshmodelRelationshipByName
+            responses:
+                "200":
+                    $ref: '#/responses/meshmodelRelationshipsResponseWrapper'
+            summary: Handle GET request for getting meshmodel relationships of a specific model by name.
+            tags:
+                - GetMeshmodelRelationshipByName
     /api/meshmodels/relationships:
         get:
             description: |-
