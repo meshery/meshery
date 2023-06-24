@@ -561,14 +561,11 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 //
 // ```?sort={[asc/desc]}``` Default behavior is asc
 //
-// ```?search={[true/false]}``` If search is true then a greedy search is performed
-//
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-//
 // responses:
-// 200: []ComponentDefinition
+//  200: []meshmodelComponentsResponseWrapper
 func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -585,11 +582,11 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 	}
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page == 0 {
+	if page <= 0 {
 		page = 1
 	}
 	offset := (page - 1) * limit
-	res, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	entities, count := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		Name:       name,
 		ModelName:  typ,
 		APIVersion: r.URL.Query().Get("apiVersion"),
@@ -600,7 +597,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 		Sort:       r.URL.Query().Get("sort"),
 	})
 	var comps []v1alpha1.ComponentDefinition
-	for _, r := range res {
+	for _, r := range entities {
 		comp, ok := r.(v1alpha1.ComponentDefinition)
 		if ok {
 			m := make(map[string]interface{})
@@ -611,7 +608,22 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 			comps = append(comps, comp)
 		}
 	}
-	if err := enc.Encode(comps); err != nil {
+
+	var pgSize int64
+	if limitstr == "all" {
+		pgSize = *count
+	} else {
+		pgSize = int64(limit)
+	}
+
+	response := models.MeshmodelComponentsAPIResponse {
+		Page: page,
+		PageSize: int(pgSize),
+		Count: *count,
+		Components: comps,
+	}
+
+	if err := enc.Encode(response); err != nil {
 		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
