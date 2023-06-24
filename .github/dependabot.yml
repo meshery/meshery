@@ -8,6 +8,7 @@ updates:
   labels:
   - pr/dependencies
   - kind/chore
+  - language/go
   ignore:
   - dependency-name: k8s.io/api
     versions:
@@ -58,3 +59,12 @@ updates:
   labels:
   - kind/chore
   - pr/dependencies
+- package-ecosystem: gomod
+  directory: "/scripts"
+  schedule:
+    interval: monthly
+  open-pull-requests-limit: 5
+  labels:
+  - pr/dependencies
+  - kind/chore
+  - language/go
