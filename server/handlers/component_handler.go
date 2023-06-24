@@ -846,7 +846,6 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 // swagger:route GET /api/meshmodels/categories/{category}/components GetMeshmodelComponentByCategory idGetMeshmodelComponentByCategory
 // Handle GET request for getting meshmodel components of a specific model and category.
 //
-// Example: ```/api/meshmodels/categories/Orchestration``` and Management/models/kubernetes/components
 // Components can be further filtered through query parameter
 //
 // ```?version={version}```
@@ -858,13 +857,14 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 // ```?order={field}``` orders on the passed field
 //
 // ```?search={componentname}``` If search is non empty then a greedy search is performed
+//
 // ```?sort={[asc/desc]}``` Default behavior is asc
 //
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-// 200: []ComponentDefinition
+//  200: []meshmodelComponentsResponseWrapper
 func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -880,7 +880,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	}
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page == 0 {
+	if page <= 0 {
 		page = 1
 	}
 	offset := (page - 1) * limit
@@ -898,9 +898,9 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		filter.Greedy = true
 		filter.Name = r.URL.Query().Get("search")
 	}
-	res, _ := h.registryManager.GetEntities(filter)
+	entities, count := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
-	for _, r := range res {
+	for _, r := range entities {
 		comp, ok := r.(v1alpha1.ComponentDefinition)
 		if ok {
 			m := make(map[string]interface{})
@@ -911,7 +911,22 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 			comps = append(comps, comp)
 		}
 	}
-	if err := enc.Encode(comps); err != nil {
+
+	var pgSize int64
+	if limitstr == "all" {
+		pgSize = *count
+	} else {
+		pgSize = int64(limit)
+	}
+
+	response := models.MeshmodelComponentsAPIResponse {
+		Page: page,
+		PageSize: int(pgSize),
+		Count: *count,
+		Components: comps,
+	}
+
+	if err := enc.Encode(response); err != nil {
 		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}

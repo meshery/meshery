@@ -570,7 +570,6 @@ paths:
     /api/meshmodels/categories/{category}/components:
         get:
             description: |-
-                Example: ```/api/meshmodels/categories/Orchestration``` and Management/models/kubernetes/components
                 Components can be further filtered through query parameter
 
                 ```?version={version}```
@@ -582,6 +581,7 @@ paths:
                 ```?order={field}``` orders on the passed field
 
                 ```?search={componentname}``` If search is non empty then a greedy search is performed
+
                 ```?sort={[asc/desc]}``` Default behavior is asc
 
                 ```?page={page-number}``` Default page number is 1
@@ -590,7 +590,7 @@ paths:
             operationId: idGetMeshmodelComponentByCategory
             responses:
                 "200":
-                    $ref: '#/responses/ComponentDefinition'
+                    $ref: '#/responses/meshmodelComponentsResponseWrapper'
             summary: Handle GET request for getting meshmodel components of a specific model and category.
             tags:
                 - GetMeshmodelComponentByCategory
