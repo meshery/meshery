@@ -38,7 +38,7 @@ const (
 	HTTP SupportedLoadTestMethods = 1
 
 	// gRPC Load Test
-	gRPC SupportedLoadTestMethods = 2
+	// gRPC SupportedLoadTestMethods = 2
 
 	// TCP Load Test
 	TCP SupportedLoadTestMethods = 3

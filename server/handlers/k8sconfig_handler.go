@@ -143,8 +143,8 @@ func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.Resp
 			ComponentName: "kubernetes",
 			OperationId:   guid.NewString(),
 			EventType:     meshes.EventType_INFO,
-			Summary:       fmt.Sprintf("Kubernetes configuration Info"),
-			Details:       fmt.Sprintf("%s", respMessage),
+			Summary:       "Kubernetes configuration Info",
+			Details:       respMessage,
 		})
 	}
 }
@@ -359,7 +359,7 @@ const k8sMeshModelPath = "../meshmodel/components/kubernetes/model_template.json
 var k8sMeshModelMetadata = make(map[string]interface{})
 
 func writeK8sMetadata(comp *meshmodelv1alpha1.ComponentDefinition, reg *meshmodel.RegistryManager) {
-	ent := reg.GetEntities(&meshmodelv1alpha1.ComponentFilter{
+	ent, _ := reg.GetEntities(&meshmodelv1alpha1.ComponentFilter{
 		Name:       comp.Kind,
 		APIVersion: comp.APIVersion,
 	})
@@ -394,23 +394,6 @@ func init() {
 		return
 	}
 	k8sMeshModelMetadata = m
-}
-
-// Utility to be used to write k8s components after generating them.
-func writeMeshModelComponentsOnFileSystem(c meshmodelv1alpha1.ComponentDefinition, dirpath string) {
-	fileName := c.Kind + ".json"
-	file, err := os.Create(filepath.Join(dirpath, fileName))
-	if err != nil {
-		fmt.Println("err: ", err.Error())
-	}
-	byt, err := json.Marshal(c)
-	if err != nil {
-		fmt.Println("err: ", err.Error())
-	}
-	_, err = file.Write(byt)
-	if err != nil {
-		fmt.Println("err: ", err.Error())
-	}
 }
 
 // func writeDefK8sOnFileSystem(def string, path string) {

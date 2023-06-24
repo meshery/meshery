@@ -69,10 +69,7 @@ func (a *AdaptersTracker) GetAdapters(_ context.Context) []models.Adapter {
 
 // AddAdapter is used to add new adapters to the collection
 func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adapter) error {
-	platform, err := utils.GetPlatform()
-	if err != nil {
-		return ErrDockerHost(err)
-	}
+	platform := utils.GetPlatform()
 
 	// Deploy to current platform
 	switch platform {
@@ -130,10 +127,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 
 // RemoveAdapter is used to remove existing adapters from the collection
 func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Adapter) error {
-	platform, err := utils.GetPlatform()
-	if err != nil {
-		return ErrDockerHost(err)
-	}
+	platform := utils.GetPlatform()
 
 	// Undeploy from current platform
 	switch platform {

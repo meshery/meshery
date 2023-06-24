@@ -394,11 +394,11 @@ class MeshAdapterConfigComponent extends React.Component {
 
     return (
       <NoSsr>
-        <div className={classes.wrapperClass}>
+        <div className={classes.wrapperClass} data-cy="mesh-adapter-connections" >
           {showAdapters}
 
           <Grid container spacing={1} alignItems="flex-end">
-            <Grid item xs={12}>
+            <Grid item xs={12} data-cy="mesh-adapter-url">
               <ReactSelectWrapper
                 onChange={this.handleMeshLocURLChange}
                 options={setAdapterURLs}

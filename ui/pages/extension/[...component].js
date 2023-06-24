@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 
 import NavigatorExtension from "../../components/NavigatorExtension";
-import ExtensionSandbox, { getComponentTitleFromPath } from "../../components/ExtensionSandbox";
+import ExtensionSandbox, { getComponentTitleFromPath, getComponentIsBetaFromPath } from "../../components/ExtensionSandbox";
 import { Box, CircularProgress, NoSsr } from "@material-ui/core";
-import { updatepagepath, updatepagetitle, updateExtensionType, updateCapabilities } from "../../lib/store";
+import { updatepagepath, updatepagetitle, updateExtensionType, updateCapabilities,updatebetabadge } from "../../lib/store";
 import { connect } from "react-redux";
 import Head from "next/head";
 import { bindActionCreators } from "redux";
@@ -89,12 +89,10 @@ class RemoteExtension extends React.Component {
       },
       (result) => {
         this.props.updatepagepath({ path : getPath() });
-        console.log("result:", result)
         if (result) {
           this.setState({
             capabilitiesRegistryObj : result,
           });
-          //global state
           this.props.updateCapabilities({ capabilitiesRegistry : result })
           this.renderExtension();
         }
@@ -134,6 +132,7 @@ class RemoteExtension extends React.Component {
           let extensions = ExtensionPointSchemaValidator(ext.name)(cap?.extensions[ext.name]);
           this.setState({ componentTitle : getComponentTitleFromPath(extensions, getPath()), isLoading : false });
           this.props.updatepagetitle({ title : getComponentTitleFromPath(extensions, getPath()) });
+          this.props.updatebetabadge({ isBeta : getComponentIsBetaFromPath(extensions, getPath()) })
         }
       })
     }
@@ -183,6 +182,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
   updatepagepath : bindActionCreators(updatepagepath, dispatch),
   updatepagetitle : bindActionCreators(updatepagetitle, dispatch),
+  updatebetabadge : bindActionCreators(updatebetabadge, dispatch),
   updateExtensionType : bindActionCreators(updateExtensionType, dispatch),
   updateCapabilities : bindActionCreators(updateCapabilities, dispatch),
 });

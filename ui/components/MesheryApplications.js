@@ -28,7 +28,7 @@ import DoneAllIcon from '@material-ui/icons/DoneAll';
 import ConfirmationMsg from "./ConfirmationModal";
 import ViewSwitch from "./ViewSwitch";
 import ApplicationsGrid from "./MesheryApplications/ApplicationsGrid";
-import { fileDownloader } from "../utils/fileDownloader";
+import downloadFile from "../utils/fileDownloader";
 import { trueRandom } from "../lib/trueRandom";
 import PublishIcon from "@material-ui/icons/Publish";
 import InfoIcon from '@material-ui/icons/Info';
@@ -395,19 +395,24 @@ function MesheryApplications({
 
   const handleAppDownload = (id, source_type, name) => {
     updateProgress({ showProgress : true })
-    dataFetch(
-        `/api/application/download/${id}/${source_type}`,
-        {
-          credentials : "include",
-          method : "GET",
-        },
-        () => {
-          fileDownloader(id, name, source_type);
-          console.log("ApplicationFile API", `/api/application/download/${id}/${source_type}`);
-          updateProgress({ showProgress : false });
-        },
-        handleError(ACTION_TYPES.DOWNLOAD_APP)
-    );
+    try {
+      downloadFile({ id, name, source_type })
+      updateProgress({ showProgress : false });
+      enqueueSnackbar(`"${name}" application downloaded`, {
+        variant : "success",
+        action : function Action(key) {
+          return (
+            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+              <CloseIcon style={iconMedium} />
+            </IconButton>
+          );
+        }
+      });
+
+    } catch (error) {
+      console.error(error);
+    }
+
   };
 
   const getTypes = () => {

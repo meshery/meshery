@@ -69,7 +69,8 @@ function NavigatorExtensionSchemaDecoder(content) {
         icon : (item.icon && "/api/provider/extension/" + item.icon) || "",
         show : !!item.show,
         children : NavigatorExtensionSchemaDecoder(item.children),
-        full_page : item.full_page
+        full_page : item.full_page,
+        isBeta : item.isBeta ?? false
       };
     });
   }

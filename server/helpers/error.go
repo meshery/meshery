@@ -31,7 +31,6 @@ const (
 	ErrRestConfigFromKubeConfigCode        = "2200"
 	ErrNewKubeClientCode                   = "2201"
 	ErrAdapterAdministrationCode           = "2259"
-	ErrDockerHostCode                      = "2260"
 )
 
 func ErrNewDynamicClientGenerator(err error) error {
@@ -140,8 +139,4 @@ func ErrNewKubeClient(err error) error {
 
 func ErrAdapterAdministration(err error) error {
 	return errors.New(ErrAdapterAdministrationCode, errors.Critical, []string{"Unable to create new kube client"}, []string{err.Error()}, []string{}, []string{})
-}
-
-func ErrDockerHost(err error) error {
-	return errors.New(ErrDockerHostCode, errors.Fatal, []string{"Unable to parse docker host"}, []string{err.Error()}, []string{"invalid DOCKER_HOST environment variable"}, []string{"Set correct DOCKER_HOST"})
 }

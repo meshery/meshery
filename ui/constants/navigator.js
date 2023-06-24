@@ -32,3 +32,7 @@ export const TOGGLER = "toggler";
 
 export const SETTINGS = "settings"
 export const CONTEXT_SWITCHER = "contextSwitcher"
+
+export const MODELS = "models"
+export const COMPONENTS = "components"
+export const RELATIONSHIPS = "relationships"

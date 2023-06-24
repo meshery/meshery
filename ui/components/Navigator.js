@@ -585,7 +585,6 @@ class Navigator extends React.Component {
             capabilitiesRegistryObj,
             navigatorComponents
           });
-          //global state
           this.props.updateCapabilities({ capabilitiesRegistry : result })
         }
       },

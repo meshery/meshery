@@ -236,6 +236,26 @@ export function getComponentTitleFromPath(extensions, path) {
   return "";
 }
 
+
+/**
+ * getComponentIsBetaFromPath takes in the extensions and the current
+ * path and searches for the matching component and returns isBeta
+ *
+ * @param {import("../utils/ExtensionPointSchemaValidator").FullPageExtensionSchema[]} extensions
+ * @param {string} path
+ * @returns {boolean}
+ */
+export function getComponentIsBetaFromPath(extensions, path) {
+  path = normalizeURI(path);
+
+  if (Array.isArray(extensions)) {
+    const extension = extensions.find((item) => item?.href === path);
+    if (extension) return extension.isBeta ?? false
+  }
+
+  return false;
+}
+
 /**
  * getComponentURIFromPathForUserPrefs takes in the user_prefs extensions and returns
  * an array of all the component mappings

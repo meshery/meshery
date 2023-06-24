@@ -1,4 +1,4 @@
-//@ts-check
+// @ts-nocheck
 import React from "react";
 import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
@@ -118,7 +118,14 @@ const infoloadGenerators = (
   </>
 );
 const styles = (theme) => ({
-  wrapperClss : { padding : theme.spacing(10), position : "relative" },
+  title : {
+    textAlign : 'center',
+    minWidth : 400,
+    padding : '10px',
+    color : '#fff',
+    backgroundColor : theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : theme.palette.secondary.mainBackground,
+  },
+  wrapperClss : { padding : theme.spacing(10), position : "relative", paddingTop : theme.spacing(5) },
   buttons : { display : "flex", justifyContent : "flex-end" },
   button : { marginTop : theme.spacing(3), marginLeft : theme.spacing(1) },
   expansionPanel : { boxShadow : "none", border : "1px solid rgb(196,196,196)" },
@@ -154,6 +161,11 @@ const styles = (theme) => ({
     height : "18px",
     marginBottom : theme.spacing(1),
     marginLeft : theme.spacing(0.3),
+  },
+  radio : {
+    '&.Mui-checked' : {
+      color : theme.palette.type === 'dark' ? theme.palette.secondary.focused : theme.palette.primary
+    },
   },
 });
 
@@ -759,19 +771,27 @@ class MesheryPerformanceComponent extends React.Component {
           <div className={classes.wrapperClss} style={this.props.style || {}}>
             <Grid container spacing={1}>
               <Grid item xs={12} md={6}>
-                <Tooltip title="If a profile name is not provided, a random one will be generated for you.">
-                  <TextField
-                    id="profileName"
-                    name="profileName"
-                    label="Profile Name"
-                    fullWidth
-                    value={profileName}
-                    margin="normal"
-                    variant="outlined"
-                    onChange={this.handleChange("profileName")}
-                    inputProps={{ maxLength : 300 }}
-                  />
-                </Tooltip>
+
+                <TextField
+                  id="profileName"
+                  name="profileName"
+                  label="Profile Name"
+                  fullWidth
+                  value={profileName}
+                  margin="normal"
+                  variant="outlined"
+                  onChange={this.handleChange("profileName")}
+                  inputProps={{
+                    maxLength : 300,
+                  }}
+                  InputProps={{
+                    endAdornment : (
+                      <Tooltip title="Create a profile providing a name, if a profile name is not provided, a random one will be generated for you.">
+                        <HelpOutlineOutlinedIcon style={{ color : "#929292" }} />
+                      </Tooltip>
+                    )
+                  }}
+                />
               </Grid>
 
               <Grid item xs={12} md={6}>
@@ -818,6 +838,13 @@ class MesheryPerformanceComponent extends React.Component {
                   margin="normal"
                   variant="outlined"
                   onChange={this.handleChange("url")}
+                  InputProps={{
+                    endAdornment : (
+                      <Tooltip title="The Endpoint where the load will be generated and the perfromance test will run against.">
+                        <HelpOutlineOutlinedIcon style={{ color : "#929292" }} />
+                      </Tooltip>
+                    )
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -834,6 +861,13 @@ class MesheryPerformanceComponent extends React.Component {
                   variant="outlined"
                   onChange={this.handleChange("c")}
                   InputLabelProps={{ shrink : true }}
+                  InputProps={{
+                    endAdornment : (
+                      <Tooltip title="Load Testing tool will create this many concurrent request against the endpoint.">
+                        <HelpOutlineOutlinedIcon style={{ color : "#929292" }} />
+                      </Tooltip>
+                    )
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -850,6 +884,13 @@ class MesheryPerformanceComponent extends React.Component {
                   variant="outlined"
                   onChange={this.handleChange("qps")}
                   InputLabelProps={{ shrink : true }}
+                  InputProps={{
+                    endAdornment : (
+                      <Tooltip title="The Number of queries/second. If not provided then the MAX number of queries/second will be requested">
+                        <HelpOutlineOutlinedIcon style={{ color : "#929292" }} />
+                      </Tooltip>
+                    )
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -871,6 +912,13 @@ class MesheryPerformanceComponent extends React.Component {
                     options={durationOptions}
                     style={{ marginTop : "16px", marginBottom : "8px" }}
                     renderInput={(params) => <TextField {...params} label="Duration*" variant="outlined" />}
+                    InputProps={{
+                      endAdornment : (
+                        <Tooltip title="Default duration is 30 seconds">
+                          <HelpOutlineOutlinedIcon style={{ color : "#929292" }} />
+                        </Tooltip>
+                      )
+                    }}
                   />
                 </Tooltip>
               </Grid>
@@ -958,7 +1006,7 @@ class MesheryPerformanceComponent extends React.Component {
                     row
                   >
                     {loadGenerators.map((lg, index) => (
-                      <FormControlLabel key={index} value={lg} control={<Radio color="primary" />} label={lg} />
+                      <FormControlLabel key={index} value={lg} disabled={lg==="wrk2"} control={<Radio color="primary" className={classes.radio} />} label={lg} />
                     ))}
                   </RadioGroup>
                 </FormControl>
