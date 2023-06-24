@@ -423,6 +423,13 @@ type meshmodelRelationshipsResponseWrapper struct {
 	Body *models.MeshmodelRelationshipsAPIResponse
 }
 
+// Returns meshmodel categories
+// swagger:response meshmodelCategoriesResponseWrapper
+type meshmodelCategoriesResponseWrapper struct {
+	// in: body
+	Body *models.MeshmodelCategoriesAPIResponse
+}
+
 // Returns database summary
 // swagger:response systemDatabaseResponseWrapper
 type systemDatabaseResponseWrapper struct {

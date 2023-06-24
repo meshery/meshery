@@ -25,3 +25,11 @@ type MeshmodelRelationshipsAPIResponse struct {
 	Count         int64                             `json:"total_count"`
 	Relationships []v1alpha1.RelationshipDefinition `json:"relationships"`
 }
+
+// API response model for meshmodel categories API
+type MeshmodelCategoriesAPIResponse struct {
+	Page          int 			 		`json:"page"`
+	PageSize 	  int 			 		`json:"page_size"`	
+	Count         int64                 `json:"total_count"`
+	Categories 	  []v1alpha1.Category	`json:"categories"`
+}

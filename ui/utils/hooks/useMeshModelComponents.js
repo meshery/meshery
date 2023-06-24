@@ -107,7 +107,7 @@ export function useMeshModelComponents() {
   useEffect(() => {
     fetchCategories()
       .then((categoryJson) => {
-        setCategories(categoryJson.sort((catA, catB) => catA.name.localeCompare(catB.name)));
+        setCategories(categoryJson.categories.sort((catA, catB) => catA.name.localeCompare(catB.name)));
       })
       .catch(handleError);
   }, []);

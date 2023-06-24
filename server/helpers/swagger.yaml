@@ -496,7 +496,7 @@ paths:
             operationId: idGetMeshmodelCategories
             responses:
                 "200":
-                    $ref: '#/responses/Category'
+                    $ref: '#/responses/meshmodelCategoriesResponseWrapper'
             summary: Handle GET request for getting all meshmodel categories
             tags:
                 - GetMeshmodelCategories
@@ -2031,6 +2031,8 @@ responses:
         description: Returns all meshery patterns
     mesheryVersionRespWrapper:
         description: Returns Meshery version
+    meshmodelCategoriesResponseWrapper:
+        description: Returns meshmodel categories
     meshmodelComponentsResponseWrapper:
         description: Return meshmodel components
     meshmodelModelsResponseWrapper:

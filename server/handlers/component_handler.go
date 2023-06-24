@@ -299,7 +299,7 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-// 200: []Category
+//  200: []meshmodelCategoriesResponseWrapper
 func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -313,7 +313,7 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 	}
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page == 0 {
+	if page <= 0 {
 		page = 1
 	}
 	offset := (page - 1) * limit
@@ -327,7 +327,23 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 		filter.Greedy = true
 		filter.Name = r.URL.Query().Get("search")
 	}
-	res := h.registryManager.GetCategories(h.dbHandler, filter)
+	
+	categories, count := h.registryManager.GetCategories(h.dbHandler, filter)
+
+	var pgSize int64
+
+	if limitstr == "all" {
+		pgSize = count
+	} else {
+		pgSize = int64(limit)
+	} 
+
+	res := models.MeshmodelCategoriesAPIResponse {
+		Page: page,
+		PageSize: int(pgSize),
+		Count: count,
+		Categories: categories,
+	}
 
 	if err := enc.Encode(res); err != nil {
 		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
@@ -367,7 +383,7 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 		page = 1
 	}
 	offset := (page - 1) * limit
-	res := h.registryManager.GetCategories(h.dbHandler, &v1alpha1.CategoryFilter{
+	res, _ := h.registryManager.GetCategories(h.dbHandler, &v1alpha1.CategoryFilter{
 		Name:    name,
 		Limit:   limit,
 		Offset:  offset,
