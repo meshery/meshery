@@ -10,7 +10,7 @@ import { withSnackbar } from "notistack";
 import dataFetch from "../lib/data-fetch";
 import { EXTENSIONS } from "../utils/Enum";
 import { extensionStyles as styles } from "../css/icons.styles";
-import { AdaptersHOC as Adapters } from "../components/extensions"
+import { Adapters } from "../components/extensions"
 import { LARGE_6_MED_12_GRID_STYLE } from "../css/grid.styles";
 
 const MeshMapSignUpcard = ({ classes, hasAccessToMeshMap = false }) => {
@@ -69,7 +69,6 @@ const Extensions = ({ classes, toggleCatalogContent, enqueueSnackbar, closeSnack
       },
       (result) => {
         if (result) {
-          console.log(result);
           setExtensionPreferences(result?.usersExtensionPreferences)
           setCatalogContent(result?.usersExtensionPreferences?.catalogContent)
         }

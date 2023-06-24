@@ -169,6 +169,6 @@ const mapDispatchToProps = (dispatch) => ({
 
 
 
-export const AdaptersHOC = withStyles(styles)(
+export default withStyles(styles)(
   connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(Adapters)))
 );

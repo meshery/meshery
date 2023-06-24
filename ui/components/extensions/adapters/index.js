@@ -1,1 +1,1 @@
-export * from "./adapters";
+export { default as Adapters } from "./adapters";
