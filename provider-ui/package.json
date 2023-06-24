@@ -24,7 +24,7 @@
     "@cypress/code-coverage": "^3.10.7",
     "@emotion/cache": "^11.10.5",
     "@emotion/react": "^11.11.0",
-    "@emotion/server": "^11.10.0",
+    "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.11.15",
