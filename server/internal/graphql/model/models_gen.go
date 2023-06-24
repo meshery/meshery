@@ -70,7 +70,7 @@ type CatalogPattern struct {
 
 type CatalogSelector struct {
 	Page     string `json:"page"`
-	PageSize string `json:"page_size"`
+	PageSize string `json:"pageSize"`
 	Search   string `json:"search"`
 	Order    string `json:"order"`
 }
