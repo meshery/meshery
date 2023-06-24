@@ -14,11 +14,16 @@ const grafanaStyles = (theme) => ({
     borderBottomRightRadius : theme.spacing(1),
     marginTop : theme.spacing(2),
   },
-  buttons : { display : 'flex',
-    justifyContent : 'flex-end', },
-  inputContainer : { marginTop : theme.spacing(2),
-    marginBottom : theme.spacing(1) },
-  button : { marginTop : theme.spacing(3),
+  buttons : {
+    display : 'flex',
+    justifyContent : 'flex-end',
+  },
+  inputContainer : {
+    marginTop : theme.spacing(2),
+    marginBottom : theme.spacing(1)
+  },
+  button : {
+    marginTop : theme.spacing(3),
     //   marginLeft: theme.spacing(1),
   },
 });
@@ -55,11 +60,7 @@ class GrafanaConfigComponent extends Component {
                   value={grafanaAPIKey}
                   margin="normal"
                   variant="outlined"
-                  onKeyDown={(e) => {
-                    if (e.keyCode == 13) {
-                      handleGrafanaConfigure();
-                    }
-                  }}
+                  onKeyDown={(e) => e.key == 'Enter' && handleGrafanaConfigure()}
                   onChange={handleChangeApiKey}
                 />
               </Grid>
@@ -73,7 +74,7 @@ class GrafanaConfigComponent extends Component {
                 onClick={handleGrafanaConfigure}
                 className={classes.button}
               >
-                  Submit
+                Submit
               </Button>
             </div>
           </div>

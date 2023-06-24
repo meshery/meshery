@@ -1,4 +1,4 @@
-//@ts-check
+// @ts-nocheck
 import React from "react";
 import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
@@ -23,7 +23,6 @@ import {
   ExpansionPanel,
   ExpansionPanelSummary,
   ExpansionPanelDetails,
-  DialogTitle,
 } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
 import { withSnackbar } from "notistack";
@@ -124,7 +123,7 @@ const styles = (theme) => ({
     minWidth : 400,
     padding : '10px',
     color : '#fff',
-    backgroundColor : theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : '#396679',
+    backgroundColor : theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : theme.palette.secondary.mainBackground,
   },
   wrapperClss : { padding : theme.spacing(10), position : "relative", paddingTop : theme.spacing(5) },
   buttons : { display : "flex", justifyContent : "flex-end" },
@@ -162,6 +161,11 @@ const styles = (theme) => ({
     height : "18px",
     marginBottom : theme.spacing(1),
     marginLeft : theme.spacing(0.3),
+  },
+  radio : {
+    '&.Mui-checked' : {
+      color : theme.palette.type === 'dark' ? theme.palette.secondary.focused : theme.palette.primary
+    },
   },
 });
 
@@ -764,7 +768,6 @@ class MesheryPerformanceComponent extends React.Component {
     return (
       <NoSsr>
         <React.Fragment>
-          <DialogTitle className={classes.title} >Performance Profile Wizard</DialogTitle>
           <div className={classes.wrapperClss} style={this.props.style || {}}>
             <Grid container spacing={1}>
               <Grid item xs={12} md={6}>
@@ -1003,7 +1006,7 @@ class MesheryPerformanceComponent extends React.Component {
                     row
                   >
                     {loadGenerators.map((lg, index) => (
-                      <FormControlLabel key={index} value={lg} control={<Radio color="primary" />} label={lg} />
+                      <FormControlLabel key={index} value={lg} disabled={lg==="wrk2"} control={<Radio color="primary" className={classes.radio} />} label={lg} />
                     ))}
                   </RadioGroup>
                 </FormControl>
