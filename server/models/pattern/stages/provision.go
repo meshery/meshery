@@ -27,7 +27,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 			return
 		}
 
-		processUndeployableComponents(data.Pattern, data.PatternSvcWorkloadCapabilities)
+		processAnnotations(data.Pattern)
 
 		// Create provision plan
 		plan, err := planner.CreatePlan(*data.Pattern, prov.IsDelete())
@@ -99,10 +99,9 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 	}
 }
 
-func processUndeployableComponents(pattern *core.Pattern, patternSvcWorkloadCapabilities map[string]meshmodelv1alpha1.ComponentDefinition) {
-	for name := range pattern.Services {
-		componentDef := patternSvcWorkloadCapabilities[name]
-		if componentDef.IsNotDeployable {
+func processAnnotations(pattern *core.Pattern) {
+	for name, svc := range pattern.Services {
+		if svc.IsAnnotation {
 			delete(pattern.Services, name)
 		}
 

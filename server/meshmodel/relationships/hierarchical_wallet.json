@@ -14,7 +14,8 @@
         },
         "metadata": {}
     },
-    "subType": "Parent",
+    "subType": "Parent",    
+    "referenceURI": "#configPatches.patch.value",
     "selectors": {
         "allow": {
             "from": [
