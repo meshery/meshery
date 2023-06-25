@@ -1,4 +1,4 @@
-name: CNCF Playground - Reset Non-essential Namespaces and Reboot
+name: Playground CNCF - Reset Non-essential Namespaces and Reboot
 on:
   workflow_dispatch:
   schedule:
