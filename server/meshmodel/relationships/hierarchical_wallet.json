@@ -14,7 +14,7 @@
         },
         "metadata": {}
     },
-    "subType": "Parent",    
+    "subType": "Inventory",    
     "referenceURI": "#configPatches.patch.value",
     "selectors": {
         "allow": {
