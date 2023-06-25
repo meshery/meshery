@@ -171,6 +171,7 @@ type Service struct {
 	Namespace   string            `yaml:"namespace,omitempty" json:"namespace,omitempty"`
 	Version     string            `yaml:"version,omitempty" json:"version,omitempty"`
 	Model       string            `yaml:"model,omitempty" json:"model,omitempty"`
+	IsAnnotation bool             `yaml:"isAnnotation,omitempty" json:"isAnnotation,omitempty"`
 	Labels      map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
 	Annotations map[string]string `yaml:"annotations,omitempty" json:"annotations,omitempty"`
 	// DependsOn correlates one or more objects as a required dependency of this service
