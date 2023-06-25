@@ -1,12 +1,12 @@
 {
     "kind": "WASMFilter",
-    "apiVersion": "core.meshmodel.dev/v1alpha1",
+    "apiVersion": "core.meshery.io/v1alpha1",
     "displayName": "WASM Filter",
     "format": "JSON",
     "isAnnotation": true,
     "metadata": {
-        "model": "core",
-        "modelDisplayName": "Core",
+        "model": "kubernetes",
+        "modelDisplayName": "Kubernetes",
         "primaryColor": "",
         "published": true,
         "secondaryColor": "",
