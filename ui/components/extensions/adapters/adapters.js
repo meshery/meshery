@@ -19,7 +19,7 @@ const Adapters = ({ updateProgress, enqueueSnackbar, closeSnackbar, classes, mes
 
   // useEffects.
   useEffect(() => {
-    updateProgress({ showProgress: true })
+    updateProgress({ showProgress : true })
   }, [])
 
   useEffect(() => {
@@ -34,7 +34,7 @@ const Adapters = ({ updateProgress, enqueueSnackbar, closeSnackbar, classes, mes
       })
       setAvailableAdapters(currentAdaptersList);
       setMts(meshAdaptersts);
-      updateProgress({ showProgress: false })
+      updateProgress({ showProgress : false })
     }
 
   }, [meshAdapters, meshAdaptersts])
@@ -42,22 +42,22 @@ const Adapters = ({ updateProgress, enqueueSnackbar, closeSnackbar, classes, mes
 
   // Handlers.
   const handleAdapterDeployment = (payload, msg, selectedAdapter, adapterId) => {
-    updateProgress({ showProgress: true });
+    updateProgress({ showProgress : true });
 
     changeAdapterState((response, errors) => {
-      updateProgress({ showProgress: false });
+      updateProgress({ showProgress : false });
 
       if (errors !== undefined) {
         // Toggle the switch to it's previous state if the request fails.
-        setAvailableAdapters({ ...availableAdapters, [adapterId]: { ...selectedAdapter, enabled: !selectedAdapter.enabled } });
+        setAvailableAdapters({ ...availableAdapters, [adapterId] : { ...selectedAdapter, enabled : !selectedAdapter.enabled } });
         handleError(msg);
       }
 
       enqueueSnackbar(`Adapter ${response.adapterStatus.toLowerCase()}`, {
-        opt: {
-          variant: "success",
-          autoHideDuration: 2000,
-          action: (key) => (
+        opt : {
+          variant : "success",
+          autoHideDuration : 2000,
+          action : (key) => (
             <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
               <CloseIcon style={iconMedium} />
             </IconButton>
@@ -69,35 +69,35 @@ const Adapters = ({ updateProgress, enqueueSnackbar, closeSnackbar, classes, mes
   };
 
   const handleError = (msg) => (error) => {
-    updateProgress({ showProgress: false });
+    updateProgress({ showProgress : false });
     enqueueSnackbar(`${msg}: ${error}`, {
-      opt: {
-        variant: "error", preventDuplicate: true,
-        action: (key) => (
+      opt : {
+        variant : "error", preventDuplicate : true,
+        action : (key) => (
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
             <CloseIcon style={iconMedium} />
           </IconButton>
         ),
-        autoHideDuration: 7000,
+        autoHideDuration : 7000,
       }
     });
   };
 
   const handleToggle = (selectedAdapter, adapterId) => {
-    setAvailableAdapters({ ...availableAdapters, [adapterId]: { ...selectedAdapter, enabled: !selectedAdapter.enabled } });
+    setAvailableAdapters({ ...availableAdapters, [adapterId] : { ...selectedAdapter, enabled : !selectedAdapter.enabled } });
     let payload = {}, msg = "";
     if (!selectedAdapter.enabled) {
       payload = {
-        status: "ENABLED",
-        adapter: selectedAdapter.label,
-        targetPort: selectedAdapter.defaultPort
+        status : "ENABLED",
+        adapter : selectedAdapter.label,
+        targetPort : selectedAdapter.defaultPort
       };
       msg = "Unable to Deploy adapter";
     } else {
       payload = {
-        status: "DISABLED",
-        adapter: "",
-        targetPort: selectedAdapter.url
+        status : "DISABLED",
+        adapter : "",
+        targetPort : selectedAdapter.url
       };
       msg = "Unable to Undeploy adapter";
 
@@ -120,27 +120,27 @@ const Adapters = ({ updateProgress, enqueueSnackbar, closeSnackbar, classes, mes
               <Typography className={classes.frontSideDescription} variant="body">
                 <img className={classes.img} src={adapter.imageSrc} />
                 <div style={{
-                  display: "inline", position: "relative",
+                  display : "inline", position : "relative",
                 }}>
                   {adapter.description}
                 </div>
               </Typography>
 
-              <Grid container spacing={2} className={classes.grid} direction="row" justifyContent="space-between" alignItems="baseline" style={{ position: "absolute", paddingRight: "3rem", paddingLeft: ".5rem", bottom: "1.5rem", }}>
-                <Typography variant="subtitle2" style={{ fontStyle: "italic" }}>
+              <Grid container spacing={2} className={classes.grid} direction="row" justifyContent="space-between" alignItems="baseline" style={{ position : "absolute", paddingRight : "3rem", paddingLeft : ".5rem", bottom : "1.5rem", }}>
+                <Typography variant="subtitle2" style={{ fontStyle : "italic" }}>
                   <a href="https://docs.meshery.io/concepts/architecture/adapters" target="_blank" rel="noreferrer" className={classes.link}>Open Adapter docs</a>
                 </Typography>
 
-                <div style={{ textAlign: "right" }}>
+                <div style={{ textAlign : "right" }}>
                   <Switch
                     checked={adapter.enabled}
                     onChange={() => handleToggle(adapter, adapterId)}
                     name="OperatorSwitch"
                     color="primary"
                     classes={{
-                      switchBase: classes.switchBase,
-                      track: classes.track,
-                      checked: classes.checked,
+                      switchBase : classes.switchBase,
+                      track : classes.track,
+                      checked : classes.checked,
                     }}
                   />
                 </div>
@@ -164,7 +164,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
+  updateProgress : bindActionCreators(updateProgress, dispatch),
 });
 
 

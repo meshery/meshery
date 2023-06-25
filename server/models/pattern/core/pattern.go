@@ -390,13 +390,14 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 		}
 
 		//Only make the name unique when duplicates are encountered. This allows clients to preserve and propagate the unique name they want to give to their workload
-		if countDuplicates[svc.Name] > 1 {
+		uniqueName := svc.Name
+		if countDuplicates[uniqueName] > 1 {
 			//set appropriate unique service name
-			svc.Name = strings.ToLower(svc.Name)
-			svc.Name += "-" + getRandomAlphabetsOfDigit(5)
+			uniqueName = strings.ToLower(svc.Name)
+			uniqueName += "-" + getRandomAlphabetsOfDigit(5)
 		}
-		eleToSvc[ele.Data.ID] = svc.Name //will be used while adding depends-on
-		pf.Services[svc.Name] = &svc
+		eleToSvc[ele.Data.ID] = uniqueName //will be used while adding depends-on
+		pf.Services[uniqueName] = &svc
 		return nil
 	})
 	if err != nil {

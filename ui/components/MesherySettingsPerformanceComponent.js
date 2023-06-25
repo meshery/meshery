@@ -41,6 +41,11 @@ const styles = (theme) => ({
   margin: {
     margin: theme.spacing(1),
   },
+  radio: {
+    '&.Mui-checked': {
+      color : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary
+    },
+  },
 });
 
 class MesherySettingsPerformanceComponent extends React.Component {
@@ -277,7 +282,7 @@ class MesherySettingsPerformanceComponent extends React.Component {
                   <label><strong>Default Load Generator</strong></label>
                   <RadioGroup aria-label="loadGenerator" name="loadGenerator" value={gen} onChange={this.handleChange('gen')} row>
                     {loadGenerators.map((lg) => (
-                      <FormControlLabel value={lg} control={<Radio color="primary" />} label={lg} />
+                      <FormControlLabel value={lg} control={<Radio color='primary' disabled={lg==="wrk2"} className={classes.radio} />} label={lg} />
                     ))}
                   </RadioGroup>
                 </FormControl>
