@@ -94,7 +94,57 @@ const MeshMapSignUpcard = ({ classes, hasAccessToMeshMap=false }) => {
   )
 }
 
+const LogoStyles = () => ({
+
+  img : {
+    paddingRight : "1rem",
+    height : "auto",
+    width : "auto",
+    maxWidth : "220px",
+    maxHeight : "150px",
+  },
+})
+
+const MeshMapSnapShotLogo = withStyles(LogoStyles)(({ classes }) => {
+  return <img className={classes.img} src="/static/img/meshmap-snapshot-logo.svg" />
+})
+
+const MeshMapSnapShotCard = ({ classes,githubActionEnabled=false }) => {
+
+  const handleEnable = (e) => {
+    window.open("https://cloud.meshery.io/connect/github/new/", "_blank")
+    e.stopPropagation();
+  };
+
+  return (
+    <Grid item {...INITIAL_GRID_SIZE}>
+      <div className={classes.card}>
+        <Typography className={classes.frontContent} variant="h5" component="div">
+            GitHub Action: MeshMap Snapshot
+        </Typography>
+
+        <Typography className={classes.frontSideDescription} variant="body">
+          <MeshMapSnapShotLogo />
+          Connect MeshMap to your GitHub repo and see changes pull request-to-pull request.
+          Get snapshots of your infrastructure directly in your PRs
+        </Typography>
+        {<div style={{ textAlign : "right" }}>
+          <Button
+            variant="contained"
+            color="primary"
+            disabled={githubActionEnabled}
+            className={classes.button}
+            onClick={(e) => handleEnable(e)}>
+            {githubActionEnabled ? "Remove" : "Enable"}
+          </Button>
+        </div>}
+      </div>
+    </Grid>
+  )
+}
+
 export const WrappedMeshMapSignupCard = withStyles(styles)(MeshMapSignUpcard);
+export const WrappedMeshMapSnapShopCard = withStyles(styles)(MeshMapSnapShotCard) ;
 
 const Extensions = ({ classes, toggleCatalogContent,  enqueueSnackbar, closeSnackbar, capabilitiesRegistry }) => {
   const [catalogContent, setCatalogContent] = useState(true);
@@ -171,6 +221,7 @@ const Extensions = ({ classes, toggleCatalogContent,  enqueueSnackbar, closeSnac
       </Head>
       <Grid container spacing={1} >
         <WrappedMeshMapSignupCard hasAccessToMeshMap={hasAccessToMeshMap} />
+        <WrappedMeshMapSnapShopCard githubActionEnabled={false} />
         <Grid item {...INITIAL_GRID_SIZE}>
           <div className={classes.card} >
             <Typography className={classes.frontContent} variant="h5" component="div">

@@ -657,7 +657,7 @@ meshery-custom-end -->
 
 <ol>
   <li>Define the adapter’s address in the UI: Unless the running container is named as specified in the docker-run target in the Makefile, the container has to be removed manually first. Then, run <code class="language-plaintext highlighter-rouge">make docker</code> followed by <code class="language-plaintext highlighter-rouge">make docker-run</code>. Then, connect to the adapter in the UI in “Settings&gt;Service Meshes” using <code class="language-plaintext highlighter-rouge">localhost:&lt;port&gt;</code> if the meshery server is running as a binary, or <docker IP="" address="">:<port> if it is running as a docker container.</port></docker></li>
-  <li>Using mesheryctl: In <code class="language-plaintext highlighter-rouge">~/.meshery/meshery.yaml</code>, change the tag specifying the image of the adapter to “latest”. Run make docker, followed by <code class="language-plaintext highlighter-rouge">mesheryctl system start --skip-update</code>. This assumes mesheryctl system start has been executed at least once before.</li>
+  <li>Using mesheryctl: In <code class="language-plaintext highlighter-rouge">~/.meshery/meshery.yaml</code>, change the tag specifying the image of the adapter to “latest”. Run <code class="language-plaintext highlighter-rouge">make docker</code>, followed by <code class="language-plaintext highlighter-rouge">mesheryctl system start --skip-update</code>. This assumes mesheryctl system start has been executed at least once before.</li>
 </ol>
 
 <h3 id="running-an-adapter-as-a-process">Running an adapter as a process</h3>

@@ -1,1 +1,1 @@
-{"kind":"Restore","apiVersion":"mittwald.systems/v1alpha1","displayName":"Restore","format":"JSON","metadata":{},"model":{"name":"brudi-operator","version":"0.1.2","displayName":"brudi-operator","category":{"name":"","metadata":null},"metadata":null}}
+{"kind":"Restore","apiVersion":"mittwald.systems/v1alpha1","displayName":"Restore","format":"JSON","metadata":{"isNamespaced":true},"model":{"name":"brudi-operator","version":"0.1.2","displayName":"brudi-operator","category":{"name":"","metadata":null},"metadata":null}}
