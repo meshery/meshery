@@ -3,10 +3,10 @@
     "apiVersion": "core.meshery.io/v1alpha1",
     "displayName": "WASM Filter",
     "format": "JSON",
-    "isAnnotation": true,
     "metadata": {
         "model": "istio-base",
         "modelDisplayName": "Istio Base",
+        "isAnnotation": true,
         "primaryColor": "",
         "published": true,
         "secondaryColor": "",
