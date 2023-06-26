@@ -1104,7 +1104,7 @@ Input for changing Addon Status.
 | ---- | ---- | ----------- |
 | <a id="catalogselectororder"></a>`order` | [`String!`](#string) |  |
 | <a id="catalogselectorpage"></a>`page` | [`String!`](#string) |  |
-| <a id="catalogselectorpagesize"></a>`pageSize` | [`String!`](#string) |  |
+| <a id="catalogselectorpagesize"></a>`page_size` | [`String!`](#string) |  |
 | <a id="catalogselectorsearch"></a>`search` | [`String!`](#string) |  |
 
 ### `MeshModelSummarySelector`
