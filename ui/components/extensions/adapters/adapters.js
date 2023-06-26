@@ -1,21 +1,25 @@
 import { useEffect, useState } from "react";
 import { withRouter } from "next/router";
 import { iconMedium, extensionStyles as styles } from "../../../css/icons.styles";
-import { Grid, Typography, IconButton, Switch, CloseIcon } from "@material-ui/core";
+import { Grid, Typography, IconButton, Switch } from "@material-ui/core";
+import CloseIcon from "@material-ui/icons/Close";
 import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { withSnackbar } from "notistack";
+import { useSnackbar } from "notistack";
 import { updateProgress } from "../../../lib/store";
 import { adaptersList } from "./constants";
 import changeAdapterState from '../../graphql/mutations/AdapterStatusMutation';
 import { LARGE_6_MED_12_GRID_STYLE } from "../../../css/grid.styles";
 
-const Adapters = ({ updateProgress, enqueueSnackbar, closeSnackbar, classes, meshAdapters, meshAdaptersts }) => {
+const Adapters = ({ updateProgress, classes, meshAdapters, meshAdaptersts }) => {
 
   // States.
   const [availableAdapters, setAvailableAdapters] = useState(adaptersList);
   const [mts, setMts] = useState(new Date());
+
+  // Hooks.
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   // useEffects.
   useEffect(() => {
@@ -54,16 +58,15 @@ const Adapters = ({ updateProgress, enqueueSnackbar, closeSnackbar, classes, mes
       }
 
       enqueueSnackbar(`Adapter ${response.adapterStatus.toLowerCase()}`, {
-        opt : {
-          variant : "success",
-          autoHideDuration : 2000,
-          action : (key) => (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon style={iconMedium} />
-            </IconButton>
-          ),
-        }
-      });
+        variant : "success",
+        autoHideDuration : 2000,
+        action : (key) => (
+          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+            <CloseIcon style={iconMedium} />
+          </IconButton>
+        ),
+      }
+      );
     }, payload);
 
   };
@@ -71,15 +74,13 @@ const Adapters = ({ updateProgress, enqueueSnackbar, closeSnackbar, classes, mes
   const handleError = (msg) => (error) => {
     updateProgress({ showProgress : false });
     enqueueSnackbar(`${msg}: ${error}`, {
-      opt : {
-        variant : "error", preventDuplicate : true,
-        action : (key) => (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-            <CloseIcon style={iconMedium} />
-          </IconButton>
-        ),
-        autoHideDuration : 7000,
-      }
+      variant : "error", preventDuplicate : true,
+      action : (key) => (
+        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
+          <CloseIcon style={iconMedium} />
+        </IconButton>
+      ),
+      autoHideDuration : 7000,
     });
   };
 
@@ -170,5 +171,5 @@ const mapDispatchToProps = (dispatch) => ({
 
 
 export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(Adapters)))
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(Adapters))
 );
