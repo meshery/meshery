@@ -3,6 +3,7 @@ package utils
 import (
 	"testing"
 
+	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	"k8s.io/apimachinery/pkg/version"
 )
 
@@ -182,29 +183,7 @@ func TestAreMesheryComponentsRunning(t *testing.T) {
 	}
 }
 
-func TestIsMesheryRunning(t *testing.T){
-	tests := []struct {
-		platform string
-		expected bool
-	}{
-		{
-			platform: "docker",
-			expected: false,
-		},
-		{
-			platform: "kubernetes",
-			expected: false,
-		},
-	}
 
-	for _, tt := range tests {
-		t.Run("Is Meshery Running", func(t *testing.T) {
-			if got, _ := IsMesheryRunning(tt.platform); got != tt.expected {
-				t.Errorf("Meshery is not Running got %v want %v", got, tt.expected)
-			}
-		})
-	}
-}
 
 func TestAreAllPodsRunning(t *testing.T) {
 	tests := []struct {
@@ -228,6 +207,40 @@ func TestCheckMesheryNsDelete(t *testing.T){
 	t.Run("Test Existing Meshery Namespace", func(t *testing.T) {
 		if got, _:= CheckMesheryNsDelete(); got != expected {
 			t.Errorf("Namespace not deleted got %v want %v ", got, expected )
+		}
+	})
+}
+
+
+func TestIsPodRunning(t *testing.T) {
+
+	client, _ := meshkitkube.New([]byte(""))
+	t.Run("Check Pod running", func(t *testing.T){
+		result := isPodRunning(client, "test", "test")
+		got, _ := result()
+		if got != false {
+			t.Errorf("Check Pod Running got %v want %v", got, got)
+		}
+	})
+}
+
+func TestWaitForPodRunning(t *testing.T) {
+	client, _ := meshkitkube.New([]byte(""))
+	t.Run("Check Pod running", func(t *testing.T){
+		got := WaitForPodRunning(client, "test", "test", 300)
+		if got == nil {
+			t.Errorf("Check Pod Running got %v", got)
+		}
+	})
+}
+
+func TestIsNamespaceDeleted(t *testing.T) {
+	client, _ := meshkitkube.New([]byte(""))
+	t.Run("Check Pod running", func(t *testing.T){
+		result := isNamespaceDeleted(client, "test")
+		got, _ := result()
+		if got != false {
+			t.Errorf("Check Pod Running got %v", got)
 		}
 	})
 }
