@@ -133,8 +133,8 @@ Once the Meshery server is up and running, you should be able to access Meshery 
 Potential Solution: 
 
 -  Go to your meshery folder in your local-system where you’ve cloned it.
-Execute: `git remote add upstream https://github.com/meshery/meshery
-git fetch upstream`
+Execute: 
+
 
 - restart the meshery server.
 
