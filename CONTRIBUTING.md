@@ -140,9 +140,6 @@ Execute:
 - Make sure that `BUILD="v0.X.X"` is logged in some starting line while starting the server.
 
 - Addionally, before restarting the server, if you like to pull the latest changes, you can do: `git pull upstream master`
-
-This should resolve this error: **Meshery Development Incompatible**
-
 ### UI Development Server
 
 If you want to work on the UI, it will be a good idea to use the included UI development server. You can run the UI development server by running the following command:
