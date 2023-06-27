@@ -2162,7 +2162,7 @@ func (l *RemoteProvider) GetMesheryFilterFile(req *http.Request, filterID string
 
 	logrus.Infof("attempting to fetch filter from cloud for id: %s", filterID)
 
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/file/%s", l.RemoteProviderURL, ep, filterID))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/download/%s", l.RemoteProviderURL, ep, filterID))
 	logrus.Debugf("constructed filter url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
