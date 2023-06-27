@@ -147,6 +147,11 @@ func TestIsCompatibleVersion(t *testing.T){
 			current: [3]int{2, 13, 2},
 			expected: true,
 		},
+		{
+			minimum: [3]int{2, 13, 2},
+			current: [3]int{1, 11, 0},
+			expected: false,
+		},
 	}
 
 	for _, tt := range tests {
