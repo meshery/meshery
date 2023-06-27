@@ -62,3 +62,5 @@ default.profraw
 **errorutil_analyze_summary.json
 **errorutil_errors_export.json
 .ruby-version
+
+wasm/policies/temp-bundle-extract-dir/**

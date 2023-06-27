@@ -22,3 +22,5 @@ mv policy.wasm namespace_discovery_relationship_policy.wasm
 ```
 10. move the new wasm binary to [ui/public/static/](../ui/public/static/)
 11. reference the policy file from UI
+
+## Please don't push the contents of  [temp-bundle-extract-dir](./policies/temp-bundle-extract-dir/)
