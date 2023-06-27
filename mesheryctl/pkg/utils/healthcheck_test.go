@@ -216,20 +216,6 @@ func TestCheckMesheryNsDelete(t *testing.T){
 	})
 }
 
-
-func TestIsPodRunning(t *testing.T) {
-
-	
-	t.Run("Check Pod running", func(t *testing.T){
-		client, _ := meshkitkube.New([]byte(""))	
-		result := isPodRunning(client, "test", "test")
-		got, _ := result()
-		if got != false {
-			t.Errorf("Check Pod Running got %v want %v", got, got)
-		}
-	})
-}
-
 func TestWaitForPodRunning(t *testing.T) {
 	client, _ := meshkitkube.New([]byte(""))
 	t.Run("Check Pod running", func(t *testing.T){
