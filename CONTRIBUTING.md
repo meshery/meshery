@@ -138,7 +138,7 @@ Execute:
 
 - restart the meshery server.
 
-- Addionally, before restarting the server, you might like to pull the latest changes, for that you can do: `git pull upstream master`
+- Addionally, before restarting the server, if you like to pull the latest changes, you can do: `git pull upstream master`
 
 This should resolve this error: **Meshery Development Incompatible**
 
