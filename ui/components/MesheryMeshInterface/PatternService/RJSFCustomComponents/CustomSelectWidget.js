@@ -20,7 +20,6 @@ import {
 export default function CustomSelectWidget({
   schema,
   id,
-  name,
   options,
   label,
   hideLabel,
@@ -35,13 +34,13 @@ export default function CustomSelectWidget({
   onBlur,
   onFocus,
   rawErrors = [],
-  registry,
-  uiSchema,
-  hideError,
+  // registry,
+  // uiSchema,
+  // hideError,
   formContext,
   ...nativeSelectProps
 }) {
-  const { enumOptions, enumDisabled, emptyValue: optEmptyVal } = options;
+  const { enumOptions, enumDisabled, emptyValue : optEmptyVal } = options;
 
   multiple = typeof multiple === 'undefined' ? false : !!multiple;
 
@@ -78,45 +77,45 @@ export default function CustomSelectWidget({
   );
 
   return (
-    <FormControl variant="outlined" margin='dense' style={{width : "calc(100% - 4px)"}}>
+    <FormControl variant="outlined" margin="dense" style={{ width : "calc(100% - 4px)" }}>
       <InputLabel>
         {labelValue(label, hideLabel || !label, false)}
       </InputLabel>
       <NativeSelect
         id={id}
-        name={id}
         value={isEmpty ? emptyValue : selectedIndexes}
         required={required}
+        placeholder={placeholder}
         disabled={disabled || readonly}
         input={<OutlinedInput label={label} />}
         endAdornment={
-             (<InputAdornment position="start">
-          {rawErrors?.length > 0 && (
-            <CustomTextTooltip
-              backgroundColor={ERROR_COLOR}
-              flag={formContext?.overrideFlag}
-              title={
-                <div>
-                  {rawErrors?.map((error, index) => (
-                    <div key={index}>{error}</div>
-                  ))}
-                </div>
+          (<InputAdornment position="start">
+            {rawErrors?.length > 0 && (
+              <CustomTextTooltip
+                backgroundColor={ERROR_COLOR}
+                flag={formContext?.overrideFlag}
+                title={
+                  <div>
+                    {rawErrors?.map((error, index) => (
+                      <div key={index}>{error}</div>
+                    ))}
+                  </div>
 
-              }
-              interactive={true}>
-              <IconButton component="span" size="small">
-                <ErrorOutlineIcon width="14px" height="14px" fill={ERROR_COLOR} style={{ verticalAlign : "middle", ...iconSmall }} />
-              </IconButton>
-            </CustomTextTooltip>
-          )}
-          {schema?.description && (
-            <CustomTextTooltip backgroundColor="#3C494F" flag={formContext?.overrideFlag} title={getHyperLinkDiv(schema?.description)} interactive={true}>
-              <IconButton component="span" size="small">
-                <HelpOutlineIcon width="14px" height="14px" fill={theme.palette.type === 'dark' ? "white" : "gray"} style={{ verticalAlign : "middle", ...iconSmall }} />
-              </IconButton>
-            </CustomTextTooltip>
-          )}
-        </InputAdornment>)
+                }
+                interactive={true}>
+                <IconButton component="span" size="small">
+                  <ErrorOutlineIcon width="14px" height="14px" fill={ERROR_COLOR} style={{ verticalAlign : "middle", ...iconSmall }} />
+                </IconButton>
+              </CustomTextTooltip>
+            )}
+            {schema?.description && (
+              <CustomTextTooltip backgroundColor="#3C494F" flag={formContext?.overrideFlag} title={getHyperLinkDiv(schema?.description)} interactive={true}>
+                <IconButton component="span" size="small">
+                  <HelpOutlineIcon width="14px" height="14px" fill={theme.palette.type === 'dark' ? "white" : "gray"} style={{ verticalAlign : "middle", ...iconSmall }} />
+                </IconButton>
+              </CustomTextTooltip>
+            )}
+          </InputAdornment>)
         }
         autoFocus={autofocus}
         onChange={_onChange}
@@ -125,7 +124,7 @@ export default function CustomSelectWidget({
         {...nativeSelectProps}
         multiple={multiple}
         inputProps={{
-          'aria-describedby': ariaDescribedByIds(id),
+          'aria-describedby' : ariaDescribedByIds(id),
         }}
       >
         {Array.isArray(enumOptions) &&
