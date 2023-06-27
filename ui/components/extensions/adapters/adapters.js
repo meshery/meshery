@@ -58,7 +58,7 @@ const Adapters = ({ updateProgress, classes, meshAdapters, meshAdaptersts }) => 
       }
 
       enqueueSnackbar(`Adapter ${response.adapterStatus.toLowerCase()}`, {
-        variant : "success",
+        variant : "info",
         autoHideDuration : 2000,
         action : (key) => (
           <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
