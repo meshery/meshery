@@ -398,7 +398,7 @@ type Provider interface {
 	CloneMesheryFilter(req *http.Request, filterID string, cloneFilterRequest *MesheryCloneFilterRequestBody) ([]byte, error)
 	GetMesheryFilter(req *http.Request, filterID string) ([]byte, error)
 	GetMesheryFilterFile(req *http.Request, filterID string) ([]byte, error)
-	RemoteFilterFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
+	RemoteFilterFile(req *http.Request, resourceURL, path string, save bool, resource string) ([]byte, error)
 
 	SaveMesheryApplication(tokenString string, application *MesheryApplication) ([]byte, error)
 	SaveApplicationSourceContent(token string, applicationID string, sourceContent []byte) error
