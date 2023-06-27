@@ -6,7 +6,6 @@ import (
 	"io"
 	"os"
 	"strconv"
-	"strings"
 	"sync"
 	"time"
 
@@ -137,8 +136,6 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 			return ErrAdapterAdministration(err)
 		}
 
-		// Find the container ID by given exposed port
-		port := strings.Split(adapter.Location, ":")[1]
 		containers, err := cli.ContainerList(ctx, types.ContainerListOptions{})
 		if err != nil {
 			return ErrAdapterAdministration(err)
@@ -146,14 +143,14 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 		var containerID string
 		for _, container := range containers {
 			for _, p := range container.Ports {
-				if strconv.Itoa(int(p.PublicPort)) == port {
+				if strconv.Itoa(int(p.PublicPort)) == adapter.Location {
 					containerID = container.ID
 					break
 				}
 			}
 		}
 		if containerID == "" {
-			return ErrAdapterAdministration(fmt.Errorf("no container found for port %s", port))
+			return ErrAdapterAdministration(fmt.Errorf("no container found for port %s", adapter.Location))
 		}
 
 		// Stop and remove the container

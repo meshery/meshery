@@ -97,11 +97,10 @@ const Adapters = ({ updateProgress, classes, meshAdapters, meshAdaptersts }) => 
     } else {
       payload = {
         status : "DISABLED",
-        adapter : "",
-        targetPort : selectedAdapter.url
+        adapter : selectedAdapter.label,
+        targetPort : selectedAdapter.defaultPort
       };
       msg = "Unable to Undeploy adapter";
-
     }
     handleAdapterDeployment(payload, msg, selectedAdapter, adapterId);
   }
