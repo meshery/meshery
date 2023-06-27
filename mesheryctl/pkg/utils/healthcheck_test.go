@@ -182,3 +182,52 @@ func TestAreMesheryComponentsRunning(t *testing.T) {
 	}
 }
 
+func TestIsMesheryRunning(t *testing.T){
+	tests := []struct {
+		platform string
+		expected bool
+	}{
+		{
+			platform: "docker",
+			expected: false,
+		},
+		{
+			platform: "kubernetes",
+			expected: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run("Is Meshery Running", func(t *testing.T) {
+			if got, _ := IsMesheryRunning(tt.platform); got != tt.expected {
+				t.Errorf("Meshery is not Running got %v want %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestAreAllPodsRunning(t *testing.T) {
+	tests := []struct {
+		expected bool
+	}{
+		{
+			expected: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run("Are All Pods Running", func(t *testing.T) {
+			if got, _:= AreAllPodsRunning(); got != tt.expected {
+				t.Errorf("Are all pods running got %v want %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestCheckMesheryNsDelete(t *testing.T){
+	expected := false
+	t.Run("Test Existing Meshery Namespace", func(t *testing.T) {
+		if got, _:= CheckMesheryNsDelete(); got != expected {
+			t.Errorf("Namespace not deleted got %v want %v ", got, expected )
+		}
+	})
+}
