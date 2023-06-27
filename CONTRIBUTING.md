@@ -130,6 +130,13 @@ Once the Meshery server is up and running, you should be able to access Meshery 
 
 **Please note**: If you get error while starting the server as **"Meshery Development Incompatible"** then follow the below guideline 👇
 
+<br/><br/>
+<div style="text-align: center;">
+<a href="{{ site.baseurl }}/assets/img/meshery-development-incompatible-error.png">
+  <img style= "width: 600px;" src="{{ site.baseurl }}/assets/img/meshery-development-incompatible-error.png" />
+</a>
+</div>
+
 Potential Solution: 
 
 -  Go to your meshery folder in your local-system where you’ve cloned it.
