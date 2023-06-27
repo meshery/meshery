@@ -310,10 +310,22 @@ class MeshAdapterConfigComponent extends React.Component {
 
     this.props.updateProgress({ showProgress : true });
 
+    const targetPort = function getTargetPort(location) {
+      if(!location.value) {
+        return null
+      }
+
+      if(location.value.includes(":")) {
+        return location.value.split(":")[1]
+      }
+
+      return location.value;
+    }(meshLocationURL)
+
     const variables = {
       status : "DISABLED",
       adapter : "",
-      targetPort : meshLocationURL.value
+      targetPort
     };
 
     changeAdapterState((response, errors) => {

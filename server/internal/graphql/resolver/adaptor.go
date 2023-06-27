@@ -24,8 +24,8 @@ func getAdapterInformationByName(adapterName string) *models.Adapter {
 
 func (r *Resolver) changeAdapterStatus(_ context.Context, _ models.Provider, targetStatus model.Status, adapterName, targetPort string) (model.Status, error) {
 	// not able to perform any operation when the name is not there
-	if adapterName == "" {
-		return model.StatusUnknown, helpers.ErrAdapterInsufficientInformation(fmt.Errorf("adapter name is not provided, please provide a name of adapter to perform operation on, current"))
+	if adapterName == "" && targetPort == "" {
+		return model.StatusUnknown, helpers.ErrAdapterInsufficientInformation(fmt.Errorf("either of adapter name or target port is not provided, please provide a name of adapter or target-port to perform operation on"))
 	}
 
 	// in case of empty target, prefer the default ports
