@@ -34,8 +34,7 @@ Once the Meshery server is up and running, you should be able to access Meshery 
 After running Meshery server, you will need to select your **Cloud Provider** by navigating to `localhost:9081`. Only then you will be able to use the Meshery UI on port `3000`.
 
 **Please note**: If you get error while starting the server as **"Meshery Development Incompatible"** then follow the below guideline 👇
- 
-<br/><br/>
+
 <div style="text-align: center;">
 <a href="{{ site.baseurl }}/assets/img/meshery-development-incompatible-error.png">
   <img style= "width: 600px;" src="{{ site.baseurl }}/assets/img/meshery-development-incompatible-error.png" />
