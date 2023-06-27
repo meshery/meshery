@@ -214,8 +214,9 @@ func TestCheckMesheryNsDelete(t *testing.T){
 
 func TestIsPodRunning(t *testing.T) {
 
-	client, _ := meshkitkube.New([]byte(""))
+	
 	t.Run("Check Pod running", func(t *testing.T){
+		client, _ := meshkitkube.New([]byte(""))	
 		result := isPodRunning(client, "test", "test")
 		got, _ := result()
 		if got != false {
