@@ -26,7 +26,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/asaskevich/govalidator"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
@@ -117,7 +116,8 @@ mesheryctl pattern apply [pattern-name]
 			}
 		} else {
 			// Method to check if the entered file is a URL or not
-			if validURL := govalidator.IsURL(file); !validURL {
+			validURL := strings.HasPrefix(file, "https://github.com")
+			if !validURL {
 				content, err := os.ReadFile(file)
 				if err != nil {
 					return errors.Errorf("file path %s is invalid. Enter a valid path ", file)

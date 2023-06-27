@@ -1,4 +1,4 @@
-name: CNCF Playground - Meshery Deployment
+name: Playground CNCF - Deploy
 on:
   workflow_call:
   workflow_dispatch:

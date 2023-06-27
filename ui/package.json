@@ -38,7 +38,7 @@
   "repository": "https://github.com/meshery/meshery",
   "license": "Apache-2.0",
   "dependencies": {
-    "@cypress/code-coverage": "^3.10.1",
+    "@cypress/code-coverage": "^3.10.7",
     "@date-io/moment": "^2.11.0",
     "@emotion/react": "^11.10.8",
     "@emotion/styled": "^11.11.0",
@@ -58,7 +58,7 @@
     "@paciolan/remote-component": "^2.11.0",
     "@redux-devtools/extension": "^3.2.3",
     "@rjsf/core": "^5.8.1",
-    "@rjsf/material-ui": "^5.8.1",
+    "@rjsf/material-ui": "^5.8.2",
     "@rjsf/utils": "^5.8.1",
     "@rjsf/validator-ajv8": "^5.8.1",
     "autoprefixer": "^10.4.13",
@@ -144,6 +144,6 @@
     "relay-compiler": "^14.1.0",
     "start-server-and-test": "^1.13.1",
     "webpack": "^5.76.0",
-    "webpack-cli": "^5.0.1"
+    "webpack-cli": "^5.1.4"
   }
 }
