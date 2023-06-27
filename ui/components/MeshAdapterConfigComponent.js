@@ -394,7 +394,7 @@ class MeshAdapterConfigComponent extends React.Component {
 
     return (
       <NoSsr>
-        <div className={classes.wrapperClass}>
+        <div className={classes.wrapperClass} data-cy="mesh-adapter-connections" >
           {showAdapters}
 
           <Grid container spacing={1} alignItems="flex-end">
