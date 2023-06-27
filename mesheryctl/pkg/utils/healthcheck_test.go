@@ -217,18 +217,21 @@ func TestCheckMesheryNsDelete(t *testing.T){
 }
 
 func TestWaitForPodRunning(t *testing.T) {
-	client, _ := meshkitkube.New([]byte(""))
+	client, err := meshkitkube.New([]byte(""))
 	t.Run("Check Pod running", func(t *testing.T){
 		got := WaitForPodRunning(client, "test", "test", 300)
-		if got == nil {
+		if err != nil {
 			t.Errorf("Check Pod Running got %v", got)
 		}
 	})
 }
 
 func TestIsNamespaceDeleted(t *testing.T) {
-	client, _ := meshkitkube.New([]byte(""))
+	client, err := meshkitkube.New([]byte(""))
 	t.Run("Check Pod running", func(t *testing.T){
+		if err != nil {
+			t.Errorf("Got error %v", err)
+		}
 		result := isNamespaceDeleted(client, "test")
 		got, _ := result()
 		if got != false {
