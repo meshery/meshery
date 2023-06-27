@@ -118,6 +118,25 @@ To start running Meshery Server locally:
 {% include code.html code="make server" %}
 Now, Meshery will run on the default port `http://localhost:9081`.
 
+**Please note**: If you get error while starting the server as **"Meshery Development Incompatible"** then follow the below guideline 👇
+ 
+<br/><br/>
+<div style="text-align: center;">
+<a href="{{ site.baseurl }}/assets/img/meshery-development-incompatible-error.png">
+  <img style= "width: 600px;" src="{{ site.baseurl }}/assets/img/meshery-development-incompatible-error.png" />
+</a>
+</div>
+
+Potential Solution: 
+
+-  Go to your meshery folder in your local-system where you’ve cloned it.
+Execute: 
+
+
+- Restart the meshery server.
+- Make sure that `BUILD="v0.X.X"` is logged in some starting line while starting the server.
+
+- Addionally, before restarting the server, if you like to pull the latest changes, you can do: `git pull upstream master`
 
 ### UI Development Server
 

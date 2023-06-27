@@ -33,6 +33,26 @@ Any time changes are made to the GO code, you will have to stop the server and r
 Once the Meshery server is up and running, you should be able to access Meshery on your `localhost` on port `9081` at `http://localhost:9081`. One thing to note, you might NOT see the [Meshery UI](#contributing-ui) until the UI code is built as well.
 After running Meshery server, you will need to select your **Cloud Provider** by navigating to `localhost:9081`. Only then you will be able to use the Meshery UI on port `3000`.
 
+**Please note**: If you get error while starting the server as **"Meshery Development Incompatible"** then follow the below guideline 👇
+ 
+<br/><br/>
+<div style="text-align: center;">
+<a href="{{ site.baseurl }}/assets/img/meshery-development-incompatible-error.png">
+  <img style= "width: 600px;" src="{{ site.baseurl }}/assets/img/meshery-development-incompatible-error.png" />
+</a>
+</div>
+
+Potential Solution: 
+
+-  Go to your meshery folder in your local-system where you’ve cloned it.
+Execute: 
+
+
+- Restart the meshery server.
+- Make sure that `BUILD="v0.X.X"` is logged in some starting line while starting the server.
+
+- Addionally, before restarting the server, if you like to pull the latest changes, you can do: `git pull upstream master`
+
 #### Building Docker image
 
 To build a Docker image of Meshery, please ensure you have `Docker` installed to be able to build the image. Now, run the following command to build the Docker image:
