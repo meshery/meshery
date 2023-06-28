@@ -683,7 +683,7 @@ func (l *DefaultLocalProvider) PublishCatalogFilter(_ *http.Request, _ *MesheryC
 	return []byte(""), nil
 }
 
-func (l *DefaultLocalProvider) UnPublishCatalogFilter(_ *http.Request, _ *MesheryCatalogPatternRequestBody) ([]byte, error) {
+func (l *DefaultLocalProvider) UnPublishCatalogFilter(_ *http.Request, _ *MesheryCatalogFilterRequestBody) ([]byte, error) {
 	return []byte(""), ErrLocalProviderSupport
 }
 
