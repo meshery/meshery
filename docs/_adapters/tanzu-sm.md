@@ -29,7 +29,7 @@ language: en
       {% endif %}
 {% endfor %}
 
-{% include adapter-status.html %}
+{% include compatibility/adapter-status.html %}
 ## Features
 
 1. {{page.mesh_name}} Lifecycle Management

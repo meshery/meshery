@@ -24,7 +24,7 @@ language: en
       {% endif %}
 {% endfor %}
 
-{% include adapter-status.html %}
+{% include compatibility/adapter-status.html %}
 
 ### Lifecycle management
 

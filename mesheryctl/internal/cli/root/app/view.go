@@ -81,7 +81,7 @@ mesheryctl app view --all
 		application = strings.Join(args, "%20")
 		if len(application) == 0 {
 			if viewAllFlag {
-				url += "/api/application?page_size=10000"
+				url += "/api/application?pagesize=10000"
 			} else {
 				return errors.New("[application-name|application-id] not specified, use -a to view all applications")
 			}
