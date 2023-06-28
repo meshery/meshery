@@ -54,7 +54,7 @@ class MesherySMIResults extends Component {
       sortOrder = '';
     }
 
-    query = `?page=${page}&pageSize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
+    query = `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
     dataFetch(`/api/smi/results${query}`, {
       method : 'GET',
       credentials : 'include',

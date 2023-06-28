@@ -16,10 +16,10 @@ type MesheryK8sContextPersister struct {
 
 // MesheryK8sContextPage represents a page of contexts
 type MesheryK8sContextPage struct {
-	Page       uint64        `json:"page,omitempty"`
-	PageSize   uint64        `json:"page_size,omitempty"`
-	TotalCount int           `json:"total_count,omitempty"`
-	Contexts   []*K8sContext `json:"contexts,omitempty"`
+	Page       uint64        `json:"page"`
+	PageSize   uint64        `json:"page_size"`
+	TotalCount int           `json:"total_count"`
+	Contexts   []*K8sContext `json:"contexts"`
 }
 
 // GetMesheryK8sContexts returns all of the contexts

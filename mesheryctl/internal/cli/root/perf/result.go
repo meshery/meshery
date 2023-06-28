@@ -176,7 +176,7 @@ func fetchPerformanceProfileResults(baseURL, profileID string, pageSize, pageNum
 
 	url := baseURL + "/api/user/performance/profiles/" + profileID + "/results"
 
-	tempURL := fmt.Sprintf("%s?pageSize=%d&page=%d", url, pageSize, pageNumber)
+	tempURL := fmt.Sprintf("%s?pagesize=%d&page=%d", url, pageSize, pageNumber)
 
 	req, err := utils.NewRequest("GET", tempURL, nil)
 	if err != nil {
