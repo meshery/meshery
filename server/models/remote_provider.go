@@ -386,7 +386,7 @@ func (l *RemoteProvider) GetUsers(token, page, pageSize, search, order, filter s
 		q.Set("page", page)
 	}
 	if pageSize != "" {
-		q.Set("pageSize", pageSize)
+		q.Set("pagesize", pageSize)
 	}
 	if search != "" {
 		q.Set("search", search)
@@ -636,7 +636,7 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 		q.Set("page", page)
 	}
 	if pageSize != "" {
-		q.Set("page_size", pageSize)
+		q.Set("pagesize", pageSize)
 	}
 	if search != "" {
 		q.Set("search", search)
@@ -855,7 +855,7 @@ func (l *RemoteProvider) FetchResults(tokenVal string, page, pageSize, search, o
 		q.Set("page", page)
 	}
 	if pageSize != "" {
-		q.Set("page_size", pageSize)
+		q.Set("pagesize", pageSize)
 	}
 	if search != "" {
 		q.Set("search", search)
@@ -911,7 +911,7 @@ func (l *RemoteProvider) FetchAllResults(tokenString string, page, pageSize, sea
 		q.Set("page", page)
 	}
 	if pageSize != "" {
-		q.Set("page_size", pageSize)
+		q.Set("pagesize", pageSize)
 	}
 	if search != "" {
 		q.Set("search", search)
@@ -970,7 +970,7 @@ func (l *RemoteProvider) FetchSmiResults(req *http.Request, page, pageSize, sear
 		q.Set("page", page)
 	}
 	if pageSize != "" {
-		q.Set("page_size", pageSize)
+		q.Set("pagesize", pageSize)
 	}
 	if search != "" {
 		q.Set("search", search)
@@ -1025,7 +1025,7 @@ func (l *RemoteProvider) FetchSmiResult(req *http.Request, page, pageSize, searc
 		q.Set("page", page)
 	}
 	if pageSize != "" {
-		q.Set("page_size", pageSize)
+		q.Set("pagesize", pageSize)
 	}
 	if search != "" {
 		q.Set("search", search)
@@ -1390,7 +1390,7 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 		q.Set("page", page)
 	}
 	if pageSize != "" {
-		q.Set("page_size", pageSize)
+		q.Set("pagesize", pageSize)
 	}
 	if search != "" {
 		q.Set("search", search)
@@ -1554,7 +1554,7 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 		q.Set("page", page)
 	}
 	if pageSize != "" {
-		q.Set("page_size", pageSize)
+		q.Set("pagesize", pageSize)
 	}
 	if search != "" {
 		q.Set("search", search)
@@ -2070,7 +2070,7 @@ func (l *RemoteProvider) GetMesheryFilters(tokenString string, page, pageSize, s
 		q.Set("page", page)
 	}
 	if pageSize != "" {
-		q.Set("page_size", pageSize)
+		q.Set("pagesize", pageSize)
 	}
 	if search != "" {
 		q.Set("search", search)
@@ -2162,7 +2162,7 @@ func (l *RemoteProvider) GetMesheryFilterFile(req *http.Request, filterID string
 
 	logrus.Infof("attempting to fetch filter from cloud for id: %s", filterID)
 
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/file/%s", l.RemoteProviderURL, ep, filterID))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/download/%s", l.RemoteProviderURL, ep, filterID))
 	logrus.Debugf("constructed filter url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
@@ -2586,7 +2586,7 @@ func (l *RemoteProvider) GetMesheryApplications(tokenString string, page, pageSi
 		q.Set("page", page)
 	}
 	if pageSize != "" {
-		q.Set("page_size", pageSize)
+		q.Set("pagesize", pageSize)
 	}
 	if search != "" {
 		q.Set("search", search)
@@ -2807,7 +2807,7 @@ func (l *RemoteProvider) GetPerformanceProfiles(tokenString string, page, pageSi
 		q.Set("page", page)
 	}
 	if pageSize != "" {
-		q.Set("page_size", pageSize)
+		q.Set("pagesize", pageSize)
 	}
 	if search != "" {
 		q.Set("search", search)
@@ -2990,7 +2990,7 @@ func (l *RemoteProvider) GetSchedules(req *http.Request, page, pageSize, order s
 		q.Set("page", page)
 	}
 	if pageSize != "" {
-		q.Set("page_size", pageSize)
+		q.Set("pagesize", pageSize)
 	}
 	if order != "" {
 		q.Set("order", order)
@@ -3345,7 +3345,7 @@ func (l *RemoteProvider) SMPTestConfigFetch(req *http.Request, page, pageSize, s
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
 	q.Add("page", page)
-	q.Add("pageSize", pageSize)
+	q.Add("pagesize", pageSize)
 	q.Add("search", search)
 	q.Add("order", order)
 
@@ -3532,7 +3532,7 @@ func (l *RemoteProvider) GetConnections(req *http.Request, _ string, page, pageS
 
 	q := remoteProviderURL.Query()
 	q.Add("page", strconv.Itoa(page))
-	q.Add("pageSize", strconv.Itoa(pageSize))
+	q.Add("pagesize", strconv.Itoa(pageSize))
 	q.Add("search", search)
 	q.Add("order", order)
 
@@ -3874,7 +3874,7 @@ func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, p
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
 	q.Add("page", strconv.Itoa(page))
-	q.Add("pageSize", strconv.Itoa(pageSize))
+	q.Add("pagesize", strconv.Itoa(pageSize))
 	q.Add("search", search)
 	q.Add("order", order)
 
