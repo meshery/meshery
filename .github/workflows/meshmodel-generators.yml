@@ -1,4 +1,4 @@
-name: Static Component Generation and Updation
+name: MeshModel Component Generator and Updater
 on: 
   workflow_dispatch:
   schedule:
