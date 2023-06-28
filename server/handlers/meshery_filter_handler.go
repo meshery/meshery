@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -137,6 +138,10 @@ func (h *Handler) handleFilterPOST(
 		}
 
 		mesheryFilter := parsedBody.FilterData
+
+		// encode the filter binary data to base64 string before processing it further.
+		filterData := base64.StdEncoding.EncodeToString([]byte(mesheryFilter.FilterFile))
+		mesheryFilter.FilterFile = filterData
 
 		if parsedBody.Save {
 			resp, err := provider.SaveMesheryFilter(token, mesheryFilter)

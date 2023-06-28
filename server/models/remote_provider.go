@@ -1836,7 +1836,6 @@ func (l *RemoteProvider) PublishCatalogPattern(req *http.Request, publishPattern
 	return nil, fmt.Errorf("error while publishing pattern file to catalog - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
-
 // UnPublishMesheryPattern publishes a meshery pattern with the given id to catalog
 func (l *RemoteProvider) UnPublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error) {
 	if !l.Capabilities.IsSupported(MesheryPatternsCatalog) {
@@ -2018,7 +2017,7 @@ func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFi
 		return nil, ErrMarshal(err, "meshery metrics for shipping")
 	}
 
-	logrus.Debugf("Filter: %s, size: %d", data, len(data))
+	logrus.Debugf("size of filter: %d", len(data))
 	logrus.Infof("attempting to save filter to remote provider")
 	bf := bytes.NewBuffer(data)
 
@@ -3182,7 +3181,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 			Type:             "platform",
 			SubType:          "management",
 			MetaData:         metadata,
-			Status: 		  DISCOVERED,
+			Status:           DISCOVERED,
 			CredentialSecret: cred,
 		}
 
