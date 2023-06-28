@@ -1,7 +1,7 @@
 {
   "$id": "https://schema.meshery.io/relationship.json",
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "description": "`Relationships` define the genealogy between one or more `Components` interconnected `Components`. Just as in familial relationships, MeshModel `Relationships` are represented in a variety of forms very much resembling familiar ancestral lineage, including `hierarchical` relationships such as direct parent and child relationship as well as any number of layers of indirect grandparent and grandchild relationships. Peer relationships like that of `sibling`s take on different types such as `network` and `dependency`.  Each type of `Relationship` has `metadata`, `selectors` and some optional parameters.",
+  "description": "`Relationships` define the genealogy between one or more interconnected `Components`. Just as in familial relationships, MeshModel `Relationships` are represented in a variety of forms very much resembling familiar ancestral lineage, including `hierarchical` relationships such as direct parent and child relationships as well as any number of layers of indirect grandparent and grandchild relationships and branch relationships (e.g. aunt, uncle,..). Peer relationships like that of `sibling`s take on different types such as `network` and `dependency`.  Each type of `Relationship` has a `subtype`, `metadata`, `selectors` and some optional parameters.",
   "required": [
     "apiVersion",
     "kind",
@@ -56,6 +56,20 @@
               },
               "version": {
                 "$ref": "https://schema.meshery.io/core.json#versionString"
+              },
+              "patch": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "patchStrategy": {
+                    "type": "string",
+                    "enum": ["replace"]
+                  },
+                  "mutatorRef": {
+                    "type": "string",
+                    "description": "JSON ref to value from where patch should be applied."
+                  }
+                }
               }
             },
             "description": "Optional fields that are a part of the `from` selector. Absence of a field has an implied * meaning."
@@ -75,6 +89,22 @@
               },
               "version": {
                 "$ref": "https://schema.meshery.io/core.json#versionString"
+              },
+              "patch": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "patchStrategy": {
+                    "type": "string",
+                    "enum": [
+                      "replace"
+                    ]
+                  },
+                  "mutatedRef": {
+                    "type": "string",
+                    "description": "JSON ref to value that should be patched."
+                  }
+                }
               }
             },
             "description": "Optional fields that are a part of the `to` selector. Absence of a field has an implied * meaning."

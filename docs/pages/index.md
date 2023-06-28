@@ -9,9 +9,7 @@ language: en
 {% assign sorted_pages = site.pages | sort: "name" | alphabetical %}
 
 <div style="display: block; text-align: center; margin-bottom: 30px;">
-     <a href="https://layer5.io/meshery" class="svg-lg">
         {% include svg/meshery-logo.html %}
-    </a>
 </div>
 <p style="margin:auto;padding:1.6rem">As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.</p>
 
