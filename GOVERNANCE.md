@@ -38,7 +38,7 @@ A core team of maintainers steward Meshery, however, Meshery is comprised of any
 
 ### Becoming a Maintainer
 
-Maintainers will be added to the GitHub @meshery/maintainers team, and made a GitHub maintainer of that team. They will be given write permission to the Kuma GitHub repository <https://github.com/meshery/meshery> repo. To do so they need to open an issue in kumahq/kuma showing that they fill the above requirements. Sponsors express their support by adding `+1` as a comment.
+Maintainers will be added to the GitHub @meshery/maintainers team, and made a GitHub maintainer of that team. They will be given write permission to the Meshery GitHub repository <https://github.com/meshery/meshery> repo. To do so they need to open an issue in meshery/meshery showing that they fill the above requirements. Sponsors express their support by adding `+1` as a comment.
 
 ### Emeritus Maintainers
 
