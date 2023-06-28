@@ -130,7 +130,7 @@ Once the Meshery server is up and running, you should be able to access Meshery 
 
 **Please note**: If you get error while starting the server as **"Meshery Development Incompatible"** then follow the below guideline 👇
 
-<a href="https://user-images.githubusercontent.com/86982322/246590595-22177454-4b04-4c01-aab6-546ff9d4a318.png" ><img src="https://user-images.githubusercontent.com/86982322/246590595-22177454-4b04-4c01-aab6-546ff9d4a318.png" width="50%"></a>
+<img src="./docs/assets/img/meshery-development-incompatible-error.png" width="50%">
 
 Potential Solution: 
 
