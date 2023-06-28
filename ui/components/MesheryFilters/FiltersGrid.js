@@ -8,10 +8,11 @@ import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
 import useStyles from "../MesheryPatterns/Grid.styles";
+import PublishModal from "../PublishModal";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
-function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit, setSelectedFilters, handleClone }) {
+function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit, setSelectedFilters, handleClone, handlePublishModal, handleUnpublishModal, canPublishFilter }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(filter.filter_file);
 
@@ -22,6 +23,9 @@ function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit
         updated_at={filter.updated_at}
         created_at={filter.created_at}
         filter_file={filter.filter_file}
+        canPublishFilter={canPublishFilter}
+        handlePublishModal={handlePublishModal}
+        handleUnpublishModal={handleUnpublishModal}
         requestFullSize={() => setGridProps({ xl : 12, md : 12, xs : 12 })}
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
         handleDeploy={handleDeploy}
@@ -37,13 +41,58 @@ function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit
   );
 }
 
-function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, handleSubmit,urlUploadHandler,uploadHandler, setSelectedFilter, selectedFilter, pages = 1,setPage, selectedPage, UploadImport, fetch }) {
+/**
+ * FilterGrid is the react component for rendering grid
+ * @param {{
+*  filters:Array<{
+  *  id:string,
+  *  created_at: string,
+  *  updated_at: string,
+  *  filter_file: string,
+  * }>,
+  *  handleVerify: (e: Event, filter_file: any, filter_id: string) => void,
+  *  handlePublish: (catalog_data : any) => void,
+  *  handleUnpublishModal: (ev: Event, filter: any) => (() => Promise<void>),
+  *  handleDeploy: (filter_file: any) => void,
+  *  handleUnDeploy: (filter_file: any) => void,
+  *  handleSubmit: (data: any, id: string, name: string, type: string) => void,
+  *  setSelectedFilter : ({show: boolean, filter:any}) => void,
+  *  selectedFilter: {show : boolean, filter : any},
+  *  pages?: number,
+  *  selectedPage?: number,
+  *  setPage: (page: number) => void
+  *  filterErrors: Map
+  *  canPublishFilter: boolean
+  * }} props props
+  */
+ 
+
+function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, handleSubmit,urlUploadHandler,uploadHandler, setSelectedFilter, selectedFilter, pages = 1,setPage, selectedPage, UploadImport, fetch, canPublishFilter, handlePublish, handleUnpublishModal }) {
 
   const classes = useStyles()
 
   const [importModal, setImportModal] = useState({
     open : false
   });
+
+  const [publishModal, setPublishModal] = useState({
+    open : false,
+    filter : {}
+  });
+  const handlePublishModal = (filter) => {
+    if (canPublishFilter) {
+      setPublishModal({
+        open : true,
+        filter : filter
+      });
+    }
+  };
+  const handlePublishModalClose = () => {
+    setPublishModal({
+      open : false,
+      filter : {}
+    });
+  };
 
   const handleUploadImport = () => {
     setImportModal({
@@ -97,6 +146,9 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, han
             handleUndeploy={() => handleModalOpen(filter, false)}
             handleSubmit={handleSubmit}
             setSelectedFilters={setSelectedFilter}
+            canPublishFilter={canPublishFilter}
+            handlePublishModal={() => handlePublishModal(filter)}
+            handleUnpublishModal={(e) => handleUnpublishModal(e, filter)()}
           />
         ))}
 
@@ -143,6 +195,7 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, han
         componentCount = {modalOpen.count}
         tab={modalOpen.deploy ? 2 : 1}
       />
+            {canPublishFilter && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} filter={publishModal.filter} aria-label="catalog publish" handlePublish={handlePublish} />}
       <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetch()} configuration="Filter"  />
     </div>
   );
