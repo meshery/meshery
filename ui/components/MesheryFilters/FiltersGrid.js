@@ -65,7 +65,7 @@ function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit
   *  canPublishFilter: boolean
   * }} props props
   */
- 
+
 
 function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, handleSubmit,urlUploadHandler,uploadHandler, setSelectedFilter, selectedFilter, pages = 1,setPage, selectedPage, UploadImport, fetch, canPublishFilter, handlePublish, handleUnpublishModal }) {
 
@@ -195,7 +195,7 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, han
         componentCount = {modalOpen.count}
         tab={modalOpen.deploy ? 2 : 1}
       />
-            {canPublishFilter && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} filter={publishModal.filter} aria-label="catalog publish" handlePublish={handlePublish} />}
+      {canPublishFilter && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} filter={publishModal.filter} aria-label="catalog publish" handlePublish={handlePublish} />}
       <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetch()} configuration="Filter"  />
     </div>
   );

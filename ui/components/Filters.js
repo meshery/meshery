@@ -245,27 +245,27 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     }
   };
 
-/**
+  /**
    * Checking whether users are signed in under a provider that doesn't have
    * publish filter capability and setting the canPublishFilter state accordingly
    */
-useEffect(() => {
-  dataFetch(
-    "/api/provider/capabilities",
-    {
-      method : "GET",
-      credentials : "include",
-    },
-    (result) => {
-      if (result) {
-        const capabilitiesRegistry = result;
-        const filtersCatalogueCapability = capabilitiesRegistry?.capabilities.filter((val) => val.feature === MesheryFiltersCatalog);
-        if (filtersCatalogueCapability?.length > 0) setCanPublishFilter(true);
-      }
-    },
-    (err) => console.error(err)
-  );
-}, [])
+  useEffect(() => {
+    dataFetch(
+      "/api/provider/capabilities",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      (result) => {
+        if (result) {
+          const capabilitiesRegistry = result;
+          const filtersCatalogueCapability = capabilitiesRegistry?.capabilities.filter((val) => val.feature === MesheryFiltersCatalog);
+          if (filtersCatalogueCapability?.length > 0) setCanPublishFilter(true);
+        }
+      },
+      (err) => console.error(err)
+    );
+  }, [])
 
   const searchTimeout = useRef(null);
 

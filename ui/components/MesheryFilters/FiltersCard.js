@@ -99,7 +99,7 @@ function FiltersCard({
           <div className={classes.bottomPart} >
 
             <div className={classes.cardButtons} >
-            {canPublishFilter &&
+              {canPublishFilter &&
                 (visibility !== VISIBILITY.PUBLISHED)
                 ?
                 (<TooltipButton
