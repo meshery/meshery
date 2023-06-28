@@ -336,7 +336,7 @@ func (h *Handler) PublishCatalogFilterHandler(
 }
 
 // swagger:route DELETE /api/filter/catalog/unpublish FiltersAPI idUnPublishCatalogFilterHandler
-// Handle Publish for a Meshery Filter
+// Handle UnPublish for a Meshery Filter
 //
 // Unpublishes filter from Meshery Catalog by setting visibility to private and removing catalog data from website
 // responses:
