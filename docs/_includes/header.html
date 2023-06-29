@@ -32,10 +32,14 @@
             ><span>{{ link.title }}</span></a
           >
         </li>
+        <li>
+        </li>
         {% endfor %}
-
+        
+        <a href="{{ site.baseurl }}/playground">
+          <div class="nav-btn">PlayGround</div>
+        </a>
         <!--Version Selector -->
-
         <select
           onchange="window.location=this.value"
           class="appearance-none flex-1 w-full px-0 py-1 placeholder-gray-900 tracking-wide focus:outline-none version-selector"

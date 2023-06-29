@@ -78,12 +78,6 @@
       url: tasks/pattern-management
     - title: Performance Management
       url: tasks/performance-management
-- title: 📑 Features
-  url: features
-  links:
-    - title: Meshery Playground
-      url: features/playground
-
 
     # - title: Service Mesh Interface (SMI) Conformance
     #   url: tasks/service-mesh-interface
@@ -115,7 +109,7 @@
 #     - title: Traefik Mesh
 #       url: service-meshes/adapters/traefik-mesh
 - title: 📚 Guides (all)
-  url: guides
+  url: guides 
   links:
     - title: Deploying Sample Applications
       url: guides/sample-apps
