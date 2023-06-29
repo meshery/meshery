@@ -21,23 +21,25 @@ import (
 func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
-		h.log.Error(fmt.Errorf("error reading request body: %v", err))
-		http.Error(w, "unable to read result data", http.StatusInternalServerError)
+		h.log.Error(ErrRequestBody(err))
+		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
 	connection := models.ConnectionPayload{}
 	err = json.Unmarshal(bd, &connection)
+	obj := "connection"
+
 	if err != nil {
-		h.log.Error(fmt.Errorf("error unmarshal request body: %v", err))
-		http.Error(w, "unable to parse connection data", http.StatusInternalServerError)
+		h.log.Error(ErrUnmarshal(err, obj))
+		http.Error(w, ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 
 	err = provider.SaveConnection(req, &connection, "", false)
 	if err != nil {
-		h.log.Error(fmt.Errorf("error saving connection: %v", err))
-		http.Error(w, "unable to save connection", http.StatusInternalServerError)
+		h.log.Error(ErrFailToSave(err, obj))
+		http.Error(w, ErrFailToSave(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -50,11 +52,11 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 //
 // ```?order={field}``` orders on the passed field
 //
-// ```?search={modelname}``` If search is non empty then a greedy search is performed
+// ```?search={}``` If search is non empty then a greedy search is performed
 //
-// ```?page={page-number}``` Default page number is 1
+// ```?page={page-number}``` Default page number is 0
 //
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+// ```?pagesize={pagesize}``` Default pagesize is 10
 // responses:
 // 200: ConnectionPage
 func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
@@ -80,16 +82,18 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, _ *mo
 
 	h.log.Debug(fmt.Sprintf("page: %d, page size: %d, search: %s, order: %s", page+1, pageSize, search, order))
 
-	connectionsPage, err := provider.GetConnections(req, user.ID, page, pageSize, order, search, connectionKind)
+	connectionsPage, err := provider.GetConnections(req, user.ID, page, pageSize, search, order, connectionKind)
+	obj := "connections"
+
 	if err != nil {
-		h.log.Error(fmt.Errorf("error getting user connections: %v", err))
-		http.Error(w, "unable to get user connections", http.StatusInternalServerError)
+		h.log.Error(ErrQueryGet(obj))
+		http.Error(w, ErrQueryGet(obj).Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if err := json.NewEncoder(w).Encode(connectionsPage); err != nil {
-		h.log.Error(fmt.Errorf("error encoding user connections: %v", err))
-		http.Error(w, "unable to encode user connections", http.StatusInternalServerError)
+		h.log.Error(ErrEncoding(err, obj))
+		http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -103,23 +107,24 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, _ *mo
 func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
-		h.log.Error(fmt.Errorf("error reading request body: %v", err))
-		http.Error(w, "unable to read connection data", http.StatusInternalServerError)
+		h.log.Error(ErrRequestBody(err))
+		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
 	connection := &models.Connection{}
 	err = json.Unmarshal(bd, connection)
+	obj := "connection"
 	if err != nil {
-		h.log.Error(fmt.Errorf("error unmarshal request body: %v", err))
-		http.Error(w, "unable to parse connection data", http.StatusInternalServerError)
+		h.log.Error(ErrUnmarshal(err, obj))
+		http.Error(w, ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 
 	_, err = provider.UpdateConnection(req, connection)
 	if err != nil {
-		h.log.Error(fmt.Errorf("error getting user connection: %v", err))
-		http.Error(w, "unable to get user connection", http.StatusInternalServerError)
+		h.log.Error(ErrQueryGet(obj))
+		http.Error(w, ErrQueryGet(obj).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -139,8 +144,9 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	connectionID := uuid.FromStringOrNil(q.Get("connectionId"))
 	_, err := provider.DeleteConnection(req, connectionID)
 	if err != nil {
-		h.log.Error(fmt.Errorf("error deleting user connection: %v", err))
-		http.Error(w, "unable to delete user connection", http.StatusInternalServerError)
+		obj := "connection"
+		h.log.Error(ErrFailToDelete(err, obj))
+		http.Error(w, ErrFailToDelete(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 

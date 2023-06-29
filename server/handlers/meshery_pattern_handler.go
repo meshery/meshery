@@ -308,8 +308,6 @@ func (h *Handler) handlePatternPOST(
 // Returns the list of all the patterns saved by the current user
 // This will return all the patterns with their details
 //
-// ```?updated_after=<timestamp>``` timestamp should be of the format "YYYY-MM-DD HH:MM:SS"
-//
 // ```?order={field}``` orders on the passed field
 //
 // ```?search=<design name>``` A string matching is done on the specified design name
@@ -319,8 +317,6 @@ func (h *Handler) handlePatternPOST(
 // ```?pagesize={pagesize}``` Default pagesize is 10
 // responses:
 // 	200: mesheryPatternsResponseWrapper
-
-// GetMesheryPatternsHandler returns the list of all the patterns saved by the current user
 func (h *Handler) GetMesheryPatternsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -331,7 +327,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 	updateAfter := q.Get("updated_after")
-	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"), updateAfter)
+	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter)
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
@@ -356,7 +352,15 @@ func (h *Handler) GetMesheryPatternsHandler(
 // swagger:route GET /api/pattern/catalog PatternsAPI idGetCatalogMesheryPatternsHandler
 // Handle GET request for catalog patterns
 //
-// Used to get catalog patterns
+// # Patterns can be further filtered through query parameter
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?page={page-number}``` Default page number is 0
+//
+// ```?pagesize={pagesize}``` Default pagesize is 10.
+// 
+// ```?search={patternname}``` If search is non empty then a greedy search is performed
 // responses:
 //
 //	200: mesheryPatternsResponseWrapper
@@ -370,7 +374,7 @@ func (h *Handler) GetCatalogMesheryPatternsHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("search"), q.Get("order"))
+	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
