@@ -1019,7 +1019,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 					for i, name := range names {
 						id, _ := uuid.NewV4()
 						var filter = &MesheryFilter{
-							FilterFile: content[i],
+							FilterFile: []byte(content[i]),
 							Name:       name,
 							ID:         &id,
 							UserID:     &nilUserID,
@@ -1239,7 +1239,7 @@ func githubRepoFilterScan(
 
 				ff := MesheryFilter{
 					Name:       name,
-					FilterFile: string(f.Content),
+					FilterFile: []byte(f.Content),
 					Location: map[string]interface{}{
 						"type":   "github",
 						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
@@ -1320,7 +1320,7 @@ func genericHTTPFilterFile(fileURL string) ([]MesheryFilter, error) {
 
 	ff := MesheryFilter{
 		Name:       name,
-		FilterFile: result,
+		FilterFile: []byte(result),
 		Location: map[string]interface{}{
 			"type":   "http",
 			"host":   fileURL,
