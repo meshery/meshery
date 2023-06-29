@@ -402,20 +402,58 @@ type filterFilesResponseWrapper struct {
 	Body *models.MesheryFilter
 }
 
-// Returns all meshmodel models
+// Returns meshmodel models
 // swagger:response meshmodelModelsResponseWrapper
 type meshmodelModelsResponseWrapper struct {
+	// in: body
 	Body *models.MeshmodelsAPIResponse
 }
 
-// Returns all meshmodel components across all models and categories
-// swagger:response allMeshmodelComponentsResponseWrapper
-type allMeshmodelComponentsResponseWrapper struct {
+// Return meshmodel components
+// swagger:response meshmodelComponentsResponseWrapper
+type meshmodelComponentsResponseWrapper struct {
+	// in: body
 	Body *models.MeshmodelComponentsAPIResponse
 }
 
-// Returns all meshmodel relationships of a specific model
-// swagger:response allMeshmodelRelationshipsResponseWrapper
-type allMeshmodelRelationshipsResponseWrapper struct {
+// Returns meshmodel relationships
+// swagger:response meshmodelRelationshipsResponseWrapper
+type meshmodelRelationshipsResponseWrapper struct {
+	// in: body
 	Body *models.MeshmodelRelationshipsAPIResponse
+}
+
+// Returns meshmodel categories
+// swagger:response meshmodelCategoriesResponseWrapper
+type meshmodelCategoriesResponseWrapper struct {
+	// in: body
+	Body *models.MeshmodelCategoriesAPIResponse
+}
+
+// Returns database summary
+// swagger:response systemDatabaseResponseWrapper
+type systemDatabaseResponseWrapper struct {
+	// in: body
+	Body *models.DatabaseSummary
+}
+
+// Returns K8s contexts
+// swagger:response systemK8sContextsResponseWrapper
+type systemK8sContextsResponseWrapper struct {
+	// in: body
+	Body *models.MesheryK8sContextPage
+}
+
+// Returns SMI results
+// swagger:response smiResultsResponseWrapper
+type smiResultsResponseWrapper struct {
+	// in: body
+	Body *models.SmiResultPage
+}
+
+// Returns Meshery application types
+// swagger:response mesheryApplicationTypesResponseWrapper
+type mesheryApplicationTypesResponseWrapper struct {
+	// in: body
+	Body []models.ApplicationTypeResponse
 }
