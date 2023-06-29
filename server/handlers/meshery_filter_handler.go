@@ -15,10 +15,10 @@ import (
 // MesheryFilterRequestBody refers to the type of request body that
 // SaveMesheryFilter would receive
 type MesheryFilterRequestBody struct {
-	URL        string                `json:"url,omitempty"`
-	Path       string                `json:"path,omitempty"`
-	Save       bool                  `json:"save,omitempty"`
-	FilterData *models.MesheryFilter `json:"filter_data,omitempty"`
+	URL        string                       `json:"url,omitempty"`
+	Path       string                       `json:"path,omitempty"`
+	Save       bool                         `json:"save,omitempty"`
+	FilterData *models.MesheryFilterPayload `json:"filter_data,omitempty"`
 }
 
 // swagger:route GET /api/filter/file/{id} FiltersAPI idGetFilterFile
@@ -128,10 +128,17 @@ func (h *Handler) handleFilterPOST(
 			}
 		}
 
-		mesheryFilter := parsedBody.FilterData
+		mesheryFilter := models.MesheryFilter{
+			FilterFile: []byte(parsedBody.FilterData.FilterFile),
+			Name:       parsedBody.FilterData.Name,
+			ID:         parsedBody.FilterData.ID,
+			UserID:     parsedBody.FilterData.UserID,
+			UpdatedAt:  parsedBody.FilterData.UpdatedAt,
+			Location:   parsedBody.FilterData.Location,
+		}
 
 		if parsedBody.Save {
-			resp, err := provider.SaveMesheryFilter(token, mesheryFilter)
+			resp, err := provider.SaveMesheryFilter(token, &mesheryFilter)
 			if err != nil {
 				h.log.Error(ErrSaveFilter(err))
 				http.Error(rw, ErrSaveFilter(err).Error(), http.StatusInternalServerError)
@@ -145,7 +152,7 @@ func (h *Handler) handleFilterPOST(
 			return
 		}
 
-		byt, err := json.Marshal([]models.MesheryFilter{*mesheryFilter})
+		byt, err := json.Marshal([]models.MesheryFilter{mesheryFilter})
 		if err != nil {
 			h.log.Error(ErrEncodeFilter(err))
 			http.Error(rw, ErrEncodeFilter(err).Error(), http.StatusInternalServerError)
