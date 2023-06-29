@@ -571,7 +571,7 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 		return err
 	}
 
-	// List the pods in the MesheryNamespace
+	// List the pods in the `meshery` Namespace
 	podList, err := utils.GetPodList(clientMesh, utils.MesheryNamespace)
 	if err != nil {
 		return err
