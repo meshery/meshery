@@ -355,6 +355,44 @@ func (h *Handler) PublishCatalogFilterHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
+// swagger:route DELETE /api/filter/catalog/unpublish FiltersAPI idUnPublishCatalogFilterHandler
+// Handle UnPublish for a Meshery Filter
+//
+// Unpublishes filter from Meshery Catalog by setting visibility to private and removing catalog data from website
+// responses:
+//
+//	200: noContentWrapper
+//
+// UnPublishCatalogFilterHandler sets visibility of filter with given id as private
+func (h *Handler) UnPublishCatalogFilterHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	_ *models.Preference,
+	_ *models.User,
+	provider models.Provider,
+) {
+	defer func() {
+		_ = r.Body.Close()
+	}()
+
+	var parsedBody *models.MesheryCatalogFilterRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+		return
+	}
+	resp, err := provider.UnPublishCatalogFilter(r, parsedBody)
+	if err != nil {
+		h.log.Error(ErrPublishCatalogFilter(err))
+		http.Error(rw, ErrPublishCatalogFilter(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	go h.config.ConfigurationChannel.PublishFilters()
+	rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(rw, string(resp))
+}
+
 // swagger:route GET /api/filter/{id} FiltersAPI idGetMesheryFilter
 // Handle GET request for a Meshery Filter
 //

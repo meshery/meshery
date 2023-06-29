@@ -320,6 +320,16 @@ paths:
             summary: Handle Publish for a Meshery Filter
             tags:
                 - FiltersAPI
+    /api/filter/catalog/unpublish:
+        delete:
+            description: Unpublishes filter from Meshery Catalog by setting visibility to private and removing catalog data from website
+            operationId: idUnPublishCatalogFilterHandler
+            responses:
+                "200":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle UnPublish for a Meshery Filter
+            tags:
+                - FiltersAPI
     /api/filter/clone/{id}:
         post:
             description: 'Creates a local copy of a published filter with id: id'
