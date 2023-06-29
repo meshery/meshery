@@ -10,37 +10,46 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-type sqliteSchema struct {
-	Name  string `json:"name,omitempty"`
-	Type  string `json:"type,omitempty"`
-	Count int64  `json:"count"`
-}
-
-type databaseSummary struct {
-	Tables       []*sqliteSchema `json:"tables"`
-	TotalRecords int             `json:"totalRecords"`
-	TotalSize    int             `json:"totalSize"`
-	TotalTables  int64           `json:"totalTables"`
-}
-
 const defaultPageSize = 10
 
+// swagger:route GET /api/system/database GetSystemDatabase idGetSystemDatabase
+// Handle GET request for getting summary about the system database.
+//
+// # Tables can be further filtered through query parameter
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?sort={[asc/desc]}``` Default behavior is asc
+//
+// ```?page={page-number}``` Default page number is 1
+//
+// ```?pagesize={pagesize}``` Default pagesize is 10. To return all results: ```pagesize=all```
+// 
+// ```?search={tablename}``` If search is non empty then a greedy search is performed
+// responses:
+//
+//	200: systemDatabaseResponseWrapper
 func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	var tables []*sqliteSchema
-	var totalRecords int
+	var tables []*models.SqliteSchema
+	var recordCount int
 	var totalTables int64
 
 	limitstr := r.URL.Query().Get("pagesize")
 	var limit int
 	if limitstr != "all" {
 		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 {
+		if limit <= 0 {
 			limit = defaultPageSize
 		}
 	}
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	offset := (page) * limit
+
+	if page <= 0 {
+		page = 1
+	}
+
+	offset := (page - 1) * limit
 	order := r.URL.Query().Get("order")
 	sort := r.URL.Query().Get("sort")
 	search := r.URL.Query().Get("search")
@@ -72,14 +81,15 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 
 	for _, table := range tables {
 		h.dbHandler.DB.Table(table.Name).Count(&table.Count)
-		totalRecords += int(table.Count)
+		recordCount += int(table.Count)
 	}
 
-	databaseSummary := &databaseSummary{
-		Tables:       tables,
-		TotalRecords: totalRecords,
-		TotalSize:    0,
-		TotalTables:  totalTables,
+	databaseSummary := &models.DatabaseSummary{
+		Page: page,
+		PageSize: limit,
+		TotalTables: int(totalTables),
+		RecordCount: recordCount,
+		Tables: tables,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
