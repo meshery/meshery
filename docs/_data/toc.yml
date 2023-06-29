@@ -109,7 +109,7 @@
 #     - title: Traefik Mesh
 #       url: service-meshes/adapters/traefik-mesh
 - title: 📚 Guides (all)
-  url: guides 
+  url: guides
   links:
     - title: Deploying Sample Applications
       url: guides/sample-apps
