@@ -735,7 +735,7 @@ function MesheryPatterns({
   function fetchPatterns(page, pageSize, search, sortOrder) {
     if (!search) search = "";
     if (!sortOrder) sortOrder = "";
-    const query = `?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
+    const query = `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
       sortOrder
     )}`;
 

@@ -31,7 +31,7 @@ permalink: service-meshes/adapters/consul
       {% endif %}
 {% endfor %}
 
-{% include adapter-status.html %}
+{% include compatibility/adapter-status.html %}
 
 {% include adapter-labs.html %}
 

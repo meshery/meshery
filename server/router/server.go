@@ -182,7 +182,6 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/meshmodels/models/{model}/relationships", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelRelationships), models.NoAuth))).Methods("GET")
 	gMux.Handle("/api/meshmodels/models/{model}/relationships/{name}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelRelationshipByName), models.NoAuth))).Methods("GET")
 	gMux.Handle("/api/meshmodels/relationships", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelRelationships), models.NoAuth))).Methods("POST") //This should also be left with NoAuth
-	gMux.Handle("/api/meshmodels/models/{model}/components", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelComponentByModel), models.NoAuth))).Methods("GET")
 
 	gMux.Handle("/api/filter/deploy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.FilterFileHandler)), models.ProviderAuth))).
 		Methods("POST", "DELETE")
@@ -196,7 +195,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("GET")
 	gMux.Handle("/api/filter/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMesheryFilterHandler), models.ProviderAuth))).
 		Methods("DELETE")
-	gMux.Handle("/api/filter/file/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryFilterFileHandler), models.ProviderAuth))).
+	gMux.Handle("/api/filter/download/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryFilterFileHandler), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/api/filter/clone/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.CloneMesheryFilterHandler), models.ProviderAuth))).
 		Methods("POST")
@@ -290,19 +289,6 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		http.ServeFile(w, r, "../ui/out/static/img/meshery-logo/meshery-logo.svg")
 	}))
 
-	// Swagger Interactive Playground
-	swaggerOpts := middleware.SwaggerUIOpts{SpecURL: "./swagger.yaml"}
-	swaggerSh := middleware.SwaggerUI(swaggerOpts, nil)
-	gMux.Handle("/swagger.yaml", http.FileServer(http.Dir("../helpers/")))
-	gMux.Handle("/docs", swaggerSh)
-	fs := http.FileServer(http.Dir("../../ui"))
-	gMux.PathPrefix("/ui/public/static/img/meshmodels").Handler(http.StripPrefix("/ui/", fs)).Methods("GET")
-	gMux.PathPrefix("/").
-		Handler(h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			handlers.ServeUI(w, r, "", "../../ui/out/")
-		}), models.ProviderAuth))).
-		Methods("GET")
-
 	// Handlers for User Credentials
 	gMux.Handle("/api/integrations/credentials", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveUserCredential), models.ProviderAuth))).
 		Methods("POST")
@@ -322,6 +308,19 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("PUT")
 	gMux.Handle("/api/integrations/connections/{connectionId}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteConnection), models.ProviderAuth))).
 		Methods("DELETE")
+
+	// Swagger Interactive Playground
+	swaggerOpts := middleware.SwaggerUIOpts{SpecURL: "./swagger.yaml"}
+	swaggerSh := middleware.SwaggerUI(swaggerOpts, nil)
+	gMux.Handle("/swagger.yaml", http.FileServer(http.Dir("../helpers/")))
+	gMux.Handle("/docs", swaggerSh)
+	fs := http.FileServer(http.Dir("../../ui"))
+	gMux.PathPrefix("/ui/public/static/img/meshmodels").Handler(http.StripPrefix("/ui/", fs)).Methods("GET")
+	gMux.PathPrefix("/").
+		Handler(h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			handlers.ServeUI(w, r, "", "../../ui/out/")
+		}), models.ProviderAuth))).
+		Methods("GET")
 
 	return &Router{
 		S:    gMux,
