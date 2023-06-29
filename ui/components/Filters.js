@@ -317,7 +317,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         pagesize : 0,
       }
     }).subscribe({
-      next: (result) => {
+      next : (result) => {
         catalogContentRef.current = result?.catalogFilters;
         initFiltersSubscription();
       },
