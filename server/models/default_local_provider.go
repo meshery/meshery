@@ -689,6 +689,10 @@ func (l *DefaultLocalProvider) PublishCatalogFilter(_ *http.Request, _ *MesheryC
 	return []byte(""), nil
 }
 
+func (l *DefaultLocalProvider) UnPublishCatalogFilter(_ *http.Request, _ *MesheryCatalogFilterRequestBody) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
 // GetMesheryFilterFile gets filter for the given filterID without the metadata
 func (l *DefaultLocalProvider) GetMesheryFilterFile(_ *http.Request, filterID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(filterID)
