@@ -16,7 +16,7 @@ alt="Meshery Logo" width="70%" /></picture></a><br /><br /></p>
 <a href="https://goreportcard.com/report/github.com/meshery/meshery" alt="Go Report Card">
   <img src="https://goreportcard.com/badge/github.com/meshery/meshery" /></a>
 <a href="https://github.com/meshery/meshery/actions" alt="Build Status">
-  <img src="https://img.shields.io/github/actions/workflow/status/meshery/meshery/build-and-release-edge.yml?branch=master" /></a>
+  <img src="https://img.shields.io/github/actions/workflow/status/meshery/meshery/build-and-release-stable.yml?branch=master" /></a>
 <a href="https://bestpractices.coreinfrastructure.org/projects/3564" alt="CLI Best Practices">
   <img src="https://bestpractices.coreinfrastructure.org/projects/3564/badge" /></a>
 <a href="https://discuss.layer5.io" alt="Discuss Users">

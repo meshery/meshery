@@ -58,7 +58,7 @@
     "@paciolan/remote-component": "^2.11.0",
     "@redux-devtools/extension": "^3.2.3",
     "@rjsf/core": "^5.8.1",
-    "@rjsf/material-ui": "^5.8.1",
+    "@rjsf/material-ui": "^5.8.2",
     "@rjsf/utils": "^5.8.1",
     "@rjsf/validator-ajv8": "^5.8.1",
     "autoprefixer": "^10.4.13",
@@ -144,6 +144,6 @@
     "relay-compiler": "^14.1.0",
     "start-server-and-test": "^1.13.1",
     "webpack": "^5.76.0",
-    "webpack-cli": "^5.0.1"
+    "webpack-cli": "^5.1.4"
   }
 }
