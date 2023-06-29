@@ -333,7 +333,7 @@ jobs:
         if: steps.filter.outputs.modified == 'true'
         uses: ruby/setup-ruby@v1.99.0
         with:
-          ruby-version: 2.7.5
+          ruby-version: 3.2.2
           bundler-cache: true
       - name: graphql-docs
         if: steps.filter.outputs.modified == 'true'
