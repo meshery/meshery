@@ -272,7 +272,7 @@ func multipleFiltersConfirmation(profiles []models.MesheryFilter) int {
 		fmt.Printf("Name: %v\n", a.Name)
 		fmt.Printf("ID: %s\n", a.ID.String())
 		fmt.Printf("FilterFile:\n")
-		fmt.Printf(string(a.FilterFile))
+		fmt.Printf("%s", a.FilterFile)
 		fmt.Println("---------------------")
 	}
 
