@@ -10,39 +10,39 @@ import {
 import { promisifiedDataFetch } from '../lib/data-fetch';
 
 const getMuiTheme = () => createTheme({
-  palette : {
-    primary : {
-      main : "#607d8b"
+  palette: {
+    primary: {
+      main: "#607d8b"
     },
-    secondary : {
-      main : "#666666"
+    secondary: {
+      main: "#666666"
     }
   },
-  overrides : {
-    MuiGrid : {
-      input : {
-        color : '#607d8b'
+  overrides: {
+    MuiGrid: {
+      input: {
+        color: '#607d8b'
       }
     },
   }
 })
 const getDarkMuiTheme = () => createTheme({
-  palette : {
-    type : "dark",
-    primary : {
-      main : "#607d8b"
+  palette: {
+    type: "dark",
+    primary: {
+      main: "#607d8b"
     },
   },
-  overrides : {
-    MuiGrid : {
-      input : {
-        color : '#607d8b'
+  overrides: {
+    MuiGrid: {
+      input: {
+        color: '#607d8b'
       }
     },
-    MuiFormLabel : {
-      root : {
-        "&$focused" : {
-          color : "#00B39F",
+    MuiFormLabel: {
+      root: {
+        "&$focused": {
+          color: "#00B39F",
         },
       }
     },
@@ -50,41 +50,43 @@ const getDarkMuiTheme = () => createTheme({
 })
 
 const styles = (theme) => ({
-  upload : {
-    paddingLeft : "0.7rem",
-    paddingTop : "8px"
+  upload: {
+    paddingLeft: "0.7rem",
+    paddingTop: "8px"
   },
-  title : {
-    textAlign : 'center',
-    minWidth : 500,
-    padding : '15px',
-    color : '#fff',
-    backgroundColor : theme.palette.type === "dark" ? "#202020" : '#396679'
+  title: {
+    textAlign: 'center',
+    minWidth: 500,
+    padding: '15px',
+    color: '#fff',
+    backgroundColor: theme.palette.type === "dark" ? "#202020" : '#396679'
   },
-  heading : {
-    color : theme.palette.type === "dark" ? "#fff" : "#607d8b"
+  heading: {
+    color: theme.palette.type === "dark" ? "#fff" : "#607d8b"
   },
-  selectType : {
-    color : theme.palette.type === "dark" ? "#fff" : "#607d8b",
-    marginRight : "1.2rem"
+  selectType: {
+    color: theme.palette.type === "dark" ? "#fff" : "#607d8b",
+    marginRight: "1.2rem"
   },
-  button : {
-    backgroundColor : theme.palette.type === "dark" ? "#00B39F" : "#607d8b",
-    "&:hover" : {
-      backgroundColor : theme.palette.type === "dark" ? "#00B39F" : "#607d8b"
+  button: {
+    backgroundColor: theme.palette.type === "dark" ? "#00B39F" : "#607d8b",
+    "&:hover": {
+      backgroundColor: theme.palette.type === "dark" ? "#00B39F" : "#607d8b"
     },
-    color : "#fff"
+    color: "#fff"
   },
 });
 
 function UploadImport(props) {
-  const { handleUpload, handleUrlUpload, configuration, isApplication, open, handleClose, classes, fetch } = props;
+  const { handleUpload, handleUrlUpload, configuration, isApplication, isFilter, open, handleClose, classes, fetch } = props; // hack, to remove, please............
   const [input, setInput] = React.useState();
+  const [name, setName] = React.useState("");
+  const [config, setConfig] = React.useState("");
   const [isError, setIsError] = React.useState(false);
   const [fileType, setFileType] = React.useState();
   const [sourceType, setSourceType] = React.useState();
   const [supportedTypes, setSupportedTypes] = React.useState();
-  const theme=useTheme()
+  const theme = useTheme()
   useEffect(() => {
     if (isApplication) {
       (async () => {
@@ -113,13 +115,13 @@ function UploadImport(props) {
     }
   }, [open])
 
-  const handleSubmit = async() => {
-    await handleUrlUpload(input, sourceType)
+  const handleSubmit = async () => {
+    await handleUrlUpload(input, sourceType, {name, config})
     handleClose()
   }
 
-  const handleUploader = async(input) => {
-    await handleUpload(input, sourceType)
+  const handleUploader = async (input) => {
+    await handleUpload(input, sourceType, {name, config})
     handleClose()
   }
 
@@ -133,25 +135,53 @@ function UploadImport(props) {
 
           <MuiThemeProvider theme={theme.palette.type == "dark" ? getDarkMuiTheme() : getMuiTheme()}>
             <DialogTitle className={classes.title}>
-              <b id="simple-modal-title" style={{ textAlign : "center" }} >Import {configuration}</b>
+              <b id="simple-modal-title" style={{ textAlign: "center" }} >Import {configuration}</b>
             </DialogTitle>
             <DialogContent>
               <Grid container spacing={24} alignItems="center">
+                <Grid item xs={3}>
+                  <h4 className={classes.heading} >Name</h4>
+                </Grid>
+                <Grid item xs={9}>
+                  <TextField
+                    required
+                    size="small"
+                    variant="outlined"
+                    label="Name"
+                    style={{ width: "100%" }}
+                    onChange={(e) => setInput(e.target.value)} />
+                </Grid>
                 <Grid item xs={3}>
                   <h4 className={classes.heading} > FROM URL </h4>
                 </Grid>
                 <Grid item xs={9}>
                   <TextField
                     size="small"
-                    error={isError}
-                    helperText={isError && "Invalid URL"}
                     variant="outlined"
                     label={`URL for ${configuration}`}
-                    style={{ width : "100%" }}
-                    onChange={(e) => setInput(e.target.value)} />
+                    style={{ width: "100%" }}
+                    onChange={(e) => setName(e.target.value)} />
                 </Grid>
               </Grid>
-              <hr />
+              {
+                isFilter && (
+                  <Grid container spacing={24} alignItems="center">
+                    <Grid item xs={3}>
+                      <h4 className={classes.heading} >Config Yaml</h4>
+                    </Grid>
+                    <Grid item xs={9}>
+                      <TextField
+                        multiline
+                        required
+                        size="small"
+                        variant="outlined"
+                        label="Name"
+                        style={{ width: "100%" }}
+                        onChange={(e) => setConfig(e.target.value)} />
+                    </Grid>
+                  </Grid>
+                )
+              }
               {
                 sourceType !== "Helm Chart" && (
                   <Grid container spacing={24} alignItems="center">
@@ -163,7 +193,7 @@ function UploadImport(props) {
                         size="small"
                         variant="outlined"
                         label="Filename"
-                        style={{ width : "100%" }}
+                        style={{ width: "100%" }}
                       />
                     </Grid>
                     <Grid item xs={3}>
@@ -172,7 +202,7 @@ function UploadImport(props) {
 
                         <Button disabled={sourceType === "Helm Chart"} variant="contained" className={classes.button} aria-label="Upload Button" onChange={sourceType === "Helm Chart" ? null : handleUploader} component="span" >
                           <input id="upload-button" type="file" accept={fileType} disabled={sourceType === "Helm Chart"} hidden name="upload-button" data-cy="file-upload-button" />
-                        Browse
+                          Browse
                         </Button>
                       </label>
                     </Grid>
@@ -183,27 +213,27 @@ function UploadImport(props) {
               <Grid container spacing={24} alignItems="center">
                 {
                   isApplication &&
-                <h4 className={classes.selectType}>SELECT TYPE </h4>
+                  <h4 className={classes.selectType}>SELECT TYPE </h4>
                 }
                 {isApplication &&
-                <>
-                  <NativeSelect
-                    defaultValue={0}
-                    onChange={(e) => handleFileType(e.target.value)}
-                    inputProps={{
-                      name : 'name',
-                      id : 'uncontrolled-native',
-                    }}
-                  >
-                    {
-                      supportedTypes?.map((type, index) => (
-                        <option key={index} value={index}>
-                          {type.application_type}
-                        </option>
-                      ))
-                    }
-                  </NativeSelect>
-                </>
+                  <>
+                    <NativeSelect
+                      defaultValue={0}
+                      onChange={(e) => handleFileType(e.target.value)}
+                      inputProps={{
+                        name: 'name',
+                        id: 'uncontrolled-native',
+                      }}
+                    >
+                      {
+                        supportedTypes?.map((type, index) => (
+                          <option key={index} value={index}>
+                            {type.application_type}
+                          </option>
+                        ))
+                      }
+                    </NativeSelect>
+                  </>
                 }
               </Grid>
             </DialogContent>
@@ -211,7 +241,7 @@ function UploadImport(props) {
               <label htmlFor="cancel" className={classes.cancel}>
                 <Button variant="outlined" color="secondary" onClick={handleClose}>Cancel</Button>
               </label>
-              <label htmlFor="URL">  <Button disabled={isError || !input} id="URL" variant="contained" className={classes.button} onClick={async(e) => {
+              <label htmlFor="URL">  <Button id="URL" variant="contained" className={classes.button} onClick={async (e) => {
                 await handleSubmit(e, handleUploader);
                 fetch?.();
               }}>Import</Button> </label>
