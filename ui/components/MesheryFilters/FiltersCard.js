@@ -65,6 +65,7 @@ function FiltersCard({
           config_file={filter_file}
           setYaml={setYaml}
           deleteHandler={deleteHandler}
+          updateHandler={updateHandler}
           type={"filter"}
         />
       }
