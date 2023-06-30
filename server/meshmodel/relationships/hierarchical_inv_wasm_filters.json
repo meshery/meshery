@@ -17,6 +17,7 @@
     "subType": "Inventory",
     "selectors": {
         "allow": {
+<<<<<<< HEAD
             "from": [
                 {
                     "kind": "WASMFilter",
@@ -69,6 +70,28 @@
 										"description": "Receive the WASM filter configuration."
 									}
 								}
+=======
+          "from": [
+            {
+                "kind": "WASMFilter",
+                "model": "Istio Base",
+                "patch": {
+                    "patchStrategy": "replace",
+                    "mutatorRef": ["settings", "config"],
+                    "description": "WASM filter configuration to be applied to Envoy Filter."
+                }
+            } 
+          ],
+          "to": [
+            {
+                "kind": "EnvoyFilter",
+                "model": "Istio Base",
+                "patch": {
+                    "patchStrategy": "replace",
+                    "mutatedRef": ["settings", "configPatches", "_", "patch", "value"],
+                    "description": "Receive the WASM filter configuration."
+                }
+>>>>>>> 2c7185097 (update policy and path)
             ]
         },
         "deny": {
