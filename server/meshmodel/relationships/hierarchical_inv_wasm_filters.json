@@ -23,7 +23,7 @@
                 "model": "Istio Base",
                 "patch": {
                     "patchStrategy": "replace",
-                    "$mutatorRef": "#config",
+                    "mutatorRef": ["settings", "config"],
                     "description": "WASM filter configuration to be applied to Envoy Filter."
                 }
             } 
@@ -34,7 +34,7 @@
                 "model": "Istio Base",
                 "patch": {
                     "patchStrategy": "replace",
-                    "$mutatedRef": "#configPatches.patch.value",
+                    "mutatedRef": ["settings", "configPatches", "_", "patch", "value"],
                     "description": "Receive the WASM filter configuration."
                 }
             }

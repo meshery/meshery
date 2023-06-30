@@ -1,5 +1,4 @@
-git switch -c# https://play.openpolicyagent.org/p/wFNhyGsIej
-package hierarchical_policy
+package hierarchical_wallet_policy
 
 extract_components(services, selectors) = components {
     components := {component.traits.meshmap.id: component | 
@@ -27,7 +26,6 @@ parent_child_relationship {
     some i, j
     service := filtered_services[i]
     allowed_component := allowed_parent_comps[j]
-    # print(allowed_component)
     
     allowed_component.traits.meshmap["meshmodel-metadata"].parentId == i
     apply_patch(allowed_component, service, from_selectors, to_selectors)
@@ -35,34 +33,29 @@ parent_child_relationship {
 
 apply_patch(mutator, mutated, from_selectors, to_selectors) {
     from_selectors[i].kind == mutator.type
-    mutator_path := from_selectors[i].patch.mutatorRef
-    mutator_value := json.filter(mutator, [mutator_path])
-    
-    mutator_keys := split(mutator_path, "/")
-    value_to_update := object.get(mutator_value, mutator_keys, "")
-    print(value_to_update)
+        mutator_path := from_selectors[i].patch.mutatorRef
+        update_value := object.get(mutator, mutator_path, "")
+        print(update_value)
 
     to_selectors[j].kind == mutated.type
-    mutated_path := to_selectors[j].patch.mutatedRef
-    sp := split(mutated_path, "_")
-    coun := object.get(mutated, [sp[0]], "")
-    print(mutated_path, coun, sp[0], split(sp[0], "/"), object.get(mutated, split(sp[0], "/"), "kk"))
+        mutated_path := to_selectors[j].patch.mutatedRef
+        index := get_array_pos(mutated_path)
+
+        prefix_path := array.slice(mutated_path, 0, index)
+        suffix_path := array.slice(mutated_path, index + 1, count(mutated_path))
+        value_to_patch := object.get(mutated, prefix_path, "")
+
+        intermediate_path := array.concat(prefix_path, [count(value_to_patch) - 1])
+        final_path := array.concat(intermediate_path, suffix_path)
+
     mutated_v := json.patch(mutated, [{
         "op": "add", 
-        "path": "/settings/configPatches/0/patch/value", 
-        "value": {"value": "test"}
+        "path":  final_path, 
+        "value":  update_value
     }])
-
-    mutated_keys := split(mutated_path, "/")
-    print(mutated_v, "-----")
 }
-    # print(keys, value_to_patch)
-    # key := keys[count(keys) - 1]
-    # print(object.get(mutator, keys))
-    
-    # print(value_to_patch["config"])
-    # print()
-    # value_to_update := mutator[path] 
 
-# sm := filtered_services[k]
-# print(sm, k, "\n")
+get_array_pos(arr_path) = index {
+    arr_path[k] == "_"
+    index = k
+}
