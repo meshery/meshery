@@ -1,0 +1,43 @@
+{
+    "apiVersion": "core.meshery.io/v1alpha1",
+    "kind": "Binding",
+    "metadata": {
+      "description": "A relationship between two resources where one resource uses the another resource for it's basic or enhanced functionality or Integrity.",
+      "name": "Binding Relationship",
+      "type": "Binding"
+    },
+    "model": {
+      "name": "kubernetes",
+      "version": "v1.25.2",
+      "displayName": "Kubernetes",
+      "category": {
+        "name": "Orchestration \u0026 Management",
+        "metadata": null
+      },
+      "metadata": {}
+    },
+    "selectors": {
+      "allow": {
+        "from": [
+          {
+            "kind": "Secrets",
+            "model": "kubernetes"
+          },
+          {
+            "kind": "CronJob",
+            "model": "kubernetes"
+          },
+          {
+            "kind": "PodTemplates",
+            "model": "kubernetes"
+          }
+        ],
+        "to": [
+          {
+            "kind": "ConfigMaps",
+            "model": "kubernetes"
+          }
+        ]
+      }
+    }
+  }
