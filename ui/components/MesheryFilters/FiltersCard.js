@@ -9,10 +9,8 @@ import Moment from "react-moment";
 import FlipCard from "../FlipCard";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import FullscreenExit from "@material-ui/icons/FullscreenExit";
-import DoneAllIcon from '@material-ui/icons/DoneAll';
 import useStyles from "../MesheryPatterns/Cards.styles";
 import YAMLDialog from "../YamlDialog";
-import UndeployIcon from "../../public/static/img/UndeployIcon";
 import CloneIcon from "../../public/static/img/CloneIcon";
 import PublicIcon from '@material-ui/icons/Public';
 import TooltipButton from '../../utils/TooltipButton.js'
@@ -25,8 +23,6 @@ function FiltersCard({
   updated_at,
   created_at,
   filter_file,
-  handleDeploy,
-  handleUndeploy,
   handleClone,
   deleteHandler,
   setYaml,
