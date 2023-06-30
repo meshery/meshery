@@ -14,7 +14,6 @@ const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
 function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit, setSelectedFilters, handleClone, handlePublishModal, handleUnpublishModal, canPublishFilter }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
-  console.log("filter: ", filter);
   const [yaml, setYaml] = useState(filter.config);
 
   return (
