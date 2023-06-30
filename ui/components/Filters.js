@@ -638,7 +638,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     };
   }
 
-  async function handleSubmit({ data, name, id, type, addiotionals }) {
+  async function handleSubmit({ data, name, id, type, metadata }) {
     // TODO: use filter name
     console.info("posting filter", name);
     updateProgress({ showProgress : true });
@@ -675,10 +675,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
       let body = { save : true }
       if (type === FILE_OPS.FILE_UPLOAD) {
-        body = JSON.stringify({ ...body, filter_data : { filter_file : data }, name: addiotionals.name, config: addiotionals.config })
+        body = JSON.stringify({ ...body, filter_data : { filter_file : data }, name: metadata.name, config: metadata.config })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
-        body = JSON.stringify({ ...body, url : data, name: addiotionals.name, config: addiotionals.config })
+        body = JSON.stringify({ ...body, url : data, name: metadata.name, config: metadata.config })
       }
       dataFetch(
         `/api/filter`,
@@ -727,7 +727,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         data : event.target.result,
         name : file?.name || "meshery_" + Math.floor(trueRandom() * 100),
         type : FILE_OPS.FILE_UPLOAD,
-        addiotionals: b
+        metadata: b
       });
     });
     reader.readAsText(file);
@@ -740,7 +740,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       data : link,
       name : "meshery_" + Math.floor(trueRandom() * 100),
       type : FILE_OPS.URL_UPLOAD,
-      addiotionals: b
+      metadata: b
     });
   }
 
