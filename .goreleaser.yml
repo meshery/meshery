@@ -103,7 +103,7 @@ release:
   name_template: "Meshery {{.Tag}}"
 
 # Extending the GoRelease to publish app manifest to scoop-bucket repository for Meshery
-scoop:
+scoops: -
   # Template for the url which is determined by the given Token (github or gitlab)
   # Default for github is "https://github.com/<repo_owner>/<repo_name>/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
   # Default for gitlab is "https://gitlab.com/<repo_owner>/<repo_name>/uploads/{{ .ArtifactUploadHash }}/{{ .ArtifactName }}"
