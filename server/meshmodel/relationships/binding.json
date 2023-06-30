@@ -26,15 +26,15 @@
           {
             "kind": "CronJob",
             "model": "kubernetes"
-          },
-          {
-            "kind": "PodTemplates",
-            "model": "kubernetes"
           }
         ],
         "to": [
           {
             "kind": "ConfigMaps",
+            "model": "kubernetes"
+          },
+          {
+            "kind": "Pods",
             "model": "kubernetes"
           }
         ]
