@@ -1,4 +1,4 @@
-name: Meshery Build and Releaser (stable)
+name: email test
 on:
     workflow_dispatch:
     
