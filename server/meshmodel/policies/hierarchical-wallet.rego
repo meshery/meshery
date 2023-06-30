@@ -31,6 +31,7 @@ parent_child_relationship {
     apply_patch(allowed_component, service, from_selectors, to_selectors)
 }
 
+# TODO: break into common policy funcs
 apply_patch(mutator, mutated, from_selectors, to_selectors) {
     from_selectors[i].kind == mutator.type
         mutator_path := from_selectors[i].patch.mutatorRef
