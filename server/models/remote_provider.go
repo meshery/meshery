@@ -1595,7 +1595,7 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 }
 
 // GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
-func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, search, order string) ([]byte, error) {
+func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pageSize, search, order string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(MesheryPatternsCatalog) {
 		logrus.Error("operation not available")
 		return []byte{}, ErrInvalidCapability("MesheryPatternsCatalog", l.ProviderName)
@@ -1607,6 +1607,12 @@ func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, search, o
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
+	if page != "" {
+		q.Set("page", page)
+	}
+	if pageSize != "" {
+		q.Set("pagesize", pageSize)
+	}
 	if search != "" {
 		q.Set("search", search)
 	}
@@ -1836,7 +1842,6 @@ func (l *RemoteProvider) PublishCatalogPattern(req *http.Request, publishPattern
 	return nil, fmt.Errorf("error while publishing pattern file to catalog - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
-
 // UnPublishMesheryPattern publishes a meshery pattern with the given id to catalog
 func (l *RemoteProvider) UnPublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error) {
 	if !l.Capabilities.IsSupported(MesheryPatternsCatalog) {
@@ -2018,7 +2023,7 @@ func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFi
 		return nil, ErrMarshal(err, "meshery metrics for shipping")
 	}
 
-	logrus.Debugf("Filter: %s, size: %d", data, len(data))
+	logrus.Debugf("size of filter: %d", len(data))
 	logrus.Infof("attempting to save filter to remote provider")
 	bf := bytes.NewBuffer(data)
 
@@ -2106,7 +2111,7 @@ func (l *RemoteProvider) GetMesheryFilters(tokenString string, page, pageSize, s
 }
 
 // GetCatalogMesheryFilters gives the catalog filters stored with the provider
-func (l *RemoteProvider) GetCatalogMesheryFilters(tokenString string, search, order string) ([]byte, error) {
+func (l *RemoteProvider) GetCatalogMesheryFilters(tokenString string, page, pageSize, search, order string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(MesheryFiltersCatalog) {
 		logrus.Error("operation not available")
 		return []byte{}, ErrInvalidCapability("MesheryFiltersCatalog", l.ProviderName)
@@ -2118,6 +2123,12 @@ func (l *RemoteProvider) GetCatalogMesheryFilters(tokenString string, search, or
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
+	if page != "" {
+		q.Set("page", page)
+	}
+	if pageSize != "" {
+		q.Set("pagesize", pageSize)
+	}
 	if search != "" {
 		q.Set("search", search)
 	}
@@ -2380,6 +2391,58 @@ func (l *RemoteProvider) PublishCatalogFilter(req *http.Request, publishFilterRe
 	}
 	logrus.Errorf("error while publishing filter file to catalog with id %s: %s", publishFilterRequest.ID, bdr)
 	return nil, fmt.Errorf("error while publishing filter file to catalog - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+// UnPublishMesheryFilter publishes a meshery filter with the given id to catalog
+func (l *RemoteProvider) UnPublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error) {
+	if !l.Capabilities.IsSupported(MesheryFiltersCatalog) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not suppported by provider: %s", MesheryFiltersCatalog, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(MesheryFiltersCatalog)
+
+	logrus.Infof("attempting to unpubish filter with id: %s", publishFilterRequest.ID)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
+	logrus.Debugf("constructed filter url: %s", remoteProviderURL.String())
+
+	data, err := json.Marshal(publishFilterRequest)
+	if err != nil {
+		return nil, ErrMarshal(err, "filter request to unpublish from catalog")
+	}
+	bf := bytes.NewBuffer(data)
+
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), bf)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to unpublish filter from catalog: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		logrus.Errorf("unable to unpublish filter from catalog: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("filter successfully unpublished from catalog")
+		return bdr, nil
+	}
+	logrus.Errorf("error while unpublishing filter file from catalog with id %s: %s", publishFilterRequest.ID, bdr)
+	return nil, fmt.Errorf("error while unpublishing filter file from catalog - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
 func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path string, save bool, resource string) ([]byte, error) {
@@ -3186,7 +3249,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 			Type:             "platform",
 			SubType:          "management",
 			MetaData:         metadata,
-			Status: 		  DISCOVERED,
+			Status:           DISCOVERED,
 			CredentialSecret: cred,
 		}
 
@@ -3528,7 +3591,7 @@ func (l *RemoteProvider) GetConnections(req *http.Request, _ string, page, pageS
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
 	}
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + connectionKind)
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connectionKind))
 
 	q := remoteProviderURL.Query()
 	q.Add("page", strconv.Itoa(page))

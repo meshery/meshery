@@ -8,7 +8,7 @@ language: en
 
 ## Advanced Configuration
 
-Meshery is capable of running zero or more service mesh adapters. Without any service mesh adapters, some but not all of Meshery's features will continue to function (e.g. performance testing of workloads not running on a service mesh).
+Meshery is capable of running zero or more adapters. Meshery offers many features without the need for adapters. Adapters are optional components that enhance and extend Meshery's core functionality.
 
 ### Modifying the default adapter deployment configuration
 
@@ -36,9 +36,9 @@ While installing mesheryctl using bash installation script, we can choose which 
 This is done by passing ADAPTERS environment variable to meshery bash script.
 
 *For e.g.* 
-`curl -L https://meshery.io/install | ADAPTERS=consul PLATFORM=kubernetes bash -` installs mesheryctl and starts Meshery server for kubernetes platform by loading consul adapter alone. Rest of the service mesh adapters are not loaded.
+`curl -L https://meshery.io/install | ADAPTERS=consul PLATFORM=kubernetes bash -` installs mesheryctl and starts Meshery Server in your connected Kubernetes cluster deploying only the Meshery Adapter for Consul and not the rest of Meshery's adapters.
 
-<h5>Demo of Meshery managing service mesh deployments across multiple clusters:</h5>
+<h5>Demo of Meshery managing deployments across multiple Kubernetes clusters:</h5>
 
 <iframe class="container" width="560" height="315" src="https://www.youtube.com/embed/yWPu3vq4vEs?start=5041" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 

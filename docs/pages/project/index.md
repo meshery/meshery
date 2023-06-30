@@ -66,23 +66,23 @@ Anytime performance questions are to be answered, they are subjective to the spe
 - Involved
 - Misinterpreted
 
-Beyond the need for performance and overhead data under a permutation of different workloads (applications) and types and sizes of infrastructure resources, the need for cross-project, apple-to-apple comparisons are also desired in order to facilitate a comparison of behavioral differences between service meshes and selection of their use. Individual projects shy from publishing test results of other, competing service meshes. An independent, unbiased, credible analysis is needed.
+Beyond the need for performance and overhead data under a permutation of different workloads (applications) and types and sizes of infrastructure resources, the need for cross-project, apple-to-apple comparisons are also desired in order to facilitate a comparison of behavioral differences between cloud native infrastructure and selection of their use. Individual projects shy from publishing test results of other, competing projects. An independent, unbiased, credible analysis is needed.
 
-Meshery is intended to be a vendor and project-neutral utility for uniformly benchmarking the performance of service meshes. Between service mesh and proxy projects (and surprisingly, within a single project), a number of different tools and results exist. Meshery allows you to pick an efficient set of tools for your ecosystem by providing performance evaluation and metrics.
+Meshery is vendor and project-neutral. Meshery's performance management features allow you to uniformly benchmarking the performance of cloud native infrastructure. Meshery allows you to pick an efficient set of tools for your ecosystem by providing performance evaluation and metrics.
 
-1. By leveraging Meshery you could achieve apples-to-apples performance comparison of service meshes
-1. Track your service mesh performance from release to release.
-1. Understand behavioral differences between service meshes.
-1. Track your application performance from version to version.
+1. By leveraging Meshery you could achieve apples-to-apples performance comparison of cloud native infrastructure
+2. Track your instructure and application performance from release to release.
+3. Understand behavioral differences between releases of your infrastructure.
+4. Track your application performance from version to version.
 
-<a href="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/readme/meshery_lifecycle_management.png"><img alt="Layer5 Service Mesh Community" src="{{ site.baseurl }}{% link assets/img/readme/meshery_lifecycle_management.png %}"  width="100%" align="center"/></a>
+<a href="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/readme/meshery_lifecycle_management.png"><img alt="Meshery Lifecycle Management" src="{{ site.baseurl }}{% link assets/img/readme/meshery_lifecycle_management.png %}"  width="100%" align="center"/></a>
 Establish a performance benchmark and track performance against this baseline as your environment changes over time.
 
-## Meshery is for any service mesh
+## Meshery is for all cloud native infrastructure
 
-Infrastructure diversity is a reality for any enterprise. Whether you're running a single service mesh or multiple types of service meshes, you'll find that Meshery supports your infrastructure diversity (or lack thereof).
+Infrastructure diversity is a reality for any enterprise. Whether you're running a single Kubernetes cluster or multiple clusters, you'll find that Meshery supports your infrastructure diversity (or lack thereof).
 
-### Supported Service Meshes
+<!-- ### Supported Integrations
 
 #### **Stable**
 
@@ -113,4 +113,4 @@ Infrastructure diversity is a reality for any enterprise. Whether you're running
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.project_status }} |
 {% endif -%}
 {% endfor %}
-
+ -->
