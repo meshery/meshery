@@ -123,29 +123,7 @@ function FiltersCard({
                   </TooltipButton>
                 )
               }
-              <TooltipButton
-                title="undeploy"
-                variant="contained"
-                className={classes.undeployButton}
-                onClick={(ev) =>
-                  genericClickHandler(ev, handleUndeploy)
-                }
-              >
-                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
-                Undeploy
-              </TooltipButton>
-              <TooltipButton
-                title="deploy"
-                variant="contained"
-                color="primary"
-                onClick={(ev) =>
-                  genericClickHandler(ev, handleDeploy)
-                }
-                className={classes.testsButton}
-              >
-                <DoneAllIcon className={classes.iconPatt}/>
-              Deploy
-              </TooltipButton>
+
               {visibility === VISIBILITY.PUBLISHED ? <TooltipButton
                 title="Clone"
                 variant="contained"
