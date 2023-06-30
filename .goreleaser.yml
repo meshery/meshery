@@ -111,7 +111,7 @@ scoops: -
   # url_template: "http://github.mycompany.com/foo/bar/releases/{{ .Tag }}/{{ .ArtifactName }}"
 
   # Repository to push the app manifest to.
-  bucket:
+  repository:
     owner: meshery
     name: scoop-bucket
 
