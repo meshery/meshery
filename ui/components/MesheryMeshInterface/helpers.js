@@ -126,12 +126,6 @@ function jsonSchemaBuilder(schema, uiSchema) {
     return
   }
 
-  if (schema.type === 'boolean') {
-    uiSchema["ui:widget"] = "checkbox";
-    uiSchema["ui:description"] = "";
-  }
-
-
   if (schema.type === 'number' || schema.type === 'integer') {
     schema["maximum"] = 99999;
     schema["minimum"] = 0;

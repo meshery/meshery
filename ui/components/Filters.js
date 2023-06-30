@@ -415,7 +415,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
     return () => {
       fetchCatalogFilters.unsubscribe();
-      disposeConfSubscriptionRef.current.dispose();
+      disposeConfSubscriptionRef.current?.dispose();
     }
   }, [])
 
