@@ -31,7 +31,8 @@ function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit
         handleDeploy={handleDeploy}
         handleUndeploy={handleUndeploy}
         handleClone={handleClone}
-        deleteHandler={() => handleSubmit({ data : yaml, id : filter.id, type : FILE_OPS.DELETE ,name : filter.name })}
+        deleteHandler={() => handleSubmit({ data : yaml, id : filter.id, type : FILE_OPS.DELETE, name : filter.name })}
+        updateHandler={() => handleSubmit({ data : yaml, id : filter.id, type : FILE_OPS.UPDATE ,name : filter.name })}
         setSelectedFilters={() => setSelectedFilters({ filter : filter, show : true })}
         setYaml={setYaml}
         description={filter.desciption}
