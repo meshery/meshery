@@ -661,8 +661,12 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     };
   }
 
+<<<<<<< HEAD
   async function handleSubmit({ data, name, id, type }) {
     console.log("Submit Data",data,name,id,type)
+=======
+  async function handleSubmit({ data, name, id, type, addiotionals }) {
+>>>>>>> 5e85bda64 (A quick dirty fix for uploading filters config)
     // TODO: use filter name
     updateProgress({ showProgress : true });
     if (type === FILE_OPS.DELETE) {
@@ -698,10 +702,14 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
       let body = { save : true }
       if (type === FILE_OPS.FILE_UPLOAD) {
+<<<<<<< HEAD
         body = JSON.stringify({ ...body, filter_data : { filter_resource : data } })
+=======
+        body = JSON.stringify({ ...body, filter_data : { filter_file : data }, name: addiotionals.name, config: addiotionals.config })
+>>>>>>> 5e85bda64 (A quick dirty fix for uploading filters config)
       }
       if (type === FILE_OPS.URL_UPLOAD) {
-        body = JSON.stringify({ ...body, url : data })
+        body = JSON.stringify({ ...body, url : data, name: addiotionals.name, config: addiotionals.config })
       }
       dataFetch(
         `/api/filter`,
@@ -762,7 +770,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       handleSubmit({
         data : event.target.result,
         name : file?.name || "meshery_" + Math.floor(trueRandom() * 100),
-        type : FILE_OPS.FILE_UPLOAD
+        type : FILE_OPS.FILE_UPLOAD,
+        addiotionals: b
       });
     });
     reader.readAsText(file);
@@ -772,7 +781,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     handleSubmit({
       data : link,
       name : "meshery_" + Math.floor(trueRandom() * 100),
-      type : FILE_OPS.URL_UPLOAD
+      type : FILE_OPS.URL_UPLOAD,
+      addiotionals: b
     });
   }
 
