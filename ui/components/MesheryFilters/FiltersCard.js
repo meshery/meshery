@@ -14,6 +14,7 @@ import useStyles from "../MesheryPatterns/Cards.styles";
 import YAMLDialog from "../YamlDialog";
 import UndeployIcon from "../../public/static/img/UndeployIcon";
 import CloneIcon from "../../public/static/img/CloneIcon";
+import PublicIcon from '@material-ui/icons/Public';
 import TooltipButton from '../../utils/TooltipButton.js'
 import { VISIBILITY } from "../../utils/Enum";
 
@@ -30,10 +31,13 @@ function FiltersCard({
   deleteHandler,
   setYaml,
   description={},
-  visibility
+  visibility,
+  handlePublishModal,
+  handleUnpublishModal,
+  canPublishFilter = false
 }) {
 
-  function genericClickHandler(ev, fn) {
+  const genericClickHandler = (ev, fn) => {
     ev.stopPropagation();
     fn();
   }
@@ -95,6 +99,30 @@ function FiltersCard({
           <div className={classes.bottomPart} >
 
             <div className={classes.cardButtons} >
+              {canPublishFilter &&
+                (visibility !== VISIBILITY.PUBLISHED)
+                ?
+                (<TooltipButton
+                  variant="contained"
+                  title="Publish"
+                  className={classes.testsButton}
+                  onClick={(ev) => genericClickHandler(ev, handlePublishModal)}
+                >
+                  <PublicIcon className={classes.iconPatt} />
+                  <span className={classes.btnText}> Publish </span>
+                </TooltipButton>)
+                : (
+                  <TooltipButton
+                    variant="contained"
+                    title="Unpublish"
+                    className={classes.testsButton}
+                    onClick={(ev) => genericClickHandler(ev, handleUnpublishModal)}
+                  >
+                    <PublicIcon className={classes.iconPatt} />
+                    <span className={classes.btnText}> Unpublish </span>
+                  </TooltipButton>
+                )
+              }
               <TooltipButton
                 title="undeploy"
                 variant="contained"
