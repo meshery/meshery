@@ -149,7 +149,7 @@ func (h *Handler) handleFilterPOST(
 			UserID:     parsedBody.FilterData.UserID,
 			UpdatedAt:  parsedBody.FilterData.UpdatedAt,
 			Location:   parsedBody.FilterData.Location,
-      FilterResource: filterResource
+      		FilterResource: filterResource,
 		}
 
 		if parsedBody.Save {

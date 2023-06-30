@@ -21,7 +21,7 @@ type MesheryFilter struct {
 	Location    sql.Map    `json:"location"`
 	Visibility  string     `json:"visibility"`
 	CatalogData sql.Map    `json:"catalogData"`
-	Config      string     `json:"config"`
+	FilterResource string  `json:"filter_resource"`
 	UpdatedAt   *time.Time `json:"updated_at,omitempty"`
 	CreatedAt   *time.Time `json:"created_at,omitempty"`
 }
