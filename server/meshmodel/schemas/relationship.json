@@ -56,6 +56,20 @@
               },
               "version": {
                 "$ref": "https://schema.meshery.io/core.json#versionString"
+              },
+              "patch": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "patchStrategy": {
+                    "type": "string",
+                    "enum": ["replace"]
+                  },
+                  "mutatorRef": {
+                    "type": "string",
+                    "description": "JSON ref to value from where patch should be applied."
+                  }
+                }
               }
             },
             "description": "Optional fields that are a part of the `from` selector. Absence of a field has an implied * meaning."
@@ -75,6 +89,22 @@
               },
               "version": {
                 "$ref": "https://schema.meshery.io/core.json#versionString"
+              },
+              "patch": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "patchStrategy": {
+                    "type": "string",
+                    "enum": [
+                      "replace"
+                    ]
+                  },
+                  "mutatedRef": {
+                    "type": "string",
+                    "description": "JSON ref to value that should be patched."
+                  }
+                }
               }
             },
             "description": "Optional fields that are a part of the `to` selector. Absence of a field has an implied * meaning."

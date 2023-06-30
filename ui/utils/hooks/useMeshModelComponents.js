@@ -107,7 +107,7 @@ export function useMeshModelComponents() {
   useEffect(() => {
     fetchCategories()
       .then((categoryJson) => {
-        setCategories(categoryJson.sort((catA, catB) => catA.name.localeCompare(catB.name)));
+        setCategories(categoryJson.categories.sort((catA, catB) => catA.name.localeCompare(catB.name)));
       })
       .catch(handleError);
   }, []);
@@ -119,12 +119,12 @@ export function useMeshModelComponents() {
     }
 
     getModelFromCategoryApi(category)
-      .then((modelsList) => {
+      .then((response) => {
         setModels(
           Object.assign(
             { ...models },
             {
-              [category] : sortAndGroupVersionsInModel(modelsList)
+              [category] : sortAndGroupVersionsInModel(response.models)
             }
           )
         );
@@ -140,7 +140,7 @@ export function useMeshModelComponents() {
           Object.assign(
             { ...meshmodelComponents },
             {
-              [modelName] : getProcessedComponentsData(modelData)
+              [modelName] : getProcessedComponentsData(modelData.components)
             }
           )
         );
@@ -159,7 +159,7 @@ export function useMeshModelComponents() {
         Object.assign(
           { ...meshmodelComponents },
           {
-            [modelName] : getProcessedComponentsData(modelData)
+            [modelName] : getProcessedComponentsData(modelData.components)
           }
         )
       );
