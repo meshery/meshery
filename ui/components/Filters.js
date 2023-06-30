@@ -404,7 +404,9 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     const fetchCatalogFilters = fetchCatalogFilter({
       selector : {
         search : "",
-        order : ""
+        order : "",
+        page : 0,
+        pagesize : 0,
       }
     }).subscribe({
       next : (result) => {
@@ -432,7 +434,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     if (!search) search = "";
     if (!sortOrder) sortOrder = "";
 
-    const query = `?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
+    const query = `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
       sortOrder
     )}`;
 
@@ -591,6 +593,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       disposeConfSubscriptionRef.current.dispose();
     }
     const configurationSubscription = ConfigurationSubscription((result) => {
+
       stillLoading(false);
       setPage(result.configuration?.filters?.page || 0);
       setPageSize(result.configuration?.filters?.page_size || 0);
