@@ -661,7 +661,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     };
   }
 
-  async function handleSubmit({ data, name, id, type, metadata }) {
+  async function handleSubmit({ data, name, id, type }) {
+    console.log("Submit Data",data,name,id,type)
     // TODO: use filter name
     updateProgress({ showProgress : true });
     if (type === FILE_OPS.DELETE) {
@@ -697,10 +698,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
       let body = { save : true }
       if (type === FILE_OPS.FILE_UPLOAD) {
-        body = JSON.stringify({ ...body, filter_data : { filter_file : data, name : metadata.name },  config : metadata.config })
+        body = JSON.stringify({ ...body, filter_data : { filter_resource : data } })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
-        body = JSON.stringify({ ...body, url : data, name : metadata.name, config : metadata.config })
+        body = JSON.stringify({ ...body, url : data })
       }
       dataFetch(
         `/api/filter`,
@@ -750,7 +751,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     }
   }
 
-  function uploadHandler(ev, _, metadata) {
+  function uploadHandler(ev) {
     if (!ev.target.files?.length) return;
 
     const file = ev.target.files[0];
@@ -761,20 +762,17 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       handleSubmit({
         data : event.target.result,
         name : file?.name || "meshery_" + Math.floor(trueRandom() * 100),
-        type : FILE_OPS.FILE_UPLOAD,
-        metadata : metadata
+        type : FILE_OPS.FILE_UPLOAD
       });
     });
     reader.readAsText(file);
   }
 
-  function urlUploadHandler(link, _, metadata,) {
-
+  function urlUploadHandler(link) {
     handleSubmit({
       data : link,
       name : "meshery_" + Math.floor(trueRandom() * 100),
-      type : FILE_OPS.URL_UPLOAD,
-      metadata : metadata
+      type : FILE_OPS.URL_UPLOAD
     });
   }
 
@@ -1171,15 +1169,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           <Modal open={publishModal.open} schema={publish_schema} uiSchema={publish_ui_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.filter?.catalog_data : payload.catalog_data } aria-label="catalog publish" title={publishModal.filter?.name} handleSubmit={handlePublish} payload={payload} showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }}/>
         }
         <PromptComponent ref={modalRef} />
-        <UploadImport
-          open={importModal.open}
-          isFilter
-          handleClose={handleUploadImportClose}
-          handleUrlUpload={urlUploadHandler}
-          handleUpload={uploadHandler}
-          fetch={() => fetchFilters(page, pageSize, search, sortOrder)}
-          configuration="Filter"
-        />
+        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchFilters(page, pageSize, search, sortOrder) } configuration="Filter" />
       </NoSsr>
     </>
   );
