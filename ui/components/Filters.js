@@ -23,7 +23,6 @@ import Moment from "react-moment";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import EditIcon from "@material-ui/icons/Edit";
-import DoneAllIcon from '@material-ui/icons/DoneAll';
 import { toggleCatalogContent, updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
@@ -40,8 +39,6 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import PublicIcon from '@material-ui/icons/Public';
 import { ctxUrl } from "../utils/multi-ctx";
 import ConfirmationMsg from "./ConfirmationModal";
-import UndeployIcon from "../public/static/img/UndeployIcon";
-import { getComponentsinFile } from "../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
 import downloadFile from "../utils/fileDownloader";
 import CloneIcon from "../public/static/img/CloneIcon";
@@ -569,17 +566,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     });
   };
 
-  const handleModalOpen = (e, filter_file, name, isDeploy) => {
-    e.stopPropagation()
-    setModalOpen({
-      open : true,
-      filter_file : filter_file,
-      deploy : isDeploy,
-      name : name,
-      count : getComponentsinFile(filter_file)
-    });
-  }
-
   const handleSetFilters = (filters) => {
     if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
       setFilters([...catalogContentRef.current, ...filters.filter(content => content.visibility !== VISIBILITY.PUBLISHED)])
@@ -862,23 +848,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                     style={iconMedium}
                   />
                 </TooltipIcon> }
-              <TooltipIcon
-                title="Deploy"
-                onClick={(e) => handleModalOpen(e, rowData.filter_file, rowData.name, true)}
-              >
-                <DoneAllIcon
-                  aria-label="deploy"
-                  color="inherit"
-                  data-cy="deploy-button"
-                  style={iconMedium}
-                />
-              </TooltipIcon>
-              <TooltipIcon
-                title="Undeploy"
-                onClick={(e) => handleModalOpen(e, rowData.filter_file, rowData.name, false)}
-              >
-                <UndeployIcon fill="#F91313" data-cy="undeploy-button" />
-              </TooltipIcon>
               <TooltipIcon
                 title="Download"
                 onClick={(e) => handleDownload(e, rowData.id, rowData.name)}
