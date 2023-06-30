@@ -64,7 +64,7 @@ jobs:
           RELEASE_CHANNEL: "stable"
         with:
           version: latest
-          args: release --rm-dist --skip-validate
+          args: release --clean --skip-validate
       - name: bump homebrew-core formula
         uses: mislav/bump-homebrew-formula-action@v2
         with:
