@@ -485,7 +485,7 @@ function MesheryPatterns({
 
     return () => {
       fetchCatalogPatterns.unsubscribe();
-      disposeConfSubscriptionRef.current.dispose();
+      disposeConfSubscriptionRef.current?.dispose();
     }
   }, [])
 
