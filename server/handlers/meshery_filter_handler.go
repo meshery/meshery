@@ -135,6 +135,7 @@ func (h *Handler) handleFilterPOST(
 			UserID:     parsedBody.FilterData.UserID,
 			UpdatedAt:  parsedBody.FilterData.UpdatedAt,
 			Location:   parsedBody.FilterData.Location,
+			Config: 	  parsedBody.FilterData.Config,
 		}
 
 		if parsedBody.Save {
