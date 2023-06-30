@@ -73,27 +73,36 @@ jobs:
         env:
           COMMITTER_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}  
   call-dde-release-workflow:
-    needs: ctlrelease
+    needs: 
+      - build
+      - ctlrelease
     name: Build and Release Docker Extension
     uses: meshery/meshery/.github/workflows/build-and-release-dde.yml@master
     secrets: inherit
   call-helm-chart-releaser:
-    needs: build
+    needs: 
+      - build
+      - ctlrelease
     name: Release Helm Charts
     uses: meshery/meshery/.github/workflows/helm-chart-releaser.yml@master
     secrets: inherit        
-  call-aks-playground-deploy-workflow:
-    needs: build
-    name: Deploy Meshery Playground
-    uses: meshery/meshery/.github/workflows/deploy-meshery-playground.yml@master
-    secrets: inherit
+  # call-aks-playground-deploy-workflow:
+  #   needs: build
+  #   name: Deploy Meshery Playground
+  #   uses: meshery/meshery/.github/workflows/deploy-meshery-playground.yml@master
+  #   secrets: inherit
   email-meshery-release-notes-workflow:
-    needs: build
+    needs: 
+      - build
+      - ctlrelease
     name: Email Meshery Release Notes
     uses: layer5labs/meshery-extensions-packages/.github/workflows/notify-email.yml@master
-    secrets: inherit
+    secrets:
+      token: ${{ secrets.GH_ACCESS_TOKEN }}
   call-cncf-playground-rollout:
-    needs: build
+    needs: 
+      - build
+      - ctlrelease
     name: Deploy CNCF Playground
     uses: meshery/meshery/.github/workflows/cncf-playground-deploy-meshery.yaml@master
     secrets: inherit

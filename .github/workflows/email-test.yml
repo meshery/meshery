@@ -1,0 +1,10 @@
+name: Meshery Build and Releaser (stable)
+on:
+    workflow_dispatch:
+    
+jobs:
+  email-meshery-release-notes-workflow:
+    name: Email Meshery Release Notes
+    uses: layer5labs/meshery-extensions-packages/.github/workflows/notify-email.yml@master
+    secrets:
+      token: ${{ secrets.GH_ACCESS_TOKEN }}
