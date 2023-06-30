@@ -3,7 +3,7 @@ import { withSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react'
 import MUIDataTable from 'mui-datatables';
 import { TableCell, Tooltip, TableSortLabel } from '@material-ui/core';
-import { getComponentsDetail, getModelsDetail, getRelationshipsDetail, searchModels, searchComponents } from '../api/meshmodel'
+import { getComponentsDetailWithPageSize, getMeshModels, getRelationshipsDetailWithPageSize, searchModels, searchComponents } from '../api/meshmodel'
 import debounce from '../utils/debounce';
 import { MODELS, COMPONENTS, RELATIONSHIPS } from '../constants/navigator';
 
@@ -37,13 +37,14 @@ const MeshModelComponent = ({ view, classes }) => {
   const [resourcesDetail, setResourcesDetail] = useState();
   const [isRequestCancelled, setRequestCancelled] = useState(false);
   const [count, setCount] = useState();
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(0);
   const [searchText, setSearchText] = useState(null);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
 
   const getModels = async (page) => {
     try {
-      const { total_count, models } = await getModelsDetail(page);
+      const { total_count, models } = await getMeshModels(page+1, rowsPerPage); // page+1 due to server side indexing starting from 1
       setCount(total_count);
       if (!isRequestCancelled) {
         setResourcesDetail(models);
@@ -55,7 +56,7 @@ const MeshModelComponent = ({ view, classes }) => {
 
   const getComponents = async (page) => {
     try {
-      const { total_count, components } = await getComponentsDetail(page);
+      const { total_count, components } = await getComponentsDetailWithPageSize(page+1, rowsPerPage); // page+1 due to server side indexing starting from 1
       setCount(total_count);
       if (!isRequestCancelled) {
         setResourcesDetail(components);
@@ -67,7 +68,7 @@ const MeshModelComponent = ({ view, classes }) => {
 
   const getRelationships = async (page) => {
     try {
-      const { total_count, relationships } = await getRelationshipsDetail(page);
+      const { total_count, relationships } = await getRelationshipsDetailWithPageSize(page+1, rowsPerPage);
       setCount(total_count);
       if (!isRequestCancelled) {
         setResourcesDetail(relationships);
@@ -119,7 +120,7 @@ const MeshModelComponent = ({ view, classes }) => {
     return () => {
       setRequestCancelled(true);
     };
-  }, [view, page, searchText]);
+  }, [view, page, searchText, rowsPerPage]);
 
   const meshmodel_columns = [
     {
@@ -285,7 +286,9 @@ const MeshModelComponent = ({ view, classes }) => {
   ]
 
   const meshmodel_options = {
-    rowsPerPage : 25,
+    rowsPerPage : rowsPerPage,
+    rowsPerPageOptions : [10, 25, 50, 100],
+    page : page,
     count : count,
     sort : true,
     download : false,
@@ -294,8 +297,12 @@ const MeshModelComponent = ({ view, classes }) => {
     selectableRows : false,
     search : view === RELATIONSHIPS ? false : true,
     serverSide : true,
-    onChangePage : debounce((p) =>  setPage(p+1), 200),
+    onChangePage : debounce((p) =>  setPage(p), 200),
     onSearchChange : debounce((searchText) => (setSearchText(searchText))),
+    onChangeRowsPerPage : debounce((rowsPerPage) => {
+      setRowsPerPage(rowsPerPage);
+      setPage(0);
+    }),
   }
 
   return (
@@ -313,4 +320,3 @@ const MeshModelComponent = ({ view, classes }) => {
 }
 
 export default withStyles(meshmodelStyles)((withSnackbar(MeshModelComponent)));
-
