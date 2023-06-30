@@ -119,11 +119,11 @@ scoops:
   # Defaults are shown.
     commit_author:
       name: mesheryctl releaser
-      email: community@layer5.io
+      email: community@meshery.io
 
     # Your app's homepage.
     # Default is empty.
-    homepage: "https://layer5.io/meshery"
+    homepage: "https://meshery.io"
 
     # Your app's description.
     # Default is empty.
