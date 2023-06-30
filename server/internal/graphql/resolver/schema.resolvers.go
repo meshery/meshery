@@ -145,7 +145,6 @@ func (r *queryResolver) FetchPatternCatalogContent(ctx context.Context, selector
 
 // FetchFilterCatalogContent is the resolver for the fetchFilterCatalogContent field.
 func (r *queryResolver) FetchFilterCatalogContent(ctx context.Context, selector *model.CatalogSelector) ([]*model.CatalogFilter, error) {
-	
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.fetchCatalogFilter(ctx, provider, selector)
 }
