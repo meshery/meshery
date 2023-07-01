@@ -1,6 +1,11 @@
 name: email test
 on:
     workflow_dispatch:
+      inputs:
+        release-tag:
+          type: string
+          required: false
+          default: v0.7.0
     
 jobs:
   email-meshery-release-notes-workflow:
@@ -10,3 +15,5 @@ jobs:
       token: ${{ secrets.GH_ACCESS_TOKEN }}
       MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
       MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+    with:
+      release-tag: ${{GITHUB_REF_NAME}}
