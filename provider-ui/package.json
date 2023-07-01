@@ -39,7 +39,7 @@
   "devDependencies": {
     "cypress": "^12.15.0",
     "eslint": "^8.43.0",
-    "eslint-config-next": "^13.2.4",
+    "eslint-config-next": "^13.4.7",
     "eslint-plugin-cypress": "^2.13.3",
     "start-server-and-test": "^2.0.0"
   },
