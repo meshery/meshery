@@ -104,7 +104,7 @@ jobs:
       MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
       MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
     with:
-      release-tag: ${GITHUB_REF_NAME}
+      release-tag: ${{github.ref_name}}
       to: developers@meshery.io 
   call-cncf-playground-rollout:
     needs: 
