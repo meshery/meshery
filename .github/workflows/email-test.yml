@@ -6,4 +6,7 @@ jobs:
   email-meshery-release-notes-workflow:
     name: Email Meshery Release Notes
     uses: layer5labs/meshery-extensions-packages/.github/workflows/notify-email.yml@master
-    secrets: inherit
+    secrets: 
+      token: ${{ secrets.GH_ACCESS_TOKEN }}
+      MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+      MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
