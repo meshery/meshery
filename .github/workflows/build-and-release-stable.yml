@@ -92,6 +92,11 @@ jobs:
   #   uses: meshery/meshery/.github/workflows/deploy-meshery-playground.yml@master
   #   secrets: inherit
   email-meshery-release-notes-workflow:
+    needs: 
+      - build
+      - ctlrelease
+      - call-helm-chart-releaser
+      - call-dde-release-workflow
     name: Email Meshery Release Notes
     uses: layer5labs/meshery-extensions-packages/.github/workflows/notify-email.yml@master
     secrets: 
