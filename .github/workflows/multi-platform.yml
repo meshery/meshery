@@ -51,6 +51,7 @@ jobs:
         echo "Env GITHUB_REF:" ${GITHUB_REF}
   
   docker-build:
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
     steps:
       - 

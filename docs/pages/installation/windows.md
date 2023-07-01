@@ -166,19 +166,19 @@ Type **yes** when prompted to choose to configure a file. To get started, choose
 
 Meshery is unable to detect the Kubernetes connection running on your local system, even after manually uploading the `.kube config` file :
 
-1. To display a list of the contexts in Kubernetes, run:
+  1.To display a list of the contexts in Kubernetes, run:
 
   <pre class="codeblock-pre">
   <div class="codeblock"><div class="clipboardjs">kubectl config get-contexts</div></div>
   </pre>
 
-2. Change your current context to docker-desktop:
+  2.Change your current context to docker-desktop:
 
   <pre class="codeblock-pre">
   <div class="codeblock"><div class="clipboardjs">kubectl config use-context
 docker-desktop</div></div>
   </pre>
 
-3. Restart Meshery.
+  3.Restart Meshery.
 
 Stuck at another error? [Tell us about it](http://slack.layer5.io/)

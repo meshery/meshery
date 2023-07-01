@@ -486,7 +486,9 @@ function MesheryPatterns({
     const fetchCatalogPatterns = fetchCatalogPattern({
       selector : {
         search : "",
-        order : ""
+        order : "",
+        page : 0,
+        pagesize : 0,
       }
     }).subscribe({
       next : (result) => {
@@ -498,7 +500,7 @@ function MesheryPatterns({
 
     return () => {
       fetchCatalogPatterns.unsubscribe();
-      disposeConfSubscriptionRef.current.dispose();
+      disposeConfSubscriptionRef.current?.dispose();
     }
   }, [])
 
@@ -750,7 +752,7 @@ function MesheryPatterns({
   function fetchPatterns(page, pageSize, search, sortOrder) {
     if (!search) search = "";
     if (!sortOrder) sortOrder = "";
-    const query = `?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
+    const query = `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
       sortOrder
     )}`;
 
