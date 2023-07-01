@@ -40,7 +40,7 @@ func (h *Handler) SavePerformanceProfileHandler(
 		fmt.Fprintf(rw, ErrRequestBody(err).Error(), err)
 		return
 	}
-	
+
 	j, _ := json.Marshal(parsedBody)
 	h.log.Info("performance profile is ", string(j))
 
@@ -77,6 +77,7 @@ func (h *Handler) SavePerformanceProfileHandler(
 // 	200: performanceProfilesResponseWrapper
 
 // GetPerformanceProfilesHandler returns the list of all the performance profiles saved by the current user
+// TODO: make sure cert data is not passed along and used only when test are run add a flag to control this
 func (h *Handler) GetPerformanceProfilesHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
