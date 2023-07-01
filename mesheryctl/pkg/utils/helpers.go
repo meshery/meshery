@@ -189,17 +189,17 @@ var CfgFile string
 // TODO: add "meshery-perf" as a component
 
 // allComponentsProfile returns the list of components available
-var allComponentsProfile = []string{"meshery-app-mesh", "meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-osm", "meshery-traefik-mesh", "meshery-nginx-sm", "meshery-cilium"}
+var AllComponentsProfile = []string{"meshery-app-mesh", "meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-osm", "meshery-traefik-mesh", "meshery-nginx-sm", "meshery-cilium"}
 
 // defaultComponentsProfile returns the list of components available
-var defaultComponentsProfile = []string{"meshery-istio"}
+var DefaultComponentsProfile = []string{"meshery-istio"}
 
 // TemplateContext is the template context provided when creating a config file
 var TemplateContext = config.Context{
 	Endpoint:   EndpointProtocol + "://localhost:9081",
 	Token:      "Default",
 	Platform:   "kubernetes",
-	Components: defaultComponentsProfile,
+	Components: DefaultComponentsProfile,
 	Channel:    "stable",
 	Version:    "latest",
 }
