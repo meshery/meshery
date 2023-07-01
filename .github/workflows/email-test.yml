@@ -4,7 +4,7 @@ on:
       inputs:
         release-tag:
           type: string
-          required: false
+          required: true
           default: v0.6.103
         to: 
           type: string
