@@ -415,7 +415,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
     return () => {
       fetchCatalogFilters.unsubscribe();
-      disposeConfSubscriptionRef.current.dispose();
+      disposeConfSubscriptionRef.current?.dispose();
     }
   }, [])
 
@@ -626,7 +626,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
   async function handleSubmit({ data, name, id, type }) {
     // TODO: use filter name
-    console.info("posting filter", name);
     updateProgress({ showProgress : true });
     if (type === FILE_OPS.DELETE) {
       const response = await showmodal(1);
@@ -670,10 +669,24 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         `/api/filter`,
         { credentials : "include", method : "POST", body },
         () => {
-          console.log("FilterFile API", `/api/filter`);
           updateProgress({ showProgress : false });
         },
         // handleError
+        handleError(ACTION_TYPES.UPLOAD_FILTERS)
+      );
+    }
+
+    if (type === FILE_OPS.UPDATE) {
+      dataFetch(
+        `/api/filter`,
+        {
+          credentials : "include",
+          method : "POST",
+          body : JSON.stringify({ filter_data : { id, config : data }, save : true }),
+        },
+        () => {
+          updateProgress({ showProgress : false });
+        },
         handleError(ACTION_TYPES.UPLOAD_FILTERS)
       );
     }

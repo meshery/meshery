@@ -24,6 +24,7 @@ on:
 jobs:
   analyze:
     name: Analyze
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
 
     strategy:
