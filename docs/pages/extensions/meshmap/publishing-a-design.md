@@ -5,7 +5,7 @@ permalink: extensions/publishing-a-design
 language: en
 display-title: "false"
 list: exclude
-type: extensions
+type: meshmap
 ---
 
 # Publishing a Design

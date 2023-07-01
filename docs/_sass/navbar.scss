@@ -62,6 +62,14 @@ header {
   align-items: center;
   z-index: 10;
 
+  & .nav-btn{
+      background-color: var(--brand-color-secondary);
+      color: var(--color-white);
+      padding: 4px 8px;
+      border-radius: 5px;
+      border: 1px solid var(--brand-color-secondary);
+  }
+  
   @media (max-width: 1200px) {
     justify-content: space-between;
   }
@@ -206,7 +214,7 @@ header {
       white-space: nowrap;
       display: flex;
       flex-direction: row;
-      gap: 3rem;
+      gap: 2rem;
       list-style: none;
       align-items: center;
       margin-bottom: 0;
