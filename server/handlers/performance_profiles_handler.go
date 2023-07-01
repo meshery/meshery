@@ -3,9 +3,11 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	// "io"
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/server/internal/sql"
 	"github.com/layer5io/meshery/server/models"
 )
 
@@ -28,15 +30,17 @@ func (h *Handler) SavePerformanceProfileHandler(
 		_ = r.Body.Close()
 	}()
 
-	var parsedBody *models.PerformanceProfile
-	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
+	parsedBody := &models.PerformanceProfile{}
+	parsedBody.Metadata = make(sql.Map, 0)
+	err := json.NewDecoder(r.Body).Decode(&parsedBody)
+	if err != nil {
 		rw.WriteHeader(http.StatusBadRequest)
 		//failed to read request body
 		h.log.Error(ErrRequestBody(err))
 		fmt.Fprintf(rw, ErrRequestBody(err).Error(), err)
 		return
 	}
-
+	
 	j, _ := json.Marshal(parsedBody)
 	h.log.Info("performance profile is ", string(j))
 

@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	// "os"
 	"strconv"
 	"strings"
 	"sync"
@@ -166,13 +167,25 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 		return
 	}
 
-	// if values have been passed as body we run test using SMP Handler
-	if string(body) != "" {
+	isSSLCertificateProvided := req.URL.Query().Get("cert") == "true"
+
+	/*
+	 When "cert" query param is set the body contains self-signed certs 
+	 and not the SMP config, hence we shouldn't use SMP Handler,
+	 if query param is unset/not present presence of body
+	 if values have been passed as body we run test using SMP Handler
+	*/
+	if !isSSLCertificateProvided && string(body) != "" {
 		logrus.Info("Running test with SMP config")
 		req.Body = io.NopCloser(strings.NewReader(string(body)))
 		h.LoadTestUsingSMPHandler(w, req, prefObj, user, provider)
 		return
 	}
+
+	if isSSLCertificateProvided {
+		// err := os.WriteFile("certificate")
+	}
+	
 
 	err = req.ParseForm()
 	if err != nil {

@@ -69,6 +69,9 @@ function generatePerformanceProfile(data) {
     requestCookies,
     requestBody,
     contentType,
+    certificate,
+    certificateKey,
+    caCertificate
   } = data;
 
   const performanceProfileName = MesheryPerformanceComponent.generateTestName(name, serviceMesh);
@@ -86,6 +89,11 @@ function generatePerformanceProfile(data) {
     request_body : requestBody,
     request_cookies : requestCookies,
     content_type : contentType,
+    metadata : {
+      certificate,
+      certificate_key : certificateKey,
+      ca_cert : caCertificate
+    }
   };
 }
 
@@ -204,7 +212,9 @@ class MesheryPerformanceComponent extends React.Component {
       cookies : cookies || "",
       reqBody : reqBody || "",
       contentType : contentType || "",
-
+      certificate : {},
+      certificateKey : {},
+      caCertificate : {},
       profileName : profileName || "",
       performanceProfileID : performanceProfileID || "",
 
@@ -224,6 +234,55 @@ class MesheryPerformanceComponent extends React.Component {
   }
 
   handleChange = (name) => (event) => {
+    if (name === "certificate") {
+      if (!event.target.files?.length) return;
+
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.addEventListener("load", (evt) => {
+        this.setState({ certificate : {
+          name : file.name,
+          file : evt.target.result
+        } })
+        console.log("test: ", name);
+      })
+      reader.readAsText(file);
+    }
+
+    if (name === "certificateKey") {
+      if (!event.target.files?.length) return;
+
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.addEventListener("load", (evt) => {
+        this.setState({
+          certificateKey: {
+            name: file.name,
+            file: evt.target.result
+          }
+        })
+        console.log("test: ", name);
+      })
+      reader.readAsText(file);
+    }
+
+    if (name === "caCertificate") {
+      if (!event.target.files?.length) return;
+
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.addEventListener("load", (evt) => {
+        this.setState({
+          caCertificate: {
+            name: file.name,
+            file: evt.target.result
+          }
+        })
+        console.log("test: ", name);
+      })
+      reader.readAsText(file);
+    }
+
     if (name === "url" && event.target.value !== "") {
       let urlPattern = event.target.value;
 
@@ -287,7 +346,7 @@ class MesheryPerformanceComponent extends React.Component {
 
   submitProfile = (cb) => {
     const self = this.state;
-
+    console.log("test: --", self.certificate, self.certificateKey, self.caCertificate);
     const profile = generatePerformanceProfile({
       name : self.profileName,
       loadGenerator : self.loadGenerator,
@@ -300,6 +359,9 @@ class MesheryPerformanceComponent extends React.Component {
       requestCookies : self.cookies,
       requestBody : self.reqBody,
       contentType : self.contentType,
+      certificate : self.certificate.file,
+      certificateKey : self.certificateKey.file,
+      caCertificate : self.caCertificate.file,
       testName : self.testName,
       id : self.performanceProfileID,
     });
@@ -982,6 +1044,42 @@ class MesheryPerformanceComponent extends React.Component {
                           variant="outlined"
                           onChange={this.handleChange("reqBody")}
                         ></TextField>
+                      </Grid>
+                      <Grid item xs={12} md={12}>
+                        <label htmlFor="upload-certificate" className={classes.upload}>
+                          <Button
+                            variant="outlined"
+                            aria-label="Upload Button"
+                            onChange={this.handleChange("certificate")}component="span"
+                          >
+                            <input id="upload-certificate" type="file" accept={".crt"} name="upload-button" data-cy="certificate-upload-button" />
+                            Browse
+                          </Button>
+                        </label>
+                      </Grid>
+                      <Grid item xs={12} md={12}>
+                        <label htmlFor="upload-key" className={classes.upload}>
+                          <Button
+                            variant="outlined"
+                            aria-label="Upload Button"
+                            onChange={this.handleChange("certificateKey")} component="span"
+                          >
+                            <input id="upload-key" type="file" accept={".key"} name="upload-button" data-cy="key-upload-button" />
+                            Browse
+                          </Button>
+                        </label>
+                      </Grid>
+                      <Grid item xs={12} md={12}>
+                        <label htmlFor="upload-cacertificate" className={classes.upload}>
+                          <Button
+                            variant="outlined"
+                            aria-label="Upload Button"
+                            onChange={this.handleChange("caCertificate")} component="span"
+                          >
+                            <input id="upload-cacertificate" type="file" accept={".crt"} name="upload-button" data-cy="cacertificate-upload-button" />
+                            Browse
+                          </Button>
+                        </label>
                       </Grid>
                     </Grid>
                   </ExpansionPanelDetails>

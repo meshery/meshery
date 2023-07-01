@@ -29,6 +29,7 @@ export default function fetchPerformanceProfiles(variables) {
               request_headers
               content_type
               service_mesh
+              metadata
             }
           }
         }

@@ -15,18 +15,17 @@
         "metadata": {}
     },
     "subType": "Inventory",    
-    "referenceURI":
     "selectors": {
-        "allow": {
+        "patch": {
           "from": [
               {
                   "kind": "EnvoyFilter",
                   "model": "Istio Base",
-                  "patch": {
+              
                     "patchStrategy": "replace",
                     "$mutatedRef": "#configPatches.patch.value",
                     "description": "Receive the WASM filter configuration."
-                  }
+              
               }
           ],
           "to": [

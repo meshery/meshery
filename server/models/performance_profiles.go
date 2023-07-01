@@ -26,6 +26,7 @@ type PerformanceProfile struct {
 
 	RequestHeaders string `json:"request_headers,omitempty"`
 	RequestCookies string `json:"request_cookies,omitempty"`
+	Metadata    	sql.Map `json:"metadata,omitempty"`
 	RequestBody    string `json:"request_body,omitempty"`
 	ContentType    string `json:"content_type,omitempty"`
 
