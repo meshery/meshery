@@ -5,7 +5,7 @@ on:
         release-tag:
           type: string
           required: false
-          default: v0.7.0
+          default: v0.6.103
     
 jobs:
   email-meshery-release-notes-workflow:
