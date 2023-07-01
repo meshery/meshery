@@ -689,6 +689,10 @@ func (l *DefaultLocalProvider) PublishCatalogFilter(_ *http.Request, _ *MesheryC
 	return []byte(""), nil
 }
 
+func (l *DefaultLocalProvider) UnPublishCatalogFilter(_ *http.Request, _ *MesheryCatalogFilterRequestBody) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
 // GetMesheryFilterFile gets filter for the given filterID without the metadata
 func (l *DefaultLocalProvider) GetMesheryFilterFile(_ *http.Request, filterID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(filterID)
@@ -1019,7 +1023,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 					for i, name := range names {
 						id, _ := uuid.NewV4()
 						var filter = &MesheryFilter{
-							FilterFile: content[i],
+							FilterFile: []byte(content[i]),
 							Name:       name,
 							ID:         &id,
 							UserID:     &nilUserID,
@@ -1239,7 +1243,7 @@ func githubRepoFilterScan(
 
 				ff := MesheryFilter{
 					Name:       name,
-					FilterFile: string(f.Content),
+					FilterFile: []byte(f.Content),
 					Location: map[string]interface{}{
 						"type":   "github",
 						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
@@ -1320,7 +1324,7 @@ func genericHTTPFilterFile(fileURL string) ([]MesheryFilter, error) {
 
 	ff := MesheryFilter{
 		Name:       name,
-		FilterFile: result,
+		FilterFile: []byte(result),
 		Location: map[string]interface{}{
 			"type":   "http",
 			"host":   fileURL,

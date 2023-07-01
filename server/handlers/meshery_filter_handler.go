@@ -15,10 +15,10 @@ import (
 // MesheryFilterRequestBody refers to the type of request body that
 // SaveMesheryFilter would receive
 type MesheryFilterRequestBody struct {
-	URL        string                `json:"url,omitempty"`
-	Path       string                `json:"path,omitempty"`
-	Save       bool                  `json:"save,omitempty"`
-	FilterData *models.MesheryFilter `json:"filter_data,omitempty"`
+	URL        string                       `json:"url,omitempty"`
+	Path       string                       `json:"path,omitempty"`
+	Save       bool                         `json:"save,omitempty"`
+	FilterData *models.MesheryFilterPayload `json:"filter_data,omitempty"`
 }
 
 // swagger:route GET /api/filter/file/{id} FiltersAPI idGetFilterFile
@@ -128,10 +128,18 @@ func (h *Handler) handleFilterPOST(
 			}
 		}
 
-		mesheryFilter := parsedBody.FilterData
+		mesheryFilter := models.MesheryFilter{
+			FilterFile: []byte(parsedBody.FilterData.FilterFile),
+			Name:       parsedBody.FilterData.Name,
+			ID:         parsedBody.FilterData.ID,
+			UserID:     parsedBody.FilterData.UserID,
+			UpdatedAt:  parsedBody.FilterData.UpdatedAt,
+			Location:   parsedBody.FilterData.Location,
+			Config:     parsedBody.FilterData.Config,
+		}
 
 		if parsedBody.Save {
-			resp, err := provider.SaveMesheryFilter(token, mesheryFilter)
+			resp, err := provider.SaveMesheryFilter(token, &mesheryFilter)
 			if err != nil {
 				h.log.Error(ErrSaveFilter(err))
 				http.Error(rw, ErrSaveFilter(err).Error(), http.StatusInternalServerError)
@@ -145,7 +153,7 @@ func (h *Handler) handleFilterPOST(
 			return
 		}
 
-		byt, err := json.Marshal([]models.MesheryFilter{*mesheryFilter})
+		byt, err := json.Marshal([]models.MesheryFilter{mesheryFilter})
 		if err != nil {
 			h.log.Error(ErrEncodeFilter(err))
 			http.Error(rw, ErrEncodeFilter(err).Error(), http.StatusInternalServerError)
@@ -175,7 +183,7 @@ func (h *Handler) handleFilterPOST(
 // swagger:route GET /api/filter FiltersAPI idGetFilterFiles
 // Handle GET request for filters
 //
-// Returns the list of all the filters saved by the current user
+// # Returns the list of all the filters saved by the current user
 //
 // ```?order={field}``` orders on the passed field
 //
@@ -185,7 +193,8 @@ func (h *Handler) handleFilterPOST(
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
 // responses:
-// 	200: mesheryFiltersResponseWrapper
+//
+//	200: mesheryFiltersResponseWrapper
 func (h *Handler) GetMesheryFiltersHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -216,8 +225,8 @@ func (h *Handler) GetMesheryFiltersHandler(
 //
 // ```?page={page-number}``` Default page number is 0
 //
-// ```?pagesize={pagesize}``` Default pagesize is 10. 
-// 
+// ```?pagesize={pagesize}``` Default pagesize is 10.
+//
 // ```?search={filtername}``` If search is non empty then a greedy search is performed
 // responses:
 //
@@ -337,6 +346,44 @@ func (h *Handler) PublishCatalogFilterHandler(
 	}
 
 	resp, err := provider.PublishCatalogFilter(r, parsedBody)
+	if err != nil {
+		h.log.Error(ErrPublishCatalogFilter(err))
+		http.Error(rw, ErrPublishCatalogFilter(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	go h.config.ConfigurationChannel.PublishFilters()
+	rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(rw, string(resp))
+}
+
+// swagger:route DELETE /api/filter/catalog/unpublish FiltersAPI idUnPublishCatalogFilterHandler
+// Handle UnPublish for a Meshery Filter
+//
+// Unpublishes filter from Meshery Catalog by setting visibility to private and removing catalog data from website
+// responses:
+//
+//	200: noContentWrapper
+//
+// UnPublishCatalogFilterHandler sets visibility of filter with given id as private
+func (h *Handler) UnPublishCatalogFilterHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	_ *models.Preference,
+	_ *models.User,
+	provider models.Provider,
+) {
+	defer func() {
+		_ = r.Body.Close()
+	}()
+
+	var parsedBody *models.MesheryCatalogFilterRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+		return
+	}
+	resp, err := provider.UnPublishCatalogFilter(r, parsedBody)
 	if err != nil {
 		h.log.Error(ErrPublishCatalogFilter(err))
 		http.Error(rw, ErrPublishCatalogFilter(err).Error(), http.StatusInternalServerError)

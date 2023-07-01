@@ -1,0 +1,19 @@
+name: email test
+on:
+    workflow_dispatch:
+      inputs:
+        release-tag:
+          type: string
+          required: false
+          default: v0.6.103
+    
+jobs:
+  email-meshery-release-notes-workflow:
+    name: Email Meshery Release Notes
+    uses: layer5labs/meshery-extensions-packages/.github/workflows/notify-email.yml@master
+    secrets: 
+      token: ${{ secrets.GH_ACCESS_TOKEN }}
+      MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+      MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+    with:
+      release-tag: ${{inputs.release-tag}}

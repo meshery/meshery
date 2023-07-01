@@ -55,6 +55,12 @@ export async function getVersionedComponentFromModel(
   );
 }
 
+export async function getComponentsDetailWithPageSize(page=1, pageSize="all") {
+  return await promisifiedDataFetch(
+    `api/meshmodels/components?page=${page}&pagesize=${pageSize}`
+  );
+}
+
 export async function getComponentsDetail(page) {
   return await promisifiedDataFetch(
     `api/meshmodels/components?page=${page}`
@@ -64,6 +70,12 @@ export async function getComponentsDetail(page) {
 export async function getModelsDetail(page) {
   return await promisifiedDataFetch(
     `${MESHMODEL_ENDPOINT}?page=${page}`
+  );
+}
+
+export async function getRelationshipsDetailWithPageSize(page=1, pageSize="all") {
+  return await promisifiedDataFetch(
+    `api/meshmodels/relationships?page=${page}&pagesize=${pageSize}`
   );
 }
 

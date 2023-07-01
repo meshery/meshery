@@ -79,6 +79,12 @@
     - title: Performance Management
       url: tasks/performance-management
 
+# - title: 📑 Features
+#   url: features
+#   links:
+#     - title: Meshery Playground
+#       url: features/playground
+
     # - title: Service Mesh Interface (SMI) Conformance
     #   url: tasks/service-mesh-interface
 # - title: 🦾 Service Meshes
