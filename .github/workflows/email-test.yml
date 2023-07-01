@@ -6,6 +6,10 @@ on:
           type: string
           required: false
           default: v0.6.103
+        to: 
+          type: string
+          required: true
+
     
 jobs:
   email-meshery-release-notes-workflow:
@@ -17,3 +21,4 @@ jobs:
       MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
     with:
       release-tag: ${{inputs.release-tag}}
+      to: ${{inputs.to}}
