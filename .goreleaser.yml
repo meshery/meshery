@@ -44,16 +44,22 @@ builds:
         goarch: arm64
 
 archives:
-- replacements:
-    darwin: Darwin
-    linux: Linux
-    windows: Windows
-    386: i386
-    amd64: x86_64
-  format: tar.gz
-  format_overrides:
-    - goos: windows
-      format: zip
+  - id: stable
+    name_template: >-
+      {{ .ProjectName }}_{{.Version}}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+    # darwin: Darwin
+    # linux: Linux
+    # windows: Windows
+    # 386: i386
+    # amd64: x86_64
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
   # files:
   #   - setup_scripts/*
 
@@ -97,7 +103,7 @@ release:
   name_template: "Meshery {{.Tag}}"
 
 # Extending the GoRelease to publish app manifest to scoop-bucket repository for Meshery
-scoop:
+scoops: 
   # Template for the url which is determined by the given Token (github or gitlab)
   # Default for github is "https://github.com/<repo_owner>/<repo_name>/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
   # Default for gitlab is "https://gitlab.com/<repo_owner>/<repo_name>/uploads/{{ .ArtifactUploadHash }}/{{ .ArtifactName }}"
@@ -105,29 +111,29 @@ scoop:
   # url_template: "http://github.mycompany.com/foo/bar/releases/{{ .Tag }}/{{ .ArtifactName }}"
 
   # Repository to push the app manifest to.
-  bucket:
-    owner: meshery
-    name: scoop-bucket
+  - repository:
+     owner: meshery
+     name: scoop-bucket
 
   # Git author used to commit to the repository.
   # Defaults are shown.
-  commit_author:
-    name: mesheryctl releaser
-    email: community@layer5.io
+    commit_author:
+      name: mesheryctl releaser
+      email: community@meshery.io
 
-  # Your app's homepage.
-  # Default is empty.
-  homepage: "https://layer5.io/meshery"
+    # Your app's homepage.
+    # Default is empty.
+    homepage: "https://meshery.io"
 
-  # Your app's description.
-  # Default is empty.
-  description: "The Cloud Native Management Plane."
+    # Your app's description.
+    # Default is empty.
+    description: "The Cloud Native Management Plane."
 
-  # Your app's license
-  # Default is empty.
-  license: Apache 2.0
+    # Your app's license
+    # Default is empty.
+    license: Apache 2.0
 
-  # Persist data between application updates
-  # persist:
-  # - "data"
-  # - "config.toml"
+    # Persist data between application updates
+    # persist:
+    # - "data"
+    # - "config.toml"
