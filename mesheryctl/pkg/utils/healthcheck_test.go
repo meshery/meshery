@@ -2,6 +2,8 @@ package utils
 
 import (
 	"testing"
+
+	"k8s.io/apimachinery/pkg/version"
 )
 
 var versionCheck = []struct {
@@ -94,4 +96,121 @@ func TestCheckKubectlVersion(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestCheckK8sVersion(t *testing.T) {
+	tests := []struct {
+		version *version.Info
+		expected [3]int
+	}{
+		{
+			version: &version.Info{
+				Major:        "1",
+				Minor:        "2",
+				GitVersion:   "v1.12.0",
+				GitCommit:    "abcdefg",
+				GitTreeState: "clean",
+				BuildDate:    "2023-06-20",
+				GoVersion:    "go1.16",
+				Compiler:     "gc",
+				Platform:     "linux/amd64",
+			},
+			expected: [3]int{1, 12, 0},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run("Check K8s Version", func(t *testing.T) {
+			if got := CheckK8sVersion(tt.version); got != nil {
+				t.Errorf("getK8sVersion() = %v, want %v", got, tt.expected)
+			}
+		})
+	}
+
+}
+
+
+func TestIsCompatibleVersion(t *testing.T){
+	tests := []struct {
+		minimum [3]int
+		current [3]int
+		expected bool
+	}{
+		{
+			minimum: [3]int{1, 12, 0},
+			current: [3]int{1, 12, 0},
+			expected: true,
+		},
+		{
+			minimum: [3]int{1, 11, 0},
+			current: [3]int{2, 13, 2},
+			expected: true,
+		},
+		{
+			minimum: [3]int{2, 13, 2},
+			current: [3]int{1, 11, 0},
+			expected: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run("Check compatible Version", func(t *testing.T) {
+			if got := isCompatibleVersion(tt.minimum, tt.current); got != tt.expected {
+				t.Errorf("Version not compatible got %v, want %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+
+func TestAreMesheryComponentsRunning(t *testing.T) {
+	tests := []struct {
+		platform string
+		expected bool
+	}{
+		{
+			platform: "docker",
+			expected: false,
+		},
+		{
+			platform: "kubernetes",
+			expected: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run("Meshery Components Running", func(t *testing.T) {
+			if got, _ := AreMesheryComponentsRunning(tt.platform); got != tt.expected {
+				t.Errorf("Meshery Components Running got %v, want %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+
+
+func TestAreAllPodsRunning(t *testing.T) {
+	tests := []struct {
+		expected bool
+	}{
+		{
+			expected: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run("Are All Pods Running", func(t *testing.T) {
+			if got, _:= AreAllPodsRunning(); got != tt.expected {
+				t.Errorf("Are all pods running got %v want %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestCheckMesheryNsDelete(t *testing.T){
+	expected := false
+	t.Run("Test Existing Meshery Namespace", func(t *testing.T) {
+		if got, _:= CheckMesheryNsDelete(); got != expected {
+			t.Errorf("Namespace not deleted got %v want %v ", got, expected )
+		}
+	})
 }
