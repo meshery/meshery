@@ -73,6 +73,14 @@ func (h *Handler) SavePerformanceProfileHandler(
 // Handle GET requests for performance profiles
 //
 // Returns the list of all the performance profiles saved by the current user
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?page={page-number}``` Default page number is 0
+//
+// ```?pagesize={pagesize}``` Default pagesize is 10
+// 
+// ```?search={profilename}``` If search is non empty then a greedy search is performed
 // responses:
 // 	200: performanceProfilesResponseWrapper
 
@@ -89,7 +97,7 @@ func (h *Handler) GetPerformanceProfilesHandler(
 
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetPerformanceProfiles(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
+	resp, err := provider.GetPerformanceProfiles(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
 	if err != nil {
 		obj := "performance profile"
 		//get query performance profile

@@ -32,11 +32,9 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/controllers"
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
-	kubeerror "k8s.io/apimachinery/pkg/api/errors"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	k8sVersion "k8s.io/apimachinery/pkg/version"
 
@@ -533,6 +531,10 @@ func (hc *HealthChecker) runComponentsHealthChecks() error {
 func (hc *HealthChecker) runOperatorHealthChecks() error {
 	url := hc.mctlCfg.GetBaseMesheryURL()
 	client := &http.Client{}
+	_, err := utils.GetSessionData(hc.mctlCfg)
+	if err != nil {
+		return fmt.Errorf("!! Authentication token not found. Please supply a valid user token. Login with `mesheryctl system login`")
+	}
 	if hc.Options.PrintLogs {
 		log.Info("\nMeshery Operators \n--------------")
 	}
@@ -563,24 +565,58 @@ func (hc *HealthChecker) runOperatorHealthChecks() error {
 		return errors.New("!! Meshery is not connected to any contexts ")
 	}
 
-	for _, ctx := range contexts {
-		kubeclient, err := ctx.GenerateKubeHandler()
-		if err != nil {
-			return errors.Errorf("Generating kubehandler caused error %v", err)
-		}
-		_, err = kubeclient.KubeClient.AppsV1().Deployments("meshery").Get(context.TODO(), "meshery-operator", v1.GetOptions{})
-		if err != nil && !kubeerror.IsNotFound(err) {
-			return errors.Errorf("Operator not working %s", err)
-		}
-		broker := controllers.NewMesheryBrokerHandler(kubeclient)
-		brokerStatus := broker.GetStatus().String()
-
-		log.Infof("MesheryBroker Status : %s", brokerStatus)
-
-		meshsync := controllers.NewMeshsyncHandler(kubeclient)
-		meshsyncStatus := meshsync.GetStatus().String()
-		log.Infof("MesherySync Status : %s", meshsyncStatus)
+	var clientMesh *meshkitkube.Client
+	clientMesh, err = meshkitkube.New([]byte(""))
+	if err != nil {
+		return err
 	}
+
+	// List the pods in the `meshery` Namespace
+	podList, err := utils.GetPodList(clientMesh, utils.MesheryNamespace)
+	if err != nil {
+		return err
+	}
+
+	operatorCheck := false
+	brokerCheck := false
+	meshsyncCheck := false
+
+	// Traverse the list of pods and check if the operator, broker and meshsync are running
+	// This loop is made because if the clusterIP is not public, then it can't be accessed from outside the cluster
+	for _, pod := range podList.Items {
+		name := utils.GetCleanPodName(pod.GetName())
+
+		if name == "meshery-operator" {
+			operatorCheck = true
+		}
+
+		if name == "meshery-broker" {
+			brokerCheck = true
+		}
+
+		if name == "meshery-meshsync" {
+			meshsyncCheck = true
+		}
+	}
+
+	if !operatorCheck {
+		return errors.New("!! Meshery Operator is not running")
+	} else {
+		log.Info("✓ Meshery Operator is running")
+	}
+
+	if !brokerCheck {
+		log.Info("!! Meshery Broker is not running")
+	} else {
+		log.Info("✓ Meshery Broker is running")
+	}
+
+	if !meshsyncCheck {
+		log.Info("!! Meshsync is not running")
+	} else {
+		log.Info("✓ Meshsync is running")
+	}
+
 	return nil
 }
 

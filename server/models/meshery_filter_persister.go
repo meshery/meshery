@@ -3,6 +3,7 @@ package models
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/gofrs/uuid"
@@ -57,14 +58,38 @@ func (mfp *MesheryFilterPersister) GetMesheryFilters(search, order string, page,
 }
 
 // GetMesheryCatalogFilters returns all of the published filters
-func (mfp *MesheryFilterPersister) GetMesheryCatalogFilters(search, order string) ([]byte, error) {
+func (mfp *MesheryFilterPersister) GetMesheryCatalogFilters(page, pageSize, search, order string) ([]byte, error) {
+	var err error
 	order = sanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
 		order = "updated_at desc"
 	}
 
-	filters := []*MesheryFilter{}
+	var pg int 
+	if page != "" {
+		pg, err = strconv.Atoi(page)
+
+		if err != nil || pg < 0 {
+			pg = 0
+		}
+	} else {
+		pg = 0
+	}
+
+	// 0 page size is for all records
+	var pgSize int
+	if pageSize != ""{
+		pgSize, err = strconv.Atoi(pageSize)
+
+		if err != nil  || pgSize < 0{
+			pgSize = 0
+		}
+	} else {
+		pgSize = 0
+	}
+
+	filters := []MesheryFilter{}
 
 	query := mfp.DB.Where("visibility = '?'", Published).Order(order)
 
@@ -73,10 +98,29 @@ func (mfp *MesheryFilterPersister) GetMesheryCatalogFilters(search, order string
 		query = query.Where("(lower(meshery_filters.name) like ?)", like)
 	}
 
-	query.Find(&filters)
+	var count int64
+	err = query.Model(&MesheryFilter{}).Count(&count).Error
 
-	marshalledFilters, _ := json.Marshal(filters)
-	return marshalledFilters, nil
+	if err != nil {
+		return nil, err
+	}
+
+	if pgSize != 0 {
+		Paginate(uint(pg), uint(pgSize))(query).Find(&filters)
+	} else {
+		query.Find(&filters)
+	}
+
+
+	response := FiltersAPIResponse{
+		Page: uint(pg),
+		PageSize: uint(pgSize),
+		TotalCount: uint(count),
+		Filters: filters,
+	}
+
+	marshalledResponse, _ := json.Marshal(response)
+	return marshalledResponse, nil
 }
 
 // CloneMesheryFilter clones meshery filter to private

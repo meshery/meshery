@@ -68,7 +68,7 @@ if (typeof window !== 'undefined') {
 }
 
 async function fetchContexts(number = 10, search = "") {
-  return await promisifiedDataFetch(`/api/system/kubernetes/contexts?pageSize=${number}&search=${encodeURIComponent(search)}`)
+  return await promisifiedDataFetch(`/api/system/kubernetes/contexts?pagesize=${number}&search=${encodeURIComponent(search)}`)
 }
 
 export const mesheryExtensionRoute = "/extension/meshmap";

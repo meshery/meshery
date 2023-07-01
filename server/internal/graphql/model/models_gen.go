@@ -69,8 +69,10 @@ type CatalogPattern struct {
 }
 
 type CatalogSelector struct {
-	Search string `json:"search"`
-	Order  string `json:"order"`
+	Page     string `json:"page"`
+	Pagesize string `json:"pagesize"`
+	Search   string `json:"search"`
+	Order    string `json:"order"`
 }
 
 type ClusterResources struct {

@@ -5,7 +5,7 @@ permalink: extensions/merging-design
 language: en
 display-title: "false"
 list: exclude
-type: extensions
+type: meshmap
 ---
 
 # Merging Designs

@@ -2829,6 +2829,8 @@ input PageFilter {
 }
 
 input CatalogSelector {
+  page: String!
+  pagesize: String!
   search: String!
   order: String!
 }
@@ -16868,13 +16870,29 @@ func (ec *executionContext) unmarshalInputCatalogSelector(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"search", "order"}
+	fieldsInOrder := [...]string{"page", "pagesize", "search", "order"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
+		case "page":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("page"))
+			it.Page, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "pagesize":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pagesize"))
+			it.Pagesize, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "search":
 			var err error
 

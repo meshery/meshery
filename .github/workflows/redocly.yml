@@ -17,6 +17,14 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
+      - name: Setup go-swagger
+        uses: minchao/setup-go-swagger@v1
+        with:
+          version: v0.26.1
+      - name: swagger-spec
+        run: swagger generate spec -o ./server/helpers/swagger.yaml --scan-models
+      - name: swagger-docs
+        run: swagger generate spec -o ./docs/_data/swagger.yml --scan-models; swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
       - name: Install dependencies
         run: npm install -g @redocly/openapi-cli
       - name: Generate documentation

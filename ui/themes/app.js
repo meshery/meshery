@@ -80,6 +80,16 @@ export var darkTheme = createTheme({
 darkTheme = {
   ...darkTheme,
   overrides : {
+    MuiOutlinedInput : {
+      root : {
+        "&:hover $notchedOutline" : {
+          borderColor : "#00B39F",
+        },
+        "&$focused $notchedOutline" : {
+          borderColor : "#00B39F",
+        },
+      },
+    },
     MuiCheckbox : {
       colorPrimary : {
         "&$checked" : {

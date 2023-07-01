@@ -979,8 +979,8 @@ github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 h1:BQSFePA1RWJOl
 github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99/go.mod h1:1lJo3i6rXxKeerYnT8Nvf0QmHCRC1n8sfWVwXF2Frvo=
 github.com/jessevdk/go-flags v1.4.0/go.mod h1:4FA24M0QyGHXBuZZK/XkWh8h0e1EYbRYJSGM75WSRxI=
 github.com/jessevdk/go-flags v1.5.0/go.mod h1:Fw0T6WPc1dYxT4mKEZRfG5kJhaTDP9pj1c2EWnYs/m4=
-github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a h1:zPPuIq2jAWWPTrGt70eK/BSch+gFAGrNzecsoENgu2o=
-github.com/jinzhu/copier v0.0.0-20190924061706-b57f9002281a/go.mod h1:yL958EeXv8Ylng6IfnvG4oflryUi3vgA3xPs9hmII1s=
+github.com/jinzhu/copier v0.3.5 h1:GlvfUwHk62RokgqVNvYsku0TATCF7bAHVwEXoBh3iJg=
+github.com/jinzhu/copier v0.3.5/go.mod h1:DfbEm0FYsaqBcKcFuvmOZb218JkPGtvSHsKg8S8hyyg=
 github.com/jinzhu/gorm v0.0.0-20170222002820-5409931a1bb8/go.mod h1:Vla75njaFJ8clLU1W44h34PjIkijhjHIYnZxMqCdxqo=
 github.com/jinzhu/gorm v1.9.16 h1:+IyIjPEABKRpsu/F8OvDPy9fyQlgsg2luMV2ZIH5i5o=
 github.com/jinzhu/inflection v0.0.0-20170102125226-1c35d901db3d/go.mod h1:h+uFLlag+Qp1Va5pdKtLDYj+kHp5pxUVkryuEj+Srlc=
@@ -1070,8 +1070,8 @@ github.com/layer5io/meshery-operator v0.6.8 h1:fv/qyBkGIugfpt15hSUidJWRXmxX4ixUe
 github.com/layer5io/meshery-operator v0.6.8/go.mod h1:v2haxoohSF7zNRByWYbBiGnS0dtFrVcn8njxkHw+Zrs=
 github.com/layer5io/meshkit v0.5.22/go.mod h1:EUfXIcztap9Dh0Ao3Dmoxf3FMsm4h7zFHGwagj+5ra4=
 github.com/layer5io/meshkit v0.5.32/go.mod h1:dt0uOluDzatK6hbJEDAZbUsm7LJNb4nsXXaGUDtYxD0=
-github.com/layer5io/meshkit v0.6.45 h1:gGXTqj8KtWH6JS68MVXhPOg2HHUc/zXoQ4PsYyiiUBU=
-github.com/layer5io/meshkit v0.6.45/go.mod h1:ztj50XGg3XBFfub+0xedRMog0EbxPzlrRe+8hIsnTtY=
+github.com/layer5io/meshkit v0.6.46 h1:q2V1/s6pjLgd+xTVxRyC/2GczYyJLvZ3Ugsko/+Amyk=
+github.com/layer5io/meshkit v0.6.46/go.mod h1:ztj50XGg3XBFfub+0xedRMog0EbxPzlrRe+8hIsnTtY=
 github.com/layer5io/meshsync v0.6.9 h1:TP9MxN9HNrov53IXRw1X9ftKK8HaLbHZ+Be7Z6TI0bI=
 github.com/layer5io/meshsync v0.6.9/go.mod h1:VgY6gxXmznr8mAouYlm+GsOtB5b2PXSRRmdzr8azkIk=
 github.com/layer5io/nighthawk-go v1.0.5 h1:7aTqRRCaxw8FYRKskwBkN4D524y7ThApJfNcbBeixus=

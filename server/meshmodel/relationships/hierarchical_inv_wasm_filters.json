@@ -16,28 +16,29 @@
     },
     "subType": "Inventory",    
     "selectors": {
-        "patch": {
+        "allow": {
           "from": [
-              {
-                  "kind": "EnvoyFilter",
-                  "model": "Istio Base",
-              
-                    "patchStrategy": "replace",
-                    "$mutatedRef": "#configPatches.patch.value",
-                    "description": "Receive the WASM filter configuration."
-              
-              }
-          ],
-          "to": [
-              {   "kind": "WASMFilter",
-                  "model": "Core",
-                  "patch": {
+            {
+                "kind": "WASMFilter",
+                "model": "Istio Base",
+                "patch": {
                     "patchStrategy": "replace",
                     "$mutatorRef": "#config",
                     "description": "WASM filter configuration to be applied to Envoy Filter."
-                  }
                 }
+            } 
           ],
+          "to": [
+            {
+                "kind": "EnvoyFilter",
+                "model": "Istio Base",
+                "patch": {
+                    "patchStrategy": "replace",
+                    "$mutatedRef": "#configPatches.patch.value",
+                    "description": "Receive the WASM filter configuration."
+                }
+            }
+          ]
         },
         "deny": {
             "from": [],

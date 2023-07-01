@@ -5,7 +5,7 @@ permalink: extensions/importing-a-design
 language: en
 display-title: "false"
 list: exclude
-type: extensions
+type: meshmap
 ---
 
 # Importing a Design

@@ -5,7 +5,7 @@ permalink: extensions/sharing-a-design
 language: en
 display-title: "false"
 list: exclude
-type: extensions
+type: meshmap
 ---
 
 # Sharing a Design
