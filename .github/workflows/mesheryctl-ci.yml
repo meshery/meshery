@@ -66,7 +66,7 @@ jobs:
           version: latest
           args: release --snapshot --skip-publish --clean
   mesheryctl_docs:
-    if: "always() && github.event_name != 'pull_request' "
+    if: "always() && github.event_name != 'pull_request' && github.repository == 'meshery/meshery' "
     runs-on: ubuntu-22.04
     steps:
       - name: Skip if needed
