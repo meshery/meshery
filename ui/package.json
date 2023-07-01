@@ -61,7 +61,7 @@
     "@rjsf/material-ui": "^5.8.2",
     "@rjsf/utils": "^5.8.1",
     "@rjsf/validator-ajv8": "^5.8.1",
-    "autoprefixer": "^10.4.13",
+    "autoprefixer": "^10.4.14",
     "babel-plugin-istanbul": "^6.0.0",
     "babel-plugin-relay": "^13.2.0",
     "billboard.js": "=3.3.3",
