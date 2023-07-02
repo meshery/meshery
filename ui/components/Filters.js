@@ -290,11 +290,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
   const handleUnpublishModal = (ev, filter) => {
     if (canPublishFilter) {
-      ev.stopPropagation();
       return async () => {
         let response = await modalRef.current.show({
           title : `Unpublish Catalog item?`,
-          subtitle : `Are you sure you want to unpublish ${filter?.name}?`,
+          subtitle : `Are you sure that you want to unpublish "${filter?.name}"?`,
           options : ["Yes", "No"]
         });
         if (response === "Yes") {
@@ -304,7 +303,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                 { credentials : "include", method : "DELETE", body : JSON.stringify({ "id" : filter?.id }) },
                 () => {
                   updateProgress({ showProgress : false });
-                  enqueueSnackbar("Filter unpublished", {
+                  enqueueSnackbar((`"${filter?.name}" filter unpublished`), {
                     variant : "success",
                     action : function Action(key) {
                       return (
@@ -461,7 +460,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       { credentials : "include", method : "POST", body : filter_file },
       () => {
         console.log("FilterFile Deploy API", `/api/filter/deploy`);
-        enqueueSnackbar(`"${name}" Filter deployed`, {
+        enqueueSnackbar(`"${name}" filter deployed`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -484,7 +483,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       { credentials : "include", method : "DELETE", body : filter_file },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar(`"${name}" Filter undeployed`, {
+        enqueueSnackbar(`"${name}" filter undeployed`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -533,7 +532,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar(`"${name}" Filter cloned`, {
+        enqueueSnackbar(`"${name}" filter cloned`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -568,7 +567,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
   const handleSetFilters = (filters) => {
     if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
-      setFilters([...catalogContentRef.current, ...filters.filter(content => content.visibility !== VISIBILITY.PUBLISHED)])
+      setFilters([...catalogContentRef.current, ...filters?.filter(content => content.visibility !== VISIBILITY.PUBLISHED)])
       return
     }
     setFilters(filters.filter(content => content.visibility !== VISIBILITY.PUBLISHED))
@@ -639,7 +638,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         () => {
           console.log("FilterFile API", `/api/filter/${id}`);
           updateProgress({ showProgress : false });
-          enqueueSnackbar(`"${name}" Filter deleted`, {
+          enqueueSnackbar(`"${name}" filter deleted`, {
             variant : "success",
             action : function Action(key) {
               return (
@@ -698,7 +697,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     try {
       downloadFile({ id, name, type : "filter" })
       updateProgress({ showProgress : false });
-      enqueueSnackbar(`"${name}" Filter downloaded`, {
+      enqueueSnackbar(`"${name}" filter downloaded`, {
         variant : "success",
         action : function Action(key) {
           return (
@@ -841,13 +840,16 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           const visibility = filters[tableMeta.rowIndex].visibility
           return (
             <>
-              {visibility === VISIBILITY.PUBLISHED ? <IconButton onClick={(e) => {
-                e.stopPropagation();
-                handleClone(rowData.id, rowData.name)
-              }
-              }>
-                <CloneIcon fill="currentColor" className={classes.iconPatt} />              </IconButton>
-                :
+              {visibility === VISIBILITY.PUBLISHED ? <TooltipIcon
+                placement ="top"
+                title={"Clone"}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleClone(rowData.id, rowData.name)
+                }
+                }>
+                <CloneIcon fill="currentColor" className={classes.iconPatt} />
+              </TooltipIcon> :
                 <TooltipIcon
                   title="Config"
                   onClick={(e) => {
@@ -1101,7 +1103,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           componentCount={modalOpen.count}
           tab={modalOpen.deploy ? 2 : 1}
         />
-        {canPublishFilter && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} filter={publishModal.filter} aria-label="catalog publish" handlePublish={handlePublish} />}
+        {canPublishFilter && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} filter={publishModal.filter} title={publishModal.filter?.name} aria-label="catalog publish" handlePublish={handlePublish} />}
         <PromptComponent ref={modalRef} />
         <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchFilters(page, pageSize, search, sortOrder) } configuration="Filter" />
       </NoSsr>

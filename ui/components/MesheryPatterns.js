@@ -286,7 +286,8 @@ function MesheryPatterns({
   })
   const [publishModal, setPublishModal] = useState({
     open : false,
-    pattern : {}
+    pattern : {},
+    name : ""
   });
   const [loading, stillLoading] = useState(true);
 
@@ -563,7 +564,8 @@ function MesheryPatterns({
       ev.stopPropagation();
       setPublishModal({
         open : true,
-        pattern : pattern
+        pattern : pattern, 
+        name : ""
       });
     }
   };
@@ -607,7 +609,8 @@ function MesheryPatterns({
   const handlePublishModalClose = () => {
     setPublishModal({
       open : false,
-      pattern : {}
+      pattern : {},
+      name : ""
     });
   };
 
@@ -1346,7 +1349,7 @@ function MesheryPatterns({
           validationBody={modalOpen.validationBody}
           errors={modalOpen.errors}
         />
-        {canPublishPattern && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handlePublish={handlePublish} />}
+        {canPublishPattern && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} pattern={publishModal.pattern} title={publishModal.pattern?.name} aria-label="catalog publish" handlePublish={handlePublish} />}
         <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchPatterns(page, pageSize, search, sortOrder)} configuration="Design" />
         <PromptComponent ref={modalRef} />
       </NoSsr>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useEffect } from 'react';
-import { Button, Grid } from '@material-ui/core';
+import { Button, Grid, Typography } from '@material-ui/core';
 // import { createTheme } from '@material-ui/core/styles';
 import validator from "@rjsf/validator-ajv8";
 import {
@@ -30,7 +30,7 @@ import PublicIcon from '@material-ui/icons/Public';
 // })
 
 export default function PublishModal(props) {
-  const { open, handleClose, pattern, handlePublish } = props;
+  const { open, handleClose, pattern, filter, handlePublish, title } = props;
   const classes = useStyles();
   const schema = {
     "type" : "object",
@@ -79,16 +79,24 @@ export default function PublishModal(props) {
         ]
       }
     },
-    "required" : ["compatibility", "pattern_caveats", "pattern_info", "type"]
+    "required" : ["compatibility", "pattern_caveats", "pattern_info", "type"] // TODO: to be injected dynamically and backed by RJSF
   }
 
   const [data, setData] = React.useState(null);
 
   useEffect(() => {
     if (pattern?.catalog_data) {
-      setData(pattern.catalog_data)
+      setData(pattern.catalog_data);
+    } else if (filter?.catalog_data) {
+      setData(filter.catalog_data); // TODO: Make this function generic.
     }
-  }, []);
+  }, [pattern, filter]);
+
+  const dataDetails = pattern || filter;
+
+  const getId = () => {
+    return dataDetails ? dataDetails.id : null;
+  };
 
   return (
     <>
@@ -96,7 +104,7 @@ export default function PublishModal(props) {
         open={open}
         onClose={handleClose}>
         <DialogTitle className={classes.dialogTitle}>
-          Request To Publish: {pattern?.name}
+         Request To Publish: "{title}"
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={24} alignItems="center">
@@ -104,7 +112,7 @@ export default function PublishModal(props) {
               onSubmit={(data) => {
                 handleClose();
                 handlePublish({
-                  id : pattern.id,
+                  id : getId(),
                   catalog_data : data.formData
                 })
               }}

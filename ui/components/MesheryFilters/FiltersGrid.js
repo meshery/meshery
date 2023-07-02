@@ -78,20 +78,23 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, han
 
   const [publishModal, setPublishModal] = useState({
     open : false,
-    filter : {}
+    filter : {},
+    name: ""
   });
   const handlePublishModal = (filter) => {
     if (canPublishFilter) {
       setPublishModal({
         open : true,
-        filter : filter
+        filter : filter,
+        name: ""
       });
     }
   };
   const handlePublishModalClose = () => {
     setPublishModal({
       open : false,
-      filter : {}
+      filter : {},
+      name: ""
     });
   };
 
@@ -196,7 +199,7 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, han
         componentCount = {modalOpen.count}
         tab={modalOpen.deploy ? 2 : 1}
       />
-      {canPublishFilter && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} filter={publishModal.filter} aria-label="catalog publish" handlePublish={handlePublish} />}
+      {canPublishFilter && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} filter={publishModal.filter} title={publishModal.filter?.name} aria-label="catalog publish" handlePublish={handlePublish} />}
       <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetch()} configuration="Filter"  />
     </div>
   );
