@@ -104,7 +104,7 @@ export default function PublishModal(props) {
         open={open}
         onClose={handleClose}>
         <DialogTitle className={classes.dialogTitle}>
-         Request To Publish: "{title}"
+         Request To Publish: {title}
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={24} alignItems="center">
