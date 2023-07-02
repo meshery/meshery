@@ -100,7 +100,7 @@ func TestCheckKubectlVersion(t *testing.T) {
 
 func TestCheckK8sVersion(t *testing.T) {
 	tests := []struct {
-		version *version.Info
+		version  *version.Info
 		expected [3]int
 	}{
 		{
@@ -129,26 +129,25 @@ func TestCheckK8sVersion(t *testing.T) {
 
 }
 
-
-func TestIsCompatibleVersion(t *testing.T){
+func TestIsCompatibleVersion(t *testing.T) {
 	tests := []struct {
-		minimum [3]int
-		current [3]int
+		minimum  [3]int
+		current  [3]int
 		expected bool
 	}{
 		{
-			minimum: [3]int{1, 12, 0},
-			current: [3]int{1, 12, 0},
+			minimum:  [3]int{1, 12, 0},
+			current:  [3]int{1, 12, 0},
 			expected: true,
 		},
 		{
-			minimum: [3]int{1, 11, 0},
-			current: [3]int{2, 13, 2},
+			minimum:  [3]int{1, 11, 0},
+			current:  [3]int{2, 13, 2},
 			expected: true,
 		},
 		{
-			minimum: [3]int{2, 13, 2},
-			current: [3]int{1, 11, 0},
+			minimum:  [3]int{2, 13, 2},
+			current:  [3]int{1, 11, 0},
 			expected: false,
 		},
 	}
@@ -161,7 +160,6 @@ func TestIsCompatibleVersion(t *testing.T){
 		})
 	}
 }
-
 
 func TestAreMesheryComponentsRunning(t *testing.T) {
 	tests := []struct {
@@ -187,8 +185,6 @@ func TestAreMesheryComponentsRunning(t *testing.T) {
 	}
 }
 
-
-
 func TestAreAllPodsRunning(t *testing.T) {
 	tests := []struct {
 		expected bool
@@ -199,18 +195,18 @@ func TestAreAllPodsRunning(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run("Are All Pods Running", func(t *testing.T) {
-			if got, _:= AreAllPodsRunning(); got != tt.expected {
+			if got, _ := AreAllPodsRunning(); got != tt.expected {
 				t.Errorf("Are all pods running got %v want %v", got, tt.expected)
 			}
 		})
 	}
 }
 
-func TestCheckMesheryNsDelete(t *testing.T){
+func TestCheckMesheryNsDelete(t *testing.T) {
 	expected := false
 	t.Run("Test Existing Meshery Namespace", func(t *testing.T) {
-		if got, _:= CheckMesheryNsDelete(); got != expected {
-			t.Errorf("Namespace not deleted got %v want %v ", got, expected )
+		if got, _ := CheckMesheryNsDelete(); got != expected {
+			t.Errorf("Namespace not deleted got %v want %v ", got, expected)
 		}
 	})
 }

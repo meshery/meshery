@@ -19,6 +19,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -54,7 +55,18 @@ mesheryctl exp filter list
 		if err != nil {
 			return err
 		}
-
+		prov := models.RemoteProvider{}
+		tokenPath := utils.AuthConfigFile
+		file, err := os.ReadFile(tokenPath)
+		if err != nil {
+			return err
+		}
+		jwtToken := map[string]string{}
+		json.Unmarshal(file, &jwtToken)
+		_, invalid := prov.VerifyToken(jwtToken["token"])
+		if invalid != nil {
+			return ErrInvalidAuthToken()
+		}
 		res, err := client.Do(req)
 		if err != nil {
 			return err
