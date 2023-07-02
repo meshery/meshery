@@ -79,14 +79,14 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, han
   const [publishModal, setPublishModal] = useState({
     open : false,
     filter : {},
-    name: ""
+    name : ""
   });
   const handlePublishModal = (filter) => {
     if (canPublishFilter) {
       setPublishModal({
         open : true,
         filter : filter,
-        name: ""
+        name : ""
       });
     }
   };
@@ -94,7 +94,7 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, han
     setPublishModal({
       open : false,
       filter : {},
-      name: ""
+      name : ""
     });
   };
 

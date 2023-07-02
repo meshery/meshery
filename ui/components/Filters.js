@@ -567,7 +567,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
   const handleSetFilters = (filters) => {
     if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
-      setFilters([...catalogContentRef.current, ...filters?.filter(content => content.visibility !== VISIBILITY.PUBLISHED)])
+      setFilters([...catalogContentRef.current, ...filters.filter(content => content.visibility !== VISIBILITY.PUBLISHED)])
       return
     }
     setFilters(filters.filter(content => content.visibility !== VISIBILITY.PUBLISHED))

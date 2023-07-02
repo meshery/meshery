@@ -564,7 +564,7 @@ function MesheryPatterns({
       ev.stopPropagation();
       setPublishModal({
         open : true,
-        pattern : pattern, 
+        pattern : pattern,
         name : ""
       });
     }
