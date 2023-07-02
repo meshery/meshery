@@ -753,7 +753,7 @@ function MesheryPatterns({
         updateProgress({ showProgress : false });
         page === 0 && stillLoading(false);
         if (result) {
-          setPage(result.page || 0);
+          // setPage(result.page || 0);
           setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
           handleSetPatterns(result.patterns || [])
