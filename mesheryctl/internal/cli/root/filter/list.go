@@ -62,7 +62,10 @@ mesheryctl exp filter list
 			return err
 		}
 		jwtToken := map[string]string{}
-		json.Unmarshal(file, &jwtToken)
+		errCheck := json.Unmarshal(file, &jwtToken)
+		if errCheck != nil {
+			return ErrUnmarshal(errCheck)
+		}
 		_, invalid := prov.VerifyToken(jwtToken["token"])
 		if invalid != nil {
 			return ErrInvalidAuthToken()
