@@ -36,20 +36,14 @@ After running Meshery server, you will need to select your **Cloud Provider** by
 **Please note**: If you get error while starting the server as **"Meshery Development Incompatible"** then follow the below guideline 👇
 
 <a href="{{ site.baseurl }}/assets/img/meshery-development-incompatible-error.png">
-  <img style= "width: 600px;" src="{{ site.baseurl }}/assets/img/meshery-development-incompatible-error.png" />
+  <img style= "max-width: 450px;" src="{{ site.baseurl }}/assets/img/meshery-development-incompatible-error.png" />
 </a>
 
 Potential Solution: 
+From the root of your cloned repo, execute: 
 
--  Go to your meshery folder in your local-system where you’ve cloned it.
-Execute: 
-
-
-- Restart the meshery server.
-- Make sure that `BUILD="v0.X.X"` is logged in some starting line while starting the server.
-
-- Addionally, before restarting the server, if you like to pull the latest changes, you can do: `git pull upstream master`
-
+- `CTL+C` to stop Meshery Server.
+- `export BUILD="v0.X.X"` prior to building Meshery Server again, setting this value to the desired Meshery version (git tag).
 #### Building Docker image
 
 To build a Docker image of Meshery, please ensure you have `Docker` installed to be able to build the image. Now, run the following command to build the Docker image:
