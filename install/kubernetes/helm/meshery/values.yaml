@@ -4,6 +4,7 @@
 
 replicaCount: 1
 restartPolicy: Always
+namespace: meshery
 
 image:
   repository: layer5/meshery
