@@ -16,6 +16,9 @@ package filter
 
 import (
 	"fmt"
+	"io"
+	"io/ioutil"
+	"net/http"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -47,9 +50,90 @@ mesheryctl exp filter [subcommands]
 	},
 }
 
+var importFilterCmd = &cobra.Command{
+	Use:   "import [URI]",
+	Short: "Import a WASM filter",
+	Long:  "Import a WASM filter from a URI (http/s) or local filesystem path",
+	Args:  cobra.ExactArgs(1),
+	RunE:  importFilter,
+}
+
+func importFilter(cmd *cobra.Command, args []string) error {
+	uri := args[0]
+	configPath, _ := cmd.Flags().GetString("config")
+
+	// Perform the import logic using the provided URI and configPath
+	err := importFilterFromURI(uri, configPath)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("Filter imported successfully!")
+	return nil
+}
+
+// saveFilter saves the filter content from the given reader to the specified file path
+func saveFilter(reader io.Reader, filePath string) error {
+	// Read the filter content
+	filterContent, err := ioutil.ReadAll(reader)
+	if err != nil {
+		return err
+	}
+
+	// Write the filter content to the file
+	err = ioutil.WriteFile(filePath, filterContent, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// saveFilterFromPath saves the filter content from the file at the given path to the specified file path
+func saveFilterFromPath(sourcePath, destinationPath string) error {
+	// Read the filter content from the source file
+	filterContent, err := ioutil.ReadFile(sourcePath)
+	if err != nil {
+		return err
+	}
+
+	err = ioutil.WriteFile(destinationPath, filterContent, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func importFilterFromURI(uri, configPath string) error {
+	if uri[:7] == "http://" || uri[:8] == "https://" {
+		resp, err := http.Get(uri)
+		if err != nil {
+			return err
+		}
+		defer resp.Body.Close()
+
+		err = saveFilter(resp.Body, configPath)
+		if err != nil {
+			return err
+		}
+	} else {
+		err := saveFilterFromPath(uri, configPath)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func init() {
 	FilterCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token file default from current context")
 
 	availableSubcommands = []*cobra.Command{applyCmd, viewCmd, deleteCmd, listCmd}
 	FilterCmd.AddCommand(availableSubcommands...)
+
+	importFilterCmd.Flags().StringP("config", "c", "", "Configuration file path")
+
+	FilterCmd.AddCommand(importFilterCmd)
 }
