@@ -128,7 +128,7 @@ make server
 Any time changes are made to the Go code, you will have to stop the server and run the above command again.
 Once the Meshery server is up and running, you should be able to access Meshery on your `localhost` on port `9081` at `http://localhost:9081`.
 
-**Please note**: If you get error while starting the server as **"Meshery Development Incompatible"** then follow the below guideline 👇
+**Please note**: If you see "Meshery Development Incompatible" while trying to sign into Meshery Server, then follow these steps:
 
 <img src="./docs/assets/img/meshery-development-incompatible-error.png" width="50%">
 

@@ -118,7 +118,7 @@ To start running Meshery Server locally:
 {% include code.html code="make server" %}
 Now, Meshery will run on the default port `http://localhost:9081`.
 
-**Please note**: If you get error while starting the server as **"Meshery Development Incompatible"** then follow the below guideline 👇
+**Please note**: If you see "Meshery Development Incompatible" while trying to sign into Meshery Server, then follow these steps:
 
 <a href="{{ site.baseurl }}/assets/img/meshery-development-incompatible-error.png">
   <img style= "width: 600px;" src="{{ site.baseurl }}/assets/img/meshery-development-incompatible-error.png" />
