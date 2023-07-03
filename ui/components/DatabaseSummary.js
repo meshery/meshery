@@ -138,7 +138,7 @@ const DatabaseSummary = (props) => {
     serverSide : true,
     rowsPerPage : rowsPerPage,
     count : databaseSummary?.totalTables,
-    page: page,
+    page : page,
     onChangePage : debounce((p) =>  setPage(p), 200),
     onChangeRowsPerPage : debounce((p) =>  setRowsPerPage(p), 200),
     onSearchChange : debounce((searchText) => {
