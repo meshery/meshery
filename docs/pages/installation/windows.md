@@ -157,7 +157,6 @@ $env:KUBECONFIG = "$(k3d.exe kubeconfig get 'k3s-default')"</div></div>
 ### 5. <a name="step5"><b>Set up Meshery</b></a>
 
 Follow the [installation steps]({{ site.baseurl }}/installation#windows) to install the mesheryctl CLI. Then, execute:
-
   <pre class="codeblock-pre">
   <div class="codeblock"><div class="clipboardjs">./mesheryctl system start</div></div>
   </pre>

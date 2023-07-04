@@ -137,7 +137,7 @@
       url: guides/troubleshooting
     - title: Upgrading Meshery
       url: guides/upgrade
-    - title: Using metrics in meshery
+    - title: Using metrics
       url: guides/meshery-metrics
     - title: Using mesheryctl ↆ
       url: guides/mesheryctl
