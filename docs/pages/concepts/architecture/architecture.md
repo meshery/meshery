@@ -84,6 +84,12 @@ Meshery Server's database is responsible for collecting and centralizing the sta
 
 _See the [**Database**]({{ site.baseurl }}/concepts/architecture/database) section for more information on the function of the database._
 
+## Meshery Docker Extension 
+
+Meshery's Docker extension provides a simple and flexible way to deploy service meshes on top of Kubernetes using Docker containers. The architecture of this extension is designed to be modular and extensible, with each component serving a specific purpose within the overall deployment process.
+
+[![Meshery Database]({{ site.baseurl }}/assets/img/architecture/meshery-docker-extension.svg)]({{ site.baseurl }}/assets/img/architecture/meshery-docker-extension.svg)
+
 
 ### **Statefulness in Meshery components**
 
@@ -133,7 +139,7 @@ Meshery uses the following list of network ports to interface with its various c
 See the [**Adapters**]({{ site.baseurl }}/concepts/architecture/adapters) section for more information on the function of an adapter.
 
 
-### **Meshery Connections and thier Actions**
+### **Meshery Connections and their Actions**
 
 <table style=" padding-right: 10px;
         margin: 5px 5px 5px 5px;

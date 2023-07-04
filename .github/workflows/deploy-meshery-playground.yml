@@ -1,4 +1,4 @@
-name: Deploy Meshery Playground
+name: Playground Azure - Deploy
 on:
   workflow_call:
   workflow_dispatch:
