@@ -186,9 +186,9 @@ class MesherySettings extends React.Component {
       prometheus,
       tabVal,
       subTabVal,
-      modelsCount: 0,
-      componentsCount: 0,
-      relationshipsCount: 0,
+      modelsCount : 0,
+      componentsCount : 0,
+      relationshipsCount : 0,
       isMeshConfigured : k8sconfig.clusterConfigured,
 
       // Array of scanned prometheus urls
