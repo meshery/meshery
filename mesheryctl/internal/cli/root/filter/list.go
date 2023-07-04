@@ -49,7 +49,7 @@ mesheryctl exp filter list
 			return errors.Wrap(err, "error processing config")
 		}
 		var response models.FiltersAPIResponse
-		req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/filter", nil)
+		req, err := utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/filter", nil)
 		if err != nil {
 			return err
 		}
