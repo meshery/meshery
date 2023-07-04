@@ -131,7 +131,7 @@ func (l *RemoteProvider) DecodeTokenData(tokenStringB64 string) (*oauth2.Token, 
 
 // UpdateJWKs - Updates Keys to the JWKS
 func (l *RemoteProvider) UpdateJWKs() error {
-	resp, err := http.Get("https://meshery.layer5.io/keys")
+	resp, err := http.Get(l.RemoteProviderURL + "/keys")
 	if err != nil {
 		return ErrJWKsKeys(err)
 	}
