@@ -399,7 +399,6 @@ PLATFORMS
   x86_64-darwin-22
 
 DEPENDENCIES
-  bundler (= 2.4.14)
   github-pages
   graphql
   graphql-docs
@@ -407,9 +406,6 @@ DEPENDENCIES
   rails
   rake
   webrick (~> 1.8)
-
-RUBY VERSION
-   ruby 3.2.2p53
 
 BUNDLED WITH
    2.4.14

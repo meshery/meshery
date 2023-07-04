@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -50,27 +49,11 @@ mesheryctl exp filter list
 			return errors.Wrap(err, "error processing config")
 		}
 		var response models.FiltersAPIResponse
-		client := &http.Client{}
-		req, err := utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/filter", nil)
+		req, err := http.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/filter", nil)
 		if err != nil {
 			return err
 		}
-		prov := models.RemoteProvider{}
-		tokenPath := utils.AuthConfigFile
-		file, err := os.ReadFile(tokenPath)
-		if err != nil {
-			return err
-		}
-		jwtToken := map[string]string{}
-		errCheck := json.Unmarshal(file, &jwtToken)
-		if errCheck != nil {
-			return ErrUnmarshal(errCheck)
-		}
-		_, invalid := prov.VerifyToken(jwtToken["token"])
-		if invalid != nil {
-			return ErrInvalidAuthToken()
-		}
-		res, err := client.Do(req)
+		res, err := utils.MakeRequest(req)
 		if err != nil {
 			return err
 		}
