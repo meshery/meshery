@@ -22,8 +22,6 @@ var (
 	apply1003 = "1003.golden"
 	// server response for creating new profile "test"
 	apply1004 = "1004.golden"
-	// server response for running test with new created profile
-	apply1005 = "1005.golden"
 	// server response for no profiles found
 	apply1006 = "1006.golden"
 )
@@ -33,8 +31,6 @@ var (
 	apply1001output = "1001.golden"
 	// mesheryctl response for url not having protocol added
 	apply1002output = "1002.golden"
-	// mesheryctl response for no url
-	apply1003output = "1003.golden"
 	// mesheryctl response for invalid url
 	apply1004output = "1004.golden"
 	// mesheryctl response for no existing profile provided neither new profile-name

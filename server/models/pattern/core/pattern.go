@@ -3,6 +3,7 @@ package core
 import (
 	"crypto/rand"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math/big"
 	mathrand "math/rand"
@@ -11,6 +12,8 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
+	"github.com/layer5io/meshkit/models/meshmodel"
+	meshmodelv1alpha1 "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils/manifests"
 	"github.com/sirupsen/logrus"
@@ -59,10 +62,13 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, isSchema bool) i
 					m[k2] = v2
 					continue
 				}
-				if prettify {
-					m[manifests.FormatToReadableString(k2)] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
+				newmap := ConvertMapInterfaceMapString(v2, prettify, isSchema)
+				if isSchema && isSpecialKey(k2) { //Few special keys in schema should not be prettified
+					m[k2] = newmap
+				} else if prettify {
+					m[manifests.FormatToReadableString(k2)] = newmap
 				} else {
-					m[manifests.DeFormatReadableString(k2)] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
+					m[manifests.DeFormatReadableString(k2)] = newmap
 				}
 			default:
 				m[fmt.Sprint(k)] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
@@ -78,25 +84,19 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, isSchema bool) i
 		return x2
 	case map[string]interface{}:
 		m := map[string]interface{}{}
-		foundFormatIntOrString := false
+		// foundFormatIntOrString := false
 		for k, v2 := range x {
 			if isSchema && k == "enum" { //While schema prettification, ENUMS are end system defined end user input and therefore should not be prettified/deprettified
 				m[k] = v2
+				continue
+			}
+			newmap := ConvertMapInterfaceMapString(v2, prettify, isSchema)
+			if isSchema && isSpecialKey(k) {
+				m[k] = newmap
 			} else if prettify {
-				m[manifests.FormatToReadableString(k)] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
+				m[manifests.FormatToReadableString(k)] = newmap
 			} else {
-				m[manifests.DeFormatReadableString(k)] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
-			}
-			if isSchema {
-				//Apply this fix only when the format specifies string|int and type specifies string therefore when there is a contradiction
-				if k == "format" && v2 == "int-or-string" {
-					foundFormatIntOrString = true
-				}
-			}
-		}
-		if isSchema {
-			if x["type"] == "string" && foundFormatIntOrString {
-				m["type"] = "integer"
+				m[manifests.DeFormatReadableString(k)] = newmap
 			}
 		}
 		return m
@@ -109,6 +109,18 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, isSchema bool) i
 		}
 	}
 	return v
+}
+
+// These keys should not be prettified to "any Of", "all Of" and "one Of"
+var keysToNotPrettifyOnSchema = []string{"anyOf", "allOf", "oneOf"}
+
+func isSpecialKey(k string) bool {
+	for _, k0 := range keysToNotPrettifyOnSchema {
+		if k0 == k {
+			return true
+		}
+	}
+	return false
 }
 
 // In case of any breaking change or bug caused by this, set this to false and the whitespace addition in schema generated/consumed would be removed(will go back to default behavior)
@@ -159,6 +171,7 @@ type Service struct {
 	Namespace   string            `yaml:"namespace,omitempty" json:"namespace,omitempty"`
 	Version     string            `yaml:"version,omitempty" json:"version,omitempty"`
 	Model       string            `yaml:"model,omitempty" json:"model,omitempty"`
+	IsAnnotation bool             `yaml:"isAnnotation,omitempty" json:"isAnnotation,omitempty"`
 	Labels      map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
 	Annotations map[string]string `yaml:"annotations,omitempty" json:"annotations,omitempty"`
 	// DependsOn correlates one or more objects as a required dependency of this service
@@ -193,6 +206,26 @@ func NewPatternFile(yml []byte) (af Pattern, err error) {
 		}
 	}
 
+	return
+}
+
+// isValidPattern checks if the pattern file is valid or not
+func IsValidPattern(stringifiedFile string) (err error) {
+	pattern := Pattern{}
+
+	if err = yaml.Unmarshal([]byte(stringifiedFile), &pattern); err != nil {
+		return err
+	}
+
+	if pattern.Services == nil {
+		return errors.New("invalid design-file format: missing services field")
+	}
+
+	// for serviceName, service := range pattern.Services {
+	// 	if service.Traits == nil {
+	// 		return errors.New("missing traits field for:" + serviceName)
+	// 	}
+	// }
 	return
 }
 
@@ -358,13 +391,14 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 		}
 
 		//Only make the name unique when duplicates are encountered. This allows clients to preserve and propagate the unique name they want to give to their workload
-		if countDuplicates[svc.Name] > 1 {
+		uniqueName := svc.Name
+		if countDuplicates[uniqueName] > 1 {
 			//set appropriate unique service name
-			svc.Name = strings.ToLower(svc.Name)
-			svc.Name += "-" + getRandomAlphabetsOfDigit(5)
+			uniqueName = strings.ToLower(svc.Name)
+			uniqueName += "-" + getRandomAlphabetsOfDigit(5)
 		}
-		eleToSvc[ele.Data.ID] = svc.Name //will be used while adding depends-on
-		pf.Services[svc.Name] = &svc
+		eleToSvc[ele.Data.ID] = uniqueName //will be used while adding depends-on
+		pf.Services[uniqueName] = &svc
 		return nil
 	})
 	if err != nil {
@@ -454,7 +488,7 @@ func manifestIsEmpty(manifests []string) bool {
 }
 
 // Note: If modified, make sure this function always returns a meshkit error
-func NewPatternFileFromK8sManifest(data string, ignoreErrors bool) (Pattern, error) {
+func NewPatternFileFromK8sManifest(data string, ignoreErrors bool, reg *meshmodel.RegistryManager) (Pattern, error) {
 	pattern := Pattern{
 		Name:     "Autogenerated",
 		Services: map[string]*Service{},
@@ -487,7 +521,7 @@ func NewPatternFileFromK8sManifest(data string, ignoreErrors bool) (Pattern, err
 			return pattern, ErrParseK8sManifest(fmt.Errorf("failed to parse manifest into an internal representation"))
 		}
 
-		name, svc, err := createPatternServiceFromK8s(manifest)
+		name, svc, err := createPatternServiceFromK8s(manifest, reg)
 		if err != nil {
 			if ignoreErrors {
 				continue
@@ -501,7 +535,7 @@ func NewPatternFileFromK8sManifest(data string, ignoreErrors bool) (Pattern, err
 	return pattern, nil
 }
 
-func createPatternServiceFromK8s(manifest map[string]interface{}) (string, Service, error) {
+func createPatternServiceFromK8s(manifest map[string]interface{}, regManager *meshmodel.RegistryManager) (string, Service, error) {
 	apiVersion, _ := manifest["apiVersion"].(string)
 	kind, _ := manifest["kind"].(string)
 	metadata, _ := manifest["metadata"].(map[string]interface{})
@@ -532,12 +566,20 @@ func createPatternServiceFromK8s(manifest map[string]interface{}) (string, Servi
 	if apiVersion == "" || kind == "" {
 		return "", Service{}, ErrCreatePatternService(fmt.Errorf("empty apiVersion or kind in manifest"))
 	}
-	w := GetWorkloadsByK8sAPIVersionKind(apiVersion, kind)
 
-	if len(w) == 0 {
+	// Get MeshModel entity with the selectors
+	componentList, _ := regManager.GetEntities(&meshmodelv1alpha1.ComponentFilter{
+		Name:       kind,
+		APIVersion: apiVersion,
+	})
+	if len(componentList) == 0 {
 		return "", Service{}, ErrCreatePatternService(fmt.Errorf("no resources found for APIVersion: %s Kind: %s", apiVersion, kind))
 	}
-
+	// just needs the first entry to grab meshmodel-metadata and other model requirements
+	comp, ok := componentList[0].(meshmodelv1alpha1.ComponentDefinition)
+	if !ok {
+		return "", Service{}, ErrCreatePatternService(fmt.Errorf("cannot cast to the component-definition for APIVersion: %s Kind: %s", apiVersion, kind))
+	}
 	// Setup labels
 	castedLabel := map[string]string{}
 	for k, v := range labels {
@@ -556,15 +598,22 @@ func createPatternServiceFromK8s(manifest map[string]interface{}) (string, Servi
 		}
 	}
 	rest = Format.Prettify(rest, false)
+	uuidV4, _ := uuid.NewV4()
 	svc := Service{
 		Name:        name,
-		Type:        w[0].OAMDefinition.Name,
-		APIVersion:  apiVersion,
+		Type:        comp.Kind,
+		APIVersion:  comp.APIVersion,
 		Namespace:   namespace,
-		Model:       "kubernetes",
+		Model:       comp.Model.Name,
 		Labels:      castedLabel,
 		Annotations: castedAnnotation,
 		Settings:    rest,
+		Traits: map[string]interface{}{
+			"meshmap": map[string]interface{}{
+				"id":                 uuidV4,
+				"meshmodel-metadata": comp.Metadata,
+			},
+		},
 	}
 
 	return id, svc, nil

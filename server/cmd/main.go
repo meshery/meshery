@@ -18,7 +18,6 @@ import (
 	meshmodelhelper "github.com/layer5io/meshery/server/meshmodel"
 	"github.com/layer5io/meshery/server/models"
 	mesherymeshmodel "github.com/layer5io/meshery/server/models/meshmodel"
-	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/router"
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/logger"
@@ -88,19 +87,6 @@ func main() {
 	viper.SetDefault("SKIP_COMP_GEN", false)
 	viper.SetDefault("PLAYGROUND", false)
 	store.Initialize()
-
-	// Register local OAM traits and workloads
-	if err := core.RegisterMesheryOAMTraits(); err != nil {
-		log.Error(ErrRegisteringMesheryOAMTraits(err))
-	}
-	if err := core.RegisterMesheryOAMWorkloads(); err != nil {
-		log.Error(ErrRegisteringMesheryOAMWorkloads(err))
-	}
-	if viper.GetBool("REGISTER_STATIC_K8S") {
-		if err = core.RegisterK8sOAMWorkloads(); err != nil {
-			log.Error(ErrRegisteringMesheryOAMWorkloads(err))
-		}
-	}
 
 	log.Info("Local Provider capabilities are: ", version)
 

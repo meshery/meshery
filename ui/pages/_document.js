@@ -3,34 +3,6 @@ import PropTypes from "prop-types";
 import Document, { Head, Main, NextScript, Html } from "next/document";
 import flush from "styled-jsx/server";
 
-/**
- * setupGA setups up the google analtyics in meshery UI
- *
- * This function may not be invoked here (server side) as "window" object does
- * not exist on the server side. Hence this function is stringified and
- * forced to execute on the client side only.
- *
- */
-function setupGA() {
-  window.dataLayer = window.dataLayer || [];
-
-  function gtag() {
-    dataLayer.push(arguments);
-  }
-
-  fetch("/api/user/prefs", { credentials: 'include' })
-    .then((res) => res.json())
-    .then((res) => {
-      if (res?.anonymousUsageStats) {
-        gtag("js", new Date());
-        gtag("config", "G-8Q51RLT8TZ", {
-          page_path: window.location.pathname,
-        });
-      }
-    })
-    .catch((err) => console.error(err));
-}
-
 class MesheryDocument extends Document {
   render() {
     return (
@@ -43,22 +15,29 @@ class MesheryDocument extends Document {
           <meta name="referrer" content="no-referrer" />
           <link rel="icon" href="/static/favicon.png" />
 
+          {/* Google Tag Manager */}
+          <script dangerouslySetInnerHTML={{
+            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            // Fetch user preferences
+            fetch("/api/user/prefs", { credentials: 'include' })
+              .then((res) => res.json())
+              .then((res) => {
+                if (res && res?.anonymousUsageStats === false) {
+                  // User opted out of tracking, disable GTM
+                  w[l] = []; // Clear the dataLayer array
+                  w['ga-disable-'+i] = true; // Disable Google Analytics tracking
+                }
+              });
+          })(window,document,'script','dataLayer','GTM-TFLZDSQ');`
+          }} />
+          {/* End Google Tag Manager */}
 
-
-          <script async src={`https://www.googletagmanager.com/gtag/js?id=G-8Q51RLT8TZ`} />
-
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `${"" + setupGA}; setupGA();`,
-            }}
-          />
-
-        {/**
+          {/**
           * For hiding the scrollbar without losing the scroll functionality
           * add the class "hide-scrollbar" to hide scrollbar for that element
           * Only applicable for Chrome, safari and newest version of Opera
           */}
-        <style type="text/css">{"\
+          <style type="text/css">{"\
             .hide-scrollbar::-webkit-scrollbar {\
               width: 0 !important;\
             }\
@@ -66,11 +45,16 @@ class MesheryDocument extends Document {
               width: 0.3em !important;\
             }\
           "}
-        </style>
-
+          </style>
 
         </Head>
         <body>
+          {/* Google Tag Manager (noscript) */}
+          <noscript dangerouslySetInnerHTML={{
+            __html: `<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TFLZDSQ" height="0" width="0" style="display:none;visibility:hidden"></iframe>`
+          }} />
+          {/* End Google Tag Manager (noscript) */}
+
           <Main />
           <NextScript />
         </body>

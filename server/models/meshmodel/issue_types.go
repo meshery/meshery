@@ -12,12 +12,7 @@ const (
 	K8sInternalError             IssueType = "K8sInternalError"
 )
 
-type JSONSchemaErrorDetail struct {
-	instancePath string
-	schemaPath   string
-	propertyName string
-	message      string
-}
+type JSONSchemaErrorDetail struct{}
 type PolicyErrorDetail struct{}
 type K8sAdmissionControllerErrorDetail struct{}
 type K8sInternalErrorDetail struct{}

@@ -8,6 +8,7 @@ contexts:
     channel: stable
     version: v0.5.10
 current-context: local
+provider: Meshery
 tokens:
   - name: default
     location: auth.json

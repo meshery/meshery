@@ -13,7 +13,7 @@ layout: default
 
 {% for route in sorted_paths %}
 <div class="swagger-path">
-    <h2 class="swagger-path">{{ route[0] }}</h>
+    <h2 class="swagger-path">{{ route[0] }}</h2>
 {% if route[0] contains '/api/oam' %}
     <span class="deprecated-label">Deprecated</span>
 {% endif %}
@@ -22,15 +22,17 @@ layout: default
         <h3 class="swagger-method-title">
             <a href="#" class="swagger-method-link">
                 <span class="swagger-method-name">{{ method[0] | upcase }}</span>
-                {{ method[1].summary }}
+                <span class="swagger-method-summary">{{ method[1].summary }}</span>
             </a>
         </h3>
         <div class="swagger-method-details">
-            <h5><b>Description</b></h5>
-            <p class="swagger-method-description" >{{method[1].description}}</p>
+            <h5>Description</h5>
+            <md-block>
+              <span class="swagger-method-description" >{{method[1].description}}</span>
+            </md-block>
             {% if method[1].parameters %}
             <div class="swagger-parameters">
-                <h5><b>Parameters</b></h5>
+                <h5>Parameters</h5>
                 <table class="swagger-parameters-table">
                     <thead>
                         <tr>
@@ -68,16 +70,21 @@ layout: default
                         {% endfor %}
                     </tbody>
                 </table>
-            </div><br>
+            </div>
             {% endif %}
             {% if method[1].responses %}
             <div class="swagger-response">
-                <h5><b>Responses</b></h5>
+                <h5>Responses</h5>
                 {% for response in method[1].responses %}
-                <h5>
-                    <span class="swagger-response-code">{{ response[0] }}</span>
-                    <span class="swagger-response">{{ response[1].description }}</span>
-                </h5>
+                <div class="swagger-response-{{ response[0] }}">
+                    <p class="swagger-response-title">
+                        <span class="swagger-response-code">{{ response[0] }}</span>
+                        {% if response[1].description != "" %}<span class="swagger-response-seperator">-</span>{% endif %}
+                        <md-block class="mdblock">
+                            <span class="swagger-response-description">{{ response[1].description }}</span>
+                        </md-block>
+                    </p>
+                </div>
                 {% if response[1].schema.properties %}
                  <table class="swagger-parameters-table">
                     <thead>

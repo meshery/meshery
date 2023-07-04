@@ -3,6 +3,7 @@ package models
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/gofrs/uuid"
@@ -56,14 +57,38 @@ func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, pag
 }
 
 // GetMesheryCatalogPatterns returns all of the published patterns
-func (mpp *MesheryPatternPersister) GetMesheryCatalogPatterns(search, order string) ([]byte, error) {
+func (mpp *MesheryPatternPersister) GetMesheryCatalogPatterns(page, pageSize, search, order string) ([]byte, error) {
+	var err error
 	order = sanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
 		order = "updated_at desc"
 	}
 
-	patterns := []*MesheryPattern{}
+	var pg int 
+	if page != "" {
+		pg, err = strconv.Atoi(page)
+		
+		if err != nil || pg < 0 {
+			pg = 0
+		}
+	} else {
+		pg = 0
+	}
+	
+	// 0 page size is for all records
+	var pgSize int
+	if pageSize != ""{
+		pgSize, err = strconv.Atoi(pageSize)
+
+		if err != nil  || pgSize < 0{
+			pgSize = 0
+		}
+	} else {
+		pgSize = 0
+	}
+
+	patterns := []MesheryPattern{}
 
 	query := mpp.DB.Where("visibility = ?", Published).Order(order)
 
@@ -72,10 +97,29 @@ func (mpp *MesheryPatternPersister) GetMesheryCatalogPatterns(search, order stri
 		query = query.Where("(lower(meshery_patterns.name) like ?)", like)
 	}
 
-	query.Find(&patterns)
+	var count int64
+	err = query.Model(&MesheryPattern{}).Count(&count).Error
 
-	marshalledPatterns, _ := json.Marshal(patterns)
-	return marshalledPatterns, nil
+	if err != nil {
+		return nil, err
+	}
+
+	if pgSize != 0 {
+		Paginate(uint(pg), uint(pgSize))(query).Find(&patterns)
+	} else {
+		query.Find(&patterns)
+	}
+
+
+	response := PatternsAPIResponse{
+		Page: uint(pg),
+		PageSize: uint(pgSize),
+		TotalCount: uint(count),
+		Patterns: patterns,
+	}
+
+	marshalledResponse, _ := json.Marshal(response)
+	return marshalledResponse, nil
 }
 
 // CloneMesheryPattern clones meshery pattern to private

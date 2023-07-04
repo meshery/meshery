@@ -10,8 +10,9 @@ import (
 	"os"
 	"path/filepath"
 
-	guid "github.com/google/uuid"
 	mutil "github.com/layer5io/meshery/server/helpers/utils"
+
+	guid "github.com/google/uuid"
 	"github.com/layer5io/meshery/server/meshes"
 	mcore "github.com/layer5io/meshery/server/models/meshmodel/core"
 	meshmodelv1alpha1 "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
@@ -23,8 +24,8 @@ import (
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
+	putils "github.com/layer5io/meshery/server/models/pattern/utils"
 	"github.com/layer5io/meshkit/models/meshmodel"
-	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/events"
 	"github.com/pkg/errors"
@@ -113,7 +114,7 @@ func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.Resp
 		ErroredContexts:  make([]models.K8sContext, 0),
 	}
 
-	contexts := models.K8sContextsFromKubeconfig(k8sConfigBytes, mid)
+	contexts, respMessage := models.K8sContextsFromKubeconfig(k8sConfigBytes, mid)
 	for _, ctx := range contexts {
 		_, err := provider.SaveK8sContext(token, ctx) // Ignore errors
 		if err != nil {
@@ -134,6 +135,17 @@ func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.Resp
 		logrus.Error(ErrMarshal(err, "kubeconfig"))
 		http.Error(w, ErrMarshal(err, "kubeconfig").Error(), http.StatusInternalServerError)
 		return
+	}
+
+	if respMessage != "" {
+		h.EventsBuffer.Publish(&meshes.EventsResponse{
+			Component:     "core",
+			ComponentName: "kubernetes",
+			OperationId:   guid.NewString(),
+			EventType:     meshes.EventType_INFO,
+			Summary:       "Kubernetes configuration Info",
+			Details:       respMessage,
+		})
 	}
 }
 
@@ -194,7 +206,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 		return
 	}
 
-	contexts := models.K8sContextsFromKubeconfig(k8sConfigBytes, mid)
+	contexts, _ := models.K8sContextsFromKubeconfig(k8sConfigBytes, mid)
 
 	err = json.NewEncoder(w).Encode(contexts)
 	if err != nil {
@@ -298,7 +310,7 @@ func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]
 		return contexts, err
 	}
 
-	ctxs := models.K8sContextsFromKubeconfig(cfg, mid)
+	ctxs, _ := models.K8sContextsFromKubeconfig(cfg, mid)
 
 	// Persist the generated contexts
 	for _, ctx := range ctxs {
@@ -312,42 +324,6 @@ func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]
 		contexts = append(contexts, &ctx)
 	}
 	return contexts, nil
-}
-
-func RegisterK8sComponents(ctxt context.Context, config []byte, ctxID string, _ *meshmodel.RegistryManager, _ *events.EventStreamer, _ string) (err error) {
-	man, err := core.GetK8Components(ctxt, config)
-	if err != nil {
-		return ErrCreatingKubernetesComponents(err, ctxID)
-	}
-	if man == nil {
-		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctxID)
-	}
-	for i, def := range man.Definitions {
-		var ord core.WorkloadCapability
-		ord.Metadata = make(map[string]string)
-		ord.Metadata["io.meshery.ctxid"] = ctxID
-		ord.Metadata["adapter.meshery.io/name"] = "kubernetes"
-		ord.Host = "<none-local>"
-		ord.OAMRefSchema = man.Schemas[i]
-
-		var definition v1alpha1.WorkloadDefinition
-		err := json.Unmarshal([]byte(def), &definition)
-		if err != nil {
-			return ErrCreatingKubernetesComponents(err, ctxID)
-		}
-		ord.OAMDefinition = definition
-		content, err := json.Marshal(ord)
-		if err != nil {
-			return ErrCreatingKubernetesComponents(err, ctxID)
-		}
-		// go writeDefK8sOnFileSystem(string(def), filepath.Join(rootpath, definition.Spec.Metadata["k8sKind"]+"_definitions.k8s.json"))
-		// go writeSchemaK8sFileSystem(ord.OAMRefSchema, filepath.Join(rootpath, definition.Spec.Metadata["k8sKind"]+"_schema.k8s.json"))
-		err = core.RegisterWorkload(content)
-		if err != nil {
-			return ErrCreatingKubernetesComponents(err, ctxID)
-		}
-	}
-	return nil
 }
 
 func RegisterK8sMeshModelComponents(_ context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager, es *events.EventStreamer, ctxName string) (err error) {
@@ -383,32 +359,22 @@ const k8sMeshModelPath = "../meshmodel/components/kubernetes/model_template.json
 var k8sMeshModelMetadata = make(map[string]interface{})
 
 func writeK8sMetadata(comp *meshmodelv1alpha1.ComponentDefinition, reg *meshmodel.RegistryManager) {
-	ent := reg.GetEntities(&meshmodelv1alpha1.ComponentFilter{
+	ent, _ := reg.GetEntities(&meshmodelv1alpha1.ComponentFilter{
 		Name:       comp.Kind,
 		APIVersion: comp.APIVersion,
-		ModelName:  comp.Model.Name,
 	})
 	//If component was not available in the registry, then use the generic model level metadata
 	if len(ent) == 0 {
-		mergeMaps(comp.Metadata, k8sMeshModelMetadata)
+		putils.MergeMaps(comp.Metadata, k8sMeshModelMetadata)
 		mutil.WriteSVGsOnFileSystem(comp)
 	} else {
 		existingComp, ok := ent[0].(meshmodelv1alpha1.ComponentDefinition)
 		if !ok {
-			mergeMaps(comp.Metadata, k8sMeshModelMetadata)
+			putils.MergeMaps(comp.Metadata, k8sMeshModelMetadata)
 			return
 		}
-		mergeMaps(comp.Metadata, existingComp.Metadata)
-		if comp.Model.Metadata == nil {
-			comp.Model.Metadata = make(map[string]interface{})
-		}
-		mergeMaps(comp.Model.Metadata, existingComp.Model.Metadata)
-		comp.Model.Category = existingComp.Model.Category
-	}
-}
-func mergeMaps(mergeInto, toMerge map[string]interface{}) {
-	for k, v := range toMerge {
-		mergeInto[k] = v
+		putils.MergeMaps(comp.Metadata, existingComp.Metadata)
+		comp.Model = existingComp.Model
 	}
 }
 
@@ -428,23 +394,6 @@ func init() {
 		return
 	}
 	k8sMeshModelMetadata = m
-}
-
-// Utility to be used to write k8s components after generating them.
-func writeMeshModelComponentsOnFileSystem(c meshmodelv1alpha1.ComponentDefinition, dirpath string) {
-	fileName := c.Kind + ".json"
-	file, err := os.Create(filepath.Join(dirpath, fileName))
-	if err != nil {
-		fmt.Println("err: ", err.Error())
-	}
-	byt, err := json.Marshal(c)
-	if err != nil {
-		fmt.Println("err: ", err.Error())
-	}
-	_, err = file.Write(byt)
-	if err != nil {
-		fmt.Println("err: ", err.Error())
-	}
 }
 
 // func writeDefK8sOnFileSystem(def string, path string) {

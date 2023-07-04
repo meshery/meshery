@@ -44,10 +44,7 @@ func (ss *servicestack) pop() (s *servicewrapper) {
 	return svc
 }
 func (ss *servicestack) isEmpty() bool {
-	if len(ss.sws) == 0 {
-		return true
-	}
-	return false
+	return len(ss.sws) == 0
 }
 func (ss *servicestack) runOnStack(fn func(svc *core.Service)) {
 	for _, s := range ss.sws {
@@ -246,15 +243,7 @@ func removeInDependsOn(old string, do *[]string) {
 		}
 	}
 }
-func replaceParentInDependsOn(parent string, childrens []string, do *[]string) {
-	for i, d := range *do {
-		if d == parent {
-			(*do) = append((*do)[0:i], (*do)[i+1:]...)
-			(*do) = append((*do), childrens...)
-			break
-		}
-	}
-}
+
 func getPatternFromLocation(loc string) (p core.Pattern, err error) {
 	if strings.HasPrefix(loc, "https://") {
 		resp, err := http.Get(loc)

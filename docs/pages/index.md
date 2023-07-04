@@ -9,11 +9,9 @@ language: en
 {% assign sorted_pages = site.pages | sort: "name" | alphabetical %}
 
 <div style="display: block; text-align: center; margin-bottom: 30px;">
-     <a href="https://layer5.io/meshery" class="svg-lg">
         {% include svg/meshery-logo.html %}
-    </a>
 </div>
-<p style="margin:auto;padding:1.6rem">Meshery is the open source, cloud native management plane that enables the adoption, operation, and management of Kubernetes, any service mesh, and their workloads.</p>
+<p style="margin:auto;padding:1.6rem">As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.</p>
 
 <p style="padding:1.6rem;">Follow on <a href="https://twitter.com/mesheryio">Twitter</a> or subscribe to our <a href="https://meshery.io/subscribe">newsletter</a> for the latest updates. Get support on our <a href="https://discuss.layer5.io">forum</a>. Join our <a href="https://slack.layer5.io">Slack</a> to interact directly with other users and contributors.</p>
 
@@ -25,7 +23,7 @@ language: en
     </a>
     <h6>Getting Started</h6>
     <ul>
-        <li><a href="{{ site.baseurl }}/getting-started/overview">Meshery Overview</a></li>
+        <li><a href="{{ site.baseurl }}/project">Meshery Overview</a></li>
         <li><a href="{{ site.baseurl }}/project/community">Community</a></li>
         <li><a href="{{ site.baseurl }}/project/contributing">Contributing</a></li> 
     </ul>
@@ -105,6 +103,21 @@ language: en
       {% endfor %}
     </ul>
   </div>
+
+ <!-- Extensions -->
+  <div class="section">
+    <a href="{{ site.baseurl }}/extensions">
+        <div class="btn-primary">Extensions</div>
+    </a>
+    <h6><a href="{{ site.baseurl }}/extensions" class="text-black section-title">Extensions</a></h6>
+    <ul>
+      {% for item in sorted_pages %}
+      {% if item.type=="extensions" and item.list!="exclude" and item.language!="es" -%}
+        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+        </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
 
   <!-- GUIDES -->
   <div class="section">

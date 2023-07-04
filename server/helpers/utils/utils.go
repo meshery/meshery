@@ -14,6 +14,12 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
+const (
+	HelmChartURL          = "https://meshery.io/charts/"
+	HelmChartName         = "meshery"
+	HelmChartOperatorName = "meshery-operator"
+)
+
 // RecursiveCastMapStringInterfaceToMapStringInterface will convert a
 // map[string]interface{} recursively => map[string]interface{}
 func RecursiveCastMapStringInterfaceToMapStringInterface(in map[string]interface{}) map[string]interface{} {
@@ -261,4 +267,15 @@ func SliceContains(elements []string, name string) bool {
 		}
 	}
 	return false
+}
+
+func GetPlatform() string {
+	platform := "docker"
+
+	if _, err := os.Stat("/var/run/secrets/kubernetes.io/serviceaccount"); err == nil &&
+		os.Getenv("KUBERNETES_SERVICE_HOST") != "" &&
+		os.Getenv("KUBERNETES_SERVICE_PORT") != "" {
+		platform = "kubernetes"
+	}
+	return platform
 }

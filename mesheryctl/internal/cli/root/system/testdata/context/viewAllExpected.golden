@@ -7,6 +7,7 @@ local:
   - meshery-istio
   channel: stable
   version: latest
+  provider: Meshery
 local2:
   endpoint: http://localhost:32242
   token: default2
@@ -16,4 +17,5 @@ local2:
   - meshery-istio
   channel: stable
   version: latest
+  provider: Meshery
 

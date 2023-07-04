@@ -19,8 +19,6 @@ var (
 	result1000 = "1000.golden"
 	// standard api response of 25 performance result
 	result1001 = "1001.golden"
-	// api response of zero performance result
-	result1004 = "1004.golden"
 	// unable marshal response
 	result1005 = "1005.golden"
 	// empty response
@@ -31,10 +29,6 @@ var (
 var (
 	// mesheryctl response of 25 performance result
 	result1001output = "1001.golden"
-	// mesheryctl response of 25 performance result in expanded output
-	result1004output = "1004.golden"
-	// mesheryctl response when no results found
-	result1005output = "1005.golden"
 	// mesheryctl response of 25 performance result in json output
 	result1006output = "1006.golden"
 	// mesheryctl response of 25 performance result in yaml output

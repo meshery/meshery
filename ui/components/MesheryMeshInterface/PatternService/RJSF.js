@@ -13,6 +13,8 @@ import { CustomFieldTemplate } from './RJSFCustomComponents/FieldTemplate';
 import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
 import MesheryWrapIfAdditionalTemplate from './RJSFCustomComponents/WrapIfAdditionalTemplate';
 import _ from "lodash"
+import { CustomCheckboxWidget } from './RJSFCustomComponents/CustomCheckboxWidget';
+import CustomSelectWidget from './RJSFCustomComponents/CustomSelectWidget';
 
 const MuiRJSFForm = withTheme(MaterialUITheme);
 
@@ -55,7 +57,7 @@ function RJSFForm({
 
   return (
     <MuiThemeProvider
-      theme={globalTheme.palette.type == "dark" ? darkRjsfTheme : rjsfTheme}>
+      theme={globalTheme.palette.type === "dark" ? darkRjsfTheme : rjsfTheme}>
       <MuiRJSFForm
         schema={schema.rjsfSchema}
         idPrefix={jsonSchema?.title}
@@ -74,8 +76,8 @@ function RJSFForm({
           TextWidget : CustomTextWidget,
           // Custom components to be added here
           DateTimeWidget : CustomDateTimeWidget,
-          // SelectWidget: CustomSelectWidget,
-          // CheckboxWidget: CustomBooleanWidget,
+          SelectWidget : CustomSelectWidget,
+          CheckboxWidget : CustomCheckboxWidget,
         }}
         liveValidate
         showErrorList={false}

@@ -54,7 +54,7 @@ class MesherySMIResults extends Component {
       sortOrder = '';
     }
 
-    query = `?page=${page}&pageSize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
+    query = `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
     dataFetch(`/api/smi/results${query}`, {
       method : 'GET',
       credentials : 'include',
@@ -292,7 +292,7 @@ class MesherySMIResults extends Component {
             }, 500);
             break;
           case 'sort':
-            if (sortInfo.length == 2) {
+            if (sortInfo.length === 2) {
               if (sortInfo[1] === 'ascending') {
                 order = `${smi_columns[tableState.activeColumn].name} asc`;
               } else {

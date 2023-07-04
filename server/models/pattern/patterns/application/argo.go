@@ -123,13 +123,6 @@ func (ar *ArgoRollout) istioCanary(_ RolloutEngineCanaryOptions) error {
 	return nil
 }
 
-func createIstioCanaryArgoResource(opt RolloutEngineCanaryOptions) v1alpha1.Rollout {
-	rollout := createNativeArgoResource(opt.RolloutEngineGenericOptions)
-
-	// TODO: Add canary specific information and then return
-	return rollout
-}
-
 func createNativeArgoResource(opt RolloutEngineGenericOptions) v1alpha1.Rollout {
 	replicas := int32(opt.Replicas)
 	revisionHistoryLimit := int32(2)

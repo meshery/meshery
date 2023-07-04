@@ -1,1 +1,0 @@
-{"kind":"WorkloadDefinition","apiVersion":"core.oam.dev/v1alpha1","metadata":{"name":"Broker.K8s","creationTimestamp":null},"spec":{"definitionRef":{"name":"broker.k8s.meshery.layer5.io"},"metadata":{"@type":"pattern.meshery.io/k8s","isCustomResource":"true","k8sAPIVersion":"meshery.layer5.io/v1alpha1","k8sKind":"Broker","namespaced":"true","version":"v1.25.0"}}}

@@ -1,4 +1,4 @@
-//@ts-check
+// @ts-nocheck
 import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import React, { useEffect, useState, useRef } from "react";
 import PromptComponent from "../PromptComponent";
@@ -16,14 +16,26 @@ import { updateProgress } from "../../lib/store";
 import { withSnackbar } from "notistack";
 import GenericModal from "../GenericModal";
 import MesheryPerformanceComponent from "./index";
-import { Paper, Typography, Button } from "@material-ui/core";
+import { Paper, Typography, Button,DialogTitle } from "@material-ui/core";
 import fetchPerformanceProfiles from "../graphql/queries/PerformanceProfilesQuery";
 import { withStyles } from "@material-ui/core/styles";
-import subscribePerformanceProfiles from "../graphql/subscriptions/PerformanceProfilesSubscription";
 import { iconMedium, iconXLarge } from "../../css/icons.styles";
+import subscribePerformanceProfiles from "../graphql/subscriptions/PerformanceProfilesSubscription";
 
 const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
-const styles = () => ({
+const styles = (theme) => ({
+  title : {
+    textAlign : 'center',
+    minWidth : 400,
+    padding : '10px',
+    color : '#fff',
+    flexGrow : 1
+  },
+  dialogHeader : {
+    backgroundColor : theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : theme.palette.secondary.mainBackground,
+    display : "flex",
+    alignItems : "center"
+  },
   topToolbar : {
     margin : "2rem auto",
     display : "flex",
@@ -94,8 +106,6 @@ function ViewSwitch({ view, changeView }) {
   );
 }
 
-
-
 function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, classes }) {
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
@@ -118,8 +128,6 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
   useEffect(() => {
     fetchTestProfiles(page, pageSize, search, sortOrder);
     const subscription = subscribePerformanceProfiles((res) => {
-      // @ts-ignore
-      console.log(res);
       let result = res?.subscribePerfProfiles;
       if (typeof result !== "undefined") {
         if (result) {
@@ -167,7 +175,6 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
       },
     }).subscribe({
       next : (res) => {
-        // @ts-ignore
         let result = res?.getPerformanceProfiles;
         updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
@@ -214,7 +221,6 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
             );
           },
         });
-
         fetchTestProfiles(page, pageSize, search, sortOrder);
       },
       handleError("Failed To Delete Profile")
@@ -251,7 +257,6 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
                 variant="contained"
                 color="primary"
                 size="large"
-                // @ts-ignore
                 onClick={() => setProfileForModal({})}
               >
                 <AddIcon style={iconMedium} className={classes.addIcon} />
@@ -291,7 +296,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
               fetchTestProfiles={fetchTestProfiles}
             />
           )}
-        {testProfiles.length == 0 && viewType == "grid" && (
+        {testProfiles.length === 0 && viewType === "grid" && (
           <Paper className={classes.noProfilePaper} >
             <div className={classes.noProfileContainer}>
               <Typography className={classes.noProfileText} align="center" color="textSecondary">
@@ -302,10 +307,8 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
                 variant="contained"
                 color="primary"
                 size="large"
-                // @ts-ignore
                 onClick={() => setProfileForModal({})}
               >
-
                 <Typography className="addIcon">Add Performance Profile</Typography>
               </Button>
             </div>
@@ -315,34 +318,27 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
           open={!!profileForModal}
           Content={
             <Paper className={classes.addProfileModal} >
+              <div className={classes.dialogHeader}>
+                <DialogTitle className={classes.title} >Performance Profile Wizard</DialogTitle>
+                <IconButton aria-label="close" style={{ color : "white" }} onClick={() => setProfileForModal(undefined) }>
+                  <CloseIcon />
+                </IconButton>
+              </div>
+
               <MesheryPerformanceComponent
-                // @ts-ignore
                 loadAsPerformanceProfile
-                // @ts-ignore
                 performanceProfileID={profileForModal?.id}
-                // @ts-ignore
                 profileName={profileForModal?.name}
-                // @ts-ignore
                 meshName={profileForModal?.service_mesh}
-                // @ts-ignore
                 url={profileForModal?.endpoints?.[0]}
-                // @ts-ignore
                 qps={profileForModal?.qps}
-                // @ts-ignore
                 loadGenerator={profileForModal?.load_generators?.[0]}
-                // @ts-ignore
                 t={profileForModal?.duration}
-                // @ts-ignore
                 c={profileForModal?.concurrent_request}
-                // @ts-ignore
                 reqBody={profileForModal?.request_body}
-                // @ts-ignore
                 headers={profileForModal?.request_headers}
-                // @ts-ignore
                 cookies={profileForModal?.request_cookies}
-                // @ts-ignore
                 contentType={profileForModal?.content_type}
-                // @ts-ignore
                 runTestOnMount={!!profileForModal?.runTest}
               />
             </Paper>

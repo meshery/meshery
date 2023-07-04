@@ -29,7 +29,7 @@ language: en
       {% endif %}
 {% endfor %}
 
-{% include adapter-status.html %}
+{% include compatibility/adapter-status.html %}
 
 The {{ page.name }} is currently under construction ({{ page.project_status }} state). Want to contribute? Check our [progress]({{page.github_link}}).
 

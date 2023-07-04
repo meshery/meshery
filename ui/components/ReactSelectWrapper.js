@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
-import CreateTable from 'react-select';
+import CreateSelect from 'react-select/creatable';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import NoSsr from '@material-ui/core/NoSsr';
@@ -11,16 +11,30 @@ import Chip from '@material-ui/core/Chip';
 import MenuItem from '@material-ui/core/MenuItem';
 import CancelIcon from '@material-ui/icons/Cancel';
 
-const styles = () => ({ input : { display : 'flex', },
+const styles = () => ({
+  input : { display : 'flex' },
   valueContainer : {
     display : 'flex',
     flex : 1,
     alignItems : 'center',
     overflow : 'hidden',
   },
-  placeholder : { position : 'absolute',
+  placeholder : {
+    position : 'absolute',
     left : 16,
-    fontSize : 16, }, });
+    fontSize : 16,
+  },
+  paper : {
+    zIndex : 9999,
+    width : '100%',
+    position : 'absolute',
+  },
+  noOptionsMessage : {
+    padding : '0.2rem',
+    marginLeft : '0.8rem',
+  }
+
+});
 
 function NoOptionsMessage(props) {
   return (
@@ -61,9 +75,7 @@ function Option(props) {
       buttonRef={props.innerRef}
       selected={props.isFocused}
       component="div"
-      style={{ fontWeight : props.isSelected
-        ? 500
-        : 400, }}
+      style={{ fontWeight : props.isSelected ? 500 : 400, padding : '0.4rem 1rem' }}
       {...props.innerProps}
     >
       {props.children}
@@ -132,14 +144,18 @@ class ReactSelectWrapper extends React.Component {
       classes, theme, label, placeholder, onChange, onInputChange, value, options, error, noOptionsMessage = "No Options"
     } = this.props;
 
-    const selectStyles = { input : (base) => ({ ...base,
-      color : theme.palette.text.primary,
-      '& input' : { font : 'inherit', }, }), };
+    const selectStyles = {
+      input : (base) => ({
+        ...base,
+        color : theme.palette.text.primary,
+        '& input' : { font : 'inherit', },
+      })
+    };
 
     return (
       <div className={classes.root}>
         <NoSsr>
-          <CreateTable
+          <CreateSelect
             classes={classes}
             styles={selectStyles}
             textFieldProps={{ label,
@@ -171,5 +187,4 @@ ReactSelectWrapper.propTypes = {
   error : PropTypes.bool.isRequired,
   noOptionsMessage : PropTypes.string
 };
-
 export default withStyles(styles, { withTheme : true })(ReactSelectWrapper);

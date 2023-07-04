@@ -31,35 +31,38 @@ There are two ways to get your authentication token:
   <summary>Meshery UI</summary>
 
 Using Meshery UI, you can get a copy of your authentication token by following these steps:
+<br/>
+1. Log into Meshery by selecting your identity provider of choice (typically found at <code style="
+    color: inherit;
+    padding: 0.2em 0.4em;
+    margin: 0;
+    font-size: 85%;
+    word-break: normal;
+    background-color: var(--color-primary-dark);
+    border-radius: 0.25rem;
+    ">http:\\{meshery-server}:9081/provider</code>)
+<br/>
 
-1. Log into Meshery by selecting your identity provider of choice (typically found at  <pre class="codeblock-pre">
-  <div class="codeblock">http:\\{meshery-server}:9081/provider</div>
-  </pre>)
+
+2. Navigate to your user's avatar in the upper righthand corner and select "Get Token" from the dropdown of profile section:
+
+  <a href="{{ site.baseurl }}/assets/img/token/MesheryTokenUI.png"><img alt="Meshery Dashboard" src="{{ site.baseurl }}/assets/img/token/MesheryTokenUI.png" width="680" height="400"/></a>
   <br/>
-2. Navigate to your user's avatar in the upper lefthand corner and select "Get Token" from the dropdown of profile section.
 
 </details>
 
 <details>
   <summary>Meshery CLI</summary>
-Using Meshery CLI, you can get a copy of your authentication token by executing this command:
-
-- Get your token through [Meshery UI](/extensibility/api#how-to-get-your-token), from the `Get Token` option.
-
-  _Downloading the token_
-
-  <a href="{{ site.baseurl }}/assets/img/token/MesheryTokenUI.png"><img alt="Meshery Dashboard" src="{{ site.baseurl }}/assets/img/token/MesheryTokenUI.png" width="680" height="400"/></a>
+  <br />
+Using <a href='/reference/mesheryctl'>Meshery CLI</a>, you can get a copy of your authentication token by executing this command:
   <br/>
-  <br/>
-
-- Get your token through **Meshery CLI**.
-  <br/>
-  To get the token through `mesheryctl` you would have to use the following command. (default "auth.json").
   <br/>
   <pre class="codeblock-pre">
   <div class="codeblock"><div class="clipboardjs">mesheryctl system login</div></div>
   </pre>
   <br />
+  <br />
+  In order to use this command, you must have a web browser available on your system (this command cannot be executed on a headless system). 
 
 </details>
 

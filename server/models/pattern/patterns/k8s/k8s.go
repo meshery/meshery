@@ -49,13 +49,16 @@ func dryRun(rClient rest.Interface, k8sResource map[string]interface{}, namespac
 	} else {
 		path = fmt.Sprintf("/%s/%s/%s", apiString, aV, kindToResource(k8sResource["kind"].(string)))
 	}
-
 	data, err := json.Marshal(k8sResource)
 	if err != nil {
 		return
 	}
 	req := rClient.Post().AbsPath(path).Body(data).SetHeader("Content-Type", "application/json").SetHeader("Accept", "application/json").Param("dryRun", "All").Param("fieldValidation", "Strict").Param("fieldManager", "meshery")
 	res := req.Do(context.Background())
+	if res.Error() != nil {
+		err = res.Error()
+		return
+	}
 	// ignoring the error since this client-go treats failure of dryRun as an error
 	resp, _ := res.Raw()
 	e := json.Unmarshal(resp, &st)

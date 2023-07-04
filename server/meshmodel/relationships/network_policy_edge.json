@@ -1,0 +1,34 @@
+{
+    "apiVersion": "core.meshery.io/v1alpha1",
+    "kind": "Edge",
+    "metadata": {
+      "description": "A relationship that acts as a firewall for network communication between pods"
+    },
+    "model": {
+      "name": "kubernetes",
+      "version": "v1.25.2",
+      "displayName": "Kubernetes",
+      "category": {
+        "name": "Orchestration \u0026 Management",
+        "metadata": null
+      },
+      "metadata": {}
+    },
+    "subType": "Firewall",
+    "selectors": {
+      "allow":{
+        "from": [
+            {
+                "kind": "Pod",
+                "model": "Kubernetes"
+            }
+        ],
+        "to": [
+            {
+                "kind": "Pod",
+                "model": "Kubernetes"
+            }
+        ]
+      }
+    }
+  }

@@ -154,7 +154,6 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 
 func (r *Resolver) getOperatorStatus(ctx context.Context, _ models.Provider, ctxID string) (*model.OperatorStatus, error) {
 	status := model.StatusUnknown
-	version := string(model.StatusUnknown)
 
 	var kubeclient *mesherykube.Client
 	var err error

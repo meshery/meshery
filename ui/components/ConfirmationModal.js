@@ -13,8 +13,8 @@ import { pingKubernetes } from "./ConnectionWizard/helpers/kubernetesHelpers";
 import { getK8sConfigIdsFromK8sConfig } from "../utils/multi-ctx";
 import { bindActionCreators } from "redux";
 import { useEffect, useState } from "react";
-import UndeployIcon from "../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
+import UndeployIcon from "../public/static/img/UndeployIcon";
 import AddIcon from '@material-ui/icons/Add';
 import DoneIcon from "@material-ui/icons/Done";
 import Link from 'next/link';
@@ -62,7 +62,7 @@ const styles = (theme) => ({
     // minWidth : 300,
     padding : theme.spacing(1),
     color : '#fff',
-    backgroundColor : 'rgb(57, 102, 121)',
+    backgroundColor : theme.palette.type == "light"? theme.palette.secondary.mainBackground: theme.palette.secondary.confirmationModal,
     fontSize : "1rem",
 
   },
@@ -97,9 +97,9 @@ const styles = (theme) => ({
     margin : theme.spacing(0.5),
     padding : theme.spacing(1),
     borderRadius : 5,
-    "&:disabled" : {
-      backgroundColor : theme.palette.type=="dark"? "grey": "#FF3D3D",
-      color : "#fff"
+    '&:disabled' : {
+      cursor : 'not-allowed',
+      pointerEvents : 'all !important'
     },
     minWidth : 100,
   },
@@ -329,13 +329,15 @@ function ConfirmationMsg(props) {
               }
             />}
             <Tab
+              disabled={disabled}
               data-cy="Undeploy-btn-modal"
               className={classes.tab}
               onClick={(event) => handleTabValChange(event,1)}
               label={<div style={{ display : "flex" }}
-              > <div style={{ margin : "2px" }}> <UndeployIcon style={iconSmall} fill={theme.palette.secondary.icon} width="20" height="20"/> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
+              ><div style={{ margin : "2px" }}> <UndeployIcon style={iconSmall} fill={theme.palette.secondary.icon} width="20" height="20" /> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
             />
             <Tab
+              disabled={disabled}
               data-cy="deploy-btn-modal"
               className={classes.tab}
               onClick={(event) => handleTabValChange(event, 2)}
@@ -452,7 +454,7 @@ function ConfirmationMsg(props) {
           {/* </Paper> */}
 
           <DialogActions className={classes.actions}>
-            {(tabVal == ACTIONS.DEPLOY || tabVal === ACTIONS.UNDEPLOY) ?
+            {(tabVal === ACTIONS.DEPLOY || tabVal === ACTIONS.UNDEPLOY) ?
               <>
                 <Button onClick={handleClose}
                   type="submit"

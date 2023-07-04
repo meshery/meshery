@@ -1,143 +1,8 @@
 // @ts-check
 // ********************************** TYPE DEFINTIONS **********************************
 
-import { promisifiedDataFetch } from "../../lib/data-fetch";
 import { trueRandom } from "../../lib/trueRandom";
-
-/**
- * @typedef {Object} OAMDefinition
- * @property {string} kind
- * @property {string} apiVersion
- * @property {Record<string, any>} metadata
- * @property {Record<string, any>} spec
- */
-
-/**
- * @typedef {string} OAMRefSchema
- */
-
-/**
- * @typedef {Object} OAMGenericResponse
- * @property {OAMDefinition} oam_definition
- * @property {OAMRefSchema} oam_ref_schema
- * @property {string} host
- * @property {Record<string, any>} metadata
- */
-
-// ******************************************************************************************
-
-/**
- * getWorkloadDefinitionsForAdapter will fetch workloads for the given
- * adapter from meshery server
- * @param {string} adapter
- * @returns {Promise<Array<OAMGenericResponse>>}
- */
-export async function getWorkloadDefinitionsForAdapter(adapter) {
-  try {
-    const res = await promisifiedDataFetch("/api/oam/workload");
-    if (adapter) return res?.filter((el) => el?.metadata?.["adapter.meshery.io/name"] === adapter);
-    return res;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
-
-/**
- * getTraitDefinitionsForAdapter will fetch tratis for the given
- * adapter from meshery server
- * @param {string} adapter
- * @returns {Promise<Array<OAMGenericResponse>>}
- */
-export async function getTraitDefinitionsForAdapter(adapter) {
-  try {
-    const res = await promisifiedDataFetch("/api/oam/trait?trim=true");
-
-    if (adapter) return res?.filter((el) => el?.metadata?.["adapter.meshery.io/name"] === adapter);
-    return res;
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
-}
-
-/**
- * createWorkloadTraitSets returns an array of workloads and traits object
- * which are interrelated
- * @param {string} adapter
- * @returns {Promise<Array<{
- *  workload: OAMGenericResponse;
- *  traits: Array<OAMGenericResponse>;
- *  type?: string;
- * }>>}
- */
-export async function createWorkloadTraitSets(adapter) {
-  const workloads = await getWorkloadDefinitionsForAdapter(adapter);
-  const traits = await getTraitDefinitionsForAdapter(adapter);
-
-  const sets = [];
-  workloads?.forEach((w) => {
-    const item = { workload : w, traits : [], type : getPatternServiceType(w) };
-
-    item.traits = traits?.filter((t) => {
-      if (Array.isArray(t?.oam_definition?.spec?.appliesToWorkloads))
-        return t?.oam_definition?.spec?.appliesToWorkloads?.includes(w?.oam_definition?.metadata?.name);
-
-      return false;
-    });
-
-    sets.push(item);
-  });
-
-  return sets;
-}
-
-/**
- * getPatternServiceName takes in the pattern service metadata and returns
- * the name of the service
- *
- * @param {*} item pattern service component
- * @param {boolean} includeDisplayName if set to true, display name is checked first
- * @returns {string} service name
- */
-export function getPatternServiceName(item, includeDisplayName = true) {
-  if (includeDisplayName) return item?.metadata?.["display.ui.meshery.io/name"] || item?.oam_definition?.metadata?.name || getPatternAttributeName(item) || "NA";
-
-  return item?.oam_definition?.metadata?.name || "NA";
-}
-
-/**
- * getHumanReadablePatternServiceName takes in the pattern service metadata and returns
- * the readable name of the service
- *
- * @param {*} item pattern service component
- * @returns {string} service name
- */
-export function getHumanReadablePatternServiceName(item) {
-  return (
-    item?.metadata?.["display.ui.meshery.io/name"]
-  )
-}
-
-/**
- * getPatternServiceID takes in the pattern service metadata and returns
- * the ID of the service
- * @param {*} item pattern service component
- * @returns {string | undefined}
- */
-export function getPatternServiceID(item) {
-  return item?.id;
-}
-
-/**
- * getPatternServiceType takes in the pattern service metadata and returns
- * the category of the service
- * @param {*} item pattern service coponent
- * @returns {string | undefined} service name
- */
-export function getPatternServiceType(item) {
-  return item?.metadata?.["ui.meshery.io/category"];
-}
+import { userPromptKeys } from "./PatternService/helper";
 
 /**
  * getPatternAttributeName will take a json schema and will return a pattern
@@ -213,34 +78,6 @@ export function createPatternFromConfig(config, namespace, partialClean = false)
   return pattern;
 }
 
-/**
- * Capitalises camelcase-string
- *
- * @param {String} text
- * @returns
- */
-export function camelCaseToCapitalize(text) {
-  if (!text) return null
-
-  return text?.replaceAll(/([A-Z])/g, " $1")?.trim();
-}
-
-/**
- * Formats text for prettified view
- *
- * @param {String} text
- * @returns
- */
-export function formatString(text) {
-  if (!text) return null
-
-  // format string for prettified camelCase
-  // @ts-ignore
-  let formattedText = text.replaceAll("IP", "Ip");
-  formattedText = camelCaseToCapitalize(formattedText),
-  formattedText = formattedText.replaceAll("Ip", "IP")
-  return formattedText
-}
 
 /**
  * The rjsf json schema builder for the ui
@@ -248,44 +85,46 @@ export function formatString(text) {
  * to the schema provided
  *
  * @param {Record<string, any>} schema The RJSF schema
- * @param {*} obj
+ * @param {*} uiSchema uiSchema
  * @returns
  */
-function jsonSchemaBuilder(schema, obj) {
+function jsonSchemaBuilder(schema, uiSchema) {
   if (!schema) return
 
-  if (schema.type === 'object') {
+  userPromptKeys.forEach((key) => {
+    if (Object.prototype.hasOwnProperty.call(schema, key)) {
+      schema[key]?.forEach((item) => {
+        jsonSchemaBuilder(item, uiSchema);
+      })
+    }
+  })
+
+  if (schema.type === 'object' || Object.prototype.hasOwnProperty.call(schema, "properties")) { // to handle objects as well as oneof, anyof and allof fields
     for (let key in schema.properties) {
-      obj[key] = {};
+      uiSchema[key] = {};
 
       // handle percentage for range widget
       if ((schema.properties?.[key]["type"] === 'number' || schema.properties?.[key].type === 'integer')
         && key.toLowerCase().includes("percent")) {
-        obj[key]["ui:widget"] = "range"
+        uiSchema[key]["ui:widget"] = "range"
       }
 
-      jsonSchemaBuilder(schema.properties?.[key], obj[key]);
+      jsonSchemaBuilder(schema.properties?.[key], uiSchema[key]);
     }
     return
   }
 
   if (schema.type === 'array') {
-    obj["items"] = {
+    uiSchema["items"] = {
       "ui:label" : false
     }
-    jsonSchemaBuilder(schema.items, obj["items"]);
+    jsonSchemaBuilder(schema.items, uiSchema["items"]);
     return
   }
 
-  if (obj["ui:widget"]) { // if widget is already assigned, don't go over
+  if (uiSchema["ui:widget"]) { // if widget is already assigned, don't go over
     return
   }
-
-  if (schema.type === 'boolean') {
-    obj["ui:widget"] = "checkbox";
-    obj["ui:description"] = "";
-  }
-
 
   if (schema.type === 'number' || schema.type === 'integer') {
     schema["maximum"] = 99999;

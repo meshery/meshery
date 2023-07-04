@@ -3,7 +3,7 @@ import { Grid, Paper, Typography, Button } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import MesheryPatternCard from "./MesheryPatternCard";
-import PatternConfiguratorComponent from "../configuratorComponents/patternConfigurator"
+import DesignConfigurator from "../configuratorComponents/MeshModel";
 import { FILE_OPS, ACTIONS } from "../../utils/Enum";
 import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
@@ -14,7 +14,7 @@ import PublishModal from "../PublishModal";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
-function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublishModal, handleUnDeploy, handleClone, handleSubmit, setSelectedPatterns, canPublishPattern = false }) {
+function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublishModal, handleUnpublishModal, handleUnDeploy, handleClone, handleSubmit, setSelectedPatterns, canPublishPattern = false }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(pattern.pattern_file);
 
@@ -33,6 +33,7 @@ function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublis
         handleVerify={handleVerify}
         handlePublishModal={handlePublishModal}
         handleUnDeploy={handleUnDeploy}
+        handleUnpublishModal={handleUnpublishModal}
         handleClone={handleClone}
         deleteHandler={() => handleSubmit({ data : yaml, id : pattern.id, type : FILE_OPS.DELETE ,name : pattern.name })}
         updateHandler={() => handleSubmit({ data : yaml, id : pattern.id, type : FILE_OPS.UPDATE ,name : pattern.name })}
@@ -56,6 +57,7 @@ function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublis
  * }>,
  *  handleVerify: (e: Event, pattern_file: any, pattern_id: string) => void,
  *  handlePublish: (catalog_data : any) => void,
+ *  handleUnpublishModal: (ev: Event, pattern: any) => (() => Promise<void>),
  *  handleDeploy: (pattern_file: any) => void,
  *  handleUnDeploy: (pattern_file: any) => void,
  *  handleSubmit: (data: any, id: string, name: string, type: string) => void,
@@ -69,7 +71,7 @@ function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublis
  * }} props props
  */
 
-function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish,handleDeploy, handleUnDeploy, urlUploadHandler, handleClone, uploadHandler, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage, UploadImport, fetch, patternErrors, canPublishPattern = false }) {
+function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUnpublishModal, handleDeploy, handleUnDeploy, urlUploadHandler, handleClone, uploadHandler, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage, UploadImport, fetch, patternErrors, canPublishPattern = false }) {
 
   const classes = useStyles()
 
@@ -146,7 +148,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish,handleDep
   return (
     <div>
       {selectedPattern.show &&
-      <PatternConfiguratorComponent pattern={selectedPattern.pattern} show={setSelectedPattern}  onSubmit={handleSubmit} />
+      <DesignConfigurator pattern={selectedPattern.pattern} show={setSelectedPattern}  onSubmit={handleSubmit} />
       }
       {!selectedPattern.show &&
       <Grid container spacing={3} style={{ padding : "1rem" }}>
@@ -160,6 +162,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish,handleDep
             handleUnDeploy={() => handleModalOpen(pattern, ACTIONS.UNDEPLOY)}
             handleVerify={(e) => handleVerify(e, pattern.pattern_file, pattern.id)}
             handlePublishModal={() => handlePublishModal(pattern)}
+            handleUnpublishModal={(e) => handleUnpublishModal(e, pattern)()}
             handleSubmit={handleSubmit}
             setSelectedPatterns={setSelectedPattern}
           />

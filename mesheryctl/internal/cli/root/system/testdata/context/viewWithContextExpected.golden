@@ -9,4 +9,5 @@ components:
 - meshery-istio
 channel: stable
 version: latest
+provider: Meshery
 

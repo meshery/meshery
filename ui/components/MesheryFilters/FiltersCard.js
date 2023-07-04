@@ -5,15 +5,15 @@ import {
 } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Fullscreen from "@material-ui/icons/Fullscreen";
+import Save from "@material-ui/icons/Save";
 import Moment from "react-moment";
 import FlipCard from "../FlipCard";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import FullscreenExit from "@material-ui/icons/FullscreenExit";
-import DoneAllIcon from '@material-ui/icons/DoneAll';
 import useStyles from "../MesheryPatterns/Cards.styles";
 import YAMLDialog from "../YamlDialog";
-import UndeployIcon from "../../public/static/img/UndeployIcon";
 import CloneIcon from "../../public/static/img/CloneIcon";
+import PublicIcon from '@material-ui/icons/Public';
 import TooltipButton from '../../utils/TooltipButton.js'
 import { VISIBILITY } from "../../utils/Enum";
 
@@ -24,16 +24,18 @@ function FiltersCard({
   updated_at,
   created_at,
   filter_file,
-  handleDeploy,
-  handleUndeploy,
   handleClone,
   deleteHandler,
   setYaml,
   description={},
-  visibility
+  visibility,
+  handlePublishModal,
+  handleUnpublishModal,
+  updateHandler,
+  canPublishFilter = false
 }) {
 
-  function genericClickHandler(ev, fn) {
+  const genericClickHandler = (ev, fn) => {
     ev.stopPropagation();
     fn();
   }
@@ -59,6 +61,8 @@ function FiltersCard({
           config_file={filter_file}
           setYaml={setYaml}
           deleteHandler={deleteHandler}
+          updateHandler={updateHandler}
+          type={"filter"}
         />
       }
       <FlipCard
@@ -94,29 +98,31 @@ function FiltersCard({
           <div className={classes.bottomPart} >
 
             <div className={classes.cardButtons} >
-              <TooltipButton
-                title="undeploy"
-                variant="contained"
-                className={classes.undeployButton}
-                onClick={(ev) =>
-                  genericClickHandler(ev, handleUndeploy)
-                }
-              >
-                <UndeployIcon fill="#ffffff" className={classes.iconPatt} />
-                Undeploy
-              </TooltipButton>
-              <TooltipButton
-                title="deploy"
-                variant="contained"
-                color="primary"
-                onClick={(ev) =>
-                  genericClickHandler(ev, handleDeploy)
-                }
-                className={classes.testsButton}
-              >
-                <DoneAllIcon className={classes.iconPatt}/>
-              Deploy
-              </TooltipButton>
+              {canPublishFilter &&
+                (visibility !== VISIBILITY.PUBLISHED)
+                ?
+                (<TooltipButton
+                  variant="contained"
+                  title="Publish"
+                  className={classes.testsButton}
+                  onClick={(ev) => genericClickHandler(ev, handlePublishModal)}
+                >
+                  <PublicIcon className={classes.iconPatt} />
+                  <span className={classes.btnText}> Publish </span>
+                </TooltipButton>)
+                : (
+                  <TooltipButton
+                    variant="contained"
+                    title="Unpublish"
+                    className={classes.testsButton}
+                    onClick={(ev) => genericClickHandler(ev, handleUnpublishModal)}
+                  >
+                    <PublicIcon className={classes.iconPatt} />
+                    <span className={classes.btnText}> Unpublish </span>
+                  </TooltipButton>
+                )
+              }
+
               {visibility === VISIBILITY.PUBLISHED ? <TooltipButton
                 title="Clone"
                 variant="contained"
@@ -180,7 +186,7 @@ function FiltersCard({
                     gutters : ["CodeMirror-lint-markers"],
                     // @ts-ignore
                     lint : true,
-                    mode : "text/x-yaml",
+                    mode : "text/plain",
                   }}
                   onChange={(_, data, val) => setYaml(val)}
                 />
@@ -213,17 +219,30 @@ function FiltersCard({
             </Grid>
 
             <Grid item xs={12}>
-              { visibility === VISIBILITY.PRIVATE ? <div className={classes.deleteButton} >
+              <div className={classes.updateDeleteButtons} >
+
+                {/* Save button */}
+                <Tooltip
+                  title="Save" arrow interactive placement="bottom"
+                >
+                  <IconButton onClick={(ev) =>
+                    genericClickHandler(ev, updateHandler)
+                  }>
+                    <Save color="primary" />
+                  </IconButton>
+                </Tooltip>
+
+                {/* Delete Button */}
                 <Tooltip
                   title="Delete" arrow interactive placement="bottom"
                 >
                   <IconButton onClick={(ev) =>
-                    genericClickHandler(ev,deleteHandler)
+                    genericClickHandler(ev, deleteHandler)
                   }>
                     <DeleteIcon color="primary" />
                   </IconButton>
                 </Tooltip>
-              </div> : null}
+              </div>
             </Grid>
           </Grid>
         </>

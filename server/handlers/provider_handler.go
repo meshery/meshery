@@ -75,7 +75,7 @@ func (h *Handler) ProvidersHandler(w http.ResponseWriter, _ *http.Request) {
 
 // ProviderUIHandler - serves providers UI
 func (h *Handler) ProviderUIHandler(w http.ResponseWriter, r *http.Request) {
-	if h.config.PlaygroundBuild { //Always use Remote provider for Playground build
+	if h.config.PlaygroundBuild || h.Provider == "Meshery" { //Always use Remote provider for Playground build or when Provider is enforced
 		http.SetCookie(w, &http.Cookie{
 			Name:     h.config.ProviderCookieName,
 			Value:    "Meshery",

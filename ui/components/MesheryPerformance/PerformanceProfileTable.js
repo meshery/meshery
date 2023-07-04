@@ -15,6 +15,7 @@ import PerformanceResults from "./PerformanceResults";
 import EditIcon from '@material-ui/icons/Edit';
 import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import { iconMedium } from "../../css/icons.styles";
+import ReusableTooltip from "../reusable-tooltip";
 
 
 const styles = (theme) => ({
@@ -141,7 +142,7 @@ function MesheryTestProfiles({
     //   },
     // },
     {
-      name : "updated_on",
+      name : "updated_at",
       label : "Updated On",
       options : {
         filter : false,
@@ -177,30 +178,35 @@ function MesheryTestProfiles({
         customBodyRender : function CustomBody(_, tableMeta) {
           return (
             <div>
-              <IconButton
-                style={iconMedium}
-                onClick={(ev) => {
-                  ev.stopPropagation();
-                  setSelectedProfile(testProfiles[tableMeta.rowIndex]);
-                }}
-                aria-label="edit"
-                // @ts-ignore
-                color="rgba(0, 0, 0, 0.54)"
-              >
-                <EditIcon style={iconMedium}/>
-              </IconButton>
-              <IconButton
-                style={iconMedium}
-                onClick={(ev) => {
-                  ev.stopPropagation();
-                  setSelectedProfile({ ...testProfiles[tableMeta.rowIndex], runTest : true });
-                }}
-                aria-label="run"
-                // @ts-ignore
-                color="rgba(0, 0, 0, 0.54)"
-              >
-                <PlayArrowIcon style={iconMedium} />
-              </IconButton>
+              <ReusableTooltip title="Edit">
+                <IconButton
+                  style={iconMedium}
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    setSelectedProfile(testProfiles[tableMeta.rowIndex]);
+                  }}
+                  aria-label="edit"
+                  // @ts-ignore
+                  color="rgba(0, 0, 0, 0.54)"
+                >
+                  <EditIcon style={iconMedium}/>
+                </IconButton>
+              </ReusableTooltip>
+
+              <ReusableTooltip title="Run test">
+                <IconButton
+                  style={iconMedium}
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    setSelectedProfile({ ...testProfiles[tableMeta.rowIndex], runTest : true });
+                  }}
+                  aria-label="run"
+                  // @ts-ignore
+                  color="rgba(0, 0, 0, 0.54)"
+                >
+                  <PlayArrowIcon style={iconMedium} />
+                </IconButton>
+              </ReusableTooltip>
             </div>
           );
         },
@@ -219,7 +225,7 @@ function MesheryTestProfiles({
     sort : !(user && user.user_id === "meshery"),
     search : !(user && user.user_id === "meshery"),
     filterType : "textField",
-    responsive : "scrollFullHeight",
+    responsive : "standard",
     resizableColumns : true,
     serverSide : true,
     selectableRows : true,
@@ -271,7 +277,7 @@ function MesheryTestProfiles({
           }, 500);
           break;
         case "sort":
-          if (sortInfo.length == 2) {
+          if (sortInfo.length === 2) {
             if (sortInfo[1] === "ascending") {
               order = `${columns[tableState.activeColumn].name} asc`;
             } else {
@@ -312,7 +318,7 @@ function MesheryTestProfiles({
         columns={columns}
         // @ts-ignore
         options={options}
-      />=
+      />
     </NoSsr>
   );
 }

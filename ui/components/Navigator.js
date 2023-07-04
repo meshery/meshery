@@ -442,7 +442,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       {
         id : DESIGN,
         icon : <PatternIcon style={{ ...drawerIconsStyle }} />,
-        href : "/configuration/patterns",
+        href : "/configuration/designs",
         title : "Designs",
         show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, DESIGN]),
         link : true,
@@ -585,7 +585,6 @@ class Navigator extends React.Component {
             capabilitiesRegistryObj,
             navigatorComponents
           });
-          //global state
           this.props.updateCapabilities({ capabilitiesRegistry : result })
         }
       },
@@ -812,7 +811,7 @@ class Navigator extends React.Component {
     aName = aName.toLowerCase();
     const { classes } = this.props;
     let image = "/static/img/meshery-logo.png";
-    let filter = window.location.pathname == href ? "invert(50%) sepia(78%) saturate(2392%) hue-rotate(160deg) brightness(93%) contrast(101%)" : "";
+    let filter = window.location.pathname === href ? "invert(50%) sepia(78%) saturate(2392%) hue-rotate(160deg) brightness(93%) contrast(101%)" : "";
     let logoIcon = <img src={image} className={classes.icon} />;
     if (aName) {
       image = "/static/img/" + aName + "-light.svg";
@@ -951,7 +950,7 @@ class Navigator extends React.Component {
           </List>
         );
       }
-      if (children && children.length == 1) {
+      if (children && children.length === 1) {
         this.updateAdaptersLink();
       }
     }

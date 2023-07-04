@@ -47,6 +47,7 @@ var (
 	pre            bool
 	componentsFlag bool
 	adaptersFlag   bool
+	operatorsFlag  bool
 	adapter        string
 	failure        int
 )
@@ -67,6 +68,8 @@ type HealthCheckOptions struct {
 	RunVersionChecks bool
 	// if RunComponentChecks is true we run component checks
 	RunComponentChecks bool
+	// if RunOperatorChecks is true we run operator checks
+	RunOperatorChecks bool
 }
 
 type HealthChecker struct {
@@ -172,6 +175,8 @@ mesheryctl system check --report
 			return hc.runAdapterHealthChecks(adapter)
 		} else if adaptersFlag {
 			return hc.runAdapterHealthChecks("")
+		} else if operatorsFlag {
+			return hc.runOperatorHealthChecks()
 		}
 
 		// if no flags passed we run complete system check
@@ -179,6 +184,7 @@ mesheryctl system check --report
 		hc.Options.RunDockerChecks = true
 		hc.Options.RunKubernetesChecks = true
 		hc.Options.RunVersionChecks = true
+		hc.Options.RunOperatorChecks = true
 		return hc.Run()
 	},
 }
@@ -206,6 +212,12 @@ func (hc *HealthChecker) Run() error {
 	// Run meshery component health checks
 	if hc.Options.RunComponentChecks {
 		if err := hc.runComponentsHealthChecks(); err != nil {
+			return err
+		}
+	}
+
+	if hc.Options.RunOperatorChecks {
+		if err := hc.runOperatorHealthChecks(); err != nil {
 			return err
 		}
 	}
@@ -240,9 +252,13 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 	if hc.Options.PrintLogs {
 		log.Info("\nDocker \n--------------")
 	}
+	endpointParts := strings.Split(hc.context.GetEndpoint(), ":")
 	//Check whether docker daemon is running or not
 	err := exec.Command("docker", "ps").Run()
 	if err != nil {
+		if endpointParts[1] != "//localhost" {
+			return errors.Wrapf(err, "Meshery is not running locally, please ensure that the appropriate Docker context is selected for Meshery endpoint: %s. To list all configured contexts use `docker context ls`", hc.context.GetEndpoint())
+		}
 		if hc.Options.IsPreRunE { // if this is PreRunExec we trigger self installation
 			log.Warn("!! Docker is not running")
 			//If preRunExecution and the current platform is docker then we trigger docker installation
@@ -259,7 +275,6 @@ func (hc *HealthChecker) runDockerHealthChecks() error {
 		} else { // else we're supposed to grab errors
 			return err
 		}
-
 		if hc.context.Platform == "docker" {
 			failure++
 		}
@@ -514,7 +529,94 @@ func (hc *HealthChecker) runComponentsHealthChecks() error {
 
 // runOperatorHealthChecks executes health-checks for Operators
 func (hc *HealthChecker) runOperatorHealthChecks() error {
-	//TODO
+	url := hc.mctlCfg.GetBaseMesheryURL()
+	client := &http.Client{}
+	_, err := utils.GetSessionData(hc.mctlCfg)
+	if err != nil {
+		return fmt.Errorf("!! Authentication token not found. Please supply a valid user token. Login with `mesheryctl system login`")
+	}
+	if hc.Options.PrintLogs {
+		log.Info("\nMeshery Operators \n--------------")
+	}
+
+	req, err := utils.NewRequest("GET", fmt.Sprintf("%s/api/system/kubernetes/contexts", url), nil)
+	if err != nil {
+		return errors.New("Authentication token not found. Please supply a valid user token. Login with `mesheryctl system login`")
+	}
+	var pages *models.MesheryK8sContextPage
+	var contexts []*models.K8sContext
+	resp, err := client.Do(req)
+	if err != nil || resp.StatusCode != 200 {
+		return errors.Errorf("\nFailed to connect to Meshery server : %v", err)
+	}
+	defer resp.Body.Close()
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return errors.Errorf("\n Invalid response: %v", err)
+	}
+
+	err = json.Unmarshal(data, &pages)
+	contexts = pages.Contexts
+	if err != nil {
+		return errors.Errorf("\n  Unable to unmarshal data: %v", err)
+	}
+
+	if len(contexts) == 0 {
+		return errors.New("!! Meshery is not connected to any contexts ")
+	}
+
+	var clientMesh *meshkitkube.Client
+	clientMesh, err = meshkitkube.New([]byte(""))
+	if err != nil {
+		return err
+	}
+
+	// List the pods in the `meshery` Namespace
+	podList, err := utils.GetPodList(clientMesh, utils.MesheryNamespace)
+	if err != nil {
+		return err
+	}
+
+	operatorCheck := false
+	brokerCheck := false
+	meshsyncCheck := false
+
+	// Traverse the list of pods and check if the operator, broker and meshsync are running
+	// This loop is made because if the clusterIP is not public, then it can't be accessed from outside the cluster
+	for _, pod := range podList.Items {
+		name := utils.GetCleanPodName(pod.GetName())
+
+		if name == "meshery-operator" {
+			operatorCheck = true
+		}
+
+		if name == "meshery-broker" {
+			brokerCheck = true
+		}
+
+		if name == "meshery-meshsync" {
+			meshsyncCheck = true
+		}
+	}
+
+	if !operatorCheck {
+		return errors.New("!! Meshery Operator is not running")
+	} else {
+		log.Info("✓ Meshery Operator is running")
+	}
+
+	if !brokerCheck {
+		log.Info("!! Meshery Broker is not running")
+	} else {
+		log.Info("✓ Meshery Broker is running")
+	}
+
+	if !meshsyncCheck {
+		log.Info("!! Meshsync is not running")
+	} else {
+		log.Info("✓ Meshsync is running")
+	}
+
 	return nil
 }
 
@@ -543,7 +645,7 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 		return fmt.Errorf("!! Invalid adapter name provided")
 	}
 	for _, adapter := range adapters {
-		name := strings.Split(adapter.Location, ":")[0]
+		name := adapter.Location
 		skipAdapter := false
 		req, err := utils.NewRequest("GET", fmt.Sprintf("%s/api/system/adapters?adapter=%s", url, name), nil)
 		if err != nil {
@@ -578,21 +680,6 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 	return nil
 }
 
-func (hc *HealthChecker) runMesheryReadinessHealthChecks() error {
-	ready, err := mesheryReadinessHealthCheck()
-	if err != nil || !ready {
-		if hc.Options.PrintLogs { // incase we're printing logs
-			log.Infof("!! Meshery failed to reach Running state")
-		} else { // or we're supposed to grab the errors
-			return fmt.Errorf("!! Meshery failed to reach Running state. %s", err)
-		}
-	}
-	if hc.Options.PrintLogs { // incase we're printing logs
-		log.Infof("✓ Meshery is in Running state")
-	}
-	return nil
-}
-
 // mesheryReadinessHealthCheck is waiting for Meshery to start, returns (ready, error)
 func mesheryReadinessHealthCheck() (bool, error) {
 	kubeClient, err := meshkitkube.New([]byte(""))
@@ -612,4 +699,5 @@ func init() {
 	checkCmd.Flags().BoolVarP(&componentsFlag, "components", "", false, "Check status of Meshery components")
 	checkCmd.Flags().BoolVarP(&adaptersFlag, "adapters", "", false, "Check status of meshery adapters")
 	checkCmd.Flags().StringVarP(&adapter, "adapter", "", "", "Check status of specified meshery adapter")
+	checkCmd.Flags().BoolVarP(&operatorsFlag, "operator", "", false, "Verify the health of Meshery Operator's deployment with MeshSync and Broker")
 }

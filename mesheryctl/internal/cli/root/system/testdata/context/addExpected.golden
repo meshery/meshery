@@ -7,6 +7,7 @@ contexts:
             - meshery-istio
         channel: stable
         version: latest
+        provider: Meshery
     local2:
         endpoint: http://localhost:32242
         token: default2
@@ -15,6 +16,7 @@ contexts:
             - meshery-istio
         channel: stable
         version: latest
+        provider: Meshery
     local3:
         endpoint: http://localhost:9081
         token: default
@@ -32,6 +34,7 @@ contexts:
             - meshery-cilium
         channel: stable
         version: latest
+        provider: Meshery
 current-context: local
 tokens:
     - name: default
