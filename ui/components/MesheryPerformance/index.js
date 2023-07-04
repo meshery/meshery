@@ -134,7 +134,19 @@ const styles = (theme) => ({
   },
   wrapperClss : { padding : theme.spacing(10), position : "relative", paddingTop : theme.spacing(5) },
   buttons : { display : "flex", justifyContent : "flex-end" },
-  button : { marginTop : theme.spacing(3), marginLeft : theme.spacing(1) },
+  spacing : {
+    marginTop : theme.spacing(3), marginLeft : theme.spacing(1)
+  },
+  button : {
+    backgroundColor : theme.palette.type === "dark" ? "#00B39F" : "#607d8b",
+    "&:hover" : {
+      backgroundColor : theme.palette.type === "dark" ? "#00B39F" : "#607d8b"
+    },
+    color : "#fff" },
+  upload : {
+    paddingLeft : "0.7rem",
+    paddingTop : "8px"
+  },
   expansionPanel : { boxShadow : "none", border : "1px solid rgb(196,196,196)" },
   margin : { margin : theme.spacing(1) },
   chartTitle : { textAlign : "center" },
@@ -1010,17 +1022,27 @@ class MesheryPerformanceComponent extends React.Component {
                           onChange={this.handleChange("reqBody")}
                         ></TextField>
                       </Grid>
-                      <Grid item xs={12} md={12}>
-                        <label htmlFor="upload-cacertificate" className={classes.upload}>
-                          <Button
+                      <Grid container xs={12} md={12}>
+                        <Grid item xs={6}>
+                          <TextField
+                            size="small"
                             variant="outlined"
-                            aria-label="Upload Button"
-                            onChange={this.handleChange("caCertificate")} component="span"
-                          >
-                            <input id="upload-cacertificate" type="file" accept={".crt"} name="upload-button" data-cy="cacertificate-upload-button" />
+                            label={this.state.caCertificate?.name || "Filename"}
+                            style={{ width : "50%" }}
+                            value={this.state.caCertificate?.name}
+                          />
+                          <label htmlFor="upload-cacertificate" className={classes.upload}>
+                            <Button
+                              variant="outlined"
+                              aria-label="Upload Button"
+                              onChange={this.handleChange("caCertificate")} component="span"
+                              className={classes.button}
+                            >
+                              <input id="upload-cacertificate" type="file" accept={".crt"} name="upload-button"  hidden data-cy="cacertificate-upload-button" />
                             Browse
-                          </Button>
-                        </label>
+                            </Button>
+                          </label>
+                        </Grid>
                       </Grid>
                     </Grid>
                   </ExpansionPanelDetails>
@@ -1058,7 +1080,7 @@ class MesheryPerformanceComponent extends React.Component {
                   variant="contained"
                   color="primary"
                   size="large"
-                  className={classes.button}
+                  className={classes.spacing}
                   disabled={disableTest}
                   onClick={() => this.handleAbort()}
                 >
@@ -1070,7 +1092,7 @@ class MesheryPerformanceComponent extends React.Component {
                   color="primary"
                   size="large"
                   onClick={() => this.submitProfile()}
-                  className={classes.button}
+                  className={classes.spacing}
                   disabled={disableTest}
                   startIcon={<SaveOutlinedIcon />}
                 >
@@ -1082,7 +1104,7 @@ class MesheryPerformanceComponent extends React.Component {
                   color="primary"
                   size="large"
                   onClick={this.handleSubmit}
-                  className={classes.button}
+                  className={classes.spacing}
                   disabled={blockRunTest || disableTest}
                 >
                   {blockRunTest ? <CircularProgress size={30} /> : "Run Test"}
