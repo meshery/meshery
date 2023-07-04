@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 
@@ -10,6 +12,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/sirupsen/logrus"
 )
 
 // MesheryFilterRequestBody refers to the type of request body that
@@ -44,8 +47,13 @@ func (h *Handler) GetMesheryFilterFileHandler(
 		return
 	}
 
-	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	reader := bytes.NewReader(resp)
+	rw.Header().Set("Content-Type", "application/wasm")
+	_, err = io.Copy(rw, reader)
+	if err != nil {
+		h.log.Error(ErrDownloadWASMFile(err, "download"))
+		http.Error(rw, ErrDownloadWASMFile(err, "download").Error(), http.StatusInternalServerError)
+	}
 }
 
 // FilterFileRequestHandler will handle requests of both type GET and POST
