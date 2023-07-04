@@ -30,6 +30,7 @@ function MesheryPatternCard({
   pattern_file,
   handleVerify,
   handlePublishModal,
+  handleUnpublishModal,
   handleDeploy,
   handleUnDeploy,
   updateHandler,
@@ -42,7 +43,7 @@ function MesheryPatternCard({
   canPublishPattern = false
 }) {
 
-  function genericClickHandler(ev, fn) {
+  const genericClickHandler = (ev, fn) => {
     ev.stopPropagation();
     fn(ev);
   }
@@ -91,7 +92,9 @@ function MesheryPatternCard({
               <Typography style={{ overflow : "hidden", textOverflow : "ellipsis", width : '20rem' }} variant="h6" component="div">
                 {name}
               </Typography>
-              <img  className={classes.img} src={`/static/img/${visibility}.svg`} />
+              <div style={{ border : "1px solid rgb(118 118 118)",color : "rgb(118 118 118)",marginTop : "auto",fontSize : "0.6rem",padding : "0.2rem 0.5rem",borderRadius : "0.2rem" }}>
+               PUBLISHED
+              </div>
             </div>
             <div className={classes.lastRunText} >
               <div>
@@ -109,7 +112,9 @@ function MesheryPatternCard({
 
             <div className={classes.cardButtons} >
               {canPublishPattern &&
-                <TooltipButton
+                (visibility !== VISIBILITY.PUBLISHED)
+                ?
+                (<TooltipButton
                   variant="contained"
                   title="Publish"
                   className={classes.testsButton}
@@ -117,7 +122,19 @@ function MesheryPatternCard({
                 >
                   <PublicIcon className={classes.iconPatt} />
                   <span className={classes.btnText}> Publish </span>
-                </TooltipButton>}
+                </TooltipButton>)
+                : (
+                  <TooltipButton
+                    variant="contained"
+                    title="Unpublish"
+                    className={classes.testsButton}
+                    onClick={(ev) => genericClickHandler(ev, handleUnpublishModal)}
+                  >
+                    <PublicIcon className={classes.iconPatt} />
+                    <span className={classes.btnText}> Unpublish </span>
+                  </TooltipButton>
+                )
+              }
 
               <TooltipButton
                 title="Valildate"

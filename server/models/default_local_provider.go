@@ -109,17 +109,6 @@ func (l *DefaultLocalProvider) InitiateLogin(_ http.ResponseWriter, _ *http.Requ
 	// l.issueSession(w, r, fromMiddleWare)
 }
 
-// issueSession issues a cookie session after successful login
-func (l *DefaultLocalProvider) issueSession(w http.ResponseWriter, req *http.Request, fromMiddleWare bool) {
-	if !fromMiddleWare {
-		returnURL := "/"
-		if req.RequestURI != "" {
-			returnURL = req.RequestURI
-		}
-		http.Redirect(w, req, returnURL, http.StatusFound)
-	}
-}
-
 func (l *DefaultLocalProvider) fetchUserDetails() *User {
 	return &User{
 		UserID:    "meshery",
@@ -238,6 +227,12 @@ func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, e
 
 // FetchResults - fetches results from provider backend
 func (l *DefaultLocalProvider) FetchResults(_, page, pageSize, _, _, profileID string) ([]byte, error) {
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, ErrPageNumber(err)
@@ -568,13 +563,17 @@ func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, ord
 }
 
 // GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
-func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(_, search, order string) ([]byte, error) {
-	return l.MesheryPatternPersister.GetMesheryCatalogPatterns(search, order)
+func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(_, page, pageSize, search, order string) ([]byte, error) {
+	return l.MesheryPatternPersister.GetMesheryCatalogPatterns(page, pageSize, search, order)
 }
 
 // PublishCatalogPattern publishes pattern to catalog
 // Not supported by local provider
 func (l *DefaultLocalProvider) PublishCatalogPattern(_ *http.Request, _ *MesheryCatalogPatternRequestBody) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) UnPublishCatalogPattern(_ *http.Request, _ *MesheryCatalogPatternRequestBody) ([]byte, error) {
 	return []byte(""), ErrLocalProviderSupport
 }
 
@@ -680,14 +679,18 @@ func (l *DefaultLocalProvider) GetMesheryFilters(_, page, pageSize, search, orde
 }
 
 // GetCatalogMesheryFilters gives the catalog filters stored with the provider
-func (l *DefaultLocalProvider) GetCatalogMesheryFilters(_ string, search, order string) ([]byte, error) {
-	return l.MesheryFilterPersister.GetMesheryCatalogFilters(search, order)
+func (l *DefaultLocalProvider) GetCatalogMesheryFilters(_ string, page, pageSize, search, order string) ([]byte, error) {
+	return l.MesheryFilterPersister.GetMesheryCatalogFilters(page, pageSize, search, order)
 }
 
 // PublishCatalogFilter publishes filter to catalog
 // Not supported by local provider
 func (l *DefaultLocalProvider) PublishCatalogFilter(_ *http.Request, _ *MesheryCatalogFilterRequestBody) ([]byte, error) {
 	return []byte(""), nil
+}
+
+func (l *DefaultLocalProvider) UnPublishCatalogFilter(_ *http.Request, _ *MesheryCatalogFilterRequestBody) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
 }
 
 // GetMesheryFilterFile gets filter for the given filterID without the metadata
@@ -926,8 +929,20 @@ func (l *DefaultLocalProvider) ExtensionProxy(_ *http.Request) (*ExtensionProxyR
 	return nil, ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) SaveConnection(_ *http.Request, _ *Connection, _ string, _ bool) error {
+func (l *DefaultLocalProvider) SaveConnection(_ *http.Request, _ *ConnectionPayload, _ string, _ bool) error {
 	return ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) GetConnections(_ *http.Request, _ string, _, _ int, _, _, _ string) (*ConnectionPage, error) {
+	return nil, ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) UpdateConnection(_ *http.Request, _ *Connection) (*Connection, error) {
+	return nil, ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) DeleteConnection(_ *http.Request, _ uuid.UUID) (*Connection, error) {
+	return nil, ErrLocalProviderSupport
 }
 
 func (l *DefaultLocalProvider) DeleteMesheryConnection() error {
@@ -1008,7 +1023,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 					for i, name := range names {
 						id, _ := uuid.NewV4()
 						var filter = &MesheryFilter{
-							FilterFile: content[i],
+							FilterFile: []byte(content[i]),
 							Name:       name,
 							ID:         &id,
 							UserID:     &nilUserID,
@@ -1228,7 +1243,7 @@ func githubRepoFilterScan(
 
 				ff := MesheryFilter{
 					Name:       name,
-					FilterFile: string(f.Content),
+					FilterFile: []byte(f.Content),
 					Location: map[string]interface{}{
 						"type":   "github",
 						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
@@ -1309,7 +1324,7 @@ func genericHTTPFilterFile(fileURL string) ([]MesheryFilter, error) {
 
 	ff := MesheryFilter{
 		Name:       name,
-		FilterFile: result,
+		FilterFile: []byte(result),
 		Location: map[string]interface{}{
 			"type":   "http",
 			"host":   fileURL,
@@ -1422,41 +1437,6 @@ func downloadContent(comp string, downloadpath string) error {
 	return nil
 }
 
-func downloadApplicationsFromURL(downloadpath string, appname string, url string) error {
-	path := filepath.Join(downloadpath, appname)
-	res, err := http.Get(url)
-	if err != nil {
-		return err
-	}
-	content, err := io.ReadAll(res.Body)
-	if err != nil {
-		return err
-	}
-	f, err := os.Create(path)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	fmt.Fprintf(f, "%s", content)
-	return nil
-}
-
-// DownloadYAMLSintoSingleFile takes a slice of URL's which each returns a YAML body on get request. Then combines all the yamls into one yaml
-func downloadYAMLSintoSingleFile(f io.Writer, URLs []string) error {
-	for _, url := range URLs {
-		res, err := http.Get(url)
-		if err != nil {
-			return err
-		}
-		content, err := io.ReadAll(res.Body)
-		if err != nil {
-			return err
-		}
-		fmt.Fprintf(f, "%s\n---\n", string(content))
-	}
-	return nil
-}
-
 func getFiltersFromWasmFiltersRepo(downloadPath string) error {
 	// releaseName, err := getLatestStableReleaseTag()
 	// if err != nil {
@@ -1479,7 +1459,7 @@ func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 
 	tarReader := tar.NewReader(uncompressedStream)
 
-	for true {
+	for {
 		header, err := tarReader.Next()
 		if err == io.EOF {
 			break
@@ -1502,23 +1482,6 @@ func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 		}
 	}
 	return nil
-}
-
-func getSeededAppLocation(path string) (map[string][]string, error) {
-	var applicationsAndURLS map[string][]string
-	f, err := os.Open(path)
-	if err != nil {
-		return applicationsAndURLS, err
-	}
-	content, err := io.ReadAll(f)
-	if err != nil {
-		return applicationsAndURLS, err
-	}
-	err = json.Unmarshal(content, &applicationsAndURLS)
-	if err != nil {
-		return applicationsAndURLS, err
-	}
-	return applicationsAndURLS, nil
 }
 
 // // GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub

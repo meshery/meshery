@@ -152,6 +152,7 @@ type NavigatorExtension struct {
 	Children        NavigatorExtensions `json:"children,omitempty"`
 	Type            string              `json:"type,omitempty"`
 	AllowedTo       MeshMapComponentSet `json:"allowedTo,omitempty"`
+	IsBeta          *bool               `json:"isBeta,omitempty"`
 }
 
 // AccountExtension describes the Account extension point in the UI
@@ -193,11 +194,12 @@ type K8sContextPersistResponse struct {
 	Inserted   bool       `json:"inserted,omitempty"`
 }
 
-type Connection struct {
+type ConnectionPayload struct {
 	Kind             string                 `json:"kind,omitempty"`
 	SubType          string                 `json:"sub_type,omitempty"`
 	Type             string                 `json:"type,omitempty"`
 	MetaData         map[string]interface{} `json:"metadata,omitempty"`
+	Status           ConnectionStatus       `json:"status,omitempty"`
 	CredentialSecret map[string]interface{} `json:"credential_secret,omitempty"`
 }
 
@@ -375,8 +377,9 @@ type Provider interface {
 
 	SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error)
 	GetMesheryPatterns(tokenString, page, pageSize, search, order string, updatedAfter string) ([]byte, error)
-	GetCatalogMesheryPatterns(tokenString string, search, order string) ([]byte, error)
+	GetCatalogMesheryPatterns(tokenString string, page, pageSize, search, order string) ([]byte, error)
 	PublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error)
+	UnPublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error)
 	DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error)
 	DeleteMesheryPatterns(req *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error)
 	CloneMesheryPattern(req *http.Request, patternID string, clonePatternRequest *MesheryClonePatternRequestBody) ([]byte, error)
@@ -389,8 +392,9 @@ type Provider interface {
 
 	SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error)
 	GetMesheryFilters(tokenString, page, pageSize, search, order string) ([]byte, error)
-	GetCatalogMesheryFilters(tokenString string, search, order string) ([]byte, error)
+	GetCatalogMesheryFilters(tokenString string, page, pageSize, search, order string) ([]byte, error)
 	PublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error)
+	UnPublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error)
 	DeleteMesheryFilter(req *http.Request, filterID string) ([]byte, error)
 	CloneMesheryFilter(req *http.Request, filterID string, cloneFilterRequest *MesheryCloneFilterRequestBody) ([]byte, error)
 	GetMesheryFilter(req *http.Request, filterID string) ([]byte, error)
@@ -417,7 +421,10 @@ type Provider interface {
 
 	ExtensionProxy(req *http.Request) (*ExtensionProxyResponse, error)
 
-	SaveConnection(req *http.Request, conn *Connection, token string, skipTokenCheck bool) error
+	SaveConnection(req *http.Request, conn *ConnectionPayload, token string, skipTokenCheck bool) error
+	GetConnections(req *http.Request, userID string, page, pageSize int, search, order, connectionKind string) (*ConnectionPage, error)
+	UpdateConnection(req *http.Request, conn *Connection) (*Connection, error)
+	DeleteConnection(req *http.Request, connID uuid.UUID) (*Connection, error)
 	DeleteMesheryConnection() error
 
 	SaveUserCredential(req *http.Request, credential *Credential) error

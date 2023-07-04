@@ -163,6 +163,15 @@ func (h *Handler) handlePatternPOST(
 	}
 	// If Content is not empty then assume it's a local upload
 	if parsedBody.PatternData != nil {
+		// Check if the pattern is valid
+		err := pCore.IsValidPattern(parsedBody.PatternData.PatternFile)
+		if err != nil {
+			h.log.Error(ErrInvalidPattern(err))
+			http.Error(rw, ErrInvalidPattern(err).Error(), http.StatusBadRequest)
+			addMeshkitErr(&res, ErrInvalidPattern(err))
+			go h.EventsBuffer.Publish(&res)
+			return
+		}
 		// Assign a name if no name is provided
 		if parsedBody.PatternData.Name == "" {
 			patternName, err := models.GetPatternName(parsedBody.PatternData.PatternFile)
@@ -299,8 +308,6 @@ func (h *Handler) handlePatternPOST(
 // Returns the list of all the patterns saved by the current user
 // This will return all the patterns with their details
 //
-// ```?updated_after=<timestamp>``` timestamp should be of the format "YYYY-MM-DD HH:MM:SS"
-//
 // ```?order={field}``` orders on the passed field
 //
 // ```?search=<design name>``` A string matching is done on the specified design name
@@ -310,8 +317,6 @@ func (h *Handler) handlePatternPOST(
 // ```?pagesize={pagesize}``` Default pagesize is 10
 // responses:
 // 	200: mesheryPatternsResponseWrapper
-
-// GetMesheryPatternsHandler returns the list of all the patterns saved by the current user
 func (h *Handler) GetMesheryPatternsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -322,7 +327,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 	updateAfter := q.Get("updated_after")
-	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"), updateAfter)
+	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter)
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
@@ -344,13 +349,21 @@ func (h *Handler) GetMesheryPatternsHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-// swagger:route POST /api/pattern/catalog PatternsAPI idGetCatalogMesheryPatternsHandler
+// swagger:route GET /api/pattern/catalog PatternsAPI idGetCatalogMesheryPatternsHandler
 // Handle GET request for catalog patterns
 //
-// Used to get catalog patterns
+// # Patterns can be further filtered through query parameter
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?page={page-number}``` Default page number is 0
+//
+// ```?pagesize={pagesize}``` Default pagesize is 10.
+// 
+// ```?search={patternname}``` If search is non empty then a greedy search is performed
 // responses:
 //
-//	200: mesheryPatternResponseWrapper
+//	200: mesheryPatternsResponseWrapper
 func (h *Handler) GetCatalogMesheryPatternsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -361,7 +374,7 @@ func (h *Handler) GetCatalogMesheryPatternsHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("search"), q.Get("order"))
+	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
@@ -505,6 +518,44 @@ func (h *Handler) PublishCatalogPatternHandler(
 		return
 	}
 	resp, err := provider.PublishCatalogPattern(r, parsedBody)
+	if err != nil {
+		h.log.Error(ErrPublishCatalogPattern(err))
+		http.Error(rw, ErrPublishCatalogPattern(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	go h.config.ConfigurationChannel.PublishPatterns()
+	rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(rw, string(resp))
+}
+
+// swagger:route DELETE /api/pattern/catalog/unpublish PatternsAPI idUnPublishCatalogPatternHandler
+// Handle Publish for a Meshery Pattern
+//
+// Unpublishes pattern from Meshery Catalog by setting visibility to private and removing catalog data from website
+// responses:
+//
+//	200: noContentWrapper
+//
+// UnPublishCatalogPatternHandler sets visibility of pattern with given id as private
+func (h *Handler) UnPublishCatalogPatternHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	_ *models.Preference,
+	_ *models.User,
+	provider models.Provider,
+) {
+	defer func() {
+		_ = r.Body.Close()
+	}()
+
+	var parsedBody *models.MesheryCatalogPatternRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+		return
+	}
+	resp, err := provider.UnPublishCatalogPattern(r, parsedBody)
 	if err != nil {
 		h.log.Error(ErrPublishCatalogPattern(err))
 		http.Error(rw, ErrPublishCatalogPattern(err).Error(), http.StatusInternalServerError)

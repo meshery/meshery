@@ -18,7 +18,7 @@ title: Documentation
 email: community@layer5.io
 author: Layer5
 description: > # this means to ignore newlines until "baseurl:"
-  Meshery is the open source, cloud native management plane that enables the adoption, operation, and management of Kubernetes, any service mesh, and their workloads.
+  As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.
 
 # DO NOT CHANGE THE LINE OF THIS FILE without editing .circleci/circle_urls.sh
 baseurl: "" # the subpath of your site, e.g. /blog

@@ -1,6 +1,6 @@
 import MesherySettings from "../components/MesherySettings";
 import { NoSsr, withStyles } from "@material-ui/core";
-import { updatepagepath } from "../lib/store";
+import { updatepagepath, updatepagetitle } from "../lib/store";
 import { connect } from "react-redux";
 import Head from 'next/head';
 import { bindActionCreators } from 'redux';
@@ -15,6 +15,7 @@ class Settings extends React.Component {
   componentDidMount () {
     console.log(`path: ${getPath()}`);
     this.props.updatepagepath({ path : getPath() });
+    this.props.updatepagetitle({ title : "Settings" });
   }
 
   render () {
@@ -29,7 +30,10 @@ class Settings extends React.Component {
   }
 }
 
-const mapDispatchToProps = dispatch => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch) })
+const mapDispatchToProps = dispatch => ({
+  updatepagepath : bindActionCreators(updatepagepath, dispatch),
+  updatepagetitle : bindActionCreators(updatepagetitle, dispatch),
+})
 
 export default withStyles(styles)(connect(
   null,

@@ -316,7 +316,7 @@ jobs:
   garphql_validate:
     name: Validate GraphQL schema
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -331,9 +331,9 @@ jobs:
               - added|modified: 'server/internal/graphql/schema/schema.graphql'
       - name: Set up Ruby
         if: steps.filter.outputs.modified == 'true'
-        uses: ruby/setup-ruby@v1.99.0
+        uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7.5
+          ruby-version: 3.2.2
           bundler-cache: true
       - name: graphql-docs
         if: steps.filter.outputs.modified == 'true'

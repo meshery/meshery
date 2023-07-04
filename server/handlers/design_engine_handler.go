@@ -27,16 +27,6 @@ import (
 	v1 "k8s.io/client-go/applyconfigurations/meta/v1"
 )
 
-// patternCallType is custom type for pattern
-// based calls on the adapter
-type patternCallType string
-
-const (
-	rawAdapter patternCallType = "<raw-adapter>"
-	noneLocal  patternCallType = "<none-local>"
-	oamAdapter patternCallType = ""
-)
-
 // swagger:route POST /api/pattern/deploy PatternsAPI idPostDeployPattern
 // Handle POST request for Pattern Deploy
 //

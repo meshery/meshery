@@ -25,7 +25,7 @@ User needs to set the Prometheus URL and API key to create and query boards.
 
 User needs to set the Grafana URL and API key to create and query boards.
 
-[![Grafana Charts]({{ site.baseurl }}/assets/img/architecture/GrafanaCharts.svg)]({{ site.baseurl }}/assets/img/architecture/GrafanaCharts.svg)
+[![Grafana Charts]({{ site.baseurl }}/assets/img/architecture/GrafanaBoards.svg)]({{ site.baseurl }}/assets/img/architecture/GrafanaBoards.svg)
 
 ### Dynamic Boards
 

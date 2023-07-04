@@ -47,13 +47,15 @@
   font-size: 16px;
   font-family: "Fira Mono", Consolas, Menlo, Monaco, "Courier New", Courier, monospace;
   border-radius: 0px;
-  padding: 40px 40px 30px;
+  padding: 4rem;
   position: relative;
   overflow: hidden;
-  overflow-x: scroll;
+  overflow-x: auto;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   scrollbar-width: thin;
+  height: auto !important;
+  min-height: 21rem !important;
 
   & > * {
     color: #fff;
@@ -68,11 +70,12 @@
   }
 }
 
-.btn-copy-wrap::before {
+.window-buttons {
   content: "";
-  position: absolute;
-  top: -2rem;
-  left: 1.8rem;
+  position: relative;
+  top: -3.2rem;
+  left: 1.5rem;
+  margin-bottom: -2rem;
   display: inline-block;
   width: 1.5rem;
   height: 1.5rem;
