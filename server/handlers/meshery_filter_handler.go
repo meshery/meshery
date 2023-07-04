@@ -12,7 +12,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/sirupsen/logrus"
 )
 
 // MesheryFilterRequestBody refers to the type of request body that
