@@ -137,7 +137,7 @@
     "eslint-plugin-react": "^7.31.8",
     "http-proxy": "^1.18.1",
     "husky": "^7.0.2",
-    "lint-staged": "^13.1.0",
+    "lint-staged": "^13.2.3",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "nodemon": "^2.0.20",
     "nyc": "^15.1.0",
