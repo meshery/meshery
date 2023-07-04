@@ -53,7 +53,7 @@
           "model": "Kubernetes"
         }
       ],
-      "deny": [
+      "to": [
         {
           "kind": "Endpoints",
           "model": "Kubernetes"

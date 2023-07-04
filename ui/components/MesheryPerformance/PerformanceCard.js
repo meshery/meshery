@@ -15,6 +15,7 @@ import { useTheme } from '@material-ui/core/styles';
 import moment from "moment";
 import dataFetch from "../../lib/data-fetch";
 import { MESHERY_CLOUD_PROD } from "../../constants/endpoints";
+import ReusableTooltip from "../reusable-tooltip";
 
 const useStyles = makeStyles((theme) => ({
   cardButtons : {
@@ -287,12 +288,20 @@ function PerformanceCard({
           </Grid>
           <Grid item xs={4}>
             <div className={classes.deleteEditButton} >
-              <IconButton onClick={(ev) => genericClickHandler(ev, handleEdit)}>
-                <EditIcon style={iconMedium} />
-              </IconButton>
-              <IconButton onClick={(ev) => genericClickHandler(ev, handleDelete)}>
-                <DeleteIcon style={iconMedium} />
-              </IconButton>
+              <ReusableTooltip
+                title="Edit"
+              >
+                <IconButton onClick={(ev) => genericClickHandler(ev, handleEdit)}>
+                  <EditIcon style={iconMedium} />
+                </IconButton>
+              </ReusableTooltip>
+              <ReusableTooltip
+                title="Delete"
+              >
+                <IconButton onClick={(ev) => genericClickHandler(ev, handleDelete)}>
+                  <DeleteIcon style={iconMedium} />
+                </IconButton>
+              </ReusableTooltip>
             </div>
           </Grid>
         </Grid>

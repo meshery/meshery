@@ -527,7 +527,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     if (typeof sortOrder === "undefined" || sortOrder === null) {
       sortOrder = "";
     }
-    query = `?page=${page}&pageSize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
+    query = `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
       sortOrder
     )}`;
 

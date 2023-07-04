@@ -12,6 +12,10 @@ export default function downloadFile({ id, type,name, source_type }) {
     dataUri = `/api/pattern/download/${id}`;
   }
 
+  if (type === "filter") {
+    dataUri = `/api/filter/download/${id}`;
+  }
+
   let linkElement = document.createElement('a');
   linkElement.setAttribute('href', dataUri);
   linkElement.setAttribute('download', name);

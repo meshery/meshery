@@ -52,7 +52,7 @@
 
 .sidebar-container {
   overscroll-behavior: contain;
-  padding: 1rem min(2vh, 2vw);
+  padding: .25rem min(2vh, 2vw);
   overflow-y: scroll;
   height: calc(100vh - var(--navbar-height));
   transition: all 0.5s ease-in-out;
