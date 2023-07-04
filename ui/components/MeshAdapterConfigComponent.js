@@ -23,24 +23,35 @@ const styles = (theme) => ({
     borderBottomRightRadius : theme.spacing(1),
     marginTop : theme.spacing(2),
   },
-  buttons : { display : "flex",
-    justifyContent : "flex-end", paddingTop : "2rem" },
+  buttons : {
+    display : "flex",
+    justifyContent : "flex-end", paddingTop : "2rem"
+  },
   button : {
-    marginLeft : theme.spacing(1), },
+    marginLeft : theme.spacing(1),
+  },
   margin : { margin : theme.spacing(1), },
-  alreadyConfigured : { textAlign : "center",
-    padding : theme.spacing(20), },
-  colorSwitchBase : { color : blue[300],
-    "&$colorChecked" : { color : blue[500],
-      "& + $colorBar" : { backgroundColor : blue[500], }, }, },
+  alreadyConfigured : {
+    textAlign : "center",
+    padding : theme.spacing(20),
+  },
+  colorSwitchBase : {
+    color : blue[300],
+    "&$colorChecked" : {
+      color : blue[500],
+      "& + $colorBar" : { backgroundColor : blue[500], },
+    },
+  },
   colorBar : {},
   colorChecked : {},
   fileLabel : { width : "100%", },
   fileLabelText : {},
   inClusterLabel : { paddingRight : theme.spacing(2), },
   alignCenter : { textAlign : "center", },
-  alignRight : { textAlign : "right",
-    marginBottom : theme.spacing(2), },
+  alignRight : {
+    textAlign : "right",
+    marginBottom : theme.spacing(2),
+  },
   fileInputStyle : { opacity : "0.01", },
   icon : { width : theme.spacing(2.5), },
   istioIcon : { width : theme.spacing(1.5), },
@@ -69,8 +80,10 @@ class MeshAdapterConfigComponent extends React.Component {
     const { meshAdapters, meshAdaptersts } = props;
     // if(meshAdapters.sort().join(',') !== state.meshAdapters.sort().join(',')){
     if (meshAdaptersts > state.ts) {
-      return { meshAdapters,
-        ts : meshAdaptersts };
+      return {
+        meshAdapters,
+        ts : meshAdaptersts
+      };
     }
     return {};
   }
@@ -87,12 +100,15 @@ class MeshAdapterConfigComponent extends React.Component {
       "/api/system/adapters",
       {
         method : "GET",
-        credentials : "include", },
+        credentials : "include",
+      },
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          const options = result.map((res) => ({ value : res.adapter_location,
-            label : res.adapter_location, }));
+          const options = result.map((res) => ({
+            value : res.adapter_location,
+            label : res.adapter_location,
+          }));
           this.setState({ setAdapterURLs : options });
         }
       },
@@ -107,12 +123,15 @@ class MeshAdapterConfigComponent extends React.Component {
       "/api/system/availableAdapters",
       {
         method : "GET",
-        credentials : "include", },
+        credentials : "include",
+      },
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          const options = result.map((res) => ({ value : res.adapter_location,
-            label : res.name, }));
+          const options = result.map((res) => ({
+            value : res.adapter_location,
+            label : res.name,
+          }));
           this.setState({ availableAdapters : options });
         }
       },
@@ -138,7 +157,7 @@ class MeshAdapterConfigComponent extends React.Component {
 
   handleDeployPortChange = (newValue) => {
     if (typeof newValue !== "undefined") {
-      console.log("port change to "+(newValue.value))
+      console.log("port change to " + (newValue.value))
       this.setState({ meshDeployURL : newValue.value, meshDeployURLError : false });
     }
   }
@@ -195,7 +214,7 @@ class MeshAdapterConfigComponent extends React.Component {
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon  style={iconMedium} />
+                <CloseIcon style={iconMedium} />
               </IconButton>
             ),
           });
@@ -222,13 +241,15 @@ class MeshAdapterConfigComponent extends React.Component {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
           this.setState({ meshAdapters : result });
-          this.props.enqueueSnackbar("Adapter was removed!", { variant : "success",
+          this.props.enqueueSnackbar("Adapter was removed!", {
+            variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
-            ), });
+            ),
+          });
           this.props.updateAdaptersInfo({ meshAdapters : result });
         }
       },
@@ -243,17 +264,20 @@ class MeshAdapterConfigComponent extends React.Component {
     dataFetch(
       `/api/system/adapters?adapter=${encodeURIComponent(adapterLoc)}`,
       {
-        credentials : "include", },
+        credentials : "include",
+      },
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Adapter was pinged!", { variant : "success",
+          this.props.enqueueSnackbar("Adapter was pinged!", {
+            variant : "success",
             autoHideDuration : 2000,
             action : (key) => (
               <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
                 <CloseIcon />
               </IconButton>
-            ), });
+            ),
+          });
         }
       },
       self.handleError("error")
@@ -310,10 +334,22 @@ class MeshAdapterConfigComponent extends React.Component {
 
     this.props.updateProgress({ showProgress : true });
 
+    const targetPort = function getTargetPort(location) {
+      if (!location.value) {
+        return null
+      }
+
+      if (location.value.includes(":")) {
+        return location.value.split(":")[1]
+      }
+
+      return location.value;
+    }(meshLocationURL)
+
     const variables = {
       status : "DISABLED",
       adapter : "",
-      targetPort : meshLocationURL.value
+      targetPort,
     };
 
     changeAdapterState((response, errors) => {
@@ -337,13 +373,15 @@ class MeshAdapterConfigComponent extends React.Component {
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress : false });
     const self = this;
-    this.props.enqueueSnackbar(`${msg}: ${error}`, { variant : "error",
+    this.props.enqueueSnackbar(`${msg}: ${error}`, {
+      variant : "error",
       action : (key) => (
         <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
           <CloseIcon />
         </IconButton>
       ),
-      autoHideDuration : 8000, });
+      autoHideDuration : 8000,
+    });
   };
 
   configureTemplate = () => {
@@ -370,12 +408,12 @@ class MeshAdapterConfigComponent extends React.Component {
               <Tooltip
                 key={adapter.uniqueID}
                 title={
-                        `Meshery Adapter for
+                  `Meshery Adapter for
                         ${adapter.name
-                          .toLowerCase()
-                          .split(" ")
-                          .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
-                          .join(" ")} (${adapter.version})`}>
+                    .toLowerCase()
+                    .split(" ")
+                    .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+                    .join(" ")} (${adapter.version})`}>
                 <Chip
                   className={classes.chip}
                   label={adapter.adapter_location}
@@ -467,7 +505,7 @@ class MeshAdapterConfigComponent extends React.Component {
                   onClick={this.handleAdapterDeploy}
                   className={classes.button}
                 >
-                Deploy
+                  Deploy
                 </Button>
               </div>
             </React.Fragment>
@@ -484,8 +522,10 @@ class MeshAdapterConfigComponent extends React.Component {
 
 MeshAdapterConfigComponent.propTypes = { classes : PropTypes.object.isRequired, };
 
-const mapDispatchToProps = (dispatch) => ({ updateAdaptersInfo : bindActionCreators(updateAdaptersInfo, dispatch),
-  updateProgress : bindActionCreators(updateProgress, dispatch), });
+const mapDispatchToProps = (dispatch) => ({
+  updateAdaptersInfo : bindActionCreators(updateAdaptersInfo, dispatch),
+  updateProgress : bindActionCreators(updateProgress, dispatch),
+});
 
 const mapStateToProps = (state) => {
   const meshAdapters = state.get("meshAdapters").toJS();
