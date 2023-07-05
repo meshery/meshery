@@ -17,8 +17,8 @@ package filter
 import (
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -75,13 +75,13 @@ func importFilter(cmd *cobra.Command, args []string) error {
 // saveFilter saves the filter content from the given reader to the specified file path
 func saveFilter(reader io.Reader, filePath string) error {
 	// Read the filter content
-	filterContent, err := ioutil.ReadAll(reader)
+	filterContent, err := io.ReadAll(reader)
 	if err != nil {
 		return err
 	}
 
 	// Write the filter content to the file
-	err = ioutil.WriteFile(filePath, filterContent, 0644)
+	err = os.WriteFile(filePath, filterContent, 0644)
 	if err != nil {
 		return err
 	}
@@ -92,12 +92,12 @@ func saveFilter(reader io.Reader, filePath string) error {
 // saveFilterFromPath saves the filter content from the file at the given path to the specified file path
 func saveFilterFromPath(sourcePath, destinationPath string) error {
 	// Read the filter content from the source file
-	filterContent, err := ioutil.ReadFile(sourcePath)
+	filterContent, err := os.ReadFile(sourcePath)
 	if err != nil {
 		return err
 	}
 
-	err = ioutil.WriteFile(destinationPath, filterContent, 0644)
+	err = os.WriteFile(destinationPath, filterContent, 0644)
 	if err != nil {
 		return err
 	}
