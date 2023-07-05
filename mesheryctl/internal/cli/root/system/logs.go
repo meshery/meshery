@@ -186,7 +186,7 @@ mesheryctl system logs meshery-istio
 			// If the user specified logs from any particular pods, then show only that
 			if len(args) > 0 {
 				// Get the actual pod names even when the user specifes incomplete pod names
-				requiredPodsMap, err = utils.GetRequiredPodsMap(args, availablePods)
+				requiredPodsMap, err = utils.GetRequiredPods(args, availablePods)
 				// error when the specified pod is invalid
 				if err != nil {
 					return err
