@@ -18,7 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"strings"
+	"net/url"
 
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -63,23 +63,22 @@ mesheryctl exp filter view test-wasm
 				return errors.New("Invalid filter ID / filter name. " + err.Error())
 			}
 		}
-		url := mctlCfg.GetBaseMesheryURL()
+		urlString := mctlCfg.GetBaseMesheryURL()
 		if len(filter) == 0 {
 			if viewAllFlag {
-				url += "/api/filter?pagesize=10000"
+				urlString += "/api/filter?pagesize=10000"
 			} else {
 				return errors.New("[filter-name|filter-id] not specified, use -a to view all filters")
 			}
 		} else if isID {
 			// if filter is a valid uuid, then directly fetch the filter
-			url += "/api/filter/" + filter
+			urlString += "/api/filter/" + filter
 		} else {
 			// else search filter by name
-			filter = strings.ReplaceAll(filter, " ", "%20")
-			url += "/api/filter?search=" + filter
+			urlString += "/api/filter?search=" + url.QueryEscape(filter)
 		}
 
-		req, err := utils.NewRequest("GET", url, nil)
+		req, err := utils.NewRequest("GET", urlString, nil)
 		if err != nil {
 			return err
 		}
