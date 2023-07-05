@@ -69,8 +69,10 @@ type CatalogPattern struct {
 }
 
 type CatalogSelector struct {
-	Search string `json:"search"`
-	Order  string `json:"order"`
+	Page     string `json:"page"`
+	Pagesize string `json:"pagesize"`
+	Search   string `json:"search"`
+	Order    string `json:"order"`
 }
 
 type ClusterResources struct {
@@ -326,23 +328,24 @@ type PerfPageResult struct {
 }
 
 type PerfProfile struct {
-	ConcurrentRequest int       `json:"concurrent_request"`
-	CreatedAt         *string   `json:"created_at,omitempty"`
-	Duration          string    `json:"duration"`
-	Endpoints         []*string `json:"endpoints,omitempty"`
-	ID                string    `json:"id"`
-	LastRun           *string   `json:"last_run,omitempty"`
-	LoadGenerators    []*string `json:"load_generators,omitempty"`
-	Name              *string   `json:"name,omitempty"`
-	QPS               *int      `json:"qps,omitempty"`
-	TotalResults      *int      `json:"total_results,omitempty"`
-	UpdatedAt         *string   `json:"updated_at,omitempty"`
-	UserID            string    `json:"user_id"`
-	RequestHeaders    *string   `json:"request_headers,omitempty"`
-	RequestCookies    *string   `json:"request_cookies,omitempty"`
-	RequestBody       *string   `json:"request_body,omitempty"`
-	ContentType       *string   `json:"content_type,omitempty"`
-	ServiceMesh       *string   `json:"service_mesh,omitempty"`
+	ConcurrentRequest int                    `json:"concurrent_request"`
+	CreatedAt         *string                `json:"created_at,omitempty"`
+	Duration          string                 `json:"duration"`
+	Endpoints         []*string              `json:"endpoints,omitempty"`
+	ID                string                 `json:"id"`
+	LastRun           *string                `json:"last_run,omitempty"`
+	LoadGenerators    []*string              `json:"load_generators,omitempty"`
+	Name              *string                `json:"name,omitempty"`
+	QPS               *int                   `json:"qps,omitempty"`
+	TotalResults      *int                   `json:"total_results,omitempty"`
+	UpdatedAt         *string                `json:"updated_at,omitempty"`
+	UserID            string                 `json:"user_id"`
+	RequestHeaders    *string                `json:"request_headers,omitempty"`
+	RequestCookies    *string                `json:"request_cookies,omitempty"`
+	RequestBody       *string                `json:"request_body,omitempty"`
+	ContentType       *string                `json:"content_type,omitempty"`
+	ServiceMesh       *string                `json:"service_mesh,omitempty"`
+	Metadata          map[string]interface{} `json:"metadata,omitempty"`
 }
 
 type ReSyncActions struct {

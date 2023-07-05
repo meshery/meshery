@@ -8,6 +8,21 @@ import (
 	"github.com/layer5io/meshery/server/models"
 )
 
+// swagger:route GET /api/system/kubernetes/contexts GetAllContexts idGetAllContexts
+// Handle GET request for all kubernetes contexts.
+//
+// # Contexts can be further filtered through query parameter
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?page={page-number}``` Default page number is 0
+//
+// ```?pagesize={pagesize}``` Default pagesize is 10
+// 
+// ```?search={contextname}``` If search is non empty then a greedy search is performed
+// responses:
+//
+//	200: systemK8sContextsResponseWrapper
 func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
@@ -17,7 +32,7 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *mo
 
 	q := req.URL.Query()
 
-	vals, err := provider.GetK8sContexts(token, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"))
+	vals, err := provider.GetK8sContexts(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
 	if err != nil {
 		http.Error(w, "failed to get contexts", http.StatusInternalServerError)
 		return

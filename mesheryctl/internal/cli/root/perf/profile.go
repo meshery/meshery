@@ -133,7 +133,7 @@ func fetchPerformanceProfiles(baseURL, searchString string, pageSize, pageNumber
 	url := baseURL + "/api/user/performance/profiles"
 
 	// update the url
-	url = fmt.Sprintf("%s?page_size=%d&page=%d", url, pageSize, pageNumber)
+	url = fmt.Sprintf("%s?pagesize=%d&page=%d", url, pageSize, pageNumber)
 	if searchString != "" {
 		url = url + "&search=" + searchString
 	}

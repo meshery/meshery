@@ -6,15 +6,16 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
-// swagger:route GET /api/meshmodel/model/{model}/relationship/{name} GetMeshmodelRelationshipByName idGetMeshmodelRelationshipByName
+// swagger:route GET /api/meshmodels/models/{model}/relationships/{name} GetMeshmodelRelationshipByName idGetMeshmodelRelationshipByName
 // Handle GET request for getting meshmodel relationships of a specific model by name.
 //
-// Example: ```/api/meshmodel/model/kubernetes/relationship/Edge```
+// Example: ```/api/meshmodels/models/kubernetes/relationships/Edge```
 //
 // # Relationships can be further filtered through query parameter
 //
@@ -30,7 +31,7 @@ import (
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-// 200: []RelationshipDefinition
+//  200: []meshmodelRelationshipsResponseWrapper
 func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -50,11 +51,12 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 	}
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page == 0 {
+	if page <= 0 {
 		page = 1
 	}
 	offset := (page - 1) * limit
-	res, _ := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
+	entities, count := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
+		Version:   r.URL.Query().Get("version"),
 		Kind:      name,
 		ModelName: typ,
 		Greedy:    greedy,
@@ -64,20 +66,52 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 		Sort:      r.URL.Query().Get("sort"),
 	})
 	var rels []v1alpha1.RelationshipDefinition
-	for _, r := range res {
+	for _, r := range entities {
 		rel, ok := r.(v1alpha1.RelationshipDefinition)
 		if ok {
 			rels = append(rels, rel)
 		}
 	}
-	if err := enc.Encode(rels); err != nil {
+
+	var pgSize int64
+	if limitstr == "all" {
+		pgSize = *count
+	} else {
+		pgSize = int64(limit)
+	}
+
+	response := models.MeshmodelRelationshipsAPIResponse {
+		Page: page,
+		PageSize: int(pgSize),
+		Count: *count,
+		Relationships: rels,
+	}
+
+	if err := enc.Encode(response); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}
 }
 
-// swagger:route GET /api/meshmodel/model/{model}/relationship GetAllMeshmodelRelationships idGetAllMeshmodelRelationships
-// Handle GET request for getting meshmodel relationships of a specific model and their total count.
+// swagger:route GET /api/meshmodels/relationships GetAllMeshmodelRelationships idGetAllMeshmodelRelationships
+// Handle GET request for getting all meshmodel relationships
+//
+// # Relationships can be further filtered through query parameter
+//
+// ```?version={version}```
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?sort={[asc/desc]}``` Default behavior is asc
+//
+// ```?page={page-number}``` Default page number is 1
+//
+// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+// responses:
+//	200: meshmodelRelationshipsResponseWrapper
+
+// swagger:route GET /api/meshmodels/models/{model}/relationships GetAllMeshmodelRelationships idGetAllMeshmodelRelationshipsByModel
+// Handle GET request for getting meshmodel relationships of a specific model
 //
 // Example: ```/api/meshmodel/model/kubernetes/relationship```
 //
@@ -94,7 +128,7 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
 //
-//	200: allMeshmodelRelationshipsResponseWrapper
+//	200: meshmodelRelationshipsResponseWrapper
 func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -109,7 +143,7 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 	}
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)
-	if page == 0 {
+	if page <= 0 {
 		page = 1
 	}
 	offset := (page - 1) * limit
@@ -129,15 +163,21 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 		}
 	}
 
-	res := struct {
-		Count         int64                             `json:"total_count"`
-		Relationships []v1alpha1.RelationshipDefinition `json:"relationships"`
-	}{
-		Count:         *count,
+	var pgSize int64
+	if limitstr == "all" {
+		pgSize = *count
+	} else {
+		pgSize = int64(limit)
+	}
+
+	response := models.MeshmodelRelationshipsAPIResponse {
+		Page: page,
+		PageSize: int(pgSize),
+		Count: *count,
 		Relationships: rels,
 	}
 
-	if err := enc.Encode(res); err != nil {
+	if err := enc.Encode(response); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}

@@ -71,7 +71,7 @@ class MesheryResults extends Component {
     if (typeof sortOrder === 'undefined' || sortOrder === null) {
       sortOrder = '';
     }
-    query = `?page=${page}&pageSize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
+    query = `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`;
     self.props.updateProgress({ showProgress : true });
 
     const endpoint = self.props.endpoint || "/api/perf/profile/result";

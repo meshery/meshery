@@ -34,4 +34,6 @@ export const EXTENSIONS = {
   MESHMAP : "meshmap"
 }
 
-export const MesheryPatternsCatalog = "meshery-patterns-catalog"
+export const MesheryPatternsCatalog = "meshery-patterns-catalog";
+
+export const MesheryFiltersCatalog = "meshery-filters-catalog";

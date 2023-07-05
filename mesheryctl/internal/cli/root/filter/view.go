@@ -66,7 +66,7 @@ mesheryctl exp filter view test-wasm
 		url := mctlCfg.GetBaseMesheryURL()
 		if len(filter) == 0 {
 			if viewAllFlag {
-				url += "/api/filter?page_size=10000"
+				url += "/api/filter?pagesize=10000"
 			} else {
 				return errors.New("[filter-name|filter-id] not specified, use -a to view all filters")
 			}
