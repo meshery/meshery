@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 
@@ -44,8 +46,13 @@ func (h *Handler) GetMesheryFilterFileHandler(
 		return
 	}
 
-	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	reader := bytes.NewReader(resp)
+	rw.Header().Set("Content-Type", "application/wasm")
+	_, err = io.Copy(rw, reader)
+	if err != nil {
+		h.log.Error(ErrDownloadWASMFile(err, "download"))
+		http.Error(rw, ErrDownloadWASMFile(err, "download").Error(), http.StatusInternalServerError)
+	}
 }
 
 // FilterFileRequestHandler will handle requests of both type GET and POST
