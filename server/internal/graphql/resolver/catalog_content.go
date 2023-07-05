@@ -11,17 +11,17 @@ import (
 
 // CatalogPatternPage - represents a page of meshery patterns
 type catalogPatternPage struct {
-	Page       int               `json:"page"`
-	PageSize   int               `json:"page_size"`
-	TotalCount int               `json:"total_count"`
+	Page       int                     `json:"page"`
+	PageSize   int                     `json:"page_size"`
+	TotalCount int                     `json:"total_count"`
 	Patterns   []*model.CatalogPattern `json:"patterns"`
 }
 
 // CatalogFilterPage - represents a page of meshery filters
 type catalogFilterPage struct {
-	Page       int              `json:"page"`
-	PageSize   int              `json:"page_size"`
-	TotalCount int              `json:"total_count"`
+	Page       int                    `json:"page"`
+	PageSize   int                    `json:"page_size"`
+	TotalCount int                    `json:"total_count"`
 	Filters    []*model.CatalogFilter `json:"filters"`
 }
 
