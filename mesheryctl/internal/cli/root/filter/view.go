@@ -18,7 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
+	"strings"
 
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -75,22 +75,17 @@ mesheryctl exp filter view test-wasm
 			url += "/api/filter/" + filter
 		} else {
 			// else search filter by name
+			filter = strings.ReplaceAll(filter, " ", "%20")
 			url += "/api/filter?search=" + filter
 		}
 
-		client := &http.Client{}
 		req, err := utils.NewRequest("GET", url, nil)
 		if err != nil {
 			return err
 		}
-
-		res, err := client.Do(req)
+		res, err := utils.MakeRequest(req)
 		if err != nil {
 			return err
-		}
-		if res.StatusCode != 200 {
-			// failsafe for the case when a valid uuid v4 is not an id of any filter (bad api call)
-			return errors.Errorf("Response Status Code %d, possible invalid ID", res.StatusCode)
 		}
 
 		defer res.Body.Close()
