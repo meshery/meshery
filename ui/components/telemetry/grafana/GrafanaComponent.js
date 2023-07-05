@@ -33,8 +33,8 @@ const grafanaStyles = (theme) => ({
   panelChip : { margin : theme.spacing(0.25), },
   chartTitle : { marginLeft : theme.spacing(3),
     marginTop : theme.spacing(2), textAlign : "center", },
-  grafanChartsWrapper : { backgroundColor: theme.palette.secondary.elevatedComponents,
-    padding: theme.spacing(1) , marginTop: theme.spacing(2) }
+  grafanChartsWrapper : { backgroundColor : theme.palette.secondary.elevatedComponents,
+    padding : theme.spacing(1) , marginTop : theme.spacing(2) }
 });
 
 const getGrafanaBoards = (self, cb = () => {}) => {
