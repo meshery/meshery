@@ -81,7 +81,7 @@ export default function PublishModal(props) {
     "required" : ["compatibility", "pattern_caveats", "pattern_info", "type"] // TODO: to be injected dynamically and backed by RJSF
   }
 
-  const data = React.useState(resourceType.catalog_data);
+  const data = resourceType?.catalog_data || {};
 
   return (
     <>
