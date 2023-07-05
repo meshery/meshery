@@ -199,7 +199,7 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, han
         componentCount = {modalOpen.count}
         tab={modalOpen.deploy ? 2 : 1}
       />
-      {canPublishFilter && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} filter={publishModal.filter} title={publishModal.filter?.name} aria-label="catalog publish" handlePublish={handlePublish} />}
+      {canPublishFilter && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} resourceType={publishModal.filter} title={publishModal.filter?.name} aria-label="catalog publish" handlePublish={handlePublish} />}
       <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetch()} configuration="Filter"  />
     </div>
   );
