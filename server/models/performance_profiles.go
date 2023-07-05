@@ -24,10 +24,11 @@ type PerformanceProfile struct {
 	Duration          string         `json:"duration,omitempty"`
 	TotalResults      int            `json:"total_results,omitempty"`
 
-	RequestHeaders string `json:"request_headers,omitempty"`
-	RequestCookies string `json:"request_cookies,omitempty"`
-	RequestBody    string `json:"request_body,omitempty"`
-	ContentType    string `json:"content_type,omitempty"`
+	RequestHeaders string  `json:"request_headers,omitempty"`
+	RequestCookies string  `json:"request_cookies,omitempty"`
+	Metadata       sql.Map `json:"metadata,omitempty"`
+	RequestBody    string  `json:"request_body,omitempty"`
+	ContentType    string  `json:"content_type,omitempty"`
 
 	UpdatedAt *sql.Time `json:"updated_at,omitempty"`
 	CreatedAt *sql.Time `json:"created_at,omitempty"`
