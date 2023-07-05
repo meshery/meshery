@@ -14,15 +14,6 @@ import (
 	"github.com/layer5io/meshery/server/models"
 )
 
-// MesheryFilterRequestBody refers to the type of request body that
-// SaveMesheryFilter would receive
-type MesheryFilterRequestBody struct {
-	URL        string                       `json:"url,omitempty"`
-	Path       string                       `json:"path,omitempty"`
-	Save       bool                         `json:"save,omitempty"`
-	FilterData *models.MesheryFilterPayload `json:"filter_data,omitempty"`
-}
-
 // swagger:route GET /api/filter/file/{id} FiltersAPI idGetFilterFile
 // Handle GET request for filter file with given id
 //
@@ -98,7 +89,7 @@ func (h *Handler) handleFilterPOST(
 		OperationId:   guid.NewString(),
 		EventType:     meshes.EventType_INFO,
 	}
-	var parsedBody *MesheryFilterRequestBody
+	var parsedBody *models.MesheryFilterRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrGetFilter(err).Error(), http.StatusBadRequest)
@@ -134,6 +125,9 @@ func (h *Handler) handleFilterPOST(
 				"branch": "",
 			}
 		}
+
+		fmt.Println("FILTER FILE")
+		fmt.Println(parsedBody.FilterData.FilterFile)
 
 		mesheryFilter := models.MesheryFilter{
 			FilterFile: []byte(parsedBody.FilterData.FilterFile),

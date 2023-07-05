@@ -118,6 +118,11 @@ func FilterError(msg string) string {
 	return formatError(msg, cmdFilter)
 }
 
+// FilterImportError returns a formatted error message with a link to 'filter import' command usage page in addition to the error message
+func FilterImportError(msg string) string {
+	return formatError(msg, cmdFilterImport)
+}
+
 // PatternError returns a formatted error message with a link to 'pattern' command usage page in addition to the error message
 func PatternError(msg string) string {
 	return formatError(msg, cmdPattern)
@@ -153,6 +158,8 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, expUsageURL)
 	case cmdFilter:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, filterUsageURL)
+	case cmdFilterImport:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, filterImportURL)
 	case cmdPattern:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, patternUsageURL)
 	case cmdApp:
