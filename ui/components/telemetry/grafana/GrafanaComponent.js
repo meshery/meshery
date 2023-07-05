@@ -358,10 +358,9 @@ class GrafanaComponent extends Component {
       grafanaBoardSearch,
       selectedBoardsConfigs,
     } = this.state;
-
-    if (!grafanaConfigSuccess) {
+    if (grafanaConfigSuccess) {
       let displaySelec = "";
-      if (selectedBoardsConfigs.length >= 0) {
+      if (selectedBoardsConfigs.length > 0) {
         displaySelec = (
           <React.Fragment>
             <GrafanaDisplaySelection
