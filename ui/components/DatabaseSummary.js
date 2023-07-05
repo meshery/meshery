@@ -39,9 +39,9 @@ const styles = (theme) => ({
 
 const DatabaseSummary = (props) => {
   const { classes } = props
-  const [databaseSummary, setDatabaseSummary] = useState({ tables : [], totalRecords : 0, totalSize : 0, totalTables : 0 })
+  const [databaseSummary, setDatabaseSummary] = useState({ tables : [], totalRecords : 0, totalTables : 0 })
 
-  const [page, setPage] = useState(0)
+  const [page, setPage] = useState(1)
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [searchText, setSearchText] = useState("")
 
@@ -73,9 +73,8 @@ const DatabaseSummary = (props) => {
         if (typeof result !== "undefined") {
           setDatabaseSummary({
             tables : result?.tables,
-            totalRecords : result?.totalRecords,
-            totalSize : result?.totalSize,
-            totalTables : result?.totalTables
+            totalRecords : result?.record_count,
+            totalTables : result?.total_tables
           })
         }
       },

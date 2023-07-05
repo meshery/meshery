@@ -68,7 +68,7 @@ mesheryctl pattern view [pattern-name | ID]
 		url := mctlCfg.GetBaseMesheryURL()
 		if len(pattern) == 0 {
 			if viewAllFlag {
-				url += "/api/pattern?page_size=10000"
+				url += "/api/pattern?pagesize=10000"
 			} else {
 				return errors.New("Pattern name or ID is not specified. Use `-a` to view all patterns")
 			}

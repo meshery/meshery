@@ -16,7 +16,7 @@ Various components of Meshery will need to be upgraded as new releases become av
 
 <p style="text-align:center">
 <a href="{{site.baseurl}}/assets/img/architecture/upgrading-meshery.svg">
-    <img src="{{site.baseurl}}/assets/img/architecture/upgrading-meshery.svg" style="margin: 1rem;" width="50%" />
+    <img src="{{site.baseurl}}/assets/img/architecture/upgrading-meshery.svg" style="margin: 1rem;" />
 </a><br /><i><small>Figure: Meshery components</small></i>
 </p>
 

@@ -7,6 +7,7 @@ on:
 jobs:
   reset:
     name: reset
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
     steps:
     - name: Cluster cleanup by running the cleanup script inside VM

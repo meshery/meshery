@@ -3,6 +3,7 @@ layout: default
 title: MeshMap Snapshot
 permalink: extensions/snapshot
 language: en
+abstract: Screenshot service provided via Meshmap to capture a snapshot of their infrastructure at any given time.
 display-title: "false"
 list: include
 type: extensions
