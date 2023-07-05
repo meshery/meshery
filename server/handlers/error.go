@@ -115,6 +115,7 @@ const (
 	ErrLoadCertificateCode              = "2261"
 	ErrCleanupCertificateCode           = "2262"
 	ErrTypeAssertionCode                = "2263"
+	ErrDownlaodWASMFileCode             = "2258"
 )
 
 var (
@@ -313,6 +314,11 @@ func ErrApplicationFailure(err error, obj string) error {
 func ErrApplicationSourceContent(err error, obj string) error {
 	return errors.New(ErrApplicationContentCode, errors.Alert, []string{"failed to ", obj, "the application content"}, []string{err.Error()}, []string{}, []string{})
 }
+
+func ErrDownloadWASMFile(err error, obj string) error {
+	return errors.New(ErrDownlaodWASMFileCode, errors.Alert, []string{"failed to ", obj, "the WASM file"}, []string{err.Error()}, []string{"Ensure that DB is not corrupted", "Ensure Remote Provider is working properly", "Ensure Meshery Server is working properly and connected to remote provider"}, []string{"Try restarting Meshery server"})
+}
+
 func ErrDecoding(err error, obj string) error {
 	return errors.New(ErrDecodingCode, errors.Alert, []string{"Error decoding the : ", obj}, []string{err.Error()}, []string{"Object is not a valid json object"}, []string{"Make sure if the object passed is a valid json"})
 }
