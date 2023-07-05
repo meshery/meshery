@@ -374,7 +374,7 @@ class GrafanaComponent extends Component {
               {/* <GrafanaCharts
                     boardPanelConfigs={selectedBoardsConfigs}
                     grafanaURL={grafanaURL} /> */}
-              <div style={{ padding : "0 1rem"}}>
+              <div style={{ padding : "0 1rem" }}>
                 <GrafanaCustomCharts
                   boardPanelConfigs={selectedBoardsConfigs}
                   grafanaURL={grafanaURL}
