@@ -44,7 +44,8 @@ mesheryctl exp filter import /path/to/filter.wasm
 // Import a filter file from a remote URI
 mesheryctl exp filter import https://example.com/myfilter.wasm
 
-// Add WASM configuration. Config contains configuration string/filepath that is passed to the filter.
+// Add WASM configuration. 
+// If the string is a valid file in the filesystem, the file is read and passed as a string. Otherwise, the string is passed as is.
 mesheryctl exp filter import /path/to/filter.wasm -config [filepath|string]
 
 // Specify the name of the filter to be imported
@@ -92,6 +93,7 @@ mesheryctl exp filter import /path/to/filter.wasm -name [string]
 		if cfg != "" {
 			// Check if the config is a file path or a string
 			if _, err := os.Stat(cfg); err == nil {
+				utils.Log.Info("Reading config file")
 				cfgFile, err := os.ReadFile(cfg)
 				if err != nil {
 					return errors.New("Unable to read config file. " + err.Error())
@@ -100,6 +102,8 @@ mesheryctl exp filter import /path/to/filter.wasm -name [string]
 				content := string(cfgFile)
 				body.FilterData.Config = content
 			} else {
+				utils.Log.Info("config: ")
+				utils.Log.Info(cfg)
 				body.FilterData.Config = cfg
 			}
 		}
