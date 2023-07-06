@@ -24,7 +24,6 @@ import (
 
 var (
 	availableSubcommands []*cobra.Command
-	file                 string
 )
 
 // FilterCmd represents the root command for filter commands
