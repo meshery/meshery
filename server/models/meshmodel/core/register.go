@@ -269,12 +269,12 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 					fmt.Printf("%v", err)
 					continue
 				}
-				
+
 				modifiedProps := component.UpdateProperties(fieldVal, cue.ParsePath("properties.spec"), apiVersion)
 				if modifiedProps != nil {
 					modified = modifiedProps
 				}
-				
+
 				deleteProperties(modified)
 				crd, err = json.Marshal(modified)
 				if err != nil {
