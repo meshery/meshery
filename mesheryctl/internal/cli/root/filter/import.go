@@ -29,7 +29,8 @@ import (
 )
 
 var (
-	cfg string
+	cfg  string
+	name string
 )
 
 var importCmd = &cobra.Command{
@@ -45,6 +46,9 @@ mesheryctl exp filter import https://example.com/myfilter.wasm
 
 // Add WASM configuration. Config contains configuration string/filepath that is passed to the filter.
 mesheryctl exp filter import /path/to/filter.wasm -config [filepath|string]
+
+// Specify the name of the filter to be imported
+mesheryctl exp filter import /path/to/filter.wasm -name [string]
 	`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -74,7 +78,14 @@ mesheryctl exp filter import /path/to/filter.wasm -config [filepath|string]
 				return errors.New("Unable to read file. " + err.Error())
 			}
 
+			fileInfo, err := os.Stat(uri)
+			if err != nil {
+				return errors.New("Unable to read file. " + err.Error())
+			}
+
 			content := string(filterFile)
+
+			body.FilterData.Name = fileInfo.Name()
 			body.FilterData.FilterFile = content
 		}
 
@@ -91,6 +102,10 @@ mesheryctl exp filter import /path/to/filter.wasm -config [filepath|string]
 			} else {
 				body.FilterData.Config = cfg
 			}
+		}
+
+		if name != "" {
+			body.FilterData.Name = name
 		}
 
 		// Convert the request body to JSON
@@ -122,4 +137,5 @@ mesheryctl exp filter import /path/to/filter.wasm -config [filepath|string]
 
 func init() {
 	importCmd.Flags().StringVarP(&cfg, "config", "c", "", "WASM configuration filepath/string")
+	importCmd.Flags().StringVarP(&cfg, "name", "n", "", "Filter name")
 }

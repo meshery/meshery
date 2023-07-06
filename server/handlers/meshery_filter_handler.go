@@ -117,7 +117,7 @@ func (h *Handler) handleFilterPOST(
 			parsedBody.FilterData.Name = "Test Filter"
 		}
 		// Assign a location if no location is specified
-		if parsedBody.FilterData.Location == nil {
+		if parsedBody.FilterData.Location == nil || len(parsedBody.FilterData.Location) == 0 {
 			parsedBody.FilterData.Location = map[string]interface{}{
 				"host":   "",
 				"path":   "",
@@ -125,9 +125,6 @@ func (h *Handler) handleFilterPOST(
 				"branch": "",
 			}
 		}
-
-		fmt.Println("FILTER FILE")
-		fmt.Println(parsedBody.FilterData.FilterFile)
 
 		mesheryFilter := models.MesheryFilter{
 			FilterFile: []byte(parsedBody.FilterData.FilterFile),
