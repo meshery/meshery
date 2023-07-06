@@ -141,6 +141,6 @@ mesheryctl exp filter import /path/to/filter.wasm -name [string]
 }
 
 func init() {
-	importCmd.Flags().StringVarP(&cfg, "config", "c", "", "WASM configuration filepath/string")
-	importCmd.Flags().StringVarP(&name, "name", "n", "", "filter name")
+	importCmd.Flags().StringVarP(&cfg, "config", "c", "", "(optional) WASM configuration filepath/string")
+	importCmd.Flags().StringVarP(&name, "name", "n", "", "(optional) filter name")
 }
