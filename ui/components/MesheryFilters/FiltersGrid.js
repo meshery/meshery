@@ -57,6 +57,7 @@ function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit
   *  handleUnpublishModal: (ev: Event, filter: any) => (() => Promise<void>),
   *  handleDeploy: (filter_file: any) => void,
   *  handleUnDeploy: (filter_file: any) => void,
+  *  handleDownload: (e : Event, id : string , name : string ) => void,
   *  handleSubmit: (data: any, id: string, name: string, type: string) => void,
   *  setSelectedFilter : ({show: boolean, filter:any}) => void,
   *  selectedFilter: {show : boolean, filter : any},
