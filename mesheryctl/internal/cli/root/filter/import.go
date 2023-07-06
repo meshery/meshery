@@ -44,11 +44,12 @@ mesheryctl exp filter import /path/to/filter.wasm
 // Import a filter file from a remote URI
 mesheryctl exp filter import https://example.com/myfilter.wasm
 
-// Add WASM configuration. 
+// Add WASM configuration 
 // If the string is a valid file in the filesystem, the file is read and passed as a string. Otherwise, the string is passed as is.
+// Use quotes if the string contains spaces
 mesheryctl exp filter import /path/to/filter.wasm -config [filepath|string]
 
-// Specify the name of the filter to be imported
+// Specify the name of the filter to be imported. Use quotes if the name contains spaces
 mesheryctl exp filter import /path/to/filter.wasm -name [string]
 	`,
 	Args: cobra.MinimumNArgs(0),
@@ -141,5 +142,5 @@ mesheryctl exp filter import /path/to/filter.wasm -name [string]
 
 func init() {
 	importCmd.Flags().StringVarP(&cfg, "config", "c", "", "WASM configuration filepath/string")
-	importCmd.Flags().StringVarP(&cfg, "name", "n", "", "Filter name")
+	importCmd.Flags().StringVarP(&name, "name", "n", "", "filter name")
 }
