@@ -12,7 +12,7 @@ import PublishModal from "../PublishModal";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
-function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit, setSelectedFilters, handleClone, handlePublishModal, handleUnpublishModal, canPublishFilter }) {
+function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit, setSelectedFilters, handleClone,handleDownload, handlePublishModal, handleUnpublishModal, canPublishFilter }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(filter.config);
 
@@ -31,6 +31,7 @@ function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit
         handleDeploy={handleDeploy}
         handleUndeploy={handleUndeploy}
         handleClone={handleClone}
+        handleDownload = {(ev) => handleDownload(ev,filter.id,filter.name)}
         deleteHandler={() => handleSubmit({ data : yaml, id : filter.id, type : FILE_OPS.DELETE, name : filter.name })}
         updateHandler={() => handleSubmit({ data : yaml, id : filter.id, type : FILE_OPS.UPDATE, name : filter.name })}
         setSelectedFilters={() => setSelectedFilters({ filter : filter, show : true })}
@@ -68,7 +69,7 @@ function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit
   */
 
 
-function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, handleSubmit,urlUploadHandler,uploadHandler, setSelectedFilter, selectedFilter, pages = 1,setPage, selectedPage, UploadImport, fetch, canPublishFilter, handlePublish, handleUnpublishModal }) {
+function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone,handleDownload, handleSubmit,urlUploadHandler,uploadHandler, setSelectedFilter, selectedFilter, pages = 1,setPage, selectedPage, UploadImport, fetch, canPublishFilter, handlePublish, handleUnpublishModal }) {
 
   const classes = useStyles()
 
@@ -144,6 +145,7 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, han
             filter={filter}
             handleClone={() => handleClone(filter.id, filter.name)}
             handleDeploy={() => handleModalOpen(filter, true)}
+            handleDownload={handleDownload}
             handleUndeploy={() => handleModalOpen(filter, false)}
             handleSubmit={handleSubmit}
             setSelectedFilters={setSelectedFilter}

@@ -14,6 +14,7 @@ import useStyles from "../MesheryPatterns/Cards.styles";
 import YAMLDialog from "../YamlDialog";
 import CloneIcon from "../../public/static/img/CloneIcon";
 import PublicIcon from '@material-ui/icons/Public';
+import DownloadIcon from "@material-ui/icons/CloudDownload";
 import TooltipButton from '../../utils/TooltipButton.js'
 import { VISIBILITY } from "../../utils/Enum";
 
@@ -25,6 +26,7 @@ function FiltersCard({
   created_at,
   filter_file,
   handleClone,
+  handleDownload,
   deleteHandler,
   setYaml,
   description={},
@@ -122,6 +124,15 @@ function FiltersCard({
                   </TooltipButton>
                 )
               }
+              <TooltipButton
+                title="Download"
+                variant="contained"
+                color="primary"
+                onClick={handleDownload}>
+
+                <DownloadIcon fill="#ffffff" className={classes.iconPatt} />
+                Download
+              </TooltipButton>
 
               {visibility === VISIBILITY.PUBLISHED ? <TooltipButton
                 title="Clone"
