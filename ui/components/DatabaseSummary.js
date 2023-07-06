@@ -31,8 +31,6 @@ const styles = (theme) => ({
     },
   },
   container : {
-    display : "flex",
-    justifyContent : "center",
     marginTop : theme.spacing(2),
   },
 })
@@ -41,7 +39,7 @@ const DatabaseSummary = (props) => {
   const { classes } = props
   const [databaseSummary, setDatabaseSummary] = useState({ tables : [], totalRecords : 0, totalTables : 0 })
 
-  const [page, setPage] = useState(1)
+  const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [searchText, setSearchText] = useState("")
 
@@ -138,7 +136,7 @@ const DatabaseSummary = (props) => {
     serverSide : true,
     rowsPerPage : rowsPerPage,
     count : databaseSummary?.totalTables,
-    onChangePage : debounce((p) =>  setPage(p), 200),
+    onChangePage : debounce((p) =>  setPage(p+1), 200),
     onChangeRowsPerPage : debounce((p) =>  setRowsPerPage(p), 200),
     onSearchChange : debounce((searchText) => {
       if (searchText) setPage(0);
@@ -159,10 +157,11 @@ const DatabaseSummary = (props) => {
 
   return (<>
     <DataTable
-      title={<>
+      title=
+      {<>
         <Typography>Database Overview</Typography>
-      </>
-      }
+      </>}
+      className={classes.container}
       data={databaseSummary?.tables}
       options={table_options}
       columns={[
