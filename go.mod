@@ -15,7 +15,7 @@ replace (
 )
 
 require (
-	cuelang.org/go v0.4.3
+	cuelang.org/go v0.5.0
 	fortio.org/fortio v1.21.0
 	github.com/99designs/gqlgen v0.17.28
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef
@@ -104,7 +104,7 @@ require (
 	github.com/chai2010/gettext-go v1.0.2 // indirect
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e // indirect
 	github.com/cncf/xds/go v0.0.0-20230607035331-e9ce68804cb4 // indirect
-	github.com/cockroachdb/apd/v2 v2.0.1 // indirect
+	github.com/cockroachdb/apd/v2 v2.0.2 // indirect
 	github.com/containerd/cgroups v1.1.0 // indirect
 	github.com/containerd/containerd v1.6.19 // indirect
 	github.com/cyphar/filepath-securejoin v0.2.3 // indirect
@@ -191,7 +191,7 @@ require (
 	github.com/miekg/pkcs11 v1.1.1 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
-	github.com/mitchellh/go-wordwrap v1.0.0 // indirect
+	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/moby/locker v1.0.1 // indirect
@@ -272,3 +272,5 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.3 // indirect
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
+
+replace github.com/layer5io/meshkit => /Users/shabana/Documents/OpenSource/meshkit
