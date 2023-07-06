@@ -58,7 +58,7 @@ mesheryctl exp filter view test-wasm
 			if viewAllFlag {
 				return errors.New("-a cannot be used when [filter-name|filter-id] is specified")
 			}
-			filter, isID, err = utils.Valid(args[0], "filter")
+			filter, isID, err = utils.ValidId(args[0], "filter")
 			if err != nil {
 				return errors.New("Invalid filter ID / filter name. " + err.Error())
 			}

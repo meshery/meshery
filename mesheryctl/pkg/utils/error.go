@@ -123,6 +123,21 @@ func FilterImportError(msg string) string {
 	return formatError(msg, cmdFilterImport)
 }
 
+// FilterDeleteError returns a formatted error message with a link to 'filter delete' command usage page in addition to the error message
+func FilterDeleteError(msg string) string {
+	return formatError(msg, cmdFilterDelete)
+}
+
+// FilterListError returns a formatted error message with a link to 'filter list' command usage page in addition to the error message
+func FilterListError(msg string) string {
+	return formatError(msg, cmdFilterList)
+}
+
+// FilterViewError returns a formatted error message with a link to 'filter view' command usage page in addition to the error message
+func FilterViewError(msg string) string {
+	return formatError(msg, cmdFilterView)
+}
+
 // PatternError returns a formatted error message with a link to 'pattern' command usage page in addition to the error message
 func PatternError(msg string) string {
 	return formatError(msg, cmdPattern)
@@ -160,6 +175,12 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, filterUsageURL)
 	case cmdFilterImport:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, filterImportURL)
+	case cmdFilterDelete:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, filterDeleteURL)
+	case cmdFilterList:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, filterListURL)
+	case cmdFilterView:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, filterViewURL)
 	case cmdPattern:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, patternUsageURL)
 	case cmdApp:
