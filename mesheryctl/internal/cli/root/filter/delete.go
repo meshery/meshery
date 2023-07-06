@@ -41,7 +41,7 @@ mesheryctl exp filter delete [filter-name | ID]
 		}
 
 		if len(args) == 0 {
-			return errors.New(utils.FilterDeleteError("filter name or ID not provided"))
+			return errors.New(utils.FilterDeleteError("filter name or ID not provided\nUse 'mesheryctl exp filter delete --help' to display usage guide\n"))
 		}
 
 		var filterID string

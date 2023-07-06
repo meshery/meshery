@@ -62,7 +62,7 @@ mesheryctl exp filter import /path/to/filter.wasm -name [string]
 		filterURL := mctlCfg.GetBaseMesheryURL() + "/api/filter"
 
 		if len(args) == 0 {
-			return errors.New(utils.FilterImportError("URI is required. Use 'mesheryctl exp filter import --help' to display usage guide.\n"))
+			return errors.New(utils.FilterImportError("URI is required\nUse 'mesheryctl exp filter import --help' to display usage guide\n"))
 		}
 
 		body := models.MesheryFilterRequestBody{
