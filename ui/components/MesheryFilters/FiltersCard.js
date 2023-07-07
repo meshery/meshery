@@ -142,7 +142,7 @@ function FiltersCard({
                   genericClickHandler(ev, handleClone)
                 } >
                 <CloneIcon fill="#ffffff" className={classes.iconPatt} />
-                <span className={classes.btnText}>Clone</span>
+                <span className={classes.cloneBtnText}>Clone</span>
               </TooltipButton> : null }
             </div>
           </div>

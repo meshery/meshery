@@ -80,12 +80,12 @@ const useStyles = makeStyles((theme) => ({
 
   },
   btnText : {
-    [theme.breakpoints.between(960, 1370)] : { display : "none" },
+    [theme.breakpoints.down(1370)] : { display : "none" },
     display : "flex",
     justifyContent : "center",
   },
   cloneBtnText : {
-    [theme.breakpoints.between(960, 1370)] : { display : "none" },
+    [theme.breakpoints.down(1370)] : { display : "none" },
     display : "flex",
     justifyContent : "center",
     marginLeft : "3px",
