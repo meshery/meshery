@@ -2393,7 +2393,6 @@ func (l *RemoteProvider) PublishCatalogFilter(req *http.Request, publishFilterRe
 	return nil, fmt.Errorf("error while publishing filter file to catalog - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
-
 // UnPublishMesheryFilter publishes a meshery filter with the given id to catalog
 func (l *RemoteProvider) UnPublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error) {
 	if !l.Capabilities.IsSupported(MesheryFiltersCatalog) {
@@ -2446,7 +2445,7 @@ func (l *RemoteProvider) UnPublishCatalogFilter(req *http.Request, publishFilter
 	return nil, fmt.Errorf("error while unpublishing filter file from catalog - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
-func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
+func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path string, save bool, resource string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryFilters) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistMesheryFilters", l.ProviderName)
@@ -2458,8 +2457,12 @@ func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path s
 		"url":  resourceURL,
 		"save": save,
 		"path": path,
-	})
+		"filter_data": MesheryFilter{
+			FilterResource: resource,
+		},
 
+	})
+	
 	if err != nil {
 		err = ErrMarshal(err, "meshery metrics for shipping")
 		return nil, err
