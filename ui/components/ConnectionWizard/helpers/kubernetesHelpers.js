@@ -127,3 +127,28 @@ export const submitConfig = (enqueueSnackbar, updateProgress, updateK8SConfig, a
     (err) => alert(err)
   );
 };
+
+/**
+ * Extracts kubernetes credentials from the data received from the server
+ * @param {object} data - k8's config data received from the server
+ * @returns {object} - k8's credentials
+ *
+ */
+export function extractKubernetesCredentials(data) {
+  const credentials = {
+    credentialName : data.name,
+    secret : {
+      clusterName : data.cluster.name,
+      clusterServerURL : data.cluster.cluster.server,
+      auth : {
+        clusterUserName : data.auth.name,
+        clusterToken : data.auth.user.token,
+        clusterClientCertificateData : data.auth.user['client-certificate-data'],
+        clusterCertificateAuthorityData : data.cluster.cluster['certificate-authority-data'],
+        clusterClientKeyData : data.auth.user['client-key-data'],
+      }
+    }
+  };
+
+  return credentials;
+}
