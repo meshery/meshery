@@ -2,7 +2,6 @@
 // ********************************** TYPE DEFINTIONS **********************************
 
 import { trueRandom } from "../../lib/trueRandom";
-import CustomTextAreaWidget from "./PatternService/RJSFCustomComponents/CustomTextAreaWidget";
 import { userPromptKeys } from "./PatternService/helper";
 
 /**
