@@ -14,31 +14,40 @@
         },
         "metadata": {}
     },
-    "subType": "Inventory",    
+    "subType": "Inventory",
     "selectors": {
         "allow": {
-          "from": [
-            {
-                "kind": "WASMFilter",
-                "model": "Istio Base",
-                "patch": {
-                    "patchStrategy": "replace",
-                    "$mutatorRef": "#config",
-                    "description": "WASM filter configuration to be applied to Envoy Filter."
+            "from": [
+                {
+                    "kind": "WASMFilter",
+                    "model": "Istio Base",
+                    "patch": {
+                        "patchStrategy": "replace",
+                        "mutatorRef": [
+                            "settings",
+                            "config"
+                        ],
+                        "description": "WASM filter configuration to be applied to Envoy Filter."
+                    }
                 }
-            } 
-          ],
-          "to": [
-            {
-                "kind": "EnvoyFilter",
-                "model": "Istio Base",
-                "patch": {
-                    "patchStrategy": "replace",
-                    "$mutatedRef": "#configPatches.patch.value",
-                    "description": "Receive the WASM filter configuration."
+            ],
+            "to": [
+                {
+                    "kind": "EnvoyFilter",
+                    "model": "Istio Base",
+                    "patch": {
+                        "patchStrategy": "replace",
+                        "mutatedRef": [
+                            "settings",
+                            "configPatches",
+                            "_",
+                            "patch",
+                            "value"
+                        ],
+                        "description": "Receive the WASM filter configuration."
+                    }
                 }
-            }
-          ]
+            ]
         },
         "deny": {
             "from": [],
