@@ -104,7 +104,7 @@ export default function PublishModal(props) {
               onSubmit={(data) => {
                 handleClose();
                 handlePublish({
-                  id : pattern.id,
+                  id : pattern?.id,
                   catalog_data : data.formData
                 })
               }}
