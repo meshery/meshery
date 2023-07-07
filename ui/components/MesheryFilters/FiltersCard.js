@@ -130,7 +130,7 @@ function FiltersCard({
                 color="primary"
                 onClick={handleDownload}>
 
-                <GetAppIcon fill="#ffffff" className={classes.iconPatt} />
+                <GetAppIcon fill="#ffffff" className={classes.iconDownload} />
                 <span className={classes.btnText}>Download</span>
               </TooltipButton>
 

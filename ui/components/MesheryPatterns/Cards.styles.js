@@ -79,8 +79,14 @@ const useStyles = makeStyles((theme) => ({
     marginRight : "5px",
 
   },
+  iconDownload : {
+    width : "auto",
+    height : "24px",
+
+  },
   btnText : {
     [theme.breakpoints.down(1370)] : { display : "none" },
+    marginLeft : "5px",
     display : "flex",
     justifyContent : "center",
   },
