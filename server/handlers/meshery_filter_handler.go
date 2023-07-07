@@ -8,10 +8,14 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/gofrs/uuid"
 	guid "github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshery/server/models/pattern/utils"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
 // swagger:route GET /api/filter/file/{id} FiltersAPI idGetFilterFile
@@ -109,6 +113,15 @@ func (h *Handler) handleFilterPOST(
 
 	format := r.URL.Query().Get("output")
 
+	filterResource, err := h.generateFilterComponent(parsedBody.Config)
+	if err != nil {
+		h.log.Error(ErrEncodeFilter(err))
+		http.Error(rw, ErrEncodeFilter(err).Error(), http.StatusInternalServerError)
+		addMeshkitErr(&res, ErrEncodeFilter(err))
+		go h.EventsBuffer.Publish(&res)
+		return
+	}
+
 	// If Content is not empty then assume it's a local upload
 	if parsedBody.FilterData != nil {
 		// Assign a name if no name is provided
@@ -133,7 +146,7 @@ func (h *Handler) handleFilterPOST(
 			UserID:     parsedBody.FilterData.UserID,
 			UpdatedAt:  parsedBody.FilterData.UpdatedAt,
 			Location:   parsedBody.FilterData.Location,
-			Config:     parsedBody.FilterData.Config,
+      FilterResource: filterResource,
 		}
 
 		if parsedBody.Save {
@@ -165,7 +178,7 @@ func (h *Handler) handleFilterPOST(
 	}
 
 	if parsedBody.URL != "" {
-		resp, err := provider.RemoteFilterFile(r, parsedBody.URL, parsedBody.Path, parsedBody.Save)
+		resp, err := provider.RemoteFilterFile(r, parsedBody.URL, parsedBody.Path, parsedBody.Save, filterResource)
 
 		if err != nil {
 			h.log.Error(ErrImportFilter(err))
@@ -476,4 +489,40 @@ func (h *Handler) FilterFileHandler(
 ) {
 	// Filter files are just pattern files
 	h.PatternFileHandler(rw, r, prefObj, user, provider)
+}
+
+func(h *Handler) generateFilterComponent(config string) (string, error) {
+	res, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+		Name: "WASMFilter",
+		Trim: false,
+		APIVersion: "core.meshery.io/v1alpha1",
+		Version: "v1.0.0",
+		Limit: 1,
+	})
+	
+	if len(res) > 0 {
+		filterEntity := res[0]
+		filterCompDef, ok := filterEntity.(v1alpha1.ComponentDefinition)
+		if ok {
+			filterID, _ := uuid.NewV4()
+			filterSvc := core.Service{
+				ID: &filterID,
+				Name: strings.ToLower(filterCompDef.Kind) + utils.GetRandomAlphabetsOfDigit(5),
+				Type: filterCompDef.Kind,
+				APIVersion: filterCompDef.APIVersion,
+				Version: filterCompDef.Model.Version,
+				Model: filterCompDef.Model.Name,
+				IsAnnotation: true,
+				Settings: map[string]interface{}{
+					"config": config,
+				},
+			}
+			marshalledFilter, err := json.Marshal(filterSvc)
+			if err != nil {
+				return string(marshalledFilter), err
+			}
+			return string(marshalledFilter), nil
+		}
+	}
+	return "", nil
 }
