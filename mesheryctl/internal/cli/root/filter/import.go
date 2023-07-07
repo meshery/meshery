@@ -101,11 +101,11 @@ mesheryctl exp filter import /path/to/filter.wasm -name [string]
 				}
 
 				content := string(cfgFile)
-				body.FilterData.Config = content
+				body.Config = content
 			} else {
 				utils.Log.Info("config: ")
 				utils.Log.Info(cfg)
-				body.FilterData.Config = cfg
+				body.Config = cfg
 			}
 		}
 

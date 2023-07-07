@@ -59,9 +59,10 @@ type MesheryCloneFilterRequestBody struct {
 // MesheryFilterRequestBody refers to the type of request body that
 // SaveMesheryFilter would receive
 type MesheryFilterRequestBody struct {
-	URL        string                       `json:"url,omitempty"`
-	Path       string                       `json:"path,omitempty"`
-	Save       bool                         `json:"save,omitempty"`
+	URL        string                `json:"url,omitempty"`
+	Path       string                `json:"path,omitempty"`
+	Save       bool                  `json:"save,omitempty"`
+	Config     string				 `json:"config,omitempty"` 	
 	FilterData *MesheryFilterPayload `json:"filter_data,omitempty"`
 }
 
