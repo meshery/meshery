@@ -10,7 +10,6 @@ const useStyles = makeStyles((theme) => ({
   },
   cardButtons : {
     display : "grid",
-    [theme.breakpoints.down(960)] : { gridTemplateColumns : "repeat(3,1fr)" },
     gridTemplateColumns : "repeat(5,1fr)",
     marginTop : "50px",
     height : '100%',
