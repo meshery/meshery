@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import { NoSsr, Typography, IconButton } from "@material-ui/core";
+import { NoSsr, Typography, IconButton, Box } from "@material-ui/core";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import CloseIcon from "@material-ui/icons/Close";
@@ -33,6 +33,8 @@ const grafanaStyles = (theme) => ({
   panelChip : { margin : theme.spacing(0.25), },
   chartTitle : { marginLeft : theme.spacing(3),
     marginTop : theme.spacing(2), textAlign : "center", },
+  grafanChartsWrapper : { backgroundColor : theme.palette.secondary.elevatedComponents,
+    padding : theme.spacing(1) , marginTop : theme.spacing(2) }
 });
 
 const getGrafanaBoards = (self, cb = () => {}) => {
@@ -365,20 +367,21 @@ class GrafanaComponent extends Component {
               boardPanelConfigs={selectedBoardsConfigs}
               deleteSelectedBoardPanelConfig={this.deleteSelectedBoardPanelConfig}
             />
-
-            <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-              Grafana charts
-            </Typography>
-            {/* <GrafanaCharts
+            <Box className={classes.grafanChartsWrapper}>
+              <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+                Grafana charts
+              </Typography>
+              {/* <GrafanaCharts
+                    boardPanelConfigs={selectedBoardsConfigs}
+                    grafanaURL={grafanaURL} /> */}
+              <div style={{ padding : "0 1rem" }}>
+                <GrafanaCustomCharts
                   boardPanelConfigs={selectedBoardsConfigs}
-                  grafanaURL={grafanaURL} /> */}
-            <div style={{ padding : "0 1rem" }}>
-              <GrafanaCustomCharts
-                boardPanelConfigs={selectedBoardsConfigs}
-                grafanaURL={grafanaURL}
-                grafanaAPIKey={grafanaAPIKey}
-              />
-            </div>
+                  grafanaURL={grafanaURL}
+                  grafanaAPIKey={grafanaAPIKey}
+                />
+              </div>
+            </Box>
           </React.Fragment>
         );
       }

@@ -58,7 +58,7 @@ jobs:
         with:
           go-version: 1.19
       - name: goreleaser with tag
-        uses: goreleaser/goreleaser-action@v4.1.0
+        uses: goreleaser/goreleaser-action@v4
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
           RELEASE_CHANNEL: "stable"
@@ -95,10 +95,17 @@ jobs:
     needs: 
       - build
       - ctlrelease
+      - call-helm-chart-releaser
+      - call-dde-release-workflow
     name: Email Meshery Release Notes
     uses: layer5labs/meshery-extensions-packages/.github/workflows/notify-email.yml@master
-    secrets:
+    secrets: 
       token: ${{ secrets.GH_ACCESS_TOKEN }}
+      MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+      MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+    with:
+      release-tag: ${{github.ref_name}}
+      to: developers@meshery.io 
   call-cncf-playground-rollout:
     needs: 
       - build

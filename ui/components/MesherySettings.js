@@ -26,6 +26,7 @@ import MeshModelComponent from './MeshModelComponent';
 import CredentialIcon from '../assets/icons/CredentialIcon';
 import MesheryCredentialComponent from './MesheryCredentialComponent';
 import DatabaseSummary from './DatabaseSummary';
+import { getComponentsDetail, getModelsDetail, getRelationshipsDetail } from '../api/meshmodel'
 
 
 const styles = (theme) => ({
@@ -187,7 +188,9 @@ class MesherySettings extends React.Component {
       prometheus,
       tabVal,
       subTabVal,
-
+      modelsCount : 0,
+      componentsCount : 0,
+      relationshipsCount : 0,
       isMeshConfigured : k8sconfig.clusterConfigured,
 
       // Array of scanned prometheus urls
@@ -221,6 +224,27 @@ class MesherySettings extends React.Component {
     }
     return st;
   }
+
+  async componentDidMount() {
+    try {
+      const modelsResponse = await getModelsDetail();
+      const componentsResponse = await getComponentsDetail();
+      const relationshipsResponse = await getRelationshipsDetail();
+
+      const modelsCount = modelsResponse.total_count;
+      const componentsCount = componentsResponse.total_count;
+      const relationshipsCount = relationshipsResponse.total_count;
+
+      this.setState({
+        modelsCount,
+        componentsCount,
+        relationshipsCount
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
 
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress : false });
@@ -474,19 +498,19 @@ class MesherySettings extends React.Component {
                 >
                   <Tab className={classes.tab} label={(
                     <div className={classes.iconText}>
-                      Models <span style={{ fontWeight : 'bold' }}></span>
+                      Models <span style={{ fontWeight : 'bold' }}>({this.state.modelsCount})</span>
                     </div>
                   )}
                   />
                   <Tab className={classes.tab} label={(
                     <div className={classes.iconText}>
-                      Components <span style={{ fontWeight : 'bold' }}></span>
+                      Components <span style={{ fontWeight : 'bold' }}>({this.state.componentsCount})</span>
                     </div>
                   )}
                   />
                   <Tab className={classes.tab} label={(
                     <div className={classes.iconText}>
-                      Relationships <span style={{ fontWeight : 'bold' }}></span>
+                      Relationships <span style={{ fontWeight : 'bold' }}>({this.state.relationshipsCount})</span>
                     </div>
                   )}
                   />

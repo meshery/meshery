@@ -2020,7 +2020,7 @@ func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFi
 	})
 
 	if err != nil {
-		return nil, ErrMarshal(err, "meshery metrics for shipping")
+		return nil, ErrMarshal(err, "Meshery Filters")
 	}
 
 	logrus.Debugf("size of filter: %d", len(data))

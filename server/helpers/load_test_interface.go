@@ -444,15 +444,15 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 
 type HTTPRunnerResults fhttp.HTTPRunnerResults
 
-func  (r *HTTPRunnerResults) UnmarshalJSON(data []byte) error {
+func (r *HTTPRunnerResults) UnmarshalJSON(data []byte) error {
 	type HTTPRunnerResultsAlias HTTPRunnerResults
 	rr := &struct {
 		*HTTPRunnerResultsAlias
-		RequestedQPS int
-		ActualDuration interface{}
-		RetCodes interface{}
-		Sizes interface{}
-		HeaderSizes interface{}
+		RequestedQPS      int
+		ActualDuration    interface{}
+		RetCodes          interface{}
+		Sizes             interface{}
+		HeaderSizes       interface{}
 		DurationHistogram interface{}
 	}{
 		HTTPRunnerResultsAlias: (*HTTPRunnerResultsAlias)(r),
@@ -497,6 +497,7 @@ func sharedHTTPOptions(opts *models.LoadTestOptions) (*fhttp.HTTPOptions, error)
 	httpOpts.ContentType = ""
 	httpOpts.FollowRedirects = true
 	httpOpts.DisableFastClient = true
+	httpOpts.CACert = opts.CACert
 
 	if opts.Headers != nil {
 		for key, val := range *opts.Headers {
