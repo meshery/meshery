@@ -37,7 +37,7 @@ function FiltersCard({
 
   const genericClickHandler = (ev, fn) => {
     ev.stopPropagation();
-    fn();
+    fn(ev);
   }
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [fullScreen, setFullScreen] = useState(false);
