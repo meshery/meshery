@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "meshery.name" . }}
-  namespace: {{ .metadata.namespace }}
+  namespace: {{ .Chart.metadata.namespace }}
   labels:
     {{- include "meshery.labels" . | nindent 4 }}
   annotations:
