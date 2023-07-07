@@ -127,12 +127,6 @@ function jsonSchemaBuilder(schema, uiSchema) {
     return
   }
 
-  // This will removed, once the rjsf library issue is fixed for textarea
-  if (schema.type === 'string' && schema.format === 'textarea') {
-    uiSchema["ui:widget"] = CustomTextAreaWidget;
-    return
-  }
-
   if (schema.type === 'number' || schema.type === 'integer') {
     schema["maximum"] = 99999;
     schema["minimum"] = 0;

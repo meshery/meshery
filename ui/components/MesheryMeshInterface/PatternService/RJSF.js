@@ -79,7 +79,7 @@ function RJSFForm({
           DateTimeWidget : CustomDateTimeWidget,
           SelectWidget : CustomSelectWidget,
           CheckboxWidget : CustomCheckboxWidget,
-          TextAreaWidget : CustomTextAreaWidget,
+          TextareaWidget : CustomTextAreaWidget,
         }}
         liveValidate
         showErrorList={false}
