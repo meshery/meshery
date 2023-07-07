@@ -42,11 +42,13 @@ import ConfirmationMsg from "./ConfirmationModal";
 import PublishIcon from "@material-ui/icons/Publish";
 import downloadFile from "../utils/fileDownloader";
 import CloneIcon from "../public/static/img/CloneIcon";
-import PublishModal from "./PublishModal";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import fetchCatalogFilter from "./graphql/queries/CatalogFilterQuery";
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import { iconMedium } from "../css/icons.styles";
+import Modal from "./Modal";
+import { publish_schema } from "./schemas/publish_schema";
+import _ from "lodash";
 
 const styles = (theme) => ({
   grid : {
@@ -198,8 +200,14 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   })
   const [publishModal, setPublishModal] = useState({
     open : false,
-    filter : {}
+    filter : {},
+    name : "",
   });
+  const [payload, setPayload] = useState({
+    id : "",
+    catalog_data : {}
+  });
+
   const [loading, stillLoading] = useState(true);
 
   const catalogContentRef = useRef();
@@ -266,6 +274,13 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
   const searchTimeout = useRef(null);
 
+  const onChange = (e) => {
+    setPayload({
+      id : publishModal.filter?.id,
+      catalog_data : e
+    })
+  }
+
   const handleUploadImport = () => {
     setImportModal({
       open : true
@@ -325,7 +340,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const handlePublishModalClose = () => {
     setPublishModal({
       open : false,
-      filter : {}
+      filter : {},
+      name : ""
     });
   };
 
@@ -1103,7 +1119,23 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           componentCount={modalOpen.count}
           tab={modalOpen.deploy ? 2 : 1}
         />
-        {canPublishFilter && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} resourceType={publishModal.filter} title={publishModal.filter?.name} aria-label="catalog publish" handlePublish={handlePublish} />}
+        {canPublishFilter &&
+          <Modal open={publishModal.open} schema={publish_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.filter?.catalog_data : payload.catalog_data } aria-label="catalog publish" title={publishModal.filter?.name}>
+            <Button
+              title="Publish"
+              variant="contained"
+              color="primary"
+              className={classes.testsButton}
+              onClick={() => {
+                handlePublishModalClose();
+                handlePublish(payload)
+              }}
+            >
+              <PublicIcon className={classes.iconPatt} />
+              <span className={classes.btnText}> Publish </span>
+            </Button>
+          </Modal>
+        }
         <PromptComponent ref={modalRef} />
         <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchFilters(page, pageSize, search, sortOrder) } configuration="Filter" />
       </NoSsr>

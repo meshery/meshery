@@ -52,7 +52,10 @@ function Modal(props) {
         open={open}
         onClose={handleClose}>
         <DialogTitle>
-          <div className={classes.publishTitle}>
+          <div style={{
+            display : "flex",
+            justifyContent : "space-between",
+          }}>
             <p style={{
               display : "flex",
               alignItems : "center",
