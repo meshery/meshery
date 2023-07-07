@@ -14,9 +14,9 @@ import useStyles from "../MesheryPatterns/Cards.styles";
 import YAMLDialog from "../YamlDialog";
 import CloneIcon from "../../public/static/img/CloneIcon";
 import PublicIcon from '@material-ui/icons/Public';
-import DownloadIcon from "@material-ui/icons/CloudDownload";
 import TooltipButton from '../../utils/TooltipButton.js'
 import { VISIBILITY } from "../../utils/Enum";
+import GetAppIcon from '@material-ui/icons/GetApp';
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -130,8 +130,8 @@ function FiltersCard({
                 color="primary"
                 onClick={handleDownload}>
 
-                <DownloadIcon fill="#ffffff" className={classes.iconPatt} />
-                Download
+                <GetAppIcon fill="#ffffff" className={classes.iconPatt} />
+                <span className={classes.btnText}>Download</span>
               </TooltipButton>
 
               {visibility === VISIBILITY.PUBLISHED ? <TooltipButton
@@ -140,9 +140,9 @@ function FiltersCard({
                 color="primary"
                 onClick={(ev) =>
                   genericClickHandler(ev, handleClone)
-                }>
+                } >
                 <CloneIcon fill="#ffffff" className={classes.iconPatt} />
-                  Clone
+                <span className={classes.btnText}>Clone</span>
               </TooltipButton> : null }
             </div>
           </div>
