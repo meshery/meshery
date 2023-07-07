@@ -16,7 +16,6 @@ import (
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/manifests"
 
-	// "github.com/layer5io/meshkit/utils/component"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
