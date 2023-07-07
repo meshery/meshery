@@ -23,7 +23,7 @@
     "@babel/eslint-parser": "^7.21.8",
     "@cypress/code-coverage": "^3.10.7",
     "@emotion/cache": "^11.10.5",
-    "@emotion/react": "^11.11.0",
+    "@emotion/react": "^11.11.1",
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.11.16",

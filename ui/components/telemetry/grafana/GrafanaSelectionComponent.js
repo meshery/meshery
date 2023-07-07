@@ -11,7 +11,9 @@ import { updateProgress } from '../../../lib/store';
 import { trueRandom } from '../../../lib/trueRandom';
 
 const grafanaStyles = (theme) => ({
-  grafanaRoot : { padding : theme.spacing(5), },
+  grafanaRoot : { padding : theme.spacing(5),
+    backgroundColor : theme.palette.secondary.elevatedComponents,
+    marginTop : theme.spacing(2), marginBottom : theme.spacing(2) },
   buttons : { display : 'flex',
     justifyContent : 'flex-end', },
   button : { marginTop : theme.spacing(3),

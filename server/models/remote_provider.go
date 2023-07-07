@@ -2393,7 +2393,6 @@ func (l *RemoteProvider) PublishCatalogFilter(req *http.Request, publishFilterRe
 	return nil, fmt.Errorf("error while publishing filter file to catalog - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
-
 // UnPublishMesheryFilter publishes a meshery filter with the given id to catalog
 func (l *RemoteProvider) UnPublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error) {
 	if !l.Capabilities.IsSupported(MesheryFiltersCatalog) {
@@ -2446,7 +2445,7 @@ func (l *RemoteProvider) UnPublishCatalogFilter(req *http.Request, publishFilter
 	return nil, fmt.Errorf("error while unpublishing filter file from catalog - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
-func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
+func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path string, save bool, resource string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryFilters) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistMesheryFilters", l.ProviderName)
@@ -2458,8 +2457,12 @@ func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path s
 		"url":  resourceURL,
 		"save": save,
 		"path": path,
-	})
+		"filter_data": MesheryFilter{
+			FilterResource: resource,
+		},
 
+	})
+	
 	if err != nil {
 		err = ErrMarshal(err, "meshery metrics for shipping")
 		return nil, err
@@ -3916,7 +3919,7 @@ func (l *RemoteProvider) SaveUserCredential(req *http.Request, credential *Crede
 		return ErrDataRead(err, "Save Credential")
 	}
 
-	if resp.StatusCode == http.StatusOK {
+	if resp.StatusCode == http.StatusCreated {
 		return nil
 	}
 
@@ -3929,7 +3932,7 @@ func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, p
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistCredentials", l.ProviderName)
 	}
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMPTestProfile)
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistCredentials)
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
@@ -3947,7 +3950,7 @@ func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, p
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		return nil, ErrFetch(err, "Perf Test Config Page", resp.StatusCode)
+		return nil, ErrFetch(err, "Credentials Page", resp.StatusCode)
 	}
 	defer resp.Body.Close()
 
@@ -3958,7 +3961,7 @@ func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, p
 
 	var cp CredentialsPage
 	if err = json.Unmarshal(bdr, &cp); err != nil {
-		return nil, err
+		return nil, ErrFetch(err, "Unmarshal Credentials Page", resp.StatusCode)
 	}
 	return &cp, nil
 }
@@ -3976,7 +3979,7 @@ func (l *RemoteProvider) UpdateUserCredential(req *http.Request, credential *Cre
 	}
 	bf := bytes.NewBuffer(_creds)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
-	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
 	tokenString, _ := l.GetToken(req)
 	if err != nil {
 		logrus.Error("error getting token: ", err)
@@ -4012,11 +4015,14 @@ func (l *RemoteProvider) DeleteUserCredential(req *http.Request, credentialID uu
 		return nil, ErrInvalidCapability("PersistCredentials", l.ProviderName)
 	}
 
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryFilters)
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistCredentials)
 
 	logrus.Infof("attempting to delete credential from cloud for id: %s", credentialID)
 
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, credentialID))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
+	q := remoteProviderURL.Query()
+	q.Add("credential_id", credentialID.String())
+	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("constructed credential url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
 
@@ -4038,11 +4044,7 @@ func (l *RemoteProvider) DeleteUserCredential(req *http.Request, credentialID uu
 
 	if resp.StatusCode == http.StatusOK {
 		logrus.Infof("credential successfully deleted from remote provider")
-		var cred Credential
-		if err = json.Unmarshal(bdr, &cred); err != nil {
-			return nil, err
-		}
-		return &cred, nil
+		return nil, nil
 	}
 	logrus.Errorf("error while deleting credential: %s", bdr)
 	return nil, ErrDelete(fmt.Errorf("error while deleting credential: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
