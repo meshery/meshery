@@ -8,7 +8,7 @@ import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
 import useStyles from "../MesheryPatterns/Grid.styles";
-import PublishModal from "../PublishModal";
+import PublishModal from "../Modals/PublishModal";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 

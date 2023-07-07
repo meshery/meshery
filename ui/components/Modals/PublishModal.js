@@ -9,7 +9,7 @@ import {
   DialogTitle
 } from '@material-ui/core';
 import { Form } from '@rjsf/material-ui';
-import useStyles from "./MesheryPatterns/Cards.styles";
+import useStyles from "../MesheryPatterns/Cards.styles";
 import PublicIcon from '@material-ui/icons/Public';
 // const getMuiTheme = () => createTheme({
 //   palette : {
