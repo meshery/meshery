@@ -111,6 +111,11 @@ const (
 	ErrGetUserDetailsCode               = "2258"
 	ErrResolvingRelationship            = "2259"
 	ErrGetLatestVersionCode             = "2257"
+	ErrCreateFileCode                   = "2260"
+	ErrLoadCertificateCode              = "2261"
+	ErrCleanupCertificateCode           = "2262"
+	ErrTypeAssertionCode                = "2263"
+	ErrDownlaodWASMFileCode             = "2258"
 )
 
 var (
@@ -309,6 +314,11 @@ func ErrApplicationFailure(err error, obj string) error {
 func ErrApplicationSourceContent(err error, obj string) error {
 	return errors.New(ErrApplicationContentCode, errors.Alert, []string{"failed to ", obj, "the application content"}, []string{err.Error()}, []string{}, []string{})
 }
+
+func ErrDownloadWASMFile(err error, obj string) error {
+	return errors.New(ErrDownlaodWASMFileCode, errors.Alert, []string{"failed to ", obj, "the WASM file"}, []string{err.Error()}, []string{"Ensure that DB is not corrupted", "Ensure Remote Provider is working properly", "Ensure Meshery Server is working properly and connected to remote provider"}, []string{"Try restarting Meshery server"})
+}
+
 func ErrDecoding(err error, obj string) error {
 	return errors.New(ErrDecodingCode, errors.Alert, []string{"Error decoding the : ", obj}, []string{err.Error()}, []string{"Object is not a valid json object"}, []string{"Make sure if the object passed is a valid json"})
 }
@@ -489,4 +499,16 @@ func ErrGetUserDetails(err error) error {
 
 func ErrResolvingRegoRelationship(err error) error {
 	return errors.New(ErrResolvingRelationship, errors.Alert, []string{"could not resolve rego relationship"}, []string{err.Error()}, []string{"The rego evaluation engine failed to resolve policies", "Design-File/Application-File is in incorrect format", "The policy query is invalid", "The evaluation engine response is unexpected for the code written"}, []string{"Make sure the design-file/application-file is a valid yaml", "Make sure you're proving correct rego query", "Make sure the server is evaluating the query correctly, add some logs"})
+}
+
+func ErrCreateFile(err error, obj string) error {
+	return errors.New(ErrCreateFileCode, errors.Alert, []string{"Could not create file", obj}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrLoadCertificate(err error) error {
+	return errors.New(ErrLoadCertificateCode, errors.Alert, []string{"Could not load certificates associated with performance profile"}, []string{err.Error()}, []string{"Remote provider might be not reachable"}, []string{"try running performance profile test without using certificates, update the profile without certificates"})
+}
+
+func ErrCleanupCertificate(err error, obj string) error {
+	return errors.New(ErrCleanupCertificateCode, errors.Alert, []string{"Could not delete certificates from ", obj}, []string{err.Error()}, []string{"might be due to insufficient permissions", "file was deleted manually"}, []string{"please delete the file if present, path: ", obj})
 }

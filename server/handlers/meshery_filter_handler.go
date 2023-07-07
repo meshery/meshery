@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 
@@ -49,8 +51,13 @@ func (h *Handler) GetMesheryFilterFileHandler(
 		return
 	}
 
-	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	reader := bytes.NewReader(resp)
+	rw.Header().Set("Content-Type", "application/wasm")
+	_, err = io.Copy(rw, reader)
+	if err != nil {
+		h.log.Error(ErrDownloadWASMFile(err, "download"))
+		http.Error(rw, ErrDownloadWASMFile(err, "download").Error(), http.StatusInternalServerError)
+	}
 }
 
 // FilterFileRequestHandler will handle requests of both type GET and POST
@@ -149,7 +156,7 @@ func (h *Handler) handleFilterPOST(
 			UserID:     parsedBody.FilterData.UserID,
 			UpdatedAt:  parsedBody.FilterData.UpdatedAt,
 			Location:   parsedBody.FilterData.Location,
-      		FilterResource: filterResource,
+      FilterResource: filterResource,
 		}
 
 		if parsedBody.Save {
@@ -197,7 +204,7 @@ func (h *Handler) handleFilterPOST(
 // swagger:route GET /api/filter FiltersAPI idGetFilterFiles
 // Handle GET request for filters
 //
-// Returns the list of all the filters saved by the current user
+// # Returns the list of all the filters saved by the current user
 //
 // ```?order={field}``` orders on the passed field
 //
@@ -207,7 +214,8 @@ func (h *Handler) handleFilterPOST(
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
 // responses:
-// 	200: mesheryFiltersResponseWrapper
+//
+//	200: mesheryFiltersResponseWrapper
 func (h *Handler) GetMesheryFiltersHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -238,8 +246,8 @@ func (h *Handler) GetMesheryFiltersHandler(
 //
 // ```?page={page-number}``` Default page number is 0
 //
-// ```?pagesize={pagesize}``` Default pagesize is 10. 
-// 
+// ```?pagesize={pagesize}``` Default pagesize is 10.
+//
 // ```?search={filtername}``` If search is non empty then a greedy search is performed
 // responses:
 //
