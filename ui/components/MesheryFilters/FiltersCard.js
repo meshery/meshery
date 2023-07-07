@@ -123,16 +123,19 @@ function FiltersCard({
                 )
               }
 
-              {visibility === VISIBILITY.PUBLISHED ? <TooltipButton
-                title="Clone"
-                variant="contained"
-                color="primary"
-                onClick={(ev) =>
-                  genericClickHandler(ev, handleClone)
-                }>
-                <CloneIcon fill="#ffffff" className={classes.iconPatt} />
-                  Clone
-              </TooltipButton> : null }
+              {visibility === VISIBILITY.PUBLISHED ?
+                <TooltipButton
+                  title="Clone"
+                  variant="contained"
+                  color="primary"
+                  onClick={(ev) =>
+                    genericClickHandler(ev, handleClone)
+                  }
+                  className={classes.testsButton}
+                >
+                  <CloneIcon fill="#ffffff" className={classes.iconPatt} />
+                  <span className={classes.cloneBtnText}> Clone </span>
+                </TooltipButton> : null }
             </div>
           </div>
         </>

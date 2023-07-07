@@ -83,20 +83,23 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
   });
   const [publishModal, setPublishModal] = useState({
     open : false,
-    pattern : {}
+    pattern : {},
+    name : ""
   });
   const handlePublishModal = (pattern) => {
     if (canPublishPattern) {
       setPublishModal({
         open : true,
-        pattern : pattern
+        pattern : pattern,
+        name : ""
       });
     }
   };
   const handlePublishModalClose = () => {
     setPublishModal({
       open : false,
-      pattern : {}
+      pattern : {},
+      name : ""
     });
   };
 
