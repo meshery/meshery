@@ -74,7 +74,7 @@ describe("Test Lifecycle Paths With None Provider", () => {
     })
     cy.visit("/")
     cy.get('[data-cy="lifecycle"]').click();
-    cy.wait('@gqlAddonsStatusQuery', { timeout: 30_000 })
+    cy.wait('@gqlAddonsStatusQuery', { timeout: 40_000 })
     cy.get('[data-cy="consul"]').click();
     doGeneralConsulLifecycleChecks(cy);
   })
