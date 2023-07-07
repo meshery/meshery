@@ -1,9 +1,6 @@
 apiVersion: v2
 name: meshery
 description: Meshery chart for deploying Meshery and Meshery's adapters.
-metadata:
-  name: meshery
-  namespace: meshery
 icon: https://meshery.io/images/logos/meshery-logo.png
 kubeVersion:
 keywords:
