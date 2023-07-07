@@ -270,8 +270,8 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 					continue
 				}
 
-				modifiedProps := component.UpdateProperties(fieldVal, cue.ParsePath("properties.spec"), apiVersion)
-				if modifiedProps != nil {
+				modifiedProps, err := component.UpdateProperties(fieldVal, cue.ParsePath("properties.spec"), apiVersion)
+				if err == nil {
 					modified = modifiedProps
 				}
 
