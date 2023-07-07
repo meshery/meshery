@@ -15,6 +15,7 @@ import MesheryWrapIfAdditionalTemplate from './RJSFCustomComponents/WrapIfAdditi
 import _ from "lodash"
 import { CustomCheckboxWidget } from './RJSFCustomComponents/CustomCheckboxWidget';
 import CustomSelectWidget from './RJSFCustomComponents/CustomSelectWidget';
+import CustomTextAreaWidget from './RJSFCustomComponents/CustomTextAreaWidget';
 
 const MuiRJSFForm = withTheme(MaterialUITheme);
 
@@ -73,11 +74,12 @@ function RJSFForm({
         formContext={{ overrideFlag : override, CustomTextTooltip : CustomTextTooltip }}
         uiSchema={_.merge(schema.uiSchema, uiSchema)}
         widgets={{
-          TextWidget : CustomTextWidget,
           // Custom components to be added here
+          TextWidget : CustomTextWidget,
           DateTimeWidget : CustomDateTimeWidget,
           SelectWidget : CustomSelectWidget,
           CheckboxWidget : CustomCheckboxWidget,
+          TextAreaWidget : CustomTextAreaWidget,
         }}
         liveValidate
         showErrorList={false}

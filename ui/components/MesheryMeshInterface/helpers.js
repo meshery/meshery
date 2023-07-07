@@ -2,6 +2,7 @@
 // ********************************** TYPE DEFINTIONS **********************************
 
 import { trueRandom } from "../../lib/trueRandom";
+import CustomTextAreaWidget from "./PatternService/RJSFCustomComponents/CustomTextAreaWidget";
 import { userPromptKeys } from "./PatternService/helper";
 
 /**
@@ -123,6 +124,12 @@ function jsonSchemaBuilder(schema, uiSchema) {
   }
 
   if (uiSchema["ui:widget"]) { // if widget is already assigned, don't go over
+    return
+  }
+
+  // This will removed, once the rjsf library issue is fixed for textarea
+  if (schema.type === 'string' && schema.format === 'textarea') {
+    uiSchema["ui:widget"] = CustomTextAreaWidget;
     return
   }
 
