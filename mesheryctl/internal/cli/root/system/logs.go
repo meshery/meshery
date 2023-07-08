@@ -70,7 +70,11 @@ var logsCmd = &cobra.Command{
 It also shows the logs of a specific component.`,
 	Args: cobra.ArbitraryArgs,
 	Example: `
+// Show logs (without tailing)
+mesheryctl system logs
+
 // Starts tailing Meshery server debug logs (works with components also)
+mesheryctl system logs --follow
 mesheryctl system logs meshery-istio
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
