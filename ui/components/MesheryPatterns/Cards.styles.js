@@ -23,6 +23,11 @@ const useStyles = makeStyles((theme) => ({
   perfResultsContainer : {
     marginTop : "0.5rem"
   },
+  flipButton : {
+    minWidth : "max-content",
+    padding : "6px 9px",
+    twhiteSpace : "nowwrap"
+  },
   backGrid : {
     marginBottom : "0.25rem",
     minHeight : "6rem",

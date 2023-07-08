@@ -15,7 +15,7 @@ replace (
 )
 
 require (
-	cuelang.org/go v0.4.3
+	cuelang.org/go v0.5.0
 	fortio.org/fortio v1.21.0
 	github.com/99designs/gqlgen v0.17.28
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef
@@ -40,7 +40,7 @@ require (
 	github.com/jinzhu/copier v0.3.5
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
 	github.com/layer5io/meshery-operator v0.6.8
-	github.com/layer5io/meshkit v0.6.46
+	github.com/layer5io/meshkit v0.6.47
 	github.com/layer5io/meshsync v0.6.9
 	github.com/layer5io/nighthawk-go v1.0.5
 	github.com/layer5io/service-mesh-performance v0.3.4
@@ -104,7 +104,7 @@ require (
 	github.com/chai2010/gettext-go v1.0.2 // indirect
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e // indirect
 	github.com/cncf/xds/go v0.0.0-20230607035331-e9ce68804cb4 // indirect
-	github.com/cockroachdb/apd/v2 v2.0.1 // indirect
+	github.com/cockroachdb/apd/v2 v2.0.2 // indirect
 	github.com/containerd/cgroups v1.1.0 // indirect
 	github.com/containerd/containerd v1.6.19 // indirect
 	github.com/cyphar/filepath-securejoin v0.2.3 // indirect
@@ -191,7 +191,7 @@ require (
 	github.com/miekg/pkcs11 v1.1.1 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
-	github.com/mitchellh/go-wordwrap v1.0.0 // indirect
+	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/moby/locker v1.0.1 // indirect
@@ -208,6 +208,7 @@ require (
 	github.com/nats-io/nats.go v1.22.1 // indirect
 	github.com/nats-io/nkeys v0.3.0 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
+	github.com/norwoodj/helm-docs v1.11.0 // indirect
 	github.com/novln/docker-parser v1.0.0 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/open-policy-agent/opa v0.52.0 // indirect
@@ -261,6 +262,7 @@ require (
 	k8s.io/apiserver v0.26.0 // indirect
 	k8s.io/cli-runtime v0.26.0 // indirect
 	k8s.io/component-base v0.26.0 // indirect
+	k8s.io/helm v2.14.3+incompatible // indirect
 	k8s.io/klog/v2 v2.90.0 // indirect
 	k8s.io/kube-openapi v0.0.0-20230109183929-3758b55a6596 // indirect
 	k8s.io/kubectl v0.26.0 // indirect
