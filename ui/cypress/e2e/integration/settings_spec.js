@@ -1,9 +1,9 @@
 describe("Settings", () => {
   describe("Service Meshes", () => {
     beforeEach(() => {
+      cy.visit("settings", { timeout: 45_000, headers: { "Accept-Encoding": "gzip, deflate" } });
       cy.intercept("GET", "/api/system/adapters", { fixture: "getMeshAdapters.json" }).as("getMeshAdapters");
       cy.intercept("POST", "/api/system/adapter/manage", { fixture: "postMeshManage.json" }).as("postMeshManage");
-      cy.visit("settings", { responseTimeout: 45_000 });
       cy.get('[data-cy="tabServiceMeshes"]').click({ force: true });
     });
 
