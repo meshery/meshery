@@ -23,7 +23,7 @@ function FiltersCard({
   name,
   updated_at,
   created_at,
-  filter_file,
+  filter_resource,
   handleClone,
   deleteHandler,
   setYaml,
@@ -58,11 +58,10 @@ function FiltersCard({
           fullScreen={fullScreen}
           name={name}
           toggleFullScreen={toggleFullScreen}
-          config_file={filter_file}
+          config_file={filter_resource}
           setYaml={setYaml}
           deleteHandler={deleteHandler}
           updateHandler={updateHandler}
-          type={"filter"}
         />
       }
       <FlipCard
@@ -180,7 +179,7 @@ function FiltersCard({
 
               { catalogContentKeys.length === 0 ?
                 <CodeMirror
-                  value={showCode && filter_file}
+                  value={showCode && filter_resource}
                   className={fullScreen ? classes.fullScreenCodeMirror : ""}
                   options={{
                     theme : "material",
@@ -189,7 +188,7 @@ function FiltersCard({
                     gutters : ["CodeMirror-lint-markers"],
                     // @ts-ignore
                     lint : true,
-                    mode : "text/plain",
+                    mode : "text/x-yaml",
                   }}
                   onChange={(_, data, val) => setYaml(val)}
                 />

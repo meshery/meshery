@@ -15,9 +15,9 @@ import Modal from "../Modal";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
-function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit, setSelectedFilters, handleClone, handlePublishModal, handleUnpublishModal, canPublishFilter }) {
+function FilterCardGridItem({ filter, yamlConfig, handleDeploy, handleUndeploy, handleSubmit, setSelectedFilters, handleClone, handlePublishModal, handleUnpublishModal, canPublishFilter }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
-  const [yaml, setYaml] = useState(filter.config);
+  const [yaml, setYaml] = useState(yamlConfig);
 
   return (
     <Grid item {...gridProps}>
@@ -25,7 +25,7 @@ function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit
         name={filter.name}
         updated_at={filter.updated_at}
         created_at={filter.created_at}
-        filter_file={filter.filter_file}
+        filter_resource={yaml}
         canPublishFilter={canPublishFilter}
         handlePublishModal={handlePublishModal}
         handleUnpublishModal={handleUnpublishModal}
@@ -71,7 +71,7 @@ function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit
   */
 
 
-function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, handleSubmit,urlUploadHandler,uploadHandler, setSelectedFilter, selectedFilter, pages = 1,setPage, selectedPage, UploadImport, fetch, canPublishFilter, handlePublish, handleUnpublishModal }) {
+function FiltersGrid({ filters = [], handleDeploy, handleUndeploy, handleClone, handleSubmit, urlUploadHandler, uploadHandler, setSelectedFilter, selectedFilter, pages = 1, setPage, selectedPage, UploadImport, fetch, canPublishFilter, handlePublish, handleUnpublishModal }) {
 
   const classes = useStyles()
 
@@ -153,32 +153,42 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, han
     });
   }
 
+  const getYamlConfig = (filter_resource) => {
+    if (filter_resource) {
+      return JSON.parse(filter_resource).settings.config;
+    }
+
+    return "";
+
+  }
+
   return (
     <div>
       {!selectedFilter.show &&
-      <Grid container spacing={3} style={{ padding : "1rem" }}>
-        {filters.map((filter) => (
-          <FilterCardGridItem
-            key={filter.id}
-            filter={filter}
-            handleClone={() => handleClone(filter.id, filter.name)}
-            handleDeploy={() => handleModalOpen(filter, true)}
-            handleUndeploy={() => handleModalOpen(filter, false)}
-            handleSubmit={handleSubmit}
-            setSelectedFilters={setSelectedFilter}
-            canPublishFilter={canPublishFilter}
-            handlePublishModal={() => handlePublishModal(filter)}
-            handleUnpublishModal={(e) => handleUnpublishModal(e, filter)()}
-          />
-        ))}
+        <Grid container spacing={3} style={{ padding : "1rem" }}>
+          {filters.map((filter) => (
+            <FilterCardGridItem
+              key={filter.id}
+              filter={filter}
+              yamlConfig={getYamlConfig(filter.filter_resource)}
+              handleClone={() => handleClone(filter.id, filter.name)}
+              handleDeploy={() => handleModalOpen(filter, true)}
+              handleUndeploy={() => handleModalOpen(filter, false)}
+              handleSubmit={handleSubmit}
+              setSelectedFilters={setSelectedFilter}
+              canPublishFilter={canPublishFilter}
+              handlePublishModal={() => handlePublishModal(filter)}
+              handleUnpublishModal={(e) => handleUnpublishModal(e, filter)()}
+            />
+          ))}
 
-      </Grid>
+        </Grid>
       }
       {!selectedFilter.show && filters.length === 0 &&
         <Paper className={classes.noPaper}>
           <div className={classes.noContainer}>
             <Typography align="center" color="textSecondary" className={classes.noText}>
-            No Filters Found
+              No Filters Found
             </Typography>
             <div>
               <Button
@@ -191,7 +201,7 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, han
                 style={{ marginRight : "2rem" }}
               >
                 <PublishIcon className={classes.addIcon} />
-              Import Filter
+                Import Filter
               </Button>
             </div>
           </div>
@@ -200,7 +210,7 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, han
       {filters.length
         ? (
           <div className={classes.pagination} >
-            <Pagination count={pages} page={selectedPage+1} onChange={(_, page) => setPage(page - 1)} />
+            <Pagination count={pages} page={selectedPage + 1} onChange={(_, page) => setPage(page - 1)} />
           </div>
         )
         : null}
@@ -211,12 +221,12 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, han
           { deploy : () => handleDeploy(modalOpen.filter_file), unDeploy : () => handleUndeploy(modalOpen.filter_file) }
         }
         isDelete={!modalOpen.deploy}
-        title={ modalOpen.name }
-        componentCount = {modalOpen.count}
+        title={modalOpen.name}
+        componentCount={modalOpen.count}
         tab={modalOpen.deploy ? 2 : 1}
       />
       {canPublishFilter &&
-        <Modal open={publishModal.open} schema={publish_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.filter?.catalog_data : payload.catalog_data } aria-label="catalog publish" title={publishModal.filter?.name}>
+        <Modal open={publishModal.open} schema={publish_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data) ? publishModal?.filter?.catalog_data : payload.catalog_data} aria-label="catalog publish" title={publishModal.filter?.name}>
           <Button
             title="Publish"
             variant="contained"
@@ -232,7 +242,7 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, han
           </Button>
         </Modal>
       }
-      <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetch()} configuration="Filter"  />
+      <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetch()} configuration="Filter" />
     </div>
   );
 }
