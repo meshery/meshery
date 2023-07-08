@@ -1,5 +1,10 @@
 import { createTheme } from '@material-ui/core/styles';
-import { blueGrey } from '@material-ui/core/colors';
+
+export const primaryColor = {
+  main : "#677E88",
+  dark : "#677E88",
+  light : "#677E88"
+}
 
 const drawerWidth = 256;
 export var darkTheme = createTheme({
@@ -20,7 +25,7 @@ export var darkTheme = createTheme({
   },
   palette : {
     type : "dark",
-    primary : blueGrey,
+    primary : primaryColor ,
     secondary : {
       main : '#EE5351',
       primeColor : '#303030',
@@ -229,7 +234,7 @@ let theme = createTheme({
     //   main: '#607d8b',
     //   dark: '#455a64',
     // },
-    primary : blueGrey,
+    primary : primaryColor,
     secondary : {
       main : '#EE5351',
       primeColor : '#ebeff1',
