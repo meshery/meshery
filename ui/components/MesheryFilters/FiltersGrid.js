@@ -13,7 +13,7 @@ import { publish_schema } from "../schemas/publish_schema";
 import _ from "lodash";
 import Modal from "../Modal";
 
-const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
+const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
 function FilterCardGridItem({
   filter,
@@ -41,15 +41,15 @@ function FilterCardGridItem({
         canPublishFilter={canPublishFilter}
         handlePublishModal={handlePublishModal}
         handleUnpublishModal={handleUnpublishModal}
-        requestFullSize={() => setGridProps({ xl: 12, md: 12, xs: 12 })}
+        requestFullSize={() => setGridProps({ xl : 12, md : 12, xs : 12 })}
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
         handleDeploy={handleDeploy}
         handleUndeploy={handleUndeploy}
         handleClone={handleClone}
         handleDownload={(ev) => handleDownload(ev, filter.id, filter.name)}
-        deleteHandler={() => handleSubmit({ data: yaml, id: filter.id, type: FILE_OPS.DELETE, name: filter.name })}
-        updateHandler={() => handleSubmit({ data: yaml, id: filter.id, type: FILE_OPS.UPDATE, name: filter.name })}
-        setSelectedFilters={() => setSelectedFilters({ filter: filter, show: true })}
+        deleteHandler={() => handleSubmit({ data : yaml, id : filter.id, type : FILE_OPS.DELETE, name : filter.name })}
+        updateHandler={() => handleSubmit({ data : yaml, id : filter.id, type : FILE_OPS.UPDATE, name : filter.name })}
+        setSelectedFilters={() => setSelectedFilters({ filter : filter, show : true })}
         setYaml={setYaml}
         description={filter.desciption}
         visibility={filter.visibility}
@@ -107,80 +107,80 @@ function FiltersGrid({
   const classes = useStyles();
 
   const [importModal, setImportModal] = useState({
-    open: false,
+    open : false,
   });
 
   const [publishModal, setPublishModal] = useState({
-    open: false,
-    filter: {},
-    name: "",
+    open : false,
+    filter : {},
+    name : "",
   });
 
   const [payload, setPayload] = useState({
-    id: "",
-    catalog_data: {},
+    id : "",
+    catalog_data : {},
   });
 
   const handlePublishModal = (filter) => {
     if (canPublishFilter) {
       setPublishModal({
-        open: true,
-        filter: filter,
-        name: "",
+        open : true,
+        filter : filter,
+        name : "",
       });
     }
   };
 
   const onChange = (e) => {
     setPayload({
-      id: publishModal.filter?.id,
-      catalog_data: e,
+      id : publishModal.filter?.id,
+      catalog_data : e,
     });
   };
   const handlePublishModalClose = () => {
     setPublishModal({
-      open: false,
-      filter: {},
-      name: "",
+      open : false,
+      filter : {},
+      name : "",
     });
   };
 
   const handleUploadImport = () => {
     setImportModal({
-      open: true,
+      open : true,
     });
   };
 
   const handleUploadImportClose = () => {
     setImportModal({
-      open: false,
+      open : false,
     });
   };
 
   const [modalOpen, setModalOpen] = useState({
-    open: false,
-    deploy: false,
-    filter_file: null,
-    name: "",
-    count: 0,
+    open : false,
+    deploy : false,
+    filter_file : null,
+    name : "",
+    count : 0,
   });
 
   const handleModalClose = () => {
     setModalOpen({
-      open: false,
-      filter_file: null,
-      name: "",
-      count: 0,
+      open : false,
+      filter_file : null,
+      name : "",
+      count : 0,
     });
   };
 
   const handleModalOpen = (filter, isDeploy) => {
     setModalOpen({
-      open: true,
-      deploy: isDeploy,
-      filter_file: filter.filter_file,
-      name: filter.name,
-      count: getComponentsinFile(filter.filter_file),
+      open : true,
+      deploy : isDeploy,
+      filter_file : filter.filter_file,
+      name : filter.name,
+      count : getComponentsinFile(filter.filter_file),
     });
   };
 
@@ -195,7 +195,7 @@ function FiltersGrid({
   return (
     <div>
       {!selectedFilter.show && (
-        <Grid container spacing={3} style={{ padding: "1rem" }}>
+        <Grid container spacing={3} style={{ padding : "1rem" }}>
           {filters.map((filter) => (
             <FilterCardGridItem
               key={filter.id}
@@ -228,7 +228,7 @@ function FiltersGrid({
                 size="large"
                 // @ts-ignore
                 onClick={handleUploadImport}
-                style={{ marginRight: "2rem" }}
+                style={{ marginRight : "2rem" }}
               >
                 <PublishIcon className={classes.addIcon} />
                 Import Filter
@@ -246,8 +246,8 @@ function FiltersGrid({
         open={modalOpen.open}
         handleClose={handleModalClose}
         submit={{
-          deploy: () => handleDeploy(modalOpen.filter_file),
-          unDeploy: () => handleUndeploy(modalOpen.filter_file),
+          deploy : () => handleDeploy(modalOpen.filter_file),
+          unDeploy : () => handleUndeploy(modalOpen.filter_file),
         }}
         isDelete={!modalOpen.deploy}
         title={modalOpen.name}

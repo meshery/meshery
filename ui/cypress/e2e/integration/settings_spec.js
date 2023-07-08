@@ -1,10 +1,9 @@
 describe("Settings", () => {
   describe("Service Meshes", () => {
     beforeEach(() => {
-      cy.selectProviderNone();
-      cy.visit("settings", { responseTimeout: 35_000 });
       cy.intercept("GET", "/api/system/adapters", { fixture: "getMeshAdapters.json" }).as("getMeshAdapters");
       cy.intercept("POST", "/api/system/adapter/manage", { fixture: "postMeshManage.json" }).as("postMeshManage");
+      cy.visit("settings", { responseTimeout: 35_000 });
       cy.get('[data-cy="tabServiceMeshes"]').click({ force: true });
     });
 
