@@ -31,7 +31,7 @@ const useFetchTotal = ( fetchr ) => {
   return total
 }
 
-const CHART_COLORS = ["#00b39f","#B32700" ,"#396679" , '#EE5351']
+const CHART_COLORS = ["#00B39F" ,"#396679" ,"#83B71E" , '#00382D','#477E96','#396679']
 const dataToColors = (data) => {
   const columns = data.map((item) => item[0] )
   const colors = { }
@@ -98,6 +98,9 @@ function MeshModelCategories({ classes }) {
         }
       }
     },
+    legend : {
+      show : false
+    }
   }
   useEffect(() => {
     fetchCategories().then((categoriesJson) => {
