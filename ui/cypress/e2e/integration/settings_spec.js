@@ -10,7 +10,7 @@ describe("Settings", () => {
 
     it("Adapter Connection Status", () => {
       cy.wait("@getMeshAdapters");
-      cy.get("[data-cy='mesh-adapter-connections']", { timeout: 30000 }).should("be.visible")
+      cy.get("[data-cy='mesh-adapter-connections']").should("be.visible")
     });
 
     it("select, submit, and confirm", () => {
