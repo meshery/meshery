@@ -1097,6 +1097,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
               handlePublish={handlePublish}
               handleUnpublishModal={handleUnpublishModal}
               handleClone={handleClone}
+              handleDownload={handleDownload}
               urlUploadHandler={urlUploadHandler}
               uploadHandler={uploadHandler}
               setSelectedFilter={setSelectedFilter}
