@@ -24,14 +24,14 @@ The following is a list of top-level frameworks, libraries, design system used i
 
 ## Meshery Server APIs
 
-Go [here](https://docs.meshery.io/extensibility/api#rest) for the docs.
+The [API overview](https://docs.meshery.io/extensibility/api) in the Extensibility guide offers high-level insight, while each API reference (below) offers details pertainting to each API endpoints' behavior and use.
 
 ### REST API
-Meshery provides a REST API available through the default port of `9081/tcp`. See the [REST API Reference](https://docs.meshery.io/reference/rest-apis) for a complete list of endpoints available with short description of their purpose and example code.
+Meshery provides a REST API available through the default port of `9081/tcp` at `<hostname>:<port>/api/`. See the [REST API Reference](https://docs.meshery.io/reference/rest-apis) for a complete list of endpoints available with short description of their purpose and example code.
 
 ### GraphQL API
 
-Meshery provides a GraphQl API available through the default port of `9081/tcp`. [Relay](https://relay.dev) is the client used.
+Meshery provides a GraphQl API available through the default port of `9081/tcp` at `<hostname>:<port>/api/graphql/query`. See the [GraphQL API Referencee](https://docs.meshery.io/reference/graphql-apis) [Relay](https://relay.dev) is the client used.
 
 ## Design
 
