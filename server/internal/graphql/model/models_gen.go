@@ -45,15 +45,16 @@ type ApplicationResult struct {
 }
 
 type CatalogFilter struct {
-	ID          string                 `json:"id"`
-	Name        string                 `json:"name"`
-	FilterFile  string                 `json:"filter_file"`
-	UserID      string                 `json:"user_id"`
-	Location    *Location              `json:"location"`
-	Visibility  string                 `json:"visibility"`
-	CatalogData map[string]interface{} `json:"catalog_data,omitempty"`
-	CreatedAt   *string                `json:"created_at,omitempty"`
-	UpdatedAt   *string                `json:"updated_at,omitempty"`
+	ID             string                 `json:"id"`
+	Name           string                 `json:"name"`
+	FilterFile     string                 `json:"filter_file"`
+	UserID         string                 `json:"user_id"`
+	Location       *Location              `json:"location"`
+	FilterResource string                 `json:"filter_resource"`
+	Visibility     string                 `json:"visibility"`
+	CatalogData    map[string]interface{} `json:"catalog_data,omitempty"`
+	CreatedAt      *string                `json:"created_at,omitempty"`
+	UpdatedAt      *string                `json:"updated_at,omitempty"`
 }
 
 type CatalogPattern struct {
@@ -143,15 +144,16 @@ type FilterPage struct {
 }
 
 type FilterResult struct {
-	ID          string                 `json:"id"`
-	Name        string                 `json:"name"`
-	FilterFile  string                 `json:"filter_file"`
-	UserID      string                 `json:"user_id"`
-	Location    *Location              `json:"location"`
-	Visibility  string                 `json:"visibility"`
-	CatalogData map[string]interface{} `json:"catalog_data,omitempty"`
-	CreatedAt   *string                `json:"created_at,omitempty"`
-	UpdatedAt   *string                `json:"updated_at,omitempty"`
+	ID             string                 `json:"id"`
+	Name           string                 `json:"name"`
+	FilterFile     string                 `json:"filter_file"`
+	FilterResource string                 `json:"filter_resource"`
+	UserID         string                 `json:"user_id"`
+	Location       *Location              `json:"location"`
+	Visibility     string                 `json:"visibility"`
+	CatalogData    map[string]interface{} `json:"catalog_data,omitempty"`
+	CreatedAt      *string                `json:"created_at,omitempty"`
+	UpdatedAt      *string                `json:"updated_at,omitempty"`
 }
 
 type K8sContext struct {
