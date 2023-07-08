@@ -9,7 +9,7 @@ import {
 import { Form } from '@rjsf/material-ui';
 import useStyles from "./MesheryPatterns/Cards.styles";
 import PublicIcon from '@material-ui/icons/Public';
-import { publishSchema } from './schemas/connections/publishSchema';
+import { publish_schema } from './schemas/publish_schema';
 
 export default function PublishModal(props) {
   const { open, handleClose, resourceType, handlePublish, title } = props;
@@ -27,7 +27,7 @@ export default function PublishModal(props) {
         </DialogTitle>
         <DialogContent>
           <Grid container spacing={24} alignItems="center">
-            <Form schema={publishSchema} formData={data} validator={validator}
+            <Form schema={publish_schema} formData={data} validator={validator}
               onSubmit={(data) => {
                 handlePublish({
                   id : resourceType.id,
