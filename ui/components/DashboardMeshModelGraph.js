@@ -1,24 +1,12 @@
 import Grid from "@material-ui/core/Grid";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect,  useState } from "react";
 import {
   Typography
 } from "@material-ui/core";
-import bb, { donut,pie } from "billboard.js";
+import  BBChart from "./BBChart"
+import  { donut,pie } from "billboard.js";
 import { getAllComponents,getMeshModels,getRelationshipsDetail,fetchCategories, getModelFromCategoryApi } from "../api/meshmodel"
-
-const BBChart = ({ options }) => {
-  const chartRef = useRef(null);
-
-  useEffect(() => {
-    const chart = bb.generate({ ...options,bindto : chartRef.current });
-
-    return () => {
-      chart.destroy();
-    };
-  }, [options]);
-
-  return <div ref={chartRef} ></div>;
-};
+import { dataToColors } from "../utils/chartColors"
 
 const useFetchTotal = ( fetchr ) => {
   const [total , setTotal] = useState(0)
@@ -30,19 +18,6 @@ const useFetchTotal = ( fetchr ) => {
   },[])
   return total
 }
-
-const CHART_COLORS = ["#00B39F" ,"#396679" ,"#83B71E" , '#00382D','#477E96','#396679']
-const dataToColors = (data) => {
-  const columns = data.map((item) => item[0] )
-  const colors = { }
-  CHART_COLORS.forEach((color,idx) => {
-    if (idx < columns.length ) {
-      colors[columns[idx]] = color
-    }
-  })
-  return colors
-}
-
 
 function MeshModelContructs({ classes }){
   const totalModels = useFetchTotal(() => getMeshModels(1,1))
