@@ -7,8 +7,11 @@ import { FILE_OPS } from "../../utils/Enum";
 import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
+import PublicIcon from '@material-ui/icons/Public';
 import useStyles from "../MesheryPatterns/Grid.styles";
-import PublishModal from "../PublishModal";
+import { publish_schema } from "../schemas/publish_schema";
+import _ from "lodash";
+import Modal from "../Modal";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -80,20 +83,36 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone,hand
 
   const [publishModal, setPublishModal] = useState({
     open : false,
-    filter : {}
+    filter : {},
+    name : "",
   });
+
+  const [payload, setPayload] = useState({
+    id : "",
+    catalog_data : {}
+  });
+
   const handlePublishModal = (filter) => {
     if (canPublishFilter) {
       setPublishModal({
         open : true,
-        filter : filter
+        filter : filter,
+        name : ""
       });
     }
   };
+
+  const onChange = (e) => {
+    setPayload({
+      id : publishModal.filter?.id,
+      catalog_data : e
+    })
+  }
   const handlePublishModalClose = () => {
     setPublishModal({
       open : false,
-      filter : {}
+      filter : {},
+      name : ""
     });
   };
 
@@ -199,7 +218,23 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone,hand
         componentCount = {modalOpen.count}
         tab={modalOpen.deploy ? 2 : 1}
       />
-      {canPublishFilter && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} filter={publishModal.filter} aria-label="catalog publish" handlePublish={handlePublish} />}
+      {canPublishFilter &&
+        <Modal open={publishModal.open} schema={publish_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.filter?.catalog_data : payload.catalog_data } aria-label="catalog publish" title={publishModal.filter?.name}>
+          <Button
+            title="Publish"
+            variant="contained"
+            color="primary"
+            className={classes.testsButton}
+            onClick={() => {
+              handlePublishModalClose();
+              handlePublish(payload)
+            }}
+          >
+            <PublicIcon className={classes.iconPatt} />
+            <span className={classes.btnText}> Publish </span>
+          </Button>
+        </Modal>
+      }
       <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetch()} configuration="Filter"  />
     </div>
   );

@@ -39,7 +39,7 @@ function FiltersCard({
 
   const genericClickHandler = (ev, fn) => {
     ev.stopPropagation();
-    fn();
+    fn(ev);
   }
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [fullScreen, setFullScreen] = useState(false);
@@ -134,6 +134,7 @@ function FiltersCard({
                 <span className={classes.btnText}>Download</span>
               </TooltipButton>
 
+
               {visibility === VISIBILITY.PUBLISHED ? <TooltipButton
                 title="Clone"
                 variant="contained"
@@ -144,6 +145,7 @@ function FiltersCard({
                 <CloneIcon fill="#ffffff" className={classes.iconPatt} />
                 <span className={classes.cloneBtnText}>Clone</span>
               </TooltipButton> : null }
+
             </div>
           </div>
         </>
