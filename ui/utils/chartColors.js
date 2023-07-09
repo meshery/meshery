@@ -1,4 +1,21 @@
-export const CHART_COLORS = ['#00B39F' ,'#396679' ,'#83B71E' , '#00382D','#477E96','#F0A303', '#396679']
+export const CHART_COLORS = [
+  '#14232A', // Gunmetal
+  // '#213A45',
+  '#2E5261',
+  // '#294957',
+  '#3B697D', // Paynes' Gray
+  // '#396679',
+  '#4A839C',
+  // '#477E96', Teal Blue
+  '#5996B1',
+  // '#639CB5',
+  '#74A8BE',
+  // '#8Bb2C6',
+  '#90B9CB',
+  // '#AACCBD8', // Columbia Blue
+  '#CBDEE6',
+  // '#EEF4F7'
+]
 
 export const dataToColors = (data) => {
   const columns = data.map((item) => item[0] )
