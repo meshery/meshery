@@ -23,10 +23,12 @@ function MeshModelContructs({ classes }) {
   const totalModels = useFetchTotal(() => getMeshModels(1, 1))
   const totalComponents = useFetchTotal(() => getAllComponents(1, 1))
   const totalRelationships = useFetchTotal(() => getRelationshipsDetail(1, 1))
+    // TODO: Add Policies
   const data = [
     ["Models", totalModels],
     ["Components", totalComponents],
     ["Relationships", totalRelationships]
+    // TODO: Add Policies
   ]
   const chartOptions = {
     data: {
