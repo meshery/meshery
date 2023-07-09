@@ -346,4 +346,6 @@ For older releases we have to travel back in time. Using the `Tags` in github we
 
 The above [steps]({{site.baseurl}}/project/build-and-release#in-the-v0x-folder) for replacing all the instances of direct path are to be followed. 
 
+## Bi-weekly Meetings
 
+If you are interested in learning more about Meshery and its features, or if you want to contribute to the project, you are welcome to join the bi-weekly meetings hosted by the Meshery community. The meetings are held every other Wednesday at 10:00 AM UTC. You can find the meeting details and agenda in the [Meshery calendar](https://meshery.io/calendar) and the [meeting minutes document](https://docs.google.com/document/d/1GrVdGHZAYeu6wHNLLoiaKNqBtk7enXE9XeDRCvdA4bY/edit#). The meetings are open to everyone and recorded for later viewing. We hope to see you there!
