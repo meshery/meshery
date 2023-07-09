@@ -98,7 +98,7 @@ concerned with a long-lived configuration, while others have no state at all.
 
 | Components        | Persistence  | Description                                                           |
 | :---------------- | :----------- | :-------------------------------------------------------------------- |
-| [mesheryctl]((/guides/mesheryctl/working-with-mesheryctl))        | stateless    | command line interface that has a configuration file                  |
+| [mesheryctl](/guides/mesheryctl/working-with-mesheryctl)        | stateless    | command line interface that has a configuration file                  |
 | [Meshery Adapters](/concepts/architecture/adapters)  | stateless    | interface with service meshes on a transactional basis                |
 | Meshery Server    | caches state | application cache is stored in `$HOME/.meshery/` folder               |
 | [Meshery Providers](/extensibility/providers) | stateful     | location of persistent user preferences, environment, tests and so on |
