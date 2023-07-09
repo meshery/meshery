@@ -48,7 +48,7 @@ Meshery Server's GraphQl API is available at `<hostname>:<port>/api/graphql/quer
 - Mutations for creating, updating, and deleting data.
 - Subscriptions for watching for any data changes.
 
-Explore the Meshery GraphQL API using the `interactive Playground` provided with Meshery instance at `localhost:9081/api/system/graphql/playground`.
+Explore the Meshery GraphQL API using the `interactive Playground` provided with Meshery instance at `http://localhost:9081/api/system/graphql/playground`.
 
 {% include alert.html type="dark" title="Meshery's GraphQL API Reference" content="See <a href='/reference/graphql-apis'>GraphQL API Reference</a> Self-generated API documentation for Meshery’s GraphQL API. The API can be explored interactively using the GraphQL Playground. Documentation is generated from Meshery’s GraphQL schema. Each table below documents a GraphQL type." %}
 
