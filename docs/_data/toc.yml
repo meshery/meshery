@@ -63,20 +63,22 @@
 - title: 🧠 Concepts
   url: concepts
   links:
-    - title: Architecture
+    - title: Architecture ↆ
       url: concepts/architecture
+      children:
+        - title: Broker
+          url: concepts/architecture/broker
+        - title: Database
+          url: concepts/architecture/database  
+        - title: Meshsync
+          url: concepts/architecture/meshsync     
+        - title: Operator
+          url: concepts/architecture/operator   
     - title: Adapters
       url: concepts/architecture/adapters
-    - title: Broker
-      url: concepts/architecture/broker
     - title: Catalog
-      url: concepts/catalog
-    - title: Database
-      url: concepts/architecture/database  
-    - title: Meshsync
-      url: concepts/architecture/meshsync     
-    - title: Operator
-      url: concepts/architecture/operator   
+      url: concepts/catalog  
+    
         
 - title: ⚙️ Tasks (all)
   url: tasks
