@@ -66,14 +66,17 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 		o := fgrpc.GRPCRunnerOptions{
 			RunnerOptions:      ro,
 			Destination:        rURL,
-			CACert:             opts.CACert,
 			Service:            opts.GRPCHealthSvc,
 			Streams:            opts.GRPCStreamsCount,
 			AllowInitialErrors: opts.AllowInitialErrors,
-			Payload:            httpOpts.PayloadString(),
+			Payload:            httpOpts.PayloadUTF8(),
 			Delay:              opts.GRPCPingDelay,
 			UsePing:            opts.GRPCDoPing,
-			UnixDomainSocket:   httpOpts.UnixDomainSocket,
+		}
+
+		o.TLSOptions = fhttp.TLSOptions{
+			CACert:    opts.CACert,
+			UnixDomainSocket: httpOpts.UnixDomainSocket,
 		}
 		res, err = fgrpc.RunGRPCTest(&o)
 	} else {
