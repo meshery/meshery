@@ -1,7 +1,7 @@
 import { promisifiedDataFetch } from "../lib/data-fetch";
 import { MESHMODEL_ENDPOINT, MESHMODEL_RELATIONSHIPS_ENDPOINT } from "../constants/endpoints";
 
-const COMPONENTS_ENDPOINT = "/components";
+const COMPONENTS_ENDPOINT = "/api/meshmodels/components";
 const CATEGORIES_ENDPOINT = "/api/meshmodels/categories";
 
 /**
@@ -30,8 +30,8 @@ export async function fetchRelationships() {
   return await promisifiedDataFetch(`${MESHMODEL_RELATIONSHIPS_ENDPOINT}`)
 }
 
-export async function getAllComponents() {
-  return await promisifiedDataFetch(MESHMODEL_ENDPOINT + COMPONENTS_ENDPOINT);
+export async function getAllComponents(page=1,pageSize="all") {
+  return await promisifiedDataFetch(`${COMPONENTS_ENDPOINT}?page=${page}&pagesize=${pageSize}`);
 }
 
 export async function getMeshModels(page = 1, pageSize = "all") {
