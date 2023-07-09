@@ -23,7 +23,7 @@ function MeshModelContructs({ classes }) {
   const totalModels = useFetchTotal(() => getMeshModels(1, 1))
   const totalComponents = useFetchTotal(() => getAllComponents(1, 1))
   const totalRelationships = useFetchTotal(() => getRelationshipsDetail(1, 1))
-    // TODO: Add Policies
+  // TODO: Add Policies
   const data = [
     ["Models", totalModels],
     ["Components", totalComponents],
@@ -31,24 +31,22 @@ function MeshModelContructs({ classes }) {
     // TODO: Add Policies
   ]
   const chartOptions = {
-    data: {
-      columns: data,
-      type: donut(),
-      colors: dataToColors(data),
+    data : {
+      columns : data,
+      type : donut(),
+      colors : dataToColors(data),
     },
-    arc: {
-      cornerRadius: {
-        ratio: 0.1
+    arc : {
+      cornerRadius : {
+        ratio : 0.1
       }
     },
-    bindto: "#donutCornerRadius",
-    donut: {
-      title: "Capabilities\nRegistry"
+    donut : {
+      title : "Capabilities\nRegistry"
     },
-    bindto: "#multilineTitle",
-    tooltip: {
-      format: {
-        value: function (v) {
+    tooltip : {
+      format : {
+        value : function (v) {
           return v
         }
       }
@@ -76,20 +74,20 @@ function MeshModelCategories({ classes }) {
   const cleanedData = Object.keys(categoryMap).map((key) => ([key, categoryMap[key]]))
   const chartOptions = {
 
-    data: {
-      columns: cleanedData,
-      colors: dataToColors(cleanedData),
-      type: pie(),
+    data : {
+      columns : cleanedData,
+      colors : dataToColors(cleanedData),
+      type : pie(),
     },
-    tooltip: {
-      format: {
-        value: function (v) {
+    tooltip : {
+      format : {
+        value : function (v) {
           return `${v} Models`
         }
       }
     },
-    legend: {
-      show: false
+    legend : {
+      show : false
     }
   }
   useEffect(() => {
@@ -97,7 +95,7 @@ function MeshModelCategories({ classes }) {
       categoriesJson['categories'].forEach((category) => {
         let categoryName = category.name
         getModelFromCategoryApi(categoryName).then((modelsJson) => {
-          setCategoryMap((prevState) => ({ ...prevState, [categoryName]: modelsJson["total_count"] }))
+          setCategoryMap((prevState) => ({ ...prevState, [categoryName] : modelsJson["total_count"] }))
         })
       })
     })
