@@ -6,7 +6,7 @@
     },
     "model": {
         "name": "kubernetes",
-        "version": "*",
+        "version": "v1.25.2",
         "displayName": "Kubernetes",
         "category": {
             "name": "Orchestration \u0026 Management",
