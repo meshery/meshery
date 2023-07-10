@@ -601,7 +601,6 @@ class Navigator extends React.Component {
   renderNavigatorExtensions(children, depth) {
     const { classes, isDrawerCollapsed } = this.props;
     const { path } = this.state;
-
     if (children && children.length > 0) {
       return (
         <List disablePadding>
@@ -618,8 +617,8 @@ class Navigator extends React.Component {
                   key={id}
                   className={classNames(
                     depth === 1
-                      ? classes.nested1
-                      : classes.nested2,
+                      ? ""
+                      : classes.nested1,
                     classes.item,
                     classes.itemActionable,
                     path === href && classes.itemActiveItem,
