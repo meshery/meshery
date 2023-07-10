@@ -10,12 +10,11 @@ language: en
 
 ## Meshery's APIs
 
-Each of Meshery's APIs are subject to the following authentication and authorization system.  The REST and GraphQL APIs are available on the same network port you use to connect to Meshery UI, which is `9081/tcp` by default. Each of the API endpoints are exposed through [server.go](https://github.com/meshery/meshery/blob/master/server/router/server.go). Endpoints are grouped by function (e.g. `/api/system/version`). Additionally, [Remote Providers](./providers) can extend Meshery's endpoints behind the `/api/extensions/` endpoint.
+Each of Meshery's APIs are subject to the following authentication and authorization system. The REST and GraphQL APIs are available on the same network port you use to connect to Meshery UI, which is `9081/tcp` by default. Each of the API endpoints are exposed through [server.go](https://github.com/meshery/meshery/blob/master/server/router/server.go). Endpoints are grouped by function (e.g. `/api/system/version`). Additionally, [Remote Providers](./providers) can extend Meshery's endpoints behind the `/api/extensions/` endpoint.
 
 ### Authentication
 
 Requests to any of the API endpoints must be authenticated and include a valid JWT access token in the HTTP headers. Type of authentication is determined by the selected [Provider](#providers). Use of the Local Provider, "None", puts Meshery into single-user mode and does not require authentication.
-
 
 {% include alert.html type="dark" title="What are authentication tokens?" content="Meshery authentication tokens allow users or systems to authenticate with Meshery Server via either its two clients, <a href='/reference/mesheryctl'>Meshery >CLI</a> and <a href='/extensibility/api#how-to-get-your-token'>UI</a>, or its two APIs: <a href='/reference/rest-apis'>REST</a> or <a href='/reference/graphql-apis'>GraphQL</a>. <p>Meshery's authentication token system provide secure access to Meshery's powerful management features.</p>" %}
 
@@ -32,7 +31,6 @@ Each of the API endpoints are exposed through [server.go](https://github.com/lay
 Alternatively, [Remote Providers](./providers) can extend Meshery's endpoints behind the `/api/extensions/` endpoint.
 
 {% include alert.html type="dark" title="What are authentication tokens?" content="Meshery authentication tokens allow users or systems to authenticate with Meshery Server via either its two clients, <a href='/reference/mesheryctl'>Meshery CLI</a> and <a href='/extensibility/api#how-to-get-your-token'>Meshery UI</a>, or its two APIs: <a href='/reference/rest-apis'>REST</a> or <a href='/reference/graphql-apis'>GraphQL</a>. <p>Meshery's authentication token system provide secure access to Meshery's powerful management features.</p>" %}
-
 
 ### How to get your token
 
@@ -56,18 +54,18 @@ In order to use this command, you must have a web browser available on your syst
 
 Steps to test Meshery API with Postman:
 
-1. Download your token from Meshery UI and copy the token value from the downloaded file, this will be used for authentication
+- Download your token from Meshery UI and copy the token value from the downloaded file, this will be used for authentication
 
 ![image](https://github.com/Freedisch/meshery/assets/82499435/2fb42a2b-6cd8-4e1b-a6b0-42ee796d6755)
 
-3. In Postman, navigate to the Cookies section.
-4. Set the appropriate name and value for the cookie
+- In Postman, navigate to the Cookies section.
+- Set the appropriate name and value for the cookie
 
 ![Screenshot 2023-05-11 at 8 27 49 PM](https://github.com/Freedisch/meshery/assets/82499435/41ee447c-eb3d-4faf-8028-f83643282925)
 
 Make sure to save the configured cookies in Postman
 
-4. Click the "Send" Button to initiate the request
+- Click the "Send" Button to initiate the request
 
 Postman will send the request to the Meshery API using the configured cookies for authentication
 
@@ -89,7 +87,7 @@ Explore the Meshery GraphQL API using the `interactive Playground` provided with
 
 ## REST API
 
-Meshery Server's REST API is available at `<hostname>:<port>/api/`. 
+Meshery Server's REST API is available at `<hostname>:<port>/api/`.
 
 {% include alert.html type="dark" title="Meshery's REST API Reference" content="See <a href='/reference/rest-apis'>REST API Reference</a> Self-generated API documentation for Meshery’s REST API. Documentation is generated from Meshery’s Open API schema." %}
 
