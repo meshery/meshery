@@ -50,11 +50,11 @@ func TestFilterCmd(t *testing.T) {
 		},
 		{
 			Name:             "filter view with ID",
-			Args:             []string{"view","957fbc9b-a655-4892-823d-375102a9587c"},
+			Args:             []string{"view","c0c6035a-b1b9-412d-aab2-4ed1f1d51f84"},
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectedResponse: "filter.id.view.output.golden",
 			Fixture:          "filter.id.view.api.response.golden",
-			URL:              testContext.BaseURL + "/api/filter/957fbc9b-a655-4892-823d-375102a9587c",
+			URL:              testContext.BaseURL + "/api/filter/c0c6035a-b1b9-412d-aab2-4ed1f1d51f84",
 			ExpectHelp:       false,
 			ExpectErr:        false,
 		},
