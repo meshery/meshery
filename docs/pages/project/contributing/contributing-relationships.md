@@ -33,56 +33,10 @@ Relationships within MeshModel play a crucial role in establishing concrete visu
     - [Binding](https://github.com/meshery/meshery/tree/master/.github/assets/images/binding_realtionship.png)
 4. Prospose the appropriate relationship type, using one of the predefined set of relationship types or suggest a new relationship where an existing type does not fit.
 5. Create a Relationship Definition (yaml).
-6. Create a policy for evaluation of the relationship (rego). See [examples](../../../../server/meshmodel/policies/).
+6. Create a policy for evaluation of the relationship (rego). See [examples](https://github.com/meshery/meshery/tree/master/server/meshmodel/policies/).
 7. Add in Documentation.
 
-Example of a Network Edge Relationship Schema is:
-
-```yaml
-apiVersion: core.meshery.io/vlalphal
-
-kind: RelationshipDefinition
-
-metadata:
-    name: Network Edge Relationship
-    description: Network edge relationship
-    type: edge
-    sub-type: network
-    status:
-    spec:
-        schematic:
-            cue: |
-
-selectors:
-    allow:
-        from: [self | other ]
-            kind: 
-            model: 
-            version: 
-            patch:
-                patchStrategy: replace
-                mutatorRef: (#jsonref to value from where patch should be applied.)
-
-        to: [self | other ]
-            kind: (a package can reference components from another package)
-            model:
-            version:
-            patch:
-                patchStrategy: replace
-                mutatedRef: (#jsonRef to value that should be patched.)
-
-    deny:
-        to: [self | other ]
-            kind: (a package can reference components from another package)
-            model: 
-            version:
-        from: [self | other ]
-            kind: (a package can reference components from another package)
-            model: 
-            version:
-```
-
-**Existing Relationships and Subtypes**
+**Existing Relationships and their Subtypes**
 1. Hierarchical
 - [Inventory](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/hierarchical_inv_wasm_filters.json)
 - [Parent](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/hierarchical_parent.json)
@@ -95,4 +49,4 @@ selectors:
 - [Sibling](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/sibling.json)
 
 
-For more information refer - [MesheryModel Design Specs](https://docs.google.com/document/d/16z5hA8qVfSq885of9LXFUVvfom-hQXr-6oTD_GgoFmk/edit)
+For more information refer - [MeshModel - Construct Models in Meshery](https://docs.google.com/document/d/16z5hA8qVfSq885of9LXFUVvfom-hQXr-6oTD_GgoFmk/edit)
