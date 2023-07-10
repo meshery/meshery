@@ -20,7 +20,6 @@ Requests to any of the API endpoints must be authenticated and include a valid J
 
 #### What are authentication tokens?
 
-
 ### Authorization
 
 Currently, Meshery only requires a valid token in order to allow clients to invoke its APIs.
@@ -47,7 +46,21 @@ Using Meshery CLI, you can get a copy of your authentication token by executing 
 
 {% include code.html code="mesheryctl system login" %}
 
-In order to use this command, you must have a web browser available on your system (this command cannot be executed on a headless system).  
+In order to use this command, you must have a web browser available on your system (this command cannot be executed on a headless system).
+
+### How to use the token for requests to the Meshery REST API in Postman?
+
+Steps to test Meshery API with Postman:
+
+1. Download your token from Meshery UI and copy the token value from the downloaded file, this will be used for authentication
+2. In Postman, navigate to the Cookies section.
+3. Set the appropriate name and value for the cookie
+
+Make sure to save the configured cookies in Postman
+
+4. Click the "Send" Button to initiate the request
+
+Postman will send the request to the Meshery API using the configured cookies for authentication
 
 #### GraphQL
 
@@ -72,3 +85,4 @@ Meshery provides a REST API available through the default port of `9081/tcp`.
 ## See Also
 
 - [Extension Points](/extensibility)
+
