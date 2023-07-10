@@ -37,43 +37,55 @@ Follow these steps and you'll be right at home.
 
 To contribute to Meshery, from creating a fork to creating pull request, please follow the basic fork-and-pull request workflow described [here]({{site.baseurl}}/project/contributing/contributing-gitflow).
 
-### Signing-off on Commits (Developer Certificate of Origin)
 
+<details>
+
+<summary>Signing-off on Commits (Developer Certificate of Origin)</summary>
+
+<ul>
+<li>
 To contribute to this project, you must agree to the Developer Certificate of
 Origin (DCO) for each commit you make. The DCO is a simple statement that you,
 as a contributor, have the legal right to make the contribution.
+</li>
 
-See the [DCO](https://developercertificate.org) file for the full text of what you must agree to
-and how it works [here](https://github.com/probot/dco#how-it-works).
+<li>
+See the <a href="https://developercertificate.org"> DCO </a> file for the full text of what you must agree to
+and how it works <a href="https://github.com/probot/dco#how-it-works">here</a>.
 To signify that you agree to the DCO for contributions, you simply add a line to each of your
 git commit messages:
 
-```
+<pre><code>
 Signed-off-by: Jane Smith <jane.smith@example.com>
-```
+</code></pre></li>
 
+<li>
 In most cases, you can add this signoff to your commit automatically with the
-`-s` or `--signoff` flag to `git commit`. You must use your real name and a reachable email
+<code>-s</code> or <code>--signoff</code> flag to <code>git commit</code>. You must use your real name and a reachable email
 address (sorry, no pseudonyms or anonymous contributions). An example of signing off on a commit:
 
-```
-$ git commit -s -m “my commit message w/signoff”
-```
+<pre><code>$ git commit -s -m “my commit message w/signoff”</code></pre>
+</li>
 
-To ensure all your commits are signed, you may choose to add this alias to your global `.gitconfig`:
+<li>
+To ensure all your commits are signed, you may choose to add this alias to your global <code>.gitconfig</code>:
 
-_~/.gitconfig_
+~/.gitconfig
 
-```
+<pre><code>
 [alias]
   amend = commit -s --amend
   cm = commit -s -m
   commit = commit -s
-```
+</code></pre>
 
-Or you may configure your IDE, for example, Visual Studio Code to automatically sign-off commits for you:
+Or you may configure your IDE, for example, VSCode to automatically sign-off commits for you:<a href="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" ><img src="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" width="50%"/></a>
 
-<a href="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" ><img src="https://user-images.githubusercontent.com/7570704/64490167-98906400-d25a-11e9-8b8a-5f465b854d49.png" width="50%"><a>
+</li>
+</ul>
+
+</details>
+
 
 ### Meshery Contribution Flow
 
@@ -84,10 +96,18 @@ Practices for Production Environments](https://peter.bourgon.org/go-in-productio
 
 **Please note**: All `make` commands should be run in a terminal from within the Meshery's main folder.
 
-#### Prerequisites for building Meshery in your development environment:
 
-1. `Go` version 1.19 must be installed if you want to build and/or make changes to the existing code. The binary `go1.19` should be available in your path. If you don't want to disturb your existing version of Go, then follow these [instructions](https://go.dev/doc/manage-install#:~:text=and%20run%20them.-,Installing%20multiple%20Go%20versions,-You%20can%20install) to keep multiple versions of Go in your system.
-1. `GOPATH` environment variable should be configured appropriately
-1. `npm` and `node` should be installed on your machine, `node` version 19 or higher is not supported right now.
-1. Fork this repository (`git clone https://github.com/meshery/meshery.git`), and clone your forked version of Meshery to your development environment, preferably outside `GOPATH`.
-1. `golangci-lint` should be installed if you want to test Go code, for MacOS and linux users.
+<details>
+
+<summary>Prequisites for building Meshery in your development environment:</summary>
+
+<ol>
+<li><code>Go</code> version 1.19 must be installed if you want to build and/or make changes to the existing code. The binary <code>go1.19</code> should be available in your path. If you don't want to disturb your existing version of Go, then follow these <a href="https://go.dev/doc manage-install#:~:text=and%20run%20them.-,Installing%20multiple%20Go%20versions,-You%20can%20install" rel="noopener" target="_blank">instructions</a> to keep multiple versions of Go in your system.</li>
+<li> <code>GOPATH</code> environment variable should be configured appropriately</li>
+<li> <code>npm</code> and <code>node</code> should be installed on your machine, `node` version 19 or higher is not supported right now.</li>
+<li>. Fork this repository <code>git clone https://github.com/meshery/meshery.git</code>, and clone your forked version of Meshery to your development environment, preferably outside `GOPATH`.</li>
+<li> <code>golangci-lint</code> should be installed if you want to test Go code, for MacOS and linux users.</li>
+<li> <code>golangci-lint</code> should be installed if you want to test Go code, for MacOS and linux users.</li>
+</ol>
+
+</details>
