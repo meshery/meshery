@@ -53,8 +53,13 @@ In order to use this command, you must have a web browser available on your syst
 Steps to test Meshery API with Postman:
 
 1. Download your token from Meshery UI and copy the token value from the downloaded file, this will be used for authentication
-2. In Postman, navigate to the Cookies section.
-3. Set the appropriate name and value for the cookie
+
+![image](https://github.com/Freedisch/meshery/assets/82499435/2fb42a2b-6cd8-4e1b-a6b0-42ee796d6755)
+
+3. In Postman, navigate to the Cookies section.
+4. Set the appropriate name and value for the cookie
+
+![Screenshot 2023-05-11 at 8 27 49 PM](https://github.com/Freedisch/meshery/assets/82499435/41ee447c-eb3d-4faf-8028-f83643282925)
 
 Make sure to save the configured cookies in Postman
 
