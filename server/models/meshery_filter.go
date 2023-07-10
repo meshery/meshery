@@ -21,7 +21,7 @@ type MesheryFilter struct {
 	Location    sql.Map    `json:"location"`
 	Visibility  string     `json:"visibility"`
 	CatalogData sql.Map    `json:"catalogData"`
-	Config      string     `json:"config"`
+	FilterResource string  `json:"filter_resource"`
 	UpdatedAt   *time.Time `json:"updated_at,omitempty"`
 	CreatedAt   *time.Time `json:"created_at,omitempty"`
 }
@@ -35,12 +35,13 @@ type MesheryFilterPayload struct {
 	// but the remote provider is allowed to provide one
 	UserID *string `json:"user_id"`
 
-	Location    sql.Map    `json:"location"`
-	Visibility  string     `json:"visibility"`
-	CatalogData sql.Map    `json:"catalogData"`
-	Config      string     `json:"config"`
-	UpdatedAt   *time.Time `json:"updated_at,omitempty"`
-	CreatedAt   *time.Time `json:"created_at,omitempty"`
+	Location    sql.Map `json:"location"`
+	Visibility  string  `json:"visibility"`
+	CatalogData sql.Map `json:"catalogData"`
+	FilterResource      string  `json:"filter_resource"` 
+  Config      string     `json:"config"`
+	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	CreatedAt *time.Time `json:"created_at,omitempty"`
 }
 
 // MesheryCatalogFilterRequestBody refers to the type of request body that PublishCatalogFilter would receive

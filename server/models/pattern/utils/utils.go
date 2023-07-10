@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	mathrand "math/rand"
+
 )
 
 // RecursiveCastMapStringInterfaceToMapStringInterface will convert a
@@ -99,4 +101,14 @@ func ToMapStringInterface(mp interface{}) map[string]interface{} {
 		return map[string]interface{}{}
 	}
 	return res
+}
+
+func GetRandomAlphabetsOfDigit(length int) (s string) {
+	charSet := "abcdedfghijklmnopqrstuvwxyz"
+	for i := 0; i < length; i++ {
+		random := mathrand.Intn(len(charSet))
+		randomChar := charSet[random]
+		s += string(randomChar)
+	}
+	return
 }

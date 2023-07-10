@@ -16,6 +16,7 @@ import CloneIcon from "../../public/static/img/CloneIcon";
 import PublicIcon from '@material-ui/icons/Public';
 import TooltipButton from '../../utils/TooltipButton.js'
 import { VISIBILITY } from "../../utils/Enum";
+import GetAppIcon from '@material-ui/icons/GetApp';
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -25,6 +26,7 @@ function FiltersCard({
   created_at,
   filter_file,
   handleClone,
+  handleDownload,
   deleteHandler,
   setYaml,
   description={},
@@ -37,7 +39,7 @@ function FiltersCard({
 
   const genericClickHandler = (ev, fn) => {
     ev.stopPropagation();
-    fn();
+    fn(ev);
   }
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [fullScreen, setFullScreen] = useState(false);
@@ -122,6 +124,16 @@ function FiltersCard({
                   </TooltipButton>
                 )
               }
+              <TooltipButton
+                title="Download"
+                variant="contained"
+                color="primary"
+                onClick={handleDownload}>
+
+                <GetAppIcon fill="#ffffff" className={classes.iconDownload} />
+                <span className={classes.btnText}>Download</span>
+              </TooltipButton>
+
 
               {visibility === VISIBILITY.PUBLISHED ? <TooltipButton
                 title="Clone"
@@ -129,10 +141,11 @@ function FiltersCard({
                 color="primary"
                 onClick={(ev) =>
                   genericClickHandler(ev, handleClone)
-                }>
+                } >
                 <CloneIcon fill="#ffffff" className={classes.iconPatt} />
-                  Clone
+                <span className={classes.cloneBtnText}>Clone</span>
               </TooltipButton> : null }
+
             </div>
           </div>
         </>
