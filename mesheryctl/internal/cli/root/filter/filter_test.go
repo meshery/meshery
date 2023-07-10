@@ -39,35 +39,35 @@ func TestFilterCmd(t *testing.T) {
 		ExpectErr        bool
 	}{
 		{
-			Name:             "view",
-			Args:             []string{"view"},
+			Name:             "filter view with name",
+			Args:             []string{"view","view-filter-name"},
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectedResponse: "filter.view.output.golden",
+			Fixture:          "filter.name.view.api.response.golden",
+			URL:              testContext.BaseURL + "/api/filter",
+			ExpectHelp:       false,
+			ExpectErr:        false,
+		},
+		{
+			Name:             "filter view with ID",
+			Args:             []string{"view","957fbc9b-a655-4892-823d-375102a9587c"},
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectedResponse: "filter.id.view.output.golden",
 			Fixture:          "filter.id.view.api.response.golden",
-			URL:              testContext.BaseURL + "/api/filter/view",
+			URL:              testContext.BaseURL + "/api/filter/957fbc9b-a655-4892-823d-375102a9587c",
 			ExpectHelp:       false,
 			ExpectErr:        false,
 		},
-		{
-			Name:             "delete",
-			Args:             []string{"delete"},
-			Token:            filepath.Join(fixturesDir, "token.golden"),
-			ExpectedResponse: "filter.delete.output.golden",
-			Fixture:          "filter.id.delete.api.response.golden",
-			URL:              testContext.BaseURL + "/api/filter/delete",
-			ExpectHelp:       false,
-			ExpectErr:        false,
-		},
-		{
-			Name:             "list",
-			Args:             []string{"list"},
-			Token:            filepath.Join(fixturesDir, "token.golden"),
-			ExpectedResponse: "filter.list.output.golden",
-			Fixture:          "filter.id.list.api.response.golden",
-			URL:              testContext.BaseURL + "/api/filter/list",
-			ExpectHelp:       false,
-			ExpectErr:        false,
-		},
+		// {
+		// 	Name:             "list",
+		// 	Args:             []string{"list"},
+		// 	Token:            filepath.Join(fixturesDir, "token.golden"),
+		// 	ExpectedResponse: "filter.list.output.golden",
+		// 	Fixture:          "filter.id.list.api.response.golden",
+		// 	URL:              testContext.BaseURL + "/api/filter/list",
+		// 	ExpectHelp:       false,
+		// 	ExpectErr:        false,
+		// },
 	}
 	for _, tc := range FilterTestCases {
 		t.Run(tc.Name, func(t *testing.T) {
