@@ -29,10 +29,18 @@ mesheryctl system logs [flags]
 
 ## Examples
 
+Show logs (without tailing)
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system logs
+
+</div>
+</pre> 
+
 Starts tailing Meshery server debug logs (works with components also)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system logs --verbose
+mesheryctl system logs --follow
 
 </div>
 </pre> 

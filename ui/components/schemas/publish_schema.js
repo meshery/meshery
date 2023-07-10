@@ -4,43 +4,49 @@ export const publish_schema = {
     "compatibility" : {
       "type" : "array",
       "items" : {
-        "type" : "string",
         "enum" : [
-          "Istio",
-          "Linkerd",
-          "App Mesh",
-          "OSM",
-          "Nginx",
-          "Kuma",
+          "Kubernetes",
+          "Argo CD",
+          "AWS App Mesh",
           "Consul",
-          "NSM",
-          "Traefik"
-        ]
+          "Fluentd",
+          "Istio",
+          "Jaeger",
+          "Kuma",
+          "Linkerd",
+          "Network Service Mesh",
+          "NGINX Service Mesh",
+          "Open Service Mesh",
+          "Prometheus",
+          "Traefik Mesh"
+        ],
+        "type" : "string"
       },
       "uniqueItems" : true,
-      "description" : "Select the service mesh that this pattern is compatible with."
+      "description" : "The list of compatible technologies."
     },
     "pattern_caveats" : {
       "type" : "string",
-      "description" : "Enter any caveats or limitations of the pattern."
+      "description" : "Caveats related to the pattern."
     },
     "pattern_info" : {
       "type" : "string",
-      "description" : "Enter any additional information about the pattern."
+      "description" : "Additional information about the pattern."
     },
     "type" : {
       "type" : "string",
-      "description" : "Select the category that best describes this pattern.",
-      "enum" : [
-        "Deployment",
-        "Observability",
-        "Resiliency",
-        "Scaling",
-        "Security",
-        "Traffic Management",
-        "Troubleshooting",
-        "Workloads"
-      ]
+      "examples" : [
+        "deployment",
+        "observability",
+        "resiliency",
+        "scaling",
+        "security",
+        "traffic-management",
+        "troubleshooting",
+        "workloads"
+      ],
+      "description" : "The category of the pattern."
     }
-  }
-}
+  },
+  "required" : ["compatibility", "pattern_caveats", "pattern_info", "type"]
+};

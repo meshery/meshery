@@ -7,12 +7,15 @@ import { FILE_OPS } from "../../utils/Enum";
 import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
+import PublicIcon from '@material-ui/icons/Public';
 import useStyles from "../MesheryPatterns/Grid.styles";
-import PublishModal from "../PublishModal";
+import { publish_schema } from "../schemas/publish_schema";
+import _ from "lodash";
+import Modal from "../Modal";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
-function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit, setSelectedFilters, handleClone, handlePublishModal, handleUnpublishModal, canPublishFilter }) {
+function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit, setSelectedFilters, handleClone,handleDownload, handlePublishModal, handleUnpublishModal, canPublishFilter }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(filter.config);
 
@@ -31,6 +34,7 @@ function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit
         handleDeploy={handleDeploy}
         handleUndeploy={handleUndeploy}
         handleClone={handleClone}
+        handleDownload = {(ev) => handleDownload(ev,filter.id,filter.name)}
         deleteHandler={() => handleSubmit({ data : yaml, id : filter.id, type : FILE_OPS.DELETE, name : filter.name })}
         updateHandler={() => handleSubmit({ data : yaml, id : filter.id, type : FILE_OPS.UPDATE, name : filter.name })}
         setSelectedFilters={() => setSelectedFilters({ filter : filter, show : true })}
@@ -56,6 +60,7 @@ function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit
   *  handleUnpublishModal: (ev: Event, filter: any) => (() => Promise<void>),
   *  handleDeploy: (filter_file: any) => void,
   *  handleUnDeploy: (filter_file: any) => void,
+  *  handleDownload: (e : Event, id : string , name : string ) => void,
   *  handleSubmit: (data: any, id: string, name: string, type: string) => void,
   *  setSelectedFilter : ({show: boolean, filter:any}) => void,
   *  selectedFilter: {show : boolean, filter : any},
@@ -68,7 +73,7 @@ function FilterCardGridItem({ filter, handleDeploy, handleUndeploy, handleSubmit
   */
 
 
-function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, handleSubmit,urlUploadHandler,uploadHandler, setSelectedFilter, selectedFilter, pages = 1,setPage, selectedPage, UploadImport, fetch, canPublishFilter, handlePublish, handleUnpublishModal }) {
+function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone,handleDownload, handleSubmit,urlUploadHandler,uploadHandler, setSelectedFilter, selectedFilter, pages = 1,setPage, selectedPage, UploadImport, fetch, canPublishFilter, handlePublish, handleUnpublishModal }) {
 
   const classes = useStyles()
 
@@ -78,20 +83,36 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, han
 
   const [publishModal, setPublishModal] = useState({
     open : false,
-    filter : {}
+    filter : {},
+    name : "",
   });
+
+  const [payload, setPayload] = useState({
+    id : "",
+    catalog_data : {}
+  });
+
   const handlePublishModal = (filter) => {
     if (canPublishFilter) {
       setPublishModal({
         open : true,
-        filter : filter
+        filter : filter,
+        name : ""
       });
     }
   };
+
+  const onChange = (e) => {
+    setPayload({
+      id : publishModal.filter?.id,
+      catalog_data : e
+    })
+  }
   const handlePublishModalClose = () => {
     setPublishModal({
       open : false,
-      filter : {}
+      filter : {},
+      name : ""
     });
   };
 
@@ -144,6 +165,7 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, han
             filter={filter}
             handleClone={() => handleClone(filter.id, filter.name)}
             handleDeploy={() => handleModalOpen(filter, true)}
+            handleDownload={handleDownload}
             handleUndeploy={() => handleModalOpen(filter, false)}
             handleSubmit={handleSubmit}
             setSelectedFilters={setSelectedFilter}
@@ -196,7 +218,23 @@ function FiltersGrid({ filters=[],handleDeploy, handleUndeploy, handleClone, han
         componentCount = {modalOpen.count}
         tab={modalOpen.deploy ? 2 : 1}
       />
-      {canPublishFilter && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} filter={publishModal.filter} aria-label="catalog publish" handlePublish={handlePublish} />}
+      {canPublishFilter &&
+        <Modal open={publishModal.open} schema={publish_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.filter?.catalog_data : payload.catalog_data } aria-label="catalog publish" title={publishModal.filter?.name}>
+          <Button
+            title="Publish"
+            variant="contained"
+            color="primary"
+            className={classes.testsButton}
+            onClick={() => {
+              handlePublishModalClose();
+              handlePublish(payload)
+            }}
+          >
+            <PublicIcon className={classes.iconPatt} />
+            <span className={classes.btnText}> Publish </span>
+          </Button>
+        </Modal>
+      }
       <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetch()} configuration="Filter"  />
     </div>
   );
