@@ -58,16 +58,6 @@ func TestFilterCmd(t *testing.T) {
 			ExpectHelp:       false,
 			ExpectErr:        false,
 		},
-		// {
-		// 	Name:             "list",
-		// 	Args:             []string{"list"},
-		// 	Token:            filepath.Join(fixturesDir, "token.golden"),
-		// 	ExpectedResponse: "filter.list.output.golden",
-		// 	Fixture:          "filter.id.list.api.response.golden",
-		// 	URL:              testContext.BaseURL + "/api/filter/list",
-		// 	ExpectHelp:       false,
-		// 	ExpectErr:        false,
-		// },
 	}
 	for _, tc := range FilterTestCases {
 		t.Run(tc.Name, func(t *testing.T) {
