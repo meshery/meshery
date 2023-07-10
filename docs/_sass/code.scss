@@ -83,11 +83,7 @@ pre::-webkit-scrollbar {
     word-wrap: normal;
     background-color: var(--color-primary-medium);
     padding: 1rem;
-    overflow: scroll;
-    
-    & ::-webkit-scrollbar {
-      display: none;
-    }
+    overflow: hidden;
   }
 }
 
