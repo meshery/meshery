@@ -472,26 +472,6 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
     ],
   },
   {
-    id : CONFORMANCE,
-    icon : <ConformanceIcon style={drawerIconsStyle} />,
-    hovericon : <ConformanceHover style={drawerIconsStyle} />,
-    href : "/smi_results", //Temp
-    title : "Conformance",
-    show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFORMANCE]),
-    link : true,
-    submenu : true,
-    children : [
-      {
-        id : "serviceMeshInterface",
-        icon : <SmiIcon style={drawerIconsStyle} />,
-        href : "/smi_results",
-        title : "Service Mesh Interface",
-        show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFORMANCE, SMI]),
-        link : true,
-      },
-    ],
-  },
-  {
     id : "Extensions",
     icon : <ExtensionIcon style={drawerIconsStyle} />,
     hovericon : <ExtensionIcon style={drawerIconsStyle} />,
