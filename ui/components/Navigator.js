@@ -22,7 +22,6 @@ import DashboardIcon from '@material-ui/icons/Dashboard';
 import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
 import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
 import ApplicationIcon from '../public/static/img/drawer-icons/application_svg';
-import ConformanceIcon from '../public/static/img/drawer-icons/conformance_svg';
 import ExtensionIcon from "../public/static/img/drawer-icons/extensions_svg";
 import FilterIcon from '../public/static/img/drawer-icons/filter_svg';
 import PatternIcon from '../public/static/img/drawer-icons/pattern_svg';
@@ -34,8 +33,6 @@ import DocumentIcon from "../assets/icons/DocumentIcon";
 import SlackIcon from "../assets/icons/SlackIcon";
 import GithubIcon from "../assets/icons/GithubIcon";
 import ChatIcon from "../assets/icons/ChatIcon";
-import ConformanceHover from '../public/static/img/drawer-icons/conformance_hover_svg';
-import SmiIcon from '../public/static/img/drawer-icons/servicemeshinterface-icon-white_svg';
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import {
   faAngleLeft, faCaretDown,
@@ -49,7 +46,7 @@ import dataFetch from "../lib/data-fetch";
 import { Collapse } from "@material-ui/core";
 import { cursorNotAllowed, disabledStyle, disabledStyleWithOutOpacity } from "../css/disableComponent.styles";
 import { CapabilitiesRegistry } from "../utils/disabledComponents";
-import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM, DESIGN, CONFIGURATION, CONFORMANCE, CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, SMI, TOGGLER } from "../constants/navigator"
+import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM, DESIGN, CONFIGURATION,  CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, TOGGLER } from "../constants/navigator"
 import { iconSmall } from "../css/icons.styles";
 
 const styles = (theme) => ({
