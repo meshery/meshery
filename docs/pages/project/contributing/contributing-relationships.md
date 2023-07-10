@@ -11,18 +11,15 @@ category: contributing
 
 MeshModel serves as a foundational element in the Meshery ecosystem, representing the interconnectedness of various components inside the infrastructure of a service mesh. 
 
-In the context of MeshModel, the core constructs of MeshModel are represented in three forms:
+In the context of MeshModel, the `Core Constructs` of MeshModel are represented in three forms:
 
-1. Schema (static): The schema represents the skeletal structure of a construct and provides a logical view of its size, shape, and characteristics. It defines the expected properties and attributes of the construct. The schema serves as a blueprint or template for creating instances of the construct. It is a static representation that defines the structure and properties but does not contain specific configuration values.
+1. `Schema` (static): The schema represents the skeletal structure of a construct and provides a logical view of its size, shape, and characteristics. It defines the expected properties and attributes of the construct. The schema serves as a blueprint or template for creating instances of the construct. It is a static representation that defines the structure and properties but does not contain specific configuration values.
 
-2. Definition (static): The definition is an implementation of the schema. It contains specific configurations and values for the construct at hand. The definition provides the actual configuration details for a specific instance of the construct. It is static because it is created based on the schema but does not change once created. The definition is used to instantiate instances of the construct.
+2. `Definition` (static): The definition is an implementation of the schema. It contains specific configurations and values for the construct at hand. The definition provides the actual configuration details for a specific instance of the construct. It is static because it is created based on the schema but does not change once created. The definition is used to instantiate instances of the construct.
 
-3. Instance (dynamic): The instance represents a realized construct. It is a dynamic representation that corresponds to a deployed or discovered instance of the construct. The instance is created based on the definition and represents an actual running or deployed version of the construct within the service mesh environment.
+3. `Instance` (dynamic): The instance represents a realized construct. It is a dynamic representation that corresponds to a deployed or discovered instance of the construct. The instance is created based on the definition and represents an actual running or deployed version of the construct within the service mesh environment.
 
 If a specific attribute is not provided with a value in the definition, it means that the value for that attribute has to be written or configured per construct. In other words, the absence of a value indicates that the configuration for that attribute is required and specific to each individual construct instance.
-
-### Model Packaging
-Model Packaging in MeshModel allows constructs to be imported and exported as OCI-compatible images, making them portable and encapsulating intellectual property invested into models. Model packages are versioned bundles of Mesh Model constructs.
 
 ### Contribute to MeshModel Relationships
 
@@ -86,14 +83,14 @@ selectors:
 ```
 
 **Existing Relationships and Subtypes**
-1. Hierarchical 
+1. Hierarchical
 - [Inventory](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/hierarchical_inv_wasm_filters.json)
 - [Parent](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/hierarchical_parent.json)
 2. Edge
 - [Mount](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/mount_edge.json) 
 - [Network](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/network_edge.json)
 - [Firewall](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/network_policy_edge.json)
-- [Permission Edge](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/permission_edge.json)
+- [Permission](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/permission_edge.json)
 3. Sibling
 - [Sibling](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/sibling.json)
 
