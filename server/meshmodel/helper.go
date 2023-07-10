@@ -89,7 +89,6 @@ func (erh *EntityRegistrationHelper) generateComponents(pathToComponents string)
 	if err != nil {
 		erh.errorChan <- errors.Wrapf(err, "error while generating components")
 	}
-	return
 }
 
 // reads relationship definitions from files and sends them to the relationship channel
@@ -123,7 +122,6 @@ func (erh *EntityRegistrationHelper) generateRelationships(pathToComponents stri
 	if err != nil {
 		erh.errorChan <- errors.Wrapf(err, "error while generating relationships")
 	}
-	return
 }
 
 // watches the component and relationship channels for incoming definitions and registers them with the registry manager

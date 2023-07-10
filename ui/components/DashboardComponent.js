@@ -33,7 +33,7 @@ import Popup from "./Popup";
 import { iconMedium } from "../css/icons.styles";
 import { extractURLFromScanData } from "./ConnectionWizard/helpers/metrics";
 import { configurationTableTheme, configurationTableThemeDark } from '../themes/configurationTableTheme';
-
+import DashboardMeshModelGraph from './DashboardMeshModelGraph'
 
 const styles = (theme) => ({
   rootClass : { backgroundColor : theme.palette.secondary.elevatedComponents2, },
@@ -1095,14 +1095,6 @@ class DashboardComponent extends React.Component {
 
   configureTemplate = () => {
     const { classes, k8sconfig } = this.props;
-    const {
-      meshAdapters,
-      grafanaUrl,
-      prometheusUrl,
-      availableAdapters,
-      grafana,
-      prometheus,
-    } = this.state;
     const self = this;
     let showConfigured = "Not connected to Kubernetes.";
     let chp = (
@@ -1127,143 +1119,6 @@ class DashboardComponent extends React.Component {
     }
 
     showConfigured = <div>{chp}</div>;
-
-    let showAdapters = "No adapters configured.";
-    if (availableAdapters.length > 0) {
-      availableAdapters.sort((a1, a2) => (a1.value < a2.value
-        ? -1
-        : a1.value > a2.value
-          ? 1
-          : 0));
-
-      showAdapters = (
-        <div>
-          {availableAdapters.map((aa, ia) => {
-            let isDisabled = true;
-            let image = "/static/img/meshery-logo.png";
-            let logoIcon = <img src={image} className={classes.icon} />;
-            let adapterType = "";
-            let adapterVersion = "";
-            meshAdapters.forEach((adapter) => {
-              if (aa.value === adapter.adapter_location) {
-                isDisabled = false;
-                adapterType = adapter.name;
-                adapterVersion = adapter.version;
-                image = "/static/img/" + adapter.name.toLowerCase() + ".svg";
-                logoIcon = <img src={image} className={classes.icon} />;
-              }
-            });
-
-            return (
-              <Tooltip
-                key={`adapters-${ia}`}
-                title={
-                  isDisabled
-                    ? "Inactive Meshery Adapter"
-                    : `Meshery Adapter for 
-                      ${adapterType
-                      .toLowerCase()
-                      .split(" ")
-                      .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
-                      .join(" ")} on ${aa.label.split(":")[1]}/tcp (${adapterVersion})`}
-              >
-                <Chip
-                  label={
-                    isDisabled
-                      ? aa.label.split(":")[0] + ":" + aa.label.split(":")[1]
-                      : adapterType.toLowerCase()
-                        .split("_")
-                        .map((s) => s.charAt(0).toUpperCase() + s.substring(1) + " ")}
-                  onClick={self.handleAdapterClick(aa.value)}
-                  icon={logoIcon}
-                  className={classes.chip}
-                  key={`adapters-${ia}`}
-                  variant={isDisabled
-                    ? "default"
-                    : "outlined"}
-                />
-              </Tooltip>
-            );
-          })}
-        </div>
-      );
-    }
-    let showGrafana;
-    if (grafanaUrl === "") {
-      showGrafana = (
-        <div className={classes.alreadyConfigured}>
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
-            className={classes.metricsButton}
-            onClick={() => this.handleConfigure("grafana")}
-          >
-            <SettingsIcon className={classes.settingsIcon} style={iconMedium} />
-            Configure Grafana
-          </Button>
-        </div>
-      );
-    }
-    if (grafana && grafana.grafanaURL && grafana.grafanaURL !== "") {
-      showGrafana = (
-        <Chip
-          label={grafana.grafanaURL}
-          onClick={self.handleGrafanaClick}
-          icon={<img src="/static/img/grafana_icon.svg" className={classes.icon} />}
-          className={classes.chip}
-          key="graf-key"
-          variant="outlined"
-        />
-      );
-    }
-
-    let showPrometheus;
-    if (prometheusUrl === "") {
-      showPrometheus = (
-        <div className={classes.alreadyConfigured}>
-          <Button
-            variant="contained"
-            color="primary"
-            size="large"
-            className={classes.metricsButton}
-            onClick={() => this.handleConfigure("prometheus")}
-          >
-            <SettingsIcon className={classes.settingsIcon} style={iconMedium} />
-            Configure Prometheus
-          </Button>
-        </div>
-      );
-    }
-    if (prometheus && prometheus.prometheusURL && prometheus.prometheusURL !== "") {
-      showPrometheus = (
-        <Chip
-          label={prometheus.prometheusURL}
-          onClick={self.handlePrometheusClick}
-          icon={<img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />}
-          className={classes.chip}
-          key="prom-key"
-          variant="outlined"
-        />
-      );
-    }
-
-    const showMetrics = (
-      <Grid container justify="center" spacing={2}>
-        <Grid item>{showPrometheus}</Grid>
-        <Grid item>{showGrafana}</Grid>
-        {/*<Grid item>
-          <Paper className={classes.paper}>
-            <MesheryMetrics
-              boardConfigs={grafana.selectedBoardsConfigs}
-              grafanaURL={grafana.grafanaURL}
-              grafanaAPIKey={grafana.grafanaAPIKey}
-              handleGrafanaChartAddition={() => router.push("/settings/#metrics")}
-            />
-          </Paper>
-        </Grid>*/}
-      </Grid>
-    );
 
     const showServiceMesh =(
       <>
@@ -1350,32 +1205,21 @@ class DashboardComponent extends React.Component {
         <Popup />
         <div className={classes.rootClass}>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
-              <Grid item xs={12} md={12}>
-                <div className={classes.dashboardSection} data-test="workloads">
-                  <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-                    Workloads
-                  </Typography>
-                  {showClusterResources}
-                </div>
-              </Grid>
-              <Grid item xs={12} md={12}>
-                <div className={classes.dashboardSection} data-test="service-mesh">
-                  <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-                    Service Mesh
-                  </Typography>
-                  {showServiceMesh}
-                </div>
-              </Grid>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <div className={classes.dashboardSection} data-test="connection-status">
+            <Grid item xs={12} md={12}> <DashboardMeshModelGraph classes={classes} /> </Grid>
+            <Grid item xs={12} md={12}>
+              <div className={classes.dashboardSection} data-test="workloads">
                 <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-                  Connection Status
+                  Workloads
                 </Typography>
-                <div>{self.showCard("Kubernetes", showConfigured)}</div>
-                <div>{self.showCard("Adapters", showAdapters)}</div>
-                <div>{self.showCard("Metrics", showMetrics)}</div>
+                {showClusterResources}
+              </div>
+            </Grid>
+            <Grid item xs={12} md={12}>
+              <div className={classes.dashboardSection} data-test="service-mesh">
+                <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+                  Service Mesh
+                </Typography>
+                {showServiceMesh}
               </div>
             </Grid>
           </Grid>

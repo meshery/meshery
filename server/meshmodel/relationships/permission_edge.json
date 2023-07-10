@@ -4,12 +4,12 @@
   "metadata": {
     "description": "A relationship that represents a set of permissions"
   },
-	"model":{
-		"name": "core",
-		"version": "v1.0.0",
-		"displayName": "Core",
-		"category": {
-      "name":"Cloud Native Application",
+  "model": {
+    "name": "kubernetes",
+    "version": "v1.25.2",
+    "displayName": "Kubernetes",
+    "category": {
+      "name": "Orchestration \u0026 Management",
       "metadata": null
     },
     "metadata": {}

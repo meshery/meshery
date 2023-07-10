@@ -7,7 +7,7 @@ import { bindActionCreators } from "redux";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import {
-  AppBar, Paper, Tooltip, Button, IconButton, Typography
+  AppBar, Paper, Tooltip, IconButton, Typography
 } from '@material-ui/core';
 import CloseIcon from "@material-ui/icons/Close";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -21,9 +21,12 @@ import PrometheusComponent from './telemetry/prometheus/PrometheusComponent';
 import { updateProgress } from "../lib/store";
 import { withSnackbar } from "notistack";
 import PromptComponent from './PromptComponent';
-import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 import { iconMedium } from '../css/icons.styles';
 import MeshModelComponent from './MeshModelComponent';
+import CredentialIcon from '../assets/icons/CredentialIcon';
+import MesheryCredentialComponent from './MesheryCredentialComponent';
+import DatabaseSummary from './DatabaseSummary';
+import { getComponentsDetail, getModelsDetail, getRelationshipsDetail } from '../api/meshmodel'
 
 
 const styles = (theme) => ({
@@ -58,15 +61,6 @@ const styles = (theme) => ({
   },
   backToPlay : { margin : theme.spacing(2), },
   link : { cursor : 'pointer', },
-  DBBtn : {
-    margin : theme.spacing(0.5),
-    padding : theme.spacing(1),
-    borderRadius : 5,
-    backgroundColor : "#8F1F00",
-    "&:hover" : {
-      backgroundColor : "#B32700",
-    },
-  },
   container : {
     display : "flex",
     justifyContent : "center",
@@ -194,7 +188,9 @@ class MesherySettings extends React.Component {
       prometheus,
       tabVal,
       subTabVal,
-
+      modelsCount : 0,
+      componentsCount : 0,
+      relationshipsCount : 0,
       isMeshConfigured : k8sconfig.clusterConfigured,
 
       // Array of scanned prometheus urls
@@ -203,7 +199,7 @@ class MesherySettings extends React.Component {
       scannedGrafana : [],
     };
 
-    this.systemResetRef = React.createRef();
+    this.systemResetPromptRef = React.createRef();
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -228,6 +224,27 @@ class MesherySettings extends React.Component {
     }
     return st;
   }
+
+  async componentDidMount() {
+    try {
+      const modelsResponse = await getModelsDetail();
+      const componentsResponse = await getComponentsDetail();
+      const relationshipsResponse = await getRelationshipsDetail();
+
+      const modelsCount = modelsResponse.total_count;
+      const componentsCount = componentsResponse.total_count;
+      const relationshipsCount = relationshipsResponse.total_count;
+
+      this.setState({
+        modelsCount,
+        componentsCount,
+        relationshipsCount
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
 
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress : false });
@@ -307,45 +324,6 @@ class MesherySettings extends React.Component {
       }
     };
   }
-
-  handleResetDatabase = () => {
-    return async () => {
-      let responseOfResetDatabase = await this.systemResetRef.current.show({
-        title : "Reset Meshery Database?",
-        subtitle : "Are you sure that you want to purge all data?",
-        options : ["RESET", "CANCEL"]
-      });
-      if (responseOfResetDatabase === "RESET") {
-        this.props.updateProgress({ showProgress : true });
-        const self = this;
-        resetDatabase({
-          selector : {
-            clearDB : "true",
-            ReSync : "true",
-            hardReset : "true",
-          },
-          k8scontextID : ""
-        }).subscribe({
-          next : (res) => {
-            self.props.updateProgress({ showProgress : false });
-            if (res.resetStatus === "PROCESSING") {
-              this.props.enqueueSnackbar(`Database reset successful.`, {
-                variant : "success",
-                action : (key) => (
-                  <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                    <CloseIcon />
-                  </IconButton>
-                ),
-                autohideduration : 3000,
-              })
-            }
-          },
-          error : self.handleError("Database is not reachable, try restarting server.")
-        });
-      }
-    }
-  }
-
 
   render() {
     const { classes } = this.props;
@@ -428,6 +406,16 @@ class MesherySettings extends React.Component {
                 tab="meshmodelSummary"
               />
             </Tooltip>
+            <Tooltip title="Credential" placement="top">
+              <Tab
+                className={classes.tab}
+                icon={
+                  <CredentialIcon width="1.5rem" />
+                }
+                label="Credentials"
+                tab="credential"
+              />
+            </Tooltip>
 
             {/*NOTE: Functionality of performance tab will be modified, until then keeping it and the related code commented */}
 
@@ -493,22 +481,7 @@ class MesherySettings extends React.Component {
           )}
         {tabVal === 3 && (
           <TabContainer>
-            <div className={classes.container}>
-              <Paper square style={{ width : '100%', display : 'flex', justifyContent : 'center' }}>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  onClick={this.handleResetDatabase()}
-                  className={classes.DBBtn}
-                  data-cy="btnResetDatabase"
-
-                >
-                  <Typography align="center"> System Reset </Typography>
-                </Button>
-              </Paper>
-            </div>
+            <DatabaseSummary promptRef={this.systemResetPromptRef} />
           </TabContainer>
         )}
         {(tabVal === 4) && (
@@ -525,19 +498,19 @@ class MesherySettings extends React.Component {
                 >
                   <Tab className={classes.tab} label={(
                     <div className={classes.iconText}>
-                      Models <span style={{ fontWeight : 'bold' }}></span>
+                      Models <span style={{ fontWeight : 'bold' }}>({this.state.modelsCount})</span>
                     </div>
                   )}
                   />
                   <Tab className={classes.tab} label={(
                     <div className={classes.iconText}>
-                      Components <span style={{ fontWeight : 'bold' }}></span>
+                      Components <span style={{ fontWeight : 'bold' }}>({this.state.componentsCount})</span>
                     </div>
                   )}
                   />
                   <Tab className={classes.tab} label={(
                     <div className={classes.iconText}>
-                      Relationships <span style={{ fontWeight : 'bold' }}></span>
+                      Relationships <span style={{ fontWeight : 'bold' }}>({this.state.relationshipsCount})</span>
                     </div>
                   )}
                   />
@@ -569,9 +542,14 @@ class MesherySettings extends React.Component {
 
           </TabContainer>
         )} */}
+        {tabVal === 5 && (
+          <TabContainer>
+            <MesheryCredentialComponent />
+          </TabContainer>
+        )}
 
         {backToPlay}
-        <PromptComponent ref={this.systemResetRef} />
+        <PromptComponent ref={this.systemResetPromptRef} />
       </div>
     );
   }
@@ -594,7 +572,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch) });
 
 MesherySettings.propTypes = { classes : PropTypes.object, };
 

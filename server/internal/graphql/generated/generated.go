@@ -341,6 +341,7 @@ type ComplexityRoot struct {
 		ID                func(childComplexity int) int
 		LastRun           func(childComplexity int) int
 		LoadGenerators    func(childComplexity int) int
+		Metadata          func(childComplexity int) int
 		Name              func(childComplexity int) int
 		QPS               func(childComplexity int) int
 		RequestBody       func(childComplexity int) int
@@ -1734,6 +1735,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PerfProfile.LoadGenerators(childComplexity), true
 
+	case "PerfProfile.metadata":
+		if e.complexity.PerfProfile.Metadata == nil {
+			break
+		}
+
+		return e.complexity.PerfProfile.Metadata(childComplexity), true
+
 	case "PerfProfile.name":
 		if e.complexity.PerfProfile.Name == nil {
 			break
@@ -2792,6 +2800,7 @@ type PerfProfile {
   request_body: String
   content_type: String
   service_mesh: String
+  metadata: Map
 }
 
 type MesheryResult {
@@ -2820,6 +2829,8 @@ input PageFilter {
 }
 
 input CatalogSelector {
+  page: String!
+  pagesize: String!
   search: String!
   order: String!
 }
@@ -11308,6 +11319,8 @@ func (ec *executionContext) fieldContext_PerfPageProfiles_profiles(ctx context.C
 				return ec.fieldContext_PerfProfile_content_type(ctx, field)
 			case "service_mesh":
 				return ec.fieldContext_PerfProfile_service_mesh(ctx, field)
+			case "metadata":
+				return ec.fieldContext_PerfProfile_metadata(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PerfProfile", field.Name)
 		},
@@ -12218,6 +12231,47 @@ func (ec *executionContext) fieldContext_PerfProfile_service_mesh(ctx context.Co
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PerfProfile_metadata(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PerfProfile_metadata(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Metadata, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(map[string]interface{})
+	fc.Result = res
+	return ec.marshalOMap2map(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PerfProfile_metadata(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PerfProfile",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Map does not have child fields")
 		},
 	}
 	return fc, nil
@@ -16816,13 +16870,29 @@ func (ec *executionContext) unmarshalInputCatalogSelector(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"search", "order"}
+	fieldsInOrder := [...]string{"page", "pagesize", "search", "order"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
+		case "page":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("page"))
+			it.Page, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "pagesize":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pagesize"))
+			it.Pagesize, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "search":
 			var err error
 
@@ -18994,6 +19064,10 @@ func (ec *executionContext) _PerfProfile(ctx context.Context, sel ast.SelectionS
 		case "service_mesh":
 
 			out.Values[i] = ec._PerfProfile_service_mesh(ctx, field, obj)
+
+		case "metadata":
+
+			out.Values[i] = ec._PerfProfile_metadata(ctx, field, obj)
 
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))

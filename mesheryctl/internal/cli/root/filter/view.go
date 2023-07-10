@@ -18,7 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
+	"net/url"
 
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -63,34 +63,28 @@ mesheryctl exp filter view test-wasm
 				return errors.New("Invalid filter ID / filter name. " + err.Error())
 			}
 		}
-		url := mctlCfg.GetBaseMesheryURL()
+		urlString := mctlCfg.GetBaseMesheryURL()
 		if len(filter) == 0 {
 			if viewAllFlag {
-				url += "/api/filter?page_size=10000"
+				urlString += "/api/filter?pagesize=10000"
 			} else {
 				return errors.New("[filter-name|filter-id] not specified, use -a to view all filters")
 			}
 		} else if isID {
 			// if filter is a valid uuid, then directly fetch the filter
-			url += "/api/filter/" + filter
+			urlString += "/api/filter/" + filter
 		} else {
 			// else search filter by name
-			url += "/api/filter?search=" + filter
+			urlString += "/api/filter?search=" + url.QueryEscape(filter)
 		}
 
-		client := &http.Client{}
-		req, err := utils.NewRequest("GET", url, nil)
+		req, err := utils.NewRequest("GET", urlString, nil)
 		if err != nil {
 			return err
 		}
-
-		res, err := client.Do(req)
+		res, err := utils.MakeRequest(req)
 		if err != nil {
 			return err
-		}
-		if res.StatusCode != 200 {
-			// failsafe for the case when a valid uuid v4 is not an id of any filter (bad api call)
-			return errors.Errorf("Response Status Code %d, possible invalid ID", res.StatusCode)
 		}
 
 		defer res.Body.Close()

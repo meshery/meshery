@@ -636,21 +636,22 @@ func GetPodList(client *meshkitkube.Client, namespace string) (*v1core.PodList, 
 	return podList, nil
 }
 
-// GetRequiredPods checks if the pods specified by the user is valid returns a list of the required pods
-func GetRequiredPods(specifiedPods []string, availablePods []v1core.Pod) ([]string, error) {
-	var requiredPods []string
+// GetRequiredPodsMap checks if the pods specified by the user is valid returns a map of the required pods
+func GetRequiredPods(specifiedPods []string, availablePods []v1core.Pod) (map[string]string, error) {
+	requiredPodsMap := make(map[string]string)
 	var availablePodsName []string
 	for _, pod := range availablePods {
 		availablePodsName = append(availablePodsName, pod.GetName())
 	}
 	for _, sp := range specifiedPods {
 		if index := StringContainedInSlice(sp, availablePodsName); index != -1 {
-			requiredPods = append(requiredPods, availablePodsName[index])
+			requiredPodsMap[availablePodsName[index]] = availablePodsName[index]
 		} else {
 			return nil, fmt.Errorf("pod \"%s\" specified, does not exist in the 'meshery' namespace. Please  Run `mesheryctl system status` to view the available pods", sp)
 		}
 	}
-	return requiredPods, nil
+
+	return requiredPodsMap, nil
 }
 
 // GetCleanPodName cleans the pod names in the MesheryNamespace to make it more readable

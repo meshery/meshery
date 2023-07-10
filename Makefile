@@ -238,7 +238,7 @@ ui-provider-test:
 
 ## Buils all Meshery UIs  on your local machine.
 ui-build:
-	cd ui; npm run build && npm run export; cd ..
+	cd ui; npm run lint:fix && npm run build && npm run export; cd ..
 	cd provider-ui; npm run build && npm run export; cd ..
 
 ## Build only Meshery UI on your local machine.
@@ -304,7 +304,7 @@ helm-meshery-lint:
 #-----------------------------------------------------------------------------
 # Meshery APIs
 #-----------------------------------------------------------------------------
-.PHONY: swagger-build swagger swagger-docs-build graphql-docs graphql-build
+.PHONY: swagger-build swagger swagger-docs-build graphql-docs-build graphql-build
 ## Build Meshery REST API specifications
 swagger-build:
 	swagger generate spec -o ./server/helpers/swagger.yaml --scan-models
@@ -324,8 +324,8 @@ redocly-docs-build:
 	npx @redocly/cli build-docs ./docs/_data/swagger.yml --config='redocly.yaml' -t custom.hbs
 
 ## Build Meshery GraphQL API documentation
-graphql-docs:
-	cd docs; build-docs; bundle exec rake graphql:compile_docs
+graphql-docs-build:
+	cd docs; bundle exec rake graphql:compile_docs
 
 ## Build Meshery GraphQl API specifications
 graphql-build: dep-check

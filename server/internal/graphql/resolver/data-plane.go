@@ -10,9 +10,7 @@ import (
 func (r *Resolver) getDataPlanes(ctx context.Context, provider models.Provider, filter *model.ServiceMeshFilter) ([]*model.DataPlane, error) {
 	selectors := make([]model.MeshType, 0)
 	if filter.Type == nil {
-		for _, mesh := range model.AllMeshType {
-			selectors = append(selectors, mesh)
-		}
+		selectors = append(selectors, model.AllMeshType...)
 	} else {
 		selectors = append(selectors, *filter.Type)
 	}

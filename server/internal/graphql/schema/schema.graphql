@@ -352,6 +352,7 @@ type FilterResult {
   id: ID!
   name: String!
   filter_file: String!
+  filter_resource: String!
   user_id: String!
   location: Location!
   visibility: String!
@@ -366,6 +367,7 @@ type CatalogFilter {
   filter_file: String!
   user_id: String!
   location: Location!
+  filter_resource: String!
   visibility: String!
   catalog_data: Map
   created_at: String
@@ -450,6 +452,7 @@ type PerfProfile {
   request_body: String
   content_type: String
   service_mesh: String
+  metadata: Map
 }
 
 type MesheryResult {
@@ -478,6 +481,8 @@ input PageFilter {
 }
 
 input CatalogSelector {
+  page: String!
+  pagesize: String!
   search: String!
   order: String!
 }

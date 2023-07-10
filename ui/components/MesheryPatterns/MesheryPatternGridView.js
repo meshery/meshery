@@ -7,14 +7,17 @@ import DesignConfigurator from "../configuratorComponents/MeshModel";
 import { FILE_OPS, ACTIONS } from "../../utils/Enum";
 import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
+import PublicIcon from '@material-ui/icons/Public';
 import PublishIcon from "@material-ui/icons/Publish";
 import useStyles from "./Grid.styles";
 import Validation from "../Validation";
-import PublishModal from "../PublishModal";
+import { publish_schema } from "../schemas/publish_schema";
+import Modal from "../Modal";
+import _ from "lodash";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
-function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublishModal, handleUnDeploy, handleClone, handleSubmit, setSelectedPatterns, canPublishPattern = false }) {
+function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublishModal, handleUnpublishModal, handleUnDeploy, handleClone, handleSubmit, setSelectedPatterns, canPublishPattern = false }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(pattern.pattern_file);
 
@@ -33,6 +36,7 @@ function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublis
         handleVerify={handleVerify}
         handlePublishModal={handlePublishModal}
         handleUnDeploy={handleUnDeploy}
+        handleUnpublishModal={handleUnpublishModal}
         handleClone={handleClone}
         deleteHandler={() => handleSubmit({ data : yaml, id : pattern.id, type : FILE_OPS.DELETE ,name : pattern.name })}
         updateHandler={() => handleSubmit({ data : yaml, id : pattern.id, type : FILE_OPS.UPDATE ,name : pattern.name })}
@@ -56,6 +60,7 @@ function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublis
  * }>,
  *  handleVerify: (e: Event, pattern_file: any, pattern_id: string) => void,
  *  handlePublish: (catalog_data : any) => void,
+ *  handleUnpublishModal: (ev: Event, pattern: any) => (() => Promise<void>),
  *  handleDeploy: (pattern_file: any) => void,
  *  handleUnDeploy: (pattern_file: any) => void,
  *  handleSubmit: (data: any, id: string, name: string, type: string) => void,
@@ -69,7 +74,7 @@ function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublis
  * }} props props
  */
 
-function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish,handleDeploy, handleUnDeploy, urlUploadHandler, handleClone, uploadHandler, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage, UploadImport, fetch, patternErrors, canPublishPattern = false }) {
+function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUnpublishModal, handleDeploy, handleUnDeploy, urlUploadHandler, handleClone, uploadHandler, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage, UploadImport, fetch, patternErrors, canPublishPattern = false }) {
 
   const classes = useStyles()
 
@@ -78,20 +83,23 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish,handleDep
   });
   const [publishModal, setPublishModal] = useState({
     open : false,
-    pattern : {}
+    pattern : {},
+    name : ""
   });
   const handlePublishModal = (pattern) => {
     if (canPublishPattern) {
       setPublishModal({
         open : true,
-        pattern : pattern
+        pattern : pattern,
+        name : ""
       });
     }
   };
   const handlePublishModalClose = () => {
     setPublishModal({
       open : false,
-      pattern : {}
+      pattern : {},
+      name : ""
     });
   };
 
@@ -106,6 +114,10 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish,handleDep
       open : false
     });
   }
+  const [payload, setPayload] = useState({
+    id : "",
+    catalog_data : {}
+  });
 
   const [modalOpen, setModalOpen] = useState({
     open : false,
@@ -122,6 +134,13 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish,handleDep
       name : "",
       count : 0
     });
+  }
+
+  const onChange = (e) => {
+    setPayload({
+      id : publishModal.pattern?.id,
+      catalog_data : e
+    })
   }
 
   const handleModalOpen = (pattern, action) => {
@@ -160,6 +179,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish,handleDep
             handleUnDeploy={() => handleModalOpen(pattern, ACTIONS.UNDEPLOY)}
             handleVerify={(e) => handleVerify(e, pattern.pattern_file, pattern.id)}
             handlePublishModal={() => handlePublishModal(pattern)}
+            handleUnpublishModal={(e) => handleUnpublishModal(e, pattern)()}
             handleSubmit={handleSubmit}
             setSelectedPatterns={setSelectedPattern}
           />
@@ -208,7 +228,23 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish,handleDep
         tab={modalOpen.action}
         validationBody={modalOpen.validationBody}
       />
-      {canPublishPattern && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handlePublish={handlePublish} />}
+      {canPublishPattern &&
+      <Modal open={publishModal.open} schema={publish_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data) ?publishModal?.pattern?.catalog_data : payload.catalog_data} aria-label="catalog publish" title={publishModal.pattern?.name}>
+        <Button
+          title="Publish"
+          variant="contained"
+          color="primary"
+          className={classes.testsButton}
+          onClick={() => {
+            handlePublishModalClose();
+            handlePublish(payload)
+          }}
+        >
+          <PublicIcon className={classes.iconPatt} />
+          <span className={classes.btnText}> Publish </span>
+        </Button>
+      </Modal>
+      }
       <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={async() => await fetch()} configuration="Designs"  />
     </div>
   );

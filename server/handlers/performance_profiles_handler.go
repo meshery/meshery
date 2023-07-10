@@ -3,9 +3,11 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	// "io"
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/server/internal/sql"
 	"github.com/layer5io/meshery/server/models"
 )
 
@@ -28,8 +30,10 @@ func (h *Handler) SavePerformanceProfileHandler(
 		_ = r.Body.Close()
 	}()
 
-	var parsedBody *models.PerformanceProfile
-	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
+	parsedBody := &models.PerformanceProfile{}
+	parsedBody.Metadata = make(sql.Map, 0)
+	err := json.NewDecoder(r.Body).Decode(&parsedBody)
+	if err != nil {
 		rw.WriteHeader(http.StatusBadRequest)
 		//failed to read request body
 		h.log.Error(ErrRequestBody(err))
@@ -69,10 +73,19 @@ func (h *Handler) SavePerformanceProfileHandler(
 // Handle GET requests for performance profiles
 //
 // Returns the list of all the performance profiles saved by the current user
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?page={page-number}``` Default page number is 0
+//
+// ```?pagesize={pagesize}``` Default pagesize is 10
+// 
+// ```?search={profilename}``` If search is non empty then a greedy search is performed
 // responses:
 // 	200: performanceProfilesResponseWrapper
 
 // GetPerformanceProfilesHandler returns the list of all the performance profiles saved by the current user
+// TODO: make sure cert data is not passed along and used only when test are run add a flag to control this
 func (h *Handler) GetPerformanceProfilesHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -84,7 +97,7 @@ func (h *Handler) GetPerformanceProfilesHandler(
 
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetPerformanceProfiles(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"))
+	resp, err := provider.GetPerformanceProfiles(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
 	if err != nil {
 		obj := "performance profile"
 		//get query performance profile

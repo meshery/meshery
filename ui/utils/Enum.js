@@ -7,6 +7,11 @@ export const FILE_OPS = {
   CLONE : "clone"
 }
 
+export const CON_OPS = {
+  DELETE : "delete",
+  UPDATE : "update",
+  CREATE : "create"
+}
 export const ACTIONS = {
   DEPLOY : 2,
   UNDEPLOY : 1,
@@ -34,4 +39,6 @@ export const EXTENSIONS = {
   MESHMAP : "meshmap"
 }
 
-export const MesheryPatternsCatalog = "meshery-patterns-catalog"
+export const MesheryPatternsCatalog = "meshery-patterns-catalog";
+
+export const MesheryFiltersCatalog = "meshery-filters-catalog";
