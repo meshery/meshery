@@ -288,7 +288,8 @@ function MesheryPatterns({
   })
   const [publishModal, setPublishModal] = useState({
     open : false,
-    pattern : {}
+    pattern : {},
+    name : ""
   });
   const [payload, setPayload] = useState({
     id : "",
@@ -578,7 +579,8 @@ function MesheryPatterns({
       ev.stopPropagation();
       setPublishModal({
         open : true,
-        pattern : pattern
+        pattern : pattern,
+        name : ""
       });
     }
   };
@@ -622,7 +624,8 @@ function MesheryPatterns({
   const handlePublishModalClose = () => {
     setPublishModal({
       open : false,
-      pattern : {}
+      pattern : {},
+      name : ""
     });
   };
 
