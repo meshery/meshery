@@ -30,10 +30,10 @@ Relationships within MeshModel play a crucial role in establishing concrete visu
 
 1. Identify the relationship and any specific constraints to be enforced between the two specific components, their models or potentially other components, models, or environmental considerations.
 2. Propose a specific visual representation for the relationship. 
-3. Visual representation examples: 
-    - [Hierarchical](../../../../.github/assets/images/hierarchical_relationship.png)
-    - [Sibling](../../../../.github/assets/images/sibling_relationship.png)
-    - [Binding](../../../../.github/assets/images/binding_realtionship.png)
+3. Visual representation examples:
+    - [Hierarchical](https://github.com/meshery/meshery/tree/master/.github/assets/images/hierarchical_relationship.png)
+    - [Sibling](https://github.com/meshery/meshery/tree/master/.github/assets/images/sibling_relationship.png)
+    - [Binding](https://github.com/meshery/meshery/tree/master/.github/assets/images/binding_realtionship.png)
 4. Prospose the appropriate relationship type, using one of the predefined set of relationship types or suggest a new relationship where an existing type does not fit.
 5. Create a Relationship Definition (yaml).
 6. Create a policy for evaluation of the relationship (rego). See [examples](../../../../server/meshmodel/policies/).
@@ -87,15 +87,15 @@ selectors:
 
 **Existing Relationships and Subtypes**
 1. Hierarchical 
-- [Inventory](../../../../server/meshmodel/relationships/hierarchical_inv_wasm_filters.json)
-- [Parent](../../../../server/meshmodel/relationships/hierarchical_parent.json)
+- [Inventory](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/hierarchical_inv_wasm_filters.json)
+- [Parent](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/hierarchical_parent.json)
 2. Edge
-- [Mount](../../../../server/meshmodel/relationships/mount_edge.json) 
-- [Network](../../../../server/meshmodel/relationships/network_edge.json)
-- [Firewall](../../../../server/meshmodel/relationships/network_policy_edge.json)
-- [Permission Edge](../../../../server/meshmodel/relationships/permission_edge.json)
+- [Mount](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/mount_edge.json) 
+- [Network](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/network_edge.json)
+- [Firewall](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/network_policy_edge.json)
+- [Permission Edge](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/permission_edge.json)
 3. Sibling
-- [Sibling](../../../../server/meshmodel/relationships/sibling.json)
+- [Sibling](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/sibling.json)
 
 
 For more information refer - [MesheryModel Design Specs](https://docs.google.com/document/d/16z5hA8qVfSq885of9LXFUVvfom-hQXr-6oTD_GgoFmk/edit)
