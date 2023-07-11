@@ -68,7 +68,7 @@ type Preference struct {
 	AnonymousPerfResults      bool                   `json:"anonymousPerfResults"`
 	UpdatedAt                 time.Time              `json:"updated_at,omitempty"`
 	UsersExtensionPreferences map[string]interface{} `json:"usersExtensionPreferences,omitempty"`
-	GetStarted                []int                  `json:"getStarted,omitempty"`
+	RemoteProviderPrefs       map[string]interface{} `json:"mesheryCloudPrefs,omitempty"`
 }
 
 func init() {
