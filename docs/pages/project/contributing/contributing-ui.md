@@ -10,7 +10,7 @@ category: contributing
 
 ## <a name="contributing-ui">UI Contribution Flow</a>
 
-Meshery is written in `Go` (Golang) and leverages Go Modules. UI is built on React and Next.js. To make building and packaging easier a `Makefile` is included in the main repository folder.
+Meshery UI is built on React and Next.js. In nearly all cases, while contributing to Meshery UI, you will need to build and run Meshery Server as well. Meshery Server is written in `Go` (Golang) and leverages Go Modules. To make building of each component easier a `Makefile` is included in the main repository folder. Use `make` to build any and all components.
 
 ## Architecture
 
@@ -24,71 +24,43 @@ The following is a list of top-level frameworks, libraries, design system used i
 
 ## Meshery Server APIs
 
-Go [here](https://docs.meshery.io/extensibility/api#rest) for the docs.
+The [API overview](https://docs.meshery.io/extensibility/api) in the Extensibility guide offers high-level insight, while each API reference (below) offers details pertainting to each API endpoints' behavior and use.
 
 ### REST API
-
-- Meshery provides a REST API available through the default port of `9081/tcp`.
-- List of [endpoints](https://docs.meshery.io/reference/rest-apis) (spreadsheet) a simple, static list of REST API endpoints with short description of their purpose.
-- Swagger / Open API.
-- Collection of sets of REST API docs that Meshery server exposes to clients (like the Meshery UI).
+Meshery provides a REST API available through the default port of `9081/tcp` at `<hostname>:<port>/api/`. See the [REST API Reference](https://docs.meshery.io/reference/rest-apis) for a complete list of endpoints available with short description of their purpose and example code.
 
 ### GraphQL API
 
-- Meshery provides a GraphQl API available through the default port of `9081/tcp`.
-- [Relay](https://relay.dev) is the client used.
+Meshery provides a GraphQl API available through the default port of `9081/tcp` at `<hostname>:<port>/api/graphql/query`. See the [GraphQL API Referencee](https://docs.meshery.io/reference/graphql-apis) [Relay](https://relay.dev) is the client used.
 
 ## Design
 
-### Wireframing / Mockups
-
-- Meshery UI in [Figma](https://www.figma.com/file/SMP3zxOjZztdOLtgN4dS2W/Meshery-UI)
-
-> Fill-in a <a href="https://layer5.io/newcomers">community member form</a> to gain access to community resources.
-> You need to ask for the access to the above Figma File in [Slack](http://slack.layer5.io/)
-
-### Design Prologue
-
 Meshery UI is a significant component of the value proposition Meshery offers to individuals and organizations seeking to adopt and operate a service mesh or collection of service meshes.
+
+### User Flows / Wireframing / Mockups
+
+Figma is used as the user flow and UI mockup design tool. The [Meshery UI design file](https://www.figma.com/file/SMP3zxOjZztdOLtgN4dS2W/Meshery-UI) can be viewed by using this [open invitation](https://www.figma.com/team_invite/redeem/qJy1c95qirjgWQODApilR9) for view access. Fill-in a [community member form](https://layer5.io/newcomers) to gain access to additional community resources.
 
 ### Design Goals
 
 The designs in this specification should result in enabling:
 
-- **User experience should be intuitive**
+- **User experience should be intuitive** - Meshery's UX, which includes Meshery UI as a component of the overall UX, needs to be simple, but powerful. This is achieved through intuitive layouts and predefined filters that accommodate common tasks. This is achieved through sensible defaults, consistency of user interaction paradigms and features that delight the user.
 
-  This is achieved through sensible defaults, consistency of user interaction paradigms and features that delight the user.
+- **Extensible** - Meshery UI should be a first-class component of Meshery, but also facilitate third-party integrations.
 
-- **Meshery UI should simplify user management of workloads and service meshes**
-
-  Meshery UI needs to be simple, but powerful. This is achieved through intuitive layouts and predefined filters that accommodate common tasks.
-
-- **Extensible**
-
-  Meshery UI should be a first-class component of Meshery, but also facilitate third-party integrations.
-
-### Design Objectives
-
-The designs in this specification should result in enabling:
-
-- Meshery UI should be event-driven where possible.
+- **Real-time** - Meshery UI should be event-driven where possible.
 
 ## Setup
 
 ### Node Version Recommendations 
-We recommend to use LTS versions of node:
-
-- Node 16 LTS: https://nodejs.org/download/release/v16.19.0/
-- Node 18 LTS: https://nodejs.org/en/
-
-The script supports other node versions as well, including node15 and node17, but is recommended to use node versions above 15 and especially node LTS v18.
+We recommend using Node 18 LTS. Meshery UI's build script supports other Node versions as well, including node16 and node17, but is recommended to use Node 18 LTS.
 
 ### Linting-UI
 
-- When contributing to this project, it is advisable to
+When contributing to Meshery UI, it is advisable to:
 
   - Use [eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) plugin for Visual Studio Code.
-
   - Disable plugins other than `eslint` for formatting and linting, if any.
 
 ### Install UI dependencies
@@ -117,6 +89,21 @@ To start running Meshery Server locally:
 
 {% include code.html code="make server" %}
 Now, Meshery will run on the default port `http://localhost:9081`.
+
+**Please note**: If you see "Meshery Development Incompatible" while trying to sign into Meshery Server, then follow these steps:
+
+<a href="{{ site.baseurl }}/assets/img/meshery-development-incompatible-error.png">
+  <img style= "width: 600px;" src="{{ site.baseurl }}/assets/img/meshery-development-incompatible-error.png" />
+</a>
+
+Potential Solution: 
+
+-  Go to your `meshery` clone.
+Execute: 
+
+
+- Restart Meshery Server.
+- `export BUILD="v0.X.X"`before building Meshery Server again.
 
 
 ### UI Development Server

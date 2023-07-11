@@ -64,3 +64,4 @@ default.profraw
 .ruby-version
 
 wasm/policies/temp-bundle-extract-dir/**
+.nvim.lua

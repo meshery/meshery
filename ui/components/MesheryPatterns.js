@@ -39,12 +39,15 @@ import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import { SchemaContext } from "../utils/context/schemaSet";
 import Validation from "./Validation";
 import { ACTIONS, FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from "../utils/Enum";
-import PublishModal from "./PublishModal";
 import CloneIcon from "../public/static/img/CloneIcon";
 import { useRouter } from "next/router";
+import { publish_schema } from "./schemas/publish_schema";
+import Modal from "./Modal";
+import _ from "lodash";
 import downloadFile from "../utils/fileDownloader";
 import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
+import ReusableTooltip from "./reusable-tooltip";
 
 const styles = (theme) => ({
   grid : {
@@ -152,9 +155,9 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function TooltipIcon({ children, onClick, title }) {
+function TooltipIcon({ children, onClick, title,placement }) {
   return (
-    <Tooltip title={title} placement="top" arrow interactive >
+    <Tooltip title={title} placement={placement} arrow interactive >
       <IconButton onClick={onClick}>
         {children}
       </IconButton>
@@ -177,14 +180,16 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
         <Typography variant="h6" className={classes.yamlDialogTitleText}>
           {pattern.name}
         </Typography>
-        <TooltipIcon
+        <ReusableTooltip
+          placement ="top"
           title={fullScreen ? "Exit Fullscreen" : "Enter Fullscreen"}
           onClick={toggleFullScreen}>
           {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
-        </TooltipIcon>
-        <TooltipIcon title="Exit" onClick={onClose}>
+        </ReusableTooltip>
+        <ReusableTooltip
+          placement ="top" title="Exit" onClick={onClose}>
           <CloseIcon />
-        </TooltipIcon>
+        </ReusableTooltip>
       </DialogTitle>
       <Divider variant="fullWidth" light />
       <DialogContent>
@@ -205,7 +210,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
       </DialogContent>
       <Divider variant="fullWidth" light />
       <DialogActions>
-        <Tooltip title="Update Pattern">
+        <ReusableTooltip title="Update Pattern">
           <IconButton
             aria-label="Update"
             color="primary"
@@ -215,8 +220,8 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           >
             <SaveIcon />
           </IconButton>
-        </Tooltip>
-        <Tooltip title="Delete Pattern">
+        </ReusableTooltip>
+        <ReusableTooltip title="Delete Pattern">
           <IconButton
             aria-label="Delete"
             color="primary"
@@ -229,7 +234,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
           >
             <DeleteIcon />
           </IconButton>
-        </Tooltip>
+        </ReusableTooltip>
       </DialogActions>
     </Dialog>
   );
@@ -283,8 +288,15 @@ function MesheryPatterns({
   })
   const [publishModal, setPublishModal] = useState({
     open : false,
-    pattern : {}
+    pattern : {},
+    name : ""
   });
+  const [payload, setPayload] = useState({
+    id : "",
+    catalog_data : {}
+  });
+
+
   const [loading, stillLoading] = useState(true);
 
   const catalogVisibilityRef = useRef(false);
@@ -371,6 +383,13 @@ function MesheryPatterns({
       setSearch("")
     }
   },[viewType])
+
+  const onChange = (e) => {
+    setPayload({
+      id : publishModal.pattern?.id,
+      catalog_data : e
+    })
+  }
 
 
   const handleCatalogPreference = (catalogPref) => {
@@ -471,7 +490,9 @@ function MesheryPatterns({
     const fetchCatalogPatterns = fetchCatalogPattern({
       selector : {
         search : "",
-        order : ""
+        order : "",
+        page : 0,
+        pagesize : 0,
       }
     }).subscribe({
       next : (result) => {
@@ -483,7 +504,7 @@ function MesheryPatterns({
 
     return () => {
       fetchCatalogPatterns.unsubscribe();
-      disposeConfSubscriptionRef.current.dispose();
+      disposeConfSubscriptionRef.current?.dispose();
     }
   }, [])
 
@@ -558,7 +579,8 @@ function MesheryPatterns({
       ev.stopPropagation();
       setPublishModal({
         open : true,
-        pattern : pattern
+        pattern : pattern,
+        name : ""
       });
     }
   };
@@ -602,7 +624,8 @@ function MesheryPatterns({
   const handlePublishModalClose = () => {
     setPublishModal({
       open : false,
-      pattern : {}
+      pattern : {},
+      name : ""
     });
   };
 
@@ -1011,23 +1034,30 @@ function MesheryPatterns({
           const visibility = patterns[tableMeta.rowIndex]?.visibility
           return (
             <>
-              { visibility === VISIBILITY.PUBLISHED ? <IconButton onClick={(e) => {
-                e.stopPropagation();
-                handleClone(rowData.id, rowData.name)
-              }
-              }>
-                <CloneIcon fill="currentColor" className={classes.iconPatt} />
-              </IconButton> :
-
-                <IconButton onClick={(e) => {
+              { visibility === VISIBILITY.PUBLISHED ? <TooltipIcon
+                placement ="top"
+                title={"Clone"}
+                onClick={(e) => {
                   e.stopPropagation();
-                  setSelectedPattern({ pattern : patterns[tableMeta.rowIndex], show : true })
+                  handleClone(rowData.id, rowData.name)
                 }
-                }
+                }>
+                <CloneIcon fill="currentColor" className={classes.iconPatt} />
+              </TooltipIcon> :
+
+                <TooltipIcon
+                  title={"Design"}
+                  placement={"top"}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedPattern({ pattern : patterns[tableMeta.rowIndex], show : true })
+                  }
+                  }
                 >
                   <Avatar src="/static/img/pattwhite.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
-                </IconButton> }
+                </TooltipIcon> }
               <TooltipIcon
+                placement ="top"
                 title="Validate"
                 onClick={(e) => handleVerify(e, rowData.pattern_file, rowData.id)}
               >
@@ -1035,12 +1065,14 @@ function MesheryPatterns({
               </TooltipIcon>
 
               <TooltipIcon
+                placement ="top"
                 title="Undeploy"
                 onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, patternErrors.get(rowData.id), ACTIONS.UNDEPLOY)}
               >
                 <UndeployIcon fill="#F91313" data-cy="undeploy-button" />
               </TooltipIcon>
               <TooltipIcon
+                placement ="bottom"
                 title="Deploy"
                 onClick={(e) => handleModalOpen(e, rowData.pattern_file, rowData.name, patternErrors.get(rowData.id), ACTIONS.DEPLOY)}
               >
@@ -1056,6 +1088,7 @@ function MesheryPatterns({
               {canPublishPattern &&
                 (visibility !== VISIBILITY.PUBLISHED) ?
                 (<TooltipIcon
+                  placement ="bottom"
                   title="Publish"
                   onClick={(ev) => handlePublishModal(ev,rowData)}
                 >
@@ -1331,7 +1364,24 @@ function MesheryPatterns({
           validationBody={modalOpen.validationBody}
           errors={modalOpen.errors}
         />
-        {canPublishPattern && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handlePublish={handlePublish} />}
+        {canPublishPattern &&
+          <Modal open={publishModal.open} schema={publish_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.pattern?.catalog_data : payload.catalog_data } aria-label="catalog publish" title={publishModal.pattern?.name}>
+            <Button
+              title="Publish"
+              variant="contained"
+              color="primary"
+              className={classes.testsButton}
+              onClick={() => {
+                handlePublishModalClose();
+                handlePublish(payload)
+              }}
+            >
+              <PublicIcon className={classes.iconPatt} />
+              <span className={classes.btnText}> Publish </span>
+            </Button>
+          </Modal>
+        }
+
         <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchPatterns(page, pageSize, search, sortOrder)} configuration="Design" />
         <PromptComponent ref={modalRef} />
       </NoSsr>

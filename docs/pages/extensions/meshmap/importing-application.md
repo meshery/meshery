@@ -5,7 +5,7 @@ permalink: extensions/importing-an-application
 language: en
 display-title: "false"
 list: exclude
-type: extensions
+type: meshmap
 ---
 
 # Importing an Application

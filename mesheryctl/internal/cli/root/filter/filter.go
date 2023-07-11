@@ -50,6 +50,6 @@ mesheryctl exp filter [subcommands]
 func init() {
 	FilterCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token file default from current context")
 
-	availableSubcommands = []*cobra.Command{applyCmd, viewCmd, deleteCmd, listCmd}
+	availableSubcommands = []*cobra.Command{viewCmd, deleteCmd, listCmd}
 	FilterCmd.AddCommand(availableSubcommands...)
 }

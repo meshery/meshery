@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fafba0429f5040b577057f29fd4398b2>>
+ * @generated SignedSource<<58aed683b96a4b759cb5180b0d61e55b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -178,6 +178,13 @@ v1 = [
             "kind": "ScalarField",
             "name": "service_mesh",
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "metadata",
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -204,16 +211,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "9d7eded079e0a1f23d58b8f400fbf1f7",
+    "cacheID": "05fcaffb37eda9d52f8bd45bd8da5550",
     "id": null,
     "metadata": {},
     "name": "PerformanceProfilesQuery",
     "operationKind": "query",
-    "text": "query PerformanceProfilesQuery(\n  $selector: PageFilter!\n) {\n  getPerformanceProfiles(selector: $selector) {\n    page\n    page_size\n    total_count\n    profiles {\n      concurrent_request\n      created_at\n      duration\n      endpoints\n      id\n      last_run\n      load_generators\n      name\n      qps\n      total_results\n      updated_at\n      user_id\n      request_body\n      request_cookies\n      request_headers\n      content_type\n      service_mesh\n    }\n  }\n}\n"
+    "text": "query PerformanceProfilesQuery(\n  $selector: PageFilter!\n) {\n  getPerformanceProfiles(selector: $selector) {\n    page\n    page_size\n    total_count\n    profiles {\n      concurrent_request\n      created_at\n      duration\n      endpoints\n      id\n      last_run\n      load_generators\n      name\n      qps\n      total_results\n      updated_at\n      user_id\n      request_body\n      request_cookies\n      request_headers\n      content_type\n      service_mesh\n      metadata\n    }\n  }\n}\n"
   }
 };
 })();
 
-node.hash = "8c86c93431616aef124858b289e06a4f";
+node.hash = "a901902df4422ec63fa999ca605a644b";
 
 module.exports = node;

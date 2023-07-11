@@ -1,24 +1,31 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 
+	"github.com/gofrs/uuid"
 	guid "github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshery/server/models/pattern/utils"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
 // MesheryFilterRequestBody refers to the type of request body that
 // SaveMesheryFilter would receive
 type MesheryFilterRequestBody struct {
-	URL        string                       `json:"url,omitempty"`
-	Path       string                       `json:"path,omitempty"`
-	Save       bool                         `json:"save,omitempty"`
-	FilterData *models.MesheryFilterPayload `json:"filter_data,omitempty"`
+	URL        string                `json:"url,omitempty"`
+	Path       string                `json:"path,omitempty"`
+	Save       bool                  `json:"save,omitempty"`
+	Config     string				 `json:"config,omitempty"` 	
+  FilterData *models.MesheryFilterPayload `json:"filter_data,omitempty"`
 }
 
 // swagger:route GET /api/filter/file/{id} FiltersAPI idGetFilterFile
@@ -44,8 +51,13 @@ func (h *Handler) GetMesheryFilterFileHandler(
 		return
 	}
 
-	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	reader := bytes.NewReader(resp)
+	rw.Header().Set("Content-Type", "application/wasm")
+	_, err = io.Copy(rw, reader)
+	if err != nil {
+		h.log.Error(ErrDownloadWASMFile(err, "download"))
+		http.Error(rw, ErrDownloadWASMFile(err, "download").Error(), http.StatusInternalServerError)
+	}
 }
 
 // FilterFileRequestHandler will handle requests of both type GET and POST
@@ -111,6 +123,15 @@ func (h *Handler) handleFilterPOST(
 
 	format := r.URL.Query().Get("output")
 
+	filterResource, err := h.generateFilterComponent(parsedBody.Config)
+	if err != nil {
+		h.log.Error(ErrEncodeFilter(err))
+		http.Error(rw, ErrEncodeFilter(err).Error(), http.StatusInternalServerError)
+		addMeshkitErr(&res, ErrEncodeFilter(err))
+		go h.EventsBuffer.Publish(&res)
+		return
+	}
+
 	// If Content is not empty then assume it's a local upload
 	if parsedBody.FilterData != nil {
 		// Assign a name if no name is provided
@@ -135,6 +156,7 @@ func (h *Handler) handleFilterPOST(
 			UserID:     parsedBody.FilterData.UserID,
 			UpdatedAt:  parsedBody.FilterData.UpdatedAt,
 			Location:   parsedBody.FilterData.Location,
+      FilterResource: filterResource,
 		}
 
 		if parsedBody.Save {
@@ -166,7 +188,7 @@ func (h *Handler) handleFilterPOST(
 	}
 
 	if parsedBody.URL != "" {
-		resp, err := provider.RemoteFilterFile(r, parsedBody.URL, parsedBody.Path, parsedBody.Save)
+		resp, err := provider.RemoteFilterFile(r, parsedBody.URL, parsedBody.Path, parsedBody.Save, filterResource)
 
 		if err != nil {
 			h.log.Error(ErrImportFilter(err))
@@ -182,7 +204,7 @@ func (h *Handler) handleFilterPOST(
 // swagger:route GET /api/filter FiltersAPI idGetFilterFiles
 // Handle GET request for filters
 //
-// Returns the list of all the filters saved by the current user
+// # Returns the list of all the filters saved by the current user
 //
 // ```?order={field}``` orders on the passed field
 //
@@ -192,7 +214,8 @@ func (h *Handler) handleFilterPOST(
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
 // responses:
-// 	200: mesheryFiltersResponseWrapper
+//
+//	200: mesheryFiltersResponseWrapper
 func (h *Handler) GetMesheryFiltersHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -223,8 +246,8 @@ func (h *Handler) GetMesheryFiltersHandler(
 //
 // ```?page={page-number}``` Default page number is 0
 //
-// ```?pagesize={pagesize}``` Default pagesize is 10. 
-// 
+// ```?pagesize={pagesize}``` Default pagesize is 10.
+//
 // ```?search={filtername}``` If search is non empty then a greedy search is performed
 // responses:
 //
@@ -476,4 +499,40 @@ func (h *Handler) FilterFileHandler(
 ) {
 	// Filter files are just pattern files
 	h.PatternFileHandler(rw, r, prefObj, user, provider)
+}
+
+func(h *Handler) generateFilterComponent(config string) (string, error) {
+	res, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+		Name: "WASMFilter",
+		Trim: false,
+		APIVersion: "core.meshery.io/v1alpha1",
+		Version: "v1.0.0",
+		Limit: 1,
+	})
+	
+	if len(res) > 0 {
+		filterEntity := res[0]
+		filterCompDef, ok := filterEntity.(v1alpha1.ComponentDefinition)
+		if ok {
+			filterID, _ := uuid.NewV4()
+			filterSvc := core.Service{
+				ID: &filterID,
+				Name: strings.ToLower(filterCompDef.Kind) + utils.GetRandomAlphabetsOfDigit(5),
+				Type: filterCompDef.Kind,
+				APIVersion: filterCompDef.APIVersion,
+				Version: filterCompDef.Model.Version,
+				Model: filterCompDef.Model.Name,
+				IsAnnotation: true,
+				Settings: map[string]interface{}{
+					"config": config,
+				},
+			}
+			marshalledFilter, err := json.Marshal(filterSvc)
+			if err != nil {
+				return string(marshalledFilter), err
+			}
+			return string(marshalledFilter), nil
+		}
+	}
+	return "", nil
 }
