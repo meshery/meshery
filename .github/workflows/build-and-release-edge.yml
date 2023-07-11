@@ -28,12 +28,12 @@ jobs:
           version: v0.26.1
       - name: swagger-spec
         if: steps.changes.outputs.modified == 'true'
-        run: swagger generate spec -o ./server/helpers/swagger.yaml --scan-models
+        run: |
+          make swagger-build
       - name: swagger-docs
         if: steps.changes.outputs.modified == 'true'
         run: |
-          swagger generate spec -o ./docs/_data/swagger.yml --scan-models; \
-          swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
+          make swagger-docs-build
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
@@ -69,9 +69,8 @@ jobs:
       - name: graphql-docs
         if: steps.filter.outputs.modified == 'true'
         run: |
-          cd docs
-          bundle install
-          bundle exec rake graphql:compile_docs
+          cd docs; bundle install; cd ..; \
+          make graphql-docs-build
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:

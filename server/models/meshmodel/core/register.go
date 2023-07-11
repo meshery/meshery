@@ -12,8 +12,10 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	oamcore "github.com/layer5io/meshkit/models/oam/core/v1alpha1"
+	"github.com/layer5io/meshkit/utils/component"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/manifests"
+
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -266,6 +268,12 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 					fmt.Printf("%v", err)
 					continue
 				}
+
+				modifiedProps, err := component.UpdateProperties(fieldVal, cue.ParsePath("properties.spec"), apiVersion)
+				if err == nil {
+					modified = modifiedProps
+				}
+
 				deleteProperties(modified)
 				crd, err = json.Marshal(modified)
 				if err != nil {

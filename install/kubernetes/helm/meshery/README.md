@@ -1,6 +1,6 @@
 # meshery
 
-![Version: 0.5.0](https://img.shields.io/badge/Version-0.5.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
+![Version: 0.6.0](https://img.shields.io/badge/Version-0.6.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square)
 
 Meshery chart for deploying Meshery and Meshery's adapters.
 
@@ -15,17 +15,13 @@ Meshery chart for deploying Meshery and Meshery's adapters.
 | Repository | Name | Version |
 |------------|------|---------|
 |  | meshery-app-mesh | 0.5.0 |
-|  | meshery-broker | 0.5.0 |
 |  | meshery-cilium | 0.5.0 |
 |  | meshery-consul | 0.5.0 |
-|  | meshery-cpx | 0.5.0 |
 |  | meshery-istio | 0.5.0 |
 |  | meshery-kuma | 0.5.0 |
 |  | meshery-linkerd | 0.5.0 |
-|  | meshery-meshsync | 0.5.0 |
 |  | meshery-nginx-sm | 0.5.0 |
 |  | meshery-nsm | 0.5.0 |
-|  | meshery-operator | 0.5.0 |
 |  | meshery-osm | 0.5.0 |
 |  | meshery-perf | 0.5.0 |
 |  | meshery-traefik-mesh | 0.5.0 |
@@ -36,8 +32,9 @@ Meshery chart for deploying Meshery and Meshery's adapters.
 |-----|------|---------|-------------|
 | affinity | object | `{}` |  |
 | annotations | object | `{}` |  |
-| env.ADAPTER_URLS | string | `"meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-kuma:10007 meshery-osm:10009 meshery-nginx-sm:10010 meshery-nsm:10004 meshery-app-mesh:10005 meshery-traefik-mesh:10006 meshery-cilium:10012 meshery-perf:10013"` |  |
+| env.ADAPTER_URLS | string | `"meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-kuma:10007 meshery-osm:10009 meshery-nginx-sm:10010 meshery-nsm:10004 meshery-app-mesh:10005 meshery-traefik-mesh:10006 meshery-cilium:10012"` |  |
 | env.EVENT | string | `"mesheryLocal"` |  |
+| env.PROVIDER | string | `""` |  |
 | env.PROVIDER_BASE_URLS | string | `"https://meshery.layer5.io"` |  |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"Always"` |  |
@@ -57,9 +54,6 @@ Meshery chart for deploying Meshery and Meshery's adapters.
 | meshery-consul.enabled | bool | `true` |  |
 | meshery-consul.fullnameOverride | string | `"meshery-consul"` |  |
 | meshery-consul.serviceAccountNameOverride | string | `"meshery-server"` |  |
-| meshery-cpx.enabled | bool | `false` |  |
-| meshery-cpx.fullnameOverride | string | `"meshery-cpx"` |  |
-| meshery-cpx.serviceAccountNameOverride | string | `"meshery-server"` |  |
 | meshery-istio.enabled | bool | `true` |  |
 | meshery-istio.fullnameOverride | string | `"meshery-istio"` |  |
 | meshery-istio.serviceAccountNameOverride | string | `"meshery-server"` |  |
@@ -88,6 +82,8 @@ Meshery chart for deploying Meshery and Meshery's adapters.
 | meshery-traefik-mesh.serviceAccountNameOverride | string | `"meshery-server"` |  |
 | mesherygateway.enabled | bool | `false` |  |
 | mesherygateway.selector.istio | string | `"ingressgateway"` |  |
+| metadata.name | string | `"meshery"` |  |
+| metadata.namespace | string | `"meshery"` |  |
 | nameOverride | string | `""` |  |
 | nodeSelector | object | `{}` |  |
 | podSecurityContext | object | `{}` |  |

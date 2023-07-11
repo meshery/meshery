@@ -50,20 +50,19 @@ const useStyles = makeStyles(() => ({
  * @returns
  */
 function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, scroll = false, color }) {
-  console.log({ schemaSet })
   const classes = useStyles();
   const theme = useTheme();
 
   useEffect(() => {
     schemaSet.workload.properties.name = {
-      description : "The Namespace for the service",
+      description : "The name for the service",
       default : "<Name of the Component>",
       type : "string"
     };
     schemaSet.workload.properties.namespace = {
-      description : "The Name for the service",
+      description : "The namespace for the service",
       default : "default",
-      type : "string",
+      type : "string"
     };
     schemaSet.workload.properties.labels = {
       description : "The label for the service",

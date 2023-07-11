@@ -41,7 +41,7 @@ const DatabaseSummary = (props) => {
   const { classes } = props
   const [databaseSummary, setDatabaseSummary] = useState({ tables : [], totalRecords : 0, totalTables : 0 })
 
-  const [page, setPage] = useState(1)
+  const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [searchText, setSearchText] = useState("")
 
@@ -62,7 +62,7 @@ const DatabaseSummary = (props) => {
   const getDatabaseSummary = (page, rowsPerPage, searchText) => {
     dataFetch(
       "/api/system/database?" + new URLSearchParams({
-        page : page,
+        page : page + 1,
         pagesize : rowsPerPage,
         search : searchText }).toString(),
       {
@@ -138,6 +138,7 @@ const DatabaseSummary = (props) => {
     serverSide : true,
     rowsPerPage : rowsPerPage,
     count : databaseSummary?.totalTables,
+    page : page,
     onChangePage : debounce((p) =>  setPage(p), 200),
     onChangeRowsPerPage : debounce((p) =>  setRowsPerPage(p), 200),
     onSearchChange : debounce((searchText) => {
