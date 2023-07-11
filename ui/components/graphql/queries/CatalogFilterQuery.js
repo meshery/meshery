@@ -11,6 +11,7 @@ export default function fetchCatalogFilter(variables) {
             name
             user_id
             filter_file
+            filter_resource
             visibility
             catalog_data
             created_at

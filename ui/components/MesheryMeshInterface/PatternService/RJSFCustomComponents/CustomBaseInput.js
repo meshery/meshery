@@ -29,10 +29,8 @@ const BaseInput = (props) => {
   }));
 
   const theme = useTheme();
-  console.log(theme)
   const classes = styles();
   return (
-    console.log(prettifiedName),
     <>
       <div key={props.id} style={style}>
         <TextField
