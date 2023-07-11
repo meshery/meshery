@@ -84,13 +84,19 @@ const useStyles = makeStyles((theme) => ({
     marginRight : "5px",
 
   },
+  iconDownload : {
+    width : "auto",
+    height : "24px",
+
+  },
   btnText : {
-    [theme.breakpoints.between(960, 1370)] : { display : "none" },
+    [theme.breakpoints.down(1370)] : { display : "none" },
+    marginLeft : "5px",
     display : "flex",
     justifyContent : "center",
   },
   cloneBtnText : {
-    [theme.breakpoints.between(960, 1370)] : { display : "none" },
+    [theme.breakpoints.down(1370)] : { display : "none" },
     display : "flex",
     justifyContent : "center",
     marginLeft : "3px",

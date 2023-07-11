@@ -675,7 +675,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
       let body = { save : true }
       if (type === FILE_OPS.FILE_UPLOAD) {
-        body = JSON.stringify({ ...body, filter_data : { filter_file : data } })
+        body = JSON.stringify({ ...body, filter_data : { filter_resource : data } })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
         body = JSON.stringify({ ...body, url : data })
@@ -1097,6 +1097,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
               handlePublish={handlePublish}
               handleUnpublishModal={handleUnpublishModal}
               handleClone={handleClone}
+              handleDownload={handleDownload}
               urlUploadHandler={urlUploadHandler}
               uploadHandler={uploadHandler}
               setSelectedFilter={setSelectedFilter}

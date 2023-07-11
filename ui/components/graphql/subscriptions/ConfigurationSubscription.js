@@ -47,6 +47,7 @@ const configurationSubscription = graphql`
           id
           name
           filter_file
+          filter_resource
           visibility
           catalog_data
           user_id
