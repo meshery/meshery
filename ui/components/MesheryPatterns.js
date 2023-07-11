@@ -41,7 +41,7 @@ import Validation from "./Validation";
 import { ACTIONS, FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from "../utils/Enum";
 import CloneIcon from "../public/static/img/CloneIcon";
 import { useRouter } from "next/router";
-import { publish_schema } from "./schemas/publish_schema";
+import { publish_schema, publish_ui_schema } from "./schemas/publish_schema";
 import Modal from "./Modal";
 import _ from "lodash";
 import downloadFile from "../utils/fileDownloader";
@@ -1365,7 +1365,7 @@ function MesheryPatterns({
           errors={modalOpen.errors}
         />
         {canPublishPattern &&
-          <Modal open={publishModal.open} schema={publish_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.pattern?.catalog_data : payload.catalog_data } aria-label="catalog publish" title={publishModal.pattern?.name}>
+          <Modal open={publishModal.open} schema={publish_schema} uiSchema={publish_ui_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.pattern?.catalog_data : payload.catalog_data } aria-label="catalog publish" title={publishModal.pattern?.name}>
             <Button
               title="Publish"
               variant="contained"

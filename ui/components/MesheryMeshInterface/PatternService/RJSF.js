@@ -56,6 +56,9 @@ function RJSFForm({
     return <LoadingComponent />
   }
 
+  console.log("schema")
+  console.log(schema)
+
   return (
     <MuiThemeProvider
       theme={globalTheme.palette.type === "dark" ? darkRjsfTheme : rjsfTheme}>

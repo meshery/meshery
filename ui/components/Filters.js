@@ -47,7 +47,7 @@ import fetchCatalogFilter from "./graphql/queries/CatalogFilterQuery";
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import { iconMedium } from "../css/icons.styles";
 import Modal from "./Modal";
-import { publish_schema } from "./schemas/publish_schema";
+import { publish_schema, publish_ui_schema } from "./schemas/publish_schema";
 import _ from "lodash";
 
 const styles = (theme) => ({
@@ -1121,7 +1121,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           tab={modalOpen.deploy ? 2 : 1}
         />
         {canPublishFilter &&
-          <Modal open={publishModal.open} schema={publish_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.filter?.catalog_data : payload.catalog_data } aria-label="catalog publish" title={publishModal.filter?.name}>
+          <Modal open={publishModal.open} schema={publish_schema} uiSchema={publish_ui_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.filter?.catalog_data : payload.catalog_data } aria-label="catalog publish" title={publishModal.filter?.name}>
             <Button
               title="Publish"
               variant="contained"

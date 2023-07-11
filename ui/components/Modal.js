@@ -43,7 +43,7 @@ const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
   )
 }
 function Modal(props) {
-  const { open, title, handleClose, onChange, schema, formData, children, schema_array, type, schemaChangeHandler } = props;
+  const { open, title, handleClose, onChange, schema, formData, children, schema_array, type, schemaChangeHandler, uiSchema={} } = props;
   const classes = useStyles();
 
   return (
@@ -76,6 +76,7 @@ function Modal(props) {
               key={type}
               formData={formData}
               jsonSchema={schema || getSchema(type)}
+              uiSchema={uiSchema}
               onChange={onChange}
               hideTitle={true}
             />

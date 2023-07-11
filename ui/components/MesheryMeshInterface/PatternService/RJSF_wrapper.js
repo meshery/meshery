@@ -14,6 +14,7 @@ function RJSFWrapper(props) {
     jsonSchema,
     onChange,
     hideTitle,
+    uiSchema = {},
     RJSFWrapperComponent = React.Fragment,
     //.. temporarily ignoring till handler is attached successfully
   } = props;
@@ -54,6 +55,7 @@ function RJSFWrapper(props) {
       <RJSFForm
         isLoading={isLoading}
         schema={schema}
+        uiSchema={uiSchema}
         data={data}
         onChange={(e) => {
           setData(e.formData);
