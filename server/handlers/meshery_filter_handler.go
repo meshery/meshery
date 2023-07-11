@@ -502,7 +502,7 @@ func (h *Handler) FilterFileHandler(
 }
 
 func(h *Handler) generateFilterComponent(config string) (string, error) {
-	res, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	res, _, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		Name: "WASMFilter",
 		Trim: false,
 		APIVersion: "core.meshery.io/v1alpha1",
