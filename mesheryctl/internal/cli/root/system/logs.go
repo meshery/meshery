@@ -70,8 +70,11 @@ var logsCmd = &cobra.Command{
 It also shows the logs of a specific component.`,
 	Args: cobra.ArbitraryArgs,
 	Example: `
+// Show logs (without tailing)
+mesheryctl system logs
+
 // Starts tailing Meshery server debug logs (works with components also)
-mesheryctl system logs --verbose
+mesheryctl system logs --follow
 mesheryctl system logs meshery-istio
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -181,13 +184,12 @@ mesheryctl system logs meshery-istio
 				return err
 			}
 
-			var requiredPods []string
+			requiredPodsMap := make(map[string]string)
 
 			// If the user specified logs from any particular pods, then show only that
 			if len(args) > 0 {
 				// Get the actual pod names even when the user specifes incomplete pod names
-				requiredPods, err = utils.GetRequiredPods(args, availablePods)
-
+				requiredPodsMap, err = utils.GetRequiredPods(args, availablePods)
 				// error when the specified pod is invalid
 				if err != nil {
 					return err
@@ -204,8 +206,9 @@ mesheryctl system logs meshery-istio
 				name := pod.GetName()
 
 				// Only print the logs from the required pods
-				if len(requiredPods) > 0 {
-					if !IsPodRequired(requiredPods, name) {
+				if len(requiredPodsMap) > 0 {
+					_, ok := requiredPodsMap[name]
+					if !ok {
 						continue
 					}
 				}

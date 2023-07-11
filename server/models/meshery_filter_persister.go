@@ -66,7 +66,7 @@ func (mfp *MesheryFilterPersister) GetMesheryCatalogFilters(page, pageSize, sear
 		order = "updated_at desc"
 	}
 
-	var pg int 
+	var pg int
 	if page != "" {
 		pg, err = strconv.Atoi(page)
 
@@ -79,10 +79,10 @@ func (mfp *MesheryFilterPersister) GetMesheryCatalogFilters(page, pageSize, sear
 
 	// 0 page size is for all records
 	var pgSize int
-	if pageSize != ""{
+	if pageSize != "" {
 		pgSize, err = strconv.Atoi(pageSize)
 
-		if err != nil  || pgSize < 0{
+		if err != nil || pgSize < 0 {
 			pgSize = 0
 		}
 	} else {
@@ -91,7 +91,7 @@ func (mfp *MesheryFilterPersister) GetMesheryCatalogFilters(page, pageSize, sear
 
 	filters := []MesheryFilter{}
 
-	query := mfp.DB.Where("visibility = '?'", Published).Order(order)
+	query := mfp.DB.Where("visibility = ?", Published).Order(order)
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
@@ -111,12 +111,11 @@ func (mfp *MesheryFilterPersister) GetMesheryCatalogFilters(page, pageSize, sear
 		query.Find(&filters)
 	}
 
-
 	response := FiltersAPIResponse{
-		Page: uint(pg),
-		PageSize: uint(pgSize),
+		Page:       uint(pg),
+		PageSize:   uint(pgSize),
 		TotalCount: uint(count),
-		Filters: filters,
+		Filters:    filters,
 	}
 
 	marshalledResponse, _ := json.Marshal(response)

@@ -395,7 +395,7 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 		if countDuplicates[uniqueName] > 1 {
 			//set appropriate unique service name
 			uniqueName = strings.ToLower(svc.Name)
-			uniqueName += "-" + getRandomAlphabetsOfDigit(5)
+			uniqueName += "-" + utils.GetRandomAlphabetsOfDigit(5)
 		}
 		eleToSvc[ele.Data.ID] = uniqueName //will be used while adding depends-on
 		pf.Services[uniqueName] = &svc
@@ -416,16 +416,6 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 		}
 	}
 	return pf, nil
-}
-
-func getRandomAlphabetsOfDigit(length int) (s string) {
-	charSet := "abcdedfghijklmnopqrstuvwxyz"
-	for i := 0; i < length; i++ {
-		random := mathrand.Intn(len(charSet))
-		randomChar := charSet[random]
-		s += string(randomChar)
-	}
-	return
 }
 
 // processCytoElementsWithPattern iterates over all the cyto elements, convert each into a patternfile service and exposes a callback to handle that service
