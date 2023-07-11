@@ -16,6 +16,7 @@ import CloneIcon from "../../public/static/img/CloneIcon";
 import PublicIcon from '@material-ui/icons/Public';
 import TooltipButton from '../../utils/TooltipButton.js'
 import { VISIBILITY } from "../../utils/Enum";
+import GetAppIcon from '@material-ui/icons/GetApp';
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -23,8 +24,9 @@ function FiltersCard({
   name,
   updated_at,
   created_at,
-  filter_file,
+  filter_resource,
   handleClone,
+  handleDownload,
   deleteHandler,
   setYaml,
   description={},
@@ -37,7 +39,7 @@ function FiltersCard({
 
   const genericClickHandler = (ev, fn) => {
     ev.stopPropagation();
-    fn();
+    fn(ev);
   }
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [fullScreen, setFullScreen] = useState(false);
@@ -58,11 +60,10 @@ function FiltersCard({
           fullScreen={fullScreen}
           name={name}
           toggleFullScreen={toggleFullScreen}
-          config_file={filter_file}
+          config_file={filter_resource}
           setYaml={setYaml}
           deleteHandler={deleteHandler}
           updateHandler={updateHandler}
-          type={"filter"}
         />
       }
       <FlipCard
@@ -122,6 +123,16 @@ function FiltersCard({
                   </TooltipButton>
                 )
               }
+              <TooltipButton
+                title="Download"
+                variant="contained"
+                color="primary"
+                onClick={handleDownload}>
+
+                <GetAppIcon fill="#ffffff" className={classes.iconDownload} />
+                <span className={classes.btnText}>Download</span>
+              </TooltipButton>
+
 
               {visibility === VISIBILITY.PUBLISHED ? <TooltipButton
                 title="Clone"
@@ -129,10 +140,11 @@ function FiltersCard({
                 color="primary"
                 onClick={(ev) =>
                   genericClickHandler(ev, handleClone)
-                }>
+                } >
                 <CloneIcon fill="#ffffff" className={classes.iconPatt} />
-                  Clone
+                <span className={classes.cloneBtnText}>Clone</span>
               </TooltipButton> : null }
+
             </div>
           </div>
         </>
@@ -177,7 +189,7 @@ function FiltersCard({
 
               { catalogContentKeys.length === 0 ?
                 <CodeMirror
-                  value={showCode && filter_file}
+                  value={showCode && filter_resource}
                   className={fullScreen ? classes.fullScreenCodeMirror : ""}
                   options={{
                     theme : "material",
@@ -186,7 +198,7 @@ function FiltersCard({
                     gutters : ["CodeMirror-lint-markers"],
                     // @ts-ignore
                     lint : true,
-                    mode : "text/plain",
+                    mode : "text/x-yaml",
                   }}
                   onChange={(_, data, val) => setYaml(val)}
                 />

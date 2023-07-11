@@ -717,7 +717,7 @@ func (l *DefaultLocalProvider) CloneMesheryFilter(_ *http.Request, filterID stri
 }
 
 // RemoteFilterFile takes in the
-func (l *DefaultLocalProvider) RemoteFilterFile(_ *http.Request, resourceURL, path string, save bool) ([]byte, error) {
+func (l *DefaultLocalProvider) RemoteFilterFile(_ *http.Request, resourceURL, path string, save bool, resource string) ([]byte, error) {
 	parsedURL, err := url.Parse(resourceURL)
 	if err != nil {
 		return nil, err

@@ -23,6 +23,8 @@ import { withSnackbar } from "notistack";
 import PromptComponent from './PromptComponent';
 import { iconMedium } from '../css/icons.styles';
 import MeshModelComponent from './MeshModelComponent';
+import CredentialIcon from '../assets/icons/CredentialIcon';
+import MesheryCredentialComponent from './MesheryCredentialComponent';
 import DatabaseSummary from './DatabaseSummary';
 import { getComponentsDetail, getModelsDetail, getRelationshipsDetail } from '../api/meshmodel'
 
@@ -404,6 +406,16 @@ class MesherySettings extends React.Component {
                 tab="meshmodelSummary"
               />
             </Tooltip>
+            <Tooltip title="Credential" placement="top">
+              <Tab
+                className={classes.tab}
+                icon={
+                  <CredentialIcon width="1.5rem" />
+                }
+                label="Credentials"
+                tab="credential"
+              />
+            </Tooltip>
 
             {/*NOTE: Functionality of performance tab will be modified, until then keeping it and the related code commented */}
 
@@ -530,6 +542,11 @@ class MesherySettings extends React.Component {
 
           </TabContainer>
         )} */}
+        {tabVal === 5 && (
+          <TabContainer>
+            <MesheryCredentialComponent />
+          </TabContainer>
+        )}
 
         {backToPlay}
         <PromptComponent ref={this.systemResetPromptRef} />
