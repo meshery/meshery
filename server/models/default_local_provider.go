@@ -13,6 +13,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -724,7 +725,7 @@ func (l *DefaultLocalProvider) RemoteFilterFile(_ *http.Request, resourceURL, pa
 	}
 
 	// Check if hostname is github
-	if parsedURL.Host == "github.com" {
+	if parsedURL.Host == "github.com" && strings.Contains(parsedURL.Path, "tree") {
 		parsedPath := strings.Split(parsedURL.Path, "/")
 		if parsedPath[3] == "tree" {
 			parsedPath = append(parsedPath[0:3], parsedPath[4:]...)
@@ -744,6 +745,30 @@ func (l *DefaultLocalProvider) RemoteFilterFile(_ *http.Request, resourceURL, pa
 			path = strings.Join(parsedPath[4:], "/")
 		}
 		ffs, err := githubRepoFilterScan(owner, repo, path, branch)
+		if err != nil {
+			return nil, err
+		}
+
+		if save {
+			return l.MesheryFilterPersister.SaveMesheryFilters(ffs)
+		}
+
+		return json.Marshal(ffs)
+	}
+
+	if parsedURL.Host == "github.com" || parsedURL.Host == "raw.githubusercontent.com" {
+		resourceURL = strings.Replace(resourceURL, "blob", "raw", 1)
+		parsedPath := strings.Split(resourceURL, "/")
+
+		fileName := parsedPath[len(parsedPath)-1]
+		wasmRegExp := regexp.MustCompile("\\.wasm$|\\.webasm$")
+
+		fmt.Println(fileName, wasmRegExp.MatchString(fileName))
+
+		if !wasmRegExp.MatchString(fileName) {
+			return nil, fmt.Errorf("File should be .wasm or .webasm")
+		}
+		ffs, err := downloadFilterFromUrl(resourceURL, fileName)
 		if err != nil {
 			return nil, err
 		}
@@ -1262,6 +1287,37 @@ func githubRepoFilterScan(
 		Walk()
 
 	return result, err
+}
+
+func downloadFilterFromUrl(fileURL, fileName string) ([]MesheryFilter, error) {
+	resp, err := http.Get(fileURL)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("file not found")
+	}
+
+	defer SafeClose(resp.Body)
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	result := string(body)
+
+	ff := MesheryFilter{
+		Name:       fileName,
+		FilterFile: []byte(result),
+		Location: map[string]interface{}{
+			"type":   "github",
+			"host":   fileURL,
+			"path":   "",
+			"branch": "",
+		},
+	}
+
+	return []MesheryFilter{ff}, nil
 }
 
 func genericHTTPPatternFile(fileURL string) ([]MesheryPattern, error) {
