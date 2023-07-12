@@ -64,8 +64,8 @@ func main() {
 	}
 
 	if os.Args[2] != "--system" {
-	  log.Fatal("invalid system flag provided")
-		return	
+		log.Fatal("invalid system flag provided")
+		return
 	}
 
 	if len(os.Args) <= 3 {
@@ -74,8 +74,8 @@ func main() {
 	}
 
 	if os.Args[3] == "" {
-	  log.Fatal("system name missing")
-		return	
+		log.Fatal("system name missing")
+		return
 	}
 	System = os.Args[3]
 
@@ -91,20 +91,23 @@ func main() {
 	}
 	csvReader := csv.NewReader(file)
 	output, err := pkg.GetEntries(csvReader, ColumnNamesToExtractForDocs)
-		if err != nil {
-			log.Fatal(err)
-			return
-		}
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
 	file.Close()
 	os.Remove(file.Name())
 
 	switch System {
-	  case pkg.Docs.String(): docsUpdater(output, os.Args)
-		case pkg.Meshery.String(): mesheryUpdater(output)
-		case pkg.RemoteProvider.String(): remoteProviderUpdater(output)
-		default:
-			log.Fatal("invalid system name")
-			return
+	case pkg.Docs.String():
+		docsUpdater(output, os.Args)
+	case pkg.Meshery.String():
+		mesheryUpdater(output)
+	case pkg.RemoteProvider.String():
+		remoteProviderUpdater(output)
+	default:
+		log.Fatal("invalid system name")
+		return
 	}
 
 }
@@ -145,309 +148,309 @@ func docsUpdater(output []map[string]string, args []string) {
 		log.Fatal("docsUpdater: invalid number of arguments; missing website and docs path")
 		return
 	}
-  pathToIntegrationsLayer5 := args[3]
+	pathToIntegrationsLayer5 := args[3]
 	pathToIntegrationsMeshery := args[4]
 	updateOnlyPublished := true
-			if len(args) > 5 && args[5] == "--only-published" {
-				updateOnlyPublished = true
-			}
+	if len(args) > 5 && args[5] == "--only-published" {
+		updateOnlyPublished = true
+	}
 	output = cleanupDuplicatesAndPreferEmptyComponentField(output, "model")
-		mesheryDocsJSON := "const data = ["
-		for _, out := range output {
-			var t pkg.TemplateAttributes
-			publishValue, err := strconv.ParseBool(out["Publish?"])
-			if err != nil {
-				publishValue = false
+	mesheryDocsJSON := "const data = ["
+	for _, out := range output {
+		var t pkg.TemplateAttributes
+		publishValue, err := strconv.ParseBool(out["Publish?"])
+		if err != nil {
+			publishValue = false
+		}
+		if updateOnlyPublished && !publishValue {
+			continue
+		}
+		for key, val := range out {
+			switch key {
+			case "modelDisplayName":
+				t.Title = val
+			case "model":
+				t.ModelName = val
+			case "Page Subtitle":
+				t.Subtitle = val
+			case "Docs URL":
+				t.DocURL = val
+			case "category":
+				t.Category = val
+			case "subCategory":
+				t.Subcategory = val
+			case "howItWorks":
+				t.HowItWorks = val
+			case "hotItWorksDetails":
+				t.HowItWorksDetails = val
+			case "Publish?":
+				t.Published = val
+			case "About Project":
+				t.AboutProject = val
+			case "Standard Blurb":
+				t.StandardBlurb = val
+			case "Full Page":
+				t.FullPage = val
+			case "svgColor":
+				t.ColorSVG = val
+			case "svgWhite":
+				t.WhiteSVG = val
 			}
-			if updateOnlyPublished && !publishValue {
-				continue
-			}
-			for key, val := range out {
-				switch key {
-				case "modelDisplayName":
-					t.Title = val
-				case "model":
-					t.ModelName = val
-				case "Page Subtitle":
-					t.Subtitle = val
-				case "Docs URL":
-					t.DocURL = val
-				case "category":
-					t.Category = val
-				case "subCategory":
-					t.Subcategory = val
-				case "howItWorks":
-					t.HowItWorks = val
-				case "hotItWorksDetails":
-					t.HowItWorksDetails = val
-				case "Publish?":
-					t.Published = val
-				case "About Project":
-					t.AboutProject = val
-				case "Standard Blurb":
-					t.StandardBlurb = val
-				case "Full Page":
-					t.FullPage = val
-				case "svgColor":
-					t.ColorSVG = val
-				case "svgWhite":
-					t.WhiteSVG = val
-				}
-			}
-			t.FeatureList = "[" + strings.Join([]string{out["Feature 1"], out["Feature 2"], out["Feature 3"]}, ",") + "]"
-			t.WorkingSlides = `[
+		}
+		t.FeatureList = "[" + strings.Join([]string{out["Feature 1"], out["Feature 2"], out["Feature 3"]}, ",") + "]"
+		t.WorkingSlides = `[
 				../_images/meshmap-visualizer.png,
 				../_images/meshmap-designer.png]`
 
-			md := t.CreateMarkDown()
-			jsonItem := t.CreateJSONItem()
-			mesheryDocsJSON += jsonItem + ","
-			modelName := strings.TrimSpace(out["model"])
-			pathToIntegrationsLayer5, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5, modelName))
-			pathToIntegrationsMeshery, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsMeshery))
-			err = os.MkdirAll(pathToIntegrationsLayer5, 0777)
-			if err != nil {
-				panic(err)
-			}
-			_ = pkg.WriteToFile(filepath.Join(pathToIntegrationsLayer5, "index.mdx"), md)
-			svgcolor := out["svgColor"]
-			svgwhite := out["svgWhite"]
+		md := t.CreateMarkDown()
+		jsonItem := t.CreateJSONItem()
+		mesheryDocsJSON += jsonItem + ","
+		modelName := strings.TrimSpace(out["model"])
+		pathToIntegrationsLayer5, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5, modelName))
+		pathToIntegrationsMeshery, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsMeshery))
+		err = os.MkdirAll(pathToIntegrationsLayer5, 0777)
+		if err != nil {
+			panic(err)
+		}
+		_ = pkg.WriteToFile(filepath.Join(pathToIntegrationsLayer5, "index.mdx"), md)
+		svgcolor := out["svgColor"]
+		svgwhite := out["svgWhite"]
 
-			// Write SVGs to Layer5 docs
-			err = os.MkdirAll(filepath.Join(pathToIntegrationsLayer5, "icon", "color"), 0777)
-			if err != nil {
-				panic(err)
-			}
-
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "color", modelName+"-color.svg"), svgcolor) //CHANGE PATH
-			if err != nil {
-				panic(err)
-			}
-			err = os.MkdirAll(filepath.Join(pathToIntegrationsLayer5, "icon", "white"), 0777)
-			if err != nil {
-				panic(err)
-			}
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "white", modelName+"-white.svg"), svgwhite) //CHANGE PATH
-			if err != nil {
-				panic(err)
-			}
-
-			// Write SVGs to Meshery docs
-			err = os.MkdirAll(filepath.Join(pathToIntegrationsMeshery, "../", "images"), 0777)
-			if err != nil {
-				panic(err)
-			}
-
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", modelName+"-color.svg"), svgcolor) //CHANGE PATH
-			if err != nil {
-				panic(err)
-			}
-
-			err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", modelName+"-white.svg"), svgwhite) //CHANGE PATH
-			if err != nil {
-				panic(err)
-			}
+		// Write SVGs to Layer5 docs
+		err = os.MkdirAll(filepath.Join(pathToIntegrationsLayer5, "icon", "color"), 0777)
+		if err != nil {
+			panic(err)
 		}
 
-		mesheryDocsJSON = strings.TrimSuffix(mesheryDocsJSON, ",")
-		mesheryDocsJSON += "]; export default data"
-		if err := pkg.WriteToFile(filepath.Join("../../../", pathToIntegrationsMeshery, "data.js"), mesheryDocsJSON); err != nil {
-			log.Fatal(err)
+		err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "color", modelName+"-color.svg"), svgcolor) //CHANGE PATH
+		if err != nil {
+			panic(err)
 		}
+		err = os.MkdirAll(filepath.Join(pathToIntegrationsLayer5, "icon", "white"), 0777)
+		if err != nil {
+			panic(err)
+		}
+		err = pkg.WriteSVG(filepath.Join(pathToIntegrationsLayer5, "icon", "white", modelName+"-white.svg"), svgwhite) //CHANGE PATH
+		if err != nil {
+			panic(err)
+		}
+
+		// Write SVGs to Meshery docs
+		err = os.MkdirAll(filepath.Join(pathToIntegrationsMeshery, "../", "images"), 0777)
+		if err != nil {
+			panic(err)
+		}
+
+		err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", modelName+"-color.svg"), svgcolor) //CHANGE PATH
+		if err != nil {
+			panic(err)
+		}
+
+		err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMeshery, "../", "images", modelName+"-white.svg"), svgwhite) //CHANGE PATH
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	mesheryDocsJSON = strings.TrimSuffix(mesheryDocsJSON, ",")
+	mesheryDocsJSON += "]; export default data"
+	if err := pkg.WriteToFile(filepath.Join("../../../", pathToIntegrationsMeshery, "data.js"), mesheryDocsJSON); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func mesheryUpdater(output []map[string]string) {
-publishedModels := make(map[string]bool)
-		countWithoutCrds := 0
-		_ = pkg.PopulateEntries(OutputPath, output, PrimaryColumnName, func(dirpath string, changeFields map[string]string) error {
-			if changeFields["CRDs"] == "" {
-				countWithoutCrds++
-			}
-			if changeFields["Publish?"] == "TRUE" { //For a component level field
-				publishedModels[changeFields[PrimaryColumnName]] = true
-			}
-			return nil
-		})
-		err := pkg.PopulateEntries(OutputPath, output, PrimaryColumnName, func(dirpath string, changeFields map[string]string) error {
-			entries, err := os.ReadDir(dirpath)
-			if err != nil {
-				return err
-			}
-			for _, versionentry := range entries {
-				if versionentry.IsDir() {
-					entries, err := os.ReadDir(filepath.Join(dirpath, versionentry.Name()))
-					if err != nil {
-						return err
+	publishedModels := make(map[string]bool)
+	countWithoutCrds := 0
+	_ = pkg.PopulateEntries(OutputPath, output, PrimaryColumnName, func(dirpath string, changeFields map[string]string) error {
+		if changeFields["CRDs"] == "" {
+			countWithoutCrds++
+		}
+		if changeFields["Publish?"] == "TRUE" { //For a component level field
+			publishedModels[changeFields[PrimaryColumnName]] = true
+		}
+		return nil
+	})
+	err := pkg.PopulateEntries(OutputPath, output, PrimaryColumnName, func(dirpath string, changeFields map[string]string) error {
+		entries, err := os.ReadDir(dirpath)
+		if err != nil {
+			return err
+		}
+		for _, versionentry := range entries {
+			if versionentry.IsDir() {
+				entries, err := os.ReadDir(filepath.Join(dirpath, versionentry.Name()))
+				if err != nil {
+					return err
+				}
+				for _, entry := range entries {
+					if !publishedModels[changeFields[PrimaryColumnName]] && changeFields["component"] == "" { //Ignore Publish flag for component level rows
+						fmt.Println("(Publish? is not set to TRUE) will not update", changeFields["modelDisplayName"])
+						continue
 					}
-					for _, entry := range entries {
-						if !publishedModels[changeFields[PrimaryColumnName]] && changeFields["component"] == "" { //Ignore Publish flag for component level rows
-							fmt.Println("(Publish? is not set to TRUE) will not update", changeFields["modelDisplayName"])
-							continue
-						}
-						name := strings.TrimSuffix(strings.TrimSpace(entry.Name()), ".json")
-						if changeFields["component"] != "" && changeFields["component"] != name { //This is a component specific entry and only fill this when the filename matches component name
-							continue
-						}
+					name := strings.TrimSuffix(strings.TrimSpace(entry.Name()), ".json")
+					if changeFields["component"] != "" && changeFields["component"] != name { //This is a component specific entry and only fill this when the filename matches component name
+						continue
+					}
 
-						path, err := filepath.Abs(filepath.Join(dirpath, versionentry.Name(), entry.Name()))
-						if err != nil {
-							fmt.Printf("[Error] for %s: %s\n", name, err.Error())
-							continue
-						}
-						byt, err := os.ReadFile(path)
-						if err != nil {
-							fmt.Printf("[Error] for %s: %s\n", name, err.Error())
-							continue
-						}
-						var component v1alpha1.ComponentDefinition
-						err = json.Unmarshal(byt, &component)
-						if err != nil {
-							fmt.Printf("[Error] for %s: %s\n", name, err.Error())
-							continue
-						}
-						component.DisplayName = manifests.FormatToReadableString(component.Kind)
-						if component.Metadata == nil {
-							component.Metadata = make(map[string]interface{})
-						}
-						for key, value := range changeFields {
-							if key == "category" {
-								component.Model.Category = v1alpha1.Category{
-									Name: value,
-								}
-							} else if key == "svgColor" || key == "svgWhite" {
-								svg, err := pkg.UpdateSVGString(value, SVG_WIDTH, SVG_HEIGHT)
-								if err != nil {
-									fmt.Println("err for: ", component.Kind, err.Error())
-								}
-								if changeFields["component"] == "" { //If it is a model level entry then update model svgs
-									if component.Model.Metadata == nil {
-										component.Model.Metadata = make(map[string]interface{})
-									}
-									component.Model.Metadata[key] = svg
-								}
-								if changeFields["component"] != "" || component.Metadata[key] == nil { // If it is a component level SVG or component already doesn't have an SVG. Use this svg at component level.
-									component.Metadata[key] = svg
-								}
-							} else if isInColumnNames(key, ColumnNamesToExtract) != -1 {
-								component.Metadata[key] = value
+					path, err := filepath.Abs(filepath.Join(dirpath, versionentry.Name(), entry.Name()))
+					if err != nil {
+						fmt.Printf("[Error] for %s: %s\n", name, err.Error())
+						continue
+					}
+					byt, err := os.ReadFile(path)
+					if err != nil {
+						fmt.Printf("[Error] for %s: %s\n", name, err.Error())
+						continue
+					}
+					var component v1alpha1.ComponentDefinition
+					err = json.Unmarshal(byt, &component)
+					if err != nil {
+						fmt.Printf("[Error] for %s: %s\n", name, err.Error())
+						continue
+					}
+					component.DisplayName = manifests.FormatToReadableString(component.Kind)
+					if component.Metadata == nil {
+						component.Metadata = make(map[string]interface{})
+					}
+					for key, value := range changeFields {
+						if key == "category" {
+							component.Model.Category = v1alpha1.Category{
+								Name: value,
 							}
+						} else if key == "svgColor" || key == "svgWhite" {
+							svg, err := pkg.UpdateSVGString(value, SVG_WIDTH, SVG_HEIGHT)
+							if err != nil {
+								fmt.Println("err for: ", component.Kind, err.Error())
+							}
+							if changeFields["component"] == "" { //If it is a model level entry then update model svgs
+								if component.Model.Metadata == nil {
+									component.Model.Metadata = make(map[string]interface{})
+								}
+								component.Model.Metadata[key] = svg
+							}
+							if changeFields["component"] != "" || component.Metadata[key] == nil { // If it is a component level SVG or component already doesn't have an SVG. Use this svg at component level.
+								component.Metadata[key] = svg
+							}
+						} else if isInColumnNames(key, ColumnNamesToExtract) != -1 {
+							component.Metadata[key] = value
 						}
-						if i := isInColumnNames("modelDisplayName", ColumnNamesToExtract); i != -1 {
-							component.Model.DisplayName = changeFields[ColumnNamesToExtract[i]]
-						}
-						//Either component is set to published or the parent model is set to published
-						if component.Metadata["Publish?"] == "TRUE" || publishedModels[component.Model.Name] { //Publish? is an invalid field for putting inside kubernetes annotations
-							component.Metadata["published"] = true
-						} else {
-							component.Metadata["published"] = false
-						}
-						fmt.Println("updating for ", changeFields["modelDisplayName"], "--", component.Kind, "-- published=", component.Metadata["published"])
-						delete(component.Metadata, "Publish?")
-						delete(component.Metadata, "CRDs")
-						delete(component.Metadata, "component")
-						modelDisplayName := component.Metadata["modelDisplayName"].(string)
-						component.Model.DisplayName = modelDisplayName
-						byt, err = json.Marshal(component)
-						if err != nil {
-							fmt.Printf("[Error] for %s: %s\n", name, err.Error())
-							continue
-						}
-						err = os.WriteFile(filepath.Join(dirpath, versionentry.Name(), entry.Name()), byt, 0777)
-						if err != nil {
-							fmt.Printf("[Error] for %s: %s\n", name, err.Error())
-							continue
-						}
+					}
+					if i := isInColumnNames("modelDisplayName", ColumnNamesToExtract); i != -1 {
+						component.Model.DisplayName = changeFields[ColumnNamesToExtract[i]]
+					}
+					//Either component is set to published or the parent model is set to published
+					if component.Metadata["Publish?"] == "TRUE" || publishedModels[component.Model.Name] { //Publish? is an invalid field for putting inside kubernetes annotations
+						component.Metadata["published"] = true
+					} else {
+						component.Metadata["published"] = false
+					}
+					fmt.Println("updating for ", changeFields["modelDisplayName"], "--", component.Kind, "-- published=", component.Metadata["published"])
+					delete(component.Metadata, "Publish?")
+					delete(component.Metadata, "CRDs")
+					delete(component.Metadata, "component")
+					modelDisplayName := component.Metadata["modelDisplayName"].(string)
+					component.Model.DisplayName = modelDisplayName
+					byt, err = json.Marshal(component)
+					if err != nil {
+						fmt.Printf("[Error] for %s: %s\n", name, err.Error())
+						continue
+					}
+					err = os.WriteFile(filepath.Join(dirpath, versionentry.Name(), entry.Name()), byt, 0777)
+					if err != nil {
+						fmt.Printf("[Error] for %s: %s\n", name, err.Error())
+						continue
 					}
 				}
-
 			}
-			return nil
-		})
-		fmt.Println("Total models without CRDs in spreadsheet are: ", countWithoutCrds)
-		if err != nil {
-			log.Fatal(err)
+
 		}
+		return nil
+	})
+	fmt.Println("Total models without CRDs in spreadsheet are: ", countWithoutCrds)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func remoteProviderUpdater(output []map[string]string) {
-  output = cleanupDuplicatesAndPreferEmptyComponentField(output, "model")
+	output = cleanupDuplicatesAndPreferEmptyComponentField(output, "model")
 	pathForModals := os.Args[4]
 	pathForIcons := os.Args[5]
 	for _, out := range output {
-			var m v1alpha1.Model
-			publishValue, err := strconv.ParseBool(out["Publish?"])
-			if err != nil {
-				publishValue = false
+		var m v1alpha1.Model
+		publishValue, err := strconv.ParseBool(out["Publish?"])
+		if err != nil {
+			publishValue = false
+		}
+		if !publishValue {
+			continue
+		}
+		modelName := strings.TrimSpace(out["model"])
+		if m.Metadata == nil {
+			m.Metadata = make(map[string]interface{})
+		}
+		for key, val := range out {
+			switch key {
+			case "modelDisplayName":
+				m.DisplayName = val
+			case "model":
+				m.Name = val
+			case "category":
+				m.Category = v1alpha1.Category{
+					Name: val,
+				}
+			// case "subCategory":
+			// 	m.SubCategory = val
+			case "svgColor":
+				svg, err := pkg.UpdateSVGString(val, SVG_WIDTH, SVG_HEIGHT)
+				if err != nil {
+					fmt.Println("err for: ", modelName, err.Error())
+				}
+				m.Metadata["svgColor"] = svg
+			case "svgWhite":
+				svg, err := pkg.UpdateSVGString(val, SVG_WIDTH, SVG_HEIGHT)
+				if err != nil {
+					fmt.Println("err for: ", modelName, err.Error())
+				}
+				m.Metadata["svgWhite"] = svg
 			}
-			if !publishValue {
-				continue
-			}
-			modelName := strings.TrimSpace(out["model"])
-			if m.Metadata == nil {
-										m.Metadata = make(map[string]interface{})
-									}
-			for key, val := range out {
-				switch key {
-				case "modelDisplayName":
-					m.DisplayName = val
-				case "model":
-					m.Name = val
-				case "category":
-					m.Category = v1alpha1.Category{
-									Name: val,
-								}
-				// case "subCategory":
-				// 	m.SubCategory = val
-				case "svgColor":
-					svg, err := pkg.UpdateSVGString(val, SVG_WIDTH, SVG_HEIGHT)
-								if err != nil {
-									fmt.Println("err for: ", modelName, err.Error())
-								}
-					m.Metadata["svgColor"] = svg
-				case "svgWhite":
-						svg, err := pkg.UpdateSVGString(val, SVG_WIDTH, SVG_HEIGHT)
-								if err != nil {
-									fmt.Println("err for: ", modelName, err.Error())
-								}
-					m.Metadata["svgWhite"] = svg
-				 }
-			}
-      pathForModals, _ := filepath.Abs(filepath.Join("../../../", pathForModals, modelName))
-			err = os.MkdirAll(pathForModals, 0777)
-			if err != nil {
-				fmt.Println("Error creating directory: ", err.Error())
-			}
-			pathForIcons, _ := filepath.Abs(filepath.Join("../../../", pathForIcons, modelName))
-			err = os.MkdirAll(pathForIcons, 0777)
-			if err != nil {
-				fmt.Println("Error creating directory: ", err.Error())
-			}
-			byt, err := json.Marshal(m)
-			if err != nil {
-				fmt.Println("Error marshalling model: ", err.Error())
-			}
-			err = os.WriteFile(filepath.Join(pathForModals, "model.json"), byt, 0777)
-			if err != nil {
-				fmt.Println("Error writing model: ", err.Error())
-				continue
-			}
-			err = os.MkdirAll(filepath.Join(pathForIcons, "icon", "color"), 0777)
-			if err != nil {
-				panic(err)
-			}
-			svgColor, _ := m.Metadata["svgColor"].(string)
-			err = pkg.WriteSVG(filepath.Join(pathForIcons, "icon", "color", modelName+"-color.svg"), svgColor) //CHANGE PATH
-			if err != nil {
-				panic(err)
-			}
-			err = os.MkdirAll(filepath.Join(pathForIcons, "icon", "white"), 0777)
-			if err != nil {
-				panic(err)
-			}
-			svgWith, _ := m.Metadata["svgWhite"].(string)
-			err = pkg.WriteSVG(filepath.Join(pathForIcons, "icon", "white", modelName+"-white.svg"), svgWith) //CHANGE PATH
-			if err != nil {
-				panic(err)
-			}
- }
+		}
+		pathForModals, _ := filepath.Abs(filepath.Join("../../../", pathForModals, modelName))
+		err = os.MkdirAll(pathForModals, 0777)
+		if err != nil {
+			fmt.Println("Error creating directory: ", err.Error())
+		}
+		pathForIcons, _ := filepath.Abs(filepath.Join("../../../", pathForIcons, modelName))
+		err = os.MkdirAll(pathForIcons, 0777)
+		if err != nil {
+			fmt.Println("Error creating directory: ", err.Error())
+		}
+		byt, err := json.Marshal(m)
+		if err != nil {
+			fmt.Println("Error marshalling model: ", err.Error())
+		}
+		err = os.WriteFile(filepath.Join(pathForModals, "model.json"), byt, 0777)
+		if err != nil {
+			fmt.Println("Error writing model: ", err.Error())
+			continue
+		}
+		err = os.MkdirAll(filepath.Join(pathForIcons, "icon", "color"), 0777)
+		if err != nil {
+			panic(err)
+		}
+		svgColor, _ := m.Metadata["svgColor"].(string)
+		err = pkg.WriteSVG(filepath.Join(pathForIcons, "icon", "color", modelName+"-color.svg"), svgColor) //CHANGE PATH
+		if err != nil {
+			panic(err)
+		}
+		err = os.MkdirAll(filepath.Join(pathForIcons, "icon", "white"), 0777)
+		if err != nil {
+			panic(err)
+		}
+		svgWith, _ := m.Metadata["svgWhite"].(string)
+		err = pkg.WriteSVG(filepath.Join(pathForIcons, "icon", "white", modelName+"-white.svg"), svgWith) //CHANGE PATH
+		if err != nil {
+			panic(err)
+		}
+	}
 }

@@ -10,14 +10,14 @@ const (
 
 func (dt SystemType) String() string {
 	switch dt {
-		case Meshery:
-			return "meshery"
+	case Meshery:
+		return "meshery"
 
-		case Docs:
-			return "docs"
+	case Docs:
+		return "docs"
 
-		case RemoteProvider:
-			return "remote-provider"
+	case RemoteProvider:
+		return "remote-provider"
 	}
 	return ""
 }
