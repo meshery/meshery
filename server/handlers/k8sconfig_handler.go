@@ -336,12 +336,14 @@ func RegisterK8sMeshModelComponents(_ context.Context, config []byte, ctxID stri
 	}
 	count := 0
 	for _, c := range man {
-		writeK8sMetadata(&c, reg)
-		err = reg.RegisterEntity(meshmodel.Host{
-			Hostname:  "kubernetes",
-			ContextID: ctxID,
-		}, c)
-		count++
+		if !isComponentAlreadyRegistered(&c, reg) {
+			writeK8sMetadata(&c, reg)
+			err = reg.RegisterEntity(meshmodel.Host{
+				Hostname:  "kubernetes",
+				ContextID: ctxID,
+			}, c)
+			count++
+		}
 	}
 	es.Publish(&meshes.EventsResponse{
 		Component:     "core",
@@ -358,24 +360,18 @@ const k8sMeshModelPath = "../meshmodel/components/kubernetes/model_template.json
 
 var k8sMeshModelMetadata = make(map[string]interface{})
 
-func writeK8sMetadata(comp *meshmodelv1alpha1.ComponentDefinition, reg *meshmodel.RegistryManager) {
+func isComponentAlreadyRegistered(comp *meshmodelv1alpha1.ComponentDefinition, reg *meshmodel.RegistryManager) bool {
 	ent, _, _ := reg.GetEntities(&meshmodelv1alpha1.ComponentFilter{
 		Name:       comp.Kind,
 		APIVersion: comp.APIVersion,
 	})
+	return len(ent) != 0
+}
+
+func writeK8sMetadata(comp *meshmodelv1alpha1.ComponentDefinition, reg *meshmodel.RegistryManager) {
 	//If component was not available in the registry, then use the generic model level metadata
-	if len(ent) == 0 {
-		putils.MergeMaps(comp.Metadata, k8sMeshModelMetadata)
-		mutil.WriteSVGsOnFileSystem(comp)
-	} else {
-		existingComp, ok := ent[0].(meshmodelv1alpha1.ComponentDefinition)
-		if !ok {
-			putils.MergeMaps(comp.Metadata, k8sMeshModelMetadata)
-			return
-		}
-		putils.MergeMaps(comp.Metadata, existingComp.Metadata)
-		comp.Model = existingComp.Model
-	}
+	putils.MergeMaps(comp.Metadata, k8sMeshModelMetadata)
+	mutil.WriteSVGsOnFileSystem(comp)
 }
 
 // Caches k8sMeshModel metadatas in memory to use at the time of dynamic k8s component generation
