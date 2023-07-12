@@ -18,16 +18,6 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
-// MesheryFilterRequestBody refers to the type of request body that
-// SaveMesheryFilter would receive
-type MesheryFilterRequestBody struct {
-	URL        string                `json:"url,omitempty"`
-	Path       string                `json:"path,omitempty"`
-	Save       bool                  `json:"save,omitempty"`
-	Config     string				 `json:"config,omitempty"` 	
-  FilterData *models.MesheryFilterPayload `json:"filter_data,omitempty"`
-}
-
 // swagger:route GET /api/filter/file/{id} FiltersAPI idGetFilterFile
 // Handle GET request for filter file with given id
 //
@@ -103,7 +93,7 @@ func (h *Handler) handleFilterPOST(
 		OperationId:   guid.NewString(),
 		EventType:     meshes.EventType_INFO,
 	}
-	var parsedBody *MesheryFilterRequestBody
+	var parsedBody *models.MesheryFilterRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrGetFilter(err).Error(), http.StatusBadRequest)
@@ -140,7 +130,7 @@ func (h *Handler) handleFilterPOST(
 			parsedBody.FilterData.Name = "Test Filter"
 		}
 		// Assign a location if no location is specified
-		if parsedBody.FilterData.Location == nil {
+		if parsedBody.FilterData.Location == nil || len(parsedBody.FilterData.Location) == 0 {
 			parsedBody.FilterData.Location = map[string]interface{}{
 				"host":   "",
 				"path":   "",

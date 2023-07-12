@@ -24,7 +24,6 @@ import (
 
 var (
 	availableSubcommands []*cobra.Command
-	file                 string
 )
 
 // FilterCmd represents the root command for filter commands
@@ -49,7 +48,7 @@ mesheryctl exp filter [subcommands]
 
 func init() {
 	FilterCmd.PersistentFlags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token file default from current context")
+	availableSubcommands = []*cobra.Command{viewCmd, deleteCmd, listCmd, importCmd}
 
-	availableSubcommands = []*cobra.Command{viewCmd, deleteCmd, listCmd}
 	FilterCmd.AddCommand(availableSubcommands...)
 }
