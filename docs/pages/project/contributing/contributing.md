@@ -86,28 +86,3 @@ Or you may configure your IDE, for example, VSCode to automatically sign-off com
 
 </details>
 
-
-### Meshery Contribution Flow
-
-Meshery is written in `Go` (Golang) and leverages Go Modules. UI is built on React and Next.js. To make building and packaging easier a `Makefile` is included in the main repository folder.
-
-Relevant coding style guidelines are the [Go Code Review Comments](https://code.google.com/p/go-wiki/wiki/CodeReviewComments) and the _Formatting and style_ section of Peter Bourgon's [Go: Best
-Practices for Production Environments](https://peter.bourgon.org/go-in-production/#formatting-and-style).
-
-**Please note**: All `make` commands should be run in a terminal from within the Meshery's main folder.
-
-
-<details>
-
-<summary>Prequisites for building Meshery in your development environment:</summary>
-
-<ol>
-<li><code>Go</code> version 1.19 must be installed if you want to build and/or make changes to the existing code. The binary <code>go1.19</code> should be available in your path. If you don't want to disturb your existing version of Go, then follow these <a href="https://go.dev/doc manage-install#:~:text=and%20run%20them.-,Installing%20multiple%20Go%20versions,-You%20can%20install" rel="noopener" target="_blank">instructions</a> to keep multiple versions of Go in your system.</li>
-<li> <code>GOPATH</code> environment variable should be configured appropriately</li>
-<li> <code>npm</code> and <code>node</code> should be installed on your machine, `node` version 19 or higher is not supported right now.</li>
-<li>. Fork this repository <code>git clone https://github.com/meshery/meshery.git</code>, and clone your forked version of Meshery to your development environment, preferably outside `GOPATH`.</li>
-<li> <code>golangci-lint</code> should be installed if you want to test Go code, for MacOS and linux users.</li>
-<li> <code>golangci-lint</code> should be installed if you want to test Go code, for MacOS and linux users.</li>
-</ol>
-
-</details>
