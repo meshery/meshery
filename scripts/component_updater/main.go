@@ -1,19 +1,21 @@
 /*
 Meshery Component Updater
-Uses a spreadsheet of centralized information about MeshModel components and their metadata like color, icon, and so on. Script is used to update both components that are registered in thee Capabilities Registry and on the websites.
+Uses a spreadsheet of centralized information about MeshModel components and their metadata like color, icon, and so on. Script is used to update components metada (svgs, icons etc) for Meshery, Websites (Layer5.io, Meshery.io), and Remote Provider.
 
 Usage: (order of flags matters)
 
-    ./main [path-to-spreadsheet] [--update_doc] [relative path to docs in layer5 website] [relative path to docs in meshery website] [--only-published]
+    ./main [path-to-spreadsheet] [--system] [<system-name>] [relative path to docs in layer5 website] [relative path to docs in meshery website] [--only-published]
 
-Example:
+Examples:
 
-	./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --update-docs layer5/src/collections/integrations meshery.io/integrations --only-published
+	1. ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system docs layer5/src/collections/integrations meshery.io/integrations --only-published
+	2. ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system remote-provider <remote-provider>/models/meshmodels <remote-provider>/ui/public/img/meshmodels
+	3. ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system meshery ../../server/meshmodel/components
 
 The flags are:
 
-    --update-docs
-        Skip updating components in meshery/meshery. Update website(s) only.
+  --system
+        defined type of system to update. Can be one of "meshery", "docs", or "remote-provider".
 
 	--only-published
         Only handle components that have a value of "true" under the "Published?" column in spreadsheet.
@@ -40,7 +42,7 @@ var (
 	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logoURL", "svgColor", "svgWhite", "Publish?", "CRDs", "component", "svgComplete", "genealogy", "styleOverrides"}
 	ColumnNamesToExtractForDocs = []string{"modelDisplayName", "Page Subtitle", "Docs URL", "category", "subCategory", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "svgColor", "svgWhite", "Full Page", "model"}
 	PrimaryColumnName           = "model"
-	OutputPath                  = "../../server/meshmodel/components"
+	OutputPath                  = ""
 )
 
 var System string
@@ -99,7 +101,7 @@ func main() {
 
 	switch System {
 	case pkg.Docs.String():
-		docsUpdater(output, os.Args)
+		docsUpdater(output)
 	case pkg.Meshery.String():
 		mesheryUpdater(output)
 	case pkg.RemoteProvider.String():
@@ -142,15 +144,15 @@ func cleanupDuplicatesAndPreferEmptyComponentField(out []map[string]string, grou
 	return out2
 }
 
-func docsUpdater(output []map[string]string, args []string) {
-	if len(args) < 5 {
+func docsUpdater(output []map[string]string) {
+	if len(os.Args) < 5 {
 		log.Fatal("docsUpdater: invalid number of arguments; missing website and docs path")
 		return
 	}
-	pathToIntegrationsLayer5 := args[3]
-	pathToIntegrationsMeshery := args[4]
+	pathToIntegrationsLayer5 := os.Args[3]
+	pathToIntegrationsMeshery := os.Args[4]
 	updateOnlyPublished := true
-	if len(args) > 5 && args[5] == "--only-published" {
+	if len(os.Args) > 5 && os.Args[5] == "--only-published" {
 		updateOnlyPublished = true
 	}
 	output = cleanupDuplicatesAndPreferEmptyComponentField(output, "model")
@@ -259,6 +261,14 @@ func docsUpdater(output []map[string]string, args []string) {
 }
 
 func mesheryUpdater(output []map[string]string) {
+	if len(os.Args) < 5 {
+		log.Fatal("mesheryUpdater: invalid number of arguments; missing meshmodels path in meshery server")
+		return
+	}
+	OutputPath = os.Args[4]
+	if OutputPath == "" {
+		OutputPath = "../../server/meshmodel/components" // default path for meshery server
+	}
 	publishedModels := make(map[string]bool)
 	countWithoutCrds := 0
 	_ = pkg.PopulateEntries(OutputPath, output, PrimaryColumnName, func(dirpath string, changeFields map[string]string) error {
@@ -372,6 +382,11 @@ func mesheryUpdater(output []map[string]string) {
 }
 
 func remoteProviderUpdater(output []map[string]string) {
+	if len(os.Args) < 6 { 
+		log.Fatal("remoteProvider updater: invalid number of arguments; missing meshmodels path in remote provider")
+		return
+	}
+	
 	output = cleanupDuplicatesAndPreferEmptyComponentField(output, "model")
 	pathForModals := os.Args[4]
 	pathForIcons := os.Args[5]
@@ -453,3 +468,4 @@ func remoteProviderUpdater(output []map[string]string) {
 		}
 	}
 }
+
