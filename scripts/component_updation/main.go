@@ -50,7 +50,7 @@ const (
 	SVG_HEIGHT = 20
 )
 
-func main() {)
+func main() {
 	url := os.Args[1]
 	if url == "" {
 		log.Fatal("provide a valid spreadsheet URL")
