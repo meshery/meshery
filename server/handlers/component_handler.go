@@ -64,7 +64,7 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 		filter.Greedy = true
 		filter.Name = r.URL.Query().Get("search")
 	}
-	meshmodels, count := h.registryManager.GetModels(h.dbHandler, filter)
+	meshmodels, count, uniqueCount := h.registryManager.GetModels(h.dbHandler, filter)
 
 	var pgSize int64
 	if limitstr == "all" {
@@ -76,6 +76,7 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 	res := models.MeshmodelsAPIResponse {
 		Page: page,
 		PageSize: int(pgSize),
+		UniqueCount: uniqueCount,
 		Count: count,
 		Models: meshmodels,
 	}
@@ -126,7 +127,7 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 		page = 1
 	}
 	offset := (page - 1) * limit
-	meshmodels, count := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
+	meshmodels, count, uniqueCount := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
 		Category: cat,
 		Name:     model,
 		Version:  r.URL.Query().Get("version"),
@@ -148,6 +149,7 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 		Page: page,
 		PageSize: int(pgSize),
 		Count: count,
+		UniqueCount: uniqueCount,
 		Models: meshmodels,
 	}
 
@@ -205,7 +207,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		filter.Greedy = true
 	}
 
-	meshmodels, count := h.registryManager.GetModels(h.dbHandler, filter)
+	meshmodels, count, uniqueCount := h.registryManager.GetModels(h.dbHandler, filter)
 
 	var pgSize int64
 	if limitstr == "all" {
@@ -218,6 +220,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		Page: page,
 		PageSize: int(pgSize),
 		Count: count,
+		UniqueCount: uniqueCount,
 		Models: meshmodels,
 	}
 
@@ -268,7 +271,7 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 		page = 1
 	}
 	offset := (page - 1) * limit
-	meshmodels, count := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
+	meshmodels, count, uniqueCount := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
 		Name:    name,
 		Version: v,
 		Limit:   limit,
@@ -289,6 +292,7 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 		Page: page,
 		PageSize: int(pgSize),
 		Count: count,
+		UniqueCount: uniqueCount,
 		Models: meshmodels,
 	}
 
@@ -475,7 +479,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 		page = 1
 	}
 	offset := (page - 1) * limit
-	entities, count := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	entities, count, uniqueCount := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		Name:         name,
 		CategoryName: cat,
 		ModelName:    typ,
@@ -512,6 +516,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 		PageSize: int(pgSize),
 		Count: *count,
 		Components: comps,
+		UniqueCount: *uniqueCount,
 	}
 
 	if err := enc.Encode(response); err != nil {
@@ -565,7 +570,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 		page = 1
 	}
 	offset := (page - 1) * limit
-	entities, count := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	entities, count, uniqueCount := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		Name:         name,
 		CategoryName: cat,
 		APIVersion:   r.URL.Query().Get("apiVersion"),
@@ -601,6 +606,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 		PageSize: int(pgSize),
 		Count: *count,
 		Components: comps,
+		UniqueCount: *uniqueCount,
 	}
 
 	if err := enc.Encode(response); err != nil {
@@ -654,7 +660,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 		page = 1
 	}
 	offset := (page - 1) * limit
-	entities, count := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	entities, count, uniqueCount := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		Name:       name,
 		ModelName:  typ,
 		APIVersion: r.URL.Query().Get("apiVersion"),
@@ -690,6 +696,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 		PageSize: int(pgSize),
 		Count: *count,
 		Components: comps,
+		UniqueCount: *uniqueCount,
 	}
 
 	if err := enc.Encode(response); err != nil {
@@ -744,7 +751,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 		page = 1
 	}
 	offset := (page - 1) * limit
-	entities, count := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	entities, count, uniqueCount := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		Name:       name,
 		Trim:       r.URL.Query().Get("trim") == "true",
 		APIVersion: r.URL.Query().Get("apiVersion"),
@@ -781,6 +788,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 		PageSize: int(pgSize),
 		Count: *count,
 		Components: comps,
+		UniqueCount: *uniqueCount,
 	}
 
 	if err := enc.Encode(response); err != nil {
@@ -845,7 +853,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		filter.Greedy = true
 		filter.Name = r.URL.Query().Get("search")
 	}
-	entities, count := h.registryManager.GetEntities(filter)
+	entities, count, uniqueCount := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
 		comp, ok := r.(v1alpha1.ComponentDefinition)
@@ -871,6 +879,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		PageSize: int(pgSize),
 		Count: *count,
 		Components: comps,
+		UniqueCount: *uniqueCount,
 	}
 	
 	if err := enc.Encode(response); err != nil {
@@ -939,7 +948,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		filter.Greedy = true
 		filter.Name = r.URL.Query().Get("search")
 	}
-	entities, count := h.registryManager.GetEntities(filter)
+	entities, count, uniqueCount := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
 		comp, ok := r.(v1alpha1.ComponentDefinition)
@@ -965,6 +974,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		PageSize: int(pgSize),
 		Count: *count,
 		Components: comps,
+		UniqueCount: *uniqueCount,
 	}
 
 	if err := enc.Encode(response); err != nil {
@@ -1028,7 +1038,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		filter.Greedy = true
 		filter.Name = r.URL.Query().Get("search")
 	}
-	entities, count := h.registryManager.GetEntities(filter)
+	entities, count, uniqueCount := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
 		comp, ok := r.(v1alpha1.ComponentDefinition)
@@ -1054,6 +1064,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		PageSize: int(pgSize),
 		Count: *count,
 		Components: comps,
+		UniqueCount: *uniqueCount,
 	}
 
 	if err := enc.Encode(response); err != nil {
@@ -1117,7 +1128,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 		filter.Greedy = true
 		filter.DisplayName = r.URL.Query().Get("search")
 	}
-	entities, count := h.registryManager.GetEntities(filter)
+	entities, count, uniqueCount := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
 		comp, ok := r.(v1alpha1.ComponentDefinition)
@@ -1144,6 +1155,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 		PageSize: int(pgSize),
 		Count: *count,
 		Components: comps,
+		UniqueCount: *uniqueCount,
 	}
 
 	if err := enc.Encode(res); err != nil {
