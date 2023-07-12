@@ -384,11 +384,11 @@ func mesheryUpdater(output []map[string]string) {
 }
 
 func remoteProviderUpdater(output []map[string]string) {
-	if len(os.Args) < 6 { 
+	if len(os.Args) < 6 {
 		log.Fatal("remoteProvider updater: invalid number of arguments; missing meshmodels path in remote provider")
 		return
 	}
-	
+
 	output = cleanupDuplicatesAndPreferEmptyComponentField(output, "model")
 	pathForModals := os.Args[4]
 	pathForIcons := os.Args[5]
@@ -470,4 +470,3 @@ func remoteProviderUpdater(output []map[string]string) {
 		}
 	}
 }
-
