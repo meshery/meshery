@@ -58,6 +58,35 @@ func TestFilterCmd(t *testing.T) {
 			ExpectHelp:       false,
 			ExpectErr:        false,
 		},
+		{
+			Name: "filter List",
+			Args: []string{"list"},
+			Token: filepath.Join(fixturesDir, "token.golden"),
+			ExpectedResponse: "filter.list.output.golden",
+			Fixture: "filter.list.api.response.golden",
+			URL: testContext.BaseURL+"/api/filter",
+			ExpectHelp: false,
+			ExpectErr: false,
+		},
+		{
+			Name :"filter Delete with Name ",
+			Args: []string{"delete","delete-name"},
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectedResponse: "filter.name.delete.output.golden",
+			Fixture:          "filter.name.delete.view.api.response.golden",
+			URL:              testContext.BaseURL + "/api/filter/deploy",
+			ExpectHelp:       false,
+			ExpectErr:        false,
+		},
+		{
+			Name:"filter Delete with ID",
+			Args: []string{"delete","c0c6035a-b1b9-412d-aab2-4ed1f1d51f84"},
+			ExpectedResponse: "filter.id.delete.output.golden",
+			Fixture:          "filter.id.delete.api.response.golden",
+			URL:              testContext.BaseURL + "/api/filter/deploy/c0c6035a-b1b9-412d-aab2-4ed1f1d51f84",
+			ExpectHelp:       false,
+			ExpectErr:        false,
+		},
 	}
 	for _, tc := range FilterTestCases {
 		t.Run(tc.Name, func(t *testing.T) {
@@ -69,6 +98,9 @@ func TestFilterCmd(t *testing.T) {
 			// mock response
 			httpmock.RegisterResponder("GET", tc.URL,
 				httpmock.NewStringResponder(200, apiResponse))
+
+			httpmock.RegisterResponder("DELETE", tc.URL,
+				httpmock.NewStringResponder(200, apiResponse))	
 
 			//Expected Response
 			testdataDir := filepath.Join(currentDir, "testdata")
