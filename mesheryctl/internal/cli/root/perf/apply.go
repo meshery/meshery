@@ -48,6 +48,8 @@ var (
 	filePath           string
 	profileID          string
 	req                *http.Request
+	testBody           string
+	extraFlags         string
 )
 
 var linkDocPerfApply = map[string]string{
@@ -144,6 +146,10 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 			if loadGenerator == "" {
 				loadGenerator = testClient.LoadGenerator
 			}
+
+			if testBody == "" {
+				testBody = testClient.Body
+			}
 		}
 
 		// Run test based on flags
@@ -215,14 +221,33 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 			}
 
 			// reset profile name without %20
-			// pull test configuration from the profile only if a test configuration is not provided
+			// pull test configuration from the profile only if a test configuration is not provided and flag is not set
 			if filePath == "" {
 				profileName = profiles[index].Name
-				loadGenerator = profiles[index].LoadGenerators[0]
-				concurrentRequests = strconv.Itoa(profiles[index].ConcurrentRequest)
-				qps = strconv.Itoa(profiles[index].QPS)
-				testDuration = profiles[index].Duration
-				testMesh = profiles[index].ServiceMesh
+
+				if loadGenerator == "" {
+					loadGenerator = profiles[index].LoadGenerators[0]
+				}
+
+				if concurrentRequests == "" {
+					concurrentRequests = strconv.Itoa(profiles[index].ConcurrentRequest)
+				}
+
+				if qps == "" {
+					qps = strconv.Itoa(profiles[index].QPS)
+				}
+
+				if testDuration == "" {
+					testDuration = profiles[index].Duration
+				}
+
+				if testMesh == "" {
+					testMesh = profiles[index].ServiceMesh
+				}
+
+				if testBody == "" {
+					testBody = profiles[index].RequestBody
+				}
 			}
 		}
 
@@ -250,6 +275,7 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 		q.Add("c", concurrentRequests)
 		q.Add("url", testURL)
 		q.Add("qps", qps)
+		q.Add("reqBody", testBody)
 
 		durLen := len(testDuration)
 
@@ -290,6 +316,37 @@ func init() {
 	applyCmd.Flags().StringVar(&testDuration, "duration", "", "(optional) Length of test (e.g. 10s, 5m, 2h). For more, see https://golang.org/pkg/time/#ParseDuration")
 	applyCmd.Flags().StringVar(&loadGenerator, "load-generator", "", "(optional) Load-Generator to be used (fortio/wrk2)")
 	applyCmd.Flags().StringVarP(&filePath, "file", "f", "", "(optional) file containing SMP-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
+	applyCmd.Flags().StringVarP(&testBody, "body", "b", "", "(optional) load test body. Can be a filepath/string")
+	applyCmd.Flags().StringVar(&extraFlags, "ext", "", "(optional) Additional flags to be passed to the load generator")
+}
+
+func parseFlags(input string) []string {
+	flags := make([]string, 0)
+
+	// Split the input string by whitespace
+	segments := strings.Fields(input)
+
+	// Iterate over the segments
+	for i := 0; i < len(segments); i++ {
+		segment := segments[i]
+
+		// Check if the segment starts with one or two dashes
+		if strings.HasPrefix(segment, "-") {
+			// Check if the flag has a value
+			if i + 1 < len(segments) && !strings.HasPrefix(segments[i+1], "-") {
+				flagName := segment
+				flagValue := segments[i+1]
+				
+				flags = append(flags, flagName + " " + flagValue)
+				i++ // Skip the next segment since it's the value for this flag
+			} else {
+				// The segment is a boolean flag with no value
+				flags = append(flags, segment)
+			}
+		} 
+	}
+
+	return flags
 }
 
 func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string, error) {
@@ -329,6 +386,24 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 		loadGenerator = "fortio"
 	}
 
+	if testBody != "" {
+		// Check if the testBody is a filepath or a string
+		if _, err := os.Stat(testBody); err == nil {
+			utils.Log.Info("Reading test body from file")
+			bodyFile, err := os.ReadFile(testBody)
+			if err != nil {
+				return "", "", ErrReadFilepath(err)
+			}
+			testBody = string(bodyFile)
+		}
+	}
+
+	var additionalFlags []string
+
+	if extraFlags != "" {
+		additionalFlags = parseFlags(extraFlags)
+	}
+
 	convReq, err := strconv.Atoi(concurrentRequests)
 	if err != nil {
 		return "", "", errors.New("failed to convert concurrent-request")
@@ -345,10 +420,16 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 		"name":               profileName,
 		"qps":                convQPS,
 		"service_mesh":       testMesh,
-		"request_body":       "",
+		"request_body":       testBody,
 		"request_cookies":    "",
 		"request_headers":    "",
 		"content_type":       "",
+	}
+
+	if additionalFlags !=  nil {
+		values["metadata"] = map[string]interface{}{
+			"flags": additionalFlags,
+		}
 	}
 
 	jsonValue, err := json.Marshal(values)
