@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEffect } from 'react';
+// import { useEffect } from 'react';
 import { Button, Grid } from '@material-ui/core';
 // import { createTheme } from '@material-ui/core/styles';
 import validator from "@rjsf/validator-ajv8";
@@ -14,9 +14,9 @@ import PublicIcon from '@material-ui/icons/Public';
 import filterSchema from "../../assets/jsonschema/filterImport.json"
 
 const schemaMap = {
-  filter: filterSchema,
-  application: {},
-  design: {}
+  filter : filterSchema,
+  application : {},
+  design : {}
 }
 
 export default function ImportModal(props) {
@@ -24,8 +24,8 @@ export default function ImportModal(props) {
   const classes = useStyles();
   const schema = schemaMap[importType];
 
-  const [data, setData] = React.useState(null);
-
+  // const [data, setData] = React.useState(null);
+  const data = null;
   return (
     <>
       <Dialog

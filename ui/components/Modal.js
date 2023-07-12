@@ -42,6 +42,7 @@ const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
     </div>
   )
 }
+
 function Modal(props) {
   const { open, title, handleClose, onChange, schema, formData, children, schema_array, type, schemaChangeHandler } = props;
   const classes = useStyles();

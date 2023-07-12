@@ -42,7 +42,6 @@ import ConfirmationMsg from "./ConfirmationModal";
 import PublishIcon from "@material-ui/icons/Publish";
 import downloadFile from "../utils/fileDownloader";
 import CloneIcon from "../public/static/img/CloneIcon";
-import PublishModal from "./Modals/PublishModal";
 import SaveIcon from "@material-ui/icons/Save";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import fetchCatalogFilter from "./graphql/queries/CatalogFilterQuery";
