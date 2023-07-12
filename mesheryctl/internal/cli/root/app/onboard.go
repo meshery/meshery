@@ -70,7 +70,6 @@ Description: Onboard application`
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		var err error
-		client := &http.Client{}
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -93,16 +92,12 @@ Description: Onboard application`
 				return err
 			}
 
-			resp, err := client.Do(req)
+			resp, err := utils.MakeRequest(req)
 			if err != nil {
 				return err
 			}
 
 			var response *models.ApplicationsAPIResponse
-			// failsafe (bad api call)
-			if resp.StatusCode != 200 {
-				return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-			}
 			defer resp.Body.Close()
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
@@ -143,7 +138,7 @@ Description: Onboard application`
 			return err
 		}
 
-		res, err := client.Do(req)
+		res, err := utils.MakeRequest(req)
 		if err != nil {
 			return err
 		}

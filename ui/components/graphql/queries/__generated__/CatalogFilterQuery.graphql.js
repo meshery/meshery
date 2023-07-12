@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4170a22251c03b88612e2881d58aea3c>>
+ * @generated SignedSource<<a07a98dc9791c788442de20f95e19f5d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -63,6 +63,13 @@ v1 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
+        "name": "filter_resource",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
         "name": "visibility",
         "storageKey": null
       },
@@ -109,16 +116,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "ac1121b539ce2cffd452177869b631dc",
+    "cacheID": "2178c2622b2e672bcf288e1004c939a0",
     "id": null,
     "metadata": {},
     "name": "CatalogFilterQuery",
     "operationKind": "query",
-    "text": "query CatalogFilterQuery(\n  $selector: CatalogSelector!\n) {\n  catalogFilters: fetchFilterCatalogContent(selector: $selector) {\n    id\n    name\n    user_id\n    filter_file\n    visibility\n    catalog_data\n    created_at\n    updated_at\n  }\n}\n"
+    "text": "query CatalogFilterQuery(\n  $selector: CatalogSelector!\n) {\n  catalogFilters: fetchFilterCatalogContent(selector: $selector) {\n    id\n    name\n    user_id\n    filter_file\n    filter_resource\n    visibility\n    catalog_data\n    created_at\n    updated_at\n  }\n}\n"
   }
 };
 })();
 
-node.hash = "6a8f76476c5d44a58d465d9d7106e6b2";
+node.hash = "391a34d0da3dfd429e7a8a335e07930b";
 
 module.exports = node;

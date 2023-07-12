@@ -29,10 +29,8 @@ const BaseInput = (props) => {
   }));
 
   const theme = useTheme();
-  console.log(theme)
   const classes = styles();
   return (
-    console.log(prettifiedName),
     <>
       <div key={props.id} style={style}>
         <TextField
@@ -44,6 +42,8 @@ const BaseInput = (props) => {
           value={additional && props?.value === "New Value" ? "" : props?.value} // remove the default value i.e. New Value for additionalFields
           id={props.id}
           margin="dense"
+          rows={props.options?.rows}
+          multiline={props?.multiline}
           error={props.rawErrors?.length > 0}
           onChange={e => props?.onChange(e.target.value === "" ? props.options.emptyValue : e.target.value)}
           label={`${prettifiedName}`}
@@ -53,7 +53,7 @@ const BaseInput = (props) => {
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           InputProps={{
-            style : { padding : "0px 0px 0px 0px", },
+            style : { padding : props.multiline ? "10.5px 0px 10.5px 14px" : "0px" },
             endAdornment : (<InputAdornment position="start">
               {props.rawErrors?.length > 0 && (
                 <CustomTextTooltip

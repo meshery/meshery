@@ -279,3 +279,13 @@ func GetPlatform() string {
 	}
 	return platform
 }
+
+func SanitizeFileName(fileName string) string {
+	extensionIndex := strings.LastIndex(fileName, ".")
+	tempPath := strings.Split(fileName, "")
+
+	finalPath := tempPath[:extensionIndex]
+	suffixPath := strings.Join(tempPath[(extensionIndex+1):len(fileName)], "")
+	finalPath = append(finalPath, "-*.", suffixPath)
+	return strings.Join(finalPath, "")
+}

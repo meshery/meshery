@@ -15,7 +15,7 @@ replace (
 )
 
 require (
-	cuelang.org/go v0.4.3
+	cuelang.org/go v0.5.0
 	fortio.org/fortio v1.21.0
 	github.com/99designs/gqlgen v0.17.28
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef
@@ -40,7 +40,7 @@ require (
 	github.com/jinzhu/copier v0.3.5
 	github.com/layer5io/gowrk2 v0.0.0-20191111234958-a4c9071c0f87
 	github.com/layer5io/meshery-operator v0.6.8
-	github.com/layer5io/meshkit v0.6.46
+	github.com/layer5io/meshkit v0.6.48
 	github.com/layer5io/meshsync v0.6.9
 	github.com/layer5io/nighthawk-go v1.0.5
 	github.com/layer5io/service-mesh-performance v0.3.4
@@ -61,13 +61,13 @@ require (
 	github.com/spf13/viper v1.16.0
 	github.com/vektah/gqlparser/v2 v2.5.1
 	github.com/vmihailenco/taskq/v3 v3.2.9
-	golang.org/x/oauth2 v0.8.0
-	golang.org/x/text v0.9.0
+	golang.org/x/oauth2 v0.10.0
+	golang.org/x/text v0.11.0
 	gonum.org/v1/gonum v0.12.0
 	google.golang.org/grpc v1.56.1
-	google.golang.org/protobuf v1.30.0
+	google.golang.org/protobuf v1.31.0
 	gopkg.in/yaml.v2 v2.4.0
-	gorm.io/gorm v1.24.3
+	gorm.io/gorm v1.25.2
 	k8s.io/api v0.26.1
 	k8s.io/apiextensions-apiserver v0.26.0
 	k8s.io/apimachinery v0.26.1
@@ -104,7 +104,7 @@ require (
 	github.com/chai2010/gettext-go v1.0.2 // indirect
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e // indirect
 	github.com/cncf/xds/go v0.0.0-20230607035331-e9ce68804cb4 // indirect
-	github.com/cockroachdb/apd/v2 v2.0.1 // indirect
+	github.com/cockroachdb/apd/v2 v2.0.2 // indirect
 	github.com/containerd/cgroups v1.1.0 // indirect
 	github.com/containerd/containerd v1.6.19 // indirect
 	github.com/cyphar/filepath-securejoin v0.2.3 // indirect
@@ -191,7 +191,7 @@ require (
 	github.com/miekg/pkcs11 v1.1.1 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
-	github.com/mitchellh/go-wordwrap v1.0.0 // indirect
+	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/moby/locker v1.0.1 // indirect
@@ -241,12 +241,12 @@ require (
 	go.mongodb.org/mongo-driver v1.5.1 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	go.starlark.net v0.0.0-20200306205701-8dd3e2ee1dd5 // indirect
-	golang.org/x/crypto v0.9.0 // indirect
+	golang.org/x/crypto v0.11.0 // indirect
 	golang.org/x/mod v0.10.0 // indirect
-	golang.org/x/net v0.10.0 // indirect
+	golang.org/x/net v0.12.0 // indirect
 	golang.org/x/sync v0.2.0 // indirect
-	golang.org/x/sys v0.8.0 // indirect
-	golang.org/x/term v0.8.0 // indirect
+	golang.org/x/sys v0.10.0 // indirect
+	golang.org/x/term v0.10.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	golang.org/x/tools v0.9.1 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
