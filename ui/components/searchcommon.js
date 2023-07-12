@@ -26,6 +26,12 @@ const styles = ((theme) => ({
     '& .MuiInputAdornment-root .MuiSvgIcon-root' : {
       color : theme.palette.type === 'dark'? theme.palette.common.white: theme.palette.common.grey,
     },
+    '& .MuiInputBase-root:hover .MuiOutlinedInput-notchedOutline' : {
+      borderColor : theme.palette.type === 'dark'? '#00B39F': theme.palette.grey[800],
+    },
+    '& .MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline' : {
+      borderColor : theme.palette.type === 'dark'? '#00B39F': theme.palette.grey[800],
+    },
   }
 }));
 
