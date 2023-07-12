@@ -8,7 +8,7 @@ Usage: (order of flags matters)
 
 Examples:
 
-	1. ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system docs layer5/src/collections/integrations meshery.io/integrations --only-published
+	1. ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system docs layer5/src/collections/integrations meshery.io/integrations --published-only
 	2. ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system remote-provider <remote-provider>/models/meshmodels <remote-provider>/ui/public/img/meshmodels
 	3. ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system meshery ../../server/meshmodel/components
 
@@ -145,15 +145,17 @@ func cleanupDuplicatesAndPreferEmptyComponentField(out []map[string]string, grou
 }
 
 func docsUpdater(output []map[string]string) {
-	if len(os.Args) < 5 {
+	if len(os.Args) < 7 {
 		log.Fatal("docsUpdater: invalid number of arguments; missing website and docs path")
 		return
 	}
-	pathToIntegrationsLayer5 := os.Args[3]
-	pathToIntegrationsMeshery := os.Args[4]
+	pathToIntegrationsLayer5 := os.Args[4]
+	pathToIntegrationsMeshery := os.Args[5]
 	updateOnlyPublished := true
-	if len(os.Args) > 5 && os.Args[5] == "--only-published" {
-		updateOnlyPublished = true
+	if len(os.Args) > 6 {
+		if os.Args[6] == "--published-only" {
+			updateOnlyPublished = true
+		}
 	}
 	output = cleanupDuplicatesAndPreferEmptyComponentField(output, "model")
 	mesheryDocsJSON := "const data = ["
