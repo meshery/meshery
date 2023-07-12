@@ -463,7 +463,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         updateProgress({ showProgress : false });
         if (result) {
           handleSetFilters(result.filters || []);
-          setPage(result.page || 0);
+          // setPage(result.page || 0);
           setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
         }
