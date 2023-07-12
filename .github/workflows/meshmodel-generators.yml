@@ -33,7 +33,7 @@ jobs:
         run: |
             cd scripts/component_generation; GOPROXY=https://proxy.golang.org,direct GOSUMDB=off go run main.go 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw
       - run: |
-          cd scripts/component_updater; go build main.go; ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system meshery ../../server/meshmodel/components
+            cd scripts/component_updater; go build main.go; ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system meshery ../../server/meshmodel/components
       - name: Commit changes 
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
