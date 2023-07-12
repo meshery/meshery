@@ -58,18 +58,26 @@ func main() {
 		return
 	}
 
-	systemFlag := os.Args[2]
-	if systemFlag == "" {
-		log.Fatal("system flag is required")
+	if len(os.Args) <= 2 {
+		log.Fatal("system flag is missing")
 		return
 	}
 
+	if os.Args[2] != "--system" {
+	  log.Fatal("invalid system flag provided")
+		return	
+	}
+
+	if len(os.Args) <= 3 {
+		log.Fatal("system name is missing")
+		return
+	}
+
+	if os.Args[3] == "" {
+	  log.Fatal("system name missing")
+		return	
+	}
 	System = os.Args[3]
-	if System == "" {
-		log.Fatal("system name is required")
-		return
-	}
-
 
 	filep, err := pkg.DownloadCSV(url)
 	if err != nil {
@@ -133,6 +141,10 @@ func cleanupDuplicatesAndPreferEmptyComponentField(out []map[string]string, grou
 }
 
 func docsUpdater(output []map[string]string, args []string) {
+	if len(args) < 5 {
+		log.Fatal("docsUpdater: invalid number of arguments; missing website and docs path")
+		return
+	}
   pathToIntegrationsLayer5 := args[3]
 	pathToIntegrationsMeshery := args[4]
 	updateOnlyPublished := true
@@ -189,9 +201,6 @@ func docsUpdater(output []map[string]string, args []string) {
 
 			md := t.CreateMarkDown()
 			jsonItem := t.CreateJSONItem()
-			// if out["modelDisplayName"] == "Istio" {
-			// 	fmt.Println(md)
-			// }
 			mesheryDocsJSON += jsonItem + ","
 			modelName := strings.TrimSpace(out["model"])
 			pathToIntegrationsLayer5, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5, modelName))
@@ -361,5 +370,84 @@ publishedModels := make(map[string]bool)
 }
 
 func remoteProviderUpdater(output []map[string]string) {
-
+  output = cleanupDuplicatesAndPreferEmptyComponentField(output, "model")
+	pathForModals := os.Args[4]
+	pathForIcons := os.Args[5]
+	for _, out := range output {
+			var m v1alpha1.Model
+			publishValue, err := strconv.ParseBool(out["Publish?"])
+			if err != nil {
+				publishValue = false
+			}
+			if !publishValue {
+				continue
+			}
+			modelName := strings.TrimSpace(out["model"])
+			if m.Metadata == nil {
+										m.Metadata = make(map[string]interface{})
+									}
+			for key, val := range out {
+				switch key {
+				case "modelDisplayName":
+					m.DisplayName = val
+				case "model":
+					m.Name = val
+				case "category":
+					m.Category = v1alpha1.Category{
+									Name: val,
+								}
+				// case "subCategory":
+				// 	m.SubCategory = val
+				case "svgColor":
+					svg, err := pkg.UpdateSVGString(val, SVG_WIDTH, SVG_HEIGHT)
+								if err != nil {
+									fmt.Println("err for: ", modelName, err.Error())
+								}
+					m.Metadata["svgColor"] = svg
+				case "svgWhite":
+						svg, err := pkg.UpdateSVGString(val, SVG_WIDTH, SVG_HEIGHT)
+								if err != nil {
+									fmt.Println("err for: ", modelName, err.Error())
+								}
+					m.Metadata["svgWhite"] = svg
+				 }
+			}
+      pathForModals, _ := filepath.Abs(filepath.Join("../../../", pathForModals, modelName))
+			err = os.MkdirAll(pathForModals, 0777)
+			if err != nil {
+				fmt.Println("Error creating directory: ", err.Error())
+			}
+			pathForIcons, _ := filepath.Abs(filepath.Join("../../../", pathForIcons, modelName))
+			err = os.MkdirAll(pathForIcons, 0777)
+			if err != nil {
+				fmt.Println("Error creating directory: ", err.Error())
+			}
+			byt, err := json.Marshal(m)
+			if err != nil {
+				fmt.Println("Error marshalling model: ", err.Error())
+			}
+			err = os.WriteFile(filepath.Join(pathForModals, "model.json"), byt, 0777)
+			if err != nil {
+				fmt.Println("Error writing model: ", err.Error())
+				continue
+			}
+			err = os.MkdirAll(filepath.Join(pathForIcons, "icon", "color"), 0777)
+			if err != nil {
+				panic(err)
+			}
+			svgColor, _ := m.Metadata["svgColor"].(string)
+			err = pkg.WriteSVG(filepath.Join(pathForIcons, "icon", "color", modelName+"-color.svg"), svgColor) //CHANGE PATH
+			if err != nil {
+				panic(err)
+			}
+			err = os.MkdirAll(filepath.Join(pathForIcons, "icon", "white"), 0777)
+			if err != nil {
+				panic(err)
+			}
+			svgWith, _ := m.Metadata["svgWhite"].(string)
+			err = pkg.WriteSVG(filepath.Join(pathForIcons, "icon", "white", modelName+"-white.svg"), svgWith) //CHANGE PATH
+			if err != nil {
+				panic(err)
+			}
+ }
 }
