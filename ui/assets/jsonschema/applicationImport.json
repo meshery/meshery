@@ -1,0 +1,103 @@
+{
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "title": "Name",
+      "description": "The name of application"
+    }
+  },
+  "oneOf": [
+    {
+      "title": "Upload Kunernetes Manifest",
+      "properties": {
+        "type": "object",
+        "manifest": {
+          "oneOf": [
+            {
+              "title": "via URL",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "title": "URL",
+                  "description": "raw url of the application file, example: https://raw.github.com/..."
+                }
+              },
+              "required": [
+                "url"
+              ]
+            },
+            {
+              "title": "Via FileSystem",
+              "properties": {
+                "file": {
+                  "type": "string",
+                  "format": "file",
+                  "description": "Browse the application file from your file system"
+                }
+              },
+              "required": [
+                "file"
+              ]
+            }
+          ],
+          "required": [
+            "url"
+          ]
+        }
+      }
+    },
+    {
+      "title": "Upload Helm Charts",
+      "properties": {
+        "helm": {
+          "properties": {
+            "url": {
+              "type": "string",
+              "title": "URL",
+              "description": "raw url of the application file, example: https://raw.github.com/..."
+            }
+          },
+          "required": [
+            "url"
+          ]
+        }
+      }
+    },
+    {
+      "title": "Upload Docker Compose",
+      "properties": {
+        "compose": {
+          "oneOf": [
+            {
+              "title": "via URL",
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "title": "URL",
+                  "description": "raw url of the application file, example: https://raw.github.com/..."
+                }
+              },
+              "required": [
+                "url"
+              ]
+            },
+            {
+              "title": "Via FileSystem",
+              "properties": {
+                "file": {
+                  "type": "string",
+                  "format": "file",
+                  "description": "Browse the application file from your file system"
+                }
+              },
+              "required": [
+                "file"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

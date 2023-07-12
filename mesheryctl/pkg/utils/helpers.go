@@ -59,6 +59,10 @@ const (
 	meshUsageURL      = docsBaseURL + "reference/mesheryctl/mesh"
 	expUsageURL       = docsBaseURL + "reference/mesheryctl/exp"
 	filterUsageURL    = docsBaseURL + "reference/mesheryctl/exp/filter"
+	filterImportURL   = docsBaseURL + "reference/mesheryctl/exp/filter/import"
+	filterDeleteURL   = docsBaseURL + "reference/mesheryctl/exp/filter/delete"
+	filterListURL     = docsBaseURL + "reference/mesheryctl/exp/filter/list"
+	filterViewURL     = docsBaseURL + "reference/mesheryctl/exp/filter/view"
 	patternUsageURL   = docsBaseURL + "reference/mesheryctl/pattern"
 	appUsageURL       = docsBaseURL + "reference/mesheryctl/app"
 	contextDeleteURL  = docsBaseURL + "reference/mesheryctl/system/context/delete"
@@ -95,6 +99,10 @@ const (
 	cmdSystemRestart  cmdType = "system restart"
 	cmdExp            cmdType = "exp"
 	cmdFilter         cmdType = "filter"
+	cmdFilterImport   cmdType = "filter import"
+	cmdFilterDelete   cmdType = "filter delete"
+	cmdFilterList     cmdType = "filter list"
+	cmdFilterView     cmdType = "filter view"
 	cmdPattern        cmdType = "pattern"
 	cmdApp            cmdType = "app"
 	cmdContext        cmdType = "context"
@@ -476,18 +484,14 @@ func GetID(configuration string) ([]string, error) {
 	url := MesheryEndpoint + "/api/" + configuration + "?page_size=10000"
 	configType := configuration + "s"
 	var idList []string
-	client := &http.Client{}
 	req, err := NewRequest("GET", url, nil)
 	if err != nil {
 		return idList, err
 	}
 
-	res, err := client.Do(req)
+	res, err := MakeRequest(req)
 	if err != nil {
 		return idList, err
-	}
-	if res.StatusCode != 200 {
-		return idList, errors.Errorf("Response Status Code %d, possible invalid ID", res.StatusCode)
 	}
 
 	defer res.Body.Close()
@@ -511,27 +515,59 @@ func GetID(configuration string) ([]string, error) {
 	return idList, nil
 }
 
+// GetName returns a of name:id from meshery server endpoint /api/{configurations}
+func GetName(configuration string) (map[string]string, error) {
+	url := MesheryEndpoint + "/api/" + configuration + "?page_size=10000"
+	configType := configuration + "s"
+	nameIdMap := make(map[string]string)
+	req, err := NewRequest("GET", url, nil)
+	if err != nil {
+		return nameIdMap, err
+	}
+
+	res, err := MakeRequest(req)
+	if err != nil {
+		return nameIdMap, err
+	}
+
+	defer res.Body.Close()
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nameIdMap, err
+	}
+	var dat map[string]interface{}
+	if err = json.Unmarshal(body, &dat); err != nil {
+		return nameIdMap, errors.Wrap(err, "failed to unmarshal response body")
+	}
+	if dat == nil {
+		return nameIdMap, errors.New("no data found")
+	}
+	if dat[configType] == nil {
+		return nameIdMap, errors.New("no results found")
+	}
+	for _, config := range dat[configType].([]interface{}) {
+		nameIdMap[config.(map[string]interface{})["name"].(string)] = config.(map[string]interface{})["id"].(string)
+	}
+	return nameIdMap, nil
+}
+
 // Delete configuration from meshery server endpoint /api/{configurations}/{id}
-func DeleteConfiguration(id string, configuration string) error {
-	url := MesheryEndpoint + "/api/" + configuration + "/" + id
-	client := &http.Client{}
+func DeleteConfiguration(baseUrl, id, configuration string) error {
+	url := baseUrl + "/api/" + configuration + "/" + id
 	req, err := NewRequest("DELETE", url, nil)
 	if err != nil {
 		return err
 	}
 
-	res, err := client.Do(req)
+	_, err = MakeRequest(req)
 	if err != nil {
 		return err
-	}
-	if res.StatusCode != 200 {
-		return errors.Errorf("Response Status Code %d, possible invalid ID", res.StatusCode)
 	}
 	return nil
 }
 
-// Valid - Check the args and configuration are valid.
-func Valid(args string, configuration string) (string, bool, error) {
+// ValidId - Check if args is a valid ID or a valid ID prefix and returns the full ID
+func ValidId(args string, configuration string) (string, bool, error) {
 	isID := false
 	configID, err := GetID(configuration)
 	if err == nil {
@@ -546,6 +582,29 @@ func Valid(args string, configuration string) (string, bool, error) {
 		return "", false, err
 	}
 	return args, isID, nil
+}
+
+// ValidId - Check if args is a valid name or a valid name prefix and returns the full name and ID
+func ValidName(args string, configuration string) (string, string, bool, error) {
+	isName := false
+	nameIdMap, err := GetName(configuration)
+
+	if err != nil {
+		return "", "", false, err
+	}
+
+	fullName := ""
+	ID := ""
+
+	for name := range nameIdMap {
+		if strings.HasPrefix(name, args) {
+			fullName = name
+			ID = nameIdMap[name]
+			isName = true
+		}
+	}
+
+	return fullName, ID, isName, nil
 }
 
 // AskForInput asks the user for an input and checks if it is in the available values

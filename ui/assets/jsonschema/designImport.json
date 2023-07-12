@@ -1,0 +1,31 @@
+{
+  "title": "Upload Design File",
+  "oneOf": [
+    {
+      "title": "via URL",
+      "properties": {
+        "url": {
+          "type": "string",
+          "title": "URL",
+          "description": "raw url of the design file, example: https://raw.github.com/..."
+        }
+      },
+      "required": [
+        "url"
+      ]
+    },
+    {
+      "title": "Via FileSystem",
+      "properties": {
+        "file": {
+          "type": "string",
+          "format": "file",
+          "description": "Browse the design file from your file system"
+        }
+      },
+      "required": [
+        "file"
+      ]
+    }
+  ]
+}
