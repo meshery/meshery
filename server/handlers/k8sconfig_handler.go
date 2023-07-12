@@ -359,7 +359,7 @@ const k8sMeshModelPath = "../meshmodel/components/kubernetes/model_template.json
 var k8sMeshModelMetadata = make(map[string]interface{})
 
 func writeK8sMetadata(comp *meshmodelv1alpha1.ComponentDefinition, reg *meshmodel.RegistryManager) {
-	ent, _ := reg.GetEntities(&meshmodelv1alpha1.ComponentFilter{
+	ent, _, _ := reg.GetEntities(&meshmodelv1alpha1.ComponentFilter{
 		Name:       comp.Kind,
 		APIVersion: comp.APIVersion,
 	})

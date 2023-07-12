@@ -55,7 +55,7 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 		page = 1
 	}
 	offset := (page - 1) * limit
-	entities, count := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
+	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
 		Version:   r.URL.Query().Get("version"),
 		Kind:      name,
 		ModelName: typ,
@@ -147,7 +147,7 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 		page = 1
 	}
 	offset := (page - 1) * limit
-	entities, count := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
+	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
 		Version:   r.URL.Query().Get("version"),
 		ModelName: typ,
 		Limit:     limit,

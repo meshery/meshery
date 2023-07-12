@@ -42,6 +42,7 @@ import ConfirmationMsg from "./ConfirmationModal";
 import PublishIcon from "@material-ui/icons/Publish";
 import downloadFile from "../utils/fileDownloader";
 import CloneIcon from "../public/static/img/CloneIcon";
+import SaveIcon from "@material-ui/icons/Save";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import fetchCatalogFilter from "./graphql/queries/CatalogFilterQuery";
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
@@ -88,6 +89,9 @@ const styles = (theme) => ({
       height : '100%',
     }
   },
+  visibilityImg : {
+    filter : theme.palette.secondary.img,
+  }
   // text : {
   //   padding : "5px"
   // }
@@ -139,11 +143,25 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
             lint : true,
             mode : "text/plain",
           }}
-          onChange={(val) => setYaml(val)}
+          onChange={(_,data,val) => setYaml(val)}
         />
       </DialogContent>
       <Divider variant="fullWidth" light />
       <DialogActions>
+        <Tooltip title="Update Filter">
+          <IconButton
+            aria-label="Update"
+            color="primary"
+            onClick={() => onSubmit({
+              data : yaml,
+              id : filter.id,
+              name : filter.name,
+              type : FILE_OPS.UPDATE
+            })}
+          >
+            <SaveIcon  style={iconMedium} />
+          </IconButton>
+        </Tooltip>
         <Tooltip title="Delete Filter">
           <IconButton
             aria-label="Delete"
@@ -460,7 +478,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         updateProgress({ showProgress : false });
         if (result) {
           handleSetFilters(result.filters || []);
-          setPage(result.page || 0);
+          // setPage(result.page || 0);
           setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
         }
@@ -640,6 +658,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   }
 
   async function handleSubmit({ data, name, id, type }) {
+    console.log("Submit Data",data,name,id,type)
     // TODO: use filter name
     updateProgress({ showProgress : true });
     if (type === FILE_OPS.DELETE) {
@@ -832,7 +851,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           const visibility = filters[tableMeta.rowIndex].visibility
           return (
             <>
-              <img src={`/static/img/${visibility}.svg`} />
+              <img className={classes.visibilityImg} src={`/static/img/${visibility}.svg`} />
             </>
           );
         },

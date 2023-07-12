@@ -52,7 +52,7 @@ mesheryctl pattern delete [file | URL]
 		pattern := ""
 		isID := false
 		if len(args) > 0 {
-			pattern, isID, err = utils.Valid(args[0], "pattern")
+			pattern, isID, err = utils.ValidId(args[0], "pattern")
 			if err != nil {
 				return err
 			}
@@ -60,7 +60,7 @@ mesheryctl pattern delete [file | URL]
 
 		// Delete the pattern using the id
 		if isID {
-			err := utils.DeleteConfiguration(pattern, "pattern")
+			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), pattern, "pattern")
 			if err != nil {
 				return errors.Wrap(err, utils.PatternError(fmt.Sprintf("failed to delete pattern %s", args[0])))
 			}
