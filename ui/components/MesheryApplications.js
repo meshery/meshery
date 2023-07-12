@@ -34,6 +34,10 @@ import PublishIcon from "@material-ui/icons/Publish";
 import InfoIcon from '@material-ui/icons/Info';
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import { iconMedium, iconSmall } from "../css/icons.styles";
+import TextField from '@mui/material/TextField';
+import Box from '@mui/material/Box';
+import { InputAdornment } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
@@ -66,6 +70,24 @@ const styles = (theme) => ({
   // text : {
   //   padding : theme.spacing(1)
   // }
+  searchInput : {
+    '& .MuiOutlinedInput-root' : {
+      color : theme.palette.type === 'dark'? theme.palette.common.white: theme.palette.common.grey,
+      backgroundColor : theme.palette.type === 'dark' ? theme.palette.grey[800] : 'rgba(102, 102, 102, 0.12)',
+    },
+    '& .MuiOutlinedInput-notchedOutline' : {
+      borderColor : theme.palette.type === 'dark'? 'rgba(255, 255, 255, 0.7)': theme.palette.grey[800],
+    },
+    '& .MuiInputLabel-root' : {
+      color : theme.palette.type === 'dark'? theme.palette.common.white: theme.palette.common.grey,
+    },
+    '& .MuiInputBase-input' : {
+      caretColor : theme.palette.type === 'dark'? theme.palette.common.white: theme.palette.common.grey,
+    },
+    '& .MuiInputAdornment-root .MuiSvgIcon-root' : {
+      color : theme.palette.type === 'dark'? theme.palette.common.white: theme.palette.common.grey,
+    },
+  },
 });
 
 
@@ -761,7 +783,7 @@ function MesheryApplications({
   const options = {
     filter : false,
     sort : !(user && user.user_id === "meshery"),
-    search : !(user && user.user_id === "meshery"),
+    search : false,
     filterType : "textField",
     responsive : "standard",
     resizableColumns : true,
@@ -874,6 +896,55 @@ function MesheryApplications({
 
           </div>
           }
+
+          <div
+            className={classes.searchAndView}
+            style={{
+              display : 'flex',
+              alignItems : 'center',
+              justifyContent : 'center',
+              margin : 'auto',
+            }}
+          >
+            <Box
+              component="form"
+              sx={{
+                '& > :not(style)' : {  width : '80ch' },
+              }}
+              noValidate
+              autoComplete="on"
+            >
+              <TextField
+                id="outlined-basic"
+                label="Search Applications"
+                variant="outlined"
+                fullWidth
+                type="search"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  // setPage(0);
+                  initAppsSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
+
+                }}
+                sx={{
+                  margin : 'auto',
+                }}
+                placeholder="Search"
+                className={classes.searchInput}
+                InputProps={{
+                  endAdornment : (
+                    <InputAdornment position="end">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Box>
+          </div>
+
+
+
           {!selectedApplication.show &&
           <div className={classes.viewSwitchButton}>
             <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true} />

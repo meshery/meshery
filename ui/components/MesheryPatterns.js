@@ -46,6 +46,13 @@ import downloadFile from "../utils/fileDownloader";
 import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import ReusableTooltip from "./reusable-tooltip";
+import SearchBar from "./searchcommon";
+// import { InputLabel } from "@mui/material";
+// import SearchIcon from '@mui/icons-material/Search';
+// import Input from "@mui/material";
+// import TextField from '@mui/material/TextField';
+// import Box from '@mui/material/Box';
+
 
 const styles = (theme) => ({
   grid : {
@@ -467,7 +474,7 @@ function MesheryPatterns({
 
   useEffect(() => {
     fetchUserPrefs();
-  }, [])
+  }, [catalogVisibility])
 
   useEffect(() => {
     catalogVisibilityRef.current = catalogVisibility
@@ -1148,7 +1155,7 @@ function MesheryPatterns({
     ),
     filter : false,
     sort : !(user && user.user_id === "meshery"),
-    search : !(user && user.user_id === "meshery"),
+    search : false,
     filterType : "textField",
     responsive : "standard",
     resizableColumns : true,
@@ -1282,15 +1289,36 @@ function MesheryPatterns({
           </div>
           }
 
+          <div
+            className={classes.searchAndView}
+            style={{
+              display : 'flex',
+              alignItems : 'center',
+              justifyContent : 'center',
+              margin : 'auto',
+            }}
+          >
+            <SearchBar
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                initPatternsSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
+              }
+              }
+              width="60ch"
+            />
+          </div>
+
           {!selectedPattern.show &&
             <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingRight : "1rem", paddingTop : "0.2rem" }}>
               <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} />
             </div>
           }
 
+
           {!selectedPattern.show &&
             <div className={classes.viewSwitchButton}>
-              <ViewSwitch view={viewType} changeView={setViewType} />
+              <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true}/>
             </div>
           }
         </div>
