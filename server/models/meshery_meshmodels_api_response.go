@@ -7,6 +7,7 @@ type MeshmodelsAPIResponse struct {
 	Page        int 			 `json:"page"`
 	PageSize 	int 			 `json:"page_size"`	
 	Count       int64            `json:"total_count"`
+	UniqueCount int				 `json:"unique_count"`
 	Models      []v1alpha1.Model `json:"models"`
 }
 
@@ -15,6 +16,7 @@ type MeshmodelComponentsAPIResponse struct {
 	Page        int 			 			   `json:"page"`
 	PageSize 	int 			 			   `json:"page_size"`	
 	Count       int64                          `json:"total_count"`
+	UniqueCount int							   `json:"unique_count"`
 	Components  []v1alpha1.ComponentDefinition `json:"components"`
 }
 
