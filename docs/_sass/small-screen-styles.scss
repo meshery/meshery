@@ -9,7 +9,7 @@
     font-size: 1.8rem;
   }
   table {
-    font-size: 1.6rem !important;
+    font-size: 1.1rem !important;
   }
   .main-container #breadcrumbs {
     font-size: 1.6rem;
@@ -23,12 +23,12 @@
   }
 }
 
-@media (max-width: 600px) {
+@media  (min-width: 400px) and (max-width: 600px) {
   p {
-    font-size: 2.2rem;
+    font-size: 2rem;
   }
   table {
-    font-size: 2rem !important;
+    font-size: 0.7rem !important;
   }
   .main-container #breadcrumbs {
     font-size: 2rem;
@@ -61,6 +61,8 @@
   h1 {
     font-size: 4rem;
   }
+ 
+
   .alert,
   .alert-info,
   .alert-warning,
@@ -68,4 +70,6 @@
     font-size: 1.8rem;
   }
 }
-
+@media (max-width:400px) {
+  table { font-size: 0.4rem !important; }
+}  
