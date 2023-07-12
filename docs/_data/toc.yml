@@ -66,6 +66,8 @@
     - title: Architecture ↆ
       url: concepts/architecture
       children:
+        - title: Adapters
+          url: concepts/architecture/adapters      
         - title: Broker
           url: concepts/architecture/broker
         - title: Database
