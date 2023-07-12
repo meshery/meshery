@@ -43,39 +43,34 @@ var (
 	OutputPath                  = "../../server/meshmodel/components"
 )
 
+var System string
+
 const (
 	SVG_WIDTH  = 20
 	SVG_HEIGHT = 20
 )
 
 func main() {
+	fmt.Println("os.args: ", os.Args)
 	url := os.Args[1]
 	if url == "" {
-		log.Fatal("provide a valid URL")
+		log.Fatal("provide a valid spreadsheet URL")
 		return
 	}
 
-	// If updateDocs is set true then it updates the website docs instead of updating the components onto the filesystem
-	var updateDocs bool
-
-	// If updateOnlyPublished is set true, then only update site pages that have "Published?" set to true.
-	updateOnlyPublished := true
-
-	var pathToIntegrationsLayer5 string
-	var pathToIntegrationsMeshery string
-	if len(os.Args) > 4 {
-		if os.Args[2] == "--update-docs" {
-			updateDocs = true
-			pathToIntegrationsLayer5 = os.Args[3]
-			pathToIntegrationsMeshery = os.Args[4]
-			if len(os.Args) > 5 && os.Args[5] == "--only-published" {
-				updateOnlyPublished = true
-			}
-		}
-		if os.Args[2] == "--only-published" {
-			updateOnlyPublished = true
-		}
+	systemFlag := os.Args[2]
+	if systemFlag == "" {
+		log.Fatal("system flag is required")
+		return
 	}
+
+	System = os.Args[3]
+	if System == "" {
+		log.Fatal("system name is required")
+		return
+	}
+
+
 	filep, err := pkg.DownloadCSV(url)
 	if err != nil {
 		log.Fatal(err)
@@ -87,17 +82,64 @@ func main() {
 		return
 	}
 	csvReader := csv.NewReader(file)
-
-	//*** UPDATE WEBSITE ***/
-	if updateDocs {
-		output, err := pkg.GetEntries(csvReader, ColumnNamesToExtractForDocs)
+	output, err := pkg.GetEntries(csvReader, ColumnNamesToExtractForDocs)
 		if err != nil {
 			log.Fatal(err)
 			return
 		}
-		file.Close()
-		os.Remove(file.Name())
-		output = cleanupDuplicatesAndPreferEmptyComponentField(output, "model")
+	file.Close()
+	os.Remove(file.Name())
+
+	switch System {
+	  case pkg.Docs.String(): docsUpdater(output, os.Args)
+		case pkg.Meshery.String(): mesheryUpdater(output)
+		case pkg.RemoteProvider.String(): remoteProviderUpdater(output)
+		default:
+			log.Fatal("invalid system name")
+			return
+	}
+
+}
+
+// returns the index of column. Returns -1 if doesn't exist
+func isInColumnNames(key string, col []string) int {
+	for i, n := range col {
+		if n == key {
+			return i
+		}
+	}
+	return -1
+}
+
+// For Docs:: entries with empty Component field are preferred as they are considered general
+// In other words, the absence of a component name indicates that a given row is a Model-level entry.
+// And that for docs/websites updates, the values found in this row should be used to represent the
+// integration overall (whether there is 1 or many 10s of components contained in the package / in the integration).
+func cleanupDuplicatesAndPreferEmptyComponentField(out []map[string]string, groupBykey string) (out2 []map[string]string) {
+	keyToEntry := make(map[string]map[string]string)
+	for _, o := range out {
+		gkey := o[groupBykey]
+		//If the row with given gkey is encountered for the first time, or the given row already exists but with a non-empty component field then use the new entry.
+		//This logic will prioritize empty component fields to not be overriden
+		if keyToEntry[gkey] == nil || keyToEntry[gkey]["component"] != "" {
+			keyToEntry[gkey] = o
+		}
+
+	}
+	for _, entry := range keyToEntry {
+		out2 = append(out2, entry)
+	}
+	return out2
+}
+
+func docsUpdater(output []map[string]string, args []string) {
+  pathToIntegrationsLayer5 := args[3]
+	pathToIntegrationsMeshery := args[4]
+	updateOnlyPublished := true
+			if len(args) > 5 && args[5] == "--only-published" {
+				updateOnlyPublished = true
+			}
+	output = cleanupDuplicatesAndPreferEmptyComponentField(output, "model")
 		mesheryDocsJSON := "const data = ["
 		for _, out := range output {
 			var t pkg.TemplateAttributes
@@ -203,15 +245,10 @@ func main() {
 		if err := pkg.WriteToFile(filepath.Join("../../../", pathToIntegrationsMeshery, "data.js"), mesheryDocsJSON); err != nil {
 			log.Fatal(err)
 		}
-	} else {
-		output, err := pkg.GetEntries(csvReader, ColumnNamesToExtract)
-		if err != nil {
-			log.Fatal(err)
-			return
-		}
-		file.Close()
-		os.Remove(file.Name())
-		publishedModels := make(map[string]bool)
+}
+
+func mesheryUpdater(output []map[string]string) {
+publishedModels := make(map[string]bool)
 		countWithoutCrds := 0
 		_ = pkg.PopulateEntries(OutputPath, output, PrimaryColumnName, func(dirpath string, changeFields map[string]string) error {
 			if changeFields["CRDs"] == "" {
@@ -222,7 +259,7 @@ func main() {
 			}
 			return nil
 		})
-		err = pkg.PopulateEntries(OutputPath, output, PrimaryColumnName, func(dirpath string, changeFields map[string]string) error {
+		err := pkg.PopulateEntries(OutputPath, output, PrimaryColumnName, func(dirpath string, changeFields map[string]string) error {
 			entries, err := os.ReadDir(dirpath)
 			if err != nil {
 				return err
@@ -321,37 +358,8 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-	}
-
 }
 
-// returns the index of column. Returns -1 if doesn't exist
-func isInColumnNames(key string, col []string) int {
-	for i, n := range col {
-		if n == key {
-			return i
-		}
-	}
-	return -1
-}
+func remoteProviderUpdater(output []map[string]string) {
 
-// For Docs:: entries with empty Component field are preferred as they are considered general
-// In other words, the absence of a component name indicates that a given row is a Model-level entry.
-// And that for docs/websites updates, the values found in this row should be used to represent the
-// integration overall (whether there is 1 or many 10s of components contained in the package / in the integration).
-func cleanupDuplicatesAndPreferEmptyComponentField(out []map[string]string, groupBykey string) (out2 []map[string]string) {
-	keyToEntry := make(map[string]map[string]string)
-	for _, o := range out {
-		gkey := o[groupBykey]
-		//If the row with given gkey is encountered for the first time, or the given row already exists but with a non-empty component field then use the new entry.
-		//This logic will prioritize empty component fields to not be overriden
-		if keyToEntry[gkey] == nil || keyToEntry[gkey]["component"] != "" {
-			keyToEntry[gkey] = o
-		}
-
-	}
-	for _, entry := range keyToEntry {
-		out2 = append(out2, entry)
-	}
-	return out2
 }
