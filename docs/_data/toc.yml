@@ -136,8 +136,8 @@
   links:
     - title: Deploying Sample Applications
       url: guides/sample-apps
-    - title: Running SMI Conformance Tests
-      url: guides/smi-conformance
+    # - title: Running SMI Conformance Tests
+      # url: guides/smi-conformance
     - title: Integrating Prometheus and Grafana
       url: guides/meshery-metrics
     - title: Importing Applications
