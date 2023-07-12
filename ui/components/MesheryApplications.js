@@ -34,10 +34,7 @@ import PublishIcon from "@material-ui/icons/Publish";
 import InfoIcon from '@material-ui/icons/Info';
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import { iconMedium, iconSmall } from "../css/icons.styles";
-import TextField from '@mui/material/TextField';
-import Box from '@mui/material/Box';
-import { InputAdornment } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
+import SearchBar from "./searchcommon";
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
@@ -904,43 +901,18 @@ function MesheryApplications({
               alignItems : 'center',
               justifyContent : 'center',
               margin : 'auto',
+              height : '5ch'
             }}
           >
-            <Box
-              component="form"
-              sx={{
-                '& > :not(style)' : {  width : '80ch' },
+            <SearchBar
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                initAppsSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
               }}
-              noValidate
-              autoComplete="on"
-            >
-              <TextField
-                id="outlined-basic"
-                label="Search Applications"
-                variant="outlined"
-                fullWidth
-                type="search"
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  // setPage(0);
-                  initAppsSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
-
-                }}
-                sx={{
-                  margin : 'auto',
-                }}
-                placeholder="Search"
-                className={classes.searchInput}
-                InputProps={{
-                  endAdornment : (
-                    <InputAdornment position="end">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Box>
+              width="80ch"
+              label={"Search Applications"}
+            />
           </div>
 
 

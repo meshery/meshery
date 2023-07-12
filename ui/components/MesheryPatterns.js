@@ -49,11 +49,6 @@ import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import ReusableTooltip from "./reusable-tooltip";
 import SearchBar from "./searchcommon";
-// import { InputLabel } from "@mui/material";
-// import SearchIcon from '@mui/icons-material/Search';
-// import Input from "@mui/material";
-// import TextField from '@mui/material/TextField';
-// import Box from '@mui/material/Box';
 
 
 const styles = (theme) => ({
@@ -782,6 +777,7 @@ function MesheryPatterns({
           setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
           handleSetPatterns(result.patterns || [])
+          setPatterns(result.patterns || []);
         }
       },
       handleError(ACTION_TYPES.FETCH_PATTERNS)
@@ -1219,10 +1215,10 @@ function MesheryPatterns({
 
       switch (action) {
         case "changePage":
-          initPatternsSubscription(tableState.page.toString(), pageSize.toString(), search, sortOrder);
+          initPatternsSubscription(tableState.page.toString(), pageSize.toString(), search, order);
           break;
         case "changeRowsPerPage":
-          initPatternsSubscription(page.toString(), tableState.rowsPerPage.toString(), search, sortOrder);
+          initPatternsSubscription(page.toString(), tableState.rowsPerPage.toString(), search, order);
           break;
         case "search":
           if (searchTimeout.current) {
@@ -1323,6 +1319,7 @@ function MesheryPatterns({
                 initPatternsSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
               }
               }
+              label={"Search Designs"}
               width="60ch"
             />
           </div>

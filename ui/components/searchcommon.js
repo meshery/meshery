@@ -10,12 +10,15 @@ const styles = ((theme) => ({
     '& .MuiOutlinedInput-root' : {
       color : theme.palette.type === 'dark'? theme.palette.common.white: theme.palette.common.grey,
       backgroundColor : theme.palette.type === 'dark' ? theme.palette.grey[800] : 'rgba(102, 102, 102, 0.12)',
+      height : '4.5ch'
     },
     '& .MuiOutlinedInput-notchedOutline' : {
       borderColor : theme.palette.type === 'dark'? 'rgba(255, 255, 255, 0.7)': theme.palette.grey[800],
+      height : '5ch'
     },
     '& .MuiInputLabel-root' : {
       color : theme.palette.type === 'dark'? theme.palette.common.white: theme.palette.common.grey,
+      lineHeight : '0.975rem',
     },
     '& .MuiInputBase-input' : {
       caretColor : theme.palette.type === 'dark'? theme.palette.common.white: theme.palette.common.grey,
@@ -26,27 +29,7 @@ const styles = ((theme) => ({
   }
 }));
 
-const SearchBar = ({ onChange, value, classes, width }) => {
-  // const [searchValue, setSearchValue] = useState(value);
-  // const router = useRouter();
-
-  // const handleChange = (event) => {
-  //   const newValue = event.target.value;
-  //   setSearchValue(newValue);
-  //   onChange(newValue);
-  // };
-
-  // const handleSubmit = (event) => {
-  //   event.preventDefault();
-  //   search(searchValue);
-  //   onRequestSearch();
-  //   router.push('/search');
-  // };
-
-  // const handleCancel = () => {
-  //   setSearchValue('');
-  //   onCancelSearch();
-  // };
+const SearchBar = ({ onChange, value, classes, width, label }) => {
 
   return (
     <>
@@ -54,13 +37,14 @@ const SearchBar = ({ onChange, value, classes, width }) => {
         component="form"
         sx={{
           '& > :not(style)' : {  width : width },
+
         }}
         noValidate
         autoComplete="on"
       >
         <TextField
           id="outlined-basic"
-          label="Search Applications"
+          label={label}
           variant="outlined"
           fullWidth
           type="search"
@@ -68,6 +52,7 @@ const SearchBar = ({ onChange, value, classes, width }) => {
           onChange={onChange}
           sx={{
             margin : 'auto',
+            height : '5ch'
           }}
           placeholder="Search"
           className={classes.searchInput}
