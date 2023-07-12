@@ -88,6 +88,9 @@ const styles = (theme) => ({
       height : '100%',
     }
   },
+  visibilityImg : {
+    filter : theme.palette.secondary.img,
+  }
   // text : {
   //   padding : "5px"
   // }
@@ -832,7 +835,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           const visibility = filters[tableMeta.rowIndex].visibility
           return (
             <>
-              <img src={`/static/img/${visibility}.svg`} />
+              <img className={classes.visibilityImg} src={`/static/img/${visibility}.svg`} />
             </>
           );
         },
