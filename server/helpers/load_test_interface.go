@@ -87,6 +87,14 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 			AllowInitialErrors: opts.AllowInitialErrors,
 			AbortOn:            0,
 		}
+
+		if opts.Options != "" {
+			err := json.Unmarshal([]byte(opts.Options), &o)
+			if err != nil {
+				return nil, nil, ErrUnmarshal(err, "options string")
+			}
+		}
+
 		res, err = fhttp.RunHTTPTest(&o)
 	}
 	if err != nil {
@@ -135,6 +143,14 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 		Labels:            labels,
 		Percentiles:       []float64{50, 75, 90, 99, 99.99, 99.999},
 	}
+
+	if opts.Options != "" {
+		err := json.Unmarshal([]byte(opts.Options), &ro)
+		if err != nil {
+			return nil, nil, ErrUnmarshal(err, "options string")
+		}
+	}
+
 	var res periodic.HasRunnerResult
 	var err error
 	if opts.SupportedLoadTestMethods == 2 {
@@ -370,6 +386,13 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 
 	if opts.SupportedLoadTestMethods == 2 {
 		return nil, nil, ErrGrpcSupport(err, "Nighthawk")
+	}
+
+	if opts.Options != "" {
+		err := json.Unmarshal([]byte(opts.Options), &ro)
+		if err != nil {
+			return nil, nil, ErrUnmarshal(err, "options string")
+		}
 	}
 
 	c, err := nighthawk_client.New(nighthawk_client.Options{

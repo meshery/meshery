@@ -1677,8 +1677,8 @@ github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 h1:SOEGU9fKiNWd/HOJuq
 github.com/lann/builder v0.0.0-20180802200727-47ae307949d0/go.mod h1:dXGbAdH5GtBTC4WfIxhKZfyBF/HBFgRZSWwZ9g/He9o=
 github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 h1:P6pPBnrTSX3DEVR4fDembhRWSsG5rVo6hYhAB/ADZrk=
 github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0/go.mod h1:vmVJ0l/dxyfGW6FmdpVm2joNMFikkuWg0EoCKLGUMNw=
-github.com/layer5io/gowrk2 v0.6.0 h1:r7TB2WyrKoh+UGj5/ciVM57564jr1HJ0pbE2pXp4HDE=
-github.com/layer5io/gowrk2 v0.6.0/go.mod h1:ugxQ23+HwQ8dmZYJd1LScw/TLKbdgfN6OOtg6iYMljg=
+github.com/layer5io/gowrk2 v0.6.1 h1:0eBj7VFYJ+QTMJt7i3PzxDJTEL+X+zWx4OP+lARWIoI=
+github.com/layer5io/gowrk2 v0.6.1/go.mod h1:ugxQ23+HwQ8dmZYJd1LScw/TLKbdgfN6OOtg6iYMljg=
 github.com/layer5io/meshery-operator v0.5.5/go.mod h1:s2YXueMYV9uhkFAKHKS0XN/aS4+F3yjZ+UMD04HGRx0=
 github.com/layer5io/meshery-operator v0.6.8 h1:fv/qyBkGIugfpt15hSUidJWRXmxX4ixUeLkqzT85g0c=
 github.com/layer5io/meshery-operator v0.6.8/go.mod h1:v2haxoohSF7zNRByWYbBiGnS0dtFrVcn8njxkHw+Zrs=

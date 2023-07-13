@@ -38,7 +38,7 @@ require (
 	github.com/grafana-tools/sdk v0.0.0-20220919052116-6562121319fc
 	github.com/jarcoal/httpmock v1.3.0
 	github.com/jinzhu/copier v0.3.5
-	github.com/layer5io/gowrk2 v0.6.0
+	github.com/layer5io/gowrk2 v0.6.1
 	github.com/layer5io/meshery-operator v0.6.8
 	github.com/layer5io/meshkit v0.6.47
 	github.com/layer5io/meshsync v0.6.9

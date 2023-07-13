@@ -49,7 +49,7 @@ var (
 	profileID          string
 	req                *http.Request
 	testBody           string
-	extraFlags         string
+	additionalOptions  string
 )
 
 var linkDocPerfApply = map[string]string{
@@ -68,6 +68,12 @@ mesheryctl perf apply meshery-profile --flags
 
 // Execute a Performance test with creating a new performance profile
 mesheryctl perf apply meshery-profile-new --url "https://google.com"
+
+// Execute a Performance test creating a new performance profile and pass options to the load generator used
+// Options for nighthawk - https://github.com/layer5io/getnighthawk/blob/v1.0.5/pkg/proto/options.pb.go#L882-L1018
+// Options for fortio - https://github.com/fortio/fortio/blob/v1.57.0/fhttp/httprunner.go#L77-L84
+// Options for wrk2 - https://github.com/layer5io/gowrk2/blob/v0.6.1/api/gowrk2.go#L47-L53
+mesheryctl perf apply meshery-profile-new --url "https://google.com" --options [filepath|json-string]
 
 // Run Performance test using SMP compatible test configuration
 mesheryctl perf apply -f perf-config.yaml
@@ -314,39 +320,10 @@ func init() {
 	applyCmd.Flags().StringVar(&qps, "qps", "", "(optional) Queries per second")
 	applyCmd.Flags().StringVar(&concurrentRequests, "concurrent-requests", "", "(optional) Number of Parallel Requests")
 	applyCmd.Flags().StringVar(&testDuration, "duration", "", "(optional) Length of test (e.g. 10s, 5m, 2h). For more, see https://golang.org/pkg/time/#ParseDuration")
-	applyCmd.Flags().StringVar(&loadGenerator, "load-generator", "", "(optional) Load-Generator to be used (fortio/wrk2)")
-	applyCmd.Flags().StringVarP(&filePath, "file", "f", "", "(optional) file containing SMP-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
-	applyCmd.Flags().StringVarP(&testBody, "body", "b", "", "(optional) load test body. Can be a filepath/string")
-	applyCmd.Flags().StringVar(&extraFlags, "ext", "", "(optional) Additional flags to be passed to the load generator")
-}
-
-func parseFlags(input string) []string {
-	flags := make([]string, 0)
-
-	// Split the input string by whitespace
-	segments := strings.Fields(input)
-
-	// Iterate over the segments
-	for i := 0; i < len(segments); i++ {
-		segment := segments[i]
-
-		// Check if the segment starts with one or two dashes
-		if strings.HasPrefix(segment, "-") {
-			// Check if the flag has a value
-			if i + 1 < len(segments) && !strings.HasPrefix(segments[i+1], "-") {
-				flagName := segment
-				flagValue := segments[i+1]
-				
-				flags = append(flags, flagName + " " + flagValue)
-				i++ // Skip the next segment since it's the value for this flag
-			} else {
-				// The segment is a boolean flag with no value
-				flags = append(flags, segment)
-			}
-		} 
-	}
-
-	return flags
+	applyCmd.Flags().StringVar(&loadGenerator, "load-generator", "", "(optional) Load-Generator to be used (fortio/wrk2/nighthawk)")
+	applyCmd.Flags().StringVarP(&filePath, "file", "f", "", "(optional) File containing SMP-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
+	applyCmd.Flags().StringVarP(&testBody, "body", "b", "", "(optional) Load test body. Can be a filepath/string")
+	applyCmd.Flags().StringVar(&additionalOptions, "options", "", "(optional) Additional options to be passed to the load generator. Can be a json string or a filepath containing json")
 }
 
 func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string, error) {
@@ -398,12 +375,6 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 		}
 	}
 
-	var additionalFlags []string
-
-	if extraFlags != "" {
-		additionalFlags = parseFlags(extraFlags)
-	}
-
 	convReq, err := strconv.Atoi(concurrentRequests)
 	if err != nil {
 		return "", "", errors.New("failed to convert concurrent-request")
@@ -426,9 +397,23 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 		"content_type":       "",
 	}
 
-	if additionalFlags !=  nil {
+	if additionalOptions != "" {
+		// Check if the additionalOptions is a filepath or a string
+		if _, err := os.Stat(additionalOptions); err == nil {
+			optFile, err := os.ReadFile(additionalOptions)
+			if err != nil {
+				return "", "", errors.New("unable to read options file. " + err.Error())
+			}
+			additionalOptions = string(optFile)
+		}
+
+		// Check if the additionalOptions is a valid json
+		if !govalidator.IsJSON(additionalOptions) {
+			return "", "", errors.New("invalid json passed as options")
+		}
+
 		values["metadata"] = map[string]interface{}{
-			"flags": additionalFlags,
+			"additional_options": additionalOptions,
 		}
 	}
 
