@@ -23,7 +23,7 @@ If a specific attribute is not provided with a value in the definition, it means
 
 [![Meshery architecture]({{ site.baseurl }}/assets/img/meshmodel/meshmodel-architecture.svg)]({{ site.baseurl }}/assets/img/meshmodel/meshmodel-architecture.svg)
 
-_Figure: Meshery deploys inside or outside of a Kubernetes cluster_
+_Figure: MeshModel Contruct Classification_
 
 ### Contribute to MeshModel Relationships
 
