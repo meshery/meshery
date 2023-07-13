@@ -64,7 +64,7 @@ require (
 	golang.org/x/oauth2 v0.10.0
 	golang.org/x/text v0.11.0
 	gonum.org/v1/gonum v0.12.0
-	google.golang.org/grpc v1.56.1
+	google.golang.org/grpc v1.56.2
 	google.golang.org/protobuf v1.31.0
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/gorm v1.25.2
@@ -246,6 +246,7 @@ require (
 	go.opencensus.io v0.24.0 // indirect
 	go.starlark.net v0.0.0-20200306205701-8dd3e2ee1dd5 // indirect
 	golang.org/x/crypto v0.11.0 // indirect
+	golang.org/x/exp v0.0.0-20230425010034-47ecfdc1ba53 // indirect
 	golang.org/x/mod v0.10.0 // indirect
 	golang.org/x/net v0.12.0 // indirect
 	golang.org/x/sync v0.2.0 // indirect
