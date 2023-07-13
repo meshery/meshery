@@ -259,7 +259,11 @@ func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Reques
 
 	contexts, _ := models.K8sContextsFromKubeconfig(*k8sConfigBytes, mid)
 	h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{RegisterK8sMeshModelComponents}, h.EventsBuffer, h.registryManager, false)
-	w.Write([]byte(http.StatusText(http.StatusAccepted)))
+	if _, err = w.Write([]byte(http.StatusText(http.StatusAccepted))); err != nil {
+		logrus.Error(ErrWriteResponse)
+		logrus.Error(err)
+		http.Error(w, ErrWriteResponse.Error(), http.StatusInternalServerError)
+	}
 }
 
 func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]*models.K8sContext, error) {
