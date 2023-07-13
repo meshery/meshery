@@ -34,15 +34,16 @@ var (
 )
 
 var viewCmd = &cobra.Command{
-	Use:   "view [filter name]",
-	Short: "Display filters(s)",
+	Use:   "view [filter-name | ID]",
+	Short: "View filter(s)",
 	Long:  `Displays the contents of a specific filter based on name or id`,
 	Example: `
-// View the specified WASM filter file
+// View the specified WASM filter
+// A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be returned.
 mesheryctl exp filter view [filter-name | ID]	
 
-// View using filter name
-mesheryctl exp filter view test-wasm
+// View all filter files
+mesheryctl exp filter view --all
 	`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -56,19 +57,20 @@ mesheryctl exp filter view test-wasm
 		// if filter name/id available
 		if len(args) > 0 {
 			if viewAllFlag {
-				return errors.New("-a cannot be used when [filter-name|filter-id] is specified")
+				return errors.New(utils.FilterViewError("--all cannot be used when filter name or ID is specified\nUse 'mesheryctl exp filter view --help' to display usage guide\n"))
 			}
-			filter, isID, err = utils.Valid(args[0], "filter")
+			filter, isID, err = utils.ValidId(args[0], "filter")
 			if err != nil {
-				return errors.New("Invalid filter ID / filter name. " + err.Error())
+				return errors.New("invalid filter name or ID. " + err.Error())
 			}
 		}
+
 		urlString := mctlCfg.GetBaseMesheryURL()
 		if len(filter) == 0 {
 			if viewAllFlag {
 				urlString += "/api/filter?pagesize=10000"
 			} else {
-				return errors.New("[filter-name|filter-id] not specified, use -a to view all filters")
+				return errors.New(utils.FilterViewError("filter-name or ID not specified, use -a to view all filters\nUse 'mesheryctl exp filter view --help' to display usage guide\n"))
 			}
 		} else if isID {
 			// if filter is a valid uuid, then directly fetch the filter

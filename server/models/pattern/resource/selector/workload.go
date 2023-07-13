@@ -17,7 +17,7 @@ func (s *Selector) Workload(name string, version string, model string, apiVersio
 	if apiVersion == "core.oam.dev/v1alpha1" { //For backwards compatibility with older designs which were created using OAM
 		apiVersion = ""
 	}
-	entities, _ := s.registry.GetEntities(&v1alpha1.ComponentFilter{
+	entities, _, _ := s.registry.GetEntities(&v1alpha1.ComponentFilter{
 		Name:       name,
 		ModelName:  model,
 		APIVersion: apiVersion,

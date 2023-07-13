@@ -86,8 +86,6 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 	var req *http.Request
 	var app *models.MesheryApplication
 
-	client := &http.Client{}
-
 	// Check if the app manifest is file or URL
 	if validURL := govalidator.IsURL(file); !validURL {
 		content, err := os.ReadFile(file)
@@ -111,16 +109,12 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 			return nil, err
 		}
 
-		resp, err := client.Do(req)
+		resp, err := utils.MakeRequest(req)
 		if err != nil {
 			return nil, err
 		}
 		utils.Log.Debug("App file saved")
 		var response []*models.MesheryApplication
-		// failsafe (bad api call)
-		if resp.StatusCode != 200 {
-			return nil, errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-		}
 		defer resp.Body.Close()
 
 		body, err := io.ReadAll(resp.Body)
@@ -164,16 +158,12 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 			return nil, err
 		}
 
-		resp, err := client.Do(req)
+		resp, err := utils.MakeRequest(req)
 		if err != nil {
 			return nil, err
 		}
 		utils.Log.Debug("remote hosted app request success")
 		var response []*models.MesheryApplication
-		// failsafe (bad api call)
-		if resp.StatusCode != 200 {
-			return nil, errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-		}
 		defer resp.Body.Close()
 
 		body, err := io.ReadAll(resp.Body)

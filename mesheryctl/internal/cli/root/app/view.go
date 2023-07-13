@@ -69,7 +69,7 @@ mesheryctl app view --all
 			if viewAllFlag {
 				return errors.New("-a cannot be used when [application-name|application-id] is specified")
 			}
-			applicationID, isID, err = utils.Valid(args[0], "application")
+			applicationID, isID, err = utils.ValidId(args[0], "application")
 			if err != nil {
 				return err
 			}
@@ -93,19 +93,14 @@ mesheryctl app view --all
 			url += "/api/application?search=" + application
 		}
 
-		client := &http.Client{}
 		req, err = utils.NewRequest("GET", url, nil)
 		if err != nil {
 			return err
 		}
 
-		res, err := client.Do(req)
+		res, err := utils.MakeRequest(req)
 		if err != nil {
 			return err
-		}
-		if res.StatusCode != 200 {
-			// failsafe for the case when a valid uuid v4 is not an id of any application (bad api call)
-			return errors.Errorf("Response Status Code %d, possible invalid ID", res.StatusCode)
 		}
 
 		defer res.Body.Close()
