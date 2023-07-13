@@ -75,7 +75,7 @@ func FindDuplicateComponents(components []v1alpha1.ComponentDefinition) []Duplic
 
 		comps = append(comps, DuplicateResponseComponent{
 			ComponentDefinition: comp,
-			Duplicates: set[key],
+			Duplicates: set[key] - 1,
 		})
 	}
 
@@ -97,7 +97,7 @@ func FindDuplicateModels(models []v1alpha1.Model) []DuplicateResponseModels {
 
 		mods = append(mods, DuplicateResponseModels{
 			Model: model,
-			Duplicates: set[key],
+			Duplicates: set[key] - 1,
 		})
 	}
 
