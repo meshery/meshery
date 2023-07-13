@@ -23,15 +23,18 @@ export const publish_schema = {
         "type" : "string"
       },
       "uniqueItems" : true,
-      "description" : "The list of compatible technologies."
+      "description" : "The list of compatible technologies.",
+      "x-rjsf-style":6
     },
     "pattern_caveats" : {
       "type" : "string",
-      "description" : "Caveats related to the pattern."
+      "description" : "Caveats related to the pattern.",
+      "x-rjsf-style": 12
     },
     "pattern_info" : {
       "type" : "string",
-      "description" : "Additional information about the pattern."
+      "description" : "Additional information about the pattern.",
+      "x-rjsf-style" : 12
     },
     "type" : {
       "type" : "string",
@@ -45,7 +48,8 @@ export const publish_schema = {
         "troubleshooting",
         "workloads"
       ],
-      "description" : "The category of the pattern."
+      "description" : "The category of the pattern.",
+      "x-rjsf-style": 6
     }
   },
   "required" : ["compatibility", "pattern_caveats", "pattern_info", "type"]

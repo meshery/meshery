@@ -221,6 +221,9 @@ export const calculateGrid = element => {
     grid.lg = 12;
   }
 
+  // if fields have custom annotations to grid them differently
+  grid.lg = element.content.props.schema["x-rjsf-style"] || grid.lg;
+
   return grid;
 };
 
