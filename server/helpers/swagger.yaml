@@ -240,7 +240,7 @@ paths:
     /api/filter:
         get:
             description: |-
-                Returns the list of all the filters saved by the current user
+                # Returns the list of all the filters saved by the current user
 
                 ```?order={field}``` orders on the passed field
 
@@ -302,7 +302,16 @@ paths:
                 - FiltersAPI
     /api/filter/catalog:
         get:
-            description: "# Filters can be further filtered through query parameter\n\n```?order={field}``` orders on the passed field\n\n```?page={page-number}``` Default page number is 0\n\n```?pagesize={pagesize}``` Default pagesize is 10. \n\n```?search={filtername}``` If search is non empty then a greedy search is performed"
+            description: |-
+                # Filters can be further filtered through query parameter
+
+                ```?order={field}``` orders on the passed field
+
+                ```?page={page-number}``` Default page number is 0
+
+                ```?pagesize={pagesize}``` Default pagesize is 10.
+
+                ```?search={filtername}``` If search is non empty then a greedy search is performed
             operationId: idGetCatalogMesheryFiltersHandler
             responses:
                 "200":
@@ -1339,6 +1348,20 @@ paths:
                 "200":
                     description: ""
             summary: Handle GET request for Kubernetes ping
+            tags:
+                - SystemAPI
+    /api/system/kubernetes/register:
+        post:
+            description: Used to register Kubernetes components to system from a kubeconfig file
+            operationId: idPostK8SRegistration
+            responses:
+                "202":
+                    description: ""
+                "400":
+                    description: ""
+                "500":
+                    description: ""
+            summary: Handle registration request for Kubernetes components
             tags:
                 - SystemAPI
     /api/system/meshsync/grafana:

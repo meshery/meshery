@@ -241,6 +241,14 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 	http.Error(w, "Empty contextID. Pass the context ID(in query parameter \"context\") of the kuberenetes to be pinged", http.StatusBadRequest)
 }
 
+// swagger:route POST /api/system/kubernetes/register SystemAPI idPostK8SRegistration
+// Handle registration request for Kubernetes components
+//
+// Used to register Kubernetes components to Meshery from a kubeconfig file
+// responses:
+// 	202:
+//  400:
+//  500:
 func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Request) {
 	k8sConfigBytes, err := readK8sConfigFromBody(req)
 	if err != nil {
