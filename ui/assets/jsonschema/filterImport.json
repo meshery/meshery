@@ -9,12 +9,10 @@
     },
     "config": {
       "type": "string",
-      "title": "WASM Filter Config Yaml",
+      "title": "WASM Filter Config",
       "format": "textarea",
       "description": "Enter the configuration details. The configuration detail is the yaml string with running details",
-      "default": [
-        "typed_config:\r\n  \"@type\": type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm\r\n  config:\r\n    name: example-filter\r\n    rootId: my_root_id\r\n    vmConfig:\r\n      code:\r\n        local:\r\n          filename: /var/local/lib/wasm-filters/example-filter.wasm\r\n      runtime: envoy.wasm.runtime.v8\r\n      vmId: example-filter\r\n      allow_precompiled: true\r\nname: envoy.filters.http.wasm"
-      ]
+      "default": "This is an Exmaple config, config could be Yaml or JSON\ntyped_config:\r\n  \"@type\": type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm\r\n  config:\r\n    name: example-filter\r\n    rootId: my_root_id\r\n    vmConfig:\r\n      code:\r\n        local:\r\n          filename: /var/local/lib/wasm-filters/example-filter.wasm\r\n      runtime: envoy.wasm.runtime.v8\r\n      vmId: example-filter\r\n      allow_precompiled: true\r\nname: envoy.filters.http.wasm"
     },
     "uploadType": {
       "title": "Select the Upload Method",
@@ -35,12 +33,12 @@
         }
       },
       "then": {
-        "title": "via URL",
+        "title": "via File",
         "properties": {
           "file": {
             "type": "string",
             "format": "file",
-            "description": "Browse the design file from your file system"
+            "description": "Browse the filter file from your file system"
           }
         },
         "required": [
@@ -62,7 +60,8 @@
           "url": {
             "type": "string",
             "title": "URL",
-            "description": "raw url of the design file, example: https://raw.github.com/..."
+            "format": "uri",
+            "description": "raw url of the filter file, example: https://raw.github.com/..."
           }
         },
         "required": [

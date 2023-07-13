@@ -53,6 +53,7 @@
           "url": {
             "type": "string",
             "title": "URL",
+            "format": "uri",
             "description": "raw url of the design file, example: https://raw.github.com/..."
           }
         },

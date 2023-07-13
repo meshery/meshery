@@ -22,7 +22,6 @@ import { FILE_OPS } from "../utils/Enum";
 import { ctxUrl } from "../utils/multi-ctx";
 import { getComponentsinFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
 import PromptComponent from "./PromptComponent";
-import UploadImport from "./UploadImport";
 import UndeployIcon from "../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import ConfirmationMsg from "./ConfirmationModal";
@@ -34,6 +33,7 @@ import PublishIcon from "@material-ui/icons/Publish";
 import InfoIcon from '@material-ui/icons/Info';
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import { iconMedium, iconSmall } from "../css/icons.styles";
+import UploadImport from "./Modals/ImportModal";
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
@@ -923,8 +923,9 @@ function MesheryApplications({
           tab={modalOpen.deploy ? 2 : 1}
         />
         <PromptComponent ref={modalRef} />
-        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler}
-          supportedTypes={types} configuration="Application"  />
+        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} importType="application" handleSubmit />
+        {/* <UploadImport open={importModal.open} handleClose={handleUploadImportClose} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler}
+          supportedTypes={types} configuration="Application"  /> */}
       </NoSsr>
     </>
   );

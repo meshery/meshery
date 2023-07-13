@@ -1,66 +1,52 @@
 import React from 'react';
-// import { useEffect } from 'react';
-import { Button, Grid } from '@material-ui/core';
-// import { createTheme } from '@material-ui/core/styles';
-import validator from "@rjsf/validator-ajv8";
-import {
-  Dialog, DialogActions,
-  DialogContent,
-  DialogTitle
-} from '@material-ui/core';
-import { Form } from '@rjsf/material-ui';
+import filterSchema from "../../assets/jsonschema/filterImport.json";
+import applicationSchema from "../../assets/jsonschema/applicationImport.json";
+import applicationUISchema from "../../assets/jsonschema/uiSchemaApplication.json";
 import useStyles from "../MesheryPatterns/Cards.styles";
-import PublicIcon from '@material-ui/icons/Public';
-import filterSchema from "../../assets/jsonschema/filterImport.json"
+import RJSFModal from "../Modal";
+import { Button } from '@material-ui/core';
+import { capitalize } from 'lodash';
 
 const schemaMap = {
-  filter : filterSchema,
-  application : {},
-  design : {}
+  filter: filterSchema,
+  application: applicationSchema,
+  design: {}
+}
+
+const uiSchema = {
+  application: applicationUISchema
 }
 
 export default function ImportModal(props) {
   const { importType, open, handleClose, handleImport } = props;
-  const classes = useStyles();
   const schema = schemaMap[importType];
+  const classes = useStyles();
 
-  // const [data, setData] = React.useState(null);
   const data = null;
   return (
-    <>
-      <Dialog
-        open={open}
-        onClose={handleClose}>
-        <DialogTitle className={classes.dialogTitle}>
-          Import your {importType}
-        </DialogTitle>
-        <DialogContent>
-          <Grid container spacing={24} alignItems="center">
-            <Form schema={schema} formData={data} validator={validator}
-              onSubmit={(data) => {
-                handleClose();
-                handleImport(data)
-              }}
-            >
-              <Button
-                title="Import"
-                variant="contained"
-                color="primary"
-                type="submit"
-                className={classes.testsButton}
-              >
-                <PublicIcon className={classes.iconPatt} />
-                <span className={classes.btnText}> Import {importType} </span>
-              </Button>
-            </Form>
-          </Grid>
-
-        </DialogContent>
-        <DialogActions>
-
-        </DialogActions>
-
-      </Dialog>
-    </>
+    <RJSFModal
+      {...props}
+      title={`Import ${capitalize(importType)}`}
+      onChange={(e) => console.log("oncgan", e)}
+      schema={schema}
+      formData={{}}
+      type={importType}
+      onSubmit={(d) => console.log("onsubmit called", d)}
+      uiSchema={uiSchema?.[importType]}
+    >
+      <Button
+        fullWidth
+        title="Publish"
+        variant="contained"
+        color="primary"
+        className={classes.testsButton}
+        onClick={() => {
+          handlePublishModalClose();
+          handlePublish(payload);
+        }}
+      >
+        Import {capitalize(importType)}
+      </Button>
+    </RJSFModal>
   )
 }

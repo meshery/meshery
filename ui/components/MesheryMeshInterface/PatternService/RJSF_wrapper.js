@@ -21,7 +21,7 @@ function RJSFWrapper(props) {
   const errorHandler = HandleError();
 
   const [data, setData] = React.useState(prev => ({ ...formData, ...prev }));
-  const [schema, setSchema] = React.useState({ rjsfSchema : {}, uiSchema : {} })
+  const [schema, setSchema] = React.useState({ rjsfSchema: {}, uiSchema: {} })
   const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {

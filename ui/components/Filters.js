@@ -27,7 +27,7 @@ import { toggleCatalogContent, updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
 import PromptComponent from "./PromptComponent";
-import UploadImport from "./UploadImport";
+import UploadImport from "./Modals/ImportModal";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import { FILE_OPS, MesheryFiltersCatalog, VISIBILITY } from "../utils/Enum";
@@ -612,7 +612,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       disposeConfSubscriptionRef.current.dispose();
     }
     const configurationSubscription = ConfigurationSubscription((result) => {
-
       stillLoading(false);
       setPage(result.configuration?.filters?.page || 0);
       setPageSize(result.configuration?.filters?.page_size || 0);
@@ -1055,10 +1054,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     }
   };
 
-  if (loading) {
-    return <LoadingScreen animatedIcon="AnimatedFilter" message="Loading Filters..." />;
-  }
-
   return (
     <>
       <NoSsr>
@@ -1157,7 +1152,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           </Modal>
         }
         <PromptComponent ref={modalRef} />
-        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchFilters(page, pageSize, search, sortOrder) } configuration="Filter" />
+        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} importType="filter" handleSubmit />
+        {/* <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchFilters(page, pageSize, search, sortOrder) } configuration="Filter" /> */}
       </NoSsr>
     </>
   );

@@ -47,20 +47,6 @@ function matchComponentURI(extensionURI, currentURI) {
   return currentURI.includes(extensionURI);
 }
 
-/**
- * capitalize capitalizes the given string and returns the modified
- * string
- *
- * If the given parameter is not sting then it will return an empty
- * string
- * @param {string} string
- *
- * @returns {string}
- */
-function capitalize(string) {
-  if (typeof string === "string") return string.charAt(0).toUpperCase() + string.slice(1);
-  return "";
-}
 
 class RemoteExtension extends React.Component {
   constructor(props) {

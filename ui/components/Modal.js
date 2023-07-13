@@ -21,7 +21,7 @@ const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
     <div>
       <Tooltip title="Schema_Changer">
         <IconButton component="span" onClick={e => setAnchorEl(e.currentTarget)}>
-          <ArrowDropDown style={{ color : "#000" }} />
+          <ArrowDropDown style={{ color: "#000" }} />
         </IconButton>
       </Tooltip>
       <Menu id="schema-menu" anchorEl={anchorEl} open={open} handleClose={handleClose}>
@@ -43,8 +43,21 @@ const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
   )
 }
 
-function Modal(props) {
-  const { open, title, handleClose, onChange, schema, formData, children, schema_array, type, schemaChangeHandler } = props;
+
+const RJSFWrapperComponent = (uiSchema) =>
+    (
+    /** @type {{ jsonSchema: any; children: React.DetailedReactHTMLElement<any, HTMLElement>; }} */ props
+    ) => {
+
+      // Clone the child to pass in additional props
+      return React.cloneElement(props.children, {
+        ...(props.children?.props || {}),
+        uiSchema
+      });
+    };
+
+
+function Modal({ open, title, handleClose, onChange, schema, formData, children, schema_array, type, schemaChangeHandler, onSubmit, uiSchema }) {
   const classes = useStyles();
 
   return (
@@ -54,16 +67,16 @@ function Modal(props) {
         onClose={handleClose}>
         <DialogTitle>
           <div style={{
-            display : "flex",
-            justifyContent : "space-between",
+            display: "flex",
+            justifyContent: "space-between",
           }}>
             <p style={{
-              display : "flex",
-              alignItems : "center",
+              display: "flex",
+              alignItems: "center",
             }}>
-              <b id="simple-modal-title" style={{ textAlign : "center" }} > {title}</b>
+              <b id="simple-modal-title" style={{ textAlign: "center" }} > {title}</b>
               {schema_array?.length > 1 && (
-                <SchemaVersion schema_array={schema_array} type={type} schemaChangeHandler={schemaChangeHandler}/>
+                <SchemaVersion schema_array={schema_array} type={type} schemaChangeHandler={schemaChangeHandler} />
               )}
             </p>
             <IconButton aria-label="close" className={classes.closeButton} onClick={handleClose}>
@@ -79,6 +92,8 @@ function Modal(props) {
               jsonSchema={schema || getSchema(type)}
               onChange={onChange}
               hideTitle={true}
+              uiSchema={uiSchema}
+              RJSFWrapperComponent={RJSFWrapperComponent(uiSchema)}
             />
           </Grid>
 

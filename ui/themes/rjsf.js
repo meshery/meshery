@@ -100,7 +100,8 @@ export const rjsfTheme = createTheme({
     },
     MuiInputBase : {
       root : {
-        fontSize : "0.8rem" // same as title
+        fontSize : "0.8rem", // same as title
+        minRows: 5
       }
     },
     MuiTooltip : {
@@ -314,7 +315,8 @@ const darkRjsfTheme = createTheme({
     },
     MuiInputBase : {
       root : {
-        fontSize : "0.8rem" // same as title
+        fontSize : "0.8rem", // same as title
+        minRows: 5
       }
     },
     MuiTooltip : {

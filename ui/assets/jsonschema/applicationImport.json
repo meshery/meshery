@@ -4,8 +4,7 @@
   "properties": {
     "name": {
       "type": "string",
-      "title": "Give your application file a name",
-      "default": "Untitled Application"
+      "title": "Give your application file a name"
     },
     "applicationType": {
       "title": "Select application type ",
@@ -32,6 +31,7 @@
           "url": {
             "type": "string",
             "title": "URL",
+            "format": "uri",
             "description": "raw url of the application file, example: https://raw.github.com/..."
           }
         },
@@ -56,6 +56,7 @@
               "url": {
                 "type": "string",
                 "title": "URL",
+                "format": "uri",
                 "description": "raw url of the application file, example: https://raw.github.com/..."
               }
             },
@@ -98,6 +99,7 @@
               "url": {
                 "type": "string",
                 "title": "URL",
+                "format": "uri",
                 "description": "raw url of the application file, example: https://raw.github.com/..."
               }
             },
