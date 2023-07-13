@@ -21,6 +21,10 @@ In the context of MeshModel, the `Core Constructs` of MeshModel are represented 
 
 If a specific attribute is not provided with a value in the definition, it means that the value for that attribute has to be written or configured per construct. In other words, the absence of a value indicates that the configuration for that attribute is required and specific to each individual construct instance.
 
+[![Meshery architecture]({{ site.baseurl }}/assets/img/meshmodel/meshmodel-architecture.svg)]({{ site.baseurl }}/assets/img/meshmodel/meshmodel-architecture.svg)
+
+_Figure: MeshModel Construct Classification_
+
 ### Contribute to MeshModel Relationships
 
 Relationships within MeshModel play a crucial role in establishing concrete visualisations of efficient data flow between different components of Meshery. These are used to classify the nature of interaction between one or more interconnected Components.
