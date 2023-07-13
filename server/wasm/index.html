@@ -1,0 +1,20 @@
+<html>  
+    <head>
+        <meta charset="utf-8"/>
+        <script src="wasm_exec.js"></script>
+        <script>
+            const go = new Go();
+            WebAssembly.instantiateStreaming(fetch("pattern.wasm"), go.importObject).then((result) => {
+                go.run(result.instance);
+            });
+            go.importObject.env = {
+                    ...go.importObject.env,
+                    'main.throw': (e) => {
+                        console.log(e)
+                        throw e
+                    }
+                }
+        </script>
+    </head>
+    <body></body>
+</html>  
