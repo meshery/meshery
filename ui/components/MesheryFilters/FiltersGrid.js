@@ -7,7 +7,6 @@ import { FILE_OPS } from "../../utils/Enum";
 import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
-import PublicIcon from "@material-ui/icons/Public";
 import useStyles from "../MesheryPatterns/Grid.styles";
 import { publish_schema } from "../schemas/publish_schema";
 import _ from "lodash";
@@ -263,21 +262,9 @@ function FiltersGrid({
           formData={_.isEmpty(payload.catalog_data) ? publishModal?.filter?.catalog_data : payload.catalog_data}
           aria-label="catalog publish"
           title={publishModal.filter?.name}
-        >
-          <Button
-            title="Publish"
-            variant="contained"
-            color="primary"
-            className={classes.testsButton}
-            onClick={() => {
-              handlePublishModalClose();
-              handlePublish(payload);
-            }}
-          >
-            <PublicIcon className={classes.iconPatt} />
-            <span className={classes.btnText}> Publish </span>
-          </Button>
-        </Modal>
+          handleSubmit={handlePublish}
+          payload={payload}
+        />
       )}
       <UploadImport
         open={importModal.open}

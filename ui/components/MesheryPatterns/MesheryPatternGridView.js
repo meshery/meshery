@@ -7,7 +7,6 @@ import DesignConfigurator from "../configuratorComponents/MeshModel";
 import { FILE_OPS, ACTIONS } from "../../utils/Enum";
 import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
-import PublicIcon from '@material-ui/icons/Public';
 import PublishIcon from "@material-ui/icons/Publish";
 import useStyles from "./Grid.styles";
 import Validation from "../Validation";
@@ -229,21 +228,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
         validationBody={modalOpen.validationBody}
       />
       {canPublishPattern &&
-      <Modal open={publishModal.open} schema={publish_schema} uiSchema={publish_ui_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data) ?publishModal?.pattern?.catalog_data : payload.catalog_data} aria-label="catalog publish" title={publishModal.pattern?.name}>
-        <Button
-          title="Publish"
-          variant="contained"
-          color="primary"
-          className={classes.testsButton}
-          onClick={() => {
-            handlePublishModalClose();
-            handlePublish(payload)
-          }}
-        >
-          <PublicIcon className={classes.iconPatt} />
-          <span className={classes.btnText}> Publish </span>
-        </Button>
-      </Modal>
+      <Modal open={publishModal.open} schema={publish_schema} uiSchema={publish_ui_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.pattern?.catalog_data : payload.catalog_data} aria-label="catalog publish" title={publishModal.pattern?.name} payload={payload} handleSubmit={handlePublish}/>
       }
       <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={async() => await fetch()} configuration="Designs"  />
     </div>
