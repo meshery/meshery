@@ -24,6 +24,7 @@ const json_schema = {
         type : "string",
       },
       uniqueItems : true,
+      minItems : 1,
       description : "The list of compatible technologies.",
       "x-rjsf-grid-area" : 6,
     },
