@@ -265,6 +265,7 @@ function FiltersGrid({
           title={publishModal.filter?.name}
           handleSubmit={handlePublish}
           payload={payload}
+          showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog"}}
         />
       )}
       <UploadImport

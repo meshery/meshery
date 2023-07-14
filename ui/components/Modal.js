@@ -13,60 +13,60 @@ import { useSnackbar } from "notistack";
 import { Cancel } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
-  "@keyframes rotateCloseIcon" : {
-    from : {
-      transform : "rotate(0deg)",
+  "@keyframes rotateCloseIcon": {
+    from: {
+      transform: "rotate(0deg)",
     },
-    to : {
-      transform : "rotate(360deg)",
-    },
-  },
-  infoIcon : {
-    color : theme.palette.type === "dark" ? "#00B39F" : "#607d8b",
-  },
-  modalHeader : {
-    display : "flex",
-    justifyContent : "space-between",
-    alignItems : "center",
-    paddingBottom : 10,
-    padding : "0 .5rem",
-    paddingTop : 10,
-    backgroundColor : theme.palette.secondary.mainBackground,
-  },
-  modelHeader : {
-    fontSize : "1rem",
-    color : "#fff",
-  },
-  iconStyle : {
-    color : "#fff",
-  },
-  iconContainer : {
-    transition : "all .3s",
-    "&:hover" : {
-      backgroundColor : "transparent !important",
-      animation : "$rotateCloseIcon 1s",
+    to: {
+      transform: "rotate(360deg)",
     },
   },
-  submitButton : {
-    backgroundColor : theme.palette.type === "dark" ? "#00B39F" : "#607d8b",
-    color : "#fff",
-    width : "100%",
+  infoIcon: {
+    color: theme.palette.type === "dark" ? "#00B39F" : "#607d8b",
   },
-  iconPatt : {
-    marginRight : theme.spacing(1),
+  modalHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingBottom: 10,
+    padding: "0 .5rem",
+    paddingTop: 10,
+    backgroundColor: theme.palette.secondary.mainBackground,
   },
-  btnText : {
-    textTransform : "none",
+  modelHeader: {
+    fontSize: "1rem",
+    color: "#fff",
   },
-  toolTip : {
-    textDecoration : "underline",
-    color : theme.palette.secondary.link2,
+  iconStyle: {
+    color: "#fff",
   },
-  dialogAction : {
-    padding : "0.5rem 1rem",
+  iconContainer: {
+    transition: "all .3s",
+    "&:hover": {
+      backgroundColor: "transparent !important",
+      animation: "$rotateCloseIcon 1s",
+    },
   },
-  snackbar : {
-    zIndex : 9999,
+  submitButton: {
+    backgroundColor: theme.palette.type === "dark" ? "#00B39F" : "#607d8b",
+    color: "#fff",
+    width: "100%",
+  },
+  iconPatt: {
+    marginRight: theme.spacing(1),
+  },
+  btnText: {
+    textTransform: "none",
+  },
+  toolTip: {
+    textDecoration: "underline",
+    color: theme.palette.secondary.link2,
+  },
+  dialogAction: {
+    padding: "0.5rem 1rem",
+  },
+  snackbar: {
+    zIndex: 9999,
   },
 }));
 
@@ -80,7 +80,7 @@ const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
     <div>
       <Tooltip title="Schema_Changer">
         <IconButton component="span" onClick={(e) => setAnchorEl(e.currentTarget)}>
-          <ArrowDropDown style={{ color : "#000" }} />
+          <ArrowDropDown style={{ color: "#000" }} />
         </IconButton>
       </Tooltip>
       <Menu id="schema-menu" anchorEl={anchorEl} open={open} handleClose={handleClose}>
@@ -115,6 +115,8 @@ function Modal(props) {
     schemaChangeHandler,
     handleSubmit,
     payload,
+    showInfoIcon, // show info icon adjacent to modal button
+    submitBtnText,
     uiSchema = {},
   } = props;
   const classes = useStyles();
@@ -124,12 +126,14 @@ function Modal(props) {
 
   const renderTooltipContent = () => (
     <div>
-      <span>Upon submitting your catalog item, an approval flow will be initiated. </span>
-      <Link href="https://docs.meshery.io/concepts/catalog" passHref onClick={(e) => e.stopPropagation()}>
-        <a className={classes.toolTip} target="_blank" rel="noopener noreferrer">
-          Learn more
-        </a>
-      </Link>
+      <span>{showInfoIcon.text}</span>
+      { showInfoIcon.link && (
+        <Link href={showInfoIcon.link} passHref onClick={(e) => e.stopPropagation()}>
+          <a className={classes.toolTip} target="_blank" rel="noopener noreferrer">
+            Learn more
+          </a>
+        </Link>
+      )}
     </div>
   );
 
@@ -142,11 +146,11 @@ function Modal(props) {
       for (const word of forbiddenWords) {
         if (designName?.includes(word)) {
           enqueueSnackbar("Please provide a valid name", {
-            variant : "warning",
-            autoHideDuration : 4000,
-            preventDuplicate : true,
-            contentProps : { className : classes.snackbar },
-            action : (key) => (
+            variant: "warning",
+            autoHideDuration: 4000,
+            preventDuplicate: true,
+            contentProps: { className: classes.snackbar },
+            action: (key) => (
               <IconButton onClick={() => closeSnackbar(key)} color="secondary">
                 <Cancel />
               </IconButton>
@@ -163,6 +167,7 @@ function Modal(props) {
   return (
     <>
       <Dialog open={open} onClose={handleClose}>
+
         <div className={classes.modalHeader}>
           <Typography variant="h5"></Typography>
           <Typography className={classes.modelHeader} variant="h5">
@@ -175,6 +180,7 @@ function Modal(props) {
             <CloseIcon className={classes.iconStyle} />
           </IconButton>
         </div>
+
         <RJSFWrapper
           key={type}
           formData={formData}
@@ -183,31 +189,51 @@ function Modal(props) {
           onChange={onChange}
           hideTitle={true}
         />
+
         <DialogActions className={classes.dialogAction}>
-          <Button
-            title="Submit"
-            variant="contained"
-            color="primary"
-            className={classes.submitButton}
-            disabled={canNotSubmit}
-            onClick={() => {
-              handleClose();
-              handleSubmit(payload);
-            }}
-          >
-            <PublicIcon className={classes.iconPatt} />
-            <span className={classes.btnText}> Submit for Approval </span>
-          </Button>
-          <CustomTextTooltip
-            backgroundColor="#3C494F"
-            placement="top"
-            interactive={true}
-            title={renderTooltipContent()}
-          >
-            <IconButton color="primary">
-              <InfoIcon />
-            </IconButton>
-          </CustomTextTooltip>
+          {submitBtnText ? (
+            <Button
+              title={submitBtnText}
+              variant="contained"
+              color="primary"
+              className={classes.submitButton}
+              disabled={canNotSubmit}
+              onClick={() => {
+                handleClose();
+                handleSubmit(payload);
+              }}
+            >
+              <PublicIcon className={classes.iconPatt} />
+              <span className={classes.btnText}>{submitBtnText}</span>
+            </Button>
+          ) : (
+            <Button
+              title="Submit"
+              variant="contained"
+              color="primary"
+              className={classes.submitButton}
+              disabled={canNotSubmit}
+              onClick={() => {
+                handleClose();
+                handleSubmit(payload);
+              }}
+            >
+              <PublicIcon className={classes.iconPatt} />
+              <span className={classes.btnText}> Submit for Approval </span>
+            </Button>
+          )}
+          {showInfoIcon && (
+            <CustomTextTooltip
+              backgroundColor="#3C494F"
+              placement="top"
+              interactive={true}
+              title={renderTooltipContent()}
+            >
+              <IconButton color="primary">
+                <InfoIcon />
+              </IconButton>
+            </CustomTextTooltip>
+          )}
         </DialogActions>
       </Dialog>
     </>

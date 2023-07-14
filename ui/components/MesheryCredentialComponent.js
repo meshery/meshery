@@ -429,7 +429,7 @@ const MesheryCredentialComponent = ({
         options={options}
         className={classes.muiRow}
       />
-      <Modal open={credModal.open} formData={credModal.data} title="Credentials" handleClose={handleClose} onChange={_onChange} schema_array={schema_array} type={credentialType} schemaChangeHandler={schemaChangeHandler} handleSubmit={handleSubmit} payload={{ type : credModal.actionType, id : credModal.id }}/>
+      <Modal open={credModal.open} formData={credModal.data} title="Credentials" handleClose={handleClose} onChange={_onChange} schema_array={schema_array} type={credentialType} schemaChangeHandler={schemaChangeHandler} handleSubmit={handleSubmit} payload={{ type : credModal.actionType, id : credModal.id }} submitBtnText="Save"/>
     </div>
   )
 }
