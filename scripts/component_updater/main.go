@@ -39,7 +39,7 @@ import (
 )
 
 var (
-	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logoURL", "svgColor", "svgWhite", "Publish?", "CRDs", "component", "svgComplete", "genealogy", "styleOverrides"}
+	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "hasSchema?" ,"shape", "primaryColor", "secondaryColor", "logoURL", "svgColor", "svgWhite", "Publish?", "CRDs", "component", "svgComplete", "genealogy", "styleOverrides"}
 	ColumnNamesToExtractForDocs = []string{"modelDisplayName", "Page Subtitle", "Docs URL", "category", "subCategory", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "svgColor", "svgWhite", "Full Page", "model"}
 	PrimaryColumnName           = "model"
 	OutputPath                  = ""
@@ -349,6 +349,16 @@ func mesheryUpdater(output []map[string]string) {
 					if i := isInColumnNames("modelDisplayName", ColumnNamesToExtract); i != -1 {
 						component.Model.DisplayName = changeFields[ColumnNamesToExtract[i]]
 					}
+
+					if changeFields["component"] != "" {
+						haSchemaField, _ := component.Metadata["hasSchema?"].(string)
+						if strings.TrimSpace(haSchemaField) != "TRUE" {
+							component.Metadata["uiCompatible"] = false
+						} else {
+							component.Metadata["uiCompatible"] = true
+						}	
+					}
+
 					//Either component is set to published or the parent model is set to published
 					if component.Metadata["Publish?"] == "TRUE" || publishedModels[component.Model.Name] { //Publish? is an invalid field for putting inside kubernetes annotations
 						component.Metadata["published"] = true
@@ -357,6 +367,7 @@ func mesheryUpdater(output []map[string]string) {
 					}
 					fmt.Println("updating for ", changeFields["modelDisplayName"], "--", component.Kind, "-- published=", component.Metadata["published"])
 					delete(component.Metadata, "Publish?")
+					delete(component.Metadata, "hasSchema?")
 					delete(component.Metadata, "CRDs")
 					delete(component.Metadata, "component")
 					modelDisplayName := component.Metadata["modelDisplayName"].(string)

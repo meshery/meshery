@@ -33,7 +33,8 @@ const DefaultPageSizeForMeshModelComponents = 25
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-//  200: []meshmodelModelsResponseWrapper
+//
+//	200: []meshmodelModelsResponseWrapper
 func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -73,12 +74,12 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 		pgSize = int64(limit)
 	}
 
-	res := models.MeshmodelsAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
+	res := models.MeshmodelsAPIResponse{
+		Page:        page,
+		PageSize:    int(pgSize),
 		UniqueCount: uniqueCount,
-		Count: count,
-		Models: meshmodels,
+		Count:       count,
+		Models:      meshmodels,
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -103,7 +104,8 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-//  200: []meshmodelModelsResponseWrapper
+//
+//	200: []meshmodelModelsResponseWrapper
 func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -145,12 +147,12 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 		pgSize = int64(limit)
 	}
 
-	res := models.MeshmodelsAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: count,
+	res := models.MeshmodelsAPIResponse{
+		Page:        page,
+		PageSize:    int(pgSize),
+		Count:       count,
 		UniqueCount: uniqueCount,
-		Models: meshmodels,
+		Models:      meshmodels,
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -176,6 +178,7 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
+//
 //	200: meshmodelModelsResponseWrapper
 func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
@@ -216,12 +219,12 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		pgSize = int64(limit)
 	}
 
-	res := models.MeshmodelsAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: count,
+	res := models.MeshmodelsAPIResponse{
+		Page:        page,
+		PageSize:    int(pgSize),
+		Count:       count,
 		UniqueCount: uniqueCount,
-		Models: meshmodels,
+		Models:      meshmodels,
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -233,7 +236,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 // swagger:route GET /api/meshmodels/models/{model} GetMeshmodelModelsByName idGetMeshmodelModelsByName
 // Handle GET request for getting all meshmodel models. The component type/model name should be lowercase like "kubernetes", "istio"
 //
-// Returns a list of registered models across all categories
+// # Returns a list of registered models across all categories
 //
 // ```?version={version}``` If version is unspecified then all models are returned
 //
@@ -247,7 +250,8 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-//  200: []meshmodelModelsResponseWrapper
+//
+//	200: []meshmodelModelsResponseWrapper
 func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -288,12 +292,12 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 		pgSize = int64(limit)
 	}
 
-	res := models.MeshmodelsAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: count,
+	res := models.MeshmodelsAPIResponse{
+		Page:        page,
+		PageSize:    int(pgSize),
+		Count:       count,
 		UniqueCount: uniqueCount,
-		Models: meshmodels,
+		Models:      meshmodels,
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -315,7 +319,8 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-//  200: []meshmodelCategoriesResponseWrapper
+//
+//	200: []meshmodelCategoriesResponseWrapper
 func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -343,7 +348,7 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 		filter.Greedy = true
 		filter.Name = r.URL.Query().Get("search")
 	}
-	
+
 	categories, count := h.registryManager.GetCategories(h.dbHandler, filter)
 
 	var pgSize int64
@@ -352,12 +357,12 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 		pgSize = count
 	} else {
 		pgSize = int64(limit)
-	} 
+	}
 
-	res := models.MeshmodelCategoriesAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: count,
+	res := models.MeshmodelCategoriesAPIResponse{
+		Page:       page,
+		PageSize:   int(pgSize),
+		Count:      count,
 		Categories: categories,
 	}
 
@@ -380,7 +385,8 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 //
 // ```?search={[true/false]}``` If search is true then a greedy search is performed
 // responses:
-//  200: []meshmodelCategoriesResponseWrapper
+//
+//	200: []meshmodelCategoriesResponseWrapper
 func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -418,12 +424,12 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 		pgSize = count
 	} else {
 		pgSize = int64(limit)
-	} 
+	}
 
-	res := models.MeshmodelCategoriesAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: count,
+	res := models.MeshmodelCategoriesAPIResponse{
+		Page:       page,
+		PageSize:   int(pgSize),
+		Count:      count,
 		Categories: categories,
 	}
 
@@ -452,6 +458,8 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+//
+// ```?incompatible={[true/false]}``` Default incompatible is false. To return components that do not have schema: ```incompatible=true```
 // responses:
 // 200: []meshmodelComponentsResponseWrapper
 func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.ResponseWriter, r *http.Request) {
@@ -479,17 +487,19 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 		page = 1
 	}
 	offset := (page - 1) * limit
+	returnIncompatibleComponent := r.URL.Query().Get("incompatible") == "true"
 	entities, count, uniqueCount := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		Name:         name,
-		CategoryName: cat,
-		ModelName:    typ,
-		APIVersion:   r.URL.Query().Get("apiVersion"),
-		Version:      v,
-		Offset:       offset,
-		Greedy: 	  greedy,
-		Limit:        limit,
-		OrderOn:      r.URL.Query().Get("order"),
-		Sort:         r.URL.Query().Get("sort"),
+		Name:                        name,
+		CategoryName:                cat,
+		ModelName:                   typ,
+		APIVersion:                  r.URL.Query().Get("apiVersion"),
+		ReturnIncompatibleComponent: returnIncompatibleComponent,
+		Version:                     v,
+		Offset:                      offset,
+		Greedy:                      greedy,
+		Limit:                       limit,
+		OrderOn:                     r.URL.Query().Get("order"),
+		Sort:                        r.URL.Query().Get("sort"),
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
@@ -511,11 +521,11 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 		pgSize = int64(limit)
 	}
 
-	response := models.MeshmodelComponentsAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: *count,
-		Components: comps,
+	response := models.MeshmodelComponentsAPIResponse{
+		Page:        page,
+		PageSize:    int(pgSize),
+		Count:       *count,
+		Components:  comps,
 		UniqueCount: *uniqueCount,
 	}
 
@@ -544,8 +554,11 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+//
+// ```?incompatible={[true/false]}``` Default incompatible is false. To return components that do not have schema: ```incompatible=true```
 // responses:
-//  200: []meshmodelComponentsResponseWrapper
+//
+//	200: []meshmodelComponentsResponseWrapper
 func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -570,16 +583,18 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 		page = 1
 	}
 	offset := (page - 1) * limit
+	returnIncompatibleComponent := r.URL.Query().Get("incompatible") == "true"
 	entities, count, uniqueCount := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		Name:         name,
-		CategoryName: cat,
-		APIVersion:   r.URL.Query().Get("apiVersion"),
-		Version:      v,
-		Offset:       offset,
-		Limit:        limit,
-		Greedy: 	  greedy,
-		OrderOn:      r.URL.Query().Get("order"),
-		Sort:         r.URL.Query().Get("sort"),
+		Name:                        name,
+		CategoryName:                cat,
+		APIVersion:                  r.URL.Query().Get("apiVersion"),
+		ReturnIncompatibleComponent: returnIncompatibleComponent,
+		Version:                     v,
+		Offset:                      offset,
+		Limit:                       limit,
+		Greedy:                      greedy,
+		OrderOn:                     r.URL.Query().Get("order"),
+		Sort:                        r.URL.Query().Get("sort"),
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
@@ -601,11 +616,11 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 		pgSize = int64(limit)
 	}
 
-	response := models.MeshmodelComponentsAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: *count,
-		Components: comps,
+	response := models.MeshmodelComponentsAPIResponse{
+		Page:        page,
+		PageSize:    int(pgSize),
+		Count:       *count,
+		Components:  comps,
 		UniqueCount: *uniqueCount,
 	}
 
@@ -634,8 +649,11 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+//
+// ```?incompatible={[true/false]}``` Default incompatible is false. To return components that do not have schema: ```incompatible=true```
 // responses:
-//  200: []meshmodelComponentsResponseWrapper
+//
+//	200: []meshmodelComponentsResponseWrapper
 func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -660,16 +678,18 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 		page = 1
 	}
 	offset := (page - 1) * limit
+	returnIncompatibleComponent := r.URL.Query().Get("incompatible") == "true"
 	entities, count, uniqueCount := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		Name:       name,
-		ModelName:  typ,
-		APIVersion: r.URL.Query().Get("apiVersion"),
-		Version:    v,
-		Offset:     offset,
-		Greedy:     greedy,
-		Limit:      limit,
-		OrderOn:    r.URL.Query().Get("order"),
-		Sort:       r.URL.Query().Get("sort"),
+		Name:                        name,
+		ModelName:                   typ,
+		APIVersion:                  r.URL.Query().Get("apiVersion"),
+		ReturnIncompatibleComponent: returnIncompatibleComponent,
+		Version:                     v,
+		Offset:                      offset,
+		Greedy:                      greedy,
+		Limit:                       limit,
+		OrderOn:                     r.URL.Query().Get("order"),
+		Sort:                        r.URL.Query().Get("sort"),
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
@@ -691,11 +711,11 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 		pgSize = int64(limit)
 	}
 
-	response := models.MeshmodelComponentsAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: *count,
-		Components: comps,
+	response := models.MeshmodelComponentsAPIResponse{
+		Page:        page,
+		PageSize:    int(pgSize),
+		Count:       *count,
+		Components:  comps,
 		UniqueCount: *uniqueCount,
 	}
 
@@ -726,6 +746,8 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+//
+// ```?incompatible={[true/false]}``` Default incompatible is false. To return components that do not have schema: ```incompatible=true```
 // responses:
 // 200: []meshmodelComponentsResponseWrapper
 func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request) {
@@ -751,16 +773,18 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 		page = 1
 	}
 	offset := (page - 1) * limit
+	returnIncompatibleComponent := r.URL.Query().Get("incompatible") == "true"
 	entities, count, uniqueCount := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		Name:       name,
-		Trim:       r.URL.Query().Get("trim") == "true",
-		APIVersion: r.URL.Query().Get("apiVersion"),
-		Version:    v,
-		Offset:     offset,
-		Limit:      limit,
-		Greedy: 	greedy,
-		OrderOn:    r.URL.Query().Get("order"),
-		Sort:       r.URL.Query().Get("sort"),
+		Name:                        name,
+		Trim:                        r.URL.Query().Get("trim") == "true",
+		APIVersion:                  r.URL.Query().Get("apiVersion"),
+		ReturnIncompatibleComponent: returnIncompatibleComponent,
+		Version:                     v,
+		Offset:                      offset,
+		Limit:                       limit,
+		Greedy:                      greedy,
+		OrderOn:                     r.URL.Query().Get("order"),
+		Sort:                        r.URL.Query().Get("sort"),
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
@@ -775,7 +799,6 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 		}
 	}
 
-
 	var pgSize int64
 	if limitstr == "all" {
 		pgSize = *count
@@ -783,11 +806,11 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 		pgSize = int64(limit)
 	}
 
-	response := models.MeshmodelComponentsAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: *count,
-		Components: comps,
+	response := models.MeshmodelComponentsAPIResponse{
+		Page:        page,
+		PageSize:    int(pgSize),
+		Count:       *count,
+		Components:  comps,
 		UniqueCount: *uniqueCount,
 	}
 
@@ -818,6 +841,8 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+//
+// ```?incompatible={[true/false]}``` Default incompatible is false. To return components that do not have schema: ```incompatible=true```
 // responses:
 // 200: []meshmodelComponentsResponseWrapper
 func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request) {
@@ -839,15 +864,17 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		page = 1
 	}
 	offset := (page - 1) * limit
+	returnIncompatibleComponent := r.URL.Query().Get("incompatible") == "true"
 	filter := &v1alpha1.ComponentFilter{
-		ModelName:  typ,
-		Version:    v,
-		Trim:       r.URL.Query().Get("trim") == "true",
-		APIVersion: r.URL.Query().Get("apiVersion"),
-		Limit:      limit,
-		Offset:     offset,
-		OrderOn:    r.URL.Query().Get("order"),
-		Sort:       r.URL.Query().Get("sort"),
+		ModelName:                   typ,
+		Version:                     v,
+		Trim:                        r.URL.Query().Get("trim") == "true",
+		APIVersion:                  r.URL.Query().Get("apiVersion"),
+		ReturnIncompatibleComponent: returnIncompatibleComponent,
+		Limit:                       limit,
+		Offset:                      offset,
+		OrderOn:                     r.URL.Query().Get("order"),
+		Sort:                        r.URL.Query().Get("sort"),
 	}
 	if r.URL.Query().Get("search") != "" {
 		filter.Greedy = true
@@ -874,14 +901,14 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		pgSize = int64(limit)
 	}
 
-	response := models.MeshmodelComponentsAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: *count,
-		Components: comps,
+	response := models.MeshmodelComponentsAPIResponse{
+		Page:        page,
+		PageSize:    int(pgSize),
+		Count:       *count,
+		Components:  comps,
 		UniqueCount: *uniqueCount,
 	}
-	
+
 	if err := enc.Encode(response); err != nil {
 		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
@@ -911,6 +938,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 //
+// ```?incompatible={[true/false]}``` Default incompatible is false. To return components that do not have schema: ```incompatible=true```
 // responses:
 // 200: []meshmodelComponentsResponseWrapper
 func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter, r *http.Request) {
@@ -933,16 +961,18 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		page = 1
 	}
 	offset := (page - 1) * limit
+	returnIncompatibleComponent := r.URL.Query().Get("incompatible") == "true"
 	filter := &v1alpha1.ComponentFilter{
-		CategoryName: cat,
-		ModelName:    typ,
-		Version:      v,
-		Trim:         r.URL.Query().Get("trim") == "true",
-		APIVersion:   r.URL.Query().Get("apiVersion"),
-		Limit:        limit,
-		Offset:       offset,
-		OrderOn:      r.URL.Query().Get("order"),
-		Sort:         r.URL.Query().Get("sort"),
+		CategoryName:                cat,
+		ModelName:                   typ,
+		Version:                     v,
+		Trim:                        r.URL.Query().Get("trim") == "true",
+		APIVersion:                  r.URL.Query().Get("apiVersion"),
+		ReturnIncompatibleComponent: returnIncompatibleComponent,
+		Limit:                       limit,
+		Offset:                      offset,
+		OrderOn:                     r.URL.Query().Get("order"),
+		Sort:                        r.URL.Query().Get("sort"),
 	}
 	if r.URL.Query().Get("search") != "" {
 		filter.Greedy = true
@@ -969,11 +999,11 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		pgSize = int64(limit)
 	}
 
-	response := models.MeshmodelComponentsAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: *count,
-		Components: comps,
+	response := models.MeshmodelComponentsAPIResponse{
+		Page:        page,
+		PageSize:    int(pgSize),
+		Count:       *count,
+		Components:  comps,
 		UniqueCount: *uniqueCount,
 	}
 
@@ -986,7 +1016,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 // swagger:route GET /api/meshmodels/categories/{category}/components GetMeshmodelComponentByCategory idGetMeshmodelComponentByCategory
 // Handle GET request for getting meshmodel components of a specific model and category.
 //
-// Components can be further filtered through query parameter
+// # Components can be further filtered through query parameter
 //
 // ```?version={version}```
 //
@@ -1003,8 +1033,11 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+//
+// ```?incompatible={[true/false]}``` Default incompatible is false. To return components that do not have schema: ```incompatible=true```
 // responses:
-//  200: []meshmodelComponentsResponseWrapper
+//
+//	200: []meshmodelComponentsResponseWrapper
 func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -1024,15 +1057,17 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		page = 1
 	}
 	offset := (page - 1) * limit
+	returnIncompatibleComponent := r.URL.Query().Get("incompatible") == "true"
 	filter := &v1alpha1.ComponentFilter{
-		CategoryName: cat,
-		Version:      v,
-		Trim:         r.URL.Query().Get("trim") == "true",
-		APIVersion:   r.URL.Query().Get("apiVersion"),
-		Limit:        limit,
-		Offset:       offset,
-		OrderOn:      r.URL.Query().Get("order"),
-		Sort:         r.URL.Query().Get("sort"),
+		CategoryName:                cat,
+		Version:                     v,
+		Trim:                        r.URL.Query().Get("trim") == "true",
+		APIVersion:                  r.URL.Query().Get("apiVersion"),
+		ReturnIncompatibleComponent: returnIncompatibleComponent,
+		Limit:                       limit,
+		Offset:                      offset,
+		OrderOn:                     r.URL.Query().Get("order"),
+		Sort:                        r.URL.Query().Get("sort"),
 	}
 	if r.URL.Query().Get("search") != "" {
 		filter.Greedy = true
@@ -1059,11 +1094,11 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		pgSize = int64(limit)
 	}
 
-	response := models.MeshmodelComponentsAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: *count,
-		Components: comps,
+	response := models.MeshmodelComponentsAPIResponse{
+		Page:        page,
+		PageSize:    int(pgSize),
+		Count:       *count,
+		Components:  comps,
 		UniqueCount: *uniqueCount,
 	}
 
@@ -1093,6 +1128,8 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+//
+// ```?incompatible={[true/false]}``` Default incompatible is false. To return components that do not have schema: ```incompatible=true```
 // responses:
 //  200: meshmodelComponentsResponseWrapper
 
@@ -1110,19 +1147,21 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	}
 
 	pagestr := r.URL.Query().Get("page")
+	returnIncompatibleComponent := r.URL.Query().Get("incompatible") == "true"
 	page, _ := strconv.Atoi(pagestr)
 	if page <= 0 {
 		page = 1
 	}
 	offset := (page - 1) * limit
 	filter := &v1alpha1.ComponentFilter{
-		Version:    v,
-		Trim:       r.URL.Query().Get("trim") == "true",
-		APIVersion: r.URL.Query().Get("apiVersion"),
-		Limit:      limit,
-		Offset:     offset,
-		OrderOn:    r.URL.Query().Get("order"),
-		Sort:       r.URL.Query().Get("sort"),
+		Version:                     v,
+		Trim:                        r.URL.Query().Get("trim") == "true",
+		APIVersion:                  r.URL.Query().Get("apiVersion"),
+		ReturnIncompatibleComponent: returnIncompatibleComponent,
+		Limit:                       limit,
+		Offset:                      offset,
+		OrderOn:                     r.URL.Query().Get("order"),
+		Sort:                        r.URL.Query().Get("sort"),
 	}
 	if r.URL.Query().Get("search") != "" {
 		filter.Greedy = true
@@ -1141,20 +1180,20 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 			comps = append(comps, comp)
 		}
 	}
-	
+
 	var pgSize int64
 
 	if limitstr == "all" {
 		pgSize = *count
 	} else {
 		pgSize = int64(limit)
-	} 
+	}
 
-	res := models.MeshmodelComponentsAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: *count,
-		Components: comps,
+	res := models.MeshmodelComponentsAPIResponse{
+		Page:        page,
+		PageSize:    int(pgSize),
+		Count:       *count,
+		Components:  comps,
 		UniqueCount: *uniqueCount,
 	}
 
