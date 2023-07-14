@@ -22,9 +22,9 @@ import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
 import { toggleCatalogContent, updateProgress } from "../lib/store";
 import DesignConfigurator from "../components/configuratorComponents/MeshModel";
-import UploadImport from "./UploadImport";
+import UploadImport from "./Modals/ImportModal";
 import { ctxUrl } from "../utils/multi-ctx";
-import { generateValidatePayload, getComponentsinFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
+import { generateValidatePayload, getComponentsinFile, getDecodedFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
 import ViewSwitch from "./ViewSwitch";
 import CatalogFilter from "./CatalogFilter";
 import MesheryPatternGrid from "./MesheryPatterns/MesheryPatternGridView";
@@ -1260,6 +1260,54 @@ function MesheryPatterns({
     return <LoadingScreen animatedIcon="AnimatedMeshPattern" message="Loading Designs..." />;
   }
 
+  /**
+   * Gets the data of Import Filter and handles submit operation
+   *
+   * @param {{
+  * uploadType: ("File Upload"| "URL Upload");
+  * name: string;
+  * url: string;
+  * file: string;
+  * }} data
+  */
+  function handleImportDesign(data) {
+    console.log("data....", data)
+    updateProgress({ showProgress : true })
+    const { uploadType, name, config, url, file } = data;
+    let requestBody = null;
+    switch (uploadType) {
+      case "File Upload":
+        requestBody = JSON.stringify({
+          config,
+          save : true,
+          pattern_data : {
+            name,
+            pattern_file : getDecodedFile(file)
+          }
+        })
+        break;
+      case "URL Upload":
+        requestBody = JSON.stringify({
+          config,
+          save : true,
+          url,
+          pattern_data : {
+            name
+          }
+        })
+        break;
+    }
+
+    dataFetch("/api/pattern",
+      { credentials : "include", method : "POST", body : requestBody },
+      () => {
+        updateProgress({ showProgress : false });
+      },
+      handleError(ACTION_TYPES.UPLOAD_PATTERN)
+    )
+  }
+
+
   return (
     <>
       <NoSsr>
@@ -1382,7 +1430,12 @@ function MesheryPatterns({
           </Modal>
         }
 
-        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchPatterns(page, pageSize, search, sortOrder)} configuration="Design" />
+        <UploadImport
+          open={importModal.open}
+          handleClose={handleUploadImportClose}
+          importType="design"
+          handleSubmit={handleImportDesign} />
+        {/* <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchPatterns(page, pageSize, search, sortOrder)} configuration="Design" /> */}
         <PromptComponent ref={modalRef} />
       </NoSsr>
     </>

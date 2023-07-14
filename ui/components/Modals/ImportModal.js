@@ -2,6 +2,7 @@ import React, {  useRef } from 'react';
 import filterSchema from "../../assets/jsonschema/filterImport.json";
 import applicationSchema from "../../assets/jsonschema/applicationImport.json";
 import applicationUISchema from "../../assets/jsonschema/uiSchemaApplication.json";
+import designSchema from "../../assets/jsonschema/designImport.json"
 import useStyles from "../MesheryPatterns/Cards.styles";
 import RJSFModal from "../Modal";
 import { Button } from '@material-ui/core';
@@ -10,7 +11,7 @@ import { capitalize } from 'lodash';
 const schemaMap = {
   filter : filterSchema,
   application : applicationSchema,
-  design : {}
+  design : designSchema
 }
 
 const uiSchema = {
