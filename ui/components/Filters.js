@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import { withStyles } from "@material-ui/core/styles";
 // import { createTheme } from '@material-ui/core/styles';
 import {
@@ -45,6 +45,9 @@ import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubs
 import fetchCatalogFilter from "./graphql/queries/CatalogFilterQuery";
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import { iconMedium } from "../css/icons.styles";
+import { AbilityContext } from "./Can";
+import { keys } from '../utils/permission_keys';
+import ErrorPage from './ErrorPage';
 
 const styles = (theme) => ({
   grid : {
@@ -182,6 +185,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const DEPLOY_URL = FILTER_URL + "/deploy";
   const CLONE_URL = "/clone";
 
+  const ability = useContext(AbilityContext);
   const [modalOpen, setModalOpen] = useState({
     open : false,
     filter_file : null,
@@ -883,83 +887,87 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
   return (
     <>
-      <NoSsr>
-        {selectedRowData && Object.keys(selectedRowData).length > 0 && (
-          <YAMLEditor filter={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} classes={classes} />
-        )}
-        <div className={classes.topToolbar} >
-          {!selectedFilter.show && (filters.length > 0 || viewType === "table") && <div className={classes.createButton}>
-            <div>
-              <Button
-                aria-label="Add Filter"
-                variant="contained"
-                color="primary"
-                size="large"
-                // @ts-ignore
-                onClick={handleUploadImport}
-                style={{ marginRight : "2rem" }}
-              >
-                <PublishIcon  style={iconMedium} className={classes.addIcon} data-cy="import-button"/>
-              Import Filters
-              </Button>
+      {ability.can(keys.VIEW_FILTER.subject, keys.VIEW_FILTER.action) ? (
+        <NoSsr>
+          {selectedRowData && Object.keys(selectedRowData).length > 0 && (
+            <YAMLEditor filter={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} classes={classes} />
+          )}
+          <div className={classes.topToolbar} >
+            {!selectedFilter.show && (filters.length > 0 || viewType === "table") && <div className={classes.createButton}>
+              <div>
+                <Button
+                  aria-label="Add Filter"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  // @ts-ignore
+                  onClick={handleUploadImport}
+                  style={{ marginRight : "2rem" }}
+                >
+                  <PublishIcon  style={iconMedium} className={classes.addIcon} data-cy="import-button"/>
+                Import Filters
+                </Button>
+              </div>
             </div>
-          </div>
-          }
-          <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingRight : "1rem", paddingTop : "0.2rem" }}>
-            <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} />
-          </div>
-          {!selectedFilter.show &&
-            <div className={classes.viewSwitchButton}>
-              <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
+            }
+            <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingRight : "1rem", paddingTop : "0.2rem" }}>
+              <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} />
             </div>
-          }
-        </div>
-        {
-          !selectedFilter.show && viewType === "table" &&
-          <MUIDataTable
-            title={<div className={classes.tableHeader}>Filters</div>}
-            data={filters}
-            columns={columns}
-            // @ts-ignore
-            options={options}
-            className={classes.muiRow}
-          />
-
-        }
-        {
-          !selectedFilter.show && viewType==="grid" &&
-            // grid vieww
-            <FiltersGrid
-              filters={filters}
-              handleDeploy={handleDeploy}
-              handleUndeploy={handleUndeploy}
-              handleSubmit={handleSubmit}
-              handleClone={handleClone}
-              urlUploadHandler={urlUploadHandler}
-              uploadHandler={uploadHandler}
-              setSelectedFilter={setSelectedFilter}
-              selectedFilter={selectedFilter}
-              pages={Math.ceil(count / pageSize)}
-              setPage={setPage}
-              selectedPage={page}
-              UploadImport={UploadImport}
-              fetch={() => fetchFilters(page, pageSize, search, sortOrder)}
+            {!selectedFilter.show &&
+              <div className={classes.viewSwitchButton}>
+                <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
+              </div>
+            }
+          </div>
+          {
+            !selectedFilter.show && viewType === "table" &&
+            <MUIDataTable
+              title={<div className={classes.tableHeader}>Filters</div>}
+              data={filters}
+              columns={columns}
+              // @ts-ignore
+              options={options}
+              className={classes.muiRow}
             />
-        }
-        <ConfirmationMsg
-          open={modalOpen.open}
-          handleClose={handleModalClose}
-          submit={
-            { deploy : () => handleDeploy(modalOpen.filter_file, modalOpen.name), unDeploy : () => handleUndeploy(modalOpen.filter_file, modalOpen.name) }
+
           }
-          isDelete={!modalOpen.deploy}
-          title={modalOpen.name}
-          componentCount={modalOpen.count}
-          tab={modalOpen.deploy ? 2 : 1}
-        />
-        <PromptComponent ref={modalRef} />
-        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchFilters(page, pageSize, search, sortOrder) } configuration="Filter" />
-      </NoSsr>
+          {
+            !selectedFilter.show && viewType==="grid" &&
+              // grid vieww
+              <FiltersGrid
+                filters={filters}
+                handleDeploy={handleDeploy}
+                handleUndeploy={handleUndeploy}
+                handleSubmit={handleSubmit}
+                handleClone={handleClone}
+                urlUploadHandler={urlUploadHandler}
+                uploadHandler={uploadHandler}
+                setSelectedFilter={setSelectedFilter}
+                selectedFilter={selectedFilter}
+                pages={Math.ceil(count / pageSize)}
+                setPage={setPage}
+                selectedPage={page}
+                UploadImport={UploadImport}
+                fetch={() => fetchFilters(page, pageSize, search, sortOrder)}
+              />
+          }
+          <ConfirmationMsg
+            open={modalOpen.open}
+            handleClose={handleModalClose}
+            submit={
+              { deploy : () => handleDeploy(modalOpen.filter_file, modalOpen.name), unDeploy : () => handleUndeploy(modalOpen.filter_file, modalOpen.name) }
+            }
+            isDelete={!modalOpen.deploy}
+            title={modalOpen.name}
+            componentCount={modalOpen.count}
+            tab={modalOpen.deploy ? 2 : 1}
+          />
+          <PromptComponent ref={modalRef} />
+          <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchFilters(page, pageSize, search, sortOrder) } configuration="Filter" />
+        </NoSsr>
+      ) : (
+        <ErrorPage error="You are not authorized to view this page" />
+      )}
     </>
   );
 }

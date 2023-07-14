@@ -45,6 +45,9 @@ import { useRouter } from "next/router";
 import downloadFile from "../utils/fileDownloader";
 import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
+import { AbilityContext } from "./Can";
+import { keys } from '../utils/permission_keys';
+import ErrorPage from './ErrorPage';
 
 const styles = (theme) => ({
   grid : {
@@ -254,6 +257,7 @@ function MesheryPatterns({
   const [extensionPreferences, setExtensionPreferences] = useState({});
   const router = useRouter()
 
+  const ability = useContext(AbilityContext);
   const [patternErrors, setPatternErrors] = useState(new Map());
 
   const [canPublishPattern, setCanPublishPattern] = useState(false);
@@ -1229,6 +1233,7 @@ function MesheryPatterns({
 
   return (
     <>
+    {ability.can(keys.VIEW_DESIGNS.subject, keys.VIEW_DESIGNS.action) ? (
       <NoSsr>
         {selectedRowData && Object.keys(selectedRowData).length > 0 && (
           <YAMLEditor pattern={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
@@ -1335,6 +1340,9 @@ function MesheryPatterns({
         <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchPatterns(page, pageSize, search, sortOrder)} configuration="Design" />
         <PromptComponent ref={modalRef} />
       </NoSsr>
+    ) : (
+      <ErrorPage error="You are not authorized to view this page" />
+    )}
     </>
   );
 }

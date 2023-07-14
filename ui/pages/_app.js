@@ -100,7 +100,8 @@ class MesheryApp extends App {
       theme : 'light',
       isOpen : false,
       relayEnvironment : createRelayEnvironment(),
-      keys: [],
+      keys : [],
+      abilities : []
     };
   }
 
@@ -178,6 +179,23 @@ class MesheryApp extends App {
     }
     const disposeK8sContextSubscription = k8sContextSubscription();
     this.setState({ disposeK8sContextSubscription })
+
+    if (sessionStorage.getItem("keys") !== null) {
+      this.setState({ keys : JSON.parse(sessionStorage.getItem("keys")) });
+    } else {
+      dataFetch('/api/identity/user/keys', {
+        mehthod : 'GET',
+        credentials : 'include'
+      }, (result) =>  this.setState({ keys : result.data.keys }), (err => console.error(err)))
+    }
+
+    this.setState({abilities: [...this.state.keys]?.map(key => {
+      return {
+        action: key.function,
+        subject: key.id
+      };
+    })})
+    console.log('keys', this.state.keys, this.state.abilities);
   }
 
   componentDidUpdate(prevProps) {
@@ -397,7 +415,7 @@ class MesheryApp extends App {
                 </Hidden>
               </nav>
               <div className={classes.appContent}>
-                <AbilityContext.Provider value={createMongoAbility(abilities)}>
+                <AbilityContext.Provider value={createMongoAbility(this.state.abilities)}>
                   <SnackbarProvider
                     anchorOrigin={{
                       vertical : 'bottom',

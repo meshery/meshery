@@ -11,7 +11,7 @@ import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import SaveIcon from '@material-ui/icons/Save';
 import MUIDataTable from "mui-datatables";
 import { withSnackbar } from "notistack";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import Moment from "react-moment";
 import { connect } from "react-redux";
@@ -34,6 +34,9 @@ import PublishIcon from "@material-ui/icons/Publish";
 import InfoIcon from '@material-ui/icons/Info';
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import { iconMedium, iconSmall } from "../css/icons.styles";
+import { AbilityContext } from "./Can";
+import { keys } from '../utils/permission_keys';
+import ErrorPage from './ErrorPage';
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
@@ -252,7 +255,7 @@ function MesheryApplications({
   );
   const disposeConfSubscriptionRef = useRef(null);
   const searchTimeout = useRef(null);
-
+  const ability = useContext(AbilityContext);
   /**
    * fetch applications when the page loads
    */
@@ -850,82 +853,85 @@ function MesheryApplications({
 
   return (
     <>
+      {ability.can(keys.VIEW_APPLICATIONS.subject, keys.VIEW_APPLICATIONS.action) ? (
+        <NoSsr>
+          {selectedRowData && Object.keys(selectedRowData).length > 0 && (
+            <YAMLEditor application={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
+          )}
+          <div className={classes.topToolbar} >
+            {!selectedApplication.show && (applications.length>0 || viewType==="table") && <div className={classes.createButton}>
+              <div>
+                <Button
+                  aria-label="Add Application"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  // @ts-ignore
+                  onClick={handleUploadImport}
+                  style={{ marginRight : "2rem" }}
+                >
+                  <PublishIcon className={classes.addIcon} style={iconMedium}  />
+                Import Application
+                </Button>
+              </div>
 
-      <NoSsr>
-        {selectedRowData && Object.keys(selectedRowData).length > 0 && (
-          <YAMLEditor application={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
-        )}
-        <div className={classes.topToolbar} >
-          {!selectedApplication.show && (applications.length>0 || viewType==="table") && <div className={classes.createButton}>
-            <div>
-              <Button
-                aria-label="Add Application"
-                variant="contained"
-                color="primary"
-                size="large"
-                // @ts-ignore
-                onClick={handleUploadImport}
-                style={{ marginRight : "2rem" }}
-              >
-                <PublishIcon className={classes.addIcon} style={iconMedium}  />
-              Import Application
-              </Button>
             </div>
-
+            }
+            {!selectedApplication.show &&
+            <div className={classes.viewSwitchButton}>
+              <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true} />
+            </div>
+            }
           </div>
+          {
+            !selectedApplication.show && viewType==="table" &&
+              <MUIDataTable
+                title={<div className={classes.tableHeader}>Applications</div>}
+                data={applications}
+                columns={columns}
+                // @ts-ignore
+                options={options}
+                className={classes.muiRow}
+              />
           }
-          {!selectedApplication.show &&
-          <div className={classes.viewSwitchButton}>
-            <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true} />
-          </div>
+          {
+            !selectedApplication.show && viewType==="grid" &&
+              // grid vieww
+              <ApplicationsGrid
+                applications={applications}
+                handleDeploy={handleDeploy}
+                handleUnDeploy={handleUnDeploy}
+                handleSubmit={handleSubmit}
+                urlUploadHandler={urlUploadHandler}
+                uploadHandler={uploadHandler}
+                setSelectedApplication={setSelectedApplication}
+                selectedApplication={selectedApplication}
+                pages={Math.ceil(count / pageSize)}
+                setPage={setPage}
+                selectedPage={page}
+                UploadImport={UploadImport}
+                types={types}
+                handleAppDownload={handleAppDownload}
+              />
           }
-        </div>
-        {
-          !selectedApplication.show && viewType==="table" &&
-            <MUIDataTable
-              title={<div className={classes.tableHeader}>Applications</div>}
-              data={applications}
-              columns={columns}
-              // @ts-ignore
-              options={options}
-              className={classes.muiRow}
-            />
-        }
-        {
-          !selectedApplication.show && viewType==="grid" &&
-            // grid vieww
-            <ApplicationsGrid
-              applications={applications}
-              handleDeploy={handleDeploy}
-              handleUnDeploy={handleUnDeploy}
-              handleSubmit={handleSubmit}
-              urlUploadHandler={urlUploadHandler}
-              uploadHandler={uploadHandler}
-              setSelectedApplication={setSelectedApplication}
-              selectedApplication={selectedApplication}
-              pages={Math.ceil(count / pageSize)}
-              setPage={setPage}
-              selectedPage={page}
-              UploadImport={UploadImport}
-              types={types}
-              handleAppDownload={handleAppDownload}
-            />
-        }
-        <ConfirmationMsg
-          open={modalOpen.open}
-          handleClose={handleModalClose}
-          submit={
-            { deploy : () => handleDeploy(modalOpen.application_file, modalOpen.name),  unDeploy : () => handleUnDeploy(modalOpen.application_file, modalOpen.name) }
-          }
-          isDelete={!modalOpen.deploy}
-          title={ modalOpen.name }
-          componentCount={modalOpen.count}
-          tab={modalOpen.deploy ? 2 : 1}
-        />
-        <PromptComponent ref={modalRef} />
-        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler}
-          supportedTypes={types} configuration="Application"  />
-      </NoSsr>
+          <ConfirmationMsg
+            open={modalOpen.open}
+            handleClose={handleModalClose}
+            submit={
+              { deploy : () => handleDeploy(modalOpen.application_file, modalOpen.name),  unDeploy : () => handleUnDeploy(modalOpen.application_file, modalOpen.name) }
+            }
+            isDelete={!modalOpen.deploy}
+            title={ modalOpen.name }
+            componentCount={modalOpen.count}
+            tab={modalOpen.deploy ? 2 : 1}
+          />
+          <PromptComponent ref={modalRef} />
+          <UploadImport open={importModal.open} handleClose={handleUploadImportClose} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler}
+            supportedTypes={types} configuration="Application"  />
+        </NoSsr>
+      ) : (
+        <ErrorPage error='You are not authorized to view this page' />
+      )}
     </>
   );
 }
