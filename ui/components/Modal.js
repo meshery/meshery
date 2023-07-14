@@ -1,14 +1,16 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { IconButton, Menu, MenuItem, Tooltip, Button, Typography } from "@material-ui/core";
 import { Dialog, DialogActions, makeStyles } from "@material-ui/core";
-// import useStyles from "./MesheryPatterns/Cards.styles";
+import { CustomTextTooltip } from "./MesheryMeshInterface/PatternService/CustomTextTooltip";
 import CloseIcon from "@material-ui/icons/Close";
 import PublicIcon from "@material-ui/icons/Public";
 import InfoIcon from "@material-ui/icons/Info";
 import RJSFWrapper from "./MesheryMeshInterface/PatternService/RJSF_wrapper";
 import { ArrowDropDown } from "@material-ui/icons";
 import { getSchema } from "./MesheryMeshInterface/PatternService/helper";
-import Link from "next/link"
+import Link from "next/link";
+import { useSnackbar } from "notistack";
+import { Cancel } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   "@keyframes rotateCloseIcon" : {
@@ -57,10 +59,15 @@ const useStyles = makeStyles((theme) => ({
     textTransform : "none",
   },
   toolTip : {
-    "&.MuiTooltip-popper" : {
-      zIndex : "9999999 !important"
-    }
-  }
+    textDecoration : "underline",
+    color : theme.palette.secondary.link2,
+  },
+  dialogAction : {
+    padding : "0.5rem 1rem",
+  },
+  snackbar : {
+    zIndex : 9999,
+  },
 }));
 
 const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
@@ -94,6 +101,7 @@ const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
     </div>
   );
 };
+
 function Modal(props) {
   const {
     open,
@@ -111,6 +119,47 @@ function Modal(props) {
   } = props;
   const classes = useStyles();
 
+  const [canNotSubmit, setCanNotSubmit] = useState(false);
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+  const renderTooltipContent = () => (
+    <div>
+      <span>Upon submitting your catalog item, an approval flow will be initiated. </span>
+      <Link href="https://docs.meshery.io/concepts/catalog" passHref onClick={(e) => e.stopPropagation()}>
+        <a className={classes.toolTip} target="_blank" rel="noopener noreferrer">
+          Learn more
+        </a>
+      </Link>
+    </div>
+  );
+
+  useEffect(() => {
+    setCanNotSubmit(false);
+    const handleDesignNameCheck = () => {
+      const designName = title?.toLowerCase();
+      const forbiddenWords = ["untitled design", "untitle", "lfx"];
+
+      for (const word of forbiddenWords) {
+        if (designName?.includes(word)) {
+          enqueueSnackbar("Please provide a valid name", {
+            variant : "warning",
+            autoHideDuration : 4000,
+            preventDuplicate : true,
+            contentProps : { className : classes.snackbar },
+            action : (key) => (
+              <IconButton onClick={() => closeSnackbar(key)} color="secondary">
+                <Cancel />
+              </IconButton>
+            ),
+          });
+          setCanNotSubmit(true);
+          break;
+        }
+      }
+    };
+    handleDesignNameCheck();
+  }, [title, enqueueSnackbar, closeSnackbar]);
+
   return (
     <>
       <Dialog open={open} onClose={handleClose}>
@@ -126,11 +175,6 @@ function Modal(props) {
             <CloseIcon className={classes.iconStyle} />
           </IconButton>
         </div>
-        {/* <Snackbar open={open} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="warning">
-          Please use name which makes more sense!
-        </Alert>
-      </Snackbar> */}
         <RJSFWrapper
           key={type}
           formData={formData}
@@ -139,12 +183,13 @@ function Modal(props) {
           onChange={onChange}
           hideTitle={true}
         />
-        <DialogActions>
+        <DialogActions className={classes.dialogAction}>
           <Button
             title="Submit"
             variant="contained"
             color="primary"
             className={classes.submitButton}
+            disabled={canNotSubmit}
             onClick={() => {
               handleClose();
               handleSubmit(payload);
@@ -153,15 +198,16 @@ function Modal(props) {
             <PublicIcon className={classes.iconPatt} />
             <span className={classes.btnText}> Submit for Approval </span>
           </Button>
-          <Link href="https://docs.meshery.io/concepts/catalog" passHref>
-            <Tooltip title="View catalog approval flow" placement="top" className={classes.toolTip}>
-              <a target="_blank" rel="noopener noreferrer">
-                <IconButton color="primary">
-                  <InfoIcon />
-                </IconButton>
-              </a>
-            </Tooltip>
-          </Link>
+          <CustomTextTooltip
+            backgroundColor="#3C494F"
+            placement="top"
+            interactive={true}
+            title={renderTooltipContent()}
+          >
+            <IconButton color="primary">
+              <InfoIcon />
+            </IconButton>
+          </CustomTextTooltip>
         </DialogActions>
       </Dialog>
     </>

@@ -17,8 +17,7 @@ const styles = (theme) => ({
   objectFieldGrid : {
     padding : ".5rem",
     paddingTop : "0.7rem",
-    backgroundColor : theme.palette.type === 'dark' ? "#303030" : "#f4f4f4",
-    border : `1px solid  ${theme.palette.type === 'dark' ? "rgba(255, 255, 255, .45)" : "rgba(0, 0, 0, .125)"}`,
+    backgroundColor : theme.palette.type === 'dark' ? "#303030" : "#ffffff",
     width : "100%",
     margin : "0px"
   },
