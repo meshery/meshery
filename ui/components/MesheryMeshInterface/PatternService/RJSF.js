@@ -14,7 +14,7 @@ import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTem
 import MesheryWrapIfAdditionalTemplate from './RJSFCustomComponents/WrapIfAdditionalTemplate';
 import _ from "lodash"
 import { CustomCheckboxWidget } from './RJSFCustomComponents/CustomCheckboxWidget';
-import CustomSelectWidget from './RJSFCustomComponents/CustomSelectWidget';
+import MesheryCustomSelectWidget from './RJSFCustomComponents/CustomSelectWidget';
 import CustomTextAreaWidget from './RJSFCustomComponents/CustomTextAreaWidget';
 
 const MuiRJSFForm = withTheme(MaterialUITheme);
@@ -37,6 +37,7 @@ function RJSFForm({
   ArrayFieldTemplate = MesheryArrayFieldTemplate,
   ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
   WrapIfAdditionalTemplate = MesheryWrapIfAdditionalTemplate,
+  SelectWidget = MesheryCustomSelectWidget,
   LoadingComponent,
   // prop should be present in order for the cloned element to override this property
   transformErrors,
@@ -77,7 +78,7 @@ function RJSFForm({
           // Custom components to be added here
           TextWidget : CustomTextWidget,
           DateTimeWidget : CustomDateTimeWidget,
-          SelectWidget : CustomSelectWidget,
+          SelectWidget,
           CheckboxWidget : CustomCheckboxWidget,
           TextareaWidget : CustomTextAreaWidget,
         }}

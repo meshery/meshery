@@ -40,10 +40,10 @@ var viewCmd = &cobra.Command{
 	Example: `
 // View the specified WASM filter
 // A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be returned.
-mesheryctl exp filter view [filter-name | ID]	
+mesheryctl filter view [filter-name | ID]	
 
 // View all filter files
-mesheryctl exp filter view --all
+mesheryctl filter view --all
 	`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -57,7 +57,7 @@ mesheryctl exp filter view --all
 		// if filter name/id available
 		if len(args) > 0 {
 			if viewAllFlag {
-				return errors.New(utils.FilterViewError("--all cannot be used when filter name or ID is specified\nUse 'mesheryctl exp filter view --help' to display usage guide\n"))
+				return errors.New(utils.FilterViewError("--all cannot be used when filter name or ID is specified\nUse 'mesheryctl filter view --help' to display usage guide\n"))
 			}
 			filter, isID, err = utils.ValidId(args[0], "filter")
 			if err != nil {
@@ -70,7 +70,7 @@ mesheryctl exp filter view --all
 			if viewAllFlag {
 				urlString += "/api/filter?pagesize=10000"
 			} else {
-				return errors.New(utils.FilterViewError("filter-name or ID not specified, use -a to view all filters\nUse 'mesheryctl exp filter view --help' to display usage guide\n"))
+				return errors.New(utils.FilterViewError("filter-name or ID not specified, use -a to view all filters\nUse 'mesheryctl filter view --help' to display usage guide\n"))
 			}
 		} else if isID {
 			// if filter is a valid uuid, then directly fetch the filter
