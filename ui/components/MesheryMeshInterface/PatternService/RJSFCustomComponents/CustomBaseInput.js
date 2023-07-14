@@ -1,5 +1,5 @@
 import React from "react";
-import { IconButton, InputAdornment, TextField, useTheme } from "@material-ui/core";
+import { IconButton, InputAdornment, TextField, useTheme, InputLabel } from "@material-ui/core";
 import HelpOutlineIcon from "../../../../assets/icons/HelpOutlineIcon";
 import { CustomTextTooltip } from "../CustomTextTooltip";
 import ErrorOutlineIcon from "../../../../assets/icons/ErrorOutlineIcon";
@@ -14,10 +14,6 @@ const BaseInput = (props) => {
   const focused = props.options?.focused // true for datetime-local
   const prettifiedName = name || 'Enter a value'
   const [isFocused, setIsFocused] = React.useState(false);
-  const style = {
-    display : "flex",
-    alignItems : "center"
-  }
   const styles = makeStyles((theme) => ({
     customInputLabel : {
       color : theme.palette.secondary.text,
@@ -32,7 +28,8 @@ const BaseInput = (props) => {
   const classes = styles();
   return (
     <>
-      <div key={props.id} style={style}>
+      <div key={props.id}>
+        <InputLabel htmlFor={props.id}>{prettifiedName}</InputLabel>
         <TextField
           variant={additional ? "standard" : "outlined"}
           size="small"
@@ -46,7 +43,6 @@ const BaseInput = (props) => {
           multiline={props?.multiline}
           error={props.rawErrors?.length > 0}
           onChange={e => props?.onChange(e.target.value === "" ? props.options.emptyValue : e.target.value)}
-          label={`${prettifiedName}`}
           InputLabelProps={{
             className : (prettifiedName === "name" || prettifiedName === "namespace" || isFocused) ? classes.customInputLabel : '',
           }}
