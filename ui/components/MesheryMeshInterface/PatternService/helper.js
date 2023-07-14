@@ -222,7 +222,7 @@ export const calculateGrid = element => {
   }
 
   // if fields have custom annotations to grid them differently
-  grid.lg = element.content.props.schema["x-rjsf-style"] || grid.lg;
+  grid.lg = element.content.props.schema["x-rjsf-grid-area"] || grid.lg;
 
   return grid;
 };

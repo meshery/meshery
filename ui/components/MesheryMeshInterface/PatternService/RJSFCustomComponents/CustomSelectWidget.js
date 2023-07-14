@@ -37,18 +37,18 @@ export default function CustomSelectWidget({
   formContext,
   ...textFieldProps
 }) {
-  const { enumOptions, enumDisabled, emptyValue: optEmptyVal } = options;
+  const { enumOptions, enumDisabled, emptyValue : optEmptyVal } = options;
 
   multiple = typeof multiple === 'undefined' ? false : !!multiple;
 
   const emptyValue = multiple ? [] : '';
   const isEmpty = typeof value === 'undefined' || (multiple && value.length < 1) || (!multiple && value === emptyValue);
 
-  const _onChange = ({ target: { value } }) =>
+  const _onChange = ({ target : { value } }) =>
     onChange(enumOptionsValueForIndex(value, enumOptions, optEmptyVal));
-  const _onBlur = ({ target: { value } }) =>
+  const _onBlur = ({ target : { value } }) =>
     onBlur(id, enumOptionsValueForIndex(value, enumOptions, optEmptyVal));
-  const _onFocus = ({ target: { value } }) =>
+  const _onFocus = ({ target : { value } }) =>
     onFocus(id, enumOptionsValueForIndex(value, enumOptions, optEmptyVal));
   const selectedIndexes = enumOptionsIndexForValue(value, enumOptions, multiple);
 
@@ -67,7 +67,7 @@ export default function CustomSelectWidget({
       onBlur={_onBlur}
       onFocus={_onFocus}
       InputProps={{
-        endAdornment:
+        endAdornment :
           (<InputAdornment position="start">
             {rawErrors?.length > 0 && (
               <CustomTextTooltip
@@ -100,11 +100,11 @@ export default function CustomSelectWidget({
       select
       InputLabelProps={{
         ...textFieldProps.InputLabelProps,
-        shrink: !isEmpty,
+        shrink : !isEmpty,
       }}
       SelectProps={{
         ...textFieldProps.SelectProps,
-        renderValue: (selected) => {
+        renderValue : (selected) => {
           if (multiple) {
             return selected
               .map((index) => enumOptions[index].label)
