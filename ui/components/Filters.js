@@ -45,7 +45,6 @@ import CloneIcon from "../public/static/img/CloneIcon";
 import SaveIcon from "@material-ui/icons/Save";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import fetchCatalogFilter from "./graphql/queries/CatalogFilterQuery";
-import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import { iconMedium } from "../css/icons.styles";
 import Modal from "./Modal";
 import { publish_schema } from "./schemas/publish_schema";
@@ -225,8 +224,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     id : "",
     catalog_data : {}
   });
-
-  const [loading, stillLoading] = useState(true);
 
   const catalogContentRef = useRef();
   const catalogVisibilityRef = useRef();
@@ -612,7 +609,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       disposeConfSubscriptionRef.current.dispose();
     }
     const configurationSubscription = ConfigurationSubscription((result) => {
-      stillLoading(false);
       setPage(result.configuration?.filters?.page || 0);
       setPageSize(result.configuration?.filters?.page_size || 0);
       setCount(result.configuration?.filters?.total_count || 0);
@@ -690,7 +686,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       );
     }
 
-    if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
+    if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) { // todo: remove this
       let body = { save : true }
       if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({ ...body, filter_data : { filter_resource : data } })
@@ -1054,6 +1050,53 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     }
   };
 
+  /**
+   * Gets the data of Import Filter and handles submit operation
+   *
+   * @param {{
+   * uploadType: ("File Upload"| "URL Upload");
+   * config: string;
+   * name: string;
+   * url: string;
+   * file: string;
+   * }} data
+   */
+  function handleImportFilter(data) {
+    updateProgress({ showProgress : true })
+    const { uploadType, name, config, url, file } = data;
+    let requestBody = null;
+    switch (uploadType) {
+      case "File Upload":
+        requestBody = JSON.stringify({
+          config,
+          save : true,
+          filter_data : {
+            name,
+            filter_file : file
+          }
+        })
+        break;
+      case "URL Upload":
+        requestBody = JSON.stringify({
+          config,
+          save : true,
+          url,
+          filter_data : {
+            name
+          }
+        })
+        break;
+    }
+
+    dataFetch("/api/filter",
+      { credentials : "include", method : "POST", body : requestBody },
+      () => {
+        updateProgress({ showProgress : false });
+      },
+      handleError(ACTION_TYPES.UPLOAD_FILTERS)
+    )
+  }
+
   return (
     <>
       <NoSsr>
@@ -1152,7 +1195,12 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           </Modal>
         }
         <PromptComponent ref={modalRef} />
-        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} importType="filter" handleSubmit />
+        <UploadImport
+          open={importModal.open}
+          handleClose={handleUploadImportClose}
+          importType="filter"
+          handleSubmit={handleImportFilter}
+        />
         {/* <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchFilters(page, pageSize, search, sortOrder) } configuration="Filter" /> */}
       </NoSsr>
     </>

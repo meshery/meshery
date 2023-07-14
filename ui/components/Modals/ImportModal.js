@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import filterSchema from "../../assets/jsonschema/filterImport.json";
 import applicationSchema from "../../assets/jsonschema/applicationImport.json";
 import applicationUISchema from "../../assets/jsonschema/uiSchemaApplication.json";
@@ -8,26 +8,27 @@ import { Button } from '@material-ui/core';
 import { capitalize } from 'lodash';
 
 const schemaMap = {
-  filter: filterSchema,
-  application: applicationSchema,
-  design: {}
+  filter : filterSchema,
+  application : applicationSchema,
+  design : {}
 }
 
 const uiSchema = {
-  application: applicationUISchema
+  application : applicationUISchema
 }
 
 export default function ImportModal(props) {
-  const { importType, open, handleClose, handleImport } = props;
+  const { importType, handleSubmit, handleClose } = props;
   const schema = schemaMap[importType];
   const classes = useStyles();
+  const [data, setData] = useState(null);
 
-  const data = null;
+
   return (
     <RJSFModal
       {...props}
       title={`Import ${capitalize(importType)}`}
-      onChange={(e) => console.log("oncgan", e)}
+      onChange={(newData) => setData(newData)}
       schema={schema}
       formData={{}}
       type={importType}
@@ -41,8 +42,8 @@ export default function ImportModal(props) {
         color="primary"
         className={classes.testsButton}
         onClick={() => {
-          handlePublishModalClose();
-          handlePublish(payload);
+          handleClose();
+          handleSubmit(data);
         }}
       >
         Import {capitalize(importType)}
