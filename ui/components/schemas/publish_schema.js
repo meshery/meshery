@@ -5,7 +5,7 @@ import { getMeshModels } from "../../api/meshmodel";
 export let publish_schema = null;
 
 getMeshModels().then(({ models }) => {
-  const model_names = models?.map(model => model.displayName);
+  const model_names = _.uniq(models?.map(model => model.displayName));
   publish_schema = _.set(_.cloneDeep(json_schema), "properties.compatibility.items.enum", model_names);
 }).catch(err => {
   console.error(err);

@@ -30,7 +30,7 @@ export default function CustomSelectWidget({
   onChange,
   onBlur,
   onFocus,
-  rawErrors = [],
+  rawErrors,
   // registry,
   // uiSchema,
   // hideError,
@@ -62,7 +62,7 @@ export default function CustomSelectWidget({
       disabled={disabled || readonly}
       autoFocus={autofocus}
       placeholder={placeholder}
-      error={rawErrors.length > 0}
+      error={rawErrors?.length > 0}
       onChange={_onChange}
       onBlur={_onBlur}
       onFocus={_onFocus}
