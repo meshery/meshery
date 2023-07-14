@@ -38,11 +38,12 @@ function MeshModelContructs({ classes }) {
     },
     arc : {
       cornerRadius : {
-        ratio : 0.1
+        ratio : 0.05
       }
     },
     donut : {
-      title : "Capabilities\nRegistry"
+      title : "Capabilities\nRegistry",
+      padAngle : 0.03,
     },
     tooltip : {
       format : {
