@@ -146,3 +146,17 @@ export function updateURLs(urlsSet, newUrls, eventType) {
 
   }
 }
+
+/**
+ * Gets the raw b64 file and convert it to Binary
+ *
+ * @param {string} file
+ * @returns
+ */
+export function getDecodedFile(file) {
+  // Extract base64-encoded content
+  var encodedContent = file.split(";base64,")[1];
+
+  // Decode base64 content
+  return atob(encodedContent);
+}

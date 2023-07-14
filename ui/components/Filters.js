@@ -49,6 +49,7 @@ import { iconMedium } from "../css/icons.styles";
 import Modal from "./Modal";
 import { publish_schema } from "./schemas/publish_schema";
 import _ from "lodash";
+import { getDecodedFile } from "../utils/utils";
 
 const styles = (theme) => ({
   grid : {
@@ -1072,7 +1073,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           save : true,
           filter_data : {
             name,
-            filter_file : file
+            filter_file : getDecodedFile(file)
           }
         })
         break;
@@ -1201,7 +1202,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           importType="filter"
           handleSubmit={handleImportFilter}
         />
-        {/* <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchFilters(page, pageSize, search, sortOrder) } configuration="Filter" /> */}
+        {/* REMOVE this with its deps <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchFilters(page, pageSize, search, sortOrder) } configuration="Filter" /> */}
       </NoSsr>
     </>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {  useRef } from 'react';
 import filterSchema from "../../assets/jsonschema/filterImport.json";
 import applicationSchema from "../../assets/jsonschema/applicationImport.json";
 import applicationUISchema from "../../assets/jsonschema/uiSchemaApplication.json";
@@ -21,14 +21,14 @@ export default function ImportModal(props) {
   const { importType, handleSubmit, handleClose } = props;
   const schema = schemaMap[importType];
   const classes = useStyles();
-  const [data, setData] = useState(null);
-
+  const data = useRef(null);
 
   return (
     <RJSFModal
       {...props}
       title={`Import ${capitalize(importType)}`}
-      onChange={(newData) => setData(newData)}
+      // onChange={()=> console}
+      onChange={(newData) => data.current = newData}
       schema={schema}
       formData={{}}
       type={importType}
@@ -43,7 +43,7 @@ export default function ImportModal(props) {
         className={classes.testsButton}
         onClick={() => {
           handleClose();
-          handleSubmit(data);
+          handleSubmit(data.current);
         }}
       >
         Import {capitalize(importType)}

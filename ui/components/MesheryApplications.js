@@ -20,7 +20,7 @@ import dataFetch from "../lib/data-fetch";
 import { updateProgress } from "../lib/store";
 import { FILE_OPS } from "../utils/Enum";
 import { ctxUrl } from "../utils/multi-ctx";
-import { getComponentsinFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
+import { getComponentsinFile, getDecodedFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
 import PromptComponent from "./PromptComponent";
 import UndeployIcon from "../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
@@ -848,6 +848,53 @@ function MesheryApplications({
     }
   };
 
+
+  /**
+   * Gets the data of Import Filter and handles submit operation
+   *
+   * @param {{
+  * uploadType: ("Helm Chart"| "Kubernetes Manifest" | "Docker Compose");
+  * config: string;
+  * name: string;
+  * url: string;
+  * file: string;
+  * }} data
+  */
+  function handleImportApplication(data) {
+    console.log("hello.....", data)
+    updateProgress({ showProgress : true })
+    const { applicationType, name, url, file } = data;
+    let requestBody = null;
+
+    if (url) {
+      requestBody = JSON.stringify({
+        save : true,
+        url : url,
+        application_data : {
+          name
+        },
+        name
+      })
+    } else if (file) {
+      requestBody = JSON.stringify({
+        save : true,
+        application_data : {
+          name,
+          application_file : getDecodedFile(file)
+        },
+        name
+      })
+    }
+
+    dataFetch(`/api/application/${encodeURI(applicationType)}`,
+      { credentials : "include", method : "POST", body : requestBody },
+      () => {
+        updateProgress({ showProgress : false });
+      },
+      handleError(ACTION_TYPES.UPLOAD_APPLICATION)
+    )
+  }
+
   return (
     <>
 
@@ -923,7 +970,11 @@ function MesheryApplications({
           tab={modalOpen.deploy ? 2 : 1}
         />
         <PromptComponent ref={modalRef} />
-        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} importType="application" handleSubmit />
+        <UploadImport
+          open={importModal.open}
+          handleClose={handleUploadImportClose}
+          importType="application"
+          handleSubmit={handleImportApplication} />
         {/* <UploadImport open={importModal.open} handleClose={handleUploadImportClose} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler}
           supportedTypes={types} configuration="Application"  /> */}
       </NoSsr>
