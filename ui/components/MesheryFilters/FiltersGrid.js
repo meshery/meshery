@@ -8,7 +8,7 @@ import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
 import useStyles from "../MesheryPatterns/Grid.styles";
-import { publish_schema } from "../schemas/publish_schema";
+import { publish_schema, publish_ui_schema } from "../schemas/publish_schema";
 import _ from "lodash";
 import Modal from "../Modal";
 
@@ -257,6 +257,7 @@ function FiltersGrid({
         <Modal
           open={publishModal.open}
           schema={publish_schema}
+          uiSchema={publish_ui_schema}
           onChange={onChange}
           handleClose={handlePublishModalClose}
           formData={_.isEmpty(payload.catalog_data) ? publishModal?.filter?.catalog_data : payload.catalog_data}
