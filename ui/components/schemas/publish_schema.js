@@ -14,37 +14,37 @@ getMeshModels()
   });
 
 const json_schema = {
-  type: "object",
-  properties: {
-    compatibility: {
-      type: "array",
-      title: "Technology",
-      items: {
-        enum: ["istio", "linkerd"],
-        type: "string",
+  type : "object",
+  properties : {
+    compatibility : {
+      type : "array",
+      title : "Technology",
+      items : {
+        enum : ["istio", "linkerd"],
+        type : "string",
       },
-      uniqueItems: true,
-      description: "The list of compatible technologies.",
-      "x-rjsf-grid-area": 6,
+      uniqueItems : true,
+      description : "The list of compatible technologies.",
+      "x-rjsf-grid-area" : 6,
     },
-    pattern_caveats: {
-      type: "string",
-      title: "Caveats and Considerations",
-      description: "Caveats related to the design.",
+    pattern_caveats : {
+      type : "string",
+      title : "Caveats and Considerations",
+      description : "Caveats related to the design.",
       format : "textarea",
-      "x-rjsf-grid-area": 12,
+      "x-rjsf-grid-area" : 12,
     },
-    pattern_info: {
-      type: "string",
-      title: "Description",
-      description: "Additional information about the design.",
+    pattern_info : {
+      type : "string",
+      title : "Description",
+      description : "Additional information about the design.",
       format : "textarea",
-      "x-rjsf-grid-area": 12,
+      "x-rjsf-grid-area" : 12,
     },
-    type: {
-      type: "string",
-      title: "Type",
-      examples: [
+    type : {
+      type : "string",
+      title : "Type",
+      examples : [
         "deployment",
         "observability",
         "resiliency",
@@ -54,14 +54,14 @@ const json_schema = {
         "troubleshooting",
         "workloads",
       ],
-      description: "The category of the pattern.",
-      "x-rjsf-grid-area": 6,
+      description : "The category of the pattern.",
+      "x-rjsf-grid-area" : 6,
     },
   },
-  required: ["compatibility", "pattern_caveats", "pattern_info", "type"],
+  required : ["compatibility", "pattern_caveats", "pattern_info", "type"],
 };
 
 export const publish_ui_schema = {
-  "ui:order": ["type", "compatibility", "pattern_caveats", "pattern_info"],
+  "ui:order" : ["type", "compatibility", "pattern_caveats", "pattern_info"],
 };
 
