@@ -31,7 +31,7 @@ var deleteCmd = &cobra.Command{
 	Example: `
 // Delete the specified WASM filter file using name or ID
 // A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be deleted.
-mesheryctl exp filter delete [filter-name | ID]
+mesheryctl filter delete [filter-name | ID]
 	`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -41,7 +41,7 @@ mesheryctl exp filter delete [filter-name | ID]
 		}
 
 		if len(args) == 0 {
-			return errors.New(utils.FilterDeleteError("filter name or ID not provided\nUse 'mesheryctl exp filter delete --help' to display usage guide\n"))
+			return errors.New(utils.FilterDeleteError("filter name or ID not provided\nUse 'mesheryctl filter delete --help' to display usage guide\n"))
 		}
 
 		var filterID string
