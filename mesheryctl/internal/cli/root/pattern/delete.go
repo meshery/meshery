@@ -42,7 +42,6 @@ mesheryctl pattern delete [file | URL]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
-		client := &http.Client{}
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -110,16 +109,12 @@ mesheryctl pattern delete [file | URL]
 				return err
 			}
 
-			resp, err := client.Do(req)
+			resp, err := utils.MakeRequest(req)
 			if err != nil {
 				return err
 			}
 			utils.Log.Debug("remote hosted pattern request success")
 			var response []*models.MesheryPattern
-			// If API returns a non 200 status, return error
-			if resp.StatusCode != 200 {
-				return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-			}
 			defer resp.Body.Close()
 
 			body, err := io.ReadAll(resp.Body)
@@ -140,7 +135,7 @@ mesheryctl pattern delete [file | URL]
 			return err
 		}
 
-		res, err := client.Do(req)
+		res, err := utils.MakeRequest(req)
 		if err != nil {
 			return err
 		}
