@@ -76,10 +76,12 @@
             }
           }
         }
-        & svg:hover,
-        img.github:hover {
+        & img.github:hover {
           filter: brightness(0) invert(1);
           fill: white;
+        }
+        & svg:hover {
+          fill: #0073cf;
         }
       }
     }

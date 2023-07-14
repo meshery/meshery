@@ -1,10 +1,48 @@
-export const publish_schema = {
-  type : "object",
-  properties : {
-    type : {
-      type : "string",
-      title : "Type",
-      enum : [
+import _ from "lodash";
+import { getMeshModels } from "../../api/meshmodel";
+
+
+export let publish_schema = null;
+
+getMeshModels().then(({ models }) => {
+  const model_names = _.uniq(models?.map(model => model.displayName));
+  publish_schema = _.set(_.cloneDeep(json_schema), "properties.compatibility.items.enum", model_names);
+}).catch(err => {
+  console.error(err);
+  publish_schema = json_schema;
+});
+
+
+
+const json_schema = {
+  "type" : "object",
+  "properties" : {
+    "compatibility" : {
+      "type" : "array",
+      "items" : {
+        "enum" : [
+          "istio",
+          "linkerd"
+        ],
+        "type" : "string"
+      },
+      "uniqueItems" : true,
+      "description" : "The list of compatible technologies.",
+      "x-rjsf-grid-area" : 6
+    },
+    "pattern_caveats" : {
+      "type" : "string",
+      "description" : "Caveats related to the pattern.",
+      "x-rjsf-grid-area" : 12
+    },
+    "pattern_info" : {
+      "type" : "string",
+      "description" : "Additional information about the pattern.",
+      "x-rjsf-grid-area" : 12
+    },
+    "type" : {
+      "type" : "string",
+      "examples" : [
         "deployment",
         "observability",
         "resiliency",
@@ -14,33 +52,9 @@ export const publish_schema = {
         "troubleshooting",
         "workloads",
       ],
-      description : "The category of the pattern.",
-    },
-    compatibility : {
-      type : "array",
-      title : "Technology",
-      items : {
-        type : "string",
-        enum : [
-          "Traefik Mesh",
-          "Trickster"
-        ],
-      },
-      uniqueItems : true,
-      description : "The list of compatible technologies.",
-    },
-    pattern_caveats : {
-      type : "string",
-      title : "Caveats and Consideration",
-      format : "textarea",
-      description : "Caveats related to the pattern.",
-    },
-    pattern_info : {
-      type : "string",
-      title : "Description",
-      format : "textarea",
-      description : "Additional information about the pattern.",
-    },
+      "description" : "The category of the pattern.",
+      "x-rjsf-grid-area" : 6
+    }
   },
   required : ["compatibility", "pattern_caveats", "pattern_info", "type"],
 };
