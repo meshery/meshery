@@ -18,20 +18,6 @@ Requests to any of the API endpoints must be authenticated and include a valid J
 
 {% include alert.html type="dark" title="What are authentication tokens?" content="Meshery authentication tokens allow users or systems to authenticate with Meshery Server via either its two clients, <a href='/reference/mesheryctl'>Meshery >CLI</a> and <a href='/extensibility/api#how-to-get-your-token'>UI</a>, or its two APIs: <a href='/reference/rest-apis'>REST</a> or <a href='/reference/graphql-apis'>GraphQL</a>. <p>Meshery's authentication token system provide secure access to Meshery's powerful management features.</p>" %}
 
-#### What are authentication tokens?
-
-### Authorization
-
-Currently, Meshery only requires a valid token in order to allow clients to invoke its APIs.
-
-### Endpoints
-
-Each of the API endpoints are exposed through [server.go](https://github.com/layer5io/meshery/blob/master/router/server.go). Endpoints are grouped by function (e.g. /api/mesh or /api/perf).
-
-Alternatively, [Remote Providers](./providers) can extend Meshery's endpoints behind the `/api/extensions/` endpoint.
-
-{% include alert.html type="dark" title="What are authentication tokens?" content="Meshery authentication tokens allow users or systems to authenticate with Meshery Server via either its two clients, <a href='/reference/mesheryctl'>Meshery CLI</a> and <a href='/extensibility/api#how-to-get-your-token'>Meshery UI</a>, or its two APIs: <a href='/reference/rest-apis'>REST</a> or <a href='/reference/graphql-apis'>GraphQL</a>. <p>Meshery's authentication token system provide secure access to Meshery's powerful management features.</p>" %}
-
 ### How to get your token
 
 There are two ways to get your authentication token:
@@ -50,24 +36,16 @@ Using Meshery CLI, you can get a copy of your authentication token by executing 
 
 In order to use this command, you must have a web browser available on your system (this command cannot be executed on a headless system).
 
-### How to use the token for requests to the Meshery REST API in Postman?
+{% include alert.html type="dark" title="How to use the token for requests to Meshery Rest API using API clients" content=" Download your token from Meshery UI and copy the token value from the downloaded file, this will be used for authentication." %}
+{% include code.html code="meshery-provider: Meshery
+token: your token"%}
+{% include alert.html type="dark" title="" content="Navigate to the cookies section your API testing platform, to set the appropriate name and value for the cookie, then make sure to save the configured cookies to initiate the request. <p> The request will be sent to the Meshery API using the configured cookies for authentication</p>"%}
 
-Steps to test Meshery API with Postman:
+### Endpoints
 
-- Download your token from Meshery UI and copy the token value from the downloaded file, this will be used for authentication
+Each of the API endpoints are exposed through [server.go](https://github.com/layer5io/meshery/blob/master/router/server.go). Endpoints are grouped by function (e.g. /api/mesh or /api/perf).
 
-![image](https://github.com/Freedisch/meshery/assets/82499435/2fb42a2b-6cd8-4e1b-a6b0-42ee796d6755)
-
-- In Postman, navigate to the Cookies section.
-- Set the appropriate name and value for the cookie
-
-![Screenshot 2023-05-11 at 8 27 49 PM](https://github.com/Freedisch/meshery/assets/82499435/41ee447c-eb3d-4faf-8028-f83643282925)
-
-Make sure to save the configured cookies in Postman
-
-- Click the "Send" Button to initiate the request
-
-Postman will send the request to the Meshery API using the configured cookies for authentication
+Alternatively, [Remote Providers](./providers) can extend Meshery's endpoints behind the `/api/extensions/` endpoint.
 
 ## Authorization
 
