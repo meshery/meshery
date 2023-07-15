@@ -4,7 +4,7 @@ title: MeshModel
 permalink: concepts/meshmodel
 redirect_from: meshmodel
 type: concepts
-abstract: 
+abstract: Meshery uses a set of Construct Models to define concrete boundaries for better functionality and sustainable development.
 language: en
 list: include
 ---

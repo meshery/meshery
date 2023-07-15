@@ -9,7 +9,7 @@ type: project
 category: contributing
 ---
 
-MeshModel serves as a foundational element in the Meshery ecosystem, representing the interconnectedness of various components inside the infrastructure of a service mesh. 
+MeshModel serves as a foundational element in the Meshery ecosystem, representing the interconnectedness of various components inside the infrastructure of an architecture. 
 
 In the context of MeshModel, the `Core Constructs` of MeshModel are represented in three forms:
 
@@ -21,7 +21,7 @@ In the context of MeshModel, the `Core Constructs` of MeshModel are represented 
 
 If a specific attribute is not provided with a value in the definition, it means that the value for that attribute has to be written or configured per construct. In other words, the absence of a value indicates that the configuration for that attribute is required and specific to each individual construct instance.
 
-[![Meshery architecture]({{ site.baseurl }}/assets/img/meshmodel/meshmodel-architecture.svg)]({{ site.baseurl }}/assets/img/meshmodel/meshmodel-architecture.svg)
+[![MeshModel Contruct Classification_](https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/meshmodel/meshmodel-architecture.svg)](https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/meshmodel/meshmodel-architecture.svg)
 
 _Figure: MeshModel Contruct Classification_
 
