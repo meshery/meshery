@@ -4,7 +4,7 @@ import { Dialog, DialogActions, makeStyles } from "@material-ui/core";
 import { CustomTextTooltip } from "./MesheryMeshInterface/PatternService/CustomTextTooltip";
 import CloseIcon from "@material-ui/icons/Close";
 import PublicIcon from "@material-ui/icons/Public";
-import InfoIcon from "@material-ui/icons/Info";
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import RJSFWrapper from "./MesheryMeshInterface/PatternService/RJSF_wrapper";
 import { ArrowDropDown } from "@material-ui/icons";
 import { getSchema } from "./MesheryMeshInterface/PatternService/helper";
@@ -22,6 +22,8 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   infoIcon : {
+    position : "absolute",
+    right : 10,
     color : theme.palette.type === "dark" ? "#00B39F" : "#607d8b",
   },
   modalHeader : {
@@ -48,9 +50,8 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   submitButton : {
-    backgroundColor : theme.palette.type === "dark" ? "#00B39F" : "#607d8b",
+    backgroundColor : theme.palette.secondary.focused,
     color : "#fff",
-    width : "100%",
   },
   iconPatt : {
     marginRight : theme.spacing(1),
@@ -63,6 +64,8 @@ const useStyles = makeStyles((theme) => ({
     color : theme.palette.secondary.link2,
   },
   dialogAction : {
+    display : "flex",
+    justifyContent : "center",
     padding : "0.5rem 1rem",
   },
   snackbar : {
@@ -200,6 +203,7 @@ function Modal(props) {
           jsonSchema={schema || getSchema(type)}
           uiSchema={uiSchema}
           onChange={onChange}
+          liveValidate={false}
           hideTitle={true}
         />
 
@@ -242,8 +246,8 @@ function Modal(props) {
               interactive={true}
               title={renderTooltipContent()}
             >
-              <IconButton color="primary">
-                <InfoIcon className={classes.infoIcon} />
+              <IconButton className={classes.infoIcon} color="primary">
+                <InfoOutlinedIcon />
               </IconButton>
             </CustomTextTooltip>
           )}

@@ -39,6 +39,7 @@ function RJSFForm({
   WrapIfAdditionalTemplate = MesheryWrapIfAdditionalTemplate,
   SelectWidget = MesheryCustomSelectWidget,
   LoadingComponent,
+  liveValidate,
   // prop should be present in order for the cloned element to override this property
   transformErrors,
   override,
@@ -82,7 +83,7 @@ function RJSFForm({
           CheckboxWidget : CustomCheckboxWidget,
           TextareaWidget : CustomTextAreaWidget,
         }}
-        liveValidate
+        liveValidate={liveValidate}
         showErrorList={false}
         noHtml5Validate
         transformErrors={transformErrors}
