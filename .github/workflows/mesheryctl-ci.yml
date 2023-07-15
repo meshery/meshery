@@ -89,8 +89,8 @@ jobs:
           check-latest: "true"
       - name: Run script 📜
         run: |
-          cd mesheryctl/doc
-          go run doc.go
+          cd mesheryctl
+          make mesheryctl-docs
       - name: Commit ✅
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
