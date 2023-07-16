@@ -55,6 +55,6 @@ coverage:
 	go tool cover -html=coverage.out -o coverage.html
 
 # Generate markdown for mesheryctl docs
-.PHONY: mesheryctl-docs
-mesheryctl-docs:
+.PHONY: docs
+docs:
 	cd doc; go run doc.go
