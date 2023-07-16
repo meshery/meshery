@@ -30,7 +30,7 @@ jobs:
         platform: ['docker', 'kubernetes']
     steps:
       - name: Setup Kubernetes
-        uses: manusa/actions-setup-minikube@v2.4.1
+        uses: manusa/actions-setup-minikube@v2.7.2
         with:
           minikube version: 'v1.23.2'
           kubernetes version: ${{ matrix.k8s_version }}
@@ -84,7 +84,7 @@ jobs:
         platform: ['docker', 'kubernetes']
     steps:
       - name: Setup Kubernetes
-        uses: manusa/actions-setup-minikube@v2.4.1
+        uses: manusa/actions-setup-minikube@v2.7.2
         with:
           minikube version: 'v1.23.2'
           kubernetes version: ${{ matrix.k8s_version }}
