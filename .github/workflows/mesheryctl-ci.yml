@@ -32,7 +32,7 @@ jobs:
         with:
           version: v1.52.0
           working-directory: mesheryctl
-          args: --timeout 5m --verbose
+          args: --timeout 10m --verbose
           skip-cache: true
           skip-pkg-cache: true
           skip-build-cache: true
