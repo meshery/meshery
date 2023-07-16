@@ -2,29 +2,20 @@
   background: linear-gradient(
     to right top,
     #3d3d3d,
-    #343434,
-    #2b2b2b,
-    #222,
-    #1a1a1a,
-    #181818,
-    #161616,
-    #141414,
-    #181818,
-    #1c1c1c,
-    #212121,
+
     #252525
   );
   display: flex;
   flex-direction: column;
-  padding: min(5vh, 5vw);
-  gap: min(5vh, 5vw);
+  padding: min(2vh, 5vw);
+  gap: min(2vh, 5vw);
 
   & * {
     color: white;
   }
 
   & .text-white {
-    color: white;
+    color: #adb5bd;
     font-size: 1.4rem;
     text-align: center;
     @media (max-width: 600px) {
