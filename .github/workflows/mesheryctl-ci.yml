@@ -26,13 +26,13 @@ jobs:
       - uses: actions/checkout@master
       - uses: actions/setup-go@master
         with:
-          go-version: "1.19.x"
+          go-version: "1.20"
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
           version: v1.52.0
           working-directory: mesheryctl
-          args: --timeout 5m --verbose
+          args: --timeout 10m --verbose
           skip-cache: true
           skip-pkg-cache: true
           skip-build-cache: true
@@ -49,7 +49,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@master
         with:
-          go-version: "1.19.x"
+          go-version: "1.20"
       - name: Setup Cache
         uses: actions/cache@v3
         with:
@@ -85,12 +85,12 @@ jobs:
       - name: Setup go
         uses: actions/setup-go@master
         with:
-          go-version: "1.19"
+          go-version: "1.20"
           check-latest: "true"
       - name: Run script 📜
         run: |
-          cd mesheryctl/doc
-          go run doc.go
+          cd mesheryctl
+          make docs
       - name: Commit ✅
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
