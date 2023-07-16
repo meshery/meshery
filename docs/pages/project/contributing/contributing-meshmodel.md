@@ -32,9 +32,12 @@ Relationships within MeshModel play a crucial role in establishing concrete visu
 1. Identify the relationship and any specific constraints to be enforced between the two specific components, their models or potentially other components, models, or environmental considerations.
 2. Propose a specific visual representation for the relationship. 
 3. Visual representation examples:
-    - [Hierarchical](https://github.com/meshery/meshery/tree/master/.github/assets/images/hierarchical_relationship.png)
-    - [Sibling](https://github.com/meshery/meshery/tree/master/.github/assets/images/sibling_relationship.png)
-    - [Binding](https://github.com/meshery/meshery/tree/master/.github/assets/images/binding_realtionship.png)
+    - [Hierarchical]({{ site.baseurl }}/assets/img/meshmodel/relationships/hierarchical_relationship.png)
+    - [Sibling]({{ site.baseurl }}/assets/img/meshmodel/relationships/sibling_relationship.png)
+    - [Binding]({{ site.baseurl }}/assets/img/meshmodel/relationships/binding_relationship.png)
+    - [Mount Edge]({{ site.baseurl }}/assets/img/meshmodel/relationships/mount_edge_relationship.png)
+    - [Network Policy Edge]({{ site.baseurl }}/assets/img/meshmodel/relationships/network_policy_edge_relationship.png)
+
 4. Prospose the appropriate relationship type, using one of the predefined set of relationship types or suggest a new relationship where an existing type does not fit.
 5. Create a Relationship Definition (yaml).
 6. Create a policy for evaluation of the relationship (rego). See [examples](https://github.com/meshery/meshery/tree/master/server/meshmodel/policies/).
