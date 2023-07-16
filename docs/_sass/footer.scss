@@ -1,9 +1,10 @@
 .footer {
-  background: linear-gradient(
-    to right top,
-    #3d3d3d,
-
-    #252525
+  background: linear-gradient(to bottom,
+  #151515 5%,
+  #252525 20%,
+  #2f2f2f,
+  #303030,
+  #3d3d3d
   );
   display: flex;
   flex-direction: column;
