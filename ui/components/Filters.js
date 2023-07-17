@@ -1067,7 +1067,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     <>
       {ability.can(keys.VIEW_FILTER.subject, keys.VIEW_FILTER.action) ? (
         <NoSsr>
-            {selectedRowData && Object.keys(selectedRowData).length > 0 && (
+          {selectedRowData && Object.keys(selectedRowData).length > 0 && (
           <YAMLEditor filter={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} classes={classes} />
         )}
         <div className={classes.topToolbar} >
@@ -1162,8 +1162,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           </Modal>
         }
         <PromptComponent ref={modalRef} />
-        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchFilters(page, pageSize, search, sortOrder) } configuration="Filter" />        </NoSsr>
-      </NoSsr>
+        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchFilters(page, pageSize, search, sortOrder) } configuration="Filter" />
+        </NoSsr>
       ) : (
         <ErrorPage error="You are not authorized to view this page" />
       )}
