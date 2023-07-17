@@ -349,6 +349,10 @@ func mesheryUpdater(output []map[string]string) {
 					if i := isInColumnNames("modelDisplayName", ColumnNamesToExtract); i != -1 {
 						component.Model.DisplayName = changeFields[ColumnNamesToExtract[i]]
 					}
+					isAnnotation, _ := component.Metadata["isAnnotation"].(bool)
+					if isAnnotation {
+						component.Metadata["isNamespaced"] = false
+					}
 					//Either component is set to published or the parent model is set to published
 					if component.Metadata["Publish?"] == "TRUE" || publishedModels[component.Model.Name] { //Publish? is an invalid field for putting inside kubernetes annotations
 						component.Metadata["published"] = true
