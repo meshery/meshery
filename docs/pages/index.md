@@ -34,6 +34,23 @@ language: en
         {% endfor %}
       </ul> -->
   </div>
+  <!-- TASKS -->
+  <div class="section">
+    <a href="{{ site.baseurl }}/tasks">
+        <div class="btn-primary">Tasks</div>
+    </a>
+    <!-- <h6><a href="{{ site.baseurl }}/tasks" class="text-black section-title">Cloud Native Management</a></h6> -->
+    <ul>
+      {% for item in sorted_pages %}
+      {% if item.type=="tasks" and item.list!="exclude" and item.language !="es" -%}
+        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+        </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+    <!-- <h6><a href="{{ site.baseurl }}/service-meshes" class="text-black section-title">Service Mesh Specific Management</a></h6> -->
+  </div>
+
   
   <!-- CONCEPTS -->
   <div class="section">
@@ -49,7 +66,7 @@ language: en
         {% endif %}
       {% endfor %}
     </ul>
-
+  </div>
 
     <!-- REFERENCE -->
   <div class="section">
@@ -66,30 +83,10 @@ language: en
         {% endfor %}
       </ul>
     </div>
-    </div>
+
 </div>
 
 <div class="flex flex-col--2"  style="text-align: left; padding:1.6rem ;--col-gap:1rem">
-
-  <!-- TASKS -->
-  <div class="section">
-    <a href="{{ site.baseurl }}/tasks">
-        <div class="btn-primary">Tasks</div>
-    </a>
-    <!-- <h6><a href="{{ site.baseurl }}/tasks" class="text-black section-title">Cloud Native Management</a></h6> -->
-    <ul>
-      {% for item in sorted_pages %}
-      {% if item.type=="tasks" and item.list!="exclude" and item.language !="es" -%}
-        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-        </li>
-        {% endif %}
-      {% endfor %}
-    </ul>
-
-    <!-- <h6><a href="{{ site.baseurl }}/service-meshes" class="text-black section-title">Service Mesh Specific Management</a></h6> -->
-
-
-  </div>
 
 <!-- GUIDES -->
   <div class="section">
@@ -98,15 +95,15 @@ language: en
     </a>
     <!-- <h6><a href="{{ site.baseurl }}/guides" class="text-black section-title">Guides</a></h6> -->
     <ul>
-
       {% for item in sorted_pages %}
       {% if item.type=="Guides" and item.list!="exclude"  and item.language!="es" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}
       {% endfor %}
+    </ul>
     <!-- <h6><a href="{{ site.baseurl }}/service-meshes" class="text-black section-title">Service Mesh Specific Management</a></h6> -->
-    <ul>
+    <!-- <ul>
       {% for item in sorted_pages %}
       {% if item.type=="service-mesh" and item.list!="exclude" and item.language!="es"  -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
@@ -118,8 +115,8 @@ language: en
         <li><img src="{{ adapter.image }}" style="width:20px;height:20px; transform:translateY(5px)"/> <a href="{{ site.baseurl }}{{ adapter.url }}">{{ adapter.name }}</a></li>
       {% endif -%}
       {% endfor %}
-    </ul>
-  </div>
+    </ul> -->
+  </div> 
 
  <!-- Extensions -->
   <div class="section">
