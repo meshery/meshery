@@ -1,0 +1,37 @@
+{
+    "kind": "WASMFilter",
+    "apiVersion": "core.meshery.io/v1alpha1",
+    "displayName": "WASM Filter",
+    "format": "JSON",
+    "metadata": {
+        "genealogy": "",
+        "isAnnotation": true,
+        "isNamespaced": false,
+        "logoURL": "",
+        "model": "meshery",
+        "modelDisplayName": "Meshery",
+        "primaryColor": "#654ff0",
+        "published": true,
+        "secondaryColor": "#654ff0",
+        "shape": "circle",
+        "styleOverrides": "",
+        "subCategory": "App Definition and Development",
+        "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 20 19.84\" style=\"enable-background:new 0 0 50 49.6;\" xml:space=\"preserve\" width=\"20\" height=\"20\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e.st0{fill:none;}\n        .st1{fill:#654FF0;}\u003c/style\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M0 0\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st1\" d=\"M12.28 0v0.12C12.28 1.36 11.24 2.4 10 2.4c-1.28 0 -2.28 -1 -2.28 -2.28V0H0v19.84h20V0H12.28zm-2.72 17.72 -0.96 -4.76h-0.04l-1.04 4.76h-1.32l-1.52 -7H6l0.92 4.76 1.08 -4.8h1.2l1 4.84 1.04 -4.84h1.28l-1.68 7 -1.28 0.04zm7.28 0L16.4 16.16h-2.4l-0.36 1.56h-1.32l1.72 -7h2.08l2.08 7h-1.36z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st1\" d=\"m14.28 15 0.56 -2.6h0.56l0.68 2.6\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+        "svgComplete": "",
+        "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 20 19.84\" style=\"enable-background:new 0 0 50 49.6;\" xml:space=\"preserve\" width=\"20\" height=\"20\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e.st0{fill:none;}\n        .st1{fill:#FFFFFF;}\u003c/style\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M0 0\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st1\" d=\"M12.28 0v0.12C12.28 1.36 11.24 2.4 10 2.4c-1.28 0 -2.28 -1 -2.28 -2.28V0H0v19.84h20V0H12.28zm-2.72 17.72 -0.96 -4.76h-0.04l-1.04 4.76h-1.32l-1.52 -7H6l0.92 4.76 1.08 -4.8h1.2l1 4.84 1.04 -4.84h1.28l-1.68 7 -1.28 0.04zm7.28 0L16.4 16.16h-2.4l-0.36 1.56h-1.32l1.72 -7h2.08l2.08 7h-1.36z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st1\" d=\"m14.28 15 0.56 -2.6h0.56l0.68 2.6\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+    },
+    "model": {
+        "name": "meshery",
+        "version": "v1.0.0",
+        "displayName": "Meshery",
+        "category": {
+            "name": "Orchestration \u0026 Management",
+            "metadata": null
+        },
+        "metadata": {
+            "svgColor": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\r\n         viewBox=\"0 0 50 49.6\" style=\"enable-background:new 0 0 50 49.6;\" xml:space=\"preserve\"\u003e\r\n\u003cstyle type=\"text/css\"\u003e\r\n        .st0{fill:none;}\r\n        .st1{fill:#654FF0;}\r\n\u003c/style\u003e\r\n\u003cpath class=\"st0\" d=\"M0,0\"/\u003e\r\n\u003cpath class=\"st1\" d=\"M30.7,0c0,0.1,0,0.2,0,0.3C30.7,3.4,28.1,6,25,6c-3.2,0-5.7-2.5-5.7-5.7c0-0.1,0-0.2,0-0.3H0v49.6h50V0H30.7z\r\n         M23.9,44.3l-2.4-11.9h-0.1l-2.6,11.9h-3.3l-3.8-17.5H15l2.3,11.9l0,0l2.7-12h3l2.5,12.1l0,0l2.6-12.1h3.2l-4.2,17.5L23.9,44.3\r\n        L23.9,44.3z M42.1,44.3L41,40.4h-6l-0.9,3.9h-3.3l4.3-17.5h5.2l5.2,17.5C45.5,44.3,42.1,44.3,42.1,44.3z\"/\u003e\r\n\u003cpath class=\"st1\" d=\"M35.7,37.5l1.4-6.5h1.4l1.7,6.5\"/\u003e\r\n\u003c/svg\u003e",
+            "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\r\n         viewBox=\"0 0 50 49.6\" style=\"enable-background:new 0 0 50 49.6;\" xml:space=\"preserve\"\u003e\r\n\u003cstyle type=\"text/css\"\u003e\r\n        .st0{fill:none;}\r\n        .st1{fill:#FFFFFF;}\r\n\u003c/style\u003e\r\n\u003cpath class=\"st0\" d=\"M0,0\"/\u003e\r\n\u003cpath class=\"st1\" d=\"M30.7,0c0,0.1,0,0.2,0,0.3C30.7,3.4,28.1,6,25,6c-3.2,0-5.7-2.5-5.7-5.7c0-0.1,0-0.2,0-0.3H0v49.6h50V0H30.7z\r\n         M23.9,44.3l-2.4-11.9h-0.1l-2.6,11.9h-3.3l-3.8-17.5H15l2.3,11.9l0,0l2.7-12h3l2.5,12.1l0,0l2.6-12.1h3.2l-4.2,17.5L23.9,44.3\r\n        L23.9,44.3z M42.1,44.3L41,40.4h-6l-0.9,3.9h-3.3l4.3-17.5h5.2l5.2,17.5C45.5,44.3,42.1,44.3,42.1,44.3z\"/\u003e\r\n\u003cpath class=\"st1\" d=\"M35.7,37.5l1.4-6.5h1.4l1.7,6.5\"/\u003e\r\n\u003c/svg\u003e"
+        }
+    },
+    "schema": "{\"$id\":\"https://meshery.layer5.io/system/models/definition/Workload/WASMFilter\",\"$schema\":\"http://json-schema.org/draft-07/schema\",\"properties\":{\"wasmFilter\":{\"description\":\"Location (URL) of WASM filter accessible by Istio/Kubernetes.\",\"type\":\"string\"},\"config\":{\"description\":\"Configuration of the `spec.configPatches.patch.value` of the Istio Envoy Filter resource for your specific filter.\",\"type\":\"string\",\"format\":\"textarea\"}},\"required\":[\"wasmFilter\"],\"title\":\"WASM Filter\",\"type\":\"object\"}"
+}
