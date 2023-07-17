@@ -6,6 +6,7 @@
   --brand-color-secondary: #00b39f;
   --color-white: #fff;
   // ////////////////////////////////////////////
+  --brand-color: #00b39f;
   --color-primary-light: #fff;
   --color-primary-medium: #f8f9fa;
   --color-primary-dark: #f1f3f5;
@@ -67,6 +68,7 @@
 }
 
 .dark-mode {
+  --brand-color: #00d3a9;
   --color-primary-light: #212529;
   --color-primary-medium: #343a40;
   --color-primary-dark: #495057;

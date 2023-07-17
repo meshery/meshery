@@ -85,8 +85,28 @@ language: en
         {% endif %}
       {% endfor %}
     </ul>
+
     <!-- <h6><a href="{{ site.baseurl }}/service-meshes" class="text-black section-title">Service Mesh Specific Management</a></h6> -->
-    <!-- <ul>
+
+
+  </div>
+
+<!-- GUIDES -->
+  <div class="section">
+    <a href="{{ site.baseurl }}/guides">
+        <div class="btn-primary">Guides</div>
+    </a>
+    <!-- <h6><a href="{{ site.baseurl }}/guides" class="text-black section-title">Guides</a></h6> -->
+    <ul>
+
+      {% for item in sorted_pages %}
+      {% if item.type=="Guides" and item.list!="exclude"  and item.language!="es" -%}
+        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+        </li>
+        {% endif %}
+      {% endfor %}
+    <!-- <h6><a href="{{ site.baseurl }}/service-meshes" class="text-black section-title">Service Mesh Specific Management</a></h6> -->
+    <ul>
       {% for item in sorted_pages %}
       {% if item.type=="service-mesh" and item.list!="exclude" and item.language!="es"  -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
@@ -98,7 +118,7 @@ language: en
         <li><img src="{{ adapter.image }}" style="width:20px;height:20px; transform:translateY(5px)"/> <a href="{{ site.baseurl }}{{ adapter.url }}">{{ adapter.name }}</a></li>
       {% endif -%}
       {% endfor %}
-    </ul> -->
+    </ul>
   </div>
 
  <!-- Extensions -->
@@ -115,23 +135,8 @@ language: en
         {% endif %}
       {% endfor %}
     </ul>
-
-  <!-- GUIDES -->
-  <div class="section">
-    <a href="{{ site.baseurl }}/guides">
-        <div class="btn-primary">Guides</div>
-    </a>
-    <!-- <h6><a href="{{ site.baseurl }}/guides" class="text-black section-title">Guides</a></h6> -->
-    <ul>
-      {% for item in sorted_pages %}
-      {% if item.type=="Guides" and item.list!="exclude"  and item.language!="es" -%}
-        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-        </li>
-        {% endif %}
-      {% endfor %}
-    </ul>
   </div>
-
+    
 <p width="100%">Follow on <a href="https://twitter.com/mesheryio">Twitter</a> or subscribe to our <a href="https://meshery.io/subscribe">newsletter</a> for the latest updates. Get support on our <a href="https://discuss.layer5.io">forum</a>. Join our <a href="https://slack.meshery.io">Slack</a> to interact directly with other users and contributors.</p>
 
 </div>
