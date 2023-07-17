@@ -5,9 +5,8 @@ metadata:
   namespace: monitoring
 data:
   prometheus.yaml: | -
-    {
-      "apiVersion": 1,
-      "datasources": [
+    apiVersion: 1
+      datasources: [
         {
           "access": "proxy",
           "editable": true,
@@ -18,7 +17,6 @@ data:
           "version": 1
         }
       ]
-    }
 
 ---
 apiVersion: apps/v1
