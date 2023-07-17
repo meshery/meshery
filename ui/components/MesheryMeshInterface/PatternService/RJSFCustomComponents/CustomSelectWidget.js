@@ -119,10 +119,10 @@ export default function CustomSelectWidget({
       >
         {Array.isArray(enumOptions) &&
           enumOptions.map(({ value, label }, i) => {
-            const disabled = Array.isArray(enumDisabled) && enumDisabled.indexOf(value) !== -1;
+            const disabled = Array.isArray(enumDisabled) && enumDisabled?.indexOf(value) !== -1;
             return (
               <MenuItem key={i} value={String(i)} disabled={disabled}>
-                <Checkbox checked={selectedIndexes.indexOf(String(i)) !== -1} />
+                <Checkbox checked={selectedIndexes?.indexOf(String(i)) !== -1} />
                 <ListItemText primary={label} />
               </MenuItem>
             );
