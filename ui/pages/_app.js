@@ -1,4 +1,3 @@
-import "../wasm_exec"
 import MomentUtils from '@date-io/moment';
 import { NoSsr, Typography } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -138,15 +137,7 @@ class MesheryApp extends App {
     this.meshsyncEventsSubscriptionRef.current = meshSyncEventsSubscription;
   }
 
-  async loadWasm() {
-    const go = new globalThis.Go();
-    WebAssembly.instantiateStreaming(fetch("static/main.wasm"), go.importObject).then((result) => {
-      go.run(result.instance)
-    });
-  }
-
   componentDidMount() {
-    this.loadWasm();
     this.loadConfigFromServer(); // this works, but sometimes other components which need data load faster than this data is obtained.
     this.initSubscriptions([]);
     dataFetch(
