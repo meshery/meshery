@@ -138,9 +138,9 @@ func NewK8sContextWithServerID(
 
 // K8sContextsFromKubeconfig takes in a kubeconfig and meshery instance ID and generates
 // kubernetes contexts from it
-func K8sContextsFromKubeconfig(kubeconfig []byte, instanceID *uuid.UUID) ([]K8sContext, string) {
+func K8sContextsFromKubeconfig(kubeconfig []byte, instanceID *uuid.UUID) ([]*K8sContext, string) {
 	respMessage := ""
-	kcs := []K8sContext{}
+	kcs := []*K8sContext{}
 
 	parsed, err := clientcmd.Load(kubeconfig)
 	if err != nil {
@@ -176,7 +176,7 @@ func K8sContextsFromKubeconfig(kubeconfig []byte, instanceID *uuid.UUID) ([]K8sC
 			continue
 		}
 
-		kcs = append(kcs, kc)
+		kcs = append(kcs, &kc)
 	}
 
 	return kcs, respMessage

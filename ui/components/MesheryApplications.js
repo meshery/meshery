@@ -436,7 +436,7 @@ function MesheryApplications({
     if (!search) search = "";
     if (!sortOrder) sortOrder = "";
 
-    const query = `?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
+    const query = `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
       sortOrder
     )}`;
 
@@ -451,7 +451,7 @@ function MesheryApplications({
         updateProgress({ showProgress : false });
         if (result) {
           setApplications(result.applications || []);
-          setPage(result.page || 0);
+          // setPage(result.page || 0);
           setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
           // setType()

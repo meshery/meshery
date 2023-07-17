@@ -62,12 +62,25 @@ RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
 #RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
 
 
-FROM frolvlad/alpine-glibc:alpine-3.13_glibc-2.32
-#RUN apt-get update; apt-get install -y ca-certificates; update-ca-certificates && rm -rf /var/lib/apt/lists/*
-RUN apk update && apk add ca-certificates; update-ca-certificates && rm -rf /var/cache/apk/*
+FROM alpine:3.15.3
+ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc
+ENV GLIBC_VERSION=2.34-r0
+# To solve: ./meshery: /usr/glibc-compat/lib/libc.so.6: version `GLIBC_2.34' not found (required by ./meshery)
+RUN set -ex && \
+    apk --update add libstdc++ curl ca-certificates && \
+    for pkg in glibc-${GLIBC_VERSION} glibc-bin-${GLIBC_VERSION}; \
+    do curl -sSL ${GLIBC_REPO}/releases/download/${GLIBC_VERSION}/${pkg}.apk -o /tmp/${pkg}.apk; done && \
+    apk add --allow-untrusted /tmp/*.apk && \
+    rm -v /tmp/*.apk && \
+    /usr/glibc-compat/sbin/ldconfig /lib /usr/glibc-compat/lib
 RUN update-ca-certificates
-RUN apk upgrade --no-cache && \
-    apk add --no-cache libstdc++
+
+# FROM frolvlad/alpine-glibc:alpine-3.13_glibc-2.32
+#RUN apt-get update; apt-get install -y ca-certificates; update-ca-certificates && rm -rf /var/lib/apt/lists/*
+# RUN apk update && apk add ca-certificates; update-ca-certificates && rm -rf /var/cache/apk/*
+# RUN apk upgrade --no-cache && \
+#     apk add --no-cache libstdc++
+
 COPY ./server/meshmodel/components /app/server/meshmodel/components
 COPY ./server/meshmodel/relationships /app/server/meshmodel/relationships
 COPY ./server/meshmodel/policies /app/server/meshmodel/policies

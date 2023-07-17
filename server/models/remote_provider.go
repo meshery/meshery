@@ -386,7 +386,7 @@ func (l *RemoteProvider) GetUsers(token, page, pageSize, search, order, filter s
 		q.Set("page", page)
 	}
 	if pageSize != "" {
-		q.Set("pageSize", pageSize)
+		q.Set("pagesize", pageSize)
 	}
 	if search != "" {
 		q.Set("search", search)
@@ -636,7 +636,7 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 		q.Set("page", page)
 	}
 	if pageSize != "" {
-		q.Set("page_size", pageSize)
+		q.Set("pagesize", pageSize)
 	}
 	if search != "" {
 		q.Set("search", search)
@@ -855,7 +855,7 @@ func (l *RemoteProvider) FetchResults(tokenVal string, page, pageSize, search, o
 		q.Set("page", page)
 	}
 	if pageSize != "" {
-		q.Set("page_size", pageSize)
+		q.Set("pagesize", pageSize)
 	}
 	if search != "" {
 		q.Set("search", search)
@@ -911,7 +911,7 @@ func (l *RemoteProvider) FetchAllResults(tokenString string, page, pageSize, sea
 		q.Set("page", page)
 	}
 	if pageSize != "" {
-		q.Set("page_size", pageSize)
+		q.Set("pagesize", pageSize)
 	}
 	if search != "" {
 		q.Set("search", search)
@@ -970,7 +970,7 @@ func (l *RemoteProvider) FetchSmiResults(req *http.Request, page, pageSize, sear
 		q.Set("page", page)
 	}
 	if pageSize != "" {
-		q.Set("page_size", pageSize)
+		q.Set("pagesize", pageSize)
 	}
 	if search != "" {
 		q.Set("search", search)
@@ -1025,7 +1025,7 @@ func (l *RemoteProvider) FetchSmiResult(req *http.Request, page, pageSize, searc
 		q.Set("page", page)
 	}
 	if pageSize != "" {
-		q.Set("page_size", pageSize)
+		q.Set("pagesize", pageSize)
 	}
 	if search != "" {
 		q.Set("search", search)
@@ -1390,7 +1390,7 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 		q.Set("page", page)
 	}
 	if pageSize != "" {
-		q.Set("page_size", pageSize)
+		q.Set("pagesize", pageSize)
 	}
 	if search != "" {
 		q.Set("search", search)
@@ -1554,7 +1554,7 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 		q.Set("page", page)
 	}
 	if pageSize != "" {
-		q.Set("page_size", pageSize)
+		q.Set("pagesize", pageSize)
 	}
 	if search != "" {
 		q.Set("search", search)
@@ -1595,7 +1595,7 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 }
 
 // GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
-func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, search, order string) ([]byte, error) {
+func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pageSize, search, order string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(MesheryPatternsCatalog) {
 		logrus.Error("operation not available")
 		return []byte{}, ErrInvalidCapability("MesheryPatternsCatalog", l.ProviderName)
@@ -1607,6 +1607,12 @@ func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, search, o
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
+	if page != "" {
+		q.Set("page", page)
+	}
+	if pageSize != "" {
+		q.Set("pagesize", pageSize)
+	}
 	if search != "" {
 		q.Set("search", search)
 	}
@@ -1836,7 +1842,6 @@ func (l *RemoteProvider) PublishCatalogPattern(req *http.Request, publishPattern
 	return nil, fmt.Errorf("error while publishing pattern file to catalog - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
-
 // UnPublishMesheryPattern publishes a meshery pattern with the given id to catalog
 func (l *RemoteProvider) UnPublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error) {
 	if !l.Capabilities.IsSupported(MesheryPatternsCatalog) {
@@ -2015,10 +2020,10 @@ func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFi
 	})
 
 	if err != nil {
-		return nil, ErrMarshal(err, "meshery metrics for shipping")
+		return nil, ErrMarshal(err, "Meshery Filters")
 	}
 
-	logrus.Debugf("Filter: %s, size: %d", data, len(data))
+	logrus.Debugf("size of filter: %d", len(data))
 	logrus.Infof("attempting to save filter to remote provider")
 	bf := bytes.NewBuffer(data)
 
@@ -2070,7 +2075,7 @@ func (l *RemoteProvider) GetMesheryFilters(tokenString string, page, pageSize, s
 		q.Set("page", page)
 	}
 	if pageSize != "" {
-		q.Set("page_size", pageSize)
+		q.Set("pagesize", pageSize)
 	}
 	if search != "" {
 		q.Set("search", search)
@@ -2106,7 +2111,7 @@ func (l *RemoteProvider) GetMesheryFilters(tokenString string, page, pageSize, s
 }
 
 // GetCatalogMesheryFilters gives the catalog filters stored with the provider
-func (l *RemoteProvider) GetCatalogMesheryFilters(tokenString string, search, order string) ([]byte, error) {
+func (l *RemoteProvider) GetCatalogMesheryFilters(tokenString string, page, pageSize, search, order string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(MesheryFiltersCatalog) {
 		logrus.Error("operation not available")
 		return []byte{}, ErrInvalidCapability("MesheryFiltersCatalog", l.ProviderName)
@@ -2118,6 +2123,12 @@ func (l *RemoteProvider) GetCatalogMesheryFilters(tokenString string, search, or
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
+	if page != "" {
+		q.Set("page", page)
+	}
+	if pageSize != "" {
+		q.Set("pagesize", pageSize)
+	}
 	if search != "" {
 		q.Set("search", search)
 	}
@@ -2162,7 +2173,7 @@ func (l *RemoteProvider) GetMesheryFilterFile(req *http.Request, filterID string
 
 	logrus.Infof("attempting to fetch filter from cloud for id: %s", filterID)
 
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/file/%s", l.RemoteProviderURL, ep, filterID))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/download/%s", l.RemoteProviderURL, ep, filterID))
 	logrus.Debugf("constructed filter url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
@@ -2382,7 +2393,59 @@ func (l *RemoteProvider) PublishCatalogFilter(req *http.Request, publishFilterRe
 	return nil, fmt.Errorf("error while publishing filter file to catalog - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
-func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
+// UnPublishMesheryFilter publishes a meshery filter with the given id to catalog
+func (l *RemoteProvider) UnPublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error) {
+	if !l.Capabilities.IsSupported(MesheryFiltersCatalog) {
+		logrus.Error("operation not available")
+		return nil, fmt.Errorf("%s is not suppported by provider: %s", MesheryFiltersCatalog, l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(MesheryFiltersCatalog)
+
+	logrus.Infof("attempting to unpubish filter with id: %s", publishFilterRequest.ID)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
+	logrus.Debugf("constructed filter url: %s", remoteProviderURL.String())
+
+	data, err := json.Marshal(publishFilterRequest)
+	if err != nil {
+		return nil, ErrMarshal(err, "filter request to unpublish from catalog")
+	}
+	bf := bytes.NewBuffer(data)
+
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), bf)
+
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Errorf("unable to unpublish filter from catalog: %v", err)
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		logrus.Errorf("unable to unpublish filter from catalog: %v", err)
+		return nil, err
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("filter successfully unpublished from catalog")
+		return bdr, nil
+	}
+	logrus.Errorf("error while unpublishing filter file from catalog with id %s: %s", publishFilterRequest.ID, bdr)
+	return nil, fmt.Errorf("error while unpublishing filter file from catalog - Status code: %d, Body: %s", resp.StatusCode, bdr)
+}
+
+func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path string, save bool, resource string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryFilters) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistMesheryFilters", l.ProviderName)
@@ -2394,8 +2457,12 @@ func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path s
 		"url":  resourceURL,
 		"save": save,
 		"path": path,
-	})
+		"filter_data": MesheryFilter{
+			FilterResource: resource,
+		},
 
+	})
+	
 	if err != nil {
 		err = ErrMarshal(err, "meshery metrics for shipping")
 		return nil, err
@@ -2582,7 +2649,7 @@ func (l *RemoteProvider) GetMesheryApplications(tokenString string, page, pageSi
 		q.Set("page", page)
 	}
 	if pageSize != "" {
-		q.Set("page_size", pageSize)
+		q.Set("pagesize", pageSize)
 	}
 	if search != "" {
 		q.Set("search", search)
@@ -2803,7 +2870,7 @@ func (l *RemoteProvider) GetPerformanceProfiles(tokenString string, page, pageSi
 		q.Set("page", page)
 	}
 	if pageSize != "" {
-		q.Set("page_size", pageSize)
+		q.Set("pagesize", pageSize)
 	}
 	if search != "" {
 		q.Set("search", search)
@@ -2986,7 +3053,7 @@ func (l *RemoteProvider) GetSchedules(req *http.Request, page, pageSize, order s
 		q.Set("page", page)
 	}
 	if pageSize != "" {
-		q.Set("page_size", pageSize)
+		q.Set("pagesize", pageSize)
 	}
 	if order != "" {
 		q.Set("order", order)
@@ -3182,7 +3249,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 			Type:             "platform",
 			SubType:          "management",
 			MetaData:         metadata,
-			Status: 		  DISCOVERED,
+			Status:           DISCOVERED,
 			CredentialSecret: cred,
 		}
 
@@ -3341,7 +3408,7 @@ func (l *RemoteProvider) SMPTestConfigFetch(req *http.Request, page, pageSize, s
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
 	q.Add("page", page)
-	q.Add("pageSize", pageSize)
+	q.Add("pagesize", pageSize)
 	q.Add("search", search)
 	q.Add("order", order)
 
@@ -3524,11 +3591,11 @@ func (l *RemoteProvider) GetConnections(req *http.Request, _ string, page, pageS
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
 	}
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + connectionKind)
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connectionKind))
 
 	q := remoteProviderURL.Query()
 	q.Add("page", strconv.Itoa(page))
-	q.Add("pageSize", strconv.Itoa(pageSize))
+	q.Add("pagesize", strconv.Itoa(pageSize))
 	q.Add("search", search)
 	q.Add("order", order)
 
@@ -3852,7 +3919,7 @@ func (l *RemoteProvider) SaveUserCredential(req *http.Request, credential *Crede
 		return ErrDataRead(err, "Save Credential")
 	}
 
-	if resp.StatusCode == http.StatusOK {
+	if resp.StatusCode == http.StatusCreated {
 		return nil
 	}
 
@@ -3865,12 +3932,12 @@ func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, p
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistCredentials", l.ProviderName)
 	}
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistSMPTestProfile)
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistCredentials)
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
 	q.Add("page", strconv.Itoa(page))
-	q.Add("pageSize", strconv.Itoa(pageSize))
+	q.Add("pagesize", strconv.Itoa(pageSize))
 	q.Add("search", search)
 	q.Add("order", order)
 
@@ -3883,7 +3950,7 @@ func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, p
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		return nil, ErrFetch(err, "Perf Test Config Page", resp.StatusCode)
+		return nil, ErrFetch(err, "Credentials Page", resp.StatusCode)
 	}
 	defer resp.Body.Close()
 
@@ -3894,7 +3961,7 @@ func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, p
 
 	var cp CredentialsPage
 	if err = json.Unmarshal(bdr, &cp); err != nil {
-		return nil, err
+		return nil, ErrFetch(err, "Unmarshal Credentials Page", resp.StatusCode)
 	}
 	return &cp, nil
 }
@@ -3912,7 +3979,7 @@ func (l *RemoteProvider) UpdateUserCredential(req *http.Request, credential *Cre
 	}
 	bf := bytes.NewBuffer(_creds)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
-	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
 	tokenString, _ := l.GetToken(req)
 	if err != nil {
 		logrus.Error("error getting token: ", err)
@@ -3948,11 +4015,14 @@ func (l *RemoteProvider) DeleteUserCredential(req *http.Request, credentialID uu
 		return nil, ErrInvalidCapability("PersistCredentials", l.ProviderName)
 	}
 
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryFilters)
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistCredentials)
 
 	logrus.Infof("attempting to delete credential from cloud for id: %s", credentialID)
 
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, credentialID))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
+	q := remoteProviderURL.Query()
+	q.Add("credential_id", credentialID.String())
+	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("constructed credential url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
 
@@ -3974,11 +4044,7 @@ func (l *RemoteProvider) DeleteUserCredential(req *http.Request, credentialID uu
 
 	if resp.StatusCode == http.StatusOK {
 		logrus.Infof("credential successfully deleted from remote provider")
-		var cred Credential
-		if err = json.Unmarshal(bdr, &cred); err != nil {
-			return nil, err
-		}
-		return &cred, nil
+		return nil, nil
 	}
 	logrus.Errorf("error while deleting credential: %s", bdr)
 	return nil, ErrDelete(fmt.Errorf("error while deleting credential: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)

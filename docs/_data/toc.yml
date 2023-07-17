@@ -63,27 +63,45 @@
 - title: 🧠 Concepts
   url: concepts
   links:
-    - title: Architecture
+    - title: Architecture ↆ
       url: concepts/architecture
+      children:
+        - title: Adapters
+          url: concepts/architecture/adapters      
+        - title: Broker
+          url: concepts/architecture/broker
+        - title: Database
+          url: concepts/architecture/database  
+        - title: Meshsync
+          url: concepts/architecture/meshsync     
+        - title: Operator
+          url: concepts/architecture/operator   
     - title: Adapters
       url: concepts/architecture/adapters
+    - title: Catalog
+      url: concepts/catalog  
+    
+        
 - title: ⚙️ Tasks (all)
   url: tasks
   links:
     - title: Application Management
       url: tasks/application-management
+    - title: Filter Management
+      url: tasks/filter-management
     - title: Lifecycle Management
       url: tasks/lifecycle-management
     - title: Pattern Management
       url: tasks/pattern-management
     - title: Performance Management
       url: tasks/performance-management
-- title: 📑 Features
-  url: features
-  links:
-    - title: Meshery Playground
-      url: features/playground
-
+#    - title: Meshery and SMI Management
+#      url: tasks/service-mesh-interface  
+# - title: 📑 Features
+#   url: features
+#   links:
+#     - title: Meshery Playground
+#       url: features/playground
 
     # - title: Service Mesh Interface (SMI) Conformance
     #   url: tasks/service-mesh-interface

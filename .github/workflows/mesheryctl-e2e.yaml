@@ -26,13 +26,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        k8s_version: ['v1.20.11', 'v1.21.5', 'v1.22.2']
+        k8s_version: ['v1.27.3', 'v1.26.6', 'v1.25.11']
         platform: ['docker', 'kubernetes']
     steps:
       - name: Setup Kubernetes
-        uses: manusa/actions-setup-minikube@v2.4.1
+        uses: manusa/actions-setup-minikube@v2.7.2
         with:
-          minikube version: 'v1.23.2'
+          minikube version: 'v1.30.1'
           kubernetes version: ${{ matrix.k8s_version }}
           driver: docker
 
@@ -76,17 +76,17 @@ jobs:
   scheduled-test:
     name: Scheduled e2e Test
     runs-on: ubuntu-22.04
-    if: ${{ github.event_name == 'schedule' }}
+    if: ${{ github.event_name == 'schedule' && github.repository == 'meshery/meshery' }}
     strategy:
       fail-fast: false
       matrix:
-        k8s_version: ['v1.20.11', 'v1.21.5', 'v1.22.2']
+        k8s_version: ['v1.27.3', 'v1.26.6', 'v1.25.11']
         platform: ['docker', 'kubernetes']
     steps:
       - name: Setup Kubernetes
-        uses: manusa/actions-setup-minikube@v2.4.1
+        uses: manusa/actions-setup-minikube@v2.7.2
         with:
-          minikube version: 'v1.23.2'
+          minikube version: 'v1.30.1'
           kubernetes version: ${{ matrix.k8s_version }}
           driver: docker
 

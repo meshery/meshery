@@ -65,10 +65,14 @@ func (h *Handler) SaveScheduleHandler(
 // Handle GET request for Schedules
 //
 // Returns the list of all the schedules saved by the current user
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?page={page-number}``` Default page number is 0
+//
+// ```?pagesize={pagesize}``` Default pagesize is 10
 // responses:
 // 	200: schedulesResponseWrapper
-
-// GetSchedulesHandler returns the list of all the schedules saved by the current user
 func (h *Handler) GetSchedulesHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -78,7 +82,7 @@ func (h *Handler) GetSchedulesHandler(
 ) {
 	q := r.URL.Query()
 
-	resp, err := provider.GetSchedules(r, q.Get("page"), q.Get("page_size"), q.Get("order"))
+	resp, err := provider.GetSchedules(r, q.Get("page"), q.Get("pagesize"), q.Get("order"))
 	if err != nil {
 		obj := "schedules"
 		//unable to get schedules

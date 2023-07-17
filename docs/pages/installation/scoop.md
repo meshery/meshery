@@ -6,6 +6,7 @@ type: installation
 display-title: "false"
 language: en
 list: exclude
+image: /assets/img/platforms/scoop.png
 ---
 
 {% include installation_prerequisites.html %}

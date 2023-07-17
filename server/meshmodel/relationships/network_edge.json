@@ -20,29 +20,29 @@
       "from": [
         {
           "kind": "Service",
-          "model": "Kubernetes"
+          "model": "kubernetes"
         },
         {
           "kind": "Ingress",
-          "model": "Kubernetes"
+          "model": "kubernetes"
         }
       ],
       "to": [
         {
           "kind": "Endpoints",
-          "model": "Kubernetes"
+          "model": "kubernetes"
         },
         {
           "kind": "Pod",
-          "model": "Kubernetes"
+          "model": "kubernetes"
         },
         {
           "kind": "Deployment",
-          "model": "Kubernetes"
+          "model": "kubernetes"
         },
         {
           "kind": "Service",
-          "model": "Kubernetes"
+          "model": "kubernetes"
         }
       ]
     },
@@ -50,21 +50,21 @@
       "from": [
         {
           "kind": "Ingress",
-          "model": "Kubernetes"
+          "model": "kubernetes"
         }
       ],
-      "deny": [
+      "to": [
         {
           "kind": "Endpoints",
-          "model": "Kubernetes"
+          "model": "kubernetes"
         },
         {
           "kind": "Pod",
-          "model": "Kubernetes"
+          "model": "kubernetes"
         },
         {
           "kind": "Deployment",
-          "model": "Kubernetes"
+          "model": "kubernetes"
         }
       ]
     }

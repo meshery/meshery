@@ -165,14 +165,15 @@ type Service struct {
 	// Name is the name of the service and is an optional parameter
 	// If given then this supercedes the name of the service inherited
 	// from the parent
-	Name        string            `yaml:"name,omitempty" json:"name,omitempty"`
-	Type        string            `yaml:"type,omitempty" json:"type,omitempty"`
-	APIVersion  string            `yaml:"apiVersion,omitempty" json:"apiVersion,omitempty"`
-	Namespace   string            `yaml:"namespace,omitempty" json:"namespace,omitempty"`
-	Version     string            `yaml:"version,omitempty" json:"version,omitempty"`
-	Model       string            `yaml:"model,omitempty" json:"model,omitempty"`
-	Labels      map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
-	Annotations map[string]string `yaml:"annotations,omitempty" json:"annotations,omitempty"`
+	Name         string            `yaml:"name,omitempty" json:"name,omitempty"`
+	Type         string            `yaml:"type,omitempty" json:"type,omitempty"`
+	APIVersion   string            `yaml:"apiVersion,omitempty" json:"apiVersion,omitempty"`
+	Namespace    string            `yaml:"namespace,omitempty" json:"namespace,omitempty"`
+	Version      string            `yaml:"version,omitempty" json:"version,omitempty"`
+	Model        string            `yaml:"model,omitempty" json:"model,omitempty"`
+	IsAnnotation bool              `yaml:"isAnnotation,omitempty" json:"isAnnotation,omitempty"`
+	Labels       map[string]string `yaml:"labels,omitempty" json:"labels,omitempty"`
+	Annotations  map[string]string `yaml:"annotations,omitempty" json:"annotations,omitempty"`
 	// DependsOn correlates one or more objects as a required dependency of this service
 	// DependsOn is used to determine sequence of operations
 	DependsOn []string `yaml:"dependsOn,omitempty" json:"dependsOn,omitempty"`
@@ -390,13 +391,14 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 		}
 
 		//Only make the name unique when duplicates are encountered. This allows clients to preserve and propagate the unique name they want to give to their workload
-		if countDuplicates[svc.Name] > 1 {
+		uniqueName := svc.Name
+		if countDuplicates[uniqueName] > 1 {
 			//set appropriate unique service name
-			svc.Name = strings.ToLower(svc.Name)
-			svc.Name += "-" + getRandomAlphabetsOfDigit(5)
+			uniqueName = strings.ToLower(svc.Name)
+			uniqueName += "-" + utils.GetRandomAlphabetsOfDigit(5)
 		}
-		eleToSvc[ele.Data.ID] = svc.Name //will be used while adding depends-on
-		pf.Services[svc.Name] = &svc
+		eleToSvc[ele.Data.ID] = uniqueName //will be used while adding depends-on
+		pf.Services[uniqueName] = &svc
 		return nil
 	})
 	if err != nil {
@@ -414,16 +416,6 @@ func NewPatternFileFromCytoscapeJSJSON(name string, byt []byte) (Pattern, error)
 		}
 	}
 	return pf, nil
-}
-
-func getRandomAlphabetsOfDigit(length int) (s string) {
-	charSet := "abcdedfghijklmnopqrstuvwxyz"
-	for i := 0; i < length; i++ {
-		random := mathrand.Intn(len(charSet))
-		randomChar := charSet[random]
-		s += string(randomChar)
-	}
-	return
 }
 
 // processCytoElementsWithPattern iterates over all the cyto elements, convert each into a patternfile service and exposes a callback to handle that service
@@ -566,7 +558,7 @@ func createPatternServiceFromK8s(manifest map[string]interface{}, regManager *me
 	}
 
 	// Get MeshModel entity with the selectors
-	componentList, _ := regManager.GetEntities(&meshmodelv1alpha1.ComponentFilter{
+	componentList, _, _ := regManager.GetEntities(&meshmodelv1alpha1.ComponentFilter{
 		Name:       kind,
 		APIVersion: apiVersion,
 	})

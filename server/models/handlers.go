@@ -42,6 +42,7 @@ type HandlerInterface interface {
 	K8SConfigHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request)
 	KubernetesPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	K8sRegistrationHandler(w http.ResponseWriter, req *http.Request)
 
 	GetAllContexts(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetContext(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -56,6 +57,7 @@ type HandlerInterface interface {
 	FetchAllResultsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetResultHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetSMPServiceMeshes(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetSystemDatabase(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	FetchSmiResultsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	FetchSingleSmiResultHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -137,6 +139,7 @@ type HandlerInterface interface {
 	FilterFileRequestHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetCatalogMesheryFiltersHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	PublishCatalogFilterHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	UnPublishCatalogFilterHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetMesheryFilterHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteMesheryFilterHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	CloneMesheryFilterHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)

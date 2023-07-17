@@ -235,6 +235,10 @@ ReleaseDrafter generates a GitHub tag and release draft. ReleaseDrafter action w
 
 The publishing of release notes to Meshery Docs is automated. Triggered by a release event, a workflow will checkout the Meshery repo, copy the auto-drafted release notes into a Jekyll collection in Meshery Docs, and generate a pull request.
 
+#### Automated Release Notes Sending
+
+The sending of release notes is now automated as a step in the stable release channel workflow. The release notes are automatically sent to the [developers@meshery.io mailing list](https://groups.google.com/a/meshery.io/g/developers).
+
 #### Automated Pull Request Labeler
 
 A GitHub Issue labeler bot is configured to automatically assign labels to issues based on which files have changed in which directories. For example, a pull request with changes to files in the “/docs/**” folder will receive the “area/docs” label. Presence of the “area/docs” label is used to trigger documentation builds and Netlify builds of the Meshery Docs. Similar labels are assigned and used to trigger workflows or used as conditional flags in workflows to determine which workflows or which steps in a workflows to run. 
@@ -345,5 +349,3 @@ For older releases we have to travel back in time. Using the `Tags` in github we
 1.  The `_site` folder is renamed to `v0.X` and is copied into the `docs` folder of the present version. 
 
 The above [steps]({{site.baseurl}}/project/build-and-release#in-the-v0x-folder) for replacing all the instances of direct path are to be followed. 
-
-

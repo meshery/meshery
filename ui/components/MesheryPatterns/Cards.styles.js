@@ -1,6 +1,13 @@
 import { makeStyles } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
+  dialogTitle : {
+    textAlign : 'center',
+    minWidth : 400,
+    padding : '10px',
+    color : '#fff',
+    backgroundColor : theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : '#396679',
+  },
   cardButtons : {
     display : "grid",
     gridTemplateColumns : "repeat(5,1fr)",
@@ -15,6 +22,11 @@ const useStyles = makeStyles((theme) => ({
   },
   perfResultsContainer : {
     marginTop : "0.5rem"
+  },
+  flipButton : {
+    minWidth : "max-content",
+    padding : "6px 9px",
+    twhiteSpace : "nowwrap"
   },
   backGrid : {
     marginBottom : "0.25rem",
@@ -72,13 +84,19 @@ const useStyles = makeStyles((theme) => ({
     marginRight : "5px",
 
   },
+  iconDownload : {
+    width : "auto",
+    height : "24px",
+
+  },
   btnText : {
-    [theme.breakpoints.between(960, 1370)] : { display : "none" },
+    [theme.breakpoints.down(1370)] : { display : "none" },
+    marginLeft : "5px",
     display : "flex",
     justifyContent : "center",
   },
   cloneBtnText : {
-    [theme.breakpoints.between(960, 1370)] : { display : "none" },
+    [theme.breakpoints.down(1370)] : { display : "none" },
     display : "flex",
     justifyContent : "center",
     marginLeft : "3px",
@@ -112,11 +130,6 @@ const useStyles = makeStyles((theme) => ({
     justifyContent : "center",
     alignItems : "center",
     flexDirection : "column",
-  },
-  publishTitle : {
-    display : 'flex',
-    justifyContent : 'space-between',
-    alignItems : 'center',
   },
   noText : {
     fontSize : "2rem",

@@ -1,4 +1,4 @@
-name: CNCF Meshery Playground - Reset Non-essential Namespaces and Reboot
+name: Playground CNCF - Reset Non-essential Namespaces and Reboot
 on:
   workflow_dispatch:
   schedule:
@@ -7,6 +7,7 @@ on:
 jobs:
   reset:
     name: reset
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
     steps:
     - name: Cluster cleanup by running the cleanup script inside VM

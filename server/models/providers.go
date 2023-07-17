@@ -152,6 +152,7 @@ type NavigatorExtension struct {
 	Children        NavigatorExtensions `json:"children,omitempty"`
 	Type            string              `json:"type,omitempty"`
 	AllowedTo       MeshMapComponentSet `json:"allowedTo,omitempty"`
+	IsBeta          *bool               `json:"isBeta,omitempty"`
 }
 
 // AccountExtension describes the Account extension point in the UI
@@ -198,7 +199,7 @@ type ConnectionPayload struct {
 	SubType          string                 `json:"sub_type,omitempty"`
 	Type             string                 `json:"type,omitempty"`
 	MetaData         map[string]interface{} `json:"metadata,omitempty"`
-	Status 			 ConnectionStatus 		`json:"status,omitempty"`
+	Status           ConnectionStatus       `json:"status,omitempty"`
 	CredentialSecret map[string]interface{} `json:"credential_secret,omitempty"`
 }
 
@@ -376,7 +377,7 @@ type Provider interface {
 
 	SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error)
 	GetMesheryPatterns(tokenString, page, pageSize, search, order string, updatedAfter string) ([]byte, error)
-	GetCatalogMesheryPatterns(tokenString string, search, order string) ([]byte, error)
+	GetCatalogMesheryPatterns(tokenString string, page, pageSize, search, order string) ([]byte, error)
 	PublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error)
 	UnPublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error)
 	DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error)
@@ -391,13 +392,14 @@ type Provider interface {
 
 	SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error)
 	GetMesheryFilters(tokenString, page, pageSize, search, order string) ([]byte, error)
-	GetCatalogMesheryFilters(tokenString string, search, order string) ([]byte, error)
+	GetCatalogMesheryFilters(tokenString string, page, pageSize, search, order string) ([]byte, error)
 	PublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error)
+	UnPublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error)
 	DeleteMesheryFilter(req *http.Request, filterID string) ([]byte, error)
 	CloneMesheryFilter(req *http.Request, filterID string, cloneFilterRequest *MesheryCloneFilterRequestBody) ([]byte, error)
 	GetMesheryFilter(req *http.Request, filterID string) ([]byte, error)
 	GetMesheryFilterFile(req *http.Request, filterID string) ([]byte, error)
-	RemoteFilterFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error)
+	RemoteFilterFile(req *http.Request, resourceURL, path string, save bool, resource string) ([]byte, error)
 
 	SaveMesheryApplication(tokenString string, application *MesheryApplication) ([]byte, error)
 	SaveApplicationSourceContent(token string, applicationID string, sourceContent []byte) error

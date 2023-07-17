@@ -71,15 +71,16 @@ type ComplexityRoot struct {
 	}
 
 	CatalogFilter struct {
-		CatalogData func(childComplexity int) int
-		CreatedAt   func(childComplexity int) int
-		FilterFile  func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Location    func(childComplexity int) int
-		Name        func(childComplexity int) int
-		UpdatedAt   func(childComplexity int) int
-		UserID      func(childComplexity int) int
-		Visibility  func(childComplexity int) int
+		CatalogData    func(childComplexity int) int
+		CreatedAt      func(childComplexity int) int
+		FilterFile     func(childComplexity int) int
+		FilterResource func(childComplexity int) int
+		ID             func(childComplexity int) int
+		Location       func(childComplexity int) int
+		Name           func(childComplexity int) int
+		UpdatedAt      func(childComplexity int) int
+		UserID         func(childComplexity int) int
+		Visibility     func(childComplexity int) int
 	}
 
 	CatalogPattern struct {
@@ -162,15 +163,16 @@ type ComplexityRoot struct {
 	}
 
 	FilterResult struct {
-		CatalogData func(childComplexity int) int
-		CreatedAt   func(childComplexity int) int
-		FilterFile  func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Location    func(childComplexity int) int
-		Name        func(childComplexity int) int
-		UpdatedAt   func(childComplexity int) int
-		UserID      func(childComplexity int) int
-		Visibility  func(childComplexity int) int
+		CatalogData    func(childComplexity int) int
+		CreatedAt      func(childComplexity int) int
+		FilterFile     func(childComplexity int) int
+		FilterResource func(childComplexity int) int
+		ID             func(childComplexity int) int
+		Location       func(childComplexity int) int
+		Name           func(childComplexity int) int
+		UpdatedAt      func(childComplexity int) int
+		UserID         func(childComplexity int) int
+		Visibility     func(childComplexity int) int
 	}
 
 	K8sContext struct {
@@ -341,6 +343,7 @@ type ComplexityRoot struct {
 		ID                func(childComplexity int) int
 		LastRun           func(childComplexity int) int
 		LoadGenerators    func(childComplexity int) int
+		Metadata          func(childComplexity int) int
 		Name              func(childComplexity int) int
 		QPS               func(childComplexity int) int
 		RequestBody       func(childComplexity int) int
@@ -589,6 +592,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.CatalogFilter.FilterFile(childComplexity), true
+
+	case "CatalogFilter.filter_resource":
+		if e.complexity.CatalogFilter.FilterResource == nil {
+			break
+		}
+
+		return e.complexity.CatalogFilter.FilterResource(childComplexity), true
 
 	case "CatalogFilter.id":
 		if e.complexity.CatalogFilter.ID == nil {
@@ -974,6 +984,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.FilterResult.FilterFile(childComplexity), true
+
+	case "FilterResult.filter_resource":
+		if e.complexity.FilterResult.FilterResource == nil {
+			break
+		}
+
+		return e.complexity.FilterResult.FilterResource(childComplexity), true
 
 	case "FilterResult.id":
 		if e.complexity.FilterResult.ID == nil {
@@ -1733,6 +1750,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PerfProfile.LoadGenerators(childComplexity), true
+
+	case "PerfProfile.metadata":
+		if e.complexity.PerfProfile.Metadata == nil {
+			break
+		}
+
+		return e.complexity.PerfProfile.Metadata(childComplexity), true
 
 	case "PerfProfile.name":
 		if e.complexity.PerfProfile.Name == nil {
@@ -2694,6 +2718,7 @@ type FilterResult {
   id: ID!
   name: String!
   filter_file: String!
+  filter_resource: String!
   user_id: String!
   location: Location!
   visibility: String!
@@ -2708,6 +2733,7 @@ type CatalogFilter {
   filter_file: String!
   user_id: String!
   location: Location!
+  filter_resource: String!
   visibility: String!
   catalog_data: Map
   created_at: String
@@ -2792,6 +2818,7 @@ type PerfProfile {
   request_body: String
   content_type: String
   service_mesh: String
+  metadata: Map
 }
 
 type MesheryResult {
@@ -2820,6 +2847,8 @@ input PageFilter {
 }
 
 input CatalogSelector {
+  page: String!
+  pagesize: String!
   search: String!
   order: String!
 }
@@ -4645,6 +4674,50 @@ func (ec *executionContext) fieldContext_CatalogFilter_location(ctx context.Cont
 				return ec.fieldContext_Location_type(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Location", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CatalogFilter_filter_resource(ctx context.Context, field graphql.CollectedField, obj *model.CatalogFilter) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CatalogFilter_filter_resource(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FilterResource, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CatalogFilter_filter_resource(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CatalogFilter",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -6905,6 +6978,8 @@ func (ec *executionContext) fieldContext_FilterPage_filters(ctx context.Context,
 				return ec.fieldContext_FilterResult_name(ctx, field)
 			case "filter_file":
 				return ec.fieldContext_FilterResult_filter_file(ctx, field)
+			case "filter_resource":
+				return ec.fieldContext_FilterResult_filter_resource(ctx, field)
 			case "user_id":
 				return ec.fieldContext_FilterResult_user_id(ctx, field)
 			case "location":
@@ -7044,6 +7119,50 @@ func (ec *executionContext) _FilterResult_filter_file(ctx context.Context, field
 }
 
 func (ec *executionContext) fieldContext_FilterResult_filter_file(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FilterResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FilterResult_filter_resource(ctx context.Context, field graphql.CollectedField, obj *model.FilterResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FilterResult_filter_resource(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FilterResource, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FilterResult_filter_resource(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "FilterResult",
 		Field:      field,
@@ -11308,6 +11427,8 @@ func (ec *executionContext) fieldContext_PerfPageProfiles_profiles(ctx context.C
 				return ec.fieldContext_PerfProfile_content_type(ctx, field)
 			case "service_mesh":
 				return ec.fieldContext_PerfProfile_service_mesh(ctx, field)
+			case "metadata":
+				return ec.fieldContext_PerfProfile_metadata(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PerfProfile", field.Name)
 		},
@@ -12218,6 +12339,47 @@ func (ec *executionContext) fieldContext_PerfProfile_service_mesh(ctx context.Co
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PerfProfile_metadata(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PerfProfile_metadata(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Metadata, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(map[string]interface{})
+	fc.Result = res
+	return ec.marshalOMap2map(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PerfProfile_metadata(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PerfProfile",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Map does not have child fields")
 		},
 	}
 	return fc, nil
@@ -13351,6 +13513,8 @@ func (ec *executionContext) fieldContext_Query_fetchFilterCatalogContent(ctx con
 				return ec.fieldContext_CatalogFilter_user_id(ctx, field)
 			case "location":
 				return ec.fieldContext_CatalogFilter_location(ctx, field)
+			case "filter_resource":
+				return ec.fieldContext_CatalogFilter_filter_resource(ctx, field)
 			case "visibility":
 				return ec.fieldContext_CatalogFilter_visibility(ctx, field)
 			case "catalog_data":
@@ -16816,13 +16980,29 @@ func (ec *executionContext) unmarshalInputCatalogSelector(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"search", "order"}
+	fieldsInOrder := [...]string{"page", "pagesize", "search", "order"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
+		case "page":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("page"))
+			it.Page, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "pagesize":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pagesize"))
+			it.Pagesize, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "search":
 			var err error
 
@@ -17273,6 +17453,13 @@ func (ec *executionContext) _CatalogFilter(ctx context.Context, sel ast.Selectio
 		case "location":
 
 			out.Values[i] = ec._CatalogFilter_location(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "filter_resource":
+
+			out.Values[i] = ec._CatalogFilter_filter_resource(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -17836,6 +18023,13 @@ func (ec *executionContext) _FilterResult(ctx context.Context, sel ast.Selection
 		case "filter_file":
 
 			out.Values[i] = ec._FilterResult_filter_file(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "filter_resource":
+
+			out.Values[i] = ec._FilterResult_filter_resource(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -18994,6 +19188,10 @@ func (ec *executionContext) _PerfProfile(ctx context.Context, sel ast.SelectionS
 		case "service_mesh":
 
 			out.Values[i] = ec._PerfProfile_service_mesh(ctx, field, obj)
+
+		case "metadata":
+
+			out.Values[i] = ec._PerfProfile_metadata(ctx, field, obj)
 
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))

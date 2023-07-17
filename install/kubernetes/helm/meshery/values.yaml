@@ -4,7 +4,9 @@
 
 replicaCount: 1
 restartPolicy: Always
-
+metadata:
+  name: meshery
+  namespace: meshery
 image:
   repository: layer5/meshery
   tag: stable-latest

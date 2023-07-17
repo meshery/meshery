@@ -227,6 +227,12 @@ func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, e
 
 // FetchResults - fetches results from provider backend
 func (l *DefaultLocalProvider) FetchResults(_, page, pageSize, _, _, profileID string) ([]byte, error) {
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, ErrPageNumber(err)
@@ -557,8 +563,8 @@ func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, ord
 }
 
 // GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
-func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(_, search, order string) ([]byte, error) {
-	return l.MesheryPatternPersister.GetMesheryCatalogPatterns(search, order)
+func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(_, page, pageSize, search, order string) ([]byte, error) {
+	return l.MesheryPatternPersister.GetMesheryCatalogPatterns(page, pageSize, search, order)
 }
 
 // PublishCatalogPattern publishes pattern to catalog
@@ -673,14 +679,18 @@ func (l *DefaultLocalProvider) GetMesheryFilters(_, page, pageSize, search, orde
 }
 
 // GetCatalogMesheryFilters gives the catalog filters stored with the provider
-func (l *DefaultLocalProvider) GetCatalogMesheryFilters(_ string, search, order string) ([]byte, error) {
-	return l.MesheryFilterPersister.GetMesheryCatalogFilters(search, order)
+func (l *DefaultLocalProvider) GetCatalogMesheryFilters(_ string, page, pageSize, search, order string) ([]byte, error) {
+	return l.MesheryFilterPersister.GetMesheryCatalogFilters(page, pageSize, search, order)
 }
 
 // PublishCatalogFilter publishes filter to catalog
 // Not supported by local provider
 func (l *DefaultLocalProvider) PublishCatalogFilter(_ *http.Request, _ *MesheryCatalogFilterRequestBody) ([]byte, error) {
 	return []byte(""), nil
+}
+
+func (l *DefaultLocalProvider) UnPublishCatalogFilter(_ *http.Request, _ *MesheryCatalogFilterRequestBody) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
 }
 
 // GetMesheryFilterFile gets filter for the given filterID without the metadata
@@ -707,7 +717,7 @@ func (l *DefaultLocalProvider) CloneMesheryFilter(_ *http.Request, filterID stri
 }
 
 // RemoteFilterFile takes in the
-func (l *DefaultLocalProvider) RemoteFilterFile(_ *http.Request, resourceURL, path string, save bool) ([]byte, error) {
+func (l *DefaultLocalProvider) RemoteFilterFile(_ *http.Request, resourceURL, path string, save bool, resource string) ([]byte, error) {
 	parsedURL, err := url.Parse(resourceURL)
 	if err != nil {
 		return nil, err
@@ -1013,7 +1023,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 					for i, name := range names {
 						id, _ := uuid.NewV4()
 						var filter = &MesheryFilter{
-							FilterFile: content[i],
+							FilterFile: []byte(content[i]),
 							Name:       name,
 							ID:         &id,
 							UserID:     &nilUserID,
@@ -1233,7 +1243,7 @@ func githubRepoFilterScan(
 
 				ff := MesheryFilter{
 					Name:       name,
-					FilterFile: string(f.Content),
+					FilterFile: []byte(f.Content),
 					Location: map[string]interface{}{
 						"type":   "github",
 						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
@@ -1314,7 +1324,7 @@ func genericHTTPFilterFile(fileURL string) ([]MesheryFilter, error) {
 
 	ff := MesheryFilter{
 		Name:       name,
-		FilterFile: result,
+		FilterFile: []byte(result),
 		Location: map[string]interface{}{
 			"type":   "http",
 			"host":   fileURL,

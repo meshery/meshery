@@ -26,13 +26,13 @@ jobs:
       - uses: actions/checkout@master
       - uses: actions/setup-go@master
         with:
-          go-version: "1.19.x"
+          go-version: "1.20"
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
           version: v1.52.0
           working-directory: mesheryctl
-          args: --timeout 5m --verbose
+          args: --timeout 10m --verbose
           skip-cache: true
           skip-pkg-cache: true
           skip-build-cache: true
@@ -49,7 +49,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@master
         with:
-          go-version: "1.19.x"
+          go-version: "1.20"
       - name: Setup Cache
         uses: actions/cache@v3
         with:
@@ -58,15 +58,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
       - name: goreleaser WITHOUT tag
-        uses: goreleaser/goreleaser-action@v3
+        uses: goreleaser/goreleaser-action@v4
         if: success() && startsWith(github.ref, 'refs/tags/') == false
         env:
           RELEASE_CHANNEL: "edge"
         with:
           version: latest
-          args: release --snapshot --skip-publish --rm-dist
+          args: release --snapshot --skip-publish --clean
   mesheryctl_docs:
-    if: "always() && github.event_name != 'pull_request' "
+    if: "always() && github.event_name != 'pull_request' && github.repository == 'meshery/meshery' "
     runs-on: ubuntu-22.04
     steps:
       - name: Skip if needed
@@ -85,12 +85,12 @@ jobs:
       - name: Setup go
         uses: actions/setup-go@master
         with:
-          go-version: "1.19"
+          go-version: "1.20"
           check-latest: "true"
       - name: Run script 📜
         run: |
-          cd mesheryctl/doc
-          go run doc.go
+          cd mesheryctl
+          make docs
       - name: Commit ✅
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
