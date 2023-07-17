@@ -183,7 +183,7 @@ class MesheryApp extends App {
     if (sessionStorage.getItem("keys") !== null) {
       this.setState({ keys : JSON.parse(sessionStorage.getItem("keys")) });
     } else {
-      dataFetch('/api/identity/user/keys', {
+      dataFetch('/api/identity/users/keys', {
         mehthod : 'GET',
         credentials : 'include'
       }, (result) =>  this.setState({ keys : result.data.keys }), (err => console.error(err)))
