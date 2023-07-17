@@ -4,6 +4,6 @@
   external_url: https://meshery.io
 - title: Discuss
   external_url: http://discuss.meshery.io/ 
-- title: GitHub
-  external_url: https://github.com/meshery/meshery
+# - title: GitHub
+#   external_url: https://github.com/meshery/meshery
 
