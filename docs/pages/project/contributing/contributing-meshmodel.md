@@ -17,6 +17,23 @@ In the context of MeshModel, the `Core Constructs` of MeshModel are represented 
 
 2. `Definition` (static): The definition is an implementation of the schema. It contains specific configurations and values for the construct at hand. The definition provides the actual configuration details for a specific instance of the construct. It is static because it is created based on the schema but does not change once created. The definition is used to instantiate instances of the construct.
 
+        Things to Keep in Mind while creating RelationshipDefinitions:
+
+        a. Relationships are defined only between Components.
+        b. The values for Kind, Version  and Model are case-sensitive
+        c. The convention is to use camel-casing for Kind and SubType values.
+        d. Absence of a field means in the selector means “*” (or wildcard).
+            - If we have a selector with {Kind: Pod, Model: Kubernetes}, the absence of the Version field here 
+              means that all the versions of the Kubernetes Pod resource (e.g. k8s.io/v1/betav2) will match.
+        e. In the event of conflicting Relationship Definitions, union between them is taken. 
+            - If we have two Relationships, one from (Component A) to (Component B and Component F), and another 
+              from (Component A) to (Component B and Component C), then it is similar to having a Relationship 
+              from Component A to Component B, C and F 
+        f. In the event of an overlapping set of complementary Relationship Definitions, Union.
+        g. In the event of an overlapping set of conflicting  Relationship Definitions: 
+            - No relationship type (Kind) is inherently more important than the next one, so will not be any case 
+              of conflict
+
 3. `Instance` (dynamic): The instance represents a realized construct. It is a dynamic representation that corresponds to a deployed or discovered instance of the construct. The instance is created based on the definition and represents an actual running or deployed version of the construct within the service mesh environment.
 
 If a specific attribute is not provided with a value in the definition, it means that the value for that attribute has to be written or configured per construct. In other words, the absence of a value indicates that the configuration for that attribute is required and specific to each individual construct instance.
@@ -35,8 +52,7 @@ Relationships within MeshModel play a crucial role in establishing concrete visu
     - [Hierarchical]({{ site.baseurl }}/assets/img/meshmodel/relationships/hierarchical_relationship.png)
     - [Sibling]({{ site.baseurl }}/assets/img/meshmodel/relationships/sibling_relationship.png)
     - [Binding]({{ site.baseurl }}/assets/img/meshmodel/relationships/binding_relationship.png)
-    - [Mount Edge]({{ site.baseurl }}/assets/img/meshmodel/relationships/mount_edge_relationship.png)
-    - [Network Policy Edge]({{ site.baseurl }}/assets/img/meshmodel/relationships/network_policy_edge_relationship.png)
+    - [Edge]({{ site.baseurl }}/assets/img/meshmodel/relationships/edge_relationship.png)
 
 4. Prospose the appropriate relationship type, using one of the predefined set of relationship types or suggest a new relationship where an existing type does not fit.
 5. Create a Relationship Definition (yaml).
