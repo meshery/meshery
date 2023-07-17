@@ -65,9 +65,9 @@ mesheryctl exp filter delete test-wasm
 		}
 
 		// Read file
-		fileReader, err := os.Open(file)
+		fileReader, err := os.Open(filter)
 		if err != nil {
-			return errors.New(utils.SystemError(fmt.Sprintf("failed to read file %s", file)))
+			return errors.New(utils.SystemError(fmt.Sprintf("failed to read file %s", filter)))
 		}
 
 		req, err := utils.NewRequest("DELETE", mctlCfg.GetBaseMesheryURL()+"/api/filter/deploy", fileReader)
