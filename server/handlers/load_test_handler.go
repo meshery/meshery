@@ -201,7 +201,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	performanceProfileData, err := provider.GetPerformanceProfile(req, profileID)
 	if err != nil {
 		h.log.Error(err)
-		http.Error(w, ErrLoadCertificate(err).Error(), http.StatusInternalServerError)
+		http.Error(w, ErrFetchProfile(err).Error(), http.StatusInternalServerError)
 		return
 	}
 

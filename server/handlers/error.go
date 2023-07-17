@@ -89,6 +89,7 @@ const (
 	ErrGetPatternCode                   = "2164"
 	ErrDeletePatternCode                = "2165"
 	ErrFetchPatternCode                 = "2166"
+	ErrFetchProfileCode					= "2301"
 	ErrImportPatternCode                = "2167"
 	ErrEncodePatternCode                = "2168"
 	ErrDecodePatternCode                = "2169"
@@ -447,6 +448,10 @@ func ErrDeletePattern(err error) error {
 
 func ErrFetchPattern(err error) error {
 	return errors.New(ErrFetchPatternCode, errors.Alert, []string{"Error failed to fetch pattern"}, []string{err.Error()}, []string{"Failed to retrieve the list of all the Patterns"}, []string{})
+}
+
+func ErrFetchProfile(err error) error {
+	return errors.New(ErrFetchProfileCode, errors.Alert, []string{"Error failed to fetch profile"}, []string{err.Error()}, []string{"Failed to retrieve the performance profile"}, []string{})
 }
 
 func ErrImportPattern(err error) error {

@@ -75,13 +75,19 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com"
 // Options for wrk2 - https://github.com/layer5io/gowrk2/blob/v0.6.1/api/gowrk2.go#L47-L53
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --options [filepath|json-string]
 
+// Examples -
+mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator nighthawk --options '{"requestsPerSecond": 10, "maxPendingRequests": 5}'
+mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator fortio --options '{"MethodOverride": "POST"}'
+mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator wrk2 --options '{"DurationInSeconds": 15, "Thread": 3}'
+
+
 // Run Performance test using SMP compatible test configuration
 mesheryctl perf apply -f perf-config.yaml
 
 // Run performance test using SMP compatible test configuration and override values with flags
 mesheryctl perf apply -f [filepath] --flags
 
-// Choice of load generator - fortio or wrk2 (default: fortio)
+// Choice of load generator - fortio, wrk2 or nighthawk (default: fortio)
 mesheryctl perf apply meshery-test --load-generator wrk2
 
 // Execute a Performance test with specified queries per second
