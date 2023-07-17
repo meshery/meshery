@@ -60,6 +60,7 @@ function generatePerformanceProfile(data) {
     id,
     name,
     loadGenerator,
+    loadGeneratorOption,
     endpoint,
     serviceMesh,
     concurrentRequest,
@@ -88,6 +89,7 @@ function generatePerformanceProfile(data) {
     request_cookies : requestCookies,
     content_type : contentType,
     metadata : {
+      additional_options: [loadGeneratorOption],
       ca_certificate : {
         file : caCertificate.file,
         name : caCertificate.name
@@ -203,6 +205,7 @@ class MesheryPerformanceComponent extends React.Component {
       performanceProfileID,
       profileName,
       loadGenerator,
+      loadGeneratorOption,
       headers,
       cookies,
       reqBody,
@@ -218,10 +221,12 @@ class MesheryPerformanceComponent extends React.Component {
       t,
       tValue : t,
       loadGenerator : loadGenerator || "fortio",
+      loadGeneratorOption : loadGeneratorOption || "",
       result,
       headers : headers || "",
       cookies : cookies || "",
       reqBody : reqBody || "",
+      loadGenerator: loadGenerator || "", 
       contentType : contentType || "",
       certificate : {},
       certificateKey : {},
@@ -329,6 +334,7 @@ class MesheryPerformanceComponent extends React.Component {
     const profile = generatePerformanceProfile({
       name : self.profileName,
       loadGenerator : self.loadGenerator,
+      loadGeneratorOption : self.loadGeneratorOption,
       endpoint : self.url,
       serviceMesh : self.meshName,
       concurrentRequest : +self.c || 0,
@@ -350,6 +356,7 @@ class MesheryPerformanceComponent extends React.Component {
     this.setState({
       profileName : "",
       loadGenerator : "",
+      loadGeneratorOption : "",
       url : "",
       meshName : "",
       c : 0,
@@ -433,7 +440,7 @@ class MesheryPerformanceComponent extends React.Component {
   };
 
   submitLoadTest = (id) => {
-    const { testName, meshName, url, qps, c, t, loadGenerator, testUUID, headers, cookies, reqBody, contentType } =
+    const { testName, meshName, url, qps, c, t, loadGenerator, loadGeneratorOption, testUUID, headers, cookies, reqBody, contentType } =
       this.state;
 
     const computedTestName = MesheryPerformanceComponent.generateTestName(testName, meshName);
@@ -452,6 +459,7 @@ class MesheryPerformanceComponent extends React.Component {
       dur,
       uuid : testUUID,
       loadGenerator,
+      loadGeneratorOption,
       headers : headers,
       cookies : cookies,
       reqBody : reqBody,
@@ -717,6 +725,7 @@ class MesheryPerformanceComponent extends React.Component {
       c,
       t,
       loadGenerator,
+      loadGeneratorOption,
       meshName,
       result,
       urlError,
@@ -1022,6 +1031,19 @@ class MesheryPerformanceComponent extends React.Component {
                           onChange={this.handleChange("reqBody")}
                         ></TextField>
                       </Grid>
+                      <Grid item xs={12}>
+                        <TextField
+                          id="loadGeneratorOption"
+                          name="loadGeneratorOption"
+                          label="Load Generator Option e.g. JSON String"
+                          fullWidth
+                          value={loadGeneratorOption}
+                          multiline
+                          margin="normal"
+                          variant="outlined"
+                          onChange={this.handleChange("loadGeneratorOption")}
+                        ></TextField>
+                      </Grid>
                       <Grid container xs={12} md={12}>
                         <Grid item xs={6}>
                           <TextField
@@ -1039,7 +1061,7 @@ class MesheryPerformanceComponent extends React.Component {
                               className={classes.button}
                             >
                               <input id="upload-cacertificate" type="file" accept={".crt"} name="upload-button"  hidden data-cy="cacertificate-upload-button" />
-                            Browse
+                                Browse
                             </Button>
                           </label>
                         </Grid>
