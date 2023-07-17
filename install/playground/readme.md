@@ -67,6 +67,11 @@ Make sure to add nodeexporter.service inside /etc/systemd/system so that node ex
 After this create the namespace `monitoring` and apply `prometheus.yaml`.
 Notice the job_name: `prometheus` configured with two targets. It is the address of node exporter running on each node.
 
+## Grafana deployment
+Grafana uses prometheus as data source and expose it 3000. Prometheus and Node exporter should be deployed a long as with Grafana.
+
+Create the namespace `monitoring` if not already done and apply `grafana.yaml`.
+Notice that url in the data source should match with prometheus
 
 ### Nginx Configuration for websocket (until annotations issue is solved)
 ## When to do this: Whenever Ingress is reset directly or indirectly(via scaling deployments).
