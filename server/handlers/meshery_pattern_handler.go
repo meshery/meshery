@@ -526,6 +526,7 @@ func (h *Handler) PublishCatalogPatternHandler(
 
 	go h.config.ConfigurationChannel.PublishPatterns()
 	rw.Header().Set("Content-Type", "application/json")
+	rw.WriteHeader(http.StatusAccepted)
 	fmt.Fprint(rw, string(resp))
 }
 

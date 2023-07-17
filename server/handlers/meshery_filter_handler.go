@@ -365,6 +365,7 @@ func (h *Handler) PublishCatalogFilterHandler(
 
 	go h.config.ConfigurationChannel.PublishFilters()
 	rw.Header().Set("Content-Type", "application/json")
+	rw.WriteHeader(http.StatusAccepted)
 	fmt.Fprint(rw, string(resp))
 }
 
