@@ -30,7 +30,7 @@ label {
   padding: 15px 25px;
   font-weight: 600;
   text-align: center;
-  color: #bbb;
+  color: var(--background-primary);
   border: 1px solid transparent;
 }
 
@@ -59,12 +59,13 @@ label[for*='4']:before {
 label:hover {
   color: #888;
   cursor: pointer;
+  background-color: var(--color-summary-background);
 }
 
 input:checked + label {
-  color: #555;
+  color: var(--color-secondary-dark);
   border: 1px solid #ddd;
-  border-top: 2px solid orange;
+  border-top: 2px solid var(--brand-color);
   border-bottom: 1px solid #fff;
 }
 

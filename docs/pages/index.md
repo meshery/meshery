@@ -88,38 +88,9 @@ language: en
         {% endif %}
       {% endfor %}
     </ul>
-    <h6><a href="{{ site.baseurl }}/service-meshes" class="text-black section-title">Service Mesh Specific Management</a></h6>
-    <ul>
-      {% for item in sorted_pages %}
-      {% if item.type=="service-mesh" and item.list!="exclude" and item.language!="es"  -%}
-        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-        </li>
-        {% endif %}
-      {% endfor %}
-      {% for adapter in site.adapters -%}
-      {% if adapter.project_status -%}
-        <li><img src="{{ adapter.image }}" style="width:20px;height:20px; transform:translateY(5px)"/> <a href="{{ site.baseurl }}{{ adapter.url }}">{{ adapter.name }}</a></li>
-      {% endif -%}
-      {% endfor %}
-    </ul>
   </div>
 
- <!-- Extensions -->
-  <div class="section">
-    <a href="{{ site.baseurl }}/extensions">
-        <div class="btn-primary">Extensions</div>
-    </a>
-    <h6><a href="{{ site.baseurl }}/extensions" class="text-black section-title">Extensions</a></h6>
-    <ul>
-      {% for item in sorted_pages %}
-      {% if item.type=="extensions" and item.list!="exclude" and item.language!="es" -%}
-        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-        </li>
-        {% endif %}
-      {% endfor %}
-    </ul>
-
-  <!-- GUIDES -->
+<!-- GUIDES -->
   <div class="section">
     <a href="{{ site.baseurl }}/guides">
         <div class="btn-primary">Guides</div>
@@ -136,6 +107,36 @@ language: en
   </div>
 
 </div>
+
+
+ <!-- Extensions -->
+  <div class="section">
+    <a href="{{ site.baseurl }}/extensions">
+        <div class="btn-primary">Extensions</div>
+    </a>
+    <h6><a href="{{ site.baseurl }}/extensions" class="text-black section-title">Extensions</a></h6>
+    <ul>
+      {% for item in sorted_pages %}
+      {% if item.type=="extensions" and item.list!="exclude" and item.language!="es" -%}
+        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+        </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+     <h6><a href="{{ site.baseurl }}/service-meshes" class="text-black section-title">Service Mesh Specific Management</a></h6>
+    <ul>
+      {% for item in sorted_pages %}
+      {% if item.type=="service-mesh" and item.list!="exclude" and item.language!="es"  -%}
+        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+        </li>
+        {% endif %}
+      {% endfor %}
+      {% for adapter in site.adapters -%}
+      {% if adapter.project_status -%}
+        <li><img src="{{ adapter.image }}" style="width:20px;height:20px; transform:translateY(5px)"/> <a href="{{ site.baseurl }}{{ adapter.url }}">{{ adapter.name }}</a></li>
+      {% endif -%}
+      {% endfor %}
+    </ul>
 
 <!-- <div style="text-align:center;padding:0;margin:0;">
 <img src="https://layer5.io/assets/images/meshery/meshery-logo-shadow-light-white-text-side.svg" width="60%" />
