@@ -627,6 +627,12 @@ function MesheryPatterns({
       pattern : {},
       name : ""
     });
+
+    setPayload({
+      id : "",
+      catalog_data : {}
+    });
+
   };
 
   const handleDeploy = (pattern_file, name) => {

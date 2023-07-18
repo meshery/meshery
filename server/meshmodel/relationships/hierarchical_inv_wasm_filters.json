@@ -20,7 +20,7 @@
             "from": [
                 {
                     "kind": "WASMFilter",
-                    "model": "Istio Base",
+                    "model": "istio-base",
                     "patch": {
                         "patchStrategy": "replace",
                         "mutatorRef": [
@@ -34,7 +34,7 @@
             "to": [
                 {
                     "kind": "EnvoyFilter",
-                    "model": "Istio Base",
+                    "model": "istio-base",
                     "patch": {
                         "patchStrategy": "replace",
                         "mutatedRef": [

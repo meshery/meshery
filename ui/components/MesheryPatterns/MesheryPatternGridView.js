@@ -101,6 +101,12 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
       pattern : {},
       name : ""
     });
+
+    setPayload({
+      id : "",
+      catalog_data : {}
+    });
+
   };
 
   const handleUploadImport = () => {

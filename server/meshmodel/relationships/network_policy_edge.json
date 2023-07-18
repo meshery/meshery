@@ -20,13 +20,13 @@
         "from": [
             {
                 "kind": "Pod",
-                "model": "Kubernetes"
+                "model": "kubernetes"
             }
         ],
         "to": [
             {
                 "kind": "Pod",
-                "model": "Kubernetes"
+                "model": "kubernetes"
             }
         ]
       }
