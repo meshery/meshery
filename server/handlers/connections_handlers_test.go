@@ -15,7 +15,7 @@ import (
 var testcon = &models.ConnectionPayload{
 	Kind:    "meshery",
 	SubType: "management",
-	Type:    "type-value",
+	Type:    "platform",
 	MetaData: map[string]interface{}{
 		"key1": "value1",
 		"key2": 123,
