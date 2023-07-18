@@ -8,7 +8,7 @@ import (
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/utils/events"
-	"github.com/vmihailenco/taskq/v3"
+	"github.com/vmihailenco/taskq/v4"
 )
 
 // Handler type is the bucket for configs and http handlers
@@ -54,7 +54,7 @@ func NewHandlerInstance(
 		Provider:           provider,
 	}
 
-	h.task = taskq.RegisterTask(&taskq.TaskOptions{
+	h.task = taskq.RegisterTask(&taskq.QueueConfig{
 		Name:    "submitMetrics",
 		Handler: h.CollectStaticMetrics,
 	})

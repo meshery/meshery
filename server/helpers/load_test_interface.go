@@ -64,16 +64,18 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 	var res periodic.HasRunnerResult
 	if opts.SupportedLoadTestMethods == 2 {
 		o := fgrpc.GRPCRunnerOptions{
-			RunnerOptions:      ro,
-			Destination:        rURL,
-			CACert:             opts.CACert,
-			Service:            opts.GRPCHealthSvc,
+			RunnerOptions: ro,
+			TLSOptions:    fhttp.TLSOptions{},
+			Destination:   rURL,
+			Service:       opts.GRPCHealthSvc,
+			// Profiler:           "",
+			Payload:            string(httpOpts.Payload),
 			Streams:            opts.GRPCStreamsCount,
-			AllowInitialErrors: opts.AllowInitialErrors,
-			Payload:            httpOpts.PayloadString(),
 			Delay:              opts.GRPCPingDelay,
+			CertOverride:       opts.CACert,
+			AllowInitialErrors: opts.AllowInitialErrors,
 			UsePing:            opts.GRPCDoPing,
-			UnixDomainSocket:   httpOpts.UnixDomainSocket,
+			// Metadata:           map[string][]string{},
 		}
 		res, err = fgrpc.RunGRPCTest(&o)
 	} else {
@@ -408,7 +410,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		}
 	}
 
-	d, err := nighthawk_client.Transform(res1)
+	d, err := nighthawk_client.Transform(res1, "transform")
 	if err != nil {
 		return nil, nil, ErrTransformingData(err)
 	}

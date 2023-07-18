@@ -24,7 +24,7 @@ import (
 	"github.com/layer5io/meshkit/utils/events"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/sirupsen/logrus"
-	v1 "k8s.io/client-go/applyconfigurations/meta/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // swagger:route POST /api/pattern/deploy PatternsAPI idPostDeployPattern
@@ -310,6 +310,7 @@ func (sap *serviceActionProvider) Mutate(p *core.Pattern) {
 	}
 }
 
+// v1.StatusApplyConfiguration has deprecated, needed to find a different option to do this
 // NOTE: Currently tied to kubernetes
 // Returns ComponentName->ContextID->Response
 func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[string]map[string]core.DryRunResponse2, err error) {
@@ -319,64 +320,9 @@ func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[s
 			if err != nil {
 				return resp, err
 			}
-
-			st, ok, err := k8s.DryRunHelper(cl, cmp)
-			dResp := core.DryRunResponse2{Success: ok, Component: &core.Service{
-				Name:        cmp.Name,
-				Type:        cmp.Spec.Type,
-				Namespace:   cmp.Namespace,
-				APIVersion:  cmp.Spec.APIVersion,
-				Version:     cmp.Spec.Version,
-				Model:       cmp.Spec.Model,
-				Labels:      cmp.Labels,
-				Annotations: cmp.Annotations,
-			}}
-			// Dry run was success
-			if ok {
-				dResp.Component.Settings = make(map[string]interface{})
-				for k, v := range st {
-					if k == "apiVersion" || k == "kind" || k == "metadata" {
-						continue
-					}
-					dResp.Component.Settings[k] = v
-				}
-			} else if err != nil { //Dry run failed due to some error eg: K8s server could not identify the resource
-				dResp.Error = &core.DryRunResponse{
-					Status: err.Error(),
-				}
-			} else { //Dry run failure returned with an error wrapped in kubernetes custom error
-				dResp.Error = &core.DryRunResponse{}
-				byt, err := json.Marshal(st)
-				if err != nil {
-					return nil, err
-				}
-				var a v1.StatusApplyConfiguration
-				err = json.Unmarshal(byt, &a)
-				if err != nil {
-					return nil, err
-				}
-				if a.Status != nil {
-					dResp.Error.Status = *a.Status
-				}
-				dResp.Error.Causes = make([]core.DryRunFailureCause, 0)
-				if a.Details != nil {
-					for _, c := range a.Details.Causes {
-						msg := ""
-						field := ""
-						typ := ""
-						if c.Message != nil {
-							msg = *c.Message
-						}
-						if c.Field != nil {
-							field = cmp.Name + "." + getComponentFieldPathFromK8sFieldPath(*c.Field)
-						}
-						if c.Type != nil {
-							typ = string(*c.Type)
-						}
-						failureCase := core.DryRunFailureCause{Message: msg, FieldPath: field, Type: typ}
-						dResp.Error.Causes = append(dResp.Error.Causes, failureCase)
-					}
-				}
+			dResp, err := dryRunComponent(cl, cmp)
+			if err != nil {
+				return resp, err
 			}
 			if resp == nil {
 				resp = make(map[string]map[string]core.DryRunResponse2)
@@ -389,6 +335,75 @@ func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[s
 	}
 	return
 }
+
+func dryRunComponent(cl *meshkube.Client, cmp v1alpha1.Component) (core.DryRunResponse2, error) {
+	st, ok, err := k8s.DryRunHelper(cl, cmp)
+	dResp := core.DryRunResponse2{Success: ok, Component: &core.Service{
+		Name:        cmp.Name,
+		Type:        cmp.Spec.Type,
+		Namespace:   cmp.Namespace,
+		APIVersion:  cmp.Spec.APIVersion,
+		Version:     cmp.Spec.Version,
+		Model:       cmp.Spec.Model,
+		Labels:      cmp.Labels,
+		Annotations: cmp.Annotations,
+	}}
+	if ok {
+		dResp.Component.Settings = filterSettings(st)
+	} else if err != nil {
+		dResp.Error = &core.DryRunResponse{Status: err.Error()}
+	} else {
+		dResp.Error = parseDryRunFailure(st, cmp.Name)
+	}
+	return dResp, nil
+}
+
+func filterSettings(settings map[string]interface{}) map[string]interface{} {
+	filteredSettings := make(map[string]interface{})
+	for k, v := range settings {
+		if k != "apiVersion" && k != "kind" && k != "metadata" {
+			filteredSettings[k] = v
+		}
+	}
+	return filteredSettings
+}
+
+func parseDryRunFailure(settings map[string]interface{}, name string) *core.DryRunResponse {
+	byt, err := json.Marshal(settings)
+	if err != nil {
+		return nil
+	}
+	var a metav1.Status
+	err = json.Unmarshal(byt, &a)
+	if err != nil {
+		return nil
+	}
+	dResp := core.DryRunResponse{}
+	if a.Status != "" {
+		dResp.Status = a.Status
+	}
+	if a.Details != nil {
+		dResp.Causes = make([]core.DryRunFailureCause, 0)
+		for _, c := range a.Details.Causes {
+			msg := ""
+			field := ""
+			typ := ""
+			if c.Message != "" {
+				msg = c.Message
+			}
+			if c.Field != "" {
+				field = name + "." + getComponentFieldPathFromK8sFieldPath(c.Field)
+			}
+			if c.Type != "" {
+				typ = string(c.Type)
+			}
+			failureCase := core.DryRunFailureCause{Message: msg, FieldPath: field, Type: typ}
+			dResp.Causes = append(dResp.Causes, failureCase)
+		}
+	}
+	return &dResp
+}
+
 func getComponentFieldPathFromK8sFieldPath(path string) (newpath string) {
 	if strings.HasPrefix(path, "metadata.") {
 		path = strings.TrimPrefix(path, "metadata.")
