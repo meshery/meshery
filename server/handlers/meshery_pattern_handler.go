@@ -461,7 +461,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 // Creates a local copy of a published pattern with id: id
 // responses:
 //
-//	202 : noContentWrapper
+//	200 : noContentWrapper
 //
 // CloneMesheryPatternHandler clones a pattern with the given id
 func (h *Handler) CloneMesheryPatternHandler(
@@ -497,7 +497,7 @@ func (h *Handler) CloneMesheryPatternHandler(
 // Publishes pattern to Meshery Catalog by setting visibility to published and setting catalog data
 // responses:
 //
-//	200: noContentWrapper
+//	202: noContentWrapper
 //
 // PublishCatalogPatternHandler sets visibility of pattern with given id as published
 func (h *Handler) PublishCatalogPatternHandler(
