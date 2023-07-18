@@ -89,7 +89,7 @@ const (
 	ErrGetPatternCode                   = "2164"
 	ErrDeletePatternCode                = "2165"
 	ErrFetchPatternCode                 = "2166"
-	ErrFetchProfileCode					= "2301"
+	ErrFetchProfileCode					= "replace_me"
 	ErrImportPatternCode                = "2167"
 	ErrEncodePatternCode                = "2168"
 	ErrDecodePatternCode                = "2169"

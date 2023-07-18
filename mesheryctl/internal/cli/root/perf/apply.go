@@ -74,12 +74,10 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com"
 // Options for fortio - https://github.com/fortio/fortio/blob/v1.57.0/fhttp/httprunner.go#L77-L84
 // Options for wrk2 - https://github.com/layer5io/gowrk2/blob/v0.6.1/api/gowrk2.go#L47-L53
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --options [filepath|json-string]
-
-// Examples -
+mesheryctl perf apply meshery-profile-new --url "https://google.com" --options path/to/options.json
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator nighthawk --options '{"requestsPerSecond": 10, "maxPendingRequests": 5}'
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator fortio --options '{"MethodOverride": "POST"}'
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator wrk2 --options '{"DurationInSeconds": 15, "Thread": 3}'
-
 
 // Run Performance test using SMP compatible test configuration
 mesheryctl perf apply -f perf-config.yaml
