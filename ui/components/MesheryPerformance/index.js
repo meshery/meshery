@@ -89,7 +89,7 @@ function generatePerformanceProfile(data) {
     request_cookies : requestCookies,
     content_type : contentType,
     metadata : {
-      additional_options: [loadGeneratorOption],
+      additional_options : [loadGeneratorOption],
       ca_certificate : {
         file : caCertificate.file,
         name : caCertificate.name
@@ -226,7 +226,6 @@ class MesheryPerformanceComponent extends React.Component {
       headers : headers || "",
       cookies : cookies || "",
       reqBody : reqBody || "",
-      loadGenerator: loadGenerator || "", 
       contentType : contentType || "",
       certificate : {},
       certificateKey : {},
