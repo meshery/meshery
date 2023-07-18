@@ -9,7 +9,7 @@ newIssueWelcomeComment: >
 newPRWelcomeComment: >
   Yay, your first pull request! :thumbsup: A contributor will be by to give feedback soon. In the meantime, you can find updates in the [#github-notifications](https://layer5io.slack.com/archives/CLVT4TSG4) channel in the [community Slack](https://slack.layer5.io).
 
-  Be sure to double-check that you have signed your commits. Here are instructions for [making signing an implicit activity while peforming a commit](https://github.com/layer5io/layer5/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin).
+  Be sure to double-check that you have signed your commits. Here are instructions for [making signing an implicit activity while performing a commit](https://github.com/layer5io/layer5/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin).
 
 #-------------------------------------------------------------------------------
 # Configuration for first-pr-merge - https://github.com/behaviorbot/first-pr-merge
