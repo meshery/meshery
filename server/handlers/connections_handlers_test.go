@@ -17,8 +17,10 @@ var testcon = &models.ConnectionPayload{
 	SubType: "management",
 	Type:    "platform",
 	MetaData: map[string]interface{}{
-		"key1": "value1",
-		"key2": 123,
+    "server_id": "d058accd-290d-4123-9c19-3ee7c0b1cbdb",
+    "server_version": "v0.6.91",
+    "server_location": "https://playground.meshery.io",
+    "server_build_sha": "4bf9a717"
 	},
 	Status: models.CONNECTED,
 	CredentialSecret: map[string]interface{}{
