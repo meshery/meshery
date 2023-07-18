@@ -38,6 +38,7 @@ export default function CustomSelectWidget({
   ...textFieldProps
 }) {
   const { enumOptions, enumDisabled, emptyValue : optEmptyVal } = options;
+  const xRjsfGridArea = schema?.["x-rjsf-grid-area"]; // check if the field is used in different modal (e.g. publish)
 
   multiple = typeof multiple === 'undefined' ? false : !!multiple;
 
@@ -54,7 +55,9 @@ export default function CustomSelectWidget({
 
   return (
     <>
-      <InputLabel htmlFor={id}>{labelValue(label, hideLabel || !label, false)}</InputLabel>
+      { xRjsfGridArea &&
+        <InputLabel htmlFor={id}>{labelValue(label, hideLabel || !label, false)}</InputLabel>
+      }
       <TextField
         id={id}
         name={id}
@@ -63,6 +66,7 @@ export default function CustomSelectWidget({
         disabled={disabled || readonly}
         autoFocus={autofocus}
         placeholder={placeholder}
+        label={xRjsfGridArea ? "" : labelValue(label, hideLabel || !label, false)}
         error={rawErrors?.length > 0}
         onChange={_onChange}
         onBlur={_onBlur}

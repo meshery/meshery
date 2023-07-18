@@ -146,6 +146,9 @@ function Modal(props) {
 
   const [canNotSubmit, setCanNotSubmit] = useState(false);
   const [snackbar, setSnackbar] = useState(false);
+  const [errors, setErrors] = useState([]);
+
+  console.log("errors", errors);
 
   const renderTooltipContent = () => (
     <div>
@@ -205,6 +208,7 @@ function Modal(props) {
           onChange={onChange}
           liveValidate={false}
           hideTitle={true}
+          setErrors={setErrors}
         />
 
         <DialogActions className={classes.dialogAction}>
@@ -214,7 +218,7 @@ function Modal(props) {
               variant="contained"
               color="primary"
               className={classes.submitButton}
-              disabled={canNotSubmit}
+              disabled={canNotSubmit || errors.length > 0}
               onClick={() => {
                 handleClose();
                 handleSubmit(payload);
@@ -229,7 +233,7 @@ function Modal(props) {
               variant="contained"
               color="primary"
               className={classes.submitButton}
-              disabled={canNotSubmit}
+              disabled={canNotSubmit || errors.length > 0}
               onClick={() => {
                 handleClose();
                 handleSubmit(payload);
