@@ -561,33 +561,17 @@ paths:
             operationId: idGetMeshmodelComponentByCategory
             responses:
                 "200":
-                    $ref: '#/responses/meshmodelComponentsResponseWrapper'
+                    $ref: '#/responses/meshmodelComponentsDuplicateResponseWrapper'
             summary: Handle GET request for getting meshmodel components of a specific model and category.
             tags:
                 - GetMeshmodelComponentByCategory
     /api/meshmodels/categories/{category}/components/{name}:
         get:
-            description: |-
-                Example: ```/api/meshmodels/categories/Orchestration``` and Management/components/Namespace
-                Components can be further filtered through query parameter
-
-                ```?version={version}``` If version is unspecified then all models are returned
-
-                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
-
-                ```?order={field}``` orders on the passed field
-
-                ```?search={[true/false]}``` If search is true then a greedy search is performed
-
-                ```?sort={[asc/desc]}``` Default behavior is asc
-
-                ```?page={page-number}``` Default page number is 1
-
-                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            description: "Example: ```/api/meshmodels/categories/Orchestration``` and Management/components/Namespace\nComponents can be further filtered through query parameter\n\n```?model={model}``` If model is unspecified then all models are returned \n\n```?version={version}``` If version is unspecified then all model versions are returned\n\n```?apiVersion={apiVersion}``` If apiVersion is unspecified then all components are returned\n\n```?order={field}``` orders on the passed field\n\n```?search={[true/false]}``` If search is true then a greedy search is performed\n\n```?sort={[asc/desc]}``` Default behavior is asc\n\n```?page={page-number}``` Default page number is 1\n\n```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```"
             operationId: idGetMeshmodelComponentsByNameByCategory
             responses:
                 "200":
-                    $ref: '#/responses/meshmodelComponentsResponseWrapper'
+                    $ref: '#/responses/meshmodelComponentsDuplicateResponseWrapper'
             summary: Handle GET request for getting meshmodel components of a specific type category.
             tags:
                 - GetMeshmodelComponentsByNameByCategory
@@ -608,7 +592,7 @@ paths:
             operationId: idGetMeshmodelModelsByCategories
             responses:
                 "200":
-                    $ref: '#/responses/meshmodelModelsResponseWrapper'
+                    $ref: '#/responses/meshmodelModelsDuplicateResponseWrapper'
             summary: Handle GET request for getting all meshmodel models for a given category. The component type/model name should be lowercase like "kubernetes", "istio"
             tags:
                 - GetMeshmodelModelsByCategories
@@ -629,7 +613,7 @@ paths:
             operationId: idGetMeshmodelModelsByCategoriesByModel
             responses:
                 "200":
-                    $ref: '#/responses/meshmodelModelsResponseWrapper'
+                    $ref: '#/responses/meshmodelModelsDuplicateResponseWrapper'
             summary: Handle GET request for getting all meshmodel models for a given category. The component type/model name should be lowercase like "kubernetes", "istio"
             tags:
                 - GetMeshmodelModelsByCategoriesByModel
@@ -657,7 +641,7 @@ paths:
             operationId: idGetMeshmodelComponentByModelByCategory
             responses:
                 "200":
-                    $ref: '#/responses/meshmodelComponentsResponseWrapper'
+                    $ref: '#/responses/meshmodelComponentsDuplicateResponseWrapper'
             summary: Handle GET request for getting meshmodel components of a specific model and category. The component type/model name should be lowercase like "kubernetes", "istio"
             tags:
                 - GetMeshmodelComponentByModelByCategory
@@ -667,9 +651,9 @@ paths:
                 Example: ```/api/meshmodels/categories/Orchestration``` and Management/models/kubernetes/components/Namespace
                 Components can be further filtered through query parameter
 
-                ```?version={version}``` If version is unspecified then all models are returned
+                ```?version={version}``` If version is unspecified then all model versions are returned
 
-                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all components are returned
 
                 ```?order={field}``` orders on the passed field
 
@@ -683,7 +667,7 @@ paths:
             operationId: idGetMeshmodelComponentsByNameByModelByCategory
             responses:
                 "200":
-                    $ref: '#/responses/meshmodelComponentsResponseWrapper'
+                    $ref: '#/responses/meshmodelComponentsDuplicateResponseWrapper'
             summary: Handle GET request for getting meshmodel components of a specific type by model and category.
             tags:
                 - GetMeshmodelComponentsByNameByModelByCategory
@@ -710,35 +694,17 @@ paths:
             operationId: idGetAllMeshmodelComponents
             responses:
                 "200":
-                    $ref: '#/responses/meshmodelComponentsResponseWrapper'
-            summary: Handle GET request for getting meshmodel components across all models and categories and their total count.
+                    $ref: '#/responses/meshmodelComponentsDuplicateResponseWrapper'
+            summary: Handle GET request for getting meshmodel components across all models and categories
             tags:
                 - GetAllMeshmodelComponents
     /api/meshmodels/components/{name}:
         get:
-            description: |-
-                Example: ```/api/meshmodels/components/Namespace```
-                Components can be further filtered through query parameter
-
-                ```?version={version}``` If version is unspecified then all models are returned
-
-                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
-
-                ```?order={field}``` orders on the passed field
-
-                ```?sort={[asc/desc]}``` Default behavior is asc
-
-                ```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities
-
-                ```?search={[true/false]}``` If search is true then a greedy search is performed
-
-                ```?page={page-number}``` Default page number is 1
-
-                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            description: "Example: ```/api/meshmodels/components/Namespace```\nComponents can be further filtered through query parameter\n\n```?model={model}``` If model is unspecified then all models are returned \n\n```?version={version}``` If version is unspecified then all model versions are returned\n\n```?apiVersion={apiVersion}``` If apiVersion is unspecified then all components are returned\n\n```?order={field}``` orders on the passed field\n\n```?sort={[asc/desc]}``` Default behavior is asc\n\n```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities\n\n```?search={[true/false]}``` If search is true then a greedy search is performed\n\n```?page={page-number}``` Default page number is 1\n\n```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```"
             operationId: idGetAllMeshmodelComponentsByName
             responses:
                 "200":
-                    $ref: '#/responses/meshmodelComponentsResponseWrapper'
+                    $ref: '#/responses/meshmodelComponentsDuplicateResponseWrapper'
             summary: Handle GET request for getting meshmodel components of a specific type by name across all models and categories
             tags:
                 - GetAllMeshmodelComponentsByName
@@ -761,8 +727,8 @@ paths:
             operationId: idGetMeshmodelModels
             responses:
                 "200":
-                    $ref: '#/responses/meshmodelModelsResponseWrapper'
-            summary: Handle GET request for getting all meshmodel models and their total count.
+                    $ref: '#/responses/meshmodelModelsDuplicateResponseWrapper'
+            summary: Handle GET request for getting all meshmodel models
             tags:
                 - GetMeshmodelModels
     /api/meshmodels/models/{model}:
@@ -784,7 +750,7 @@ paths:
             operationId: idGetMeshmodelModelsByName
             responses:
                 "200":
-                    $ref: '#/responses/meshmodelModelsResponseWrapper'
+                    $ref: '#/responses/meshmodelModelsDuplicateResponseWrapper'
             summary: Handle GET request for getting all meshmodel models. The component type/model name should be lowercase like "kubernetes", "istio"
             tags:
                 - GetMeshmodelModelsByName
@@ -812,7 +778,7 @@ paths:
             operationId: idGetMeshmodelComponentByModel
             responses:
                 "200":
-                    $ref: '#/responses/meshmodelComponentsResponseWrapper'
+                    $ref: '#/responses/meshmodelComponentsDuplicateResponseWrapper'
             summary: Handle GET request for getting meshmodel components of a specific model. The component type/model name should be lowercase like "kubernetes", "istio"
             tags:
                 - GetMeshmodelComponentByModel
@@ -822,9 +788,9 @@ paths:
                 Example: ```/api/meshmodels/models/kubernetes/components/Namespace```
                 Components can be further filtered through query parameter
 
-                ```?version={version}``` If version is unspecified then all models are returned
+                ```?version={version}``` If version is unspecified then all model versions are returned
 
-                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all components are returned
 
                 ```?order={field}``` orders on the passed field
 
@@ -838,7 +804,7 @@ paths:
             operationId: idGetMeshmodelComponentsByNameByModel
             responses:
                 "200":
-                    $ref: '#/responses/meshmodelComponentsResponseWrapper'
+                    $ref: '#/responses/meshmodelComponentsDuplicateResponseWrapper'
             summary: Handle GET request for getting meshmodel components of a specific  model.
             tags:
                 - GetMeshmodelComponentsByNameByModel
@@ -2076,8 +2042,12 @@ responses:
         description: Returns Meshery version
     meshmodelCategoriesResponseWrapper:
         description: Returns meshmodel categories
+    meshmodelComponentsDuplicateResponseWrapper:
+        description: Return meshmoddel components with the count of duplicates
     meshmodelComponentsResponseWrapper:
         description: Return meshmodel components
+    meshmodelModelsDuplicateResponseWrapper:
+        description: Return meshmodel models with the count of duplicates
     meshmodelModelsResponseWrapper:
         description: Returns meshmodel models
     meshmodelRelationshipsResponseWrapper:
