@@ -43,6 +43,7 @@ function RJSFForm({
   // prop should be present in order for the cloned element to override this property
   transformErrors,
   override,
+  formRef = null,
   uiSchema={}
 }) {
   const globalTheme = useTheme();
@@ -64,6 +65,7 @@ function RJSFForm({
       <MuiRJSFForm
         schema={schema.rjsfSchema}
         idPrefix={jsonSchema?.title}
+        ref={formRef}
         onChange={onChange}
         formData={data}
         validator={ajv8validator}
