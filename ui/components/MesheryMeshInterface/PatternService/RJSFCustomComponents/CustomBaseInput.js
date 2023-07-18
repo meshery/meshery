@@ -15,6 +15,10 @@ const BaseInput = (props) => {
   const focused = props.options?.focused // true for datetime-local
   const prettifiedName = name || 'Enter a value'
   const [isFocused, setIsFocused] = React.useState(false);
+  const style = {
+    display : "flex",
+    alignItems : "center"
+  }
   const styles = makeStyles((theme) => ({
     customInputLabel : {
       color : theme.palette.secondary.text,
@@ -29,7 +33,7 @@ const BaseInput = (props) => {
   const classes = styles();
   return (
     <>
-      <div key={props.id}>
+      <div key={props.id} style={xRjsfGridArea ? {} : style}>
         { xRjsfGridArea &&
         <InputLabel htmlFor={props.id}>{prettifiedName}</InputLabel>
         }

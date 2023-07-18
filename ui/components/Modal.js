@@ -148,8 +148,6 @@ function Modal(props) {
   const [snackbar, setSnackbar] = useState(false);
   const [errors, setErrors] = useState([]);
 
-  console.log("errors", errors);
-
   const renderTooltipContent = () => (
     <div>
       <span>{showInfoIcon.text}</span>
