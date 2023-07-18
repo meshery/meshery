@@ -50,6 +50,7 @@ import { iconMedium } from "../css/icons.styles";
 import Modal from "./Modal";
 import { publish_schema } from "./schemas/publish_schema";
 import _ from "lodash";
+import SearchBar from "./searchcommon";
 
 const styles = (theme) => ({
   grid : {
@@ -973,7 +974,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const options = {
     filter : false,
     sort : !(user && user.user_id === "meshery"),
-    search : !(user && user.user_id === "meshery"),
+    search : false,
     filterType : "textField",
     responsive : "standard",
     resizableColumns : true,
@@ -1083,6 +1084,26 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             </div>
           </div>
           }
+          <div
+            className={classes.searchAndView}
+            style={{
+              display : 'flex',
+              alignItems : 'center',
+              justifyContent : 'center',
+              margin : 'auto',
+            }}
+          >
+            <SearchBar
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                initFiltersSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
+              }
+              }
+              label={"Search Filters"}
+              width="80ch"
+            />
+          </div>
           <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingRight : "1rem", paddingTop : "0.2rem" }}>
             <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} />
           </div>
