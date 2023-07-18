@@ -8,3 +8,12 @@ do
           kubectl delete ns "$ns"
     fi
 done
+
+# remove mutatingwebhookconfigurations
+for mwh in $(kubectl get mutatingwebhookconfigurations -o jsonpath="{.items[*].metadata.name}");
+do
+    if [[ "$mwh" == "consul-consul-connect-injector" ]];then
+          echo "Deleting mutatingwebhookconfigurations $mwh"
+          kubectl delete mutatingwebhookconfigurations "$mwh"
+    fi
+done
