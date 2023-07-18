@@ -13,7 +13,7 @@ import (
 )
 
 var testcon = &models.ConnectionPayload{
-	Kind:    "kind-value",
+	Kind:    "meshery",
 	SubType: "subtype-value",
 	Type:    "type-value",
 	MetaData: map[string]interface{}{
