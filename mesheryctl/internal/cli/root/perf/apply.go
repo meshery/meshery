@@ -50,6 +50,8 @@ var (
 	req                *http.Request
 	testBody           string
 	additionalOptions  string
+	certPath           string
+	useCert            bool
 )
 
 var linkDocPerfApply = map[string]string{
@@ -68,6 +70,12 @@ mesheryctl perf apply meshery-profile --flags
 
 // Execute a Performance test with creating a new performance profile
 mesheryctl perf apply meshery-profile-new --url "https://google.com"
+
+// Execute a performance profile using the certificate present in the profile
+mesheryctl perf apply meshery-profile --url "https://google.com" --useCert
+
+// Execute a Performance test creating a new performance profile and pass certificate to be used 
+mesheryctl perf apply meshery-profile-new --url "https://google.com" --certPath path/to/cert.pem --useCert
 
 // Execute a Performance test creating a new performance profile and pass options to the load generator used
 // Options for nighthawk - https://github.com/layer5io/getnighthawk/blob/v1.0.5/pkg/proto/options.pb.go#L882-L1018
@@ -280,6 +288,9 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 
 		q := req.URL.Query()
 
+		if useCert {
+			q.Add("cert", "true")
+		}
 		q.Add("name", testName)
 		q.Add("loadGenerator", loadGenerator)
 		q.Add("c", concurrentRequests)
@@ -328,6 +339,8 @@ func init() {
 	applyCmd.Flags().StringVarP(&filePath, "file", "f", "", "(optional) File containing SMP-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
 	applyCmd.Flags().StringVarP(&testBody, "body", "b", "", "(optional) Load test body. Can be a filepath/string")
 	applyCmd.Flags().StringVar(&additionalOptions, "options", "", "(optional) Additional options to be passed to the load generator. Can be a json string or a filepath containing json")
+	applyCmd.Flags().StringVar(&certPath, "certPath", "", "(optional) Path to the certificate to be used for the test")
+	applyCmd.Flags().BoolVar(&useCert, "useCert", false, "(optional) Use certificate present in the profile")
 }
 
 func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string, error) {
@@ -418,6 +431,25 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 
 		values["metadata"] = map[string]interface{}{
 			"additional_options": additionalOptions,
+		}
+	}
+
+	if fileInfo, err := os.Stat(certPath); err == nil {
+		certFile, err := os.ReadFile(certPath)
+		if err != nil {
+			return "", "", errors.New("unable to read certificate file. " + err.Error())
+		}
+		certData := string(certFile)
+		certName := fileInfo.Name()
+
+		// check if values["metadata"] is nil
+		if values["metadata"] == nil {
+			values["metadata"] = map[string]interface{}{}
+		}
+
+		values["metadata"].(map[string]interface{})["ca_certificate"] = map[string]interface{}{
+			"name":     certName,
+			"certName": certData,
 		}
 	}
 
