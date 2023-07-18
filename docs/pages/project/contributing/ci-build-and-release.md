@@ -235,6 +235,10 @@ ReleaseDrafter generates a GitHub tag and release draft. ReleaseDrafter action w
 
 The publishing of release notes to Meshery Docs is automated. Triggered by a release event, a workflow will checkout the Meshery repo, copy the auto-drafted release notes into a Jekyll collection in Meshery Docs, and generate a pull request.
 
+#### Automated Release Notes Sending
+
+The sending of release notes is now automated as a step in the stable release channel workflow. The release notes are automatically sent to the [developers@meshery.io mailing list](https://groups.google.com/a/meshery.io/g/developers).
+
 #### Automated Pull Request Labeler
 
 A GitHub Issue labeler bot is configured to automatically assign labels to issues based on which files have changed in which directories. For example, a pull request with changes to files in the “/docs/**” folder will receive the “area/docs” label. Presence of the “area/docs” label is used to trigger documentation builds and Netlify builds of the Meshery Docs. Similar labels are assigned and used to trigger workflows or used as conditional flags in workflows to determine which workflows or which steps in a workflows to run. 
@@ -344,8 +348,9 @@ For older releases we have to travel back in time. Using the `Tags` in github we
 1.  On executing `make docs` a `_site` folder is created which has static html files. 
 1.  The `_site` folder is renamed to `v0.X` and is copied into the `docs` folder of the present version. 
 
-The above [steps]({{site.baseurl}}/project/build-and-release#in-the-v0x-folder) for replacing all the instances of direct path are to be followed. 
+## Bi-Weekly Meetings
 
-## Bi-weekly Meetings
+If you are passionate about CI/CD pipelines, DevOps, automated testing, managing deployments, or if you want to learn how to use Meshery and its features, you are invited to join the bi-weekly Build and Release meetings. Find meeting details and agenda in the [community calendar](https://meshery.io/calendar) and the [meeting minutes document](https://docs.google.com/document/d/1GrVdGHZAYeu6wHNLLoiaKNqBtk7enXE9XeDRCvdA4bY/edit#). The meetings are open to everyone and recorded for later viewing. We hope to see you there!
 
-If you are passionate about ci/cd pipelines and DevOps-related works, or if you want to learn how to use Meshery and its features, you are invited to join the bi-weekly meetings hosted by the Meshery community. The meetings are held every other Thursday at 10:00 AM UTC. You can find the meeting details and agenda in the [Meshery calendar](https://meshery.io/calendar) and the [meeting minutes document](https://docs.google.com/document/d/1GrVdGHZAYeu6wHNLLoiaKNqBtk7enXE9XeDRCvdA4bY/edit#). The meetings are open to everyone and recorded for later viewing. We hope to see you there!
+These [steps]({{site.baseurl}}/project/build-and-release#in-the-v0x-folder) for replacing all the instances of direct path are to be followed. 
+

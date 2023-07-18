@@ -48,6 +48,8 @@ import downloadFile from "../utils/fileDownloader";
 import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import ReusableTooltip from "./reusable-tooltip";
+import SearchBar from "./searchcommon";
+
 
 const styles = (theme) => ({
   grid : {
@@ -483,7 +485,7 @@ function MesheryPatterns({
 
   useEffect(() => {
     fetchUserPrefs();
-  }, [])
+  }, [catalogVisibility])
 
   useEffect(() => {
     catalogVisibilityRef.current = catalogVisibility
@@ -627,6 +629,12 @@ function MesheryPatterns({
       pattern : {},
       name : ""
     });
+
+    setPayload({
+      id : "",
+      catalog_data : {}
+    });
+
   };
 
   const handleDeploy = (pattern_file, name) => {
@@ -771,10 +779,11 @@ function MesheryPatterns({
         updateProgress({ showProgress : false });
         page === 0 && stillLoading(false);
         if (result) {
-          setPage(result.page || 0);
+          // setPage(result.page || 0);
           setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
           handleSetPatterns(result.patterns || [])
+          setPatterns(result.patterns || []);
         }
       },
       handleError(ACTION_TYPES.FETCH_PATTERNS)
@@ -1166,7 +1175,7 @@ function MesheryPatterns({
     ),
     filter : false,
     sort : !(user && user.user_id === "meshery"),
-    search : !(user && user.user_id === "meshery"),
+    search : false,
     filterType : "textField",
     responsive : "standard",
     resizableColumns : true,
@@ -1212,10 +1221,10 @@ function MesheryPatterns({
 
       switch (action) {
         case "changePage":
-          initPatternsSubscription(tableState.page.toString(), pageSize.toString(), search, sortOrder);
+          initPatternsSubscription(tableState.page.toString(), pageSize.toString(), search, order);
           break;
         case "changeRowsPerPage":
-          initPatternsSubscription(page.toString(), tableState.rowsPerPage.toString(), search, sortOrder);
+          initPatternsSubscription(page.toString(), tableState.rowsPerPage.toString(), search, order);
           break;
         case "search":
           if (searchTimeout.current) {
@@ -1300,15 +1309,37 @@ function MesheryPatterns({
           </div>
           }
 
+          <div
+            className={classes.searchAndView}
+            style={{
+              display : 'flex',
+              alignItems : 'center',
+              justifyContent : 'center',
+              margin : 'auto',
+            }}
+          >
+            <SearchBar
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                initPatternsSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
+              }
+              }
+              label={"Search Designs"}
+              width="60ch"
+            />
+          </div>
+
           {!selectedPattern.show &&
             <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingRight : "1rem", paddingTop : "0.2rem" }}>
               <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} />
             </div>
           }
 
+
           {!selectedPattern.show &&
             <div className={classes.viewSwitchButton}>
-              <ViewSwitch view={viewType} changeView={setViewType} />
+              <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true}/>
             </div>
           }
         </div>

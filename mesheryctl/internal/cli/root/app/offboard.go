@@ -47,7 +47,6 @@ mesheryctl app offboard -f [filepath]
 		}
 		var req *http.Request
 		var err error
-		client := &http.Client{}
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -57,7 +56,7 @@ mesheryctl app offboard -f [filepath]
 		app := ""
 		isID := false
 		if len(args) > 0 {
-			app, isID, err = utils.Valid(args[0], "application")
+			app, isID, err = utils.ValidId(args[0], "application")
 			if err != nil {
 				return err
 			}
@@ -65,7 +64,7 @@ mesheryctl app offboard -f [filepath]
 
 		// Delete the app using the id
 		if isID {
-			err := utils.DeleteConfiguration(app, "application")
+			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), app, "application")
 			if err != nil {
 				return errors.Wrap(err, utils.AppError(fmt.Sprintf("failed to delete application %s", args[0])))
 			}
@@ -98,17 +97,13 @@ mesheryctl app offboard -f [filepath]
 			return err
 		}
 
-		resp, err := client.Do(req)
+		resp, err := utils.MakeRequest(req)
 		if err != nil {
 			return err
 		}
 		defer resp.Body.Close()
 
 		var response []*models.MesheryPattern
-		// bad api call
-		if resp.StatusCode != 200 {
-			return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-		}
 
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
@@ -129,7 +124,7 @@ mesheryctl app offboard -f [filepath]
 			return err
 		}
 
-		res, err := client.Do(req)
+		res, err := utils.MakeRequest(req)
 		if err != nil {
 			return err
 		}

@@ -50,7 +50,6 @@ const useStyles = makeStyles(() => ({
  * @returns
  */
 function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, scroll = false, color }) {
-  console.log({ schemaSet })
   const classes = useStyles();
   const theme = useTheme();
 

@@ -6,6 +6,7 @@
   --brand-color-secondary: #00b39f;
   --color-white: #fff;
   // ////////////////////////////////////////////
+  --brand-color: #00b39f;
   --color-primary-light: #fff;
   --color-primary-medium: #f8f9fa;
   --color-primary-dark: #f1f3f5;
@@ -16,6 +17,7 @@
   --color-grey-medium: #adb5bd;
   --color-grey-dark: #868e96;
   --color-summary-background:#bac1c8;
+  --color-summary-background-hover:#8f949a;
   --color-details-background:#d3d8dd;
 
   --box-shadow-primary: 3px 3px 10px rgba(0, 0, 0, 0.4);
@@ -62,9 +64,11 @@
   // --section-button: linear-gradient(to right top, #00b39f, #00b09d, #00ae9b, #00ab99, #00a997, #00ac98, #00ae99, #00b19a, #00b99e, #00c2a2, #00caa6, #00d3a9);;
   // --section-button-hover:linear-gradient(to left bottom, #007a6c, #00b09d, #00ae9b, #00ab99, #00a997, #00ac98, #00ae99, #00b19a, #00b99e, #00c2a2, #00caa6, #00d3a9);
   --sidenav-hover: #009c89;
+  --code:#952a1e;
 }
 
 .dark-mode {
+  --brand-color: #00d3a9;
   --color-primary-light: #212529;
   --color-primary-medium: #343a40;
   --color-primary-dark: #495057;
@@ -75,6 +79,7 @@
   --color-grey-medium: #868e96;
   --color-grey-dark: #adb5bd;
   --color-summary-background:#333;
+  --color-summary-background-hover:#666666;
   --color-details-background:#282828;
 
   --box-shadow-primary: 4px 4px 8px rgba(0, 0, 0, 1);
@@ -141,6 +146,7 @@
   --integrations-bg: #676e76;
   --integrations-box-shadow: 4px 4px 14px #41454a, -4px -4px 10px #78808a;
   --sidenav-hover: #00d3a9;
+  --code:#bf3526;
 }
 
 @media (max-width: 600px) {
