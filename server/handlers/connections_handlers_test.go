@@ -20,7 +20,7 @@ var testcon = &models.ConnectionPayload{
     "server_id": "d058accd-290d-4123-9c19-3ee7c0b1cbdb",
     "server_version": "v0.6.91",
     "server_location": "https://playground.meshery.io",
-    "server_build_sha": "4bf9a717"
+    "server_build_sha": "4bf9a717",
 	},
 	Status: models.CONNECTED,
 	CredentialSecret: map[string]interface{}{
