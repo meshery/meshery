@@ -335,7 +335,7 @@ func (h *Handler) CloneMesheryFilterHandler(
 // Publishes filter to Meshery Catalog by setting visibility to published and setting catalog data
 // responses:
 //
-//	200: noContentWrapper
+//	202: noContentWrapper
 //
 // PublishCatalogFilterHandler set visibility of filter with given id as published
 func (h *Handler) PublishCatalogFilterHandler(
@@ -365,6 +365,7 @@ func (h *Handler) PublishCatalogFilterHandler(
 
 	go h.config.ConfigurationChannel.PublishFilters()
 	rw.Header().Set("Content-Type", "application/json")
+	rw.WriteHeader(http.StatusAccepted)
 	fmt.Fprint(rw, string(resp))
 }
 
