@@ -88,13 +88,15 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 			AbortOn:            0,
 		}
 
+		logrus.Debugf("options string: %s", opts.Options)
 		if opts.Options != "" {
+			logrus.Debugf("Fortio config: %+#v", o)
 			err := json.Unmarshal([]byte(opts.Options), &o)
 			if err != nil {
 				return nil, nil, ErrUnmarshal(err, "options string")
 			}
+			logrus.Debugf("Fortio config with options: %+#v", o)
 		}
-
 		res, err = fhttp.RunHTTPTest(&o)
 	}
 	if err != nil {
@@ -144,11 +146,14 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 		Percentiles:       []float64{50, 75, 90, 99, 99.99, 99.999},
 	}
 
+	logrus.Debugf("options string: %s", opts.Options)
 	if opts.Options != "" {
+		logrus.Debugf("GoWrk2 config: %+#v", ro)
 		err := json.Unmarshal([]byte(opts.Options), &ro)
 		if err != nil {
 			return nil, nil, ErrUnmarshal(err, "options string")
 		}
+		logrus.Debugf("GoWrk2 config with options: %+#v", ro)
 	}
 
 	var res periodic.HasRunnerResult
@@ -388,11 +393,14 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		return nil, nil, ErrGrpcSupport(err, "Nighthawk")
 	}
 
+	logrus.Debugf("options string: %s", opts.Options)
 	if opts.Options != "" {
+		logrus.Debugf("Nighthawk CommandLineOptions: %+#v", ro)
 		err := json.Unmarshal([]byte(opts.Options), &ro)
 		if err != nil {
 			return nil, nil, ErrUnmarshal(err, "options string")
 		}
+		logrus.Debugf("Nighthawk CommandLineOptions with options: %+#v", ro)
 	}
 
 	c, err := nighthawk_client.New(nighthawk_client.Options{

@@ -48,10 +48,10 @@ var (
 	filePath           string
 	profileID          string
 	req                *http.Request
-	testBody           string
+	loadTestBody       string
 	additionalOptions  string
 	certPath           string
-	useCert            bool
+	disableCert        bool
 )
 
 var linkDocPerfApply = map[string]string{
@@ -60,24 +60,25 @@ var linkDocPerfApply = map[string]string{
 }
 
 var applyCmd = &cobra.Command{
-	Use:   "apply [profile-name | --file] --flags",
+	Use:   "apply <profile-name>",
 	Short: "Run a Performance test",
 	Long:  `Run Performance test using existing profiles or using flags`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
 // Execute a Performance test with the specified performance profile
-mesheryctl perf apply meshery-profile --flags
+mesheryctl perf apply meshery-profile [flags]
 
 // Execute a Performance test with creating a new performance profile
 mesheryctl perf apply meshery-profile-new --url "https://google.com"
 
-// Execute a performance profile using the certificate present in the profile
-mesheryctl perf apply meshery-profile --url "https://google.com" --useCert
-
 // Execute a Performance test creating a new performance profile and pass certificate to be used 
-mesheryctl perf apply meshery-profile-new --url "https://google.com" --certPath path/to/cert.pem --useCert
+mesheryctl perf apply meshery-profile-new --url "https://google.com" --certPath path/to/cert.pem
+
+// Execute a performance profile without using the certificate present in the profile
+mesheryctl perf apply meshery-profile --url "https://google.com" --disableCert
 
 // Execute a Performance test creating a new performance profile and pass options to the load generator used
+// If the same options are specified in the profile, the passed options will take precedence over the profile options
 // Options for nighthawk - https://github.com/layer5io/getnighthawk/blob/v1.0.5/pkg/proto/options.pb.go#L882-L1018
 // Options for fortio - https://github.com/fortio/fortio/blob/v1.57.0/fhttp/httprunner.go#L77-L84
 // Options for wrk2 - https://github.com/layer5io/gowrk2/blob/v0.6.1/api/gowrk2.go#L47-L53
@@ -88,19 +89,19 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator wrk2 --options '{"DurationInSeconds": 15, "Thread": 3}'
 
 // Run Performance test using SMP compatible test configuration
-mesheryctl perf apply -f perf-config.yaml
+mesheryctl perf apply meshery-profile -f path/to/perf-config.yaml
 
 // Run performance test using SMP compatible test configuration and override values with flags
-mesheryctl perf apply -f [filepath] --flags
+mesheryctl perf apply meshery-profile -f path/to/perf-config.yaml [flags]
 
 // Choice of load generator - fortio, wrk2 or nighthawk (default: fortio)
-mesheryctl perf apply meshery-test --load-generator wrk2
+mesheryctl perf apply meshery-profile --load-generator wrk2
 
 // Execute a Performance test with specified queries per second
-mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --qps 30
+mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --qps 30
 
 // Execute a Performance test with specified service mesh
-mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh istio
+mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --mesh istio
 	`,
 	Annotations: linkDocPerfApply,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -165,8 +166,8 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 				loadGenerator = testClient.LoadGenerator
 			}
 
-			if testBody == "" {
-				testBody = testClient.Body
+			if loadTestBody == "" {
+				loadTestBody = testClient.Body
 			}
 		}
 
@@ -263,8 +264,8 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 					testMesh = profiles[index].ServiceMesh
 				}
 
-				if testBody == "" {
-					testBody = profiles[index].RequestBody
+				if loadTestBody == "" {
+					loadTestBody = profiles[index].RequestBody
 				}
 			}
 		}
@@ -288,7 +289,7 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 
 		q := req.URL.Query()
 
-		if useCert {
+		if !disableCert {
 			q.Add("cert", "true")
 		}
 		q.Add("name", testName)
@@ -296,7 +297,7 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 		q.Add("c", concurrentRequests)
 		q.Add("url", testURL)
 		q.Add("qps", qps)
-		q.Add("reqBody", testBody)
+		q.Add("reqBody", loadTestBody)
 
 		durLen := len(testDuration)
 
@@ -337,10 +338,10 @@ func init() {
 	applyCmd.Flags().StringVar(&testDuration, "duration", "", "(optional) Length of test (e.g. 10s, 5m, 2h). For more, see https://golang.org/pkg/time/#ParseDuration")
 	applyCmd.Flags().StringVar(&loadGenerator, "load-generator", "", "(optional) Load-Generator to be used (fortio/wrk2/nighthawk)")
 	applyCmd.Flags().StringVarP(&filePath, "file", "f", "", "(optional) File containing SMP-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
-	applyCmd.Flags().StringVarP(&testBody, "body", "b", "", "(optional) Load test body. Can be a filepath/string")
+	applyCmd.Flags().StringVarP(&loadTestBody, "body", "b", "", "(optional) Load test body. Can be a filepath/string")
 	applyCmd.Flags().StringVar(&additionalOptions, "options", "", "(optional) Additional options to be passed to the load generator. Can be a json string or a filepath containing json")
-	applyCmd.Flags().StringVar(&certPath, "certPath", "", "(optional) Path to the certificate to be used for the test")
-	applyCmd.Flags().BoolVar(&useCert, "useCert", false, "(optional) Use certificate present in the profile")
+	applyCmd.Flags().StringVar(&certPath, "certPath", "", "(optional) Path to the certificate to be used for the load test")
+	applyCmd.Flags().BoolVar(&disableCert, "disableCert", false, "(optional) Do not use certificate present in the profile")
 }
 
 func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string, error) {
@@ -380,15 +381,15 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 		loadGenerator = "fortio"
 	}
 
-	if testBody != "" {
-		// Check if the testBody is a filepath or a string
-		if _, err := os.Stat(testBody); err == nil {
+	if loadTestBody != "" {
+		// Check if the loadTestBody is a filepath or a string
+		if _, err := os.Stat(loadTestBody); err == nil {
 			utils.Log.Info("Reading test body from file")
-			bodyFile, err := os.ReadFile(testBody)
+			bodyFile, err := os.ReadFile(loadTestBody)
 			if err != nil {
 				return "", "", ErrReadFilepath(err)
 			}
-			testBody = string(bodyFile)
+			loadTestBody = string(bodyFile)
 		}
 	}
 
@@ -408,7 +409,7 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 		"name":               profileName,
 		"qps":                convQPS,
 		"service_mesh":       testMesh,
-		"request_body":       testBody,
+		"request_body":       loadTestBody,
 		"request_cookies":    "",
 		"request_headers":    "",
 		"content_type":       "",
