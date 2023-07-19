@@ -10,6 +10,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/models/events"
 )
 
 // swagger:route POST /api/integrations/connections PostConnection idPostConnection
@@ -18,8 +19,9 @@ import (
 // Creates a new connection
 // responses:
 // 201: noContentWrapper
-func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	bd, err := io.ReadAll(req.Body)
+	userID := uuid.FromStringOrNil(user.ID)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
 		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
@@ -31,19 +33,35 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 	obj := "connection"
 
 	if err != nil {
-		h.log.Error(ErrUnmarshal(err, obj))
-		http.Error(w, ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrUnmarshal(err, obj))
+		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
+
+	eventBuilder := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
 
 	err = provider.SaveConnection(req, &connection, "", false)
 	if err != nil {
-		h.log.Error(ErrFailToSave(err, obj))
-		http.Error(w, ErrFailToSave(err, obj).Error(), http.StatusInternalServerError)
+		_err := ErrFailToSave(err, obj)
+		metadata := map[string]interface{}{
+			"error": _err,
+		}
+		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Error creating connection %s", connection.Name)).WithMetadata(metadata).Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+
+		h.log.Error(_err)
+		http.Error(w, _err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	h.log.Info("connection saved successfully")
+	description := fmt.Sprintf("Connection %s created.", connection.Name)
+
+	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
+	_ = provider.PersistEvent(event)
+	go h.config.EventBroadcaster.Publish(userID, event)
+
+	h.log.Info(description)
 	w.WriteHeader(http.StatusCreated)
 }
 
@@ -91,8 +109,8 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 	}
 
 	if err := json.NewEncoder(w).Encode(connectionsPage); err != nil {
-		h.log.Error(ErrEncoding(err, obj))
-		http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrEncoding(err, obj))
+		http.Error(w, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -142,8 +160,8 @@ func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request,
 	}
 
 	if err := json.NewEncoder(w).Encode(connectionsPage); err != nil {
-		h.log.Error(ErrEncoding(err, obj))
-		http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrEncoding(err, obj))
+		http.Error(w, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -165,8 +183,8 @@ func (h *Handler) GetConnectionsStatus(w http.ResponseWriter, req *http.Request,
 	}
 
 	if err := json.NewEncoder(w).Encode(connectionsStatusPage); err != nil {
-		h.log.Error(ErrEncoding(err, obj))
-		http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrEncoding(err, obj))
+		http.Error(w, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -177,7 +195,7 @@ func (h *Handler) GetConnectionsStatus(w http.ResponseWriter, req *http.Request,
 // Updates existing connection
 // responses:
 // 200: noContentWrapper
-func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
@@ -185,23 +203,42 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 		return
 	}
 
+	userID := uuid.FromStringOrNil(user.ID)
+
 	connection := &models.Connection{}
 	err = json.Unmarshal(bd, connection)
 	obj := "connection"
 	if err != nil {
-		h.log.Error(ErrUnmarshal(err, obj))
-		http.Error(w, ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrUnmarshal(err, obj))
+		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 
-	_, err = provider.UpdateConnection(req, connection)
+	connectionID := connection.ID
+	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+
+	updatedConnection, err := provider.UpdateConnection(req, connection)
 	if err != nil {
-		h.log.Error(ErrQueryGet(obj))
-		http.Error(w, ErrQueryGet(obj).Error(), http.StatusInternalServerError)
+		_err := ErrFailToSave(err, obj)
+		metadata := map[string]interface{}{
+			"error": _err,
+		}
+		event := eventBuilder.WithSeverity(events.Error).WithDescription("Error updating connection").WithMetadata(metadata).Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+
+		h.log.Error(_err)
+		http.Error(w, _err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	h.log.Info("connection updated successfully")
+	description := fmt.Sprintf("Connection %s updated.", updatedConnection.Name)
+
+	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
+	_ = provider.PersistEvent(event)
+	go h.config.EventBroadcaster.Publish(userID, event)
+
+	h.log.Info(description)
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -211,7 +248,10 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 // Updates existing connection using ID
 // responses:
 // 200: mesheryConnectionResponseWrapper
-func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
+	userID := uuid.FromStringOrNil(user.ID)
+
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
@@ -219,23 +259,38 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
+	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
+
 	connection := &models.ConnectionPayload{}
 	err = json.Unmarshal(bd, connection)
 	obj := "connection"
 	if err != nil {
-		h.log.Error(ErrUnmarshal(err, obj))
-		http.Error(w, ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrUnmarshal(err, obj))
+		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 
-	_, err = provider.UpdateConnectionById(req, connection, mux.Vars(req)["connectionId"])
+	updatedConnection, err := provider.UpdateConnectionById(req, connection, mux.Vars(req)["connectionId"])
 	if err != nil {
-		h.log.Error(ErrFailToSave(err, obj))
-		http.Error(w, ErrFailToSave(err, obj).Error(), http.StatusInternalServerError)
+		_err := ErrFailToSave(err, obj)
+		metadata := map[string]interface{}{
+			"error": _err,
+		}
+		event := eventBuilder.WithSeverity(events.Error).WithDescription("Error updating connection").WithMetadata(metadata).Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+
+		h.log.Error(_err)
+		http.Error(w, _err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	h.log.Info("connection updated successfully")
+	description := fmt.Sprintf("Connection %s updated.", updatedConnection.Name)
+	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
+
+	_ = provider.PersistEvent(event)
+	go h.config.EventBroadcaster.Publish(userID, event)
+	h.log.Info(description)
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -245,15 +300,32 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 // Deletes existing connection
 // responses:
 // 200: noContentWrapper
-func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
-	_, err := provider.DeleteConnection(req, connectionID)
+	userID := uuid.FromStringOrNil(user.ID)
+	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
+
+	deletedConnection, err := provider.DeleteConnection(req, connectionID)
 	if err != nil {
 		obj := "connection"
-		h.log.Error(ErrFailToDelete(err, obj))
-		http.Error(w, ErrFailToDelete(err, obj).Error(), http.StatusInternalServerError)
+		_err := ErrFailToSave(err, obj)
+		metadata := map[string]interface{}{
+			"error": _err,
+		}
+		event := eventBuilder.WithSeverity(events.Error).WithDescription("Error deleting connection").WithMetadata(metadata).Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+
+		h.log.Error(_err)
+		http.Error(w, _err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	description := fmt.Sprintf("Connection %s deleted.", deletedConnection.Name)
+	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
+
+	_ = provider.PersistEvent(event)
+	go h.config.EventBroadcaster.Publish(userID, event)
 
 	h.log.Info("connection deleted successfully")
 	w.WriteHeader(http.StatusOK)
