@@ -172,7 +172,7 @@ function Modal(props) {
     setCanNotSubmit(false);
     const handleDesignNameCheck = () => {
       const designName = title?.toLowerCase();
-      const forbiddenWords = ["untitled design", "untitle", "lfx"];
+      const forbiddenWords = ["untitled design", "Untitled", "lfx"];
 
       for (const word of forbiddenWords) {
         if (designName?.includes(word)) {
@@ -225,7 +225,10 @@ function Modal(props) {
             disabled={canNotSubmit}
             onClick={handleFormSubmit}
           >
-            <PublicIcon className={classes.iconPatt} />
+            {/* TODO: change below logic to support adding icon from prop */}
+            {!submitBtnText && (
+              <PublicIcon className={classes.iconPatt} />
+            )}
             <span className={classes.btnText}>{submitBtnText ? submitBtnText : "Submit for Approval" }</span>
           </Button>
           {showInfoIcon && (
