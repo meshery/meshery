@@ -260,6 +260,11 @@ const darkRjsfTheme = createTheme({
         width : "calc(100% - 4px)",
       }
     },
+    MuiFormControlLabel : {
+      root : {
+        textTransform : 'capitalize',
+      }
+    },
     MuiInputLabel : {
       root : {
         whiteSpace : "nowrap",
