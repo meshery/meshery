@@ -274,7 +274,7 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 					modified = modifiedProps
 				}
 
-				deleteProperties(modified)
+				component.DeleteFields(modified)
 				crd, err = json.Marshal(modified)
 				if err != nil {
 					fmt.Printf("%v", err)
@@ -290,21 +290,6 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 		}
 	}
 	return res
-}
-
-var fieldsToDelete = [4]string{"apiVersion", "kind", "status", "metadata"}
-
-func deleteProperties(m map[string]interface{}) {
-	key := "properties"
-	if m[key] == nil {
-		return
-	}
-	if prop, ok := m[key].(map[string]interface{}); ok && prop != nil {
-		for _, f := range fieldsToDelete {
-			delete(prop, f)
-		}
-		m[key] = prop
-	}
 }
 
 // TODO: To be moved in meshkit
