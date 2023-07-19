@@ -7,11 +7,8 @@ import { FILE_OPS } from "../../utils/Enum";
 import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
-import PublicIcon from "@material-ui/icons/Public";
-
 import useStyles from "../MesheryPatterns/Grid.styles";
-// import PublishModal from "../Modals/PublishModal";
-import { publish_schema } from "../schemas/publish_schema";
+import { publish_schema, publish_ui_schema } from "../schemas/publish_schema";
 import _ from "lodash";
 import Modal from "../Modal";
 
@@ -260,26 +257,16 @@ function FiltersGrid({
         <Modal
           open={publishModal.open}
           schema={publish_schema}
+          uiSchema={publish_ui_schema}
           onChange={onChange}
           handleClose={handlePublishModalClose}
           formData={_.isEmpty(payload.catalog_data) ? publishModal?.filter?.catalog_data : payload.catalog_data}
           aria-label="catalog publish"
           title={publishModal.filter?.name}
-        >
-          <Button
-            title="Publish"
-            variant="contained"
-            color="primary"
-            className={classes.testsButton}
-            onClick={() => {
-              handlePublishModalClose();
-              handlePublish(payload);
-            }}
-          >
-            <PublicIcon className={classes.iconPatt} />
-            <span className={classes.btnText}> Publish </span>
-          </Button>
-        </Modal>
+          handleSubmit={handlePublish}
+          payload={payload}
+          showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }}
+        />
       )}
       <UploadImport
         open={importModal.open}

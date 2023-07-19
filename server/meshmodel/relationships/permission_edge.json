@@ -20,37 +20,37 @@
       "from": [
         {
           "kind": "ClusterRole",
-          "model": "Kubernetes"
+          "model": "kubernetes"
         },
         {
           "kind": "Role",
-          "model": "Kubernetes"
+          "model": "kubernetes"
         },
         { 
           "kind": "ClusterRoleBinding",
-          "model": "Kubernetes"
+          "model": "kubernetes"
         },
         {
           "kind": "RoleBinding",
-          "model": "Kubernetes"
+          "model": "kubernetes"
         }
       ],
       "to": [
         {
           "kind": "ClusterRole",
-          "model": "Kubernetes"
+          "model": "kubernetes"
         },
         {
           "kind": "Role",
-          "model": "Kubernetes"
+          "model": "kubernetes"
         },
         {
           "kind": "ClusterRoleBinding",
-          "model": "Kubernetes"
+          "model": "kubernetes"
         },
         {
           "kind": "RoleBinding",
-          "model": "Kubernetes"
+          "model": "kubernetes"
         }
       ]
     },
@@ -58,16 +58,16 @@
       "from": [
         {
           "kind": "ClusterRole",
-          "model": "Kubernetes"
+          "model": "kubernetes"
         },
         {
           "kind": "Role",
-          "model": "Kubernetes"
+          "model": "kubernetes"
         }
       ],
       "to": [
         {
-          "model": "Kubernetes"
+          "model": "kubernetes"
         }
       ]
     }

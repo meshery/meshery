@@ -21,7 +21,7 @@ export function getRefinedJsonSchema(jsonSchema, hideTitle = true, handleError) 
   try {
     refinedSchema = hideTitle ? deleteTitleFromJSONSchema(jsonSchema) : jsonSchema
     refinedSchema = deleteDescriptionFromJSONSchema(refinedSchema)
-    // refinedSchema.properties = sortProperties(refinedSchema.properties); // temporarily commented
+    refinedSchema.properties = sortProperties(refinedSchema.properties); // temporarily commented÷
     recursivelyParseJsonAndCheckForNonRJSFCompliantFields(refinedSchema);
   } catch (e) {
     console.trace(e)
@@ -220,6 +220,9 @@ export const calculateGrid = element => {
   if (type === "object" || type === "array" || __additional_property) {
     grid.lg = 12;
   }
+
+  // if fields have custom annotations to grid them differently
+  grid.lg = element.content.props.schema["x-rjsf-grid-area"] || grid.lg;
 
   return grid;
 };

@@ -53,3 +53,8 @@ lint:
 coverage:
 	go test -coverprofile=coverage.out ./...
 	go tool cover -html=coverage.out -o coverage.html
+
+# Generate markdown for mesheryctl docs
+.PHONY: docs
+docs:
+	cd doc; go run doc.go

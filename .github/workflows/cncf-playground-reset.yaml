@@ -17,7 +17,7 @@ jobs:
           username: root
           key: ${{ secrets.METAL_SSH_KEY }}
           script: |
-            ./playground-cleanup.sh 
+            cd meshery/install/playground; ./playground-cleanup.sh
 
   reboot:
     name: Reboot Metal servers

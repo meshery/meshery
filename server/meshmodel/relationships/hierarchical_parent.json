@@ -20,11 +20,11 @@
       "from": [
         {
           "kind": "Namespace",
-          "model": "Kubernetes"
+          "model": "kubernetes"
         },
         {
           "kind": "Node",
-          "model": "Kubernetes"
+          "model": "kubernetes"
         }
       ],
       "to": [

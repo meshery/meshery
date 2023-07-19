@@ -1,60 +1,29 @@
-import React from 'react';
-import { Button, Grid } from '@material-ui/core';
-import validator from "@rjsf/validator-ajv8";
-import {
-  Dialog, DialogActions,
-  DialogContent,
-  DialogTitle
-} from '@material-ui/core';
-import { Form } from '@rjsf/material-ui';
-import useStyles from "../MesheryPatterns/Cards.styles";
+import { Button } from '@material-ui/core';
 import PublicIcon from '@material-ui/icons/Public';
+import React from 'react';
+import useStyles from "../MesheryPatterns/Cards.styles";
+import Modal from './Modal';
 import { publish_schema } from './schemas/publish_schema';
 
 export default function PublishModal(props) {
-  const { open, handleClose, resourceType, handlePublish, title } = props;
+  const { open, title, handleClose, handlePublish, formData, onChange, payload } = props;
   const classes = useStyles();
 
-  const data = resourceType?.catalog_data || {};
-
   return (
-    <>
-      <Dialog
-        open={open}
-        onClose={handleClose}>
-        <DialogTitle className={classes.dialogTitle}>
-         Request To Publish: {title}
-        </DialogTitle>
-        <DialogContent>
-          <Grid container spacing={24} alignItems="center">
-            <Form schema={publish_schema} formData={data} validator={validator}
-              onSubmit={(data) => {
-                handlePublish({
-                  id : resourceType.id,
-                  catalog_data : data.formData
-                })
-                handleClose();
-              }}
-            >
-              <Button
-                title="Publish"
-                variant="contained"
-                color="primary"
-                type="submit"
-                className={classes.testsButton}
-              >
-                <PublicIcon className={classes.iconPatt} />
-                <span className={classes.btnText}> Submit for Approval </span>
-              </Button>
-            </Form>
-          </Grid>
-
-        </DialogContent>
-        <DialogActions>
-
-        </DialogActions>
-
-      </Dialog>
-    </>
+    <Modal open={open} schema={publish_schema} title={title} onChange={onChange} handleClose={handleClose} formData={formData}>
+      <Button
+        title="Publish"
+        variant="contained"
+        color="primary"
+        className={classes.testsButton}
+        onClick={() => {
+          handleClose();
+          handlePublish(payload)
+        }}
+      >
+        <PublicIcon className={classes.iconPatt} />
+        <span className={classes.btnText}> Submit For Approval </span>
+      </Button>
+    </Modal>
   )
 }
