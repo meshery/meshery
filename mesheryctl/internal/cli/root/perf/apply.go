@@ -77,18 +77,8 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --certPath 
 // Execute a performance profile without using the certificate present in the profile
 mesheryctl perf apply meshery-profile --url "https://google.com" --disableCert
 
-// Execute a Performance test creating a new performance profile and pass options to the load generator used
-// If the same options are specified in the profile, the passed options will take precedence over the profile options
-// Options for nighthawk - https://github.com/layer5io/getnighthawk/blob/v1.0.5/pkg/proto/options.pb.go#L882-L1018
-// Options for fortio - https://github.com/fortio/fortio/blob/v1.57.0/fhttp/httprunner.go#L77-L84
-// Options for wrk2 - https://github.com/layer5io/gowrk2/blob/v0.6.1/api/gowrk2.go#L47-L53
-mesheryctl perf apply meshery-profile-new --url "https://google.com" --options [filepath|json-string]
-mesheryctl perf apply meshery-profile-new --url "https://google.com" --options path/to/options.json
-mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator nighthawk --options '{"requestsPerSecond": 10, "maxPendingRequests": 5}'
-mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator fortio --options '{"MethodOverride": "POST"}'
-mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator wrk2 --options '{"DurationInSeconds": 15, "Thread": 3}'
-
 // Run Performance test using SMP compatible test configuration
+// If the profile already exists, the test will be run overriding the values with the ones provided in the configuration file
 mesheryctl perf apply meshery-profile -f path/to/perf-config.yaml
 
 // Run performance test using SMP compatible test configuration and override values with flags
@@ -102,6 +92,17 @@ mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --q
 
 // Execute a Performance test with specified service mesh
 mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --mesh istio
+
+// Execute a Performance test creating a new performance profile and pass options to the load generator used
+// If any options are already present in the profile or passed through flags, the --options flag will take precedence over the profile and flag options 
+// Options for nighthawk - https://github.com/layer5io/getnighthawk/blob/v1.0.5/pkg/proto/options.pb.go#L882-L1018
+// Options for fortio - https://github.com/fortio/fortio/blob/v1.57.0/fhttp/httprunner.go#L77-L84
+// Options for wrk2 - https://github.com/layer5io/gowrk2/blob/v0.6.1/api/gowrk2.go#L47-L53
+mesheryctl perf apply meshery-profile-new --url "https://google.com" --options [filepath|json-string]
+mesheryctl perf apply meshery-profile-new --url "https://google.com" --options path/to/options.json
+mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator nighthawk --options '{"requestsPerSecond": 10, "maxPendingRequests": 5}'
+mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator fortio --options '{"MethodOverride": "POST"}'
+mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator wrk2 --options '{"DurationInSeconds": 15, "Thread": 3}'
 	`,
 	Annotations: linkDocPerfApply,
 	RunE: func(cmd *cobra.Command, args []string) error {
