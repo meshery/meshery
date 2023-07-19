@@ -60,6 +60,7 @@ function generatePerformanceProfile(data) {
     id,
     name,
     loadGenerator,
+    additional_options,
     endpoint,
     serviceMesh,
     concurrentRequest,
@@ -88,6 +89,7 @@ function generatePerformanceProfile(data) {
     request_cookies : requestCookies,
     content_type : contentType,
     metadata : {
+      additional_options : [additional_options],
       ca_certificate : {
         file : caCertificate.file,
         name : caCertificate.name
@@ -203,6 +205,7 @@ class MesheryPerformanceComponent extends React.Component {
       performanceProfileID,
       profileName,
       loadGenerator,
+      additional_options,
       headers,
       cookies,
       reqBody,
@@ -218,6 +221,7 @@ class MesheryPerformanceComponent extends React.Component {
       t,
       tValue : t,
       loadGenerator : loadGenerator || "fortio",
+      additional_options : additional_options || "",
       result,
       headers : headers || "",
       cookies : cookies || "",
@@ -233,8 +237,7 @@ class MesheryPerformanceComponent extends React.Component {
       blockRunTest : false,
       urlError : false,
       tError : "",
-      disableTest : !URLValidator(url),
-
+      disableTest : !(URLValidator(url) || this.isJsonString(additional_options)),
       testUUID : this.generateUUID(),
       staticPrometheusBoardConfig,
       selectedMesh : "",
@@ -242,6 +245,15 @@ class MesheryPerformanceComponent extends React.Component {
 
       availableSMPMeshes : [],
     };
+  }
+
+  isJsonString(str) {
+    try {
+      JSON.parse(str);
+    } catch (e) {
+      return false;
+    }
+    return true;
   }
 
   handleChange = (name) => (event) => {
@@ -275,6 +287,18 @@ class MesheryPerformanceComponent extends React.Component {
         this.setState({ urlError : false });
       }
     } else this.setState({ urlError : false });
+
+    if (name === "additional_options" ) {
+      let additionalOptions = event.target.value;
+      console.log('additional_options', event.target.value, this.isJsonString(additionalOptions))
+      if (!this.isJsonString(additionalOptions)) { 
+        this.setState({ jsonError: true }) 
+        this.setState({ disableTest: true })
+      } else {
+        this.setState({ jsonError: false})
+        this.setState({ disableTest: false })
+      }
+    }
     this.setState({ [name] : event.target.value });
   };
 
@@ -329,6 +353,7 @@ class MesheryPerformanceComponent extends React.Component {
     const profile = generatePerformanceProfile({
       name : self.profileName,
       loadGenerator : self.loadGenerator,
+      additional_options : self.additional_options,
       endpoint : self.url,
       serviceMesh : self.meshName,
       concurrentRequest : +self.c || 0,
@@ -350,6 +375,7 @@ class MesheryPerformanceComponent extends React.Component {
     this.setState({
       profileName : "",
       loadGenerator : "",
+      additional_options : "",
       url : "",
       meshName : "",
       c : 0,
@@ -433,7 +459,7 @@ class MesheryPerformanceComponent extends React.Component {
   };
 
   submitLoadTest = (id) => {
-    const { testName, meshName, url, qps, c, t, loadGenerator, testUUID, headers, cookies, reqBody, contentType } =
+    const { testName, meshName, url, qps, c, t, loadGenerator, additional_options, testUUID, headers, cookies, reqBody, contentType } =
       this.state;
 
     const computedTestName = MesheryPerformanceComponent.generateTestName(testName, meshName);
@@ -452,6 +478,7 @@ class MesheryPerformanceComponent extends React.Component {
       dur,
       uuid : testUUID,
       loadGenerator,
+      additional_options: additional_options,
       headers : headers,
       cookies : cookies,
       reqBody : reqBody,
@@ -717,9 +744,11 @@ class MesheryPerformanceComponent extends React.Component {
       c,
       t,
       loadGenerator,
+      additional_options,
       meshName,
       result,
       urlError,
+      jsonError,
       tError,
       testUUID,
       selectedMesh,
@@ -732,6 +761,7 @@ class MesheryPerformanceComponent extends React.Component {
       disableTest,
       profileName,
     } = this.state;
+    console.log(disableTest)
     let staticPrometheusBoardConfig;
     if (
       this.props.staticPrometheusBoardConfig &&
@@ -1022,6 +1052,21 @@ class MesheryPerformanceComponent extends React.Component {
                           onChange={this.handleChange("reqBody")}
                         ></TextField>
                       </Grid>
+                      <Grid item xs={12}>
+                        <TextField
+                          id="additional_options"
+                          name="additional_options"
+                          label="Additional Options e.g. { `requestPerSecond`: 20 }"
+                          fullWidth
+                          error={jsonError}
+                          helperText={jsonError ? "Please enter a valid JSON string" : ""}
+                          value={additional_options}
+                          multiline
+                          margin="normal"
+                          variant="outlined"
+                          onChange={this.handleChange("additional_options")}
+                        ></TextField>
+                      </Grid>
                       <Grid container xs={12} md={12}>
                         <Grid item xs={6}>
                           <TextField
@@ -1039,7 +1084,7 @@ class MesheryPerformanceComponent extends React.Component {
                               className={classes.button}
                             >
                               <input id="upload-cacertificate" type="file" accept={".crt"} name="upload-button"  hidden data-cy="cacertificate-upload-button" />
-                            Browse
+                              Browse
                             </Button>
                           </label>
                         </Grid>
