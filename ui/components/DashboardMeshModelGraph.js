@@ -21,11 +21,11 @@ const useFetchTotal = (fetchr) => {
 
 function MeshModelContructs({ classes }) {
 
-  // API Calls 
+  // API Calls
   const totalModels = useFetchTotal(() => getMeshModels(1, 1))
   const totalComponents = useFetchTotal(() => getAllComponents(1, 1))
   const totalRelationships = useFetchTotal(() => getRelationshipsDetail(1, 1))
-  
+
   // Data Cleanup
   const data = useMemo(() => {
     if (totalModels && totalRelationships && totalComponents){
@@ -79,7 +79,7 @@ function MeshModelContructs({ classes }) {
 
 
 function MeshModelCategories({ classes }) {
- 
+
   const [categoryMap, setCategoryMap] = useState({})
   const cleanedData = useMemo(() =>
     Object
@@ -106,7 +106,7 @@ function MeshModelCategories({ classes }) {
     }
   }) , [cleanedData])
 
-  // API Calls 
+  // API Calls
   useEffect(() => {
 
     fetchCategories().then((categoriesJson) => {
