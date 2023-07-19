@@ -72,10 +72,10 @@ mesheryctl perf apply meshery-profile [flags]
 mesheryctl perf apply meshery-profile-new --url "https://google.com"
 
 // Execute a Performance test creating a new performance profile and pass certificate to be used 
-mesheryctl perf apply meshery-profile-new --url "https://google.com" --certPath path/to/cert.pem
+mesheryctl perf apply meshery-profile-new --url "https://google.com" --cert-path path/to/cert.pem
 
 // Execute a performance profile without using the certificate present in the profile
-mesheryctl perf apply meshery-profile --url "https://google.com" --disableCert
+mesheryctl perf apply meshery-profile --url "https://google.com" --disable-cert
 
 // Run Performance test using SMP compatible test configuration
 // If the profile already exists, the test will be run overriding the values with the ones provided in the configuration file
@@ -341,8 +341,8 @@ func init() {
 	applyCmd.Flags().StringVarP(&filePath, "file", "f", "", "(optional) File containing SMP-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
 	applyCmd.Flags().StringVarP(&loadTestBody, "body", "b", "", "(optional) Load test body. Can be a filepath/string")
 	applyCmd.Flags().StringVar(&additionalOptions, "options", "", "(optional) Additional options to be passed to the load generator. Can be a json string or a filepath containing json")
-	applyCmd.Flags().StringVar(&certPath, "certPath", "", "(optional) Path to the certificate to be used for the load test")
-	applyCmd.Flags().BoolVar(&disableCert, "disableCert", false, "(optional) Do not use certificate present in the profile")
+	applyCmd.Flags().StringVar(&certPath, "cert-path", "", "(optional) Path to the certificate to be used for the load test")
+	applyCmd.Flags().BoolVar(&disableCert, "disable-cert", false, "(optional) Do not use certificate present in the profile")
 }
 
 func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string, error) {
