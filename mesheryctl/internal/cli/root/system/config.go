@@ -53,8 +53,12 @@ func getContexts(configFile string) ([]string, error) {
 
 	res, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		log.Debug(err)
+		return nil, errors.Errorf("unable to reach Meshery Server at %s\n"+
+                                          "Run `mesheryctl system status` to verify the server status or "+
+                                          "`mesheryctl system check` to check your environment", mctlCfg.GetBaseMesheryURL())
 	}
+
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
@@ -132,6 +136,10 @@ mesheryctl system config aks
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+
+		// set the token in the chosen context
+		setToken()
+
 		aksCheck := exec.Command("az", "version")
 		aksCheck.Stdout = os.Stdout
 		aksCheck.Stderr = os.Stderr
@@ -178,8 +186,6 @@ mesheryctl system config aks
 		}
 		log.Debugf("AKS configuration is written to: %s", utils.ConfigPath)
 
-		// set the token in the chosen context
-		setToken()
 		return nil
 	},
 }
@@ -202,6 +208,10 @@ mesheryctl system config eks
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+
+		// set the token in the chosen context
+		setToken()
+
 		eksCheck := exec.Command("aws", "--version")
 		eksCheck.Stdout = os.Stdout
 		eksCheck.Stderr = os.Stderr
@@ -248,8 +258,6 @@ mesheryctl system config eks
 		}
 		log.Debugf("EKS configuration is written to: %s", utils.ConfigPath)
 
-		// set the token in the chosen context
-		setToken()
 		return nil
 	},
 }
@@ -272,6 +280,10 @@ mesheryctl system config gke
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+
+		// set the token in the chosen context
+		setToken()
+
 		// TODO: move the GenerateConfigGKE logic to meshkit/client-go
 		log.Info("Configuring Meshery to access GKE...")
 		SAName := "sa-meshery-" + utils.StringWithCharset(8)
@@ -281,8 +293,6 @@ mesheryctl system config gke
 		}
 		log.Debugf("GKE configuration is written to: %s", utils.ConfigPath)
 
-		// set the token in the chosen context
-		setToken()
 		return nil
 	},
 }
@@ -305,6 +315,10 @@ mesheryctl system config minikube
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+
+		// set the token in the chosen context
+		setToken()
+
 		log.Info("Configuring Meshery to access Minikube...")
 		// Get the config from the default config path
 		if _, err = os.Stat(utils.KubeConfig); err != nil {
@@ -330,8 +344,6 @@ mesheryctl system config minikube
 		}
 		log.Debugf("Minikube configuration is written to: %s", utils.ConfigPath)
 
-		// set the token in the chosen context
-		setToken()
 		return nil
 	},
 }
