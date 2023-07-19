@@ -1,5 +1,6 @@
 import { createTheme } from '@material-ui/core/styles';
 import { blueGrey } from '@material-ui/core/colors';
+import { iconMedium } from '../css/icons.styles';
 
 const drawerWidth = 256;
 export var darkTheme = createTheme({
@@ -80,6 +81,11 @@ export var darkTheme = createTheme({
 darkTheme = {
   ...darkTheme,
   overrides : {
+    MuiSvgIcon: {
+      root: {
+        ...iconMedium
+      }
+    },
     MuiOutlinedInput : {
       root : {
         "&:hover $notchedOutline" : {
@@ -287,6 +293,11 @@ let theme = createTheme({
 theme = {
   ...theme,
   overrides : {
+    MuiSvgIcon: {
+      root: {
+        ...iconMedium
+      }
+    },
     MuiDrawer : { paper : { backgroundColor : '#263238', }, },
     MuiButton : {
       label : { textTransform : 'initial', },
