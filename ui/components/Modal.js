@@ -146,7 +146,7 @@ function Modal(props) {
 
   const [canNotSubmit, setCanNotSubmit] = useState(false);
   const [snackbar, setSnackbar] = useState(false);
-  const [errors, setErrors] = useState([]);
+  const formRef = React.createRef();
 
   const renderTooltipContent = () => (
     <div>
@@ -160,6 +160,13 @@ function Modal(props) {
       )}
     </div>
   );
+
+  const handleFormSubmit = () => {
+    if (formRef.current && formRef.current.validateForm()) {
+      handleClose();
+      handleSubmit(payload);
+    }
+  };
 
   useEffect(() => {
     setCanNotSubmit(false);
@@ -205,42 +212,22 @@ function Modal(props) {
           uiSchema={uiSchema}
           onChange={onChange}
           liveValidate={false}
+          formRef={formRef}
           hideTitle={true}
-          setErrors={setErrors}
         />
 
         <DialogActions className={classes.dialogAction}>
-          {submitBtnText ? (
-            <Button
-              title={submitBtnText}
-              variant="contained"
-              color="primary"
-              className={classes.submitButton}
-              disabled={canNotSubmit || errors.length > 0}
-              onClick={() => {
-                handleClose();
-                handleSubmit(payload);
-              }}
-            >
-              <PublicIcon className={classes.iconPatt} />
-              <span className={classes.btnText}>{submitBtnText}</span>
-            </Button>
-          ) : (
-            <Button
-              title="Submit"
-              variant="contained"
-              color="primary"
-              className={classes.submitButton}
-              disabled={canNotSubmit || errors.length > 0}
-              onClick={() => {
-                handleClose();
-                handleSubmit(payload);
-              }}
-            >
-              <PublicIcon className={classes.iconPatt} />
-              <span className={classes.btnText}> Submit for Approval </span>
-            </Button>
-          )}
+          <Button
+            title={submitBtnText ? submitBtnText : "Submit"}
+            variant="contained"
+            color="primary"
+            className={classes.submitButton}
+            disabled={canNotSubmit}
+            onClick={handleFormSubmit}
+          >
+            <PublicIcon className={classes.iconPatt} />
+            <span className={classes.btnText}>{submitBtnText ? submitBtnText : "Submit for Approval" }</span>
+          </Button>
           {showInfoIcon && (
             <CustomTextTooltip
               backgroundColor="#3C494F"
