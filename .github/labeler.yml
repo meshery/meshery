@@ -23,3 +23,5 @@ framework/graphql:
   - "server/internal/graphql/*"
 component/database:
   - "server/internal/sql/*"
+playground:
+  - "install/playground/**/*"
