@@ -1,5 +1,5 @@
 import React from "react";
-import { IconButton, InputAdornment, TextField, useTheme } from "@material-ui/core";
+import { IconButton, InputAdornment, TextField, useTheme, InputLabel } from "@material-ui/core";
 import HelpOutlineIcon from "../../../../assets/icons/HelpOutlineIcon";
 import { CustomTextTooltip } from "../CustomTextTooltip";
 import ErrorOutlineIcon from "../../../../assets/icons/ErrorOutlineIcon";
@@ -10,6 +10,7 @@ import { makeStyles } from '@material-ui/styles';
 
 const BaseInput = (props) => {
   const additional = props.schema?.__additional_property; // check if the field is additional
+  const xRjsfGridArea = props.schema?.["x-rjsf-grid-area"]; // check if the field is used in different modal (e.g. publish)
   const name = (additional ? "Value" : props.label) // || props.id?.split('_')[-1].trim()
   const focused = props.options?.focused // true for datetime-local
   const prettifiedName = name || 'Enter a value'
@@ -32,7 +33,10 @@ const BaseInput = (props) => {
   const classes = styles();
   return (
     <>
-      <div key={props.id} style={style}>
+      <div key={props.id} style={xRjsfGridArea ? {} : style}>
+        { xRjsfGridArea &&
+        <InputLabel htmlFor={props.id}>{prettifiedName}</InputLabel>
+        }
         <TextField
           variant={additional ? "standard" : "outlined"}
           size="small"
@@ -42,11 +46,11 @@ const BaseInput = (props) => {
           value={additional && props?.value === "New Value" ? "" : props?.value} // remove the default value i.e. New Value for additionalFields
           id={props.id}
           margin="dense"
+          label={xRjsfGridArea ? "" : `${prettifiedName}`}
           rows={props.options?.rows}
           multiline={props?.multiline}
           error={props.rawErrors?.length > 0}
           onChange={e => props?.onChange(e.target.value === "" ? props.options.emptyValue : e.target.value)}
-          label={`${prettifiedName}`}
           InputLabelProps={{
             className : (prettifiedName === "name" || prettifiedName === "namespace" || isFocused) ? classes.customInputLabel : '',
           }}
