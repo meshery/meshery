@@ -119,11 +119,10 @@ function PerformanceCard({
     request_body : requestBody,
     request_cookies : requestCookies,
     request_headers : requestHeaders,
-    last_run : lastRun
+    last_run : lastRun,
+    metadata,
   } = profile
   const [renderTable, setRenderTable] = useState(false);
-
-
   const tableData = [
     {
       name : "Endpoints",
@@ -132,6 +131,10 @@ function PerformanceCard({
     {
       name : "Load Generators",
       value : loadGenerators?.join(", ")
+    },
+    {
+      name : "Additional Option",
+      value : metadata?.additional_options ? JSON.stringify(JSON.parse(metadata?.additional_options), undefined, 2) : ''
     },
     {
       name : "Running Duration",
