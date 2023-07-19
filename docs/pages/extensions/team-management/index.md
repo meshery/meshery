@@ -11,7 +11,8 @@ type: extensions
 
 ## Seamlessly Add and Manage Team Members in Meshery Cloud
 
- Meshery Cloud has the ability to efficiently add and manage team members within the platform's intuitive interface. Follow this comprehensive guide to seamlessly integrate new members and streamline collaboration within your Meshery Cloud team.
+
+Highlighting Meshery Cloud's seamless integration with third-party OAuth providers like GitHub and Google, the platform efficiently adds and manages team members through its intuitive interface. Follow this comprehensive guide to seamlessly integrate new members and streamline collaboration within your Meshery Cloud team.
 
 * Log in to your Meshery Cloud account and access your cloud Dashboard.
 
