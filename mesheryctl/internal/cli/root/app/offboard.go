@@ -53,11 +53,11 @@ mesheryctl app offboard -f [filepath]
 			return errors.Wrap(err, "error processing config")
 		}
 
-		var baseUrl = mctlCfg.GetBaseMesheryURL()
+		var urlString = mctlCfg.GetBaseMesheryURL()
 		app := ""
 		isID := false
 		if len(args) > 0 {
-			app, isID, err = utils.ValidId(baseUrl, args[0], "application")
+			app, isID, err = utils.ValidId(urlString, args[0], "application")
 			if err != nil {
 				return err
 			}
@@ -65,7 +65,7 @@ mesheryctl app offboard -f [filepath]
 
 		// Delete the app using the id
 		if isID {
-			err := utils.DeleteConfiguration(baseUrl, app, "application")
+			err := utils.DeleteConfiguration(urlString, app, "application")
 			if err != nil {
 				return errors.Wrap(err, utils.AppError(fmt.Sprintf("failed to delete application %s", args[0])))
 			}
@@ -73,8 +73,8 @@ mesheryctl app offboard -f [filepath]
 			return nil
 		}
 
-		deployURL := baseUrl + "/api/application/deploy"
-		patternURL := baseUrl + "/api/pattern"
+		deployURL := urlString + "/api/application/deploy"
+		patternURL := urlString + "/api/pattern"
 
 		// Read file
 		if !govalidator.IsURL(file) {

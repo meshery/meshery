@@ -52,7 +52,7 @@ mesheryctl filter view --all
 			return errors.Wrap(err, "error processing config")
 		}
 
-		var baseUrl = mctlCfg.GetBaseMesheryURL()
+		var urlString = mctlCfg.GetBaseMesheryURL()
 		filter := ""
 		isID := false
 		// if filter name/id available
@@ -60,7 +60,7 @@ mesheryctl filter view --all
 			if viewAllFlag {
 				return errors.New(utils.FilterViewError("--all cannot be used when filter name or ID is specified\nUse 'mesheryctl filter view --help' to display usage guide\n"))
 			}
-			filter, isID, err = utils.ValidId(baseUrl, args[0], "filter")
+			filter, isID, err = utils.ValidId(urlString, args[0], "filter")
 			if err != nil {
 				return errors.New("invalid filter name or ID. " + err.Error())
 			}
@@ -68,19 +68,19 @@ mesheryctl filter view --all
 
 		if len(filter) == 0 {
 			if viewAllFlag {
-				baseUrl += "/api/filter?pagesize=10000"
+				urlString += "/api/filter?pagesize=10000"
 			} else {
 				return errors.New(utils.FilterViewError("filter-name or ID not specified, use -a to view all filters\nUse 'mesheryctl filter view --help' to display usage guide\n"))
 			}
 		} else if isID {
 			// if filter is a valid uuid, then directly fetch the filter
-			baseUrl += "/api/filter/" + filter
+			urlString += "/api/filter/" + filter
 		} else {
 			// else search filter by name
-			baseUrl += "/api/filter?search=" + url.QueryEscape(filter)
+			urlString += "/api/filter?search=" + url.QueryEscape(filter)
 		}
 
-		req, err := utils.NewRequest("GET", baseUrl, nil)
+		req, err := utils.NewRequest("GET", urlString, nil)
 		if err != nil {
 			return err
 		}
