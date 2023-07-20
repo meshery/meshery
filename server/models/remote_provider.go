@@ -2460,9 +2460,8 @@ func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path s
 		"filter_data": MesheryFilter{
 			FilterResource: resource,
 		},
-
 	})
-	
+
 	if err != nil {
 		err = ErrMarshal(err, "meshery metrics for shipping")
 		return nil, err
