@@ -81,8 +81,8 @@ export var darkTheme = createTheme({
 darkTheme = {
   ...darkTheme,
   overrides : {
-    MuiSvgIcon: {
-      root: {
+    MuiSvgIcon : {
+      root : {
         ...iconMedium
       }
     },
@@ -293,8 +293,8 @@ let theme = createTheme({
 theme = {
   ...theme,
   overrides : {
-    MuiSvgIcon: {
-      root: {
+    MuiSvgIcon : {
+      root : {
         ...iconMedium
       }
     },
