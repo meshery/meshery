@@ -114,22 +114,6 @@ Removing: /Users/lee/Library/Caches/Homebrew/mesheryctl--0.3.2.zip... (3.9MB)
 ==> No dependents found!
 ```
 
-## Kubernetes
-
-**Install**
-
-<h6>Using mesheryctl</h6>
-
-<pre class="codeblock-pre">
-<div class="codeblock">
- <div class="clipboardjs">
- $ mesheryctl system context create k8s -p kubernetes -s
- $ mesheryctl system start
- </div></div>
-</pre>
-
-Don't have `mesheryctl`? Install with Bash, Brew, or Scoop.
-
 <h6>Using Helm</h6>
 
 <pre class="codeblock-pre">
