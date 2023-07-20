@@ -100,7 +100,7 @@ mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --m
 // Options for wrk2 - https://github.com/layer5io/gowrk2/blob/v0.6.1/api/gowrk2.go#L47-L53
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --options [filepath|json-string]
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --options path/to/options.json
-mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator nighthawk --options '{"requestsPerSecond": 10, "maxPendingRequests": 5}'
+mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator nighthawk --options '{"requests_per_second": 10, "max_pending_requests": 5}'
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator fortio --options '{"MethodOverride": "POST"}'
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator wrk2 --options '{"DurationInSeconds": 15, "Thread": 3}'
 	`,
