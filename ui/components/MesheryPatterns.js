@@ -24,7 +24,7 @@ import { toggleCatalogContent, updateProgress } from "../lib/store";
 import DesignConfigurator from "../components/configuratorComponents/MeshModel";
 import UploadImport from "./Modals/ImportModal";
 import { ctxUrl } from "../utils/multi-ctx";
-import { generateValidatePayload, getComponentsinFile, getDecodedFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
+import { generateValidatePayload, getComponentsinFile, getDecodedFile } from "../utils/utils";
 import ViewSwitch from "./ViewSwitch";
 import CatalogFilter from "./CatalogFilter";
 import MesheryPatternGrid from "./MesheryPatterns/MesheryPatternGridView";
@@ -260,6 +260,7 @@ function MesheryPatterns({
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
   const [extensionPreferences, setExtensionPreferences] = useState({});
   const router = useRouter()
+  const [importSchema, setImportSchema] = useState({});
 
   const [patternErrors, setPatternErrors] = useState(new Map());
 
@@ -344,6 +345,10 @@ function MesheryPatterns({
     UNPUBLISH_CATALOG : {
       name : "PUBLISH_CATALOG",
       error_msg : "Failed to publish catalog"
+    },
+    SCHEMA_FETCH : {
+      name : "SCHEMA_FETCH",
+      error_msg : "failed to fetch import schema"
     }
   };
 
@@ -488,6 +493,16 @@ function MesheryPatterns({
   }, [catalogVisibility])
 
   useEffect(() => {
+    dataFetch("/api/schema/resource/design",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      (result) => {
+        setImportSchema(result);
+      },
+      handleError(ACTION_TYPES.SCHEMA_FETCH)
+    )
     catalogVisibilityRef.current = catalogVisibility
     const fetchCatalogPatterns = fetchCatalogPattern({
       selector : {
@@ -911,33 +926,6 @@ function MesheryPatterns({
     } catch (e) {
       console.error(e);
     }
-  }
-
-  function uploadHandler(ev) {
-    if (!ev.target.files?.length) return;
-
-
-    const file = ev.target.files[0];
-    // Create a reader
-    const reader = new FileReader();
-    reader.addEventListener("load", (event) => {
-      // @ts-ignore
-      handleSubmit({
-        data : event.target.result,
-        name : file?.name || getRandomName(),
-        type : FILE_OPS.FILE_UPLOAD
-      });
-    });
-    reader.readAsText(file);
-  }
-
-  function urlUploadHandler(link) {
-    handleSubmit({
-      data : link,
-      id : "",
-      name : getRandomName(),
-      type : FILE_OPS.URL_UPLOAD
-    });
   }
 
   const columns = [
@@ -1415,8 +1403,6 @@ function MesheryPatterns({
               handleUnpublishModal={handleUnpublishModal}
               handleUnDeploy={handleUnDeploy}
               handleClone={handleClone}
-              urlUploadHandler={urlUploadHandler}
-              uploadHandler={uploadHandler}
               supportedTypes="null"
               handleSubmit={handleSubmit}
               setSelectedPattern={setSelectedPattern}
@@ -1424,8 +1410,6 @@ function MesheryPatterns({
               pages={Math.ceil(count / pageSize)}
               setPage={setPage}
               selectedPage={page}
-              UploadImport={UploadImport}
-              fetch={() => fetchPatterns(page, pageSize, search, sortOrder)}
               patternErrors={patternErrors}
             />
         }
@@ -1448,6 +1432,9 @@ function MesheryPatterns({
         }
 
         <UploadImport
+          {
+            ...importSchema || {}
+          }
           open={importModal.open}
           handleClose={handleUploadImportClose}
           importType="design"

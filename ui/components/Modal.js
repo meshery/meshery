@@ -149,7 +149,6 @@ function Modal(props) {
     type,
     schemaChangeHandler,
     handleSubmit,
-    payload,
     showInfoIcon,
     submitBtnText,
     uiSchema = {},
@@ -176,7 +175,7 @@ function Modal(props) {
   const handleFormSubmit = () => {
     if (formRef.current && formRef.current.validateForm()) {
       handleClose();
-      handleSubmit(payload);
+      handleSubmit(formRef.current.state.formData);
     }
   };
 

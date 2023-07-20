@@ -214,6 +214,10 @@ const ACTION_TYPES = {
   DOWNLOAD_APP : {
     name : "DOWNLOAD_APP",
     error_msg : "Failed to download application file"
+  },
+  SCHEMA_FETCH : {
+    name : "SCHEMA_FETCH",
+    error_msg : "failed to fetch import schema"
   }
 };
 
@@ -235,6 +239,7 @@ function MesheryApplications({
   const [selectedApplication, setSelectedApplication] = useState(resetSelectedApplication());
   const DEPLOY_URL = '/api/pattern/deploy';
   const [types, setTypes] = useState([]);
+  const [importSchema, setImportSchema] = useState({});
   const [modalOpen, setModalOpen] = useState({
     open : false,
     deploy : false,
@@ -269,6 +274,16 @@ function MesheryApplications({
    * fetch applications when the application downloads
    */
   useEffect(() => {
+    dataFetch("/api/schema/resource/application",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      (result) => {
+        setImportSchema(result);
+      },
+      handleError(ACTION_TYPES.SCHEMA_FETCH)
+    )
     initAppsSubscription();
     getTypes();
     return () => {
@@ -871,10 +886,7 @@ function MesheryApplications({
       requestBody = JSON.stringify({
         save : true,
         url : url,
-        application_data : {
-          name
-        },
-        name
+        name : name
       })
     } else if (file) {
       requestBody = JSON.stringify({
@@ -996,10 +1008,14 @@ function MesheryApplications({
         />
         <PromptComponent ref={modalRef} />
         <UploadImport
+          {
+            ...importSchema || {}
+          }
           open={importModal.open}
           handleClose={handleUploadImportClose}
           importType="application"
-          handleSubmit={handleImportApplication} />
+          handleSubmit={handleImportApplication}
+        />
         {/* <UploadImport open={importModal.open} handleClose={handleUploadImportClose} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler}
           supportedTypes={types} configuration="Application"  /> */}
       </NoSsr>

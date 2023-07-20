@@ -198,6 +198,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [extensionPreferences, setExtensionPreferences] = useState({});
   const [canPublishFilter, setCanPublishFilter] = useState(false);
+  const [importSchema, setImportSchema] = useState({});
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ("grid")
@@ -264,6 +265,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     UNPUBLISH_CATALOG : {
       name : "PUBLISH_CATALOG",
       error_msg : "Failed to publish catalog"
+    },
+    SCHEMA_FETCH : {
+      name : "SCHEMA_FETCH",
+      error_msg : "failed to fetch import schema"
     }
   };
 
@@ -272,6 +277,16 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
    * publish filter capability and setting the canPublishFilter state accordingly
    */
   useEffect(() => {
+    dataFetch("/api/schema/resource/filter",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      (result) => {
+        setImportSchema(result);
+      },
+      handleError(ACTION_TYPES.SCHEMA_FETCH)
+    )
     dataFetch(
       "/api/provider/capabilities",
       {
@@ -1204,6 +1219,9 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         }
         <PromptComponent ref={modalRef} />
         <UploadImport
+          {
+            ...importSchema || {}
+          }
           open={importModal.open}
           handleClose={handleUploadImportClose}
           importType="filter"
