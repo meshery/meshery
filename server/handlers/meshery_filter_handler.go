@@ -127,7 +127,7 @@ func (h *Handler) handleFilterPOST(
 		// Assign a name if no name is provided
 		if parsedBody.FilterData.Name == "" {
 			// TODO: Dynamically generate names or get the name of the file from the UI (@navendu-pottekkat)
-			parsedBody.FilterData.Name = "Test Filter"
+			parsedBody.FilterData.Name = "meshery-filter-"+ utils.GetRandomAlphabetsOfDigit(5)
 		}
 		// Assign a location if no location is specified
 		if parsedBody.FilterData.Location == nil || len(parsedBody.FilterData.Location) == 0 {
