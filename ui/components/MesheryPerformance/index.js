@@ -232,7 +232,6 @@ class MesheryPerformanceComponent extends React.Component {
       caCertificate : {},
       profileName : profileName || "",
       performanceProfileID : performanceProfileID || "",
-
       timerDialogOpen : false,
       blockRunTest : false,
       urlError : false,
@@ -242,8 +241,9 @@ class MesheryPerformanceComponent extends React.Component {
       staticPrometheusBoardConfig,
       selectedMesh : "",
       availableAdapters : [],
-
       availableSMPMeshes : [],
+      disableAvailableOptionsUploadButton: false,
+      disableAvailableOptionsInputField: false
     };
   }
 
@@ -289,15 +289,50 @@ class MesheryPerformanceComponent extends React.Component {
     } else this.setState({ urlError : false });
 
     if (name === "additional_options" ) {
-      let additionalOptions = event.target.value;
-      console.log('additional_options', event.target.value, this.isJsonString(additionalOptions))
-      if (!this.isJsonString(additionalOptions)) { 
-        this.setState({ jsonError: true }) 
-        this.setState({ disableTest: true })
-      } else {
-        this.setState({ jsonError: false})
-        this.setState({ disableTest: false })
-      }
+      const { name, value } = event.target;
+      
+        // Check if the target event is an input element (typing) or a file input (upload)
+        const isFileUpload = event.target.getAttribute("type") === "file";
+
+        if (isFileUpload) {
+          // Handle file upload
+          const file = event.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+              try {
+                const fileContent = event.target.result;
+                // Validate JSON
+                JSON.parse(fileContent); 
+                this.setState({
+                  additional_options: fileContent,
+                  jsonError: false,
+                });
+              } catch (error) {
+                this.setState({
+                  additional_options: event.target.result,
+                  jsonError: true,
+                });
+              }
+            };
+            reader.readAsText(file);
+          }
+        } else {
+          // Handle text input
+          try {
+            // empty text input exception
+            if(value !== "") JSON.parse(value); 
+            this.setState({
+              additional_options: value,
+              jsonError: false,
+            });
+          } catch (error) {
+            this.setState({
+              additional_options: value,
+              jsonError: true,
+            });
+          }
+        }
     }
     this.setState({ [name] : event.target.value });
   };
@@ -478,7 +513,7 @@ class MesheryPerformanceComponent extends React.Component {
       dur,
       uuid : testUUID,
       loadGenerator,
-      additional_options: additional_options,
+      additional_options : additional_options,
       headers : headers,
       cookies : cookies,
       reqBody : reqBody,
@@ -761,7 +796,6 @@ class MesheryPerformanceComponent extends React.Component {
       disableTest,
       profileName,
     } = this.state;
-    console.log(disableTest)
     let staticPrometheusBoardConfig;
     if (
       this.props.staticPrometheusBoardConfig &&
@@ -1052,31 +1086,51 @@ class MesheryPerformanceComponent extends React.Component {
                           onChange={this.handleChange("reqBody")}
                         ></TextField>
                       </Grid>
-                      <Grid item xs={12}>
-                        <TextField
-                          id="additional_options"
-                          name="additional_options"
-                          label="Additional Options e.g. { `requestPerSecond`: 20 }"
-                          fullWidth
-                          error={jsonError}
-                          helperText={jsonError ? "Please enter a valid JSON string" : ""}
-                          value={additional_options}
-                          multiline
-                          margin="normal"
-                          variant="outlined"
-                          onChange={this.handleChange("additional_options")}
-                        ></TextField>
+                      <Grid item xs={12} md={12}>
+                        <Grid item xs={6}>
+                          <TextField
+                            id="additional_options"
+                            name="additional_options"
+                            label="Additional Options e.g. { `requestPerSecond`: 20 }"
+                            fullWidth
+                            error={jsonError}
+                            helperText={jsonError ? "Please enter a valid JSON string" : ""}
+                            value={additional_options}
+                            multiline
+                            margin="normal"
+                            variant="outlined"
+                            onChange={this.handleChange("additional_options")}
+                          /> 
+                          <label htmlFor="upload-additional-options"                               
+                            style={{ paddingLeft: '0' }}
+                            className={classes.upload}
+                          >
+                            <Button
+                              variant="outlined"
+                              onChange={this.handleChange("additional_options")}
+                              aria-label="Upload Button"
+                              component="span"
+                              className={classes.button}
+                            >
+                              <input id="upload-additional-options"  type="file" accept={".json"} name="upload-button" hidden  data-cy="additional-options-upload-button" />
+                              Browse
+                            </Button>
+                          </label>
+                        </Grid>
                       </Grid>
                       <Grid container xs={12} md={12}>
                         <Grid item xs={6}>
                           <TextField
                             size="small"
                             variant="outlined"
-                            label={this.state.caCertificate?.name || "Filename"}
-                            style={{ width : "50%" }}
+                            label={this.state.caCertificate?.name || "Upload Ca Certificate"}
+                            style={{ width : "100%", margin: '0.5rem 0' }}
                             value={this.state.caCertificate?.name}
                           />
-                          <label htmlFor="upload-cacertificate" className={classes.upload}>
+                          <label htmlFor="upload-cacertificate" 
+                            className={classes.upload}
+                            style={{ paddingLeft: '0' }}
+                          >
                             <Button
                               variant="outlined"
                               aria-label="Upload Button"
