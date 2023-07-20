@@ -101,7 +101,7 @@ export const rjsfTheme = createTheme({
     MuiInputBase : {
       root : {
         fontSize : "0.8rem", // same as title
-        minRows: 5
+        minRows : 5
       }
     },
     MuiTooltip : {
@@ -261,6 +261,11 @@ const darkRjsfTheme = createTheme({
         width : "calc(100% - 4px)",
       }
     },
+    MuiFormControlLabel : {
+      root : {
+        textTransform : 'capitalize',
+      }
+    },
     MuiInputLabel : {
       root : {
         whiteSpace : "nowrap",
@@ -316,7 +321,7 @@ const darkRjsfTheme = createTheme({
     MuiInputBase : {
       root : {
         fontSize : "0.8rem", // same as title
-        minRows: 5
+        minRows : 5
       }
     },
     MuiTooltip : {
