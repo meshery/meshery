@@ -68,7 +68,7 @@ type Preference struct {
 	AnonymousPerfResults      bool                   `json:"anonymousPerfResults"`
 	UpdatedAt                 time.Time              `json:"updated_at,omitempty"`
 	UsersExtensionPreferences map[string]interface{} `json:"usersExtensionPreferences,omitempty"`
-	RemoteProviderPreferences      map[string]interface{} `json:"remoteProviderPreferences,omitempty"`
+	RemoteProviderPreferences map[string]interface{} `json:"remoteProviderPreferences,omitempty"`
 }
 
 func init() {
