@@ -105,7 +105,7 @@ const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
   );
 };
 
-const RJSFWrapperComponent = (uiSchema) =>
+const RJSFWrapperComponentDefault = (uiSchema) =>
   (
     /** @type {{ jsonSchema: any; children: React.DetailedReactHTMLElement<any, HTMLElement>; }} */ props
   ) => {
@@ -152,6 +152,7 @@ function Modal(props) {
     showInfoIcon,
     submitBtnText,
     uiSchema = {},
+    RJSFWrapperComponent=null
   } = props;
   const classes = useStyles();
 
@@ -225,7 +226,7 @@ function Modal(props) {
           liveValidate={false}
           formRef={formRef}
           hideTitle={true}
-          RJSFWrapperComponent={RJSFWrapperComponent(uiSchema)}
+          RJSFWrapperComponent={RJSFWrapperComponent || RJSFWrapperComponentDefault(uiSchema)}
         />
 
         <DialogActions className={classes.dialogAction}>

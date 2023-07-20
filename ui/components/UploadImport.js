@@ -25,7 +25,8 @@ const getMuiTheme = () => createTheme({
       }
     },
   }
-})
+});
+
 const getDarkMuiTheme = () => createTheme({
   palette : {
     type : "dark",
@@ -47,7 +48,7 @@ const getDarkMuiTheme = () => createTheme({
       }
     },
   }
-})
+});
 
 const styles = (theme) => ({
   upload : {

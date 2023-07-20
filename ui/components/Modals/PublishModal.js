@@ -2,8 +2,8 @@ import { Button } from '@material-ui/core';
 import PublicIcon from '@material-ui/icons/Public';
 import React from 'react';
 import useStyles from "../MesheryPatterns/Cards.styles";
-import Modal from './Modal';
-import { publish_schema } from './schemas/publish_schema';
+import Modal from "../Modal";
+import { publish_schema } from "../schemas/publish_schema"
 
 export default function PublishModal(props) {
   const { open, title, handleClose, handlePublish, formData, onChange, payload } = props;

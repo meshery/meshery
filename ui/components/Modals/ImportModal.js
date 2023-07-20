@@ -4,6 +4,7 @@ import RJSFModal from "../Modal";
 import { Button } from '@material-ui/core';
 import { capitalize } from 'lodash';
 
+// might also expect RJSFWrapperComponent from extensions
 export default function ImportModal(props) {
   const { importType, handleSubmit, handleClose, rjsfSchema, uiSchema } = props;
   const classes = useStyles();
