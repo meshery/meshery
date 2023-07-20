@@ -33,7 +33,7 @@ import (
 var listModelCmd = &cobra.Command{
 	Use:   "list",
 	Short: "list models",
-	Long:  "list all the registered models",
+	Long:  "list name of all registered models",
 	Example: `
 // View current provider
 mesheryctl system model list
@@ -71,7 +71,7 @@ mesheryctl system model list
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 0 {
-			return errors.New(utils.SystemProviderSubError("this command takes no arguments\n", "list"))
+			return errors.New(utils.SystemModelSubError("this command takes no arguments\n", "list"))
 		}
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -138,19 +138,22 @@ var modelCmd = &cobra.Command{
 	Example: `
 // To view list of components
 mesheryctl system model list
+
 // To view a specific model
 mesheryctl system model view [model-name]
+
 // To update model
-mesheryctl system model update
+mesheryctl system model update --source [path-to-spreadsheet] [--output-dir] [relative path persist assets/icons]
+
 // To generate model
 mesheryctl system model gen
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return errors.New(utils.SystemProviderSubError("please specify a flag or subcommand. Use 'mesheryctl system model --help' to display user guide.\n", "model"))
+			return errors.New(utils.SystemModelSubError("please specify a flag or subcommand. Use 'mesheryctl system model --help' to display user guide.\n", "model"))
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemProviderSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl system model --help' to display usage guide.\n", args[0]), "model"))
+			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl system model --help' to display usage guide.\n", args[0]), "model"))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

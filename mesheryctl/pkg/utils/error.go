@@ -103,6 +103,17 @@ func SystemProviderSubError(msg string, cmd string) string {
 	}
 }
 
+// SystemProviderSubError returns a formatted error message with a link to `provider` command usage page
+// in addition to the error message
+func SystemModelSubError(msg string, cmd string) string {
+	switch cmd {
+	case "list":
+		return formatError(msg, cmdModelList)
+	default:
+		return formatError(msg, cmdModel)
+	}
+}
+
 // MeshError returns a formatted error message with a link to 'mesh' command usage page in addition to the error message
 func MeshError(msg string) string {
 	return formatError(msg, cmdMesh)
@@ -215,6 +226,10 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerUsageURL)
 	case cmdToken:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, tokenUsageURL)
+	case cmdModel:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelUsageURL)
+	case cmdModelList:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelListURL)
 	default:
 		return fmt.Sprintf("%s\n", msg)
 	}
