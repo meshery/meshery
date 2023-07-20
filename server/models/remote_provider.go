@@ -323,24 +323,6 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 	}
 
 	prefLocal, _ := l.ReadFromPersister(up.UserID)
-	logrus.Debug("User Pref (remote): ", up.Preferences)
-	logrus.Debug("User Pref (loca): ", prefLocal)
-
-	// Prefs in remote provider
-	// 1. badges
-	// 2. getstarted
-	//
-	//
-	// Prefs in meshery
-	// 1. userextension
-	// 2. anonymousUsageStats
-	// 3. anonymousPerfResults
-	// 4. meshAdapters
-	// 5. grafana
-	// 6. prometheus
-	// 7. loadTestPrefs
-	//
-	//
 
 	if prefLocal == nil || up.Preferences.UpdatedAt.After(prefLocal.UpdatedAt) || !reflect.DeepEqual(up.Preferences.RemoteProviderPreferences, prefLocal.RemoteProviderPreferences){
 		_ = l.WriteToPersister(up.UserID, up.Preferences)
