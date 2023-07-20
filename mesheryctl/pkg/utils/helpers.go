@@ -80,6 +80,8 @@ const (
 	providerResetURL  = docsBaseURL + "reference/mesheryctl/system/provider/reset"
 	providerSwitchURL = docsBaseURL + "reference/mesheryctl/system/provider/switch"
 	tokenUsageURL     = docsBaseURL + "reference/mesheryctl/system/token"
+	modelUsageURL     = docsBaseURL + "reference/mesheryctl/system/model"
+	modelListURL      = docsBaseURL + "reference/mesheryctl/system/model/list"
 
 	// Meshery Server Location
 	EndpointProtocol = "http"
@@ -120,6 +122,8 @@ const (
 	cmdProviderList   cmdType = "provider list"
 	cmdProviderReset  cmdType = "provider reset"
 	cmdToken          cmdType = "token"
+	cmdModel          cmdType = "model"
+	cmdModelList      cmdType = "model list"
 )
 
 const (
