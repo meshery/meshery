@@ -480,8 +480,9 @@ func StringInSlice(str string, slice []string) bool {
 }
 
 // GetID returns a array of IDs from meshery server endpoint /api/{configurations}
-func GetID(configuration string) ([]string, error) {
-	url := MesheryEndpoint + "/api/" + configuration + "?page_size=10000"
+func GetID(baseUrl, configuration string) ([]string, error) {
+	url := baseUrl + "/api/" + configuration + "?page_size=10000"
+	fmt.Println(url)
 	configType := configuration + "s"
 	var idList []string
 	req, err := NewRequest("GET", url, nil)
@@ -516,8 +517,8 @@ func GetID(configuration string) ([]string, error) {
 }
 
 // GetName returns a of name:id from meshery server endpoint /api/{configurations}
-func GetName(configuration string) (map[string]string, error) {
-	url := MesheryEndpoint + "/api/" + configuration + "?page_size=10000"
+func GetName(baseUrl, configuration string) (map[string]string, error) {
+	url := baseUrl + "/api/" + configuration + "?page_size=10000"
 	configType := configuration + "s"
 	nameIdMap := make(map[string]string)
 	req, err := NewRequest("GET", url, nil)
@@ -567,9 +568,9 @@ func DeleteConfiguration(baseUrl, id, configuration string) error {
 }
 
 // ValidId - Check if args is a valid ID or a valid ID prefix and returns the full ID
-func ValidId(args string, configuration string) (string, bool, error) {
+func ValidId(baseUrl, args string, configuration string) (string, bool, error) {
 	isID := false
-	configID, err := GetID(configuration)
+	configID, err := GetID(baseUrl, configuration)
 	if err == nil {
 		for _, id := range configID {
 			if strings.HasPrefix(id, args) {
@@ -585,9 +586,9 @@ func ValidId(args string, configuration string) (string, bool, error) {
 }
 
 // ValidId - Check if args is a valid name or a valid name prefix and returns the full name and ID
-func ValidName(args string, configuration string) (string, string, bool, error) {
+func ValidName(baseUrl, args string, configuration string) (string, string, bool, error) {
 	isName := false
-	nameIdMap, err := GetName(configuration)
+	nameIdMap, err := GetName(baseUrl, configuration)
 
 	if err != nil {
 		return "", "", false, err

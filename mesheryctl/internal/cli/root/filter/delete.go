@@ -44,18 +44,19 @@ mesheryctl filter delete [filter-name | ID]
 			return errors.New(utils.FilterDeleteError("filter name or ID not provided\nUse 'mesheryctl filter delete --help' to display usage guide\n"))
 		}
 
+		var baseUrl = mctlCfg.GetBaseMesheryURL()
 		var filterID string
 		var isValidID bool
 		var filterName string
 		var isValidName bool
 
-		filterID, isValidID, err = utils.ValidId(args[0], "filter")
+		filterID, isValidID, err = utils.ValidId(baseUrl, args[0], "filter")
 		if err != nil {
 			return err
 		}
 
 		if !isValidID {
-			filterName, filterID, isValidName, err = utils.ValidName(args[0], "filter")
+			filterName, filterID, isValidName, err = utils.ValidName(baseUrl, args[0], "filter")
 			if err != nil {
 				return err
 			}
@@ -63,7 +64,7 @@ mesheryctl filter delete [filter-name | ID]
 
 		// Delete the filter using the id
 		if isValidID || isValidName {
-			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), filterID, "filter")
+			err := utils.DeleteConfiguration(baseUrl, filterID, "filter")
 
 			var filter string
 			if isValidID {

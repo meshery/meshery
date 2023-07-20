@@ -61,6 +61,7 @@ mesheryctl app view --all
 			return errors.Wrap(err, "error processing config")
 		}
 
+		var baseUrl = mctlCfg.GetBaseMesheryURL()
 		application := ""
 		isID := false
 		applicationID := ""
@@ -69,31 +70,31 @@ mesheryctl app view --all
 			if viewAllFlag {
 				return errors.New("-a cannot be used when [application-name|application-id] is specified")
 			}
-			applicationID, isID, err = utils.ValidId(args[0], "application")
+			applicationID, isID, err = utils.ValidId(baseUrl, args[0], "application")
 			if err != nil {
 				return err
 			}
 		}
 		var req *http.Request
-		url := mctlCfg.GetBaseMesheryURL()
+		// url := mctlCfg.GetBaseMesheryURL()
 		var response *models.ApplicationsAPIResponse
 		// Merge args to get app-name
 		application = strings.Join(args, "%20")
 		if len(application) == 0 {
 			if viewAllFlag {
-				url += "/api/application?pagesize=10000"
+				baseUrl += "/api/application?pagesize=10000"
 			} else {
 				return errors.New("[application-name|application-id] not specified, use -a to view all applications")
 			}
 		} else if isID {
 			// if application is a valid uuid, then directly fetch the application
-			url += "/api/application/" + applicationID
+			baseUrl += "/api/application/" + applicationID
 		} else {
 			// else search application by name
-			url += "/api/application?search=" + application
+			baseUrl += "/api/application?search=" + application
 		}
 
-		req, err = utils.NewRequest("GET", url, nil)
+		req, err = utils.NewRequest("GET", baseUrl, nil)
 		if err != nil {
 			return err
 		}
