@@ -409,11 +409,25 @@ type meshmodelModelsResponseWrapper struct {
 	Body *models.MeshmodelsAPIResponse
 }
 
+// Return meshmodel models with the count of duplicates
+// swagger:response meshmodelModelsDuplicateResponseWrapper
+type meshmodelModelsDuplicateResponseWrapper struct {
+	// in: body
+	Body *models.MeshmodelsDuplicateAPIResponse
+}
+
 // Return meshmodel components
 // swagger:response meshmodelComponentsResponseWrapper
 type meshmodelComponentsResponseWrapper struct {
 	// in: body
 	Body *models.MeshmodelComponentsAPIResponse
+}
+
+// Return meshmoddel components with the count of duplicates
+// swagger:response meshmodelComponentsDuplicateResponseWrapper
+type meshmodelComponentsDuplicateResponseWrapper struct {
+	// in: body
+	Body *models.MeshmodelComponentsDuplicateAPIResponse
 }
 
 // Returns meshmodel relationships
