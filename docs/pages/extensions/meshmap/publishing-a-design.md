@@ -45,7 +45,7 @@ Add details about your design. Select compatibility, add caveats and considerati
 
 You are all set, Your request to publish this design is sent to Meshery Cloud admins. Create more designs!
 
-### Watch a turorial on how to publish a design
+### Watch a tutorial on how to publish a design
 <video class="videoTest" width="750" height="auto" autoplay="" muted ="" loop="">
   <source src="{{ site.baseurl }}/assets/img/meshmap/how-to-publish-your-design.mp4" type="video/mp4" />
  Your browser does not support the video tag
