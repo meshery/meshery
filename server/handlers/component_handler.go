@@ -62,7 +62,7 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 	}
 	if r.URL.Query().Get("search") != "" {
 		filter.Greedy = true
-		filter.Name = r.URL.Query().Get("search")
+		filter.DisplayName = r.URL.Query().Get("search")
 	}
 	meshmodels, count, _ := h.registryManager.GetModels(h.dbHandler, filter)
 
@@ -849,7 +849,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	}
 	if r.URL.Query().Get("search") != "" {
 		filter.Greedy = true
-		filter.Name = r.URL.Query().Get("search")
+		filter.DisplayName = r.URL.Query().Get("search")
 	}
 	entities, count, _ := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
@@ -943,7 +943,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	}
 	if r.URL.Query().Get("search") != "" {
 		filter.Greedy = true
-		filter.Name = r.URL.Query().Get("search")
+		filter.DisplayName = r.URL.Query().Get("search")
 	}
 	entities, count, _ := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
@@ -1032,7 +1032,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	}
 	if r.URL.Query().Get("search") != "" {
 		filter.Greedy = true
-		filter.Name = r.URL.Query().Get("search")
+		filter.DisplayName = r.URL.Query().Get("search")
 	}
 	entities, count, _ := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
