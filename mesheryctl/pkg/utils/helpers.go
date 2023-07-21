@@ -482,7 +482,6 @@ func StringInSlice(str string, slice []string) bool {
 // GetID returns a array of IDs from meshery server endpoint /api/{configurations}
 func GetID(baseUrl, configuration string) ([]string, error) {
 	url := baseUrl + "/api/" + configuration + "?page_size=10000"
-	fmt.Println(url)
 	configType := configuration + "s"
 	var idList []string
 	req, err := NewRequest("GET", url, nil)

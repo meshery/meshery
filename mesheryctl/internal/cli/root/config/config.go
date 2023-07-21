@@ -67,7 +67,7 @@ func GetMesheryCtl(v *viper.Viper) (*MesheryCtlConfig, error) {
 	// Load the config data into the object
 	err := v.Unmarshal(&c)
 	if err != nil {
-		return nil, errors.New("invalid meshconfig")
+		return nil, ErrInvalidConfig(err)
 	}
 	return c, err
 }
