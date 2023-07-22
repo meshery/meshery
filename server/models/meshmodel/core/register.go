@@ -9,8 +9,8 @@ import (
 	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/cuecontext"
 	cueJson "cuelang.org/go/encoding/json"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	oamcore "github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils/component"
 	"github.com/layer5io/meshkit/utils/kubernetes"
@@ -66,7 +66,7 @@ func RegisterMeshmodelComponentsForCRDS(reg meshmodel.RegistryManager, k8sYaml [
 			return
 		}
 		_ = reg.RegisterEntity(meshmodel.Host{
-			Hostname:  meshmodel.Kubernetes{}.String(),
+			Hostname: meshmodel.Kubernetes{}.String(),
 			Metadata: contextID,
 		}, v1alpha1.ComponentDefinition{
 			Schema: schema,

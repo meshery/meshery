@@ -614,7 +614,8 @@ func (h *Handler) GetMesheryApplicationHandler(
 //
 // Get application file types
 // responses:
-//  200: mesheryApplicationTypesResponseWrapper
+//
+//	200: mesheryApplicationTypesResponseWrapper
 func (h *Handler) GetMesheryApplicationTypesHandler(
 	rw http.ResponseWriter,
 	_ *http.Request,

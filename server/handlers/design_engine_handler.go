@@ -88,7 +88,7 @@ func (h *Handler) PatternFileHandler(
 		isDel,
 		r.URL.Query().Get("verify") == "true",
 		r.URL.Query().Get("dryRun") == "true",
-		r.URL.Query().Get("skipDependencies") == "true",
+		r.URL.Query().Get("skipCRD") == "true",
 		false,
 		h.registryManager,
 		h.EventsBuffer,
@@ -123,7 +123,7 @@ func _processPattern(
 	isDelete bool,
 	verify bool,
 	dryRun bool,
-	skipDependencies bool,
+	skipCrdAndOperator bool,
 	skipPrintLogs bool,
 	registry *meshmodel.RegistryManager,
 	eb *events.EventStreamer,
@@ -179,12 +179,12 @@ func _processPattern(
 			registry:   registry,
 			// kubeconfig:    kubecfg,
 			// kubecontext:   mk8scontext,
-			skipPrintLogs:   skipPrintLogs,
-			skipDependencies: skipDependencies,
-			ctxTokubeconfig: ctxToconfig,
-			accumulatedMsgs: []string{},
-			err:             nil,
-			eventbuffer:     eb,
+			skipPrintLogs:    skipPrintLogs,
+			skipCrdAndOperator: skipCrdAndOperator,
+			ctxTokubeconfig:  ctxToconfig,
+			accumulatedMsgs:  []string{},
+			err:              nil,
+			eventbuffer:      eb,
 		}
 		chain := stages.CreateChain()
 		chain.
@@ -277,12 +277,12 @@ type serviceActionProvider struct {
 	userID          string
 	// kubeconfig  []byte
 	// kubecontext     *models.K8sContext
-	skipDependencies bool
-	skipPrintLogs   bool
-	accumulatedMsgs []string
-	err             error
-	eventbuffer     *events.EventStreamer
-	registry        *meshmodel.RegistryManager
+	skipCrdAndOperator bool
+	skipPrintLogs    bool
+	accumulatedMsgs  []string
+	err              error
+	eventbuffer      *events.EventStreamer
+	registry         *meshmodel.RegistryManager
 }
 
 func (sap *serviceActionProvider) GetRegistry() *meshmodel.RegistryManager {
@@ -440,7 +440,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 				sap.opIsDelete,
 				sap.eventbuffer,
 				host.IHost,
-				sap.skipDependencies,
+				sap.skipCrdAndOperator,
 			)
 			return resp, err
 		}

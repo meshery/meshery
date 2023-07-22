@@ -41,7 +41,7 @@ var (
 
 const (
 	// DefaultProviderURL is the provider url for the "none" provider
-	DefaultProviderURL           = "https://meshery.layer5.io"
+	DefaultProviderURL = "https://meshery.layer5.io"
 )
 
 func main() {

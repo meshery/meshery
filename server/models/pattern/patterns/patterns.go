@@ -16,7 +16,7 @@ import (
 	"github.com/layer5io/meshkit/utils/kubernetes"
 )
 
-func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bool, eb *events.EventStreamer, hostname registry.IHost, skipDependencies bool) (string, error) {
+func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bool, eb *events.EventStreamer, hostname registry.IHost, skipCrdAndOperator bool) (string, error) {
 	var comps []v1alpha1.Component
 	var config v1alpha1.Configuration
 
@@ -50,7 +50,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 		go func(kcli *kubernetes.Client) {
 			defer wg.Done()
 			id, _ := uuid.NewV4()
-			
+
 			for _, comp := range comps {
 				var req meshes.EventsResponse
 				if comp.Spec.Model == "core" {
@@ -96,7 +96,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 					eb.Publish(&req)
 					continue
 				}
-				if !skipDependencies && hostname != nil && hostname.String() != (registry.Kubernetes{}).String() {
+				if !skipCrdAndOperator && hostname != nil && hostname.String() != (registry.Kubernetes{}).String() {
 					var summary string
 					eventType := meshes.EventType_INFO
 					if !isDel {
@@ -107,10 +107,10 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 						msgs = append(msgs, fmt.Sprintf("Deleted %s: %s", strings.TrimSuffix(comp.Spec.Type, ".K8s"), comp.Name))
 					}
 					fmt.Println("host: ", hostname, " comp: ", comp.Name, "type: ", comp.Spec.Type, comp)
-					// even if dependencies were not resolved fail forward, there can be case that dependency already exist in the cluster.
-					result, err := hostname.HandleDependents(comp, kcli, !isDel) 
+					// Deploys resources that are required inside cluster for successful deployment of the design.
+					result, err := hostname.HandleDependents(comp, kcli, !isDel)
 					details := fmt.Sprintf("Dependencies resolved for %s. %s", comp.Name, result)
-
+					// If dependencies were not resolved fail forward, there can be case that dependency already exist in the cluster.
 					if err != nil {
 						eventType = meshes.EventType_ERROR
 						details = err.Error()

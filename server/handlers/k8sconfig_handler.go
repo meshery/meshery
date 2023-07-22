@@ -164,7 +164,7 @@ func (h *Handler) deleteK8SConfig(_ *models.User, _ *models.Preference, w http.R
 
 // GetContextsFromK8SConfig returns the context list for a given k8s config
 func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request) {
-	
+
 	k8sConfigBytes, err := readK8sConfigFromBody(req)
 	if err != nil {
 		logrus.Error(err)
@@ -246,9 +246,10 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 //
 // Used to register Kubernetes components to Meshery from a kubeconfig file
 // responses:
-// 	202:
-//  400:
-//  500:
+//
+//		202:
+//	 400:
+//	 500:
 func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Request) {
 	k8sConfigBytes, err := readK8sConfigFromBody(req)
 	if err != nil {
@@ -345,7 +346,7 @@ func RegisterK8sMeshModelComponents(_ context.Context, config []byte, ctxID stri
 	for _, c := range man {
 		writeK8sMetadata(&c, reg)
 		err = reg.RegisterEntity(meshmodel.Host{
-			Hostname:  "kubernetes",
+			Hostname: "kubernetes",
 			Metadata: ctxID,
 		}, c)
 		count++
@@ -403,7 +404,7 @@ func init() {
 	k8sMeshModelMetadata = m
 }
 
-func readK8sConfigFromBody(req *http.Request) (*[]byte, error){
+func readK8sConfigFromBody(req *http.Request) (*[]byte, error) {
 	_ = req.ParseMultipartForm(1 << 20)
 
 	k8sfile, _, err := req.FormFile("k8sfile")
@@ -420,6 +421,7 @@ func readK8sConfigFromBody(req *http.Request) (*[]byte, error){
 	}
 	return &k8sConfigBytes, nil
 }
+
 // func writeDefK8sOnFileSystem(def string, path string) {
 // 	err := ioutil.WriteFile(path, []byte(def), 0777)
 // 	if err != nil {
