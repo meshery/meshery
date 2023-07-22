@@ -65,7 +65,9 @@
   links:
     - title: Architecture ↆ
       url: concepts/architecture
-      children:           
+      children: 
+         - title: Adapters
+           url: concepts/architecture/adapters
         - title: Broker
           url: concepts/architecture/broker
         - title: Database
@@ -74,8 +76,6 @@
           url: concepts/architecture/meshsync     
         - title: Operator
           url: concepts/architecture/operator   
-    - title: Adapters
-      url: concepts/architecture/adapters
     - title: Catalog
       url: concepts/catalog  
     
