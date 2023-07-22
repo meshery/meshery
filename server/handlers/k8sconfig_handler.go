@@ -25,7 +25,7 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	putils "github.com/layer5io/meshery/server/models/pattern/utils"
-	"github.com/layer5io/meshkit/models/meshmodel"
+	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/events"
 	"github.com/pkg/errors"
@@ -346,7 +346,7 @@ func RegisterK8sMeshModelComponents(_ context.Context, config []byte, ctxID stri
 		writeK8sMetadata(&c, reg)
 		err = reg.RegisterEntity(meshmodel.Host{
 			Hostname:  "kubernetes",
-			ContextID: ctxID,
+			Metadata: ctxID,
 		}, c)
 		count++
 	}

@@ -19,7 +19,7 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
 	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/meshmodel"
+	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils/events"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -88,6 +88,7 @@ func (h *Handler) PatternFileHandler(
 		isDel,
 		r.URL.Query().Get("verify") == "true",
 		r.URL.Query().Get("dryRun") == "true",
+		r.URL.Query().Get("skipDependencies") == "true",
 		false,
 		h.registryManager,
 		h.EventsBuffer,
@@ -122,6 +123,7 @@ func _processPattern(
 	isDelete bool,
 	verify bool,
 	dryRun bool,
+	skipDependencies bool,
 	skipPrintLogs bool,
 	registry *meshmodel.RegistryManager,
 	eb *events.EventStreamer,
@@ -178,6 +180,7 @@ func _processPattern(
 			// kubeconfig:    kubecfg,
 			// kubecontext:   mk8scontext,
 			skipPrintLogs:   skipPrintLogs,
+			skipDependencies: skipDependencies,
 			ctxTokubeconfig: ctxToconfig,
 			accumulatedMsgs: []string{},
 			err:             nil,
@@ -274,6 +277,7 @@ type serviceActionProvider struct {
 	userID          string
 	// kubeconfig  []byte
 	// kubecontext     *models.K8sContext
+	skipDependencies bool
 	skipPrintLogs   bool
 	accumulatedMsgs []string
 	err             error
@@ -402,6 +406,7 @@ func getComponentFieldPathFromK8sFieldPath(path string) (newpath string) {
 	}
 	return fmt.Sprintf("%s.%s", "settings", path)
 }
+
 func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, error) { // Marshal the component
 	jsonComp, err := json.Marshal(ccp.Component)
 	if err != nil {
@@ -434,6 +439,8 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 				string(jsonConfig),
 				sap.opIsDelete,
 				sap.eventbuffer,
+				host.IHost,
+				sap.skipDependencies,
 			)
 			return resp, err
 		}
