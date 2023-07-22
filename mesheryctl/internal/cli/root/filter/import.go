@@ -56,7 +56,7 @@ mesheryctl filter import /path/to/filter.wasm -name [string]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			return ErrProcessConfigFile(err)
 		}
 
 		filterURL := mctlCfg.GetBaseMesheryURL() + "/api/filter"
@@ -77,12 +77,12 @@ mesheryctl filter import /path/to/filter.wasm -name [string]
 		} else {
 			filterFile, err := os.ReadFile(uri)
 			if err != nil {
-				return errors.New("Unable to read file. " + err.Error())
+				return ErrReadFile(err)
 			}
 
 			fileInfo, err := os.Stat(uri)
 			if err != nil {
-				return errors.New("Unable to read file. " + err.Error())
+				return ErrReadFile(err)
 			}
 
 			content := string(filterFile)
@@ -97,7 +97,7 @@ mesheryctl filter import /path/to/filter.wasm -name [string]
 				utils.Log.Info("Reading config file")
 				cfgFile, err := os.ReadFile(cfg)
 				if err != nil {
-					return errors.New("Unable to read config file. " + err.Error())
+					return ErrReadConfigFile(err)
 				}
 
 				content := string(cfgFile)
@@ -117,23 +117,23 @@ mesheryctl filter import /path/to/filter.wasm -name [string]
 		marshalledBody, err := json.Marshal(body)
 
 		if err != nil {
-			return err
+			return ErrMarshal(err)
 		}
 
 		req, err := utils.NewRequest("POST", filterURL, bytes.NewBuffer(marshalledBody))
 		if err != nil {
-			return err
+			return ErrNewRequest(err)
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
-			return err
+			return ErrMakeRequest(err)
 		}
 
 		if resp.StatusCode == 200 {
 			utils.Log.Info("filter successfully imported")
 		} else {
-			return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
+			return ErrResponseStatus(resp.StatusCode)
 		}
 
 		return nil
