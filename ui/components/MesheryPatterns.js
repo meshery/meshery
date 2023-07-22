@@ -1436,7 +1436,7 @@ function MesheryPatterns({
             title={publishModal.pattern?.name}
             handleSubmit={handlePublish}
             payload={payload}
-            howInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }}
+            showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }}
             submitBtnText="Submit for Approval"
             submitBtnIcon={<PublicIcon/>}
           />
