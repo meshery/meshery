@@ -82,6 +82,7 @@ const (
 	tokenUsageURL     = docsBaseURL + "reference/mesheryctl/system/token"
 	modelUsageURL     = docsBaseURL + "reference/mesheryctl/system/model"
 	modelListURL      = docsBaseURL + "reference/mesheryctl/system/model/list"
+	modelViewURL      = docsBaseURL + "reference/mesheryctl/system/model/view"
 
 	// Meshery Server Location
 	EndpointProtocol = "http"
@@ -124,6 +125,7 @@ const (
 	cmdToken          cmdType = "token"
 	cmdModel          cmdType = "model"
 	cmdModelList      cmdType = "model list"
+	cmdModelView      cmdType = "model view"
 )
 
 const (

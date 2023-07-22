@@ -109,6 +109,8 @@ func SystemModelSubError(msg string, cmd string) string {
 	switch cmd {
 	case "list":
 		return formatError(msg, cmdModelList)
+	case "view":
+		return formatError(msg, cmdModelView)
 	default:
 		return formatError(msg, cmdModel)
 	}
@@ -230,6 +232,8 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelUsageURL)
 	case cmdModelList:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelListURL)
+	case cmdModelView:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelViewURL)
 	default:
 		return fmt.Sprintf("%s\n", msg)
 	}

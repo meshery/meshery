@@ -19,14 +19,24 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
+	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"gopkg.in/yaml.v2"
+)
+
+var (
+	// flag used to specify format of output of view {model-name} command
+	outFormatFlag string
 )
 
 // represents the `mesheryctl system model list` subcommand.
@@ -115,15 +125,137 @@ mesheryctl system model list
 
 		for _, model := range modelsResponse.Models {
 			if len(model.DisplayName) > 0 {
-				rows = append(rows, []string{model.DisplayName})
+				// in `mesheryctl system model view [model-name]` command `model.Name` must be
+				// passed in order to fetch its details
+				rows = append(rows, []string{model.Name})
 			}
 		}
 
 		if len(rows) == 0 {
 			// if no model is found
-			utils.Log.Info("No models found")
+			utils.Log.Info("No model(s) found")
 		} else {
 			utils.PrintToTable(header, rows)
+		}
+
+		return nil
+	},
+}
+
+// represents the `mesheryctl system model view [model-name]` subcommand.
+var viewModelCmd = &cobra.Command{
+	Use:   "view",
+	Short: "view model",
+	Long:  "view a model queried by its name",
+	Example: `
+// View current provider
+mesheryctl system model view [model-name]
+	`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		//Check prerequisite
+		hcOptions := &HealthCheckOptions{
+			IsPreRunE:  true,
+			PrintLogs:  false,
+			Subcommand: cmd.Use,
+		}
+		hc, err := NewHealthChecker(hcOptions)
+		if err != nil {
+			return ErrHealthCheckFailed(err)
+		}
+		// execute healthchecks
+		err = hc.RunPreflightHealthChecks()
+		if err != nil {
+			cmd.SilenceUsage = true
+			return err
+		}
+		cfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return err
+		}
+		ctx, err := cfg.GetCurrentContext()
+		if err != nil {
+			return err
+		}
+		err = ctx.ValidateVersion()
+		if err != nil {
+			return err
+		}
+		return nil
+	},
+	Args: func(_ *cobra.Command, args []string) error {
+		const errMsg = "Usage: mesheryctl system model view [model-name]\nRun 'mesheryctl system model list' to see list of models"
+		if len(args) == 0 {
+			return fmt.Errorf("model name isn't specified\n\n%v", errMsg)
+		} else if len(args) > 1 {
+			return fmt.Errorf("too many arguments\n\n%v", errMsg)
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			log.Fatalln(err, "error processing config")
+		}
+
+		baseUrl := mctlCfg.GetBaseMesheryURL()
+		model := args[0]
+
+		url := fmt.Sprintf("%s/api/meshmodels/models/%s?pagesize=all", baseUrl, model)
+		req, err := utils.NewRequest(http.MethodGet, url, nil)
+		if err != nil {
+			utils.Log.Error(ErrGettingRequestContext(err))
+			return err
+		}
+
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			utils.Log.Error(ErrConnectingToServer(err))
+			return err
+		}
+
+		// defers the closing of the response body after its use, ensuring that the resources are properly released.
+		defer resp.Body.Close()
+
+		data, err := io.ReadAll(resp.Body)
+		if err != nil {
+			utils.Log.Error(ErrInvalidAPIResponse(err))
+			return err
+		}
+
+		modelsResponse := &models.MeshmodelsAPIResponse{}
+		err = json.Unmarshal(data, modelsResponse)
+		if err != nil {
+			utils.Log.Error(ErrUnmarshallingAPIData(err))
+			return err
+		}
+
+		var selectedModel v1alpha1.Model
+
+		if modelsResponse.Count == 0 {
+			utils.Log.Info("No model(s) found for the given name ", model)
+			return nil
+		} else if modelsResponse.Count == 1 {
+			selectedModel = modelsResponse.Models[0]
+		} else {
+			selectedModel = selectModelPrompt(modelsResponse.Models)
+		}
+
+		var output []byte
+
+		// user may pass flag in lower or upper case but we have to keep it lower
+		// in order to make it consistent while checking output format
+		outFormatFlag = strings.ToLower(outFormatFlag)
+		if outFormatFlag == "yaml" {
+			output, err = yaml.Marshal(selectedModel)
+			if err != nil {
+				return errors.Wrap(err, "failed to format output in YAML")
+			}
+			utils.Log.Info(string(output))
+		} else if outFormatFlag == "json" {
+			return outputJson(selectedModel)
+		} else {
+			return errors.New("output-format choice invalid, use [json|yaml]")
 		}
 
 		return nil
@@ -172,6 +304,62 @@ mesheryctl system model gen
 }
 
 func init() {
-	availableSubcommands = []*cobra.Command{listModelCmd}
+	viewModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd}
 	modelCmd.AddCommand(availableSubcommands...)
+}
+
+// `selectModelPrompt` lets user to select a model if models are more than one
+func selectModelPrompt(models []v1alpha1.Model) v1alpha1.Model {
+	modelArray := []v1alpha1.Model{}
+	modelNames := []string{}
+
+	modelArray = append(modelArray, models...)
+
+	for _, model := range modelArray {
+		modelName := fmt.Sprintf("%s, version: %s", model.DisplayName, model.Version)
+		modelNames = append(modelNames, modelName)
+	}
+
+	prompt := promptui.Select{
+		Label: "Select a model",
+		Items: modelNames,
+	}
+
+	for {
+		i, _, err := prompt.Run()
+		if err != nil {
+			continue
+		}
+
+		return modelArray[i]
+	}
+}
+
+func outputJson(model v1alpha1.Model) error {
+	if err = prettifyJson(model); err != nil {
+		// if prettifyJson return error, marshal output in conventional way using json.MarshalIndent
+		// but it doesn't convert unicode to its corresponding HTML string (it is default behavior)
+		// e.g unicode representation of '&' will be printed as '\u0026'
+		if output, err := json.MarshalIndent(model, "", "  "); err != nil {
+			return errors.Wrap(err, "failed to format output in YAML")
+		} else {
+			utils.Log.Info(string(output))
+		}
+	}
+	return nil
+}
+
+// prettifyJson takes a v1alpha1.Model struct as input, marshals it into a nicely formatted JSON representation,
+// and prints it to standard output with proper indentation and without escaping HTML entities.
+func prettifyJson(model v1alpha1.Model) error {
+	// Create a new JSON encoder that writes to the standard output (os.Stdout).
+	enc := json.NewEncoder(os.Stdout)
+	// Configure the JSON encoder settings.
+	// SetEscapeHTML(false) prevents special characters like '<', '>', and '&' from being escaped to their HTML entities.
+	enc.SetEscapeHTML(false)
+	enc.SetIndent("", "  ")
+
+	// Any errors during the encoding process will be returned as an error.
+	return enc.Encode(model)
 }
