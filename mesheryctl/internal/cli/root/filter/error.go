@@ -22,20 +22,20 @@ import (
 )
 
 const (
-	ErrInvalidAuthTokenCode  = "1000"
-	ErrInvalidAPICallCode    = "1001"
-	ErrReadAPIResponseCode   = "1002"
-	ErrUnmarshalCode         = "1003"
-	ErrMarshalCode           = "1004"
-	ErrMarshalIndentCode     = "1005"
-	ErrReadFileCode          = "1006"
-	ErrReadConfigFileCode    = "1007"
-	ErrProcessConfigFileCode = "1008"
-	ErrNewRequestCode        = "1009"
-	ErrMakeRequestCode       = "1010"
-	ErrReadResponseBodyCode  = "1011"
-	ErrResponseStatusBodyCode    = "1012"
-	ErrResponseStatusCode ="1013"
+	ErrInvalidAuthTokenCode   = "1000"
+	ErrInvalidAPICallCode     = "1001"
+	ErrReadAPIResponseCode    = "1002"
+	ErrUnmarshalCode          = "1003"
+	ErrMarshalCode            = "1004"
+	ErrMarshalIndentCode      = "1005"
+	ErrReadFileCode           = "1006"
+	ErrReadConfigFileCode     = "1007"
+	ErrProcessConfigFileCode  = "1008"
+	ErrNewRequestCode         = "1009"
+	ErrMakeRequestCode        = "1010"
+	ErrReadResponseBodyCode   = "1011"
+	ErrResponseStatusBodyCode = "1012"
+	ErrResponseStatusCode     = "1013"
 )
 
 func ErrInvalidAuthToken() error {
@@ -58,8 +58,8 @@ func ErrMarshal(err error) error {
 	return errors.New(ErrMarshalCode, errors.Alert, []string{"Error marshalling request"}, []string{"Error coverting requestbody to JSON.\n" + err.Error()}, []string{}, []string{})
 }
 
-func ErrMarshalIndent(err error)error{
-	return errors.New(ErrMarshalIndentCode, errors.Alert, []string{"Error indenting json body"},[]string{"Can't marshal indent body filters", "" + err.Error()}, []string{}, []string{})
+func ErrMarshalIndent(err error) error {
+	return errors.New(ErrMarshalIndentCode, errors.Alert, []string{"Error indenting json body"}, []string{"Can't marshal indent body filters", "" + err.Error()}, []string{}, []string{})
 }
 
 func ErrReadFile(err error) error {
