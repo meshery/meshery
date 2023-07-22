@@ -34,7 +34,8 @@ const (
 	ErrNewRequestCode        = "1009"
 	ErrMakeRequestCode       = "1010"
 	ErrReadResponseBodyCode  = "1011"
-	ErrResponseStatusCode    = "1012"
+	ErrResponseStatusBodyCode    = "1012"
+	ErrResponseStatusCode ="1013"
 )
 
 func ErrInvalidAuthToken() error {
@@ -85,6 +86,10 @@ func ErrReadResponseBody(err error) error {
 	return errors.New(ErrReadResponseBodyCode, errors.Alert, []string{"error in reading response"}, []string{"Can't read response body", "" + err.Error()}, []string{}, []string{})
 }
 
-func ErrResponseStatus(statusCode int, body string) error {
-	return errors.New(ErrResponseStatusCode, errors.Alert, []string{"Wrong status code"}, []string{"Server returned with status code: " + fmt.Sprint(statusCode) + "\n" + "Response: " + body}, []string{}, []string{})
+func ErrResponseStatusBody(statusCode int, body string) error {
+	return errors.New(ErrResponseStatusBodyCode, errors.Alert, []string{"Wrong status code"}, []string{"Server returned with status code: " + fmt.Sprint(statusCode) + "\n" + "Response: " + body}, []string{}, []string{})
+}
+
+func ErrResponseStatus(statusCode int) error {
+	return errors.New(ErrResponseStatusCode, errors.Alert, []string{"Wrong status code"}, []string{"Server returned with status code: " + fmt.Sprint(statusCode)}, []string{}, []string{})
 }
