@@ -35,6 +35,8 @@ import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubs
 import { iconMedium, iconSmall } from "../css/icons.styles";
 import UploadImport from "./Modals/ImportModal";
 import SearchBar from "./searchcommon";
+import Application from "../public/static/img/drawer-icons/application_svg.js";
+import Modal from "./Modal"
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
@@ -1007,14 +1009,16 @@ function MesheryApplications({
           tab={modalOpen.deploy ? 2 : 1}
         />
         <PromptComponent ref={modalRef} />
-        <UploadImport
-          {
-            ...importSchema || {}
-          }
+        <Modal
           open={importModal.open}
+          schema={importSchema.rjsfSchema}
+          uiSchema={importSchema.uiSchema}
           handleClose={handleUploadImportClose}
-          importType="application"
           handleSubmit={handleImportApplication}
+          title="Import Application"
+          submitBtnText="Import"
+          leftHeaderIcon={<Application fill="#fff" style={{ height : "24px", width : "24px", fonSize : "1.45rem" }} />}
+          submitBtnIcon={<PublishIcon  style={iconMedium} className={classes.addIcon} data-cy="import-button"/>}
         />
         {/* <UploadImport open={importModal.open} handleClose={handleUploadImportClose} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler}
           supportedTypes={types} configuration="Application"  /> */}

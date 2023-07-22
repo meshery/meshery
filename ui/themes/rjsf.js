@@ -9,7 +9,7 @@ export const rjsfTheme = createTheme({
     },
   },
   typography : {
-    fontFamily : "inherit",
+    fontFamily : "Qanelas Soft, sans-serif",
     fontSize : 13,
   },
   props : {
@@ -229,7 +229,7 @@ const darkRjsfTheme = createTheme({
     },
   },
   typography : {
-    fontFamily : "inherit",
+    fontFamily : "Qanelas Soft, sans-serif",
     fontSize : 13,
   },
   props : {

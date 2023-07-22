@@ -22,7 +22,6 @@ import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
 import { toggleCatalogContent, updateProgress } from "../lib/store";
 import DesignConfigurator from "../components/configuratorComponents/MeshModel";
-import UploadImport from "./Modals/ImportModal";
 import { ctxUrl } from "../utils/multi-ctx";
 import { generateValidatePayload, getComponentsinFile, getDecodedFile } from "../utils/utils";
 import ViewSwitch from "./ViewSwitch";
@@ -43,13 +42,12 @@ import CloneIcon from "../public/static/img/CloneIcon";
 import { useRouter } from "next/router";
 import { publish_schema, publish_ui_schema } from "./schemas/publish_schema";
 import Modal from "./Modal";
-import _ from "lodash";
 import downloadFile from "../utils/fileDownloader";
 import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import ReusableTooltip from "./reusable-tooltip";
 import SearchBar from "./searchcommon";
-
+import Pattern from "../public/static/img/drawer-icons/pattern_svg.js";
 
 const styles = (theme) => ({
   grid : {
@@ -1428,17 +1426,32 @@ function MesheryPatterns({
           errors={modalOpen.errors}
         />
         {canPublishPattern &&
-          <Modal open={publishModal.open} schema={publish_schema} uiSchema={publish_ui_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.pattern?.catalog_data : payload.catalog_data } aria-label="catalog publish" title={publishModal.pattern?.name} handleSubmit={handlePublish} payload={payload} showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }}/>
+          <Modal
+            open={publishModal.open}
+            schema={publish_schema}
+            uiSchema={publish_ui_schema}
+            onChange={onChange}
+            handleClose={handlePublishModalClose}
+            aria-label="catalog publish"
+            title={publishModal.pattern?.name}
+            handleSubmit={handlePublish}
+            payload={payload}
+            howInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }}
+            submitBtnText="Submit for Approval"
+            submitBtnIcon={<PublicIcon/>}
+          />
         }
-
-        <UploadImport
-          {
-            ...importSchema || {}
-          }
+        <Modal
           open={importModal.open}
+          schema={importSchema.rjsfSchema}
+          uiSchema={importSchema.uiSchema}
           handleClose={handleUploadImportClose}
-          importType="design"
-          handleSubmit={handleImportDesign} />
+          handleSubmit={handleImportDesign}
+          title="Import Design"
+          submitBtnText="Import"
+          leftHeaderIcon={<Pattern fill="#fff" style={{ height: "24px", width: "24px", fonSize: "1.45rem" }} className={undefined} />}
+          submitBtnIcon={<PublishIcon  className={classes.addIcon} data-cy="import-button"/>}
+        />
         {/* <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchPatterns(page, pageSize, search, sortOrder)} configuration="Design" /> */}
         <PromptComponent ref={modalRef} />
       </NoSsr>
