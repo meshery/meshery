@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
@@ -157,8 +158,12 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 	})
 	var rels []v1alpha1.RelationshipDefinition
 	for _, r := range entities {
+		host := h.registryManager.GetRegistrant(r)
 		rel, ok := r.(v1alpha1.RelationshipDefinition)
 		if ok {
+			rel.HostID = host.ID
+			rel.HostName = host.Hostname
+			rel.DisplayHostName = helpers.HostnameToPascalCase(host.Hostname)
 			rels = append(rels, rel)
 		}
 	}

@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
@@ -205,11 +206,23 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		filter.Greedy = true
 	}
 
-	meshmodels, count, _ := h.registryManager.GetModels(h.dbHandler, filter)
+	entities, count ,_ := h.registryManager.GetEntities(filter)
+	var meshmodel []v1alpha1.Model
+	for _, r := range entities {
+		host := h.registryManager.GetRegistrant(r)
+		mod, ok := r.(v1alpha1.Model)
+		if ok {
+			mod.HostID = host.ID
+			mod.HostName = host.Hostname
+			mod.DisplayHostName = helpers.HostnameToPascalCase(host.Hostname)
+			meshmodel = append(meshmodel, mod)
+		}
+
+	}
 
 	var pgSize int64
 	if limitstr == "all" {
-		pgSize = count
+		pgSize = *count
 	} else {
 		pgSize = int64(limit)
 	}
@@ -217,8 +230,8 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	res := models.MeshmodelsDuplicateAPIResponse {
 		Page: page,
 		PageSize: int(pgSize),
-		Count: count,
-		Models: models.FindDuplicateModels(meshmodels),
+		Count: *count,
+		Models: models.FindDuplicateModels(meshmodel),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -1126,6 +1139,8 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	entities, count, _ := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
+		host := h.registryManager.GetRegistrant(r)
+
 		comp, ok := r.(v1alpha1.ComponentDefinition)
 		if ok {
 			m := make(map[string]interface{})
@@ -1133,6 +1148,9 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 			m = core.Format.Prettify(m, true)
 			b, _ := json.Marshal(m)
 			comp.Schema = string(b)
+			comp.HostID = host.ID
+			comp.HostName = host.Hostname
+			comp.DisplayHostName = helpers.HostnameToPascalCase(host.Hostname)
 			comps = append(comps, comp)
 		}
 	}

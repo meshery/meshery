@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"unicode"
 
 	"github.com/layer5io/meshkit/utils"
 	"gopkg.in/yaml.v2"
@@ -88,4 +89,29 @@ func NestedMapExplorer(
 			mp[key] = val
 		}
 	}
+}
+
+func HostnameToPascalCase(input string) string {
+    parts := strings.Split(input, ".")
+
+    for i, part := range parts {
+        parts[i] = CapitalizeFirstLetter(part)
+    }
+
+    pascalCaseHostname := strings.Join(parts, " ")
+
+    return pascalCaseHostname
+}
+
+func CapitalizeFirstLetter(word string) string {
+    if word == "" {
+        return ""
+    }
+
+    runes := []rune(word)
+    if unicode.IsLower(runes[0]) {
+        runes[0] = unicode.ToUpper(runes[0])
+    }
+
+    return string(runes)
 }
