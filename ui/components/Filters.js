@@ -48,7 +48,6 @@ import fetchCatalogFilter from "./graphql/queries/CatalogFilterQuery";
 import { iconMedium } from "../css/icons.styles";
 import Modal from "./Modal";
 import { publish_schema, publish_ui_schema } from "./schemas/publish_schema";
-import _ from "lodash";
 import { getDecodedFile } from "../utils/utils";
 import SearchBar from "./searchcommon";
 import Filter from "../public/static/img/drawer-icons/filter_svg.js";
@@ -224,10 +223,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     filter : {},
     name : "",
   });
-  const [payload, setPayload] = useState({
-    id : "",
-    catalog_data : {}
-  });
 
   const catalogContentRef = useRef();
   const catalogVisibilityRef = useRef();
@@ -306,13 +301,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   }, [])
 
   const searchTimeout = useRef(null);
-
-  const onChange = (e) => {
-    setPayload({
-      id : publishModal.filter?.id,
-      catalog_data : e
-    })
-  }
 
   const handleUploadImport = () => {
     setImportModal({
@@ -1198,9 +1186,12 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
               setSelectedFilter={setSelectedFilter}
               selectedFilter={selectedFilter}
               pages={Math.ceil(count / pageSize)}
+              importSchema={importSchema}
               setPage={setPage}
               selectedPage={page}
               UploadImport={UploadImport}
+              handleImportFilter={handleImportFilter}
+
               fetch={() => fetchFilters(page, pageSize, search, sortOrder)}
             />
         }
@@ -1220,19 +1211,19 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             open={publishModal.open}
             schema={publish_schema}
             uiSchema={publish_ui_schema}
-            onChange={onChange}
+            title={publishModal.filter?.name}
             handleClose={handlePublishModalClose}
             handleSubmit={handlePublish}
             showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }}
             submitBtnText="Submit for Approval"
-            submitBtnIcon={<PublicIcon  style={iconMedium} className={classes.addIcon} data-cy="import-button"/>}/>
+            submitBtnIcon={<PublicIcon  style={iconMedium} className={classes.addIcon} data-cy="import-button"/>}
+          />
         }
         <PromptComponent ref={modalRef} />
         <Modal
           open={importModal.open}
           schema={importSchema.rjsfSchema}
           uiSchema={importSchema.uiSchema}
-          onChange={onChange}
           handleClose={handleUploadImportClose}
           handleSubmit={handleImportFilter}
           title="Import Filter"

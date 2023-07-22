@@ -1449,7 +1449,7 @@ function MesheryPatterns({
           handleSubmit={handleImportDesign}
           title="Import Design"
           submitBtnText="Import"
-          leftHeaderIcon={<Pattern fill="#fff" style={{ height: "24px", width: "24px", fonSize: "1.45rem" }} className={undefined} />}
+          leftHeaderIcon={<Pattern fill="#fff" style={{ height : "24px", width : "24px", fonSize : "1.45rem" }} className={undefined} />}
           submitBtnIcon={<PublishIcon  className={classes.addIcon} data-cy="import-button"/>}
         />
         {/* <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchPatterns(page, pageSize, search, sortOrder)} configuration="Design" /> */}

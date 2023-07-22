@@ -210,7 +210,7 @@ function Modal(props) {
   };
 
   console.log(submitBtnText)
-  
+
 
   return (
     <>
