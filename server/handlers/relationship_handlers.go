@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
@@ -70,7 +71,7 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 			rels = append(rels, rel)
 		}
 	}
-	if err := enc.Encode(rels); err != nil {
+	if err := enc.Encode(res); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}
@@ -121,26 +122,42 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 		OrderOn:   r.URL.Query().Get("order"),
 		Sort:      r.URL.Query().Get("sort"),
 	})
+
 	var rels []v1alpha1.RelationshipDefinition
+	type restype struct {
+		Count         int64                             `json:"total_count"`
+		HostID		  uuid.UUID                         `json:"hostID"`
+		Hostname	  string							`json:"hostName"`
+		Relationships []v1alpha1.RelationshipDefinition `json:"relationships"`
+	}
+	var Res []restype
 	for _, r := range entities {
+		
+		host := h.registryManager.GetRegistrant(r)
 		rel, ok := r.(v1alpha1.RelationshipDefinition)
 		if ok {
 			rels = append(rels, rel)
 		}
+		hostID := host.ID
+		hostName := host.Hostname
+		res := struct {
+			Count         int64                             `json:"total_count"`
+			HostID		  uuid.UUID                         `json:"hostID"`
+			Hostname	  string							`json:"hostName"`
+			Relationships []v1alpha1.RelationshipDefinition `json:"relationships"`
+		}{
+			Count:         *count,
+			HostID:        hostID,
+			Hostname:      hostName,
+			Relationships: rels,
+		}
+		
+		Res = append(Res, res)
 	}
-
-	res := struct {
-		Count         int64                             `json:"total_count"`
-		Relationships []v1alpha1.RelationshipDefinition `json:"relationships"`
-	}{
-		Count:         *count,
-		Relationships: rels,
-	}
-
-	if err := enc.Encode(res); err != nil {
+	if err := enc.Encode(Res); err != nil {
 		h.log.Error(ErrWorkloadDefinition(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
-	}
+	}	
 }
 
 func (h *Handler) RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http.Request) {

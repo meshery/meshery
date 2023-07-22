@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models/pattern/core"
@@ -164,24 +165,40 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		OrderOn: r.URL.Query().Get("order"),
 		Sort:    r.URL.Query().Get("sort"),
 	}
+	
 	if r.URL.Query().Get("search") != "" {
 		filter.DisplayName = r.URL.Query().Get("search")
 		filter.Greedy = true
 	}
+
+	//entityFilter := &v1alpha1.ComponentFilter{}
 	models, count := h.registryManager.GetModels(h.dbHandler, filter)
+	entities, _ := h.registryManager.GetEntities(filter)
+	for _, r := range entities {
+		host := h.registryManager.GetRegistrant(r)
+		hostID := host.ID
+		hostName := host.Hostname
 
-	res := struct {
-		Count  int64            `json:"total_count"`
-		Models []v1alpha1.Model `json:"models"`
-	}{
-		Count:  count,
-		Models: models,
+		res := struct {
+			Count  		  int64            						`json:"total_count"`
+			HostID		  uuid.UUID                         `json:"hostID"`
+			Hostname	  string							`json:"hostName"`
+			Models []v1alpha1.Model `json:"models"`
+	
+		}{
+			Count:  	count,
+			HostID:        hostID,
+			Hostname:      hostName,
+			Models: models,
+		}
+	
+		if err := enc.Encode(res); err != nil {
+			h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
+			http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		}
 	}
+	
 
-	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
-	}
 }
 
 // swagger:route GET ```/api/meshmodels/models/{model}``` GetMeshmodelModelsByName idGetMeshmodelModelsByName
@@ -670,6 +687,8 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range res {
 		comp, ok := r.(v1alpha1.ComponentDefinition)
+		
+		host := h.registryManager.GetRegistrant(r)
 		if ok {
 			m := make(map[string]interface{})
 			_ = json.Unmarshal([]byte(comp.Schema), &m)
@@ -678,11 +697,12 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 			comp.Schema = string(b)
 			comps = append(comps, comp)
 		}
+		if err := enc.Encode(host); err != nil {
+			h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
+			http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		}
 	}
-	if err := enc.Encode(comps); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
-	}
+	
 }
 
 // swagger:route GET /api/meshmodels/categories/{category}/models/{model}/components GetMeshmodelComponentByModelByCategory idGetMeshmodelComponentByModelByCategory
@@ -894,6 +914,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
 		comp, ok := r.(v1alpha1.ComponentDefinition)
+		host := h.registryManager.GetRegistrant(r)
 		if ok {
 			m := make(map[string]interface{})
 			_ = json.Unmarshal([]byte(comp.Schema), &m)
@@ -902,20 +923,27 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 			comp.Schema = string(b)
 			comps = append(comps, comp)
 		}
+		hostID := host.ID
+		hostName := host.Hostname
+		res := struct {
+			Count      int64                          `json:"total_count"`
+			HostID		  uuid.UUID                         `json:"hostID"`
+			Hostname	  string							`json:"hostName"`
+			Components []v1alpha1.ComponentDefinition `json:"components"`
+		}{
+			Count:      *count,
+			HostID:        hostID,
+			Hostname:      hostName,
+			Components: comps,
+		}
+	
+		if err := enc.Encode(res); err != nil {
+			h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
+			http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		}
 	}
 
-	res := struct {
-		Count      int64                          `json:"total_count"`
-		Components []v1alpha1.ComponentDefinition `json:"components"`
-	}{
-		Count:      *count,
-		Components: comps,
-	}
-
-	if err := enc.Encode(res); err != nil {
-		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
-	}
+	
 }
 
 // swagger:route POST /api/meshmodel/components/register MeshmodelValidate idPostMeshModelValidate
@@ -963,4 +991,42 @@ func filterUniqueElementsArray(s []string) []string {
 		ans = append(ans, a)
 	}
 	return ans
+}
+
+
+
+func (h *Handler) GetMeshmodelRegistery(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Add("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+	// v := r.URL.Query().Get("version")
+	// limitstr := r.URL.Query().Get("pagesize")
+
+	filter := &v1alpha1.ComponentFilter{}
+	
+	// var entity meshmodel.Entity = &meshmodel.Entity{
+
+	// }
+	var hosts []meshmodel.Host
+	entities, count := h.registryManager.GetEntities(filter)
+	for _, entity := range entities {
+		//host, _:= entity.(v1alpha1.ComponentDefinition)
+		registries := h.registryManager.GetRegistrant(entity)
+		hosts = append(hosts, registries)
+		
+	}
+	res := struct {
+		Count int64 				`json:"total_count"`
+		Registries []meshmodel.Host `json:"Registrant"`
+	}{
+		Count: *count,
+		Registries: hosts,
+
+	}
+	if err := enc.Encode(res); err != nil {
+		h.log.Error(ErrGetMeshModels(err))
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+	}
+
+	
+	
 }
