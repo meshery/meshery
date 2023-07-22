@@ -108,7 +108,6 @@ type HandlerInterface interface {
 	ValidationHandler(rw http.ResponseWriter, r *http.Request)
 	MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelModels(rw http.ResponseWriter, r *http.Request)
-	GetMeshmodelRegistery(rw http.ResponseWriter, r *http.Request)
 	RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Request)
 
 	GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request)
