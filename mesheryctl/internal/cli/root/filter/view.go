@@ -49,7 +49,7 @@ mesheryctl filter view --all
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			return ErrProcessConfigFile(err)
 		}
 
 		filter := ""
@@ -61,7 +61,7 @@ mesheryctl filter view --all
 			}
 			filter, isID, err = utils.ValidId(args[0], "filter")
 			if err != nil {
-				return errors.New("invalid filter name or ID. " + err.Error())
+				return ErrFilterNameOrID(err)
 			}
 		}
 
@@ -82,17 +82,17 @@ mesheryctl filter view --all
 
 		req, err := utils.NewRequest("GET", urlString, nil)
 		if err != nil {
-			return err
+			return ErrNewRequest(err)
 		}
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			return err
+			return ErrMakeRequest(err)
 		}
 
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			return err
+			return ErrReadResponseBody(err)
 		}
 
 		var dat map[string]interface{}
@@ -102,12 +102,12 @@ mesheryctl filter view --all
 
 		if isID {
 			if body, err = json.MarshalIndent(dat, "", "  "); err != nil {
-				return err
+				return ErrMarshalIndent(err)
 			}
 		} else if viewAllFlag {
 			// only keep the filter key from the response when viewing all the filters
 			if body, err = json.MarshalIndent(map[string]interface{}{"filters": dat["filters"]}, "", "  "); err != nil {
-				return err
+				return ErrMarshalIndent(err)
 			}
 		} else {
 			// use the first match from the result when searching by filter name
@@ -117,16 +117,16 @@ mesheryctl filter view --all
 				return nil
 			}
 			if body, err = json.MarshalIndent(arr[0], "", "  "); err != nil {
-				return err
+				return ErrMarshalIndent(err)
 			}
 		}
 
 		if outFormatFlag == "yaml" {
 			if body, err = yaml.JSONToYAML(body); err != nil {
-				return errors.Wrap(err, "failed to convert json to yaml")
+				return ErrJSONToYAML(err)
 			}
 		} else if outFormatFlag != "json" {
-			return errors.New("output-format choice invalid, use [json|yaml]")
+			return ErrOutFormatFlag()
 		}
 		utils.Log.Info(string(body))
 		return nil
