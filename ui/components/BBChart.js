@@ -1,4 +1,4 @@
-import { useRef , useEffect } from "react"
+import { useRef , useEffect ,memo } from "react"
 import { bb } from "billboard.js"
 
 const BBChart = ({ options }) => {
@@ -15,4 +15,4 @@ const BBChart = ({ options }) => {
   return <div ref={chartRef} ></div>;
 };
 
-export default BBChart
+export default memo(BBChart)
