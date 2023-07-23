@@ -13,6 +13,7 @@ var (
 	ErrAttachAuthTokenCode = "1046"
 	ErrUnmarshalCode       = "1003"
 	ErrFileReadCode        = "1000"
+	ErrCreatingRequestCode = "replace_me"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -248,9 +249,14 @@ func ErrFailReqStatus(statusCode int) error {
 }
 
 func ErrUnmarshal(err error) error {
-	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Error unmarshalling response"}, []string{"Error processing JSON response from server.\n" + err.Error()}, []string{}, []string{})
+	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Error unmarshalling response"}, []string{"Error processing JSON response from server.\n" + err.Error()}, []string{""}, []string{})
 }
 
 func ErrFileRead(err error) error {
 	return errors.New(ErrFileReadCode, errors.Alert, []string{"Unable to read file"}, []string{err.Error()}, []string{"Provided file is not present or invalid path"}, []string{"Please provide a valid file path with a valid file"})
+}
+
+func ErrCreatingRequest(err error) error {
+	return errors.New(ErrCreatingRequestCode, errors.Fatal, []string{err.Error()},
+		[]string{"Error occured while making an http request"}, []string{"Meshery is not running or there is a network issue"}, []string{"Check your network connection and check the status of meshery server via 'mesheryctl system status'"})
 }

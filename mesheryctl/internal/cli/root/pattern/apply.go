@@ -108,7 +108,7 @@ mesheryctl pattern apply [pattern-name]
 
 			index := 0
 			if len(response.Patterns) == 0 {
-				log.Error(ErrPatternsNotFound())
+				log.Error(ErrPatternNotFound())
 				return nil
 			} else if len(response.Patterns) == 1 {
 				patternFile = response.Patterns[0].PatternFile

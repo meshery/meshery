@@ -24,7 +24,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/pkg/errors"
+	"github.com/layer5io/meshkit/logger"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -49,20 +49,27 @@ mesheryctl pattern list
 	`,
 	Annotations: linkDocPatternList,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		log, err := logger.New("pattern", logger.Options{
+			Format:     logger.SyslogLogFormat,
+			DebugLevel: true,
+		})
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			log.Error(err)
+			return nil
 		}
 
 		var response models.PatternsAPIResponse
 		req, err := utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/pattern", nil)
 		if err != nil {
-			return err
+			log.Error(err)
+			return nil
 		}
 
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			return err
+			log.Error(err)
+			return nil
 		}
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
@@ -72,11 +79,13 @@ mesheryctl pattern list
 		err = json.Unmarshal(body, &response)
 
 		if err != nil {
-			return err
+			log.Error(utils.ErrUnmarshal(err))
+			return nil
 		}
 		tokenObj, err := utils.ReadToken(utils.TokenFlag)
 		if err != nil {
-			return err
+			log.Error(err)
+			return nil
 		}
 		provider := tokenObj["meshery-provider"]
 		var data [][]string

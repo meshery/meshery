@@ -21,8 +21,8 @@ const (
 	ErrInvalidPatternFileCode = "replace_me"
 )
 
-func ErrPatternsNotFound() error {
-	return errors.New(ErrPatternsNotFoundCode, errors.Fatal, []string{"Patterns Not Found"}, []string{"No Patterns found with the given name"}, []string{"Patterns with the given name is not present to apply"}, []string{"Please check if the given pattern name is present via 'mesheryctl pattern list'"})
+func ErrPatternNotFound() error {
+	return errors.New(ErrPatternsNotFoundCode, errors.Fatal, []string{"Pattern Not Found"}, []string{"No Pattern found with the given name or ID"}, []string{"Pattern with the given name or ID is not present"}, []string{"Please check if the given pattern name or ID is present via 'mesheryctl pattern list'"})
 }
 
 func ErrInvalidPatternFile(err error) error {

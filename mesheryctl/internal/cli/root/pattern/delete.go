@@ -26,6 +26,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/logger"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -42,17 +43,19 @@ mesheryctl pattern delete [file | URL]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
-
+		log, err := logger.New("pattern", logger.Options{
+			Format:     logger.SyslogLogFormat,
+			DebugLevel: true,
+		})
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
 
-		var urlString = mctlCfg.GetBaseMesheryURL()
 		pattern := ""
 		isID := false
 		if len(args) > 0 {
-			pattern, isID, err = utils.ValidId(urlString, args[0], "pattern")
+			pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
 			if err != nil {
 				return err
 			}
@@ -60,15 +63,15 @@ mesheryctl pattern delete [file | URL]
 
 		// Delete the pattern using the id
 		if isID {
-			err := utils.DeleteConfiguration(urlString, pattern, "pattern")
+			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), pattern, "pattern")
 			if err != nil {
 				return errors.Wrap(err, utils.PatternError(fmt.Sprintf("failed to delete pattern %s", args[0])))
 			}
 			utils.Log.Info("Pattern ", args[0], " deleted successfully")
 			return nil
 		}
-		deployURL := urlString + "/api/pattern/deploy"
-		patternURL := urlString + "/api/pattern"
+		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
+		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
 
 		// If file path not a valid URL, treat it like a local file path
 		if !govalidator.IsURL(file) {
@@ -107,12 +110,14 @@ mesheryctl pattern delete [file | URL]
 
 			req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 			if err != nil {
-				return err
+				log.Error(err)
+				return nil
 			}
 
 			resp, err := utils.MakeRequest(req)
 			if err != nil {
-				return err
+				log.Error(err)
+				return nil
 			}
 			utils.Log.Debug("remote hosted pattern request success")
 			var response []*models.MesheryPattern
@@ -133,12 +138,14 @@ mesheryctl pattern delete [file | URL]
 
 		req, err = utils.NewRequest("DELETE", deployURL, bytes.NewBuffer([]byte(patternFile)))
 		if err != nil {
-			return err
+			log.Error(err)
+			return nil
 		}
 
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			return err
+			log.Error(err)
+			return nil
 		}
 
 		defer res.Body.Close()
