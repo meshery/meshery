@@ -46,7 +46,7 @@ mesheryctl filter list
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			return ErrProcessConfigFile(err)
 		}
 
 		if len(args) > 0 {
@@ -56,19 +56,19 @@ mesheryctl filter list
 		var response models.FiltersAPIResponse
 		req, err := utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/filter", nil)
 		if err != nil {
-			return err
+			return ErrNewRequest(err)
 		}
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			return err
+			return ErrMakeRequest(err)
 		}
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			return err
+			return ErrReadResponseBody(err)
 		}
 		if res.StatusCode != http.StatusOK {
-			return errors.New("Server returned with status code: " + fmt.Sprint(res.StatusCode) + "\n" + "Response: " + string(body))
+			return  ErrResponseStatusBody(res.StatusCode, string(body))
 		}
 		err = json.Unmarshal(body, &response)
 
