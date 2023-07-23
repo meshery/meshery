@@ -42,15 +42,15 @@ const (
 )
 
 func ErrInvalidAuthToken() error {
-	return errors.New(ErrInvalidAuthTokenCode, errors.Alert, []string{"authentication token not found. please supply a valid user token with the --token (or -t) flag"}, []string{}, []string{}, []string{})
+	return errors.New(ErrInvalidAuthTokenCode, errors.Alert, []string{"Authentication token not found. please supply a valid user token with the --token (or -t) flag"}, []string{}, []string{}, []string{})
 }
 
 func ErrInvalidAPICall(statusCode int) error {
-	return errors.New(ErrInvalidAPICallCode, errors.Alert, []string{"Response Status Code ", strconv.Itoa(statusCode), " possible Server Error"}, []string{"Response Status Code " + strconv.Itoa(statusCode) + " possible Server Error"}, []string{}, []string{})
+	return errors.New(ErrInvalidAPICallCode, errors.Alert, []string{"Response Status Code ", strconv.Itoa(statusCode), " Possible Server Error"}, []string{"Response Status Code " + strconv.Itoa(statusCode) + " possible Server Error"}, []string{}, []string{})
 }
 
 func ErrReadAPIResponse(err error) error {
-	return errors.New(ErrReadAPIResponseCode, errors.Alert, []string{"failed to read response body"}, []string{"Failed to read response body", " " + err.Error()}, []string{}, []string{})
+	return errors.New(ErrReadAPIResponseCode, errors.Alert, []string{"Failed to read response body"}, []string{"Failed to read response body", " " + err.Error()}, []string{}, []string{})
 }
 
 func ErrUnmarshal(err error) error {
@@ -78,15 +78,15 @@ func ErrProcessConfigFile(err error) error {
 }
 
 func ErrNewRequest(err error) error {
-	return errors.New(ErrNewRequestCode, errors.Alert, []string{"error creating new request"}, []string{"Error in creating new Request", "" + err.Error()}, []string{}, []string{})
+	return errors.New(ErrNewRequestCode, errors.Alert, []string{"Error creating new request"}, []string{"Error in creating new Request", "" + err.Error()}, []string{}, []string{})
 }
 
 func ErrMakeRequest(err error) error {
-	return errors.New(ErrMakeRequestCode, errors.Alert, []string{"error in making request"}, []string{"Can't return response from the new request made", "" + err.Error()}, []string{}, []string{})
+	return errors.New(ErrMakeRequestCode, errors.Alert, []string{"Error in making request"}, []string{"Can't return response from the new request made", "" + err.Error()}, []string{}, []string{})
 }
 
 func ErrReadResponseBody(err error) error {
-	return errors.New(ErrReadResponseBodyCode, errors.Alert, []string{"error in reading response"}, []string{"Can't read response body", "" + err.Error()}, []string{}, []string{})
+	return errors.New(ErrReadResponseBodyCode, errors.Alert, []string{"Error in reading response"}, []string{"Can't read response body", "" + err.Error()}, []string{}, []string{})
 }
 
 func ErrResponseStatusBody(statusCode int, body string) error {
@@ -98,7 +98,7 @@ func ErrResponseStatus(statusCode int) error {
 }
 
 func ErrJSONToYAML(err error) error {
-	return errors.New(ErrJSONToYAMLCode, errors.Alert, []string{"Can't convert JSON to yaml"}, []string{"failed to convert json to yaml", "" + err.Error()}, []string{}, []string{})
+	return errors.New(ErrJSONToYAMLCode, errors.Alert, []string{"Can't convert JSON to yaml"}, []string{"Failed to convert json to yaml", "" + err.Error()}, []string{}, []string{})
 }
 
 func ErrOutFormatFlag() error {
