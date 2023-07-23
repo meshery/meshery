@@ -281,7 +281,6 @@ func (opt *NighthawkCliOptions) UnmarshalJSON(data []byte) error {
 		OpenLoop							 	bool 			  	`json:"open_loop"`
 		JitterUniform 							Duration 		  	`json:"jitter_uniform"`
 		NighthawkService 						string 			  	`json:"nighthawk_service"`
-		ExperimentalH2UseMultipleConnections 	bool 			  	`json:"experimental_h2_use_multiple_connections"`
 		MaxConcurrentStreams 					uint32 			  	`json:"max_concurrent_streams"`	
 		Labels 									[]string 		  	`json:"labels"`
 		SimpleWarmup 							bool 			  	`json:"simple_warmup"`
@@ -320,7 +319,6 @@ func (opt *NighthawkCliOptions) UnmarshalJSON(data []byte) error {
 	opt.OpenLoop = &wrappers.BoolValue{Value: o.OpenLoop}
 	opt.JitterUniform = durationpb.New(time.Duration(o.JitterUniform.Seconds) * time.Second + time.Duration(o.JitterUniform.Nanos) * time.Nanosecond)
 	opt.NighthawkService = &wrappers.StringValue{Value: o.NighthawkService}
-	opt.ExperimentalH2UseMultipleConnections = &wrappers.BoolValue{Value: o.ExperimentalH2UseMultipleConnections}
 	opt.MaxConcurrentStreams = &wrappers.UInt32Value{Value: o.MaxConcurrentStreams}
 	opt.Labels = o.Labels
 	opt.SimpleWarmup = &wrappers.BoolValue{Value: o.SimpleWarmup}
@@ -477,12 +475,12 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 
 	logrus.Debugf("options string: %s", opts.Options)
 	if opts.Options != "" {
-		logrus.Debugf("Nighthawk CommandLineOptions: %+#v", ro)
+		// logrus.Debugf("Nighthawk CommandLineOptions: %+#v", ro)
 		err := json.Unmarshal([]byte(opts.Options), &ro)
 		if err != nil {
 			return nil, nil, ErrUnmarshal(err, "options string")
 		}
-		logrus.Debugf("Nighthawk CommandLineOptions with options: %+#v", ro)
+		// logrus.Debugf("Nighthawk CommandLineOptions with options: %+#v", ro)
 	}
 
 	c, err := nighthawk_client.New(nighthawk_client.Options{
