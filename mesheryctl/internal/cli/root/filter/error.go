@@ -102,9 +102,9 @@ func ErrJSONToYAML(err error) error {
 }
 
 func ErrOutFormatFlag() error {
-	return errors.New(ErrOutFormatFlagCode, errors.Alert, []string{"output-format choice invalid"}, []string{"output-format choice invalid, use [json|yaml]"}, []string{}, []string{})
+	return errors.New(ErrOutFormatFlagCode, errors.Alert, []string{"Output-format choice invalid"}, []string{"Output-format choice invalid, use [json|yaml]"}, []string{}, []string{})
 }
 
 func ErrFilterNameOrID(err error) error {
-	return errors.New(ErrFilterNameOrIDCode, errors.Alert, []string{"invalid filter name or ID"}, []string{"invalid filter name or ID", "" + err.Error()}, []string{}, []string{})
+	return errors.New(ErrFilterNameOrIDCode, errors.Alert, []string{"Invalid filter name or ID"}, []string{"Invalid filter name or ID", "" + err.Error()}, []string{}, []string{})
 }
