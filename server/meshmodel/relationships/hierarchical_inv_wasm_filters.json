@@ -39,6 +39,7 @@
                         "patchStrategy": "replace",
                         "mutatedRef": [
                             "settings",
+                            "spec",
                             "configPatches",
                             "_",
                             "patch",
