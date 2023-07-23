@@ -36,6 +36,9 @@ const (
 	ErrReadResponseBodyCode   = "1011"
 	ErrResponseStatusBodyCode = "1012"
 	ErrResponseStatusCode     = "1013"
+	ErrJSONToYAMLCode         = "1014"
+	ErrOutFormatFlagCode      = "1015"
+	ErrFilterNameOrIDCode     = "1016"
 )
 
 func ErrInvalidAuthToken() error {
@@ -92,4 +95,16 @@ func ErrResponseStatusBody(statusCode int, body string) error {
 
 func ErrResponseStatus(statusCode int) error {
 	return errors.New(ErrResponseStatusCode, errors.Alert, []string{"Wrong status code"}, []string{"Server returned with status code: " + fmt.Sprint(statusCode)}, []string{}, []string{})
+}
+
+func ErrJSONToYAML(err error) error {
+	return errors.New(ErrJSONToYAMLCode, errors.Alert, []string{"Can't convert JSON to yaml"}, []string{"failed to convert json to yaml", "" + err.Error()}, []string{}, []string{})
+}
+
+func ErrOutFormatFlag() error {
+	return errors.New(ErrOutFormatFlagCode, errors.Alert, []string{"output-format choice invalid"}, []string{"output-format choice invalid, use [json|yaml]"}, []string{}, []string{})
+}
+
+func ErrFilterNameOrID(err error) error {
+	return errors.New(ErrFilterNameOrIDCode, errors.Alert, []string{"invalid filter name or ID"}, []string{"invalid filter name or ID", "" + err.Error()}, []string{}, []string{})
 }
