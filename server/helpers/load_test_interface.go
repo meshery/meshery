@@ -24,6 +24,7 @@ import (
 	nighthawk_proto "github.com/layer5io/nighthawk-go/pkg/proto"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/types/known/durationpb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	v3 "github.com/envoyproxy/go-control-plane/envoy/config/core/v3"
 	v32 "github.com/envoyproxy/go-control-plane/envoy/config/metrics/v3"
@@ -249,6 +250,87 @@ func startNighthawkServer(timeout int64) error {
 	return ErrStartingNighthawkServer(err)
 }
 
+type NighthawkCliOptions nighthawk_proto.CommandLineOptions
+
+func (opt *NighthawkCliOptions) UnmarshalJSON(data []byte) error {
+
+	type Duration struct {
+		Seconds int64 `json:"seconds"`
+		Nanos   int32 `json:"nanos"`
+	}
+
+
+	o := &struct {	
+		RequestsPerSecond 						uint32 				`json:"requests_per_second"`
+		Connections 	  						uint32 				`json:"connections"`
+		Timeout           						Duration 			`json:"timeout"`
+		Concurrency		  						string 				`json:"concurrency"`
+		Verbosity	  	  						int32 				`json:"verbosity"`
+		OutputFormat	  						int32 	    		`json:"output_format"`
+		PrefetchConnections 					bool 				`json:"prefetch_connections"`
+		BurstSize								uint32				`json:"burst_size"`
+		AddressFamily							int32	    		`json:"address_family"`
+		MaxPendingRequests						uint32				`json:"max_pending_requests"`
+		MaxActiveRequests   					uint32				`json:"max_active_requests"`
+		MaxRequestsPerConnection 				uint32				`json:"max_requests_per_connection"`
+		SequencerIdleStrategy 					int32 				`json:"sequencer_idle_strategy"`
+		Trace 									string 				`json:"trace"`
+		ExperimentalH1ConnectionReuseStrategy 	int32 			  	`json:"experimental_h1_connection_reuse_strategy"`
+		TerminationPredicates 					map[string]uint64 	`json:"termination_predicates"`
+		FailurePredicates 						map[string]uint64 	`json:"failure_predicates"`
+		OpenLoop							 	bool 			  	`json:"open_loop"`
+		JitterUniform 							Duration 		  	`json:"jitter_uniform"`
+		NighthawkService 						string 			  	`json:"nighthawk_service"`
+		ExperimentalH2UseMultipleConnections 	bool 			  	`json:"experimental_h2_use_multiple_connections"`
+		MaxConcurrentStreams 					uint32 			  	`json:"max_concurrent_streams"`	
+		Labels 									[]string 		  	`json:"labels"`
+		SimpleWarmup 							bool 			  	`json:"simple_warmup"`
+		StatsFlushInterval 						uint32 			  	`json:"stats_flush_interval"`
+		LatencyResponseHeaderName 				string 			  	`json:"latency_response_header_name"`
+		ScheduledStart 							Duration 		  	`json:"scheduled_start"`
+		ExecutionId 							string 			  	`json:"execution_id"`
+	}{}
+
+	if err := json.Unmarshal(data, &o); err != nil {
+		return err
+	}
+	
+	opt.RequestsPerSecond = &wrappers.UInt32Value{Value: o.RequestsPerSecond}
+	opt.Connections = &wrappers.UInt32Value{Value: o.Connections}
+	opt.Timeout = durationpb.New(time.Duration(o.Timeout.Seconds) * time.Second + time.Duration(o.Timeout.Nanos) * time.Nanosecond)
+	opt.Concurrency = &wrappers.StringValue{Value: o.Concurrency}
+	verbosity := nighthawk_proto.Verbosity_VerbosityOptions(o.Verbosity)
+	opt.Verbosity = &nighthawk_proto.Verbosity{Value: verbosity}
+	outputFormat := nighthawk_proto.OutputFormat_OutputFormatOptions(o.OutputFormat)
+	opt.OutputFormat = &nighthawk_proto.OutputFormat{Value: outputFormat}
+	opt.PrefetchConnections = &wrappers.BoolValue{Value: o.PrefetchConnections}
+	opt.BurstSize = &wrappers.UInt32Value{Value: o.BurstSize}
+	addressFamily := nighthawk_proto.AddressFamily_AddressFamilyOptions(o.AddressFamily)
+	opt.AddressFamily = &nighthawk_proto.AddressFamily{Value: addressFamily}
+	opt.MaxPendingRequests = &wrappers.UInt32Value{Value: o.MaxPendingRequests}
+	opt.MaxActiveRequests = &wrappers.UInt32Value{Value: o.MaxActiveRequests}
+	opt.MaxRequestsPerConnection = &wrappers.UInt32Value{Value: o.MaxRequestsPerConnection}
+	sequencerIdleStrategy := nighthawk_proto.SequencerIdleStrategy_SequencerIdleStrategyOptions(o.SequencerIdleStrategy)
+	opt.SequencerIdleStrategy = &nighthawk_proto.SequencerIdleStrategy{Value: sequencerIdleStrategy}
+	opt.Trace = &wrappers.StringValue{Value: o.Trace}
+	experimentalH1ConnectionReuseStrategy := nighthawk_proto.H1ConnectionReuseStrategy_H1ConnectionReuseStrategyOptions(o.ExperimentalH1ConnectionReuseStrategy)
+	opt.ExperimentalH1ConnectionReuseStrategy = &nighthawk_proto.H1ConnectionReuseStrategy{Value: experimentalH1ConnectionReuseStrategy}
+	opt.TerminationPredicates = o.TerminationPredicates
+	opt.FailurePredicates = o.FailurePredicates
+	opt.OpenLoop = &wrappers.BoolValue{Value: o.OpenLoop}
+	opt.JitterUniform = durationpb.New(time.Duration(o.JitterUniform.Seconds) * time.Second + time.Duration(o.JitterUniform.Nanos) * time.Nanosecond)
+	opt.NighthawkService = &wrappers.StringValue{Value: o.NighthawkService}
+	opt.ExperimentalH2UseMultipleConnections = &wrappers.BoolValue{Value: o.ExperimentalH2UseMultipleConnections}
+	opt.MaxConcurrentStreams = &wrappers.UInt32Value{Value: o.MaxConcurrentStreams}
+	opt.Labels = o.Labels
+	opt.SimpleWarmup = &wrappers.BoolValue{Value: o.SimpleWarmup}
+	opt.StatsFlushInterval = &wrappers.UInt32Value{Value: o.StatsFlushInterval}
+	opt.LatencyResponseHeaderName = &wrappers.StringValue{Value: o.LatencyResponseHeaderName}
+	opt.ScheduledStart = timestamppb.New(time.Unix(o.ScheduledStart.Seconds, int64(o.ScheduledStart.Nanos)))
+	opt.ExecutionId = &wrappers.StringValue{Value: o.ExecutionId}
+
+	return nil
+}
 // NighthawkLoadTest is the actual code which invokes nighthawk to run the load test
 func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *periodic.RunnerResults, error) {
 	err := startNighthawkServer(int64(opts.Duration))
@@ -328,7 +410,8 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		requestOptions.RequestMethod = v3.RequestMethod_GET
 	}
 
-	ro := &nighthawk_proto.CommandLineOptions{
+	// ro := &nighthawk_proto.CommandLineOptions{
+	ro:= NighthawkCliOptions{
 		OneofDurationOptions: &nighthawk_proto.CommandLineOptions_Duration{
 			Duration: durationpb.New(opts.Duration),
 		},
@@ -418,10 +501,11 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		return nil, nil, ErrRunningTest(err)
 	}
 
+	opt := nighthawk_proto.CommandLineOptions(ro)
 	err = client.Send(&nighthawk_proto.ExecutionRequest{
 		CommandSpecificOptions: &nighthawk_proto.ExecutionRequest_StartRequest{
 			StartRequest: &nighthawk_proto.StartRequest{
-				Options: ro,
+				Options: &opt,
 			},
 		},
 	})
