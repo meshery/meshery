@@ -410,7 +410,6 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		requestOptions.RequestMethod = v3.RequestMethod_GET
 	}
 
-	// ro := &nighthawk_proto.CommandLineOptions{
 	ro:= NighthawkCliOptions{
 		OneofDurationOptions: &nighthawk_proto.CommandLineOptions_Duration{
 			Duration: durationpb.New(opts.Duration),
