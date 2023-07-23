@@ -17,14 +17,13 @@ package filter
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"os"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/errors"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -48,22 +47,22 @@ mesheryctl filter import https://example.com/myfilter.wasm
 // Add WASM configuration 
 // If the string is a valid file in the filesystem, the file is read and passed as a string. Otherwise, the string is passed as is.
 // Use quotes if the string contains spaces
-mesheryctl filter import /path/to/filter.wasm --config [filepath|string]
+mesheryctl filter import /path/to/filter.wasm -config [filepath|string]
 
 // Specify the name of the filter to be imported. Use quotes if the name contains spaces
-mesheryctl filter import /path/to/filter.wasm --name [string]
+mesheryctl filter import /path/to/filter.wasm -name [string]
 	`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			return errors.Wrap(err, "error processing config")
 		}
 
 		filterURL := mctlCfg.GetBaseMesheryURL() + "/api/filter"
 
 		if len(args) == 0 {
-			return fmt.Errorf(utils.FilterImportError("URI is required\nUse 'mesheryctl filter import --help' to display usage guide\n"))
+			return errors.New(utils.FilterImportError("URI is required\nUse 'mesheryctl filter import --help' to display usage guide\n"))
 		}
 
 		body := models.MesheryFilterRequestBody{
@@ -78,16 +77,12 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 		} else {
 			filterFile, err := os.ReadFile(uri)
 			if err != nil {
-				error := ErrFileRead(err)
-				utils.Log.Info("Probable Cause", errors.GetCause(error), "Remedy", errors.GetRemedy(error))
-				return error
+				return errors.New("Unable to read file. " + err.Error())
 			}
 
 			fileInfo, err := os.Stat(uri)
 			if err != nil {
-				error := ErrFileRead(err)
-				utils.Log.Info("Probable Cause : ", errors.GetCause(error), "Remedy : ", errors.GetRemedy(error))
-				return error
+				return errors.New("Unable to read file. " + err.Error())
 			}
 
 			content := string(filterFile)
@@ -102,9 +97,7 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 				utils.Log.Info("Reading config file")
 				cfgFile, err := os.ReadFile(cfg)
 				if err != nil {
-					error := ErrFileRead(err)
-					utils.Log.Info("Probable Cause : ", errors.GetCause(error), "Remedy : ", errors.GetRemedy(error))
-					return error
+					return errors.New("Unable to read config file. " + err.Error())
 				}
 
 				content := string(cfgFile)
@@ -140,7 +133,7 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 		if resp.StatusCode == 200 {
 			utils.Log.Info("filter successfully imported")
 		} else {
-			return ErrUnmarshal(err)
+			return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
 		}
 
 		return nil

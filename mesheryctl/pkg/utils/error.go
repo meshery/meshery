@@ -11,6 +11,8 @@ var (
 	ErrFailRequestCode     = "1044"
 	ErrFailReqStatusCode   = "1045"
 	ErrAttachAuthTokenCode = "1046"
+	ErrUnmarshalCode       = "1003"
+	ErrFileReadCode        = "1000"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -243,4 +245,12 @@ func InvalidToken() error {
 func ErrFailReqStatus(statusCode int) error {
 	return errors.New(ErrFailReqStatusCode, errors.Alert, []string{},
 		[]string{"Response Status Code " + strconv.Itoa(statusCode) + ", possible Server Error"}, []string{}, []string{})
+}
+
+func ErrUnmarshal(err error) error {
+	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Error unmarshalling response"}, []string{"Error processing JSON response from server.\n" + err.Error()}, []string{}, []string{})
+}
+
+func ErrFileRead(err error) error {
+	return errors.New(ErrFileReadCode, errors.Alert, []string{"Unable to read file"}, []string{err.Error()}, []string{"Provided file is not present or invalid path"}, []string{"Please provide a valid file path with a valid file"})
 }

@@ -30,6 +30,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshkit/logger"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -60,11 +61,14 @@ mesheryctl pattern apply [pattern-name]
 	Args:        cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
-		var err error
-
+		log, err := logger.New("pattern", logger.Options{
+			Format:     logger.SyslogLogFormat,
+			DebugLevel: true,
+		})
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			log.Error(err)
+			return nil
 		}
 
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
@@ -80,11 +84,13 @@ mesheryctl pattern apply [pattern-name]
 
 			req, err = utils.NewRequest("GET", patternURL+"?search="+patternName, nil)
 			if err != nil {
-				return errors.Wrap(err, "could not create request ")
+				log.Error(err)
+				return err
 			}
 
 			resp, err := utils.MakeRequest(req)
 			if err != nil {
+				log.Error(err)
 				return err
 			}
 
@@ -92,16 +98,18 @@ mesheryctl pattern apply [pattern-name]
 			defer resp.Body.Close()
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
-				return errors.Wrap(err, utils.PerfError("failed to read response body"))
+				return errors.Wrap(err, utils.PatternError("failed to read response body"))
 			}
 			err = json.Unmarshal(body, &response)
 			if err != nil {
-				return errors.Wrap(err, "failed to unmarshal response body")
+				log.Error(utils.ErrUnmarshal(err))
+				return utils.ErrUnmarshal(err)
 			}
 
 			index := 0
 			if len(response.Patterns) == 0 {
-				return errors.New("no patterns found with the given name")
+				log.Error(ErrPatternsNotFound())
+				return nil
 			} else if len(response.Patterns) == 1 {
 				patternFile = response.Patterns[0].PatternFile
 			} else {
@@ -111,7 +119,7 @@ mesheryctl pattern apply [pattern-name]
 			}
 		} else {
 			// Method to check if the entered file is a URL or not
-			validURL := strings.HasPrefix(file, "https://github.com")
+			validURL := strings.HasPrefix(file, "https://github.com") || strings.HasPrefix(file, "https://raw.githubusercontent.com")
 			if !validURL {
 				content, err := os.ReadFile(file)
 				if err != nil {
@@ -209,7 +217,7 @@ mesheryctl pattern apply [pattern-name]
 
 				body, err := io.ReadAll(resp.Body)
 				if err != nil {
-					return errors.Wrap(err, utils.PerfError("failed to read response body"))
+					return errors.Wrap(err, utils.PatternError("failed to read response body"))
 				}
 				err = json.Unmarshal(body, &response)
 				if err != nil {
@@ -223,19 +231,22 @@ mesheryctl pattern apply [pattern-name]
 
 		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(patternFile)))
 		if err != nil {
-			return errors.Wrap(err, "could not create request ")
+			log.Error(err)
+			return nil
 		}
 
 		pf, err := core.NewPatternFile([]byte(patternFile))
 		if err != nil {
-			return errors.Wrap(err, "Pattern appears invalid. Could not parse successfully")
+			log.Error(ErrInvalidPatternFile(err))
+			return nil
 		}
 
 		s := utils.CreateDefaultSpinner("Applying pattern "+pf.Name, "")
 		s.Start()
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			return err
+			log.Error(err)
+			return nil
 		}
 
 		defer res.Body.Close()

@@ -52,7 +52,6 @@ mesheryctl filter view --all
 			return errors.Wrap(err, "error processing config")
 		}
 
-		var urlString = mctlCfg.GetBaseMesheryURL()
 		filter := ""
 		isID := false
 		// if filter name/id available
@@ -60,12 +59,13 @@ mesheryctl filter view --all
 			if viewAllFlag {
 				return errors.New(utils.FilterViewError("--all cannot be used when filter name or ID is specified\nUse 'mesheryctl filter view --help' to display usage guide\n"))
 			}
-			filter, isID, err = utils.ValidId(urlString, args[0], "filter")
+			filter, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "filter")
 			if err != nil {
 				return errors.New("invalid filter name or ID. " + err.Error())
 			}
 		}
 
+		urlString := mctlCfg.GetBaseMesheryURL()
 		if len(filter) == 0 {
 			if viewAllFlag {
 				urlString += "/api/filter?pagesize=10000"
