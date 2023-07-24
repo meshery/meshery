@@ -397,9 +397,9 @@ func remoteProviderUpdater(output []map[string]string) {
 	pathForModals := os.Args[4]
 	pathForIcons := os.Args[5]
 	_path := ""
-				for _, f := range strings.Split(pathForIcons, "/")[1:] {
-           _path = filepath.Join(_path, f)
-				}
+	for _, f := range strings.Split(pathForIcons, "/")[1:] {
+		_path = filepath.Join(_path, f)
+	}
 	for _, out := range output {
 		var m v1alpha1.Model
 		var svgColor, svgWhite string
