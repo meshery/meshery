@@ -7,7 +7,7 @@ type: Guides
 language: en
 ---
 
-# Mesheryctl system model
+## Mesheryctl : system commands
 These commands can be executed using the `mesheryctl` commandline-tool to interact with & manage the system model of meshery
 <br><br>
 
@@ -27,3 +27,5 @@ These commands can be executed using the `mesheryctl` commandline-tool to intera
 * `mesheryctl system stop`      -  Stop Meshery.
 * `mesheryctl system token`     -  Manage Meshery user tokens.
 * `mesheryctl system update`    -  Pull new Meshery images/manifest files.
+
+To know more about mesheryctl commands `mesheryctl -h` in your terminal (after installing mesheryctl).

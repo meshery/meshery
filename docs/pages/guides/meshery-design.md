@@ -10,7 +10,7 @@ language: en
 
 ## Meshery Design
 
-We know in the world of microservice architecture, **service meshes** are crucial. And it comes with a **heptic price** (complexity, error-prone).
+We know in the world of microservice architecture, **service meshes** are crucial. And it comes with a **price** (complexity, error-prone, steep learning curve).
 
 ### We are here to help you out with **Meshery Designs**.
 
