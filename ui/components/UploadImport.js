@@ -1,9 +1,13 @@
 import React, { useEffect } from 'react'
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { TextField, Button, Grid, NativeSelect, Divider, Typography } from '@material-ui/core';
 =======
 import { TextField, Button, Grid, NativeSelect, Divider, Typography, Box } from '@material-ui/core';
 >>>>>>> 59cd2f789 (resolve issues with import statements)
+=======
+import { TextField, Button, Grid, NativeSelect, Divider, Typography } from '@material-ui/core';
+>>>>>>> 31dbb18b2 (resolve issues with import statements)
 import { createTheme, MuiThemeProvider, useTheme, withStyles } from '@material-ui/core/styles';
 import { URLValidator } from '../utils/URLValidator';
 import {
@@ -14,39 +18,39 @@ import {
 import { promisifiedDataFetch } from '../lib/data-fetch';
 
 const getMuiTheme = () => createTheme({
-  palette: {
-    primary: {
-      main: "#607d8b"
+  palette : {
+    primary : {
+      main : "#607d8b"
     },
-    secondary: {
-      main: "#666666"
+    secondary : {
+      main : "#666666"
     }
   },
-  overrides: {
-    MuiGrid: {
-      input: {
-        color: '#607d8b'
+  overrides : {
+    MuiGrid : {
+      input : {
+        color : '#607d8b'
       }
     },
   }
 })
 const getDarkMuiTheme = () => createTheme({
-  palette: {
-    type: "dark",
-    primary: {
-      main: "#607d8b"
+  palette : {
+    type : "dark",
+    primary : {
+      main : "#607d8b"
     },
   },
-  overrides: {
-    MuiGrid: {
-      input: {
-        color: '#607d8b'
+  overrides : {
+    MuiGrid : {
+      input : {
+        color : '#607d8b'
       }
     },
-    MuiFormLabel: {
-      root: {
-        "&$focused": {
-          color: "#00B39F",
+    MuiFormLabel : {
+      root : {
+        "&$focused" : {
+          color : "#00B39F",
         },
       }
     },
@@ -54,30 +58,30 @@ const getDarkMuiTheme = () => createTheme({
 })
 
 const styles = (theme) => ({
-  upload: {
-    paddingLeft: "0.7rem",
-    paddingTop: "8px"
+  upload : {
+    paddingLeft : "0.7rem",
+    paddingTop : "8px"
   },
-  title: {
-    textAlign: 'center',
-    minWidth: 500,
-    padding: '15px',
-    color: '#fff',
-    backgroundColor: theme.palette.type === "dark" ? "#202020" : '#396679'
+  title : {
+    textAlign : 'center',
+    minWidth : 500,
+    padding : '15px',
+    color : '#fff',
+    backgroundColor : theme.palette.type === "dark" ? "#202020" : '#396679'
   },
-  heading: {
-    color: theme.palette.type === "dark" ? "#fff" : "#607d8b"
+  heading : {
+    color : theme.palette.type === "dark" ? "#fff" : "#607d8b"
   },
-  selectType: {
-    color: theme.palette.type === "dark" ? "#fff" : "#607d8b",
-    marginRight: "1.2rem"
+  selectType : {
+    color : theme.palette.type === "dark" ? "#fff" : "#607d8b",
+    marginRight : "1.2rem"
   },
-  button: {
-    backgroundColor: theme.palette.type === "dark" ? "#00B39F" : "#607d8b",
-    "&:hover": {
-      backgroundColor: theme.palette.type === "dark" ? "#00B39F" : "#607d8b"
+  button : {
+    backgroundColor : theme.palette.type === "dark" ? "#00B39F" : "#607d8b",
+    "&:hover" : {
+      backgroundColor : theme.palette.type === "dark" ? "#00B39F" : "#607d8b"
     },
-    color: "#fff"
+    color : "#fff"
   },
 });
 
@@ -121,15 +125,22 @@ function UploadImport(props) {
 
   const handleSubmit = async () => {
 <<<<<<< HEAD
+<<<<<<< HEAD
     await handleUrlUpload(input, sourceType, { name, config })
 =======
     await handleUrlUpload(input, sourceType, {name, config})
 >>>>>>> 813a28c85 (A quick dirty fix for uploading filters config)
+=======
+    await handleUrlUpload(input, sourceType, { name, config })
+>>>>>>> 31dbb18b2 (resolve issues with import statements)
     handleClose()
   }
 
   const handleUploader = async (input) => {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 31dbb18b2 (resolve issues with import statements)
     await handleUpload(input, sourceType, { name, config })
     fetch?.();
 =======
@@ -152,7 +163,7 @@ function UploadImport(props) {
 
           <MuiThemeProvider theme={theme.palette.type == "dark" ? getDarkMuiTheme() : getMuiTheme()}>
             <DialogTitle className={classes.title}>
-              <b id="simple-modal-title" style={{ textAlign: "center" }} >Import {configuration}</b>
+              <b id="simple-modal-title" style={{ textAlign : "center" }} >Import {configuration}</b>
             </DialogTitle>
             <DialogContent>
               <Grid container spacing={24} alignItems="center">
@@ -165,6 +176,7 @@ function UploadImport(props) {
                     size="small"
                     variant="outlined"
                     label="Name"
+<<<<<<< HEAD
 <<<<<<< HEAD
                     style={{ width : "100%" }}
                     onChange={(e) => setName(e.target.value)} />
@@ -201,6 +213,9 @@ function UploadImport(props) {
                     onChange={(e) => setInput(e.target.value)} />
 >>>>>>> 813a28c85 (A quick dirty fix for uploading filters config)
 =======
+=======
+                    style={{ width : "100%" }}
+>>>>>>> 31dbb18b2 (resolve issues with import statements)
                     onChange={(e) => setName(e.target.value)} />
                 </Grid>
                 {
@@ -219,7 +234,7 @@ function UploadImport(props) {
                             size="small"
                             variant="outlined"
                             label="WASM Filter Config"
-                            style={{ width: "100%" }}
+                            style={{ width : "100%" }}
                             onChange={(e) => setConfig(e.target.value)} />
                         </Grid>
                       </Grid>
@@ -228,8 +243,12 @@ function UploadImport(props) {
                   )
                 }
                 <Grid item xs={12}>
+<<<<<<< HEAD
                   <Divider style={{margin: "8px 0px"}}/>
 >>>>>>> 59cd2f789 (resolve issues with import statements)
+=======
+                  <Divider style={{ margin : "8px 0px" }}/>
+>>>>>>> 31dbb18b2 (resolve issues with import statements)
                 </Grid>
                 <Grid item xs={3}>
                   <h4 className={classes.heading} > FROM URL </h4>
@@ -237,14 +256,17 @@ function UploadImport(props) {
                 <Grid item xs={9}>
                   <TextField
                     size="small"
+                    error={isError}
+                    helperText={isError && "Invalid URL"}
                     variant="outlined"
                     label={`URL for ${configuration}`}
-                    style={{ width: "100%" }}
+                    style={{ width : "100%" }}
                     onChange={(e) => setInput(e.target.value)} />
                 </Grid>
               </Grid>
               {
                 isFilter && (
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
                   <div style={{ display : "flex", flexDirection : "column", alignItems : "center" }}>
@@ -270,6 +292,10 @@ function UploadImport(props) {
 =======
                   <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                     <Typography variant='caption'>---OR---</Typography>
+=======
+                  <div style={{ display : "flex", flexDirection : "column", alignItems : "center" }}>
+                    <Typography variant="caption">---OR---</Typography>
+>>>>>>> 31dbb18b2 (resolve issues with import statements)
                   </div>
 >>>>>>> 59cd2f789 (resolve issues with import statements)
                 )
@@ -285,7 +311,7 @@ function UploadImport(props) {
                         size="small"
                         variant="outlined"
                         label="Filename"
-                        style={{ width: "100%" }}
+                        style={{ width : "100%" }}
                       />
                     </Grid>
                     <Grid item xs={3}>
@@ -314,12 +340,17 @@ function UploadImport(props) {
                       onChange={(e) => handleFileType(e.target.value)}
                       inputProps={{
 <<<<<<< HEAD
+<<<<<<< HEAD
                         name : 'name',
                         id : 'uncontrolled-native',
 =======
                         name: 'name',
                         id: 'uncontrolled-native',
 >>>>>>> 813a28c85 (A quick dirty fix for uploading filters config)
+=======
+                        name : 'name',
+                        id : 'uncontrolled-native',
+>>>>>>> 31dbb18b2 (resolve issues with import statements)
                       }}
                     >
                       {
@@ -339,10 +370,14 @@ function UploadImport(props) {
                 <Button variant="outlined" color="secondary" onClick={handleClose}>Cancel</Button>
               </label>
 <<<<<<< HEAD
+<<<<<<< HEAD
               <label htmlFor="URL">  <Button id="URL" disabled={isError || !input} variant="contained" className={classes.button} onClick={async (e) => {
 =======
               <label htmlFor="URL">  <Button id="URL" variant="contained" className={classes.button} onClick={async (e) => {
 >>>>>>> 813a28c85 (A quick dirty fix for uploading filters config)
+=======
+              <label htmlFor="URL">  <Button id="URL" disabled={isError || !input} variant="contained" className={classes.button} onClick={async (e) => {
+>>>>>>> 31dbb18b2 (resolve issues with import statements)
                 await handleSubmit(e, handleUploader);
                 fetch?.();
               }}>Import</Button> </label>

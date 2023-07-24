@@ -506,10 +506,14 @@ function MesheryApplications({
           credentials : "include",
           method : "PUT",
 <<<<<<< HEAD
+<<<<<<< HEAD
           body : JSON.stringify({ application_data : { id, name : metadata.name || name, application_file : data }, save : true }),
 =======
           body : JSON.stringify({ application_data : { id, name: metadata.name || name, application_file : data }, save : true }),
 >>>>>>> 59cd2f789 (resolve issues with import statements)
+=======
+          body : JSON.stringify({ application_data : { id, name : metadata.name || name, application_file : data }, save : true }),
+>>>>>>> 31dbb18b2 (resolve issues with import statements)
         },
         () => {
           console.log("ApplicationFile API", `/api/application/${source_type}`);
@@ -536,6 +540,7 @@ function MesheryApplications({
       if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({
 <<<<<<< HEAD
+<<<<<<< HEAD
           ...body, application_data : { name : metadata.name || name || getRandomName(), application_file : data }
         })
       }
@@ -548,6 +553,13 @@ function MesheryApplications({
       if (type === FILE_OPS.URL_UPLOAD) {
         body = JSON.stringify({ ...body, url : data, name:  metadata.name || name })
 >>>>>>> 59cd2f789 (resolve issues with import statements)
+=======
+          ...body, application_data : { name : metadata.name || name || getRandomName(), application_file : data }
+        })
+      }
+      if (type === FILE_OPS.URL_UPLOAD) {
+        body = JSON.stringify({ ...body, url : data, name : metadata.name || name })
+>>>>>>> 31dbb18b2 (resolve issues with import statements)
       }
       dataFetch(
         `/api/application/${source_type}`,
@@ -956,12 +968,17 @@ function MesheryApplications({
           submit={
             {
 <<<<<<< HEAD
+<<<<<<< HEAD
               deploy : () => handleDeploy(modalOpen.application_file, modalOpen.name),
               unDeploy : () => handleUnDeploy(modalOpen.application_file, modalOpen.name)
 =======
               deploy: () => handleDeploy(modalOpen.application_file, modalOpen.name),
               unDeploy: () => handleUnDeploy(modalOpen.application_file, modalOpen.name)
 >>>>>>> 59cd2f789 (resolve issues with import statements)
+=======
+              deploy : () => handleDeploy(modalOpen.application_file, modalOpen.name),
+              unDeploy : () => handleUnDeploy(modalOpen.application_file, modalOpen.name)
+>>>>>>> 31dbb18b2 (resolve issues with import statements)
             }
           }
           isDelete={!modalOpen.deploy}
@@ -973,19 +990,27 @@ function MesheryApplications({
         <UploadImport
           open={importModal.open}
 <<<<<<< HEAD
+<<<<<<< HEAD
           handleClose={handleUploadImportClose}
 =======
           handleClose={() => { }}
 >>>>>>> 59cd2f789 (resolve issues with import statements)
+=======
+          handleClose={handleUploadImportClose}
+>>>>>>> 31dbb18b2 (resolve issues with import statements)
           isApplication={true}
           aria-label="URL upload button"
           handleUrlUpload={urlUploadHandler}
           handleUpload={uploadHandler}
 <<<<<<< HEAD
+<<<<<<< HEAD
           supportedTypes={types}
 =======
           supportedTypes={types} 
 >>>>>>> 59cd2f789 (resolve issues with import statements)
+=======
+          supportedTypes={types}
+>>>>>>> 31dbb18b2 (resolve issues with import statements)
           configuration="Application"  />
       </NoSsr>
     </>

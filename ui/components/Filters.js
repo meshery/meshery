@@ -703,13 +703,17 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       let body = { save : true }
       if (type === FILE_OPS.FILE_UPLOAD) {
 <<<<<<< HEAD
+<<<<<<< HEAD
         body = JSON.stringify({ ...body, filter_data : { filter_resource : data } })
 =======
         body = JSON.stringify({ ...body, filter_data : { filter_file : data }, name: addiotionals.name, config: addiotionals.config })
 >>>>>>> 5e85bda64 (A quick dirty fix for uploading filters config)
+=======
+        body = JSON.stringify({ ...body, filter_data : { filter_file : data }, name: metadata.name, config: metadata.config })
+>>>>>>> 70a7b47d8 (rename addiotionals to metadata)
       }
       if (type === FILE_OPS.URL_UPLOAD) {
-        body = JSON.stringify({ ...body, url : data, name: addiotionals.name, config: addiotionals.config })
+        body = JSON.stringify({ ...body, url : data, name: metadata.name, config: metadata.config })
       }
       dataFetch(
         `/api/filter`,
@@ -759,7 +763,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     }
   }
 
-  function uploadHandler(ev) {
+  function uploadHandler(ev, a, b) {
+    console.log({ev,a,b})
     if (!ev.target.files?.length) return;
 
     const file = ev.target.files[0];
@@ -771,18 +776,20 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         data : event.target.result,
         name : file?.name || "meshery_" + Math.floor(trueRandom() * 100),
         type : FILE_OPS.FILE_UPLOAD,
-        addiotionals: b
+        metadata: b
       });
     });
     reader.readAsText(file);
   }
 
-  function urlUploadHandler(link) {
+  function urlUploadHandler(link, a, b,) {
+    console.log({link,a,b})
+
     handleSubmit({
       data : link,
       name : "meshery_" + Math.floor(trueRandom() * 100),
       type : FILE_OPS.URL_UPLOAD,
-      addiotionals: b
+      metadata: b
     });
   }
 
@@ -1179,7 +1186,15 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           <Modal open={publishModal.open} schema={publish_schema} uiSchema={publish_ui_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.filter?.catalog_data : payload.catalog_data } aria-label="catalog publish" title={publishModal.filter?.name} handleSubmit={handlePublish} payload={payload} showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }}/>
         }
         <PromptComponent ref={modalRef} />
-        <UploadImport open={importModal.open} isFilter handleClose={handleUploadImportClose} handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchFilters(page, pageSize, search, sortOrder) } configuration="Filter" />
+        <UploadImport
+          open={importModal.open}
+          isFilter
+          handleClose={() => {}}
+          handleUrlUpload={urlUploadHandler}
+          handleUpload={uploadHandler}
+          fetch={() => fetchFilters(page, pageSize, search, sortOrder)}
+          configuration="Filter"
+           />
       </NoSsr>
     </>
   );

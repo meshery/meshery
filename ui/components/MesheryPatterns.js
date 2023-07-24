@@ -868,10 +868,14 @@ function MesheryPatterns({
         body = JSON.stringify({
           pattern_data : {
 <<<<<<< HEAD
+<<<<<<< HEAD
             name : metadata?.name || name,
 =======
             name: metadata?.name || name,
 >>>>>>> 59cd2f789 (resolve issues with import statements)
+=======
+            name : metadata?.name || name,
+>>>>>>> 31dbb18b2 (resolve issues with import statements)
             pattern_file : data,
           },
           save : true
@@ -879,10 +883,14 @@ function MesheryPatterns({
       }
       if (type === FILE_OPS.URL_UPLOAD) {
 <<<<<<< HEAD
+<<<<<<< HEAD
         body = JSON.stringify({ url : data, save : true,  name : metadata?.name || name })
 =======
         body = JSON.stringify({ url : data, save : true,  name: metadata?.name || name })
 >>>>>>> 59cd2f789 (resolve issues with import statements)
+=======
+        body = JSON.stringify({ url : data, save : true,  name : metadata?.name || name })
+>>>>>>> 31dbb18b2 (resolve issues with import statements)
       }
       dataFetch(
         `/api/pattern`,
@@ -935,10 +943,14 @@ function MesheryPatterns({
         name : file?.name || getRandomName(),
         type : FILE_OPS.FILE_UPLOAD,
 <<<<<<< HEAD
+<<<<<<< HEAD
         metadata : otherMetadata
 =======
         metadata: otherMetadata
 >>>>>>> 59cd2f789 (resolve issues with import statements)
+=======
+        metadata : otherMetadata
+>>>>>>> 31dbb18b2 (resolve issues with import statements)
       });
     });
     reader.readAsText(file);
@@ -951,10 +963,14 @@ function MesheryPatterns({
       name : getRandomName(),
       type : FILE_OPS.URL_UPLOAD,
 <<<<<<< HEAD
+<<<<<<< HEAD
       metadata : otherMetadata
 =======
       metadata: otherMetadata
 >>>>>>> 59cd2f789 (resolve issues with import statements)
+=======
+      metadata : otherMetadata
+>>>>>>> 31dbb18b2 (resolve issues with import statements)
     });
   }
 
@@ -1429,8 +1445,12 @@ function MesheryPatterns({
         {canPublishPattern && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handlePublish={handlePublish} />}
         <UploadImport
           open={importModal.open}
+<<<<<<< HEAD
           handleClose={handleModalClose}
 >>>>>>> 59cd2f789 (resolve issues with import statements)
+=======
+          handleClose={handleUploadImportClose}
+>>>>>>> 31dbb18b2 (resolve issues with import statements)
           aria-label="URL upload button"
           handleUrlUpload={urlUploadHandler}
           handleUpload={uploadHandler}
