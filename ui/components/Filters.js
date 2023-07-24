@@ -713,8 +713,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     }
   }
 
-  function uploadHandler(ev, a, b) {
-    console.log({ ev,a,b })
+  function uploadHandler(ev, _, metadata) {
     if (!ev.target.files?.length) return;
 
     const file = ev.target.files[0];
@@ -726,20 +725,19 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         data : event.target.result,
         name : file?.name || "meshery_" + Math.floor(trueRandom() * 100),
         type : FILE_OPS.FILE_UPLOAD,
-        metadata : b
+        metadata : metadata
       });
     });
     reader.readAsText(file);
   }
 
-  function urlUploadHandler(link, a, b,) {
-    console.log({ link,a,b })
+  function urlUploadHandler(link, _, metadata,) {
 
     handleSubmit({
       data : link,
       name : "meshery_" + Math.floor(trueRandom() * 100),
       type : FILE_OPS.URL_UPLOAD,
-      metadata : b
+      metadata : metadata
     });
   }
 
