@@ -209,9 +209,6 @@ function Modal(props) {
     setFormState(data.formData);
   };
 
-  console.log(submitBtnText)
-
-
   return (
     <>
       <Dialog open={open} onClose={handleClose}>
