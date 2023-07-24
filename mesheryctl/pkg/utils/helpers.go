@@ -497,17 +497,17 @@ func GetID(baseUrl, configuration string) ([]string, error) {
 	defer res.Body.Close()
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return idList, err
+		return idList, ErrReadingResp(err)
 	}
 	var dat map[string]interface{}
 	if err = json.Unmarshal(body, &dat); err != nil {
-		return idList, errors.Wrap(err, "failed to unmarshal response body")
+		return idList, ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
 	}
 	if dat == nil {
-		return idList, errors.New("no data found")
+		return idList, ErrNotFound(errors.New("no data found"))
 	}
 	if dat[configType] == nil {
-		return idList, errors.New("no results found")
+		return idList, ErrNotFound(errors.New("no results found"))
 	}
 	for _, config := range dat[configType].([]interface{}) {
 		idList = append(idList, config.(map[string]interface{})["id"].(string))
@@ -533,17 +533,17 @@ func GetName(baseUrl, configuration string) (map[string]string, error) {
 	defer res.Body.Close()
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nameIdMap, err
+		return nameIdMap, ErrReadingResp(err)
 	}
 	var dat map[string]interface{}
 	if err = json.Unmarshal(body, &dat); err != nil {
-		return nameIdMap, errors.Wrap(err, "failed to unmarshal response body")
+		return nameIdMap, ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
 	}
 	if dat == nil {
-		return nameIdMap, errors.New("no data found")
+		return nameIdMap, ErrNotFound(errors.New("no data found"))
 	}
 	if dat[configType] == nil {
-		return nameIdMap, errors.New("no results found")
+		return nameIdMap, ErrNotFound(errors.New("no results found"))
 	}
 	for _, config := range dat[configType].([]interface{}) {
 		nameIdMap[config.(map[string]interface{})["name"].(string)] = config.(map[string]interface{})["id"].(string)
@@ -635,7 +635,7 @@ func ParseURLGithub(URL string) (string, string, error) {
 	// - https://raw.githubusercontent.com/layer5io/meshery/master/.goreleaser.yml
 	parsedURL, err := url.Parse(URL)
 	if err != nil {
-		return "", "", fmt.Errorf("failed to retrieve file from URL: %s", URL)
+		return "", "", ErrParsingUrl(fmt.Errorf("failed to retrieve file from URL: %s", URL))
 	}
 	host := parsedURL.Host
 	path := parsedURL.Path
@@ -643,18 +643,18 @@ func ParseURLGithub(URL string) (string, string, error) {
 	paths := strings.Split(path, "/")
 	if host == "github.com" {
 		if len(paths) < 5 {
-			return "", "", fmt.Errorf("failed to retrieve file from URL: %s", URL)
+			return "", "", ErrParsingUrl(fmt.Errorf("failed to retrieve file from URL: %s", URL))
 		}
 		resURL := "https://" + host + strings.Join(paths[:4], "/")
 		return resURL, strings.Join(paths[4:], "/"), nil
 	} else if host == "raw.githubusercontent.com" {
 		if len(paths) < 5 {
-			return "", "", fmt.Errorf("failed to retrieve file from URL: %s", URL)
+			return "", "", ErrParsingUrl(fmt.Errorf("failed to retrieve file from URL: %s", URL))
 		}
 		resURL := "https://" + "raw.githubusercontent.com" + path
 		return resURL, "", nil
 	}
-	return URL, "", errors.New("only github urls are supported")
+	return URL, "", ErrParsingUrl(errors.New("only github urls are supported"))
 }
 
 // PrintToTableInStringFormat prints the given data into a table format but return as a string

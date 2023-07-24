@@ -85,13 +85,13 @@ mesheryctl pattern apply [pattern-name]
 			req, err = utils.NewRequest("GET", patternURL+"?search="+patternName, nil)
 			if err != nil {
 				log.Error(err)
-				return err
+				return nil
 			}
 
 			resp, err := utils.MakeRequest(req)
 			if err != nil {
 				log.Error(err)
-				return err
+				return nil
 			}
 
 			var response *models.PatternsAPIResponse
@@ -103,7 +103,7 @@ mesheryctl pattern apply [pattern-name]
 			err = json.Unmarshal(body, &response)
 			if err != nil {
 				log.Error(utils.ErrUnmarshal(err))
-				return utils.ErrUnmarshal(err)
+				return nil
 			}
 
 			index := 0
@@ -141,12 +141,14 @@ mesheryctl pattern apply [pattern-name]
 					}
 					req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 					if err != nil {
-						return errors.Wrap(err, "could not create request ")
+						log.Error(err)
+						return nil
 					}
 
 					resp, err := utils.MakeRequest(req)
 					if err != nil {
-						return err
+						log.Error(err)
+						return nil
 					}
 					utils.Log.Debug("saved pattern file")
 					var response []*models.MesheryPattern
@@ -204,12 +206,14 @@ mesheryctl pattern apply [pattern-name]
 				}
 				req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 				if err != nil {
-					return errors.Wrap(err, "could not create request ")
+					log.Error(err)
+					return nil
 				}
 
 				resp, err := utils.MakeRequest(req)
 				if err != nil {
-					return err
+					log.Error(err)
+					return nil
 				}
 				utils.Log.Debug("remote hosted pattern request success")
 				var response []*models.MesheryPattern

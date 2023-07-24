@@ -14,6 +14,10 @@ var (
 	ErrUnmarshalCode       = "1003"
 	ErrFileReadCode        = "1000"
 	ErrCreatingRequestCode = "replace_me"
+	ErrMarhallingCode      = "replace_me"
+	ErrReadingRespCode     = "replace_me"
+	ErrParsingUrlCode      = "replace_me"
+	ErrNotFoundCode        = "replace_me"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -249,14 +253,37 @@ func ErrFailReqStatus(statusCode int) error {
 }
 
 func ErrUnmarshal(err error) error {
-	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Error unmarshalling response"}, []string{"Error processing JSON response from server.\n" + err.Error()}, []string{""}, []string{})
+	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Error unmarshalling response"},
+		[]string{"Error processing JSON response from server.\n" + err.Error()},
+		[]string{"JSON format from response body is not valid"}, []string{"Check if valid JSON is given to process"})
 }
 
 func ErrFileRead(err error) error {
-	return errors.New(ErrFileReadCode, errors.Alert, []string{"Unable to read file"}, []string{err.Error()}, []string{"Provided file is not present or invalid path"}, []string{"Please provide a valid file path with a valid file"})
+	return errors.New(ErrFileReadCode, errors.Alert, []string{"Unable to read file"},
+		[]string{err.Error()}, []string{"Provided file is not present or invalid path"}, []string{"Please provide a valid file path with a valid file"})
 }
 
 func ErrCreatingRequest(err error) error {
 	return errors.New(ErrCreatingRequestCode, errors.Fatal, []string{err.Error()},
 		[]string{"Error occured while making an http request"}, []string{"Meshery is not running or there is a network issue"}, []string{"Check your network connection and check the status of meshery server via 'mesheryctl system status'"})
+}
+
+func ErrMarhalling(err error) error {
+	return errors.New(ErrMarhallingCode, errors.Fatal, []string{"Error while Marshalling the content"},
+		[]string{err.Error()}, []string{"The Content provided to Marshall is invalid"}, []string{"Please check the data structure you are providing for Marshalling"})
+}
+
+func ErrReadingResp(err error) error {
+	return errors.New(ErrReadingRespCode, errors.Alert, []string{"Error Reading Response Body"},
+		[]string{err.Error()}, []string{"There might be connection failure with Meshery Server"}, []string{"Check the status via 'mesheryctl system status'"})
+}
+
+func ErrParsingUrl(err error) error {
+	return errors.New(ErrParsingUrlCode, errors.Fatal, []string{"Error while Paring the URL"},
+		[]string{err.Error()}, []string{"The URL Provided doesn't exit or the relative path is wrong"}, []string{"Check the correctness of URL that you have inputed"})
+}
+
+func ErrNotFound(err error) error {
+	return errors.New(ErrNotFoundCode, errors.Fatal, []string{"Not Found"}, []string{err.Error()},
+		[]string{"The item you are searching for is not present"}, []string{"Check whether that item is present"})
 }

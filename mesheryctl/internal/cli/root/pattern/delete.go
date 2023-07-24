@@ -49,7 +49,8 @@ mesheryctl pattern delete [file | URL]
 		})
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			log.Error(err)
+			return nil
 		}
 
 		pattern := ""

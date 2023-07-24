@@ -22,6 +22,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/logger"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -67,19 +68,26 @@ func init() {
 }
 
 func getSourceTypes() error {
+	log, err := logger.New("app", logger.Options{
+		Format:     logger.SyslogLogFormat,
+		DebugLevel: true,
+	})
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return err
+		log.Error(err)
+		return nil
 	}
 	validTypesURL := mctlCfg.GetBaseMesheryURL() + "/api/application/types"
 	req, err := utils.NewRequest("GET", validTypesURL, nil)
 	if err != nil {
-		return err
+		log.Error(err)
+		return nil
 	}
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		return err
+		log.Error(err)
+		return nil
 	}
 
 	defer resp.Body.Close()
