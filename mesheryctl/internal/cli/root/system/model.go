@@ -342,7 +342,7 @@ func outputJson(model v1alpha1.Model) error {
 		// but it doesn't convert unicode to its corresponding HTML string (it is default behavior)
 		// e.g unicode representation of '&' will be printed as '\u0026'
 		if output, err := json.MarshalIndent(model, "", "  "); err != nil {
-			return errors.Wrap(err, "failed to format output in YAML")
+			return errors.Wrap(err, "failed to format output in JSON")
 		} else {
 			utils.Log.Info(string(output))
 		}

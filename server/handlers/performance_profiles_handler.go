@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+
 	// "io"
 	"net/http"
 
@@ -79,7 +80,7 @@ func (h *Handler) SavePerformanceProfileHandler(
 // ```?page={page-number}``` Default page number is 0
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
-// 
+//
 // ```?search={profilename}``` If search is non empty then a greedy search is performed
 // responses:
 // 	200: performanceProfilesResponseWrapper
