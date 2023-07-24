@@ -42,13 +42,15 @@ import ConfirmationMsg from "./ConfirmationModal";
 import PublishIcon from "@material-ui/icons/Publish";
 import downloadFile from "../utils/fileDownloader";
 import CloneIcon from "../public/static/img/CloneIcon";
+import SaveIcon from "@material-ui/icons/Save";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import fetchCatalogFilter from "./graphql/queries/CatalogFilterQuery";
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import { iconMedium } from "../css/icons.styles";
 import Modal from "./Modal";
-import { publish_schema } from "./schemas/publish_schema";
+import { publish_schema, publish_ui_schema } from "./schemas/publish_schema";
 import _ from "lodash";
+import SearchBar from "./searchcommon";
 
 const styles = (theme) => ({
   grid : {
@@ -88,6 +90,9 @@ const styles = (theme) => ({
       height : '100%',
     }
   },
+  visibilityImg : {
+    filter : theme.palette.secondary.img,
+  }
   // text : {
   //   padding : "5px"
   // }
@@ -139,11 +144,25 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
             lint : true,
             mode : "text/plain",
           }}
-          onChange={(val) => setYaml(val)}
+          onChange={(_,data,val) => setYaml(val)}
         />
       </DialogContent>
       <Divider variant="fullWidth" light />
       <DialogActions>
+        <Tooltip title="Update Filter">
+          <IconButton
+            aria-label="Update"
+            color="primary"
+            onClick={() => onSubmit({
+              data : yaml,
+              id : filter.id,
+              name : filter.name,
+              type : FILE_OPS.UPDATE
+            })}
+          >
+            <SaveIcon  style={iconMedium} />
+          </IconButton>
+        </Tooltip>
         <Tooltip title="Delete Filter">
           <IconButton
             aria-label="Delete"
@@ -460,7 +479,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         updateProgress({ showProgress : false });
         if (result) {
           handleSetFilters(result.filters || []);
-          setPage(result.page || 0);
+          // setPage(result.page || 0);
           setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
         }
@@ -639,7 +658,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     };
   }
 
-  async function handleSubmit({ data, name, id, type }) {
+  async function handleSubmit({ data, name, id, type, metadata }) {
     // TODO: use filter name
     updateProgress({ showProgress : true });
     if (type === FILE_OPS.DELETE) {
@@ -675,10 +694,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
       let body = { save : true }
       if (type === FILE_OPS.FILE_UPLOAD) {
-        body = JSON.stringify({ ...body, filter_data : { filter_resource : data } })
+        body = JSON.stringify({ ...body, filter_data : { filter_file : data }, name : metadata.name, config : metadata.config })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
-        body = JSON.stringify({ ...body, url : data })
+        body = JSON.stringify({ ...body, url : data, name : metadata.name, config : metadata.config })
       }
       dataFetch(
         `/api/filter`,
@@ -728,7 +747,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     }
   }
 
-  function uploadHandler(ev) {
+  function uploadHandler(ev, _, metadata) {
     if (!ev.target.files?.length) return;
 
     const file = ev.target.files[0];
@@ -739,17 +758,20 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       handleSubmit({
         data : event.target.result,
         name : file?.name || "meshery_" + Math.floor(trueRandom() * 100),
-        type : FILE_OPS.FILE_UPLOAD
+        type : FILE_OPS.FILE_UPLOAD,
+        metadata : metadata
       });
     });
     reader.readAsText(file);
   }
 
-  function urlUploadHandler(link) {
+  function urlUploadHandler(link, _, metadata,) {
+
     handleSubmit({
       data : link,
       name : "meshery_" + Math.floor(trueRandom() * 100),
-      type : FILE_OPS.URL_UPLOAD
+      type : FILE_OPS.URL_UPLOAD,
+      metadata : metadata
     });
   }
 
@@ -832,7 +854,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           const visibility = filters[tableMeta.rowIndex].visibility
           return (
             <>
-              <img src={`/static/img/${visibility}.svg`} />
+              <img className={classes.visibilityImg} src={`/static/img/${visibility}.svg`} />
             </>
           );
         },
@@ -954,7 +976,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const options = {
     filter : false,
     sort : !(user && user.user_id === "meshery"),
-    search : !(user && user.user_id === "meshery"),
+    search : false,
     filterType : "textField",
     responsive : "standard",
     resizableColumns : true,
@@ -1064,6 +1086,26 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             </div>
           </div>
           }
+          <div
+            className={classes.searchAndView}
+            style={{
+              display : 'flex',
+              alignItems : 'center',
+              justifyContent : 'center',
+              margin : 'auto',
+            }}
+          >
+            <SearchBar
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                initFiltersSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
+              }
+              }
+              label={"Search Filters"}
+              width="80ch"
+            />
+          </div>
           <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingRight : "1rem", paddingTop : "0.2rem" }}>
             <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} />
           </div>
@@ -1121,24 +1163,18 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           tab={modalOpen.deploy ? 2 : 1}
         />
         {canPublishFilter &&
-          <Modal open={publishModal.open} schema={publish_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.filter?.catalog_data : payload.catalog_data } aria-label="catalog publish" title={publishModal.filter?.name}>
-            <Button
-              title="Publish"
-              variant="contained"
-              color="primary"
-              className={classes.testsButton}
-              onClick={() => {
-                handlePublishModalClose();
-                handlePublish(payload)
-              }}
-            >
-              <PublicIcon className={classes.iconPatt} />
-              <span className={classes.btnText}> Publish </span>
-            </Button>
-          </Modal>
+          <Modal open={publishModal.open} schema={publish_schema} uiSchema={publish_ui_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.filter?.catalog_data : payload.catalog_data } aria-label="catalog publish" title={publishModal.filter?.name} handleSubmit={handlePublish} payload={payload} showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }}/>
         }
         <PromptComponent ref={modalRef} />
-        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchFilters(page, pageSize, search, sortOrder) } configuration="Filter" />
+        <UploadImport
+          open={importModal.open}
+          isFilter
+          handleClose={handleUploadImportClose}
+          handleUrlUpload={urlUploadHandler}
+          handleUpload={uploadHandler}
+          fetch={() => fetchFilters(page, pageSize, search, sortOrder)}
+          configuration="Filter"
+        />
       </NoSsr>
     </>
   );

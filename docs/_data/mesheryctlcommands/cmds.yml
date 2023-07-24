@@ -766,20 +766,20 @@ app:
 
 filter:
   name: filter
-  description: Service Mesh Filter Management (experimental feature)
+  description: Service Mesh Filter Management
   flags:
     file:
       name: --file, -f
-      description: (required) path to WASM file [GitHub links only supported]
+      description: (required) path to WASM file
 
   subcommands:
-    apply:
-      name: apply
-      description: Apply WASM file to deploy a filter
+    import:
+      name: import
+      description: Upload WASM filter file to Meshery Server
 
     delete:
       name: delete
-      description: Delete filter from Meshery
+      description: Delete filter from Meshery Server
 
     list:
       name: list

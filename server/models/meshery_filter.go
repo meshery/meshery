@@ -56,6 +56,16 @@ type MesheryCloneFilterRequestBody struct {
 	Name string `json:"name,omitempty"`
 }
 
+// MesheryFilterRequestBody refers to the type of request body that
+// SaveMesheryFilter would receive
+type MesheryFilterRequestBody struct {
+	URL        string                `json:"url,omitempty"`
+	Path       string                `json:"path,omitempty"`
+	Save       bool                  `json:"save,omitempty"`
+	Config     string				 `json:"config,omitempty"` 	
+	FilterData *MesheryFilterPayload `json:"filter_data,omitempty"`
+}
+
 // GetFilterName takes in a stringified filterfile and extracts the name from it
 func GetFilterName(stringifiedFile string) (string, error) {
 	out := map[string]interface{}{}

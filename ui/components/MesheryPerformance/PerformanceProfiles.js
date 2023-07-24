@@ -182,7 +182,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
             setCount(result.total_count || 0);
             setPageSize(result.page_size || 0);
             setTestProfiles(result.profiles || []);
-            setPage(result.page || 0);
+            // setPage(result.page || 0);
           }
         }
       },
