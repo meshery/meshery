@@ -34,6 +34,7 @@ import PublishIcon from "@material-ui/icons/Publish";
 import InfoIcon from '@material-ui/icons/Info';
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import { iconMedium, iconSmall } from "../css/icons.styles";
+import SearchBar from "./searchcommon";
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
@@ -448,7 +449,7 @@ function MesheryApplications({
         updateProgress({ showProgress : false });
         if (result) {
           setApplications(result.applications || []);
-          setPage(result.page || 0);
+          // setPage(result.page || 0);
           setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
           // setType()
@@ -763,7 +764,7 @@ function MesheryApplications({
   const options = {
     filter : false,
     sort : !(user && user.user_id === "meshery"),
-    search : !(user && user.user_id === "meshery"),
+    search : false,
     filterType : "textField",
     responsive : "standard",
     resizableColumns : true,
@@ -876,6 +877,30 @@ function MesheryApplications({
 
           </div>
           }
+
+          <div
+            className={classes.searchAndView}
+            style={{
+              display : 'flex',
+              alignItems : 'center',
+              justifyContent : 'center',
+              margin : 'auto',
+              height : '5ch'
+            }}
+          >
+            <SearchBar
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                initAppsSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
+              }}
+              width="80ch"
+              label={"Search Applications"}
+            />
+          </div>
+
+
+
           {!selectedApplication.show &&
           <div className={classes.viewSwitchButton}>
             <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true} />

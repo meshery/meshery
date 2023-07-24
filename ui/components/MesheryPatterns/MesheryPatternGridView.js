@@ -10,7 +10,9 @@ import { getComponentsinFile } from "../../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
 import useStyles from "./Grid.styles";
 import Validation from "../Validation";
-import PublishModal from "../PublishModal";
+import { publish_schema, publish_ui_schema } from "../schemas/publish_schema";
+import Modal from "../Modal";
+import _ from "lodash";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -80,21 +82,30 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
   });
   const [publishModal, setPublishModal] = useState({
     open : false,
-    pattern : {}
+    pattern : {},
+    name : ""
   });
   const handlePublishModal = (pattern) => {
     if (canPublishPattern) {
       setPublishModal({
         open : true,
-        pattern : pattern
+        pattern : pattern,
+        name : ""
       });
     }
   };
   const handlePublishModalClose = () => {
     setPublishModal({
       open : false,
-      pattern : {}
+      pattern : {},
+      name : ""
     });
+
+    setPayload({
+      id : "",
+      catalog_data : {}
+    });
+
   };
 
   const handleUploadImport = () => {
@@ -108,6 +119,10 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
       open : false
     });
   }
+  const [payload, setPayload] = useState({
+    id : "",
+    catalog_data : {}
+  });
 
   const [modalOpen, setModalOpen] = useState({
     open : false,
@@ -124,6 +139,13 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
       name : "",
       count : 0
     });
+  }
+
+  const onChange = (e) => {
+    setPayload({
+      id : publishModal.pattern?.id,
+      catalog_data : e
+    })
   }
 
   const handleModalOpen = (pattern, action) => {
@@ -211,7 +233,9 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
         tab={modalOpen.action}
         validationBody={modalOpen.validationBody}
       />
-      {canPublishPattern && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handlePublish={handlePublish} />}
+      {canPublishPattern &&
+      <Modal open={publishModal.open} schema={publish_schema} uiSchema={publish_ui_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.pattern?.catalog_data : payload.catalog_data} aria-label="catalog publish" title={publishModal.pattern?.name} payload={payload} handleSubmit={handlePublish} showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }} />
+      }
       <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={async() => await fetch()} configuration="Designs"  />
     </div>
   );

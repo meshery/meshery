@@ -12,8 +12,10 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	oamcore "github.com/layer5io/meshkit/models/oam/core/v1alpha1"
+	"github.com/layer5io/meshkit/utils/component"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/manifests"
+
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -266,7 +268,13 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 					fmt.Printf("%v", err)
 					continue
 				}
-				deleteProperties(modified)
+
+				modifiedProps, err := component.UpdateProperties(fieldVal, cue.ParsePath("properties.spec"), apiVersion)
+				if err == nil {
+					modified = modifiedProps
+				}
+
+				component.DeleteFields(modified)
 				crd, err = json.Marshal(modified)
 				if err != nil {
 					fmt.Printf("%v", err)
@@ -282,21 +290,6 @@ func getCRDsFromManifest(manifest string, arrAPIResources []string) []crdRespons
 		}
 	}
 	return res
-}
-
-var fieldsToDelete = [4]string{"apiVersion", "kind", "status", "metadata"}
-
-func deleteProperties(m map[string]interface{}) {
-	key := "properties"
-	if m[key] == nil {
-		return
-	}
-	if prop, ok := m[key].(map[string]interface{}); ok && prop != nil {
-		for _, f := range fieldsToDelete {
-			delete(prop, f)
-		}
-		m[key] = prop
-	}
 }
 
 // TODO: To be moved in meshkit

@@ -18,7 +18,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -38,7 +37,7 @@ var (
 var AppCmd = &cobra.Command{
 	Use:   "app",
 	Short: "Cloud Native Apps Management",
-	Long:  `Manage all apps operations; import, list, view, onboard and offboard`,
+	Long:  `All apps operations: import, list, view, onboard and offboard`,
 	Example: `
 // Base command
 mesheryctl app [subcommand]
@@ -73,20 +72,16 @@ func getSourceTypes() error {
 		return err
 	}
 	validTypesURL := mctlCfg.GetBaseMesheryURL() + "/api/application/types"
-	client := &http.Client{}
 	req, err := utils.NewRequest("GET", validTypesURL, nil)
 	if err != nil {
 		return err
 	}
 
-	resp, err := client.Do(req)
+	resp, err := utils.MakeRequest(req)
 	if err != nil {
 		return err
 	}
 
-	if resp.StatusCode != 200 {
-		return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-	}
 	defer resp.Body.Close()
 
 	var response []*models.ApplicationSourceTypesAPIResponse

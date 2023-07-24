@@ -16,9 +16,6 @@ package filter
 
 import (
 	"fmt"
-	"io"
-	"net/http"
-	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -28,70 +25,59 @@ import (
 )
 
 var deleteCmd = &cobra.Command{
-	Use:   "delete",
-	Short: "Delete filter file",
-	Long:  `delete filter file will trigger deletion of the filter file`,
+	Use:   "delete [filter-name | ID]",
+	Short: "Delete a filter file",
+	Long:  `Delete a filter file using the name or ID of a filter`,
 	Example: `
 // Delete the specified WASM filter file using name or ID
-mesheryctl exp filter delete [filter-name | ID]
-
-// Delete using the file name
-mesheryctl exp filter delete test-wasm
+// A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be deleted.
+mesheryctl filter delete [filter-name | ID]
 	`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		client := &http.Client{}
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
-		filter := ""
-		isID := false
-		if len(args) > 0 {
-			filter, isID, err = utils.Valid(args[0], "filter")
+
+		if len(args) == 0 {
+			return errors.New(utils.FilterDeleteError("filter name or ID not provided\nUse 'mesheryctl filter delete --help' to display usage guide\n"))
+		}
+
+		var filterID string
+		var isValidID bool
+		var filterName string
+		var isValidName bool
+
+		filterID, isValidID, err = utils.ValidId(args[0], "filter")
+		if err != nil {
+			return err
+		}
+
+		if !isValidID {
+			filterName, filterID, isValidName, err = utils.ValidName(args[0], "filter")
 			if err != nil {
 				return err
 			}
 		}
 
 		// Delete the filter using the id
-		if isID {
-			err := utils.DeleteConfiguration(filter, "filter")
-			if err != nil {
-				return errors.Wrap(err, utils.FilterError(fmt.Sprintf("failed to delete filter %s", args[0])))
+		if isValidID || isValidName {
+			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), filterID, "filter")
+
+			var filter string
+			if isValidID {
+				filter = filterID
+			} else {
+				filter = filterName
 			}
-			utils.Log.Info("Filter ", args[0], " deleted successfully")
+			if err != nil {
+				return errors.Wrap(err, utils.FilterDeleteError(fmt.Sprintf("failed to delete filter %s", filter)))
+			}
+			utils.Log.Info("Filter ", filter, " deleted successfully")
 			return nil
 		}
 
-		// Read file
-		fileReader, err := os.Open(file)
-		if err != nil {
-			return errors.New(utils.SystemError(fmt.Sprintf("failed to read file %s", file)))
-		}
-
-		req, err := utils.NewRequest("DELETE", mctlCfg.GetBaseMesheryURL()+"/api/filter/deploy", fileReader)
-		if err != nil {
-			return err
-		}
-
-		res, err := client.Do(req)
-		if err != nil {
-			return err
-		}
-
-		if res.StatusCode != 200 {
-			return ErrInvalidAPICall(res.StatusCode)
-		}
-
-		defer res.Body.Close()
-		body, err := io.ReadAll(res.Body)
-		if err != nil {
-			return errors.New("Error processing response body. " + err.Error())
-		}
-
-		utils.Log.Info(string(body))
-
-		return nil
+		return errors.New(utils.FilterDeleteError(fmt.Sprintf("filter with name or ID having prefix %s does not exist", args[0])))
 	},
 }

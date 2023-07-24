@@ -5,9 +5,11 @@ import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder'
 import CloseIcon from "@material-ui/icons/Close";
 import PromptComponent from './PromptComponent';
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
-import { promisifiedDataFetch } from "../lib/data-fetch";
+import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
 import { updateProgress } from '../lib/store';
 import { withSnackbar } from 'notistack';
+import { extractKubernetesCredentials } from './ConnectionWizard/helpers/kubernetesHelpers';
+
 const MesherySettingsEnvButtons = ({ enqueueSnackbar,closeSnackbar }) => {
   let k8sfileElementVal = "";
   let formData = new FormData();
@@ -15,8 +17,8 @@ const MesherySettingsEnvButtons = ({ enqueueSnackbar,closeSnackbar }) => {
 
   const handleConfigSnackbars = ctxs => {
     updateProgress({ showProgress : false });
-
     for (let ctx of ctxs.inserted_contexts) {
+      handleCredentialsPost(ctx);
       const msg = `Cluster ${ctx.name} at ${ctx.server} connected`
       enqueueSnackbar(msg, {
         variant : "success",
@@ -53,6 +55,30 @@ const MesherySettingsEnvButtons = ({ enqueueSnackbar,closeSnackbar }) => {
         autoHideDuration : 7000,
       });
     }
+  }
+
+  function handleCredentialsPost(obj){
+    // right now we just posting the credentials when we insert a new context
+    const data = {
+      name : obj.name,
+      type : "kubernetes",
+      secret : extractKubernetesCredentials(obj),
+    }
+
+    dataFetch(
+      "/api/integrations/credentials",
+      {
+        credentials : "include",
+        method : "POST",
+        body : JSON.stringify(data),
+      },
+      () => {
+        enqueueSnackbar("Credentials saved successfully!", {
+          variant : "success",
+          autoHideDuration : 2000,
+        });
+      }
+    );
   }
 
   const handleError = (msg) => (error) => {

@@ -176,6 +176,23 @@ const getHyperLinkWithDescription = description => {
 export const getHyperLinkDiv = text => (
   <div dangerouslySetInnerHTML={{ __html : getHyperLinkWithDescription(text) }} />
 );
+/**
+ * Returns the schema for the credentials.
+ * @param {String} type
+ * @returns
+ */
+export const getSchema = (type) => {
+  switch (type) {
+    case "grafana":
+      return require("../../schemas/credentials/grafana").grafanaSchema;
+    case "prometheus":
+      return require("../../schemas/credentials/prometheus").prometheusSchema;
+    case "kubernetes":
+      return require("../../schemas/credentials/kubernetes").kubernetesSchema;
+    default:
+      return
+  }
+}
 
 /**
  * Calculates the grid for the object field template.
@@ -203,6 +220,9 @@ export const calculateGrid = element => {
   if (type === "object" || type === "array" || __additional_property) {
     grid.lg = 12;
   }
+
+  // if fields have custom annotations to grid them differently
+  grid.lg = element.content.props.schema["x-rjsf-grid-area"] || grid.lg;
 
   return grid;
 };

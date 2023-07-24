@@ -238,7 +238,7 @@ ui-provider-test:
 
 ## Buils all Meshery UIs  on your local machine.
 ui-build:
-	cd ui; npm run build && npm run export; cd ..
+	cd ui; npm run lint:fix && npm run build && npm run export; cd ..
 	cd provider-ui; npm run build && npm run export; cd ..
 
 ## Build only Meshery UI on your local machine.
@@ -257,7 +257,7 @@ ui-integration-tests: ui-setup
 # Meshery Docs
 #-----------------------------------------------------------------------------
 #Incorporating Make docs commands from the Docs Makefile
-.PHONY: docs docs-build site docs-docker
+.PHONY: docs docs-build site docs-docker docs-mesheryctl
 jekyll=bundle exec jekyll
 
 site: docs
@@ -274,6 +274,9 @@ docs-build:
 docs-docker:
 	cd docs; docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:4.0.0 bash -c "bundle install; jekyll serve --drafts --livereload"
 
+## Build Meshery CLI docs
+docs-mesheryctl:
+	cd mesheryctl; make docs;
 #-----------------------------------------------------------------------------
 # Meshery Helm Charts
 #-----------------------------------------------------------------------------

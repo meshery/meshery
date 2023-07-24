@@ -14,6 +14,8 @@ import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTem
 import MesheryWrapIfAdditionalTemplate from './RJSFCustomComponents/WrapIfAdditionalTemplate';
 import _ from "lodash"
 import { CustomCheckboxWidget } from './RJSFCustomComponents/CustomCheckboxWidget';
+import MesheryCustomSelectWidget from './RJSFCustomComponents/CustomSelectWidget';
+import CustomTextAreaWidget from './RJSFCustomComponents/CustomTextAreaWidget';
 
 const MuiRJSFForm = withTheme(MaterialUITheme);
 
@@ -35,10 +37,13 @@ function RJSFForm({
   ArrayFieldTemplate = MesheryArrayFieldTemplate,
   ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
   WrapIfAdditionalTemplate = MesheryWrapIfAdditionalTemplate,
+  SelectWidget = MesheryCustomSelectWidget,
   LoadingComponent,
+  liveValidate,
   // prop should be present in order for the cloned element to override this property
   transformErrors,
   override,
+  formRef = null,
   uiSchema={}
 }) {
   const globalTheme = useTheme();
@@ -60,6 +65,7 @@ function RJSFForm({
       <MuiRJSFForm
         schema={schema.rjsfSchema}
         idPrefix={jsonSchema?.title}
+        ref={formRef}
         onChange={onChange}
         formData={data}
         validator={ajv8validator}
@@ -72,13 +78,14 @@ function RJSFForm({
         formContext={{ overrideFlag : override, CustomTextTooltip : CustomTextTooltip }}
         uiSchema={_.merge(schema.uiSchema, uiSchema)}
         widgets={{
-          TextWidget : CustomTextWidget,
           // Custom components to be added here
+          TextWidget : CustomTextWidget,
           DateTimeWidget : CustomDateTimeWidget,
-          // SelectWidget: CustomSelectWidget,
+          SelectWidget,
           CheckboxWidget : CustomCheckboxWidget,
+          TextareaWidget : CustomTextAreaWidget,
         }}
-        liveValidate
+        liveValidate={liveValidate}
         showErrorList={false}
         noHtml5Validate
         transformErrors={transformErrors}

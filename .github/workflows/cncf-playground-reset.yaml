@@ -7,6 +7,7 @@ on:
 jobs:
   reset:
     name: reset
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
     steps:
     - name: Cluster cleanup by running the cleanup script inside VM
@@ -16,7 +17,7 @@ jobs:
           username: root
           key: ${{ secrets.METAL_SSH_KEY }}
           script: |
-            ./playground-cleanup.sh 
+            cd meshery/install/playground; ./playground-cleanup.sh
 
   reboot:
     name: Reboot Metal servers

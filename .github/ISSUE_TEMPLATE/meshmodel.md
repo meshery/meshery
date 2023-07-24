@@ -2,7 +2,7 @@
 name: 🖥 💡 MeshModel Update
 about: An update, addition, or removal of one or more of the models, components, relationships, or policies within MeshModel.
 title: '[MeshModel]: '
-labels: component/meshmodel
+labels: area/meshmodel
 assignees: ''
 ---
 ### Current Situation

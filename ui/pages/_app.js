@@ -9,8 +9,8 @@ import {
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 // import 'billboard.js/dist/theme/insight.min.css';
-// import 'billboard.js/dist/theme/graph.min.css';
-import 'billboard.js/dist/billboard.min.css';
+import 'billboard.js/dist/theme/dark.min.css';
+// import 'billboard.js/dist/billboard. min.css';
 import 'codemirror/addon/lint/lint.css';
 // codemirror + js-yaml imports when added to a page was preventing to navigating to that page using nextjs
 // link clicks, hence attempting to add them here

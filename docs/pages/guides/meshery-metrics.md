@@ -12,39 +12,59 @@ category: performance
 
 Meshery provides performance reports, including performance test results, node resource metrics etc. so that operators may easily understand the overhead of their service mesh's control plane and data plane in context of the overhead incurred on nodes running within the cluster. In order to generate performance test reports of service meshes and their workloads, Meshery uses Grafana and/or Prometheus as visualization and metrics systems, respectively. This guide outlines the requirements necessary for Meshery to connect to these systems. The steps may vary depending upon the service mesh and its configuration.
 
-In order to pull in these environment metrics, you can also manually configure Meshery to connect with your existing Grafana and/or Prometheus instances through the Meshery dashboard. Once they have been loaded and are displayed on the screen, you may also perform an *ad-hoc* test to check Meshery's connection status.
+In order to pull in these environment metrics, you can also manually configure Meshery to connect with your existing Grafana and/or Prometheus instances through the Meshery dashboard. Once they have been loaded and are displayed on the screen, you may also perform an _ad-hoc_ test to check Meshery's connection status.
 
-### Prometheus Charts
+<main>
+  
+  <input id="tab1" type="radio" name="tabs" checked>
+  <label for="tab1">Prometheus Metrics</label>
+    
+  <input id="tab2" type="radio" name="tabs">
+  <label for="tab2">Grafana Charts</label>
+    
+  <input id="tab3" type="radio" name="tabs">
+  <label for="tab3">Static Boards</label>
+    
+  <input id="tab4" type="radio" name="tabs">
+  <label for="tab4">Dynamic Boards</label>
+    
+  <section class="tabbed" id="content1">
+    <p>User needs to set the Prometheus URL and API key to create and query boards.</p>
+    <img src="{{ site.baseurl }}/assets/img/architecture/PrometheusCharts.svg" 
+      alt="Prometheus Metrics in Meshery" />
 
-User needs to set the Prometheus URL and API key to create and query boards.
+  </section>
+    
+  <section class="tabbed" id="content2">
+    <p>User needs to set the Grafana URL and API key to create and query boards.</p>
+    <img src="{{ site.baseurl }}/assets/img/architecture/GrafanaBoards.svg"
+      alt="Grafana Charts in Meshery" />
 
-[![Prometheus Charts]({{ site.baseurl }}/assets/img/architecture/PrometheusCharts.svg)]({{ site.baseurl }}/assets/img/architecture/PrometheusCharts.svg)
+  </section>
+    
+  <section id="content3">
+    <p>
+      Static Boards capture the Service Mesh Performance. Certain protos are defined and tracked as a part of performance tests. Static Boards Queries Prometheus SDK directly.
+    </p>
+  </section>
+    
+  <section id="content4">
+    <p>
+      Dynamic Boards can be generated from Prometheus or Grafana. These boards are defined by the user. Grafana SDK is used for these boards.
+    </p>
 
-
-### Grafana Charts
-
-User needs to set the Grafana URL and API key to create and query boards.
-
-[![Grafana Charts]({{ site.baseurl }}/assets/img/architecture/GrafanaCharts.svg)]({{ site.baseurl }}/assets/img/architecture/GrafanaCharts.svg)
-
-### Dynamic Boards
-
-Dynamic Boards can be generated from Prometheus or Grafana. These boards are defined by the user. Grafana SDK is used for these boards.
-
-### Static Boards
-
-Static Boards capture the Service Mesh Performance. Certain protos are defined and tracked as a part of performance tests. Static Boards Queries Prometheus SDK directly.
-
-
+  </section>
+    
+</main>
 
 <!-- ## Tutorial Guide
 
 Connect Meshery to your Grafana and Prometheus instances to enable enhanced service mesh performance management. Deploy a service mesh and any available sample application
 
 Retreive the IP address of your Minikube cluster by executing:
-    
+
  <pre class="codeblock-pre">
- <div class="codeblock"><div class="clipboardjs">       
+ <div class="codeblock"><div class="clipboardjs">
  minikube ip
  172.17.0.2
  </div></div>
@@ -150,7 +170,7 @@ Meshery auto-discovers all Prometheus instances available on your local system a
 Meshery also provides you the option of simply pasting in your Prometheus queries:
 
 - Navigate to the management page for Istio on the Meshery UI
-- Click on <i class="fas fa-caret-right fa-lg"></i>, located under **Apply Custom Configuration** 
+- Click on <i class="fas fa-caret-right fa-lg"></i>, located under **Apply Custom Configuration**
 - Paste in your Prometherus query. Click on <i class="fas fa-caret-right fa-lg"></i>
 
 <a href="{{ site.baseurl }}/assets/img/meshery-metrics/prometheus-query.png">
@@ -167,7 +187,7 @@ Meshery also provides you the option of simply pasting in your Prometheus querie
  </div></div>
  </pre>
 
-* Find the Prometheus endpoint 
+* Find the Prometheus endpoint
 
 The Prometheus endpoint will be *http://$MINIKUBE_IP:NODE_PORT*
 
@@ -208,3 +228,4 @@ After successfully setting up a connection between your metric service and Meshe
 ##### Suggested Reading
 
 - Guide: [Interpreting Performance Test Results]({{ site.baseurl }}/guides/interpreting-performance-test-results)
+

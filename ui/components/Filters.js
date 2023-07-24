@@ -23,7 +23,6 @@ import Moment from "react-moment";
 import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import EditIcon from "@material-ui/icons/Edit";
-import DoneAllIcon from '@material-ui/icons/DoneAll';
 import { toggleCatalogContent, updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
@@ -40,16 +39,18 @@ import GetAppIcon from '@material-ui/icons/GetApp';
 import PublicIcon from '@material-ui/icons/Public';
 import { ctxUrl } from "../utils/multi-ctx";
 import ConfirmationMsg from "./ConfirmationModal";
-import UndeployIcon from "../public/static/img/UndeployIcon";
-import { getComponentsinFile } from "../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
 import downloadFile from "../utils/fileDownloader";
 import CloneIcon from "../public/static/img/CloneIcon";
-import PublishModal from "./PublishModal";
+import SaveIcon from "@material-ui/icons/Save";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import fetchCatalogFilter from "./graphql/queries/CatalogFilterQuery";
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import { iconMedium } from "../css/icons.styles";
+import Modal from "./Modal";
+import { publish_schema, publish_ui_schema } from "./schemas/publish_schema";
+import _ from "lodash";
+import SearchBar from "./searchcommon";
 
 const styles = (theme) => ({
   grid : {
@@ -89,6 +90,9 @@ const styles = (theme) => ({
       height : '100%',
     }
   },
+  visibilityImg : {
+    filter : theme.palette.secondary.img,
+  }
   // text : {
   //   padding : "5px"
   // }
@@ -140,11 +144,25 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
             lint : true,
             mode : "text/plain",
           }}
-          onChange={(val) => setYaml(val)}
+          onChange={(_,data,val) => setYaml(val)}
         />
       </DialogContent>
       <Divider variant="fullWidth" light />
       <DialogActions>
+        <Tooltip title="Update Filter">
+          <IconButton
+            aria-label="Update"
+            color="primary"
+            onClick={() => onSubmit({
+              data : yaml,
+              id : filter.id,
+              name : filter.name,
+              type : FILE_OPS.UPDATE
+            })}
+          >
+            <SaveIcon  style={iconMedium} />
+          </IconButton>
+        </Tooltip>
         <Tooltip title="Delete Filter">
           <IconButton
             aria-label="Delete"
@@ -201,8 +219,14 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   })
   const [publishModal, setPublishModal] = useState({
     open : false,
-    filter : {}
+    filter : {},
+    name : "",
   });
+  const [payload, setPayload] = useState({
+    id : "",
+    catalog_data : {}
+  });
+
   const [loading, stillLoading] = useState(true);
 
   const catalogContentRef = useRef();
@@ -269,6 +293,13 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
   const searchTimeout = useRef(null);
 
+  const onChange = (e) => {
+    setPayload({
+      id : publishModal.filter?.id,
+      catalog_data : e
+    })
+  }
+
   const handleUploadImport = () => {
     setImportModal({
       open : true
@@ -293,11 +324,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
   const handleUnpublishModal = (ev, filter) => {
     if (canPublishFilter) {
-      ev.stopPropagation();
       return async () => {
         let response = await modalRef.current.show({
           title : `Unpublish Catalog item?`,
-          subtitle : `Are you sure you want to unpublish ${filter?.name}?`,
+          subtitle : `Are you sure that you want to unpublish "${filter?.name}"?`,
           options : ["Yes", "No"]
         });
         if (response === "Yes") {
@@ -307,7 +337,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                 { credentials : "include", method : "DELETE", body : JSON.stringify({ "id" : filter?.id }) },
                 () => {
                   updateProgress({ showProgress : false });
-                  enqueueSnackbar("Filter unpublished", {
+                  enqueueSnackbar((`"${filter?.name}" filter unpublished`), {
                     variant : "success",
                     action : function Action(key) {
                       return (
@@ -329,7 +359,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const handlePublishModalClose = () => {
     setPublishModal({
       open : false,
-      filter : {}
+      filter : {},
+      name : ""
     });
   };
 
@@ -418,7 +449,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
     return () => {
       fetchCatalogFilters.unsubscribe();
-      disposeConfSubscriptionRef.current.dispose();
+      disposeConfSubscriptionRef.current?.dispose();
     }
   }, [])
 
@@ -448,7 +479,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         updateProgress({ showProgress : false });
         if (result) {
           handleSetFilters(result.filters || []);
-          setPage(result.page || 0);
+          // setPage(result.page || 0);
           setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
         }
@@ -464,7 +495,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       { credentials : "include", method : "POST", body : filter_file },
       () => {
         console.log("FilterFile Deploy API", `/api/filter/deploy`);
-        enqueueSnackbar(`"${name}" Filter deployed`, {
+        enqueueSnackbar(`"${name}" filter deployed`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -487,7 +518,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       { credentials : "include", method : "DELETE", body : filter_file },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar(`"${name}" Filter undeployed`, {
+        enqueueSnackbar(`"${name}" filter undeployed`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -536,7 +567,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar(`"${name}" Filter cloned`, {
+        enqueueSnackbar(`"${name}" filter cloned`, {
           variant : "success",
           action : function Action(key) {
             return (
@@ -568,17 +599,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       autoHideDuration : 8000,
     });
   };
-
-  const handleModalOpen = (e, filter_file, name, isDeploy) => {
-    e.stopPropagation()
-    setModalOpen({
-      open : true,
-      filter_file : filter_file,
-      deploy : isDeploy,
-      name : name,
-      count : getComponentsinFile(filter_file)
-    });
-  }
 
   const handleSetFilters = (filters) => {
     if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
@@ -653,7 +673,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         () => {
           console.log("FilterFile API", `/api/filter/${id}`);
           updateProgress({ showProgress : false });
-          enqueueSnackbar(`"${name}" Filter deleted`, {
+          enqueueSnackbar(`"${name}" filter deleted`, {
             variant : "success",
             action : function Action(key) {
               return (
@@ -683,10 +703,24 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         `/api/filter`,
         { credentials : "include", method : "POST", body },
         () => {
-          console.log("FilterFile API", `/api/filter`);
           updateProgress({ showProgress : false });
         },
         // handleError
+        handleError(ACTION_TYPES.UPLOAD_FILTERS)
+      );
+    }
+
+    if (type === FILE_OPS.UPDATE) {
+      dataFetch(
+        `/api/filter`,
+        {
+          credentials : "include",
+          method : "POST",
+          body : JSON.stringify({ filter_data : { id, config : data }, save : true }),
+        },
+        () => {
+          updateProgress({ showProgress : false });
+        },
         handleError(ACTION_TYPES.UPLOAD_FILTERS)
       );
     }
@@ -698,7 +732,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     try {
       downloadFile({ id, name, type : "filter" })
       updateProgress({ showProgress : false });
-      enqueueSnackbar(`"${name}" Filter downloaded`, {
+      enqueueSnackbar(`"${name}" filter downloaded`, {
         variant : "success",
         action : function Action(key) {
           return (
@@ -820,7 +854,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           const visibility = filters[tableMeta.rowIndex].visibility
           return (
             <>
-              <img src={`/static/img/${visibility}.svg`} />
+              <img className={classes.visibilityImg} src={`/static/img/${visibility}.svg`} />
             </>
           );
         },
@@ -844,13 +878,16 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           const visibility = filters[tableMeta.rowIndex].visibility
           return (
             <>
-              {visibility === VISIBILITY.PUBLISHED ? <IconButton onClick={(e) => {
-                e.stopPropagation();
-                handleClone(rowData.id, rowData.name)
-              }
-              }>
-                <CloneIcon fill="currentColor" className={classes.iconPatt} />              </IconButton>
-                :
+              {visibility === VISIBILITY.PUBLISHED ? <TooltipIcon
+                placement ="top"
+                title={"Clone"}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleClone(rowData.id, rowData.name)
+                }
+                }>
+                <CloneIcon fill="currentColor" className={classes.iconPatt} />
+              </TooltipIcon> :
                 <TooltipIcon
                   title="Config"
                   onClick={(e) => {
@@ -864,23 +901,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                     style={iconMedium}
                   />
                 </TooltipIcon> }
-              <TooltipIcon
-                title="Deploy"
-                onClick={(e) => handleModalOpen(e, rowData.filter_file, rowData.name, true)}
-              >
-                <DoneAllIcon
-                  aria-label="deploy"
-                  color="inherit"
-                  data-cy="deploy-button"
-                  style={iconMedium}
-                />
-              </TooltipIcon>
-              <TooltipIcon
-                title="Undeploy"
-                onClick={(e) => handleModalOpen(e, rowData.filter_file, rowData.name, false)}
-              >
-                <UndeployIcon fill="#F91313" data-cy="undeploy-button" />
-              </TooltipIcon>
               <TooltipIcon
                 title="Download"
                 onClick={(e) => handleDownload(e, rowData.id, rowData.name)}
@@ -956,7 +976,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const options = {
     filter : false,
     sort : !(user && user.user_id === "meshery"),
-    search : !(user && user.user_id === "meshery"),
+    search : false,
     filterType : "textField",
     responsive : "standard",
     resizableColumns : true,
@@ -1066,6 +1086,26 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             </div>
           </div>
           }
+          <div
+            className={classes.searchAndView}
+            style={{
+              display : 'flex',
+              alignItems : 'center',
+              justifyContent : 'center',
+              margin : 'auto',
+            }}
+          >
+            <SearchBar
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                initFiltersSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
+              }
+              }
+              label={"Search Filters"}
+              width="80ch"
+            />
+          </div>
           <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingRight : "1rem", paddingTop : "0.2rem" }}>
             <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} />
           </div>
@@ -1099,6 +1139,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
               handlePublish={handlePublish}
               handleUnpublishModal={handleUnpublishModal}
               handleClone={handleClone}
+              handleDownload={handleDownload}
               urlUploadHandler={urlUploadHandler}
               uploadHandler={uploadHandler}
               setSelectedFilter={setSelectedFilter}
@@ -1121,7 +1162,9 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           componentCount={modalOpen.count}
           tab={modalOpen.deploy ? 2 : 1}
         />
-        {canPublishFilter && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} filter={publishModal.filter} aria-label="catalog publish" handlePublish={handlePublish} />}
+        {canPublishFilter &&
+          <Modal open={publishModal.open} schema={publish_schema} uiSchema={publish_ui_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.filter?.catalog_data : payload.catalog_data } aria-label="catalog publish" title={publishModal.filter?.name} handleSubmit={handlePublish} payload={payload} showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }}/>
+        }
         <PromptComponent ref={modalRef} />
         <UploadImport
           open={importModal.open}
