@@ -71,8 +71,8 @@ Using curl, you can access Meshery's REST API by executing this command:
   <br/>
   <pre class="codeblock-pre">
   <div class="codeblock"><div class="clipboardjs">curl --location 'localhost:9081/api/&lt;endpoint&gt;' \
---header 'meshery-token: &lt;mytoken&gt;\
---header 'Cookie: meshery-provider=Meshery; meshery.layer5.io_ref=/;token=&lt;mytoken&gt;
+--header 'meshery-token: &lt;yourToken&gt;\
+--header 'Cookie: meshery-provider=Meshery; meshery.layer5.io_ref=/;token=&lt;yourToken&gt;
 </div>
 </div>
   </pre>
