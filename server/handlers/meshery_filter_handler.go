@@ -127,7 +127,7 @@ func (h *Handler) handleFilterPOST(
 		// Assign a name if no name is provided
 		if parsedBody.FilterData.Name == "" {
 			// TODO: Dynamically generate names or get the name of the file from the UI (@navendu-pottekkat)
-			parsedBody.FilterData.Name = "Test Filter"
+			parsedBody.FilterData.Name = "meshery-filter-"+ utils.GetRandomAlphabetsOfDigit(5)
 		}
 		// Assign a location if no location is specified
 		if parsedBody.FilterData.Location == nil || len(parsedBody.FilterData.Location) == 0 {
@@ -335,7 +335,7 @@ func (h *Handler) CloneMesheryFilterHandler(
 // Publishes filter to Meshery Catalog by setting visibility to published and setting catalog data
 // responses:
 //
-//	200: noContentWrapper
+//	202: noContentWrapper
 //
 // PublishCatalogFilterHandler set visibility of filter with given id as published
 func (h *Handler) PublishCatalogFilterHandler(
@@ -365,6 +365,7 @@ func (h *Handler) PublishCatalogFilterHandler(
 
 	go h.config.ConfigurationChannel.PublishFilters()
 	rw.Header().Set("Content-Type", "application/json")
+	rw.WriteHeader(http.StatusAccepted)
 	fmt.Fprint(rw, string(resp))
 }
 

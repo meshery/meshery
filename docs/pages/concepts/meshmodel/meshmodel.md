@@ -4,7 +4,7 @@ title: MeshModel
 permalink: concepts/meshmodel
 redirect_from: meshmodel
 type: concepts
-abstract: 
+abstract: Meshery uses a set of Construct Models to define concrete boundaries for better functionality and sustainable development.
 language: en
 list: include
 ---
@@ -20,10 +20,10 @@ MeshModel serves as an internal model within Meshery, defining constructs and th
 MeshModel adheres to several design principles, including establishing a set of constructs, clearly defining construct boundaries, allowing construct extension, reusing existing models, being user-centric, and simplifying complex networking and distributed systems.
 
 ### Core Constructs
-[MeshModel](https://github.com/meshery/meshery/tree/master/server/meshmodel) introduces various core constructs that form the foundation of the model. Some of the core constructs mentioned in the document include Components, Designs, Patterns, Traits, Metrics, Actions, Color, and Relationships.
+[MeshModel](https://github.com/meshery/meshery/tree/master/server/meshmodel) introduces various core constructs that form the foundation of the model. Some of the core constructs mentioned in the document include Components, Designs, Patterns, Traits, Metrics, Actions, Color, and Relationships. Models having the same `name` and `version` attributes are considered duplicates.
 
 ### Component
-[Components](https://github.com/meshery/meshery/tree/master/server/meshmodel/components) represent entities in the Meshery ecosystem, exposing capabilities of the underlying platform. They can be registered, created, and used by users and operators. Components have definitions, instances, and associated metadata.
+[Components](https://github.com/meshery/meshery/tree/master/server/meshmodel/components) represent entities in the Meshery ecosystem, exposing capabilities of the underlying platform. They can be registered, created, and used by users and operators. Components have definitions, instances, and associated metadata. Components having the same `kind`, `apiVersion` and `model.name` attributes are considered duplicates.
 
 ### Design
 Designs are deployable units in Meshery that describe the desired infrastructure. They consist of components and patterns, allowing users to define and configure the behavior of their cloud-native applications.
