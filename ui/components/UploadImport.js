@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { TextField, Button, Grid, NativeSelect } from '@material-ui/core';
+import { TextField, Button, Grid, NativeSelect, Divider, Typography, Box } from '@material-ui/core';
 import { createTheme, MuiThemeProvider, useTheme, withStyles } from '@material-ui/core/styles';
 import { URLValidator } from '../utils/URLValidator';
 import {
@@ -122,6 +122,7 @@ function UploadImport(props) {
 
   const handleUploader = async (input) => {
     await handleUpload(input, sourceType, {name, config})
+    fetch?.();
     handleClose()
   }
 
@@ -149,7 +150,34 @@ function UploadImport(props) {
                     variant="outlined"
                     label="Name"
                     style={{ width: "100%" }}
-                    onChange={(e) => setInput(e.target.value)} />
+                    onChange={(e) => setName(e.target.value)} />
+                </Grid>
+                {
+                  isFilter && (
+                    <>
+                      <Grid container spacing={24} alignItems="center">
+                        <Grid item xs={3}>
+                          <h4 className={classes.heading} >WASM Config</h4>
+                        </Grid>
+                        <Grid item xs={9}>
+                          <TextField
+                            placeholder={"typed_config:\r\n  \"@type\": type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm\r\n  config:\r\n    name: example-filter\r\n    rootId: my_root_id\r\n    vmConfig:\r\n      code:\r\n        local:\r\n          filename: /var/local/lib/wasm-filters/example-filter.wasm\r\n      runtime: envoy.wasm.runtime.v8\r\n      vmId: example-filter\r\n      allow_precompiled: true\r\nname: envoy.filters.http.wasm"}
+                            multiline
+                            required
+                            minRows={4}
+                            size="small"
+                            variant="outlined"
+                            label="WASM Filter Config"
+                            style={{ width: "100%" }}
+                            onChange={(e) => setConfig(e.target.value)} />
+                        </Grid>
+                      </Grid>
+                      <br />
+                    </>
+                  )
+                }
+                <Grid item xs={12}>
+                  <Divider style={{margin: "8px 0px"}}/>
                 </Grid>
                 <Grid item xs={3}>
                   <h4 className={classes.heading} > FROM URL </h4>
@@ -160,26 +188,14 @@ function UploadImport(props) {
                     variant="outlined"
                     label={`URL for ${configuration}`}
                     style={{ width: "100%" }}
-                    onChange={(e) => setName(e.target.value)} />
+                    onChange={(e) => setInput(e.target.value)} />
                 </Grid>
               </Grid>
               {
                 isFilter && (
-                  <Grid container spacing={24} alignItems="center">
-                    <Grid item xs={3}>
-                      <h4 className={classes.heading} >Config Yaml</h4>
-                    </Grid>
-                    <Grid item xs={9}>
-                      <TextField
-                        multiline
-                        required
-                        size="small"
-                        variant="outlined"
-                        label="Name"
-                        style={{ width: "100%" }}
-                        onChange={(e) => setConfig(e.target.value)} />
-                    </Grid>
-                  </Grid>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    <Typography variant='caption'>---OR---</Typography>
+                  </div>
                 )
               }
               {

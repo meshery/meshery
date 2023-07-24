@@ -782,7 +782,7 @@ function MesheryPatterns({
     };
   }
 
-  async function handleSubmit({ data, id, name, type }) {
+  async function handleSubmit({ data, id, name, type, metadata }) {
     updateProgress({ showProgress : true })
     if (type === FILE_OPS.DELETE) {
       const response = await showModal(1, name)
@@ -837,14 +837,14 @@ function MesheryPatterns({
       if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({
           pattern_data : {
-            name,
+            name: metadata?.name || name,
             pattern_file : data,
           },
           save : true
         })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
-        body = JSON.stringify({ url : data, save : true })
+        body = JSON.stringify({ url : data, save : true,  name: metadata?.name || name })
       }
       dataFetch(
         `/api/pattern`,
@@ -883,7 +883,7 @@ function MesheryPatterns({
     }
   }
 
-  function uploadHandler(ev) {
+  function uploadHandler(ev, _, otherMetadata) {
     if (!ev.target.files?.length) return;
 
 
@@ -895,18 +895,20 @@ function MesheryPatterns({
       handleSubmit({
         data : event.target.result,
         name : file?.name || getRandomName(),
-        type : FILE_OPS.FILE_UPLOAD
+        type : FILE_OPS.FILE_UPLOAD,
+        metadata: otherMetadata
       });
     });
     reader.readAsText(file);
   }
 
-  function urlUploadHandler(link) {
+  function urlUploadHandler(link, _, otherMetadata) {
     handleSubmit({
       data : link,
       id : "",
       name : getRandomName(),
-      type : FILE_OPS.URL_UPLOAD
+      type : FILE_OPS.URL_UPLOAD,
+      metadata: otherMetadata
     });
   }
 
@@ -1334,7 +1336,15 @@ function MesheryPatterns({
           errors={modalOpen.errors}
         />
         {canPublishPattern && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handlePublish={handlePublish} />}
-        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchPatterns(page, pageSize, search, sortOrder)} configuration="Design" />
+        <UploadImport
+          open={importModal.open}
+          handleClose={handleModalClose}
+          aria-label="URL upload button"
+          handleUrlUpload={urlUploadHandler}
+          handleUpload={uploadHandler}
+          fetch={() => fetchPatterns(page, pageSize, search, sortOrder)}
+          configuration="Design"
+        />
         <PromptComponent ref={modalRef} />
       </NoSsr>
     </>

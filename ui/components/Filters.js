@@ -640,7 +640,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
 
   async function handleSubmit({ data, name, id, type, metadata }) {
     // TODO: use filter name
-    console.info("posting filter", name);
     updateProgress({ showProgress : true });
     if (type === FILE_OPS.DELETE) {
       const response = await showmodal(1);
@@ -1126,7 +1125,15 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         />
         {canPublishFilter && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} filter={publishModal.filter} aria-label="catalog publish" handlePublish={handlePublish} />}
         <PromptComponent ref={modalRef} />
-        <UploadImport open={importModal.open} isFilter handleClose={handleUploadImportClose} handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchFilters(page, pageSize, search, sortOrder) } configuration="Filter" />
+        <UploadImport
+          open={importModal.open}
+          isFilter
+          handleClose={() => {}}
+          handleUrlUpload={urlUploadHandler}
+          handleUpload={uploadHandler}
+          fetch={() => fetchFilters(page, pageSize, search, sortOrder)}
+          configuration="Filter"
+           />
       </NoSsr>
     </>
   );
