@@ -867,14 +867,22 @@ function MesheryPatterns({
       if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({
           pattern_data : {
+<<<<<<< HEAD
             name : metadata?.name || name,
+=======
+            name: metadata?.name || name,
+>>>>>>> 59cd2f789 (resolve issues with import statements)
             pattern_file : data,
           },
           save : true
         })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
+<<<<<<< HEAD
         body = JSON.stringify({ url : data, save : true,  name : metadata?.name || name })
+=======
+        body = JSON.stringify({ url : data, save : true,  name: metadata?.name || name })
+>>>>>>> 59cd2f789 (resolve issues with import statements)
       }
       dataFetch(
         `/api/pattern`,
@@ -926,7 +934,11 @@ function MesheryPatterns({
         data : event.target.result,
         name : file?.name || getRandomName(),
         type : FILE_OPS.FILE_UPLOAD,
+<<<<<<< HEAD
         metadata : otherMetadata
+=======
+        metadata: otherMetadata
+>>>>>>> 59cd2f789 (resolve issues with import statements)
       });
     });
     reader.readAsText(file);
@@ -938,7 +950,11 @@ function MesheryPatterns({
       id : "",
       name : getRandomName(),
       type : FILE_OPS.URL_UPLOAD,
+<<<<<<< HEAD
       metadata : otherMetadata
+=======
+      metadata: otherMetadata
+>>>>>>> 59cd2f789 (resolve issues with import statements)
     });
   }
 
@@ -1397,16 +1413,34 @@ function MesheryPatterns({
           validationBody={modalOpen.validationBody}
           errors={modalOpen.errors}
         />
+<<<<<<< HEAD
         {canPublishPattern && <Modal open={publishModal.open} schema={publish_schema} uiSchema={publish_ui_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.pattern?.catalog_data : payload.catalog_data } aria-label="catalog publish" title={publishModal.pattern?.name} handleSubmit={handlePublish} payload={payload} showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }}/>}
         <UploadImport
           open={importModal.open}
           handleClose={handleUploadImportClose}
+=======
+<<<<<<< HEAD
+        {canPublishPattern &&
+          <Modal open={publishModal.open} schema={publish_schema} uiSchema={publish_ui_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.pattern?.catalog_data : payload.catalog_data } aria-label="catalog publish" title={publishModal.pattern?.name} handleSubmit={handlePublish} payload={payload} showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }}/>
+        }
+
+        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchPatterns(page, pageSize, search, sortOrder)} configuration="Design" />
+=======
+        {canPublishPattern && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handlePublish={handlePublish} />}
+        <UploadImport
+          open={importModal.open}
+          handleClose={handleModalClose}
+>>>>>>> 59cd2f789 (resolve issues with import statements)
           aria-label="URL upload button"
           handleUrlUpload={urlUploadHandler}
           handleUpload={uploadHandler}
           fetch={() => fetchPatterns(page, pageSize, search, sortOrder)}
           configuration="Design"
         />
+<<<<<<< HEAD
+=======
+>>>>>>> 6e3b1c372 (resolve issues with import statements)
+>>>>>>> 59cd2f789 (resolve issues with import statements)
         <PromptComponent ref={modalRef} />
       </NoSsr>
     </>
