@@ -504,7 +504,7 @@ function MesheryApplications({
         {
           credentials : "include",
           method : "PUT",
-          body : JSON.stringify({ application_data : { id, name: metadata.name || name, application_file : data }, save : true }),
+          body : JSON.stringify({ application_data : { id, name : metadata.name || name, application_file : data }, save : true }),
         },
         () => {
           console.log("ApplicationFile API", `/api/application/${source_type}`);
@@ -530,11 +530,11 @@ function MesheryApplications({
       let body = { save : true }
       if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({
-          ...body, application_data : { name :  metadata.name || name || getRandomName(), application_file : data }
+          ...body, application_data : { name : metadata.name || name || getRandomName(), application_file : data }
         })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
-        body = JSON.stringify({ ...body, url : data, name:  metadata.name || name })
+        body = JSON.stringify({ ...body, url : data, name : metadata.name || name })
       }
       dataFetch(
         `/api/application/${source_type}`,
@@ -918,8 +918,8 @@ function MesheryApplications({
           handleClose={handleModalClose}
           submit={
             {
-              deploy: () => handleDeploy(modalOpen.application_file, modalOpen.name),
-              unDeploy: () => handleUnDeploy(modalOpen.application_file, modalOpen.name)
+              deploy : () => handleDeploy(modalOpen.application_file, modalOpen.name),
+              unDeploy : () => handleUnDeploy(modalOpen.application_file, modalOpen.name)
             }
           }
           isDelete={!modalOpen.deploy}
@@ -930,12 +930,12 @@ function MesheryApplications({
         <PromptComponent ref={modalRef} />
         <UploadImport
           open={importModal.open}
-          handleClose={() => { }}
+          handleClose={handleUploadImportClose}
           isApplication={true}
           aria-label="URL upload button"
           handleUrlUpload={urlUploadHandler}
           handleUpload={uploadHandler}
-          supportedTypes={types} 
+          supportedTypes={types}
           configuration="Application"  />
       </NoSsr>
     </>

@@ -837,14 +837,14 @@ function MesheryPatterns({
       if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({
           pattern_data : {
-            name: metadata?.name || name,
+            name : metadata?.name || name,
             pattern_file : data,
           },
           save : true
         })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
-        body = JSON.stringify({ url : data, save : true,  name: metadata?.name || name })
+        body = JSON.stringify({ url : data, save : true,  name : metadata?.name || name })
       }
       dataFetch(
         `/api/pattern`,
@@ -896,7 +896,7 @@ function MesheryPatterns({
         data : event.target.result,
         name : file?.name || getRandomName(),
         type : FILE_OPS.FILE_UPLOAD,
-        metadata: otherMetadata
+        metadata : otherMetadata
       });
     });
     reader.readAsText(file);
@@ -908,7 +908,7 @@ function MesheryPatterns({
       id : "",
       name : getRandomName(),
       type : FILE_OPS.URL_UPLOAD,
-      metadata: otherMetadata
+      metadata : otherMetadata
     });
   }
 
@@ -1338,7 +1338,7 @@ function MesheryPatterns({
         {canPublishPattern && <PublishModal open={publishModal.open} handleClose={handlePublishModalClose} pattern={publishModal.pattern} aria-label="catalog publish" handlePublish={handlePublish} />}
         <UploadImport
           open={importModal.open}
-          handleClose={handleModalClose}
+          handleClose={handleUploadImportClose}
           aria-label="URL upload button"
           handleUrlUpload={urlUploadHandler}
           handleUpload={uploadHandler}

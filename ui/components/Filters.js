@@ -674,10 +674,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
       let body = { save : true }
       if (type === FILE_OPS.FILE_UPLOAD) {
-        body = JSON.stringify({ ...body, filter_data : { filter_file : data }, name: metadata.name, config: metadata.config })
+        body = JSON.stringify({ ...body, filter_data : { filter_file : data }, name : metadata.name, config : metadata.config })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
-        body = JSON.stringify({ ...body, url : data, name: metadata.name, config: metadata.config })
+        body = JSON.stringify({ ...body, url : data, name : metadata.name, config : metadata.config })
       }
       dataFetch(
         `/api/filter`,
@@ -714,7 +714,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   }
 
   function uploadHandler(ev, a, b) {
-    console.log({ev,a,b})
+    console.log({ ev,a,b })
     if (!ev.target.files?.length) return;
 
     const file = ev.target.files[0];
@@ -726,20 +726,20 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         data : event.target.result,
         name : file?.name || "meshery_" + Math.floor(trueRandom() * 100),
         type : FILE_OPS.FILE_UPLOAD,
-        metadata: b
+        metadata : b
       });
     });
     reader.readAsText(file);
   }
 
   function urlUploadHandler(link, a, b,) {
-    console.log({link,a,b})
+    console.log({ link,a,b })
 
     handleSubmit({
       data : link,
       name : "meshery_" + Math.floor(trueRandom() * 100),
       type : FILE_OPS.URL_UPLOAD,
-      metadata: b
+      metadata : b
     });
   }
 
@@ -1128,12 +1128,12 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         <UploadImport
           open={importModal.open}
           isFilter
-          handleClose={() => {}}
+          handleClose={handleUploadImportClose}
           handleUrlUpload={urlUploadHandler}
           handleUpload={uploadHandler}
           fetch={() => fetchFilters(page, pageSize, search, sortOrder)}
           configuration="Filter"
-           />
+        />
       </NoSsr>
     </>
   );
