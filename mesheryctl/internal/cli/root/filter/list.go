@@ -23,6 +23,7 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/ctlerrors"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
@@ -46,7 +47,7 @@ mesheryctl filter list
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return ErrProcessConfigFile(err)
+			return ctlerrors.ErrProcessingConfig(err)
 		}
 
 		if len(args) > 0 {
@@ -56,24 +57,24 @@ mesheryctl filter list
 		var response models.FiltersAPIResponse
 		req, err := utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/filter", nil)
 		if err != nil {
-			return ErrNewRequest(err)
+			return ctlerrors.ErrNewRequest(err)
 		}
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			return ErrMakeRequest(err)
+			return ctlerrors.ErrMakeRequest(err)
 		}
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			return ErrReadResponseBody(err)
+			return ctlerrors.ErrReadResponseBody(err)
 		}
 		if res.StatusCode != http.StatusOK {
-			return  ErrResponseStatusBody(res.StatusCode, string(body))
+			return  ctlerrors.ErrResponseStatusBody(res.StatusCode, string(body))
 		}
 		err = json.Unmarshal(body, &response)
 
 		if err != nil {
-			return ErrUnmarshal(err)
+			return ctlerrors.ErrUnmarshal(err)
 		}
 		tokenObj, err := utils.ReadToken(utils.TokenFlag)
 		if err != nil {

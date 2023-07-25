@@ -20,6 +20,7 @@ import (
 	"os"
 
 	"github.com/asaskevich/govalidator"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/ctlerrors"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
@@ -56,7 +57,7 @@ mesheryctl filter import /path/to/filter.wasm -name [string]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return ErrProcessConfigFile(err)
+			return ctlerrors.ErrProcessingConfig(err)
 		}
 
 		filterURL := mctlCfg.GetBaseMesheryURL() + "/api/filter"
@@ -77,12 +78,12 @@ mesheryctl filter import /path/to/filter.wasm -name [string]
 		} else {
 			filterFile, err := os.ReadFile(uri)
 			if err != nil {
-				return ErrReadFile(err)
+				return ctlerrors.ErrReadFile(err)
 			}
 
 			fileInfo, err := os.Stat(uri)
 			if err != nil {
-				return ErrReadFile(err)
+				return ctlerrors.ErrReadFile(err)
 			}
 
 			content := string(filterFile)
@@ -97,7 +98,7 @@ mesheryctl filter import /path/to/filter.wasm -name [string]
 				utils.Log.Info("Reading config file")
 				cfgFile, err := os.ReadFile(cfg)
 				if err != nil {
-					return ErrReadConfigFile(err)
+					return ctlerrors.ErrReadConfigFile(err)
 				}
 
 				content := string(cfgFile)
@@ -117,23 +118,23 @@ mesheryctl filter import /path/to/filter.wasm -name [string]
 		marshalledBody, err := json.Marshal(body)
 
 		if err != nil {
-			return ErrMarshal(err)
+			return ctlerrors.ErrMarshal(err)
 		}
 
 		req, err := utils.NewRequest("POST", filterURL, bytes.NewBuffer(marshalledBody))
 		if err != nil {
-			return ErrNewRequest(err)
+			return ctlerrors.ErrNewRequest(err)
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
-			return ErrMakeRequest(err)
+			return ctlerrors.ErrMakeRequest(err)
 		}
 
 		if resp.StatusCode == 200 {
 			utils.Log.Info("filter successfully imported")
 		} else {
-			return ErrResponseStatus(resp.StatusCode)
+			return ctlerrors.ErrResponseStatus(resp.StatusCode)
 		}
 
 		return nil
