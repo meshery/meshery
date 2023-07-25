@@ -1,6 +1,6 @@
 ---
 layout: default
-tittle: Meshery Designs 
+title: Meshery Designs 
 description: Get to know what is Design & how its helps in configuring components
 permalink: guides/meshery-design
 type: Guides
@@ -8,24 +8,23 @@ language: en
 ---
 
 
-## Meshery Design
 
-We know in the world of microservice architecture, **service meshes** are crucial. And it comes with a **price** (complexity, error-prone, steep learning curve).
+We know in the world of microservice architecture, **service meshes** are crucial. And they comes with a **price** (complexity, error-prone, steep learning curve).
 
-### We are here to help you out with **Meshery Designs**.
-
+### We are here to help you out, with **Designs**.
 
 ## WHAT IS IT ?
-**Here**, we have pre-build configuration yaml files that serve as a blueprint for the configuration of various service-mesh components. So that you dont need to bother for writing config files for your mesh & make things aggravated. <br>
-when you apply the config files on kubernetes cluster. The service-mesh control plane reads the instructions (from the config file) & takes the necessary steps to setup the desired service-mesh environment. This help you to use your service-mesh's potential with prior experience of it. Like 
+**Here**, we have pre-build configuration yaml files that serve as a blueprint for the configuration of various service-mesh components. So that you dont need to bother for writing configuration files for your mesh & make things aggravated. <br>
+when you apply the configuration files on kubernetes cluster. The service-mesh control plane reads the instructions (from the configuration file) & takes the necessary steps to setup the desired service-mesh environment. <br><br>
+**Designs** help you to use your service-mesh's potential without any prior experience of using service-meshes. Like 
 
-* Configure control plane
-* Define traffic routing rules
-* Implement security policies
-* Configure observability
+* Configuring control plane
+* Defining traffic routing rules
+* Implementing security policies
+* Configuring observability
 
 
-Along all these we provide an opportuinity to create or import you own config files.
+Along all these we also provide an opportuinity to create or import you own configuration files.
 
 
 ## WHERE TO FIND IT

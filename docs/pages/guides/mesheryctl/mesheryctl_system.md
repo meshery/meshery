@@ -1,14 +1,16 @@
 ---
 layout: default
-tittle: Mesheryctl system model 
+title: Mesheryctl system commands 
 description: Get to know what are the meshrey commands present for system model
-permalink: guides/mesheryctl/mesheryctl-system
+permalink: guides/mesheryctl/system-commands
 type: Guides
 language: en
+category: mesheryctl
 ---
 
-## Mesheryctl : system commands
-These commands can be executed using the `mesheryctl` commandline-tool to interact with & manage the system model of meshery
+
+
+These commands can be executed to do tasks related to system configuration, control & maintainance of meshery itself.
 <br><br>
 
 * `mesheryctl system channel`   -  Switch between release channels.
