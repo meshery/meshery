@@ -22,7 +22,7 @@ In the context of MeshModel, the `Core Constructs` of MeshModel are represented 
         a. Relationships are defined only between Components.
         b. The values for Kind, Version  and Model are case-sensitive
         c. The convention is to use camel-casing for Kind and SubType values.
-        d. Absence of a field means in the selector means “*” (or wildcard).
+        d. Absence of a field in the selector means “*” (or wildcard).
             - If we have a selector with {Kind: Pod, Model: Kubernetes}, the absence of the Version field here 
               means that all the versions of the Kubernetes Pod resource (e.g. k8s.io/v1/betav2) will match.
         e. In the event of conflicting Relationship Definitions, union between them is taken. 

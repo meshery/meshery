@@ -1,0 +1,68 @@
+{
+    "apiVersion": "core.meshery.io/v1alpha1",
+    "kind": "Peer",
+    "metadata": {
+      "name": "Controller Peer Relationship",
+      "description": "A relationship that defines different controller relationships.",
+      "labels": {
+        "type": "Controller",
+        "category": "Kubernetes",
+        "version": "v1.25.2"
+      }
+    },
+    "model": {
+      "name": "kubernetes",
+      "version": "v1.25.2",
+      "displayName": "Kubernetes",
+      "category": {
+        "name": "Orchestration & Management",
+        "metadata": null
+      },
+      "metadata": {}
+    },
+    "subType": "Controller",
+    "selectors": {
+      "allow": {
+        "from": [
+          {
+            "kind":"Deployment",
+            "model":"kubernetes"
+          },
+          {
+            "kind": "StatefulSet",
+            "model": "kubernetes"
+          },
+          {
+            "kind": "DaemonSet",
+            "model": "kubernetes"
+          },
+          {
+            "kind": "ReplicaSet",
+            "model": "kubernetes"
+          },
+          {
+            "kind":"CronJob",
+            "model":"kubernetes"
+          },
+          {
+            "kind": "HorizontalPodAutoScaler",
+            "model": "kubernetes"
+          },
+          {
+            "kind": "PodDisruptionBudget",
+            "model": "kubernetes"
+          }
+        ],
+        "to": [
+          {
+            "kind": "Pod",
+            "model": "kubernetes"
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  }
