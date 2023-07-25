@@ -219,3 +219,14 @@ func (h *Handler) ShareDesignHandler(w http.ResponseWriter, r *http.Request, _ *
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(w, "Design shared")
 }
+
+func (h *Handler) ShareFilterHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	statusCode, err := provider.ShareDesign(r)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error: %v", err.Error()), statusCode)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, "Filter shared")
+}
