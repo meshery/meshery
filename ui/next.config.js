@@ -1,10 +1,16 @@
-module.exports = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode : false,
+  compiler : {
+    relay : require("./relay.config"),
+  },
   exportPathMap : function () {
     return {
       '/404' : { page : '/404' },
       '/configuration/applications' : { page : '/configuration/applications' },
       '/configuration/filters' : { page : '/configuration/filters' },
-      '/configuration/patterns' : { page : '/configuration/patterns' },
+      '/configuration/designs' : { page : '/configuration/designs' },
+      '/configuration/designs/configurator' : { page : '/configuration/designs/configurator' },
       '/extension/[...component]' : { page : '/extension/[...component]' },
       '/extensions' : { page : '/extensions' },
       '/' : { page : '/', query : { __nextDefaultLocale : 'en' } },
@@ -35,6 +41,10 @@ module.exports = {
       ...config.resolve.alias,
       "remote-component.config.js" : __dirname + "/remote-component.config.js"
     };
+    config.output.webassemblyModuleFilename = 'static/[modulehash].wasm',
+    config.experiments = { asyncWebAssembly : true, layers : true }
     return config;
   }
 }
+
+module.exports = nextConfig

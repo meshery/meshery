@@ -1,9 +1,10 @@
-import { graphql, fetchQuery } from "react-relay";
-import environment from "../../../lib/relayEnvironment";
+import { fetchQuery, graphql } from "react-relay";
+import { createRelayEnvironment } from "../../../lib/relayEnvironment";
 
 export default function NatsStatusQuery(vars) {
+  const environment = createRelayEnvironment({});
 
-  const query = graphql`
+  const NatsStatusQueryNode = graphql`
     query NatsStatusQuery($k8scontextID: String!) {
       controller: getNatsStatus(k8scontextID: $k8scontextID){
             name
@@ -13,5 +14,5 @@ export default function NatsStatusQuery(vars) {
     }
   `;
 
-  return fetchQuery(environment, query, vars);
+  return fetchQuery(environment, NatsStatusQueryNode, vars);
 }

@@ -37,13 +37,6 @@ mesheryctl app onboard -f [filepath] -s [source type]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-Example:
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
 mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 
 </div>

@@ -18,6 +18,7 @@ import (
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
 	pCore "github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
 	"github.com/layer5io/meshkit/utils/walker"
@@ -68,13 +69,6 @@ func (h *Handler) ApplicationFileHandler(
 // responses:
 //  200: mesheryApplicationResponseWrapper
 
-// swagger:route GET /api/application/ ApplicationsAPI idGetApplicationFileRequest
-// Handle GET request for Application Files
-//
-// Returns requests for all Meshery Applications
-// responses:
-//  200: mesheryApplicationsResponseWrapper
-
 // ApplicationFileRequestHandler will handle requests of both type GET and POST
 // on the route /api/application
 func (h *Handler) ApplicationFileRequestHandler(
@@ -109,8 +103,8 @@ func (h *Handler) ApplicationFileRequestHandler(
 func (h *Handler) handleApplicationPOST(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	defer func() {
@@ -187,8 +181,7 @@ func (h *Handler) handleApplicationPOST(
 					Valid:  true,
 				}
 			}
-
-			pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false)
+			pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false, h.registryManager)
 			if err != nil {
 				obj := "convert"
 				h.log.Error(ErrApplicationFailure(err, obj))
@@ -250,7 +243,7 @@ func (h *Handler) handleApplicationPOST(
 				return
 			}
 			result := string(resp)
-			pattern, err := pCore.NewPatternFileFromK8sManifest(result, false)
+			pattern, err := pCore.NewPatternFileFromK8sManifest(result, false, h.registryManager)
 			if err != nil {
 				obj := "convert"
 				h.log.Error(ErrApplicationFailure(err, obj))
@@ -314,7 +307,7 @@ func (h *Handler) handleApplicationPOST(
 					path = strings.Join(parsedPath[4:], "/")
 				}
 
-				pfs, err := githubRepoApplicationScan(owner, repo, path, branch, sourcetype)
+				pfs, err := githubRepoApplicationScan(owner, repo, path, branch, sourcetype, h.registryManager)
 				if err != nil {
 					http.Error(rw, ErrRemoteApplication(err).Error(), http.StatusInternalServerError)
 					addMeshkitErr(&res, err) //error guaranteed to be meshkit error
@@ -325,7 +318,7 @@ func (h *Handler) handleApplicationPOST(
 				mesheryApplication = &pfs[0]
 			} else {
 				// Fallback to generic HTTP import
-				pfs, err := genericHTTPApplicationFile(parsedBody.URL, sourcetype)
+				pfs, err := genericHTTPApplicationFile(parsedBody.URL, sourcetype, h.registryManager)
 				if err != nil {
 					http.Error(rw, ErrRemoteApplication(err).Error(), http.StatusInternalServerError)
 					addMeshkitErr(&res, err) //error guaranteed to be meshkit error
@@ -394,13 +387,12 @@ func (h *Handler) handleApplicationPOST(
 	}
 
 	h.formatApplicationOutput(rw, byt, format, &res)
-	return
 }
 
 func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider) {
 	defer func() {
 		_ = r.Body.Close()
@@ -527,30 +519,35 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 	h.formatApplicationOutput(rw, resp, format, &res)
 }
 
-// swagger:route GET /api/application/{id} ApplicationsAPI idGetMesheryApplication
-// Handle GET request for Meshery Application with the given id
+// swagger:route GET /api/application ApplicationsAPI idGetMesheryApplications
+// Handle GET request for Application Files
 //
 // Fetches the list of all applications saved by the current user
-// ?updated_after=<timestamp> timestamp should be of the format `YYYY-MM-DD HH:MM:SS`
-// ?order={field} orders on the passed field
-// ?search=<application name> A string matching is done on the specified application name
-// ?page={page-number} Default page number is 1
-// ?pagesize={pagesize} Default pagesize is 10
+//
+// ```?updated_after=<timestamp>``` timestamp should be of the format "YYYY-MM-DD HH:MM:SS"
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?search=<application name>``` A string matching is done on the specified application name
+//
+// ```?page={page-number}``` Default page number is 0
+//
+// ```?pagesize={pagesize}``` Default pagesize is 10
 // responses:
-//  200: mesheryApplicationResponseWrapper
+//  200: mesheryApplicationsResponseWrapper
 
 // GetMesheryApplicationsHandler returns the list of all the applications saved by the current user
 func (h *Handler) GetMesheryApplicationsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetMesheryApplications(tokenString, q.Get("page"), q.Get("page_size"), q.Get("search"), q.Get("order"), q.Get("updated_after"))
+	resp, err := provider.GetMesheryApplications(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("updated_after"))
 	if err != nil {
 		obj := "fetch"
 		h.log.Error(ErrApplicationFailure(err, obj))
@@ -573,8 +570,8 @@ func (h *Handler) GetMesheryApplicationsHandler(
 func (h *Handler) DeleteMesheryApplicationHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	applicationID := mux.Vars(r)["id"]
@@ -595,8 +592,8 @@ func (h *Handler) DeleteMesheryApplicationHandler(
 func (h *Handler) GetMesheryApplicationHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	applicationID := mux.Vars(r)["id"]
@@ -613,19 +610,17 @@ func (h *Handler) GetMesheryApplicationHandler(
 }
 
 // swagger:route GET /api/application/types ApplicationsAPI typeGetMesheryApplication
-// Handle GET request for Meshery Application with the provided type
+// Handle GET request for Meshery Application types
 //
-// Get application file type
+// Get application file types
 // responses:
-//  200: mesheryApplicationResponseWrapper
-
-// GetMesheryApplicationHandler fetched the application with the given id
+//  200: mesheryApplicationTypesResponseWrapper
 func (h *Handler) GetMesheryApplicationTypesHandler(
 	rw http.ResponseWriter,
-	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
-	provider models.Provider,
+	_ *http.Request,
+	_ *models.Preference,
+	_ *models.User,
+	_ models.Provider,
 ) {
 	response := models.GetApplicationTypes()
 	b, err := json.Marshal(response)
@@ -639,6 +634,48 @@ func (h *Handler) GetMesheryApplicationTypesHandler(
 	fmt.Fprint(rw, string(b))
 }
 
+// swagger: route GET /api/application/download/{id} ApplicationsAPI idGetApplication
+// Handle GET request for Meshery Application with the given id
+//
+// Get the application file with the given id
+// responses:
+//  200
+
+// GetMesheryApplicationFile returns the application file with the given id
+func (h *Handler) GetMesheryApplicationFile(
+	rw http.ResponseWriter,
+	r *http.Request,
+	_ *models.Preference,
+	_ *models.User,
+	provider models.Provider,
+) {
+	applicationID := mux.Vars(r)["id"]
+	resp, err := provider.GetMesheryApplication(r, applicationID)
+
+	if err != nil {
+		obj := "download"
+		h.log.Error(ErrApplicationFailure(err, obj))
+		http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusNotFound)
+		return
+	}
+
+	application := &models.MesheryApplication{}
+
+	err = json.Unmarshal(resp, &application)
+	if err != nil {
+		h.log.Error(ErrApplicationFailure(err, "parse failure"))
+		http.Error(rw, ErrApplicationFailure(err, "parse failure").Error(), http.StatusInternalServerError)
+		return
+	}
+
+	rw.Header().Set("Content-Type", "application/x-yaml")
+	if _, err := io.Copy(rw, strings.NewReader(application.ApplicationFile)); err != nil {
+		h.log.Error(ErrApplicationSourceContent(err, "download"))
+		http.Error(rw, ErrApplicationSourceContent(err, "download").Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 // swagger:route GET /api/application/download/{id}/{sourcetype} ApplicationsAPI typeGetApplication
 // Handle GET request for Meshery Application with of source content
 //
@@ -650,8 +687,8 @@ func (h *Handler) GetMesheryApplicationTypesHandler(
 func (h *Handler) GetMesheryApplicationSourceHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	applicationID := mux.Vars(r)["id"]
@@ -680,7 +717,7 @@ func (h *Handler) GetMesheryApplicationSourceHandler(
 	}
 }
 
-func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte, format string, res *meshes.EventsResponse) {
+func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte, _ string, res *meshes.EventsResponse) {
 	contentMesheryApplicationSlice := make([]models.MesheryApplication, 0)
 	names := []string{}
 
@@ -719,6 +756,7 @@ func githubRepoApplicationScan(
 	path,
 	branch,
 	sourceType string,
+	reg *meshmodel.RegistryManager,
 ) ([]models.MesheryApplication, error) {
 	var mu sync.Mutex
 	ghWalker := walker.NewGit()
@@ -740,7 +778,7 @@ func githubRepoApplicationScan(
 						return ErrRemoteApplication(err)
 					}
 				}
-				pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false)
+				pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false, reg)
 				if err != nil {
 					return err //always a meshkit error
 				}
@@ -778,7 +816,7 @@ func githubRepoApplicationScan(
 }
 
 // Note: Always return meshkit error from this function
-func genericHTTPApplicationFile(fileURL, sourceType string) ([]models.MesheryApplication, error) {
+func genericHTTPApplicationFile(fileURL, sourceType string, reg *meshmodel.RegistryManager) ([]models.MesheryApplication, error) {
 	resp, err := http.Get(fileURL)
 	if err != nil {
 		return nil, ErrRemoteApplication(err)
@@ -803,7 +841,7 @@ func genericHTTPApplicationFile(fileURL, sourceType string) ([]models.MesheryApp
 		}
 	}
 
-	pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false)
+	pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false, reg)
 	if err != nil {
 		return nil, err //This error is already a meshkit error
 	}

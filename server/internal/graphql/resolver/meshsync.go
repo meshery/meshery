@@ -5,9 +5,7 @@ import (
 	"io"
 	"os"
 	"path"
-	"time"
 
-	operatorClient "github.com/layer5io/meshery-operator/pkg/client"
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/broker"
@@ -27,94 +25,6 @@ var (
 		Description: "Cannot find Meshery Client",
 	}
 )
-
-func (r *Resolver) listenToMeshSyncEvents(ctx context.Context, provider models.Provider, k8scontextIDs []string) (<-chan *model.OperatorControllerStatusPerK8sContext, error) {
-	channel := make(chan *model.OperatorControllerStatusPerK8sContext)
-	if r.brokerChannel == nil {
-		r.brokerChannel = make(chan *broker.Message)
-	}
-
-	k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
-	if !ok || len(k8sctxs) == 0 {
-		return nil, ErrNilClient
-	}
-	var k8sContexts []models.K8sContext
-	if len(k8scontextIDs) == 1 && k8scontextIDs[0] == "all" {
-		k8sContexts = k8sctxs
-	} else if len(k8scontextIDs) != 0 {
-		var k8sContextIDsMap = make(map[string]bool)
-		for _, k8sContext := range k8scontextIDs {
-			k8sContextIDsMap[k8sContext] = true
-		}
-		for _, k8Context := range k8sctxs {
-			if k8sContextIDsMap[k8Context.ID] {
-				k8sContexts = append(k8sContexts, k8Context)
-			}
-		}
-	}
-	for _, k8sctx := range k8sContexts {
-		prevStatus := r.getMeshSyncStatus(k8sctx)
-		go func(k8sctx models.K8sContext, ch chan *model.OperatorControllerStatusPerK8sContext) {
-			r.Log.Info("Initializing MeshSync subscription")
-			if r.MeshSyncChannelPerK8sContext[k8sctx.ID] == nil {
-				r.MeshSyncChannelPerK8sContext[k8sctx.ID] = make(chan struct{})
-			}
-			go model.PersistClusterNames(ctx, r.Log, provider.GetGenericPersister(), r.MeshSyncChannelPerK8sContext[k8sctx.ID])
-			go model.ListernToEvents(r.Log, provider.GetGenericPersister(), r.brokerChannel, r.MeshSyncChannelPerK8sContext[k8sctx.ID], r.Broadcast)
-			for {
-				status := r.getMeshSyncStatus(k8sctx)
-				statusWithContext := model.OperatorControllerStatusPerK8sContext{
-					ContextID:                k8sctx.ID,
-					OperatorControllerStatus: &status,
-				}
-				ch <- &statusWithContext
-				if status != prevStatus {
-					prevStatus = status
-				}
-				time.Sleep(10 * time.Second)
-			}
-		}(k8sctx, channel)
-	}
-
-	return channel, nil
-}
-
-func (r *Resolver) getMeshSyncStatus(k8sctx models.K8sContext) model.OperatorControllerStatus {
-	var status model.OperatorControllerStatus
-	kubeclient, err := k8sctx.GenerateKubeHandler()
-	if err != nil {
-		r.Log.Error(ErrNilClient)
-		return model.OperatorControllerStatus{
-			Name:    "",
-			Version: "",
-			Status:  model.StatusDisabled,
-			Error:   &MeshSyncMesheryClientMissingError,
-		}
-	}
-
-	mesheryclient, err := operatorClient.New(&kubeclient.RestConfig)
-	if err != nil {
-		return model.OperatorControllerStatus{
-			Name:    "",
-			Version: "",
-			Status:  model.StatusDisabled,
-			Error:   &MeshSyncMesheryClientMissingError,
-		}
-	}
-
-	status, err = model.GetMeshSyncInfo(mesheryclient, kubeclient)
-
-	if err != nil {
-		return model.OperatorControllerStatus{
-			Name:    "",
-			Version: "",
-			Status:  model.StatusDisabled,
-			Error:   &MeshSyncSubscriptionError,
-		}
-	}
-
-	return status
-}
 
 func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, actions *model.ReSyncActions, k8scontextID string) (model.Status, error) {
 	if actions.ClearDb == "true" {
@@ -319,7 +229,7 @@ func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider
 	return nil
 }
 
-func (r *Resolver) deployMeshsync(ctx context.Context, provider models.Provider, ctxID string) (model.Status, error) {
+func (r *Resolver) deployMeshsync(_ context.Context, _ models.Provider, _ string) (model.Status, error) {
 	//err := model.RunMeshSync(r.Config.KubeClient, false)
 	return model.StatusProcessing, nil
 }

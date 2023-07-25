@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<b3011daaf25f93f6365380461e140963>>
- * @flow
+ * @generated SignedSource<<feda7231f9bc112c1c0c376035a03065>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,25 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
-export type MeshSyncEventsSubscription$variables = {|
-  k8scontextIDs?: ?$ReadOnlyArray<string>,
-|};
-export type MeshSyncEventsSubscription$data = {|
-  +meshsyncevents: {|
-    +type: string,
-    +object: any,
-    +contextId: string,
-  |},
-|};
-export type MeshSyncEventsSubscription = {|
-  variables: MeshSyncEventsSubscription$variables,
-  response: MeshSyncEventsSubscription$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -103,9 +84,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "bb175879d0d8929cbeb1f5809b51413e";
+node.hash = "bb175879d0d8929cbeb1f5809b51413e";
 
-module.exports = ((node/*: any*/)/*: GraphQLSubscription<
-  MeshSyncEventsSubscription$variables,
-  MeshSyncEventsSubscription$data,
->*/);
+module.exports = node;

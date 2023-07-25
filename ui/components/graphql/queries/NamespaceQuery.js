@@ -1,8 +1,10 @@
-import { graphql, fetchQuery } from "react-relay";
-import environment from "../../../lib/relayEnvironment";
+import { fetchQuery, graphql } from "react-relay";
+import { createRelayEnvironment } from "../../../lib/relayEnvironment";
 
 export default function fetchAvailableNamespaces(vars) {
-  const query = graphql`
+  const environment = createRelayEnvironment({});
+
+  const NamespaceQueryNode = graphql`
         query NamespaceQuery($k8sClusterIDs: [String!]) {
           namespaces: getAvailableNamespaces(k8sClusterIDs: $k8sClusterIDs) {
             namespace
@@ -10,5 +12,5 @@ export default function fetchAvailableNamespaces(vars) {
         }
     `;
 
-  return fetchQuery(environment, query, vars);
+  return fetchQuery(environment, NamespaceQueryNode, vars);
 }

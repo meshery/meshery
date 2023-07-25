@@ -1,6 +1,6 @@
 import UserPreferences from "../../components/UserPreferences";
 import { NoSsr, Paper, withStyles } from "@material-ui/core";
-import { updatepagepath } from "../../lib/store";
+import { updatepagepath, updatepagetitle } from "../../lib/store";
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
 import { getPath } from "../../lib/path";
@@ -22,6 +22,7 @@ class UserPref extends React.Component {
   async componentDidMount() {
     console.log(`path: ${getPath()}`);
     this.props.updatepagepath({ path : getPath() });
+    this.props.updatepagetitle({ title : "User Preferences" });
 
     await new Promise(resolve => {
       dataFetch(
@@ -48,7 +49,7 @@ class UserPref extends React.Component {
   render () {
     const { anonymousStats, perfResultStats }=this.state;
     console.log(this.state)
-    if (anonymousStats==undefined){
+    if (anonymousStats===undefined){
       // Skip rendering till data is not loaded
       return <div></div>
     }
@@ -59,14 +60,17 @@ class UserPref extends React.Component {
         </Head>
         <Paper className={this.props.classes.paper}>
           {/* {should meshmap specific user preferences be placed along with general preferences or from the remote provider} */}
-          <UserPreferences anonymousStats={anonymousStats} perfResultStats={perfResultStats}/>
+          <UserPreferences anonymousStats={anonymousStats} perfResultStats={perfResultStats}  theme={this.props.theme} themeSetter={this.props.themeSetter}/>
         </Paper>
       </NoSsr>
     );
   }
 }
 
-const mapDispatchToProps = dispatch => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch) })
+const mapDispatchToProps = dispatch => ({
+  updatepagepath : bindActionCreators(updatepagepath, dispatch),
+  updatepagetitle : bindActionCreators(updatepagetitle, dispatch),
+})
 const mapStateToProps = (state) => {
   const selectedK8sContexts = state.get('selectedK8sContexts');
 

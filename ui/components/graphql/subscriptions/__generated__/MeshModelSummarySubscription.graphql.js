@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<c7993af69a7029ac9585746143552568>>
- * @flow
+ * @generated SignedSource<<b2d0207b1050ec5ac932b0306d9186cf>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,33 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
-export type MeshModelSummarySelector = {|
-  type: string,
-|};
-export type MeshModelSummarySubscription$variables = {|
-  selector: MeshModelSummarySelector,
-|};
-export type MeshModelSummarySubscription$data = {|
-  +meshmodelSummary: {|
-    +components: ?$ReadOnlyArray<{|
-      +name: string,
-      +count: number,
-    |}>,
-    +relationships: ?$ReadOnlyArray<{|
-      +name: string,
-      +count: number,
-    |}>,
-  |},
-|};
-export type MeshModelSummarySubscription = {|
-  variables: MeshModelSummarySubscription$variables,
-  response: MeshModelSummarySubscription$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -126,9 +99,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "f9ce6171759cd696ee275c65c930974b";
+node.hash = "f9ce6171759cd696ee275c65c930974b";
 
-module.exports = ((node/*: any*/)/*: GraphQLSubscription<
-  MeshModelSummarySubscription$variables,
-  MeshModelSummarySubscription$data,
->*/);
+module.exports = node;

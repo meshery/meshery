@@ -15,7 +15,7 @@ const YAMLDialog = ({
   config_file,
   setYaml,
   deleteHandler,
-  updateHandler
+  updateHandler,
 }) => {
   const classes = useStyles()
   return (

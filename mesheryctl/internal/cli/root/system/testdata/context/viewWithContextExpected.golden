@@ -2,11 +2,12 @@
 Current Context: local2
 
 endpoint: http://localhost:32242
-token: Default2
+token: default2
 token-location: auth.json
 platform: docker
 components:
 - meshery-istio
 channel: stable
 version: latest
+provider: Meshery
 

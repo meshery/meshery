@@ -1,5 +1,5 @@
 import { graphql, requestSubscription } from "react-relay";
-import environment from "../../../lib/relayEnvironment";
+import { createRelayEnvironment } from "../../../lib/relayEnvironment";
 
 const mesheryControllersStatusSubscription = graphql`
  subscription MesheryControllersStatusSubscription($k8scontextIDs: [String!]) {
@@ -12,6 +12,7 @@ const mesheryControllersStatusSubscription = graphql`
 `;
 
 export default function subscribeMesheryControllersStatus(dataCB) {
+  const environment = createRelayEnvironment({});
   return requestSubscription(environment, {
     subscription : mesheryControllersStatusSubscription,
     variables : { k8scontextIDs : [""] },

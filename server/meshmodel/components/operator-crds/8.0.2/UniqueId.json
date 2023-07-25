@@ -1,1 +1,0 @@
-{"kind":"UniqueId","apiVersion":"v2","displayName":"Unique Id","format":"JSON","metadata":{},"model":{"name":"operator-crds","version":"8.0.2","displayName":"operator-crds","category":"","subCategory":""},"schema":"{\n \"description\": \"UniqueIdSpec defines the desired state of UniqueId\",\n \"title\": \"Unique Id\",\n \"type\": \"object\"\n}"}

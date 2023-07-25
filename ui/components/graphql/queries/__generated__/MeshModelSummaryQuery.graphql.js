@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<d3841b2609d7137b27d2a46fe4250cff>>
- * @flow
+ * @generated SignedSource<<fc2ef860d09573a73d5b766e731a9d5a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,33 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type MeshModelSummarySelector = {|
-  type: string,
-|};
-export type MeshModelSummaryQuery$variables = {|
-  selector: MeshModelSummarySelector,
-|};
-export type MeshModelSummaryQuery$data = {|
-  +meshmodelSummary: {|
-    +components: ?$ReadOnlyArray<{|
-      +name: string,
-      +count: number,
-    |}>,
-    +relationships: ?$ReadOnlyArray<{|
-      +name: string,
-      +count: number,
-    |}>,
-  |},
-|};
-export type MeshModelSummaryQuery = {|
-  variables: MeshModelSummaryQuery$variables,
-  response: MeshModelSummaryQuery$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -126,9 +99,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "830ea0f72a52a2f3419b0796d9b3a562";
+node.hash = "830ea0f72a52a2f3419b0796d9b3a562";
 
-module.exports = ((node/*: any*/)/*: Query<
-  MeshModelSummaryQuery$variables,
-  MeshModelSummaryQuery$data,
->*/);
+module.exports = node;

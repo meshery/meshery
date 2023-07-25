@@ -1,4 +1,4 @@
-// Copyright 2020 Layer5, Inc.
+// Copyright 2023 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,9 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root"
 )
 
+// main is the entrypoint of the mesheryctl command-line tool
 func main() {
+	// Execute the root command
 	err := root.Execute()
 	if err != nil {
 		os.Exit(1)

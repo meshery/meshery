@@ -4,7 +4,9 @@
 
 replicaCount: 1
 restartPolicy: Always
-
+metadata:
+  name: meshery
+  namespace: meshery
 image:
   repository: layer5/meshery
   tag: stable-latest
@@ -14,7 +16,7 @@ env:
   EVENT: mesheryLocal
   PROVIDER_BASE_URLS: https://meshery.layer5.io
   ADAPTER_URLS: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-kuma:10007 meshery-osm:10009 meshery-nginx-sm:10010 meshery-nsm:10004 meshery-app-mesh:10005 meshery-traefik-mesh:10006 meshery-cilium:10012
-
+  PROVIDER: ""
 probe:
   #TODO: Need to confirm the health check path of meshery.
   livenessProbe:
@@ -137,11 +139,6 @@ meshery-nginx-sm:
 meshery-traefik-mesh:
   enabled: true
   fullnameOverride: meshery-traefik-mesh
-  serviceAccountNameOverride: meshery-server
-
-meshery-cpx:
-  enabled: false
-  fullnameOverride: meshery-cpx
   serviceAccountNameOverride: meshery-server
 
 # The operator has its own cluster role

@@ -5,7 +5,14 @@
       "description": "A relationship that represents volume mounts between components"
     },
     "model": {
-      "name": "core"
+      "name": "kubernetes",
+      "version": "v1.25.2",
+      "displayName": "Kubernetes",
+      "category": {
+        "name": "Orchestration \u0026 Management",
+        "metadata": null
+      },
+      "metadata": {}
     },
     "subType": "Mount",
     "selectors": {
@@ -13,13 +20,13 @@
         "from": [
           {
             "kind": "Pod",
-            "model": "Kubernetes"
+            "model": "kubernetes"
           }
         ],
         "to": [
           {
             "kind": "Pod",
-            "model": "Kubernetes"
+            "model": "kubernetes"
           }
         ]
       },
@@ -27,12 +34,12 @@
         "from": [
           {
             "kind": "Pod",
-            "model": "Kubernetes"
+            "model": "kubernetes"
           }
         ],
         "to": [
           { "kind": "PersistentVolume",
-            "model": "Kubernetes"
+            "model": "kubernetes"
           }
         ]
       }

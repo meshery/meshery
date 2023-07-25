@@ -24,6 +24,7 @@ const (
 	ErrUnauthenticatedCode       = "1040"
 	ErrFailUnmarshalFileCode     = "1041"
 	ErrInvalidTestConfigFileCode = "1042"
+	ErrArgumentOverflowCode      = "1043"
 )
 
 func ErrMesheryConfig(err error) error {
@@ -121,4 +122,9 @@ func formatErrorWithReference() string {
 		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/result")
 	}
 	return fmt.Sprintf("\nSee %s for usage details\n", baseURL)
+}
+
+func ErrorArgumentOverflow() error {
+	return errors.New(ErrArgumentOverflowCode, errors.Alert, []string{},
+		[]string{"Invalid number of arguments", formatErrorWithReference()}, []string{}, []string{"Use 'mesheryctl --help' to display usage guide."})
 }

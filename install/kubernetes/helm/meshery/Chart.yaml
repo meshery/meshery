@@ -62,9 +62,6 @@ dependencies:
   - name: meshery-traefik-mesh
     version: 0.5.0
     condition: meshery-traefik-mesh.enabled
-  - name: meshery-cpx
-    version: 0.5.0
-    condition: meshery-cpx.enabled
   - name: meshery-nginx-sm
     version: 0.5.0
     condition: meshery-nginx-sm.enabled
@@ -81,3 +78,4 @@ dependencies:
 maintainers:
   - name: Meshery Authors
     email: maintainers@meshery.io
+

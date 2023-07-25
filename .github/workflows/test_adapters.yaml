@@ -83,7 +83,7 @@ jobs:
         run: |
           echo $provider_token
           mkdir ~/.meshery
-          config='{"contexts":{"local":{"endpoint":"http://localhost:9081","token":"Default","platform":"kubernetes","adapters":[],"channel":"stable","version":"latest"}},"current-context":"local","tokens":[{"location":"auth.json","name":"Default"}]}'
+          config='{"contexts":{"local":{"endpoint":"http://localhost:9081","token":"default","platform":"kubernetes","adapters":[],"channel":"stable","version":"latest"}},"current-context":"local","tokens":[{"location":"auth.json","name":"default"}]}'
           echo $config > ~/.meshery/config.yaml
           cat ~/.meshery/config.yaml
           echo "Using provider: ${{ inputs.provider }}"
@@ -140,7 +140,7 @@ jobs:
           kubectl get svc -n meshery
           svcip="http://$(kubectl get svc -n meshery | grep "meshery " | tr -s ' ' | cut -d " " -f 3):9081"
           echo "this is $svcip"
-          config='{"contexts":{"local":{"endpoint":'$svcip',"token":"Default","platform":"kubernetes","adapters":[],"channel":"stable","version":"latest"}},"current-context":"local","tokens":[{"location":"auth.json","name":"Default"}]}'
+          config='{"contexts":{"local":{"endpoint":'$svcip',"token":"default","platform":"kubernetes","adapters":[],"channel":"stable","version":"latest"}},"current-context":"local","tokens":[{"location":"auth.json","name":"default"}]}'
           echo $config  > ~/.meshery/config.yaml
       - name: Download patternfile
         uses: actions/download-artifact@v3

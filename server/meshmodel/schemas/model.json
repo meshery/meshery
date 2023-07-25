@@ -1,0 +1,34 @@
+{
+  "$id": "https://schema.meshery.io/model.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "description": "Model is a construct used for namespacing MeshModel entities.",
+  "additionalProperties": false,
+  "type": "object",
+  "required": [
+    "name",
+    "version",
+    "category"
+  ],
+  "properties": {
+    "name": {
+      "$ref": "https://schema.meshery.io/core.json#inputString",
+      "description": "The name for the model."
+    },
+    "displayName": {
+      "$ref": "https://schema.meshery.io/core.json#inputString",
+      "description": "The display name for the model."
+    },
+    "version": {
+      "$ref": "https://schema.meshery.io/core.json#versionString",
+      "description": "Version of the model."
+    },
+    "category": {
+      "type": "string",
+      "description": "Category of the model."
+    },
+    "subCategory": {
+      "type": "string",
+      "description": "Sub-category of the model."
+    }
+  }
+}

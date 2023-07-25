@@ -127,7 +127,7 @@ func (h *Handler) MesheryControllersMiddleware(next func(http.ResponseWriter, *h
 		}
 
 		// 1. get the status of controller deployments for each cluster and make sure that all the contexts have meshery controllers deployed
-		ctrlHlpr := h.MesheryCtrlsHelper.UpdateCtxControllerHandlers(mk8sContexts).UpdateOperatorsStatusMap(models.OperatorIsUndeployed).DeployUndeployedOperators(models.OperatorIsUndeployed)
+		ctrlHlpr := h.MesheryCtrlsHelper.UpdateCtxControllerHandlers(mk8sContexts).UpdateOperatorsStatusMap(h.config.OperatorTracker).DeployUndeployedOperators(h.config.OperatorTracker)
 		ctx = context.WithValue(ctx, models.MesheryControllerHandlersKey, h.MesheryCtrlsHelper.GetControllerHandlersForEachContext())
 
 		// 2. make sure that the data from meshsync for all the clusters are persisted properly
@@ -163,7 +163,7 @@ func (h *Handler) KubernetesMiddleware(next func(http.ResponseWriter, *http.Requ
 		}
 
 		// register kubernetes components
-		h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{RegisterK8sComponents, RegisterK8sMeshModelComponents}, h.EventsBuffer, h.registryManager)
+		h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{RegisterK8sMeshModelComponents}, h.EventsBuffer, h.registryManager, true)
 		go h.config.MeshModelSummaryChannel.Publish()
 
 		// Identify custom contexts, if provided
@@ -215,12 +215,12 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			http.Redirect(w, req, "/provider", http.StatusFound)
 			return
 		}
-		// ensuring session is intact before running load test
+		// ensuring session is intact
 		err := provider.GetSession(req)
 		if err != nil {
-			err := provider.Logout(w, req)
-			if err != nil {
-				logrus.Errorf("Error performing logout: %v", err.Error())
+			err1 := provider.Logout(w, req)
+			if err1 != nil {
+				logrus.Errorf("Error performing logout: %v", err1.Error())
 				provider.HandleUnAuthenticated(w, req)
 				return
 			}
@@ -229,7 +229,20 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 			return
 		}
 
-		user, _ := provider.GetUserDetails(req)
+		user, err := provider.GetUserDetails(req)
+		// if user details are not available,
+		// then logout current user session and redirect to login page
+		if err != nil {
+			err1 := provider.Logout(w, req)
+			if err1 != nil {
+				logrus.Errorf("Error performing logout: %v", err1.Error())
+				provider.HandleUnAuthenticated(w, req)
+				return
+			}
+			h.log.Error(ErrGetUserDetails(err))
+			http.Error(w, "unable to get user details", http.StatusUnauthorized)
+			return
+		}
 		prefObj, err := provider.ReadFromPersister(user.UserID)
 		if err != nil {
 			logrus.Warn("unable to read session from the session persister, starting with a new one")

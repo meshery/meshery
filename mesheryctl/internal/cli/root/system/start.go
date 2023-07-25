@@ -1,4 +1,4 @@
-// Copyright 2020 Layer5, Inc.
+// Copyright 2023 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,14 +25,18 @@ import (
 	"strings"
 	"time"
 
+	c "github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/pkg/errors"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
+	dockerCmd "github.com/docker/cli/cli/command"
+	cliconfig "github.com/docker/cli/cli/config"
+	cliflags "github.com/docker/cli/cli/flags"
 	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/client"
+	dockerconfig "github.com/docker/docker/cli/config"
 
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -50,7 +54,7 @@ var (
 var startCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Start Meshery",
-	Long:  `Start Meshery and each of its service mesh components.`,
+	Long:  `Start Meshery and each of its cloud native components.`,
 	Args:  cobra.NoArgs,
 	Example: `
 // Start meshery
@@ -106,12 +110,19 @@ mesheryctl system start --yes
 		return nil
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		latest, err := utils.GetLatestStableReleaseTag()
+		latestVersions, err := meshkitutils.GetLatestReleaseTagsSorted(c.GetMesheryGitHubOrg(), c.GetMesheryGitHubRepo())
 		version := constants.GetMesheryctlVersion()
-		if err == nil && latest != version {
-			log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
-			log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
-			log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
+		if err == nil {
+			if len(latestVersions) == 0 {
+				log.Warn("no versions found for Meshery")
+				return
+			}
+			latest := latestVersions[len(latestVersions)-1]
+			if latest != version {
+				log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
+				log.Printf("https://github.com/layer5io/meshery/releases/tag/%s", latest)
+				log.Print("Check https://docs.meshery.io/guides/upgrade#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
+			}
 		}
 	},
 }
@@ -151,7 +162,7 @@ func start() error {
 			currCtx.SetPlatform(utils.PlatformFlag)
 
 			// update the context to config
-			err = config.UpdateContextInConfig(viper.GetViper(), currCtx, mctlCfg.GetCurrentContextName())
+			err = config.UpdateContextInConfig(currCtx, mctlCfg.GetCurrentContextName())
 			if err != nil {
 				return err
 			}
@@ -278,7 +289,7 @@ func start() error {
 			endpoint.Address = utils.EndpointProtocol + "://localhost"
 			currCtx.SetEndpoint(endpoint.Address + ":" + userPort[len(userPort)-1])
 
-			err = config.UpdateContextInConfig(viper.GetViper(), currCtx, mctlCfg.GetCurrentContextName())
+			err = config.UpdateContextInConfig(currCtx, mctlCfg.GetCurrentContextName())
 			if err != nil {
 				return err
 			}
@@ -303,10 +314,16 @@ func start() error {
 
 		checkFlag := 0 //flag to check
 
-		//connection to docker-client
-		cli, err := client.NewClientWithOpts(client.FromEnv)
+		// Get the Docker configuration
+		dockerCfg, err := cliconfig.Load(dockerconfig.Dir())
 		if err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to create new env client"))
+			return ErrCreatingDockerClient(err)
+		}
+
+		//connection to docker-client
+		cli, err := dockerCmd.NewAPIClientFromFlags(cliflags.NewCommonOptions(), dockerCfg)
+		if err != nil {
+			return ErrCreatingDockerClient(err)
 		}
 
 		containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{})
@@ -328,9 +345,9 @@ func start() error {
 				//check flag to check successful deployment
 				checkFlag = 0
 				break
-			} else {
-				checkFlag = 1
 			}
+
+			checkFlag = 1
 		}
 
 		//if meshery_meshery_1 failed to start showing logs

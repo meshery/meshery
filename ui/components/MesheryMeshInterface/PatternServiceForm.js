@@ -1,10 +1,12 @@
 // @ts-check
-import { AppBar, Button, makeStyles, Tab, Tabs, Typography } from "@material-ui/core";
-import React, { useEffect } from "react";
-import { getMeshProperties } from "../../utils/nameMapper";
-import PatternServiceFormCore from "./PatternServiceFormCore";
+import { AppBar, IconButton, makeStyles, Toolbar, Tooltip } from "@material-ui/core";
+import { Delete, HelpOutline } from "@material-ui/icons";
 import SettingsIcon from '@material-ui/icons/Settings';
+import React, { useEffect } from "react";
 import { iconSmall } from "../../css/icons.styles";
+import { pSBCr } from "../../utils/lightenOrDarkenColor";
+import PatternServiceFormCore from "./PatternServiceFormCore";
+import { useTheme } from "@material-ui/core/styles";
 
 const useStyles = makeStyles(() => ({
 
@@ -31,54 +33,36 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-function RJSFButton({ handler, text, ...restParams }) {
-  return (
-    <Button variant="contained" color="primary" style={{ margin : "0px 0.5rem 32px 0px",...iconSmall }} onClick={handler} {...restParams}>
-      {text}
-    </Button>
-  );
-}
-
-function RJSFFormChildComponent({ onSubmit, onDelete }) {
-  return (
-    <>
-      <RJSFButton handler={onSubmit} text="Submit" />
-      <RJSFButton handler={onDelete} text="Delete" />
-    </>
-  )
-}
-
 /**
- * PatternServiceForm renders a form from the workloads schema and
- * traits schema
+ * PatternServiceForm renders a form from the workloads schema
  * @param {{
- *  schemaSet: { workload: any, traits: any[], type: string };
+ *  schemaSet: { workload: any, type: string };
  *  onSubmit: Function;
  *  onDelete: Function;
  *  namespace: string;
  *  onChange?: Function
  *  onSettingsChange?: Function;
- *  onTraitsChange?: Function;
  *  formData?: Record<String, unknown>
  *  reference?: Record<any, any>;
  *  scroll?: Boolean; // If the window should be scrolled to zero after re-rendering
+ *  color ?: string;
  * }} props
  * @returns
  */
-function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, onTraitsChange, scroll = false }) {
-  const [tab, setTab] = React.useState(0);
-  const classes = useStyles({ color : getMeshProperties(getMeshName(schemaSet))?.color });
+function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference, namespace, onSettingsChange, scroll = false, color }) {
+  const classes = useStyles();
+  const theme = useTheme();
 
   useEffect(() => {
     schemaSet.workload.properties.name = {
-      description : "The Namespace for the service",
+      description : "The name for the service",
       default : "<Name of the Component>",
       type : "string"
     };
     schemaSet.workload.properties.namespace = {
-      description : "The Name for the service",
+      description : "The namespace for the service",
       default : "default",
-      type : "string",
+      type : "string"
     };
     schemaSet.workload.properties.labels = {
       description : "The label for the service",
@@ -96,11 +80,6 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
     };
   }, [])
 
-  const handleTabChange = (_, newValue) => {
-    setTab(newValue);
-  };
-  const renderTraits = () => !!schemaSet.traits?.length;
-
   return (
     <PatternServiceFormCore
       formData={formData}
@@ -110,86 +89,68 @@ function PatternServiceForm({ formData, schemaSet, onSubmit, onDelete, reference
       reference={reference}
       namespace={namespace}
       onSettingsChange={onSettingsChange}
-      onTraitsChange={onTraitsChange}
       scroll={scroll}
-      tab={tab}
     >
-      {(SettingsForm, TraitsForm) => {
-
-        // For rendering addons without tabs
-        if (schemaSet?.type === "addon") {
-          return <SettingsForm />
-        }
-
-        // for rendering normal rjsf forms
+      {(SettingsForm) => {
         return (
           <div className={classes.formWrapper}>
             <AppBar style={{
-
               boxShadow : `0px 2px 4px -1px "#677E88"`,
-              background : "#677E88",
+              background : `${theme.palette.type === "dark" ? "#202020" : "#647881"}`,
               position : "sticky",
               zIndex : 'auto',
             }}>
-              <Tabs className={classes.appTabs} value={tab} onChange={handleTabChange} TabIndicatorProps={{
-                style : {
-                  display : "none",
-                },
-              }} aria-label="Pattern Service" >
-                <Tab label={<div style={{ display : "flex" }}> <SettingsIcon  className={classes.setIcon} style={iconSmall} />Settings</div>} {...a11yProps(0)} />
-                {
-                  renderTraits()
-                    ? <Tab label="Traits" {...a11yProps(1)} />
-                    : null
-                }
-              </Tabs>
+              <Toolbar
+                variant="dense"
+                style={{
+                  padding : "0 5px",
+                  paddingLeft : 16,
+                  background : `linear-gradient(115deg, ${pSBCr(
+                    color,
+                    -20
+                  )} 0%, ${color} 100%)`,
+                  height : "0.7rem !important",
+                }}
+              >
+                <SettingsIcon style={iconSmall} />
+                <p
+                  style={{
+                    margin : "auto auto auto 10px",
+                    fontSize : "16px",
+                    display : "flex",
+                    alignItems : "center"
+                  }}
+                >
+                  Settings
+                </p>
+                {schemaSet?.workload?.description && (
+                  <label htmlFor="help-button">
+                    <Tooltip title={schemaSet?.workload?.description} interactive>
+                      <IconButton component="span">
+                        <HelpOutline width="22px" style={{ color : "#fff" }} height="22px" />
+                      </IconButton>
+                    </Tooltip>
+                  </label>
+                )}
+                <IconButton
+                  component="span"
+                  onClick={() =>
+                    // @ts-ignore
+                    reference.current.delete(settings => ({
+                      settings
+                    }))
+                  }
+                >
+                  <Delete width="22px" height="22px" style={{ color : "#FFF" }} />
+                </IconButton>
+              </Toolbar>
             </AppBar>
-            <TabPanel value={tab} index={0} className={classes.tabPanel}>
-              <SettingsForm RJSFFormChildComponent={RJSFFormChildComponent} />
-            </TabPanel>
-            <TabPanel value={tab} index={1} className={classes.tabPanel}>
-              <TraitsForm />
-            </TabPanel>
+            <SettingsForm />
           </div>
         )
       }}
     </PatternServiceFormCore>
   )
-}
-
-function TabPanel(props) {
-  const {
-    children, value, index, ...other
-  } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Typography>{children}</Typography>
-      )}
-    </div>
-  );
-}
-
-function a11yProps(index) {
-  return {
-    id : `simple-tab-${index}`,
-    "aria-controls" : `simple-tabpanel-${index}`,
-  };
-}
-
-/**
- * @param {{ workload: { [x: string]: string; }; }} schema
- * @returns {String} name
- */
-function getMeshName(schema) {
-  return schema?.workload?.["service-mesh"]?.toLowerCase() || "core";
 }
 
 export default PatternServiceForm;

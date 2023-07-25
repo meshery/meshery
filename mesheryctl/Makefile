@@ -42,3 +42,19 @@ clean:
 .PHONY: error
 error:
 	go run github.com/layer5io/meshkit/cmd/errorutil -d . analyze -i ./helpers -o ./helpers
+
+# Check code quality at local by using golangci-lint and return the coverage
+.PHONY: lint
+lint:
+	golangci-lint run --timeout 5m
+
+# output a HTML coverage by using gocov and gocov-html
+.PHONY: coverage
+coverage:
+	go test -coverprofile=coverage.out ./...
+	go tool cover -html=coverage.out -o coverage.html
+
+# Generate markdown for mesheryctl docs
+.PHONY: docs
+docs:
+	cd doc; go run doc.go

@@ -4,8 +4,15 @@
   "metadata": {
     "description": "A relationship that defines network edges between components"
   },
-  "model":{
-    "name":"core"
+	"model": {
+    "name": "kubernetes",
+    "version": "v1.25.2",
+    "displayName": "Kubernetes",
+    "category": {
+      "name": "Orchestration \u0026 Management",
+      "metadata": null
+    },
+    "metadata": {}
   },
   "subType": "Network",
   "selectors": {
@@ -13,27 +20,53 @@
       "from": [
         {
           "kind": "Service",
-          "model": "Kubernetes"
+          "model": "kubernetes"
+        },
+        {
+          "kind": "Ingress",
+          "model": "kubernetes"
         }
       ],
       "to": [
         {
           "kind": "Endpoints",
-          "model": "Kubernetes"
+          "model": "kubernetes"
         },
         {
           "kind": "Pod",
-          "model": "Kubernetes"
+          "model": "kubernetes"
         },
         {
           "kind": "Deployment",
-          "model": "Kubernetes"
+          "model": "kubernetes"
+        },
+        {
+          "kind": "Service",
+          "model": "kubernetes"
         }
       ]
     },
     "deny": {
-      "from": [],
-      "deny": []
+      "from": [
+        {
+          "kind": "Ingress",
+          "model": "kubernetes"
+        }
+      ],
+      "to": [
+        {
+          "kind": "Endpoints",
+          "model": "kubernetes"
+        },
+        {
+          "kind": "Pod",
+          "model": "kubernetes"
+        },
+        {
+          "kind": "Deployment",
+          "model": "kubernetes"
+        }
+      ]
     }
   }
 }

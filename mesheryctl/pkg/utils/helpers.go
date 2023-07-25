@@ -58,7 +58,11 @@ const (
 	systemRestartURL  = docsBaseURL + "reference/mesheryctl/system/restart"
 	meshUsageURL      = docsBaseURL + "reference/mesheryctl/mesh"
 	expUsageURL       = docsBaseURL + "reference/mesheryctl/exp"
-	filterUsageURL    = docsBaseURL + "reference/mesheryctl/exp/filter"
+	filterUsageURL    = docsBaseURL + "reference/mesheryctl/filter"
+	filterImportURL   = docsBaseURL + "reference/mesheryctl/filter/import"
+	filterDeleteURL   = docsBaseURL + "reference/mesheryctl/filter/delete"
+	filterListURL     = docsBaseURL + "reference/mesheryctl/filter/list"
+	filterViewURL     = docsBaseURL + "reference/mesheryctl/filter/view"
 	patternUsageURL   = docsBaseURL + "reference/mesheryctl/pattern"
 	appUsageURL       = docsBaseURL + "reference/mesheryctl/app"
 	contextDeleteURL  = docsBaseURL + "reference/mesheryctl/system/context/delete"
@@ -95,6 +99,10 @@ const (
 	cmdSystemRestart  cmdType = "system restart"
 	cmdExp            cmdType = "exp"
 	cmdFilter         cmdType = "filter"
+	cmdFilterImport   cmdType = "filter import"
+	cmdFilterDelete   cmdType = "filter delete"
+	cmdFilterList     cmdType = "filter list"
+	cmdFilterView     cmdType = "filter view"
 	cmdPattern        cmdType = "pattern"
 	cmdApp            cmdType = "app"
 	cmdContext        cmdType = "context"
@@ -197,33 +205,32 @@ var DefaultComponentsProfile = []string{"meshery-istio"}
 // TemplateContext is the template context provided when creating a config file
 var TemplateContext = config.Context{
 	Endpoint:   EndpointProtocol + "://localhost:9081",
-	Token:      "Default",
+	Token:      "default",
 	Platform:   "kubernetes",
 	Components: DefaultComponentsProfile,
 	Channel:    "stable",
 	Version:    "latest",
+	Provider:   "Meshery",
 }
 
 // TemplateToken is the template token provided when creating a config file
 var TemplateToken = config.Token{
-	Name:     "Default",
+	Name:     "default",
 	Location: AuthConfigFile,
 }
 
 func BackupConfigFile(cfgFile string) {
-	// extracting file and folder name from the meshconfig path
 	dir, file := filepath.Split(cfgFile)
-	// extracting extension
 	extension := filepath.Ext(file)
 	bakLocation := filepath.Join(dir, file[:len(file)-len(extension)]+".bak.yaml")
-
-	log.Println("Backing up " + cfgFile + " to " + bakLocation)
 	err := os.Rename(cfgFile, bakLocation)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	log.Println(errors.New("outdated config file found. Please re-run the command"))
+	_, err = os.Create(cfgFile)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 const tokenName = "token"
@@ -480,18 +487,14 @@ func GetID(configuration string) ([]string, error) {
 	url := MesheryEndpoint + "/api/" + configuration + "?page_size=10000"
 	configType := configuration + "s"
 	var idList []string
-	client := &http.Client{}
 	req, err := NewRequest("GET", url, nil)
 	if err != nil {
 		return idList, err
 	}
 
-	res, err := client.Do(req)
+	res, err := MakeRequest(req)
 	if err != nil {
 		return idList, err
-	}
-	if res.StatusCode != 200 {
-		return idList, errors.Errorf("Response Status Code %d, possible invalid ID", res.StatusCode)
 	}
 
 	defer res.Body.Close()
@@ -515,27 +518,59 @@ func GetID(configuration string) ([]string, error) {
 	return idList, nil
 }
 
+// GetName returns a of name:id from meshery server endpoint /api/{configurations}
+func GetName(configuration string) (map[string]string, error) {
+	url := MesheryEndpoint + "/api/" + configuration + "?page_size=10000"
+	configType := configuration + "s"
+	nameIdMap := make(map[string]string)
+	req, err := NewRequest("GET", url, nil)
+	if err != nil {
+		return nameIdMap, err
+	}
+
+	res, err := MakeRequest(req)
+	if err != nil {
+		return nameIdMap, err
+	}
+
+	defer res.Body.Close()
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nameIdMap, err
+	}
+	var dat map[string]interface{}
+	if err = json.Unmarshal(body, &dat); err != nil {
+		return nameIdMap, errors.Wrap(err, "failed to unmarshal response body")
+	}
+	if dat == nil {
+		return nameIdMap, errors.New("no data found")
+	}
+	if dat[configType] == nil {
+		return nameIdMap, errors.New("no results found")
+	}
+	for _, config := range dat[configType].([]interface{}) {
+		nameIdMap[config.(map[string]interface{})["name"].(string)] = config.(map[string]interface{})["id"].(string)
+	}
+	return nameIdMap, nil
+}
+
 // Delete configuration from meshery server endpoint /api/{configurations}/{id}
-func DeleteConfiguration(id string, configuration string) error {
-	url := MesheryEndpoint + "/api/" + configuration + "/" + id
-	client := &http.Client{}
+func DeleteConfiguration(baseUrl, id, configuration string) error {
+	url := baseUrl + "/api/" + configuration + "/" + id
 	req, err := NewRequest("DELETE", url, nil)
 	if err != nil {
 		return err
 	}
 
-	res, err := client.Do(req)
+	_, err = MakeRequest(req)
 	if err != nil {
 		return err
-	}
-	if res.StatusCode != 200 {
-		return errors.Errorf("Response Status Code %d, possible invalid ID", res.StatusCode)
 	}
 	return nil
 }
 
-// Valid - Check the args and configuration are valid.
-func Valid(args string, configuration string) (string, bool, error) {
+// ValidId - Check if args is a valid ID or a valid ID prefix and returns the full ID
+func ValidId(args string, configuration string) (string, bool, error) {
 	isID := false
 	configID, err := GetID(configuration)
 	if err == nil {
@@ -550,6 +585,29 @@ func Valid(args string, configuration string) (string, bool, error) {
 		return "", false, err
 	}
 	return args, isID, nil
+}
+
+// ValidId - Check if args is a valid name or a valid name prefix and returns the full name and ID
+func ValidName(args string, configuration string) (string, string, bool, error) {
+	isName := false
+	nameIdMap, err := GetName(configuration)
+
+	if err != nil {
+		return "", "", false, err
+	}
+
+	fullName := ""
+	ID := ""
+
+	for name := range nameIdMap {
+		if strings.HasPrefix(name, args) {
+			fullName = name
+			ID = nameIdMap[name]
+			isName = true
+		}
+	}
+
+	return fullName, ID, isName, nil
 }
 
 // AskForInput asks the user for an input and checks if it is in the available values
@@ -951,6 +1009,15 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[stri
 		valueOverrides["env"] = map[string]interface{}{
 			"PROVIDER": ctx.GetProvider(),
 		}
+	}
+
+	// disable the operator
+	if ctx.GetOperatorStatus() == "disabled" {
+		if _, ok := valueOverrides["env"]; !ok {
+			valueOverrides["env"] = map[string]interface{}{}
+		}
+		envOverrides := valueOverrides["env"].(map[string]interface{})
+		envOverrides["DISABLE_OPERATOR"] = "'true'"
 	}
 
 	return valueOverrides

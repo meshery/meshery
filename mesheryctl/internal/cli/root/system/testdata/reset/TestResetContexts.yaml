@@ -1,21 +1,23 @@
 contexts:
   local:
     endpoint: http://localhost:9081
-    token: Default
+    token: default
     platform: kubernetes
     components:
       - meshery-istio
     channel: stable
     version: v0.5.56
+    provider: Meshery
   local2:
     components:
       - meshery-istio
     channel: stable
     endpoint: http://localhost:32242
     platform: docker
-    token: Default
+    token: default
     version: latest
+    provider: Meshery
 current-context: local
 tokens:
   - location: auth.json
-    name: Default
+    name: default

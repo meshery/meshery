@@ -61,6 +61,11 @@ export const rjsfTheme = createTheme({
         marginTop : "0.3rem"
       }
     },
+    MuiFormControlLabel : {
+      root : {
+        textTransform : 'capitalize',
+      }
+    },
     MuiBox : {
       root : {
         marginTop : 0
@@ -255,6 +260,11 @@ const darkRjsfTheme = createTheme({
         width : "calc(100% - 4px)",
       }
     },
+    MuiFormControlLabel : {
+      root : {
+        textTransform : 'capitalize',
+      }
+    },
     MuiInputLabel : {
       root : {
         whiteSpace : "nowrap",
@@ -396,7 +406,7 @@ const darkRjsfTheme = createTheme({
       root : {
         marginLeft : "4px",
         "& > *:nth-child(1)" : {
-          backgroundColor : "#ffffff",
+          backgroundColor : "#303030",
           width : "1rem",
           height : "1rem"
         },

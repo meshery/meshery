@@ -1,3 +1,17 @@
+// Copyright 2023 Layer5, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package filter
 
 import (
@@ -26,22 +40,25 @@ var listCmd = &cobra.Command{
 	Long:  `Display list of all available filter files.`,
 	Example: `
 // List all WASM filter files present
-mesheryctl exp filter list	
+mesheryctl filter list	
 	`,
-	Args: cobra.MaximumNArgs(0),
+	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
+
+		if len(args) > 0 {
+			return errors.New(utils.FilterListError("accepts no arguments\nUse 'mesheryctl filter import --help' to display usage guide\n"))
+		}
+
 		var response models.FiltersAPIResponse
-		client := &http.Client{}
 		req, err := utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/filter", nil)
 		if err != nil {
 			return err
 		}
-
-		res, err := client.Do(req)
+		res, err := utils.MakeRequest(req)
 		if err != nil {
 			return err
 		}
@@ -60,7 +77,7 @@ mesheryctl exp filter list
 		}
 		tokenObj, err := utils.ReadToken(utils.TokenFlag)
 		if err != nil {
-			return errors.New("Error reading token. Use 'mesheryctl exp filter list --help' for usage details. " + err.Error())
+			return errors.New(utils.FilterListError("error reading token\nUse 'mesheryctl filter list --help' to display usage guide\n" + err.Error()))
 		}
 		provider := tokenObj["meshery-provider"]
 		var data [][]string

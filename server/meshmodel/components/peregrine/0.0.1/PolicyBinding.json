@@ -1,1 +1,0 @@
-{"kind":"PolicyBinding","apiVersion":"v1alpha1","displayName":"Policy Binding","format":"JSON","metadata":{},"model":{"name":"peregrine","version":"0.0.1","displayName":"peregrine","category":"","subCategory":""},"schema":"{\n \"title\": \"Policy Binding\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"}

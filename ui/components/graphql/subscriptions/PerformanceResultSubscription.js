@@ -1,5 +1,5 @@
 import { graphql, requestSubscription } from "react-relay";
-import environment from "../../../lib/relayEnvironment";
+import { createRelayEnvironment } from "../../../lib/relayEnvironment";
 
 const performanceResultSubscription = graphql`
 subscription PerformanceResultSubscription($selector: PageFilter!, $profileID: String!) {
@@ -24,6 +24,7 @@ subscription PerformanceResultSubscription($selector: PageFilter!, $profileID: S
     }
 `;
 export default function subscribePerformanceProfiles(dataCB, variables) {
+  const environment = createRelayEnvironment({});
   return requestSubscription(environment, {
     subscription : performanceResultSubscription,
     variables : variables,

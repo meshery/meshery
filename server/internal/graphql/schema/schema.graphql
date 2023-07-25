@@ -295,6 +295,7 @@ type K8sContext {
   meshery_instance_id: ID!,
   kubernetes_server_id: ID!,
   deployment_type: String!,
+  version: String!,
   updated_at: String!,
   created_at: String!
 }
@@ -351,6 +352,7 @@ type FilterResult {
   id: ID!
   name: String!
   filter_file: String!
+  filter_resource: String!
   user_id: String!
   location: Location!
   visibility: String!
@@ -365,6 +367,7 @@ type CatalogFilter {
   filter_file: String!
   user_id: String!
   location: Location!
+  filter_resource: String!
   visibility: String!
   catalog_data: Map
   created_at: String
@@ -449,6 +452,7 @@ type PerfProfile {
   request_body: String
   content_type: String
   service_mesh: String
+  metadata: Map
 }
 
 type MesheryResult {
@@ -477,6 +481,8 @@ input PageFilter {
 }
 
 input CatalogSelector {
+  page: String!
+  pagesize: String!
   search: String!
   order: String!
 }
@@ -593,13 +599,6 @@ type Query {
   # Query for fetching all patterns with selector
   fetchPatterns(selector: PageFilter!): PatternPageResult!
 
-  # Query for getting workloads
-  getWorkloads(name: String, id: ID, trim: Boolean): [OAMCapability]
-  # Query for getting traits
-  getTraits(name: String, id: ID, trim: Boolean): [OAMCapability]
-  # Query for getting scopes
-  getScopes(name: String, id: ID, trim: Boolean): [OAMCapability]
-
   # Query for getting kubectl describe details with meshkit 
   getKubectlDescribe(name: String!, kind: String!, namespace: String!): KctlDescribeDetails!
 
@@ -621,9 +620,24 @@ type Query {
 
 #
 
+# Input for status change of Meshery Operator
+input AdapterStatusInput {
+  # Desired status for Meshery Operator
+  targetStatus: Status!
+  
+  # The port on which adapter will be deployed
+  targetPort: String!
+
+  # Name of the adapter to be deployed
+  adapter: String!
+}
+
 type Mutation {
   # Change the Operator Status
   changeOperatorStatus(input: OperatorStatusInput): Status!
+
+  # Change the Adapter Status
+  changeAdapterStatus(input: AdapterStatusInput): Status!
 }
 
 type Subscription {

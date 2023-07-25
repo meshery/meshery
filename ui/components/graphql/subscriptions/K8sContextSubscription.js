@@ -1,5 +1,5 @@
 import { graphql, requestSubscription } from "relay-runtime";
-import environment from "../../../lib/relayEnvironment";
+import { createRelayEnvironment } from "../../../lib/relayEnvironment";
 
 const k8sContextSubscription = graphql`
 subscription K8sContextSubscription($selector: PageFilter!) {
@@ -17,13 +17,15 @@ subscription K8sContextSubscription($selector: PageFilter!) {
         kubernetes_server_id
         deployment_type
         updated_at
-        created_at 
+        created_at
+        version
       }  
     }
 }
 `;
 
 export default function subscribeK8sContext(dataCB, variables) {
+  const environment = createRelayEnvironment({});
   return requestSubscription(environment, {
     subscription : k8sContextSubscription,
     variables : variables,

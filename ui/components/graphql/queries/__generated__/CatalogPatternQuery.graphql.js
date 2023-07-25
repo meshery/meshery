@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<f748126ea7823a3d1bb7ec5d378be920>>
- * @flow
+ * @generated SignedSource<<250f6fec42f64cdf2df9bd2be3190563>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,34 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type CatalogSelector = {|
-  search: string,
-  order: string,
-|};
-export type CatalogPatternQuery$variables = {|
-  selector: CatalogSelector,
-|};
-export type CatalogPatternQuery$data = {|
-  +catalogPatterns: $ReadOnlyArray<{|
-    +id: string,
-    +name: string,
-    +user_id: string,
-    +pattern_file: string,
-    +visibility: string,
-    +catalog_data: ?any,
-    +created_at: ?string,
-    +updated_at: ?string,
-  |}>,
-|};
-export type CatalogPatternQuery = {|
-  variables: CatalogPatternQuery$variables,
-  response: CatalogPatternQuery$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -147,9 +119,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "3662bdbf1b55f72dec9757315e54e8ab";
+node.hash = "3662bdbf1b55f72dec9757315e54e8ab";
 
-module.exports = ((node/*: any*/)/*: Query<
-  CatalogPatternQuery$variables,
-  CatalogPatternQuery$data,
->*/);
+module.exports = node;

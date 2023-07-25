@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { toggleDrawer } from "../lib/store";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { CircularProgress, Typography } from "@material-ui/core";
+// import { CircularProgress, Typography } from "@material-ui/core";
 import normalizeURI from "../utils/normalizeURI";
 import dataFetch from "../lib/data-fetch";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
@@ -236,6 +236,26 @@ export function getComponentTitleFromPath(extensions, path) {
   return "";
 }
 
+
+/**
+ * getComponentIsBetaFromPath takes in the extensions and the current
+ * path and searches for the matching component and returns isBeta
+ *
+ * @param {import("../utils/ExtensionPointSchemaValidator").FullPageExtensionSchema[]} extensions
+ * @param {string} path
+ * @returns {boolean}
+ */
+export function getComponentIsBetaFromPath(extensions, path) {
+  path = normalizeURI(path);
+
+  if (Array.isArray(extensions)) {
+    const extension = extensions.find((item) => item?.href === path);
+    if (extension) return extension.isBeta ?? false
+  }
+
+  return false;
+}
+
 /**
  * getComponentURIFromPathForUserPrefs takes in the user_prefs extensions and returns
  * an array of all the component mappings
@@ -282,6 +302,13 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer, ca
     if (type === "navigator" && !isDrawerCollapsed) {
       toggleDrawer({ isDrawerCollapsed : !isDrawerCollapsed });
     }
+    if (capabilitiesRegistry) {
+      const data = ExtensionPointSchemaValidator(type)(capabilitiesRegistry?.extensions[type]);
+      if (data !== undefined) {
+        setExtension(data);
+        setIsLoading(false);
+      }
+    }
     // necessary to cleanup states on each unmount to prevent memory leaks and unwanted clashes between extension points
     return () => {
       setExtension([]);
@@ -289,41 +316,31 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer, ca
     }
   }, [type]);
 
-  useEffect(() => {
-    if (capabilitiesRegistry) {
-      const data = ExtensionPointSchemaValidator(type)(capabilitiesRegistry?.extensions[type]);
-      setExtension(data);
-      setIsLoading(false);
-    }
-  },[capabilitiesRegistry])
-
   return (
     <>
       {
-        (type === "navigator" && extension?.length !== 0)?
-          isLoading ?
+        (
+          isLoading ? (
             <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
-            : (
-              <Extension url={createPathForRemoteComponent(getComponentURIFromPathForNavigator(extension, getPath()))} />
-            )
-          : (type === "user_prefs" && extension?.length !== 0)?
-            isLoading?
-              <Typography align="center">
-                <CircularProgress />
-              </Typography>
-              : (
-                getComponentURIFromPathForUserPrefs(extension).map(uri => {
-                  return <Extension url={createPathForRemoteComponent(uri)} key={uri} />
-                })
-              )
-            : (type === "account" && extension?.length !== 0)?
-              isLoading ?
-                <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
-                :
+          ) :
+            (
+              (type === "navigator")?
                 (
-                  <Extension url={createPathForRemoteComponent(getComponentURIFromPathForAccount(extension, getPath()))} />
+                  <Extension url={createPathForRemoteComponent(getComponentURIFromPathForNavigator(extension, getPath()))} />
                 )
-              : null
+                : (type === "user_prefs")?
+                  (
+                    getComponentURIFromPathForUserPrefs(extension).map(uri => {
+                      return <Extension url={createPathForRemoteComponent(uri)} key={uri} />
+                    })
+                  )
+                  : (type === "account")?
+                    (
+                      <Extension url={createPathForRemoteComponent(getComponentURIFromPathForAccount(extension, getPath()))} />
+                    )
+                    : null
+            )
+        )
       }
     </>
   )

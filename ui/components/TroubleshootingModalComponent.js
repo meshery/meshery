@@ -42,6 +42,9 @@ const useStyles = makeStyles(theme => ({
     margin : 10,
     fontSize : "1rem"
   },
+  infoIcon : {
+    color : theme.palette.type === 'dark' ? "#00B39F" : "#607d8b"
+  },
   footerText : {
     color : "#EDEDED",
     fontSize : ".85rem",
@@ -55,7 +58,7 @@ const useStyles = makeStyles(theme => ({
     paddingBottom : 10,
     padding : "0 .5rem",
     paddingTop : 10,
-    backgroundColor : "rgb(57, 102, 121)"
+    backgroundColor : theme.palette.secondary.mainBackground,
   },
   modalFooter : {
     display : "flex",
@@ -64,7 +67,7 @@ const useStyles = makeStyles(theme => ({
     paddingBottom : 10,
     padding : "0 .5rem",
     paddingTop : 10,
-    backgroundColor : "rgba(57, 102, 121, .95)"
+    backgroundColor : theme.palette.secondary.mainBackground,
   },
   modalContent : {
     backgroundColor : "transparent"
@@ -92,11 +95,11 @@ const useStyles = makeStyles(theme => ({
   },
   accordionSummary : {
     "&.Mui-expanded" : {
-      backgroundColor : "#f1f1f1"
+      backgroundColor : theme.palette.type === 'dark' ? "#303030" : "#f1f1f1"
     }
   },
   accDetailHead : {
-    color : "#444",
+    color : theme.palette.type=='dark' ? "f1f1f1" : "#444",
     fontFamily : "Qanelas Soft, sans-serif"
   },
   troubleshootListitem : {
@@ -106,7 +109,7 @@ const useStyles = makeStyles(theme => ({
   keyStyleContainer : {
     display : "inline-block",
     padding : "0.1rem 0.5rem",
-    background : "#eee",
+    background : theme.palette.secondary.elevatedComponent,
     // boxShadow: "0 1px 5px rgba(0,0,0,0.1)",
     margin : "0.3rem",
     borderRadius : "5px",
@@ -117,7 +120,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection : "column"
   },
   troubleshootHelpLink : {
-    color : "rgb(57, 102, 121)",
+    color : theme.palette.type=='dark' ? "#00B39F" : "rgb(57, 102, 121)",
     fontWeight : "bold",
     textDecoration : "none"
   },
@@ -186,7 +189,7 @@ const TroubleshootingModal = props => {
               className={classes.accordionSummary}
             >
               <div className={classes.headerContainer}>
-                <InfoIcon color="primary" />
+                <InfoIcon className={classes.infoIcon} />
                 <Typography variant="h6" className={classes.headerText}>
                   Stale Data
                 </Typography>
@@ -227,7 +230,7 @@ const TroubleshootingModal = props => {
               className={classes.accordionSummary}
             >
               <div className={classes.headerContainer}>
-                <InfoIcon color="primary" />
+                <InfoIcon className={classes.infoIcon} />
                 <Typography variant="h6" className={classes.headerText}>
                   Missing Data
                 </Typography>
@@ -269,7 +272,7 @@ const TroubleshootingModal = props => {
               className={classes.accordionSummary}
             >
               <div className={classes.headerContainer}>
-                <InfoIcon color="primary" />
+                <InfoIcon className={classes.infoIcon} />
                 <Typography variant="h6" className={classes.headerText}>
                   Incompatibility
                 </Typography>
@@ -317,7 +320,7 @@ const TroubleshootingModal = props => {
               className={classes.accordionSummary}
             >
               <div className={classes.headerContainer}>
-                <InfoIcon color="primary" />
+                <InfoIcon className={classes.infoIcon} />
                 <Typography variant="h6" className={classes.headerText}>
                   Additional Resources
                 </Typography>

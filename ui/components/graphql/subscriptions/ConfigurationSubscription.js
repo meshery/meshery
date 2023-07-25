@@ -1,6 +1,5 @@
 import { graphql, requestSubscription } from "react-relay";
-import environment from "../../../lib/relayEnvironment";
-
+import { createRelayEnvironment } from "../../../lib/relayEnvironment";
 
 const configurationSubscription = graphql`
   subscription ConfigurationSubscription($applicationSelector: PageFilter!, $patternSelector: PageFilter!, $filterSelector: PageFilter!) {
@@ -48,6 +47,7 @@ const configurationSubscription = graphql`
           id
           name
           filter_file
+          filter_resource
           visibility
           catalog_data
           user_id
@@ -60,6 +60,7 @@ const configurationSubscription = graphql`
 `;
 
 export default function ConfigurationSubscription(onNext, variables) {
+  const environment = createRelayEnvironment({});
   return requestSubscription(environment, {
     subscription : configurationSubscription,
     variables : variables,

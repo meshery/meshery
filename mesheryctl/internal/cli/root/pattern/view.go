@@ -1,10 +1,23 @@
+// Copyright 2023 Layer5, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package pattern
 
 import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -19,6 +32,11 @@ var (
 	outFormatFlag string
 )
 
+var linkDocPatternView = map[string]string{
+	"link":    "![pattern-view-usage](/assets/img/mesheryctl/patternView.png)",
+	"caption": "Usage of mesheryctl pattern view",
+}
+
 var viewCmd = &cobra.Command{
 	Use:   "view pattern name",
 	Short: "Display pattern(s)",
@@ -27,11 +45,8 @@ var viewCmd = &cobra.Command{
 	Example: `
 // view a pattern
 mesheryctl pattern view [pattern-name | ID]
-
-! Refer below image link for usage
-* Usage of mesheryctl pattern view
-# ![pattern-view-usage](/assets/img/mesheryctl/patternView.png)
 	`,
+	Annotations: linkDocPatternView,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -44,7 +59,7 @@ mesheryctl pattern view [pattern-name | ID]
 			if viewAllFlag {
 				return errors.New("-a cannot be used when [pattern-name|pattern-id] is specified")
 			}
-			pattern, isID, err = utils.Valid(args[0], "pattern")
+			pattern, isID, err = utils.ValidId(args[0], "pattern")
 			if err != nil {
 				return err
 			}
@@ -52,7 +67,7 @@ mesheryctl pattern view [pattern-name | ID]
 		url := mctlCfg.GetBaseMesheryURL()
 		if len(pattern) == 0 {
 			if viewAllFlag {
-				url += "/api/pattern?page_size=10000"
+				url += "/api/pattern?pagesize=10000"
 			} else {
 				return errors.New("Pattern name or ID is not specified. Use `-a` to view all patterns")
 			}
@@ -64,19 +79,14 @@ mesheryctl pattern view [pattern-name | ID]
 			url += "/api/pattern?search=" + pattern
 		}
 
-		client := &http.Client{}
 		req, err := utils.NewRequest("GET", url, nil)
 		if err != nil {
 			return err
 		}
 
-		res, err := client.Do(req)
+		res, err := utils.MakeRequest(req)
 		if err != nil {
 			return err
-		}
-		if res.StatusCode != 200 {
-			// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
-			return errors.Errorf("Response Status Code %d, possible invalid ID", res.StatusCode)
 		}
 
 		defer res.Body.Close()

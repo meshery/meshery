@@ -1,32 +1,38 @@
 {
-    "apiVersion": "core.meshery.io/v1alpha1",
-    "kind": "Sibling",
-    "metadata": {
-      "description": "A relationship between two objects that are siblings."
+  "apiVersion": "core.meshery.io/v1alpha1",
+  "kind": "Sibling",
+  "metadata": {
+    "description": "A relationship between two objects that are siblings."
+  },
+  "model": {
+    "name": "kubernetes",
+    "version": "v1.25.2",
+    "displayName": "Kubernetes",
+    "category": {
+      "name": "Orchestration \u0026 Management",
+      "metadata": null
     },
-    "model":{
-      "name":"core"
+    "metadata": {}
+  },
+  "subType": "MatchLabels",
+  "selectors": {
+    "allow": {
+      "from": [
+        {
+          "kind": "Service",
+          "model": "kubernetes"
+        }
+      ],
+      "to": [
+        {
+          "kind": "Pod",
+          "model": "kubernetes"
+        }
+      ]
     },
-    "subType": "MatchLabels",
-    "selectors": {
-      "allow":{
-        "from": [
-          {
-            "kind": "Service",
-            "model": "Kubernetes"
-          }      
-        ],
-        "to": [
-          {
-            "kind": "Pod",
-            "model": "Kubernetes"
-          }     
-        ]
-      },
-      "deny": {
-        "from": [],
-        "to": []
-      }
+    "deny": {
+      "from": [],
+      "to": []
     }
   }
-  
+}

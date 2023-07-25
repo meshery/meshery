@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<e6c8f534f70499df52c1519ce03be5cd>>
- * @flow
+ * @generated SignedSource<<a07a98dc9791c788442de20f95e19f5d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,34 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type CatalogSelector = {|
-  search: string,
-  order: string,
-|};
-export type CatalogFilterQuery$variables = {|
-  selector: CatalogSelector,
-|};
-export type CatalogFilterQuery$data = {|
-  +catalogFilters: $ReadOnlyArray<{|
-    +id: string,
-    +name: string,
-    +user_id: string,
-    +filter_file: string,
-    +visibility: string,
-    +catalog_data: ?any,
-    +created_at: ?string,
-    +updated_at: ?string,
-  |}>,
-|};
-export type CatalogFilterQuery = {|
-  variables: CatalogFilterQuery$variables,
-  response: CatalogFilterQuery$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -91,6 +63,13 @@ v1 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
+        "name": "filter_resource",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
         "name": "visibility",
         "storageKey": null
       },
@@ -137,19 +116,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "ac1121b539ce2cffd452177869b631dc",
+    "cacheID": "2178c2622b2e672bcf288e1004c939a0",
     "id": null,
     "metadata": {},
     "name": "CatalogFilterQuery",
     "operationKind": "query",
-    "text": "query CatalogFilterQuery(\n  $selector: CatalogSelector!\n) {\n  catalogFilters: fetchFilterCatalogContent(selector: $selector) {\n    id\n    name\n    user_id\n    filter_file\n    visibility\n    catalog_data\n    created_at\n    updated_at\n  }\n}\n"
+    "text": "query CatalogFilterQuery(\n  $selector: CatalogSelector!\n) {\n  catalogFilters: fetchFilterCatalogContent(selector: $selector) {\n    id\n    name\n    user_id\n    filter_file\n    filter_resource\n    visibility\n    catalog_data\n    created_at\n    updated_at\n  }\n}\n"
   }
 };
 })();
 
-(node/*: any*/).hash = "6a8f76476c5d44a58d465d9d7106e6b2";
+node.hash = "391a34d0da3dfd429e7a8a335e07930b";
 
-module.exports = ((node/*: any*/)/*: Query<
-  CatalogFilterQuery$variables,
-  CatalogFilterQuery$data,
->*/);
+module.exports = node;

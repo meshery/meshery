@@ -1,12 +1,12 @@
-import { graphql ,fetchQuery } from "react-relay";
-import environment from "../../../lib/relayEnvironment";
+import { fetchQuery, graphql } from "react-relay";
+import { createRelayEnvironment } from "../../../lib/relayEnvironment";
 
 export default function fetchMeshModelSummary(selector) {
-  const vars = {
-    selector : selector
-  }
+  const environment = createRelayEnvironment({});
 
-  const query = graphql`
+  const vars = { selector : selector }
+
+  const MeshModelSummaryQueryNode = graphql`
     query MeshModelSummaryQuery($selector: MeshModelSummarySelector!) {
       meshmodelSummary: getMeshModelSummary(selector: $selector) {
         components {
@@ -21,5 +21,5 @@ export default function fetchMeshModelSummary(selector) {
     }
   `;
 
-  return fetchQuery(environment, query, vars)
+  return fetchQuery(environment, MeshModelSummaryQueryNode, vars)
 }

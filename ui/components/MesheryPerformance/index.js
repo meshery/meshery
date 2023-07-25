@@ -1,4 +1,4 @@
-//@ts-check
+// @ts-nocheck
 import React from "react";
 import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
@@ -69,6 +69,7 @@ function generatePerformanceProfile(data) {
     requestCookies,
     requestBody,
     contentType,
+    caCertificate
   } = data;
 
   const performanceProfileName = MesheryPerformanceComponent.generateTestName(name, serviceMesh);
@@ -86,6 +87,12 @@ function generatePerformanceProfile(data) {
     request_body : requestBody,
     request_cookies : requestCookies,
     content_type : contentType,
+    metadata : {
+      ca_certificate : {
+        file : caCertificate.file,
+        name : caCertificate.name
+      }
+    }
   };
 }
 
@@ -118,9 +125,28 @@ const infoloadGenerators = (
   </>
 );
 const styles = (theme) => ({
-  wrapperClss : { padding : theme.spacing(10), position : "relative" },
+  title : {
+    textAlign : 'center',
+    minWidth : 400,
+    padding : '10px',
+    color : '#fff',
+    backgroundColor : theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : theme.palette.secondary.mainBackground,
+  },
+  wrapperClss : { padding : theme.spacing(10), position : "relative", paddingTop : theme.spacing(5) },
   buttons : { display : "flex", justifyContent : "flex-end" },
-  button : { marginTop : theme.spacing(3), marginLeft : theme.spacing(1) },
+  spacing : {
+    marginTop : theme.spacing(3), marginLeft : theme.spacing(1)
+  },
+  button : {
+    backgroundColor : theme.palette.type === "dark" ? "#00B39F" : "#607d8b",
+    "&:hover" : {
+      backgroundColor : theme.palette.type === "dark" ? "#00B39F" : "#607d8b"
+    },
+    color : "#fff" },
+  upload : {
+    paddingLeft : "0.7rem",
+    paddingTop : "8px"
+  },
   expansionPanel : { boxShadow : "none", border : "1px solid rgb(196,196,196)" },
   margin : { margin : theme.spacing(1) },
   chartTitle : { textAlign : "center" },
@@ -154,6 +180,11 @@ const styles = (theme) => ({
     height : "18px",
     marginBottom : theme.spacing(1),
     marginLeft : theme.spacing(0.3),
+  },
+  radio : {
+    '&.Mui-checked' : {
+      color : theme.palette.type === 'dark' ? theme.palette.secondary.focused : theme.palette.primary
+    },
   },
 });
 
@@ -192,7 +223,9 @@ class MesheryPerformanceComponent extends React.Component {
       cookies : cookies || "",
       reqBody : reqBody || "",
       contentType : contentType || "",
-
+      certificate : {},
+      certificateKey : {},
+      caCertificate : {},
       profileName : profileName || "",
       performanceProfileID : performanceProfileID || "",
 
@@ -212,6 +245,24 @@ class MesheryPerformanceComponent extends React.Component {
   }
 
   handleChange = (name) => (event) => {
+
+    if (name === "caCertificate") {
+      if (!event.target.files?.length) return;
+
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.addEventListener("load", (evt) => {
+        this.setState({
+          caCertificate : {
+            name : file.name,
+            file : evt.target.result
+          }
+        })
+        console.log("test: ", name);
+      })
+      reader.readAsText(file);
+    }
+
     if (name === "url" && event.target.value !== "") {
       let urlPattern = event.target.value;
 
@@ -275,7 +326,6 @@ class MesheryPerformanceComponent extends React.Component {
 
   submitProfile = (cb) => {
     const self = this.state;
-
     const profile = generatePerformanceProfile({
       name : self.profileName,
       loadGenerator : self.loadGenerator,
@@ -288,6 +338,7 @@ class MesheryPerformanceComponent extends React.Component {
       requestCookies : self.cookies,
       requestBody : self.reqBody,
       contentType : self.contentType,
+      caCertificate : self.caCertificate,
       testName : self.testName,
       id : self.performanceProfileID,
     });
@@ -411,7 +462,7 @@ class MesheryPerformanceComponent extends React.Component {
       .join("&");
     console.log(params);
 
-    const runURL = ctxUrl(`/api/user/performance/profiles/${id}/run`, this.props?.selectedK8sContexts);
+    const runURL = ctxUrl(`/api/user/performance/profiles/${id}/run`, this.props?.selectedK8sContexts) + "&cert=true";
     this.startEventStream(`${runURL}${this.props?.selectedK8sContexts?.length > 0 ? "&" : "?"}${params}`);
     this.setState({ blockRunTest : true }); // to block the button
   };
@@ -759,19 +810,27 @@ class MesheryPerformanceComponent extends React.Component {
           <div className={classes.wrapperClss} style={this.props.style || {}}>
             <Grid container spacing={1}>
               <Grid item xs={12} md={6}>
-                <Tooltip title="If a profile name is not provided, a random one will be generated for you.">
-                  <TextField
-                    id="profileName"
-                    name="profileName"
-                    label="Profile Name"
-                    fullWidth
-                    value={profileName}
-                    margin="normal"
-                    variant="outlined"
-                    onChange={this.handleChange("profileName")}
-                    inputProps={{ maxLength : 300 }}
-                  />
-                </Tooltip>
+
+                <TextField
+                  id="profileName"
+                  name="profileName"
+                  label="Profile Name"
+                  fullWidth
+                  value={profileName}
+                  margin="normal"
+                  variant="outlined"
+                  onChange={this.handleChange("profileName")}
+                  inputProps={{
+                    maxLength : 300,
+                  }}
+                  InputProps={{
+                    endAdornment : (
+                      <Tooltip title="Create a profile providing a name, if a profile name is not provided, a random one will be generated for you.">
+                        <HelpOutlineOutlinedIcon style={{ color : "#929292" }} />
+                      </Tooltip>
+                    )
+                  }}
+                />
               </Grid>
 
               <Grid item xs={12} md={6}>
@@ -818,6 +877,13 @@ class MesheryPerformanceComponent extends React.Component {
                   margin="normal"
                   variant="outlined"
                   onChange={this.handleChange("url")}
+                  InputProps={{
+                    endAdornment : (
+                      <Tooltip title="The Endpoint where the load will be generated and the perfromance test will run against.">
+                        <HelpOutlineOutlinedIcon style={{ color : "#929292" }} />
+                      </Tooltip>
+                    )
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -834,6 +900,13 @@ class MesheryPerformanceComponent extends React.Component {
                   variant="outlined"
                   onChange={this.handleChange("c")}
                   InputLabelProps={{ shrink : true }}
+                  InputProps={{
+                    endAdornment : (
+                      <Tooltip title="Load Testing tool will create this many concurrent request against the endpoint.">
+                        <HelpOutlineOutlinedIcon style={{ color : "#929292" }} />
+                      </Tooltip>
+                    )
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -850,6 +923,13 @@ class MesheryPerformanceComponent extends React.Component {
                   variant="outlined"
                   onChange={this.handleChange("qps")}
                   InputLabelProps={{ shrink : true }}
+                  InputProps={{
+                    endAdornment : (
+                      <Tooltip title="The Number of queries/second. If not provided then the MAX number of queries/second will be requested">
+                        <HelpOutlineOutlinedIcon style={{ color : "#929292" }} />
+                      </Tooltip>
+                    )
+                  }}
                 />
               </Grid>
               <Grid item xs={12} md={4}>
@@ -871,6 +951,13 @@ class MesheryPerformanceComponent extends React.Component {
                     options={durationOptions}
                     style={{ marginTop : "16px", marginBottom : "8px" }}
                     renderInput={(params) => <TextField {...params} label="Duration*" variant="outlined" />}
+                    InputProps={{
+                      endAdornment : (
+                        <Tooltip title="Default duration is 30 seconds">
+                          <HelpOutlineOutlinedIcon style={{ color : "#929292" }} />
+                        </Tooltip>
+                      )
+                    }}
                   />
                 </Tooltip>
               </Grid>
@@ -935,6 +1022,28 @@ class MesheryPerformanceComponent extends React.Component {
                           onChange={this.handleChange("reqBody")}
                         ></TextField>
                       </Grid>
+                      <Grid container xs={12} md={12}>
+                        <Grid item xs={6}>
+                          <TextField
+                            size="small"
+                            variant="outlined"
+                            label={this.state.caCertificate?.name || "Filename"}
+                            style={{ width : "50%" }}
+                            value={this.state.caCertificate?.name}
+                          />
+                          <label htmlFor="upload-cacertificate" className={classes.upload}>
+                            <Button
+                              variant="outlined"
+                              aria-label="Upload Button"
+                              onChange={this.handleChange("caCertificate")} component="span"
+                              className={classes.button}
+                            >
+                              <input id="upload-cacertificate" type="file" accept={".crt"} name="upload-button"  hidden data-cy="cacertificate-upload-button" />
+                            Browse
+                            </Button>
+                          </label>
+                        </Grid>
+                      </Grid>
                     </Grid>
                   </ExpansionPanelDetails>
                 </ExpansionPanel>
@@ -958,7 +1067,7 @@ class MesheryPerformanceComponent extends React.Component {
                     row
                   >
                     {loadGenerators.map((lg, index) => (
-                      <FormControlLabel key={index} value={lg} control={<Radio color="primary" />} label={lg} />
+                      <FormControlLabel key={index} value={lg} disabled={lg==="wrk2"} control={<Radio color="primary" className={classes.radio} />} label={lg} />
                     ))}
                   </RadioGroup>
                 </FormControl>
@@ -971,7 +1080,7 @@ class MesheryPerformanceComponent extends React.Component {
                   variant="contained"
                   color="primary"
                   size="large"
-                  className={classes.button}
+                  className={classes.spacing}
                   disabled={disableTest}
                   onClick={() => this.handleAbort()}
                 >
@@ -983,7 +1092,7 @@ class MesheryPerformanceComponent extends React.Component {
                   color="primary"
                   size="large"
                   onClick={() => this.submitProfile()}
-                  className={classes.button}
+                  className={classes.spacing}
                   disabled={disableTest}
                   startIcon={<SaveOutlinedIcon />}
                 >
@@ -995,7 +1104,7 @@ class MesheryPerformanceComponent extends React.Component {
                   color="primary"
                   size="large"
                   onClick={this.handleSubmit}
-                  className={classes.button}
+                  className={classes.spacing}
                   disabled={blockRunTest || disableTest}
                 >
                   {blockRunTest ? <CircularProgress size={30} /> : "Run Test"}

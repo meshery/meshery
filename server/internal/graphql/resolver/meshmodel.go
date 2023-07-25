@@ -40,7 +40,7 @@ func (r *Resolver) subscribeMeshModelSummary(ctx context.Context, provider model
 	return respChan, nil
 }
 
-func (r *Resolver) getMeshModelSummary(ctx context.Context, provider models.Provider, selector model.MeshModelSummarySelector) (*model.MeshModelSummary, error) {
+func (r *Resolver) getMeshModelSummary(ctx context.Context, _ models.Provider, selector model.MeshModelSummarySelector) (*model.MeshModelSummary, error) {
 	regManager, ok := ctx.Value(models.RegistryManagerKey).(*meshmodel.RegistryManager)
 	summary := &model.MeshModelSummary{}
 	if !ok {
@@ -71,7 +71,7 @@ type MeshModelRelationshipResponse struct {
 }
 
 func getMeshModelRelationships(regManager *meshmodel.RegistryManager) []*model.MeshModelRelationship {
-	res := regManager.GetEntities(&v1alpha1.RelationshipFilter{})
+	res, _, _ := regManager.GetEntities(&v1alpha1.RelationshipFilter{})
 	relationships := make([]*model.MeshModelRelationship, 0)
 	var relmap = make(map[string]*MeshModelRelationshipResponse)
 	for _, r := range res {
@@ -98,7 +98,7 @@ func getMeshModelRelationships(regManager *meshmodel.RegistryManager) []*model.M
 }
 
 func getMeshModelComponents(regManager *meshmodel.RegistryManager) []*model.MeshModelComponent {
-	res := regManager.GetEntities(&v1alpha1.ComponentFilter{})
+	res, _, _ := regManager.GetEntities(&v1alpha1.ComponentFilter{})
 	components := make([]*model.MeshModelComponent, 0)
 	var response = make(map[string]*MeshModelComponentResponse)
 	for _, r := range res {

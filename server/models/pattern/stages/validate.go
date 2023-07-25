@@ -33,11 +33,10 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider, skipValidati
 			if core.Format {
 				svc.Settings = core.Format.DePrettify(svc.Settings, false)
 			}
-
-			//Validate workload definition
+			//Validate component definition
 			if !skipValidation {
 				if err := validateWorkload(svc.Settings, wc); err != nil {
-					act.Terminate(fmt.Errorf("invalid workload configuration for: %s", svc.Name))
+					act.Terminate(fmt.Errorf("invalid component configuration for %s: %s", svc.Name, err.Error()))
 					return
 				}
 			}
@@ -73,9 +72,10 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider, skipValidati
 }
 
 func validateWorkload(comp map[string]interface{}, wc meshmodel.ComponentDefinition) error {
+	schemaByt := []byte(wc.Schema)
 	// Create schema validator from the schema
 	rs := jsonschema.GlobalJSONSchema()
-	if err := json.Unmarshal([]byte(wc.Schema), rs); err != nil {
+	if err := json.Unmarshal(schemaByt, rs); err != nil {
 		return fmt.Errorf("failed to create schema: %s", err)
 	}
 
@@ -95,57 +95,4 @@ func validateWorkload(comp map[string]interface{}, wc meshmodel.ComponentDefinit
 	}
 
 	return nil
-}
-
-func validateTrait(trait interface{}, tc core.TraitCapability, compType string) error {
-	// Create schema validator from the schema
-	rs := jsonschema.GlobalJSONSchema()
-	if err := json.Unmarshal([]byte(tc.OAMRefSchema), rs); err != nil {
-		return fmt.Errorf("failed to create schema: %s", err)
-	}
-
-	// Check if the trait applied to the component is legal or not
-	isLegal := isLegalTrait(tc, compType)
-	if !isLegal {
-		return fmt.Errorf(
-			"%s trait is not applicable to %s",
-			tc.OAMDefinition.Name,
-			compType,
-		)
-	}
-
-	// Create json of the trait's properties for validation
-	jsonCompTraitProp, err := json.Marshal(trait)
-	if err != nil {
-		return fmt.Errorf(
-			"failed to generate schema from the PatternFile's service type %s trait: %s",
-			compType,
-			err,
-		)
-	}
-
-	// Validate the json against the schema
-	errs, err := rs.ValidateBytes(context.TODO(), jsonCompTraitProp)
-	if err != nil {
-		return fmt.Errorf("error occurred during schema validation: %s", err)
-	}
-	if len(errs) > 0 {
-		return fmt.Errorf("invalid traits: %s", errs)
-	}
-
-	return nil
-}
-
-func isLegalTrait(tc core.TraitCapability, compType string) bool {
-	if len(tc.OAMDefinition.Spec.AppliesToWorkloads) == 0 {
-		return true
-	}
-
-	for _, wl := range tc.OAMDefinition.Spec.AppliesToWorkloads {
-		if wl == compType {
-			return true
-		}
-	}
-
-	return false
 }

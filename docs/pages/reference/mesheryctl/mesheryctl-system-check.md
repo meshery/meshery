@@ -51,6 +51,28 @@ mesheryctl system check --adapter meshery-istio:10000
 </div>
 </pre> 
 
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+or
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system check --adapter meshery-istio
+
+</div>
+</pre> 
+
+Run checks for all the mesh adapters
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system check --adapters
+
+</div>
+</pre> 
+
 Verify the health of Meshery Operator's deployment with MeshSync and Broker
 <pre class='codeblock-pre'>
 <div class='codeblock'>
@@ -71,10 +93,13 @@ mesheryctl system check --report
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --components   Check status of Meshery components
-  -h, --help         help for check
-      --pre          Verify environment readiness to deploy Meshery
-      --preflight    Verify environment readiness to deploy Meshery
+      --adapter string   Check status of specified meshery adapter
+      --adapters         Check status of meshery adapters
+      --components       Check status of Meshery components
+  -h, --help             help for check
+      --operator         Verify the health of Meshery Operator's deployment with MeshSync and Broker
+      --pre              Verify environment readiness to deploy Meshery
+      --preflight        Verify environment readiness to deploy Meshery
 
 </div>
 </pre>
@@ -94,7 +119,7 @@ mesheryctl system check --report
 ## Screenshots
 
 Usage of mesheryctl system check
-![check-usage](/assets/img/mesheryctl/check.jpeg)
+![check-usage](/assets/img/mesheryctl/check.png)
 
 ## See Also
 

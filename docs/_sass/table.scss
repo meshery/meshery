@@ -469,12 +469,14 @@ table.tablesorter th.tablesorter-headerAsc {
     no-repeat 99%;
   background-repeat: no-repeat;
   background-position: center right;
+  background-color: var(--color-primary-dark);
 }
 table.tablesorter th.tablesorter-headerDesc {
   background-image: url("data:image/gif;base64, R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7")
     no-repeat 99%;
   background-repeat: no-repeat;
   background-position: center right;
+  background-color: var(--color-primary-dark);
 }
 table.tablesorter th.headerSortDown,
 table.tablesorter th.headerSortUp {
@@ -488,3 +490,6 @@ table.tablesorter th.headerSortUp {
   background-color: rgb(244, 244, 244) !important ;
 }
 
+td.details, .hidden-details > td {
+  background-color: var(--color-primary-dark) !important;
+}

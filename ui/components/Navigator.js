@@ -21,8 +21,10 @@ import HelpIcon from '@material-ui/icons/Help';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
 import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
-import ConformanceIcon from '../public/static/img/drawer-icons/conformance_svg';
+import ApplicationIcon from '../public/static/img/drawer-icons/application_svg';
 import ExtensionIcon from "../public/static/img/drawer-icons/extensions_svg";
+import FilterIcon from '../public/static/img/drawer-icons/filter_svg';
+import PatternIcon from '../public/static/img/drawer-icons/pattern_svg';
 import LifecycleHover from '../public/static/img/drawer-icons/lifecycle_hover_svg';
 import PerformanceHover from '../public/static/img/drawer-icons/performance_hover_svg';
 import ConfigurationHover from '../public/static/img/drawer-icons/configuration_hover_svg';
@@ -31,8 +33,6 @@ import DocumentIcon from "../assets/icons/DocumentIcon";
 import SlackIcon from "../assets/icons/SlackIcon";
 import GithubIcon from "../assets/icons/GithubIcon";
 import ChatIcon from "../assets/icons/ChatIcon";
-import ConformanceHover from '../public/static/img/drawer-icons/conformance_hover_svg';
-import SmiIcon from '../public/static/img/drawer-icons/servicemeshinterface-icon-white_svg';
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import {
   faAngleLeft, faCaretDown,
@@ -46,7 +46,7 @@ import dataFetch from "../lib/data-fetch";
 import { Collapse } from "@material-ui/core";
 import { cursorNotAllowed, disabledStyle, disabledStyleWithOutOpacity } from "../css/disableComponent.styles";
 import { CapabilitiesRegistry } from "../utils/disabledComponents";
-import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM, DESIGN, CONFIGURATION, CONFORMANCE, CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, SMI, TOGGLER } from "../constants/navigator"
+import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM, DESIGN, CONFIGURATION,  CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, TOGGLER } from "../constants/navigator"
 import { iconSmall } from "../css/icons.styles";
 
 const styles = (theme) => ({
@@ -420,7 +420,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
     children : [
       {
         id : APPLICATION,
-        icon : <img src="/static/img/web-applications.svg" style={{ width : "1.21rem" }} />,
+        icon : <ApplicationIcon style={{ ...drawerIconsStyle }}/>,
         href : "/configuration/applications",
         title : "Applications",
         show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, APPLICATION]),
@@ -429,7 +429,7 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       },
       {
         id : FILTER,
-        icon : <img src="/static/img/web-filters.svg" style={{ width : "1.21rem" }} />,
+        icon : <FilterIcon style={{ ...drawerIconsStyle }}/>,
         href : "/configuration/filters",
         title : "Filters",
         show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, FILTER]),
@@ -438,8 +438,8 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
       },
       {
         id : DESIGN,
-        icon : <img src="/static/img/pattern_trans.svg" style={{ width : "1.21rem" }} />,
-        href : "/configuration/patterns",
+        icon : <PatternIcon style={{ ...drawerIconsStyle }} />,
+        href : "/configuration/designs",
         title : "Designs",
         show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, DESIGN]),
         link : true,
@@ -464,26 +464,6 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
         href : "/performance/profiles",
         title : "Profiles",
         show : capabilityRegistryObj.isNavigatorComponentEnabled([PERFORMANCE, PROFILES]),
-        link : true,
-      },
-    ],
-  },
-  {
-    id : CONFORMANCE,
-    icon : <ConformanceIcon style={drawerIconsStyle} />,
-    hovericon : <ConformanceHover style={drawerIconsStyle} />,
-    href : "/smi_results", //Temp
-    title : "Conformance",
-    show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFORMANCE]),
-    link : true,
-    submenu : true,
-    children : [
-      {
-        id : "serviceMeshInterface",
-        icon : <SmiIcon style={drawerIconsStyle} />,
-        href : "/smi_results",
-        title : "Service Mesh Interface",
-        show : capabilityRegistryObj.isNavigatorComponentEnabled([CONFORMANCE, SMI]),
         link : true,
       },
     ],
@@ -582,7 +562,6 @@ class Navigator extends React.Component {
             capabilitiesRegistryObj,
             navigatorComponents
           });
-          //global state
           this.props.updateCapabilities({ capabilitiesRegistry : result })
         }
       },
@@ -619,7 +598,6 @@ class Navigator extends React.Component {
   renderNavigatorExtensions(children, depth) {
     const { classes, isDrawerCollapsed } = this.props;
     const { path } = this.state;
-
     if (children && children.length > 0) {
       return (
         <List disablePadding>
@@ -636,8 +614,8 @@ class Navigator extends React.Component {
                   key={id}
                   className={classNames(
                     depth === 1
-                      ? classes.nested1
-                      : classes.nested2,
+                      ? ""
+                      : classes.nested1,
                     classes.item,
                     classes.itemActionable,
                     path === href && classes.itemActiveItem,
@@ -702,7 +680,7 @@ class Navigator extends React.Component {
       if (cat.id === LIFECYCLE) {
         cat.children.forEach((catc, ind1) => {
           const cr = self.fetchChildren(catc.id);
-          const icon = self.pickIcon(catc.id);
+          const icon = self.pickIcon(catc.id,catc.href);
           navigatorComponents[ind].children[ind1].icon = icon;
           navigatorComponents[ind].children[ind1].children = cr;
         });
@@ -805,14 +783,15 @@ class Navigator extends React.Component {
    *
    * @returns {JSX.Element} image to display
    */
-  pickIcon(aName) {
+  pickIcon(aName,href) {
     aName = aName.toLowerCase();
     const { classes } = this.props;
     let image = "/static/img/meshery-logo.png";
+    let filter = window.location.pathname === href ? "invert(50%) sepia(78%) saturate(2392%) hue-rotate(160deg) brightness(93%) contrast(101%)" : "";
     let logoIcon = <img src={image} className={classes.icon} />;
     if (aName) {
       image = "/static/img/" + aName + "-light.svg";
-      logoIcon = <img src={image} className={classes.icon} />;
+      logoIcon = <img src={image} className={classes.icon} style={{ filter : filter }}/>;
     }
     return logoIcon;
   }
@@ -947,7 +926,7 @@ class Navigator extends React.Component {
           </List>
         );
       }
-      if (children && children.length == 1) {
+      if (children && children.length === 1) {
         this.updateAdaptersLink();
       }
     }
@@ -1309,7 +1288,7 @@ class Navigator extends React.Component {
             icon={faAngleLeft}
             fixedWidth
             size="1.5x"
-            style={{ margin : "0.5rem 0.2rem ", width : "0.8rem" }}
+            style={{ margin : "0.75rem 0.2rem ", width : "0.8rem", verticalAlign : "middle" }}
             alt="Sidebar collapse toggle icon"
           />
         </div>

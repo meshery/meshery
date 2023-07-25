@@ -9,6 +9,7 @@ project_status: stable
 github_link: https://github.com/meshery/meshery-nginx-sm
 image: /assets/img/service-meshes/nginx-sm.svg
 permalink: service-meshes/adapters/nginx-sm
+language: en
 ---
 
 {% assign sorted_tests_group = site.compatibility | group_by: "meshery-component" %}
@@ -28,7 +29,7 @@ permalink: service-meshes/adapters/nginx-sm
       {% endif %}
 {% endfor %}
 
-{% include adapter-status.html %}
+{% include compatibility/adapter-status.html %}
 
 The {{ page.name }} is currently under construction ({{ page.project_status }} state). Want to contribute? Check our [progress]({{page.github_link}}).
 

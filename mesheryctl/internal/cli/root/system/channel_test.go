@@ -2,7 +2,6 @@ package system
 
 import (
 	"bytes"
-	"fmt"
 	"os"
 	"testing"
 
@@ -34,7 +33,7 @@ func SetupContextEnv(t *testing.T) {
 	}
 }
 
-func SetupFunc(t *testing.T) {
+func SetupFunc() {
 	//fmt.Println(viper.AllKeys())
 	b = bytes.NewBufferString("")
 	logrus.SetOutput(b)
@@ -42,7 +41,7 @@ func SetupFunc(t *testing.T) {
 	SystemCmd.SetOut(b)
 }
 
-func BreakupFunc(t *testing.T) {
+func BreakupFunc() {
 	viewCmd.Flags().VisitAll(setFlagValueAsUndefined)
 }
 
@@ -58,12 +57,6 @@ type CmdTestInput struct {
 
 func TestViewCmd(t *testing.T) {
 	SetupContextEnv(t)
-	expectedResponseForAll := ""
-	for k, v := range mctlCfg.Contexts {
-		expectedResponseForAll += PrintChannelAndVersionToStdout(v, k) + "\n\n"
-	}
-	expectedResponseForAll += fmt.Sprintf("Current Context: %v\n", mctlCfg.CurrentContext)
-
 	tests := []CmdTestInput{
 		{
 			Name:             "view without any parameter",
@@ -75,16 +68,11 @@ func TestViewCmd(t *testing.T) {
 			Args:             []string{"channel", "view", "-c", "gke"},
 			ExpectedResponse: PrintChannelAndVersionToStdout(mctlCfg.Contexts["gke"], "gke") + "\n\n",
 		},
-		// {
-		// 	Name:             "view with all flag",
-		// 	Args:             []string{"channel", "view", "--all"},
-		// 	ExpectedResponse: expectedResponseForAll,
-		// },
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			SetupFunc(t)
+			SetupFunc()
 			SystemCmd.SetArgs(tt.Args)
 			err = SystemCmd.Execute()
 			if err != nil {
@@ -97,12 +85,12 @@ func TestViewCmd(t *testing.T) {
 			if expectedResponse != actualResponse {
 				t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
 			}
-			BreakupFunc(t)
+			BreakupFunc()
 		})
 	}
 }
 func TestRunChannelWithNoCmdOrFlag(t *testing.T) {
-	SetupFunc(t)
+	SetupFunc()
 	SystemCmd.SetArgs([]string{"channel"})
 	err = SystemCmd.Execute()
 
@@ -114,5 +102,5 @@ func TestRunChannelWithNoCmdOrFlag(t *testing.T) {
 	if expectedResponse != actualResponse {
 		t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
 	}
-	BreakupFunc(t)
+	BreakupFunc()
 }

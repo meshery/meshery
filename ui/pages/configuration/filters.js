@@ -6,7 +6,6 @@ import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
 import Head from 'next/head';
 import { getPath } from "../../lib/path";
-import Wrapper from "../../components/ConfiguratorWrapper"
 
 const styles = { paper : { maxWidth : '90%',
   margin : 'auto',
@@ -24,9 +23,7 @@ class NewFilters extends React.Component {
         <Head>
           <title>Filters | Meshery</title>
         </Head>
-        <Wrapper>
-          <MesheryFilters />
-        </Wrapper>
+        <MesheryFilters />
       </NoSsr>
     );
   }

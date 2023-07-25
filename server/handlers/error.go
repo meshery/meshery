@@ -26,9 +26,7 @@ const (
 	ErrParseBoolCode                    = "2016"
 	ErrStreamEventsCode                 = "2017"
 	ErrStreamClientCode                 = "2018"
-	ErrUnmarshalEventCode               = "2019"
 	ErrPublishSmiResultsCode            = "2020"
-	ErrMarshalEventCode                 = "2021"
 	ErrPluginOpenCode                   = "2022"
 	ErrPluginLookupCode                 = "2023"
 	ErrPluginRunCode                    = "2024"
@@ -65,7 +63,6 @@ const (
 	ErrPanicRecoveryCode                = "2210"
 	ErrBlankNameCode                    = "2211"
 	ErrInvalidLTURLCode                 = "2053"
-	ErrDataSendCode                     = "2137"
 	ErrVersionCompareCode               = "2138"
 	ErrSaveSessionCode                  = "2136"
 	ErrKubeClientCode                   = "2139"
@@ -110,6 +107,15 @@ const (
 	ErrGenerateComponentsCode           = "2254"
 	ErrPublishCatalogPatternCode        = "2255"
 	ErrPublishCatalogFilterCode         = "2256"
+	ErrGetMeshModelsCode                = "2257"
+	ErrGetUserDetailsCode               = "2258"
+	ErrResolvingRelationship            = "2259"
+	ErrGetLatestVersionCode             = "2257"
+	ErrCreateFileCode                   = "2260"
+	ErrLoadCertificateCode              = "2261"
+	ErrCleanupCertificateCode           = "2262"
+	ErrTypeAssertionCode                = "2263"
+	ErrDownlaodWASMFileCode             = "2258"
 )
 
 var (
@@ -162,7 +168,7 @@ func ErrGrafanaBoards(err error) error {
 }
 
 func ErrPrometheusBoards(err error) error {
-	return errors.New(ErrGrafanaBoardsCode, errors.Alert, []string{"unable to get Prometheus boards"}, []string{err.Error()}, []string{"Prometheus endpoint might not be reachable from meshery", "Prometheus endpoint is incorrect"}, []string{"Check if your Prometheus endpoint is correct", "Connect to Prometheus from the settings page in the UI"})
+	return errors.New(ErrPrometheusBoardsCode, errors.Alert, []string{"unable to get Prometheus boards"}, []string{err.Error()}, []string{"Prometheus endpoint might not be reachable from meshery", "Prometheus endpoint is incorrect"}, []string{"Check if your Prometheus endpoint is correct", "Connect to Prometheus from the settings page in the UI"})
 }
 
 func ErrRecordPreferences(err error) error {
@@ -198,7 +204,7 @@ func ErrExecutionPlan(err error) error {
 }
 
 func ErrCompConfigPairs(err error) error {
-	return errors.New(ErrRequestBodyCode, errors.Alert, []string{"unable to Create Comp Config.", err.Error()}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrCompConfigPairsCode, errors.Alert, []string{"unable to Create Comp Config.", err.Error()}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrRequestBody(err error) error {
@@ -308,6 +314,11 @@ func ErrApplicationFailure(err error, obj string) error {
 func ErrApplicationSourceContent(err error, obj string) error {
 	return errors.New(ErrApplicationContentCode, errors.Alert, []string{"failed to ", obj, "the application content"}, []string{err.Error()}, []string{}, []string{})
 }
+
+func ErrDownloadWASMFile(err error, obj string) error {
+	return errors.New(ErrDownlaodWASMFileCode, errors.Alert, []string{"failed to ", obj, "the WASM file"}, []string{err.Error()}, []string{"Ensure that DB is not corrupted", "Ensure Remote Provider is working properly", "Ensure Meshery Server is working properly and connected to remote provider"}, []string{"Try restarting Meshery server"})
+}
+
 func ErrDecoding(err error, obj string) error {
 	return errors.New(ErrDecodingCode, errors.Alert, []string{"Error decoding the : ", obj}, []string{err.Error()}, []string{"Object is not a valid json object"}, []string{"Make sure if the object passed is a valid json"})
 }
@@ -336,7 +347,7 @@ func ErrLoadTest(err error, obj string) error {
 }
 
 func ErrFetchKubernetes(err error) error {
-	return errors.New(ErrLoadTestCode, errors.Alert, []string{"unable to ping kubernetes", "unable to scan"}, []string{err.Error()}, []string{"Kubernetes might not be reachable from meshery"}, []string{"Make sure meshery has connectivity to kubernetes"})
+	return errors.New(ErrFetchKubernetesCode, errors.Alert, []string{"unable to ping kubernetes", "unable to scan"}, []string{err.Error()}, []string{"Kubernetes might not be reachable from meshery"}, []string{"Make sure meshery has connectivity to kubernetes"})
 }
 
 func ErrPanicRecovery(r interface{}) error {
@@ -356,7 +367,7 @@ func ErrVersionCompare(err error) error {
 }
 
 func ErrGetLatestVersion(err error) error {
-	return errors.New(ErrVersionCompareCode, errors.Alert, []string{"failed to get latest version of Meshery"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrGetLatestVersionCode, errors.Alert, []string{"failed to get latest version of Meshery"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrSaveSession(err error) error {
@@ -368,11 +379,11 @@ func ErrCreateDir(err error, obj string) error {
 }
 
 func ErrInvalidRequestObject(fields ...string) error {
-	return errors.New(ErrCreateDirCode, errors.Alert, append([]string{"Error invalid request object:"}, fields...), []string{}, []string{}, []string{})
+	return errors.New(ErrInvalidRequestObjectCode, errors.Alert, append([]string{"Error invalid request object:"}, fields...), []string{}, []string{}, []string{})
 }
 
 func ErrChangeK8sContext(err error) error {
-	return errors.New(ErrCreateDirCode, errors.Alert, []string{"Error changing context"}, []string{err.Error()}, []string{"Context Name might be invalid or not present in the uploaded kubeconfig"}, []string{"Check the context name, if the context name is correct and is present in the kubeconfig then try uploading the kubeconfig again"})
+	return errors.New(ErrChangeK8sContextCode, errors.Alert, []string{"Error changing context"}, []string{err.Error()}, []string{"Context Name might be invalid or not present in the uploaded kubeconfig"}, []string{"Check the context name, if the context name is correct and is present in the kubeconfig then try uploading the kubeconfig again"})
 }
 
 func ErrInvalidKubeConfig(err error, content string) error {
@@ -476,4 +487,28 @@ func ErrPublishCatalogPattern(err error) error {
 
 func ErrPublishCatalogFilter(err error) error {
 	return errors.New(ErrPublishCatalogFilterCode, errors.Alert, []string{"Error failed to publish catalog filter"}, []string{err.Error()}, []string{"Failed to publish catalog filter"}, []string{"Check if the filter ID is correct and you are admin"})
+}
+
+func ErrGetMeshModels(err error) error {
+	return errors.New(ErrGetMeshModelsCode, errors.Alert, []string{"could not get meshmodel entitities"}, []string{err.Error()}, []string{"Meshmodel entity could not be converted into valid json", "data in the registry was inconsistent"}, []string{"make sure correct and consistent data is present inside the registry", "drop the Meshmodel tables and restart Meshery server"})
+}
+
+func ErrGetUserDetails(err error) error {
+	return errors.New(ErrGetUserDetailsCode, errors.Alert, []string{"could not get user details"}, []string{err.Error()}, []string{"User details could not be fetched from provider", "Your provider may not be reachable", "No user exists for the provided token"}, []string{"Make sure provider is reachable", "Make sure you are logged in", "Make sure you are using a valid token"})
+}
+
+func ErrResolvingRegoRelationship(err error) error {
+	return errors.New(ErrResolvingRelationship, errors.Alert, []string{"could not resolve rego relationship"}, []string{err.Error()}, []string{"The rego evaluation engine failed to resolve policies", "Design-File/Application-File is in incorrect format", "The policy query is invalid", "The evaluation engine response is unexpected for the code written"}, []string{"Make sure the design-file/application-file is a valid yaml", "Make sure you're proving correct rego query", "Make sure the server is evaluating the query correctly, add some logs"})
+}
+
+func ErrCreateFile(err error, obj string) error {
+	return errors.New(ErrCreateFileCode, errors.Alert, []string{"Could not create file", obj}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrLoadCertificate(err error) error {
+	return errors.New(ErrLoadCertificateCode, errors.Alert, []string{"Could not load certificates associated with performance profile"}, []string{err.Error()}, []string{"Remote provider might be not reachable"}, []string{"try running performance profile test without using certificates, update the profile without certificates"})
+}
+
+func ErrCleanupCertificate(err error, obj string) error {
+	return errors.New(ErrCleanupCertificateCode, errors.Alert, []string{"Could not delete certificates from ", obj}, []string{err.Error()}, []string{"might be due to insufficient permissions", "file was deleted manually"}, []string{"please delete the file if present, path: ", obj})
 }

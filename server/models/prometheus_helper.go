@@ -84,7 +84,7 @@ func (p *PrometheusClient) QueryRange(ctx context.Context, promURL string, query
 }
 
 // GetClusterStaticBoard retrieves the cluster static board config
-func (p *PrometheusClient) GetClusterStaticBoard(ctx context.Context, promURL string) (*GrafanaBoard, error) {
+func (p *PrometheusClient) GetClusterStaticBoard(ctx context.Context, _ string) (*GrafanaBoard, error) {
 	return p.ImportGrafanaBoard(ctx, []byte(staticBoardCluster))
 }
 
@@ -152,44 +152,42 @@ func (p *PrometheusClient) QueryRangeUsingClient(ctx context.Context, promURL, q
 }
 
 // ComputeStep computes the step size for a window
-func (p *PrometheusClient) ComputeStep(ctx context.Context, start, end time.Time) time.Duration {
-	step := 5 * time.Second
+func (p *PrometheusClient) ComputeStep(_ context.Context, start, end time.Time) time.Duration {
 	diff := end.Sub(start)
 	// all calc. here are approx.
 	if diff <= 10*time.Minute { // 10 mins
-		step = 5 * time.Second
+		return 5 * time.Second
 	} else if diff <= 30*time.Minute { // 30 mins
-		step = 10 * time.Second
+		return 10 * time.Second
 	} else if diff > 30*time.Minute && diff <= time.Hour { // 60 mins/1hr
-		step = 20 * time.Second
+		return 20 * time.Second
 	} else if diff > 1*time.Hour && diff <= 3*time.Hour { // 3 time.Hour
-		step = 1 * time.Minute
+		return 1 * time.Minute
 	} else if diff > 3*time.Hour && diff <= 6*time.Hour { // 6 time.Hour
-		step = 2 * time.Minute
+		return 2 * time.Minute
 	} else if diff > 6*time.Hour && diff <= 1*24*time.Hour { // 24 time.Hour/1 day
-		step = 8 * time.Minute
+		return 8 * time.Minute
 	} else if diff > 1*24*time.Hour && diff <= 2*24*time.Hour { // 2 24*time.Hour
-		step = 16 * time.Minute
+		return 16 * time.Minute
 	} else if diff > 2*24*time.Hour && diff <= 4*24*time.Hour { // 4 24*time.Hour
-		step = 32 * time.Minute
+		return 32 * time.Minute
 	} else if diff > 4*24*time.Hour && diff <= 7*24*time.Hour { // 7 24*time.Hour
-		step = 56 * time.Minute
+		return 56 * time.Minute
 	} else if diff > 7*24*time.Hour && diff <= 15*24*time.Hour { // 15 24*time.Hour
-		step = 2 * time.Hour
+		return 2 * time.Hour
 	} else if diff > 15*24*time.Hour && diff <= 1*30*24*time.Hour { // 30 24*time.Hour/1 month
-		step = 4 * time.Hour
+		return 4 * time.Hour
 	} else if diff > 1*30*24*time.Hour && diff <= 3*30*24*time.Hour { // 3 months
-		step = 12 * time.Hour
+		return 12 * time.Hour
 	} else if diff > 3*30*24*time.Hour && diff <= 6*30*24*time.Hour { // 6 months
-		step = 1 * 24 * time.Hour
+		return 1 * 24 * time.Hour
 	} else if diff > 6*30*24*time.Hour && diff <= 1*12*30*24*time.Hour { // 1 year/12 months
-		step = 2 * 24 * time.Hour
+		return 2 * 24 * time.Hour
 	} else if diff > 1*12*30*24*time.Hour && diff <= 2*12*30*24*time.Hour { // 2 years
-		step = 4 * 24 * time.Hour
+		return 4 * 24 * time.Hour
 	} else if diff > 2*12*30*24*time.Hour && diff <= 5*12*30*24*time.Hour { // 5 years
-		step = 10 * 24 * time.Hour
+		return 10 * 24 * time.Hour
 	} else {
-		step = 30 * 24 * time.Hour
+		return 30 * 24 * time.Hour
 	}
-	return step
 }

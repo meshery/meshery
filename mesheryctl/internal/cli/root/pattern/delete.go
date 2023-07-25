@@ -1,3 +1,17 @@
+// Copyright 2023 Layer5, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package pattern
 
 import (
@@ -28,7 +42,6 @@ mesheryctl pattern delete [file | URL]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
-		client := &http.Client{}
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -38,7 +51,7 @@ mesheryctl pattern delete [file | URL]
 		pattern := ""
 		isID := false
 		if len(args) > 0 {
-			pattern, isID, err = utils.Valid(args[0], "pattern")
+			pattern, isID, err = utils.ValidId(args[0], "pattern")
 			if err != nil {
 				return err
 			}
@@ -46,7 +59,7 @@ mesheryctl pattern delete [file | URL]
 
 		// Delete the pattern using the id
 		if isID {
-			err := utils.DeleteConfiguration(pattern, "pattern")
+			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), pattern, "pattern")
 			if err != nil {
 				return errors.Wrap(err, utils.PatternError(fmt.Sprintf("failed to delete pattern %s", args[0])))
 			}
@@ -96,16 +109,12 @@ mesheryctl pattern delete [file | URL]
 				return err
 			}
 
-			resp, err := client.Do(req)
+			resp, err := utils.MakeRequest(req)
 			if err != nil {
 				return err
 			}
 			utils.Log.Debug("remote hosted pattern request success")
 			var response []*models.MesheryPattern
-			// If API returns a non 200 status, return error
-			if resp.StatusCode != 200 {
-				return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-			}
 			defer resp.Body.Close()
 
 			body, err := io.ReadAll(resp.Body)
@@ -126,7 +135,7 @@ mesheryctl pattern delete [file | URL]
 			return err
 		}
 
-		res, err := client.Do(req)
+		res, err := utils.MakeRequest(req)
 		if err != nil {
 			return err
 		}

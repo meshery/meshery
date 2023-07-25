@@ -11,8 +11,8 @@ pre.codeblock-pre {
   font-size: 1.5rem;
   border-radius: 4px;
   width: 100%;
-  box-shadow: var(--box-shadow-primary);
-  background-color: var(--color-secondary-dark) !important;
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.4);
+  background-color: #212529 !important;
   max-width: 700px;
 }
 
@@ -21,7 +21,7 @@ pre.codeblock-pre {
   display: inline-flex;
   overflow: auto;
   justify-content: left;
-  color: var(--color-primary-medium);
+  color: #f8f9fa;
   margin: 0px;
   padding: 0px;
 }
@@ -31,13 +31,32 @@ pre.codeblock-pre {
   overflow-x: auto;
   padding: 1rem;
   margin: 0px;
-  color: var(--color-primary-medium);
+  color: #f8f9fa;
+
+  &::-webkit-scrollbar {
+    width: 0.5rem !important;
+    padding: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    width: 0.5rem !important;
+    border-radius: 11px;
+    overflow: hidden;
+    padding: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #868e96;
+    width: 0.5rem !important;
+    border-radius: 11px;
+    margin: 5px;
+  }
 }
 
 .btn-copy-wrap {
   align-content: flex-end;
-  z-index: 9;
+  z-index: auto;
   position: relative;
+  text-align: right;
 }
 
 .clipbtn {
@@ -54,5 +73,10 @@ pre.codeblock-pre {
 .clipbtn:hover {
   color: #fff;
   cursor: pointer;
+}
+
+.clipbtn:active{
+  background-color: #495057;
+  transform: scale(0.75);
 }
 

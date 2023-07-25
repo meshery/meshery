@@ -353,6 +353,35 @@ system-context:
           usage:
               mesheryctl system context view --all
 
+system-provider:
+  name: system-provider
+  description: Switch between providers
+
+  subcommands:
+    set:
+      name: set
+      description: set provider to desired value
+      flags:
+        force:
+          name: --force
+          description: force set the provider
+    reset:
+      name: reset
+      description: reset the provider
+    switch:
+      name: switch
+      description: Switch the provider to desired value
+    list:
+      name: list
+      description: List available providers from meshconfig
+    view:
+      name: view
+      description: View current provider value
+      flags:
+        all:
+          name: --all
+          description: if set, shows all available providers
+
 perf:
   name: perf
   description: Performance Management and Benchmarking using Meshery CLI
@@ -737,20 +766,20 @@ app:
 
 filter:
   name: filter
-  description: Service Mesh Filter Management (experimental feature)
+  description: Service Mesh Filter Management
   flags:
     file:
       name: --file, -f
-      description: (required) path to WASM file [GitHub links only supported]
+      description: (required) path to WASM file
 
   subcommands:
-    apply:
-      name: apply
-      description: Apply WASM file to deploy a filter
+    import:
+      name: import
+      description: Upload WASM filter file to Meshery Server
 
     delete:
       name: delete
-      description: Delete filter from Meshery
+      description: Delete filter from Meshery Server
 
     list:
       name: list

@@ -121,7 +121,7 @@ mesheryctl system provider list
 
 		providers, err := utils.GetProviderInfo(mctlCfg)
 		if err != nil {
-			log.Fatalln("unable to fetch providers\nStart Meshery or see https://docs.meshery.io/extensibility/providers#types-of-providers")
+			log.Fatalln("could not fetch providers as Meshery server was unreachable\nStart Meshery to list available providers")
 		}
 
 		log.Print("Available providers:\n")
@@ -139,9 +139,9 @@ mesheryctl system provider list
 
 		if currCtx.Provider == "" {
 			if tempContext == "" {
-				log.Print("\nRun `mesheryctl system provider set <provider>` to set the provider")
+				log.Print("\nRun `mesheryctl system provider set [provider]` to set the provider")
 			} else {
-				log.Printf("\nRun `mesheryctl system provider set <provider> --context %s` to set the provider", tempContext)
+				log.Printf("\nRun `mesheryctl system provider set [provider] --context %s` to set the provider", tempContext)
 			}
 		}
 		log.Println()
@@ -150,15 +150,15 @@ mesheryctl system provider list
 }
 
 var setProviderCmd = &cobra.Command{
-	Use:   "set <provider>",
+	Use:   "set [provider]",
 	Short: "set provider",
 	Long:  "Set provider of context in focus. Run `mesheryctl system provider list` to see the available providers.",
 	Example: `
 // Set provider
-mesheryctl system provider set <provider>
+mesheryctl system provider set [provider]
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl system provider set <provider>\nRun 'mesheryctl system provider list' to see the available providers\n"
+		const errMsg = "Usage: mesheryctl system provider set [provider]\nRun 'mesheryctl system provider list' to see the available providers"
 		if len(args) == 0 {
 			return fmt.Errorf("provider not specified\n\n%v", errMsg)
 		} else if len(args) > 1 {
@@ -193,31 +193,30 @@ mesheryctl system provider set <provider>
 		if !forceSetProvider {
 			// Verify provider
 			availableProviders, err := utils.GetProviderInfo(mctlCfg)
-
 			if err != nil {
-				log.Fatalln("unable to verify provider\nStart Meshery or see https://docs.meshery.io/extensibility/providers#types-of-providers\n\nRun `mesheryctl system provider set <provider> --force` to force set the provider")
-			} else {
-				keys := make([]string, 0, len(availableProviders))
-				isValidProvider := false
+				log.Fatalln("could not verify provider as Meshery server was unreachable\nStart Meshery to verify provider\n\nRun `mesheryctl system provider set [provider] --force` to force set the provider")
+			}
 
-				for k := range availableProviders {
-					if provider == k {
-						isValidProvider = true
-					}
-					keys = append(keys, k)
+			keys := make([]string, 0, len(availableProviders))
+			isValidProvider := false
+
+			for k := range availableProviders {
+				if provider == k {
+					isValidProvider = true
 				}
+				keys = append(keys, k)
+			}
 
-				if !isValidProvider {
-					log.Error("invalid provider\nPlease specify a valid provider\n")
+			if !isValidProvider {
+				log.Error("invalid provider\nPlease specify a valid provider\n")
 
-					log.Print("Available providers:\n")
-					//sorting the contexts to get a consistent order on each subsequent run
-					sort.Strings(keys)
-					for _, k := range keys {
-						log.Printf("- %s", k)
-					}
-					os.Exit(1)
+				log.Print("Available providers:\n")
+				//sorting the contexts to get a consistent order on each subsequent run
+				sort.Strings(keys)
+				for _, k := range keys {
+					log.Printf("- %s", k)
 				}
+				os.Exit(1)
 			}
 		}
 
@@ -236,15 +235,15 @@ mesheryctl system provider set <provider>
 }
 
 var switchProviderCmd = &cobra.Command{
-	Use:   "switch <provider>",
+	Use:   "switch [provider]",
 	Short: "switch provider and redeploy",
 	Long:  "Switch provider of context in focus and redeploy Meshery. Run `mesheryctl system provider list` to see the available providers.",
 	Example: `
 // Switch provider and redeploy Meshery
-mesheryctl system provider switch <provider>
+mesheryctl system provider switch [provider]
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl system provider switch <provider>\nRun 'mesheryctl system provider list' to see the available providers\n"
+		const errMsg = "Usage: mesheryctl system provider switch [provider]\nRun 'mesheryctl system provider list' to see the available providers\n"
 		if len(args) == 0 {
 			return fmt.Errorf("provider not specified\n\n%v", errMsg)
 		} else if len(args) > 1 {
@@ -306,7 +305,7 @@ mesheryctl system provider switch <provider>
 var resetProviderCmd = &cobra.Command{
 	Use:   "reset",
 	Short: "reset provider to default",
-	Long:  "Reset provider of context in focus to default (No provider set)",
+	Long:  "Reset provider for current context to default (Meshery)",
 	Example: `
 // Reset provider to default
 mesheryctl system provider reset
@@ -337,7 +336,7 @@ mesheryctl system provider reset
 			return err
 		}
 
-		currCtx.Provider = ""
+		currCtx.Provider = "Meshery"
 
 		mctlCfg.Contexts[focusedContext] = *currCtx
 		viper.Set("contexts", mctlCfg.Contexts)
@@ -346,7 +345,7 @@ mesheryctl system provider reset
 			return err
 		}
 
-		log.Infof("Provider reset to default (No provider set)")
+		log.Infof("Provider reset to Meshery")
 		return nil
 	},
 }
@@ -362,9 +361,9 @@ mesheryctl system provider view
 // To list all available providers
 mesheryctl system provider list
 // To set a provider
-mesheryctl system provider set <provider>
+mesheryctl system provider set [provider]
 // To switch provider and redeploy Meshery
-mesheryctl system provider switch <provider>
+mesheryctl system provider switch [provider]
 // To reset provider to default
 mesheryctl system provider reset
 	`,

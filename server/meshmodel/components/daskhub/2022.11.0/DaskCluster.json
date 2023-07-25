@@ -1,1 +1,0 @@
-{"kind":"DaskCluster","apiVersion":"v1alpha1","displayName":"Dask Cluster","format":"JSON","metadata":{"logo-URL":"","model":"daskhub","modelDisplayName":"Daskhub","primaryColor":"","secondaryColor":"","shape":"circle","svgColor":"","svgWhite":""},"model":{"name":"daskhub","version":"2022.11.0","displayName":"Daskhub","category":"Not Found","subCategory":"Not Found"},"schema":""}

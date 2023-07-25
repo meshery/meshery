@@ -1,10 +1,24 @@
+// Copyright 2023 Layer5, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package filter
 
 import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
+	"net/url"
 
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -20,15 +34,16 @@ var (
 )
 
 var viewCmd = &cobra.Command{
-	Use:   "view [filter name]",
-	Short: "Display filters(s)",
+	Use:   "view [filter-name | ID]",
+	Short: "View filter(s)",
 	Long:  `Displays the contents of a specific filter based on name or id`,
 	Example: `
-// View the specified WASM filter file
-mesheryctl exp filter view [filter-name | ID]	
+// View the specified WASM filter
+// A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be returned.
+mesheryctl filter view [filter-name | ID]	
 
-// View using filter name
-mesheryctl exp filter view test-wasm
+// View all filter files
+mesheryctl filter view --all
 	`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -42,41 +57,36 @@ mesheryctl exp filter view test-wasm
 		// if filter name/id available
 		if len(args) > 0 {
 			if viewAllFlag {
-				return errors.New("-a cannot be used when [filter-name|filter-id] is specified")
+				return errors.New(utils.FilterViewError("--all cannot be used when filter name or ID is specified\nUse 'mesheryctl filter view --help' to display usage guide\n"))
 			}
-			filter, isID, err = utils.Valid(args[0], "filter")
+			filter, isID, err = utils.ValidId(args[0], "filter")
 			if err != nil {
-				return errors.New("Invalid filter ID / filter name. " + err.Error())
+				return errors.New("invalid filter name or ID. " + err.Error())
 			}
 		}
-		url := mctlCfg.GetBaseMesheryURL()
+
+		urlString := mctlCfg.GetBaseMesheryURL()
 		if len(filter) == 0 {
 			if viewAllFlag {
-				url += "/api/filter?page_size=10000"
+				urlString += "/api/filter?pagesize=10000"
 			} else {
-				return errors.New("[filter-name|filter-id] not specified, use -a to view all filters")
+				return errors.New(utils.FilterViewError("filter-name or ID not specified, use -a to view all filters\nUse 'mesheryctl filter view --help' to display usage guide\n"))
 			}
 		} else if isID {
 			// if filter is a valid uuid, then directly fetch the filter
-			url += "/api/filter/" + filter
+			urlString += "/api/filter/" + filter
 		} else {
 			// else search filter by name
-			url += "/api/filter?search=" + filter
+			urlString += "/api/filter?search=" + url.QueryEscape(filter)
 		}
 
-		client := &http.Client{}
-		req, err := utils.NewRequest("GET", url, nil)
+		req, err := utils.NewRequest("GET", urlString, nil)
 		if err != nil {
 			return err
 		}
-
-		res, err := client.Do(req)
+		res, err := utils.MakeRequest(req)
 		if err != nil {
 			return err
-		}
-		if res.StatusCode != 200 {
-			// failsafe for the case when a valid uuid v4 is not an id of any filter (bad api call)
-			return errors.Errorf("Response Status Code %d, possible invalid ID", res.StatusCode)
 		}
 
 		defer res.Body.Close()

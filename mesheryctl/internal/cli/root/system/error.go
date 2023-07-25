@@ -1,3 +1,17 @@
+// Copyright 2023 Layer5, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package system
 
 import (
@@ -28,6 +42,7 @@ const (
 	ErrInitPortForwardCode               = "1047"
 	ErrRunPortForwardCode                = "1048"
 	ErrFailedGetEphemeralPortCode        = "1049"
+	ErrCreatingDockerClientCode          = "1060"
 )
 
 func ErrHealthCheckFailed(err error) error {
@@ -131,4 +146,14 @@ func ErrFailedGetEphemeralPort(err error) error {
 		[]string{err.Error(), "Failed to start port-forwarding"},
 		nil, nil,
 	)
+}
+
+func ErrCreatingDockerClient(err error) error {
+	return errors.New(
+		ErrCreatingDockerClientCode,
+		errors.Critical,
+		[]string{"Failed to create Docker client"},
+		[]string{"Error occurred while creating Docker client from config file", err.Error()},
+		[]string{"Missing or invalid docker config"},
+		[]string{"Please check the Docker config file for any errors or missing information. Make sure it is correctly formatted and contains all the required fields."})
 }

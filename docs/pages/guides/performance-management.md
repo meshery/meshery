@@ -22,11 +22,11 @@ If you are looking to run performance benchmarks on a service mesh, you can use 
 
 With Meshery's performance benchmarking feature, you can also deploy you application off the mesh and compare the performance and determine the overhead when the app runs on the mesh.
 
-To install a service mesh, see [this guide](https://docs.meshery.io/service-meshes).
+To install a service mesh, see [this guide]({{ site.baseurl }}/service-meshes).
 
-Meshery also comes with a set of [sample applications](https://docs.meshery.io/guides/sample-apps) that you can quickly deploy to test out the capabilities of your service mesh.
+Meshery also comes with a set of [sample applications](h{{ site.baseurl }}/guides/sample-apps) that you can quickly deploy to test out the capabilities of your service mesh.
 
-Next, we navigate to the main Performance Testing dashboard. See [Performance Management]({{ site.baseurl }}/functionality/performance-management) to learn more about performance profiles, load generators, Kubernetes cluster, and service mesh metrics.
+Next, we navigate to the main Performance Testing dashboard. See [Performance Management]({{ site.baseurl }}/tasks/performance-management) to learn more about performance profiles, load generators, Kubernetes cluster, and service mesh metrics.
 
 ## Running Performance Benchmarks Through Meshery UI
 

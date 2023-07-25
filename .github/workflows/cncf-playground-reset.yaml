@@ -1,0 +1,37 @@
+name: Playground CNCF - Reset Non-essential Namespaces and Reboot
+on:
+  workflow_dispatch:
+  schedule:
+    - cron:  '0 0 * * *'  # Run the job every day at midnight UTC
+
+jobs:
+  reset:
+    name: reset
+    if: github.repository == 'meshery/meshery'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Cluster cleanup by running the cleanup script inside VM
+      uses: appleboy/ssh-action@master
+      with:
+          host: 147.75.47.9
+          username: root
+          key: ${{ secrets.METAL_SSH_KEY }}
+          script: |
+            cd meshery/install/playground; ./playground-cleanup.sh
+
+  reboot:
+    name: Reboot Metal servers
+    needs: reset 
+    if: github.repository == 'meshery/meshery'
+    runs-on: ubuntu-latest 
+    steps:
+        - name: Download and install Equinix Metal CLI
+          run: |
+            curl -L https://github.com/equinix/metal-cli/releases/latest/download/metal-linux-amd64 -o metal
+            chmod +x metal
+            sudo mv metal /usr/local/bin/metal
+        - name: Reboot both servers
+          env:
+            METAL_AUTH_TOKEN: ${{ secrets.METAL_AUTH_TOKEN }}
+          run: |
+            METAL_AUTH_TOKEN=$METAL_AUTH_TOKEN metal device reboot -i ${{ secrets.METAL_SERVER2 }} 

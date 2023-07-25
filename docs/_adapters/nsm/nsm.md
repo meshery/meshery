@@ -10,6 +10,7 @@ lab: nsm-meshery-adapter
 github_link: https://github.com/meshery/meshery-nsm
 image: /assets/img/service-meshes/nsm.svg
 permalink: service-meshes/adapters/nsm
+language: en
 ---
 
 {% assign sorted_tests_group = site.compatibility | group_by: "meshery-component" %}
@@ -29,7 +30,7 @@ permalink: service-meshes/adapters/nsm
 {% endif %}
 {% endfor %}
 
-{% include adapter-status.html %}
+{% include compatibility/adapter-status.html %}
 
 {% include adapter-labs.html %}
 

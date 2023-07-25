@@ -22,8 +22,15 @@ var (
 	flusherMap map[string]http.Flusher
 )
 
+// swagger:route GET /api/events EventsAPI idGetEventStreamer
+// Handle GET request for events.
+// Listens for events across all of Meshery's components like adapters and server, streaming them to the UI via Server Side Events
+// This API call never terminates and establishes a persistent keep-alive connection over which `EventsResponse`s are pushed.
+// responses:
+// 	200: EventsResponse
+
 // EventStreamHandler endpoint is used for streaming events to the frontend
-func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, p models.Provider) {
+func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, p models.Provider) {
 	// if req.Method != http.MethodGet {
 	// 	w.WriteHeader(http.StatusNotFound)
 	// 	return
@@ -135,7 +142,7 @@ STOP:
 	close(respChan)
 	defer log.Debug("events handler closed")
 }
-func listenForCoreEvents(ctx context.Context, eb *events.EventStreamer, resp chan []byte, log *logrus.Entry, p models.Provider) {
+func listenForCoreEvents(ctx context.Context, eb *events.EventStreamer, resp chan []byte, log *logrus.Entry, _ models.Provider) {
 	datach := make(chan interface{}, 10)
 	go eb.Subscribe(datach)
 	for {

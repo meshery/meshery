@@ -1,1 +1,0 @@
-{"kind":"IstioOperator","apiVersion":"v1alpha1","displayName":"Istio Operator","format":"JSON","metadata":{"logo-URL":"","model":"base","modelDisplayName":"Base","primaryColor":"","secondaryColor":"","shape":"circle","svgColor":"","svgWhite":""},"model":{"name":"base","version":"1.10.3","displayName":"Base","category":"Not Found","subCategory":"Not Found"},"schema":""}

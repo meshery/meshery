@@ -3,6 +3,7 @@ layout: page
 title: Articles
 permalink: /archive/
 excluded_in_search: true
+language: en
 ---
 # News Archive
 

@@ -12,23 +12,23 @@ Meshery is a CNCF project maintained by engineers from Layer5, VMware, Red Hat, 
 
 #### Community First
 
-<p>Meshery is one of a number of open source projects originated by the <a href="https://layer5.io">Layer5 community</a>, which represents the largest collection of service mesh projects and their maintainers in the world.</p>
+<p>Meshery is one of a number of open source projects originated by the <a href="https://layer5.io/community">Layer5 community</a>.</p>
 
 The Meshery project is community-built and welcomes collaboration! 
 <br /><a href="https://github.com/meshery/meshery"><i class="fab fa-github"></i> Fork here on Github</a>
 
-* Join [weekly community meeting](https://docs.google.com/document/d/1c07UO9dS7_tFD-ClCWHIrEzRnzUJoFQ10EzfJTpS7FY/edit?usp=sharing) [Fridays from 10am to 11am Central](https://meshery.io/calendar). 
-    - Watch community [meeting recordings](https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0) and subscribe to the [community calendar](https://bit.ly/2SbrRhe).
+* Join any of the [community meetings](https://meshery.io/calendar). 
+  * Watch [meeting recordings](https://www.youtube.com/@Layer5io?sub_confirmation=1) and subscribe to the [community calendar](https://meshery.io/calendar).
 * Fill-in a <a href="https://layer5.io/newcomers">community member form</a> to gain access to community resources.
 
 ## Getting involved in the Community
 
-Want to get involved with project, read through the [Newcomers Guide](https://layer5.io/community/newcomers), which provides details on how to engage. Seek out other community members, who will make sure you are not left out. We always have a role for everyone whether to be a code-writer, a community manager, user, advocate, or just to listen in. Layer5 community is always open and warmly welcomes you. Check out our [community welcome guide](https://docs.google.com/document/d/17OPtDE_rdnPQxmk2Kauhm3GwXF1R5dZ3Cj8qZLKdo5E/edit) for more details.
-If this is your first time making open source contribution, you are in the right place! Check out our [first timers' welcome guide](https://docs.google.com/document/d/1tpg2sLxirozNt3Ofr3GdM002f9rExp74EqrsGZBU710/edit).
+Want to get involved with project, read through the [Newcomers Guide](https://layer5.io/community/newcomers), which provides details on how to engage. Seek out other community members, who will make sure you are not left out. We always have a role for everyone whether to be a code-writer, a community manager, user, advocate, or just to listen in. Layer5 community is always open and warmly welcomes you. 
+If this is your first time making open source contribution, you are in the right place!
 
 Please see our [contributing guide]({{ site.baseurl }}/project/contributing) for more details.
 
-## Presentations
+<!-- ## Presentations
 
 <iframe class="container" width="560" height="315" src="https://www.youtube.com/embed/CFj1O_uyhhs" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
@@ -51,7 +51,7 @@ Past presentations of Meshery:
 - [KubeCon EU 2019 Istio Founders Meetup](https://calcotestudios.com/talks/decks/slides-istio-meetup-kubecon-eu-2019-istio-at-scale-large-and-small.html)
 - [Cloud Native Rejekts EU 2019](https://calcotestudios.com/talks/decks/slides-cloud-native-rejekts-2019-evaluating-service-meshes.html)
 - [Container World 2019](https://calcotestudios.com/talks/decks/slides-container-world-2019-service-meshes-but-at-what-cost.html)
-- Solving the Service Mesh Adopter’s Dilemma ([deck](https://calcotestudios.com/talks/decks/slides-open-source-101-at-home-solving-the-service-mesh-adopters-dilemma.html), [event](https://opensource101.com/sessions/solving-the-service-mesh-adopters-dilemma/),[video](https://www.youtube.com/watch?v=Q1zSWbO0RmI&list=PL3A-A6hPO2IN_HSU0pSfijBboiHggs5mC&index=2&t=0s))
+- Solving the Service Mesh Adopter’s Dilemma ([deck](https://calcotestudios.com/talks/decks/slides-open-source-101-at-home-solving-the-service-mesh-adopters-dilemma.html), [event](https://opensource101.com/sessions/solving-the-service-mesh-adopters-dilemma/),[video](https://www.youtube.com/watch?v=Q1zSWbO0RmI&list=PL3A-A6hPO2IN_HSU0pSfijBboiHggs5mC&index=2&t=0s)) -->
 
 ## Talking about Meshery?
 

@@ -92,7 +92,26 @@ getcodeelement.each(function(i) {
        $(this).after(clipButton);
 });
 
-new Clipboard('.clipbtn');
+var clipboard = new Clipboard('.clipbtn');
+
+/* Change copy icon to text when successfully copied*/
+clipboard.on("success", (e)=>{
+    console.info(e.trigger);
+    console.info(e.trigger.childNodes[0]);
+    let originalIcon = e.trigger.childNodes[0];
+
+    var icon = e.trigger.childNodes[0];
+    var text = document.createElement('span');
+    text.textContent = "Copied!";
+    text.style.color = "white";
+
+    e.trigger.replaceChild(text, icon);
+
+    setTimeout(()=>{
+        e.trigger.replaceChild(originalIcon, text);
+    },2000)
+})
+
 const toggleBtnSidebarNav=document.querySelector(".nav-toggle-btn--document");
 
 toggleBtnSidebarNav.addEventListener("click",()=>{

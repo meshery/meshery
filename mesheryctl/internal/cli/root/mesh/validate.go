@@ -1,3 +1,17 @@
+// Copyright 2023 Layer5, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package mesh
 
 import (
@@ -22,6 +36,11 @@ type Operation struct {
 
 var spec string
 
+var linkDocMeshValidate = map[string]string{
+	"link":    "![mesh-validate-usage](/assets/img/mesheryctl/mesh-validate.png)",
+	"caption": "Usage of mesheryctl mesh validate",
+}
+
 // validateCmd represents the service mesh validation command
 var validateCmd = &cobra.Command{
 	Use:   "validate",
@@ -32,12 +51,9 @@ mesheryctl mesh validate [mesh name] --adapter [name of the adapter] --tokenPath
 
 // Validate Istio to service mesh standards
 mesheryctl mesh validate istio --adapter meshery-istio --spec smi
-
-! Refer below image link for usage
-* Usage of mesheryctl mesh validate
-# ![mesh-validate-usage](/assets/img/mesheryctl/mesh-validate.png)
 	`,
-	Long: `Validate service mesh conformance to different standard specifications`,
+	Annotations: linkDocMeshValidate,
+	Long:        `Validate service mesh conformance to different standard specifications`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		log.Infof("Verifying prerequisites...")
 

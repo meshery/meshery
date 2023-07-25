@@ -10,6 +10,7 @@ import (
 	"io"
 	"strconv"
 	"sync"
+	"sync/atomic"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
@@ -70,15 +71,16 @@ type ComplexityRoot struct {
 	}
 
 	CatalogFilter struct {
-		CatalogData func(childComplexity int) int
-		CreatedAt   func(childComplexity int) int
-		FilterFile  func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Location    func(childComplexity int) int
-		Name        func(childComplexity int) int
-		UpdatedAt   func(childComplexity int) int
-		UserID      func(childComplexity int) int
-		Visibility  func(childComplexity int) int
+		CatalogData    func(childComplexity int) int
+		CreatedAt      func(childComplexity int) int
+		FilterFile     func(childComplexity int) int
+		FilterResource func(childComplexity int) int
+		ID             func(childComplexity int) int
+		Location       func(childComplexity int) int
+		Name           func(childComplexity int) int
+		UpdatedAt      func(childComplexity int) int
+		UserID         func(childComplexity int) int
+		Visibility     func(childComplexity int) int
 	}
 
 	CatalogPattern struct {
@@ -161,15 +163,16 @@ type ComplexityRoot struct {
 	}
 
 	FilterResult struct {
-		CatalogData func(childComplexity int) int
-		CreatedAt   func(childComplexity int) int
-		FilterFile  func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Location    func(childComplexity int) int
-		Name        func(childComplexity int) int
-		UpdatedAt   func(childComplexity int) int
-		UserID      func(childComplexity int) int
-		Visibility  func(childComplexity int) int
+		CatalogData    func(childComplexity int) int
+		CreatedAt      func(childComplexity int) int
+		FilterFile     func(childComplexity int) int
+		FilterResource func(childComplexity int) int
+		ID             func(childComplexity int) int
+		Location       func(childComplexity int) int
+		Name           func(childComplexity int) int
+		UpdatedAt      func(childComplexity int) int
+		UserID         func(childComplexity int) int
+		Visibility     func(childComplexity int) int
 	}
 
 	K8sContext struct {
@@ -185,6 +188,7 @@ type ComplexityRoot struct {
 		Owner              func(childComplexity int) int
 		Server             func(childComplexity int) int
 		UpdatedAt          func(childComplexity int) int
+		Version            func(childComplexity int) int
 	}
 
 	K8sContextsPage struct {
@@ -247,6 +251,7 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
+		ChangeAdapterStatus  func(childComplexity int, input *model.AdapterStatusInput) int
 		ChangeOperatorStatus func(childComplexity int, input *model.OperatorStatusInput) int
 	}
 
@@ -338,6 +343,7 @@ type ComplexityRoot struct {
 		ID                func(childComplexity int) int
 		LastRun           func(childComplexity int) int
 		LoadGenerators    func(childComplexity int) int
+		Metadata          func(childComplexity int) int
 		Name              func(childComplexity int) int
 		QPS               func(childComplexity int) int
 		RequestBody       func(childComplexity int) int
@@ -370,9 +376,6 @@ type ComplexityRoot struct {
 		GetOperatorStatus          func(childComplexity int, k8scontextID string) int
 		GetPerfResult              func(childComplexity int, id string) int
 		GetPerformanceProfiles     func(childComplexity int, selector model.PageFilter) int
-		GetScopes                  func(childComplexity int, name *string, id *string, trim *bool) int
-		GetTraits                  func(childComplexity int, name *string, id *string, trim *bool) int
-		GetWorkloads               func(childComplexity int, name *string, id *string, trim *bool) int
 		ResyncCluster              func(childComplexity int, selector *model.ReSyncActions, k8scontextID string) int
 	}
 
@@ -407,6 +410,7 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	ChangeOperatorStatus(ctx context.Context, input *model.OperatorStatusInput) (model.Status, error)
+	ChangeAdapterStatus(ctx context.Context, input *model.AdapterStatusInput) (model.Status, error)
 }
 type QueryResolver interface {
 	GetAvailableAddons(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.AddonList, error)
@@ -424,9 +428,6 @@ type QueryResolver interface {
 	GetPerformanceProfiles(ctx context.Context, selector model.PageFilter) (*model.PerfPageProfiles, error)
 	FetchAllResults(ctx context.Context, selector model.PageFilter) (*model.PerfPageResult, error)
 	FetchPatterns(ctx context.Context, selector model.PageFilter) (*model.PatternPageResult, error)
-	GetWorkloads(ctx context.Context, name *string, id *string, trim *bool) ([]*model.OAMCapability, error)
-	GetTraits(ctx context.Context, name *string, id *string, trim *bool) ([]*model.OAMCapability, error)
-	GetScopes(ctx context.Context, name *string, id *string, trim *bool) ([]*model.OAMCapability, error)
 	GetKubectlDescribe(ctx context.Context, name string, kind string, namespace string) (*model.KctlDescribeDetails, error)
 	FetchPatternCatalogContent(ctx context.Context, selector *model.CatalogSelector) ([]*model.CatalogPattern, error)
 	FetchFilterCatalogContent(ctx context.Context, selector *model.CatalogSelector) ([]*model.CatalogFilter, error)
@@ -591,6 +592,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.CatalogFilter.FilterFile(childComplexity), true
+
+	case "CatalogFilter.filter_resource":
+		if e.complexity.CatalogFilter.FilterResource == nil {
+			break
+		}
+
+		return e.complexity.CatalogFilter.FilterResource(childComplexity), true
 
 	case "CatalogFilter.id":
 		if e.complexity.CatalogFilter.ID == nil {
@@ -977,6 +985,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.FilterResult.FilterFile(childComplexity), true
 
+	case "FilterResult.filter_resource":
+		if e.complexity.FilterResult.FilterResource == nil {
+			break
+		}
+
+		return e.complexity.FilterResult.FilterResource(childComplexity), true
+
 	case "FilterResult.id":
 		if e.complexity.FilterResult.ID == nil {
 			break
@@ -1102,6 +1117,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.K8sContext.UpdatedAt(childComplexity), true
+
+	case "K8sContext.version":
+		if e.complexity.K8sContext.Version == nil {
+			break
+		}
+
+		return e.complexity.K8sContext.Version(childComplexity), true
 
 	case "K8sContextsPage.contexts":
 		if e.complexity.K8sContextsPage.Contexts == nil {
@@ -1326,6 +1348,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.MesheryResult.UserID(childComplexity), true
+
+	case "Mutation.changeAdapterStatus":
+		if e.complexity.Mutation.ChangeAdapterStatus == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_changeAdapterStatus_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.ChangeAdapterStatus(childComplexity, args["input"].(*model.AdapterStatusInput)), true
 
 	case "Mutation.changeOperatorStatus":
 		if e.complexity.Mutation.ChangeOperatorStatus == nil {
@@ -1717,6 +1751,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PerfProfile.LoadGenerators(childComplexity), true
 
+	case "PerfProfile.metadata":
+		if e.complexity.PerfProfile.Metadata == nil {
+			break
+		}
+
+		return e.complexity.PerfProfile.Metadata(childComplexity), true
+
 	case "PerfProfile.name":
 		if e.complexity.PerfProfile.Name == nil {
 			break
@@ -2020,42 +2061,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetPerformanceProfiles(childComplexity, args["selector"].(model.PageFilter)), true
 
-	case "Query.getScopes":
-		if e.complexity.Query.GetScopes == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getScopes_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetScopes(childComplexity, args["name"].(*string), args["id"].(*string), args["trim"].(*bool)), true
-
-	case "Query.getTraits":
-		if e.complexity.Query.GetTraits == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getTraits_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetTraits(childComplexity, args["name"].(*string), args["id"].(*string), args["trim"].(*bool)), true
-
-	case "Query.getWorkloads":
-		if e.complexity.Query.GetWorkloads == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getWorkloads_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetWorkloads(childComplexity, args["name"].(*string), args["id"].(*string), args["trim"].(*bool)), true
-
 	case "Query.resyncCluster":
 		if e.complexity.Query.ResyncCluster == nil {
 			break
@@ -2274,6 +2279,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputAdapterStatusInput,
 		ec.unmarshalInputAddonStatusInput,
 		ec.unmarshalInputCatalogSelector,
 		ec.unmarshalInputMeshModelSummarySelector,
@@ -2655,6 +2661,7 @@ type K8sContext {
   meshery_instance_id: ID!,
   kubernetes_server_id: ID!,
   deployment_type: String!,
+  version: String!,
   updated_at: String!,
   created_at: String!
 }
@@ -2711,6 +2718,7 @@ type FilterResult {
   id: ID!
   name: String!
   filter_file: String!
+  filter_resource: String!
   user_id: String!
   location: Location!
   visibility: String!
@@ -2725,6 +2733,7 @@ type CatalogFilter {
   filter_file: String!
   user_id: String!
   location: Location!
+  filter_resource: String!
   visibility: String!
   catalog_data: Map
   created_at: String
@@ -2809,6 +2818,7 @@ type PerfProfile {
   request_body: String
   content_type: String
   service_mesh: String
+  metadata: Map
 }
 
 type MesheryResult {
@@ -2837,6 +2847,8 @@ input PageFilter {
 }
 
 input CatalogSelector {
+  page: String!
+  pagesize: String!
   search: String!
   order: String!
 }
@@ -2953,13 +2965,6 @@ type Query {
   # Query for fetching all patterns with selector
   fetchPatterns(selector: PageFilter!): PatternPageResult!
 
-  # Query for getting workloads
-  getWorkloads(name: String, id: ID, trim: Boolean): [OAMCapability]
-  # Query for getting traits
-  getTraits(name: String, id: ID, trim: Boolean): [OAMCapability]
-  # Query for getting scopes
-  getScopes(name: String, id: ID, trim: Boolean): [OAMCapability]
-
   # Query for getting kubectl describe details with meshkit 
   getKubectlDescribe(name: String!, kind: String!, namespace: String!): KctlDescribeDetails!
 
@@ -2981,9 +2986,24 @@ type Query {
 
 #
 
+# Input for status change of Meshery Operator
+input AdapterStatusInput {
+  # Desired status for Meshery Operator
+  targetStatus: Status!
+  
+  # The port on which adapter will be deployed
+  targetPort: String!
+
+  # Name of the adapter to be deployed
+  adapter: String!
+}
+
 type Mutation {
   # Change the Operator Status
   changeOperatorStatus(input: OperatorStatusInput): Status!
+
+  # Change the Adapter Status
+  changeAdapterStatus(input: AdapterStatusInput): Status!
 }
 
 type Subscription {
@@ -3060,14 +3080,28 @@ type OAMCapability {
 type KctlDescribeDetails {
   describe: String
   ctxid: String
-}
-`, BuiltIn: false},
+}`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_Mutation_changeAdapterStatus_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.AdapterStatusInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOAdapterStatusInput2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐAdapterStatusInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
 
 func (ec *executionContext) field_Mutation_changeOperatorStatus_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -3432,105 +3466,6 @@ func (ec *executionContext) field_Query_getPerformanceProfiles_args(ctx context.
 		}
 	}
 	args["selector"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_getScopes_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 *string
-	if tmp, ok := rawArgs["name"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["name"] = arg0
-	var arg1 *string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg1, err = ec.unmarshalOID2ᚖstring(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg1
-	var arg2 *bool
-	if tmp, ok := rawArgs["trim"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trim"))
-		arg2, err = ec.unmarshalOBoolean2ᚖbool(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["trim"] = arg2
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_getTraits_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 *string
-	if tmp, ok := rawArgs["name"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["name"] = arg0
-	var arg1 *string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg1, err = ec.unmarshalOID2ᚖstring(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg1
-	var arg2 *bool
-	if tmp, ok := rawArgs["trim"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trim"))
-		arg2, err = ec.unmarshalOBoolean2ᚖbool(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["trim"] = arg2
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_getWorkloads_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 *string
-	if tmp, ok := rawArgs["name"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["name"] = arg0
-	var arg1 *string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg1, err = ec.unmarshalOID2ᚖstring(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg1
-	var arg2 *bool
-	if tmp, ok := rawArgs["trim"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trim"))
-		arg2, err = ec.unmarshalOBoolean2ᚖbool(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["trim"] = arg2
 	return args, nil
 }
 
@@ -4739,6 +4674,50 @@ func (ec *executionContext) fieldContext_CatalogFilter_location(ctx context.Cont
 				return ec.fieldContext_Location_type(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Location", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CatalogFilter_filter_resource(ctx context.Context, field graphql.CollectedField, obj *model.CatalogFilter) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CatalogFilter_filter_resource(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FilterResource, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CatalogFilter_filter_resource(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CatalogFilter",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -6999,6 +6978,8 @@ func (ec *executionContext) fieldContext_FilterPage_filters(ctx context.Context,
 				return ec.fieldContext_FilterResult_name(ctx, field)
 			case "filter_file":
 				return ec.fieldContext_FilterResult_filter_file(ctx, field)
+			case "filter_resource":
+				return ec.fieldContext_FilterResult_filter_resource(ctx, field)
 			case "user_id":
 				return ec.fieldContext_FilterResult_user_id(ctx, field)
 			case "location":
@@ -7138,6 +7119,50 @@ func (ec *executionContext) _FilterResult_filter_file(ctx context.Context, field
 }
 
 func (ec *executionContext) fieldContext_FilterResult_filter_file(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "FilterResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _FilterResult_filter_resource(ctx context.Context, field graphql.CollectedField, obj *model.FilterResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_FilterResult_filter_resource(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FilterResource, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_FilterResult_filter_resource(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "FilterResult",
 		Field:      field,
@@ -7855,6 +7880,50 @@ func (ec *executionContext) fieldContext_K8sContext_deployment_type(ctx context.
 	return fc, nil
 }
 
+func (ec *executionContext) _K8sContext_version(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8sContext_version(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Version, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8sContext_version(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8sContext",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _K8sContext_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_K8sContext_updated_at(ctx, field)
 	if err != nil {
@@ -8046,6 +8115,8 @@ func (ec *executionContext) fieldContext_K8sContextsPage_contexts(ctx context.Co
 				return ec.fieldContext_K8sContext_kubernetes_server_id(ctx, field)
 			case "deployment_type":
 				return ec.fieldContext_K8sContext_deployment_type(ctx, field)
+			case "version":
+				return ec.fieldContext_K8sContext_version(ctx, field)
 			case "updated_at":
 				return ec.fieldContext_K8sContext_updated_at(ctx, field)
 			case "created_at":
@@ -9347,6 +9418,7 @@ func (ec *executionContext) _Mutation_changeOperatorStatus(ctx context.Context, 
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -9377,6 +9449,61 @@ func (ec *executionContext) fieldContext_Mutation_changeOperatorStatus(ctx conte
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_changeOperatorStatus_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_changeAdapterStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_changeAdapterStatus(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().ChangeAdapterStatus(rctx, fc.Args["input"].(*model.AdapterStatusInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.Status)
+	fc.Result = res
+	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_changeAdapterStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Status does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_changeAdapterStatus_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -11300,6 +11427,8 @@ func (ec *executionContext) fieldContext_PerfPageProfiles_profiles(ctx context.C
 				return ec.fieldContext_PerfProfile_content_type(ctx, field)
 			case "service_mesh":
 				return ec.fieldContext_PerfProfile_service_mesh(ctx, field)
+			case "metadata":
+				return ec.fieldContext_PerfProfile_metadata(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PerfProfile", field.Name)
 		},
@@ -12215,6 +12344,47 @@ func (ec *executionContext) fieldContext_PerfProfile_service_mesh(ctx context.Co
 	return fc, nil
 }
 
+func (ec *executionContext) _PerfProfile_metadata(ctx context.Context, field graphql.CollectedField, obj *model.PerfProfile) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PerfProfile_metadata(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Metadata, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(map[string]interface{})
+	fc.Result = res
+	return ec.marshalOMap2map(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PerfProfile_metadata(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PerfProfile",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Map does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_getAvailableAddons(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_getAvailableAddons(ctx, field)
 	if err != nil {
@@ -12233,6 +12403,7 @@ func (ec *executionContext) _Query_getAvailableAddons(ctx context.Context, field
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -12293,6 +12464,7 @@ func (ec *executionContext) _Query_getControlPlanes(ctx context.Context, field g
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -12353,6 +12525,7 @@ func (ec *executionContext) _Query_getDataPlanes(ctx context.Context, field grap
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -12413,6 +12586,7 @@ func (ec *executionContext) _Query_getOperatorStatus(ctx context.Context, field 
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		return graphql.Null
@@ -12476,6 +12650,7 @@ func (ec *executionContext) _Query_resyncCluster(ctx context.Context, field grap
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -12530,6 +12705,7 @@ func (ec *executionContext) _Query_getMeshsyncStatus(ctx context.Context, field 
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -12596,6 +12772,7 @@ func (ec *executionContext) _Query_deployMeshsync(ctx context.Context, field gra
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -12650,6 +12827,7 @@ func (ec *executionContext) _Query_getNatsStatus(ctx context.Context, field grap
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -12716,6 +12894,7 @@ func (ec *executionContext) _Query_connectToNats(ctx context.Context, field grap
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -12770,6 +12949,7 @@ func (ec *executionContext) _Query_getAvailableNamespaces(ctx context.Context, f
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -12828,6 +13008,7 @@ func (ec *executionContext) _Query_getPerfResult(ctx context.Context, field grap
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		return graphql.Null
@@ -12905,6 +13086,7 @@ func (ec *executionContext) _Query_fetchResults(ctx context.Context, field graph
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -12969,6 +13151,7 @@ func (ec *executionContext) _Query_getPerformanceProfiles(ctx context.Context, f
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -13033,6 +13216,7 @@ func (ec *executionContext) _Query_fetchAllResults(ctx context.Context, field gr
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -13097,6 +13281,7 @@ func (ec *executionContext) _Query_fetchPatterns(ctx context.Context, field grap
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -13143,201 +13328,6 @@ func (ec *executionContext) fieldContext_Query_fetchPatterns(ctx context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_getWorkloads(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getWorkloads(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetWorkloads(rctx, fc.Args["name"].(*string), fc.Args["id"].(*string), fc.Args["trim"].(*bool))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*model.OAMCapability)
-	fc.Result = res
-	return ec.marshalOOAMCapability2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOAMCapability(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_getWorkloads(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "oam_definition":
-				return ec.fieldContext_OAMCapability_oam_definition(ctx, field)
-			case "id":
-				return ec.fieldContext_OAMCapability_id(ctx, field)
-			case "oam_ref_schema":
-				return ec.fieldContext_OAMCapability_oam_ref_schema(ctx, field)
-			case "host":
-				return ec.fieldContext_OAMCapability_host(ctx, field)
-			case "restricted":
-				return ec.fieldContext_OAMCapability_restricted(ctx, field)
-			case "metadata":
-				return ec.fieldContext_OAMCapability_metadata(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type OAMCapability", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getWorkloads_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_getTraits(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getTraits(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetTraits(rctx, fc.Args["name"].(*string), fc.Args["id"].(*string), fc.Args["trim"].(*bool))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*model.OAMCapability)
-	fc.Result = res
-	return ec.marshalOOAMCapability2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOAMCapability(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_getTraits(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "oam_definition":
-				return ec.fieldContext_OAMCapability_oam_definition(ctx, field)
-			case "id":
-				return ec.fieldContext_OAMCapability_id(ctx, field)
-			case "oam_ref_schema":
-				return ec.fieldContext_OAMCapability_oam_ref_schema(ctx, field)
-			case "host":
-				return ec.fieldContext_OAMCapability_host(ctx, field)
-			case "restricted":
-				return ec.fieldContext_OAMCapability_restricted(ctx, field)
-			case "metadata":
-				return ec.fieldContext_OAMCapability_metadata(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type OAMCapability", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getTraits_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_getScopes(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getScopes(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetScopes(rctx, fc.Args["name"].(*string), fc.Args["id"].(*string), fc.Args["trim"].(*bool))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*model.OAMCapability)
-	fc.Result = res
-	return ec.marshalOOAMCapability2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOAMCapability(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_getScopes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "oam_definition":
-				return ec.fieldContext_OAMCapability_oam_definition(ctx, field)
-			case "id":
-				return ec.fieldContext_OAMCapability_id(ctx, field)
-			case "oam_ref_schema":
-				return ec.fieldContext_OAMCapability_oam_ref_schema(ctx, field)
-			case "host":
-				return ec.fieldContext_OAMCapability_host(ctx, field)
-			case "restricted":
-				return ec.fieldContext_OAMCapability_restricted(ctx, field)
-			case "metadata":
-				return ec.fieldContext_OAMCapability_metadata(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type OAMCapability", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getScopes_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Query_getKubectlDescribe(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_getKubectlDescribe(ctx, field)
 	if err != nil {
@@ -13356,6 +13346,7 @@ func (ec *executionContext) _Query_getKubectlDescribe(ctx context.Context, field
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -13416,6 +13407,7 @@ func (ec *executionContext) _Query_fetchPatternCatalogContent(ctx context.Contex
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -13490,6 +13482,7 @@ func (ec *executionContext) _Query_fetchFilterCatalogContent(ctx context.Context
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -13520,6 +13513,8 @@ func (ec *executionContext) fieldContext_Query_fetchFilterCatalogContent(ctx con
 				return ec.fieldContext_CatalogFilter_user_id(ctx, field)
 			case "location":
 				return ec.fieldContext_CatalogFilter_location(ctx, field)
+			case "filter_resource":
+				return ec.fieldContext_CatalogFilter_filter_resource(ctx, field)
 			case "visibility":
 				return ec.fieldContext_CatalogFilter_visibility(ctx, field)
 			case "catalog_data":
@@ -13564,6 +13559,7 @@ func (ec *executionContext) _Query_getClusterResources(ctx context.Context, fiel
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -13622,6 +13618,7 @@ func (ec *executionContext) _Query_getMeshModelSummary(ctx context.Context, fiel
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -13682,6 +13679,7 @@ func (ec *executionContext) _Query_fetchTelemetryComponents(ctx context.Context,
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -13744,6 +13742,7 @@ func (ec *executionContext) _Query___type(ctx context.Context, field graphql.Col
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		return graphql.Null
@@ -13817,6 +13816,7 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return graphql.Null
 	}
 	if resTmp == nil {
 		return graphql.Null
@@ -13959,6 +13959,7 @@ func (ec *executionContext) _Subscription_listenToAddonState(ctx context.Context
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return nil
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -14033,6 +14034,7 @@ func (ec *executionContext) _Subscription_listenToControlPlaneState(ctx context.
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return nil
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -14107,6 +14109,7 @@ func (ec *executionContext) _Subscription_listenToDataPlaneState(ctx context.Con
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return nil
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -14181,6 +14184,7 @@ func (ec *executionContext) _Subscription_listenToOperatorState(ctx context.Cont
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return nil
 	}
 	if resTmp == nil {
 		return nil
@@ -14252,6 +14256,7 @@ func (ec *executionContext) _Subscription_listenToMeshSyncEvents(ctx context.Con
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return nil
 	}
 	if resTmp == nil {
 		return nil
@@ -14323,6 +14328,7 @@ func (ec *executionContext) _Subscription_subscribePerfProfiles(ctx context.Cont
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return nil
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -14401,6 +14407,7 @@ func (ec *executionContext) _Subscription_subscribePerfResults(ctx context.Conte
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return nil
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -14479,6 +14486,7 @@ func (ec *executionContext) _Subscription_subscribeBrokerConnection(ctx context.
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return nil
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -14536,6 +14544,7 @@ func (ec *executionContext) _Subscription_subscribeMesheryControllersStatus(ctx 
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return nil
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -14612,6 +14621,7 @@ func (ec *executionContext) _Subscription_subscribeMeshSyncEvents(ctx context.Co
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return nil
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -14688,6 +14698,7 @@ func (ec *executionContext) _Subscription_subscribeConfiguration(ctx context.Con
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return nil
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -14764,6 +14775,7 @@ func (ec *executionContext) _Subscription_subscribeClusterResources(ctx context.
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return nil
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -14836,6 +14848,7 @@ func (ec *executionContext) _Subscription_subscribeK8sContext(ctx context.Contex
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return nil
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -14910,6 +14923,7 @@ func (ec *executionContext) _Subscription_subscribeMeshModelSummary(ctx context.
 	})
 	if err != nil {
 		ec.Error(ctx, err)
+		return nil
 	}
 	if resTmp == nil {
 		if !graphql.HasFieldError(ctx, fc) {
@@ -16871,6 +16885,50 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(ctx context.Conte
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputAdapterStatusInput(ctx context.Context, obj interface{}) (model.AdapterStatusInput, error) {
+	var it model.AdapterStatusInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"targetStatus", "targetPort", "adapter"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "targetStatus":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("targetStatus"))
+			it.TargetStatus, err = ec.unmarshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "targetPort":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("targetPort"))
+			it.TargetPort, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "adapter":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("adapter"))
+			it.Adapter, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputAddonStatusInput(ctx context.Context, obj interface{}) (model.AddonStatusInput, error) {
 	var it model.AddonStatusInput
 	asMap := map[string]interface{}{}
@@ -16922,13 +16980,29 @@ func (ec *executionContext) unmarshalInputCatalogSelector(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"search", "order"}
+	fieldsInOrder := [...]string{"page", "pagesize", "search", "order"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
+		case "page":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("page"))
+			it.Page, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "pagesize":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pagesize"))
+			it.Pagesize, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "search":
 			var err error
 
@@ -17379,6 +17453,13 @@ func (ec *executionContext) _CatalogFilter(ctx context.Context, sel ast.Selectio
 		case "location":
 
 			out.Values[i] = ec._CatalogFilter_location(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "filter_resource":
+
+			out.Values[i] = ec._CatalogFilter_filter_resource(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -17946,6 +18027,13 @@ func (ec *executionContext) _FilterResult(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "filter_resource":
+
+			out.Values[i] = ec._FilterResult_filter_resource(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "user_id":
 
 			out.Values[i] = ec._FilterResult_user_id(ctx, field, obj)
@@ -18066,6 +18154,13 @@ func (ec *executionContext) _K8sContext(ctx context.Context, sel ast.SelectionSe
 		case "deployment_type":
 
 			out.Values[i] = ec._K8sContext_deployment_type(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "version":
+
+			out.Values[i] = ec._K8sContext_version(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -18457,6 +18552,7 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 	})
 
 	out := graphql.NewFieldSet(fields)
+	var invalids uint32
 	for i, field := range fields {
 		innerCtx := graphql.WithRootFieldContext(ctx, &graphql.RootFieldContext{
 			Object: field.Name,
@@ -18472,11 +18568,26 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 				return ec._Mutation_changeOperatorStatus(ctx, field)
 			})
 
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "changeAdapterStatus":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_changeAdapterStatus(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
 	}
 	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
 	return out
 }
 
@@ -19078,6 +19189,10 @@ func (ec *executionContext) _PerfProfile(ctx context.Context, sel ast.SelectionS
 
 			out.Values[i] = ec._PerfProfile_service_mesh(ctx, field, obj)
 
+		case "metadata":
+
+			out.Values[i] = ec._PerfProfile_metadata(ctx, field, obj)
+
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -19098,6 +19213,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 	})
 
 	out := graphql.NewFieldSet(fields)
+	var invalids uint32
 	for i, field := range fields {
 		innerCtx := graphql.WithRootFieldContext(ctx, &graphql.RootFieldContext{
 			Object: field.Name,
@@ -19117,6 +19233,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getAvailableAddons(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -19137,6 +19256,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getControlPlanes(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -19157,6 +19279,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getDataPlanes(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -19197,6 +19322,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_resyncCluster(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -19217,6 +19345,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getMeshsyncStatus(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -19237,6 +19368,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_deployMeshsync(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -19257,6 +19391,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getNatsStatus(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -19277,6 +19414,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_connectToNats(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -19297,6 +19437,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getAvailableNamespaces(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -19337,6 +19480,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_fetchResults(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -19357,6 +19503,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getPerformanceProfiles(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -19377,6 +19526,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_fetchAllResults(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -19397,66 +19549,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_fetchPatterns(ctx, field)
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
-		case "getWorkloads":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getWorkloads(ctx, field)
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
-		case "getTraits":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getTraits(ctx, field)
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return rrm(innerCtx)
-			})
-		case "getScopes":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getScopes(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -19477,6 +19572,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getKubectlDescribe(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -19497,6 +19595,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_fetchPatternCatalogContent(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -19517,6 +19618,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_fetchFilterCatalogContent(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -19537,6 +19641,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getClusterResources(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -19557,6 +19664,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getMeshModelSummary(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -19577,6 +19687,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_fetchTelemetryComponents(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -19604,6 +19717,9 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		}
 	}
 	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
 	return out
 }
 
@@ -21293,6 +21409,14 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
+func (ec *executionContext) unmarshalOAdapterStatusInput2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐAdapterStatusInput(ctx context.Context, v interface{}) (*model.AdapterStatusInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputAdapterStatusInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalOAny2interface(ctx context.Context, v interface{}) (interface{}, error) {
 	if v == nil {
 		return nil, nil
@@ -21562,22 +21686,6 @@ func (ec *executionContext) marshalOFilterResult2ᚖgithubᚗcomᚋlayer5ioᚋme
 	return ec._FilterResult(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOID2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := graphql.UnmarshalID(v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOID2ᚖstring(ctx context.Context, sel ast.SelectionSet, v *string) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	res := graphql.MarshalID(*v)
-	return res
-}
-
 func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
 	if v == nil {
 		return nil, nil
@@ -21773,54 +21881,6 @@ func (ec *executionContext) marshalOMesheryResult2ᚖgithubᚗcomᚋlayer5ioᚋm
 		return graphql.Null
 	}
 	return ec._MesheryResult(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOOAMCapability2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOAMCapability(ctx context.Context, sel ast.SelectionSet, v []*model.OAMCapability) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOOAMCapability2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOAMCapability(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
-func (ec *executionContext) marshalOOAMCapability2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOAMCapability(ctx context.Context, sel ast.SelectionSet, v *model.OAMCapability) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._OAMCapability(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOOperatorControllerStatusPerK8sContext2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐOperatorControllerStatusPerK8sContext(ctx context.Context, sel ast.SelectionSet, v *model.OperatorControllerStatusPerK8sContext) graphql.Marshaler {

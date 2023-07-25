@@ -1,9 +1,10 @@
 import { dataPlaneSubscription } from "./DataPlanesSubscription";
 import { controlPlaneSubscription } from "./ControlPlaneSubscription";
 import { requestSubscription } from "react-relay";
-import environment from "../../../lib/relayEnvironment";
+import { createRelayEnvironment } from "../../../lib/relayEnvironment";
 
 export default function subscribeServiceMeshEvents(dataCB, variables) {
+  const environment = createRelayEnvironment({});
   let controlRes = null
 
   requestSubscription(environment, {

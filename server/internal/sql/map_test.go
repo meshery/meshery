@@ -1,17 +1,38 @@
 package sql
 
 import (
+	"database/sql/driver"
 	"testing"
 )
 
-var Sample map[string]interface{}
-
-func TestScan(t *testing.T) {
-	if testing.Short() {
-		t.Skip("Skipping test in short mode.")
-	}
-	err := Map.Interface(Sample)
+// Test cases for sql.Map
+func TestSMap(t *testing.T) {
+	// Test sql.Map.Scan
+	m := Map{}
+	err := m.Scan([]byte(`{"foo": "bar"}`))
 	if err != nil {
-		t.Errorf("Scan() failed with error: %s", err)
+		t.Errorf("Scan error: %v", err)
+	}
+	if m["foo"] != "bar" {
+		t.Errorf("Scan error: expected %v, got %v", "bar", m["foo"])
+	}
+
+	// Test sql.Map.Value
+	v, err := m.Value()
+	if err != nil {
+		t.Errorf("Value error: %v", err)
+	}
+
+	if v != driver.Value(`{"foo":"bar"}`) {
+		t.Errorf("Value error: expected %v, got %v", `{"foo":"bar"}`, string(v.([]byte)))
+	}
+
+	// Test sql.Map.UnmarshalJSON
+	err = m.UnmarshalJSON([]byte(`{"foo": "bar"}`))
+	if err != nil {
+		t.Errorf("UnmarshalJSON error: %v", err)
+	}
+	if m["foo"] != "bar" {
+		t.Errorf("UnmarshalJSON error: expected %v, got %v", "bar", m["foo"])
 	}
 }

@@ -3,37 +3,47 @@
     <input
       type="search"
       class="sidebar__search-input"
+      id="sidebar-search-input"
       placeholder="Search this site"
       aria-label="Search this site…"
       autocomplete="off"
     />
-    <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="48" height="48" viewBox="0 0 64 64">
-      <path
-        d="M 27 9 C 17.075 9 9 17.075 9 27 C 9 36.925 17.075 45 27 45 C 31.129213 45 34.9263 43.587367 37.966797 41.240234 L 51.048828 54.322266 C 51.952828 55.226266 53.418266 55.226266 54.322266 54.322266 C 55.226266 53.418266 55.226266 51.952828 54.322266 51.048828 L 41.240234 37.966797 C 43.587367 34.9263 45 31.129213 45 27 C 45 17.075 36.925 9 27 9 z M 27 13 C 34.719 13 41 19.281 41 27 C 41 34.719 34.719 41 27 41 C 19.281 41 13 34.719 13 27 C 13 19.281 19.281 13 27 13 z"
-      ></path>
-    </svg>
   </form>
+
+  <script type="text/javascript">
+    <!--Ref: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView-->
+    <!--Ref: https://stackoverflow.com/questions/11039885/scrollintoview-causing-the-whole-page-to-move-->
+    (() => {
+      window.addEventListener("load", function () {
+        let scrollElem = document.getElementsByClassName("sidebar-nav__section-link active").item(0);
+        scrollElem.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+      });
+    })();
+  </script>
 
   <nav class="sidebar-nav" id="td-section-nav">
     {% for section in site.data.toc %}
     <ul class="sidebar-nav__section">
-      {% capture sectionUrl %}{{ section.url | replace: "/", "" }}{% endcapture %} {% capture pageUrl %}{{ page.url |
-      replace: "/", "" }}{% endcapture %}
-      <li class="sidebar-nav__section-title">
+      {% capture sectionUrl %}{{ section.url | replace: "/", "" | strip}}{% endcapture %} {% capture pageUrl %}{{
+      page.url | replace: "/", "" }}{% endcapture %}
+      <li class="sidebar-nav__section-title {% if pageUrl == sectionUrl %} active {% endif %}">
         <a
-          href="{% if section.url %}{{ site.baseurl }}{{linkUrlSelected}}/{{ section.url }}{% else %}{{ section.external_url }}{% endif %}"
-          class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section"
-          >{{ section.title }}</a
-        >
+          href="{% if section.url %}{{ site.baseurl }}{{linkUrlSelected}}/{{ section.url }}{% else %}{{
+		  section.external_url }}{% endif %}"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+          >{{ section.title }}
+        </a>
       </li>
       {% if section.links %}
       <ul>
         <li id="{{ section.title | slugify }}">
           <ul class="td-sidebar-nav__section">
-            {% for entry in section.links %}
-            <li class="sidebar-nav__section-link">
+            {% for entry in section.links %} {% capture entryUrl %}{{ entry.url | replace: "/", "" | strip }}{%
+            endcapture %}
+            <li class="sidebar-nav__section-link {% if entryUrl == pageUrl %} active {% endif %}">
               <a
-                href="{% if entry.url %}{{ site.baseurl }}{{linkUrlSelected}}/{{ entry.url }}{% else %}{{ entry.external_url }}{% endif %}"
+                href="{% if entry.url %}{{ site.baseurl }}{{linkUrlSelected}}/{{ entry.url }}{% else %}{{
+				entry.external_url }}{% endif %}"
                 class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
                 >{{ entry.title }}</a
               >
@@ -41,11 +51,15 @@
             {% if page.url contains entry.url or pageUrl == sectionUrl %} {% if entry.children %}
             <ul>
               <li id="{{ child.title | slugify }}">
-                {% for child in entry.children %}
+                {% for child in entry.children %} {% capture childUrl %}{% if child.url %}{{ site.baseurl
+                }}{{linkUrlSelected}}/{{ child.url }}{% else %}{{ child.external_url }}{% endif %} {% endcapture %} {%
+                capture childUrl %}{{childUrl | strip}}{% endcapture %} {% capture childTitle %}{{ childUrl | replace:
+                "/", "" | strip}}{% endcapture %}
                 <a
-                  class="sidebar-nav__section-link"
-                  id="m-{{ section.title | slugify }}-{{ entry.title | slugify }}-{{ child.title | slugify }}"
-                  href="{% if child.url %}{{ site.baseurl }}{{linkUrlSelected}}/{{ child.url }}{% else %}{{ child.external_url }}{% endif %}"
+                  class="sidebar-nav__section-link {% if pageUrl contains childTitle %} active {% endif %}"
+                  id="m-{{ section.title | slugify }}-{{ entry.title | slugify }}-{{ child.title | slugify
+					 }}"
+                  href="{{childUrl}}"
                   >{{ child.title }}</a
                 >
                 {% endfor %}

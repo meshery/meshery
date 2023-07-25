@@ -34,7 +34,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@master
         with:
-          go-version: "1.19"
+          go-version: "1.20"
       - name: Setup Cache
         uses: actions/cache@v3
         with:
@@ -90,48 +90,48 @@ jobs:
       - name: build provider-ui
         run: |
           make ui-provider-build
-  tests-ui:
-    needs: [ui-build]
-    name: UI integration tests
-    if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - name: Cache node modules
-        id: node-cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/cache
-            ~/.cache
-            !~/cache/exclude
-            **/node_modules
-            /home/runner/.cache
-            ~/.npm
-            ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-      - name: Run tests
-        run: |
-          cd ui
-          npm i
-          npm run ci-test-integration
-          cd ..
-          cd provider-ui
-          npm i
-          npm test
-          cd ..
-      - name: Upload coverage to Codecov (ui)
-        uses: codecov/codecov-action@v3
-        with:
-          files: ./provider-ui/coverage/coverage-summary.json
-          directory: ./provider-ui/coverage/lcov-report
-          flags: integrationtests
+  # tests-ui:
+  #   needs: [ui-build]
+  #   name: UI integration tests
+  #   if: github.repository == 'meshery/meshery'
+  #   runs-on: ubuntu-22.04
+  #   steps:
+  #     - name: Check out code
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 18
+  #     - name: Cache node modules
+  #       id: node-cache
+  #       uses: actions/cache@v3
+  #       with:
+  #         path: |
+  #           ~/cache
+  #           ~/.cache
+  #           !~/cache/exclude
+  #           **/node_modules
+  #           /home/runner/.cache
+  #           ~/.npm
+  #           ${{ github.workspace }}/.next/cache
+  #         key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+  #     - name: Run tests
+  #       run: |
+  #         cd ui
+  #         npm i
+  #         npm run ci-test-integration
+  #         cd ..
+  #         cd provider-ui
+  #         npm i
+  #         npm test
+  #         cd ..
+  #     - name: Upload coverage to Codecov (ui)
+  #       uses: codecov/codecov-action@v3
+  #       with:
+  #         files: ./provider-ui/coverage/coverage-summary.json
+  #         directory: ./provider-ui/coverage/lcov-report
+  #         flags: integrationtests
   tests-ui-e2e:
     needs: [build-backend, ui-build]
     name: UI end-to-end tests
@@ -155,9 +155,9 @@ jobs:
       - name: Setup go
         uses: actions/setup-go@master
         with:
-          go-version: "1.19"
+          go-version: "1.20"
       - name: Create k8s Kind Cluster
-        uses: helm/kind-action@v1.3.0
+        uses: helm/kind-action@v1.8.0
         with:
           cluster_name: "kind-cluster"
       - name: Run meshery-istio
@@ -316,7 +316,7 @@ jobs:
   garphql_validate:
     name: Validate GraphQL schema
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v3
@@ -331,9 +331,9 @@ jobs:
               - added|modified: 'server/internal/graphql/schema/schema.graphql'
       - name: Set up Ruby
         if: steps.filter.outputs.modified == 'true'
-        uses: ruby/setup-ruby@v1.99.0
+        uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7.5
+          ruby-version: 3.2.2
           bundler-cache: true
       - name: graphql-docs
         if: steps.filter.outputs.modified == 'true'

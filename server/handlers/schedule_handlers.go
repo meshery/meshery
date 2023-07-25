@@ -10,7 +10,7 @@ import (
 )
 
 // swagger:route POST /api/user/schedules SchedulesAPI idPostSchedules
-// Handle POST reqeuest for Schedules
+// Handle POST request for Schedules
 //
 // Save schedule using the current provider's persistence mechanism
 // responses:
@@ -20,8 +20,8 @@ import (
 func (h *Handler) SaveScheduleHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	defer func() {
@@ -62,23 +62,27 @@ func (h *Handler) SaveScheduleHandler(
 }
 
 // swagger:route GET /api/user/schedules SchedulesAPI idGetSchedules
-// Handle GET reqeuest for Schedules
+// Handle GET request for Schedules
 //
 // Returns the list of all the schedules saved by the current user
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?page={page-number}``` Default page number is 0
+//
+// ```?pagesize={pagesize}``` Default pagesize is 10
 // responses:
 // 	200: schedulesResponseWrapper
-
-// GetSchedulesHandler returns the list of all the schedules saved by the current user
 func (h *Handler) GetSchedulesHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	q := r.URL.Query()
 
-	resp, err := provider.GetSchedules(r, q.Get("page"), q.Get("page_size"), q.Get("order"))
+	resp, err := provider.GetSchedules(r, q.Get("page"), q.Get("pagesize"), q.Get("order"))
 	if err != nil {
 		obj := "schedules"
 		//unable to get schedules
@@ -92,7 +96,7 @@ func (h *Handler) GetSchedulesHandler(
 }
 
 // swagger:route DELETE /api/user/schedules/{id} SchedulesAPI idDeleteSchedules
-// Handle DELETE reqeuest for Schedules
+// Handle DELETE request for Schedules
 //
 // Deletes a schedule with the given id
 // responses:
@@ -102,8 +106,8 @@ func (h *Handler) GetSchedulesHandler(
 func (h *Handler) DeleteScheduleHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	ScheduleID := mux.Vars(r)["id"]
@@ -122,7 +126,7 @@ func (h *Handler) DeleteScheduleHandler(
 }
 
 // swagger:route GET /api/user/schedules/{id} SchedulesAPI idGetSingleSchedule
-// Handle GET reqeuest for Schedules
+// Handle GET request for Schedules
 //
 // Fetches and returns the schedule with the given id
 // responses:
@@ -132,8 +136,8 @@ func (h *Handler) DeleteScheduleHandler(
 func (h *Handler) GetScheduleHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
-	prefObj *models.Preference,
-	user *models.User,
+	_ *models.Preference,
+	_ *models.User,
 	provider models.Provider,
 ) {
 	ScheduleID := mux.Vars(r)["id"]

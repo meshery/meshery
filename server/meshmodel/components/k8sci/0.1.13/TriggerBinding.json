@@ -1,1 +1,0 @@
-{"kind":"TriggerBinding","apiVersion":"v1alpha1","displayName":"Trigger Binding","format":"JSON","metadata":{"logo-URL":"","model":"k8sci","modelDisplayName":"K8Sci","primaryColor":"","secondaryColor":"","shape":"circle","svgColor":"","svgWhite":""},"model":{"name":"k8sci","version":"0.1.13","displayName":"K8Sci","category":"Not Found","subCategory":"Not Found"},"schema":""}

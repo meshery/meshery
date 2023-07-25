@@ -9,6 +9,7 @@ project_status: alpha
 github_link: https://github.com/meshery/meshery-tanzu-sm
 image: /assets/img/service-meshes/tanzu.svg
 permalink: service-meshes/adapters/tanzu-sm
+language: en
 ---
 
 {% assign sorted_tests_group = site.compatibility | group_by: "meshery-component" %}
@@ -28,7 +29,7 @@ permalink: service-meshes/adapters/tanzu-sm
       {% endif %}
 {% endfor %}
 
-{% include adapter-status.html %}
+{% include compatibility/adapter-status.html %}
 ## Features
 
 1. {{page.mesh_name}} Lifecycle Management

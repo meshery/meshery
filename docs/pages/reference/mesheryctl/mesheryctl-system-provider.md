@@ -46,7 +46,7 @@ mesheryctl system provider list
 To set a provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system provider set <provider>
+mesheryctl system provider set [provider]
 
 </div>
 </pre> 
@@ -54,7 +54,7 @@ mesheryctl system provider set <provider>
 To switch provider and redeploy Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system provider switch <provider>
+mesheryctl system provider switch [provider]
 
 </div>
 </pre> 

@@ -8,6 +8,7 @@ redirect_from:
   - reference/mesheryctl/commands
   - reference/mesheryctl/
 type: Reference
+language: en
 ---
 
 ## Categories and Command Structure
@@ -16,11 +17,11 @@ Meshery CLI commands are categorized by function, which are:
 
 - `mesheryctl` - Global flags and CLI configuration
 - `mesheryctl system` - Meshery Lifecycle and Troubleshooting
-- `mesheryctl mesh` - Service Mesh Lifecycle & Configuration Management: provisioning and configuration best practices
-- `mesheryctl perf` - Service Mesh Performance Management: Workload and service mesh performance characterization
-- `mesheryctl pattern` - Service Mesh Pattern Configuration & Management: Service mesh patterns and Open Application Model integration
-- `mesheryctl app` - Service Mesh Application Management
-- `mesheryctl filter` - Data Plane Intelligence: Registry and configuration of WebAssembly filters for Envoy (experimental feature)
+- `mesheryctl mesh` - Cloud Native Lifecycle & Configuration Management: provisioning and configuration best practices
+- `mesheryctl perf` - Cloud Native Performance Management: Workload and service mesh performance characterization
+- `mesheryctl pattern` - Cloud Native Pattern Configuration & Management: Service mesh patterns and Open Application Model integration
+- `mesheryctl app` - Cloud Native Application Management
+- `mesheryctl filter` - Data Plane Intelligence: Registry and configuration of WebAssembly filters for Envoy (experimental feature, usage of `exp` needed)
 
 ## Global Commands and Flags
 
@@ -313,7 +314,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
       {% endfor %}
       {% assign subcommand4 = command4.subcommands.switch %}
         <tr>
-          <td rowspan=4><a href="{{ site.baseurl }}/reference/mesheryctl/system/context/switch">{{ subcommand4.name }}</a></td>
+          <td><a href="{{ site.baseurl }}/reference/mesheryctl/system/context/switch">{{ subcommand4.name }}</a></td>
           <td></td>
           <td>{{ subcommand4.description }}</td>
         </tr>
@@ -323,10 +324,61 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
           <td>{{ flag.description }}</td>
         </tr>
       {% endfor %}
+      </tr>
+    {% assign command5 = site.data.mesheryctlcommands.cmds.system-provider %}
+      <tr>
+        <td rowspan=8><a href="{{ site.baseurl }}/reference/mesheryctl/system/provider">{{ command5.name }}</a></td>
+      <td></td>
+      <td></td>
+      <td>{{ command5.description }}</td>
+    </tr>
+      {% assign subcommand2 = command5.subcommands.list %}
+        <tr>
+          <td><a href="{{ site.baseurl }}/reference/mesheryctl/system/provider/list">{{ subcommand2.name }}</a></td>
+          <td></td>
+          <td>{{ subcommand2.description }}</td>
+        </tr>
+      {% assign subcommand3 = command5.subcommands.reset %}
+        <tr>
+          <td><a href="{{ site.baseurl }}/reference/mesheryctl/system/provider/reset">{{ subcommand3.name }}</a></td>
+          <td></td>
+          <td>{{ subcommand3.description }}</td>
+        </tr>
+      {% assign subcommand4 = command5.subcommands.switch %}
+        <tr>
+          <td><a href="{{ site.baseurl }}/reference/mesheryctl/system/provider/switch">{{ subcommand4.name }}</a></td>
+          <td></td>
+          <td>{{ subcommand4.description }}</td>
+        </tr>
+      {% assign subcommand5 = command5.subcommands.view %}
+        <tr>
+          <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/system/provider/view">{{ subcommand5.name }}</a></td>
+          <td></td>
+          <td>{{ subcommand5.description }}</td>
+        </tr>
+      {% for flag_hash in subcommand5.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+        </tr>
+      {% endfor %}
+      {% assign subcommand1 = command5.subcommands.set %}
+        <tr>
+          <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/system/provider/set">{{ subcommand1.name }}</a></td>
+          <td></td>
+          <td>{{ subcommand1.description }}</td>
+        </tr>
+      {% for flag_hash in subcommand1.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+        </tr>
+      {% endfor %}
+      
 </thead>
 </table>
 
-## Service Mesh Performance Management
+## Cloud Native Performance Management
 
 <table>
 <thead>
@@ -389,7 +441,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
 </thead>
 </table>
 
-## Service Mesh Lifecycle and Configuration Management
+## Cloud Native Lifecycle and Configuration Management
 
 <table>
 <thead>
@@ -433,7 +485,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
 </thead>
 </table>
 
-## Service Mesh Pattern Configuration and Management
+## Cloud Native Pattern Configuration and Management
 
 <table>
 <thead>
@@ -512,7 +564,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
 </thead>
 </table>
 
-## Service Mesh Application Management
+## Cloud Native Application Management
 
 <table>
 <thead>
@@ -584,7 +636,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
 </thead>
 </table>
 
-## Data Plane Intelligence (experimental feature)
+## Data Plane Intelligence
 
 <table>
 <thead>
@@ -596,7 +648,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
   </tr>
   {% assign command9 = site.data.mesheryctlcommands.cmds.filter %}
     <tr>
-      <td rowspan=12><a href="{{ site.baseurl }}/reference/mesheryctl/exp/filter">{{ command9.name }}</a></td>
+      <td rowspan=12><a href="{{ site.baseurl }}/reference/mesheryctl/filter">{{ command9.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command9.description }}</td>
@@ -610,7 +662,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
     {% endfor %}
     {% assign subcommand1 = command9.subcommands.apply %}
       <tr>
-        <td><a href="{{ site.baseurl }}/reference/mesheryctl/exp/filter/apply">{{ subcommand1.name }}</a></td>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/filter/apply">{{ subcommand1.name }}</a></td>
         <td></td>
         <td>{{ subcommand1.description }}</td>
       </tr>
@@ -621,9 +673,15 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
         <td>{{ flag.description }}</td>
       </tr>
     {% endfor %}
+    {% assign subcommand1 = command9.subcommands.import %}
+      <tr>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/filter/import">{{ subcommand1.name }}</a></td>
+        <td></td>
+        <td>{{ subcommand1.description }}</td>
+      </tr>
     {% assign subcommand2 = command9.subcommands.delete %}
       <tr>
-        <td><a href="{{ site.baseurl }}/reference/mesheryctl/exp/filter/delete">{{ subcommand2.name }}</a></td>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/filter/delete">{{ subcommand2.name }}</a></td>
         <td></td>
         <td>{{ subcommand2.description }}</td>
       </tr>
@@ -636,13 +694,13 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
     {% endfor %}
     {% assign subcommand3 = command9.subcommands.list %}
       <tr>
-        <td><a href="{{ site.baseurl }}/reference/mesheryctl/exp/filter/list">{{ subcommand3.name }}</a></td>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/filter/list">{{ subcommand3.name }}</a></td>
         <td></td>
         <td>{{ subcommand3.description }}</td>
       </tr>
     {% assign subcommand4 = command9.subcommands.view %}
       <tr>
-        <td><a href="{{ site.baseurl }}/reference/mesheryctl/exp/filter/view">{{ subcommand4.name }}</a></td>
+        <td><a href="{{ site.baseurl }}/reference/mesheryctl/filter/view">{{ subcommand4.name }}</a></td>
         <td></td>
         <td>{{ subcommand4.description }}</td>
       </tr>

@@ -9,6 +9,7 @@ project_status: stable
 lab: consul-meshery-adapter
 github_link: https://github.com/meshery/meshery-consul
 image: /assets/img/service-meshes/consul.svg
+language: en
 #redirect_from: service-meshes/adapters/consul
 permalink: service-meshes/adapters/consul
 ---
@@ -30,7 +31,7 @@ permalink: service-meshes/adapters/consul
       {% endif %}
 {% endfor %}
 
-{% include adapter-status.html %}
+{% include compatibility/adapter-status.html %}
 
 {% include adapter-labs.html %}
 

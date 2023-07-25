@@ -84,6 +84,12 @@ Meshery Server's database is responsible for collecting and centralizing the sta
 
 _See the [**Database**]({{ site.baseurl }}/concepts/architecture/database) section for more information on the function of the database._
 
+## Meshery Docker Extension 
+
+Meshery's Docker extension provides a simple and flexible way to deploy service meshes on top of Kubernetes using Docker containers. The architecture of this extension is designed to be modular and extensible, with each component serving a specific purpose within the overall deployment process.
+
+[![Meshery Database]({{ site.baseurl }}/assets/img/architecture/meshery-docker-extension.svg)]({{ site.baseurl }}/assets/img/architecture/meshery-docker-extension.svg)
+
 
 ### **Statefulness in Meshery components**
 
@@ -92,7 +98,7 @@ concerned with a long-lived configuration, while others have no state at all.
 
 | Components        | Persistence  | Description                                                           |
 | :---------------- | :----------- | :-------------------------------------------------------------------- |
-| [mesheryctl]((/guides/mesheryctl/working-with-mesheryctl))        | stateless    | command line interface that has a configuration file                  |
+| [mesheryctl](/guides/mesheryctl/working-with-mesheryctl)        | stateless    | command line interface that has a configuration file                  |
 | [Meshery Adapters](/concepts/architecture/adapters)  | stateless    | interface with service meshes on a transactional basis                |
 | Meshery Server    | caches state | application cache is stored in `$HOME/.meshery/` folder               |
 | [Meshery Providers](/extensibility/providers) | stateful     | location of persistent user preferences, environment, tests and so on |
@@ -128,6 +134,150 @@ Meshery uses the following list of network ports to interface with its various c
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.port }} | Communication with Meshery Server |
 {% endif -%}
 {% endfor -%}
-| [Meshery Perf](https://docs.meshery.io/functionality/performance-management) | 10013/gRPC    | Performance Management|
+| [Meshery Perf]({{ site.baseurl }}/tasks/performance-management) | 10013/gRPC    | Performance Management|
 
 See the [**Adapters**]({{ site.baseurl }}/concepts/architecture/adapters) section for more information on the function of an adapter.
+
+
+### **Meshery Connections and their Actions**
+
+<table style=" padding-right: 10px;
+        margin: 5px 5px 5px 5px;
+        display: block;
+        max-width: fit-content;
+        overflow-x: auto;
+        white-space: nowrap;">
+  <thead>
+    <tr>
+      <th>Connection Type</th>
+      <th>&nbsp;</th>
+      <th>&nbsp;</th>
+      <th>Action / Behaviour</th>
+      <th>&nbsp;</th>
+      <th>&nbsp;</th>
+      <th>&nbsp;</th>
+      <th>&nbsp;</th>
+      <th>&nbsp;</th>
+      <th>&nbsp;</th>
+      <th>&nbsp;</th>
+      <th>&nbsp;</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>&nbsp;</td>
+      <td><strong>Connect mesheryctl</strong></td>
+      <td><strong>Connect Meshery UI</strong></td>
+      <td><strong>Disconnect</strong></td>
+      <td><strong>Ad hoc Connectivity Test</strong></td>
+      <td><strong>Ongoing Connectivity Test</strong></td>
+      <td><strong>Synthetic Check</strong></td>
+      <td><strong>Deploy mesheryctl</strong></td>
+      <td><strong>Undeploy mesheryctl</strong></td>
+      <td><strong>Deploy Meshery UI</strong></td>
+      <td><strong>Undeploy Meshery UI</strong></td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Kubernetes clusters</td>
+      <td>`system start`</td>
+      <td>Upload kubeconfig</td>
+      <td>Click "X" on chip</td>
+      <td>On click of connection chip</td>
+      <td>Yes, via MeshSync</td>
+      <td>No</td>
+      <td>No</td>
+      <td>No</td>
+      <td>No</td>
+      <td>No</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Grafana Servers</td>
+      <td>No</td>
+      <td>Enter IP/hostname into Meshery UI</td>
+      <td>Click "X" on chip</td>
+      <td>On click of connection chip</td>
+      <td>No</td>
+      <td>No</td>
+      <td>No</td>
+      <td>No</td>
+      <td>No</td>
+      <td>No</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td>Prometheus Servers</td>
+      <td>No</td>
+      <td>Enter IP/hostname into Meshery UI</td>
+      <td>Click "X" on chip</td>
+      <td>On click of connection chip</td>
+      <td>Yes, when metrics are configured in a dashboard</td>
+      <td>Yes</td>
+      <td>No</td>
+      <td>No</td>
+      <td>No</td>
+      <td>No</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td><a href="/concepts/architecture/adapters">Meshery Adapters</a></td>
+      <td>`system check`</td>
+      <td>Server to Adapter on every UI refresh</td>
+      <td>Click "X on" chip</td>
+      <td>Server to Adapter every click on adapter chip in UI</td>
+      <td>Server to Adapter every 10 seconds</td>
+      <td>-</td>
+      <td>Yes, as listed in meshconfig contexts</td>
+      <td>Yes, as listed in meshconfig contexts</td>
+      <td>Toggle switch needed</td>
+      <td>Toggle switch needed</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td><a href="/concepts/architecture/operator">Meshery Operator</a></td>
+      <td>`system check`</td>
+      <td>Upon upload of kubeconfig</td>
+      <td>No</td>
+      <td>On click of connection chip in UI to Server to Kubernetes to Meshery Operator</td>
+      <td>No</td>
+      <td>-</td>
+      <td>`system start`</td>
+      <td>`system stop`</td>
+      <td>Upon upload of kubeconfig & Toggle of switch</td>
+      <td>Toggle of switch</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td><a href="/concepts/architecture/meshsync">MeshSync</a></td>
+      <td>`system check`</td>
+      <td>follows the lifecycle of Meshery Operator</td>
+      <td>No</td>
+      <td>On click of connection chip in UI to Server to Kubernetes to Meshery Operator to MeshSync</td>
+      <td>Managed by Meshery Operator</td>
+      <td>On click of connection chip</td>
+      <td>follows the lifecycle of Meshery Operator</td>
+      <td>follows the lifecycle of Meshery Operator</td>
+      <td>follows the lifecycle of Meshery Operator</td>
+      <td>follows the lifecycle of Meshery Operator</td>
+      <td>&nbsp;</td>
+    </tr>
+    <tr>
+      <td><a href="/concepts/architecture/broker">Broker</a></td>
+      <td>`system check`</td>
+      <td>follows the lifecycle of Meshery Operator</td>
+      <td>No</td>
+      <td>On click of connection chip in UI to Server to Brokers exposed service port</td>
+      <td>NATS Topic Subscription</td>
+      <td>On click of connection chip</td>
+      <td>follows the lifecycle of Meshery Operator</td>
+      <td>follows the lifecycle of Meshery Operator</td>
+      <td>follows the lifecycle of Meshery Operator</td>
+      <td>follows the lifecycle of Meshery Operator</td>
+      <td>&nbsp;</td>
+    </tr>
+  </tbody>
+</table>
+<br>
+
+Please also see the [Troubleshooting Toolkit](https://docs.google.com/document/d/1q-aayRqx3QKIk2soTaTTTH-jmHcVXHwNYFsYkFawaME/edit#heading=h.ngupcd4j1pfm) and the [Meshery v0.7.0: Connection States (Kubnernetes) Design Review](https://discuss.layer5.io/t/meshery-v0-7-0-connection-states-kubnernetes-design-review/958)

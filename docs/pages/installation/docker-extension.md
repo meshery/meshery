@@ -13,7 +13,7 @@ image: /assets/img/platforms/docker.svg
 
 ## Docker Extension for Meshery
 
-The Docker Extension for Meshery extends Docker Desktop’s position as the cloud native developer’s go-to Kubernetes environment with easy access to the next layer of cloud native infrastructure: service meshes.
+The Docker Extension for Meshery extends Docker Desktop’s position as the developer’s go-to Kubernetes environment with easy access to full the capabilities of Meshery's collaborative cloud native management features.
 
 ### Using Docker Desktop
 
@@ -31,10 +31,29 @@ The Docker Extension for Meshery extends Docker Desktop’s position as the clou
   <img style="width:90%" src="{{ site.baseurl }}/assets/img/platforms/docker-extension.png">
 </a>
 
-### Using `Docker CLI`
+OR
 
-Meshery runs as a set of containers inside your Docker Desktop virtual machine.
+You can visit the [Docker Hub](https://hub.docker.com/extensions/meshery/docker-extension-meshery) marketplace to directly install Meshery extension in your Docker Desktop.
 
-{% capture code_content %}docker extension install meshery/docker-extension-meshery{% endcapture %}
-{% include code.html code=code_content %}
+### Using Docker CLI
 
+Meshery runs as a set of one or more containers inside your Docker Desktop virtual machine.
+
+<!-- 
+{% capture code_content %}docker extension install meshery/docker-extension-meshery{% endcapture %} -->
+<!-- {% include code.html code=code_content %} -->
+
+<pre class="codeblock-pre" style="padding: 0; font-size:0px;"><div class="codeblock" style="display: block;">
+ <div class="clipboardjs" style="padding: 0">
+ <span style="font-size:0;">docker extension install meshery/docker-extension-meshery</span> 
+ </div>
+ <div class="window-buttons"></div>
+ <div id="termynal2" style="width:100%; height:200px; max-width:100%;" data-termynal="">
+            <span data-ty="input">docker extension install meshery/docker-extension-meshery</span>
+            <span data-ty="progress"></span>
+            <span data-ty="">Successfully installed Meshery</span>
+            <span data-ty="input">mesheryctl system dashboard</span>
+  </div>
+ </div>
+</pre>
+<script src="{{ site.baseurl }}/assets/js/terminal.js" data-termynal-container="#termynal2"></script>

@@ -9,8 +9,8 @@ import {
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 // import 'billboard.js/dist/theme/insight.min.css';
-// import 'billboard.js/dist/theme/graph.min.css';
-import 'billboard.js/dist/billboard.min.css';
+import 'billboard.js/dist/theme/dark.min.css';
+// import 'billboard.js/dist/billboard. min.css';
 import 'codemirror/addon/lint/lint.css';
 // codemirror + js-yaml imports when added to a page was preventing to navigating to that page using nextjs
 // link clicks, hence attempting to add them here
@@ -49,6 +49,8 @@ import subscribeMeshSyncEvents from '../components/graphql/subscriptions/MeshSyn
 import { isTelemetryComponent, TelemetryComps } from '../utils/nameMapper';
 import { extractURLFromScanData } from '../components/ConnectionWizard/helpers/metrics';
 import { updateURLs } from '../utils/utils';
+import { RelayEnvironmentProvider } from 'react-relay';
+import { createRelayEnvironment } from "../lib/relayEnvironment"
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -66,16 +68,16 @@ if (typeof window !== 'undefined') {
 }
 
 async function fetchContexts(number = 10, search = "") {
-  return await promisifiedDataFetch(`/api/system/kubernetes/contexts?pageSize=${number}&search=${encodeURIComponent(search)}`)
+  return await promisifiedDataFetch(`/api/system/kubernetes/contexts?pagesize=${number}&search=${encodeURIComponent(search)}`)
 }
 
-const playgroundExtensionRoute = "/extension/meshmap";
+export const mesheryExtensionRoute = "/extension/meshmap";
 function isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry) {
-  return !window.location.pathname.startsWith(playgroundExtensionRoute) && capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted
+  return !window.location.pathname.startsWith(mesheryExtensionRoute) && capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted
 }
 
 export function isExtensionOpen() {
-  return window.location.pathname.startsWith(playgroundExtensionRoute);
+  return window.location.pathname.startsWith(mesheryExtensionRoute);
 }
 
 class MesheryApp extends App {
@@ -93,7 +95,8 @@ class MesheryApp extends App {
       meshSyncSubscription : null,
       disposeK8sContextSubscription : null,
       theme : 'light',
-      isOpen : false
+      isOpen : false,
+      relayEnvironment : createRelayEnvironment(),
     };
   }
 
@@ -178,7 +181,7 @@ class MesheryApp extends App {
 
     // in case the meshery-ui is restricted, the user will be redirected to signup/extension page
     if (isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry)) {
-      Router.push(playgroundExtensionRoute);
+      Router.push(mesheryExtensionRoute);
     }
 
     if (!_.isEqual(prevProps.k8sConfig, k8sConfig)) {
@@ -254,7 +257,7 @@ class MesheryApp extends App {
         let ids = [...(state.activeK8sContexts || [])];
         //pop event
         if (ids.includes(id)) {
-          ids = ids.filter(id => id != "all")
+          ids = ids.filter(id => id !== "all")
           return { activeK8sContexts : ids.filter(cid => cid !== id) }
         }
 
@@ -360,93 +363,98 @@ class MesheryApp extends App {
   };
   render() {
     const {
-      Component, pageProps, classes, isDrawerCollapsed
+      Component, pageProps, classes, isDrawerCollapsed, relayEnvironment
     } = this.props;
     return (
-      <ThemeProvider theme={this.state.theme === "dark" ? darkTheme : theme}>
-        <NoSsr>
-          <div className={classes.root}>
-            <CssBaseline />
-            <nav className={isDrawerCollapsed
-              ? classes.drawerCollapsed
-              : classes.drawer} data-test="navigation">
-              <Hidden smUp implementation="js">
-                <Navigator
-                  variant="temporary"
-                  open={this.state.mobileOpen}
-                  onClose={this.handleDrawerToggle}
-                  onCollapseDrawer={(open = null) => this.handleCollapseDrawer(open)}
-                  isDrawerCollapsed={isDrawerCollapsed}
-                  updateExtensionType={this.updateExtensionType}
-                />
-              </Hidden>
-              <Hidden xsDown implementation="css">
-                <Navigator
-                  onCollapseDrawer={(open = null) => this.handleCollapseDrawer(open)}
-                  isDrawerCollapsed={isDrawerCollapsed}
-                  updateExtensionType={this.updateExtensionType}
-                />
-              </Hidden>
-            </nav>
-            <div className={classes.appContent}>
-              <SnackbarProvider
-                anchorOrigin={{
-                  vertical : 'bottom',
-                  horizontal : 'right',
-                }}
-                iconVariant={{
-                  success : <CheckCircle style={{ marginRight : "0.5rem" }} />,
-                  error : <Error style={{ marginRight : "0.5rem" }} />,
-                  warning : <Warning style={{ marginRight : "0.5rem" }} />,
-                  info : <Info style={{ marginRight : "0.5rem" }} />
-                }}
-                classes={{
-                  variantSuccess : this.state.theme === "dark" ? classes.darknotifSuccess : classes.notifSuccess,
-                  variantError : this.state.theme === "dark" ? classes.darknotifError : classes.notifError,
-                  variantWarning : this.state.theme === "dark" ? classes.darknotifWarn : classes.notifWarn,
-                  variantInfo : this.state.theme === "dark" ? classes.darknotifInfo : classes.notifInfo,
-                }}
-                maxSnack={10}
-              >
-                <MesheryProgressBar />
-                <Header
-                  onDrawerToggle={this.handleDrawerToggle}
-                  onDrawerCollapse={isDrawerCollapsed}
-                  contexts={this.state.k8sContexts}
-                  activeContexts={this.state.activeK8sContexts}
-                  setActiveContexts={this.setActiveContexts}
-                  searchContexts={this.searchContexts}
-                  updateExtensionType={this.updateExtensionType}
-                  theme={this.state.theme}
-                  themeSetter={this.themeSetter}
-                />
-                <main className={classes.mainContent}>
-                  <MuiPickersUtilsProvider utils={MomentUtils}>
-                    <Component
-                      pageContext={this.pageContext}
-                      contexts={this.state.k8sContexts}
-                      activeContexts={this.state.activeK8sContexts}
-                      setActiveContexts={this.setActiveContexts}
-                      searchContexts={this.searchContexts}
-                      {...pageProps}
-                    />
-                  </MuiPickersUtilsProvider>
-                </main>
-              </SnackbarProvider>
-              <footer className={this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? classes.playgroundFooter : (this.state.theme === "dark" ? classes.footerDark : classes.footer )}>
-                <Typography variant="body2" align="center" color="textSecondary" component="p"
-                  style={this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? { color : "#000" } : {}}
+      <RelayEnvironmentProvider environment={relayEnvironment}>
+        <ThemeProvider theme={this.state.theme === "dark" ? darkTheme : theme}>
+          <NoSsr>
+            <div className={classes.root}>
+              <CssBaseline />
+              <nav className={isDrawerCollapsed
+                ? classes.drawerCollapsed
+                : classes.drawer} data-test="navigation">
+                <Hidden smUp implementation="js">
+                  <Navigator
+                    variant="temporary"
+                    open={this.state.mobileOpen}
+                    onClose={this.handleDrawerToggle}
+                    onCollapseDrawer={(open = null) => this.handleCollapseDrawer(open)}
+                    isDrawerCollapsed={isDrawerCollapsed}
+                    updateExtensionType={this.updateExtensionType}
+                  />
+                </Hidden>
+                <Hidden xsDown implementation="css">
+                  <Navigator
+                    onCollapseDrawer={(open = null) => this.handleCollapseDrawer(open)}
+                    isDrawerCollapsed={isDrawerCollapsed}
+                    updateExtensionType={this.updateExtensionType}
+                  />
+                </Hidden>
+              </nav>
+              <div className={classes.appContent}>
+                <SnackbarProvider
+                  anchorOrigin={{
+                    vertical : 'bottom',
+                    horizontal : 'right',
+                  }}
+                  iconVariant={{
+                    success : <CheckCircle style={{ marginRight : "0.5rem" }} />,
+                    error : <Error style={{ marginRight : "0.5rem" }} />,
+                    warning : <Warning style={{ marginRight : "0.5rem" }} />,
+                    info : <Info style={{ marginRight : "0.5rem" }} />
+                  }}
+                  classes={{
+                    variantSuccess : this.state.theme === "dark" ? classes.darknotifSuccess : classes.notifSuccess,
+                    variantError : this.state.theme === "dark" ? classes.darknotifError : classes.notifError,
+                    variantWarning : this.state.theme === "dark" ? classes.darknotifWarn : classes.notifWarn,
+                    variantInfo : this.state.theme === "dark" ? classes.darknotifInfo : classes.notifInfo,
+                  }}
+                  maxSnack={10}
                 >
-                  <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
-                    {this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? "ACCESS LIMITED IN MESHERY PLAYGROUND. DEPLOY MESHERY TO ACCESS ALL FEATURES." : (<> Built with <FavoriteIcon className={classes.footerIcon} /> by the Layer5 Community</>)}
-                  </span>
-                </Typography>
-              </footer>
+                  <MesheryProgressBar />
+                  <Header
+                    onDrawerToggle={this.handleDrawerToggle}
+                    onDrawerCollapse={isDrawerCollapsed}
+                    contexts={this.state.k8sContexts}
+                    activeContexts={this.state.activeK8sContexts}
+                    setActiveContexts={this.setActiveContexts}
+                    searchContexts={this.searchContexts}
+                    updateExtensionType={this.updateExtensionType}
+                    theme={this.state.theme}
+                    themeSetter={this.themeSetter}
+                  />
+                  <main className={classes.mainContent}>
+                    <MuiPickersUtilsProvider utils={MomentUtils}>
+                      <Component
+                        pageContext={this.pageContext}
+                        contexts={this.state.k8sContexts}
+                        activeContexts={this.state.activeK8sContexts}
+                        setActiveContexts={this.setActiveContexts}
+                        searchContexts={this.searchContexts}
+                        theme={this.state.theme}
+                        themeSetter={this.themeSetter}
+                        {...pageProps}
+                      />
+                    </MuiPickersUtilsProvider>
+                  </main>
+                </SnackbarProvider>
+                <footer className={this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? classes.playgroundFooter : (this.state.theme === "dark" ? classes.footerDark : classes.footer )}>
+                  <Typography variant="body2" align="center" color="textSecondary" component="p"
+                    style={this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? { color : "#000" } : {}}
+                  >
+                    <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
+                      {this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? "ACCESS LIMITED IN MESHERY PLAYGROUND. DEPLOY MESHERY TO ACCESS ALL FEATURES." : (<> Built with <FavoriteIcon className={classes.footerIcon} /> by the Layer5 Community</>)}
+                    </span>
+                  </Typography>
+                </footer>
+              </div>
             </div>
-          </div>
-          <PlaygroundMeshDeploy closeForm={() => this.setState({ isOpen : false })} isOpen={this.state.isOpen} />
-        </NoSsr>
-      </ThemeProvider>
+            <PlaygroundMeshDeploy closeForm={() => this.setState({ isOpen : false })} isOpen={this.state.isOpen} />
+          </NoSsr>
+        </ThemeProvider>
+      </RelayEnvironmentProvider>
+
     );
   }
 }

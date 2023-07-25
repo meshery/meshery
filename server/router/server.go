@@ -19,7 +19,7 @@ type Router struct {
 }
 
 // NewRouter returns a new ServeMux with app routes.
-func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.Handler, gp http.Handler) *Router {
+func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Handler, gp http.Handler) *Router {
 	gMux := mux.NewRouter()
 
 	gMux.Handle("/api/system/graphql/query", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.MesheryControllersMiddleware(h.GraphqlMiddleware(g)))), models.ProviderAuth))).Methods("GET", "POST")
@@ -28,6 +28,8 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.
 	gMux.HandleFunc("/api/system/version", h.ServerVersionHandler).
 		Methods("GET")
 	gMux.Handle("/api/extension/version", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ExtensionsVersionHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/system/database", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetSystemDatabase), models.ProviderAuth))).
 		Methods("GET")
 
 	gMux.HandleFunc("/api/provider", h.ProviderHandler)
@@ -52,6 +54,12 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.
 
 	gMux.Handle("/api/user", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UserHandler), models.ProviderAuth))).
 		Methods("GET")
+	gMux.Handle("/api/user/profile/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetUserByIDHandler), models.ProviderAuth))).
+		Methods("GET")
+
+	gMux.Handle("/api/identity/users", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetUsers), models.ProviderAuth))).
+		Methods("GET")
+
 	gMux.Handle("/api/user/prefs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UserPrefsHandler), models.ProviderAuth))).
 		Methods("GET", "POST")
 
@@ -64,6 +72,8 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.
 		Methods("GET")
 
 	gMux.Handle("/api/system/kubernetes/contexts", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetContextsFromK8SConfig), models.ProviderAuth))).
+		Methods("POST")
+	gMux.Handle("/api/system/kubernetes/register", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.K8sRegistrationHandler), models.ProviderAuth))).
 		Methods("POST")
 	gMux.Handle("/api/system/kubernetes/contexts", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetAllContexts), models.ProviderAuth))).
 		Methods("GET")
@@ -90,6 +100,9 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.
 	gMux.Handle("/api/system/adapter/operation", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.MeshOpsHandler)), models.ProviderAuth))).
 		Methods("POST")
 	gMux.Handle("/api/system/adapters", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.AdaptersHandler), models.ProviderAuth)))
+	gMux.Handle("/api/system/availableAdapters", http.HandlerFunc(h.AvailableAdaptersHandler)).
+		Methods("GET")
+
 	gMux.Handle("/api/events", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.EventStreamHandler), models.ProviderAuth))).
 		Methods("GET")
 
@@ -129,6 +142,8 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.
 		Methods("POST", "GET")
 	gMux.Handle("/api/pattern/catalog", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetCatalogMesheryPatternsHandler), models.ProviderAuth))).
 		Methods("GET")
+	gMux.Handle("/api/pattern/catalog/unpublish", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UnPublishCatalogPatternHandler), models.ProviderAuth))).
+		Methods("DELETE")
 	gMux.Handle("/api/pattern/catalog/publish", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PublishCatalogPatternHandler), models.ProviderAuth))).
 		Methods("POST")
 	gMux.Handle("/api/pattern/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryPatternHandler), models.ProviderAuth))).
@@ -137,35 +152,38 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.
 		Methods("DELETE")
 	gMux.Handle("/api/pattern/clone/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.CloneMesheryPatternHandler), models.ProviderAuth))).
 		Methods("POST")
+	gMux.Handle("/api/pattern/download/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DownloadMesheryPatternHandler), models.ProviderAuth))).
+		Methods("GET")
 	gMux.Handle("/api/patterns/delete", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMultiMesheryPatternsHandler), models.ProviderAuth))).
 		Methods("POST")
 
-	gMux.Handle("/api/oam/{type}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GETOAMRegisterHandler), models.NoAuth))).Methods("GET")
-	//TODO: Put all the meshmodel endpoints under ProviderAuth(except for register)
-	gMux.Handle("/api/oam/{type}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.OAMRegisterHandler), models.NoAuth))).Methods("POST")
-	gMux.Handle("/api/oam/{type}/{name}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.OAMComponentDetailsHandler), models.NoAuth))).Methods("GET")
-	gMux.Handle("/api/oam/{type}/{name}/{id}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.OAMComponentDetailByIDHandler), models.NoAuth))).Methods("GET")
-	gMux.Handle("/api/meshmodel/validate", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.ValidationHandler), models.NoAuth))).Methods("POST")
-	gMux.Handle("/api/meshmodel/components/register", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelComponents), models.NoAuth))).Methods("POST") //This should also be left with NoAuth
-	// gMux.Handle("/api/meshmodel/components", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelComponents), models.NoAuth))).Methods("GET")
-	gMux.Handle("/api/meshmodel/generate", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.MeshModelGenerationHandler), models.NoAuth))).Methods("POST")
-	// gMux.Handle("/api/meshmodel/components/types", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.MeshmodelComponentsForTypeHandler), models.NoAuth))).Methods("GET")
-	gMux.Handle("/api/meshmodel/relationship", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelRelationships), models.NoAuth))).Methods("GET")
-	gMux.Handle("/api/meshmodel/component", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelRelationships), models.NoAuth))).Methods("GET")
-	gMux.Handle("/api/meshmodel/model", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelModels), models.NoAuth))).Methods("GET")
-	gMux.Handle("/api/meshmodel/model/{model}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelEntititiesByModel), models.NoAuth))).Methods("GET")
-	gMux.Handle("/api/meshmodel/model/{model}/component", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelComponentByModel), models.NoAuth))).Methods("GET")
-	gMux.Handle("/api/meshmodel/model/{model}/component/{name}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelComponentsByName), models.NoAuth))).Methods("GET")
-	gMux.Handle("/api/meshmodel/model/{model}/relationship", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelRelationships), models.NoAuth))).Methods("GET")
-	gMux.Handle("/api/meshmodel/model/{model}/relationship/{name}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelRelationshipByName), models.NoAuth))).Methods("GET")
-	gMux.Handle("/api/meshmodel/relationships/register", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelRelationships), models.NoAuth))).Methods("POST") //This should also be left with NoAuth
+	gMux.Handle("/api/meshmodels/validate", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.ValidationHandler), models.NoAuth))).Methods("POST")
+	gMux.Handle("/api/meshmodels/components", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelComponents), models.NoAuth))).Methods("POST")         //This should also be left with NoAuth
+	gMux.Handle("/api/meshmodel/components/register", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelComponents), models.NoAuth))).Methods("POST") //For backwards compatibility with previous registrants
+	gMux.Handle("/api/meshmodels/components", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelComponents), models.NoAuth))).Methods("GET")
 
-	//TODO: Remove the 5 endpoints below made obsolete by Meshmodel components
-	gMux.Handle("/api/components", h.AuthMiddleware(http.HandlerFunc(h.GetAllComponents), models.NoAuth)).Methods("GET")
-	gMux.Handle("/api/components/types", h.AuthMiddleware(http.HandlerFunc(h.ComponentTypesHandler), models.NoAuth)).Methods("GET")
-	gMux.Handle("/api/components/{type}", h.AuthMiddleware(http.HandlerFunc(h.ComponentsForTypeHandler), models.NoAuth)).Methods("GET")
-	gMux.Handle("/api/components/{type}/versions", h.AuthMiddleware(http.HandlerFunc(h.ComponentVersionsHandler), models.NoAuth)).Methods("GET")
-	gMux.Handle("/api/components/{type}/{name}", h.AuthMiddleware(http.HandlerFunc(h.ComponentsByNameHandler), models.NoAuth)).Methods("GET")
+	gMux.Handle("/api/meshmodels/categories", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelCategories), models.NoAuth))).Methods("GET")
+	gMux.Handle("/api/meshmodels/models", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelModels), models.NoAuth))).Methods("GET")
+	gMux.Handle("/api/meshmodels/models/{model}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelModelsByName), models.NoAuth))).Methods("GET")
+
+	gMux.Handle("/api/meshmodels/categories/{category}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelCategoriesByName), models.NoAuth))).Methods("GET")
+	gMux.Handle("/api/meshmodels/categories/{category}/models", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelModelsByCategories), models.NoAuth))).Methods("GET")
+	gMux.Handle("/api/meshmodels/categories/{category}/models/{model}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelModelsByCategoriesByModel), models.NoAuth))).Methods("GET")
+	gMux.Handle("/api/meshmodels/categories/{category}/models/{model}/components", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelComponentByModelByCategory), models.NoAuth))).Methods("GET")
+	gMux.Handle("/api/meshmodels/categories/{category}/models/{model}/components/{name}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelComponentsByNameByModelByCategory), models.NoAuth))).Methods("GET")
+	gMux.Handle("/api/meshmodels/categories/{category}/components", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelComponentByCategory), models.NoAuth))).Methods("GET")
+	gMux.Handle("/api/meshmodels/categories/{category}/components/{name}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelComponentsByNameByCategory), models.NoAuth))).Methods("GET")
+
+	gMux.Handle("/api/meshmodels/components/{name}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelComponentsByName), models.NoAuth))).Methods("GET")
+	gMux.Handle("/api/meshmodels/generate", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.MeshModelGenerationHandler), models.NoAuth))).Methods("POST")
+	gMux.Handle("/api/meshmodels/relationships", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelRelationships), models.NoAuth))).Methods("GET")
+
+	gMux.Handle("/api/meshmodels/models/{model}/components", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelComponentByModel), models.NoAuth))).Methods("GET")
+	gMux.Handle("/api/meshmodels/models/{model}/components/{name}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelComponentsByNameByModel), models.NoAuth))).Methods("GET")
+
+	gMux.Handle("/api/meshmodels/models/{model}/relationships", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetAllMeshmodelRelationships), models.NoAuth))).Methods("GET")
+	gMux.Handle("/api/meshmodels/models/{model}/relationships/{name}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelRelationshipByName), models.NoAuth))).Methods("GET")
+	gMux.Handle("/api/meshmodels/relationships", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.RegisterMeshmodelRelationships), models.NoAuth))).Methods("POST") //This should also be left with NoAuth
 
 	gMux.Handle("/api/filter/deploy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.FilterFileHandler)), models.ProviderAuth))).
 		Methods("POST", "DELETE")
@@ -175,11 +193,13 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.
 		Methods("GET")
 	gMux.Handle("/api/filter/catalog/publish", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PublishCatalogFilterHandler), models.ProviderAuth))).
 		Methods("POST")
+	gMux.Handle("/api/filter/catalog/unpublish", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UnPublishCatalogFilterHandler), models.ProviderAuth))).
+		Methods("DELETE")
 	gMux.Handle("/api/filter/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryFilterHandler), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/api/filter/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMesheryFilterHandler), models.ProviderAuth))).
 		Methods("DELETE")
-	gMux.Handle("/api/filter/file/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryFilterFileHandler), models.ProviderAuth))).
+	gMux.Handle("/api/filter/download/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryFilterFileHandler), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/api/filter/clone/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.CloneMesheryFilterHandler), models.ProviderAuth))).
 		Methods("POST")
@@ -195,6 +215,8 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.
 	gMux.Handle("/api/application/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryApplicationHandler), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/api/application/download/{id}/{sourcetype}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryApplicationSourceHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/application/download/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryApplicationFile), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/api/application/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMesheryApplicationHandler), models.ProviderAuth))).
 		Methods("DELETE")
@@ -223,6 +245,19 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.
 	gMux.Handle("/api/user/schedules/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteScheduleHandler), models.ProviderAuth))).
 		Methods("DELETE")
 	gMux.Handle("/api/user/schedules", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveScheduleHandler), models.ProviderAuth))).
+		Methods("POST")
+	gMux.Handle("/api/policies/run_policy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetRegoPolicyForDesignFile), models.ProviderAuth))).
+		Methods("POST")
+
+	// Handlers for User Credentials
+
+	gMux.Handle("/api/integrations/credentials", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetUserCredentials), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/integrations/credentials", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateUserCredential), models.ProviderAuth))).
+		Methods("PUT")
+	gMux.Handle("/api/integrations/credentials", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteUserCredential), models.ProviderAuth))).
+		Methods("DELETE")
+	gMux.Handle("/api/integrations/credentials", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveUserCredential), models.ProviderAuth))).
 		Methods("POST")
 
 	gMux.PathPrefix("/api/extensions").
@@ -268,6 +303,26 @@ func NewRouter(ctx context.Context, h models.HandlerInterface, port int, g http.
 		w.Header().Set("Cache-Control", "public, max-age=3600") // 1 hr
 		http.ServeFile(w, r, "../ui/out/static/img/meshery-logo/meshery-logo.svg")
 	}))
+
+	// Handlers for User Credentials
+	gMux.Handle("/api/integrations/credentials", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveUserCredential), models.ProviderAuth))).
+		Methods("POST")
+	gMux.Handle("/api/integrations/credentials", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetUserCredentials), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/integrations/credentials", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateUserCredential), models.ProviderAuth))).
+		Methods("PUT")
+	gMux.Handle("/api/integrations/credentials", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteUserCredential), models.ProviderAuth))).
+		Methods("DELETE")
+
+	// Handlers for User Connections
+	gMux.Handle("/api/integrations/connections", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveConnection), models.ProviderAuth))).
+		Methods("POST")
+	gMux.Handle("/api/integrations/connections/{connectionKind}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetConnections), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/integrations/connections/{connectionKind}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateConnection), models.ProviderAuth))).
+		Methods("PUT")
+	gMux.Handle("/api/integrations/connections/{connectionId}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteConnection), models.ProviderAuth))).
+		Methods("DELETE")
 
 	// Swagger Interactive Playground
 	swaggerOpts := middleware.SwaggerUIOpts{SpecURL: "./swagger.yaml"}

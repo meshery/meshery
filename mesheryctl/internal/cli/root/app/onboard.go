@@ -1,3 +1,17 @@
+// Copyright 2023 Layer5, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package app
 
 import (
@@ -25,6 +39,11 @@ var (
 	sourceType string // app file type (manifest / compose)
 )
 
+var linkDocAppOnboard = map[string]string{
+	"link":    "![app-onboard-usage](/assets/img/mesheryctl/app-onboard.png)",
+	"caption": "Usage of mesheryctl app onboard",
+}
+
 var onboardCmd = &cobra.Command{
 	Use:   "onboard",
 	Short: "Onboard application",
@@ -32,14 +51,9 @@ var onboardCmd = &cobra.Command{
 	Example: `
 // Onboard application by providing file path
 mesheryctl app onboard -f [filepath] -s [source type]
-
-Example:
 mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
-
-! Refer below image link for usage
-* Usage of mesheryctl app onboard
-# ![app-onboard-usage](/assets/img/mesheryctl/app-onboard.png)
 	`,
+	Annotations: linkDocAppOnboard,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = `Usage: mesheryctl app onboard -f [filepath] -s [source type]
 Example: mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
@@ -56,7 +70,6 @@ Description: Onboard application`
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		var err error
-		client := &http.Client{}
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -79,16 +92,12 @@ Description: Onboard application`
 				return err
 			}
 
-			resp, err := client.Do(req)
+			resp, err := utils.MakeRequest(req)
 			if err != nil {
 				return err
 			}
 
 			var response *models.ApplicationsAPIResponse
-			// failsafe (bad api call)
-			if resp.StatusCode != 200 {
-				return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-			}
 			defer resp.Body.Close()
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
@@ -129,7 +138,7 @@ Description: Onboard application`
 			return err
 		}
 
-		res, err := client.Do(req)
+		res, err := utils.MakeRequest(req)
 		if err != nil {
 			return err
 		}

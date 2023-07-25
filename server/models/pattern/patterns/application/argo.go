@@ -110,7 +110,7 @@ func (ar *ArgoRollout) Canary(opt RolloutEngineCanaryOptions) error {
 	return nil
 }
 
-func (ar *ArgoRollout) istioCanary(opt RolloutEngineCanaryOptions) error {
+func (ar *ArgoRollout) istioCanary(_ RolloutEngineCanaryOptions) error {
 	// Performing canary requires 4 steps:
 	// 1. Create a rollout
 	// ar.createOrUpdateRollout(opt)
@@ -121,13 +121,6 @@ func (ar *ArgoRollout) istioCanary(opt RolloutEngineCanaryOptions) error {
 	// 4. Create a virtual service for routing
 	// invoke remote operation
 	return nil
-}
-
-func createIstioCanaryArgoResource(opt RolloutEngineCanaryOptions) v1alpha1.Rollout {
-	rollout := createNativeArgoResource(opt.RolloutEngineGenericOptions)
-
-	// TODO: Add canary specific information and then return
-	return rollout
 }
 
 func createNativeArgoResource(opt RolloutEngineGenericOptions) v1alpha1.Rollout {

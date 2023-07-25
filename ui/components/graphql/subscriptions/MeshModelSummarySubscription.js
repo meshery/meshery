@@ -1,5 +1,5 @@
 import { graphql, requestSubscription } from "react-relay";
-import environment from "../../../lib/relayEnvironment";
+import { createRelayEnvironment } from "../../../lib/relayEnvironment";
 
 export const meshmodelSummarySubscription = graphql`
   subscription MeshModelSummarySubscription($selector: MeshModelSummarySelector!) {
@@ -17,6 +17,7 @@ export const meshmodelSummarySubscription = graphql`
 `;
 
 export default function subscribeClusterResources(dataCB, variables) {
+  const environment = createRelayEnvironment({});
   return requestSubscription(environment, {
     subscription : meshmodelSummarySubscription,
     variables : variables,

@@ -150,27 +150,9 @@ func PersistClusterNames(
 	}
 }
 
-func applyYaml(client *mesherykube.Client, delete bool, file string) error {
-	contents, err := utils.ReadRemoteFile(file)
-	if err != nil {
-		return err
-	}
-
-	err = client.ApplyManifest([]byte(contents), mesherykube.ApplyOptions{
-		Namespace: Namespace,
-		Update:    true,
-		Delete:    delete,
-	})
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 // installs operator
 // To be depricated
-func installUsingHelm(client *mesherykube.Client, delete bool, adapterTracker models.AdaptersTrackerInterface) error {
+func installUsingHelm(client *mesherykube.Client, delete bool, _ models.AdaptersTrackerInterface) error {
 	// retrieving meshery's version to apply the appropriate chart
 	mesheryReleaseVersion := viper.GetString("BUILD")
 	if mesheryReleaseVersion == "" || mesheryReleaseVersion == "Not Set" || mesheryReleaseVersion == "edge-latest" {

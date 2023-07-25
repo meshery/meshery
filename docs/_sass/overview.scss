@@ -54,6 +54,10 @@ div.overview:hover {
   color: #eee;
 }
 
+a:hover, a > strong:hover {
+  color: #00D3A9 ;
+}
+
 @media (max-width: 900px) {
   div.wrapper {
     display: block;

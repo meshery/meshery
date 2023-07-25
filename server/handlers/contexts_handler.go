@@ -8,7 +8,22 @@ import (
 	"github.com/layer5io/meshery/server/models"
 )
 
-func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+// swagger:route GET /api/system/kubernetes/contexts GetAllContexts idGetAllContexts
+// Handle GET request for all kubernetes contexts.
+//
+// # Contexts can be further filtered through query parameter
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?page={page-number}``` Default page number is 0
+//
+// ```?pagesize={pagesize}``` Default pagesize is 10
+// 
+// ```?search={contextname}``` If search is non empty then a greedy search is performed
+// responses:
+//
+//	200: systemK8sContextsResponseWrapper
+func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		http.Error(w, "failed to get token", http.StatusInternalServerError)
@@ -17,7 +32,7 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, prefO
 
 	q := req.URL.Query()
 
-	vals, err := provider.GetK8sContexts(token, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"))
+	vals, err := provider.GetK8sContexts(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
 	if err != nil {
 		http.Error(w, "failed to get contexts", http.StatusInternalServerError)
 		return
@@ -35,7 +50,7 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, prefO
 	}
 }
 
-func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	// if req.URL.Query().Get("current") != "" {
 	// 	context, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
 	// 	if !ok || context == nil {
@@ -69,7 +84,7 @@ func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, prefObj *
 	}
 }
 
-func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		http.Error(w, "failed to get token", http.StatusInternalServerError)

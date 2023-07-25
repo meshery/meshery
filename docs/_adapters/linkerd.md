@@ -10,6 +10,7 @@ lab: linkerd-meshery-adapter
 github_link: https://github.com/meshery/meshery-linkerd
 image: /assets/img/service-meshes/linkerd.svg
 permalink: service-meshes/adapters/linkerd
+language: en
 ---
 
 {% assign sorted_tests_group = site.compatibility | group_by: "meshery-component" %}
@@ -29,7 +30,7 @@ permalink: service-meshes/adapters/linkerd
       {% endif %}
 {% endfor %}
 
-{% include adapter-status.html %}
+{% include compatibility/adapter-status.html %}
 
 {% include adapter-labs.html %}
 

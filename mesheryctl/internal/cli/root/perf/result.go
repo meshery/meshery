@@ -1,3 +1,17 @@
+// Copyright 2023 Layer5, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package perf
 
 import (
@@ -36,6 +50,11 @@ var (
 	viewSingleResult bool
 )
 
+var linkDocPerfResult = map[string]string{
+	"link":    "![perf-result-usage](/assets/img/mesheryctl/perf-result.png)",
+	"caption": "Usage of mesheryctl perf result",
+}
+
 var resultCmd = &cobra.Command{
 	Use:   "result profile-name",
 	Short: "List performance test results",
@@ -50,11 +69,8 @@ mesheryctl perf result saturday-profile --page 2
 
 // View single performance result with detailed information
 mesheryctl perf result saturday-profile --view
-
-! Refer below image link for usage
-* Usage of mesheryctl perf result
-# ![perf-result-usage](/assets/img/mesheryctl/perf-result.png)
 `,
+	Annotations: linkDocPerfResult,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// used for searching performance profile
 		var searchString, profileID string
@@ -160,7 +176,7 @@ func fetchPerformanceProfileResults(baseURL, profileID string, pageSize, pageNum
 
 	url := baseURL + "/api/user/performance/profiles/" + profileID + "/results"
 
-	tempURL := fmt.Sprintf("%s?pageSize=%d&page=%d", url, pageSize, pageNumber)
+	tempURL := fmt.Sprintf("%s?pagesize=%d&page=%d", url, pageSize, pageNumber)
 
 	req, err := utils.NewRequest("GET", tempURL, nil)
 	if err != nil {

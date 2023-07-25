@@ -22,5 +22,15 @@ type User struct {
 	AvatarURL string `json:"avatar_url,omitempty"`
 	Provider  string `json:"provider,omitempty" db:"provider"`
 	Email     string `json:"email,omitempty" db:"email"`
+	Status    string `json:"string,omitempty"`
 	Bio       string `json:"bio,omitempty" db:"bio"`
+
+	RoleNames []string `json:"role_names,omitempty" db:"-"`
+}
+
+type AllUsers struct {
+	Page         int     `json:"page"`
+	PageSize     int     `json:"page_size"`
+	Data         []*User `json:"data"`
+	TotalCount   int     `json:"total_count"`
 }

@@ -1,17 +1,17 @@
 # <a name="contributing">Contributing Overview</a>
 
-Please do! Thanks for your help in improving the project! :balloon:
+Please do! Thank you for your help in improving Meshery! :balloon:
 
 ---
 
-<h3> See the complete set of contributor guides at https://docs.meshery.io/project/contributing</h3>
-
----
+<details>
+  
+  <summary><h3>Find the complete set of contributor guides at https://docs.meshery.io/project/contributing</h3></summary>
 
 All contributors are welcome. Not sure where to start? Please see the [newcomers welcome guide](https://layer5.io/community/handbook/repository-overview) for how, where, and why to contribute. This project is community-built and welcomes collaboration. Contributors are expected to adhere to our [Code of Conduct](CODE_OF_CONDUCT.md).
 
 All set to contribute? Grab an open issue with the [help-wanted label](../../labels/help%20wanted) and jump in. Join our [Slack channel](http://slack.layer5.io) and engage in conversation. Create a [new issue](/../../issues/new/choose) if needed. All [pull requests](/../../pulls) should ideally reference an open [issue](/../../issues). Include keywords in your pull request descriptions, as well as commit messages, to [automatically close related issues in GitHub](https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords).
-
+  
 **Sections**
 
 - <a name="contributing">General Contribution Flow</a>
@@ -128,6 +128,31 @@ make server
 Any time changes are made to the Go code, you will have to stop the server and run the above command again.
 Once the Meshery server is up and running, you should be able to access Meshery on your `localhost` on port `9081` at `http://localhost:9081`.
 
+**Please note**: If you see "Meshery Development Incompatible" while trying to sign into Meshery Server, then follow these steps:
+
+<img src="./docs/assets/img/meshery-development-incompatible-error.png" width="50%">
+
+Potential Solution: 
+
+-  Go to your meshery folder in your local-system where you’ve cloned it.
+Execute: 
+
+
+- Restart the meshery server.
+- Make sure that `BUILD="v0.X.X"` is logged in some starting line while starting the server.
+
+- Addionally, before restarting the server, if you like to pull the latest changes, you can do: `git pull upstream master`
+### UI Development Server
+
+If you want to work on the UI, it will be a good idea to use the included UI development server. You can run the UI development server by running the following command:
+
+```
+make ui
+```
+
+Once you have the server configured, and running successfully on the default port `http://localhost:9081`, you may proceed to access the Meshery UI at `http://localhost:3000`.
+Any UI changes made now will automatically be recompiled and served in the browser.
+
 To access the [Meshery UI Development Server](#ui-development-server) on port `3000`, you will need to select your **Cloud Provider** by navigating to `localhost:9081` after running the Meshery server.
 
 **Please note**: When running `make server` on the macOS platform, some may face errors with the crypto module in Go. This is caused due to invalid C headers in Clang installed with XCode platform tools. Replacing Clang with gcc by adding `export CC=gcc` to .bashrc / .zshrc should fix the issue. More information on the issue can be found [here](https://github.com/golang/go/issues/30072)
@@ -209,7 +234,15 @@ make ui-setup
 To build and export the UI code:
 
 ```
-make ui-setup
+make ui-build
+```
+
+### Build and run Meshery Server
+
+To build & run Meshery Server:
+
+```
+make server
 ```
 
 Now that the UI code is built, Meshery UI will be available at `http://localhost:9081`.
@@ -313,3 +346,7 @@ Resources: https://lab.github.com and https://try.github.com/
 ### License
 
 This repository and site are available as open-source under the terms of the [Apache 2.0 License](https://opensource.org/licenses/Apache-2.0).
+
+</details>
+  
+---

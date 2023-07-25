@@ -26,12 +26,14 @@ type ComponentsRegistrationHelper struct {
 	// it should be private
 	ctxRegStatusMap map[string]RegistrationStatus
 	log             logger.Handler
+	mx              sync.RWMutex
 }
 
 func NewComponentsRegistrationHelper(logger logger.Handler) *ComponentsRegistrationHelper {
 	return &ComponentsRegistrationHelper{
 		ctxRegStatusMap: make(map[string]RegistrationStatus),
 		log:             logger,
+		mx:              sync.RWMutex{},
 	}
 }
 
@@ -40,7 +42,9 @@ func (cg *ComponentsRegistrationHelper) UpdateContexts(ctxs []*K8sContext) *Comp
 	for _, ctx := range ctxs {
 		ctxID := ctx.ID
 		if _, ok := cg.ctxRegStatusMap[ctxID]; !ok {
+			cg.mx.Lock()
 			cg.ctxRegStatusMap[ctxID] = NotRegistered
+			cg.mx.Unlock()
 		}
 	}
 	return cg
@@ -49,8 +53,12 @@ func (cg *ComponentsRegistrationHelper) UpdateContexts(ctxs []*K8sContext) *Comp
 type K8sRegistrationFunction func(ctxt context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager, es *events.EventStreamer, ctxName string) error
 
 // start registration of components for the contexts
-func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc []K8sRegistrationFunction, eb *events.EventStreamer, reg *meshmodel.RegistryManager) {
-	if viper.GetBool("SKIP_COMP_GEN") {
+func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc []K8sRegistrationFunction, eb *events.EventStreamer, reg *meshmodel.RegistryManager, skip bool) {
+	/* If flag "SKIP_COMP_GEN" is set but the registration is invoked in form of API request explicitly, 
+	then flag should not be respected and to control this behaviour skip is introduced. 
+	In case of API requests "skip" is set to false, otherise true and behaviour is controlled by "SKIP_COMP_GEN".
+	*/
+	if viper.GetBool("SKIP_COMP_GEN") && skip {
 		return
 	}
 
@@ -68,7 +76,9 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 		id, _ := uuid.NewV4()
 
 		// update the status
+		cg.mx.Lock()
 		cg.ctxRegStatusMap[ctxID] = Registering
+		cg.mx.Unlock()
 		cg.log.Info("Registration of ", ctxName, " components started for contextID: ", ctxID)
 		req := meshes.EventsResponse{
 			Component:     "core",
@@ -79,15 +89,12 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 			OperationId:   id.String(),
 		}
 		eb.Publish(&req)
-
-		var mu sync.Mutex // declare a mutex for synchronizing access to the map
-
 		go func(ctx *K8sContext) {
 			// set the status to RegistrationComplete
 			defer func() {
-				mu.Lock()
+				cg.mx.Lock()
 				cg.ctxRegStatusMap[ctxID] = RegistrationComplete
-				mu.Unlock()
+				cg.mx.Unlock()
 
 				cg.log.Info(ctxName, " components for contextID:", ctxID, " registered")
 			}()

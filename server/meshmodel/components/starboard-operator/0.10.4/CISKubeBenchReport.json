@@ -1,1 +1,0 @@
-{"kind":"CISKubeBenchReport","apiVersion":"v1alpha1","displayName":"CIS Kube Bench Report","format":"JSON","metadata":{},"model":{"name":"starboard-operator","version":"0.10.4","displayName":"starboard-operator","category":"","subCategory":""},"schema":""}

@@ -8,6 +8,8 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"os"
+
 	"strconv"
 	"strings"
 	"sync"
@@ -18,6 +20,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/helpers"
+	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
@@ -26,7 +29,7 @@ import (
 )
 
 // LoadTestUsingSMPHandler runs the load test with the given parameters and SMP
-func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) LoadTestUsingSMPHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, provider models.Provider) {
 	// if req.Method != http.MethodPost && req.Method != http.MethodGet {
 	// 	w.WriteHeader(http.StatusNotFound)
 	// 	return
@@ -157,6 +160,16 @@ func (h *Handler) jsonToMap(headersString string) *map[string]string {
 
 // LoadTestHandler runs the load test with the given parameters
 func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	cleanUpFiles := make([]string, 0)
+
+	defer func() {
+		for _, file := range cleanUpFiles {
+			err := os.Remove(file)
+			if err != nil {
+				h.log.Error(ErrCleanupCertificate(err, file))
+			}
+		}
+	}()
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		msg := "unable to read request body"
@@ -166,12 +179,73 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 		return
 	}
 
-	// if values have been passed as body we run test using SMP Handler
-	if string(body) != "" {
+	isSSLCertificateProvided := req.URL.Query().Get("cert") == "true"
+
+	/*
+	 When "cert" query param is set the body contains self-signed certs
+	 and not the SMP config, hence we shouldn't use SMP Handler,
+	 if query param is unset/not present presence of body
+	 if values have been passed as body we run test using SMP Handler
+	*/
+	if !isSSLCertificateProvided && string(body) != "" {
 		logrus.Info("Running test with SMP config")
 		req.Body = io.NopCloser(strings.NewReader(string(body)))
 		h.LoadTestUsingSMPHandler(w, req, prefObj, user, provider)
 		return
+	}
+
+	loadTestOptions := &models.LoadTestOptions{}
+
+	profileID := mux.Vars(req)["id"]
+	if isSSLCertificateProvided {
+		performanceProfileData, err := provider.GetPerformanceProfile(req, profileID)
+		if err != nil {
+			h.log.Error(err)
+			http.Error(w, ErrLoadCertificate(err).Error(), http.StatusInternalServerError)
+			return
+		}
+		performanceProfile := models.PerformanceProfile{}
+		err = json.Unmarshal(performanceProfileData, &performanceProfile)
+		if err != nil {
+			h.log.Error(ErrUnmarshal(err, "performance profile"))
+			http.Error(w, ErrUnmarshal(err, "performance profile").Error(), http.StatusInternalServerError)
+			return
+		}
+		var isErrLoadingCertificate bool
+		caCertificate, certificateOk := performanceProfile.Metadata["ca_certificate"].(map[string]interface{})
+
+		if certificateOk {
+			certificateName, ok := caCertificate["name"].(string)
+			if ok {
+				filePath := utils.SanitizeFileName(certificateName)
+
+				file, err := os.CreateTemp(os.TempDir(), filePath)
+				if err != nil {
+					h.log.Error(ErrCreateFile(err, certificateName))
+					http.Error(w, ErrCreateFile(err, certificateName).Error(), http.StatusInternalServerError)
+					return
+				}
+				cleanUpFiles = append(cleanUpFiles, file.Name())
+				certificateData := caCertificate["file"].(string)
+
+				_, err = file.Write([]byte(certificateData))
+				if err != nil {
+					logrus.Error(ErrCreateFile(err, certificateName))
+					http.Error(w, ErrCreateFile(err, certificateName).Error(), http.StatusInternalServerError)
+					return
+				}
+				assignCertificatePath("ca_certificate", file.Name(), loadTestOptions)
+			} else {
+				isErrLoadingCertificate = true
+			}
+
+		} else {
+			isErrLoadingCertificate = true
+		}
+
+		if isErrLoadingCertificate {
+			h.log.Info("unable to load SSL certificate, skipping")
+		}
 	}
 
 	err = req.ParseForm()
@@ -192,7 +266,6 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	meshName := q.Get("mesh")
 	testUUID := q.Get("uuid")
 	// getting profile id from URL
-	profileID := mux.Vars(req)["id"]
 
 	headersString := q.Get("headers")
 	cookiesString := q.Get("cookies")
@@ -204,7 +277,6 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	body = []byte(bodyString)
 	h.log.Debug("Headers : ", headers)
 
-	loadTestOptions := &models.LoadTestOptions{}
 	loadTestOptions.Headers = headers
 	loadTestOptions.Cookies = cookies
 	loadTestOptions.Body = body
@@ -572,4 +644,8 @@ func (h *Handler) CollectStaticMetrics(config *models.SubmitMetricsConfig) error
 	// now to remove all the queries for the uuid
 	h.config.QueryTracker.RemoveUUID(ctx, config.TestUUID)
 	return nil
+}
+
+func assignCertificatePath(key, path string, loadTestOptions *models.LoadTestOptions) {
+	loadTestOptions.CACert = path
 }

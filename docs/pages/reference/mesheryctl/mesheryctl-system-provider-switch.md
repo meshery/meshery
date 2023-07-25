@@ -20,7 +20,7 @@ Switch provider of context in focus and redeploy Meshery. Run `mesheryctl system
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system provider switch <provider> [flags]
+mesheryctl system provider switch [provider] [flags]
 
 </div>
 </pre> 
@@ -30,7 +30,7 @@ mesheryctl system provider switch <provider> [flags]
 Switch provider and redeploy Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system provider switch <provider>
+mesheryctl system provider switch [provider]
 
 </div>
 </pre> 

@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<421f4334a6a6f8ba072a28874d1839a3>>
- * @flow
+ * @generated SignedSource<<d64858ca50550820eabcb2f9253dd5cd>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,34 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type Status = "ENABLED" | "CONNECTED" | "DISABLED" | "PROCESSING" | "UNKNOWN" | "%future added value";
-export type OperatorStatusQuery$variables = {|
-  k8scontextID: string,
-|};
-export type OperatorStatusQuery$data = {|
-  +operator: ?{|
-    +status: Status,
-    +version: string,
-    +controllers: $ReadOnlyArray<{|
-      +name: string,
-      +version: string,
-      +status: Status,
-    |}>,
-    +error: ?{|
-      +code: string,
-      +description: string,
-    |},
-  |},
-|};
-export type OperatorStatusQuery = {|
-  variables: OperatorStatusQuery$variables,
-  response: OperatorStatusQuery$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -152,9 +124,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "ee746a7c43a6c4b8aa38b143e8a5b01e";
+node.hash = "ee746a7c43a6c4b8aa38b143e8a5b01e";
 
-module.exports = ((node/*: any*/)/*: Query<
-  OperatorStatusQuery$variables,
-  OperatorStatusQuery$data,
->*/);
+module.exports = node;

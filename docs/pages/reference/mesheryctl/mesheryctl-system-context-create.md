@@ -71,7 +71,7 @@ mesheryctl system context create context-name --components meshery-osm --platfor
 ## Screenshots
 
 Usage of mesheryctl context create
-![context-create-usage](../../../../docs/assets/img/mesheryctl/newcontext.png)
+![context-create-usage](/assets/img/mesheryctl/newcontext.png)
 
 ## See Also
 

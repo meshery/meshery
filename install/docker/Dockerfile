@@ -62,15 +62,28 @@ RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
 #RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
 
 
-FROM frolvlad/alpine-glibc:alpine-3.13_glibc-2.32
-#RUN apt-get update; apt-get install -y ca-certificates; update-ca-certificates && rm -rf /var/lib/apt/lists/*
-RUN apk update && apk add ca-certificates; update-ca-certificates && rm -rf /var/cache/apk/*
+FROM alpine:3.15.3
+ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc
+ENV GLIBC_VERSION=2.34-r0
+# To solve: ./meshery: /usr/glibc-compat/lib/libc.so.6: version `GLIBC_2.34' not found (required by ./meshery)
+RUN set -ex && \
+    apk --update add libstdc++ curl ca-certificates && \
+    for pkg in glibc-${GLIBC_VERSION} glibc-bin-${GLIBC_VERSION}; \
+    do curl -sSL ${GLIBC_REPO}/releases/download/${GLIBC_VERSION}/${pkg}.apk -o /tmp/${pkg}.apk; done && \
+    apk add --allow-untrusted /tmp/*.apk && \
+    rm -v /tmp/*.apk && \
+    /usr/glibc-compat/sbin/ldconfig /lib /usr/glibc-compat/lib
 RUN update-ca-certificates
-RUN apk upgrade --no-cache && \
-    apk add --no-cache libstdc++
-COPY ./server/oam /app/server/oam
+
+# FROM frolvlad/alpine-glibc:alpine-3.13_glibc-2.32
+#RUN apt-get update; apt-get install -y ca-certificates; update-ca-certificates && rm -rf /var/lib/apt/lists/*
+# RUN apk update && apk add ca-certificates; update-ca-certificates && rm -rf /var/cache/apk/*
+# RUN apk upgrade --no-cache && \
+#     apk add --no-cache libstdc++
+
 COPY ./server/meshmodel/components /app/server/meshmodel/components
 COPY ./server/meshmodel/relationships /app/server/meshmodel/relationships
+COPY ./server/meshmodel/policies /app/server/meshmodel/policies
 COPY --from=meshery-server /meshery /app/server/cmd/
 COPY --from=meshery-server /etc/passwd /etc/passwd
 COPY --from=meshery-server /github.com/meshery/meshery/server/helpers/swagger.yaml /app/server/helpers/swagger.yaml
@@ -80,8 +93,8 @@ COPY --from=provider-ui /out /app/provider-ui/out
 COPY --from=wrk2 /wrk2 /app/server/cmd/wrk2
 COPY --from=wrk2 /wrk2/wrk /usr/local/bin
 COPY --from=seed_content /seed_content /home/appuser/.meshery/seed_content
-COPY --from=layer5/getnighthawk:latest /usr/local/bin/nighthawk_service /app/server/cmd/
-COPY --from=layer5/getnighthawk:latest /usr/local/bin/nighthawk_output_transform /app/server/cmd/
+COPY --from=layer5/getnighthawk:v1.0.1 /usr/local/bin/nighthawk_service /app/server/cmd/
+COPY --from=layer5/getnighthawk:v1.0.1 /usr/local/bin/nighthawk_output_transform /app/server/cmd/
 
 RUN mkdir -p /home/appuser/.meshery/config; chown -R appuser /home/appuser/; chown -R appuser /app/ui/public
 USER appuser

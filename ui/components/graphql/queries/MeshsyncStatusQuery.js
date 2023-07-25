@@ -1,10 +1,10 @@
-import { graphql, fetchQuery } from "react-relay";
-import environment from "../../../lib/relayEnvironment";
+import { fetchQuery, graphql } from "react-relay";
+import { createRelayEnvironment } from "../../../lib/relayEnvironment";
 
-export default function MeshsyncStatusQuery(variables) {
-  const vars = { k8scontextID : variables.k8scontextID };
+export default function MeshsyncStatusQuery(vars = { k8scontextID : vars.k8scontextID }) {
+  const environment = createRelayEnvironment({});
 
-  const query = graphql`
+  const MeshsyncStatusQueryNode = graphql`
     query MeshsyncStatusQuery($k8scontextID: String!)  {
         controller: getMeshsyncStatus(k8scontextID: $k8scontextID){
             name
@@ -14,5 +14,5 @@ export default function MeshsyncStatusQuery(variables) {
     }
   `;
 
-  return fetchQuery(environment, query, vars);
+  return fetchQuery(environment, MeshsyncStatusQueryNode, vars);
 }

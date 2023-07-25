@@ -20,14 +20,12 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-
 	"gopkg.in/yaml.v2"
-
-	v1core "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	v1core "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 var (
@@ -35,6 +33,75 @@ var (
 	ManifestsFolder = "manifests"
 	ReleaseTag      string
 )
+
+type K8sCompose struct {
+	APIVersion interface{} `yaml:"apiVersion,omitempty"`
+	Kind       string      `yaml:"kind,omitempty"`
+	Metadata   interface{} `yaml:"metadata,omitempty"`
+	Spec       Spec        `yaml:"spec,omitempty"`
+	Status     interface{} `yaml:"status,omitempty"`
+}
+
+type Spec struct {
+	Replicas int         `yaml:"replicas,omitempty"`
+	Selector interface{} `yaml:"selector,omitempty"`
+	Strategy interface{} `yaml:"strategy,omitempty"`
+	Template Template    `yaml:"template,omitempty"`
+}
+
+type Template struct {
+	Metadata interface{}  `yaml:"metadata,omitempty"`
+	Spec     TemplateSpec `yaml:"spec,omitempty"`
+}
+
+type TemplateSpec struct {
+	ServiceAccount     string       `yaml:"serviceAccount,omitempty"`
+	ServiceAccountName string       `yaml:"serviceAccountName,omitempty"`
+	Containers         []Containers `yaml:"containers,omitempty"`
+	RestartPolicy      string       `yaml:"restartPolicy,omitempty"`
+}
+
+type Containers struct {
+	Env             interface{}      `yaml:"env,omitempty"`
+	Image           string           `yaml:"image,omitempty"`
+	ImagePullPolicy string           `yaml:"imagePullPolicy"`
+	Name            string           `yaml:"name,omitempty"`
+	Ports           []map[string]int `yaml:"ports,omitempty"`
+	Resources       interface{}      `yaml:"resources,omitempty"`
+}
+
+type DockerCompose struct {
+	Version  string             `yaml:"version,omitempty"`
+	Services map[string]Service `yaml:"services,omitempty"`
+	Volumes  Volumes            `yaml:"volumes,omitempty"`
+}
+type Service struct {
+	Image       string   `yaml:"image,omitempty"`
+	Labels      []string `yaml:"labels,omitempty"`
+	Environment []string `yaml:"environment,omitempty"`
+	Volumes     []string `yaml:"volumes,omitempty"`
+	Ports       []string `yaml:"ports,omitempty"`
+}
+
+type Volumes struct {
+	MesheryConfig interface{} `yaml:"meshery-config,omitempty"`
+}
+
+type ManifestList struct {
+	SHA       string     `json:"sha,omitempty"`
+	URL       string     `json:"url,omitempty"`
+	Tree      []Manifest `json:"tree,omitempty"`
+	Truncated bool       `json:"truncated,omitempty"`
+}
+
+type Manifest struct {
+	Path string      `json:"path,omitempty"`
+	Mode string      `json:"mode,omitempty"`
+	Typ  string      `json:"type,omitempty"`
+	SHA  string      `json:"sha,omitempty"`
+	Size json.Number `json:"size,omitempty"`
+	URL  string      `json:"url,omitempty"`
+}
 
 // GetManifestTreeURL returns the manifest tree url based on version
 func GetManifestTreeURL(version string) (string, error) {
@@ -138,21 +205,22 @@ func DownloadOperatorManifest() error {
 // returns the Channel and Version given a context
 func GetChannelAndVersion(currCtx *(config.Context)) (string, string, error) {
 	var version, channel string
-	var err error
-
 	version = currCtx.GetVersion()
 	channel = currCtx.GetChannel()
 	if version == "latest" {
 		if channel == "edge" {
 			version = "master"
 		} else {
-			version, err = GetLatestStableReleaseTag()
+			versions, err := meshkitutils.GetLatestReleaseTagsSorted(constants.GetMesheryGitHubOrg(), constants.GetMesheryGitHubRepo())
 			if err != nil {
 				return "", "", err
 			}
+			if len(versions) == 0 {
+				return "", "", fmt.Errorf("no versions found")
+			}
+			version = versions[len(versions)-1]
 		}
 	}
-
 	return channel, version, nil
 }
 
@@ -187,7 +255,7 @@ func GetDeploymentVersion(filePath string) (string, error) {
 }
 
 // CanUseCachedOperatorManifests returns an error if it is not possible to use cached operator manifests
-func CanUseCachedOperatorManifests(currCtx *(config.Context)) error {
+func CanUseCachedOperatorManifests(_ *config.Context) error {
 	if _, err := os.Stat(filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperator)); os.IsNotExist(err) {
 		return errors.New("operator manifest file does not exist")
 	}
@@ -287,30 +355,6 @@ func FetchManifests(currCtx *(config.Context)) ([]Manifest, error) {
 	return manifests, nil
 }
 
-// GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
-func GetLatestStableReleaseTag() (string, error) {
-	url := "https://github.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/releases/latest"
-	resp, err := http.Get(url)
-	if err != nil {
-		return "", errors.Wrapf(err, "failed to make GET request to %s", url)
-	}
-	defer SafeClose(resp.Body)
-
-	if resp.StatusCode != http.StatusOK {
-		return "", errors.New("failed to get latest stable release tag")
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", errors.Wrap(err, "failed to read response body")
-	}
-	re := regexp.MustCompile("/releases/tag/(.*?)\"")
-	releases := re.FindAllString(string(body), -1)
-	latest := strings.ReplaceAll(releases[0], "/releases/tag/", "")
-	latest = strings.ReplaceAll(latest, "\"", "")
-	return latest, nil
-}
-
 // IsAdapterValid checks if the component mentioned by the user is a valid component
 func IsAdapterValid(manifestArr []Manifest, componentManifest string) bool {
 	for _, v := range manifestArr {
@@ -332,10 +376,14 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 			fileURL = "https://raw.githubusercontent.com/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/master/install/docker/docker-compose.yaml"
 		} else if ctx.Channel == "stable" {
 			if ctx.Version == "latest" {
-				ReleaseTag, err = GetLatestStableReleaseTag()
+				versions, err := meshkitutils.GetLatestReleaseTagsSorted(constants.GetMesheryGitHubOrg(), constants.GetMesheryGitHubRepo())
 				if err != nil {
 					return errors.Wrapf(err, "failed to fetch latest stable release tag")
 				}
+				if len(versions) == 0 {
+					return fmt.Errorf("no versions found")
+				}
+				ReleaseTag = versions[len(versions)-1]
 			} else { // else we get version tag from the config file
 				mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 				if err != nil {
@@ -588,21 +636,22 @@ func GetPodList(client *meshkitkube.Client, namespace string) (*v1core.PodList, 
 	return podList, nil
 }
 
-// GetRequiredPods checks if the pods specified by the user is valid returns a list of the required pods
-func GetRequiredPods(specifiedPods []string, availablePods []v1core.Pod) ([]string, error) {
-	var requiredPods []string
+// GetRequiredPodsMap checks if the pods specified by the user is valid returns a map of the required pods
+func GetRequiredPods(specifiedPods []string, availablePods []v1core.Pod) (map[string]string, error) {
+	requiredPodsMap := make(map[string]string)
 	var availablePodsName []string
 	for _, pod := range availablePods {
 		availablePodsName = append(availablePodsName, pod.GetName())
 	}
 	for _, sp := range specifiedPods {
 		if index := StringContainedInSlice(sp, availablePodsName); index != -1 {
-			requiredPods = append(requiredPods, availablePodsName[index])
+			requiredPodsMap[availablePodsName[index]] = availablePodsName[index]
 		} else {
 			return nil, fmt.Errorf("pod \"%s\" specified, does not exist in the 'meshery' namespace. Please  Run `mesheryctl system status` to view the available pods", sp)
 		}
 	}
-	return requiredPods, nil
+
+	return requiredPodsMap, nil
 }
 
 // GetCleanPodName cleans the pod names in the MesheryNamespace to make it more readable

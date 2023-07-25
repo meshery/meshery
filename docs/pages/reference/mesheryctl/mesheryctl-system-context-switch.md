@@ -59,7 +59,7 @@ mesheryctl system context switch sample
 ## Screenshots
 
 Usage of mesheryctl context switch
-![context-switch-usage](../../../../docs/assets/img/mesheryctl/contextswitch.png)
+![context-switch-usage](/assets/img/mesheryctl/contextswitch.png)
 
 ## See Also
 

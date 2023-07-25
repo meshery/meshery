@@ -1,3 +1,17 @@
+// Copyright 2023 Layer5, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package perf
 
 import (
@@ -36,6 +50,11 @@ var (
 	req                *http.Request
 )
 
+var linkDocPerfApply = map[string]string{
+	"link":    "![perf-apply-usage](/assets/img/mesheryctl/perf-apply.png)",
+	"caption": "Usage of mesheryctl perf apply",
+}
+
 var applyCmd = &cobra.Command{
 	Use:   "apply [profile-name | --file] --flags",
 	Short: "Run a Performance test",
@@ -62,13 +81,9 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --qps 30
 
 // Execute a Performance test with specified service mesh
 mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh istio
-
-! Refer below image link for usage
-* Usage of mesheryctl perf apply
-# ![perf-apply-usage](/assets/img/mesheryctl/perf-apply.png)
 	`,
+	Annotations: linkDocPerfApply,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		client := &http.Client{}
 		userResponse := false
 
 		// setting up for error formatting
@@ -143,6 +158,11 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 			return ErrNoProfileName()
 		}
 
+		// Invalid number of arguments
+		if len(args) > 1 {
+			return ErrorArgumentOverflow()
+		}
+
 		// handles spaces in args if quoted args passed
 		for i, arg := range args {
 			args[i] = strings.ReplaceAll(arg, " ", "%20")
@@ -170,7 +190,7 @@ mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh i
 			}
 
 			if userResponse {
-				profileID, profileName, err = createPerformanceProfile(client, mctlCfg)
+				profileID, profileName, err = createPerformanceProfile(mctlCfg)
 				if err != nil {
 					return err
 				}
@@ -272,7 +292,7 @@ func init() {
 	applyCmd.Flags().StringVarP(&filePath, "file", "f", "", "(optional) file containing SMP-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
 }
 
-func createPerformanceProfile(client *http.Client, mctlCfg *config.MesheryCtlConfig) (string, string, error) {
+func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string, error) {
 	utils.Log.Debug("Creating new performance profile inside function")
 
 	if profileName == "" {

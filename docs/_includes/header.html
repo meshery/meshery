@@ -33,9 +33,11 @@
           >
         </li>
         {% endfor %}
-
+        
+        <a href="https://play.meshery.io">
+          <div class="nav-btn">Playground</div>
+        </a>
         <!--Version Selector -->
-
         <select
           onchange="window.location=this.value"
           class="appearance-none flex-1 w-full px-0 py-1 placeholder-gray-900 tracking-wide focus:outline-none version-selector"
@@ -79,7 +81,10 @@
         </svg>
       </button>
       <button class="nav-mode-icon" id="mode-toggle-btn" style="text-align: center">
-        <img class="nav-text" src="{{ site.baseurl }}/assets/img/nav-icons/mode-toggle-icon.png" />
+        <img class="nav-text" id="logo-dark-light" src="{{ site.baseurl }}/assets/img/nav-icons/mode-toggle-icon-moon.png" 
+        data-logo-for-dark="{{ site.baseurl }}/assets/img/nav-icons/mode-toggle-icon-moon.png"
+        data-logo-for-light="{{ site.baseurl }}/assets/img/nav-icons/mode-toggle-icon-sun.png"
+        />
       </button>
     </div>
 

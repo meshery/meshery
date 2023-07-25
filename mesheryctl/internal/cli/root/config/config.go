@@ -1,3 +1,17 @@
+// Copyright 2023 Layer5, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package config
 
 import (
@@ -44,6 +58,7 @@ type Context struct {
 	Channel    string   `yaml:"channel,omitempty" mapstructure:"channel,omitempty"`
 	Version    string   `yaml:"version,omitempty" mapstructure:"version,omitempty"`
 	Provider   string   `yaml:"provider,omitempty" mapstructure:"provider,omitempty"`
+	Operator   string   `yaml:"operator,omitempty" mapstructure:"operator,omitempty"`
 }
 
 // GetMesheryCtl returns a reference to the mesheryctl configuration object
@@ -58,7 +73,7 @@ func GetMesheryCtl(v *viper.Viper) (*MesheryCtlConfig, error) {
 }
 
 // UpdateContextInConfig write the given context in meshconfig
-func UpdateContextInConfig(v *viper.Viper, context *Context, name string) error {
+func UpdateContextInConfig(context *Context, name string) error {
 	viper.Set("contexts."+name, context)
 	err := viper.WriteConfig()
 	if err != nil {
@@ -267,6 +282,16 @@ func (ctx *Context) SetProvider(provider string) {
 	ctx.Provider = provider
 }
 
+// GetOperatorStatus returns a string that denotes the operator status
+func (ctx *Context) GetOperatorStatus() string {
+	return ctx.Operator
+}
+
+// SetOperatorStatus can be used to set operator status
+func (ctx *Context) SetOperatorStatus(status string) {
+	ctx.Operator = status
+}
+
 // GetName returns the token name
 func (t *Token) GetName() string {
 	return t.Name
@@ -416,7 +441,7 @@ func SetTokenToConfig(tokenName string, configPath string, ctxName string) error
 		return err
 	}
 	context.Token = tokenName
-	err = UpdateContextInConfig(viper.GetViper(), context, ctxName)
+	err = UpdateContextInConfig(context, ctxName)
 	if err != nil {
 		return err
 	}

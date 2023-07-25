@@ -67,7 +67,7 @@ func (g *GrafanaClient) Validate(ctx context.Context, BaseURL, APIKey string) er
 	}
 	return nil
 }
-func (g *GrafanaClient) makeRequest(ctx context.Context, queryURL, APIKey string) ([]byte, error) {
+func (g *GrafanaClient) makeRequest(_ context.Context, queryURL, APIKey string) ([]byte, error) {
 	req, err := http.NewRequest(http.MethodGet, queryURL, nil)
 	if err != nil {
 		return nil, err

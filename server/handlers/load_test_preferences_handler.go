@@ -41,7 +41,7 @@ func (h *Handler) UserTestPreferenceHandler(w http.ResponseWriter, req *http.Req
 // 	200:
 
 // UserTestPreferenceStore is used for persisting load test preferences
-func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		// logrus.Error(err)
@@ -87,13 +87,13 @@ func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Reque
 // 	200: loadTestPreferencesWrapper
 
 // UserTestPreferenceGet gets the PerformanceTestConfig object
-func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	q := req.URL.Query()
 	testUUID := q.Get("uuid")
 	h.log.Debug(testUUID)
 	if testUUID == "" {
 		testPage := q.Get("page")
-		testPageSize := q.Get("pageSize")
+		testPageSize := q.Get("pagesize")
 		testSearch := q.Get("search")
 		testOrder := q.Get("order")
 		h.log.Debug(testPage, testPageSize)
@@ -147,7 +147,7 @@ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request
 // 	200:
 
 // UserTestPreferenceDelete deletes the PerformanceTestConfig object
-func (h *Handler) UserTestPreferenceDelete(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) UserTestPreferenceDelete(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	testUUID := req.URL.Query().Get("uuid")
 	if testUUID == "" {
 		obj := "field uuid"

@@ -16,6 +16,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/database"
@@ -27,6 +28,7 @@ import (
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"gorm.io/gorm"
 )
 
 // DefaultLocalProvider - represents a local provider
@@ -64,6 +66,7 @@ func (l *DefaultLocalProvider) Initialize() {
 		{Feature: PersistMesheryPatterns},
 		{Feature: PersistMesheryApplications},
 		{Feature: PersistMesheryFilters},
+		{Feature: PersistCredentials},
 	}
 }
 
@@ -94,7 +97,7 @@ func (l *DefaultLocalProvider) PackageLocation() string {
 }
 
 // GetProviderCapabilities returns all of the provider properties
-func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, r *http.Request) {
+func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, _ *http.Request) {
 	encoder := json.NewEncoder(w)
 	if err := encoder.Encode(l.ProviderProperties); err != nil {
 		http.Error(w, "failed to encode provider capabilities", http.StatusInternalServerError)
@@ -102,19 +105,8 @@ func (l *DefaultLocalProvider) GetProviderCapabilities(w http.ResponseWriter, r 
 }
 
 // InitiateLogin - initiates login flow and returns a true to indicate the handler to "return" or false to continue
-func (l *DefaultLocalProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
+func (l *DefaultLocalProvider) InitiateLogin(_ http.ResponseWriter, _ *http.Request, _ bool) {
 	// l.issueSession(w, r, fromMiddleWare)
-}
-
-// issueSession issues a cookie session after successful login
-func (l *DefaultLocalProvider) issueSession(w http.ResponseWriter, req *http.Request, fromMiddleWare bool) {
-	if !fromMiddleWare {
-		returnURL := "/"
-		if req.RequestURI != "" {
-			returnURL = req.RequestURI
-		}
-		http.Redirect(w, req, returnURL, http.StatusFound)
-	}
 }
 
 func (l *DefaultLocalProvider) fetchUserDetails() *User {
@@ -127,22 +119,30 @@ func (l *DefaultLocalProvider) fetchUserDetails() *User {
 }
 
 // GetUserDetails - returns the user details
-func (l *DefaultLocalProvider) GetUserDetails(req *http.Request) (*User, error) {
+func (l *DefaultLocalProvider) GetUserDetails(_ *http.Request) (*User, error) {
 	return l.fetchUserDetails(), nil
 }
 
+func (l *DefaultLocalProvider) GetUserByID(_ *http.Request, _ string) ([]byte, error) {
+	return nil, nil
+}
+
+func (l *DefaultLocalProvider) GetUsers(_, _, _, _, _, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
 // GetSession - returns the session
-func (l *DefaultLocalProvider) GetSession(req *http.Request) error {
+func (l *DefaultLocalProvider) GetSession(_ *http.Request) error {
 	return nil
 }
 
 // GetProviderToken - returns provider token
-func (l *DefaultLocalProvider) GetProviderToken(req *http.Request) (string, error) {
+func (l *DefaultLocalProvider) GetProviderToken(_ *http.Request) (string, error) {
 	return "", nil
 }
 
 // Logout - logout from provider backend
-func (l *DefaultLocalProvider) Logout(w http.ResponseWriter, req *http.Request) error {
+func (l *DefaultLocalProvider) Logout(_ http.ResponseWriter, _ *http.Request) error {
 	return nil
 }
 
@@ -151,11 +151,11 @@ func (l *DefaultLocalProvider) HandleUnAuthenticated(w http.ResponseWriter, req 
 	http.Redirect(w, req, "/user/login", http.StatusFound)
 }
 
-func (l *DefaultLocalProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8sContext, error) {
+func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (K8sContext, error) {
 	return l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
 }
 
-func (l *DefaultLocalProvider) GetK8sContexts(token, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetK8sContexts(_, page, pageSize, search, order string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -176,11 +176,11 @@ func (l *DefaultLocalProvider) GetK8sContexts(token, page, pageSize, search, ord
 	return l.MesheryK8sContextPersister.GetMesheryK8sContexts(search, order, pg, pgs)
 }
 
-func (l *DefaultLocalProvider) DeleteK8sContext(token, id string) (K8sContext, error) {
+func (l *DefaultLocalProvider) DeleteK8sContext(_, id string) (K8sContext, error) {
 	return l.MesheryK8sContextPersister.DeleteMesheryK8sContext(id)
 }
 
-func (l *DefaultLocalProvider) GetK8sContext(token, id string) (K8sContext, error) {
+func (l *DefaultLocalProvider) GetK8sContext(_, id string) (K8sContext, error) {
 	return l.MesheryK8sContextPersister.GetMesheryK8sContext(id)
 }
 
@@ -226,7 +226,13 @@ func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, e
 // }
 
 // FetchResults - fetches results from provider backend
-func (l *DefaultLocalProvider) FetchResults(tokenVal, page, pageSize, search, order, profileID string) ([]byte, error) {
+func (l *DefaultLocalProvider) FetchResults(_, page, pageSize, _, _, profileID string) ([]byte, error) {
+	if page == "" {
+		page = "0"
+	}
+	if pageSize == "" {
+		pageSize = "10"
+	}
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, ErrPageNumber(err)
@@ -239,7 +245,7 @@ func (l *DefaultLocalProvider) FetchResults(tokenVal, page, pageSize, search, or
 }
 
 // FetchResults - fetches results from provider backend
-func (l *DefaultLocalProvider) FetchAllResults(tokenString string, page, pageSize, search, order, from, to string) ([]byte, error) {
+func (l *DefaultLocalProvider) FetchAllResults(_, page, pageSize, _, _, _, _ string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -259,7 +265,7 @@ func (l *DefaultLocalProvider) FetchAllResults(tokenString string, page, pageSiz
 }
 
 // GetResult - fetches result from provider backend for the given result id
-func (l *DefaultLocalProvider) GetResult(tokenVal string, resultID uuid.UUID) (*MesheryResult, error) {
+func (l *DefaultLocalProvider) GetResult(_ string, resultID uuid.UUID) (*MesheryResult, error) {
 	// key := uuid.FromStringOrNil(resultID)
 	if resultID == uuid.Nil {
 		return nil, ErrResultID
@@ -306,7 +312,7 @@ func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *Meshery
 }
 
 // FetchSmiResults - fetches results from provider backend
-func (l *DefaultLocalProvider) FetchSmiResults(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) FetchSmiResults(_ *http.Request, page, pageSize, _, _ string) ([]byte, error) {
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, ErrPageNumber(err)
@@ -319,16 +325,8 @@ func (l *DefaultLocalProvider) FetchSmiResults(req *http.Request, page, pageSize
 }
 
 // FetchSmiResults - fetches results from provider backend
-func (l *DefaultLocalProvider) FetchSmiResult(req *http.Request, page, pageSize, search, order string, resultID uuid.UUID) ([]byte, error) {
-	pg, err := strconv.ParseUint(page, 10, 32)
-	if err != nil {
-		return nil, ErrPageNumber(err)
-	}
-	pgs, err := strconv.ParseUint(pageSize, 10, 32)
-	if err != nil {
-		return nil, ErrPageSize(err)
-	}
-	return l.SmiResultPersister.GetResult(pg, pgs, resultID)
+func (l *DefaultLocalProvider) FetchSmiResult(_ *http.Request, _, _, _, _ string, resultID uuid.UUID) ([]byte, error) {
+	return l.SmiResultPersister.GetResult(resultID)
 }
 
 // PublishSmiResults - publishes results to the provider backend synchronously
@@ -347,7 +345,7 @@ func (l *DefaultLocalProvider) PublishSmiResults(result *SmiResult) (string, err
 	return key.String(), nil
 }
 
-func (l *DefaultLocalProvider) shipResults(req *http.Request, data []byte) (string, error) {
+func (l *DefaultLocalProvider) shipResults(_ *http.Request, data []byte) (string, error) {
 	bf := bytes.NewBuffer(data)
 	remoteProviderURL, _ := url.Parse(l.ProviderBaseURL + "/result")
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
@@ -420,7 +418,7 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 }
 
 // RecordPreferences - records the user preference
-func (l *DefaultLocalProvider) RecordPreferences(req *http.Request, userID string, data *Preference) error {
+func (l *DefaultLocalProvider) RecordPreferences(_ *http.Request, userID string, data *Preference) error {
 	return l.MapPreferencePersister.WriteToPersister(userID, data)
 }
 
@@ -430,11 +428,11 @@ func (l *DefaultLocalProvider) UpdateToken(http.ResponseWriter, *http.Request) s
 }
 
 // TokenHandler - specific to remote auth
-func (l *DefaultLocalProvider) TokenHandler(w http.ResponseWriter, r *http.Request, fromMiddleWare bool) {
+func (l *DefaultLocalProvider) TokenHandler(_ http.ResponseWriter, _ *http.Request, _ bool) {
 }
 
 // ExtractToken - Returns the auth token and the provider type
-func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, r *http.Request) {
+func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, _ *http.Request) {
 	resp := map[string]interface{}{
 		"meshery-provider": l.Name(),
 		tokenName:          "",
@@ -447,7 +445,7 @@ func (l *DefaultLocalProvider) ExtractToken(w http.ResponseWriter, r *http.Reque
 }
 
 // SMPTestConfigStore Stores the given PerformanceTestConfig into local datastore
-func (l *DefaultLocalProvider) SMPTestConfigStore(req *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error) {
+func (l *DefaultLocalProvider) SMPTestConfigStore(_ *http.Request, perfConfig *SMP.PerformanceTestConfig) (string, error) {
 	uid, err := uuid.NewV4()
 	if err != nil {
 		return "", ErrGenerateUUID(err)
@@ -461,7 +459,7 @@ func (l *DefaultLocalProvider) SMPTestConfigStore(req *http.Request, perfConfig 
 }
 
 // SMPTestConfigGet gets the given PerformanceTestConfig from the local datastore
-func (l *DefaultLocalProvider) SMPTestConfigGet(req *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error) {
+func (l *DefaultLocalProvider) SMPTestConfigGet(_ *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error) {
 	uid, err := uuid.FromString(testUUID)
 	if err != nil {
 		return nil, ErrGenerateUUID(err)
@@ -470,7 +468,7 @@ func (l *DefaultLocalProvider) SMPTestConfigGet(req *http.Request, testUUID stri
 }
 
 // SMPTestConfigFetch gets all the PerformanceTestConfigs from the local datastore
-func (l *DefaultLocalProvider) SMPTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) SMPTestConfigFetch(_ *http.Request, page, pageSize, _, _ string) ([]byte, error) {
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, ErrPageNumber(err)
@@ -483,7 +481,7 @@ func (l *DefaultLocalProvider) SMPTestConfigFetch(req *http.Request, page, pageS
 }
 
 // SMPTestConfigDelete deletes the given PerformanceTestConfig from the local datastore
-func (l *DefaultLocalProvider) SMPTestConfigDelete(req *http.Request, testUUID string) error {
+func (l *DefaultLocalProvider) SMPTestConfigDelete(_ *http.Request, testUUID string) error {
 	uid, err := uuid.FromString(testUUID)
 	if err != nil {
 		return ErrGenerateUUID(err)
@@ -491,17 +489,17 @@ func (l *DefaultLocalProvider) SMPTestConfigDelete(req *http.Request, testUUID s
 	return l.TestProfilesPersister.DeleteTestConfig(uid)
 }
 
-func (l *DefaultLocalProvider) SaveMesheryPatternResource(token string, resource *PatternResource) (*PatternResource, error) {
+func (l *DefaultLocalProvider) SaveMesheryPatternResource(_ string, resource *PatternResource) (*PatternResource, error) {
 	return l.MesheryPatternResourcePersister.SavePatternResource(resource)
 }
 
-func (l *DefaultLocalProvider) GetMesheryPatternResource(token, resourceID string) (*PatternResource, error) {
+func (l *DefaultLocalProvider) GetMesheryPatternResource(_, resourceID string) (*PatternResource, error) {
 	id := uuid.FromStringOrNil(resourceID)
 	return l.MesheryPatternResourcePersister.GetPatternResource(id)
 }
 
 func (l *DefaultLocalProvider) GetMesheryPatternResources(
-	token,
+	_,
 	page,
 	pageSize,
 	search,
@@ -533,18 +531,18 @@ func (l *DefaultLocalProvider) GetMesheryPatternResources(
 	)
 }
 
-func (l *DefaultLocalProvider) DeleteMesheryPatternResource(token, resourceID string) error {
+func (l *DefaultLocalProvider) DeleteMesheryPatternResource(_, resourceID string) error {
 	id := uuid.FromStringOrNil(resourceID)
 	return l.MesheryPatternResourcePersister.DeletePatternResource(id)
 }
 
 // SaveMesheryPattern saves given pattern with the provider
-func (l *DefaultLocalProvider) SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error) {
+func (l *DefaultLocalProvider) SaveMesheryPattern(_ string, pattern *MesheryPattern) ([]byte, error) {
 	return l.MesheryPatternPersister.SaveMesheryPattern(pattern)
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
-func (l *DefaultLocalProvider) GetMesheryPatterns(tokenString, page, pageSize, search, order string, updatedAfter string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, order string, updatedAfter string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -565,40 +563,44 @@ func (l *DefaultLocalProvider) GetMesheryPatterns(tokenString, page, pageSize, s
 }
 
 // GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
-func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(tokenString string, search, order string) ([]byte, error) {
-	return l.MesheryPatternPersister.GetMesheryCatalogPatterns(search, order)
+func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(_, page, pageSize, search, order string) ([]byte, error) {
+	return l.MesheryPatternPersister.GetMesheryCatalogPatterns(page, pageSize, search, order)
 }
 
 // PublishCatalogPattern publishes pattern to catalog
 // Not supported by local provider
-func (l *DefaultLocalProvider) PublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error) {
-	return []byte(""), nil
+func (l *DefaultLocalProvider) PublishCatalogPattern(_ *http.Request, _ *MesheryCatalogPatternRequestBody) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) UnPublishCatalogPattern(_ *http.Request, _ *MesheryCatalogPatternRequestBody) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
 }
 
 // GetMesheryPattern gets pattern for the given patternID
-func (l *DefaultLocalProvider) GetMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryPattern(_ *http.Request, patternID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(patternID)
 	return l.MesheryPatternPersister.GetMesheryPattern(id)
 }
 
 // DeleteMesheryPattern deletes a meshery pattern with the given id
-func (l *DefaultLocalProvider) DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
+func (l *DefaultLocalProvider) DeleteMesheryPattern(_ *http.Request, patternID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(patternID)
 	return l.MesheryPatternPersister.DeleteMesheryPattern(id)
 }
 
 // DeleteMesheryPattern deletes a meshery pattern with the given id
-func (l *DefaultLocalProvider) DeleteMesheryPatterns(req *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
+func (l *DefaultLocalProvider) DeleteMesheryPatterns(_ *http.Request, patterns MesheryPatternDeleteRequestBody) ([]byte, error) {
 	return l.MesheryPatternPersister.DeleteMesheryPatterns(patterns)
 }
 
 // CloneMesheryPattern clones a meshery pattern with the given id
-func (l *DefaultLocalProvider) CloneMesheryPattern(req *http.Request, patternID string, clonePatternRequest *MesheryClonePatternRequestBody) ([]byte, error) {
+func (l *DefaultLocalProvider) CloneMesheryPattern(_ *http.Request, patternID string, clonePatternRequest *MesheryClonePatternRequestBody) ([]byte, error) {
 	return l.MesheryPatternPersister.CloneMesheryPattern(patternID, clonePatternRequest)
 }
 
 // RemotePatternFile takes in the
-func (l *DefaultLocalProvider) RemotePatternFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
+func (l *DefaultLocalProvider) RemotePatternFile(_ *http.Request, resourceURL, path string, save bool) ([]byte, error) {
 	parsedURL, err := url.Parse(resourceURL)
 	if err != nil {
 		return nil, err
@@ -650,12 +652,12 @@ func (l *DefaultLocalProvider) RemotePatternFile(req *http.Request, resourceURL,
 }
 
 // SaveMesheryFilter saves given filter with the provider
-func (l *DefaultLocalProvider) SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error) {
+func (l *DefaultLocalProvider) SaveMesheryFilter(_ string, filter *MesheryFilter) ([]byte, error) {
 	return l.MesheryFilterPersister.SaveMesheryFilter(filter)
 }
 
 // GetMesheryFilters gives the filters stored with the provider
-func (l *DefaultLocalProvider) GetMesheryFilters(tokenString, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryFilters(_, page, pageSize, search, order string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -677,41 +679,45 @@ func (l *DefaultLocalProvider) GetMesheryFilters(tokenString, page, pageSize, se
 }
 
 // GetCatalogMesheryFilters gives the catalog filters stored with the provider
-func (l *DefaultLocalProvider) GetCatalogMesheryFilters(tokenString string, search, order string) ([]byte, error) {
-	return l.MesheryFilterPersister.GetMesheryCatalogFilters(search, order)
+func (l *DefaultLocalProvider) GetCatalogMesheryFilters(_ string, page, pageSize, search, order string) ([]byte, error) {
+	return l.MesheryFilterPersister.GetMesheryCatalogFilters(page, pageSize, search, order)
 }
 
 // PublishCatalogFilter publishes filter to catalog
 // Not supported by local provider
-func (l *DefaultLocalProvider) PublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error) {
+func (l *DefaultLocalProvider) PublishCatalogFilter(_ *http.Request, _ *MesheryCatalogFilterRequestBody) ([]byte, error) {
 	return []byte(""), nil
 }
 
+func (l *DefaultLocalProvider) UnPublishCatalogFilter(_ *http.Request, _ *MesheryCatalogFilterRequestBody) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
 // GetMesheryFilterFile gets filter for the given filterID without the metadata
-func (l *DefaultLocalProvider) GetMesheryFilterFile(req *http.Request, filterID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryFilterFile(_ *http.Request, filterID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(filterID)
 	return l.MesheryFilterPersister.GetMesheryFilterFile(id)
 }
 
 // GetMesheryFilter gets filter for the given filterID
-func (l *DefaultLocalProvider) GetMesheryFilter(req *http.Request, filterID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryFilter(_ *http.Request, filterID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(filterID)
 	return l.MesheryFilterPersister.GetMesheryFilter(id)
 }
 
 // DeleteMesheryFilter deletes a meshery filter with the given id
-func (l *DefaultLocalProvider) DeleteMesheryFilter(req *http.Request, filterID string) ([]byte, error) {
+func (l *DefaultLocalProvider) DeleteMesheryFilter(_ *http.Request, filterID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(filterID)
 	return l.MesheryFilterPersister.DeleteMesheryFilter(id)
 }
 
 // CloneMesheryFilter clones a meshery filter with the given id
-func (l *DefaultLocalProvider) CloneMesheryFilter(req *http.Request, filterID string, cloneFilterRequest *MesheryCloneFilterRequestBody) ([]byte, error) {
+func (l *DefaultLocalProvider) CloneMesheryFilter(_ *http.Request, filterID string, cloneFilterRequest *MesheryCloneFilterRequestBody) ([]byte, error) {
 	return l.MesheryFilterPersister.CloneMesheryFilter(filterID, cloneFilterRequest)
 }
 
 // RemoteFilterFile takes in the
-func (l *DefaultLocalProvider) RemoteFilterFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
+func (l *DefaultLocalProvider) RemoteFilterFile(_ *http.Request, resourceURL, path string, save bool, resource string) ([]byte, error) {
 	parsedURL, err := url.Parse(resourceURL)
 	if err != nil {
 		return nil, err
@@ -762,23 +768,23 @@ func (l *DefaultLocalProvider) RemoteFilterFile(req *http.Request, resourceURL, 
 }
 
 // SaveMesheryApplication saves given application with the provider
-func (l *DefaultLocalProvider) SaveMesheryApplication(tokenString string, application *MesheryApplication) ([]byte, error) {
+func (l *DefaultLocalProvider) SaveMesheryApplication(_ string, application *MesheryApplication) ([]byte, error) {
 	return l.MesheryApplicationPersister.SaveMesheryApplication(application)
 }
 
 // SaveApplicationSourceContent nothing needs to be done as application is saved with source content for local provider
-func (l *DefaultLocalProvider) SaveApplicationSourceContent(tokenString string, applicationID string, sourceContent []byte) error {
+func (l *DefaultLocalProvider) SaveApplicationSourceContent(_, _ string, _ []byte) error {
 	return nil
 }
 
 // GetApplicationSourceContent returns application source-content from provider
-func (l *DefaultLocalProvider) GetApplicationSourceContent(req *http.Request, applicationID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetApplicationSourceContent(_ *http.Request, applicationID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(applicationID)
 	return l.MesheryApplicationPersister.GetMesheryApplicationSource(id)
 }
 
 // GetMesheryApplications gives the applications stored with the provider
-func (l *DefaultLocalProvider) GetMesheryApplications(tokenString, page, pageSize, search, order string, updatedAfter string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryApplications(_, page, pageSize, search, order string, updatedAfter string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -800,23 +806,23 @@ func (l *DefaultLocalProvider) GetMesheryApplications(tokenString, page, pageSiz
 }
 
 // GetMesheryApplication gets application for the given applicationID
-func (l *DefaultLocalProvider) GetMesheryApplication(req *http.Request, applicationID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryApplication(_ *http.Request, applicationID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(applicationID)
 	return l.MesheryApplicationPersister.GetMesheryApplication(id)
 }
 
 // DeleteMesheryApplication deletes a meshery application with the given id
-func (l *DefaultLocalProvider) DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error) {
+func (l *DefaultLocalProvider) DeleteMesheryApplication(_ *http.Request, applicationID string) ([]byte, error) {
 	id := uuid.FromStringOrNil(applicationID)
 	return l.MesheryApplicationPersister.DeleteMesheryApplication(id)
 }
 
-func (l *DefaultLocalProvider) ShareDesign(req *http.Request) (int, error) {
+func (l *DefaultLocalProvider) ShareDesign(_ *http.Request) (int, error) {
 	return http.StatusForbidden, ErrLocalProviderSupport
 }
 
 // SavePerformanceProfile saves given performance profile with the provider
-func (l *DefaultLocalProvider) SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error) {
+func (l *DefaultLocalProvider) SavePerformanceProfile(_ string, performanceProfile *PerformanceProfile) ([]byte, error) {
 	var uid uuid.UUID
 	if performanceProfile.ID != nil {
 		uid = *performanceProfile.ID
@@ -838,7 +844,7 @@ func (l *DefaultLocalProvider) SavePerformanceProfile(tokenString string, perfor
 }
 
 // GetPerformanceProfiles gives the performance profiles stored with the provider
-func (l *DefaultLocalProvider) GetPerformanceProfiles(tokenString string, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetPerformanceProfiles(_, page, pageSize, _, _ string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -860,7 +866,7 @@ func (l *DefaultLocalProvider) GetPerformanceProfiles(tokenString string, page, 
 }
 
 // GetPerformanceProfile gets performance profile for the given performance profileID
-func (l *DefaultLocalProvider) GetPerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetPerformanceProfile(_ *http.Request, performanceProfileID string) ([]byte, error) {
 	uid, err := uuid.FromString(performanceProfileID)
 	if err != nil {
 		return nil, ErrPerfID(err)
@@ -880,7 +886,7 @@ func (l *DefaultLocalProvider) GetPerformanceProfile(req *http.Request, performa
 }
 
 // DeletePerformanceProfile deletes a meshery performance profile with the given id
-func (l *DefaultLocalProvider) DeletePerformanceProfile(req *http.Request, performanceProfileID string) ([]byte, error) {
+func (l *DefaultLocalProvider) DeletePerformanceProfile(_ *http.Request, performanceProfileID string) ([]byte, error) {
 	uid, err := uuid.FromString(performanceProfileID)
 	if err != nil {
 		return nil, ErrPerfID(err)
@@ -890,22 +896,22 @@ func (l *DefaultLocalProvider) DeletePerformanceProfile(req *http.Request, perfo
 }
 
 // SaveSchedule saves a schedule
-func (l *DefaultLocalProvider) SaveSchedule(tokenString string, schedule *Schedule) ([]byte, error) {
+func (l *DefaultLocalProvider) SaveSchedule(_ string, _ *Schedule) ([]byte, error) {
 	return []byte{}, ErrLocalProviderSupport
 }
 
 // GetSchedules gets the schedules stored by the current user
-func (l *DefaultLocalProvider) GetSchedules(req *http.Request, page, pageSize, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetSchedules(_ *http.Request, _, _, _ string) ([]byte, error) {
 	return []byte{}, ErrLocalProviderSupport
 }
 
 // GetSchedule gets a schedule with the given id
-func (l *DefaultLocalProvider) GetSchedule(req *http.Request, scheduleID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetSchedule(_ *http.Request, _ string) ([]byte, error) {
 	return []byte{}, ErrLocalProviderSupport
 }
 
 // DeleteSchedule deletes a schedule with the given id
-func (l *DefaultLocalProvider) DeleteSchedule(req *http.Request, scheduleID string) ([]byte, error) {
+func (l *DefaultLocalProvider) DeleteSchedule(_ *http.Request, _ string) ([]byte, error) {
 	return []byte{}, ErrLocalProviderSupport
 }
 
@@ -919,12 +925,24 @@ func (l *DefaultLocalProvider) RecordMeshSyncData(obj model.Object) error {
 	return nil
 }
 
-func (l *DefaultLocalProvider) ExtensionProxy(req *http.Request) ([]byte, error) {
-	return []byte{}, ErrLocalProviderSupport
+func (l *DefaultLocalProvider) ExtensionProxy(_ *http.Request) (*ExtensionProxyResponse, error) {
+	return nil, ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) SaveConnection(req *http.Request, conn *Connection, token string, skipTokenCheck bool) error {
+func (l *DefaultLocalProvider) SaveConnection(_ *http.Request, _ *ConnectionPayload, _ string, _ bool) error {
 	return ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) GetConnections(_ *http.Request, _ string, _, _ int, _, _, _ string) (*ConnectionPage, error) {
+	return nil, ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) UpdateConnection(_ *http.Request, _ *Connection) (*Connection, error) {
+	return nil, ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) DeleteConnection(_ *http.Request, _ uuid.UUID) (*Connection, error) {
+	return nil, ErrLocalProviderSupport
 }
 
 func (l *DefaultLocalProvider) DeleteMesheryConnection() error {
@@ -1005,7 +1023,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 					for i, name := range names {
 						id, _ := uuid.NewV4()
 						var filter = &MesheryFilter{
-							FilterFile: content[i],
+							FilterFile: []byte(content[i]),
 							Name:       name,
 							ID:         &id,
 							UserID:     &nilUserID,
@@ -1079,10 +1097,77 @@ func (l *DefaultLocalProvider) Cleanup() error {
 	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryApplication{}); err != nil {
 		return err
 	}
-	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryFilter{}); err != nil {
-		return err
+	return l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryFilter{})
+}
+
+func (l *DefaultLocalProvider) SaveUserCredential(_ *http.Request, credential *Credential) error {
+	result := l.GetGenericPersister().Table("credentials").Create(&credential)
+	if result.Error != nil {
+		return fmt.Errorf("error saving user credentials: %v", result.Error)
 	}
 	return nil
+}
+
+func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error) {
+	result := l.GetGenericPersister().Select("*").Where("user_id=? and deleted_at is NULL", userID)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	if search != "" {
+		like := "%" + strings.ToLower(search) + "%"
+		result = result.Where("(lower(name) like ?)", like)
+	}
+
+	result = result.Order(order)
+
+	var count int64
+	if err := result.Count(&count).Error; err != nil {
+		return nil, fmt.Errorf("error retrieving count of credentials for user id: %s - %v", userID, err)
+	}
+
+	var credentialsList []*Credential
+	if count > 0 {
+		if err := result.Offset(page * pageSize).Limit(pageSize).Find(&credentialsList).Error; err != nil {
+			if err != gorm.ErrRecordNotFound {
+				return nil, fmt.Errorf("error retrieving credentials for user id: %s - %v", userID, err)
+			}
+		}
+	}
+
+	credentialsPage := &CredentialsPage{
+		Credentials: credentialsList,
+		Page:        page,
+		PageSize:    pageSize,
+		TotalCount:  int(count),
+	}
+
+	if result.Error != nil {
+		return nil, fmt.Errorf("error getting user credentials: %v", result.Error)
+	}
+	return credentialsPage, nil
+}
+
+func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential *Credential) (*Credential, error) {
+	updatedCredential := &Credential{}
+	if err := l.GetGenericPersister().Model(*updatedCredential).Where("user_id = ? AND id = ? AND deleted_at is NULL", credential.UserID, credential.ID).Updates(credential); err != nil {
+		return nil, fmt.Errorf("error updating user credential: %v", err)
+	}
+
+	if err := l.GetGenericPersister().Where("user_id = ? AND id = ?", credential.UserID, credential.ID).First(updatedCredential).Error; err != nil {
+		return nil, fmt.Errorf("error getting updated user credential: %v", err)
+	}
+	return updatedCredential, nil
+}
+
+func (l *DefaultLocalProvider) DeleteUserCredential(_ *http.Request, credentialID uuid.UUID) (*Credential, error) {
+	delCredential := &Credential{}
+	if err := l.GetGenericPersister().Model(&Credential{}).Where("id = ?", credentialID).Update("deleted_at", time.Now()).Error; err != nil {
+		return nil, err
+	}
+	if err := l.GetGenericPersister().Where("id = ?", credentialID).First(delCredential).Error; err != nil {
+		return nil, err
+	}
+	return delCredential, nil
 }
 
 // githubRepoPatternScan & githubRepoFilterScan takes in github repo owner, repo name, path from where the file/files are needed
@@ -1158,7 +1243,7 @@ func githubRepoFilterScan(
 
 				ff := MesheryFilter{
 					Name:       name,
-					FilterFile: string(f.Content),
+					FilterFile: []byte(f.Content),
 					Location: map[string]interface{}{
 						"type":   "github",
 						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
@@ -1239,7 +1324,7 @@ func genericHTTPFilterFile(fileURL string) ([]MesheryFilter, error) {
 
 	ff := MesheryFilter{
 		Name:       name,
-		FilterFile: result,
+		FilterFile: []byte(result),
 		Location: map[string]interface{}{
 			"type":   "http",
 			"host":   fileURL,
@@ -1275,7 +1360,7 @@ func getSeededComponents(comp string, log logger.Handler) ([]string, []string, e
 		}
 	}
 	if !viper.GetBool("SKIP_DOWNLOAD_CONTENT") {
-		err = downloadContent(comp, wd, log)
+		err = downloadContent(comp, wd)
 		if err != nil {
 			log.Error(ErrDownloadingSeededComponents(err, comp))
 		}
@@ -1309,7 +1394,7 @@ func getSeededComponents(comp string, log logger.Handler) ([]string, []string, e
 }
 
 // Below helper functions are for downloading seed content and can be re used in future as the way of extracting them changes, like endpoint changes or so. That is why, they are encapsulated into general functions
-func downloadContent(comp string, downloadpath string, log logger.Handler) error {
+func downloadContent(comp string, downloadpath string) error {
 	switch comp {
 	case "Pattern":
 		walk := walker.NewGithub()
@@ -1352,41 +1437,6 @@ func downloadContent(comp string, downloadpath string, log logger.Handler) error
 	return nil
 }
 
-func downloadApplicationsFromURL(downloadpath string, appname string, url string) error {
-	path := filepath.Join(downloadpath, appname)
-	res, err := http.Get(url)
-	if err != nil {
-		return err
-	}
-	content, err := io.ReadAll(res.Body)
-	if err != nil {
-		return err
-	}
-	f, err := os.Create(path)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	fmt.Fprintf(f, "%s", content)
-	return nil
-}
-
-// DownloadYAMLSintoSingleFile takes a slice of URL's which each returns a YAML body on get request. Then combines all the yamls into one yaml
-func downloadYAMLSintoSingleFile(f io.Writer, URLs []string) error {
-	for _, url := range URLs {
-		res, err := http.Get(url)
-		if err != nil {
-			return err
-		}
-		content, err := io.ReadAll(res.Body)
-		if err != nil {
-			return err
-		}
-		fmt.Fprintf(f, "%s\n---\n", string(content))
-	}
-	return nil
-}
-
 func getFiltersFromWasmFiltersRepo(downloadPath string) error {
 	// releaseName, err := getLatestStableReleaseTag()
 	// if err != nil {
@@ -1409,7 +1459,7 @@ func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 
 	tarReader := tar.NewReader(uncompressedStream)
 
-	for true {
+	for {
 		header, err := tarReader.Next()
 		if err == io.EOF {
 			break
@@ -1432,23 +1482,6 @@ func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 		}
 	}
 	return nil
-}
-
-func getSeededAppLocation(path string) (map[string][]string, error) {
-	var applicationsAndURLS map[string][]string
-	f, err := os.Open(path)
-	if err != nil {
-		return applicationsAndURLS, err
-	}
-	content, err := io.ReadAll(f)
-	if err != nil {
-		return applicationsAndURLS, err
-	}
-	err = json.Unmarshal(content, &applicationsAndURLS)
-	if err != nil {
-		return applicationsAndURLS, err
-	}
-	return applicationsAndURLS, nil
 }
 
 // // GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub

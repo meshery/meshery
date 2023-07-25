@@ -1,0 +1,28 @@
+name: Playground CNCF - Deploy
+on:
+  workflow_call:
+  workflow_dispatch:
+jobs:
+    cncf-playground-rollout:
+        name: Update Meshery on CNCF playground
+        if: github.repository == 'meshery/meshery'
+        runs-on: ubuntu-latest 
+        steps:
+        - name: Pull latest images and restart containers
+          uses: appleboy/ssh-action@master
+          with:
+              host: ${{ secrets.METAL_SERVER1 }}
+              username: root
+              key: ${{ secrets.METAL_SSH_KEY }}
+              script: |
+                cd meshery
+                git pull
+                docker compose -f install/playground/docker/docker-compose.yaml pull
+                docker compose -f install/playground/docker/docker-compose.yaml up -d
+#         steps:
+#          - uses: azure/setup-kubectl@v3
+#          - name: Extract kubeconfig
+#            run: mkdir ~/.kube; touch ~/.kube/config ;echo "${{ secrets.PLAYGROUND_CONFIG }}" | base64 --decode > ~/.kube/config
+#          - name: Rollout Meshery so that pods can restart with latest Meshery image
+#            run: |
+#             kubectl -n meshery rollout restart deployment meshery

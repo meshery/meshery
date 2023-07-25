@@ -1,4 +1,4 @@
-// Copyright 2020 Layer5, Inc.
+// Copyright 2023 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/app"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/filter"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/pattern"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/perf"
@@ -46,7 +46,7 @@ var (
 var RootCmd = &cobra.Command{
 	Use:   "mesheryctl",
 	Short: "Meshery Command Line tool",
-	Long:  `Meshery is the service mesh management plane, providing lifecycle, performance, and configuration management of service meshes and their workloads.`,
+	Long:  `As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.`,
 	Example: `
 // Base command
 mesheryctl
@@ -108,7 +108,8 @@ func init() {
 		perf.PerfCmd,
 		mesh.MeshCmd,
 		app.AppCmd,
-		experimental.ExpCmd,
+		// experimental.ExpCmd,
+		filter.FilterCmd,
 	}
 
 	RootCmd.AddCommand(availableSubcommands...)

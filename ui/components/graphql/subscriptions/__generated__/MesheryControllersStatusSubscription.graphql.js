@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<8dc2ae6951a9d6ff15b5c01022e30a71>>
- * @flow
+ * @generated SignedSource<<ed02c176db233601ebb7c92a33710c62>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,27 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
-export type MesheryController = "BROKER" | "OPERATOR" | "MESHSYNC" | "%future added value";
-export type MesheryControllerStatus = "DEPLOYED" | "NOTDEPLOYED" | "DEPLOYING" | "UNKOWN" | "%future added value";
-export type MesheryControllersStatusSubscription$variables = {|
-  k8scontextIDs?: ?$ReadOnlyArray<string>,
-|};
-export type MesheryControllersStatusSubscription$data = {|
-  +subscribeMesheryControllersStatus: $ReadOnlyArray<{|
-    +contextId: string,
-    +controller: MesheryController,
-    +status: MesheryControllerStatus,
-  |}>,
-|};
-export type MesheryControllersStatusSubscription = {|
-  variables: MesheryControllersStatusSubscription$variables,
-  response: MesheryControllersStatusSubscription$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -105,9 +84,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "5a93ffadfcfbf8ea14d9bac0fe6b50f3";
+node.hash = "5a93ffadfcfbf8ea14d9bac0fe6b50f3";
 
-module.exports = ((node/*: any*/)/*: GraphQLSubscription<
-  MesheryControllersStatusSubscription$variables,
-  MesheryControllersStatusSubscription$data,
->*/);
+module.exports = node;

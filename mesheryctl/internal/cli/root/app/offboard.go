@@ -1,3 +1,17 @@
+// Copyright 2023 Layer5, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package app
 
 import (
@@ -33,7 +47,6 @@ mesheryctl app offboard -f [filepath]
 		}
 		var req *http.Request
 		var err error
-		client := &http.Client{}
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -43,7 +56,7 @@ mesheryctl app offboard -f [filepath]
 		app := ""
 		isID := false
 		if len(args) > 0 {
-			app, isID, err = utils.Valid(args[0], "application")
+			app, isID, err = utils.ValidId(args[0], "application")
 			if err != nil {
 				return err
 			}
@@ -51,7 +64,7 @@ mesheryctl app offboard -f [filepath]
 
 		// Delete the app using the id
 		if isID {
-			err := utils.DeleteConfiguration(app, "application")
+			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), app, "application")
 			if err != nil {
 				return errors.Wrap(err, utils.AppError(fmt.Sprintf("failed to delete application %s", args[0])))
 			}
@@ -84,17 +97,13 @@ mesheryctl app offboard -f [filepath]
 			return err
 		}
 
-		resp, err := client.Do(req)
+		resp, err := utils.MakeRequest(req)
 		if err != nil {
 			return err
 		}
 		defer resp.Body.Close()
 
 		var response []*models.MesheryPattern
-		// bad api call
-		if resp.StatusCode != 200 {
-			return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-		}
 
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
@@ -115,7 +124,7 @@ mesheryctl app offboard -f [filepath]
 			return err
 		}
 
-		res, err := client.Do(req)
+		res, err := utils.MakeRequest(req)
 		if err != nil {
 			return err
 		}

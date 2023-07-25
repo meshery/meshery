@@ -1,3 +1,17 @@
+// Copyright 2023 Layer5, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package app
 
 import (
@@ -72,8 +86,6 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 	var req *http.Request
 	var app *models.MesheryApplication
 
-	client := &http.Client{}
-
 	// Check if the app manifest is file or URL
 	if validURL := govalidator.IsURL(file); !validURL {
 		content, err := os.ReadFile(file)
@@ -97,16 +109,12 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 			return nil, err
 		}
 
-		resp, err := client.Do(req)
+		resp, err := utils.MakeRequest(req)
 		if err != nil {
 			return nil, err
 		}
 		utils.Log.Debug("App file saved")
 		var response []*models.MesheryApplication
-		// failsafe (bad api call)
-		if resp.StatusCode != 200 {
-			return nil, errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-		}
 		defer resp.Body.Close()
 
 		body, err := io.ReadAll(resp.Body)
@@ -150,16 +158,12 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 			return nil, err
 		}
 
-		resp, err := client.Do(req)
+		resp, err := utils.MakeRequest(req)
 		if err != nil {
 			return nil, err
 		}
 		utils.Log.Debug("remote hosted app request success")
 		var response []*models.MesheryApplication
-		// failsafe (bad api call)
-		if resp.StatusCode != 200 {
-			return nil, errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-		}
 		defer resp.Body.Close()
 
 		body, err := io.ReadAll(resp.Body)

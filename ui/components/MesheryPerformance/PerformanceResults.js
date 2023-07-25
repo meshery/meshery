@@ -22,7 +22,6 @@ import GenericModal from "../GenericModal";
 import BarChartIcon from '@material-ui/icons/BarChart';
 import InfoIcon from '@material-ui/icons/Info';
 import fetchPerformanceResults from "../graphql/queries/PerformanceResultQuery";
-import subscribePerformanceProfiles from "../graphql/subscriptions/PerformanceResultSubscription";
 import NodeDetails from "../NodeDetails";
 import ReplyIcon from '@material-ui/icons/Reply';
 import FacebookIcon from "./assets/facebookIcon";
@@ -35,6 +34,7 @@ import {
   FacebookShareButton,
 
 } from "react-share"
+import subscribePerformanceProfiles from "../graphql/subscriptions/PerformanceResultSubscription";
 
 const COL_MAPPING = {
   QPS : 3,
@@ -61,7 +61,7 @@ function generateResultsForDisplay(results) {
         name : record.name,
         mesh : record.mesh,
         test_start_time : record.runner_results.StartTime,
-        qps : record.runner_results.ActualQPS.toFixed(1),
+        qps : record.runner_results.ActualQPS?.toFixed(1) || "unavailable",
         duration : (record.runner_results.ActualDuration / 1000000000).toFixed(1),
         threads : record.runner_results.NumThreads,
       };
@@ -419,7 +419,6 @@ function ResultChart({ result, handleTabChange, tabValue }) {
 }
 
 function ResultNodeDetails({ result, handleTabChange, tabValue }) {
-  console.log("results: ", result)
   if (!result) return <div />
   const chartData = result.runner_results;
 
@@ -528,9 +527,9 @@ function MesheryResults({
   useEffect(() => {
     fetchResults(page, pageSize, search, sortOrder);
 
+    //TODO: remove this
     const subscription = subscribePerformanceProfiles((res) => {
       // @ts-ignore
-      console.log(res);
       let result = res?.subscribePerfResults
       if (typeof result !== "undefined") {
         updateProgress({ showProgress : false })
@@ -641,7 +640,7 @@ function MesheryResults({
     sort : !(user?.user_id === "meshery"),
     search : !(user?.user_id === "meshery"),
     filterType : "textField",
-    responsive : "scrollFullHeight",
+    responsive : "standard",
     resizableColumns : true,
     selectableRows : true,
     serverSide : true,
@@ -694,7 +693,7 @@ function MesheryResults({
           }, 500);
           break;
         case "sort":
-          if (sortInfo.length == 2) {
+          if (sortInfo.length === 2) {
             if (sortInfo[1] === "ascending") order = `${columns[tableState.activeColumn].name} asc`;
             else order = `${columns[tableState.activeColumn].name} desc`;
           }

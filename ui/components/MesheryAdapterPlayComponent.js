@@ -527,7 +527,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     if (typeof sortOrder === "undefined" || sortOrder === null) {
       sortOrder = "";
     }
-    query = `?page=${page}&pageSize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
+    query = `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
       sortOrder
     )}`;
 
@@ -864,7 +864,7 @@ class MesheryAdapterPlayComponent extends React.Component {
             }, 500);
             break;
           case "sort":
-            if (sortInfo.length == 2) {
+            if (sortInfo.length === 2) {
               if (sortInfo[1] === "ascending") {
                 order = `${smi_columns[tableState.activeColumn].name} asc`;
               } else {

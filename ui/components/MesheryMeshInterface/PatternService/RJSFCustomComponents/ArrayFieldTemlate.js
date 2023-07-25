@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
-import React, { useEffect } from "react";
+import React from "react";
 import Box from "@material-ui/core/Box";
 import Grid from "@material-ui/core/Grid";
 import Paper from "@material-ui/core/Paper";
-import { Button, IconButton, makeStyles, Typography, useTheme, withStyles } from "@material-ui/core";
+import { Button, IconButton,Typography, withStyles } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
 import SimpleAccordion from "./Accordion";
 import { CustomTextTooltip } from "../CustomTextTooltip";
@@ -11,7 +11,9 @@ import HelpOutlineIcon from "../../../../assets/icons/HelpOutlineIcon";
 import { isMultiSelect, getDefaultFormState } from "@rjsf/utils";
 import ErrorOutlineIcon from "../../../../assets/icons/ErrorOutlineIcon";
 import { ERROR_COLOR } from "../../../../constants/colors";
-import { iconMedium, iconSmall } from "../../../../css/icons.styles";
+import { iconSmall } from "../../../../css/icons.styles";
+import { getHyperLinkDiv } from "../helper";
+import pluralize from "pluralize";
 const styles = (theme) => ({
   typography : {
     fontSize : "0.8rem",
@@ -25,15 +27,7 @@ const styles = (theme) => ({
 function getTitleForItem(props) {
   const title = getTitle(props);
 
-  // remove plurals
-  if (title.endsWith("es")) {
-    return title.substring(0, title.length - 2);
-  }
-  if (title.endsWith("s")) {
-    return title.substring(0, title.length - 1);
-  }
-
-  return title;
+  return pluralize.singular(title);
 }
 
 function getTitle(props) {
@@ -53,21 +47,12 @@ const ArrayFieldTemplate = (props) => {
   }
 };
 
-const ArrayFieldTitle = ({ TitleField, idSchema, title, required, classes }) => {
+const ArrayFieldTitle = ({ title, classes }) => {
   if (!title) {
     return null;
   }
 
   return <Typography className={classes.typography} variant="body1" style={{ fontWeight : "bold", display : "inline" }}>{title.charAt(0).toUpperCase() + title.slice(1)}</Typography>;
-};
-
-const ArrayFieldDescription = ({ DescriptionField, idSchema, description }) => {
-  if (!description) {
-    return null;
-  }
-
-  const id = `${idSchema.$id}__description`;
-  return <DescriptionField id={id} description={description} />;
 };
 
 // Used in the two templates
@@ -187,7 +172,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
 
             {
               (props.uiSchema["ui:description"] || props.schema.description) &&
-              <CustomTextTooltip backgroundColor="#3C494F" title={props.uiSchema["ui:description"] || props.schema.description}>
+              <CustomTextTooltip backgroundColor="#3C494F" title={getHyperLinkDiv(props.schema.description)}>
                 <IconButton  disableTouchRipple="true" disableRipple="true">
                   <HelpOutlineIcon width="14px" height="14px"  fill={theme.palette.type === 'dark' ? "white" : "gray"}  style={{ marginLeft : '4px', ...iconSmall }} />
                 </IconButton>
@@ -231,17 +216,6 @@ const DefaultNormalArrayFieldTemplate = (props) => {
             )}
           </Grid>
         </Grid>
-
-        {/* {(props.uiSchema["ui:description"] || props.schema.description) && (
-          <ArrayFieldDescription
-            key={`array-field-description-${props.idSchema.$id}`}
-            DescriptionField={CustomDescriptionField}
-            idSchema={props.idSchema}
-            description={
-              props.uiSchema["ui:description"] || props.schema.description
-            }
-          />
-        )} */}
 
         <Grid container={true} key={`array-item-list-${props.idSchema.$id}`}>
           {props.items && props.items.map((item, idx) => {

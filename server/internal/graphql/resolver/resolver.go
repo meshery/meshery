@@ -18,9 +18,8 @@ type Resolver struct {
 	MeshSyncChannelPerK8sContext map[string]chan struct{}
 	Config                       *models.HandlerConfig
 	Broadcast                    broadcast.Broadcaster
-
 	// operatorChannel         chan *model.OperatorStatus
-	performanceChannel  chan *model.PerfPageResult
+	// performanceChannel  chan *model.PerfPageResult
 	brokerChannel       chan *broker.Message
 	addonChannel        chan []*model.AddonList
 	controlPlaneChannel chan []*model.ControlPlane

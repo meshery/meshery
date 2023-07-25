@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<f75db6bb9cb108799bde607ad506bda9>>
- * @flow
+ * @generated SignedSource<<9aed7c29919008bbe111bee947e721bf>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,48 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, Query } from 'relay-runtime';
-export type PageFilter = {|
-  page: string,
-  pageSize: string,
-  order?: ?string,
-  search?: ?string,
-  from?: ?string,
-  to?: ?string,
-  updated_after?: ?string,
-|};
-export type PerformanceResultQuery$variables = {|
-  selector: PageFilter,
-  profileID: string,
-|};
-export type PerformanceResultQuery$data = {|
-  +fetchResults: {|
-    +page: number,
-    +page_size: number,
-    +total_count: number,
-    +results: ?$ReadOnlyArray<?{|
-      +meshery_id: ?string,
-      +name: ?string,
-      +mesh: ?string,
-      +performance_profile: ?string,
-      +test_id: ?string,
-      +server_metrics: ?string,
-      +test_start_time: ?string,
-      +created_at: ?string,
-      +user_id: ?string,
-      +updated_at: ?string,
-      +runner_results: ?any,
-    |}>,
-  |},
-|};
-export type PerformanceResultQuery = {|
-  variables: PerformanceResultQuery$variables,
-  response: PerformanceResultQuery$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
@@ -228,9 +186,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "e42d1c8529e951f7ad055eab6db359b8";
+node.hash = "e42d1c8529e951f7ad055eab6db359b8";
 
-module.exports = ((node/*: any*/)/*: Query<
-  PerformanceResultQuery$variables,
-  PerformanceResultQuery$data,
->*/);
+module.exports = node;

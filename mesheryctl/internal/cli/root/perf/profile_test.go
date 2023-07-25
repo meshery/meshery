@@ -38,8 +38,6 @@ var (
 	profile1002output = "1002.golden"
 	// mesheryctl response of performance profile with searched term "test 3"
 	profile1003output = "1003.golden"
-	// mesheryctl response of 25 performance profile in expanded output
-	profile1004output = "1004.golden"
 	// mesheryctl response when no profiles found
 	profile1005output = "1005.golden"
 	// mesheryctl response of 25 performance profile in json output

@@ -39,6 +39,34 @@ import (
 	v1 "k8s.io/api/core/v1"
 )
 
+// Returns user info
+// swagger:response userInfo
+type userInfo struct {
+	// in: body
+	Body models.User
+}
+
+// Returns all users info
+// swagger:response users
+type users struct {
+	// in: body
+	Body models.AllUsers
+}
+
+// swagger:parameters idGetAllUsersHandler
+type usersParameterWrapper struct {
+	// in: query
+	Page int64 `json:"page"`
+	// in: query
+	PageSize int64 `json:"pageSize"`
+	// in: query
+	Search string `json:"search"`
+	// in: order
+	Order string `json:"order"`
+	// in: filter
+	Filter string `json:"filter"`
+}
+
 // Returns all meshery patterns
 // swagger:response mesheryPatternsResponseWrapper
 type mesheryPatternsResponseWrapper struct {
@@ -372,4 +400,74 @@ type mesheryFiltersResponseWrapper struct {
 type filterFilesResponseWrapper struct {
 	// in: body
 	Body *models.MesheryFilter
+}
+
+// Returns meshmodel models
+// swagger:response meshmodelModelsResponseWrapper
+type meshmodelModelsResponseWrapper struct {
+	// in: body
+	Body *models.MeshmodelsAPIResponse
+}
+
+// Return meshmodel models with the count of duplicates
+// swagger:response meshmodelModelsDuplicateResponseWrapper
+type meshmodelModelsDuplicateResponseWrapper struct {
+	// in: body
+	Body *models.MeshmodelsDuplicateAPIResponse
+}
+
+// Return meshmodel components
+// swagger:response meshmodelComponentsResponseWrapper
+type meshmodelComponentsResponseWrapper struct {
+	// in: body
+	Body *models.MeshmodelComponentsAPIResponse
+}
+
+// Return meshmoddel components with the count of duplicates
+// swagger:response meshmodelComponentsDuplicateResponseWrapper
+type meshmodelComponentsDuplicateResponseWrapper struct {
+	// in: body
+	Body *models.MeshmodelComponentsDuplicateAPIResponse
+}
+
+// Returns meshmodel relationships
+// swagger:response meshmodelRelationshipsResponseWrapper
+type meshmodelRelationshipsResponseWrapper struct {
+	// in: body
+	Body *models.MeshmodelRelationshipsAPIResponse
+}
+
+// Returns meshmodel categories
+// swagger:response meshmodelCategoriesResponseWrapper
+type meshmodelCategoriesResponseWrapper struct {
+	// in: body
+	Body *models.MeshmodelCategoriesAPIResponse
+}
+
+// Returns database summary
+// swagger:response systemDatabaseResponseWrapper
+type systemDatabaseResponseWrapper struct {
+	// in: body
+	Body *models.DatabaseSummary
+}
+
+// Returns K8s contexts
+// swagger:response systemK8sContextsResponseWrapper
+type systemK8sContextsResponseWrapper struct {
+	// in: body
+	Body *models.MesheryK8sContextPage
+}
+
+// Returns SMI results
+// swagger:response smiResultsResponseWrapper
+type smiResultsResponseWrapper struct {
+	// in: body
+	Body *models.SmiResultPage
+}
+
+// Returns Meshery application types
+// swagger:response mesheryApplicationTypesResponseWrapper
+type mesheryApplicationTypesResponseWrapper struct {
+	// in: body
+	Body []models.ApplicationTypeResponse
 }

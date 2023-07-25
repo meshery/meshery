@@ -4,13 +4,19 @@ import { withStyles } from '@material-ui/core/styles';
 import { NoSsr, Grid, Button, } from '@material-ui/core';
 import ReactSelectWrapper from "../../ReactSelectWrapper";
 
-const promStyles = (theme) => ({ promRoot : { padding : theme.spacing(5),
-  backgroundColor : "white" , borderBottomLeftRadius : theme.spacing(1), borderBottomRightRadius : theme.spacing(1), },
-buttons : { display : 'flex',
-  justifyContent : 'flex-end', },
-button : { marginTop : theme.spacing(3),
+const promStyles = (theme) => ({
+  promRoot : {
+    padding : theme.spacing(5),
+    backgroundColor : theme.palette.secondary.elevatedComponents ,
+    borderBottomLeftRadius : theme.spacing(1),
+    borderBottomRightRadius : theme.spacing(1),
+    marginTop : theme.spacing(2),
+  },
+  buttons : { display : 'flex',
+    justifyContent : 'flex-end', },
+  button : { marginTop : theme.spacing(3),
   //   marginLeft: theme.spacing(1),
-}, });
+  }, });
 
 class PrometheusConfigComponent extends Component {
   render = () => {

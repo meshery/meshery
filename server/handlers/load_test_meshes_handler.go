@@ -18,7 +18,7 @@ type SMPMeshes struct {
 }
 
 // GetSMPServiceMeshes handles the available meshes request
-func (h *Handler) GetSMPServiceMeshes(w http.ResponseWriter, r *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) GetSMPServiceMeshes(w http.ResponseWriter, _ *http.Request, _ *models.Preference, _ *models.User, _ models.Provider) {
 	meshes := SMPMeshes{
 		AvailableMeshes: make([]string, 0, len(SMP.ServiceMesh_Type_name)),
 	}

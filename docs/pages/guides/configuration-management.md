@@ -1,17 +1,23 @@
 ---
 layout: default
-title: Configuring your Deployment with Patterns, Filters and Applications
-description: Learn how to configure your deployments and service meshes
+title: Configuring your Cloud Native Infrastructure and Applications with Meshery
+description: Learn how to use Meshery Designs effectively
 permalink: guides/configuration-management
 type: Guides
 language: en
 ---
 
-Meshery now comes with built in support for service mesh patterns, WASM filters and application workloads. Users can use Meshery to manage these artifacts and use them with their service mesh deployment.
+As an cloud native management platform, Meshery has built-in support infastructure and application configuration management. Use Meshery to configure your multi-cluster Kubernetes environments on-premises or across clouds.
 
-## Service Mesh Patterns
+## What is a Meshery Design?
 
-Users can use Meshery UI or mesheryctl to manage [service mesh patterns](../functionality/patterns.md).
+Meshery's core construct of configuration management is that of a design. A design is ultimately a document – and a document in which you capture and describe your desired state of improv the environment.
+
+## Creating a Meshery Design
+
+ you have your choice of how are you would like to create an infrastructure design. You can use the design configurator inside of measure, UI or extensions, like MeshMap, or you can hand code your design, using the mesh model spec, if you like. 
+ 
+ Use Meshery UI or mesheryctl to manage [designs](../tasks/patterns.md).
 
 ## Pattern Management Through Meshery UI
 
@@ -73,18 +79,18 @@ You can onboard ImageHub to an installed service mesh as shown below.
 
 You can also manage WASM filters through Meshery's CLI, mesheryctl.
 
-The `mesheryctl filter` subcommand lets you import and configure filters in your service meshes.
+The `mesheryctl exp filter` subcommand lets you import and configure filters in your service meshes.
 
 For example,
 
 ```
-mesheryctl filter apply -f metrics_collector_bg.wasm
+mesheryctl exp filter apply -f metrics_collector_bg.wasm
 ```
 
 If you already have a filter imported into Meshery, you can configure the filter by name.
 
 ```
-mesheryctl filter apply metrics_collector_bg
+mesheryctl exp filter apply metrics_collector_bg
 ```
 
 ## Applications

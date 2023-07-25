@@ -28,7 +28,15 @@ const styles = makeStyles((theme) => ({
   imgWrapper : {
     display : "flex",
     justifyContent : "center",
-    padding : "1rem"
+    alignItems : "center",
+    padding : "2rem"
+  },
+  insideImgWrapper : {
+    padding : "0rem 0.5rem",
+    content : theme.palette.type === 'dark' ? "url('/static/img/meshery-logo-text.svg')" : "url('/static/img/meshery-logo-light-text.svg')"
+  },
+  insideImgWrapperLogo : {
+    padding : "0rem 0.5rem"
   },
   installButton : {
     marginBottom : "1rem",
@@ -62,11 +70,19 @@ export default function PlaygroundMeshDeploy(props) {
         </DialogTitle>
         <DialogContent>
           <div className={classes.imgWrapper}>
-            <img width="60%" height="60%" src="/static/img/meshery-logo-light-text-side.png" />
+            <img
+              className={classes.insideImgWrapperLogo}
+              width="20%"  height="20%"
+              src="/static/img/meshery-logo.png"
+            />
+            <img
+              className={classes.insideImgWrapper}
+              width="50%" height="50%"
+            />
           </div>
           <Typography gutterBottom>
             Meshery Playground gives you hands-on experience with designing cloud native systems - from your browser - using every CNCF project.
-            Choose a <a href="https://layer5.io/learn/learning-paths">Learning Path</a> and work through labs as you visually and collaboratively learn-by-doing without having to install a single thing.
+            Choose a <a href="https://layer5.io/learn/learning-paths"style={{ color : "#00b39f" }}>Learning Path</a> and work through labs as you visually and collaboratively learn-by-doing without having to install a single thing.
           </Typography>
           <Typography gutterBottom>
             To ensure that Meshery Playground remains a clean sandbox for all to use, many of Meshery&apos;s features are disabled.

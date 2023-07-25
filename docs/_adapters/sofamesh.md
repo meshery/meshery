@@ -4,6 +4,7 @@ title: SOFAmesh
 name: Meshery Adapter for SOFAmesh
 project_status: 
 visibility: hidden
+language: en
 ---
 
 {% assign sorted_tests_group = site.compatibility | group_by: "meshery-component" %}
@@ -23,7 +24,7 @@ visibility: hidden
       {% endif %}
 {% endfor %}
 
-{% include adapter-status.html %}
+{% include compatibility/adapter-status.html %}
 
 ### Lifecycle management
 

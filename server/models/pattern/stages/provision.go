@@ -27,6 +27,8 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 			return
 		}
 
+		processAnnotations(data.Pattern)
+
 		// Create provision plan
 		plan, err := planner.CreatePlan(*data.Pattern, prov.IsDelete())
 		if err != nil {
@@ -69,6 +71,9 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 				v1alpha1.GetAnnotationsForWorkload(data.PatternSvcWorkloadCapabilities[name]),
 				comp.ObjectMeta.Annotations,
 			)
+			if core.Format { //deprettify the component before deploying
+				comp.Spec.Settings = core.Format.DePrettify(comp.Spec.Settings, false)
+			}
 			ccp.Component = comp
 			// Add configuration only if traits are applied to the component
 			if len(svc.Traits) > 0 {
@@ -94,7 +99,16 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 	}
 }
 
-func generateHosts(wc meshmodelv1alpha1.ComponentDefinition, tcs []core.TraitCapability, reg *meshmodel.RegistryManager) map[meshmodel.Host]bool {
+func processAnnotations(pattern *core.Pattern) {
+	for name, svc := range pattern.Services {
+		if svc.IsAnnotation {
+			delete(pattern.Services, name)
+		}
+
+	}
+}
+
+func generateHosts(wc meshmodelv1alpha1.ComponentDefinition, _ []core.TraitCapability, reg *meshmodel.RegistryManager) map[meshmodel.Host]bool {
 	res := map[meshmodel.Host]bool{}
 	host := reg.GetRegistrant(wc)
 	res[host] = true

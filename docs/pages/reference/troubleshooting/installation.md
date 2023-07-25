@@ -40,7 +40,10 @@ The difficulty with Minikube and Kind clusters is that they typically don't supp
     Docs: [link](https://kind.sigs.k8s.io/docs/user/loadbalancer/)
 
 ## Meshery Operator
+By default, Meshery Operator is installed in all the connected clusters automatically once Meshery server detects those clusters. The operator can manually be turned off on particular cluster from the settings page.
 
+#### Disabling the operator
+The env variable DISABLE_OPERATOR=true can be used to signal Meshery server to not install operator in any of the clusters at any point in time after starting. While using Meshery server locally, the `make server-without-operator` should be used to start Meshery in disabled operator mode.
 ### Meshery Broker
 Example of a healthy Meshery Broker server with an actively connected (subscribed) Meshery Server:
 

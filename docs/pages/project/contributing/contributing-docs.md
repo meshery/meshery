@@ -16,10 +16,10 @@ Before contributing, please review the [Documentation Contribution Flow](https:/
 
 Meshery documentation is made of these components:
 
-- Framework - Jekyll
-- Theme - https://github.com/vsoch/docsy-jekyll
-- Repo - https://github.com/layer5io/meshery/tree/master/docs
-- DNS - https://meshery.layer5.io/docs
+- Framework - [Jekyll](https://jekyllrb.com)
+- Theme - [https://github.com/vsoch/docsy-jekyll](https://github.com/vsoch/docsy-jekyll)
+- Repo - [https://github.com/layer5io/meshery/tree/master/docs](https://github.com/layer5io/meshery/tree/master/docs)
+- Site - [https://docs.meshery.io](https://docs.meshery.io)
 - AWS API GW - an instance is configured to redirect from docs.meshery.io to meshery.layer5.io, because of the repo location of where the docs currently reside.
 
 ## Set up your development environment
@@ -53,11 +53,31 @@ or
 Restart your WSL VM before moving forward.
 
 - For installing Ruby, run:
-{% capture code_content %}rvm install ruby
-rvm --default use ruby 2.7.1
-gem update
-gem install jekyll bundler{% endcapture %}
-{% include code.html code=code_content %}
+
+  ```bash
+    rvm install ruby
+    rvm --default use ruby 2.7.5
+    gem update
+    gem install jekyll bundler
+  ```
+  
+- Update the Gemfile located in meshery/docs directory
+  ```
+    ruby '3.0.2'
+  ```
+  <strong>Note:</strong> In place of `3.0.2` add your installed version
+  
+- Also add this to the next line in the Gemfile
+  ```
+    gem 'wdm','>=0.1.0' if Gem.win_platform?
+  ```
+  <strong>Note:</strong> This is just a workaround for your local machine so do not commit or push the modified Gemfile or Gemfile.lock during Pull Requests
+  
+- Next, go to this folder on your device
+  ```C:\Ruby24-x64\lib\ruby\gems\2.4.0\gems\eventmachine-1.2.5-x64-mingw32\lib```
+  
+- Add ```require 'em/pure_ruby' ``` in the first line of the <strong>eventmachine.rb</strong> file
+
 ### For Linux
 
 - Prerequisites
@@ -92,7 +112,7 @@ sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libre
 
 - To list all the versions that can be installed
 
-{% capture code_content %}rbenv install --list-all{% endcapture %}
+{% capture code_content %}rbenv install --list{% endcapture %}
 {% include code.html code=code_content %}
 
 - Set which Ruby version you want to use
@@ -111,7 +131,7 @@ sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libre
 
 ### Get the code
 
-- Fork and then clone the [Meshery repository](https://github.com/layer5io/meshery)
+- Fork and then clone the [Meshery repository](https://github.com/meshery/meshery)
 {% capture code_content %}git clone https://github.com/YOUR-USERNAME/meshery{% endcapture %}
 {% include code.html code=code_content %}
 - Change to the docs directory
@@ -160,9 +180,10 @@ So, you need to follow either of the three steps to resolve this problem;
 - Alternatively, if you have Docker installed, then type `make docker-docs` to view the changes
 - If you're unable to install the required Ruby version, then manually configure the `Gemfile` as below (not recommended! Do only if above two steps fail):
 
-{% capture code_content %}source "https://rubygems.org"
-ruby '2.7.1' //to any version you have installed{% endcapture %}
-{% include code.html code=code_content %}
+```
+source "https://rubygems.org"
+ruby '2.7.5' //to any version you have installed
+```
 
 Automatically the `Gemfile.lock` will update once the `make docs` is given (for Windows, run `bundle exec jekyll serve` if WSL2 isn't present)
 
@@ -288,7 +309,7 @@ This executes the block of code only if the given condition is true. It is execu
 If the condition is true, the output would be:
 
 ```
-    How are you?
+    These shoes are awesome!
 ```
 
 ### `for` loop

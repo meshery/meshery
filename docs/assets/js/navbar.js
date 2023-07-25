@@ -1,26 +1,28 @@
 "use strict";
 
-
 // DARK/LIGHT MODE TOGGLE
 
-let toggleBtn = document.getElementById("mode-toggle-btn")
-toggleBtn.onclick = setMode;
-if (localStorage.getItem("mode")) setMode();
+const toggleBtn = document.getElementById("mode-toggle-btn");
+toggleBtn.addEventListener("click", setMode);
+
+
 function setMode() {
-    document.body.classList.toggle("dark-mode")
-    // let layer5Logos = document.querySelectorAll("#layer5-logo");
-    // let allLogos=document.querySelectorAll("#logo-dark-light");
-    // console.log(allLogos)
+  document.body.classList.toggle("dark-mode");
+  updateLogos();
+  if (document.body.classList.contains("dark-mode")) {
+    localStorage.setItem("mode", "dark-mode");
+  } else {
+    localStorage.setItem("mode", "light-mode");
+  }
+}
+
+function updateLogos() {
+  const allLogos = document.querySelectorAll("#logo-dark-light");
+  allLogos.forEach(logo => {
     if (document.body.classList.contains("dark-mode")) {
-        // layer5Logos.forEach(e => e.src = '../images/company-logo/layer5-dark-mode-logo.svg')
-        // allLogos.forEach(e=>e.src=e.dataset.logoForDark)
+      logo.src = logo.dataset.logoForDark;
     } else {
-        // layer5Logos.forEach(e => e.src = '../images/company-logo/layer5-no-trim.svg')
-        // allLogos.forEach(e=>e.src=e.dataset.logoForLight)
+      logo.src = logo.dataset.logoForLight;
     }
-    if (document.body.classList.contains("dark-mode")) {
-        localStorage.setItem("mode", "dark-mode")
-    } else {
-        localStorage.setItem("mode", "")
-    }
+  });
 }

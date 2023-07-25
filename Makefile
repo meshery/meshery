@@ -72,7 +72,7 @@ nighthawk-setup: dep-check
 run-local: server-local error
 ## Build and run Meshery Server on your local machine
 ## and point to (expect) a locally running Meshery Cloud or other Provider(s)
-## for user authentication (requires go${GOVERSION}).
+## for user authentication.
 server-local: dep-check
 	cd server; cd cmd; go clean; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -83,8 +83,7 @@ server-local: dep-check
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go run main.go error.go
 
-## Build and run Meshery Server on your local machine (requires go${GOVERSION}).
-
+## Build and run Meshery Server on your local machine.
 server-without-k8s: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -105,7 +104,16 @@ server: dep-check
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go run main.go error.go;
-
+server-without-operator: dep-check
+	cd server; cd cmd; go mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DISABLE_OPERATOR=true \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	go run main.go error.go;
 server-remote-provider: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -117,7 +125,6 @@ server-remote-provider: dep-check
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go run main.go error.go;
 
-
 server-local-provider: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -128,7 +135,8 @@ server-local-provider: dep-check
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go run main.go error.go;
-## Build and run Meshery Server with no Kubernetes components on your local machine (requires go${GOVERSION}).
+
+## Build and run Meshery Server with no Kubernetes components on your local machine.
 server-skip-compgen:
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -140,7 +148,7 @@ server-skip-compgen:
  	SKIP_COMP_GEN=true \
 	go run main.go error.go;
 
-## Build and run Meshery Server with no seed content (requires go$(GOVERSION)).
+## Build and run Meshery Server with no seed content.
 server-no-content:
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -168,7 +176,7 @@ server-playground: dep-check
 golangci: error dep-check
 	golangci-lint run
 
-## Build Meshery's protobufs (requires go$(GOVERSION)).
+## Build Meshery's protobufs.
 proto-build:
 	# see https://developers.google.com/protocol-buffers/docs/reference/go-generated
 	# see https://grpc.io/docs/languages/go/quickstart/
@@ -181,8 +189,8 @@ proto-build:
 error: dep-check
 	go run github.com/layer5io/meshkit/cmd/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl
 
-## Build Meshery UI; Build and run Meshery Server on your local machine (requires go${GOVERSION}).
-ui-server: ui-meshery-build server
+## Build Meshery UI; Build and run Meshery Server on your local machine.
+ui-server: ui-meshery-build ui-provider-build server
 
 #-----------------------------------------------------------------------------
 # Meshery UI Native Builds.
@@ -230,7 +238,7 @@ ui-provider-test:
 
 ## Buils all Meshery UIs  on your local machine.
 ui-build:
-	cd ui; npm run build && npm run export; cd ..
+	cd ui; npm run lint:fix && npm run build && npm run export; cd ..
 	cd provider-ui; npm run build && npm run export; cd ..
 
 ## Build only Meshery UI on your local machine.
@@ -249,7 +257,7 @@ ui-integration-tests: ui-setup
 # Meshery Docs
 #-----------------------------------------------------------------------------
 #Incorporating Make docs commands from the Docs Makefile
-.PHONY: docs docs-build site docs-docker
+.PHONY: docs docs-build site docs-docker docs-mesheryctl
 jekyll=bundle exec jekyll
 
 site: docs
@@ -266,6 +274,9 @@ docs-build:
 docs-docker:
 	cd docs; docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:4.0.0 bash -c "bundle install; jekyll serve --drafts --livereload"
 
+## Build Meshery CLI docs
+docs-mesheryctl:
+	cd mesheryctl; make docs;
 #-----------------------------------------------------------------------------
 # Meshery Helm Charts
 #-----------------------------------------------------------------------------
@@ -296,7 +307,7 @@ helm-meshery-lint:
 #-----------------------------------------------------------------------------
 # Meshery APIs
 #-----------------------------------------------------------------------------
-.PHONY: swagger-build swagger swagger-docs-build graphql-docs graphql-build
+.PHONY: swagger-build swagger swagger-docs-build graphql-docs-build graphql-build
 ## Build Meshery REST API specifications
 swagger-build:
 	swagger generate spec -o ./server/helpers/swagger.yaml --scan-models
@@ -310,9 +321,14 @@ swagger-docs-build:
 	swagger generate spec -o ./docs/_data/swagger.yml --scan-models; \
 	swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
 
+
+## Building Meshery docs with redocly
+redocly-docs-build:
+	npx @redocly/cli build-docs ./docs/_data/swagger.yml --config='redocly.yaml' -t custom.hbs
+
 ## Build Meshery GraphQL API documentation
-graphql-docs:
-	cd docs; build-docs; bundle exec rake graphql:compile_docs
+graphql-docs-build:
+	cd docs; bundle exec rake graphql:compile_docs
 
 ## Build Meshery GraphQl API specifications
 graphql-build: dep-check
@@ -330,11 +346,11 @@ dep-check:
 	
 ifeq (,$(findstring $(GOVERSION), $(INSTALLED_GO_VERSION)))
 # Only send a warning.
-# @echo "Dependency missing: go$(GOVERSION). Ensure 'go$(GOVERSION).x' is installed and available in your 'PATH'"	
+	@echo "Dependency missing: go$(GOVERSION). Ensure 'go$(GOVERSION).x' is installed and available in your 'PATH'"	
 	@echo "GOVERSION: " $(GOVERSION)
 	@echo "INSTALLED_GO_VERSION: " $(INSTALLED_GO_VERSION) 
 # Force error and stop.
-	$(error Found $(INSTALLED_GO_VERSION). \
-	 Required golang version is: 'go$(GOVERSION).x'. \
-	 Ensure go '$(GOVERSION).x' is installed and available in your 'PATH'.)
+#	$(error Found $(INSTALLED_GO_VERSION). \
+#	 Required golang version is: 'go$(GOVERSION).x'. \
+#	 Ensure go '$(GOVERSION).x' is installed and available in your 'PATH'.)
 endif

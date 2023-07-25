@@ -51,7 +51,8 @@
 }
 
 .sidebar-container {
-  padding: 1rem min(2vh, 2vw);
+  overscroll-behavior: contain;
+  padding: .25rem min(2vh, 2vw);
   overflow-y: scroll;
   height: calc(100vh - var(--navbar-height));
   transition: all 0.5s ease-in-out;
@@ -62,6 +63,7 @@
   height: 100%;
 
   &::-webkit-scrollbar {
+    overscroll-behavior: contain;
     width: 5px;
     padding: 6px;
   }
@@ -100,16 +102,6 @@
         width: 100%;
         margin: 2rem 0 2rem;
         position: relative;
-
-        & > svg {
-          position: absolute;
-          top: 50%;
-          right: 5%;
-          width: 2rem;
-          height: 2rem;
-          transform: translateY(-50%);
-          fill: var(--color-grey-medium);
-        }
       }
 
       &-input {
@@ -144,7 +136,7 @@
         }
 
         & a {
-          color: var(--color-secondary-medium) !important;
+          color: var(--color-secondary-medium);
           letter-spacing: 0.2px;
           &:hover {
             color: var(--sidenav-hover) !important;
@@ -156,6 +148,12 @@
           color: var(--color-secondary-medium);
           position: relative;
           width: fit-content;
+
+          &.active,
+          &.active a {
+            scroll-margin-bottom: 8rem;
+            color: var(--sidenav-hover);
+          }
 
           & a:hover {
             text-decoration: none;
@@ -197,4 +195,3 @@
     }
   }
 }
-

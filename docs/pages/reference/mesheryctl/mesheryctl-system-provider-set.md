@@ -20,7 +20,7 @@ Set provider of context in focus. Run `mesheryctl system provider list` to see t
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system provider set <provider> [flags]
+mesheryctl system provider set [provider] [flags]
 
 </div>
 </pre> 
@@ -30,7 +30,7 @@ mesheryctl system provider set <provider> [flags]
 Set provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system provider set <provider>
+mesheryctl system provider set [provider]
 
 </div>
 </pre> 

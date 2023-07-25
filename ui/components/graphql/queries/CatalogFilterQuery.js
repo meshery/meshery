@@ -1,14 +1,17 @@
 import { fetchQuery, graphql } from "relay-runtime";
-import environment from "../../../lib/relayEnvironment";
+import { createRelayEnvironment } from "../../../lib/relayEnvironment";
 
 export default function fetchCatalogFilter(variables) {
-  const query = graphql`
+  const environment = createRelayEnvironment({});
+
+  const CatalogFilterQueryNode = graphql`
       query CatalogFilterQuery($selector: CatalogSelector!) {
         catalogFilters: fetchFilterCatalogContent(selector: $selector) {
             id
             name
             user_id
             filter_file
+            filter_resource
             visibility
             catalog_data
             created_at
@@ -17,5 +20,5 @@ export default function fetchCatalogFilter(variables) {
       }
     `;
 
-  return fetchQuery(environment, query, variables)
+  return fetchQuery(environment, CatalogFilterQueryNode, variables)
 }

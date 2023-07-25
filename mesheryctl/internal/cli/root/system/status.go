@@ -1,4 +1,4 @@
-// Copyright 2020 Layer5, Inc.
+// Copyright 2023 Layer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,6 +33,11 @@ import (
 
 var verboseStatus bool
 
+var linkDocStatus = map[string]string{
+	"link":    "![status-usage](/assets/img/mesheryctl/status.png)",
+	"caption": "Usage of mesheryctl system status",
+}
+
 // statusCmd represents the status command
 var statusCmd = &cobra.Command{
 	Use:   "status",
@@ -41,11 +46,8 @@ var statusCmd = &cobra.Command{
 	Example: `
 // Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.
 mesheryctl system status 
-
-! Refer below image link for usage
-* Usage of mesheryctl system status
-# ![status-usage](/assets/img/mesheryctl/status.png)
 	`,
+	Annotations: linkDocStatus,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
 		hcOptions := &HealthCheckOptions{

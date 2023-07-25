@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<b5bafefd8ea424078209f23685fb6ae5>>
- * @flow
+ * @generated SignedSource<<e7e74407cb42cd55b2aa0cb42c236b52>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,19 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
-export type BrokerStatusSubscription$variables = {||};
-export type BrokerStatusSubscription$data = {|
-  +subscribeBrokerConnection: boolean,
-|};
-export type BrokerStatusSubscription = {|
-  variables: BrokerStatusSubscription$variables,
-  response: BrokerStatusSubscription$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "alias": null,
@@ -59,9 +46,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "c3d1793f9ca896edd7ce6ec58cb79a59";
+node.hash = "c3d1793f9ca896edd7ce6ec58cb79a59";
 
-module.exports = ((node/*: any*/)/*: GraphQLSubscription<
-  BrokerStatusSubscription$variables,
-  BrokerStatusSubscription$data,
->*/);
+module.exports = node;

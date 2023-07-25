@@ -1,6 +1,5 @@
 /**
- * @generated SignedSource<<72097e0f300f6482737d74fb33a2da15>>
- * @flow
+ * @generated SignedSource<<1458eea8e467b84cf49388a342747d93>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,50 +8,7 @@
 
 'use strict';
 
-/*::
-import type { ConcreteRequest, GraphQLSubscription } from 'relay-runtime';
-export type MeshType = "ALL_MESH" | "INVALID_MESH" | "APP_MESH" | "CITRIX_SERVICE_MESH" | "CONSUL" | "ISTIO" | "KUMA" | "LINKERD" | "TRAEFIK_MESH" | "OCTARINE" | "NETWORK_SERVICE_MESH" | "TANZU" | "OPEN_SERVICE_MESH" | "NGINX_SERVICE_MESH" | "CILIUM_SERVICE_MESH" | "%future added value";
-export type ServiceMeshFilter = {|
-  type?: ?MeshType,
-  k8sClusterIDs?: ?$ReadOnlyArray<string>,
-|};
-export type DataPlanesSubscription$variables = {|
-  filter?: ?ServiceMeshFilter,
-|};
-export type DataPlanesSubscription$data = {|
-  +dataPlanesState: $ReadOnlyArray<{|
-    +name: string,
-    +proxies: $ReadOnlyArray<{|
-      +controlPlaneMemberName: string,
-      +containerName: string,
-      +image: string,
-      +status: ?{|
-        +containerStatusName: string,
-        +image: string,
-        +state: ?any,
-        +lastState: ?any,
-        +ready: boolean,
-        +restartCount: ?any,
-        +started: boolean,
-        +imageID: ?any,
-        +containerID: ?any,
-      |},
-      +ports: ?$ReadOnlyArray<?{|
-        +name: ?string,
-        +containerPort: number,
-        +protocol: string,
-      |}>,
-      +resources: ?any,
-    |}>,
-  |}>,
-|};
-export type DataPlanesSubscription = {|
-  variables: DataPlanesSubscription$variables,
-  response: DataPlanesSubscription$data,
-|};
-*/
-
-var node/*: ConcreteRequest*/ = (function(){
+var node = (function(){
 var v0 = [
   {
     "defaultValue": null,
@@ -249,9 +205,6 @@ return {
 };
 })();
 
-(node/*: any*/).hash = "a2c93006a260dea20ca515d042492692";
+node.hash = "a2c93006a260dea20ca515d042492692";
 
-module.exports = ((node/*: any*/)/*: GraphQLSubscription<
-  DataPlanesSubscription$variables,
-  DataPlanesSubscription$data,
->*/);
+module.exports = node;
