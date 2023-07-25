@@ -23,6 +23,7 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/ctlerrors"
 	c "github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/handlers"
@@ -56,7 +57,7 @@ mesheryctl version
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			// get the currCtx
-			utils.Log.Error(ErrProcessingConfig(err))
+			utils.Log.Error(ctlerrors.ErrProcessingConfig(err))
 			userResponse := false
 			userResponse = utils.AskForConfirmation("Looks like you are using an outdated config file. Do you want to generate a new config file?")
 			if userResponse {
@@ -64,19 +65,19 @@ mesheryctl version
 				// Create config file if not present in meshery folder
 				err = utils.CreateConfigFile()
 				if err != nil {
-					utils.Log.Error(ErrCreatingConfigFile)
+					utils.Log.Error(ctlerrors.ErrCreatingConfigFile)
 				}
 
 				// Add Token to context file
 				err = config.AddTokenToConfig(utils.TemplateToken, utils.DefaultConfigPath)
 				if err != nil {
-					utils.Log.Error(ErrAddingTokenToConfig)
+					utils.Log.Error(ctlerrors.ErrAddingTokenToConfig)
 				}
 
 				// Add Context to context file
 				err = config.AddContextToConfig("local", utils.TemplateContext, utils.DefaultConfigPath, true, false)
 				if err != nil {
-					utils.Log.Error(ErrAddingContextToConfig)
+					utils.Log.Error(ctlerrors.ErrAddingContextToConfig)
 				}
 
 				utils.Log.Info(
@@ -86,7 +87,7 @@ mesheryctl version
 
 				mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 				if err != nil {
-					utils.Log.Error(ErrUnmarshallingConfigFile)
+					utils.Log.Error(ctlerrors.ErrUnmarshallingConfigFile)
 				}
 				currCtx, err := mctlCfg.GetCurrentContext()
 				if err != nil {
@@ -128,7 +129,7 @@ mesheryctl version
 		req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/system/version", url), nil)
 		if err != nil {
 			utils.PrintToTable(header, rows)
-			utils.Log.Error(ErrGettingRequestContext(err))
+			utils.Log.Error(ctlerrors.ErrGettingRequestContext(err))
 			return
 		}
 
@@ -138,7 +139,7 @@ mesheryctl version
 
 		if err != nil {
 			utils.PrintToTable(header, rows)
-			utils.Log.Error(ErrConnectingToServer(err))
+			utils.Log.Error(ctlerrors.ErrConnectingToServer(err))
 			return
 		}
 
@@ -147,14 +148,14 @@ mesheryctl version
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.PrintToTable(header, rows)
-			utils.Log.Error(ErrInvalidAPIResponse(err))
+			utils.Log.Error(ctlerrors.ErrInvalidAPIResponse(err))
 			return
 		}
 
 		err = json.Unmarshal(data, &version)
 		if err != nil {
 			utils.PrintToTable(header, rows)
-			utils.Log.Error(ErrUnmarshallingAPIData(err))
+			utils.Log.Error(ctlerrors.ErrUnmarshallingAPIData(err))
 			return
 		}
 
