@@ -179,10 +179,17 @@ mesheryctl system check --report
 			return hc.runOperatorHealthChecks()
 		}
 
-		// if no flags passed we run complete system check
+		currContext, err := hc.mctlCfg.GetCurrentContext()
+		if err != nil {
+			return errors.New("failed to get current context, please check that you've correct meshery config at $HOME/.meshery/config.yaml")
+		}
+		currPlatform := currContext.GetPlatform()
+
 		hc.Options.RunComponentChecks = true
-		hc.Options.RunDockerChecks = true
-		hc.Options.RunKubernetesChecks = true
+		// if platform is docker only then run docker checks
+		hc.Options.RunDockerChecks = currPlatform == "docker"
+		// if platform is kubernetes only then run kubernetes checks
+		hc.Options.RunKubernetesChecks = currPlatform == "kubernetes"
 		hc.Options.RunVersionChecks = true
 		hc.Options.RunOperatorChecks = true
 		return hc.Run()
