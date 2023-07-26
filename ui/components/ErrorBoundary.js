@@ -25,7 +25,7 @@ class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return (
         <div className="alert alert-danger">
-          <p>Couldn&apos;t open RJSF Form, the following error was encountered:</p>
+          <p>Couldn&apos;t open form. Encountered the following error:</p>
           <pre>{this.state.error.message}</pre>
           <Button color="primary" variant="contained" onClick={this.resetErrorBoundary}>
             Refresh Form
