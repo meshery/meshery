@@ -53,7 +53,7 @@ mesheryctl filter list Test Filter (maximum 25 filters)
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, utils.FilterListError("error processing config"))
+			return errors.Wrap(err, "error processing config")
 		}
 
 		for i, arg := range args {
