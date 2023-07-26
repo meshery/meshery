@@ -183,7 +183,7 @@ mesheryctl system model view [model-name]
 		return nil
 	},
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl system model view [model-name]\nRun 'mesheryctl system model list' to see list of models"
+		const errMsg = "Usage: mesheryctl system model view [model-name]\nRun 'mesheryctl system model view --help' to see its usage"
 		if len(args) == 0 {
 			return fmt.Errorf("model name isn't specified\n\n%v", errMsg)
 		} else if len(args) > 1 {
@@ -247,11 +247,10 @@ mesheryctl system model view [model-name]
 		// in order to make it consistent while checking output format
 		outFormatFlag = strings.ToLower(outFormatFlag)
 		if outFormatFlag == "yaml" {
-			output, err = yaml.Marshal(selectedModel)
-			if err != nil {
+			if output, err = yaml.Marshal(selectedModel); err != nil {
 				return errors.Wrap(err, "failed to format output in YAML")
 			}
-			utils.Log.Info(string(output))
+			fmt.Print(string(output))
 		} else if outFormatFlag == "json" {
 			return outputJson(selectedModel)
 		} else {
@@ -344,7 +343,7 @@ func outputJson(model v1alpha1.Model) error {
 		if output, err := json.MarshalIndent(model, "", "  "); err != nil {
 			return errors.Wrap(err, "failed to format output in JSON")
 		} else {
-			utils.Log.Info(string(output))
+			fmt.Print(string(output))
 		}
 	}
 	return nil
