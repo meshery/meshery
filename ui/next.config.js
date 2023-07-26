@@ -41,6 +41,8 @@ const nextConfig = {
       ...config.resolve.alias,
       "remote-component.config.js" : __dirname + "/remote-component.config.js"
     };
+    config.output.webassemblyModuleFilename = 'static/[modulehash].wasm',
+    config.experiments = { asyncWebAssembly : true, layers : true }
     return config;
   }
 }
