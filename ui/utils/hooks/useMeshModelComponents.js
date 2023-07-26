@@ -1,5 +1,7 @@
 import _ from "lodash";
 
+export const WILDCARD_V = "*(All Versions)"
+
 import {
   fetchCategories,
   getComponentFromModelApi,
@@ -80,8 +82,28 @@ function getProcessedMeshModelResponseData(meshModelResponse) {
     .reverse(); // sort the versions in reverse order
 }
 
+function deduplicatedListOfComponentsFromAllVersions(components) {
+  const uniqueComponents = [...new Set(components.map(comp => comp.kind))];
+  return uniqueComponents.map(compKind => components.find(c => c.kind === compKind));
+}
+
 function groupComponentsByVersion(components) {
   const versions = [...new Set(components.map(component => component.model.version))];
+
+  if (versions.length > 1) {
+    return [
+      {
+        version : WILDCARD_V,
+        components : deduplicatedListOfComponentsFromAllVersions(components)
+      },
+      ...versions.map(version => ({
+        version : version,
+        components : components.filter(component => component.model.version === version)
+      }))
+    ]
+  }
+
+  // don't attach the wildcards
   return versions.map(version => ({
     version : version,
     components : components.filter(component => component.model.version === version)
@@ -136,6 +158,7 @@ export function useMeshModelComponents() {
     if (!version) {
       if (!meshmodelComponents[modelName]) {
         const modelData = (await getComponentFromModelApi(modelName));
+        console.log("modeled data....", modelData)
         setMeshModelComponents(
           Object.assign(
             { ...meshmodelComponents },
