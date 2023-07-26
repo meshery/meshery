@@ -1,6 +1,6 @@
 import _ from "lodash";
 
-export const WILDCARD_V = "*(All Versions)"
+export const WILDCARD_V = "All Versions"
 
 import {
   fetchCategories,
