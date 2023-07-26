@@ -3,10 +3,9 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	mathrand "math/rand"
 	"strconv"
 	"strings"
-	mathrand "math/rand"
-
 )
 
 // RecursiveCastMapStringInterfaceToMapStringInterface will convert a
