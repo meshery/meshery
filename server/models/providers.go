@@ -257,7 +257,7 @@ const (
 
 	UsersIdentity Feature = "users-identity"
 
-	UsersKeys Feature = "" //To be filled...
+	UsersKeys Feature = "users-keys"
 )
 
 const (
