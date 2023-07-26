@@ -16,6 +16,7 @@ import _ from "lodash"
 import { CustomCheckboxWidget } from './RJSFCustomComponents/CustomCheckboxWidget';
 import MesheryCustomSelectWidget from './RJSFCustomComponents/CustomSelectWidget';
 import CustomTextAreaWidget from './RJSFCustomComponents/CustomTextAreaWidget';
+import ErrorBoundary from '../../ErrorBoundary';
 
 const MuiRJSFForm = withTheme(MaterialUITheme);
 
@@ -44,7 +45,7 @@ function RJSFForm({
   transformErrors,
   override,
   formRef = null,
-  uiSchema={}
+  uiSchema = {}
 }) {
   const globalTheme = useTheme();
   useEffect(() => {
@@ -60,39 +61,41 @@ function RJSFForm({
   }
 
   return (
-    <MuiThemeProvider
-      theme={globalTheme.palette.type === "dark" ? darkRjsfTheme : rjsfTheme}>
-      <MuiRJSFForm
-        schema={schema.rjsfSchema}
-        idPrefix={jsonSchema?.title}
-        ref={formRef}
-        onChange={onChange}
-        formData={data}
-        validator={ajv8validator}
-        templates={{
-          ArrayFieldTemplate,
-          ObjectFieldTemplate,
-          WrapIfAdditionalTemplate,
-          FieldTemplate : CustomFieldTemplate, // applying field template universally to every field type.
-        }}
-        formContext={{ overrideFlag : override, CustomTextTooltip : CustomTextTooltip }}
-        uiSchema={_.merge(schema.uiSchema, uiSchema)}
-        widgets={{
-          // Custom components to be added here
-          TextWidget : CustomTextWidget,
-          DateTimeWidget : CustomDateTimeWidget,
-          SelectWidget,
-          CheckboxWidget : CustomCheckboxWidget,
-          TextareaWidget : CustomTextAreaWidget,
-        }}
-        liveValidate={liveValidate}
-        showErrorList={false}
-        noHtml5Validate
-        transformErrors={transformErrors}
-      >
-        <div></div>
-      </MuiRJSFForm>
-    </MuiThemeProvider>
+    <ErrorBoundary> {/* Putting RJSF into error boundary, so that error can be catched.. */}
+      <MuiThemeProvider
+        theme={globalTheme.palette.type === "dark" ? darkRjsfTheme : rjsfTheme}>
+        <MuiRJSFForm
+          schema={schema.rjsfSchema}
+          idPrefix={jsonSchema?.title}
+          ref={formRef}
+          onChange={onChange}
+          formData={data}
+          validator={ajv8validator}
+          templates={{
+            ArrayFieldTemplate,
+            ObjectFieldTemplate,
+            WrapIfAdditionalTemplate,
+            FieldTemplate : CustomFieldTemplate, // applying field template universally to every field type.
+          }}
+          formContext={{ overrideFlag : override, CustomTextTooltip : CustomTextTooltip }}
+          uiSchema={_.merge(schema.uiSchema, uiSchema)}
+          widgets={{
+            // Custom components to be added here
+            TextWidget : CustomTextWidget,
+            DateTimeWidget : CustomDateTimeWidget,
+            SelectWidget,
+            CheckboxWidget : CustomCheckboxWidget,
+            TextareaWidget : CustomTextAreaWidget,
+          }}
+          liveValidate={liveValidate}
+          showErrorList={false}
+          noHtml5Validate
+          transformErrors={transformErrors}
+        >
+          <div></div>
+        </MuiRJSFForm>
+      </MuiThemeProvider>
+    </ErrorBoundary>
   )
 }
 
