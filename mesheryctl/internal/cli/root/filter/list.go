@@ -67,7 +67,13 @@ mesheryctl filter list Test Filter (maximum 25 filters)
 			return err
 		}
 
-		if len(response.Filters) == 0 {
+		if len(args) > 0 && len(response.Filters) == 0 {
+			utils.Log.Info("No WASM Filter to display with name :", strings.Join(args, " "))
+			return nil
+		} else if len(response.Filters) == 0 {
+			utils.Log.Info("No WASM Filter to display")
+			return nil
+		}
 			utils.Log.Info("No WASM Filter to display")
 			return nil
 		}
