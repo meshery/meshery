@@ -22,7 +22,7 @@ import (
 // ```?page={page-number}``` Default page number is 0
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
-// 
+//
 // ```?search={result_name|mesh|url}``` If search is non empty then a greedy search is performed
 // responses:
 // 	200:performanceResultsResponseWrapper
@@ -60,7 +60,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 // ```?page={page-number}``` Default page number is 0
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
-// 
+//
 // ```?search={}``` If search is non empty then a greedy search is performed
 //
 //  ```?from={date}``` Date must be in yyyy-mm-dd format
@@ -79,7 +79,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 // ```?page={page-number}``` Default page number is 0
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
-// 
+//
 // ```?search={}``` If search is non empty then a greedy search is performed
 //
 //  ```?from={date}``` Date must be in yyyy-mm-dd format
@@ -172,7 +172,7 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 // ```?page={page-number}``` Default page number is 0
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
-// 
+//
 // ```?search={status|mesh_version|mesh_name|date|id}``` If search is non empty then a greedy search is performed
 // responses:
 //

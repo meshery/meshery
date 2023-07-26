@@ -65,23 +65,23 @@ func (mpp *MesheryPatternPersister) GetMesheryCatalogPatterns(page, pageSize, se
 		order = "updated_at desc"
 	}
 
-	var pg int 
+	var pg int
 	if page != "" {
 		pg, err = strconv.Atoi(page)
-		
+
 		if err != nil || pg < 0 {
 			pg = 0
 		}
 	} else {
 		pg = 0
 	}
-	
+
 	// 0 page size is for all records
 	var pgSize int
-	if pageSize != ""{
+	if pageSize != "" {
 		pgSize, err = strconv.Atoi(pageSize)
 
-		if err != nil  || pgSize < 0{
+		if err != nil || pgSize < 0 {
 			pgSize = 0
 		}
 	} else {
@@ -110,12 +110,11 @@ func (mpp *MesheryPatternPersister) GetMesheryCatalogPatterns(page, pageSize, se
 		query.Find(&patterns)
 	}
 
-
 	response := PatternsAPIResponse{
-		Page: uint(pg),
-		PageSize: uint(pgSize),
+		Page:       uint(pg),
+		PageSize:   uint(pgSize),
 		TotalCount: uint(count),
-		Patterns: patterns,
+		Patterns:   patterns,
 	}
 
 	marshalledResponse, _ := json.Marshal(response)
