@@ -59,19 +59,19 @@ Relationships within MeshModel play a crucial role in establishing concrete visu
 6. Create a policy for evaluation of the relationship (rego). See [examples](https://github.com/meshery/meshery/tree/master/server/meshmodel/policies/).
 7. Add in Documentation.
 
-**Existing Relationships and their Subtypes**
+**Existing Relationships, their Definitions and their Subtypes**
 
-1. Hierarchical
-- [Inventory](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/hierarchical_inv_wasm_filters.json)
-- [Parent](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/hierarchical_parent.json)
+1. `Hierarchical` relationships involve either an ancestral connection of the components i.e. the creation/ deletion of a Component higher up affects the existence of the Components below in the lineage or a connection which involves the inheritence of features from one Component to the other. Hierarchical relationships involve either an ancestral connection between components or the inheritance of features from one Component to another.  
+- [Parent](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/hierarchical_parent.json) - A parent-child relationship implies the requirement of the parent component before the child component can be created. For example, a "Namespace" can be a parent of "Pods" within that namespace. The namespace must exist before creating pods within it.
+- [Inventory](https://github.com/meshery/meshery/blob/master/server/meshmodel/relationships/hierarchical_inv_wasm_filters.json) - Wasm filters can inherit features and functionalities from Envoy filters. This can be used to build on existing functionalities provided by Envoy filters and further extend them using Wasm filters. It enables a modular and scalable approach to customize the behavior of the proxy while maintaining a clear hierarchy of features.
 
-2. Edge
-- [Mount](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/mount_edge.json)
-- [Network](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/network_edge.json)
-- [Firewall](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/network_policy_edge.json)
-- [Permission](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/permission_edge.json)
+2. `Edge` relationships indicate the possibility of traffic flow between two components. They enable communication and interaction between different Components within the system.
+- [Mount](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/mount_edge.json) - This subtype addresses the storage and access possibility between involved components. For example, a "PersistentVolume" can be mounted to a "Pod" to provide persistent storage for the pod's data.
+- [Network](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/network_edge.json) - This deals with IP addresses and DNS names and provides stable endpoints for communication. For example, a "Service" provides a stable endpoint for accessing multiple replicas of a "Deployment."
+- [Firewall](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/network_policy_edge.json) - This acts as intermediary for communications which include standard networking protocols like TCP and UDP. It can enforce network policies to control traffic between components. For example, a "NetworkPolicy" can be used to manage the traffic flow between different "Pods" in the cluster.
+- [Permission](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/permission_edge.json) - This defines the permissions for components if they can have a possible relationship with other Components. It ensures that only authorized Components can interact with each other. For example, a "Role" can define permissions for Components to access specific resources.
 
-3. Sibling
+3. `Sibling` relationships represent connections between components that are at the same hierarchical level or share a common parent. Siblings can have the same or similar functionalities or may interact with each other in specific ways. These relationships facilitate communication and cooperation between components that are in the same group or category.
 - [Sibling](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/sibling.json)
 
 
