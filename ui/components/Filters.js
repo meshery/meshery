@@ -694,7 +694,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
       let body = { save : true }
       if (type === FILE_OPS.FILE_UPLOAD) {
-        body = JSON.stringify({ ...body, filter_data : { filter_file : data }, name : metadata.name, config : metadata.config })
+        body = JSON.stringify({ ...body, filter_data : { filter_file : data, name : metadata.name },  config : metadata.config })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
         body = JSON.stringify({ ...body, url : data, name : metadata.name, config : metadata.config })
@@ -716,7 +716,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         {
           credentials : "include",
           method : "POST",
-          body : JSON.stringify({ filter_data : { id, config : data }, save : true }),
+          body : JSON.stringify({ filter_data : { id, name : name }, config : data, save : true }),
         },
         () => {
           updateProgress({ showProgress : false });
