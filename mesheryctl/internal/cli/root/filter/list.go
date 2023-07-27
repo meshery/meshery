@@ -61,7 +61,7 @@ mesheryctl filter list
 		}
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			return utils.ErrMakeRequest(err)
+			return err
 		}
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)

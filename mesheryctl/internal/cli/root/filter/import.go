@@ -127,7 +127,7 @@ mesheryctl filter import /path/to/filter.wasm -name [string]
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
-			return utils.ErrMakeRequest(err)
+			return err
 		}
 
 		if resp.StatusCode == 200 {

@@ -86,7 +86,7 @@ mesheryctl filter view --all
 		}
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			return utils.ErrMakeRequest(err)
+			return err
 		}
 
 		defer res.Body.Close()
