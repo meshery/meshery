@@ -1,4 +1,5 @@
 import { compose } from "lodash/fp";
+import { WILDCARD_V } from "./hooks/useMeshModelComponents";
 
 /**
  * returns the API Version that should be used and is most stable
@@ -43,8 +44,13 @@ export function versionSortComparatorFn(versionA, versionB) {
     return;
   }
 
+  if (versionA.startsWith("*") || versionB.startsWith("*")) { // wildcard support
+    return -1;
+  }
+
   const verA = versionA.split(".");
   const verB = versionB.split(".");
+
 
   for (let i = 0; i < verA.length && i < verB.length; i++) {
     let vA = verA[i];
@@ -83,7 +89,13 @@ export const sortByVersionInDecreasingOrder = versions => {
     return;
   }
 
-  return [...versions].sort(versionSortComparatorFn).reverse();
+  // add wildcard only in the case of multiple distinct versions
+  let wildCardV = [];
+  if (versions.length > 1) {
+    wildCardV = [WILDCARD_V]
+  }
+
+  return [...wildCardV, ...[...versions].sort(versionSortComparatorFn).reverse()];
 };
 
 /**
