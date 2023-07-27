@@ -59,6 +59,7 @@ Relationships within MeshModel play a crucial role in establishing concrete visu
 6. Create a policy for evaluation of the relationship (rego). See [examples](https://github.com/meshery/meshery/tree/master/server/meshmodel/policies/).
 7. Add in Documentation.
 
+<<<<<<< HEAD
 **Existing Relationships, their Definitions and their Subtypes**
 
 1. `Hierarchical` relationships involve either an ancestral connection of the components i.e. the creation/ deletion of a Component higher up affects the existence of the Components below in the lineage or a connection which involves the inheritence of features from one Component to the other.  
@@ -72,6 +73,21 @@ Relationships within MeshModel play a crucial role in establishing concrete visu
 - [Permission](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/permission_edge.json) - This defines the permissions for components if they can have a possible relationship with other Components. It ensures that only authorized Components can interact with each other. For example, a "Role" can define permissions for Components to access specific resources.
 
 3. `Sibling` relationships represent connections between components that are at the same hierarchical level or share a common parent. Siblings can have the same or similar functionalities or may interact with each other in specific ways. These relationships facilitate communication and cooperation between components that are in the same group or category.
+=======
+**Existing Relationships and their Subtypes**
+
+1. Hierarchical
+- [Inventory](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/hierarchical_inv_wasm_filters.json)
+- [Parent](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/hierarchical_parent.json)
+
+2. Edge
+- [Mount](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/mount_edge.json)
+- [Network](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/network_edge.json)
+- [Firewall](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/network_policy_edge.json)
+- [Permission](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/permission_edge.json)
+
+3. Sibling
+>>>>>>> 8ab616978 (add screenshots in contrib docs)
 - [Sibling](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/sibling.json)
 
 
@@ -79,7 +95,11 @@ Relationships within MeshModel play a crucial role in establishing concrete visu
 <summary>See all Visual Representations</summary>
     <details close><summary>Hierarchical</summary>
     <figure><br><figcaption>Hierarchical Parent</figcaption>
+<<<<<<< HEAD
     <img alt="Hierarchical Parent" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/hierachical_relationship_namespace_others.png"/>
+=======
+    <img alt="Hierarchical Parent" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/hierarchical_relationship.png"/>
+>>>>>>> 8ab616978 (add screenshots in contrib docs)
     </figure>
     </details>
 
