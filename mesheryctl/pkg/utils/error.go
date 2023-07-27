@@ -11,6 +11,14 @@ var (
 	ErrFailRequestCode     = "1044"
 	ErrFailReqStatusCode   = "1045"
 	ErrAttachAuthTokenCode = "1046"
+	ErrReadConfigFileCode          = "replace_me"
+	ErrMarshalIndentCode           = "replace_me"
+	ErrMakeRequestCode             = "replace_me"
+	ErrProcessingConfigCode  ="replace_me"
+	ErrResponseStatusBodyCode      = "replace_me"
+	ErrResponseStatusCode          = "replace_me"
+	ErrJSONToYAMLCode              = "replace_me"
+	ErrOutFormatFlagCode           = "replace_me"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -243,4 +251,36 @@ func InvalidToken() error {
 func ErrFailReqStatus(statusCode int) error {
 	return errors.New(ErrFailReqStatusCode, errors.Alert, []string{},
 		[]string{"Response Status Code " + strconv.Itoa(statusCode) + ", possible Server Error"}, []string{}, []string{})
+}
+
+func ErrProcessingConfig(err error) error {
+	return errors.New(ErrProcessingConfigCode, errors.Alert, []string{"Error processing config"}, []string{"Error processing config", err.Error()}, []string{}, []string{})
+}
+
+func ErrMarshalIndent(err error) error {
+	return errors.New(ErrMarshalIndentCode, errors.Alert, []string{"Error indenting json body"}, []string{"Can't marshal indent body filters", "" + err.Error()}, []string{}, []string{})
+}
+
+func ErrMakeRequest(err error) error {
+	return errors.New(ErrMakeRequestCode, errors.Alert, []string{"Error in making request"}, []string{"Can't return response from the new request made", "" + err.Error()}, []string{}, []string{})
+}
+
+func ErrResponseStatusBody(statusCode int, body string) error {
+	return errors.New(ErrResponseStatusBodyCode, errors.Alert, []string{"Wrong status code"}, []string{"Server returned with status code: " + fmt.Sprint(statusCode) + "\n" + "Response: " + body}, []string{}, []string{})
+}
+
+func ErrResponseStatus(statusCode int) error {
+	return errors.New(ErrResponseStatusCode, errors.Alert, []string{"Wrong status code"}, []string{"Server returned with status code: " + fmt.Sprint(statusCode)}, []string{}, []string{})
+}
+
+func ErrJSONToYAML(err error) error {
+	return errors.New(ErrJSONToYAMLCode, errors.Alert, []string{"Can't convert JSON to yaml"}, []string{"Failed to convert json to yaml", "" + err.Error()}, []string{}, []string{})
+}
+
+func ErrOutFormatFlag() error {
+	return errors.New(ErrOutFormatFlagCode, errors.Alert, []string{"Output-format choice invalid"}, []string{"Output-format choice invalid, use [json|yaml]"}, []string{}, []string{})
+}
+
+func ErrReadConfigFile(err error) error {
+	return errors.New(ErrReadConfigFileCode, errors.Alert, []string{"Unable to read config file"}, []string{"Can't read config file from Path", "" + err.Error()}, []string{}, []string{})
 }
