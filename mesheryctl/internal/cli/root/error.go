@@ -39,21 +39,26 @@ var (
 )
 
 func ErrProcessingConfig(err error) error {
-	return errors.New(ErrProcessingConfigCode, errors.Alert, []string{"Error processing config"}, []string{"Error processing config", err.Error()}, []string{}, []string{})
+	return errors.New(ErrProcessingConfigCode, errors.Alert, []string{"Error processing config"},
+		[]string{"Error processing config", err.Error()}, []string{"Couldn't load mesh config"}, []string{"Ensure mesheryctl has the right configurations"})
 }
 
 func ErrConnectingToServer(err error) error {
-	return errors.New(ErrConnectingToServerCode, errors.Fatal, []string{"Unable to communicate with Meshery server"}, []string{"Unable to communicate with Meshery server", err.Error(), "See https://docs.meshery.io for help getting started with Meshery"}, []string{}, []string{"See https://docs.meshery.io for help getting started with Meshery"})
+	return errors.New(ErrConnectingToServerCode, errors.Fatal, []string{"Unable to communicate with Meshery server"},
+	 []string{"Unable to communicate with Meshery server", err.Error()}, []string{"There might be connection failure to Meshery Server"}, []string{"See https://docs.meshery.io for help getting started with Meshery"})
 }
 
 func ErrGettingRequestContext(err error) error {
-	return errors.New(ErrGettingRequestContextCode, errors.Fatal, []string{"Unable to add token to config"}, []string{"Unable to add token to config", err.Error()}, []string{}, []string{})
+	return errors.New(ErrGettingRequestContextCode, errors.Fatal, []string{"Unable to add token to config"}, 
+	[]string{"Unable to add token to config", err.Error()}, []string{"Meshery is not running or there is a network issue"}, []string{"Check your network connection and check the status of meshery server via 'mesheryctl system status'"})
 }
 
 func ErrInvalidAPIResponse(err error) error {
-	return errors.New(ErrInvalidAPIResponseCode, errors.Fatal, []string{"Invalid API response encountered"}, []string{"Invalid API response encountered", err.Error()}, []string{}, []string{})
+	return errors.New(ErrInvalidAPIResponseCode, errors.Fatal, []string{"Invalid API response encountered"},
+	 []string{"Invalid API response encountered", err.Error()}, []string{"Error occured while generating a response body"}, []string{"Check your network connection and check the status of meshery server via 'mesheryctl system status'"})
 }
 
 func ErrUnmarshallingAPIData(err error) error {
-	return errors.New(ErrUnmarshallingAPIDataCode, errors.Fatal, []string{"Error processing json API data"}, []string{"Error processing json API data", err.Error()}, []string{}, []string{})
+	return errors.New(ErrUnmarshallingAPIDataCode, errors.Fatal, []string{"Error processing json API data"}, 
+	[]string{"Error processing json API data", err.Error()}, []string{"The json format from Api Data is not valid"}, []string{"Check if valid json is given to process"})
 }
