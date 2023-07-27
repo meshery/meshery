@@ -28,7 +28,7 @@ You can create your first design and give it a name. The design that you will be
 
 **Step 3. Creating the design**
 
-You can create the design by dragging and droping the component. You can simply drag the component and drop the components onto the MeshMap Canvas using the configuration panel, and while creating the design the design gets automatically saved with each change. You can also connect two componets by dragging your cursor from one component to another.
+You can create the design by dragging and droping the component. You can simply drag the component and drop the components on the MeshMap Canvas using the configuration panel, and while creating the design the design gets automatically saved with each change. You can also connect two componets by dragging your cursor from one component to another.
 
 **Step 4. Setting Configuration of Component**
 
@@ -42,7 +42,7 @@ You can also merge two or more designs by dragging and dropping them on the canv
 
 **Step 1. Access the Meshmap in Meshery UI**
 
-The option to access the MeshMap is present at last option inside the sidebar of Meshery UI. Upon clicking the icon, the extension MeshMap will enable at your screen and then choose visual option. The visualize mode will pop up on your screen.
+The option to access the MeshMap is present at last option in the sidebar of Meshery UI. On clicking the icon, the extension MeshMap will enable at your screen and then choose visual option. The visualize mode will pop up on your screen.
 
 <a href="{{ site.baseurl }}/assets/img/meshmap/meshmap-visual-desktop.png"> <img src="{{ site.baseurl }}/assets/img/meshmap/meshmap-visual-desktop.png" /> </a>
 
@@ -56,8 +56,9 @@ Now you can visualize the cluster in the workspace.
 
 **Step 3. Working in visualizer mode**
 
-Yon can visualize you replicaset, pods, deployment, secrets inside the canvas, also they can filtered as per the namespaces. Upon clicking an item in the canvas its detail will appear in the right panel, also many other option like opening an interactive terminal are provided for an pod and container under actions button in right panel.
+You can visualize you replicaset, pods, deployment, secrets in the canvas, also these can be filtered as per the namespaces. On clicking an item in the canvas its detail will appear in the details section in right, also many other option like opening an interactive terminal are provided for an pod and container under Actions button in right panel.
 
 <a href="{{ site.baseurl }}/assets/img/meshmap/meshmap-visual.png"> <img src="{{ site.baseurl }}/assets/img/meshmap/meshmap-visual.png"/> </a>
+
 <a href="{{ site.baseurl }}/assets/img/meshmap/meshmap-visual-terminal.png"> <img src="{{ site.baseurl }}/assets/img/meshmap/meshmap-visual-terminal.png"/> </a>
 
