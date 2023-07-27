@@ -61,7 +61,7 @@ Relationships within MeshModel play a crucial role in establishing concrete visu
 
 **Existing Relationships, their Definitions and their Subtypes**
 
-1. `Hierarchical` relationships involve either an ancestral connection of the components i.e. the creation/ deletion of a Component higher up affects the existence of the Components below in the lineage or a connection which involves the inheritence of features from one Component to the other. Hierarchical relationships involve either an ancestral connection between components or the inheritance of features from one Component to another.  
+1. `Hierarchical` relationships involve either an ancestral connection of the components i.e. the creation/ deletion of a Component higher up affects the existence of the Components below in the lineage or a connection which involves the inheritence of features from one Component to the other.  
 - [Parent](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/hierarchical_parent.json) - A parent-child relationship implies the requirement of the parent component before the child component can be created. For example, a "Namespace" can be a parent of "Pods" within that namespace. The namespace must exist before creating pods within it.
 - [Inventory](https://github.com/meshery/meshery/blob/master/server/meshmodel/relationships/hierarchical_inv_wasm_filters.json) - Wasm filters can inherit features and functionalities from Envoy filters. This can be used to build on existing functionalities provided by Envoy filters and further extend them using Wasm filters. It enables a modular and scalable approach to customize the behavior of the proxy while maintaining a clear hierarchy of features.
 
