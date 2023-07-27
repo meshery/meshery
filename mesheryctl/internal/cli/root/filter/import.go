@@ -20,7 +20,6 @@ import (
 	"os"
 
 	"github.com/asaskevich/govalidator"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/ctlerrors"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
@@ -57,7 +56,7 @@ mesheryctl filter import /path/to/filter.wasm -name [string]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return ctlerrors.ErrProcessingConfig(err)
+			return utils.ErrProcessingConfig(err)
 		}
 
 		filterURL := mctlCfg.GetBaseMesheryURL() + "/api/filter"
@@ -78,12 +77,12 @@ mesheryctl filter import /path/to/filter.wasm -name [string]
 		} else {
 			filterFile, err := os.ReadFile(uri)
 			if err != nil {
-				return ctlerrors.ErrReadFile(err)
+				return err
 			}
 
 			fileInfo, err := os.Stat(uri)
 			if err != nil {
-				return ctlerrors.ErrReadFile(err)
+				return err
 			}
 
 			content := string(filterFile)
@@ -98,7 +97,7 @@ mesheryctl filter import /path/to/filter.wasm -name [string]
 				utils.Log.Info("Reading config file")
 				cfgFile, err := os.ReadFile(cfg)
 				if err != nil {
-					return ctlerrors.ErrReadConfigFile(err)
+					return utils.ErrReadConfigFile(err)
 				}
 
 				content := string(cfgFile)
@@ -118,23 +117,23 @@ mesheryctl filter import /path/to/filter.wasm -name [string]
 		marshalledBody, err := json.Marshal(body)
 
 		if err != nil {
-			return ctlerrors.ErrMarshal(err)
+			return err
 		}
 
 		req, err := utils.NewRequest("POST", filterURL, bytes.NewBuffer(marshalledBody))
 		if err != nil {
-			return ctlerrors.ErrNewRequest(err)
+			return err
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
-			return ctlerrors.ErrMakeRequest(err)
+			return utils.ErrMakeRequest(err)
 		}
 
 		if resp.StatusCode == 200 {
 			utils.Log.Info("filter successfully imported")
 		} else {
-			return ctlerrors.ErrResponseStatus(resp.StatusCode)
+			return utils.ErrResponseStatus(resp.StatusCode)
 		}
 
 		return nil

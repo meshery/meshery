@@ -22,7 +22,6 @@ import (
 
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/ctlerrors"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -50,7 +49,7 @@ mesheryctl filter view --all
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return ctlerrors.ErrProcessingConfig(err)
+			return utils.ErrProcessingConfig(err)
 		}
 
 		filter := ""
@@ -83,32 +82,32 @@ mesheryctl filter view --all
 
 		req, err := utils.NewRequest("GET", urlString, nil)
 		if err != nil {
-			return ctlerrors.ErrNewRequest(err)
+			return err
 		}
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			return ctlerrors.ErrMakeRequest(err)
+			return utils.ErrMakeRequest(err)
 		}
 
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			return ctlerrors.ErrReadResponseBody(err)
+			return err
 		}
 
 		var dat map[string]interface{}
 		if err = json.Unmarshal(body, &dat); err != nil {
-			return ctlerrors.ErrUnmarshal(err)
+			return err
 		}
 
 		if isID {
 			if body, err = json.MarshalIndent(dat, "", "  "); err != nil {
-				return ctlerrors.ErrMarshalIndent(err)
+				return utils.ErrMarshalIndent(err)
 			}
 		} else if viewAllFlag {
 			// only keep the filter key from the response when viewing all the filters
 			if body, err = json.MarshalIndent(map[string]interface{}{"filters": dat["filters"]}, "", "  "); err != nil {
-				return ctlerrors.ErrMarshalIndent(err)
+				return utils.ErrMarshalIndent(err)
 			}
 		} else {
 			// use the first match from the result when searching by filter name
@@ -118,16 +117,16 @@ mesheryctl filter view --all
 				return nil
 			}
 			if body, err = json.MarshalIndent(arr[0], "", "  "); err != nil {
-				return ctlerrors.ErrMarshalIndent(err)
+				return utils.ErrMarshalIndent(err)
 			}
 		}
 
 		if outFormatFlag == "yaml" {
 			if body, err = yaml.JSONToYAML(body); err != nil {
-				return ctlerrors.ErrJSONToYAML(err)
+				return utils.ErrJSONToYAML(err)
 			}
 		} else if outFormatFlag != "json" {
-			return ctlerrors.ErrOutFormatFlag()
+			return utils.ErrOutFormatFlag()
 		}
 		utils.Log.Info(string(body))
 		return nil
