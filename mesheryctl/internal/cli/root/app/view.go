@@ -115,7 +115,7 @@ mesheryctl app view --all
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			log.Error(utils.ErrReadingResp(err))
+			log.Error(utils.ErrReadResponseBody(err))
 			return nil
 		}
 

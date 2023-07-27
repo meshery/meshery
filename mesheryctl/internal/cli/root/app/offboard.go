@@ -116,7 +116,7 @@ mesheryctl app offboard -f [filepath]
 
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
-			log.Error(utils.ErrReadingResp(err))
+			log.Error(utils.ErrReadResponseBody(err))
 			return nil
 		}
 
@@ -145,7 +145,7 @@ mesheryctl app offboard -f [filepath]
 		defer res.Body.Close()
 		body, err = io.ReadAll(res.Body)
 		if err != nil {
-			log.Error(utils.ErrReadingResp(err))
+			log.Error(utils.ErrReadResponseBody(err))
 			return nil
 		}
 

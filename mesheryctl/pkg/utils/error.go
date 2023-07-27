@@ -8,16 +8,17 @@ import (
 )
 
 var (
-	ErrFailRequestCode     = "1044"
-	ErrFailReqStatusCode   = "1045"
-	ErrAttachAuthTokenCode = "1046"
-	ErrUnmarshalCode       = "1003"
-	ErrFileReadCode        = "1000"
-	ErrCreatingRequestCode = "replace_me"
-	ErrMarhallingCode      = "replace_me"
-	ErrReadingRespCode     = "replace_me"
-	ErrParsingUrlCode      = "replace_me"
-	ErrNotFoundCode        = "replace_me"
+	ErrFailRequestCode      = "1044"
+	ErrFailReqStatusCode    = "1045"
+	ErrAttachAuthTokenCode  = "1046"
+	ErrUnmarshalCode        = "1003"
+	ErrFileReadCode         = "1000"
+	ErrCreatingRequestCode  = "replace_me"
+	ErrMarhallingCode       = "replace_me"
+	ErrReadResponseBodyCode = "replace_me"
+	ErrParsingUrlCode       = "replace_me"
+	ErrNotFoundCode         = "replace_me"
+	ErrUnauthenticatedCode  = "replace_me"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -234,17 +235,17 @@ func ErrAttachAuthToken(err error) error {
 
 func ErrFailRequest(err error) error {
 	return errors.New(ErrFailRequestCode, errors.Alert, []string{"Failed to make a request"},
-		[]string{err.Error()}, []string{}, []string{})
+		[]string{err.Error()}, []string{"Meshery server isn't running or not reachable"}, []string{"Please check your kubernetes cluster is running or not and Run `mesheryctl system restart`"})
 }
 
 func ErrUnauthenticated() error {
-	return errors.New(ErrFailRequestCode, errors.Alert, []string{},
-		[]string{"Authentication token is invalid. Please supply a valid user token. Login with `mesheryctl system login`"}, []string{}, []string{})
+	return errors.New(ErrUnauthenticatedCode, errors.Alert, []string{"UnAuthenticated User"},
+		[]string{"You are UnAuthenticated to access any resource"}, []string{"You haven't login to meshery"}, []string{"Login with `mesheryctl system login`"})
 }
 
 func InvalidToken() error {
-	return errors.New(ErrFailRequestCode, errors.Alert, []string{},
-		[]string{"Authentication token is expired/invalid. Please login with `mesheryctl system login` to generate a new token"}, []string{}, []string{})
+	return errors.New(ErrFailRequestCode, errors.Alert, []string{"Authentication token invalid"},
+		[]string{"Authentication got expired or is invalid"}, []string{"Authentication token present in auth.json expired or is invalid"}, []string{"Please supply a valid user token. Login with `mesheryctl system login`"})
 }
 
 func ErrFailReqStatus(statusCode int) error {
@@ -273,8 +274,8 @@ func ErrMarhalling(err error) error {
 		[]string{err.Error()}, []string{"The Content provided to Marshall is invalid"}, []string{"Please check the data structure you are providing for Marshalling"})
 }
 
-func ErrReadingResp(err error) error {
-	return errors.New(ErrReadingRespCode, errors.Alert, []string{"Error Reading Response Body"},
+func ErrReadResponseBody(err error) error {
+	return errors.New(ErrReadResponseBodyCode, errors.Alert, []string{"Error Reading Response Body"},
 		[]string{err.Error()}, []string{"There might be connection failure with Meshery Server"}, []string{"Check the status via 'mesheryctl system status'"})
 }
 

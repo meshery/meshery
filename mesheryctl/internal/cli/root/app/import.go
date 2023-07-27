@@ -126,7 +126,7 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.Log.Debug("failed to read response body")
-			return nil, utils.ErrReadingResp(err)
+			return nil, utils.ErrReadResponseBody(err)
 		}
 		err = json.Unmarshal(body, &response)
 		if err != nil {
@@ -175,7 +175,7 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.Log.Debug("failed to read response body")
-			return nil, utils.ErrReadingResp(err)
+			return nil, utils.ErrReadResponseBody(err)
 		}
 		err = json.Unmarshal(body, &response)
 		if err != nil {
