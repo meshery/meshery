@@ -44,7 +44,7 @@ export function versionSortComparatorFn(versionA, versionB) {
     return;
   }
 
-  if (versionA.startsWith("*") || versionB.startsWith("*")) { // wildcard support
+  if (versionA === WILDCARD_V || versionB === WILDCARD_V) { // wildcard support
     return -1;
   }
 
