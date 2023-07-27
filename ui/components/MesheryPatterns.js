@@ -812,7 +812,7 @@ function MesheryPatterns({
     };
   }
 
-  async function handleSubmit({ data, id, name, type }) {
+  async function handleSubmit({ data, id, name, type, metadata }) {
     updateProgress({ showProgress : true })
     if (type === FILE_OPS.DELETE) {
       const response = await showModal(1, name)
@@ -867,14 +867,14 @@ function MesheryPatterns({
       if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({
           pattern_data : {
-            name,
+            name : metadata?.name || name,
             pattern_file : data,
           },
           save : true
         })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
-        body = JSON.stringify({ url : data, save : true })
+        body = JSON.stringify({ url : data, save : true,  name : metadata?.name || name })
       }
       dataFetch(
         `/api/pattern`,
@@ -913,7 +913,7 @@ function MesheryPatterns({
     }
   }
 
-  function uploadHandler(ev) {
+  function uploadHandler(ev, _, otherMetadata) {
     if (!ev.target.files?.length) return;
 
 
@@ -925,18 +925,20 @@ function MesheryPatterns({
       handleSubmit({
         data : event.target.result,
         name : file?.name || getRandomName(),
-        type : FILE_OPS.FILE_UPLOAD
+        type : FILE_OPS.FILE_UPLOAD,
+        metadata : otherMetadata
       });
     });
     reader.readAsText(file);
   }
 
-  function urlUploadHandler(link) {
+  function urlUploadHandler(link, _, otherMetadata) {
     handleSubmit({
       data : link,
       id : "",
       name : getRandomName(),
-      type : FILE_OPS.URL_UPLOAD
+      type : FILE_OPS.URL_UPLOAD,
+      metadata : otherMetadata
     });
   }
 
@@ -1016,7 +1018,7 @@ function MesheryPatterns({
           );
         },
         customBodyRender : function CustomBody(_, tableMeta) {
-          const visibility = patterns[tableMeta.rowIndex].visibility
+          const visibility = patterns[tableMeta.rowIndex]?.visibility
           return (
             <div style={{ cursor : "default" }}>
               <img className={classes.visibilityImg} src={`/static/img/${visibility}.svg`} />
@@ -1395,11 +1397,16 @@ function MesheryPatterns({
           validationBody={modalOpen.validationBody}
           errors={modalOpen.errors}
         />
-        {canPublishPattern &&
-          <Modal open={publishModal.open} schema={publish_schema} uiSchema={publish_ui_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.pattern?.catalog_data : payload.catalog_data } aria-label="catalog publish" title={publishModal.pattern?.name} handleSubmit={handlePublish} payload={payload} showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }}/>
-        }
-
-        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchPatterns(page, pageSize, search, sortOrder)} configuration="Design" />
+        {canPublishPattern && <Modal open={publishModal.open} schema={publish_schema} uiSchema={publish_ui_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.pattern?.catalog_data : payload.catalog_data } aria-label="catalog publish" title={publishModal.pattern?.name} handleSubmit={handlePublish} payload={payload} showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }}/>}
+        <UploadImport
+          open={importModal.open}
+          handleClose={handleUploadImportClose}
+          aria-label="URL upload button"
+          handleUrlUpload={urlUploadHandler}
+          handleUpload={uploadHandler}
+          fetch={() => fetchPatterns(page, pageSize, search, sortOrder)}
+          configuration="Design"
+        />
         <PromptComponent ref={modalRef} />
       </NoSsr>
     </>

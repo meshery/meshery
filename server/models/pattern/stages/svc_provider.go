@@ -3,7 +3,7 @@ package stages
 import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/pattern/core"
-	"github.com/layer5io/meshkit/models/meshmodel"
+	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 )
 

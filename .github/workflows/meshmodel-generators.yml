@@ -43,3 +43,19 @@ jobs:
           commit_options: "--signoff"
           commit_message: "New Meshmodel components generated"
           branch: master
+      
+      - name: Send Email on Meshmodel Generators Failure
+        if: failure()
+        uses: dawidd6/action-send-mail@v3.7.1
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: GitHub Actions - Workflow Failure
+          from: |
+            "Meshmodel Generator" <no-reply@meshery.io>
+          to: developers@meshery.io
+          body: |
+            The GitHub Actions workflow in ${{ github.repository }} has failed.
+            You can find more details in the GitHub Actions log ${{ github.workflow }}.
