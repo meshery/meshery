@@ -42,25 +42,7 @@ The authentication mode is web-based browser flow`,
 // Login with the Meshery Provider of your choice: the Local Provider or a Remote Provider.
 mesheryctl system login 
 	`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-		hcOptions := &HealthCheckOptions{
-			IsPreRunE:  true,
-			PrintLogs:  false,
-			Subcommand: cmd.Use,
-		}
-		hc, err := NewHealthChecker(hcOptions)
-		if err != nil {
-			return errors.Wrapf(err, "failed to initialize healthchecker")
-		}
-		// execute healthchecks
-		err = hc.RunPreflightHealthChecks()
-		if err != nil {
-			cmd.SilenceUsage = true
-		}
 
-		return err
-	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
