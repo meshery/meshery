@@ -13,6 +13,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/manifoldco/promptui"
@@ -342,18 +343,35 @@ func initiateRemoteProviderAuth(provider Provider) (string, error) {
 
 	// Redirect user to the provider page
 	if err := NavigateToBrowser(uri); err != nil {
+		// Terminate the temporary server if there's an error
+		srv.Shutdown(context.Background())
 		return "", err
 	}
 
-	// Pause until we get the response on the channel
-	token := <-tokenChan
-
-	// Shut down the server
-	if err := srv.Shutdown(context.TODO()); err != nil {
-		return token, err
+	// Pause until we get the response on the channel or timeout occurs
+	select {
+	case token := <-tokenChan:
+		// Shut down the server
+		srv.Shutdown(context.Background())
+		return token, nil
+	case <-time.After(5 * time.Second): // Set the timeout duration as needed
+		// Terminate the temporary server after the timeout
+		srv.Shutdown(context.Background())
+		select {
+		case token := <-tokenChan:
+			// If the token is received after the timeout
+			return token, err
+		default:
+			// If no token is received after the timeout
+			return "", err
+		}
 	}
 
-	return token, nil
+	// // Shut down the server
+	// if err := srv.Shutdown(context.TODO()); err != nil {
+	// 	return token, err
+	// }
+
 }
 
 func selectProviderPrompt(provs map[string]Provider) Provider {
