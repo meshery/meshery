@@ -344,7 +344,9 @@ func initiateRemoteProviderAuth(provider Provider) (string, error) {
 	// Redirect user to the provider page
 	if err := NavigateToBrowser(uri); err != nil {
 		// Terminate the temporary server if there's an error
-		srv.Shutdown(context.Background())
+		if err := srv.Shutdown(context.Background()); err != nil {
+			return "", err
+		}
 		return "", err
 	}
 
@@ -352,11 +354,15 @@ func initiateRemoteProviderAuth(provider Provider) (string, error) {
 	select {
 	case token := <-tokenChan:
 		// Shut down the server
-		srv.Shutdown(context.Background())
+		if err := srv.Shutdown(context.Background()); err != nil {
+			return "", err
+		}
 		return token, nil
 	case <-time.After(5 * time.Second): // Set the timeout duration as needed
 		// Terminate the temporary server after the timeout
-		srv.Shutdown(context.Background())
+		if err := srv.Shutdown(context.Background()); err != nil {
+			return "", err
+		}
 		select {
 		case token := <-tokenChan:
 			// If the token is received after the timeout
