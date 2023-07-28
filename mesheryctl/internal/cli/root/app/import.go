@@ -58,7 +58,7 @@ Example: mesheryctl app import -f ./application.yml -s "Kubernetes Manifest"`
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var err error
-		log, err := logger.New("app", logger.Options{
+		log, _ := logger.New("app", logger.Options{
 			Format:     logger.SyslogLogFormat,
 			DebugLevel: true,
 		})

@@ -49,7 +49,7 @@ mesheryctl pattern view [pattern-name | ID]
 	`,
 	Annotations: linkDocPatternView,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		log, err := logger.New("pattern", logger.Options{
+		log, _ := logger.New("pattern", logger.Options{
 			Format:     logger.SyslogLogFormat,
 			DebugLevel: true,
 		})

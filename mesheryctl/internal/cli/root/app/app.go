@@ -68,7 +68,7 @@ func init() {
 }
 
 func getSourceTypes() error {
-	log, err := logger.New("app", logger.Options{
+	log, _ := logger.New("app", logger.Options{
 		Format:     logger.SyslogLogFormat,
 		DebugLevel: true,
 	})

@@ -57,7 +57,7 @@ mesheryctl app view --all
 	Annotations: linkDocAppView,
 	Args:        cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		log, err := logger.New("app", logger.Options{
+		log, _ := logger.New("app", logger.Options{
 			Format:     logger.SyslogLogFormat,
 			DebugLevel: true,
 		})

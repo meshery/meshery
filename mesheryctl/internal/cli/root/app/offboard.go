@@ -48,7 +48,7 @@ mesheryctl app offboard -f [filepath]
 		}
 		var req *http.Request
 		var err error
-		log, err := logger.New("app", logger.Options{
+		log, _ := logger.New("app", logger.Options{
 			Format:     logger.SyslogLogFormat,
 			DebugLevel: true,
 		})
@@ -85,7 +85,7 @@ mesheryctl app offboard -f [filepath]
 		if !govalidator.IsURL(file) {
 			content, err := os.ReadFile(file)
 			if err != nil {
-				utils.ErrFileRead(err)
+				log.Error(utils.ErrFileRead(err))
 				return nil
 			}
 

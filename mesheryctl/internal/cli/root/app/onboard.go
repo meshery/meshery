@@ -72,7 +72,7 @@ Description: Onboard application`
 		var req *http.Request
 		var err error
 
-		log, err := logger.New("app", logger.Options{
+		log, _ := logger.New("app", logger.Options{
 			Format:     logger.SyslogLogFormat,
 			DebugLevel: true,
 		})

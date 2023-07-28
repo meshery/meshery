@@ -43,7 +43,7 @@ mesheryctl pattern delete [file | URL]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
-		log, err := logger.New("pattern", logger.Options{
+		log, _ := logger.New("pattern", logger.Options{
 			Format:     logger.SyslogLogFormat,
 			DebugLevel: true,
 		})
