@@ -80,6 +80,7 @@ export const adaptersList = {
   //   enabled: false,
   //   url: "",
   // },
+
   "NGINX_SERVICE_MESH" : {
     name : "Nginx Service Mesh",
     label : "meshery-nginx-sm",
