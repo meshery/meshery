@@ -81,9 +81,13 @@ export const adaptersList = {
   //   url: "",
   // },
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 =======
 >>>>>>> 02e0c85c1 (Remove Open Service Mesh Adapter Card)
+=======
+
+>>>>>>> b9241daf2 (Remove Open Service Mesh Adapter from adaptersList)
   "NGINX_SERVICE_MESH" : {
     name : "Nginx Service Mesh",
     label : "meshery-nginx-sm",
