@@ -80,7 +80,10 @@ export const adaptersList = {
   //   enabled: false,
   //   url: "",
   // },
+<<<<<<< HEAD
 
+=======
+>>>>>>> 02e0c85c1 (Remove Open Service Mesh Adapter Card)
   "NGINX_SERVICE_MESH" : {
     name : "Nginx Service Mesh",
     label : "meshery-nginx-sm",
