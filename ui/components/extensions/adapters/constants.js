@@ -34,15 +34,6 @@ export const adaptersList = {
     enabled : false,
     url : "",
   },
-  "meshery-octarine" : {
-    name : "Meshery Octarine",
-    label : "meshery-octarine",
-    imageSrc : "/static/img/octarine.svg",
-    description : adaptersDescription("Meshery Ocatrine"),
-    defaultPort : 10003,
-    enabled : false,
-    url : "",
-  },
   "NETWORK_SERVICE_MESH" : {
     name : "Network Service Mesh",
     label : "meshery-nsm",
