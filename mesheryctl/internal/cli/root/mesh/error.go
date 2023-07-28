@@ -14,7 +14,11 @@
 
 package mesh
 
-import "github.com/layer5io/meshkit/errors"
+import (
+	"fmt"
+
+	"github.com/layer5io/meshkit/errors"
+)
 
 const (
 	ErrGettingSessionDataCode                = "1009"
@@ -30,6 +34,8 @@ const (
 	ErrCreatingValidateResponseRequestCode   = "1019"
 	ErrTimeoutWaitingForValidateResponseCode = "1020"
 	ErrSMIConformanceTestsFailedCode         = "1021"
+	ErrValidateAdapterCode                   = "replace_me"
+	ErrSendOperationRequestCode              = "replace_me"
 )
 
 var (
@@ -80,4 +86,14 @@ func ErrCreatingValidateResponseRequest(err error) error {
 
 func ErrCreatingValidateResponseStream(err error) error {
 	return errors.New(ErrCreatingDeployResponseStreamCode, errors.Fatal, []string{"Error creating validate event response stream"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrValidateAdapter(err error) error {
+	return errors.New(ErrValidateAdapterCode, errors.Fatal, []string{"Error in validating Adapter"},
+		[]string{"Error in validating adapter" + err.Error()}, []string{"Couldn't get an available adapter to validate"}, []string{"Check your network connection and check the status of meshery server via 'mesheryctl system status'"})
+}
+
+func ErrSendOperationRequest(query string, err error) error {
+	return errors.New(ErrSendOperationRequestCode, errors.Critical, []string{"failed to apply operation"},
+		[]string{fmt.Sprint("Failed to apply %s operation:%v", query, err.Error())}, []string{"Cannot peform the service mesh operation "}, []string{"Check your network connection and check the status of meshery server via 'mesheryctl system status'"})
 }

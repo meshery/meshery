@@ -322,3 +322,23 @@ func waitForValidateResponse(mctlCfg *config.MesheryCtlConfig, query string) (st
 
 	return "", nil
 }
+
+func ApplyOperation(mctlCfg *config.MesheryCtlConfig, query string) error {
+	var spec string
+	var delete bool
+
+	switch query {
+	case "mtls":
+		delete = false
+		spec = "mtls" 
+	default:
+		return fmt.Errorf("unsupported service mesh operation: %s", query)
+	}
+	// Call the sendOperationRequest function to apply the operation
+	_, err = sendOperationRequest(mctlCfg, query, delete, spec)
+	if err != nil {
+		return fmt.Errorf("failed to apply %s operation: %v", query, err)
+	}
+	return nil
+
+}
