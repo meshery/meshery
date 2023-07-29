@@ -95,5 +95,5 @@ func ErrValidateAdapter(err error) error {
 
 func ErrSendOperationRequest(query string, err error) error {
 	return errors.New(ErrSendOperationRequestCode, errors.Critical, []string{"failed to apply operation"},
-		[]string{fmt.Sprint("Failed to apply %s operation:%v", query, err.Error())}, []string{"Cannot peform the service mesh operation "}, []string{"Check your network connection and check the status of meshery server via 'mesheryctl system status'"})
+		[]string{fmt.Sprintf("Failed to apply %s operation:%v", query, err.Error())}, []string{"Cannot peform the service mesh operation "}, []string{"Check your network connection and check the status of meshery server via 'mesheryctl system status'"})
 }
