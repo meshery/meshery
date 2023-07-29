@@ -4,50 +4,50 @@ import "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 
 // API response model for meshmodel models API
 type MeshmodelsAPIResponse struct {
-	Page        int 			 `json:"page"`
-	PageSize 	int 			 `json:"page_size"`	
-	Count       int64            `json:"total_count"`
-	Models      []v1alpha1.Model `json:"models"`
+	Page     int              `json:"page"`
+	PageSize int              `json:"page_size"`
+	Count    int64            `json:"total_count"`
+	Models   []v1alpha1.Model `json:"models"`
 }
 
 // API response model for meshmodel models API that contains the number of duplicates for each model
 type MeshmodelsDuplicateAPIResponse struct {
-	Page        int 			 			`json:"page"`
-	PageSize 	int 			 			`json:"page_size"`	
-	Count       int64            			`json:"total_count"`
-	Models      []DuplicateResponseModels 	`json:"models"`
+	Page     int                       `json:"page"`
+	PageSize int                       `json:"page_size"`
+	Count    int64                     `json:"total_count"`
+	Models   []DuplicateResponseModels `json:"models"`
 }
 
 // API response model for meshmodel components API
 type MeshmodelComponentsAPIResponse struct {
-	Page        int 			 			   `json:"page"`
-	PageSize 	int 			 			   `json:"page_size"`	
-	Count       int64                          `json:"total_count"`
-	Components  []v1alpha1.ComponentDefinition `json:"components"`
+	Page       int                            `json:"page"`
+	PageSize   int                            `json:"page_size"`
+	Count      int64                          `json:"total_count"`
+	Components []v1alpha1.ComponentDefinition `json:"components"`
 }
 
 // API response model for meshmodel components API that contains the number of duplicates for each component
 type MeshmodelComponentsDuplicateAPIResponse struct {
-	Page        int 			 			   `json:"page"`
-	PageSize 	int 			 			   `json:"page_size"`
-	Count       int64                          `json:"total_count"`
-	Components  []DuplicateResponseComponent   `json:"components"`
+	Page       int                          `json:"page"`
+	PageSize   int                          `json:"page_size"`
+	Count      int64                        `json:"total_count"`
+	Components []DuplicateResponseComponent `json:"components"`
 }
 
 // API response model for meshmodel relationships API
 type MeshmodelRelationshipsAPIResponse struct {
-	Page          int 			 			   		`json:"page"`
-	PageSize 	  int 			 			   		`json:"page_size"`	
+	Page          int                               `json:"page"`
+	PageSize      int                               `json:"page_size"`
 	Count         int64                             `json:"total_count"`
 	Relationships []v1alpha1.RelationshipDefinition `json:"relationships"`
 }
 
 // API response model for meshmodel categories API
 type MeshmodelCategoriesAPIResponse struct {
-	Page          int 			 		`json:"page"`
-	PageSize 	  int 			 		`json:"page_size"`	
-	Count         int64                 `json:"total_count"`
-	Categories 	  []v1alpha1.Category	`json:"categories"`
+	Page       int                 `json:"page"`
+	PageSize   int                 `json:"page_size"`
+	Count      int64               `json:"total_count"`
+	Categories []v1alpha1.Category `json:"categories"`
 }
 
 type DuplicateResponseComponent struct {
@@ -75,7 +75,7 @@ func FindDuplicateComponents(components []v1alpha1.ComponentDefinition) []Duplic
 
 		comps = append(comps, DuplicateResponseComponent{
 			ComponentDefinition: comp,
-			Duplicates: set[key] - 1,
+			Duplicates:          set[key] - 1,
 		})
 	}
 
@@ -96,7 +96,7 @@ func FindDuplicateModels(models []v1alpha1.Model) []DuplicateResponseModels {
 		key := model.Name + "@" + model.Version
 
 		mods = append(mods, DuplicateResponseModels{
-			Model: model,
+			Model:      model,
 			Duplicates: set[key] - 1,
 		})
 	}
