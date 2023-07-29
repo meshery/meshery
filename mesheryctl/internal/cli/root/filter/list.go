@@ -44,23 +44,21 @@ var listCmd = &cobra.Command{
 // List all WASM filter files present
 mesheryctl filter list	(maximum 25 filters)
 
-mesheryctl filter list Test Filter (maximum 25 filters)
+// Search for filter
+mesheryctl filter list Test (maximum 25 filters)
+
+// Search for filter with space
+mesheryctl filter list 'Test Filter' (maximum 25 filters)
 	`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
-
-		var searchString string
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
 
-		for i, arg := range args {
-			args[i] = strings.ReplaceAll(arg, " ", "%20")
-		}
-
-		searchString = strings.Join(args, "%20")
+		searchString := strings.ReplaceAll(args[0], " ", "%20")
 
 		response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
 		if err != nil {
@@ -71,9 +69,6 @@ mesheryctl filter list Test Filter (maximum 25 filters)
 			utils.Log.Info("No WASM Filter to display with name :", strings.Join(args, " "))
 			return nil
 		} else if len(response.Filters) == 0 {
-			utils.Log.Info("No WASM Filter to display")
-			return nil
-		}
 			utils.Log.Info("No WASM Filter to display")
 			return nil
 		}
