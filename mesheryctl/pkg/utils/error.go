@@ -19,6 +19,7 @@ var (
 	ErrParsingUrlCode       = "replace_me"
 	ErrNotFoundCode         = "replace_me"
 	ErrUnauthenticatedCode  = "replace_me"
+	ErrInvalidFileCode      = "replace_me"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -287,4 +288,9 @@ func ErrParsingUrl(err error) error {
 func ErrNotFound(err error) error {
 	return errors.New(ErrNotFoundCode, errors.Fatal, []string{"Not Found"}, []string{err.Error()},
 		[]string{"The item you are searching for is not present"}, []string{"Check whether that item is present"})
+}
+
+func ErrInvalidFile(err error) error {
+	return errors.New(ErrInvalidFileCode, errors.Fatal, []string{"Invalid File Provided"}, []string{err.Error()},
+		[]string{"File Provided doesn't passes the criteria"}, []string{"Please check the validity of file"})
 }

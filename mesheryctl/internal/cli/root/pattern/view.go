@@ -67,7 +67,8 @@ mesheryctl pattern view [pattern-name | ID]
 			}
 			pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
 			if err != nil {
-				return err
+				log.Error(err)
+				return nil
 			}
 		}
 		url := mctlCfg.GetBaseMesheryURL()
@@ -100,12 +101,14 @@ mesheryctl pattern view [pattern-name | ID]
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			return err
+			log.Error(utils.ErrReadResponseBody(err))
+			return nil
 		}
 
 		var dat map[string]interface{}
 		if err = json.Unmarshal(body, &dat); err != nil {
-			return utils.ErrUnmarshal(err)
+			log.Error(utils.ErrUnmarshal(err))
+			return nil
 		}
 
 		if isID {

@@ -123,7 +123,8 @@ mesheryctl pattern apply [pattern-name]
 			if !validURL {
 				content, err := os.ReadFile(file)
 				if err != nil {
-					return errors.Errorf("file path %s is invalid. Enter a valid path ", file)
+					log.Error(utils.ErrFileRead(errors.Errorf("file path %s is invalid. Enter a valid path ", file)))
+					return nil
 				}
 				text := string(content)
 
@@ -170,7 +171,8 @@ mesheryctl pattern apply [pattern-name]
 				var jsonValues []byte
 				url, path, err := utils.ParseURLGithub(file)
 				if err != nil {
-					return err
+					log.Error(err)
+					return nil
 				}
 
 				utils.Log.Debug(url)
@@ -221,11 +223,13 @@ mesheryctl pattern apply [pattern-name]
 
 				body, err := io.ReadAll(resp.Body)
 				if err != nil {
-					return errors.Wrap(err, utils.PatternError("failed to read response body"))
+					log.Error(utils.ErrReadResponseBody(errors.Wrap(err, "failed to read response body")))
+					return nil
 				}
 				err = json.Unmarshal(body, &response)
 				if err != nil {
-					return errors.Wrap(err, "failed to unmarshal response body")
+					log.Error(utils.ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body")))
+					return nil
 				}
 
 				// setup pattern file here
@@ -257,7 +261,8 @@ mesheryctl pattern apply [pattern-name]
 		body, err := io.ReadAll(res.Body)
 		s.Stop()
 		if err != nil {
-			return err
+			log.Error(utils.ErrReadResponseBody(err))
+			return nil
 		}
 
 		if res.StatusCode == 200 {

@@ -72,6 +72,7 @@ mesheryctl app offboard -f [filepath]
 		if isID {
 			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), app, "application")
 			if err != nil {
+				log.Error(err)
 				return errors.Wrap(err, utils.AppError(fmt.Sprintf("failed to delete application %s", args[0])))
 			}
 			utils.Log.Info("Application ", args[0], " deleted successfully")
