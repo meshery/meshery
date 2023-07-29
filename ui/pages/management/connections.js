@@ -2,6 +2,7 @@ import React from "react";
 import { NoSsr, withStyles } from "@material-ui/core";
 import { connect } from "react-redux";
 import Head from 'next/head';
+import MesheryConnections from "../../components/connections";
 
 const styles = { paper : { maxWidth : '90%',
   margin : 'auto',
@@ -17,6 +18,7 @@ class Connections extends React.Component {
         <Head>
           <title>Connections | Meshery</title>
         </Head>
+        <MesheryConnections />
       </NoSsr>
     );
   }
