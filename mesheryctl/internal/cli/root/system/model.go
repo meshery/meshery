@@ -97,8 +97,7 @@ mesheryctl system model list
 			return err
 		}
 
-		client := &http.Client{}
-		resp, err := client.Do(req)
+		resp, err := utils.MakeRequest(req)
 		if err != nil {
 			utils.Log.Error(ErrConnectingToServer(err))
 			return err
