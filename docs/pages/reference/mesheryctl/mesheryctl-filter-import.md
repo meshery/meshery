@@ -48,7 +48,7 @@ If the string is a valid file in the filesystem, the file is read and passed as 
 Use quotes if the string contains spaces
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl filter import /path/to/filter.wasm -config [filepath|string]
+mesheryctl filter import /path/to/filter.wasm --wasm-config [filepath|string]
 
 </div>
 </pre> 
@@ -56,7 +56,7 @@ mesheryctl filter import /path/to/filter.wasm -config [filepath|string]
 Specify the name of the filter to be imported. Use quotes if the name contains spaces
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl filter import /path/to/filter.wasm -name [string]
+mesheryctl filter import /path/to/filter.wasm --name [string]
 
 </div>
 </pre> 
@@ -65,9 +65,9 @@ mesheryctl filter import /path/to/filter.wasm -name [string]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -c, --config string   (optional) WASM configuration filepath/string
-  -h, --help            help for import
-  -n, --name string     (optional) filter name
+  -h, --help                 help for import
+  -n, --name string          (optional) filter name
+  -w, --wasm-config string   (optional) WASM configuration filepath/string
 
 </div>
 </pre>
@@ -76,8 +76,9 @@ mesheryctl filter import /path/to/filter.wasm -name [string]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -t, --token string   Path to token file default from current context
-  -v, --verbose        verbose output
+      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+  -t, --token string    Path to token file default from current context
+  -v, --verbose         verbose output
 
 </div>
 </pre>
