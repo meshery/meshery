@@ -27,7 +27,8 @@ Along all these, we also provide an opportuinity to create or import your own co
 
 
 ## WHERE TO FIND IT
-If your Meshery setup is done then, you can start meshery (eg : `$ mesheryctl system start`) & open your browser & search for http://< hostname >:9081/provider or http://localhost:9081/provider
+If your Meshery setup is done. Then you can start meshery (eg : `$ mesheryctl system start`) & open your browser & search for <br> 
+http://< hostname >:9081/provider or http://localhost:9081/provider
 
 * Select the Provider.
 
