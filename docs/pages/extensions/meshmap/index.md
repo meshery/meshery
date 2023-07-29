@@ -32,7 +32,9 @@ For developers, MeshMap is valuable as it enables them to manage their infrastru
 
 <h5>MeshMap Designer Walkthrough:</h5>
 
-<iframe class="container" width="560" height="460" src="https://www.youtube.com/embed/qaoYRP3oLok?rel=0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<div class="iframe-container">
+    <iframe src="https://www.youtube.com/embed/qaoYRP3oLok?rel=0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
 
 See on YouTube: [MeshMap Designer Walkthrough](https://www.youtube.com/watch?v=qaoYRP3oLok)
 
