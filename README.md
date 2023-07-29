@@ -367,8 +367,11 @@ Please do! We're a warm and welcoming community of open source contributors. Ple
 ### Stargazers
 
 <p align="center">
-  <i>If you’re using Meshery or if you like the project, please <a href="../../stargazers">★</a> star this repository to show your support! 🤩</i>
-<a href="../../stargazers"><img align="right" src="https://starchart.cc/meshery/meshery.svg" /></a></p>
+  <i>If you like Meshery, please <a href="../../stargazers">★</a> star this repository to show your support! 🤩</i>
+ <br />
+<a href="../../stargazers">
+ <img align="center" src="https://api.star-history.com/svg?repos=meshery/meshery&type=Date" />
+</a></p>
 
 ### License
 
