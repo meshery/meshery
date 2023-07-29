@@ -65,11 +65,11 @@ mesheryctl system model list
 			cmd.SilenceUsage = true
 			return err
 		}
-		cfg, err := config.GetMesheryCtl(viper.GetViper())
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return err
 		}
-		ctx, err := cfg.GetCurrentContext()
+		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
 			return err
 		}
@@ -167,11 +167,11 @@ mesheryctl system model view [model-name]
 			cmd.SilenceUsage = true
 			return err
 		}
-		cfg, err := config.GetMesheryCtl(viper.GetViper())
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return err
 		}
-		ctx, err := cfg.GetCurrentContext()
+		ctx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
 			return err
 		}
@@ -271,12 +271,6 @@ mesheryctl system model list
 
 // To view a specific model
 mesheryctl system model view [model-name]
-
-// To update model
-mesheryctl system model update --source [path-to-spreadsheet] [--output-dir] [relative path persist assets/icons]
-
-// To generate model
-mesheryctl system model gen
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
