@@ -576,10 +576,12 @@ func ValidId(mesheryServerUrl, args string, configuration string) (string, bool,
 				args = id
 			}
 		}
+	} else {
+		return "", false, err
 	}
 	isID, err = regexp.MatchString("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$", args)
 	if err != nil {
-		return "", false, err
+		return "", false, ErrInvalidNameOrID(err)
 	}
 	return args, isID, nil
 }

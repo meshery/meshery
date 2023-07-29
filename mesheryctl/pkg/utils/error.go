@@ -20,6 +20,7 @@ var (
 	ErrNotFoundCode         = "replace_me"
 	ErrUnauthenticatedCode  = "replace_me"
 	ErrInvalidFileCode      = "replace_me"
+	ErrInvalidNameOrIDCode  = "replace_me"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -293,4 +294,9 @@ func ErrNotFound(err error) error {
 func ErrInvalidFile(err error) error {
 	return errors.New(ErrInvalidFileCode, errors.Fatal, []string{"Invalid File Provided"}, []string{err.Error()},
 		[]string{"File Provided doesn't passes the criteria"}, []string{"Please check the validity of file"})
+}
+
+func ErrInvalidNameOrID(err error) error {
+	return errors.New(ErrInvalidNameOrIDCode, errors.Fatal, []string{"Provided Name or ID not present"}, []string{err.Error()},
+		[]string{"Provided Name or ID would be invalid"}, []string{"Please Provide a valid name or ID by using list command with the appropriate subcommand"})
 }

@@ -23,6 +23,7 @@ import (
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshkit/logger"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -47,8 +48,13 @@ mesheryctl filter view --all
 	`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
+		log, _ := logger.New("pattern", logger.Options{
+			Format:     logger.SyslogLogFormat,
+			DebugLevel: true,
+		})
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
+			log.Error(err)
 			return errors.Wrap(err, "error processing config")
 		}
 
@@ -61,7 +67,8 @@ mesheryctl filter view --all
 			}
 			filter, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "filter")
 			if err != nil {
-				return errors.New("invalid filter name or ID. " + err.Error())
+				log.Error(err)
+				return nil
 			}
 		}
 
