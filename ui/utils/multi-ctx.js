@@ -32,7 +32,6 @@ export const getK8sClusterIdsFromCtxId = (selectedContexts, k8sconfig) => {
   }
 
   const clusterIds = [];
-
   selectedContexts.forEach(context => {
     const clusterId = k8sconfig.find(cfg => cfg.id === context)?.clusterID
     if (clusterId) {

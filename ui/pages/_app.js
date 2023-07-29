@@ -161,7 +161,6 @@ class MesheryApp extends App {
     const k8sContextSubscription = (page="", search="", pageSize="10", order="") => {
       return subscribeK8sContext((result) => {
         this.setState({ k8sContexts : result.k8sContext }, () => this.setActiveContexts("all"))
-        this.props.store.dispatch({ type : actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig : result.k8sContext.contexts });
       },
       {
         selector : {
