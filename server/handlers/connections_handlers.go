@@ -98,6 +98,30 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, _ *mo
 	}
 }
 
+
+// swagger:route GET /api/integrations/connections/status GetConnectionsStatus idGetConnectionsStatus
+// Handle GET request for getting all connections status
+//
+// responses:
+// 200: ConnectionsStatusPage
+func (h *Handler) GetConnectionsStatus(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	connectionsStatusPage, err := provider.GetConnectionsStatus(req, user.ID)
+	obj := "connections status"
+
+	if err != nil {
+		h.log.Error(ErrQueryGet(obj))
+		http.Error(w, ErrQueryGet(obj).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(connectionsStatusPage); err != nil {
+		h.log.Error(ErrEncoding(err, obj))
+		http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+
 // swagger:route PUT /api/integrations/connections/{connectionKind} PutConnection idPutConnection
 // Handle PUT request for updating an existing connection
 //
