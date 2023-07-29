@@ -44,3 +44,13 @@ type ConnectionPage struct {
 	Page       int          `json:"page"`
 	PageSize   int          `json:"page_size"`
 }
+
+type ConnectionStatusInfo struct {
+	Status string `json:"status" db:"status"`
+	Count  int    `json:"count" db:"count"`
+}
+
+// swagger:response ConnectionsStatusPage
+type ConnectionsStatusPage struct {
+	ConnectionsStatus []*ConnectionStatusInfo `json:"connections_status"`
+}
