@@ -24,7 +24,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/logger"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -57,13 +56,9 @@ mesheryctl app view --all
 	Annotations: linkDocAppView,
 	Args:        cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		log, _ := logger.New("app", logger.Options{
-			Format:     logger.SyslogLogFormat,
-			DebugLevel: true,
-		})
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 
@@ -77,7 +72,7 @@ mesheryctl app view --all
 			}
 			applicationID, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "application")
 			if err != nil {
-				log.Error(err)
+				utils.Log.Error(err)
 				return nil
 			}
 		}
@@ -102,26 +97,26 @@ mesheryctl app view --all
 
 		req, err = utils.NewRequest("GET", url, nil)
 		if err != nil {
-			log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			log.Error(utils.ErrReadResponseBody(err))
+			utils.Log.Error(utils.ErrReadResponseBody(err))
 			return nil
 		}
 
 		var dat map[string]interface{}
 		if err = json.Unmarshal(body, &dat); err != nil {
-			log.Error(utils.ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body")))
+			utils.Log.Error(utils.ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body")))
 			return nil
 		}
 		if isID {
@@ -134,11 +129,11 @@ mesheryctl app view --all
 			}
 		} else {
 			if err = json.Unmarshal(body, &response); err != nil {
-				log.Error(utils.ErrUnmarshal(err))
+				utils.Log.Error(utils.ErrUnmarshal(err))
 				return nil
 			}
 			if response.TotalCount == 0 {
-				log.Error(utils.ErrNotFound(errors.New("application does not exit. Please get an app name and try again. Use `mesheryctl app list` to see a list of applications")))
+				utils.Log.Error(utils.ErrNotFound(errors.New("application does not exit. Please get an app name and try again. Use `mesheryctl app list` to see a list of applications")))
 				return nil
 			}
 			// Manage more than one apps with similar name

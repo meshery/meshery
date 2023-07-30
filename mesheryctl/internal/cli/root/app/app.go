@@ -22,7 +22,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/logger"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -68,25 +67,21 @@ func init() {
 }
 
 func getSourceTypes() error {
-	log, _ := logger.New("app", logger.Options{
-		Format:     logger.SyslogLogFormat,
-		DebugLevel: true,
-	})
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		log.Error(err)
+		utils.Log.Error(err)
 		return nil
 	}
 	validTypesURL := mctlCfg.GetBaseMesheryURL() + "/api/application/types"
 	req, err := utils.NewRequest("GET", validTypesURL, nil)
 	if err != nil {
-		log.Error(err)
+		utils.Log.Error(err)
 		return nil
 	}
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		log.Error(err)
+		utils.Log.Error(err)
 		return nil
 	}
 
@@ -96,12 +91,12 @@ func getSourceTypes() error {
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Error(utils.ErrReadResponseBody(errors.Wrap(err, "couldn't read response from server. Please try again after some time")))
+		utils.Log.Error(utils.ErrReadResponseBody(errors.Wrap(err, "couldn't read response from server. Please try again after some time")))
 		return nil
 	}
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		log.Error(utils.ErrUnmarshal(errors.Wrap(err, "couldn't process response received from server")))
+		utils.Log.Error(utils.ErrUnmarshal(errors.Wrap(err, "couldn't process response received from server")))
 		return nil
 	}
 

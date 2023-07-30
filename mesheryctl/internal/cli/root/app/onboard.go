@@ -28,7 +28,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/logger"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -72,13 +71,9 @@ Description: Onboard application`
 		var req *http.Request
 		var err error
 
-		log, _ := logger.New("app", logger.Options{
-			Format:     logger.SyslogLogFormat,
-			DebugLevel: true,
-		})
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 
@@ -95,13 +90,13 @@ Description: Onboard application`
 
 			req, err = utils.NewRequest("GET", appURL+"?search="+appName, nil)
 			if err != nil {
-				log.Error(err)
+				utils.Log.Error(err)
 				return nil
 			}
 
 			resp, err := utils.MakeRequest(req)
 			if err != nil {
-				log.Error(err)
+				utils.Log.Error(err)
 				return nil
 			}
 
@@ -109,18 +104,18 @@ Description: Onboard application`
 			defer resp.Body.Close()
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
-				log.Error(utils.ErrReadResponseBody(err))
+				utils.Log.Error(utils.ErrReadResponseBody(err))
 				return nil
 			}
 			err = json.Unmarshal(body, &response)
 			if err != nil {
-				log.Error(utils.ErrUnmarshal(err))
+				utils.Log.Error(utils.ErrUnmarshal(err))
 				return nil
 			}
 
 			index := 0
 			if len(response.Applications) == 0 {
-				log.Error(utils.ErrNotFound(errors.New("no apps found with the given name")))
+				utils.Log.Error(utils.ErrNotFound(errors.New("no apps found with the given name")))
 				return nil
 			} else if len(response.Applications) == 1 {
 				appFile = response.Applications[0].ApplicationFile
@@ -136,7 +131,7 @@ Description: Onboard application`
 			}
 			app, err := importApp(sourceType, file, appURL, !skipSave)
 			if err != nil {
-				log.Error(err)
+				utils.Log.Error(err)
 				return nil
 			}
 
@@ -145,20 +140,20 @@ Description: Onboard application`
 
 		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(appFile)))
 		if err != nil {
-			log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			log.Error(utils.ErrReadResponseBody(err))
+			utils.Log.Error(utils.ErrReadResponseBody(err))
 			return nil
 		}
 

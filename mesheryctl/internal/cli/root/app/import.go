@@ -28,7 +28,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/logger"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -58,13 +57,9 @@ Example: mesheryctl app import -f ./application.yml -s "Kubernetes Manifest"`
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var err error
-		log, _ := logger.New("app", logger.Options{
-			Format:     logger.SyslogLogFormat,
-			DebugLevel: true,
-		})
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 
@@ -78,7 +73,7 @@ Example: mesheryctl app import -f ./application.yml -s "Kubernetes Manifest"`
 		app, err := importApp(sourceType, file, appURL, true)
 
 		if err != nil {
-			log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 

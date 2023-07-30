@@ -30,7 +30,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
-	"github.com/layer5io/meshkit/logger"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -61,13 +60,9 @@ mesheryctl pattern apply [pattern-name]
 	Args:        cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
-		log, _ := logger.New("pattern", logger.Options{
-			Format:     logger.SyslogLogFormat,
-			DebugLevel: true,
-		})
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 
@@ -84,13 +79,13 @@ mesheryctl pattern apply [pattern-name]
 
 			req, err = utils.NewRequest("GET", patternURL+"?search="+patternName, nil)
 			if err != nil {
-				log.Error(err)
+				utils.Log.Error(err)
 				return nil
 			}
 
 			resp, err := utils.MakeRequest(req)
 			if err != nil {
-				log.Error(err)
+				utils.Log.Error(err)
 				return nil
 			}
 
@@ -102,13 +97,13 @@ mesheryctl pattern apply [pattern-name]
 			}
 			err = json.Unmarshal(body, &response)
 			if err != nil {
-				log.Error(utils.ErrUnmarshal(err))
+				utils.Log.Error(utils.ErrUnmarshal(err))
 				return nil
 			}
 
 			index := 0
 			if len(response.Patterns) == 0 {
-				log.Error(ErrPatternNotFound())
+				utils.Log.Error(ErrPatternNotFound())
 				return nil
 			} else if len(response.Patterns) == 1 {
 				patternFile = response.Patterns[0].PatternFile
@@ -123,7 +118,7 @@ mesheryctl pattern apply [pattern-name]
 			if !validURL {
 				content, err := os.ReadFile(file)
 				if err != nil {
-					log.Error(utils.ErrFileRead(errors.Errorf("file path %s is invalid. Enter a valid path ", file)))
+					utils.Log.Error(utils.ErrFileRead(errors.Errorf("file path %s is invalid. Enter a valid path ", file)))
 					return nil
 				}
 				text := string(content)
@@ -142,13 +137,13 @@ mesheryctl pattern apply [pattern-name]
 					}
 					req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 					if err != nil {
-						log.Error(err)
+						utils.Log.Error(err)
 						return nil
 					}
 
 					resp, err := utils.MakeRequest(req)
 					if err != nil {
-						log.Error(err)
+						utils.Log.Error(err)
 						return nil
 					}
 					utils.Log.Debug("saved pattern file")
@@ -171,7 +166,7 @@ mesheryctl pattern apply [pattern-name]
 				var jsonValues []byte
 				url, path, err := utils.ParseURLGithub(file)
 				if err != nil {
-					log.Error(err)
+					utils.Log.Error(err)
 					return nil
 				}
 
@@ -208,13 +203,13 @@ mesheryctl pattern apply [pattern-name]
 				}
 				req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 				if err != nil {
-					log.Error(err)
+					utils.Log.Error(err)
 					return nil
 				}
 
 				resp, err := utils.MakeRequest(req)
 				if err != nil {
-					log.Error(err)
+					utils.Log.Error(err)
 					return nil
 				}
 				utils.Log.Debug("remote hosted pattern request success")
@@ -223,12 +218,12 @@ mesheryctl pattern apply [pattern-name]
 
 				body, err := io.ReadAll(resp.Body)
 				if err != nil {
-					log.Error(utils.ErrReadResponseBody(errors.Wrap(err, "failed to read response body")))
+					utils.Log.Error(utils.ErrReadResponseBody(errors.Wrap(err, "failed to read response body")))
 					return nil
 				}
 				err = json.Unmarshal(body, &response)
 				if err != nil {
-					log.Error(utils.ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body")))
+					utils.Log.Error(utils.ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body")))
 					return nil
 				}
 
@@ -239,13 +234,13 @@ mesheryctl pattern apply [pattern-name]
 
 		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(patternFile)))
 		if err != nil {
-			log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 
 		pf, err := core.NewPatternFile([]byte(patternFile))
 		if err != nil {
-			log.Error(ErrInvalidPatternFile(err))
+			utils.Log.Error(ErrInvalidPatternFile(err))
 			return nil
 		}
 
@@ -253,7 +248,7 @@ mesheryctl pattern apply [pattern-name]
 		s.Start()
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 
@@ -261,7 +256,7 @@ mesheryctl pattern apply [pattern-name]
 		body, err := io.ReadAll(res.Body)
 		s.Stop()
 		if err != nil {
-			log.Error(utils.ErrReadResponseBody(err))
+			utils.Log.Error(utils.ErrReadResponseBody(err))
 			return nil
 		}
 

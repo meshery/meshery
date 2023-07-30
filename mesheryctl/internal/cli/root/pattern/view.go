@@ -22,7 +22,6 @@ import (
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshkit/logger"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -49,13 +48,9 @@ mesheryctl pattern view [pattern-name | ID]
 	`,
 	Annotations: linkDocPatternView,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		log, _ := logger.New("pattern", logger.Options{
-			Format:     logger.SyslogLogFormat,
-			DebugLevel: true,
-		})
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 		pattern := ""
@@ -67,7 +62,7 @@ mesheryctl pattern view [pattern-name | ID]
 			}
 			pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
 			if err != nil {
-				log.Error(err)
+				utils.Log.Error(err)
 				return nil
 			}
 		}
@@ -88,26 +83,26 @@ mesheryctl pattern view [pattern-name | ID]
 
 		req, err := utils.NewRequest("GET", url, nil)
 		if err != nil {
-			log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			log.Error(utils.ErrReadResponseBody(err))
+			utils.Log.Error(utils.ErrReadResponseBody(err))
 			return nil
 		}
 
 		var dat map[string]interface{}
 		if err = json.Unmarshal(body, &dat); err != nil {
-			log.Error(utils.ErrUnmarshal(err))
+			utils.Log.Error(utils.ErrUnmarshal(err))
 			return nil
 		}
 
@@ -124,7 +119,7 @@ mesheryctl pattern view [pattern-name | ID]
 			// use the first match from the result when searching by pattern name
 			arr := dat["patterns"].([]interface{})
 			if len(arr) == 0 {
-				log.Error(ErrPatternNotFound())
+				utils.Log.Error(ErrPatternNotFound())
 				utils.Log.Info(fmt.Sprintf("pattern with name: %s not found. Enter a valid pattern name or ID", pattern))
 				return nil
 			}

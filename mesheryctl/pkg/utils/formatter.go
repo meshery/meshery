@@ -26,7 +26,7 @@ func SetupLogrusFormatter() {
 // Initialize Meshkit Logger instance
 func SetupMeshkitLogger(debugLevel bool, output io.Writer) {
 	logger, err := logger.New("mesheryctl", logger.Options{
-		Format:     logger.TerminalLogFormat,
+		Format:     logger.SyslogLogFormat,
 		DebugLevel: debugLevel,
 		Output:     output,
 	})

@@ -26,7 +26,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/logger"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -48,13 +47,9 @@ mesheryctl app offboard -f [filepath]
 		}
 		var req *http.Request
 		var err error
-		log, _ := logger.New("app", logger.Options{
-			Format:     logger.SyslogLogFormat,
-			DebugLevel: true,
-		})
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 
@@ -63,7 +58,7 @@ mesheryctl app offboard -f [filepath]
 		if len(args) > 0 {
 			app, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "application")
 			if err != nil {
-				log.Error(err)
+				utils.Log.Error(err)
 				return nil
 			}
 		}
@@ -72,7 +67,7 @@ mesheryctl app offboard -f [filepath]
 		if isID {
 			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), app, "application")
 			if err != nil {
-				log.Error(err)
+				utils.Log.Error(err)
 				return errors.Wrap(err, utils.AppError(fmt.Sprintf("failed to delete application %s", args[0])))
 			}
 			utils.Log.Info("Application ", args[0], " deleted successfully")
@@ -86,7 +81,7 @@ mesheryctl app offboard -f [filepath]
 		if !govalidator.IsURL(file) {
 			content, err := os.ReadFile(file)
 			if err != nil {
-				log.Error(utils.ErrFileRead(err))
+				utils.Log.Error(utils.ErrFileRead(err))
 				return nil
 			}
 
@@ -102,13 +97,13 @@ mesheryctl app offboard -f [filepath]
 
 		req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 		if err != nil {
-			log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
-			log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 		defer resp.Body.Close()
@@ -117,13 +112,13 @@ mesheryctl app offboard -f [filepath]
 
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
-			log.Error(utils.ErrReadResponseBody(err))
+			utils.Log.Error(utils.ErrReadResponseBody(err))
 			return nil
 		}
 
 		err = json.Unmarshal(body, &response)
 		if err != nil {
-			log.Error(utils.ErrUnmarshal(err))
+			utils.Log.Error(utils.ErrUnmarshal(err))
 			return nil
 		}
 
@@ -133,20 +128,20 @@ mesheryctl app offboard -f [filepath]
 
 		req, err = utils.NewRequest("DELETE", deployURL, bytes.NewBuffer([]byte(patternFile)))
 		if err != nil {
-			log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			log.Error(err)
+			utils.Log.Error(err)
 			return nil
 		}
 
 		defer res.Body.Close()
 		body, err = io.ReadAll(res.Body)
 		if err != nil {
-			log.Error(utils.ErrReadResponseBody(err))
+			utils.Log.Error(utils.ErrReadResponseBody(err))
 			return nil
 		}
 
