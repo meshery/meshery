@@ -73,7 +73,7 @@ mesheryctl filter list
 		err = json.Unmarshal(body, &response)
 
 		if err != nil {
-			return ErrUnmarshal(err)
+			return utils.ErrUnmarshal(err)
 		}
 		tokenObj, err := utils.ReadToken(utils.TokenFlag)
 		if err != nil {

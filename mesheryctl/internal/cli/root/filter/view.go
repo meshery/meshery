@@ -104,7 +104,7 @@ mesheryctl filter view --all
 
 		var dat map[string]interface{}
 		if err = json.Unmarshal(body, &dat); err != nil {
-			return ErrUnmarshal(err)
+			return utils.ErrUnmarshal(err)
 		}
 
 		if isID {

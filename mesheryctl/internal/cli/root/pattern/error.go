@@ -17,8 +17,8 @@ package pattern
 import "github.com/layer5io/meshkit/errors"
 
 const (
-	ErrPatternsNotFoundCode   = "replace_me"
-	ErrInvalidPatternFileCode = "replace_me"
+	ErrPatternsNotFoundCode   = "1031"
+	ErrInvalidPatternFileCode = "1032"
 )
 
 func ErrPatternNotFound() error {

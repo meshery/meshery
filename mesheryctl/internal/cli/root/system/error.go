@@ -21,36 +21,31 @@ import (
 )
 
 const (
-	ErrHealthCheckFailedCode             = "1000"
-	ErrInvalidComponentCode              = "1001"
-	ErrDownloadFileCode                  = "1002"
-	ErrStopMesheryCode                   = "1003"
-	ErrResetMeshconfigCode               = "1004"
-	ErrApplyManifestCode                 = "1005"
-	ErrApplyOperatorManifestCode         = "1006"
-	ErrCreateDirCode                     = "1007"
-	ErrUnmarshalCode                     = "1008"
-	ErrUnsupportedPlatformCode           = "1009"
-	ErrRetrievingCurrentContextCode      = "1022"
-	ErrSettingDefaultContextToConfigCode = "1059"
-	ErrSettingTemporaryContextCode       = "1023"
-	ErrCreateManifestsFolderCode         = "1024"
-	ErrProcessingMctlConfigCode          = "1025"
-	ErrRestartMesheryCode                = "1026"
-	ErrK8sQueryCode                      = "1041"
-	ErrK8sConfigCode                     = "1042"
-	ErrInitPortForwardCode               = "1047"
-	ErrRunPortForwardCode                = "1048"
-	ErrFailedGetEphemeralPortCode        = "1049"
-	ErrCreatingDockerClientCode          = "1060"
+	ErrHealthCheckFailedCode             = "1047"
+	ErrDownloadFileCode                  = "1048"
+	ErrStopMesheryCode                   = "1049"
+	ErrResetMeshconfigCode               = "1050"
+	ErrApplyManifestCode                 = "1051"
+	ErrApplyOperatorManifestCode         = "1052"
+	ErrCreateDirCode                     = "1053"
+	ErrUnmarshalDockerComposeCode        = "1054"
+	ErrUnsupportedPlatformCode           = "1055"
+	ErrRetrievingCurrentContextCode      = "1060"
+	ErrSettingDefaultContextToConfigCode = "1061"
+	ErrSettingTemporaryContextCode       = "1062"
+	ErrCreateManifestsFolderCode         = "1063"
+	ErrProcessingMctlConfigCode          = "1064"
+	ErrRestartMesheryCode                = "1065"
+	ErrK8sQueryCode                      = "1066"
+	ErrK8sConfigCode                     = "1067"
+	ErrInitPortForwardCode               = "1068"
+	ErrRunPortForwardCode                = "1069"
+	ErrFailedGetEphemeralPortCode        = "1070"
+	ErrCreatingDockerClientCode          = "1071"
 )
 
 func ErrHealthCheckFailed(err error) error {
 	return errors.New(ErrHealthCheckFailedCode, errors.Alert, []string{"Health checks failed"}, []string{err.Error()}, []string{"Health checks execution failed"}, []string{"Health checks execution should passed to start Meshery server successfully"})
-}
-
-func ErrInvalidComponent(err error, obj string) error {
-	return errors.New(ErrInvalidComponentCode, errors.Alert, []string{"Invalid component ", obj, " specified"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrDownloadFile(err error, obj string) error {
@@ -77,8 +72,8 @@ func ErrCreateDir(err error, obj string) error {
 	return errors.New(ErrCreateDirCode, errors.Alert, []string{"Error creating directory ", obj}, []string{err.Error()}, []string{}, []string{})
 }
 
-func ErrUnmarshal(err error, obj string) error {
-	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Error processing JSON response from Meshery Server", obj}, []string{err.Error()}, []string{}, []string{"Either the JSON response or the Response is distorted"})
+func ErrUnmarshalDockerCompose(err error, obj string) error {
+	return errors.New(ErrUnmarshalDockerComposeCode, errors.Alert, []string{"Error processing JSON response from Meshery Server", obj}, []string{err.Error()}, []string{}, []string{"Either the JSON response or the Response is distorted"})
 }
 
 func ErrUnsupportedPlatform(platform string, config string) error {
@@ -90,7 +85,7 @@ func ErrRetrievingCurrentContext(err error) error {
 }
 
 func ErrSettingDefaultContextToConfig(err error) error {
-	return errors.New(ErrRetrievingCurrentContextCode, errors.Alert, []string{"Error setting default context to config"}, []string{err.Error()}, []string{"Mesheryctl config file may not exist or is invalid"}, []string{"Make sure the Mesheryctl config file exists"})
+	return errors.New(ErrSettingDefaultContextToConfigCode, errors.Alert, []string{"Error setting default context to config"}, []string{err.Error()}, []string{"Mesheryctl config file may not exist or is invalid"}, []string{"Make sure the Mesheryctl config file exists"})
 }
 
 func ErrSettingTemporaryContext(err error) error {
@@ -122,7 +117,7 @@ func ErrInitPortForward(err error) error {
 		ErrInitPortForwardCode,
 		errors.Alert, []string{"Failed to initialize port-forward"},
 		[]string{err.Error(), "Failed to create new Port Forward instance"},
-		nil, nil,
+		[]string{""}, []string{""},
 	)
 }
 
@@ -144,7 +139,7 @@ func ErrFailedGetEphemeralPort(err error) error {
 		errors.Fatal,
 		[]string{"Failed to get a free port"},
 		[]string{err.Error(), "Failed to start port-forwarding"},
-		nil, nil,
+		[]string{""}, []string{""},
 	)
 }
 

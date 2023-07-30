@@ -147,7 +147,7 @@ mesheryctl version
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.PrintToTable(header, rows)
-			utils.Log.Error(ErrInvalidAPIResponse(err))
+			utils.Log.Error(utils.ErrInvalidAPIResponse(err))
 			return
 		}
 

@@ -17,7 +17,7 @@ package config
 import "github.com/layer5io/meshkit/errors"
 
 const (
-	ErrInvalidMeshConfigCode = "replace_me"
+	ErrInvalidMeshConfigCode = "1015"
 )
 
 func ErrInvalidMeshConfig(err error) error {

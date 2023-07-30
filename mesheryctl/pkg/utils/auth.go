@@ -77,7 +77,7 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 	// If statuscode = 302, then we either have an expired or invalid token
 	// We return the response and correct error message
 	if resp.StatusCode == 302 {
-		return nil, InvalidToken()
+		return nil, ErrInvalidToken()
 	}
 
 	// failsafe for not being authenticated

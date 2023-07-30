@@ -8,19 +8,21 @@ import (
 )
 
 var (
-	ErrFailRequestCode      = "1044"
-	ErrFailReqStatusCode    = "1045"
-	ErrAttachAuthTokenCode  = "1046"
-	ErrUnmarshalCode        = "1003"
-	ErrFileReadCode         = "1000"
-	ErrCreatingRequestCode  = "replace_me"
-	ErrMarhallingCode       = "replace_me"
-	ErrReadResponseBodyCode = "replace_me"
-	ErrParsingUrlCode       = "replace_me"
-	ErrNotFoundCode         = "replace_me"
-	ErrUnauthenticatedCode  = "replace_me"
-	ErrInvalidFileCode      = "replace_me"
-	ErrInvalidNameOrIDCode  = "replace_me"
+	ErrFailRequestCode        = "1000"
+	ErrInvalidTokenCode       = "1001"
+	ErrFailReqStatusCode      = "1002"
+	ErrAttachAuthTokenCode    = "1003"
+	ErrUnmarshalCode          = "1004"
+	ErrFileReadCode           = "1005"
+	ErrCreatingRequestCode    = "1006"
+	ErrMarhallingCode         = "1007"
+	ErrReadResponseBodyCode   = "1008"
+	ErrParsingUrlCode         = "1009"
+	ErrNotFoundCode           = "1010"
+	ErrUnauthenticatedCode    = "1011"
+	ErrInvalidFileCode        = "1012"
+	ErrInvalidNameOrIDCode    = "1013"
+	ErrInvalidAPIResponseCode = "1014"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -245,8 +247,8 @@ func ErrUnauthenticated() error {
 		[]string{"You are UnAuthenticated to access any resource"}, []string{"You haven't login to meshery"}, []string{"Login with `mesheryctl system login`"})
 }
 
-func InvalidToken() error {
-	return errors.New(ErrFailRequestCode, errors.Alert, []string{"Authentication token invalid"},
+func ErrInvalidToken() error {
+	return errors.New(ErrInvalidTokenCode, errors.Alert, []string{"Authentication token invalid"},
 		[]string{"Authentication got expired or is invalid"}, []string{"Authentication token present in auth.json expired or is invalid"}, []string{"Please supply a valid user token. Login with `mesheryctl system login`"})
 }
 
@@ -299,4 +301,8 @@ func ErrInvalidFile(err error) error {
 func ErrInvalidNameOrID(err error) error {
 	return errors.New(ErrInvalidNameOrIDCode, errors.Fatal, []string{"Provided Name or ID not present"}, []string{err.Error()},
 		[]string{"Provided Name or ID would be invalid"}, []string{"Please Provide a valid name or ID by using list command with the appropriate subcommand"})
+}
+
+func ErrInvalidAPIResponse(err error) error {
+	return errors.New(ErrInvalidAPIResponseCode, errors.Fatal, []string{"Invalid API response encountered"}, []string{"Invalid API response encountered", err.Error()}, []string{}, []string{})
 }
