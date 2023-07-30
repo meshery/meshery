@@ -36,8 +36,6 @@ import (
 )
 
 func getContexts(configFile string) ([]string, error) {
-	client := &http.Client{}
-
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
 		return nil, errors.Wrap(err, "error processing config")
@@ -51,7 +49,7 @@ func getContexts(configFile string) ([]string, error) {
 		return nil, err
 	}
 
-	res, err := client.Do(req)
+	res, err := utils.MakeRequest(req)
 	if err != nil {
 		return nil, err
 	}

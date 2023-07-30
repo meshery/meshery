@@ -230,7 +230,7 @@ func ErrAttachAuthToken(err error) error {
 
 func ErrFailRequest(err error) error {
 	return errors.New(ErrFailRequestCode, errors.Alert, []string{"Failed to make a request"},
-		[]string{err.Error()}, []string{}, []string{})
+		[]string{"Connection refused. Run `mesheryctl system check` to verify that your environment is ready."}, []string{}, []string{})
 }
 
 func ErrUnauthenticated() error {
