@@ -201,6 +201,7 @@ type ConnectionPayload struct {
 	MetaData         map[string]interface{} `json:"metadata,omitempty"`
 	Status           ConnectionStatus       `json:"status,omitempty"`
 	CredentialSecret map[string]interface{} `json:"credential_secret,omitempty"`
+	Name             string                 `json:"name,omitempty"`
 }
 
 type ExtensionProxyResponse struct {

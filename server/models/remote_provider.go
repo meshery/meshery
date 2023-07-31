@@ -580,50 +580,71 @@ func (l *RemoteProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.
 }
 
 func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8sContext, error) {
-	data, err := json.Marshal(k8sContext)
-	if err != nil {
-		return k8sContext, ErrMarshal(err, "kubernetes context error")
+	// data, err := json.Marshal(k8sContext)
+	// if err != nil {
+	// 	return k8sContext, ErrMarshal(err, "kubernetes context error")
+	// }
+
+	_metadata := map[string]string{
+		"id":  k8sContext.ID,
+		"server": k8sContext.Server,
+		"meshery_instance_id": k8sContext.MesheryInstanceID.String(),
+		"deployment_type": k8sContext.DeploymentType,
+		"version": k8sContext.Version,
 	}
+	metadata := make(map[string]interface{}, len(_metadata))
+		for k, v := range _metadata {
+			metadata[k] = v
+		}
+  
+	conn := &ConnectionPayload{
+		Name:     k8sContext.Name,
+		Metadata: metadata,
+
+	}
+	
+	err := l.SaveConnection(nil, conn, token, true)
 
 	logrus.Infof("attempting to save %s context to remote provider with ID %s", k8sContext.Name, k8sContext.ID)
-	bf := bytes.NewBuffer(data)
 
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/user/contexts")
-	cReq, err := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
-	if err != nil {
-		return k8sContext, err
-	}
+	// bf := bytes.NewBuffer(data)
 
-	resp, err := l.DoRequest(cReq, token)
-	if err != nil {
-		if resp == nil {
-			return k8sContext, ErrUnreachableRemoteProvider(err)
-		}
-		logrus.Errorf("unable to send kubernetes context: %v", err)
-		return k8sContext, ErrPost(err, "kubernetes context", cReq.Response.StatusCode)
-	}
+	// remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/user/contexts")
+	// cReq, err := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+	// if err != nil {
+	// 	return k8sContext, err
+	// }
 
-	defer func() {
-		_ = resp.Body.Close()
-	}()
+	// resp, err := l.DoRequest(cReq, token)
+	// if err != nil {
+	// 	if resp == nil {
+	// 		return k8sContext, ErrUnreachableRemoteProvider(err)
+	// 	}
+	// 	logrus.Errorf("unable to send kubernetes context: %v", err)
+	// 	return k8sContext, ErrPost(err, "kubernetes context", cReq.Response.StatusCode)
+	// }
 
-	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
-		var kcr K8sContextPersistResponse
-		if err := json.NewDecoder(resp.Body).Decode(&kcr); err != nil {
-			return k8sContext, ErrUnmarshal(err, "kubernetes context")
-		}
+	// defer func() {
+	// 	_ = resp.Body.Close()
+	// }()
 
-		// Sensitive data. Commenting until better debug controls are put into place. - @leecalcote
-		// logrus.Infof("kubernetes context successfully sent to remote provider: %+v", kc)
+	// if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
+	// 	var kcr K8sContextPersistResponse
+	// 	if err := json.NewDecoder(resp.Body).Decode(&kcr); err != nil {
+	// 		return k8sContext, ErrUnmarshal(err, "kubernetes context")
+	// 	}
 
-		// If the context already existed, return that as error
-		if !kcr.Inserted {
-			return kcr.K8sContext, ErrContextAlreadyPersisted
-		}
+	// 	// Sensitive data. Commenting until better debug controls are put into place. - @leecalcote
+	// 	// logrus.Infof("kubernetes context successfully sent to remote provider: %+v", kc)
 
-		return kcr.K8sContext, nil
-	}
-	return k8sContext, ErrPost(fmt.Errorf("failed to save kubernetes context"), fmt.Sprint(resp.Body), resp.StatusCode)
+	// 	// If the context already existed, return that as error
+	// 	if !kcr.Inserted {
+	// 		return kcr.K8sContext, ErrContextAlreadyPersisted
+	// 	}
+
+	// 	return kcr.K8sContext, nil
+	// }
+	// return k8sContext, ErrPost(fmt.Errorf("failed to save kubernetes context"), fmt.Sprint(resp.Body), resp.StatusCode)
 }
 func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order string) ([]byte, error) {
 	MesheryInstanceID, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
@@ -3231,14 +3252,14 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 	}
 
 	go func() {
-		_metada := map[string]string{
+		_metadata := map[string]string{
 			"server_id":        viper.GetString("INSTANCE_ID"),
 			"server_version":   viper.GetString("BUILD"),
 			"server_build_sha": viper.GetString("COMMITSHA"),
 			"server_location":  r.Context().Value(MesheryServerURL).(string),
 		}
-		metadata := make(map[string]interface{}, len(_metada))
-		for k, v := range _metada {
+		metadata := make(map[string]interface{}, len(_metadata))
+		for k, v := range _metadata {
 			metadata[k] = v
 		}
 		cred := make(map[string]interface{}, 0)
