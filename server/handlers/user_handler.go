@@ -230,7 +230,7 @@ func (h *Handler) ShareDesignHandler(w http.ResponseWriter, r *http.Request, _ *
 //  500:
 
 func (h *Handler) ShareFilterHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	statusCode, err := provider.ShareDesign(r)
+	statusCode, err := provider.ShareFilter(r)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error: %v", err.Error()), statusCode)
 		return
