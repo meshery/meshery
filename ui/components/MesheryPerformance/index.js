@@ -242,8 +242,8 @@ class MesheryPerformanceComponent extends React.Component {
       selectedMesh : "",
       availableAdapters : [],
       availableSMPMeshes : [],
-      disableAvailableOptionsUploadButton: false,
-      disableAvailableOptionsInputField: false
+      disableAvailableOptionsUploadButton : false,
+      disableAvailableOptionsInputField : false
     };
   }
 
@@ -289,50 +289,50 @@ class MesheryPerformanceComponent extends React.Component {
     } else this.setState({ urlError : false });
 
     if (name === "additional_options" ) {
-      const { name, value } = event.target;
-      
-        // Check if the target event is an input element (typing) or a file input (upload)
-        const isFileUpload = event.target.getAttribute("type") === "file";
+      const { value } = event.target;
 
-        if (isFileUpload) {
-          // Handle file upload
-          const file = event.target.files[0];
-          if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-              try {
-                const fileContent = event.target.result;
-                // Validate JSON
-                JSON.parse(fileContent); 
-                this.setState({
-                  additional_options: fileContent,
-                  jsonError: false,
-                });
-              } catch (error) {
-                this.setState({
-                  additional_options: event.target.result,
-                  jsonError: true,
-                });
-              }
-            };
-            reader.readAsText(file);
-          }
-        } else {
-          // Handle text input
-          try {
-            // empty text input exception
-            if(value !== "") JSON.parse(value); 
-            this.setState({
-              additional_options: value,
-              jsonError: false,
-            });
-          } catch (error) {
-            this.setState({
-              additional_options: value,
-              jsonError: true,
-            });
-          }
+      // Check if the target event is an input element (typing) or a file input (upload)
+      const isFileUpload = event.target.getAttribute("type") === "file";
+
+      if (isFileUpload) {
+        // Handle file upload
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            try {
+              const fileContent = event.target.result;
+              // Validate JSON
+              JSON.parse(fileContent);
+              this.setState({
+                additional_options : fileContent,
+                jsonError : false,
+              });
+            } catch (error) {
+              this.setState({
+                additional_options : event.target.result,
+                jsonError : true,
+              });
+            }
+          };
+          reader.readAsText(file);
         }
+      } else {
+        // Handle text input
+        try {
+          // empty text input exception
+          if (value !== "") JSON.parse(value);
+          this.setState({
+            additional_options : value,
+            jsonError : false,
+          });
+        } catch (error) {
+          this.setState({
+            additional_options : value,
+            jsonError : true,
+          });
+        }
+      }
     }
     this.setState({ [name] : event.target.value });
   };
@@ -1100,9 +1100,9 @@ class MesheryPerformanceComponent extends React.Component {
                             margin="normal"
                             variant="outlined"
                             onChange={this.handleChange("additional_options")}
-                          /> 
-                          <label htmlFor="upload-additional-options"                               
-                            style={{ paddingLeft: '0' }}
+                          />
+                          <label htmlFor="upload-additional-options"
+                            style={{ paddingLeft : '0' }}
                             className={classes.upload}
                           >
                             <Button
@@ -1124,12 +1124,12 @@ class MesheryPerformanceComponent extends React.Component {
                             size="small"
                             variant="outlined"
                             label={this.state.caCertificate?.name || "Upload Ca Certificate"}
-                            style={{ width : "100%", margin: '0.5rem 0' }}
+                            style={{ width : "100%", margin : '0.5rem 0' }}
                             value={this.state.caCertificate?.name}
                           />
-                          <label htmlFor="upload-cacertificate" 
+                          <label htmlFor="upload-cacertificate"
                             className={classes.upload}
-                            style={{ paddingLeft: '0' }}
+                            style={{ paddingLeft : '0' }}
                           >
                             <Button
                               variant="outlined"
