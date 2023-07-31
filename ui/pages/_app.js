@@ -9,8 +9,8 @@ import {
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 // import 'billboard.js/dist/theme/insight.min.css';
-// import 'billboard.js/dist/theme/graph.min.css';
-import 'billboard.js/dist/billboard.min.css';
+import 'billboard.js/dist/theme/dark.min.css';
+// import 'billboard.js/dist/billboard. min.css';
 import 'codemirror/addon/lint/lint.css';
 // codemirror + js-yaml imports when added to a page was preventing to navigating to that page using nextjs
 // link clicks, hence attempting to add them here
@@ -160,7 +160,7 @@ class MesheryApp extends App {
 
     const k8sContextSubscription = (page="", search="", pageSize="10", order="") => {
       return subscribeK8sContext((result) => {
-        this.setState({ k8sContexts : result.k8sContext }, () => this.setActiveContexts("all"))
+        this.setState({ k8sContexts : result.k8sContext }, () =>  this.setActiveContexts("all"))
         this.props.store.dispatch({ type : actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig : result.k8sContext.contexts });
       },
       {
@@ -245,11 +245,8 @@ class MesheryApp extends App {
           activeContexts.push(ctx.id)
         );
         activeContexts.push("all");
-        this.setState(state => {
-          if (state.activeK8sContexts?.includes("all")) return { activeK8sContexts : [] };
-          return { activeK8sContexts : activeContexts };
-        },
-        () => this.activeContextChangeCallback(this.state.activeK8sContexts));
+        this.setState({ activeK8sContexts : activeContexts },
+          () => this.activeContextChangeCallback(this.state.activeK8sContexts));
         return;
       }
 
@@ -292,19 +289,6 @@ class MesheryApp extends App {
         credentials : 'include',
       }, result => {
         if (result) {
-          if (result.k8sConfig && result.k8sConfig.length != 0) {
-            const kubeConfigs = result.k8sConfig.map(config => Object.assign({
-              inClusterConfig : false,
-              k8sfile : "",
-              name : "",
-              clusterConfigured : "",
-              server : "",
-              created_at : "",
-              updated_at : "",
-              ts : new Date()
-            }, config));
-            store.dispatch({ type : actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig : kubeConfigs });
-          }
           if (result.meshAdapters && result.meshAdapters !== null && result.meshAdapters.length > 0) {
             store.dispatch({ type : actionTypes.UPDATE_ADAPTERS_INFO, meshAdapters : result.meshAdapters });
           }

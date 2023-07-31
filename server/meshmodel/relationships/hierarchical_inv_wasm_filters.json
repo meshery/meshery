@@ -6,7 +6,7 @@
     },
     "model": {
         "name": "kubernetes",
-        "version": "*",
+        "version": "v1.25.2",
         "displayName": "Kubernetes",
         "category": {
             "name": "Orchestration \u0026 Management",
@@ -20,7 +20,7 @@
             "from": [
                 {
                     "kind": "WASMFilter",
-                    "model": "Istio Base",
+                    "model": "istio-base",
                     "patch": {
                         "patchStrategy": "replace",
                         "mutatorRef": [
@@ -34,11 +34,12 @@
             "to": [
                 {
                     "kind": "EnvoyFilter",
-                    "model": "Istio Base",
+                    "model": "istio-base",
                     "patch": {
                         "patchStrategy": "replace",
                         "mutatedRef": [
                             "settings",
+                            "spec",
                             "configPatches",
                             "_",
                             "patch",

@@ -33,7 +33,7 @@ import Popup from "./Popup";
 import { iconMedium } from "../css/icons.styles";
 import { extractURLFromScanData } from "./ConnectionWizard/helpers/metrics";
 import { configurationTableTheme, configurationTableThemeDark } from '../themes/configurationTableTheme';
-
+import DashboardMeshModelGraph from './DashboardMeshModelGraph'
 
 const styles = (theme) => ({
   rootClass : { backgroundColor : theme.palette.secondary.elevatedComponents2, },
@@ -1205,6 +1205,7 @@ class DashboardComponent extends React.Component {
         <Popup />
         <div className={classes.rootClass}>
           <Grid container spacing={2}>
+            <Grid item xs={12} md={12}> <DashboardMeshModelGraph classes={classes} /> </Grid>
             <Grid item xs={12} md={12}>
               <div className={classes.dashboardSection} data-test="workloads">
                 <Typography variant="h6" gutterBottom className={classes.chartTitle}>
@@ -1228,6 +1229,7 @@ class DashboardComponent extends React.Component {
   };
 
   render() {
+    // console.info("Rerendering Dashboard")
     return this.configureTemplate();
   }
 }

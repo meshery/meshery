@@ -7,9 +7,9 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 )
 
 // swagger:route GET /api/meshmodels/models/{model}/relationships/{name} GetMeshmodelRelationshipByName idGetMeshmodelRelationshipByName
@@ -31,7 +31,8 @@ import (
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-//  200: []meshmodelRelationshipsResponseWrapper
+//
+//	200: []meshmodelRelationshipsResponseWrapper
 func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -55,7 +56,7 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 		page = 1
 	}
 	offset := (page - 1) * limit
-	entities, count := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
+	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
 		Version:   r.URL.Query().Get("version"),
 		Kind:      name,
 		ModelName: typ,
@@ -80,10 +81,10 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 		pgSize = int64(limit)
 	}
 
-	response := models.MeshmodelRelationshipsAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: *count,
+	response := models.MeshmodelRelationshipsAPIResponse{
+		Page:          page,
+		PageSize:      int(pgSize),
+		Count:         *count,
 		Relationships: rels,
 	}
 
@@ -147,7 +148,7 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 		page = 1
 	}
 	offset := (page - 1) * limit
-	entities, count := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
+	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
 		Version:   r.URL.Query().Get("version"),
 		ModelName: typ,
 		Limit:     limit,
@@ -170,10 +171,10 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 		pgSize = int64(limit)
 	}
 
-	response := models.MeshmodelRelationshipsAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: *count,
+	response := models.MeshmodelRelationshipsAPIResponse{
+		Page:          page,
+		PageSize:      int(pgSize),
+		Count:         *count,
 		Relationships: rels,
 	}
 

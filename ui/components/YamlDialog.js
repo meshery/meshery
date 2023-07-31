@@ -16,7 +16,6 @@ const YAMLDialog = ({
   setYaml,
   deleteHandler,
   updateHandler,
-  type
 }) => {
   const classes = useStyles()
   return (
@@ -46,7 +45,7 @@ const YAMLDialog = ({
             gutters : ["CodeMirror-lint-markers"],
             // @ts-ignore
             lint : true,
-            mode : (type==="filter")? "text/plain":"text/x-yaml",
+            mode : "text/x-yaml",
           }}
           onChange={(_, data, val) => setYaml(val)}
         />

@@ -18,16 +18,6 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
-// MesheryFilterRequestBody refers to the type of request body that
-// SaveMesheryFilter would receive
-type MesheryFilterRequestBody struct {
-	URL        string                `json:"url,omitempty"`
-	Path       string                `json:"path,omitempty"`
-	Save       bool                  `json:"save,omitempty"`
-	Config     string				 `json:"config,omitempty"` 	
-  FilterData *models.MesheryFilterPayload `json:"filter_data,omitempty"`
-}
-
 // swagger:route GET /api/filter/file/{id} FiltersAPI idGetFilterFile
 // Handle GET request for filter file with given id
 //
@@ -103,7 +93,7 @@ func (h *Handler) handleFilterPOST(
 		OperationId:   guid.NewString(),
 		EventType:     meshes.EventType_INFO,
 	}
-	var parsedBody *MesheryFilterRequestBody
+	var parsedBody *models.MesheryFilterRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		h.log.Error(ErrRequestBody(err))
 		http.Error(rw, ErrGetFilter(err).Error(), http.StatusBadRequest)
@@ -137,10 +127,10 @@ func (h *Handler) handleFilterPOST(
 		// Assign a name if no name is provided
 		if parsedBody.FilterData.Name == "" {
 			// TODO: Dynamically generate names or get the name of the file from the UI (@navendu-pottekkat)
-			parsedBody.FilterData.Name = "Test Filter"
+			parsedBody.FilterData.Name = "meshery-filter-" + utils.GetRandomAlphabetsOfDigit(5)
 		}
 		// Assign a location if no location is specified
-		if parsedBody.FilterData.Location == nil {
+		if parsedBody.FilterData.Location == nil || len(parsedBody.FilterData.Location) == 0 {
 			parsedBody.FilterData.Location = map[string]interface{}{
 				"host":   "",
 				"path":   "",
@@ -150,13 +140,13 @@ func (h *Handler) handleFilterPOST(
 		}
 
 		mesheryFilter := models.MesheryFilter{
-			FilterFile: []byte(parsedBody.FilterData.FilterFile),
-			Name:       parsedBody.FilterData.Name,
-			ID:         parsedBody.FilterData.ID,
-			UserID:     parsedBody.FilterData.UserID,
-			UpdatedAt:  parsedBody.FilterData.UpdatedAt,
-			Location:   parsedBody.FilterData.Location,
-      FilterResource: filterResource,
+			FilterFile:     []byte(parsedBody.FilterData.FilterFile),
+			Name:           parsedBody.FilterData.Name,
+			ID:             parsedBody.FilterData.ID,
+			UserID:         parsedBody.FilterData.UserID,
+			UpdatedAt:      parsedBody.FilterData.UpdatedAt,
+			Location:       parsedBody.FilterData.Location,
+			FilterResource: filterResource,
 		}
 
 		if parsedBody.Save {
@@ -345,7 +335,7 @@ func (h *Handler) CloneMesheryFilterHandler(
 // Publishes filter to Meshery Catalog by setting visibility to published and setting catalog data
 // responses:
 //
-//	200: noContentWrapper
+//	202: noContentWrapper
 //
 // PublishCatalogFilterHandler set visibility of filter with given id as published
 func (h *Handler) PublishCatalogFilterHandler(
@@ -375,6 +365,7 @@ func (h *Handler) PublishCatalogFilterHandler(
 
 	go h.config.ConfigurationChannel.PublishFilters()
 	rw.Header().Set("Content-Type", "application/json")
+	rw.WriteHeader(http.StatusAccepted)
 	fmt.Fprint(rw, string(resp))
 }
 
@@ -501,27 +492,27 @@ func (h *Handler) FilterFileHandler(
 	h.PatternFileHandler(rw, r, prefObj, user, provider)
 }
 
-func(h *Handler) generateFilterComponent(config string) (string, error) {
-	res, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		Name: "WASMFilter",
-		Trim: false,
+func (h *Handler) generateFilterComponent(config string) (string, error) {
+	res, _, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+		Name:       "WASMFilter",
+		Trim:       false,
 		APIVersion: "core.meshery.io/v1alpha1",
-		Version: "v1.0.0",
-		Limit: 1,
+		Version:    "v1.0.0",
+		Limit:      1,
 	})
-	
+
 	if len(res) > 0 {
 		filterEntity := res[0]
 		filterCompDef, ok := filterEntity.(v1alpha1.ComponentDefinition)
 		if ok {
 			filterID, _ := uuid.NewV4()
 			filterSvc := core.Service{
-				ID: &filterID,
-				Name: strings.ToLower(filterCompDef.Kind) + utils.GetRandomAlphabetsOfDigit(5),
-				Type: filterCompDef.Kind,
-				APIVersion: filterCompDef.APIVersion,
-				Version: filterCompDef.Model.Version,
-				Model: filterCompDef.Model.Name,
+				ID:           &filterID,
+				Name:         strings.ToLower(filterCompDef.Kind) + utils.GetRandomAlphabetsOfDigit(5),
+				Type:         filterCompDef.Kind,
+				APIVersion:   filterCompDef.APIVersion,
+				Version:      filterCompDef.Model.Version,
+				Model:        filterCompDef.Model.Name,
 				IsAnnotation: true,
 				Settings: map[string]interface{}{
 					"config": config,
