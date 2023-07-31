@@ -124,8 +124,6 @@ mesheryctl system model list
 
 		for _, model := range modelsResponse.Models {
 			if len(model.DisplayName) > 0 {
-				// in `mesheryctl system model view [model-name]` command `model.Name` must be
-				// passed in order to fetch its details
 				rows = append(rows, []string{model.Name})
 			}
 		}
@@ -182,7 +180,7 @@ mesheryctl system model view [model-name]
 		return nil
 	},
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl system model view [model-name]\nRun 'mesheryctl system model list' to see list of models"
+		const errMsg = "Usage: mesheryctl system model view [model-name]\nRun 'mesheryctl system model view' to see list of models"
 		if len(args) == 0 {
 			return fmt.Errorf("model name isn't specified\n\n%v", errMsg)
 		} else if len(args) > 1 {
@@ -206,8 +204,7 @@ mesheryctl system model view [model-name]
 			return err
 		}
 
-		client := &http.Client{}
-		resp, err := client.Do(req)
+		resp, err := utils.MakeRequest(req)
 		if err != nil {
 			utils.Log.Error(ErrConnectingToServer(err))
 			return err
