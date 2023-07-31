@@ -1,7 +1,7 @@
 {
-  "kind": "Comments",
+  "kind": "Comment",
   "apiVersion": "core.meshery.io/v1alpha1",
-  "displayName": "Comments",
+  "displayName": "Comment",
   "format": "JSON",
   "metadata": {
     "genealogy": "",
