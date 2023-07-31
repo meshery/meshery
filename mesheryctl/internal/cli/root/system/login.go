@@ -42,7 +42,6 @@ The authentication mode is web-based browser flow`,
 // Login with the Meshery Provider of your choice: the Local Provider or a Remote Provider.
 mesheryctl system login 
 	`,
-
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
