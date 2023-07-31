@@ -147,8 +147,8 @@
       url: guides/troubleshooting
     - title: Upgrading Meshery
       url: guides/upgrade
-    - title: Using Meshmap
-      url: guides/meshmap
+    - title: Using MeshMap
+      url: guides/using-meshmap
     - title: Using mesheryctl ↆ
       url: guides/mesheryctl
       children:
