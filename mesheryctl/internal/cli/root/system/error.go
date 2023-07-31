@@ -42,15 +42,6 @@ const (
 	ErrInitPortForwardCode               = "1047"
 	ErrRunPortForwardCode                = "1048"
 	ErrFailedGetEphemeralPortCode        = "1049"
-	ErrProcessingConfigCode              = "1050"
-	ErrCreatingConfigFileCode            = "1051"
-	ErrAddingTokenToConfigCode           = "1052"
-	ErrAddingContextToConfigCode         = "1053"
-	ErrUnmarshallingConfigFileCode       = "1054"
-	ErrGettingRequestContextCode         = "1055"
-	ErrInvalidAPIResponseCode            = "1056"
-	ErrUnmarshallingAPIDataCode          = "1057"
-	ErrConnectingToServerCode            = "1058"
 	ErrCreatingDockerClientCode          = "1060"
 )
 
@@ -155,42 +146,6 @@ func ErrFailedGetEphemeralPort(err error) error {
 		[]string{err.Error(), "Failed to start port-forwarding"},
 		nil, nil,
 	)
-}
-
-func ErrProcessingConfig(err error) error {
-	return errors.New(ErrProcessingConfigCode, errors.Alert, []string{"Error processing config"}, []string{"Error processing config", err.Error()}, []string{}, []string{})
-}
-
-func ErrCreatingConfigFile(err error) error {
-	return errors.New(ErrCreatingConfigFileCode, errors.Alert, []string{"Unable to create config file"}, []string{"Unable to create config file"}, []string{}, []string{})
-}
-
-func ErrAddingTokenToConfig(err error) error {
-	return errors.New(ErrAddingTokenToConfigCode, errors.Alert, []string{"Unable to add token to config"}, []string{"Unable to add token to config"}, []string{}, []string{})
-}
-
-func ErrAddingContextToConfig(err error) error {
-	return errors.New(ErrAddingContextToConfigCode, errors.Alert, []string{"Unable to add context to config"}, []string{"Unable to add context to config"}, []string{}, []string{})
-}
-
-func ErrUnmarshallingConfigFile(err error) error {
-	return errors.New(ErrUnmarshallingConfigFileCode, errors.Alert, []string{"Error processing json in config file"}, []string{"Error processing json in config file"}, []string{}, []string{})
-}
-
-func ErrGettingRequestContext(err error) error {
-	return errors.New(ErrGettingRequestContextCode, errors.Fatal, []string{"Unable to add token to config"}, []string{"Unable to add token to config", err.Error()}, []string{}, []string{})
-}
-
-func ErrInvalidAPIResponse(err error) error {
-	return errors.New(ErrInvalidAPIResponseCode, errors.Fatal, []string{"Invalid API response encountered"}, []string{"Invalid API response encountered", err.Error()}, []string{}, []string{})
-}
-
-func ErrUnmarshallingAPIData(err error) error {
-	return errors.New(ErrUnmarshallingAPIDataCode, errors.Fatal, []string{"Error processing json API data"}, []string{"Error processing json API data", err.Error()}, []string{}, []string{})
-}
-
-func ErrConnectingToServer(err error) error {
-	return errors.New(ErrConnectingToServerCode, errors.Fatal, []string{"Unable to communicate with Meshery server"}, []string{"Unable to communicate with Meshery server", err.Error(), "See https://docs.meshery.io for help getting started with Meshery"}, []string{}, []string{"See https://docs.meshery.io for help getting started with Meshery"})
 }
 
 func ErrCreatingDockerClient(err error) error {

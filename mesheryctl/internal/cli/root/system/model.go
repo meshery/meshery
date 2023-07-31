@@ -93,13 +93,13 @@ mesheryctl system model list
 		url := fmt.Sprintf("%s/api/meshmodels/models?pagesize=all", baseUrl)
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
-			utils.Log.Error(ErrGettingRequestContext(err))
+			utils.Log.Error(err)
 			return err
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(ErrConnectingToServer(err))
+			utils.Log.Error(err)
 			return err
 		}
 
@@ -108,14 +108,14 @@ mesheryctl system model list
 
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
-			utils.Log.Error(ErrInvalidAPIResponse(err))
+			utils.Log.Error(err)
 			return err
 		}
 
 		modelsResponse := &models.MeshmodelsAPIResponse{}
 		err = json.Unmarshal(data, modelsResponse)
 		if err != nil {
-			utils.Log.Error(ErrUnmarshallingAPIData(err))
+			utils.Log.Error(err)
 			return err
 		}
 
@@ -200,13 +200,13 @@ mesheryctl system model view [model-name]
 		url := fmt.Sprintf("%s/api/meshmodels/models/%s?pagesize=all", baseUrl, model)
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
-			utils.Log.Error(ErrGettingRequestContext(err))
+			utils.Log.Error(err)
 			return err
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(ErrConnectingToServer(err))
+			utils.Log.Error(err)
 			return err
 		}
 
@@ -215,14 +215,14 @@ mesheryctl system model view [model-name]
 
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
-			utils.Log.Error(ErrInvalidAPIResponse(err))
+			utils.Log.Error(err)
 			return err
 		}
 
 		modelsResponse := &models.MeshmodelsAPIResponse{}
 		err = json.Unmarshal(data, modelsResponse)
 		if err != nil {
-			utils.Log.Error(ErrUnmarshallingAPIData(err))
+			utils.Log.Error(err)
 			return err
 		}
 
