@@ -247,7 +247,7 @@ export const updateK8SConfig = ({ k8sConfig }) => dispatch => {
   return dispatch({ type : actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig });
 }
 
-export const setK8sContexts = ({  selectedK8sContexts}) => dispatch => {
+export const setK8sContexts = ({ selectedK8sContexts }) => dispatch => {
   return dispatch({ type : actionTypes.SET_K8S_CONTEXT, selectedK8sContexts });
 }
 
