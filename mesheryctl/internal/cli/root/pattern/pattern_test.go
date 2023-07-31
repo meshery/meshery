@@ -63,9 +63,9 @@ func TestPatterncmd(t *testing.T) {
 			ExpectedResponse: "pattern.delete.output.golden",
 			URLs: []utils.MockURL{
 				{
-					Method:   "DELETE",
-					URL:      testContext.BaseURL + "/api/pattern/deploy",
-					Response: "pattern.delete.golden",
+					Method:       "DELETE",
+					URL:          testContext.BaseURL + "/api/pattern/deploy",
+					Response:     "pattern.delete.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -78,75 +78,75 @@ func TestPatterncmd(t *testing.T) {
 			ExpectedResponse: "pattern.list.output.golden",
 			URLs: []utils.MockURL{
 				{
-					Method:   "GET",
-					URL:      testContext.BaseURL + "/api/pattern",
-					Response: "pattern.list.golden",
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern",
+					Response:     "pattern.list.golden",
 					ResponseCode: 200,
 				},
 			},
 			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: false,
 		},
-		//  {
-		// 	Name:             "pattern view",
-		// 	Args:             []string{"view", "kumatest"},
-		// 	ExpectedResponse: "pattern.view.kuma.output.golden",
-		// 	URLs: []utils.MockURL{
-		// 		{
-		// 			Method:   "POST",
-		// 			URL:      testContext.BaseURL + "/api/pattern?search=",
-		// 			Response: "pattern.view.kuma.golden",
-		// 			ResponseCode: 200,
-		// 		},
-		// 	},
-		// 	Token:       filepath.Join(fixturesDir, "token.golden"),
-		// 	ExpectError: false,
-		// },
-		// {
-		// 	Name:             "pattern view",
-		// 	Args:             []string{"view", "957fbc9b-708d-4396-84b8-e2ba37c1adcc"},
-		// 	ExpectedResponse: "pattern.id.view.output.golden",
-		// 	URLs: []utils.MockURL{
-		// 		{
-		// 			Method:   "GET",
-		// 			URL:      testContext.BaseURL + "api/pattern/",
-		// 			Response: "pattern.id.view.golden",
-		// 			ResponseCode: 200,
-		// 		},
-		// 	},
-		// 	Token:       filepath.Join(fixturesDir, "token.golden"),
-		// 	ExpectError: false,
-		// },
-		//Invalid or Non-Existing 
-	// 	{
-	// 		Name:             "pattern invalid view",
-	// 		Args:             []string{"view", "kuma-test"},
-	// 		ExpectedResponse: "pattern.view.invalid.output.golden",
-	// 		URLs: []utils.MockURL{
-	// 			{
-	// 				Method:   "GET",
-	// 				URL:      testContext.BaseURL + "api/pattern",
-	// 				Response: "pattern.view.invalid.golden",
-	// 			},
-	// 		},
-	// 		Token:       filepath.Join(fixturesDir, "token.golden"),
-	// 		ExpectError: true,
-	// 	},
-	// 	{
-	// 		Name:             "pattern invalid delete",
-	// 		Args:             []string{"delete",  "-f", filepath.Join(fixturesDir, "InvalidPattern.golden")},
-	// 		ExpectedResponse: "pattern.delete.invalid.output.golden",
-	// 		URLs: []utils.MockURL{
-	// 			{
-	// 				Method:   "POST",
-	// 				URL:      testContext.BaseURL + "api/pattern/deploy",
-	// 				Response: "pattern.delete.invalid.golden",
-	// 			},
-	// 		},
-	// 		Token:       filepath.Join(fixturesDir, "token.golden"),
-	// 		ExpectError: true,
-	// 	},
-	 }
+		{
+			Name:             "pattern view",
+			Args:             []string{"view", "kumatest"},
+			ExpectedResponse: "pattern.view.kuma.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern?search=",
+					Response:     "pattern.view.kuma.golden",
+					ResponseCode: 200,
+				},
+			},
+			Token:       filepath.Join(fixturesDir, "token.golden"),
+			ExpectError: false,
+		},
+		{
+			Name:             "pattern view with ID",
+			Args:             []string{"view", "4o7fbc9b-708d-4396-84b8-e2ba37c1adcc"},
+			ExpectedResponse: "pattern.id.view.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "api/pattern/",
+					Response:     "pattern.id.view.golden",
+					ResponseCode: 200,
+				},
+			},
+			Token:       filepath.Join(fixturesDir, "token.golden"),
+			ExpectError: false,
+		},
+		//Invalid or Non-Existing
+		{
+			Name:             "pattern invalid view",
+			Args:             []string{"view", "kuma-test"},
+			ExpectedResponse: "pattern.view.invalid.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:   "GET",
+					URL:      testContext.BaseURL + "api/pattern",
+					Response: "pattern.view.invalid.golden",
+				},
+			},
+			Token:       filepath.Join(fixturesDir, "token.golden"),
+			ExpectError: true,
+		},
+		{
+			Name:             "pattern invalid delete",
+			Args:             []string{"delete", "-f", filepath.Join(fixturesDir, "InvalidPattern.golden")},
+			ExpectedResponse: "pattern.delete.invalid.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:   "POST",
+					URL:      testContext.BaseURL + "api/pattern/deploy",
+					Response: "pattern.delete.invalid.golden",
+				},
+			},
+			Token:       filepath.Join(fixturesDir, "token.golden"),
+			ExpectError: true,
+		},
+	}
 	for _, test := range testcase {
 		t.Run(test.Name, func(t *testing.T) {
 			for _, url := range test.URLs {
