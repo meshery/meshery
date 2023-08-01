@@ -23,7 +23,7 @@ A popular way of exposing your cluster is by using [Ingress](https://kubernetes.
 1. Click (+) on **Manage Sample Application Lifecycle**. You will now be able to see a dropdown menu with the available sample applications.
 <a href="{{ site.baseurl }}/assets/img/adapters/consul/consul-sample-app.png"><img alt="ImageHub sample app" style="width:500px;height:auto;display:flex;padding-top:10px;" src="{{ site.baseurl }}/assets/img/adapters/consul/consul-sample-app.png" /></a>
 
-1. Click on the sample application you want to deploy. This might take up to a minute. You will be notified when the sample application has been deployed
+1. Click on the sample application you want to deploy. This might take up to a minute. You will be notified when the sample application has been deployed.
 <a href="{{ site.baseurl }}/assets/img/adapters/consul/consul-imagehub-success.png"><img alt="ImageHub deployed" style="width:500px;height:auto;display:flex;padding-top:10px;" src="{{ site.baseurl }}/assets/img/adapters/consul/consul-imagehub-success.png" /></a>
 
 ### [BookInfo](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md#what-is-the-bookinfo-application)
