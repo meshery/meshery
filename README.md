@@ -52,6 +52,11 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
  <br /><a href="https://youtu.be/Do7htKrRzDA">Click to see Meshery Playground video</a>
 </div>
 
+
+[![](https://badges.layer5.io/bring-a-buddy.html)](https://meshery.layer5.io/user/090e7114-509a-4046-81f1-9c5fb8daf724?tab=badges)
+
+<img src="https://badges.layer5.io/assets/badges/bring-a-buddy/bring-a-buddy.svg" />
+<img src="https://badges.layer5.io/bring-a-buddy.svg" />
 <br />
 <br />
 
