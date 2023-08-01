@@ -58,12 +58,14 @@ ol {
 }
 
 .main-container {
-  height: 100vh;
   padding: 3.5rem 4.4rem;
   overflow: hidden;
   width: 100%;
 
   @media (max-width: 1200px) {
+    @media (max-height: 100vh) {
+      height: 100vh;
+    }
     flex: 0 0 100%;
   }
 
