@@ -6,8 +6,8 @@ import {
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import EditIcon from "@material-ui/icons/Edit";
-import SearchIcon from "@mui/icons-material/Search";
-import DeleteIcon from "@material-ui/icons/Delete";
+import YoutubeSearchedForIcon from '@mui/icons-material/YoutubeSearchedFor';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import MUIDataTable from "mui-datatables";
 import { withSnackbar } from "notistack";
 import React, { useState } from "react";
@@ -16,13 +16,13 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { updateProgress } from "../../lib/store";
 import { iconMedium } from "../../css/icons.styles";
-import { Avatar, Chip, FormControl, MenuItem } from "@mui/material";
+import { Avatar, Chip, FormControl } from "@mui/material";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import classNames from "classnames";
-import Select from '@mui/material/Select';
+import ReactSelectWrapper from "../ReactSelectWrapper";
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2) },
@@ -177,16 +177,11 @@ function Connections({ classes }) {
         customBodyRender : function CustomBody(value) {
           return (
             <FormControl sx={{ m : 1, minWidth : 120 }} size="small">
-              <Select
-                labelId="demo-select-small-label"
-                id="demo-select-small"
-                value={value}
-                label="Environment"
+              <ReactSelectWrapper
                 onChange={handleChange}
-              >
-                <MenuItem value={"environment 1"}>environment 1</MenuItem>
-                <MenuItem value={"environment 2"}>environment 2</MenuItem>
-              </Select>
+                options={[{ value : "environment 1", label : "environment 1" }, { value : "environment 2", label : "environment 2" }]}
+                value={{ value : value, label : value }}
+              />
             </FormControl>
           );
         },
@@ -303,7 +298,7 @@ function Connections({ classes }) {
                 onClick={() => {}}
                 style={{ marginRight : "2rem" }}
               >
-                <SearchIcon style={iconMedium} />
+                <YoutubeSearchedForIcon style={iconMedium} />
                 Rediscover
               </Button>
             </div>
@@ -337,7 +332,7 @@ function Connections({ classes }) {
               onClick={() => {}}
               style={{ background : "#8F1F00" }}
             >
-              <DeleteIcon style={iconMedium} />
+              <DeleteForeverIcon style={iconMedium} />
               Delete
             </Button>
           </div>
