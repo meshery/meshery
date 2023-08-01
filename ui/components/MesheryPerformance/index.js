@@ -1095,7 +1095,7 @@ class MesheryPerformanceComponent extends React.Component {
                             fullWidth
                             error={jsonError}
                             helperText={jsonError ? "Please enter a valid JSON string" : ""}
-                            value={additional_options}
+                            value={additional_options.length > 150 ? `${additional_options.slice(0,150)} .....` : additional_options}
                             multiline
                             margin="normal"
                             variant="outlined"
