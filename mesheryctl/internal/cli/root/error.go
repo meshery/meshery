@@ -16,6 +16,10 @@ package root
 
 import "github.com/layer5io/meshkit/errors"
 
+
+// Please reference the following before contributing an error code:
+// https://docs.meshery.io/project/contributing/contributing-error
+// https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
 	ErrProcessingConfigCode        = "1050"
 	ErrCreatingConfigFileCode      = "1051"
