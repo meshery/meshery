@@ -54,7 +54,7 @@
     "@mui/icons-material": "^5.11.0",
     "@mui/lab": "^5.0.0-alpha.135",
     "@mui/material": "^5.11.4",
-    "@mui/styles": "^5.11.2",
+    "@mui/styles": "^5.14.3",
     "@open-policy-agent/opa-wasm": "^1.8.0",
     "@paciolan/remote-component": "^2.13.0",
     "@redux-devtools/extension": "^3.2.3",
