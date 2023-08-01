@@ -1077,8 +1077,8 @@ github.com/layer5io/meshsync v0.6.11 h1:6HOnIQf73sIuPa/5Q8DKwMMdPtlUFSfB26lNqIUY
 github.com/layer5io/meshsync v0.6.11/go.mod h1:4NAngevdOm4LL5nNCePMFsKm3N8LtA3jVIyIs/lpVl0=
 github.com/layer5io/nighthawk-go v1.0.5 h1:7aTqRRCaxw8FYRKskwBkN4D524y7ThApJfNcbBeixus=
 github.com/layer5io/nighthawk-go v1.0.5/go.mod h1:KH069xC3b0fQWdbpw34WzMzBa1eotD12O6iyGnPelzQ=
-github.com/layer5io/service-mesh-performance v0.3.4 h1:aw/elsx0wkry7SyiQRIj31wW7TPCP4YfhINdNOLXVg8=
-github.com/layer5io/service-mesh-performance v0.3.4/go.mod h1:W153amv8aHAeIWxO7b7d7Vibt9RhaEVh4Uh+RG+BumQ=
+github.com/layer5io/service-mesh-performance v0.6.1 h1:Q1k6E96UEwcmNIirbMpRY7Odost1eOdrCh6R8IbTOXs=
+github.com/layer5io/service-mesh-performance v0.6.1/go.mod h1:W153amv8aHAeIWxO7b7d7Vibt9RhaEVh4Uh+RG+BumQ=
 github.com/lib/pq v0.0.0-20150723085316-0dad96c0b94f/go.mod h1:5WUZQaWbwv1U+lTReE5YruASi9Al49XbQIvNi/34Woo=
 github.com/lib/pq v1.0.0/go.mod h1:5WUZQaWbwv1U+lTReE5YruASi9Al49XbQIvNi/34Woo=
 github.com/lib/pq v1.2.0/go.mod h1:5WUZQaWbwv1U+lTReE5YruASi9Al49XbQIvNi/34Woo=
