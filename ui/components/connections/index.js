@@ -66,27 +66,27 @@ const styles = (theme) => ({
   },
   ignored : {
     "& .MuiChip-label" : {
-      color : "#51636B",
+      color : `${theme.palette.secondary.default}`,
     },
-    background : "#51636B15 !important"
+    background : `${theme.palette.secondary.default}15 !important`,
   },
   connected : {
     "& .MuiChip-label" : {
-      color : "#00B39F",
+      color : theme.palette.secondary.success,
     },
-    background : "#00B39F15 !important"
+    background : `${theme.palette.secondary.success}15 !important`,
   },
   registered : {
     "& .MuiChip-label" : {
-      color : "#477E96 !important",
+      color : theme.palette.secondary.primary,
     },
-    background : "#477E9615 !important"
+    background : `${theme.palette.secondary.primary}15 !important`,
   },
   discovered : {
     "& .MuiChip-label" : {
-      color : "#EBC017",
+      color : theme.palette.secondary.warning,
     },
-    background : "#EBC01715 !important"
+    background : `${theme.palette.secondary.warning}15 !important`,
   },
 });
 

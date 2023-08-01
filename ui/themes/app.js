@@ -61,7 +61,11 @@ export var darkTheme = createTheme({
       tabHover : '#212121',
       confirmationModal : '#111111',
       focused : '#00b39f',
-      primaryModalText : '#FFF'
+      primaryModalText : '#FFF',
+      default : "#51636B",
+      success : "#00B39F",
+      primary : "#477E96",
+      warning : "#EBC017",
     },
   },
   p : {
@@ -275,7 +279,11 @@ let theme = createTheme({
       tabHover : '#e3e3e3',
       confirmationModal : 'rgb(234, 235, 236)',
       focused : '#607d8b',
-      primaryModalText : '#FFF'
+      primaryModalText : '#FFF',
+      default : "#51636B",
+      success : "#00B39F",
+      primary : "#477E96",
+      warning : "#EBC017",
     },
   },
   shape : { borderRadius : 8, },
