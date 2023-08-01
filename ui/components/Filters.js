@@ -116,6 +116,9 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
     setFullScreen(!fullScreen);
   }
 
+  const resourceData = JSON.parse(filter.filter_resource);
+  const config = resourceData.settings.config;
+
   return (
     <Dialog onClose={onClose} aria-labelledby="filter-dialog-title" open maxWidth="md" fullScreen={fullScreen} fullWidth={!fullScreen}>
       <DialogTitle disableTypography id="filter-dialog-title" className={classes.ymlDialogTitle}>
@@ -134,7 +137,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
       <Divider variant="fullWidth" light />
       <DialogContent>
         <CodeMirror
-          value={filter.filter_file}
+          value={config}
           className={fullScreen ? classes.fullScreenCodeMirror : ""}
           options={{
             theme : "material",
@@ -142,7 +145,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
             lineWrapping : true,
             gutters : ["CodeMirror-lint-markers"],
             lint : true,
-            mode : "text/plain",
+            mode : "text/x-yaml",
           }}
           onChange={(_,data,val) => setYaml(val)}
         />
@@ -694,7 +697,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
       let body = { save : true }
       if (type === FILE_OPS.FILE_UPLOAD) {
-        body = JSON.stringify({ ...body, filter_data : { filter_file : data }, name : metadata.name, config : metadata.config })
+        body = JSON.stringify({ ...body, filter_data : { filter_file : data, name : metadata.name },  config : metadata.config })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
         body = JSON.stringify({ ...body, url : data, name : metadata.name, config : metadata.config })
@@ -716,7 +719,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         {
           credentials : "include",
           method : "POST",
-          body : JSON.stringify({ filter_data : { id, config : data }, save : true }),
+          body : JSON.stringify({ filter_data : { id, name : name }, config : data, save : true }),
         },
         () => {
           updateProgress({ showProgress : false });
@@ -993,6 +996,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         text : "filter(s) selected"
       }
     },
+
+    onCellClick : (_, meta) => meta.colIndex !== 3 && meta.colIndex !== 4 && setSelectedRowData(filters[meta.rowIndex]),
 
     onRowsDelete : async function handleDelete(row) {
       let response = await showmodal(Object.keys(row.lookup).length)

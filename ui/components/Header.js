@@ -539,9 +539,6 @@ class Header extends React.Component {
       this.setState({ capabilityregistryObj : new CapabilityRegistryClass(this.props.capabilitiesRegistry) });
     }
 
-
-
-
   }
 
   componentWillUnmount = () => {

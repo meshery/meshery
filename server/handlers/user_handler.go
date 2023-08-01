@@ -53,7 +53,7 @@ func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *
 // ```?page={page-number}``` Default page number is 0
 //
 // ```?pagesize={pagesize}``` Default pagesize is 20
-// 
+//
 // ```?search={username|email|first_name|last_name}``` If search is non empty then a greedy search is performed
 //
 // ```?filter={condition}```

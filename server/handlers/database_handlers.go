@@ -24,7 +24,7 @@ const defaultPageSize = 10
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10. To return all results: ```pagesize=all```
-// 
+//
 // ```?search={tablename}``` If search is non empty then a greedy search is performed
 // responses:
 //
@@ -85,11 +85,11 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	}
 
 	databaseSummary := &models.DatabaseSummary{
-		Page: page,
-		PageSize: limit,
+		Page:        page,
+		PageSize:    limit,
 		TotalTables: int(totalTables),
 		RecordCount: recordCount,
-		Tables: tables,
+		Tables:      tables,
 	}
 
 	w.Header().Set("Content-Type", "application/json")

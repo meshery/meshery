@@ -459,19 +459,19 @@ func remoteProviderUpdater(output []map[string]string) {
 			fmt.Println("Error writing model: ", err.Error())
 			continue
 		}
-		err = os.MkdirAll(filepath.Join(pathForIcons, "icon", "color"), 0777)
+		err = os.MkdirAll(filepath.Join(pathForIcons, "color"), 0777)
 		if err != nil {
 			panic(err)
 		}
-		err = pkg.WriteSVG(filepath.Join(pathForIcons, "icon", "color", modelName+"-color.svg"), svgColor) //CHANGE PATH
+		err = pkg.WriteSVG(filepath.Join(pathForIcons, "color", modelName+"-color.svg"), svgColor) //CHANGE PATH
 		if err != nil {
 			panic(err)
 		}
-		err = os.MkdirAll(filepath.Join(pathForIcons, "icon", "white"), 0777)
+		err = os.MkdirAll(filepath.Join(pathForIcons, "white"), 0777)
 		if err != nil {
 			panic(err)
 		}
-		err = pkg.WriteSVG(filepath.Join(pathForIcons, "icon", "white", modelName+"-white.svg"), svgWhite) //CHANGE PATH
+		err = pkg.WriteSVG(filepath.Join(pathForIcons, "white", modelName+"-white.svg"), svgWhite) //CHANGE PATH
 		if err != nil {
 			panic(err)
 		}

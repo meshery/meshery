@@ -432,7 +432,7 @@ class MesherySettings extends React.Component {
           </Tabs>
         </Paper>
         {tabVal === 0 && (
-          <MeshConfigComponent />
+          <MeshConfigComponent/>
         )}
         {tabVal === 1 && (
           <TabContainer>
