@@ -361,7 +361,7 @@ const MeshModelComponent = ({ view, classes }) => {
               </DuplicatesDataTable>
             </Grid>
           </TableCell>
-        );
+      );
     },
   };
 

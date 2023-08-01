@@ -12,21 +12,21 @@ const DuplicatesDataTable = ({ view, rowData, classes }) => {
   const [resourcesDetail, setResourcesDetail] = useState();
   const [count, setCount] = useState();
   const [page, setPage] = useState(0);
-  const [searchText, setSearchText] = useState(null);
+  const [, setSearchText] = useState(null);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  
+
   const kind = rowData[0].props?.children?.props?.children;
   const model = rowData[3].props?.children?.props?.children;
   const version = rowData[1].props?.children?.props?.children;
 
   const getDuplicatedModels = async (model, version) => {
-    const {total_count, models} = await getDuplicateModels(model, version);
+    const { total_count, models } = await getDuplicateModels(model, version);
     setCount(total_count);
     setResourcesDetail(models);
   }
 
   const getDuplicatedComponents = async (componentKind, apiVersion, modelName) => {
-    const {total_count, components} = await getDuplicateComponents(componentKind, modelName, apiVersion);
+    const { total_count, components } = await getDuplicateComponents(componentKind, modelName, apiVersion);
     setCount(total_count);
     setResourcesDetail(components);
   }
@@ -189,17 +189,17 @@ const DuplicatesDataTable = ({ view, rowData, classes }) => {
     else if (view === COMPONENTS) getDuplicatedComponents(kind, model, version);
   }, [])
 
-    return (
-        <div style={{ width: '100%' }}>
-            <MUIDataTable
-                title={<div className={classes.tableHeader}></div>}
-                data={resourcesDetail && resourcesDetail}
-                columns={meshmodel_columns}
-                options={meshmodel_options}
-                classes={classes}
-            />
-        </div>
-    );
+  return (
+    <div style={{ width : '100%' }}>
+      <MUIDataTable
+        title={<div className={classes.tableHeader}></div>}
+        data={resourcesDetail && resourcesDetail}
+        columns={meshmodel_columns}
+        options={meshmodel_options}
+        classes={classes}
+      />
+    </div>
+  );
 
 }
 
