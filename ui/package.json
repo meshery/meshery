@@ -121,7 +121,7 @@
     "@babel/core": "^7.21.3",
     "@babel/eslint-parser": "^7.18.2",
     "@babel/traverse": "^7.20.1",
-    "@babel/types": "^7.20.7",
+    "@babel/types": "^7.22.5",
     "@next/eslint-plugin-next": "^13.1.2",
     "@storybook/addon-interactions": "^6.5.16",
     "@storybook/addon-styling": "^1.0.8",
