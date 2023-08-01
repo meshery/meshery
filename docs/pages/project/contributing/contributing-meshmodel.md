@@ -79,7 +79,7 @@ Relationships within MeshModel play a crucial role in establishing concrete visu
 <summary>See all Visual Representations</summary>
     <details close><summary>Hierarchical</summary>
     <figure><br><figcaption>Hierarchical Parent</figcaption>
-    <img alt="Hierarchical Parent" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/hierarchical_relationship.png"/>
+    <img alt="Hierarchical Parent" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/hierachical_relationship_namespace_others.png"/>
     </figure>
     </details>
 
