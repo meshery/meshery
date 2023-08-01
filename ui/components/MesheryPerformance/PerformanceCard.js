@@ -134,7 +134,7 @@ function PerformanceCard({
     },
     {
       name : "Additional Option",
-      value : metadata?.additional_options ? JSON.stringify(JSON.parse(metadata?.additional_options), undefined, 2) : ''
+      value : (metadata?.additional_options && metadata?.additional_options[0] !== '') ? JSON.stringify(JSON.parse(metadata?.additional_options), null, 4) : ''
     },
     {
       name : "Running Duration",
@@ -217,7 +217,7 @@ function PerformanceCard({
             </Typography>
           </div>
         </div>
-        <div style={{ display : "flex", justifyContent : "space-between" }}>
+        <div style={{ }}>
           <div className={classes.bottomPart} >
             <Link href={`${MESHERY_CLOUD_PROD}/user/${profile.user_id}`} target="_blank">
               <Avatar alt="profile-avatar" src={userAvatar} />
@@ -330,10 +330,28 @@ function DetailsTable({ rowKey, value, omitEmpty }) {
     return null
   }
 
+  const MAX_TEXT_LENGTH = 150;
+  const [isExpanded, setIsExpanded] = useState(false);
+ 
+  const shouldShowButton = rowKey === 'Additional Option' && value && value.length > MAX_TEXT_LENGTH;
+  const displayText = isExpanded && rowKey === 'Additional Option' ? value : JSON.stringify(value)?.substr(0, MAX_TEXT_LENGTH);
+
+  const handleExpandClick = (e) => {
+    setIsExpanded((prevExpanded) => !prevExpanded);
+    e.stopPropagation()
+  };
+
   return (
     <TableRow>
       <TableCell><b>{rowKey}</b></TableCell>
-      <TableCell>{value || "none"}</TableCell>
+      <TableCell style={{ maxWidth: '300px', overflow: 'hidden' }}> 
+        <p>{rowKey === "Additional Option" ? displayText : value || "none"}</p>
+        {shouldShowButton && (
+          <Link onClick={handleExpandClick}>
+            {isExpanded ? 'Show Less' : 'Show More'}
+          </Link>
+        )}
+      </TableCell>
     </TableRow>
   )
 }
