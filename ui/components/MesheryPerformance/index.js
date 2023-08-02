@@ -1143,9 +1143,9 @@ class MesheryPerformanceComponent extends React.Component {
                           <TextField
                             size="small"
                             variant="outlined"
-                            label={metadata.ca_certificate.name || "Upload SSL Certificate e.g. .crt file"}
+                            label={this.state.caCertificate?.name || "Upload SSL Certificate e.g. .crt file"}
                             style={{ width : "100%", margin : '0.5rem 0' }}
-                            value={metadata.ca_certificate.name}
+                            value={metadata?.ca_certificate?.name}
                           />
                           <label htmlFor="upload-cacertificate"
                             className={classes.upload}
