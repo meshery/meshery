@@ -316,7 +316,8 @@ func (h *Handler) handlePatternPOST(
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
 // responses:
-// 	200: mesheryPatternsResponseWrapper
+//
+//	200: mesheryPatternsResponseWrapper
 func (h *Handler) GetMesheryPatternsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -359,7 +360,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 // ```?page={page-number}``` Default page number is 0
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10.
-// 
+//
 // ```?search={patternname}``` If search is non empty then a greedy search is performed
 // responses:
 //
@@ -461,7 +462,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 // Creates a local copy of a published pattern with id: id
 // responses:
 //
-//	200: noContentWrapper
+//	200 : noContentWrapper
 //
 // CloneMesheryPatternHandler clones a pattern with the given id
 func (h *Handler) CloneMesheryPatternHandler(
@@ -497,7 +498,7 @@ func (h *Handler) CloneMesheryPatternHandler(
 // Publishes pattern to Meshery Catalog by setting visibility to published and setting catalog data
 // responses:
 //
-//	200: noContentWrapper
+//	202: noContentWrapper
 //
 // PublishCatalogPatternHandler sets visibility of pattern with given id as published
 func (h *Handler) PublishCatalogPatternHandler(
@@ -526,6 +527,7 @@ func (h *Handler) PublishCatalogPatternHandler(
 
 	go h.config.ConfigurationChannel.PublishPatterns()
 	rw.Header().Set("Content-Type", "application/json")
+	rw.WriteHeader(http.StatusAccepted)
 	fmt.Fprint(rw, string(resp))
 }
 

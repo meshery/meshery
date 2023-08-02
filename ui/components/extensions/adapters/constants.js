@@ -34,15 +34,6 @@ export const adaptersList = {
     enabled : false,
     url : "",
   },
-  "meshery-octarine" : {
-    name : "Meshery Octarine",
-    label : "meshery-octarine",
-    imageSrc : "/static/img/octarine.svg",
-    description : adaptersDescription("Meshery Ocatrine"),
-    defaultPort : 10003,
-    enabled : false,
-    url : "",
-  },
   "NETWORK_SERVICE_MESH" : {
     name : "Network Service Mesh",
     label : "meshery-nsm",
@@ -89,15 +80,7 @@ export const adaptersList = {
   //   enabled: false,
   //   url: "",
   // },
-  "OPEN_SERVICE_MESH" : {
-    name : "Open Service Mesh",
-    label : "meshery-osm",
-    imageSrc : "/static/img/openservicemesh.svg",
-    description : adaptersDescription("Open Service Mesh"),
-    defaultPort : 10009,
-    enabled : false,
-    url : "",
-  },
+
   "NGINX_SERVICE_MESH" : {
     name : "Nginx Service Mesh",
     label : "meshery-nginx-sm",
