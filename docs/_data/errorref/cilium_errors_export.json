@@ -1,6 +1,6 @@
 {
   "errors_export": {
-    "component_name": "Meshery-Cilium",
+    "component_name": "CILIUM",
     "component_type": "adapter",
     "errors": {
       "1000": {

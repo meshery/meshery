@@ -39,18 +39,18 @@ var importCmd = &cobra.Command{
 	Long:  "Import a WASM filter from a URI (http/s) or local filesystem path",
 	Example: `
 // Import a filter file from local filesystem
-mesheryctl exp filter import /path/to/filter.wasm
+mesheryctl filter import /path/to/filter.wasm
 
 // Import a filter file from a remote URI
-mesheryctl exp filter import https://example.com/myfilter.wasm
+mesheryctl filter import https://example.com/myfilter.wasm
 
 // Add WASM configuration 
 // If the string is a valid file in the filesystem, the file is read and passed as a string. Otherwise, the string is passed as is.
 // Use quotes if the string contains spaces
-mesheryctl exp filter import /path/to/filter.wasm -config [filepath|string]
+mesheryctl filter import /path/to/filter.wasm --wasm-config [filepath|string]
 
 // Specify the name of the filter to be imported. Use quotes if the name contains spaces
-mesheryctl exp filter import /path/to/filter.wasm -name [string]
+mesheryctl filter import /path/to/filter.wasm --name [string]
 	`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -62,7 +62,7 @@ mesheryctl exp filter import /path/to/filter.wasm -name [string]
 		filterURL := mctlCfg.GetBaseMesheryURL() + "/api/filter"
 
 		if len(args) == 0 {
-			return errors.New(utils.FilterImportError("URI is required\nUse 'mesheryctl exp filter import --help' to display usage guide\n"))
+			return errors.New(utils.FilterImportError("URI is required\nUse 'mesheryctl filter import --help' to display usage guide\n"))
 		}
 
 		body := models.MesheryFilterRequestBody{
@@ -141,6 +141,6 @@ mesheryctl exp filter import /path/to/filter.wasm -name [string]
 }
 
 func init() {
-	importCmd.Flags().StringVarP(&cfg, "config", "c", "", "(optional) WASM configuration filepath/string")
+	importCmd.Flags().StringVarP(&cfg, "wasm-config", "w", "", "(optional) WASM configuration filepath/string")
 	importCmd.Flags().StringVarP(&name, "name", "n", "", "(optional) filter name")
 }

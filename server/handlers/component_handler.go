@@ -9,9 +9,9 @@ import (
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
-	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 )
 
 /**Meshmodel endpoints **/
@@ -33,7 +33,8 @@ const DefaultPageSizeForMeshModelComponents = 25
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-//  200: []meshmodelModelsResponseWrapper
+//
+//	200: []meshmodelModelsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -64,7 +65,7 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 		filter.Greedy = true
 		filter.Name = r.URL.Query().Get("search")
 	}
-	meshmodels, count, uniqueCount := h.registryManager.GetModels(h.dbHandler, filter)
+	meshmodels, count, _ := h.registryManager.GetModels(h.dbHandler, filter)
 
 	var pgSize int64
 	if limitstr == "all" {
@@ -73,12 +74,11 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 		pgSize = int64(limit)
 	}
 
-	res := models.MeshmodelsAPIResponse {
-		Page: page,
+	res := models.MeshmodelsDuplicateAPIResponse{
+		Page:     page,
 		PageSize: int(pgSize),
-		UniqueCount: uniqueCount,
-		Count: count,
-		Models: meshmodels,
+		Count:    count,
+		Models:   models.FindDuplicateModels(meshmodels),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -103,7 +103,8 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-//  200: []meshmodelModelsResponseWrapper
+//
+//	200: []meshmodelModelsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -127,7 +128,7 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 		page = 1
 	}
 	offset := (page - 1) * limit
-	meshmodels, count, uniqueCount := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
+	meshmodels, count, _ := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
 		Category: cat,
 		Name:     model,
 		Version:  r.URL.Query().Get("version"),
@@ -145,12 +146,11 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 		pgSize = int64(limit)
 	}
 
-	res := models.MeshmodelsAPIResponse {
-		Page: page,
+	res := models.MeshmodelsDuplicateAPIResponse{
+		Page:     page,
 		PageSize: int(pgSize),
-		Count: count,
-		UniqueCount: uniqueCount,
-		Models: meshmodels,
+		Count:    count,
+		Models:   models.FindDuplicateModels(meshmodels),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -160,7 +160,7 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 }
 
 // swagger:route GET /api/meshmodels/models GetMeshmodelModels idGetMeshmodelModels
-// Handle GET request for getting all meshmodel models and their total count.
+// Handle GET request for getting all meshmodel models
 //
 // # Returns a list of registered models across all categories
 //
@@ -176,7 +176,8 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-//	200: meshmodelModelsResponseWrapper
+//
+//	200: meshmodelModelsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -207,7 +208,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		filter.Greedy = true
 	}
 
-	meshmodels, count, uniqueCount := h.registryManager.GetModels(h.dbHandler, filter)
+	meshmodels, count, _ := h.registryManager.GetModels(h.dbHandler, filter)
 
 	var pgSize int64
 	if limitstr == "all" {
@@ -216,12 +217,11 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		pgSize = int64(limit)
 	}
 
-	res := models.MeshmodelsAPIResponse {
-		Page: page,
+	res := models.MeshmodelsDuplicateAPIResponse{
+		Page:     page,
 		PageSize: int(pgSize),
-		Count: count,
-		UniqueCount: uniqueCount,
-		Models: meshmodels,
+		Count:    count,
+		Models:   models.FindDuplicateModels(meshmodels),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -233,7 +233,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 // swagger:route GET /api/meshmodels/models/{model} GetMeshmodelModelsByName idGetMeshmodelModelsByName
 // Handle GET request for getting all meshmodel models. The component type/model name should be lowercase like "kubernetes", "istio"
 //
-// Returns a list of registered models across all categories
+// # Returns a list of registered models across all categories
 //
 // ```?version={version}``` If version is unspecified then all models are returned
 //
@@ -247,7 +247,8 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-//  200: []meshmodelModelsResponseWrapper
+//
+//	200: []meshmodelModelsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -271,7 +272,7 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 		page = 1
 	}
 	offset := (page - 1) * limit
-	meshmodels, count, uniqueCount := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
+	meshmodels, count, _ := h.registryManager.GetModels(h.dbHandler, &v1alpha1.ModelFilter{
 		Name:    name,
 		Version: v,
 		Limit:   limit,
@@ -288,12 +289,11 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 		pgSize = int64(limit)
 	}
 
-	res := models.MeshmodelsAPIResponse {
-		Page: page,
+	res := models.MeshmodelsDuplicateAPIResponse{
+		Page:     page,
 		PageSize: int(pgSize),
-		Count: count,
-		UniqueCount: uniqueCount,
-		Models: meshmodels,
+		Count:    count,
+		Models:   models.FindDuplicateModels(meshmodels),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -315,7 +315,8 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-//  200: []meshmodelCategoriesResponseWrapper
+//
+//	200: []meshmodelCategoriesResponseWrapper
 func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -343,7 +344,7 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 		filter.Greedy = true
 		filter.Name = r.URL.Query().Get("search")
 	}
-	
+
 	categories, count := h.registryManager.GetCategories(h.dbHandler, filter)
 
 	var pgSize int64
@@ -352,12 +353,12 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 		pgSize = count
 	} else {
 		pgSize = int64(limit)
-	} 
+	}
 
-	res := models.MeshmodelCategoriesAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: count,
+	res := models.MeshmodelCategoriesAPIResponse{
+		Page:       page,
+		PageSize:   int(pgSize),
+		Count:      count,
 		Categories: categories,
 	}
 
@@ -380,7 +381,8 @@ func (h *Handler) GetMeshmodelCategories(rw http.ResponseWriter, r *http.Request
 //
 // ```?search={[true/false]}``` If search is true then a greedy search is performed
 // responses:
-//  200: []meshmodelCategoriesResponseWrapper
+//
+//	200: []meshmodelCategoriesResponseWrapper
 func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -418,12 +420,12 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 		pgSize = count
 	} else {
 		pgSize = int64(limit)
-	} 
+	}
 
-	res := models.MeshmodelCategoriesAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: count,
+	res := models.MeshmodelCategoriesAPIResponse{
+		Page:       page,
+		PageSize:   int(pgSize),
+		Count:      count,
 		Categories: categories,
 	}
 
@@ -439,9 +441,9 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 // Example: ```/api/meshmodels/categories/Orchestration``` and Management/models/kubernetes/components/Namespace
 // Components can be further filtered through query parameter
 //
-// ```?version={version}``` If version is unspecified then all models are returned
+// ```?version={version}``` If version is unspecified then all model versions are returned
 //
-// ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+// ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all components are returned
 //
 // ```?order={field}``` orders on the passed field
 //
@@ -453,7 +455,7 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-// 200: []meshmodelComponentsResponseWrapper
+// 200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -479,14 +481,14 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 		page = 1
 	}
 	offset := (page - 1) * limit
-	entities, count, uniqueCount := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		Name:         name,
 		CategoryName: cat,
 		ModelName:    typ,
 		APIVersion:   r.URL.Query().Get("apiVersion"),
 		Version:      v,
 		Offset:       offset,
-		Greedy: 	  greedy,
+		Greedy:       greedy,
 		Limit:        limit,
 		OrderOn:      r.URL.Query().Get("order"),
 		Sort:         r.URL.Query().Get("sort"),
@@ -511,12 +513,11 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 		pgSize = int64(limit)
 	}
 
-	response := models.MeshmodelComponentsAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: *count,
-		Components: comps,
-		UniqueCount: *uniqueCount,
+	response := models.MeshmodelComponentsDuplicateAPIResponse{
+		Page:       page,
+		PageSize:   int(pgSize),
+		Count:      *count,
+		Components: models.FindDuplicateComponents(comps),
 	}
 
 	if err := enc.Encode(response); err != nil {
@@ -531,9 +532,11 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 // Example: ```/api/meshmodels/categories/Orchestration``` and Management/components/Namespace
 // Components can be further filtered through query parameter
 //
-// ```?version={version}``` If version is unspecified then all models are returned
+// ```?model={model}``` If model is unspecified then all models are returned
 //
-// ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+// ```?version={version}``` If version is unspecified then all model versions are returned
+//
+// ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all components are returned
 //
 // ```?order={field}``` orders on the passed field
 //
@@ -545,7 +548,8 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-//  200: []meshmodelComponentsResponseWrapper
+//
+//	200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -570,14 +574,15 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 		page = 1
 	}
 	offset := (page - 1) * limit
-	entities, count, uniqueCount := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		Name:         name,
+		ModelName:    r.URL.Query().Get("model"),
 		CategoryName: cat,
 		APIVersion:   r.URL.Query().Get("apiVersion"),
 		Version:      v,
 		Offset:       offset,
 		Limit:        limit,
-		Greedy: 	  greedy,
+		Greedy:       greedy,
 		OrderOn:      r.URL.Query().Get("order"),
 		Sort:         r.URL.Query().Get("sort"),
 	})
@@ -601,12 +606,11 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 		pgSize = int64(limit)
 	}
 
-	response := models.MeshmodelComponentsAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: *count,
-		Components: comps,
-		UniqueCount: *uniqueCount,
+	response := models.MeshmodelComponentsDuplicateAPIResponse{
+		Page:       page,
+		PageSize:   int(pgSize),
+		Count:      *count,
+		Components: models.FindDuplicateComponents(comps),
 	}
 
 	if err := enc.Encode(response); err != nil {
@@ -621,9 +625,9 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 // Example: ```/api/meshmodels/models/kubernetes/components/Namespace```
 // Components can be further filtered through query parameter
 //
-// ```?version={version}``` If version is unspecified then all models are returned
+// ```?version={version}``` If version is unspecified then all model versions are returned
 //
-// ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+// ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all components are returned
 //
 // ```?order={field}``` orders on the passed field
 //
@@ -635,7 +639,8 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-//  200: []meshmodelComponentsResponseWrapper
+//
+//	200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -660,7 +665,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 		page = 1
 	}
 	offset := (page - 1) * limit
-	entities, count, uniqueCount := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		Name:       name,
 		ModelName:  typ,
 		APIVersion: r.URL.Query().Get("apiVersion"),
@@ -691,12 +696,11 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 		pgSize = int64(limit)
 	}
 
-	response := models.MeshmodelComponentsAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: *count,
-		Components: comps,
-		UniqueCount: *uniqueCount,
+	response := models.MeshmodelComponentsDuplicateAPIResponse{
+		Page:       page,
+		PageSize:   int(pgSize),
+		Count:      *count,
+		Components: models.FindDuplicateComponents(comps),
 	}
 
 	if err := enc.Encode(response); err != nil {
@@ -711,9 +715,11 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 // Example: ```/api/meshmodels/components/Namespace```
 // Components can be further filtered through query parameter
 //
-// ```?version={version}``` If version is unspecified then all models are returned
+// ```?model={model}``` If model is unspecified then all models are returned
 //
-// ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+// ```?version={version}``` If version is unspecified then all model versions are returned
+//
+// ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all components are returned
 //
 // ```?order={field}``` orders on the passed field
 //
@@ -727,7 +733,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-// 200: []meshmodelComponentsResponseWrapper
+// 200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -751,14 +757,15 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 		page = 1
 	}
 	offset := (page - 1) * limit
-	entities, count, uniqueCount := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
 		Name:       name,
 		Trim:       r.URL.Query().Get("trim") == "true",
 		APIVersion: r.URL.Query().Get("apiVersion"),
 		Version:    v,
+		ModelName:  r.URL.Query().Get("model"),
 		Offset:     offset,
 		Limit:      limit,
-		Greedy: 	greedy,
+		Greedy:     greedy,
 		OrderOn:    r.URL.Query().Get("order"),
 		Sort:       r.URL.Query().Get("sort"),
 	})
@@ -775,7 +782,6 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 		}
 	}
 
-
 	var pgSize int64
 	if limitstr == "all" {
 		pgSize = *count
@@ -783,12 +789,11 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 		pgSize = int64(limit)
 	}
 
-	response := models.MeshmodelComponentsAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: *count,
-		Components: comps,
-		UniqueCount: *uniqueCount,
+	response := models.MeshmodelComponentsDuplicateAPIResponse{
+		Page:       page,
+		PageSize:   int(pgSize),
+		Count:      *count,
+		Components: models.FindDuplicateComponents(comps),
 	}
 
 	if err := enc.Encode(response); err != nil {
@@ -819,7 +824,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-// 200: []meshmodelComponentsResponseWrapper
+// 200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -853,7 +858,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		filter.Greedy = true
 		filter.Name = r.URL.Query().Get("search")
 	}
-	entities, count, uniqueCount := h.registryManager.GetEntities(filter)
+	entities, count, _ := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
 		comp, ok := r.(v1alpha1.ComponentDefinition)
@@ -874,14 +879,13 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		pgSize = int64(limit)
 	}
 
-	response := models.MeshmodelComponentsAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: *count,
-		Components: comps,
-		UniqueCount: *uniqueCount,
+	response := models.MeshmodelComponentsDuplicateAPIResponse{
+		Page:       page,
+		PageSize:   int(pgSize),
+		Count:      *count,
+		Components: models.FindDuplicateComponents(comps),
 	}
-	
+
 	if err := enc.Encode(response); err != nil {
 		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
@@ -912,7 +916,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 //
 // responses:
-// 200: []meshmodelComponentsResponseWrapper
+// 200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -948,7 +952,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		filter.Greedy = true
 		filter.Name = r.URL.Query().Get("search")
 	}
-	entities, count, uniqueCount := h.registryManager.GetEntities(filter)
+	entities, count, _ := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
 		comp, ok := r.(v1alpha1.ComponentDefinition)
@@ -969,12 +973,11 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		pgSize = int64(limit)
 	}
 
-	response := models.MeshmodelComponentsAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: *count,
-		Components: comps,
-		UniqueCount: *uniqueCount,
+	response := models.MeshmodelComponentsDuplicateAPIResponse{
+		Page:       page,
+		PageSize:   int(pgSize),
+		Count:      *count,
+		Components: models.FindDuplicateComponents(comps),
 	}
 
 	if err := enc.Encode(response); err != nil {
@@ -986,7 +989,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 // swagger:route GET /api/meshmodels/categories/{category}/components GetMeshmodelComponentByCategory idGetMeshmodelComponentByCategory
 // Handle GET request for getting meshmodel components of a specific model and category.
 //
-// Components can be further filtered through query parameter
+// # Components can be further filtered through query parameter
 //
 // ```?version={version}```
 //
@@ -1004,7 +1007,8 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-//  200: []meshmodelComponentsResponseWrapper
+//
+//	200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -1038,7 +1042,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		filter.Greedy = true
 		filter.Name = r.URL.Query().Get("search")
 	}
-	entities, count, uniqueCount := h.registryManager.GetEntities(filter)
+	entities, count, _ := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
 		comp, ok := r.(v1alpha1.ComponentDefinition)
@@ -1059,12 +1063,11 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		pgSize = int64(limit)
 	}
 
-	response := models.MeshmodelComponentsAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: *count,
-		Components: comps,
-		UniqueCount: *uniqueCount,
+	response := models.MeshmodelComponentsDuplicateAPIResponse{
+		Page:       page,
+		PageSize:   int(pgSize),
+		Count:      *count,
+		Components: models.FindDuplicateComponents(comps),
 	}
 
 	if err := enc.Encode(response); err != nil {
@@ -1074,7 +1077,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 }
 
 // swagger:route GET /api/meshmodels/components GetAllMeshmodelComponents idGetAllMeshmodelComponents
-// Handle GET request for getting meshmodel components across all models and categories and their total count.
+// Handle GET request for getting meshmodel components across all models and categories
 //
 // # Components can be further filtered through query parameter
 //
@@ -1094,7 +1097,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-//  200: meshmodelComponentsResponseWrapper
+//  200: meshmodelComponentsDuplicateResponseWrapper
 
 func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
@@ -1128,7 +1131,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 		filter.Greedy = true
 		filter.DisplayName = r.URL.Query().Get("search")
 	}
-	entities, count, uniqueCount := h.registryManager.GetEntities(filter)
+	entities, count, _ := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
 		comp, ok := r.(v1alpha1.ComponentDefinition)
@@ -1141,21 +1144,20 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 			comps = append(comps, comp)
 		}
 	}
-	
+
 	var pgSize int64
 
 	if limitstr == "all" {
 		pgSize = *count
 	} else {
 		pgSize = int64(limit)
-	} 
+	}
 
-	res := models.MeshmodelComponentsAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: *count,
-		Components: comps,
-		UniqueCount: *uniqueCount,
+	res := models.MeshmodelComponentsDuplicateAPIResponse{
+		Page:       page,
+		PageSize:   int(pgSize),
+		Count:      *count,
+		Components: models.FindDuplicateComponents(comps),
 	}
 
 	if err := enc.Encode(res); err != nil {

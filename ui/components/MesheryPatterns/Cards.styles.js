@@ -91,12 +91,18 @@ const useStyles = makeStyles((theme) => ({
   },
   btnText : {
     [theme.breakpoints.down(1370)] : { display : "none" },
+    [`${theme.breakpoints.up(1920)} and (max-width: 2200px)`] : {
+      display : "none",
+    },
     marginLeft : "5px",
     display : "flex",
     justifyContent : "center",
   },
   cloneBtnText : {
     [theme.breakpoints.down(1370)] : { display : "none" },
+    [`${theme.breakpoints.up(1920)} and (max-width: 2200px)`] : {
+      display : "none",
+    },
     display : "flex",
     justifyContent : "center",
     marginLeft : "3px",

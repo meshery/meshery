@@ -13,6 +13,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"reflect"
 	"strconv"
 	"strings"
 	"sync"
@@ -322,7 +323,8 @@ func (l *RemoteProvider) GetUserDetails(req *http.Request) (*User, error) {
 	}
 
 	prefLocal, _ := l.ReadFromPersister(up.UserID)
-	if prefLocal == nil || up.Preferences.UpdatedAt.After(prefLocal.UpdatedAt) {
+
+	if prefLocal == nil || up.Preferences.UpdatedAt.After(prefLocal.UpdatedAt) || !reflect.DeepEqual(up.Preferences.RemoteProviderPreferences, prefLocal.RemoteProviderPreferences) {
 		_ = l.WriteToPersister(up.UserID, up.Preferences)
 	}
 
@@ -2460,9 +2462,8 @@ func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path s
 		"filter_data": MesheryFilter{
 			FilterResource: resource,
 		},
-
 	})
-	
+
 	if err != nil {
 		err = ErrMarshal(err, "meshery metrics for shipping")
 		return nil, err
@@ -3618,6 +3619,38 @@ func (l *RemoteProvider) GetConnections(req *http.Request, _ string, page, pageS
 	}
 
 	var cp ConnectionPage
+	if err = json.Unmarshal(bdr, &cp); err != nil {
+		return nil, err
+	}
+	return &cp, nil
+}
+
+func (l *RemoteProvider) GetConnectionsStatus(req *http.Request, userID string) (*ConnectionsStatusPage, error) {
+	if !l.Capabilities.IsSupported(PersistConnection) {
+		logrus.Error("operation not available")
+		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
+	}
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/status", l.RemoteProviderURL, ep))
+
+	logrus.Debugf("Making request to : %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		return nil, ErrFetch(err, "Connections Status Page", resp.StatusCode)
+	}
+	defer resp.Body.Close()
+
+	bdr, _ := io.ReadAll(resp.Body)
+	if resp.StatusCode != http.StatusOK {
+		return nil, ErrFetch(fmt.Errorf("could not retrieve list of connections status: %d", resp.StatusCode), fmt.Sprint(bdr), resp.StatusCode)
+	}
+
+	var cp ConnectionsStatusPage
 	if err = json.Unmarshal(bdr, &cp); err != nil {
 		return nil, err
 	}
