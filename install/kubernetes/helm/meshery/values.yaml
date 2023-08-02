@@ -97,47 +97,47 @@ affinity: {}
 # If need to use a different service accounts for the adapters, modify the serviceAccountNameOverride for the corresponding adapters here,
 # or set the serviceAccountNameOverride to empty while setting the serviceAccount information in the sub-chart accordingly
 meshery-app-mesh:
-  enabled: true
+  enabled: false
   fullnameOverride: meshery-app-mesh
   serviceAccountNameOverride: meshery-server
 
 meshery-istio:
-  enabled: true
+  enabled: false
   fullnameOverride: meshery-istio
   serviceAccountNameOverride: meshery-server
 
 meshery-linkerd:
-  enabled: true
+  enabled: false
   fullnameOverride: meshery-linkerd
   serviceAccountNameOverride: meshery-server
 
 meshery-consul:
-  enabled: true
+  enabled: false
   fullnameOverride: meshery-consul
   serviceAccountNameOverride: meshery-server
 
 meshery-kuma:
-  enabled: true
+  enabled: false
   fullnameOverride: meshery-kuma
   serviceAccountNameOverride: meshery-server
 
 meshery-osm:
-  enabled: true
+  enabled: false
   fullnameOverride: meshery-osm
   serviceAccountNameOverride: meshery-server
 
 meshery-nsm:
-  enabled: true
+  enabled: false
   fullnameOverride: meshery-nsm
   serviceAccountNameOverride: meshery-server
 
 meshery-nginx-sm:
-  enabled: true
+  enabled: false
   fullnameOverride: meshery-nginx-sm
   serviceAccountNameOverride: meshery-server
 
 meshery-traefik-mesh:
-  enabled: true
+  enabled: false
   fullnameOverride: meshery-traefik-mesh
   serviceAccountNameOverride: meshery-server
 
@@ -147,7 +147,7 @@ meshery-operator:
   fullnameOverride: meshery-operator
 
 meshery-cilium:
-  enabled: true
+  enabled: false
   fullnameOverride: meshery-cilium
 
 meshery-perf:
