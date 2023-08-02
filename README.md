@@ -52,6 +52,11 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
  <br /><a href="https://youtu.be/Do7htKrRzDA">Click to see Meshery Playground video</a>
 </div>
 
+
+[![](https://badges.layer5.io/bring-a-buddy.html)](https://meshery.layer5.io/user/090e7114-509a-4046-81f1-9c5fb8daf724?tab=badges)
+
+<img src="https://badges.layer5.io/assets/badges/bring-a-buddy/bring-a-buddy.svg" />
+<img src="https://badges.layer5.io/bring-a-buddy.svg" />
 <br />
 <br />
 
@@ -243,22 +248,6 @@ Meshery is the cloud native utility for uniformly managing the performance of mi
 <br /><br />
 
 </p>
-<h4>Conforming to Service Mesh Interface (SMI)</h4>
-
-<p style="clear:both;">
-
-Meshery provides tooling to validate any service mesh that claims to implement and conform to SMI specifications. Working in accordance with the [SMI Conformance project](https://layer5.io/projects/service-mesh-interface-conformance), it essentially provides:
-
-✔︎ Defines compliant behavior.<br />
-✔︎ Produces compatibility matrix. <br />
-✔︎ Ensures provenance of results. <br />
-✔︎ Runs a set of conformance tests. <br />
-✔︎ Built into the participating service mesh’s release pipeline. <br />
-✔︎ Provides [Learn Layer5](https://github.com/layer5io/learn-layer5) sample application used for validating test assertions.
-<a href="https://docs.meshery.io/assets/img/readme/smi-conformance-with-meshery.png"><img alt="SMI Validation, Verification, and Conformance with Meshery" src="https://docs.meshery.io/assets/img/readme/smi-conformance-with-meshery.png" style="margin-right:10px;margin-bottom:10px;" width="100%" align="left" /></a>
-<br />
-<br /><br /><br /><br />
-<div>&nbsp;</div>
 
 ## Meshery Architecture
 
