@@ -84,10 +84,8 @@ require (
 )
 
 require (
-	fortio.org/cli v1.2.0 // indirect
 	fortio.org/dflag v1.5.2 // indirect
 	fortio.org/log v1.8.1 // indirect
-	fortio.org/scli v1.9.0 // indirect
 	fortio.org/sets v1.0.3 // indirect
 	fortio.org/version v1.0.2 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 // indirect
