@@ -176,7 +176,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
       <Box sx={{
         display : 'flex',
         flexWrap : 'wrap',
-        justifyContent : 'space-between',
+        justifyContent : 'space-evenly',
         gap : '40px',
       }}>
         {patterns.map((pattern) => (
