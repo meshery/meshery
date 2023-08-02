@@ -86,3 +86,43 @@ Meshery chart for deploying Meshery
 | testCase.enabled | bool | `false` |  |
 | tolerations | list | `[]` |  |
 
+## Setup Repo Info
+
+```console
+helm repo add meshery meshery https://meshery.io/charts/
+helm repo update
+```
+
+_See [helm repo](https://helm.sh/docs/helm/helm_repo/) for command documentation._
+
+## Installing the Chart
+
+To install the chart with the release name `meshery`:
+
+```console
+kubectl create namespace meshery
+helm install meshery meshery/meshery
+```
+
+## Uninstalling the Chart
+
+To uninstall/delete the `istiod` deployment:
+
+```console
+helm delete meshery
+```
+
+## Installing the Chart with a custom namespace
+
+```console
+kubectl create namespace custom-namespace
+helm install meshery meshery/meshery --set metadata.namespace=custom-namespace
+```
+
+## Installing the Chart with a custom Meshery Adapters
+
+Eg: For [Meshery Adapter for Istio](https://github.com/meshery/meshery-istio)
+```console
+kubectl create namespace meshery
+helm install meshery meshery/meshery --set meshery-istio.enabled=true
+```
