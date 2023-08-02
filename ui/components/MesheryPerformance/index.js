@@ -101,6 +101,19 @@ function generatePerformanceProfile(data) {
 // =============================== PERFORMANCE COMPONENT =======================
 
 const loadGenerators = ["fortio", "wrk2", "nighthawk"];
+
+const infoFlags = (
+  <>
+  Only .json files are supported.
+  </>
+)
+
+const infoCRTCertificates = (
+  <>
+  Only .crt files are supported.
+  </>
+);
+
 const infoloadGenerators = (
   <>
     Which load generators does Meshery support?
@@ -210,6 +223,7 @@ class MesheryPerformanceComponent extends React.Component {
       cookies,
       reqBody,
       contentType,
+      metadata,
     } = props;
 
     this.state = {
@@ -243,7 +257,8 @@ class MesheryPerformanceComponent extends React.Component {
       availableAdapters : [],
       availableSMPMeshes : [],
       disableAvailableOptionsUploadButton : false,
-      disableAvailableOptionsInputField : false
+      disableAvailableOptionsInputField : false,
+      metadata
     };
   }
 
@@ -795,7 +810,9 @@ class MesheryPerformanceComponent extends React.Component {
       tValue,
       disableTest,
       profileName,
+      metadata
     } = this.state;
+
     let staticPrometheusBoardConfig;
     if (
       this.props.staticPrometheusBoardConfig &&
@@ -1115,6 +1132,9 @@ class MesheryPerformanceComponent extends React.Component {
                               <input id="upload-additional-options"  type="file" accept={".json"} name="upload-button" hidden  data-cy="additional-options-upload-button" />
                               Browse
                             </Button>
+                            <Tooltip title={infoFlags} interactive>
+                              <HelpOutlineOutlinedIcon className={classes.smallIcons} />
+                            </Tooltip>
                           </label>
                         </Grid>
                       </Grid>
@@ -1123,9 +1143,9 @@ class MesheryPerformanceComponent extends React.Component {
                           <TextField
                             size="small"
                             variant="outlined"
-                            label={this.state.caCertificate?.name || "Upload SSL Certificate e.g. .crt file"}
+                            label={metadata.ca_certificate.name || "Upload SSL Certificate e.g. .crt file"}
                             style={{ width : "100%", margin : '0.5rem 0' }}
-                            value={this.state.caCertificate?.name}
+                            value={metadata.ca_certificate.name}
                           />
                           <label htmlFor="upload-cacertificate"
                             className={classes.upload}
@@ -1140,6 +1160,9 @@ class MesheryPerformanceComponent extends React.Component {
                               <input id="upload-cacertificate" type="file" accept={".crt"} name="upload-button"  hidden data-cy="cacertificate-upload-button" />
                               Browse
                             </Button>
+                            <Tooltip title={infoCRTCertificates} interactive>
+                              <HelpOutlineOutlinedIcon className={classes.smallIcons} />
+                            </Tooltip>
                           </label>
                         </Grid>
                       </Grid>

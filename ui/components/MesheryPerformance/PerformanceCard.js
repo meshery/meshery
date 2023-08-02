@@ -332,7 +332,7 @@ function DetailsTable({ rowKey, value, omitEmpty }) {
 
   const MAX_TEXT_LENGTH = 150;
   const [isExpanded, setIsExpanded] = useState(false);
- 
+
   const shouldShowButton = rowKey === 'Additional Option' && value && value.length > MAX_TEXT_LENGTH;
   const displayText = isExpanded && rowKey === 'Additional Option' ? value : JSON.stringify(value)?.substr(0, MAX_TEXT_LENGTH);
 
@@ -344,7 +344,7 @@ function DetailsTable({ rowKey, value, omitEmpty }) {
   return (
     <TableRow>
       <TableCell><b>{rowKey}</b></TableCell>
-      <TableCell style={{ maxWidth: '300px', overflow: 'hidden' }}> 
+      <TableCell style={{ maxWidth : '300px', overflow : 'hidden' }}>
         <p>{rowKey === "Additional Option" ? displayText : value || "none"}</p>
         {shouldShowButton && (
           <Link onClick={handleExpandClick}>
