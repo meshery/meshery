@@ -62,6 +62,14 @@ default.profraw
 **errorutil_analyze_summary.json
 **errorutil_errors_export.json
 .ruby-version
+<<<<<<< HEAD
 
 wasm/policies/temp-bundle-extract-dir/**
+=======
+<<<<<<< HEAD
+>>>>>>> 108b28535 (add the wasm settings to load policy in MeshMap)
 .nvim.lua
+=======
+
+wasm/policies/temp-bundle-extract-dir/**
+>>>>>>> f266651b0 (add the wasm settings to load policy in MeshMap)
