@@ -47,7 +47,7 @@ If your Meshery setup is done then, you can start meshery (eg : `$ mesheryctl sy
 
 4. Click on "Designs".
 
-<img src="{{site.baseurl}}/assets/img/meshery-design/design-location.png" />
+<img src="{{site.baseurl}}/assets/img/meshery-design/location.png" />
 
 
 ## IMPORT YOUR DESIGNS
@@ -60,7 +60,7 @@ where you had uploaded your Configuration file (github/gitlab).
 3.  Provide the file name
 
 
-<img src="{{site.baseurl}}/assets/img/meshery-design/import-design.png" />
+<img src="{{site.baseurl}}/assets/img/meshery-design/import.png" />
 
 ## CREATE YOUR DESIGN 
 
@@ -73,4 +73,4 @@ where you had uploaded your Configuration file (github/gitlab).
 4. Write your Configuration file.
 
 
-<img src="{{site.baseurl}}/assets/img/meshery-design/create-design.png" />
+<img src="{{site.baseurl}}/assets/img/meshery-design/create.png" />
