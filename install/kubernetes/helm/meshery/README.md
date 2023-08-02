@@ -106,7 +106,7 @@ helm install meshery meshery/meshery
 
 ## Uninstalling the Chart
 
-To uninstall/delete the `istiod` deployment:
+To uninstall/delete the `meshery` deployment:
 
 ```console
 helm delete meshery
