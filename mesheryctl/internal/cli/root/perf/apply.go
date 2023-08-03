@@ -48,10 +48,6 @@ var (
 	filePath           string
 	profileID          string
 	req                *http.Request
-	loadTestBody       string
-	additionalOptions  string
-	certPath           string
-	disableCert        bool
 )
 
 var linkDocPerfApply = map[string]string{
@@ -60,49 +56,31 @@ var linkDocPerfApply = map[string]string{
 }
 
 var applyCmd = &cobra.Command{
-	Use:   "apply <profile-name>",
+	Use:   "apply [profile-name | --file] --flags",
 	Short: "Run a Performance test",
 	Long:  `Run Performance test using existing profiles or using flags`,
 	Args:  cobra.MinimumNArgs(0),
 	Example: `
 // Execute a Performance test with the specified performance profile
-mesheryctl perf apply meshery-profile [flags]
+mesheryctl perf apply meshery-profile --flags
 
 // Execute a Performance test with creating a new performance profile
 mesheryctl perf apply meshery-profile-new --url "https://google.com"
 
-// Execute a Performance test creating a new performance profile and pass certificate to be used 
-mesheryctl perf apply meshery-profile-new --url "https://google.com" --cert-path path/to/cert.pem
-
-// Execute a performance profile without using the certificate present in the profile
-mesheryctl perf apply meshery-profile --url "https://google.com" --disable-cert
-
 // Run Performance test using SMP compatible test configuration
-// If the profile already exists, the test will be run overriding the values with the ones provided in the configuration file
-mesheryctl perf apply meshery-profile -f path/to/perf-config.yaml
+mesheryctl perf apply -f perf-config.yaml
 
 // Run performance test using SMP compatible test configuration and override values with flags
-mesheryctl perf apply meshery-profile -f path/to/perf-config.yaml [flags]
+mesheryctl perf apply -f [filepath] --flags
 
-// Choice of load generator - fortio, wrk2 or nighthawk (default: fortio)
-mesheryctl perf apply meshery-profile --load-generator wrk2
+// Choice of load generator - fortio or wrk2 (default: fortio)
+mesheryctl perf apply meshery-test --load-generator wrk2
 
 // Execute a Performance test with specified queries per second
-mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --qps 30
+mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --qps 30
 
 // Execute a Performance test with specified service mesh
-mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --mesh istio
-
-// Execute a Performance test creating a new performance profile and pass options to the load generator used
-// If any options are already present in the profile or passed through flags, the --options flag will take precedence over the profile and flag options 
-// Options for nighthawk - https://github.com/layer5io/getnighthawk/blob/v1.0.5/pkg/proto/options.pb.go#L882-L1018
-// Options for fortio - https://github.com/fortio/fortio/blob/v1.57.0/fhttp/httprunner.go#L77-L84
-// Options for wrk2 - https://github.com/layer5io/gowrk2/blob/v0.6.1/api/gowrk2.go#L47-L53
-mesheryctl perf apply meshery-profile-new --url "https://google.com" --options [filepath|json-string]
-mesheryctl perf apply meshery-profile-new --url "https://google.com" --options path/to/options.json
-mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator nighthawk --options '{"requests_per_second": 10, "max_pending_requests": 5}'
-mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator fortio --options '{"MethodOverride": "POST"}'
-mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator wrk2 --options '{"DurationInSeconds": 15, "Thread": 3}'
+mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh istio
 	`,
 	Annotations: linkDocPerfApply,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -165,10 +143,6 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 
 			if loadGenerator == "" {
 				loadGenerator = testClient.LoadGenerator
-			}
-
-			if loadTestBody == "" {
-				loadTestBody = testClient.Body
 			}
 		}
 
@@ -241,33 +215,14 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 			}
 
 			// reset profile name without %20
-			// pull test configuration from the profile only if a test configuration is not provided and flag is not set
+			// pull test configuration from the profile only if a test configuration is not provided
 			if filePath == "" {
 				profileName = profiles[index].Name
-
-				if loadGenerator == "" {
-					loadGenerator = profiles[index].LoadGenerators[0]
-				}
-
-				if concurrentRequests == "" {
-					concurrentRequests = strconv.Itoa(profiles[index].ConcurrentRequest)
-				}
-
-				if qps == "" {
-					qps = strconv.Itoa(profiles[index].QPS)
-				}
-
-				if testDuration == "" {
-					testDuration = profiles[index].Duration
-				}
-
-				if testMesh == "" {
-					testMesh = profiles[index].ServiceMesh
-				}
-
-				if loadTestBody == "" {
-					loadTestBody = profiles[index].RequestBody
-				}
+				loadGenerator = profiles[index].LoadGenerators[0]
+				concurrentRequests = strconv.Itoa(profiles[index].ConcurrentRequest)
+				qps = strconv.Itoa(profiles[index].QPS)
+				testDuration = profiles[index].Duration
+				testMesh = profiles[index].ServiceMesh
 			}
 		}
 
@@ -290,15 +245,11 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 
 		q := req.URL.Query()
 
-		if !disableCert {
-			q.Add("cert", "true")
-		}
 		q.Add("name", testName)
 		q.Add("loadGenerator", loadGenerator)
 		q.Add("c", concurrentRequests)
 		q.Add("url", testURL)
 		q.Add("qps", qps)
-		q.Add("reqBody", loadTestBody)
 
 		durLen := len(testDuration)
 
@@ -337,12 +288,8 @@ func init() {
 	applyCmd.Flags().StringVar(&qps, "qps", "", "(optional) Queries per second")
 	applyCmd.Flags().StringVar(&concurrentRequests, "concurrent-requests", "", "(optional) Number of Parallel Requests")
 	applyCmd.Flags().StringVar(&testDuration, "duration", "", "(optional) Length of test (e.g. 10s, 5m, 2h). For more, see https://golang.org/pkg/time/#ParseDuration")
-	applyCmd.Flags().StringVar(&loadGenerator, "load-generator", "", "(optional) Load-Generator to be used (fortio/wrk2/nighthawk)")
-	applyCmd.Flags().StringVarP(&filePath, "file", "f", "", "(optional) File containing SMP-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
-	applyCmd.Flags().StringVarP(&loadTestBody, "body", "b", "", "(optional) Load test body. Can be a filepath/string")
-	applyCmd.Flags().StringVar(&additionalOptions, "options", "", "(optional) Additional options to be passed to the load generator. Can be a json string or a filepath containing json")
-	applyCmd.Flags().StringVar(&certPath, "cert-path", "", "(optional) Path to the certificate to be used for the load test")
-	applyCmd.Flags().BoolVar(&disableCert, "disable-cert", false, "(optional) Do not use certificate present in the profile")
+	applyCmd.Flags().StringVar(&loadGenerator, "load-generator", "", "(optional) Load-Generator to be used (fortio/wrk2)")
+	applyCmd.Flags().StringVarP(&filePath, "file", "f", "", "(optional) file containing SMP-compatible test configuration. For more, see https://github.com/layer5io/service-mesh-performance-specification")
 }
 
 func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string, error) {
@@ -382,18 +329,6 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 		loadGenerator = "fortio"
 	}
 
-	if loadTestBody != "" {
-		// Check if the loadTestBody is a filepath or a string
-		if _, err := os.Stat(loadTestBody); err == nil {
-			utils.Log.Info("Reading test body from file")
-			bodyFile, err := os.ReadFile(loadTestBody)
-			if err != nil {
-				return "", "", ErrReadFilepath(err)
-			}
-			loadTestBody = string(bodyFile)
-		}
-	}
-
 	convReq, err := strconv.Atoi(concurrentRequests)
 	if err != nil {
 		return "", "", errors.New("failed to convert concurrent-request")
@@ -410,49 +345,10 @@ func createPerformanceProfile(mctlCfg *config.MesheryCtlConfig) (string, string,
 		"name":               profileName,
 		"qps":                convQPS,
 		"service_mesh":       testMesh,
-		"request_body":       loadTestBody,
+		"request_body":       "",
 		"request_cookies":    "",
 		"request_headers":    "",
 		"content_type":       "",
-	}
-
-	if additionalOptions != "" {
-		// Check if the additionalOptions is a filepath or a string
-		if _, err := os.Stat(additionalOptions); err == nil {
-			optFile, err := os.ReadFile(additionalOptions)
-			if err != nil {
-				return "", "", errors.New("unable to read options file. " + err.Error())
-			}
-			additionalOptions = string(optFile)
-		}
-
-		// Check if the additionalOptions is a valid json
-		if !govalidator.IsJSON(additionalOptions) {
-			return "", "", errors.New("invalid json passed as options")
-		}
-
-		values["metadata"] = map[string]interface{}{
-			"additional_options": additionalOptions,
-		}
-	}
-
-	if fileInfo, err := os.Stat(certPath); err == nil {
-		certFile, err := os.ReadFile(certPath)
-		if err != nil {
-			return "", "", errors.New("unable to read certificate file. " + err.Error())
-		}
-		certData := string(certFile)
-		certName := fileInfo.Name()
-
-		// check if values["metadata"] is nil
-		if values["metadata"] == nil {
-			values["metadata"] = map[string]interface{}{}
-		}
-
-		values["metadata"].(map[string]interface{})["ca_certificate"] = map[string]interface{}{
-			"name":     certName,
-			"certName": certData,
-		}
 	}
 
 	jsonValue, err := json.Marshal(values)
