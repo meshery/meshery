@@ -64,7 +64,7 @@ func (h *Handler) SaveScheduleHandler(
 // swagger:route GET /api/user/schedules SchedulesAPI idGetSchedules
 // Handle GET request for Schedules
 //
-// Returns the list of all the schedules saved by the current user
+// # Returns the list of all the schedules saved by the current user
 //
 // ```?order={field}``` orders on the passed field
 //
@@ -72,7 +72,8 @@ func (h *Handler) SaveScheduleHandler(
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
 // responses:
-// 	200: schedulesResponseWrapper
+//
+//	200: schedulesResponseWrapper
 func (h *Handler) GetSchedulesHandler(
 	rw http.ResponseWriter,
 	r *http.Request,

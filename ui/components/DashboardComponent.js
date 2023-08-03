@@ -1240,6 +1240,7 @@ class DashboardComponent extends React.Component {
   };
 
   render() {
+    // console.info("Rerendering Dashboard")
     return this.configureTemplate();
   }
 }

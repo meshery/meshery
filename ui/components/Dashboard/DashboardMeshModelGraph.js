@@ -1,5 +1,5 @@
 import Grid from "@material-ui/core/Grid";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Typography
 } from "@material-ui/core";
@@ -20,17 +20,27 @@ const useFetchTotal = (fetchr) => {
 }
 
 function MeshModelContructs({ classes }) {
+
+  // API Calls
   const totalModels = useFetchTotal(() => getMeshModels(1, 1))
   const totalComponents = useFetchTotal(() => getAllComponents(1, 1))
   const totalRelationships = useFetchTotal(() => getRelationshipsDetail(1, 1))
-  // TODO: Add Policies
-  const data = [
-    ["Models", totalModels],
-    ["Components", totalComponents],
-    ["Relationships", totalRelationships]
-    // TODO: Add Policies
-  ]
-  const chartOptions = {
+
+  // Data Cleanup
+  const data = useMemo(() => {
+    if (totalModels && totalRelationships && totalComponents){
+      // TODO: Add Policies
+      return [
+        ["Models", totalModels],
+        ["Components", totalComponents],
+        ["Relationships", totalRelationships]
+        // TODO: Add Policies
+      ]
+    }
+    return []
+  }, [totalModels,totalRelationships,totalComponents])
+
+  const chartOptions = useMemo(() => ({
     data : {
       columns : data,
       type : donut(),
@@ -52,7 +62,7 @@ function MeshModelContructs({ classes }) {
         }
       }
     },
-  }
+  }) , [data])
 
   return (
     <div className={classes.dashboardSection}>
@@ -72,8 +82,13 @@ function MeshModelContructs({ classes }) {
 function MeshModelCategories({ classes }) {
 
   const [categoryMap, setCategoryMap] = useState({})
-  const cleanedData = Object.keys(categoryMap).map((key) => ([key, categoryMap[key]]))
-  const chartOptions = {
+  const cleanedData = useMemo(() =>
+    Object
+      .keys(categoryMap)
+      .map((key) => ([key, categoryMap[key]]))
+  ,[categoryMap])
+
+  const chartOptions =useMemo(() => ({
 
     data : {
       columns : cleanedData,
@@ -90,8 +105,11 @@ function MeshModelCategories({ classes }) {
     legend : {
       show : false
     }
-  }
+  }) , [cleanedData])
+
+  // API Calls
   useEffect(() => {
+
     fetchCategories().then((categoriesJson) => {
       categoriesJson['categories'].forEach((category) => {
         let categoryName = category.name
@@ -115,8 +133,7 @@ function MeshModelCategories({ classes }) {
   )
 }
 
-export default function DashboardMeshModelGraph({ classes }) {
-
+const MeshModelGraph =  ({ classes }) =>  {
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} md={6}>
@@ -129,3 +146,6 @@ export default function DashboardMeshModelGraph({ classes }) {
 
     </Grid>)
 }
+
+MeshModelGraph.displayName = "MeshModalGraph"
+export default MeshModelGraph

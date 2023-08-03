@@ -947,7 +947,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   return (
     <div style={{ display : 'table', tableLayout : 'fixed', width : '100%' }}>
       <div className={classes.topToolbar}>
-        < MesherySettingsEnvButtons/>
+        <MesherySettingsEnvButtons/>
       </div>
       <DataTable
         columns={columns}

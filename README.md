@@ -44,10 +44,16 @@ MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
 <p align="center">
 A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, is the open source, cloud native manager that enables the design and management of all Kubernetes-based infrastructure and applications. Among other features,  As an extensible platform, Meshery offers visual and collaborative GitOps, freeing you from the chains of YAML while managing Kubernetes multi-cluster deployments.
 </p>
+<br />
 
 <!-- [Meshery](https://meshery.io) is the cloud native management plane offering lifecycle, configuration, and performance management of Kubernetes, service meshes, and your workloads. -->
+<div align="center" width="100%">
+<a href="https://youtu.be/Do7htKrRzDA"><img src="https://play.meshery.io/static/media/meshery-playground-meshmap.5242722a8cd9c3855f42.png" width="800px" /></a>
+ <br /><a href="https://youtu.be/Do7htKrRzDA">Click to see Meshery Playground video</a>
+</div>
 
-
+<br />
+<br />
 
 - [Functionality](#functionality)
 - [Meshery Architecture](#meshery-architecture)
@@ -237,22 +243,6 @@ Meshery is the cloud native utility for uniformly managing the performance of mi
 <br /><br />
 
 </p>
-<h4>Conforming to Service Mesh Interface (SMI)</h4>
-
-<p style="clear:both;">
-
-Meshery provides tooling to validate any service mesh that claims to implement and conform to SMI specifications. Working in accordance with the [SMI Conformance project](https://layer5.io/projects/service-mesh-interface-conformance), it essentially provides:
-
-✔︎ Defines compliant behavior.<br />
-✔︎ Produces compatibility matrix. <br />
-✔︎ Ensures provenance of results. <br />
-✔︎ Runs a set of conformance tests. <br />
-✔︎ Built into the participating service mesh’s release pipeline. <br />
-✔︎ Provides [Learn Layer5](https://github.com/layer5io/learn-layer5) sample application used for validating test assertions.
-<a href="https://docs.meshery.io/assets/img/readme/smi-conformance-with-meshery.png"><img alt="SMI Validation, Verification, and Conformance with Meshery" src="https://docs.meshery.io/assets/img/readme/smi-conformance-with-meshery.png" style="margin-right:10px;margin-bottom:10px;" width="100%" align="left" /></a>
-<br />
-<br /><br /><br /><br />
-<div>&nbsp;</div>
 
 ## Meshery Architecture
 
@@ -335,17 +325,18 @@ Find out more on the <a href="https://layer5.io/community#meshmate">Layer5 commu
 <div>
 <a href="http://slack.layer5.io">
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/slack-dark-128.png"  width="110px" />
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/slack-128.png" width="110px" />
-  <img alt="Shows an illustrated light mode meshery logo in light color mode and a dark mode meshery logo dark color mode." src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/slack-128.png" width="110px" />
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/slack.svg"  width="110px" />
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/slack.svg" width="110px" />
+  <img alt="Shows an illustrated light mode meshery logo in light color mode and a dark mode meshery logo dark color mode." src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/slack.svg" width="110px" align="left" />
 </picture>
 </a>
 </div>
 </div>
 <br /><br />
-<p align="center">
-<i>Not sure where to start?</i> Grab an open issue with the <a href="https://github.com/issues?q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+org%3Ameshery+org%3Aservice-mesh-performance+org%3Aservice-mesh-patterns+label%3A%22help+wanted%22+">help-wanted label</a>.
+<p align="left">
+&nbsp;&nbsp;&nbsp;&nbsp; <i>Not sure where to start?</i> Grab an open issue with the <a href="https://github.com/issues?q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+org%3Ameshery+org%3Aservice-mesh-performance+org%3Aservice-mesh-patterns+label%3A%22help+wanted%22+">help-wanted label</a>.
 </p>
+<br /><br />
 
 <div>&nbsp;</div>
 
@@ -360,8 +351,11 @@ Please do! We're a warm and welcoming community of open source contributors. Ple
 ### Stargazers
 
 <p align="center">
-  <i>If you’re using Meshery or if you like the project, please <a href="../../stargazers">★</a> star this repository to show your support! 🤩</i>
-<a href="../../stargazers"><img align="right" src="https://starchart.cc/meshery/meshery.svg" /></a></p>
+  <i>If you like Meshery, please <a href="../../stargazers">★</a> star this repository to show your support! 🤩</i>
+ <br />
+<a href="../../stargazers">
+ <img align="center" src="https://api.star-history.com/svg?repos=meshery/meshery&type=Date" />
+</a></p>
 
 ### License
 

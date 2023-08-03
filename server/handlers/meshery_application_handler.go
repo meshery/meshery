@@ -18,7 +18,7 @@ import (
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
 	pCore "github.com/layer5io/meshery/server/models/pattern/core"
-	"github.com/layer5io/meshkit/models/meshmodel"
+	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
 	"github.com/layer5io/meshkit/utils/walker"
@@ -614,7 +614,8 @@ func (h *Handler) GetMesheryApplicationHandler(
 //
 // Get application file types
 // responses:
-//  200: mesheryApplicationTypesResponseWrapper
+//
+//	200: mesheryApplicationTypesResponseWrapper
 func (h *Handler) GetMesheryApplicationTypesHandler(
 	rw http.ResponseWriter,
 	_ *http.Request,

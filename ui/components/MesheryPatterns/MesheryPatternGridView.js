@@ -1,5 +1,5 @@
 //@ts-check
-import { Grid, Paper, Typography, Button } from "@material-ui/core";
+import { Paper, Typography, Button, Box } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import MesheryPatternCard from "./MesheryPatternCard";
@@ -7,11 +7,10 @@ import DesignConfigurator from "../configuratorComponents/MeshModel";
 import { FILE_OPS, ACTIONS } from "../../utils/Enum";
 import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
-import PublicIcon from '@material-ui/icons/Public';
 import PublishIcon from "@material-ui/icons/Publish";
 import useStyles from "./Grid.styles";
 import Validation from "../Validation";
-import { publish_schema } from "../schemas/publish_schema";
+import { publish_schema, publish_ui_schema } from "../schemas/publish_schema";
 import Modal from "../Modal";
 import _ from "lodash";
 
@@ -22,7 +21,7 @@ function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublis
   const [yaml, setYaml] = useState(pattern.pattern_file);
 
   return (
-    <Grid item {...gridProps}>
+    <Box item {...gridProps}>
       <MesheryPatternCard
         // id={pattern.id}
         canPublishPattern={canPublishPattern}
@@ -45,7 +44,7 @@ function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublis
         description={pattern.description}
         visibility={pattern.visibility}
       />
-    </Grid>
+    </Box>
   );
 }
 
@@ -101,6 +100,12 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
       pattern : {},
       name : ""
     });
+
+    setPayload({
+      id : "",
+      catalog_data : {}
+    });
+
   };
 
   const handleUploadImport = () => {
@@ -168,7 +173,12 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
       <DesignConfigurator pattern={selectedPattern.pattern} show={setSelectedPattern}  onSubmit={handleSubmit} />
       }
       {!selectedPattern.show &&
-      <Grid container spacing={3} style={{ padding : "1rem" }}>
+      <Box sx={{
+        display : 'flex',
+        flexWrap : 'wrap',
+        justifyContent : 'space-evenly',
+        gap : '40px',
+      }}>
         {patterns.map((pattern) => (
           <PatternCardGridItem
             key={pattern.id}
@@ -185,7 +195,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
           />
         ))}
 
-      </Grid>
+      </Box>
       }
       {!selectedPattern.show && patterns.length === 0 &&
           <Paper className={classes.noPaper}>
@@ -229,21 +239,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
         validationBody={modalOpen.validationBody}
       />
       {canPublishPattern &&
-      <Modal open={publishModal.open} schema={publish_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data) ?publishModal?.pattern?.catalog_data : payload.catalog_data} aria-label="catalog publish" title={publishModal.pattern?.name}>
-        <Button
-          title="Publish"
-          variant="contained"
-          color="primary"
-          className={classes.testsButton}
-          onClick={() => {
-            handlePublishModalClose();
-            handlePublish(payload)
-          }}
-        >
-          <PublicIcon className={classes.iconPatt} />
-          <span className={classes.btnText}> Publish </span>
-        </Button>
-      </Modal>
+      <Modal open={publishModal.open} schema={publish_schema} uiSchema={publish_ui_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.pattern?.catalog_data : payload.catalog_data} aria-label="catalog publish" title={publishModal.pattern?.name} payload={payload} handleSubmit={handlePublish} showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }} />
       }
       <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={async() => await fetch()} configuration="Designs"  />
     </div>

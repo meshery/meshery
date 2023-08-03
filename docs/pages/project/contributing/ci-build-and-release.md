@@ -268,7 +268,7 @@ Every docker image built receives either the edge tags or the stable tabs. Which
 
 ### Edge Channel
 
-The edge release channel generally contains code less tested, less “baked”. The primary reason for "edge" is to allow contributors and advanced users to get at features sooner than later. Some features need testing that is best facilitated by letting users with tolerance and patience try them out.
+The Edge release channel provides early access to the latest features, allowing experimentation and feedback. Recent updates introduce dynamic versioning for Edge releases and improve compatibility with remote providers, ensuring a seamless experience. This makes the Edge channel valuable for users seeking cutting-edge features while contributing to the Meshery project. Docker image tags remain consistent for differentiation.
 
 Stable and edge releases are both published to the same Docker Hub repository. Docker Hub repositories differentiate release channels by image tag. The following Docker images tagging convention is followed:
 
@@ -348,4 +348,9 @@ For older releases we have to travel back in time. Using the `Tags` in github we
 1.  On executing `make docs` a `_site` folder is created which has static html files. 
 1.  The `_site` folder is renamed to `v0.X` and is copied into the `docs` folder of the present version. 
 
-The above [steps]({{site.baseurl}}/project/build-and-release#in-the-v0x-folder) for replacing all the instances of direct path are to be followed. 
+## Bi-Weekly Meetings
+
+If you are passionate about CI/CD pipelines, DevOps, automated testing, managing deployments, or if you want to learn how to use Meshery and its features, you are invited to join the bi-weekly Build and Release meetings. Find meeting details and agenda in the [community calendar](https://meshery.io/calendar) and the [meeting minutes document](https://docs.google.com/document/d/1GrVdGHZAYeu6wHNLLoiaKNqBtk7enXE9XeDRCvdA4bY/edit#). The meetings are open to everyone and recorded for later viewing. We hope to see you there!
+
+These [steps]({{site.baseurl}}/project/build-and-release#in-the-v0x-folder) for replacing all the instances of direct path are to be followed. 
+

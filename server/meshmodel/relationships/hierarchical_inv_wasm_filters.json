@@ -20,13 +20,12 @@
             "from": [
                 {
                     "kind": "WASMFilter",
-                    "model": "Istio Base",
+                    "model": "istio-base",
                     "patch": {
                         "patchStrategy": "replace",
                         "mutatorRef": [
-                            "settings",
-                            "config"
-                        ],
+													["settings", "config"], ["settings", "wasmFilter"]
+												],
                         "description": "WASM filter configuration to be applied to Envoy Filter."
                     }
                 }
@@ -34,19 +33,42 @@
             "to": [
                 {
                     "kind": "EnvoyFilter",
-                    "model": "Istio Base",
+                    "model": "istio-base",
                     "patch": {
                         "patchStrategy": "replace",
                         "mutatedRef": [
-                            "settings",
-                            "configPatches",
-                            "_",
-                            "patch",
-                            "value"
-                        ],
+													[
+														"settings",
+														"spec",
+														"configPatches",
+														"_",
+														"patch",
+														"value"
+													]
+												],
                         "description": "Receive the WASM filter configuration."
                     }
-                }
+                },
+								{
+									"kind": "WasmPlugin",
+									"model": "istio-base",
+									"patch": {
+										"patchStrategy": "replace",
+										"mutatedRef": [
+											[
+												"settings",
+												"spec",
+												"pluginConfig"
+											],
+											[
+												"settings",
+												"spec",
+												"url"
+											]
+										],
+										"description": "Receive the WASM filter configuration."
+									}
+								}
             ]
         },
         "deny": {

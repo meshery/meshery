@@ -37,7 +37,7 @@ var (
 var AppCmd = &cobra.Command{
 	Use:   "app",
 	Short: "Cloud Native Apps Management",
-	Long:  `Manage all apps operations; import, list, view, onboard and offboard`,
+	Long:  `All apps operations: import, list, view, onboard and offboard`,
 	Example: `
 // Base command
 mesheryctl app [subcommand]

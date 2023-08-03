@@ -6,6 +6,9 @@ import (
 	"github.com/layer5io/meshkit/errors"
 )
 
+// Please reference the following before contributing an error code:
+// https://docs.meshery.io/project/contributing/contributing-error
+// https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
 	ErrInvalidK8SConfigCode             = "2000"
 	ErrNilClientCode                    = "2001"
@@ -89,6 +92,7 @@ const (
 	ErrGetPatternCode                   = "2164"
 	ErrDeletePatternCode                = "2165"
 	ErrFetchPatternCode                 = "2166"
+	ErrFetchProfileCode					= "replace_me"
 	ErrImportPatternCode                = "2167"
 	ErrEncodePatternCode                = "2168"
 	ErrDecodePatternCode                = "2169"
@@ -130,7 +134,7 @@ var (
 	ErrWriteResponse     = errors.New(ErrWriteResponseCode, errors.Alert, []string{"Error writing response"}, []string{}, []string{}, []string{})
 	ErrTestConfigs       = errors.New(ErrTestConfigsCode, errors.Alert, []string{"Error fetching test configs"}, []string{}, []string{}, []string{})
 	ErrInvalidGenValue   = errors.New(ErrInvalidGenValueCode, errors.Alert, []string{"Invalid value for gen"}, []string{}, []string{}, []string{"please provide a valid value for gen (load generator)"})
-	ErrParseDuration     = errors.New(ErrParseDurationCode, errors.Alert, []string{"error parsing test duration"}, []string{}, []string{"The format of the duration passed could be incorrect"}, []string{"please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"})
+	ErrParseDuration     = errors.New(ErrParseDurationCode, errors.Alert, []string{"error parsing test duration"}, []string{}, []string{"The format of the duration passed could be incorrect"}, []string{"please refer to:  https://docs.meshery.io/tasks/performance-management#configuring-performance-testing-settings"})
 	ErrMesheryInstanceID = errors.New(ErrMesheryInstanceIDCode, errors.Alert, []string{"Error: Meshery Instance ID is empty or is invalid"}, []string{}, []string{}, []string{})
 	ErrPerformanceTest   = errors.New(ErrLoadTestCode, errors.Alert, []string{"load test error"}, []string{}, []string{"Load test endpoint could be not reachable"}, []string{"Make sure load test endpoint is reachable"})
 )
@@ -359,7 +363,7 @@ func ErrFailToLoadExtensions(err error) error {
 }
 
 func ErrInvalidLTURL(url string) error {
-	return errors.New(ErrInvalidLTURLCode, errors.Alert, []string{"invalid loadtest url: ", url}, []string{}, []string{"URL for load test could be invalid"}, []string{"please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"})
+	return errors.New(ErrInvalidLTURLCode, errors.Alert, []string{"invalid loadtest url: ", url}, []string{}, []string{"URL for load test could be invalid"}, []string{"please refer to:  https://docs.meshery.io/tasks/performance-management"})
 }
 
 func ErrVersionCompare(err error) error {
@@ -447,6 +451,10 @@ func ErrDeletePattern(err error) error {
 
 func ErrFetchPattern(err error) error {
 	return errors.New(ErrFetchPatternCode, errors.Alert, []string{"Error failed to fetch pattern"}, []string{err.Error()}, []string{"Failed to retrieve the list of all the Patterns"}, []string{})
+}
+
+func ErrFetchProfile(err error) error {
+	return errors.New(ErrFetchProfileCode, errors.Alert, []string{"Error failed to fetch profile"}, []string{err.Error()}, []string{"Invalid profile ID"}, []string{"Check if the profile ID is correct"})
 }
 
 func ErrImportPattern(err error) error {

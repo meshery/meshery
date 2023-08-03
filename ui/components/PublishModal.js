@@ -1,60 +1,26 @@
-import React from 'react';
-import { Button, Grid } from '@material-ui/core';
-import validator from "@rjsf/validator-ajv8";
-import {
-  Dialog, DialogActions,
-  DialogContent,
-  DialogTitle
-} from '@material-ui/core';
-import { Form } from '@rjsf/material-ui';
-import useStyles from "./MesheryPatterns/Cards.styles";
-import PublicIcon from '@material-ui/icons/Public';
-import { publish_schema } from './schemas/publish_schema';
+import React from "react";
+import { publish_schema, publish_ui_schema } from "./schemas/publish_schema";
+import Modal from "./Modal";
 
+// This modal is used in MeshMap also
 export default function PublishModal(props) {
-  const { open, handleClose, resourceType, handlePublish, title } = props;
-  const classes = useStyles();
-
-  const data = resourceType?.catalog_data || {};
+  const { open, title, handleClose, formData, onChange, payload, handleSubmit } = props;
 
   return (
-    <>
-      <Dialog
-        open={open}
-        onClose={handleClose}>
-        <DialogTitle className={classes.dialogTitle}>
-         Request To Publish: {title}
-        </DialogTitle>
-        <DialogContent>
-          <Grid container spacing={24} alignItems="center">
-            <Form schema={publish_schema} formData={data} validator={validator}
-              onSubmit={(data) => {
-                handlePublish({
-                  id : resourceType.id,
-                  catalog_data : data.formData
-                })
-                handleClose();
-              }}
-            >
-              <Button
-                title="Publish"
-                variant="contained"
-                color="primary"
-                type="submit"
-                className={classes.testsButton}
-              >
-                <PublicIcon className={classes.iconPatt} />
-                <span className={classes.btnText}> Submit for Approval </span>
-              </Button>
-            </Form>
-          </Grid>
-
-        </DialogContent>
-        <DialogActions>
-
-        </DialogActions>
-
-      </Dialog>
-    </>
-  )
+    <Modal
+      open={open}
+      schema={publish_schema}
+      uiSchema={publish_ui_schema}
+      title={title}
+      onChange={onChange}
+      handleClose={handleClose}
+      formData={formData}
+      payload={payload}
+      handleSubmit={handleSubmit}
+      showInfoIcon={{
+        text : "Upon submitting your catalog item, an approval flow will be initiated.",
+        link : "https://docs.meshery.io/concepts/catalog",
+      }}
+    />
+  );
 }
