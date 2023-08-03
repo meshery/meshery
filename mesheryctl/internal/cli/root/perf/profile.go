@@ -15,7 +15,6 @@
 package perf
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -120,16 +119,6 @@ mesheryctl perf profile test --view
 				fmt.Printf("Last Run: %v\n", a.LastRun.Time.Format("2006-01-02 15:04:05"))
 			} else {
 				fmt.Printf("Last Run: %v\n", "nil")
-			}
-
-			if _, ok := a.Metadata["additional_options"]; ok {
-				var out bytes.Buffer
-				err := json.Indent(&out, []byte(a.Metadata["additional_options"].(string)), "", "  ")
-
-				if err != nil {
-					return err
-				}
-				fmt.Printf("Load generator options:\n%s\n", out.String())
 			}
 		}
 
