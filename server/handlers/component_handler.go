@@ -209,23 +209,16 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		filter.Greedy = true
 	}
 
-	entities, count ,_ := h.registryManager.GetEntities(filter)
-	var meshmodel []v1alpha1.Model
-	for _, r := range entities {
-		host := h.registryManager.GetRegistrant(r)
-		mod, ok := r.(v1alpha1.Model)
-		if ok {
-			mod.HostID = host.ID
-			mod.HostName = host.Hostname
-			mod.DisplayHostName = helpers.HostnameToPascalCase(host.Hostname)
-			meshmodel = append(meshmodel, mod)
-		}
-
+	meshmodel, count, _ := h.registryManager.GetModels(h.dbHandler, filter)
+	var meshmodels []v1alpha1.Model
+	for _, r := range meshmodel {
+		r.DisplayHostName = helpers.HostnameToPascalCase(r.HostName)
+		meshmodels = append(meshmodels, r)
 	}
 
 	var pgSize int64
 	if limitstr == "all" {
-		pgSize = *count
+		pgSize = count
 	} else {
 		pgSize = int64(limit)
 	}
@@ -233,8 +226,8 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	res := models.MeshmodelsDuplicateAPIResponse{
 		Page:     page,
 		PageSize: int(pgSize),
-		Count: *count,
-		Models: models.FindDuplicateModels(meshmodel),
+		Count: count,
+		Models: models.FindDuplicateModels(meshmodels),
 	}
 
 	if err := enc.Encode(res); err != nil {
