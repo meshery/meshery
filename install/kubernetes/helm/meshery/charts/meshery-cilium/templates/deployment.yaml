@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "meshery-cilium.fullname" . }}
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ .Values.metadata.namespace }}
   labels:
     {{- include "meshery-cilium.labels" . | nindent 4 }}
   annotations:
