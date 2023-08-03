@@ -8,7 +8,7 @@ language: en
 type: project
 ---
 
-Meshery is a CNCF project maintained by engineers from Layer5, VMware, Red Hat, Rackspace, Citrix, Layer5, Instabase, Microsoft, OpenGov, Computas AS, Rill Data, Quantex, Lumina Networks, and HashiCorp. Meshery is an open source project that adheres to the [CNCF's Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md). Meshery advance the state of the art surrounding service meshes and enable adopters of Cloud Native technologies and techniques to do so with confidence. Our shared commitment to the open source spirit pushes Meshery forward.
+Meshery is a CNCF project maintained by engineers from Layer5, VMware, Red Hat, Rackspace, Citrix, Instabase, Microsoft, OpenGov, Computas AS, Rill Data, Quantex, Lumina Networks, and HashiCorp. Meshery is an open source project that adheres to the [CNCF's Code of Conduct](https://github.com/cncf/foundation/blob/master/code-of-conduct.md). Meshery advance the state of the art surrounding service meshes and enable adopters of Cloud Native technologies and techniques to do so with confidence. Our shared commitment to the open source spirit pushes Meshery forward.
 
 #### Community First
 
@@ -18,7 +18,7 @@ The Meshery project is community-built and welcomes collaboration!
 <br /><a href="https://github.com/meshery/meshery"><i class="fab fa-github"></i> Fork here on Github</a>
 
 * Join any of the [community meetings](https://meshery.io/calendar). 
-  * Watch [meeting recordings](https://www.youtube.com/@Layer5io?sub_confirmation=1) and subscribe to the [community calendar](https://meshery.io/calendar).
+* Watch [meeting recordings](https://www.youtube.com/@Layer5io?sub_confirmation=1) and subscribe to the [community calendar](https://meshery.io/calendar).
 * Fill-in a <a href="https://layer5.io/newcomers">community member form</a> to gain access to community resources.
 
 ## Getting involved in the Community
