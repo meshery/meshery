@@ -53,7 +53,7 @@ import SearchBar from "./searchcommon";
 
 const styles = (theme) => ({
   grid : {
-    padding : theme.spacing(2),
+    padding : theme.spacing(1),
   },
   tableHeader : {
     fontWeight : "bolder",
@@ -70,14 +70,23 @@ const styles = (theme) => ({
     filter : theme.palette.secondary.brightness
   },
   topToolbar : {
-    margin : "2rem auto",
+    marginBottom : "6rem",
     display : "flex",
     justifyContent : "space-between",
-    paddingLeft : "1rem"
+    flexWrap : 'wrap',
+    "@media (max-width: 1450px)" : {
+      justifyContent : "start",
+      paddingLeft : 0,
+    },
   },
   viewSwitchButton : {
     justifySelf : "flex-end",
-    paddingLeft : "1rem"
+    paddingLeft : "1rem",
+    order : 4,
+    "@media (max-width: 1450px)" : {
+      order : 3,
+      marginRight : '2rem'
+    },
   },
   createButton : {
     display : "flex",
@@ -117,7 +126,42 @@ const styles = (theme) => ({
   },
   visibilityImg : {
     filter : theme.palette.secondary.img,
+  },
+  searchAndView : {
+    display : 'flex',
+    alignItems : 'center',
+    justifyContent : 'center',
+    order : 2,
+    margin : 'auto',
+    "@media (max-width: 1450px)" : {
+      order : 4,
+      paddingLeft : 0,
+      margin : 0,
+    },
+    "@media (max-width: 1200px)" : {
+      marginTop : '20px',
+    },
+  },
+  catalogFilter : {
+    order : 3,
+    marginRight : '2rem',
+    "@media (max-width: 1450px)" : {
+      order : 2
+    },
+  },
+  btnText : {
+    display : 'block',
+    "@media (max-width: 1450px)" : {
+      display : "none",
+    },
+  },
+  searchWrapper : {
+    display : "flex",
+    "@media (max-width: 1450px)" : {
+      display : "block",
+    },
   }
+
   // text : {
   //   padding : "5px"
   // }
@@ -812,7 +856,7 @@ function MesheryPatterns({
     };
   }
 
-  async function handleSubmit({ data, id, name, type }) {
+  async function handleSubmit({ data, id, name, type, metadata }) {
     updateProgress({ showProgress : true })
     if (type === FILE_OPS.DELETE) {
       const response = await showModal(1, name)
@@ -867,14 +911,14 @@ function MesheryPatterns({
       if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({
           pattern_data : {
-            name,
+            name : metadata?.name || name,
             pattern_file : data,
           },
           save : true
         })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
-        body = JSON.stringify({ url : data, save : true })
+        body = JSON.stringify({ url : data, save : true,  name : metadata?.name || name })
       }
       dataFetch(
         `/api/pattern`,
@@ -913,7 +957,7 @@ function MesheryPatterns({
     }
   }
 
-  function uploadHandler(ev) {
+  function uploadHandler(ev, _, otherMetadata) {
     if (!ev.target.files?.length) return;
 
 
@@ -925,18 +969,20 @@ function MesheryPatterns({
       handleSubmit({
         data : event.target.result,
         name : file?.name || getRandomName(),
-        type : FILE_OPS.FILE_UPLOAD
+        type : FILE_OPS.FILE_UPLOAD,
+        metadata : otherMetadata
       });
     });
     reader.readAsText(file);
   }
 
-  function urlUploadHandler(link) {
+  function urlUploadHandler(link, _, otherMetadata) {
     handleSubmit({
       data : link,
       id : "",
       name : getRandomName(),
-      type : FILE_OPS.URL_UPLOAD
+      type : FILE_OPS.URL_UPLOAD,
+      metadata : otherMetadata
     });
   }
 
@@ -1280,7 +1326,7 @@ function MesheryPatterns({
         }
         <div className={classes.topToolbar} >
           {!selectedPattern.show && (patterns.length > 0 || viewType === "table") && <div className={classes.createButton}>
-            <div>
+            <div style={{ display : 'flex', order : '1' }}>
               <Button
                 aria-label="Add Pattern"
                 variant="contained"
@@ -1288,10 +1334,10 @@ function MesheryPatterns({
                 size="large"
                 // @ts-ignore
                 onClick={() => router.push("designs/configurator")}
-                style={{ marginRight : "2rem" }}
+                style={{ display : 'flex', marginRight : "2rem" }}
               >
                 <AddIcon className={classes.addIcon} />
-                Create Design
+                <span className={classes.btnText}> Create Design </span>
               </Button>
               <Button
                 aria-label="Add Pattern"
@@ -1300,24 +1346,15 @@ function MesheryPatterns({
                 size="large"
                 // @ts-ignore
                 onClick={handleUploadImport}
-                style={{ marginRight : "2rem" }}
+                style={{ display : 'flex', marginRight : "2rem" }}
               >
                 <PublishIcon className={classes.addIcon} />
-                Import Design
+                <span className={classes.btnText}> Import Design </span>
               </Button>
             </div>
           </div>
           }
-
-          <div
-            className={classes.searchAndView}
-            style={{
-              display : 'flex',
-              alignItems : 'center',
-              justifyContent : 'center',
-              margin : 'auto',
-            }}
-          >
+          <div className={classes.searchAndView}>
             <SearchBar
               value={search}
               onChange={(e) => {
@@ -1326,19 +1363,19 @@ function MesheryPatterns({
               }
               }
               label={"Search Designs"}
-              width="60ch"
+              width="55ch"
             />
           </div>
 
           {!selectedPattern.show &&
-            <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingRight : "1rem", paddingTop : "0.2rem" }}>
-              <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} />
+            <div className={classes.catalogFilter} style={{ display : 'flex' }}>
+              <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} classes={classes} />
             </div>
           }
 
 
           {!selectedPattern.show &&
-            <div className={classes.viewSwitchButton}>
+            <div className={classes.viewSwitchButton} style={{ display : 'flex' }}>
               <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true}/>
             </div>
           }
@@ -1395,11 +1432,16 @@ function MesheryPatterns({
           validationBody={modalOpen.validationBody}
           errors={modalOpen.errors}
         />
-        {canPublishPattern &&
-          <Modal open={publishModal.open} schema={publish_schema} uiSchema={publish_ui_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.pattern?.catalog_data : payload.catalog_data } aria-label="catalog publish" title={publishModal.pattern?.name} handleSubmit={handlePublish} payload={payload} showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }}/>
-        }
-
-        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchPatterns(page, pageSize, search, sortOrder)} configuration="Design" />
+        {canPublishPattern && <Modal open={publishModal.open} schema={publish_schema} uiSchema={publish_ui_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.pattern?.catalog_data : payload.catalog_data } aria-label="catalog publish" title={publishModal.pattern?.name} handleSubmit={handlePublish} payload={payload} showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }}/>}
+        <UploadImport
+          open={importModal.open}
+          handleClose={handleUploadImportClose}
+          aria-label="URL upload button"
+          handleUrlUpload={urlUploadHandler}
+          handleUpload={uploadHandler}
+          fetch={() => fetchPatterns(page, pageSize, search, sortOrder)}
+          configuration="Design"
+        />
         <PromptComponent ref={modalRef} />
       </NoSsr>
     </>
