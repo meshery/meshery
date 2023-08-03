@@ -16,7 +16,7 @@ replace (
 
 require (
 	cuelang.org/go v0.5.0
-	fortio.org/fortio v1.57.4
+	fortio.org/fortio v1.57.0
 	github.com/99designs/gqlgen v0.17.28
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef
 	github.com/briandowns/spinner v1.19.0
