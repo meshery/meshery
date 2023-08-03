@@ -2,7 +2,8 @@ import {  withStyles } from '@material-ui/core'
 import { withSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react'
 import MUIDataTable from 'mui-datatables';
-import { TableCell, Tooltip, TableSortLabel } from '@material-ui/core';
+import { Grid, TableCell, Tooltip, TableSortLabel } from '@material-ui/core';
+import DuplicatesDataTable from './DuplicatesDataTable';
 import { getComponentsDetailWithPageSize, getMeshModels, getRelationshipsDetailWithPageSize, searchModels, searchComponents } from '../api/meshmodel'
 import debounce from '../utils/debounce';
 import { MODELS, COMPONENTS, RELATIONSHIPS } from '../constants/navigator';
@@ -282,7 +283,25 @@ const MeshModelComponent = ({ view, classes }) => {
         },
       },
     },
-
+    {
+      name : 'duplicates',
+      label : 'Duplicate Component',
+      options : {
+        sort : false,
+        display : false,
+        searchable : false,
+      },
+      customBodyRender : (value) => {
+        if (view === RELATIONSHIPS) {
+          const { displayName } = value
+          return (
+            <Tooltip title={displayName} placement="top">
+              <div>{displayName}</div>
+            </Tooltip>
+          )
+        }
+      },
+    },
   ]
 
   const meshmodel_options = {
@@ -297,24 +316,64 @@ const MeshModelComponent = ({ view, classes }) => {
     selectableRows : false,
     search : view === RELATIONSHIPS ? false : true,
     serverSide : true,
+    expandableRows : true,
     onChangePage : debounce((p) =>  setPage(p), 200),
     onSearchChange : debounce((searchText) => (setSearchText(searchText))),
     onChangeRowsPerPage : debounce((rowsPerPage) => {
       setRowsPerPage(rowsPerPage);
       setPage(0);
     }),
-  }
+    setRowProps : (row) => {
+      return {
+        style : {
+          backgroundColor : row[6] !== 0 ? '#eaeff1f7' : 'inherit',
+        },
+      };
+    },
+
+    renderExpandableRow : (rowData) => {
+      return (
+        rowData[6] > 0 &&
+          <TableCell
+            colSpan={6}
+            sx={{
+              padding : "0.5rem",
+              backgroundColor : "rgba(0, 0, 0, 0.05)"
+            }}
+          >
+            <Grid
+              container
+              xs={12}
+              spacing={1}
+              sx={{
+                margin : "auto",
+                backgroundColor : "#f3f1f1",
+                paddingLeft : "0.5rem",
+                borderRadius : "0.25rem",
+                width : "inherit"
+              }}
+            >
+              <DuplicatesDataTable
+                view={view}
+                rowData={rowData}
+                classes={classes}
+              >
+              </DuplicatesDataTable>
+            </Grid>
+          </TableCell>
+      );
+    },
+  };
+
 
   return (
-    <div >
-      <div data-test="workloads">
-        <MUIDataTable
-          title={<div className={classes.tableHeader}></div>}
-          data={resourcesDetail && resourcesDetail}
-          columns={meshmodel_columns}
-          options={meshmodel_options}
-        />
-      </div>
+    <div data-test="workloads">
+      <MUIDataTable
+        title={<div className={classes.tableHeader}></div>}
+        data={resourcesDetail && resourcesDetail}
+        columns={meshmodel_columns}
+        options={meshmodel_options}
+      />
     </div>
   )
 }

@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "meshery-traefik-mesh.fullname" . }}
-  namespace: {{ .Release.Namespace }}
+  namespace: {{ .Values.metadata.namespace }}
   labels:
     {{- include "meshery-traefik-mesh.labels" . | nindent 4 }}
   annotations:
