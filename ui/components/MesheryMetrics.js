@@ -58,7 +58,7 @@ function MesheryMetrics({
         onClick={() => handleGrafanaChartAddition()}
       >
         <AddIcon className={classes.addIcon}  style={iconMedium}  />
-        Configure Service Mesh Metrics
+        Configure Metrics
       </Button>
     </div>
   );

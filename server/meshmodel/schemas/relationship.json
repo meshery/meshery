@@ -66,7 +66,14 @@
                     "enum": ["replace"]
                   },
                   "mutatorRef": {
-                    "type": "string",
+                    "type": "array",
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "The sequence of mutatorRef and mutatedRef must match. eg: mutatorRef: [[config, url], [config, name]], mutatedRef: [[configPatch, value], [name]]. The value [config, url] will be patched at [configPatch, value]. Similarly [config,name] will be patched at [name]." 
+                    },
                     "description": "JSON ref to value from where patch should be applied."
                   }
                 }

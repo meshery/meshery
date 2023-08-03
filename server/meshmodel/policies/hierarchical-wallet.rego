@@ -1,6 +1,8 @@
 package hierarchical_wallet_policy
 
 import future.keywords.every
+import future.keywords.in
+
 
 extract_components(services, selectors) = components {
     components := {component.traits.meshmap.id: component | 
@@ -43,25 +45,48 @@ parent_child_relationship = updated_design {
 # TODO: break into common policy funcs
 apply_patch(mutator, mutated, from_selectors, to_selectors) := mutated_design {
     from_selectors[i].kind == mutator.type
-        mutator_path := from_selectors[i].patch.mutatorRef
-        update_value := object.get(mutator, mutator_path, "")
+        mutator_paths := from_selectors[i].patch.mutatorRef
+        
 
     to_selectors[j].kind == mutated.type
-        mutated_path := to_selectors[j].patch.mutatedRef
-        index := get_array_pos(mutated_path)
+        mutated_paths := to_selectors[j].patch.mutatedRef
 
-        prefix_path := array.slice(mutated_path, 0, index)
-        suffix_path := array.slice(mutated_path, index + 1, count(mutated_path))
-        value_to_patch := object.get(mutated, prefix_path, "")
+    patches := [ patch |  
+        some i
+            mutator_path := get_path(mutator_paths[i], mutator)
+            update_value := object.get(mutator, mutator_path, "")
+            update_value != null
+            mutated_path := get_path(mutated_paths[i], mutated)
+            patch := {
+                "op": "add",
+                "path": mutated_path,
+                "value": update_value
+            }
+    ]
+    mutated_design = json.patch(mutated, patches)
+}
 
-        intermediate_path := array.concat(prefix_path, [count(value_to_patch) - 1])
-        final_path := array.concat(intermediate_path, suffix_path)
+get_path(obj, mutated) = path {
+    path = is_array(obj, mutated)        
+}
 
-    mutated_design = json.patch(mutated, [{
-        "op": "add", 
-        "path":  final_path, 
-        "value":  update_value
-    }])
+is_array(arr, mutated) = path {
+    contains(arr, "_")
+    index := get_array_pos(arr)
+    prefix_path := array.slice(arr, 0, index)
+    suffix_path := array.slice(arr, index + 1, count(arr))
+    value_to_patch := object.get(mutated, prefix_path, "")
+    intermediate_path := array.concat(prefix_path, [count(value_to_patch) - 1])
+    path = array.concat(intermediate_path, suffix_path)
+} 
+
+is_array(arr, mutated) = path {
+	not contains(arr, "_")
+    path = arr
+}
+
+contains(arr, elem) {
+  arr[_] = elem
 }
 
 get_array_pos(arr_path) = index {

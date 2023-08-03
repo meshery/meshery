@@ -145,3 +145,18 @@ application_url:
 
 After testing you can [create a v1 tag](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md) to reference the stable and latest V1 action
 
+# General Upgrade Guide
+[MeshMap Snapshot Release Page](https://github.com/layer5labs/meshmap-snapshot/releases)
+
+```
+ - id: test_result
+        uses: layer5labs/MeshMap-Snapshot@v0.0.5 # <-- Update the version to latest from the MeshMap-Snapshot release page
+        with:
+        ...
+```
+
+## Upgrade/Migrate Guide - For Meshery
+1. Given changes done in `action.yml` in MeshMap Snapshot, updating the workflows is required.
+2. Given changes done other than in `action.yml` in MeshMap Snapshot, the update in the `.github/worflows` is not a hard requirement, but doesnt hurt.
+
+
