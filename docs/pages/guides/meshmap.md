@@ -39,19 +39,19 @@ In the Dashboard, the MeshMap visualization tool is accessible via a sidebar opt
 **Step 2. Create a New Design**
 
 
-To create a new design click on the pencil button and give the design a new name.
+To create a new design click on the pencil button and give the design a name accordingly.
 
 
 **Step 3. Creating the design**
 
 
-You can create the design by dragging and dropping the components. You can simply drag and drop the component on the MeshMap Canvas using the configuration panel, and while creating the design, it gets automatically saved with each change. You can also connect two components by dragging your cursor from one component to another.
+You can create the design by dragging and dropping the model. You can simply drag and drop the model on the MeshMap Canvas using the configuration panel, and while creating the design, it gets automatically saved with each change. You can also connect two components by dragging your cursor from one component to another.
 
 
-**Step 4. Setting Configuration of Component**
+**Step 4. Setting Configuration of model**
 
 
-To change a component or configure it left-click on the component. The settings menu, would appear where all there configuration options are present. And to delete the component right click on the component and drag the cursor to the delete option.
+To configure it left-click on the model. The settings menu, would appear where all there configuration options are present. And to delete the model right click on the component and drag the cursor to the delete option. The information about the configuration of the model and its component can also be accessed in [MeshModel Summary Browser]({{site.baseurl}}/guides/accessing-meshmodel).
 
 <a href="{{ site.baseurl }}/assets/img/meshmap/meshmap-design-component-option.png"> <img style="border-radius: 0.5%;" style="width:700px;height:auto;" src="{{ site.baseurl }}/assets/img/meshmap/meshmap-design-component-option.png" /> </a>
 

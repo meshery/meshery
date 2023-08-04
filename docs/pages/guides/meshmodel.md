@@ -10,10 +10,13 @@ language: en
 "MeshModel Summary" provides a visual representation of the summary of the MeshModel in Meshery. Through the "MeshModel Summary" tab in Meshery's UI Settings, you can easily visualize all the Models, Components, and Relationships associated with your service mesh. This feature offers a convenient way for administrators and developers to gain insights into their service mesh deployments at a glance.
 
 
+### Steps to access the MeshModel Summary
+
+
 **Step 1. Access the settings in Meshery UI**
 
 
-Click on the Settings button in the Meshery UI. Once you do that, you will find the setting 
+Click on the Settings button in the Meshery UI. Once you do that, you will find the setting menu. The setting menu in Meshery UI provides a bunch of information about things like `Environment`, `Adapters` that allows Meshery to interface with different service Meshes, `Metrics`, `MeshModel Summary`. 
 
 <a href="{{ site.baseurl }}/assets/img/meshmodel/settings-meshmodal.png"><img alt="Settings" style="border-radius: 0.5%;" style="width:700px;height:auto;" src="{{ site.baseurl }}/assets/img/meshmodel/settings-meshmodal.png" /></a>
 
@@ -21,6 +24,8 @@ Click on the Settings button in the Meshery UI. Once you do that, you will find 
 **Step 2. Accessing Meshmodel Summary**
 
 
-Select the **MeshModel Summary** tab. By doing so, you will be able to view all the models, components and relationships of MeshModel.
+To view **MeshModel Summary** panel, select the **MeshModel Summary** tab. By doing so, you will be able to view all the models, components and relationships of MeshModel. 
+
+The **MeshModel Browser Summary** provides a brief about all the different types of infrastructues that it manages, it models all the infrastructures that it manages. The model has a particular set of components. You can take advantage of MeshModel summary by looking about the configuration of a component from the data table. At present, in Meshery environment there are around 124 Models and these models have their components.
 
 <a href="{{ site.baseurl }}/assets/img/meshmodel/settings-meshmodel-summary.png"><img alt="MeshModel Summary" style="border-radius: 0.5%;" style="width:700px;height:auto;" src="{{ site.baseurl }}/assets/img/meshmodel/settings-meshmodel-summary.png" /></a>
