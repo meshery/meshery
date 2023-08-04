@@ -256,8 +256,8 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			fmt.Errorf("error processing config: %v", err)
-			
+			return fmt.Errorf("error processing config: %v", err)
+
 		}
 
 		// If no subcommands are provided, show usage
