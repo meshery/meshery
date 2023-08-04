@@ -257,7 +257,7 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			fmt.Errorf("error processing config: %v", err)
-			return err
+			
 		}
 
 		// If no subcommands are provided, show usage
