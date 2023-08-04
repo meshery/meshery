@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -61,7 +60,6 @@ var (
 	AhSearchEndpoint = artifacthub.AhHelmExporterEndpoint
 
 	OutputDirectoryPath     = "../../server/meshmodel"
-	ComponentsFileName      = path.Join(OutputDirectoryPath, "components.yaml")
 	ComponentModelsFileName = path.Join(OutputDirectoryPath, "component_models.yaml")
 )
 
@@ -98,16 +96,7 @@ func main() {
 			return
 		}
 	}
-	compsFd, err := os.OpenFile(ComponentsFileName, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	err = SplitYamlIntoFiles(compsFd)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	
 	modelsFd, err := os.OpenFile(ComponentModelsFileName, os.O_CREATE|os.O_RDWR, 0644)
 	if err != nil {
 		fmt.Println(err)
@@ -117,7 +106,6 @@ func main() {
 		file: modelsFd,
 	}
 	defer modelsFd.Close()
-	defer compsFd.Close()
 	// move to a new function: getHelmPackages
 	pkgs := make([]artifacthub.AhPackage, 0)
 	content, err := io.ReadAll(modelsFd)
@@ -130,7 +118,6 @@ func main() {
 		fmt.Println(err)
 	}
 
-	// pkgs = convertCompModelsToPackages(models)
 	if len(pkgs) == 0 {
 		pkgs, err = artifacthub.GetAllAhHelmPackages()
 		if err != nil {
@@ -219,18 +206,7 @@ func main() {
 
 	executeInStages(StartPipeline, csvChan, spreadsheetChan, dp, priority, cncf, official, verified, unverified)
 	time.Sleep(20 * time.Second)
-
-	// split files
-	err = SplitYamlIntoFiles(compsFd)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	err = os.Remove(filepath.Join(OutputDirectoryPath, ComponentsFileName))
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	
 	close(spreadsheetChan)
 	wg.Wait()
 }
@@ -446,23 +422,37 @@ func writeComponents(cmps []v1alpha1.ComponentDefinition) error {
 	// writer.m.Lock()
 	// defer writer.m.Unlock()
 	for _, comp := range cmps {
-		path := filepath.Join(OutputDirectoryPath, comp.Model.Name)
-		if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
-			err := os.Mkdir(path, os.ModePerm)
+		modelPath := filepath.Join(OutputDirectoryPath, comp.Model.Name)
+		if _, err := os.Stat(modelPath); errors.Is(err, os.ErrNotExist) {
+			err := os.Mkdir(modelPath, os.ModePerm)
 			if err != nil {
 				return err
 			}
 			fmt.Println("created directory ", comp.Model.Name)
 		}
-		path = filepath.Join(path, comp.Model.Version)
-		if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
-			err := os.Mkdir(path, os.ModePerm)
+		componentPath := filepath.Join(modelPath, comp.Model.Version)
+		if _, err := os.Stat(componentPath); errors.Is(err, os.ErrNotExist) {
+			err := os.Mkdir(componentPath, os.ModePerm)
 			if err != nil {
 				return err
 			}
 			fmt.Println("created versioned directory ", comp.Model.Version)
 		}
-		f, err := os.Create(filepath.Join(path, comp.Kind+".json"))
+		relationshipsPath := filepath.Join(modelPath, "relationships")
+		policiesPath := filepath.Join(modelPath, "policies")
+		if _, err := os.Stat(relationshipsPath); errors.Is(err, os.ErrNotExist) {
+			err := os.Mkdir(relationshipsPath, os.ModePerm)
+			if err != nil {
+				return err
+			}
+		}
+		if _, err := os.Stat(policiesPath); errors.Is(err, os.ErrNotExist) {
+			err := os.Mkdir(policiesPath, os.ModePerm)
+			if err != nil {
+				return err
+			}
+		}
+		f, err := os.Create(filepath.Join(componentPath, comp.Kind+".json"))
 		if err != nil {
 			return err
 		}
@@ -628,7 +618,7 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 
 func NewSheetSRV() *sheets.Service {
 	ctx := context.Background()
-	byt, _ := base64.StdEncoding.DecodeString(os.Getenv("CRED"))
+	byt, _ := os.ReadFile("/Users/shabana/Downloads/spreadsheet.json")
 	// authenticate and get configuration
 	config, err := google.JWTConfigFromJSON(byt, "https://www.googleapis.com/auth/spreadsheets")
 	if err != nil {
