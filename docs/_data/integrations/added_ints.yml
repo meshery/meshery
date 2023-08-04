@@ -1,0 +1,601 @@
+- desc: Enables binding AWS target groups to Kubernetes services.
+  name: AWS Target Group Binding
+- desc: JFrog's artifact distribution platform for managing and distributing software
+    packages.
+  name: Jfrog Distribution
+- desc: A popular open-source automation server for building, testing, and deploying
+    software projects.
+  name: Jenkins
+- desc: A service mesh for cloud-native applications, providing features like observability,
+    reliability, and security.
+  name: Linkerd
+- desc: A package manager for Kubernetes that simplifies deploying and managing applications.
+  name: Helm
+- desc: AWS Target Group Binding
+  name: Containerd
+- desc: A data collector for unified logging, used for gathering and forwarding log
+    data.
+  name: Fluentd
+- desc: A security framework for ensuring the integrity and authenticity of software
+    supply chains.
+  name: In Toto
+- desc: An in-memory data management system for accelerating data access in analytics
+    workloads.
+  name: Vineyard
+- desc: A platform for running applications securely and efficiently across different
+    cloud providers.
+  name: Hexa
+- desc: A lightweight container runtime specifically designed for Kubernetes and Open
+    Container Initiative (OCI) standards.
+  name: CRI-O
+- desc: A tool for automating continuous delivery of Kubernetes resources.
+  name: Flux
+- desc: A high-availability solution for stateful applications on Kubernetes.
+  name: Piraeus
+- desc: A Kubernetes-native Platform-as-Code framework for managing applications.
+  name: Kubevela
+- desc: A universal service mesh that provides traffic management and security for
+    microservices.
+  name: Kuma
+- desc: A tool for trust and security for distributing and verifying container images.
+  name: Notary
+- desc: A tool for managing and applying Kubernetes resources declaratively.
+  name: Kube Rs
+- desc: The Kubernetes Dashboard for visualizing and managing Kubernetes clusters.
+  name: Kubernetes UI Server
+- desc: A distributed search and analytics engine commonly used for log analysis.
+  name: Elastic Search
+- desc: A policy-based control system used for enforcing policies across
+  name: Open Policy Agent (OPA)
+- desc: A Kubernetes-native policy management engine.
+  name: Kyverno
+- desc: A service for creating, publishing, maintaining, monitoring, and securing
+    APIs.
+  name: AWS API Gateway
+- desc: Secure containers that leverage hardware-enforced Trusted Execution Environments
+    (TEEs).
+  name: Inclavare Containers
+- desc: An AI-driven observability platform for Kubernetes.
+  name: Mimir
+- desc: A service mesh designed to provide observability, security, and traffic management
+    for microservices.
+  name: Citrix Service Mesh
+- desc: An operator for running distributed MPI workloads on Kubeflow.
+  name: Kubeflow MPI Operator
+- desc: A Kubernetes-native system for managing and automating batch processing workloads.
+  name: Volcano
+- desc: A high-performance proxy used as a service mesh data plane.
+  name: Envoy
+- desc: The operating system on which Kubernetes runs.
+  name: Linux
+- desc: An open-source distributed key-value database built for cloud-native applications.
+  name: Tikv
+- desc: A Kubernetes-native control plane for managing cloud infrastructure.
+  name: Crossplane
+- desc: A portable, event-driven runtime for building microservices applications.
+  name: Dapr
+- desc: A Kubernetes-native solution for edge computing.
+  name: Fabedge
+- desc: A tool for securing workload-to-workload communication in a SPIFFE-compliant
+    way.
+  name: Spire
+- desc: An operator for managing GitLab CI/CD runners on Kubernetes.
+  name: Gitlab Runner Operator
+- desc: A popular service mesh that provides traffic management, security, and observability
+    for microservices.
+  name: Istio
+- desc: A distributed key-value store used as the Kubernetes cluster's datastore.
+  name: Etcd
+- desc: A global network plugin for Kubernetes that enables cross-cluster communication.
+  name: Submariner
+- desc: A flexible DNS server that is the default DNS provider for Kubernetes.
+  name: Coredns
+- desc: An admission controller for enforcing policies on Kubernetes resources.
+  name: OPA Gatekeeper
+- desc: A software development framework for defining Kubernetes native resources
+    using familiar programming languages.
+  name: Cdk For Kubernetes (Cdk8S)
+- desc: A platform for event processing, analytics, and data integration.
+  name: Tremor
+- desc: A knowledge graph for cloud-native computing environments.
+  name: Clusterpedia
+- desc: A network security and observability plugin for Kubernetes using eBPF technology.
+  name: Cilium
+- desc: A chaos engineering platform for Kubernetes.
+  name: Chaos Mesh
+- desc: A bare metal provisioning engine for Kubernetes.
+  name: Tinkerbell
+- desc: A lightweight and secure WebAssembly runtime.
+  name: Wasmedge Runtime
+- desc: A high-performance, open-source remote procedure call (RPC) framework.
+  name: gRPC
+- desc: A workflow engine for Kubernetes, used for running and managing workflows.
+  name: Argo
+- desc: A lightweight Kubernetes distribution designed for edge computing and resource-constrained
+    environments.
+  name: K3S
+- desc: An operator for managing GitHub Actions runners on Kubernetes.
+  name: Github Actions Runner Operator
+- desc: A cloud-native runtime security tool that detects and alerts on abnormal behavior.
+  name: Falco
+- desc: The server component of Grafana, a popular open-source analytics and monitoring
+    platform.
+  name: Grafana UI Server
+- desc: A specification for configuring network interfaces of container runtimes like
+    Docker and Kubernetes.
+  name: Container Network Interface (Cni)
+- desc: A set of tools and best practices for building and managing Kubernetes operators.
+  name: Operator Framework
+- desc: A P2P-based container image distribution system.
+  name: Dragonfly
+- desc: A lightweight and extensible service mesh designed for Kubernetes.
+  name: Open Service Mesh
+- desc: A Kafka Operator for running Apache Kafka on Kubernetes.
+  name: Strimzi
+- desc: A platform for building, deploying, and running WebAssembly modules.
+  name: Wasmcloud
+- desc: A cloud-native edge computing platform.
+  name: Superedge
+- desc: A database clustering system for horizontal scaling of MySQL.
+  name: Vitess
+- desc: An operator for managing Grafana instances on Kubernetes.
+  name: Grafana Operator
+- desc: An open-source distributed block storage system for Kubernetes.
+  name: Longhorn
+- desc: A platform for discovering, installing, and publishing Kubernetes packages.
+  name: Artifact Hub
+- desc: An observability platform for debugging applications in real-time.
+  name: Pixie
+- desc: An SSH server for containers.
+  name: Containerssh
+- desc: A specification for describing event data in a common way.
+  name: Cloudevents
+- desc: An operator for managing MySQL instances on Kubernetes.
+  name: MySQL Operator
+- desc: A service mesh management plane that enables multi-mesh and multi-cluster
+    operations.
+  name: Meshery
+- desc: A monitoring and observability system for Prometheus.
+  name: Thanos
+- desc: An edge computing framework that extends Kubernetes to edge devices.
+  name: Kubeedge
+- desc: A platform for securely storing and managing secrets.
+  name: Parsec
+- desc: Microsoft's cloud-based identity and access management service.
+  name: Azure Active Directory (Aad)
+- desc: An Ingress controller for Kubernetes built on the Envoy proxy.
+  name: Contour
+- desc: A popular web server and reverse proxy.
+  name: NGINX
+- desc: A containerized filesystem for Kubernetes.
+  name: Cubefs
+- desc: A system for managing identity and access control.
+  name: Identity Manager
+- desc: An open-source security platform for API security and access control.
+  name: Curiefense
+- desc: An OpenID Connect identity provider that uses OAuth 2.0.
+  name: Dex
+- desc: A specification for securely identifying software systems in dynamic and heterogeneous
+    environments.
+  name: Spiffe
+- desc: Kubernetes-based Event-Driven Autoscaling.
+  name: Keda
+- desc: A tool for working with OCI-compliant registries.
+  name: Oras
+- desc: A service mesh and service discovery tool.
+  name: Consul
+- desc: An operator for managing Grafana Agent instances on Kubernetes.
+  name: Grafana Agent Operator
+- desc: A full-stack container platform that includes Kubernetes and various add-ons.
+  name: Kubesphere
+- desc: An event-driven scripting tool for Kubernetes.
+  name: Brigade
+- desc: A platform for building, shipping, and running containers.
+  name: Docker
+- desc: An Ingress controller for NGINX.
+  name: NGINX Ingress Controller
+- desc: A format for exposing Prometheus metrics.
+  name: OpenMetrics
+- desc: A tool for local development with Kubernetes services.
+  name: Telepresence
+- desc: A Kubernetes automation framework.
+  name: Openkruise
+- desc: A horizontally scalable, Prometheus-compatible, and multi-tenant monitoring
+    system.
+  name: Cortex
+- desc: An operator for managing Jira Service Desk instances on Kubernetes.
+  name: Jira Service Desk Operator
+- desc: A framework for securing software update systems.
+  name: The Update Framework (TUF)
+- desc: An open-source, end-to-end distributed tracing system.
+  name: Jaeger
+- desc: A set of tools for managing Kubernetes clusters and applications across different
+    environments.
+  name: Open Cluster Management
+- desc: A service mesh that provides observability, traffic control, and security
+    for AWS applications.
+  name: AWS App Mesh
+- desc: A platform for building serverless applications.
+  name: Serverless Devs
+- desc: Amazon's managed Kubernetes service.
+  name: AWS Elastic Kubernetes Service
+- desc: Containers with hardware-based encryption for protecting data at runtime.
+  name: Confidential Containers
+- desc: A web-based platform for software development and version control.
+  name: Github
+- desc: A Kubernetes add-on for automated node provisioning and scaling.
+  name: AWS Karpenter
+- desc: An open-source service mesh built on NGINX.
+  name: NGINX Service Mesh
+- desc: A cloud-native layer 7 load balancer.
+  name: BFE
+- desc: A platform for building and packaging applications as container images.
+  name: Buildpacks
+- desc: A chaos engineering toolset for Kubernetes.
+  name: Litmus
+- desc: A Kubernetes extension for managing edge devices as resources.
+  name: Akri
+- desc: A network security and observability plugin for Kubernetes using eBPF technology.
+  name: Athenz
+- desc: A framework for deploying and managing GitOps-based applications.
+  name: OpenGitOps
+- desc: A serverless workflow platform for Kubernetes.
+  name: Teller
+- desc: The container orchestration platform.
+  name: Kubernetes
+- desc: A Kubernetes-native workflow engine.
+  name: Porter
+- desc: A specification for defining development environments.
+  name: Devfile
+- desc: An operator for managing external secrets in Kubernetes.
+  name: External Secrets Operator
+- desc: A scalable and secure web application gateway.
+  name: 'Azure Application Gateway '
+- desc: A Kubernetes reboot daemon.
+  name: Kured
+- desc: A platform for managing feature flags in Kubernetes.
+  name: OpenFeature
+- desc: The Windows operating system, compatible with Kubernetes.
+  name: Windows
+- desc: A high-performance messaging system for cloud-native applications.
+  name: NATS
+- desc: An open-source, distributed storage system for streaming data.
+  name: Pravega
+- desc: A Kubernetes operator for synthetic monitoring of cluster components.
+  name: Kuberhealthy
+- desc: An open-source container image registry.
+  name: Harbor
+- desc: A platform for managing multi-cluster applications.
+  name: Karmada
+- desc: An open platform for building developer portals.
+  name: Backstage
+- desc: A Global Service Load Balancing solution for Kubernetes.
+  name: K8GB
+- desc: A virtual machine management add-on for Kubernetes.
+  name: Kubevirt
+- desc: A trusted cloud-native environment for applications.
+  name: Keylime
+- desc: A reverse proxy cache for Prometheus.
+  name: Trickster
+- desc: Runners used for Github Actions workflows.
+  name: Github Actions Runners
+- desc: A platform for continuous delivery and deployment to Kubernetes.
+  name: Skooner
+- desc: A Kubernetes operator for managing database schema.
+  name: Schemahero
+- desc: An operator for managing GitHub Actions runners on Kubernetes.
+  name: Actions Runner Controller (Arc)
+- desc: A load balancer implementation for bare metal Kubernetes clusters.
+  name: Metallb
+- desc: A development environment for sharing projects and collaborating.
+  name: Devstream
+- desc: A collection of Kubernetes manifest for Prometheus.
+  name: Kube Prometheus
+- desc: A Kubernetes native deep learning framework.
+  name: Kubedl
+- desc: A Kubernetes add-on for managing TLS certificates.
+  name: Cert Manager
+- desc: An open-source platform for machine learning on Kubernetes.
+  name: Kubeflow
+- desc: A specification for defining and managing serverless workflows.
+  name: Serverless Workflow
+- desc: A Kubernetes kubelet implementation that runs on cloud provider APIs.
+  name: Virtual Kubelet
+- desc: An API gateway for Kubernetes.
+  name: Fonio
+- desc: An open-source storage orchestrator for Kubernetes.
+  name: Rook
+- desc: A progressive delivery tool for Kubernetes.
+  name: Flagger
+- desc: A Kubernetes-based hyperparameter tuning system.
+  name: Kubeflow Katib
+- desc: A local development tool for Kubernetes applications.
+  name: Nocalhost
+- desc: AWS load balancing solutions for Kubernetes.
+  name: AWS Load Balancer
+- desc: A set of APIs, libraries, agents, and instrumentation for observability.
+  name: OpenTelemetry
+- desc: An operator for managing GitLab instances on Kubernetes.
+  name: Gitlab Controller
+- desc: A cloud-native, federated learning platform.
+  name: Fluid
+- color: ../images/integration/argocd-color.svg
+  name: Argo CD
+  white: ../images/integration/argocd-white.svg
+- color: ../images/integration/fluentbit-operator-color.svg
+  name: Fluentbit Operator
+  white: ../images/integration/fluentbit-operator-white.svg
+- color: ../images/integration/rabbitmq-cluster-operator-color.svg
+  name: RabbitMQ Cluster Operator
+- color: ../images/integration/capsule-proxy-color.svg
+  name: Capsule Proxy
+  white: ../images/integration/capsule-proxy-white.svg
+- color: ../images/integration/psmdb-operator-color.svg
+  name: Percona Operator for MongoDB
+  white: ../images/integration/psmdb-operator-white.svg
+- color: ../images/integration/terraform-color.svg
+  name: Terraform
+  white: ../images/integration/terraform-white.svg
+- color: ../images/integration/actions-runner-controller-color.svg
+  name: Actions Runner Controller (ARC)
+  white: ../images/integration/actions-runner-controller-white.svg
+- color: ../images/integration/fluentd-operator-color.svg
+  name: Fluentd Operator
+  white: ../images/integration/fluentd-operator-white.svg
+- color: ../images/integration/admin-console-operator-color.svg
+  name: Epam Delivery Platform (EDP) Admin Console
+  white: ../images/integration/admin-console-operator-white.svg
+- color: ../images/integration/emissary-ingress-color.svg
+  name: Emissary Ingress
+  white: ../images/integration/emissary-ingress-white.svg
+- color: ../images/integration/apache-shardingsphere-operator-charts-color.svg
+  name: Apache Shardingsphere Operator Charts
+  white: ../images/integration/apache-shardingsphere-operator-charts-white.svg
+- color: ../images/integration/harbor-operator-color.svg
+  name: Harbor Operator
+  white: ../images/integration/harbor-operator-white.svg
+- color: ../images/integration/kubevault-color.svg
+  name: Kubevault
+  white: ../images/integration/kubevault-white.svg
+- color: ../images/integration/argo-workflows-color.svg
+  name: Argo Workflows
+  white: ../images/integration/argo-workflows-white.svg
+- color: ../images/integration/argocd-operator-color.svg
+  name: Argocd Operator
+  white: ../images/integration/argocd-operator-white.svg
+- color: ../images/integration/openebs-color.svg
+  name: OpenEBS
+  white: ../images/integration/openebs-white.svg
+- color: ../images/integration/cd-pipeline-operator-color.svg
+  name: CD Pipeline Operator
+  white: ../images/integration/cd-pipeline-operator-white.svg
+- color: ../images/integration/kubevault-catalog-color.svg
+  name: Kubevault Catalog
+  white: ../images/integration/kubevault-catalog-white.svg
+- color: ../images/integration/cert-manager-crds-color.svg
+  name: Cert Manager Crds
+  white: ../images/integration/cert-manager-crds-white.svg
+- color: ../images/integration/kong-color.svg
+  name: Kong API Gateway
+  white: ../images/integration/kong-white.svg
+- color: ../images/integration/etcd-cluster-operator-color.svg
+  name: Etcd Cluster Operator
+  white: ../images/integration/etcd-cluster-operator-white.svg
+- color: ../images/integration/spire-color.svg
+  name: SPIRE
+  white: ../images/integration/spire-white.svg
+- color: ../images/integration/k3s-color.svg
+  name: K3s
+  white: ../images/integration/k3s-white.svg
+- color: ../images/integration/posthog-color.svg
+  name: Posthog
+  white: ../images/integration/posthog-white.svg
+- color: ../images/integration/kyverno-monitor-color.svg
+  name: Kyverno Monitor
+  white: ../images/integration/kyverno-monitor-white.svg
+- color: ../images/integration/nats-operator-color.svg
+  name: NATS Operator
+  white: ../images/integration/nats-operator-white.svg
+- color: ../images/integration/strimzi-registry-operator-color.svg
+  name: Strimzi Registry Operator
+  white: ../images/integration/strimzi-registry-operator-white.svg
+- color: ../images/integration/spiffe-color.svg
+  name: SPIFFE
+  white: ../images/integration/spiffe-white.svg
+- color: ../images/integration/meshery-operator-color.svg
+  name: Meshery Operator
+  white: ../images/integration/meshery-operator-white.svg
+- color: ../images/integration/aws-vpc-cni-color.svg
+  name: AWS VPC CNI
+  white: ../images/integration/aws-vpc-cni-white.svg
+- color: ../images/integration/jitsi-color.svg
+  name: Jitsi
+  white: ../images/integration/jitsi-white.svg
+- color: ../images/integration/mattermost-operator-color.svg
+  name: Mattermost Operator
+  white: ../images/integration/mattermost-operator-white.svg
+- color: ../images/integration/aad-pod-identity-color.svg
+  name: Azure Active Directory (AAD)
+  white: ../images/integration/aad-pod-identity-white.svg
+- color: ../images/integration/aperture-agent-color.svg
+  name: Aperture Agent
+  white: ../images/integration/aperture-agent-white.svg
+- color: ../images/integration/kubedb-metrics-color.svg
+  name: Kubedb Metrics
+- color: ../images/integration/kubevault-metrics-color.svg
+  name: Kubevault Metrics
+  white: ../images/integration/kubevault-metrics-white.svg
+- color: ../images/integration/prometheus-operator-crds-color.svg
+  name: Prometheus Operator
+  white: ../images/integration/prometheus-operator-crds-white.svg
+- color: ../images/integration/jaeger-operator-color.svg
+  name: Jaeger Operator
+  white: ../images/integration/jaeger-operator-white.svg
+- color: ../images/integration/postgres-with-operator-color.svg
+  name: Postgres With Operator
+  white: ../images/integration/postgres-with-operator-white.svg
+- color: ../images/integration/kubedb-grafana-dashboards-color.svg
+  name: Kubedb Grafana Dashboards
+- color: ../images/integration/tuf-color.svg
+  name: Tuf
+  white: ../images/integration/tuf-white.svg
+- color: ../images/integration/opentelemetry-operator-color.svg
+  name: OpenTelemetry Operator
+  white: ../images/integration/opentelemetry-operator-white.svg
+- color: ../images/integration/pulsar-resources-operator-color.svg
+  name: Pulsar Resources Operator
+  white: ../images/integration/pulsar-resources-operator-white.svg
+- color: ../images/integration/aws-node-termination-handler-2-color.svg
+  name: AWS Node Termination Handler
+  white: ../images/integration/aws-node-termination-handler-2-white.svg
+- color: ../images/integration/pg-operator-color.svg
+  name: Percona Postgres Operator
+  white: ../images/integration/pg-operator-white.svg
+- color: ../images/integration/kong-mesh-color.svg
+  name: Kong Mesh
+  white: ../images/integration/kong-mesh-white.svg
+- color: ../images/integration/kubedb-catalog-color.svg
+  name: Kubedb Catalog
+- color: ../images/integration/kubedb-crds-color.svg
+  name: Kubedb CRDs
+- color: ../images/integration/newrelic-operator-color.svg
+  name: New Relic Operator
+  white: ../images/integration/newrelic-operator-white.svg
+- color: ../images/integration/kubevault-crds-color.svg
+  name: Kubevault Crds
+  white: ../images/integration/kubevault-crds-white.svg
+- color: ../images/integration/awx-operator-color.svg
+  name: AWX Operator
+  white: ../images/integration/awx-operator-white.svg
+- color: ../images/integration/helm-controller-color.svg
+  name: Helm Controller
+  white: ../images/integration/helm-controller-white.svg
+- color: ../images/integration/istio-operator-color.svg
+  name: Istio Operator
+  white: ../images/integration/istio-operator-white.svg
+- color: ../images/integration/fluentd-color.svg
+  name: Fluentd Operator
+  white: ../images/integration/fluentd-white.svg
+- color: ../images/integration/keycloak-operator-color.svg
+  name: Keycloak Operator
+  white: ../images/integration/keycloak-operator-white.svg
+- color: ../images/integration/prometheus-color.svg
+  name: Prometheus
+  white: ../images/integration/prometheus-white.svg
+- color: ../images/integration/jenkins-operator-color.svg
+  name: Jenkins Operator
+  white: ../images/integration/jenkins-operator-white.svg
+- color: ../images/integration/litmus-core-color.svg
+  name: Litmus Chaos
+  white: ../images/integration/litmus-core-white.svg
+- color: ../images/integration/grafana-agent-color.svg
+  name: Grafana Agent
+  white: ../images/integration/grafana-agent-white.svg
+- color: ../images/integration/pgo-color.svg
+  name: PGO (CrunchyData)
+  white: ../images/integration/pgo-white.svg
+- color: ../images/integration/rabbitmq-operator-color.svg
+  name: RabbitMQ Operator
+- color: ../images/integration/container network interface (cni)-color.svg
+  name: Container Network Interface (CNI)
+  white: ../images/integration/container network interface (cni)-white.svg
+- color: ../images/integration/kube-prometheus-stack-color.svg
+  name: Kube Prometheus Stack
+  white: ../images/integration/kube-prometheus-stack-white.svg
+- color: ../images/integration/kubedb-ops-manager-color.svg
+  name: Kubedb Ops Manager
+- color: ../images/integration/postgres-operator-color.svg
+  name: Postgres Operator
+  white: ../images/integration/postgres-operator-white.svg
+- color: ../images/integration/armory-spinnaker-operator-color.svg
+  name: Armory Spinnaker Operator
+  white: ../images/integration/armory-spinnaker-operator-white.svg
+- color: ../images/integration/camel-k-color.svg
+  name: Camel K
+  white: ../images/integration/camel-k-white.svg
+- color: ../images/integration/piraeus datastore-color.svg
+  name: Piraeus Datastore
+  white: ../images/integration/piraeus datastore-white.svg
+- color: ../images/integration/stackgres-operator-color.svg
+  name: Stackgres Operator
+  white: ../images/integration/stackgres-operator-white.svg
+- color: ../images/integration/kusk-gateway-color.svg
+  name: Kusk Gateway
+  white: ../images/integration/kusk-gateway-white.svg
+- color: ../images/integration/tikv-operator-color.svg
+  name: Tikv Operator
+  white: ../images/integration/tikv-operator-white.svg
+- color: ../images/integration/argo-cd-color.svg
+  name: Argo CD
+  white: ../images/integration/argo-cd-white.svg
+- color: ../images/integration/aperture-controller-color.svg
+  name: Aperture Controller
+  white: ../images/integration/aperture-controller-white.svg
+- color: ../images/integration/postgres-controller-color.svg
+  name: Postgres Controller
+  white: ../images/integration/postgres-controller-white.svg
+- color: ../images/integration/psmdb-db-color.svg
+  name: Percona Server for MongoDB
+  white: ../images/integration/psmdb-db-white.svg
+- color: ../images/integration/knative-serving-color.svg
+  name: Knative Serving
+  white: ../images/integration/knative-serving-white.svg
+- color: ../images/integration/kubedb-ui-server-color.svg
+  name: Kubedb UI Server
+- color: ../images/integration/pulsar-operator-color.svg
+  name: Pulsar Operator
+  white: ../images/integration/pulsar-operator-white.svg
+- color: ../images/integration/ps-db-color.svg
+  name: Percona Server for MySQL
+  white: ../images/integration/ps-db-white.svg
+- color: ../images/integration/strimzi-kafka-operator-color.svg
+  name: Strimzi Kafka Operator
+  white: ../images/integration/strimzi-kafka-operator-white.svg
+- color: ../images/integration/grpc-color.svg
+  name: GRPC
+  white: ../images/integration/grpc-white.svg
+- color: ../images/integration/kubedb-opscenter-color.svg
+  name: Kubedb Opscenter
+- color: ../images/integration/kubevault-operator-color.svg
+  name: Kubevault Operator
+  white: ../images/integration/kubevault-operator-white.svg
+- color: ../images/integration/karpenter-color.svg
+  name: Karpenter
+  white: ../images/integration/karpenter-white.svg
+- color: ../images/integration/kiali-operator-color.svg
+  name: Kiali Operator
+  white: ../images/integration/kiali-operator-white.svg
+- color: ../images/integration/istio-ratelimit-operator-color.svg
+  name: Istio Rate Limit Operator
+  white: ../images/integration/istio-ratelimit-operator-white.svg
+- color: ../images/integration/aws-api-gateway-operator-color.svg
+  name: AWS API Gateway Operator
+  white: ../images/integration/aws-api-gateway-operator-white.svg
+- color: ../images/integration/fluentbit-skt-color.svg
+  name: Fluentbit Skt
+  white: ../images/integration/fluentbit-skt-white.svg
+- color: ../images/integration/ambassador-color.svg
+  name: Ambassador
+  white: ../images/integration/ambassador-white.svg
+- color: ../images/integration/cert-manager-csi-driver-cacerts-color.svg
+  name: Cert Manager Csi Driver Cacerts
+  white: ../images/integration/cert-manager-csi-driver-cacerts-white.svg
+- color: ../images/integration/knative-color.svg
+  name: Knative
+  white: ../images/integration/knative-white.svg
+- color: ../images/integration/ps-operator-color.svg
+  name: Percona Operator for MySQL
+  white: ../images/integration/ps-operator-white.svg
+- color: ../images/integration/apisix-ingress-controller-color.svg
+  name: APISIX Ingress Controller
+- color: ../images/integration/kubedb-color.svg
+  name: Kubedb
+- color: ../images/integration/fluent-operator-color.svg
+  name: Fluent Operator
+  white: ../images/integration/fluent-operator-white.svg
+- color: ../images/integration/minio-operator-color.svg
+  name: MinIO Operator
+  white: ../images/integration/minio-operator-white.svg
+- color: ../images/integration/pg-db-color.svg
+  name: Postgres Database (CrunchyData)
+  white: ../images/integration/pg-db-white.svg
