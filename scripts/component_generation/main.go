@@ -98,7 +98,7 @@ func main() {
 			return
 		}
 	}
-	compsFd, err := os.OpenFile(filepath.Join(OutputDirectoryPath, ComponentsFileName), os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
+	compsFd, err := os.OpenFile(ComponentsFileName, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -108,7 +108,7 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	modelsFd, err := os.OpenFile(filepath.Join(OutputDirectoryPath, ComponentModelsFileName), os.O_CREATE|os.O_RDWR, 0644)
+	modelsFd, err := os.OpenFile(ComponentModelsFileName, os.O_CREATE|os.O_RDWR, 0644)
 	if err != nil {
 		fmt.Println(err)
 		return
