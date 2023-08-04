@@ -10,7 +10,7 @@ list: exclude
 
 # Meshery Overview
 
-As the cloud native management plane, Meshery enables the operation and management of Kubernetes, any service mesh, and their workloads. Meshery's powerful performance management functionality is accomplished through implementation of [Service Mesh Performance](https://smp-spec.io) (SMP). Meshery's cloud native manager functionality leverages [Service Mesh Interface](https://smi-spec.io) (SMI) and Meshery is the conformance tool for SMI. Meshery integrates with Open Application Model (OAM) to enable users to deploy service mesh patterns. Meshery enables operators to deploy WebAssembly filters to Envoy-based data planes. Meshery facilitates learning about functionality and performance of service meshes and incorporates the collection and display of metrics from applications running on or across service meshes.
+As the cloud native management plane, Meshery enables the operation and management of Kubernetes, any service mesh, and their workloads. Meshery's powerful performance management functionality is accomplished through implementation of [Cloud Native Performance](https://smp-spec.io). <!-- Meshery's cloud native manager functionality leverages [Service Mesh Interface](https://smi-spec.io) (SMI) and Meshery is the conformance tool for SMI. --> Meshery Catalog enable users to capture and share cloud native design patterns. Meshery enables operators to deploy WebAssembly filters to Envoy-based data planes. Meshery facilitates learning about functionality and performance of infrastructure and incorporates the collection and display of metrics from applications.
 
 ##### **Meshery as a project and its community**
 
@@ -34,33 +34,31 @@ As the cloud native management plane, Meshery enables the operation and manageme
 Meshery features can be categorized by:
 
 1. Cloud Native Performance Management
-   - Workload and service mesh performance characterization
+   - Workload and infrastructure performance characterization
    - Prometheus and Grafana integration
 1. Cloud Native Configuration Management
    - Configuration best practices
+   - Configuration support for hundreds of [integrations]({{ site.baseurl/extensibility/integrations }})
 1. Cloud Native Lifecycle Management
    - Cloud native provisioning and workload onboarding
-   - Meshery Operator and MeshSync
-   - Cloud native patterns and Open Application Model integration
+   - Cloud native design patterns and sharing via catalog
 1. Data Plane Intelligence
    - Registry and configuration of WebAssembly filters for Envoy
+   - Filter chaining and publishing to content catalog
 1. Cloud Native Interoperability and Federation
-   - Manage multiple service meshes concurrently
-   - Connect to multiple clusters independently
-
-See all projects Meshery seamlessly integrates with <a href="{{ site.baseurl/extensibility/integrations }}">here</a>.
+   - Manage multiple Kubernetes clusters concurrently
 
 ### Meshery is for Developers, Operators, and Product Owners
 
-Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Meshery has useful capabilities in either circumstance. Targeted audience for Meshery project would be any technology operators that leverage service mesh in their ecosystem; this includes developers, devops engineers, decision makers, architects, and organizations that rely on microservices platform.
+Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Meshery has useful capabilities in either circumstance. Targeted audience for Meshery project would be any technology operators that leverage cloud native infrastructure in their ecosystem; this includes developers, devops engineers, decision makers, architects, and organizations that rely on microservices platform.
 
-### Meshery is for service mesh patterns
+### Meshery is for cloud native design patterns
 
-Meshery integrates with Open Application Model (OAM) to enable users to deploy service mesh patterns.
+Meshery integrates with hundreds of [infrastructure and application components]({{ site.baseurl/extensibility/integrations }}) to enable users to deploy cloud native design patterns.
 
 ### Meshery is for performance management
 
-Meshery helps users weigh the value of their service mesh deployment against the overhead incurred in running a service mesh. Meshery provides statistical analysis of the request latency and throughput seen across various permutations of your workload, infrastructure and service mesh configuration.
+Meshery helps users weigh the value of their workload deployments against the overhead incurred while running cloud native infrastructure. Meshery provides statistical analysis of the request latency and throughput seen across various permutations of your workload, infrastructure and configuration.
 In addition to request latency and throughput, Meshery also tracks memory and CPU overhead in of the nodes in your cluster. Measure your data plane and control plane against different sets of workloads and infrastructures.
 
 Anytime performance questions are to be answered, they are subjective to the specific workload and infrastructure used for measurement. Given this challenge, the Envoy project, for example, refuses to publish performance data because such tests can be:
