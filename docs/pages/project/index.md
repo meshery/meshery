@@ -38,7 +38,7 @@ Meshery features can be categorized by:
    - Prometheus and Grafana integration
 1. Cloud Native Configuration Management
    - Configuration best practices
-   - Configuration support for hundreds of [integrations]({{ site.baseurl/extensibility/integrations }})
+   - Configuration support for hundreds of [integrations](/extensibility/integrations)
 1. Cloud Native Lifecycle Management
    - Cloud native provisioning and workload onboarding
    - Cloud native design patterns and sharing via catalog
@@ -54,7 +54,7 @@ Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Mesher
 
 ### Meshery is for cloud native design patterns
 
-Meshery integrates with hundreds of [infrastructure and application components]({{ site.baseurl/extensibility/integrations }}) to enable users to deploy cloud native design patterns.
+Meshery integrates with hundreds of [infrastructure and application components](/extensibility/integrations) to enable users to deploy cloud native design patterns.
 
 ### Meshery is for performance management
 
