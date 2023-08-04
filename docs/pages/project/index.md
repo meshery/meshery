@@ -48,6 +48,8 @@ Meshery features can be categorized by:
    - Manage multiple service meshes concurrently
    - Connect to multiple clusters independently
 
+See all projects Meshery seamlessly integrates with <a href="{{ site.baseurl/extensibility/integrations }}">here</a>.
+
 ### Meshery is for Developers, Operators, and Product Owners
 
 Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Meshery has useful capabilities in either circumstance. Targeted audience for Meshery project would be any technology operators that leverage service mesh in their ecosystem; this includes developers, devops engineers, decision makers, architects, and organizations that rely on microservices platform.

@@ -1,925 +1,1197 @@
-- name: AWS Target Group Binding
-  desc: Enables binding AWS target groups to Kubernetes services. 
-  # color: "../images/integration/aws-target-group-binding-color.svg"
-  # white: "../images/integration/aws-target-group-binding-white.svg"
-- name: Jfrog Distribution
-  desc: JFrog's artifact distribution platform for managing and distributing software packages.
-  # color: "../images/integration/distribution-color.svg"
-  # white: "../images/integration/distribution-white.svg"
-- name: Jenkins
-  desc: A popular open-source automation server for building, testing, and deploying software projects.
-  # color: "../images/integration/jenkins-operator-color.svg"
-  # white: "../images/integration/jenkins-operator-white.svg"
-- name: Linkerd
-  desc: A service mesh for cloud-native applications, providing features like observability, reliability, and security.
-  # color: "../images/integration/linkerd-color.svg"
-  # white: "../images/integration/linkerd-white.svg"
-- name: Helm
-  desc: A package manager for Kubernetes that simplifies deploying and managing applications.
-  # color: "../images/integration/helm-controller-color.svg"
-  # white: "../images/integration/helm-controller-white.svg"
-- name: Containerd
-  desc: AWS Target Group Binding 
-  # color: "../images/integration/containerd-color.svg"
-  # white: "../images/integration/containerd-white.svg"
-- name: Fluentd
-  desc: A data collector for unified logging, used for gathering and forwarding log data.
-  # color: "../images/integration/fluent-operator-color.svg"
-  # white: "../images/integration/fluent-operator-white.svg"
-- name: In Toto
-  desc: A security framework for ensuring the integrity and authenticity of software supply chains.
-  # color: "../images/integration/in-toto-color.svg"
-  # white: "../images/integration/in-toto-white.svg"
-- name: Vineyard
-  desc: An in-memory data management system for accelerating data access in analytics workloads.
-  # color: "../images/integration/vineyard-color.svg"
-  # white: "../images/integration/vineyard-white.svg"
-- name: Hexa
-  desc: A platform for running applications securely and efficiently across different cloud providers.
-  # color: "../images/integration/hexa-color.svg"
-  # white: "../images/integration/hexa-white.svg"
-- name: CRI-O
-  desc: A lightweight container runtime specifically designed for Kubernetes and Open Container Initiative (OCI) standards.
-  # color: "../images/integration/cri-o-color.svg"
-  # white: "../images/integration/cri-o-white.svg"
-- name: Flux
-  desc: A tool for automating continuous delivery of Kubernetes resources.
-  # color: "../images/integration/flux-color.svg"
-  # white: "../images/integration/flux-white.svg"
-- name: Piraeus
-  desc: A high-availability solution for stateful applications on Kubernetes.
-  # color: "../images/integration/piraeus datastore-color.svg"
-  # white: "../images/integration/piraeus datastore-white.svg"
-- name: Kubevela
-  desc: A Kubernetes-native Platform-as-Code framework for managing applications.
-  # color: "../images/integration/kubevela-color.svg"
-  # white: "../images/integration/kubevela-white.svg"
-- name: Kuma
-  desc: A universal service mesh that provides traffic management and security for microservices. 
-  # color: "../images/integration/kuma-color.svg"
-  # white: "../images/integration/kuma-white.svg"
-- name: Notary
-  desc: A tool for trust and security for distributing and verifying container images.
-  # color: "../images/integration/notary-color.svg"
-  # white: "../images/integration/notary-white.svg"
-- name: Kube Rs
-  desc: A tool for managing and applying Kubernetes resources declaratively.
-  # color: "../images/integration/kube-rs-color.svg"
-  # white: "../images/integration/kube-rs-white.svg"
-- name: Kubernetes UI Server
-  desc: The Kubernetes Dashboard for visualizing and managing Kubernetes clusters.
-  # color: "../images/integration/kube-ui-server-color.svg"
-  # white: "../images/integration/kube-ui-server-white.svg"
-- name: Elastic Search
-  desc: A distributed search and analytics engine commonly used for log analysis.
-  # color: "../images/integration/elasticsearch-operator-color.svg"
-  # white: "../images/integration/elasticsearch-operator-white.svg"
-- name: Open Policy Agent (OPA)
-  desc: A policy-based control system used for enforcing policies across 
-  # color: "../images/integration/open policy agent (opa)-color.svg"
-  # white: "../images/integration/open policy agent (opa)-white.svg"
-- name: Kyverno
-  desc: A Kubernetes-native policy management engine.
-  # color: "../images/integration/kyverno-monitor-color.svg"
-  # white: "../images/integration/kyverno-monitor-white.svg"
-- name: AWS API Gateway
-  desc: A service for creating, publishing, maintaining, monitoring, and securing APIs.
-  # color: "../images/integration/aws-api-gateway-operator-color.svg"
-  # white: "../images/integration/aws-api-gateway-operator-white.svg"
-- name: Inclavare Containers
-  desc: Secure containers that leverage hardware-enforced Trusted Execution Environments (TEEs).
-  # color: "../images/integration/inclavare containers-color.svg"
-  # white: "../images/integration/inclavare containers-white.svg"
-- name: Mimir
-  desc: An AI-driven observability platform for Kubernetes.
-  # color: "../images/integration/mimir-distributed-color.svg"
-  # white: "../images/integration/mimir-distributed-white.svg"
-- name: Citrix Service Mesh
-  desc: A service mesh designed to provide observability, security, and traffic management for microservices.
-  # color: "../images/integration/cpx-color.svg"
-  # white: "../images/integration/cpx-white.svg"
-- name: Kubeflow MPI Operator
-  desc: An operator for running distributed MPI workloads on Kubeflow.
-  # color: "../images/integration/mpi-operator-color.svg"
-  # white: "../images/integration/mpi-operator-white.svg"
-- name: Volcano
-  desc: A Kubernetes-native system for managing and automating batch processing workloads.
-  # color: "../images/integration/volcano-color.svg"
-  # white: "../images/integration/volcano-white.svg"
-- name: Envoy
-  desc: A high-performance proxy used as a service mesh data plane.
-  # color: "../images/integration/envoy-color.svg"
-  # white: "../images/integration/envoy-white.svg"
-- name: Linux
-  desc: The operating system on which Kubernetes runs.
-  # color: "../images/integration/linux-color.svg"
-  # white: "../images/integration/linux-white.svg"
-- name: Tikv
-  desc: An open-source distributed key-value database built for cloud-native applications.
-  # color: "../images/integration/tikv-operator-color.svg"
-  # white: "../images/integration/tikv-operator-white.svg"
-- name: Crossplane
-  desc: A Kubernetes-native control plane for managing cloud infrastructure.
-  # color: "../images/integration/crossplane-color.svg"
-  # white: "../images/integration/crossplane-white.svg"
-- name: Dapr
-  desc: A portable, event-driven runtime for building microservices applications.
-  # color: "../images/integration/dapr-color.svg"
-  # white: "../images/integration/dapr-white.svg"
-- name: Fabedge
-  desc: A Kubernetes-native solution for edge computing.
-  # color: "../images/integration/fabedge-color.svg"
-  # white: "../images/integration/fabedge-white.svg"
-- name: Spire
-  desc: A tool for securing workload-to-workload communication in a SPIFFE-compliant way.
-  # color: "../images/integration/spire-color.svg"
-  # white: "../images/integration/spire-white.svg"
-- name: Gitlab Runner Operator
-  desc: An operator for managing GitLab CI/CD runners on Kubernetes.
-  # color: "../images/integration/gitlab-runner-operator-color.svg"
-  # white: "../images/integration/gitlab-runner-operator-white.svg"
-- name: Istio
-  desc: A popular service mesh that provides traffic management, security, and observability for microservices.
-  # color: "../images/integration/istio-color.svg"
-  # white: "../images/integration/istio-white.svg"
-- name: Etcd
-  desc: A distributed key-value store used as the Kubernetes cluster's datastore.
-  # color: "../images/integration/etcd-color.svg"
-  # white: "../images/integration/etcd-white.svg"
-- name: Submariner
-  desc: A global network plugin for Kubernetes that enables cross-cluster communication.
-  # color: "../images/integration/submariner-color.svg"
-  # white: "../images/integration/submariner-white.svg"
-- name: Coredns
-  desc: A flexible DNS server that is the default DNS provider for Kubernetes.
-  # color: "../images/integration/coredns-color.svg"
-  # white: "../images/integration/coredns-white.svg"
-- name: OPA Gatekeeper
-  desc: An admission controller for enforcing policies on Kubernetes resources.
-  # color: "../images/integration/gatekeeper-color.svg"
-  # white: "../images/integration/gatekeeper-white.svg"
-- name: Cdk For Kubernetes (Cdk8S)
-  desc: A software development framework for defining Kubernetes native resources using familiar programming languages.
-  # color: "../images/integration/cdk8s-color.svg"
-  # white: "../images/integration/cdk8s-white.svg"
-- name: Tremor 
-  desc: A platform for event processing, analytics, and data integration.
-  # color: "../images/integration/tremor-color.svg"
-  # white: "../images/integration/tremor-white.svg"
-- name: Clusterpedia
-  desc: A knowledge graph for cloud-native computing environments.
-  # color: "../images/integration/clusterpedia-color.svg"
-  # white: "../images/integration/clusterpedia-white.svg"
-- name: Cilium 
-  desc: A network security and observability plugin for Kubernetes using eBPF technology.
-  # color: "../images/integration/cilium-color.svg"
-  # white: "../images/integration/cilium-white.svg"
-- name: Chaos Mesh
-  desc: A chaos engineering platform for Kubernetes.
-  # color: "../images/integration/chaos-mesh-color.svg"
-  # white: "../images/integration/chaos-mesh-white.svg"
-- name: Tinkerbell
-  desc: A bare metal provisioning engine for Kubernetes.
-  # color: "../images/integration/tinkerbell-color.svg"
-  # white: "../images/integration/tinkerbell-white.svg"
-- name: Wasmedge Runtime
-  desc: A lightweight and secure WebAssembly runtime.
-  # color: "../images/integration/wasmedgeruntime-color.svg"
-  # white: "../images/integration/wasmedgeruntime-white.svg"
-- name: gRPC
-  desc: A high-performance, open-source remote procedure call (RPC) framework.
-  # color: "../images/integration/grpc-color.svg"
-  # white: "../images/integration/grpc-white.svg"
-- name: Argo
-  desc: A workflow engine for Kubernetes, used for running and managing workflows.
-  # color: "../images/integration/argo-color.svg"
-  # white: "../images/integration/argo-white.svg"
-- name: K3S
-  desc: A lightweight Kubernetes distribution designed for edge computing and resource-constrained environments.
-  # color: "../images/integration/k3s-color.svg"
-  # white: "../images/integration/k3s-white.svg"
-- name: Github Actions Runner Operator
-  desc: An operator for managing GitHub Actions runners on Kubernetes.
-  # color: "../images/integration/github-actions-runner-operator-color.svg"
-  # white: "../images/integration/github-actions-runner-operator-white.svg"
-- name: Falco
-  desc: A cloud-native runtime security tool that detects and alerts on abnormal behavior.
-  # color: "../images/integration/falco-color.svg"
-  # white: "../images/integration/falco-white.svg"
-- name: Grafana UI Server
-  desc: The server component of Grafana, a popular open-source analytics and monitoring platform.
-  # color: "../images/integration/grafana-ui-server-color.svg"
-  # white: "../images/integration/grafana-ui-server-white.svg"
-- name: Container Network Interface (Cni)
-  desc: A specification for configuring network interfaces of container runtimes like Docker and Kubernetes.
-  # color: "../images/integration/container network interface (cni)-color.svg"
-  # white: "../images/integration/container network interface (cni)-white.svg"
-- name: Operator Framework
-  desc: A set of tools and best practices for building and managing Kubernetes operators.
-  # color: "../images/integration/operator framework-color.svg"
-  # white: "../images/integration/operator framework-white.svg"
-- name: Dragonfly
-  desc: A P2P-based container image distribution system.
-  # color: "../images/integration/dragonfly-color.svg"
-  # white: "../images/integration/dragonfly-white.svg"
-- name: Open Service Mesh
-  desc: A lightweight and extensible service mesh designed for Kubernetes.
-  # color: "../images/integration/open service mesh-color.svg"
-  # white: "../images/integration/open service mesh-white.svg"
-- name: Strimzi
-  desc: A Kafka Operator for running Apache Kafka on Kubernetes.
-  # color: "../images/integration/strimzi-kafka-operator-color.svg"
-  # white: "../images/integration/strimzi-kafka-operator-white.svg"
-- name: Wasmcloud
-  desc: A platform for building, deploying, and running WebAssembly modules.
-  # color: "../images/integration/wasmcloud-color.svg"
-  # white: "../images/integration/wasmcloud-white.svg"
-- name: Superedge
-  desc: A cloud-native edge computing platform.
-  # color: "../images/integration/superedge-color.svg"
-  # white: "../images/integration/superedge-white.svg"
-- name: Vitess
-  desc: A database clustering system for horizontal scaling of MySQL.
-  # color: "../images/integration/vitess-color.svg"
-  # white: "../images/integration/vitess-white.svg"
-- name: Grafana Operator  
-  desc: An operator for managing Grafana instances on Kubernetes.
-  # color: "../images/integration/grafana-operator-color.svg"
-  # white: "../images/integration/grafana-operator-white.svg"
-- name: Longhorn
-  desc: An open-source distributed block storage system for Kubernetes.
-  # color: "../images/integration/longhorn-color.svg"
-  # white: "../images/integration/longhorn-white.svg"
-- name: Artifact Hub
-  desc: A platform for discovering, installing, and publishing Kubernetes packages.
-  # color: "../images/integration/artifact hub-color.svg"
-  # white: "../images/integration/artifact hub-white.svg"
-- name: Pixie
-  desc: An observability platform for debugging applications in real-time.
-  # color: "../images/integration/pixie-color.svg"
-  # white: "../images/integration/pixie-white.svg"
-- name: Containerssh
-  desc: An SSH server for containers.
-  # color: "../images/integration/containerssh-color.svg"
-  # white: "../images/integration/containerssh-white.svg"
-- name: Cloudevents
-  desc: A specification for describing event data in a common way.
-  # color: "../images/integration/cloudevents-color.svg"
-  # white: "../images/integration/cloudevents-white.svg"
-- name: MySQL Operator
-  desc: An operator for managing MySQL instances on Kubernetes.
-  # color: "../images/integration/mysql-operator-color.svg"
-  # white: "../images/integration/mysql-operator-white.svg"
-- name: Meshery
-  desc: A service mesh management plane that enables multi-mesh and multi-cluster operations.
-  # color: "../images/integration/meshery-color.svg"
-  # white: "../images/integration/meshery-white.svg"
-- name: Thanos
-  desc: A monitoring and observability system for Prometheus.
-  # color: "../images/integration/thanos-color.svg"
-  # white: "../images/integration/thanos-white.svg"
-- name: Kubeedge
-  desc: An edge computing framework that extends Kubernetes to edge devices.
-  # color: "../images/integration/kubeedge-color.svg"
-  # white: "../images/integration/kubeedge-white.svg"
-- name: Parsec
-  desc: A platform for securely storing and managing secrets.
-  # color: "../images/integration/parsec-color.svg"
-  # white: "../images/integration/parsec-white.svg"
-- name: Azure Active Directory (Aad)
-  desc: Microsoft's cloud-based identity and access management service.
-  # color: "../images/integration/aad-pod-identity-color.svg"
-  # white: "../images/integration/aad-pod-identity-white.svg"
-- name: Contour
-  desc: An Ingress controller for Kubernetes built on the Envoy proxy.
-  # color: "../images/integration/contour-color.svg"
-  # white: "../images/integration/contour-white.svg"
-- name: NGINX
-  desc: A popular web server and reverse proxy.
-  # color: "../images/integration/nginx-color.svg"
-  # white: "../images/integration/nginx-white.svg"
-- name: Cubefs
-  desc: A containerized filesystem for Kubernetes.
-  # color: "../images/integration/cubefs-color.svg"
-  # white: "../images/integration/cubefs-white.svg"
-- name: Identity Manager
-  desc:  A system for managing identity and access control.
-  # color: "../images/integration/identity-manager-color.svg"
-  # white: "../images/integration/identity-manager-white.svg"
-- name: Curiefense
-  desc: An open-source security platform for API security and access control.
-  # color: "../images/integration/curiefense-color.svg"
-  # white: "../images/integration/curiefense-white.svg"
-- name: Dex
-  desc: An OpenID Connect identity provider that uses OAuth 2.0.
-  # color: "../images/integration/dex-color.svg"
-  # white: "../images/integration/dex-white.svg"
-- name: Spiffe
-  desc: A specification for securely identifying software systems in dynamic and heterogeneous environments.
-  # color: "../images/integration/spiffe-color.svg"
-  # white: "../images/integration/spiffe-white.svg"
-- name: Keda
-  desc: Kubernetes-based Event-Driven Autoscaling.
-  # color: "../images/integration/keda-color.svg"
-  # white: "../images/integration/keda-white.svg"
-- name: Oras
-  desc: A tool for working with OCI-compliant registries.
-  # color: "../images/integration/oras-color.svg"
-  # white: "../images/integration/oras-white.svg"
-- name: Consul
-  desc: A service mesh and service discovery tool.
-  # color: "../images/integration/consul-color.svg"
-  # white: "../images/integration/consul-white.svg"
-- name: Grafana Agent Operator
-  desc: An operator for managing Grafana Agent instances on Kubernetes.
-  # color: "../images/integration/grafana-agent-operator-color.svg"
-  # white: "../images/integration/grafana-agent-operator-white.svg"
-- name: Kubesphere
-  desc: A full-stack container platform that includes Kubernetes and various add-ons.
-  # color: "../images/integration/kubesphere-color.svg"
-  # white: "../images/integration/kubesphere-white.svg"
-- name: Brigade
-  desc: An event-driven scripting tool for Kubernetes.
-  # color: "../images/integration/brigade-color.svg"
-  # white: "../images/integration/brigade-white.svg"
-- name: Docker
-  desc: A platform for building, shipping, and running containers.
-  # color: "../images/integration/docker-color.svg"
-  # white: "../images/integration/docker-white.svg"
-- name: NGINX Ingress Controller
-  desc: An Ingress controller for NGINX.
-  # color: "../images/integration/nginx-ingress-color.svg"
-  # white: "../images/integration/nginx-ingress-white.svg"
-- name: OpenMetrics
-  desc: A format for exposing Prometheus metrics.
-  # color: "../images/integration/openmetrics-color.svg"
-  # white: "../images/integration/openmetrics-white.svg"
-- name: Telepresence
-  desc: A tool for local development with Kubernetes services.
-  # color: "../images/integration/telepresence-color.svg"
-  # white: "../images/integration/telepresence-white.svg"
-- name: Openkruise
-  desc: A Kubernetes automation framework.
-  # color: "../images/integration/openkruise-color.svg"
-  # white: "../images/integration/openkruise-white.svg"
-- name: Cortex
-  desc: A horizontally scalable, Prometheus-compatible, and multi-tenant monitoring system.
-  # color: "../images/integration/cortex-color.svg"
-  # white: "../images/integration/cortex-white.svg"
-- name: Jira Service Desk Operator
-  desc: An operator for managing Jira Service Desk instances on Kubernetes.
-  # color: "../images/integration/jira-service-desk-operator-color.svg"
-  # white: "../images/integration/jira-service-desk-operator-white.svg"
-- name: The Update Framework (TUF)
-  desc: A framework for securing software update systems.
-  # color: "../images/integration/tuf-color.svg"
-  # white: "../images/integration/tuf-white.svg"
-- name: Jaeger
-  desc: An open-source, end-to-end distributed tracing system.
-  # color: "../images/integration/jaeger-color.svg"
-  # white: "../images/integration/jaeger-white.svg"
-- name: Open Cluster Management
-  desc: A set of tools for managing Kubernetes clusters and applications across different environments.
-  # color: "../images/integration/open cluster management-color.svg"
-  # white: "../images/integration/open cluster management-white.svg"
-- name: AWS App Mesh
-  desc: A service mesh that provides observability, traffic control, and security for AWS applications.
-#   color: "../images/integration/appmesh-controller-color.svg"
-#   white: "../images/integration/appmesh-controller-white.svg"
-- name: Serverless Devs
-  desc: A platform for building serverless applications.
-  # color: "../images/integration/serverless devs-color.svg"
-  # white: "../images/integration/serverless devs-white.svg"
-- name: AWS Elastic Kubernetes Service
-  desc: Amazon's managed Kubernetes service.
-  # color: "../images/integration/eks-color.svg"
-  # white: "../images/integration/eks-white.svg"
-- name: Confidential Containers
-  desc: Containers with hardware-based encryption for protecting data at runtime.
-  # color: "../images/integration/confidential containers-color.svg"
-  # white: "../images/integration/confidential containers-white.svg"
-- name: Github
-  desc: A web-based platform for software development and version control.
-  # color: "../images/integration/github-color.svg"
-  # white: "../images/integration/github-white.svg"
-- name: AWS Karpenter
-  desc: A Kubernetes add-on for automated node provisioning and scaling.
-  # color: "../images/integration/karpenter-color.svg"
-  # white: "../images/integration/karpenter-white.svg"
-- name: NGINX Service Mesh
-  desc: An open-source service mesh built on NGINX.
-  # color: "../images/integration/nginx-service-mesh-color.svg"
-  # white: "../images/integration/nginx-service-mesh-white.svg"
-- name: BFE
-  desc: A cloud-native layer 7 load balancer.
-  # color: "../images/integration/bfe-color.svg"
-  # white: "../images/integration/bfe-white.svg"
-- name: Buildpacks
-  desc: A platform for building and packaging applications as container images.
-  # color: "../images/integration/buildpacks-color.svg"
-  # white: "../images/integration/buildpacks-white.svg"
-- name: Litmus
-  desc: A chaos engineering toolset for Kubernetes.
-  # color: "../images/integration/litmus-color.svg"
-  # white: "../images/integration/litmus-white.svg"
-- name: Akri
-  desc: A Kubernetes extension for managing edge devices as resources.
-  # color: "../images/integration/akri-color.svg"
-  # white: "../images/integration/akri-white.svg"
-- name: Athenz
-  desc: A network security and observability plugin for Kubernetes using eBPF technology.
-  # color: "../images/integration/athenz-color.svg"
-  # white: "../images/integration/athenz-white.svg"
-- name: OpenGitOps
-  desc: A framework for deploying and managing GitOps-based applications.
-  # color: "../images/integration/opengitops-color.svg"
-  # white: "../images/integration/opengitops-white.svg"
-- name: Teller
-  desc: A serverless workflow platform for Kubernetes.
-  # color: "../images/integration/teller-color.svg"
-  # white: "../images/integration/teller-white.svg"
-- name: Kubernetes
-  desc: The container orchestration platform.
-  # color: "../images/integration/kubernetes-color.svg"
-  # white: "../images/integration/kubernetes-white.svg"
-- name: Porter
-  desc: A Kubernetes-native workflow engine.
-  # color: "../images/integration/porter-color.svg"
-  # white: "../images/integration/porter-white.svg"
-- name: Devfile
-  desc: A specification for defining development environments.
-  # color: "../images/integration/devfile-color.svg"
-  # white: "../images/integration/devfile-white.svg"
-- name: External Secrets Operator
-  desc: An operator for managing external secrets in Kubernetes.
-  # color: "../images/integration/external-secrets-operator-color.svg"
-  # white: "../images/integration/external-secrets-operator-white.svg"
-- name: 'Azure Application Gateway '
-  desc: A scalable and secure web application gateway.
-  # color: "../images/integration/aks-appgw-fe-color.svg"
-  # white: "../images/integration/aks-appgw-fe-white.svg"
-- name: Kured
-  desc: A Kubernetes reboot daemon.
-  # color: "../images/integration/kured-color.svg"
-  # white: "../images/integration/kured-white.svg"
-- name: OpenFeature
-  desc: A platform for managing feature flags in Kubernetes.
-  # color: "../images/integration/openfeature-color.svg"
-  # white: "../images/integration/openfeature-white.svg"
-- name: Windows
-  desc: The Windows operating system, compatible with Kubernetes.
-  # color: "../images/integration/windows-color.svg"
-  # white: "../images/integration/windows-white.svg"
-- name: NATS
-  desc: A high-performance messaging system for cloud-native applications.
-  # color: "../images/integration/nats-color.svg"
-  # white: "../images/integration/nats-white.svg"
-- name: Pravega
-  desc: An open-source, distributed storage system for streaming data.
-  # color: "../images/integration/pravega-color.svg"
-  # white: "../images/integration/pravega-white.svg"
-- name: Kuberhealthy
-  desc: A Kubernetes operator for synthetic monitoring of cluster components.
-  # color: "../images/integration/kuberhealthy-color.svg"
-  # white: "../images/integration/kuberhealthy-white.svg"
-- name: Harbor
-  desc: An open-source container image registry.
-  # color: "../images/integration/harbor-color.svg"
-  # white: "../images/integration/harbor-white.svg"
-- name: Karmada
-  desc: A platform for managing multi-cluster applications.
-  # color: "../images/integration/karmada-color.svg"
-  # white: "../images/integration/karmada-white.svg"
-- name: Backstage
-  desc: An open platform for building developer portals.
-  # color: "../images/integration/backstage-color.svg"
-  # white: "../images/integration/backstage-white.svg"
-- name: K8GB
-  desc: A Global Service Load Balancing solution for Kubernetes.
-  # color: "../images/integration/k8gb-color.svg"
-  # white: "../images/integration/k8gb-white.svg"
-- name: Kubevirt
-  desc: A virtual machine management add-on for Kubernetes.
-  # color: "../images/integration/kubevirt-color.svg"
-  # white: "../images/integration/kubevirt-white.svg"
-- name: Keylime
-  desc: A trusted cloud-native environment for applications.
-  # color: "../images/integration/keylime-color.svg"
-  # white: "../images/integration/keylime-white.svg"
-- name: Trickster
-  desc: A reverse proxy cache for Prometheus.
-  # color: "../images/integration/trickster-color.svg"
-  # white: "../images/integration/trickster-white.svg"
-- name: Github Actions Runners
-  desc: Runners used for Github Actions workflows.
-  # color: "../images/integration/github-actions-runners-color.svg"
-  # white: "../images/integration/github-actions-runners-white.svg"
-- name: Skooner
-  desc: A platform for continuous delivery and deployment to Kubernetes.
-  # color: "../images/integration/skooner-color.svg"
-  # white: "../images/integration/skooner-white.svg"
-- name: Schemahero
-  desc: A Kubernetes operator for managing database schema.
-  # color: "../images/integration/schemahero-color.svg"
-  # white: "../images/integration/schemahero-white.svg"
-- name: Actions Runner Controller (Arc)
-  desc: An operator for managing GitHub Actions runners on Kubernetes.
-  # color: "../images/integration/actions-runner-controller-color.svg"
-  # white: "../images/integration/actions-runner-controller-white.svg"
-- name: Metallb
-  desc: A load balancer implementation for bare metal Kubernetes clusters.
-  # color: "../images/integration/metallb-color.svg"
-  # white: "../images/integration/metallb-white.svg"
-- name: Devstream
-  desc: A development environment for sharing projects and collaborating.
-  # color: "../images/integration/devstream-color.svg"
-  # white: "../images/integration/devstream-white.svg"
-- name: Kube Prometheus
-  desc: A collection of Kubernetes manifest for Prometheus.
-  # color: "../images/integration/kube-prometheus-color.svg"
-  # white: "../images/integration/kube-prometheus-white.svg"
-- name: Kubedl
-  desc: A Kubernetes native deep learning framework.
-  # color: "../images/integration/kubedl-color.svg"
-  # white: "../images/integration/kubedl-white.svg"
-- name: Cert Manager
-  desc: A Kubernetes add-on for managing TLS certificates.
-  # color: "../images/integration/cert-manager-color.svg"
-  # white: "../images/integration/cert-manager-white.svg"
-- name: Kubeflow
-  desc: An open-source platform for machine learning on Kubernetes.
-  # color: "../images/integration/kubeflow-color.svg"
-  # white: "../images/integration/kubeflow-white.svg"
-- name: Serverless Workflow
-  desc: A specification for defining and managing serverless workflows.
-  # color: "../images/integration/serverless workflow-color.svg"
-  # white: "../images/integration/serverless workflow-white.svg"
-- name: Virtual Kubelet
-  desc: A Kubernetes kubelet implementation that runs on cloud provider APIs.
-  # color: "../images/integration/virtual kubelet-color.svg"
-  # white: "../images/integration/virtual kubelet-white.svg"
-- name: Fonio
-  desc: An API gateway for Kubernetes.
-  # color: "../images/integration/fonio-color.svg"
-  # white: "../images/integration/fonio-white.svg"
-- name: Rook
-  desc: An open-source storage orchestrator for Kubernetes.
-  # color: "../images/integration/rook-color.svg"
-  # white: "../images/integration/rook-white.svg"
-- name: Flagger
-  desc: A progressive delivery tool for Kubernetes.
-  # color: "../images/integration/flagger-color.svg"
-  # white: "../images/integration/flagger-white.svg"
-- name: Kubeflow Katib
-  desc: A Kubernetes-based hyperparameter tuning system.
-  # color: "../images/integration/katib-color.svg"
-  # white: "../images/integration/katib-white.svg"
-- name: Nocalhost
-  desc: A local development tool for Kubernetes applications.
-  # color: "../images/integration/nocalhost-color.svg"
-  # white: "../images/integration/nocalhost-white.svg"
-- name: AWS Load Balancer
-  desc: AWS load balancing solutions for Kubernetes.
-  # color: "../images/integration/aws-load-balancer-controller-color.svg"
-  # white: "../images/integration/aws-load-balancer-controller-white.svg"
-- name: OpenTelemetry
-  desc: A set of APIs, libraries, agents, and instrumentation for observability.
-  # color: "../images/integration/opentelemetry-color.svg"
-  # white: "../images/integration/opentelemetry-white.svg"
-- name: Gitlab Controller
-  desc: An operator for managing GitLab instances on Kubernetes.
-  # color: "../images/integration/gitlab-controller-color.svg"
-  # white: "../images/integration/gitlab-controller-white.svg"
-- name: Fluid
-  desc: A cloud-native, federated learning platform.
-  # color: "../images/integration/fluid-color.svg"
-  # white: "../images/integration/fluid-white.svg"
-- desc: Argo CD is a declarative continuous deployment tool that automates the deployment
-    of applications to Kubernetes. Meshery integrates with Argo CD to provide seamless
-    management of application deployments and updates within a Kubernetes environment.
+- desc: Interacts with Docker to provide cloud-native capabilities for
+    managing and securing container operations. With this integration, users can enable
+    features for container management and security. Check out the Meshery Docker Extension.
+  name: Docker
+
+- desc: Meshery can configure and manage the application with Argo CD, enabling better 
+    observability and traffic control for applications deployed through Argo CD.
   name: Argo CD
-- desc: Fluentbit Operator enables the deployment and management of Fluent Bit, a
-    log processor and forwarder, in Kubernetes clusters. With Meshery integration,
-    users can efficiently manage and collect logs from various applications and services.
+
+- desc: Interacts with Fluentbit Operator for configuration and to ensure seamless
+    communication with other components.
   name: Fluentbit Operator
-- desc: The RabbitMQ Cluster Operator facilitates the setup and management of RabbitMQ
-    clusters in Kubernetes. Meshery integration allows users to configure and monitor
-    RabbitMQ clusters effectively.
+
+- desc: Binds with RabbitMQ Cluster Operator to integrate RabbitMQ messaging system
+     with the application, facilitating secure and observable communication.
   name: RabbitMQ Cluster Operator
-- desc: Capsule Proxy is a lightweight Kubernetes networking solution. Meshery integrates
-    with Capsule Proxy to enhance network management and service discovery capabilities
-    in Kubernetes clusters.
+
+- desc: Integrates with Capsule Proxy to provide functionality and configuration
+     for Capsule-based applications.
   name: Capsule Proxy
-- desc: Percona Operator simplifies the deployment and management of MongoDB instances
-    in Kubernetes. Meshery integration enables users to interact with MongoDB databases
-    seamlessly.
+
+- desc: Meshery can manage and control the interactions between MongoDB and the application,
+     enhancing its observability and security features.
   name: Percona Operator for MongoDB
-- desc: Meshery incorporates Terraform, an infrastructure-as-code tool, to provide
-    automation and management of cloud resources and infrastructure.
+
+- desc: Interacts with Terraform and the application, enabling integration for resources
+     deployed using Terraform.
   name: Terraform
-- desc: Actions Runner Controller allows the management of GitHub Actions runners
-    in Kubernetes. Meshery integration enables efficient management and coordination
-    of GitHub Actions workflows.
+
+- desc: Binds with ARC to incorporate cloud-native features in GitHub Actions, 
+      ensuring secure and observable workflows.
   name: Actions Runner Controller (ARC)
-- desc: Fluentd Operator automates the deployment and management of Fluentd instances
-    in Kubernetes clusters. Meshery integration enhances log collection and forwarding
-    capabilities within the Kubernetes environment.
+
+- desc: Interacts with Fluentd Operator to 
+      configure and enable better observability.
   name: Fluentd Operator
-- desc: The EDP Admin Console provides a unified interface for managing applications
-    and their delivery pipelines. Meshery integrates with EDP to streamline application
-    delivery processes.
+
+- desc: Integrates with EDP Admin Console to provide cloud-native functionality and 
+      configuration for EDP applications.
   name: Epam Delivery Platform (EDP) Admin Console
-- desc: Emissary Ingress is a Kubernetes-native ingress controller. With Meshery integration,
-    users can easily manage ingress resources and traffic routing.
+
+- desc: Binds with Emissary Ingress to incorporate cloud-native features in Kubernetes Ingress, 
+      enabling traffic control and observability.
   name: Emissary Ingress
-- desc: The Apache Shardingsphere Operator Charts simplify the deployment and management
-    of Apache Shardingsphere in Kubernetes. Meshery integration enables seamless interaction
-    with Apache Shardingsphere.
+
+- desc: Interacts with Apache Shardingsphere Operator Charts and enable traffic control 
+      for the database sharding solution.
   name: Apache Shardingsphere Operator Charts
-- desc: Harbor Operator automates the setup and management of Harbor, a cloud-native
-    container registry. Meshery integration enhances the registry's capabilities and
-    facilitates container image management.
+
+- desc: Integrates with Harbor Operator to provide configuration for the Harbor container registry.
   name: Harbor Operator
-- desc: Kubevault provides secrets management for Kubernetes applications. Meshery
-    integration allows users to efficiently manage secrets and sensitive data in Kubernetes
-    clusters.
+
+- desc: Binds with Kubevault to enable secure and observable communication between 
+      applications and the Kubevault vaults.
   name: Kubevault
-- desc: Argo Workflows is a Kubernetes-native workflow engine. Meshery integrates
-    with Argo Workflows to streamline workflow automation and management.
+
+- desc: Meshery can configure and manage the cloud-native interactions for Argo Workflows, enhancing 
+    observability and security for workflows.
   name: Argo Workflows
-- desc: The Argocd Operator simplifies the deployment and management of Argo CD instances
-    in Kubernetes. Meshery integration enhances continuous deployment and GitOps capabilities.
-  name: Argocd Operator
-- desc: OpenEBS is an open-source containerized storage solution for Kubernetes. Meshery
-    integration allows users to manage storage volumes and persistent storage within
-    Kubernetes clusters.
+
+- desc: Interacts with Argo CD Operator to provide functionality and 
+    configuration for Argo CD applications.
+  name: Argo CD Operator
+
+- desc: Meshery can manage and control the interactions between OpenEBS storage and the application, ensuring 
+    observability and security.
   name: OpenEBS
-- desc: CD Pipeline Operator facilitates the setup and management of continuous delivery
-    pipelines in Kubernetes. Meshery integration streamlines the deployment and monitoring
-    of CD pipelines.
+
+- desc: Integrates with CD Pipeline Operator to provide features for continuous 
+     delivery pipelines.
   name: CD Pipeline Operator
-- desc: The Kubevault Catalog provides a collection of pre-built secrets and policies
-    for Kubevault. Meshery integration allows users to access and utilize these resources
-    easily.
+
+- desc: Binds with Kubevault Catalog to incorporate features in 
+      Kubevault applications, enabling secure communication.
   name: Kubevault Catalog
-- desc: Cert Manager CRDs enable the management of TLS certificates in Kubernetes.
-    With Meshery integration, users can efficiently manage and renew certificates
-    for their applications.
-  name: Cert Manager Crds
-- desc: Kong API Gateway offers a scalable and secure API gateway solution. Meshery
-    integration allows users to configure and manage API gateway services within Kubernetes.
+
+- desc: Interacts with Cert Manager CRDs to manage certificates in the
+    service mesh, enhancing security for TLS communication.
+  name: Cert Manager CRDs
+
+- desc: Integrates with Kong API Gateway and provide service mesh configuration
+    and traffic control for APIs.
   name: Kong API Gateway
-- desc: The Etcd Cluster Operator automates the setup and management of etcd clusters
-    in Kubernetes. Meshery integration enhances the configuration and monitoring of
-    etcd clusters.
+
+- desc: Interacts with Etcd Cluster Operator to manage the service mesh
+    configuration and interactions with Etcd.
   name: Etcd Cluster Operator
-- desc: SPIRE provides a secure identity framework for service meshes. Meshery integration
-    enables efficient management and validation of service identities.
+
+- desc: Binds with SPIRE to provide SPIFFE-based identity management and
+    secure communication within the service mesh.
   name: SPIRE
-- desc: K3s is a lightweight Kubernetes distribution designed for edge computing and
-    resource-constrained environments. Meshery integration allows users to deploy
-    and manage K3s clusters effectively.
+
+- desc: Meshery can configure and manage the service mesh for K3s, providing observability
+    and traffic control for lightweight Kubernetes clusters.
   name: K3s
-- desc: Posthog is an open-source product analytics platform. Meshery integration
-    enables seamless interaction with Posthog for analytics and monitoring purposes.
+
+- desc: Integrates with Posthog and enable functionality for
+    the Posthog event tracking platform.
   name: Posthog
-- desc: Kyverno Monitor provides policy compliance monitoring for Kubernetes. Meshery
-    integration enhances the visibility and enforcement of security policies.
+
+- desc: Interacts with Kyverno Monitor to enable service mesh observability
+    and monitoring for Kubernetes policy management.
   name: Kyverno Monitor
-- desc: NATS Operator automates the deployment and management of NATS messaging system
-    in Kubernetes. Meshery integration streamlines the setup and configuration of
-    NATS clusters.
+
+- desc: Integrates with NATS Operator to enable functionality
+    and configuration for the NATS messaging system.
   name: NATS Operator
-- desc: The Strimzi Registry Operator simplifies the deployment and management of
-    Kafka Registry instances in Kubernetes. Meshery integration enhances the management
-    of Kafka schema registries.
+
+- desc: Binds with Strimzi Registry Operator to provide features
+    for the Strimzi Kafka Registry.
   name: Strimzi Registry Operator
-- desc: SPIFFE provides a framework for securing workload identities in a cloud-native
-    environment. Meshery integration allows users to manage and validate SPIFFE identities.
+
+- desc: Interacts with SPIFFE (Secure Production Identity Framework For
+    Everyone) to enable secure and verifiable identity management within the service
+    mesh.
   name: SPIFFE
-- desc: Meshery Operator facilitates the deployment and management of Meshery instances
-    in Kubernetes. Meshery integration enhances the control and monitoring of service
-    meshes.
+
+- desc: Binds with the Meshery Operator to provide a unified interface
+    and configuration for managing multiple applications.
   name: Meshery Operator
-- desc: AWS VPC CNI is a container network interface plugin for Amazon Elastic Container
-    Service. Meshery integration streamlines network configuration for containers
-    in AWS.
+
+- desc: Integrates with AWS VPC CNI (Container Network Interface) to provide
+    features and traffic control for AWS VPC networking.
   name: AWS VPC CNI
-- desc: Jitsi is an open-source video conferencing solution. Meshery integration allows
-    users to manage and scale Jitsi instances within Kubernetes.
+
+- desc: Meshery can configure and manage the service mesh for Jitsi, providing observability
+    and security for the video conferencing platform.
   name: Jitsi
-- desc: Mattermost Operator automates the setup and management of Mattermost messaging
-    system in Kubernetes. Meshery integration enhances collaboration and messaging
-    capabilities.
+
+- desc: Interacts with the Mattermost Operator to enable functionality
+    and configuration for the Mattermost messaging platform.
   name: Mattermost Operator
-- desc: Azure Active Directory integration allows users to manage and authenticate
-    identities within Azure Active Directory in Kubernetes clusters.
+
+- desc: Binds with Azure Active Directory to enable secure authentication
+    and authorization within the service mesh for Azure-based applications.
   name: Azure Active Directory (AAD)
-- desc: Aperture Agent is an application performance management agent. With Meshery
-    integration, users can collect and analyze performance metrics from their applications.
+
+- desc: Integrates with Aperture Agent to provide features
+    and configuration for the Aperture service discovery and routing platform.
   name: Aperture Agent
-- desc: Kubedb Metrics provides metrics and monitoring for Kubernetes databases. Meshery
-    integration enhances the visibility and monitoring of database performance.
+
+- desc: Interacts with Kubedb Metrics to enable observability
+    and monitoring for Kubernetes database workloads managed by Kubedb.
   name: Kubedb Metrics
-- desc: Kubevault Metrics enables the collection and monitoring of metrics from Kubevault
-    in Kubernetes. Meshery integration enhances the observability of secrets management.
+  category: Observability & Monitoring
+
+- desc: Binds with Kubevault Metrics to incorporate service mesh observability
+    and monitoring for Kubevault applications.
   name: Kubevault Metrics
-- desc: Prometheus Operator automates the setup and management of Prometheus instances
-    in Kubernetes. Meshery integration enhances the monitoring and alerting capabilities.
+  category: Observability & Monitoring
+
+- desc: Integrates with the Prometheus Operator to enable
+    observability and monitoring using Prometheus metrics.
   name: Prometheus Operator
-- desc: The Jaeger Operator simplifies the deployment and management of Jaeger distributed
-    tracing system in Kubernetes. Meshery integration streamlines tracing configuration.
+  category: Observability & Monitoring
+
+- desc: Interacts with the Jaeger Operator to enable distributed tracing
+    and observability within the service mesh using Jaeger.
   name: Jaeger Operator
-- desc: Postgres with Operator simplifies the deployment and management of PostgreSQL
-    databases in Kubernetes. Meshery integration enhances database management and
-    monitoring.
+  category: Observability & Monitoring
+
+- desc: Binds with the Postgres With Operator to provide features
+    for PostgreSQL databases.
   name: Postgres With Operator
-- desc: Kubedb Grafana Dashboards provide pre-built Grafana dashboards for monitoring
-    Kubernetes databases. Meshery integration enhances the observability of database
-    metrics.
+
+- desc: Integrates with Kubedb Grafana Dashboards to enable service mesh
+    observability and monitoring using Grafana dashboards.
   name: Kubedb Grafana Dashboards
-- desc: TUF (The Update Framework) integration allows users to securely and efficiently
-    distribute software updates. Meshery integration enhances the security of update
-    distribution.
-  name: Tuf
-- desc: The OpenTelemetry Operator automates the setup and management of OpenTelemetry
-    in Kubernetes. Meshery integration streamlines the deployment and monitoring of
-    telemetry data.
+  category: Observability & Monitoring
+
+- desc: Integrates with TUF to enable secure software updates and distribution
+    within the service mesh, ensuring that only trusted updates are applied to containers
+    and applications.
+  name: TUF (The Update Framework)
+
+- desc: Binds with the OpenTelemetry Operator to provide service mesh observability
+    and monitoring using OpenTelemetry for distributed tracing and metrics.
   name: OpenTelemetry Operator
-- desc: Pulsar Resources Operator simplifies the deployment and management of Apache
-    Pulsar instances in Kubernetes. Meshery integration enhances the configuration
-    and monitoring of Pulsar clusters.
+  category: Observability & Monitoring
+
+- desc: Interacts with the Pulsar Resources Operator to enable service
+    mesh functionality and configuration for Apache Pulsar messaging resources.
   name: Pulsar Resources Operator
-- desc: AWS Node Termination Handler facilitates graceful termination of EC2 instances
-    in AWS. Meshery integration enhances the management of node termination events.
+
+- desc: Integrates with the AWS Node Termination Handler to provide service
+    mesh features for handling node termination events in AWS environments.
   name: AWS Node Termination Handler
-- desc: Percona Postgres Operator simplifies the deployment and management of PostgreSQL
-    databases in Kubernetes. Meshery integration streamlines database management.
+
+- desc: Binds with the Percona Postgres Operator to enable service mesh
+    capabilities for PostgreSQL databases managed by Percona.
   name: Percona Postgres Operator
-- desc: Kong Mesh provides a service mesh solution for secure and reliable communication
-    within microservices architectures. Meshery integration enhances the management
-    and observability of service mesh.
+
+- desc: Interacts with Kong Mesh to enable advanced features,
+    traffic control, and security for microservices running on Kong's service mesh.
   name: Kong Mesh
-- desc: The Kubedb Catalog provides a collection of pre-built resources and configurations
-    for Kubernetes databases. Meshery integration allows users to access and utilize
-    these resources.
+
+- desc: Integrates with Kubedb Catalog to provide observability
+    and monitoring for various Kubernetes database workloads supported by Kubedb.
   name: Kubedb Catalog
-- desc: Kubedb Custom Resource Definitions enable the management of Kubernetes databases.
-    Meshery integration enhances the configuration and monitoring of database instances.
+  category: Observability & Monitoring
+
+- desc: Binds with Kubedb CRDs (Custom Resource Definitions) to enable
+    cloud-native functionality and configuration for Kubernetes database resources.
   name: Kubedb CRDs
-- desc: New Relic Operator automates the setup and management of New Relic monitoring
-    in Kubernetes. Meshery integration enhances the monitoring and observability of
-    applications.
+
+- desc: Interacts with the New Relic Operator to enable observability
+    and monitoring using New Relic's monitoring capabilities.
   name: New Relic Operator
-- desc: Kubevault Custom Resource Definitions enable the management of secrets and
-    sensitive data in Kubernetes. Meshery integration enhances the configuration and
-    security of secret management.
+  category: Observability & Monitoring
+
+- desc: Integrates with Kubevault CRDs to provide features
+    and configuration for various Kubernetes secrets and secure data management.
   name: Kubevault Crds
-- desc: AWX Operator facilitates the deployment and management of AWX, an open-source
-    automation platform, in Kubernetes. Meshery integration enhances the management
-    of AWX instances.
+
+- desc: Binds with the AWX Operator to enable functionality
+    and configuration for Ansible AWX automation workloads.
   name: AWX Operator
-- desc: Helm Controller enables the management of Helm charts and releases in Kubernetes.
-    Meshery integration allows users to easily deploy and manage Helm charts.
+
+- desc: Interacts with the Helm Controller to provide features
+    for Helm-based application deployments and management.
   name: Helm Controller
-- desc: Istio Operator automates the setup and management of Istio service mesh in
-    Kubernetes. Meshery integration enhances the control and monitoring of Istio deployments.
+
+- desc: Integrates with the Istio Operator to enable advanced service mesh
+    features, traffic control, and security for applications running on Istio.
   name: Istio Operator
-- desc: Fluentd Operator simplifies the deployment and management of Fluentd instances
-    in Kubernetes. Meshery integration enhances log collection and forwarding capabilities.
+
+- desc: Binds with the Fluentd Operator to provide service mesh observability
+    and monitoring using Fluentd logging capabilities.
   name: Fluentd Operator
-- desc: Keycloak Operator automates the setup and management of Keycloak identity
-    and access management in Kubernetes. Meshery integration enhances user authentication
-    and authorization.
+  category: Observability & Monitoring
+
+- desc: Interacts with the Keycloak Operator to enable functionality
+    and configuration for the Keycloak identity and access management platform.
   name: Keycloak Operator
-- desc: Prometheus integration enables the monitoring and alerting of Kubernetes clusters
-    and applications. Meshery integration enhances the observability of Kubernetes
-    resources.
+
+- desc: Integrates with Prometheus to enable service mesh observability
+    and monitoring using Prometheus metrics.
   name: Prometheus
-- desc: Jenkins Operator facilitates the deployment and management of Jenkins instances
-    in Kubernetes. Meshery integration enhances CI/CD workflows and automation.
+
+- desc: Binds with the Jenkins Operator to enable cloud-native capabilities
+    for Jenkins-based continuous integration and continuous deployment pipelines.
   name: Jenkins Operator
-- desc: Litmus Chaos provides chaos engineering capabilities for Kubernetes applications.
-    Meshery integration allows users to introduce controlled chaos and test application
-    resilience.
+
+- desc: Interacts with Litmus Chaos to enable features and
+    configuration for Litmus-based chaos engineering experiments.
   name: Litmus Chaos
-- desc: Grafana Agent simplifies the setup and management of Grafana metrics collection
-    in Kubernetes. Meshery integration enhances monitoring and observability.
+
+- desc: Integrates with the Grafana Agent to provide service mesh observability
+    and monitoring using Grafana's agent-based monitoring capabilities.
   name: Grafana Agent
-- desc: PGO (PostgreSQL Operator) by CrunchyData simplifies the deployment and management
-    of PostgreSQL databases in Kubernetes. Meshery integration enhances database management.
+  category: Observability & Monitoring
+
+- desc: Binds with PGO to enable functionality and configuration
+    for PostgreSQL databases managed by CrunchyData.
   name: PGO (CrunchyData)
-- desc: RabbitMQ Operator automates the setup and management of RabbitMQ instances
-    in Kubernetes. Meshery integration streamlines the configuration and monitoring
-    of RabbitMQ clusters.
+
+- desc: Interacts with the RabbitMQ Operator to provide features
+    and configuration for RabbitMQ message broker resources running on Kubernetes.
   name: RabbitMQ Operator
-- desc: CNI integration enhances networking capabilities for containers in Kubernetes.
-    Meshery integration allows users to configure and manage container networking.
+
+- desc: Integrates with CNI plugins to enable features for
+    container networking, traffic management, and security.
   name: Container Network Interface (CNI)
-- desc: The Kube Prometheus Stack provides a complete observability solution for Kubernetes
-    clusters. Meshery integration enhances monitoring and alerting.
+
+- desc: Binds with the Kube Prometheus Stack to enable service mesh observability
+    and monitoring using the Prometheus Operator and Grafana.
   name: Kube Prometheus Stack
-- desc: Kubedb Ops Manager facilitates the deployment and management of Kubernetes
-    databases. Meshery integration enhances the configuration and monitoring of database
-    resources.
+  category: Observability & Monitoring
+
+- desc: Interacts with the Kubedb Ops Manager to provide cloud-native capabilities
+    for managing and monitoring various database workloads on Kubernetes.
   name: Kubedb Ops Manager
-- desc: Postgres Operator simplifies the deployment and management of PostgreSQL databases
-    in Kubernetes. Meshery integration streamlines database management and monitoring.
+
+- desc: Integrates with the Postgres Operator to enable functionality
+    and configuration for PostgreSQL databases running on Kubernetes.
   name: Postgres Operator
-- desc: Armory Spinnaker Operator automates the setup and management of Spinnaker,
-    a continuous delivery platform, in Kubernetes. Meshery integration enhances CI/CD
-    workflows.
+
+- desc: Binds with the Armory Spinnaker Operator to provide service mesh
+    features and configuration for the Armory Spinnaker continuous delivery platform.
   name: Armory Spinnaker Operator
-- desc: Camel K is a lightweight integration framework for Kubernetes. Meshery integration
-    allows users to deploy and manage Camel K integrations effectively.
+
+- desc: Interacts with Camel K to enable features and configuration
+    for Apache Camel integration patterns running on Kubernetes.
   name: Camel K
-- desc: Piraeus Datastore facilitates the deployment and management of shared data
-    storage solutions in Kubernetes. Meshery integration enhances data storage and
-    retrieval capabilities.
+
+- desc: Integrates with the Piraeus Datastore to enable functionality
+    and configuration for Piraeus-based distributed storage solutions.
   name: Piraeus Datastore
-- desc: Stackgres Operator simplifies the deployment and management of PostgreSQL
-    instances in Kubernetes. Meshery integration streamlines database management.
+
+- desc: Binds with the Stackgres Operator to provide cloud-native capabilities
+    for managing and monitoring PostgreSQL databases in Kubernetes.
   name: Stackgres Operator
-- desc: Kusk Gateway provides API gateway capabilities for Kubernetes. Meshery integration
-    enhances API management and security.
+
+- desc: Interacts with the Kusk Gateway to enable features
+    and configuration for the Kusk API Gateway.
   name: Kusk Gateway
-- desc: Tikv Operator automates the setup and management of TiKV, a distributed key-value
-    storage system, in Kubernetes. Meshery integration enhances storage management.
+
+- desc: Integrates with the Tikv Operator to enable functionality
+    and configuration for TiKV distributed key-value storage on Kubernetes.
   name: Tikv Operator
-- desc: Aperture Controller is an application performance management controller. With
-    Meshery integration, users can collect and analyze performance metrics from applications.
+
+- desc: Binds with the Aperture Controller to provide cloud-native capabilities 
+    for managing and monitoring the Aperture Gateway.
   name: Aperture Controller
-- desc: Postgres Controller facilitates the deployment and management of PostgreSQL
-    databases in Kubernetes. Meshery integration enhances database management and
-    monitoring.
+
+- desc: Interacts with the Postgres Controller to enable features
+    and configuration for PostgreSQL databases running on Kubernetes.
   name: Postgres Controller
-- desc: Percona Server for MongoDB simplifies the deployment and management of MongoDB
-    databases in Kubernetes. Meshery integration streamlines database management.
+
+- desc: Integrates with Percona Server for MongoDB to enable service mesh
+    capabilities for MongoDB databases managed by Percona.
   name: Percona Server for MongoDB
-- desc: Knative Serving provides serverless capabilities for Kubernetes applications.
-    Meshery integration allows users to manage and scale serverless workloads.
+
+- desc: Binds with Knative Serving to provide features for
+    Knative-based serverless applications and event-driven workloads.
   name: Knative Serving
-- desc: Kubedb UI Server is a web-based user interface for managing Kubernetes databases.
-    Meshery integration enhances the database management experience.
+
+- desc: Interacts with the Kubedb UI Server to provide features
+    and configuration for managing and monitoring various Kubernetes database workloads.
   name: Kubedb UI Server
-- desc: Pulsar Operator automates the setup and management of Apache Pulsar instances
-    in Kubernetes. Meshery integration streamlines the configuration and monitoring
-    of Pulsar clusters.
+
+- desc: Integrates with the Pulsar Operator to enable functionality
+    and configuration for Apache Pulsar messaging resources running on Kubernetes.
   name: Pulsar Operator
-- desc: Percona Server for MySQL simplifies the deployment and management of MySQL
-    databases in Kubernetes. Meshery integration streamlines database management.
+
+- desc: Binds with Percona Server for MySQL to provide cloud-native capabilities
+    for MySQL databases managed by Percona.
   name: Percona Server for MySQL
-- desc: Strimzi Kafka Operator facilitates the deployment and management of Apache
-    Kafka instances in Kubernetes. Meshery integration enhances the configuration
-    and monitoring of Kafka clusters.
+
+- desc: Interacts with the Strimzi Kafka Operator to enable service mesh
+    features and configuration for Apache Kafka messaging resources on Kubernetes.
   name: Strimzi Kafka Operator
-- desc: Kubedb Opscenter is a centralized management console for Kubernetes databases.
-    Meshery integration enhances the observability and control of database resources.
+
+- desc: Integrates with gRPC to enable features for gRPC-based microservices communication and configuration.
+  name: GRPC
+
+- desc: Binds with the Kubedb Opscenter to provide cloud-native capabilities for managing and monitoring various Kubernetes database workloads.
   name: Kubedb Opscenter
-- desc: Kubevault Operator automates the deployment and management of Kubevault, a
-    secrets management solution, in Kubernetes. Meshery integration enhances security
-    and secret management.
+
+- desc: Interacts with the Kubevault Operator to enable features and configuration for Kubernetes secret management.
   name: Kubevault Operator
-- desc: Karpenter provides automated node scaling for Kubernetes clusters. Meshery
-    integration enhances cluster auto-scaling capabilities.
+
+- desc: Integrates with Karpenter to enable cloud-native capabilities for Kubernetes cluster autoscaling and workload placement.
   name: Karpenter
-- desc: Kiali Operator automates the setup and management of Kiali, a service mesh
-    observability tool, in Kubernetes. Meshery integration enhances service mesh monitoring.
+
+- desc: Binds with the Kiali Operator to provide observability and monitoring 
+      using the Kiali dashboard.
   name: Kiali Operator
-- desc: Istio Rate Limit Operator simplifies the configuration and management of rate
-    limits in Istio service mesh. Meshery integration enhances rate limiting capabilities.
+  category: Observability & Monitoring
+
+- desc: Interacts with the Istio Rate Limit Operator to enable features for rate limiting and traffic shaping in Istio.
   name: Istio Rate Limit Operator
-- desc: AWS API Gateway Operator automates the deployment and management of AWS API
-    Gateway in Kubernetes. Meshery integration streamlines API gateway configuration.
+
+- desc: Integrates with the AWS API Gateway Operator to enable service mesh capabilities for managing and monitoring AWS API Gateway resources on Kubernetes.
   name: AWS API Gateway Operator
-- desc: Fluentbit Skt is a Kubernetes service for Fluent Bit log processor and forwarder.
-    Meshery integration enhances log collection and forwarding capabilities.
+
+- desc: Binds with Fluentbit Skt to provide service mesh observability and monitoring 
+      using Fluentbit log forwarding capabilities.
   name: Fluentbit Skt
-- desc: Ambassador is a Kubernetes-native API gateway and ingress controller. Meshery
-    integration allows users to configure and manage API gateway services.
+  category: Observability & Monitoring
+
+- desc: Interacts with Ambassador to enable features and configuration for the Ambassador API Gateway on Kubernetes.
   name: Ambassador
-- desc: Cert Manager CSI Driver Cacerts enables the management of certificates in
-    Kubernetes using Cert Manager. Meshery integration enhances certificate management.
+
+- desc: Integrates with Cert Manager Csi Driver Cacerts to enable service mesh capabilities for certificate management in Kubernetes.
   name: Cert Manager Csi Driver Cacerts
-- desc: Knative provides serverless capabilities for Kubernetes. Meshery integration
-    allows users to manage and scale serverless workloads.
+
+- desc: Binds with Knative to provide features for Knative-based
+    serverless applications and event-driven workloads.
   name: Knative
-- desc: Percona Operator for MySQL simplifies the deployment and management of MySQL
-    databases in Kubernetes. Meshery integration streamlines database management.
+
+- desc: Interacts with Percona Operator for MySQL to enable features and configuration for MySQL databases managed by Percona.
   name: Percona Operator for MySQL
-- desc: APISIX Ingress Controller provides an API gateway solution for Kubernetes.
-    Meshery integration enhances API gateway management and configuration.
+
+- desc: Integrates with the APISIX Ingress Controller to enable service mesh capabilities for managing and monitoring APISIX-based API gateways on Kubernetes.
   name: APISIX Ingress Controller
-- desc: Kubedb provides a suite of operators for managing Kubernetes databases. Meshery
-    integration allows users to manage and monitor database instances effectively.
+
+- desc: Binds with Kubedb to provide features and configuration for various Kubernetes database workloads supported by Kubedb.
   name: Kubedb
-- desc: Fluent Operator automates the setup and management of Fluentd instances in
-    Kubernetes. Meshery integration enhances log collection and forwarding capabilities.
+
+- desc: Interacts with the Fluent Operator to provide observability and monitoring 
+      using Fluentd log forwarding capabilities.
   name: Fluent Operator
-- desc: MinIO Operator facilitates the deployment and management of MinIO, an object
-    storage server, in Kubernetes. Meshery integration enhances object storage capabilities.
+  category: Observability & Monitoring
+
+- desc: Integrates with the MinIO Operator to enable cloud-native capabilities for managing and monitoring MinIO object storage on Kubernetes.
   name: MinIO Operator
-- desc: Postgres Database by CrunchyData simplifies the deployment and management
-    of PostgreSQL databases in Kubernetes. Meshery integration streamlines database
-    management.
+
+- desc: Binds with the Postgres Database Operator to provide configuration for PostgreSQL databases managed by CrunchyData.
   name: Postgres Database (CrunchyData)
+
+- desc: Interacts with Jenkins to enable features and configuration
+    for continuous integration and continuous delivery (CI/CD) pipelines running on
+    Kubernetes.
+  name: Jenkins
+
+- desc: Integrates with Grafana Agent to enable service mesh observability
+    and monitoring using the Grafana dashboard.
+  name: Grafana Agent
+  category: Observability & Monitoring
+
+- desc: Binds with the PGO (Postgres Operator) provided by CrunchyData
+    to enable cloud-native capabilities for PostgreSQL databases running on Kubernetes.
+  name: PGO (CrunchyData)
+
+- desc: Interacts with the RabbitMQ Operator to enable features
+    and configuration for RabbitMQ message broker resources running on Kubernetes.
+  name: RabbitMQ Operator
+
+- desc: Integrates with CNI plugins to enable features for
+    container networking, traffic management, and security.
+  name: Container Network Interface (CNI)
+
+- desc: Binds with the Kube Prometheus Stack to provide service mesh observability
+    and monitoring using the Prometheus Operator and Grafana.
+  name: Kube Prometheus Stack
+
+- desc: Interacts with the Kubedb Ops Manager to provide cloud-native capabilities
+    for managing and monitoring various database workloads on Kubernetes.
+  name: Kubedb Ops Manager
+
+- desc: Integrates with the Postgres Operator to enable functionality
+    and configuration for PostgreSQL databases running on Kubernetes.
+  name: Postgres Operator
+
+- desc: Binds with the Armory Spinnaker Operator to provide service mesh
+    features and configuration for the Armory Spinnaker continuous delivery platform.
+  name: Armory Spinnaker Operator
+
+- desc: Interacts with Camel K to enable features and configuration
+    for Apache Camel integration patterns running on Kubernetes.
+  name: Camel K
+
+- desc: Integrates with the Piraeus Datastore to enable functionality
+    and configuration for Piraeus-based distributed storage solutions.
+  name: Piraeus Datastore
+
+- desc: Binds with the Stackgres Operator to provide cloud-native capabilities
+    for managing and monitoring PostgreSQL databases in Kubernetes.
+  name: Stackgres Operator
+
+- desc: Interacts with the Kusk Gateway to enable features
+    and configuration for the Kusk API Gateway.
+  name: Kusk Gateway
+
+- desc: Integrates with the Tikv Operator to enable functionality
+    and configuration for TiKV distributed key-value storage on Kubernetes.
+  name: Tikv Operator
+
+- desc: Binds with the Aperture Controller to provide cloud-native capabilities
+    for managing and monitoring the Aperture Gateway.
+  name: Aperture Controller
+
+- desc: Interacts with the Postgres Controller to enable features
+    and configuration for PostgreSQL databases running on Kubernetes.
+  name: Postgres Controller
+
+- desc: Integrates with Percona Server for MongoDB to enable service mesh
+    capabilities for MongoDB databases managed by Percona.
+  name: Percona Server for MongoDB
+
+- desc: Binds with Knative Serving to provide features for
+    Knative-based serverless applications and event-driven workloads.
+  name: Knative Serving
+
+- desc: Interacts with the Kubedb UI Server to provide features
+    and configuration for managing and monitoring various Kubernetes database workloads.
+  name: Kubedb UI Server
+
+- desc: Integrates with the Pulsar Operator to enable functionality
+    and configuration for Apache Pulsar messaging resources running on Kubernetes.
+  name: Pulsar Operator
+
+- desc: Binds with Percona Server for MySQL to provide cloud-native capabilities
+    for MySQL databases managed by Percona.
+  name: Percona Server for MySQL
+
+- desc: Interacts with the Strimzi Kafka Operator to enable service mesh
+    features and configuration for Apache Kafka messaging resources on Kubernetes.
+  name: Strimzi Kafka Operator
+
+- desc: Integrates with gRPC to enable features for gRPC-based
+    microservices communication and configuration.
+  name: GRPC
+
+- desc: Binds with the Kubedb Opscenter to provide cloud-native capabilities
+    for managing and monitoring various Kubernetes database workloads.
+  name: Kubedb Opscenter
+
+- desc: Interacts with the Kubevault Operator to enable features
+    and configuration for Kubernetes secret management.
+  name: Kubevault Operator
+
+- desc: Integrates with Karpenter to enable cloud-native capabilities for
+    Kubernetes cluster autoscaling and workload placement.
+  name: Karpenter
+
+- desc: Binds with the Kiali Operator to provide service mesh observability
+    and monitoring using the Kiali dashboard.
+  name: Kiali Operator
+  category: Observability & Monitoring
+
+- desc: Interacts with the Istio Rate Limit Operator to enable service
+    mesh features for rate limiting and traffic shaping in Istio.
+  name: Istio Rate Limit Operator
+
+- desc: Integrates with the AWS API Gateway Operator to enable service
+    mesh capabilities for managing and monitoring AWS API Gateway resources on Kubernetes.
+  name: AWS API Gateway Operator
+
+- desc: Binds with Fluentbit Skt to provide service mesh observability
+    and monitoring using Fluentbit log forwarding capabilities.
+  name: Fluentbit Skt
+  category: Observability & Monitoring
+
+- desc: Interacts with Ambassador to enable features and configuration
+    for the Ambassador API Gateway on Kubernetes.
+  name: Ambassador
+
+- desc: Integrates with Cert Manager Csi Driver Cacerts to enable capabilities for certificate management in Kubernetes.
+  name: Cert Manager Csi Driver Cacerts
+
+- desc: Binds with Knative to provide features for Knative-based serverless applications and event-driven workloads.
+  name: Knative
+
+- desc: Interacts with Percona Operator for MySQL to enable and configuration for MySQL databases managed by Percona.
+  name: Percona Operator for MySQL
+
+- desc: Integrates with the APISIX Ingress Controller to enable service mesh capabilities for managing and monitoring APISIX-based API gateways on Kubernetes.
+  name: APISIX Ingress Controller
+
+- desc: Binds with Kubedb to provide features and configuration for various Kubernetes database workloads supported by Kubedb.
+  name: Kubedb
+
+- desc: Interacts with the Fluent Operator to provide service mesh observability and monitoring using Fluentd log forwarding capabilities.
+  name: Fluent Operator
+  category: Observability & Monitoring
+
+- desc: Integrates with the MinIO Operator to enable cloud-native capabilities for managing and monitoring MinIO object storage on Kubernetes.
+  name: MinIO Operator
+
+- desc: Binds with the Postgres Database Operator to provide features and configuration for PostgreSQL databases managed by CrunchyData.
+  name: Postgres Database (CrunchyData)
+
+- desc: Interacts with Skooner to provide cloud-native capabilities for
+    managing and securing applications deployed on Skooner containers. With this integration,
+    users can easily enable features, including traffic management and
+    observability.
+  name: Skooner
+  category: Observability & Monitoring
+
+- desc: Binds with Hexa to provide cloud-native capabilities for managing
+    and monitoring Hexa workloads running on Kubernetes. With this integration, users
+    can enable features for Hexa resources, ensuring secure communication
+    and traffic control.
+  name: Hexa
+
+- desc: Integrates with Grafana UI Server to provide observability
+    and monitoring using Grafana's powerful visualization capabilities. With this
+    integration, users can easily visualize and analyze service mesh metrics and logs.
+  name: Grafana UI Server
+  category: Observability & Monitoring
+
+- desc: Interacts with Longhorn to provide cloud-native capabilities for
+    managing and monitoring Longhorn volumes running on Kubernetes. With this integration,
+    users can enable service mesh functionalities for storage management and performance
+    monitoring.
+  name: Longhorn
+
+- desc: Binds with OPA for implementing
+    fine-grained security policies. OPA is a powerful policy engine, and with Meshery's
+    integration, users can easily define and enforce access control policies within
+    the service mesh.
+  name: Open Policy Agent (OPA)
+
+- desc: Integrates with Dragonfly to manage and secure file transfer between nodes in a distributed system. 
+      With this integration, users can apply cloud-native features to ensure secure and reliable file transfers.
+  name: Dragonfly
+
+- desc: Interacts with OpenMetrics to provide observability and monitoring 
+    using the OpenMetrics format. With this integration, users can easily collect and analyze service mesh metrics in a standardized format.
+  name: OpenMetrics
+  category: Observability & Monitoring
+
+- desc: Binds with Falco for runtime security monitoring. Falco is a powerful runtime security tool, and with Meshery's integration, users can enable real-time security monitoring for their application.
+  name: Falco
+
+- desc: Integrates with Submariner for managing and securing cross-cluster communication. With this integration, users can easily enable secure communication between Kubernetes clusters.
+  name: Submariner
+
+- desc: Interacts with Volcano to provide capabilities for managing and monitoring batch workloads running on Kubernetes. With this integration, users can enable features for batch job scheduling and resource management.
+  name: Volcano
+
+- desc: Binds with Fabedge to provide cloud-native capabilities for managing
+    and securing edge computing deployments. With this integration, users can enable
+    features for edge nodes and edge applications.
+  name: Fabedge
+- desc: Integrates with Parsec to provide cloud-native capabilities for
+    managing and securing secure computation tasks. With this integration, users can
+    apply features to ensure the security and integrity of secure computation
+    tasks.
+  name: Parsec
+- desc: Interacts with Kubeflow to provide cloud-native capabilities for
+    managing and monitoring Kubeflow workloads running on Kubernetes. With this integration,
+    users can enable features for Kubeflow resources, ensuring secure
+    and efficient machine learning workflows.
+  name: Kubeflow
+- desc: Binds with Cert Manager CRDs to provide cloud-native capabilities
+    for managing and securing TLS certificates. With this integration, users can easily
+    request and manage TLS certificates for their service mesh applications.
+  name: Cert Manager CRDs
+- desc: Integrates with Telepresence to provide cloud-native capabilities
+    for local development and debugging of service mesh-enabled applications. With
+    this integration, users can easily test and debug applications with service mesh
+    features in a local environment.
+  name: Telepresence
+- desc: Interacts with the Wasmedge Runtime to provide cloud-native capabilities
+    for managing and securing WebAssembly workloads. With this integration, users
+    can enable features for WebAssembly applications running on Kubernetes.
+  name: Wasmedge Runtime
+- desc: Binds with Vitess to provide cloud-native capabilities for managing
+    and monitoring Vitess database clusters running on Kubernetes. With this integration,
+    users can enable features for these databases.
+  name: Vitess
+
+- desc: Integrates with Kubedl to provide cloud-native capabilities for
+    managing and monitoring Kubedl machine learning workloads running on Kubernetes.
+    With this integration, users can enable features for Kubedl resources,
+    ensuring secure and efficient machine learning workflows.
+  name: Kubedl
+
+- desc: Interacts with the NGINX Ingress Controller to provide service
+    mesh capabilities for managing and securing inbound traffic to Kubernetes services.
+    With this integration, users can apply service mesh policies to control and secure
+    traffic flow.
+  name: NGINX Ingress Controller
+
+- desc: Binds with AWS EKS to provide cloud-native capabilities for managing
+    and securing applications deployed on AWS EKS clusters. With this integration,
+    users can enable features, including traffic management and observability,
+    for their AWS EKS workloads.
+  name: AWS Elastic Kubernetes Service (EKS)
+  category: Observability & Monitoring
+
+- desc: Integrates with the Kubernetes UI Server to provide service mesh
+    capabilities for managing and monitoring Kubernetes resources through the Kubernetes
+    dashboard. With this integration, users can enable features within
+    the Kubernetes dashboard.
+  name: Kubernetes UI Server
+
+- desc: Interacts with Athenz to provide cloud-native capabilities for
+    managing and securing access to microservices. With this integration, users can
+    enable features for access control and security policies based on
+    Athenz identity and access management.
+  name: Athenz
+
+- desc: Binds with CoreDNS to provide cloud-native capabilities for managing
+    and securing DNS resolution within Kubernetes clusters. With this integration,
+    users can apply features to ensure secure and efficient DNS resolution
+    for their applications.
+  name: CoreDNS
+
+- desc: Integrates with Notary to provide cloud-native capabilities for
+    managing and securing container image signing and verification. With this integration,
+    users can enable features for image security and integrity.
+  name: Notary
+
+- desc: Interacts with the GitLab Runner Operator to provide service mesh
+    capabilities for managing and monitoring GitLab runners on Kubernetes. With this
+    integration, users can enable features for GitLab runners.
+  name: GitLab Runner Operator
+
+- desc: Binds with the GitLab Controller to provide cloud-native capabilities
+    for managing and securing GitLab resources. With this integration, users can easily
+    enable features for GitLab projects and repositories.
+  name: GitLab Controller
+
+- desc: Integrates with Teller to provide cloud-native capabilities for
+    managing and securing bank vault operations. With this integration, users can
+    enable features for secure and reliable bank vault operations.
+  name: Teller
+
+- desc: Interacts with Kube Prometheus to provide service mesh observability
+    and monitoring using Prometheus. With this integration, users can easily collect
+    and analyze service mesh metrics with Prometheus.
+  name: Kube Prometheus
+  category: Observability & Monitoring
+
+- desc: Binds with the Kubeflow MPI Operator to provide cloud-native capabilities
+    for managing and monitoring Kubeflow MPI workloads running on Kubernetes. With
+    this integration, users can enable features for MPI applications
+    within Kubeflow.
+  name: Kubeflow MPI Operator
+
+- desc: Integrates with Cloudevents to provide cloud-native capabilities
+    for managing and monitoring Cloudevents resources running on Kubernetes. With
+    this integration, users can enable features for event-driven applications.
+  name: Cloudevents
+
+- desc: Interacts with Pravega to provide cloud-native capabilities for
+    managing and securing Pravega stream processing workloads. With this integration,
+    users can enable features for reliable and efficient stream processing.
+  name: Pravega
+
+- desc: Binds with Vineyard to provide cloud-native capabilities for managing
+    and securing distributed in-memory data. With this integration, users can enable
+    features for secure and efficient distributed data processing.
+  name: Vineyard
+
+- desc: Integrates with Kured to provide cloud-native capabilities for
+    managing and monitoring Kubernetes node reboot operations. With this integration,
+    users can enable features for managing node reboot events.
+  name: Kured
+
+- desc: Interacts with Rook to provide cloud-native capabilities for managing
+    and securing distributed storage resources. With this integration, users can enable
+    features for distributed storage management.
+  name: Rook
+
+- desc: Binds with AWS Load Balancer to provide cloud-native capabilities
+    for managing and securing load balancers on AWS. With this integration, users
+    can enable features for AWS load balancers.
+  name: AWS Load Balancer
+
+- desc: Integrates with Containerssh to provide cloud-native capabilities
+    for managing and securing SSH connections to containers. With this integration,
+    users can enable features for secure and efficient SSH connections.
+  name: Containerssh
+
+- desc: Interacts with Linkerd to provide cloud-native capabilities for
+    managing and securing microservices communications. With this integration, users
+    can enable features for traffic management and security.
+  name: Linkerd
+
+- desc: Binds with Kubeflow Katib to provide cloud-native capabilities
+    for managing and monitoring hyperparameter tuning jobs within Kubeflow. With this
+    integration, users can enable features for efficient and reliable
+    hyperparameter tuning.
+  name: Kubeflow Katib
+
+- desc: Integrates with Mimir to provide cloud-native capabilities for
+    managing and securing data integration workflows. With this integration, users
+    can enable features for secure and reliable data integration.
+  name: Mimir
+
+- desc: Interacts with Serverless Workflow to provide cloud-native capabilities
+    for managing and monitoring serverless workflows running on Kubernetes. With this
+    integration, users can enable features for serverless applications.
+  name: Serverless Workflow
+
+- desc: Binds with Istio to provide cloud-native capabilities for managing
+    and securing microservices communications. Istio is a popular service mesh, and
+    with Meshery's integration, users can enable advanced traffic management, security,
+    and observability features.
+  name: Istio
+
+- desc: Integrates with the MySQL Operator to provide cloud-native capabilities
+    for managing and securing MySQL database clusters running on Kubernetes. With
+    this integration, users can enable features for MySQL databases.
+  name: MySQL Operator
+
+- desc: Interacts with In Toto to provide cloud-native capabilities for
+    securing the software supply chain. With this integration, users can enable service
+    mesh features for software integrity and verification.
+  name: In Toto
+
+- desc: Binds with Superedge to provide cloud-native capabilities for managing
+    and securing edge computing deployments. With this integration, users can enable
+    features for edge nodes and edge applications.
+  name: Superedge
+
+- desc: Integrates with the Jira Service Desk Operator to provide service
+    mesh capabilities for managing and monitoring Jira Service Desk deployments on
+    Kubernetes. With this integration, users can enable service mesh functionalities
+    for Jira Service Desk resources.
+  name: Jira Service Desk Operator
+
+- desc: Interacts with Identity Manager to provide cloud-native capabilities
+    for managing and securing identity and access management in a microservices environment.
+    With this integration, users can enable features for secure identity
+    management.
+  name: Identity Manager
+
+- desc: Binds with Kubesphere to provide cloud-native capabilities for
+    managing and securing Kubesphere applications and resources. With this integration,
+    users can enable features for Kubesphere projects and workspaces.
+  name: Kubesphere
+
+- desc: Integrates with OPA Gatekeeper to provide cloud-native capabilities
+    for implementing fine-grained security policies. OPA Gatekeeper is an admission
+    controller for Kubernetes, and with Meshery's integration, users can easily define
+    and enforce access control policies within the service mesh.
+  name: OPA Gatekeeper
+
+- desc: Interacts with Contour to provide cloud-native capabilities for
+    managing and securing inbound traffic to Kubernetes services. Contour is an Ingress
+    controller for Kubernetes, and with Meshery's integration, users can apply service
+    mesh policies to control and secure traffic flow.
+  name: Contour
+- desc: Binds with Dex to provide cloud-native capabilities for managing
+    and securing identity and access management in a microservices environment. Dex
+    is an OpenID Connect identity provider, and with Meshery's integration, users
+    can enable features for secure identity management.
+  name: Dex
+
+- desc: Integrates with Kuma to provide cloud-native capabilities for managing
+    and securing microservices communications. Kuma is a lightweight service mesh,
+    and with Meshery's integration, users can enable traffic routing, security, and
+    observability features.
+  name: Kuma
+
+- desc: Interacts with Devfile to provide cloud-native capabilities for
+    defining and managing developer environments in a microservices environment. With
+    this integration, users can enable features for developer environments.
+  name: Devfile
+
+- desc: Binds with the Github Actions Runner Operator to provide service
+    mesh capabilities for managing and monitoring Github Actions runners on Kubernetes.
+    With this integration, users can enable features for Github Actions
+    runners.
+  name: Github Actions Runner Operator
+
+- desc: Integrates with Chaos Mesh to provide cloud-native capabilities
+    for injecting chaos experiments into microservices environments. With this integration,
+    users can enable features for chaos engineering and resilience testing.
+  name: Chaos Mesh
+
+- desc: Interacts with Cilium to provide cloud-native capabilities for
+    managing and securing network communication between microservices. Cilium is a
+    powerful networking solution, and with Meshery's integration, users can enable
+    advanced network policies and security features.
+  name: Cilium
+
+- desc: Binds with AWS Target Group Binding to provide cloud-native capabilities
+    for managing and securing communication between services on AWS. With this integration,
+    users can enable features for AWS Target Groups.
+  name: AWS Target Group Binding
+
+- desc: Integrates with Flagger to provide cloud-native capabilities for
+    progressive delivery and canary deployments. With this integration, users can
+    enable features for advanced deployment strategies and observability.
+  name: Flagger
+
+- desc: Interacts with Metallb to provide cloud-native capabilities for
+    managing and securing load balancers in Kubernetes clusters. With this integration,
+    users can apply features to ensure secure and efficient load balancing
+    for their applications.
+  name: Metallb
+
+- desc: Binds with Virtual Kubelet to provide cloud-native capabilities
+    for managing and securing workloads running on Virtual Kubelet nodes. With this
+    integration, users can enable features for workloads running on Virtual
+    Kubelet.
+  name: Virtual Kubelet
+
+- desc: Integrates with Cert Manager to provide cloud-native capabilities
+    for managing and securing TLS certificates. With this integration, users can enable
+    features for requesting and managing TLS certificates for their applications.
+  name: Cert Manager
+
+- desc: Interacts with Github Actions Runners to provide cloud-native capabilities
+    for managing and monitoring Github Actions runners on Kubernetes. With this integration,
+    users can enable features for Github Actions runners.
+  name: Github Actions Runners
+
+- desc: Binds with Kube Rs to provide cloud-native capabilities for managing
+    and securing Kubernetes resources. With this integration, users can enable service
+    mesh features for Kubernetes resources management and security.
+  name: Kube Rs
+
+- desc: Integrates with Tinkerbell to provide cloud-native capabilities
+    for managing and securing hardware provisioning in a microservices environment.
+    With this integration, users can enable features for secure and efficient
+    hardware provisioning.
+  name: Tinkerbell
+
+- desc: Interacts with Consul to provide cloud-native capabilities for
+    managing and securing microservices communications. Consul is a popular service
+    mesh, and with Meshery's integration, users can enable advanced traffic management,
+    security, and observability features.
+  name: Consul
+
+- desc: Binds with Open Cluster Management to provide cloud-native capabilities
+    for managing and securing multiple Kubernetes clusters. With this integration,
+    users can enable features for multi-cluster management and security.
+  name: Open Cluster Management
+
+- desc: Integrates with Devstream to provide cloud-native capabilities
+    for managing and securing real-time data streaming. With this integration, users
+    can enable features for reliable and efficient data streaming.
+  name: Devstream
+
+- desc: Interacts with Curiefense to provide cloud-native capabilities
+    for managing and securing API gateways and API traffic. With this integration,
+    users can enable features for API security and traffic control.
+  name: Curiefense
+
+- desc: Binds with Meshery to provide cloud-native capabilities for managing
+    and monitoring service mesh configurations and performance. With this integration,
+    users can easily manage and visualize features using the Meshery
+    dashboard.
+  name: Meshery
+
+- desc: Integrates with Openkruise to provide cloud-native capabilities
+    for managing and securing applications running on Kubernetes. With this integration,
+    users can enable features for workload management and observability.
+  name: Openkruise
+
+- desc: Interacts with Azure Application Gateway to provide service mesh
+    capabilities for managing and securing inbound traffic to Azure services. With
+    this integration, users can apply service mesh policies to control and secure
+    traffic flow for Azure services.
+  name: Azure Application Gateway
+- desc: Binds with Karmada to provide cloud-native capabilities for managing
+    and securing multi-cluster communication and applications. With this integration,
+    users can enable features for multi-cluster management and traffic
+    control.
+  name: Karmada
+
+- desc: Integrates with Akri to provide cloud-native capabilities for managing
+    and securing IoT and edge computing deployments. With this integration, users
+    can enable features for IoT and edge devices communication.
+  name: Akri
+
+- desc: Interacts with Keda to provide cloud-native capabilities for managing
+    and securing event-driven workloads. With this integration, users can enable service
+    mesh features for scaling and managing event-driven applications.
+  name: Keda
+
+- desc: Binds with BFE to provide cloud-native capabilities for managing
+    and securing network traffic in a microservices environment. BFE is a powerful
+    proxy and traffic management solution, and with Meshery's integration, users can
+    enable advanced traffic management features.
+  name: BFE
+
+- desc: Integrates with Elastic Search to provide cloud-native capabilities
+    for managing and securing Elastic Search workloads running on Kubernetes. With
+    this integration, users can enable features for Elastic Search resources.
+  name: Elastic Search
+
+- desc: Interacts with OpenGitOps to provide cloud-native capabilities
+    for managing and securing Git
+  name: OpenGitOps
+
+- desc: Binds with Envoy to provide cloud-native capabilities for managing
+    and securing microservices communications. Envoy is a popular proxy and data plane
+    solution, and with Meshery's integration, users can enable advanced traffic management
+    and security features.
+  name: Envoy
+
+- desc: Integrates with Github to provide cloud-native capabilities for
+    managing and securing Github repositories and projects. With this integration,
+    users can enable features for Github workflows and repositories.
+  name: Github
+
+- desc: Interacts with Pixie to provide cloud-native capabilities for managing
+    and monitoring applications running on Kubernetes. With this integration, users
+    can enable features for observability and performance monitoring.
+  name: Pixie
+
+- desc: Binds with Buildpacks to provide cloud-native capabilities for
+    managing and securing container image building and management. With this integration,
+    users can enable features for secure and efficient container image
+    building.
+  name: Buildpacks
+
+- desc: Integrates with Cortex to provide cloud-native capabilities for
+    managing and securing metrics and monitoring. With this integration, users can
+    enable features for efficient and reliable metrics collection.
+  name: Cortex
+
+- desc: Interacts with Citrix Service Mesh to provide cloud-native capabilities
+    for managing and securing microservices communications. Citrix Service Mesh is
+    a popular service mesh, and with Meshery's integration, users can enable advanced
+    traffic management, security, and observability features.
+  name: Citrix Service Mesh
+
+- desc: Binds with CRI-O to provide cloud-native capabilities for managing
+    and securing container runtime operations. With this integration, users can enable
+    features for secure and efficient container runtime operations.
+  name: CRI-O
+
+- desc: Integrates with Schemahero to provide cloud-native capabilities
+    for managing and securing database schemas in Kubernetes. With this integration,
+    users can enable features for database schema management and security.
+  name: Schemahero
+
+- desc: Interacts with Wasmcloud to provide cloud-native capabilities for
+    managing and securing WebAssembly workloads. With this integration, users can
+    enable features for WebAssembly applications running on Kubernetes.
+  name: Wasmcloud
+
+- desc: Binds with Brigade to provide cloud-native capabilities for managing
+    and securing event-driven workflows. With this integration, users can enable features 
+    for event-driven applications and workflows.
+  name: Brigade
+
+- desc: Integrates with K8GB to provide cloud-native capabilities for managing
+    features for efficient and secure DNS resolution across multiple
+    and securing multi-cluster DNS resolution. With this integration, users can enable
+    Kubernetes clusters.
+  name: K8GB
+
+- desc: Interacts with Clusterpedia to provide cloud-native capabilities
+    for managing and securing Kubernetes clusters. With this integration, users can
+    enable features for cluster management and security.
+  name: Clusterpedia
+
+- desc: Binds with Inclavare Containers to provide cloud-native capabilities
+    for managing and securing confidential computing deployments. With this integration,
+    users can enable features for secure and confidential computing.
+  name: Inclavare Containers
+
+- desc: Integrates with Cdk8S to provide cloud-native capabilities for
+    managing and securing Kubernetes resources using the Cdk8S framework. With this
+    integration, users can enable features for Kubernetes resources management.
+  name: Cdk For Kubernetes (Cdk8S)
+
+- desc: Interacts with Porter to provide cloud-native capabilities for
+    managing and securing multi-cloud deployments. With this integration, users can
+    enable features for multi-cloud management and security.
+  name: Porter
+
+- desc: Binds with Windows to provide cloud-native capabilities for managing
+    and securing Windows containers and workloads. With this integration, users can
+    enable features for Windows-based deployments.
+  name: Windows
+
+- desc: Integrates with Thanos to provide cloud-native capabilities for
+    managing and securing distributed metrics and monitoring. With this integration,
+    users can enable features for efficient and reliable metrics collection
+    in distributed environments.
+  name: Thanos
+
+- desc: Interacts with Grafana Operator to provide cloud-native capabilities
+    for managing and monitoring Grafana instances on Kubernetes. With this integration,
+    users can enable features for Grafana resources.
+  name: Grafana Operator
+
+- desc: Binds with Flux to provide cloud-native capabilities for managing
+    and securing GitOps deployments. With this integration, users can enable features for 
+    GitOps workflows and deployments.
+  name: Flux
+
+- desc: Integrates with Kubernetes to provide cloud-native capabilities
+    for managing and securing Kubernetes resources and workloads. With this integration,
+    users can enable features for Kubernetes management and security.
+  name: Kubernetes
+
+- desc: Interacts with External Secrets Operator to provide
+    capabilities for managing and securing external secrets in Kubernetes. With this
+    integration, users can enable features for secret management.
+  name: External Secrets Operator
+
+- desc: Binds with Fonio to provide cloud-native capabilities for managing
+    and securing data storage and processing in a microservices environment. With
+    this integration, users can enable features for data storage and
+    processing.
+  name: Fonio
+
+- desc: Integrates with AWS App Mesh to provide cloud-native capabilities
+    for managing and securing applications deployed on AWS. With this integration,
+    users can enable features, including traffic management and observability,
+    for their AWS workloads.
+  name: AWS App Mesh
+- desc: Interacts with Confidential Containers to provide
+    capabilities for managing and securing confidential computing deployments. With
+    this integration, users can enable features for secure and confidential
+    computing.
+  name: Confidential Containers
+- desc: Binds with JFrog Distribution to provide cloud-native capabilities
+    for managing and securing artifact distribution workflows. With this integration,
+    users can enable features for artifact distribution and security.
+  name: JFrog Distribution
+
+- desc: Integrates with Kubevela to provide cloud-native capabilities for
+    managing and securing cloud-native applications using the Kubevela framework.
+    With this integration, users can enable features for application
+    management.
+  name: Kubevela
+
+- desc: Binds with Open Service Mesh to provide cloud-native capabilities
+    for managing and securing microservices communications. Open Service Mesh is an
+    open-source service mesh, and with Meshery's integration, users can enable advanced
+    traffic management, security, and observability features.
+  name: Open Service Mesh
+
+- desc: Integrates with NGINX to provide cloud-native capabilities for
+    managing and securing microservices communications. NGINX is a popular proxy and
+    web server, and with Meshery's integration, users can enable traffic management,
+    security, and observability features.
+  name: NGINX
+
+- desc: Binds with Containerd to provide cloud-native capabilities for
+    managing and securing container runtime operations. With this integration, users
+    can enable features for secure and efficient container runtime operations.
+  name: Containerd
+
+- desc: Integrates with Crossplane to provide cloud-native capabilities
+    for managing and securing cloud-native applications and resources. With this integration,
+    users can enable features for resource management.
+  name: Crossplane
+
+- desc: Interacts with Artifact Hub to provide cloud-native capabilities
+    for managing and securing container images and artifacts. With this integration,
+    users can enable features for secure and efficient artifact management.
+  name: Artifact Hub
+
+- desc: Binds with Jaeger to provide cloud-native capabilities for managing
+    and securing distributed tracing and observability. With this integration, users
+    can enable features for distributed tracing.
+  name: Jaeger
+  
+- desc: Integrates with Linux to provide cloud-native capabilities for
+    managing and securing Linux containers and workloads. With this integration, users
+    can enable features for Linux-based deployments.
+  name: Linux
+  
+- desc: Interacts with Backstage to provide cloud-native capabilities for
+    managing and securing microservices communications. Backstage is a popular developer
+    portal, and with Meshery's integration, users can enable advanced traffic management
+    and security features.
+  name: Backstage
+
+- desc: Binds with Trickster to provide cloud-native capabilities for managing
+    and securing metrics caching and observability. With this integration, users can
+    enable features for efficient and reliable metrics caching.
+  name: Trickster
+
+- desc: Integrates with NGINX Service Mesh to provide cloud-native capabilities
+    for managing and securing microservices communications. NGINX Service Mesh is
+    a popular service mesh, and with Meshery's integration, users can enable advanced
+    traffic management, security, and observability features.
+  name: NGINX Service Mesh
+
+- desc: Interacts with Argocd Operator to provide cloud-native capabilities
+    for managing and securing continuous delivery and GitOps workflows with ArgoCD.
+    With this integration, users can enable features for GitOps deployments
+    and observability.
+  name: Argocd Operator
+
+- desc: Binds with Oras to provide cloud-native capabilities for managing
+    and securing container image storage and distribution. With this integration,
+    users can enable features for secure and efficient container image
+    management.
+  name: Oras
+
+- desc: Integrates with Grafana Agent Operator to provide
+    capabilities for managing and monitoring Grafana agents on Kubernetes. With this
+    integration, users can enable features for Grafana agent resources.
+  name: Grafana Agent Operator
+
+- desc: Interacts with Kubevirt to provide cloud-native capabilities for
+    managing and securing virtual machine workloads on Kubernetes. With this integration,
+    users can enable features for virtual machine management.
+  name: Kubevirt
+
+- desc: Binds with Cubefs to provide cloud-native capabilities for managing
+    and securing file storage and processing in a microservices environment. With
+    this integration, users can enable features for file storage and
+    processing.
+  name: Cubefs
+
+- desc: Integrates with Keylime to provide cloud-native capabilities for
+    managing and securing trusted computing deployments. With this integration, users
+    can enable features for trusted computing and secure boot.
+  name: Keylime
+
+- desc: Interacts with Operator Framework to provide cloud-native capabilities
+    for managing and securing Kubernetes operators. With this integration, users can
+    enable features for Kubernetes operator management and security.
+  name: Operator Framework
+
+- desc: Binds with Nocalhost to provide cloud-native capabilities for managing
+    and securing local development environments for microservices. With this integration,
+    users can enable features for local development and testing.
+  name: Nocalhost
+
+- desc: Integrates with OpenFeature to provide cloud-native capabilities
+    for managing and securing feature flags and rollouts. With this integration, users
+    can enable features for feature flag management and rollouts.
+  name: OpenFeature
+
+- desc: Interacts with Kuberhealthy to provide cloud-native capabilities
+    for managing and securing Kubernetes health checks and observability. With this
+    integration, users can enable features for health checks and observability.
+  name: Kuberhealthy
+
+- desc: Binds with Dapr to provide cloud-native capabilities for managing
+    and securing microservices communications using the Dapr framework. With this
+    integration, users can enable features for Dapr applications.
+  name: Dapr
+
+- desc: Integrates with Tremor to provide cloud-native capabilities for
+    managing and securing data streaming and processing. With this integration, users
+    can enable features for data streaming and processing.
+  name: Tremo
