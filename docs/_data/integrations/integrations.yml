@@ -334,13 +334,16 @@
 - desc: Integrates with gRPC to enable features for gRPC-based microservices communication and configuration.
   name: GRPC
 
-- desc: Binds with the Kubedb Opscenter to provide cloud-native capabilities for managing and monitoring various Kubernetes database workloads.
+- desc: Binds with the Kubedb Opscenter to provide cloud-native capabilities 
+      for managing and monitoring various Kubernetes database workloads.
   name: Kubedb Opscenter
 
-- desc: Interacts with the Kubevault Operator to enable features and configuration for Kubernetes secret management.
+- desc: Interacts with the Kubevault Operator to enable features and configuration 
+      for Kubernetes secret management.
   name: Kubevault Operator
 
-- desc: Integrates with Karpenter to enable cloud-native capabilities for Kubernetes cluster autoscaling and workload placement.
+- desc: Integrates with Karpenter to enable cloud-native capabilities for Kubernetes cluster 
+      autoscaling and workload placement.
   name: Karpenter
 
 - desc: Binds with the Kiali Operator to provide observability and monitoring 
