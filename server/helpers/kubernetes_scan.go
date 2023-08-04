@@ -24,13 +24,6 @@ var meshesMeta = map[string][]string{
 		"networkservicemesh",
 		"nsm",
 	},
-	"Citrix": {
-		"citrix",
-	},
-	"osm": {
-		"openservicemesh",
-		"osm",
-	},
 }
 
 var TelemetryComps = []string{
