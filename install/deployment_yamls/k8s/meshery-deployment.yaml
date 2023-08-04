@@ -28,7 +28,7 @@ spec:
             - name: PROVIDER_BASE_URLS
               value: https://meshery.layer5.io
             - name: ADAPTER_URLS
-              value: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-cpx:10008 meshery-osm:10009 meshery-nginx-sm:10010
+              value: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-nginx-sm:10010
           image: layer5/meshery:stable-latest
           imagePullPolicy: Always
           name: meshery

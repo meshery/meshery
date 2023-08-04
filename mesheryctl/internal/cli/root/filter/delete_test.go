@@ -41,7 +41,7 @@ func TestDeleteCmd(t *testing.T) {
 	}{
 		{
 			Name:             "Delete Kuma-Test",
-			Args:             []string{"delete", "c0c6035a-b1b9-412d-aab2-4ed1f1d51f84","Kuma-Test"},
+			Args:             []string{"delete", "c0c6035a-b1b9-412d-aab2-4ed1f1d51f84", "Kuma-Test"},
 			URL:              testContext.BaseURL + "/api/filter/c0c6035a-b1b9-412d-aab2-4ed1f1d51f84",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			Fixture:          "delete.kuma.api.response.golden",
@@ -49,9 +49,9 @@ func TestDeleteCmd(t *testing.T) {
 			ExpectedError:    false,
 			Method:           "DELETE",
 			ResponseCode:     200,
-		},{
-			Name:"Delete RolloutAndIstio",
-			Args:[]string{"delete","d0e09134-acb6-4c71-b051-3d5611653f70","RolloutAndIstio"},
+		}, {
+			Name:             "Delete RolloutAndIstio",
+			Args:             []string{"delete", "d0e09134-acb6-4c71-b051-3d5611653f70", "RolloutAndIstio"},
 			URL:              testContext.BaseURL + "/api/filter/d0e09134-acb6-4c71-b051-3d5611653f70",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			Fixture:          "delete.rollout.api.response.golden",
