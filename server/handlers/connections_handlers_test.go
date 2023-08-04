@@ -30,12 +30,23 @@ var saveconn = []models.ConnectionPayload{
 		},
 	},
 }
-
+var user = models.User{
+	ID:        "9cb4356o",
+	UserID:    "wer5653o",
+	FirstName: "Lee",
+	LastName:  "Caltcole",
+	AvatarURL: "",
+	Provider:  "",
+	Email:     "lee@gmail.com",
+	Status:    "",
+	Bio:       "",
+	RoleNames: []string{},
+}
 var provide models.Provider
 var preference *models.Preference
 
 func TestSaveConnections(t *testing.T) {
-	t.Run("TestSave", func(t *testing.T) {
+	t.Run("TestSaveConnection", func(t *testing.T) {
 		handlers := Handler{}
 
 		// Convert the connection payload to JSON
@@ -49,11 +60,8 @@ func TestSaveConnections(t *testing.T) {
 		}
 		// Create a response recorder
 		rr := httptest.NewRecorder()
-		http.HandleFunc("/api/integrations/connections",func(w http.ResponseWriter, r *http.Request){
-			handlers.SaveConnection(rr, req, nil, nil, provide)
-		})
-		// Serve the request
-		http.DefaultServeMux.ServeHTTP(rr, req)
+
+		handlers.SaveConnection(rr, req, preference, &user, provide)
 		// Check the response status code
 		if rr.Code != http.StatusCreated {
 			t.Errorf("Expected status code %d, got %d", http.StatusCreated, rr.Code)
@@ -62,7 +70,7 @@ func TestSaveConnections(t *testing.T) {
 	})
 }
 func TestGetConnections(t *testing.T) {
-	t.Run("GetConnection", func(t *testing.T) {
+	t.Run("TestGetConnection", func(t *testing.T) {
 		h := Handler{}
 		req, err := http.NewRequest(http.MethodGet, "/api/integrations/connections/{connectionKind}", nil)
 		if err != nil {
@@ -81,4 +89,3 @@ func TestGetConnections(t *testing.T) {
 		}
 	})
 }
-
