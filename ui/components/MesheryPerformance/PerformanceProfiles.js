@@ -121,11 +121,11 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
   const [testProfiles, setTestProfiles] = useState([]);
   const [profileForModal, setProfileForModal] = useState();
   // const [loading, setLoading] = useState(false);
-
   /**
    * fetch performance profiles when the page loads
    */
   useEffect(() => {
+
     fetchTestProfiles(page, pageSize, search, sortOrder);
     const subscription = subscribePerformanceProfiles((res) => {
       let result = res?.subscribePerfProfiles;
@@ -340,6 +340,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
                 cookies={profileForModal?.request_cookies}
                 contentType={profileForModal?.content_type}
                 runTestOnMount={!!profileForModal?.runTest}
+                metadata={profileForModal?.metadata}
               />
             </Paper>
           }

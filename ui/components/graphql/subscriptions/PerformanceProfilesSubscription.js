@@ -25,6 +25,7 @@ subscription PerformanceProfilesSubscription($selector: PageFilter!) {
       request_headers
       content_type
       service_mesh
+      metadata
     }
   }
 }

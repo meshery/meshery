@@ -96,7 +96,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 					eb.Publish(&req)
 					continue
 				}
-				if !skipCrdAndOperator && hostname != nil && hostname.String() != (registry.Kubernetes{}).String() {
+				if !skipCrdAndOperator && hostname != nil && comp.Spec.Model != (registry.Kubernetes{}).String() {
 					var summary string
 					eventType := meshes.EventType_INFO
 					if !isDel {
