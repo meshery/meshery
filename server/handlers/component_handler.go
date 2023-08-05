@@ -232,7 +232,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		Page:     page,
 		PageSize: int(pgSize),
 		Count: count,
-		Models: models.FindDuplicateModels(meshmodels),
+		Models: models.FindDuplicateModels(meshmodel),
 	}
 
 	if err := enc.Encode(res); err != nil {
