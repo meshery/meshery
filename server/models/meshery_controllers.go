@@ -303,9 +303,6 @@ func setOverrideValues(delete bool, adapterTracker AdaptersTrackerInterface) map
 		"meshery-kuma": map[string]interface{}{
 			"enabled": false,
 		},
-		"meshery-osm": map[string]interface{}{
-			"enabled": false,
-		},
 		"meshery-nsm": map[string]interface{}{
 			"enabled": false,
 		},
@@ -313,9 +310,6 @@ func setOverrideValues(delete bool, adapterTracker AdaptersTrackerInterface) map
 			"enabled": false,
 		},
 		"meshery-traefik-mesh": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-cpx": map[string]interface{}{
 			"enabled": false,
 		},
 		"meshery-app-mesh": map[string]interface{}{
