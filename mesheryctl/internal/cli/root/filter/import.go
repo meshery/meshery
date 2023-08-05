@@ -85,7 +85,7 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 				return errors.New("Unable to read file. " + err.Error())
 			}
 
-			content := string(filterFile)
+			content := filterFile
 
 			body.FilterData.Name = fileInfo.Name()
 			body.FilterData.FilterFile = content

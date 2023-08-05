@@ -11,4 +11,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: {{ include "meshery.serviceAccountName" . }}
-  namespace: {{ .Values.metadata.namespace }}
+  namespace: {{ .Release.Namespace }}

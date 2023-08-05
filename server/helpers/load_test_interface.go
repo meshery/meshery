@@ -66,17 +66,14 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 		o := fgrpc.GRPCRunnerOptions{
 			RunnerOptions:      ro,
 			Destination:        rURL,
+			CACert:             opts.CACert,
 			Service:            opts.GRPCHealthSvc,
 			Streams:            opts.GRPCStreamsCount,
 			AllowInitialErrors: opts.AllowInitialErrors,
-			Payload:            httpOpts.PayloadUTF8(),
+			Payload:            httpOpts.PayloadString(),
 			Delay:              opts.GRPCPingDelay,
 			UsePing:            opts.GRPCDoPing,
-		}
-
-		o.TLSOptions = fhttp.TLSOptions{
-			CACert:    opts.CACert,
-			UnixDomainSocket: httpOpts.UnixDomainSocket,
+			UnixDomainSocket:   httpOpts.UnixDomainSocket,
 		}
 		res, err = fgrpc.RunGRPCTest(&o)
 	} else {
@@ -86,16 +83,6 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 			Profiler:           "",
 			AllowInitialErrors: opts.AllowInitialErrors,
 			AbortOn:            0,
-		}
-
-		logrus.Debugf("options string: %s", opts.Options)
-		if opts.Options != "" {
-			logrus.Debugf("Fortio config: %+#v", o)
-			err := json.Unmarshal([]byte(opts.Options), &o)
-			if err != nil {
-				return nil, nil, ErrUnmarshal(err, "options string")
-			}
-			logrus.Debugf("Fortio config with options: %+#v", o)
 		}
 		res, err = fhttp.RunHTTPTest(&o)
 	}
@@ -145,17 +132,6 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 		Labels:            labels,
 		Percentiles:       []float64{50, 75, 90, 99, 99.99, 99.999},
 	}
-
-	logrus.Debugf("options string: %s", opts.Options)
-	if opts.Options != "" {
-		logrus.Debugf("GoWrk2 config: %+#v", ro)
-		err := json.Unmarshal([]byte(opts.Options), &ro)
-		if err != nil {
-			return nil, nil, ErrUnmarshal(err, "options string")
-		}
-		logrus.Debugf("GoWrk2 config with options: %+#v", ro)
-	}
-
 	var res periodic.HasRunnerResult
 	var err error
 	if opts.SupportedLoadTestMethods == 2 {
@@ -391,16 +367,6 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 
 	if opts.SupportedLoadTestMethods == 2 {
 		return nil, nil, ErrGrpcSupport(err, "Nighthawk")
-	}
-
-	logrus.Debugf("options string: %s", opts.Options)
-	if opts.Options != "" {
-		// logrus.Debugf("Nighthawk CommandLineOptions: %+#v", ro)
-		err := json.Unmarshal([]byte(opts.Options), &ro)
-		if err != nil {
-			return nil, nil, ErrUnmarshal(err, "options string")
-		}
-		// logrus.Debugf("Nighthawk CommandLineOptions with options: %+#v", ro)
 	}
 
 	c, err := nighthawk_client.New(nighthawk_client.Options{
