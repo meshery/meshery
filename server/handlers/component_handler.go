@@ -1146,7 +1146,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 			comp.Schema = string(b)
 			comp.HostID = host.ID
 			comp.HostName = host.Hostname
-			comp.DisplayHostName = manifests.DeFormatReadableString(host.Hostname)
+			comp.DisplayHostName = manifests.FormatToReadableString(host.Hostname)
 			comps = append(comps, comp)
 		}
 	}

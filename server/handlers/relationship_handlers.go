@@ -164,7 +164,7 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 		if ok {
 			rel.HostID = host.ID
 			rel.HostName = host.Hostname
-			rel.DisplayHostName = manifests.DeFormatReadableString(host.Hostname)
+			rel.DisplayHostName = manifests.FormatToReadableString(host.Hostname)
 			rels = append(rels, rel)
 		}
 	}
