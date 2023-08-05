@@ -158,9 +158,9 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 		Sort:      r.URL.Query().Get("sort"),
 	})
 	var rels []v1alpha1.RelationshipDefinition
-	for _, r := range entities {
-		host := h.registryManager.GetRegistrant(r)
-		rel, ok := r.(v1alpha1.RelationshipDefinition)
+	for _, entity := range entities {
+		host := h.registryManager.GetRegistrant(entity)
+		rel, ok := entity.(v1alpha1.RelationshipDefinition)
 		if ok {
 			rel.HostID = host.ID
 			rel.HostName = host.Hostname
