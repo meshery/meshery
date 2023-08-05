@@ -704,7 +704,9 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       }
       dataFetch(
         `/api/filter`,
-        { credentials : "include", method : "POST", body },
+        { credentials : "include", headers : {
+          'Content-Type' : 'application/octet-stream', // Set appropriate content type for binary data
+        }, method : "POST", body },
         () => {
           updateProgress({ showProgress : false });
         },
@@ -758,14 +760,16 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     // Create a reader
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
+      let uint8 = new Uint8Array(event.target.result);
       handleSubmit({
-        data : event.target.result,
+        data : Array.from(uint8),
         name : file?.name || "meshery_" + Math.floor(trueRandom() * 100),
         type : FILE_OPS.FILE_UPLOAD,
         metadata : metadata
       });
+
     });
-    reader.readAsText(file);
+    reader.readAsArrayBuffer(file);
   }
 
   function urlUploadHandler(link, _, metadata,) {
@@ -1112,7 +1116,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             />
           </div>
           <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingRight : "1rem", paddingTop : "0.2rem" }}>
-            <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} />
+            <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} classes={classes} />
           </div>
           {!selectedFilter.show &&
             <div className={classes.viewSwitchButton}>

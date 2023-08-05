@@ -68,7 +68,7 @@ var createContextCmd = &cobra.Command{
 mesheryctl system context create [context-name]
 
 // Create new context and provide list of components, platform & URL
-mesheryctl system context create context-name --components meshery-osm --platform docker --url http://localhost:9081 --set --yes
+mesheryctl system context create context-name --components meshery-nsm --platform docker --url http://localhost:9081 --set --yes
 	`,
 	Annotations: linkDocContextCreate,
 	RunE: func(cmd *cobra.Command, args []string) error {

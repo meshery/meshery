@@ -47,7 +47,7 @@ mesheryctl mesh validate istio --adapter meshery-istio --spec smi
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -a, --adapter string   (Required) Adapter to use for validation (default "meshery-osm")
+  -a, --adapter string   (Required) Adapter to use for validation (default "meshery-nsm")
   -h, --help             help for validate
   -s, --spec string      (Required) specification to be used for conformance test (smi/istio-vet) (default "smi")
   -t, --token string     Path to token for authenticating to Meshery API
