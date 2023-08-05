@@ -6,13 +6,13 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
+	"github.com/layer5io/meshkit/utils/manifests"
 )
 
 /**Meshmodel endpoints **/
@@ -210,11 +210,6 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	meshmodel, count, _ := h.registryManager.GetModels(h.dbHandler, filter)
-	var meshmodels []v1alpha1.Model
-	for _, r := range meshmodel {
-		r.DisplayHostName = helpers.HostnameToPascalCase(r.HostName)
-		meshmodels = append(meshmodels, r)
-	}
 
 	var pgSize int64
 	if limitstr == "all" {
@@ -227,7 +222,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		Page:     page,
 		PageSize: int(pgSize),
 		Count: count,
-		Models: models.FindDuplicateModels(meshmodels),
+		Models: models.FindDuplicateModels(meshmodel),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -1151,7 +1146,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 			comp.Schema = string(b)
 			comp.HostID = host.ID
 			comp.HostName = host.Hostname
-			comp.DisplayHostName = helpers.HostnameToPascalCase(host.Hostname)
+			comp.DisplayHostName = manifests.DeFormatReadableString(host.Hostname)
 			comps = append(comps, comp)
 		}
 	}
