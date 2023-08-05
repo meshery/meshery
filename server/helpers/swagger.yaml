@@ -425,6 +425,22 @@ paths:
             tags:
                 - UserAPI
     /api/integrations/connections:
+        get:
+            description: |-
+                ```?order={field}``` orders on the passed field
+
+                ```?search={}``` If search is non empty then a greedy search is performed
+
+                ```?page={page-number}``` Default page number is 0
+
+                ```?pagesize={pagesize}``` Default pagesize is 10
+            operationId: idGetConnections
+            responses:
+                "200":
+                    $ref: '#/responses/ConnectionPage'
+            summary: Handle GET request for getting all connections
+            tags:
+                - GetConnections
         post:
             description: Creates a new connection
             operationId: idPostConnection
@@ -1966,7 +1982,7 @@ responses:
     ConnectionPage:
         description: ""
         headers:
-            connection:
+            connections:
                 items: {}
                 type: array
             page:

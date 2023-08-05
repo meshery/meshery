@@ -31,16 +31,13 @@ var (
 		MeshTypeLinkerd:            {"linkerd-system"},
 		MeshTypeCiliumServiceMesh:  {"kube-system"},
 		MeshTypeConsul:             {"consul-system"},
-		MeshTypeOctarine:           {"octarine-system"},
 		MeshTypeTraefikMesh:        {"traefik-system"},
-		MeshTypeOpenServiceMesh:    {"osm-system"},
 		MeshTypeKuma:               {"kuma-system"},
 		MeshTypeNginxServiceMesh:   {"nginx-system"},
 		MeshTypeNetworkServiceMesh: {"nsm-system"},
-		MeshTypeCitrixServiceMesh:  {"citrix-system"},
 		MeshTypeAppMesh:            {"appmesh-system"},
 		//Any namespace added or appended above should also be appended on the AllMesh array
-		MeshTypeAllMesh: {"istio-system", "linkerd-system", "consul-system", "octarine-system", "traefik-system", "osm-system", "kuma-system", "nginx-system", "nsm-system", "citrix-system", "appmesh-system"},
+		MeshTypeAllMesh: {"istio-system", "linkerd-system", "consul-system", "traefik-system", "kuma-system", "nginx-system", "nsm-system", "appmesh-system"},
 	}
 
 	addonPortSelector = map[string]string{
@@ -234,9 +231,6 @@ func SetOverrideValues(delete bool, adapterTracker models.AdaptersTrackerInterfa
 		"meshery-kuma": map[string]interface{}{
 			"enabled": false,
 		},
-		"meshery-osm": map[string]interface{}{
-			"enabled": false,
-		},
 		"meshery-nsm": map[string]interface{}{
 			"enabled": false,
 		},
@@ -244,9 +238,6 @@ func SetOverrideValues(delete bool, adapterTracker models.AdaptersTrackerInterfa
 			"enabled": false,
 		},
 		"meshery-traefik-mesh": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-cpx": map[string]interface{}{
 			"enabled": false,
 		},
 		"meshery-app-mesh": map[string]interface{}{

@@ -302,7 +302,7 @@ Our projects are community-built and welcome collaboration. 👍 Be sure to see 
 <a href ="https://layer5.io/community"><img alt="MeshMates" src=".github/assets/images/readme/layer5-community-sign.png" style="margin-right:36px; margin-bottom:7px;" width="140px" align="left" /></a>
 <h3>Find your MeshMate</h3>
 
-<p>MeshMates are experienced Layer5 community members, who will help you learn your way around, discover live projects, and expand your community network. Conneect with a Meshmate today!</p>
+<p>MeshMates are experienced Layer5 community members, who will help you learn your way around, discover live projects, and expand your community network. Connect with a Meshmate today!</p>
 
 Find out more on the <a href="https://layer5.io/community#meshmate">Layer5 community</a>. <br />
 
