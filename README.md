@@ -243,22 +243,6 @@ Meshery is the cloud native utility for uniformly managing the performance of mi
 <br /><br />
 
 </p>
-<h4>Conforming to Service Mesh Interface (SMI)</h4>
-
-<p style="clear:both;">
-
-Meshery provides tooling to validate any service mesh that claims to implement and conform to SMI specifications. Working in accordance with the [SMI Conformance project](https://layer5.io/projects/service-mesh-interface-conformance), it essentially provides:
-
-✔︎ Defines compliant behavior.<br />
-✔︎ Produces compatibility matrix. <br />
-✔︎ Ensures provenance of results. <br />
-✔︎ Runs a set of conformance tests. <br />
-✔︎ Built into the participating service mesh’s release pipeline. <br />
-✔︎ Provides [Learn Layer5](https://github.com/layer5io/learn-layer5) sample application used for validating test assertions.
-<a href="https://docs.meshery.io/assets/img/readme/smi-conformance-with-meshery.png"><img alt="SMI Validation, Verification, and Conformance with Meshery" src="https://docs.meshery.io/assets/img/readme/smi-conformance-with-meshery.png" style="margin-right:10px;margin-bottom:10px;" width="100%" align="left" /></a>
-<br />
-<br /><br /><br /><br />
-<div>&nbsp;</div>
 
 ## Meshery Architecture
 
@@ -318,7 +302,7 @@ Our projects are community-built and welcome collaboration. 👍 Be sure to see 
 <a href ="https://layer5.io/community"><img alt="MeshMates" src=".github/assets/images/readme/layer5-community-sign.png" style="margin-right:36px; margin-bottom:7px;" width="140px" align="left" /></a>
 <h3>Find your MeshMate</h3>
 
-<p>MeshMates are experienced Layer5 community members, who will help you learn your way around, discover live projects, and expand your community network. Conneect with a Meshmate today!</p>
+<p>MeshMates are experienced Layer5 community members, who will help you learn your way around, discover live projects, and expand your community network. Connect with a Meshmate today!</p>
 
 Find out more on the <a href="https://layer5.io/community#meshmate">Layer5 community</a>. <br />
 

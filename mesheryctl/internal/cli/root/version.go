@@ -138,7 +138,7 @@ mesheryctl version
 
 		if err != nil {
 			utils.PrintToTable(header, rows)
-			utils.Log.Error(ErrConnectingToServer(err))
+			utils.Log.Warn(ErrConnectingToServer(err))
 			return
 		}
 
@@ -165,23 +165,23 @@ mesheryctl version
 }
 
 func checkMesheryctlClientVersion(build string) {
-	utils.Log.Info("\nChecking for latest version of mesheryctl...")
+	utils.Log.Info("Checking for latest version of mesheryctl...\n")
 
 	// Inform user of the latest release version
 	res, err := meshkitutils.GetLatestReleaseTagsSorted(c.GetMesheryGitHubOrg(), c.GetMesheryGitHubRepo())
 	if err != nil {
-		utils.Log.Warn(fmt.Errorf("\n  Unable to check for latest version of mesheryctl. %s", err))
+		utils.Log.Warn(fmt.Errorf("Unable to check for latest version of mesheryctl. %s", err))
 		return
 	}
 	if len(res) == 0 {
-		utils.Log.Warn(fmt.Errorf("\n  Unable to check for latest version of mesheryctl. %s", fmt.Errorf("no version found")))
+		utils.Log.Warn(fmt.Errorf("Unable to check for latest version of mesheryctl. %s", fmt.Errorf("no version found")))
 		return
 	}
 	r := res[len(res)-1]
 	// If user is running an outdated release, let them know.
 	if r != build {
-		utils.Log.Info("\n  ", build, " is not the latest release. Update to ", r, ".")
+		utils.Log.Info(build, " is not the latest release. Update to ", r, ".")
 	} else { // If user is running the latest release, let them know.
-		utils.Log.Info("\n  ", r, " is the latest release.")
+		utils.Log.Info(r, " is the latest release.")
 	}
 }
