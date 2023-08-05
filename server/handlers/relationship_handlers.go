@@ -6,11 +6,11 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/layer5io/meshkit/utils/manifests"
 )
 
 // swagger:route GET /api/meshmodels/models/{model}/relationships/{name} GetMeshmodelRelationshipByName idGetMeshmodelRelationshipByName
@@ -164,7 +164,7 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 		if ok {
 			rel.HostID = host.ID
 			rel.HostName = host.Hostname
-			rel.DisplayHostName = manifests.FormatToReadableString(host.Hostname)
+			rel.DisplayHostName = utils.HostnameToPascalCase(host.Hostname)
 			rels = append(rels, rel)
 		}
 	}

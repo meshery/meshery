@@ -12,12 +12,10 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/layer5io/meshkit/utils/manifests"
 )
 
 /**Meshmodel endpoints **/
 const DefaultPageSizeForMeshModelComponents = 25
-
 // swagger:route GET /api/meshmodels/categories/{category}/models GetMeshmodelModelsByCategories idGetMeshmodelModelsByCategories
 //
 // Handle GET request for getting all meshmodel models for a given category. The component type/model name should be lowercase like "kubernetes", "istio"
@@ -1146,7 +1144,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 			comp.Schema = string(b)
 			comp.HostID = host.ID
 			comp.HostName = host.Hostname
-			comp.DisplayHostName = manifests.FormatToReadableString(host.Hostname)
+			comp.DisplayHostName = utils.HostnameToPascalCase(host.Hostname)
 			comps = append(comps, comp)
 		}
 	}
