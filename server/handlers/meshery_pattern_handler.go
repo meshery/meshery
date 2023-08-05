@@ -316,7 +316,8 @@ func (h *Handler) handlePatternPOST(
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
 // responses:
-// 	200: mesheryPatternsResponseWrapper
+//
+//	200: mesheryPatternsResponseWrapper
 func (h *Handler) GetMesheryPatternsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -359,7 +360,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 // ```?page={page-number}``` Default page number is 0
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10.
-// 
+//
 // ```?search={patternname}``` If search is non empty then a greedy search is performed
 // responses:
 //

@@ -32,9 +32,8 @@ export const getK8sClusterIdsFromCtxId = (selectedContexts, k8sconfig) => {
   }
 
   const clusterIds = [];
-
   selectedContexts.forEach(context => {
-    const clusterId = k8sconfig.find(cfg => cfg.id === context)?.clusterID
+    const clusterId = k8sconfig.find(cfg => cfg.id === context)?.kubernetes_server_id
     if (clusterId) {
       clusterIds.push(clusterId)
     }

@@ -47,10 +47,10 @@ mesheryctl filter import https://example.com/myfilter.wasm
 // Add WASM configuration 
 // If the string is a valid file in the filesystem, the file is read and passed as a string. Otherwise, the string is passed as is.
 // Use quotes if the string contains spaces
-mesheryctl filter import /path/to/filter.wasm -config [filepath|string]
+mesheryctl filter import /path/to/filter.wasm --wasm-config [filepath|string]
 
 // Specify the name of the filter to be imported. Use quotes if the name contains spaces
-mesheryctl filter import /path/to/filter.wasm -name [string]
+mesheryctl filter import /path/to/filter.wasm --name [string]
 	`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -85,7 +85,7 @@ mesheryctl filter import /path/to/filter.wasm -name [string]
 				return errors.New("Unable to read file. " + err.Error())
 			}
 
-			content := string(filterFile)
+			content := filterFile
 
 			body.FilterData.Name = fileInfo.Name()
 			body.FilterData.FilterFile = content
@@ -141,6 +141,6 @@ mesheryctl filter import /path/to/filter.wasm -name [string]
 }
 
 func init() {
-	importCmd.Flags().StringVarP(&cfg, "config", "c", "", "(optional) WASM configuration filepath/string")
+	importCmd.Flags().StringVarP(&cfg, "wasm-config", "w", "", "(optional) WASM configuration filepath/string")
 	importCmd.Flags().StringVarP(&name, "name", "n", "", "(optional) filter name")
 }
