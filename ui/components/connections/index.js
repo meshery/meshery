@@ -6,23 +6,25 @@ import {
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import EditIcon from "@material-ui/icons/Edit";
+import CloseIcon from "@material-ui/icons/Close";
 import YoutubeSearchedForIcon from '@mui/icons-material/YoutubeSearchedFor';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import MUIDataTable from "mui-datatables";
 import { withSnackbar } from "notistack";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Moment from "react-moment";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { updateProgress } from "../../lib/store";
 import { iconMedium } from "../../css/icons.styles";
-import { Avatar, Chip, FormControl } from "@mui/material";
+import { Avatar, Chip, FormControl, IconButton } from "@mui/material";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import classNames from "classnames";
 import ReactSelectWrapper from "../ReactSelectWrapper";
+import dataFetch from "../../lib/data-fetch";
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2) },
@@ -90,32 +92,18 @@ const styles = (theme) => ({
   },
 });
 
-function Connections({ classes }) {
+const ACTION_TYPES = {
+  FETCH_CONNECTIONS : {
+    name : "FETCH_CONNECTIONS",
+    error_msg : "Failed to fetch connections"
+  },
+};
+
+function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }) {
   const [page] = useState(0);
   const [count] = useState(0);
   const [pageSize] = useState(10);
-  const [connections] = useState([
-    {
-      id : "681946c4-8136-4348-bdaf-c9d50ffb47a8",
-      element : "Prometheus-2",
-      cluster : "cluster-name",
-      environment : "environment 1",
-      updated_at : "2023-04-25T18:30:29.337724Z",
-      discovered_at : "2023-04-14T20:09:00.556036Z",
-      asdf : "100",
-      status : "Ignored"
-    },
-    {
-      id : "681946c4-8136-4348-bdaf-c9d50ffb47a8",
-      element : "Prometheus-1",
-      cluster : "cluster-name",
-      environment : "environment 1",
-      updated_at : "2023-04-25T18:30:29.337724Z",
-      discovered_at : "2023-04-14T20:09:00.556036Z",
-      asdf : "100",
-      status : "Connected"
-    }
-  ]);
+  const [connections, setConnections] = useState([]);
 
 
   const status = (value) => {
@@ -281,6 +269,41 @@ function Connections({ classes }) {
         text : "connection(s) selected",
       },
     }
+  };
+
+  useEffect(() => {
+    getConnections()
+  },[])
+
+  const getConnections = () => {
+    dataFetch(
+      `/api/integrations/connections`,
+      {
+        credentials : "include",
+        method : "GET",
+      },
+      (res) => {
+        console.log("🚀 ~ file: index.js:306 ~ getConnections ~ res:", res)
+        setConnections(res?.connection)
+      },
+      handleError(ACTION_TYPES.FETCH_CONNECTIONS)
+    );
+  }
+
+  const handleError = (action) => (error) => {
+    updateProgress({ showProgress : false });
+
+    enqueueSnackbar(`${action.error_msg}: ${error}`, {
+      variant : "error",
+      action : function Action(key) {
+        return (
+          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+            <CloseIcon style={iconMedium} />
+          </IconButton>
+        );
+      },
+      autoHideDuration : 8000,
+    });
   };
 
   return (
