@@ -20,9 +20,6 @@ dependencies:
 - name: meshery-traefik-mesh
   repository: ""
   version: 0.5.0
-- name: meshery-cpx
-  repository: ""
-  version: 0.5.0
 - name: meshery-nginx-sm
   repository: ""
   version: 0.5.0
@@ -35,5 +32,5 @@ dependencies:
 - name: meshery-perf
   repository: ""
   version: 0.5.0
-digest: sha256:1a58f0dc6f2cc5c7cdd8c1a9871ca738502f0e773c2c47f5dc95f03b5388b2c0
-generated: "2022-09-13T11:09:31.819721622Z"
+digest: sha256:0052d7bca77e34ae653e997458933b0e5665d163cbfb68d9b150497d537ef610
+generated: "2023-08-02T21:43:47.651148+05:30"
