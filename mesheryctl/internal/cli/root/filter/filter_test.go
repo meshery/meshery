@@ -50,7 +50,7 @@ func TestFilterCmd(t *testing.T) {
 		},
 		{
 			Name:             "filter viewcmd with ID",
-			Args:             []string{"view","c0c6035a-b1b9-412d-aab2-4ed1f1d51f84"},
+			Args:             []string{"view", "c0c6035a-b1b9-412d-aab2-4ed1f1d51f84"},
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectedResponse: "filter.id.view.output.golden",
 			Fixture:          "filter.id.view.api.response.golden",
@@ -90,7 +90,7 @@ func TestFilterCmd(t *testing.T) {
 		},
 		{
 			Name:             "filter viewcmd with Invalid ID",
-			Args:             []string{"view", "957fbc9b-a655-4892-823d-375102a9587c"},
+			Args:             []string{"view","957fbc9b-a655-4892-823d-375102a9587c"},
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectedResponse: "filter.invalidID.view.output.golden",
 			Fixture:          "filter.invalidID.view.response.golden",
