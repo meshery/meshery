@@ -389,8 +389,11 @@ mesheryctl system context create `
 		isRunning, _ := utils.AreMesheryComponentsRunning(currCtx.GetPlatform())
 		//if meshery running stop meshery before context switch
 		if isRunning {
+
 			if err := stop(); err != nil {
 				return errors.Wrap(err, utils.SystemError("Failed to stop Meshery before switching context"))
+			} else {
+				return nil
 			}
 		}
 		configuration.CurrentContext = args[0]
