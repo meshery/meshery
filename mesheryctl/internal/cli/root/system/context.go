@@ -391,10 +391,11 @@ mesheryctl system context create `
 		if isRunning {
 			if err := stop(); err != nil {
 				return errors.Wrap(err, utils.SystemError("Failed to stop Meshery before switching context"))
-			} else {
+			} else if !userResponse && err == nil {
 				return nil
 			}
 		}
+
 		configuration.CurrentContext = args[0]
 		viper.Set("current-context", configuration.CurrentContext)
 		log.Printf("switched to context '%s'", args[0])
