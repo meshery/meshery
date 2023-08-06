@@ -47,6 +47,57 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 	w.WriteHeader(http.StatusCreated)
 }
 
+// swagger:route GET /api/integrations/connections GetConnections idGetConnections
+// Handle GET request for getting all connections
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?search={}``` If search is non empty then a greedy search is performed
+//
+// ```?page={page-number}``` Default page number is 0
+//
+// ```?pagesize={pagesize}``` Default pagesize is 10
+// responses:
+// 200: ConnectionPage
+func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	q := req.URL.Query()
+	page, _ := strconv.Atoi(q.Get("page"))
+	order := q.Get("order")
+	search := q.Get("search")
+	pageSize, _ := strconv.Atoi(q.Get("pagesize"))
+
+	if pageSize > 50 {
+		pageSize = 50
+	}
+	if pageSize <= 0 {
+		pageSize = 10
+	}
+	if page < 0 {
+		page = 0
+	}
+	if order == "" {
+		order = "updated_at desc"
+	}
+
+	h.log.Debug(fmt.Sprintf("page: %d, page size: %d, search: %s, order: %s", page+1, pageSize, search, order))
+
+	connectionsPage, err := provider.GetConnections(req, user.ID, page, pageSize, search, order)
+	obj := "connections"
+
+	if err != nil {
+		h.log.Error(ErrQueryGet(obj))
+		http.Error(w, ErrQueryGet(obj).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(connectionsPage); err != nil {
+		h.log.Error(ErrEncoding(err, obj))
+		http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+
 // swagger:route GET /api/integrations/connections/{connectionKind} GetConnectionsByKind idGetConnectionsByKind
 // Handle GET request for getting all connections for a given kind.
 //
@@ -59,7 +110,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 // ```?pagesize={pagesize}``` Default pagesize is 10
 // responses:
 // 200: ConnectionPage
-func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	q := req.URL.Query()
 	connectionKind := mux.Vars(req)["connectionKind"]
 	page, _ := strconv.Atoi(q.Get("page"))
@@ -77,12 +128,12 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, _ *mo
 		page = 0
 	}
 	if order == "" {
-		order = "created_at desc"
+		order = "updated_at desc"
 	}
 
 	h.log.Debug(fmt.Sprintf("page: %d, page size: %d, search: %s, order: %s", page+1, pageSize, search, order))
 
-	connectionsPage, err := provider.GetConnections(req, user.ID, page, pageSize, search, order, connectionKind)
+	connectionsPage, err := provider.GetConnectionsByKind(req, user.ID, page, pageSize, search, order, connectionKind)
 	obj := "connections"
 
 	if err != nil {

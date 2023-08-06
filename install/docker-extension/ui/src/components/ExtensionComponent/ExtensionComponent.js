@@ -76,11 +76,6 @@ const adapters = {
     icon: <NginxIcon width={38} height={40} />,
     name: 'NGINX_SERVICE_MESH',
   },
-  OPEN_SERVICE_MESH: {
-    displayName: 'OSM',
-    icon: <OsmIcon width={40} height={40} />,
-    name: 'OPEN_SERVICE_MESH',
-  },
   TRAEFIK_MESH: {
     displayName: 'Traefix Mesh',
     icon: <TraefikIcon width={40} height={40} />,
