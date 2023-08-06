@@ -3,8 +3,7 @@ package helpers
 import (
 	"context"
 	"fmt"
-	"io"
-	"os"
+	"strings"
 	"strconv"
 	"sync"
 	"time"
@@ -79,15 +78,24 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 			return ErrAdapterAdministration(err)
 		}
 
-		adapterImage := "layer5/" + adapter.Name + ":stable-latest"
-
-		// Pull the latest image
-		reader, err := cli.ImagePull(ctx, adapterImage, types.ImagePullOptions{})
+		containers, err := cli.ContainerList(ctx, types.ContainerListOptions{})
 		if err != nil {
 			return ErrAdapterAdministration(err)
 		}
-		defer reader.Close()
-		_, _ = io.Copy(os.Stdout, reader)
+		var mesheryNetworkSettings *types.SummaryNetworkSettings
+		for _, container := range containers {
+			if strings.Contains(container.Image, "layer5/meshery") {
+        mesheryNetworkSettings = container.NetworkSettings
+			}
+		}
+
+		adapterImage := "layer5/" + adapter.Name + ":stable-latest"
+
+		// Pull the latest image
+		_, err = cli.ImagePull(ctx, adapterImage, types.ImagePullOptions{})
+		if err != nil {
+			return ErrAdapterAdministration(err)
+		}
 
 		// Create and start the container
 		portNum := adapter.Location
@@ -110,6 +118,10 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		}, &network.NetworkingConfig{}, nil, adapter.Name+"-"+fmt.Sprint(time.Now().Unix()))
 		if err != nil {
 			return ErrAdapterAdministration(err)
+		}
+
+		for _, network := range mesheryNetworkSettings.Networks {
+			cli.NetworkConnect(ctx, network.NetworkID, resp.ID, network)
 		}
 
 		if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
