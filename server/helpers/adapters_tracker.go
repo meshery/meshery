@@ -84,7 +84,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		}
 		var mesheryNetworkSettings *types.SummaryNetworkSettings
 		for _, container := range containers {
-			if strings.Contains(container.Image, "layer5/meshery") {
+			if strings.Contains(container.Image, "thebeginner86/meshery-dev") {
         mesheryNetworkSettings = container.NetworkSettings
 			}
 		}
