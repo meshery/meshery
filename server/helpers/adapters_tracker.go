@@ -120,8 +120,18 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 			return ErrAdapterAdministration(err)
 		}
 
-		for _, network := range mesheryNetworkSettings.Networks {
-			cli.NetworkConnect(ctx, network.NetworkID, resp.ID, network)
+		for netName := range mesheryNetworkSettings.Networks {
+			fmt.Printf("network: %#v", netName)
+			nets, err := cli.NetworkList(ctx, types.NetworkListOptions{})
+			if err != nil {
+				// fmt.Errorf("error listing networks: %v", err)
+				return ErrAdapterAdministration(err)
+			}
+			for _, net := range nets {
+        if net.Name == netName {     
+           cli.NetworkConnect(ctx, net.ID, resp.ID, &network.EndpointSettings{})
+				}
+			}
 		}
 
 		if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
