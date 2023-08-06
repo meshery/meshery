@@ -41,7 +41,8 @@ import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles'
 import PromptComponent from './PromptComponent';
 import { iconMedium } from '../css/icons.styles';
 import { isExtensionOpen } from '../pages/_app';
-import UserAvatars from './UserAvatars';
+import ExtensionSandbox from './ExtensionSandbox';
+import RemoteComponent from './RemoteComponent';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -578,10 +579,8 @@ class Header extends React.Component {
                   </Typography>
                 </Grid>
                 <Grid item className={classes.userContainer} style={{ position : "relative", right : "-27px" }}>
-                  <div>
-                    <UserAvatars />
-                  </div>
-
+                  {/* According to the capabilities load the component */}
+                  <ExtensionSandbox type="user_prefs" Extension={() => RemoteComponent({ url : { url : "/api/provider/extension/provider/useravatar/meshmap_avatar/index.js" }, componentLoading : false })} />
                   <div className={classes.userSpan} style={{ position : "relative" }}>
                     <K8sContextMenu
                       classes={classes}
