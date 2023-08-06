@@ -75,6 +75,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 	switch platform {
 	case "docker":
 		cli, err := client.NewClientWithOpts(client.FromEnv)
+		fmt.Printf("cli: %#v", cli)
 		if err != nil {
 			return ErrAdapterAdministration(err)
 		}
@@ -133,7 +134,7 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 	switch platform {
 	case "docker":
 		cli, err := client.NewClientWithOpts(client.FromEnv)
-		logrus.Debug("cli: ", cli)
+		fmt.Printf("cli: %#v", cli)
 		if err != nil {
 			return ErrAdapterAdministration(err)
 		}
