@@ -16,6 +16,7 @@ import (
 	"github.com/docker/go-connections/nat"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/sirupsen/logrus"
 )
 
 // AdaptersTracker is used to hold the list of known adapters
@@ -132,6 +133,7 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 	switch platform {
 	case "docker":
 		cli, err := client.NewClientWithOpts(client.FromEnv)
+		logrus.Debug("cli: ", cli)
 		if err != nil {
 			return ErrAdapterAdministration(err)
 		}
