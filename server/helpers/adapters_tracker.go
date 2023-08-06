@@ -16,7 +16,6 @@ import (
 	"github.com/docker/go-connections/nat"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/sirupsen/logrus"
 )
 
 // AdaptersTracker is used to hold the list of known adapters
