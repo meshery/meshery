@@ -96,8 +96,7 @@ COPY --from=seed_content /seed_content /home/appuser/.meshery/seed_content
 COPY --from=layer5/getnighthawk:v1.0.1 /usr/local/bin/nighthawk_service /app/server/cmd/
 COPY --from=layer5/getnighthawk:v1.0.1 /usr/local/bin/nighthawk_output_transform /app/server/cmd/
 
-RUN addgroup docker
-RUN usermod -aG docker appuser
+RUN addgroup docker && addgroup appuser docker
 RUN chown -R appuser:docker /var/run/docker.sock
 RUN mkdir -p /home/appuser/.meshery/config; chown -R appuser /home/appuser/; chown -R appuser /app/ui/public
 USER appuser
