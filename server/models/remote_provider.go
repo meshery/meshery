@@ -3627,7 +3627,7 @@ func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, 
 
 
 // GetConnectionsByKind - to get saved credentials
-func (l *RemoteProvider) GetConnectionsByKind(req *http.Request, _ string, page, pageSize int, search, order, connectionKind string) (*ConnectionPage, error) {
+func (l *RemoteProvider) GetConnectionsByKind(req *http.Request, _ string, page, pageSize int, search, order, connectionKind string) (*map[string]interface{}, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -3656,14 +3656,14 @@ func (l *RemoteProvider) GetConnectionsByKind(req *http.Request, _ string, page,
 
 	bdr, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
-		return nil, ErrFetch(fmt.Errorf("could not retrieve list of connections: %d", resp.StatusCode), fmt.Sprint(bdr), resp.StatusCode)
+		return nil, ErrFetch(fmt.Errorf(string(bdr)), "connections", resp.StatusCode)
 	}
 
-	var cp ConnectionPage
-	if err = json.Unmarshal(bdr, &cp); err != nil {
+	var res map[string]interface{}
+	if err = json.Unmarshal(bdr, &res); err != nil {
 		return nil, err
 	}
-	return &cp, nil
+	return &res, nil
 }
 
 func (l *RemoteProvider) GetConnectionsStatus(req *http.Request, userID string) (*ConnectionsStatusPage, error) {
