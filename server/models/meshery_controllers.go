@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
@@ -336,3 +337,56 @@ func setOverrideValues(delete bool, adapterTracker AdaptersTrackerInterface) map
 
 	return overrideValues
 }
+
+// setOverrideValues detects the currently insalled adapters and sets appropriate
+// overrides so as to not uninstall them.
+func SetOverrideValuesForMesheryDeploy(adapters []Adapter) map[string]interface{} {
+	installedAdapters := make([]string, 0)
+
+	for _, adapter := range adapters {
+		if adapter.Name != "" {
+			installedAdapters = append(installedAdapters, strings.Split(adapter.Location, ":")[0])
+		}
+	}
+
+	overrideValues := map[string]interface{}{
+		"meshery-istio": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-cilium": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-linkerd": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-consul": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-kuma": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-nsm": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-nginx-sm": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-traefik-mesh": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-app-mesh": map[string]interface{}{
+			"enabled": false,
+		},
+	}
+
+	for _, adapter := range installedAdapters {
+		if _, ok := overrideValues[adapter]; ok {
+			overrideValues[adapter] = map[string]interface{}{
+				"enabled": true,
+			}
+		}
+	}
+
+	return overrideValues
+}
+
