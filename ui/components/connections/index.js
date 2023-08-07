@@ -11,7 +11,7 @@ import YoutubeSearchedForIcon from '@mui/icons-material/YoutubeSearchedFor';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import MUIDataTable from "mui-datatables";
 import { withSnackbar } from "notistack";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Moment from "react-moment";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -90,6 +90,12 @@ const styles = (theme) => ({
     },
     background : `${theme.palette.secondary.warning}15 !important`,
   },
+  deleted : {
+    "& .MuiChip-label" : {
+      color : theme.palette.secondary.error,
+    },
+    background : `${theme.palette.secondary.error}15 !important`,
+  },
 });
 
 const ACTION_TYPES = {
@@ -100,22 +106,26 @@ const ACTION_TYPES = {
 };
 
 function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }) {
-  const [page] = useState(0);
-  const [count] = useState(0);
-  const [pageSize] = useState(10);
+  const [page, setPage] = useState(0);
+  const [count, setCount] = useState(0);
+  const [pageSize, setPageSize] = useState(0);
   const [connections, setConnections] = useState([]);
+  const [search,setSearch] = useState("");
 
+  const searchTimeout = useRef(null);
 
   const status = (value) => {
     switch (value) {
-      case 'Ignored':
+      case 'ignored':
         return <Chip className={classNames(classes.statusCip, classes.ignored)} avatar={<RemoveCircleIcon style={{ color : "#51636B" }} />} label={value} />
-      case 'Connected':
+      case 'connected':
         return <Chip className={classNames(classes.statusCip, classes.connected)} avatar={<CheckCircleIcon style={{ color : "#00B39F" }}/>} label={value} />
-      case 'Registered':
-        return <Chip className={classNames(classes.statusCip, classes.registered)} avatar={<AssignmentTurnedInIcon style={{ color : "#477E96" }} />} label={value} />
-      case 'Discovered':
+      case 'REGISTERED':
+        return <Chip className={classNames(classes.statusCip, classes.registered)} avatar={<AssignmentTurnedInIcon style={{ color : "#477E96" }} />} label={value.toLowerCase()} />
+      case 'discovered':
         return <Chip className={classNames(classes.statusCip, classes.discovered)} avatar={<ExploreIcon style={{ color : "#EBC017" }} />} label={value} />
+      case 'deleted':
+        return <Chip className={classNames(classes.statusCip, classes.deleted)} avatar={<DeleteForeverIcon style={{ color : "#8F1F00" }} />} label={value} />
       default:
         return "-"
     }
@@ -123,7 +133,7 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
 
   const columns = [
     {
-      name : "element",
+      name : "name",
       label : "Element",
       options : {
         customHeadRender : function CustomHead({ index, ...column }) {
@@ -136,7 +146,7 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
       },
     },
     {
-      name : "cluster",
+      name : "type",
       label : "Cluster",
       options : {
         customHeadRender : function CustomHead({ index, ...column }) {
@@ -146,13 +156,13 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
             </TableCell>
           );
         },
-        customBodyRender : function CustomBody(/* value */) {
-          return <Chip avatar={<Avatar>M</Avatar>} label={'value'} />;
+        customBodyRender : function CustomBody(value) {
+          return <Chip avatar={<Avatar>M</Avatar>} label={value} />;
         },
       },
     },
     {
-      name : "environment",
+      name : "sub_type",
       label : "Environment",
       options : {
         customHeadRender : function CustomHead({ index, ...column }) {
@@ -164,7 +174,7 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
         },
         customBodyRender : function CustomBody(value) {
           return (
-            <FormControl sx={{ m : 1, minWidth : 120 }} size="small">
+            <FormControl sx={{ m : 1, minWidth : 200, maxWidth : 200 }} size="small">
               <ReactSelectWrapper
                 onChange={handleChange}
                 options={[{ value : "environment 1", label : "environment 1" }, { value : "environment 2", label : "environment 2" }]}
@@ -216,7 +226,7 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
       },
     },
     {
-      name : "asdf",
+      name : "kind",
       label : "asdf",
       options : {
         customHeadRender : function CustomHead({ index, ...column }) {
@@ -268,23 +278,52 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
       selectedRows : {
         text : "connection(s) selected",
       },
-    }
+    },
+    onSearchClose : () => {
+      setSearch("")
+    },
+    onTableChange : (action, tableState) => {
+      switch (action) {
+        case "changePage":
+          getConnections(tableState.page.toString(), pageSize.toString());
+          break;
+        case "changeRowsPerPage":
+          getConnections(page.toString(), tableState.rowsPerPage.toString());
+          break;
+        case "search":
+          if (searchTimeout.current) {
+            clearTimeout(searchTimeout.current);
+          }
+          searchTimeout.current = setTimeout(() => {
+            if (search !== tableState.searchText) {
+              getConnections(page, pageSize, tableState.searchText !== null ? tableState.searchText : "");
+              setSearch(tableState.searchText);
+            }
+          }, 500);
+          break;
+      }
+    },
   };
 
+  /**
+   * fetch connections when the page loads
+   */
   useEffect(() => {
-    getConnections()
-  },[])
+    getConnections(page, pageSize,)
+  }, [page, pageSize, search]);
 
-  const getConnections = () => {
+  const getConnections = (page, pageSize) => {
     dataFetch(
-      `/api/integrations/connections`,
+      `/api/integrations/connections?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(search)}`,
       {
         credentials : "include",
         method : "GET",
       },
       (res) => {
-        console.log("🚀 ~ file: index.js:306 ~ getConnections ~ res:", res)
-        setConnections(res?.connection)
+        setConnections(res?.connections)
+        setPage(res?.page || 0)
+        setCount(res?.total_count || 0)
+        setPageSize(res?.page_size || 0)
       },
       handleError(ACTION_TYPES.FETCH_CONNECTIONS)
     );
@@ -380,4 +419,3 @@ const mapStateToProps = (state) => {
 
 // @ts-ignore
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(Connections)));
-

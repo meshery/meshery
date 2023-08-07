@@ -68,6 +68,7 @@ export var darkTheme = createTheme({
       success : "#00B39F",
       primary : "#477E96",
       warning : "#EBC017",
+      error : "#8F1F00",
       penColorPrimary : '#E6E6E6',
       penColorSecondary : '#E6E6E6'
     },
@@ -290,6 +291,7 @@ let theme = createTheme({
       success : "#00B39F",
       primary : "#477E96",
       warning : "#EBC017",
+      error : "#8F1F00",
       penColorPrimary : '#3C494F',
       penColorSecondary : '#677E88'
     },

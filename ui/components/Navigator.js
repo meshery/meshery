@@ -330,12 +330,10 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
     children : [
       {
         id : CONNECTION,
-        icon : <ApplicationIcon style={{ ...drawerIconsStyle }}/>,
         href : "/management/connections",
         title : "Connections",
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CONNECTION]),
         link : true,
-        isBeta : true,
       },
       {
         id : APP_MESH,
