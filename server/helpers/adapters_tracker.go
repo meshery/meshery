@@ -110,7 +110,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 				if net.Name == netName {
 					fmt.Printf("found net\n: %#v", net)
 					// Create and start the container
-					portNum := adapter.Location
+					portNum := strings.Split(adapter.Location, ":")[1] // eg: for location=meshery-istio:10000, portNum=10000
 					adapter.Location = "localhost:" + adapter.Location
 					port := nat.Port(portNum + "/tcp")
 					adapterContainerCreatedBody, err := cli.ContainerCreate(ctx, &container.Config{
@@ -133,7 +133,9 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 						return ErrAdapterAdministration(err)
 					}
 					fmt.Printf("adapterContainerCreatedBody: %#v\n", adapterContainerCreatedBody)
-					err = cli.NetworkConnect(ctx, net.ID, adapterContainerCreatedBody.ID, &network.EndpointSettings{})
+					err = cli.NetworkConnect(ctx, net.ID, adapterContainerCreatedBody.ID, &network.EndpointSettings{
+						Aliases: []string{adapter.Name},
+					})
 					if err != nil {
 						return ErrAdapterAdministration(err)
 					}
