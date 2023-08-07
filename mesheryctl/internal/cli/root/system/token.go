@@ -40,7 +40,9 @@ var tokenCmd = &cobra.Command{
 	Manipulate user tokens and their context assignments in your meshconfig`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			cmd.Help() // Display help information if no arguments are provided
+			if err := cmd.Help(); err != nil {
+				return errors.Wrap(err, "displaying help menu")
+			}
 			return nil
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
