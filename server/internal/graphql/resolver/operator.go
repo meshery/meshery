@@ -55,17 +55,17 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 		}
 		kubeclient, err = k8scontext.GenerateKubeHandler()
 		if err != nil {
-			return model.StatusUnknown, ErrMesheryClient(err)
+			return model.StatusUnknown, ErrResolverMesheryClient(err)
 		}
 	} else {
 		k8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
 		if !ok || len(k8scontexts) == 0 {
-			return model.StatusUnknown, ErrMesheryClient(nil)
+			return model.StatusUnknown, ErrResolverMesheryClient(nil)
 		}
 		k8scontext = k8scontexts[0]
 		kubeclient, err = k8scontext.GenerateKubeHandler()
 		if err != nil {
-			return model.StatusUnknown, ErrMesheryClient(err)
+			return model.StatusUnknown, ErrResolverMesheryClient(err)
 		}
 	}
 	if kubeclient.KubeClient == nil {
@@ -160,13 +160,13 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, _ models.Provider, ctx
 	if ctxID != "" {
 		k8scontexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 		if !ok || len(k8scontexts) == 0 {
-			return nil, ErrMesheryClient(nil)
+			return nil, ErrResolverMesheryClient(nil)
 		}
 		for _, ctx := range k8scontexts {
 			if ctx.ID == ctxID {
 				kubeclient, err = ctx.GenerateKubeHandler()
 				if err != nil {
-					return nil, ErrMesheryClient(err)
+					return nil, ErrResolverMesheryClient(err)
 				}
 				break
 			}
@@ -174,15 +174,15 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, _ models.Provider, ctx
 	} else {
 		k8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
 		if !ok || len(k8scontexts) == 0 {
-			return nil, ErrMesheryClient(nil)
+			return nil, ErrResolverMesheryClient(nil)
 		}
 		kubeclient, err = k8scontexts[0].GenerateKubeHandler()
 		if err != nil {
-			return nil, ErrMesheryClient(err)
+			return nil, ErrResolverMesheryClient(err)
 		}
 	}
 	if kubeclient == nil {
-		return nil, ErrMesheryClient(nil)
+		return nil, ErrResolverMesheryClient(nil)
 	}
 	name, version, err := model.GetOperator(kubeclient)
 	if err != nil {
@@ -226,13 +226,13 @@ func (r *Resolver) getMeshsyncStatus(ctx context.Context, _ models.Provider, k8s
 	if k8scontextID != "" {
 		k8scontexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 		if !ok || len(k8scontexts) == 0 {
-			return nil, ErrMesheryClient(nil)
+			return nil, ErrResolverMesheryClient(nil)
 		}
 		for _, ctx := range k8scontexts {
 			if ctx.ID == k8scontextID {
 				kubeclient, err = ctx.GenerateKubeHandler()
 				if err != nil {
-					return nil, ErrMesheryClient(err)
+					return nil, ErrResolverMesheryClient(err)
 				}
 				break
 			}
@@ -240,15 +240,15 @@ func (r *Resolver) getMeshsyncStatus(ctx context.Context, _ models.Provider, k8s
 	} else {
 		k8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
 		if !ok || len(k8scontexts) == 0 {
-			return nil, ErrMesheryClient(nil)
+			return nil, ErrResolverMesheryClient(nil)
 		}
 		kubeclient, err = k8scontexts[0].GenerateKubeHandler()
 		if err != nil {
-			return nil, ErrMesheryClient(err)
+			return nil, ErrResolverMesheryClient(err)
 		}
 	}
 	if kubeclient == nil {
-		return nil, ErrMesheryClient(nil)
+		return nil, ErrResolverMesheryClient(nil)
 	}
 	mesheryclient, err := operatorClient.New(&kubeclient.RestConfig)
 	if err != nil {
@@ -268,13 +268,13 @@ func (r *Resolver) getNatsStatus(ctx context.Context, _ models.Provider, k8scont
 	if k8scontextID != "" {
 		k8scontexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 		if !ok || len(k8scontexts) == 0 {
-			return nil, ErrMesheryClient(nil)
+			return nil, ErrResolverMesheryClient(nil)
 		}
 		for _, ctx := range k8scontexts {
 			if ctx.ID == k8scontextID {
 				kubeclient, err = ctx.GenerateKubeHandler()
 				if err != nil {
-					return nil, ErrMesheryClient(err)
+					return nil, ErrResolverMesheryClient(err)
 				}
 				break
 			}
@@ -282,15 +282,15 @@ func (r *Resolver) getNatsStatus(ctx context.Context, _ models.Provider, k8scont
 	} else {
 		k8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
 		if !ok || len(k8scontexts) == 0 {
-			return nil, ErrMesheryClient(nil)
+			return nil, ErrResolverMesheryClient(nil)
 		}
 		kubeclient, err = k8scontexts[0].GenerateKubeHandler()
 		if err != nil {
-			return nil, ErrMesheryClient(err)
+			return nil, ErrResolverMesheryClient(err)
 		}
 	}
 	if kubeclient == nil {
-		return nil, ErrMesheryClient(nil)
+		return nil, ErrResolverMesheryClient(nil)
 	}
 	mesheryclient, err := operatorClient.New(&kubeclient.RestConfig)
 	if err != nil {

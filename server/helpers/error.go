@@ -8,41 +8,41 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrErrNewDynamicClientGeneratorCode    = "2048"
-	ErrInvalidK8SConfigCode                = "2049"
-	ErrClientConfigCode                    = "2050"
-	ErrFetchKubernetesNodesCode            = "2051"
-	ErrFetchNodesCode                      = "2181"
-	ErrFetchKubernetesVersionCode          = "2182"
-	ErrScanKubernetesCode                  = "2183"
-	ErrRetrievePodListCode                 = "2184"
-	ErrDetectServiceForDeploymentImageCode = "2185"
-	ErrRetrieveNamespacesListCode          = "2186"
-	ErrGetNamespaceDeploymentsCode         = "2187"
-	ErrDetectServiceWithNameCode           = "2188"
-	ErrGeneratingLoadTestCode              = "2189"
-	ErrRunningTestCode                     = "2190"
-	ErrConvertingResultToMapCode           = "2191"
-	ErrUnmarshalCode                       = "2192"
-	ErrGrpcSupportCode                     = "2193"
-	ErrStartingNighthawkServerCode         = "2194"
-	ErrTransformingDataCode                = "2195"
-	ErrRunningNighthawkServerCode          = "2196"
-	ErrAddAndValidateExtraHeaderCode       = "2197"
-	ErrInClusterConfigCode                 = "2198"
-	ErrNewKubeClientGeneratorCode          = "2199"
-	ErrRestConfigFromKubeConfigCode        = "2200"
-	ErrNewKubeClientCode                   = "2201"
-	ErrAdapterAdministrationCode           = "2259"
-	ErrAdapterInsufficientInformationCode  = "2260"
+	ErrErrNewDynamicClientGeneratorCode    = "1200"
+	ErrInvalidK8SConfigFileCode            = "1201"
+	ErrClientConfigCode                    = "1202"
+	ErrFetchKubernetesNodesCode            = "1203"
+	ErrFetchNodesCode                      = "1204"
+	ErrFetchKubernetesVersionCode          = "1205"
+	ErrScanKubernetesCode                  = "1206"
+	ErrRetrievePodListCode                 = "1207"
+	ErrDetectServiceForDeploymentImageCode = "1208"
+	ErrRetrieveNamespacesListCode          = "1209"
+	ErrGetNamespaceDeploymentsCode         = "1210"
+	ErrDetectServiceWithNameCode           = "1211"
+	ErrGeneratingLoadTestCode              = "1212"
+	ErrRunningTestCode                     = "1213"
+	ErrConvertingResultToMapCode           = "1214"
+	ErrGrpcSupportCode                     = "1216"
+	ErrStartingNighthawkServerCode         = "1217"
+	ErrTransformingDataCode                = "1218"
+	ErrRunningNighthawkServerCode          = "1219"
+	ErrAddAndValidateExtraHeaderCode       = "1220"
+	ErrInClusterConfigCode                 = "1221"
+	ErrNewKubeClientGeneratorCode          = "1222"
+	ErrRestConfigFromKubeConfigCode        = "1223"
+	ErrNewKubeClientCode                   = "1224"
+	ErrAdapterAdministrationCode           = "1225"
+	ErrAdapterInsufficientInformationCode  = "1226"
+	ErrClientSetCode                       = "1227"
 )
 
 func ErrNewDynamicClientGenerator(err error) error {
 	return errors.New(ErrErrNewDynamicClientGeneratorCode, errors.Alert, []string{"Unable to generate the dynamic client generator"}, []string{err.Error()}, []string{"Kubernetes config is not accessible to meshery or not valid"}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
 }
 
-func ErrInvalidK8SConfig(err error) error {
-	return errors.New(ErrInvalidK8SConfigCode, errors.Alert, []string{"No valid kubernetes config found"}, []string{err.Error()}, []string{"Kubernetes config is not accessible to meshery or not valid"}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
+func ErrInvalidK8SConfigFile(err error) error {
+	return errors.New(ErrInvalidK8SConfigFileCode, errors.Alert, []string{"No valid kubernetes config found"}, []string{err.Error()}, []string{"Kubernetes config is not accessible to meshery or not valid"}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
 }
 
 func ErrClientConfig(err error) error {
@@ -97,10 +97,6 @@ func ErrConvertingResultToMap(err error) error {
 	return errors.New(ErrConvertingResultToMapCode, errors.Alert, []string{"Unable to convert from the result to map"}, []string{err.Error()}, []string{}, []string{})
 }
 
-func ErrUnmarshal(err error, obj string) error {
-	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Unable to unmarshal the : ", obj}, []string{err.Error()}, []string{}, []string{})
-}
-
 func ErrGrpcSupport(err error, obj string) error {
 	return errors.New(ErrGrpcSupportCode, errors.Alert, []string{obj, " does not support gRPC load testing"}, []string{err.Error()}, []string{}, []string{})
 }
@@ -130,7 +126,7 @@ func ErrRestConfigFromKubeConfig(err error) error {
 }
 
 func ErrClientSet(err error) error {
-	return errors.New(ErrClientConfigCode, errors.Alert, []string{"Unable to create client set"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrClientSetCode, errors.Alert, []string{"Unable to create client set"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrStartingNighthawkServer(err error) error {
