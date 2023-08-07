@@ -97,8 +97,6 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 			return ErrAdapterAdministration(err)
 		}
 
-		var adapterContainerCreatedBody container.ContainerCreateCreatedBody
-
 		for netName := range mesheryNetworkSettings.Networks {
 			fmt.Printf("network: %#v\n", netName)
 			nets, err := cli.NetworkList(ctx, types.NetworkListOptions{})
@@ -133,16 +131,18 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 					if err != nil {
 						return ErrAdapterAdministration(err)
 					}
+					fmt.Printf("adapterContainerCreatedBody: %#v\n", adapterContainerCreatedBody)
 					err = cli.NetworkConnect(ctx, net.ID, adapterContainerCreatedBody.ID, &network.EndpointSettings{})
 					if err != nil {
 						return ErrAdapterAdministration(err)
 					}
+
+					fmt.Printf("adapterContainerCreatedBody: %#v\n", adapterContainerCreatedBody)
+							if err := cli.ContainerStart(ctx, adapterContainerCreatedBody.ID, types.ContainerStartOptions{}); err != nil {
+			return ErrAdapterAdministration(err)
+		}
 				}
 			}
-		}
-
-		if err := cli.ContainerStart(ctx, adapterContainerCreatedBody.ID, types.ContainerStartOptions{}); err != nil {
-			return ErrAdapterAdministration(err)
 		}
 
 	// switch to default case if the platform specified is not supported
