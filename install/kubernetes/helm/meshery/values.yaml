@@ -120,11 +120,6 @@ meshery-kuma:
   fullnameOverride: meshery-kuma
   serviceAccountNameOverride: meshery-server
 
-meshery-osm:
-  enabled: false
-  fullnameOverride: meshery-osm
-  serviceAccountNameOverride: meshery-server
-
 meshery-nsm:
   enabled: false
   fullnameOverride: meshery-nsm
