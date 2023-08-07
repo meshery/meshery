@@ -3,7 +3,7 @@ package helpers
 import (
 	"context"
 	"fmt"
-  "io"	
+	"io"
 	"strconv"
 	"strings"
 	"sync"
@@ -100,8 +100,8 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		defer resp.Close()
 		_, err = io.ReadAll(resp)
 		if err != nil {
-      return ErrAdapterAdministration(err)
-		}			
+			return ErrAdapterAdministration(err)
+		}
 
 		for netName := range mesheryNetworkSettings.Networks {
 			nets, err := cli.NetworkList(ctx, types.NetworkListOptions{})
@@ -144,9 +144,9 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 					if err != nil {
 						return ErrAdapterAdministration(err)
 					}
-							if err := cli.ContainerStart(ctx, adapterContainerCreatedBody.ID, types.ContainerStartOptions{}); err != nil {
-			return ErrAdapterAdministration(err)
-		}
+					if err := cli.ContainerStart(ctx, adapterContainerCreatedBody.ID, types.ContainerStartOptions{}); err != nil {
+						return ErrAdapterAdministration(err)
+					}
 				}
 			}
 		}

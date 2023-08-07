@@ -3,7 +3,6 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"encoding/gob"
 	"encoding/json"
 	"net/http"

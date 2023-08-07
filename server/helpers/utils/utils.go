@@ -276,13 +276,13 @@ func GetPlatform() string {
 	if _, err := os.Stat("/var/run/secrets/kubernetes.io/serviceaccount"); err == nil &&
 		os.Getenv("KUBERNETES_SERVICE_HOST") != "" &&
 		os.Getenv("KUBERNETES_SERVICE_PORT") != "" {
-		
+
 		// kubernetes means running Meshery Server inside a Kubernetes cluster
 		platform = "kubernetes"
 	}
 
 	if isRunningInContainer() {
-    // docker means running Meshery Server inside a Docker container
+		// docker means running Meshery Server inside a Docker container
 		platform = "docker"
 	}
 
