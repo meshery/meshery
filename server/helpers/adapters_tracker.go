@@ -73,7 +73,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 	switch platform {
 	case "docker":
 		cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-		fmt.Printf("cli: %#v", cli)
+		fmt.Printf("cli: %#v\n", cli)
 		if err != nil {
 			return ErrAdapterAdministration(err)
 		}
@@ -100,16 +100,16 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		var adapterContainerCreatedBody container.ContainerCreateCreatedBody
 
 		for netName := range mesheryNetworkSettings.Networks {
-			fmt.Printf("network: %#v", netName)
+			fmt.Printf("network: %#v\n", netName)
 			nets, err := cli.NetworkList(ctx, types.NetworkListOptions{})
-			fmt.Printf("networks: %#v", nets)
+			fmt.Printf("networks: %#v\n", nets)
 			if err != nil {
 				// fmt.Errorf("error listing networks: %v", err)
 				return ErrAdapterAdministration(err)
 			}
 			for _, net := range nets {
 				if net.Name == netName {
-					fmt.Printf("found net: %#v", net)
+					fmt.Printf("found net\n: %#v", net)
 					// Create and start the container
 					portNum := adapter.Location
 					adapter.Location = "localhost:" + adapter.Location
