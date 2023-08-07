@@ -127,7 +127,13 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 								},
 							},
 						},
-					}, &network.NetworkingConfig{}, nil, adapter.Name+"-"+fmt.Sprint(time.Now().Unix()))
+					}, &network.NetworkingConfig{
+						EndpointsConfig: map[string]*network.EndpointSettings{
+							netName: {
+								Aliases: []string{adapter.Name},
+							},
+						},
+					}, nil, adapter.Name+"-"+fmt.Sprint(time.Now().Unix()))
 					if err != nil {
 						return ErrAdapterAdministration(err)
 					}
