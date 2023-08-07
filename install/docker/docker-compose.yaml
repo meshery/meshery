@@ -1,7 +1,7 @@
 version: "3"
 services:
   meshery:
-    image: layer5/meshery:latest
+    image: layer5/meshery:stable-latest
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
     environment:
