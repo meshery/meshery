@@ -54,6 +54,9 @@ func (erh *EntityRegistrationHelper) SeedComponents() {
 		return
 	}
 
+	relationships := make([]string, 0)
+	
+	// change to queue approach to register comps, relationships and policies
 	// Read component and relationship definitions from files and send them to respective channels
 	for _, model  := range models {
 		entitiesPath := filepath.Join(ModelsPath, model.Name())
@@ -68,17 +71,19 @@ func (erh *EntityRegistrationHelper) SeedComponents() {
 			if entity.IsDir() {
 				switch entity.Name() {
 				case "relationships":
-					erh.generateRelationships(entityPath)
+					relationships = append(relationships, entityPath)
 				case "policies": 
 					break
 				default:
-					erh.generateComponents(entityPath)
+					erh.generateComponents(entityPath) // register components first
 				}
 			}
 		}
-		
 	}
 
+	for _, relationship := range relationships {
+		erh.generateRelationships(relationship)
+	}
 }
 
 // reads component definitions from files and sends them to the component channel
