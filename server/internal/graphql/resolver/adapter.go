@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/layer5io/meshery/server/helpers"
-	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
 )
@@ -22,7 +21,7 @@ func getAdapterInformationByName(adapterName string) *models.Adapter {
 	return adapter
 }
 
-func (r *Resolver) changeAdapterStatus(_ context.Context, _ models.Provider, targetStatus model.Status, adapterName, targetPort string) (model.Status, error) {
+func (r *Resolver) changeAdapterStatus(ctx context.Context, _ models.Provider, targetStatus model.Status, adapterName, targetPort string) (model.Status, error) {
 	// not able to perform any operation when the name is not there
 	if adapterName == "" && targetPort == "" {
 		return model.StatusUnknown, helpers.ErrAdapterInsufficientInformation(fmt.Errorf("either of adapter name or target port is not provided, please provide a name of adapter or target-port to perform operation on"))
@@ -39,12 +38,6 @@ func (r *Resolver) changeAdapterStatus(_ context.Context, _ models.Provider, tar
 		targetPort = selectedAdapter.Location
 	}
 
-	platform := utils.GetPlatform()
-	if platform == "kubernetes" {
-		r.Log.Info("Feature for kuberenetes disabled")
-		return model.StatusDisabled, nil
-	}
-
 	deleteAdapter := true
 
 	if targetStatus == model.StatusEnabled {
@@ -56,14 +49,14 @@ func (r *Resolver) changeAdapterStatus(_ context.Context, _ models.Provider, tar
 
 	r.Log.Debug(fmt.Printf("changing adapter status of %s on port %s to status %s \n", adapterName, targetPort, targetStatus))
 	adapter := models.Adapter{Name: adapterName, Location: fmt.Sprintf("%s:%s", adapterName, targetPort)}
-	go func(routineCtx context.Context, del bool) {
+	go func(ctx context.Context, del bool) {
 		var operation string
 		if del {
 			operation = "Undeploy"
-			err = r.Config.AdapterTracker.UndeployAdapter(routineCtx, adapter)
+			err = r.Config.AdapterTracker.UndeployAdapter(ctx, adapter)
 		} else {
 			operation = "Deploy"
-			err = r.Config.AdapterTracker.DeployAdapter(routineCtx, adapter)
+			err = r.Config.AdapterTracker.DeployAdapter(ctx, adapter)
 		}
 		if err != nil {
 			// r.Log.Error(errors.Errorf("Failed to "+operation+" adapter: %w", err))
@@ -72,7 +65,7 @@ func (r *Resolver) changeAdapterStatus(_ context.Context, _ models.Provider, tar
 		} else {
 			r.Log.Info("Successfully " + operation + "ed adapter")
 		}
-	}(context.Background(), deleteAdapter)
+	}(ctx, deleteAdapter)
 
 	return model.StatusProcessing, nil
 }
