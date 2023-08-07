@@ -2,12 +2,13 @@ package main
 
 import (
 	"context"
-	"encoding/base64"
 	"encoding/json"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"io"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -59,50 +60,10 @@ var NameToIndex = map[string]int{ //Update this on addition of new columns
 var (
 	AhSearchEndpoint = artifacthub.AhHelmExporterEndpoint
 
-	OutputDirectoryPath     = "../../server/meshmodel/components"
-	ComponentsFileName      = "components.yaml"
-	ComponentModelsFileName = "component_models.yaml"
+	OutputDirectoryPath     = "../../server/meshmodel"
+	ComponentModelsFileName = path.Join(OutputDirectoryPath, "component_models.yaml")
 )
 
-type ComponentModel struct {
-	SystemName string `yaml:"systemName"`
-	AhRepo     string `yaml:"ahRepo"`
-	Version    string `yaml:"version"`
-	RepoUrl    string `yaml:"repoUrl"`
-	Verified   bool   `yaml:"verified"`
-	Official   bool   `yaml:"official"`
-	CNCF       bool   `yaml:"cncf"`
-}
-
-func convertPackagesToCompModels(pkgs []artifacthub.AhPackage) []ComponentModel {
-	models := make([]ComponentModel, 0)
-	for _, ap := range pkgs {
-		models = append(models, ComponentModel{
-			SystemName: ap.Name,
-			Version:    ap.Version,
-			AhRepo:     ap.Repository,
-			RepoUrl:    ap.RepoUrl,
-			Verified:   ap.VerifiedPublisher,
-		})
-	}
-	return models
-}
-
-func convertCompModelsToPackages(models []ComponentModel) []artifacthub.AhPackage {
-	pkgs := make([]artifacthub.AhPackage, 0)
-	for _, cm := range models {
-		pkgs = append(pkgs, artifacthub.AhPackage{
-			Name:              cm.SystemName,
-			Version:           cm.Version,
-			Repository:        cm.AhRepo,
-			RepoUrl:           cm.RepoUrl,
-			VerifiedPublisher: cm.Verified,
-			Official:          cm.Official,
-			CNCF:              cm.CNCF,
-		})
-	}
-	return pkgs
-}
 
 var priorityRepos = map[string]bool{"prometheus-community": true, "grafana": true} //Append ahrepos here whose components should be respected and should be used when encountered duplicates
 
@@ -136,20 +97,8 @@ func main() {
 			return
 		}
 	}
-	compsFd, err := os.OpenFile(filepath.Join(OutputDirectoryPath, ComponentsFileName), os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	err = SplitYamlIntoFiles(compsFd)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	compsWriter := Writer{
-		file: compsFd,
-	}
-	modelsFd, err := os.OpenFile(filepath.Join(OutputDirectoryPath, ComponentModelsFileName), os.O_CREATE|os.O_RDWR, 0644)
+	
+	modelsFd, err := os.OpenFile(ComponentModelsFileName, os.O_CREATE|os.O_RDWR, 0644)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -158,28 +107,25 @@ func main() {
 		file: modelsFd,
 	}
 	defer modelsFd.Close()
-	defer compsFd.Close()
 	// move to a new function: getHelmPackages
-	content := make([]byte, 0)
-	models := make([]ComponentModel, 0)
 	pkgs := make([]artifacthub.AhPackage, 0)
-	content, err = io.ReadAll(modelsFd)
+	content, err := io.ReadAll(modelsFd)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	err = yaml.Unmarshal(content, &models)
+	err = yaml.Unmarshal(content, &pkgs)
 	if err != nil {
 		fmt.Println(err)
 	}
-	pkgs = convertCompModelsToPackages(models)
-	if pkgs == nil || len(pkgs) == 0 {
+
+	if len(pkgs) == 0 {
 		pkgs, err = artifacthub.GetAllAhHelmPackages()
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		err = writeComponentModels(convertPackagesToCompModels(pkgs), &modelsWriter)
+		err = writeComponentModels(pkgs, &modelsWriter)
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -259,33 +205,21 @@ func main() {
 	}()
 	dp := newdedup()
 
-	executeInStages(StartPipeline, csvChan, &compsWriter, spreadsheetChan, dp, priority, cncf, official, verified, unverified)
+	executeInStages(StartPipeline, csvChan, spreadsheetChan, dp, priority, cncf, official, verified, unverified)
 	time.Sleep(20 * time.Second)
-
-	// split files
-	err = SplitYamlIntoFiles(compsFd)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	err = os.Remove(filepath.Join(OutputDirectoryPath, ComponentsFileName))
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	
 	close(spreadsheetChan)
 	wg.Wait()
 }
 
 // Stages have to run sequentially. The steps within each stage can be concurrent.
 // pipeline function should return only after completion
-func executeInStages(pipeline func(in chan []artifacthub.AhPackage, csv chan string, writer *Writer, spreadsheet chan struct {
+func executeInStages(pipeline func(in chan []artifacthub.AhPackage, csv chan string, spreadsheet chan struct {
 	comps   []v1alpha1.ComponentDefinition
 	model   string
 	helmURL string
 }, dp *dedup) error,
 	csv chan string,
-	writer *Writer,
 	spreadsheetChan chan struct {
 		comps   []v1alpha1.ComponentDefinition
 		model   string
@@ -309,7 +243,7 @@ func executeInStages(pipeline func(in chan []artifacthub.AhPackage, csv chan str
 			wg.Add(1)
 			go func() {
 				defer wg.Done()
-				pipeline(input, csv, writer, spreadsheetChan, dp) //synchronous
+				pipeline(input, csv, spreadsheetChan, dp) //synchronous
 				fmt.Println("Pipeline exited for a go routine")
 			}()
 		}
@@ -336,7 +270,7 @@ func (d *dedup) set(key string) {
 func (d *dedup) check(key string) bool {
 	return d.m[key]
 }
-func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, writer *Writer, spreadsheet chan struct {
+func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, spreadsheet chan struct {
 	comps   []v1alpha1.ComponentDefinition
 	model   string
 	helmURL string
@@ -370,7 +304,7 @@ func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, writer *Wri
 	// writer
 	go func() {
 		for modelcomps := range compsChan {
-			err := writeComponents(modelcomps.comps, writer)
+			err := writeComponents(modelcomps.comps)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -471,7 +405,7 @@ type Writer struct {
 	m    sync.Mutex
 }
 
-func writeComponentModels(models []ComponentModel, writer *Writer) error {
+func writeComponentModels(models []artifacthub.AhPackage, writer *Writer) error {
 	writer.m.Lock()
 	defer writer.m.Unlock()
 	val, err := yaml.Marshal(models)
@@ -485,27 +419,41 @@ func writeComponentModels(models []ComponentModel, writer *Writer) error {
 	return nil
 }
 
-func writeComponents(cmps []v1alpha1.ComponentDefinition, writer *Writer) error {
+func writeComponents(cmps []v1alpha1.ComponentDefinition) error {
 	// writer.m.Lock()
 	// defer writer.m.Unlock()
 	for _, comp := range cmps {
-		path := filepath.Join(OutputDirectoryPath, comp.Model.Name)
-		if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
-			err := os.Mkdir(path, os.ModePerm)
+		modelPath := filepath.Join(OutputDirectoryPath, comp.Model.Name)
+		if _, err := os.Stat(modelPath); errors.Is(err, os.ErrNotExist) {
+			err := os.Mkdir(modelPath, os.ModePerm)
 			if err != nil {
 				return err
 			}
 			fmt.Println("created directory ", comp.Model.Name)
 		}
-		path = filepath.Join(path, comp.Model.Version)
-		if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
-			err := os.Mkdir(path, os.ModePerm)
+		componentPath := filepath.Join(modelPath, comp.Model.Version)
+		if _, err := os.Stat(componentPath); errors.Is(err, os.ErrNotExist) {
+			err := os.Mkdir(componentPath, os.ModePerm)
 			if err != nil {
 				return err
 			}
 			fmt.Println("created versioned directory ", comp.Model.Version)
 		}
-		f, err := os.Create(filepath.Join(path, comp.Kind+".json"))
+		relationshipsPath := filepath.Join(modelPath, "relationships")
+		policiesPath := filepath.Join(modelPath, "policies")
+		if _, err := os.Stat(relationshipsPath); errors.Is(err, os.ErrNotExist) {
+			err := os.Mkdir(relationshipsPath, os.ModePerm)
+			if err != nil {
+				return err
+			}
+		}
+		if _, err := os.Stat(policiesPath); errors.Is(err, os.ErrNotExist) {
+			err := os.Mkdir(policiesPath, os.ModePerm)
+			if err != nil {
+				return err
+			}
+		}
+		f, err := os.Create(filepath.Join(componentPath, comp.Kind+".json"))
 		if err != nil {
 			return err
 		}
