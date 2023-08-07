@@ -14,6 +14,12 @@
       },
       "metadata": {}
     },
+      "bindingResource": {
+        "kind": "PersistentVolumeClaim",
+        "match": [
+          [ "name" ]
+        ]
+      },
     "subType": "Mount",
     "selectors": {
       "deny": {
@@ -34,7 +40,10 @@
         "from": [
           {
             "kind": "Pod",
-            "model": "kubernetes"
+            "model": "kubernetes",
+            "match": [
+              [ "settings", "spec", "volumes", "_", "persistentVolumeClaim", "claimName" ]
+            ]
           }
         ],
         "to": [

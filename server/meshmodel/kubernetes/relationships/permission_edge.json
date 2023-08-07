@@ -15,6 +15,13 @@
     "metadata": {}
   },
   "subType": "Permission",
+  "bindingResource": {
+    "kind": "ClusterRoleBinding",
+    "match": [
+      ["settings", "spec", "roleRef", "kind"],
+      ["settings", "spec", "roleRef", "name"]
+    ]
+  },
   "selectors": {
     "deny": {
       "from": [
@@ -58,11 +65,21 @@
       "from": [
         {
           "kind": "ClusterRole",
-          "model": "kubernetes"
+          "model": "kubernetes",
+          "match": [
+            ["type"],
+            ["name"]
+          ]
         },
         {
           "kind": "Role",
-          "model": "kubernetes"
+          "model": "kubernetes",
+          "match": [
+            [
+              "type"
+            ],
+            ["name"]
+          ]
         }
       ],
       "to": [
