@@ -3,7 +3,7 @@ package helpers
 import (
 	"context"
 	"fmt"
-  "io/ioutil"	
+  "io"	
 	"strconv"
 	"strings"
 	"sync"
@@ -73,9 +73,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 	// Deploy to current platform
 	switch platform {
 	case "docker":
-		fmt.Printf("Deploying adapter to docker: %#v\n", adapter)
 		cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-		fmt.Printf("cli: %#v\n", cli)
 		if err != nil {
 			return ErrAdapterAdministration(err)
 		}
@@ -86,7 +84,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		}
 		var mesheryNetworkSettings *types.SummaryNetworkSettings
 		for _, container := range containers {
-			if strings.Contains(container.Image, "thebeginner86/meshery-dev") {
+			if strings.Contains(container.Image, "layer5/meshery") {
 				mesheryNetworkSettings = container.NetworkSettings
 			}
 		}
@@ -100,22 +98,18 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		}
 
 		defer resp.Close()
-		_, err = ioutil.ReadAll(resp)
+		_, err = io.ReadAll(resp)
 		if err != nil {
       return ErrAdapterAdministration(err)
 		}			
 
 		for netName := range mesheryNetworkSettings.Networks {
-			fmt.Printf("network: %#v\n", netName)
 			nets, err := cli.NetworkList(ctx, types.NetworkListOptions{})
-			fmt.Printf("networks: %#v\n", nets)
 			if err != nil {
-				// fmt.Errorf("error listing networks: %v", err)
 				return ErrAdapterAdministration(err)
 			}
 			for _, net := range nets {
 				if net.Name == netName {
-					fmt.Printf("found net\n: %#v", net)
 					// Create and start the container
 					portNum := strings.Split(adapter.Location, ":")[1] // eg: for location=meshery-istio:10000, portNum=10000
 					port := nat.Port(portNum + "/tcp")
@@ -144,14 +138,12 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 					if err != nil {
 						return ErrAdapterAdministration(err)
 					}
-					fmt.Printf("adapterContainerCreatedBody: %#v\n", adapterContainerCreatedBody)
 					err = cli.NetworkConnect(ctx, net.ID, adapterContainerCreatedBody.ID, &network.EndpointSettings{
 						Aliases: []string{adapter.Name},
 					})
 					if err != nil {
 						return ErrAdapterAdministration(err)
 					}
-					fmt.Printf("adapterContainerCreatedBody: %#v\n", adapterContainerCreatedBody)
 							if err := cli.ContainerStart(ctx, adapterContainerCreatedBody.ID, types.ContainerStartOptions{}); err != nil {
 			return ErrAdapterAdministration(err)
 		}
@@ -176,7 +168,6 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 	switch platform {
 	case "docker":
 		cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-		fmt.Printf("cli: %#v", cli)
 		if err != nil {
 			return ErrAdapterAdministration(err)
 		}
