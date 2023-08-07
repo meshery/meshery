@@ -72,6 +72,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 	// Deploy to current platform
 	switch platform {
 	case "docker":
+		fmt.Printf("Deploying adapter to docker: %#v\n", adapter)
 		cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 		fmt.Printf("cli: %#v\n", cli)
 		if err != nil {

@@ -3,6 +3,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"encoding/gob"
 	"encoding/json"
 	"net/http"
@@ -197,7 +198,7 @@ func (h *Handler) addAdapter(ctx context.Context, meshAdapters []*models.Adapter
 		h.log.Debug("Adapter already configured...")
 		return meshAdapters, nil
 	}
-
+  fmt.Println("meshLocationURL----: ", meshLocationURL)
 	mClient, err := meshes.CreateClient(ctx, meshLocationURL)
 	if err != nil {
 		h.log.Error(ErrMeshClient)
