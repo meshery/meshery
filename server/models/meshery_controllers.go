@@ -7,7 +7,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
