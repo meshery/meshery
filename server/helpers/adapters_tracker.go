@@ -234,6 +234,41 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 			return ErrAdapterAdministration(err)
 		}
 
+	case "kubernetes":
+		var k8scontext models.K8sContext
+			allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
+		if !ok || len(allContexts) == 0 {
+			fmt.Println("No context found")
+			return ErrAdapterAdministration(fmt.Errorf("no context found"))
+		}
+		for _, ctx := range allContexts {
+			if ctx.Name == "in-cluster" {
+				k8scontext = ctx
+				break
+			}
+		}
+		kubeclient, err := k8scontext.GenerateKubeHandler()
+		if err != nil {
+			return ErrAdapterAdministration(err)
+		}
+
+		overrideValues := models.SetOverrideValuesForMesheryDeploy(a.GetAdapters(ctx))
+		err = kubeclient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
+		Namespace:       "meshery",
+		ReleaseName:     "meshery",
+		CreateNamespace: true,
+		ChartLocation: meshkitkube.HelmChartLocation{
+			Repository: utils.HelmChartURL,
+			Chart:      utils.HelmChartName,
+			Version:    "latest",
+		},
+		OverrideValues: overrideValues,
+		Action:         meshkitkube.INSTALL,
+		// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
+		DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
+	})
+
+
 	// switch to default case if the platform specified is not supported
 	default:
 		return ErrAdapterAdministration(fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes", platform))
