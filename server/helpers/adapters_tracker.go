@@ -124,7 +124,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 						PortBindings: nat.PortMap{
 							port: []nat.PortBinding{
 								{
-									HostIP:   "0.0.0.0",
+									HostIP:   "",
 									HostPort: portNum,
 								},
 							},
@@ -133,7 +133,10 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 					if err != nil {
 						return ErrAdapterAdministration(err)
 					}
-					cli.NetworkConnect(ctx, net.ID, adapterContainerCreatedBody.ID, &network.EndpointSettings{})
+					err = cli.NetworkConnect(ctx, net.ID, adapterContainerCreatedBody.ID, &network.EndpointSettings{})
+					if err != nil {
+						return ErrAdapterAdministration(err)
+					}
 				}
 			}
 		}
