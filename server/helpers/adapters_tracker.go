@@ -3,6 +3,7 @@ package helpers
 import (
 	"context"
 	"fmt"
+  "io/ioutil"	
 	"strconv"
 	"strings"
 	"sync"
@@ -93,10 +94,16 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		adapterImage := "layer5/" + adapter.Name + ":stable-latest"
 
 		// Pull the latest image
-		_, err = cli.ImagePull(ctx, adapterImage, types.ImagePullOptions{})
+		resp, err := cli.ImagePull(ctx, adapterImage, types.ImagePullOptions{})
 		if err != nil {
 			return ErrAdapterAdministration(err)
 		}
+
+		defer resp.Close()
+		_, err = ioutil.ReadAll(resp)
+		if err != nil {
+      return ErrAdapterAdministration(err)
+		}			
 
 		for netName := range mesheryNetworkSettings.Networks {
 			fmt.Printf("network: %#v\n", netName)
