@@ -9,7 +9,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
-func TestPatternView(t *testing.T) {
+func TestViewCmd(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
 

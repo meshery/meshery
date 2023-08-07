@@ -14,7 +14,7 @@ import (
 
 var update = flag.Bool("update", false, "update golden files")
 
-func TestPatternList(t *testing.T) {
+func TestListCmd(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
 
