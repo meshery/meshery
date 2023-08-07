@@ -55,7 +55,7 @@ func (r *Resolver) changeAdapterStatus(_ context.Context, _ models.Provider, tar
 	}
 
 	r.Log.Debug(fmt.Printf("changing adapter status of %s on port %s to status %s \n", adapterName, targetPort, targetStatus))
-	adapter := models.Adapter{Name: adapterName, Location: targetPort}
+	adapter := models.Adapter{Name: adapterName, Location: fmt.Sprintf("%s:%s", adapterName, targetPort)}
 	go func(routineCtx context.Context, del bool) {
 		var operation string
 		if del {
