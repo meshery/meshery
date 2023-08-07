@@ -97,20 +97,36 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 			return ErrAdapterAdministration(err)
 		}
 
-		// Create and start the container
+		
+
+		var adapterContainerCreatedBody container.ContainerCreateCreatedBody
+
+		for netName := range mesheryNetworkSettings.Networks {
+			fmt.Printf("network: %#v", netName)
+			nets, err := cli.NetworkList(ctx, types.NetworkListOptions{})
+			fmt.Printf("networks: %#v", nets)
+			if err != nil {
+				// fmt.Errorf("error listing networks: %v", err)
+				return ErrAdapterAdministration(err)
+			}
+			for _, net := range nets {
+        if net.Name == netName {     
+		fmt.Printf("found net: %#v", net)
+// Create and start the container
 		portNum := adapter.Location
 		adapter.Location = "localhost:" + adapter.Location
 		port := nat.Port(portNum + "/tcp")
-		resp, err := cli.ContainerCreate(ctx, &container.Config{
+		adapterContainerCreatedBody, err := cli.ContainerCreate(ctx, &container.Config{
 			Image: adapterImage,
 			ExposedPorts: nat.PortSet{
 				port: struct{}{},
 			},
 		}, &container.HostConfig{
+			NetworkMode: container.NetworkMode(netName),
 			PortBindings: nat.PortMap{
 				port: []nat.PortBinding{
 					{
-						HostIP:   "127.0.0.1",
+						HostIP:   "0.0.0.0",
 						HostPort: portNum,
 					},
 				},
@@ -119,22 +135,12 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		if err != nil {
 			return ErrAdapterAdministration(err)
 		}
-
-		for netName := range mesheryNetworkSettings.Networks {
-			fmt.Printf("network: %#v", netName)
-			nets, err := cli.NetworkList(ctx, types.NetworkListOptions{})
-			if err != nil {
-				// fmt.Errorf("error listing networks: %v", err)
-				return ErrAdapterAdministration(err)
-			}
-			for _, net := range nets {
-        if net.Name == netName {     
-           cli.NetworkConnect(ctx, net.ID, resp.ID, &network.EndpointSettings{})
+           cli.NetworkConnect(ctx, net.ID, adapterContainerCreatedBody.ID, &network.EndpointSettings{})
 				}
 			}
 		}
 
-		if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
+		if err := cli.ContainerStart(ctx, adapterContainerCreatedBody.ID, types.ContainerStartOptions{}); err != nil {
 			return ErrAdapterAdministration(err)
 		}
 
