@@ -3,8 +3,8 @@ package helpers
 import (
 	"context"
 	"fmt"
-	"strings"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -85,7 +85,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		var mesheryNetworkSettings *types.SummaryNetworkSettings
 		for _, container := range containers {
 			if strings.Contains(container.Image, "thebeginner86/meshery-dev") {
-        mesheryNetworkSettings = container.NetworkSettings
+				mesheryNetworkSettings = container.NetworkSettings
 			}
 		}
 
@@ -96,8 +96,6 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		if err != nil {
 			return ErrAdapterAdministration(err)
 		}
-
-		
 
 		var adapterContainerCreatedBody container.ContainerCreateCreatedBody
 
@@ -110,32 +108,32 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 				return ErrAdapterAdministration(err)
 			}
 			for _, net := range nets {
-        if net.Name == netName {     
-		fmt.Printf("found net: %#v", net)
-// Create and start the container
-		portNum := adapter.Location
-		adapter.Location = "localhost:" + adapter.Location
-		port := nat.Port(portNum + "/tcp")
-		adapterContainerCreatedBody, err := cli.ContainerCreate(ctx, &container.Config{
-			Image: adapterImage,
-			ExposedPorts: nat.PortSet{
-				port: struct{}{},
-			},
-		}, &container.HostConfig{
-			NetworkMode: container.NetworkMode(netName),
-			PortBindings: nat.PortMap{
-				port: []nat.PortBinding{
-					{
-						HostIP:   "0.0.0.0",
-						HostPort: portNum,
-					},
-				},
-			},
-		}, &network.NetworkingConfig{}, nil, adapter.Name+"-"+fmt.Sprint(time.Now().Unix()))
-		if err != nil {
-			return ErrAdapterAdministration(err)
-		}
-           cli.NetworkConnect(ctx, net.ID, adapterContainerCreatedBody.ID, &network.EndpointSettings{})
+				if net.Name == netName {
+					fmt.Printf("found net: %#v", net)
+					// Create and start the container
+					portNum := adapter.Location
+					adapter.Location = "localhost:" + adapter.Location
+					port := nat.Port(portNum + "/tcp")
+					adapterContainerCreatedBody, err := cli.ContainerCreate(ctx, &container.Config{
+						Image: adapterImage,
+						ExposedPorts: nat.PortSet{
+							port: struct{}{},
+						},
+					}, &container.HostConfig{
+						NetworkMode: container.NetworkMode(netName),
+						PortBindings: nat.PortMap{
+							port: []nat.PortBinding{
+								{
+									HostIP:   "0.0.0.0",
+									HostPort: portNum,
+								},
+							},
+						},
+					}, &network.NetworkingConfig{}, nil, adapter.Name+"-"+fmt.Sprint(time.Now().Unix()))
+					if err != nil {
+						return ErrAdapterAdministration(err)
+					}
+					cli.NetworkConnect(ctx, net.ID, adapterContainerCreatedBody.ID, &network.EndpointSettings{})
 				}
 			}
 		}
