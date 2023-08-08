@@ -1,9 +1,25 @@
-package binding_policy
+package meshmodel_policy
 
-import data.common
+import data.meshmodel_policy.extract_components
+import data.meshmodel_policy.contains
+import data.meshmodel_policy.get_array_pos
 import future.keywords.in
+# import data.mo
 
-binding_relationship = results {
+binding_types := ["mount", "permission"]
+
+evaluate[results] {
+    binding_type := binding_types[_]
+    # has_key(data, binding_type)
+    # results := object.keys(data[binding_type].selectors)
+    results = binding_relationship with data.selectors as data[binding_type].selectors with data.binding_comp as data[binding_type].bindingResource
+}
+
+binding_relationship[results] {
+
+    print(data.selectors, "\n\n")
+    # object.get(data, ["selectors"], "") != ""
+    # print(data)
     # pattern := json.marshal(input.services)    
     from_selectors := { kind: selectors |
         s := data.selectors.allow.from[_]
@@ -19,11 +35,11 @@ binding_relationship = results {
 
     # print(input.services)
     # contains "selectors.from" components only, eg: Role/ClusterRole(s) comps only
-    from := common.extract_components(input.services, from_selectors)
-    to := common.extract_components(input.services, to_selectors)
+    from := extract_components(input.services, from_selectors)
+    to := extract_components(input.services, to_selectors)
 
     # binding_selectors := { data.bindingResource : [] }
-    binding_resources := common.extract_components(input.services, [data.bindingResource])
+    binding_resources := extract_components(input.services, [data.binding_comp])
 
     # print("from:", from, "\n\n", "to:", to, "\n\n", "binding_resources\n\n",  binding_resources)
     # print("from-selectors: ", from_selectors, "to-selectors: ", to_selectors, "binding-selectors: ", data.bindingResource)
@@ -32,7 +48,7 @@ binding_relationship = results {
     }
 
     print(services_map)
-    results = [ result |
+    # results = [ result |
         some i, j, k
             resource := from[i]
             # some j
@@ -48,7 +64,7 @@ binding_relationship = results {
                 q == true
                 print("line 48: ")
 
-        result := {
+        results = {
             "from": {
                 "id": resource.traits.meshmap.id
             },
@@ -59,7 +75,8 @@ binding_relationship = results {
                 "id": binding_resource.traits.meshmap.id
             }
         }
-    ]
+    # ]
+    print(results)
 }
 
 is_match(resource1, resource2, from_selectors) {
@@ -82,7 +99,7 @@ is_match(resource1, resource2, from_selectors) {
 } 
 
 is_feasible(from, to, resource1, resource2) {
-    not common.contains(to, "_")
+    not contains(to, "_")
     print("\n\n\n 82", from, to, resource1,resource2)
     object.get(resource1, from, "") == object.get(resource2, to, "")
 }
@@ -96,10 +113,10 @@ is_feasible(from, to, resource1, resource2) {
 }
 
 match(from, to, resource1, resource2) {
-     print(to, ";;;")
-    common.contains(to, "_")
+    print(to, ";;;")
+    contains(to, "_")
 
-    index := common.get_array_pos(to)
+    index := get_array_pos(to)
     prefix_path := array.slice(to, 0, index)
     suffix_path := array.slice(to, index + 1, count(to))
 

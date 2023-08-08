@@ -1,15 +1,18 @@
-package hierarchical_wallet_policy
+package meshmodel_policy
 
 import future.keywords.every
 import future.keywords.in
-import data.common
+import data.meshmodel_policy.extract_components
+import data.meshmodel_policy.contains
+import data.meshmodel_policy.get_array_pos
+import data.meshmodel_policy.get_path
 
 parent_child_relationship = updated_design {
     from_selectors := data.selectors.allow.from
     to_selectors := data.selectors.allow.to
 
     # contains "selectors.from" components only, eg: WASMFilters comps only
-    allowed_parent_comps := common.extract_components(input.services, from_selectors)
+    allowed_parent_comps := extract_components(input.services, from_selectors)
     
     services_map := { service.traits.meshmap.id: service |
         service := input.services[_]
@@ -44,10 +47,10 @@ apply_patch(mutator, mutated, from_selectors, to_selectors) := mutated_design {
     print(mutated)
     patches := [ patch |  
         some i
-            mutator_path := common.get_path(mutator_paths[i], mutator)
+            mutator_path := get_path(mutator_paths[i], mutator)
             update_value := object.get(mutator, mutator_path, "")
             update_value != null
-            mutated_path := common.get_path(mutated_paths[i], mutated)
+            mutated_path := get_path(mutated_paths[i], mutated)
             patch := {
                 "op": "add",
                 "path": mutated_path,

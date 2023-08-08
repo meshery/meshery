@@ -1,4 +1,4 @@
-package common
+package meshmodel_policy
 
 get_path(obj, mutated) = path {
     path = is_array(obj, mutated)        
@@ -37,4 +37,8 @@ extract_components(services, selectors) = components {
         print(selector.kind, service.type)
         component := service
     }
+}
+
+has_key(x, k) {
+    x[k]
 }
