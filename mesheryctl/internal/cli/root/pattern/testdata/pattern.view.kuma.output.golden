@@ -1,0 +1,12 @@
+created_at: "2023-07-31T15:37:03.729663Z" 
+id: 957fbc9b-708d-4396-84b8-e2ba37c1adcc
+location:
+  branch: ""
+  host: ""
+  path: ""
+  type: local
+name: kumatest
+pattern_file: |
+  name: kumatest 
+updated_at: "2023-07-31T15:37:03.729663Z"
+user_id: 990f779c-708d-4396-84b8-e2ba37c1adcc
