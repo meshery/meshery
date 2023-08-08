@@ -1,7 +1,7 @@
 package binding_policy
 
 import data.common
-import future.keywords.if
+import future.keywords.in
 
 binding_relationship = results {
     # pattern := json.marshal(input.services)    
@@ -31,6 +31,7 @@ binding_relationship = results {
         service := input.services[_]
     }
 
+    print(services_map)
     results = [ result |
         some i, j, k
             resource := from[i]
@@ -45,13 +46,14 @@ binding_relationship = results {
                 to_resource := to[k]
                 q := is_match(to_resource, binding_resource, to_selectors[to_resource.type])
                 q == true
+                print("line 48: ")
 
         result := {
             "from": {
                 "id": resource.traits.meshmap.id
             },
             "to": {
-                "id": to.traits.meshmap.id
+                "id": to_resource.traits.meshmap.id
             },
             "binded_by": {
                 "id": binding_resource.traits.meshmap.id
@@ -60,26 +62,55 @@ binding_relationship = results {
     ]
 }
 
-is_match(resource1, resource2, from_selectors) = match {
+is_match(resource1, resource2, from_selectors) {
     # print("from: ", from_selectors)
     # match = true
-    value1 := [ val |
-        some i
-        match_from := from_selectors.match.self[i]
-        print(match_from)
-        val := object.get(resource1, match_from, "") if {
-            not common.contains(match_from, "_")
-        } else := ["test"]
-    ]
-    
-    value2 := [ val |
-        some i
-        match_to := from_selectors.match["bindingResource"][i]
-        print(match_to)
-        val := object.get(resource2, match_to, "")
-    ]
-    
-    print("r1:", resource1.type, "v1:", value1, "r2:", resource2.type, "v2:", value2)
+    some i
+    match_from := from_selectors.match.self[i]
+    match_to := from_selectors.match["bindingResource"][i]
+    ans := is_feasible(match_from, match_to, resource1, resource2) 
 
-    match := value1 == value2
+    print("ans", ans)
+    # value1 := object.get(resource1, match_from, "")
+    # value2 := object.get(resource2, match_to, "/")
+    # print("r1:", resource1.type, "v1:", value1, "r2:", resource2.type, "v2:", value2, "mf: ", match_from, "mt: ", match_to)
+    
+    #     value1 != value2
+    #     match = false
+    
+    # print(match)
+} 
+
+is_feasible(from, to, resource1, resource2) {
+    not common.contains(to, "_")
+    print("\n\n\n 82", from, to, resource1,resource2)
+    object.get(resource1, from, "") == object.get(resource2, to, "")
+}
+
+is_feasible(from, to, resource1, resource2) {
+    match(from, to, resource1, resource2)    
+}
+
+is_feasible(from, to, resource1, resource2) {
+    match(to, from, resource2, resource1)    
+}
+
+match(from, to, resource1, resource2) {
+     print(to, ";;;")
+    common.contains(to, "_")
+
+    index := common.get_array_pos(to)
+    prefix_path := array.slice(to, 0, index)
+    suffix_path := array.slice(to, index + 1, count(to))
+
+    resource_val := object.get(resource2, prefix_path, "")
+    print("line96: ", index, prefix_path, suffix_path, resource_val)
+    value := [val |
+        
+        v := resource_val[_]
+        val := object.get(v, suffix_path, "")
+    ]
+
+    some i in value 
+     i == object.get(resource1, from, "")
 }

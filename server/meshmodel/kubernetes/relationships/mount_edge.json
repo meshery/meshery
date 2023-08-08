@@ -15,10 +15,7 @@
       "metadata": {}
     },
       "bindingResource": {
-        "kind": "PersistentVolumeClaim",
-        "match": [
-          [ "name" ]
-        ]
+        "kind": "PersistentVolumeClaim"
       },
     "subType": "Mount",
     "selectors": {
@@ -41,14 +38,27 @@
           {
             "kind": "Pod",
             "model": "kubernetes",
-            "match": [
-              [ "settings", "spec", "volumes", "_", "persistentVolumeClaim", "claimName" ]
-            ]
+            "match": {
+              "self": [
+                [ "settings", "spec", "volumes", "_", "persistentVolumeClaim", "claimName" ]
+              ],
+              "bindingResource": [
+                ["name"]
+              ]
+            }
           }
         ],
         "to": [
           { "kind": "PersistentVolume",
-            "model": "kubernetes"
+            "model": "kubernetes",
+            "match": {
+              "self": [
+                ["labels"]
+              ],
+              "bindingResource": [
+                ["settings", "spec", "selectors", "matchLabels"]
+              ]
+            }
           }
         ]
       }
