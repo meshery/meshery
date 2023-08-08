@@ -72,42 +72,44 @@ export default function DesignConfigurator() {
             </FormControl>
 
             {/* Model Selector */}
-            <FormControl>
-              <TextField
-                placeholder="select Model"
-                select={true}
-                SelectProps={{
-                  MenuProps : {
-                    anchorOrigin : {
-                      vertical : "bottom",
-                      horizontal : "left"
+            {selectedCategory && (
+              <FormControl>
+                <TextField
+                  placeholder="select Model"
+                  select={true}
+                  SelectProps={{
+                    MenuProps : {
+                      anchorOrigin : {
+                        vertical : "bottom",
+                        horizontal : "left"
+                      },
+                      getContentAnchorEl : null
                     },
-                    getContentAnchorEl : null
-                  },
-                  renderValue : (selected) => {
-                    if (!selected || selected.length === 0) {
-                      return <em>Select Model</em>;
-                    }
+                    renderValue : (selected) => {
+                      if (!selected || selected.length === 0) {
+                        return <em>Select Model</em>;
+                      }
 
-                    return removeHyphenAndCapitalise(selected)
-                  },
-                  displayEmpty : true
-                }}
-                InputProps={{ disableUnderline : true }}
-                labelId="model-selector"
-                id="model-selector"
-                value={selectedModel}
-                onChange={handleModelChange}
-                fullWidth
-              >
-                {models?.[selectedCategory]
-                  ? models[selectedCategory].map(function renderModels(model, idx) {
-                    return (<MenuItem key={`${model.name}-${idx}`} value={model.name} >{model.displayName}</MenuItem>)
-                  })
-                  : <RenderModelNull selectedCategory={selectedCategory} models={models} />
-                }
-              </TextField>
-            </FormControl>
+                      return removeHyphenAndCapitalise(selected)
+                    },
+                    displayEmpty : true
+                  }}
+                  InputProps={{ disableUnderline : true }}
+                  labelId="model-selector"
+                  id="model-selector"
+                  value={selectedModel}
+                  onChange={handleModelChange}
+                  fullWidth
+                >
+                  {models?.[selectedCategory]
+                    ? models[selectedCategory].map(function renderModels(model, idx) {
+                      return (<MenuItem key={`${model.name}-${idx}`} value={model.name} >{model.displayName}</MenuItem>)
+                    })
+                    : <RenderModelNull selectedCategory={selectedCategory} models={models} />
+                  }
+                </TextField>
+              </FormControl>
+            )}
           </div>
 
           {/* Action Toolbar */}

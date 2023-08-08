@@ -113,6 +113,7 @@ const (
 	ErrCleanupCertificateCode           = "1120"
 	ErrDownlaodWASMFileCode             = "1121"
 	ErrPerformanceTestCode              = "1122"
+	ErrFetchProfileCode                 = "1123"
 )
 
 var (
@@ -339,7 +340,7 @@ func ErrFailToLoadExtensions(err error) error {
 }
 
 func ErrInvalidLTURL(url string) error {
-	return errors.New(ErrInvalidLTURLCode, errors.Alert, []string{"invalid loadtest url: ", url}, []string{}, []string{"URL for load test could be invalid"}, []string{"please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"})
+	return errors.New(ErrInvalidLTURLCode, errors.Alert, []string{"invalid loadtest url: ", url}, []string{}, []string{"URL for load test could be invalid"}, []string{"please refer to: https://docs.meshery.io/tasks/performance-management"})
 }
 
 func ErrVersionCompare(err error) error {
@@ -423,6 +424,10 @@ func ErrDeletePattern(err error) error {
 
 func ErrFetchPattern(err error) error {
 	return errors.New(ErrFetchPatternCode, errors.Alert, []string{"Error failed to fetch pattern"}, []string{err.Error()}, []string{"Failed to retrieve the list of all the Patterns"}, []string{})
+}
+
+func ErrFetchProfile(err error) error {
+	return errors.New(ErrFetchProfileCode, errors.Alert, []string{"Error failed to fetch profile"}, []string{err.Error()}, []string{"Invalid profile ID"}, []string{"Check if the profile ID is correct"})
 }
 
 func ErrImportPattern(err error) error {

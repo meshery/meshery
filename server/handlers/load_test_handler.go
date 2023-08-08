@@ -197,6 +197,28 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	loadTestOptions := &models.LoadTestOptions{}
 
 	profileID := mux.Vars(req)["id"]
+
+	performanceProfileData, err := provider.GetPerformanceProfile(req, profileID)
+	if err != nil {
+		h.log.Error(err)
+		http.Error(w, ErrFetchProfile(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	performanceProfile := models.PerformanceProfile{}
+	err = json.Unmarshal(performanceProfileData, &performanceProfile)
+	if err != nil {
+		h.log.Error(models.ErrUnmarshal(err, "performance profile"))
+		http.Error(w, models.ErrUnmarshal(err, "performance profile").Error(), http.StatusInternalServerError)
+		return
+	}
+
+	options, ok := performanceProfile.Metadata["additional_options"].(string)
+
+	if ok {
+		loadTestOptions.Options = options
+	}
+
 	if isSSLCertificateProvided {
 		performanceProfileData, err := provider.GetPerformanceProfile(req, profileID)
 		if err != nil {
