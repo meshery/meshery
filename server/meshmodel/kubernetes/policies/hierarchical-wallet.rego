@@ -4,12 +4,10 @@ import future.keywords.every
 import future.keywords.in
 import data.common
 
-
-
 parent_child_relationship = updated_design {
     from_selectors := data.selectors.allow.from
     to_selectors := data.selectors.allow.to
-    print(common)
+
     # contains "selectors.from" components only, eg: WASMFilters comps only
     allowed_parent_comps := common.extract_components(input.services, from_selectors)
     
@@ -43,6 +41,7 @@ apply_patch(mutator, mutated, from_selectors, to_selectors) := mutated_design {
     to_selectors[j].kind == mutated.type
         mutated_paths := to_selectors[j].patch.mutatedRef
 
+    print(mutated)
     patches := [ patch |  
         some i
             mutator_path := common.get_path(mutator_paths[i], mutator)

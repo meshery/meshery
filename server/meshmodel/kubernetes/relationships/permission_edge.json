@@ -16,11 +16,7 @@
   },
   "subType": "Permission",
   "bindingResource": {
-    "kind": "ClusterRoleBinding",
-    "match": [
-      ["settings", "spec", "roleRef", "kind"],
-      ["settings", "spec", "roleRef", "name"]
-    ]
+    "kind": "ClusterRoleBinding"
   },
   "selectors": {
     "deny": {
@@ -33,7 +29,7 @@
           "kind": "Role",
           "model": "kubernetes"
         },
-        { 
+        {
           "kind": "ClusterRoleBinding",
           "model": "kubernetes"
         },
@@ -61,30 +57,78 @@
         }
       ]
     },
-    "allow":{
+    "allow": {
       "from": [
         {
           "kind": "ClusterRole",
           "model": "kubernetes",
-          "match": [
-            ["type"],
-            ["name"]
-          ]
+          "match": {
+            "self": [
+              [
+                "type"
+              ],
+              [
+                "name"
+              ]
+            ],
+            "bindingResource": [
+              [
+                "settings",
+                "roleRef",
+                "kind"
+              ],
+              [
+                "settings",
+                "roleRef",
+                "name"
+              ]
+            ]
+          }
         },
         {
           "kind": "Role",
           "model": "kubernetes",
-          "match": [
-            [
-              "type"
+          "match": {
+            "self": [
+              [
+                "type"
+              ],
+              [
+                "name"
+              ]
             ],
-            ["name"]
-          ]
+            "bindingResource": [
+              [
+                "settings",
+                "roleRef",
+                "kind"
+              ],
+              [
+                "settings",
+                "roleRef",
+                "name"
+              ]
+            ]
+          }
         }
       ],
       "to": [
         {
-          "model": "kubernetes"
+          "kind": "ServiceAccount",
+          "model": "kubernetes",
+          "match": {
+            "self": [
+              [
+                "name"
+              ]
+            ],
+            "bindingResource": [[
+              "settings",
+              "subjects",
+              "_",
+              "name"
+            ]]
+          }
         }
       ]
     }
