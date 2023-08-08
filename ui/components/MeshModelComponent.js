@@ -30,6 +30,10 @@ const meshmodelStyles = (theme) => ({
   dashboardSection : {
     padding : theme.spacing(2), borderRadius : 4,height : "100%",overflowY : "scroll"
   },
+  duplicatesModelStyle : {
+    backgroundColor : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
+
+  }
 
 
 })
@@ -41,9 +45,10 @@ const MeshModelComponent = ({ view, classes }) => {
   const [page, setPage] = useState(0);
   const [searchText, setSearchText] = useState(null);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
+  const [sortOrder, setSortOrder] = useState("");
 
   const getModels = async (page) => {
+
     try {
       const { total_count, models } = await getMeshModels(page+1, rowsPerPage); // page+1 due to server side indexing starting from 1
       setCount(total_count);
@@ -55,24 +60,36 @@ const MeshModelComponent = ({ view, classes }) => {
     }
   };
 
-  const getComponents = async (page) => {
+  const getComponents = async (page, sortOrder) => {
+
+    if (typeof sortOrder === "undefined" || sortOrder === null) {
+      setSortOrder("");
+    }
+
     try {
-      const { total_count, components } = await getComponentsDetailWithPageSize(page+1, rowsPerPage); // page+1 due to server side indexing starting from 1
+      const { total_count, components } = await getComponentsDetailWithPageSize(page+1, rowsPerPage, sortOrder); // page+1 due to server side indexing starting from 1
       setCount(total_count);
       if (!isRequestCancelled) {
         setResourcesDetail(components);
+        setSortOrder(sortOrder);
       }
     } catch (error) {
       console.error('Failed to fetch components:', error);
     }
   };
 
-  const getRelationships = async (page) => {
+  const getRelationships = async (page, sortOrder) => {
+
+    if (typeof sortOrder === "undefined" || sortOrder === null) {
+      setSortOrder("");
+    }
+    console.log('sort order inside relationships', sortOrder)
     try {
-      const { total_count, relationships } = await getRelationshipsDetailWithPageSize(page+1, rowsPerPage);
+      const { total_count, relationships } = await getRelationshipsDetailWithPageSize(page+1, rowsPerPage, sortOrder);
       setCount(total_count);
       if (!isRequestCancelled) {
         setResourcesDetail(relationships);
+        setSortOrder(sortOrder);
       }
     } catch (error) {
       console.error('Failed to fetch relationships:', error);
@@ -109,9 +126,9 @@ const MeshModelComponent = ({ view, classes }) => {
     if (view === MODELS && searchText === null) {
       getModels(page);
     } else if (view === COMPONENTS && searchText === null) {
-      getComponents(page);
+      getComponents(page, sortOrder);
     } else if (view === RELATIONSHIPS) {
-      getRelationships(page);
+      getRelationships(page, sortOrder);
     } else if (view === MODELS && searchText) {
       getSearchedModels(searchText);
     } else if (view === COMPONENTS && searchText) {
@@ -128,9 +145,7 @@ const MeshModelComponent = ({ view, classes }) => {
       name : (view === COMPONENTS || view === RELATIONSHIPS) ? 'kind' : 'displayName',
       label : `Name`,
       options : {
-        sort : true,
-        sortDescFirst : true,
-        sortThirdClickReset : true,
+        sort : view === COMPONENTS || view === RELATIONSHIPS ? true : false,
         searchable : view === RELATIONSHIPS ? false : true,
         customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
           return (
@@ -152,16 +167,12 @@ const MeshModelComponent = ({ view, classes }) => {
       name : (view === COMPONENTS || view === RELATIONSHIPS) ? 'apiVersion' : 'version',
       label : (view === COMPONENTS || view === RELATIONSHIPS) ? 'Api Version' : 'Version',
       options : {
-        sort : true,
-        sortDescFirst : true,
-        sortThirdClickReset : true,
+        sort : false,
         searchable : view === RELATIONSHIPS ?  false : true,
-        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender : function CustomHead({ index, ...column }) {
           return (
-            <TableCell align={"start"} key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
-                <b>{column.label}</b>
-              </TableSortLabel>
+            <TableCell align={"start"} key={index}>
+              <b>{column.label}</b>
             </TableCell>
           );
         },
@@ -182,9 +193,7 @@ const MeshModelComponent = ({ view, classes }) => {
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell align={"start"} key={index}>
-              <TableSortLabel>
-                <b>{column.label}</b>
-              </TableSortLabel>
+              <b>{column.label}</b>
             </TableCell>
           );
         },
@@ -211,9 +220,7 @@ const MeshModelComponent = ({ view, classes }) => {
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell align={"start"} key={index}>
-              <TableSortLabel>
-                <b>{column.label}</b>
-              </TableSortLabel>
+              <b>{column.label}</b>
             </TableCell>
           );
         },
@@ -239,9 +246,7 @@ const MeshModelComponent = ({ view, classes }) => {
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell align={"start"} key={index}>
-              <TableSortLabel>
-                <b>{column.label}</b>
-              </TableSortLabel>
+              <b>{column.label}</b>
             </TableCell>
           );
         },
@@ -265,9 +270,7 @@ const MeshModelComponent = ({ view, classes }) => {
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell align={"start"} key={index}>
-              <TableSortLabel>
-                <b>{column.label}</b>
-              </TableSortLabel>
+              <b>{column.label}</b>
             </TableCell>
           );
         },
@@ -285,22 +288,28 @@ const MeshModelComponent = ({ view, classes }) => {
     },
     {
       name : 'duplicates',
-      label : 'Duplicate Component',
+      label : 'Duplicates',
       options : {
         sort : false,
-        display : false,
-        searchable : false,
-      },
-      customBodyRender : (value) => {
-        if (view === RELATIONSHIPS) {
-          const { displayName } = value
-          return (
-            <Tooltip title={displayName} placement="top">
-              <div>{displayName}</div>
-            </Tooltip>
-          )
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }) {
+          if ( view !== RELATIONSHIPS)
+            return (
+              <TableCell align={"start"} key={index}>
+                <b>{column.label}</b>
+              </TableCell>
+            );
+        },
+        customBodyRender : (value) => {
+          if (view !== RELATIONSHIPS)
+            return (
+              <Tooltip title={value} placement="top">
+                <div>{value}</div>
+              </Tooltip>
+            )
         }
       },
+
     },
   ]
 
@@ -316,24 +325,51 @@ const MeshModelComponent = ({ view, classes }) => {
     selectableRows : false,
     search : view === RELATIONSHIPS ? false : true,
     serverSide : true,
-    expandableRows : true,
+    expandableRows : view !== RELATIONSHIPS && true,
     onChangePage : debounce((p) =>  setPage(p), 200),
     onSearchChange : debounce((searchText) => (setSearchText(searchText))),
     onChangeRowsPerPage : debounce((rowsPerPage) => {
       setRowsPerPage(rowsPerPage);
       setPage(0);
     }),
-    setRowProps : () => {
-      return {
-        style : {
-          backgroundColor : 'inherit',
-        },
-      };
-    },
+    onTableChange : (action, tableState) => {
+      console.log('action', action, tableState)
+      const sortInfo = tableState.announceText
+        ? tableState.announceText.split(" : ")
+        : [];
+      let order = "";
+      if (tableState.activeColumn || tableState.activeColumn === 0) {
+        order = `${meshmodel_columns[tableState.activeColumn].name} desc`;
+        console.log('name', meshmodel_columns[tableState.activeColumn].name)
+        switch (action) {
+          case "sort":
 
+            if (sortInfo.length == 2) {
+              if (sortInfo[1] === "ascending") {
+                order = `${meshmodel_columns[tableState.activeColumn].name} asc`;
+              } else {
+                order = `${meshmodel_columns[tableState.activeColumn].name} desc`;
+              }
+            }
+
+            if (order !== sortOrder && view === COMPONENTS && meshmodel_columns[tableState.activeColumn].name === 'kind') {
+              getComponents(page, order);
+            }
+
+            if (order !== sortOrder && view === RELATIONSHIPS && meshmodel_columns[tableState.activeColumn].name === 'kind') {
+              getRelationships(page, order)
+            }
+
+            break;
+
+          case "default":
+            break;
+        }
+      }
+    },
     renderExpandableRow : (rowData) => {
       return (
-        rowData[6] > 0 &&
+        rowData[6] > 0 ? (
           <TableCell
             colSpan={6}
             sx={{
@@ -361,6 +397,27 @@ const MeshModelComponent = ({ view, classes }) => {
               </DuplicatesDataTable>
             </Grid>
           </TableCell>
+        ) : (
+          <TableCell
+            colSpan={6}
+            sx={{
+              padding : "0.5rem",
+            }}
+          >
+            <Grid
+              container
+              xs={12}
+              spacing={1}
+              sx={{
+                margin : "auto",
+                paddingLeft : "0.5rem",
+                borderRadius : "0.25rem",
+              }}
+            >
+              <b>No duplicates found</b>
+            </Grid>
+          </TableCell>
+        )
       );
     },
   };
