@@ -66,9 +66,9 @@ export async function getVersionedComponentFromModel(
   );
 }
 
-export async function getComponentsDetailWithPageSize(page=1, pageSize="all") {
+export async function getComponentsDetailWithPageSize(page=1, pageSize="all", sortOrder) {
   return await promisifiedDataFetch(
-    `api/meshmodels/components?page=${page}&pagesize=${pageSize}`
+    `api/meshmodels/components?page=${page}&pagesize=${pageSize}&order=${encodeURIComponent(sortOrder)}`
   );
 }
 
@@ -84,9 +84,9 @@ export async function getModelsDetail(page) {
   );
 }
 
-export async function getRelationshipsDetailWithPageSize(page=1, pageSize="all") {
+export async function getRelationshipsDetailWithPageSize(page=1, pageSize="all", sortOrder) {
   return await promisifiedDataFetch(
-    `api/meshmodels/relationships?page=${page}&pagesize=${pageSize}`
+    `api/meshmodels/relationships?page=${page}&pagesize=${pageSize}&order=${encodeURIComponent(sortOrder)}`
   );
 }
 
