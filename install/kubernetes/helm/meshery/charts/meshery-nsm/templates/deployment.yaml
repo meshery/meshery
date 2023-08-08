@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "meshery-nsm.fullname" . }}
-  namespace: {{ .Values.metadata.namespace }}
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "meshery-nsm.labels" . | nindent 4 }}
   annotations:

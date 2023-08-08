@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "meshery-nginx-sm.fullname" . }}
-  namespace: {{ .Values.metadata.namespace }}
+  namespace: {{ .Release.Namespace }}
   labels:
     io.kompose.service: {{ include "meshery-nginx-sm.fullname" . }}
   annotations:
