@@ -9,8 +9,6 @@ language: en
 list: include
 ---
 
-# Meshery Catalog
-
 [Meshery Catalog](https://meshery.io/catalog) functions much like a cloud marketplace, providing a user-friendly interface for browsing, discovering, and sharing configurations and patterns for cloud native infrastructure. With Meshery Catalog, you can easily find and deploy Kubernetes-based infrastructure and tools, making it easy to streamline your cloud native development and operations processes.
 
 ### Simplify Your Cloud Native Infrastructure Deployment and Management
@@ -20,7 +18,7 @@ Meshery Catalog functions much like a cloud marketplace, providing a user-friend
 It also supports a collaborative environment, where DevOps engineers can share their experiences, feedback, and best practices with others in the community. Import cloud native patterns published by others into your Meshery Server. Benefit from and build upon each pattern by incorporating your own tips and tricks, then publish and share with the community at-large. This facilitates knowledge-sharing and helps to build a strong ecosystem of cloud native infrastructure experts.
 
 
-### To create catalog using Meshery UI
+### To create a design pattern using Meshery UI
 
 1. Open the [Meshery UI](https://docs.meshery.io/installation/quick-start) in your web browser.
 2. Navigate to the configuration section, usually located in the main navigation menu.
@@ -29,7 +27,7 @@ It also supports a collaborative environment, where DevOps engineers can share t
 5. Voilà, You can publish or deploy you design.
 
 
-### To create catalog using Meshery CLI
+### To create design pattern using Meshery CLI
 
 1. Ensure that you have [Meshery CLI](https://docs.meshery.io/installation/mesheryctl) installed on your machine and it is configured to connect to your desired Meshery instance.
 2. Open a terminal or command prompt.
@@ -43,6 +41,9 @@ It also supports a collaborative environment, where DevOps engineers can share t
 6. Applying [WASM Filter](https://docs.meshery.io/guides/configuration-management#wasm-filters). `mesheryctl exp filter apply --file [GitHub Link]`
 
 
-
-If you have any questions or need assistance, please refer to the [Meshery Documentation](https://docs.meshery.io/) or reach out to our discussion form [layer5.io](https://discuss.layer5.io/).
+{% include alert.html
+    type="info"
+    title="Help with Meshery Catalog"
+    content="If you have any questions or need assistance, please refer to the [Meshery Documentation](https://docs.meshery.io/) or reach out to our discussion form [layer5.io](https://discuss.layer5.io/)." %}
+.
 

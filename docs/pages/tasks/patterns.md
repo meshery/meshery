@@ -27,7 +27,7 @@ You may bring your own patterns or find them available through your chosen provi
 {% include alert.html
     type="info"
     title="Repository of Cloud Native Patterns"
-    content="A central set of design patterns is available in <a href='https://meshery.io/catalog'>Meshery Catalog</a>." %}
+    content="A central set of design patterns is available in Meshery Catalog (<a href='/concepts/catalog'>concept</a>, <a href='https://meshery.io/catalog'>site</a>)." %}
 
 
 ## Importing Patterns
