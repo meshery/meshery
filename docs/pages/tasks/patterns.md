@@ -24,88 +24,11 @@ _See [Meshery Catalog](https://meshery.io/catalog)_.
 
 You may bring your own patterns or find them available through your chosen provider. Each service mesh pattern carries a unique identifier for reference. The patterns in this repository serve in an educational capacity, facilitating learning, and also serve in an operational capacity, facilitating implementation and validation of your service mesh deployment’s adherence to a pattern.
 
-{% include alert.html 
-    type="info" 
-    title="Future Pattern Repository" 
-    content="A central set of patterns will available in the <a href='https://github.com/service-mesh-patterns'>Service Mesh Patterns repository</a>. In this repository, you will find each of Meshery's patterns, which will also be available through the Local Provider." %}
+{% include alert.html
+    type="info"
+    title="Repository of Cloud Native Patterns"
+    content="A central set of design patterns is available in <a href='https://meshery.io/catalog'>Meshery Catalog</a>." %}
 
-## Sample Patterns
-
-### Basic Istio Install
-
-```
-### 
-pattern-id: MESHERY001
-pattern-name: Basic Istio Install
-service-mesh:				    # (required*) one or more service meshes
-  istio-acme:				    # (required*) name of the instance mesh
-    type: IstioMesh			    # (required*) type of service mesh
-    namespace: istio-system		# (required*) control plane namespace required
-    settings:				    # (optional) control and data plane settings
-      version: 1.8.2			# (required) service mesh build version
-      profile: demo				# (optional) reference to service mesh configuration
-    traits:				    # (required) one or more configuration 
-      mTLS:				    # (optional)
-        policy: mutual			# (optional)
-        namespaces:			  # (optional)
-          - istio-test			 # (optional)
-      automaticSidecarInjection:    # (optional)
-        namespaces:			    # (optional)
-          - default				# (optional)
-          - istio-test			# (optional)
-```        
-
-### Duration-based Canary Rollout
-
-```
-pattern-id: MESHERY002
-pattern-name: Duration-based Canary Rollout
-namespace: meshy-app
-settings:
-    replicas: 5
-    containers:
-    - name: svc-demo
-        image: layer5/meshy-app:v5
-        ports:
-        - name: http
-        containerPort: 8080
-        protocol: TCP
-        resources:
-        requests:
-            memory: 32Mi
-            cpu: 5m
-    svcPorts:
-    - 8080:8080
-traits:
-    strategy:
-    canary:
-        - setWeight: 20
-        - pause: {duration: 60}
-        - setWeight: 40
-        - pause: {duration: 10}
-        - setWeight: 60
-        - pause: {duration: 10}
-        - setWeight: 80
-        - pause: {duration: 10}
-```
-
-### Sample Application
-
-```
-name: ApplicationPattern # display name in Meshery UI
-services:
-  myapp:
-    type: Application
-    namespace: test
-    settings:
-      replicas: 1
-      containers:
-        - name: meshy
-          image: utkarsh23/meshy:v5
-          ports:
-            - name: http
-              containerPort: 8080
-```
 
 ## Importing Patterns
 
