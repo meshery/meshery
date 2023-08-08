@@ -137,6 +137,15 @@
         "short_description": "Invalid operation",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "1015": {
+        "name": "ErrLoadNamespaceCode",
+        "code": "1015",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while labeling namespace:",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     }
   }
