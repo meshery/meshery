@@ -112,4 +112,5 @@ func TestListCmd(t *testing.T) {
 
 	// stop mock server
 	utils.StopMockery(t)
+	t.Log("test Passed")
 }

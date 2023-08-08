@@ -193,4 +193,6 @@ func TestPatterncmd(t *testing.T) {
 			utils.Equals(t, expectedResponse, actualResponse)
 		})
 	}
+	utils.StopMockery(t)
+	t.Log("Pattern tests Passed")
 }
