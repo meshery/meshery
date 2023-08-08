@@ -3,6 +3,7 @@ import {
   TableCell,
   Button,
   Tooltip,
+  Link,
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import EditIcon from "@material-ui/icons/Edit";
@@ -17,14 +18,15 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { updateProgress } from "../../lib/store";
 import { iconMedium } from "../../css/icons.styles";
-import { Avatar, Chip, FormControl, IconButton } from "@mui/material";
+import { /* Avatar, */ Chip, /* FormControl, */ IconButton } from "@mui/material";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import classNames from "classnames";
-import ReactSelectWrapper from "../ReactSelectWrapper";
+// import ReactSelectWrapper from "../ReactSelectWrapper";
 import dataFetch from "../../lib/data-fetch";
+import LaunchIcon from '@mui/icons-material/Launch';
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2) },
@@ -35,6 +37,9 @@ const styles = (theme) => ({
   muiRow : {
     "& .MuiTableRow-root" : {
       cursor : "pointer",
+    },
+    "& .MuiTableCell-root" : {
+      textTransform : "capitalize",
     },
   },
   createButton : {
@@ -59,12 +64,16 @@ const styles = (theme) => ({
       paddingTop : "3px",
       fontWeight : "400",
     },
+    textTransform : "capitalize",
     borderRadius : "3px !important",
     display : "flex",
     width : "117px",
     padding : "6px 8px",
     alignItems : "center",
     gap : "5px",
+  },
+  capitalize : {
+    textTransform : "capitalize",
   },
   ignored : {
     "& .MuiChip-label" : {
@@ -146,24 +155,30 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
       },
     },
     {
-      name : "type",
-      label : "Cluster",
+      name : "metadata",
+      label : " ",
       options : {
-        customHeadRender : function CustomHead({ index, ...column }) {
+        customHeadRender : function CustomHead({ index }) {
           return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
-            </TableCell>
+            <TableCell key={index}></TableCell>
           );
         },
         customBodyRender : function CustomBody(value) {
-          return <Chip avatar={<Avatar>M</Avatar>} label={value} />;
+          return (
+            <>
+              <Tooltip title={value.server_location} placement="top" arrow interactive >
+                <Link href={value.server_location} target="_blank">
+                  <LaunchIcon />
+                </Link>
+              </Tooltip>
+            </>
+          );
         },
       },
     },
     {
-      name : "sub_type",
-      label : "Environment",
+      name : "type",
+      label : "Type",
       options : {
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
@@ -172,22 +187,51 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
             </TableCell>
           );
         },
-        customBodyRender : function CustomBody(value) {
+        // customBodyRender : function CustomBody(value) {
+        //   return (
+        //     <FormControl sx={{ m : 1, minWidth : 200, maxWidth : 200 }} size="small">
+        //       <ReactSelectWrapper
+        //         onChange={handleChange}
+        //         options={[{ value : "environment 1", label : "environment 1" }, { value : "environment 2", label : "environment 2" }]}
+        //         value={{ value : value, label : value }}
+        //       />
+        //     </FormControl>
+        //   );
+        // },
+      },
+    },
+    {
+      name : "sub_type",
+      label : "Sub Type",
+      options : {
+        customHeadRender : function CustomHead({ index, ...column }) {
           return (
-            <FormControl sx={{ m : 1, minWidth : 200, maxWidth : 200 }} size="small">
-              <ReactSelectWrapper
-                onChange={handleChange}
-                options={[{ value : "environment 1", label : "environment 1" }, { value : "environment 2", label : "environment 2" }]}
-                value={{ value : value, label : value }}
-              />
-            </FormControl>
+            <TableCell key={index}>
+              <b>{column.label}</b>
+            </TableCell>
+          );
+        },
+        // customBodyRender : function CustomBody(value) {
+        //   return <Chip avatar={<Avatar>M</Avatar>} label={value} />;
+        // },
+      },
+    },
+    {
+      name : "kind",
+      label : "Kind",
+      options : {
+        customHeadRender : function CustomHead({ index, ...column }) {
+          return (
+            <TableCell key={index}>
+              <b>{column.label}</b>
+            </TableCell>
           );
         },
       },
     },
     {
       name : "updated_at",
-      label : "Update At",
+      label : "Updated At",
       options : {
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
@@ -207,7 +251,7 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
     },
     {
       name : "discoverd_at",
-      label : "Discoverd At",
+      label : "Discovered At",
       options : {
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
@@ -221,19 +265,6 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
             <Tooltip title={<Moment startOf="day" format="LLL">{value}</Moment>} placement="top" arrow interactive >
               <Moment format="LL">{value}</Moment>
             </Tooltip>
-          );
-        },
-      },
-    },
-    {
-      name : "kind",
-      label : "asdf",
-      options : {
-        customHeadRender : function CustomHead({ index, ...column }) {
-          return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
-            </TableCell>
           );
         },
       },
@@ -258,9 +289,9 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
     },
   ];
 
-  const handleChange = () => {
-    // Select change
-  }
+  // const handleChange = () => {
+  //   // Select change
+  // }
 
   const options = {
     filter : false,
@@ -279,6 +310,7 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
         text : "connection(s) selected",
       },
     },
+    enableNestedDataAccess : '.',
     onSearchClose : () => {
       setSearch("")
     },
