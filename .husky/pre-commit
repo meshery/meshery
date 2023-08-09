@@ -8,3 +8,8 @@ make error
 echo "Running make target for mesheryctl meshkit error duplicacy"
 cd mesheryctl
 make error
+
+if [ $? -ne 0 ]; then
+    echo "Aborting commit Meshkit Error Duplicacy found"
+    exit 1
+fi
