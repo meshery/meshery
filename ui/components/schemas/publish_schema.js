@@ -45,7 +45,7 @@ const json_schema = {
     type : {
       type : "string",
       title : "Type",
-      examples : [
+      enum : [
         "deployment",
         "observability",
         "resiliency",
@@ -55,6 +55,7 @@ const json_schema = {
         "troubleshooting",
         "workloads",
       ],
+      default : "deployment",
       description : "The category of the pattern.",
       "x-rjsf-grid-area" : 6,
     },

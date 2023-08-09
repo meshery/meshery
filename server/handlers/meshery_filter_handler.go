@@ -127,7 +127,7 @@ func (h *Handler) handleFilterPOST(
 		// Assign a name if no name is provided
 		if parsedBody.FilterData.Name == "" {
 			// TODO: Dynamically generate names or get the name of the file from the UI (@navendu-pottekkat)
-			parsedBody.FilterData.Name = "Test Filter"
+			parsedBody.FilterData.Name = "meshery-filter-" + utils.GetRandomAlphabetsOfDigit(5)
 		}
 		// Assign a location if no location is specified
 		if parsedBody.FilterData.Location == nil || len(parsedBody.FilterData.Location) == 0 {
@@ -140,13 +140,13 @@ func (h *Handler) handleFilterPOST(
 		}
 
 		mesheryFilter := models.MesheryFilter{
-			FilterFile: []byte(parsedBody.FilterData.FilterFile),
-			Name:       parsedBody.FilterData.Name,
-			ID:         parsedBody.FilterData.ID,
-			UserID:     parsedBody.FilterData.UserID,
-			UpdatedAt:  parsedBody.FilterData.UpdatedAt,
-			Location:   parsedBody.FilterData.Location,
-      FilterResource: filterResource,
+			FilterFile:     parsedBody.FilterData.FilterFile,
+			Name:           parsedBody.FilterData.Name,
+			ID:             parsedBody.FilterData.ID,
+			UserID:         parsedBody.FilterData.UserID,
+			UpdatedAt:      parsedBody.FilterData.UpdatedAt,
+			Location:       parsedBody.FilterData.Location,
+			FilterResource: filterResource,
 		}
 
 		if parsedBody.Save {
@@ -492,27 +492,27 @@ func (h *Handler) FilterFileHandler(
 	h.PatternFileHandler(rw, r, prefObj, user, provider)
 }
 
-func(h *Handler) generateFilterComponent(config string) (string, error) {
+func (h *Handler) generateFilterComponent(config string) (string, error) {
 	res, _, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		Name: "WASMFilter",
-		Trim: false,
+		Name:       "WASMFilter",
+		Trim:       false,
 		APIVersion: "core.meshery.io/v1alpha1",
-		Version: "v1.0.0",
-		Limit: 1,
+		Version:    "v1.0.0",
+		Limit:      1,
 	})
-	
+
 	if len(res) > 0 {
 		filterEntity := res[0]
 		filterCompDef, ok := filterEntity.(v1alpha1.ComponentDefinition)
 		if ok {
 			filterID, _ := uuid.NewV4()
 			filterSvc := core.Service{
-				ID: &filterID,
-				Name: strings.ToLower(filterCompDef.Kind) + utils.GetRandomAlphabetsOfDigit(5),
-				Type: filterCompDef.Kind,
-				APIVersion: filterCompDef.APIVersion,
-				Version: filterCompDef.Model.Version,
-				Model: filterCompDef.Model.Name,
+				ID:           &filterID,
+				Name:         strings.ToLower(filterCompDef.Kind) + utils.GetRandomAlphabetsOfDigit(5),
+				Type:         filterCompDef.Kind,
+				APIVersion:   filterCompDef.APIVersion,
+				Version:      filterCompDef.Model.Version,
+				Model:        filterCompDef.Model.Name,
 				IsAnnotation: true,
 				Settings: map[string]interface{}{
 					"config": config,

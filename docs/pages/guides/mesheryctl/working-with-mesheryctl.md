@@ -44,7 +44,7 @@ Many Meshery users have more than one Meshery deployment. Contexts allow you to 
 
 #### Question: What's the difference between contexts and environments?
 
-Contexts configure Meshery deployments (server, adapters, operator and so on), while environments define a collection of Kubernetes clusters and service meshes under management in Meshery.
+Contexts configure Meshery deployments (server, adapters, operator and so on), while environments define a collection of Kubernetes clusters and cloud native infrastructure under management in Meshery.
 
 #### Question: What does the default meshconfig look like?
 
@@ -57,7 +57,7 @@ contexts:
       token: <name of token variable in this config file>
       platform: <type of platform: ”docker” or “kubernetes”>
       # Future: specify type of kubernetes (e.g. eks)
-      adapters: <collection of names of service mesh adapters:
+      adapters: <collection of names of Meshery adapters:
           “istio”,“linkerd”,”consul”,”nginx-sm”,”octarine”,”tanzu-sm”,”citrix-sm”,”kuma”,”osm”,”nsm”>
 
    <context2-name>:

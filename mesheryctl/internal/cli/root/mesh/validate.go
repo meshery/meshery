@@ -111,7 +111,7 @@ mesheryctl mesh validate istio --adapter meshery-istio --spec smi
 func init() {
 	validateCmd.Flags().StringVarP(&spec, "spec", "s", "smi", "(Required) specification to be used for conformance test (smi/istio-vet)")
 	_ = validateCmd.MarkFlagRequired("spec")
-	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-osm", "(Required) Adapter to use for validation")
+	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-nsm", "(Required) Adapter to use for validation")
 	_ = validateCmd.MarkFlagRequired("adapter")
 	validateCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
 	validateCmd.Flags().BoolVarP(&watch, "watch", "w", false, "Watch for events and verify operation (in beta testing)")

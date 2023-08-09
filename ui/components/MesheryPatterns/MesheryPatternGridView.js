@@ -156,7 +156,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
       <DesignConfigurator pattern={selectedPattern.pattern} show={setSelectedPattern}  onSubmit={handleSubmit} />
       }
       {!selectedPattern.show &&
-      <Grid container spacing={3} style={{ padding : "1rem" }}>
+      <Grid container spacing={3}>
         {patterns.map((pattern) => (
           <PatternCardGridItem
             key={pattern.id}

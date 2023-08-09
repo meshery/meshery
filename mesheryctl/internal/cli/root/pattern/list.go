@@ -98,7 +98,7 @@ mesheryctl pattern list
 				PatternID := utils.TruncateID(v.ID.String())
 				var UserID string
 				if v.UserID != nil {
-					UserID = *v.UserID
+					UserID = utils.TruncateID(*v.UserID)
 				} else {
 					UserID = "null"
 				}
@@ -128,7 +128,7 @@ mesheryctl pattern list
 			PatternID := utils.TruncateID(v.ID.String())
 			var UserID string
 			if v.UserID != nil {
-				UserID = *v.UserID
+				UserID = utils.TruncateID(*v.UserID)
 			} else {
 				UserID = "null"
 			}

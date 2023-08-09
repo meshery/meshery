@@ -48,7 +48,7 @@ function MesheryMetrics({
       }}
     >
       <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" color="textSecondary">
-        No Service Mesh Metrics Configurations Found
+        No Metrics Configurations Found
       </Typography>
       <Button
         aria-label="Add Grafana Charts"
@@ -58,7 +58,7 @@ function MesheryMetrics({
         onClick={() => handleGrafanaChartAddition()}
       >
         <AddIcon className={classes.addIcon}  style={iconMedium}  />
-        Configure Service Mesh Metrics
+        Configure Metrics
       </Button>
     </div>
   );
