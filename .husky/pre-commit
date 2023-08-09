@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# Run make target for meshery server
+echo "Running make target for meshery server meshkit error duplicacy"
+make error
+
+# Run make target for mesheryctl
+echo "Running make target for mesheryctl meshkit error duplicacy"
+cd mesheryctl
+make error

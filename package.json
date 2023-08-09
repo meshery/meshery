@@ -7,7 +7,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "make error; cd mesheryctl; make error"
+      "pre-commit": "sh .husky/pre-commit"
     }
   }
 }
