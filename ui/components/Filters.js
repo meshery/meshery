@@ -48,7 +48,7 @@ import fetchCatalogFilter from "./graphql/queries/CatalogFilterQuery";
 import { iconMedium } from "../css/icons.styles";
 import Modal from "./Modal";
 import { publish_schema, publish_ui_schema } from "./schemas/publish_schema";
-import { getDecodedFile } from "../utils/utils";
+import { getUnit8ArrayDecodedFile } from "../utils/utils";
 import SearchBar from "./searchcommon";
 import Filter from "../public/static/img/drawer-icons/filter_svg.js";
 
