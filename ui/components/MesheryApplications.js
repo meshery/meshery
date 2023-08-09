@@ -20,8 +20,9 @@ import dataFetch from "../lib/data-fetch";
 import { updateProgress } from "../lib/store";
 import { FILE_OPS } from "../utils/Enum";
 import { ctxUrl } from "../utils/multi-ctx";
-import { getComponentsinFile, getDecodedFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
+import { getComponentsinFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
 import PromptComponent from "./PromptComponent";
+import UploadImport from "./UploadImport";
 import UndeployIcon from "../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import ConfirmationMsg from "./ConfirmationModal";
@@ -33,10 +34,7 @@ import PublishIcon from "@material-ui/icons/Publish";
 import InfoIcon from '@material-ui/icons/Info';
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import { iconMedium, iconSmall } from "../css/icons.styles";
-import UploadImport from "./Modals/ImportModal";
 import SearchBar from "./searchcommon";
-import Application from "../public/static/img/drawer-icons/application_svg.js";
-import Modal from "./Modal"
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
@@ -222,10 +220,6 @@ const ACTION_TYPES = {
   DOWNLOAD_APP : {
     name : "DOWNLOAD_APP",
     error_msg : "Failed to download application file"
-  },
-  SCHEMA_FETCH : {
-    name : "SCHEMA_FETCH",
-    error_msg : "failed to fetch import schema"
   }
 };
 
@@ -247,7 +241,6 @@ function MesheryApplications({
   const [selectedApplication, setSelectedApplication] = useState(resetSelectedApplication());
   const DEPLOY_URL = '/api/pattern/deploy';
   const [types, setTypes] = useState([]);
-  const [importSchema, setImportSchema] = useState({});
   const [modalOpen, setModalOpen] = useState({
     open : false,
     deploy : false,
@@ -282,16 +275,6 @@ function MesheryApplications({
    * fetch applications when the application downloads
    */
   useEffect(() => {
-    dataFetch("/api/schema/resource/application",
-      {
-        method : "GET",
-        credentials : "include",
-      },
-      (result) => {
-        setImportSchema(result);
-      },
-      handleError(ACTION_TYPES.SCHEMA_FETCH)
-    )
     initAppsSubscription();
     getTypes();
     return () => {
@@ -874,49 +857,6 @@ function MesheryApplications({
     }
   };
 
-
-  /**
-   * Gets the data of Import Filter and handles submit operation
-   *
-   * @param {{
-  * uploadType: ("Helm Chart"| "Kubernetes Manifest" | "Docker Compose");
-  * config: string;
-  * name: string;
-  * url: string;
-  * file: string;
-  * }} data
-  */
-  function handleImportApplication(data) {
-    updateProgress({ showProgress : true })
-    const { applicationType, name, url, file } = data;
-    let requestBody = null;
-
-    if (url) {
-      requestBody = JSON.stringify({
-        save : true,
-        url : url,
-        name : name
-      })
-    } else if (file) {
-      requestBody = JSON.stringify({
-        save : true,
-        application_data : {
-          name,
-          application_file : getDecodedFile(file)
-        },
-        name
-      })
-    }
-
-    dataFetch(`/api/application/${encodeURI(applicationType)}`,
-      { credentials : "include", method : "POST", body : requestBody },
-      () => {
-        updateProgress({ showProgress : false });
-      },
-      handleError(ACTION_TYPES.UPLOAD_APPLICATION)
-    )
-  }
-
   return (
     <>
 
@@ -1017,19 +957,15 @@ function MesheryApplications({
           tab={modalOpen.deploy ? 2 : 1}
         />
         <PromptComponent ref={modalRef} />
-        <Modal
+        <UploadImport
           open={importModal.open}
-          schema={importSchema.rjsfSchema}
-          uiSchema={importSchema.uiSchema}
           handleClose={handleUploadImportClose}
-          handleSubmit={handleImportApplication}
-          title="Import Application"
-          submitBtnText="Import"
-          leftHeaderIcon={<Application fill="#fff" style={{ height : "24px", width : "24px", fonSize : "1.45rem" }} />}
-          submitBtnIcon={<PublishIcon  style={iconMedium} className={classes.addIcon} data-cy="import-button"/>}
-        />
-        {/* <UploadImport open={importModal.open} handleClose={handleUploadImportClose} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler}
-          supportedTypes={types} configuration="Application"  /> */}
+          isApplication={true}
+          aria-label="URL upload button"
+          handleUrlUpload={urlUploadHandler}
+          handleUpload={uploadHandler}
+          supportedTypes={types}
+          configuration="Application"  />
       </NoSsr>
     </>
   );
