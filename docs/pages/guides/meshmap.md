@@ -97,4 +97,4 @@ Click on "Interactive Terminal" button, after clicking the Open Interactive Term
 <a href="{{ site.baseurl }}/assets/img/meshmap/meshmap-visual-terminal.png"> <img style="border-radius: 0.5%;" style="width:700px;height:auto;" src="{{ site.baseurl }}/assets/img/meshmap/meshmap-visual-terminal.png"/> </a>
 
 
-To learn more about working with designs, click here: <a href="{{site.baseurl}}/extensions/meshmap"> MeshMap - Meshery Extensions Documentation </a>
+To learn more about working with designs, click here: <a href="{{site.baseurl}}/extensions/meshmap"> MeshMap - Meshery Extensions </a>
