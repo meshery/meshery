@@ -879,7 +879,6 @@ function MesheryApplications({
   * }} data
   */
   function handleImportApplication(data) {
-    console.log("hello.....", data)
     updateProgress({ showProgress : true })
     const { applicationType, name, url, file } = data;
     let requestBody = null;
