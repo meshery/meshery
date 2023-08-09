@@ -226,7 +226,6 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
          aria-label="catalog publish"
          title={publishModal.pattern?.name}
          handleSubmit={handlePublish}
-         payload={payload}
          showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }}
          submitBtnText="Submit for Approval"
          submitBtnIcon={<PublicIcon/>}
