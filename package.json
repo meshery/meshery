@@ -3,7 +3,7 @@
     "google-sheet-cli": "^1.6.0"
   },
   "devDependencies": {
-    "husky": "^8.0.3"
+    "husky": "^7.0.2"
   },
   "husky": {
     "hooks": {

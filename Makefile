@@ -96,6 +96,7 @@ server-without-k8s: dep-check
 	go run main.go error.go;
 
 server: dep-check
+	npx husky install
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
