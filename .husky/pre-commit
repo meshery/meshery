@@ -2,14 +2,21 @@
 
 # Run make target for meshery server
 echo "Running make target for meshery server meshkit error duplicacy"
-make error
+output=$(make error)
+output_length=${#output}
+
+if [ $output_length -gt 1 ]; then
+    echo "Aborting commit Meshkit Error Duplicacy found in Meshery Server ..."
+    exit 1
+fi
 
 # Run make target for mesheryctl
 echo "Running make target for mesheryctl meshkit error duplicacy"
 cd mesheryctl
-make error
+output=$(make error)
+output_length=${#output}
 
-if [ $? -ne 0 ]; then
-    echo "Aborting commit Meshkit Error Duplicacy found"
+if [ $output_length -gt 1 ]; then
+    echo "Aborting commit Meshkit Error Duplicacy found in Mesheryctl ..."
     exit 1
 fi
