@@ -272,6 +272,21 @@ function getComponentURIFromPathForUserPrefs(extensions) {
 }
 
 /**
+ * getComponentURIFromPathForCollaborator takes in the user_prefs extensions and returns
+ * an array of all the component mappings
+ * @param {import("../utils/ExtensionPointSchemaValidator").CollaboratorSchema[]} extensions
+ * @returns {string[]}
+ */
+function getComponentURIFromPathForCollaborator(extensions) {
+
+  if (Array.isArray(extensions)) {
+    return extensions.map(ext => ext.component)
+  }
+
+  return []
+}
+
+/**
  * createPathForRemoteComponent takes in the name of the component and
  * returns a path for making the http request for that path
  *
@@ -291,19 +306,47 @@ function createPathForRemoteComponent(componentName) {
  * Only two "types" are supported by the sandbox:
  *  1. navigator - for navigator extensions
  *  2. user_prefs - for user preference extension
- *  3. account - for user account
- * @param {{ type: "navigator" | "user_prefs" | "account", Extension: JSX.Element }} props
+ *  3. account - for user account extension
+ *  4. collaborator - for collaborator extension
+ * @param {{ type: "navigator" | "user_prefs" | "account" | "collaborator", Extension: JSX.Element }} props
  */
 function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer, capabilitiesRegistry }) {
+  console.log("ExtensionSandbox: type: ", type)
   const [extension, setExtension] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+
   useEffect(() => {
+    console.log("Inside ExtensionSandbox ")
     if (type === "navigator" && !isDrawerCollapsed) {
       toggleDrawer({ isDrawerCollapsed : !isDrawerCollapsed });
     }
+    console.log("ExtensionSandbox: capabilitiesRegistry: ", capabilitiesRegistry)
     if (capabilitiesRegistry) {
       const data = ExtensionPointSchemaValidator(type)(capabilitiesRegistry?.extensions[type]);
+      console.log("ExtensionSandbox: data: ", data)
+      if (data !== undefined) {
+        setExtension(data);
+        setIsLoading(false);
+      }
+    }
+    // necessary to cleanup states on each unmount to prevent memory leaks and unwanted clashes between extension points
+    return () => {
+      setExtension([]);
+      setIsLoading(true);
+    }
+  }, []);
+
+
+  useEffect(() => {
+    console.log("Inside ExtensionSandbox ")
+    if (type === "navigator" && !isDrawerCollapsed) {
+      toggleDrawer({ isDrawerCollapsed : !isDrawerCollapsed });
+    }
+    console.log("ExtensionSandbox: capabilitiesRegistry: ", capabilitiesRegistry)
+    if (capabilitiesRegistry) {
+      const data = ExtensionPointSchemaValidator(type)(capabilitiesRegistry?.extensions[type]);
+      console.log("ExtensionSandbox: data: ", data)
       if (data !== undefined) {
         setExtension(data);
         setIsLoading(false);
@@ -320,6 +363,7 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer, ca
     <>
       {
         (
+          console.log(extension),
           isLoading ? (
             <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
           ) :
@@ -334,11 +378,17 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer, ca
                       return <Extension url={createPathForRemoteComponent(uri)} key={uri} />
                     })
                   )
-                  : (type === "account")?
+                  : (type === "collaborator")?
                     (
-                      <Extension url={createPathForRemoteComponent(getComponentURIFromPathForAccount(extension, getPath()))} />
+                      getComponentURIFromPathForCollaborator(extension).map(uri => {
+                        return <Extension url={createPathForRemoteComponent(uri)} key={uri} />
+                      })
                     )
-                    : null
+                    : (type === "account")?
+                      (
+                        <Extension url={createPathForRemoteComponent(getComponentURIFromPathForAccount(extension, getPath()))} />
+                      )
+                      : null
             )
         )
       }
