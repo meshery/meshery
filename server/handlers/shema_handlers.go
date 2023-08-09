@@ -25,7 +25,6 @@ func (h *Handler) HandleResourceSchemas(rw http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	fmt.Println("see this, came here", rscName)
 
 	var rjsfSchemaJSON map[string]interface{}
 	var uiSchemaJSON map[string]interface{}
@@ -35,7 +34,6 @@ func (h *Handler) HandleResourceSchemas(rw http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	fmt.Println("see this, came here", rjsfSchema)
 	if err := json.Unmarshal(uiSchema, &rjsfSchemaJSON); err != nil {
 		uiSchemaJSON = map[string]interface{}{}
 	}
