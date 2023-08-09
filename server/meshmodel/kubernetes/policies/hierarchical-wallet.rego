@@ -8,8 +8,8 @@ import data.meshmodel_policy.get_array_pos
 import data.meshmodel_policy.get_path
 
 parent_child_relationship = updated_design {
-    from_selectors := data.selectors.allow.from
-    to_selectors := data.selectors.allow.to
+    from_selectors := data.inventory.selectors.allow.from
+    to_selectors := data.inventory.selectors.allow.to
 
     # contains "selectors.from" components only, eg: WASMFilters comps only
     allowed_parent_comps := extract_components(input.services, from_selectors)

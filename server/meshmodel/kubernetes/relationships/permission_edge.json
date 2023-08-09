@@ -15,9 +15,6 @@
     "metadata": {}
   },
   "subType": "Permission",
-  "bindingResource": {
-    "kind": "ClusterRoleBinding"
-  },
   "selectors": {
     "deny": {
       "from": [
@@ -71,7 +68,7 @@
                 "name"
               ]
             ],
-            "bindingResource": [
+            "ClusterRoleBinding": [
               [
                 "settings",
                 "roleRef",
@@ -97,7 +94,7 @@
                 "name"
               ]
             ],
-            "bindingResource": [
+            "ClusterRoleBinding": [
               [
                 "settings",
                 "roleRef",
@@ -122,7 +119,7 @@
                 "name"
               ]
             ],
-            "bindingResource": [[
+            "ClusterRoleBinding": [[
               "settings",
               "subjects",
               "_",

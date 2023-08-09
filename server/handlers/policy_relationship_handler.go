@@ -1,14 +1,12 @@
 package handlers
 
 import (
-	"context"
 	"encoding/json"
 	"io"
 	"net/http"
 
 	"github.com/layer5io/meshery/server/models"
 
-	"github.com/layer5io/meshkit/models/meshmodel/core/policies"
 	"github.com/sirupsen/logrus"
 )
 
@@ -38,7 +36,7 @@ func (h *Handler) GetRegoPolicyForDesignFile(
 	}
 
 	// evaluate all the rego policies in the policies directory
-	networkPolicy, err := policies.RegoPolicyHandler(context.Background(), []string{"../meshmodel/policies"}, "data.network_policy", body)
+	networkPolicy, err := h.Rego.RegoPolicyHandler("data.meshmodel_policy", body)
 	if err != nil {
 		h.log.Error(ErrResolvingRegoRelationship(err))
 		http.Error(rw, ErrResolvingRegoRelationship(err).Error(), http.StatusInternalServerError)

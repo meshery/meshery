@@ -14,9 +14,6 @@
       },
       "metadata": {}
     },
-      "bindingResource": {
-        "kind": "PersistentVolumeClaim"
-      },
     "subType": "Mount",
     "selectors": {
       "deny": {
@@ -42,7 +39,7 @@
               "self": [
                 [ "settings", "spec", "volumes", "_", "persistentVolumeClaim", "claimName" ]
               ],
-              "bindingResource": [
+              "PersistentVolumeClaim": [
                 ["name"]
               ]
             }
@@ -55,7 +52,7 @@
               "self": [
                 ["labels"]
               ],
-              "bindingResource": [
+              "PersistentVolumeClaim": [
                 ["settings", "spec", "selectors", "matchLabels"]
               ]
             }
