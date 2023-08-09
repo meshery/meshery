@@ -1,5 +1,13 @@
 {
   "dependencies": {
     "google-sheet-cli": "^1.6.0"
+  },
+  "devDependencies": {
+    "husky": "^8.0.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "make error; cd mesheryctl; make error"
+    }
   }
 }
