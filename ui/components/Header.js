@@ -31,7 +31,7 @@ import {
   successHandlerGenerator, errorHandlerGenerator, closeButtonForSnackbarAction
 } from './ConnectionWizard/helpers/common';
 import { promisifiedDataFetch } from '../lib/data-fetch';
-import { updateK8SConfig, updateProgress } from '../lib/store';
+import { updateK8SConfig, updateProgress, updateCapabilities } from '../lib/store';
 import { bindActionCreators } from 'redux';
 import BadgeAvatars from './CustomAvatar';
 import { CapabilitiesRegistry as CapabilityRegistryClass } from '../utils/disabledComponents';
@@ -43,6 +43,9 @@ import { iconMedium } from '../css/icons.styles';
 import { isExtensionOpen } from '../pages/_app';
 import ExtensionSandbox from './ExtensionSandbox';
 import RemoteComponent from './RemoteComponent';
+import { CapabilitiesRegistry } from "../utils/disabledComponents";
+import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
+import dataFetch from '../lib/data-fetch';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -524,10 +527,33 @@ class Header extends React.Component {
       brokerStatusSubscription : null,
       brokerStatus : false,
       /** @type {CapabilityRegistryClass} */
-      capabilityregistryObj : null
+      capabilityregistryObj : null,
+      collaboratorExt : null,
     }
   }
   componentDidMount() {
+    dataFetch(
+      "/api/provider/capabilities",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      (result) => {
+        if (result) {
+          console.log("capabilitiesRegistry-result(header)", result)
+          const capabilitiesRegistryObj = new CapabilitiesRegistry(result);
+          console.log("capabilitiesRegistryObj(header)", capabilitiesRegistryObj)
+
+          this.setState({
+            collaboratorExt : ExtensionPointSchemaValidator("collaborator")(result?.extensions?.collaborator),
+            capabilitiesRegistryObj,
+          });
+          this.props.updateCapabilities({ capabilitiesRegistry : result })
+        }
+      },
+      (err) => console.error(err)
+    );
+    console.log("capabilitiesRegistry (mounted header)", this.props.capabilitiesRegistry)
     this._isMounted = true;
     const brokerStatusSub = subscribeBrokerStatusEvents(data => {
       console.log({ brokerData : data })
@@ -538,6 +564,7 @@ class Header extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (!_.isEqual(prevProps.capabilitiesRegistry, this.props.capabilitiesRegistry)) {
+      console.log("capabilitiesRegistry changed", this.props.capabilitiesRegistry)
       this.setState({ capabilityregistryObj : new CapabilityRegistryClass(this.props.capabilitiesRegistry) });
     }
 
@@ -548,7 +575,7 @@ class Header extends React.Component {
   }
 
   render() {
-    const { classes, title, onDrawerToggle, isBeta, theme, themeSetter, onDrawerCollapse } = this.props;
+    const { classes, title, onDrawerToggle, isBeta, theme, themeSetter, onDrawerCollapse, capabilityregistryObj } = this.props;
 
     return (
       <NoSsr>
@@ -580,7 +607,9 @@ class Header extends React.Component {
                 </Grid>
                 <Grid item className={classes.userContainer} style={{ position : "relative", right : "-27px" }}>
                   {/* According to the capabilities load the component */}
-                  <ExtensionSandbox type="user_prefs" Extension={() => RemoteComponent({ url : { url : "/api/provider/extension/provider/useravatar/meshmap_avatar/index.js" }, componentLoading : false })} />
+                  {
+                    this.state.collaboratorExt && <ExtensionSandbox type="collaborator" Extension={(url) => RemoteComponent({ url })} capabilitiesRegistry={capabilityregistryObj} />
+                  }
                   <div className={classes.userSpan} style={{ position : "relative" }}>
                     <K8sContextMenu
                       classes={classes}
@@ -646,6 +675,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => ({
   updateK8SConfig : bindActionCreators(updateK8SConfig, dispatch),
   updateProgress : bindActionCreators(updateProgress, dispatch),
+  updateCapabilities : bindActionCreators(updateCapabilities, dispatch),
 });
 
 

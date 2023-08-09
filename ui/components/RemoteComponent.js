@@ -8,6 +8,7 @@ const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
 
 const RemoteComponent = ({ url }) => {
+  console.log("RemoteComponent: url: ", url)
   const [loading, err, RemoteComponent] = useRemoteComponent(url.url);
   if (loading) {
     return (
