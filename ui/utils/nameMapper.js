@@ -17,10 +17,6 @@ export const podNameMapper = (serviceMeshName, podName) => {
       return "Grafana";
     case "prometheus":
       return "Prometheus";
-    case "osm":
-      if (podName.includes("osm-injector")) return "OSM Injector";
-      if (podName.includes("osm-controller")) return "OSM Controller";
-      break;
     default:
       break;
   }

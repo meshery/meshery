@@ -15,7 +15,7 @@ image:
 env:
   EVENT: mesheryLocal
   PROVIDER_BASE_URLS: https://meshery.layer5.io
-  ADAPTER_URLS: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-kuma:10007 meshery-osm:10009 meshery-nginx-sm:10010 meshery-nsm:10004 meshery-app-mesh:10005 meshery-traefik-mesh:10006 meshery-cilium:10012
+  ADAPTER_URLS: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-kuma:10007 meshery-nginx-sm:10010 meshery-nsm:10004 meshery-app-mesh:10005 meshery-traefik-mesh:10006 meshery-cilium:10012
   PROVIDER: ""
 probe:
   #TODO: Need to confirm the health check path of meshery.
@@ -97,63 +97,80 @@ affinity: {}
 # If need to use a different service accounts for the adapters, modify the serviceAccountNameOverride for the corresponding adapters here,
 # or set the serviceAccountNameOverride to empty while setting the serviceAccount information in the sub-chart accordingly
 meshery-app-mesh:
-  enabled: true
+  enabled: false
   fullnameOverride: meshery-app-mesh
   serviceAccountNameOverride: meshery-server
+  metadata:
+    namespace: meshery
 
 meshery-istio:
-  enabled: true
+  enabled: false
   fullnameOverride: meshery-istio
   serviceAccountNameOverride: meshery-server
+  metadata:
+    namespace: meshery
 
 meshery-linkerd:
-  enabled: true
+  enabled: false
   fullnameOverride: meshery-linkerd
   serviceAccountNameOverride: meshery-server
+  metadata:
+    namespace: meshery
 
 meshery-consul:
-  enabled: true
+  enabled: false
   fullnameOverride: meshery-consul
   serviceAccountNameOverride: meshery-server
+  metadata:
+    namespace: meshery
 
 meshery-kuma:
-  enabled: true
+  enabled: false
   fullnameOverride: meshery-kuma
   serviceAccountNameOverride: meshery-server
+  metadata:
+    namespace: meshery
 
 meshery-osm:
-  enabled: true
+  enabled: false
   fullnameOverride: meshery-osm
   serviceAccountNameOverride: meshery-server
+  metadata:
+    namespace: meshery
 
 meshery-nsm:
-  enabled: true
+  enabled: false
   fullnameOverride: meshery-nsm
   serviceAccountNameOverride: meshery-server
+  metadata:
+    namespace: meshery
 
 meshery-nginx-sm:
-  enabled: true
+  enabled: false
   fullnameOverride: meshery-nginx-sm
   serviceAccountNameOverride: meshery-server
+  metadata:
+    namespace: meshery
 
 meshery-traefik-mesh:
-  enabled: true
+  enabled: false
   fullnameOverride: meshery-traefik-mesh
   serviceAccountNameOverride: meshery-server
-
-# The operator has its own cluster role
-meshery-operator:
-  enabled: true
-  fullnameOverride: meshery-operator
+  metadata:
+    namespace: meshery
 
 meshery-cilium:
-  enabled: true
+  enabled: false
   fullnameOverride: meshery-cilium
+  metadata:
+    namespace: meshery
 
 meshery-perf:
   enabled: false
   fullnameOverride: meshery-perf
   serviceAccountNameOverride: meshery-server
+  metadata:
+    namespace: meshery
 
 # If there need the test cases set it as true.
 #

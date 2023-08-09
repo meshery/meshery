@@ -2,6 +2,9 @@ package main
 
 import "github.com/layer5io/meshkit/errors"
 
+// Please reference the following before contributing an error code:
+// https://docs.meshery.io/project/contributing/contributing-error
+// https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
 	ErrCreatingUUIDInstanceCode                   = "2251"
 	ErrRegisteringMesheryOAMTraitsCode            = "2241"
