@@ -6,7 +6,7 @@ import {
 import BBChart from "../BBChart"
 import { donut, pie } from "billboard.js";
 import { getAllComponents, getMeshModels, getRelationshipsDetail, fetchCategories, getModelFromCategoryApi } from "../../api/meshmodel"
-import { dataToColors } from "../../utils/chartColors"
+import { dataToColors } from "../../utils/charts"
 
 const useFetchTotal = (fetchr) => {
   const [total, setTotal] = useState(0)
