@@ -38,7 +38,7 @@ func (h *Handler) GetRegoPolicyForDesignFile(
 	}
 
 	// evaluate all the rego policies in the policies directory
-	networkPolicy, err := policies.RegoPolicyHandler(context.Background(), []string{"../meshmodel/policies"}, "data.network_policy", body)
+	networkPolicy, err := policies.RegoPolicyHandler(context.Background(), []string{"../meshmodel/kubernetes/policies"}, "data.network_policy", body)
 	if err != nil {
 		h.log.Error(ErrResolvingRegoRelationship(err))
 		http.Error(rw, ErrResolvingRegoRelationship(err).Error(), http.StatusInternalServerError)

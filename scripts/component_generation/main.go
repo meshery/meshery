@@ -565,16 +565,16 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 			batchSize--
 			fmt.Println("Batch size: ", batchSize)
 			if batchSize <= 0 {
-				// row := &sheets.ValueRange{
-				// 	Values: values,
-				// }
-				// response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, sheetName, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
-				// values = make([][]interface{}, 0)
-				// batchSize = 100
-				// if err != nil || response2.HTTPStatusCode != 200 {
-				// 	fmt.Println(err)
-				// 	continue
-				// }
+				row := &sheets.ValueRange{
+					Values: values,
+				}
+				response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, sheetName, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
+				values = make([][]interface{}, 0)
+				batchSize = 100
+				if err != nil || response2.HTTPStatusCode != 200 {
+					fmt.Println(err)
+					continue
+				}
 			}
 		}
 		if am[entry.model] != nil {
@@ -592,26 +592,26 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 		batchSize--
 		fmt.Println("Batch size: ", batchSize)
 		if batchSize <= 0 {
-			// row := &sheets.ValueRange{
-			// 	Values: values,
-			// }
-			// response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, sheetName, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
-			// values = make([][]interface{}, 0)
-			// batchSize = 100
-			// if err != nil || response2.HTTPStatusCode != 200 {
-			// 	fmt.Println(err)
-			// 	continue
-			// }
+			row := &sheets.ValueRange{
+				Values: values,
+			}
+			response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, sheetName, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
+			values = make([][]interface{}, 0)
+			batchSize = 100
+			if err != nil || response2.HTTPStatusCode != 200 {
+				fmt.Println(err)
+				continue
+			}
 		}
 	}
 	if len(values) != 0 {
-		// row := &sheets.ValueRange{
-		// 	Values: values,
-		// }
-		// response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, sheetName, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
-		// if err != nil || response2.HTTPStatusCode != 200 {
-		// 	fmt.Println(err)
-		// }
+		row := &sheets.ValueRange{
+			Values: values,
+		}
+		response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, sheetName, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
+		if err != nil || response2.HTTPStatusCode != 200 {
+			fmt.Println(err)
+		}
 	}
 	elapsed := time.Now().Sub(start)
 	fmt.Printf("Time taken by spreadsheet updater in minutes (including the time it required to generate components): %f", elapsed.Minutes())
