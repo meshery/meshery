@@ -1299,12 +1299,11 @@ function MesheryPatterns({
   function handleImportDesign(data) {
     console.log("data....", data)
     updateProgress({ showProgress : true })
-    const { uploadType, name, config, url, file } = data;
+    const { uploadType, name, url, file } = data;
     let requestBody = null;
     switch (uploadType) {
       case "File Upload":
         requestBody = JSON.stringify({
-          config,
           save : true,
           pattern_data : {
             name,
@@ -1314,7 +1313,6 @@ function MesheryPatterns({
         break;
       case "URL Upload":
         requestBody = JSON.stringify({
-          config,
           save : true,
           url,
           pattern_data : {
