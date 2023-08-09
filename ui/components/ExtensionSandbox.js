@@ -311,20 +311,16 @@ function createPathForRemoteComponent(componentName) {
  * @param {{ type: "navigator" | "user_prefs" | "account" | "collaborator", Extension: JSX.Element }} props
  */
 function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer, capabilitiesRegistry }) {
-  console.log("ExtensionSandbox: type: ", type)
   const [extension, setExtension] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
 
   useEffect(() => {
-    console.log("Inside ExtensionSandbox ")
     if (type === "navigator" && !isDrawerCollapsed) {
       toggleDrawer({ isDrawerCollapsed : !isDrawerCollapsed });
     }
-    console.log("ExtensionSandbox: capabilitiesRegistry: ", capabilitiesRegistry)
     if (capabilitiesRegistry) {
       const data = ExtensionPointSchemaValidator(type)(capabilitiesRegistry?.extensions[type]);
-      console.log("ExtensionSandbox: data: ", data)
       if (data !== undefined) {
         setExtension(data);
         setIsLoading(false);
@@ -339,14 +335,11 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer, ca
 
 
   useEffect(() => {
-    console.log("Inside ExtensionSandbox ")
     if (type === "navigator" && !isDrawerCollapsed) {
       toggleDrawer({ isDrawerCollapsed : !isDrawerCollapsed });
     }
-    console.log("ExtensionSandbox: capabilitiesRegistry: ", capabilitiesRegistry)
     if (capabilitiesRegistry) {
       const data = ExtensionPointSchemaValidator(type)(capabilitiesRegistry?.extensions[type]);
-      console.log("ExtensionSandbox: data: ", data)
       if (data !== undefined) {
         setExtension(data);
         setIsLoading(false);
@@ -363,7 +356,6 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer, ca
     <>
       {
         (
-          console.log(extension),
           isLoading ? (
             <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
           ) :

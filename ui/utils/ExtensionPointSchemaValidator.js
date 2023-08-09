@@ -47,7 +47,6 @@
  * @param {string} type - Type of Schema validator needed. Valid types are - navigator, userprefs, account
  */
 export default function ExtensionPointSchemaValidator(type) {
-  console.log("type", type)
   switch (type) {
     case "navigator":
       return NavigatorExtensionSchemaDecoder;

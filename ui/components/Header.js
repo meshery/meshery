@@ -540,9 +540,7 @@ class Header extends React.Component {
       },
       (result) => {
         if (result) {
-          console.log("capabilitiesRegistry-result(header)", result)
           const capabilitiesRegistryObj = new CapabilitiesRegistry(result);
-          console.log("capabilitiesRegistryObj(header)", capabilitiesRegistryObj)
 
           this.setState({
             collaboratorExt : ExtensionPointSchemaValidator("collaborator")(result?.extensions?.collaborator),
@@ -564,7 +562,6 @@ class Header extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (!_.isEqual(prevProps.capabilitiesRegistry, this.props.capabilitiesRegistry)) {
-      console.log("capabilitiesRegistry changed", this.props.capabilitiesRegistry)
       this.setState({ capabilityregistryObj : new CapabilityRegistryClass(this.props.capabilitiesRegistry) });
     }
 
