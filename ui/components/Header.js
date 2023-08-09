@@ -573,7 +573,7 @@ class Header extends React.Component {
 
   render() {
     const { classes, title, onDrawerToggle, isBeta, theme, themeSetter, onDrawerCollapse, capabilityregistryObj } = this.props;
-
+    const loaderType = "circular"
     return (
       <NoSsr>
         <React.Fragment>
@@ -605,7 +605,7 @@ class Header extends React.Component {
                 <Grid item className={classes.userContainer} style={{ position : "relative", right : "-27px" }}>
                   {/* According to the capabilities load the component */}
                   {
-                    this.state.collaboratorExt && <ExtensionSandbox type="collaborator" Extension={(url) => RemoteComponent({ url })} capabilitiesRegistry={capabilityregistryObj} />
+                    this.state.collaboratorExt && <ExtensionSandbox type="collaborator" Extension={(url) => RemoteComponent({ url, loaderType })} capabilitiesRegistry={capabilityregistryObj} />
                   }
                   <div className={classes.userSpan} style={{ position : "relative" }}>
                     <K8sContextMenu
