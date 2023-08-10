@@ -8,17 +8,20 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrNilClientCode                            = "1001"
-	ErrCreateDataCode                           = "1002"
-	ErrQueryCode                                = "1003"
-	ErrMeshsyncSubscriptionCode                 = "1004"
-	ErrMesheryClientCode                        = "1008"
-	ErrSubscribeChannelCode                     = "1009"
-	ErrPublishBrokerCode                        = "1010"
-	ErrNoMeshSyncCode                           = "1011"
-	ErrApplyHelmChartCode                       = "2155"
-	ErrMesheryControllersStatusSubscriptionCode = "2239"
-	ErrMeshSyncEventsSubscriptionCode           = "2240"
+	ErrNilClientCode                            = "1300"
+	ErrCreateDataCode                           = "1301"
+	ErrQueryCode                                = "1302"
+	ErrMeshsyncSubscriptionCode                 = "1303"
+	ErrMesheryClientCode                        = "1304"
+	ErrSubscribeChannelCode                     = "1305"
+	ErrPublishBrokerCode                        = "1306"
+	ErrNoMeshSyncCode                           = "1307"
+	ErrApplyHelmChartCode                       = "1308"
+	ErrMesheryControllersStatusSubscriptionCode = "1309"
+	ErrMeshSyncEventsSubscriptionCode           = "1310"
+	ErrUpdateDataCode                           = "1311"
+	ErrDeleteDataCode                           = "1312"
+	ErrMesheryClientNilCode                     = "1313"
 )
 
 var (
@@ -38,11 +41,11 @@ func ErrCreateData(err error) error {
 }
 
 func ErrUpdateData(err error) error {
-	return errors.New(ErrCreateDataCode, errors.Alert, []string{"Error while updating meshsync data", err.Error()}, []string{"Unable to update MeshSync data to the Meshery Database"}, []string{"Meshery Database is crashed or not reachable"}, []string{"Restart Meshery Server", "Please check if Meshery server is accessible to the Database"})
+	return errors.New(ErrUpdateDataCode, errors.Alert, []string{"Error while updating meshsync data", err.Error()}, []string{"Unable to update MeshSync data to the Meshery Database"}, []string{"Meshery Database is crashed or not reachable"}, []string{"Restart Meshery Server", "Please check if Meshery server is accessible to the Database"})
 }
 
 func ErrDeleteData(err error) error {
-	return errors.New(ErrCreateDataCode, errors.Alert, []string{"Error while deleting meshsync data", err.Error()}, []string{"Unable to read MeshSync data to the Meshery Database"}, []string{"Meshery Database is crashed or not reachable"}, []string{"Restart Meshery Server", "Please check if Meshery server is accessible to the Database"})
+	return errors.New(ErrDeleteDataCode, errors.Alert, []string{"Error while deleting meshsync data", err.Error()}, []string{"Unable to read MeshSync data to the Meshery Database"}, []string{"Meshery Database is crashed or not reachable"}, []string{"Restart Meshery Server", "Please check if Meshery server is accessible to the Database"})
 }
 
 func ErrQuery(err error) error {
@@ -62,10 +65,11 @@ func ErrPublishBroker(err error) error {
 }
 
 func ErrMesheryClient(err error) error {
-	if err != nil {
-		return errors.New(ErrMesheryClientCode, errors.Alert, []string{"Meshery kubernetes client not initialized", err.Error()}, []string{"Kubernetes config is not initialized with Meshery 1"}, []string{}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
-	}
-	return errors.New(ErrMesheryClientCode, errors.Alert, []string{"Meshery kubernetes client not initialized"}, []string{"Kubernetes config is not initialized with Meshery 2"}, []string{}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
+	return errors.New(ErrMesheryClientCode, errors.Alert, []string{"Meshery kubernetes client not initialized", err.Error()}, []string{"Kubernetes config is not initialized with Meshery 1"}, []string{}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
+}
+
+func ErrMesheryClientNil(err error) error {
+	return errors.New(ErrMesheryClientNilCode, errors.Alert, []string{"Meshery kubernetes client not initialized"}, []string{"Kubernetes config is not initialized with Meshery 2"}, []string{}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
 }
 
 // ErrApplyHelmChart is the error which occurs while applying helm chart

@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/spf13/viper"
 )
@@ -54,8 +55,8 @@ func (h *Handler) ServerVersionHandler(w http.ResponseWriter, _ *http.Request) {
 
 	err = json.NewEncoder(w).Encode(version)
 	if err != nil {
-		h.log.Error(ErrEncoding(err, "server-version"))
-		http.Error(w, ErrEncoding(err, "server-version").Error(), http.StatusNotFound)
+		h.log.Error(models.ErrEncoding(err, "server-version"))
+		http.Error(w, models.ErrEncoding(err, "server-version").Error(), http.StatusNotFound)
 	}
 }
 
