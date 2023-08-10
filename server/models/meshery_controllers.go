@@ -387,13 +387,10 @@ func SetOverrideValuesForMesheryDeploy(adapters []Adapter, adapter Adapter, inst
 
 	// based on deploy/undeploy action change the status of adapter override
 	if _, ok := overrideValues[strings.Split(adapter.Location, ":")[0]]; ok {
-			overrideValues[strings.Split(adapter.Location, ":")[0]] = map[string]interface{}{
-				"enabled": install,
-			}
+		overrideValues[strings.Split(adapter.Location, ":")[0]] = map[string]interface{}{
+			"enabled": install,
 		}
-
-
+	}
 
 	return overrideValues
 }
-

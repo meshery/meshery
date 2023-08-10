@@ -18,9 +18,8 @@ const (
 	HelmChartURL          = "https://meshery.io/charts/"
 	HelmChartName         = "meshery"
 	HelmChartOperatorName = "meshery-operator"
-	MesheryFolder = ".meshery"
-	ManifestsFolder = "manifests"
-
+	MesheryFolder         = ".meshery"
+	ManifestsFolder       = "manifests"
 )
 
 // RecursiveCastMapStringInterfaceToMapStringInterface will convert a
