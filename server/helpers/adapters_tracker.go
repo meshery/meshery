@@ -8,7 +8,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-	"path"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -160,18 +159,19 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 			fmt.Println("No context found")
 			return ErrAdapterAdministration(fmt.Errorf("no context found"))
 		}
-		for _, ctx := range allContexts {
-			if ctx.Name == "in-cluster" {
-				k8scontext = ctx
+		for _, k8sctx := range allContexts {
+			if k8sctx.Name == "in-cluster" {
+				k8scontext = k8sctx
 				break
 			}
-		}
+}
+
 		kubeclient, err := k8scontext.GenerateKubeHandler()
 		if err != nil {
 			return ErrAdapterAdministration(err)
 		}
 
-		overrideValues := models.SetOverrideValuesForMesheryDeploy(a.GetAdapters(ctx))
+		overrideValues := models.SetOverrideValuesForMesheryDeploy(a.GetAdapters(ctx), adapter, true)
 		err = kubeclient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
 		Namespace:       "meshery",
 		ReleaseName:     "meshery",
@@ -185,11 +185,16 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		Action:         meshkitkube.INSTALL,
 	})
 
+	if err != nil {
+		return ErrAdapterAdministration(err)
+	}
+
 	// switch to default case if the platform specified is not supported
 	default:
 		return ErrAdapterAdministration(fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes", platform))
 	}
 
+	fmt.Println("Adapter deployed successfully")
 	a.AddAdapter(ctx, adapter)
 	return nil
 }
@@ -239,18 +244,19 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 			fmt.Println("No context found")
 			return ErrAdapterAdministration(fmt.Errorf("no context found"))
 		}
-		for _, ctx := range allContexts {
-			if ctx.Name == "in-cluster" {
-				k8scontext = ctx
+		for _, k8sctx := range allContexts {
+			if k8sctx.Name == "in-cluster" {
+				k8scontext = k8sctx
 				break
 			}
+
 		}
 		kubeclient, err := k8scontext.GenerateKubeHandler()
 		if err != nil {
 			return ErrAdapterAdministration(err)
 		}
 
-		overrideValues := models.SetOverrideValuesForMesheryDeploy(a.GetAdapters(ctx))
+		overrideValues := models.SetOverrideValuesForMesheryDeploy(a.GetAdapters(ctx), adapter, false)
 		err = kubeclient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
 		Namespace:       "meshery",
 		ReleaseName:     "meshery",
@@ -263,6 +269,9 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 		OverrideValues: overrideValues,
 		Action:         meshkitkube.UNINSTALL,
 	})
+	if err != nil {
+		return ErrAdapterAdministration(err)
+	}
 
 
 	// switch to default case if the platform specified is not supported
