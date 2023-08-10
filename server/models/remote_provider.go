@@ -3753,6 +3753,7 @@ func (l *RemoteProvider) UpdateConnectionById(req *http.Request, connection *Con
 	}
 	bf := bytes.NewBuffer(_conn)
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connId))
+	logrus.Debugf("Making request to : %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
 	tokenString, err := l.GetToken(req)
 	if err != nil {
@@ -3782,7 +3783,7 @@ func (l *RemoteProvider) UpdateConnectionById(req *http.Request, connection *Con
 		return &conn, nil
 	}
 
-	return nil, ErrFetch(fmt.Errorf("failed to update the connection"), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("failed to update the connection"), string(bdr), resp.StatusCode)
 }
 
 // DeleteConnection - to delete a saved connection

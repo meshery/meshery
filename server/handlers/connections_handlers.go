@@ -230,8 +230,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
-	q := req.URL.Query()
-	_, err = provider.UpdateConnectionById(req, connection, q.Get("connectionId"))
+	_, err = provider.UpdateConnectionById(req, connection, mux.Vars(req)["connectionId"])
 	if err != nil {
 		h.log.Error(ErrFailToSave(err, obj))
 		http.Error(w, ErrFailToSave(err, obj).Error(), http.StatusInternalServerError)
@@ -250,9 +249,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 // responses:
 // 200: noContentWrapper
 func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	q := req.URL.Query()
-
-	connectionID := uuid.FromStringOrNil(q.Get("connectionId"))
+	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
 	_, err := provider.DeleteConnection(req, connectionID)
 	if err != nil {
 		obj := "connection"
