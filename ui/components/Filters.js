@@ -546,11 +546,15 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     );
   };
 
-  const handlePublish = (catalog_data) => {
+  const handlePublish = (formData) => {
+    const payload = {
+      id : publishModal.filter?.id,
+      catalog_data : formData
+    }
     updateProgress({ showProgress : true });
     dataFetch(
       `/api/filter/catalog/publish`,
-      { credentials : "include", method : "POST", body : JSON.stringify(catalog_data) },
+      { credentials : "include", method : "POST", body : JSON.stringify(payload) },
       () => {
         updateProgress({ showProgress : false });
         enqueueSnackbar("Filter Published!", {
@@ -1214,7 +1218,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
               selectedPage={page}
               UploadImport={UploadImport}
               handleImportFilter={handleImportFilter}
-
+              publishModal={publishModal}
+              setPublishModal={setPublishModal}
               fetch={() => fetchFilters(page, pageSize, search, sortOrder)}
             />
         }

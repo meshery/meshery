@@ -68,17 +68,18 @@ function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublis
  *  selectedPage?: number,
  *  setPage: (page: number) => void
  *  patternErrors: Map
- *  canPublishPattern: boolean
+ *  canPublishPattern: boolean,
+ *  publishModal: {
+ *   open: boolean,
+ *   filter: any,
+ *   name: string
+ *  },
+ *  setPublishModal: (publishModal: { open: boolean, filter: any, name: string }) => void
  * }} props props
  */
 
-function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUnpublishModal, handleDeploy, handleUnDeploy, handleClone, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage, patternErrors, canPublishPattern = false }) {
+function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUnpublishModal, handleDeploy, handleUnDeploy, handleClone, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage, patternErrors, canPublishPattern = false, publishModal, setPublishModal }) {
   const classes = useStyles()
-  const [publishModal, setPublishModal] = useState({
-    open : false,
-    pattern : {},
-    name : ""
-  });
   const handlePublishModal = (pattern) => {
     if (canPublishPattern) {
       setPublishModal({
@@ -94,18 +95,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
       pattern : {},
       name : ""
     });
-
-    setPayload({
-      id : "",
-      catalog_data : {}
-    });
-
   };
-
-  const [payload, setPayload] = useState({
-    id : "",
-    catalog_data : {}
-  });
 
   const [modalOpen, setModalOpen] = useState({
     open : false,
@@ -122,13 +112,6 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
       name : "",
       count : 0
     });
-  }
-
-  const onChange = (e) => {
-    setPayload({
-      id : publishModal.pattern?.id,
-      catalog_data : e
-    })
   }
 
   const handleModalOpen = (pattern, action) => {
@@ -221,7 +204,6 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
          open={publishModal.open}
          schema={publish_schema}
          uiSchema={publish_ui_schema}
-         onChange={onChange}
          handleClose={handlePublishModalClose}
          aria-label="catalog publish"
          title={publishModal.pattern?.name}

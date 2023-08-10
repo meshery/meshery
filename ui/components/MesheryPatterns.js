@@ -323,10 +323,6 @@ function MesheryPatterns({
     pattern : {},
     name : ""
   });
-  const [payload, setPayload] = useState({
-    id : "",
-    catalog_data : {}
-  });
 
 
   const [loading, stillLoading] = useState(true);
@@ -419,13 +415,6 @@ function MesheryPatterns({
       setSearch("")
     }
   },[viewType])
-
-  const onChange = (e) => {
-    setPayload({
-      id : publishModal.pattern?.id,
-      catalog_data : e
-    })
-  }
 
 
   const handleCatalogPreference = (catalogPref) => {
@@ -673,12 +662,6 @@ function MesheryPatterns({
       pattern : {},
       name : ""
     });
-
-    setPayload({
-      id : "",
-      catalog_data : {}
-    });
-
   };
 
   const handleDeploy = (pattern_file, name) => {
@@ -759,11 +742,15 @@ function MesheryPatterns({
       handleError(ACTION_TYPES.UNDEPLOY_PATTERN),
     );
   };
-  const handlePublish = (catalog_data) => {
+  const handlePublish = (formData) => {
+    const payload = {
+      id : publishModal.pattern?.id,
+      catalog_data : formData
+    }
     updateProgress({ showProgress : true });
     dataFetch(
       `/api/pattern/catalog/publish`,
-      { credentials : "include", method : "POST", body : JSON.stringify(catalog_data) },
+      { credentials : "include", method : "POST", body : JSON.stringify(payload) },
       () => {
         updateProgress({ showProgress : false });
         enqueueSnackbar("Design Published!", {
@@ -1431,6 +1418,8 @@ function MesheryPatterns({
               setPage={setPage}
               selectedPage={page}
               patternErrors={patternErrors}
+              publishModal={publishModal}
+              setPublishModal={setPublishModal}
             />
         }
         <ConfirmationModal
@@ -1452,7 +1441,6 @@ function MesheryPatterns({
             open={publishModal.open}
             schema={publish_schema}
             uiSchema={publish_ui_schema}
-            onChange={onChange}
             handleClose={handlePublishModalClose}
             aria-label="catalog publish"
             title={publishModal.pattern?.name}

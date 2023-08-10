@@ -16,7 +16,7 @@ export default function PublishModal(props) {
       handleClose={handleClose}
       handleSubmit={handleSubmit}
       submitBtnText="Submit for Approval"
-      submitBtnIcon={<PublicIcon  style={iconMedium} className={classes.addIcon} data-cy="import-button"/>}
+      submitBtnIcon={<PublicIcon data-cy="import-button"/>}
       showInfoIcon={{
         text : "Upon submitting your catalog item, an approval flow will be initiated.",
         link : "https://docs.meshery.io/concepts/catalog",

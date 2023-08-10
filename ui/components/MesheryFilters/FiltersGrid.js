@@ -78,9 +78,15 @@ function FilterCardGridItem({
  *  selectedFilter: {show : boolean, filter : any},
  *  pages?: number,
  *  selectedPage?: number,
- *  setPage: (page: number) => void
- *  filterErrors: Map
- *  canPublishFilter: boolean
+ *  setPage: (page: number) => void,
+ *  filterErrors: Map,
+ *  canPublishFilter: boolean,
+ *  publishModal: {
+ *   open: boolean,
+ *   filter: any,
+ *   name: string,
+ *  },
+ *  setPublishModal: (publishModal: { open: boolean, filter: any, name: string }) => void,
  * }} props props
  */
 
@@ -100,18 +106,14 @@ function FiltersGrid({
   canPublishFilter,
   handlePublish,
   handleUnpublishModal,
-  handleImportFilter
+  handleImportFilter,
+  publishModal,
+  setPublishModal
 }) {
   const classes = useStyles();
 
   const [importModal, setImportModal] = useState({
     open : false,
-  });
-
-  const [publishModal, setPublishModal] = useState({
-    open : false,
-    filter : {},
-    name : "",
   });
 
   const handlePublishModal = (filter) => {
