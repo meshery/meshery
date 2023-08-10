@@ -38,7 +38,7 @@ mesheryctl system context create [context-name]
 Create new context and provide list of components, platform & URL
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system context create context-name --components meshery-osm --platform docker --url http://localhost:9081 --set --yes
+mesheryctl system context create context-name --components meshery-nsm --platform docker --url http://localhost:9081 --set --yes
 
 </div>
 </pre> 

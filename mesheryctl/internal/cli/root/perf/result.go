@@ -56,7 +56,7 @@ var linkDocPerfResult = map[string]string{
 }
 
 var resultCmd = &cobra.Command{
-	Use:   "result profile-name",
+	Use:   "result [profile-name]",
 	Short: "List performance test results",
 	Long:  `List all the available test results of a performance profile`,
 	Args:  cobra.MinimumNArgs(0),

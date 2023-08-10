@@ -14,7 +14,7 @@ import (
 
 var specialComps = map[string][]string{
 	"EnvoyFilter": {"configPatches", "patch", "value"},
-	"WASMPlugin":  {"pluginConfig"},
+	"WasmPlugin":  {"pluginConfig"},
 }
 
 func hydrateComponentWithOriginalType(compType string, spec interface{}) error {
@@ -43,8 +43,8 @@ func hydrateComponentWithOriginalType(compType string, spec interface{}) error {
 				}
 			}
 		}
-	case "WASMPlugin":
-		err := formatValue("pluginConfig", specValue)
+	case "WasmPlugin":
+		err := formatValue("pluginConfig", specValue)	
 		if err != nil {
 			return fmt.Errorf("cannot hydrate config for comp: %s", compType)
 		}
