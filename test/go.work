@@ -1,7 +1,0 @@
-go 1.20
-
-use (
-	.
-	./scripts/component_generation
-	./scripts/component_updater
-)
