@@ -43,6 +43,7 @@ var (
 	ColumnNamesToExtractForDocs = []string{"modelDisplayName", "Page Subtitle", "Docs URL", "category", "subCategory", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "svgColor", "svgWhite", "Full Page", "model"}
 	PrimaryColumnName           = "model"
 	OutputPath                  = ""
+	ExcludeDirs = []string{"relationships", "policies"}
 )
 
 var System string
@@ -114,7 +115,7 @@ func main() {
 }
 
 // returns the index of column. Returns -1 if doesn't exist
-func isInColumnNames(key string, col []string) int {
+func contains(key string, col []string) int {
 	for i, n := range col {
 		if n == key {
 			return i
@@ -269,7 +270,7 @@ func mesheryUpdater(output []map[string]string) {
 	}
 	OutputPath = os.Args[4]
 	if OutputPath == "" {
-		OutputPath = "../../server/meshmodel/components" // default path for meshery server
+		OutputPath = "../../server/meshmodel" // default path for meshery server
 	}
 	publishedModels := make(map[string]bool)
 	countWithoutCrds := 0
@@ -289,6 +290,9 @@ func mesheryUpdater(output []map[string]string) {
 		}
 		for _, versionentry := range entries {
 			if versionentry.IsDir() {
+				if contains(versionentry.Name(), ExcludeDirs) != -1 {
+					continue
+				}
 				entries, err := os.ReadDir(filepath.Join(dirpath, versionentry.Name()))
 				if err != nil {
 					return err
@@ -342,11 +346,11 @@ func mesheryUpdater(output []map[string]string) {
 							if changeFields["component"] != "" || component.Metadata[key] == nil { // If it is a component level SVG or component already doesn't have an SVG. Use this svg at component level.
 								component.Metadata[key] = svg
 							}
-						} else if isInColumnNames(key, ColumnNamesToExtract) != -1 {
+						} else if contains(key, ColumnNamesToExtract) != -1 {
 							component.Metadata[key] = value
 						}
 					}
-					if i := isInColumnNames("modelDisplayName", ColumnNamesToExtract); i != -1 {
+					if i := contains("modelDisplayName", ColumnNamesToExtract); i != -1 {
 						component.Model.DisplayName = changeFields[ColumnNamesToExtract[i]]
 					}
 					isAnnotation, _ := component.Metadata["isAnnotation"].(bool)

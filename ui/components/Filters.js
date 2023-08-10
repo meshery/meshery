@@ -70,6 +70,7 @@ const styles = (theme) => ({
     margin : "2rem auto",
     display : "flex",
     justifyContent : "space-between",
+    flexWrap : "wrap",
     paddingLeft : "1rem"
   },
   viewSwitchButton : {
@@ -80,6 +81,12 @@ const styles = (theme) => ({
     display : "flex",
     alignItems : "center"
   },
+  searchWrapper : {
+    "@media (max-width: 1150px)" : {
+      marginTop : '20px',
+    },
+  },
+
   ymlDialogTitleText : {
     flexGrow : 1
   },
@@ -1078,51 +1085,56 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           <YAMLEditor filter={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} classes={classes} />
         )}
         <div className={classes.topToolbar} >
-          {!selectedFilter.show && (filters.length > 0 || viewType === "table") && <div className={classes.createButton}>
-            <div>
-              <Button
-                aria-label="Add Filter"
-                variant="contained"
-                color="primary"
-                size="large"
-                // @ts-ignore
-                onClick={handleUploadImport}
-                style={{ marginRight : "2rem" }}
-              >
-                <PublishIcon  style={iconMedium} className={classes.addIcon} data-cy="import-button"/>
-              Import Filters
-              </Button>
+          <div style={{ display : "flex" }}>
+            {!selectedFilter.show && (filters.length > 0 || viewType === "table") &&
+                <div className={classes.createButton}>
+                  <div>
+                    <Button
+                      aria-label="Add Filter"
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      // @ts-ignore
+                      onClick={handleUploadImport}
+                      style={{ marginRight : "2rem" }}
+                    >
+                      <PublishIcon  style={iconMedium} className={classes.addIcon} data-cy="import-button"/>
+                      Import Filters
+                    </Button>
+                  </div>
+                </div>
+            }
+            <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingRight : "1rem", paddingTop : "0.2rem" }}>
+              <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} classes={classes} />
             </div>
           </div>
-          }
-          <div
-            className={classes.searchAndView}
-            style={{
-              display : 'flex',
-              alignItems : 'center',
-              justifyContent : 'center',
-              margin : 'auto',
-            }}
-          >
-            <SearchBar
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                initFiltersSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
-              }
-              }
-              label={"Search Filters"}
-              width="80ch"
-            />
-          </div>
-          <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingRight : "1rem", paddingTop : "0.2rem" }}>
-            <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} classes={classes} />
-          </div>
-          {!selectedFilter.show &&
-            <div className={classes.viewSwitchButton}>
-              <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
+          <div className={classes.searchWrapper} style={{ display : "flex" }}>
+            <div
+              className={classes.searchAndView}
+              style={{
+                display : 'flex',
+                alignItems : 'center',
+                justifyContent : 'center',
+                margin : 'auto',
+              }}
+            >
+              <SearchBar
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  initFiltersSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
+                }
+                }
+                label={"Search Filters"}
+                width="55ch"
+              />
             </div>
-          }
+            {!selectedFilter.show &&
+                <div className={classes.viewSwitchButton}>
+                  <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
+                </div>
+            }
+          </div>
         </div>
         {
           !selectedFilter.show && viewType === "table" &&

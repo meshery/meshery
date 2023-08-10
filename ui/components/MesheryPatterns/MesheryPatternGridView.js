@@ -1,5 +1,5 @@
 //@ts-check
-import { Paper, Typography, Button, Box } from "@material-ui/core";
+import { Paper, Typography, Button, Grid } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import MesheryPatternCard from "./MesheryPatternCard";
@@ -21,7 +21,7 @@ function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublis
   const [yaml, setYaml] = useState(pattern.pattern_file);
 
   return (
-    <Box item {...gridProps}>
+    <Grid item {...gridProps}>
       <MesheryPatternCard
         // id={pattern.id}
         canPublishPattern={canPublishPattern}
@@ -44,7 +44,7 @@ function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublis
         description={pattern.description}
         visibility={pattern.visibility}
       />
-    </Box>
+    </Grid>
   );
 }
 
@@ -173,12 +173,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
       <DesignConfigurator pattern={selectedPattern.pattern} show={setSelectedPattern}  onSubmit={handleSubmit} />
       }
       {!selectedPattern.show &&
-      <Box sx={{
-        display : 'flex',
-        flexWrap : 'wrap',
-        justifyContent : 'space-evenly',
-        gap : '40px',
-      }}>
+      <Grid container spacing={3}>
         {patterns.map((pattern) => (
           <PatternCardGridItem
             key={pattern.id}
@@ -195,7 +190,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
           />
         ))}
 
-      </Box>
+      </Grid>
       }
       {!selectedPattern.show && patterns.length === 0 &&
           <Paper className={classes.noPaper}>
