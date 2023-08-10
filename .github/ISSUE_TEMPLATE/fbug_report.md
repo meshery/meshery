@@ -5,16 +5,16 @@ title: ''
 labels: 'kind/bug'
 assignees: ''
 ---
-#### Current Behavior
+### Current Behavior
 <!-- A brief description of the issue. -->
 
-#### Expected Behavior
+### Expected Behavior
 <!-- A brief description of what you expected to happen. -->
 
-#### Screenshots/Logs
+### Screenshots/Logs
 <!-- Add screenshots, if applicable, to help explain your problem. -->
 
-#### Environment
+### Environment
 
 - **Host OS:** Mac Linux Windows
 - **Platform:** Docker or Kubernetes
@@ -22,7 +22,7 @@ assignees: ''
 - **Meshery Client Version:** stable-v
 
 <!-- Optional 
-#### To Reproduce
+### To Reproduce
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
@@ -30,7 +30,7 @@ assignees: ''
 -->
 
 ---
-#### Contributor [Guides](https://docs.meshery.io/project/contributing) and [Handbook](https://layer5.io/community/handbook)
+### Contributor [Guides](https://docs.meshery.io/project/contributing) and [Handbook](https://layer5.io/community/handbook)
 - 🛠 [Meshery Build & Release Strategy](https://docs.meshery.io/project/contributing/build-and-release)
 - 📚 [Instructions for contributing to documentation](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow)
    - Meshery documentation [site](https://docs.meshery.io/) and [source](https://github.com/meshery/meshery/tree/master/docs)
