@@ -51,4 +51,8 @@ func (h *Handler) HandleResourceSchemas(rw http.ResponseWriter, r *http.Request)
 
 	rw.Header().Set("Content-Type", "application/json")
 	rw.Write(mergedJSON)
+	if _, writeErr := rw.Write(mergedJSON); writeErr != nil {
+		http.Error(rw, "Error writing response", http.StatusInternalServerError)
+		return
+	}
 }
