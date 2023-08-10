@@ -2,7 +2,7 @@ import React , { useEffect,useState } from "react";
 import { Typography } from "@material-ui/core";
 import { donut } from "billboard.js";
 import BBChart from "../BBChart";
-import { dataToColors } from "../../utils/chartColors"
+import { dataToColors , isValidColumnName } from "../../utils/charts"
 import { getConnectionStatusSummary } from "../../api/connections";
 
 
@@ -12,10 +12,11 @@ export default function ConnectionStatsChart({ classes }) {
 
   useEffect(() => {
     getConnectionStatusSummary().then(json => {
-      setChartData(json.connections_status.map(data => [data.status,data.count]))
+      setChartData(json.connections_status
+        .filter(data => isValidColumnName(data.status))
+        .map(data => [data.status,data.count]))
     })
   },[])
-
 
   const chartOptions = {
     data : {
