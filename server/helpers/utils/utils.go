@@ -12,6 +12,8 @@ import (
 	"sync"
 
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 const (
@@ -288,4 +290,17 @@ func SanitizeFileName(fileName string) string {
 	suffixPath := strings.Join(tempPath[(extensionIndex+1):len(fileName)], "")
 	finalPath = append(finalPath, "-*.", suffixPath)
 	return strings.Join(finalPath, "")
+}
+
+func HostnameToPascalCase(input string) string {
+	parts := strings.Split(input, ".")
+	caser := cases.Title(language.English)
+    for i, part := range parts {
+
+        parts[i] = caser.String(part)
+    }
+
+    pascalCaseHostname := strings.Join(parts, " ")
+
+    return pascalCaseHostname
 }

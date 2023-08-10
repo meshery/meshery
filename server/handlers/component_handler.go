@@ -209,7 +209,18 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	meshmodels, count, _ := h.registryManager.GetModels(h.dbHandler, filter)
-
+	var meshmodel []v1alpha1.Model
+	for _, mod := range meshmodels {
+		filter := &v1alpha1.ComponentFilter{
+			ModelName: mod.Name,
+		}
+		entities, _, _ := h.registryManager.GetEntities(filter)
+		host := h.registryManager.GetRegistrant(entities[0])
+		mod.HostID = host.ID
+		mod.HostName = host.Hostname
+		mod.DisplayHostName = utils.HostnameToPascalCase(host.Hostname)
+		meshmodel = append(meshmodel, mod)
+	}	
 	var pgSize int64
 	if limitstr == "all" {
 		pgSize = count
@@ -221,7 +232,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		Page:     page,
 		PageSize: int(pgSize),
 		Count:    count,
-		Models:   models.FindDuplicateModels(meshmodels),
+		Models:   models.FindDuplicateModels(meshmodel),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -1135,12 +1146,16 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
 		comp, ok := r.(v1alpha1.ComponentDefinition)
+		host := h.registryManager.GetRegistrant(r)
 		if ok {
 			m := make(map[string]interface{})
 			_ = json.Unmarshal([]byte(comp.Schema), &m)
 			m = core.Format.Prettify(m, true)
 			b, _ := json.Marshal(m)
 			comp.Schema = string(b)
+			comp.HostID = host.ID
+			comp.HostName = host.Hostname
+			comp.DisplayHostName = utils.HostnameToPascalCase(host.Hostname)
 			comps = append(comps, comp)
 		}
 	}
