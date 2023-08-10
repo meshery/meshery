@@ -137,8 +137,8 @@ func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request,
 	obj := "connections"
 
 	if err != nil {
-		h.log.Error(ErrQueryGet(obj))
-		http.Error(w, ErrQueryGet(obj).Error(), http.StatusInternalServerError)
+		h.log.Error(err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
