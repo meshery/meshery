@@ -136,43 +136,45 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 	dbHandler := provider.GetGenericPersister()
 	if dbHandler == nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-	dbHandler.Lock()
-	defer dbHandler.Unlock()
+	} else {
+		dbHandler.Lock()
+		defer dbHandler.Unlock()
 
-	tables, err := dbHandler.Migrator().GetTables()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-
-	for _, table := range tables {
-		err = dbHandler.Migrator().DropTable(table)
+		tables, err := dbHandler.Migrator().GetTables()
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
-	}
 
-	err = dbHandler.AutoMigrate(
-		&meshsyncmodel.KeyValue{},
-		&meshsyncmodel.Object{},
-		&meshsyncmodel.ResourceSpec{},
-		&meshsyncmodel.ResourceStatus{},
-		&meshsyncmodel.ResourceObjectMeta{},
-		&models.PerformanceProfile{},
-		&models.MesheryResult{},
-		&models.MesheryPattern{},
-		&models.MesheryFilter{},
-		&models.PatternResource{},
-		&models.MesheryApplication{},
-		&models.UserPreference{},
-		&models.PerformanceTestConfig{},
-		&models.SmiResultWithID{},
-		&models.K8sContext{},
-	)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+		for _, table := range tables {
+			err = dbHandler.Migrator().DropTable(table)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+		}
 
-	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, "Database reset successful")
+		err = dbHandler.AutoMigrate(
+			&meshsyncmodel.KeyValue{},
+			&meshsyncmodel.Object{},
+			&meshsyncmodel.ResourceSpec{},
+			&meshsyncmodel.ResourceStatus{},
+			&meshsyncmodel.ResourceObjectMeta{},
+			&models.PerformanceProfile{},
+			&models.MesheryResult{},
+			&models.MesheryPattern{},
+			&models.MesheryFilter{},
+			&models.PatternResource{},
+			&models.MesheryApplication{},
+			&models.UserPreference{},
+			&models.PerformanceTestConfig{},
+			&models.SmiResultWithID{},
+			&models.K8sContext{},
+		)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprint(w, "Database reset successful")
+
+	}
 }
