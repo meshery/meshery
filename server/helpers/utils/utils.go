@@ -274,7 +274,7 @@ func SliceContains(elements []string, name string) bool {
 
 func GetPlatform() string {
 	// local means running Meshery Server locally
-	platform := "local"
+	platform := "kubernetes"
 
 	if _, err := os.Stat("/var/run/secrets/kubernetes.io/serviceaccount"); err == nil &&
 		os.Getenv("KUBERNETES_SERVICE_HOST") != "" &&

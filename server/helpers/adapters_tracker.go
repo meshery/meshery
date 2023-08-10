@@ -183,8 +183,6 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		},
 		OverrideValues: overrideValues,
 		Action:         meshkitkube.INSTALL,
-		// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
-		DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
 	})
 
 	// switch to default case if the platform specified is not supported
@@ -263,9 +261,7 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 			Version:    "latest",
 		},
 		OverrideValues: overrideValues,
-		Action:         meshkitkube.INSTALL,
-		// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
-		DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
+		Action:         meshkitkube.UNINSTALL,
 	})
 
 
