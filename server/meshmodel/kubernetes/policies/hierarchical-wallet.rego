@@ -2,10 +2,10 @@ package meshmodel_policy
 
 import future.keywords.every
 import future.keywords.in
-import data.meshmodel_policy.extract_components
-import data.meshmodel_policy.contains
-import data.meshmodel_policy.get_array_pos
-import data.meshmodel_policy.get_path
+import data.common.extract_components
+import data.common.contains
+import data.common.get_array_pos
+import data.common.get_path
 
 parent_child_relationship = updated_design {
     from_selectors := data.inventory.selectors.allow.from

@@ -1,4 +1,4 @@
-package meshmodel_policy
+package common
 
 get_path(obj, mutated) = path {
     path = is_array(obj, mutated)        

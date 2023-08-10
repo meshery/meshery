@@ -1,14 +1,30 @@
 package meshmodel_policy
 
-import data.meshmodel_policy.extract_components
-import data.meshmodel_policy.contains
-import data.meshmodel_policy.get_array_pos
+import data.common.extract_components
+import data.common.contains
+import data.common.get_array_pos
 import future.keywords.in
 
 binding_types := ["mount", "permission"]
 
 binding_relationship[results] {
     binding_type := binding_types[_]
+
+    from_selectors := { kind: selectors |
+        s := data[binding_type].selectors.allow.from[_]
+        kind := s.kind
+        selectors := s
+    }
+
+    to_selectors :=  { kind: selectors |
+        t := data[binding_type].selectors.allow.to[_]
+        kind := t.kind
+        selectors := t
+    }
+
+    # contains "selectors.from" components only, eg: Role/ClusterRole(s) comps only
+    from := extract_components(input.services, from_selectors)
+    to := extract_components(input.services, to_selectors)
 
     binding_comps := { type |
         selector := data[binding_type].selectors.allow.from[_].match
@@ -19,27 +35,12 @@ binding_relationship[results] {
 
     some comp in binding_comps
     
-    result = evaluate with data.selectors as data[binding_type].selectors with data.binding_comp as comp
+    result = evaluate with data.binding_comp as comp with data.from as from with data.to as to with data.from_selectors as from_selectors with data.to_selectors as to_selectors
     results = {binding_type: result}
 }
 
 evaluate[results] {
 
-    from_selectors := { kind: selectors |
-        s := data.selectors.allow.from[_]
-        kind := s.kind
-        selectors := s
-    }
-
-    to_selectors :=  { kind: selectors |
-        t := data.selectors.allow.to[_]
-        kind := t.kind
-        selectors := t
-    }
-
-    # contains "selectors.from" components only, eg: Role/ClusterRole(s) comps only
-    from := extract_components(input.services, from_selectors)
-    to := extract_components(input.services, to_selectors)
 
     binding_resources := extract_components(input.services, [{"kind": data.binding_comp}])
 
@@ -47,13 +48,13 @@ evaluate[results] {
         service := input.services[_]
     }
     some i, j, k
-        resource := from[i]
+        resource := data.from[i]
             binding_resource := binding_resources[j]
 
-        r := is_related(resource, binding_resource, from_selectors[resource.type])
+        r := is_related(resource, binding_resource, data.from_selectors[resource.type])
         r == true  
-            to_resource := to[k]
-            q := is_related(to_resource, binding_resource, to_selectors[to_resource.type])
+            to_resource := data.to[k]
+            q := is_related(to_resource, binding_resource, data.to_selectors[to_resource.type])
             q == true
 
     results = {
