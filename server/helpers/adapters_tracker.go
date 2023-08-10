@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/spf13/viper"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
@@ -153,6 +154,11 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		}
 	
 	case "kubernetes":
+		build := viper.GetString("BUILD")
+		_, latestVersion, err := models.CheckLatestVersion(build)
+		if err != nil {
+			return ErrAdapterAdministration(err)
+		}
 	var k8scontext models.K8sContext
 			allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 		if !ok || len(allContexts) == 0 {
@@ -179,7 +185,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		ChartLocation: meshkitkube.HelmChartLocation{
 			Repository: utils.HelmChartURL,
 			Chart:      utils.HelmChartName,
-			Version:    "latest",
+			Version:    latestVersion,
 		},
 		OverrideValues: overrideValues,
 		Action:         meshkitkube.INSTALL,
@@ -238,6 +244,11 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 		}
 
 	case "kubernetes":
+		build := viper.GetString("BUILD")
+		_, latestVersion, err := models.CheckLatestVersion(build)
+		if err != nil {
+			return ErrAdapterAdministration(err)
+		}
 		var k8scontext models.K8sContext
 			allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 		if !ok || len(allContexts) == 0 {
@@ -264,7 +275,7 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 		ChartLocation: meshkitkube.HelmChartLocation{
 			Repository: utils.HelmChartURL,
 			Chart:      utils.HelmChartName,
-			Version:    "latest",
+			Version:    latestVersion,
 		},
 		OverrideValues: overrideValues,
 		Action:         meshkitkube.UNINSTALL,

@@ -231,7 +231,7 @@ func NewOperatorDeploymentConfig(adapterTracker AdaptersTrackerInterface) contro
 	// get meshery release version
 	mesheryReleaseVersion := viper.GetString("BUILD")
 	if mesheryReleaseVersion == "" || mesheryReleaseVersion == "Not Set" || mesheryReleaseVersion == "edge-latest" {
-		_, latestRelease, err := checkLatestVersion(mesheryReleaseVersion)
+		_, latestRelease, err := CheckLatestVersion(mesheryReleaseVersion)
 		// if unable to fetch latest release tag, meshkit helm functions handle
 		// this automatically fetch the latest one
 		if err != nil {
@@ -253,7 +253,7 @@ func NewOperatorDeploymentConfig(adapterTracker AdaptersTrackerInterface) contro
 
 // checkLatestVersion takes in the current server version compares it with the target
 // and returns the (isOutdated, latestVersion, error)
-func checkLatestVersion(serverVersion string) (*bool, string, error) {
+func CheckLatestVersion(serverVersion string) (*bool, string, error) {
 	// Inform user of the latest release version
 	versions, err := utils.GetLatestReleaseTagsSorted("meshery", "meshery")
 	latestVersion := versions[len(versions)-1]
