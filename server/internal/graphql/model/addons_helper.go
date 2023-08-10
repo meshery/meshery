@@ -15,7 +15,7 @@ func GetAddonsState(ctx context.Context, selectors []MeshType, provider models.P
 	if len(cid) == 1 && cid[0] == "all" {
 		k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 		if !ok || len(k8sctxs) == 0 {
-			return nil, ErrMesheryClient(nil)
+			return nil, ErrMesheryClientNil(nil)
 		}
 		for _, k8ctx := range k8sctxs {
 			if k8ctx.KubernetesServerID != nil {

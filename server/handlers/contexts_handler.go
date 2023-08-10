@@ -41,8 +41,8 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *mo
 	err = json.Unmarshal(vals, &mesheryK8sContextPage)
 	if err != nil {
 		obj := "k8s context"
-		h.log.Error(ErrUnmarshal(err, obj))
-		http.Error(w, ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrUnmarshal(err, obj))
+		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
 	}
 	if err := json.NewEncoder(w).Encode(mesheryK8sContextPage); err != nil {
 		http.Error(w, "failed to encode contexts", http.StatusInternalServerError)

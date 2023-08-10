@@ -53,7 +53,7 @@ func Initialize(client *mesherykube.Client, delete bool, adapterTracker models.A
 
 func GetOperator(kubeclient *mesherykube.Client) (string, string, error) {
 	if kubeclient == nil || kubeclient.KubeClient == nil {
-		return "", "", ErrMesheryClient(nil)
+		return "", "", ErrMesheryClientNil(nil)
 	}
 
 	dep, err := kubeclient.KubeClient.AppsV1().Deployments("meshery").Get(context.TODO(), "meshery-operator", metav1.GetOptions{})
@@ -79,7 +79,7 @@ func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn broker
 	mesheryclient, err := operatorClient.New(&mesheryKubeClient.RestConfig)
 	if err != nil {
 		if mesheryclient == nil {
-			return controllers, ErrMesheryClient(nil)
+			return controllers, ErrMesheryClientNil(nil)
 		}
 		return controllers, ErrMesheryClient(err)
 	}
@@ -148,7 +148,7 @@ func SubscribeToBroker(_ models.Provider, mesheryKubeClient *mesherykube.Client,
 	mesheryclient, err := operatorClient.New(&mesheryKubeClient.RestConfig)
 	if err != nil {
 		if mesheryclient == nil {
-			return "", ErrMesheryClient(nil)
+			return "", ErrMesheryClientNil(nil)
 		}
 		return "", ErrMesheryClient(err)
 	}

@@ -17,8 +17,8 @@ import (
 func (h *Handler) UserHandler(w http.ResponseWriter, _ *http.Request, _ *models.Preference, user *models.User, _ models.Provider) {
 	if err := json.NewEncoder(w).Encode(user); err != nil {
 		obj := "user data"
-		h.log.Error(ErrEncoding(err, obj))
-		http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrEncoding(err, obj))
+		http.Error(w, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -99,8 +99,8 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 	if req.Method == http.MethodGet {
 		if err := json.NewEncoder(w).Encode(prefObj); err != nil {
 			obj := "user preference object"
-			h.log.Error(ErrEncoding(err, obj))
-			http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+			h.log.Error(models.ErrEncoding(err, obj))
+			http.Error(w, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 		}
 		return
 	}
@@ -168,8 +168,8 @@ func (h *Handler) UserPrefsHandler(w http.ResponseWriter, req *http.Request, pre
 
 	if err := json.NewEncoder(w).Encode(prefObj); err != nil {
 		obj := "user preferences"
-		h.log.Error(ErrEncoding(err, obj))
-		http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrEncoding(err, obj))
+		http.Error(w, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }

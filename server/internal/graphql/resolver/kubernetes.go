@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
 	meshkitKube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -18,7 +17,7 @@ func (r *Resolver) getAvailableNamespaces(ctx context.Context, provider models.P
 	if len(k8sClusterIDs) != 0 {
 		k8sCtxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 		if !ok || len(k8sCtxs) == 0 {
-			return nil, ErrMesheryClient(nil)
+			return nil, ErrResolverMesheryClient(nil)
 		}
 		if len(k8sClusterIDs) == 1 && k8sClusterIDs[0] == "all" {
 			for _, k8sContext := range k8sCtxs {
@@ -101,7 +100,7 @@ func (r *Resolver) getKubectlDescribe(_ context.Context, name, kind, namespace s
 
 	client, err := meshkitKube.New([]byte(""))
 	if err != nil {
-		r.Log.Error(ErrMesheryClient(err))
+		r.Log.Error(ErrResolverMesheryClient(err))
 		return nil, err
 	}
 
@@ -159,7 +158,7 @@ func (r *Resolver) getClusterResources(ctx context.Context, provider models.Prov
 	var err error
 	k8sCtxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 	if !ok || len(k8sCtxs) == 0 {
-		return nil, ErrMesheryClient(nil)
+		return nil, ErrResolverMesheryClient(nil)
 	}
 
 	if len(k8scontextIDs) == 1 && k8scontextIDs[0] == "all" {
@@ -235,7 +234,7 @@ func (r *Resolver) getK8sContexts(ctx context.Context, provider models.Provider,
 	err = json.Unmarshal(resp, &k8sContext)
 	if err != nil {
 		obj := "k8s context"
-		return nil, handlers.ErrEncoding(err, obj)
+		return nil, models.ErrEncoding(err, obj)
 	}
 	return &k8sContext, nil
 }

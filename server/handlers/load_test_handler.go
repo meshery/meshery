@@ -208,8 +208,8 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	performanceProfile := models.PerformanceProfile{}
 	err = json.Unmarshal(performanceProfileData, &performanceProfile)
 	if err != nil {
-		h.log.Error(ErrUnmarshal(err, "performance profile"))
-		http.Error(w, ErrUnmarshal(err, "performance profile").Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrUnmarshal(err, "performance profile"))
+		http.Error(w, models.ErrUnmarshal(err, "performance profile").Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -220,6 +220,19 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	}
 
 	if isSSLCertificateProvided {
+		performanceProfileData, err := provider.GetPerformanceProfile(req, profileID)
+		if err != nil {
+			h.log.Error(err)
+			http.Error(w, ErrLoadCertificate(err).Error(), http.StatusInternalServerError)
+			return
+		}
+		performanceProfile := models.PerformanceProfile{}
+		err = json.Unmarshal(performanceProfileData, &performanceProfile)
+		if err != nil {
+			h.log.Error(models.ErrUnmarshal(err, "performance profile"))
+			http.Error(w, models.ErrUnmarshal(err, "performance profile").Error(), http.StatusInternalServerError)
+			return
+		}
 		var isErrLoadingCertificate bool
 		caCertificate, certificateOk := performanceProfile.Metadata["ca_certificate"].(map[string]interface{})
 
@@ -381,8 +394,8 @@ func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request
 		for data := range respChan {
 			bd, err := json.Marshal(data)
 			if err != nil {
-				h.log.Error(ErrMarshal(err, "meshery result for shipping"))
-				http.Error(w, ErrMarshal(err, "meshery result for shipping").Error(), http.StatusInternalServerError)
+				h.log.Error(models.ErrMarshal(err, "meshery result for shipping"))
+				http.Error(w, models.ErrMarshal(err, "meshery result for shipping").Error(), http.StatusInternalServerError)
 				return
 			}
 
