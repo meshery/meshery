@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
 )
@@ -24,15 +23,15 @@ func getAdapterInformationByName(adapterName string) *models.Adapter {
 func (r *Resolver) changeAdapterStatus(ctx context.Context, _ models.Provider, targetStatus model.Status, adapterName, targetPort string) (model.Status, error) {
 	// not able to perform any operation when the name is not there
 	if adapterName == "" && targetPort == "" {
-		return model.StatusUnknown, helpers.ErrAdapterInsufficientInformation(fmt.Errorf("either of adapter name or target port is not provided, please provide a name of adapter or target-port to perform operation on"))
+		return model.StatusUnknown, ErrAdapterInsufficientInformation(fmt.Errorf("adapter name or targetport or both are missing"))
 	}
 
 	// in case of empty target, prefer the default ports
 	if targetPort == "" {
-		r.Log.Warn(fmt.Errorf("target port is not specified in the request body, searching for default ports"))
+		r.Log.Warn(fmt.Errorf("target port is not provided, looking for default ports"))
 		selectedAdapter := getAdapterInformationByName(adapterName)
 		if selectedAdapter == nil {
-			return model.StatusUnknown, helpers.ErrAdapterInsufficientInformation(fmt.Errorf("adapter name is not available, not able to figure out target port"))
+			return model.StatusUnknown, ErrAdapterInsufficientInformation(fmt.Errorf("adapter name is not available, not able to figure out target port"))
 		}
 
 		targetPort = selectedAdapter.Location
@@ -47,7 +46,7 @@ func (r *Resolver) changeAdapterStatus(ctx context.Context, _ models.Provider, t
 		r.Log.Info("Undeploying Adapter")
 	}
 
-	r.Log.Debug(fmt.Printf("changing adapter status of %s on port %s to status %s \n", adapterName, targetPort, targetStatus))
+	r.Log.Debug(fmt.Printf("changing adapter status for %s on port %s to %s \n", adapterName, targetPort, targetStatus))
 
 	adapter := models.Adapter{Name: adapterName, Location: fmt.Sprintf("%s:%s", adapterName, targetPort)}
 	go func(ctx context.Context, del bool) {
@@ -60,7 +59,6 @@ func (r *Resolver) changeAdapterStatus(ctx context.Context, _ models.Provider, t
 			err = r.Config.AdapterTracker.DeployAdapter(ctx, adapter)
 		}
 		if err != nil {
-			// r.Log.Error(errors.Errorf("Failed to "+operation+" adapter: %w", err))
 			r.Log.Info("Failed to " + operation + " adapter")
 			r.Log.Error(err)
 		} else {

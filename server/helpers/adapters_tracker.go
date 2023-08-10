@@ -77,12 +77,12 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 	case "docker":
 		cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 		if err != nil {
-			return ErrAdapterAdministration(err)
+			return ErrDeployingAdapterInDocker(err)
 		}
 
 		containers, err := cli.ContainerList(ctx, types.ContainerListOptions{})
 		if err != nil {
-			return ErrAdapterAdministration(err)
+			return ErrDeployingAdapterInDocker(err)
 		}
 		var mesheryNetworkSettings *types.SummaryNetworkSettings
 		for _, container := range containers {
@@ -96,19 +96,19 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		// Pull the latest image
 		resp, err := cli.ImagePull(ctx, adapterImage, types.ImagePullOptions{})
 		if err != nil {
-			return ErrAdapterAdministration(err)
+			return ErrDeployingAdapterInDocker(err)
 		}
 
 		defer resp.Close()
 		_, err = io.ReadAll(resp)
 		if err != nil {
-			return ErrAdapterAdministration(err)
+			return ErrDeployingAdapterInDocker(err)
 		}
 
 		for netName := range mesheryNetworkSettings.Networks {
 			nets, err := cli.NetworkList(ctx, types.NetworkListOptions{})
 			if err != nil {
-				return ErrAdapterAdministration(err)
+				return ErrDeployingAdapterInDocker(err)
 			}
 			for _, net := range nets {
 				if net.Name == netName {
@@ -138,16 +138,16 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 						},
 					}, nil, adapter.Name+"-"+fmt.Sprint(time.Now().Unix()))
 					if err != nil {
-						return ErrAdapterAdministration(err)
+						return ErrDeployingAdapterInDocker(err)
 					}
 					err = cli.NetworkConnect(ctx, net.ID, adapterContainerCreatedBody.ID, &network.EndpointSettings{
 						Aliases: []string{adapter.Name},
 					})
 					if err != nil {
-						return ErrAdapterAdministration(err)
+						return ErrDeployingAdapterInDocker(err)
 					}
 					if err := cli.ContainerStart(ctx, adapterContainerCreatedBody.ID, types.ContainerStartOptions{}); err != nil {
-						return ErrAdapterAdministration(err)
+						return ErrDeployingAdapterInDocker(err)
 					}
 				}
 			}
@@ -157,13 +157,13 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		build := viper.GetString("BUILD")
 		_, latestVersion, err := models.CheckLatestVersion(build)
 		if err != nil {
-			return ErrAdapterAdministration(err)
+			return ErrDeployingAdapterInK8s(err)
 		}
 		var k8scontext models.K8sContext
 		allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 		if !ok || len(allContexts) == 0 {
 			fmt.Println("No context found")
-			return ErrAdapterAdministration(fmt.Errorf("no context found"))
+			return ErrDeployingAdapterInK8s(fmt.Errorf("no context found"))
 		}
 		for _, k8sctx := range allContexts {
 			if k8sctx.Name == "in-cluster" {
@@ -174,7 +174,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 
 		kubeclient, err := k8scontext.GenerateKubeHandler()
 		if err != nil {
-			return ErrAdapterAdministration(err)
+			return ErrDeployingAdapterInK8s(err)
 		}
 
 		overrideValues := models.SetOverrideValuesForMesheryDeploy(a.GetAdapters(ctx), adapter, true)
@@ -192,15 +192,14 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		})
 
 		if err != nil {
-			return ErrAdapterAdministration(err)
+			return ErrDeployingAdapterInK8s(err)
 		}
 
 	// switch to default case if the platform specified is not supported
 	default:
-		return ErrAdapterAdministration(fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes", platform))
+		return ErrDeployingAdapterInUnknownPlatform(fmt.Errorf("the platform %s is not supported currently. The supported platforms are: Docker and Kubernetes", platform))
 	}
 
-	fmt.Println("Adapter deployed successfully")
 	a.AddAdapter(ctx, adapter)
 	return nil
 }
@@ -214,12 +213,12 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 	case "docker":
 		cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 		if err != nil {
-			return ErrAdapterAdministration(err)
+			return ErrUnDeployingAdapterInDocker(err)
 		}
 
 		containers, err := cli.ContainerList(ctx, types.ContainerListOptions{})
 		if err != nil {
-			return ErrAdapterAdministration(err)
+			return ErrUnDeployingAdapterInDocker(err)
 		}
 		var containerID string
 		for _, container := range containers {
@@ -231,7 +230,7 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 			}
 		}
 		if containerID == "" {
-			return ErrAdapterAdministration(fmt.Errorf("no container found for port %s", strings.Split(adapter.Location, ":")[1]))
+			return ErrUnDeployingAdapterInDocker(fmt.Errorf("no container found for port %s", strings.Split(adapter.Location, ":")[1]))
 		}
 
 		// Stop and remove the container
@@ -240,20 +239,20 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 			RemoveVolumes: true,
 		})
 		if err != nil {
-			return ErrAdapterAdministration(err)
+			return ErrUnDeployingAdapterInDocker(err)
 		}
 
 	case "kubernetes":
 		build := viper.GetString("BUILD")
 		_, latestVersion, err := models.CheckLatestVersion(build)
 		if err != nil {
-			return ErrAdapterAdministration(err)
+			return ErrUnDeployingAdapterInK8s(err)
 		}
 		var k8scontext models.K8sContext
 		allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 		if !ok || len(allContexts) == 0 {
 			fmt.Println("No context found")
-			return ErrAdapterAdministration(fmt.Errorf("no context found"))
+			return ErrUnDeployingAdapterInK8s(fmt.Errorf("no context found"))
 		}
 		for _, k8sctx := range allContexts {
 			if k8sctx.Name == "in-cluster" {
@@ -264,7 +263,7 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 		}
 		kubeclient, err := k8scontext.GenerateKubeHandler()
 		if err != nil {
-			return ErrAdapterAdministration(err)
+			return ErrUnDeployingAdapterInK8s(err)
 		}
 
 		overrideValues := models.SetOverrideValuesForMesheryDeploy(a.GetAdapters(ctx), adapter, false)
@@ -281,12 +280,12 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 			Action:         meshkitkube.UNINSTALL,
 		})
 		if err != nil {
-			return ErrAdapterAdministration(err)
+			return ErrUnDeployingAdapterInK8s(err)
 		}
 
 	// switch to default case if the platform specified is not supported
 	default:
-		return ErrAdapterAdministration(fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes", platform))
+		return ErrUnDeployingAdapterInUnknownPlatform(fmt.Errorf("the platform %s is not supported currently. The supported platforms are: Docker and Kubernetes", platform))
 	}
 
 	a.RemoveAdapter(ctx, adapter)
