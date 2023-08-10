@@ -58,6 +58,7 @@ type HandlerInterface interface {
 	GetResultHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetSMPServiceMeshes(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetSystemDatabase(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	ResetSystemDatabase(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	FetchSmiResultsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	FetchSingleSmiResultHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
