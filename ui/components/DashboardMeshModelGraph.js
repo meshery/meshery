@@ -3,10 +3,10 @@ import React, { useEffect, useMemo, useState } from "react";
 import {
   Typography
 } from "@material-ui/core";
-import BBChart from "../BBChart"
+import BBChart from "./BBChart"
 import { donut, pie } from "billboard.js";
-import { getAllComponents, getMeshModels, getRelationshipsDetail, fetchCategories, getModelFromCategoryApi } from "../../api/meshmodel"
-import { dataToColors } from "../../utils/charts"
+import { getAllComponents, getMeshModels, getRelationshipsDetail, fetchCategories, getModelFromCategoryApi } from "../api/meshmodel"
+import { dataToColors } from "../utils/chartColors"
 
 const useFetchTotal = (fetchr) => {
   const [total, setTotal] = useState(0)
@@ -45,12 +45,11 @@ function MeshModelContructs({ classes }) {
     },
     arc : {
       cornerRadius : {
-        ratio : 0.05
+        ratio : 0.1
       }
     },
     donut : {
-      title : "Capabilities\nRegistry",
-      padAngle : 0.03,
+      title : "Capabilities\nRegistry"
     },
     tooltip : {
       format : {
@@ -132,7 +131,7 @@ function MeshModelCategories({ classes }) {
 
 const MeshModelGraph =  ({ classes }) =>  {
   return (
-    <Grid container spacing={2}>
+    <Grid container spacing={4}>
       <Grid item xs={12} md={6}>
         <MeshModelCategories classes={classes} />
       </Grid>
