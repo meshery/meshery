@@ -27,6 +27,7 @@ import classNames from "classnames";
 // import ReactSelectWrapper from "../ReactSelectWrapper";
 import dataFetch from "../../lib/data-fetch";
 import LaunchIcon from '@mui/icons-material/Launch';
+import TableRow from '@mui/material/TableRow';
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2) },
@@ -287,6 +288,27 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
         },
       },
     },
+    {
+      name : "metadata.server_build_sha",
+      label : "Server Version",
+      options : {
+        display : false,
+      },
+    },
+    {
+      name : "metadata.server_version",
+      label : "Server Version",
+      options : {
+        display : false,
+      },
+    },
+    {
+      name : "credential_id",
+      label : "Credential ID",
+      options : {
+        display : false,
+      },
+    },
   ];
 
   // const handleChange = () => {
@@ -334,6 +356,31 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
           }, 500);
           break;
       }
+    },
+    expandableRows : true,
+    expandableRowsHeader : false,
+    expandableRowsOnClick : true,
+    isRowExpandable : () => {
+      return true;
+    },
+    rowsExpanded : [0, 1],
+    renderExpandableRow : (rowData) => {
+      const colSpan = (rowData.length-1)/3;
+      return (
+        <TableRow>
+          <TableCell>
+          </TableCell>
+          <TableCell colSpan={colSpan}>
+            <b>Server builsd SHA:</b> {rowData[8]}
+          </TableCell>
+          <TableCell colSpan={colSpan}>
+            <b>Server Version:</b> {rowData[9]}
+          </TableCell>
+          <TableCell colSpan={colSpan}>
+            <b>Credential:</b> {rowData[10]}
+          </TableCell>
+        </TableRow>
+      );
     },
   };
 
