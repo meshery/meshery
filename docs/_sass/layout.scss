@@ -63,6 +63,9 @@ ol {
   width: 100%;
 
   @media (max-width: 1200px) {
+    @media (max-height: 100vh) {
+      height: 100vh;
+    }
     flex: 0 0 100%;
   }
 
