@@ -53,7 +53,7 @@ import SearchBar from "./searchcommon";
 
 const styles = (theme) => ({
   grid : {
-    padding : theme.spacing(2),
+    padding : theme.spacing(1),
   },
   tableHeader : {
     fontWeight : "bolder",
@@ -70,14 +70,21 @@ const styles = (theme) => ({
     filter : theme.palette.secondary.brightness
   },
   topToolbar : {
-    margin : "2rem auto",
+    marginBottom : "6rem",
     display : "flex",
     justifyContent : "space-between",
-    paddingLeft : "1rem"
+    flexWrap : 'wrap',
+    "@media (max-width: 1450px)" : {
+      justifyContent : "start",
+      paddingLeft : 0,
+    },
   },
   viewSwitchButton : {
     justifySelf : "flex-end",
-    paddingLeft : "1rem"
+    paddingLeft : "1rem",
+    "@media (max-width: 1450px)" : {
+      marginRight : '2rem'
+    },
   },
   createButton : {
     display : "flex",
@@ -117,7 +124,31 @@ const styles = (theme) => ({
   },
   visibilityImg : {
     filter : theme.palette.secondary.img,
-  }
+  },
+  searchAndView : {
+    display : 'flex',
+    alignItems : 'center',
+    justifyContent : 'center',
+    margin : 'auto',
+    "@media (max-width: 1450px)" : {
+      paddingLeft : 0,
+      margin : 0,
+    },
+  },
+  searchWrapper : {
+    "@media (max-width: 1150px)" : {
+      marginTop : '20px',
+    },
+  },
+  catalogFilter : {
+    marginRight : '2rem',
+  },
+  btnText : {
+    display : 'block',
+    "@media (max-width: 1450px)" : {
+      display : "none",
+    },
+  },
   // text : {
   //   padding : "5px"
   // }
@@ -1281,69 +1312,62 @@ function MesheryPatterns({
           <DesignConfigurator onSubmit={handleSubmit} show={setSelectedPattern} pattern={selectedPattern.pattern} />
         }
         <div className={classes.topToolbar} >
-          {!selectedPattern.show && (patterns.length > 0 || viewType === "table") && <div className={classes.createButton}>
-            <div>
-              <Button
-                aria-label="Add Pattern"
-                variant="contained"
-                color="primary"
-                size="large"
-                // @ts-ignore
-                onClick={() => router.push("designs/configurator")}
-                style={{ marginRight : "2rem" }}
-              >
-                <AddIcon className={classes.addIcon} />
-                Create Design
-              </Button>
-              <Button
-                aria-label="Add Pattern"
-                variant="contained"
-                color="primary"
-                size="large"
-                // @ts-ignore
-                onClick={handleUploadImport}
-                style={{ marginRight : "2rem" }}
-              >
-                <PublishIcon className={classes.addIcon} />
-                Import Design
-              </Button>
+          <div style={{ display : "flex" }}>
+            {!selectedPattern.show && (patterns.length > 0 || viewType === "table") && <div className={classes.createButton}>
+              <div style={{ display : 'flex', order : '1' }}>
+                <Button
+                  aria-label="Add Pattern"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  // @ts-ignore
+                  onClick={() => router.push("designs/configurator")}
+                  style={{ display : 'flex', marginRight : "2rem" }}
+                >
+                  <AddIcon className={classes.addIcon} />
+                  <span className={classes.btnText}> Create Design </span>
+                </Button>
+                <Button
+                  aria-label="Add Pattern"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  // @ts-ignore
+                  onClick={handleUploadImport}
+                  style={{ display : 'flex', marginRight : "2rem" }}
+                >
+                  <PublishIcon className={classes.addIcon} />
+                  <span className={classes.btnText}> Import Design </span>
+                </Button>
+              </div>
             </div>
+            }
+            {!selectedPattern.show &&
+              <div className={classes.catalogFilter} style={{ display : 'flex' }}>
+                <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} classes={classes} />
+              </div>
+            }
           </div>
-          }
+          <div className={classes.searchWrapper} style={{ display : "flex" }}>
+            <div className={classes.searchAndView}>
+              <SearchBar
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  initPatternsSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
+                }
+                }
+                label={"Search Designs"}
+                width="55ch"
+              />
+            </div>
 
-          <div
-            className={classes.searchAndView}
-            style={{
-              display : 'flex',
-              alignItems : 'center',
-              justifyContent : 'center',
-              margin : 'auto',
-            }}
-          >
-            <SearchBar
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                initPatternsSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
-              }
-              }
-              label={"Search Designs"}
-              width="60ch"
-            />
+            {!selectedPattern.show &&
+              <div className={classes.viewSwitchButton} style={{ display : 'flex' }}>
+                <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true}/>
+              </div>
+            }
           </div>
-
-          {!selectedPattern.show &&
-            <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingRight : "1rem", paddingTop : "0.2rem" }}>
-              <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} />
-            </div>
-          }
-
-
-          {!selectedPattern.show &&
-            <div className={classes.viewSwitchButton}>
-              <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true}/>
-            </div>
-          }
         </div>
         {
           !selectedPattern.show && viewType === "table" &&

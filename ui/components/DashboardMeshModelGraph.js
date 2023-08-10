@@ -28,16 +28,13 @@ function MeshModelContructs({ classes }) {
 
   // Data Cleanup
   const data = useMemo(() => {
-    if (totalModels && totalRelationships && totalComponents){
+    // TODO: Add Policies
+    return [
+      ["Models", totalModels],
+      ["Components", totalComponents],
+      ["Relationships", totalRelationships]
       // TODO: Add Policies
-      return [
-        ["Models", totalModels],
-        ["Components", totalComponents],
-        ["Relationships", totalRelationships]
-        // TODO: Add Policies
-      ]
-    }
-    return []
+    ]
   }, [totalModels,totalRelationships,totalComponents])
 
   const chartOptions = useMemo(() => ({

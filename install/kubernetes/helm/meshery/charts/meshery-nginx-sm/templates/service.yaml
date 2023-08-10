@@ -5,8 +5,7 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     io.kompose.service: {{ include "meshery-nginx-sm.fullname" . }}
-  annotations:
-    {{- toYaml .Values.annotations | nindent 4 }}
+  annotations: {{- toYaml .Values.annotations | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -15,3 +14,4 @@ spec:
       name: "{{ .Values.service.port }}"
   selector:
     io.kompose.service: {{ include "meshery-nginx-sm.fullname" . }}
+

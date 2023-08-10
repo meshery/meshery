@@ -70,6 +70,7 @@ const styles = (theme) => ({
     margin : "2rem auto",
     display : "flex",
     justifyContent : "space-between",
+    flexWrap : "wrap",
     paddingLeft : "1rem"
   },
   viewSwitchButton : {
@@ -80,6 +81,12 @@ const styles = (theme) => ({
     display : "flex",
     alignItems : "center"
   },
+  searchWrapper : {
+    "@media (max-width: 1150px)" : {
+      marginTop : '20px',
+    },
+  },
+
   ymlDialogTitleText : {
     flexGrow : 1
   },
@@ -116,6 +123,9 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
     setFullScreen(!fullScreen);
   }
 
+  const resourceData = JSON.parse(filter.filter_resource);
+  const config = resourceData.settings.config;
+
   return (
     <Dialog onClose={onClose} aria-labelledby="filter-dialog-title" open maxWidth="md" fullScreen={fullScreen} fullWidth={!fullScreen}>
       <DialogTitle disableTypography id="filter-dialog-title" className={classes.ymlDialogTitle}>
@@ -134,7 +144,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
       <Divider variant="fullWidth" light />
       <DialogContent>
         <CodeMirror
-          value={filter.filter_file}
+          value={config}
           className={fullScreen ? classes.fullScreenCodeMirror : ""}
           options={{
             theme : "material",
@@ -142,7 +152,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
             lineWrapping : true,
             gutters : ["CodeMirror-lint-markers"],
             lint : true,
-            mode : "text/plain",
+            mode : "text/x-yaml",
           }}
           onChange={(_,data,val) => setYaml(val)}
         />
@@ -701,7 +711,9 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       }
       dataFetch(
         `/api/filter`,
-        { credentials : "include", method : "POST", body },
+        { credentials : "include", headers : {
+          'Content-Type' : 'application/octet-stream', // Set appropriate content type for binary data
+        }, method : "POST", body },
         () => {
           updateProgress({ showProgress : false });
         },
@@ -755,14 +767,16 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     // Create a reader
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
+      let uint8 = new Uint8Array(event.target.result);
       handleSubmit({
-        data : event.target.result,
+        data : Array.from(uint8),
         name : file?.name || "meshery_" + Math.floor(trueRandom() * 100),
         type : FILE_OPS.FILE_UPLOAD,
         metadata : metadata
       });
+
     });
-    reader.readAsText(file);
+    reader.readAsArrayBuffer(file);
   }
 
   function urlUploadHandler(link, _, metadata,) {
@@ -994,6 +1008,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       }
     },
 
+    onCellClick : (_, meta) => meta.colIndex !== 3 && meta.colIndex !== 4 && setSelectedRowData(filters[meta.rowIndex]),
+
     onRowsDelete : async function handleDelete(row) {
       let response = await showmodal(Object.keys(row.lookup).length)
       console.log(response)
@@ -1069,51 +1085,56 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           <YAMLEditor filter={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} classes={classes} />
         )}
         <div className={classes.topToolbar} >
-          {!selectedFilter.show && (filters.length > 0 || viewType === "table") && <div className={classes.createButton}>
-            <div>
-              <Button
-                aria-label="Add Filter"
-                variant="contained"
-                color="primary"
-                size="large"
-                // @ts-ignore
-                onClick={handleUploadImport}
-                style={{ marginRight : "2rem" }}
-              >
-                <PublishIcon  style={iconMedium} className={classes.addIcon} data-cy="import-button"/>
-              Import Filters
-              </Button>
+          <div style={{ display : "flex" }}>
+            {!selectedFilter.show && (filters.length > 0 || viewType === "table") &&
+                <div className={classes.createButton}>
+                  <div>
+                    <Button
+                      aria-label="Add Filter"
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      // @ts-ignore
+                      onClick={handleUploadImport}
+                      style={{ marginRight : "2rem" }}
+                    >
+                      <PublishIcon  style={iconMedium} className={classes.addIcon} data-cy="import-button"/>
+                      Import Filters
+                    </Button>
+                  </div>
+                </div>
+            }
+            <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingRight : "1rem", paddingTop : "0.2rem" }}>
+              <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} classes={classes} />
             </div>
           </div>
-          }
-          <div
-            className={classes.searchAndView}
-            style={{
-              display : 'flex',
-              alignItems : 'center',
-              justifyContent : 'center',
-              margin : 'auto',
-            }}
-          >
-            <SearchBar
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                initFiltersSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
-              }
-              }
-              label={"Search Filters"}
-              width="80ch"
-            />
-          </div>
-          <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingRight : "1rem", paddingTop : "0.2rem" }}>
-            <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} />
-          </div>
-          {!selectedFilter.show &&
-            <div className={classes.viewSwitchButton}>
-              <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
+          <div className={classes.searchWrapper} style={{ display : "flex" }}>
+            <div
+              className={classes.searchAndView}
+              style={{
+                display : 'flex',
+                alignItems : 'center',
+                justifyContent : 'center',
+                margin : 'auto',
+              }}
+            >
+              <SearchBar
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  initFiltersSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
+                }
+                }
+                label={"Search Filters"}
+                width="55ch"
+              />
             </div>
-          }
+            {!selectedFilter.show &&
+                <div className={classes.viewSwitchButton}>
+                  <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
+                </div>
+            }
+          </div>
         </div>
         {
           !selectedFilter.show && viewType === "table" &&

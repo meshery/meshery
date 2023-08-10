@@ -57,7 +57,13 @@ const styles = (theme) => ({
     margin : "2rem auto",
     display : "flex",
     justifyContent : "space-between",
-    paddingLeft : "1rem"
+    paddingLeft : "1rem",
+    flexWrap : 'wrap',
+  },
+  searchWrapper : {
+    "@media (max-width: 1070px)" : {
+      marginTop : '20px',
+    },
   },
   viewSwitchButton : {
     justifySelf : "flex-end",
@@ -859,53 +865,51 @@ function MesheryApplications({
           <YAMLEditor application={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
         )}
         <div className={classes.topToolbar} >
-          {!selectedApplication.show && (applications.length>0 || viewType==="table") && <div className={classes.createButton}>
-            <div>
-              <Button
-                aria-label="Add Application"
-                variant="contained"
-                color="primary"
-                size="large"
-                // @ts-ignore
-                onClick={handleUploadImport}
-                style={{ marginRight : "2rem" }}
-              >
-                <PublishIcon className={classes.addIcon} style={iconMedium}  />
-              Import Application
-              </Button>
+          {!selectedApplication.show && (applications.length>0 || viewType==="table") &&
+            <div className={classes.createButton}>
+              <div>
+                <Button
+                  aria-label="Add Application"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  // @ts-ignore
+                  onClick={handleUploadImport}
+                  style={{ marginRight : "2rem" }}
+                >
+                  <PublishIcon className={classes.addIcon} style={iconMedium}  />
+                Import Application
+                </Button>
+              </div>
+            </div>
+          }
+          <div className={classes.searchWrapper} style={{ display : "flex" }}>
+            <div
+              className={classes.searchAndView}
+              style={{
+                display : 'flex',
+                alignItems : 'center',
+                justifyContent : 'center',
+                margin : 'auto',
+                height : '5ch'
+              }}
+            >
+              <SearchBar
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  initAppsSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
+                }}
+                width="55ch"
+                label={"Search Applications"}
+              />
             </div>
 
+            {!selectedApplication.show &&
+            <div className={classes.viewSwitchButton}>
+              <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true} />
+            </div>}
           </div>
-          }
-
-          <div
-            className={classes.searchAndView}
-            style={{
-              display : 'flex',
-              alignItems : 'center',
-              justifyContent : 'center',
-              margin : 'auto',
-              height : '5ch'
-            }}
-          >
-            <SearchBar
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                initAppsSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
-              }}
-              width="80ch"
-              label={"Search Applications"}
-            />
-          </div>
-
-
-
-          {!selectedApplication.show &&
-          <div className={classes.viewSwitchButton}>
-            <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true} />
-          </div>
-          }
         </div>
         {
           !selectedApplication.show && viewType==="table" &&
