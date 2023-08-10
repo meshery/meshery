@@ -26,6 +26,7 @@ import { iconMedium, iconSmall } from "../css/icons.styles";
 import { RoundedTriangleShape } from "./shapes/RoundedTriangle";
 import { notificationColors } from "../themes/app";
 import RedOctagonSvg from "./shapes/Octagon";
+import PatternIcon from "../assets/icons/Pattern";
 
 const styles = (theme) => ({
   dialogBox : {
@@ -193,6 +194,17 @@ const styles = (theme) => ({
     bottom : 9.5 ,
     color : "#fff",
     fontSize : "0.8rem"
+  },
+  closeIcon : {
+    transform : "rotate(-90deg)",
+    "&:hover" : {
+      transform : "rotate(90deg)",
+      transition : "all .3s ease-in",
+      cursor : "pointer"
+    }
+  },
+  closeIconButton : {
+    color : "white"
   }
 })
 
@@ -301,7 +313,18 @@ function ConfirmationMsg(props) {
       >
         <>
           <DialogTitle id="alert-dialog-title" className={classes.title}>
-            {title}
+            <div style={{ display : 'flex', justifyContent : "space-between", alignItems : 'center' }}>
+
+              <PatternIcon style={{ ...iconMedium }} fill={"#FFFFFF"}></PatternIcon>
+
+              {title}
+              <IconButton
+                onClick={handleClose}
+                disableRipple={true}
+                className={classes.closeIconButton}>
+                <CloseIcon fill={"#FFFFF"}className={classes.closeIcon} style={{ ...iconMedium }}></CloseIcon>
+              </IconButton>
+            </div>
           </DialogTitle>
           {/* <Paper square className={classes.paperRoot}> */}
           <Tabs
