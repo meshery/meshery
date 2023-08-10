@@ -941,7 +941,7 @@ func (l *DefaultLocalProvider) GetConnections(_ *http.Request, _ string, _, _ in
 	return nil, ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) GetConnectionsByKind(_ *http.Request, _ string, _, _ int, _, _, _ string) (*ConnectionPage, error) {
+func (l *DefaultLocalProvider) GetConnectionsByKind(_ *http.Request, _ string, _, _ int, _, _, _ string) (*map[string]interface{}, error) {
 	return nil, ErrLocalProviderSupport
 }
 
