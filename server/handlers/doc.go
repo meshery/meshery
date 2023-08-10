@@ -471,10 +471,3 @@ type mesheryApplicationTypesResponseWrapper struct {
 	// in: body
 	Body []models.ApplicationTypeResponse
 }
-
-// Returns a single connection
-// swagger:response mesheryConnectionResponseWrapper
-type mesheryConnectionResponseWrapper struct {
-	// in: body
-	Body models.Connection
-}
