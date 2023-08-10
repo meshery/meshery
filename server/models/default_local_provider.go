@@ -950,6 +950,10 @@ func (l *DefaultLocalProvider) UpdateConnection(_ *http.Request, _ *Connection) 
 	return nil, ErrLocalProviderSupport
 }
 
+func (l *DefaultLocalProvider) UpdateConnectionById(_ *http.Request, _ *ConnectionPayload, _ string) (*Connection, error) {
+	return nil, ErrLocalProviderSupport
+}
+
 func (l *DefaultLocalProvider) DeleteConnection(_ *http.Request, _ uuid.UUID) (*Connection, error) {
 	return nil, ErrLocalProviderSupport
 }
