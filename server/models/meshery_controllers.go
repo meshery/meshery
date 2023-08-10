@@ -339,9 +339,8 @@ func setOverrideValues(delete bool, adapterTracker AdaptersTrackerInterface) map
 
 // setOverrideValues detects the currently insalled adapters and sets appropriate
 // overrides so as to not uninstall them.
-func SetOverrideValuesForMesheryDeploy(adapters []Adapter) map[string]interface{} {
+func SetOverrideValuesForMesheryDeploy(adapters []Adapter, adapter Adapter, install bool) map[string]interface{} {
 	installedAdapters := make([]string, 0)
-
 	for _, adapter := range adapters {
 		if adapter.Name != "" {
 			installedAdapters = append(installedAdapters, strings.Split(adapter.Location, ":")[0])
@@ -385,6 +384,15 @@ func SetOverrideValuesForMesheryDeploy(adapters []Adapter) map[string]interface{
 			}
 		}
 	}
+
+	// based on deploy/undeploy action change the status of adapter override
+	if _, ok := overrideValues[strings.Split(adapter.Location, ":")[0]]; ok {
+			overrideValues[strings.Split(adapter.Location, ":")[0]] = map[string]interface{}{
+				"enabled": install,
+			}
+		}
+
+
 
 	return overrideValues
 }
