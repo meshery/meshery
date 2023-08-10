@@ -3,10 +3,15 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"os"
+	"path"
 	"strconv"
 
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/utils"
+	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"gorm.io/gorm/clause"
 )
 
@@ -99,4 +104,75 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 		fmt.Println(err)
 	}
 	fmt.Fprint(w, string(val))
+}
+
+func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+
+	mesherydbPath := path.Join(utils.GetHome(), ".meshery/config")
+	err := os.Mkdir(path.Join(mesherydbPath, ".archive"), os.ModePerm)
+	if err != nil && os.IsNotExist(err) {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	src := path.Join(mesherydbPath, "mesherydb.sql")
+	dst := path.Join(mesherydbPath, ".archive/mesherydb.sql")
+
+	fin, err := os.Open(src)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	defer fin.Close()
+
+	fout, err := os.Create(dst)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	defer fout.Close()
+
+	_, err = io.Copy(fout, fin)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	dbHandler := provider.GetGenericPersister()
+	if dbHandler == nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	dbHandler.Lock()
+	defer dbHandler.Unlock()
+
+	tables, err := dbHandler.Migrator().GetTables()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	for _, table := range tables {
+		err = dbHandler.Migrator().DropTable(table)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	}
+
+	err = dbHandler.AutoMigrate(
+		&meshsyncmodel.KeyValue{},
+		&meshsyncmodel.Object{},
+		&meshsyncmodel.ResourceSpec{},
+		&meshsyncmodel.ResourceStatus{},
+		&meshsyncmodel.ResourceObjectMeta{},
+		&models.PerformanceProfile{},
+		&models.MesheryResult{},
+		&models.MesheryPattern{},
+		&models.MesheryFilter{},
+		&models.PatternResource{},
+		&models.MesheryApplication{},
+		&models.UserPreference{},
+		&models.PerformanceTestConfig{},
+		&models.SmiResultWithID{},
+		&models.K8sContext{},
+	)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, "Database reset successful")
 }
