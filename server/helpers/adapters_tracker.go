@@ -9,7 +9,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/spf13/viper"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
@@ -18,6 +17,7 @@ import (
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/spf13/viper"
 )
 
 // AdaptersTracker is used to hold the list of known adapters
@@ -152,15 +152,15 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 				}
 			}
 		}
-	
+
 	case "kubernetes":
 		build := viper.GetString("BUILD")
 		_, latestVersion, err := models.CheckLatestVersion(build)
 		if err != nil {
 			return ErrAdapterAdministration(err)
 		}
-	var k8scontext models.K8sContext
-			allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
+		var k8scontext models.K8sContext
+		allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 		if !ok || len(allContexts) == 0 {
 			fmt.Println("No context found")
 			return ErrAdapterAdministration(fmt.Errorf("no context found"))
@@ -170,7 +170,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 				k8scontext = k8sctx
 				break
 			}
-}
+		}
 
 		kubeclient, err := k8scontext.GenerateKubeHandler()
 		if err != nil {
@@ -179,21 +179,21 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 
 		overrideValues := models.SetOverrideValuesForMesheryDeploy(a.GetAdapters(ctx), adapter, true)
 		err = kubeclient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
-		Namespace:       "meshery",
-		ReleaseName:     "meshery",
-		CreateNamespace: true,
-		ChartLocation: meshkitkube.HelmChartLocation{
-			Repository: utils.HelmChartURL,
-			Chart:      utils.HelmChartName,
-			Version:    latestVersion,
-		},
-		OverrideValues: overrideValues,
-		Action:         meshkitkube.INSTALL,
-	})
+			Namespace:       "meshery",
+			ReleaseName:     "meshery",
+			CreateNamespace: true,
+			ChartLocation: meshkitkube.HelmChartLocation{
+				Repository: utils.HelmChartURL,
+				Chart:      utils.HelmChartName,
+				Version:    latestVersion,
+			},
+			OverrideValues: overrideValues,
+			Action:         meshkitkube.INSTALL,
+		})
 
-	if err != nil {
-		return ErrAdapterAdministration(err)
-	}
+		if err != nil {
+			return ErrAdapterAdministration(err)
+		}
 
 	// switch to default case if the platform specified is not supported
 	default:
@@ -250,7 +250,7 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 			return ErrAdapterAdministration(err)
 		}
 		var k8scontext models.K8sContext
-			allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
+		allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 		if !ok || len(allContexts) == 0 {
 			fmt.Println("No context found")
 			return ErrAdapterAdministration(fmt.Errorf("no context found"))
@@ -269,21 +269,20 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 
 		overrideValues := models.SetOverrideValuesForMesheryDeploy(a.GetAdapters(ctx), adapter, false)
 		err = kubeclient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
-		Namespace:       "meshery",
-		ReleaseName:     "meshery",
-		CreateNamespace: true,
-		ChartLocation: meshkitkube.HelmChartLocation{
-			Repository: utils.HelmChartURL,
-			Chart:      utils.HelmChartName,
-			Version:    latestVersion,
-		},
-		OverrideValues: overrideValues,
-		Action:         meshkitkube.UNINSTALL,
-	})
-	if err != nil {
-		return ErrAdapterAdministration(err)
-	}
-
+			Namespace:       "meshery",
+			ReleaseName:     "meshery",
+			CreateNamespace: true,
+			ChartLocation: meshkitkube.HelmChartLocation{
+				Repository: utils.HelmChartURL,
+				Chart:      utils.HelmChartName,
+				Version:    latestVersion,
+			},
+			OverrideValues: overrideValues,
+			Action:         meshkitkube.UNINSTALL,
+		})
+		if err != nil {
+			return ErrAdapterAdministration(err)
+		}
 
 	// switch to default case if the platform specified is not supported
 	default:
