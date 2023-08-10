@@ -81,19 +81,7 @@ func (h *Handler) GetUsers(w http.ResponseWriter, req *http.Request, _ *models.P
 }
 
 // swagger:route GET /api/identity/users/keys UserKeysAPI idGetAllUsersKeysHandler
-// Handles GET for all Keys
-//
-// # Keys can be further filtered through query parameters
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?page={page-number}``` Default page number is 0
-//
-// ```?pagesize={pagesize}``` Default pagesize is 20
-// 
-// ```?search={id|function|owner|category}``` If search is non empty then a greedy search is performed
-//
-// ```?filter={condition}```
+// Handles GET for all Keys for users
 // responses:
 // 	200: keys
 
