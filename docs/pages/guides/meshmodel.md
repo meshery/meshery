@@ -28,7 +28,7 @@ Click on the Settings button in the Meshery UI to access settings menu. The sett
 
 
 To view **MeshModel Summary**, select the **MeshModel Summary** tab. The summary will appear on your screen.
-You will see all Models, Components, and Relationships in the Summary table. You can acccess these models and their components through the [MeshMap extension]({{site.baseurl}}/extensions/meshmap). As these models are registered by another systems, 
+You will see all Models, Components, and Relationships in the Summary table. You can acccess these models and their components through the [MeshMap extension]({{site.baseurl}}/extensions/meshmap). As these models are registered by another systems, whenever a new request to make changes in model are created, those are sent to the systems those have regsitered those models.
 
 
 <a href="{{ site.baseurl }}/assets/img/meshmodel/settings-meshmodel-summary.png"><img alt="MeshModel Summary" style="border-radius: 0.5%;" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/meshmodel/settings-meshmodel-summary.png" /></a>
