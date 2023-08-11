@@ -16,6 +16,12 @@
  */
 
 /**
+ * @typedef {Object} CollaboratorSchema
+ * @property {string} component
+ * @property {string} type
+ */
+
+/**
  * @typedef {Object} AccountSchema
  * @property {string} title
  * @property {number} onClickCallback
@@ -46,6 +52,8 @@ export default function ExtensionPointSchemaValidator(type) {
       return NavigatorExtensionSchemaDecoder;
     case "user_prefs":
       return UserPrefsExtensionSchemaDecoder;
+    case "collaborator":
+      return CollaboratorExtensionSchemaDecoder;
     case "account":
       return AccountExtensionSchemaDecoder;
     default:
@@ -84,6 +92,22 @@ function NavigatorExtensionSchemaDecoder(content) {
  * @returns {UserPrefSchema[]}
  */
 function UserPrefsExtensionSchemaDecoder(content) {
+  if (Array.isArray(content)) {
+    return content.map((item) => {
+      return { component : item.component || "", };
+    });
+  }
+
+  return [];
+}
+
+/**
+ *
+ * @param {*} content
+ * @returns {CollaboratorSchema[]}
+ */
+function CollaboratorExtensionSchemaDecoder(content) {
+  console.log("content", content)
   if (Array.isArray(content)) {
     return content.map((item) => {
       return { component : item.component || "", };
