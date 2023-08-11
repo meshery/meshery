@@ -9,16 +9,16 @@ assignees: ''
 <!-- Please update the mesheryctl Command Tracker spreadsheet -->
 _See [mesheryctl Command Tracker](https://bit.ly/3dqXy1q) for current status of commands._
 
-#### Current Behavior
+### Current Behavior
 <!-- A brief description of what the problem is. (e.g. I need to be able to...) -->
 
-#### Desired Behavior
+### Desired Behavior
 <!-- A brief description of the enhancement. -->
 
-#### Screenshots/Logs
+### Screenshots/Logs
 <!-- Add screenshots, if applicable, to help explain your problem. -->
 
-#### Environment
+### Environment
 
 - Host OS: Mac Linux Windows
 - Meshery Server Version: stable-v
@@ -27,7 +27,7 @@ _See [mesheryctl Command Tracker](https://bit.ly/3dqXy1q) for current status of 
 
 ---
 
-#### Contributor [Guides](https://docs.meshery.io/project/contributing) and [Handbook](https://layer5.io/community/handbook)
+### Contributor [Guides](https://docs.meshery.io/project/contributing) and [Handbook](https://layer5.io/community/handbook)
 - 📚 [mesheryctl Contributing Guide](https://github.com/meshery/meshery/blob/master/mesheryctl/README.md)
 - 📺 [Beginner's guide to contributing to Meshery and mesheryctl](https://youtu.be/hh_kFLZx3G4)
 - ⌨️ [mesheryctl Command Tracker](https://docs.google.com/spreadsheets/d/1q63sIGAuCnIeDs8PeM-0BAkNj8BBgPUXhLbe1Y-318o/edit#gid=0)

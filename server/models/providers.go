@@ -426,6 +426,7 @@ type Provider interface {
 	GetConnectionsByKind(req *http.Request, userID string, page, pageSize int, search, order, connectionKind string) (*map[string]interface{}, error)
 	GetConnectionsStatus(req *http.Request, userID string) (*ConnectionsStatusPage, error)
 	UpdateConnection(req *http.Request, conn *Connection) (*Connection, error)
+	UpdateConnectionById(req *http.Request, conn *ConnectionPayload, connId string) (*Connection, error)
 	DeleteConnection(req *http.Request, connID uuid.UUID) (*Connection, error)
 	DeleteMesheryConnection() error
 

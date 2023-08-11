@@ -58,7 +58,7 @@ export var darkTheme = createTheme({
       switcherButtons : '#1e1e1e',
       honeyComb : '#202020',
       filterChipBackground : '#222222',
-      tabs : '#20202087',
+      tabs : '#202020',
       modalTabs : '#363636',
       tabHover : '#212121',
       confirmationModal : '#111111',

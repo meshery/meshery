@@ -207,6 +207,41 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 	w.WriteHeader(http.StatusOK)
 }
 
+// swagger:route PUT /api/integrations/connections/{connectionId} PutConnectionById idPutConnectionById
+// Handle PUT request for updating an existing connection by connection ID
+//
+// Updates existing connection using ID
+// responses:
+// 200: mesheryConnectionResponseWrapper
+func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	bd, err := io.ReadAll(req.Body)
+	if err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	connection := &models.ConnectionPayload{}
+	err = json.Unmarshal(bd, connection)
+	obj := "connection"
+	if err != nil {
+		h.log.Error(ErrUnmarshal(err, obj))
+		http.Error(w, ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	_, err = provider.UpdateConnectionById(req, connection, mux.Vars(req)["connectionId"])
+	if err != nil {
+		h.log.Error(ErrFailToSave(err, obj))
+		http.Error(w, ErrFailToSave(err, obj).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	h.log.Info("connection updated successfully")
+	w.WriteHeader(http.StatusOK)
+}
+
+
 // swagger:route DELETE /api/integrations/connections/{connectionId} DeleteConnection idDeleteConnection
 // Handle DELETE request for deleting an existing connection by connection ID
 //
@@ -214,9 +249,7 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 // responses:
 // 200: noContentWrapper
 func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	q := req.URL.Query()
-
-	connectionID := uuid.FromStringOrNil(q.Get("connectionId"))
+	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
 	_, err := provider.DeleteConnection(req, connectionID)
 	if err != nil {
 		obj := "connection"

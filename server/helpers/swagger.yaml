@@ -460,6 +460,15 @@ paths:
             summary: Handle DELETE request for deleting an existing connection by connection ID
             tags:
                 - DeleteConnection
+        put:
+            description: Updates existing connection using ID
+            operationId: idPutConnectionById
+            responses:
+                "200":
+                    $ref: '#/responses/mesheryConnectionResponseWrapper'
+            summary: Handle PUT request for updating an existing connection by connection ID
+            tags:
+                - PutConnectionById
     /api/integrations/connections/{connectionKind}:
         get:
             description: |-
@@ -2099,6 +2108,8 @@ responses:
             type: array
     mesheryApplicationsResponseWrapper:
         description: Returns all meshery applications
+    mesheryConnectionResponseWrapper:
+        description: Returns a single connection
     mesheryFilterResponseWrapper:
         description: Returns a single meshery filter
     mesheryFiltersResponseWrapper:

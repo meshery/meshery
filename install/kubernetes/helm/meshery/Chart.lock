@@ -11,9 +11,6 @@ dependencies:
 - name: meshery-kuma
   repository: ""
   version: 0.5.0
-- name: meshery-osm
-  repository: ""
-  version: 0.5.0
 - name: meshery-nsm
   repository: ""
   version: 0.5.0
@@ -32,5 +29,5 @@ dependencies:
 - name: meshery-perf
   repository: ""
   version: 0.5.0
-digest: sha256:0052d7bca77e34ae653e997458933b0e5665d163cbfb68d9b150497d537ef610
-generated: "2023-08-02T21:43:47.651148+05:30"
+digest: sha256:2e425653a865f5f1d18e21d852434b5dca10d16f09a1a97e205fa7566faf39f3
+generated: "2023-08-05T11:55:49.783469+05:30"
