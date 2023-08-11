@@ -354,9 +354,9 @@ func (h *Handler) handleApplicationPOST(
 		err = json.Unmarshal(resp, &mesheryApplicationContent)
 		if err != nil {
 			obj := "application"
-			h.log.Error(models.ErrEncoding(err, obj))
-			http.Error(rw, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
-			addMeshkitErr(&res, models.ErrEncoding(err, obj))
+			h.log.Error(ErrEncoding(err, obj))
+			http.Error(rw, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+			addMeshkitErr(&res, ErrEncoding(err, obj))
 			go h.EventsBuffer.Publish(&res)
 			return
 		}
@@ -379,9 +379,9 @@ func (h *Handler) handleApplicationPOST(
 	byt, err := json.Marshal([]models.MesheryApplication{*mesheryApplication})
 	if err != nil {
 		obj := "application"
-		h.log.Error(models.ErrEncoding(err, obj))
-		http.Error(rw, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
-		addMeshkitErr(&res, models.ErrEncoding(err, obj))
+		h.log.Error(ErrEncoding(err, obj))
+		http.Error(rw, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+		addMeshkitErr(&res, ErrEncoding(err, obj))
 		go h.EventsBuffer.Publish(&res)
 		return
 	}
@@ -627,8 +627,8 @@ func (h *Handler) GetMesheryApplicationTypesHandler(
 	b, err := json.Marshal(response)
 	if err != nil {
 		obj := "available types"
-		h.log.Error(models.ErrMarshal(err, obj))
-		http.Error(rw, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(ErrMarshal(err, obj))
+		http.Error(rw, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 	rw.Header().Set("Content-Type", "application/json")
@@ -734,9 +734,9 @@ func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte
 	data, err := json.Marshal(&contentMesheryApplicationSlice)
 	if err != nil {
 		obj := "application file"
-		h.log.Error(models.ErrMarshal(err, obj))
-		http.Error(rw, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
-		addMeshkitErr(res, models.ErrMarshal(err, obj))
+		h.log.Error(ErrMarshal(err, obj))
+		http.Error(rw, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		addMeshkitErr(res, ErrMarshal(err, obj))
 		go h.EventsBuffer.Publish(res)
 		return
 	}
@@ -785,7 +785,7 @@ func githubRepoApplicationScan(
 				}
 				response, err := yaml.Marshal(pattern)
 				if err != nil {
-					return models.ErrMarshal(err, string(response))
+					return ErrMarshal(err, string(response))
 				}
 
 				af := models.MesheryApplication{
@@ -849,7 +849,7 @@ func genericHTTPApplicationFile(fileURL, sourceType string, reg *meshmodel.Regis
 	response, err := yaml.Marshal(pattern)
 
 	if err != nil {
-		return nil, models.ErrMarshal(err, string(response))
+		return nil, ErrMarshal(err, string(response))
 	}
 
 	url := strings.Split(fileURL, "/")

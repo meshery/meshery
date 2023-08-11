@@ -23,7 +23,7 @@ func getK8SClientSet(kubeconfig []byte, contextName string) (*kubernetes.Clients
 	} else {
 		config, err := clientcmd.Load(kubeconfig)
 		if err != nil {
-			return nil, ErrInvalidK8SConfigFile(err)
+			return nil, ErrInvalidK8SConfig(err)
 		}
 		if contextName != "" {
 			config.CurrentContext = contextName

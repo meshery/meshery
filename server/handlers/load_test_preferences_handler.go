@@ -56,8 +56,8 @@ func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Reque
 		// err = errors.Wrapf(err, msg)
 		// logrus.Error(err)
 		// http.Error(w, msg, http.StatusBadRequest)
-		h.log.Error(models.ErrUnmarshal(err, obj))
-		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusBadRequest)
+		h.log.Error(ErrUnmarshal(err, obj))
+		http.Error(w, ErrUnmarshal(err, obj).Error(), http.StatusBadRequest)
 		return
 	}
 	if err = models.SMPPerformanceTestConfigValidator(perfTest); err != nil {

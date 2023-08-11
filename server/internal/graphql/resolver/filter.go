@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
+	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
 )
@@ -23,7 +24,7 @@ func (r *Resolver) fetchFilters(ctx context.Context, provider models.Provider, s
 	err = json.Unmarshal(resp, filters)
 	if err != nil {
 		obj := "result data"
-		return nil, models.ErrUnmarshal(err, obj)
+		return nil, handlers.ErrUnmarshal(err, obj)
 	}
 
 	return filters, nil
