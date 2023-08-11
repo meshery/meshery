@@ -376,6 +376,8 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
           <TableCell colSpan={colSpan}>
             <b>Server Version:</b> {rowData[9]}
           </TableCell>
+          <TableCell colSpan={colSpan}>
+          </TableCell>
         </TableRow>
       );
     },
