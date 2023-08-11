@@ -11,6 +11,7 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/registry"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 )
 
@@ -218,7 +219,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		host := h.registryManager.GetRegistrant(entities[0])
 		mod.HostID = host.ID
 		mod.HostName = host.Hostname
-		mod.DisplayHostName = utils.HostnameToPascalCase(host.Hostname)
+		mod.DisplayHostName = registry.HostnameToPascalCase(host.Hostname)
 		meshmodel = append(meshmodel, mod)
 	}	
 	var pgSize int64
@@ -1155,7 +1156,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 			comp.Schema = string(b)
 			comp.HostID = host.ID
 			comp.HostName = host.Hostname
-			comp.DisplayHostName = utils.HostnameToPascalCase(host.Hostname)
+			comp.DisplayHostName = registry.HostnameToPascalCase(host.Hostname)
 			comps = append(comps, comp)
 		}
 	}
