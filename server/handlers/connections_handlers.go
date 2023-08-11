@@ -31,8 +31,8 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 	obj := "connection"
 
 	if err != nil {
-		h.log.Error(models.ErrUnmarshal(err, obj))
-		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(ErrUnmarshal(err, obj))
+		http.Error(w, ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -91,11 +91,12 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 	}
 
 	if err := json.NewEncoder(w).Encode(connectionsPage); err != nil {
-		h.log.Error(models.ErrEncoding(err, obj))
-		http.Error(w, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(ErrEncoding(err, obj))
+		http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
+
 
 // swagger:route GET /api/integrations/connections/{connectionKind} GetConnectionsByKind idGetConnectionsByKind
 // Handle GET request for getting all connections for a given kind.
@@ -142,11 +143,12 @@ func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request,
 	}
 
 	if err := json.NewEncoder(w).Encode(connectionsPage); err != nil {
-		h.log.Error(models.ErrEncoding(err, obj))
-		http.Error(w, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(ErrEncoding(err, obj))
+		http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
+
 
 // swagger:route GET /api/integrations/connections/status GetConnectionsStatus idGetConnectionsStatus
 // Handle GET request for getting all connections status
@@ -164,11 +166,12 @@ func (h *Handler) GetConnectionsStatus(w http.ResponseWriter, req *http.Request,
 	}
 
 	if err := json.NewEncoder(w).Encode(connectionsStatusPage); err != nil {
-		h.log.Error(models.ErrEncoding(err, obj))
-		http.Error(w, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(ErrEncoding(err, obj))
+		http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
+
 
 // swagger:route PUT /api/integrations/connections/{connectionKind} PutConnection idPutConnection
 // Handle PUT request for updating an existing connection
@@ -188,8 +191,8 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 	err = json.Unmarshal(bd, connection)
 	obj := "connection"
 	if err != nil {
-		h.log.Error(models.ErrUnmarshal(err, obj))
-		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(ErrUnmarshal(err, obj))
+		http.Error(w, ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -204,41 +207,6 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 	w.WriteHeader(http.StatusOK)
 }
 
-// swagger:route PUT /api/integrations/connections/{connectionId} PutConnectionById idPutConnectionById
-// Handle PUT request for updating an existing connection by connection ID
-//
-// Updates existing connection using ID
-// responses:
-// 200: mesheryConnectionResponseWrapper
-func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	bd, err := io.ReadAll(req.Body)
-	if err != nil {
-		h.log.Error(ErrRequestBody(err))
-		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
-		return
-	}
-
-	connection := &models.ConnectionPayload{}
-	err = json.Unmarshal(bd, connection)
-	obj := "connection"
-	if err != nil {
-		h.log.Error(ErrUnmarshal(err, obj))
-		http.Error(w, ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
-		return
-	}
-
-	_, err = provider.UpdateConnectionById(req, connection, mux.Vars(req)["connectionId"])
-	if err != nil {
-		h.log.Error(ErrFailToSave(err, obj))
-		http.Error(w, ErrFailToSave(err, obj).Error(), http.StatusInternalServerError)
-		return
-	}
-
-	h.log.Info("connection updated successfully")
-	w.WriteHeader(http.StatusOK)
-}
-
-
 // swagger:route DELETE /api/integrations/connections/{connectionId} DeleteConnection idDeleteConnection
 // Handle DELETE request for deleting an existing connection by connection ID
 //
@@ -246,7 +214,9 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 // responses:
 // 200: noContentWrapper
 func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
+	q := req.URL.Query()
+
+	connectionID := uuid.FromStringOrNil(q.Get("connectionId"))
 	_, err := provider.DeleteConnection(req, connectionID)
 	if err != nil {
 		obj := "connection"

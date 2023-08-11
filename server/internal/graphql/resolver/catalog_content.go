@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
+	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
 )
@@ -35,7 +36,7 @@ func (r *queryResolver) fetchCatalogPattern(ctx context.Context, provider models
 	var catalog catalogPatternPage
 	err = json.Unmarshal(resp, &catalog)
 	if err != nil {
-		r.Log.Error(models.ErrUnmarshal(err, "catalog data"))
+		r.Log.Error(handlers.ErrUnmarshal(err, "catalog data"))
 		return nil, err
 	}
 	return catalog.Patterns, nil
@@ -54,7 +55,7 @@ func (r *queryResolver) fetchCatalogFilter(ctx context.Context, provider models.
 
 	err = json.Unmarshal(resp, &catalog)
 	if err != nil {
-		r.Log.Error(models.ErrUnmarshal(err, "catalog data"))
+		r.Log.Error(handlers.ErrUnmarshal(err, "catalog data"))
 		return nil, err
 	}
 	return catalog.Filters, nil
