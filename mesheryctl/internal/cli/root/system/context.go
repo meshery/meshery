@@ -16,6 +16,7 @@ package system
 
 import (
 	"fmt"
+	"os"
 	"sort"
 
 	log "github.com/sirupsen/logrus"
@@ -418,10 +419,11 @@ var ContextCmd = &cobra.Command{
 // Base command
 mesheryctl system context
 	`,
-	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return errors.New(utils.SystemContextSubError("please specify a flag or subcommand. Use 'mesheryctl system context --help' to display user guide.\n", "context"))
+			// Display the help message
+			_ = cmd.Help()
+			os.Exit(0)
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
