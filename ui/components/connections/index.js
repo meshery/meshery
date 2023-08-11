@@ -1,14 +1,14 @@
 import {
   NoSsr,
   TableCell,
-  Button,
+  // Button,
   Tooltip,
   Link,
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
-import EditIcon from "@material-ui/icons/Edit";
+// import EditIcon from "@material-ui/icons/Edit";
 import CloseIcon from "@material-ui/icons/Close";
-import YoutubeSearchedForIcon from '@mui/icons-material/YoutubeSearchedFor';
+// import YoutubeSearchedForIcon from '@mui/icons-material/YoutubeSearchedFor';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import MUIDataTable from "mui-datatables";
 import { withSnackbar } from "notistack";
@@ -424,7 +424,7 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
   return (
     <>
       <NoSsr>
-        <div className={classes.topToolbar}>
+        {/* <div className={classes.topToolbar}>
           <div className={classes.createButton}>
             <div>
               <Button
@@ -474,7 +474,7 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
               Delete
             </Button>
           </div>
-        </div>
+        </div> */}
         <MUIDataTable
           data={connections}
           columns={columns}
