@@ -31,8 +31,8 @@ func (h *Handler) AvailableAdaptersHandler(w http.ResponseWriter, _ *http.Reques
 	err := json.NewEncoder(w).Encode(models.ListAvailableAdapters)
 	if err != nil {
 		obj := "data"
-		h.log.Error(ErrMarshal(err, obj))
-		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrMarshal(err, obj))
+		http.Error(w, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -62,8 +62,8 @@ func (h *Handler) AdaptersHandler(w http.ResponseWriter, req *http.Request, pref
 	err := json.NewEncoder(w).Encode(h.config.AdapterTracker.GetAdapters(req.Context()))
 	if err != nil {
 		obj := "data"
-		h.log.Error(ErrMarshal(err, obj))
-		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrMarshal(err, obj))
+		http.Error(w, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -174,8 +174,8 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	err = json.NewEncoder(w).Encode(meshAdapters)
 	if err != nil {
 		obj := "data"
-		h.log.Error(ErrMarshal(err, obj))
-		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrMarshal(err, obj))
+		http.Error(w, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -319,8 +319,8 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 	}
 	mk8sContexts, ok := req.Context().Value(models.KubeClustersKey).([]models.K8sContext)
 	if !ok || len(mk8sContexts) == 0 {
-		h.log.Error(ErrInvalidK8SConfig)
-		http.Error(w, ErrInvalidK8SConfig.Error(), http.StatusBadRequest)
+		h.log.Error(ErrInvalidK8SConfigNil)
+		http.Error(w, ErrInvalidK8SConfigNil.Error(), http.StatusBadRequest)
 		return
 	}
 	var configs []string

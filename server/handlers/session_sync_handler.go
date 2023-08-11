@@ -81,8 +81,8 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 	err = json.NewEncoder(w).Encode(data)
 	if err != nil {
 		obj := "user config data"
-		h.log.Error(ErrMarshal(err, obj))
-		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrMarshal(err, obj))
+		http.Error(w, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
