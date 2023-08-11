@@ -33,10 +33,35 @@ binding_relationship[results] {
         type = key
     }
 
-    some comp in binding_comps
+    evaluation_results := { result |
+        some comp in binding_comps
+        result := evaluate with data.binding_comp as comp with data.from as from with data.to as to with data.from_selectors as from_selectors with data.to_selectors as to_selectors
+    }
+
+    edges_set := { e |
+        some comp in from
+
+        some edge in comp.traits.meshmap.edges
+        e := {
+            "from": {
+                "id": edge.data.source
+            },
+            "to": {
+                "id": edge.data.target
+            },
+            "binded_by": {
+                "id": edge.data.metadata
+            }
+        }
+    }
     
-    result = evaluate with data.binding_comp as comp with data.from as from with data.to as to with data.from_selectors as from_selectors with data.to_selectors as to_selectors
-    results = {binding_type: result}
+    print(edges_set - evaluation_results)
+    results = {
+        binding_type: {
+            "edges_to_add": evaluation_results,
+            "edges_to_remove": edges_set - evaluation_results
+        }
+    }
 }
 
 evaluate[results] {
@@ -53,6 +78,7 @@ evaluate[results] {
 
         r := is_related(resource, binding_resource, data.from_selectors[resource.type])
         r == true  
+        print(resource)
             to_resource := data.to[k]
             q := is_related(to_resource, binding_resource, data.to_selectors[to_resource.type])
             q == true
@@ -91,8 +117,8 @@ is_feasible(from, to, resource1, resource2) {
 }
 
 match(from, to, resource1, resource2) {
+    print(from, to)
     contains(to, "_")
-
     index := get_array_pos(to)
     prefix_path := array.slice(to, 0, index)
     suffix_path := array.slice(to, index + 1, count(to))

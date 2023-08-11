@@ -1,4 +1,4 @@
-{
+{"permission": {
   "apiVersion": "core.meshery.io/v1alpha1",
   "kind": "Edge",
   "metadata": {
@@ -94,7 +94,7 @@
                 "name"
               ]
             ],
-            "ClusterRoleBinding": [
+            "RoleBinding": [
               [
                 "settings",
                 "roleRef",
@@ -130,4 +130,5 @@
       ]
     }
   }
+}
 }

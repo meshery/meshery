@@ -1,4 +1,4 @@
-{
+{"mount":{
     "apiVersion": "core.meshery.io/v1alpha1",
     "kind": "Edge",
     "metadata": {
@@ -53,7 +53,7 @@
                 ["labels"]
               ],
               "PersistentVolumeClaim": [
-                ["settings", "spec", "selectors", "matchLabels"]
+                ["settings", "spec", "selector", "matchLabels"]
               ]
             }
           }
@@ -61,3 +61,4 @@
       }
     }
   }
+}

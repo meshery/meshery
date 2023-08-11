@@ -24,7 +24,6 @@ contains(arr, elem) {
 }
 
 get_array_pos(arr_path) = index {
-    print(arr_path, ">>>>>")
     arr_path[k] == "_"
     index = k
 }
@@ -34,7 +33,6 @@ extract_components(services, selectors) = components {
         selector := selectors[_]
         service := services[_]
         selector.kind == service.type; 
-        print(selector.kind, service.type)
         component := service
     }
 }
