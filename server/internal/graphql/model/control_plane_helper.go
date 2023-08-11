@@ -18,7 +18,7 @@ func GetControlPlaneState(ctx context.Context, selectors []MeshType, provider mo
 	if len(cid) == 1 && cid[0] == "all" {
 		k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 		if !ok || len(k8sctxs) == 0 {
-			return nil, ErrMesheryClientNil(nil)
+			return nil, ErrMesheryClient(nil)
 		}
 		for _, k8ctx := range k8sctxs {
 			if k8ctx.KubernetesServerID != nil {

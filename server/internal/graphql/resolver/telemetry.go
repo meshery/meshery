@@ -20,7 +20,7 @@ func (r *Resolver) getTelemetryComps(ctx context.Context, provider models.Provid
 
 	k8sCtxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 	if !ok || len(k8sCtxs) == 0 {
-		return nil, ErrResolverMesheryClient(nil)
+		return nil, ErrMesheryClient(nil)
 	}
 
 	if len(k8sContextIDs) == 1 && k8sContextIDs[0] == "all" {

@@ -444,8 +444,8 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	err = json.Unmarshal(resp, &pattern)
 	if err != nil {
 		obj := "download pattern"
-		h.log.Error(models.ErrUnmarshal(err, obj))
-		http.Error(rw, models.ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(ErrUnmarshal(err, obj))
+		http.Error(rw, ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -679,8 +679,8 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 	data, err := json.Marshal(&result)
 	if err != nil {
 		obj := "pattern file"
-		http.Error(rw, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
-		addMeshkitErr(res, models.ErrMarshal(err, obj))
+		http.Error(rw, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		addMeshkitErr(res, ErrMarshal(err, obj))
 		go h.EventsBuffer.Publish(res)
 		return
 	}
