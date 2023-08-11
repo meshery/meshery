@@ -6,18 +6,18 @@ import "github.com/layer5io/meshkit/errors"
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrCreatingUUIDInstanceCode                   = "1001"
-	ErrRegisteringMesheryOAMTraitsCode            = "1002"
-	ErrRegisteringMesheryOAMWorkloadsCode         = "1003"
-	ErrRetrievingUserHomeDirectoryCode            = "1004"
-	ErrCreatingUserDataDirectoryCode              = "1005"
-	ErrCreatingMapPreferencePersisterInstanceCode = "1006"
-	ErrDatabaseAutoMigrationCode                  = "1008"
-	ErrInvalidURLSkippingProviderCode             = "1009"
-	ErrListenAndServeCode                         = "1010"
-	ErrCleaningUpLocalProviderCode                = "1011"
-	ErrClosingDatabaseInstanceCode                = "1012"
-	ErrInitializingRegistryManagerCode            = "1013"
+	ErrCreatingUUIDInstanceCode                   = "2251"
+	ErrRegisteringMesheryOAMTraitsCode            = "2241"
+	ErrRegisteringMesheryOAMWorkloadsCode         = "2242"
+	ErrRetrievingUserHomeDirectoryCode            = "2243"
+	ErrCreatingUserDataDirectoryCode              = "2244"
+	ErrCreatingMapPreferencePersisterInstanceCode = "2245"
+	ErrDatabaseAutoMigrationCode                  = "2246"
+	ErrInvalidURLSkippingProviderCode             = "2247"
+	ErrListenAndServeCode                         = "2248"
+	ErrCleaningUpLocalProviderCode                = "2249"
+	ErrClosingDatabaseInstanceCode                = "2250"
+	ErrInitializingRegistryManagerCode            = "2251"
 )
 
 func ErrInitializingRegistryManager(err error) error {

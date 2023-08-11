@@ -49,8 +49,8 @@ func (h *Handler) GetRegoPolicyForDesignFile(
 	ec := json.NewEncoder(rw)
 	err = ec.Encode(networkPolicy)
 	if err != nil {
-		h.log.Error(models.ErrEncoding(err, "networkPolicy response"))
-		http.Error(rw, models.ErrEncoding(err, "networkPolicy response").Error(), http.StatusInternalServerError)
+		h.log.Error(ErrEncoding(err, "networkPolicy response"))
+		http.Error(rw, ErrEncoding(err, "networkPolicy response").Error(), http.StatusInternalServerError)
 		return
 	}
 }

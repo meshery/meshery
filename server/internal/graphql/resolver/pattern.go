@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
+	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
 )
@@ -41,7 +42,7 @@ func (r *Resolver) fetchPatterns(ctx context.Context, provider models.Provider, 
 
 	if err := json.Unmarshal(resp, patterns); err != nil {
 		obj := "result data"
-		return nil, models.ErrUnmarshal(err, obj)
+		return nil, handlers.ErrUnmarshal(err, obj)
 	}
 
 	return patterns, nil

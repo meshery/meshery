@@ -9,7 +9,6 @@ import (
 	"cuelang.org/go/cue"
 	"cuelang.org/go/cue/cuecontext"
 	cueJson "cuelang.org/go/encoding/json"
-	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	oamcore "github.com/layer5io/meshkit/models/oam/core/v1alpha1"
@@ -118,23 +117,23 @@ func mergeAllAPIResults(content []byte, cli *kubernetes.Client) [][]byte {
 func GetK8sMeshModelComponents(kubeconfig []byte) ([]v1alpha1.ComponentDefinition, error) {
 	cli, err := kubernetes.New(kubeconfig)
 	if err != nil {
-		return nil, core.ErrGetK8sComponents(err)
+		return nil, ErrGetK8sComponents(err)
 	}
 	req := cli.KubeClient.RESTClient().Get().RequestURI("/openapi/v3")
 	k8version, err := cli.KubeClient.ServerVersion()
 	if err != nil {
-		return nil, core.ErrGetK8sComponents(err)
+		return nil, ErrGetK8sComponents(err)
 	}
 	var customResources = make(map[string]bool)
 	crdresult, err := cli.KubeClient.RESTClient().Get().RequestURI("/apis/apiextensions.k8s.io/v1/customresourcedefinitions").Do(context.Background()).Raw()
 	if err != nil {
-		return nil, core.ErrGetK8sComponents(err)
+		return nil, ErrGetK8sComponents(err)
 	}
 
 	var xcrd crd
 	err = json.Unmarshal(crdresult, &xcrd)
 	if err != nil {
-		return nil, core.ErrGetK8sComponents(err)
+		return nil, ErrGetK8sComponents(err)
 	}
 	for _, item := range xcrd.Items {
 		customResources[item.Spec.Names.Kind] = true
@@ -142,12 +141,12 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]v1alpha1.ComponentDefinitio
 	res := req.Do(context.Background())
 	content, err := res.Raw()
 	if err != nil {
-		return nil, core.ErrGetK8sComponents(err)
+		return nil, ErrGetK8sComponents(err)
 	}
 	contents := mergeAllAPIResults(content, cli)
 	apiResources, err := getAPIRes(cli)
 	if err != nil {
-		return nil, core.ErrGetK8sComponents(err)
+		return nil, ErrGetK8sComponents(err)
 	}
 
 	var arrAPIResources []string
