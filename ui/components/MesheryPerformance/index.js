@@ -780,6 +780,21 @@ class MesheryPerformanceComponent extends React.Component {
     };
   }
 
+  handleCertificateUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const newMetadata = {
+        ...this.state.metadata,
+        ca_certificate : {
+          ...this.state.metadata.ca_certificate,
+          name : file.name,
+        },
+      };
+      this.setState({ metadata : newMetadata });
+    }
+  };
+
+
   handleTimerDialogClose = () => {
     this.setState({ timerDialogOpen : false });
   };
@@ -1157,7 +1172,7 @@ class MesheryPerformanceComponent extends React.Component {
                               onChange={this.handleChange("caCertificate")} component="span"
                               className={classes.button}
                             >
-                              <input id="upload-cacertificate" type="file" accept={".crt"} name="upload-button"  hidden data-cy="cacertificate-upload-button" />
+                              <input id="upload-cacertificate" type="file" accept={".crt"} name="upload-button"  hidden data-cy="cacertificate-upload-button" onChange={this.handleCertificateUpload}/>
                               Browse
                             </Button>
                             <Tooltip title={infoCRTCertificates} interactive>
