@@ -1,0 +1,16 @@
+{
+      "page":0,
+      "page_size":10,
+      "total_count":3,
+      "filters":[
+            {
+                  "id":"d0e09134-acb6-4c71-b051-3d5611653f70",
+                  "name":"RolloutAndIstio",
+                  "user_id":"24187768-ce8a-41f0-be74-c537c8e41adc",
+                  "filter_file":"name: RolloutAndIstio\nversion: Rollouts-2.3.0\nservices:\n  istio:\n    type: IstioMesh\n    namespace: istio-system\n    settings:\n      version: 1.8.2\n    traits:\n      mTLS:\n        policy: mutual\n        namespaces:\n          - istio-test\n      automaticSidecarInjection:\n        namespaces:\n          - default\n          - istio-test\n      meshmap:\n        position:\n          x: 98\n          y: 100\n\n  svc:\n    type: Rollout\n    namespace: istio-test\n    settings:\n      replicas: 5\n      containers:\n        - name: svc-demo\n          image: utkarsh23/meshy:v5\n          ports:\n            - name: http\n              containerPort: 8080\n              protocol: TCP\n          resources:\n            requests:\n              memory: 32Mi\n              cpu: 5m\n      svcPorts:\n        - 8080:8080\n    traits:\n      strategy:\n        canary:\n          steps:\n            - setWeight: 20\n            - pause: { duration: 20 }\n            - setWeight: 40\n            - pause: { duration: 10 }\n\n  prometheus:\n    type: PrometheusIstioAddon\n    namespace: istio-system\n    dependsOn:\n      - istio\n      - svc\n  \n  grafana:\n    type: GrafanaIstioAddon\n    namespace: istio-system\n    dependsOn:\n      - prometheus\n\n",
+                  "location":{"branch":"","host":"","path":"","type":"local"},
+                  "created_at":"2023-07-12T16:22:41+01:00",
+                  "updated_at":"2023-07-12T16:22:41+01:00"
+            }
+      ]
+}

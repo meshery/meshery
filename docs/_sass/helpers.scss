@@ -75,6 +75,20 @@
 }
 
 // Embeds
+.iframe-container {
+  position: relative;
+  overflow: hidden;
+  padding-top: 56.25%;
+}
+
+.iframe-container iframe
+{
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
 
 iframe.container {
   width: 100%;

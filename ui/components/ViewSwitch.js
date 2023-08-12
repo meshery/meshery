@@ -1,29 +1,20 @@
-import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
+import { ToggleButton } from "@material-ui/lab";
 import GridOnIcon from "@material-ui/icons/GridOn";
 import TableChartIcon from "@material-ui/icons/TableChart";
 
 function ViewSwitch({ view, changeView }) {
   return (
-    <ToggleButtonGroup
+    <ToggleButton
       size="small"
       value={view}
-      exclusive
-      onChange={(_, newView) => {
-        if (newView !==null){
-          changeView(newView)
-        }
-      }
-      }
+      onChange={() => {
+        changeView(view === "grid" ? "table" : "grid");
+      }}
       aria-label="Switch View"
     >
-      <ToggleButton value="grid" data-cy="grid-view">
-        <GridOnIcon />
-      </ToggleButton>
-      <ToggleButton value="table" data-cy="table-view">
-        <TableChartIcon />
-      </ToggleButton>
-    </ToggleButtonGroup>
-  )
+      {view === "grid" ? <GridOnIcon /> : <TableChartIcon />}
+    </ToggleButton>
+  );
 }
 
-export default ViewSwitch
+export default ViewSwitch;

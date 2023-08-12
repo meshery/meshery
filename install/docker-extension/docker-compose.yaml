@@ -10,7 +10,7 @@ services:
     pull_policy: always
     environment:
       - "PROVIDER_BASE_URLS=https://meshery.layer5.io"
-      - "ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nginx-sm:10010 meshery-app-mesh:10005 meshery-kuma:10007 meshery-osm:10009 meshery-traefik-mesh:10006  meshery-cilium:10012"
+      - "ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nginx-sm:10010 meshery-app-mesh:10005 meshery-kuma:10007 meshery-traefik-mesh:10006  meshery-cilium:10012"
       - "EVENT=mesheryLocal"
       - "PORT=9081"
     volumes:
@@ -48,11 +48,6 @@ services:
     pull_policy: always
     ports:
       - "10007:10007"
-  meshery-osm:
-    image: layer5/meshery-osm:stable-latest
-    pull_policy: always
-    ports:
-      - "10009:10009"
   meshery-nginx-sm:
     image: layer5/meshery-nginx-sm:stable-latest
     pull_policy: always

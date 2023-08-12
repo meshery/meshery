@@ -151,20 +151,20 @@ function MesherySnackbarWrapper(props) {
       }, 3000)
     }
     if (componentType === "adapter") {
-      if (message.includes("mesh installed")) {
+      if (message?.includes("mesh installed")) {
         setSocialMessage(generateMsgForMesh(componentName[0].toUpperCase() + componentName.substring(1).toLowerCase()))
         return
       }
       if (message.includes("application installed")) {
-        const name = message.split(" ")[0];
+        const name = message?.split(" ")[0];
         setSocialMessage(generateMsgForSampleApp(name[0].toUpperCase() + name.substring(1).toLowerCase()))
         return
       }
       setSocialMessage(getDefaultMessage(message))
       return
     }
-    if (componentType === "core" && message.includes("deployed")) {
-      const designName = message.split(":")[1]
+    if (componentType === "core" && message?.includes("deployed")) {
+      const designName = message?.split(":")[1]
       setSocialMessage(generateMsgForAppsPatt(designName))
     }
 

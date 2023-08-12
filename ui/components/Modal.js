@@ -191,7 +191,7 @@ function Modal(props) {
 
   return (
     <>
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog style={{ zIndex : 9999 }} open={open} onClose={handleClose}>
         <div className={classes.modalHeader}>
           <Typography variant="h5"></Typography>
           <Typography className={classes.modelHeader} variant="h5">

@@ -126,7 +126,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 			FilterID := utils.TruncateID(v.ID.String())
 			var UserID string
 			if v.UserID != nil {
-				UserID = *v.UserID
+				UserID = utils.TruncateID(*v.UserID)
 			} else {
 				UserID = "null"
 			}
