@@ -1,110 +1,108 @@
-MODEL NAME                            
-admin-console-operator               	
-aks-appgw-fe                         	
-ambassador                           	
-apache-shardingsphere-operator-charts	
-aperture-agent                       	
-aperture-controller                  	
-apisix-ingress-controller            	
-apisix-ingress-controller            	
-appmesh-controller                   	
-argo-cd                              	
-argo-cd                              	
-argo-workflows                       	
-argocd-operator                      	
-aws-api-gateway-operator             	
-aws-load-balancer-controller         	
-aws-node-termination-handler-2       	
-aws-target-group-binding             	
-aws-vpc-cni                          	
-camel-k                              	
-capsule-proxy                        	
-cd-pipeline-operator                 	
-cert-manager-csi-driver-cacerts      	
-chaos-mesh                           	
-contour-operator                     	
-dapr                                 	
-elasticsearch-operator               	
-etcd-cluster-operator                	
-external-secrets-operator            	
-flagger                              	
-fluent-operator                      	
-fluent-operator                      	
-fluentbit-operator                   	
-fluentbit-operator                   	
-fluentd-operator                     	
-gatekeeper                           	
-gatekeeper                           	
-github-actions-runner-operator       	
-github-actions-runners               	
-gitlab-runner-operator               	
-grafana-operator                     	
-grafana-operator                     	
-grafana-ui-server                    	
-harbor-operator                      	
-helm-controller                      	
-identity-manager                     	
-istio-base                           	
-istio-operator                       	
-istio-ratelimit-operator             	
-jenkins-operator                     	
-jenkins-operator                     	
-jira-service-desk-operator           	
-jitsi                                	
-karpenter                            	
-katib                                	
-keycloak-operator                    	
-keycloak-operator                    	
-keycloak-operator                    	
-kiali-operator                       	
-knative                              	
-knative                              	
-kube-prometheus-stack                	
-kube-ui-server                       	
-kubedb-catalog                       	
-kubedb-crds                          	
-kubedb-ops-manager                   	
-kubedb-opscenter                     	
-kubedb-ui-server                     	
-kubeflow                             	
-kubernetes                           	
-kubernetes                           	
-kubevault                            	
-kubevault-catalog                    	
-kubevault-crds                       	
-kubevault-operator                   	
-kuma                                 	
-kusk-gateway                         	
-kyverno-monitor                      	
-litmus-core                          	
-mattermost-operator                  	
-meshery                              	
-meshery                              	
-meshery                              	
-minio-operator                       	
-mpi-operator                         	
-mysql-operator                       	
-mysql-operator                       	
-nats-operator                        	
-nginx-ingress                        	
-nginx-service-mesh                   	
-openebs                              	
-pg-db                                	
-pgo                                  	
-porter                               	
-postgres-controller                  	
-postgres-operator                    	
-postgres-with-operator               	
-ps-db                                	
-ps-operator                          	
-psmdb-operator                       	
-pulsar-operator                      	
-pulsar-resources-operator            	
-rabbitmq-cluster-operator            	
-rabbitmq-operator                    	
-spire                                	
-stackgres-operator                   	
-terraform                            	
-trickster                            	
-kubernetes                           	
-kubernetes                           	
+CATEGORY                      	MODEL                                	VERSION            
+Provisioning                  	admin-console-operator               	2.14.0-SNAPSHOT.4 	
+Cloud Native Network          	aks-appgw-fe                         	1.0.0-rc1         	
+Cloud Native Network          	ambassador                           	6.9.5             	
+App Definition and Development	apache-shardingsphere-operator-charts	0.2.0             	
+Orchestration & Management    	aperture-agent                       	1.0.0             	
+Orchestration & Management    	aperture-controller                  	1.0.0             	
+Cloud Native Network          	apisix-ingress-controller            	0.11.3            	
+Cloud Native Network          	apisix-ingress-controller            	0.8.0             	
+Cloud Native Network          	appmesh-controller                   	1.11.0            	
+App Definition and Development	argo-cd                              	3.3.5             	
+App Definition and Development	argo-cd                              	4.5.1             	
+App Definition and Development	argo-workflows                       	5.1.12            	
+App Definition and Development	argocd-operator                      	0.4.1             	
+App Definition and Development	armory-spinnaker-operator            	1.8.4             	
+Cloud Native Network          	aws-api-gateway-operator             	0.1.2             	
+Cloud Native Network          	aws-load-balancer-controller         	1.4.8             	
+Provisioning                  	aws-node-termination-handler-2       	0.2.0             	
+Cloud Native Network          	aws-target-group-binding             	0.1.0             	
+Cloud Native Network          	aws-vpc-cni                          	1.2.8             	
+Orchestration & Management    	awx-operator                         	1.3.0             	
+App Definition and Development	camel-k                              	0.13.0            	
+Provisioning                  	capsule-proxy                        	0.4.3             	
+App Definition and Development	cd-pipeline-operator                 	2.14.0-SNAPSHOT.32	
+Security & Compliance         	cert-manager-csi-driver-cacerts      	2022.6.14         	
+Observability and Analysis    	chaos-mesh                           	2.5.1             	
+Cloud Native Network          	contour-operator                     	4.0.2             	
+Serverless                    	dapr                                 	1.10.4            	
+Observability and Analysis    	elasticsearch-operator               	1.0.3             	
+Orchestration & Management    	etcd-cluster-operator                	0.1.6             	
+Provisioning                  	external-secrets-operator            	0.0.15            	
+App Definition and Development	flagger                              	1.29.0            	
+Observability and Analysis    	fluent-operator                      	0.1.0             	
+Observability and Analysis    	fluent-operator                      	2.0.2             	
+Observability and Analysis    	fluentbit-operator                   	1.3.0             	
+Observability and Analysis    	fluentd-operator                     	0.5.1             	
+Provisioning                  	gatekeeper                           	0.6.10            	
+Provisioning                  	gatekeeper                           	3.12.0-beta.0     	
+App Definition and Development	github-actions-runner-operator       	2.8.0             	
+App Definition and Development	github-actions-runners               	0.1.2             	
+App Definition and Development	gitlab-runner-operator               	1.5.0             	
+Observability and Analysis    	grafana-agent                        	0.10.0            	
+Observability and Analysis    	grafana-operator                     	2.7.24            	
+Observability and Analysis    	grafana-operator                     	2.7.9             	
+Provisioning                  	harbor-operator                      	1.5.4             	
+App Definition and Development	helm-controller                      	0.1.1             	
+Provisioning                  	identity-manager                     	1.0.0             	
+Cloud Native Network          	istio-base                           	1.16.0            	
+Cloud Native Network          	istio-operator                       	2.1.2             	
+Cloud Native Network          	istio-ratelimit-operator             	2.9.0             	
+App Definition and Development	jenkins-operator                     	0.6.2             	
+Tools                         	jira-service-desk-operator           	0.0.50            	
+Provisioning                  	karpenter                            	0.16.3            	
+Machine Learning              	katib                                	2.4.2             	
+Security & Compliance         	keycloak-operator                    	0.1.0             	
+Security & Compliance         	keycloak-operator                    	0.1.5             	
+Security & Compliance         	keycloak-operator                    	1.15.0-SNAPSHOT.19	
+Observability and Analysis    	kiali-operator                       	1.65.0            	
+Serverless                    	knative                              	0.5.1             	
+Serverless                    	knative-serving                      	1.0.1             	
+Serverless                    	knative-serving                      	3.0.0             	
+Cloud Native Network          	kong                                 	4.6.0             	
+Cloud Native Network          	kong-mesh                            	2.1.1             	
+Observability and Analysis    	kube-prometheus-stack                	45.7.1            	
+Provisioning                  	kube-ui-server                       	2022.6.14         	
+App Definition and Development	kubedb-catalog                       	2023.2.28         	
+App Definition and Development	kubedb-crds                          	2023.2.28         	
+App Definition and Development	kubedb-opscenter                     	2023.2.28         	
+App Definition and Development	kubedb-ui-server                     	2021.12.21        	
+Machine Learning              	kubeflow                             	1.6.1             	
+Orchestration & Management    	kubernetes                           	v1.25.4           	
+Orchestration & Management    	kubernetes                           	v1.25.2           	
+Security & Compliance         	kubevault                            	2023.3.3          	
+Security & Compliance         	kubevault-catalog                    	2023.3.3          	
+Security & Compliance         	kubevault-operator                   	0.14.0            	
+Cloud Native Network          	kuma                                 	2.1.1             	
+Orchestration & Management    	kusk-gateway                         	0.0.65            	
+Provisioning                  	kyverno-monitor                      	0.1.2             	
+Observability and Analysis    	litmus-core                          	2.14.0            	
+Tools                         	mattermost-operator                  	0.3.3             	
+Uncategorized                 	meshery                              	v1.0.0            	
+Orchestration & Management    	meshery                              	0.6.66            	
+App Definition and Development	minio-operator                       	4.3.7             	
+Machine Learning              	mpi-operator                         	1.2.2             	
+App Definition and Development	mysql-operator                       	2.0.8             	
+App Definition and Development	nats-operator                        	0.8.3             	
+Observability and Analysis    	newrelic-operator                    	0.3.4+f2ca803     	
+Cloud Native Network          	nginx-ingress                        	0.16.2            	
+Cloud Native Network          	nginx-service-mesh                   	0.7.0             	
+Cloud Native Storage          	openebs                              	3.5.0             	
+App Definition and Development	pg-db                                	1.1.0             	
+App Definition and Development	pg-operator                          	1.3.1             	
+App Definition and Development	pgo                                  	5.3.1             	
+App Definition and Development	porter                               	0.2.2             	
+App Definition and Development	postgres-controller                  	1.3.6             	
+App Definition and Development	postgres-operator                    	1.7.1             	
+App Definition and Development	postgres-with-operator               	0.1.0             	
+App Definition and Development	ps-operator                          	0.4.0             	
+App Definition and Development	psmdb-operator                       	1.14.1            	
+App Definition and Development	pulsar-operator                      	0.15.0            	
+App Definition and Development	pulsar-resources-operator            	0.2.1             	
+App Definition and Development	rabbitmq-cluster-operator            	3.2.7             	
+App Definition and Development	rabbitmq-operator                    	0.0.3             	
+Security & Compliance         	spire                                	0.12.2            	
+Provisioning                  	terraform                            	1.1.2             	
+Observability and Analysis    	trickster                            	2022.6.14         	
+Orchestration & Management    	kubernetes                           	v1.25.2           	
+Orchestration & Management    	kubernetes                           	v1.27.3           	

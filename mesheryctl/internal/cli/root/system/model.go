@@ -35,6 +35,8 @@ import (
 )
 
 var (
+	// flag used to specify the page number in list command
+	pageNumberFlag int
 	// flag used to specify format of output of view {model-name} command
 	outFormatFlag string
 )
@@ -45,8 +47,11 @@ var listModelCmd = &cobra.Command{
 	Short: "list models",
 	Long:  "list name of all registered models",
 	Example: `
-// View current provider
+// View list of models
 mesheryctl system model list
+
+// View list of models with specified page number (25 models per page)
+mesheryctl system model list --page 2
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -89,8 +94,12 @@ mesheryctl system model list
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
-
-		url := fmt.Sprintf("%s/api/meshmodels/models?pagesize=all", baseUrl)
+		var url string
+		if cmd.Flags().Changed("page") {
+			url = fmt.Sprintf("%s/api/meshmodels/models?page=%d", baseUrl, pageNumberFlag)
+		} else {
+			url = fmt.Sprintf("%s/api/meshmodels/models?pagesize=all", baseUrl)
+		}
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			utils.Log.Error(err)
@@ -119,12 +128,12 @@ mesheryctl system model list
 			return err
 		}
 
-		header := []string{"Model Name"}
+		header := []string{"Category", "Model", "Version"}
 		rows := [][]string{}
 
 		for _, model := range modelsResponse.Models {
 			if len(model.DisplayName) > 0 {
-				rows = append(rows, []string{model.Name})
+				rows = append(rows, []string{model.Category.Name, model.Name, model.Version})
 			}
 		}
 
@@ -293,6 +302,7 @@ mesheryctl system model view [model-name]
 }
 
 func init() {
+	listModelCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
 	viewModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd}
 	modelCmd.AddCommand(availableSubcommands...)
