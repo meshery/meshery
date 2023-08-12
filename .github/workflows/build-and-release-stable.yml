@@ -188,3 +188,24 @@ jobs:
     uses: meshery/meshery/.github/workflows/cncf-playground-deploy-meshery.yaml@master
     secrets: inherit
 
+  notify-via-email:
+    runs-on: ubuntu-latest
+    needs: [update-rest-api-docs, update-graphql-docs, build, ctlrelease, call-dde-relase-workflow, call-helm-chart-releaser, email-meshery-release-notes-workflow, call-cncf-playground-rollout]
+    if: ${{ failure() }}
+    steps:
+      - name: Send email notification on failure
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
+          to: support@layer5.io
+          from: Build and Release Stable workflow
+          body: |
+            The workflow failed. Here are the details:
+
+            Job: ${{ job.status }}
+            Job Name: ${{ job.job_name }}
+            Error: ${{ job.steps[*].outcome }}

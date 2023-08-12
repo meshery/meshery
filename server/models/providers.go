@@ -102,6 +102,7 @@ type Extensions struct {
 	UserPrefs UserPrefsExtensions `json:"user_prefs,omitempty"`
 	GraphQL   GraphQLExtensions   `json:"graphql,omitempty"`
 	Acccount  AccountExtensions   `json:"account,omitempty"`
+	Collaborator CollaboratorExtensions `json:"collaborator,omitempty"`
 }
 
 // NavigatorExtensions is a collection of NavigatorExtension
@@ -113,8 +114,11 @@ type UserPrefsExtensions []UserPrefsExtension
 // GraphQLExtensions is a collection of GraphQLExtension endpoints
 type GraphQLExtensions []GraphQLExtension
 
-// NavigatorExtensions is a collection of NavigatorExtension
+// NavigatorExtensions is a collection of AccountExtension
 type AccountExtensions []AccountExtension
+
+// CollaboratorExtension describes the Collaborator extension point in the UI
+type CollaboratorExtensions []CollaboratorExtension
 
 // GraphQLExtension describes the graphql server extension point in the backend
 type GraphQLExtension struct {
@@ -169,6 +173,12 @@ type AccountExtension struct {
 
 // UserPrefsExtension describes the user preference extension point in the UI
 type UserPrefsExtension struct {
+	Component string `json:"component,omitempty"`
+	Type      string `json:"type,omitempty"`
+}
+
+// CollaboratorsExtension is the struct for collaborators extension
+type CollaboratorExtension struct {
 	Component string `json:"component,omitempty"`
 	Type      string `json:"type,omitempty"`
 }
@@ -423,9 +433,10 @@ type Provider interface {
 
 	SaveConnection(req *http.Request, conn *ConnectionPayload, token string, skipTokenCheck bool) error
 	GetConnections(req *http.Request, userID string, page, pageSize int, search, order string) (*ConnectionPage, error)
-	GetConnectionsByKind(req *http.Request, userID string, page, pageSize int, search, order, connectionKind string) (*ConnectionPage, error)
+	GetConnectionsByKind(req *http.Request, userID string, page, pageSize int, search, order, connectionKind string) (*map[string]interface{}, error)
 	GetConnectionsStatus(req *http.Request, userID string) (*ConnectionsStatusPage, error)
 	UpdateConnection(req *http.Request, conn *Connection) (*Connection, error)
+	UpdateConnectionById(req *http.Request, conn *ConnectionPayload, connId string) (*Connection, error)
 	DeleteConnection(req *http.Request, connID uuid.UUID) (*Connection, error)
 	DeleteMesheryConnection() error
 

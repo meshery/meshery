@@ -35,6 +35,7 @@ const (
 	ErrGettingMeshModelSummaryCode          = "2249"
 	ErrGettingRegistryManagerCode           = "2250"
 	ErrGettingTelemetryComponentsCode       = "2251"
+	ErrAdapterInsufficientInformationCode   = "2252"
 )
 
 var (
@@ -190,4 +191,8 @@ func ErrK8sContextSubscription(err error) error {
 
 func ErrGettingTelemetryComponents(err error) error {
 	return errors.New(ErrGettingTelemetryComponentsCode, errors.Alert, []string{"unable to retrieve telemetry components"}, []string{err.Error()}, []string{"table in the database might be corrupted"}, []string{"try resetting database from settings"})
+}
+
+func ErrAdapterInsufficientInformation(err error) error {
+	return errors.New(ErrAdapterInsufficientInformationCode, errors.Critical, []string{"Unable to process adapter request, incomplete request"}, []string{err.Error()}, []string{}, []string{})
 }

@@ -7,24 +7,24 @@ assignees: ''
 ---
 
 
-#### Current Behavior
+### Current Behavior
 <!-- A brief description of what the problem is. (e.g. I need to be able to...) -->
 
-#### Desired Behavior
+### Desired Behavior
 <!-- A brief description of the enhancement. -->
 
-#### Implementation
+### Implementation
 <!-- Specifics on the approach to fulfilling the feature request. -->
 
-#### Acceptance Tests
+### Acceptance Tests
 <!-- Stipulations of functional behavior or non-functional items that must be in-place in order for the issue to be closed. -->
 
-#### Mockups
+### Mockups
 <!-- Any visual diagrams of the desired user interface. -->
 
 ---
 
-#### Contributor [Guides](https://docs.meshery.io/project/contributing) and [Handbook](https://layer5.io/community/handbook)
+### Contributor [Guides](https://docs.meshery.io/project/contributing) and [Handbook](https://layer5.io/community/handbook)
 - 📚 [Meshery Build and Release Strategy](https://docs.meshery.io/project/contributing/build-and-release)
 - 🎨 UI Design For Meshery Extensions [Figma](https://www.figma.com/file/SMP3zxOjZztdOLtgN4dS2W/Meshery-UI) in Figma [(open invite)](https://www.figma.com/team_invite/redeem/qJy1c95qirjgWQODApilR9)
 - 📚 [Meshery Extensibility Providers](https://docs.meshery.io/extensibility/providers)

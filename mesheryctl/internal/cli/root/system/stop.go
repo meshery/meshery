@@ -81,6 +81,8 @@ mesheryctl system stop --force
 	},
 }
 
+var userResponse bool
+
 func stop() error {
 	// Get viper instance used for context
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -143,7 +145,7 @@ func stop() error {
 			return err
 		}
 		// if the platform is kubernetes, stop the deployment by uninstalling the helm charts
-		userResponse := false
+		userResponse = false
 		if utils.SilentFlag {
 			userResponse = true
 		} else {

@@ -14,7 +14,8 @@ import { getK8sConfigIdsFromK8sConfig } from "../utils/multi-ctx";
 import { bindActionCreators } from "redux";
 import { useEffect, useState } from "react";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
-import UndeployIcon from "../public/static/img/UndeployIcon";
+// import UndeployIcon from "../public/static/img/UndeployIcon";
+import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
 import AddIcon from '@material-ui/icons/Add';
 import DoneIcon from "@material-ui/icons/Done";
 import Link from 'next/link';
@@ -25,6 +26,7 @@ import { iconMedium, iconSmall } from "../css/icons.styles";
 import { RoundedTriangleShape } from "./shapes/RoundedTriangle";
 import { notificationColors } from "../themes/app";
 import RedOctagonSvg from "./shapes/Octagon";
+import PatternIcon from "../assets/icons/Pattern";
 
 const styles = (theme) => ({
   dialogBox : {
@@ -117,7 +119,7 @@ const styles = (theme) => ({
   tabs : {
     marginLeft : 0,
     "& .MuiTab-root.Mui-selected" : {
-      backgroundColor : theme.palette.secondary.modalTabs
+      backgroundColor : theme.palette.type == "light"? theme.palette.secondary.modalTabs: theme.palette.secondary.mainBackground,
     }
   },
   tabLabel : {
@@ -128,7 +130,8 @@ const styles = (theme) => ({
       [theme.breakpoints.between("xs", 'sm')] : {
         fontSize : '0.8em'
       }
-    }
+    },
+    color : theme.palette.secondary.iconMain,
   },
   AddIcon : {
     width : theme.spacing(2.5),
@@ -191,6 +194,17 @@ const styles = (theme) => ({
     bottom : 9.5 ,
     color : "#fff",
     fontSize : "0.8rem"
+  },
+  closeIcon : {
+    transform : "rotate(-90deg)",
+    "&:hover" : {
+      transform : "rotate(90deg)",
+      transition : "all .3s ease-in",
+      cursor : "pointer"
+    }
+  },
+  closeIconButton : {
+    color : "white"
   }
 })
 
@@ -299,7 +313,18 @@ function ConfirmationMsg(props) {
       >
         <>
           <DialogTitle id="alert-dialog-title" className={classes.title}>
-            {title}
+            <div style={{ display : 'flex', justifyContent : "space-between", alignItems : 'center' }}>
+
+              <PatternIcon style={{ ...iconMedium }} fill={"#FFFFFF"}></PatternIcon>
+
+              {title}
+              <IconButton
+                onClick={handleClose}
+                disableRipple={true}
+                className={classes.closeIconButton}>
+                <CloseIcon fill={"#FFFFF"}className={classes.closeIcon} style={{ ...iconMedium }}></CloseIcon>
+              </IconButton>
+            </div>
           </DialogTitle>
           {/* <Paper square className={classes.paperRoot}> */}
           <Tabs
@@ -317,7 +342,7 @@ function ConfirmationMsg(props) {
               label={
                 <div style={{ display : "flex" }}
                 >
-                  <DoneIcon style={{ margin : "2px", ...iconSmall }}  fontSize="small"/><span className={classes.tabLabel}>Validate</span>
+                  <DoneIcon style={{ margin : "2px",  paddingRight : "2px", ...iconSmall }}  fontSize="small"/><span className={classes.tabLabel}>Validate</span>
                   {errors?.validationError > 0 && (
                     <div className={classes.triangleContainer}>
                       <RoundedTriangleShape color={notificationColors.warning}></RoundedTriangleShape>
@@ -334,7 +359,7 @@ function ConfirmationMsg(props) {
               className={classes.tab}
               onClick={(event) => handleTabValChange(event,1)}
               label={<div style={{ display : "flex" }}
-              ><div style={{ margin : "2px" }}> <UndeployIcon style={iconSmall} fill={theme.palette.secondary.icon} width="20" height="20" /> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
+              ><div style={{ margin : "2px", paddingRight : "2px" }}> <RemoveDoneIcon style={iconSmall} width="20" height="20" /> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
             />
             <Tab
               disabled={disabled}
@@ -342,7 +367,7 @@ function ConfirmationMsg(props) {
               className={classes.tab}
               onClick={(event) => handleTabValChange(event, 2)}
               label={<div style={{ display : "flex" }}>
-                <DoneAllIcon style={{ margin : "2px", ...iconSmall }} fontSize="small" />
+                <DoneAllIcon style={{ margin : "2px",  paddingRight : "2px", ...iconSmall }} fontSize="small" />
                 <span className={classes.tabLabel}>Deploy</span>
                 {errors?.deploymentError > 0 && (
                   <div className={classes.octagonContainer}>

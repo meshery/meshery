@@ -115,8 +115,8 @@ helm delete meshery
 ## Installing the Chart with a custom namespace
 
 ```console
-kubectl create namespace custom-namespace
-helm install meshery meshery/meshery --set metadata.namespace=custom-namespace
+kubectl create namespace meshery
+helm install meshery meshery/meshery --namespace meshery
 ```
 
 ## Installing the Chart with a custom Meshery Adapters
