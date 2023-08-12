@@ -106,6 +106,10 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 			return ErrDeployingAdapterInDocker(err)
 		}
 
+		if mesheryNetworkSettings == nil {
+			return ErrDeployingAdapterInDocker(fmt.Errorf("meshery network not found"))
+		}
+
 		for netName := range mesheryNetworkSettings.Networks {
 			nets, err := cli.NetworkList(ctx, types.NetworkListOptions{})
 			if err != nil {
