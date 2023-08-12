@@ -39,6 +39,7 @@ flags:
       - "*/helpers/**"
       - "*/internal/**"
       - "*/mesheryctl/**" 
+      - "*/mesheryctl/internal/cli/root/config"
       - "*/meshes/**"
       - "*/models/**"
       - "*/router/**"
