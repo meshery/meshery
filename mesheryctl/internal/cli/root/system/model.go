@@ -189,7 +189,7 @@ mesheryctl system model view [model-name]
 		return nil
 	},
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl system model view [model-name]\nRun 'mesheryctl system model view' to see list of models"
+		const errMsg = "Usage: mesheryctl system model view [model-name]\nRun 'mesheryctl system model view [model-name]' to view the model"
 		if len(args) == 0 {
 			return fmt.Errorf("model name isn't specified\n\n%v", errMsg)
 		} else if len(args) > 1 {
