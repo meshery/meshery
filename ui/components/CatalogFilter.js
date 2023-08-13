@@ -11,8 +11,7 @@ function CatalogFilter({ catalogVisibility, handleCatalogVisibility, hideCatalog
         <Button
           style={{
             marginBottom : '0.2rem',
-
-
+            alignItems : 'center'
           }}
           size="large"
           onClick = {handleCatalogVisibility} variant="contained" color="primary">
