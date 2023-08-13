@@ -1,6 +1,6 @@
 services:
     meshery:
-        image: layer5/meshery:stable-latest
+        image: layer5/meshery:playground-latest
         labels:
             - "com.centurylinklabs.watchtower.enable=true"
         environment:
@@ -13,6 +13,7 @@ services:
         volumes:
             - $HOME/.kube:/home/appuser/.kube:ro
             - $HOME/.minikube:$HOME/.minikube:ro
+            - /var/run/docker.sock:/var/run/docker.sock
         ports:
             - 9081:9081
         restart: always
