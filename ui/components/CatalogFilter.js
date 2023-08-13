@@ -8,9 +8,16 @@ function CatalogFilter({ catalogVisibility, handleCatalogVisibility, hideCatalog
   return (
     <>
       { !hideCatalog &&  // In application we  don't have catalog, hence this check
-        <Button onClick = {handleCatalogVisibility} variant="contained" color="primary">
+        <Button
+          style={{
+            marginBottom : '0.2rem',
+
+
+          }}
+          size="large"
+          onClick = {handleCatalogVisibility} variant="contained" color="primary">
           {catalogVisibility ? <VisibilityIcon style={iconMedium} /> : <VisibilityOffIcon style={iconMedium} />}
-          <span className={classes.btnText} style={{ marginLeft : '4px' }}> Catalog </span>
+          <span className={classes.btnText} style={{ marginLeft : '4px' }}> Catalog</span>
         </Button>
       }
     </>
