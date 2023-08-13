@@ -107,6 +107,29 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	fmt.Fprint(w, string(val))
 }
 
+// swagger:route POST /api/system/database/reset ResetSystemDatabase
+// Reset the system database to its initial state.
+//
+// This endpoint resets the system database to its initial state by performing the following steps:
+// - Creates an archive of the current database contents.
+// - Drops all existing tables in the database.
+// - Applies auto migration to recreate the necessary tables.
+//
+// responses:
+//   200: successfulResponse
+//   500: errorResponse
+
+// successfulResponse: database reset successful
+// A successful response indicating that the database reset operation was successful.
+// ---
+// type: string
+// example: "Database reset successful"
+
+// errorResponse: error response
+// An error response indicating the reason for the failure of the database reset operation.
+// ---
+// type: string
+// example: "Directory could not be created due to a non-existent path."
 func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 
 	mesherydbPath := path.Join(utils.GetHome(), ".meshery/config")
