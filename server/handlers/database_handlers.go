@@ -8,6 +8,7 @@ import (
 	"os"
 	"path"
 	"strconv"
+	"time"
 
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/utils"
@@ -114,7 +115,9 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	src := path.Join(mesherydbPath, "mesherydb.sql")
-	dst := path.Join(mesherydbPath, ".archive/mesherydb.sql")
+	currentTime := time.Now().Format("20060102150407")
+	newFileName := ".archive/mesherydb" + currentTime + ".sql"
+	dst := path.Join(mesherydbPath, newFileName)
 
 	fin, err := os.Open(src)
 	if err != nil {
