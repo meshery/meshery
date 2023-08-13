@@ -1,6 +1,6 @@
 services:
     meshery:
-        image: layer5/meshery:stable-latest
+        image: layer5/meshery:playground-latest
         labels:
             - "com.centurylinklabs.watchtower.enable=true"
         environment:
