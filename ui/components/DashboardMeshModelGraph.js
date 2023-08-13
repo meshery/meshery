@@ -63,7 +63,7 @@ function MeshModelContructs({ classes }) {
   return (
     <div className={classes.dashboardSection}>
       <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-        MeshModel Constructs
+        Models
       </Typography>
 
       <div>
@@ -119,7 +119,7 @@ function MeshModelCategories({ classes }) {
   return (
     <div className={classes.dashboardSection}>
       <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-        MeshModel Categories
+        Model Categories
       </Typography>
 
       <div>

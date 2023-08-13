@@ -6,7 +6,6 @@ replicaCount: 1
 restartPolicy: Always
 metadata:
   name: meshery
-  namespace: meshery
 image:
   repository: layer5/meshery
   tag: stable-latest
@@ -100,77 +99,50 @@ meshery-app-mesh:
   enabled: false
   fullnameOverride: meshery-app-mesh
   serviceAccountNameOverride: meshery-server
-  metadata:
-    namespace: meshery
 
 meshery-istio:
   enabled: false
   fullnameOverride: meshery-istio
   serviceAccountNameOverride: meshery-server
-  metadata:
-    namespace: meshery
 
 meshery-linkerd:
   enabled: false
   fullnameOverride: meshery-linkerd
   serviceAccountNameOverride: meshery-server
-  metadata:
-    namespace: meshery
 
 meshery-consul:
   enabled: false
   fullnameOverride: meshery-consul
   serviceAccountNameOverride: meshery-server
-  metadata:
-    namespace: meshery
 
 meshery-kuma:
   enabled: false
   fullnameOverride: meshery-kuma
   serviceAccountNameOverride: meshery-server
-  metadata:
-    namespace: meshery
-
-meshery-osm:
-  enabled: false
-  fullnameOverride: meshery-osm
-  serviceAccountNameOverride: meshery-server
-  metadata:
-    namespace: meshery
 
 meshery-nsm:
   enabled: false
   fullnameOverride: meshery-nsm
   serviceAccountNameOverride: meshery-server
-  metadata:
-    namespace: meshery
 
 meshery-nginx-sm:
   enabled: false
   fullnameOverride: meshery-nginx-sm
   serviceAccountNameOverride: meshery-server
-  metadata:
-    namespace: meshery
 
 meshery-traefik-mesh:
   enabled: false
   fullnameOverride: meshery-traefik-mesh
   serviceAccountNameOverride: meshery-server
-  metadata:
-    namespace: meshery
 
 meshery-cilium:
   enabled: false
   fullnameOverride: meshery-cilium
-  metadata:
-    namespace: meshery
 
 meshery-perf:
   enabled: false
   fullnameOverride: meshery-perf
   serviceAccountNameOverride: meshery-server
-  metadata:
-    namespace: meshery
 
 # If there need the test cases set it as true.
 #
