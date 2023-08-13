@@ -7,6 +7,7 @@ import normalizeURI from "../utils/normalizeURI";
 import dataFetch from "../lib/data-fetch";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
+import { CircularProgress } from "@material-ui/core";
 
 /**
  * getPath returns the current pathname
@@ -272,6 +273,21 @@ function getComponentURIFromPathForUserPrefs(extensions) {
 }
 
 /**
+ * getComponentURIFromPathForCollaborator takes in the user_prefs extensions and returns
+ * an array of all the component mappings
+ * @param {import("../utils/ExtensionPointSchemaValidator").CollaboratorSchema[]} extensions
+ * @returns {string[]}
+ */
+function getComponentURIFromPathForCollaborator(extensions) {
+
+  if (Array.isArray(extensions)) {
+    return extensions.map(ext => ext.component)
+  }
+
+  return []
+}
+
+/**
  * createPathForRemoteComponent takes in the name of the component and
  * returns a path for making the http request for that path
  *
@@ -291,12 +307,33 @@ function createPathForRemoteComponent(componentName) {
  * Only two "types" are supported by the sandbox:
  *  1. navigator - for navigator extensions
  *  2. user_prefs - for user preference extension
- *  3. account - for user account
- * @param {{ type: "navigator" | "user_prefs" | "account", Extension: JSX.Element }} props
+ *  3. account - for user account extension
+ *  4. collaborator - for collaborator extension
+ * @param {{ type: "navigator" | "user_prefs" | "account" | "collaborator", Extension: JSX.Element }} props
  */
 function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer, capabilitiesRegistry }) {
   const [extension, setExtension] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+
+  useEffect(() => {
+    if (type === "navigator" && !isDrawerCollapsed) {
+      toggleDrawer({ isDrawerCollapsed : !isDrawerCollapsed });
+    }
+    if (capabilitiesRegistry) {
+      const data = ExtensionPointSchemaValidator(type)(capabilitiesRegistry?.extensions[type]);
+      if (data !== undefined) {
+        setExtension(data);
+        setIsLoading(false);
+      }
+    }
+    // necessary to cleanup states on each unmount to prevent memory leaks and unwanted clashes between extension points
+    return () => {
+      setExtension([]);
+      setIsLoading(true);
+    }
+  }, []);
+
 
   useEffect(() => {
     if (type === "navigator" && !isDrawerCollapsed) {
@@ -321,7 +358,11 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer, ca
       {
         (
           isLoading ? (
-            <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
+            (type === "collaborator") ? (
+              <CircularProgress color="#fff" size="1.5rem" />
+            ) : (
+              <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
+            )
           ) :
             (
               (type === "navigator")?
@@ -334,11 +375,17 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer, ca
                       return <Extension url={createPathForRemoteComponent(uri)} key={uri} />
                     })
                   )
-                  : (type === "account")?
+                  : (type === "collaborator")?
                     (
-                      <Extension url={createPathForRemoteComponent(getComponentURIFromPathForAccount(extension, getPath()))} />
+                      getComponentURIFromPathForCollaborator(extension).map(uri => {
+                        return <Extension url={createPathForRemoteComponent(uri)} key={uri} />
+                      })
                     )
-                    : null
+                    : (type === "account")?
+                      (
+                        <Extension url={createPathForRemoteComponent(getComponentURIFromPathForAccount(extension, getPath()))} />
+                      )
+                      : null
             )
         )
       }
