@@ -244,7 +244,7 @@ system:
             mesheryctl system check --report
 
 system-channel:
-  name: system-channel
+  name: system channel
   description: Switch between release channels.
   usage:
     mesheryctl system channel
@@ -281,7 +281,7 @@ system-channel:
               mesheryctl system channel view --all
 
 system-context:
-  name: system-context
+  name: system context
   description: Display the current context.
   usage:
       mesheryctl system context
@@ -354,7 +354,7 @@ system-context:
               mesheryctl system context view --all
 
 system-provider:
-  name: system-provider
+  name: system provider
   description: Switch between providers
 
   subcommands:

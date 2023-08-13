@@ -111,11 +111,11 @@ Usage: mesheryctl system context create [context-name]`
 
 // deleteContextCmd represents the delete command
 var deleteContextCmd = &cobra.Command{
-	Use:   "delete context-name",
-	Short: "delete context",
+	Use:   "delete [context-name]",
+	Short: "Delete context",
 	Long:  `Delete an existing context (a named Meshery deployment) from Meshery config file`,
 	Example: `
-// Delete context
+// ### Delete context
 mesheryctl system context delete [context name]
 	`,
 
