@@ -44,6 +44,5 @@ type UserKeys struct {
 	Subcategory string `json:"subcategory,omitempty"`
 	Created_at  string `json:"created_at,omitempty"`
 	Updated_at  string `json:"updated_at,omitempty"`
-	Deleted_at  string `json:"deleted_at,omitempty" db:"bio"`
-	Valid       bool   `json:"valid"`
+	Deleted_at  string `json:"deleted_at,omitempty"`
 }

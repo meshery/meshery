@@ -82,6 +82,8 @@ func (h *Handler) GetUsers(w http.ResponseWriter, req *http.Request, _ *models.P
 
 // swagger:route GET /api/identity/users/keys UserKeysAPI idGetAllUsersKeysHandler
 // Handles GET for all Keys for users
+//
+// Returns all keys for user
 // responses:
 // 	200: keys
 
