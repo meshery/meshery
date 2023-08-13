@@ -190,7 +190,7 @@ jobs:
 
   notify-via-email:
     runs-on: ubuntu-latest
-    needs: [update-rest-api-docs, update-graphql-docs, build, ctlrelease, call-dde-relase-workflow, call-helm-chart-releaser, email-meshery-release-notes-workflow, call-cncf-playground-rollout]
+    needs: [update-rest-api-docs, update-graphql-docs, build, ctlrelease, call-dde-release-workflow, call-helm-chart-releaser, email-meshery-release-notes-workflow, call-cncf-playground-rollout]
     if: ${{ failure() }}
     steps:
       - name: Send email notification on failure

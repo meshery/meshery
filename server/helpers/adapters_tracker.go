@@ -79,6 +79,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		if err != nil {
 			return ErrDeployingAdapterInDocker(err)
 		}
+		defer cli.Close()
 
 		containers, err := cli.ContainerList(ctx, types.ContainerListOptions{})
 		if err != nil {
@@ -103,6 +104,10 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		_, err = io.ReadAll(resp)
 		if err != nil {
 			return ErrDeployingAdapterInDocker(err)
+		}
+
+		if mesheryNetworkSettings == nil {
+			return ErrDeployingAdapterInDocker(fmt.Errorf("meshery network not found"))
 		}
 
 		for netName := range mesheryNetworkSettings.Networks {
@@ -215,6 +220,7 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 		if err != nil {
 			return ErrUnDeployingAdapterInDocker(err)
 		}
+		defer cli.Close()
 
 		containers, err := cli.ContainerList(ctx, types.ContainerListOptions{})
 		if err != nil {
