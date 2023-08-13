@@ -112,7 +112,8 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 	mesherydbPath := path.Join(utils.GetHome(), ".meshery/config")
 	err := os.Mkdir(path.Join(mesherydbPath, ".archive"), os.ModePerm)
 	if err != nil && os.IsNotExist(err) {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Directory could not be created due to a non-existent path.", http.StatusInternalServerError)
+		return
 	}
 	src := path.Join(mesherydbPath, "mesherydb.sql")
 	currentTime := time.Now().Format("20060102150407")
@@ -121,37 +122,43 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 
 	fin, err := os.Open(src)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "The database does not exist or you don't have enough permission to access it", http.StatusInternalServerError)
+		return
 	}
 	defer fin.Close()
 
 	fout, err := os.Create(dst)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Destination file can not be created", http.StatusInternalServerError)
+		return
 	}
 	defer fout.Close()
 
 	_, err = io.Copy(fout, fin)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Can not copy file from source to destination", http.StatusInternalServerError)
+		return
 	}
 
 	dbHandler := provider.GetGenericPersister()
 	if dbHandler == nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Failed to obtain database handler", http.StatusInternalServerError)
+		return
 	} else {
 		dbHandler.Lock()
 		defer dbHandler.Unlock()
 
 		tables, err := dbHandler.Migrator().GetTables()
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			http.Error(w, "Can not access database tables", http.StatusInternalServerError)
+			return
 		}
 
 		for _, table := range tables {
 			err = dbHandler.Migrator().DropTable(table)
 			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+				http.Error(w, "Cannot drop table from database", http.StatusInternalServerError)
+				return
 			}
 		}
 
@@ -173,7 +180,8 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 			&models.K8sContext{},
 		)
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			http.Error(w, "Can not migrate tables to database", http.StatusInternalServerError)
+			return
 		}
 
 		w.Header().Set("Content-Type", "application/json")
