@@ -33,11 +33,18 @@ binding_relationship[results] {
         type = key
     }
 
+    # This is a set of set as it contains results for a particular binding_type and each binding_type can be binded by different type of nodes.
     evaluation_results := { result |
         some comp in binding_comps
-        result := evaluate with data.binding_comp as comp with data.from as from with data.to as to with data.from_selectors as from_selectors with data.to_selectors as to_selectors
+        binding_resources := extract_components(input.services, [{"kind": comp}])
+        # binding_resources := extract_components(input.services, [{"kind": comp}])
+        count(binding_resources) > 0
+        print("comp: ", comp, count(binding_resources))
+        result := evaluate with data.binding_resources as binding_resources with data.from as from with data.to as to with data.from_selectors as from_selectors with data.to_selectors as to_selectors
+        print("result", result)
     }
 
+    union_of_results := union(evaluation_results)
     edges_set := { e |
         some comp in from
 
@@ -54,12 +61,15 @@ binding_relationship[results] {
             }
         }
     }
-    
-    print(edges_set - evaluation_results)
+
+    print("edges_set: ", edges_set)
+    print("edges_set - evaluation_results: ", edges_set - union_of_results)
+    print("union_of_results: ", union_of_results)
+   
     results = {
         binding_type: {
-            "edges_to_add": evaluation_results,
-            "edges_to_remove": edges_set - evaluation_results
+            "edges_to_add": union_of_results,
+            "edges_to_remove": edges_set - union_of_results
         }
     }
 }
@@ -67,39 +77,37 @@ binding_relationship[results] {
 evaluate[results] {
 
 
-    binding_resources := extract_components(input.services, [{"kind": data.binding_comp}])
-
     services_map := { service.traits.meshmap.id: service |
         service := input.services[_]
     }
-    some i, j, k
-        resource := data.from[i]
-            binding_resource := binding_resources[j]
-
+    some i
+        binding_resource := data.binding_resources[i]
+        some j
+        resource := data.from[j]
         r := is_related(resource, binding_resource, data.from_selectors[resource.type])
         r == true  
-        print(resource)
+        some k
             to_resource := data.to[k]
             q := is_related(to_resource, binding_resource, data.to_selectors[to_resource.type])
             q == true
 
-    results = {
-        "from": {
-            "id": resource.traits.meshmap.id
-        },
-        "to": {
-            "id": to_resource.traits.meshmap.id
-        },
-        "binded_by": {
-            "id": binding_resource.traits.meshmap.id
-        }
-    }
+            results = {
+                "from": {
+                    "id": resource.traits.meshmap.id
+                },
+                "to": {
+                    "id": to_resource.traits.meshmap.id
+                },
+                "binded_by": {
+                    "id": binding_resource.traits.meshmap.id
+                }
+            }
 }
 
 is_related(resource1, resource2, from_selectors) {
     some i
     match_from := from_selectors.match.self[i]
-    match_to := from_selectors.match[data.binding_comp][i]
+    match_to := from_selectors.match[resource2.type][i]
     ans := is_feasible(match_from, match_to, resource1, resource2) 
 } 
 

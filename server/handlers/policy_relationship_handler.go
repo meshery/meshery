@@ -48,9 +48,7 @@ func (h *Handler) GetRegoPolicyForDesignFile(
 	for _, svc := range input.Services {
 		svc.Settings = core.Format.DePrettify(svc.Settings, false)
 	}
-	
 
- // instead of marshal and unmarshal pass the map iteself to meshkit func and dpn;t do unamarshal there
 	data, err := yaml.Marshal(input)
 	if err != nil {
 		http.Error(rw, ErrEncoding(err, "design file").Error(), http.StatusInternalServerError)
