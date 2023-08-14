@@ -7,7 +7,6 @@ import normalizeURI from "../utils/normalizeURI";
 import dataFetch from "../lib/data-fetch";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
-import { CircularProgress } from "@material-ui/core";
 
 /**
  * getPath returns the current pathname
@@ -359,7 +358,7 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer, ca
         (
           isLoading ? (
             (type === "collaborator") ? (
-              <CircularProgress color="#fff" size="1.5rem" />
+              ''
             ) : (
               <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
             )
