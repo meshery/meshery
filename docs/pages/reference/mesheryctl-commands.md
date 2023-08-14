@@ -712,3 +712,4 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
       {% endfor %}
 </thead>
 </table>
+{% include related-discussions.html tag="mesheryctl" %}
