@@ -1,5 +1,5 @@
 //@ts-check
-import { Grid, Paper, Typography, Button } from "@material-ui/core";
+import { Paper, Typography, Button, Grid } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import MesheryPatternCard from "./MesheryPatternCard";
@@ -173,7 +173,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
       <DesignConfigurator pattern={selectedPattern.pattern} show={setSelectedPattern}  onSubmit={handleSubmit} />
       }
       {!selectedPattern.show &&
-      <Grid container spacing={3} style={{ padding : "1rem" }}>
+      <Grid container spacing={3}>
         {patterns.map((pattern) => (
           <PatternCardGridItem
             key={pattern.id}

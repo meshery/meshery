@@ -4,6 +4,9 @@ import (
 	"github.com/layer5io/meshkit/errors"
 )
 
+// Please reference the following before contributing an error code:
+// https://docs.meshery.io/project/contributing/contributing-error
+// https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
 	ErrErrNewDynamicClientGeneratorCode    = "2048"
 	ErrInvalidK8SConfigCode                = "2049"
@@ -30,8 +33,12 @@ const (
 	ErrNewKubeClientGeneratorCode          = "2199"
 	ErrRestConfigFromKubeConfigCode        = "2200"
 	ErrNewKubeClientCode                   = "2201"
-	ErrAdapterAdministrationCode           = "2259"
-	ErrAdapterInsufficientInformationCode  = "2260"
+	ErrDeployingAdapterInK8sEnvCode        = "2259"
+	ErrDeployingAdapterInDockerEnvCode     = "2260"
+	ErrUnDeployingAdapterInK8sEnvCode      = "2261"
+	ErrUnDeployingAdapterInDockerEnvCode   = "2262"
+	ErrDeployingAdapterCode                = "2263"
+	ErrUnDeployingAdapterCode              = "2264"
 )
 
 func ErrNewDynamicClientGenerator(err error) error {
@@ -138,10 +145,26 @@ func ErrNewKubeClient(err error) error {
 	return errors.New(ErrNewKubeClientCode, errors.Alert, []string{"Unable to create new kube client"}, []string{err.Error()}, []string{}, []string{})
 }
 
-func ErrAdapterAdministration(err error) error {
-	return errors.New(ErrAdapterAdministrationCode, errors.Critical, []string{"Unable to create new kube client"}, []string{err.Error()}, []string{}, []string{})
+func ErrDeployingAdapterInK8s(err error) error {
+	return errors.New(ErrDeployingAdapterInK8sEnvCode, errors.Critical, []string{"Unable to deploy adapter in k8s env"}, []string{err.Error()}, []string{"Possible issues with Kubernetes cluster configuration or network connectivity."}, []string{"Check the Kubernetes cluster's configuration, ensure necessary resources are available, and verify network connectivity."})
 }
 
-func ErrAdapterInsufficientInformation(err error) error {
-	return errors.New(ErrAdapterInsufficientInformationCode, errors.Critical, []string{"Unable to process adapter request, incomplete request"}, []string{err.Error()}, []string{}, []string{})
+func ErrUnDeployingAdapterInK8s(err error) error {
+	return errors.New(ErrUnDeployingAdapterInK8sEnvCode, errors.Critical, []string{"Unable to undeploy adapter in k8s env"}, []string{err.Error()}, []string{"Possible issues with Kubernetes cluster configuration or network connectivity."}, []string{"Check the Kubernetes cluster's configuration, ensure necessary resources are available, and verify network connectivity."})
+}
+
+func ErrDeployingAdapterInDocker(err error) error {
+	return errors.New(ErrDeployingAdapterInDockerEnvCode, errors.Critical, []string{"Unable to deploy adapter in k8s env"}, []string{err.Error()}, []string{"Possible issues with Docker configuration, container networking, or resource availability."}, []string{"Check Docker configuration settings, ensure containers have proper networking access, and verify available resources."})
+}
+
+func ErrUnDeployingAdapterInDocker(err error) error {
+	return errors.New(ErrUnDeployingAdapterInDockerEnvCode, errors.Critical, []string{"Unable to undeploy Meshery Adapter in Kubernetes environment"}, []string{err.Error()}, []string{"Possible issues with Docker configuration, container networking, or resource availability."}, []string{"Check Docker configuration settings, ensure containers have proper networking access, and verify available resources."})
+}
+
+func ErrDeployingAdapterInUnknownPlatform(err error) error {
+	return errors.New(ErrDeployingAdapterCode, errors.Critical, []string{"Unable to deploy Meshery Adapter in the current environment"}, []string{err.Error()}, []string{"Your platform is not supported for deploying Meshery Adapters"}, []string{"Consider using a supported platform for deploying Meshery Adapters"})
+}
+
+func ErrUnDeployingAdapterInUnknownPlatform(err error) error {
+	return errors.New(ErrUnDeployingAdapterCode, errors.Critical, []string{"Unable to undeploy Meshery Adapter in the current environment"}, []string{err.Error()}, []string{"Current platform is not supported for undeploying Meshery Adapters"}, []string{"Consider using a supported platform for undeploying Meshery Adapters"})
 }

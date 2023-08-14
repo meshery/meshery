@@ -2,7 +2,7 @@ module github.com/layer5io/component_scraper
 
 go 1.19
 
-require github.com/layer5io/meshkit v0.6.50
+require github.com/layer5io/meshkit v0.6.52
 
 require (
 	cuelang.org/go v0.5.0 // indirect
@@ -23,7 +23,7 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/docker/cli v20.10.21+incompatible // indirect
 	github.com/docker/distribution v2.8.2+incompatible // indirect
-	github.com/docker/docker v20.10.21+incompatible // indirect
+	github.com/docker/docker v20.10.24+incompatible // indirect
 	github.com/docker/docker-credential-helpers v0.7.0 // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-metrics v0.0.1 // indirect

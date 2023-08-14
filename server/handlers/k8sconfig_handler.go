@@ -362,7 +362,7 @@ func RegisterK8sMeshModelComponents(_ context.Context, config []byte, ctxID stri
 	return
 }
 
-const k8sMeshModelPath = "../meshmodel/components/kubernetes/model_template.json"
+const k8sMeshModelPath = "../meshmodel/kubernetes/model_template.json"
 
 var k8sMeshModelMetadata = make(map[string]interface{})
 

@@ -5,20 +5,20 @@ title: '[CI]'
 labels: 'area/ci'
 assignees: ''
 ---
-#### Current Behavior
+### Current Behavior
 <!-- A brief description of what the problem is. (e.g. I need to be able to...) -->
 
-#### Desired Behavior
+### Desired Behavior
 <!-- A brief description of what you expected to happen. -->
 
-#### Implementation
+### Implementation
 <!-- Specifics on the approach to fulfilling the feature request. -->
 
-#### Acceptance Tests
+### Acceptance Tests
 <!-- Stipulations of functional behavior or non-functional items that must be in-place in order for the issue to be closed. -->
 
 ---
-#### Contributor [Guides](https://docs.meshery.io/project/contributing) and [Handbook](https://layer5.io/community/handbook)
+### Contributor [Guides](https://docs.meshery.io/project/contributing) and [Handbook](https://layer5.io/community/handbook)
 - 🛠 [Meshery Build & Release Strategy](https://docs.meshery.io/project/contributing/build-and-release)
 - 📚 [Instructions for contributing to documentation](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow)
 - Meshery documentation [site](https://docs.meshery.io/) and [source](https://github.com/meshery/meshery/tree/master/docs)

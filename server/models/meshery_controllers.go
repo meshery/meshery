@@ -231,7 +231,7 @@ func NewOperatorDeploymentConfig(adapterTracker AdaptersTrackerInterface) contro
 	// get meshery release version
 	mesheryReleaseVersion := viper.GetString("BUILD")
 	if mesheryReleaseVersion == "" || mesheryReleaseVersion == "Not Set" || mesheryReleaseVersion == "edge-latest" {
-		_, latestRelease, err := checkLatestVersion(mesheryReleaseVersion)
+		_, latestRelease, err := CheckLatestVersion(mesheryReleaseVersion)
 		// if unable to fetch latest release tag, meshkit helm functions handle
 		// this automatically fetch the latest one
 		if err != nil {
@@ -253,7 +253,7 @@ func NewOperatorDeploymentConfig(adapterTracker AdaptersTrackerInterface) contro
 
 // checkLatestVersion takes in the current server version compares it with the target
 // and returns the (isOutdated, latestVersion, error)
-func checkLatestVersion(serverVersion string) (*bool, string, error) {
+func CheckLatestVersion(serverVersion string) (*bool, string, error) {
 	// Inform user of the latest release version
 	versions, err := utils.GetLatestReleaseTagsSorted("meshery", "meshery")
 	latestVersion := versions[len(versions)-1]
@@ -303,9 +303,6 @@ func setOverrideValues(delete bool, adapterTracker AdaptersTrackerInterface) map
 		"meshery-kuma": map[string]interface{}{
 			"enabled": false,
 		},
-		"meshery-osm": map[string]interface{}{
-			"enabled": false,
-		},
 		"meshery-nsm": map[string]interface{}{
 			"enabled": false,
 		},
@@ -313,9 +310,6 @@ func setOverrideValues(delete bool, adapterTracker AdaptersTrackerInterface) map
 			"enabled": false,
 		},
 		"meshery-traefik-mesh": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-cpx": map[string]interface{}{
 			"enabled": false,
 		},
 		"meshery-app-mesh": map[string]interface{}{
@@ -337,6 +331,64 @@ func setOverrideValues(delete bool, adapterTracker AdaptersTrackerInterface) map
 	if delete {
 		overrideValues["meshery-operator"] = map[string]interface{}{
 			"enabled": false,
+		}
+	}
+
+	return overrideValues
+}
+
+// setOverrideValues detects the currently insalled adapters and sets appropriate
+// overrides so as to not uninstall them.
+func SetOverrideValuesForMesheryDeploy(adapters []Adapter, adapter Adapter, install bool) map[string]interface{} {
+	installedAdapters := make([]string, 0)
+	for _, adapter := range adapters {
+		if adapter.Name != "" {
+			installedAdapters = append(installedAdapters, strings.Split(adapter.Location, ":")[0])
+		}
+	}
+
+	overrideValues := map[string]interface{}{
+		"meshery-istio": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-cilium": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-linkerd": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-consul": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-kuma": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-nsm": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-nginx-sm": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-traefik-mesh": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-app-mesh": map[string]interface{}{
+			"enabled": false,
+		},
+	}
+
+	for _, adapter := range installedAdapters {
+		if _, ok := overrideValues[adapter]; ok {
+			overrideValues[adapter] = map[string]interface{}{
+				"enabled": true,
+			}
+		}
+	}
+
+	// based on deploy/undeploy action change the status of adapter override
+	if _, ok := overrideValues[strings.Split(adapter.Location, ":")[0]]; ok {
+		overrideValues[strings.Split(adapter.Location, ":")[0]] = map[string]interface{}{
+			"enabled": install,
 		}
 	}
 

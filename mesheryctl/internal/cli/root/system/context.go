@@ -16,6 +16,7 @@ package system
 
 import (
 	"fmt"
+	"os"
 	"sort"
 
 	log "github.com/sirupsen/logrus"
@@ -68,7 +69,7 @@ var createContextCmd = &cobra.Command{
 mesheryctl system context create [context-name]
 
 // Create new context and provide list of components, platform & URL
-mesheryctl system context create context-name --components meshery-osm --platform docker --url http://localhost:9081 --set --yes
+mesheryctl system context create context-name --components meshery-nsm --platform docker --url http://localhost:9081 --set --yes
 	`,
 	Annotations: linkDocContextCreate,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -391,8 +392,11 @@ mesheryctl system context create `
 		if isRunning {
 			if err := stop(); err != nil {
 				return errors.Wrap(err, utils.SystemError("Failed to stop Meshery before switching context"))
+			} else if !userResponse && err == nil {
+				return nil
 			}
 		}
+
 		configuration.CurrentContext = args[0]
 		viper.Set("current-context", configuration.CurrentContext)
 		log.Printf("switched to context '%s'", args[0])
@@ -415,10 +419,11 @@ var ContextCmd = &cobra.Command{
 // Base command
 mesheryctl system context
 	`,
-	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return errors.New(utils.SystemContextSubError("please specify a flag or subcommand. Use 'mesheryctl system context --help' to display user guide.\n", "context"))
+			// Display the help message
+			_ = cmd.Help()
+			os.Exit(0)
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {

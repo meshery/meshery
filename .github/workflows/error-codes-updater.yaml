@@ -5,6 +5,11 @@ on:
       - "master"
     paths:
       - "**.go"
+  pull_request:
+    branches:
+      - "master"
+    paths:
+      - "**.go"
 
 jobs:
   Update-error-codes:
@@ -39,6 +44,7 @@ jobs:
           echo '{ "errors_export": "" }' | jq --slurpfile export ./server/helpers/errorutil_errors_export.json '.errors_export = $export[0]' > ../docs/_data/errorref/mesheryctl_errors_export.json
 
       - name: Commit changes
+        if: ${{ github.event_name != 'pull_request' }}  # Skip for pull requests
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
           file_pattern: mesheryctl/helpers server/helpers/ **.go docs/
