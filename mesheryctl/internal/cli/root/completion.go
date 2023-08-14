@@ -23,7 +23,7 @@ import (
 )
 
 const example = `
-// ### bash <= 3.2
+// #### bash <= 3.2
 source /dev/stdin <<< "$(mesheryctl completion bash)"
 
 // bash <= 3.2 on osx
@@ -31,14 +31,14 @@ source /dev/stdin <<< "$(mesheryctl completion bash)"
 brew install bash-completion 
 mesheryctl completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
 
-// ### bash >= 4.0
+// #### bash >= 4.0
 source <(mesheryctl completion bash)
 
 // bash >= 4.0 on osx
 brew install bash-completion@2
 mesheryctl completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
 
-// ### zsh
+// #### zsh
 // If shell completion is not already enabled in your environment you will need
 // to enable it.  You can execute the following once:
 // Might need to start a new shell for this setup to take effect.
@@ -48,7 +48,7 @@ source <(mesheryctl completion zsh)
 // zsh on osx / oh-my-zsh
 COMPLETION_DIR=$(echo $fpath | grep -o '[^ ]*completions' | grep -v cache) && mkdir -p $COMPLETION_DIR && mesheryctl completion zsh > "${COMPLETION_DIR}/_mesheryctl"
 
-// ### fish:
+// #### fish:
 mesheryctl completion fish | source
 // To load fish shell completions for each session, execute once:
 mesheryctl completion fish > ~/.config/fish/completions/mesheryctl.fish`
