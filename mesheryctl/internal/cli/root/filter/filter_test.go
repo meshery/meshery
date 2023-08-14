@@ -157,4 +157,5 @@ func TestFilterCmd(t *testing.T) {
 	}
 	// stop mock server
 	utils.StopMockery(t)
+	t.Log("Filter tests Passed")
 }
