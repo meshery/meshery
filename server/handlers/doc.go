@@ -67,6 +67,12 @@ type usersParameterWrapper struct {
 	Filter string `json:"filter"`
 }
 
+//Returns users Keys
+// swagger:response keys
+type usersKeys struct {
+	Body models.UserKeys
+}
+
 // Returns all meshery patterns
 // swagger:response mesheryPatternsResponseWrapper
 type mesheryPatternsResponseWrapper struct {

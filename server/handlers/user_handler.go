@@ -80,6 +80,32 @@ func (h *Handler) GetUsers(w http.ResponseWriter, req *http.Request, _ *models.P
 	fmt.Fprint(w, string(resp))
 }
 
+// swagger:route GET /api/identity/users/keys UserKeysAPI idGetAllUsersKeysHandler
+// Handles GET for all Keys for users
+//
+// Returns all keys for user
+// responses:
+// 	200: keys
+
+func (h *Handler) GetUsersKeys(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	token, ok := req.Context().Value(models.TokenCtxKey).(string)
+	if !ok {
+		http.Error(w, "failed to get token", http.StatusInternalServerError)
+		return
+	}
+
+	q := req.URL.Query()
+	resp, err := provider.GetUsersKeys(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
+	if err != nil {
+		h.log.Error(ErrGetResult(err))
+		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, string(resp))
+}
+
 // swagger:route GET /api/user/prefs UserAPI idGetUserTestPrefs
 // Handle GET Requests for User Load Test Preferences
 //
