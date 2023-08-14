@@ -511,6 +511,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
     <tr>
       <td rowspan=10><a href="{{ site.baseurl }}/reference/mesheryctl/pattern">{{ command7.name }}</a></td>
       <td></td>
+      <td></td>
       <td>{{ command7.description }}</td>
     </tr>
     {% assign subcommand1 = command7.subcommands.apply %}
@@ -577,6 +578,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters.
   {% assign command8 = site.data.mesheryctlcommands.cmds.app %}
     <tr>
       <td rowspan=16><a href="{{ site.baseurl }}/reference/mesheryctl/app">{{ command8.name }}</a></td>
+      <td></td>
       <td></td>
       <td>{{ command8.description }}</td>
     </tr>

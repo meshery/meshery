@@ -527,9 +527,9 @@ mesh:
 
 pattern:
   name: pattern
-  description:
-  usage: mesheryctl pattern
-
+  description: Manage service meshes using predefined patterns
+  usage: mesheryctl pattern [flags] or mesheryctl pattern [command]
+  example: mesheryctl pattern list
   flags:
     file:
       name: --file, -f
