@@ -65,9 +65,9 @@
   links:
     - title: Architecture ↆ
       url: concepts/architecture
-      children:
+      children: 
         - title: Adapters
-          url: concepts/architecture/adapters      
+          url: concepts/architecture/adapters
         - title: Broker
           url: concepts/architecture/broker
         - title: Database
@@ -80,9 +80,7 @@
       url: concepts/catalog
       children:
         - title: Envoy WASM Filters
-          url: tasks/filter-management   
-    
-        
+          url: tasks/filter-management
 - title: ⚙️ Tasks (all)
   url: tasks
   links:
