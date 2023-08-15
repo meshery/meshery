@@ -107,7 +107,7 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	fmt.Fprint(w, string(val))
 }
 
-// swagger:route POST /api/system/database/reset ResetSystemDatabase
+// swagger:route DELETE /api/system/database/reset ResetSystemDatabase
 // Reset the system database to its initial state.
 //
 // This endpoint resets the system database to its initial state by performing the following steps:
