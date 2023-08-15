@@ -189,7 +189,7 @@ mesheryctl system model view [model-name]
 		return nil
 	},
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl system model view [model-name]\nRun 'mesheryctl system model view [model-name]' to view the model"
+		const errMsg = "Usage: mesheryctl system model view [model-name]\nRun 'mesheryctl system model view --help' to see detailed help message"
 		if len(args) == 0 {
 			return fmt.Errorf("model name isn't specified\n\n%v", errMsg)
 		} else if len(args) > 1 {
@@ -266,11 +266,11 @@ mesheryctl system model view [model-name]
 	},
 }
 
-// providerCmd represents the `mesheryctl system model` command
+// modelCmd represents the `mesheryctl system model` command
 var modelCmd = &cobra.Command{
 	Use:   "model",
-	Short: "Generate and update components",
-	Long:  `Generates and updates components in binary form`,
+	Short: "View list of models and detail of models",
+	Long:  `View list of models and detailed information of a specific model`,
 	Example: `
 // To view list of components
 mesheryctl system model list
