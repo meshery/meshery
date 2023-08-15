@@ -32,6 +32,7 @@ message ApplyRuleRequest {
     bool delete_op = 5;
     string operation_id = 6;
     repeated string kube_configs=7;
+    string version = 8;
 }
 
 message ApplyRuleResponse {
