@@ -30,7 +30,6 @@ import PatternIcon from "../assets/icons/Pattern";
 
 const styles = (theme) => ({
   dialogBox : {
-    // maxHeight : "42rem"
   },
   icon : {
     display : 'inline',

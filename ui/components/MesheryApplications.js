@@ -35,6 +35,7 @@ import InfoIcon from '@material-ui/icons/Info';
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import { iconMedium, iconSmall } from "../css/icons.styles";
 import SearchBar from "./searchcommon";
+import DryRunComponent from "./DryRunComponent";
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
@@ -324,11 +325,21 @@ function MesheryApplications({
     disposeConfSubscriptionRef.current = configurationSubscription
   }
 
+
   const handleModalOpen = (app_file, name, isDeploy) => {
+
+    const dryRunComponent = ( <DryRunComponent
+      design={app_file}
+      handleClose={handleModalClose}
+      numberOfElements={getComponentsinFile(app_file)}
+      selectedContexts={selectedK8sContexts}
+    />)
+
     setModalOpen({
       open : true,
       deploy : isDeploy,
       application_file : app_file,
+      dryRunComponent,
       name : name,
       count : getComponentsinFile(app_file)
     });
@@ -355,7 +366,6 @@ function MesheryApplications({
         method : "POST",
         body : application_file,
       }, () => {
-        console.log("ApplicationFile Deploy API", `/api/application/deploy`);
         enqueueSnackbar(`"${name}" application deployed` , {
           variant : "success",
           action : function Action(key) {
@@ -382,7 +392,6 @@ function MesheryApplications({
         method : "DELETE",
         body : application_file,
       }, () => {
-        console.log("ApplicationFile Undeploy API", `/api/pattern/deploy`);
         enqueueSnackbar(`"${name}" application undeployed`, {
           variant : "success",
           action : function Action(key) {
@@ -450,8 +459,6 @@ function MesheryApplications({
       `/api/application${query}`,
       { credentials : "include", },
       (result) => {
-        console.log(result);
-        console.log("ApplicationFile API", `/api/application${query}`);
         updateProgress({ showProgress : false });
         if (result) {
           setApplications(result.applications || []);
@@ -514,7 +521,6 @@ function MesheryApplications({
           body : JSON.stringify({ application_data : { id, name : metadata.name || name, application_file : data }, save : true }),
         },
         () => {
-          console.log("ApplicationFile API", `/api/application/${source_type}`);
           updateProgress({ showProgress : false });
           enqueueSnackbar(`"${name}" Application updated`, {
             variant : "success",
@@ -551,7 +557,6 @@ function MesheryApplications({
           body,
         },
         () => {
-          console.log("ApplicationFile API", `/api/application/${source_type}`);
           updateProgress({ showProgress : false });
         },
         handleError(ACTION_TYPES.UPLOAD_APPLICATION)
@@ -812,7 +817,6 @@ function MesheryApplications({
 
       switch (action) {
         case "changePage":
-          console.log("PPPPPPPPPPPPP------", tableState);
           initAppsSubscription(tableState.page.toString(), pageSize.toString(), search, order);
           break;
         case "changeRowsPerPage":
@@ -927,6 +931,7 @@ function MesheryApplications({
             // grid vieww
             <ApplicationsGrid
               applications={applications}
+              selectedK8sContexts={selectedK8sContexts}
               handleDeploy={handleDeploy}
               handleUnDeploy={handleUnDeploy}
               handleSubmit={handleSubmit}
@@ -952,6 +957,7 @@ function MesheryApplications({
             }
           }
           isDelete={!modalOpen.deploy}
+          dryRunComponent = {modalOpen.dryRunComponent}
           title={ modalOpen.name }
           componentCount={modalOpen.count}
           tab={modalOpen.deploy ? 2 : 1}
