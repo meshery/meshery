@@ -417,6 +417,8 @@ function MesheryPatterns({
     }
   },[viewType])
 
+  console.log("canPublishPattern", canPublishPattern);
+
   const onChange = (e) => {
     setPayload({
       id : publishModal.pattern?.id,
@@ -746,6 +748,7 @@ function MesheryPatterns({
       handleError(ACTION_TYPES.UNDEPLOY_PATTERN),
     );
   };
+
   const handlePublish = (catalog_data) => {
     updateProgress({ showProgress : true });
     dataFetch(
@@ -753,21 +756,36 @@ function MesheryPatterns({
       { credentials : "include", method : "POST", body : JSON.stringify(catalog_data) },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Design Published!", {
-          variant : "success",
-          action : function Action(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            );
-          },
-          autoHideDuration : 2000,
-        });
+        if (user.role_names.includes("admin")) {
+          enqueueSnackbar("Design Published", {
+            variant : "success",
+            action : function Action(key) {
+              return (
+                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                  <CloseIcon />
+                </IconButton>
+              );
+            },
+            autoHideDuration : 2000,
+          });
+        } else {
+          enqueueSnackbar("Design publish request has been submitted! Wait for Approval", {
+            variant : "success",
+            action : function Action(key) {
+              return (
+                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                  <CloseIcon />
+                </IconButton>
+              );
+            },
+            autoHideDuration : 2000,
+          });
+        }
       },
       handleError(ACTION_TYPES.PUBLISH_CATALOG),
     );
-  }
+  };
+
   function handleClone(patternID, name) {
     updateProgress({ showProgress : true });
     dataFetch(PATTERN_URL.concat(CLONE_URL, "/", patternID),
