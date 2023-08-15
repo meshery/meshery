@@ -434,7 +434,7 @@ const MeshModelComponent = ({ view, classes }) => {
   return (
     <div data-test="workloads">
       <MUIDataTable
-        title={<div className={classes.tableHeader}><FormControlLabel control={<Switch color="primary" checked={checked} onChange={handleToggleDuplicates} inputProps={{ 'aria-label' : 'controlled' }} />} label="Duplicates" /></div>}
+        title={<div className={classes.tableHeader}>{view !== RELATIONSHIPS && <FormControlLabel control={<Switch color="primary" checked={checked} onChange={handleToggleDuplicates} inputProps={{ 'aria-label' : 'controlled' }} />} label="Duplicates" />}</div>}
         data={resourcesDetail && resourcesDetail}
         columns={meshmodel_columns}
         options={meshmodel_options}
