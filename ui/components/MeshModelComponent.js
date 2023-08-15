@@ -1,4 +1,4 @@
-import {  withStyles } from '@material-ui/core'
+import { withStyles } from '@material-ui/core'
 import { withSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react'
 import MUIDataTable from 'mui-datatables';
@@ -29,7 +29,7 @@ const meshmodelStyles = (theme) => ({
     },
   },
   dashboardSection : {
-    padding : theme.spacing(2), borderRadius : 4,height : "100%",overflowY : "scroll"
+    padding : theme.spacing(2), borderRadius : 4, height : "100%", overflowY : "scroll"
   },
   duplicatesModelStyle : {
     backgroundColor : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
@@ -52,7 +52,7 @@ const MeshModelComponent = ({ view, classes }) => {
   const getModels = async (page) => {
 
     try {
-      const { total_count, models } = await getMeshModels(page+1, rowsPerPage); // page+1 due to server side indexing starting from 1
+      const { total_count, models } = await getMeshModels(page + 1, rowsPerPage); // page+1 due to server side indexing starting from 1
       setCount(total_count);
 
       if (!isRequestCancelled) {
@@ -71,7 +71,7 @@ const MeshModelComponent = ({ view, classes }) => {
     }
 
     try {
-      const { total_count, components } = await getComponentsDetailWithPageSize(page+1, rowsPerPage, sortOrder); // page+1 due to server side indexing starting from 1
+      const { total_count, components } = await getComponentsDetailWithPageSize(page + 1, rowsPerPage, sortOrder); // page+1 due to server side indexing starting from 1
       setCount(total_count);
       if (!isRequestCancelled) {
         setResourcesDetail(components);
@@ -89,7 +89,7 @@ const MeshModelComponent = ({ view, classes }) => {
     }
     console.log('sort order inside relationships', sortOrder)
     try {
-      const { total_count, relationships } = await getRelationshipsDetailWithPageSize(page+1, rowsPerPage, sortOrder);
+      const { total_count, relationships } = await getRelationshipsDetailWithPageSize(page + 1, rowsPerPage, sortOrder);
       setCount(total_count);
       if (!isRequestCancelled) {
         setResourcesDetail(relationships);
@@ -100,7 +100,7 @@ const MeshModelComponent = ({ view, classes }) => {
     }
   };
 
-  const getSearchedModels =  async (searchText) => {
+  const getSearchedModels = async (searchText) => {
     try {
       const { total_count, models } = await searchModels(searchText);
       setCount(total_count);
@@ -176,7 +176,7 @@ const MeshModelComponent = ({ view, classes }) => {
       label : (view === COMPONENTS || view === RELATIONSHIPS) ? 'Api Version' : 'Version',
       options : {
         sort : false,
-        searchable : view === RELATIONSHIPS ?  false : true,
+        searchable : view === RELATIONSHIPS ? false : true,
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell align={"start"} key={index}>
@@ -301,7 +301,7 @@ const MeshModelComponent = ({ view, classes }) => {
         sort : false,
         searchable : true,
         customHeadRender : function CustomHead({ index, ...column }) {
-          if ( view !== RELATIONSHIPS)
+          if (view !== RELATIONSHIPS)
             return (
               <TableCell align={"start"} key={index}>
                 <b>{column.label}</b>
@@ -334,14 +334,13 @@ const MeshModelComponent = ({ view, classes }) => {
     search : view === RELATIONSHIPS ? false : true,
     serverSide : true,
     expandableRows : (view !== RELATIONSHIPS && checked === true) && true,
-    onChangePage : debounce((p) =>  setPage(p), 200),
+    onChangePage : debounce((p) => setPage(p), 200),
     onSearchChange : debounce((searchText) => (setSearchText(searchText))),
     onChangeRowsPerPage : debounce((rowsPerPage) => {
       setRowsPerPage(rowsPerPage);
       setPage(0);
     }),
     onTableChange : (action, tableState) => {
-      console.log('action', action, tableState)
       const sortInfo = tableState.announceText
         ? tableState.announceText.split(" : ")
         : [];
@@ -376,9 +375,9 @@ const MeshModelComponent = ({ view, classes }) => {
       }
     },
     renderExpandableRow : (rowData) => {
-      console.log(rowData[6]>0)
+      console.log(rowData[6], rowData[5])
       return (
-        rowData[6] > 0 ? (
+        rowData[6].props.children.props.children > 0 ? (
           <TableCell
             colSpan={6}
             sx={{
@@ -435,7 +434,7 @@ const MeshModelComponent = ({ view, classes }) => {
   return (
     <div data-test="workloads">
       <MUIDataTable
-        title={<div className={classes.tableHeader}><FormControlLabel control={<Switch color="primary" checked={checked} onChange={handleToggleDuplicates} inputProps={{ 'aria-label' : 'controlled' }}/>} label="Duplicates" /></div>}
+        title={<div className={classes.tableHeader}><FormControlLabel control={<Switch color="primary" checked={checked} onChange={handleToggleDuplicates} inputProps={{ 'aria-label' : 'controlled' }} />} label="Duplicates" /></div>}
         data={resourcesDetail && resourcesDetail}
         columns={meshmodel_columns}
         options={meshmodel_options}
