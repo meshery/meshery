@@ -1,9 +1,10 @@
 import React , { useEffect,useState } from "react";
-import { Typography } from "@material-ui/core";
+import {  Box , Typography } from "@material-ui/core";
 import { donut } from "billboard.js";
 import BBChart from "../BBChart";
 import { dataToColors , isValidColumnName } from "../../utils/charts"
 import { getConnectionStatusSummary } from "../../api/connections";
+import ConnectClustersBtn from "../General/ConnectClustersBtn";
 
 
 export default function ConnectionStatsChart({ classes }) {
@@ -47,15 +48,35 @@ export default function ConnectionStatsChart({ classes }) {
     },
   };
 
+
+
   return (
     <div className={classes.dashboardSection}>
       <Typography variant="h6" gutterBottom className={classes.chartTitle}>
         Connections
       </Typography>
 
-      <div>
-        <BBChart options={chartOptions} />
-      </div>
+      <Box  sx={{ display : "flex",justifyContent : "center",alignItems : "center",alignContent : "center",height : "100%" }}>
+        { chartData.length > 0 ?
+          <BBChart options={chartOptions} />
+          : (
+            <div
+              style={{
+                padding : "2rem",
+                display : "flex",
+                justifyContent : "center",
+                alignItems : "center",
+                flexDirection : "column",
+              }}
+            >
+              <Typography style={{ fontSize : "1.5rem", marginBottom : "1rem" }} align="center" >
+                 No connections found in your clusters
+              </Typography>
+              <ConnectClustersBtn/>
+            </div>
+          )
+        }
+      </Box>
     </div>
   );
 }
