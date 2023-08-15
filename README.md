@@ -229,7 +229,7 @@ Assess your cloud native infrastructure configuration against deployment and ope
   <img alt="Shows an illustrated light mode meshery logo in light color mode and a dark mode meshery logo dark color mode." src="https://raw.githubusercontent.com/layer5io/layer5/master/src/assets/images/service-mesh-performance/stacked/smp-light-text.svg" width="18%" align="left" style="margin-left:10px;" />
 </picture>
 
-In an effort to produce service mesh agnostic tooling, Meshery uses the <a href="https://smp-spec.io">Service Mesh Performance</a> specification as a common format to capture and measure your infrasturcture's performance against a universal cloud native performance index. As an implementation of Service Mesh Interface (SMI), Meshery participates in advancing cloud native infrastructure adoption through the standardization of APIs.
+In an effort to produce service mesh agnostic tooling, Meshery uses the <a href="https://smp-spec.io">Service Mesh Performance</a> specification as a common format to capture and measure your infrastructure's performance against a universal cloud native performance index. As an implementation of Service Mesh Interface (SMI), Meshery participates in advancing cloud native infrastructure adoption through the standardization of APIs.
 <br /><br />
 <p style="clear:both;">
 
@@ -237,7 +237,7 @@ In an effort to produce service mesh agnostic tooling, Meshery uses the <a href=
 
 <h4>Standardized Cloud Native Performance Management</h4>
 
-Meshery is the cloud native utility for uniformly managing the performance of microservices and the infrastructure that run them. As an implementation of the Service Mesh Performance ([SMP](https://layer5.io/performance)), Meshery enables you to measure the value provided by Docker, Kubernetes, or a service mesh in the context of the overhead incurred.
+Meshery is the cloud native utility for uniformly managing the performance of microservices and the infrastructure that run them. As an implementation of the Service Mesh Performance ([SMP](https://layer5.io/projects/service-mesh-performance)), Meshery enables you to measure the value provided by Docker, Kubernetes, or a service mesh in the context of the overhead incurred.
 
 <a href="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/smp/service-mesh-performance-example.gif"><img alt="Performance Management" src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/smp/service-mesh-performance-example.gif" style="margin-left:10px;margin-bottom:10px;" width="100%" align="center" /></a>
 <br /><br />
