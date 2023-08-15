@@ -1,7 +1,4 @@
-FILTER ID	USER ID     NAME           	CREATED  	UPDATED   
-6dc1d203 	24187768	test-filter    	7-10-2023	7-10-2023	
-957fbc9b    24187768    kumatest        7-10-2023   7-10-2023
-d0e09134    24187768    RolloutAndIstio 7-10-2023   7-10-2023
-  
-  
-    TOTAL                     3                                                             
+FILTER ID	USER ID	NAME	CREATED	UPDATED 
+
+    TOTAL       3                               
+

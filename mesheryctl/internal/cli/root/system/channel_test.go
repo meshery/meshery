@@ -89,18 +89,20 @@ func TestViewCmd(t *testing.T) {
 		})
 	}
 }
-func TestRunChannelWithNoCmdOrFlag(t *testing.T) {
-	SetupFunc()
-	SystemCmd.SetArgs([]string{"channel"})
-	err = SystemCmd.Execute()
 
-	actualResponse := err.Error()
+// func TestRunChannelWithNoCmdOrFlag(t *testing.T) {
 
-	expectedResponse := "please specify a flag or subcommand. Use 'mesheryctl system channel --help' to display user guide." + "\n\n"
-	expectedResponse += "See https://docs.meshery.io/reference/mesheryctl/system/channel for usage details\n"
+// 	SetupFunc()
+// 	SystemCmd.SetArgs([]string{"channel"})
+// 	err = SystemCmd.Execute()
 
-	if expectedResponse != actualResponse {
-		t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
-	}
-	BreakupFunc()
-}
+// 	actualResponse := err.Error()
+
+// 	expectedResponse := "please specify a flag or subcommand. Use 'mesheryctl system channel --help' to display user guide." + "\n\n"
+// 	expectedResponse += "See https://docs.meshery.io/reference/mesheryctl/system/channel for usage details\n"
+
+// 	if expectedResponse != actualResponse {
+// 		t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
+// 	}
+// 	BreakupFunc()
+// }

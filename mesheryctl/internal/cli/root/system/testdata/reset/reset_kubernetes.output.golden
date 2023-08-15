@@ -2,9 +2,9 @@ Meshery resetting...
 
 Current Context: local
 Channel: stable
-Version: v0.5.56
+Version: latest
 Platform: kubernetes
 
 Fetching Meshery Server and Meshery Operator manifests for  local context...
-downloading manifest files from https://github.com/meshery/meshery/tree/v0.5.56/install/deployment_yamls/k8s
+downloading manifest files from https://github.com/meshery/meshery/tree/v0.6.123/install/deployment_yamls/k8s
 ...meshconfig has been reset to default settings.

@@ -24,6 +24,7 @@ import (
 	"github.com/spf13/viper"
 )
 
+// deleteCmd deletes a WASM filter using its name or ID
 var deleteCmd = &cobra.Command{
 	Use:   "delete [filter-name | ID]",
 	Short: "Delete a filter file",

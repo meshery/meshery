@@ -10,6 +10,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
+// TestDeleteCmd is testing the "deletedCmd" command
 func TestDeleteCmd(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
@@ -61,26 +62,26 @@ func TestDeleteCmd(t *testing.T) {
 			ResponseCode:     200,
 		},
 	}
-	for _, tt := range testcase {
-		t.Run(tt.Name, func(t *testing.T) {
-			apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
+	for _, test := range testcase {
+		t.Run(test.Name, func(t *testing.T) {
+			apiResponse := utils.NewGoldenFile(t, test.Fixture, fixturesDir).Load()
 			// set token
-			utils.TokenFlag = tt.Token
+			utils.TokenFlag = test.Token
 			// mock response
-			httpmock.RegisterResponder(tt.Method, tt.URL,
-				httpmock.NewStringResponder(tt.ResponseCode, apiResponse))
+			httpmock.RegisterResponder(test.Method, test.URL,
+				httpmock.NewStringResponder(test.ResponseCode, apiResponse))
 			// Expected response
 			testdataDir := filepath.Join(currDir, "testdata")
-			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
+			golden := utils.NewGoldenFile(t, test.ExpectedResponse, testdataDir)
 
-			b := utils.SetupMeshkitLoggerTesting(t, false)
-			FilterCmd.SetOutput(b)
+			buff := utils.SetupMeshkitLoggerTesting(t, false)
+			FilterCmd.SetOutput(buff)
 
-			FilterCmd.SetArgs(tt.Args)
+			FilterCmd.SetArgs(test.Args)
 			err := FilterCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error
-				if tt.ExpectedError {
+				if test.ExpectedError {
 					// write it in file
 					if *update {
 						golden.Write(err.Error())
@@ -93,7 +94,7 @@ func TestDeleteCmd(t *testing.T) {
 				t.Fatal(err)
 			}
 			// response being printed in console
-			output := b.String()
+			output := buff.String()
 			actualResponse := output
 
 			// write it in file

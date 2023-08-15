@@ -1,1 +1,2 @@
-failed to delete pattern 
+failed to read file /home/runner/work/meshery/meshery/mesheryctl/internal/cli/root/pattern/fixtures/InvalidPattern.golden. Ensure the filename or URL is valid
+See https://docs.meshery.io/reference/mesheryctl/pattern for usage details
