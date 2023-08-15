@@ -32,7 +32,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/system/database", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetSystemDatabase), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/api/system/database/reset", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ResetSystemDatabase), models.ProviderAuth))).
-		Methods("GET")
+		Methods("DELETE")
 
 	gMux.HandleFunc("/api/provider", h.ProviderHandler)
 	gMux.HandleFunc("/api/providers", h.ProvidersHandler).
