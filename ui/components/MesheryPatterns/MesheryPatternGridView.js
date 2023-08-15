@@ -13,7 +13,7 @@ import Validation from "../Validation";
 import { publish_schema, publish_ui_schema } from "../schemas/publish_schema";
 import Modal from "../Modal";
 import _ from "lodash";
-import DryRunComponent from "../DryRunComponent";
+import DryRunComponent from "../DryRun/DryRunComponent";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 

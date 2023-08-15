@@ -8,7 +8,7 @@ import { getComponentsinFile } from "../../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
 import useStyles from "../MesheryPatterns/Grid.styles";
 import { FILE_OPS } from "../../utils/Enum";
-import DryRunComponent from "../DryRunComponent";
+import DryRunComponent from "../DryRun/DryRunComponent";
 
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };

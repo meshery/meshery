@@ -16,9 +16,9 @@ import { v4 } from "uuid";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import { useState } from "react";
-import ErrorIcon from "../assets/icons/ErrorIcon";
-import { dryRunPattern } from "../api/patterns"
-import { NOTIFICATIONCOLORS } from "../themes"
+import ErrorIcon from "../../assets/icons/ErrorIcon";
+import { dryRunPattern } from "../../api/patterns"
+import { NOTIFICATIONCOLORS } from "../../themes"
 
 const styles = theme => {
   const error_color = NOTIFICATIONCOLORS.ERROR_DARK;
@@ -206,7 +206,6 @@ export const dryRunAndFormatErrors = (design,selectedContexts) => {
   return new Promise((resolve, rej) => {
     dryRunPattern(design, selectedContexts)
       .then(res => {
-        console.log("dryRun res",res)
         const dryRunResponse = res.data.dryRunResponse;
         let errorList = [];
         if (dryRunResponse) {

@@ -35,7 +35,7 @@ import InfoIcon from '@material-ui/icons/Info';
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import { iconMedium, iconSmall } from "../css/icons.styles";
 import SearchBar from "./searchcommon";
-import DryRunComponent from "./DryRunComponent";
+import DryRunComponent from "./DryRun/DryRunComponent";
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },

@@ -49,7 +49,7 @@ import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import ReusableTooltip from "./reusable-tooltip";
 import SearchBar from "./searchcommon";
-import DryRunComponent from "./DryRunComponent";
+import DryRunComponent from "./DryRun/DryRunComponent";
 
 
 const styles = (theme) => ({
