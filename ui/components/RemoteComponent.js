@@ -2,7 +2,6 @@ import React from "react";
 import { createUseRemoteComponent, getDependencies, createRequires } from "@paciolan/remote-component";
 // import CircularProgress from "@material-ui/core/CircularProgress";
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
-import { CircularProgress } from "@material-ui/core";
 
 const requires = createRequires(getDependencies);
 
@@ -12,7 +11,7 @@ const RemoteComponent = ({ url, loaderType }) => {
   const [loading, err, RemoteComponent] = useRemoteComponent(url.url);
   if (loading) {
     if (loaderType === "circular") {
-      return <CircularProgress color="#fff" size="1.5rem" />
+      return ''
     } else {
       return <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />;
     }
