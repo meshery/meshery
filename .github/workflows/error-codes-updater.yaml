@@ -19,7 +19,6 @@ jobs:
     steps:
       - uses: actions/checkout@master
         with:
-          token: ${{ secrets.GH_ACCESS_TOKEN }}
           ref: "master"
 
       - name: Setup Go
