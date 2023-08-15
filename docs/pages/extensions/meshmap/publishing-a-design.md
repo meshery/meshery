@@ -52,4 +52,3 @@ You are all set. Your request to publish this design is sent to Meshery Maintain
     <iframe src="https://www.youtube.com/embed/UCKS4eSB7AY" title="How to Publish Designs using Meshery Extension" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
   </div>
 </div>
-
