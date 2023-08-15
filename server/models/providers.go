@@ -102,6 +102,7 @@ type Extensions struct {
 	UserPrefs UserPrefsExtensions `json:"user_prefs,omitempty"`
 	GraphQL   GraphQLExtensions   `json:"graphql,omitempty"`
 	Acccount  AccountExtensions   `json:"account,omitempty"`
+	Collaborator CollaboratorExtensions `json:"collaborator,omitempty"`
 }
 
 // NavigatorExtensions is a collection of NavigatorExtension
@@ -113,8 +114,11 @@ type UserPrefsExtensions []UserPrefsExtension
 // GraphQLExtensions is a collection of GraphQLExtension endpoints
 type GraphQLExtensions []GraphQLExtension
 
-// NavigatorExtensions is a collection of NavigatorExtension
+// NavigatorExtensions is a collection of AccountExtension
 type AccountExtensions []AccountExtension
+
+// CollaboratorExtension describes the Collaborator extension point in the UI
+type CollaboratorExtensions []CollaboratorExtension
 
 // GraphQLExtension describes the graphql server extension point in the backend
 type GraphQLExtension struct {
@@ -169,6 +173,12 @@ type AccountExtension struct {
 
 // UserPrefsExtension describes the user preference extension point in the UI
 type UserPrefsExtension struct {
+	Component string `json:"component,omitempty"`
+	Type      string `json:"type,omitempty"`
+}
+
+// CollaboratorsExtension is the struct for collaborators extension
+type CollaboratorExtension struct {
 	Component string `json:"component,omitempty"`
 	Type      string `json:"type,omitempty"`
 }
@@ -256,6 +266,8 @@ const (
 	UsersProfile Feature = "users-profile"
 
 	UsersIdentity Feature = "users-identity"
+
+	UsersKeys Feature = "users-keys"
 )
 
 const (
@@ -341,6 +353,7 @@ type Provider interface {
 	GetUserDetails(*http.Request) (*User, error)
 	GetUserByID(req *http.Request, userID string) ([]byte, error)
 	GetUsers(token, page, pageSize, search, order, filter string) ([]byte, error)
+	GetUsersKeys(token, page, pageSize, search, order, filter string) ([]byte, error)
 	GetProviderToken(req *http.Request) (string, error)
 	UpdateToken(http.ResponseWriter, *http.Request) string
 	Logout(http.ResponseWriter, *http.Request) error
