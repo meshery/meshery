@@ -71,7 +71,7 @@ const styles = (theme) => ({
     filter : theme.palette.secondary.brightness
   },
   topToolbar : {
-    marginBottom : "6rem",
+    marginBottom : "3rem",
     display : "flex",
     justifyContent : "space-between",
     flexWrap : 'wrap',
