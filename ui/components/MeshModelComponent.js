@@ -2,7 +2,8 @@ import {  withStyles } from '@material-ui/core'
 import { withSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react'
 import MUIDataTable from 'mui-datatables';
-import { Grid, TableCell, Tooltip, TableSortLabel } from '@material-ui/core';
+import { Grid, TableCell, Tooltip, TableSortLabel, Switch, FormControlLabel } from '@material-ui/core';
+
 import DuplicatesDataTable from './DuplicatesDataTable';
 import { getComponentsDetailWithPageSize, getMeshModels, getRelationshipsDetailWithPageSize, searchModels, searchComponents } from '../api/meshmodel'
 import debounce from '../utils/debounce';
@@ -46,15 +47,18 @@ const MeshModelComponent = ({ view, classes }) => {
   const [searchText, setSearchText] = useState(null);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortOrder, setSortOrder] = useState("");
+  const [checked, setChecked] = useState(false);
 
   const getModels = async (page) => {
 
     try {
       const { total_count, models } = await getMeshModels(page+1, rowsPerPage); // page+1 due to server side indexing starting from 1
       setCount(total_count);
+
       if (!isRequestCancelled) {
         setResourcesDetail(models);
       }
+
     } catch (error) {
       console.error('Failed to fetch models:', error);
     }
@@ -119,6 +123,10 @@ const MeshModelComponent = ({ view, classes }) => {
       console.error('Failed to fetch components:', error);
     }
   };
+
+  const handleToggleDuplicates = () => {
+    setChecked(!checked);
+  }
 
   useEffect(() => {
     setRequestCancelled(false);
@@ -315,7 +323,7 @@ const MeshModelComponent = ({ view, classes }) => {
 
   const meshmodel_options = {
     rowsPerPage : rowsPerPage,
-    rowsPerPageOptions : [10, 25, 50, 100],
+    rowsPerPageOptions : [10, 25],
     page : page,
     count : count,
     sort : true,
@@ -325,7 +333,7 @@ const MeshModelComponent = ({ view, classes }) => {
     selectableRows : false,
     search : view === RELATIONSHIPS ? false : true,
     serverSide : true,
-    expandableRows : view !== RELATIONSHIPS && true,
+    expandableRows : (view !== RELATIONSHIPS && checked === true) && true,
     onChangePage : debounce((p) =>  setPage(p), 200),
     onSearchChange : debounce((searchText) => (setSearchText(searchText))),
     onChangeRowsPerPage : debounce((rowsPerPage) => {
@@ -368,6 +376,7 @@ const MeshModelComponent = ({ view, classes }) => {
       }
     },
     renderExpandableRow : (rowData) => {
+      console.log(rowData[6]>0)
       return (
         rowData[6] > 0 ? (
           <TableCell
@@ -406,9 +415,9 @@ const MeshModelComponent = ({ view, classes }) => {
           >
             <Grid
               container
-              xs={12}
               spacing={1}
               sx={{
+                justifyContent : "center",
                 margin : "auto",
                 paddingLeft : "0.5rem",
                 borderRadius : "0.25rem",
@@ -426,7 +435,7 @@ const MeshModelComponent = ({ view, classes }) => {
   return (
     <div data-test="workloads">
       <MUIDataTable
-        title={<div className={classes.tableHeader}></div>}
+        title={<div className={classes.tableHeader}><FormControlLabel control={<Switch color="primary" checked={checked} onChange={handleToggleDuplicates} inputProps={{ 'aria-label' : 'controlled' }}/>} label="Duplicates" /></div>}
         data={resourcesDetail && resourcesDetail}
         columns={meshmodel_columns}
         options={meshmodel_options}
