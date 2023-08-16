@@ -160,10 +160,28 @@ system:
       name: status
       description: Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.
       usage: mesheryctl system status
+      flags:
+        verbose:
+          name: --verbose, -v
+          description: (optional) Extra data in status table
+          usage: mesheryctl system status
 
     dashboard:
       name: dashboard
       description: Open Meshery UI in browser.
+      usage: mesheryctl system dashboard [flags]
+      example: mesheryctl system dashboard --port-forward
+      flags:
+        port-forward:
+          name: --port-forward
+          description: (optional) Use port forwarding to access Meshery UI
+          usage: mesheryctl system dashboard --port-forward
+          example: mesheryctl system dashboard --port-forward
+        skip-browser:
+          name: --skip-browser
+          description: (optional) skip opening of MesheryUI in browser.
+          usage: mesheryctl system dashboard --skip-browser
+          example: mesheryctl system dashboard --skip-browser 
 
     login:
       name: login
@@ -182,7 +200,7 @@ system:
       example: mesheryctl system check
       flags:
         preflight:
-          name: --preflight
+          name: --preflight, --pre
           description: Run Pre-mesh deployment checks (Docker and Kubernetes)
           usage: mesheryctl system check --preflight
           example: mesheryctl system check --preflight
@@ -196,11 +214,16 @@ system:
           description: Verify the health of Meshery Operator's deployment with MeshSync and Broker
           usage: mesheryctl system check --operator
           example: mesheryctl system check --operator
-        report:
-          name: --report
-          description: Runs diagnostic checks and bundles up to open an issue if present
-          usage: mesheryctl system check --report
-          example: mesheryctl system check --report
+        adapters:
+          name: --adapters
+          description: Check status of meshery adapters
+          usage: mesheryctl system check --adapters
+          example: mesheryctl system check --adapters
+        components:
+          name: --components
+          description: Check status of Meshery components
+          usage: mesheryctl system check --components
+          example: mesheryctl system check --components
 
 system-channel:
   name: system channel
@@ -220,7 +243,7 @@ system-channel:
       name: switch
       description: switch release channel and version
       usage: mesheryctl system channel switch [stable|stable-version|edge|edge-version]
-      example: |
+      example: |  
         mesheryctl system channel switch stable
           mesheryctl system channel switch edge
           mesheryctl system channel switch v0.5.60
@@ -249,7 +272,7 @@ system-context:
           mesheryctl system context create docker-edge
       flags:
         adapters:
-          name: --adapters
+          name: --components, -a
           description: create a new context in config.yaml file- specify the list of adapters to be added
           usage: mesheryctl system context create [context name] --adapters [list of adapters]
           example: mesheryctl system context create k8s-sample --adapters "meshery-osm:10010", "meshery-istio:10000"
@@ -284,7 +307,7 @@ system-context:
       usage: mesheryctl system context view
       flags:
         context:
-          name: --context
+          name: --context, -c
           description: view the configurations of the specified context
           usage: mesheryctl system context view --context [context name]
           example: mesheryctl system context view --context docker-edge
@@ -295,32 +318,60 @@ system-context:
 
 system-provider:
   name: system provider
-  description: Switch between providers
+  description: Enforce a provider. Choose between available Meshery providers
+  usage: |
+    mesheryctl system provider [flags]
+    mesheryctl system provider [command]
+  example: |
+    To view provider
+    mesheryctl system provider view
+    // To list all available providers
+    mesheryctl system provider list
+    // To set a provider
+    mesheryctl system provider set [provider]
+    // To switch provider and redeploy Meshery
+    mesheryctl system provider switch [provider]
+    // To reset provider to default
+    mesheryctl system provider reset
 
   subcommands:
     set:
       name: set
-      description: set provider to desired value
+      description: Set provider to desired value
+      usage:  mesheryctl system provider set [provider] [flags]
+      example:  mesheryctl system provider set Meshery
       flags:
         force:
           name: --force
-          description: force set the provider
+          description: Force set the provider
+          usage: mesheryctl system provider set [provider] --force
+          example: mesheryctl system provider set Meshery --force
     reset:
       name: reset
-      description: reset the provider
+      description: Reset provider for current context to default (Meshery)
+      usage: mesheryctl system provider reset [flags]
+      example: mesheryctl system provider reset
     switch:
       name: switch
-      description: Switch the provider to desired value
+      description: Switch provider of context in focus and redeploy Meshery
+      usage: mesheryctl system provider switch [provider] [flags]
+      example: mesheryctl system provider switch Meshery
     list:
       name: list
       description: List available providers from meshconfig
+      usage: mesheryctl system provider list [flags]
+      example: mesheryctl system provider list
     view:
       name: view
       description: View current provider value
+      usage: mesheryctl system provider view [flags]
+      example: mesheryctl system provider view
       flags:
         all:
-          name: --all
-          description: if set, shows all available providers
+          name: --all, -a
+          description: Show provider for all contexts
+          usage: mesheryctl system provider view --all
+          example: mesheryctl system provider view --all
 
 perf:
   name: perf
@@ -407,25 +458,35 @@ perf:
           description: (required/optional) URL of the endpoint send load to during testing.
           usage: mesheryctl perf apply [profile-name] --url [URL]
           example: mesheryctl perf apply local-perf --url https://192.168.1.15/productpage
+        cert-path:
+          name: --cert-path
+          arg: apply
+          description: (optional) Path to the certificate to be used for the load test
+          usage: mesheryctl perf apply [profile-name] --url "https://google.com" --cert-path path/to/cert.pem
+          example: mesheryctl perf apply meshery-profile-new --url "https://google.com" --cert-path path/to/cert.pem
+        disable-cert:
+          name: --disable-cert
+          arg: apply
+          description: (optional) Do not use certificate present in the profil
+          usage: mesheryctl perf apply [profile-name] --url "https://google.com" --disable-cert
     profile:
       name: profile
-      description: List the available performance profiles.
+      description: List all the available performance profiles
       usage: |
-
         # View performance profiles
         mesheryctl perf profile [profile-id] [flags]
       example: |
         # List performance profiles
           mesheryctl perf profile
 
-          # Search for performance profiles
-          mesheryctl perf profile soak-test
+        # Search for performance profiles
+        mesheryctl perf profile soak-test
 
-          # View detailed information about a performance profile
-          mesheryctl perf profile --view
+        # View detailed information about a performance profile
+        mesheryctl perf profile --view
       flags:
         page:
-          name: --page
+          name: --page, -p
           description: "(optional) List next set of performance profiles with --page (default = 1) (default 1)."
           usage: mesheryctl perf profile --page [page number]
           example: mesheryctl perf profile --page 2
@@ -439,18 +500,17 @@ perf:
       name: result
       description: View the results of a performance profile.
       usage: |
-
         # View results of a performance profile
         mesheryctl perf result [profile-name] [flags]
       example: |
         # List test results of a performance profile
           mesheryctl perf result soak-test
 
-          # View detailed information of a performance test result
-          mesheryctl perf result soak-test --view
+        # View detailed information of a performance test result
+        mesheryctl perf result soak-test --view
       flags:
         page:
-          name: --page
+          name: --page, -p
           description: "(optional) List next set of performance results with --page (default = 1) (default 1)."
           usage: mesheryctl perf result --page [page number]
           example: mesheryctl perf result --page 2
