@@ -417,7 +417,6 @@ function MesheryPatterns({
     }
   },[viewType])
 
-  console.log("canPublishPattern", canPublishPattern);
 
   const onChange = (e) => {
     setPayload({
