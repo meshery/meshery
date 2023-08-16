@@ -281,6 +281,9 @@ export const setAdapter = ({selectedAdapter}) => dispatch => {
 }
 
 export const updateEvents = ({ events }) => dispatch => {
+  if (typeof events === 'object') {
+    events = fromJS(events)
+  }
   return dispatch({ type: actionTypes.UPDATE_EVENTS, events });
 }
 

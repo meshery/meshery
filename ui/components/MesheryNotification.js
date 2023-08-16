@@ -296,7 +296,7 @@ class MesheryNotification extends React.Component {
     const { updateEvents } = this.props;
     return () => {
       updateEvents({ events : [] })
-      self.setState({ open : false });
+      self.handleClose();
     };
   }
 
