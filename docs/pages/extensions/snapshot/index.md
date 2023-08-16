@@ -166,76 +166,18 @@ You can configure your workflows to run when specific activity on GitHub happens
 ### About events that trigger workflows
 GitHub Actions provides a variety of events that can trigger workflows, allowing you to automate your software development process. Each event corresponds to a specific activity, such as creating a pull request, pushing code to a repository, or releasing a new version.
 
-## Supported Events
+### Supported Events
 
-GitHub Actions supports the following events:
-
-- [`push`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#push-event): Triggers when code is pushed to the repository.
-
-- [`pull_request`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request-event): Triggers when a pull request is opened or updated.
-
-- [`pull_request_target`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request_target-event): Triggers when a pull request is opened against the repository's default branch.
-
-- [`workflow_run`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_run-event): Triggers when a workflow is executed.
-
-- [`check_run`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#check_run-event): Triggers when a check run is requested or completed.
-
-- [`check_suite`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#check_suite-event): Triggers when a check suite is requested or completed.
-
-- [`create`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#create-event): Triggers when a branch or tag is created.
-
-- [`delete`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#delete-event): Triggers when a branch or tag is deleted.
-
-- [`deployment`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#deployment-event): Triggers when a deployment is created or updated.
-
-- [`deployment_status`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#deployment_status-event): Triggers when a deployment's status is updated.
-
-- [`fork`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#fork-event): Triggers when a fork is created.
-
-- [`gollum`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#gollum-event): Triggers when a Wiki page is created or updated.
-
-- [`issue_comment`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#issue_comment-event): Triggers when an issue comment is created or edited.
-
-- [`issues`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#issues-event): Triggers when an issue is opened, edited, or deleted.
-
-- [`label`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#label-event): Triggers when a label is created, edited, or deleted.
-
-- [`milestone`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#milestone-event): Triggers when a milestone is created, edited, or deleted.
-
-- [`page_build`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#page_build-event): Triggers when a GitHub Pages site is built.
-
-- [`project_card`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#project_card-event): Triggers when a project card is created, edited, moved, or deleted.
-
-- [`project_column`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#project_column-event): Triggers when a project column is created, edited, moved, or deleted.
-
-- [`project`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#project-event): Triggers when a project is created, edited, closed, reopened, or deleted.
-
-- [`public`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#public-event): Triggers when a private repository is made public.
-
-- [`pull_request_review`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request_review-event): Triggers when a pull request review is submitted or dismissed.
-
-- [`pull_request_review_comment`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request_review_comment-event): Triggers when a comment on a pull request review is created, edited, or deleted.
-
-- [`registry_package`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#registry_package-event): Triggers when a package is published, updated, or deleted in a GitHub Packages registry.
-
-- [`release`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#release-event): Triggers when a release is published or updated.
-
-- [`status`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#status-event): Triggers when a commit status is created, updated, or deleted.
-
-- [`watch`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#watch-event): Triggers when a user "watches" a repository.
-
-- [`workflow_dispatch`](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch-event): Triggers when a workflow is manually triggered using the GitHub UI or API.
-
-
+The MeshMap Snapshot Action supports all of the events listed in the GitHub documentation: 
 For detailed information about each event, including its properties and payloads, refer to the [GitHub Actions documentation](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows).
 
-## Workflow Syntax for Event Filtering
+### Workflow Syntax for Event Filtering
 
 When defining workflows, you can use the `on` keyword to specify which events trigger the workflow. You can further filter the triggering conditions by using the `types`, `branches`, `tags`, and other options. For example:
 
 ```yaml
 on:
-  push:
+  push: 
     branches:
       - main
   pull_request:
@@ -243,6 +185,27 @@ on:
       - opened
       - synchronize
 ```
+
+Specific events that are relevant to the MeshMap Snapshot Action are:
+
+- **push:** This event is triggered when code is pushed to the repository. It is the most common event used to trigger workflows.
+- **pull_request:** This event is triggered when a pull request is opened or updated. It is often used to trigger workflows that run tests or linters on the pull request's code. 
+
+- **workflow_dispatch:** This event is triggered when a workflow is manually triggered. It can be used to trigger workflows on demand, such as for publishing a new release or addressing critical bugs.
+
+For a comprehensive list of events that can be used in GitHub Actions, please refer to the Supported Events section above.
+
+## What Happens to Workflow Customizations on Upgrade?
+
+Customizations to the trigger criteria for the MeshMap Snapshot actions are preserved when upgrading to a new version of the action. However, there may be some cases where customizations are lost, such as when the syntax for specifying the trigger criteria changes in a new version of the action.
+
+Here are some examples of cases where customizations may be lost:
+
+- You currently have a workflow that is triggered on the push event, and the syntax for specifying the push event changes in a new version of the action.
+
+- You have a workflow that is triggered on a custom event, and the custom event is no longer supported in a new version of the action.
+
+It is always a good practice to test your workflows after upgrading to a new version of the MeshMap Snapshot Action to make sure that your customizations are still working as expected.
 
 ## Usage:
 
@@ -261,6 +224,7 @@ After testing you can [create a v1 tag](https://github.com/actions/toolkit/blob/
 ## Upgrade/Migrate Guide - For Meshery
 1. Given changes done in `action.yml` in MeshMap Snapshot, updating the workflows is required.
 2. Given changes done other than in `action.yml` in MeshMap Snapshot, the update in the `.github/worflows` is not a hard requirement, but doesnt hurt.
+
 
 
 
