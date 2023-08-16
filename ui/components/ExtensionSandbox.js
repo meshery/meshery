@@ -357,7 +357,11 @@ function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer, ca
       {
         (
           isLoading ? (
-            <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
+            (type === "collaborator") ? (
+              ''
+            ) : (
+              <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
+            )
           ) :
             (
               (type === "navigator")?

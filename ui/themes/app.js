@@ -56,7 +56,7 @@ export var darkTheme = createTheme({
       canvas : '#1A1A1A',
       brightness : 'brightness(200%)',
       switcherButtons : '#1e1e1e',
-      honeyComb : '#202020',
+      honeyComb : '#303030',
       filterChipBackground : '#222222',
       tabs : '#202020',
       modalTabs : '#363636',

@@ -49,6 +49,7 @@ import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import ReusableTooltip from "./reusable-tooltip";
 import SearchBar from "./searchcommon";
+import DryRunComponent from "./DryRun/DryRunComponent";
 
 
 const styles = (theme) => ({
@@ -70,7 +71,7 @@ const styles = (theme) => ({
     filter : theme.palette.secondary.brightness
   },
   topToolbar : {
-    marginBottom : "6rem",
+    marginBottom : "3rem",
     display : "flex",
     justifyContent : "space-between",
     flexWrap : 'wrap',
@@ -311,6 +312,7 @@ function MesheryPatterns({
     name : "",
     count : 0,
     validationBody : null,
+    dryRunComponent : null,
     errors : {
       validationErrors : 0
     }
@@ -580,6 +582,9 @@ function MesheryPatterns({
         handleClose={() => setModalOpen({ ...modalOpen, open : false })}
       />
     )
+    const dryRunComponent = (
+      <DryRunComponent design={pattern_file} noOfElements={compCount} selectedContexts={selectedK8sContexts} />
+    )
     setModalOpen({
       open : true,
       action : action,
@@ -587,6 +592,7 @@ function MesheryPatterns({
       name : name,
       count : compCount,
       validationBody : validationBody,
+      dryRunComponent : dryRunComponent,
       errors : {
         validationError : errors?.reduce((count, ele) => {
           return ele.errors.length + count
@@ -1385,6 +1391,7 @@ function MesheryPatterns({
           !selectedPattern.show && viewType==="grid" &&
             // grid vieww
             <MesheryPatternGrid
+              selectedK8sContexts={selectedK8sContexts}
               canPublishPattern={canPublishPattern}
               patterns={patterns}
               handleDeploy={handleDeploy}
@@ -1419,6 +1426,7 @@ function MesheryPatterns({
           componentCount={modalOpen.count}
           tab={modalOpen.action}
           validationBody={modalOpen.validationBody}
+          dryRunComponent={modalOpen.dryRunComponent}
           errors={modalOpen.errors}
         />
         {canPublishPattern && <Modal open={publishModal.open} schema={publish_schema} uiSchema={publish_ui_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.pattern?.catalog_data : payload.catalog_data } aria-label="catalog publish" title={publishModal.pattern?.name} handleSubmit={handlePublish} payload={payload} showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }}/>}

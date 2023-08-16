@@ -429,6 +429,56 @@ func (l *RemoteProvider) GetUsers(token, page, pageSize, search, order, filter s
 	return nil, err
 }
 
+//Returns Keys from a user /api/identity/users/keys
+func (l *RemoteProvider) GetUsersKeys(token, page, pageSize, search, order, filter string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(UsersKeys) {
+		logrus.Warn("operation not available")
+		return []byte{}, ErrInvalidCapability("UsersKeys", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(UsersKeys)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	q := remoteProviderURL.Query()
+	if page != "" {
+		q.Set("page", page)
+	}
+	if pageSize != "" {
+		q.Set("pagesize", pageSize)
+	}
+	if search != "" {
+		q.Set("search", search)
+	}
+	if order != "" {
+		q.Set("order", order)
+	}
+	if filter != "" {
+		q.Set("filter", filter)
+	}
+	remoteProviderURL.RawQuery = q.Encode()
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Users keys", http.StatusUnauthorized)
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bd, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, ErrDataRead(err, "Users Keys")
+	}
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("user keys successfully retrived from remote provider")
+		return bd, nil
+	}
+	err = ErrFetch(err, "Users Keys", resp.StatusCode)
+	logrus.Errorf(err.Error())
+	return nil, err
+}
+
 // GetSession - validates the current request, attempts for a refresh of token, and then return its validity
 //
 // It is assumed that each remote provider will support this feature

@@ -314,6 +314,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 	customBody := req.PostFormValue("customBody")
 	namespace := req.PostFormValue("namespace")
 	deleteOp := req.PostFormValue("deleteOp")
+	version := req.PostFormValue("version")
 	if namespace == "" {
 		namespace = "default"
 	}
@@ -354,6 +355,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 		CustomBody:  customBody,
 		DeleteOp:    (deleteOp != ""),
 		KubeConfigs: configs,
+		Version: version,
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
