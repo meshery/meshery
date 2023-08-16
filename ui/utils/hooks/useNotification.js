@@ -9,17 +9,7 @@ import { pushEvent ,openEventInNotificationCenter, toggleNotificationCenter } fr
 import moment from "moment";
 import { v4 } from "uuid";
 
-// Meshery Event Interface
-// event = {
-//   event_type ,
-//   summary,
-//   deleteEvent,
-//   eventCause,
-//   eventRemediation,
-//   eventErrorCode,
-//   componentType,
-//   componentName,
-// }
+
 
 export const useNotification = () => {
 
@@ -33,7 +23,7 @@ export const useNotification = () => {
       eventId
     }))
   }
-  const notify = ({ id=null,message,description=null,event_type,timestamp=null,customEvent=null,showInNotificationCenter=true }) => {
+  const notify = ({ id=null,message,details=null,event_type,timestamp=null,customEvent=null,showInNotificationCenter=true }) => {
 
     timestamp = timestamp ?? moment.utc().valueOf()
     id = id  || v4()
@@ -41,12 +31,13 @@ export const useNotification = () => {
 
     if (showInNotificationCenter) {
       dispatch(pushEvent({
+
+        ...customEvent,
         summary : message ,
         id,
         event_type,
         timestamp,
-        eventCause : description,
-        ...customEvent
+        details,
       }))
     }
 
@@ -72,5 +63,12 @@ export const useNotification = () => {
   return {
     notify
   }
+}
 
+// For use in legacy class based components
+export function withNotify( Component ){
+  return function WrappedWithNotify(props) {
+    const { notify } = useNotification()
+    return <Component {...props} notify={notify} />
+  }
 }

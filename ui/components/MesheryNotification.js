@@ -1,6 +1,5 @@
 import React from "react";
 import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import { connect } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
 import {
@@ -14,7 +13,6 @@ import {
   ClickAwayListener
 } from '@material-ui/core';
 import BellIcon from '@material-ui/icons/Notifications';
-import InfoIcon from '@mui/icons-material/Info';
 import ClearIcon from "../assets/icons/ClearIcon";
 import ErrorIcon from '@material-ui/icons/Error';
 import { withStyles } from '@material-ui/core/styles';
@@ -22,13 +20,13 @@ import amber from '@material-ui/core/colors/amber';
 import {  EVENT_TYPES, eventTypes } from '../lib/event-types';
 import MesheryEventViewer from './MesheryEventViewer';
 import dataFetch from '../lib/data-fetch';
-import { withSnackbar } from 'notistack'
 import { bindActionCreators } from "redux";
 import { toggleNotificationCenter, updateEvents } from "../lib/store";
 import { iconMedium } from "../css/icons.styles";
 import { cursorNotAllowed } from "../css/disableComponent.styles";
 import { v4 } from "uuid";
 import moment from "moment";
+import { withNotify } from "../utils/hooks/useNotification";
 
 const styles = (theme) => ({
   sidelist : { width : 450, },
@@ -187,8 +185,8 @@ class MesheryNotification extends React.Component {
       return
     }
     this.setState({ anchorEl : false });
-    // this.setState({ showFullNotificationCenter : false })
     this.props.toggleOpen()
+
   }
 
   /**
@@ -198,36 +196,6 @@ class MesheryNotification extends React.Component {
    */
 
   // const {notify} = useNotification()
-
-  notificationDispatcher(type, message, id ) {
-    const self = this;
-    //TODO: Use custom notification hook here
-    self.props.enqueueSnackbar(message, {
-      variant : eventTypes[type]?.type,
-      autoHideDuration : 5000,
-      action : (key) => (
-        <>
-          <IconButton
-            key="eye"
-            aria-label="eye"
-            color="inherit"
-            onClick={() => self.openEventInNotificationCenter(id)}
-          >
-            <InfoIcon style={iconMedium} />
-          </IconButton>
-          <IconButton
-            key="close"
-            aria-label="Close"
-            color="inherit"
-            onClick={() => self.props.closeSnackbar(key)}
-          >
-            <CloseIcon style={iconMedium} />
-          </IconButton>
-        </>
-      ),
-    });
-  }
-
 
   componentDidMount() {
     this.startEventStream();
@@ -240,20 +208,24 @@ class MesheryNotification extends React.Component {
     this.eventStream.onerror = this.handleError();
   }
 
-  handleEvents() {
-    const self = this;
-    return (e) => {
-      const { events, updateEvents } = this.props;
-      const data = JSON.parse(e.data);
-      // set null event field as success
-      data.event_type = data.event_type || 0
-      data.timestamp = data.timestamp || moment.utc().valueOf()
-      data.id = data.id || v4()
 
-      // Dispatch the notification
-      self.notificationDispatcher(data.event_type, data.summary, data.id)
-      updateEvents({ events : [...events, data] })
-    };
+  handleEvents() {
+    const self = this
+    return (e) => {
+      const data = JSON.parse(e.data);
+      const event = {
+        ...data,
+        event_type : getEventType(data),
+        timestamp : data.timestamp || moment.utc().valueOf() ,
+        id : data.id || v4() ,
+      }
+      self.props.notify({
+        message : event.summary ,
+        event_type : event.event_type,
+        details : event.details,
+        customEvent : event
+      })
+    }
   }
 
   handleError() {
@@ -314,14 +286,6 @@ class MesheryNotification extends React.Component {
     this.setState({
       tabValue : 0,
       displayEventType : '*'
-    })
-  }
-
-  openEventInNotificationCenter = (operation_id) => {
-    this.props.toggleOpen()
-    this.setState({
-      showFullNotificationCenter : true,
-      eventIdToOpenInNotification : operation_id,
     })
   }
 
@@ -496,4 +460,4 @@ const mapStateToProps = (state) => {
 export default withStyles(styles)(connect(
   mapStateToProps,
   mapDispatchToProps,
-)(withSnackbar(MesheryNotification)));
+)(withNotify(MesheryNotification)));
