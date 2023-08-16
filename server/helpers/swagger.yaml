@@ -424,6 +424,15 @@ paths:
             summary: Handles GET for all Users
             tags:
                 - UserAPI
+    /api/identity/users/keys:
+        get:
+            description: Handles GET for all Keys for users
+            operationId: idGetAllUsersKeysHandler
+            responses:
+                "200":
+                    $ref: '#/responses/keys'
+            tags:
+                - UserKeysAPI
     /api/integrations/connections:
         get:
             description: |-
@@ -460,6 +469,15 @@ paths:
             summary: Handle DELETE request for deleting an existing connection by connection ID
             tags:
                 - DeleteConnection
+        put:
+            description: Updates existing connection using ID
+            operationId: idPutConnectionById
+            responses:
+                "200":
+                    $ref: '#/responses/mesheryConnectionResponseWrapper'
+            summary: Handle PUT request for updating an existing connection by connection ID
+            tags:
+                - PutConnectionById
     /api/integrations/connections/{connectionKind}:
         get:
             description: |-
@@ -1943,7 +1961,12 @@ responses:
                 type: string
             displayName:
                 type: string
+            displayhostname:
+                type: string
             format: {}
+            hostID: {}
+            hostname:
+                type: string
             kind:
                 type: string
             metadata: {}
@@ -2040,6 +2063,11 @@ responses:
             category: {}
             displayName:
                 type: string
+            displayhostname:
+                type: string
+            hostID: {}
+            hostname:
+                type: string
             metadata: {}
             name:
                 type: string
@@ -2054,6 +2082,11 @@ responses:
             see RELATIONSHIPDEFINITIONS table in the diagram
         headers:
             apiVersion:
+                type: string
+            displayhostname:
+                type: string
+            hostID: {}
+            hostname:
                 type: string
             kind:
                 type: string
@@ -2078,6 +2111,10 @@ responses:
         description: Returns saved kubernetes config
     k8sContextsRespWrapper:
         description: Returns kubernetes context list
+    keys:
+        description: Returns users Keys
+        headers:
+            Body: {}
     listProvidersRespWrapper:
         description: Returns a list of available providers
         schema:
@@ -2099,6 +2136,8 @@ responses:
             type: array
     mesheryApplicationsResponseWrapper:
         description: Returns all meshery applications
+    mesheryConnectionResponseWrapper:
+        description: Returns a single connection
     mesheryFilterResponseWrapper:
         description: Returns a single meshery filter
     mesheryFiltersResponseWrapper:

@@ -97,9 +97,14 @@ Interwoven into Meshery’s web-based, user interface are a variety of extension
   **Type:** Single Component  
   **Description:** This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. As of now, the only place where this extension can be loaded is the “User Preference” section under meshery settings.
 
-- **Name:** "Account"
+- **Name:** "account"
   **Type:** Full Page
   **Description:** Remote Reactjs components (or other) are placed in a pre-existing page and will have dedicated endpoint: `/extension/account`.
+
+- **Name:** "collaborator"
+  **Type:** Single Component
+  **Description:** This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. Currently, placed at the Header component of Mehery UI.
+  Its work is to show active Meshery users under the same remote provider.
 
 - **Name:** /extension/\<your name here>  
   **Type:** Full Page  
@@ -206,6 +211,11 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
     "user_prefs": [
       {
         "component": "/provider/userprefs/meshmap-preferences.js"
+      }
+    ],
+    "collaborator": [
+      {
+        "component": "/provider/collaborator/avatar.js"
       }
     ]
   },

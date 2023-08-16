@@ -18,6 +18,8 @@ const (
 	HelmChartURL          = "https://meshery.io/charts/"
 	HelmChartName         = "meshery"
 	HelmChartOperatorName = "meshery-operator"
+	MesheryFolder         = ".meshery"
+	ManifestsFolder       = "manifests"
 )
 
 // RecursiveCastMapStringInterfaceToMapStringInterface will convert a
@@ -270,14 +272,30 @@ func SliceContains(elements []string, name string) bool {
 }
 
 func GetPlatform() string {
-	platform := "docker"
+	// local means running Meshery Server locally
+	platform := "local"
 
 	if _, err := os.Stat("/var/run/secrets/kubernetes.io/serviceaccount"); err == nil &&
 		os.Getenv("KUBERNETES_SERVICE_HOST") != "" &&
 		os.Getenv("KUBERNETES_SERVICE_PORT") != "" {
+
+		// kubernetes means running Meshery Server inside a Kubernetes cluster
 		platform = "kubernetes"
 	}
+
+	if isRunningInContainer() {
+		// docker means running Meshery Server inside a Docker container
+		platform = "docker"
+	}
+
 	return platform
+}
+
+// isRunningInContainer returns true if the process is running inside a container
+// this code is taken from https://github.com/moby/libnetwork/blob/master/drivers/bridge/setup_bridgenetfiltering.go
+func isRunningInContainer() bool {
+	_, err := os.Stat("/.dockerenv")
+	return !os.IsNotExist(err)
 }
 
 func SanitizeFileName(fileName string) string {

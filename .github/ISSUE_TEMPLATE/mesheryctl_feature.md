@@ -9,24 +9,24 @@ assignees: ''
 <!-- Please update the mesheryctl Command Tracker spreadsheet -->
 _See [mesheryctl Command Tracker](https://bit.ly/3dqXy1q) for current status of commands._
 
-#### Current Behavior
+### Current Behavior
 <!-- A brief description of what the problem is. (e.g. I need to be able to...) -->
 
-#### Desired Behavior
+### Desired Behavior
 <!-- A brief description of the enhancement. -->
 
-#### Implementation
+### Implementation
 <!-- Specifics on the approach to fulfilling the feature request. -->
 
-#### Acceptance Tests
+### Acceptance Tests
 <!-- Stipulations of functional behavior or non-functional items that must be in-place in order for the issue to be closed. -->
 
-#### Mockups
+### Mockups
 <!-- Any visual diagrams of the desired user interface. -->
 
 ---
 
-#### Contributor Resources
+### Contributor Resources
 
 - ⌨️ [mesheryctl Contributing Guide](https://github.com/meshery/meshery/blob/master/mesheryctl/README.md)
 - [Beginner's guide to contributing to Meshery and mesheryctl](https://youtu.be/hh_kFLZx3G4)

@@ -49,6 +49,7 @@ import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import ReusableTooltip from "./reusable-tooltip";
 import SearchBar from "./searchcommon";
+import DryRunComponent from "./DryRun/DryRunComponent";
 
 
 const styles = (theme) => ({
@@ -70,7 +71,7 @@ const styles = (theme) => ({
     filter : theme.palette.secondary.brightness
   },
   topToolbar : {
-    marginBottom : "6rem",
+    marginBottom : "3rem",
     display : "flex",
     justifyContent : "space-between",
     flexWrap : 'wrap',
@@ -82,9 +83,7 @@ const styles = (theme) => ({
   viewSwitchButton : {
     justifySelf : "flex-end",
     paddingLeft : "1rem",
-    order : 4,
     "@media (max-width: 1450px)" : {
-      order : 3,
       marginRight : '2rem'
     },
   },
@@ -131,23 +130,19 @@ const styles = (theme) => ({
     display : 'flex',
     alignItems : 'center',
     justifyContent : 'center',
-    order : 2,
     margin : 'auto',
     "@media (max-width: 1450px)" : {
-      order : 4,
       paddingLeft : 0,
       margin : 0,
     },
-    "@media (max-width: 1200px)" : {
+  },
+  searchWrapper : {
+    "@media (max-width: 1150px)" : {
       marginTop : '20px',
     },
   },
   catalogFilter : {
-    order : 3,
     marginRight : '2rem',
-    "@media (max-width: 1450px)" : {
-      order : 2
-    },
   },
   btnText : {
     display : 'block',
@@ -155,13 +150,6 @@ const styles = (theme) => ({
       display : "none",
     },
   },
-  searchWrapper : {
-    display : "flex",
-    "@media (max-width: 1450px)" : {
-      display : "block",
-    },
-  }
-
   // text : {
   //   padding : "5px"
   // }
@@ -324,6 +312,7 @@ function MesheryPatterns({
     name : "",
     count : 0,
     validationBody : null,
+    dryRunComponent : null,
     errors : {
       validationErrors : 0
     }
@@ -593,6 +582,9 @@ function MesheryPatterns({
         handleClose={() => setModalOpen({ ...modalOpen, open : false })}
       />
     )
+    const dryRunComponent = (
+      <DryRunComponent design={pattern_file} noOfElements={compCount} selectedContexts={selectedK8sContexts} />
+    )
     setModalOpen({
       open : true,
       action : action,
@@ -600,6 +592,7 @@ function MesheryPatterns({
       name : name,
       count : compCount,
       validationBody : validationBody,
+      dryRunComponent : dryRunComponent,
       errors : {
         validationError : errors?.reduce((count, ele) => {
           return ele.errors.length + count
@@ -1325,60 +1318,62 @@ function MesheryPatterns({
           <DesignConfigurator onSubmit={handleSubmit} show={setSelectedPattern} pattern={selectedPattern.pattern} />
         }
         <div className={classes.topToolbar} >
-          {!selectedPattern.show && (patterns.length > 0 || viewType === "table") && <div className={classes.createButton}>
-            <div style={{ display : 'flex', order : '1' }}>
-              <Button
-                aria-label="Add Pattern"
-                variant="contained"
-                color="primary"
-                size="large"
-                // @ts-ignore
-                onClick={() => router.push("designs/configurator")}
-                style={{ display : 'flex', marginRight : "2rem" }}
-              >
-                <AddIcon className={classes.addIcon} />
-                <span className={classes.btnText}> Create Design </span>
-              </Button>
-              <Button
-                aria-label="Add Pattern"
-                variant="contained"
-                color="primary"
-                size="large"
-                // @ts-ignore
-                onClick={handleUploadImport}
-                style={{ display : 'flex', marginRight : "2rem" }}
-              >
-                <PublishIcon className={classes.addIcon} />
-                <span className={classes.btnText}> Import Design </span>
-              </Button>
+          <div style={{ display : "flex" }}>
+            {!selectedPattern.show && (patterns.length > 0 || viewType === "table") && <div className={classes.createButton}>
+              <div style={{ display : 'flex', order : '1' }}>
+                <Button
+                  aria-label="Add Pattern"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  // @ts-ignore
+                  onClick={() => router.push("designs/configurator")}
+                  style={{ display : 'flex', marginRight : "2rem" }}
+                >
+                  <AddIcon className={classes.addIcon} />
+                  <span className={classes.btnText}> Create Design </span>
+                </Button>
+                <Button
+                  aria-label="Add Pattern"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  // @ts-ignore
+                  onClick={handleUploadImport}
+                  style={{ display : 'flex', marginRight : "2rem" }}
+                >
+                  <PublishIcon className={classes.addIcon} />
+                  <span className={classes.btnText}> Import Design </span>
+                </Button>
+              </div>
             </div>
+            }
+            {!selectedPattern.show &&
+              <div className={classes.catalogFilter} style={{ display : 'flex' }}>
+                <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} classes={classes} />
+              </div>
+            }
           </div>
-          }
-          <div className={classes.searchAndView}>
-            <SearchBar
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                initPatternsSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
-              }
-              }
-              label={"Search Designs"}
-              width="55ch"
-            />
+          <div className={classes.searchWrapper} style={{ display : "flex" }}>
+            <div className={classes.searchAndView}>
+              <SearchBar
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  initPatternsSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
+                }
+                }
+                label={"Search Designs"}
+                width="55ch"
+              />
+            </div>
+
+            {!selectedPattern.show &&
+              <div className={classes.viewSwitchButton} style={{ display : 'flex' }}>
+                <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true}/>
+              </div>
+            }
           </div>
-
-          {!selectedPattern.show &&
-            <div className={classes.catalogFilter} style={{ display : 'flex' }}>
-              <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} classes={classes} />
-            </div>
-          }
-
-
-          {!selectedPattern.show &&
-            <div className={classes.viewSwitchButton} style={{ display : 'flex' }}>
-              <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true}/>
-            </div>
-          }
         </div>
         {
           !selectedPattern.show && viewType === "table" &&
@@ -1396,6 +1391,7 @@ function MesheryPatterns({
           !selectedPattern.show && viewType==="grid" &&
             // grid vieww
             <MesheryPatternGrid
+              selectedK8sContexts={selectedK8sContexts}
               canPublishPattern={canPublishPattern}
               patterns={patterns}
               handleDeploy={handleDeploy}
@@ -1430,6 +1426,7 @@ function MesheryPatterns({
           componentCount={modalOpen.count}
           tab={modalOpen.action}
           validationBody={modalOpen.validationBody}
+          dryRunComponent={modalOpen.dryRunComponent}
           errors={modalOpen.errors}
         />
         {canPublishPattern && <Modal open={publishModal.open} schema={publish_schema} uiSchema={publish_ui_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.pattern?.catalog_data : payload.catalog_data } aria-label="catalog publish" title={publishModal.pattern?.name} handleSubmit={handlePublish} payload={payload} showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }}/>}

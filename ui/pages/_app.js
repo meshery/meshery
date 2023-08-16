@@ -51,6 +51,7 @@ import { extractURLFromScanData } from '../components/ConnectionWizard/helpers/m
 import { updateURLs } from '../utils/utils';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createRelayEnvironment } from "../lib/relayEnvironment"
+import "./styles/charts.css"
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
