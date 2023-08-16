@@ -3,7 +3,6 @@ import { IconButton, Menu, MenuItem, Tooltip, Button, Typography } from "@materi
 import { Dialog, DialogActions, makeStyles } from "@material-ui/core";
 import { CustomTextTooltip } from "./MesheryMeshInterface/PatternService/CustomTextTooltip";
 import CloseIcon from "@material-ui/icons/Close";
-import PublicIcon from "@material-ui/icons/Public";
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import RJSFWrapper from "./MesheryMeshInterface/PatternService/RJSF_wrapper";
 import { ArrowDropDown } from "@material-ui/icons";
@@ -54,6 +53,8 @@ const useStyles = makeStyles((theme) => ({
     color : "#fff",
   },
   iconPatt : {
+    display : "flex",
+    alignItems : "center",
     marginRight : theme.spacing(1),
   },
   btnText : {
@@ -71,6 +72,9 @@ const useStyles = makeStyles((theme) => ({
   snackbar : {
     backgroundColor : theme.palette.secondary.elevatedComponents,
   },
+  leftHeaderIcon : {
+    paddingLeft : "0.45rem"
+  }
 }));
 
 const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
@@ -105,6 +109,19 @@ const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
   );
 };
 
+const RJSFWrapperComponentDefault = (uiSchema) =>
+  (
+    /** @type {{ jsonSchema: any; children: React.DetailedReactHTMLElement<any, HTMLElement>; }} */ props
+  ) => {
+
+    // Clone the child to pass in additional props
+    return React.cloneElement(props.children, {
+      ...(props.children?.props || {}),
+      uiSchema
+    });
+  };
+
+
 /**
  * Renders common dialog component.
  *
@@ -124,28 +141,28 @@ const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
  * @param {string} props.submitBtnText - The text for the submit button.
  * @param {Object} props.uiSchema - The UI schema for the form fields.
  */
-
 function Modal(props) {
   const {
     open,
     title,
     handleClose,
-    onChange,
     schema,
-    formData,
     schema_array,
     type,
     schemaChangeHandler,
     handleSubmit,
-    payload,
     showInfoIcon,
     submitBtnText,
+    leftHeaderIcon,
+    submitBtnIcon,
     uiSchema = {},
+    RJSFWrapperComponent=null
   } = props;
   const classes = useStyles();
 
   const [canNotSubmit, setCanNotSubmit] = useState(false);
   const [snackbar, setSnackbar] = useState(false);
+  const [formState, setFormState] = useState({});
   const formRef = React.createRef();
 
   const renderTooltipContent = () => (
@@ -164,7 +181,7 @@ function Modal(props) {
   const handleFormSubmit = () => {
     if (formRef.current && formRef.current.validateForm()) {
       handleClose();
-      handleSubmit(payload);
+      handleSubmit(formRef.current.state.formData);
     }
   };
 
@@ -189,11 +206,17 @@ function Modal(props) {
     handleDesignNameCheck();
   }, [title]);
 
+  const handleFormChange = (data) => {
+    setFormState(data.formData);
+  };
+
   return (
     <>
       <Dialog style={{ zIndex : 9999 }} open={open} onClose={handleClose}>
         <div className={classes.modalHeader}>
-          <Typography variant="h5"></Typography>
+          <Typography className={classes.leftHeaderIcon}>
+            {leftHeaderIcon ? leftHeaderIcon : null}
+          </Typography>
           <Typography className={classes.modelHeader} variant="h5">
             {title}
             {schema_array?.length < 1 && (
@@ -207,13 +230,14 @@ function Modal(props) {
 
         <RJSFWrapper
           key={type}
-          formData={formData}
+          formData={formState}
           jsonSchema={schema || getSchema(type)}
           uiSchema={uiSchema}
-          onChange={onChange}
+          onChange={handleFormChange}
           liveValidate={false}
           formRef={formRef}
           hideTitle={true}
+          RJSFWrapperComponent={RJSFWrapperComponent || RJSFWrapperComponentDefault(uiSchema)}
         />
 
         <DialogActions className={classes.dialogAction}>
@@ -225,11 +249,12 @@ function Modal(props) {
             disabled={canNotSubmit}
             onClick={handleFormSubmit}
           >
-            {/* TODO: change below logic to support adding icon from prop */}
-            {!submitBtnText && (
-              <PublicIcon className={classes.iconPatt} />
-            )}
-            <span className={classes.btnText}>{submitBtnText ? submitBtnText : "Submit for Approval" }</span>
+            {submitBtnIcon ? (
+              <div className={classes.iconPatt}>
+                {submitBtnIcon}
+              </div>
+            ) : null}
+            <span className={classes.btnText}>{submitBtnText ? submitBtnText : "Submit"}</span>
           </Button>
           {showInfoIcon && (
             <CustomTextTooltip
@@ -262,4 +287,3 @@ function Modal(props) {
 }
 
 export default Modal;
-

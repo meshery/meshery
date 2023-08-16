@@ -43,14 +43,26 @@ const BaseInput = (props) => {
           focused={focused}
           type={props.options?.inputType}
           key={props.id}
-          value={additional && props?.value === "New Value" ? "" : props?.value} // remove the default value i.e. New Value for additionalFields
+          value={
+            props.options?.inputType === "file"
+              ? null
+              : additional && props?.value === "New Value"
+                ? ""
+                : props?.value
+          } // remove the default value i.e. New Value for additionalFields
           id={props.id}
           margin="dense"
           label={xRjsfGridArea ? "" : `${prettifiedName}`}
           rows={props.options?.rows}
           multiline={props?.multiline}
           error={props.rawErrors?.length > 0}
-          onChange={e => props?.onChange(e.target.value === "" ? props.options.emptyValue : e.target.value)}
+          onChange={e =>
+            props.options?.inputType === "file"
+              ? props?.onChange(e)
+              : props?.onChange(
+                e.target.value === "" ? props.options.emptyValue : e.target.value
+              )
+          }
           InputLabelProps={{
             className : (prettifiedName === "name" || prettifiedName === "namespace" || isFocused) ? classes.customInputLabel : '',
           }}
