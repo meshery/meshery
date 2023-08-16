@@ -43,6 +43,8 @@ function MesheryPatternCard({
   canPublishPattern = false
 }) {
 
+
+
   const genericClickHandler = (ev, fn) => {
     ev.stopPropagation();
     fn(ev);
@@ -60,6 +62,13 @@ function MesheryPatternCard({
   const catalogContentValues = Object.values(description);
   const classes = useStyles()
   const theme = useTheme()
+
+  const omittedName=(name) => {
+    if (name.length > 25){
+      return name.substring(0,25)+"..."
+    }
+    return name
+  }
 
   return (
     <>
@@ -86,9 +95,9 @@ function MesheryPatternCard({
         {/* FRONT PART */}
         <div>
           <div>
-            <div style={{ display : "flex", justifyContent : "space-between" }}>
-              <Typography style={{ overflow : "hidden", textOverflow : "ellipsis", width : '20rem' }} variant="h6" component="div">
-                {name}
+            <div style={{ height : "max",display : "flex", justifyContent : "space-between" }}>
+              <Typography style={{ overflow : "hidden", textOverflow : "ellipsis", width : '30rem' }} variant="h6" component="div">
+                {omittedName(name)}
               </Typography>
               <img  className={classes.img} src={`/static/img/${visibility}.svg`} />
             </div>
