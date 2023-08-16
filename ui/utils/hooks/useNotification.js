@@ -3,13 +3,11 @@ import { ToggleButtonGroup } from "@mui/material"
 import { useSnackbar } from "notistack"
 import { iconMedium } from "../../css/icons.styles"
 import CloseIcon from "@material-ui/icons/Close";
-import { NorthEast } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
 import { pushEvent ,openEventInNotificationCenter, toggleNotificationCenter } from "../../lib/store";
 import moment from "moment";
 import { v4 } from "uuid";
-
-
+import BellIcon from '@material-ui/icons/Notifications';
 
 export const useNotification = () => {
 
@@ -52,7 +50,7 @@ export const useNotification = () => {
               </IconButton>
               {showInNotificationCenter &&
               <IconButton key={`openevent-${id}`} aria-label="Open" color="inherit" onClick={() => openEvent(id)}>
-                <NorthEast style={iconMedium} />
+                <BellIcon style={iconMedium} />
               </IconButton> }
             </ToggleButtonGroup>
           );
