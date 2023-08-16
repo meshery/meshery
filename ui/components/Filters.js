@@ -123,8 +123,16 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
     setFullScreen(!fullScreen);
   }
 
-  const resourceData = JSON.parse(filter.filter_resource);
-  const config = resourceData.settings.config;
+  let resourceData;
+  try {
+    resourceData = JSON.parse(filter.filter_resource);
+  } catch (error) {
+    // Handling the error or provide a default value
+    console.error("Error parsing JSON:", error);
+    resourceData = {}; // Setting a default value if parsing fails
+  }
+
+  const config = resourceData?.settings?.config || "";
 
   return (
     <Dialog onClose={onClose} aria-labelledby="filter-dialog-title" open maxWidth="md" fullScreen={fullScreen} fullWidth={!fullScreen}>
