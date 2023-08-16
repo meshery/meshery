@@ -266,6 +266,8 @@ const (
 	UsersProfile Feature = "users-profile"
 
 	UsersIdentity Feature = "users-identity"
+
+	UsersKeys Feature = "users-keys"
 )
 
 const (
@@ -351,6 +353,7 @@ type Provider interface {
 	GetUserDetails(*http.Request) (*User, error)
 	GetUserByID(req *http.Request, userID string) ([]byte, error)
 	GetUsers(token, page, pageSize, search, order, filter string) ([]byte, error)
+	GetUsersKeys(token, page, pageSize, search, order, filter string) ([]byte, error)
 	GetProviderToken(req *http.Request) (string, error)
 	UpdateToken(http.ResponseWriter, *http.Request) string
 	Logout(http.ResponseWriter, *http.Request) error
