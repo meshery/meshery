@@ -123,6 +123,8 @@ type HandlerInterface interface {
 	GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request)
 	GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http.Request)
+	GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Request)
+	GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.Request)
 	RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)
 
 	PatternFileRequestHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
