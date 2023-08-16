@@ -36,6 +36,8 @@ import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubs
 import { iconMedium, iconSmall } from "../css/icons.styles";
 import SearchBar from "./searchcommon";
 import DryRunComponent from "./DryRun/DryRunComponent";
+import { useNotification } from "../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../lib/event-types";
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
@@ -229,7 +231,7 @@ function resetSelectedApplication() {
 }
 
 function MesheryApplications({
-  updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts
+  updateProgress , user, classes, selectedK8sContexts
 }) {
   const [page, setPage] = useState(0);
   const [search,setSearch] = useState("");
@@ -260,6 +262,8 @@ function MesheryApplications({
   );
   const disposeConfSubscriptionRef = useRef(null);
   const searchTimeout = useRef(null);
+
+  const { notify } = useNotification()
 
   /**
    * fetch applications when the page loads
@@ -366,17 +370,10 @@ function MesheryApplications({
         method : "POST",
         body : application_file,
       }, () => {
-        enqueueSnackbar(`"${name}" application deployed` , {
-          variant : "success",
-          action : function Action(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon style={iconMedium} />
-              </IconButton>
-            );
-          },
-          autoHideDuration : 2000,
-        });
+        notify({
+          message : `"${name}" application deployed`,
+          eventType : EVENT_TYPES.SUCCESS
+        })
         updateProgress({ showProgress : false });
       },
       handleError(ACTION_TYPES.DEPLOY_APPLICATIONS)
@@ -392,17 +389,12 @@ function MesheryApplications({
         method : "DELETE",
         body : application_file,
       }, () => {
-        enqueueSnackbar(`"${name}" application undeployed`, {
-          variant : "success",
-          action : function Action(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon style={iconMedium} />
-              </IconButton>
-            );
-          },
-          autoHideDuration : 2000,
-        });
+
+        notify({
+          message : `"${name}" application undeployed`,
+          eventType : EVENT_TYPES.SUCCESS
+        })
+
         updateProgress({ showProgress : false });
       },
       handleError(ACTION_TYPES.UNDEPLOY_APPLICATION)
@@ -414,16 +406,11 @@ function MesheryApplications({
     try {
       downloadFile({ id, name, source_type })
       updateProgress({ showProgress : false });
-      enqueueSnackbar(`"${name}" application downloaded`, {
-        variant : "success",
-        action : function Action(key) {
-          return (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon style={iconMedium} />
-            </IconButton>
-          );
-        }
-      });
+      notify({
+        message : `"${name}" application downloaded`,
+        event_type : EVENT_TYPES.SUCCESS
+      })
+
 
     } catch (error) {
       console.error(error);
@@ -472,22 +459,9 @@ function MesheryApplications({
       handleError(ACTION_TYPES.FETCH_APPLICATIONS)
     );
   }
-
-  // function handleError(error) {
   const handleError = (action) => (error) => {
     updateProgress({ showProgress : false });
-
-    enqueueSnackbar(`${action.error_msg}: ${error}`, {
-      variant : "error",
-      action : function Action(key) {
-        return (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon style={iconMedium} />
-          </IconButton>
-        );
-      },
-      autoHideDuration : 8000,
-    });
+    notify({ message : `${action.error_msg}: ${error}` , event_type : EVENT_TYPES.ERROR })
   };
 
   function resetSelectedRowData() {
@@ -522,17 +496,11 @@ function MesheryApplications({
         },
         () => {
           updateProgress({ showProgress : false });
-          enqueueSnackbar(`"${name}" Application updated`, {
-            variant : "success",
-            action : function Action(key) {
-              return (
-                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                  <CloseIcon style={iconMedium} />
-                </IconButton>
-              );
-            },
-            autoHideDuration : 2000,
-          });
+          notify({
+            message : `"${name}" application updated`,
+            event_type : EVENT_TYPES.SUCCESS
+          })
+
         },
         // handleError
         handleError(ACTION_TYPES.UPDATE_APPLICATIONS)
@@ -756,16 +724,9 @@ function MesheryApplications({
       () => {
         updateProgress({ showProgress : false });
 
-        enqueueSnackbar("Application deleted.", {
-          variant : "success",
-          autoHideDuration : 2000,
-          action : function Action(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon style={iconMedium} />
-              </IconButton>
-            );
-          },
+        notify({
+          message : "Application deleted.",
+          event_type : EVENT_TYPES.SUCCESS,
         });
       },
       handleError("Failed to delete application")
