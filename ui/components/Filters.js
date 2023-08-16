@@ -551,21 +551,35 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       { credentials : "include", method : "POST", body : JSON.stringify(catalog_data) },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Filter Published!", {
-          variant : "success",
-          action : function Action(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            );
-          },
-          autoHideDuration : 2000,
-        });
+        if (user.role_names.includes("admin")) {
+          enqueueSnackbar("Filter Published", {
+            variant : "success",
+            action : function Action(key) {
+              return (
+                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                  <CloseIcon />
+                </IconButton>
+              );
+            },
+            autoHideDuration : 2000,
+          });
+        } else {
+          enqueueSnackbar("Filter publish request has been submitted! Wait for Approval", {
+            variant : "success",
+            action : function Action(key) {
+              return (
+                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                  <CloseIcon />
+                </IconButton>
+              );
+            },
+            autoHideDuration : 2000,
+          });
+        }
       },
       handleError(ACTION_TYPES.PUBLISH_CATALOG),
     );
-  }
+  };
 
   function handleClone(filterID, name) {
     updateProgress({ showProgress : true });
