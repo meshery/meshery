@@ -175,8 +175,12 @@ export const reducer = (state = initialState, action) => {
       return state.mergeDeep({ selectedAdapter : action.selectedAdapter });
 
     case actionTypes.UPDATE_EVENTS:
-      return state.merge({ events : action.events })
+      return state.merge({ events : action.events.sort((a,b)=> b.timestamp-a.timestamp) })
 
+    case actionTypes.PUSH_EVENT :
+      return state.merge({
+        events : state.get("events").push(action.event).sort((a,b)=>b.timestamp - a.timestamp)
+      })
     case actionTypes.SET_CATALOG_CONTENT:
       return state.mergeDeep({ catalogVisibility : action.catalogVisibility })
 
@@ -196,10 +200,14 @@ export const reducer = (state = initialState, action) => {
       return state.updateIn(['telemetryURLs'], val => fromJS(action.telemetryURLs));
 
     case actionTypes.OPEN_EVENT_IN_NOTIFICATION_CENTER:
-      return state.setIn(['notificationCenter','openEventId'],action.eventId )
+
+      return state
+        .setIn(['notificationCenter','showFullNotificationCenter'],true)
+        .setIn(['notificationCenter','openEventId'],action.eventId )
 
     case actionTypes.TOGGLE_NOTIFICATION_CENTER :
-      return state.setIn(['notificationCenter','showFullNotificationCenter'],!state.get('notificationCenter').get('showFullNotificationCenter'))
+       return state.
+        setIn(['notificationCenter','showFullNotificationCenter'],!state.get('notificationCenter').get('showFullNotificationCenter'))
 
     default:
       return state;
@@ -284,14 +292,13 @@ export const updateEvents = ({ events }) => dispatch => {
   if (typeof events === 'object') {
     events = fromJS(events)
   }
-  return dispatch({ type: actionTypes.UPDATE_EVENTS, events });
+  return dispatch({ type: actionTypes.UPDATE_EVENTS, events :events });
 }
 
-export const pushEvent = (event) => (dispatch,getState) => {
-  const events = getState().get("events").push(event)
+export const pushEvent = (event) => dispatch => {
   return dispatch({
-    type : actionTypes.UPDATE_EVENTS ,
-    events
+    type : actionTypes.PUSH_EVENT ,
+    event
   })
 }
 

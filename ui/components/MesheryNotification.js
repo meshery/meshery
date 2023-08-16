@@ -318,7 +318,7 @@ class MesheryNotification extends React.Component {
   }
 
   openEventInNotificationCenter = (operation_id) => {
-    this.props.toggleNotificationCenter()
+    this.props.toggleOpen()
     this.setState({
       showFullNotificationCenter : true,
       eventIdToOpenInNotification : operation_id,
@@ -485,7 +485,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state) => {
   //TODO: Sort While Storing
-  const events = state.get('events').sort((a,b) => b.timestamp - a.timestamp)
+  const events = state.get('events')
   return {
     events : events.toJS(),
     openEventId : state.get("notificationCenter").get("openEventId"),

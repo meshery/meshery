@@ -28,10 +28,10 @@ export const useNotification = () => {
   const dispatch = useDispatch()
 
   const openEvent = (eventId) => {
+    dispatch(toggleNotificationCenter())
     dispatch(openEventInNotificationCenter({
       eventId
     }))
-    dispatch(toggleNotificationCenter())
   }
   const notify = ({ id=null,message,description=null,event_type,timestamp=null,customEvent=null,showInNotificationCenter=true }) => {
 
@@ -50,22 +50,23 @@ export const useNotification = () => {
       }))
     }
 
-    enqueueSnackbar(message,{
-      variant : event_type.type,
-      action : function Action(key) {
-        return (
-          <ToggleButtonGroup>
-            <IconButton key={`closeevent-${id}`} aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon style={iconMedium} />
-            </IconButton>
-            {showInNotificationCenter &&
+    enqueueSnackbar(
+      message,{
+        variant : event_type.type,
+        action : function Action(key) {
+          return (
+            <ToggleButtonGroup>
+              <IconButton key={`closeevent-${id}`} aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon style={iconMedium} />
+              </IconButton>
+              {showInNotificationCenter &&
               <IconButton key={`openevent-${id}`} aria-label="Open" color="inherit" onClick={() => openEvent(id)}>
                 <NorthEast style={iconMedium} />
               </IconButton> }
-          </ToggleButtonGroup>
-        );
-      },
-    })
+            </ToggleButtonGroup>
+          );
+        },
+      })
   }
 
   return {
