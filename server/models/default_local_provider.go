@@ -131,6 +131,10 @@ func (l *DefaultLocalProvider) GetUsers(_, _, _, _, _, _ string) ([]byte, error)
 	return []byte(""), ErrLocalProviderSupport
 }
 
+func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, _, _, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
 // GetSession - returns the session
 func (l *DefaultLocalProvider) GetSession(_ *http.Request) error {
 	return nil
@@ -947,6 +951,10 @@ func (l *DefaultLocalProvider) GetConnectionsStatus(_ *http.Request, _ string) (
 
 
 func (l *DefaultLocalProvider) UpdateConnection(_ *http.Request, _ *Connection) (*Connection, error) {
+	return nil, ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) UpdateConnectionById(_ *http.Request, _ *ConnectionPayload, _ string) (*Connection, error) {
 	return nil, ErrLocalProviderSupport
 }
 

@@ -332,10 +332,10 @@ func ErrRetrieveUserToken(err error) error {
 }
 
 func ErrFailToSave(err error, obj string) error {
-	return errors.New(ErrFailToSaveCode, errors.Alert, []string{"Failed to Save: ", obj}, []string{err.Error()}, []string{"Meshery Database could be down or not reachable"}, []string{"Restart Meshery instance and make sure database is up and reachable"})
+	return errors.New(ErrFailToSaveCode, errors.Alert, []string{"Failed to Save: ", obj}, []string{err.Error()}, []string{"Provider Database could be down or not reachable"}, []string{"Make sure provider is up and reachable"})
 }
 func ErrFailToDelete(err error, obj string) error {
-	return errors.New(ErrFailToDeleteCode, errors.Alert, []string{"Failed to Delete: ", obj}, []string{err.Error()}, []string{"Meshery Database could be down or not reachable"}, []string{"Restart Meshery instance and make sure database is up and reachable"})
+	return errors.New(ErrFailToDeleteCode, errors.Alert, []string{"Failed to Delete: ", obj}, []string{err.Error()}, []string{"Provider Database could be down or not reachable"}, []string{"Make sure provider is up and reachable"})
 }
 
 func ErrBlankName(err error) error {

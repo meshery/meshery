@@ -48,6 +48,8 @@ import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubs
 import ReusableTooltip from "./reusable-tooltip";
 import SearchBar from "./searchcommon";
 import Pattern from "../public/static/img/drawer-icons/pattern_svg.js";
+import DryRunComponent from "./DryRun/DryRunComponent";
+
 
 const styles = (theme) => ({
   grid : {
@@ -68,7 +70,7 @@ const styles = (theme) => ({
     filter : theme.palette.secondary.brightness
   },
   topToolbar : {
-    marginBottom : "6rem",
+    marginBottom : "3rem",
     display : "flex",
     justifyContent : "space-between",
     flexWrap : 'wrap',
@@ -310,6 +312,7 @@ function MesheryPatterns({
     name : "",
     count : 0,
     validationBody : null,
+    dryRunComponent : null,
     errors : {
       validationErrors : 0
     }
@@ -582,6 +585,9 @@ function MesheryPatterns({
         handleClose={() => setModalOpen({ ...modalOpen, open : false })}
       />
     )
+    const dryRunComponent = (
+      <DryRunComponent design={pattern_file} noOfElements={compCount} selectedContexts={selectedK8sContexts} />
+    )
     setModalOpen({
       open : true,
       action : action,
@@ -589,6 +595,7 @@ function MesheryPatterns({
       name : name,
       count : compCount,
       validationBody : validationBody,
+      dryRunComponent : dryRunComponent,
       errors : {
         validationError : errors?.reduce((count, ele) => {
           return ele.errors.length + count
@@ -1402,6 +1409,7 @@ function MesheryPatterns({
           !selectedPattern.show && viewType==="grid" &&
             // grid vieww
             <MesheryPatternGrid
+              selectedK8sContexts={selectedK8sContexts}
               canPublishPattern={canPublishPattern}
               patterns={patterns}
               handleDeploy={handleDeploy}
@@ -1434,6 +1442,7 @@ function MesheryPatterns({
           componentCount={modalOpen.count}
           tab={modalOpen.action}
           validationBody={modalOpen.validationBody}
+          dryRunComponent={modalOpen.dryRunComponent}
           errors={modalOpen.errors}
         />
         {canPublishPattern &&

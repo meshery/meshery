@@ -149,6 +149,12 @@ export async function searchComponents(queryString, options = defaultOptions) {
     )}`
   );
 }
+
+export async function getModelByName(modelName, options = defaultOptions) {
+  return promisifiedDataFetch(
+    `${MESHMODEL_ENDPOINT}/${modelName}?${optionToQueryConvertor(options)}`
+  );
+}
 /**
  *
  * @param {pageOptions} options

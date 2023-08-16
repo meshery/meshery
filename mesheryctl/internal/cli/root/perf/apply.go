@@ -60,7 +60,7 @@ var linkDocPerfApply = map[string]string{
 }
 
 var applyCmd = &cobra.Command{
-	Use:   "apply <profile-name>",
+	Use:   "apply [profile-name]",
 	Short: "Run a Performance test",
 	Long:  `Run Performance test using existing profiles or using flags`,
 	Args:  cobra.MinimumNArgs(0),

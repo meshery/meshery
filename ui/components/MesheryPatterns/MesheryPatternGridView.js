@@ -12,6 +12,7 @@ import Validation from "../Validation";
 import { publish_schema, publish_ui_schema } from "../schemas/publish_schema";
 import Modal from "../Modal";
 import PublicIcon from '@material-ui/icons/Public';
+import DryRunComponent from "../DryRun/DryRunComponent";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -78,7 +79,8 @@ function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublis
  * }} props props
  */
 
-function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUnpublishModal, handleDeploy, handleUnDeploy, handleClone, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage, patternErrors, canPublishPattern = false, publishModal, setPublishModal }) {
+function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUnpublishModal, handleDeploy, handleUnDeploy, handleClone, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage, patternErrors, canPublishPattern = false, publishModal, setPublishModal, selectedK8sContexts }) {
+
   const classes = useStyles()
   const handlePublishModal = (pattern) => {
     if (canPublishPattern) {
@@ -102,7 +104,8 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
     deploy : false,
     pattern_file : null,
     name : "",
-    count : 0
+    count : 0,
+    dryRunComponent : null ,
   });
 
   const handleModalClose = () => {
@@ -123,13 +126,19 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
         handleClose={() => setModalOpen({ ...modalOpen, open : false })}
       />
     )
+
+    const dryRunComponent = (
+      <DryRunComponent design={pattern.pattern_file} noOfElements={compCount} selectedContexts={selectedK8sContexts} />
+    )
     setModalOpen({
       open : true,
       action : action,
       pattern_file : pattern.pattern_file,
       name : pattern.name,
       count : compCount,
-      validationBody : validationBody
+      validationBody : validationBody,
+      dryRunComponent : dryRunComponent
+
     });
   }
 
@@ -197,6 +206,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
         title={ modalOpen.name }
         componentCount={modalOpen.count}
         tab={modalOpen.action}
+        dryRunComponent={modalOpen.dryRunComponent}
         validationBody={modalOpen.validationBody}
       />
       {canPublishPattern &&
