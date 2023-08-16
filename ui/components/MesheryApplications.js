@@ -372,7 +372,7 @@ function MesheryApplications({
       }, () => {
         notify({
           message : `"${name}" application deployed`,
-          eventType : EVENT_TYPES.SUCCESS
+          event_type : EVENT_TYPES.SUCCESS
         })
         updateProgress({ showProgress : false });
       },
@@ -392,7 +392,7 @@ function MesheryApplications({
 
         notify({
           message : `"${name}" application undeployed`,
-          eventType : EVENT_TYPES.SUCCESS
+          event_type : EVENT_TYPES.SUCCESS
         })
 
         updateProgress({ showProgress : false });

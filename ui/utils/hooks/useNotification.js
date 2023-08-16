@@ -33,7 +33,7 @@ export const useNotification = () => {
     }))
     dispatch(toggleNotificationCenter())
   }
-  const notify = ({ id,message,description,event_type,timestamp,customEvent,showInNotificationCenter=true }) => {
+  const notify = ({ id=null,message,description=null,event_type,timestamp=null,customEvent=null,showInNotificationCenter=true }) => {
 
     timestamp = timestamp ?? moment.utc().valueOf()
     id = id  || v4()

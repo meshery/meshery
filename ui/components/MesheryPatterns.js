@@ -50,6 +50,8 @@ import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubs
 import ReusableTooltip from "./reusable-tooltip";
 import SearchBar from "./searchcommon";
 import DryRunComponent from "./DryRun/DryRunComponent";
+import { useNotification } from "../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../lib/event-types";
 
 
 const styles = (theme) => ({
@@ -279,7 +281,7 @@ function resetSelectedPattern() {
 }
 
 function MesheryPatterns({
-  updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts, catalogVisibility, toggleCatalogContent
+  updateProgress,  user, classes, selectedK8sContexts, catalogVisibility, toggleCatalogContent
 }) {
   const [page, setPage] = useState(0);
   const [search,setSearch] = useState("");
@@ -298,9 +300,9 @@ function MesheryPatterns({
   const [canPublishPattern, setCanPublishPattern] = useState(false);
 
   const [viewType, setViewType] = useState(
-    /**  @type {TypeView} */
     ("grid")
   );
+  const { notify } = useNotification()
 
   const PATTERN_URL = '/api/pattern'
   const DEPLOY_URL = `${PATTERN_URL}/deploy`;
@@ -439,21 +441,11 @@ function MesheryPatterns({
         body : JSON.stringify({ usersExtensionPreferences : body })
       },
       () => {
-        enqueueSnackbar(`Catalog Content was ${catalogPref ? "enab" : "disab"}led`,
-          {
-            variant : 'success',
-            autoHideDuration : 4000,
-            action : (key) => (
-              <IconButton
-                key="close"
-                aria-label="Close"
-                color="inherit"
-                onClick={() => closeSnackbar(key)}
-              >
-                <CloseIcon />
-              </IconButton>
-            ),
-          });
+
+        notify({
+          message : `Catalog Content was ${catalogPref ? "enabled" : "disabled" }` ,
+          event_type : EVENT_TYPES.SUCCESS,
+        })
       },
       err => console.error(err),
     )
@@ -640,17 +632,10 @@ function MesheryPatterns({
                 { credentials : "include", method : "DELETE", body : JSON.stringify({ "id" : pattern?.id }) },
                 () => {
                   updateProgress({ showProgress : false });
-                  enqueueSnackbar("Design unpublished", {
-                    variant : "success",
-                    action : function Action(key) {
-                      return (
-                        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                          <CloseIcon />
-                        </IconButton>
-                      );
-                    },
-                    autoHideDuration : 2000,
-                  });
+                  notify({
+                    message : `Design Unpublished` ,
+                    event_type : EVENT_TYPES.SUCCESS,
+                  })
                 },
                 handleError(ACTION_TYPES.UNPUBLISH_CATALOG),
           );
@@ -684,17 +669,11 @@ function MesheryPatterns({
         body : pattern_file,
       }, () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar(`"${name}" Design deployed`, {
-          variant : "success",
-          action : function Action(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            );
-          },
-          autoHideDuration : 2000,
-        });
+        notify({
+          message : `"${name}" Design Deployed` ,
+          event_type : EVENT_TYPES.SUCCESS,
+        })
+
       },
       handleError(ACTION_TYPES.DEPLOY_PATTERN),
     );
@@ -737,17 +716,11 @@ function MesheryPatterns({
         body : pattern_file,
       }, () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar(`"${name}" Design undeployed`, {
-          variant : "success",
-          action : function Action(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            );
-          },
-          autoHideDuration : 2000,
-        });
+        notify({
+          message : `"${name}" Design undeployed`,
+          event_type : EVENT_TYPES.SUCCESS
+
+        })
       },
       handleError(ACTION_TYPES.UNDEPLOY_PATTERN),
     );
@@ -759,17 +732,11 @@ function MesheryPatterns({
       { credentials : "include", method : "POST", body : JSON.stringify(catalog_data) },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Design Published!", {
-          variant : "success",
-          action : function Action(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            );
-          },
-          autoHideDuration : 2000,
-        });
+
+        notify({
+          message : "Design Published",
+          event_type : EVENT_TYPES.SUCCESS
+        })
       },
       handleError(ACTION_TYPES.PUBLISH_CATALOG),
     );
@@ -784,17 +751,10 @@ function MesheryPatterns({
       },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar(`"${name}" Design cloned`, {
-          variant : "success",
-          action : function Action(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            );
-          },
-          autoHideDuration : 2000,
-        });
+        notify({
+          message : `"${name}" Design cloned`,
+          event_type : EVENT_TYPES.SUCCESS
+        })
       },
       handleError(ACTION_TYPES.CLONE_PATTERN),
     );
@@ -830,17 +790,10 @@ function MesheryPatterns({
   const handleError = (action) => (error) => {
     updateProgress({ showProgress : false });
 
-    enqueueSnackbar(`${action.error_msg}: ${error}`, {
-      variant : "error",
-      action : function Action(key) {
-        return (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon />
-          </IconButton>
-        );
-      },
-      autoHideDuration : 8000,
-    });
+    notify({
+      message : `${action.error_msg}: ${error}`,
+      event_type : EVENT_TYPES.ERROR
+    })
   };
 
   function resetSelectedRowData() {
@@ -866,17 +819,7 @@ function MesheryPatterns({
         () => {
           console.log("PatternFile API", `/api/pattern/${id}`);
           updateProgress({ showProgress : false });
-          enqueueSnackbar(`"${name}" Design deleted`, {
-            variant : "success",
-            action : function Action(key) {
-              return (
-                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                  <CloseIcon />
-                </IconButton>
-              );
-            },
-            autoHideDuration : 2000,
-          });
+          notify({ message : `"${name}" Design deleted` , event_type : EVENT_TYPES.SUCCESS })
           resetSelectedRowData()();
         },
         handleError(ACTION_TYPES.DELETE_PATTERN)
@@ -935,16 +878,7 @@ function MesheryPatterns({
     try {
       downloadFile({ id, name, type : "pattern" })
       updateProgress({ showProgress : false });
-      enqueueSnackbar(`"${name}" Design downloaded`, {
-        variant : "success",
-        action : function Action(key) {
-          return (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon />
-            </IconButton>
-          );
-        }
-      });
+      notify({ message : `"${name}" Design Downloaded` , event_type : EVENT_TYPES.SUCCESS })
     } catch (e) {
       console.error(e);
     }
@@ -1188,19 +1122,7 @@ function MesheryPatterns({
       console.log("PatternFile Delete Multiple API", `/api/pattern/delete`);
       updateProgress({ showProgress : false });
       setTimeout(() => {
-        enqueueSnackbar(`${patterns.patterns.length} Designs deleted`,
-          {
-            variant : "success",
-            autoHideDuration : 2000,
-            action : function Action(key) {
-              return (
-                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                  <CloseIcon />
-                </IconButton>
-              );
-            }
-          }
-        )
+        notify({ message : `${patterns.patterns.length} Designs deleted` , event_type : EVENT_TYPES.SUCCESS })
         resetSelectedRowData()()
       }, 1200);
     },
