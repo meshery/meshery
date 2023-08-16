@@ -753,7 +753,7 @@ class DashboardComponent extends React.Component {
 
     const columns = [
       {
-        name : "component",
+        name : "name",
         label : "Component",
         options : {
           filter : false,
@@ -772,6 +772,10 @@ class DashboardComponent extends React.Component {
 
             )
           }
+        },
+        customBodyRender : (value) => {
+          const modifiedName = value.replace(/-[a-zA-Z0-9]*$/, ''); // Remove last hyphen and alphanumeric characters after it
+          return <span>{modifiedName}</span>;
         },
       },
       {
