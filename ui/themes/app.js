@@ -227,7 +227,7 @@ darkTheme = {
 let theme = createTheme({
   typography : {
     useNextVariants : true,
-    fontFamily: "Qanelas Soft",
+    fontFamily : "Qanelas Soft",
     h5 : {
       fontWeight : 'bolder',
       fontSize : 26,
