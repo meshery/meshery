@@ -23,7 +23,7 @@ jobs:
         if: steps.changes.outputs.modified == 'true'
         uses: minchao/setup-go-swagger@v1
         with:
-          version: v0.26.1
+          version: v0.30.5
       - name: swagger-spec
         if: steps.changes.outputs.modified == 'true'
         run: |
