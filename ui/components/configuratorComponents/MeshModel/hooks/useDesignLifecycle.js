@@ -72,7 +72,7 @@ export default function useDesignLifecycle() {
       method : "POST"
     }).then(data => {
       setDesignId(data[0].id);
-      enqueueSnackbar(`"${designName}" saved successfully`, { variant : "success" })
+      enqueueSnackbar(`"${designName}" Design saved`, { variant : "success" })
     }).catch(() => {
       enqueueSnackbar("failed to save design file", { variant : "error" })
     })
@@ -89,7 +89,7 @@ export default function useDesignLifecycle() {
       }),
       method : "POST"
     }).then(() => {
-      enqueueSnackbar(`"${designName}" updated successfully`, { variant : "success" })
+      enqueueSnackbar(`"${designName}" Design updated`, { variant : "success" })
     }).catch(() => {
       enqueueSnackbar(`couldn't update "${designName}"`, { variant : "error" })
     })
@@ -97,14 +97,14 @@ export default function useDesignLifecycle() {
 
   function designDelete() {
     return promisifiedDataFetch("/api/pattern/" + designId, { method : "DELETE" }).then(() => {
-      enqueueSnackbar(`Design "${designName}" Deleted`, { variant : "success" })
+      enqueueSnackbar(`"${designName}" Design deleted`, { variant : "success" })
       setDesignJson({
         name : "Unitled Design",
         services : {}
       })
       setDesignId(undefined)
       setDesignName("Unitled Design")
-    }).catch(() => enqueueSnackbar("error deleting design", { variant : "error" })
+    }).catch(() => enqueueSnackbar(`error deleting "${designName}" design`, { variant : "error" })
     )
   }
 
