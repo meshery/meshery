@@ -1,27 +1,27 @@
 ---
 layout: default
-title: "Extensibility: Service Mesh Adapters"
+title: "Extensibility: MesheryAdapters"
 permalink: extensibility/adapters
 type: Extensibility
-abstract: 'Meshery architecture is extensible. Meshery provides several extension points for working with different service meshes via <a href="extensibility#adapters">adapters</a>, <a href="extensibility#load-generators">load generators</a> and <a href="extensibility#providers">providers</a>.'
+abstract: 'Meshery architecture is extensible. Meshery provides several extension points for working with different cloud native infrastructure via <a href="extensibility#adapters">adapters</a>, <a href="extensibility#load-generators">load generators</a> and <a href="extensibility#providers">providers</a>.'
 language: en
 #redirect_from: extensibility
 ---
 ## Guiding Principles of Adapter Design
 
-Adapters allow Meshery to interface with the different service meshes. Review the list of all available [service mesh adapters](../concepts/architecture/service-meshes/adapters.md). See the [Meshery Architecture](../concepts/architecture/architecture.md) diagrams for visuals on how adapters relate to other Meshery components.
+Adapters allow Meshery to interface with the different cloud native infrastructure. Review the list of all available [Meshery Adapters](../concepts/architecture/adapters). See the [Meshery Architecture](../concepts/architecture/architecture.md) diagrams for visuals on how adapters relate to other Meshery components.
 
 Meshery upholds the following guiding principles for adapter design:
 
-1. **Adapters allow Meshery to interface with the different service meshes, exposing their differentiated value to users.**
-  - Service mesh projects should be encouraged to maintain their own adapters. Allowing them to expose their differentiated capabilities encourages this.
-1. **Adapters should avoid wheel reinvention, but seek to leverage the functionality provided by service meshes under management.**
+1. **Adapters allow Meshery to interface with the different cloud native infrastructure, exposing their differentiated value to users.**
+  - Cloud native infrastructure projects should be encouraged to maintain their own adapters. Allowing them to expose their differentiated capabilities encourages this.
+1. **Adapters should avoid wheel reinvention, but seek to leverage the functionality provided by cloud native infrastructure under management.**
   - This both reduces sustaining costs and improves reliability.
 
 
 ### Adapter Capabilities
 
-Meshery communicates with adapters over grpc. Adapters establish communication with the service mesh. Adapters have a predefined set of operations which are grouped based on predefined operation types. 
+Meshery communicates with adapters over gRPC. Adapters establish communication with the cloud native infrastructure. Adapters have a predefined set of operations which are grouped based on predefined operation types.
 
 The predefined operation types are:
 
@@ -35,7 +35,7 @@ The predefined operation types are:
 
 [Common libraries](https://docs.google.com/presentation/d/1uQU7e_evJ8IMIzlLoBi3jQSRvpKsl_-K1COVGjJVs30/edit#) are used to avoid code duplication and apply DRY.
 
-### [MeshKit](https://github.com/layer5io/meshkit)
+### [MeshKit](https://github.com/meshery/meshkit)
 
 The code hierarchy is pluggable and independent from one another. There can be N number of packages depending upon the use case.
 - `errors/` - holds the implementations and the error handlers and error codes which are used across projects.

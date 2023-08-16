@@ -1,5 +1,5 @@
 //@ts-check
-import { Paper, Typography, Button, Box } from "@material-ui/core";
+import { Paper, Typography, Button, Grid } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import MesheryPatternCard from "./MesheryPatternCard";
@@ -13,6 +13,7 @@ import Validation from "../Validation";
 import { publish_schema, publish_ui_schema } from "../schemas/publish_schema";
 import Modal from "../Modal";
 import _ from "lodash";
+import DryRunComponent from "../DryRun/DryRunComponent";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -21,7 +22,7 @@ function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublis
   const [yaml, setYaml] = useState(pattern.pattern_file);
 
   return (
-    <Box item {...gridProps}>
+    <Grid item {...gridProps}>
       <MesheryPatternCard
         // id={pattern.id}
         canPublishPattern={canPublishPattern}
@@ -44,7 +45,7 @@ function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublis
         description={pattern.description}
         visibility={pattern.visibility}
       />
-    </Box>
+    </Grid>
   );
 }
 
@@ -73,7 +74,7 @@ function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublis
  * }} props props
  */
 
-function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUnpublishModal, handleDeploy, handleUnDeploy, urlUploadHandler, handleClone, uploadHandler, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage, UploadImport, fetch, patternErrors, canPublishPattern = false }) {
+function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUnpublishModal, handleDeploy, handleUnDeploy, urlUploadHandler, handleClone, uploadHandler, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage, UploadImport, fetch, patternErrors, canPublishPattern = false ,selectedK8sContexts }) {
 
   const classes = useStyles()
 
@@ -129,7 +130,8 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
     deploy : false,
     pattern_file : null,
     name : "",
-    count : 0
+    count : 0,
+    dryRunComponent : null ,
   });
 
   const handleModalClose = () => {
@@ -157,13 +159,19 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
         handleClose={() => setModalOpen({ ...modalOpen, open : false })}
       />
     )
+
+    const dryRunComponent = (
+      <DryRunComponent design={pattern.pattern_file} noOfElements={compCount} selectedContexts={selectedK8sContexts} />
+    )
     setModalOpen({
       open : true,
       action : action,
       pattern_file : pattern.pattern_file,
       name : pattern.name,
       count : compCount,
-      validationBody : validationBody
+      validationBody : validationBody,
+      dryRunComponent : dryRunComponent
+
     });
   }
 
@@ -173,12 +181,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
       <DesignConfigurator pattern={selectedPattern.pattern} show={setSelectedPattern}  onSubmit={handleSubmit} />
       }
       {!selectedPattern.show &&
-      <Box sx={{
-        display : 'flex',
-        flexWrap : 'wrap',
-        justifyContent : 'space-evenly',
-        gap : '40px',
-      }}>
+      <Grid container spacing={3}>
         {patterns.map((pattern) => (
           <PatternCardGridItem
             key={pattern.id}
@@ -195,7 +198,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
           />
         ))}
 
-      </Box>
+      </Grid>
       }
       {!selectedPattern.show && patterns.length === 0 &&
           <Paper className={classes.noPaper}>
@@ -236,6 +239,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
         title={ modalOpen.name }
         componentCount={modalOpen.count}
         tab={modalOpen.action}
+        dryRunComponent={modalOpen.dryRunComponent}
         validationBody={modalOpen.validationBody}
       />
       {canPublishPattern &&

@@ -40,7 +40,10 @@ var tokenCmd = &cobra.Command{
 	Manipulate user tokens and their context assignments in your meshconfig`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return errors.New(utils.SystemTokenError("please specify a flag or subcommand. Use 'mesheryctl system token --help' to display user guide.\n"))
+			if err := cmd.Help(); err != nil {
+				return errors.Wrap(err, "displaying help menu")
+			}
+			return nil
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemError(fmt.Sprintf("invalid command: \"%s\"", args[0])))
