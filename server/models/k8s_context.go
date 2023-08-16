@@ -333,8 +333,14 @@ func (kc K8sContext) PingTest() error {
 		return err
 	}
 
-	res := h.KubeClient.DiscoveryClient.RESTClient().Get().RequestURI("/livez").Timeout(1 * time.Second).Do(context.TODO())
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	res := h.KubeClient.DiscoveryClient.RESTClient().Get().RequestURI("/livez").Do(ctx)
 	if res.Error() != nil {
+		if res.Error() == context.DeadlineExceeded {
+			return ErrLateClusterResponse(err)
+		}
 		return res.Error()
 	}
 
