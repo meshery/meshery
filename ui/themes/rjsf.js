@@ -9,7 +9,7 @@ export const rjsfTheme = createTheme({
     },
   },
   typography : {
-    fontFamily : "inherit",
+    fontFamily : "Qanelas Soft, sans-serif",
     fontSize : 13,
   },
   props : {
@@ -100,7 +100,8 @@ export const rjsfTheme = createTheme({
     },
     MuiInputBase : {
       root : {
-        fontSize : "0.8rem" // same as title
+        fontSize : "0.8rem", // same as title
+        minRows : 5
       }
     },
     MuiTooltip : {
@@ -228,7 +229,7 @@ const darkRjsfTheme = createTheme({
     },
   },
   typography : {
-    fontFamily : "inherit",
+    fontFamily : "Qanelas Soft, sans-serif",
     fontSize : 13,
   },
   props : {
@@ -319,7 +320,8 @@ const darkRjsfTheme = createTheme({
     },
     MuiInputBase : {
       root : {
-        fontSize : "0.8rem" // same as title
+        fontSize : "0.8rem", // same as title
+        minRows : 5
       }
     },
     MuiTooltip : {

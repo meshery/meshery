@@ -27,7 +27,7 @@ import { toggleCatalogContent, updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
 import PromptComponent from "./PromptComponent";
-import UploadImport from "./UploadImport";
+import UploadImport from "./Modals/ImportModal";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import { FILE_OPS, MesheryFiltersCatalog, VISIBILITY } from "../utils/Enum";
@@ -45,12 +45,12 @@ import CloneIcon from "../public/static/img/CloneIcon";
 import SaveIcon from "@material-ui/icons/Save";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import fetchCatalogFilter from "./graphql/queries/CatalogFilterQuery";
-import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import { iconMedium } from "../css/icons.styles";
 import Modal from "./Modal";
 import { publish_schema, publish_ui_schema } from "./schemas/publish_schema";
-import _ from "lodash";
+import { getUnit8ArrayDecodedFile } from "../utils/utils";
 import SearchBar from "./searchcommon";
+import Filter from "../public/static/img/drawer-icons/filter_svg.js";
 
 const styles = (theme) => ({
   grid : {
@@ -216,6 +216,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [extensionPreferences, setExtensionPreferences] = useState({});
   const [canPublishFilter, setCanPublishFilter] = useState(false);
+  const [importSchema, setImportSchema] = useState({});
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ("grid")
@@ -240,12 +241,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     filter : {},
     name : "",
   });
-  const [payload, setPayload] = useState({
-    id : "",
-    catalog_data : {}
-  });
-
-  const [loading, stillLoading] = useState(true);
 
   const catalogContentRef = useRef();
   const catalogVisibilityRef = useRef();
@@ -284,6 +279,10 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     UNPUBLISH_CATALOG : {
       name : "PUBLISH_CATALOG",
       error_msg : "Failed to publish catalog"
+    },
+    SCHEMA_FETCH : {
+      name : "SCHEMA_FETCH",
+      error_msg : "failed to fetch import schema"
     }
   };
 
@@ -292,6 +291,16 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
    * publish filter capability and setting the canPublishFilter state accordingly
    */
   useEffect(() => {
+    dataFetch("/api/schema/resource/filter",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      (result) => {
+        setImportSchema(result);
+      },
+      handleError(ACTION_TYPES.SCHEMA_FETCH)
+    )
     dataFetch(
       "/api/provider/capabilities",
       {
@@ -310,13 +319,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   }, [])
 
   const searchTimeout = useRef(null);
-
-  const onChange = (e) => {
-    setPayload({
-      id : publishModal.filter?.id,
-      catalog_data : e
-    })
-  }
 
   const handleUploadImport = () => {
     setImportModal({
@@ -552,11 +554,15 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     );
   };
 
-  const handlePublish = (catalog_data) => {
+  const handlePublish = (formData) => {
+    const payload = {
+      id : publishModal.filter?.id,
+      catalog_data : formData
+    }
     updateProgress({ showProgress : true });
     dataFetch(
       `/api/filter/catalog/publish`,
-      { credentials : "include", method : "POST", body : JSON.stringify(catalog_data) },
+      { credentials : "include", method : "POST", body : JSON.stringify(payload) },
       () => {
         updateProgress({ showProgress : false });
         enqueueSnackbar("Filter Published!", {
@@ -631,8 +637,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       disposeConfSubscriptionRef.current.dispose();
     }
     const configurationSubscription = ConfigurationSubscription((result) => {
-
-      stillLoading(false);
       setPage(result.configuration?.filters?.page || 0);
       setPageSize(result.configuration?.filters?.page_size || 0);
       setCount(result.configuration?.filters?.total_count || 0);
@@ -709,7 +713,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       );
     }
 
-    if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
+    if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) { // todo: remove this
       let body = { save : true }
       if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({ ...body, filter_data : { filter_file : data, name : metadata.name },  config : metadata.config })
@@ -1082,8 +1086,51 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     }
   };
 
-  if (loading) {
-    return <LoadingScreen animatedIcon="AnimatedFilter" message="Loading Filters..." />;
+  /**
+   * Gets the data of Import Filter and handles submit operation
+   *
+   * @param {{
+   * uploadType: ("File Upload"| "URL Upload");
+   * config: string;
+   * name: string;
+   * url: string;
+   * file: string;
+   * }} data
+   */
+  function handleImportFilter(data) {
+    updateProgress({ showProgress : true })
+    const { uploadType, name, config, url, file } = data;
+    let requestBody = null;
+    switch (uploadType) {
+      case "File Upload":
+        requestBody = JSON.stringify({
+          config,
+          save : true,
+          filter_data : {
+            name,
+            filter_file : getUnit8ArrayDecodedFile(file)
+          }
+        })
+        break;
+      case "URL Upload":
+        requestBody = JSON.stringify({
+          config,
+          save : true,
+          url,
+          filter_data : {
+            name
+          }
+        })
+        break;
+    }
+
+    dataFetch("/api/filter",
+      { credentials : "include", method : "POST", body : requestBody },
+      () => {
+        updateProgress({ showProgress : false });
+      },
+      handleError(ACTION_TYPES.UPLOAD_FILTERS)
+    )
   }
 
   return (
@@ -1174,9 +1221,13 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
               setSelectedFilter={setSelectedFilter}
               selectedFilter={selectedFilter}
               pages={Math.ceil(count / pageSize)}
+              importSchema={importSchema}
               setPage={setPage}
               selectedPage={page}
               UploadImport={UploadImport}
+              handleImportFilter={handleImportFilter}
+              publishModal={publishModal}
+              setPublishModal={setPublishModal}
               fetch={() => fetchFilters(page, pageSize, search, sortOrder)}
             />
         }
@@ -1192,18 +1243,31 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           tab={modalOpen.deploy ? 2 : 1}
         />
         {canPublishFilter &&
-          <Modal open={publishModal.open} schema={publish_schema} uiSchema={publish_ui_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.filter?.catalog_data : payload.catalog_data } aria-label="catalog publish" title={publishModal.filter?.name} handleSubmit={handlePublish} payload={payload} showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }}/>
+          <Modal
+            open={publishModal.open}
+            schema={publish_schema}
+            uiSchema={publish_ui_schema}
+            title={publishModal.filter?.name}
+            handleClose={handlePublishModalClose}
+            handleSubmit={handlePublish}
+            showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }}
+            submitBtnText="Submit for Approval"
+            submitBtnIcon={<PublicIcon  style={iconMedium} className={classes.addIcon} data-cy="import-button"/>}
+          />
         }
         <PromptComponent ref={modalRef} />
-        <UploadImport
+        <Modal
           open={importModal.open}
-          isFilter
+          schema={importSchema.rjsfSchema}
+          uiSchema={importSchema.uiSchema}
           handleClose={handleUploadImportClose}
-          handleUrlUpload={urlUploadHandler}
-          handleUpload={uploadHandler}
-          fetch={() => fetchFilters(page, pageSize, search, sortOrder)}
-          configuration="Filter"
+          handleSubmit={handleImportFilter}
+          title="Import Filter"
+          submitBtnText="Import"
+          leftHeaderIcon={<Filter fill="#fff" style={{ height : "24px", width : "24px", fonSize : "1.45rem" }} />}
+          submitBtnIcon={<PublishIcon/>}
         />
+        {/* REMOVE this with its deps <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchFilters(page, pageSize, search, sortOrder) } configuration="Filter" /> */}
       </NoSsr>
     </>
   );
