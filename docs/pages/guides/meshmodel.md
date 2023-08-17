@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Accessing MeshModel Summary
+title: MeshModel Summary
 description: Accessing the MeshModel Summary in settings in Meshery UI
-permalink: guides/accessing-meshmodel
+permalink: guides/meshmodel-summary
 type: Guides
 language: en
 ---
