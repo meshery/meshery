@@ -1,3 +1,7 @@
+export const isValidColumnName = (name) => {
+  return name !== "" && name !== " " && name != undefined && name != null
+}
+
 export const CHART_COLORS = [
   '#14232A', // Gunmetal
   // '#213A45',
