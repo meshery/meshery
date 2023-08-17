@@ -80,7 +80,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 				err = dbHandler.Migrator().DropTable(table)
 				if err != nil {
 					r.Log.Error(err)
-					return "", errors.New(ErrDatabaseOpenCode, errors.Alert, []string{"Database is unreachable"}, []string{err.Error()}, []string{"Database connection may have lost"}, []string{"Make sure your database is reachable"})
+					return "", errors.New(ErrDatabaseOpenCode, errors.Alert, []string{"Database is unreachable"}, []string{err.Error()}, []string{"Database connection may have been lost"}, []string{"Make sure your database is reachable"})
 				}
 			}
 
