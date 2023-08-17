@@ -80,13 +80,14 @@ evaluate[results] {
     services_map := { service.traits.meshmap.id: service |
         service := input.services[_]
     }
-    some i
-        binding_resource := data.binding_resources[i]
-        some j
-        resource := data.from[j]
+    some i, j, k
+        resource := data.from[i]
+        binding_resource := data.binding_resources[j]
+        
         r := is_related(resource, binding_resource, data.from_selectors[resource.type])
+        print(resource, "\n", binding_resource)
         r == true  
-        some k
+        
             to_resource := data.to[k]
             q := is_related(to_resource, binding_resource, data.to_selectors[to_resource.type])
             q == true
@@ -105,10 +106,18 @@ evaluate[results] {
 }
 
 is_related(resource1, resource2, from_selectors) {
-    some i
-    match_from := from_selectors.match.self[i]
-    match_to := from_selectors.match[resource2.type][i]
-    ans := is_feasible(match_from, match_to, resource1, resource2) 
+    print(from_selectors, resource2.type)
+    
+    match_results := [ result |
+        some i
+        match_from := from_selectors.match.self[i]
+        match_to := from_selectors.match[resource2.type][i]
+        ans := is_feasible(match_from, match_to, resource1, resource2) 
+        ans == true
+        result := true
+    ]
+ # ensure all the atribute present in the match field are equal
+    count(match_results) == count(from_selectors.match.self)
 } 
 
 is_feasible(from, to, resource1, resource2) {
