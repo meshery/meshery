@@ -6,7 +6,6 @@ const drawerWidth = 256;
 export var darkTheme = createTheme({
   typography : {
     useNextVariants : true,
-    fontFamily : "Qanelas Soft",
     h5 : {
       fontWeight : 'bolder',
       fontSize : 26,
@@ -232,7 +231,6 @@ darkTheme = {
 let theme = createTheme({
   typography : {
     useNextVariants : true,
-    fontFamily : "Qanelas Soft",
     h5 : {
       fontWeight : 'bolder',
       fontSize : 26,
