@@ -120,11 +120,14 @@ is_related(resource1, resource2, from_selectors) {
     count(match_results) == count(from_selectors.match.self)
 } 
 
+# If none of the match paths ("from" and "to") doesn't contain array field in between, then it is a normal lookup.
 is_feasible(from, to, resource1, resource2) {
     not contains(to, "_")
     object.get(resource1, from, "") == object.get(resource2, to, "")
 }
 
+# If any of the match paths contains array field in between then the path needs to be resolved before checking for their equality.
+# "from" or "to" any of them can contain array in their path hence "is_feasible" is overrided. 
 is_feasible(from, to, resource1, resource2) {
     match(from, to, resource1, resource2)    
 }
