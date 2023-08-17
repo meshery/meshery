@@ -62,30 +62,20 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 				return "", ErrEmptyHandler
 			}
 
-			dbHandler.Lock()
-			defer dbHandler.Unlock()
-
-			r.Log.Info("Dropping Meshery Database")
-			err = dbHandler.Migrator().DropTable(
-				&meshsyncmodel.KeyValue{},
-				&meshsyncmodel.Object{},
-				&meshsyncmodel.ResourceSpec{},
-				&meshsyncmodel.ResourceStatus{},
-				&meshsyncmodel.ResourceObjectMeta{},
-				&models.PerformanceProfile{},
-				&models.MesheryResult{},
-				&models.MesheryPattern{},
-				&models.MesheryFilter{},
-				&models.PatternResource{},
-				&models.MesheryApplication{},
-				&models.UserPreference{},
-				&models.PerformanceTestConfig{},
-				&models.SmiResultWithID{},
-				models.K8sContext{},
-			)
+			tables, err := dbHandler.Migrator().GetTables()
 			if err != nil {
 				r.Log.Error(err)
 				return "", err
+			}
+
+			r.Log.Info("Dropping Meshery Database")
+
+			for _, table := range tables {
+				err = dbHandler.Migrator().DropTable(table)
+				if err != nil {
+					r.Log.Error(err)
+					return "", err
+				}
 			}
 
 			r.Log.Info("Migrating Meshery Database")
