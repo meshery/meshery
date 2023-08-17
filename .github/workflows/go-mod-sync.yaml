@@ -39,3 +39,25 @@ jobs:
         commit_options: '--signoff'
         commit_message: 'Upgrading go.mod in response to meshery/meshery'
         branch: master
+  notify-via-email:
+    runs-on: ubuntu-latest
+    needs: 
+      - sync
+    if: ${{ always() && contains(needs.*.result, 'failure') }}
+    steps:
+      - name: Send email notification on failure
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: Go Mod Sync Failed - ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
+          to: support@layer5.io
+          from: Meshery extensions go.mod sync workflow
+          body: |
+            The workflow failed. Here are the details:
+
+            Job: ${{ job.status }}
+            Job Name: ${{ job.job_name }}
+            Error: ${{ job.steps[*].outcome }}
