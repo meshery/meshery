@@ -62,6 +62,9 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 				return "", ErrEmptyHandler
 			}
 
+			dbHandler.Lock()
+			defer dbHandler.Unlock()
+
 			tables, err := dbHandler.Migrator().GetTables()
 			if err != nil {
 				r.Log.Error(err)
