@@ -90,7 +90,7 @@ function MesheryPatternCard({
           <div>
             <div style={{ height : "max",display : "flex", justifyContent : "space-between" }}>
               <Typography style={{ whiteSpace : 'nowrap', overflow : "hidden", textOverflow : "ellipsis", width : '20rem' }} variant="h6" component="div">
-                {(name)}
+                {name}
               </Typography>
               <img  className={classes.img} src={`/static/img/${visibility}.svg`} />
             </div>
