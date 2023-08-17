@@ -552,7 +552,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       () => {
         updateProgress({ showProgress : false });
         if (user.role_names.includes("admin")) {
-          enqueueSnackbar("Filter Published", {
+          enqueueSnackbar(`${publishModal.filter?.name} Filter Published`, {
             variant : "success",
             action : function Action(key) {
               return (
@@ -564,7 +564,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             autoHideDuration : 2000,
           });
         } else {
-          enqueueSnackbar("Filter publish request has been submitted! Wait for Approval", {
+          enqueueSnackbar(` ${publishModal.filter?.name} Filter publish request has been submitted! Wait for Approval`, {
             variant : "success",
             action : function Action(key) {
               return (

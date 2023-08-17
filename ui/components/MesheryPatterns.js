@@ -756,7 +756,7 @@ function MesheryPatterns({
       () => {
         updateProgress({ showProgress : false });
         if (user.role_names.includes("admin")) {
-          enqueueSnackbar("Design Published", {
+          enqueueSnackbar(`${publishModal.pattern?.name} design published`, {
             variant : "success",
             action : function Action(key) {
               return (
@@ -768,7 +768,7 @@ function MesheryPatterns({
             autoHideDuration : 2000,
           });
         } else {
-          enqueueSnackbar("Design publish request has been submitted! Wait for Approval", {
+          enqueueSnackbar(`${publishModal.pattern?.name} design queued for publishing into Meshery Catalog. Maintainers notified for review`, {
             variant : "success",
             action : function Action(key) {
               return (
