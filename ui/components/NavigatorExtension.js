@@ -22,6 +22,7 @@ import PromptComponent from "./PromptComponent";
 import Validation from "./Validation";
 import { CapabilitiesRegistry } from "../utils/disabledComponents";
 import TroubleshootingComponent from "./TroubleshootingComponent";
+import { useNotification } from "../utils/hooks/useNotification";
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -96,7 +97,8 @@ function NavigatorExtension({ grafana, prometheus, updateLoadTestData, url, isDr
         generateValidatePayload,
         Validation,
         capabilitiesRegistry,
-        CapabilitiesRegistryClass : CapabilitiesRegistry
+        CapabilitiesRegistryClass : CapabilitiesRegistry,
+        useNotificationHook : useNotification
       }}
     />
   );
