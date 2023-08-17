@@ -9,9 +9,12 @@ import (
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/broker"
+	"github.com/layer5io/meshkit/errors"
 	"github.com/layer5io/meshkit/utils"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 )
+
+const ErrDatabaseOpenCode = "11011"
 
 // Global singleton instance of k8s connection tracker to map Each K8sContext to a unique Broker URL
 var connectionTrackerSingleton = model.NewK8sConnctionTracker()
@@ -77,7 +80,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 				err = dbHandler.Migrator().DropTable(table)
 				if err != nil {
 					r.Log.Error(err)
-					return "", err
+					return "", errors.New(ErrDatabaseOpenCode, errors.Alert, []string{"Database is unreachable"}, []string{err.Error()}, []string{"Database connection may have lost"}, []string{"Make sure your database is reachable"})
 				}
 			}
 
