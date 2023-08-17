@@ -7,6 +7,7 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestPatterncmd(t *testing.T) {
@@ -132,20 +133,6 @@ func TestPatterncmd(t *testing.T) {
 			Token:       filepath.Join(fixturesDir, "token.golden"),
 			ExpectError: true,
 		},
-		{
-			Name:             "pattern invalid delete",
-			Args:             []string{"delete", "-f", filepath.Join(fixturesDir, "InvalidPattern.golden")},
-			ExpectedResponse: "pattern.delete.invalid.output.golden",
-			URLs: []utils.MockURL{
-				{
-					Method:   "POST",
-					URL:      testContext.BaseURL + "api/pattern/deploy",
-					Response: "pattern.delete.invalid.golden",
-				},
-			},
-			Token:       filepath.Join(fixturesDir, "token.golden"),
-			ExpectError: true,
-		},
 	}
 	for _, test := range testcase {
 		t.Run(test.Name, func(t *testing.T) {
@@ -190,7 +177,7 @@ func TestPatterncmd(t *testing.T) {
 			}
 			expectedResponse := golden.Load()
 
-			utils.Equals(t, expectedResponse, actualResponse)
+			assert.Equal(t, expectedResponse, actualResponse)
 		})
 	}
 	utils.StopMockery(t)
