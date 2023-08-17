@@ -63,13 +63,6 @@ function MesheryPatternCard({
   const classes = useStyles()
   const theme = useTheme()
 
-  const omittedName=(name) => {
-    if (name.length > 25){
-      return name.substring(0,25)+"..."
-    }
-    return name
-  }
-
   return (
     <>
       {fullScreen &&
@@ -96,8 +89,8 @@ function MesheryPatternCard({
         <div>
           <div>
             <div style={{ height : "max",display : "flex", justifyContent : "space-between" }}>
-              <Typography style={{ overflow : "hidden", textOverflow : "ellipsis", width : '30rem' }} variant="h6" component="div">
-                {omittedName(name)}
+              <Typography style={{ whiteSpace : 'nowrap', overflow : "hidden", textOverflow : "ellipsis", width : '20rem' }} variant="h6" component="div">
+                {(name)}
               </Typography>
               <img  className={classes.img} src={`/static/img/${visibility}.svg`} />
             </div>
