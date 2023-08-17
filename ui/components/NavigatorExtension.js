@@ -15,8 +15,8 @@ import usePreventUserFromLeavingPage from "../utils/hooks/usePreventUserFromLeav
 import { getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
 import ConfirmationModal from "./ConfirmationModal"
 import { getComponentsinFile, generateValidatePayload } from "../utils/utils";
-import UploadImport from "./UploadImport";
-import PublishModal from "../components/PublishModal"
+import UploadImport from "./Modals/ImportModal";
+import PublishModal from "../components/Modals/PublishModal"
 import ConfigurationSubscription from "../components/graphql/subscriptions/ConfigurationSubscription";
 import PromptComponent from "./PromptComponent";
 import Validation from "./Validation";
