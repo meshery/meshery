@@ -564,7 +564,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
             autoHideDuration : 2000,
           });
         } else {
-          enqueueSnackbar(` ${publishModal.filter?.name} Filter publish request has been submitted! Wait for Approval`, {
+          enqueueSnackbar(` ${publishModal.filter?.name} Filter queued for publishing into Meshery Catalog. Maintainers notified for review`, {
             variant : "success",
             action : function Action(key) {
               return (
