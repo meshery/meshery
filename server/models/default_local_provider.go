@@ -825,6 +825,10 @@ func (l *DefaultLocalProvider) ShareDesign(_ *http.Request) (int, error) {
 	return http.StatusForbidden, ErrLocalProviderSupport
 }
 
+func (l *DefaultLocalProvider) ShareFilter(_ *http.Request) (int, error) {
+	return http.StatusForbidden, ErrLocalProviderSupport
+}
+
 // SavePerformanceProfile saves given performance profile with the provider
 func (l *DefaultLocalProvider) SavePerformanceProfile(_ string, performanceProfile *PerformanceProfile) ([]byte, error) {
 	var uid uuid.UUID
