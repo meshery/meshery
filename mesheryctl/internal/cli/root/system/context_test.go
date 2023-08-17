@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestViewContextCmd(t *testing.T) {
@@ -67,6 +68,8 @@ func TestViewContextCmd(t *testing.T) {
 			expectedResponse := golden.Load()
 			if expectedResponse != actualResponse {
 				t.Errorf("expected response [%v] and actual response [%v] don't match", expectedResponse, actualResponse)
+			} else {
+				t.Log("test passed")
 			}
 		})
 	}
@@ -105,10 +108,12 @@ func TestListContextCmd(t *testing.T) {
 				golden.Write(actualResponse)
 			}
 			expectedResponse := golden.Load()
-			if expectedResponse != actualResponse {
-				t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
-			}
+			//t.Logf("Expected response:\n%s", expectedResponse)
+			//t.Logf("Actual response:\n%s", actualResponse)
+
+			assert.Equal(t, expectedResponse, actualResponse)
 		})
+		t.Log("test passed")
 	}
 }
 

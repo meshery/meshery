@@ -23,15 +23,6 @@ contexts:
         platform: kubernetes
         components:
             - meshery-app-mesh
-            - meshery-istio
-            - meshery-linkerd
-            - meshery-consul
-            - meshery-nsm
-            - meshery-kuma
-            - meshery-osm
-            - meshery-traefik-mesh
-            - meshery-nginx-sm
-            - meshery-cilium
         channel: stable
         version: latest
         provider: Meshery

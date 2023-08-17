@@ -9,6 +9,7 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestFilterCmd(t *testing.T) {
@@ -151,11 +152,10 @@ func TestFilterCmd(t *testing.T) {
 			}
 			expectedResponse := golden.Load()
 
-			utils.Equals(t, expectedResponse, Response)
-
+			assert.Equal(t, expectedResponse, Response)
 		})
 	}
+	t.Log("Filter tests Passed")
 	// stop mock server
 	utils.StopMockery(t)
-	t.Log("Filter tests Passed")
 }
