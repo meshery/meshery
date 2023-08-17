@@ -69,7 +69,7 @@ func TestViewContextCmd(t *testing.T) {
 			if expectedResponse != actualResponse {
 				t.Errorf("expected response [%v] and actual response [%v] don't match", expectedResponse, actualResponse)
 			} else {
-				t.Log("test passed")
+				t.Log("View Context test passed")
 			}
 		})
 	}
@@ -113,7 +113,7 @@ func TestListContextCmd(t *testing.T) {
 
 			assert.Equal(t, expectedResponse, actualResponse)
 		})
-		t.Log("test passed")
+		t.Log("List Context test passed")
 	}
 }
 

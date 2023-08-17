@@ -10,6 +10,7 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/stretchr/testify/assert"
 )
 
 var update = flag.Bool("update", false, "update golden files")
@@ -106,11 +107,11 @@ func TestListCmd(t *testing.T) {
 			}
 			expectedResponse := golden.Load()
 
-			utils.Equals(t, expectedResponse, actualResponse)
+			//utils.Equals(t, expectedResponse, actualResponse)
+			assert.Equal(t, expectedResponse, actualResponse)
 		})
+		t.Log("List Filter test Passed")	
 	}
-
 	// stop mock server
 	utils.StopMockery(t)
-	t.Log("test Passed")
 }

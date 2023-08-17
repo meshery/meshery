@@ -116,9 +116,9 @@ func TestViewCmd(t *testing.T) {
 
 			utils.Equals(t, expectedResponse, actualResponse)
 		})
+		t.Log("View Filter test Passed")
 	}
 
 	// stop mock server
 	utils.StopMockery(t)
-	t.Log("test Passed")
 }

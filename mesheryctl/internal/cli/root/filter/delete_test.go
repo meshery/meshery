@@ -105,7 +105,7 @@ func TestDeleteCmd(t *testing.T) {
 			if expectedResponse != actualResponse {
 				t.Errorf("expected response [%v] and actual response [%v] don't match", expectedResponse, actualResponse)
 			} else {
-				t.Log("test passed")
+				t.Log("Delete filter test passed")
 			}
 		})
 	}

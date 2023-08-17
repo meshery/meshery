@@ -1,8 +1,6 @@
 package filter
 
 import (
-	"io"
-	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -41,9 +39,9 @@ func TestFilterCmd(t *testing.T) {
 	}{
 		{
 			Name:             "filter viewcmd with name",
-			Args:             []string{"view", "view-filter-name"},
+			Args:             []string{"view", "test-filter-name"},
 			Token:            filepath.Join(fixturesDir, "token.golden"),
-			ExpectedResponse: "filter.id.view.output.golden",
+			ExpectedResponse: "filter.name.view.output.golden",
 			Fixture:          "filter.name.view.api.response.golden",
 			URL:              testContext.BaseURL + "/api/filter",
 			ExpectHelp:       false,
@@ -65,7 +63,7 @@ func TestFilterCmd(t *testing.T) {
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectedResponse: "filter.id.delete.output.golden",
 			Fixture:          "filter.id.delete.api.response.golden",
-			URL:              testContext.BaseURL + "/api/filter/deploy/c0c6035a-b1b9-412d-aab2-4ed1f1d51f84",
+			URL:              testContext.BaseURL + "/api/filter/c0c6035a-b1b9-412d-aab2-4ed1f1d51f84",
 			ExpectHelp:       false,
 			ExpectErr:        false,
 		},
@@ -118,15 +116,11 @@ func TestFilterCmd(t *testing.T) {
 			testdataDir := filepath.Join(currentDir, "testdata")
 			golden := utils.NewGoldenFile(t, tc.ExpectedResponse, testdataDir)
 
-			//Console Prints
-			StdOut := os.Stdout
-			//return expected pair of files/output
-			read, write, _ := os.Pipe()
-			os.Stdout = write
-			_ = utils.SetupMeshkitLoggerTesting(t, false)
+
+			buff := utils.SetupMeshkitLoggerTesting(t, false)
 			cmd := FilterCmd
 			cmd.SetArgs(tc.Args)
-			cmd.SetOutput(StdOut)
+			cmd.SetOutput(buff)
 
 			err := cmd.Execute()
 			if err != nil {
@@ -141,21 +135,18 @@ func TestFilterCmd(t *testing.T) {
 				}
 				t.Fatal(err)
 			}
-			write.Close()
-			output, _ := io.ReadAll(read)
-			os.Stdout = StdOut
 			//print response string to console
-			Response := string(output)
+			actualResponse := buff.String()
 			// write it in file
 			if *update {
-				golden.Write(Response)
+				golden.Write(actualResponse)
 			}
 			expectedResponse := golden.Load()
 
-			assert.Equal(t, expectedResponse, Response)
+			assert.Equal(t, expectedResponse, actualResponse)
 		})
+		t.Log("Filter tests Passed")
 	}
-	t.Log("Filter tests Passed")
 	// stop mock server
 	utils.StopMockery(t)
 }
