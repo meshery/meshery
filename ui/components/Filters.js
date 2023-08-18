@@ -51,6 +51,8 @@ import { publish_schema, publish_ui_schema } from "./schemas/publish_schema";
 import { getUnit8ArrayDecodedFile } from "../utils/utils";
 import SearchBar from "./searchcommon";
 import Filter from "../public/static/img/drawer-icons/filter_svg.js";
+import { useNotification } from "../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../lib/event-types";
 
 const styles = (theme) => ({
   grid : {
@@ -221,6 +223,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     /**  @type {TypeView} */
     ("grid")
   );
+  const { notify } = useNotification()
   const FILTER_URL = "/api/filter"
   const DEPLOY_URL = FILTER_URL + "/deploy";
   const CLONE_URL = "/clone";
@@ -565,30 +568,17 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       { credentials : "include", method : "POST", body : JSON.stringify(payload) },
       () => {
         updateProgress({ showProgress : false });
-        if (user.role_names.includes("admin")) {
-          enqueueSnackbar(`${publishModal.filter?.name} Filter Published`, {
-            variant : "success",
-            action : function Action(key) {
-              return (
-                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                  <CloseIcon />
-                </IconButton>
-              );
-            },
-            autoHideDuration : 2000,
-          });
+        if (user.role_names.includes("admin")){
+
+          notify({
+            message : "Filter Published",
+            event_type : EVENT_TYPES.SUCCESS
+          })
         } else {
-          enqueueSnackbar(` ${publishModal.filter?.name} Filter queued for publishing into Meshery Catalog. Maintainers notified for review`, {
-            variant : "success",
-            action : function Action(key) {
-              return (
-                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                  <CloseIcon />
-                </IconButton>
-              );
-            },
-            autoHideDuration : 2000,
-          });
+          notify({
+            message : "filters queued for publishing into Meshery Catalog. Maintainers notified for review",
+            event_type : EVENT_TYPES.SUCCESS
+          })
         }
       },
       handleError(ACTION_TYPES.PUBLISH_CATALOG),

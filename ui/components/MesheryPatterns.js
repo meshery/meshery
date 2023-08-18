@@ -741,7 +741,7 @@ function MesheryPatterns({
           })
         } else {
           notify({
-            message : "Design Submitted for Approval",
+            message : "Design queued for publishing into Meshery Catalog. Maintainers notified for review",
             event_type : EVENT_TYPES.SUCCESS
           })
         }
