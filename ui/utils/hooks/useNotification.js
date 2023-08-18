@@ -26,7 +26,6 @@ export const useNotification = () => {
     timestamp = timestamp ?? moment.utc().valueOf()
     id = id  || v4()
 
-
     if (showInNotificationCenter) {
       dispatch(pushEvent({
 
@@ -45,13 +44,13 @@ export const useNotification = () => {
         action : function Action(key) {
           return (
             <ToggleButtonGroup>
-              <IconButton key={`closeevent-${id}`} aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon style={iconMedium} />
-              </IconButton>
               {showInNotificationCenter &&
               <IconButton key={`openevent-${id}`} aria-label="Open" color="inherit" onClick={() => openEvent(id)}>
                 <BellIcon style={iconMedium} />
               </IconButton> }
+              <IconButton key={`closeevent-${id}`} aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
+                <CloseIcon style={iconMedium} />
+              </IconButton>
             </ToggleButtonGroup>
           );
         },

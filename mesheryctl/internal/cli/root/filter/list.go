@@ -32,7 +32,9 @@ import (
 )
 
 var (
-	verbose bool
+	pageSize   = 25
+	pageNumber int
+	verbose    bool
 )
 
 var listCmd = &cobra.Command{
@@ -41,25 +43,25 @@ var listCmd = &cobra.Command{
 	Long:  `Display list of all available filter files.`,
 	Example: `
 // List all WASM filter files present
-mesheryctl filter list	
+mesheryctl filter list	(maximum 25 filters)
+
+// Search for filter
+mesheryctl filter list Test (maximum 25 filters)
+
+// Search for filter with space
+mesheryctl filter list 'Test Filter' (maximum 25 filters)
 	`,
 	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
+
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return utils.ErrProcessingConfig(err)
 		}
 
-		if len(args) > 0 {
-			return errors.New(utils.FilterListError("accepts no arguments\nUse 'mesheryctl filter import --help' to display usage guide\n"))
-		}
+		searchString := strings.ReplaceAll(args[0], " ", "%20")
 
-		var response models.FiltersAPIResponse
-		req, err := utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/filter", nil)
-		if err != nil {
-			return err
-		}
-		res, err := utils.MakeRequest(req)
+		response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
 		if err != nil {
 			return err
 		}
@@ -75,7 +77,16 @@ mesheryctl filter list
 
 		if err != nil {
 			return err
+
+
+		if len(args) > 0 && len(response.Filters) == 0 {
+			utils.Log.Info("No WASM Filter to display with name :", strings.Join(args, " "))
+			return nil
+		} else if len(response.Filters) == 0 {
+			utils.Log.Info("No WASM Filter to display")
+			return nil
 		}
+
 		tokenObj, err := utils.ReadToken(utils.TokenFlag)
 		if err != nil {
 			return errors.New(utils.FilterListError("error reading token\nUse 'mesheryctl filter list --help' to display usage guide\n" + err.Error()))
@@ -143,6 +154,46 @@ mesheryctl filter list
 	},
 }
 
+func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*models.FiltersAPIResponse, error) {
+	var response *models.FiltersAPIResponse
+
+	url := baseURL + "/api/filter"
+
+	url = fmt.Sprintf("%s?pagesize=%d&page=%d", url, pageSize, pageNumber)
+	if searchString != "" {
+		url = url + "&search=" + searchString
+	}
+
+	utils.Log.Debug(url)
+
+	req, err := utils.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := utils.MakeRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, errors.Wrap(err, utils.FilterListError("failed to read response body"))
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.New("Server returned with status code: " + fmt.Sprint(resp.StatusCode) + "\n" + "Response: " + string(body))
+	}
+
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return nil, ErrUnmarshal(err)
+	}
+	return response, nil
+}
 func init() {
 	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Display full length user and filter file identifiers")
+	listCmd.Flags().IntVarP(&pageNumber, "page", "p", 1, "(optional) List next set of filters with --page (default = 1)")
 }

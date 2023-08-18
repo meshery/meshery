@@ -75,7 +75,7 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 		}
 
 		o.TLSOptions = fhttp.TLSOptions{
-			CACert:    opts.CACert,
+			CACert:           opts.CACert,
 			UnixDomainSocket: httpOpts.UnixDomainSocket,
 		}
 		res, err = fgrpc.RunGRPCTest(&o)
@@ -402,7 +402,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		}
 		// logrus.Debugf("Nighthawk CommandLineOptions with options: %+#v", ro)
 	}
-	
+
 	c, err := nighthawk_client.New(nighthawk_client.Options{
 		ServerHost: "0.0.0.0",
 		ServerPort: 8443,

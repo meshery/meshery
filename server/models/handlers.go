@@ -126,6 +126,8 @@ type HandlerInterface interface {
 	GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request)
 	GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http.Request)
+	GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Request)
+	GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.Request)
 	RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)
 
 	PatternFileRequestHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -156,6 +158,7 @@ type HandlerInterface interface {
 	GetMesheryApplicationFile(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteMesheryApplicationHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	ShareDesignHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	ShareFilterHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	ExtensionsEndpointHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	LoadExtensionFromPackage(w http.ResponseWriter, req *http.Request, provider Provider) error

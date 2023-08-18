@@ -838,6 +838,7 @@ function MesheryPatterns({
         () => {
           console.log("PatternFile API", `/api/pattern`);
           updateProgress({ showProgress : false });
+          notify({ message : `"${name}" Design updated` , event_type : EVENT_TYPES.SUCCESS })
         },
         handleError(ACTION_TYPES.UPDATE_PATTERN)
       );
