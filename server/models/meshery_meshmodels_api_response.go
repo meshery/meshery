@@ -53,6 +53,8 @@ type MeshmodelCategoriesAPIResponse struct {
 // API response model for meshmodel relationships API
 type MeshmodelPoliciesAPIResponse struct {
 	Page          int                               `json:"page"`
+	PageSize   int                 `json:"page_size"`
+	Count      int64               `json:"total_count"`
 	Policies []v1alpha1.PolicyDefinition `json:"policies"`
 }
 
