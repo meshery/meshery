@@ -23,7 +23,7 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	
+
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
@@ -65,19 +65,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 		if err != nil {
 			return err
 		}
-		defer res.Body.Close()
-		body, err := io.ReadAll(res.Body)
-		if err != nil {
-			return err
-		}
-		if res.StatusCode != http.StatusOK {
-			return  utils.ErrResponseStatusBody(res.StatusCode, string(body))
-		}
-		err = json.Unmarshal(body, &response)
 
-		if err != nil {
-			return err
-		}
 		if len(args) > 0 && len(response.Filters) == 0 {
 			utils.Log.Info("No WASM Filter to display with name :", strings.Join(args, " "))
 			return nil
@@ -152,6 +140,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 		return nil
 	},
 }
+
 func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*models.FiltersAPIResponse, error) {
 	var response *models.FiltersAPIResponse
 
@@ -187,7 +176,7 @@ func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*mode
 
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return nil, ErrUnmarshal(err)
+		return nil, err
 	}
 	return response, nil
 }
