@@ -279,6 +279,10 @@ func docsUpdater(output []map[string]string) {
 	if err := pkg.WriteToFile(filepath.Join("../../../", pathToIntegrationsMeshery, "data.js"), mesheryDocsJSON); err != nil {
 		log.Fatal(err)
 	}
+
+	if err := pkg.WriteToFile(filepath.Join("../../../", pathToIntegrationsMesheryDocs, "data.js"), mesheryDocsJSON); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func mesheryUpdater(output []map[string]string) {
