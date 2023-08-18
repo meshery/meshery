@@ -1,4 +1,4 @@
-/*
+
 package filter
 
 import (
@@ -12,8 +12,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
-
-//var update = flag.Bool("update", false, "update golden files")
 
 func TestListCmd(t *testing.T) {
 	// setup current context
@@ -115,4 +113,3 @@ func TestListCmd(t *testing.T) {
 	// stop mock server
 	utils.StopMockery(t)
 }
-*/

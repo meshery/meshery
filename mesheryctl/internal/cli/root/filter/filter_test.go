@@ -89,7 +89,7 @@ func TestFilterCmd(t *testing.T) {
 		},
 		{
 			Name:             "filter viewcmd with Invalid ID",
-			Args:             []string{"view","957fbc9b-a655-4892-823d-375102a9587c"},
+			Args:             []string{"view", "957fbc9b-a655-4892-823d-375102a9587c"},
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectedResponse: "filter.invalidID.view.output.golden",
 			Fixture:          "filter.invalidID.view.response.golden",
@@ -115,7 +115,6 @@ func TestFilterCmd(t *testing.T) {
 			//Expected Response
 			testdataDir := filepath.Join(currentDir, "testdata")
 			golden := utils.NewGoldenFile(t, tc.ExpectedResponse, testdataDir)
-
 
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
 			cmd := FilterCmd

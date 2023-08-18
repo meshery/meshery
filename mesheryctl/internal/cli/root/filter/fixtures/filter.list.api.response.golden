@@ -1,34 +1,357 @@
 {
-      "page": 0,
-      "page_size": 10,
-      "total_count": 3,
-      "filter_file":[
-            {
-                  "id":"6dc1d203-69bf-47fc-b1df-4a971f1c2e00",
-                  "name":"test-filter",
-                  "user_id":"24187768-ce8a-41f0-be74-c537c8e41adc",
-                  "filter_file":"name:test-filter \n",
-                  "location":{"branch":"","host":"","path":"","type":"local"},
-                  "created_at":"2023-07-10T16:22:41+01:00",
-                  "updated_at":"2023-07-10T16:22:41+01:00"
-            },    
-            {
-                  "id":"957fbc9b-a655-4892-823d-375102a9587c",
-                  "name":"kumatest",
-                  "user_id":"24187768-ce8a-41f0-be74-c537c8e41adc",
-                  "filter_file":"name:kumatest\r\nversion: Rollouts-2.3.0\r\nservices:\r\n  istio:\r\n    type: IstioMesh\r\n    namespace: istio-system\r\n    settings:\r\n      version: 1.8.2\r\n    traits:\r\n      mTLS:\r\n        policy: mutual\r\n        namespaces:\r\n          - istio-test\r\n      automaticSidecarInjection:\r\n        namespaces:\r\n          - default\r\n          - istio-test\r\n      meshmap:\r\n        position:\r\n          x: 98\r\n          y: 100\r\n\r\n  svc:\r\n    type: Rollout\r\n    namespace: istio-test\r\n    settings:\r\n      replicas: 5\r\n      containers:\r\n        - name: svc-demo\r\n          image: utkarsh23/meshy:v5\r\n          ports:\r\n            - name: http\r\n              containerPort: 8080\r\n              protocol: TCP\r\n          resources:\r\n            requests:\r\n              memory: 32Mi\r\n              cpu: 5m\r\n      svcPorts:\r\n        - 8080:8080\r\n    traits:\r\n      strategy:\r\n        canary:\r\n          steps:\r\n            - setWeight: 20\r\n            - pause: { duration: 20 }\r\n            - setWeight: 40\r\n            - pause: { duration: 10 }\r\n\r\n  prometheus:\r\n    type: PrometheusIstioAddon\r\n    namespace: istio-system\r\n    dependsOn:\r\n      - istio\r\n      - svc\r\n  \r\n  grafana:\r\n    type: GrafanaIstioAddon\r\n    namespace: istio-system\r\n    dependsOn:\r\n      - prometheus\r\n\r\n",
-                  "location":{"branch":"","host":"","path":"","type":"local"},
-                  "created_at":"2023-07-10T16:22:41+01:00",
-                  "updated_at":"2023-07-10T16:22:41+01:00"
-            },
-            {
-                        "id":"d0e09134-acb6-4c71-b051-3d5611653f70",
-                        "name":"RolloutAndIstio",
-                        "user_id":"24187768-ce8a-41f0-be74-c537c8e41adc",
-                        "filter_file":"name: RolloutAndIstio \nversion: Rollouts-2.3.0\nservices:\n  istio:\n    type: IstioMesh\n    namespace: istio-system\n    settings:\n      version: 1.8.2\n    traits:\n      mTLS:\n        policy: mutual\n        namespaces:\n          - istio-test\n      automaticSidecarInjection:\n        namespaces:\n          - default\n          - istio-test\n      meshmap:\n        position:\n          x: 98\n          y: 100\n\n  svc:\n    type: Rollout\n    namespace: istio-test\n    settings:\n      replicas: 5\n      containers:\n        - name: svc-demo\n          image: utkarsh23/meshy:v5\n          ports:\n            - name: http\n              containerPort: 8080\n              protocol: TCP\n          resources:\n            requests:\n              memory: 32Mi\n              cpu: 5m\n      svcPorts:\n        - 8080:8080\n    traits:\n      strategy:\n        canary:\n          steps:\n            - setWeight: 20\n            - pause: { duration: 20 }\n            - setWeight: 40\n            - pause: { duration: 10 }\n\n  prometheus:\n    type: PrometheusIstioAddon\n    namespace: istio-system\n    dependsOn:\n      - istio\n      - svc\n  \n  grafana:\n    type: GrafanaIstioAddon\n    namespace: istio-system\n    dependsOn:\n      - prometheus\n\n",
-                        "location":{"branch":"","host":"","path":"","type":"local"},
-                        "created_at":"2021-06-15T15:58:05.866171Z",
-                        "updated_at":"2021-06-15T15:58:05.866181Z"
-            }           
-      ]
+  "page": 0,
+  "page_size": 25,
+  "total_count": 343,
+  "filters": [
+    {
+      "id": "3817ec9a-1d83-4f6f-9154-0fd4408ba9f0",
+      "name": "Untitled Design",
+      "user_id": "990f779c-708d-4396-84b8-e2ba37c1adcc",
+      "pattern_file": "name: MesheryGeneratedPatternFile\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2021-07-30T13:37:03.729663Z",
+      "updated_at": "2021-07-30T14:14:10.672636Z"
+    },
+    {
+      "id": "0af0b4b0-9656-45a2-b778-0da3446e422f",
+      "name": "Untitled Design",
+      "user_id": "2540d988-4ae2-44ff-8688-2301be1ca87a",
+      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.27908838824537985:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 209\n          posY: 506\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2021-07-30T13:59:24.971527Z",
+      "updated_at": "2021-07-30T13:59:24.971536Z"
+    },
+    {
+      "id": "a7236994-e5b7-427e-9108-b4d7281e1971",
+      "name": "Untitled Design",
+      "user_id": "2540d988-4ae2-44ff-8688-2301be1ca87a",
+      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.7878536729717105:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 218\n          posY: 520\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2021-07-30T13:55:21.668558Z",
+      "updated_at": "2021-07-30T13:55:21.668567Z"
+    },
+    {
+      "id": "7c89d94e-e05a-4251-ba3f-cc83d54fb435",
+      "name": "Untitled Design",
+      "user_id": "f76b761f-2adb-406a-b291-4ddbbd44f0c1",
+      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.37476815392181395:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 471.98200252453256\n          posY: 217.001940904217\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2021-07-30T13:55:12.185299Z",
+      "updated_at": "2021-07-30T13:55:12.185308Z"
+    },
+    {
+      "id": "e47c3c76-a988-4fbd-8f50-209e4baafc03",
+      "name": "Untitled Design",
+      "user_id": "2540d988-4ae2-44ff-8688-2301be1ca87a",
+      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  IstioMesh-0.8210882560998072:\n    type: IstioMesh\n    namespace: IstioMesh\n    traits:\n      meshmap:\n        position:\n          posX: 594\n          posY: 452\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2021-07-30T13:53:55.856017Z",
+      "updated_at": "2021-07-30T13:53:55.856027Z"
+    },
+    {
+      "id": "ecd1b220-1510-4c99-aacb-a5a6e1963ec9",
+      "name": "Untitled Design",
+      "user_id": "2540d988-4ae2-44ff-8688-2301be1ca87a",
+      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.2274220971228964:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 462\n          posY: 514\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2021-07-30T13:52:42.557913Z",
+      "updated_at": "2021-07-30T13:52:42.557923Z"
+    },
+    {
+      "id": "41f81b3d-64dc-42de-8b68-fa904ec46da9",
+      "name": "Untitled Design",
+      "user_id": "2540d988-4ae2-44ff-8688-2301be1ca87a",
+      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.8005725680310047:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 552\n          posY: 495\n  Application-0.09360455543391955:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 288\n          posY: 541\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2021-07-30T13:44:12.366024Z",
+      "updated_at": "2021-07-30T13:51:36.224203Z"
+    },
+    {
+      "id": "e793dfc9-d1be-4747-98b7-623b50188432",
+      "name": "Untitled Design",
+      "user_id": "2540d988-4ae2-44ff-8688-2301be1ca87a",
+      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.176390234717001:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 433\n          posY: 478\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2021-07-30T13:49:04.111646Z",
+      "updated_at": "2021-07-30T13:49:04.111656Z"
+    },
+    {
+      "id": "ef074b5c-46f1-4900-8e6b-6e582cf0c8dc",
+      "name": "Untitled Design",
+      "user_id": "2540d988-4ae2-44ff-8688-2301be1ca87a",
+      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  IstioMesh-0.17864617140697137:\n    type: IstioMesh\n    namespace: IstioMesh\n    traits:\n      meshmap:\n        position:\n          posX: 499\n          posY: 534\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2021-07-30T13:43:20.480596Z",
+      "updated_at": "2021-07-30T13:43:20.480605Z"
+    },
+    {
+      "id": "2606d710-2915-4693-8384-ba7cd57e9a24",
+      "name": "Untitled Design",
+      "user_id": "2540d988-4ae2-44ff-8688-2301be1ca87a",
+      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.621009018425815:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 470\n          posY: 531\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2021-07-30T13:43:09.919549Z",
+      "updated_at": "2021-07-30T13:43:09.919559Z"
+    },
+    {
+      "id": "301497db-893b-45c3-b295-39bbe34bd560",
+      "name": "Untitled Design",
+      "user_id": "990f779c-708d-4396-84b8-e2ba37c1adcc",
+      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.13778766896704742:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 123\n          posY: 157\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2021-07-30T13:08:49.680656Z",
+      "updated_at": "2021-07-30T13:36:41.326359Z"
+    },
+    {
+      "id": "6b310df3-1fa9-4422-a011-5607c8889b22",
+      "name": "Untitled Design",
+      "user_id": "6e955e6d-7a8f-4687-b0bb-17504aa8d520",
+      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  IstioMesh-0.9844390140980204:\n    type: IstioMesh\n    namespace: IstioMesh\n    traits:\n      meshmap:\n        position:\n          posX: 490.16920794149416\n          posY: 325.181232091009\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2021-07-30T13:13:57.237002Z",
+      "updated_at": "2021-07-30T13:31:41.681536Z"
+    },
+    {
+      "id": "f59050f5-919f-41e2-a1fb-7b4b0d1279e7",
+      "name": "Untitled Design",
+      "user_id": "2540d988-4ae2-44ff-8688-2301be1ca87a",
+      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.6148006313202254:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 540\n          posY: 510\n  IstioMesh-0.9135764319813964:\n    type: IstioMesh\n    namespace: IstioMesh\n    traits:\n      meshmap:\n        position:\n          posX: 133\n          posY: 517\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2021-07-30T13:19:09.045471Z",
+      "updated_at": "2021-07-30T13:22:14.480394Z"
+    },
+    {
+      "id": "95352c69-58b4-4fea-8e75-69685b4c2279",
+      "name": "Untitled Design",
+      "user_id": "2540d988-4ae2-44ff-8688-2301be1ca87a",
+      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.04977677294826788:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 531\n          posY: 527\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2021-07-30T13:17:02.008134Z",
+      "updated_at": "2021-07-30T13:17:02.008144Z"
+    },
+    {
+      "id": "b903942f-c5b7-40d2-921f-a99deb916282",
+      "name": "Untitled Design",
+      "user_id": "2540d988-4ae2-44ff-8688-2301be1ca87a",
+      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.693462796214507:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 570\n          posY: 545\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2021-07-30T12:58:49.186822Z",
+      "updated_at": "2021-07-30T12:58:49.186831Z"
+    },
+    {
+      "id": "529d9407-7f4b-4057-9f62-6740133f6f0e",
+      "name": "Untitled Design",
+      "user_id": "f76b761f-2adb-406a-b291-4ddbbd44f0c1",
+      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.4437308053769995:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 76\n          posY: 223\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2021-07-30T12:45:06.967141Z",
+      "updated_at": "2021-07-30T12:47:40.225241Z"
+    },
+    {
+      "id": "51060d54-2443-4588-b501-bcbffde55ab5",
+      "name": "Untitled Design",
+      "user_id": "f76b761f-2adb-406a-b291-4ddbbd44f0c1",
+      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.5815667852972106:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 510\n          posY: 209\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2021-07-30T12:36:05.080888Z",
+      "updated_at": "2021-07-30T12:36:05.080897Z"
+    },
+    {
+      "id": "2ff9406a-90ff-4f7c-ab3c-b82a856ea1d5",
+      "name": "Untitled Design",
+      "user_id": "6e955e6d-7a8f-4687-b0bb-17504aa8d520",
+      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  IstioMesh-0.5948656824682783:\n    type: IstioMesh\n    namespace: IstioMesh\n    traits:\n      meshmap:\n        position:\n          posX: 406\n          posY: 325\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2021-07-30T11:31:23.026984Z",
+      "updated_at": "2021-07-30T11:31:23.026994Z"
+    },
+    {
+      "id": "f4d397af-f712-4220-abc9-0412db7998cd",
+      "name": "Untitled Design",
+      "user_id": "990f779c-708d-4396-84b8-e2ba37c1adcc",
+      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.8788625506218308:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 137\n          posY: 227\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2021-07-30T11:24:47.128425Z",
+      "updated_at": "2021-07-30T11:24:47.128434Z"
+    },
+    {
+      "id": "851cf9f1-69bc-4c84-b413-fe15db06e75a",
+      "name": "Untitled Design",
+      "user_id": "990f779c-708d-4396-84b8-e2ba37c1adcc",
+      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.6149710126506669:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 92.97143963152412\n          posY: 178.05714298427043\n  Application-0.6485811574743265:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 98.39976556279979\n          posY: 88.66330148065327\n  Service-0.47525839984738716:\n    type: Service\n    namespace: Service\n    traits:\n      meshmap:\n        position:\n          posX: 281\n          posY: 207\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2021-07-30T11:22:49.867201Z",
+      "updated_at": "2021-07-30T11:24:27.703045Z"
+    },
+    {
+      "id": "89c4592d-9dab-40f5-98ea-66acd0ea4995",
+      "name": "Untitled Design",
+      "user_id": "990f779c-708d-4396-84b8-e2ba37c1adcc",
+      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.3184750806863046:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 120\n          posY: 251\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2021-07-30T11:21:05.108289Z",
+      "updated_at": "2021-07-30T11:21:05.108298Z"
+    },
+    {
+      "id": "9266c2cb-ecb3-45dc-996c-ce7377d3d599",
+      "name": "Untitled Design",
+      "user_id": "990f779c-708d-4396-84b8-e2ba37c1adcc",
+      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  VirtualService-0.12001309099105661:\n    type: VirtualService\n    namespace: VirtualService\n    traits:\n      meshmap:\n        position:\n          posX: 235\n          posY: 246\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2021-07-30T11:20:18.120441Z",
+      "updated_at": "2021-07-30T11:20:18.120465Z"
+    },
+    {
+      "id": "f90a35f9-17e6-4e27-9428-b47709451348",
+      "name": "Untitled Design",
+      "user_id": "990f779c-708d-4396-84b8-e2ba37c1adcc",
+      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Deployment-0.7973917932194861:\n    type: Deployment\n    namespace: Deployment\n    traits:\n      meshmap:\n        position:\n          posX: 187\n          posY: 269\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2021-07-30T11:19:57.319874Z",
+      "updated_at": "2021-07-30T11:19:57.319894Z"
+    },
+    {
+      "id": "9f203ee3-3116-41d3-b82f-b57a8d87e2be",
+      "name": "Untitled Design",
+      "user_id": "990f779c-708d-4396-84b8-e2ba37c1adcc",
+      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  VirtualService-0.4157272729581598:\n    type: VirtualService\n    namespace: VirtualService\n    traits:\n      meshmap:\n        position:\n          posX: 313\n          posY: 173\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2021-07-30T11:18:11.74766Z",
+      "updated_at": "2021-07-30T11:19:30.403435Z"
+    },
+    {
+      "id": "cd4e3495-cf78-4d72-848c-647d6171ab91",
+      "name": "Untitled Design",
+      "user_id": "990f779c-708d-4396-84b8-e2ba37c1adcc",
+      "pattern_file": "name: MesheryGeneratedPatternFile\n",
+      "location": {
+        "branch": "",
+        "host": "",
+        "path": "",
+        "type": "local"
+      },
+      "created_at": "2021-07-30T11:12:32.706626Z",
+      "updated_at": "2021-07-30T11:14:40.613272Z"
+    }
+  ]
 }
