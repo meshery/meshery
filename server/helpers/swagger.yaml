@@ -225,6 +225,20 @@ paths:
             summary: Handle POST request for Sharing content
             tags:
                 - ShareContent
+    /api/content/filter/share:
+        post:
+            description: Used to share filters with others
+            operationId: idPostShareContent
+            responses:
+                "200":
+                    description: ""
+                "403":
+                    description: ""
+                "500":
+                    description: ""
+            summary: Handle POST request for Sharing content
+            tags:
+                - ShareContent
     /api/events:
         get:
             description: |-
@@ -426,11 +440,12 @@ paths:
                 - UserAPI
     /api/identity/users/keys:
         get:
-            description: Handles GET for all Keys for users
+            description: Returns all keys for user
             operationId: idGetAllUsersKeysHandler
             responses:
                 "200":
                     $ref: '#/responses/keys'
+            summary: Handles GET for all Keys for users
             tags:
                 - UserKeysAPI
     /api/integrations/connections:
@@ -889,6 +904,48 @@ paths:
             summary: Handle GET request for getting meshmodel components of a specific  model.
             tags:
                 - GetMeshmodelComponentsByNameByModel
+    /api/meshmodels/models/{model}/policies/:
+        get:
+            description: |-
+                Example: ```/api/meshmodels/models/kubernetes/policies```
+
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetMeshmodelPolicies
+            responses:
+                "200":
+                    $ref: '#/responses/meshmodelPoliciesResponseWrapper'
+            summary: Handle GET request for getting meshmodel policies of a specific model by name.
+            tags:
+                - GetMeshmodelPolicies
+    /api/meshmodels/models/{model}/policies/{name}:
+        get:
+            description: |-
+                Example: ```/api/meshmodels/models/kubernetes/policies/{name}```
+
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetMeshmodelPoliciesByName
+            responses:
+                "200":
+                    $ref: '#/responses/meshmodelPoliciesResponseWrapper'
+            summary: Handle GET request for getting meshmodel policies of a specific model by name.
+            tags:
+                - GetMeshmodelPoliciesByName
     /api/meshmodels/models/{model}/relationships:
         get:
             description: |-
@@ -1214,6 +1271,11 @@ paths:
             summary: Handle GET request for list of providers
             tags:
                 - ProvidersAPI
+    /api/schema/resource/{resourceName}:
+        get:
+            operationId: HandleResourceSchemas
+            responses: {}
+            summary: Handles the request to retrieve and merge resource JSON schema and UI schema.
     /api/smi/results:
         get:
             description: |-
@@ -1340,6 +1402,20 @@ paths:
             summary: Handle GET request for getting summary about the system database.
             tags:
                 - GetSystemDatabase
+    /api/system/database/reset:
+        delete:
+            description: |-
+                This endpoint resets the system database to its initial state by performing the following steps:
+                Creates an archive of the current database contents.
+                Drops all existing tables in the database.
+                Applies auto migration to recreate the necessary tables.
+            operationId: ResetSystemDatabase
+            responses:
+                "200":
+                    $ref: '#/responses/successfulResponse'
+                "500":
+                    $ref: '#/responses/errorResponse'
+            summary: Reset the system database to its initial state.
     /api/system/kubernetes:
         delete:
             description: Used to delete kubernetes config to System
@@ -2026,35 +2102,6 @@ responses:
             connections_status:
                 items: {}
                 type: array
-    EventsResponse:
-        description: ""
-        headers:
-            component:
-                type: string
-            component_name:
-                type: string
-            details:
-                type: string
-            error_code:
-                type: string
-            event_type: {}
-            operation_id:
-                type: string
-            probable_cause:
-                type: string
-            sizeCache:
-                format: int32
-                type: integer
-            state: {}
-            suggested_remediation:
-                type: string
-            summary:
-                type: string
-            unknownFields:
-                items:
-                    format: uint8
-                    type: integer
-                type: array
     FilterFilesResponseWrapper:
         description: Returns the response of the Filter files
     Model:
@@ -2158,6 +2205,8 @@ responses:
         description: Return meshmodel models with the count of duplicates
     meshmodelModelsResponseWrapper:
         description: Returns meshmodel models
+    meshmodelPoliciesResponseWrapper:
+        description: Returns meshmodel policies
     meshmodelRelationshipsResponseWrapper:
         description: Returns meshmodel relationships
     noContentWrapper:
