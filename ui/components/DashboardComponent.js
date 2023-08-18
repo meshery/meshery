@@ -35,6 +35,7 @@ import { extractURLFromScanData } from "./ConnectionWizard/helpers/metrics";
 import { configurationTableTheme, configurationTableThemeDark } from '../themes/configurationTableTheme';
 import DashboardMeshModelGraph from './Dashboard/DashboardMeshModelGraph'
 import ConnectionStatsChart from "./Dashboard/ConnectionCharts.js";
+import { EVENT_TYPES } from "../lib/event-types";
 
 const styles = (theme) => ({
   rootClass : { backgroundColor : theme.palette.secondary.elevatedComponents2, },
@@ -541,16 +542,8 @@ class DashboardComponent extends React.Component {
 
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress : false });
-    const self = this;
-    this.props.enqueueSnackbar(`${msg}: ${error}`, {
-      variant : "error", preventDuplicate : true,
-      action : (key) => (
-        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-          <CloseIcon style={iconMedium} />
-        </IconButton>
-      ),
-      autoHideDuration : 7000,
-    });
+    const notify = this.props.notify;
+    notify({ message : `${msg}: ${error}`, event_type : EVENT_TYPES.ERROR })
   };
 
   /**
