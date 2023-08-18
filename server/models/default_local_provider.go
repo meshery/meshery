@@ -953,7 +953,6 @@ func (l *DefaultLocalProvider) GetConnectionsStatus(_ *http.Request, _ string) (
 	return nil, ErrLocalProviderSupport
 }
 
-
 func (l *DefaultLocalProvider) UpdateConnection(_ *http.Request, _ *Connection) (*Connection, error) {
 	return nil, ErrLocalProviderSupport
 }
