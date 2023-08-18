@@ -7,7 +7,6 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestPatterncmd(t *testing.T) {
@@ -74,21 +73,21 @@ func TestPatterncmd(t *testing.T) {
 			ExpectError: false,
 		},
 		//commented to pass in workflow run
-		// {
-		// 	Name:             "pattern list",
-		// 	Args:             []string{"list"},
-		// 	ExpectedResponse: "pattern.list.output.golden",
-		// 	URLs: []utils.MockURL{
-		// 		{
-		// 			Method:       "GET",
-		// 			URL:          testContext.BaseURL + "/api/pattern",
-		// 			Response:     "pattern.list.golden",
-		// 			ResponseCode: 200,
-		// 		},
-		// 	},
-		// 	Token:       filepath.Join(fixturesDir, "token.golden"),
-		// 	ExpectError: false,
-		// },
+		{
+			Name:             "pattern list",
+			Args:             []string{"list"},
+			ExpectedResponse: "pattern.list.output.golden",
+			URLs: []utils.MockURL{
+				{
+					Method:       "GET",
+					URL:          testContext.BaseURL + "/api/pattern",
+					Response:     "pattern.list.golden",
+					ResponseCode: 200,
+				},
+			},
+			Token:       filepath.Join(fixturesDir, "token.golden"),
+			ExpectError: false,
+		},
 		{
 			Name:             "pattern view",
 			Args:             []string{"view", "kumatest"},
@@ -178,7 +177,7 @@ func TestPatterncmd(t *testing.T) {
 			}
 			expectedResponse := golden.Load()
 
-			assert.Equal(t, expectedResponse, actualResponse)
+			utils.Equals(t, expectedResponse, actualResponse)
 		})
 	}
 	utils.StopMockery(t)

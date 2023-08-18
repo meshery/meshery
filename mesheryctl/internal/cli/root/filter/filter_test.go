@@ -7,7 +7,6 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestFilterCmd(t *testing.T) {
@@ -67,17 +66,16 @@ func TestFilterCmd(t *testing.T) {
 			ExpectHelp:       false,
 			ExpectErr:        false,
 		},
-		//commented to pass in workflow run
-		// {
-		// 	Name:             "filter listcmd",
-		// 	Args:             []string{"list"},
-		// 	Token:            filepath.Join(fixturesDir, "token.golden"),
-		// 	ExpectedResponse: "filter.list.output.golden",
-		// 	Fixture:          "filter.list.api.response.golden",
-		// 	URL:              testContext.BaseURL + "/api/filter",
-		// 	ExpectHelp:       false,
-		// 	ExpectErr:        false,
-		// },
+		{
+			Name:             "filter listcmd",
+			Args:             []string{"list"},
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectedResponse: "filter.list.output.golden",
+			Fixture:          "filter.list.api.response.golden",
+			URL:              testContext.BaseURL + "/api/filter",
+			ExpectHelp:       false,
+			ExpectErr:        false,
+		},
 		{
 			Name:             "filter viewcmd For Non-Existing Name",
 			Args:             []string{"view", "test-existence"},
@@ -144,7 +142,7 @@ func TestFilterCmd(t *testing.T) {
 			}
 			expectedResponse := golden.Load()
 
-			assert.Equal(t, expectedResponse, actualResponse)
+			utils.Equals(t, expectedResponse, actualResponse)
 		})
 		t.Log("Filter tests Passed")
 	}
