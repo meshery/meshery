@@ -36,6 +36,7 @@ import { configurationTableTheme, configurationTableThemeDark } from '../themes/
 import DashboardMeshModelGraph from './Dashboard/DashboardMeshModelGraph'
 import ConnectionStatsChart from "./Dashboard/ConnectionCharts.js";
 import { EVENT_TYPES } from "../lib/event-types";
+import { withNotify } from "../utils/hooks/useNotification";
 
 const styles = (theme) => ({
   rootClass : { backgroundColor : theme.palette.secondary.elevatedComponents2, },
@@ -1270,5 +1271,5 @@ const mapStateToProps = (state) => {
 };
 
 export default withStyles(styles, { withTheme : true })(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(DashboardComponent)))
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(withNotify(DashboardComponent)))
 );
