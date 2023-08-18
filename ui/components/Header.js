@@ -27,7 +27,7 @@ import Avatar from '@material-ui/core/Avatar';
 import { Paper } from '@material-ui/core';
 import { deleteKubernetesConfig, pingKubernetes } from './ConnectionWizard/helpers/kubernetesHelpers';
 import {
-  successHandlerGenerator, errorHandlerGenerator, closeButtonForSnackbarAction
+  successHandlerGenerator, errorHandlerGenerator
 } from './ConnectionWizard/helpers/common';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 import { updateK8SConfig, updateProgress, updateCapabilities } from '../lib/store';

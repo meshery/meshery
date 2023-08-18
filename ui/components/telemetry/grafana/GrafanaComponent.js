@@ -1,10 +1,9 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import { NoSsr, Typography, IconButton, Box } from "@material-ui/core";
+import { NoSsr, Typography, Box } from "@material-ui/core";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import CloseIcon from "@material-ui/icons/Close";
 import dataFetch from "../../../lib/data-fetch";
 import GrafanaConfigComponent from "./GrafanaConfigComponent";
 import GrafanaSelectionComponent from "./GrafanaSelectionComponent";
@@ -218,7 +217,6 @@ class GrafanaComponent extends Component {
   };
 
   handleError = (msg) => () => {
-    const self = this;
     // this.setState({timerDialogOpen: false });
     this.props.updateProgress({ showProgress : false });
     const notify = this.props.notify

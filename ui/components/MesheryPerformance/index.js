@@ -27,7 +27,6 @@ import {
 import TextField from "@material-ui/core/TextField";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import CloseIcon from "@material-ui/icons/Close";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
@@ -565,12 +564,12 @@ class MesheryPerformanceComponent extends React.Component {
 
   handleEvents() {
     const self = this;
+    const notify = self.props.notify;
     let track = 0;
     return (e) => {
       const data = JSON.parse(e.data);
       switch (data.status) {
         case "info":
-          const notify = self.props.notify;
           notify({ message : data.message, event_type : EVENT_TYPES.INFO });
           if (track === 0) {
             self.setState({ timerDialogOpen : true, result : {} });

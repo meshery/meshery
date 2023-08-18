@@ -184,8 +184,8 @@ class UserPreference extends React.Component {
         body : JSON.stringify({ usersExtensionPreferences : body })
       },
       () => {
-          const notify = this.props.notify;
-          notify({ message : `Catalog Content was ${this.state.catalogContent ? "enab" : "disab"}led`, event_type : EVENT_TYPES.SUCCESS })
+        const notify = this.props.notify;
+        notify({ message : `Catalog Content was ${this.state.catalogContent ? "enab" : "disab"}led`, event_type : EVENT_TYPES.SUCCESS })
       },
       this.handleError("There was an error sending your preference")
     )
@@ -201,7 +201,6 @@ class UserPreference extends React.Component {
   }
 
   handleError = (msg) => () => {
-    const self = this;
     this.props.updateProgress({ showProgress : false });
     const notify = this.props.notify;
     notify({ message : msg, event_type : EVENT_TYPES.ERROR })

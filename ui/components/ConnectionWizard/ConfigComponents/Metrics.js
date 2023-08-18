@@ -26,7 +26,7 @@ const configurationNotificationAction = (closeSnackbar) => (key) => (
 )
 
 const MetricsConfig = ({
-   componentName, prometheusScannedUrls, grafanaScannedUrls,updatePrometheusConfig, updateGrafanaConfig, updateProgress
+  componentName, prometheusScannedUrls, grafanaScannedUrls,updatePrometheusConfig, updateGrafanaConfig, updateProgress
 }) => {
   const { notify } = useNotification()
   const  handleConfigurationSubmit = () => {

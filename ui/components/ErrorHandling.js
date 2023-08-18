@@ -8,6 +8,7 @@ import { EVENT_TYPES } from "../lib/event-types";
  *
  */
 function HandleError() {
+  const { notify } = useNotification()
   /**
     *
     * @param {Object} err
@@ -16,7 +17,6 @@ function HandleError() {
     */
   const errorH = (err, prefixMessage, variant) => {
     console.error("an error occured with severity: ", variant, { err })
-    const { notify } = useNotification()
     return notify({ message : `${prefixMessage}: ${err?.message}`, event_type : EVENT_TYPES.ERROR, details : err.toString() })
   }
 

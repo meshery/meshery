@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import { NoSsr, Chip, IconButton, Button, TextField, Tooltip } from "@material-ui/core";
+import { NoSsr, Chip, Button, TextField, Tooltip } from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";

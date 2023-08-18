@@ -110,14 +110,14 @@ const MetricsDataPlane = ({
           console.log("Updating prometheus config")
 
         updatePrometheusConfig({ prometheus : { prometheusURL : "",
-          selectedPrometheusBoardsConfigs : [], }, });
-          notify({ message : `${componentName} was disconnected!`, event_type : EVENT_TYPES.SUCCESS })
+        selectedPrometheusBoardsConfigs : [], }, });
+        notify({ message : `${componentName} was disconnected!`, event_type : EVENT_TYPES.SUCCESS })
       }
     }
 
     const errorCb = (error) => {
       updateProgress({ showProgress : false });
-        notify({ message : `${componentName} could not be disconnected!: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() })
+      notify({ message : `${componentName} could not be disconnected!: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() })
     }
 
     deleteMetricsComponentConfig(componentName)(successCb, errorCb)

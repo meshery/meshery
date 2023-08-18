@@ -1,14 +1,13 @@
-import { Button, Typography,FormGroup,TextField,InputAdornment, IconButton } from '@material-ui/core'
+import { Button, Typography,FormGroup,TextField,InputAdornment } from '@material-ui/core'
 import React from 'react'
 import { useRef } from 'react';
 import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder'
-import CloseIcon from "@material-ui/icons/Close";
 import PromptComponent from './PromptComponent';
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
 import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
 import { updateProgress } from '../lib/store';
 import { extractKubernetesCredentials } from './ConnectionWizard/helpers/kubernetesHelpers';
-import { useNotification, withNotify } from '../utils/hooks/useNotification';
+import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 
 const MesherySettingsEnvButtons = () => {
@@ -31,7 +30,7 @@ const MesherySettingsEnvButtons = () => {
 
     for (let ctx of ctxs.errored_contexts) {
       const msg = `Failed to add cluster ${ctx.name} at ${ctx.server}`
-      notify({ message : msg, event_type : EVENT_TYPES.ERROR , details : ctx.error.toString()})
+      notify({ message : msg, event_type : EVENT_TYPES.ERROR , details : ctx.error.toString() })
     }
   }
 

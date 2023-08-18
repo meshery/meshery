@@ -361,7 +361,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
                 { credentials : "include", method : "DELETE", body : JSON.stringify({ "id" : filter?.id }) },
                 () => {
                   updateProgress({ showProgress : false });
-                  notify({ message : `"${filter?.name}" filter unpublished` , event_type : EVENT_TYPES.SUCCESS})
+                  notify({ message : `"${filter?.name}" filter unpublished` , event_type : EVENT_TYPES.SUCCESS })
                 },
                 handleError(ACTION_TYPES.UNPUBLISH_CATALOG),
           );
@@ -398,7 +398,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
         body : JSON.stringify({ usersExtensionPreferences : body })
       },
       () => {
-          notify({ message : `Catalog Content was ${catalogPref ? "enab" : "disab"}led` , event_type : EVENT_TYPES.SUCCESS})
+        notify({ message : `Catalog Content was ${catalogPref ? "enab" : "disab"}led` , event_type : EVENT_TYPES.SUCCESS })
       },
       err => console.error(err),
     )
@@ -496,7 +496,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
       { credentials : "include", method : "POST", body : filter_file },
       () => {
         console.log("FilterFile Deploy API", `/api/filter/deploy`);
-        notify({ message : `"${name}" filter deployed` , event_type : EVENT_TYPES.SUCCESS})
+        notify({ message : `"${name}" filter deployed` , event_type : EVENT_TYPES.SUCCESS })
         updateProgress({ showProgress : false });
       },
       handleError(ACTION_TYPES.DEPLOY_FILTERS)
@@ -509,7 +509,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
       { credentials : "include", method : "DELETE", body : filter_file },
       () => {
         updateProgress({ showProgress : false });
-        notify({ message : `"${name}" filter undeployed` , event_type : EVENT_TYPES.SUCCESS})
+        notify({ message : `"${name}" filter undeployed` , event_type : EVENT_TYPES.SUCCESS })
       },
       handleError(ACTION_TYPES.UNDEPLOY_FILTERS)
     );
@@ -526,7 +526,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
       { credentials : "include", method : "POST", body : JSON.stringify(payload) },
       () => {
         updateProgress({ showProgress : false });
-        notify({ message : `Filter published!` , event_type : EVENT_TYPES.SUCCESS})
+        notify({ message : `Filter published!` , event_type : EVENT_TYPES.SUCCESS })
       },
       handleError(ACTION_TYPES.PUBLISH_CATALOG),
     );
@@ -542,7 +542,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
       },
       () => {
         updateProgress({ showProgress : false });
-        notify({ message : `"${name}" filter cloned` , event_type : EVENT_TYPES.SUCCESS})
+        notify({ message : `"${name}" filter cloned` , event_type : EVENT_TYPES.SUCCESS })
       },
       handleError(ACTION_TYPES.CLONE_FILTERS),
     );
@@ -551,7 +551,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
   // function handleError(error) {
   const handleError = (action) => (error) => {
     updateProgress({ showProgress : false });
-    notify({ message : `${action.error_msg}: ${error}` , event_type : EVENT_TYPES.ERROR, details : error.toString()})
+    notify({ message : `${action.error_msg}: ${error}` , event_type : EVENT_TYPES.ERROR, details : error.toString() })
   };
 
   const handleSetFilters = (filters) => {
@@ -625,7 +625,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
         () => {
           console.log("FilterFile API", `/api/filter/${id}`);
           updateProgress({ showProgress : false });
-          notify({ message : `"${name}" filter deleted` , event_type : EVENT_TYPES.SUCCESS})
+          notify({ message : `"${name}" filter deleted` , event_type : EVENT_TYPES.SUCCESS })
           resetSelectedRowData()();
         },
         // handleError
@@ -676,7 +676,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
     try {
       downloadFile({ id, name, type : "filter" })
       updateProgress({ showProgress : false });
-      notify({ message : `"${name}" filter downloaded` , event_type : EVENT_TYPES.SUCCESS})
+      notify({ message : `"${name}" filter downloaded` , event_type : EVENT_TYPES.SUCCESS })
     } catch (e) {
       console.error(e);
     }
@@ -892,7 +892,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
       },
       () => {
         updateProgress({ showProgress : false });
-        notify({ message : `Filter deleted` , event_type : EVENT_TYPES.SUCCESS})
+        notify({ message : `Filter deleted` , event_type : EVENT_TYPES.SUCCESS })
       },
       handleError("Failed To Delete Filter")
     );

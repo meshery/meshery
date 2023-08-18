@@ -73,7 +73,7 @@ export default function useDesignLifecycle() {
       method : "POST"
     }).then(data => {
       setDesignId(data[0].id);
-      notify({ message : `"${designName}" saved successfully`, event_type :  EVENT_TYPES.SUCCESS })
+      notify({ message : `"${designName}" saved successfully`, event_type : EVENT_TYPES.SUCCESS })
     }).catch((err) => {
       notify({ message : `failed to save design file`, event_type : EVENT_TYPES.ERROR, details : err.toString() })
     })

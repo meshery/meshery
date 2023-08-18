@@ -1,6 +1,6 @@
 import {
   Button, Card, CardContent, CardHeader, Chip,
- MenuItem, NoSsr, Paper, Select, TableCell, TableSortLabel, Tooltip, Typography
+  MenuItem, NoSsr, Paper, Select, TableCell, TableSortLabel, Tooltip, Typography
 } from "@material-ui/core";
 // import {Table, TableBody, TableContainer, TableHead, TableRow,} from "@material-ui/core"
 import blue from "@material-ui/core/colors/blue";
@@ -558,9 +558,7 @@ class DashboardComponent extends React.Component {
   };
 
   handleAdapterPingError = (msg) => () => {
-    const { classes } = this.props;
     this.props.updateProgress({ showProgress : false });
-    const self = this;
     const notify = this.props.notify;
     // this.props.enqueueSnackbar(`${msg}. To configure an adapter, visit`, {
     //   variant : "error",

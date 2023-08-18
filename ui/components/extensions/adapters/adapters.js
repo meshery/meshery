@@ -2,7 +2,7 @@ import { isNil, isUndefined } from "lodash";
 import { useEffect, useState } from "react";
 import { withRouter } from "next/router";
 import { extensionStyles as styles } from "../../../css/icons.styles";
-import { Grid, Typography, IconButton, Switch } from "@material-ui/core";
+import { Grid, Typography, Switch } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";

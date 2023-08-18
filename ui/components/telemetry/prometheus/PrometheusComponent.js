@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import { NoSsr, Typography, IconButton } from "@material-ui/core";
+import { NoSsr, Typography } from "@material-ui/core";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import dataFetch from "../../../lib/data-fetch";
@@ -165,7 +165,6 @@ class PrometheusComponent extends Component {
   };
 
   handleError = () => {
-    const self = this;
     this.props.updateProgress({ showProgress : false });
     const notify = this.props.notify;
     notify({ message : "There was an error communicating with Prometheus", event_type : EVENT_TYPES.ERROR });

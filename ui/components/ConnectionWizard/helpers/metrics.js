@@ -63,13 +63,13 @@ export const pingPrometheusWithNotification = (notify, updateProgress) => {
   const successCb = (result) => {
     updateProgress({ showProgress : false });
     if (typeof result !== "undefined") {
-        notify({ message : "Prometheus connected!", event_type : EVENT_TYPES.SUCCESS })
+      notify({ message : "Prometheus connected!", event_type : EVENT_TYPES.SUCCESS })
     }
   }
 
   const errorCb = (error) => {
     updateProgress({ showProgress : false });
-      notify({ message : "Prometheus not connected! : "+error, event_type : EVENT_TYPES.ERROR, details : error.toString() })
+    notify({ message : "Prometheus not connected! : "+error, event_type : EVENT_TYPES.ERROR, details : error.toString() })
   }
 
   pingPrometheus(successCb, errorCb)
@@ -227,8 +227,7 @@ export const handlePrometheusConfigure = (notify, prometheusURL, updateProgress,
       updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
         notify({ message : "Prometheus was configured!", event_type : EVENT_TYPES.SUCCESS });
-        updatePrometheusConfig({ prometheus : { prometheusURL,
-          selectedPrometheusBoardsConfigs : [], }, });
+        updatePrometheusConfig({ prometheus : { prometheusURL, selectedPrometheusBoardsConfigs : [], }, });
       }
     },
     (err) => {

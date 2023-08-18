@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { updateProgress } from '../lib/store';
-import { Button, IconButton, Typography, withStyles } from '@material-ui/core';
-import CloseIcon from "@material-ui/icons/Close";
+import { Button, Typography, withStyles } from '@material-ui/core';
 import dataFetch from '../lib/data-fetch';
 import DataTable from "mui-datatables";
 import { connect } from 'react-redux';
@@ -49,7 +48,6 @@ const DatabaseSummary = (props) => {
 
   const handleError = (msg) => (error) => {
     props.updateProgress({ showProgress : false });
-    const self = this;
     notify({ message : `${msg}: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() });
   };
 
@@ -89,7 +87,6 @@ const DatabaseSummary = (props) => {
       });
       if (responseOfResetDatabase === "RESET") {
         props.updateProgress({ showProgress : true });
-        const self = this;
         resetDatabase({
           selector : {
             clearDB : "true",
