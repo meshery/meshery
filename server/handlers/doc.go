@@ -443,6 +443,13 @@ type meshmodelRelationshipsResponseWrapper struct {
 	Body *models.MeshmodelRelationshipsAPIResponse
 }
 
+// Returns meshmodel policies
+// swagger:response meshmodelPoliciesResponseWrapper
+type meshmodelPoliciesResponseWrapper struct {
+	// in: body
+	Body *models.MeshmodelPoliciesAPIResponse
+}
+
 // Returns meshmodel categories
 // swagger:response meshmodelCategoriesResponseWrapper
 type meshmodelCategoriesResponseWrapper struct {
