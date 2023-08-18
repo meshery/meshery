@@ -99,8 +99,8 @@ class MesheryResults extends Component {
   handleError = (error) => {
     this.props.updateProgress({ showProgress : false });
     // console.log(`error fetching results: ${error}`);
-      const notify = this.props.notify;
-      notify({ message : `There was an error fetching results: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() });
+    const notify = this.props.notify;
+    notify({ message : `There was an error fetching results: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() });
   }
 
   resetSelectedRowData() {

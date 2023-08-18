@@ -109,8 +109,7 @@ const MetricsDataPlane = ({
         if (componentName === "Prometheus")
           console.log("Updating prometheus config")
 
-        updatePrometheusConfig({ prometheus : { prometheusURL : "",
-        selectedPrometheusBoardsConfigs : [], }, });
+        updatePrometheusConfig({ prometheus : { prometheusURL : "", selectedPrometheusBoardsConfigs : [], }, });
         notify({ message : `${componentName} was disconnected!`, event_type : EVENT_TYPES.SUCCESS })
       }
     }
