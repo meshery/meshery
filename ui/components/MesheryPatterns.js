@@ -736,7 +736,7 @@ function MesheryPatterns({
         if (user.role_names.includes("admin")){
 
           notify({
-            message : "Design Published",
+            message : `${publishModal.pattern?.name} Design Published`,
             event_type : EVENT_TYPES.SUCCESS
           })
         } else {

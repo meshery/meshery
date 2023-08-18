@@ -571,7 +571,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         if (user.role_names.includes("admin")){
 
           notify({
-            message : "Filter Published",
+            message : `${publishModal.filter?.name} filter published to Meshery Catalog`,
             event_type : EVENT_TYPES.SUCCESS
           })
         } else {
