@@ -58,7 +58,15 @@ func (h *Handler) GetRegoPolicyForDesignFile(
 	}
 }
 
-
+// swagger:route GET /api/meshmodels/models/{model}/policies/{name} GetMeshmodelPoliciesByName idGetMeshmodelPoliciesByName
+// Handle GET request for getting meshmodel policies of a specific model by name.
+//
+// Example: ```/api/meshmodels/models/kubernetes/policies/{name}```
+//
+// ```?page={page-number}``` Default page number is 1
+// responses:
+//
+//	200: []meshmodelPoliciesResponseWrapper
 func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -100,6 +108,16 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	}
 }
 
+
+// swagger:route GET /api/meshmodels/models/{model}/policies/ GetMeshmodelPolicies idGetMeshmodelPolicies
+// Handle GET request for getting meshmodel policies of a specific model by name.
+//
+// Example: ```/api/meshmodels/models/kubernetes/policies```
+//
+// ```?page={page-number}``` Default page number is 1
+// responses:
+//
+//	200: []meshmodelPoliciesResponseWrapper
 func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)

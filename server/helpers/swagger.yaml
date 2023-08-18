@@ -426,11 +426,12 @@ paths:
                 - UserAPI
     /api/identity/users/keys:
         get:
-            description: Handles GET for all Keys for users
+            description: Returns all keys for user
             operationId: idGetAllUsersKeysHandler
             responses:
                 "200":
                     $ref: '#/responses/keys'
+            summary: Handles GET for all Keys for users
             tags:
                 - UserKeysAPI
     /api/integrations/connections:
@@ -889,6 +890,32 @@ paths:
             summary: Handle GET request for getting meshmodel components of a specific  model.
             tags:
                 - GetMeshmodelComponentsByNameByModel
+    /api/meshmodels/models/{model}/policies/:
+        get:
+            description: |-
+                Example: ```/api/meshmodels/models/kubernetes/policies```
+
+                ```?page={page-number}``` Default page number is 1
+            operationId: idGetMeshmodelPolicies
+            responses:
+                "200":
+                    $ref: '#/responses/meshmodelPoliciesResponseWrapper'
+            summary: Handle GET request for getting meshmodel policies of a specific model by name.
+            tags:
+                - GetMeshmodelPolicies
+    /api/meshmodels/models/{model}/policies/{name}:
+        get:
+            description: |-
+                Example: ```/api/meshmodels/models/kubernetes/policies/{name}```
+
+                ```?page={page-number}``` Default page number is 1
+            operationId: idGetMeshmodelPoliciesByName
+            responses:
+                "200":
+                    $ref: '#/responses/meshmodelPoliciesResponseWrapper'
+            summary: Handle GET request for getting meshmodel policies of a specific model by name.
+            tags:
+                - GetMeshmodelPoliciesByName
     /api/meshmodels/models/{model}/relationships:
         get:
             description: |-
@@ -2158,6 +2185,8 @@ responses:
         description: Return meshmodel models with the count of duplicates
     meshmodelModelsResponseWrapper:
         description: Returns meshmodel models
+    meshmodelPoliciesResponseWrapper:
+        description: Returns meshmodel relationships
     meshmodelRelationshipsResponseWrapper:
         description: Returns meshmodel relationships
     noContentWrapper:
