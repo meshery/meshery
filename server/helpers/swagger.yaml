@@ -2186,7 +2186,7 @@ responses:
     meshmodelModelsResponseWrapper:
         description: Returns meshmodel models
     meshmodelPoliciesResponseWrapper:
-        description: Returns meshmodel relationships
+        description: Returns meshmodel policies
     meshmodelRelationshipsResponseWrapper:
         description: Returns meshmodel relationships
     noContentWrapper:

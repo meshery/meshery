@@ -443,7 +443,7 @@ type meshmodelRelationshipsResponseWrapper struct {
 	Body *models.MeshmodelRelationshipsAPIResponse
 }
 
-// Returns meshmodel relationships
+// Returns meshmodel policies
 // swagger:response meshmodelPoliciesResponseWrapper
 type meshmodelPoliciesResponseWrapper struct {
 	// in: body
