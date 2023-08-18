@@ -90,14 +90,7 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	enc := json.NewEncoder(rw)
 	typ := mux.Vars(r)["model"]
 	name := mux.Vars(r)["name"]
-	limitstr := r.URL.Query().Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 {
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
+
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)
 	if page <= 0 {
@@ -140,14 +133,7 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	typ := mux.Vars(r)["model"]
-	limitstr := r.URL.Query().Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
-		if limit == 0 {
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	}
+	
 	pagestr := r.URL.Query().Get("page")
 	page, _ := strconv.Atoi(pagestr)
 	if page <= 0 {
