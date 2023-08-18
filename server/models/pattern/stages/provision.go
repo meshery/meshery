@@ -102,9 +102,23 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 func processAnnotations(pattern *core.Pattern) {
 	for name, svc := range pattern.Services {
 		if svc.IsAnnotation {
+			// this particular block is present so that designs with previous filters don't break 
+			// also UI is dependent but not exactly sure how?
 			delete(pattern.Services, name)
 		}
-
+		data, ok := svc.Traits["meshmap"]
+		if ok {
+			metadata, ok2 := data.(map[string]interface{})
+			if ok2 {
+				compMetadata, ok3 := metadata["meshmodel-metadata"].(map[string]interface{})
+				if ok3 {
+					isAnnotation, ok4 := compMetadata["isAnnotation"].(bool)
+					if ok4 && isAnnotation {
+						delete(pattern.Services, name)
+					}
+				}
+			}
+		}
 	}
 }
 
