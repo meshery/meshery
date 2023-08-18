@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<4a889c17abcbfd1e4f4799ea21fc0d0e>>
+ * @generated SignedSource<<a432edc018f0c0e1eba7422e44366bc3>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -178,6 +178,13 @@ v1 = [
             "kind": "ScalarField",
             "name": "service_mesh",
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "metadata",
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -204,16 +211,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "44c12a99a803800ffae91a06add3ef0c",
+    "cacheID": "5f6c02d0e3a568b9f4be8793665cb275",
     "id": null,
     "metadata": {},
     "name": "PerformanceProfilesSubscription",
     "operationKind": "subscription",
-    "text": "subscription PerformanceProfilesSubscription(\n  $selector: PageFilter!\n) {\n  subscribePerfProfiles(selector: $selector) {\n    page\n    page_size\n    total_count\n    profiles {\n      concurrent_request\n      created_at\n      duration\n      endpoints\n      id\n      last_run\n      load_generators\n      name\n      qps\n      total_results\n      updated_at\n      user_id\n      request_body\n      request_cookies\n      request_headers\n      content_type\n      service_mesh\n    }\n  }\n}\n"
+    "text": "subscription PerformanceProfilesSubscription(\n  $selector: PageFilter!\n) {\n  subscribePerfProfiles(selector: $selector) {\n    page\n    page_size\n    total_count\n    profiles {\n      concurrent_request\n      created_at\n      duration\n      endpoints\n      id\n      last_run\n      load_generators\n      name\n      qps\n      total_results\n      updated_at\n      user_id\n      request_body\n      request_cookies\n      request_headers\n      content_type\n      service_mesh\n      metadata\n    }\n  }\n}\n"
   }
 };
 })();
 
-node.hash = "2efb94fd4676d37f9cc54c1c45a8bcdb";
+node.hash = "4444030b4fe1fdb502b3e6036ccf6fd1";
 
 module.exports = node;

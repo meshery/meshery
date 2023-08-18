@@ -65,9 +65,9 @@
   links:
     - title: Architecture ↆ
       url: concepts/architecture
-      children:
+      children: 
         - title: Adapters
-          url: concepts/architecture/adapters      
+          url: concepts/architecture/adapters
         - title: Broker
           url: concepts/architecture/broker
         - title: Database
@@ -76,12 +76,11 @@
           url: concepts/architecture/meshsync     
         - title: Operator
           url: concepts/architecture/operator   
-    - title: Adapters
-      url: concepts/architecture/adapters
-    - title: Catalog
-      url: concepts/catalog  
-    
-        
+    - title: Catalog ↆ
+      url: concepts/catalog
+      children:
+        - title: Envoy WASM Filters
+          url: tasks/filter-management
 - title: ⚙️ Tasks (all)
   url: tasks
   links:
@@ -182,8 +181,11 @@
       url: reference/mesheryctl
     - title: Error Codes
       url: reference/error-codes
-    - title: "GraphQL API Reference"
-      url: reference/graphql-apis
-    - title: "REST API Reference"
-      url: reference/rest-apis
+    - title: "REST & GraphQL APIs ↆ"
+      url: extensibility/api
+      children:
+      - title: "GraphQL API Reference"
+        url: reference/graphql-apis
+      - title: "REST API Reference"
+        url: reference/rest-apis
 

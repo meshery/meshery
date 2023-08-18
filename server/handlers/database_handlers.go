@@ -3,10 +3,16 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"os"
+	"path"
 	"strconv"
+	"time"
 
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/utils"
+	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"gorm.io/gorm/clause"
 )
 
@@ -24,7 +30,7 @@ const defaultPageSize = 10
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10. To return all results: ```pagesize=all```
-// 
+//
 // ```?search={tablename}``` If search is non empty then a greedy search is performed
 // responses:
 //
@@ -85,11 +91,11 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	}
 
 	databaseSummary := &models.DatabaseSummary{
-		Page: page,
-		PageSize: limit,
+		Page:        page,
+		PageSize:    limit,
 		TotalTables: int(totalTables),
 		RecordCount: recordCount,
-		Tables: tables,
+		Tables:      tables,
 	}
 
 	w.Header().Set("Content-Type", "application/json")
@@ -99,4 +105,110 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 		fmt.Println(err)
 	}
 	fmt.Fprint(w, string(val))
+}
+
+// swagger:route DELETE /api/system/database/reset ResetSystemDatabase
+// Reset the system database to its initial state.
+//
+// This endpoint resets the system database to its initial state by performing the following steps:
+// - Creates an archive of the current database contents.
+// - Drops all existing tables in the database.
+// - Applies auto migration to recreate the necessary tables.
+//
+// responses:
+//   200: successfulResponse
+//   500: errorResponse
+
+// successfulResponse: database reset successful
+// A successful response indicating that the database reset operation was successful.
+// ---
+// type: string
+// example: "Database reset successful"
+
+// errorResponse: error response
+// An error response indicating the reason for the failure of the database reset operation.
+// ---
+// type: string
+// example: "Directory could not be created due to a non-existent path."
+func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+
+	mesherydbPath := path.Join(utils.GetHome(), ".meshery/config")
+	err := os.Mkdir(path.Join(mesherydbPath, ".archive"), os.ModePerm)
+	if err != nil && os.IsNotExist(err) {
+		http.Error(w, "Directory could not be created due to a non-existent path.", http.StatusInternalServerError)
+		return
+	}
+	src := path.Join(mesherydbPath, "mesherydb.sql")
+	currentTime := time.Now().Format("20060102150407")
+	newFileName := ".archive/mesherydb" + currentTime + ".sql"
+	dst := path.Join(mesherydbPath, newFileName)
+
+	fin, err := os.Open(src)
+	if err != nil {
+		http.Error(w, "The database does not exist or you don't have enough permission to access it", http.StatusInternalServerError)
+		return
+	}
+	defer fin.Close()
+
+	fout, err := os.Create(dst)
+	if err != nil {
+		http.Error(w, "Destination file can not be created", http.StatusInternalServerError)
+		return
+	}
+	defer fout.Close()
+
+	_, err = io.Copy(fout, fin)
+	if err != nil {
+		http.Error(w, "Can not copy file from source to destination", http.StatusInternalServerError)
+		return
+	}
+
+	dbHandler := provider.GetGenericPersister()
+	if dbHandler == nil {
+		http.Error(w, "Failed to obtain database handler", http.StatusInternalServerError)
+		return
+	} else {
+		dbHandler.Lock()
+		defer dbHandler.Unlock()
+
+		tables, err := dbHandler.Migrator().GetTables()
+		if err != nil {
+			http.Error(w, "Can not access database tables", http.StatusInternalServerError)
+			return
+		}
+
+		for _, table := range tables {
+			err = dbHandler.Migrator().DropTable(table)
+			if err != nil {
+				http.Error(w, "Cannot drop table from database", http.StatusInternalServerError)
+				return
+			}
+		}
+
+		err = dbHandler.AutoMigrate(
+			&meshsyncmodel.KeyValue{},
+			&meshsyncmodel.Object{},
+			&meshsyncmodel.ResourceSpec{},
+			&meshsyncmodel.ResourceStatus{},
+			&meshsyncmodel.ResourceObjectMeta{},
+			&models.PerformanceProfile{},
+			&models.MesheryResult{},
+			&models.MesheryPattern{},
+			&models.MesheryFilter{},
+			&models.PatternResource{},
+			&models.MesheryApplication{},
+			&models.UserPreference{},
+			&models.PerformanceTestConfig{},
+			&models.SmiResultWithID{},
+			&models.K8sContext{},
+		)
+		if err != nil {
+			http.Error(w, "Can not migrate tables to database", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprint(w, "Database reset successful")
+
+	}
 }

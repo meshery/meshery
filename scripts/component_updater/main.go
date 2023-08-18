@@ -9,8 +9,8 @@ Usage: (order of flags matters)
 Examples:
 
 	1. ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system docs layer5/src/collections/integrations meshery.io/integrations --published-only
-	2. ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system remote-provider <remote-provider>/models/meshmodels <remote-provider>/ui/public/img/meshmodels
-	3. ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system meshery ../../server/meshmodel/components
+	2. ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system remote-provider <remote-provider>/meshmodels/models <remote-provider>/ui/public/img/meshmodels
+	3. ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system meshery ../../server/meshmodel
 
 The flags are:
 
@@ -43,6 +43,7 @@ var (
 	ColumnNamesToExtractForDocs = []string{"modelDisplayName", "Page Subtitle", "Docs URL", "category", "subCategory", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "svgColor", "svgWhite", "Full Page", "model"}
 	PrimaryColumnName           = "model"
 	OutputPath                  = ""
+	ExcludeDirs = []string{"relationships", "policies"}
 )
 
 var System string
@@ -114,7 +115,7 @@ func main() {
 }
 
 // returns the index of column. Returns -1 if doesn't exist
-func isInColumnNames(key string, col []string) int {
+func contains(key string, col []string) int {
 	for i, n := range col {
 		if n == key {
 			return i
@@ -269,7 +270,7 @@ func mesheryUpdater(output []map[string]string) {
 	}
 	OutputPath = os.Args[4]
 	if OutputPath == "" {
-		OutputPath = "../../server/meshmodel/components" // default path for meshery server
+		OutputPath = "../../server/meshmodel" // default path for meshery server
 	}
 	publishedModels := make(map[string]bool)
 	countWithoutCrds := 0
@@ -289,6 +290,9 @@ func mesheryUpdater(output []map[string]string) {
 		}
 		for _, versionentry := range entries {
 			if versionentry.IsDir() {
+				if contains(versionentry.Name(), ExcludeDirs) != -1 {
+					continue
+				}
 				entries, err := os.ReadDir(filepath.Join(dirpath, versionentry.Name()))
 				if err != nil {
 					return err
@@ -342,11 +346,11 @@ func mesheryUpdater(output []map[string]string) {
 							if changeFields["component"] != "" || component.Metadata[key] == nil { // If it is a component level SVG or component already doesn't have an SVG. Use this svg at component level.
 								component.Metadata[key] = svg
 							}
-						} else if isInColumnNames(key, ColumnNamesToExtract) != -1 {
+						} else if contains(key, ColumnNamesToExtract) != -1 {
 							component.Metadata[key] = value
 						}
 					}
-					if i := isInColumnNames("modelDisplayName", ColumnNamesToExtract); i != -1 {
+					if i := contains("modelDisplayName", ColumnNamesToExtract); i != -1 {
 						component.Model.DisplayName = changeFields[ColumnNamesToExtract[i]]
 					}
 					isAnnotation, _ := component.Metadata["isAnnotation"].(bool)
@@ -396,8 +400,13 @@ func remoteProviderUpdater(output []map[string]string) {
 	output = cleanupDuplicatesAndPreferEmptyComponentField(output, "model")
 	pathForModals := os.Args[4]
 	pathForIcons := os.Args[5]
+	_path := ""
+	for _, f := range strings.Split(pathForIcons, "/")[1:] {
+		_path = filepath.Join(_path, f)
+	}
 	for _, out := range output {
 		var m v1alpha1.Model
+		var svgColor, svgWhite string
 		publishValue, err := strconv.ParseBool(out["Publish?"])
 		if err != nil {
 			publishValue = false
@@ -422,17 +431,17 @@ func remoteProviderUpdater(output []map[string]string) {
 			// case "subCategory":
 			// 	m.SubCategory = val
 			case "svgColor":
-				svg, err := pkg.UpdateSVGString(val, SVG_WIDTH, SVG_HEIGHT)
+				svgColor, err = pkg.UpdateSVGString(val, SVG_WIDTH, SVG_HEIGHT)
 				if err != nil {
 					fmt.Println("err for: ", modelName, err.Error())
 				}
-				m.Metadata["svgColor"] = svg
+				m.Metadata["svgColor"] = fmt.Sprintf("%s/%s/color/%s-color.svg", _path, modelName, modelName)
 			case "svgWhite":
-				svg, err := pkg.UpdateSVGString(val, SVG_WIDTH, SVG_HEIGHT)
+				svgWhite, err = pkg.UpdateSVGString(val, SVG_WIDTH, SVG_HEIGHT)
 				if err != nil {
 					fmt.Println("err for: ", modelName, err.Error())
 				}
-				m.Metadata["svgWhite"] = svg
+				m.Metadata["svgWhite"] = fmt.Sprintf("%s/%s/white/%s-white.svg", _path, modelName, modelName)
 			}
 		}
 		pathForModals, _ := filepath.Abs(filepath.Join("../../../", pathForModals, modelName))
@@ -454,21 +463,19 @@ func remoteProviderUpdater(output []map[string]string) {
 			fmt.Println("Error writing model: ", err.Error())
 			continue
 		}
-		err = os.MkdirAll(filepath.Join(pathForIcons, "icon", "color"), 0777)
+		err = os.MkdirAll(filepath.Join(pathForIcons, "color"), 0777)
 		if err != nil {
 			panic(err)
 		}
-		svgColor, _ := m.Metadata["svgColor"].(string)
-		err = pkg.WriteSVG(filepath.Join(pathForIcons, "icon", "color", modelName+"-color.svg"), svgColor) //CHANGE PATH
+		err = pkg.WriteSVG(filepath.Join(pathForIcons, "color", modelName+"-color.svg"), svgColor) //CHANGE PATH
 		if err != nil {
 			panic(err)
 		}
-		err = os.MkdirAll(filepath.Join(pathForIcons, "icon", "white"), 0777)
+		err = os.MkdirAll(filepath.Join(pathForIcons, "white"), 0777)
 		if err != nil {
 			panic(err)
 		}
-		svgWith, _ := m.Metadata["svgWhite"].(string)
-		err = pkg.WriteSVG(filepath.Join(pathForIcons, "icon", "white", modelName+"-white.svg"), svgWith) //CHANGE PATH
+		err = pkg.WriteSVG(filepath.Join(pathForIcons, "white", modelName+"-white.svg"), svgWhite) //CHANGE PATH
 		if err != nil {
 			panic(err)
 		}
