@@ -1,4 +1,4 @@
-package network_policy
+package meshmodel_policy
 
 # playground with this policy: https://play.openpolicyagent.org/p/ttJQwNEGQ8
 
@@ -23,12 +23,12 @@ has_key(x, k) { _ = x[k] }
 
 checkServiceToContainerPortMap(service_port, container_port) {
 	# the service target-port can be number as well and should be equal to container port in that case
-	service_port["target Port"] == container_port["container Port"]
+	service_port["targetPort"] == container_port["containerPort"]
 }
 
 checkServiceToContainerPortMap(service_port, container_port) {
 	# or the service port number equals to the the container Port Number
-	service_port.port == container_port["container Port"]
+	service_port.port == container_port["containerPort"]
 }
 
 service_pod_relationships[service_name] {
