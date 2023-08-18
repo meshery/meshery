@@ -2,7 +2,7 @@ import WarningIcon from '@material-ui/icons/Warning';
 import ErrorIcon from '@material-ui/icons/Error';
 import InfoIcon from '@material-ui/icons/Info';
 
-// TODO: rename to serverEventType
+// TODO: rename to serverEventType or better integrate wiht EVENT_TYPES
 export const eventTypes = {
   0: {
     icon: InfoIcon,
@@ -27,7 +27,11 @@ export const EVENT_TYPES = {
   },
   DEFAULT: {
     icon: InfoIcon,
-    type: 'success',
+    type: 'default',
+  },
+  INFO: {
+    icon: InfoIcon,
+    type: 'info',
   },
   WARNING: {
     icon: WarningIcon,
