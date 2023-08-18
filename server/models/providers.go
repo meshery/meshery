@@ -98,10 +98,10 @@ type RestrictedAccess struct {
 
 // Extensions defines the UI extension points
 type Extensions struct {
-	Navigator NavigatorExtensions `json:"navigator,omitempty"`
-	UserPrefs UserPrefsExtensions `json:"user_prefs,omitempty"`
-	GraphQL   GraphQLExtensions   `json:"graphql,omitempty"`
-	Acccount  AccountExtensions   `json:"account,omitempty"`
+	Navigator    NavigatorExtensions    `json:"navigator,omitempty"`
+	UserPrefs    UserPrefsExtensions    `json:"user_prefs,omitempty"`
+	GraphQL      GraphQLExtensions      `json:"graphql,omitempty"`
+	Acccount     AccountExtensions      `json:"account,omitempty"`
 	Collaborator CollaboratorExtensions `json:"collaborator,omitempty"`
 }
 
@@ -259,6 +259,8 @@ const (
 
 	ShareDesigns Feature = "share-designs"
 
+	ShareFilters Feature = "share-filters"
+
 	PersistConnection Feature = "persist-connection"
 
 	PersistCredentials Feature = "persist-credentials"
@@ -266,6 +268,8 @@ const (
 	UsersProfile Feature = "users-profile"
 
 	UsersIdentity Feature = "users-identity"
+
+	UsersKeys Feature = "users-keys"
 )
 
 const (
@@ -351,6 +355,7 @@ type Provider interface {
 	GetUserDetails(*http.Request) (*User, error)
 	GetUserByID(req *http.Request, userID string) ([]byte, error)
 	GetUsers(token, page, pageSize, search, order, filter string) ([]byte, error)
+	GetUsersKeys(token, page, pageSize, search, order, filter string) ([]byte, error)
 	GetProviderToken(req *http.Request) (string, error)
 	UpdateToken(http.ResponseWriter, *http.Request) string
 	Logout(http.ResponseWriter, *http.Request) error
@@ -418,6 +423,7 @@ type Provider interface {
 	DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
 	GetMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
 	ShareDesign(req *http.Request) (int, error)
+	ShareFilter(req *http.Request) (int, error)
 
 	SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error)
 	GetPerformanceProfiles(tokenString string, page, pageSize, search, order string) ([]byte, error)

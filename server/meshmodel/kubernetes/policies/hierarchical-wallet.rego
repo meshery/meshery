@@ -1,21 +1,15 @@
-package hierarchical_wallet_policy
+package meshmodel_policy
 
 import future.keywords.every
 import future.keywords.in
-
-
-extract_components(services, selectors) = components {
-    components := {component.traits.meshmap.id: component | 
-        selector := selectors[_]
-        service := services[_]
-        selector.kind == service.type; 
-        component := service
-    }
-}
+import data.common.extract_components
+import data.common.contains
+import data.common.get_array_pos
+import data.common.get_path
 
 parent_child_relationship = updated_design {
-    from_selectors := data.selectors.allow.from
-    to_selectors := data.selectors.allow.to
+    from_selectors := data.inventory.selectors.allow.from
+    to_selectors := data.inventory.selectors.allow.to
 
     # contains "selectors.from" components only, eg: WASMFilters comps only
     allowed_parent_comps := extract_components(input.services, from_selectors)
@@ -42,7 +36,6 @@ parent_child_relationship = updated_design {
     updated_design = object.union_n([remaining_comps, updated_comps])
 }
 
-# TODO: break into common policy funcs
 apply_patch(mutator, mutated, from_selectors, to_selectors) := mutated_design {
     from_selectors[i].kind == mutator.type
         mutator_paths := from_selectors[i].patch.mutatorRef
@@ -51,6 +44,7 @@ apply_patch(mutator, mutated, from_selectors, to_selectors) := mutated_design {
     to_selectors[j].kind == mutated.type
         mutated_paths := to_selectors[j].patch.mutatedRef
 
+    print(mutated)
     patches := [ patch |  
         some i
             mutator_path := get_path(mutator_paths[i], mutator)
@@ -64,32 +58,4 @@ apply_patch(mutator, mutated, from_selectors, to_selectors) := mutated_design {
             }
     ]
     mutated_design = json.patch(mutated, patches)
-}
-
-get_path(obj, mutated) = path {
-    path = is_array(obj, mutated)        
-}
-
-is_array(arr, mutated) = path {
-    contains(arr, "_")
-    index := get_array_pos(arr)
-    prefix_path := array.slice(arr, 0, index)
-    suffix_path := array.slice(arr, index + 1, count(arr))
-    value_to_patch := object.get(mutated, prefix_path, "")
-    intermediate_path := array.concat(prefix_path, [count(value_to_patch) - 1])
-    path = array.concat(intermediate_path, suffix_path)
-} 
-
-is_array(arr, mutated) = path {
-	not contains(arr, "_")
-    path = arr
-}
-
-contains(arr, elem) {
-  arr[_] = elem
-}
-
-get_array_pos(arr_path) = index {
-    arr_path[k] == "_"
-    index = k
 }
