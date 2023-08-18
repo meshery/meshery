@@ -55,10 +55,10 @@ func (erh *EntityRegistrationHelper) SeedComponents() {
 	}
 
 	relationships := make([]string, 0)
-	
+
 	// change to queue approach to register comps, relationships and policies
 	// Read component and relationship definitions from files and send them to respective channels
-	for _, model  := range models {
+	for _, model := range models {
 		entitiesPath := filepath.Join(ModelsPath, model.Name())
 		entities, err := os.ReadDir(entitiesPath)
 		if err != nil {
@@ -72,7 +72,7 @@ func (erh *EntityRegistrationHelper) SeedComponents() {
 				switch entity.Name() {
 				case "relationships":
 					relationships = append(relationships, entityPath)
-				case "policies": 
+				case "policies":
 					break
 				default:
 					erh.generateComponents(entityPath) // register components first

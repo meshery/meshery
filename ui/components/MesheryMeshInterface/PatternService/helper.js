@@ -21,7 +21,7 @@ export function getRefinedJsonSchema(jsonSchema, hideTitle = true, handleError) 
   try {
     refinedSchema = hideTitle ? deleteTitleFromJSONSchema(jsonSchema) : jsonSchema
     refinedSchema = deleteDescriptionFromJSONSchema(refinedSchema)
-    refinedSchema.properties = sortProperties(refinedSchema.properties)
+    refinedSchema.properties = sortProperties(refinedSchema.properties); // temporarily commented÷
     recursivelyParseJsonAndCheckForNonRJSFCompliantFields(refinedSchema);
   } catch (e) {
     console.trace(e)

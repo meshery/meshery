@@ -26,7 +26,7 @@
           "kind": "Role",
           "model": "kubernetes"
         },
-        { 
+        {
           "kind": "ClusterRoleBinding",
           "model": "kubernetes"
         },
@@ -54,20 +54,78 @@
         }
       ]
     },
-    "allow":{
+    "allow": {
       "from": [
         {
           "kind": "ClusterRole",
-          "model": "kubernetes"
+          "model": "kubernetes",
+          "match": {
+            "self": [
+              [
+                "type"
+              ],
+              [
+                "name"
+              ]
+            ],
+            "ClusterRoleBinding": [
+              [
+                "settings",
+                "roleRef",
+                "kind"
+              ],
+              [
+                "settings",
+                "roleRef",
+                "name"
+              ]
+            ]
+          }
         },
         {
           "kind": "Role",
-          "model": "kubernetes"
+          "model": "kubernetes",
+          "match": {
+            "self": [
+              [
+                "type"
+              ],
+              [
+                "name"
+              ]
+            ],
+            "RoleBinding": [
+              [
+                "settings",
+                "roleRef",
+                "kind"
+              ],
+              [
+                "settings",
+                "roleRef",
+                "name"
+              ]
+            ]
+          }
         }
       ],
       "to": [
         {
-          "model": "kubernetes"
+          "kind": "ServiceAccount",
+          "model": "kubernetes",
+          "match": {
+            "self": [
+              [
+                "name"
+              ]
+            ],
+            "ClusterRoleBinding": [[
+              "settings",
+              "subjects",
+              "_",
+              "name"
+            ]]
+          }
         }
       ]
     }

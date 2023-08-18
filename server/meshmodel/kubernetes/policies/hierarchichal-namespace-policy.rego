@@ -1,4 +1,4 @@
-package hierarchichal
+package meshmodel_policy
 # https://play.openpolicyagent.org/p/I25U0udl0I
 
 namespace_Keys[namespace_key] {
@@ -7,6 +7,7 @@ namespace_Keys[namespace_key] {
 }
 
 namespaces = { namespace_map: ns |
+print("ppppp")
 	some namespace_map
 	namespace_Keys[namespace_map]
     service := input.services[key]
