@@ -34,12 +34,28 @@
         "from": [
           {
             "kind": "Pod",
-            "model": "kubernetes"
+            "model": "kubernetes",
+            "match": {
+              "self": [
+                [ "settings", "spec", "volumes", "_", "persistentVolumeClaim", "claimName" ]
+              ],
+              "PersistentVolumeClaim": [
+                ["name"]
+              ]
+            }
           }
         ],
         "to": [
           { "kind": "PersistentVolume",
-            "model": "kubernetes"
+            "model": "kubernetes",
+            "match": {
+              "self": [
+                ["labels"]
+              ],
+              "PersistentVolumeClaim": [
+                ["settings", "spec", "selector", "matchLabels"]
+              ]
+            }
           }
         ]
       }
