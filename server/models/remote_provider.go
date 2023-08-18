@@ -646,16 +646,31 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8
 		for k, v := range _metadata {
 			metadata[k] = v
 		}
-  
-	conn := &ConnectionPayload{
-		Name:     k8sContext.Name,
-		Metadata: metadata,
 
+	cred := map[string]interface{}{
+    		"auth": k8sContext.Auth,
+    		"cluster": k8sContext.Cluster,
 	}
-	
-	err := l.SaveConnection(nil, conn, token, true)
+
+	conn := &ConnectionPayload{
+		Kind: 	 "kubernetes",
+		Type: 	 "platform",
+		SubType: "orchestrator",
+		Name:     k8sContext.Name,
+		Status:  DISCOVERED,
+		MetaData: metadata,
+    CredentialSecret: cred,
+	}
 
 	logrus.Infof("attempting to save %s context to remote provider with ID %s", k8sContext.Name, k8sContext.ID)
+	err := l.SaveConnection(nil, conn, token, true)
+   if err != nil {
+			logrus.Errorf("unable to save K8s connection: %v", err)
+			return k8sContext, fmt.Errorf("unable to save K8s connection: %v", err)
+		}
+	
+	return k8sContext, nil
+
 
 	// bf := bytes.NewBuffer(data)
 
