@@ -10,7 +10,6 @@ import AddIcon from "@material-ui/icons/AddCircleOutline";
 import CloseIcon from "@material-ui/icons/Close";
 import SettingsIcon from "@material-ui/icons/Settings";
 import { withRouter } from "next/router";
-import { withSnackbar } from "notistack";
 import PropTypes from "prop-types";
 import React from "react";
 import { connect } from "react-redux";
