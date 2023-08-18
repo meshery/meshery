@@ -43,5 +43,5 @@ func ErrReadAPIResponse(err error) error {
 }
 
 func ErrFilterNameOrID(err error) error {
-	return errors.New(ErrFilterNameOrIDCode, errors.Alert, []string{"Invalid filter name or ID"}, []string{"Invalid filter name or ID", "" + err.Error()}, []string{}, []string{})
+	return errors.New(ErrFilterNameOrIDCode, errors.Alert, []string{"Invalid filter name or ID"}, []string{"Invalid filter name or ID", "" + err.Error()}, []string{"Probable invalid filter name|ID"}, []string{"Please run `mesheryctl filter list` to view all filters avilable"})
 }
