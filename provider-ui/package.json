@@ -40,7 +40,7 @@
     "cypress": "^12.16.0",
     "eslint": "^8.46.0",
     "eslint-config-next": "^13.4.9",
-    "eslint-plugin-cypress": "^2.13.3",
+    "eslint-plugin-cypress": "^2.14.0",
     "start-server-and-test": "^2.0.0"
   },
   "engines": {
