@@ -102,7 +102,7 @@
     "react-lazyload": "^3.2.0",
     "react-moment": "^1.1.2",
     "react-redux": "^8.0.2",
-    "react-relay": "^14.1.0",
+    "react-relay": "^15.0.0",
     "react-runtime": "^1.1.0",
     "react-select": "^5.7.0",
     "react-share": "^4.4.1",
