@@ -144,6 +144,7 @@ jobs:
         with:
           formula-name: mesheryctl
           download-url: https://github.com/meshery/meshery.git
+          formula-path: Formula/m/mesheryctl.rb
         env:
           COMMITTER_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}  
   call-dde-release-workflow:

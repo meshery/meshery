@@ -71,7 +71,7 @@ type LoadTestOptions struct {
 	AllowInitialErrors bool
 
 	Options string
-	
+
 	// Values required for fortio gRPC health & ping test
 	GRPCStreamsCount int
 	GRPCDoHealth     bool
