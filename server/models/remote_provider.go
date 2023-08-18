@@ -429,7 +429,7 @@ func (l *RemoteProvider) GetUsers(token, page, pageSize, search, order, filter s
 	return nil, err
 }
 
-//Returns Keys from a user /api/identity/users/keys
+// Returns Keys from a user /api/identity/users/keys
 func (l *RemoteProvider) GetUsersKeys(token, page, pageSize, search, order, filter string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(UsersKeys) {
 		logrus.Warn("operation not available")
@@ -3720,7 +3720,6 @@ func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, 
 
 	return &cp, nil
 }
-
 
 // GetConnectionsByKind - to get saved credentials
 func (l *RemoteProvider) GetConnectionsByKind(req *http.Request, _ string, page, pageSize int, search, order, connectionKind string) (*map[string]interface{}, error) {
