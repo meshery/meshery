@@ -9,6 +9,7 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/registry"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 )
 
@@ -157,9 +158,13 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 		Sort:      r.URL.Query().Get("sort"),
 	})
 	var rels []v1alpha1.RelationshipDefinition
-	for _, r := range entities {
-		rel, ok := r.(v1alpha1.RelationshipDefinition)
+	for _, entity := range entities {
+		host := h.registryManager.GetRegistrant(entity)
+		rel, ok := entity.(v1alpha1.RelationshipDefinition)
 		if ok {
+			rel.HostID = host.ID
+			rel.HostName = host.Hostname
+			rel.DisplayHostName = registry.HostnameToPascalCase(host.Hostname)
 			rels = append(rels, rel)
 		}
 	}

@@ -46,7 +46,7 @@ import dataFetch from "../lib/data-fetch";
 import { Collapse } from "@material-ui/core";
 import { cursorNotAllowed, disabledStyle, disabledStyleWithOutOpacity } from "../css/disableComponent.styles";
 import { CapabilitiesRegistry } from "../utils/disabledComponents";
-import { APPLICATION, APP_MESH, CILIUM_SM, CITRIX_SM, DESIGN, CONFIGURATION,  CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, OSM, PERFORMANCE, TRAEFIK_SM, PROFILES, TOGGLER } from "../constants/navigator"
+import { APPLICATION, APP_MESH, CILIUM_SM, DESIGN, CONFIGURATION,  CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, PERFORMANCE, TRAEFIK_SM, PROFILES, TOGGLER, CONNECTION } from "../constants/navigator"
 import { iconSmall } from "../css/icons.styles";
 
 const styles = (theme) => ({
@@ -329,18 +329,18 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
     submenu : true,
     children : [
       {
+        id : CONNECTION,
+        href : "/management/connections",
+        title : "Connections",
+        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CONNECTION]),
+        link : true,
+      },
+      {
         id : APP_MESH,
         href : "/management/app-mesh",
         title : "AWS App Mesh",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, APP_MESH]),
-      },
-      {
-        id : CITRIX_SM,
-        href : "/management/citrix",
-        title : "Citrix Service Mesh",
-        link : true,
-        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CITRIX_SM]),
       },
       {
         id : CONSUL,
@@ -391,13 +391,6 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
         title : "NGINX Service Mesh",
         link : true,
         show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, NGINX]),
-      },
-      {
-        id : OSM,
-        href : "/management/osm",
-        title : "Open Service Mesh",
-        link : true,
-        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, OSM]),
       },
       {
         id : TRAEFIK_SM,

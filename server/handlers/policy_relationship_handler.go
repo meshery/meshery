@@ -1,14 +1,14 @@
 package handlers
 
 import (
-	"context"
 	"encoding/json"
 	"io"
 	"net/http"
 
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/pattern/core"
+	"gopkg.in/yaml.v2"
 
-	"github.com/layer5io/meshkit/models/meshmodel/core/policies"
 	"github.com/sirupsen/logrus"
 )
 
@@ -37,8 +37,25 @@ func (h *Handler) GetRegoPolicyForDesignFile(
 		return
 	}
 
+	var input core.Pattern
+	err = yaml.Unmarshal((body), &input)
+
+	if err != nil {
+		http.Error(rw, ErrDecoding(err, "design file").Error(), http.StatusInternalServerError)
+		return
+	}
+
+	for _, svc := range input.Services {
+		svc.Settings = core.Format.DePrettify(svc.Settings, false)
+	}
+
+	data, err := yaml.Marshal(input)
+	if err != nil {
+		http.Error(rw, ErrEncoding(err, "design file").Error(), http.StatusInternalServerError)
+		return
+	}
 	// evaluate all the rego policies in the policies directory
-	networkPolicy, err := policies.RegoPolicyHandler(context.Background(), []string{"../meshmodel/policies"}, "data.network_policy", body)
+	networkPolicy, err := h.Rego.RegoPolicyHandler("data.meshmodel_policy", data)
 	if err != nil {
 		h.log.Error(ErrResolvingRegoRelationship(err))
 		http.Error(rw, ErrResolvingRegoRelationship(err).Error(), http.StatusInternalServerError)

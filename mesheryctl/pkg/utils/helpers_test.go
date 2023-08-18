@@ -480,9 +480,6 @@ func TestSetOverrideValues(t *testing.T) {
 				"meshery-kuma": map[string]interface{}{
 					"enabled": false,
 				},
-				"meshery-osm": map[string]interface{}{
-					"enabled": false,
-				},
 				"meshery-nsm": map[string]interface{}{
 					"enabled": false,
 				},
@@ -500,7 +497,7 @@ func TestSetOverrideValues(t *testing.T) {
 		{
 			name: "Context contains part of all available components and meshery image version",
 			ctx: &config.Context{
-				Components: []string{"meshery-istio", "meshery-osm", "meshery-nsm"},
+				Components: []string{"meshery-istio", "meshery-nsm"},
 				Channel:    testChannel,
 			},
 			mesheryImageVersion: "testImageVersion",
@@ -523,9 +520,6 @@ func TestSetOverrideValues(t *testing.T) {
 				"meshery-kuma": map[string]interface{}{
 					"enabled": false,
 				},
-				"meshery-osm": map[string]interface{}{
-					"enabled": true,
-				},
 				"meshery-nsm": map[string]interface{}{
 					"enabled": true,
 				},
@@ -544,7 +538,7 @@ func TestSetOverrideValues(t *testing.T) {
 			name: "Context contains all available components and meshery image version",
 			ctx: &config.Context{
 				Components: []string{"meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-kuma",
-					"meshery-osm", "meshery-nsm", "meshery-nginx-sm", "meshery-traefik-mesh", "meshery-cilium"},
+					"meshery-nsm", "meshery-nginx-sm", "meshery-traefik-mesh", "meshery-cilium"},
 				Channel: testChannel,
 			},
 			mesheryImageVersion: "testImageVersion",
@@ -565,9 +559,6 @@ func TestSetOverrideValues(t *testing.T) {
 					"enabled": true,
 				},
 				"meshery-kuma": map[string]interface{}{
-					"enabled": true,
-				},
-				"meshery-osm": map[string]interface{}{
 					"enabled": true,
 				},
 				"meshery-nsm": map[string]interface{}{

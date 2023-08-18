@@ -102,6 +102,7 @@ type Extensions struct {
 	UserPrefs UserPrefsExtensions `json:"user_prefs,omitempty"`
 	GraphQL   GraphQLExtensions   `json:"graphql,omitempty"`
 	Acccount  AccountExtensions   `json:"account,omitempty"`
+	Collaborator CollaboratorExtensions `json:"collaborator,omitempty"`
 }
 
 // NavigatorExtensions is a collection of NavigatorExtension
@@ -113,8 +114,11 @@ type UserPrefsExtensions []UserPrefsExtension
 // GraphQLExtensions is a collection of GraphQLExtension endpoints
 type GraphQLExtensions []GraphQLExtension
 
-// NavigatorExtensions is a collection of NavigatorExtension
+// NavigatorExtensions is a collection of AccountExtension
 type AccountExtensions []AccountExtension
+
+// CollaboratorExtension describes the Collaborator extension point in the UI
+type CollaboratorExtensions []CollaboratorExtension
 
 // GraphQLExtension describes the graphql server extension point in the backend
 type GraphQLExtension struct {
@@ -169,6 +173,12 @@ type AccountExtension struct {
 
 // UserPrefsExtension describes the user preference extension point in the UI
 type UserPrefsExtension struct {
+	Component string `json:"component,omitempty"`
+	Type      string `json:"type,omitempty"`
+}
+
+// CollaboratorsExtension is the struct for collaborators extension
+type CollaboratorExtension struct {
 	Component string `json:"component,omitempty"`
 	Type      string `json:"type,omitempty"`
 }
@@ -250,6 +260,8 @@ const (
 
 	ShareDesigns Feature = "share-designs"
 
+	ShareFilters Feature = "share-filters"
+
 	PersistConnection Feature = "persist-connection"
 
 	PersistCredentials Feature = "persist-credentials"
@@ -257,6 +269,8 @@ const (
 	UsersProfile Feature = "users-profile"
 
 	UsersIdentity Feature = "users-identity"
+
+	UsersKeys Feature = "users-keys"
 )
 
 const (
@@ -342,6 +356,7 @@ type Provider interface {
 	GetUserDetails(*http.Request) (*User, error)
 	GetUserByID(req *http.Request, userID string) ([]byte, error)
 	GetUsers(token, page, pageSize, search, order, filter string) ([]byte, error)
+	GetUsersKeys(token, page, pageSize, search, order, filter string) ([]byte, error)
 	GetProviderToken(req *http.Request) (string, error)
 	UpdateToken(http.ResponseWriter, *http.Request) string
 	Logout(http.ResponseWriter, *http.Request) error
@@ -409,6 +424,7 @@ type Provider interface {
 	DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
 	GetMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
 	ShareDesign(req *http.Request) (int, error)
+	ShareFilter(req *http.Request) (int, error)
 
 	SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error)
 	GetPerformanceProfiles(tokenString string, page, pageSize, search, order string) ([]byte, error)
@@ -423,9 +439,11 @@ type Provider interface {
 	ExtensionProxy(req *http.Request) (*ExtensionProxyResponse, error)
 
 	SaveConnection(req *http.Request, conn *ConnectionPayload, token string, skipTokenCheck bool) error
-	GetConnections(req *http.Request, userID string, page, pageSize int, search, order, connectionKind string) (*ConnectionPage, error)
+	GetConnections(req *http.Request, userID string, page, pageSize int, search, order string) (*ConnectionPage, error)
+	GetConnectionsByKind(req *http.Request, userID string, page, pageSize int, search, order, connectionKind string) (*map[string]interface{}, error)
 	GetConnectionsStatus(req *http.Request, userID string) (*ConnectionsStatusPage, error)
 	UpdateConnection(req *http.Request, conn *Connection) (*Connection, error)
+	UpdateConnectionById(req *http.Request, conn *ConnectionPayload, connId string) (*Connection, error)
 	DeleteConnection(req *http.Request, connID uuid.UUID) (*Connection, error)
 	DeleteMesheryConnection() error
 

@@ -22,9 +22,8 @@ import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
 import { toggleCatalogContent, updateProgress } from "../lib/store";
 import DesignConfigurator from "../components/configuratorComponents/MeshModel";
-import UploadImport from "./UploadImport";
 import { ctxUrl } from "../utils/multi-ctx";
-import { generateValidatePayload, getComponentsinFile, randomPatternNameGenerator as getRandomName } from "../utils/utils";
+import { generateValidatePayload, getComponentsinFile, getDecodedFile } from "../utils/utils";
 import ViewSwitch from "./ViewSwitch";
 import CatalogFilter from "./CatalogFilter";
 import MesheryPatternGrid from "./MesheryPatterns/MesheryPatternGridView";
@@ -43,17 +42,20 @@ import CloneIcon from "../public/static/img/CloneIcon";
 import { useRouter } from "next/router";
 import { publish_schema, publish_ui_schema } from "./schemas/publish_schema";
 import Modal from "./Modal";
-import _ from "lodash";
 import downloadFile from "../utils/fileDownloader";
 import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import ReusableTooltip from "./reusable-tooltip";
 import SearchBar from "./searchcommon";
+import Pattern from "../public/static/img/drawer-icons/pattern_svg.js";
+import DryRunComponent from "./DryRun/DryRunComponent";
+import { useNotification } from "../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../lib/event-types";
 
 
 const styles = (theme) => ({
   grid : {
-    padding : theme.spacing(2),
+    padding : theme.spacing(1),
   },
   tableHeader : {
     fontWeight : "bolder",
@@ -70,14 +72,21 @@ const styles = (theme) => ({
     filter : theme.palette.secondary.brightness
   },
   topToolbar : {
-    margin : "2rem auto",
+    marginBottom : "3rem",
     display : "flex",
     justifyContent : "space-between",
-    paddingLeft : "1rem"
+    flexWrap : 'wrap',
+    "@media (max-width: 1450px)" : {
+      justifyContent : "start",
+      paddingLeft : 0,
+    },
   },
   viewSwitchButton : {
     justifySelf : "flex-end",
-    paddingLeft : "1rem"
+    paddingLeft : "1rem",
+    "@media (max-width: 1450px)" : {
+      marginRight : '2rem'
+    },
   },
   createButton : {
     display : "flex",
@@ -117,7 +126,31 @@ const styles = (theme) => ({
   },
   visibilityImg : {
     filter : theme.palette.secondary.img,
-  }
+  },
+  searchAndView : {
+    display : 'flex',
+    alignItems : 'center',
+    justifyContent : 'center',
+    margin : 'auto',
+    "@media (max-width: 1450px)" : {
+      paddingLeft : 0,
+      margin : 0,
+    },
+  },
+  searchWrapper : {
+    "@media (max-width: 1150px)" : {
+      marginTop : '20px',
+    },
+  },
+  catalogFilter : {
+    marginRight : '2rem',
+  },
+  btnText : {
+    display : 'block',
+    "@media (max-width: 1450px)" : {
+      display : "none",
+    },
+  },
   // text : {
   //   padding : "5px"
   // }
@@ -247,7 +280,7 @@ function resetSelectedPattern() {
 }
 
 function MesheryPatterns({
-  updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts, catalogVisibility, toggleCatalogContent
+  updateProgress,  user, classes, selectedK8sContexts, catalogVisibility, toggleCatalogContent
 }) {
   const [page, setPage] = useState(0);
   const [search,setSearch] = useState("");
@@ -260,15 +293,16 @@ function MesheryPatterns({
   const [selectedPattern, setSelectedPattern] = useState(resetSelectedPattern());
   const [extensionPreferences, setExtensionPreferences] = useState({});
   const router = useRouter()
+  const [importSchema, setImportSchema] = useState({});
 
   const [patternErrors, setPatternErrors] = useState(new Map());
 
   const [canPublishPattern, setCanPublishPattern] = useState(false);
 
   const [viewType, setViewType] = useState(
-    /**  @type {TypeView} */
     ("grid")
   );
+  const { notify } = useNotification()
 
   const PATTERN_URL = '/api/pattern'
   const DEPLOY_URL = `${PATTERN_URL}/deploy`;
@@ -280,6 +314,7 @@ function MesheryPatterns({
     name : "",
     count : 0,
     validationBody : null,
+    dryRunComponent : null,
     errors : {
       validationErrors : 0
     }
@@ -292,10 +327,6 @@ function MesheryPatterns({
     open : false,
     pattern : {},
     name : ""
-  });
-  const [payload, setPayload] = useState({
-    id : "",
-    catalog_data : {}
   });
 
 
@@ -344,6 +375,10 @@ function MesheryPatterns({
     UNPUBLISH_CATALOG : {
       name : "PUBLISH_CATALOG",
       error_msg : "Failed to publish catalog"
+    },
+    SCHEMA_FETCH : {
+      name : "SCHEMA_FETCH",
+      error_msg : "failed to fetch import schema"
     }
   };
 
@@ -386,13 +421,6 @@ function MesheryPatterns({
     }
   },[viewType])
 
-  const onChange = (e) => {
-    setPayload({
-      id : publishModal.pattern?.id,
-      catalog_data : e
-    })
-  }
-
 
   const handleCatalogPreference = (catalogPref) => {
     let body = Object.assign({}, extensionPreferences)
@@ -406,21 +434,11 @@ function MesheryPatterns({
         body : JSON.stringify({ usersExtensionPreferences : body })
       },
       () => {
-        enqueueSnackbar(`Catalog Content was ${catalogPref ? "enab" : "disab"}led`,
-          {
-            variant : 'success',
-            autoHideDuration : 4000,
-            action : (key) => (
-              <IconButton
-                key="close"
-                aria-label="Close"
-                color="inherit"
-                onClick={() => closeSnackbar(key)}
-              >
-                <CloseIcon />
-              </IconButton>
-            ),
-          });
+
+        notify({
+          message : `Catalog Content was ${catalogPref ? "enabled" : "disabled" }` ,
+          event_type : EVENT_TYPES.SUCCESS,
+        })
       },
       err => console.error(err),
     )
@@ -488,6 +506,16 @@ function MesheryPatterns({
   }, [catalogVisibility])
 
   useEffect(() => {
+    dataFetch("/api/schema/resource/design",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      (result) => {
+        setImportSchema(result);
+      },
+      handleError(ACTION_TYPES.SCHEMA_FETCH)
+    )
     catalogVisibilityRef.current = catalogVisibility
     const fetchCatalogPatterns = fetchCatalogPattern({
       selector : {
@@ -549,6 +577,9 @@ function MesheryPatterns({
         handleClose={() => setModalOpen({ ...modalOpen, open : false })}
       />
     )
+    const dryRunComponent = (
+      <DryRunComponent design={pattern_file} noOfElements={compCount} selectedContexts={selectedK8sContexts} />
+    )
     setModalOpen({
       open : true,
       action : action,
@@ -556,6 +587,7 @@ function MesheryPatterns({
       name : name,
       count : compCount,
       validationBody : validationBody,
+      dryRunComponent : dryRunComponent,
       errors : {
         validationError : errors?.reduce((count, ele) => {
           return ele.errors.length + count
@@ -603,17 +635,10 @@ function MesheryPatterns({
                 { credentials : "include", method : "DELETE", body : JSON.stringify({ "id" : pattern?.id }) },
                 () => {
                   updateProgress({ showProgress : false });
-                  enqueueSnackbar("Design unpublished", {
-                    variant : "success",
-                    action : function Action(key) {
-                      return (
-                        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                          <CloseIcon />
-                        </IconButton>
-                      );
-                    },
-                    autoHideDuration : 2000,
-                  });
+                  notify({
+                    message : `Design Unpublished` ,
+                    event_type : EVENT_TYPES.SUCCESS,
+                  })
                 },
                 handleError(ACTION_TYPES.UNPUBLISH_CATALOG),
           );
@@ -629,12 +654,6 @@ function MesheryPatterns({
       pattern : {},
       name : ""
     });
-
-    setPayload({
-      id : "",
-      catalog_data : {}
-    });
-
   };
 
   const handleDeploy = (pattern_file, name) => {
@@ -647,17 +666,11 @@ function MesheryPatterns({
         body : pattern_file,
       }, () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar(`"${name}" Design deployed`, {
-          variant : "success",
-          action : function Action(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            );
-          },
-          autoHideDuration : 2000,
-        });
+        notify({
+          message : `"${name}" Design Deployed` ,
+          event_type : EVENT_TYPES.SUCCESS,
+        })
+
       },
       handleError(ACTION_TYPES.DEPLOY_PATTERN),
     );
@@ -700,39 +713,31 @@ function MesheryPatterns({
         body : pattern_file,
       }, () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar(`"${name}" Design undeployed`, {
-          variant : "success",
-          action : function Action(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            );
-          },
-          autoHideDuration : 2000,
-        });
+        notify({
+          message : `"${name}" Design undeployed`,
+          event_type : EVENT_TYPES.SUCCESS
+
+        })
       },
       handleError(ACTION_TYPES.UNDEPLOY_PATTERN),
     );
   };
-  const handlePublish = (catalog_data) => {
+  const handlePublish = (formData) => {
+    const payload = {
+      id : publishModal.pattern?.id,
+      catalog_data : formData
+    }
     updateProgress({ showProgress : true });
     dataFetch(
       `/api/pattern/catalog/publish`,
-      { credentials : "include", method : "POST", body : JSON.stringify(catalog_data) },
+      { credentials : "include", method : "POST", body : JSON.stringify(payload) },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Design Published!", {
-          variant : "success",
-          action : function Action(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            );
-          },
-          autoHideDuration : 2000,
-        });
+
+        notify({
+          message : "Design Published",
+          event_type : EVENT_TYPES.SUCCESS
+        })
       },
       handleError(ACTION_TYPES.PUBLISH_CATALOG),
     );
@@ -747,17 +752,10 @@ function MesheryPatterns({
       },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar(`"${name}" Design cloned`, {
-          variant : "success",
-          action : function Action(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            );
-          },
-          autoHideDuration : 2000,
-        });
+        notify({
+          message : `"${name}" Design cloned`,
+          event_type : EVENT_TYPES.SUCCESS
+        })
       },
       handleError(ACTION_TYPES.CLONE_PATTERN),
     );
@@ -793,17 +791,10 @@ function MesheryPatterns({
   const handleError = (action) => (error) => {
     updateProgress({ showProgress : false });
 
-    enqueueSnackbar(`${action.error_msg}: ${error}`, {
-      variant : "error",
-      action : function Action(key) {
-        return (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon />
-          </IconButton>
-        );
-      },
-      autoHideDuration : 8000,
-    });
+    notify({
+      message : `${action.error_msg}: ${error}`,
+      event_type : EVENT_TYPES.ERROR
+    })
   };
 
   function resetSelectedRowData() {
@@ -829,17 +820,7 @@ function MesheryPatterns({
         () => {
           console.log("PatternFile API", `/api/pattern/${id}`);
           updateProgress({ showProgress : false });
-          enqueueSnackbar(`"${name}" Design deleted`, {
-            variant : "success",
-            action : function Action(key) {
-              return (
-                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                  <CloseIcon />
-                </IconButton>
-              );
-            },
-            autoHideDuration : 2000,
-          });
+          notify({ message : `"${name}" Design deleted` , event_type : EVENT_TYPES.SUCCESS })
           resetSelectedRowData()();
         },
         handleError(ACTION_TYPES.DELETE_PATTERN)
@@ -857,6 +838,7 @@ function MesheryPatterns({
         () => {
           console.log("PatternFile API", `/api/pattern`);
           updateProgress({ showProgress : false });
+          notify({ message : `"${name}" Design updated` , event_type : EVENT_TYPES.SUCCESS })
         },
         handleError(ACTION_TYPES.UPDATE_PATTERN)
       );
@@ -898,48 +880,10 @@ function MesheryPatterns({
     try {
       downloadFile({ id, name, type : "pattern" })
       updateProgress({ showProgress : false });
-      enqueueSnackbar(`"${name}" Design downloaded`, {
-        variant : "success",
-        action : function Action(key) {
-          return (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon />
-            </IconButton>
-          );
-        }
-      });
+      notify({ message : `"${name}" Design Downloaded` , event_type : EVENT_TYPES.SUCCESS })
     } catch (e) {
       console.error(e);
     }
-  }
-
-  function uploadHandler(ev, _, otherMetadata) {
-    if (!ev.target.files?.length) return;
-
-
-    const file = ev.target.files[0];
-    // Create a reader
-    const reader = new FileReader();
-    reader.addEventListener("load", (event) => {
-      // @ts-ignore
-      handleSubmit({
-        data : event.target.result,
-        name : file?.name || getRandomName(),
-        type : FILE_OPS.FILE_UPLOAD,
-        metadata : otherMetadata
-      });
-    });
-    reader.readAsText(file);
-  }
-
-  function urlUploadHandler(link, _, otherMetadata) {
-    handleSubmit({
-      data : link,
-      id : "",
-      name : getRandomName(),
-      type : FILE_OPS.URL_UPLOAD,
-      metadata : otherMetadata
-    });
   }
 
   const columns = [
@@ -1151,19 +1095,7 @@ function MesheryPatterns({
       console.log("PatternFile Delete Multiple API", `/api/pattern/delete`);
       updateProgress({ showProgress : false });
       setTimeout(() => {
-        enqueueSnackbar(`${patterns.patterns.length} Designs deleted`,
-          {
-            variant : "success",
-            autoHideDuration : 2000,
-            action : function Action(key) {
-              return (
-                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                  <CloseIcon />
-                </IconButton>
-              );
-            }
-          }
-        )
+        notify({ message : `${patterns.patterns.length} Designs deleted` , event_type : EVENT_TYPES.SUCCESS })
         resetSelectedRowData()()
       }, 1200);
     },
@@ -1271,6 +1203,52 @@ function MesheryPatterns({
     return <LoadingScreen animatedIcon="AnimatedMeshPattern" message="Loading Designs..." />;
   }
 
+  /**
+   * Gets the data of Import Filter and handles submit operation
+   *
+   * @param {{
+  * uploadType: ("File Upload"| "URL Upload");
+  * name: string;
+  * url: string;
+  * file: string;
+  * }} data
+  */
+  function handleImportDesign(data) {
+    console.log("data....", data)
+    updateProgress({ showProgress : true })
+    const { uploadType, name, url, file } = data;
+    let requestBody = null;
+    switch (uploadType) {
+      case "File Upload":
+        requestBody = JSON.stringify({
+          save : true,
+          pattern_data : {
+            name,
+            pattern_file : getDecodedFile(file)
+          }
+        })
+        break;
+      case "URL Upload":
+        requestBody = JSON.stringify({
+          save : true,
+          url,
+          pattern_data : {
+            name
+          }
+        })
+        break;
+    }
+
+    dataFetch("/api/pattern",
+      { credentials : "include", method : "POST", body : requestBody },
+      () => {
+        updateProgress({ showProgress : false });
+      },
+      handleError(ACTION_TYPES.UPLOAD_PATTERN)
+    )
+  }
+
+
   return (
     <>
       <NoSsr>
@@ -1281,69 +1259,62 @@ function MesheryPatterns({
           <DesignConfigurator onSubmit={handleSubmit} show={setSelectedPattern} pattern={selectedPattern.pattern} />
         }
         <div className={classes.topToolbar} >
-          {!selectedPattern.show && (patterns.length > 0 || viewType === "table") && <div className={classes.createButton}>
-            <div>
-              <Button
-                aria-label="Add Pattern"
-                variant="contained"
-                color="primary"
-                size="large"
-                // @ts-ignore
-                onClick={() => router.push("designs/configurator")}
-                style={{ marginRight : "2rem" }}
-              >
-                <AddIcon className={classes.addIcon} />
-                Create Design
-              </Button>
-              <Button
-                aria-label="Add Pattern"
-                variant="contained"
-                color="primary"
-                size="large"
-                // @ts-ignore
-                onClick={handleUploadImport}
-                style={{ marginRight : "2rem" }}
-              >
-                <PublishIcon className={classes.addIcon} />
-                Import Design
-              </Button>
+          <div style={{ display : "flex" }}>
+            {!selectedPattern.show && (patterns.length > 0 || viewType === "table") && <div className={classes.createButton}>
+              <div style={{ display : 'flex', order : '1' }}>
+                <Button
+                  aria-label="Add Pattern"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  // @ts-ignore
+                  onClick={() => router.push("designs/configurator")}
+                  style={{ display : 'flex', marginRight : "2rem" }}
+                >
+                  <AddIcon className={classes.addIcon} />
+                  <span className={classes.btnText}> Create Design </span>
+                </Button>
+                <Button
+                  aria-label="Add Pattern"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  // @ts-ignore
+                  onClick={handleUploadImport}
+                  style={{ display : 'flex', marginRight : "2rem" }}
+                >
+                  <PublishIcon className={classes.addIcon} />
+                  <span className={classes.btnText}> Import Design </span>
+                </Button>
+              </div>
             </div>
+            }
+            {!selectedPattern.show &&
+              <div className={classes.catalogFilter} style={{ display : 'flex' }}>
+                <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} classes={classes} />
+              </div>
+            }
           </div>
-          }
+          <div className={classes.searchWrapper} style={{ display : "flex" }}>
+            <div className={classes.searchAndView}>
+              <SearchBar
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  initPatternsSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
+                }
+                }
+                label={"Search Designs"}
+                width="55ch"
+              />
+            </div>
 
-          <div
-            className={classes.searchAndView}
-            style={{
-              display : 'flex',
-              alignItems : 'center',
-              justifyContent : 'center',
-              margin : 'auto',
-            }}
-          >
-            <SearchBar
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                initPatternsSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
-              }
-              }
-              label={"Search Designs"}
-              width="60ch"
-            />
+            {!selectedPattern.show &&
+              <div className={classes.viewSwitchButton} style={{ display : 'flex' }}>
+                <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true}/>
+              </div>
+            }
           </div>
-
-          {!selectedPattern.show &&
-            <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingRight : "1rem", paddingTop : "0.2rem" }}>
-              <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} />
-            </div>
-          }
-
-
-          {!selectedPattern.show &&
-            <div className={classes.viewSwitchButton}>
-              <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true}/>
-            </div>
-          }
         </div>
         {
           !selectedPattern.show && viewType === "table" &&
@@ -1361,6 +1332,7 @@ function MesheryPatterns({
           !selectedPattern.show && viewType==="grid" &&
             // grid vieww
             <MesheryPatternGrid
+              selectedK8sContexts={selectedK8sContexts}
               canPublishPattern={canPublishPattern}
               patterns={patterns}
               handleDeploy={handleDeploy}
@@ -1369,8 +1341,6 @@ function MesheryPatterns({
               handleUnpublishModal={handleUnpublishModal}
               handleUnDeploy={handleUnDeploy}
               handleClone={handleClone}
-              urlUploadHandler={urlUploadHandler}
-              uploadHandler={uploadHandler}
               supportedTypes="null"
               handleSubmit={handleSubmit}
               setSelectedPattern={setSelectedPattern}
@@ -1378,9 +1348,9 @@ function MesheryPatterns({
               pages={Math.ceil(count / pageSize)}
               setPage={setPage}
               selectedPage={page}
-              UploadImport={UploadImport}
-              fetch={() => fetchPatterns(page, pageSize, search, sortOrder)}
               patternErrors={patternErrors}
+              publishModal={publishModal}
+              setPublishModal={setPublishModal}
             />
         }
         <ConfirmationModal
@@ -1395,18 +1365,35 @@ function MesheryPatterns({
           componentCount={modalOpen.count}
           tab={modalOpen.action}
           validationBody={modalOpen.validationBody}
+          dryRunComponent={modalOpen.dryRunComponent}
           errors={modalOpen.errors}
         />
-        {canPublishPattern && <Modal open={publishModal.open} schema={publish_schema} uiSchema={publish_ui_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data)? publishModal?.pattern?.catalog_data : payload.catalog_data } aria-label="catalog publish" title={publishModal.pattern?.name} handleSubmit={handlePublish} payload={payload} showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }}/>}
-        <UploadImport
+        {canPublishPattern &&
+          <Modal
+            open={publishModal.open}
+            schema={publish_schema}
+            uiSchema={publish_ui_schema}
+            handleClose={handlePublishModalClose}
+            aria-label="catalog publish"
+            title={publishModal.pattern?.name}
+            handleSubmit={handlePublish}
+            showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }}
+            submitBtnText="Submit for Approval"
+            submitBtnIcon={<PublicIcon/>}
+          />
+        }
+        <Modal
           open={importModal.open}
+          schema={importSchema.rjsfSchema}
+          uiSchema={importSchema.uiSchema}
           handleClose={handleUploadImportClose}
-          aria-label="URL upload button"
-          handleUrlUpload={urlUploadHandler}
-          handleUpload={uploadHandler}
-          fetch={() => fetchPatterns(page, pageSize, search, sortOrder)}
-          configuration="Design"
+          handleSubmit={handleImportDesign}
+          title="Import Design"
+          submitBtnText="Import"
+          leftHeaderIcon={<Pattern fill="#fff" style={{ height : "24px", width : "24px", fonSize : "1.45rem" }} className={undefined} />}
+          submitBtnIcon={<PublishIcon  className={classes.addIcon} data-cy="import-button"/>}
         />
+        {/* <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchPatterns(page, pageSize, search, sortOrder)} configuration="Design" /> */}
         <PromptComponent ref={modalRef} />
       </NoSsr>
     </>

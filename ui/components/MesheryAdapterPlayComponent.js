@@ -31,6 +31,7 @@ import ReactSelectWrapper from "./ReactSelectWrapper";
 import ConfirmationMsg from "./ConfirmationModal";
 import { iconMedium } from "../css/icons.styles";
 import { ACTIONS } from "../utils/Enum";
+import { getModelByName } from "../api/meshmodel";
 
 const styles = (theme) => ({
   smWrapper : { backgroundColor : theme.palette.secondary.elevatedComponents2, },
@@ -205,7 +206,13 @@ class MesheryAdapterPlayComponent extends React.Component {
       category : 0,
       selectedOp : "",
       isDeleteOp : false,
-      operationName : ""
+      operationName : "",
+      versionList : [],
+      version : {
+        labeL : "",
+        value : ""
+      },
+      versionError : false
     };
   }
 
@@ -253,6 +260,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     const meshname = self.mapAdapterNameToMeshName(self.activeMesh)
     const variables = { type : meshname, k8sClusterIDs : this.getK8sClusterIds() }
     this.initSubscription();
+    this.getMeshVersions();
     if (this.props.selectedK8sContexts) {
       if (this.props.selectedK8sContexts.includes("all")) {
         let active = [];
@@ -296,10 +304,29 @@ class MesheryAdapterPlayComponent extends React.Component {
 
   }
 
+  getMeshVersions() {
+    const activeMesh = this.props?.adapter.name;
+    getModelByName(activeMesh.toLowerCase())
+      .then(res => {
+        let uniqueVersions = [...new Set(res?.models?.map(model => model?.version))].reverse();
+        if (uniqueVersions.length === 0) {
+          uniqueVersions = [""]
+        }
+        let versionList = uniqueVersions.map(version => ({ value : version, label : version }));
+        this.setState({
+          versionList : versionList,
+          version : versionList[0]
+        })
+      })
+  }
+
   componentDidUpdate(prevProps) {
     if (prevProps?.selectedK8sContexts.length !== this.props?.selectedK8sContexts.length) {
       this.disposeSubscriptions();
       this.initSubscription();
+    }
+    if (prevProps?.adapter.name !== this.props?.adapter.name) {
+      this.getMeshVersions();
     }
   }
 
@@ -359,6 +386,14 @@ class MesheryAdapterPlayComponent extends React.Component {
     }
   }
 
+  handleVersionChange = (newValue) => {
+    if (typeof newValue !== "undefined") {
+      this.setState({ version : newValue, namespaceError : false });
+    } else {
+      this.setState({ versionError : true })
+    }
+  }
+
   handleModalClose(isDelete) {
     const self = this;
     return () => {
@@ -398,7 +433,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     const self = this;
     return () => {
       self.handleOpen();
-      const { namespace, cmEditorValAdd, cmEditorValDel } = self.state;
+      const { namespace, cmEditorValAdd, cmEditorValDel, version } = self.state;
       const { adapter } = self.props;
       const filteredOp = adapter.ops.filter(({ key }) => key === selectedOp);
       if (selectedOp === "" || typeof filteredOp === "undefined" || filteredOp.length === 0) {
@@ -416,6 +451,11 @@ class MesheryAdapterPlayComponent extends React.Component {
       }
       if (namespace.value === "") {
         self.setState({ namespaceError : true });
+        return;
+      }
+
+      if (version?.value === "") {
+        self.setState({ versionError : true });
         return;
       }
       const operationName = selectedOp.replaceAll("_", " ").split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
@@ -436,7 +476,7 @@ class MesheryAdapterPlayComponent extends React.Component {
 
   submitOp = (cat, selectedOp, deleteOp = false) => {
     const {
-      namespace, cmEditorValAdd, cmEditorValDel, menuState
+      namespace, cmEditorValAdd, cmEditorValDel, menuState, version
     } = this.state;
     const { adapter } = this.props;
     // const fileInput = document.querySelector('#k8sfile') ;
@@ -450,6 +490,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       deleteOp : deleteOp
         ? "on"
         : "",
+      version : version.value
     };
 
     const params = Object.keys(data)
@@ -913,7 +954,7 @@ class MesheryAdapterPlayComponent extends React.Component {
   generateYAMLEditor(cat, isDelete) {
     const { adapter } = this.props;
     const {
-      customDialogAdd, customDialogDel, namespace, namespaceError, cmEditorValAdd, cmEditorValDel, namespaceList
+      customDialogAdd, customDialogDel, namespace, namespaceError, cmEditorValAdd, cmEditorValDel, namespaceList, versionList, version, versionError
     } = this.state;
     const self = this;
     return (
@@ -935,13 +976,22 @@ class MesheryAdapterPlayComponent extends React.Component {
         <Divider variant="fullWidth" light />
         <DialogContent>
           <Grid container spacing={5}>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <ReactSelectWrapper
                 label="Namespace"
                 value={namespace}
                 error={namespaceError}
                 options={namespaceList}
                 onChange={this.handleNamespaceChange}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <ReactSelectWrapper
+                label="Version"
+                value={version}
+                error={versionError}
+                options={versionList}
+                onChange={this.handleVersionChange}
               />
             </Grid>
             <Grid item xs={12}>
@@ -986,8 +1036,8 @@ class MesheryAdapterPlayComponent extends React.Component {
         <DialogActions>
           <IconButton aria-label="Apply" color="primary" onClick={this.handleSubmit(cat, "custom", isDelete)}>
             {/* <FontAwesomeIcon icon={faArrowRight} transform="shrink-4" fixedWidth /> */}
-            {!isDelete && <PlayIcon  style={iconMedium}  />}
-            {isDelete && <DeleteIcon  style={iconMedium}  />}
+            {!isDelete && <PlayIcon style={iconMedium} />}
+            {isDelete && <DeleteIcon style={iconMedium} />}
           </IconButton>
         </DialogActions>
       </Dialog>
@@ -1068,7 +1118,7 @@ class MesheryAdapterPlayComponent extends React.Component {
           >
             {cat !== 4
               ? <AddIcon style={iconMedium} />
-              : <PlayIcon style={iconMedium}  />}
+              : <PlayIcon style={iconMedium} />}
           </IconButton>
           {cat !== 4 && this.generateMenu(cat, false, selectedAdapterOps)}
           {cat === 4 && this.generateYAMLEditor(cat, false)}
@@ -1080,7 +1130,7 @@ class MesheryAdapterPlayComponent extends React.Component {
                 className={classes.deleteRight}
                 onClick={this.addDelHandleClick(cat, true)}
               >
-                <DeleteIcon  style={iconMedium}  />
+                <DeleteIcon style={iconMedium} />
               </IconButton>
               {cat !== 4 && this.generateMenu(cat, true, selectedAdapterOps)}
               {cat === 4 && this.generateYAMLEditor(cat, true)}
@@ -1167,9 +1217,8 @@ class MesheryAdapterPlayComponent extends React.Component {
   render() {
     const { classes, adapter } = this.props;
     const {
-      namespace, namespaceError, selectedRowData, namespaceList
+      namespace, namespaceError, selectedRowData, namespaceList, version, versionList, versionError
     } = this.state;
-
     let adapterName = adapter.name.split(" ").join("").toLowerCase();
     let imageSrc = "/static/img/" + adapterName + ".svg";
     let adapterChip = (
@@ -1227,6 +1276,15 @@ class MesheryAdapterPlayComponent extends React.Component {
                           onChange={this.handleNamespaceChange}
                         />
                       </div>
+                      <div className={classes.inputContainer}>
+                        <ReactSelectWrapper
+                          label="Version"
+                          value={version}
+                          error={versionError}
+                          options={versionList}
+                          onChange={this.handleVersionChange}
+                        />
+                      </div>
                     </Grid>
                     <Grid container spacing={1}>
                       <Grid
@@ -1277,7 +1335,7 @@ class MesheryAdapterPlayComponent extends React.Component {
             }
             isDelete={this.state.isDeleteOp}
             title={this.state.operationName}
-            tab={this.state.isDeleteOp ? ACTIONS.UNDEPLOY : ACTIONS.DEPLOY }
+            tab={this.state.isDeleteOp ? ACTIONS.UNDEPLOY : ACTIONS.DEPLOY}
           />
         </React.Fragment>
       </NoSsr>
