@@ -384,6 +384,12 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
     },
   };
 
+  const components = {
+    ExpandButton : function() {
+      return '';
+    },
+  };
+
   /**
    * fetch connections when the page loads
    */
@@ -484,6 +490,7 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
           // @ts-ignore
           options={options}
           className={classes.muiRow}
+          components={components}
         />
       </NoSsr>
     </>
