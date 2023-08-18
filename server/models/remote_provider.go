@@ -635,12 +635,16 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8
 	// 	return k8sContext, ErrMarshal(err, "kubernetes context error")
 	// }
 
+	k8sServerID := *k8sContext.KubernetesServerID
+	
 	_metadata := map[string]string{
 		"id":  k8sContext.ID,
 		"server": k8sContext.Server,
 		"meshery_instance_id": k8sContext.MesheryInstanceID.String(),
 		"deployment_type": k8sContext.DeploymentType,
 		"version": k8sContext.Version,
+		"name": k8sContext.Name,
+		"kubernetes_server_id": k8sServerID.String(),
 	}
 	metadata := make(map[string]interface{}, len(_metadata))
 		for k, v := range _metadata {
@@ -656,7 +660,6 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8
 		Kind: 	 "kubernetes",
 		Type: 	 "platform",
 		SubType: "orchestrator",
-		Name:     k8sContext.Name,
 		Status:  DISCOVERED,
 		MetaData: metadata,
     CredentialSecret: cred,
@@ -718,7 +721,13 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 	}
 	mi := MesheryInstanceID.String()
 	logrus.Infof("attempting to fetch kubernetes contexts from cloud for Meshery instance: %s", mi)
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/user/contexts/" + mi)
+		if !l.Capabilities.IsSupported(PersistConnection) {
+		logrus.Error("operation not available")
+		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
+	}
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/kubernetes", l.RemoteProviderURL, ep))
+	// remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/user/contexts/" + mi)
 	q := remoteProviderURL.Query()
 	if page != "" {
 		q.Set("page", page)
@@ -732,6 +741,7 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 	if order != "" {
 		q.Set("order", order)
 	}
+	q.Set("meshery_instance_id", mi)
 	remoteProviderURL.RawQuery = q.Encode()
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
