@@ -77,8 +77,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
 		if err != nil {
 			return err
-
-
+		}
 		if len(args) > 0 && len(response.Filters) == 0 {
 			utils.Log.Info("No WASM Filter to display with name :", strings.Join(args, " "))
 			return nil
@@ -153,7 +152,6 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 		return nil
 	},
 }
-
 func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*models.FiltersAPIResponse, error) {
 	var response *models.FiltersAPIResponse
 
