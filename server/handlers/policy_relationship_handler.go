@@ -11,8 +11,6 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"gopkg.in/yaml.v2"
 
-  
-	"github.com/layer5io/meshkit/models/meshmodel/core/policies"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 
 	"github.com/sirupsen/logrus"
