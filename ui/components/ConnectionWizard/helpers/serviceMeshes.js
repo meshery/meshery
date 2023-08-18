@@ -1,4 +1,5 @@
 import dataFetch from "../../../lib/data-fetch"
+import { EVENT_TYPES } from "../../../lib/event-types";
 
 /**
   * fetch the adapters that are available
@@ -33,22 +34,17 @@ export const fetchAvailableAdapters = () => {
 };
 
 
-export const pingAdapterWithNotification = (updateProgress, enqueueSnackbar, action, adapterLoc) => {
-
+export const pingAdapterWithNotification = (notify, updateProgress, adapterLoc) => {
   const successCb = (result) => {
     updateProgress({ showProgress : false });
     if (typeof result !== "undefined") {
-      enqueueSnackbar("Adapter pinged!", { variant : "success",
-        autoHideDuration : 2000,
-        action });
+      notify({ message : "Adapter pinged!", event_type : EVENT_TYPES.SUCCESS })
     }
   }
 
   const errorCb = (err) => {
     updateProgress({ showProgress : false });
-    enqueueSnackbar("Adapter ping failed! : "+err, { variant : "error",
-      autoHideDuration : 2000,
-      action });
+    notify({ message : "Adapter ping failed!", event_type : EVENT_TYPES.ERROR, details : err.toString() })
   }
 
   pingAdapter(adapterLoc, successCb, errorCb)
@@ -66,26 +62,18 @@ export const pingAdapter = (adapterLoc, successCb, errorCb) => {
   );
 }
 
-export const configureAdapterWithNotification = (enqueueSnackbar, updateProgress, action, adapterLocation, updateAdaptersInfo) => {
-
+export const configureAdapterWithNotification = (notify, updateProgress, adapterLocation, updateAdaptersInfo) => {
   const successCb = (result) => {
     updateProgress({ showProgress : false });
     if (typeof result !== "undefined") {
-      enqueueSnackbar("Adapter was configured!", {
-        variant : "success",
-        "data-cy" : "adapterSuccessSnackbar",
-        autoHideDuration : 2000,
-        action
-      });
+      notify({ message : "Adapter was configured!", event_type : EVENT_TYPES.SUCCESS })
       updateAdaptersInfo({ meshAdapters : result });
     }
   }
 
   const errorCb = (err) => {
     updateProgress({ showProgress : false });
-    enqueueSnackbar("Adapter configuration failed! : "+err, { variant : "error",
-      autoHideDuration : 2000,
-      action });
+    notify({ message : "Adapter configuration failed!", event_type : EVENT_TYPES.ERROR, details : err.toString() })
   }
 
   configureAdapter(successCb, errorCb, adapterLocation)

@@ -3,12 +3,10 @@
 import {
   withStyles,
   TextField,
-  MenuItem,
   Grid,
   Button,
   IconButton,
 } from "@material-ui/core/";
-import { withSnackbar } from "notistack";
 import { useState } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -16,7 +14,7 @@ import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from "../
 import ReactSelectWrapper from "../../ReactSelectWrapper"
 import { handleGrafanaConfigure, handlePrometheusConfigure } from "../helpers/metrics";
 import CloseIcon from "@material-ui/icons/Close";
-import { composeWithDevTools } from "@redux-devtools/extension";
+import { useNotification } from "../../../utils/hooks/useNotification";
 
 
 const styles = () => ({})
@@ -28,13 +26,13 @@ const configurationNotificationAction = (closeSnackbar) => (key) => (
 )
 
 const MetricsConfig = ({
-  classes, componentName, prometheusScannedUrls, grafanaScannedUrls,updatePrometheusConfig, updateGrafanaConfig, closeSnackbar, enqueueSnackbar, updateProgress
+   componentName, prometheusScannedUrls, grafanaScannedUrls,updatePrometheusConfig, updateGrafanaConfig, updateProgress
 }) => {
-
+  const { notify } = useNotification()
   const  handleConfigurationSubmit = () => {
 
-    if (componentName === "Grafana") handleGrafanaConfigure(url,apiKey, updateProgress, enqueueSnackbar, configurationNotificationAction(closeSnackbar), updateGrafanaConfig  )
-    if (componentName === "Prometheus") handlePrometheusConfigure(url, updateProgress, enqueueSnackbar, configurationNotificationAction(closeSnackbar), updatePrometheusConfig  )
+    if (componentName === "Grafana") handleGrafanaConfigure(notify, url,apiKey, updateProgress, updateGrafanaConfig  )
+    if (componentName === "Prometheus") handlePrometheusConfigure(notify, url, updateProgress, updatePrometheusConfig  )
   }
   const getOptions = () => {
     if (componentName === "Grafana")
@@ -125,4 +123,4 @@ const mapDispatchToProps = (dispatch) => ({ updateGrafanaConfig : bindActionCrea
   updatePrometheusConfig : bindActionCreators(updatePrometheusConfig, dispatch),
   updateProgress : bindActionCreators(updateProgress, dispatch), });
 
-export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(MetricsConfig)))
+export default withStyles(styles)(connect(null, mapDispatchToProps)(MetricsConfig))

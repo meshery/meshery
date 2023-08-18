@@ -8,7 +8,6 @@ import {
   Chip,
   IconButton,
 } from "@material-ui/core/";
-import { withSnackbar } from "notistack";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import {
@@ -16,6 +15,8 @@ import {
 } from "../../../lib/store";
 import { pingAdapterWithNotification } from "../helpers/serviceMeshes"
 import { deleteMetricsComponentConfig, pingGrafanaWithNotification, pingPrometheusWithNotification } from "../helpers/metrics";
+import { useNotification } from "../../../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../../../lib/event-types";
 
 const styles = theme => ({
 
@@ -84,11 +85,10 @@ const AdapterPingSnackbarAction = (closeSnackbar) => (key) => (
 
 
 const MetricsDataPlane = ({
-  classes, updateProgress, enqueueSnackbar,grafana, prometheus, closeSnackbar, isConnected, componentName, updateGrafanaConfig, updatePrometheusConfig
+  classes, updateProgress,grafana, prometheus, isConnected, componentName, updateGrafanaConfig, updatePrometheusConfig
 }) => {
-
+  const { notify } = useNotification()
   const handleDeleteAdapter = () => {
-
     updateProgress({ showProgress : true });
 
     const successCb = (result) => {
@@ -111,18 +111,13 @@ const MetricsDataPlane = ({
 
         updatePrometheusConfig({ prometheus : { prometheusURL : "",
           selectedPrometheusBoardsConfigs : [], }, });
-
-        enqueueSnackbar(`${componentName} was disconnected!` , { variant : "success",
-          autoHideDuration : 2000,
-          action : AdapterPingSnackbarAction })
+          notify({ message : `${componentName} was disconnected!`, event_type : EVENT_TYPES.SUCCESS })
       }
     }
 
     const errorCb = (error) => {
       updateProgress({ showProgress : false });
-      enqueueSnackbar(`${componentName} could not be disconnected!: ${error}` , { variant : "error",
-        autoHideDuration : 2000,
-        action : AdapterPingSnackbarAction })
+        notify({ message : `${componentName} could not be disconnected!: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() })
     }
 
     deleteMetricsComponentConfig(componentName)(successCb, errorCb)
@@ -130,8 +125,8 @@ const MetricsDataPlane = ({
 
 
   const handleAdapterClick = () => {
-    if (componentName === "Prometheus") pingPrometheusWithNotification(updateProgress, AdapterPingSnackbarAction(closeSnackbar), enqueueSnackbar)
-    if (componentName === "Grafana") pingGrafanaWithNotification(updateProgress, AdapterPingSnackbarAction(closeSnackbar), enqueueSnackbar)
+    if (componentName === "Prometheus") pingPrometheusWithNotification(notify, updateProgress)
+    if (componentName === "Grafana") pingGrafanaWithNotification(notify, updateProgress)
   }
 
   return (
@@ -181,4 +176,4 @@ const mapStateToProps = (state) => {
     prometheus };
 };
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MetricsDataPlane)))
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(MetricsDataPlane))

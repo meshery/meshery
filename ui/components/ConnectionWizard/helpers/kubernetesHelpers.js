@@ -1,5 +1,6 @@
 import dataFetch from "../../../lib/data-fetch";
 import { updateProgress } from "../../../lib/store";
+import { EVENT_TYPES } from "../../../lib/event-types";
 
 /**
   * Pings kuberenetes server endpoint
@@ -92,8 +93,7 @@ export const fetchContexts = (updateProgress, k8sfile) => {
 };
 
 
-export const submitConfig = (enqueueSnackbar, updateProgress, updateK8SConfig, action, contextName, k8sfile) => {
-
+export const submitConfig = (notify, updateProgress, updateK8SConfig, contextName, k8sfile) => {
   const inClusterConfigForm = false
   const formData = new FormData();
   formData.append("inClusterConfig", inClusterConfigForm ? "on" : ""); // to simulate form behaviour of a checkbox
@@ -112,9 +112,7 @@ export const submitConfig = (enqueueSnackbar, updateProgress, updateK8SConfig, a
     (result) => {
       updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Kubernetes config was validated!", { variant : "success",
-          autoHideDuration : 2000,
-          action });
+        notify({ message : "Kubernetes config was validated!", event_type : EVENT_TYPES.SUCCESS });
         updateK8SConfig({ k8sConfig : {
           inClusterConfig : inClusterConfigForm,
           k8sfile,

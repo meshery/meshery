@@ -237,8 +237,8 @@ function ConfirmationMsg(props) {
   const handleKubernetesClick = (ctxID) => {
     updateProgress({ showProgress : true })
     pingKubernetes(
-      successHandlerGenerator("Kubernetes pinged", () => updateProgress({ showProgress : false })),
-      errorHandlerGenerator("Kubernetes not pinged", () => updateProgress({ showProgress : false })),
+      successHandlerGenerator(notify, "Kubernetes pinged", () => updateProgress({ showProgress : false })),
+      errorHandlerGenerator(notify, "Kubernetes not pinged", () => updateProgress({ showProgress : false })),
       ctxID
     )
   }

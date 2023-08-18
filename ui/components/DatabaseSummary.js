@@ -5,11 +5,12 @@ import CloseIcon from "@material-ui/icons/Close";
 import dataFetch from '../lib/data-fetch';
 import DataTable from "mui-datatables";
 import { connect } from 'react-redux';
-import { withSnackbar } from 'notistack';
 import { bindActionCreators } from 'redux';
 import PropTypes from "prop-types";
 import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 import debounce from '../utils/debounce';
+import { useNotification } from '../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../lib/event-types';
 
 const styles = (theme) => ({
   textCenter : {
@@ -44,19 +45,12 @@ const DatabaseSummary = (props) => {
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [searchText, setSearchText] = useState("")
+  const { notify } = useNotification();
 
   const handleError = (msg) => (error) => {
     props.updateProgress({ showProgress : false });
     const self = this;
-    props.enqueueSnackbar(`${msg}: ${error}`, {
-      variant : "error",
-      action : (key) => (
-        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-          <CloseIcon />
-        </IconButton>
-      ),
-      autoHideDuration : 7000,
-    });
+    notify({ message : `${msg}: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() });
   };
 
   const getDatabaseSummary = (page, rowsPerPage, searchText) => {
@@ -107,16 +101,7 @@ const DatabaseSummary = (props) => {
           next : (res) => {
             props.updateProgress({ showProgress : false });
             if (res.resetStatus === "PROCESSING") {
-              props.enqueueSnackbar(`Database reset successful.`, {
-                variant : "success",
-                action : (key) => (
-                  <IconButton key="close" aria-label="close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                    <CloseIcon />
-                  </IconButton>
-                ),
-                autohideduration : 3000,
-              })
-
+              notify({ message : "Database reset successful.", event_type : EVENT_TYPES.SUCCESS })
               getDatabaseSummary()
             }
           },
@@ -190,5 +175,5 @@ DatabaseSummary.propTypes = {
 }
 
 export default withStyles(styles, { withTheme : true })(
-  connect(mapStateToProps, mapDispatchToProps)(withSnackbar(DatabaseSummary))
+  connect(mapStateToProps, mapDispatchToProps)(DatabaseSummary)
 );

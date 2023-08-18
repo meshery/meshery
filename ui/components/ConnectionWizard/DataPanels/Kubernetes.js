@@ -4,9 +4,7 @@ import {
   withStyles,
   Typography,
   Grid,
-  IconButton,
 } from "@material-ui/core/";
-import { withSnackbar } from "notistack";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { updateProgress, updateK8SConfig } from "../../../lib/store";
@@ -15,6 +13,7 @@ import { deleteKubernetesConfig, pingKubernetes } from "../helpers/kubernetesHel
 import {
   successHandlerGenerator, errorHandlerGenerator, closeButtonForSnackbarAction
 } from "../helpers/common"
+import { useNotification } from "../../../utils/hooks/useNotification";
 
 const styles = theme => ({
 
@@ -47,7 +46,7 @@ const styles = theme => ({
 
 
 const KubernetesDataPanel = ({
-  clusterInformation, classes, updateProgress, enqueueSnackbar, closeSnackbar, setClusterInformation, setIsConnected, updateK8SConfig
+  clusterInformation, classes, updateK8SConfig
 }) => {
 
   const resetKubernetesConfig = () => updateK8SConfig({ k8sConfig : {
@@ -56,7 +55,7 @@ const KubernetesDataPanel = ({
     contextName : "",
     clusterConfigured : false,
   }, })
-
+  const { notify } = useNotification()
 
   const handleKubernetesDelete = () => {
     // showProgress()
@@ -64,16 +63,16 @@ const KubernetesDataPanel = ({
     const handlerCb = () => resetKubernetesConfig()
 
     deleteKubernetesConfig(
-      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes config removed", handlerCb),
-      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Not able to remove config")
+      successHandlerGenerator(notify, "Kubernetes config removed", handlerCb),
+      errorHandlerGenerator(notify, "Not able to remove config")
     )
   }
 
   const handleKubernetesClick = () => {
     // showProgress()
     pingKubernetes(
-      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes pinged"/*, () => hideProgress()*/),
-      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged"/*, () => hideProgress()*/)
+      successHandlerGenerator(notify, "Kubernetes pinged"/*, () => hideProgress()*/),
+      errorHandlerGenerator(notify, "Kubernetes not pinged"/*, () => hideProgress()*/)
     )
 
   }
@@ -121,4 +120,4 @@ const KubernetesDataPanel = ({
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),
   updateK8SConfig : bindActionCreators(updateK8SConfig, dispatch), });
 
-export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(KubernetesDataPanel)))
+export default withStyles(styles)(connect(null, mapDispatchToProps)(KubernetesDataPanel))

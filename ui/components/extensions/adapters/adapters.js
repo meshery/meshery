@@ -1,18 +1,18 @@
 import { isNil, isUndefined } from "lodash";
 import { useEffect, useState } from "react";
 import { withRouter } from "next/router";
-import { iconMedium, extensionStyles as styles } from "../../../css/icons.styles";
+import { extensionStyles as styles } from "../../../css/icons.styles";
 import { Grid, Typography, IconButton, Switch } from "@material-ui/core";
-import CloseIcon from "@material-ui/icons/Close";
 import { withStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { useSnackbar } from "notistack";
 import { updateProgress } from "../../../lib/store";
 import { adaptersList } from "./constants";
 import changeAdapterState from '../../graphql/mutations/AdapterStatusMutation';
 import { LARGE_6_MED_12_GRID_STYLE } from "../../../css/grid.style";
 import { promisifiedDataFetch } from "../../../lib/data-fetch";
+import { useNotification } from "../../../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../../../lib/event-types";
 
 const Adapters = ({ updateProgress, classes }) => {
 
@@ -20,7 +20,7 @@ const Adapters = ({ updateProgress, classes }) => {
   const [availableAdapters, setAvailableAdapters] = useState(adaptersList);
 
   // Hooks.
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { notify } = useNotification();
 
   // useEffects.
   useEffect(() => {
@@ -70,16 +70,7 @@ const Adapters = ({ updateProgress, classes }) => {
         setAvailableAdapters({ ...availableAdapters, [adapterId] : { ...selectedAdapter, enabled : !selectedAdapter.enabled } });
         handleError(msg);
       } else {
-        enqueueSnackbar(`Adapter ${response.adapterStatus.toLowerCase()}`, {
-          variant : "info",
-          autoHideDuration : 2000,
-          action : (key) => (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon style={iconMedium} />
-            </IconButton>
-          ),
-        }
-        );
+        notify({ message : `Adapter ${response.adapterStatus.toLowerCase()}`, event_type : EVENT_TYPES.SUCCESS });
       }
     }, payload);
 
@@ -89,15 +80,7 @@ const Adapters = ({ updateProgress, classes }) => {
 
   const handleError = (msg) => (error) => {
     updateProgress({ showProgress : false });
-    enqueueSnackbar(`${msg}: ${error}`, {
-      variant : "error", preventDuplicate : true,
-      action : (key) => (
-        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-          <CloseIcon style={iconMedium} />
-        </IconButton>
-      ),
-      autoHideDuration : 7000,
-    });
+    notify({ message : msg, event_type : EVENT_TYPES.ERROR, details : error.toString() })
   };
 
   const handleToggle = (selectedAdapter, adapterId) => {
