@@ -14,8 +14,9 @@ import (
 // Handles the request to retrieve and merge resource JSON schema and UI schema.
 //
 // Responses:
-//   200
-//   500
+//
+//	200
+//	500
 func (h *Handler) HandleResourceSchemas(rw http.ResponseWriter, r *http.Request) {
 	rscName := mux.Vars(r)["resourceName"]
 	rjsfSchema, uiSchema, err := schemas.ServeJSonFile(rscName)
@@ -23,7 +24,6 @@ func (h *Handler) HandleResourceSchemas(rw http.ResponseWriter, r *http.Request)
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
 
 	var rjsfSchemaJSON map[string]interface{}
 	var uiSchemaJSON map[string]interface{}
