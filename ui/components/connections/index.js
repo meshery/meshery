@@ -68,7 +68,6 @@ const styles = (theme) => ({
     textTransform : "capitalize",
     borderRadius : "3px !important",
     display : "flex",
-    width : "117px",
     padding : "6px 8px",
     alignItems : "center",
     gap : "5px",
@@ -80,31 +79,31 @@ const styles = (theme) => ({
     "& .MuiChip-label" : {
       color : `${theme.palette.secondary.default}`,
     },
-    background : `${theme.palette.secondary.default}15 !important`,
+    background : `${theme.palette.secondary.default}33 !important`,
   },
   connected : {
     "& .MuiChip-label" : {
       color : theme.palette.secondary.success,
     },
-    background : `${theme.palette.secondary.success}15 !important`,
+    background : `${theme.palette.secondary.success}33 !important`,
   },
   registered : {
     "& .MuiChip-label" : {
       color : theme.palette.secondary.primary,
     },
-    background : `${theme.palette.secondary.primary}15 !important`,
+    background : `${theme.palette.secondary.primary}33 !important`,
   },
   discovered : {
     "& .MuiChip-label" : {
       color : theme.palette.secondary.warning,
     },
-    background : `${theme.palette.secondary.warning}15 !important`,
+    background : `${theme.palette.secondary.warning}33 !important`,
   },
   deleted : {
     "& .MuiChip-label" : {
       color : theme.palette.secondary.error,
     },
-    background : `${theme.palette.secondary.error}15 !important`,
+    background : `${theme.palette.secondary.error}33 !important`,
   },
 });
 
@@ -120,7 +119,7 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(0);
   const [connections, setConnections] = useState([]);
-  const [search,setSearch] = useState("");
+  const [search, setSearch] = useState("");
 
   const searchTimeout = useRef(null);
 
@@ -129,7 +128,7 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
       case 'ignored':
         return <Chip className={classNames(classes.statusCip, classes.ignored)} avatar={<RemoveCircleIcon style={{ color : "#51636B" }} />} label={value} />
       case 'connected':
-        return <Chip className={classNames(classes.statusCip, classes.connected)} avatar={<CheckCircleIcon style={{ color : "#00B39F" }}/>} label={value} />
+        return <Chip className={classNames(classes.statusCip, classes.connected)} avatar={<CheckCircleIcon style={{ color : "#00B39F" }} />} label={value} />
       case 'REGISTERED':
         return <Chip className={classNames(classes.statusCip, classes.registered)} avatar={<AssignmentTurnedInIcon style={{ color : "#477E96" }} />} label={value.toLowerCase()} />
       case 'discovered':
@@ -146,6 +145,20 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
       name : "name",
       label : "Element",
       options : {
+        display : false,
+      },
+    },
+    {
+      name : "metadata.server_location",
+      label : "Server Location",
+      options : {
+        display : false,
+      },
+    },
+    {
+      name : "name",
+      label : "Element",
+      options : {
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell key={index}>
@@ -153,29 +166,19 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
             </TableCell>
           );
         },
-      },
-    },
-    {
-      name : "metadata",
-      label : " ",
-      options : {
-        customHeadRender : function CustomHead({ index }) {
+        customBodyRender : (value, tableMeta) => {
           return (
-            <TableCell key={index}></TableCell>
+            <Tooltip title={tableMeta.rowData[1]} placement="top" >
+              <Link href={tableMeta.rowData[1]} target="_blank">
+                {value}
+                <sup>
+                  <LaunchIcon sx={{ fontSize : "12px" }} />
+                </sup>
+              </Link>
+            </Tooltip>
           );
-        },
-        customBodyRender : function CustomBody(value) {
-          return (
-            <>
-              <Tooltip title={value.server_location} placement="top" arrow interactive >
-                <Link href={value.server_location} target="_blank">
-                  <LaunchIcon />
-                </Link>
-              </Tooltip>
-            </>
-          );
-        },
-      },
+        }
+      }
     },
     {
       name : "type",
@@ -365,19 +368,17 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
     },
     rowsExpanded : [0, 1],
     renderExpandableRow : (rowData) => {
-      const colSpan = (rowData.length-1)/3;
+      const colSpan = (rowData.length - 2) / 3;
       return (
         <TableRow>
-          <TableCell>
+          <TableCell></TableCell>
+          <TableCell colSpan={colSpan}>
+            <b>Server builsd SHA:</b> {rowData[9]}
           </TableCell>
           <TableCell colSpan={colSpan}>
-            <b>Server builsd SHA:</b> {rowData[8]}
+            <b>Server Version:</b> {rowData[10]}
           </TableCell>
-          <TableCell colSpan={colSpan}>
-            <b>Server Version:</b> {rowData[9]}
-          </TableCell>
-          <TableCell colSpan={colSpan}>
-          </TableCell>
+          <TableCell colSpan={colSpan}></TableCell>
         </TableRow>
       );
     },
