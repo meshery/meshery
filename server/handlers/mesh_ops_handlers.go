@@ -355,7 +355,7 @@ func (h *Handler) MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefO
 		CustomBody:  customBody,
 		DeleteOp:    (deleteOp != ""),
 		KubeConfigs: configs,
-		Version: version,
+		Version:     version,
 	})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
