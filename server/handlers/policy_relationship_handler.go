@@ -81,7 +81,15 @@ func (h *Handler) GetRegoPolicyForDesignFile(
 //
 // Example: ```/api/meshmodels/models/kubernetes/policies/{name}```
 //
+// ```?order={field}``` orders on the passed field
+//
+// ```?sort={[asc/desc]}``` Default behavior is asc
+//
+// ```?search={[true/false]}``` If search is true then a greedy search is performed
+//
 // ```?page={page-number}``` Default page number is 1
+//
+// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
 //
 //	200: []meshmodelPoliciesResponseWrapper
@@ -150,7 +158,15 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 //
 // Example: ```/api/meshmodels/models/kubernetes/policies```
 //
+// // ```?order={field}``` orders on the passed field
+//
+// ```?sort={[asc/desc]}``` Default behavior is asc
+//
+// ```?search={[true/false]}``` If search is true then a greedy search is performed
+//
 // ```?page={page-number}``` Default page number is 1
+//
+// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
 //
 //	200: []meshmodelPoliciesResponseWrapper
