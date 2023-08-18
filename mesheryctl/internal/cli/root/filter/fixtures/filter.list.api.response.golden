@@ -2,7 +2,7 @@
       "page": 0,
       "page_size": 10,
       "total_count": 3,
-      "filter":[
+      "filter_file":[
             {
                   "id":"6dc1d203-69bf-47fc-b1df-4a971f1c2e00",
                   "name":"test-filter",
