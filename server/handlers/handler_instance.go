@@ -55,7 +55,7 @@ func NewHandlerInstance(
 		EventsBuffer:       eb,
 		registryManager:    regManager,
 		Provider:           provider,
-		Rego: rego,
+		Rego:               rego,
 	}
 
 	h.task = taskq.RegisterTask(&taskq.TaskOptions{
