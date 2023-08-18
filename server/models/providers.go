@@ -259,6 +259,8 @@ const (
 
 	ShareDesigns Feature = "share-designs"
 
+	ShareFilters Feature = "share-filters"
+
 	PersistConnection Feature = "persist-connection"
 
 	PersistCredentials Feature = "persist-credentials"
@@ -421,6 +423,7 @@ type Provider interface {
 	DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
 	GetMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
 	ShareDesign(req *http.Request) (int, error)
+	ShareFilter(req *http.Request) (int, error)
 
 	SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error)
 	GetPerformanceProfiles(tokenString string, page, pageSize, search, order string) ([]byte, error)
