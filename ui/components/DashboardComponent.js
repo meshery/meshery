@@ -33,7 +33,8 @@ import Popup from "./Popup";
 import { iconMedium } from "../css/icons.styles";
 import { extractURLFromScanData } from "./ConnectionWizard/helpers/metrics";
 import { configurationTableTheme, configurationTableThemeDark } from '../themes/configurationTableTheme';
-import DashboardMeshModelGraph from './DashboardMeshModelGraph'
+import DashboardMeshModelGraph from './Dashboard/DashboardMeshModelGraph'
+import ConnectionStatsChart from "./Dashboard/ConnectionCharts.js";
 
 const styles = (theme) => ({
   rootClass : { backgroundColor : theme.palette.secondary.elevatedComponents2, },
@@ -752,7 +753,7 @@ class DashboardComponent extends React.Component {
 
     const columns = [
       {
-        name : "component",
+        name : "name",
         label : "Component",
         options : {
           filter : false,
@@ -771,6 +772,10 @@ class DashboardComponent extends React.Component {
 
             )
           }
+        },
+        customBodyRender : (value) => {
+          const modifiedName = value.replace(/-[a-zA-Z0-9]*$/, ''); // Remove last hyphen and alphanumeric characters after it
+          return <span>{modifiedName}</span>;
         },
       },
       {
@@ -1205,7 +1210,9 @@ class DashboardComponent extends React.Component {
         <Popup />
         <div className={classes.rootClass}>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={12}> <DashboardMeshModelGraph classes={classes} /> </Grid>
+            <Grid item xs={12} md={12}>
+              <DashboardMeshModelGraph classes={classes} />
+            </Grid>
             <Grid item xs={12} md={12}>
               <div className={classes.dashboardSection} data-test="workloads">
                 <Typography variant="h6" gutterBottom className={classes.chartTitle}>
@@ -1214,13 +1221,21 @@ class DashboardComponent extends React.Component {
                 {showClusterResources}
               </div>
             </Grid>
-            <Grid item xs={12} md={12}>
-              <div className={classes.dashboardSection} data-test="service-mesh">
-                <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-                  Service Mesh
-                </Typography>
-                {showServiceMesh}
-              </div>
+
+            <Grid item xs={12}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={4}>
+                  <ConnectionStatsChart classes={classes} />
+                </Grid>
+                <Grid item xs={12} md={8}>
+                  <div className={classes.dashboardSection} data-test="service-mesh">
+                    <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+                      Service Mesh
+                    </Typography>
+                    {showServiceMesh}
+                  </div>
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
         </div>
@@ -1229,6 +1244,7 @@ class DashboardComponent extends React.Component {
   };
 
   render() {
+    // console.info("Rerendering Dashboard")
     return this.configureTemplate();
   }
 }

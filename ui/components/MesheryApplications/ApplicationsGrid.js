@@ -8,6 +8,8 @@ import { getComponentsinFile } from "../../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
 import useStyles from "../MesheryPatterns/Grid.styles";
 import { FILE_OPS } from "../../utils/Enum";
+import DryRunComponent from "../DryRun/DryRunComponent";
+
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -57,12 +59,13 @@ function ApplicationsGridItem({ application,  handleDeploy, handleUnDeploy, hand
  *  setPage: (page: number) => void
  *  urlUploadHandler: any
  *  uploadHandler: Function
+ *  selectedK8sContexts : Array
  *  UploadImport: any
  * handleAppDownload: Function
  * }} props props
  */
 
-function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, handleSubmit,urlUploadHandler,uploadHandler, setSelectedApplication, selectedApplication, pages = 1,setPage, selectedPage, UploadImport, fetch, handleAppDownload }) {
+function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, handleSubmit,urlUploadHandler,uploadHandler, setSelectedApplication, selectedApplication, pages = 1,setPage, selectedPage, UploadImport, fetch, handleAppDownload ,selectedK8sContexts }) {
 
   const classes = useStyles()
 
@@ -87,7 +90,8 @@ function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, 
     deploy : false,
     application_file : null,
     name : "",
-    count : 0
+    count : 0,
+    dryRunComponent : null
   });
 
   const handleModalClose = () => {
@@ -101,11 +105,20 @@ function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, 
   }
 
   const handleModalOpen = (app, isDeploy) => {
+
+    const dryRunComponent =(
+      <DryRunComponent
+        design={app.application_file}
+        noOfElements={getComponentsinFile(app.application_file)}
+        selectedContexts={selectedK8sContexts}
+      ></DryRunComponent>)
+
     setModalOpen({
       open : true,
       deploy : isDeploy,
       application_file : app.application_file,
       name : app.name,
+      dryRunComponent,
       count : getComponentsinFile(app.application_file)
     });
   }
@@ -167,6 +180,7 @@ function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, 
         isDelete={!modalOpen.deploy}
         title={ modalOpen.name }
         componentCount={ modalOpen.count }
+        dryRunComponent={modalOpen.dryRunComponent}
         tab={modalOpen.deploy ? 2 : 1}
       />
       <UploadImport open={importModal.open} handleClose={handleUploadImportClose} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetch()} configuration="Application"  />

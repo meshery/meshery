@@ -1,5 +1,6 @@
 import { createTheme } from '@material-ui/core/styles';
 import { blueGrey } from '@material-ui/core/colors';
+import { iconMedium } from '../css/icons.styles';
 
 const drawerWidth = 256;
 export var darkTheme = createTheme({
@@ -29,6 +30,7 @@ export var darkTheme = createTheme({
       text : '#FFF',
       text2 : '#7494a1',
       text3 : '#FFF',
+      textMain : "#F6F8F8",
       titleBackground : "#000",
       mainBackground : '#202020',
       mainBackground2 : '#303030',
@@ -38,6 +40,7 @@ export var darkTheme = createTheme({
       lightText : 'rgba(255, 255, 255, 0.54)',
       icon : 'rgba(255, 255, 255, 0.54)',
       icon2 : '#E6E6E6',
+      iconMain : '#F6F8F8',
       disabledIcon : 'rgba(255, 255, 255, 0.26)',
       chevron : 'rgb(255, 255, 255, 0.2)',
       link : 'rgba(255, 255, 255, 0.7)',
@@ -53,14 +56,21 @@ export var darkTheme = createTheme({
       canvas : '#1A1A1A',
       brightness : 'brightness(200%)',
       switcherButtons : '#1e1e1e',
-      honeyComb : '#202020',
+      honeyComb : '#303030',
       filterChipBackground : '#222222',
-      tabs : '#20202087',
+      tabs : '#202020',
       modalTabs : '#363636',
       tabHover : '#212121',
       confirmationModal : '#111111',
       focused : '#00b39f',
-      primaryModalText : '#FFF'
+      primaryModalText : '#FFF',
+      default : "#51636B",
+      success : "#00B39F",
+      primary : "#477E96",
+      warning : "#EBC017",
+      error : "#8F1F00",
+      penColorPrimary : '#E6E6E6',
+      penColorSecondary : '#E6E6E6'
     },
   },
   p : {
@@ -80,6 +90,11 @@ export var darkTheme = createTheme({
 darkTheme = {
   ...darkTheme,
   overrides : {
+    MuiSvgIcon : {
+      root : {
+        ...iconMedium
+      }
+    },
     MuiOutlinedInput : {
       root : {
         "&:hover $notchedOutline" : {
@@ -238,6 +253,7 @@ let theme = createTheme({
       text : '#000',
       text2 : 'rgba(57, 102, 121, .9)',
       text3 : '#333333',
+      textMain : "#3C494F",
       titleBackground : "rgba(57, 102, 121, .1)",
       mainBackground : '#396679',
       mainBackground2 : '#FFF',
@@ -247,6 +263,7 @@ let theme = createTheme({
       lightText : 'rgba(0, 0, 0, 0.54)',
       icon : 'rgba(0, 0, 0, 0.54)',
       icon2 : 'gray',
+      iconMain : '#3C494F',
       disabledIcon : 'rgba(0, 0, 0, 0.26)',
       chevron : '#FFF',
       link : '#000',
@@ -269,7 +286,14 @@ let theme = createTheme({
       tabHover : '#e3e3e3',
       confirmationModal : 'rgb(234, 235, 236)',
       focused : '#607d8b',
-      primaryModalText : '#FFF'
+      primaryModalText : '#FFF',
+      default : "#51636B",
+      success : "#00B39F",
+      primary : "#477E96",
+      warning : "#EBC017",
+      error : "#8F1F00",
+      penColorPrimary : '#3C494F',
+      penColorSecondary : '#677E88'
     },
   },
   shape : { borderRadius : 8, },
@@ -287,6 +311,11 @@ let theme = createTheme({
 theme = {
   ...theme,
   overrides : {
+    MuiSvgIcon : {
+      root : {
+        ...iconMedium
+      }
+    },
     MuiDrawer : { paper : { backgroundColor : '#263238', }, },
     MuiButton : {
       label : { textTransform : 'initial', },

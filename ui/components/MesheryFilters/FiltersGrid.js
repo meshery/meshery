@@ -7,12 +7,11 @@ import { FILE_OPS } from "../../utils/Enum";
 import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
-import PublicIcon from "@material-ui/icons/Public";
-
 import useStyles from "../MesheryPatterns/Grid.styles";
-import { publish_schema } from "../schemas/publish_schema";
-import _ from "lodash";
+import { publish_schema, publish_ui_schema } from "../schemas/publish_schema";
 import Modal from "../Modal";
+import Filter from "../../public/static/img/drawer-icons/filter_svg.js";
+import PublicIcon from '@material-ui/icons/Public';
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -79,9 +78,15 @@ function FilterCardGridItem({
  *  selectedFilter: {show : boolean, filter : any},
  *  pages?: number,
  *  selectedPage?: number,
- *  setPage: (page: number) => void
- *  filterErrors: Map
- *  canPublishFilter: boolean
+ *  setPage: (page: number) => void,
+ *  filterErrors: Map,
+ *  canPublishFilter: boolean,
+ *  publishModal: {
+ *   open: boolean,
+ *   filter: any,
+ *   name: string,
+ *  },
+ *  setPublishModal: (publishModal: { open: boolean, filter: any, name: string }) => void,
  * }} props props
  */
 
@@ -92,34 +97,23 @@ function FiltersGrid({
   handleClone,
   handleDownload,
   handleSubmit,
-  urlUploadHandler,
-  uploadHandler,
   setSelectedFilter,
   selectedFilter,
   pages = 1,
   setPage,
   selectedPage,
-  UploadImport,
-  fetch,
+  importSchema,
   canPublishFilter,
   handlePublish,
   handleUnpublishModal,
+  handleImportFilter,
+  publishModal,
+  setPublishModal
 }) {
   const classes = useStyles();
 
   const [importModal, setImportModal] = useState({
     open : false,
-  });
-
-  const [publishModal, setPublishModal] = useState({
-    open : false,
-    filter : {},
-    name : "",
-  });
-
-  const [payload, setPayload] = useState({
-    id : "",
-    catalog_data : {},
   });
 
   const handlePublishModal = (filter) => {
@@ -132,12 +126,6 @@ function FiltersGrid({
     }
   };
 
-  const onChange = (e) => {
-    setPayload({
-      id : publishModal.filter?.id,
-      catalog_data : e,
-    });
-  };
   const handlePublishModalClose = () => {
     setPublishModal({
       open : false,
@@ -259,35 +247,25 @@ function FiltersGrid({
         <Modal
           open={publishModal.open}
           schema={publish_schema}
-          onChange={onChange}
-          handleClose={handlePublishModalClose}
-          formData={_.isEmpty(payload.catalog_data) ? publishModal?.filter?.catalog_data : payload.catalog_data}
-          aria-label="catalog publish"
+          uiSchema={publish_ui_schema}
           title={publishModal.filter?.name}
-        >
-          <Button
-            title="Publish"
-            variant="contained"
-            color="primary"
-            className={classes.testsButton}
-            onClick={() => {
-              handlePublishModalClose();
-              handlePublish(payload);
-            }}
-          >
-            <PublicIcon className={classes.iconPatt} />
-            <span className={classes.btnText}> Publish </span>
-          </Button>
-        </Modal>
+          handleClose={handlePublishModalClose}
+          handleSubmit={handlePublish}
+          showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }}
+          submitBtnText="Submit for Approval"
+          submitBtnIcon={<PublicIcon/>}
+        />
       )}
-      <UploadImport
+      <Modal
         open={importModal.open}
+        schema={importSchema.rjsfSchema}
+        uiSchema={importSchema.uiSchema}
         handleClose={handleUploadImportClose}
-        aria-label="URL upload button"
-        handleUrlUpload={urlUploadHandler}
-        handleUpload={uploadHandler}
-        fetch={() => fetch()}
-        configuration="Filter"
+        handleSubmit={handleImportFilter}
+        title="Import Filter"
+        submitBtnText="Import"
+        leftHeaderIcon={<Filter fill="#fff" style={{ height : "24px", width : "24px", fonSize : "1.45rem" }} />}
+        submitBtnIcon={<PublishIcon/>}
       />
     </div>
   );

@@ -6,7 +6,8 @@ import (
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/meshmodel"
+	"github.com/layer5io/meshkit/models/meshmodel/core/policies"
+	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils/events"
 	"github.com/vmihailenco/taskq/v4"
 )
@@ -26,6 +27,7 @@ type Handler struct {
 	dbHandler          *database.Handler
 	registryManager    *meshmodel.RegistryManager
 	EventsBuffer       *events.EventStreamer
+	Rego               *policies.Rego
 }
 
 // NewHandlerInstance returns a Handler instance
@@ -40,6 +42,7 @@ func NewHandlerInstance(
 	eb *events.EventStreamer,
 	regManager *meshmodel.RegistryManager,
 	provider string,
+	rego *policies.Rego,
 ) models.HandlerInterface {
 	h := &Handler{
 		config:             handlerConfig,
@@ -52,6 +55,7 @@ func NewHandlerInstance(
 		EventsBuffer:       eb,
 		registryManager:    regManager,
 		Provider:           provider,
+		Rego:               rego,
 	}
 
 	h.task = taskq.RegisterTask(&taskq.QueueConfig{

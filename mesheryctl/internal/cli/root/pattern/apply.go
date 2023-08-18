@@ -61,7 +61,6 @@ mesheryctl pattern apply [pattern-name]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		var err error
-		client := &http.Client{}
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -84,16 +83,12 @@ mesheryctl pattern apply [pattern-name]
 				return errors.Wrap(err, "could not create request ")
 			}
 
-			resp, err := client.Do(req)
+			resp, err := utils.MakeRequest(req)
 			if err != nil {
-				return errors.Errorf("unable to reach Meshery Server at %s. Verify your environment's readiness for a Meshery deployment by running `mesheryctl system check`", mctlCfg.GetBaseMesheryURL())
+				return err
 			}
 
 			var response *models.PatternsAPIResponse
-			// failsafe (bad api call)
-			if resp.StatusCode != 200 {
-				return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-			}
 			defer resp.Body.Close()
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
@@ -141,16 +136,12 @@ mesheryctl pattern apply [pattern-name]
 						return errors.Wrap(err, "could not create request ")
 					}
 
-					resp, err := client.Do(req)
+					resp, err := utils.MakeRequest(req)
 					if err != nil {
-						return errors.Errorf("unable to reach Meshery server at %s. Verify your environment's readiness for a Meshery deployment by running `mesheryctl system check`", mctlCfg.GetBaseMesheryURL())
+						return err
 					}
 					utils.Log.Debug("saved pattern file")
 					var response []*models.MesheryPattern
-					// failsafe (bad api call)
-					if resp.StatusCode != 200 {
-						return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-					}
 					defer resp.Body.Close()
 
 					body, err := io.ReadAll(resp.Body)
@@ -208,16 +199,12 @@ mesheryctl pattern apply [pattern-name]
 					return errors.Wrap(err, "could not create request ")
 				}
 
-				resp, err := client.Do(req)
+				resp, err := utils.MakeRequest(req)
 				if err != nil {
-					return errors.Errorf("unable to reach Meshery Server at %s. Verify your environment's readiness for a Meshery deployment by running `mesheryctl system check`", mctlCfg.GetBaseMesheryURL())
+					return err
 				}
 				utils.Log.Debug("remote hosted pattern request success")
 				var response []*models.MesheryPattern
-				// failsafe (bad api call)
-				if resp.StatusCode != 200 {
-					return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-				}
 				defer resp.Body.Close()
 
 				body, err := io.ReadAll(resp.Body)
@@ -246,9 +233,9 @@ mesheryctl pattern apply [pattern-name]
 
 		s := utils.CreateDefaultSpinner("Applying pattern "+pf.Name, "")
 		s.Start()
-		res, err := client.Do(req)
+		res, err := utils.MakeRequest(req)
 		if err != nil {
-			return errors.Errorf("unable to reach Meshery Server at %s. Verify your environment's readiness for a Meshery deployment by running `mesheryctl system check`", mctlCfg.GetBaseMesheryURL())
+			return err
 		}
 
 		defer res.Body.Close()

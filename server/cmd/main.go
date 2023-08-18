@@ -21,7 +21,8 @@ import (
 	"github.com/layer5io/meshery/server/router"
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/meshmodel"
+	"github.com/layer5io/meshkit/models/meshmodel/core/policies"
+	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils/broadcast"
 	"github.com/layer5io/meshkit/utils/events"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
@@ -41,8 +42,9 @@ var (
 
 const (
 	// DefaultProviderURL is the provider url for the "none" provider
-	DefaultProviderURL           = "https://meshery.layer5.io"
-	ArtifactHubComponentsHandler = "kubernetes" //The components generated in output directory will be handled by kubernetes
+	DefaultProviderURL = "https://meshery.layer5.io"
+	PoliciesPath       = "../meshmodel/kubernetes/policies"
+	RelationshipsPath  = "../meshmodel/kubernetes/relationships"
 )
 
 func main() {
@@ -260,8 +262,11 @@ func main() {
 	operatorDeploymentConfig := models.NewOperatorDeploymentConfig(adapterTracker)
 	mctrlHelper := models.NewMesheryControllersHelper(log, operatorDeploymentConfig, dbHandler)
 	k8sComponentsRegistrationHelper := models.NewComponentsRegistrationHelper(log)
-
-	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, viper.GetString("PROVIDER"))
+	rego, err := policies.NewRegoInstance(PoliciesPath, RelationshipsPath)
+	if err != nil {
+		logrus.Warn("error creating rego instance, policies will not be evaluated")
+	}
+	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, viper.GetString("PROVIDER"), rego)
 
 	b := broadcast.NewBroadcaster(100)
 	defer b.Close()

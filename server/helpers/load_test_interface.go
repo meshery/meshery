@@ -16,7 +16,7 @@ import (
 	"fortio.org/fortio/fgrpc"
 	"fortio.org/fortio/fhttp"
 	"fortio.org/fortio/periodic"
-	"github.com/golang/protobuf/ptypes/wrappers"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 	"github.com/layer5io/gowrk2/api"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/utils"
@@ -86,6 +86,16 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 			AllowInitialErrors: opts.AllowInitialErrors,
 			AbortOn:            0,
 		}
+
+		logrus.Debugf("options string: %s", opts.Options)
+		if opts.Options != "" {
+			logrus.Debugf("Fortio config: %+#v", o)
+			err := json.Unmarshal([]byte(opts.Options), &o)
+			if err != nil {
+				return nil, nil, ErrUnmarshal(err, "options string")
+			}
+			logrus.Debugf("Fortio config with options: %+#v", o)
+		}
 		res, err = fhttp.RunHTTPTest(&o)
 	}
 	if err != nil {
@@ -134,6 +144,17 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 		Labels:            labels,
 		Percentiles:       []float64{50, 75, 90, 99, 99.99, 99.999},
 	}
+
+	logrus.Debugf("options string: %s", opts.Options)
+	if opts.Options != "" {
+		logrus.Debugf("GoWrk2 config: %+#v", ro)
+		err := json.Unmarshal([]byte(opts.Options), &ro)
+		if err != nil {
+			return nil, nil, ErrUnmarshal(err, "options string")
+		}
+		logrus.Debugf("GoWrk2 config with options: %+#v", ro)
+	}
+
 	var res periodic.HasRunnerResult
 	var err error
 	if opts.SupportedLoadTestMethods == 2 {
@@ -299,10 +320,10 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 	// 'a' characters corresponding to that body's size
 	// TODO: Request method should be specifiable through UI
 	if reqBodyLength := len(opts.Body); reqBodyLength > 0 {
-		requestOptions.RequestBodySize = &wrappers.UInt32Value{Value: uint32(len(opts.Body))}
+		requestOptions.RequestBodySize = &wrapperspb.UInt32Value{Value: uint32(len(opts.Body))}
 		requestOptions.RequestMethod = v3.RequestMethod_POST
 	} else {
-		requestOptions.RequestBodySize = &wrappers.UInt32Value{Value: uint32(0)}
+		requestOptions.RequestBodySize = &wrapperspb.UInt32Value{Value: uint32(0)}
 		requestOptions.RequestMethod = v3.RequestMethod_GET
 	}
 
@@ -312,23 +333,23 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		},
 		Timeout: durationpb.New(10 * time.Second),
 		// TODO: support multiple http versions
-		Concurrency:         &wrappers.StringValue{Value: fmt.Sprint(opts.HTTPNumThreads)},
+		Concurrency:         &wrapperspb.StringValue{Value: fmt.Sprint(opts.HTTPNumThreads)},
 		Verbosity:           &nighthawk_proto.Verbosity{Value: nighthawk_proto.Verbosity_INFO},
 		OutputFormat:        &nighthawk_proto.OutputFormat{Value: nighthawk_proto.OutputFormat_FORTIO},
-		PrefetchConnections: &wrappers.BoolValue{Value: false},
-		BurstSize:           &wrappers.UInt32Value{Value: uint32(0)},
+		PrefetchConnections: &wrapperspb.BoolValue{Value: false},
+		BurstSize:           &wrapperspb.UInt32Value{Value: uint32(0)},
 		AddressFamily:       &nighthawk_proto.AddressFamily{Value: nighthawk_proto.AddressFamily_AUTO},
 		OneofRequestOptions: &nighthawk_proto.CommandLineOptions_RequestOptions{
 			RequestOptions: requestOptions,
 		},
 		// use default values for nighthawk's configuration to avoid any unexpected
 		// failures until there is a dynamic way to specify this
-		// MaxPendingRequests:       &wrappers.UInt32Value{Value: uint32(10)},
-		// MaxActiveRequests:        &wrappers.UInt32Value{Value: uint32(100)},
-		// MaxRequestsPerConnection: &wrappers.UInt32Value{Value: uint32(100)},
+		// MaxPendingRequests:       &wrapperspb.UInt32Value{Value: uint32(10)},
+		// MaxActiveRequests:        &wrapperspb.UInt32Value{Value: uint32(100)},
+		// MaxRequestsPerConnection: &wrapperspb.UInt32Value{Value: uint32(100)},
 		SequencerIdleStrategy: &nighthawk_proto.SequencerIdleStrategy{Value: nighthawk_proto.SequencerIdleStrategy_DEFAULT},
 		OneofUri: &nighthawk_proto.CommandLineOptions_Uri{
-			Uri: &wrappers.StringValue{Value: rURL},
+			Uri: &wrapperspb.StringValue{Value: rURL},
 		},
 		ExperimentalH1ConnectionReuseStrategy: &nighthawk_proto.H1ConnectionReuseStrategy{
 			Value: nighthawk_proto.H1ConnectionReuseStrategy_DEFAULT,
@@ -336,9 +357,9 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		TerminationPredicates: make(map[string]uint64),
 		// Used for specifying parameters for failing execution. Use defailt for now
 		//FailurePredicates:                    make(map[string]uint64),
-		OpenLoop:                             &wrappers.BoolValue{Value: false},
+		OpenLoop:                             &wrapperspb.BoolValue{Value: false},
 		JitterUniform:                        durationpb.New(0 * time.Second),
-		ExperimentalH2UseMultipleConnections: &wrappers.BoolValue{Value: false},
+		ExperimentalH2UseMultipleConnections: &wrapperspb.BoolValue{Value: false},
 		Labels:                               []string{opts.Name, " -_- ", rURL},
 		//TransportSocket: &v3.TransportSocket{
 		//	Name: "test",
@@ -349,26 +370,36 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		//		},
 		//	},
 		//},
-		SimpleWarmup:              &wrappers.BoolValue{Value: false},
+		SimpleWarmup:              &wrapperspb.BoolValue{Value: false},
 		StatsSinks:                make([]*v32.StatsSink, 0),
-		StatsFlushInterval:        &wrappers.UInt32Value{Value: uint32(5)},
-		LatencyResponseHeaderName: &wrappers.StringValue{Value: ""},
+		StatsFlushInterval:        &wrapperspb.UInt32Value{Value: uint32(5)},
+		LatencyResponseHeaderName: &wrapperspb.StringValue{Value: ""},
 		//ScheduledStart: &timestamp.Timestamp{
 		//	Seconds: 0,
 		//	Nanos:   0,
 		//},
-		ExecutionId: &wrappers.StringValue{Value: "gg"},
+		ExecutionId: &wrapperspb.StringValue{Value: "gg"},
 	}
 
 	qps := opts.HTTPQPS
 	// set QPS only if given QPS > 0
 	// user nighthawk's default QPS otherwise
 	if qps > 0 {
-		ro.RequestsPerSecond = &wrappers.UInt32Value{Value: uint32(qps)}
+		ro.RequestsPerSecond = &wrapperspb.UInt32Value{Value: uint32(qps)}
 	}
 
 	if opts.SupportedLoadTestMethods == 2 {
 		return nil, nil, ErrGrpcSupport(err, "Nighthawk")
+	}
+
+	logrus.Debugf("options string: %s", opts.Options)
+	if opts.Options != "" {
+		// logrus.Debugf("Nighthawk CommandLineOptions: %+#v", ro)
+		err := json.Unmarshal([]byte(opts.Options), &ro)
+		if err != nil {
+			return nil, nil, ErrUnmarshal(err, "options string")
+		}
+		// logrus.Debugf("Nighthawk CommandLineOptions with options: %+#v", ro)
 	}
 
 	c, err := nighthawk_client.New(nighthawk_client.Options{

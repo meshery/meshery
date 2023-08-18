@@ -55,6 +55,11 @@ const initialState = fromJS({
   isDrawerCollapsed: false,
   selectedAdapter : '',
   events:[],
+
+  notificationCenter : {
+    openEventId : null  ,
+    showFullNotificationCenter: false,
+  },
   catalogVisibility: true,
   extensionType: '',
   capabilitiesRegistry: null,
@@ -76,9 +81,7 @@ export const actionTypes = {
   SET_K8S_CONTEXT : 'SET_K8S_CONTEXT',
   UPDATE_LOAD_TEST_DATA : 'UPDATE_LOAD_TEST_DATA',
   UPDATE_ADAPTERS_INFO : 'UPDATE_ADAPTERS_INFO',
-  // UPDATE_MESH_RESULTS: 'UPDATE_MESH_RESULTS',
   UPDATE_RESULTS_SELECTION : 'UPDATE_RESULTS_SELECTION',
-  // DELETE_RESULTS_SELECTION: 'DELETE_RESULTS_SELECTION',
   CLEAR_RESULTS_SELECTION : 'CLEAR_RESULTS_SELECTION',
   UPDATE_GRAFANA_CONFIG : 'UPDATE_GRAFANA_CONFIG',
   UPDATE_PROMETHEUS_CONFIG : 'UPDATE_PROMETHEUS_CONFIG',
@@ -90,6 +93,7 @@ export const actionTypes = {
   TOOGLE_DRAWER : 'TOOGLE_DRAWER',
   SET_ADAPTER : 'SET_ADAPTER',
   UPDATE_EVENTS : 'UPDATE_EVENTS',
+  PUSH_EVENT : 'PUSH_EVENT',
   SET_CATALOG_CONTENT : 'SET_CATALOG_CONTENT',
   SET_OPERATOR_SUBSCRIPTION: 'SET_OPERATOR_SUBSCRIPTION',
   SET_MESHSYNC_SUBSCRIPTION: 'SET_MESHSYNC_SUBSCRIPTION',
@@ -97,13 +101,15 @@ export const actionTypes = {
   UPDATE_EXTENSION_TYPE: 'UPDATE_EXTENSION_TYPE',
   UPDATE_CAPABILITY_REGISTRY: 'UPDATE_CAPABILITY_REGISTRY',
   UPDATE_TELEMETRY_URLS : 'UPDATE_TELEMETRY_URLS',
+
+  OPEN_EVENT_IN_NOTIFICATION_CENTER : "OPEN_EVENT_IN_NOTIFICATION_CENTER",
+  TOGGLE_NOTIFICATION_CENTER : "TOGGLE_NOTIFICATION_CENTER"
 };
 
 // REDUCERS
 export const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.UPDATE_PAGE:
-      // console.log(`received an action to update page: ${action.path} title: ${action.title}`);
       return state.mergeDeep({
         page : {
           path : action.path,
@@ -122,15 +128,12 @@ export const reducer = (state = initialState, action) => {
         }
       });
     case actionTypes.UPDATE_USER:
-      // console.log(`received an action to update user: ${JSON.stringify(action.user)} and New state: ${JSON.stringify(state.mergeDeep({ user: action.user }))}`);
       return state.mergeDeep({ user : action.user });
     case actionTypes.UPDATE_CLUSTER_CONFIG:
-      // console.log(`received an action to update k8sconfig: ${JSON.stringify(action.k8sConfig)} and New state: ${JSON.stringify(state.mergeDeep({ k8sConfig: action.k8sConfig }))}`);
       return state.merge({ k8sConfig : action.k8sConfig });
     case actionTypes.SET_K8S_CONTEXT:
       return state.merge({ selectedK8sContexts : action.selectedK8sContexts });
     case actionTypes.UPDATE_LOAD_TEST_DATA:
-      // console.log(`received an action to update k8sconfig: ${JSON.stringify(action.loadTest)} and New state: ${JSON.stringify(state.mergeDeep({ user: action.loadTest }))}`);
       return state.updateIn(['loadTest'], val => fromJS(action.loadTest));
     case actionTypes.UPDATE_LOAD_GEN_CONFIG:
       return state.mergeDeep({ loadTestPref : action.loadTestPref });
@@ -139,30 +142,12 @@ export const reducer = (state = initialState, action) => {
     case actionTypes.UPDATE_ANONYMOUS_PERFORMANCE_RESULTS:
       return state.mergeDeep({ anonymousPerfResults : action.anonymousPerfResults });
     case actionTypes.UPDATE_ADAPTERS_INFO:
-      // console.log(`received an action to update mesh info: ${JSON.stringify(action.mesh)} and New state: ${JSON.stringify(state.mergeDeep({ mesh: action.mesh }))}`);
       state = state.updateIn(['meshAdapters'], val => fromJS([]));
       state = state.updateIn(['meshAdaptersts'], val => fromJS(new Date()));
       return state.mergeDeep({ meshAdapters : action.meshAdapters });
-    // case actionTypes.UPDATE_MESH_RESULTS:
-    //   // console.log(`received an action to update mesh results: ${JSON.stringify(action.results)} and New state: ${JSON.stringify(state.mergeDeep({ results: action.results }))}`);
-    //   // const results = state.get('results').get('results').toArray().concat(action.results);
-    //   // do a more intelligent merge based on meshery_id
-    //   const results = resultsMerge(state.get('results').get('results').toArray(), action.results);
-    //   return state.mergeDeep({ results: { results }});
-    case actionTypes.UPDATE_RESULTS_SELECTION:
-      // let lg = `current page: ${action.page}, results_selection: ${JSON.stringify(Object.keys(action.results))}`;
-      // Object.keys(action.results).forEach(pg =>{
-      //   lg += `- indices: ${JSON.stringify(Object.keys(action.results[pg]))}`;
-      // });
-      // alert(lg);
-
-      // if (typeof rs[action.page] === 'undefined'){
-      //   rs[action.page] = {};
-      // }
-      if (Object.keys(action.results).length > 0){
-        // const rs = state.get('results_selection').toObject();
-        // rs[action.page] = action.results;
-        return state.updateIn(['results_selection', action.page], val => action.results);
+       case actionTypes.UPDATE_RESULTS_SELECTION:
+           if (Object.keys(action.results).length > 0){
+             return state.updateIn(['results_selection', action.page], val => action.results);
       } else {
         return state.deleteIn(['results_selection', action.page]);
       }
@@ -187,34 +172,43 @@ export const reducer = (state = initialState, action) => {
       return state.mergeDeep({ isDrawerCollapsed : action.isDrawerCollapsed });
 
     case actionTypes.SET_ADAPTER:
-      return state.mergeDeep({ selectedAdapter : action.selectedAdapter });   
-      // case actionTypes.UPDATE_SMI_RESULT:
-      //   console.log(`received an action to update smi result`,action.smi_result);
-      //   if(action.smi_result!==undefined)
-      //     return state.updateIn(['smi_result'], val => fromJS(action.smi_result));
-      //   else
-      //     return state
+      return state.mergeDeep({ selectedAdapter : action.selectedAdapter });
 
     case actionTypes.UPDATE_EVENTS:
-      return state.merge({ events : action.events })
+      return state.merge({ events : action.events.sort((a,b)=> b.timestamp-a.timestamp) })
 
+    case actionTypes.PUSH_EVENT :
+      return state.merge({
+        events : state.get("events").push(action.event).sort((a,b)=>b.timestamp - a.timestamp)
+      })
     case actionTypes.SET_CATALOG_CONTENT:
       return state.mergeDeep({ catalogVisibility : action.catalogVisibility })
 
-    case actionTypes.SET_OPERATOR_SUBSCRIPTION: 
+    case actionTypes.SET_OPERATOR_SUBSCRIPTION:
       return state.merge({operatorState: action.operatorState});
 
-    case actionTypes.SET_MESHSYNC_SUBSCRIPTION: 
+    case actionTypes.SET_MESHSYNC_SUBSCRIPTION:
       return state.merge({meshSyncState: action.meshSyncState});
 
     case actionTypes.UPDATE_EXTENSION_TYPE:
         return state.merge({ extensionType: action.extensionType });
 
-    case actionTypes.UPDATE_CAPABILITY_REGISTRY: 
+    case actionTypes.UPDATE_CAPABILITY_REGISTRY:
       return state.merge({capabilitiesRegistry: action.capabilitiesRegistry})
-    
+
     case actionTypes.UPDATE_TELEMETRY_URLS:
       return state.updateIn(['telemetryURLs'], val => fromJS(action.telemetryURLs));
+
+    case actionTypes.OPEN_EVENT_IN_NOTIFICATION_CENTER:
+
+      return state
+        .setIn(['notificationCenter','showFullNotificationCenter'],true)
+        .setIn(['notificationCenter','openEventId'],action.eventId )
+
+    case actionTypes.TOGGLE_NOTIFICATION_CENTER :
+       return state.
+        setIn(['notificationCenter','showFullNotificationCenter'],!state.get('notificationCenter').get('showFullNotificationCenter'))
+
     default:
       return state;
   }
@@ -222,12 +216,10 @@ export const reducer = (state = initialState, action) => {
 
 // ACTION CREATOR
 export const updatepagepath = ({ path }) => dispatch => {
-  // console.log("invoking the updatepagepathandtitle action creator. . .");
   return dispatch({ type : actionTypes.UPDATE_PAGE, path });
 }
 
 export const updatepagetitle = ({ path, title }) => dispatch => {
-  // console.log("invoking the updatepagepathandtitle action creator. . .");
   return dispatch({ type : actionTypes.UPDATE_TITLE, title });
 }
 
@@ -247,7 +239,7 @@ export const updateK8SConfig = ({ k8sConfig }) => dispatch => {
   return dispatch({ type : actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig });
 }
 
-export const setK8sContexts = ({  selectedK8sContexts}) => dispatch => {
+export const setK8sContexts = ({ selectedK8sContexts }) => dispatch => {
   return dispatch({ type : actionTypes.SET_K8S_CONTEXT, selectedK8sContexts });
 }
 
@@ -268,15 +260,11 @@ export const updateAnonymousPerformanceResults = ({ anonymousPerfResults }) => d
 export const updateAdaptersInfo = ({ meshAdapters }) => dispatch => {
   return dispatch({ type : actionTypes.UPDATE_ADAPTERS_INFO, meshAdapters });
 }
-// export const updateMeshResults = ({startKey, results}) => dispatch => {
-//   return dispatch({ type: actionTypes.UPDATE_MESH_RESULTS, startKey, results });
-// }
+
 export const updateResultsSelection = ({ page, results }) => dispatch => {
   return dispatch({ type : actionTypes.UPDATE_RESULTS_SELECTION, page, results });
 }
-// export const deleteFromResultsSelection = ({page, index}) => dispatch => {
-//   return dispatch({ type: actionTypes.DELETE_RESULTS_SELECTION, page, index });
-// }
+
 export const clearResultsSelection = () => dispatch => {
   return dispatch({ type : actionTypes.CLEAR_RESULTS_SELECTION });
 }
@@ -301,8 +289,20 @@ export const setAdapter = ({selectedAdapter}) => dispatch => {
 }
 
 export const updateEvents = ({ events }) => dispatch => {
-  return dispatch({ type: actionTypes.UPDATE_EVENTS, events });
+  if (typeof events === 'object') {
+    events = fromJS(events)
+  }
+  return dispatch({ type: actionTypes.UPDATE_EVENTS, events :events });
 }
+
+export const pushEvent = (event) => dispatch => {
+  return dispatch({
+    type : actionTypes.PUSH_EVENT ,
+    event
+  })
+}
+
+
 
 export const toggleCatalogContent = ({ catalogVisibility }) => dispatch => {
   return dispatch({ type: actionTypes.SET_CATALOG_CONTENT, catalogVisibility });
@@ -327,30 +327,18 @@ export const updateCapabilities = ({capabilitiesRegistry}) => dispatch => {
 export const updateTelemetryUrls = ({ telemetryURLs }) => dispatch => {
   return dispatch({type: actionTypes.UPDATE_TELEMETRY_URLS, telemetryURLs })
 }
-// export const updateSMIResults = ({smi_result}) => dispatch => {
-//   console.log("invoking the updateSMIResults action creator. . .",smi_result);
-//   return dispatch({ type: actionTypes.UPDATE_SMI_RESULT, smi_result });
-// }
 
-// export const startClock = dispatch => {
-//   return setInterval(() => {
-//     // Dispatch `TICK` every 1 second
-//     dispatch({ type: actionTypes.TICK, light: true, ts: Date.now() })
-//   }, 1000)
-// }
+export const openEventInNotificationCenter = ({eventId}) => dispatch => {
+  return dispatch({
+    type : actionTypes.OPEN_EVENT_IN_NOTIFICATION_CENTER , eventId
+  })
+}
 
-// export const incrementCount = () => dispatch => {
-//   return dispatch({ type: actionTypes.INCREMENT })
-// }
-
-// export const decrementCount = () => dispatch => {
-//   return dispatch({ type: actionTypes.DECREMENT })
-// }
-
-// export const resetCount = () => dispatch => {
-//   return dispatch({ type: actionTypes.RESET })
-// }
-
+export const toggleNotificationCenter = () => dispatch => {
+  return dispatch({
+    type : actionTypes.TOGGLE_NOTIFICATION_CENTER
+  })
+}
 export const makeStore = (initialState, options) => {
   return createStore(
     reducer,

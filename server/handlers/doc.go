@@ -67,6 +67,12 @@ type usersParameterWrapper struct {
 	Filter string `json:"filter"`
 }
 
+// Returns users Keys
+// swagger:response keys
+type usersKeys struct {
+	Body models.UserKeys
+}
+
 // Returns all meshery patterns
 // swagger:response mesheryPatternsResponseWrapper
 type mesheryPatternsResponseWrapper struct {
@@ -409,11 +415,25 @@ type meshmodelModelsResponseWrapper struct {
 	Body *models.MeshmodelsAPIResponse
 }
 
+// Return meshmodel models with the count of duplicates
+// swagger:response meshmodelModelsDuplicateResponseWrapper
+type meshmodelModelsDuplicateResponseWrapper struct {
+	// in: body
+	Body *models.MeshmodelsDuplicateAPIResponse
+}
+
 // Return meshmodel components
 // swagger:response meshmodelComponentsResponseWrapper
 type meshmodelComponentsResponseWrapper struct {
 	// in: body
 	Body *models.MeshmodelComponentsAPIResponse
+}
+
+// Return meshmoddel components with the count of duplicates
+// swagger:response meshmodelComponentsDuplicateResponseWrapper
+type meshmodelComponentsDuplicateResponseWrapper struct {
+	// in: body
+	Body *models.MeshmodelComponentsDuplicateAPIResponse
 }
 
 // Returns meshmodel relationships
@@ -456,4 +476,11 @@ type smiResultsResponseWrapper struct {
 type mesheryApplicationTypesResponseWrapper struct {
 	// in: body
 	Body []models.ApplicationTypeResponse
+}
+
+// Returns a single connection
+// swagger:response mesheryConnectionResponseWrapper
+type mesheryConnectionResponseWrapper struct {
+	// in: body
+	Body models.Connection
 }

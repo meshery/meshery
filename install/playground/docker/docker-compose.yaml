@@ -1,11 +1,11 @@
 services:
     meshery:
-        image: layer5/meshery:stable-latest
+        image: layer5/meshery:playground-latest
         labels:
             - "com.centurylinklabs.watchtower.enable=true"
         environment:
             - PROVIDER_BASE_URLS=https://meshery.layer5.io
-            - ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-osm:10009 meshery-traefik-mesh:10006 meshery-nginx-sm:10010 meshery-cilium:10012
+            - ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-traefik-mesh:10006 meshery-nginx-sm:10010 meshery-cilium:10012
             - EVENT=mesheryLocal
             - PORT=9081
             - MESHERY_SERVER_CALLBACK_URL=https://playground.meshery.io/api/user/token
@@ -13,6 +13,7 @@ services:
         volumes:
             - $HOME/.kube:/home/appuser/.kube:ro
             - $HOME/.minikube:$HOME/.minikube:ro
+            - /var/run/docker.sock:/var/run/docker.sock
         ports:
             - 9081:9081
         restart: always
@@ -75,13 +76,6 @@ services:
             - "com.centurylinklabs.watchtower.enable=true"
        ports:
             - 10007:10007
-       restart: always
-    meshery-osm:
-       image: layer5/meshery-osm:stable-latest
-       labels:
-            - "com.centurylinklabs.watchtower.enable=true"
-       ports:
-            - 10009:10009
        restart: always
     meshery-nginx-sm:
        image: layer5/meshery-nginx-sm:stable-latest

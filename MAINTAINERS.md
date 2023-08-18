@@ -1,9 +1,9 @@
 ### CLI Maintainers
 
-| Name              | GitHub            | Affiliation |
-| ----------------- | ----------------- | ----------- |
-| Hussaina Begum    | hexxdump          | VMware      |
-| Aadhitya Amarendiran    | alphaX86    | Independent |
+| Name                    | GitHub            | Affiliation |
+| ----------------------- | ----------------- | ----------- |
+| Hussaina Begum          | hexxdump          | VMware      |
+| Aadhitya Amarendiran    | alphaX86          | Citi        |
 
 ### UI Maintainers
 
