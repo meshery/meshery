@@ -1,6 +1,7 @@
 package filter
 
 import (
+	"flag"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -8,6 +9,8 @@ import (
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
+
+var update = flag.Bool("update", false, "update golden files")
 
 func TestViewCmd(t *testing.T) {
 	// setup current context
