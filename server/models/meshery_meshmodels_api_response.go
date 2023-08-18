@@ -55,7 +55,7 @@ type MeshmodelPoliciesAPIResponse struct {
 	Page          int                               `json:"page"`
 	PageSize      int                               `json:"page_size"`
 	Count         int64                             `json:"total_count"`
-	Policies []v1alpha1.PolicyDefinition `json:"relationships"`
+	Policies []v1alpha1.PolicyDefinition `json:"policies"`
 }
 
 type DuplicateResponseComponent struct {

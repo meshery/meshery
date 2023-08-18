@@ -64,10 +64,6 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	enc := json.NewEncoder(rw)
 	typ := mux.Vars(r)["model"]
 	name := mux.Vars(r)["name"]
-	var greedy bool
-	if r.URL.Query().Get("search") == "true" {
-		greedy = true
-	}
 	limitstr := r.URL.Query().Get("pagesize")
 	var limit int
 	if limitstr != "all" {
@@ -81,14 +77,9 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	if page <= 0 {
 		page = 1
 	}
-	offset := (page - 1) * limit
-	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.PolicyFilter{
+	entities, _, _ := h.registryManager.GetEntities(&v1alpha1.PolicyFilter{
 		Kind: name,
-		SubType: typ,
-		Greedy: greedy,
-		Limit: limit,
-		Offset: offset,
-		OrderOn: r.URL.Query().Get("order"),
+		ModelName: typ,
 	})
 	var policies []v1alpha1.PolicyDefinition
 	for _, p := range entities {
@@ -98,17 +89,8 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 		} 
 	}
 
-	var pgSize int64
-	if limitstr == "all" {
-		pgSize = *count
-	} else {
-		pgSize = int64(limit)
-	}
-
 	response := models.MeshmodelPoliciesAPIResponse{
 		Page:          page,
-		PageSize:      int(pgSize),
-		Count:         *count,
 		Policies: 	   policies,
 	}
 
@@ -122,11 +104,6 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	typ := mux.Vars(r)["model"]
-	name := mux.Vars(r)["name"]
-	var greedy bool
-	if r.URL.Query().Get("search") == "true" {
-		greedy = true
-	}
 	limitstr := r.URL.Query().Get("pagesize")
 	var limit int
 	if limitstr != "all" {
@@ -140,14 +117,8 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 	if page <= 0 {
 		page = 1
 	}
-	offset := (page - 1) * limit
-	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.PolicyFilter{
-		Kind: name,
-		SubType: typ,
-		Greedy: greedy,
-		Limit: limit,
-		Offset: offset,
-		OrderOn: r.URL.Query().Get("order"),
+	entities, _, _ := h.registryManager.GetEntities(&v1alpha1.PolicyFilter{
+		ModelName: typ,
 	})
 	var policies []v1alpha1.PolicyDefinition
 	for _, p := range entities {
@@ -157,17 +128,9 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 		} 
 	}
 
-	var pgSize int64
-	if limitstr == "all" {
-		pgSize = *count
-	} else {
-		pgSize = int64(limit)
-	}
 
 	response := models.MeshmodelPoliciesAPIResponse{
 		Page:          page,
-		PageSize:      int(pgSize),
-		Count:         *count,
 		Policies: 	   policies,
 	}
 
