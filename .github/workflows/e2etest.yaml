@@ -32,7 +32,7 @@ jobs:
     needs: SetPatternfileForEmojivotoInstall
     uses: meshery/meshery/.github/workflows/test_adaptersv2.yaml@master
     with: 
-      expected_resources: vote-bot, emoji,voting,web,emoji-svc,voting-svc,web-svc
+      expected_resources: vote-bot, emoji,voting,web,emoji-svc,voting-svc,web-svcw
       expected_resources_types: pod,pod,pod,pod,service,service,service
       expected_resources_namespaces: emojivoto, emojivoto,emojivoto,emojivoto,emojivoto,emojivoto,emojivoto
       patternfile_name: emojivoto.yaml 

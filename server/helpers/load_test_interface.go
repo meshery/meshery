@@ -75,7 +75,7 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 		}
 
 		o.TLSOptions = fhttp.TLSOptions{
-			CACert:    opts.CACert,
+			CACert:           opts.CACert,
 			UnixDomainSocket: httpOpts.UnixDomainSocket,
 		}
 		res, err = fgrpc.RunGRPCTest(&o)
