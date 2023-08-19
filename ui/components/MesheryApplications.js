@@ -10,7 +10,7 @@ import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import SaveIcon from '@material-ui/icons/Save';
 import MUIDataTable from "mui-datatables";
-import { withSnackbar } from "notistack";
+// import { withSnackbar } from "notistack";
 import React, { useEffect, useRef, useState } from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import Moment from "react-moment";
@@ -36,7 +36,7 @@ import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubs
 import { iconMedium, iconSmall } from "../css/icons.styles";
 import SearchBar from "./searchcommon";
 import DryRunComponent from "./DryRun/DryRunComponent";
-import { useNotification } from "../utils/hooks/useNotification";
+import { useNotification, withNotify } from "../utils/hooks/useNotification";
 import { EVENT_TYPES } from "../lib/event-types";
 
 const styles = (theme) => ({
@@ -945,4 +945,4 @@ const mapStateToProps = (state) => {
 };
 
 // @ts-ignore
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MesheryApplications)));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withNotify(MesheryApplications)));

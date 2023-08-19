@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
 import { withSnackbar } from 'notistack';
+import { useNotification } from '../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../lib/event-types';
 import { withStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import {
@@ -102,7 +104,7 @@ const styles = (theme) => ({
   }
 });
 
-function ThemeToggler({ theme, themeSetter, enqueueSnackbar, classes }) {
+function ThemeToggler({ theme, themeSetter, classes }) {
   const [themeToggle, setthemeToggle] = useState(false);
   const defaultTheme = "light";
   const handle = () => {
@@ -113,6 +115,7 @@ function ThemeToggler({ theme, themeSetter, enqueueSnackbar, classes }) {
     theme === "dark" ? setthemeToggle(true)  : setthemeToggle(false);
     setTheme(theme)
   };
+  const { notify }=useNotification();
 
   useLayoutEffect(() => {
     if (isExtensionOpen()) {
@@ -130,10 +133,17 @@ function ThemeToggler({ theme, themeSetter, enqueueSnackbar, classes }) {
 
   const themeToggler = () => {
     if (isExtensionOpen()) {
-      enqueueSnackbar("Toggling between themes is not supported in MeshMap", {
+      // enqueueSnackbar("Toggling between themes is not supported in MeshMap", {
+      //   variant : "info",
+      //   preventDuplicate : true,
+      // });
+      notify({
+        message : "Toggling between themes is not supported in MeshMap",
         variant : "info",
-        preventDuplicate : true,
-      });
+        event_type : EVENT_TYPES.INFO,
+      })
+
+
       return;
     }
     theme === "light" ? themeSetter("dark")  : themeSetter("light");

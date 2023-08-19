@@ -5,10 +5,13 @@ import { isEmpty } from "lodash";
 import React from "react";
 import { getMeshModelComponent } from "../../../api/meshmodel";
 import { iconMedium } from "../../../css/icons.styles";
-import { useSnackbar } from "notistack";
+// import { useSnackbar } from "notistack";
+// import { useNotification } from "../../../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../../../lib/event-types";
 import PatternServiceForm from "../../MesheryMeshInterface/PatternServiceForm";
 // eslint-disable-next-line no-unused-vars
 import * as Types from "../MeshModel/hooks/types";
+import { useNotification } from "../../../utils/hooks/useNotification";
 // import { isEmptyObj } from "../../utils/utils";
 // import PatternServiceForm from "./PatternServiceForm";
 
@@ -23,6 +26,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
+
 /**
  *
  * @param {{
@@ -31,10 +36,11 @@ const useStyles = makeStyles((theme) => ({
  * @returns
  */
 export default function LazyComponentForm({ component, disabled, ...otherprops }) {
+  const { notify }=useNotification();
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
   const [schemaSet, setSchemaSet] = React.useState({});
-  const { enqueueSnackbar } = useSnackbar();
+  // const { enqueueSnackbar } = useSnackbar();
 
   async function expand(state) {
     if (!state) {
@@ -57,7 +63,12 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
         }
       }
     } catch (error) {
-      enqueueSnackbar(`error getting schema: ${error?.message}`, { variant : "error" })
+      // enqueueSnackbar(`error getting schema: ${error?.message}`, { variant : "error" })
+      notify({
+        event_type : EVENT_TYPES.ERROR,
+        message : `error getting schema: ${error?.message}`,
+      })
+
     }
   }
 

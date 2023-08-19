@@ -5,7 +5,7 @@ import { NoSsr, Typography, IconButton, Box } from "@material-ui/core";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import CloseIcon from "@material-ui/icons/Close";
-import { withSnackbar } from "notistack";
+// import { withSnackbar } from "notistack";
 import dataFetch from "../../../lib/data-fetch";
 import GrafanaConfigComponent from "./GrafanaConfigComponent";
 import GrafanaSelectionComponent from "./GrafanaSelectionComponent";
@@ -15,6 +15,7 @@ import { updateGrafanaConfig, updateProgress } from "../../../lib/store";
 import GrafanaCustomCharts from "./GrafanaCustomCharts";
 import fetchAvailableAddons from "../../graphql/queries/AddonsStatusQuery";
 import { getK8sClusterIdsFromCtxId } from "../../../utils/multi-ctx";
+import { withNotify } from "../../../utils/hooks/useNotification";
 
 const grafanaStyles = (theme) => ({
   buttons : { display : "flex",
@@ -437,4 +438,4 @@ const mapStateToProps = (st) => {
   return { grafana : { ...grafana, ts : new Date(grafana.ts) }, selectedK8sContexts, k8sconfig };
 };
 
-export default withStyles(grafanaStyles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(GrafanaComponent)));
+export default withStyles(grafanaStyles)(connect(mapStateToProps, mapDispatchToProps)(withNotify(GrafanaComponent)));

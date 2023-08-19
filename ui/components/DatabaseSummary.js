@@ -5,11 +5,12 @@ import CloseIcon from "@material-ui/icons/Close";
 import dataFetch from '../lib/data-fetch';
 import DataTable from "mui-datatables";
 import { connect } from 'react-redux';
-import { withSnackbar } from 'notistack';
+// import { withSnackbar } from 'notistack';
 import { bindActionCreators } from 'redux';
 import PropTypes from "prop-types";
 import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 import debounce from '../utils/debounce';
+import { withNotify } from '../utils/hooks/useNotification';
 
 const styles = (theme) => ({
   textCenter : {
@@ -190,5 +191,5 @@ DatabaseSummary.propTypes = {
 }
 
 export default withStyles(styles, { withTheme : true })(
-  connect(mapStateToProps, mapDispatchToProps)(withSnackbar(DatabaseSummary))
+  connect(mapStateToProps, mapDispatchToProps)(withNotify(DatabaseSummary))
 );

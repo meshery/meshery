@@ -5,7 +5,8 @@ import {
 import CloseIcon from "@material-ui/icons/Close";
 import { withStyles } from "@material-ui/core/styles";
 import { Search } from "@material-ui/icons";
-import { withSnackbar } from "notistack";
+// import { withSnackbar } from "notistack";
+import { useNotification, withNotify } from "../utils/hooks/useNotification";
 import { connect } from "react-redux";
 import { setK8sContexts, updateProgress } from "../lib/store";
 import { closeButtonForSnackbarAction, errorHandlerGenerator, successHandlerGenerator } from "./ConnectionWizard/helpers/common";
@@ -27,6 +28,7 @@ import { RoundedTriangleShape } from "./shapes/RoundedTriangle";
 import { notificationColors } from "../themes/app";
 import RedOctagonSvg from "./shapes/Octagon";
 import PatternIcon from "../assets/icons/Pattern";
+import { EVENT_TYPES } from "../lib/event-types";
 
 const styles = (theme) => ({
   dialogBox : {
@@ -239,19 +241,16 @@ function ConfirmationMsg(props) {
       ctxID
     )
   }
+  const { notify }=useNotification()
 
   const handleSubmit = () => {
     if (selectedK8sContexts.length === 0) {
-      enqueueSnackbar("Please select Kubernetes context(s) before proceeding with the operation",
-        {
-          variant : "info", preventDuplicate : true,
-          action : (key) => (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon style={iconMedium} />
-            </IconButton>
-          ),
-          autoHideDuration : 3000,
-        });
+      notify({
+        message : "Please select Kubernetes context(s) before proceeding with the operation",
+        event_type : EVENT_TYPES.INFO,
+        variant : "info",
+
+      })
     }
 
     if (tabVal === 2) {
@@ -533,4 +532,4 @@ const mapDispatchToProps = (dispatch) => ({
   setK8sContexts : bindActionCreators(setK8sContexts, dispatch)
 });
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(ConfirmationMsg)));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withNotify(ConfirmationMsg)));

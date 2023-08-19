@@ -5,7 +5,7 @@ import {
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import CloseIcon from "@material-ui/icons/Close";
-import { withSnackbar } from "notistack";
+// import { withSnackbar } from "notistack";
 import { useState, useEffect, useRef } from 'react';
 import DataTable from "mui-datatables";
 import { withStyles } from '@material-ui/core/styles';
@@ -24,6 +24,7 @@ import fetchMesheryOperatorStatus from "./graphql/queries/OperatorStatusQuery";
 import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 import { DEPLOYMENT_TYPE } from '../utils/Enum';
 import { iconMedium } from '../css/icons.styles';
+import { withNotify } from '../utils/hooks/useNotification';
 
 const styles = (theme) => ({
   operationButton : {
@@ -972,5 +973,5 @@ const mapDispatchToProps = (dispatch) => ({
   // setMeshsyncSubscription : bindActionCreators(setMeshsyncSubscription, dispatch)
 });
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MesherySettingsNew)));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withNotify(MesherySettingsNew)));
 

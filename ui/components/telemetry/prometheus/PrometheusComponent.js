@@ -5,7 +5,7 @@ import { NoSsr, Typography, IconButton } from "@material-ui/core";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import CloseIcon from "@material-ui/icons/Close";
-import { withSnackbar } from "notistack";
+// import { withSnackbar } from "notistack";
 import dataFetch from "../../../lib/data-fetch";
 import PrometheusSelectionComponent from "./PrometheusSelectionComponent";
 import GrafanaDisplaySelection from "../grafana/GrafanaDisplaySelection";
@@ -14,6 +14,7 @@ import GrafanaCustomCharts from "../grafana/GrafanaCustomCharts";
 import PrometheusConfigComponent from "./PrometheusConfigComponent";
 import { getK8sClusterIdsFromCtxId } from "../../../utils/multi-ctx";
 import fetchAvailableAddons from "../../graphql/queries/AddonsStatusQuery";
+import { withNotify } from "../../../utils/hooks/useNotification";
 
 const promStyles = (theme) => ({
   buttons : { display : "flex",
@@ -320,4 +321,4 @@ const mapStateToProps = (st) => {
   return { grafana, prometheus, selectedK8sContexts, k8sconfig };
 };
 
-export default withStyles(promStyles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(PrometheusComponent)));
+export default withStyles(promStyles)(connect(mapStateToProps, mapDispatchToProps)(withNotify(PrometheusComponent)));

@@ -6,12 +6,13 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { toggleCatalogContent } from "../lib/store";
 import Head from 'next/head';
-import { withSnackbar } from "notistack";
+// import { withSnackbar } from "notistack";
 import dataFetch from "../lib/data-fetch";
 import { EXTENSIONS } from "../utils/Enum";
 import { extensionStyles as styles } from "../css/icons.styles";
 import { Adapters } from "../components/extensions";
 import { LARGE_6_MED_12_GRID_STYLE } from "../css/grid.style";
+import { withNotify } from "../utils/hooks/useNotification";
 
 
 const INITIAL_GRID_SIZE = { lg : 6, md : 12, xs : 12 };
@@ -231,4 +232,4 @@ const mapDispatchToProps = dispatch => ({
   toggleCatalogContent : bindActionCreators(toggleCatalogContent, dispatch)
 })
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(Extensions)));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withNotify(Extensions)));

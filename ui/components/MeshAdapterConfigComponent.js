@@ -7,13 +7,14 @@ import blue from "@material-ui/core/colors/blue";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { withRouter } from "next/router";
-import { withSnackbar } from "notistack";
+// import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import ReactSelectWrapper from "./ReactSelectWrapper";
 import { updateAdaptersInfo, updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
 import { iconMedium } from "../css/icons.styles";
 import changeAdapterState from './graphql/mutations/AdapterStatusMutation';
+import { withNotify } from "../utils/hooks/useNotification";
 
 const styles = (theme) => ({
   wrapperClass : {
@@ -547,5 +548,5 @@ const mapStateToProps = (state) => {
 };
 
 export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(MeshAdapterConfigComponent)))
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(withNotify(MeshAdapterConfigComponent)))
 );

@@ -10,7 +10,7 @@ import AddIcon from "@material-ui/icons/AddCircleOutline";
 import CloseIcon from "@material-ui/icons/Close";
 import SettingsIcon from "@material-ui/icons/Settings";
 import { withRouter } from "next/router";
-import { withSnackbar } from "notistack";
+// import { withSnackbar } from "notistack";
 import PropTypes from "prop-types";
 import React from "react";
 import { connect } from "react-redux";
@@ -35,6 +35,7 @@ import { extractURLFromScanData } from "./ConnectionWizard/helpers/metrics";
 import { configurationTableTheme, configurationTableThemeDark } from '../themes/configurationTableTheme';
 import DashboardMeshModelGraph from './Dashboard/DashboardMeshModelGraph'
 import ConnectionStatsChart from "./Dashboard/ConnectionCharts.js";
+import { withNotify } from "../utils/hooks/useNotification";
 
 const styles = (theme) => ({
   rootClass : { backgroundColor : theme.palette.secondary.elevatedComponents2, },
@@ -1277,5 +1278,5 @@ const mapStateToProps = (state) => {
 };
 
 export default withStyles(styles, { withTheme : true })(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(DashboardComponent)))
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(withNotify(DashboardComponent)))
 );

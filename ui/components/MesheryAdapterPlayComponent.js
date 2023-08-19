@@ -12,7 +12,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import PlayIcon from "@material-ui/icons/PlayArrow";
 import MUIDataTable from "mui-datatables";
 import { withRouter } from "next/router";
-import { withSnackbar } from "notistack";
+// import { withSnackbar } from "notistack";
 import PropTypes from "prop-types";
 import React from "react";
 import { Controlled as CodeMirror } from "react-codemirror2";
@@ -32,6 +32,7 @@ import ConfirmationMsg from "./ConfirmationModal";
 import { iconMedium } from "../css/icons.styles";
 import { ACTIONS } from "../utils/Enum";
 import { getModelByName } from "../api/meshmodel";
+import { withNotify } from "../utils/hooks/useNotification";
 
 const styles = (theme) => ({
   smWrapper : { backgroundColor : theme.palette.secondary.elevatedComponents2, },
@@ -1363,5 +1364,5 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(MesheryAdapterPlayComponent)))
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(withNotify(MesheryAdapterPlayComponent)))
 );

@@ -3,9 +3,12 @@ import jsYaml from "js-yaml";
 // eslint-disable-next-line no-unused-vars
 import * as Types from "./types";
 import { promisifiedDataFetch } from "../../../../lib/data-fetch";
-import { useSnackbar } from "notistack";
+// import { useSnackbar } from "notistack";
+import { useNotification } from "../../../../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../../../../lib/event-types";
 
 export default function useDesignLifecycle() {
+  const { notify }=useNotification();
   const [designName, setDesignName] = useState("Unitled Design")
   const [designId, setDesignId] = useState();
   const [designJson, setDesignJson] = useState({
@@ -13,7 +16,7 @@ export default function useDesignLifecycle() {
     services : {}
   })
   const [designYaml, setDesignyaml] = useState("");
-  const { enqueueSnackbar } = useSnackbar();
+  // const { enqueueSnackbar } = useSnackbar();
 
 
   useEffect(function updateDesignYamlFromJson() {
@@ -72,9 +75,20 @@ export default function useDesignLifecycle() {
       method : "POST"
     }).then(data => {
       setDesignId(data[0].id);
-      enqueueSnackbar(`"${designName}" saved successfully`, { variant : "success" })
+      // enqueueSnackbar(`"${designName}" saved successfully`, { variant : "success" })
+      notify({
+        event_type : EVENT_TYPES.SUCCESS,
+        message : `"${designName}" saved successfully`,
+        variant : "success"
+      })
+
     }).catch(() => {
-      enqueueSnackbar("failed to save design file", { variant : "error" })
+      // enqueueSnackbar("failed to save design file", { variant : "error" })
+      notify({
+        event_type : EVENT_TYPES.ERROR,
+        message : "failed to save design file",
+        variant : "error"
+      })
     })
   }
 
@@ -89,22 +103,44 @@ export default function useDesignLifecycle() {
       }),
       method : "POST"
     }).then(() => {
-      enqueueSnackbar(`"${designName}" updated successfully`, { variant : "success" })
+      // enqueueSnackbar(`"${designName}" updated successfully`, { variant : "success" })
+      notify({
+        event_type : EVENT_TYPES.SUCCESS,
+        message : `"${designName}" updated successfully`,
+        variant : "success"
+
+      })
     }).catch(() => {
-      enqueueSnackbar(`couldn't update "${designName}"`, { variant : "error" })
+      // enqueueSnackbar(`couldn't update "${designName}"`, { variant : "error" })
+      notify({
+        event_type : EVENT_TYPES.ERROR,
+        message : `couldn't update "${designName}"`,
+        variant : "error"
+
+      })
     })
   }
 
   function designDelete() {
     return promisifiedDataFetch("/api/pattern/" + designId, { method : "DELETE" }).then(() => {
-      enqueueSnackbar(`Design "${designName}" Deleted`, { variant : "success" })
+      // enqueueSnackbar(`Design "${designName}" Deleted`, { variant : "success" })
+      notify({
+        event_type : EVENT_TYPES.SUCCESS,
+        message : `Design "${designName}" Deleted`,
+        variant : "success"
+
+      })
       setDesignJson({
         name : "Unitled Design",
         services : {}
       })
       setDesignId(undefined)
       setDesignName("Unitled Design")
-    }).catch(() => enqueueSnackbar("error deleting design", { variant : "error" })
+    }).catch(() => notify({
+      event_type : EVENT_TYPES.ERROR,
+      message : `couldn't delete "${designName}"`,
+      variant : "error"
+    })
     )
   }
 
