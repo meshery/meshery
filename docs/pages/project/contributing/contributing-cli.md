@@ -17,6 +17,8 @@ category: contributing
     <li><a href="https://docs.google.com/document/d/1xRlFpElRmybJ3WacgPKXgCSiQ2poJl3iCCV1dAalf0k/edit#">Meshery CLI Commands and Documentation</a>: Detailed documentation of the `mesheryctl` commands.</li>
 	<li><a href="https://github.com/layer5io/meshery/labels/component%2Fmesheryctl">mesheryctl open issues and pull requests</a>: Matching the "component/mesheryctl" label.</li></ul>' %}
 
+{% include member-form.html %}
+
 ### Mechanics of Contributing
 
 **Building mesheryctl**

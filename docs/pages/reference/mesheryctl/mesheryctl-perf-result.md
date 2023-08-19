@@ -20,7 +20,7 @@ List all the available test results of a performance profile
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf result profile-name [flags]
+mesheryctl perf result [profile-name] [flags]
 
 </div>
 </pre> 

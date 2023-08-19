@@ -429,6 +429,56 @@ func (l *RemoteProvider) GetUsers(token, page, pageSize, search, order, filter s
 	return nil, err
 }
 
+// Returns Keys from a user /api/identity/users/keys
+func (l *RemoteProvider) GetUsersKeys(token, page, pageSize, search, order, filter string) ([]byte, error) {
+	if !l.Capabilities.IsSupported(UsersKeys) {
+		logrus.Warn("operation not available")
+		return []byte{}, ErrInvalidCapability("UsersKeys", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(UsersKeys)
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
+	q := remoteProviderURL.Query()
+	if page != "" {
+		q.Set("page", page)
+	}
+	if pageSize != "" {
+		q.Set("pagesize", pageSize)
+	}
+	if search != "" {
+		q.Set("search", search)
+	}
+	if order != "" {
+		q.Set("order", order)
+	}
+	if filter != "" {
+		q.Set("filter", filter)
+	}
+	remoteProviderURL.RawQuery = q.Encode()
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Users keys", http.StatusUnauthorized)
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bd, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, ErrDataRead(err, "Users Keys")
+	}
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("user keys successfully retrived from remote provider")
+		return bd, nil
+	}
+	err = ErrFetch(err, "Users Keys", resp.StatusCode)
+	logrus.Errorf(err.Error())
+	return nil, err
+}
+
 // GetSession - validates the current request, attempts for a refresh of token, and then return its validity
 //
 // It is assumed that each remote provider will support this feature
@@ -3625,9 +3675,8 @@ func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, 
 	return &cp, nil
 }
 
-
 // GetConnectionsByKind - to get saved credentials
-func (l *RemoteProvider) GetConnectionsByKind(req *http.Request, _ string, page, pageSize int, search, order, connectionKind string) (*ConnectionPage, error) {
+func (l *RemoteProvider) GetConnectionsByKind(req *http.Request, _ string, page, pageSize int, search, order, connectionKind string) (*map[string]interface{}, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -3656,14 +3705,14 @@ func (l *RemoteProvider) GetConnectionsByKind(req *http.Request, _ string, page,
 
 	bdr, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
-		return nil, ErrFetch(fmt.Errorf("could not retrieve list of connections: %d", resp.StatusCode), fmt.Sprint(bdr), resp.StatusCode)
+		return nil, ErrFetch(fmt.Errorf(string(bdr)), "connections", resp.StatusCode)
 	}
 
-	var cp ConnectionPage
-	if err = json.Unmarshal(bdr, &cp); err != nil {
+	var res map[string]interface{}
+	if err = json.Unmarshal(bdr, &res); err != nil {
 		return nil, err
 	}
-	return &cp, nil
+	return &res, nil
 }
 
 func (l *RemoteProvider) GetConnectionsStatus(req *http.Request, userID string) (*ConnectionsStatusPage, error) {
@@ -3738,6 +3787,52 @@ func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *Connect
 	}
 
 	return nil, ErrFetch(fmt.Errorf("failed to update the connection"), fmt.Sprint(bdr), resp.StatusCode)
+}
+
+// UpdateConnectionById - to update an existing connection using the connection id
+func (l *RemoteProvider) UpdateConnectionById(req *http.Request, connection *ConnectionPayload, connId string) (*Connection, error) {
+	if !l.Capabilities.IsSupported(PersistConnection) {
+		logrus.Error("operation not available")
+		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
+	}
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
+	_conn, err := json.Marshal(connection)
+	if err != nil {
+		return nil, err
+	}
+	bf := bytes.NewBuffer(_conn)
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connId))
+	logrus.Debugf("Making request to : %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Error("error getting token: ", err)
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Update Connection", resp.StatusCode)
+	}
+	defer resp.Body.Close()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, ErrDataRead(err, "Update Connection")
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		var conn Connection
+		if err = json.Unmarshal(bdr, &conn); err != nil {
+			return nil, ErrUnmarshal(err, "connection")
+		}
+		return &conn, nil
+	}
+
+	return nil, ErrFetch(fmt.Errorf("failed to update the connection"), string(bdr), resp.StatusCode)
 }
 
 // DeleteConnection - to delete a saved connection
@@ -4122,4 +4217,34 @@ func (l *RemoteProvider) DeleteUserCredential(req *http.Request, credentialID uu
 	}
 	logrus.Errorf("error while deleting credential: %s", bdr)
 	return nil, ErrDelete(fmt.Errorf("error while deleting credential: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
+}
+
+func (l *RemoteProvider) ShareFilter(req *http.Request) (int, error) {
+	if !l.Capabilities.IsSupported(ShareFilters) {
+		logrus.Error("operation not available")
+		return http.StatusForbidden, ErrInvalidCapability("ShareFilters", l.ProviderName)
+	}
+
+	ep, _ := l.Capabilities.GetEndpointForFeature(ShareFilters)
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
+	bd, _ := io.ReadAll(req.Body)
+	defer func() {
+		_ = req.Body.Close()
+	}()
+	bf := bytes.NewBuffer(bd)
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		return http.StatusInternalServerError, err
+	}
+
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		return http.StatusInternalServerError, ErrShareFilter(err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return resp.StatusCode, ErrShareFilter(fmt.Errorf("unable to share filter"))
+	}
+	return resp.StatusCode, nil
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/registry"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 )
 
@@ -63,7 +64,7 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 	}
 	if r.URL.Query().Get("search") != "" {
 		filter.Greedy = true
-		filter.Name = r.URL.Query().Get("search")
+		filter.DisplayName = r.URL.Query().Get("search")
 	}
 	meshmodels, count, _ := h.registryManager.GetModels(h.dbHandler, filter)
 
@@ -209,7 +210,18 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	meshmodels, count, _ := h.registryManager.GetModels(h.dbHandler, filter)
-
+	var meshmodel []v1alpha1.Model
+	for _, mod := range meshmodels {
+		filter := &v1alpha1.ComponentFilter{
+			ModelName: mod.Name,
+		}
+		entities, _, _ := h.registryManager.GetEntities(filter)
+		host := h.registryManager.GetRegistrant(entities[0])
+		mod.HostID = host.ID
+		mod.HostName = host.Hostname
+		mod.DisplayHostName = registry.HostnameToPascalCase(host.Hostname)
+		meshmodel = append(meshmodel, mod)
+	}
 	var pgSize int64
 	if limitstr == "all" {
 		pgSize = count
@@ -221,7 +233,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		Page:     page,
 		PageSize: int(pgSize),
 		Count:    count,
-		Models:   models.FindDuplicateModels(meshmodels),
+		Models:   models.FindDuplicateModels(meshmodel),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -856,7 +868,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	}
 	if r.URL.Query().Get("search") != "" {
 		filter.Greedy = true
-		filter.Name = r.URL.Query().Get("search")
+		filter.DisplayName = r.URL.Query().Get("search")
 	}
 	entities, count, _ := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
@@ -950,7 +962,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	}
 	if r.URL.Query().Get("search") != "" {
 		filter.Greedy = true
-		filter.Name = r.URL.Query().Get("search")
+		filter.DisplayName = r.URL.Query().Get("search")
 	}
 	entities, count, _ := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
@@ -1040,7 +1052,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	}
 	if r.URL.Query().Get("search") != "" {
 		filter.Greedy = true
-		filter.Name = r.URL.Query().Get("search")
+		filter.DisplayName = r.URL.Query().Get("search")
 	}
 	entities, count, _ := h.registryManager.GetEntities(filter)
 	var comps []v1alpha1.ComponentDefinition
@@ -1135,12 +1147,16 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
 		comp, ok := r.(v1alpha1.ComponentDefinition)
+		host := h.registryManager.GetRegistrant(r)
 		if ok {
 			m := make(map[string]interface{})
 			_ = json.Unmarshal([]byte(comp.Schema), &m)
 			m = core.Format.Prettify(m, true)
 			b, _ := json.Marshal(m)
 			comp.Schema = string(b)
+			comp.HostID = host.ID
+			comp.HostName = host.Hostname
+			comp.DisplayHostName = registry.HostnameToPascalCase(host.Hostname)
 			comps = append(comps, comp)
 		}
 	}
