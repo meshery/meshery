@@ -127,13 +127,15 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   const setTableData = () => {
     let tableInfo = [];
     handleContexts(k8sconfig);
+    console.log("k8sconfig: ", k8sconfig)
     k8sconfig.forEach(ctx => {
       let data = {
         context : ctx.name,
         location : ctx.server,
         deployment_type : ctx.deployment_type === DEPLOYMENT_TYPE.IN_CLUSTER ? "In Cluster" : "Out of Cluster",
-        last_discovery : setDateTime(new Date()),
-        id : ctx.id
+        last_discovery : setDateTime(new Date()), // TODO: use the info from db
+        id : ctx.id,
+        connection_id : ctx.connection_id,
       };
       tableInfo.push(data);
     })
@@ -453,7 +455,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
             <Tooltip title={`Server: ${tableMeta.rowData[2]}`}>
               <Chip
                 label={data[tableMeta.rowIndex].context}
-                onDelete={handleConfigDelete(data[tableMeta.rowIndex].id, data[tableMeta.rowIndex].context, tableMeta.rowIndex)}
+                onDelete={handleConfigDelete(data[tableMeta.rowIndex].connection_id, data[tableMeta.rowIndex].context, tableMeta.rowIndex)}
                 onClick={() => handleKubernetesClick(data[tableMeta.rowIndex].id, tableMeta.rowIndex)}
                 icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
                 variant="outlined"
