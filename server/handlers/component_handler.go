@@ -221,7 +221,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		mod.HostName = host.Hostname
 		mod.DisplayHostName = registry.HostnameToPascalCase(host.Hostname)
 		meshmodel = append(meshmodel, mod)
-	}	
+	}
 	var pgSize int64
 	if limitstr == "all" {
 		pgSize = count

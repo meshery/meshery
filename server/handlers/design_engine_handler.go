@@ -179,12 +179,12 @@ func _processPattern(
 			registry:   registry,
 			// kubeconfig:    kubecfg,
 			// kubecontext:   mk8scontext,
-			skipPrintLogs:    skipPrintLogs,
+			skipPrintLogs:      skipPrintLogs,
 			skipCrdAndOperator: skipCrdAndOperator,
-			ctxTokubeconfig:  ctxToconfig,
-			accumulatedMsgs:  []string{},
-			err:              nil,
-			eventbuffer:      eb,
+			ctxTokubeconfig:    ctxToconfig,
+			accumulatedMsgs:    []string{},
+			err:                nil,
+			eventbuffer:        eb,
 		}
 		chain := stages.CreateChain()
 		chain.
@@ -278,11 +278,11 @@ type serviceActionProvider struct {
 	// kubeconfig  []byte
 	// kubecontext     *models.K8sContext
 	skipCrdAndOperator bool
-	skipPrintLogs    bool
-	accumulatedMsgs  []string
-	err              error
-	eventbuffer      *events.EventStreamer
-	registry         *meshmodel.RegistryManager
+	skipPrintLogs      bool
+	accumulatedMsgs    []string
+	err                error
+	eventbuffer        *events.EventStreamer
+	registry           *meshmodel.RegistryManager
 }
 
 func (sap *serviceActionProvider) GetRegistry() *meshmodel.RegistryManager {
