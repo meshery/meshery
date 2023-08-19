@@ -51,6 +51,7 @@ import { publish_schema, publish_ui_schema } from "./schemas/publish_schema";
 import { getUnit8ArrayDecodedFile } from "../utils/utils";
 import SearchBar from "./searchcommon";
 import Filter from "../public/static/img/drawer-icons/filter_svg.js";
+import { parseJson } from "./ConnectionWizard/helpers/jsonParser";
 
 const styles = (theme) => ({
   grid : {
@@ -125,7 +126,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
 
   let resourceData;
   try {
-    resourceData = JSON.parse(filter.filter_resource);
+    resourceData = parseJson(filter.filter_resource);
   } catch (error) {
     // Handling the error or provide a default value
     console.error("Error parsing JSON:", error);

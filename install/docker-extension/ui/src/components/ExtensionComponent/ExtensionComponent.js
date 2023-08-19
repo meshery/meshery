@@ -34,6 +34,7 @@ import {
 } from './styledComponents'
 import { MesheryAnimation } from '../MesheryAnimation/MesheryAnimation'
 import { trueRandom, randomApplicationNameGenerator } from '../../utils'
+import { parseJson } from '../../../../../../ui/components/ConnectionWizard/helpers/jsonParser'
 
 const AuthenticatedMsg = 'Authenticated'
 const UnauthenticatedMsg = 'Unauthenticated'
@@ -149,8 +150,9 @@ const ExtensionsComponent = () => {
           fetch(proxyUrl + '/api/user')
             .then((res) => res.text())
             .then((res) => {
-              setUserName(JSON.parse(res)?.user_id)
-              setAvatar(JSON.parse(res)?.avatar_url)
+              setUserName(parseJson(res)?.user_id)
+              // setAvatar((res)?.avatar_url)
+              setAvatar(parseJson(res)?.avatar_url)
               console.log(res)
             })
             .catch(console.error)
@@ -163,7 +165,7 @@ const ExtensionsComponent = () => {
             .catch(console.err)
           fetch(proxyUrl + '/api/system/version')
             .then((result) => result.text())
-            .then((result) => setMesheryVersion(JSON.parse(result)?.build))
+            .then((result) => setMesheryVersion(parseJson(result)?.build))
             .catch(console.error)
         }
       })

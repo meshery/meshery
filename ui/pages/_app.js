@@ -52,6 +52,7 @@ import { updateURLs } from '../utils/utils';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createRelayEnvironment } from "../lib/relayEnvironment"
 import "./styles/charts.css"
+import { parseJson } from '../components/ConnectionWizard/helpers/jsonParser';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -118,7 +119,7 @@ class MesheryApp extends App {
         const eventType = result.meshsyncevents.type;
         const spec = result?.meshsyncevents?.object?.spec?.attribute;
         const status = result?.meshsyncevents?.object?.status?.attribute;
-        const data = { spec : JSON.parse(spec), status : JSON.parse(status) };
+        const data = { spec : parseJson(spec), status : parseJson(status) };
 
         if (telemetryCompName === TelemetryComps.GRAFANA) {
           grafanaURLs = grafanaURLs.concat(extractURLFromScanData(data));

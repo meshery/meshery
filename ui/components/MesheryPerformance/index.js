@@ -47,7 +47,7 @@ import { durationOptions } from "../../lib/prePopulatedOptions";
 import fetchControlPlanes from "../graphql/queries/ControlPlanesQuery";
 import { ctxUrl, getK8sClusterIdsFromCtxId } from "../../utils/multi-ctx";
 import { iconMedium } from "../../css/icons.styles";
-
+import { parseJson } from "../ConnectionWizard/helpers/jsonParser";
 // =============================== HELPER FUNCTIONS ===========================
 
 /**
@@ -264,7 +264,7 @@ class MesheryPerformanceComponent extends React.Component {
 
   isJsonString(str) {
     try {
-      JSON.parse(str);
+      parseJson(str);
     } catch (e) {
       return false;
     }
@@ -318,7 +318,7 @@ class MesheryPerformanceComponent extends React.Component {
             try {
               const fileContent = event.target.result;
               // Validate JSON
-              JSON.parse(fileContent);
+              parseJson(fileContent);
               this.setState({
                 additional_options : fileContent,
                 jsonError : false,
@@ -336,7 +336,7 @@ class MesheryPerformanceComponent extends React.Component {
         // Handle text input
         try {
           // empty text input exception
-          if (value !== "") JSON.parse(value);
+          if (value !== "") parseJson(value);
           this.setState({
             additional_options : value,
             jsonError : false,
@@ -599,7 +599,7 @@ class MesheryPerformanceComponent extends React.Component {
     const self = this;
     let track = 0;
     return (e) => {
-      const data = JSON.parse(e.data);
+      const data = parseJson(e.data);
       switch (data.status) {
         case "info":
           self.props.enqueueSnackbar(data.message, {

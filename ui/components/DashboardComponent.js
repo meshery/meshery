@@ -35,6 +35,7 @@ import { extractURLFromScanData } from "./ConnectionWizard/helpers/metrics";
 import { configurationTableTheme, configurationTableThemeDark } from '../themes/configurationTableTheme';
 import DashboardMeshModelGraph from './Dashboard/DashboardMeshModelGraph'
 import ConnectionStatsChart from "./Dashboard/ConnectionCharts.js";
+import { parseJson } from "./ConnectionWizard/helpers/jsonParser";
 
 const styles = (theme) => ({
   rootClass : { backgroundColor : theme.palette.secondary.elevatedComponents2, },
@@ -276,7 +277,7 @@ class DashboardComponent extends React.Component {
         let prometheusURLs = [];
         let grafanaURLs = [];
         components.telemetryComps?.forEach((component) => {
-          const data = { spec : JSON.parse(component.spec), status : JSON.parse(component.status) };
+          const data = { spec : parseJson(component.spec), status : parseJson(component.status) };
           if (component.name === "grafana") {
             grafanaURLs = grafanaURLs.concat(extractURLFromScanData(data));
           } else {

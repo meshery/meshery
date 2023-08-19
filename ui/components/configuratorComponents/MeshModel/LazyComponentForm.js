@@ -9,6 +9,7 @@ import { useSnackbar } from "notistack";
 import PatternServiceForm from "../../MesheryMeshInterface/PatternServiceForm";
 // eslint-disable-next-line no-unused-vars
 import * as Types from "../MeshModel/hooks/types";
+import { parseJson } from "../../ConnectionWizard/helpers/jsonParser";
 // import { isEmptyObj } from "../../utils/utils";
 // import PatternServiceForm from "./PatternServiceForm";
 
@@ -50,7 +51,7 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
         const res = await getMeshModelComponent(modelName, kind, version, apiVersion);
         if (res.components[0]) {
           setSchemaSet({
-            workload : JSON.parse(res.components[0].schema), // has to be removed
+            workload : parseJson(res.components[0].schema), // has to be removed
           })
         } else {
           throw new Error("found null in component definition")

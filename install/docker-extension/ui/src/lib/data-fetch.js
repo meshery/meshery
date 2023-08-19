@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-unfetch';
+import { parseJson } from '../../../../../ui/components/ConnectionWizard/helpers/jsonParser';
 
 const dataFetch = (url, options = {}, successFn, errorFn) => {
   // const controller = new AbortController();
@@ -20,7 +21,7 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
         result = res.text()
           .then(text => {
             try {
-              return JSON.parse(text);
+              return parseJson(text);
             } catch (e) {
               return text;
             }

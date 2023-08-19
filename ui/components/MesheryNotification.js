@@ -27,6 +27,7 @@ import { cursorNotAllowed } from "../css/disableComponent.styles";
 import { v4 } from "uuid";
 import moment from "moment";
 import { withNotify } from "../utils/hooks/useNotification";
+import { parseJson } from "./ConnectionWizard/helpers/jsonParser";
 
 const styles = (theme) => ({
   sidelist : { width : 450, },
@@ -212,7 +213,7 @@ class MesheryNotification extends React.Component {
   handleEvents() {
     const self = this
     return (e) => {
-      const data = JSON.parse(e.data);
+      const data = parseJson(e.data);
       const event = {
         ...data,
         event_type : getEventType(data),

@@ -12,6 +12,7 @@ import { publish_schema, publish_ui_schema } from "../schemas/publish_schema";
 import Modal from "../Modal";
 import Filter from "../../public/static/img/drawer-icons/filter_svg.js";
 import PublicIcon from '@material-ui/icons/Public';
+import { parseJson } from "../ConnectionWizard/helpers/jsonParser";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -175,7 +176,7 @@ function FiltersGrid({
 
   const getYamlConfig = (filter_resource) => {
     if (filter_resource) {
-      return JSON.parse(filter_resource).settings.config;
+      return parseJson(filter_resource).settings.config;
     }
 
     return "";
