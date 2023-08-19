@@ -6,7 +6,7 @@ import MesherySnackbarWrapper from './MesherySnackbarWrapper';
 import { EVENT_TYPES } from '../lib/event-types';
 const styles = (theme) => ({ event : { margin : theme.spacing(0.5, 1), }, });
 
-
+//TODO: This Component is a unnessary wrapper, remove it
 class MesheryEventViewer extends React.Component {
   state = { dialogShow : false, }
 
@@ -25,7 +25,7 @@ class MesheryEventViewer extends React.Component {
         <React.Fragment>
           <MesherySnackbarWrapper
             key={`event_-_${eventVariant.type}`}
-            variant={eventVariant.type || EVENT_TYPES.DEFAULT.type}
+            eventType ={eventVariant|| EVENT_TYPES.DEFAULT}
             message={eventSummary}
             details={eventDetails}
             onClose={this.handleSnackbarClose}

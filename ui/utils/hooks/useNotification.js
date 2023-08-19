@@ -53,14 +53,14 @@ export const useNotification = () => {
     id = id  || v4()
 
     if (showInNotificationCenter) {
-      dispatch(pushEvent({
+      dispatch(pushEvent({ event : {
         ...customEvent,
         summary : message ,
         id,
         event_type,
         timestamp,
         details,
-      }))
+      } }))
     }
 
     enqueueSnackbar(
