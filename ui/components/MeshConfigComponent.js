@@ -257,10 +257,10 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     setLastDiscover(newData);
   }
 
-  const handleKubernetesClick = (context, index) => {
+  const handleKubernetesClick = (connection_id, index) => {
     updateProgress({ showProgress : true });
     dataFetch(
-      "/api/system/kubernetes/ping?context=" + context,
+      "/api/system/kubernetes/ping?connection_id=" + connection_id,
       { credentials : "same-origin" },
       (result) => {
         updateProgress({ showProgress : false });
@@ -450,13 +450,12 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           );
         },
         customBodyRender : (_, tableMeta,) => {
-          console.log("tableMeta: ", tableMeta);
           return (
             <Tooltip title={`Server: ${tableMeta.rowData[2]}`}>
               <Chip
                 label={data[tableMeta.rowIndex].context}
                 onDelete={handleConfigDelete(data[tableMeta.rowIndex].connection_id, data[tableMeta.rowIndex].context, tableMeta.rowIndex)}
-                onClick={() => handleKubernetesClick(data[tableMeta.rowIndex].id, tableMeta.rowIndex)}
+                onClick={() => handleKubernetesClick(data[tableMeta.rowIndex].connection_id, tableMeta.rowIndex)}
                 icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
                 variant="outlined"
                 data-cy="chipContextName"
@@ -609,7 +608,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     },
     onRowsDelete : (td) => {
       td.data.forEach((item) => {
-        handleConfigDelete(data[item.index].id, data[item.index].context)
+        handleConfigDelete(data[item.index].connection_id, data[item.index].context)
       })
     },
     renderExpandableRow : (rowData, rowMetaData) => {
@@ -632,7 +631,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                               >
                                 <Chip
                                   label={data[rowMetaData.rowIndex].context}
-                                  onClick={() => handleKubernetesClick(data[rowMetaData.rowIndex].id, rowMetaData.rowIndex)}
+                                  onClick={() => handleKubernetesClick(data[rowMetaData.rowIndex].connection_id, rowMetaData.rowIndex)}
                                   icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
                                   variant="outlined"
                                   data-cy="chipContextName"

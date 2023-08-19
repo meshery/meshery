@@ -666,7 +666,7 @@ class DashboardComponent extends React.Component {
 
     const { server, name } = selectedCtx;
     dataFetch(
-      "/api/system/kubernetes/ping?context=" + id,
+      "/api/system/kubernetes/ping?connection_id=" + id,
       {
         credentials : "include",
       },
@@ -1109,7 +1109,7 @@ class DashboardComponent extends React.Component {
             <Chip
               label={ctx?.name}
               className={classes.chip}
-              onClick={() => self.handleKubernetesClick(ctx.id)}
+              onClick={() => self.handleKubernetesClick(ctx.connection_id)}
               icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
               variant="outlined"
               data-cy="chipContextName"
