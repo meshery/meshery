@@ -17,7 +17,7 @@ import ClearIcon from "../assets/icons/ClearIcon";
 import ErrorIcon from '@material-ui/icons/Error';
 import { withStyles } from '@material-ui/core/styles';
 import amber from '@material-ui/core/colors/amber';
-import {  EVENT_TYPES, eventTypes } from '../lib/event-types';
+import {  EVENT_TYPES, SERVER_EVENT_TYPES } from '../lib/event-types';
 import MesheryEventViewer from './MesheryEventViewer';
 import dataFetch from '../lib/data-fetch';
 import { bindActionCreators } from "redux";
@@ -138,7 +138,7 @@ function getNotifications(events, type) {
 function getNotificationCount(events) {
   if (!Array.isArray(events)) return 0;
 
-  const errorEventCount = events.filter(ev => getEventType(ev) == EVENT_TYPES.ERROR ).length;
+  const errorEventCount = events.filter(ev => getEventType(ev).type == EVENT_TYPES.ERROR.type ).length;
   const totalEventsCount = events.length;
   return errorEventCount || totalEventsCount;
 }
@@ -148,7 +148,7 @@ const  getEventType = (event) => {
   // checks if an event_type is as cardinal (0 , 1 ,2 ) or as a event_type object
   // return the event_type object
   let eventVariant = event.event_type
-  eventVariant = typeof eventVariant  == "number" ? eventTypes[eventVariant] : eventVariant
+  eventVariant = typeof eventVariant  == "number" ? SERVER_EVENT_TYPES[eventVariant] : eventVariant
   return eventVariant  ? eventVariant :  EVENT_TYPES.DEFAULT
 }
 
