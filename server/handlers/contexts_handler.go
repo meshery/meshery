@@ -50,6 +50,7 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *mo
 	}
 }
 
+// not being used....
 func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	// if req.URL.Query().Get("current") != "" {
 	// 	context, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
@@ -72,6 +73,7 @@ func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models
 		return
 	}
 
+	h.log.Info("this is being used\n\n\n")
 	val, err := provider.GetK8sContext(token, mux.Vars(req)["id"])
 	if err != nil {
 		http.Error(w, "failed to get context", http.StatusInternalServerError)

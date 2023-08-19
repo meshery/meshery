@@ -829,12 +829,18 @@ if !l.Capabilities.IsSupported(PersistConnection) {
 	return K8sContext{}, fmt.Errorf("error while deleting kubernetes context - Status code: %d", resp.StatusCode)
 }
 
-func (l *RemoteProvider) GetK8sContext(token, id string) (K8sContext, error) {
-	mesheryInstanceID, _ := viper.Get("INSTANCE_ID").(*uuid.UUID)
-	ep := "/user/contexts/" + mesheryInstanceID.String()
-	logrus.Infof("attempting to fetch kubernetes contexts from cloud for context id: %s", id)
+func (l *RemoteProvider) GetK8sContext(token, connectionID string) (K8sContext, error) {
+	// mesheryInstanceID, _ := viper.Get("INSTANCE_ID").(*uuid.UUID)
+	// ep := "/user/contexts/" + mesheryInstanceID.String()
+	logrus.Infof("attempting to fetch kubernetes contexts from cloud for connection id: %s", connectionID)
 
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/context/%s", l.RemoteProviderURL, ep, id))
+	if !l.Capabilities.IsSupported(PersistConnection) {
+		logrus.Error("operation not available")
+		return K8sContext{}, ErrInvalidCapability("PersistConnection", l.ProviderName)
+	}
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/kubernetes/%s", l.RemoteProviderURL, ep, connectionID))
+
 	logrus.Debugf("constructed kubernetes contexts url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
