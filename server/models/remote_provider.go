@@ -665,6 +665,8 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8
     CredentialSecret: cred,
 	}
 
+	// logrus.Debugf("sending request for %v at %v\n\n", k8sContext.Name, time.Now())
+
 	logrus.Infof("attempting to save %s context to remote provider with ID %s", k8sContext.Name, k8sContext.ID)
 	err := l.SaveConnection(nil, conn, token, true)
    if err != nil {
@@ -799,10 +801,14 @@ func (l *RemoteProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) 
 
 func (l *RemoteProvider) DeleteK8sContext(token, id string) (K8sContext, error) {
 	logrus.Infof("attempting to delete kubernetes context from cloud for id: %s", id)
-	mesheryInstanceID, _ := viper.Get("INSTANCE_ID").(*uuid.UUID)
-	ep := "/user/contexts/" + mesheryInstanceID.String()
-
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/context/%s", l.RemoteProviderURL, ep, id))
+	// mesheryInstanceID, _ := viper.Get("INSTANCE_ID").(*uuid.UUID)
+	// ep := "/user/contexts/" + mesheryInstanceID.String()
+if !l.Capabilities.IsSupported(PersistConnection) {
+		logrus.Error("operation not available")
+		return K8sContext{}, ErrInvalidCapability("PersistConnection", l.ProviderName)
+	}
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, id))
 	logrus.Debugf("constructed kubernetes contexts url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
 

@@ -91,6 +91,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		return
 	}
 
+	// id is the connection_id of the specific cluster in connections table
 	_, err := provider.DeleteK8sContext(token, mux.Vars(req)["id"])
 	if err != nil {
 		http.Error(w, "failed to delete context", http.StatusInternalServerError)
