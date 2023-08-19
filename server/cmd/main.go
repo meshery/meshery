@@ -43,8 +43,8 @@ var (
 const (
 	// DefaultProviderURL is the provider url for the "none" provider
 	DefaultProviderURL = "https://meshery.layer5.io"
-	PoliciesPath = "../meshmodel/kubernetes/policies"
-	RelationshipsPath = "../meshmodel/kubernetes/relationships"
+	PoliciesPath       = "../meshmodel/kubernetes/policies"
+	RelationshipsPath  = "../meshmodel/kubernetes/relationships"
 )
 
 func main() {

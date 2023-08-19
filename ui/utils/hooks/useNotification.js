@@ -26,7 +26,6 @@ export const useNotification = () => {
     timestamp = timestamp ?? moment.utc().valueOf()
     id = id  || v4()
 
-
     if (showInNotificationCenter) {
       dispatch(pushEvent({
 
