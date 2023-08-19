@@ -121,7 +121,7 @@ function getNotifications(events, type) {
   if (type === "warning") return events.filter(ev => getEventType(ev).type == EVENT_TYPES.WARNING.type)
   if (type === "success") return events.filter(ev =>
     ((getEventType(ev).type == EVENT_TYPES.SUCCESS.type)
-                                      || getEventType(ev).type == EVENT_TYPES.DEFAULT.type))
+                                      || getEventType(ev).type == EVENT_TYPES.INFO.type))
 
   return events;
 }
@@ -149,7 +149,7 @@ const  getEventType = (event) => {
   // return the event_type object
   let eventVariant = event.event_type
   eventVariant = typeof eventVariant  == "number" ? SERVER_EVENT_TYPES[eventVariant] : eventVariant
-  return eventVariant  ? eventVariant :  EVENT_TYPES.DEFAULT
+  return eventVariant  ? eventVariant :  EVENT_TYPES.INFO
 }
 
 
