@@ -94,6 +94,7 @@ const (
 	ErrTokenIntrospectCode                = "2254"
 	ErrShareDesignCode                    = "2255"
 	ErrUnreachableRemoteProviderCode      = "2256"
+	ErrShareFilterCode                    = "2257"
 )
 
 var (
@@ -346,6 +347,10 @@ func ErrDownloadingSeededComponents(err error, content string) error {
 
 func ErrShareDesign(err error) error {
 	return errors.New(ErrShareDesignCode, errors.Alert, []string{"cannot make design public"}, []string{err.Error()}, []string{"email address provided might not be valid", "insufficient permission"}, []string{"Ensure that you are the owner of the design you are sharing", "Try again later", "Try using an alternate email address"})
+}
+
+func ErrShareFilter(err error) error {
+	return errors.New(ErrShareFilterCode, errors.Alert, []string{"cannot make filter public"}, []string{err.Error()}, []string{"email address provided might not be valid", "insufficient permission"}, []string{"Ensure that you are the owner of the filter you are sharing", "Try again later", "Try using an alternate email address"})
 }
 
 func ErrUnreachableRemoteProvider(err error) error {

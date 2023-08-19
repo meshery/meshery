@@ -64,6 +64,11 @@ export var darkTheme = createTheme({
       confirmationModal : '#111111',
       focused : '#00b39f',
       primaryModalText : '#FFF',
+      default : "#51636B",
+      success : "#00B39F",
+      primary : "#477E96",
+      warning : "#EBC017",
+      error : "#8F1F00",
       penColorPrimary : '#E6E6E6',
       penColorSecondary : '#E6E6E6'
     },
@@ -282,6 +287,11 @@ let theme = createTheme({
       confirmationModal : 'rgb(234, 235, 236)',
       focused : '#607d8b',
       primaryModalText : '#FFF',
+      default : "#51636B",
+      success : "#00B39F",
+      primary : "#477E96",
+      warning : "#EBC017",
+      error : "#8F1F00",
       penColorPrimary : '#3C494F',
       penColorSecondary : '#677E88'
     },

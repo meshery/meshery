@@ -19,6 +19,8 @@ import { useState } from "react";
 import ErrorIcon from "../../assets/icons/ErrorIcon";
 import { dryRunPattern } from "../../api/patterns"
 import { NOTIFICATIONCOLORS } from "../../themes"
+import { useNotification } from "../../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../../lib/event-types";
 
 const styles = theme => {
   const error_color = NOTIFICATIONCOLORS.ERROR_DARK;
@@ -242,15 +244,19 @@ const DryRunComponent = props => {
   const { design, classes, handleClose, numberOfElements ,selectedContexts } = props;
   const [deploymentErrors, setDeploymentErrors] = useState();
   const [isLoading, setIsLoading] = useState(true);
+  const { notify } = useNotification()
 
   useEffect(() => {
-    console.log("Doing a dry run")
     dryRunAndFormatErrors(design,selectedContexts)
       .then(errs => {
         setDeploymentErrors(errs);
       })
       .catch(e => {
-        console.error("error while dry running", e);
+        notify({
+          message : "error while doing a dry run",
+          event_type : EVENT_TYPES.ERROR ,
+          details : e.toString()
+        })
       })
       .finally(() => {
         setIsLoading(false);
@@ -268,7 +274,6 @@ const DryRunComponent = props => {
     );
   }
 
-  console.log("Deployment Errors",deploymentErrors)
 
   const errorCount = deploymentErrors?.length;
   if (!errorCount) return null;
