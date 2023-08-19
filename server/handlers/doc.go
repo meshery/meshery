@@ -67,7 +67,7 @@ type usersParameterWrapper struct {
 	Filter string `json:"filter"`
 }
 
-//Returns users Keys
+// Returns users Keys
 // swagger:response keys
 type usersKeys struct {
 	Body models.UserKeys
@@ -441,6 +441,13 @@ type meshmodelComponentsDuplicateResponseWrapper struct {
 type meshmodelRelationshipsResponseWrapper struct {
 	// in: body
 	Body *models.MeshmodelRelationshipsAPIResponse
+}
+
+// Returns meshmodel policies
+// swagger:response meshmodelPoliciesResponseWrapper
+type meshmodelPoliciesResponseWrapper struct {
+	// in: body
+	Body *models.MeshmodelPoliciesAPIResponse
 }
 
 // Returns meshmodel categories
