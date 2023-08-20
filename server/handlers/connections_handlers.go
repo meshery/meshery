@@ -151,8 +151,9 @@ func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request,
 // swagger:route GET /api/integrations/connections/status GetConnectionsStatus idGetConnectionsStatus
 // Handle GET request for getting all connections status
 //
+// Get all connections status
 // responses:
-// 200: ConnectionsStatusPage
+// 200: mesheryConnectionsStatusPage
 func (h *Handler) GetConnectionsStatus(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionsStatusPage, err := provider.GetConnectionsStatus(req, user.ID)
 	obj := "connections status"

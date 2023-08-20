@@ -491,3 +491,10 @@ type mesheryConnectionResponseWrapper struct {
 	// in: body
 	Body models.Connection
 }
+
+// Returns all connections Status
+// swagger:response mesheryConnectionsStatusPage
+type mesheryConnectionsStatusPage struct {
+	// in: body
+	Body *models.ConnectionsStatusPage
+}
