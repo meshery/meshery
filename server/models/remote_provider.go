@@ -673,6 +673,7 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8
 			logrus.Errorf("unable to save K8s connection: %v", err)
 			return k8sContext, fmt.Errorf("unable to save K8s connection: %v", err)
 		}
+
 	
 	return k8sContext, nil
 
@@ -3686,7 +3687,7 @@ func (l *RemoteProvider) SaveConnection(req *http.Request, conn *ConnectionPaylo
 		return ErrDataRead(err, "Save Connection")
 	}
 
-	if resp.StatusCode == http.StatusOK {
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
 		return nil
 	}
 
