@@ -1,54 +1,20 @@
-{
-  "meshAdapters": [
-    {
-      "adapter_location": "mock://meshery-istio:10000",
-      "name": "meshery-istio",
-      "version": "1.2.3",
-      "git_commit_sha": "abcdef123",
-      "ops": [
-        {
-          "op_name": "operation1",
-          "op_description": "Description for operation1"
-        },
-        {
-          "op_name": "operation2",
-          "op_description": "Description for operation2"
-        }
-      ]
-    }
-  ]
-  "grafana": {
-    "url": "http://grafana.example.com",
-    "apiKey": "randommesh"
-  },
-  "prometheus": {
-    "url": "http://prometheus.example.com"
-  },
-  "loadTestPrefs": {
-    "testDuration": 300,
-    "tuningInterval": 10
-  },
-  "anonymousUsageStats": true,
-  "anonymousPerfResults": false,
-  "updated_at": "2023-08-08T19:00:00+01:00",
-  "usersExtensionPreferences": {
-    "extension_name_1": {
-      "key1": "value1",
-      "key2": "value2"
-    },
-    "extension_name_2": {
-      "key1": "value1",
-      "key2": "value2"
-    }
-  },
-  "remoteProviderPreferences": {
-    "provider_name_1": {
-      "key1": "value1",
-      "key2": "value2"
-    },
-    "provider_name_2": {
-      "key1": "value1",
-      "key2": "value2"
-    }
-  }
-}
+contexts:
+  local:
+    endpoint: http://localhost:9081
+    token: local-token
+    platform: docker 
+    adapters: 
+      -istio
+    channel: stable-v0.4.25
+  prod-us-east-1:
+    endpoint:  http://fiwaf-ssfdd.aws.useast1.amazon.com
+    token: production-token
+    platform: kubernetes
+    channel: edge 
+    version: v0.4.27
+current-context: prod-us-east-1
+tokens:
+- name: local-token
+  location: ~/Downloads/auth.json
+- name: production-token
+  value: dasjdansdlnksanfklnslkndlanslkdnklssamdlkmasdlkmlkasmdlmal      
