@@ -137,7 +137,7 @@ In this how-to, [K3d](https://github.com/rancher/k3d) will be used as it relies 
   <pre class="codeblock-pre">
   <div class="codeblock"><div class="clipboardjs">curl -s https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
 k3d cluster create
-export KUBECONFIG="$(k3d kubeconfig get 'k3s-default')"</div></div>
+export $env:KUBECONFIG = "$(k3d.exe kubeconfig get 'k3s-default')"</div></div>
   </pre>
 
 If using Scoop, run the following in the PowerShell to install a Kubernetes cluster :
