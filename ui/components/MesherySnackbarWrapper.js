@@ -27,6 +27,7 @@ import {
   FacebookIcon
 } from "react-share"
 import { ClickAwayListener, Fade, Popper } from "@material-ui/core";
+import moment from "moment";
 
 const variantIcon = {
   success : CheckCircleIcon,
@@ -60,6 +61,11 @@ const styles = (theme) => ({
   message : {
     display : "flex",
     alignItems : "center",
+  },
+  timestamp : {
+    color : "#ebeff1",
+    fontSize : "0.8rem",
+    fontStyle : "italic",
   },
   snackbarContent : { [theme.breakpoints.up("sm")] : { minWidth : "344px !important", }, },
   snackbarContentBorder : {
@@ -120,9 +126,19 @@ const getDefaultMessage = (message) => {
   return msg
 }
 
+const formatTimestamp = (utcTimestamp ) => {
+  const currentUtcTimestamp = moment.utc().valueOf()
+
+  const timediff = currentUtcTimestamp - utcTimestamp
+  if (timediff >= 24 * 60 *60 *1000) {
+    return moment(utcTimestamp).local().format('YYYY-MM-DD HH:mm')
+  }
+  return moment(utcTimestamp).fromNow()
+}
+
 function MesherySnackbarWrapper(props) {
   const {
-    classes, className, message, onClose, variant, details, cause, remedy, errorCode, componentType, componentName, expand
+    classes, className, message, onClose, variant, details, cause, remedy, errorCode, componentType, componentName, expand,timestamp
   } = props;
   const Icon = variantIcon[variant];
   const ERROR_DOC_LINK = "https://docs.meshery.io/reference/error-codes"
@@ -180,9 +196,13 @@ function MesherySnackbarWrapper(props) {
             <Typography variant="subtitle2">
               <div style={{ display : "flex", alignItems : "center" }}>
                 <Icon className={classNames(classes.icon, classes.iconVariant)} />
-                <div>{message}</div>
+                <div>
+                  <p>{message}</p>
+                  <p className={classes.timestamp}> {formatTimestamp(timestamp)} </p>
+                </div>
               </div>
             </Typography>
+
             <Grid container item xs={4} className={classes.icons} justify="flex-end">
               <IconButton
                 aria-label="Show more"
@@ -221,20 +241,26 @@ function MesherySnackbarWrapper(props) {
             <Typography variant="subtitle2" gutterBottom>DETAILS</Typography>
             {details}
           </Paper>
-          {variant === eventTypes[2].type &&
+          {variant === eventTypes[2].type  &&
             <>
+
+              { cause &&
               <Paper className={classes.collapse} square variant="outlined" elevation={0}>
                 <Typography variant="subtitle2" gutterBottom>PROBABLE CAUSE</Typography>
                 {cause}
               </Paper>
+              }
+              { remedy &&
               <Paper className={classes.collapse} square variant="outlined" elevation={0}>
                 <Typography variant="subtitle2" gutterBottom>SUGGESTED REMEDIATION</Typography>
                 {remedy}
               </Paper>
+              }
+              {componentName &&
               <Paper className={classes.collapse} square variant="outlined" elevation={0}>
                 <Typography variant="subtitle2" gutterBottom>ERROR CODE</Typography>
                 <a href={`${ERROR_DOC_LINK}#meshery-${componentType}-for-meshery-${componentName.toLowerCase()}`} target="_blank" rel="referrer noreferrer"> {errorCode} </a>
-              </Paper>
+              </Paper>}
             </>
           }
         </Collapse>
