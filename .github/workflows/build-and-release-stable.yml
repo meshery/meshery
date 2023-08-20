@@ -189,24 +189,41 @@ jobs:
     uses: meshery/meshery/.github/workflows/cncf-playground-deploy-meshery.yaml@master
     secrets: inherit
 
-  notify-via-email:
-    runs-on: ubuntu-latest
+  email-on-failure:
     needs: [update-rest-api-docs, update-graphql-docs, build, ctlrelease, call-dde-release-workflow, call-helm-chart-releaser, email-meshery-release-notes-workflow, call-cncf-playground-rollout]
-    if: ${{ always() && contains(needs.*.result, 'failure') }}
+    runs-on: ubuntu-latest
+    if: ${{ failure() }}
     steps:
-      - name: Send email notification on failure
+      - name: Prepare Failed Job Details
+        id: prepare_failed_jobs
+        run: |
+          failed_jobs=""
+          failed_details=""
+
+          # Loop through each job in the needs array
+          for job_name in update-rest-api-docs update-graphql-docs build ctlrelease call-dde-release-workflow call-helm-chart-releaser email-meshery-release-notes-workflow call-cncf-playground-rollout; do
+            if [[ "${{ needs.$job_name.result }}" == 'failure' ]]; then
+              failed_jobs+="$job_name "
+              failed_details+="Job $job_name: ${{ needs.$job_name.outputs }}\n"
+            fi
+          done
+
+          echo "::set-output name=failed_jobs::${failed_jobs}"
+          echo "::set-output name=failed_details::${failed_details}"
+
+      - name: Send Email Notification
+        if: steps.prepare_failed_jobs.outputs.failed_jobs != ''
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 465
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
-          subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
+          subject: Details of the jobs failed during the release
           to: support@layer5.io
           from: Build and Release Stable workflow
           body: |
             The workflow failed. Here are the details:
 
-            Job: ${{ job.status }}
-            Job Name: ${{ job.job_name }}
-            Error: ${{ job.steps[*].outcome }}
+            Job(s) Failed: ${{ steps.prepare_failed_jobs.outputs.failed_jobs }}
+            Details: ${{ steps.prepare_failed_jobs.output.failed_details }}
