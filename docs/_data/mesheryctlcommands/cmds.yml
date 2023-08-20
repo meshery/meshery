@@ -763,6 +763,18 @@ app:
               mesheryctl app view [application-name|application-id] -o json
           example:
               mesheryctl app view bookInfo -o json
+    import:
+      name: import
+      description: Import the app manifest into Meshery
+      usage: |
+        mesheryctl app import [flags]
+      flags:
+        file:
+          name: --file, -f
+          description: Path/URL to app file
+        source-type:
+          name: --source-type, -s
+          description: source type of application
 
 filter:
   name: filter
