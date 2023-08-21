@@ -95,6 +95,7 @@ const (
 	ErrShareDesignCode                    = "2255"
 	ErrUnreachableRemoteProviderCode      = "2256"
 	ErrShareFilterCode                    = "2257"
+	ErrDatabaseOpenCode                   = "11011"
 )
 
 var (
@@ -159,6 +160,10 @@ func ErrPageNumber(err error) error {
 
 func ErrPerfID(err error) error {
 	return errors.New(ErrPerfIDCode, errors.Alert, []string{"Invalid peformance profile ID"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrDatabaseOpen(err error) error {
+	return errors.New(ErrDatabaseOpenCode, errors.Alert, []string{"Unable to open database"}, []string{err.Error()}, []string{"Database connection may have been lost"}, []string{"Make sure your database is reachable"})
 }
 
 func ErrMarshal(err error, obj string) error {
