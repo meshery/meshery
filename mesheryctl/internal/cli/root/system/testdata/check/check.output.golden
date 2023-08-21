@@ -6,13 +6,13 @@ Docker
 
 Kubernetes API 
 --------------
-✓ can initialize Kubernetes client
+!! cannot initialize Kubernetes client
 !! cannot query the Kubernetes API
 
 Kubernetes Version 
 --------------
 !! cannot check Kubernetes version
-✓ running the minimum kubectl version
+!! exec: "kubectl": executable file not found in $PATH
 
 --------------
 --------------
