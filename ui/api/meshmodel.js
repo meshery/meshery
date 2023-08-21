@@ -1,5 +1,5 @@
 import { promisifiedDataFetch } from "../lib/data-fetch";
-import { MESHMODEL_ENDPOINT, MESHMODEL_RELATIONSHIPS_ENDPOINT } from "../constants/endpoints";
+import { MESHMODEL_ENDPOINT, MESHMODEL_RELATIONSHIPS_ENDPOINT,SORT } from "../constants/endpoints";
 
 const COMPONENTS_ENDPOINT = "/api/meshmodels/components";
 const CATEGORIES_ENDPOINT = "/api/meshmodels/categories";
@@ -66,7 +66,7 @@ export async function getVersionedComponentFromModel(
   );
 }
 
-export async function getComponentsDetailWithPageSize(page=1, pageSize="all", sort="asc" , order="" ) {
+export async function getComponentsDetailWithPageSize(page=1, pageSize="all", sort=SORT.ASCENDING , order="" ) {
   return await promisifiedDataFetch(
     `api/meshmodels/components?page=${page}&pagesize=${pageSize}&order=${encodeURIComponent(order)}&sort=${sort}`
   );
@@ -84,7 +84,7 @@ export async function getModelsDetail(page) {
   );
 }
 
-export async function getRelationshipsDetailWithPageSize(page=1, pageSize="all", sort="asc",order="") {
+export async function getRelationshipsDetailWithPageSize(page=1, pageSize="all", sort=SORT.ASCENDING,order="") {
   return await promisifiedDataFetch(
     `api/meshmodels/relationships?page=${page}&pagesize=${pageSize}&sort=${sort}&order=${encodeURIComponent(order)}`
   );

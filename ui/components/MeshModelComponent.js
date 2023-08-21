@@ -8,7 +8,14 @@ import DuplicatesDataTable from './DuplicatesDataTable';
 import { getComponentsDetailWithPageSize, getMeshModels, getRelationshipsDetailWithPageSize, searchModels, searchComponents } from '../api/meshmodel'
 import debounce from '../utils/debounce';
 import { MODELS, COMPONENTS, RELATIONSHIPS } from '../constants/navigator';
+import { SORT } from '../constants/endpoints';
 
+//TODO : This Should derive the indices of rendered rows
+const ROWS_INDICES = {
+  KIND : 0 ,
+  VERSION : 1 ,
+  MODEL : 3 ,
+}
 const meshmodelStyles = (theme) => ({
   wrapperClss : {
     flexGrow : 1,
@@ -35,10 +42,7 @@ const meshmodelStyles = (theme) => ({
     backgroundColor : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
   }
 })
-const SORT = {
-  ASCENDING : "asc",
-  DESCENDING : "desc"
-}
+
 
 const MeshModelComponent = ({ view, classes }) => {
   const [resourcesDetail, setResourcesDetail] = useState();
@@ -48,7 +52,7 @@ const MeshModelComponent = ({ view, classes }) => {
   const [searchText, setSearchText] = useState(null);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [sortOrder, setSortOrder] = useState({
-    "sort" : SORT.DESCENDING ,
+    "sort" : SORT.ASCENDING,
     "order" : ""
   });
   const [checked, setChecked] = useState(false);
@@ -358,7 +362,7 @@ const MeshModelComponent = ({ view, classes }) => {
         //order = `${meshmodel_columns[tableState.activeColumn].name} desc`;
         order = {
           order : meshmodel_columns[tableState.activeColumn].name ,
-          sort : SORT.DESCENDING
+          sort : SORT.ASCENDING
         }
         console.log('name', meshmodel_columns[tableState.activeColumn].name)
         switch (action) {
@@ -388,7 +392,12 @@ const MeshModelComponent = ({ view, classes }) => {
       }
     },
     renderExpandableRow : (rowData) => {
-      console.log(rowData[6], rowData[5])
+      //TODO: Index The data by id and then extract directly from api resp rather than component props
+      const data = {
+        kind : rowData[ROWS_INDICES.KIND]?.props?.children?.props?.children,
+        model : rowData[ROWS_INDICES.MODEL]?.props?.children?.props?.children,
+        version : rowData[ROWS_INDICES.VERSION]?.props?.children?.props?.children,
+      }
       return (
         rowData[6].props.children.props.children > 0 ? (
           <TableCell
@@ -412,7 +421,7 @@ const MeshModelComponent = ({ view, classes }) => {
             >
               <DuplicatesDataTable
                 view={view}
-                rowData={rowData}
+                rowData={data}
                 classes={classes}
               >
               </DuplicatesDataTable>
