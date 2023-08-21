@@ -33,11 +33,12 @@ const meshmodelStyles = (theme) => ({
   },
   duplicatesModelStyle : {
     backgroundColor : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
-
   }
-
-
 })
+const SORT = {
+  ASCENDING : "asc",
+  DESCENDING : "desc"
+}
 
 const MeshModelComponent = ({ view, classes }) => {
   const [resourcesDetail, setResourcesDetail] = useState();
@@ -46,7 +47,10 @@ const MeshModelComponent = ({ view, classes }) => {
   const [page, setPage] = useState(0);
   const [searchText, setSearchText] = useState(null);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [sortOrder, setSortOrder] = useState("");
+  const [sortOrder, setSortOrder] = useState({
+    "sort" : SORT.DESCENDING ,
+    "order" : ""
+  });
   const [checked, setChecked] = useState(false);
 
   const getModels = async (page) => {
@@ -65,13 +69,13 @@ const MeshModelComponent = ({ view, classes }) => {
   };
 
   const getComponents = async (page, sortOrder) => {
-
-    if (typeof sortOrder === "undefined" || sortOrder === null) {
-      setSortOrder("");
-    }
+    console.log("sortOrder getComponents",sortOrder)
+    // if (typeof sortOrder === "undefined" || sortOrder === null) {
+    //   setSortOrder("");
+    // }
 
     try {
-      const { total_count, components } = await getComponentsDetailWithPageSize(page + 1, rowsPerPage, sortOrder); // page+1 due to server side indexing starting from 1
+      const { total_count, components } = await getComponentsDetailWithPageSize(page + 1, rowsPerPage, sortOrder.sort , sortOrder.order); // page+1 due to server side indexing starting from 1
       setCount(total_count);
       if (!isRequestCancelled) {
         setResourcesDetail(components);
@@ -84,12 +88,13 @@ const MeshModelComponent = ({ view, classes }) => {
 
   const getRelationships = async (page, sortOrder) => {
 
-    if (typeof sortOrder === "undefined" || sortOrder === null) {
-      setSortOrder("");
-    }
+    // if (typeof sortOrder === "undefined" || sortOrder === null) {
+    //   setSortOrder("");
+    // }
+
     console.log('sort order inside relationships', sortOrder)
     try {
-      const { total_count, relationships } = await getRelationshipsDetailWithPageSize(page + 1, rowsPerPage, sortOrder);
+      const { total_count, relationships } = await getRelationshipsDetailWithPageSize(page + 1, rowsPerPage, sortOrder.sort,sortOrder.order);
       setCount(total_count);
       if (!isRequestCancelled) {
         setResourcesDetail(relationships);
@@ -344,18 +349,26 @@ const MeshModelComponent = ({ view, classes }) => {
       const sortInfo = tableState.announceText
         ? tableState.announceText.split(" : ")
         : [];
-      let order = "";
+      let order = {
+        sort : "",
+        order : ""
+      };
+
       if (tableState.activeColumn || tableState.activeColumn === 0) {
-        order = `${meshmodel_columns[tableState.activeColumn].name} desc`;
+        //order = `${meshmodel_columns[tableState.activeColumn].name} desc`;
+        order = {
+          order : meshmodel_columns[tableState.activeColumn].name ,
+          sort : SORT.DESCENDING
+        }
         console.log('name', meshmodel_columns[tableState.activeColumn].name)
         switch (action) {
           case "sort":
 
             if (sortInfo.length == 2) {
               if (sortInfo[1] === "ascending") {
-                order = `${meshmodel_columns[tableState.activeColumn].name} asc`;
+                order.sort = SORT.ASCENDING
               } else {
-                order = `${meshmodel_columns[tableState.activeColumn].name} desc`;
+                order.sort = SORT.DESCENDING;
               }
             }
 
