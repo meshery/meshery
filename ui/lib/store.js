@@ -295,7 +295,7 @@ export const updateEvents = ({ events }) => dispatch => {
   return dispatch({ type: actionTypes.UPDATE_EVENTS, events :events });
 }
 
-export const pushEvent = (event) => dispatch => {
+export const pushEvent = ({event}) => dispatch => {
   return dispatch({
     type : actionTypes.PUSH_EVENT ,
     event
