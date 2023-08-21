@@ -1,40 +1,25 @@
-import WarningIcon from '@material-ui/icons/Warning';
-import ErrorIcon from '@material-ui/icons/Error';
-import InfoIcon from '@material-ui/icons/Info';
-
-// TODO: rename to serverEventType
-export const eventTypes = {
-  0: {
-    icon: InfoIcon,
-    type: 'success',
-  },
-  1: {
-    icon: WarningIcon,
-    type: 'warning',
-  },
-  2: {
-    icon: ErrorIcon,
-    type: 'error',
-  },
-};
-
-export const ALL_EVENT_TYPES = new Set(Object.values(eventTypes).map(e=>e.type))
 
 export const EVENT_TYPES = {
   SUCCESS: {
-    icon: InfoIcon,
     type: 'success',
   },
   DEFAULT: {
-    icon: InfoIcon,
-    type: 'success',
+    type: 'default',
+  },
+  INFO: {
+    type: 'info',
   },
   WARNING: {
-    icon: WarningIcon,
     type: 'warning',
   },
   ERROR: {
-    icon: ErrorIcon,
     type: 'error',
   },
 }
+
+
+export const SERVER_EVENT_TYPES = {
+  0: EVENT_TYPES.SUCCESS,
+  1: EVENT_TYPES.WARNING,
+  2: EVENT_TYPES.ERROR,
+};

@@ -323,10 +323,10 @@ const MeshModelComponent = ({ view, classes }) => {
       setRowsPerPage(rowsPerPage);
       setPage(0);
     }),
-    setRowProps : (row) => {
+    setRowProps : () => {
       return {
         style : {
-          backgroundColor : row[6] !== 0 ? '#eaeff1f7' : 'inherit',
+          backgroundColor : 'inherit',
         },
       };
     },

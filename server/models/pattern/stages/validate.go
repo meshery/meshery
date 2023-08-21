@@ -44,7 +44,7 @@ func hydrateComponentWithOriginalType(compType string, spec interface{}) error {
 			}
 		}
 	case "WasmPlugin":
-		err := formatValue("pluginConfig", specValue)	
+		err := formatValue("pluginConfig", specValue)
 		if err != nil {
 			return fmt.Errorf("cannot hydrate config for comp: %s", compType)
 		}
