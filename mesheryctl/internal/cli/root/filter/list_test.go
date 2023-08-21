@@ -1,9 +1,6 @@
-
 package filter
 
 import (
-	"io"
-	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -69,13 +66,9 @@ func TestListCmd(t *testing.T) {
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
-			// Grab console prints
-			rescueStdout := os.Stdout
-			r, w, _ := os.Pipe()
-			os.Stdout = w
-			_ = utils.SetupMeshkitLoggerTesting(t, false)
+			buff := utils.SetupMeshkitLoggerTesting(t, false)
 			FilterCmd.SetArgs(tt.Args)
-			FilterCmd.SetOutput(rescueStdout)
+			FilterCmd.SetOutput(buff)
 			err := FilterCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error
@@ -91,24 +84,17 @@ func TestListCmd(t *testing.T) {
 				}
 				t.Fatal(err)
 			}
-
-			w.Close()
-			out, _ := io.ReadAll(r)
-			os.Stdout = rescueStdout
-
 			// response being printed in console
-			actualResponse := string(out)
+			actualResponse := buff.String()
 
 			// write it in file
 			if *update {
 				golden.Write(actualResponse)
 			}
 			expectedResponse := golden.Load()
-
-			//utils.Equals(t, expectedResponse, actualResponse)
 			assert.Equal(t, expectedResponse, actualResponse)
 		})
-		t.Log("List Filter test Passed")	
+		t.Log("List Filter test Passed")
 	}
 	// stop mock server
 	utils.StopMockery(t)
