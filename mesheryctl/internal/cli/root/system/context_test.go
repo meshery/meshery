@@ -69,7 +69,7 @@ func TestViewContextCmd(t *testing.T) {
 			if expectedResponse != actualResponse {
 				t.Errorf("expected response [%v] and actual response [%v] don't match", expectedResponse, actualResponse)
 			} else {
-				t.Log("View Context test passed")
+				t.Log("ViewContextCmd test passed")
 			}
 		})
 	}
@@ -113,7 +113,7 @@ func TestListContextCmd(t *testing.T) {
 
 			assert.Equal(t, expectedResponse, actualResponse)
 		})
-		t.Log("List Context test passed")
+		t.Log("ListContextCmd test passed")
 	}
 }
 
@@ -186,6 +186,7 @@ func TestDeleteContextCmd(t *testing.T) {
 				t.Error(err, "Could not complete test. Unable to configure delete test file")
 			}
 		})
+		t.Log("DeleteContextCmd test Passed")
 	}
 }
 func TestAddContextCmd(t *testing.T) {
@@ -224,9 +225,7 @@ func TestAddContextCmd(t *testing.T) {
 			}
 			expectedResponse := golden.Load()
 
-			if expectedResponse != actualResponse {
-				t.Errorf("Context: expected response [%v] and actual response [%v] don't match", expectedResponse, actualResponse)
-			}
+			assert.Equal(t, expectedResponse, actualResponse)
 			path, err := os.Getwd()
 			if err != nil {
 				t.Error("unable to locate meshery directory")
@@ -243,15 +242,14 @@ func TestAddContextCmd(t *testing.T) {
 				golden.Write(actualResponse)
 			}
 			addExpected := golden.Load()
-			if actualResponse != addExpected {
-				t.Errorf("ExpectedAdd: expected response [%v] and actual response [%v] don't match", addExpected, actualResponse)
-			}
+			assert.Equal(t, addExpected, actualResponse)
 
 			//Repopulating Expected yaml
 			if err := utils.Populate(path+"/fixtures/.meshery/TestContext.yaml", filepath); err != nil {
 				t.Error(err, "Could not complete test. Unable to configure delete test file")
 			}
 		})
+		t.Log("CreateContextCmd test Passed")
 	}
 }
 
@@ -304,9 +302,8 @@ func TestSwitchContextCmd(t *testing.T) {
 			}
 			expectedResponse := golden.Load()
 
-			if expectedResponse != actualResponse {
-				t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
-			}
+			assert.Equal(t, expectedResponse, actualResponse)
+
 			path, err := os.Getwd()
 			if err != nil {
 				t.Error("unable to locate meshery directory")
@@ -322,13 +319,13 @@ func TestSwitchContextCmd(t *testing.T) {
 				golden.Write(actualResponse)
 			}
 			switchExpected := golden.Load()
-			if actualResponse != switchExpected {
-				t.Errorf("expected response %v and actual response %v don't match", switchExpected, actualResponse)
-			}
+			assert.Equal(t, switchExpected, actualResponse)
+
 			if err := utils.Populate(path+"/fixtures/.meshery/TestContext.yaml", filepath); err != nil {
 				t.Error(err, "Could not complete test. Unable to configure delete test file")
 			}
 		})
+		t.Log("SwitchContextCmd test passed")
 	}
 }
 
