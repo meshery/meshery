@@ -630,92 +630,44 @@ func (l *RemoteProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.
 }
 
 func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8sContext, error) {
-	// data, err := json.Marshal(k8sContext)
-	// if err != nil {
-	// 	return k8sContext, ErrMarshal(err, "kubernetes context error")
-	// }
 
 	k8sServerID := *k8sContext.KubernetesServerID
-	
+
 	_metadata := map[string]string{
-		"id":  k8sContext.ID,
-		"server": k8sContext.Server,
-		"meshery_instance_id": k8sContext.MesheryInstanceID.String(),
-		"deployment_type": k8sContext.DeploymentType,
-		"version": k8sContext.Version,
-		"name": k8sContext.Name,
+		"id":                   k8sContext.ID,
+		"server":               k8sContext.Server,
+		"meshery_instance_id":  k8sContext.MesheryInstanceID.String(),
+		"deployment_type":      k8sContext.DeploymentType,
+		"version":              k8sContext.Version,
+		"name":                 k8sContext.Name,
 		"kubernetes_server_id": k8sServerID.String(),
 	}
 	metadata := make(map[string]interface{}, len(_metadata))
-		for k, v := range _metadata {
-			metadata[k] = v
-		}
+	for k, v := range _metadata {
+		metadata[k] = v
+	}
 
 	cred := map[string]interface{}{
-    		"auth": k8sContext.Auth,
-    		"cluster": k8sContext.Cluster,
+		"auth":    k8sContext.Auth,
+		"cluster": k8sContext.Cluster,
 	}
 
 	conn := &ConnectionPayload{
-		Kind: 	 "kubernetes",
-		Type: 	 "platform",
-		SubType: "orchestrator",
-		Status:  DISCOVERED,
-		MetaData: metadata,
-    CredentialSecret: cred,
+		Kind:             "kubernetes",
+		Type:             "platform",
+		SubType:          "orchestrator",
+		Status:           DISCOVERED,
+		MetaData:         metadata,
+		CredentialSecret: cred,
 	}
-
-	// logrus.Debugf("sending request for %v at %v\n\n", k8sContext.Name, time.Now())
-
 	logrus.Infof("attempting to save %s context to remote provider with ID %s", k8sContext.Name, k8sContext.ID)
 	err := l.SaveConnection(nil, conn, token, true)
-   if err != nil {
-			logrus.Errorf("unable to save K8s connection: %v", err)
-			return k8sContext, fmt.Errorf("unable to save K8s connection: %v", err)
-		}
+	if err != nil {
+		logrus.Errorf("unable to save K8s connection: %v", err)
+		return k8sContext, fmt.Errorf("unable to save K8s connection: %v", err)
+	}
 
-	
 	return k8sContext, nil
-
-
-	// bf := bytes.NewBuffer(data)
-
-	// remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/user/contexts")
-	// cReq, err := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
-	// if err != nil {
-	// 	return k8sContext, err
-	// }
-
-	// resp, err := l.DoRequest(cReq, token)
-	// if err != nil {
-	// 	if resp == nil {
-	// 		return k8sContext, ErrUnreachableRemoteProvider(err)
-	// 	}
-	// 	logrus.Errorf("unable to send kubernetes context: %v", err)
-	// 	return k8sContext, ErrPost(err, "kubernetes context", cReq.Response.StatusCode)
-	// }
-
-	// defer func() {
-	// 	_ = resp.Body.Close()
-	// }()
-
-	// if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
-	// 	var kcr K8sContextPersistResponse
-	// 	if err := json.NewDecoder(resp.Body).Decode(&kcr); err != nil {
-	// 		return k8sContext, ErrUnmarshal(err, "kubernetes context")
-	// 	}
-
-	// 	// Sensitive data. Commenting until better debug controls are put into place. - @leecalcote
-	// 	// logrus.Infof("kubernetes context successfully sent to remote provider: %+v", kc)
-
-	// 	// If the context already existed, return that as error
-	// 	if !kcr.Inserted {
-	// 		return kcr.K8sContext, ErrContextAlreadyPersisted
-	// 	}
-
-	// 	return kcr.K8sContext, nil
-	// }
-	// return k8sContext, ErrPost(fmt.Errorf("failed to save kubernetes context"), fmt.Sprint(resp.Body), resp.StatusCode)
 }
 func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order string) ([]byte, error) {
 	MesheryInstanceID, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
@@ -724,13 +676,12 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 	}
 	mi := MesheryInstanceID.String()
 	logrus.Infof("attempting to fetch kubernetes contexts from cloud for Meshery instance: %s", mi)
-		if !l.Capabilities.IsSupported(PersistConnection) {
+	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
 	}
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/kubernetes", l.RemoteProviderURL, ep))
-	// remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/user/contexts/" + mi)
 	q := remoteProviderURL.Query()
 	if page != "" {
 		q.Set("page", page)
@@ -802,9 +753,7 @@ func (l *RemoteProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) 
 
 func (l *RemoteProvider) DeleteK8sContext(token, id string) (K8sContext, error) {
 	logrus.Infof("attempting to delete kubernetes context from cloud for id: %s", id)
-	// mesheryInstanceID, _ := viper.Get("INSTANCE_ID").(*uuid.UUID)
-	// ep := "/user/contexts/" + mesheryInstanceID.String()
-if !l.Capabilities.IsSupported(PersistConnection) {
+	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return K8sContext{}, ErrInvalidCapability("PersistConnection", l.ProviderName)
 	}
@@ -831,8 +780,6 @@ if !l.Capabilities.IsSupported(PersistConnection) {
 }
 
 func (l *RemoteProvider) GetK8sContext(token, connectionID string) (K8sContext, error) {
-	// mesheryInstanceID, _ := viper.Get("INSTANCE_ID").(*uuid.UUID)
-	// ep := "/user/contexts/" + mesheryInstanceID.String()
 	logrus.Infof("attempting to fetch kubernetes contexts from cloud for connection id: %s", connectionID)
 
 	if !l.Capabilities.IsSupported(PersistConnection) {
@@ -874,79 +821,6 @@ func (l *RemoteProvider) GetK8sContext(token, connectionID string) (K8sContext, 
 	logrus.Errorf("error while fetching kubernetes context: %s", bdr)
 	return K8sContext{}, ErrFetch(fmt.Errorf("failed to get kubernetes context"), fmt.Sprint(bdr), resp.StatusCode)
 }
-
-// func (l *RemoteProvider) SetCurrentContext(token, id string) (K8sContext, error) {
-// 	if id == "" {
-// 		return K8sContext{}, ErrContextID
-// 	}
-
-// 	mesheryInstanceID, _ := viper.Get("INSTANCE_ID").(*uuid.UUID)
-// 	ep := "/user/contexts/" + mesheryInstanceID.String()
-// 	logrus.Infof("attempting to set kubernetes contexts from cloud to id: %s", id)
-
-// 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/current/%s", l.RemoteProviderURL, ep, id))
-// 	logrus.Debugf("constructed kubernetes contexts url: %s", remoteProviderURL.String())
-// 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), nil)
-
-// 	resp, err := l.DoRequest(cReq, token)
-// 	if err != nil {
-// 		return K8sContext{}, ErrFetch(err, "Kubernetes Context", resp.StatusCode)
-// 	}
-// 	defer func() {
-// 		_ = resp.Body.Close()
-// 	}()
-
-// 	if resp.StatusCode == http.StatusOK {
-// 		var kc K8sContext
-
-// 		logrus.Infof("kubernetes context successfully retrieved from remote provider")
-// 		return kc, nil
-// 	}
-
-// 	bdr, err := io.ReadAll(resp.Body)
-// 	if err != nil {
-// 		return K8sContext{}, ErrDataRead(err, "Kubernetes context")
-// 	}
-
-// 	logrus.Errorf("error while setting kubernetes context: %s", bdr)
-// 	return K8sContext{}, ErrPost(fmt.Errorf("failed to set current context"), fmt.Sprint(bdr), resp.StatusCode)
-// }
-
-// func (l *RemoteProvider) GetCurrentContext(token string) (K8sContext, error) {
-// 	mesheryInstanceID, _ := viper.Get("INSTANCE_ID").(*uuid.UUID)
-// 	ep := "/user/contexts/" + mesheryInstanceID.String()
-// 	logrus.Infof("attempting to fetch current kubernetes contexts from cloud")
-
-// 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, "current"))
-// 	logrus.Debugf("constructed kubernetes contexts url: %s", remoteProviderURL.String())
-// 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
-
-// 	resp, err := l.DoRequest(cReq, token)
-// 	if err != nil {
-// 		return K8sContext{}, ErrFetch(err, "Kubernetes Context", resp.StatusCode)
-// 	}
-// 	defer func() {
-// 		_ = resp.Body.Close()
-// 	}()
-
-// 	if resp.StatusCode == http.StatusOK {
-// 		var kc K8sContext
-// 		if err := json.NewDecoder(resp.Body).Decode(&kc); err != nil {
-// 			return kc, ErrUnmarshal(err, "Kubernetes context")
-// 		}
-
-// 		logrus.Infof("kubernetes context successfully retrieved from remote provider")
-// 		return kc, nil
-// 	}
-
-// 	bdr, err := io.ReadAll(resp.Body)
-// 	if err != nil {
-// 		return K8sContext{}, ErrDataRead(err, "Kubernetes context")
-// 	}
-
-// 	logrus.Errorf("error while fetching kubernetes current context: %s", bdr)
-// 	return K8sContext{}, ErrFetch(fmt.Errorf("failed to retrieve kubernetes current contexts"), fmt.Sprint(bdr), resp.StatusCode)
-// }
 
 // FetchResults - fetches results for profile id from provider backend
 func (l *RemoteProvider) FetchResults(tokenVal string, page, pageSize, search, order, profileID string) ([]byte, error) {
