@@ -120,6 +120,7 @@ const (
 	ErrCleanupCertificateCode           = "2262"
 	ErrTypeAssertionCode                = "2263"
 	ErrDownlaodWASMFileCode             = "2258"
+	ErrDatabaseOpenCode                 = "11011"
 )
 
 var (
@@ -213,6 +214,10 @@ func ErrCompConfigPairs(err error) error {
 
 func ErrRequestBody(err error) error {
 	return errors.New(ErrRequestBodyCode, errors.Alert, []string{"unable to read the request body"}, []string{err.Error()}, []string{"Request body is empty or faulty"}, []string{"Check if the request is sent with proper values"})
+}
+
+func ErrDatabaseOpen(err error) error {
+	return errors.New(ErrDatabaseOpenCode, errors.Alert, []string{"Unable to open database"}, []string{err.Error()}, []string{"Database connection may have been lost"}, []string{"Make sure your database is reachable"})
 }
 
 func ErrMarshal(err error, obj string) error {
