@@ -364,7 +364,7 @@ func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
 }
 
 // FlushMeshSyncData will flush the meshsync data for the passed kubernetes contextID
-func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider, eb *events.EventStreamer) {
+func FlushMeshSyncData(ctx context.Context, connID string, provider Provider, eb *events.EventStreamer) {
 	var req meshes.EventsResponse
 	id, _ := uuid.NewV4()
 	// Gets all the available kubernetes contexts
@@ -383,12 +383,13 @@ func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider, eb 
 		eb.Publish(&req)
 		return
 	}
-	var sid string
+	var sid, ctxID string
 	var refCount int
 	// Gets the serverID for the passed contextID
 	for _, k8ctx := range k8sctxs {
-		if k8ctx.ID == ctxID && k8ctx.KubernetesServerID != nil {
+		if k8ctx.ConnectionID == connID && k8ctx.KubernetesServerID != nil {
 			sid = k8ctx.KubernetesServerID.String()
+			ctxID = k8ctx.ID
 			break
 		}
 	}

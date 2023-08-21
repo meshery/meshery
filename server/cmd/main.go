@@ -174,6 +174,8 @@ func main() {
 		&models.PerformanceTestConfig{},
 		&models.SmiResultWithID{},
 		models.K8sContext{},
+		&models.Connection{},
+		&models.Credential{},
 	)
 	if err != nil {
 		log.Error(ErrDatabaseAutoMigration(err))
@@ -191,7 +193,8 @@ func main() {
 		MesheryFilterPersister:          &models.MesheryFilterPersister{DB: dbHandler},
 		MesheryApplicationPersister:     &models.MesheryApplicationPersister{DB: dbHandler},
 		MesheryPatternResourcePersister: &models.PatternResourcePersister{DB: dbHandler},
-		MesheryK8sContextPersister:      &models.MesheryK8sContextPersister{DB: dbHandler},
+		ConnectionPersister:            &models.ConnectionPersister{DB: dbHandler},
+		CredentialPersister:             &models.CredentialPersister{DB: dbHandler},
 		GenericPersister:                dbHandler,
 	}
 	lProv.Initialize()

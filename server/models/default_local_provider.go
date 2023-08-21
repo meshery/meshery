@@ -44,7 +44,8 @@ type DefaultLocalProvider struct {
 	MesheryPatternResourcePersister *PatternResourcePersister
 	MesheryApplicationPersister     *MesheryApplicationPersister
 	MesheryFilterPersister          *MesheryFilterPersister
-	MesheryK8sContextPersister      *MesheryK8sContextPersister
+	ConnectionPersister             *ConnectionPersister
+	CredentialPersister             *CredentialPersister
 	GenericPersister                *database.Handler
 	KubeClient                      *mesherykube.Client
 }
@@ -156,7 +157,47 @@ func (l *DefaultLocalProvider) HandleUnAuthenticated(w http.ResponseWriter, req 
 }
 
 func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (K8sContext, error) {
-	return l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
+	k8sServerID := *k8sContext.KubernetesServerID
+	
+	_metadata := map[string]string{
+		"id":  k8sContext.ID,
+		"server": k8sContext.Server,
+		"meshery_instance_id": k8sContext.MesheryInstanceID.String(),
+		"deployment_type": k8sContext.DeploymentType,
+		"version": k8sContext.Version,
+		"name": k8sContext.Name,
+		"kubernetes_server_id": k8sServerID.String(),
+	}
+	metadata := make(map[string]interface{}, len(_metadata))
+		for k, v := range _metadata {
+			metadata[k] = v
+		}
+
+	cred := map[string]interface{}{
+    		"auth": k8sContext.Auth,
+    		"cluster": k8sContext.Cluster,
+	}
+
+	conn := &ConnectionPayload{
+		Kind: 	 "kubernetes",
+		Type: 	 "platform",
+		SubType: "orchestrator",
+		Status:  DISCOVERED,
+		MetaData: metadata,
+    CredentialSecret: cred,
+	}
+
+	// logrus.Debugf("sending request for %v at %v\n\n", k8sContext.Name, time.Now())
+
+	logrus.Infof("attempting to save %s context to remote provider with ID %s", k8sContext.Name, k8sContext.ID)
+	err := l.SaveConnection(nil, conn, "", true)
+   if err != nil {
+			logrus.Errorf("unable to save K8s connection: %v", err)
+			return k8sContext, fmt.Errorf("unable to save K8s connection: %v", err)
+		}
+
+	
+	return k8sContext, nil
 }
 
 func (l *DefaultLocalProvider) GetK8sContexts(_, page, pageSize, search, order string) ([]byte, error) {
@@ -177,15 +218,17 @@ func (l *DefaultLocalProvider) GetK8sContexts(_, page, pageSize, search, order s
 		return nil, ErrPageSize(err)
 	}
 
-	return l.MesheryK8sContextPersister.GetMesheryK8sContexts(search, order, pg, pgs)
+	l.GetConnections(nil, int(pg), int(pgs), search, order)
+
+	return 
 }
 
-func (l *DefaultLocalProvider) DeleteK8sContext(_, id string) (K8sContext, error) {
-	return l.MesheryK8sContextPersister.DeleteMesheryK8sContext(id)
+func (l *DefaultLocalProvider) DeleteK8sContext(_, id *uuid.UUID) (interface{}, error) {
+	return l.ConnectionPersister.DeleteConnection(id)
 }
 
-func (l *DefaultLocalProvider) GetK8sContext(_, id string) (K8sContext, error) {
-	return l.MesheryK8sContextPersister.GetMesheryK8sContext(id)
+func (l *DefaultLocalProvider) GetK8sContext(_, id string) (interface{}, error) {
+	return l.ConnectionPersister.GetConnectionById(id)
 }
 
 func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) {
@@ -937,12 +980,128 @@ func (l *DefaultLocalProvider) ExtensionProxy(_ *http.Request) (*ExtensionProxyR
 	return nil, ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) SaveConnection(_ *http.Request, _ *ConnectionPayload, _ string, _ bool) error {
+
+type RegisterConnectionUtilityHanderFunc map[ConnectionRegistrationProcess]func(l *DefaultLocalProvider, connection *Connection, payload *ConnectionPayload) error
+
+var registerConnectionUtilityHandlers = map[ConnectionKind]RegisterConnectionUtilityHanderFunc{
+	KUBERNETES: {
+		PRE_REGISTRATION:  KubernetesConnectionUtilityHandlerPreRegistration,
+		POST_REGISTRATION: KubernetesConnectionUtilityHandlerPostRegistration,
+	},
+}
+
+
+func KubernetesConnectionUtilityHandlerPostRegistration(l *DefaultLocalProvider, connection *Connection, payload *ConnectionPayload) error {
+
+	var credential *Credential
+	
+	_cred, err := l.CredentialPersister.GetCredentialByID(connection.CredentialID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			credential, err = l.CredentialPersister.SaveUserCredentials(&Credential{
+				// UserID: &user.ID,
+				Name:   connection.Name,
+				Type:   connection.Kind,
+				Secret: payload.CredentialSecret,
+			})
+			if err != nil {
+				return err
+			}
+		}
+	} else {
+   credential, err = l.CredentialPersister.UpdateUserCredential(&Credential{
+		ID:     _cred.ID,
+		// UserID: &user.ID,
+		Name:   connection.Name,
+		Type:   connection.Kind,
+		Secret: payload.CredentialSecret,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	}
+
+	connection.CredentialID = credential.ID
+	_, err = l.ConnectionPersister.UpdateConnectionById(connection)
+	if err != nil {
+		return err
+	}
+
+	
+
+	return nil
+}
+
+func KubernetesConnectionUtilityHandlerPreRegistration(l *DefaultLocalProvider, connection *Connection, _ *ConnectionPayload) error {
+	existingMesheryConn, err := l.ConnectionPersister.CheckK8sExistence(connection)
+	if err != nil {
+		return err
+	}
+
+	if existingMesheryConn != nil {
+		logrus.Debugf("found existing connection for k8s connection id: %s", existingMesheryConn.ID)
+		connection.ID = existingMesheryConn.ID
+		connection.UserID = existingMesheryConn.UserID
+		connection.Kind = existingMesheryConn.Kind
+		connection.Name = existingMesheryConn.Name
+		connection.Type = existingMesheryConn.Type
+		connection.SubType = existingMesheryConn.SubType
+		connection.Status = existingMesheryConn.Status
+		connection.CredentialID = existingMesheryConn.CredentialID
+	}
+
+	return nil
+}
+
+func (l *DefaultLocalProvider) SaveConnection(_ *http.Request, conn *ConnectionPayload, _ string, _ bool) error {
+
+	// Checking if the variable belongs to the valid kinds
+	if !ValidConnectionsKinds[ConnectionKind(conn.Kind)] {
+		return fmt.Errorf("connection kind: %v, not implemented yet", conn.Kind)
+	}
+
+	connection := Connection{
+		Name:     conn.Kind,
+		Kind:     conn.Kind,
+		Type:     conn.Type,
+		SubType:  conn.SubType,
+		Metadata: conn.MetaData,
+		Status:   conn.Status,
+	}
+
+	// _id := utils.GenerateConnectionUUID(connection)
+	// connection.ID, _ = uuid.FromString(_id)
+
+	utilityHandler, utilityFound := registerConnectionUtilityHandlers[ConnectionKind(conn.Kind)]
+	if utilityFound {
+		preRegistrationsUtilityHandlerFunc, ok := utilityHandler[PRE_REGISTRATION]
+		if ok {
+			if err := preRegistrationsUtilityHandlerFunc(l, &connection, conn); err != nil {
+				return err
+			}
+		}
+	}
+
+	_, err := l.ConnectionPersister.UpsertConnection(&connection)
+	if err != nil {
+		return err
+	}
+
+	if utilityFound {
+		postRegistrationsUtilityHandlerFunc, ok := utilityHandler[POST_REGISTRATION]
+		if ok {
+			if err := postRegistrationsUtilityHandlerFunc(l, &connection, conn); err != nil {
+				return err
+			}
+		}
+	}
 	return ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) GetConnections(_ *http.Request, _ string, _, _ int, _, _ string) (*ConnectionPage, error) {
-	return nil, ErrLocalProviderSupport
+func (l *DefaultLocalProvider) GetConnections(_ *http.Request, _ string, page, pageSize int, search, order string) (*ConnectionPage, error) {
+	return l.ConnectionPersister.GetConnections(page, pageSize, search, order)
 }
 
 func (l *DefaultLocalProvider) GetConnectionsByKind(_ *http.Request, _ string, _, _ int, _, _, _ string) (*map[string]interface{}, error) {
@@ -1107,18 +1266,18 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 		}(seedContent, log, &seededUUIDs)
 	}
 }
-func (l *DefaultLocalProvider) Cleanup() error {
-	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&K8sContext{}); err != nil {
-		return err
-	}
-	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryPattern{}); err != nil {
-		return err
-	}
-	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryApplication{}); err != nil {
-		return err
-	}
-	return l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryFilter{})
-}
+// func (l *DefaultLocalProvider) Cleanup() error {
+// 	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&K8sContext{}); err != nil {
+// 		return err
+// 	}
+// 	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryPattern{}); err != nil {
+// 		return err
+// 	}
+// 	if err := l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryApplication{}); err != nil {
+// 		return err
+// 	}
+// 	return l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryFilter{})
+// }
 
 func (l *DefaultLocalProvider) SaveUserCredential(_ *http.Request, credential *Credential) error {
 	result := l.GetGenericPersister().Table("credentials").Create(&credential)
