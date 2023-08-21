@@ -73,7 +73,6 @@ const MeshModelComponent = ({ view, classes }) => {
   };
 
   const getComponents = async (page, sortOrder) => {
-    console.log("sortOrder getComponents",sortOrder)
     // if (typeof sortOrder === "undefined" || sortOrder === null) {
     //   setSortOrder("");
     // }
@@ -96,7 +95,6 @@ const MeshModelComponent = ({ view, classes }) => {
     //   setSortOrder("");
     // }
 
-    console.log('sort order inside relationships', sortOrder)
     try {
       const { total_count, relationships } = await getRelationshipsDetailWithPageSize(page + 1, rowsPerPage, sortOrder.sort,sortOrder.order);
       setCount(total_count);
