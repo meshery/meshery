@@ -33,6 +33,7 @@ import DocumentIcon from "../assets/icons/DocumentIcon";
 import SlackIcon from "../assets/icons/SlackIcon";
 import GithubIcon from "../assets/icons/GithubIcon";
 import ChatIcon from "../assets/icons/ChatIcon";
+import ServiceMeshIcon from "../assets/icons/ServiceMeshIcon"
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import {
   faAngleLeft, faCaretDown,
@@ -46,7 +47,7 @@ import dataFetch from "../lib/data-fetch";
 import { Collapse } from "@material-ui/core";
 import { cursorNotAllowed, disabledStyle, disabledStyleWithOutOpacity } from "../css/disableComponent.styles";
 import { CapabilitiesRegistry } from "../utils/disabledComponents";
-import { APPLICATION, APP_MESH, CILIUM_SM, DESIGN, CONFIGURATION,  CONSUL, DASHBOARD, FILTER, ISTIO, KUMA, LIFECYCLE, LINKERD, NETWORK_SM, NGINX, PERFORMANCE, TRAEFIK_SM, PROFILES, TOGGLER, CONNECTION } from "../constants/navigator"
+import { APPLICATION, DESIGN, CONFIGURATION,   DASHBOARD, FILTER,  LIFECYCLE,SERVICE_MESH,  PERFORMANCE,  PROFILES, TOGGLER, CONNECTION } from "../constants/navigator"
 import { iconSmall } from "../css/icons.styles";
 
 const styles = (theme) => ({
@@ -307,7 +308,7 @@ const styles = (theme) => ({
 const drawerIconsStyle = { height : "1.21rem", width : "1.21rem", fontSize : "1.45rem", ...iconSmall };
 const externalLinkIconStyle = { width : "1.11rem", fontSize : "1.11rem" };
 
-const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilityRegistryObj) => [
+const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilityRegistryObj,isServiceMeshActive) => [
   {
     id : DASHBOARD,
     icon : <DashboardIcon style={drawerIconsStyle} />,
@@ -322,10 +323,10 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
     id : LIFECYCLE,
     icon : <LifecycleIcon style={drawerIconsStyle} />,
     hovericon : <LifecycleHover style={drawerIconsStyle} />,
-    href : "/management",
     title : "Lifecycle",
-    show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE]),
     link : true,
+    href : "/management",
+    show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE]),
     submenu : true,
     children : [
       {
@@ -336,69 +337,13 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
         link : true,
       },
       {
-        id : APP_MESH,
-        href : "/management/app-mesh",
-        title : "AWS App Mesh",
+        id : SERVICE_MESH,
+        href : "/management",
+        title : "Service Mesh",
         link : true,
-        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, APP_MESH]),
-      },
-      {
-        id : CONSUL,
-        href : "/management/consul",
-        title : "Consul",
-        link : true,
-        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CONSUL]),
-      },
-      {
-        id : CILIUM_SM,
-        href : "/management/cilium",
-        title : "Cilium",
-        link : true,
-        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CILIUM_SM]),
-      },
-      {
-        id : ISTIO,
-        href : "/management/istio",
-        title : "Istio",
-        link : true,
-        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, ISTIO]),
-      },
-      {
-        id : KUMA,
-        href : "/management/kuma",
-        title : "Kuma",
-        link : true,
-        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, KUMA]),
-      },
-      {
-        id : LINKERD,
-        href : "/management/linkerd",
-        title : "Linkerd",
-        link : true,
-        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, LINKERD]),
-      },
-      {
-        id : NETWORK_SM,
-        href : "/management/nsm",
-        title : "Network Service Mesh",
-        link : true,
-        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, NETWORK_SM]),
-      },
-      {
-        id : NGINX,
-        // icon: <FontAwesomeIcon icon={faTachometerAlt} transform="shrink-2" fixedWidth />,
-        href : "/management/nginx",
-        title : "NGINX Service Mesh",
-        link : true,
-        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, NGINX]),
-      },
-      {
-        id : TRAEFIK_SM,
-        href : "/management/traefik-mesh",
-        title : "Traefik Mesh",
-        link : true,
-        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, TRAEFIK_SM]),
-      },
+        icon : <ServiceMeshIcon style={{ ...drawerIconsStyle }} />,
+        show : isServiceMeshActive,
+      }
     ],
   },
   {
@@ -536,6 +481,10 @@ class Navigator extends React.Component {
     };
   }
 
+  isServiceMeshActive() {
+    return this.state.meshAdapters.length > 0
+  }
+
   componentId = "navigator";
 
   componentDidMount() {
@@ -548,7 +497,7 @@ class Navigator extends React.Component {
       (result) => {
         if (result) {
           const capabilitiesRegistryObj = new CapabilitiesRegistry(result);
-          const navigatorComponents = getNavigatorComponents(capabilitiesRegistryObj);
+          const navigatorComponents = getNavigatorComponents(capabilitiesRegistryObj,this.isServiceMeshActive());
 
           this.setState({
             navigator : ExtensionPointSchemaValidator("navigator")(result?.extensions?.navigator),
@@ -672,9 +621,13 @@ class Navigator extends React.Component {
     navigatorComponents.forEach((cat, ind) => {
       if (cat.id === LIFECYCLE) {
         cat.children.forEach((catc, ind1) => {
-          const cr = self.fetchChildren(catc.id);
+          if (catc.id == SERVICE_MESH) {
+            return
+          }
           const icon = self.pickIcon(catc.id,catc.href);
           navigatorComponents[ind].children[ind1].icon = icon;
+
+          const cr = self.fetchChildren(catc.id);
           navigatorComponents[ind].children[ind1].children = cr;
         });
       }
@@ -883,15 +836,15 @@ class Navigator extends React.Component {
       );
     }
     if (idname == LIFECYCLE) {
-      if (children && children.length > 1) {
+      if (children && children.length > 0 ) {
         return (
           <List disablePadding>
             {children.map(({
               id : idc, title : titlec, icon : iconc, href : hrefc, show : showc, link : linkc, children : childrenc
             }) => {
-              // if (typeof showc !== "undefined" && !showc) {
-              //   return "";
-              // }
+              if (typeof showc !== "undefined" && !showc) {
+                return "";
+              }
               return (
                 <div key={idc} className={!showc ? classes.cursorNotAllowed : null}>
                   <ListItem
@@ -937,7 +890,6 @@ class Navigator extends React.Component {
    */
   linkContent(iconc, titlec, hrefc, linkc, drawerCollapsed) {
     const { classes } = this.props;
-
     let linkContent = (
       <div className={classNames(classes.link)}>
         <Tooltip
@@ -947,7 +899,7 @@ class Navigator extends React.Component {
           disableHoverListener={!drawerCollapsed}
           disableTouchListener={!drawerCollapsed}
         >
-          <ListItemIcon className={classes.listIcon}>{iconc}</ListItemIcon>
+          <ListItemIcon className={classes.listIcon}>{iconc} </ListItemIcon>
         </Tooltip>
         <ListItemText
           className={drawerCollapsed
