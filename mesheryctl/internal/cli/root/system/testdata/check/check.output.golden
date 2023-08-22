@@ -1,7 +1,7 @@
 
 Docker 
 --------------
-!! Docker is not running
+✓ Docker is running
 ✓ docker-compose is available
 
 Kubernetes API 
@@ -11,7 +11,7 @@ Kubernetes API
 
 Kubernetes Version 
 --------------
-✓ running the minimum kubectl version
+✓ running the minimum Kubernetes version
 ✓ running the minimum kubectl version
 
 --------------
