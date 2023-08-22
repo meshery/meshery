@@ -140,7 +140,7 @@ func (h *Handler) handleFilterPOST(
 		}
 
 		mesheryFilter := models.MesheryFilter{
-			FilterFile:     []byte(parsedBody.FilterData.FilterFile),
+			FilterFile:     parsedBody.FilterData.FilterFile,
 			Name:           parsedBody.FilterData.Name,
 			ID:             parsedBody.FilterData.ID,
 			UserID:         parsedBody.FilterData.UserID,

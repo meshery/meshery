@@ -222,8 +222,6 @@ func start() error {
 				return errors.New("unable to extract component version")
 			}
 
-			spliter := strings.Split(temp.Image, ":")
-			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), "latest")
 			services[v] = temp
 			AllowedServices[v] = services[v]
 		}

@@ -17,6 +17,8 @@ import (
 )
 
 var ArtifactHubComponentsHandler = meshmodel.ArtifactHub{} //The components generated in output directory will be handled by kubernetes
+var ModelsPath = "../meshmodel"
+var RelativeRelationshipsPath = "relationships"
 
 type EntityRegistrationHelper struct {
 	handlerConfig    *models.HandlerConfig
@@ -46,9 +48,42 @@ func (erh *EntityRegistrationHelper) SeedComponents() {
 
 	go erh.watchComponents(ctx)
 
+	models, err := os.ReadDir(ModelsPath)
+	if err != nil {
+		erh.errorChan <- errors.Wrapf(err, "error while reading directory for generating components")
+		return
+	}
+
+	relationships := make([]string, 0)
+
+	// change to queue approach to register comps, relationships and policies
 	// Read component and relationship definitions from files and send them to respective channels
-	erh.generateComponents("../meshmodel/components")
-	erh.generateRelationships("../meshmodel/relationships")
+	for _, model := range models {
+		entitiesPath := filepath.Join(ModelsPath, model.Name())
+		entities, err := os.ReadDir(entitiesPath)
+		if err != nil {
+			erh.errorChan <- errors.Wrapf(err, "error while reading directory for generating components")
+			continue
+		}
+
+		for _, entity := range entities {
+			entityPath := filepath.Join(entitiesPath, entity.Name())
+			if entity.IsDir() {
+				switch entity.Name() {
+				case "relationships":
+					relationships = append(relationships, entityPath)
+				case "policies":
+					break
+				default:
+					erh.generateComponents(entityPath) // register components first
+				}
+			}
+		}
+	}
+
+	for _, relationship := range relationships {
+		erh.generateRelationships(relationship)
+	}
 }
 
 // reads component definitions from files and sends them to the component channel

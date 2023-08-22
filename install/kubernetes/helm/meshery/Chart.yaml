@@ -9,7 +9,6 @@ keywords:
   - meshery-linkerd
   - meshery-consul
   - meshery-kuma
-  - meshery-osm
   - meshery-nsm
   - meshery-traefik-mesh
   - meshery-nginx-sm
@@ -53,9 +52,6 @@ dependencies:
   - name: meshery-kuma
     version: 0.5.0
     condition: meshery-kuma.enabled
-  - name: meshery-osm
-    version: 0.5.0
-    condition: meshery-osm.enabled
   - name: meshery-nsm
     version: 0.5.0
     condition: meshery-nsm.enabled

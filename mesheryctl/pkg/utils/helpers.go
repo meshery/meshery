@@ -197,7 +197,7 @@ var CfgFile string
 // TODO: add "meshery-perf" as a component
 
 // ListOfComponents returns the list of components available
-var ListOfComponents = []string{""}
+var ListOfComponents = []string{}
 
 // TemplateContext is the template context provided when creating a config file
 var TemplateContext = config.Context{
@@ -968,9 +968,6 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[stri
 			"enabled": false,
 		},
 		"meshery-kuma": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-osm": map[string]interface{}{
 			"enabled": false,
 		},
 		"meshery-nsm": map[string]interface{}{

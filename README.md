@@ -52,11 +52,6 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
  <br /><a href="https://youtu.be/Do7htKrRzDA">Click to see Meshery Playground video</a>
 </div>
 
-
-[![](https://badges.layer5.io/bring-a-buddy.html)](https://meshery.layer5.io/user/090e7114-509a-4046-81f1-9c5fb8daf724?tab=badges)
-
-<img src="https://badges.layer5.io/assets/badges/bring-a-buddy/bring-a-buddy.svg" />
-<img src="https://badges.layer5.io/bring-a-buddy.svg" />
 <br />
 <br />
 
@@ -234,7 +229,7 @@ Assess your cloud native infrastructure configuration against deployment and ope
   <img alt="Shows an illustrated light mode meshery logo in light color mode and a dark mode meshery logo dark color mode." src="https://raw.githubusercontent.com/layer5io/layer5/master/src/assets/images/service-mesh-performance/stacked/smp-light-text.svg" width="18%" align="left" style="margin-left:10px;" />
 </picture>
 
-In an effort to produce service mesh agnostic tooling, Meshery uses the <a href="https://smp-spec.io">Service Mesh Performance</a> specification as a common format to capture and measure your infrasturcture's performance against a universal cloud native performance index. As an implementation of Service Mesh Interface (SMI), Meshery participates in advancing cloud native infrastructure adoption through the standardization of APIs.
+In an effort to produce service mesh agnostic tooling, Meshery uses the <a href="https://smp-spec.io">Service Mesh Performance</a> specification as a common format to capture and measure your infrastructure's performance against a universal cloud native performance index. As an implementation of Service Mesh Interface (SMI), Meshery participates in advancing cloud native infrastructure adoption through the standardization of APIs.
 <br /><br />
 <p style="clear:both;">
 
@@ -242,7 +237,7 @@ In an effort to produce service mesh agnostic tooling, Meshery uses the <a href=
 
 <h4>Standardized Cloud Native Performance Management</h4>
 
-Meshery is the cloud native utility for uniformly managing the performance of microservices and the infrastructure that run them. As an implementation of the Service Mesh Performance ([SMP](https://layer5.io/performance)), Meshery enables you to measure the value provided by Docker, Kubernetes, or a service mesh in the context of the overhead incurred.
+Meshery is the cloud native utility for uniformly managing the performance of microservices and the infrastructure that run them. As an implementation of the Service Mesh Performance ([SMP](https://layer5.io/projects/service-mesh-performance)), Meshery enables you to measure the value provided by Docker, Kubernetes, or a service mesh in the context of the overhead incurred.
 
 <a href="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/smp/service-mesh-performance-example.gif"><img alt="Performance Management" src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/smp/service-mesh-performance-example.gif" style="margin-left:10px;margin-bottom:10px;" width="100%" align="center" /></a>
 <br /><br />
@@ -301,13 +296,13 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 ## Join the Meshery community!
 
 <a name="contributing"></a><a name="community"></a>
-Our projects are community-built and welcome collaboration. 👍 Be sure to see the <a href="https://layer5.io/community/handbook">Contributor Journey Map</a> and <a href="https://layer5.io/community/handbook">Community Handbook</a> for a tour of resources available to you and the <a href="https://layer5.io/community/handbook/repository-overview">Repository Overview</a> for a cursory description of repository by technology and programming language. Jump into community <a href="https://slack.meshery.io">Slack</a> or <a href="http://discuss.meshery.io">discussion forum</a> to participate.
+Our projects are community-built and welcome collaboration. 👍 Be sure to see the <a href="https://layer5.io/community/newcomers">Contributor Journey Map</a> and <a href="https://layer5.io/community/handbook">Community Handbook</a> for a tour of resources available to you and the <a href="https://layer5.io/community/handbook/repository-overview">Repository Overview</a> for a cursory description of repository by technology and programming language. Jump into community <a href="https://slack.meshery.io">Slack</a> or <a href="http://discuss.meshery.io">discussion forum</a> to participate.
 
 <p style="clear:both;">
 <a href ="https://layer5.io/community"><img alt="MeshMates" src=".github/assets/images/readme/layer5-community-sign.png" style="margin-right:36px; margin-bottom:7px;" width="140px" align="left" /></a>
 <h3>Find your MeshMate</h3>
 
-<p>MeshMates are experienced Layer5 community members, who will help you learn your way around, discover live projects, and expand your community network. Conneect with a Meshmate today!</p>
+<p>MeshMates are experienced Layer5 community members, who will help you learn your way around, discover live projects, and expand your community network. Connect with a Meshmate today!</p>
 
 Find out more on the <a href="https://layer5.io/community#meshmate">Layer5 community</a>. <br />
 
