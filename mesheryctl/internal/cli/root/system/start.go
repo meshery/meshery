@@ -210,7 +210,6 @@ func start() error {
 		services["meshery"].Ports[0] = userPortMapping
 
 		RequiredService := []string{"meshery", "watchtower"}
-		fmt.Println(services)
 		AllowedServices := map[string]utils.Service{}
 		for _, v := range currCtx.GetComponents() {
 			if services[v].Image == "" {
