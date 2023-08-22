@@ -1,20 +1,25 @@
 contexts:
   local:
     endpoint: http://localhost:9081
-    token: local-token
-    platform: docker 
-    adapters: 
-      -istio
-    channel: stable-v0.4.25
-  prod-us-east-1:
-    endpoint:  http://fiwaf-ssfdd.aws.useast1.amazon.com
-    token: production-token
+    token: default
     platform: kubernetes
-    channel: edge 
-    version: v0.4.27
-current-context: prod-us-east-1
+    components:
+      - meshery-istio
+    channel: stable
+    version: latest
+    provider: Meshery
+  local2:
+    endpoint: http://localhost:32242
+    token: default2
+    platform: docker
+    components:
+      - meshery-istio
+    channel: stable
+    version: latest
+    provider: Meshery
+current-context: local
 tokens:
-- name: local-token
-  location: ~/Downloads/auth.json
-- name: production-token
-  value: dasjdansdlnksanfklnslkndlanslkdnklssamdlkmasdlkmlkasmdlmal      
+  - location: auth.json
+    name: default
+  - location: auth.json
+    name: default2
