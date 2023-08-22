@@ -57,9 +57,10 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
-
-		searchString := strings.ReplaceAll(args[0], " ", "%20")
-
+		var searchString string
+		if len(args) > 0 {
+			searchString = strings.ReplaceAll(args[0], " ", "%20")
+		}
 		response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
 		if err != nil {
 			return err
@@ -140,6 +141,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 	},
 }
 
+// Pagination(making multiple requests) to retrieve filter Data in batches
 func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*models.FiltersAPIResponse, error) {
 	var response *models.FiltersAPIResponse
 

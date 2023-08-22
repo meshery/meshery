@@ -2,7 +2,7 @@
   "page": 0,
   "page_size": 25,
   "total_count": 343,
-  "filters": [
+  "filter": [
     {
       "id": "3817ec9a-1d83-4f6f-9154-0fd4408ba9f0",
       "name": "Untitled Design",

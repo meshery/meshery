@@ -2,12 +2,12 @@
   "page": 0,
   "page_size": 25,
   "total_count": 343,
-  "filters": [
+  "filter": [
     {
       "id": "3817ec9a-1d83-4f6f-9154-0fd4408ba9f0",
       "name": "Untitled Design",
       "user_id": "990f779c-708d-4396-84b8-e2ba37c1adcc",
-      "pattern_file": "name: MesheryGeneratedPatternFile\n",
+      "filter_file": "name: MesheryGeneratedFilterFile\n",
       "location": {
         "branch": "",
         "host": "",
@@ -21,7 +21,7 @@
       "id": "0af0b4b0-9656-45a2-b778-0da3446e422f",
       "name": "Untitled Design",
       "user_id": "2540d988-4ae2-44ff-8688-2301be1ca87a",
-      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.27908838824537985:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 209\n          posY: 506\n",
+      "filter_file": "name: MesheryGeneratedFilterFile\nservices:\n  Application-0.27908838824537985:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 209\n          posY: 506\n",
       "location": {
         "branch": "",
         "host": "",
@@ -35,7 +35,7 @@
       "id": "a7236994-e5b7-427e-9108-b4d7281e1971",
       "name": "Untitled Design",
       "user_id": "2540d988-4ae2-44ff-8688-2301be1ca87a",
-      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.7878536729717105:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 218\n          posY: 520\n",
+      "filter_file": "name: MesheryGeneratedFilterFile\nservices:\n  Application-0.7878536729717105:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 218\n          posY: 520\n",
       "location": {
         "branch": "",
         "host": "",
@@ -49,7 +49,7 @@
       "id": "7c89d94e-e05a-4251-ba3f-cc83d54fb435",
       "name": "Untitled Design",
       "user_id": "f76b761f-2adb-406a-b291-4ddbbd44f0c1",
-      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.37476815392181395:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 471.98200252453256\n          posY: 217.001940904217\n",
+      "filter_file": "name: MesheryGeneratedFilterFile\nservices:\n  Application-0.37476815392181395:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 471.98200252453256\n          posY: 217.001940904217\n",
       "location": {
         "branch": "",
         "host": "",
@@ -63,7 +63,7 @@
       "id": "e47c3c76-a988-4fbd-8f50-209e4baafc03",
       "name": "Untitled Design",
       "user_id": "2540d988-4ae2-44ff-8688-2301be1ca87a",
-      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  IstioMesh-0.8210882560998072:\n    type: IstioMesh\n    namespace: IstioMesh\n    traits:\n      meshmap:\n        position:\n          posX: 594\n          posY: 452\n",
+      "filter_file": "name: MesheryGeneratedFilterFile\nservices:\n  IstioMesh-0.8210882560998072:\n    type: IstioMesh\n    namespace: IstioMesh\n    traits:\n      meshmap:\n        position:\n          posX: 594\n          posY: 452\n",
       "location": {
         "branch": "",
         "host": "",
@@ -77,7 +77,7 @@
       "id": "ecd1b220-1510-4c99-aacb-a5a6e1963ec9",
       "name": "Untitled Design",
       "user_id": "2540d988-4ae2-44ff-8688-2301be1ca87a",
-      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.2274220971228964:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 462\n          posY: 514\n",
+      "filter_file": "name: MesheryGeneratedFilterFile\nservices:\n  Application-0.2274220971228964:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 462\n          posY: 514\n",
       "location": {
         "branch": "",
         "host": "",
@@ -91,7 +91,7 @@
       "id": "41f81b3d-64dc-42de-8b68-fa904ec46da9",
       "name": "Untitled Design",
       "user_id": "2540d988-4ae2-44ff-8688-2301be1ca87a",
-      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.8005725680310047:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 552\n          posY: 495\n  Application-0.09360455543391955:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 288\n          posY: 541\n",
+      "filter_file": "name: MesheryGeneratedFilterFile\nservices:\n  Application-0.8005725680310047:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 552\n          posY: 495\n  Application-0.09360455543391955:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 288\n          posY: 541\n",
       "location": {
         "branch": "",
         "host": "",
@@ -105,7 +105,7 @@
       "id": "e793dfc9-d1be-4747-98b7-623b50188432",
       "name": "Untitled Design",
       "user_id": "2540d988-4ae2-44ff-8688-2301be1ca87a",
-      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.176390234717001:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 433\n          posY: 478\n",
+      "filter_file": "name: MesheryGeneratedFilterFile\nservices:\n  Application-0.176390234717001:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 433\n          posY: 478\n",
       "location": {
         "branch": "",
         "host": "",
@@ -119,7 +119,7 @@
       "id": "ef074b5c-46f1-4900-8e6b-6e582cf0c8dc",
       "name": "Untitled Design",
       "user_id": "2540d988-4ae2-44ff-8688-2301be1ca87a",
-      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  IstioMesh-0.17864617140697137:\n    type: IstioMesh\n    namespace: IstioMesh\n    traits:\n      meshmap:\n        position:\n          posX: 499\n          posY: 534\n",
+      "filter_file": "name: MesheryGeneratedFilterFile\nservices:\n  IstioMesh-0.17864617140697137:\n    type: IstioMesh\n    namespace: IstioMesh\n    traits:\n      meshmap:\n        position:\n          posX: 499\n          posY: 534\n",
       "location": {
         "branch": "",
         "host": "",
@@ -133,7 +133,7 @@
       "id": "2606d710-2915-4693-8384-ba7cd57e9a24",
       "name": "Untitled Design",
       "user_id": "2540d988-4ae2-44ff-8688-2301be1ca87a",
-      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.621009018425815:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 470\n          posY: 531\n",
+      "filter_file": "name: MesheryGeneratedFilterFile\nservices:\n  Application-0.621009018425815:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 470\n          posY: 531\n",
       "location": {
         "branch": "",
         "host": "",
@@ -147,7 +147,7 @@
       "id": "301497db-893b-45c3-b295-39bbe34bd560",
       "name": "Untitled Design",
       "user_id": "990f779c-708d-4396-84b8-e2ba37c1adcc",
-      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.13778766896704742:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 123\n          posY: 157\n",
+      "filter_file": "name: MesheryGeneratedFilterFile\nservices:\n  Application-0.13778766896704742:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 123\n          posY: 157\n",
       "location": {
         "branch": "",
         "host": "",
@@ -161,7 +161,7 @@
       "id": "6b310df3-1fa9-4422-a011-5607c8889b22",
       "name": "Untitled Design",
       "user_id": "6e955e6d-7a8f-4687-b0bb-17504aa8d520",
-      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  IstioMesh-0.9844390140980204:\n    type: IstioMesh\n    namespace: IstioMesh\n    traits:\n      meshmap:\n        position:\n          posX: 490.16920794149416\n          posY: 325.181232091009\n",
+      "filter_file": "name: MesheryGeneratedFilterFile\nservices:\n  IstioMesh-0.9844390140980204:\n    type: IstioMesh\n    namespace: IstioMesh\n    traits:\n      meshmap:\n        position:\n          posX: 490.16920794149416\n          posY: 325.181232091009\n",
       "location": {
         "branch": "",
         "host": "",
@@ -175,7 +175,7 @@
       "id": "f59050f5-919f-41e2-a1fb-7b4b0d1279e7",
       "name": "Untitled Design",
       "user_id": "2540d988-4ae2-44ff-8688-2301be1ca87a",
-      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.6148006313202254:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 540\n          posY: 510\n  IstioMesh-0.9135764319813964:\n    type: IstioMesh\n    namespace: IstioMesh\n    traits:\n      meshmap:\n        position:\n          posX: 133\n          posY: 517\n",
+      "filter_file": "name: MesheryGeneratedFilterFile\nservices:\n  Application-0.6148006313202254:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 540\n          posY: 510\n  IstioMesh-0.9135764319813964:\n    type: IstioMesh\n    namespace: IstioMesh\n    traits:\n      meshmap:\n        position:\n          posX: 133\n          posY: 517\n",
       "location": {
         "branch": "",
         "host": "",
@@ -189,7 +189,7 @@
       "id": "95352c69-58b4-4fea-8e75-69685b4c2279",
       "name": "Untitled Design",
       "user_id": "2540d988-4ae2-44ff-8688-2301be1ca87a",
-      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.04977677294826788:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 531\n          posY: 527\n",
+      "filter_file": "name: MesheryGeneratedFilterFile\nservices:\n  Application-0.04977677294826788:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 531\n          posY: 527\n",
       "location": {
         "branch": "",
         "host": "",
@@ -203,7 +203,7 @@
       "id": "b903942f-c5b7-40d2-921f-a99deb916282",
       "name": "Untitled Design",
       "user_id": "2540d988-4ae2-44ff-8688-2301be1ca87a",
-      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.693462796214507:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 570\n          posY: 545\n",
+      "filter_file": "name: MesheryGeneratedFilterFile\nservices:\n  Application-0.693462796214507:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 570\n          posY: 545\n",
       "location": {
         "branch": "",
         "host": "",
@@ -217,7 +217,7 @@
       "id": "529d9407-7f4b-4057-9f62-6740133f6f0e",
       "name": "Untitled Design",
       "user_id": "f76b761f-2adb-406a-b291-4ddbbd44f0c1",
-      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.4437308053769995:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 76\n          posY: 223\n",
+      "filter_file": "name: MesheryGeneratedFilterFile\nservices:\n  Application-0.4437308053769995:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 76\n          posY: 223\n",
       "location": {
         "branch": "",
         "host": "",
@@ -231,7 +231,7 @@
       "id": "51060d54-2443-4588-b501-bcbffde55ab5",
       "name": "Untitled Design",
       "user_id": "f76b761f-2adb-406a-b291-4ddbbd44f0c1",
-      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.5815667852972106:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 510\n          posY: 209\n",
+      "filter_file": "name: MesheryGeneratedFilterFile\nservices:\n  Application-0.5815667852972106:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 510\n          posY: 209\n",
       "location": {
         "branch": "",
         "host": "",
@@ -245,7 +245,7 @@
       "id": "2ff9406a-90ff-4f7c-ab3c-b82a856ea1d5",
       "name": "Untitled Design",
       "user_id": "6e955e6d-7a8f-4687-b0bb-17504aa8d520",
-      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  IstioMesh-0.5948656824682783:\n    type: IstioMesh\n    namespace: IstioMesh\n    traits:\n      meshmap:\n        position:\n          posX: 406\n          posY: 325\n",
+      "filter_file": "name: MesheryGeneratedFilterFile\nservices:\n  IstioMesh-0.5948656824682783:\n    type: IstioMesh\n    namespace: IstioMesh\n    traits:\n      meshmap:\n        position:\n          posX: 406\n          posY: 325\n",
       "location": {
         "branch": "",
         "host": "",
@@ -259,7 +259,7 @@
       "id": "f4d397af-f712-4220-abc9-0412db7998cd",
       "name": "Untitled Design",
       "user_id": "990f779c-708d-4396-84b8-e2ba37c1adcc",
-      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.8788625506218308:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 137\n          posY: 227\n",
+      "filter_file": "name: MesheryGeneratedFilterFile\nservices:\n  Application-0.8788625506218308:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 137\n          posY: 227\n",
       "location": {
         "branch": "",
         "host": "",
@@ -273,7 +273,7 @@
       "id": "851cf9f1-69bc-4c84-b413-fe15db06e75a",
       "name": "Untitled Design",
       "user_id": "990f779c-708d-4396-84b8-e2ba37c1adcc",
-      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.6149710126506669:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 92.97143963152412\n          posY: 178.05714298427043\n  Application-0.6485811574743265:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 98.39976556279979\n          posY: 88.66330148065327\n  Service-0.47525839984738716:\n    type: Service\n    namespace: Service\n    traits:\n      meshmap:\n        position:\n          posX: 281\n          posY: 207\n",
+      "filter_file": "name: MesheryGeneratedFilterFile\nservices:\n  Application-0.6149710126506669:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 92.97143963152412\n          posY: 178.05714298427043\n  Application-0.6485811574743265:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 98.39976556279979\n          posY: 88.66330148065327\n  Service-0.47525839984738716:\n    type: Service\n    namespace: Service\n    traits:\n      meshmap:\n        position:\n          posX: 281\n          posY: 207\n",
       "location": {
         "branch": "",
         "host": "",
@@ -287,7 +287,7 @@
       "id": "89c4592d-9dab-40f5-98ea-66acd0ea4995",
       "name": "Untitled Design",
       "user_id": "990f779c-708d-4396-84b8-e2ba37c1adcc",
-      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Application-0.3184750806863046:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 120\n          posY: 251\n",
+      "filter_file": "name: MesheryGeneratedFilterFile\nservices:\n  Application-0.3184750806863046:\n    type: Application\n    namespace: Application\n    traits:\n      meshmap:\n        position:\n          posX: 120\n          posY: 251\n",
       "location": {
         "branch": "",
         "host": "",
@@ -301,7 +301,7 @@
       "id": "9266c2cb-ecb3-45dc-996c-ce7377d3d599",
       "name": "Untitled Design",
       "user_id": "990f779c-708d-4396-84b8-e2ba37c1adcc",
-      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  VirtualService-0.12001309099105661:\n    type: VirtualService\n    namespace: VirtualService\n    traits:\n      meshmap:\n        position:\n          posX: 235\n          posY: 246\n",
+      "filter_file": "name: MesheryGeneratedFilterFile\nservices:\n  VirtualService-0.12001309099105661:\n    type: VirtualService\n    namespace: VirtualService\n    traits:\n      meshmap:\n        position:\n          posX: 235\n          posY: 246\n",
       "location": {
         "branch": "",
         "host": "",
@@ -315,7 +315,7 @@
       "id": "f90a35f9-17e6-4e27-9428-b47709451348",
       "name": "Untitled Design",
       "user_id": "990f779c-708d-4396-84b8-e2ba37c1adcc",
-      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  Deployment-0.7973917932194861:\n    type: Deployment\n    namespace: Deployment\n    traits:\n      meshmap:\n        position:\n          posX: 187\n          posY: 269\n",
+      "filter_file": "name: MesheryGeneratedFilterFile\nservices:\n  Deployment-0.7973917932194861:\n    type: Deployment\n    namespace: Deployment\n    traits:\n      meshmap:\n        position:\n          posX: 187\n          posY: 269\n",
       "location": {
         "branch": "",
         "host": "",
@@ -329,7 +329,7 @@
       "id": "9f203ee3-3116-41d3-b82f-b57a8d87e2be",
       "name": "Untitled Design",
       "user_id": "990f779c-708d-4396-84b8-e2ba37c1adcc",
-      "pattern_file": "name: MesheryGeneratedPatternFile\nservices:\n  VirtualService-0.4157272729581598:\n    type: VirtualService\n    namespace: VirtualService\n    traits:\n      meshmap:\n        position:\n          posX: 313\n          posY: 173\n",
+      "filter_file": "name: MesheryGeneratedFilterFile\nservices:\n  VirtualService-0.4157272729581598:\n    type: VirtualService\n    namespace: VirtualService\n    traits:\n      meshmap:\n        position:\n          posX: 313\n          posY: 173\n",
       "location": {
         "branch": "",
         "host": "",
@@ -343,7 +343,7 @@
       "id": "cd4e3495-cf78-4d72-848c-647d6171ab91",
       "name": "Untitled Design",
       "user_id": "990f779c-708d-4396-84b8-e2ba37c1adcc",
-      "pattern_file": "name: MesheryGeneratedPatternFile\n",
+      "filter_file": "name: MesheryGeneratedFilterFile\n",
       "location": {
         "branch": "",
         "host": "",
