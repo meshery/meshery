@@ -132,6 +132,8 @@ function TabContainer(props) {
 
 TabContainer.propTypes = { children : PropTypes.node.isRequired, };
 
+
+//TODO: Tabs are hardcoded everywhere
 class MesherySettings extends React.Component {
   constructor(props) {
     super(props);
@@ -140,9 +142,10 @@ class MesherySettings extends React.Component {
     } = props;
 
     this._isMounted = false;
+
+    //TODO: Extract this logic and clean it
     let tabVal = 0, subTabVal = 0;
     const splittedPath = asPath.split('#');
-
     if (splittedPath.length >= 2 && splittedPath[1]) {
       const subTabPath = splittedPath[1].split('/');
 
@@ -159,6 +162,10 @@ class MesherySettings extends React.Component {
           break;
         case 'system':
           tabVal = 3;
+          break
+        case 'meshmodel-summary' :
+          tabVal = 4;
+          break
         // case 'performance':
         //   tabVal = 3;
         //   break;
@@ -571,4 +578,3 @@ MesherySettings.propTypes = { classes : PropTypes.object, };
 export default withStyles(styles, { withTheme : true })(
   connect(mapStateToProps, mapDispatchToProps)(withRouter(withNotify(MesherySettings)))
 );
-

@@ -52,6 +52,10 @@ const styles = (theme) => ({
     marginTop : theme.spacing(3),
     marginLeft : theme.spacing(1),
   },
+  link : {
+    cursor : "pointer",
+    textDecoration : "none"
+  },
   metricsButton : { width : "240px", },
   alreadyConfigured : { textAlign : "center", },
   margin : { margin : theme.spacing(1), },
