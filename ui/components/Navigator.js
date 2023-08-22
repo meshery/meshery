@@ -308,7 +308,7 @@ const styles = (theme) => ({
 const drawerIconsStyle = { height : "1.21rem", width : "1.21rem", fontSize : "1.45rem", ...iconSmall };
 const externalLinkIconStyle = { width : "1.11rem", fontSize : "1.11rem" };
 
-const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilityRegistryObj,isServiceMeshActive) => [
+const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilityRegistryObj) => [
   {
     id : DASHBOARD,
     icon : <DashboardIcon style={drawerIconsStyle} />,
@@ -341,8 +341,8 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
         href : "/management",
         title : "Service Mesh",
         link : true,
-        icon : <ServiceMeshIcon style={{ ...drawerIconsStyle }} />,
-        show : isServiceMeshActive,
+        icon : <ServiceMeshIcon  style={{ ...drawerIconsStyle }} />,
+        show : true,
       }
     ],
   },
@@ -497,7 +497,7 @@ class Navigator extends React.Component {
       (result) => {
         if (result) {
           const capabilitiesRegistryObj = new CapabilitiesRegistry(result);
-          const navigatorComponents = getNavigatorComponents(capabilitiesRegistryObj,this.isServiceMeshActive());
+          const navigatorComponents = getNavigatorComponents(capabilitiesRegistryObj);
 
           this.setState({
             navigator : ExtensionPointSchemaValidator("navigator")(result?.extensions?.navigator),
