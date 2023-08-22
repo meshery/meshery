@@ -43,6 +43,8 @@ function MesheryPatternCard({
   canPublishPattern = false
 }) {
 
+
+
   const genericClickHandler = (ev, fn) => {
     ev.stopPropagation();
     fn(ev);
@@ -86,8 +88,8 @@ function MesheryPatternCard({
         {/* FRONT PART */}
         <div>
           <div>
-            <div style={{ display : "flex", justifyContent : "space-between" }}>
-              <Typography style={{ overflow : "hidden", textOverflow : "ellipsis", width : '20rem' }} variant="h6" component="div">
+            <div style={{ height : "max",display : "flex", justifyContent : "space-between" }}>
+              <Typography style={{ whiteSpace : 'nowrap', overflow : "hidden", textOverflow : "ellipsis", width : '20rem' }} variant="h6" component="div">
                 {name}
               </Typography>
               <img  className={classes.img} src={`/static/img/${visibility}.svg`} />
