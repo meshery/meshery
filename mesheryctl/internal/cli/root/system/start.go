@@ -183,7 +183,7 @@ func start() error {
 	switch currCtx.GetPlatform() {
 	case "docker":
 		// download the docker-compose.yaml file corresponding to the current version
-		if err := utils.DownloadDockerComposeFile(currCtx, true); err != nil {
+		if err := utils.DownloadDockerComposeFile(currCtx, false); err != nil {
 			return ErrDownloadFile(err, utils.DockerComposeFile)
 		}
 
@@ -210,7 +210,7 @@ func start() error {
 		services["meshery"].Ports[0] = userPortMapping
 
 		RequiredService := []string{"meshery", "watchtower"}
-
+		fmt.Println(services)
 		AllowedServices := map[string]utils.Service{}
 		for _, v := range currCtx.GetComponents() {
 			if services[v].Image == "" {
@@ -222,6 +222,9 @@ func start() error {
 				return errors.New("unable to extract component version")
 			}
 
+			// spliter := strings.Split(temp.Image, ":")
+			// fmt.Println(services[v].Image)
+			// temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), "latest")
 			services[v] = temp
 			AllowedServices[v] = services[v]
 		}
@@ -244,9 +247,9 @@ func start() error {
 					temp.Environment = append(temp.Environment, fmt.Sprintf("%s=%s", "MESHERY_SERVER_CALLBACK_URL", viper.GetString("MESHERY_SERVER_CALLBACK_URL")))
 				}
 
-				if currCtx.GetProvider() != "" {
-					temp.Environment = append(temp.Environment, fmt.Sprintf("%s=%s", "PROVIDER", currCtx.GetProvider()))
-				}
+				// if currCtx.GetProvider() != "" {
+				// 	temp.Environment = append(temp.Environment, fmt.Sprintf("%s=%s", "PROVIDER", currCtx.GetProvider()))
+				// }
 
 				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), mesheryImageVersion)
 			}
