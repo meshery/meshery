@@ -1,19 +1,19 @@
 
 Docker 
 --------------
-✓ Docker is running
+!! Docker is not running
 ✓ docker-compose is available
 
 Kubernetes API 
 --------------
 ✓ can initialize Kubernetes client
-✓ can query the Kubernetes API
+!! cannot query the Kubernetes API
 
 Kubernetes Version 
 --------------
-✓ running the minimum Kubernetes version
+!! cannot check Kubernetes version
 ✓ running the minimum kubectl version
 
 --------------
 --------------
-✓✓ Meshery prerequisites met
+!! Meshery prerequisites not met
