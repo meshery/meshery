@@ -21,16 +21,6 @@ contexts:
         endpoint: http://localhost:9081
         token: default
         platform: kubernetes
-        components:
-            - meshery-app-mesh
-            - meshery-istio
-            - meshery-linkerd
-            - meshery-consul
-            - meshery-nsm
-            - meshery-kuma
-            - meshery-traefik-mesh
-            - meshery-nginx-sm
-            - meshery-cilium
         channel: stable
         version: latest
         provider: Meshery
