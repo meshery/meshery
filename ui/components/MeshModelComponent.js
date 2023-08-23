@@ -347,7 +347,6 @@ const MeshModelComponent = ({ view, classes }) => {
       setRowsPerPage(rowsPerPage);
       setPage(0);
     }),
-<<<<<<< Updated upstream
     onTableChange : (action, tableState) => {
       const sortInfo = tableState.announceText
         ? tableState.announceText.split(" : ")
@@ -355,13 +354,6 @@ const MeshModelComponent = ({ view, classes }) => {
       let order = {
         sort : "",
         order : ""
-=======
-    setRowProps : () => {
-      return {
-        style : {
-          backgroundColor : 'inherit',
-        },
->>>>>>> Stashed changes
       };
 
       if (tableState.activeColumn || tableState.activeColumn === 0) {
