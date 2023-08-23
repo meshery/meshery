@@ -120,6 +120,9 @@ const styles = (theme) => ({
     "& .MuiSvgIcon-root" : {
       color : `${theme.palette.secondary.error} !important`,
     }
+  },
+  expandedRows : {
+    background : `${theme.palette.secondary.default}10`
   }
 });
 
@@ -165,7 +168,7 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
       },
     },
     {
-      name : "metadata.server_location",
+      name : "metadata.server",
       label : "Server Location",
       options : {
         display : false,
@@ -308,22 +311,22 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
       },
     },
     {
-      name : "metadata.server_build_sha",
+      name : "metadata.name",
+      label : "Server Name",
+      options : {
+        display : false,
+      },
+    },
+    {
+      name : "metadata.version",
       label : "Server Version",
       options : {
         display : false,
       },
     },
     {
-      name : "metadata.server_version",
-      label : "Server Version",
-      options : {
-        display : false,
-      },
-    },
-    {
-      name : "credential_id",
-      label : "Credential ID",
+      name : "metadata.deployment_type",
+      label : "Deployment Type",
       options : {
         display : false,
       },
@@ -384,17 +387,18 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
     },
     rowsExpanded : [0, 1],
     renderExpandableRow : (rowData) => {
-      const colSpan = (rowData.length - 2) / 3;
       return (
-        <TableRow>
+        <TableRow className={classNames(classes.expandedRows)}>
           <TableCell></TableCell>
-          <TableCell colSpan={colSpan}>
-            <b>Server builsd SHA:</b> {rowData[9]}
+          <TableCell colSpan={3}>
+            <b>Server Name:</b> {rowData[9]}
           </TableCell>
-          <TableCell colSpan={colSpan}>
+          <TableCell colSpan={2}>
             <b>Server Version:</b> {rowData[10]}
           </TableCell>
-          <TableCell colSpan={colSpan}></TableCell>
+          <TableCell colSpan={2}>
+            <b>Deployment Type:</b> {rowData[11]}
+          </TableCell>
         </TableRow>
       );
     },
