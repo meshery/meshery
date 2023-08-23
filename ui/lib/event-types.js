@@ -1,4 +1,9 @@
 
+export const NOTIFICATION_STATUS = {
+  VIEWED : "read" ,
+  NEW : "new"
+}
+
 export const EVENT_TYPES = {
   SUCCESS: {
     type: 'success',
