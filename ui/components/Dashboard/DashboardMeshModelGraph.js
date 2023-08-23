@@ -7,6 +7,7 @@ import BBChart from "../BBChart"
 import { donut, pie } from "billboard.js";
 import { getAllComponents, getMeshModels, getRelationshipsDetail, fetchCategories, getModelFromCategoryApi } from "../../api/meshmodel"
 import { dataToColors } from "../../utils/charts"
+import Link from "next/link";
 
 const useFetchTotal = (fetchr) => {
   const [total, setTotal] = useState(0)
@@ -63,10 +64,12 @@ function MeshModelContructs({ classes }) {
 
   return (
     <div className={classes.dashboardSection}>
-      <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-        Models
-      </Typography>
 
+      <Link href="/settings#meshmodel-summary">
+        <Typography variant="h6" gutterBottom className={classes.link}>
+          Models
+        </Typography>
+      </Link>
       <div>
         <BBChart options={chartOptions} />
       </div>
@@ -119,10 +122,12 @@ function MeshModelCategories({ classes }) {
 
   return (
     <div className={classes.dashboardSection}>
-      <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-        Model Categories
-      </Typography>
 
+      <Link href="/settings#meshmodel-summary">
+        <Typography variant="h6" gutterBottom className={classes.link}>
+          Model Categories
+        </Typography>
+      </Link>
       <div>
         <BBChart options={chartOptions} />
       </div>

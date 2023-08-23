@@ -11,13 +11,13 @@ import {
 } from '@material-ui/core';
 import dataFetch from '../lib/data-fetch';
 import TextField from '@material-ui/core/TextField';
-import { withSnackbar } from 'notistack';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import CloseIcon from '@material-ui/icons/Close';
 import { updateLoadTestPref, updateProgress } from '../lib/store';
 import { durationOptions } from '../lib/prePopulatedOptions';
 import { ctxUrl } from '../utils/multi-ctx';
+import { withNotify } from '../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../lib/event-types';
 
 
 const loadGenerators = [
@@ -134,20 +134,8 @@ class MesherySettingsPerformanceComponent extends React.Component {
     }, (result) => {
       this.props.updateProgress({ showProgress: false });
       if (typeof result !== 'undefined') {
-        this.props.enqueueSnackbar('Preference was updated!', {
-          variant: 'success',
-          autoHideDuration: 2000,
-          action: (key) => (
-            <IconButton
-              key="close"
-              aria-label="Close"
-              color="inherit"
-              onClick={() => self.props.closeSnackbar(key)}
-            >
-              <CloseIcon />
-            </IconButton>
-          ),
-        });
+        const notify = this.props.notify;
+        notify({ message: 'Preferences saved', event_type: EVENT_TYPES.SUCCESS})
         this.props.updateLoadTestPref({
           loadTestPref: {
             qps: self.state.qps,
@@ -192,20 +180,8 @@ class MesherySettingsPerformanceComponent extends React.Component {
       if (typeof error === 'string') {
         finalMsg = `${msg}: ${error}`;
       }
-      self.props.enqueueSnackbar(finalMsg, {
-        variant: 'error',
-        action: (key) => (
-          <IconButton
-            key="close"
-            aria-label="Close"
-            color="inherit"
-            onClick={() => self.props.closeSnackbar(key)}
-          >
-            <CloseIcon />
-          </IconButton>
-        ),
-        autoHideDuration: 4000,
-      });
+      const notify = self.props.notify;
+      notify({ message: finalMsg, event_type: EVENT_TYPES.ERROR, details: error.toString() })
     };
   }
 
@@ -334,4 +310,4 @@ const mapStateToProps = (state) => {
 export default withStyles(styles)(connect(
     mapStateToProps,
     mapDispatchToProps,
-)(withSnackbar(MesherySettingsPerformanceComponent)));
+)(withNotify(MesherySettingsPerformanceComponent)));
