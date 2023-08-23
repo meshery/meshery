@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { NoSsr, withStyles } from "@material-ui/core";
 import { updatebetabadge, updatepagepath, updatepagetitle } from "../../../lib/store";
 import { connect } from "react-redux";
@@ -15,25 +15,26 @@ const styles = {
   }
 };
 
-class DesignConfiguratorPage extends React.Component {
-  componentDidMount() {
-    console.log(`path: ${getPath()}`);
-    this.props.updatepagepath({ path : getPath(), isBeta : true, title : "Configure Design" });
-    this.props.updatepagetitle({ title : "Configure Design" })
-    this.props.updatebetabadge({ isBeta : true })
-  }
+function DesignConfiguratorPage({ updatepagepath, updatepagetitle, updatebetabadge }) {
 
-  render() {
-    return (
-      <NoSsr>
-        <Head>
-          <title>Designs Configurator</title>
-        </Head>
-        <DesignConfigurator />
-      </NoSsr>
-    );
-  }
+  useEffect(() => {
+    console.log(`path: ${getPath()}`);
+    updatepagepath({ path : getPath(), isBeta : true, title : "Configure Design" });
+    updatepagetitle({ title : "Configure Design" });
+    updatebetabadge({ isBeta : true });
+  }, []);
+
+
+  return (
+    <NoSsr>
+      <Head>
+        <title>Designs Configurator</title>
+      </Head>
+      <DesignConfigurator />
+    </NoSsr>
+  );
 }
+
 
 const mapDispatchToProps = dispatch => ({
   updatepagepath : bindActionCreators(updatepagepath, dispatch),
