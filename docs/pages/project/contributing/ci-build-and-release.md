@@ -264,11 +264,11 @@ The following is an example of the release channels and the docker tags used to 
 - layer5/meshery:stable-v0.4.0
 - layer5/meshery:stable-289d02 (sha)
 
-Every docker image built receives either the edge tags or the stable tabs. Which set of image tags assigned is determined by whether a release tag is present or not. In other words, stable channel docker images get the “stable” tags only in the presence of a release tag (e.g. v0.4.1).
+Every docker image built receives either the edge tags or the stable tags. Which set of image tags assigned is determined by whether a release tag is present or not. In other words, stable channel docker images get the “stable” tags only in the presence of a release tag (e.g. v0.4.1).
 
 ### Edge Channel
 
-The edge release channel generally contains code less tested, less “baked”. The primary reason for "edge" is to allow contributors and advanced users to get at features sooner than later. Some features need testing that is best facilitated by letting users with tolerance and patience try them out.
+The Edge release channel provides early access to the latest features, allowing experimentation and feedback. Recent updates introduce dynamic versioning for Edge releases and improve compatibility with remote providers, ensuring a seamless experience. This makes the Edge channel valuable for users seeking cutting-edge features while contributing to the Meshery project. Docker image tags remain consistent for differentiation.
 
 Stable and edge releases are both published to the same Docker Hub repository. Docker Hub repositories differentiate release channels by image tag. The following Docker images tagging convention is followed:
 

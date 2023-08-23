@@ -8,6 +8,9 @@ import (
 	"github.com/layer5io/meshkit/errors"
 )
 
+// Please reference the following before contributing an error code:
+// https://docs.meshery.io/project/contributing/contributing-error
+// https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
 	ErrGrafanaClientCode                  = "2073"
 	ErrPageSizeCode                       = "2074"
@@ -91,6 +94,7 @@ const (
 	ErrTokenIntrospectCode                = "2254"
 	ErrShareDesignCode                    = "2255"
 	ErrUnreachableRemoteProviderCode      = "2256"
+	ErrShareFilterCode                    = "2257"
 )
 
 var (
@@ -343,6 +347,10 @@ func ErrDownloadingSeededComponents(err error, content string) error {
 
 func ErrShareDesign(err error) error {
 	return errors.New(ErrShareDesignCode, errors.Alert, []string{"cannot make design public"}, []string{err.Error()}, []string{"email address provided might not be valid", "insufficient permission"}, []string{"Ensure that you are the owner of the design you are sharing", "Try again later", "Try using an alternate email address"})
+}
+
+func ErrShareFilter(err error) error {
+	return errors.New(ErrShareFilterCode, errors.Alert, []string{"cannot make filter public"}, []string{err.Error()}, []string{"email address provided might not be valid", "insufficient permission"}, []string{"Ensure that you are the owner of the filter you are sharing", "Try again later", "Try using an alternate email address"})
 }
 
 func ErrUnreachableRemoteProvider(err error) error {

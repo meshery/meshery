@@ -13,7 +13,6 @@ import AddIcon from "@material-ui/icons/AddCircleOutline";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { updateProgress } from "../../lib/store";
-import { withSnackbar } from "notistack";
 import GenericModal from "../GenericModal";
 import MesheryPerformanceComponent from "./index";
 import { Paper, Typography, Button,DialogTitle } from "@material-ui/core";
@@ -21,6 +20,8 @@ import fetchPerformanceProfiles from "../graphql/queries/PerformanceProfilesQuer
 import { withStyles } from "@material-ui/core/styles";
 import { iconMedium, iconXLarge } from "../../css/icons.styles";
 import subscribePerformanceProfiles from "../graphql/subscriptions/PerformanceProfilesSubscription";
+import { useNotification } from "../../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../../lib/event-types";
 
 const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 const styles = (theme) => ({
@@ -106,7 +107,7 @@ function ViewSwitch({ view, changeView }) {
   );
 }
 
-function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, classes }) {
+function PerformanceProfile({ updateProgress , classes }) {
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ("grid")
@@ -120,12 +121,13 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
   const [pageSize, setPageSize] = useState(10);
   const [testProfiles, setTestProfiles] = useState([]);
   const [profileForModal, setProfileForModal] = useState();
+  const { notify } = useNotification();
   // const [loading, setLoading] = useState(false);
-
   /**
    * fetch performance profiles when the page loads
    */
   useEffect(() => {
+
     fetchTestProfiles(page, pageSize, search, sortOrder);
     const subscription = subscribePerformanceProfiles((res) => {
       let result = res?.subscribePerfProfiles;
@@ -209,18 +211,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
       },
       () => {
         updateProgress({ showProgress : false });
-
-        enqueueSnackbar("Performance Profile Deleted!", {
-          variant : "success",
-          autoHideDuration : 2000,
-          action : function Action(key) {
-            return (
-              <IconButton style={iconMedium} key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon style={iconMedium}/>
-              </IconButton>
-            );
-          },
-        });
+        notify({ message : "Performance Profile Deleted!", event_type : EVENT_TYPES.SUCCESS })
         fetchTestProfiles(page, pageSize, search, sortOrder);
       },
       handleError("Failed To Delete Profile")
@@ -231,18 +222,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
   function handleError(msg) {
     return function (error) {
       updateProgress({ showProgress : false });
-
-      enqueueSnackbar(`${msg} : ${error}`, {
-        variant : "error",
-        action : function Action(key) {
-          return (
-            <IconButton style={iconMedium} key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon style={iconMedium} />
-            </IconButton>
-          );
-        },
-        autoHideDuration : 8000,
-      });
+      notify({ message : `${msg}: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() })
     };
   }
 
@@ -340,6 +320,7 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
                 cookies={profileForModal?.request_cookies}
                 contentType={profileForModal?.content_type}
                 runTestOnMount={!!profileForModal?.runTest}
+                metadata={profileForModal?.metadata}
               />
             </Paper>
           }
@@ -356,4 +337,4 @@ function PerformanceProfile({ updateProgress, enqueueSnackbar, closeSnackbar, cl
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
-export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(PerformanceProfile)));
+export default withStyles(styles)(connect(null, mapDispatchToProps)(PerformanceProfile));

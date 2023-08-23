@@ -8,13 +8,14 @@ import { Search } from "@material-ui/icons";
 import { withSnackbar } from "notistack";
 import { connect } from "react-redux";
 import { setK8sContexts, updateProgress } from "../lib/store";
-import { closeButtonForSnackbarAction, errorHandlerGenerator, successHandlerGenerator } from "./ConnectionWizard/helpers/common";
+import { errorHandlerGenerator, successHandlerGenerator } from "./ConnectionWizard/helpers/common";
 import { pingKubernetes } from "./ConnectionWizard/helpers/kubernetesHelpers";
 import { getK8sConfigIdsFromK8sConfig } from "../utils/multi-ctx";
 import { bindActionCreators } from "redux";
 import { useEffect, useState } from "react";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
-import UndeployIcon from "../public/static/img/UndeployIcon";
+// import UndeployIcon from "../public/static/img/UndeployIcon";
+import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
 import AddIcon from '@material-ui/icons/Add';
 import DoneIcon from "@material-ui/icons/Done";
 import Link from 'next/link';
@@ -25,10 +26,12 @@ import { iconMedium, iconSmall } from "../css/icons.styles";
 import { RoundedTriangleShape } from "./shapes/RoundedTriangle";
 import { notificationColors } from "../themes/app";
 import RedOctagonSvg from "./shapes/Octagon";
+import PatternIcon from "../assets/icons/Pattern";
+import { useNotification } from "../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../lib/event-types";
 
 const styles = (theme) => ({
   dialogBox : {
-    // maxHeight : "42rem"
   },
   icon : {
     display : 'inline',
@@ -117,7 +120,7 @@ const styles = (theme) => ({
   tabs : {
     marginLeft : 0,
     "& .MuiTab-root.Mui-selected" : {
-      backgroundColor : theme.palette.secondary.modalTabs
+      backgroundColor : theme.palette.type == "light"? theme.palette.secondary.modalTabs: theme.palette.secondary.mainBackground,
     }
   },
   tabLabel : {
@@ -128,7 +131,8 @@ const styles = (theme) => ({
       [theme.breakpoints.between("xs", 'sm')] : {
         fontSize : '0.8em'
       }
-    }
+    },
+    color : theme.palette.secondary.iconMain,
   },
   AddIcon : {
     width : theme.spacing(2.5),
@@ -191,18 +195,30 @@ const styles = (theme) => ({
     bottom : 9.5 ,
     color : "#fff",
     fontSize : "0.8rem"
+  },
+  closeIcon : {
+    transform : "rotate(-90deg)",
+    "&:hover" : {
+      transform : "rotate(90deg)",
+      transition : "all .3s ease-in",
+      cursor : "pointer"
+    }
+  },
+  closeIconButton : {
+    color : "white"
   }
 })
 
 
 function ConfirmationMsg(props) {
   const { classes, open, handleClose, submit,
-    selectedK8sContexts, k8scontext, title, validationBody, setK8sContexts, enqueueSnackbar, closeSnackbar, componentCount, tab, errors, dryRunComponent } = props
+    selectedK8sContexts, k8scontext, title, validationBody, setK8sContexts, componentCount, tab, errors, dryRunComponent } = props
 
   const [tabVal, setTabVal] = useState(tab);
   const [disabled, setDisabled] = useState(true);
   const [context, setContexts] = useState([]);
   const theme = useTheme();
+  const { notify } = useNotification();
   let isDisabled = typeof selectedK8sContexts.length === "undefined" || selectedK8sContexts.length === 0
 
   useEffect(() => {
@@ -221,24 +237,15 @@ function ConfirmationMsg(props) {
   const handleKubernetesClick = (ctxID) => {
     updateProgress({ showProgress : true })
     pingKubernetes(
-      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes pinged", () => updateProgress({ showProgress : false })),
-      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged", () => updateProgress({ showProgress : false })),
+      successHandlerGenerator(notify, "Kubernetes pinged", () => updateProgress({ showProgress : false })),
+      errorHandlerGenerator(notify, "Kubernetes not pinged", () => updateProgress({ showProgress : false })),
       ctxID
     )
   }
 
   const handleSubmit = () => {
     if (selectedK8sContexts.length === 0) {
-      enqueueSnackbar("Please select Kubernetes context(s) before proceeding with the operation",
-        {
-          variant : "info", preventDuplicate : true,
-          action : (key) => (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon style={iconMedium} />
-            </IconButton>
-          ),
-          autoHideDuration : 3000,
-        });
+      notify({ message : "Please select Kubernetes context(s) before proceeding with the operation", event_type : EVENT_TYPES.INFO });
     }
 
     if (tabVal === 2) {
@@ -299,7 +306,18 @@ function ConfirmationMsg(props) {
       >
         <>
           <DialogTitle id="alert-dialog-title" className={classes.title}>
-            {title}
+            <div style={{ display : 'flex', justifyContent : "space-between", alignItems : 'center' }}>
+
+              <PatternIcon style={{ ...iconMedium }} fill={"#FFFFFF"}></PatternIcon>
+
+              {title}
+              <IconButton
+                onClick={handleClose}
+                disableRipple={true}
+                className={classes.closeIconButton}>
+                <CloseIcon fill={"#FFFFF"}className={classes.closeIcon} style={{ ...iconMedium }}></CloseIcon>
+              </IconButton>
+            </div>
           </DialogTitle>
           {/* <Paper square className={classes.paperRoot}> */}
           <Tabs
@@ -317,7 +335,7 @@ function ConfirmationMsg(props) {
               label={
                 <div style={{ display : "flex" }}
                 >
-                  <DoneIcon style={{ margin : "2px", ...iconSmall }}  fontSize="small"/><span className={classes.tabLabel}>Validate</span>
+                  <DoneIcon style={{ margin : "2px",  paddingRight : "2px", ...iconSmall }}  fontSize="small"/><span className={classes.tabLabel}>Validate</span>
                   {errors?.validationError > 0 && (
                     <div className={classes.triangleContainer}>
                       <RoundedTriangleShape color={notificationColors.warning}></RoundedTriangleShape>
@@ -334,7 +352,7 @@ function ConfirmationMsg(props) {
               className={classes.tab}
               onClick={(event) => handleTabValChange(event,1)}
               label={<div style={{ display : "flex" }}
-              ><div style={{ margin : "2px" }}> <UndeployIcon style={iconSmall} fill={theme.palette.secondary.icon} width="20" height="20" /> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
+              ><div style={{ margin : "2px", paddingRight : "2px" }}> <RemoveDoneIcon style={iconSmall} width="20" height="20" /> </div> <span className={classes.tabLabel}>Undeploy</span> </div>}
             />
             <Tab
               disabled={disabled}
@@ -342,7 +360,7 @@ function ConfirmationMsg(props) {
               className={classes.tab}
               onClick={(event) => handleTabValChange(event, 2)}
               label={<div style={{ display : "flex" }}>
-                <DoneAllIcon style={{ margin : "2px", ...iconSmall }} fontSize="small" />
+                <DoneAllIcon style={{ margin : "2px",  paddingRight : "2px", ...iconSmall }} fontSize="small" />
                 <span className={classes.tabLabel}>Deploy</span>
                 {errors?.deploymentError > 0 && (
                   <div className={classes.octagonContainer}>
@@ -409,7 +427,7 @@ function ConfirmationMsg(props) {
                                     <Chip
                                       label={ctx.name}
                                       className={classes.ctxChip}
-                                      onClick={() => handleKubernetesClick(ctx.id)}
+                                      onClick={() => handleKubernetesClick(ctx.connection_id)}
                                       icon={<img src="/static/img/kubernetes.svg" className={classes.ctxIcon} />}
                                       variant="outlined"
                                       data-cy="chipContextName"

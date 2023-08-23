@@ -30,7 +30,23 @@ mesheryctl filter list [flags]
 List all WASM filter files present
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl filter list	
+mesheryctl filter list	(maximum 25 filters)
+
+</div>
+</pre> 
+
+Search for filter
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl filter list Test (maximum 25 filters)
+
+</div>
+</pre> 
+
+Search for filter with space
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
 </div>
 </pre> 
@@ -39,8 +55,9 @@ mesheryctl filter list
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help      help for list
-  -v, --verbose   Display full length user and filter file identifiers
+  -h, --help       help for list
+  -p, --page int   (optional) List next set of filters with --page (default = 1) (default 1)
+  -v, --verbose    Display full length user and filter file identifiers
 
 </div>
 </pre>

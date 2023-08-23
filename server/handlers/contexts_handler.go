@@ -18,7 +18,7 @@ import (
 // ```?page={page-number}``` Default page number is 0
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
-// 
+//
 // ```?search={contextname}``` If search is non empty then a greedy search is performed
 // responses:
 //
@@ -50,6 +50,7 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *mo
 	}
 }
 
+// not being used....
 func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	// if req.URL.Query().Get("current") != "" {
 	// 	context, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
@@ -72,6 +73,7 @@ func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models
 		return
 	}
 
+	h.log.Info("this is being used\n\n\n")
 	val, err := provider.GetK8sContext(token, mux.Vars(req)["id"])
 	if err != nil {
 		http.Error(w, "failed to get context", http.StatusInternalServerError)
@@ -91,6 +93,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		return
 	}
 
+	// id is the connection_id of the specific cluster in connections table
 	_, err := provider.DeleteK8sContext(token, mux.Vars(req)["id"])
 	if err != nil {
 		http.Error(w, "failed to delete context", http.StatusInternalServerError)

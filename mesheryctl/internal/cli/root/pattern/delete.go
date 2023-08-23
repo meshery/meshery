@@ -48,11 +48,10 @@ mesheryctl pattern delete [file | URL]
 			return errors.Wrap(err, "error processing config")
 		}
 
-		var urlString = mctlCfg.GetBaseMesheryURL()
 		pattern := ""
 		isID := false
 		if len(args) > 0 {
-			pattern, isID, err = utils.ValidId(urlString, args[0], "pattern")
+			pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
 			if err != nil {
 				return err
 			}
@@ -60,15 +59,15 @@ mesheryctl pattern delete [file | URL]
 
 		// Delete the pattern using the id
 		if isID {
-			err := utils.DeleteConfiguration(urlString, pattern, "pattern")
+			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), pattern, "pattern")
 			if err != nil {
 				return errors.Wrap(err, utils.PatternError(fmt.Sprintf("failed to delete pattern %s", args[0])))
 			}
 			utils.Log.Info("Pattern ", args[0], " deleted successfully")
 			return nil
 		}
-		deployURL := urlString + "/api/pattern/deploy"
-		patternURL := urlString + "/api/pattern"
+		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
+		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
 
 		// If file path not a valid URL, treat it like a local file path
 		if !govalidator.IsURL(file) {

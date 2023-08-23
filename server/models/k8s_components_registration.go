@@ -8,7 +8,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/meshmodel"
+	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils/events"
 	"github.com/spf13/viper"
 )
@@ -54,8 +54,8 @@ type K8sRegistrationFunction func(ctxt context.Context, config []byte, ctxID str
 
 // start registration of components for the contexts
 func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc []K8sRegistrationFunction, eb *events.EventStreamer, reg *meshmodel.RegistryManager, skip bool) {
-	/* If flag "SKIP_COMP_GEN" is set but the registration is invoked in form of API request explicitly, 
-	then flag should not be respected and to control this behaviour skip is introduced. 
+	/* If flag "SKIP_COMP_GEN" is set but the registration is invoked in form of API request explicitly,
+	then flag should not be respected and to control this behaviour skip is introduced.
 	In case of API requests "skip" is set to false, otherise true and behaviour is controlled by "SKIP_COMP_GEN".
 	*/
 	if viper.GetBool("SKIP_COMP_GEN") && skip {

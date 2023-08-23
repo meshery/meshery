@@ -25,7 +25,7 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	putils "github.com/layer5io/meshery/server/models/pattern/utils"
-	"github.com/layer5io/meshkit/models/meshmodel"
+	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/events"
 	"github.com/pkg/errors"
@@ -164,7 +164,7 @@ func (h *Handler) deleteK8SConfig(_ *models.User, _ *models.Preference, w http.R
 
 // GetContextsFromK8SConfig returns the context list for a given k8s config
 func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request) {
-	
+
 	k8sConfigBytes, err := readK8sConfigFromBody(req)
 	if err != nil {
 		logrus.Error(err)
@@ -190,7 +190,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	}
 }
 
-// swagger:route GET /api/system/kubernetes/ping?contexts={id} SystemAPI idGetKubernetesPing
+// swagger:route GET /api/system/kubernetes/ping?connection_id={id} SystemAPI idGetKubernetesPing
 // Handle GET request for Kubernetes ping
 //
 // Fetches server version to simulate ping
@@ -206,10 +206,10 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		return
 	}
 
-	ctx := req.URL.Query().Get("context")
-	if ctx != "" {
+	connectionID := req.URL.Query().Get("connection_id")
+	if connectionID != "" {
 		// Get the context associated with this ID
-		k8sContext, err := provider.GetK8sContext(token, ctx)
+		k8sContext, err := provider.GetK8sContext(token, connectionID)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(w, "failed to get kubernetes context for the given ID")
@@ -246,9 +246,10 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 //
 // Used to register Kubernetes components to Meshery from a kubeconfig file
 // responses:
-// 	202:
-//  400:
-//  500:
+//
+//		202:
+//	 400:
+//	 500:
 func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Request) {
 	k8sConfigBytes, err := readK8sConfigFromBody(req)
 	if err != nil {
@@ -345,8 +346,8 @@ func RegisterK8sMeshModelComponents(_ context.Context, config []byte, ctxID stri
 	for _, c := range man {
 		writeK8sMetadata(&c, reg)
 		err = reg.RegisterEntity(meshmodel.Host{
-			Hostname:  "kubernetes",
-			ContextID: ctxID,
+			Hostname: "kubernetes",
+			Metadata: ctxID,
 		}, c)
 		count++
 	}
@@ -361,7 +362,7 @@ func RegisterK8sMeshModelComponents(_ context.Context, config []byte, ctxID stri
 	return
 }
 
-const k8sMeshModelPath = "../meshmodel/components/kubernetes/model_template.json"
+const k8sMeshModelPath = "../meshmodel/kubernetes/model_template.json"
 
 var k8sMeshModelMetadata = make(map[string]interface{})
 
@@ -403,7 +404,7 @@ func init() {
 	k8sMeshModelMetadata = m
 }
 
-func readK8sConfigFromBody(req *http.Request) (*[]byte, error){
+func readK8sConfigFromBody(req *http.Request) (*[]byte, error) {
 	_ = req.ParseMultipartForm(1 << 20)
 
 	k8sfile, _, err := req.FormFile("k8sfile")
@@ -420,6 +421,7 @@ func readK8sConfigFromBody(req *http.Request) (*[]byte, error){
 	}
 	return &k8sConfigBytes, nil
 }
+
 // func writeDefK8sOnFileSystem(def string, path string) {
 // 	err := ioutil.WriteFile(path, []byte(def), 0777)
 // 	if err != nil {

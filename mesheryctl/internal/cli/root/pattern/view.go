@@ -52,7 +52,6 @@ mesheryctl pattern view [pattern-name | ID]
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
-		var urlString = mctlCfg.GetBaseMesheryURL()
 		pattern := ""
 		isID := false
 		// if pattern name/id available
@@ -60,27 +59,27 @@ mesheryctl pattern view [pattern-name | ID]
 			if viewAllFlag {
 				return errors.New("-a cannot be used when [pattern-name|pattern-id] is specified")
 			}
-			pattern, isID, err = utils.ValidId(urlString, args[0], "pattern")
+			pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
 			if err != nil {
 				return err
 			}
 		}
-		// url := mctlCfg.GetBaseMesheryURL()
+		url := mctlCfg.GetBaseMesheryURL()
 		if len(pattern) == 0 {
 			if viewAllFlag {
-				urlString += "/api/pattern?pagesize=10000"
+				url += "/api/pattern?pagesize=10000"
 			} else {
 				return errors.New("Pattern name or ID is not specified. Use `-a` to view all patterns")
 			}
 		} else if isID {
 			// if pattern is a valid uuid, then directly fetch the pattern
-			urlString += "/api/pattern/" + pattern
+			url += "/api/pattern/" + pattern
 		} else {
 			// else search pattern by name
-			urlString += "/api/pattern?search=" + pattern
+			url += "/api/pattern?search=" + pattern
 		}
 
-		req, err := utils.NewRequest("GET", urlString, nil)
+		req, err := utils.NewRequest("GET", url, nil)
 		if err != nil {
 			return err
 		}

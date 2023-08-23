@@ -225,6 +225,20 @@ paths:
             summary: Handle POST request for Sharing content
             tags:
                 - ShareContent
+    /api/content/filter/share:
+        post:
+            description: Used to share filters with others
+            operationId: idPostShareContent
+            responses:
+                "200":
+                    description: ""
+                "403":
+                    description: ""
+                "500":
+                    description: ""
+            summary: Handle POST request for Sharing content
+            tags:
+                - ShareContent
     /api/events:
         get:
             description: |-
@@ -324,7 +338,7 @@ paths:
             description: Publishes filter to Meshery Catalog by setting visibility to published and setting catalog data
             operationId: idPublishCatalogFilterHandler
             responses:
-                "200":
+                "202":
                     $ref: '#/responses/noContentWrapper'
             summary: Handle Publish for a Meshery Filter
             tags:
@@ -424,7 +438,33 @@ paths:
             summary: Handles GET for all Users
             tags:
                 - UserAPI
+    /api/identity/users/keys:
+        get:
+            description: Returns all keys for user
+            operationId: idGetAllUsersKeysHandler
+            responses:
+                "200":
+                    $ref: '#/responses/keys'
+            summary: Handles GET for all Keys for users
+            tags:
+                - UserKeysAPI
     /api/integrations/connections:
+        get:
+            description: |-
+                ```?order={field}``` orders on the passed field
+
+                ```?search={}``` If search is non empty then a greedy search is performed
+
+                ```?page={page-number}``` Default page number is 0
+
+                ```?pagesize={pagesize}``` Default pagesize is 10
+            operationId: idGetConnections
+            responses:
+                "200":
+                    $ref: '#/responses/ConnectionPage'
+            summary: Handle GET request for getting all connections
+            tags:
+                - GetConnections
         post:
             description: Creates a new connection
             operationId: idPostConnection
@@ -444,6 +484,15 @@ paths:
             summary: Handle DELETE request for deleting an existing connection by connection ID
             tags:
                 - DeleteConnection
+        put:
+            description: Updates existing connection using ID
+            operationId: idPutConnectionById
+            responses:
+                "200":
+                    $ref: '#/responses/mesheryConnectionResponseWrapper'
+            summary: Handle PUT request for updating an existing connection by connection ID
+            tags:
+                - PutConnectionById
     /api/integrations/connections/{connectionKind}:
         get:
             description: |-
@@ -470,6 +519,15 @@ paths:
             summary: Handle PUT request for updating an existing connection
             tags:
                 - PutConnection
+    /api/integrations/connections/status:
+        get:
+            description: Handle GET request for getting all connections status
+            operationId: idGetConnectionsStatus
+            responses:
+                "200":
+                    $ref: '#/responses/ConnectionsStatusPage'
+            tags:
+                - GetConnectionsStatus
     /api/meshmodel/components/register:
         post:
             description: Validate the given value with the given schema
@@ -541,7 +599,7 @@ paths:
     /api/meshmodels/categories/{category}/components:
         get:
             description: |-
-                Components can be further filtered through query parameter
+                # Components can be further filtered through query parameter
 
                 ```?version={version}```
 
@@ -567,7 +625,25 @@ paths:
                 - GetMeshmodelComponentByCategory
     /api/meshmodels/categories/{category}/components/{name}:
         get:
-            description: "Example: ```/api/meshmodels/categories/Orchestration``` and Management/components/Namespace\nComponents can be further filtered through query parameter\n\n```?model={model}``` If model is unspecified then all models are returned \n\n```?version={version}``` If version is unspecified then all model versions are returned\n\n```?apiVersion={apiVersion}``` If apiVersion is unspecified then all components are returned\n\n```?order={field}``` orders on the passed field\n\n```?search={[true/false]}``` If search is true then a greedy search is performed\n\n```?sort={[asc/desc]}``` Default behavior is asc\n\n```?page={page-number}``` Default page number is 1\n\n```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```"
+            description: |-
+                Example: ```/api/meshmodels/categories/Orchestration``` and Management/components/Namespace
+                Components can be further filtered through query parameter
+
+                ```?model={model}``` If model is unspecified then all models are returned
+
+                ```?version={version}``` If version is unspecified then all model versions are returned
+
+                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all components are returned
+
+                ```?order={field}``` orders on the passed field
+
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             operationId: idGetMeshmodelComponentsByNameByCategory
             responses:
                 "200":
@@ -700,7 +776,27 @@ paths:
                 - GetAllMeshmodelComponents
     /api/meshmodels/components/{name}:
         get:
-            description: "Example: ```/api/meshmodels/components/Namespace```\nComponents can be further filtered through query parameter\n\n```?model={model}``` If model is unspecified then all models are returned \n\n```?version={version}``` If version is unspecified then all model versions are returned\n\n```?apiVersion={apiVersion}``` If apiVersion is unspecified then all components are returned\n\n```?order={field}``` orders on the passed field\n\n```?sort={[asc/desc]}``` Default behavior is asc\n\n```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities\n\n```?search={[true/false]}``` If search is true then a greedy search is performed\n\n```?page={page-number}``` Default page number is 1\n\n```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```"
+            description: |-
+                Example: ```/api/meshmodels/components/Namespace```
+                Components can be further filtered through query parameter
+
+                ```?model={model}``` If model is unspecified then all models are returned
+
+                ```?version={version}``` If version is unspecified then all model versions are returned
+
+                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all components are returned
+
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?trim={[true]}``` When trim is set to true, the underlying schemas are not returned for entities
+
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
             operationId: idGetAllMeshmodelComponentsByName
             responses:
                 "200":
@@ -734,7 +830,7 @@ paths:
     /api/meshmodels/models/{model}:
         get:
             description: |-
-                Returns a list of registered models across all categories
+                # Returns a list of registered models across all categories
 
                 ```?version={version}``` If version is unspecified then all models are returned
 
@@ -808,6 +904,48 @@ paths:
             summary: Handle GET request for getting meshmodel components of a specific  model.
             tags:
                 - GetMeshmodelComponentsByNameByModel
+    /api/meshmodels/models/{model}/policies/:
+        get:
+            description: |-
+                Example: ```/api/meshmodels/models/kubernetes/policies```
+
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetMeshmodelPolicies
+            responses:
+                "200":
+                    $ref: '#/responses/meshmodelPoliciesResponseWrapper'
+            summary: Handle GET request for getting meshmodel policies of a specific model by name.
+            tags:
+                - GetMeshmodelPolicies
+    /api/meshmodels/models/{model}/policies/{name}:
+        get:
+            description: |-
+                Example: ```/api/meshmodels/models/kubernetes/policies/{name}```
+
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetMeshmodelPoliciesByName
+            responses:
+                "200":
+                    $ref: '#/responses/meshmodelPoliciesResponseWrapper'
+            summary: Handle GET request for getting meshmodel policies of a specific model by name.
+            tags:
+                - GetMeshmodelPoliciesByName
     /api/meshmodels/models/{model}/relationships:
         get:
             description: |-
@@ -965,7 +1103,7 @@ paths:
             description: Publishes pattern to Meshery Catalog by setting visibility to published and setting catalog data
             operationId: idPublishCatalogPatternHandler
             responses:
-                "200":
+                "202":
                     $ref: '#/responses/noContentWrapper'
             summary: Handle Publish for a Meshery Pattern
             tags:
@@ -1133,6 +1271,11 @@ paths:
             summary: Handle GET request for list of providers
             tags:
                 - ProvidersAPI
+    /api/schema/resource/{resourceName}:
+        get:
+            operationId: HandleResourceSchemas
+            responses: {}
+            summary: Handles the request to retrieve and merge resource JSON schema and UI schema.
     /api/smi/results:
         get:
             description: |-
@@ -1259,6 +1402,20 @@ paths:
             summary: Handle GET request for getting summary about the system database.
             tags:
                 - GetSystemDatabase
+    /api/system/database/reset:
+        delete:
+            description: |-
+                This endpoint resets the system database to its initial state by performing the following steps:
+                Creates an archive of the current database contents.
+                Drops all existing tables in the database.
+                Applies auto migration to recreate the necessary tables.
+            operationId: ResetSystemDatabase
+            responses:
+                "200":
+                    $ref: '#/responses/successfulResponse'
+                "500":
+                    $ref: '#/responses/errorResponse'
+            summary: Reset the system database to its initial state.
     /api/system/kubernetes:
         delete:
             description: Used to delete kubernetes config to System
@@ -1318,7 +1475,7 @@ paths:
                 - SystemAPI
     /api/system/kubernetes/register:
         post:
-            description: Used to register Kubernetes components to system from a kubeconfig file
+            description: Used to register Kubernetes components to Meshery from a kubeconfig file
             operationId: idPostK8SRegistration
             responses:
                 "202":
@@ -1774,7 +1931,7 @@ paths:
     /api/user/schedules:
         get:
             description: |-
-                Returns the list of all the schedules saved by the current user
+                # Returns the list of all the schedules saved by the current user
 
                 ```?order={field}``` orders on the passed field
 
@@ -1880,7 +2037,12 @@ responses:
                 type: string
             displayName:
                 type: string
+            displayhostname:
+                type: string
             format: {}
+            hostID: {}
+            hostname:
+                type: string
             kind:
                 type: string
             metadata: {}
@@ -1919,7 +2081,7 @@ responses:
     ConnectionPage:
         description: ""
         headers:
-            connection:
+            connections:
                 items: {}
                 type: array
             page:
@@ -1934,34 +2096,11 @@ responses:
     ConnectionStatus:
         description: ""
         schema: {}
-    EventsResponse:
+    ConnectionsStatusPage:
         description: ""
         headers:
-            component:
-                type: string
-            component_name:
-                type: string
-            details:
-                type: string
-            error_code:
-                type: string
-            event_type: {}
-            operation_id:
-                type: string
-            probable_cause:
-                type: string
-            sizeCache:
-                format: int32
-                type: integer
-            state: {}
-            suggested_remediation:
-                type: string
-            summary:
-                type: string
-            unknownFields:
-                items:
-                    format: uint8
-                    type: integer
+            connections_status:
+                items: {}
                 type: array
     FilterFilesResponseWrapper:
         description: Returns the response of the Filter files
@@ -1970,6 +2109,11 @@ responses:
         headers:
             category: {}
             displayName:
+                type: string
+            displayhostname:
+                type: string
+            hostID: {}
+            hostname:
                 type: string
             metadata: {}
             name:
@@ -1985,6 +2129,11 @@ responses:
             see RELATIONSHIPDEFINITIONS table in the diagram
         headers:
             apiVersion:
+                type: string
+            displayhostname:
+                type: string
+            hostID: {}
+            hostname:
                 type: string
             kind:
                 type: string
@@ -2009,6 +2158,10 @@ responses:
         description: Returns saved kubernetes config
     k8sContextsRespWrapper:
         description: Returns kubernetes context list
+    keys:
+        description: Returns users Keys
+        headers:
+            Body: {}
     listProvidersRespWrapper:
         description: Returns a list of available providers
         schema:
@@ -2030,6 +2183,8 @@ responses:
             type: array
     mesheryApplicationsResponseWrapper:
         description: Returns all meshery applications
+    mesheryConnectionResponseWrapper:
+        description: Returns a single connection
     mesheryFilterResponseWrapper:
         description: Returns a single meshery filter
     mesheryFiltersResponseWrapper:
@@ -2050,6 +2205,8 @@ responses:
         description: Return meshmodel models with the count of duplicates
     meshmodelModelsResponseWrapper:
         description: Returns meshmodel models
+    meshmodelPoliciesResponseWrapper:
+        description: Returns meshmodel policies
     meshmodelRelationshipsResponseWrapper:
         description: Returns meshmodel relationships
     noContentWrapper:

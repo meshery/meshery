@@ -11,12 +11,14 @@ import (
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/pkg/errors"
 )
 
-const ArtifactHubComponentsHandler = "kubernetes" //The components generated in output directory will be handled by kubernetes
+var ArtifactHubComponentsHandler = meshmodel.ArtifactHub{} //The components generated in output directory will be handled by kubernetes
+var ModelsPath = "../meshmodel"
+var RelativeRelationshipsPath = "relationships"
 
 type EntityRegistrationHelper struct {
 	handlerConfig    *models.HandlerConfig
@@ -46,9 +48,42 @@ func (erh *EntityRegistrationHelper) SeedComponents() {
 
 	go erh.watchComponents(ctx)
 
+	models, err := os.ReadDir(ModelsPath)
+	if err != nil {
+		erh.errorChan <- errors.Wrapf(err, "error while reading directory for generating components")
+		return
+	}
+
+	relationships := make([]string, 0)
+
+	// change to queue approach to register comps, relationships and policies
 	// Read component and relationship definitions from files and send them to respective channels
-	erh.generateComponents("../meshmodel/components")
-	erh.generateRelationships("../meshmodel/relationships")
+	for _, model := range models {
+		entitiesPath := filepath.Join(ModelsPath, model.Name())
+		entities, err := os.ReadDir(entitiesPath)
+		if err != nil {
+			erh.errorChan <- errors.Wrapf(err, "error while reading directory for generating components")
+			continue
+		}
+
+		for _, entity := range entities {
+			entityPath := filepath.Join(entitiesPath, entity.Name())
+			if entity.IsDir() {
+				switch entity.Name() {
+				case "relationships":
+					relationships = append(relationships, entityPath)
+				case "policies":
+					break
+				default:
+					erh.generateComponents(entityPath) // register components first
+				}
+			}
+		}
+	}
+
+	for _, relationship := range relationships {
+		erh.generateRelationships(relationship)
+	}
 }
 
 // reads component definitions from files and sends them to the component channel
@@ -132,11 +167,11 @@ func (erh *EntityRegistrationHelper) watchComponents(ctx context.Context) {
 		select {
 		case comp := <-erh.componentChan:
 			err = erh.regManager.RegisterEntity(meshmodel.Host{
-				Hostname: ArtifactHubComponentsHandler,
+				Hostname: ArtifactHubComponentsHandler.String(),
 			}, comp)
 		case rel := <-erh.relationshipChan:
 			err = erh.regManager.RegisterEntity(meshmodel.Host{
-				Hostname: ArtifactHubComponentsHandler,
+				Hostname: ArtifactHubComponentsHandler.String(),
 			}, rel)
 
 		//Watching and logging errors from error channel

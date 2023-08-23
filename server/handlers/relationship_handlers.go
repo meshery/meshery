@@ -7,9 +7,10 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/models/meshmodel/registry"
+	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 )
 
 // swagger:route GET /api/meshmodels/models/{model}/relationships/{name} GetMeshmodelRelationshipByName idGetMeshmodelRelationshipByName
@@ -31,7 +32,8 @@ import (
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-//  200: []meshmodelRelationshipsResponseWrapper
+//
+//	200: []meshmodelRelationshipsResponseWrapper
 func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -80,10 +82,10 @@ func (h *Handler) GetMeshmodelRelationshipByName(rw http.ResponseWriter, r *http
 		pgSize = int64(limit)
 	}
 
-	response := models.MeshmodelRelationshipsAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: *count,
+	response := models.MeshmodelRelationshipsAPIResponse{
+		Page:          page,
+		PageSize:      int(pgSize),
+		Count:         *count,
 		Relationships: rels,
 	}
 
@@ -156,9 +158,13 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 		Sort:      r.URL.Query().Get("sort"),
 	})
 	var rels []v1alpha1.RelationshipDefinition
-	for _, r := range entities {
-		rel, ok := r.(v1alpha1.RelationshipDefinition)
+	for _, entity := range entities {
+		host := h.registryManager.GetRegistrant(entity)
+		rel, ok := entity.(v1alpha1.RelationshipDefinition)
 		if ok {
+			rel.HostID = host.ID
+			rel.HostName = host.Hostname
+			rel.DisplayHostName = registry.HostnameToPascalCase(host.Hostname)
 			rels = append(rels, rel)
 		}
 	}
@@ -170,10 +176,10 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 		pgSize = int64(limit)
 	}
 
-	response := models.MeshmodelRelationshipsAPIResponse {
-		Page: page,
-		PageSize: int(pgSize),
-		Count: *count,
+	response := models.MeshmodelRelationshipsAPIResponse{
+		Page:          page,
+		PageSize:      int(pgSize),
+		Count:         *count,
 		Relationships: rels,
 	}
 

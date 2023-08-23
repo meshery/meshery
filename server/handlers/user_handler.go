@@ -53,7 +53,7 @@ func (h *Handler) GetUserByIDHandler(w http.ResponseWriter, r *http.Request, _ *
 // ```?page={page-number}``` Default page number is 0
 //
 // ```?pagesize={pagesize}``` Default pagesize is 20
-// 
+//
 // ```?search={username|email|first_name|last_name}``` If search is non empty then a greedy search is performed
 //
 // ```?filter={condition}```
@@ -70,6 +70,32 @@ func (h *Handler) GetUsers(w http.ResponseWriter, req *http.Request, _ *models.P
 	q := req.URL.Query()
 
 	resp, err := provider.GetUsers(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
+	if err != nil {
+		h.log.Error(ErrGetResult(err))
+		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, string(resp))
+}
+
+// swagger:route GET /api/identity/users/keys UserKeysAPI idGetAllUsersKeysHandler
+// Handles GET for all Keys for users
+//
+// Returns all keys for user
+// responses:
+// 	200: keys
+
+func (h *Handler) GetUsersKeys(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	token, ok := req.Context().Value(models.TokenCtxKey).(string)
+	if !ok {
+		http.Error(w, "failed to get token", http.StatusInternalServerError)
+		return
+	}
+
+	q := req.URL.Query()
+	resp, err := provider.GetUsersKeys(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
 		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
@@ -192,4 +218,24 @@ func (h *Handler) ShareDesignHandler(w http.ResponseWriter, r *http.Request, _ *
 
 	w.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(w, "Design shared")
+}
+
+// swagger:route POST /api/content/filter/share ShareContent idPostShareContent
+// Handle POST request for Sharing content
+//
+// Used to share filters with others
+// responses:
+// 	200:
+//  403:
+//  500:
+
+func (h *Handler) ShareFilterHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	statusCode, err := provider.ShareFilter(r)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Error: %v", err.Error()), statusCode)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, "Filter shared")
 }
