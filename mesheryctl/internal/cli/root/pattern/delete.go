@@ -42,10 +42,10 @@ mesheryctl pattern delete [file | URL]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
-
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			utils.Log.Error(err)
+			return nil
 		}
 
 		pattern := ""
@@ -61,6 +61,7 @@ mesheryctl pattern delete [file | URL]
 		if isID {
 			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), pattern, "pattern")
 			if err != nil {
+				utils.Log.Error(err)
 				return errors.Wrap(err, utils.PatternError(fmt.Sprintf("failed to delete pattern %s", args[0])))
 			}
 			utils.Log.Info("Pattern ", args[0], " deleted successfully")
@@ -73,7 +74,8 @@ mesheryctl pattern delete [file | URL]
 		if !govalidator.IsURL(file) {
 			content, err := os.ReadFile(file)
 			if err != nil {
-				return errors.New(utils.PatternError(fmt.Sprintf("failed to read file %s. Ensure the filename or URL is valid", file)))
+				utils.Log.Error(utils.ErrFileRead(errors.New(utils.PatternError(fmt.Sprintf("failed to read file %s. Ensure the filename or URL is valid", file)))))
+				return nil
 			}
 
 			patternFile = string(content)
@@ -81,7 +83,8 @@ mesheryctl pattern delete [file | URL]
 			// Else treat it like a URL
 			url, path, err := utils.ParseURLGithub(file)
 			if err != nil {
-				return err
+				utils.Log.Error(err)
+				return nil
 			}
 
 			utils.Log.Debug(url)
@@ -106,12 +109,14 @@ mesheryctl pattern delete [file | URL]
 
 			req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 			if err != nil {
-				return err
+				utils.Log.Error(err)
+				return nil
 			}
 
 			resp, err := utils.MakeRequest(req)
 			if err != nil {
-				return err
+				utils.Log.Error(err)
+				return nil
 			}
 			utils.Log.Debug("remote hosted pattern request success")
 			var response []*models.MesheryPattern
@@ -119,12 +124,14 @@ mesheryctl pattern delete [file | URL]
 
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
-				return errors.Wrap(err, utils.PerfError("failed to read response body"))
+				utils.Log.Error(utils.ErrReadResponseBody(errors.Wrap(err, "failed to read response body")))
+				return nil
 			}
 
 			err = json.Unmarshal(body, &response)
 			if err != nil {
-				return errors.Wrap(err, "couldn't process JSON response from Meshery Server")
+				utils.Log.Error(utils.ErrUnmarshal(errors.Wrap(err, "couldn't process JSON response from Meshery Server")))
+				return nil
 			}
 
 			patternFile = response[0].PatternFile
@@ -132,18 +139,21 @@ mesheryctl pattern delete [file | URL]
 
 		req, err = utils.NewRequest("DELETE", deployURL, bytes.NewBuffer([]byte(patternFile)))
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			return err
+			utils.Log.Error(utils.ErrReadResponseBody(err))
+			return nil
 		}
 
 		utils.Log.Info(string(body))

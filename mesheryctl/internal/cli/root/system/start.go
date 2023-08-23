@@ -60,8 +60,8 @@ var startCmd = &cobra.Command{
 // Start meshery
 mesheryctl system start
 
-// To create a new context for in-cluster Kubernetes deployments and set the new context as your current-context
-mesheryctl system context create k8s -p kubernetes -s
+// (optional) skip opening of MesheryUI in browser.
+mesheryctl system start --skip-browser
 
 // (optional) skip checking for new updates available in Meshery.
 mesheryctl system start --skip-update
@@ -69,8 +69,8 @@ mesheryctl system start --skip-update
 // Reset Meshery's configuration file to default settings.
 mesheryctl system start --reset
 
-// Silently create Meshery's configuration file with default settings
-mesheryctl system start --yes
+// Specify Platform to deploy Meshery to.
+mesheryctl system start -p docker
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -197,7 +197,7 @@ func start() error {
 		compose := &utils.DockerCompose{}
 		err = utils.ViperCompose.Unmarshal(&compose)
 		if err != nil {
-			return ErrUnmarshal(err, utils.DockerComposeFile)
+			return ErrUnmarshalDockerCompose(err, utils.DockerComposeFile)
 		}
 
 		//changing the port mapping in docker compose

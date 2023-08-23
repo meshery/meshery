@@ -57,10 +57,10 @@ Example: mesheryctl app import -f ./application.yml -s "Kubernetes Manifest"`
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var err error
-
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			utils.Log.Error(err)
+			return nil
 		}
 
 		appURL := mctlCfg.GetBaseMesheryURL() + "/api/application"
@@ -73,7 +73,8 @@ Example: mesheryctl app import -f ./application.yml -s "Kubernetes Manifest"`
 		app, err := importApp(sourceType, file, appURL, true)
 
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 
 		fmt.Printf("App file imported successfully. \nID of the app: %s \n", utils.TruncateID(app.ID.String()))
@@ -90,7 +91,7 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 	if validURL := govalidator.IsURL(file); !validURL {
 		content, err := os.ReadFile(file)
 		if err != nil {
-			return nil, err
+			return nil, utils.ErrFileRead(err)
 		}
 		text := string(content)
 
@@ -102,7 +103,7 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 			"save": save,
 		})
 		if err != nil {
-			return nil, err
+			return nil, utils.ErrMarhalling(err)
 		}
 		req, err = utils.NewRequest("POST", appURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
 		if err != nil {
@@ -120,12 +121,12 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.Log.Debug("failed to read response body")
-			return nil, errors.Wrap(err, utils.AppError("couldn't read response from server. Please try again after some time"))
+			return nil, utils.ErrReadResponseBody(err)
 		}
 		err = json.Unmarshal(body, &response)
 		if err != nil {
 			utils.Log.Debug("failed to unmarshal JSON response")
-			return nil, errors.Wrap(err, "couldn't process JSON response from server")
+			return nil, utils.ErrUnmarshal(err)
 		}
 		// set app
 		app = response[0]
@@ -169,12 +170,12 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.Log.Debug("failed to read response body")
-			return nil, errors.Wrap(err, utils.AppError("couldn't read response from server. Please try again after some time"))
+			return nil, utils.ErrReadResponseBody(err)
 		}
 		err = json.Unmarshal(body, &response)
 		if err != nil {
 			utils.Log.Debug("failed to unmarshal JSON response")
-			return nil, errors.Wrap(err, "couldn't process response received from server")
+			return nil, utils.ErrUnmarshal(err)
 		}
 
 		// set app

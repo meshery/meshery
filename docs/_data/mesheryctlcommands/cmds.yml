@@ -77,10 +77,14 @@ system:
           name: --reset
           description: Reset Meshery’s configuration file to default settings.
           usage: mesheryctl system start --reset
-        silent:
-          name: --silent
-          description: Silently create Meshery's configuration file with default settings.
-          usage: mesheryctl system start --silent
+        skip-browser:
+          name: --skip-browser
+          description: (optional) skip opening of MesheryUI in browser.
+          usage: mesheryctl system start --skip-browser
+        platform:
+          name: --platform, -p
+          description: platform to deploy Meshery to.
+          usage: mesheryctl system start -p kubernetes
 
     stop:
       name: stop
@@ -92,6 +96,14 @@ system:
           name: --reset
           description: Reset Meshery’s configuration file to default settings.
           usage: mesheryctl system stop --reset
+        keep-namespace:
+          name: --keep-namespace
+          description: (optional) keep the Meshery namespace during uninstallation
+          usage: mesheryctl system stop --keep-namespace
+        force:
+          name: --force
+          description: (optional) uninstall Meshery resources forcefully
+          usage: mesheryctl system stop --force
 
     update:
       name: update
@@ -134,13 +146,17 @@ system:
       name: logs
       description: Starts tailing Meshery server debug logs
       usage: |
-
         # View logs for specific component
         mesheryctl system logs [component-name]
-
       example: |
         mesheryctl system logs --verbose
           mesheryctl system logs meshery-istio
+      flags:
+        follow:
+          name: --follow, -f
+          description: (Optional) Follow the stream of the Meshery's logs. Defaults to false.
+          usage: mesheryctl system logs --follow
+
     reset:
       name: reset
       description: Resets meshery.yaml file with a copy from Meshery repo
@@ -187,6 +203,11 @@ system:
       name: login
       description: "Authenticate with the Meshery Provider of your choice: the Local Provider or a Remote Provider."
       usage: mesheryctl system login
+      flags:
+        provider:
+          name: --provider, -p
+          description: Login Meshery with specified provider
+          usage: mesheryctl system login -p Meshery
 
     logout:
       name: logout
@@ -286,7 +307,10 @@ system-context:
           description: create a new context in config.yaml file- set Meshery server URL. Defaults to "https://localhost:9081"
           usage: mesheryctl system context create [context name] --url [URL]
           example: mesheryctl system context create k8s-sample --url "https://localhost:9990"
-
+        platform:
+          name: --platform, -p
+          description: Platform to deploy Meshery
+          usage: mesheryctl system context create context-name --platform docker
     delete:
       name: delete
       description: delete an existing context from Meshery config file
@@ -315,6 +339,10 @@ system-context:
           name: --all
           description: if set, shows the configurations of all the contexts
           usage: mesheryctl system context view --all
+    list:
+      name: list
+      description: List all contexts present
+      usage: mesheryctl system context list
 
 system-provider:
   name: system provider
