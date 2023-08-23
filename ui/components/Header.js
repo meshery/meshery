@@ -345,7 +345,7 @@ function K8sContextMenu({
     )
   }
 
-  const handleKubernetesDelete = (name, ctxId) => async () => {
+  const handleKubernetesDelete = (name, connectionID) => async () => {
     let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
       title : `Delete ${name} context ?`,
       subtitle : `Are you sure you want to delete ${name} cluster from Meshery?`,
@@ -362,7 +362,7 @@ function K8sContextMenu({
       deleteKubernetesConfig(
         successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes config removed", successCallback),
         errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Not able to remove config"),
-        ctxId
+        connectionID
       )
     }
   }
@@ -485,8 +485,8 @@ function K8sContextMenu({
                         />
                         <Chip
                           label={ctx?.name}
-                          onDelete={handleKubernetesDelete(ctx.name, ctx.id)}
-                          onClick={() => handleKubernetesClick(ctx.id)}
+                          onDelete={handleKubernetesDelete(ctx.name, ctx.connection_id)}
+                          onClick={() => handleKubernetesClick(ctx.connection_id)}
                           avatar={
                             meshStatus ?
                               <BadgeAvatars>

@@ -8,7 +8,7 @@ import { updateProgress } from "../../../lib/store";
 */
 export const pingKubernetes = (successHandler,errorHandler, context) => {
   dataFetch(
-    "/api/system/kubernetes/ping?context=" + context,
+    "/api/system/kubernetes/ping?connection_id=" + context,
     { credentials : "include" },
     successHandler,
     errorHandler

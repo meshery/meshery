@@ -178,6 +178,7 @@ type ComplexityRoot struct {
 	K8sContext struct {
 		Auth               func(childComplexity int) int
 		Cluster            func(childComplexity int) int
+		ConnectionID       func(childComplexity int) int
 		CreatedAt          func(childComplexity int) int
 		CreatedBy          func(childComplexity int) int
 		DeploymentType     func(childComplexity int) int
@@ -1047,6 +1048,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.K8sContext.Cluster(childComplexity), true
+
+	case "K8sContext.connection_id":
+		if e.complexity.K8sContext.ConnectionID == nil {
+			break
+		}
+
+		return e.complexity.K8sContext.ConnectionID(childComplexity), true
 
 	case "K8sContext.created_at":
 		if e.complexity.K8sContext.CreatedAt == nil {
@@ -2663,7 +2671,8 @@ type K8sContext {
   deployment_type: String!,
   version: String!,
   updated_at: String!,
-  created_at: String!
+  created_at: String!,
+  connection_id: String!
 }
 
 type K8sContextsPage {
@@ -8012,6 +8021,50 @@ func (ec *executionContext) fieldContext_K8sContext_created_at(ctx context.Conte
 	return fc, nil
 }
 
+func (ec *executionContext) _K8sContext_connection_id(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8sContext_connection_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ConnectionID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8sContext_connection_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8sContext",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _K8sContextsPage_total_count(ctx context.Context, field graphql.CollectedField, obj *model.K8sContextsPage) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_K8sContextsPage_total_count(ctx, field)
 	if err != nil {
@@ -8121,6 +8174,8 @@ func (ec *executionContext) fieldContext_K8sContextsPage_contexts(ctx context.Co
 				return ec.fieldContext_K8sContext_updated_at(ctx, field)
 			case "created_at":
 				return ec.fieldContext_K8sContext_created_at(ctx, field)
+			case "connection_id":
+				return ec.fieldContext_K8sContext_connection_id(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type K8sContext", field.Name)
 		},
@@ -18175,6 +18230,13 @@ func (ec *executionContext) _K8sContext(ctx context.Context, sel ast.SelectionSe
 		case "created_at":
 
 			out.Values[i] = ec._K8sContext_created_at(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "connection_id":
+
+			out.Values[i] = ec._K8sContext_connection_id(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++

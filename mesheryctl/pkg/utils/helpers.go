@@ -197,7 +197,7 @@ var CfgFile string
 // TODO: add "meshery-perf" as a component
 
 // ListOfComponents returns the list of components available
-var ListOfComponents = []string{"meshery-app-mesh", "meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-traefik-mesh", "meshery-nginx-sm", "meshery-cilium"}
+var ListOfComponents = []string{}
 
 // TemplateContext is the template context provided when creating a config file
 var TemplateContext = config.Context{
