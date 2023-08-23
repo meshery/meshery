@@ -7,12 +7,10 @@ import {
 import { blue } from "@material-ui/core/colors";
 import NoSsr from "@material-ui/core/NoSsr";
 import AddIcon from "@material-ui/icons/Add";
-import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
 import PlayIcon from "@material-ui/icons/PlayArrow";
 import MUIDataTable from "mui-datatables";
 import { withRouter } from "next/router";
-import { withSnackbar } from "notistack";
 import PropTypes from "prop-types";
 import React from "react";
 import { Controlled as CodeMirror } from "react-codemirror2";
@@ -32,6 +30,8 @@ import ConfirmationMsg from "./ConfirmationModal";
 import { iconMedium } from "../css/icons.styles";
 import { ACTIONS } from "../utils/Enum";
 import { getModelByName } from "../api/meshmodel";
+import { EVENT_TYPES } from "../lib/event-types";
+import { withNotify } from "../utils/hooks/useNotification";
 
 const styles = (theme) => ({
   smWrapper : { backgroundColor : theme.palette.secondary.elevatedComponents2, },
@@ -518,15 +518,8 @@ class MesheryAdapterPlayComponent extends React.Component {
         self.setState({ menuState, [dlg] : false });
 
         if (typeof result !== "undefined") {
-          self.props.enqueueSnackbar("Operation executing...", {
-            variant : "info",
-            autoHideDuration : 2000,
-            action : (key) => (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon style={iconMedium} />
-              </IconButton>
-            ),
-          });
+          const notify = self.props.notify;
+          notify({ message : "Operation executing...", event_type : EVENT_TYPES.INFO });
         }
       },
       self.handleError(cat, deleteOp, selectedOp)
@@ -544,15 +537,8 @@ class MesheryAdapterPlayComponent extends React.Component {
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Adapter pinged!", {
-            variant : "success",
-            autoHideDuration : 2000,
-            action : (key) => (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon style={iconMedium} />
-              </IconButton>
-            ),
-          });
+          const notify = self.props.notify;
+          notify({ message : "Adapter pinged!", event_type : EVENT_TYPES.SUCCESS });
         }
       },
       self.handleError("Could not ping adapter.")
@@ -615,15 +601,8 @@ class MesheryAdapterPlayComponent extends React.Component {
       self.setState(
         { addonSwitchGroup : { ...self.addonSwitchGroup, [selectedOp] : deleteOp } })
       self.props.updateProgress({ showProgress : false });
-      self.props.enqueueSnackbar(`Operation submission failed: ${error}`, {
-        variant : "error",
-        action : (key) => (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-            <CloseIcon style={iconMedium} />
-          </IconButton>
-        ),
-        autoHideDuration : 8000,
-      });
+      const notify = self.props.notify;
+      notify({ message : `Operation submission failed: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() });
     };
   };
 
@@ -1363,5 +1342,5 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(MesheryAdapterPlayComponent)))
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(withNotify(MesheryAdapterPlayComponent)))
 );

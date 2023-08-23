@@ -1,11 +1,9 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import { NoSsr, Typography, IconButton } from "@material-ui/core";
+import { NoSsr, Typography } from "@material-ui/core";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import CloseIcon from "@material-ui/icons/Close";
-import { withSnackbar } from "notistack";
 import dataFetch from "../../../lib/data-fetch";
 import PrometheusSelectionComponent from "./PrometheusSelectionComponent";
 import GrafanaDisplaySelection from "../grafana/GrafanaDisplaySelection";
@@ -14,6 +12,8 @@ import GrafanaCustomCharts from "../grafana/GrafanaCustomCharts";
 import PrometheusConfigComponent from "./PrometheusConfigComponent";
 import { getK8sClusterIdsFromCtxId } from "../../../utils/multi-ctx";
 import fetchAvailableAddons from "../../graphql/queries/AddonsStatusQuery";
+import { withNotify } from "../../../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../../../lib/event-types";
 
 const promStyles = (theme) => ({
   buttons : { display : "flex",
@@ -55,15 +55,8 @@ export const submitPrometheusConfigure = (self, cb = () => {}) => {
     (result) => {
       self.props.updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        self.props.enqueueSnackbar("Prometheus was configured!", { variant : "success",
-          autoHideDuration : 2000,
-          action : function Loader(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            );
-          }, });
+        const notify = self.props.notify;
+        notify({ message : "Prometheus was configured!", event_type : EVENT_TYPES.SUCCESS });
         self.setState({ prometheusConfigSuccess : true });
         self.props.updatePrometheusConfig({ prometheus : { prometheusURL,
           selectedPrometheusBoardsConfigs, }, });
@@ -172,15 +165,9 @@ class PrometheusComponent extends Component {
   };
 
   handleError = () => {
-    const self = this;
     this.props.updateProgress({ showProgress : false });
-    this.props.enqueueSnackbar("There was an error communicating with Prometheus", { variant : "error",
-      action : (key) => (
-        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-          <CloseIcon />
-        </IconButton>
-      ),
-      autoHideDuration : 8000, });
+    const notify = this.props.notify;
+    notify({ message : "There was an error communicating with Prometheus", event_type : EVENT_TYPES.ERROR });
   };
 
   handlePrometheusChipDelete = () => {
@@ -215,13 +202,8 @@ class PrometheusComponent extends Component {
       (result) => {
         self.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          self.props.enqueueSnackbar("Prometheus pinged!", { variant : "success",
-            autoHideDuration : 2000,
-            action : (key) => (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            ), });
+          const notify = self.props.notify;
+          notify({ message : "Prometheus pinged!", event_type : EVENT_TYPES.SUCCESS });
         }
       },
       self.handleError
@@ -320,4 +302,4 @@ const mapStateToProps = (st) => {
   return { grafana, prometheus, selectedK8sContexts, k8sconfig };
 };
 
-export default withStyles(promStyles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(PrometheusComponent)));
+export default withStyles(promStyles)(connect(mapStateToProps, mapDispatchToProps)(withNotify(PrometheusComponent)));
