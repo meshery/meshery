@@ -297,7 +297,8 @@ type K8sContext {
   deployment_type: String!,
   version: String!,
   updated_at: String!,
-  created_at: String!
+  created_at: String!,
+  connection_id: String!
 }
 
 type K8sContextsPage {

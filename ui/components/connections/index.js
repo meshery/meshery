@@ -7,18 +7,15 @@ import {
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 // import EditIcon from "@material-ui/icons/Edit";
-import CloseIcon from "@material-ui/icons/Close";
 // import YoutubeSearchedForIcon from '@mui/icons-material/YoutubeSearchedFor';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import MUIDataTable from "mui-datatables";
-import { withSnackbar } from "notistack";
 import React, { useEffect, useRef, useState } from "react";
 import Moment from "react-moment";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { updateProgress } from "../../lib/store";
-import { iconMedium } from "../../css/icons.styles";
-import { /* Avatar, */ Chip, /* FormControl, */ IconButton } from "@mui/material";
+import { /* Avatar, */ Chip, /* FormControl, */ } from "@mui/material";
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
@@ -28,6 +25,8 @@ import classNames from "classnames";
 import dataFetch from "../../lib/data-fetch";
 import LaunchIcon from '@mui/icons-material/Launch';
 import TableRow from '@mui/material/TableRow';
+import { useNotification } from "../../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../../lib/event-types";
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2) },
@@ -133,12 +132,13 @@ const ACTION_TYPES = {
   },
 };
 
-function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }) {
+function Connections({ classes, updateProgress }) {
   const [page, setPage] = useState(0);
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(0);
   const [connections, setConnections] = useState([]);
-  const [search, setSearch] = useState("");
+  const [search,setSearch] = useState("");
+  const { notify } = useNotification()
 
   const searchTimeout = useRef(null);
 
@@ -436,18 +436,7 @@ function Connections({ classes, updateProgress, closeSnackbar, enqueueSnackbar }
 
   const handleError = (action) => (error) => {
     updateProgress({ showProgress : false });
-
-    enqueueSnackbar(`${action.error_msg}: ${error}`, {
-      variant : "error",
-      action : function Action(key) {
-        return (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon style={iconMedium} />
-          </IconButton>
-        );
-      },
-      autoHideDuration : 8000,
-    });
+    notify({ message : `${action.error_msg}: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() })
   };
 
   return (
@@ -524,4 +513,4 @@ const mapStateToProps = (state) => {
 };
 
 // @ts-ignore
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(Connections)));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Connections));

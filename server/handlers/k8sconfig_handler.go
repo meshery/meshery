@@ -190,7 +190,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	}
 }
 
-// swagger:route GET /api/system/kubernetes/ping?contexts={id} SystemAPI idGetKubernetesPing
+// swagger:route GET /api/system/kubernetes/ping?connection_id={id} SystemAPI idGetKubernetesPing
 // Handle GET request for Kubernetes ping
 //
 // Fetches server version to simulate ping
@@ -206,10 +206,10 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		return
 	}
 
-	ctx := req.URL.Query().Get("context")
-	if ctx != "" {
+	connectionID := req.URL.Query().Get("connection_id")
+	if connectionID != "" {
 		// Get the context associated with this ID
-		k8sContext, err := provider.GetK8sContext(token, ctx)
+		k8sContext, err := provider.GetK8sContext(token, connectionID)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(w, "failed to get kubernetes context for the given ID")

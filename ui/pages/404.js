@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import CustomErrorMessage from "../components/ErrorPage";
 import { NoSsr } from "@material-ui/core";
 import { updatepagepath } from "../lib/store";
@@ -7,30 +7,27 @@ import { bindActionCreators } from 'redux';
 import { getPath } from "../lib/path";
 import Head from 'next/head';
 
-class Error extends React.Component {
-
-  componentDidMount() {
+const Error = () => {
+  useEffect(() => {
     console.log(`path: ${getPath()}`);
-    this.props.updatepagepath({ path : getPath() })
-  }
+    updatepagepath({ path : getPath() });
+  }, [updatepagepath]);
 
-  render() {
-    return (
-      <NoSsr>
-        <Head>
-          <title>404 - Page Not Found</title>
-        </Head>
-        <CustomErrorMessage/>
-      </NoSsr>
-    );
-  }
+  return (
+    <NoSsr>
+      <Head>
+        <title>404 - Page Not Found</title>
+      </Head>
+      <CustomErrorMessage />
+    </NoSsr>
+  )
 }
 
-const mapDispatchToProps = dispatch => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch) })
+const mapDispatchToProps = dispatch => ({
+  updatepagepath : bindActionCreators(updatepagepath, dispatch)
+});
 
 export default connect(
   null,
   mapDispatchToProps
 )(Error);
-
-
