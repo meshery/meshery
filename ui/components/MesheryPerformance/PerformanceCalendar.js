@@ -5,9 +5,6 @@ import moment from "moment";
 import { connect } from "react-redux";
 import { updateProgress } from "../../lib/store";
 import { bindActionCreators } from "redux";
-import { withSnackbar } from "notistack";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import GenericModal from "../GenericModal";
 import GrafanaCustomCharts from "../telemetry/grafana/GrafanaCustomCharts";
@@ -15,7 +12,8 @@ import MesheryChart from "../MesheryChart";
 import { Paper, withStyles } from "@material-ui/core";
 import { Typography } from "@material-ui/core";
 import fetchAllResults from '../graphql/queries/FetchAllResultsQuery'
-import { iconMedium } from "../../css/icons.styles";
+import { useNotification } from "../../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../../lib/event-types";
 
 const localizer = momentLocalizer(moment);
 const styles = (theme) => ({
@@ -167,17 +165,19 @@ function generateDateRange(from, to) {
  * @param {{
  *  style?: React.CSSProperties,
  *  updateProgress: any,
- *  enqueueSnackbar: any,
- *  closeSnackbar: any
+ * classes: any
  * }} props
  * @returns
  */
 function PerformanceCalendar({
-  style, updateProgress, enqueueSnackbar, closeSnackbar, classes
+  style, updateProgress, classes
 }) {
   const [time, setTime] = useState(generateDateRange());
   const [results, setResults] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState();
+
+  //hooks
+  const { notify } = useNotification();
 
   useEffect(() => {
     fetchResults(time.start, time.end);
@@ -215,18 +215,7 @@ function PerformanceCalendar({
   function handleError(msg) {
     return function (error) {
       updateProgress({ showProgress : false });
-
-      enqueueSnackbar(`${msg}: ${error}`, {
-        variant : "error",
-        action : function Action(key) {
-          return (
-            <IconButton style={iconMedium} key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon style={iconMedium}/>
-            </IconButton>
-          );
-        },
-        autoHideDuration : 8000,
-      });
+      notify({ message : `${msg}: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() })
     };
   }
 
@@ -302,4 +291,4 @@ function PerformanceCalendar({
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
-export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(PerformanceCalendar)));
+export default withStyles(styles)(connect(null, mapDispatchToProps)(PerformanceCalendar));

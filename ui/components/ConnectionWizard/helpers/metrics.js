@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import dataFetch from "../../../lib/data-fetch";
+import { EVENT_TYPES } from "../../../lib/event-types";
 import { ctxUrl } from "../../../utils/multi-ctx";
 
 export const verifyGrafanaConnection = (grafanaUrl) => {
@@ -16,24 +17,18 @@ export const verifyGrafanaConnection = (grafanaUrl) => {
 }
 
 
-export const pingGrafanaWithNotification = (updateProgress, action, enqueueSnackbar) => {
-
+export const pingGrafanaWithNotification = (notify, updateProgress) => {
   updateProgress({ showProgress : true })
-
   const successCb = (result) => {
     updateProgress({ showProgress : false });
     if (typeof result !== "undefined") {
-      enqueueSnackbar("Grafana pinged!", { variant : "success",
-        autoHideDuration : 2000,
-        action });
+      notify({ message : "Grafana connected!", event_type : EVENT_TYPES.SUCCESS })
     }
   }
 
   const errorCb = (error) => {
     updateProgress({ showProgress : false });
-    enqueueSnackbar("Grafana could not be pinged! : "+error, { variant : "error",
-      autoHideDuration : 2000,
-      action });
+    notify({ message : "Grafana not connected! : "+error, event_type : EVENT_TYPES.ERROR, details : error.toString() })
   }
 
   pingGrafana(successCb, errorCb)
@@ -62,24 +57,19 @@ export const verifyPrometheusConnection =  (prometheusUrl) => {
 }
 
 
-export const pingPrometheusWithNotification = (updateProgress, action, enqueueSnackbar) => {
-
+export const pingPrometheusWithNotification = (notify, updateProgress) => {
   updateProgress({ showProgress : true })
 
   const successCb = (result) => {
     updateProgress({ showProgress : false });
     if (typeof result !== "undefined") {
-      enqueueSnackbar("Prometheus pinged!", { variant : "success",
-        autoHideDuration : 2000,
-        action });
+      notify({ message : "Prometheus connected!", event_type : EVENT_TYPES.SUCCESS })
     }
   }
 
   const errorCb = (error) => {
     updateProgress({ showProgress : false });
-    enqueueSnackbar("Prometheus could not be pinged! : "+error, { variant : "error",
-      autoHideDuration : 2000,
-      action });
+    notify({ message : "Prometheus not connected! : "+error, event_type : EVENT_TYPES.ERROR, details : error.toString() })
   }
 
   pingPrometheus(successCb, errorCb)
@@ -172,8 +162,7 @@ export const extractURLFromScanData = (data) => {
 
 
 
-export const handleGrafanaConfigure = (grafanaURL, grafanaAPIKey, updateProgress, enqueueSnackbar, action, updateGrafanaConfig) => {
-
+export const handleGrafanaConfigure = (notify, grafanaURL, grafanaAPIKey, updateProgress, updateGrafanaConfig) => {
   if (
     grafanaURL === "" ||
       !(grafanaURL.toLowerCase().startsWith("http://") || grafanaURL.toLowerCase().startsWith("https://"))
@@ -198,9 +187,7 @@ export const handleGrafanaConfigure = (grafanaURL, grafanaAPIKey, updateProgress
     (result) => {
       updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Grafana was configured!", { variant : "success",
-          autoHideDuration : 2000,
-          action });
+        notify({ message : "Grafana was configured!", event_type : EVENT_TYPES.SUCCESS });
         updateGrafanaConfig({ grafana : { grafanaURL,
           grafanaAPIKey, }, });
       }
@@ -208,17 +195,14 @@ export const handleGrafanaConfigure = (grafanaURL, grafanaAPIKey, updateProgress
     (err) => {
       updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Grafana was not configured! :" + err, { variant : "error",
-          autoHideDuration : 2000,
-          action });
+        notify({ message : "Grafana was not configured! :" + err, event_type : EVENT_TYPES.ERROR });
       }
     }
 
   )
 }
 
-export const handlePrometheusConfigure = (prometheusURL, updateProgress, enqueueSnackbar, action, updatePrometheusConfig) => {
-
+export const handlePrometheusConfigure = (notify, prometheusURL, updateProgress, updatePrometheusConfig) => {
   if (
     prometheusURL === "" ||
       !(prometheusURL.toLowerCase().startsWith("http://") || prometheusURL.toLowerCase().startsWith("https://"))
@@ -242,19 +226,14 @@ export const handlePrometheusConfigure = (prometheusURL, updateProgress, enqueue
     (result) => {
       updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Prometheus was configured!", { variant : "success",
-          autoHideDuration : 2000,
-          action });
-        updatePrometheusConfig({ prometheus : { prometheusURL,
-          selectedPrometheusBoardsConfigs : [], }, });
+        notify({ message : "Prometheus was configured!", event_type : EVENT_TYPES.SUCCESS });
+        updatePrometheusConfig({ prometheus : { prometheusURL, selectedPrometheusBoardsConfigs : [], }, });
       }
     },
     (err) => {
       updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Prometheus was not configured! :" + err, { variant : "error",
-          autoHideDuration : 2000,
-          action });
+        notify({ message : "Prometheus was not configured! :" + err, event_type : EVENT_TYPES.ERROR });
       }
     }
 
