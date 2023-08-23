@@ -10,7 +10,7 @@ import {
   Typography,
   Tabs,
   Tab,
-  ClickAwayListener
+  ClickAwayListener,
 } from '@material-ui/core';
 import BellIcon from '@material-ui/icons/Notifications';
 import ClearIcon from "../assets/icons/ClearIcon";
@@ -29,7 +29,7 @@ import moment from "moment";
 import { withNotify } from "../utils/hooks/useNotification";
 
 const styles = (theme) => ({
-  sidelist : { width : 450, },
+  sidelist : { width : "35rem", },
   notificationButton : { height : '100%', },
   notificationDrawer : {
     backgroundColor : theme.palette.secondary.sideBar,
@@ -80,15 +80,22 @@ const styles = (theme) => ({
     transition : '0.3s ease-in-out !important'
   },
   peekView : {
-    right : "-26.1rem",
+    right : "-32.1rem",
     transition : '0.3s ease-in-out !important'
   },
   tabs : {
+
+    "&.MuiTabs-flexContainer" : {
+      display : "flex",
+      justifyContent : "space-around",
+    },
     "& .MuiTabs-indicator" : {
       backgroundColor : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
     },
   },
   tab : {
+    padding : "0px",
+    margin : "0px",
     "&.Mui-selected" : {
       color : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
     },
@@ -104,10 +111,10 @@ const styles = (theme) => ({
 
 export const NOTIFICATION_FILTERS = {
   ALL : "all",
-  HISTORY : NOTIFICATION_STATUS.VIEWED,
   ERROR : EVENT_TYPES.ERROR.type ,
   SUCCESS : EVENT_TYPES.SUCCESS.type ,
-  WARNING : EVENT_TYPES.WARNING.type
+  WARNING : EVENT_TYPES.WARNING.type,
+  HISTORY : "history" ,
 }
 
 /**
@@ -189,6 +196,16 @@ const notificationBadgeTooltipMessage = (events) => {
   return `No new notifications`
 }
 
+const TabLabel = ({ filterType,events }) => {
+
+  const notifCount = getNotifications(events,filterType).length
+  return (
+    <div style={{ margin : 0 , padding : 0 ,textTransform : "capitalize" , display : "flex" , gap : "0.3rem" }}>
+      {notifCount ? `${filterType} (${notifCount})` : filterType }
+    </div>
+  )
+}
+
 //TODO: Convert To functional Compoent
 class MesheryNotification extends React.Component {
   state = {
@@ -197,11 +214,9 @@ class MesheryNotification extends React.Component {
     displayEventType : NOTIFICATION_FILTERS.ALL,
     tabValue : 0,
     anchorEl : false,
-    // showFullNotificationCenter : false,
   }
 
   handleToggle = () => {
-    // this.setState({ showFullNotificationCenter : !this.state.showFullNotificationCenter })
     this.props.toggleOpen()
   };
 
@@ -330,6 +345,7 @@ class MesheryNotification extends React.Component {
     })
   }
 
+
   render() {
     const { classes, events ,showFullNotificationCenter  } = this.props;
     const { anchorEl, show } = this.state;
@@ -428,11 +444,13 @@ class MesheryNotification extends React.Component {
                     textColor="primary"
                     variant="fullWidth"
                   >
-                    <Tab label="All" className={classes.tab} onClick={this.handleNotifFiltering(NOTIFICATION_FILTERS.ALL)} style={{ minWidth : "10%" }} />
-                    <Tab label="Error" className={classes.tab} onClick={this.handleNotifFiltering(NOTIFICATION_FILTERS.ERROR)} style={{ minWidth : "10%" }} />
-                    <Tab label="Warning" className={classes.tab} onClick={this.handleNotifFiltering(NOTIFICATION_FILTERS.WARNING)} style={{ minWidth : "10%" }} />
-                    <Tab label="Success" className={classes.tab} onClick={this.handleNotifFiltering(NOTIFICATION_FILTERS.SUCCESS)} style={{ minWidth : "10%" }} />
-                    <Tab label="History" className={classes.tab} onClick={this.handleNotifFiltering(NOTIFICATION_FILTERS.HISTORY)} style={{ minWidth : "10%" }} />
+
+                    {Object.values(NOTIFICATION_FILTERS).map(filter  =>
+                      <Tab label={<TabLabel filterType={filter} events={events}/>}
+                        className={classes.tab}
+                        onClick={this.handleNotifFiltering(filter)}
+                        style={{ minWidth : "8%" }} />
+                    )}
                   </Tabs>
                   {getNotifications(this.props.events, this.state.displayEventType).map((event) => (
                     <Notification

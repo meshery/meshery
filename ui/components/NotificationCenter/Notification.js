@@ -16,7 +16,7 @@ import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { EVENT_TYPES } from "../../lib/event-types";
+import { EVENT_TYPES , NOTIFICATION_STATUS } from "../../lib/event-types";
 import ReplyIcon from '@material-ui/icons/Reply';
 import {
   TwitterShareButton,
@@ -28,7 +28,6 @@ import {
 } from "react-share"
 import { ClickAwayListener, Fade, Popper } from "@material-ui/core";
 import moment from "moment";
-import { NOTIFICATION_STATUS } from "../../lib/event-types";
 
 const variantIcon = {
   [EVENT_TYPES.SUCCESS.type] : CheckCircleIcon,

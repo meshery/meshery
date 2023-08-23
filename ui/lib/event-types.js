@@ -1,6 +1,6 @@
 
 export const NOTIFICATION_STATUS = {
-  VIEWED : "read" ,
+  VIEWED : "viewed" ,
   NEW : "new"
 }
 
