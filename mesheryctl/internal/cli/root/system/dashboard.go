@@ -17,6 +17,7 @@ package system
 import (
 	"context"
 	"fmt"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -145,6 +146,15 @@ mesheryctl system dashboard --port-forward
 
 				mesheryURL := portforward.URLFor("")
 
+				// Update the endpoint in the current context
+				currCtx.SetEndpoint(mesheryURL)
+
+				// Save the updated context configuration
+				err = config.UpdateContextInConfig(currCtx, mctlCfg.GetCurrentContextName())
+				if err != nil {
+					return err
+				}
+
 				// ticker for keeping connection alive with pod each 10 seconds
 				ticker := time.NewTicker(10 * time.Second)
 				go func() {
@@ -216,8 +226,21 @@ mesheryctl system dashboard --port-forward
 		}
 
 		if !skipBrowserFlag {
-			log.Info("Opening Meshery (" + currCtx.GetEndpoint() + ") in browser.")
-			err = utils.NavigateToBrowser(currCtx.GetEndpoint())
+			u, err := url.Parse(currCtx.GetEndpoint())
+			if err != nil {
+				return errors.Wrap(err, "error parsing the endpoint")
+			}
+
+			_, port, err := net.SplitHostPort(u.Host)
+			if err != nil {
+				return errors.Wrap(err, "error extracting port from the endpoint")
+			}
+
+			// Update the endpoint in the context configuration.
+			serverAddress := fmt.Sprintf("http://localhost:%s", port)
+
+			log.Info("Opening Meshery (" + serverAddress + ") in browser.")
+			err = utils.NavigateToBrowser(serverAddress)
 			if err != nil {
 				log.Warn("Failed to open Meshery in your browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
 			}
