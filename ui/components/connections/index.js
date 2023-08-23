@@ -70,6 +70,9 @@ const styles = (theme) => ({
     "& .MuiChip-label" : {
       paddingTop : "3px",
       fontWeight : "400",
+    },
+    "&:hover" : {
+      boxShadow : "0px 1px 2px 0px rgba(0, 0, 0, 0.25)"
     }
   },
   capitalize : {
