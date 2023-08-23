@@ -735,7 +735,7 @@ app:
               mesheryctl app view [application-name|application-id] -o json
           example:
               mesheryctl app view bookInfo -o json
-
+    
 filter:
   name: filter
   description: Service Mesh Filter Management
