@@ -127,13 +127,15 @@ function MesherySettingsNew({ classes, updateProgress,
   const setTableData = () => {
     let tableInfo = [];
     handleContexts(k8sconfig);
+    console.log("k8sconfig: ", k8sconfig)
     k8sconfig.forEach(ctx => {
       let data = {
         context : ctx.name,
         location : ctx.server,
         deployment_type : ctx.deployment_type === DEPLOYMENT_TYPE.IN_CLUSTER ? "In Cluster" : "Out of Cluster",
-        last_discovery : setDateTime(new Date()),
-        id : ctx.id
+        last_discovery : setDateTime(new Date()), // TODO: use the info from db
+        id : ctx.id,
+        connection_id : ctx.connection_id,
       };
       tableInfo.push(data);
     })
@@ -239,10 +241,10 @@ function MesherySettingsNew({ classes, updateProgress,
     setLastDiscover(newData);
   }
 
-  const handleKubernetesClick = (context, index) => {
+  const handleKubernetesClick = (connection_id, index) => {
     updateProgress({ showProgress : true });
     dataFetch(
-      "/api/system/kubernetes/ping?context=" + context,
+      "/api/system/kubernetes/ping?connection_id=" + connection_id,
       { credentials : "same-origin" },
       (result) => {
         updateProgress({ showProgress : false });
@@ -415,13 +417,12 @@ function MesherySettingsNew({ classes, updateProgress,
           );
         },
         customBodyRender : (_, tableMeta,) => {
-          console.log("tableMeta: ", tableMeta);
           return (
             <Tooltip title={`Server: ${tableMeta.rowData[2]}`}>
               <Chip
                 label={data[tableMeta.rowIndex].context}
-                onDelete={handleConfigDelete(data[tableMeta.rowIndex].id, data[tableMeta.rowIndex].context, tableMeta.rowIndex)}
-                onClick={() => handleKubernetesClick(data[tableMeta.rowIndex].id, tableMeta.rowIndex)}
+                onDelete={handleConfigDelete(data[tableMeta.rowIndex].connection_id, data[tableMeta.rowIndex].context, tableMeta.rowIndex)}
+                onClick={() => handleKubernetesClick(data[tableMeta.rowIndex].connection_id, tableMeta.rowIndex)}
                 icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
                 variant="outlined"
                 data-cy="chipContextName"
@@ -574,7 +575,7 @@ function MesherySettingsNew({ classes, updateProgress,
     },
     onRowsDelete : (td) => {
       td.data.forEach((item) => {
-        handleConfigDelete(data[item.index].id, data[item.index].context)
+        handleConfigDelete(data[item.index].connection_id, data[item.index].context)
       })
     },
     renderExpandableRow : (rowData, rowMetaData) => {
@@ -597,7 +598,7 @@ function MesherySettingsNew({ classes, updateProgress,
                               >
                                 <Chip
                                   label={data[rowMetaData.rowIndex].context}
-                                  onClick={() => handleKubernetesClick(data[rowMetaData.rowIndex].id, rowMetaData.rowIndex)}
+                                  onClick={() => handleKubernetesClick(data[rowMetaData.rowIndex].connection_id, rowMetaData.rowIndex)}
                                   icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
                                   variant="outlined"
                                   data-cy="chipContextName"

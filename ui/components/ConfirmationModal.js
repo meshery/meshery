@@ -427,7 +427,7 @@ function ConfirmationMsg(props) {
                                     <Chip
                                       label={ctx.name}
                                       className={classes.ctxChip}
-                                      onClick={() => handleKubernetesClick(ctx.id)}
+                                      onClick={() => handleKubernetesClick(ctx.connection_id)}
                                       icon={<img src="/static/img/kubernetes.svg" className={classes.ctxIcon} />}
                                       variant="outlined"
                                       data-cy="chipContextName"

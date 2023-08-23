@@ -1071,7 +1071,7 @@ class MesheryPerformanceComponent extends React.Component {
                           onChange={this.handleChange("reqBody")}
                         ></TextField>
                       </Grid>
-                      <Grid item xs={12} md={12}>
+                      <Grid container xs={12} md={12}>
                         <Grid item xs={6}>
                           <TextField
                             id="additional_options"
@@ -1084,11 +1084,15 @@ class MesheryPerformanceComponent extends React.Component {
                             multiline
                             margin="normal"
                             variant="outlined"
+                            size="small"
                             onChange={this.handleChange("additional_options")}
                           />
+                        </Grid>
+                        <Grid item xs={6}>
                           <label htmlFor="upload-additional-options"
                             style={{ paddingLeft : '0' }}
                             className={classes.upload}
+                            fullWidth
                           >
                             <Button
                               variant="outlined"
@@ -1096,6 +1100,7 @@ class MesheryPerformanceComponent extends React.Component {
                               aria-label="Upload Button"
                               component="span"
                               className={classes.button}
+                              style={{ margin : "0.5rem", marginTop : "1.15rem" }}
                             >
                               <input id="upload-additional-options"  type="file" accept={".json"} name="upload-button" hidden  data-cy="additional-options-upload-button" />
                               Browse
@@ -1111,10 +1116,14 @@ class MesheryPerformanceComponent extends React.Component {
                           <TextField
                             size="small"
                             variant="outlined"
+                            margin="mormal"
+                            fullWidth
                             label={this.state.caCertificate?.name || "Upload SSL Certificate e.g. .crt file"}
                             style={{ width : "100%", margin : '0.5rem 0' }}
                             value={metadata?.ca_certificate.name}
                           />
+                        </Grid>
+                        <Grid item xs={6}>
                           <label htmlFor="upload-cacertificate"
                             className={classes.upload}
                             style={{ paddingLeft : '0' }}
@@ -1122,8 +1131,10 @@ class MesheryPerformanceComponent extends React.Component {
                             <Button
                               variant="outlined"
                               aria-label="Upload Button"
-                              onChange={this.handleChange("caCertificate")} component="span"
+                              onChange={this.handleChange("caCertificate")}
+                              component="span"
                               className={classes.button}
+                              style={{ margin : "0.5rem" }}
                             >
                               <input id="upload-cacertificate" type="file" accept={".crt"} name="upload-button"  hidden data-cy="cacertificate-upload-button" onChange={this.handleCertificateUpload}/>
                               Browse

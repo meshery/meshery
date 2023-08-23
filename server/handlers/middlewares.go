@@ -185,12 +185,17 @@ func (h *Handler) KubernetesMiddleware(next func(http.ResponseWriter, *http.Requ
 			}
 		} else {
 			for _, kctxID := range k8sContextIDs {
-				kctx, err := provider.GetK8sContext(token, kctxID)
-				if err != nil {
-					logrus.Warn("invalid context ID found")
-					continue
+				for _, c := range contexts {
+					if c != nil && c.ID == kctxID {
+						k8scontexts = append(k8scontexts, *c)
+					}
 				}
-				k8scontexts = append(k8scontexts, kctx)
+				// kctx, err := provider.GetK8sContext(token, kctxID)
+				// if err != nil {
+				// 	logrus.Warn("invalid context ID found")
+				// 	continue
+				// }
+				// k8scontexts = append(k8scontexts, kctx)
 			}
 		}
 		for _, k8scontext := range contexts {
