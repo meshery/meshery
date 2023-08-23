@@ -7,9 +7,8 @@ import { bindActionCreators } from "redux";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import {
-  AppBar, Paper, Tooltip, IconButton, Typography
+  AppBar, Paper, Tooltip, Typography
 } from '@material-ui/core';
-import CloseIcon from "@material-ui/icons/Close";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faCloud, faPoll, faDatabase, faFileInvoice } from '@fortawesome/free-solid-svg-icons';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
@@ -19,7 +18,6 @@ import GrafanaComponent from './telemetry/grafana/GrafanaComponent';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
 import PrometheusComponent from './telemetry/prometheus/PrometheusComponent';
 import { updateProgress } from "../lib/store";
-import { withSnackbar } from "notistack";
 import PromptComponent from './PromptComponent';
 import { iconMedium } from '../css/icons.styles';
 import MeshModelComponent from './MeshModelComponent';
@@ -27,6 +25,8 @@ import CredentialIcon from '../assets/icons/CredentialIcon';
 import MesheryCredentialComponent from './MesheryCredentialComponent';
 import DatabaseSummary from './DatabaseSummary';
 import { getComponentsDetail, getModelsDetail, getRelationshipsDetail } from '../api/meshmodel'
+import { withNotify } from '../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../lib/event-types';
 
 
 const styles = (theme) => ({
@@ -132,6 +132,8 @@ function TabContainer(props) {
 
 TabContainer.propTypes = { children : PropTypes.node.isRequired, };
 
+
+//TODO: Tabs are hardcoded everywhere
 class MesherySettings extends React.Component {
   constructor(props) {
     super(props);
@@ -140,9 +142,10 @@ class MesherySettings extends React.Component {
     } = props;
 
     this._isMounted = false;
+
+    //TODO: Extract this logic and clean it
     let tabVal = 0, subTabVal = 0;
     const splittedPath = asPath.split('#');
-
     if (splittedPath.length >= 2 && splittedPath[1]) {
       const subTabPath = splittedPath[1].split('/');
 
@@ -159,6 +162,10 @@ class MesherySettings extends React.Component {
           break;
         case 'system':
           tabVal = 3;
+          break
+        case 'meshmodel-summary' :
+          tabVal = 4;
+          break
         // case 'performance':
         //   tabVal = 3;
         //   break;
@@ -248,16 +255,8 @@ class MesherySettings extends React.Component {
 
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress : false });
-    const self = this;
-    this.props.enqueueSnackbar(`${msg}: ${error}`, {
-      variant : "error",
-      action : (key) => (
-        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-          <CloseIcon />
-        </IconButton>
-      ),
-      autoHideDuration : 7000,
-    });
+    const notify = this.props.notify;
+    notify({ message : `${msg}: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() });
   };
 
   handleChange = (val) => {
@@ -577,6 +576,5 @@ const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(
 MesherySettings.propTypes = { classes : PropTypes.object, };
 
 export default withStyles(styles, { withTheme : true })(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(MesherySettings)))
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(withNotify(MesherySettings)))
 );
-

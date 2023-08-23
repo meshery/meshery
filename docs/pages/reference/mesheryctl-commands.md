@@ -575,7 +575,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
   </tr>
   {% assign command8 = site.data.mesheryctlcommands.cmds.app %}
     <tr>
-      <td rowspan=16><a href="{{ site.baseurl }}/reference/mesheryctl/app">{{ command8.name }}</a></td>
+      <td rowspan=15><a href="{{ site.baseurl }}/reference/mesheryctl/app">{{ command8.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command8.description }}</td>

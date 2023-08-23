@@ -27,8 +27,6 @@ updates:
   schedule:
     interval: monthly
   open-pull-requests-limit: 5
-  reviewers:
-  - Abhishek-kumar09
   labels:
   - kind/chore
   - pr/dependencies
@@ -55,7 +53,7 @@ updates:
     interval: monthly
   open-pull-requests-limit: 5
   reviewers:
-  - MarioArriaga92
+  - nebula-aac
   labels:
   - kind/chore
   - pr/dependencies

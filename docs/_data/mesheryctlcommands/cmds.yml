@@ -732,8 +732,9 @@ app:
           name: --output-format, -o
           description: Display the content of an application in [json/yaml] format
           usage: |
-            mesheryctl app view [application-name|application-id] -o json
-          example: mesheryctl app view bookInfo -o json
+              mesheryctl app view [application-name|application-id] -o json
+          example:
+              mesheryctl app view bookInfo -o json
 
 filter:
   name: filter

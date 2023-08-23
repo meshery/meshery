@@ -825,6 +825,10 @@ func (l *DefaultLocalProvider) ShareDesign(_ *http.Request) (int, error) {
 	return http.StatusForbidden, ErrLocalProviderSupport
 }
 
+func (l *DefaultLocalProvider) ShareFilter(_ *http.Request) (int, error) {
+	return http.StatusForbidden, ErrLocalProviderSupport
+}
+
 // SavePerformanceProfile saves given performance profile with the provider
 func (l *DefaultLocalProvider) SavePerformanceProfile(_ string, performanceProfile *PerformanceProfile) ([]byte, error) {
 	var uid uuid.UUID
@@ -948,7 +952,6 @@ func (l *DefaultLocalProvider) GetConnectionsByKind(_ *http.Request, _ string, _
 func (l *DefaultLocalProvider) GetConnectionsStatus(_ *http.Request, _ string) (*ConnectionsStatusPage, error) {
 	return nil, ErrLocalProviderSupport
 }
-
 
 func (l *DefaultLocalProvider) UpdateConnection(_ *http.Request, _ *Connection) (*Connection, error) {
 	return nil, ErrLocalProviderSupport

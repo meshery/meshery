@@ -116,20 +116,10 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 // - Applies auto migration to recreate the necessary tables.
 //
 // responses:
-//   200: successfulResponse
-//   500: errorResponse
+//   200:
+//   500:
 
-// successfulResponse: database reset successful
-// A successful response indicating that the database reset operation was successful.
-// ---
-// type: string
-// example: "Database reset successful"
-
-// errorResponse: error response
-// An error response indicating the reason for the failure of the database reset operation.
-// ---
-// type: string
-// example: "Directory could not be created due to a non-existent path."
+// Reset the system database to its initial state.
 func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 
 	mesherydbPath := path.Join(utils.GetHome(), ".meshery/config")
