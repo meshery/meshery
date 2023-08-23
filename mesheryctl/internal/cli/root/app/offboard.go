@@ -56,7 +56,7 @@ mesheryctl app offboard -f [filepath]
 		app := ""
 		isID := false
 		if len(args) > 0 {
-			app, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "application")
+			app, isID, err = utils.ValidId(args[0], "application")
 			if err != nil {
 				utils.Log.Error(err)
 				return nil

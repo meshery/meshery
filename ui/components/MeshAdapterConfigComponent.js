@@ -2,18 +2,17 @@ import React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
-import { NoSsr, Chip, IconButton, Button, TextField, Tooltip } from "@material-ui/core";
+import { NoSsr, Chip, Button, TextField, Tooltip } from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { withRouter } from "next/router";
-import { withSnackbar } from "notistack";
-import CloseIcon from "@material-ui/icons/Close";
 import ReactSelectWrapper from "./ReactSelectWrapper";
 import { updateAdaptersInfo, updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
-import { iconMedium } from "../css/icons.styles";
 import changeAdapterState from './graphql/mutations/AdapterStatusMutation';
+import { withNotify } from "../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../lib/event-types";
 
 const styles = (theme) => ({
   wrapperClass : {
@@ -61,7 +60,7 @@ const styles = (theme) => ({
   }
 });
 
-class MeshAdapterConfigComponent extends React.Component {
+class  MeshAdapterConfigComponent extends React.Component {
   constructor(props) {
     super(props);
     const { meshAdapters } = props;
@@ -208,16 +207,8 @@ class MeshAdapterConfigComponent extends React.Component {
         self.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
           self.setState({ meshAdapters : result, meshLocationURL : "" });
-          self.props.enqueueSnackbar("Adapter was configured!", {
-            variant : "success",
-            "data-cy" : "adapterSuccessSnackbar",
-            autoHideDuration : 2000,
-            action : (key) => (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon style={iconMedium} />
-              </IconButton>
-            ),
-          });
+          const notify = self.props.notify;
+          notify({ message : "Adapter was configured!", event_type : EVENT_TYPES.SUCCESS })
           self.props.updateAdaptersInfo({ meshAdapters : result });
           self.fetchSetAdapterURLs();
         }
@@ -241,15 +232,8 @@ class MeshAdapterConfigComponent extends React.Component {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
           this.setState({ meshAdapters : result });
-          this.props.enqueueSnackbar("Adapter was removed!", {
-            variant : "success",
-            autoHideDuration : 2000,
-            action : (key) => (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            ),
-          });
+          const notify = self.props.notify;
+          notify({ message : "Adapter was removed!", event_type : EVENT_TYPES.SUCCESS })
           this.props.updateAdaptersInfo({ meshAdapters : result });
         }
       },
@@ -269,15 +253,8 @@ class MeshAdapterConfigComponent extends React.Component {
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Adapter was pinged!", {
-            variant : "success",
-            autoHideDuration : 2000,
-            action : (key) => (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            ),
-          });
+          const notify = self.props.notify;
+          notify({ message : "Adapter was pinged!", event_type : EVENT_TYPES.SUCCESS })
         }
       },
       self.handleError("error")
@@ -312,15 +289,8 @@ class MeshAdapterConfigComponent extends React.Component {
       if (errors !== undefined) {
         this.handleError("Unable to Deploy adapter");
       }
-      this.props.enqueueSnackbar("Adapter " + response.adapterStatus.toLowerCase(), {
-        variant : "success",
-        autoHideDuration : 2000,
-        action : (key) => (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => this.closeSnackbar(key)}>
-            <CloseIcon style={iconMedium} />
-          </IconButton>
-        ),
-      });
+      const notify = this.props.notify;
+      notify({ message : "Adapter " + response.adapterStatus.toLowerCase(), event_type : EVENT_TYPES.SUCCESS })
     }, variables);
   };
 
@@ -370,30 +340,15 @@ class MeshAdapterConfigComponent extends React.Component {
       if (errors !== undefined) {
         this.handleError("Unable to Deploy adapter");
       }
-      this.props.enqueueSnackbar("Adapter " + response.adapterStatus.toLowerCase(), {
-        variant : "success",
-        autoHideDuration : 2000,
-        action : (key) => (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => this.closeSnackbar(key)}>
-            <CloseIcon style={iconMedium} />
-          </IconButton>
-        ),
-      });
+      const notify = this.props.notify;
+      notify({ message : "Adapter " + response.adapterStatus.toLowerCase(), event_type : EVENT_TYPES.SUCCESS })
     }, variables);
   };
 
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress : false });
-    const self = this;
-    this.props.enqueueSnackbar(`${msg}: ${error}`, {
-      variant : "error",
-      action : (key) => (
-        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-          <CloseIcon />
-        </IconButton>
-      ),
-      autoHideDuration : 8000,
-    });
+    const notify = this.props.notify;
+    notify({ message : msg, event_type : EVENT_TYPES.ERROR, details : error.toString() })
   };
 
   configureTemplate = () => {
@@ -547,5 +502,5 @@ const mapStateToProps = (state) => {
 };
 
 export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(MeshAdapterConfigComponent)))
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(withNotify(MeshAdapterConfigComponent)))
 );

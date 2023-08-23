@@ -8,7 +8,7 @@ import { Search } from "@material-ui/icons";
 import { withSnackbar } from "notistack";
 import { connect } from "react-redux";
 import { setK8sContexts, updateProgress } from "../lib/store";
-import { closeButtonForSnackbarAction, errorHandlerGenerator, successHandlerGenerator } from "./ConnectionWizard/helpers/common";
+import { errorHandlerGenerator, successHandlerGenerator } from "./ConnectionWizard/helpers/common";
 import { pingKubernetes } from "./ConnectionWizard/helpers/kubernetesHelpers";
 import { getK8sConfigIdsFromK8sConfig } from "../utils/multi-ctx";
 import { bindActionCreators } from "redux";
@@ -27,6 +27,8 @@ import { RoundedTriangleShape } from "./shapes/RoundedTriangle";
 import { notificationColors } from "../themes/app";
 import RedOctagonSvg from "./shapes/Octagon";
 import PatternIcon from "../assets/icons/Pattern";
+import { useNotification } from "../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../lib/event-types";
 
 const styles = (theme) => ({
   dialogBox : {
@@ -210,12 +212,13 @@ const styles = (theme) => ({
 
 function ConfirmationMsg(props) {
   const { classes, open, handleClose, submit,
-    selectedK8sContexts, k8scontext, title, validationBody, setK8sContexts, enqueueSnackbar, closeSnackbar, componentCount, tab, errors, dryRunComponent } = props
+    selectedK8sContexts, k8scontext, title, validationBody, setK8sContexts, componentCount, tab, errors, dryRunComponent } = props
 
   const [tabVal, setTabVal] = useState(tab);
   const [disabled, setDisabled] = useState(true);
   const [context, setContexts] = useState([]);
   const theme = useTheme();
+  const { notify } = useNotification();
   let isDisabled = typeof selectedK8sContexts.length === "undefined" || selectedK8sContexts.length === 0
 
   useEffect(() => {
@@ -234,24 +237,15 @@ function ConfirmationMsg(props) {
   const handleKubernetesClick = (ctxID) => {
     updateProgress({ showProgress : true })
     pingKubernetes(
-      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes pinged", () => updateProgress({ showProgress : false })),
-      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged", () => updateProgress({ showProgress : false })),
+      successHandlerGenerator(notify, "Kubernetes pinged", () => updateProgress({ showProgress : false })),
+      errorHandlerGenerator(notify, "Kubernetes not pinged", () => updateProgress({ showProgress : false })),
       ctxID
     )
   }
 
   const handleSubmit = () => {
     if (selectedK8sContexts.length === 0) {
-      enqueueSnackbar("Please select Kubernetes context(s) before proceeding with the operation",
-        {
-          variant : "info", preventDuplicate : true,
-          action : (key) => (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon style={iconMedium} />
-            </IconButton>
-          ),
-          autoHideDuration : 3000,
-        });
+      notify({ message : "Please select Kubernetes context(s) before proceeding with the operation", event_type : EVENT_TYPES.INFO });
     }
 
     if (tabVal === 2) {
@@ -433,7 +427,7 @@ function ConfirmationMsg(props) {
                                     <Chip
                                       label={ctx.name}
                                       className={classes.ctxChip}
-                                      onClick={() => handleKubernetesClick(ctx.id)}
+                                      onClick={() => handleKubernetesClick(ctx.connection_id)}
                                       icon={<img src="/static/img/kubernetes.svg" className={classes.ctxIcon} />}
                                       variant="outlined"
                                       data-cy="chipContextName"

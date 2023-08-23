@@ -1,17 +1,17 @@
-import { Grid, Typography, Button, Switch, IconButton } from "@material-ui/core";
+import { Grid, Typography, Button, Switch } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import React, { useEffect, useState } from "react";
-import CloseIcon from "@material-ui/icons/Close";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { toggleCatalogContent } from "../lib/store";
 import Head from 'next/head';
-import { withSnackbar } from "notistack";
 import dataFetch from "../lib/data-fetch";
 import { EXTENSIONS } from "../utils/Enum";
 import { extensionStyles as styles } from "../css/icons.styles";
 import { Adapters } from "../components/extensions";
 import { LARGE_6_MED_12_GRID_STYLE } from "../css/grid.style";
+import { useNotification } from "../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../lib/event-types";
 
 
 const INITIAL_GRID_SIZE = { lg : 6, md : 12, xs : 12 };
@@ -102,10 +102,11 @@ const MeshMapSnapShotCard = ({ classes, githubActionEnabled = false }) => {
 export const WrappedMeshMapSignupCard = withStyles(styles)(MeshMapSignUpcard);
 export const WrappedMeshMapSnapShopCard = withStyles(styles)(MeshMapSnapShotCard);
 
-const Extensions = ({ classes, toggleCatalogContent, enqueueSnackbar, closeSnackbar, capabilitiesRegistry }) => {
+const Extensions = ({ classes, toggleCatalogContent , capabilitiesRegistry }) => {
   const [catalogContent, setCatalogContent] = useState(true);
   const [extensionPreferences, setExtensionPreferences] = useState({})
   const [hasAccessToMeshMap, setHasAccessToMeshMap] = useState(false)
+  const { notify } = useNotification()
 
   const handleToggle = () => {
     toggleCatalogContent({ catalogVisibility : !catalogContent });
@@ -142,21 +143,7 @@ const Extensions = ({ classes, toggleCatalogContent, enqueueSnackbar, closeSnack
         body : JSON.stringify({ usersExtensionPreferences : body })
       },
       () => {
-        enqueueSnackbar(`Catalog Content was ${catalogPref ? "enab" : "disab"}led`,
-          {
-            variant : 'success',
-            autoHideDuration : 4000,
-            action : (key) => (
-              <IconButton
-                key="close"
-                aria-label="Close"
-                color="inherit"
-                onClick={() => closeSnackbar(key)}
-              >
-                <CloseIcon />
-              </IconButton>
-            ),
-          });
+        notify({ message : `Catalog Content was ${catalogPref ? "enab" : "disab"}led`, event_type : EVENT_TYPES.SUCCESS })
       },
       err => console.error(err),
     )
@@ -231,4 +218,4 @@ const mapDispatchToProps = dispatch => ({
   toggleCatalogContent : bindActionCreators(toggleCatalogContent, dispatch)
 })
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(Extensions)));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Extensions));

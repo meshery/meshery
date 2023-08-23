@@ -197,7 +197,7 @@ var CfgFile string
 // TODO: add "meshery-perf" as a component
 
 // ListOfComponents returns the list of components available
-var ListOfComponents = []string{"meshery-app-mesh", "meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-traefik-mesh", "meshery-nginx-sm", "meshery-cilium"}
+var ListOfComponents = []string{}
 
 // TemplateContext is the template context provided when creating a config file
 var TemplateContext = config.Context{
@@ -480,8 +480,8 @@ func StringInSlice(str string, slice []string) bool {
 }
 
 // GetID returns a array of IDs from meshery server endpoint /api/{configurations}
-func GetID(mesheryServerUrl, configuration string) ([]string, error) {
-	url := mesheryServerUrl + "/api/" + configuration + "?page_size=10000"
+func GetID(configuration string) ([]string, error) {
+	url := MesheryEndpoint + "/api/" + configuration + "?page_size=10000"
 	configType := configuration + "s"
 	var idList []string
 	req, err := NewRequest("GET", url, nil)
@@ -516,8 +516,8 @@ func GetID(mesheryServerUrl, configuration string) ([]string, error) {
 }
 
 // GetName returns a of name:id from meshery server endpoint /api/{configurations}
-func GetName(mesheryServerUrl, configuration string) (map[string]string, error) {
-	url := mesheryServerUrl + "/api/" + configuration + "?page_size=10000"
+func GetName(configuration string) (map[string]string, error) {
+	url := MesheryEndpoint + "/api/" + configuration + "?page_size=10000"
 	configType := configuration + "s"
 	nameIdMap := make(map[string]string)
 	req, err := NewRequest("GET", url, nil)
@@ -567,9 +567,9 @@ func DeleteConfiguration(baseUrl, id, configuration string) error {
 }
 
 // ValidId - Check if args is a valid ID or a valid ID prefix and returns the full ID
-func ValidId(mesheryServerUrl, args string, configuration string) (string, bool, error) {
+func ValidId(args string, configuration string) (string, bool, error) {
 	isID := false
-	configID, err := GetID(mesheryServerUrl, configuration)
+	configID, err := GetID(configuration)
 	if err == nil {
 		for _, id := range configID {
 			if strings.HasPrefix(id, args) {
@@ -587,9 +587,9 @@ func ValidId(mesheryServerUrl, args string, configuration string) (string, bool,
 }
 
 // ValidId - Check if args is a valid name or a valid name prefix and returns the full name and ID
-func ValidName(mesheryServerUrl, args string, configuration string) (string, string, bool, error) {
+func ValidName(args string, configuration string) (string, string, bool, error) {
 	isName := false
-	nameIdMap, err := GetName(mesheryServerUrl, configuration)
+	nameIdMap, err := GetName(configuration)
 
 	if err != nil {
 		return "", "", false, err

@@ -5,15 +5,15 @@ import {
   withStyles,
   Typography,
   Grid,
-  Chip,
   IconButton,
 } from "@material-ui/core/";
-import { withSnackbar } from "notistack";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { updateProgress, updateK8SConfig, updateAdaptersInfo } from "../../../lib/store";
 import { pingAdapterWithNotification, handleDeleteAdapter } from "../helpers/serviceMeshes"
 import AdapterChip from "./AdapterChip"
+import { useNotification } from "../../../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../../../lib/event-types";
 
 const styles = theme => ({
 
@@ -76,26 +76,22 @@ const AdapterPingSnackbarAction = (closeSnackbar) => (key) => (
 
 
 const ServiceMeshDataPlane= ({
-  classes, updateProgress, enqueueSnackbar, closeSnackbar, adapterInfo, isActive, updateAdaptersInfo
+  classes, updateProgress, adapterInfo, isActive, updateAdaptersInfo
 }) => {
 
+  const { notify } = useNotification()
   const handleAdapterDelete =  handleDeleteAdapter(
-
     (result) => {
       updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Adapter was removed!", { variant : "success",
-          autoHideDuration : 2000,
-          action : AdapterPingSnackbarAction(closeSnackbar) });
+        notify({ message : 'Adapter was removed!', type : EVENT_TYPES.SUCCESS })
         updateAdaptersInfo({ meshAdapters : result });
       }
     },
 
     (err) => {
       updateProgress({ showProgress : false });
-      enqueueSnackbar("Adapter was not removed! "+err, { variant : "error",
-        autoHideDuration : 2000,
-        action : AdapterPingSnackbarAction(closeSnackbar) });
+      notify({ message : 'Adapter was not removed!', type : EVENT_TYPES.ERROR, details : err.toString() })
     }
   )
 
@@ -104,9 +100,8 @@ const ServiceMeshDataPlane= ({
 
       <Grid item xs={12}>
         <MeshAdapterChip adapter={adapterInfo} handleAdapterDelete={handleAdapterDelete} isActive={isActive} handleAdapterClick={(location) => pingAdapterWithNotification(
+          notify,
           updateProgress,
-          enqueueSnackbar,
-          AdapterPingSnackbarAction(closeSnackbar),
           location)
         }/>
       </Grid>
@@ -138,4 +133,4 @@ const ServiceMeshDataPlane= ({
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch),
   updateAdaptersInfo : bindActionCreators(updateAdaptersInfo, dispatch), });
 
-export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(ServiceMeshDataPlane)))
+export default withStyles(styles)(connect(null, mapDispatchToProps)(ServiceMeshDataPlane))

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { NoSsr } from "@material-ui/core";
 import PerformanceProfiles from "../../components/MesheryPerformance/PerformanceProfiles";
 import { updatepagepath } from "../../lib/store";
@@ -7,24 +7,22 @@ import { bindActionCreators } from "redux";
 import Head from "next/head";
 import { getPath } from "../../lib/path";
 
-class Results extends React.Component {
-  componentDidMount() {
+function Results({ updatepagepath }) {
+  useEffect(() => {
     console.log(`path: ${getPath()}`);
-    this.props.updatepagepath({ path : getPath() });
-  }
+    updatepagepath({ path : getPath() });
+  }, [updatepagepath]);
 
-  render() {
-    return (
-      <NoSsr>
-        <Head>
-          <title>Performance Profiles | Meshery</title>
-        </Head>
-        <PerformanceProfiles />
-      </NoSsr>
-    );
-  }
+  return (
+    <NoSsr>
+      <Head>
+        <title>Performance Profiles | Meshery</title>
+      </Head>
+      <PerformanceProfiles />
+    </NoSsr>
+  );
 }
 
-const mapDispatchToProps = (dispatch) => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch), });
+const mapDispatchToProps = (dispatch) => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch) });
 
 export default connect(null, mapDispatchToProps)(Results);

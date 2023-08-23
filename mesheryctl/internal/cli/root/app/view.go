@@ -70,7 +70,7 @@ mesheryctl app view --all
 			if viewAllFlag {
 				return errors.New("-a cannot be used when [application-name|application-id] is specified")
 			}
-			applicationID, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "application")
+			applicationID, isID, err = utils.ValidId(args[0], "application")
 			if err != nil {
 				utils.Log.Error(err)
 				return nil
