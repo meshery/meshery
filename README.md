@@ -32,7 +32,7 @@ alt="Meshery Logo" width="70%" /></picture></a><br /><br /></p>
   -->
 </p>
 
-<h5><p align="center"><i>If you’re using Meshery or if you like the project, please <a href="https://github.com/meshery/meshery/stargazers">★</a> this repository to show your support! 🤩</i></p></h5>
+<h5><p align="center"><i>If you like Meshery, please <a href="https://github.com/meshery/meshery/stargazers">★</a> this repository to show your support! 🤩</i></p></h5>
 <p align="center" >
 MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
 </p>
