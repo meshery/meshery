@@ -55,6 +55,8 @@ const (
 	ErrRetrieveUserTokenCode            = "2044"
 	ErrFailToSaveCode                   = "2045"
 	ErrFailToDeleteCode                 = "2046"
+	ErrMakeDirCode                        = "2091"
+	ErrCopyCode               			= "2101"
 	ErrWriteResponseCode                = "2202"
 	ErrTestConfigsCode                  = "2203"
 	ErrInvalidGenValueCode              = "2204"
@@ -218,6 +220,14 @@ func ErrRequestBody(err error) error {
 
 func ErrDatabaseOpen(err error) error {
 	return errors.New(ErrDatabaseOpenCode, errors.Alert, []string{"Unable to open database"}, []string{err.Error()}, []string{"Database connection may have been lost"}, []string{"Make sure your database is reachable"})
+}
+
+func ErrCopy(err error, obj string) error {
+	return errors.New(ErrCopyCode, errors.Alert, []string{"Error occurred while copying ", obj}, []string{err.Error()}, []string{"File might not be present at the location"}, []string{"Make sure the file exists in the specified location"})
+}
+
+func ErrMakeDir(err error, dir string) error {
+	return errors.New(ErrMakeDirCode, errors.Alert, []string{"Unable to create directory/folder", dir}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrMarshal(err error, obj string) error {
