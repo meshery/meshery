@@ -24,6 +24,7 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
+<<<<<<< HEAD
 	ErrInvalidAuthTokenCode = "1000"
 	ErrInvalidAPICallCode   = "1001"
 	ErrReadAPIResponseCode  = "1002"
@@ -34,9 +35,15 @@ func ErrInvalidAuthToken() error {
 	return errors.New(ErrInvalidAuthTokenCode, errors.Alert, []string{"Authentication token not found. please supply a valid user token with the --token (or -t) flag"}, []string{}, []string{}, []string{})
 }
 
+=======
+	ErrInvalidAPICallCode = "1016"
+)
+
+>>>>>>> master
 func ErrInvalidAPICall(statusCode int) error {
 	return errors.New(ErrInvalidAPICallCode, errors.Alert, []string{"Response Status Code ", strconv.Itoa(statusCode), " Possible Server Error"}, []string{"Response Status Code " + strconv.Itoa(statusCode) + " possible Server Error"}, []string{}, []string{})
 }
+<<<<<<< HEAD
 
 func ErrReadAPIResponse(err error) error {
 	return errors.New(ErrReadAPIResponseCode, errors.Alert, []string{"Failed to read response body"}, []string{"Failed to read response body", " " + err.Error()}, []string{}, []string{})
@@ -45,3 +52,5 @@ func ErrReadAPIResponse(err error) error {
 func ErrFilterNameOrID(err error) error {
 	return errors.New(ErrFilterNameOrIDCode, errors.Alert, []string{"Invalid filter name or ID"}, []string{"Invalid filter name or ID", "" + err.Error()}, []string{"Probable invalid filter name|ID"}, []string{"Please run `mesheryctl filter list` to view all filters avilable"})
 }
+=======
+>>>>>>> master
