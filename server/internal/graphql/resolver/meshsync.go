@@ -34,7 +34,9 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			mesherydbPath := path.Join(utils.GetHome(), ".meshery/config")
 			err := os.Mkdir(path.Join(mesherydbPath, ".archive"), os.ModePerm)
 			if err != nil && os.IsNotExist(err) {
-				return "", err
+				createFolder := models.ErrMakeDir(err, path.Join(mesherydbPath, ".archive"))
+				r.Log.Error(createFolder)
+				return model.StatusUnknown, createFolder
 			}
 
 			src := path.Join(mesherydbPath, "mesherydb.sql")
@@ -42,24 +44,30 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 
 			fin, err := os.Open(src)
 			if err != nil {
-				return "", err
+				openFileError := models.ErrOpenFile(src)
+				r.Log.Error(openFileError)
+				return model.StatusUnknown, openFileError
 			}
 			defer fin.Close()
 
 			fout, err := os.Create(dst)
 			if err != nil {
-				return "", err
+				createFileError := models.ErrMakeDir(err, dst)
+				r.Log.Error(createFileError)
+				return model.StatusUnknown, createFileError
 			}
 			defer fout.Close()
 
 			_, err = io.Copy(fout, fin)
 			if err != nil {
-				return "", err
+				copyError := models.ErrCopy(err, "meshery database file")
+				r.Log.Error(copyError)
+				return model.StatusUnknown, copyError
 			}
 
 			dbHandler := provider.GetGenericPersister()
 			if dbHandler == nil {
-				return "", ErrEmptyHandler
+				return model.StatusDisabled, ErrEmptyHandler
 			}
 
 			dbHandler.Lock()
@@ -67,8 +75,9 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 
 			tables, err := dbHandler.Migrator().GetTables()
 			if err != nil {
-				r.Log.Error(err)
-				return "", err
+				databaseOpenErr := models.ErrDatabaseOpen(err)
+				r.Log.Error(databaseOpenErr)
+				return model.StatusDisabled, databaseOpenErr
 			}
 
 			r.Log.Info("Dropping Meshery Database")
@@ -78,7 +87,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 				if err != nil {
 					databaseOpenErr := models.ErrDatabaseOpen(err)
 					r.Log.Error(databaseOpenErr)
-					return "", databaseOpenErr
+					return model.StatusDisabled, databaseOpenErr
 				}
 			}
 
