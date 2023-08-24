@@ -2,16 +2,16 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import {
-  TableRow, TableCell, IconButton, Table, TableBody, TableHead, Tooltip
+  TableRow, TableCell, Table, TableBody, TableHead, Tooltip
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import MUIDataTable from 'mui-datatables';
 import Moment from 'react-moment';
-import { withSnackbar } from 'notistack';
-import CloseIcon from '@material-ui/icons/Close';
 import { updateProgress, } from '../lib/store';
 import dataFetch from '../lib/data-fetch';
+import { withNotify } from '../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../lib/event-types';
 
 
 const styles = (theme) => ({
@@ -70,21 +70,8 @@ class MesherySMIResults extends Component {
   handleError = (error) => {
     this.props.updateProgress({ showProgress : false });
     // console.log(`error fetching results: ${error}`);
-    const self = this;
-    this.props.enqueueSnackbar(`There was an error fetching results: ${error}`, {
-      variant : 'error',
-      action : (key) => (
-        <IconButton
-          key="close"
-          aria-label="Close"
-          color="inherit"
-          onClick={() => self.props.closeSnackbar(key)}
-        >
-          <CloseIcon />
-        </IconButton>
-      ),
-      autoHideDuration : 8000,
-    });
+    const notify = this.props.notify;
+    notify({ message : `There was an error fetching results: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() });
   }
 
   resetSelectedRowData() {
@@ -330,4 +317,4 @@ const mapStateToProps = (state) => {
 export default withStyles(styles)(connect(
   mapStateToProps,
   mapDispatchToProps,
-)(withSnackbar(MesherySMIResults)));
+)(withNotify(MesherySMIResults)));

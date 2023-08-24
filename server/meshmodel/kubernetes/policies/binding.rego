@@ -57,7 +57,7 @@ binding_relationship[results] {
                 "id": edge.data.target
             },
             "binded_by": {
-                "id": edge.data.metadata
+                "id": edge.data.metadata.binded_by
             }
         }
     }

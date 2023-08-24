@@ -1,24 +1,20 @@
 /* eslint-disable react/display-name */
 /* eslint-disable  no-unused-vars*/
-import CloseIcon from "@material-ui/icons/Close";
 import {
-  withStyles,
   Grid,
-  Chip,
-  IconButton,
   List,
   Paper,
 } from "@material-ui/core/";
-import { withSnackbar } from "notistack";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { updateProgress } from "../../../lib/store";
-import { pingMesheryOperator, pingMesheryOperatorWithNotification } from "../helpers/mesheryOperator";
+import { pingMesheryOperator } from "../helpers/mesheryOperator";
 import fetchMesheryOperatorStatus from "../../graphql/queries/OperatorStatusQuery";
 import AdapterChip from "./AdapterChip"
-import { closeButtonForSnackbarAction, errorHandlerGenerator,successHandlerGenerator } from "../helpers/common"
+import { useNotification } from "../../../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../../../lib/event-types";
 
 
 const chipStyles = (theme) => ({ chipIcon : { width : theme.spacing(2.5) },
@@ -28,27 +24,21 @@ const chipStyles = (theme) => ({ chipIcon : { width : theme.spacing(2.5) },
 // Connection Wizard
 // TODO: bind to contextID prop, leaving due to no use in current UI
 const MesheryOperatorDataPanel = ({
-  operatorInformation, updateProgress, enqueueSnackbar, closeSnackbar
+  operatorInformation
 }) => {
-
+  const { notify } = useNotification()
   const handleMesheryOperatorClick = () => {
 
     const successCb = (res) => {
       if (res?.operator?.status == "ENABLED") {
-        enqueueSnackbar('Operator was pinged!', { variant : 'success',
-          autoHideDuration : 2000,
-          action : closeButtonForSnackbarAction(closeSnackbar) })
+        notify({ message : 'Operator was pinged!', type : EVENT_TYPES.SUCCESS })
       } else {
-        enqueueSnackbar('Operator was not pinged!', { variant : 'failure',
-          autoHideDuration : 2000,
-          action : closeButtonForSnackbarAction(closeSnackbar) })
+        notify({ message : 'Operator was not pinged!', type : EVENT_TYPES.ERROR })
       }
     }
 
     const errorCb = (err) => {
-      enqueueSnackbar('Unable to ping meshery operator!'+err, { variant : 'error',
-        autoHideDuration : 2000,
-        action : closeButtonForSnackbarAction(closeSnackbar) })
+      notify({ message : 'Unable to ping meshery operator!', type : EVENT_TYPES.ERROR, details : err.toString() })
     }
 
 
@@ -57,7 +47,6 @@ const MesheryOperatorDataPanel = ({
       successCb,
       errorCb
     )
-
   }
 
 
@@ -114,4 +103,4 @@ const MesheryOperatorDataPanel = ({
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch), });
 
-export default connect(null, mapDispatchToProps)(withSnackbar(MesheryOperatorDataPanel))
+export default connect(null, mapDispatchToProps)(MesheryOperatorDataPanel)
