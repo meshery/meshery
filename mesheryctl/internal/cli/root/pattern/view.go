@@ -50,7 +50,8 @@ mesheryctl pattern view [pattern-name | ID]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			utils.Log.Error(err)
+			return nil
 		}
 		pattern := ""
 		isID := false
@@ -61,7 +62,8 @@ mesheryctl pattern view [pattern-name | ID]
 			}
 			pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
 			if err != nil {
-				return err
+				utils.Log.Error(err)
+				return nil
 			}
 		}
 		url := mctlCfg.GetBaseMesheryURL()
@@ -81,23 +83,27 @@ mesheryctl pattern view [pattern-name | ID]
 
 		req, err := utils.NewRequest("GET", url, nil)
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			return err
+			utils.Log.Error(utils.ErrReadResponseBody(err))
+			return nil
 		}
 
 		var dat map[string]interface{}
 		if err = json.Unmarshal(body, &dat); err != nil {
-			return errors.Wrap(err, "couldn't process JSON response from Meshery Server")
+			utils.Log.Error(utils.ErrUnmarshal(err))
+			return nil
 		}
 
 		if isID {
@@ -113,6 +119,7 @@ mesheryctl pattern view [pattern-name | ID]
 			// use the first match from the result when searching by pattern name
 			arr := dat["patterns"].([]interface{})
 			if len(arr) == 0 {
+				utils.Log.Error(ErrPatternNotFound())
 				utils.Log.Info(fmt.Sprintf("pattern with name: %s not found. Enter a valid pattern name or ID", pattern))
 				return nil
 			}

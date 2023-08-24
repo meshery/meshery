@@ -37,7 +37,8 @@ mesheryctl filter delete [filter-name | ID]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			utils.Log.Error(err)
+			return nil
 		}
 
 		if len(args) == 0 {
@@ -51,12 +52,14 @@ mesheryctl filter delete [filter-name | ID]
 
 		filterID, isValidID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "filter")
 		if err != nil {
+			utils.Log.Error(err)
 			return err
 		}
 
 		if !isValidID {
 			filterName, filterID, isValidName, err = utils.ValidName(mctlCfg.GetBaseMesheryURL(), args[0], "filter")
 			if err != nil {
+				utils.Log.Error(err)
 				return err
 			}
 		}

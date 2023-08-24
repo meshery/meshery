@@ -197,7 +197,7 @@ func start() error {
 		compose := &utils.DockerCompose{}
 		err = utils.ViperCompose.Unmarshal(&compose)
 		if err != nil {
-			return ErrUnmarshal(err, utils.DockerComposeFile)
+			return ErrUnmarshalDockerCompose(err, utils.DockerComposeFile)
 		}
 
 		//changing the port mapping in docker compose

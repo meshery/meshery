@@ -20,19 +20,20 @@ import "github.com/layer5io/meshkit/errors"
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrGettingSessionDataCode                = "1009"
-	ErrNoAdaptersCode                        = "1010"
-	ErrPromptCode                            = "1011"
-	ErrCreatingDeployRequestCode             = "1012"
-	ErrCreatingDeployResponseRequestCode     = "1013"
-	ErrAddingAuthDetailsCode                 = "1014"
-	ErrCreatingDeployResponseStreamCode      = "1015"
-	ErrTimeoutWaitingForDeployResponseCode   = "1016"
-	ErrFailedDeployingMeshCode               = "1017"
-	ErrCreatingValidateRequestCode           = "1018"
-	ErrCreatingValidateResponseRequestCode   = "1019"
-	ErrTimeoutWaitingForValidateResponseCode = "1020"
-	ErrSMIConformanceTestsFailedCode         = "1021"
+	ErrGettingSessionDataCode                = "1017"
+	ErrNoAdaptersCode                        = "1018"
+	ErrPromptCode                            = "1019"
+	ErrCreatingDeployRequestCode             = "1020"
+	ErrCreatingDeployResponseRequestCode     = "1021"
+	ErrAddingAuthDetailsCode                 = "1022"
+	ErrCreatingDeployResponseStreamCode      = "1023"
+	ErrCreatingValidateResponseStreamCode    = "1024"
+	ErrTimeoutWaitingForDeployResponseCode   = "1025"
+	ErrFailedDeployingMeshCode               = "1026"
+	ErrCreatingValidateRequestCode           = "1027"
+	ErrCreatingValidateResponseRequestCode   = "1028"
+	ErrTimeoutWaitingForValidateResponseCode = "1029"
+	ErrSMIConformanceTestsFailedCode         = "1030"
 )
 
 var (
@@ -82,5 +83,5 @@ func ErrCreatingValidateResponseRequest(err error) error {
 }
 
 func ErrCreatingValidateResponseStream(err error) error {
-	return errors.New(ErrCreatingDeployResponseStreamCode, errors.Fatal, []string{"Error creating validate event response stream"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrCreatingValidateResponseStreamCode, errors.Fatal, []string{"Error creating validate event response stream"}, []string{err.Error()}, []string{}, []string{})
 }

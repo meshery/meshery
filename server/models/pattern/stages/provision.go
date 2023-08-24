@@ -66,11 +66,13 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 				data.PatternSvcTraitCapabilities[name],
 				act.GetRegistry(),
 			)
-			// Get annotations for the component, if any
-			comp.ObjectMeta.Annotations = helpers.MergeStringMaps(
+
+			// Get annotations for the component and merge with existing, if any
+			comp.ObjectMeta.SetAnnotations(helpers.MergeStringMaps(
 				v1alpha1.GetAnnotationsForWorkload(data.PatternSvcWorkloadCapabilities[name]),
-				comp.ObjectMeta.Annotations,
-			)
+				comp.GetAnnotations(),
+				getAdditionalAnnotations(data.Pattern),
+			))
 			if core.Format { //deprettify the component before deploying
 				comp.Spec.Settings = core.Format.DePrettify(comp.Spec.Settings, false)
 			}
@@ -144,4 +146,13 @@ func mergeErrors(errs []error) error {
 	}
 
 	return fmt.Errorf(strings.Join(errMsg, "\n"))
+}
+
+// move into meshkit and change annotations prefix name
+
+func getAdditionalAnnotations(pattern *core.Pattern) map[string]string {
+	annotations := make(map[string]string, 2)
+	annotations[fmt.Sprintf("%s.name", v1alpha1.MesheryAnnotationPrefix)] = pattern.Name 
+	annotations[fmt.Sprintf("%s.id", v1alpha1.MesheryAnnotationPrefix)] = pattern.PatternID 
+	return annotations
 }
