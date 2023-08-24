@@ -176,11 +176,7 @@ func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*mode
 
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-<<<<<<< HEAD
-		return nil, err
-=======
 		return nil, utils.ErrUnmarshal(err)
->>>>>>> master
 	}
 	return response, nil
 }

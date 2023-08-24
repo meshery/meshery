@@ -49,12 +49,7 @@ mesheryctl filter view --all
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-<<<<<<< HEAD
 			return utils.ErrProcessingConfig(err)
-=======
-			utils.Log.Error(err)
-			return errors.Wrap(err, "error processing config")
->>>>>>> master
 		}
 
 		filter := ""
@@ -66,12 +61,7 @@ mesheryctl filter view --all
 			}
 			filter, isID, err = utils.ValidId(args[0], "filter")
 			if err != nil {
-<<<<<<< HEAD
 				return ErrFilterNameOrID(err)
-=======
-				utils.Log.Error(err)
-				return nil
->>>>>>> master
 			}
 		}
 
@@ -107,11 +97,7 @@ mesheryctl filter view --all
 
 		var dat map[string]interface{}
 		if err = json.Unmarshal(body, &dat); err != nil {
-<<<<<<< HEAD
-			return err
-=======
 			return utils.ErrUnmarshal(err)
->>>>>>> master
 		}
 
 		if isID {

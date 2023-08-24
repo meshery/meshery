@@ -55,14 +55,6 @@ func ErrGettingRequestContext(err error) error {
 		[]string{"Unable to add token to config", err.Error()}, []string{"Meshery is not running or there is a network issue"}, []string{"Check your network connection and check the status of meshery server via 'mesheryctl system status'"})
 }
 
-<<<<<<< HEAD
-func ErrInvalidAPIResponse(err error) error {
-	return errors.New(ErrInvalidAPIResponseCode, errors.Fatal, []string{"Invalid API response encountered"},
-		[]string{"Invalid API response encountered", err.Error()}, []string{"Error occured while generating a response body"}, []string{"Check your network connection and check the status of meshery server via 'mesheryctl system status'"})
-}
-
-=======
->>>>>>> master
 func ErrUnmarshallingAPIData(err error) error {
 	return errors.New(ErrUnmarshallingAPIDataCode, errors.Fatal, []string{"Error processing json API data"},
 		[]string{"Error processing json API data", err.Error()}, []string{"The json format from Api Data is not valid"}, []string{"Check if valid json is given to process"})

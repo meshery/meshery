@@ -117,12 +117,12 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 		marshalledBody, err := json.Marshal(body)
 
 		if err != nil {
-			return err
+			return utils.ErrMarhalling(err)
 		}
 
 		req, err := utils.NewRequest("POST", filterURL, bytes.NewBuffer(marshalledBody))
 		if err != nil {
-			return err
+			return utils.ErrCreatingRequest(err)
 		}
 
 		resp, err := utils.MakeRequest(req)

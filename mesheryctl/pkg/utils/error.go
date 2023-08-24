@@ -11,18 +11,6 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 var (
-<<<<<<< HEAD
-	ErrFailRequestCode        = "1044"
-	ErrFailReqStatusCode      = "1045"
-	ErrAttachAuthTokenCode    = "1046"
-	ErrReadConfigFileCode     = "replace_me"
-	ErrMarshalIndentCode      = "replace_me"
-	ErrProcessingConfigCode   = "replace_me"
-	ErrResponseStatusBodyCode = "replace_me"
-	ErrResponseStatusCode     = "replace_me"
-	ErrJSONToYAMLCode         = "replace_me"
-	ErrOutFormatFlagCode      = "replace_me"
-=======
 	ErrFailRequestCode        = "1000"
 	ErrInvalidTokenCode       = "1001"
 	ErrFailReqStatusCode      = "1002"
@@ -38,7 +26,14 @@ var (
 	ErrInvalidFileCode        = "1012"
 	ErrInvalidNameOrIDCode    = "1013"
 	ErrInvalidAPIResponseCode = "1014"
->>>>>>> master
+	ErrReadConfigFileCode     = "1015"
+	ErrMarshalIndentCode      = "1016"
+	ErrProcessingConfigCode   = "1017"
+	ErrResponseStatusBodyCode = "1018"
+	ErrResponseStatusCode     = "1019"
+	ErrJSONToYAMLCode         = "1020"
+	ErrOutFormatFlagCode      = "1021"
+	ErrInvalidAPICallCode     = "1022"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -250,36 +245,23 @@ func formatError(msg string, cmd cmdType) string {
 
 func ErrAttachAuthToken(err error) error {
 	return errors.New(ErrAttachAuthTokenCode, errors.Alert, []string{"Authentication token not found"},
-		[]string{"Authentication token not found", err.Error()}, []string{"User not logged in to generate token"}, []string{ "Login with `mesheryctl system login` or supply a valid user token using the --token (or -t) flag."})
+		[]string{"Authentication token not found", err.Error()}, []string{"User not logged in to generate token"}, []string{"Login with `mesheryctl system login` or supply a valid user token using the --token (or -t) flag."})
 }
 
 func ErrFailRequest(err error) error {
 	return errors.New(ErrFailRequestCode, errors.Alert, []string{"Failed to make a request"},
-<<<<<<< HEAD
 		[]string{"Failed to make request" + err.Error()}, []string{"Probable network connection problem"}, []string{"Check your network connection and check the status of meshery server via 'mesheryctl system status'"})
 }
 
 func ErrUnauthenticated() error {
-	return errors.New(ErrFailRequestCode, errors.Alert, []string{"Authentication token is invalid"},
-		[]string{"Authentication token is invalid. Please supply a valid user token. "}, []string{"User not logged in correctly to generate token"}, []string{"Please login with `mesheryctl system login`"})
-}
-
-func InvalidToken() error {
-	return errors.New(ErrFailRequestCode, errors.Alert, []string{},
-		[]string{"Authentication token is expired/invalid."}, []string{"Token expired"}, []string{" Please login with `mesheryctl system login` to generate a new token"})
-=======
-		[]string{err.Error()}, []string{"Meshery server isn't running or not reachable"}, []string{"Please check your kubernetes cluster is running or not and Run `mesheryctl system restart`"})
-}
-
-func ErrUnauthenticated() error {
 	return errors.New(ErrUnauthenticatedCode, errors.Alert, []string{"UnAuthenticated User"},
-		[]string{"You are UnAuthenticated to access any resource"}, []string{"You haven't login to meshery"}, []string{"Login with `mesheryctl system login`"})
+		[]string{"You are UnAuthenticated to access any resource"}, []string{"You haven't login to meshery"}, []string{"Please Login with `mesheryctl system login`"})
 }
 
 func ErrInvalidToken() error {
 	return errors.New(ErrInvalidTokenCode, errors.Alert, []string{"Authentication token invalid"},
 		[]string{"Authentication got expired or is invalid"}, []string{"Authentication token present in auth.json expired or is invalid"}, []string{"Please supply a valid user token. Login with `mesheryctl system login`"})
->>>>>>> master
+
 }
 
 func ErrFailReqStatus(statusCode int) error {
@@ -369,5 +351,9 @@ func ErrInvalidNameOrID(err error) error {
 }
 
 func ErrInvalidAPIResponse(err error) error {
-	return errors.New(ErrInvalidAPIResponseCode, errors.Fatal, []string{"Invalid API response encountered"}, []string{"Invalid API response encountered", err.Error()}, []string{}, []string{})
+	return errors.New(ErrInvalidAPIResponseCode, errors.Fatal, []string{"Invalid API response encountered"},
+		[]string{"Invalid API response encountered", err.Error()}, []string{"Error occured while generating a response body"}, []string{"Check your network connection and check the status of meshery server via 'mesheryctl system status'"})
+}
+func ErrInvalidAPICall(statusCode int) error {
+	return errors.New(ErrInvalidAPICallCode, errors.Alert, []string{"Response Status Code ", strconv.Itoa(statusCode), " Possible Server Error"}, []string{"Response Status Code " + strconv.Itoa(statusCode) + " possible Server Error"}, []string{}, []string{})
 }
