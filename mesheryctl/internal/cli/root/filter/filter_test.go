@@ -66,7 +66,6 @@ func TestFilterCmd(t *testing.T) {
 			ExpectHelp:       false,
 			ExpectErr:        false,
 		},
-		//adding comments to passworkflow
 		{
 			Name:             "filter listcmd",
 			Args:             []string{"list"},
