@@ -12,6 +12,7 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
+	ErrOpenFileCode                       = "2033"
 	ErrGrafanaClientCode                  = "2073"
 	ErrPageSizeCode                       = "2074"
 	ErrPageNumberCode                     = "2075"
@@ -220,6 +221,10 @@ func ErrUnableToPersistsResult(err error) error {
 
 func ErrGenerateUUID(err error) error {
 	return errors.New(ErrGenerateUUIDCode, errors.Alert, []string{"Unable to generate a new UUID"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrOpenFile(file string) error {
+	return errors.New(ErrOpenFileCode, errors.Alert, []string{"unable to open file: ", file}, []string{}, []string{"The file does not exist in the location"}, []string{"Make sure to upload the correct file"})
 }
 
 func ErrGrafanaOrg(err error) error {
