@@ -12,6 +12,7 @@ import { Adapters } from "../components/extensions";
 import { LARGE_6_MED_12_GRID_STYLE } from "../css/grid.style";
 import { useNotification } from "../utils/hooks/useNotification";
 import { EVENT_TYPES } from "../lib/event-types";
+import CircleIcon from '@mui/icons-material/Circle';
 
 
 const INITIAL_GRID_SIZE = { lg : 6, md : 12, xs : 12 };
@@ -106,6 +107,7 @@ const Extensions = ({ classes, toggleCatalogContent , capabilitiesRegistry }) =>
   const [catalogContent, setCatalogContent] = useState(true);
   const [extensionPreferences, setExtensionPreferences] = useState({})
   const [hasAccessToMeshMap, setHasAccessToMeshMap] = useState(false)
+  const [deployStatus, setDeployStatus] = useState("")
   const { notify } = useNotification()
 
   const handleToggle = () => {
@@ -129,6 +131,7 @@ const Extensions = ({ classes, toggleCatalogContent , capabilitiesRegistry }) =>
       },
       err => console.error(err)
     )
+    setDeployStatus(catalogContent ? "Deployed" : "Undeployed")
   }, []);
 
   const handleCatalogPreference = (catalogPref) => {
@@ -147,6 +150,7 @@ const Extensions = ({ classes, toggleCatalogContent , capabilitiesRegistry }) =>
       },
       err => console.error(err),
     )
+    setDeployStatus(catalogPref ? "Deployed" : "Undeployed")
   }
 
   useEffect(() => {
@@ -157,6 +161,12 @@ const Extensions = ({ classes, toggleCatalogContent , capabilitiesRegistry }) =>
       setHasAccessToMeshMap(true);
   }, [])
 
+  const getColorForState = () => {
+    if ( deployStatus === "Deploying" ) return "#ffcc00";
+    if ( deployStatus === "Undeploying" ) return "#ff9400";
+    if ( catalogContent ) return "#008000";
+    if ( !catalogContent ) return "#808080";
+  }
 
   return (
     <React.Fragment>
@@ -183,23 +193,29 @@ const Extensions = ({ classes, toggleCatalogContent , capabilitiesRegistry }) =>
             </Typography>
 
             <Grid container spacing={2} className={classes.grid} direction="row" justifyContent="space-between" alignItems="baseline" style={{ position : "absolute", paddingRight : "3rem", paddingLeft : ".5rem", bottom : "1.5rem", }}>
-              <Typography variant="subtitle2" style={{ fontStyle : "italic" }}>
-                Explore the <a href="https://meshery.io/catalog" target="_blank" rel="noreferrer" className={classes.link}>Meshery Catalog</a>
-              </Typography>
-
-              <div style={{ textAlign : "right" }}>
-                <Switch
-                  checked={catalogContent}
-                  onChange={handleToggle}
-                  name="OperatorSwitch"
-                  color="primary"
-                  classes={{
-                    switchBase : classes.switchBase,
-                    track : classes.track,
-                    checked : classes.checked,
-                  }}
-                />
-              </div>
+              <Grid item xs={7} md={8}>
+                <Typography variant="subtitle2" style={{ fontStyle : "italic" }}>
+                  Explore the <a href="https://meshery.io/catalog" target="_blank" rel="noreferrer" className={classes.link}>Meshery Catalog</a>
+                </Typography>
+              </Grid>
+              <Grid item xs={2} md={1} style={{ margin : "auto" }}>
+                <CircleIcon style={{ color : getColorForState() }} />
+              </Grid>
+              <Grid item>
+                <div style={{ textAlign : "right" }}>
+                  <Switch
+                    checked={catalogContent}
+                    onChange={handleToggle}
+                    name="OperatorSwitch"
+                    color="primary"
+                    classes={{
+                      switchBase : classes.switchBase,
+                      track : classes.track,
+                      checked : classes.checked,
+                    }}
+                  />
+                </div>
+              </Grid>
             </Grid>
           </div>
         </Grid>
