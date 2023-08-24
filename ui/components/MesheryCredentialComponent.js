@@ -1,5 +1,4 @@
 import { Button, Chip, IconButton, TableCell, TableSortLabel, Tooltip, Typography, withStyles } from "@material-ui/core";
-import { withSnackbar } from "notistack";
 import React, { useEffect, useState } from "react"
 import DataTable from "mui-datatables";
 import Modal from "./Modal"
@@ -7,13 +6,14 @@ import { CON_OPS } from "../utils/Enum";
 import dataFetch from "../lib/data-fetch";
 import AddIconCircleBorder from "../assets/icons/AddIconCircleBorder";
 import EditIcon from '@material-ui/icons/Edit';
-import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
 import Moment from "react-moment";
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { updateProgress } from "../lib/store";
+import { useNotification } from "../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../lib/event-types";
 
 
 const styles = (theme) => ({
@@ -31,7 +31,7 @@ const styles = (theme) => ({
 const schema_array = ["prometheus", "grafana", "kubernetes"]
 
 const MesheryCredentialComponent = ({
-  updateProgress, enqueueSnackbar, closeSnackbar, classes
+  updateProgress, classes
 }) => {
 
   const [credentials, setCredentials] = useState([]);
@@ -45,6 +45,7 @@ const MesheryCredentialComponent = ({
   });
   const [credentialType, setCredentialType] = useState(schema_array[0]);
   const [credentialName, setCredentialName] = useState(null);
+  const { notify } = useNotification()
 
   useEffect(() => {
     fetchCredential();
@@ -88,18 +89,7 @@ const MesheryCredentialComponent = ({
 
   const handleError = (error_msg) => {
     updateProgress({ showProgress : false });
-
-    enqueueSnackbar(`${error_msg}`, {
-      variant : "error",
-      action : function Action(key) {
-        return (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon />
-          </IconButton>
-        );
-      },
-      autoHideDuration : 5000,
-    });
+    notify({ message : `${error_msg}`, event_type : EVENT_TYPES.ERROR, details : error_msg.toString() })
   };
 
   const fetchCredential = async () => {
@@ -329,17 +319,7 @@ const MesheryCredentialComponent = ({
         () => {
           fetchCredential();
           updateProgress({ showProgress : false })
-          enqueueSnackbar(`"${type}" deleted.`, {
-            variant : "success",
-            action : function Action(key) {
-              return (
-                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                  <CloseIcon />
-                </IconButton>
-              );
-            },
-            autoHideDuration : 2000,
-          });
+          notify({ message : `"${type}" deleted.`, event_type : EVENT_TYPES.SUCCESS })
         },
         () => {
           handleError("Failed to delete credentials.")
@@ -362,17 +342,7 @@ const MesheryCredentialComponent = ({
         () => {
           fetchCredential()
           updateProgress({ showProgress : false })
-          enqueueSnackbar(`"${credentialType}" created.`, {
-            variant : "success",
-            action : function Action(key) {
-              return (
-                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                  <CloseIcon />
-                </IconButton>
-              );
-            },
-            autoHideDuration : 2000,
-          });
+          notify({ message : `"${credentialType}" created.`, event_type : EVENT_TYPES.SUCCESS })
         },
         () => {
           handleError("Failed to create credentials.")
@@ -397,18 +367,7 @@ const MesheryCredentialComponent = ({
         () => {
           fetchCredential();
           updateProgress({ showProgress : false })
-          enqueueSnackbar(`"${credentialType}" updated.`, {
-            variant : "success",
-            action : function Action(key) {
-              return (
-                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                  <CloseIcon />
-                </IconButton>
-              );
-            },
-            autoHideDuration : 2000,
-          });
-
+          notify({ message : `"${credentialType}" updated.`, event_type : EVENT_TYPES.SUCCESS })
         },
         () => {
           handleError("Failed to update credentials.")
@@ -436,4 +395,4 @@ const MesheryCredentialComponent = ({
 
 const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch) });
 
-export default withStyles(styles)(connect(null, mapDispatchToProps)(withSnackbar(MesheryCredentialComponent)));
+export default withStyles(styles)(connect(null, mapDispatchToProps)(MesheryCredentialComponent));

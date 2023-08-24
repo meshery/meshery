@@ -20,7 +20,7 @@ MeshMap is a GitOps-infused cloud native <b>visual designer</b> for Kubernetes a
 - <a href="{{site.baseurl}}/extensions/importing-a-design">Import a Design</a> - Importing a design from catalog or locally.
 - <a href="{{site.baseurl}}/extensions/merging-design">Merge Designs</a> - Merging designs.
 - <a href="{{site.baseurl}}/extensions/importing-an-application">Import an application</a> - Importing an application of different types.
-
+- <a href="{{site.baseurl}}/extensions/component-shape-guide">Component Shapes</a> - Know what each component shape signify.
 
 ### MeshMap For GitOps
 

@@ -9,9 +9,7 @@ import MUIDataTable from "mui-datatables";
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Moment from "react-moment";
-import { withSnackbar } from "notistack";
 import { withStyles } from '@material-ui/core/styles';
-import CloseIcon from "@material-ui/icons/Close";
 import { updateResultsSelection, clearResultsSelection, updateProgress } from "../../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 // import dataFetch from "../../lib/data-fetch";
@@ -35,6 +33,8 @@ import {
 
 } from "react-share"
 import subscribePerformanceProfiles from "../graphql/subscriptions/PerformanceResultSubscription";
+import { useNotification } from "../../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../../lib/event-types";
 
 const COL_MAPPING = {
   QPS : 3,
@@ -486,8 +486,6 @@ function ResultNodeDetails({ result, handleTabChange, tabValue }) {
  *
  * @param {{
  *  updateProgress?: any,
- *  enqueueSnackbar?: any,
- *  closeSnackbar?: any,
  *  results_selection?: any,
  *  user?: any
  *  updateResultsSelection?: any,
@@ -499,8 +497,6 @@ function ResultNodeDetails({ result, handleTabChange, tabValue }) {
  */
 function MesheryResults({
   updateProgress,
-  enqueueSnackbar,
-  closeSnackbar,
   endpoint,
   updateResultsSelection,
   results_selection,
@@ -523,6 +519,9 @@ function MesheryResults({
   const [socialMessage, setSocialMessage] = useState();
 
   const searchTimeout = useRef();
+
+  //hooks
+  const { notify } = useNotification();
 
   useEffect(() => {
     fetchResults(page, pageSize, search, sortOrder);
@@ -612,18 +611,7 @@ function MesheryResults({
 
   function handleError(error) {
     updateProgress({ showProgress : false });
-
-    enqueueSnackbar(`There was an error fetching results: ${error}`, {
-      variant : "error",
-      action : function Action(key) {
-        return (
-          <IconButton style={iconMedium} key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon style={iconMedium} />
-          </IconButton>
-        );
-      },
-      autoHideDuration : 8000,
-    });
+    notify({ message : `There was an error fetching results: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() })
   }
 
   const columns = generateColumnsForDisplay(sortOrder, (idx) => {
@@ -779,4 +767,4 @@ const mapStateToProps = (state) => {
 };
 
 // @ts-ignore
-export default connect(mapStateToProps, mapDispatchToProps)(withSnackbar(withStyles(styles)(MesheryResults)));
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(MesheryResults));
