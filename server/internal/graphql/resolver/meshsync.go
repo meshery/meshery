@@ -91,6 +91,17 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 				}
 			}
 
+			r.Log.Info("Dropping Meshery Database")
+
+			for _, table := range tables {
+				err = dbHandler.Migrator().DropTable(table)
+				if err != nil {
+					databaseOpenErr := models.ErrDatabaseOpen(err)
+					r.Log.Error(databaseOpenErr)
+					return "", databaseOpenErr
+				}
+			}
+
 			r.Log.Info("Migrating Meshery Database")
 			err = dbHandler.AutoMigrate(
 				&meshsyncmodel.KeyValue{},
