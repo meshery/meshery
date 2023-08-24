@@ -33,12 +33,12 @@ func (mfp *MesheryFilterPersister) GetMesheryFilters(search, order string, page,
 		order = "updated_at desc"
 	}
 
-	if visibility == "public" {
-		visibility = Public
+	if visibility == "private" {
+		visibility = Private
 	} else if visibility == "published" {
 		visibility = Published
 	} else {
-		visibility = Private
+		visibility = Public
 	}
 
 	count := int64(0)

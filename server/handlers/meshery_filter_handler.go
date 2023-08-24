@@ -204,7 +204,7 @@ func (h *Handler) handleFilterPOST(
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
 //
-// ```?visibility={visibility}``` Default visibility is private
+// ```?visibility={visibility}``` Default visibility is public
 // responses:
 //
 //	200: mesheryFiltersResponseWrapper

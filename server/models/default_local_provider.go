@@ -670,7 +670,7 @@ func (l *DefaultLocalProvider) GetMesheryFilters(_, page, pageSize, search, orde
 	}
 
 	if visibility == "" {
-		visibility = "private"
+		visibility = Public
 	}
 
 	pg, err := strconv.ParseUint(page, 10, 32)
