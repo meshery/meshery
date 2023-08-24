@@ -8,6 +8,7 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/stretchr/testify/assert"
 )
 
 var update = flag.Bool("update", false, "update golden files")
@@ -133,7 +134,7 @@ func TestAppView(t *testing.T) {
 			}
 			expectedResponse := golden.Load()
 
-			utils.Equals(t, expectedResponse, actualResponse)
+			assert.Equal(t, expectedResponse, actualResponse)
 		})
 	}
 
