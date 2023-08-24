@@ -55,7 +55,7 @@ const (
 	ErrRetrieveUserTokenCode            = "2044"
 	ErrFailToSaveCode                   = "2045"
 	ErrFailToDeleteCode                 = "2046"
-	ErrMakeDirCode                        = "2091"
+	ErrMakeDirCode                      = "2091"
 	ErrCopyCode               			= "2101"
 	ErrWriteResponseCode                = "2202"
 	ErrTestConfigsCode                  = "2203"
