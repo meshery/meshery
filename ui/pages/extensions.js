@@ -1,4 +1,4 @@
-import { Grid, Typography, Button, Switch } from "@material-ui/core";
+import { Grid, Typography, Button, Switch, Tooltip } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
@@ -111,6 +111,7 @@ const Extensions = ({ classes, toggleCatalogContent , capabilitiesRegistry }) =>
   const { notify } = useNotification()
 
   const handleToggle = () => {
+    setDeployStatus(catalogContent ? "Undeploying" : "Deploying")
     toggleCatalogContent({ catalogVisibility : !catalogContent });
     setCatalogContent(!catalogContent);
     handleCatalogPreference(!catalogContent);
@@ -147,10 +148,10 @@ const Extensions = ({ classes, toggleCatalogContent , capabilitiesRegistry }) =>
       },
       () => {
         notify({ message : `Catalog Content was ${catalogPref ? "enab" : "disab"}led`, event_type : EVENT_TYPES.SUCCESS })
+        setDeployStatus(catalogPref ? "Deployed" : "Undeployed")
       },
       err => console.error(err),
     )
-    setDeployStatus(catalogPref ? "Deployed" : "Undeployed")
   }
 
   useEffect(() => {
@@ -199,9 +200,11 @@ const Extensions = ({ classes, toggleCatalogContent , capabilitiesRegistry }) =>
                 </Typography>
               </Grid>
               <Grid item xs={2} md={1} style={{ margin : "auto" }}>
-                <CircleIcon style={{ color : getColorForState() }} />
+                <Tooltip title={deployStatus}>
+                  <CircleIcon style={{ color : getColorForState() }} />
+                </Tooltip>
               </Grid>
-              <Grid item>
+              <Grid item xs={3}>
                 <div style={{ textAlign : "right" }}>
                   <Switch
                     checked={catalogContent}
