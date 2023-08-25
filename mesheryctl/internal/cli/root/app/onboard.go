@@ -55,12 +55,9 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 	`,
 	Annotations: linkDocAppOnboard,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = `Usage: mesheryctl app onboard -f [filepath] -s [source type]
-Example: mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
-Description: Onboard application`
 
 		if file == "" && len(args) == 0 {
-			return fmt.Errorf("file path or application name not provided. Provide file/app name \n\n%v", errMsg)
+			return ErrOnboardApp()
 		}
 		return nil
 	},
@@ -73,8 +70,8 @@ Description: Onboard application`
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			utils.Log.Error(utils.ErrProcessingConfig(err))
+			return utils.ErrProcessingConfig(err)
 		}
 
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/application/deploy"
@@ -90,14 +87,14 @@ Description: Onboard application`
 
 			req, err = utils.NewRequest("GET", appURL+"?search="+appName, nil)
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				utils.Log.Error(utils.ErrCreatingRequest(err))
+				return utils.ErrCreatingRequest(err)
 			}
 
 			resp, err := utils.MakeRequest(req)
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				utils.Log.Error(utils.ErrCreatingRequest(err))
+				return utils.ErrCreatingRequest(err)
 			}
 
 			var response *models.ApplicationsAPIResponse
@@ -105,18 +102,18 @@ Description: Onboard application`
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
 				utils.Log.Error(utils.ErrReadResponseBody(err))
-				return nil
+				return utils.ErrReadResponseBody(err)
 			}
 			err = json.Unmarshal(body, &response)
 			if err != nil {
 				utils.Log.Error(utils.ErrUnmarshal(err))
-				return nil
+				return utils.ErrUnmarshal(err)
 			}
 
 			index := 0
 			if len(response.Applications) == 0 {
-				utils.Log.Error(utils.ErrNotFound(errors.New("no apps found with the given name")))
-				return nil
+				utils.Log.Error(utils.ErrNotFound(errors.New("no app found with the given name")))
+				return ErrAppFound()
 			} else if len(response.Applications) == 1 {
 				appFile = response.Applications[0].ApplicationFile
 			} else {
@@ -127,12 +124,12 @@ Description: Onboard application`
 		} else {
 			// Check if a valid source type is set
 			if !isValidSource(sourceType) {
-				return errors.Errorf("application source type (-s) invalid or not passed.\nAllowed source types: %s", strings.Join(validSourceTypes, ", "))
+				return ErrValidSource(validSourceTypes)
 			}
 			app, err := importApp(sourceType, file, appURL, !skipSave)
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				utils.Log.Error(ErrImportApp(err))
+				return ErrImportApp(err)
 			}
 
 			appFile = app.ApplicationFile
@@ -140,21 +137,19 @@ Description: Onboard application`
 
 		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(appFile)))
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return utils.ErrCreatingRequest(err)
 		}
 
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return utils.ErrCreatingRequest(err)
 		}
 
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
 			utils.Log.Error(utils.ErrReadResponseBody(err))
-			return nil
+			return utils.ErrReadResponseBody(err)
 		}
 
 		if res.StatusCode == 200 {

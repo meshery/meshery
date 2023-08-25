@@ -58,22 +58,19 @@ mesheryctl app view --all
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return utils.ErrProcessingConfig(err)
 		}
-
 		application := ""
 		isID := false
 		applicationID := ""
 		// if application name/id available
 		if len(args) > 0 {
 			if viewAllFlag {
-				return errors.New("-a cannot be used when [application-name|application-id] is specified")
+				return ErrViewAppFlag()
 			}
 			applicationID, isID, err = utils.ValidId(args[0], "application")
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				return ErrInvalidNameOrID()
 			}
 		}
 		var req *http.Request
@@ -85,7 +82,7 @@ mesheryctl app view --all
 			if viewAllFlag {
 				url += "/api/application?pagesize=10000"
 			} else {
-				return errors.New("[application-name|application-id] not specified, use -a to view all applications")
+				return ErrNoAppNameOrID()
 			}
 		} else if isID {
 			// if application is a valid uuid, then directly fetch the application
@@ -97,44 +94,39 @@ mesheryctl app view --all
 
 		req, err = utils.NewRequest("GET", url, nil)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return utils.ErrCreatingRequest(err)
 		}
 
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return utils.ErrCreatingRequest(err)
 		}
 
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			utils.Log.Error(utils.ErrReadResponseBody(err))
-			return nil
+			return utils.ErrReadResponseBody(err)
 		}
 
 		var dat map[string]interface{}
 		if err = json.Unmarshal(body, &dat); err != nil {
-			utils.Log.Error(utils.ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body")))
-			return nil
+			return utils.ErrUnmarshal(err)
 		}
 		if isID {
 			if body, err = json.MarshalIndent(dat, "", "  "); err != nil {
-				return err
+				return utils.ErrMarshalIndent(err)
 			}
 		} else if viewAllFlag {
 			if body, err = json.MarshalIndent(map[string]interface{}{"applications": dat["applications"]}, "", "  "); err != nil {
-				return err
+				return utils.ErrMarshalIndent(err)
 			}
 		} else {
 			if err = json.Unmarshal(body, &response); err != nil {
-				utils.Log.Error(utils.ErrUnmarshal(err))
-				return nil
+				return utils.ErrUnmarshal(err)
 			}
 			if response.TotalCount == 0 {
 				utils.Log.Error(utils.ErrNotFound(errors.New("application does not exit. Please get an app name and try again. Use `mesheryctl app list` to see a list of applications")))
-				return nil
+				return ErrAppFound()
 			}
 			// Manage more than one apps with similar name
 			for _, app := range response.Applications {
@@ -143,7 +135,7 @@ mesheryctl app view --all
 				}
 				body, err = json.MarshalIndent(&app, "", "  ")
 				if err != nil {
-					return err
+					return utils.ErrMarshalIndent(err)
 				}
 				if outFormatFlag == "json" {
 					utils.Log.Info(string(body))
@@ -151,7 +143,7 @@ mesheryctl app view --all
 				}
 				if outFormatFlag == "yaml" {
 					if body, err = yaml.JSONToYAML(body); err != nil {
-						return errors.Wrap(err, "failed to convert json to yaml")
+						return utils.ErrJSONToYAML(err)
 					}
 					utils.Log.Info(string(body))
 					continue
@@ -161,10 +153,10 @@ mesheryctl app view --all
 
 		if outFormatFlag == "yaml" {
 			if body, err = yaml.JSONToYAML(body); err != nil {
-				return errors.Wrap(err, "failed to convert json to yaml")
+				return utils.ErrJSONToYAML(err)
 			}
 		} else if outFormatFlag != "json" {
-			return errors.New("output-format choice invalid, use [json|yaml]")
+			return utils.ErrOutFormatFlag()
 		}
 		if viewAllFlag || isID {
 			utils.Log.Info(string(body))

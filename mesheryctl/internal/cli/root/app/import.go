@@ -22,13 +22,11 @@ import (
 	"net/http"
 	"os"
 	"path"
-	"strings"
 
 	"github.com/asaskevich/govalidator"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -42,12 +40,10 @@ var importCmd = &cobra.Command{
 mesheryctl app import -f [file/URL] -s [source-type]
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = `Usage: mesheryctl app import -f [file/url] -s [source-type]
-Example: mesheryctl app import -f ./application.yml -s "Kubernetes Manifest"`
 
 		if file == "" {
 			utils.Log.Debug("manifest path not provided")
-			return fmt.Errorf("manifest path not provided. Provide the path to the app manifest. \n\n%v", errMsg)
+			return ErrAppManifest()
 		}
 
 		return nil
@@ -60,21 +56,21 @@ Example: mesheryctl app import -f ./application.yml -s "Kubernetes Manifest"`
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
-			return nil
+			return utils.ErrReadConfigFile(err)
 		}
 
 		appURL := mctlCfg.GetBaseMesheryURL() + "/api/application"
 
 		// If app file is passed via flags
 		if !isValidSource(sourceType) {
-			return errors.Errorf("Application source type (-s) invalid or not passed.\nAllowed source types: %s", strings.Join(validSourceTypes, ", "))
+			return ErrValidSource(validSourceTypes)
 		}
 
 		app, err := importApp(sourceType, file, appURL, true)
 
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			utils.Log.Error(ErrImportApp(err))
+			return ErrImportApp(err)
 		}
 
 		fmt.Printf("App file imported successfully. \nID of the app: %s \n", utils.TruncateID(app.ID.String()))
@@ -103,16 +99,16 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 			"save": save,
 		})
 		if err != nil {
-			return nil, utils.ErrMarhalling(err)
+			return nil, utils.ErrMarshal(err)
 		}
 		req, err = utils.NewRequest("POST", appURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
 		if err != nil {
-			return nil, err
+			return nil, utils.ErrCreatingRequest(err)
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
-			return nil, err
+			return nil, utils.ErrCreatingRequest(err)
 		}
 		utils.Log.Debug("App file saved")
 		var response []*models.MesheryApplication
@@ -134,7 +130,7 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 		var jsonValues []byte
 		url, path, err := utils.ParseURLGithub(file)
 		if err != nil {
-			return nil, err
+			return nil, utils.ErrParseGithubFile(err, file)
 		}
 
 		utils.Log.Debug(url)
@@ -156,12 +152,12 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 
 		req, err = utils.NewRequest("POST", appURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
 		if err != nil {
-			return nil, err
+			return nil, utils.ErrCreatingRequest(err)
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
-			return nil, err
+			return nil, utils.ErrCreatingRequest(err)
 		}
 		utils.Log.Debug("remote hosted app request success")
 		var response []*models.MesheryApplication

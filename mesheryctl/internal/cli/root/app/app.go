@@ -69,20 +69,17 @@ func init() {
 func getSourceTypes() error {
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		utils.Log.Error(err)
-		return nil
+		utils.ErrProcessingConfig(err)
 	}
 	validTypesURL := mctlCfg.GetBaseMesheryURL() + "/api/application/types"
 	req, err := utils.NewRequest("GET", validTypesURL, nil)
 	if err != nil {
-		utils.Log.Error(err)
-		return nil
+		return utils.ErrCreatingRequest(err)
 	}
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		utils.Log.Error(err)
-		return nil
+		return utils.ErrCreatingRequest(err)
 	}
 
 	defer resp.Body.Close()
@@ -92,12 +89,12 @@ func getSourceTypes() error {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		utils.Log.Error(utils.ErrReadResponseBody(errors.Wrap(err, "couldn't read response from server. Please try again after some time")))
-		return nil
+		return utils.ErrReadResponseBody(err)
 	}
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		utils.Log.Error(utils.ErrUnmarshal(errors.Wrap(err, "couldn't process response received from server")))
-		return nil
+		utils.Log.Error(utils.ErrUnmarshal(err))
+		return utils.ErrUnmarshal(err)
 	}
 
 	for _, apiResponse := range response {

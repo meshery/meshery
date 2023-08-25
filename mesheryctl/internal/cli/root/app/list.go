@@ -51,36 +51,36 @@ mesheryctl app list
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
-			return nil
+			return utils.ErrProcessingConfig(err)
 		}
 
 		var response *models.ApplicationsAPIResponse
 		req, err := utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/application", nil)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			utils.Log.Error(utils.ErrCreatingRequest(err))
+			return utils.ErrCreatingRequest(err)
 		}
 
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			utils.Log.Error(utils.ErrCreatingRequest(err))
+			return utils.ErrCreatingRequest(err)
 		}
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
 			utils.Log.Error(utils.ErrReadResponseBody(err))
-			return nil
+			return utils.ErrReadResponseBody(err)
 		}
 		err = json.Unmarshal(body, &response)
 		if err != nil {
 			utils.Log.Error(utils.ErrUnmarshal(err))
-			return nil
+			return utils.ErrUnmarshal(err)
 		}
 		tokenObj, err := utils.ReadToken(utils.TokenFlag)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			utils.Log.Error(utils.ErrReadToken(err))
+			return utils.ErrReadToken(err)
 		}
 		provider := tokenObj["meshery-provider"]
 		var data [][]string

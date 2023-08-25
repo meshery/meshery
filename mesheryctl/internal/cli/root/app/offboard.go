@@ -49,8 +49,8 @@ mesheryctl app offboard -f [filepath]
 		var err error
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			utils.Log.Error(utils.ErrProcessingConfig(err))
+			return utils.ErrProcessingConfig(err)
 		}
 
 		app := ""
@@ -58,8 +58,8 @@ mesheryctl app offboard -f [filepath]
 		if len(args) > 0 {
 			app, isID, err = utils.ValidId(args[0], "application")
 			if err != nil {
-				utils.Log.Error(err)
-				return nil
+				utils.Log.Error(utils.ErrInvalidNameOrID(err))
+				return utils.ErrInvalidNameOrID(err)
 			}
 		}
 
@@ -82,7 +82,7 @@ mesheryctl app offboard -f [filepath]
 			content, err := os.ReadFile(file)
 			if err != nil {
 				utils.Log.Error(utils.ErrFileRead(err))
-				return nil
+				return utils.ErrFileRead(err)
 			}
 
 			appFile = string(content)
@@ -97,14 +97,14 @@ mesheryctl app offboard -f [filepath]
 
 		req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			utils.Log.Error(utils.ErrCreatingRequest(err))
+			return utils.ErrCreatingRequest(err)
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			utils.Log.Error(utils.ErrCreatingRequest(err))
+			return utils.ErrCreatingRequest(err)
 		}
 		defer resp.Body.Close()
 
@@ -113,13 +113,13 @@ mesheryctl app offboard -f [filepath]
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.Log.Error(utils.ErrReadResponseBody(err))
-			return nil
+			return utils.ErrReadResponseBody(err)
 		}
 
 		err = json.Unmarshal(body, &response)
 		if err != nil {
 			utils.Log.Error(utils.ErrUnmarshal(err))
-			return nil
+			return utils.ErrUnmarshal(err)
 		}
 
 		utils.Log.Debug("application file converted to pattern file")
@@ -128,21 +128,21 @@ mesheryctl app offboard -f [filepath]
 
 		req, err = utils.NewRequest("DELETE", deployURL, bytes.NewBuffer([]byte(patternFile)))
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			utils.Log.Error(utils.ErrCreatingRequest(err))
+			return utils.ErrCreatingRequest(err)
 		}
 
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			utils.Log.Error(utils.ErrCreatingRequest(err))
+			return utils.ErrCreatingRequest(err)
 		}
 
 		defer res.Body.Close()
 		body, err = io.ReadAll(res.Body)
 		if err != nil {
 			utils.Log.Error(utils.ErrReadResponseBody(err))
-			return nil
+			return utils.ErrReadResponseBody(err)
 		}
 
 		if res.StatusCode == 200 {
