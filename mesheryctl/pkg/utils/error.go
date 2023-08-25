@@ -34,6 +34,8 @@ var (
 	ErrJSONToYAMLCode         = "1020"
 	ErrOutFormatFlagCode      = "1021"
 	ErrInvalidAPICallCode     = "1022"
+	ErrParseGithubFileCode    = "1023"
+	ErrReadTokenCode          = "1024"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -316,7 +318,7 @@ func ErrParsingUrl(err error) error {
 
 func ErrNotFound(err error) error {
 	return errors.New(ErrNotFoundCode, errors.Fatal,
-		[]string{"Not Found"},
+		[]string{"Item Not Found"},
 		[]string{err.Error()},
 		[]string{"The item you are searching for is not present."},
 		[]string{"Check whether the item is present."})
@@ -409,10 +411,27 @@ func ErrInvalidAPIResponse(err error) error {
 		[]string{"Error occurred while generating a response body"},
 		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
 }
+
 func ErrProcessingConfig(err error) error {
 	return errors.New(ErrProcessingConfigCode, errors.Alert,
 		[]string{"Error processing config"},
 		[]string{"Error processing config", err.Error()},
 		[]string{"Couldn't load mesh config"},
-		[]string{"Ensure mesheryctl has the right configurations"})
+		[]string{"Ensure Mesheryctl has the right configurations, run `mesheryctl system config`"})
+}
+
+func ErrParseGithubFile(err error, URL string) error {
+	return errors.New(ErrParseGithubFileCode, errors.Alert,
+		[]string{"Failed to parse github file"},
+		[]string{"Failed to parse github file" + err.Error()},
+		[]string{"Unable to retrieve file from URL: %s", URL},
+		[]string{"Ensure you have a github url in file path"})
+}
+
+func ErrReadToken(err error) error {
+	return errors.New(ErrReadTokenCode, errors.Alert,
+		[]string{"Could not read token"},
+		[]string{err.Error()},
+		[]string{"Token file is invalid"},
+		[]string{"Provide a valid user token by logging in with `mesheryctl system login`."})
 }
