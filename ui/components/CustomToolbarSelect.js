@@ -80,16 +80,14 @@ function CustomToolbarSelect({ classes, results_selection, setSelectedRows, clea
     setDialogOpen(true);
   };
 
-  useEffect(() => {
-    const rs = results_selection;
-    Object.keys(rs).forEach((k1) => {
-      Object.keys(rs[k1]).forEach((k2) => {
-        if (typeof rs[k1][k2] !== 'undefined') {
-          fullData.push(rs[k1][k2]);
-        }
-      });
+  const rs = results_selection;
+  Object.keys(rs).forEach((k1) => {
+    Object.keys(rs[k1]).forEach((k2) => {
+      if (typeof rs[k1][k2] !== 'undefined') {
+        fullData.push(rs[k1][k2]);
+      }
     });
-  }, [results_selection]);
+  });
 
   return (
     <NoSsr>
