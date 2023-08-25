@@ -32,11 +32,15 @@ app.prepare().then(() => {
       handle(req, res);
     }
   });
+
   server.on("upgrade", (req, socket, head) => {
-    proxy.ws(req, socket, head, (err) => {
-      socket.write("HTTP/" + req.httpVersion + " 500 Connection error\r\n\r\n");
-      socket.end();
-    });
+    const { pathname } = parse(req.url, true);
+    if (!pathname.startsWith('/_next/webpack-hmr')) {
+      proxy.ws(req, socket, head, (err) => {
+        socket.write("HTTP/" + req.httpVersion + " 500 Connection error\r\n\r\n");
+        socket.end();
+      });
+    }
   });
 
   server.listen(port, (err) => {
