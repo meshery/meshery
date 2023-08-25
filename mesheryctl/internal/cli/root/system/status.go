@@ -45,7 +45,10 @@ var statusCmd = &cobra.Command{
 	Long:  `Check status of Meshery and Meshery components.`,
 	Example: `
 // Check status of Meshery, Meshery adapters, Meshery Operator and its controllers.
-mesheryctl system status 
+mesheryctl system status
+
+// (optional) Extra data in status table
+mesheryctl system status --verbose
 	`,
 	Annotations: linkDocStatus,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
