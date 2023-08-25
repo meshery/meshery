@@ -70,6 +70,9 @@ mesheryctl system dashboard
 
 // Open Meshery UI in browser and use port-forwarding (if default port is taken already)
 mesheryctl system dashboard --port-forward
+
+// (optional) skip opening of MesheryUI in browser.
+mesheryctl system dashboard --skip-browser
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// check if meshery is running or not
