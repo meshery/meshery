@@ -25,10 +25,9 @@ import { Search } from '@material-ui/icons';
 import { TextField } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import { Paper } from '@material-ui/core';
-import { useSnackbar } from "notistack";
 import { deleteKubernetesConfig, pingKubernetes } from './ConnectionWizard/helpers/kubernetesHelpers';
 import {
-  successHandlerGenerator, errorHandlerGenerator, closeButtonForSnackbarAction
+  successHandlerGenerator, errorHandlerGenerator
 } from './ConnectionWizard/helpers/common';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 import { updateK8SConfig, updateProgress, updateCapabilities } from '../lib/store';
@@ -46,6 +45,7 @@ import RemoteComponent from './RemoteComponent';
 import { CapabilitiesRegistry } from "../utils/disabledComponents";
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import dataFetch from '../lib/data-fetch';
+import { withNotify } from '../utils/hooks/useNotification';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -269,7 +269,6 @@ function K8sContextMenu({
   const [showFullContextMenu, setShowFullContextMenu] = React.useState(false);
   const [transformProperty, setTransformProperty] = React.useState(100);
   const deleteCtxtRef = React.createRef();
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const styleSlider = {
     position : "absolute",
@@ -337,15 +336,15 @@ function K8sContextMenu({
 
   const handleKubernetesClick = (id) => {
     updateProgress({ showProgress : true })
-
+    const notify = this.props.notify;
     pingKubernetes(
-      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes pinged", () => updateProgress({ showProgress : false })),
-      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged", () => updateProgress({ showProgress : false })),
+      successHandlerGenerator (notify, "Kubernetes pinged", () => updateProgress({ showProgress : false })),
+      errorHandlerGenerator(notify, "Kubernetes not pinged", () => updateProgress({ showProgress : false })),
       id
     )
   }
 
-  const handleKubernetesDelete = (name, ctxId) => async () => {
+  const handleKubernetesDelete = (name, connectionID) => async () => {
     let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
       title : `Delete ${name} context ?`,
       subtitle : `Are you sure you want to delete ${name} cluster from Meshery?`,
@@ -358,11 +357,11 @@ function K8sContextMenu({
           updateK8SConfig({ k8sConfig : updatedConfig })
         }
       }
-
+      const notify = this.props.notify;
       deleteKubernetesConfig(
-        successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes config removed", successCallback),
-        errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Not able to remove config"),
-        ctxId
+        successHandlerGenerator(notify, "Kubernetes config removed", successCallback),
+        errorHandlerGenerator(notify, "Not able to remove config"),
+        connectionID
       )
     }
   }
@@ -485,8 +484,8 @@ function K8sContextMenu({
                         />
                         <Chip
                           label={ctx?.name}
-                          onDelete={handleKubernetesDelete(ctx.name, ctx.id)}
-                          onClick={() => handleKubernetesClick(ctx.id)}
+                          onDelete={handleKubernetesDelete(ctx.name, ctx.connection_id)}
+                          onClick={() => handleKubernetesClick(ctx.connection_id)}
                           avatar={
                             meshStatus ?
                               <BadgeAvatars>
@@ -676,4 +675,4 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Header));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withNotify(Header)));

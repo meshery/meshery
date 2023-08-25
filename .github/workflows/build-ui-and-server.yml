@@ -223,14 +223,16 @@ jobs:
           PORT: 9081
           ADAPTER_URLS: "localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10009 localhost:10007"
         run: |
-          chmod +x ./main
-          ./main &
+          # chmod +x ./main
+          # ./main &
+          make ui-server &
+          sleep 60
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with:
           working-directory: ui
-          start: npm start
-          wait-on: http://localhost:3000
+          # start: npm run dev
+          wait-on: http://localhost:9081
           spec: cypress/e2e/e2e/**/*
           browser: chrome
           record: true

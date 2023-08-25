@@ -17,6 +17,7 @@ class MesheryProgressBar extends Component {
   componentDidUpdate() {
     const { showProgress } = this.props;
     if (showProgress) {
+      // const notify = this.props.enqueueSnackbar;
       this.key = this.props.enqueueSnackbar(<div style={{ width : 250 }}><LinearProgress /></div>, { variant : 'default',
         persist : true, });
     } else {
