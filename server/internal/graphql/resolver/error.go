@@ -8,6 +8,7 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
+	ErrOpenFileCode                         = "2033"
 	ErrResolverInvalidRequestCode           = "2222"
 	ErrResolverNilClientCode                = "2223"
 	ErrResolverCreateDataCode               = "2224"
@@ -19,6 +20,8 @@ const (
 	ErrResolverPublishBrokerCode            = "2232"
 	ErrResolverNoMeshSyncCode               = "2233"
 	ErrDataPlaneSubscriptionCode            = "1013"
+	ErrCopyCode                             = "2101"
+	ErrMakeDirCode                          = "2091"
 	ErrBrokerNotConnectedCode               = "2221"
 	ErrGettingNamespaceCode                 = "1014"
 	ErrFetchingPatternsCode                 = "1015"
@@ -36,6 +39,7 @@ const (
 	ErrGettingRegistryManagerCode           = "2250"
 	ErrGettingTelemetryComponentsCode       = "2251"
 	ErrAdapterInsufficientInformationCode   = "2252"
+	ErrDatabaseOpenCode                     = "11011"
 )
 
 var (
@@ -87,15 +91,33 @@ func ErrPublishBroker(err error) error {
 	return errors.New(ErrResolverPublishBrokerCode, errors.Alert, []string{"Unable to publish to broker", err.Error()}, []string{"Unable to create a broker publisher"}, []string{"Could be a network issue", "Meshery Broker could have crashed"}, []string{"Check if Meshery Broker is reachable from Meshery Server", "Check if Meshery Broker is up and running inside the configured cluster"})
 }
 
+func ErrMakeDir(err error, dir string) error {
+	return errors.New(ErrMakeDirCode, errors.Alert, []string{"Unable to create directory/folder", dir}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrOpenFile(file string) error {
+	return errors.New(ErrOpenFileCode, errors.Alert, []string{"unable to open file: ", file}, []string{}, []string{"The file does not exist in the location"}, []string{"Make sure to upload the correct file"})
+}
+
+func ErrCopy(err error, obj string) error {
+	return errors.New(ErrCopyCode, errors.Alert, []string{"Error occurred while copying", obj}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrDatabaseOpen(err error) error {
+	return errors.New(ErrDatabaseOpenCode, errors.Alert, []string{"Unable to open database"}, []string{err.Error()}, []string{"Database connection may have been lost"}, []string{"Make sure your database is reachable"})
+}
+
 func ErrMesheryClient(err error) error {
 	if err != nil {
 		return errors.New(ErrResolverMesheryClientCode, errors.Alert, []string{"Meshery kubernetes client not initialized", err.Error()}, []string{"Kubernetes config is not initialized with Meshery 4"}, []string{}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
 	}
 	return errors.New(ErrResolverMesheryClientCode, errors.Alert, []string{"Meshery kubernetes client not initialized"}, []string{"Kubernetes config is not initialized with Meshery 5"}, []string{}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
 }
+
 func ErrGettingNamespace(err error) error {
 	return errors.New(ErrGettingNamespaceCode, errors.Alert, []string{"Cannot get available namespaces"}, []string{err.Error()}, []string{"The table in the database might not exist"}, []string{})
 }
+
 func ErrFetchingPatterns(err error) error {
 	return errors.New(ErrFetchingPatternsCode, errors.Alert, []string{"Cannot fetch patterns"}, []string{err.Error()}, []string{"There might be something wrong with the Meshery or Meshery Cloud"}, []string{"Try again, if still exist, please post an issue on Meshery repository"})
 }

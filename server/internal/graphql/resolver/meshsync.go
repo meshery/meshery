@@ -34,7 +34,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			mesherydbPath := path.Join(utils.GetHome(), ".meshery/config")
 			err := os.Mkdir(path.Join(mesherydbPath, ".archive"), os.ModePerm)
 			if err != nil && os.IsNotExist(err) {
-				createFolder := models.ErrMakeDir(err, path.Join(mesherydbPath, ".archive"))
+				createFolder := ErrMakeDir(err, path.Join(mesherydbPath, ".archive"))
 				r.Log.Error(createFolder)
 				return model.StatusUnknown, createFolder
 			}
@@ -44,7 +44,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 
 			fin, err := os.Open(src)
 			if err != nil {
-				openFileError := models.ErrOpenFile(src)
+				openFileError := ErrOpenFile(src)
 				r.Log.Error(openFileError)
 				return model.StatusUnknown, openFileError
 			}
@@ -52,7 +52,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 
 			fout, err := os.Create(dst)
 			if err != nil {
-				createFileError := models.ErrMakeDir(err, dst)
+				createFileError := ErrMakeDir(err, dst)
 				r.Log.Error(createFileError)
 				return model.StatusUnknown, createFileError
 			}
@@ -60,7 +60,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 
 			_, err = io.Copy(fout, fin)
 			if err != nil {
-				copyError := models.ErrCopy(err, "meshery database file")
+				copyError := ErrCopy(err, "meshery database file")
 				r.Log.Error(copyError)
 				return model.StatusUnknown, copyError
 			}
@@ -75,7 +75,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 
 			tables, err := dbHandler.Migrator().GetTables()
 			if err != nil {
-				databaseOpenErr := models.ErrDatabaseOpen(err)
+				databaseOpenErr := ErrDatabaseOpen(err)
 				r.Log.Error(databaseOpenErr)
 				return model.StatusDisabled, databaseOpenErr
 			}
@@ -85,7 +85,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			for _, table := range tables {
 				err = dbHandler.Migrator().DropTable(table)
 				if err != nil {
-					databaseOpenErr := models.ErrDatabaseOpen(err)
+					databaseOpenErr := ErrDatabaseOpen(err)
 					r.Log.Error(databaseOpenErr)
 					return model.StatusDisabled, databaseOpenErr
 				}
