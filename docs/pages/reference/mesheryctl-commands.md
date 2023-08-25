@@ -21,7 +21,7 @@ Meshery CLI commands are categorized by function, which are:
 - `mesheryctl perf` - Cloud Native Performance Management: Workload and service mesh performance characterization
 - `mesheryctl pattern` - Cloud Native Pattern Configuration & Management: Service mesh patterns and Open Application Model integration
 - `mesheryctl app` - Cloud Native Application Management
-- `mesheryctl filter` - Data Plane Intelligence: Registry and configuration of WebAssembly filters for Envoy (experimental feature, usage of `exp` needed)
+- `mesheryctl filter` - Data Plane Intelligence: Registry and configuration of WebAssembly filters for Envoy
 
 ## Global Commands and Flags
 
