@@ -131,7 +131,7 @@ mesheryctl system check --preflight
 
 // Run checks on specific mesh adapter
 mesheryctl system check --adapter meshery-istio:10000
-or
+// or
 mesheryctl system check --adapter meshery-istio
 
 // Run checks for all the mesh adapters
@@ -139,9 +139,6 @@ mesheryctl system check --adapters
 
 // Verify the health of Meshery Operator's deployment with MeshSync and Broker
 mesheryctl system check --operator
-
-// Runs diagnostic checks and bundles up to open an issue if present
-mesheryctl system check --report
 	`,
 	Annotations: linkDocCheck,
 	RunE: func(cmd *cobra.Command, args []string) error {

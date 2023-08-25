@@ -27,156 +27,91 @@ mesheryctl completion [bash|zsh|fish]
 
 ## Examples
 
+### bash <= 3.2
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  # bash <= 3.2
+source /dev/stdin <<< "$(mesheryctl completion bash)"
+
+</div>
+</pre> 
+
+bash <= 3.2 on osx
+ensure you have bash-completion 1.3+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+brew install bash-completion 
 
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  source /dev/stdin <<< "$(mesheryctl completion bash)"
+mesheryctl completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
+
+</div>
+</pre> 
+
+### bash >= 4.0
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+source <(mesheryctl completion bash)
+
+</div>
+</pre> 
+
+bash >= 4.0 on osx
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+brew install bash-completion@2
 
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  # bash >= 4.0
+mesheryctl completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
+
+</div>
+</pre> 
+
+### zsh
+If shell completion is not already enabled in your environment you will need
+to enable it.  You can execute the following once:
+Might need to start a new shell for this setup to take effect.
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+$ echo "autoload -U compinit; compinit" >> ~/.zshrc
 
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  source <(mesheryctl completion bash)
+source <(mesheryctl completion zsh)
 
 </div>
 </pre> 
 
+zsh on osx / oh-my-zsh
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  # bash <= 3.2 on osx
+COMPLETION_DIR=$(echo $fpath | grep -o '[^ ]*completions' | grep -v cache) && mkdir -p $COMPLETION_DIR && mesheryctl completion zsh > "${COMPLETION_DIR}/_mesheryctl"
 
 </div>
 </pre> 
 
+### fish:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  brew install bash-completion # ensure you have bash-completion 1.3+
+mesheryctl completion fish | source
 
 </div>
 </pre> 
 
+To load fish shell completions for each session, execute once:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  mesheryctl completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-  # bash >= 4.0 on osx
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-  brew install bash-completion@2
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-  mesheryctl completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-  # zsh
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-  # If shell completion is not already enabled in your environment you will need
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-  # to enable it.  You can execute the following once:
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-  # Might need to start a new shell for this setup to take effect.
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-  $ echo "autoload -U compinit; compinit" >> ~/.zshrc
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-  source <(mesheryctl completion zsh)
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-  # zsh on osx / oh-my-zsh
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-  COMPLETION_DIR=$(echo $fpath | grep -o '[^ ]*completions' | grep -v cache) && mkdir -p $COMPLETION_DIR && mesheryctl completion zsh > "${COMPLETION_DIR}/_mesheryctl"
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-  # fish:
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-  mesheryctl completion fish | source
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-  # To load fish shell completions for each session, execute once:
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-  mesheryctl completion fish > ~/.config/fish/completions/mesheryctl.fish
+mesheryctl completion fish > ~/.config/fish/completions/mesheryctl.fish
 
 </div>
 </pre> 

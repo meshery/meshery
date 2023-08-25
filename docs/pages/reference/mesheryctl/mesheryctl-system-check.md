@@ -51,13 +51,7 @@ mesheryctl system check --adapter meshery-istio:10000
 </div>
 </pre> 
 
-<pre class='codeblock-pre'>
-<div class='codeblock'>
 or
-
-</div>
-</pre> 
-
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system check --adapter meshery-istio
@@ -77,14 +71,6 @@ Verify the health of Meshery Operator's deployment with MeshSync and Broker
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system check --operator
-
-</div>
-</pre> 
-
-Runs diagnostic checks and bundles up to open an issue if present
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl system check --report
 
 </div>
 </pre> 
