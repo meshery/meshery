@@ -171,7 +171,7 @@ function Connections({ classes, updateProgress }) {
       },
     },
     {
-      name : "metadata.server",
+      name : "metadata.server_location",
       label : "Server Location",
       options : {
         display : false,
@@ -314,22 +314,22 @@ function Connections({ classes, updateProgress }) {
       },
     },
     {
-      name : "metadata.name",
-      label : "Server Name",
-      options : {
-        display : false,
-      },
-    },
-    {
-      name : "metadata.version",
+      name : "metadata.server_build_sha",
       label : "Server Version",
       options : {
         display : false,
       },
     },
     {
-      name : "metadata.deployment_type",
-      label : "Deployment Type",
+      name : "metadata.server_version",
+      label : "Server Version",
+      options : {
+        display : false,
+      },
+    },
+    {
+      name : "credential_id",
+      label : "Credential ID",
       options : {
         display : false,
       },
@@ -394,13 +394,12 @@ function Connections({ classes, updateProgress }) {
         <TableRow className={classNames(classes.expandedRows)}>
           <TableCell></TableCell>
           <TableCell colSpan={3}>
-            <b>Server Name:</b> {rowData[9]}
+            <b>Server Builsd SHA:</b> {rowData[9]}
           </TableCell>
           <TableCell colSpan={2}>
             <b>Server Version:</b> {rowData[10]}
           </TableCell>
           <TableCell colSpan={2}>
-            <b>Deployment Type:</b> {rowData[11]}
           </TableCell>
         </TableRow>
       );
