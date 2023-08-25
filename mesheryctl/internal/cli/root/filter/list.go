@@ -55,14 +55,14 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			return utils.ErrProcessingConfig(err)
 		}
 
 		searchString := strings.ReplaceAll(args[0], " ", "%20")
 
 		response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
 		if err != nil {
-			return err
+			return ErrFetchFilter(err)
 		}
 
 		if len(args) > 0 && len(response.Filters) == 0 {
@@ -154,12 +154,12 @@ func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*mode
 
 	req, err := utils.NewRequest("GET", url, nil)
 	if err != nil {
-		return nil, err
+		return nil, utils.ErrCreatingRequest(err)
 	}
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		return nil, err
+		return nil, utils.ErrCreatingRequest(err)
 	}
 
 	defer resp.Body.Close()

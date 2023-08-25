@@ -22,9 +22,26 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrFilterNameOrIDCode = "1024"
+	ErrFilterNameOrIDCode = "1034"
+	ErrFetchFilterCode    = "1035"
 )
 
 func ErrFilterNameOrID(err error) error {
-	return errors.New(ErrFilterNameOrIDCode, errors.Alert, []string{"Invalid filter name or ID"}, []string{"Invalid filter name or ID", "" + err.Error()}, []string{"Probable invalid filter name|ID"}, []string{"Please run `mesheryctl filter list` to view all filters avilable"})
+	return errors.New(
+		ErrFilterNameOrIDCode,
+		errors.Alert,
+		[]string{"Unable to fetch filter"},
+		[]string{err.Error()},
+		[]string{"Probable invalid filter name or id"},
+		[]string{"Run `mesheryctl filter list` to view all available filters."})
+}
+
+func ErrFetchFilter(err error) error {
+	return errors.New(
+		ErrFetchFilterCode,
+		errors.Alert,
+		[]string{"Unable to Fetch Filter"},
+		[]string{err.Error()},
+		[]string{"Filter name or id doesn't exist"},
+		[]string{"Run `mesheryctl filter list` to view all available filters."})
 }
