@@ -47,10 +47,11 @@ import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubs
 import fetchCatalogFilter from "./graphql/queries/CatalogFilterQuery";
 import { iconMedium } from "../css/icons.styles";
 import Modal from "./Modal";
-import { publish_schema, publish_ui_schema } from "./schemas/publish_schema";
-import { getUnit8ArrayDecodedFile } from "../utils/utils";
+import { getUnit8ArrayDecodedFile, modifyRJSFSchema } from "../utils/utils";
 import SearchBar from "./searchcommon";
 import Filter from "../public/static/img/drawer-icons/filter_svg.js";
+import { getMeshModels } from "../api/meshmodel";
+import _ from "lodash";
 
 const styles = (theme) => ({
   grid : {
@@ -217,6 +218,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const [extensionPreferences, setExtensionPreferences] = useState({});
   const [canPublishFilter, setCanPublishFilter] = useState(false);
   const [importSchema, setImportSchema] = useState({});
+  const [publishSchema, setPublishSchema] = useState({})
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ("grid")
@@ -298,6 +300,32 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       },
       (result) => {
         setImportSchema(result);
+      },
+      handleError(ACTION_TYPES.SCHEMA_FETCH)
+    )
+    dataFetch("/api/schema/resource/publish",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      async (result) => {
+        try {
+          console.log(result)
+          const { models } = await getMeshModels();
+          const modelNames = _.uniq(models?.map((model) => model.displayName));
+    
+          // Modify the schema using the utility function
+          const modifiedSchema = modifyRJSFSchema(
+            result.rjsfSchema,
+            "properties.compatibility.items.enum",
+            modelNames
+          );
+    
+          setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
+        } catch (err) {
+          console.error(err);
+          setPublishSchema({ rjsfSchema: json_schema, uiSchema: result.uiSchema });
+        }
       },
       handleError(ACTION_TYPES.SCHEMA_FETCH)
     )
@@ -1245,8 +1273,8 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         {canPublishFilter &&
           <Modal
             open={publishModal.open}
-            schema={publish_schema}
-            uiSchema={publish_ui_schema}
+            schema={publishSchema.rjsfSchema}
+            uiSchema={publishSchema.uiSchema}
             title={publishModal.filter?.name}
             handleClose={handlePublishModalClose}
             handleSubmit={handlePublish}
