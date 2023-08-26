@@ -3,11 +3,9 @@ import React, { useState, useLayoutEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
-import { withSnackbar } from 'notistack';
 import { withStyles } from '@material-ui/core/styles';
-import CloseIcon from '@material-ui/icons/Close';
 import {
-  IconButton, FormControl, FormLabel, FormGroup, FormControlLabel, Switch
+  FormControl, FormLabel, FormGroup, FormControlLabel, Switch
 } from '@material-ui/core';
 import NoSsr from '@material-ui/core/NoSsr';
 import dataFetch from '../lib/data-fetch';
@@ -27,6 +25,8 @@ import { ctxUrl } from '../utils/multi-ctx';
 import { iconMedium } from '../css/icons.styles';
 import { getTheme,setTheme } from "../utils/theme";
 import { isExtensionOpen } from "../pages/_app";
+import { withNotify } from '../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../lib/event-types';
 
 
 const styles = (theme) => ({
@@ -102,7 +102,7 @@ const styles = (theme) => ({
   }
 });
 
-function ThemeToggler({ theme, themeSetter, enqueueSnackbar, classes }) {
+function ThemeToggler({ theme, themeSetter, notify, classes }) {
   const [themeToggle, setthemeToggle] = useState(false);
   const defaultTheme = "light";
   const handle = () => {
@@ -130,10 +130,7 @@ function ThemeToggler({ theme, themeSetter, enqueueSnackbar, classes }) {
 
   const themeToggler = () => {
     if (isExtensionOpen()) {
-      enqueueSnackbar("Toggling between themes is not supported in MeshMap", {
-        variant : "info",
-        preventDuplicate : true,
-      });
+      notify({ message : "Toggling between themes is not supported in MeshMap", event_type : EVENT_TYPES.INFO })
       return;
     }
     theme === "light" ? themeSetter("dark")  : themeSetter("light");
@@ -187,20 +184,8 @@ class UserPreference extends React.Component {
         body : JSON.stringify({ usersExtensionPreferences : body })
       },
       () => {
-        this.props.enqueueSnackbar(`Catalog Content was ${this.state.catalogContent ? "enab" : "disab"}led`,
-          { variant : 'success',
-            autoHideDuration : 4000,
-            action : (key) => (
-              <IconButton
-                key="close"
-                aria-label="Close"
-                color="inherit"
-                onClick={() => this.props.closeSnackbar(key)}
-              >
-                <CloseIcon style={iconMedium} />
-              </IconButton>
-            ),
-          });
+        const notify = this.props.notify;
+        notify({ message : `Catalog Content was ${this.state.catalogContent ? "enab" : "disab"}led`, event_type : EVENT_TYPES.SUCCESS })
       },
       this.handleError("There was an error sending your preference")
     )
@@ -216,20 +201,9 @@ class UserPreference extends React.Component {
   }
 
   handleError = (msg) => () => {
-    const self = this;
     this.props.updateProgress({ showProgress : false });
-    this.props.enqueueSnackbar(msg, { variant : 'error',
-      action : (key) => (
-        <IconButton
-          key="close"
-          aria-label="Close"
-          color="inherit"
-          onClick={() => self.props.closeSnackbar(key)}
-        >
-          <CloseIcon style={iconMedium} />
-        </IconButton>
-      ),
-      autoHideDuration : 8000, });
+    const notify = this.props.notify;
+    notify({ message : msg, event_type : EVENT_TYPES.ERROR })
   }
 
   handleChange = (name) => {
@@ -265,20 +239,8 @@ class UserPreference extends React.Component {
       }, (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== 'undefined') {
-          this.props.enqueueSnackbar(msg, { variant : val
-            ? 'success'
-            : 'info',
-          autoHideDuration : 4000,
-          action : (key) => (
-            <IconButton
-              key="close"
-              aria-label="Close"
-              color="inherit"
-              onClick={() => self.props.closeSnackbar(key)}
-            >
-              <CloseIcon style={iconMedium} />
-            </IconButton>
-          ), });
+          const notify = this.props.notify;
+          notify({ message : msg, event_type : val ? EVENT_TYPES.SUCCESS : EVENT_TYPES.INFO })
         }
       }, self.handleError('There was an error sending your preference'));
   }
@@ -449,7 +411,7 @@ class UserPreference extends React.Component {
                         classes={classes}
                         theme={this.props.theme}
                         themeSetter={this.props.themeSetter}
-                        enqueueSnackbar={this.props.enqueueSnackbar}
+                        notify={this.props.notify}
 
                       />
                     )}
@@ -492,4 +454,4 @@ const mapStateToProps = (state) => {
 export default withStyles(styles)(connect(
   mapStateToProps,
   mapDispatchToProps,
-)(withRouter(withSnackbar(UserPreference))));
+)(withRouter(withNotify(UserPreference))));

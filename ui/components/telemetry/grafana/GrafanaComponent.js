@@ -1,11 +1,9 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import { NoSsr, Typography, IconButton, Box } from "@material-ui/core";
+import { NoSsr, Typography, Box } from "@material-ui/core";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import CloseIcon from "@material-ui/icons/Close";
-import { withSnackbar } from "notistack";
 import dataFetch from "../../../lib/data-fetch";
 import GrafanaConfigComponent from "./GrafanaConfigComponent";
 import GrafanaSelectionComponent from "./GrafanaSelectionComponent";
@@ -15,6 +13,8 @@ import { updateGrafanaConfig, updateProgress } from "../../../lib/store";
 import GrafanaCustomCharts from "./GrafanaCustomCharts";
 import fetchAvailableAddons from "../../graphql/queries/AddonsStatusQuery";
 import { getK8sClusterIdsFromCtxId } from "../../../utils/multi-ctx";
+import { withNotify } from "../../../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../../../lib/event-types";
 
 const grafanaStyles = (theme) => ({
   buttons : { display : "flex",
@@ -94,15 +94,8 @@ export const submitGrafanaConfigure = (self, cb) => {
     (result) => {
       self.props.updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        self.props.enqueueSnackbar("Grafana was configured!", { variant : "success",
-          autoHideDuration : 2000,
-          action : function Loader(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            );
-          }, });
+        const notify = self.props.notify
+        notify({ message : "Grafana was configured!", event_type : EVENT_TYPES.SUCCESS })
         self.setState({ grafanaConfigSuccess : true });
         self.props.updateGrafanaConfig({ grafana : {
           grafanaURL,
@@ -224,16 +217,10 @@ class GrafanaComponent extends Component {
   };
 
   handleError = (msg) => () => {
-    const self = this;
     // this.setState({timerDialogOpen: false });
     this.props.updateProgress({ showProgress : false });
-    this.props.enqueueSnackbar(msg, { variant : "error",
-      action : (key) => (
-        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-          <CloseIcon />
-        </IconButton>
-      ),
-      autoHideDuration : 8000, });
+    const notify = this.props.notify
+    notify({ message : msg, event_type : EVENT_TYPES.ERROR })
   };
 
   handleGrafanaChipDelete = () => {
@@ -278,13 +265,8 @@ class GrafanaComponent extends Component {
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Grafana pinged!", { variant : "success",
-            autoHideDuration : 2000,
-            action : (key) => (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            ), });
+          const notify = this.props.notify
+          notify({ message : "Grafana pinged!", event_type : EVENT_TYPES.SUCCESS })
         }
       },
       self.handleError("Could not ping Grafana.")
@@ -334,13 +316,8 @@ class GrafanaComponent extends Component {
             selectedBoardsConfigs,
           }, });
 
-          self.props.enqueueSnackbar("Grafana board selection was saved!", { variant : "success",
-            autoHideDuration : 2000,
-            action : (key) => (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            ), });
+          const notify = self.props.notify
+          notify({ message : "Grafana board selection was saved!", event_type : EVENT_TYPES.SUCCESS })
         }
       },
       self.handleError("There was an error persisting the board selection")
@@ -437,4 +414,4 @@ const mapStateToProps = (st) => {
   return { grafana : { ...grafana, ts : new Date(grafana.ts) }, selectedK8sContexts, k8sconfig };
 };
 
-export default withStyles(grafanaStyles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(GrafanaComponent)));
+export default withStyles(grafanaStyles)(connect(mapStateToProps, mapDispatchToProps)(withNotify(GrafanaComponent)));

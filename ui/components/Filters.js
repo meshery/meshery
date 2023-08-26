@@ -20,7 +20,6 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import MUIDataTable from "mui-datatables";
 import Moment from "react-moment";
-import { withSnackbar } from "notistack";
 import CloseIcon from "@material-ui/icons/Close";
 import EditIcon from "@material-ui/icons/Edit";
 import { toggleCatalogContent, updateProgress } from "../lib/store";
@@ -52,6 +51,8 @@ import SearchBar from "./searchcommon";
 import Filter from "../public/static/img/drawer-icons/filter_svg.js";
 import { getMeshModels } from "../api/meshmodel";
 import _ from "lodash";
+import { useNotification } from "../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../lib/event-types";
 
 const styles = (theme) => ({
   grid : {
@@ -205,7 +206,7 @@ function resetSelectedFilter() {
   return { show : false, filter : null };
 }
 
-function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts, catalogVisibility, toggleCatalogContent }) {
+function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, catalogVisibility, toggleCatalogContent }) {
   const [page, setPage] = useState(0);
   const [search,setSearch] = useState("");
   const [sortOrder] = useState("");
@@ -226,6 +227,9 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   const FILTER_URL = "/api/filter"
   const DEPLOY_URL = FILTER_URL + "/deploy";
   const CLONE_URL = "/clone";
+
+  //hooks
+  const { notify } = useNotification()
 
   const [modalOpen, setModalOpen] = useState({
     open : false,
@@ -384,17 +388,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
                 { credentials : "include", method : "DELETE", body : JSON.stringify({ "id" : filter?.id }) },
                 () => {
                   updateProgress({ showProgress : false });
-                  enqueueSnackbar((`"${filter?.name}" filter unpublished`), {
-                    variant : "success",
-                    action : function Action(key) {
-                      return (
-                        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                          <CloseIcon />
-                        </IconButton>
-                      );
-                    },
-                    autoHideDuration : 2000,
-                  });
+                  notify({ message : `"${filter?.name}" filter unpublished` , event_type : EVENT_TYPES.SUCCESS })
                 },
                 handleError(ACTION_TYPES.UNPUBLISH_CATALOG),
           );
@@ -431,20 +425,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         body : JSON.stringify({ usersExtensionPreferences : body })
       },
       () => {
-        enqueueSnackbar(`Catalog Content was ${catalogPref ? "enab" : "disab"}led`,
-          { variant : 'success',
-            autoHideDuration : 4000,
-            action : (key) => (
-              <IconButton
-                key="close"
-                aria-label="Close"
-                color="inherit"
-                onClick={() => closeSnackbar(key)}
-              >
-                <CloseIcon style={iconMedium} />
-              </IconButton>
-            ),
-          });
+        notify({ message : `Catalog Content was ${catalogPref ? "enab" : "disab"}led` , event_type : EVENT_TYPES.SUCCESS })
       },
       err => console.error(err),
     )
@@ -542,17 +523,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       { credentials : "include", method : "POST", body : filter_file },
       () => {
         console.log("FilterFile Deploy API", `/api/filter/deploy`);
-        enqueueSnackbar(`"${name}" filter deployed`, {
-          variant : "success",
-          action : function Action(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon style={iconMedium} />
-              </IconButton>
-            );
-          },
-          autoHideDuration : 2000,
-        });
+        notify({ message : `"${name}" filter deployed` , event_type : EVENT_TYPES.SUCCESS })
         updateProgress({ showProgress : false });
       },
       handleError(ACTION_TYPES.DEPLOY_FILTERS)
@@ -565,17 +536,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       { credentials : "include", method : "DELETE", body : filter_file },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar(`"${name}" filter undeployed`, {
-          variant : "success",
-          action : function Action(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon style={iconMedium} />
-              </IconButton>
-            );
-          },
-          autoHideDuration : 2000,
-        });
+        notify({ message : `"${name}" filter undeployed` , event_type : EVENT_TYPES.SUCCESS })
       },
       handleError(ACTION_TYPES.UNDEPLOY_FILTERS)
     );
@@ -592,17 +553,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       { credentials : "include", method : "POST", body : JSON.stringify(payload) },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar("Filter Published!", {
-          variant : "success",
-          action : function Action(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            );
-          },
-          autoHideDuration : 2000,
-        });
+        notify({ message : `Filter published!` , event_type : EVENT_TYPES.SUCCESS })
       },
       handleError(ACTION_TYPES.PUBLISH_CATALOG),
     );
@@ -618,17 +569,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       },
       () => {
         updateProgress({ showProgress : false });
-        enqueueSnackbar(`"${name}" filter cloned`, {
-          variant : "success",
-          action : function Action(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon  style={iconMedium}/>
-              </IconButton>
-            );
-          },
-          autoHideDuration : 2000,
-        });
+        notify({ message : `"${name}" filter cloned` , event_type : EVENT_TYPES.SUCCESS })
       },
       handleError(ACTION_TYPES.CLONE_FILTERS),
     );
@@ -637,18 +578,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
   // function handleError(error) {
   const handleError = (action) => (error) => {
     updateProgress({ showProgress : false });
-
-    enqueueSnackbar(`${action.error_msg}: ${error}`, {
-      variant : "error",
-      action : function Action(key) {
-        return (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon  style={iconMedium}/>
-          </IconButton>
-        );
-      },
-      autoHideDuration : 8000,
-    });
+    notify({ message : `${action.error_msg}: ${error}` , event_type : EVENT_TYPES.ERROR, details : error.toString() })
   };
 
   const handleSetFilters = (filters) => {
@@ -722,17 +652,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
         () => {
           console.log("FilterFile API", `/api/filter/${id}`);
           updateProgress({ showProgress : false });
-          enqueueSnackbar(`"${name}" filter deleted`, {
-            variant : "success",
-            action : function Action(key) {
-              return (
-                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                  <CloseIcon  style={iconMedium}/>
-                </IconButton>
-              );
-            },
-            autoHideDuration : 2000,
-          });
+          notify({ message : `"${name}" filter deleted` , event_type : EVENT_TYPES.SUCCESS })
           resetSelectedRowData()();
         },
         // handleError
@@ -783,16 +703,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
     try {
       downloadFile({ id, name, type : "filter" })
       updateProgress({ showProgress : false });
-      enqueueSnackbar(`"${name}" filter downloaded`, {
-        variant : "success",
-        action : function Action(key) {
-          return (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon />
-            </IconButton>
-          );
-        }
-      });
+      notify({ message : `"${name}" filter downloaded` , event_type : EVENT_TYPES.SUCCESS })
     } catch (e) {
       console.error(e);
     }
@@ -1008,19 +919,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       },
       () => {
         updateProgress({ showProgress : false });
-
-        enqueueSnackbar("Filter deleted", {
-          variant : "success",
-          autoHideDuration : 2000,
-          action : function Action(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon  style={iconMedium}/>
-              </IconButton>
-            );
-          },
-        });
-
+        notify({ message : `Filter deleted` , event_type : EVENT_TYPES.SUCCESS })
       },
       handleError("Failed To Delete Filter")
     );
@@ -1314,4 +1213,4 @@ const mapStateToProps = (state) => {
 };
 
 // @ts-ignore
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MesheryFilters)));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(MesheryFilters));
