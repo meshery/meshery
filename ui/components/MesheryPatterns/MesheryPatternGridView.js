@@ -1,7 +1,7 @@
 //@ts-check
 import { Grid, Paper, Typography } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MesheryPatternCard from "./MesheryPatternCard";
 import DesignConfigurator from "../configuratorComponents/MeshModel";
 import { FILE_OPS, ACTIONS } from "../../utils/Enum";
@@ -9,10 +9,10 @@ import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
 import useStyles from "./Grid.styles";
 import Validation from "../Validation";
-import { publish_schema, publish_ui_schema } from "../schemas/publish_schema";
 import Modal from "../Modal";
 import PublicIcon from '@material-ui/icons/Public';
 import DryRunComponent from "../DryRun/DryRunComponent";
+import _ from "lodash"
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -79,7 +79,7 @@ function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublis
  * }} props props
  */
 
-function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUnpublishModal, handleDeploy, handleUnDeploy, handleClone, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage, patternErrors, canPublishPattern = false, publishModal, setPublishModal, selectedK8sContexts }) {
+function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUnpublishModal, handleDeploy, handleUnDeploy, handleClone, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage, patternErrors, canPublishPattern = false, publishModal, setPublishModal, selectedK8sContexts, publishSchema }) {
 
   const classes = useStyles()
   const handlePublishModal = (pattern) => {
@@ -212,8 +212,8 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
       {canPublishPattern &&
        <Modal
          open={publishModal.open}
-         schema={publish_schema}
-         uiSchema={publish_ui_schema}
+         schema={publishSchema.rjsfSchema}
+         uiSchema={publishSchema.uiSchema}
          handleClose={handlePublishModalClose}
          aria-label="catalog publish"
          title={publishModal.pattern?.name}

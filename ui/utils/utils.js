@@ -179,3 +179,17 @@ export const getUnit8ArrayDecodedFile = (dataUrl) => {
 
   return Array.from(uint8Array);
 };
+
+/**
+ * Change the value of a property in RJSF schema
+ * 
+ * @param {string} schema - RJSF schema
+ * @param {string} propertyPath - path of the property to be modified
+ * @param {any} newValue - new value to be set
+ * @returns {object} - modified schema
+*/
+export const modifyRJSFSchema = (schema, propertyPath, newValue) => {
+  const clonedSchema = _.cloneDeep(schema);
+  _.set(clonedSchema, propertyPath, newValue);
+  return clonedSchema;
+};

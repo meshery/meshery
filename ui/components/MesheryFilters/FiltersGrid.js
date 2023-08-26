@@ -87,6 +87,7 @@ function FilterCardGridItem({
  *   name: string,
  *  },
  *  setPublishModal: (publishModal: { open: boolean, filter: any, name: string }) => void,
+ *  publishSchema: object,
  * }} props props
  */
 
@@ -109,6 +110,7 @@ function FiltersGrid({
   handleImportFilter,
   publishModal,
   setPublishModal
+  publishSchema
 }) {
   const classes = useStyles();
 
@@ -246,8 +248,8 @@ function FiltersGrid({
       {canPublishFilter && (
         <Modal
           open={publishModal.open}
-          schema={publish_schema}
-          uiSchema={publish_ui_schema}
+          schema={publishSchema.rjsfSchema}
+          uiSchema={publishSchema.uiSchema}
           title={publishModal.filter?.name}
           handleClose={handlePublishModalClose}
           handleSubmit={handlePublish}

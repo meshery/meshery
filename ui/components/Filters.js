@@ -313,18 +313,18 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
           console.log(result)
           const { models } = await getMeshModels();
           const modelNames = _.uniq(models?.map((model) => model.displayName));
-    
+
           // Modify the schema using the utility function
           const modifiedSchema = modifyRJSFSchema(
             result.rjsfSchema,
             "properties.compatibility.items.enum",
             modelNames
           );
-    
-          setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
+
+          setPublishSchema({ rjsfSchema : modifiedSchema, uiSchema : result.uiSchema });
         } catch (err) {
           console.error(err);
-          setPublishSchema({ rjsfSchema: json_schema, uiSchema: result.uiSchema });
+          setPublishSchema(result);
         }
       },
       handleError(ACTION_TYPES.SCHEMA_FETCH)
@@ -1256,6 +1256,7 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
               handleImportFilter={handleImportFilter}
               publishModal={publishModal}
               setPublishModal={setPublishModal}
+              publishSchema={publishSchema}
               fetch={() => fetchFilters(page, pageSize, search, sortOrder)}
             />
         }
