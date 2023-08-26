@@ -50,7 +50,6 @@ mesheryctl app list
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
 			return utils.ErrProcessingConfig(err)
 		}
 

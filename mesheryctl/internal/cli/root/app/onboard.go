@@ -70,7 +70,6 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(utils.ErrProcessingConfig(err))
 			return utils.ErrProcessingConfig(err)
 		}
 
