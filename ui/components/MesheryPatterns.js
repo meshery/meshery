@@ -40,7 +40,6 @@ import Validation from "./Validation";
 import { ACTIONS, FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from "../utils/Enum";
 import CloneIcon from "../public/static/img/CloneIcon";
 import { useRouter } from "next/router";
-import { publish_schema, publish_ui_schema } from "./schemas/publish_schema";
 import Modal from "./Modal";
 import downloadFile from "../utils/fileDownloader";
 import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
@@ -527,7 +526,6 @@ function MesheryPatterns({
       },
       async (result) => {
         try {
-          console.log(result)
           const { models } = await getMeshModels();
           const modelNames = _.uniq(models?.map((model) => model.displayName));
   

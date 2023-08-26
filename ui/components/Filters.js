@@ -310,7 +310,6 @@ function MesheryFilters({ updateProgress, enqueueSnackbar, closeSnackbar, user, 
       },
       async (result) => {
         try {
-          console.log(result)
           const { models } = await getMeshModels();
           const modelNames = _.uniq(models?.map((model) => model.displayName));
 

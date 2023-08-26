@@ -8,7 +8,6 @@ import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
 import useStyles from "../MesheryPatterns/Grid.styles";
-import { publish_schema, publish_ui_schema } from "../schemas/publish_schema";
 import Modal from "../Modal";
 import Filter from "../../public/static/img/drawer-icons/filter_svg.js";
 import PublicIcon from '@material-ui/icons/Public';
