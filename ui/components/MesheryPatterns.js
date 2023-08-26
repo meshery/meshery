@@ -521,21 +521,21 @@ function MesheryPatterns({
     )
     dataFetch("/api/schema/resource/publish",
       {
-          method : "GET",
-          credentials : "include",
+        method : "GET",
+        credentials : "include",
       },
       async (result) => {
         try {
           const { models } = await getMeshModels();
           const modelNames = _.uniq(models?.map((model) => model.displayName));
-  
+
           // Modify the schema using the utility function
           const modifiedSchema = modifyRJSFSchema(
             result.rjsfSchema,
             "properties.compatibility.items.enum",
             modelNames
           );
-  
+
           setPublishSchema({ rjsfSchema : modifiedSchema, uiSchema : result.uiSchema });
         } catch (err) {
           console.error(err);

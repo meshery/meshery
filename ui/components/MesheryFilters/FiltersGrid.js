@@ -108,7 +108,7 @@ function FiltersGrid({
   handleUnpublishModal,
   handleImportFilter,
   publishModal,
-  setPublishModal
+  setPublishModal,
   publishSchema
 }) {
   const classes = useStyles();

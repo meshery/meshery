@@ -15,8 +15,8 @@ export default function PublishModal(props) {
     dataFetch(
       "/api/schema/resource/publish",
       {
-        method: "GET",
-        credentials: "include",
+        method : "GET",
+        credentials : "include",
       },
       async (result) => {
         try {
@@ -27,13 +27,12 @@ export default function PublishModal(props) {
           // Modify the schema using the utility function
           const modifiedSchema = modifyRJSFSchema(result.rjsfSchema, "properties.compatibility.items.enum", modelNames);
 
-          setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
+          setPublishSchema({ rjsfSchema : modifiedSchema, uiSchema : result.uiSchema });
         } catch (err) {
           console.error(err);
           setPublishSchema(result);
         }
-      },
-      handleError(ACTION_TYPES.SCHEMA_FETCH)
+      }
     );
   });
 
@@ -48,8 +47,8 @@ export default function PublishModal(props) {
       submitBtnText="Submit for Approval"
       submitBtnIcon={<PublicIcon data-cy="import-button" />}
       showInfoIcon={{
-        text: "Upon submitting your catalog item, an approval flow will be initiated.",
-        link: "https://docs.meshery.io/concepts/catalog",
+        text : "Upon submitting your catalog item, an approval flow will be initiated.",
+        link : "https://docs.meshery.io/concepts/catalog",
       }}
     />
   );

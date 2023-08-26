@@ -2,6 +2,7 @@ import { trueRandom } from "../lib/trueRandom";
 import jsYaml from "js-yaml";
 import { findWorkloadByName } from "./workloadFilter";
 import { EVENT_TYPES } from "./Enum";
+import _ from "lodash"
 
 /**
  * Check if an object is empty
@@ -182,7 +183,7 @@ export const getUnit8ArrayDecodedFile = (dataUrl) => {
 
 /**
  * Change the value of a property in RJSF schema
- * 
+ *
  * @param {string} schema - RJSF schema
  * @param {string} propertyPath - path of the property to be modified
  * @param {any} newValue - new value to be set

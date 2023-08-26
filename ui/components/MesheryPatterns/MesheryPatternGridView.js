@@ -1,7 +1,7 @@
 //@ts-check
 import { Grid, Paper, Typography } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import MesheryPatternCard from "./MesheryPatternCard";
 import DesignConfigurator from "../configuratorComponents/MeshModel";
 import { FILE_OPS, ACTIONS } from "../../utils/Enum";
@@ -12,7 +12,6 @@ import Validation from "../Validation";
 import Modal from "../Modal";
 import PublicIcon from '@material-ui/icons/Public';
 import DryRunComponent from "../DryRun/DryRunComponent";
-import _ from "lodash"
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
