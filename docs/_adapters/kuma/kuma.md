@@ -9,6 +9,7 @@ project_status: stable
 lab: kuma-meshery-adapter
 github_link: https://github.com/meshery/meshery-kuma
 image: /assets/img/service-meshes/kuma.svg
+white_image: /assets/img/service-meshes/kuma-white.svg
 permalink: service-meshes/adapters/kuma
 language: en
 ---
@@ -63,3 +64,4 @@ The following sample applications are available in this adapter.
 Meshery allows you to analyze the compliance status and functional capabilities of your service mesh. This allows you to compare high-level functional differences between service meshes and verify whether your service mesh is conformant with the SMI specification.
 
 Learn more about the SMI specification and [Meshery's conformance test suite]({{ site.baseurl }}/tasks/service-mesh-interface).
+
