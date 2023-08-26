@@ -4,7 +4,7 @@
   <th>Adapter Version</th>
   <th>Earliest Supported Mesh Version</th>
   <tr>
-    <td><img src="{{ page.image }}" style="width: 20px" /> {{ page.mesh_name }}</td>
+    <td>{%if page.mesh_name == "Kuma"%} <img src="{{ page.image }}" style="width:20px" data-logo-for-dark="{{ page.white_image }}" data-logo-for-light="{{ page.image }}" id="logo-dark-light" loading="lazy"/>{% endif %} {%if page.mesh_name != "Kuma"%} <img src="{{ page.image }}" style="width:20px" /> {% endif %} {{ page.mesh_name }}</td>
     <td><a href="{{ page.github_link }}">{{ page.project_status }}</a></td>
     <td>{{ page.adapter_version }}</td>
     <td>{{page.earliest_version}}</td>
