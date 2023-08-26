@@ -97,7 +97,6 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 	}
 }
 
-
 // swagger:route GET /api/integrations/connections/{connectionKind} GetConnectionsByKind idGetConnectionsByKind
 // Handle GET request for getting all connections for a given kind.
 //
@@ -149,12 +148,12 @@ func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request,
 	}
 }
 
-
 // swagger:route GET /api/integrations/connections/status GetConnectionsStatus idGetConnectionsStatus
 // Handle GET request for getting all connections status
 //
+// Get all connections status
 // responses:
-// 200: ConnectionsStatusPage
+// 200: mesheryConnectionsStatusPage
 func (h *Handler) GetConnectionsStatus(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionsStatusPage, err := provider.GetConnectionsStatus(req, user.ID)
 	obj := "connections status"
@@ -171,7 +170,6 @@ func (h *Handler) GetConnectionsStatus(w http.ResponseWriter, req *http.Request,
 		return
 	}
 }
-
 
 // swagger:route PUT /api/integrations/connections/{connectionKind} PutConnection idPutConnection
 // Handle PUT request for updating an existing connection
@@ -240,7 +238,6 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	h.log.Info("connection updated successfully")
 	w.WriteHeader(http.StatusOK)
 }
-
 
 // swagger:route DELETE /api/integrations/connections/{connectionId} DeleteConnection idDeleteConnection
 // Handle DELETE request for deleting an existing connection by connection ID

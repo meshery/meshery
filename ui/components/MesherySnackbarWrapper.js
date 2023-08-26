@@ -16,7 +16,7 @@ import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { eventTypes } from "../lib/event-types";
+import { EVENT_TYPES } from "../lib/event-types";
 import ReplyIcon from '@material-ui/icons/Reply';
 import {
   TwitterShareButton,
@@ -27,26 +27,30 @@ import {
   FacebookIcon
 } from "react-share"
 import { ClickAwayListener, Fade, Popper } from "@material-ui/core";
+import moment from "moment";
 
 const variantIcon = {
-  success : CheckCircleIcon,
-  warning : WarningIcon,
-  error : ErrorIcon,
-  info : InfoIcon,
+  [EVENT_TYPES.SUCCESS.type] : CheckCircleIcon,
+  [EVENT_TYPES.WARNING.type] : WarningIcon,
+  [EVENT_TYPES.ERROR.type] : ErrorIcon,
+  [EVENT_TYPES.DEFAULT.type] : InfoIcon,
+  [EVENT_TYPES.INFO.type] : InfoIcon,
 };
 
 const variantHoverColor = {
-  success : "iconSuccess",
-  warning : "iconWarning",
-  error : "iconError",
-  info : "iconInfo",
+  [EVENT_TYPES.SUCCESS.type] : "iconSuccess",
+  [EVENT_TYPES.WARNING.type] : "iconWarning",
+  [EVENT_TYPES.ERROR.type] : "iconError",
+  [EVENT_TYPES.INFO.type] : "iconInfo",
+  [EVENT_TYPES.DEFAULT.type] : "iconInfo"
 }
 
 const styles = (theme) => ({
-  success : { color : "#6fbf73", },
-  error : { color : "#ff1744", },
-  info : { color : "#2196f3", },
-  warning : { color : "#ffc400", },
+  [EVENT_TYPES.SUCCESS.type] : { color : "#6fbf73", },
+  [EVENT_TYPES.ERROR.type] : { color : "#ff1744", },
+  [EVENT_TYPES.INFO.type] : { color : "#2196f3", },
+  [EVENT_TYPES.WARNING.type] : { color : "#ffc400", },
+  [EVENT_TYPES.DEFAULT.type] : { color : "#edeff1", },
   iconColor : { color : "rgba(102, 102, 102, 1)" },
   iconSuccess : { "&:hover" : { color : "#6fbf73" } },
   iconError : { "&:hover" : { color : "#ff1744" } },
@@ -60,6 +64,11 @@ const styles = (theme) => ({
   message : {
     display : "flex",
     alignItems : "center",
+  },
+  timestamp : {
+    color : "#ebeff1",
+    fontSize : "0.8rem",
+    fontStyle : "italic",
   },
   snackbarContent : { [theme.breakpoints.up("sm")] : { minWidth : "344px !important", }, },
   snackbarContentBorder : {
@@ -120,10 +129,21 @@ const getDefaultMessage = (message) => {
   return msg
 }
 
+const formatTimestamp = (utcTimestamp ) => {
+  const currentUtcTimestamp = moment.utc().valueOf()
+
+  const timediff = currentUtcTimestamp - utcTimestamp
+  if (timediff >= 24 * 60 *60 *1000) {
+    return moment(utcTimestamp).local().format('YYYY-MM-DD HH:mm')
+  }
+  return moment(utcTimestamp).fromNow()
+}
+
 function MesherySnackbarWrapper(props) {
   const {
-    classes, className, message, onClose, variant, details, cause, remedy, errorCode, componentType, componentName, expand
+    classes, className, message, onClose, eventType, details, cause, remedy, errorCode, componentType, componentName, expand,timestamp
   } = props;
+  const variant = eventType.type
   const Icon = variantIcon[variant];
   const ERROR_DOC_LINK = "https://docs.meshery.io/reference/error-codes"
   const [expanded, setExpanded] = useState(false);
@@ -169,7 +189,6 @@ function MesherySnackbarWrapper(props) {
     }
 
   },[expand])
-
   return (
     <SnackbarContent className={classes.snackbarContent}>
       <Card className={highlight ? classNames(classes.card, classes[variant], className, classes.snackbarContentBorder) : classNames(classes.card, classes[variant], className)}
@@ -180,9 +199,13 @@ function MesherySnackbarWrapper(props) {
             <Typography variant="subtitle2">
               <div style={{ display : "flex", alignItems : "center" }}>
                 <Icon className={classNames(classes.icon, classes.iconVariant)} />
-                <div>{message}</div>
+                <div>
+                  <p>{message}</p>
+                  <p className={classes.timestamp}> {formatTimestamp(timestamp)} </p>
+                </div>
               </div>
             </Typography>
+
             <Grid container item xs={4} className={classes.icons} justify="flex-end">
               <IconButton
                 aria-label="Show more"
@@ -194,7 +217,7 @@ function MesherySnackbarWrapper(props) {
                 <ExpandMoreIcon className={classNames({ [classes.iconColor] : !cardHover, [classes[variant]] : cardHover })} />
               </IconButton>
 
-              {variant === eventTypes[0].type &&
+              {variant === EVENT_TYPES.SUCCESS.type &&
                 <IconButton
                   aria-label="Share"
                   className={classes.expand}
@@ -221,20 +244,26 @@ function MesherySnackbarWrapper(props) {
             <Typography variant="subtitle2" gutterBottom>DETAILS</Typography>
             {details}
           </Paper>
-          {variant === eventTypes[2].type &&
+          {variant === EVENT_TYPES.ERROR.type  &&
             <>
+
+              { cause &&
               <Paper className={classes.collapse} square variant="outlined" elevation={0}>
                 <Typography variant="subtitle2" gutterBottom>PROBABLE CAUSE</Typography>
                 {cause}
               </Paper>
+              }
+              { remedy &&
               <Paper className={classes.collapse} square variant="outlined" elevation={0}>
                 <Typography variant="subtitle2" gutterBottom>SUGGESTED REMEDIATION</Typography>
                 {remedy}
               </Paper>
+              }
+              {componentName &&
               <Paper className={classes.collapse} square variant="outlined" elevation={0}>
                 <Typography variant="subtitle2" gutterBottom>ERROR CODE</Typography>
                 <a href={`${ERROR_DOC_LINK}#meshery-${componentType}-for-meshery-${componentName.toLowerCase()}`} target="_blank" rel="referrer noreferrer"> {errorCode} </a>
-              </Paper>
+              </Paper>}
             </>
           }
         </Collapse>
@@ -273,7 +302,7 @@ MesherySnackbarWrapper.propTypes = {
   className : PropTypes.string,
   message : PropTypes.node,
   onClose : PropTypes.func,
-  variant : PropTypes.oneOf(["success", "warning", "error", "info"]).isRequired,
+  eventType : PropTypes.object.isRequired,
   details : PropTypes.string,
   expand : PropTypes.string.isRequired
 };

@@ -4,6 +4,8 @@ export const CONFIGURATION = "configuration"
 export const CONFORMANCE = "conformance"
 export const PERFORMANCE = "performance";
 
+export const CONNECTION = "connection";
+export const SERVICE_MESH = "service_mesh"
 export const ISTIO = "istio";
 export const KUMA = "kuma";
 export const CILIUM_SM = "cilium_service_mesh";
