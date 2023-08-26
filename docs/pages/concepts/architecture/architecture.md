@@ -131,7 +131,7 @@ Meshery uses the following list of network ports to interface with its various c
 | [Meshery Remote Providers]((/extensibility/providers)) | 443/tcp    | e.g. Meshery Cloud                             |
 {% for adapter in site.adapters -%}
 {% if adapter.port -%}
-| <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.port }} | Communication with Meshery Server |
+| {%if adapter.mesh_name == "Kuma"%} <img src="{{ adapter.image }}" style="width:20px" data-logo-for-dark="{{ adapter.white_image }}" data-logo-for-light="{{ adapter.image }}" id="logo-dark-light" loading="lazy"/>{% endif %} {%if adapter.mesh_name != "Kuma"%} <img src="{{ adapter.image }}" style="width:20px" /> {% endif %} [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.port }} | Communication with Meshery Server |
 {% endif -%}
 {% endfor -%}
 | [Meshery Perf]({{ site.baseurl }}/tasks/performance-management) | 10013/gRPC    | Performance Management|
