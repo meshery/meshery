@@ -880,7 +880,7 @@ function MesheryPatterns({
     try {
       downloadFile({ id, name, type : "pattern" })
       updateProgress({ showProgress : false });
-      notify({ message : `"${name}" Design Downloaded` , event_type : EVENT_TYPES.SUCCESS })
+      notify({ message : `"${name}" Design Downloaded` , event_type : EVENT_TYPES.INFO })
     } catch (e) {
       console.error(e);
     }
