@@ -416,7 +416,7 @@ func ErrProcessingConfig(err error) error {
 	return errors.New(ErrProcessingConfigCode, errors.Alert,
 		[]string{"Error processing config"},
 		[]string{"Error processing config", err.Error()},
-		[]string{"Couldn't load mesh config"},
+		[]string{"Unable to load meshconfig"},
 		[]string{"Ensure Mesheryctl has the right configurations, run `mesheryctl system config`"})
 }
 
