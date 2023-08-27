@@ -28,7 +28,7 @@ var (
 	ErrInvalidAPIResponseCode = "1014"
 	ErrReadConfigFileCode     = "1015"
 	ErrMarshalIndentCode      = "1016"
-	ErrProcessingConfigCode   = "1017"
+	ErrLoadConfigCode         = "1017"
 	ErrResponseStatusBodyCode = "1018"
 	ErrResponseStatusCode     = "1019"
 	ErrJSONToYAMLCode         = "1020"
@@ -412,12 +412,12 @@ func ErrInvalidAPIResponse(err error) error {
 		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
 }
 
-func ErrProcessingConfig(err error) error {
-	return errors.New(ErrProcessingConfigCode, errors.Alert,
+func ErrLoadConfig(err error) error {
+	return errors.New(ErrLoadConfigCode, errors.Alert,
 		[]string{"Error processing config"},
 		[]string{"Error processing config:" + err.Error()},
-		[]string{"Unable to load meshconfig"},
-		[]string{"Ensure Mesheryctl has the right configurations, run `mesheryctl system config`"})
+		[]string{"Unable to load meshconfig due to wrong configurations"},
+		[]string{"Ensure your `config.yaml` file in your `.meshery` is valid, or run `mesheryctl system config`."})
 }
 
 func ErrParseGithubFile(err error, URL string) error {

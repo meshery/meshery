@@ -56,7 +56,7 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return utils.ErrProcessingConfig(err)
+			return utils.ErrLoadConfig(err)
 		}
 
 		filterURL := mctlCfg.GetBaseMesheryURL() + "/api/filter"

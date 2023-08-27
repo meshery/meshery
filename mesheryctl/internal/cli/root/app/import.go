@@ -55,7 +55,7 @@ mesheryctl app import -f [file/URL] -s [source-type]
 		var err error
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return utils.ErrProcessingConfig(err)
+			return utils.ErrLoadConfig(err)
 		}
 
 		appURL := mctlCfg.GetBaseMesheryURL() + "/api/application"

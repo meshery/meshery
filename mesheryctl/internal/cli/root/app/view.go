@@ -58,7 +58,7 @@ mesheryctl app view --all
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return utils.ErrProcessingConfig(err)
+			return utils.ErrLoadConfig(err)
 		}
 		application := ""
 		isID := false

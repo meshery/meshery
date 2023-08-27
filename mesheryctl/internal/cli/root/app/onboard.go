@@ -70,7 +70,7 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return utils.ErrProcessingConfig(err)
+			return utils.ErrLoadConfig(err)
 		}
 
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/application/deploy"

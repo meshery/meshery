@@ -55,7 +55,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return utils.ErrProcessingConfig(err)
+			return utils.ErrLoadConfig(err)
 		}
 
 		searchString := strings.ReplaceAll(args[0], " ", "%20")
