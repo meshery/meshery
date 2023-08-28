@@ -20,14 +20,14 @@ import (
 )
 
 const (
-	ErrImportAppCode       = "1025"
-	ErrValidSourceCode     = "1026"
-	ErrAppManifestcode     = "1027"
-	ErrOnboardAppCode      = "1028"
-	ErrAppFoundCode        = "1029"
-	ErrNoAppNameOrIDCode   = "1030"
-	ErrInvalidNameOrIDCode = "1031"
-	ErrAppFlagCode         = "1032"
+	ErrImportAppCode       = "1026"
+	ErrValidSourceCode     = "1027"
+	ErrAppManifestcode     = "1028"
+	ErrOnboardAppCode      = "1029"
+	ErrAppFoundCode        = "1030"
+	ErrNoAppNameOrIDCode   = "1031"
+	ErrInvalidNameOrIDCode = "1032"
+	ErrAppFlagCode         = "1033"
 )
 const (
 	errAppMsg = `Usage: mesheryctl app import -f [file/url] -s [source-type]

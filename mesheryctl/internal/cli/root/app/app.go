@@ -69,7 +69,7 @@ func init() {
 func getSourceTypes() error {
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		utils.ErrLoadConfig(err)
+		return utils.ErrLoadConfig(err)
 	}
 	validTypesURL := mctlCfg.GetBaseMesheryURL() + "/api/application/types"
 	req, err := utils.NewRequest("GET", validTypesURL, nil)

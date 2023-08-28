@@ -54,25 +54,25 @@ mesheryctl mesh deploy linkerd --watch
 			log.Infof("Verifying prerequisites...")
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				utils.ErrLoadConfig(err)
+				return utils.ErrLoadConfig(err)
 			}
 
 			if err = validateAdapter(mctlCfg, meshName); err != nil {
 				// ErrValidatingAdapter
-				log.Fatalln(err)
+				return ErrValidatingAdapters(err)
 			}
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				log.Fatalln(err)
+				return utils.ErrLoadConfig(err)
 			}
 			s := utils.CreateDefaultSpinner(fmt.Sprintf("Deploying %s", meshName), fmt.Sprintf("\n%s service mesh deployed successfully", meshName))
 			s.Start()
 			_, err = sendOperationRequest(mctlCfg, strings.ToLower(meshName), false, "null")
 			if err != nil {
-				log.Fatalln(err)
+				return ErrSendOperation(err)
 			}
 			s.Stop()
 
@@ -80,7 +80,7 @@ mesheryctl mesh deploy linkerd --watch
 				log.Infof("Verifying Operation")
 				_, err = waitForDeployResponse(mctlCfg, "mesh is now installed")
 				if err != nil {
-					log.Fatalln(err)
+					return ErrWaitValidateResponse(err)
 				}
 			}
 

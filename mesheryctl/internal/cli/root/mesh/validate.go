@@ -59,12 +59,12 @@ mesheryctl mesh validate istio --adapter meshery-istio --spec smi
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Fatalln(err)
+			return utils.ErrLoadConfig(err)
 		}
 
 		prefs, err := utils.GetSessionData(mctlCfg)
 		if err != nil {
-			log.Fatalln(err)
+			log.Fatalln(ErrGettingSessionData(err))
 		}
 		//resolve adapterUrl to adapter Location
 		for _, adapter := range prefs.MeshAdapters {
@@ -86,13 +86,13 @@ mesheryctl mesh validate istio --adapter meshery-istio --spec smi
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Fatalln(err)
+			return utils.ErrLoadConfig(err)
 		}
 		s := utils.CreateDefaultSpinner(fmt.Sprintf("Validating %s", meshName), fmt.Sprintf("\n%s validation successful", meshName))
 		s.Start()
 		_, err = sendOperationRequest(mctlCfg, meshName, false, spec)
 		if err != nil {
-			log.Fatalln(err)
+			return ErrSendOperation(err)
 		}
 		s.Stop()
 
@@ -100,7 +100,7 @@ mesheryctl mesh validate istio --adapter meshery-istio --spec smi
 			log.Infof("Verifying Operation")
 			_, err = waitForValidateResponse(mctlCfg, "Smi conformance test")
 			if err != nil {
-				log.Fatalln(err)
+				return ErrWaitValidateResponse(err)
 			}
 		}
 

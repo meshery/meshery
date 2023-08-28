@@ -20,12 +20,11 @@ import "github.com/layer5io/meshkit/errors"
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrGettingSessionDataCode                = "1036"
-	ErrNoAdaptersCode                        = "1037"
-	ErrPromptCode                            = "1038"
-	ErrCreatingDeployRequestCode             = "1039"
-	ErrCreatingDeployResponseRequestCode     = "1040"
-	ErrAddingAuthDetailsCode                 = "1041"
+	ErrGettingSessionDataCode                = "1037"
+	ErrNoAdaptersCode                        = "1038"
+	ErrPromptCode                            = "1039"
+	ErrCreatingDeployRequestCode             = "1040"
+	ErrCreatingDeployResponseRequestCode     = "1041"
 	ErrCreatingDeployResponseStreamCode      = "1042"
 	ErrCreatingValidateResponseStreamCode    = "1043"
 	ErrTimeoutWaitingForDeployResponseCode   = "1044"
@@ -34,6 +33,10 @@ const (
 	ErrCreatingValidateResponseRequestCode   = "1047"
 	ErrTimeoutWaitingForValidateResponseCode = "1048"
 	ErrSMIConformanceTestsFailedCode         = "1049"
+	ErrValidateAdapterCode                   = "1050"
+	ErrSendOperationCode                     = "1051"
+	ErrValidMeshNameCode                     = "1052"
+	ErrWaitValidateResponseCode              = "1053"
 )
 
 var (
@@ -51,37 +54,99 @@ var (
 
 // When unable to get release data
 func ErrGettingSessionData(err error) error {
-	return errors.New(ErrGettingSessionDataCode, errors.Fatal, []string{"Unable to fetch session data"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrGettingSessionDataCode, errors.Fatal,
+		[]string{"Unable to fetch session data"},
+		[]string{err.Error()},
+		[]string{"Unable to get session from server"},
+		[]string{"Check your network connection and verify the status of the Meshery server with `mesheryctl system status`."})
 }
 
 func ErrPrompt(err error) error {
-	return errors.New(ErrPromptCode, errors.Fatal, []string{"Error while reading selected option"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrPromptCode, errors.Fatal,
+		[]string{"Error while reading selected option"},
+		[]string{err.Error()},
+		[]string{"Unable to execute Service Mesh from the list"},
+		[]string{"Ensure you enter a valid Service Mesh"})
 }
 
 func ErrCreatingDeployRequest(err error) error {
-	return errors.New(ErrCreatingDeployRequestCode, errors.Fatal, []string{"Error sending deploy request"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrCreatingDeployRequestCode, errors.Fatal,
+		[]string{"Error sending deploy request"},
+		[]string{err.Error()},
+		[]string{"There might be a connection failure with Meshery Server"},
+		[]string{"Check your network connection and verify the status of the Meshery server with `mesheryctl system status`."})
 }
 
 func ErrCreatingDeployResponseRequest(err error) error {
-	return errors.New(ErrCreatingDeployResponseRequestCode, errors.Fatal, []string{"Error creating request for deploy response"}, []string{err.Error()}, []string{}, []string{})
-}
-
-func ErrAddingAuthDetails(err error) error {
-	return errors.New(ErrAddingAuthDetailsCode, errors.Fatal, []string{"Error adding auth details"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrCreatingDeployResponseRequestCode,
+		errors.Fatal,
+		[]string{"Failed to create a response"},
+		[]string{err.Error()},
+		[]string{"Error occurred while generating a response from deployed request"},
+		[]string{"Check your network connection and verify the status of the Meshery server with `mesheryctl system status`."})
 }
 
 func ErrCreatingDeployResponseStream(err error) error {
-	return errors.New(ErrCreatingDeployResponseStreamCode, errors.Fatal, []string{"Error creating deploy event response stream"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrCreatingDeployResponseStreamCode,
+		errors.Fatal,
+		[]string{"Error creating deploy event response stream"},
+		[]string{err.Error()},
+		[]string{"Unable convert a connection to a stream of server sent events"},
+		[]string{"Ensure your connection is valid and verify the status of the Meshery server with `mesheryctl system status`."})
 }
 
 func ErrCreatingValidateRequest(err error) error {
-	return errors.New(ErrCreatingValidateRequestCode, errors.Fatal, []string{"Error sending Validate request"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrCreatingValidateRequestCode, errors.Fatal,
+		[]string{"Error sending Validate request"},
+		[]string{err.Error()},
+		[]string{"An HTTP error occured due to network connection"},
+		[]string{"Check your network connection and verify the status of the Meshery server with `mesheryctl system status`."})
 }
 
 func ErrCreatingValidateResponseRequest(err error) error {
-	return errors.New(ErrCreatingValidateResponseRequestCode, errors.Fatal, []string{"Error creating request for validate response"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrCreatingValidateResponseRequestCode, errors.Fatal,
+		[]string{"Error creating request for validate response"},
+		[]string{err.Error()},
+		[]string{"Unable to create response from request"},
+		[]string{"Check your network connection and verify the status of the Meshery server with `mesheryctl system status`."})
 }
 
 func ErrCreatingValidateResponseStream(err error) error {
-	return errors.New(ErrCreatingValidateResponseStreamCode, errors.Fatal, []string{"Error creating validate event response stream"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrCreatingValidateResponseStreamCode, errors.Fatal,
+		[]string{"Error creating validate event response stream"},
+		[]string{err.Error()},
+		[]string{"Meshery is not running or there is a network issue."},
+		[]string{"Check your network connection and verify the status of the Meshery server with `mesheryctl system status`."})
+}
+
+func ErrValidatingAdapters(err error) error {
+	return errors.New(ErrValidateAdapterCode, errors.Fatal,
+		[]string{"Unable to validate adapter"},
+		[]string{err.Error()},
+		[]string{"Unable to fetch Mesh adapter, adapter not valid."},
+		[]string{"Enter a valid Mesh adapter."})
+}
+
+func ErrSendOperation(err error) error {
+	return errors.New(ErrSendOperationCode, errors.Alert,
+		[]string{"Unable to perform operation"},
+		[]string{err.Error()},
+		[]string{"Failed to perform an adapter operation due to network connection."},
+		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
+}
+
+func ErrValidMeshName(meshName string) error {
+	return errors.New(ErrValidMeshNameCode, errors.Alert,
+		[]string{"Invalid mesh name"},
+		[]string{"Unable to validate mesh name"},
+		[]string{"%s is not a valid mesh name or is unsupported", meshName},
+		[]string{"Enter a valid mesh name"})
+}
+
+func ErrWaitValidateResponse(err error) error {
+	return errors.New(ErrWaitValidateResponseCode, errors.Fatal,
+		[]string{"Unable to validate a response"},
+		[]string{err.Error()},
+		[]string{"Unable to create responses after verifying operation"},
+		[]string{"Ensure your connection is valid and verify the status of the Meshery server with `mesheryctl system status`."})
 }
