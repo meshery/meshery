@@ -1,5 +1,5 @@
-created_at: "2023-07-10T16:22:41+01:00"
-filter_file: "name: view-filter-test\r\nversion: Rollouts-2.3.0\r\nservices:\r\n  istio:\r\n
+created_at: ' 2023-07-10T16:22:41+01:00'
+filter_file: "name:view-filter-name \r\nversion: Rollouts-2.3.0\r\nservices:\r\n  istio:\r\n
   \   type: IstioMesh\r\n    namespace: istio-system\r\n    settings:\r\n      version:
   1.8.2\r\n    traits:\r\n      mTLS:\r\n        policy: mutual\r\n        namespaces:\r\n
   \         - istio-test\r\n      automaticSidecarInjection:\r\n        namespaces:\r\n
@@ -23,5 +23,6 @@ location:
   path: ""
   type: local
 name: view-filter-name
-updated_at: " 2023-07-10T16:22:41+01:00"
+updated_at: ' 2023-07-10T16:22:41+01:00'
 user_id: 6e241a8c-30db-4ed8-9a62-8e72ff06f8cc
+

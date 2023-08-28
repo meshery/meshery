@@ -96,6 +96,7 @@ func TestPatternView(t *testing.T) {
 
 			utils.Equals(t, expectedResponse, actualResponse)
 		})
+		t.Log("View Pattern test Passed")
 	}
 
 	// stop mock server
