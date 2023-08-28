@@ -676,7 +676,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
     try {
       downloadFile({ id, name, type : "filter" })
       updateProgress({ showProgress : false });
-      notify({ message : `"${name}" filter downloaded` , event_type : EVENT_TYPES.SUCCESS })
+      notify({ message : `"${name}" filter downloaded` , event_type : EVENT_TYPES.INFO })
     } catch (e) {
       console.error(e);
     }
