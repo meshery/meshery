@@ -36,6 +36,7 @@ var (
 	ErrInvalidAPICallCode     = "1022"
 	ErrParseGithubFileCode    = "1023"
 	ErrReadTokenCode          = "1024"
+	ErrRequestResponseCode    = "1025"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -302,7 +303,7 @@ func ErrMarshal(err error) error {
 
 func ErrReadResponseBody(err error) error {
 	return errors.New(ErrReadResponseBodyCode, errors.Alert,
-		[]string{"Error Reading response rody"},
+		[]string{"Error reading response body from request"},
 		[]string{err.Error()},
 		[]string{"There might be connection failure with Meshery Server"},
 		[]string{"Check the status via `mesheryctl system status`"})
@@ -434,4 +435,12 @@ func ErrReadToken(err error) error {
 		[]string{err.Error()},
 		[]string{"Token file is invalid"},
 		[]string{"Provide a valid user token by logging in with `mesheryctl system login`."})
+}
+
+func ErrRequestResponse(err error) error {
+	return errors.New(ErrRequestResponseCode, errors.Alert,
+		[]string{"Failed to handle request"},
+		[]string{"Unable to create a response from request" + err.Error()},
+		[]string{"Error occurred while generating a response"},
+		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
 }

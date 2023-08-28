@@ -695,18 +695,18 @@ func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error
 	client := &http.Client{}
 	req, err := NewRequest(method, path, nil)
 	if err != nil {
-		return nil, err
+		return nil, ErrCreatingRequest(err)
 	}
 
 	res, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, ErrRequestResponse(err)
 	}
 	defer res.Body.Close()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nil, err
+		return nil, ErrReadResponseBody(err)
 	}
 
 	prefs := &models.Preference{}
