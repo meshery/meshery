@@ -5,6 +5,7 @@ contexts:
             - meshery-istio
         endpoint: http://localhost:9081
         platform: kubernetes
+        provider: Meshery
         token: default
         version: latest
     local2:
@@ -13,6 +14,7 @@ contexts:
             - meshery-istio
         endpoint: http://localhost:32242
         platform: docker
+        provider: Meshery
         token: default2
         version: latest
 current-context: local2
