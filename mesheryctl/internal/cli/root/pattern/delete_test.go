@@ -102,8 +102,8 @@ func TestDeleteCmd(t *testing.T) {
 
 			utils.Equals(t, expectedResponse, actualResponse)
 		})
+		t.Log("Delete Pattern test Passed")
 	}
-
 	// stop mock server
 	utils.StopMockery(t)
 }

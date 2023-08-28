@@ -145,12 +145,12 @@ func K8sContextsFromKubeconfig(kubeconfig []byte, instanceID *uuid.UUID) ([]*K8s
 
 	parsed, err := clientcmd.Load(kubeconfig)
 	if err != nil {
-		return kcs, respMessage
+		return kcs, err.Error()
 	}
 
 	kcfg := InternalKubeConfig{}
 	if err := yaml.Unmarshal(kubeconfig, &kcfg); err != nil {
-		return kcs, respMessage
+		return kcs, err.Error()
 	}
 
 	for name := range parsed.Contexts {
