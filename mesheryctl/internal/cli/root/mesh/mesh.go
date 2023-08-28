@@ -20,6 +20,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"os"
 	"regexp"
 	"strings"
 	"time"
@@ -49,18 +50,25 @@ var (
 		Short: "Cloud Native Lifecycle Management",
 		Long:  "Provisioning, configuration, and on-going operational management of service meshes",
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-
 			// if `mesh` command is ran without any subcommands, show Help and exit
 			if cmd.HasSubCommands() {
-				return cmd.Help()
+				cmd.Help()
+				os.Exit(0)
 			}
-
 			// get the meshery config
-			mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
+			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				log.Fatalln(err)
+				utils.Log.Error(err)
+				return nil
 			}
-
+			currCtx, err := mctlCfg.GetCurrentContext()
+			if err != nil {
+				return err
+			}
+			running, _ := utils.IsMesheryRunning(currCtx.GetPlatform())
+			if !running {
+				return errors.New(`meshery server is not running. run "mesheryctl system start" to start meshery`)
+			}
 			if len(args) > 0 {
 				// if a mesh name was provided, convert it the same format as adapter.Name
 				// all args are joined, converted to upper case, and non-word characters replaced with "_"
@@ -68,21 +76,18 @@ var (
 				//     args = Linkerd -> ["LINKERD"] -> "LINKERD"
 				//     args = nginx service mesh -> ["nginx", "service", "mesh"] -> "NGINX_SERVICE_MESH"
 				r, _ := regexp.Compile(`\W`)
-
 				// If the mesh name is single word and without any spaces eg: istio, linkerd
 				if len(args) == 1 {
 					meshName = strings.ToUpper(args[0])
 				}
 				meshName = r.ReplaceAllString(strings.ToUpper(strings.Join(args, "_")), "_")
 			}
-
 			// verify the specified mesh is valid
 			// if no mesh was specified, the user will be prompted to select one
 			meshName, err = validateMesh(mctlCfg, meshName)
 			if err != nil {
 				log.Fatalln(err)
 			}
-
 			// ensure the mesh's adapter is available and update adapterURL if so
 			if err = validateAdapter(mctlCfg, meshName); err != nil {
 				log.Fatalln(err)

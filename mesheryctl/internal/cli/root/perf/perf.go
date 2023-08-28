@@ -16,13 +16,15 @@ package perf
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/pkg/errors"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -51,23 +53,27 @@ mesheryctl perf result sam-test
 mesheryctl perf result -o json
 mesheryctl perf result -o yaml
 	`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-		hcOptions := &system.HealthCheckOptions{
-			IsPreRunE:  true,
-			PrintLogs:  false,
-			Subcommand: cmd.Use,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		if cmd.HasSubCommands() {
+			cmd.Help()
+			os.Exit(0)
 		}
-		hc, err := system.NewHealthChecker(hcOptions)
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrapf(err, "failed to initialize healthchecker")
+			utils.Log.Error(err)
+			return nil
 		}
-		return hc.RunPreflightHealthChecks()
+		currCtx, err := mctlCfg.GetCurrentContext()
+		if err != nil {
+			return err
+		}
+		running, _ := utils.IsMesheryRunning(currCtx.GetPlatform())
+		if !running {
+			return errors.New(`meshery server is not running. run "mesheryctl system start" to start meshery`)
+		}
+		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 {
-			return cmd.Help()
-		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			availableSubCmds := []string{"apply", "profile", "result"}
 

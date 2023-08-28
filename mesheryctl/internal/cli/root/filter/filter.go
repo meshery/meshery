@@ -16,10 +16,13 @@ package filter
 
 import (
 	"fmt"
+	"os"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -35,10 +38,27 @@ var FilterCmd = &cobra.Command{
 // Base command for WASM filters
 mesheryctl filter [subcommands]	
 	`,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 {
-			return cmd.Help()
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		if cmd.HasSubCommands() {
+			cmd.Help()
+			os.Exit(0)
 		}
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			utils.Log.Error(err)
+			return nil
+		}
+		currCtx, err := mctlCfg.GetCurrentContext()
+		if err != nil {
+			return err
+		}
+		running, _ := utils.IsMesheryRunning(currCtx.GetPlatform())
+		if !running {
+			return errors.New(`meshery server is not running. run "mesheryctl system start" to start meshery`)
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.FilterError(fmt.Sprintf("'%s' is a invalid command.  Use 'mesheryctl filter --help' to display usage guide.\n", args[0])))
 		}

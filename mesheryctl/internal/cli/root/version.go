@@ -19,7 +19,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"net/http"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
@@ -56,7 +55,7 @@ mesheryctl version
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			// get the currCtx
-			utils.Log.Error(ErrProcessingConfig(err))
+			utils.Log.Error(err)
 			userResponse := false
 			userResponse = utils.AskForConfirmation("Looks like you are using an outdated config file. Do you want to generate a new config file?")
 			if userResponse {
@@ -86,7 +85,7 @@ mesheryctl version
 
 				mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 				if err != nil {
-					utils.Log.Error(ErrUnmarshallingConfigFile)
+					utils.Log.Error(err)
 				}
 				currCtx, err := mctlCfg.GetCurrentContext()
 				if err != nil {
@@ -125,7 +124,7 @@ mesheryctl version
 		header := []string{"", "Version", "GitSHA"}
 		rows := [][]string{{"Client", build, commitsha}, {"Server", version.GetBuild(), version.GetCommitSHA()}}
 
-		req, err := http.NewRequest("GET", fmt.Sprintf("%s/api/system/version", url), nil)
+		req, err := utils.NewRequest("GET", url+"/api/system/version", nil)
 		if err != nil {
 			utils.PrintToTable(header, rows)
 			utils.Log.Error(ErrGettingRequestContext(err))
@@ -133,8 +132,8 @@ mesheryctl version
 		}
 
 		defer checkMesheryctlClientVersion(build)
-		client := &http.Client{}
-		resp, err := client.Do(req)
+		// client := &http.Client{}
+		resp, err := utils.MakeRequest(req)
 
 		if err != nil {
 			utils.PrintToTable(header, rows)
