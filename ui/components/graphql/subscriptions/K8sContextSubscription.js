@@ -18,7 +18,8 @@ subscription K8sContextSubscription($selector: PageFilter!) {
         deployment_type
         updated_at
         created_at
-        version
+        version,
+        connection_id
       }  
     }
 }

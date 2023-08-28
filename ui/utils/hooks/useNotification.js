@@ -8,6 +8,7 @@ import { pushEvent ,openEventInNotificationCenter, toggleNotificationCenter } fr
 import moment from "moment";
 import { v4 } from "uuid";
 import BellIcon from '@material-ui/icons/Notifications';
+import { NOTIFICATION_STATUS } from "../../lib/event-types";
 
 
 /**
@@ -57,6 +58,7 @@ export const useNotification = () => {
         ...customEvent,
         summary : message ,
         id,
+        status : NOTIFICATION_STATUS.NEW,
         event_type,
         timestamp,
         details,

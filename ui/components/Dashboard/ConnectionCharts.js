@@ -5,6 +5,7 @@ import BBChart from "../BBChart";
 import { dataToColors , isValidColumnName } from "../../utils/charts"
 import { getConnectionStatusSummary } from "../../api/connections";
 import ConnectClustersBtn from "../General/ConnectClustersBtn";
+import Link from "next/link";
 
 
 export default function ConnectionStatsChart({ classes }) {
@@ -52,10 +53,11 @@ export default function ConnectionStatsChart({ classes }) {
 
   return (
     <div className={classes.dashboardSection}>
-      <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-        Connections
-      </Typography>
-
+      <Link href="/management/connections">
+        <Typography variant="h6" gutterBottom  className={classes.link}>
+          Connections
+        </Typography>
+      </Link>
       <Box  sx={{ display : "flex",justifyContent : "center",alignItems : "center",alignContent : "center",height : "100%" }}>
         { chartData.length > 0 ?
           <BBChart options={chartOptions} />

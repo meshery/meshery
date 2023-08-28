@@ -1,16 +1,13 @@
 import {
   Button, Card, CardContent, CardHeader, Chip,
-  IconButton, MenuItem, NoSsr, Paper, Select, TableCell, TableSortLabel, Tooltip, Typography
+  MenuItem, NoSsr, Paper, Select, TableCell, TableSortLabel, Tooltip, Typography
 } from "@material-ui/core";
 // import {Table, TableBody, TableContainer, TableHead, TableRow,} from "@material-ui/core"
 import blue from "@material-ui/core/colors/blue";
 import Grid from "@material-ui/core/Grid";
 import { withStyles, MuiThemeProvider } from "@material-ui/core/styles";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
-import CloseIcon from "@material-ui/icons/Close";
-import SettingsIcon from "@material-ui/icons/Settings";
 import { withRouter } from "next/router";
-import { withSnackbar } from "notistack";
 import PropTypes from "prop-types";
 import React from "react";
 import { connect } from "react-redux";
@@ -35,6 +32,8 @@ import { extractURLFromScanData } from "./ConnectionWizard/helpers/metrics";
 import { configurationTableTheme, configurationTableThemeDark } from '../themes/configurationTableTheme';
 import DashboardMeshModelGraph from './Dashboard/DashboardMeshModelGraph'
 import ConnectionStatsChart from "./Dashboard/ConnectionCharts.js";
+import { EVENT_TYPES } from "../lib/event-types";
+import { withNotify } from "../utils/hooks/useNotification";
 
 const styles = (theme) => ({
   rootClass : { backgroundColor : theme.palette.secondary.elevatedComponents2, },
@@ -52,6 +51,10 @@ const styles = (theme) => ({
   button : {
     marginTop : theme.spacing(3),
     marginLeft : theme.spacing(1),
+  },
+  link : {
+    cursor : "pointer",
+    textDecoration : "none"
   },
   metricsButton : { width : "240px", },
   alreadyConfigured : { textAlign : "center", },
@@ -541,16 +544,8 @@ class DashboardComponent extends React.Component {
 
   handleError = (msg) => (error) => {
     this.props.updateProgress({ showProgress : false });
-    const self = this;
-    this.props.enqueueSnackbar(`${msg}: ${error}`, {
-      variant : "error", preventDuplicate : true,
-      action : (key) => (
-        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-          <CloseIcon style={iconMedium} />
-        </IconButton>
-      ),
-      autoHideDuration : 7000,
-    });
+    const notify = this.props.notify;
+    notify({ message : `${msg}: ${error}`, event_type : EVENT_TYPES.ERROR })
   };
 
   /**
@@ -567,34 +562,34 @@ class DashboardComponent extends React.Component {
   };
 
   handleAdapterPingError = (msg) => () => {
-    const { classes } = this.props;
     this.props.updateProgress({ showProgress : false });
-    const self = this;
-    this.props.enqueueSnackbar(`${msg}. To configure an adapter, visit`, {
-      variant : "error",
-      autoHideDuration : 3000,
-      action : (key) => (
-        <>
-          <Button
-            variant="contained"
-            key="configure-close"
-            aria-label="Configure"
-            className={classes.redirectButton}
-            onClick={() => {
-              self.props.router.push("/settings#service-mesh");
-              self.props.closeSnackbar(key);
-            }}
-          >
-            <SettingsIcon className={classes.settingsIcon}  />
-            Settings
-          </Button>
+    const notify = this.props.notify;
+    // this.props.enqueueSnackbar(`${msg}. To configure an adapter, visit`, {
+    //   variant : "error",
+    //   autoHideDuration : 3000,
+    //   action : (key) => (
+    //     <>
+    //       <Button
+    //         variant="contained"
+    //         key="configure-close"
+    //         aria-label="Configure"
+    //         className={classes.redirectButton}
+    //         onClick={() => {
+    //           self.props.router.push("/settings#service-mesh");
+    //           self.props.closeSnackbar(key);
+    //         }}
+    //       >
+    //         <SettingsIcon className={classes.settingsIcon}  />
+    //         Settings
+    //       </Button>
 
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-            <CloseIcon  style={iconMedium} />
-          </IconButton>
-        </>
-      ),
-    });
+    //       <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
+    //         <CloseIcon  style={iconMedium} />
+    //       </IconButton>
+    //     </>
+    //   ),
+    // });
+    notify({ message : `${msg}`, event_type : EVENT_TYPES.ERROR })
   };
 
   handleDelete() {
@@ -605,6 +600,7 @@ class DashboardComponent extends React.Component {
     // const { meshAdapters } = this.state;
     this.props.updateProgress({ showProgress : true });
     const self = this;
+    const notify = this.props.notify;
     dataFetch(
       `/api/system/adapters?adapter=${encodeURIComponent(adapterLoc)}`,
       {
@@ -613,15 +609,7 @@ class DashboardComponent extends React.Component {
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Meshery Adapter connected at " + adapterLoc, {
-            variant : "success",
-            autoHideDuration : 2000,
-            action : (key) => (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon  style={iconMedium} />
-              </IconButton>
-            ),
-          });
+          notify({ message : `Meshery Adapter connected at ${adapterLoc}`, event_type : EVENT_TYPES.SUCCESS })
         }
       },
       self.handleAdapterPingError("Could not connect to " + adapterLoc)
@@ -661,27 +649,20 @@ class DashboardComponent extends React.Component {
   handleKubernetesClick = (id) => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
+    const notify = this.props.notify;
     const selectedCtx = this.props.k8sconfig?.find((ctx) => ctx.id === id);
     if (!selectedCtx) return;
 
     const { server, name } = selectedCtx;
     dataFetch(
-      "/api/system/kubernetes/ping?context=" + id,
+      "/api/system/kubernetes/ping?connection_id=" + id,
       {
         credentials : "include",
       },
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar(`${name} is connected at ${server}`, {
-            variant : "success",
-            autoHideDuration : 2000,
-            action : (key) => (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon style={iconMedium} />
-              </IconButton>
-            ),
-          });
+          notify({ message : `${name} is connected at ${server}`, event_type : EVENT_TYPES.SUCCESS })
         }
       },
       self.handleError("Could not connect to Kubernetes")
@@ -691,6 +672,7 @@ class DashboardComponent extends React.Component {
   handleGrafanaClick = () => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
+    const notify = this.props.notify;
     const { grafanaURL } = this.state.grafana;
     dataFetch(
       "/api/telemetry/metrics/grafana/ping",
@@ -700,15 +682,7 @@ class DashboardComponent extends React.Component {
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Grafana connected at " + `${grafanaURL}`, {
-            variant : "success",
-            autoHideDuration : 2000,
-            action : (key) => (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon style={iconMedium} />
-              </IconButton>
-            ),
-          });
+          notify({ message : `Grafana connected at ${grafanaURL}`, event_type : EVENT_TYPES.SUCCESS })
         }
       },
       self.handleError("Could not connect to Grafana")
@@ -1059,6 +1033,7 @@ class DashboardComponent extends React.Component {
   handlePrometheusClick = () => {
     this.props.updateProgress({ showProgress : true });
     const self = this;
+    const notify = this.props.notify;
     const { prometheusURL } = this.state.prometheus;
     dataFetch(
       "/api/telemetry/metrics/ping",
@@ -1068,15 +1043,7 @@ class DashboardComponent extends React.Component {
       (result) => {
         this.props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.props.enqueueSnackbar("Prometheus connected at" + ` ${prometheusURL}`, {
-            variant : "success",
-            autoHideDuration : 2000,
-            action : (key) => (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon  style={iconMedium} />
-              </IconButton>
-            ),
-          });
+          notify({ message : `Prometheus connected at ${prometheusURL}`, event_type : EVENT_TYPES.SUCCESS })
         }
       },
       self.handleError("Could not connect to Prometheus")
@@ -1109,7 +1076,7 @@ class DashboardComponent extends React.Component {
             <Chip
               label={ctx?.name}
               className={classes.chip}
-              onClick={() => self.handleKubernetesClick(ctx.id)}
+              onClick={() => self.handleKubernetesClick(ctx.connection_id)}
               icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
               variant="outlined"
               data-cy="chipContextName"
@@ -1277,5 +1244,5 @@ const mapStateToProps = (state) => {
 };
 
 export default withStyles(styles, { withTheme : true })(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(withSnackbar(DashboardComponent)))
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(withNotify(DashboardComponent)))
 );

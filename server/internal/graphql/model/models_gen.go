@@ -170,6 +170,7 @@ type K8sContext struct {
 	Version            string                 `json:"version"`
 	UpdatedAt          string                 `json:"updated_at"`
 	CreatedAt          string                 `json:"created_at"`
+	ConnectionID       string                 `json:"connection_id"`
 }
 
 type K8sContextsPage struct {
