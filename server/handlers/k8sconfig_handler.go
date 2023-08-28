@@ -294,7 +294,7 @@ func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]
 		ComponentName: "kubernetes",
 		OperationId:   guid.NewString(),
 		EventType:     meshes.EventType_INFO,
-		Summary:       "Kubernetes configuration Info",
+		Summary:       "Kubernetes Connection Information",
 		Details:      fmt.Sprintf("Unable to access kubeconfig. Verify that the file exists at %s and has sufficient read permissions", filepath.Join(h.config.KubeConfigFolder, "config")),
 	})
 
