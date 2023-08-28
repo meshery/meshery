@@ -31,7 +31,6 @@ import (
 	"github.com/manifoldco/promptui"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var (
@@ -41,7 +40,6 @@ var (
 // MeshCmd represents the Performance Management CLI command
 var (
 	adapterURL string
-	err        error
 	mctlCfg    *config.MesheryCtlConfig
 	namespace  string
 	watch      bool
@@ -52,14 +50,8 @@ var (
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			// if `mesh` command is ran without any subcommands, show Help and exit
 			if cmd.HasSubCommands() {
-				cmd.Help()
+				_ = cmd.Help()
 				os.Exit(0)
-			}
-			// get the meshery config
-			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-			if err != nil {
-				utils.Log.Error(err)
-				return nil
 			}
 			currCtx, err := mctlCfg.GetCurrentContext()
 			if err != nil {

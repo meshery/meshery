@@ -50,7 +50,7 @@ mesheryctl pattern list
 	`,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		if cmd.HasSubCommands() {
-			cmd.Help()
+			_ = cmd.Help()
 			os.Exit(0)
 		}
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
