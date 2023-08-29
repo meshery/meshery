@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Modal from "../Modal";
 import PublicIcon from "@material-ui/icons/Public";
 import _ from "lodash";
-import { getMeshModels } from "../../lib/api/meshmodel";
+import { getMeshModels } from "../../api/meshmodel";
 import { modifyRJSFSchema } from "../../utils/utils";
 import dataFetch from "../../lib/data-fetch";
 
