@@ -173,13 +173,13 @@ class  MeshAdapterConfigComponent extends React.Component {
 
   getStatusColor = (status) => {
     if (status === STATUS.DEPLOYED) {
-      return "green";
+      return "#00FF00";
     } else if (status === STATUS.UNDEPLOYED) {
-      return "red";
+      return "#E97451";
     } else if (status === STATUS.DEPLOYING) {
-      return "yellow"
+      return "#FFEA00"
     } else if (status === STATUS.UNDEPLOYING) {
-      return "orange"
+      return "#FFAF0A"
     }
   }
 
