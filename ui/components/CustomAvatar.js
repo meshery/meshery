@@ -43,7 +43,6 @@ const useStyles = makeStyles((theme) => ({
 
 export default function BadgeAvatars({ children, color }) {
   const classes = useStyles();
-  console.log(color)
   return (
     <div className={classes.root}>
       <StyledBadge
