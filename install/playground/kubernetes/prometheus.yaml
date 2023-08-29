@@ -17,7 +17,7 @@ data:
     scrape_configs:
       - job_name: 'prometheus'
         static_configs:
-        - targets: ['147.75.47.9:9100','147.28.149.165:9100']
+          - targets: ['10.107.164.64:9100'] # Changed the Port as node exporter is running on different port
       - job_name: 'k8services'
         kubernetes_sd_configs:
             - role: endpoints
@@ -33,6 +33,20 @@ data:
               action: keep
             - source_labels: [__meta_kubernetes_service_name]
               target_label: job
+      - job_name: 'blackbox'
+        metrics_path: /probe
+        params:
+          module: [http_2xx]  # Define the probe module (can be http_2xx, http_3xx, etc.)
+        static_configs:
+          - targets:
+            - https://playground.meshery.io  # Replace with the URLs you want to monitor
+        relabel_configs:
+          - source_labels: [__address__]
+            target_label: __param_target
+          - source_labels: [__param_target]
+            target_label: instance
+          - target_label: __address__
+            replacement: 10.107.70.179:9115  # Replace with the actual Blackbox Exporter address
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -118,14 +132,14 @@ metadata:
   name: prometheus-service
   namespace: monitoring
   annotations:
-      prometheus.io/scrape: 'true'
-      prometheus.io/path:   /
-      prometheus.io/port:   '8080'
-  
+    prometheus.io/scrape: 'true'
+    prometheus.io/path:   /probe
+    prometheus.io/port:   '9115'  # Port where Blackbox Exporter is listening
+
 spec:
-  selector: 
+  selector:
     app: prometheus-server
-  type: NodePort  
+  type: NodePort
   ports:
     - port: 8080
-      targetPort: 9090 
+      targetPort: 9090
