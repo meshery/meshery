@@ -1,3 +1,4 @@
+//NOTE: Component not used anywhere
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles, useTheme } from '@material-ui/core/styles';
