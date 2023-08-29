@@ -8,23 +8,23 @@ import {
 import { withStyles } from "@material-ui/core/styles";
 // import EditIcon from "@material-ui/icons/Edit";
 // import YoutubeSearchedForIcon from '@mui/icons-material/YoutubeSearchedFor';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import MUIDataTable from "mui-datatables";
 import React, { useEffect, useRef, useState } from "react";
 import Moment from "react-moment";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { updateProgress } from "../../lib/store";
-import { /* Avatar, */ Chip, /* FormControl, */ } from "@mui/material";
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import ExploreIcon from '@mui/icons-material/Explore';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import { /* Avatar, */ Chip /* FormControl, */ } from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
+import ExploreIcon from "@mui/icons-material/Explore";
+import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import classNames from "classnames";
 // import ReactSelectWrapper from "../ReactSelectWrapper";
 import dataFetch from "../../lib/data-fetch";
-import LaunchIcon from '@mui/icons-material/Launch';
-import TableRow from '@mui/material/TableRow';
+import LaunchIcon from "@mui/icons-material/Launch";
+import TableRow from "@mui/material/TableRow";
 import { useNotification } from "../../utils/hooks/useNotification";
 import { EVENT_TYPES } from "../../lib/event-types";
 
@@ -110,7 +110,7 @@ const styles = (theme) => ({
 const ACTION_TYPES = {
   FETCH_CONNECTIONS : {
     name : "FETCH_CONNECTIONS",
-    error_msg : "Failed to fetch connections"
+    error_msg : "Failed to fetch connections",
   },
 };
 
@@ -119,27 +119,57 @@ function Connections({ classes, updateProgress }) {
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(0);
   const [connections, setConnections] = useState([]);
-  const [search,setSearch] = useState("");
-  const { notify } = useNotification()
+  const [search, setSearch] = useState("");
+  const { notify } = useNotification();
 
   const searchTimeout = useRef(null);
 
   const status = (value) => {
     switch (value) {
-      case 'ignored':
-        return <Chip className={classNames(classes.statusCip, classes.ignored)} avatar={<RemoveCircleIcon style={{ color : "#51636B" }} />} label={value} />
-      case 'connected':
-        return <Chip className={classNames(classes.statusCip, classes.connected)} avatar={<CheckCircleIcon style={{ color : "#00B39F" }}/>} label={value} />
-      case 'REGISTERED':
-        return <Chip className={classNames(classes.statusCip, classes.registered)} avatar={<AssignmentTurnedInIcon style={{ color : "#477E96" }} />} label={value.toLowerCase()} />
-      case 'discovered':
-        return <Chip className={classNames(classes.statusCip, classes.discovered)} avatar={<ExploreIcon style={{ color : "#EBC017" }} />} label={value} />
-      case 'deleted':
-        return <Chip className={classNames(classes.statusCip, classes.deleted)} avatar={<DeleteForeverIcon style={{ color : "#8F1F00" }} />} label={value} />
+      case "ignored":
+        return (
+          <Chip
+            className={classNames(classes.statusCip, classes.ignored)}
+            avatar={<RemoveCircleIcon style={{ color : "#51636B" }} />}
+            label={value}
+          />
+        );
+      case "connected":
+        return (
+          <Chip
+            className={classNames(classes.statusCip, classes.connected)}
+            avatar={<CheckCircleIcon style={{ color : "#00B39F" }} />}
+            label={value}
+          />
+        );
+      case "REGISTERED":
+        return (
+          <Chip
+            className={classNames(classes.statusCip, classes.registered)}
+            avatar={<AssignmentTurnedInIcon style={{ color : "#477E96" }} />}
+            label={value.toLowerCase()}
+          />
+        );
+      case "discovered":
+        return (
+          <Chip
+            className={classNames(classes.statusCip, classes.discovered)}
+            avatar={<ExploreIcon style={{ color : "#EBC017" }} />}
+            label={value}
+          />
+        );
+      case "deleted":
+        return (
+          <Chip
+            className={classNames(classes.statusCip, classes.deleted)}
+            avatar={<DeleteForeverIcon style={{ color : "#8F1F00" }} />}
+            label={value}
+          />
+        );
       default:
-        return "-"
+        return "-";
     }
-  }
+  };
 
   const columns = [
     {
@@ -160,14 +190,12 @@ function Connections({ classes, updateProgress }) {
       label : " ",
       options : {
         customHeadRender : function CustomHead({ index }) {
-          return (
-            <TableCell key={index}></TableCell>
-          );
+          return <TableCell key={index}></TableCell>;
         },
         customBodyRender : function CustomBody(value) {
           return (
             <>
-              <Tooltip title={value.server_location} placement="top" arrow interactive >
+              <Tooltip title={value.server_location} placement="top" arrow interactive>
                 <Link href={value.server_location} target="_blank">
                   <LaunchIcon />
                 </Link>
@@ -243,7 +271,16 @@ function Connections({ classes, updateProgress }) {
         },
         customBodyRender : function CustomBody(value) {
           return (
-            <Tooltip title={<Moment startOf="day" format="LLL">{value}</Moment>} placement="top" arrow interactive >
+            <Tooltip
+              title={
+                <Moment startOf="day" format="LLL">
+                  {value}
+                </Moment>
+              }
+              placement="top"
+              arrow
+              interactive
+            >
               <Moment format="LL">{value}</Moment>
             </Tooltip>
           );
@@ -263,7 +300,16 @@ function Connections({ classes, updateProgress }) {
         },
         customBodyRender : function CustomBody(value) {
           return (
-            <Tooltip title={<Moment startOf="day" format="LLL">{value}</Moment>} placement="top" arrow interactive >
+            <Tooltip
+              title={
+                <Moment startOf="day" format="LLL">
+                  {value}
+                </Moment>
+              }
+              placement="top"
+              arrow
+              interactive
+            >
               <Moment format="LL">{value}</Moment>
             </Tooltip>
           );
@@ -282,9 +328,7 @@ function Connections({ classes, updateProgress }) {
           );
         },
         customBodyRender : function CustomBody(value) {
-          return (
-            status(value)
-          );
+          return status(value);
         },
       },
     },
@@ -332,9 +376,9 @@ function Connections({ classes, updateProgress }) {
         text : "connection(s) selected",
       },
     },
-    enableNestedDataAccess : '.',
+    enableNestedDataAccess : ".",
     onSearchClose : () => {
-      setSearch("")
+      setSearch("");
     },
     onTableChange : (action, tableState) => {
       switch (action) {
@@ -365,19 +409,17 @@ function Connections({ classes, updateProgress }) {
     },
     rowsExpanded : [0, 1],
     renderExpandableRow : (rowData) => {
-      const colSpan = (rowData.length-1)/3;
+      const colSpan = (rowData.length - 1) / 3;
       return (
         <TableRow>
-          <TableCell>
-          </TableCell>
+          <TableCell></TableCell>
           <TableCell colSpan={colSpan}>
-            <b>Server builsd SHA:</b> {rowData[8]}
+            <b>Server Build SHA:</b> {rowData[8]}
           </TableCell>
           <TableCell colSpan={colSpan}>
             <b>Server Version:</b> {rowData[9]}
           </TableCell>
-          <TableCell colSpan={colSpan}>
-          </TableCell>
+          <TableCell colSpan={colSpan}></TableCell>
         </TableRow>
       );
     },
@@ -387,7 +429,7 @@ function Connections({ classes, updateProgress }) {
    * fetch connections when the page loads
    */
   useEffect(() => {
-    getConnections(page, pageSize,)
+    getConnections(page, pageSize);
   }, [page, pageSize, search]);
 
   const getConnections = (page, pageSize) => {
@@ -398,18 +440,18 @@ function Connections({ classes, updateProgress }) {
         method : "GET",
       },
       (res) => {
-        setConnections(res?.connections)
-        setPage(res?.page || 0)
-        setCount(res?.total_count || 0)
-        setPageSize(res?.page_size || 0)
+        setConnections(res?.connections);
+        setPage(res?.page || 0);
+        setCount(res?.total_count || 0);
+        setPageSize(res?.page_size || 0);
       },
       handleError(ACTION_TYPES.FETCH_CONNECTIONS)
     );
-  }
+  };
 
   const handleError = (action) => (error) => {
     updateProgress({ showProgress : false });
-    notify({ message : `${action.error_msg}: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() })
+    notify({ message : `${action.error_msg}: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() });
   };
 
   return (
@@ -486,3 +528,4 @@ const mapStateToProps = (state) => {
 
 // @ts-ignore
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Connections));
+
