@@ -59,6 +59,7 @@ require (
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.16.0
+	github.com/stretchr/testify v1.8.4
 	github.com/vektah/gqlparser/v2 v2.5.8
 	github.com/vmihailenco/taskq/v3 v3.2.9
 	golang.org/x/oauth2 v0.10.0
@@ -221,6 +222,7 @@ require (
 	github.com/openshift/api v3.9.0+incompatible // indirect
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_model v0.4.0 // indirect
 	github.com/prometheus/procfs v0.10.1 // indirect
 	github.com/qri-io/jsonpointer v0.1.1 // indirect
