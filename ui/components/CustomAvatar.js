@@ -3,9 +3,9 @@ import Badge from '@material-ui/core/Badge';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
 
 const StyledBadge = withStyles((theme) => ({
-  badge : (props) => ({
-    backgroundColor : props.color || '#44b700',
-    color : props.color || '#44b700',
+  badge : {
+    backgroundColor : ({ color }) => color || '#44b700',
+    color : ({ color }) => color || '#44b700',
     boxShadow : `0 0 0 2px ${theme.palette.background.paper}`,
     '&::after' : {
       position : 'absolute',
@@ -18,7 +18,7 @@ const StyledBadge = withStyles((theme) => ({
       border : '1px solid currentColor',
       content : '""',
     },
-  }),
+  },
   '@keyframes ripple' : {
     '0%' : {
       transform : 'scale(.8)',
@@ -43,6 +43,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function BadgeAvatars({ children, color }) {
   const classes = useStyles();
+
   return (
     <div className={classes.root}>
       <StyledBadge
