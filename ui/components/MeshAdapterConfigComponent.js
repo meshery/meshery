@@ -103,6 +103,7 @@ class  MeshAdapterConfigComponent extends React.Component {
   componentDidMount = () => {
     this.fetchSetAdapterURLs();
     this.fetchAvailableAdapters();
+    this.setAdapterStates();
   }
 
   fetchSetAdapterURLs = () => {
@@ -145,7 +146,6 @@ class  MeshAdapterConfigComponent extends React.Component {
             label : res.name,
           }));
           this.setState({ availableAdapters : options });
-          this.setAdapterStates()
         }
       },
       self.handleError("Unable to fetch available adapters")
@@ -153,12 +153,12 @@ class  MeshAdapterConfigComponent extends React.Component {
   };
 
   setAdapterStates = () => {
-    const { availableAdapters } = this.state;
+    const { meshAdapters } = this.state;
     const initialAdapterStates = {};
 
-    availableAdapters.forEach((adapter) => {
-      const cleanLabel = adapter.label.replace(/^meshery-/, '').toUpperCase()
-      initialAdapterStates[cleanLabel] = STATUS.UNDEPLOYED;
+    meshAdapters.forEach((adapter) => {
+      const lable = adapter.name.toUpperCase()
+      initialAdapterStates[lable] = STATUS.UNDEPLOYED;
     });
 
     this.setState({
@@ -168,7 +168,7 @@ class  MeshAdapterConfigComponent extends React.Component {
 
   getStatusColor = (status) => {
     if (status === STATUS.DEPLOYED) {
-      return "#44b700";
+      return "#00B39F";
     } else if (status === STATUS.UNDEPLOYED) {
       return "#808080";
     } else if (status === STATUS.DEPLOYING) {
