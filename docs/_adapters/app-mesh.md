@@ -8,6 +8,7 @@ port: 10005/gRPC
 project_status: beta
 github_link: https://github.com/meshery/meshery-app-mesh
 image: /assets/img/service-meshes/app-mesh.svg
+white_image: /assets/img/service-meshes/app-mesh.svg
 permalink: service-meshes/adapters/app-mesh
 language: en
 ---

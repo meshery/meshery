@@ -9,6 +9,7 @@ project_status: stable
 lab: istio-meshery-adapter
 github_link: https://github.com/meshery/meshery-istio
 image: /assets/img/service-meshes/istio.svg
+white_image: /assets/img/service-meshes/istio.svg
 permalink: service-meshes/adapters/istio
 language: en
 ---

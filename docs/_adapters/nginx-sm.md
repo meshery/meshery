@@ -8,6 +8,7 @@ port: 10010/gRPC
 project_status: stable
 github_link: https://github.com/meshery/meshery-nginx-sm
 image: /assets/img/service-meshes/nginx-sm.svg
+white_image: /assets/img/service-meshes/nginx-sm.svg
 permalink: service-meshes/adapters/nginx-sm
 language: en
 ---

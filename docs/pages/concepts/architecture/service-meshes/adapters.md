@@ -22,7 +22,7 @@ Meshery has adapters for managing the following cloud native infrasture.
 | :------------: | :----------: | :--: | :------------------------: |
 {% for adapter in sorted -%}
 {% if adapter.project_status -%}
-| {{ adapter.project_status }} | {%if adapter.mesh_name == "Kuma"%} <img src="{{ adapter.image }}" style="width:20px" data-logo-for-dark="{{ adapter.white_image }}" data-logo-for-light="{{ adapter.image }}" id="logo-dark-light" loading="lazy"/>{% endif %} {%if adapter.mesh_name != "Kuma"%} <img src="{{ adapter.image }}" style="width:20px" /> {% endif %} [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.port }} | {{adapter.earliest_version}} |
+| {{ adapter.project_status }} | <img src="{{ adapter.image }}" style="width:20px" data-logo-for-dark="{{ adapter.white_image }}" data-logo-for-light="{{ adapter.image }}" id="logo-dark-light" loading="lazy"/> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.port }} | {{adapter.earliest_version}} |
 {% endif -%}
 {% endfor %}
 

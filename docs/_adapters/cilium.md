@@ -9,6 +9,7 @@ project_status: stable
 lab: cilium-meshery-adapter
 github_link: https://github.com/meshery/meshery-cilium
 image: /assets/img/service-meshes/cilium.svg
+white_image: /assets/img/service-meshes/cilium.svg
 permalink: service-meshes/adapters/cilium
 language: en
 ---
