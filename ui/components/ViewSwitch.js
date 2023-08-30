@@ -1,10 +1,22 @@
 import { ToggleButton } from "@material-ui/lab";
 import GridOnIcon from "@material-ui/icons/GridOn";
 import TableChartIcon from "@material-ui/icons/TableChart";
+import { makeStyles } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+  toggleButton : {
+    border : "none",
+  },
+  icon : {
+    color : theme.palette.type === 'dark' ? "#FFFFFF" : "#3C494F"
+  }
+}));
 
 function ViewSwitch({ view, changeView }) {
+  const classes = useStyles();
   return (
     <ToggleButton
+      className={classes.toggleButton}
       size="small"
       value={view}
       onChange={() => {
@@ -12,7 +24,7 @@ function ViewSwitch({ view, changeView }) {
       }}
       aria-label="Switch View"
     >
-      {view === "grid" ? <GridOnIcon /> : <TableChartIcon />}
+      {view === "grid" ? <GridOnIcon className={classes.icon} /> : <TableChartIcon className={classes.icon} />}
     </ToggleButton>
   );
 }

@@ -70,7 +70,8 @@ export var darkTheme = createTheme({
       warning : "#EBC017",
       error : "#8F1F00",
       penColorPrimary : '#E6E6E6',
-      penColorSecondary : '#E6E6E6'
+      penColorSecondary : '#E6E6E6',
+      toolbarBg2 : "#464646",
     },
   },
   p : {
@@ -293,7 +294,8 @@ let theme = createTheme({
       warning : "#EBC017",
       error : "#8F1F00",
       penColorPrimary : '#3C494F',
-      penColorSecondary : '#677E88'
+      penColorSecondary : '#677E88',
+      toolbarBg1 : "#FFFFFF",
     },
   },
   shape : { borderRadius : 8, },
