@@ -35,6 +35,7 @@ import (
 type RemoteProvider struct {
 	ProviderProperties
 	*SessionPreferencePersister
+	*EventsPersister
 
 	SaaSTokenName     string
 	RemoteProviderURL string

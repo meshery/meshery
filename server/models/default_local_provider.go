@@ -34,6 +34,7 @@ import (
 // DefaultLocalProvider - represents a local provider
 type DefaultLocalProvider struct {
 	*MapPreferencePersister
+	*EventsPersister
 	ProviderProperties
 	ProviderBaseURL                 string
 	ResultPersister                 *MesheryResultsPersister

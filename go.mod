@@ -40,7 +40,7 @@ require (
 	github.com/jinzhu/copier v0.3.5
 	github.com/layer5io/gowrk2 v0.6.1
 	github.com/layer5io/meshery-operator v0.6.10
-	github.com/layer5io/meshkit v0.6.59
+	github.com/layer5io/meshkit v0.6.61
 	github.com/layer5io/meshsync v0.6.11
 	github.com/layer5io/nighthawk-go v1.0.6
 	github.com/layer5io/service-mesh-performance v0.6.1
@@ -279,3 +279,5 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.3 // indirect
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
+
+replace github.com/layer5io/meshkit => /Users/shabana/Documents/OpenSource/meshkit

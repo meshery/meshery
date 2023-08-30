@@ -149,6 +149,7 @@ func main() {
 	}
 	defer preferencePersister.ClosePersister()
 
+	// eventsPersister, err := models.
 	dbHandler := models.GetNewDBInstance()
 	regManager, err := meshmodel.NewRegistryManager(dbHandler)
 	if err != nil {
@@ -174,6 +175,7 @@ func main() {
 		&models.PerformanceTestConfig{},
 		&models.SmiResultWithID{},
 		models.K8sContext{},
+		models.Event{},
 	)
 	if err != nil {
 		log.Error(ErrDatabaseAutoMigration(err))
