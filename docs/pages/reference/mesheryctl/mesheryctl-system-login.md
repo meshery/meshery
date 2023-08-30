@@ -33,7 +33,15 @@ mesheryctl system login [flags]
 Login with the Meshery Provider of your choice: the Local Provider or a Remote Provider.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system login 
+mesheryctl system login
+
+</div>
+</pre> 
+
+Login with the Meshery Provider by specifying it via -p or --provider flag.
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system login -p Meshery
 
 </div>
 </pre> 

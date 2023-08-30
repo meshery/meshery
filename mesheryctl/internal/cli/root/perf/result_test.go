@@ -187,8 +187,8 @@ func TestResultCmd(t *testing.T) {
 			utils.Equals(t, expectedResponse, actualResponse)
 			resetVariables()
 		})
+		t.Log("Result perf test passed")
 	}
-
 	// stop mock server
 	utils.StopMockery(t)
 }

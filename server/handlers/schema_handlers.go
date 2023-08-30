@@ -33,7 +33,7 @@ func (h *Handler) HandleResourceSchemas(rw http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	if err := json.Unmarshal(uiSchema, &rjsfSchemaJSON); err != nil {
+	if err := json.Unmarshal(uiSchema, &uiSchemaJSON); err != nil {
 		uiSchemaJSON = map[string]interface{}{}
 	}
 

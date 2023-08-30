@@ -8,6 +8,7 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
 )
 
 // This is a Unit test
@@ -58,9 +59,7 @@ func TestResetCmd(t *testing.T) {
 			expectedResponse := golden.Load()
 
 			//Comparing the expected response with the actual response
-			if expectedResponse != actualResponse {
-				utils.Equals(t, expectedResponse, actualResponse)
-			}
+			assert.Equal(t, expectedResponse, actualResponse)
 		})
 	}
 	//Removing the files and directory that were created during the test
