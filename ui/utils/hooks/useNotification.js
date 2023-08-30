@@ -1,5 +1,5 @@
 import { IconButton } from "@material-ui/core"
-import { ToggleButtonGroup } from "@mui/material"
+import { ToggleButtonGroup } from "@material-ui/core"
 import { useSnackbar } from "notistack"
 import { iconMedium } from "../../css/icons.styles"
 import CloseIcon from "@material-ui/icons/Close";

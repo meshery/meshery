@@ -15,7 +15,7 @@ import { bindActionCreators } from "redux";
 import { useEffect, useState } from "react";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 // import UndeployIcon from "../public/static/img/UndeployIcon";
-import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
+import RemoveDoneIcon from "@layer5/sistent-svg"
 import AddIcon from '@material-ui/icons/Add';
 import DoneIcon from "@material-ui/icons/Done";
 import Link from 'next/link';
