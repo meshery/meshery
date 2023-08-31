@@ -159,7 +159,7 @@ func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*mode
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		return nil, utils.ErrCreatingRequest(err)
+		return nil, utils.ErrRequestResponse(err)
 	}
 
 	defer resp.Body.Close()

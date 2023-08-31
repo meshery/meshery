@@ -79,7 +79,7 @@ func getSourceTypes() error {
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		return utils.ErrCreatingRequest(err)
+		return utils.ErrRequestResponse(err)
 	}
 
 	defer resp.Body.Close()

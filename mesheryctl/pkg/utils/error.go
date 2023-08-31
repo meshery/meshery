@@ -169,9 +169,19 @@ func PatternError(msg string) string {
 	return formatError(msg, cmdPattern)
 }
 
+// PatternViewError returns a formatted error message with a link to the 'pattern view' commad usage page in addition to the error message
+func PatternViewError(msg string) string {
+	return formatError(msg, cmdPatternView)
+}
+
 // AppError returns a formatted error message with a link to 'app' command usage page in addition to the error message
 func AppError(msg string) string {
 	return formatError(msg, cmdApp)
+}
+
+// AppError returns a formatted error message with a link to 'app view' command usage page in addition to the error message
+func AppViewError(msg string) string {
+	return formatError(msg, cmdAppView)
 }
 
 // formatError returns a formatted error message with a link to the meshery command URL
@@ -209,7 +219,11 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, filterViewURL)
 	case cmdPattern:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, patternUsageURL)
+	case cmdPatternView:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, patternViewURL)
 	case cmdApp:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, appViewURL)
+	case cmdAppView:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, appUsageURL)
 	case cmdContextDelete:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, contextDeleteURL)
@@ -272,9 +286,9 @@ func ErrInvalidToken() error {
 func ErrUnmarshal(err error) error {
 	return errors.New(ErrUnmarshalCode, errors.Alert,
 		[]string{"Error Unmarshalling Response"},
-		[]string{"Error processing JSON response from server.\n" + err.Error()},
+		[]string{"Unable to process JSON response from server.\n" + err.Error()},
 		[]string{"The JSON format from the response body is not valid."},
-		[]string{"Check if valid JSON is provided for processing."})
+		[]string{"Ensure a valid JSON is provided for processing."})
 }
 
 func ErrFileRead(err error) error {
@@ -303,7 +317,7 @@ func ErrMarshal(err error) error {
 
 func ErrReadResponseBody(err error) error {
 	return errors.New(ErrReadResponseBodyCode, errors.Alert,
-		[]string{"Error reading response body from request"},
+		[]string{"Failed to read response body from request"},
 		[]string{err.Error()},
 		[]string{"There might be connection failure with Meshery Server"},
 		[]string{"Check the status via `mesheryctl system status`"})

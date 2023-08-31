@@ -102,8 +102,8 @@ mesheryctl app offboard -f [filepath]
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(utils.ErrCreatingRequest(err))
-			return utils.ErrCreatingRequest(err)
+			utils.Log.Error(utils.ErrRequestResponse(err))
+			return utils.ErrRequestResponse(err)
 		}
 		defer resp.Body.Close()
 

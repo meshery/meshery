@@ -62,8 +62,8 @@ mesheryctl app list
 
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(utils.ErrCreatingRequest(err))
-			return utils.ErrCreatingRequest(err)
+			utils.Log.Error(utils.ErrRequestResponse(err))
+			return utils.ErrRequestResponse(err)
 		}
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)

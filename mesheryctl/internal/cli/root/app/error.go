@@ -25,9 +25,8 @@ const (
 	ErrAppManifestcode     = "1028"
 	ErrOnboardAppCode      = "1029"
 	ErrAppFoundCode        = "1030"
-	ErrNoAppNameOrIDCode   = "1031"
-	ErrInvalidNameOrIDCode = "1032"
-	ErrAppFlagCode         = "1033"
+	ErrInvalidNameOrIDCode = "1031"
+	ErrAppFlagCode         = "1032"
 )
 const (
 	errAppMsg = `Usage: mesheryctl app import -f [file/url] -s [source-type]
@@ -79,20 +78,12 @@ func ErrAppFound() error {
 	)
 }
 
-func ErrNoAppNameOrID() error {
-	return errors.New(ErrNoAppNameOrIDCode, errors.Alert,
-		[]string{"Unable to get Application"},
-		[]string{"Unable to get Application name or id"},
-		[]string{"Application name|id not specified"},
-		[]string{"Run `mesheryctl app view --all` to view all applications"})
-}
-
-func ErrInvalidNameOrID() error {
+func ErrInvalidNameOrID(err error) error {
 	return errors.New(ErrInvalidNameOrIDCode, errors.Alert,
 		[]string{"Invalid application"},
 		[]string{"Failed to get application based on input"},
 		[]string{"Application name|id is invalid"},
-		[]string{"Run `mesheryctl app list`to display list of applications"})
+		[]string{"Run `mesheryctl app view --all` to view all applications"})
 }
 
 func ErrViewAppFlag() error {

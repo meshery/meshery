@@ -70,7 +70,7 @@ mesheryctl app view --all
 			}
 			applicationID, isID, err = utils.ValidId(args[0], "application")
 			if err != nil {
-				return ErrInvalidNameOrID()
+				return ErrInvalidNameOrID(err)
 			}
 		}
 		var req *http.Request
@@ -82,7 +82,7 @@ mesheryctl app view --all
 			if viewAllFlag {
 				url += "/api/application?pagesize=10000"
 			} else {
-				return ErrNoAppNameOrID()
+				return errors.New(utils.AppViewError("Application name or ID is not specified. Use `-a` to view all applications"))
 			}
 		} else if isID {
 			// if application is a valid uuid, then directly fetch the application
@@ -99,7 +99,7 @@ mesheryctl app view --all
 
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			return utils.ErrCreatingRequest(err)
+			return utils.ErrRequestResponse(err)
 		}
 
 		defer res.Body.Close()

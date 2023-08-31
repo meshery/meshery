@@ -107,7 +107,7 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
-			return nil, utils.ErrCreatingRequest(err)
+			return nil, utils.ErrRequestResponse(err)
 		}
 		utils.Log.Debug("App file saved")
 		var response []*models.MesheryApplication
@@ -156,7 +156,7 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
-			return nil, utils.ErrCreatingRequest(err)
+			return nil, utils.ErrRequestResponse(err)
 		}
 		utils.Log.Debug("remote hosted app request success")
 		var response []*models.MesheryApplication

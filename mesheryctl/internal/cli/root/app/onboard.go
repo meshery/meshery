@@ -92,8 +92,8 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 
 			resp, err := utils.MakeRequest(req)
 			if err != nil {
-				utils.Log.Error(utils.ErrCreatingRequest(err))
-				return utils.ErrCreatingRequest(err)
+				utils.Log.Error(utils.ErrRequestResponse(err))
+				return utils.ErrRequestResponse(err)
 			}
 
 			var response *models.ApplicationsAPIResponse
@@ -141,7 +141,7 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			return utils.ErrCreatingRequest(err)
+			return utils.ErrRequestResponse(err)
 		}
 
 		defer res.Body.Close()
