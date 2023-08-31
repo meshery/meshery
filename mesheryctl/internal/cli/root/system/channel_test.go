@@ -2,6 +2,7 @@ package system
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"testing"
 
@@ -50,6 +51,11 @@ func setFlagValueAsUndefined(flag *pflag.Flag) {
 	_ = flag.Value.Set("")
 }
 
+func PrintSetChannel(stable, Edge string) string {
+	var ctx config.Context
+	return fmt.Sprintf("Channel set to %s-%s", ctx.Channel, ctx.Version)
+}
+
 type CmdTestInput struct {
 	Name             string
 	Args             []string
@@ -71,6 +77,31 @@ func TestViewCmd(t *testing.T) {
 		},
 	}
 
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			SetupFunc()
+			SystemCmd.SetArgs(tt.Args)
+			err = SystemCmd.Execute()
+			if err != nil {
+				t.Error(err)
+			}
+
+			actualResponse := b.String()
+			expectedResponse := tt.ExpectedResponse
+			assert.Equal(t, expectedResponse, actualResponse)
+			BreakupFunc()
+		})
+	}
+}
+
+func TestSetCmd(t *testing.T) {
+	tests := []CmdTestInput{
+		{
+			Name:             "Set Channel",
+			Args:             []string{"channel", "set", "-c", "local", "latest"},
+			ExpectedResponse: PrintSetChannel("stable", "latest"),
+		},
+	}
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			SetupFunc()

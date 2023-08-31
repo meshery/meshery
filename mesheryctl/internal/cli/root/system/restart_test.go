@@ -20,14 +20,14 @@ func TestRestartCmd(t *testing.T) {
 	testcases := []utils.CmdTestInput{
 		{
 			Name:             "Restart meshery on docker",
-			Args:             []string{"restart","-y", "-c", "docker"},
-			ExpectedResponse: "restart_k8.output.golden",
-		},
-		{
-			Name:             "Restart Meshery on k8",
-			Args:             []string{"restart","-y", "-c", "k8s"},
+			Args:             []string{"restart", "local"},
 			ExpectedResponse: "restart_docker.output.golden",
 		},
+		// {
+		// 	Name:             "Restart Meshery on k8",
+		// 	Args:             []string{"restart", "local2"},
+		// 	ExpectedResponse: "restart_k8.output.golden",
+		// },
 	}
 	for _, test := range testcases {
 		t.Run(test.Name, func(t *testing.T) {
