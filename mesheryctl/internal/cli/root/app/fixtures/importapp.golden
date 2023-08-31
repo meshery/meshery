@@ -1,0 +1,13 @@
+name: SampleApp # display name in Meshery UI
+services:
+  myapp:
+    type: Application
+    namespace: test
+    settings:
+      replicas: 1
+      containers:
+        - name: Meshery
+          image: layer5/meshery:stable-latest
+          ports:
+            - name: http
+              containerPort: 8080

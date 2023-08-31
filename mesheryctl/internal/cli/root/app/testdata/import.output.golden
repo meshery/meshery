@@ -1,0 +1,18 @@
+Get "http://localhost:9081/api/application/types": no responder found
+Usage:
+  app import [flags]
+
+Examples:
+
+// Import app manifest
+mesheryctl app import -f [file/URL] -s [source-type]
+	
+
+Flags:
+  -f, --file string          Path/URL to app file
+  -h, --help                 help for import
+  -s, --source-type string   Type of source file (ex. manifest / compose / helm)
+
+Global Flags:
+  -t, --token string   Path to token file default from current context
+
