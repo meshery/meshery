@@ -9,7 +9,7 @@ project_status: stable
 lab: consul-meshery-adapter
 github_link: https://github.com/meshery/meshery-consul
 image: /assets/img/service-meshes/consul.svg
-white_image: /assets/img/service-meshes/consul.svg
+white_image: /assets/img/service-meshes/consul-white.svg
 language: en
 language: en
 #redirect_from: service-meshes/adapters/consul

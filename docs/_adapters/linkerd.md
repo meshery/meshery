@@ -9,7 +9,7 @@ project_status: stable
 lab: linkerd-meshery-adapter
 github_link: https://github.com/meshery/meshery-linkerd
 image: /assets/img/service-meshes/linkerd.svg
-white_image: /assets/img/service-meshes/linkerd.svg
+white_image: /assets/img/service-meshes/linkerd-white.svg
 permalink: service-meshes/adapters/linkerd
 language: en
 ---
