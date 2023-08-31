@@ -371,7 +371,7 @@ function Connections({ classes, updateProgress }) {
           <TableCell>
           </TableCell>
           <TableCell colSpan={colSpan}>
-            <b>Server builsd SHA:</b> {rowData[8]}
+            <b>Server Build SHA:</b> {rowData[8]}
           </TableCell>
           <TableCell colSpan={colSpan}>
             <b>Server Version:</b> {rowData[9]}
