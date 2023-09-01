@@ -98,10 +98,10 @@ type RestrictedAccess struct {
 
 // Extensions defines the UI extension points
 type Extensions struct {
-	Navigator NavigatorExtensions `json:"navigator,omitempty"`
-	UserPrefs UserPrefsExtensions `json:"user_prefs,omitempty"`
-	GraphQL   GraphQLExtensions   `json:"graphql,omitempty"`
-	Acccount  AccountExtensions   `json:"account,omitempty"`
+	Navigator    NavigatorExtensions    `json:"navigator,omitempty"`
+	UserPrefs    UserPrefsExtensions    `json:"user_prefs,omitempty"`
+	GraphQL      GraphQLExtensions      `json:"graphql,omitempty"`
+	Acccount     AccountExtensions      `json:"account,omitempty"`
 	Collaborator CollaboratorExtensions `json:"collaborator,omitempty"`
 }
 
@@ -211,6 +211,7 @@ type ConnectionPayload struct {
 	MetaData         map[string]interface{} `json:"metadata,omitempty"`
 	Status           ConnectionStatus       `json:"status,omitempty"`
 	CredentialSecret map[string]interface{} `json:"credential_secret,omitempty"`
+	Name             string                 `json:"name,omitempty"`
 }
 
 type ExtensionProxyResponse struct {
@@ -406,7 +407,7 @@ type Provider interface {
 	DeleteMesheryPatternResource(token, resourceID string) error
 
 	SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error)
-	GetMesheryFilters(tokenString, page, pageSize, search, order string) ([]byte, error)
+	GetMesheryFilters(tokenString, page, pageSize, search, order string, visibility string) ([]byte, error)
 	GetCatalogMesheryFilters(tokenString string, page, pageSize, search, order string) ([]byte, error)
 	PublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error)
 	UnPublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error)

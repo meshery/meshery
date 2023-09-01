@@ -8,16 +8,14 @@ import { getDuplicateModels, getDuplicateComponents } from "../api/meshmodel";
 import { MODELS, COMPONENTS } from '../constants/navigator';
 
 
+
 const DuplicatesDataTable = ({ view, rowData, classes }) => {
   const [resourcesDetail, setResourcesDetail] = useState();
   const [count, setCount] = useState();
   const [page, setPage] = useState(0);
   const [, setSearchText] = useState(null);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
-  const kind = rowData[0].props?.children?.props?.children;
-  const model = rowData[3].props?.children?.props?.children;
-  const version = rowData[1].props?.children?.props?.children;
+  const { kind,model,version } = rowData
 
   const getDuplicatedModels = async (model, version) => {
     const { total_count, models } = await getDuplicateModels(model, version);
@@ -198,6 +196,7 @@ const DuplicatesDataTable = ({ view, rowData, classes }) => {
         options={meshmodel_options}
         classes={classes}
       />
+
     </div>
   );
 

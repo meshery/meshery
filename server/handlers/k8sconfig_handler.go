@@ -88,8 +88,8 @@ func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.Resp
 	// Get meshery instance ID
 	mid, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
 	if !ok {
-		logrus.Error(ErrMesheryInstanceID)
-		http.Error(w, ErrMesheryInstanceID.Error(), http.StatusInternalServerError)
+		logrus.Error(models.ErrMesheryInstanceID)
+		http.Error(w, models.ErrMesheryInstanceID.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -117,8 +117,8 @@ func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.Resp
 		h.config.K8scontextChannel.PublishContext()
 	}
 	if err := json.NewEncoder(w).Encode(saveK8sContextResponse); err != nil {
-		logrus.Error(ErrMarshal(err, "kubeconfig"))
-		http.Error(w, ErrMarshal(err, "kubeconfig").Error(), http.StatusInternalServerError)
+		logrus.Error(models.ErrMarshal(err, "kubeconfig"))
+		http.Error(w, models.ErrMarshal(err, "kubeconfig").Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -127,7 +127,7 @@ func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.Resp
 			Component:     "core",
 			ComponentName: "kubernetes",
 			OperationId:   guid.NewString(),
-			EventType:     meshes.EventType_INFO,
+			EventType:     meshes.EventType_WARN,
 			Summary:       "Kubernetes configuration Info",
 			Details:       respMessage,
 		})
@@ -175,8 +175,8 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	// Get meshery instance ID
 	mid, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
 	if !ok {
-		logrus.Error(ErrMesheryInstanceID)
-		http.Error(w, ErrMesheryInstanceID.Error(), http.StatusInternalServerError)
+		logrus.Error(models.ErrMesheryInstanceID)
+		http.Error(w, models.ErrMesheryInstanceID.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -184,13 +184,13 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 
 	err = json.NewEncoder(w).Encode(contexts)
 	if err != nil {
-		logrus.Error(ErrMarshal(err, "kube-context"))
-		http.Error(w, ErrMarshal(err, "kube-context").Error(), http.StatusInternalServerError)
+		logrus.Error(models.ErrMarshal(err, "kube-context"))
+		http.Error(w, models.ErrMarshal(err, "kube-context").Error(), http.StatusInternalServerError)
 		return
 	}
 }
 
-// swagger:route GET /api/system/kubernetes/ping?contexts={id} SystemAPI idGetKubernetesPing
+// swagger:route GET /api/system/kubernetes/ping?connection_id={id} SystemAPI idGetKubernetesPing
 // Handle GET request for Kubernetes ping
 //
 // Fetches server version to simulate ping
@@ -206,10 +206,10 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		return
 	}
 
-	ctx := req.URL.Query().Get("context")
-	if ctx != "" {
+	connectionID := req.URL.Query().Get("connection_id")
+	if connectionID != "" {
 		// Get the context associated with this ID
-		k8sContext, err := provider.GetK8sContext(token, ctx)
+		k8sContext, err := provider.GetK8sContext(token, connectionID)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(w, "failed to get kubernetes context for the given ID")
@@ -233,8 +233,8 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 			"server_version": version.String(),
 		}); err != nil {
 			err = errors.Wrap(err, "unable to marshal the payload")
-			logrus.Error(ErrMarshal(err, "kube-server-version"))
-			http.Error(w, ErrMarshal(err, "kube-server-version").Error(), http.StatusInternalServerError)
+			logrus.Error(models.ErrMarshal(err, "kube-server-version"))
+			http.Error(w, models.ErrMarshal(err, "kube-server-version").Error(), http.StatusInternalServerError)
 		}
 		return
 	}
@@ -261,8 +261,8 @@ func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Reques
 	// Get meshery instance ID
 	mid, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
 	if !ok {
-		logrus.Error(ErrMesheryInstanceID)
-		http.Error(w, ErrMesheryInstanceID.Error(), http.StatusInternalServerError)
+		logrus.Error(models.ErrMesheryInstanceID)
+		http.Error(w, models.ErrMesheryInstanceID.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -280,14 +280,15 @@ func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]
 	// Get meshery instance ID
 	mid, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
 	if !ok {
-		return contexts, ErrMesheryInstanceID
+		return contexts, models.ErrMesheryInstanceID
 	}
 
 	// Attempt to get kubeconfig from the filesystem
 	if h.config == nil {
-		return contexts, ErrInvalidK8SConfig
+		return contexts, ErrInvalidK8SConfigNil
 	}
 	data, err := utils.ReadFileSource(fmt.Sprintf("file://%s", filepath.Join(h.config.KubeConfigFolder, "config")))
+
 	if err != nil {
 		// Could be an in-cluster deployment
 		ctxName := "in-cluster"

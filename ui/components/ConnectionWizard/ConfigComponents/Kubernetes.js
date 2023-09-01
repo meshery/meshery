@@ -7,12 +7,12 @@ import {
   Grid,
 } from "@material-ui/core/";
 import BackupIcon from "@material-ui/icons/Backup";
-import { withSnackbar } from "notistack";
 import { useState } from "react";
 import { fetchContexts, submitConfig } from "../helpers/kubernetesHelpers";
+import { useNotification } from "../../../utils/hooks/useNotification";
 
 const KubernetesConfig = ({
-  enqueueSnackbar, closeSnackbar, updateK8SConfig, updateProgress
+  updateK8SConfig, updateProgress
 }) => {
 
   const [state, setState] = useState({
@@ -24,7 +24,7 @@ const KubernetesConfig = ({
     k8sfileElementVal : "",
     inClusterConfigForm : false,
   })
-
+  const { notify } = useNotification();
 
   const handleChange = (name) => {
     return (event) => {
@@ -40,12 +40,12 @@ const KubernetesConfig = ({
               ...state, contextsFromFile : res.result, k8sfile, contextNameForForm : res.currentContextName
             })
             if (res.result.length === 1)
-              submitConfig(enqueueSnackbar, updateProgress, updateK8SConfig, () => null, res.currentContextName, k8sfile);
+              submitConfig(notify, updateProgress, updateK8SConfig, () => null, res.currentContextName, k8sfile);
           })
           .catch(err => alert(err))
       }
       if ( name === "contextNameChange"){
-        submitConfig(enqueueSnackbar, updateProgress, updateK8SConfig, action, event.target.value, k8sfile);
+        submitConfig(notify, updateProgress, updateK8SConfig, action, event.target.value, k8sfile);
       }
     };
   };
@@ -147,4 +147,4 @@ const KubernetesConfig = ({
 }
 
 
-export default withSnackbar(KubernetesConfig)
+export default KubernetesConfig

@@ -2,7 +2,6 @@ package perf
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/layer5io/meshkit/errors"
 )
@@ -11,23 +10,20 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrMesheryConfigCode         = "1027"
-	ErrReadFilepathCode          = "1028"
-	ErrNoProfileNameCode         = "1029"
-	ErrNoTestURLCode             = "1030"
-	ErrNotValidURLCode           = "1031"
-	ErrFailMarshalCode           = "1032"
-	ErrAttachAuthTokenCode       = "1033"
-	ErrFailRequestCode           = "1034"
-	ErrFailReqStatusCode         = "1035"
-	ErrFailUnmarshalCode         = "1036"
-	ErrNoProfileFoundCode        = "1037"
-	ErrFailTestRunCode           = "1038"
-	ErrInvalidOutputChoiceCode   = "1039"
-	ErrUnauthenticatedCode       = "1040"
-	ErrFailUnmarshalFileCode     = "1041"
-	ErrInvalidTestConfigFileCode = "1042"
-	ErrArgumentOverflowCode      = "1043"
+	ErrMesheryConfigCode         = "1033"
+	ErrReadFilepathCode          = "1034"
+	ErrNoProfileNameCode         = "1035"
+	ErrNoTestURLCode             = "1036"
+	ErrNotValidURLCode           = "1037"
+	ErrFailMarshalCode           = "1038"
+	ErrFailUnmarshalCode         = "1039"
+	ErrNoProfileFoundCode        = "1040"
+	ErrFailTestRunCode           = "1041"
+	ErrInvalidOutputChoiceCode   = "1042"
+	ErrUnauthenticatedCode       = "1043"
+	ErrFailUnmarshalFileCode     = "1044"
+	ErrInvalidTestConfigFileCode = "1045"
+	ErrArgumentOverflowCode      = "1046"
 )
 
 func ErrMesheryConfig(err error) error {
@@ -58,31 +54,6 @@ func ErrNotValidURL() error {
 func ErrFailMarshal(err error) error {
 	return errors.New(ErrFailMarshalCode, errors.Alert, []string{},
 		[]string{"failed to marshal values", err.Error(), formatErrorWithReference()}, []string{}, []string{})
-}
-
-func ErrAttachAuthToken(err error) error {
-	return errors.New(ErrAttachAuthTokenCode, errors.Alert, []string{err.Error()},
-		[]string{"authentication token not found. Run `mesheryctl system login` to generate a new token or supply a valid token with the `--token` flag.", formatErrorWithReference()}, []string{}, []string{})
-}
-
-func ErrFailRequest(err error) error {
-	return errors.New(ErrFailRequestCode, errors.Alert, []string{},
-		[]string{"Failed to make a request", err.Error(), formatErrorWithReference()}, []string{}, []string{})
-}
-
-func ErrUnauthenticated() error {
-	return errors.New(ErrFailRequestCode, errors.Alert, []string{},
-		[]string{"Authentication token is invalid. Please supply a valid user token. Login with `mesheryctl system login`", formatErrorWithReference()}, []string{}, []string{})
-}
-
-func ErrExpired() error {
-	return errors.New(ErrFailRequestCode, errors.Alert, []string{},
-		[]string{"Authentication token is expired. Please login with `mesheryctl system login` to generate a new token", formatErrorWithReference()}, []string{}, []string{})
-}
-
-func ErrFailReqStatus(statusCode int) error {
-	return errors.New(ErrFailReqStatusCode, errors.Alert, []string{},
-		[]string{"Response Status Code " + strconv.Itoa(statusCode) + ", possible Server Error", formatErrorWithReference()}, []string{}, []string{})
 }
 
 func ErrFailUnmarshal(err error) error {

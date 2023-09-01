@@ -8,6 +8,7 @@ import MesheryPerformanceComponent from "./MesheryPerformance";
 import dataFetch from "../lib/data-fetch";
 import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";
 import PatternServiceFormCore from "./MesheryMeshInterface/PatternServiceFormCore";
+import RJSFWrapper from "./MesheryMeshInterface/PatternService/RJSF_wrapper";
 import { createRelayEnvironment, subscriptionClient } from "../lib/relayEnvironment";
 import subscribeMeshSyncStatusEvents from "../components/graphql/subscriptions/MeshSyncStatusSubscription"
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
@@ -15,7 +16,7 @@ import usePreventUserFromLeavingPage from "../utils/hooks/usePreventUserFromLeav
 import { getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
 import ConfirmationModal from "./ConfirmationModal"
 import { getComponentsinFile, generateValidatePayload } from "../utils/utils";
-import UploadImport from "./Modals/ImportModal";
+import UploadImport from "./UploadImport";
 import PublishModal from "../components/Modals/PublishModal"
 import ConfigurationSubscription from "../components/graphql/subscriptions/ConfigurationSubscription";
 import PromptComponent from "./PromptComponent";
@@ -67,6 +68,7 @@ function NavigatorExtension({ grafana, prometheus, updateLoadTestData, url, isDr
         GrafanaCustomCharts,
         updateLoadTestData,
         PatternServiceForm,
+        RJSFWrapper,
         PatternServiceFormCore,
         grafana,
         prometheus,

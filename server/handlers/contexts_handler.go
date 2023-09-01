@@ -41,8 +41,8 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *mo
 	err = json.Unmarshal(vals, &mesheryK8sContextPage)
 	if err != nil {
 		obj := "k8s context"
-		h.log.Error(ErrUnmarshal(err, obj))
-		http.Error(w, ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrUnmarshal(err, obj))
+		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
 	}
 	if err := json.NewEncoder(w).Encode(mesheryK8sContextPage); err != nil {
 		http.Error(w, "failed to encode contexts", http.StatusInternalServerError)
@@ -50,6 +50,7 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *mo
 	}
 }
 
+// not being used....
 func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	// if req.URL.Query().Get("current") != "" {
 	// 	context, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
@@ -72,6 +73,7 @@ func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models
 		return
 	}
 
+	h.log.Info("this is being used\n\n\n")
 	val, err := provider.GetK8sContext(token, mux.Vars(req)["id"])
 	if err != nil {
 		http.Error(w, "failed to get context", http.StatusInternalServerError)
@@ -91,6 +93,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		return
 	}
 
+	// id is the connection_id of the specific cluster in connections table
 	_, err := provider.DeleteK8sContext(token, mux.Vars(req)["id"])
 	if err != nil {
 		http.Error(w, "failed to delete context", http.StatusInternalServerError)

@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/schemas"
 )
 
@@ -14,8 +15,9 @@ import (
 // Handles the request to retrieve and merge resource JSON schema and UI schema.
 //
 // Responses:
-//   200
-//   500
+//
+//	200
+//	500
 func (h *Handler) HandleResourceSchemas(rw http.ResponseWriter, r *http.Request) {
 	rscName := mux.Vars(r)["resourceName"]
 	rjsfSchema, uiSchema, err := schemas.ServeJSonFile(rscName)
@@ -24,16 +26,15 @@ func (h *Handler) HandleResourceSchemas(rw http.ResponseWriter, r *http.Request)
 		return
 	}
 
-
 	var rjsfSchemaJSON map[string]interface{}
 	var uiSchemaJSON map[string]interface{}
 
 	if err := json.Unmarshal(rjsfSchema, &rjsfSchemaJSON); err != nil {
-		http.Error(rw, ErrUnmarshal(err, "RJSF schema").Error(), http.StatusInternalServerError)
+		http.Error(rw, models.ErrUnmarshal(err, "RJSF schema").Error(), http.StatusInternalServerError)
 		return
 	}
 
-	if err := json.Unmarshal(uiSchema, &rjsfSchemaJSON); err != nil {
+	if err := json.Unmarshal(uiSchema, &uiSchemaJSON); err != nil {
 		uiSchemaJSON = map[string]interface{}{}
 	}
 

@@ -120,7 +120,7 @@ func (h *Handler) MesheryControllersMiddleware(next func(http.ResponseWriter, *h
 		ctx := req.Context()
 		mk8sContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 		if !ok || len(mk8sContexts) == 0 {
-			h.log.Error(ErrInvalidK8SConfig)
+			h.log.Error(ErrInvalidK8SConfigNil)
 			// this should not block the request
 			next(w, req, prefObj, user, provider)
 			return
@@ -185,12 +185,17 @@ func (h *Handler) KubernetesMiddleware(next func(http.ResponseWriter, *http.Requ
 			}
 		} else {
 			for _, kctxID := range k8sContextIDs {
-				kctx, err := provider.GetK8sContext(token, kctxID)
-				if err != nil {
-					logrus.Warn("invalid context ID found")
-					continue
+				for _, c := range contexts {
+					if c != nil && c.ID == kctxID {
+						k8scontexts = append(k8scontexts, *c)
+					}
 				}
-				k8scontexts = append(k8scontexts, kctx)
+				// kctx, err := provider.GetK8sContext(token, kctxID)
+				// if err != nil {
+				// 	logrus.Warn("invalid context ID found")
+				// 	continue
+				// }
+				// k8scontexts = append(k8scontexts, kctx)
 			}
 		}
 		for _, k8scontext := range contexts {

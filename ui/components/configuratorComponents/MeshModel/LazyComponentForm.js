@@ -5,10 +5,11 @@ import { isEmpty } from "lodash";
 import React from "react";
 import { getMeshModelComponent } from "../../../api/meshmodel";
 import { iconMedium } from "../../../css/icons.styles";
-import { useSnackbar } from "notistack";
 import PatternServiceForm from "../../MesheryMeshInterface/PatternServiceForm";
 // eslint-disable-next-line no-unused-vars
 import * as Types from "../MeshModel/hooks/types";
+import { useNotification } from "../../../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../../../lib/event-types";
 // import { isEmptyObj } from "../../utils/utils";
 // import PatternServiceForm from "./PatternServiceForm";
 
@@ -34,7 +35,7 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
   const [schemaSet, setSchemaSet] = React.useState({});
-  const { enqueueSnackbar } = useSnackbar();
+  const { notify } = useNotification()
 
   async function expand(state) {
     if (!state) {
@@ -57,7 +58,7 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
         }
       }
     } catch (error) {
-      enqueueSnackbar(`error getting schema: ${error?.message}`, { variant : "error" })
+      notify({ message : `error getting schema: ${error?.message}`, event_type : EVENT_TYPES.ERROR, details : error.toString() })
     }
   }
 
