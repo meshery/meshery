@@ -687,6 +687,7 @@ func PrintToTableInStringFormat(header []string, data [][]string) string {
 	return tableString.String()
 }
 
+// Indicate an ongoing Process at a given time on CLI
 func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 	s := spinner.New(spinner.CharSets[11], 100*time.Millisecond)
 
@@ -695,6 +696,7 @@ func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 	return s
 }
 
+// Get Meshery Session Data/Details (Adapters)
 func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error) {
 	path := mctlCfg.GetBaseMesheryURL() + "/api/system/sync"
 	method := "GET"
