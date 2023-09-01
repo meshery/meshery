@@ -204,8 +204,7 @@ jobs:
         run: |
           # chmod +x ./main
           # ./main &
-          make ui-server &
-          sleep 60
+          make ui-server && sleep 60
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with:
