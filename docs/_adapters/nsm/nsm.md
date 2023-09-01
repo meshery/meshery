@@ -9,6 +9,7 @@ project_status: stable
 lab: nsm-meshery-adapter
 github_link: https://github.com/meshery/meshery-nsm
 image: /assets/img/service-meshes/nsm.svg
+white_image: /assets/img/service-meshes/nsm.svg
 permalink: service-meshes/adapters/nsm
 language: en
 ---

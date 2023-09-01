@@ -151,6 +151,7 @@ func TestApplyCmd(t *testing.T) {
 			utils.Equals(t, expectedResponse, actualResponse)
 			resetVariables()
 		})
+		t.Log("Apply Perf test Passed")
 	}
 	utils.StopMockery(t)
 }
