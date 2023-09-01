@@ -224,7 +224,6 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
     /**  @type {TypeView} */
     ("grid")
   );
-  const { notify } = useNotification()
   const FILTER_URL = "/api/filter"
   const DEPLOY_URL = FILTER_URL + "/deploy";
   const CLONE_URL = "/clone";
