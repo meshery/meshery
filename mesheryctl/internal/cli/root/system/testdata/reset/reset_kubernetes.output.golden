@@ -6,5 +6,20 @@ Version: latest
 Platform: kubernetes
 
 Fetching Meshery Server and Meshery Operator manifests for  local context...
-downloading manifest files from https://github.com/meshery/meshery/tree/v0.6.132/install/deployment_yamls/k8s
-...meshconfig has been reset to default settings.
+downloading manifest files from https://github.com/meshery/meshery/tree/v0.6.133/install/deployment_yamls/k8s
+Usage:
+  system reset [flags]
+
+Examples:
+
+// Resets meshery.yaml file with a copy from Meshery repo
+mesheryctl system reset
+	
+
+Flags:
+  -h, --help   help for reset
+
+Global Flags:
+  -c, --context string   (optional) temporarily change the current context.
+  -y, --yes              (optional) assume yes for user interactive prompts.
+
