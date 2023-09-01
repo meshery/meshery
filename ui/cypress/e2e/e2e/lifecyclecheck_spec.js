@@ -38,7 +38,7 @@ describe("Test Lifecycle Paths With None Provider", () => {
 
 
   it("visit Management page", () => {
-    cy.visit("/management");
+     cy.visit("/management");
     cy.contains("Lifecycle");
   })
 
