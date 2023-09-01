@@ -174,14 +174,14 @@ func K8sContextsFromKubeconfig(kubeconfig []byte, instanceID *uuid.UUID) ([]*K8s
 
 		err = kc.AssignVersion(handler)
 		if err != nil {
-			msg = fmt.Sprintf("Skipping context: error getting kubernetes version: %v ", err)
+			msg = fmt.Sprintf("Skipping context: Could not retrieve Kubernetes version: %v ", err)
 			logrus.Warnf(msg)
 			respMessage += msg
 			continue
 		}
 		
 		if err := kc.AssignServerID(handler); err != nil {
-			msg = fmt.Sprintf("Skipping context: error getting kubernetes server ID %v", err)
+			msg = fmt.Sprintf("Skipping context: Could not retrieve Kubernetes cluster ID (%v)", err)
 			logrus.Warn(msg)
 			respMessage += msg
 			continue

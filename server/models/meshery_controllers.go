@@ -86,10 +86,10 @@ func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControl
 					if err != nil {
 						mch.log.Warn(err)
 					}
-					mch.log.Info(fmt.Sprintf("skipping meshsync data handler setup for contextId: %v as its public endpoint could not be found", ctxID))
+					mch.log.Info(fmt.Sprintf("Meshery Broker unreachable for Kubernetes context (%v)", ctxID))
 					continue
 				}
-				mch.log.Info(fmt.Sprintf("found meshery-broker endpoint: %s for contextId: %s", brokerEndpoint, ctxID))
+				mch.log.Info(fmt.Sprintf("Connected to Meshery Broker (%s) for Kubernetes context (%s)", brokerEndpoint, ctxID))
 				brokerHandler, err := nats.New(nats.Options{
 					// URLS: []string{"localhost:4222"},
 					URLS:           []string{brokerEndpoint},
@@ -101,19 +101,19 @@ func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControl
 				})
 				if err != nil {
 					mch.log.Warn(err)
-					mch.log.Info(fmt.Sprintf("skipping meshsync data handler setup for contextId: %v due to: %v", ctxID, err.Error()))
+					mch.log.Info(fmt.Sprintf("MeshSync not configured for Kubernetes context (%v) due to '%v'", ctxID, err.Error()))
 					continue
 				}
-				mch.log.Info(fmt.Sprintf("broker connection successfully established for contextId: %v with meshery-broker at: %v", ctxID, brokerEndpoint))
+				mch.log.Info(fmt.Sprintf("Connected to Meshery Broker (%v) for Kubernetes context (%v)", brokerEndpoint, ctxID))
 				msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log)
 				err = msDataHandler.Run()
 				if err != nil {
 					mch.log.Warn(err)
-					mch.log.Info(fmt.Sprintf("skipping meshsync data handler setup for contextId: %s due to: %s", ctxID, err.Error()))
+					mch.log.Info(fmt.Sprintf("Unable to connect MeshSync for Kubernetes context (%s) due to: %s", ctxID, err.Error()))
 					continue
 				}
 				mch.ctxMeshsyncDataHandlerMap[ctxID] = *msDataHandler
-				mch.log.Info(fmt.Sprintf("meshsync data handler successfully setup for contextId: %s", ctxID))
+				mch.log.Info(fmt.Sprintf("MeshSync connected for Kubernetes context (%s)", ctxID))
 			}
 		}
 	}(mch)
