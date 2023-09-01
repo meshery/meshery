@@ -27,7 +27,7 @@
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.7",
-    "@mui/material": "^5.14.3",
+    "@mui/material": "^5.14.7",
     "babel-plugin-istanbul": "^6.1.1",
     "http-proxy": "^1.18.1",
     "isomorphic-unfetch": "^4.0.2",
@@ -37,7 +37,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "cypress": "^12.17.4",
+    "cypress": "^13.1.0",
     "eslint": "^8.48.0",
     "eslint-config-next": "^13.4.19",
     "eslint-plugin-cypress": "^2.14.0",
