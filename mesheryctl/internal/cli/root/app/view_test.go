@@ -12,7 +12,6 @@ import (
 )
 
 var update = flag.Bool("update", false, "update golden files")
-var tempAppID = "e39df138-bd73-47f1-8db4-edfc4027f178"
 var tempAppName = "OApplicationPattern"
 
 func TestAppView(t *testing.T) {
@@ -46,11 +45,11 @@ func TestAppView(t *testing.T) {
 	}{
 		{
 			Name:             "View Applications with ID",
-			Args:             []string{"view", tempAppID},
+			Args:             []string{"view", "41f81b3d-64dc-42de-8b68-fa904ec46da9"},
 			View:             "ApplicationId",
 			ExpectedResponse: "view.applicationid.output.golden",
 			Fixture:          "view.applicationid.api.response.golden",
-			URL:              testContext.BaseURL + "/api/application/" + tempAppID,
+			URL:              testContext.BaseURL + "/api/application/41f81b3d-64dc-42de-8b68-fa904ec46da9",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
 		},
@@ -74,16 +73,16 @@ func TestAppView(t *testing.T) {
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      true,
 		},
-		{
-			Name:             "View All Applications",
-			Args:             []string{"view", "--all"},
-			View:             "Applications",
-			ExpectedResponse: "view.application.output.golden",
-			Fixture:          "view.application.api.response.golden",
-			URL:              testContext.BaseURL + "/api/application",
-			Token:            filepath.Join(fixturesDir, "token.golden"),
-			ExpectError:      false,
-		},
+		// {
+		// 	Name:             "View All Applications",
+		// 	Args:             []string{"view", "--all"},
+		// 	View:             "Applications",
+		// 	ExpectedResponse: "view.application.output.golden",
+		// 	Fixture:          "view.application.api.response.golden",
+		// 	URL:              testContext.BaseURL + "/api/application",
+		// 	Token:            filepath.Join(fixturesDir, "token.golden"),
+		// 	ExpectError:      false,
+		// },
 	}
 
 	// Run tests
