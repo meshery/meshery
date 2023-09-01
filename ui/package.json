@@ -119,7 +119,7 @@
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^2.2.3",
     "@babel/core": "^7.21.3",
-    "@babel/eslint-parser": "^7.18.2",
+    "@babel/eslint-parser": "^7.22.11",
     "@babel/traverse": "^7.20.1",
     "@babel/types": "^7.22.5",
     "@next/eslint-plugin-next": "^13.1.2",

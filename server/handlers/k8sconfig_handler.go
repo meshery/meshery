@@ -289,15 +289,6 @@ func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]
 	}
 	data, err := utils.ReadFileSource(fmt.Sprintf("file://%s", filepath.Join(h.config.KubeConfigFolder, "config")))
 
-	h.EventsBuffer.Publish(&meshes.EventsResponse{
-		Component:     "core",
-		ComponentName: "kubernetes",
-		OperationId:   guid.NewString(),
-		EventType:     meshes.EventType_INFO,
-		Summary:       "Kubernetes Connection Information",
-		Details:      fmt.Sprintf("Unable to access kubeconfig. Verify that the file exists at %s and has sufficient read permissions", filepath.Join(h.config.KubeConfigFolder, "config")),
-	})
-
 	if err != nil {
 		// Could be an in-cluster deployment
 		ctxName := "in-cluster"
