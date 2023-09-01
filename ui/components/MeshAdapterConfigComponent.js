@@ -172,9 +172,9 @@ class  MeshAdapterConfigComponent extends React.Component {
     } else if (status === STATUS.UNDEPLOYED) {
       return "#808080";
     } else if (status === STATUS.DEPLOYING) {
-      return "#FFEA00"
+      return "#EBC017"
     } else if (status === STATUS.UNDEPLOYING) {
-      return "#FFAF0A"
+      return "#E75225"
     }
   }
 
