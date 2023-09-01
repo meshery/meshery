@@ -1635,7 +1635,7 @@ func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pag
 func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
 		logrus.Error("operation not available")
-		return nil, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryPatterns, l.ProviderName)
+		return nil, ErrInvalidCapability("PersistMesheryPatterns", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
@@ -1657,7 +1657,7 @@ func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string) 
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
 		logrus.Errorf("unable to get patterns: %v", err)
-		return nil, err
+		return nil, ErrFetch(err, "Pattern:"+patternID, resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -1665,7 +1665,7 @@ func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string) 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Errorf("unable to read response body: %v", err)
-		return nil, err
+		return nil, ErrDataRead(err, "Pattern:"+patternID)
 	}
 
 	if resp.StatusCode == http.StatusOK {
@@ -1673,7 +1673,7 @@ func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string) 
 		return bdr, nil
 	}
 	logrus.Errorf("error while fetching pattern: %s", bdr)
-	return nil, fmt.Errorf("error while getting pattern - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	return nil, ErrFetch(fmt.Errorf("could not retrieve pattern from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // DeleteMesheryPattern deletes a meshery pattern with the given id
@@ -2044,7 +2044,7 @@ func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFi
 }
 
 // GetMesheryFilters gives the filters stored with the provider
-func (l *RemoteProvider) GetMesheryFilters(tokenString string, page, pageSize, search, order string) ([]byte, error) {
+func (l *RemoteProvider) GetMesheryFilters(tokenString string, page, pageSize, search, order string, visibility string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryFilters) {
 		logrus.Error("operation not available")
 		return []byte{}, ErrInvalidCapability("PersistMesheryFilters", l.ProviderName)
@@ -2067,6 +2067,9 @@ func (l *RemoteProvider) GetMesheryFilters(tokenString string, page, pageSize, s
 	}
 	if order != "" {
 		q.Set("order", order)
+	}
+	if visibility != "" {
+		q.Set("visibility", visibility)
 	}
 	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("constructed filters url: %s", remoteProviderURL.String())
@@ -3839,7 +3842,7 @@ func (l *RemoteProvider) DeleteMesheryConnection() error {
 		return nil
 	}
 
-	return ErrDelete(fmt.Errorf("could not delete meshery connection"), "Meshery Connection", resp.StatusCode)
+	return ErrDelete(fmt.Errorf("Could not delete meshery connection"), " Meshery Connection", resp.StatusCode)
 }
 
 // RecordMeshSyncData records the mesh sync data

@@ -12,7 +12,7 @@ import (
 func (r *Resolver) fetchFilters(ctx context.Context, provider models.Provider, selector model.PageFilter) (*model.FilterPage, error) {
 	tokenString := ctx.Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetMesheryFilters(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order)
+	resp, err := provider.GetMesheryFilters(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order, models.Private)
 
 	if err != nil {
 		r.Log.Error(err)

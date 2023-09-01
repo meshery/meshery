@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"strings"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
@@ -86,8 +87,9 @@ func (tf *GoldenFile) Load() string {
 	if err != nil {
 		tf.t.Fatalf("could not read file %s: %v", tf.name, err)
 	}
-
-	return string(content)
+	// ensuring that the newline characters in the content are consistent and match the expected newline representation
+	normalizedContent := strings.ReplaceAll(string(content), "\r\n", "\n")
+	return normalizedContent
 }
 
 // Load a Golden file

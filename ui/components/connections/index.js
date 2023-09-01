@@ -391,10 +391,11 @@ function Connections({ classes, updateProgress }) {
     rowsExpanded : [0, 1],
     renderExpandableRow : (rowData) => {
       return (
-        <TableRow className={classNames(classes.expandedRows)}>
-          <TableCell></TableCell>
-          <TableCell colSpan={3}>
-            <b>Server Builsd SHA:</b> {rowData[9]}
+        <TableRow>
+          <TableCell>
+          </TableCell>
+          <TableCell colSpan={colSpan}>
+            <b>Server Build SHA:</b> {rowData[8]}
           </TableCell>
           <TableCell colSpan={2}>
             <b>Server Version:</b> {rowData[10]}

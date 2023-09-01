@@ -127,7 +127,7 @@ func (h *Handler) addK8SConfig(_ *models.User, _ *models.Preference, w http.Resp
 			Component:     "core",
 			ComponentName: "kubernetes",
 			OperationId:   guid.NewString(),
-			EventType:     meshes.EventType_INFO,
+			EventType:     meshes.EventType_WARN,
 			Summary:       "Kubernetes configuration Info",
 			Details:       respMessage,
 		})
@@ -288,6 +288,7 @@ func (h *Handler) LoadContextsAndPersist(token string, prov models.Provider) ([]
 		return contexts, ErrInvalidK8SConfig
 	}
 	data, err := utils.ReadFileSource(fmt.Sprintf("file://%s", filepath.Join(h.config.KubeConfigFolder, "config")))
+
 	if err != nil {
 		// Could be an in-cluster deployment
 		ctxName := "in-cluster"

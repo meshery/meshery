@@ -35,10 +35,10 @@ mesheryctl system start
 </div>
 </pre> 
 
-To create a new context for in-cluster Kubernetes deployments and set the new context as your current-context
+(optional) skip opening of MesheryUI in browser.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system context create k8s -p kubernetes -s
+mesheryctl system start --skip-browser
 
 </div>
 </pre> 
@@ -59,10 +59,10 @@ mesheryctl system start --reset
 </div>
 </pre> 
 
-Silently create Meshery's configuration file with default settings
+Specify Platform to deploy Meshery to.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system start --yes
+mesheryctl system start -p docker
 
 </div>
 </pre> 

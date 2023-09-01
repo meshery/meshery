@@ -54,6 +54,9 @@ mesheryctl system stop
 // Reset Meshery's configuration file to default settings.
 mesheryctl system stop --reset
 
+// (optional) keep the Meshery namespace during uninstallation
+mesheryctl system stop --keep-namespace
+
 // Stop Meshery forcefully (use it when system stop doesn't work)
 mesheryctl system stop --force
 	`,

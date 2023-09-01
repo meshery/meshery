@@ -124,6 +124,7 @@ func TestApplyCmd(t *testing.T) {
 
 			utils.Equals(t, expectedResponse, actualResponse)
 		})
+		t.Log("Apply Pattern Test Passed")
 	}
 
 	// stop mock server
