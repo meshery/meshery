@@ -86,7 +86,7 @@ class MesheryApp extends App {
     super();
     this.pageContext = getPageContext();
     this.meshsyncEventsSubscriptionRef = React.createRef();
-    this.fullscreenchanged = this.fullscreenchanged.bind(this);
+    this.fullScreenChanged = this.fullScreenChanged.bind(this);
 
     this.state = {
       mobileOpen : false,
@@ -140,7 +140,7 @@ class MesheryApp extends App {
     this.meshsyncEventsSubscriptionRef.current = meshSyncEventsSubscription;
   }
 
-  fullscreenchanged = () => {
+  fullScreenChanged = () => {
     this.setState(state => {
       return { isFullScreenMode : !state.isFullScreenMode }
     });
@@ -184,11 +184,11 @@ class MesheryApp extends App {
     const disposeK8sContextSubscription = k8sContextSubscription();
     this.setState({ disposeK8sContextSubscription })
 
-    document.addEventListener("fullscreenchange", this.fullscreenchanged);
+    document.addEventListener("fullscreenchange", this.fullScreenChanged);
   }
 
   componentWillUnmount() {
-    document.removeEventListener("fullscreenchange", this.fullscreenchanged);
+    document.removeEventListener("fullscreenchange", this.fullScreenChanged);
   }
 
   componentDidUpdate(prevProps) {
