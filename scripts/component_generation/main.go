@@ -138,7 +138,9 @@ func main() {
 	}
 	defer modelsFd.Close()
 
-	pkgs, err := loadPackages(modelsFd)
+	file := filepath.Join(OutputDirPath, CompModelsFile) 
+
+	pkgs, err := loadPackages(file)
 	if err != nil {
 		fmt.Println(err)
 		return
