@@ -76,12 +76,6 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps }) => {
                   key={col.name}
                   control={
                     <Checkbox
-                    // sx={{
-                    //   color: theme.palette.charcoal,
-                    //   '&.Mui-checked': {
-                    //     color: theme.palette.keppelGreen,
-                    //   },
-                    // }}
                       checked={customToolsProps.columnVisibility[col.name]}
                       onChange={e =>
                         handleColumnVisibilityChange(col.name, e.target.checked)
