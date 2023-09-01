@@ -147,11 +147,23 @@ jobs:
         with:
           repository: layer5io/meshery-istio
           path: ./meshery-istio
+      - name: Run meshery-istio
+        run: |
+          mkdir -p /home/runner/.meshery/bin
+          cd ./meshery-istio
+          go run main.go &
+          sleep 60
       - name: Check out meshery-consul code
         uses: actions/checkout@v3
         with:
           repository: layer5io/meshery-consul
           path: ./meshery-consul
+      - name: Run meshery-consul
+        run: |
+          mkdir -p /home/runner/.meshery/bin
+          cd ./meshery-consul
+          go run main.go &
+          sleep 60
       - name: Setup go
         uses: actions/setup-go@master
         with:
@@ -160,18 +172,6 @@ jobs:
         uses: helm/kind-action@v1.8.0
         with:
           cluster_name: "kind-cluster"
-      - name: Run meshery-istio
-        run: |
-          mkdir -p /home/runner/.meshery/bin
-          cd ./meshery-istio
-          go run main.go &
-          sleep 60
-      - name: Run meshery-consul
-        run: |
-          mkdir -p /home/runner/.meshery/bin
-          cd ./meshery-consul
-          go run main.go &
-          sleep 60
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
@@ -196,28 +196,7 @@ jobs:
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
-      - name: Build Next App
-        run: |
-          cd ui
-          node --version
-          npm i
-          cd ../
-          make ui-meshery-build
-      # - name: Update /etc/hosts
-      #   run: echo "127.0.0.1 mesherylocal.layer5.io" | sudo tee -a /etc/hosts
-      - name: Run meshery-consul
-        run: |
-          mkdir -p /home/runner/.meshery/bin
-          cd ./meshery-consul
-          go run main.go &
-          sleep 60
-      - name: Run meshery-istio
-        run: |
-          mkdir -p /home/runner/.meshery/bin
-          cd ./meshery-istio
-          go run main.go &
-          sleep 60
-      - name: Run backend
+      - name: Run Meshery UI and Server
         env:
           PROVIDER_BASE_URLS: http://localhost:9876
           PORT: 9081
