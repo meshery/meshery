@@ -52,6 +52,7 @@ import { updateURLs } from '../utils/utils';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createRelayEnvironment } from "../lib/relayEnvironment"
 import "./styles/charts.css"
+import subscribeEvents from '../components/graphql/subscriptions/EventsSubscription';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -86,7 +87,7 @@ class MesheryApp extends App {
     super();
     this.pageContext = getPageContext();
     this.meshsyncEventsSubscriptionRef = React.createRef();
-
+    this.eventsSubscriptionRef = React.createRef();
     this.state = {
       mobileOpen : false,
       isDrawerCollapsed : false,
@@ -158,7 +159,7 @@ class MesheryApp extends App {
     )
 
     this.initMeshSyncEventsSubscription(this.state.activeK8sContexts);
-
+    this.initEventsSubscription()
     const k8sContextSubscription = (page="", search="", pageSize="10", order="") => {
       return subscribeK8sContext((result) => {
         this.setState({ k8sContexts : result.k8sContext }, () =>  this.setActiveContexts("all"))
@@ -175,6 +176,17 @@ class MesheryApp extends App {
     }
     const disposeK8sContextSubscription = k8sContextSubscription();
     this.setState({ disposeK8sContextSubscription })
+  }
+
+  initEventsSubscription() {
+    if (this.eventsSubscriptionRef.current) {
+      this.eventsSubscriptionRef.current.dispose();
+    }
+
+    const eventsSubscription = subscribeEvents(result => {
+      console.log("event: ", result);
+    })
+    this.eventsSubscriptionRef.current = eventsSubscription;
   }
 
   componentDidUpdate(prevProps) {

@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/spf13/viper"
 )
 
 // swagger:route GET /api/system/kubernetes/contexts GetAllContexts idGetAllContexts
@@ -86,13 +88,18 @@ func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models
 	}
 }
 
-func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		http.Error(w, "failed to get token", http.StatusInternalServerError)
 		return
 	}
-
+	
+	mesheryInstanceID, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
+	if !ok {
+		http.Error(w, "failed to get instance id", http.StatusInternalServerError)
+		return
+	}
 	// id is the connection_id of the specific cluster in connections table
 	_, err := provider.DeleteK8sContext(token, mux.Vars(req)["id"])
 	if err != nil {
@@ -100,7 +107,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		return
 	}
 	h.config.K8scontextChannel.PublishContext()
-	go models.FlushMeshSyncData(req.Context(), mux.Vars(req)["id"], provider, h.EventsBuffer)
+	go models.FlushMeshSyncData(req.Context(), mux.Vars(req)["id"], provider, h.EventsBuffer, h.config.EventsChannel, user.ID, mesheryInstanceID)
 }
 
 // func (h *Handler) GetCurrentContextHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {

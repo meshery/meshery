@@ -95,6 +95,7 @@ const (
 	ErrShareDesignCode                    = "2255"
 	ErrUnreachableRemoteProviderCode      = "2256"
 	ErrShareFilterCode                    = "2257"
+	ErrPersistEventCode                   = "2265"
 )
 
 var (
@@ -355,4 +356,8 @@ func ErrShareFilter(err error) error {
 
 func ErrUnreachableRemoteProvider(err error) error {
 	return errors.New(ErrUnreachableRemoteProviderCode, errors.Alert, []string{"Could not reach remote provider"}, []string{"", err.Error()}, []string{"Remote provider server may be down or not accepting requests"}, []string{"Make sure remote provider server is healthy and accepting requests"})
+}
+
+func ErrPersistEvent(err error) error {
+	return errors.New(ErrPersistEventCode, errors.Alert, []string{"Could not persist event"}, []string{err.Error()}, []string{"Database could be down or not reachable", "Meshery Database handler is not accessible to perform operations"}, []string{"Restart Meshery Server or Perform Hard Reset"})
 }

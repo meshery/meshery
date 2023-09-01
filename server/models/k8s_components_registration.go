@@ -8,6 +8,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshkit/logger"
+	_events "github.com/layer5io/meshkit/models/events"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils/events"
 	"github.com/spf13/viper"
@@ -20,6 +21,20 @@ const (
 	NotRegistered
 	Registering
 )
+
+// INstead define a set of actions
+func (rs RegistrationStatus) String() string {
+	switch rs {
+	case RegistrationComplete:
+		return "register"
+	case NotRegistered:
+		return "not_registered"
+	case Registering:
+		return "registering"
+	default:
+		return ""
+	}
+}
 
 type ComponentsRegistrationHelper struct {
 	// map that holds the registration status of each of the contexts in this runtime of the server
@@ -53,7 +68,7 @@ func (cg *ComponentsRegistrationHelper) UpdateContexts(ctxs []*K8sContext) *Comp
 type K8sRegistrationFunction func(ctxt context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager, es *events.EventStreamer, ctxName string) error
 
 // start registration of components for the contexts
-func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc []K8sRegistrationFunction, eb *events.EventStreamer, reg *meshmodel.RegistryManager, skip bool) {
+func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc []K8sRegistrationFunction, eb *events.EventStreamer, reg *meshmodel.RegistryManager, eventsChan *Signal, provider Provider, userID string, skip bool) {
 	/* If flag "SKIP_COMP_GEN" is set but the registration is invoked in form of API request explicitly,
 	then flag should not be respected and to control this behaviour skip is introduced.
 	In case of API requests "skip" is set to false, otherise true and behaviour is controlled by "SKIP_COMP_GEN".
@@ -62,9 +77,11 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 		return
 	}
 
+	userUUID, _ := uuid.FromString(userID)
+
 	for _, ctx := range ctxs {
 		ctxID := ctx.ID
-
+		connectionID, _ := uuid.FromString(ctx.ConnectionID)
 		// do not do anything about the contexts that are not present in the ctxRegStatusMap
 		// only start registering components for contexts whose status is NotRegistered
 		status, ok := cg.ctxRegStatusMap[ctxID]
@@ -88,6 +105,14 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 			Details:       fmt.Sprintf("Registration for Kubernetes context \"%s\" started with context ID %s", ctxName, ctxID),
 			OperationId:   id.String(),
 		}
+
+		event := _events.NewEvent().ActedUpon(connectionID).FromSystem(*ctx.MesheryInstanceID).WithSeverity(_events.Informational).WithCategory("connection").WithAction(Registering.String()).FromUser(userUUID).Build()
+		err := provider.PersistEvent(event)
+		if err != nil {
+			// Even if event was not persisted continue with the operation and publish the event to user.
+			cg.log.Warn(err)
+		}
+		eventsChan.Publish(userUUID, event)
 		eb.Publish(&req)
 		go func(ctx *K8sContext) {
 			// set the status to RegistrationComplete

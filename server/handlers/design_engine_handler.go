@@ -92,6 +92,7 @@ func (h *Handler) PatternFileHandler(
 		false,
 		h.registryManager,
 		h.EventsBuffer,
+		h.config.EventsChannel,
 		h.log,
 	)
 	if err != nil {
@@ -127,6 +128,7 @@ func _processPattern(
 	skipPrintLogs bool,
 	registry *meshmodel.RegistryManager,
 	eb *events.EventStreamer,
+	ec *models.Signal,
 	l logger.Handler,
 ) (map[string]interface{}, error) {
 	resp := make(map[string]interface{})
@@ -185,6 +187,8 @@ func _processPattern(
 			accumulatedMsgs:    []string{},
 			err:                nil,
 			eventbuffer:        eb,
+			eventsChannel:       ec,
+			patternName:        strings.ToLower(pattern.Name),
 		}
 		chain := stages.CreateChain()
 		chain.
@@ -282,7 +286,9 @@ type serviceActionProvider struct {
 	accumulatedMsgs    []string
 	err                error
 	eventbuffer        *events.EventStreamer
+	eventsChannel      *models.Signal
 	registry           *meshmodel.RegistryManager
+	patternName        string
 }
 
 func (sap *serviceActionProvider) GetRegistry() *meshmodel.RegistryManager {
@@ -438,7 +444,11 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 				[]string{string(jsonComp)},
 				string(jsonConfig),
 				sap.opIsDelete,
+				sap.patternName,
 				sap.eventbuffer,
+				sap.eventsChannel,
+				sap.userID,
+				sap.provider,
 				host.IHost,
 				sap.skipCrdAndOperator,
 			)

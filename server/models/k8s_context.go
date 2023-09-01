@@ -15,6 +15,7 @@ import (
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/internal/sql"
 	"github.com/layer5io/meshery/server/meshes"
+	_events "github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/utils/events"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
@@ -163,7 +164,7 @@ func K8sContextsFromKubeconfig(kubeconfig []byte, instanceID *uuid.UUID) ([]*K8s
 			respMessage += msg
 			continue
 		}
-		
+
 		// Perform Ping test on the cluster
 		if err := kc.PingTest(); err != nil {
 			msg = fmt.Sprintf("Skipping context: %v \n", err)
@@ -179,7 +180,7 @@ func K8sContextsFromKubeconfig(kubeconfig []byte, instanceID *uuid.UUID) ([]*K8s
 			respMessage += msg
 			continue
 		}
-		
+
 		if err := kc.AssignServerID(handler); err != nil {
 			msg = fmt.Sprintf("Skipping context: Could not retrieve Kubernetes cluster ID (%v)", err)
 			logrus.Warn(msg)
@@ -369,9 +370,11 @@ func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
 }
 
 // FlushMeshSyncData will flush the meshsync data for the passed kubernetes contextID
-func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider, eb *events.EventStreamer) {
+func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider, eb *events.EventStreamer, eventsChan *Signal, userID string, mesheryInstanceID *uuid.UUID) {
 	var req meshes.EventsResponse
 	id, _ := uuid.NewV4()
+	ctxUUID, _ := uuid.FromString(ctxID)
+	userUUID, _ := uuid.FromString(userID)
 	// Gets all the available kubernetes contexts
 	k8sctxs, ok := ctx.Value(AllKubeClusterKey).([]K8sContext)
 	if !ok || len(k8sctxs) == 0 {
@@ -385,6 +388,13 @@ func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider, eb 
 			ProbableCause:        "If you are using Meshery UI, likely there is no actively selected Kubernetes context in the Kubernetes context switcher (see upper right corner of the Meshery UI navigation bar).",
 			SuggestedRemediation: "If you are using Meshery UI, ensure one or more available Kubernetes contexts are checkmarked in your Kubernetes context switcher.",
 		}
+		// FOrmat bove ProbableCause, SuggestedRemediation,..... as meshkit er and add to metadata
+		event := _events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(_events.Error).WithCategory("connection").WithAction("flush").WithDescription("No Kubernetes context specified, please choose a context from context switcher").FromUser(userUUID).Build()
+		err := provider.PersistEvent(event)
+		if err != nil {
+			logrus.Error(err)
+		}
+		eventsChan.Publish(userUUID, event)
 		eb.Publish(&req)
 		return
 	}
@@ -416,6 +426,13 @@ func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider, eb 
 				OperationId:          id.String(),
 				SuggestedRemediation: "Restart Meshery Server or Perform Hard Reset",
 			}
+			// FOrmat bove ProbableCause, SuggestedRemediation,..... as meshkit er and add to metadata
+			event := _events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(_events.Error).WithCategory("connection").WithAction("flush").WithDescription("Meshery Database handler is not accessible to perform operations").FromUser(userUUID).Build()
+			err := provider.PersistEvent(event)
+			if err != nil {
+				logrus.Error(err)
+			}
+			eventsChan.Publish(userUUID, event)
 			eb.Publish(&req)
 			return
 		}
@@ -431,6 +448,14 @@ func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider, eb 
 				Details:              err.Error(),
 				SuggestedRemediation: "Restart Meshery Server or Perform Hard Reset",
 			}
+			// FOrmat bove ProbableCause, SuggestedRemediation,..... as meshkit er and add to metadata
+			event := _events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(_events.Error).WithCategory("connection").WithAction("flush").WithDescription("Meshery Database handler is not accessible to perform operations").FromUser(userUUID).Build()
+			err := provider.PersistEvent(event)
+			if err != nil {
+				logrus.Error(err)
+			}
+
+			eventsChan.Publish(userUUID, event)
 			eb.Publish(&req)
 			return
 		}
@@ -446,6 +471,14 @@ func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider, eb 
 				Details:              err.Error(),
 				SuggestedRemediation: "Restart Meshery Server or Perform Hard Reset",
 			}
+			// FOrmat bove ProbableCause, SuggestedRemediation,..... as meshkit er and add to metadata
+			event := _events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(_events.Error).WithCategory("connection").WithAction("flush").WithDescription("Meshery Database handler is not accessible to perform operations").FromUser(userUUID).Build()
+			err := provider.PersistEvent(event)
+			if err != nil {
+				logrus.Error(err)
+			}
+
+			eventsChan.Publish(userUUID, event)
 			eb.Publish(&req)
 			return
 		}
@@ -461,6 +494,14 @@ func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider, eb 
 				Details:              err.Error(),
 				SuggestedRemediation: "Restart Meshery Server or Perform Hard Reset",
 			}
+			event := _events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(_events.Error).WithCategory("connection").WithAction("flush").WithDescription("Meshery Database handler is not accessible to perform operations").FromUser(userUUID).Build()
+			// FOrmat bove ProbableCause, SuggestedRemediation,..... as meshkit er and add to metadata
+			err := provider.PersistEvent(event)
+			if err != nil {
+				logrus.Error(err)
+			}
+
+			eventsChan.Publish(userUUID, event)
 			eb.Publish(&req)
 			return
 		}
@@ -476,6 +517,14 @@ func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider, eb 
 				Details:              err.Error(),
 				SuggestedRemediation: "Restart Meshery Server or Perform Hard Reset",
 			}
+			// FOrmat bove ProbableCause, SuggestedRemediation,..... as meshkit er and add to metadata
+			event := _events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(_events.Error).WithCategory("connection").WithAction("flush").WithDescription("Meshery Database handler is not accessible to perform operations").FromUser(userUUID).Build()
+			err := provider.PersistEvent(event)
+			if err != nil {
+				logrus.Error(err)
+			}
+
+			eventsChan.Publish(userUUID, event)
 			eb.Publish(&req)
 			return
 		}
@@ -491,6 +540,14 @@ func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider, eb 
 				Details:              err.Error(),
 				SuggestedRemediation: "Restart Meshery Server or Perform Hard Reset",
 			}
+			// FOrmat bove ProbableCause, SuggestedRemediation,..... as meshkit er and add to metadata
+			event := _events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(_events.Error).WithCategory("connection").WithAction("flush").WithDescription("Meshery Database handler is not accessible to perform operations").FromUser(userUUID).Build()
+			err := provider.PersistEvent(event)
+			if err != nil {
+				logrus.Error(err)
+			}
+
+			eventsChan.Publish(userUUID, event)
 			eb.Publish(&req)
 			return
 		}
@@ -502,6 +559,14 @@ func FlushMeshSyncData(ctx context.Context, ctxID string, provider Provider, eb 
 			Summary:       "MeshSync data flushed successfully for context " + ctxID,
 			OperationId:   id.String(),
 		}
+		// FOrmat bove ProbableCause, SuggestedRemediation,..... as meshkit er and add to metadata
+		event := _events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(_events.Informational).WithCategory("connection").WithAction("flush").WithDescription(fmt.Sprintf("MeshSync data flushed successfully for context %s", ctxID)).FromUser(userUUID).Build()
+		// Also add context name, as id is not helpful
+		err = provider.PersistEvent(event)
+		if err != nil {
+			logrus.Error(err)
+		}
+		eventsChan.Publish(userUUID, event)
 		eb.Publish(&req)
 	}
 }

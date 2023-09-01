@@ -250,7 +250,7 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 //		202:
 //	 400:
 //	 500:
-func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Request) {
+func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	k8sConfigBytes, err := readK8sConfigFromBody(req)
 	if err != nil {
 		logrus.Error(err)
@@ -267,7 +267,7 @@ func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Reques
 	}
 
 	contexts, _ := models.K8sContextsFromKubeconfig(*k8sConfigBytes, mid)
-	h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{RegisterK8sMeshModelComponents}, h.EventsBuffer, h.registryManager, false)
+	h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{RegisterK8sMeshModelComponents}, h.EventsBuffer, h.registryManager, h.config.EventsChannel, provider, user.ID, false)
 	if _, err = w.Write([]byte(http.StatusText(http.StatusAccepted))); err != nil {
 		logrus.Error(ErrWriteResponse)
 		logrus.Error(err)

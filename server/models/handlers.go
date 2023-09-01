@@ -43,7 +43,7 @@ type HandlerInterface interface {
 	K8SConfigHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request)
 	KubernetesPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	K8sRegistrationHandler(w http.ResponseWriter, req *http.Request)
+	K8sRegistrationHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	GetAllContexts(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetContext(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -221,7 +221,7 @@ type HandlerConfig struct {
 	PerformanceResultChannel chan struct{}
 
 	ConfigurationChannel *ConfigurationChannel
-
+	EventsChannel        *Signal
 	DashboardK8sResourcesChan *DashboardK8sResourcesChan
 	MeshModelSummaryChannel   *meshmodel.SummaryChannel
 
