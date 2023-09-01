@@ -452,8 +452,8 @@ func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, _ s
 	data, err := json.Marshal(&result)
 	if err != nil {
 		obj := "filter file"
-		http.Error(rw, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
-		addMeshkitErr(res, ErrMarshal(err, obj))
+		http.Error(rw, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		addMeshkitErr(res, models.ErrMarshal(err, obj))
 		go h.EventsBuffer.Publish(res)
 		return
 	}
