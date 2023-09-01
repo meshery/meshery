@@ -18,7 +18,6 @@ import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import MUIDataTable from "mui-datatables";
 import Moment from "react-moment";
 import CloseIcon from "@material-ui/icons/Close";
 import EditIcon from "@material-ui/icons/Edit";
@@ -47,12 +46,14 @@ import fetchCatalogFilter from "./graphql/queries/CatalogFilterQuery";
 import { iconMedium } from "../css/icons.styles";
 import Modal from "./Modal";
 import { getUnit8ArrayDecodedFile, modifyRJSFSchema } from "../utils/utils";
-import SearchBar from "./searchcommon";
 import Filter from "../public/static/img/drawer-icons/filter_svg.js";
 import { getMeshModels } from "../api/meshmodel";
 import _ from "lodash";
 import { useNotification } from "../utils/hooks/useNotification";
 import { EVENT_TYPES } from "../lib/event-types";
+import SearchBar from "../utils/custom-search";
+import CustomColumnVisibilityControl from "../utils/custom-column";
+import ResponsiveDataTable from "../utils/data-table";
 
 const styles = (theme) => ({
   grid : {
@@ -63,17 +64,20 @@ const styles = (theme) => ({
     fontSize : 18,
   },
   createButton : {
-    display : "flex",
-    justifyContent : "flex-start",
-    alignItems : "center",
-    whiteSpace : "nowrap",
+    width : "fit-content",
+    alignSelf : "flex-start"
   },
   topToolbar : {
     margin : "2rem auto",
     display : "flex",
     justifyContent : "space-between",
-    flexWrap : "wrap",
-    paddingLeft : "1rem"
+    // flexWrap : "wrap",
+    paddingLeft : "1rem",
+    backgroundColor : theme.palette.type === 'dark' ? theme.palette.secondary.toolbarBg2 : theme.palette.secondary.toolbarBg1,
+    boxShadow : " 0px 2px 4px -1px rgba(0,0,0,0.2)",
+    height : "4rem",
+    padding : "0.68rem",
+    borderRadius : "0.5rem"
   },
   viewSwitchButton : {
     justifySelf : "flex-end",
@@ -84,9 +88,10 @@ const styles = (theme) => ({
     alignItems : "center"
   },
   searchWrapper : {
-    "@media (max-width: 1150px)" : {
-      marginTop : '20px',
-    },
+    justifySelf : "flex-end",
+    marginLeft : "auto",
+    paddingLeft : "1rem",
+    display : "flex"
   },
 
   ymlDialogTitleText : {
@@ -101,10 +106,13 @@ const styles = (theme) => ({
   },
   visibilityImg : {
     filter : theme.palette.secondary.img,
-  }
-  // text : {
-  //   padding : "5px"
-  // }
+  },
+  btnText : {
+    display : 'block',
+    "@media (max-width: 1450px)" : {
+      display : "none",
+    },
+  },
 });
 
 function TooltipIcon({ children, onClick, title }) {
@@ -815,7 +823,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
           );
         },
         customBodyRender : function CustomBody(_, tableMeta) {
-          const visibility = filters[tableMeta.rowIndex].visibility
+          const visibility = filters[tableMeta.rowIndex]?.visibility
           return (
             <>
               <img className={classes.visibilityImg} src={`/static/img/${visibility}.svg`} />
@@ -826,6 +834,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
     },
     {
       name : "Actions",
+      label : "Actions",
       options : {
         filter : false,
         sort : false,
@@ -839,7 +848,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
         },
         customBodyRender : function CustomBody(_, tableMeta) {
           const rowData = filters[tableMeta.rowIndex];
-          const visibility = filters[tableMeta.rowIndex].visibility
+          const visibility = filters[tableMeta.rowIndex]?.visibility
           return (
             <>
               {visibility === VISIBILITY.PUBLISHED ? <TooltipIcon
@@ -927,6 +936,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
 
   const options = {
     filter : false,
+    viewColumns : false,
     sort : !(user && user.user_id === "meshery"),
     search : false,
     filterType : "textField",
@@ -1059,6 +1069,17 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
     )
   }
 
+  const [tableCols, updateCols] = useState(columns);
+
+  const [columnVisibility, setColumnVisibility] = useState(() => {
+    // Initialize column visibility based on the original columns' visibility
+    const initialVisibility = {};
+    columns.forEach(col => {
+      initialVisibility[col.name] = col.options?.display !== false;
+    });
+    return initialVisibility;
+  });
+
   return (
     <>
       <NoSsr>
@@ -1080,49 +1101,45 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
                       style={{ marginRight : "2rem" }}
                     >
                       <PublishIcon  style={iconMedium} className={classes.addIcon} data-cy="import-button"/>
-                      Import Filters
+                      <span className={classes.btnText}> Import Filters  </span>
                     </Button>
                   </div>
                 </div>
             }
-            <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingRight : "1rem", paddingTop : "0.2rem" }}>
+            <div style={{ jdisplay : 'flex' }}>
               <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} classes={classes} />
             </div>
           </div>
           <div className={classes.searchWrapper} style={{ display : "flex" }}>
-            <div
-              className={classes.searchAndView}
-              style={{
-                display : 'flex',
-                alignItems : 'center',
-                justifyContent : 'center',
-                margin : 'auto',
-              }}
-            >
-              <SearchBar
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  initFiltersSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
-                }
-                }
-                label={"Search Filters"}
-                width="55ch"
-              />
-            </div>
+
+            <SearchBar
+              onChange={(value) => {
+                setSearch(value);
+                initFiltersSubscription(page.toString(), pageSize.toString(), value, sortOrder);
+              }
+              }
+              placeholder="Search"
+            />
+            <CustomColumnVisibilityControl
+              columns={columns}
+              customToolsProps={{ columnVisibility, setColumnVisibility }}
+            />
+
             {!selectedFilter.show &&
-                <div className={classes.viewSwitchButton}>
+
                   <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
-                </div>
+
             }
           </div>
         </div>
         {
           !selectedFilter.show && viewType === "table" &&
-          <MUIDataTable
-            title={<div className={classes.tableHeader}>Filters</div>}
+          <ResponsiveDataTable
             data={filters}
             columns={columns}
+            tableCols={tableCols}
+            updateCols={updateCols}
+            columnVisibility={columnVisibility}
             // @ts-ignore
             options={options}
             className={classes.muiRow}
