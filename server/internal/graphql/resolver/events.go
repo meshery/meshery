@@ -39,7 +39,7 @@ func (r *Resolver) eventsResolver (ctx context.Context, provider models.Provider
 
 				}
 				
-				r.Log.Info(fmt.Sprintf("event received %v: ", ch))
+				r.Log.Info(fmt.Sprintf("event received for id %s %v: ", userID, ch))
 				eventsChan <- _event
 			case <-ctx.Done():
 				unsubscribe()
@@ -48,7 +48,6 @@ func (r *Resolver) eventsResolver (ctx context.Context, provider models.Provider
 				r.Log.Info("Events Subscription stopped for %s", userID)
 				return
 			}
-
 		}
 	}(userID)
 	return eventsChan, nil

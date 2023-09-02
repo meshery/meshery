@@ -18,14 +18,13 @@ type Signal struct {
 }
 
 func (c *Signal) Subscribe(id uuid.UUID) (chan interface{}, func()) {
-	clientMap, loaded := c.clients.LoadOrStore(id, &clients{mu: new(sync.Mutex)})
+	clientMap, _ := c.clients.LoadOrStore(id, &clients{mu: new(sync.Mutex)})
 	ch := make(chan interface{})
 	connectedClient := clientMap.(*clients)
 	
 	connectedClient.mu.Lock()
 	connectedClient.listeners = append(connectedClient.listeners, ch)
 	connectedClient.mu.Unlock()
-	fmt.Println("line 22: ", clientMap, loaded, id, connectedClient)
 
 	unsubscribe := func() {
 		connectedClient.mu.Lock()
@@ -38,7 +37,6 @@ func (c *Signal) Subscribe(id uuid.UUID) (chan interface{}, func()) {
 			}
 		}
 	}
-	fmt.Println("exiting Subscribe: ")
 	return ch, unsubscribe
 }
 
@@ -50,11 +48,9 @@ func (c *Signal) Publish(id uuid.UUID, event *events.Event) {
 	}
 
 	clientToPublish, _ := clientMap.(*clients)
-	fmt.Println("before signalling")
 	for _, client := range clientToPublish.listeners {
 		client <- event
 	}
-	fmt.Println("exiting Publish")
 }
 
 func NewSignal() *Signal {

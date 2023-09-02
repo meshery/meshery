@@ -13,7 +13,6 @@ type EventsPersister struct{
 }
 
 func (e *EventsPersister) PersistEvent(event *events.Event) error {
-	fmt.Println("line[8]: ", event)
 	err := e.DB.Save(event).Error
 	if err != nil {
 		return ErrPersistEvent(err)
