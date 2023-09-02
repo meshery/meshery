@@ -6,7 +6,7 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/meshes"
+
 	"github.com/layer5io/meshkit/logger"
 	_events "github.com/layer5io/meshkit/models/events"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
@@ -65,7 +65,7 @@ func (cg *ComponentsRegistrationHelper) UpdateContexts(ctxs []*K8sContext) *Comp
 	return cg
 }
 
-type K8sRegistrationFunction func(ctxt context.Context, config []byte, ctxID string, reg *meshmodel.RegistryManager, es *events.EventStreamer, ctxName string) error
+type K8sRegistrationFunction func(provider *Provider, ctxt context.Context, config []byte, ctxID string, connectionID string, userID string, MesheryInstanceID uuid.UUID, reg *meshmodel.RegistryManager, es *events.EventStreamer, ec *Signal, ctxName string) error
 
 // start registration of components for the contexts
 func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc []K8sRegistrationFunction, eb *events.EventStreamer, reg *meshmodel.RegistryManager, eventsChan *Signal, provider Provider, userID string, skip bool) {
@@ -90,30 +90,22 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 		}
 
 		ctxName := ctx.Name
-		id, _ := uuid.NewV4()
-
+	
 		// update the status
 		cg.mx.Lock()
 		cg.ctxRegStatusMap[ctxID] = Registering
 		cg.mx.Unlock()
 		cg.log.Info("Registration of ", ctxName, " components started for contextID: ", ctxID)
-		req := meshes.EventsResponse{
-			Component:     "core",
-			ComponentName: "Kubernetes",
-			EventType:     meshes.EventType_INFO,
-			Summary:       fmt.Sprintf("Registration for Kubernetes context \"%s\" started", ctxName),
-			Details:       fmt.Sprintf("Registration for Kubernetes context \"%s\" started with context ID %s", ctxName, ctxID),
-			OperationId:   id.String(),
-		}
+	
 
-		event := _events.NewEvent().ActedUpon(connectionID).FromSystem(*ctx.MesheryInstanceID).WithSeverity(_events.Informational).WithCategory("connection").WithAction(Registering.String()).FromUser(userUUID).Build()
+		event := _events.NewEvent().ActedUpon(connectionID).FromSystem(*ctx.MesheryInstanceID).WithSeverity(_events.Informational).WithCategory("connection").WithAction(Registering.String()).FromUser(userUUID).WithDescription(fmt.Sprintf("Registration for Kubernetes context %s started", ctxName)).Build()
 		err := provider.PersistEvent(event)
 		if err != nil {
 			// Even if event was not persisted continue with the operation and publish the event to user.
 			cg.log.Warn(err)
 		}
 		eventsChan.Publish(userUUID, event)
-		eb.Publish(&req)
+
 		go func(ctx *K8sContext) {
 			// set the status to RegistrationComplete
 			defer func() {
@@ -131,7 +123,7 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 				return
 			}
 			for _, f := range regFunc {
-				err = f(context.Background(), cfg, ctxID, reg, eb, ctxName)
+				err = f(&provider, context.Background(), cfg, ctxID, ctx.ConnectionID, userID, *ctx.MesheryInstanceID, reg, eb, eventsChan, ctxName)
 				if err != nil {
 					cg.log.Error(err)
 					return

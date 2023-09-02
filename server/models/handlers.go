@@ -41,7 +41,7 @@ type HandlerInterface interface {
 	GetUsers(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetUsersKeys(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	K8SConfigHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
-	GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request)
+	GetContextsFromK8SConfig(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	KubernetesPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	K8sRegistrationHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 

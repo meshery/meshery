@@ -156,7 +156,7 @@ func (h *Handler) KubernetesMiddleware(next func(http.ResponseWriter, *http.Requ
 		if err != nil || len(contexts) == 0 { //Try to load the contexts when there are no contexts available
 			logrus.Warn("failed to get kubernetes contexts")
 			// only the contexts that are successfully pinged will be persisted
-			contexts, err = h.LoadContextsAndPersist(token, provider)
+			contexts, err = h.LoadContextsAndPersist(user.UserID, token, provider)
 			if err != nil {
 				logrus.Warn("failed to load kubernetes contexts: ", err.Error())
 			}

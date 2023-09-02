@@ -664,8 +664,8 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8
 	logrus.Infof("attempting to save %s context to remote provider with ID %s", k8sContext.Name, k8sContext.ID)
 	err := l.SaveConnection(nil, conn, token, true)
 	if err != nil {
-		logrus.Errorf("unable to save K8s connection: %v", err)
-		return k8sContext, fmt.Errorf("unable to save K8s connection: %v", err)
+		logrus.Errorf(err.Error())
+		return k8sContext, err
 	}
 
 	return k8sContext, nil
@@ -3566,7 +3566,7 @@ func (l *RemoteProvider) SaveConnection(req *http.Request, conn *ConnectionPaylo
 		return nil
 	}
 
-	return ErrFetch(fmt.Errorf("failed to save the connection"), fmt.Sprint(bdr), resp.StatusCode)
+	return ErrPost(fmt.Errorf("failed to save the connection"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, pageSize int, search, order string) (*ConnectionPage, error) {
