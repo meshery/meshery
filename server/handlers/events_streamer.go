@@ -154,7 +154,7 @@ func listenForCoreEvents(ctx context.Context, eb *events.EventStreamer, resp cha
 			}
 			data, err := json.Marshal(event)
 			if err != nil {
-				log.Error(ErrMarshal(err, "event"))
+				log.Error(models.ErrMarshal(err, "event"))
 				continue
 			}
 			resp <- data
@@ -192,7 +192,7 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 			result := &models.SmiResult{}
 			err := json.Unmarshal([]byte(event.Details), result)
 			if err != nil {
-				log.Error(ErrUnmarshal(err, "event"))
+				log.Error(models.ErrUnmarshal(err, "event"))
 				return
 			}
 
@@ -206,7 +206,7 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 
 		data, err := json.Marshal(event)
 		if err != nil {
-			log.Error(ErrMarshal(err, "event"))
+			log.Error(models.ErrMarshal(err, "event"))
 			return
 		}
 		respChan <- data

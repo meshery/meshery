@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/schemas"
 )
 
@@ -29,7 +30,7 @@ func (h *Handler) HandleResourceSchemas(rw http.ResponseWriter, r *http.Request)
 	var uiSchemaJSON map[string]interface{}
 
 	if err := json.Unmarshal(rjsfSchema, &rjsfSchemaJSON); err != nil {
-		http.Error(rw, ErrUnmarshal(err, "RJSF schema").Error(), http.StatusInternalServerError)
+		http.Error(rw, models.ErrUnmarshal(err, "RJSF schema").Error(), http.StatusInternalServerError)
 		return
 	}
 
