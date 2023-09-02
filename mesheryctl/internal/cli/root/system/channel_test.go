@@ -92,29 +92,36 @@ func TestViewCmd(t *testing.T) {
 			BreakupFunc()
 		})
 	}
+	t.Log("View channelCmd Passed")
 }
 
-// func TestSetCmd(t *testing.T) {
-// 	tests := []CmdTestInput{
-// 		{
-// 			Name:             "Set Channel",
-// 			Args:             []string{"channel", "set", "-c", "local", "latest"},
-// 			ExpectedResponse: PrintSetChannel("stable", "latest"),
-// 		},
-// 	}
-// 	for _, tt := range tests {
-// 		t.Run(tt.Name, func(t *testing.T) {
-// 			SetupFunc()
-// 			SystemCmd.SetArgs(tt.Args)
-// 			err = SystemCmd.Execute()
-// 			if err != nil {
-// 				t.Error(err)
-// 			}
-
-// 			actualResponse := b.String()
-// 			expectedResponse := tt.ExpectedResponse
-// 			assert.Equal(t, expectedResponse, actualResponse)
-// 			BreakupFunc()
-// 		})
-// 	}
-// }
+func TestSetCmd(t *testing.T) {
+	SetupContextEnv(t)
+	tests := []CmdTestInput{
+		{
+			Name:             "Set Docker Platform  Channel",
+			Args:             []string{"channel", "set", "stable", "-c", "local"},
+			ExpectedResponse: "Channel set to stable-latest" + "\n",
+		},
+		{
+			Name:             "Set GKE Platform Channel",
+			Args:             []string{"channel", "set", "stable", "-c", "gke"},
+			ExpectedResponse: "Channel set to stable-latest" + "\n",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			SetupFunc()
+			SystemCmd.SetArgs(tt.Args)
+			err = SystemCmd.Execute()
+			if err != nil {
+				t.Error(err)
+			}
+			actualResponse := b.String()
+			expectedResponse := tt.ExpectedResponse
+			assert.Equal(t, expectedResponse, actualResponse)
+			BreakupFunc()
+		})
+	}
+	t.Log("Set ChannelCmd Passed")
+}
