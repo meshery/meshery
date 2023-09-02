@@ -100,9 +100,4 @@ jobs:
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "[Docs] Update mesheryctl docs"
-      - name: Start Mesheryctl System
-        run: |
-          cd mesheryctl/internal/cli/root/system
-          go build
-          mesheryctl system start
 

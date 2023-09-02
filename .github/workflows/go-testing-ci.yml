@@ -84,4 +84,8 @@ jobs:
         with:
           files: ./coverage.txt
           flags: gointegrationtests
+      - name: Start Mesheryctl System
+        run: |
+          cd mesheryctl/internal/cli/root/system
+          mesheryctl system start  
 
