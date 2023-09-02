@@ -118,7 +118,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		return
 	}
 	
-	description := fmt.Sprintf("Kubernetes %s deleted.", deletedContext.Name)
+	description := fmt.Sprintf("Kubernetes context %s deleted.", deletedContext.Name)
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
 	_ = provider.PersistEvent(event)

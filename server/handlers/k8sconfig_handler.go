@@ -12,8 +12,6 @@ import (
 
 	mutil "github.com/layer5io/meshery/server/helpers/utils"
 
-	guid "github.com/google/uuid"
-	"github.com/layer5io/meshery/server/meshes"
 	mcore "github.com/layer5io/meshery/server/models/meshmodel/core"
 	meshmodelv1alpha1 "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 
@@ -95,7 +93,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
 
-	contexts, respMessage := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventsChannel, *k8sConfigBytes, h.SystemID)
+	contexts, _ := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventsChannel, *k8sConfigBytes, h.SystemID)
 	for _, ctx := range contexts {
 		k8sContext, err := provider.SaveK8sContext(token, *ctx) // Ignore errors
 		if err != nil {
@@ -128,17 +126,6 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		logrus.Error(models.ErrMarshal(err, "kubeconfig"))
 		http.Error(w, models.ErrMarshal(err, "kubeconfig").Error(), http.StatusInternalServerError)
 		return
-	}
-
-	if respMessage != "" {
-		h.EventsBuffer.Publish(&meshes.EventsResponse{
-			Component:     "core",
-			ComponentName: "kubernetes",
-			OperationId:   guid.NewString(),
-			EventType:     meshes.EventType_WARN,
-			Summary:       "Kubernetes configuration Info",
-			Details:       respMessage,
-		})
 	}
 }
 
