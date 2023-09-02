@@ -8,7 +8,6 @@ import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
 import useStyles from "../MesheryPatterns/Grid.styles";
-import { publish_schema, publish_ui_schema } from "../schemas/publish_schema";
 import Modal from "../Modal";
 import Filter from "../../public/static/img/drawer-icons/filter_svg.js";
 import PublicIcon from '@material-ui/icons/Public';
@@ -87,6 +86,7 @@ function FilterCardGridItem({
  *   name: string,
  *  },
  *  setPublishModal: (publishModal: { open: boolean, filter: any, name: string }) => void,
+ *  publishSchema: object,
  * }} props props
  */
 
@@ -108,7 +108,8 @@ function FiltersGrid({
   handleUnpublishModal,
   handleImportFilter,
   publishModal,
-  setPublishModal
+  setPublishModal,
+  publishSchema
 }) {
   const classes = useStyles();
 
@@ -246,8 +247,8 @@ function FiltersGrid({
       {canPublishFilter && (
         <Modal
           open={publishModal.open}
-          schema={publish_schema}
-          uiSchema={publish_ui_schema}
+          schema={publishSchema.rjsfSchema}
+          uiSchema={publishSchema.uiSchema}
           title={publishModal.filter?.name}
           handleClose={handlePublishModalClose}
           handleSubmit={handlePublish}

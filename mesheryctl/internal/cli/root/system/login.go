@@ -56,11 +56,7 @@ mesheryctl system login -p Meshery
 			return err
 		}
 
-		isRunning, err := utils.IsMesheryRunning(currCtx.GetPlatform())
-		if err != nil {
-			log.Error("failed to check Meshery Server status: ", err)
-			return nil
-		}
+		isRunning, _ := utils.IsMesheryRunning(currCtx.GetPlatform())
 
 		if !isRunning {
 			log.Error(`Meshery Server is not running. Run "mesheryctl system start" to start Meshery.`)

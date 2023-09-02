@@ -634,20 +634,25 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 	if err != nil {
 		return fmt.Errorf("!! Authentication token not found. Please supply a valid user token. Login with `mesheryctl system login`")
 	}
+
+	if len(prefs.MeshAdapters) == 0 {
+		return fmt.Errorf("!! No adapters running for health checks")
+	}
+
 	for _, adapter := range prefs.MeshAdapters {
 		if adapterName != "" {
 			name := strings.Split(adapter.Location, ":")[0]
 			if adapterName == name || adapterName == adapter.Location {
 				adapters = append(adapters, adapter)
 				break
+			} else {
+				return fmt.Errorf("!! Invalid adapter name provided")
 			}
 		} else {
 			adapters = append(adapters, adapter)
 		}
 	}
-	if len(adapters) == 0 {
-		return fmt.Errorf("!! Invalid adapter name provided")
-	}
+
 	for _, adapter := range adapters {
 		name := adapter.Location
 		skipAdapter := false

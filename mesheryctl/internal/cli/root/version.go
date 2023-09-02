@@ -24,7 +24,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
 	c "github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/handlers"
+	"github.com/layer5io/meshery/server/models"
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -97,7 +97,7 @@ mesheryctl version
 				}
 				return nil
 			}
-			return handlers.ErrUnmarshal(errors.New("invalid config file, encountered error processing json"), "meshconfig")
+			return models.ErrUnmarshal(errors.New("invalid config file, encountered error processing json"), "meshconfig")
 		}
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
@@ -132,7 +132,6 @@ mesheryctl version
 		}
 
 		defer checkMesheryctlClientVersion(build)
-		// client := &http.Client{}
 		resp, err := utils.MakeRequest(req)
 
 		if err != nil {

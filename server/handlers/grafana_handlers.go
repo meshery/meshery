@@ -50,8 +50,8 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 		err := json.NewEncoder(w).Encode(prefObj.Grafana)
 		if err != nil {
 			obj := "Grafana config"
-			h.log.Error(ErrMarshal(err, obj))
-			http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+			h.log.Error(models.ErrMarshal(err, obj))
+			http.Error(w, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -155,15 +155,15 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 	dashboardSearch := req.URL.Query().Get("dashboardSearch")
 	boards, err := h.config.GrafanaClient.GetGrafanaBoards(req.Context(), prefObj.Grafana.GrafanaURL, prefObj.Grafana.GrafanaAPIKey, dashboardSearch)
 	if err != nil {
-		h.log.Error(ErrGrafanaBoards(err))
-		http.Error(w, ErrGrafanaBoards(err).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrGrafanaBoards(err))
+		http.Error(w, models.ErrGrafanaBoards(err).Error(), http.StatusInternalServerError)
 		return
 	}
 	err = json.NewEncoder(w).Encode(boards)
 	if err != nil {
 		obj := "boards payload"
-		h.log.Error(ErrMarshal(err, obj))
-		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrMarshal(err, obj))
+		http.Error(w, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -255,8 +255,8 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 	err = json.Unmarshal(body, &boards)
 	if err != nil {
 		obj := "request body"
-		h.log.Error(ErrUnmarshal(err, obj))
-		http.Error(w, ErrUnmarshal(err, obj).Error(), http.StatusBadRequest)
+		h.log.Error(models.ErrUnmarshal(err, obj))
+		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusBadRequest)
 		return
 	}
 	if len(boards) > 0 {

@@ -59,8 +59,8 @@ func (h *Handler) ProvidersHandler(w http.ResponseWriter, _ *http.Request) {
 	bd, err := json.Marshal(providers)
 	if err != nil {
 		obj := "provider"
-		h.log.Error(ErrMarshal(err, obj))
-		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrMarshal(err, obj))
+		http.Error(w, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 	_, _ = w.Write(bd)

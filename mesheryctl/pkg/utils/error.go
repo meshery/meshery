@@ -11,21 +11,22 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 var (
-	ErrFailRequestCode        = "1000"
-	ErrInvalidTokenCode       = "1001"
-	ErrFailReqStatusCode      = "1002"
-	ErrAttachAuthTokenCode    = "1003"
-	ErrUnmarshalCode          = "1004"
-	ErrFileReadCode           = "1005"
-	ErrCreatingRequestCode    = "1006"
-	ErrMarhallingCode         = "1007"
-	ErrReadResponseBodyCode   = "1008"
-	ErrParsingUrlCode         = "1009"
-	ErrNotFoundCode           = "1010"
-	ErrUnauthenticatedCode    = "1011"
-	ErrInvalidFileCode        = "1012"
-	ErrInvalidNameOrIDCode    = "1013"
-	ErrInvalidAPIResponseCode = "1014"
+	ErrFailRequestCode             = "1000"
+	ErrInvalidTokenCode            = "1001"
+	ErrFailReqStatusCode           = "1002"
+	ErrAttachAuthTokenCode         = "1003"
+	ErrUnmarshalCode               = "1004"
+	ErrFileReadCode                = "1005"
+	ErrCreatingRequestCode         = "1006"
+	ErrMarhallingCode              = "1007"
+	ErrReadResponseBodyCode        = "1008"
+	ErrParsingUrlCode              = "1009"
+	ErrNotFoundCode                = "1010"
+	ErrUnauthenticatedCode         = "1011"
+	ErrInvalidFileCode             = "1012"
+	ErrInvalidNameOrIDCode         = "1013"
+	ErrInvalidAPIResponseCode      = "1014"
+	ErrGetKubectlClientVersionCode = "replace_me"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -308,4 +309,9 @@ func ErrInvalidNameOrID(err error) error {
 
 func ErrInvalidAPIResponse(err error) error {
 	return errors.New(ErrInvalidAPIResponseCode, errors.Fatal, []string{"Invalid API response encountered"}, []string{"Invalid API response encountered", err.Error()}, []string{}, []string{})
+}
+
+func ErrGetKubectlClientVersion(err error) error {
+	return errors.New(ErrGetKubectlClientVersionCode, errors.Alert, []string{"Error fetching kubectl client version"}, []string{"Error fetching kubectl client version", err.Error()},
+		[]string{"You might not have the kubectl binary to fetch the version"}, []string{"Install the minimum kubectl binary from the kubernetes docs"})
 }

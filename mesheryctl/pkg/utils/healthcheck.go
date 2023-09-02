@@ -72,16 +72,33 @@ func getK8sVersion(versionString string) ([3]int, error) {
 	return version, nil
 }
 
+func getKubectlClientVersion() (string, error) {
+	// Try running kubectl version with the --short flag
+	shortCmd := exec.Command("kubectl", "version", "--client", "--short=true")
+	shortOutput, err := shortCmd.CombinedOutput()
+	if err == nil {
+		return strings.TrimSpace(string(shortOutput)), nil
+	}
+
+	// If the --short flag is not supported, try without it
+	cmd := exec.Command("kubectl", "version", "--client")
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return "", err
+	}
+
+	versionInfo := strings.TrimSpace(string(output))
+	return versionInfo, nil
+}
+
 // CheckKubectlVersion validates whether the installed kubectl version is
 // running a minimum kubectl version.
 func CheckKubectlVersion() error {
-	cmd := exec.Command("kubectl", "version", "--client", "--short")
-	bytes, err := cmd.Output()
+	clientVersion, err := getKubectlClientVersion()
 	if err != nil {
-		return err
+		Log.Error(ErrGetKubectlClientVersion(err))
+		return nil
 	}
-
-	clientVersion := fmt.Sprintf("%s\n", bytes)
 	kubectlVersion, err := parseKubectlShortVersion(clientVersion)
 	if err != nil {
 		return err
