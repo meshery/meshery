@@ -27,8 +27,7 @@ import (
 	putils "github.com/layer5io/meshery/server/models/pattern/utils"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils"
-	"github.com/layer5io/meshkit/utils/events"
-	_events "github.com/layer5io/meshkit/models/events"
+	"github.com/layer5io/meshkit/models/events"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -94,7 +93,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		ErroredContexts:  make([]models.K8sContext, 0),
 	}
 
-	eventBuilder := _events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
 
 	contexts, respMessage := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventsChannel, *k8sConfigBytes, h.SystemID)
 	for _, ctx := range contexts {
@@ -104,17 +103,17 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			if err == models.ErrContextAlreadyPersisted {
 				saveK8sContextResponse.UpdatedContexts = append(saveK8sContextResponse.UpdatedContexts, *ctx)
 				
-				eventBuilder.WithSeverity(_events.Informational).WithDescription(fmt.Sprintf("Connection already exist with Kubernetes context %s at %s", k8sContext.Name, k8sContext.Server))
+				eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Connection already exist with Kubernetes context %s at %s", k8sContext.Name, k8sContext.Server))
 				} else {
 				saveK8sContextResponse.ErroredContexts = append(saveK8sContextResponse.ErroredContexts, *ctx)
 				
-				eventBuilder.WithSeverity(_events.Error).WithDescription(fmt.Sprintf("Error creating connection for Kubernetes context %s", ctx.Name)).WithMetadata(map[string]interface{}{
+				eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Error creating connection for Kubernetes context %s", ctx.Name)).WithMetadata(map[string]interface{}{
 					"error": err,
 				})
 			}
 		} else {
 			saveK8sContextResponse.InsertedContexts = append(saveK8sContextResponse.InsertedContexts, *ctx)
-			eventBuilder.WithSeverity(_events.Informational).WithDescription(fmt.Sprintf("Connection established with Kubernetes context %s at %s", k8sContext.Name, k8sContext.Server))
+			eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Connection established with Kubernetes context %s at %s", k8sContext.Name, k8sContext.Server))
 		}
 		
 		event := eventBuilder.Build()
@@ -260,7 +259,7 @@ func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Reques
 	}
 
 	contexts, _ := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventsChannel, *k8sConfigBytes, h.SystemID)
-	h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{RegisterK8sMeshModelComponents}, h.EventsBuffer, h.registryManager, h.config.EventsChannel, provider, user.ID, false)
+	h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{RegisterK8sMeshModelComponents}, h.registryManager, h.config.EventsChannel, provider, user.ID, false)
 	if _, err = w.Write([]byte(http.StatusText(http.StatusAccepted))); err != nil {
 		logrus.Error(ErrWriteResponse)
 		logrus.Error(err)
@@ -328,7 +327,7 @@ func (h *Handler) LoadContextsAndPersist(userID string, token string, prov model
 	return contexts, nil
 }
 
-func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context, config []byte, ctxID string, connectionID string, userID string, mesheryInstanceID uuid.UUID, reg *meshmodel.RegistryManager, es *events.EventStreamer, ec *models.Signal, ctxName string) (err error) {
+func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context, config []byte, ctxID string, connectionID string, userID string, mesheryInstanceID uuid.UUID, reg *meshmodel.RegistryManager, ec *models.Signal, ctxName string) (err error) {
 	connectionUUID := uuid.FromStringOrNil(connectionID)
 	userUUID := uuid.FromStringOrNil(userID)
 
@@ -348,19 +347,10 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 		}, c)
 		count++
 	}
-	event := _events.NewEvent().ActedUpon(connectionUUID).WithCategory("kubernetes_components").WithAction("registration").FromSystem(mesheryInstanceID).FromUser(userUUID).WithSeverity(_events.Informational).WithDescription(fmt.Sprintf("%d Kubernetes components registered for %s", count, ctxName)).Build()
+	event := events.NewEvent().ActedUpon(connectionUUID).WithCategory("kubernetes_components").WithAction("registration").FromSystem(mesheryInstanceID).FromUser(userUUID).WithSeverity(events.Informational).WithDescription(fmt.Sprintf("%d Kubernetes components registered for %s", count, ctxName)).Build()
 
 	_ = (*provider).PersistEvent(event)
 	ec.Publish(userUUID, event)
-
-	es.Publish(&meshes.EventsResponse{
-		Component:     "core",
-		ComponentName: "kubernetes",
-		OperationId:   guid.NewString(),
-		EventType:     meshes.EventType_INFO,
-		Summary:       fmt.Sprintf("%d Kubernetes components registered from %s", count, ctxName),
-		Details:       fmt.Sprintf("%d MeshModel components registered for Kubernetes context \"%s\" (%s)", count, ctxName, ctxID),
-	})
 	return
 }
 

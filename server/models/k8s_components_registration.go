@@ -8,9 +8,8 @@ import (
 	"github.com/gofrs/uuid"
 
 	"github.com/layer5io/meshkit/logger"
-	_events "github.com/layer5io/meshkit/models/events"
+	"github.com/layer5io/meshkit/models/events"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/layer5io/meshkit/utils/events"
 	"github.com/spf13/viper"
 )
 
@@ -65,10 +64,10 @@ func (cg *ComponentsRegistrationHelper) UpdateContexts(ctxs []*K8sContext) *Comp
 	return cg
 }
 
-type K8sRegistrationFunction func(provider *Provider, ctxt context.Context, config []byte, ctxID string, connectionID string, userID string, MesheryInstanceID uuid.UUID, reg *meshmodel.RegistryManager, es *events.EventStreamer, ec *Signal, ctxName string) error
+type K8sRegistrationFunction func(provider *Provider, ctxt context.Context, config []byte, ctxID string, connectionID string, userID string, MesheryInstanceID uuid.UUID, reg *meshmodel.RegistryManager, ec *Signal, ctxName string) error
 
 // start registration of components for the contexts
-func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc []K8sRegistrationFunction, eb *events.EventStreamer, reg *meshmodel.RegistryManager, eventsChan *Signal, provider Provider, userID string, skip bool) {
+func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, regFunc []K8sRegistrationFunction, reg *meshmodel.RegistryManager, eventsChan *Signal, provider Provider, userID string, skip bool) {
 	/* If flag "SKIP_COMP_GEN" is set but the registration is invoked in form of API request explicitly,
 	then flag should not be respected and to control this behaviour skip is introduced.
 	In case of API requests "skip" is set to false, otherise true and behaviour is controlled by "SKIP_COMP_GEN".
@@ -98,7 +97,7 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 		cg.log.Info("Registration of ", ctxName, " components started for contextID: ", ctxID)
 	
 
-		event := _events.NewEvent().ActedUpon(connectionID).FromSystem(*ctx.MesheryInstanceID).WithSeverity(_events.Informational).WithCategory("connection").WithAction(Registering.String()).FromUser(userUUID).WithDescription(fmt.Sprintf("Registration for Kubernetes context %s started", ctxName)).Build()
+		event := events.NewEvent().ActedUpon(connectionID).FromSystem(*ctx.MesheryInstanceID).WithSeverity(events.Informational).WithCategory("connection").WithAction(Registering.String()).FromUser(userUUID).WithDescription(fmt.Sprintf("Registration for Kubernetes context %s started", ctxName)).Build()
 		err := provider.PersistEvent(event)
 		if err != nil {
 			// Even if event was not persisted continue with the operation and publish the event to user.
@@ -123,7 +122,7 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 				return
 			}
 			for _, f := range regFunc {
-				err = f(&provider, context.Background(), cfg, ctxID, ctx.ConnectionID, userID, *ctx.MesheryInstanceID, reg, eb, eventsChan, ctxName)
+				err = f(&provider, context.Background(), cfg, ctxID, ctx.ConnectionID, userID, *ctx.MesheryInstanceID, reg, eventsChan, ctxName)
 				if err != nil {
 					cg.log.Error(err)
 					return
