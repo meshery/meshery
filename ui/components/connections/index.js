@@ -9,7 +9,6 @@ import { withStyles } from "@material-ui/core/styles";
 // import EditIcon from "@material-ui/icons/Edit";
 // import YoutubeSearchedForIcon from '@mui/icons-material/YoutubeSearchedFor';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import MUIDataTable from "mui-datatables";
 import React, { useEffect, useRef, useState } from "react";
 import Moment from "react-moment";
 import { connect } from "react-redux";
@@ -27,6 +26,9 @@ import LaunchIcon from '@mui/icons-material/Launch';
 import TableRow from '@mui/material/TableRow';
 import { useNotification } from "../../utils/hooks/useNotification";
 import { EVENT_TYPES } from "../../lib/event-types";
+import CustomColumnVisibilityControl from "../../utils/custom-column";
+import SearchBar from "../../utils/custom-search";
+import ResponsiveDataTable from "../../utils/data-table";
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2) },
@@ -53,6 +55,11 @@ const styles = (theme) => ({
     display : "flex",
     justifyContent : "space-between",
     paddingLeft : "1rem",
+    backgroundColor : theme.palette.type === 'dark' ? theme.palette.secondary.toolbarBg2 : theme.palette.secondary.toolbarBg1,
+    boxShadow : " 0px 2px 4px -1px rgba(0,0,0,0.2)",
+    height : "4rem",
+    padding : "0.68rem",
+    borderRadius : "0.5rem"
   },
   viewSwitchButton : {
     justifySelf : "flex-end",
@@ -60,17 +67,20 @@ const styles = (theme) => ({
     paddingLeft : "1rem",
   },
   statusCip : {
+    minWidth : "120px !important",
+    maxWidth : "max-content !important",
+    display : "flex !important",
+    justifyContent : "flex-start !important",
+    textTransform : "capitalize",
+    borderRadius : "3px !important",
+    padding : "6px 8px",
     "& .MuiChip-label" : {
       paddingTop : "3px",
       fontWeight : "400",
     },
-    textTransform : "capitalize",
-    borderRadius : "3px !important",
-    display : "flex",
-    width : "117px",
-    padding : "6px 8px",
-    alignItems : "center",
-    gap : "5px",
+    "&:hover" : {
+      boxShadow : "0px 1px 2px 0px rgba(0, 0, 0, 0.25)"
+    }
   },
   capitalize : {
     textTransform : "capitalize",
@@ -79,32 +89,50 @@ const styles = (theme) => ({
     "& .MuiChip-label" : {
       color : `${theme.palette.secondary.default}`,
     },
-    background : `${theme.palette.secondary.default}15 !important`,
+    background : `${theme.palette.secondary.default}30 !important`,
+    "& .MuiSvgIcon-root" : {
+      color : `${theme.palette.secondary.default} !important`,
+    }
   },
   connected : {
     "& .MuiChip-label" : {
       color : theme.palette.secondary.success,
     },
-    background : `${theme.palette.secondary.success}15 !important`,
+    background : `${theme.palette.secondary.success}30 !important`,
+    "& .MuiSvgIcon-root" : {
+      color : `${theme.palette.secondary.success} !important`,
+    }
   },
   registered : {
     "& .MuiChip-label" : {
       color : theme.palette.secondary.primary,
     },
-    background : `${theme.palette.secondary.primary}15 !important`,
+    background : `${theme.palette.secondary.primary}30 !important`,
+    "& .MuiSvgIcon-root" : {
+      color : `${theme.palette.secondary.primary} !important`,
+    }
   },
   discovered : {
     "& .MuiChip-label" : {
       color : theme.palette.secondary.warning,
     },
-    background : `${theme.palette.secondary.warning}15 !important`,
+    background : `${theme.palette.secondary.warning}30 !important`,
+    "& .MuiSvgIcon-root" : {
+      color : `${theme.palette.secondary.warning} !important`,
+    }
   },
   deleted : {
     "& .MuiChip-label" : {
       color : theme.palette.secondary.error,
     },
-    background : `${theme.palette.secondary.error}15 !important`,
+    background : `${theme.palette.secondary.lightError}30 !important`,
+    "& .MuiSvgIcon-root" : {
+      color : `${theme.palette.secondary.error} !important`,
+    }
   },
+  expandedRows : {
+    background : `${theme.palette.secondary.default}10`
+  }
 });
 
 const ACTION_TYPES = {
@@ -127,21 +155,35 @@ function Connections({ classes, updateProgress }) {
   const status = (value) => {
     switch (value) {
       case 'ignored':
-        return <Chip className={classNames(classes.statusCip, classes.ignored)} avatar={<RemoveCircleIcon style={{ color : "#51636B" }} />} label={value} />
+        return <Chip className={classNames(classes.statusCip, classes.ignored)} avatar={<RemoveCircleIcon />} label={value} />
       case 'connected':
-        return <Chip className={classNames(classes.statusCip, classes.connected)} avatar={<CheckCircleIcon style={{ color : "#00B39F" }}/>} label={value} />
+        return <Chip className={classNames(classes.statusCip, classes.connected)} avatar={<CheckCircleIcon />} label={value} />
       case 'REGISTERED':
-        return <Chip className={classNames(classes.statusCip, classes.registered)} avatar={<AssignmentTurnedInIcon style={{ color : "#477E96" }} />} label={value.toLowerCase()} />
+        return <Chip className={classNames(classes.statusCip, classes.registered)} avatar={<AssignmentTurnedInIcon />} label={value.toLowerCase()} />
       case 'discovered':
-        return <Chip className={classNames(classes.statusCip, classes.discovered)} avatar={<ExploreIcon style={{ color : "#EBC017" }} />} label={value} />
+        return <Chip className={classNames(classes.statusCip, classes.discovered)} avatar={<ExploreIcon />} label={value} />
       case 'deleted':
-        return <Chip className={classNames(classes.statusCip, classes.deleted)} avatar={<DeleteForeverIcon style={{ color : "#8F1F00" }} />} label={value} />
+        return <Chip className={classNames(classes.statusCip, classes.deleted)} avatar={<DeleteForeverIcon />} label={value} />
       default:
         return "-"
     }
   }
 
   const columns = [
+    {
+      name : "name",
+      label : "Element",
+      options : {
+        display : false,
+      },
+    },
+    {
+      name : "metadata.server_location",
+      label : "Server Location",
+      options : {
+        display : false,
+      },
+    },
     {
       name : "name",
       label : "Element",
@@ -153,29 +195,19 @@ function Connections({ classes, updateProgress }) {
             </TableCell>
           );
         },
-      },
-    },
-    {
-      name : "metadata",
-      label : " ",
-      options : {
-        customHeadRender : function CustomHead({ index }) {
+        customBodyRender : (value, tableMeta) => {
           return (
-            <TableCell key={index}></TableCell>
+            <Tooltip title={tableMeta.rowData[1]} placement="top" >
+              <Link href={tableMeta.rowData[1]} target="_blank">
+                {value}
+                <sup>
+                  <LaunchIcon sx={{ fontSize : "12px" }} />
+                </sup>
+              </Link>
+            </Tooltip>
           );
-        },
-        customBodyRender : function CustomBody(value) {
-          return (
-            <>
-              <Tooltip title={value.server_location} placement="top" arrow interactive >
-                <Link href={value.server_location} target="_blank">
-                  <LaunchIcon />
-                </Link>
-              </Tooltip>
-            </>
-          );
-        },
-      },
+        }
+      }
     },
     {
       name : "type",
@@ -317,6 +349,8 @@ function Connections({ classes, updateProgress }) {
 
   const options = {
     filter : false,
+    viewColumns : false,
+    search : false,
     responsive : "standard",
     resizableColumns : true,
     serverSide : true,
@@ -365,32 +399,33 @@ function Connections({ classes, updateProgress }) {
     },
     rowsExpanded : [0, 1],
     renderExpandableRow : (rowData) => {
-      const colSpan = (rowData.length-1)/3;
       return (
         <TableRow>
           <TableCell>
           </TableCell>
-          <TableCell colSpan={colSpan}>
-            <b>Server Build SHA:</b> {rowData[8]}
+          <TableCell colSpan={2}>
+            <b>Server Build SHA:</b> {rowData[9]}
           </TableCell>
-          <TableCell colSpan={colSpan}>
-            <b>Server Version:</b> {rowData[9]}
+          <TableCell colSpan={2}>
+            <b>Server Version:</b> {rowData[10]}
           </TableCell>
-          <TableCell colSpan={colSpan}>
+          <TableCell colSpan={2}>
           </TableCell>
         </TableRow>
       );
     },
   };
 
+
   /**
    * fetch connections when the page loads
    */
   useEffect(() => {
-    getConnections(page, pageSize,)
+    getConnections(page, pageSize,search)
   }, [page, pageSize, search]);
 
-  const getConnections = (page, pageSize) => {
+  const getConnections = (page, pageSize,search) => {
+    if (!search) search = "";
     dataFetch(
       `/api/integrations/connections?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(search)}`,
       {
@@ -412,13 +447,24 @@ function Connections({ classes, updateProgress }) {
     notify({ message : `${action.error_msg}: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() })
   };
 
+  const [tableCols, updateCols] = useState(columns);
+
+  const [columnVisibility, setColumnVisibility] = useState(() => {
+    // Initialize column visibility based on the original columns' visibility
+    const initialVisibility = {};
+    columns.forEach(col => {
+      initialVisibility[col.name] = col.options?.display !== false;
+    });
+    return initialVisibility;
+  });
+
   return (
     <>
       <NoSsr>
-        {/* <div className={classes.topToolbar}>
+        <div className={classes.topToolbar}>
           <div className={classes.createButton}>
             <div>
-              <Button
+              {/* <Button
                 aria-label="Rediscover"
                 variant="contained"
                 color="primary"
@@ -429,19 +475,16 @@ function Connections({ classes, updateProgress }) {
               >
                 <YoutubeSearchedForIcon style={iconMedium} />
                 Rediscover
-              </Button>
+              </Button> */}
             </div>
           </div>
           <div
             className={classes.searchAndView}
             style={{
               display : "flex",
-              alignItems : "center",
-              justifyContent : "flex-end",
-              height : "5ch",
             }}
           >
-            <Button
+            {/* <Button
               aria-label="Edit"
               variant="contained"
               color="primary"
@@ -451,8 +494,9 @@ function Connections({ classes, updateProgress }) {
               style={{ marginRight : "0.5rem" }}
             >
               <EditIcon style={iconMedium} />
-            </Button>
-            <Button
+            </Button> */}
+
+            {/* <Button
               aria-label="Delete"
               variant="contained"
               color="primary"
@@ -463,15 +507,32 @@ function Connections({ classes, updateProgress }) {
             >
               <DeleteForeverIcon style={iconMedium} />
               Delete
-            </Button>
+            </Button> */}
+
+            <SearchBar
+              onSearch={(value) => {
+                setSearch(value);
+                getConnections(page, pageSize, value);
+              }}
+              placeholder="Search"
+            />
+
+            <CustomColumnVisibilityControl
+              columns={columns}
+              customToolsProps={{ columnVisibility, setColumnVisibility }}
+            />
+
           </div>
-        </div> */}
-        <MUIDataTable
+        </div>
+        <ResponsiveDataTable
           data={connections}
           columns={columns}
           // @ts-ignore
           options={options}
           className={classes.muiRow}
+          tableCols={tableCols}
+          updateCols={updateCols}
+          columnVisibility={columnVisibility}
         />
       </NoSsr>
     </>
