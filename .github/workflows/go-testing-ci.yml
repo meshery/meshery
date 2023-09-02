@@ -91,3 +91,6 @@ jobs:
       - name: Start Mesheryctl System
         run: |
          cd mesheryctl; make; ./mesheryctl system start 
+      - name: Check Meshery System Readiness
+        run: |
+         cd mesheryctl; make; ./mesheryctl system check --preflight   
