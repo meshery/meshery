@@ -27,7 +27,7 @@ var (
 // Listens for events across all of Meshery's components like adapters and server, streaming them to the UI via Server Side Events
 // This API call never terminates and establishes a persistent keep-alive connection over which `EventsResponse`s are pushed.
 // responses:
-// 	200: EventsResponse
+// 	200:
 
 // EventStreamHandler endpoint is used for streaming events to the frontend
 func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, p models.Provider) {
@@ -154,7 +154,7 @@ func listenForCoreEvents(ctx context.Context, eb *events.EventStreamer, resp cha
 			}
 			data, err := json.Marshal(event)
 			if err != nil {
-				log.Error(ErrMarshal(err, "event"))
+				log.Error(models.ErrMarshal(err, "event"))
 				continue
 			}
 			resp <- data
@@ -192,7 +192,7 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 			result := &models.SmiResult{}
 			err := json.Unmarshal([]byte(event.Details), result)
 			if err != nil {
-				log.Error(ErrUnmarshal(err, "event"))
+				log.Error(models.ErrUnmarshal(err, "event"))
 				return
 			}
 
@@ -206,7 +206,7 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 
 		data, err := json.Marshal(event)
 		if err != nil {
-			log.Error(ErrMarshal(err, "event"))
+			log.Error(models.ErrMarshal(err, "event"))
 			return
 		}
 		respChan <- data

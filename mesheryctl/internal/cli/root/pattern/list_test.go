@@ -117,6 +117,7 @@ func TestPatternList(t *testing.T) {
 
 			utils.Equals(t, expectedResponse, actualResponse)
 		})
+		t.Log("List Pattern test Passed")
 	}
 
 	// stop mock server

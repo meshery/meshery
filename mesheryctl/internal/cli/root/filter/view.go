@@ -34,20 +34,22 @@ var (
 )
 
 var viewCmd = &cobra.Command{
-	Use:   "view [filter name]",
-	Short: "Display filters(s)",
+	Use:   "view [filter-name | ID]",
+	Short: "View filter(s)",
 	Long:  `Displays the contents of a specific filter based on name or id`,
 	Example: `
-// View the specified WASM filter file
-mesheryctl exp filter view [filter-name | ID]	
+// View the specified WASM filter
+// A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be returned.
+mesheryctl filter view [filter-name | ID]	
 
-// View using filter name
-mesheryctl exp filter view test-wasm
+// View all filter files
+mesheryctl filter view --all
 	`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
+			utils.Log.Error(err)
 			return errors.Wrap(err, "error processing config")
 		}
 
@@ -56,19 +58,21 @@ mesheryctl exp filter view test-wasm
 		// if filter name/id available
 		if len(args) > 0 {
 			if viewAllFlag {
-				return errors.New("-a cannot be used when [filter-name|filter-id] is specified")
+				return errors.New(utils.FilterViewError("--all cannot be used when filter name or ID is specified\nUse 'mesheryctl filter view --help' to display usage guide\n"))
 			}
-			filter, isID, err = utils.Valid(args[0], "filter")
+			filter, isID, err = utils.ValidId(args[0], "filter")
 			if err != nil {
-				return errors.New("Invalid filter ID / filter name. " + err.Error())
+				utils.Log.Error(err)
+				return nil
 			}
 		}
+
 		urlString := mctlCfg.GetBaseMesheryURL()
 		if len(filter) == 0 {
 			if viewAllFlag {
 				urlString += "/api/filter?pagesize=10000"
 			} else {
-				return errors.New("[filter-name|filter-id] not specified, use -a to view all filters")
+				return errors.New(utils.FilterViewError("filter-name or ID not specified, use -a to view all filters\nUse 'mesheryctl filter view --help' to display usage guide\n"))
 			}
 		} else if isID {
 			// if filter is a valid uuid, then directly fetch the filter
@@ -95,7 +99,7 @@ mesheryctl exp filter view test-wasm
 
 		var dat map[string]interface{}
 		if err = json.Unmarshal(body, &dat); err != nil {
-			return ErrUnmarshal(err)
+			return utils.ErrUnmarshal(err)
 		}
 
 		if isID {

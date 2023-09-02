@@ -1,5 +1,5 @@
 //@ts-check
-import { Grid, Paper, Typography, Button } from "@material-ui/core";
+import { Grid, Paper, Typography } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
 import MesheryPatternCard from "./MesheryPatternCard";
@@ -7,13 +7,11 @@ import DesignConfigurator from "../configuratorComponents/MeshModel";
 import { FILE_OPS, ACTIONS } from "../../utils/Enum";
 import ConfirmationMsg from "../ConfirmationModal";
 import { getComponentsinFile } from "../../utils/utils";
-import PublicIcon from '@material-ui/icons/Public';
-import PublishIcon from "@material-ui/icons/Publish";
 import useStyles from "./Grid.styles";
 import Validation from "../Validation";
-import { publish_schema } from "../schemas/publish_schema";
 import Modal from "../Modal";
-import _ from "lodash";
+import PublicIcon from '@material-ui/icons/Public';
+import DryRunComponent from "../DryRun/DryRunComponent";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
@@ -70,22 +68,19 @@ function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublis
  *  selectedPage?: number,
  *  setPage: (page: number) => void
  *  patternErrors: Map
- *  canPublishPattern: boolean
+ *  canPublishPattern: boolean,
+ *  publishModal: {
+ *   open: boolean,
+ *   filter: any,
+ *   name: string
+ *  },
+ *  setPublishModal: (publishModal: { open: boolean, filter: any, name: string }) => void
  * }} props props
  */
 
-function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUnpublishModal, handleDeploy, handleUnDeploy, urlUploadHandler, handleClone, uploadHandler, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage, UploadImport, fetch, patternErrors, canPublishPattern = false }) {
+function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUnpublishModal, handleDeploy, handleUnDeploy, handleClone, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage, patternErrors, canPublishPattern = false, publishModal, setPublishModal, selectedK8sContexts, publishSchema }) {
 
   const classes = useStyles()
-
-  const [importModal, setImportModal] = useState({
-    open : false
-  });
-  const [publishModal, setPublishModal] = useState({
-    open : false,
-    pattern : {},
-    name : ""
-  });
   const handlePublishModal = (pattern) => {
     if (canPublishPattern) {
       setPublishModal({
@@ -103,28 +98,13 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
     });
   };
 
-  const handleUploadImport = () => {
-    setImportModal({
-      open : true
-    });
-  }
-
-  const handleUploadImportClose = () => {
-    setImportModal({
-      open : false
-    });
-  }
-  const [payload, setPayload] = useState({
-    id : "",
-    catalog_data : {}
-  });
-
   const [modalOpen, setModalOpen] = useState({
     open : false,
     deploy : false,
     pattern_file : null,
     name : "",
-    count : 0
+    count : 0,
+    dryRunComponent : null ,
   });
 
   const handleModalClose = () => {
@@ -136,13 +116,6 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
     });
   }
 
-  const onChange = (e) => {
-    setPayload({
-      id : publishModal.pattern?.id,
-      catalog_data : e
-    })
-  }
-
   const handleModalOpen = (pattern, action) => {
     const compCount = getComponentsinFile(pattern.pattern_file);
     const validationBody = (
@@ -152,13 +125,19 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
         handleClose={() => setModalOpen({ ...modalOpen, open : false })}
       />
     )
+
+    const dryRunComponent = (
+      <DryRunComponent design={pattern.pattern_file} noOfElements={compCount} selectedContexts={selectedK8sContexts} />
+    )
     setModalOpen({
       open : true,
       action : action,
       pattern_file : pattern.pattern_file,
       name : pattern.name,
       count : compCount,
-      validationBody : validationBody
+      validationBody : validationBody,
+      dryRunComponent : dryRunComponent
+
     });
   }
 
@@ -168,7 +147,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
       <DesignConfigurator pattern={selectedPattern.pattern} show={setSelectedPattern}  onSubmit={handleSubmit} />
       }
       {!selectedPattern.show &&
-      <Grid container spacing={3} style={{ padding : "1rem" }}>
+      <Grid container spacing={3}>
         {patterns.map((pattern) => (
           <PatternCardGridItem
             key={pattern.id}
@@ -194,7 +173,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
                 No Designs Found
               </Typography>
               <div>
-                <Button
+                {/* <Button
                   aria-label="Add Application"
                   variant="contained"
                   color="primary"
@@ -205,7 +184,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
                 >
                   <PublishIcon className={classes.addIcon} />
               Import Design
-                </Button>
+                </Button> */}
               </div>
             </div>
           </Paper>
@@ -226,26 +205,23 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
         title={ modalOpen.name }
         componentCount={modalOpen.count}
         tab={modalOpen.action}
+        dryRunComponent={modalOpen.dryRunComponent}
         validationBody={modalOpen.validationBody}
       />
       {canPublishPattern &&
-      <Modal open={publishModal.open} schema={publish_schema} onChange={onChange} handleClose={handlePublishModalClose} formData={_.isEmpty(payload.catalog_data) ?publishModal?.pattern?.catalog_data : payload.catalog_data} aria-label="catalog publish" title={publishModal.pattern?.name}>
-        <Button
-          title="Publish"
-          variant="contained"
-          color="primary"
-          className={classes.testsButton}
-          onClick={() => {
-            handlePublishModalClose();
-            handlePublish(payload)
-          }}
-        >
-          <PublicIcon className={classes.iconPatt} />
-          <span className={classes.btnText}> Publish </span>
-        </Button>
-      </Modal>
+       <Modal
+         open={publishModal.open}
+         schema={publishSchema.rjsfSchema}
+         uiSchema={publishSchema.uiSchema}
+         handleClose={handlePublishModalClose}
+         aria-label="catalog publish"
+         title={publishModal.pattern?.name}
+         handleSubmit={handlePublish}
+         showInfoIcon={{ text : "Upon submitting your catalog item, an approval flow will be initiated.", link : "https://docs.meshery.io/concepts/catalog" }}
+         submitBtnText="Submit for Approval"
+         submitBtnIcon={<PublicIcon/>}
+       />
       }
-      <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={async() => await fetch()} configuration="Designs"  />
     </div>
   );
 }

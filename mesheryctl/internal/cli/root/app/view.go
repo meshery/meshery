@@ -58,7 +58,8 @@ mesheryctl app view --all
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			utils.Log.Error(err)
+			return nil
 		}
 
 		application := ""
@@ -69,9 +70,10 @@ mesheryctl app view --all
 			if viewAllFlag {
 				return errors.New("-a cannot be used when [application-name|application-id] is specified")
 			}
-			applicationID, isID, err = utils.Valid(args[0], "application")
+			applicationID, isID, err = utils.ValidId(args[0], "application")
 			if err != nil {
-				return err
+				utils.Log.Error(err)
+				return nil
 			}
 		}
 		var req *http.Request
@@ -93,30 +95,29 @@ mesheryctl app view --all
 			url += "/api/application?search=" + application
 		}
 
-		client := &http.Client{}
 		req, err = utils.NewRequest("GET", url, nil)
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 
-		res, err := client.Do(req)
+		res, err := utils.MakeRequest(req)
 		if err != nil {
-			return err
-		}
-		if res.StatusCode != 200 {
-			// failsafe for the case when a valid uuid v4 is not an id of any application (bad api call)
-			return errors.Errorf("Response Status Code %d, possible invalid ID", res.StatusCode)
+			utils.Log.Error(err)
+			return nil
 		}
 
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			return err
+			utils.Log.Error(utils.ErrReadResponseBody(err))
+			return nil
 		}
 
 		var dat map[string]interface{}
 		if err = json.Unmarshal(body, &dat); err != nil {
-			return errors.Wrap(err, "failed to unmarshal response body")
+			utils.Log.Error(utils.ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body")))
+			return nil
 		}
 		if isID {
 			if body, err = json.MarshalIndent(dat, "", "  "); err != nil {
@@ -128,10 +129,12 @@ mesheryctl app view --all
 			}
 		} else {
 			if err = json.Unmarshal(body, &response); err != nil {
-				return errors.Wrap(err, "failed to unmarshal response body")
+				utils.Log.Error(utils.ErrUnmarshal(err))
+				return nil
 			}
 			if response.TotalCount == 0 {
-				return errors.New("application does not exit. Please get an app name and try again. Use `mesheryctl app list` to see a list of applications")
+				utils.Log.Error(utils.ErrNotFound(errors.New("application does not exit. Please get an app name and try again. Use `mesheryctl app list` to see a list of applications")))
+				return nil
 			}
 			// Manage more than one apps with similar name
 			for _, app := range response.Applications {

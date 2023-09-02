@@ -18,7 +18,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 
 	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -51,7 +50,8 @@ mesheryctl pattern view [pattern-name | ID]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			utils.Log.Error(err)
+			return nil
 		}
 		pattern := ""
 		isID := false
@@ -60,9 +60,10 @@ mesheryctl pattern view [pattern-name | ID]
 			if viewAllFlag {
 				return errors.New("-a cannot be used when [pattern-name|pattern-id] is specified")
 			}
-			pattern, isID, err = utils.Valid(args[0], "pattern")
+			pattern, isID, err = utils.ValidId(args[0], "pattern")
 			if err != nil {
-				return err
+				utils.Log.Error(err)
+				return nil
 			}
 		}
 		url := mctlCfg.GetBaseMesheryURL()
@@ -80,30 +81,29 @@ mesheryctl pattern view [pattern-name | ID]
 			url += "/api/pattern?search=" + pattern
 		}
 
-		client := &http.Client{}
 		req, err := utils.NewRequest("GET", url, nil)
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 
-		res, err := client.Do(req)
+		res, err := utils.MakeRequest(req)
 		if err != nil {
-			return err
-		}
-		if res.StatusCode != 200 {
-			// failsafe for the case when a valid uuid v4 is not an id of any pattern (bad api call)
-			return errors.Errorf("Response Status Code %d, possible invalid ID", res.StatusCode)
+			utils.Log.Error(err)
+			return nil
 		}
 
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			return err
+			utils.Log.Error(utils.ErrReadResponseBody(err))
+			return nil
 		}
 
 		var dat map[string]interface{}
 		if err = json.Unmarshal(body, &dat); err != nil {
-			return errors.Wrap(err, "couldn't process JSON response from Meshery Server")
+			utils.Log.Error(utils.ErrUnmarshal(err))
+			return nil
 		}
 
 		if isID {
@@ -119,6 +119,7 @@ mesheryctl pattern view [pattern-name | ID]
 			// use the first match from the result when searching by pattern name
 			arr := dat["patterns"].([]interface{})
 			if len(arr) == 0 {
+				utils.Log.Error(ErrPatternNotFound())
 				utils.Log.Info(fmt.Sprintf("pattern with name: %s not found. Enter a valid pattern name or ID", pattern))
 				return nil
 			}

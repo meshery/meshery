@@ -1,21 +1,17 @@
 package filter
 
 import (
-	"flag"
-	"io"
-	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/stretchr/testify/assert"
 )
 
-var update = flag.Bool("update", false, "update golden files")
-
-func TestPatternList(t *testing.T) {
-	// setup current context
+func TestListCmd(t *testing.T) {
+	//setup current context
 	utils.SetupContextEnv(t)
 
 	// initialize mock server for handling requests
@@ -52,7 +48,6 @@ func TestPatternList(t *testing.T) {
 			ExpectError:      false,
 		},
 	}
-
 	// Run tests
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
@@ -70,13 +65,9 @@ func TestPatternList(t *testing.T) {
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
-			// Grab console prints
-			rescueStdout := os.Stdout
-			r, w, _ := os.Pipe()
-			os.Stdout = w
-			_ = utils.SetupMeshkitLoggerTesting(t, false)
+			buff := utils.SetupMeshkitLoggerTesting(t, false)
 			FilterCmd.SetArgs(tt.Args)
-			FilterCmd.SetOutput(rescueStdout)
+			FilterCmd.SetOutput(buff)
 			err := FilterCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error
@@ -92,24 +83,18 @@ func TestPatternList(t *testing.T) {
 				}
 				t.Fatal(err)
 			}
-
-			w.Close()
-			out, _ := io.ReadAll(r)
-			os.Stdout = rescueStdout
-
 			// response being printed in console
-			actualResponse := string(out)
+			actualResponse := buff.String()
 
 			// write it in file
 			if *update {
 				golden.Write(actualResponse)
 			}
 			expectedResponse := golden.Load()
-
-			utils.Equals(t, expectedResponse, actualResponse)
+			assert.Equal(t, expectedResponse, actualResponse)
 		})
+		t.Log("List Filter test Passed")
 	}
-
 	// stop mock server
 	utils.StopMockery(t)
 }

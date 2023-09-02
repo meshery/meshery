@@ -1,29 +1,26 @@
-services:
-    meshery:
-        image: layer5/meshery:stable-latest
-        labels:
-            - com.centurylinklabs.watchtower.enable=true
-        environment:
-            - PROVIDER_BASE_URLS=https://meshery.layer5.io
-            - ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-osm:10009 meshery-traefik-mesh:10006 meshery-nginx-sm:10010 meshery-cilium:10012
-            - EVENT=mesheryLocal
-            - PORT=9081
-            - MESHERY_SERVER_CALLBACK_URL=
-        volumes:
-            - $HOME/.kube:/home/appuser/.kube:ro
-            - $HOME/.minikube:$HOME/.minikube:ro
-        ports:
-            - 9081:9081
-    meshery-istio:
-        image: layer5/meshery-istio:stable-latest
-        labels:
-            - com.centurylinklabs.watchtower.enable=true
-        ports:
-            - 10000:10000
-    watchtower:
-        image: containrrr/watchtower
-        labels:
-            - com.centurylinklabs.watchtower.enable=true
-        volumes:
-            - /var/run/docker.sock:/var/run/docker.sock
 version: "3"
+services:
+  meshery:
+    image: layer5/meshery:stable-latest
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    environment:
+      - "PROVIDER_BASE_URLS=https://meshery.layer5.io"
+      - "ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-traefik-mesh:10006 meshery-nginx-sm:10010 meshery-cilium:10012"
+      - "EVENT=mesheryLocal"
+      - "PORT=9081"
+    volumes:
+      - $HOME/.kube:/home/appuser/.kube:ro
+      - $HOME/.minikube:$HOME/.minikube:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - "9081:9081"
+  watchtower:
+    image: containrrr/watchtower
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --label-enable
+volumes:
+  meshery-config:

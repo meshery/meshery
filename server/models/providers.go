@@ -98,10 +98,11 @@ type RestrictedAccess struct {
 
 // Extensions defines the UI extension points
 type Extensions struct {
-	Navigator NavigatorExtensions `json:"navigator,omitempty"`
-	UserPrefs UserPrefsExtensions `json:"user_prefs,omitempty"`
-	GraphQL   GraphQLExtensions   `json:"graphql,omitempty"`
-	Acccount  AccountExtensions   `json:"account,omitempty"`
+	Navigator    NavigatorExtensions    `json:"navigator,omitempty"`
+	UserPrefs    UserPrefsExtensions    `json:"user_prefs,omitempty"`
+	GraphQL      GraphQLExtensions      `json:"graphql,omitempty"`
+	Acccount     AccountExtensions      `json:"account,omitempty"`
+	Collaborator CollaboratorExtensions `json:"collaborator,omitempty"`
 }
 
 // NavigatorExtensions is a collection of NavigatorExtension
@@ -113,8 +114,11 @@ type UserPrefsExtensions []UserPrefsExtension
 // GraphQLExtensions is a collection of GraphQLExtension endpoints
 type GraphQLExtensions []GraphQLExtension
 
-// NavigatorExtensions is a collection of NavigatorExtension
+// NavigatorExtensions is a collection of AccountExtension
 type AccountExtensions []AccountExtension
+
+// CollaboratorExtension describes the Collaborator extension point in the UI
+type CollaboratorExtensions []CollaboratorExtension
 
 // GraphQLExtension describes the graphql server extension point in the backend
 type GraphQLExtension struct {
@@ -173,6 +177,12 @@ type UserPrefsExtension struct {
 	Type      string `json:"type,omitempty"`
 }
 
+// CollaboratorsExtension is the struct for collaborators extension
+type CollaboratorExtension struct {
+	Component string `json:"component,omitempty"`
+	Type      string `json:"type,omitempty"`
+}
+
 // Href describes a link along with its type
 type Href struct {
 	URI      string `json:"uri,omitempty"`
@@ -201,6 +211,7 @@ type ConnectionPayload struct {
 	MetaData         map[string]interface{} `json:"metadata,omitempty"`
 	Status           ConnectionStatus       `json:"status,omitempty"`
 	CredentialSecret map[string]interface{} `json:"credential_secret,omitempty"`
+	Name             string                 `json:"name,omitempty"`
 }
 
 type ExtensionProxyResponse struct {
@@ -249,6 +260,8 @@ const (
 
 	ShareDesigns Feature = "share-designs"
 
+	ShareFilters Feature = "share-filters"
+
 	PersistConnection Feature = "persist-connection"
 
 	PersistCredentials Feature = "persist-credentials"
@@ -256,6 +269,8 @@ const (
 	UsersProfile Feature = "users-profile"
 
 	UsersIdentity Feature = "users-identity"
+
+	UsersKeys Feature = "users-keys"
 )
 
 const (
@@ -341,6 +356,7 @@ type Provider interface {
 	GetUserDetails(*http.Request) (*User, error)
 	GetUserByID(req *http.Request, userID string) ([]byte, error)
 	GetUsers(token, page, pageSize, search, order, filter string) ([]byte, error)
+	GetUsersKeys(token, page, pageSize, search, order, filter string) ([]byte, error)
 	GetProviderToken(req *http.Request) (string, error)
 	UpdateToken(http.ResponseWriter, *http.Request) string
 	Logout(http.ResponseWriter, *http.Request) error
@@ -391,7 +407,7 @@ type Provider interface {
 	DeleteMesheryPatternResource(token, resourceID string) error
 
 	SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error)
-	GetMesheryFilters(tokenString, page, pageSize, search, order string) ([]byte, error)
+	GetMesheryFilters(tokenString, page, pageSize, search, order string, visibility string) ([]byte, error)
 	GetCatalogMesheryFilters(tokenString string, page, pageSize, search, order string) ([]byte, error)
 	PublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error)
 	UnPublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error)
@@ -408,6 +424,7 @@ type Provider interface {
 	DeleteMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
 	GetMesheryApplication(req *http.Request, applicationID string) ([]byte, error)
 	ShareDesign(req *http.Request) (int, error)
+	ShareFilter(req *http.Request) (int, error)
 
 	SavePerformanceProfile(tokenString string, performanceProfile *PerformanceProfile) ([]byte, error)
 	GetPerformanceProfiles(tokenString string, page, pageSize, search, order string) ([]byte, error)
@@ -422,8 +439,11 @@ type Provider interface {
 	ExtensionProxy(req *http.Request) (*ExtensionProxyResponse, error)
 
 	SaveConnection(req *http.Request, conn *ConnectionPayload, token string, skipTokenCheck bool) error
-	GetConnections(req *http.Request, userID string, page, pageSize int, search, order, connectionKind string) (*ConnectionPage, error)
+	GetConnections(req *http.Request, userID string, page, pageSize int, search, order string) (*ConnectionPage, error)
+	GetConnectionsByKind(req *http.Request, userID string, page, pageSize int, search, order, connectionKind string) (*map[string]interface{}, error)
+	GetConnectionsStatus(req *http.Request, userID string) (*ConnectionsStatusPage, error)
 	UpdateConnection(req *http.Request, conn *Connection) (*Connection, error)
+	UpdateConnectionById(req *http.Request, conn *ConnectionPayload, connId string) (*Connection, error)
 	DeleteConnection(req *http.Request, connID uuid.UUID) (*Connection, error)
 	DeleteMesheryConnection() error
 

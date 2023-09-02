@@ -6,8 +6,8 @@ import (
 
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/sirupsen/logrus"
 )
 
@@ -71,7 +71,7 @@ type MeshModelRelationshipResponse struct {
 }
 
 func getMeshModelRelationships(regManager *meshmodel.RegistryManager) []*model.MeshModelRelationship {
-	res, _ := regManager.GetEntities(&v1alpha1.RelationshipFilter{})
+	res, _, _ := regManager.GetEntities(&v1alpha1.RelationshipFilter{})
 	relationships := make([]*model.MeshModelRelationship, 0)
 	var relmap = make(map[string]*MeshModelRelationshipResponse)
 	for _, r := range res {
@@ -98,7 +98,7 @@ func getMeshModelRelationships(regManager *meshmodel.RegistryManager) []*model.M
 }
 
 func getMeshModelComponents(regManager *meshmodel.RegistryManager) []*model.MeshModelComponent {
-	res, _ := regManager.GetEntities(&v1alpha1.ComponentFilter{})
+	res, _, _ := regManager.GetEntities(&v1alpha1.ComponentFilter{})
 	components := make([]*model.MeshModelComponent, 0)
 	var response = make(map[string]*MeshModelComponentResponse)
 	for _, r := range res {

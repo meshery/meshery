@@ -38,6 +38,7 @@ type K8sContext struct {
 	Version            string     `json:"version,omitempty" yaml:"version,omitempty"`
 	UpdatedAt          *time.Time `json:"updated_at,omitempty" yaml:"updated_at,omitempty"`
 	CreatedAt          *time.Time `json:"created_at,omitempty" yaml:"created_at,omitempty"`
+	ConnectionID       string     `json:"connection_id,omitempty" yaml:"connection_id,omitempty"`
 }
 
 type InternalKubeConfig struct {
@@ -138,18 +139,18 @@ func NewK8sContextWithServerID(
 
 // K8sContextsFromKubeconfig takes in a kubeconfig and meshery instance ID and generates
 // kubernetes contexts from it
-func K8sContextsFromKubeconfig(kubeconfig []byte, instanceID *uuid.UUID) ([]K8sContext, string) {
+func K8sContextsFromKubeconfig(kubeconfig []byte, instanceID *uuid.UUID) ([]*K8sContext, string) {
 	respMessage := ""
-	kcs := []K8sContext{}
+	kcs := []*K8sContext{}
 
 	parsed, err := clientcmd.Load(kubeconfig)
 	if err != nil {
-		return kcs, respMessage
+		return kcs, err.Error()
 	}
 
 	kcfg := InternalKubeConfig{}
 	if err := yaml.Unmarshal(kubeconfig, &kcfg); err != nil {
-		return kcs, respMessage
+		return kcs, err.Error()
 	}
 
 	for name := range parsed.Contexts {
@@ -162,21 +163,31 @@ func K8sContextsFromKubeconfig(kubeconfig []byte, instanceID *uuid.UUID) ([]K8sC
 			respMessage += msg
 			continue
 		}
-		err = kc.AssignVersion(handler)
-		if err != nil {
-			msg = fmt.Sprintf("error getting kubernetes version: %v\n Skipping context", err)
-			logrus.Warnf(msg)
-			respMessage += msg
-			continue
-		}
-		if err := kc.AssignServerID(handler); err != nil {
-			msg = fmt.Sprintf("Skipping context: Reason => %s\n", err)
+		
+		// Perform Ping test on the cluster
+		if err := kc.PingTest(); err != nil {
+			msg = fmt.Sprintf("Skipping context: %v \n", err)
 			logrus.Warn(msg)
 			respMessage += msg
 			continue
 		}
 
-		kcs = append(kcs, kc)
+		err = kc.AssignVersion(handler)
+		if err != nil {
+			msg = fmt.Sprintf("Skipping context: Could not retrieve Kubernetes version: %v ", err)
+			logrus.Warnf(msg)
+			respMessage += msg
+			continue
+		}
+		
+		if err := kc.AssignServerID(handler); err != nil {
+			msg = fmt.Sprintf("Skipping context: Could not retrieve Kubernetes cluster ID (%v)", err)
+			logrus.Warn(msg)
+			respMessage += msg
+			continue
+		}
+
+		kcs = append(kcs, &kc)
 	}
 
 	return kcs, respMessage
@@ -344,11 +355,6 @@ func (kc K8sContext) PingTest() error {
 // AssignServerID will attempt to assign kubernetes
 // server ID to the kubernetes context
 func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
-	// Perform Ping test on the cluster
-	if err := kc.PingTest(); err != nil {
-		return err
-	}
-
 	// Get Kubernetes API server ID by querying the "kube-system" namespace uuid
 	ksns, err := handler.KubeClient.CoreV1().Namespaces().Get(context.TODO(), "kube-system", v1.GetOptions{})
 	if err != nil {

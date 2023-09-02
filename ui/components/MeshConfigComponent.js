@@ -4,15 +4,12 @@ import {
 } from '@material-ui/core';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import TableSortLabel from "@material-ui/core/TableSortLabel";
-import CloseIcon from "@material-ui/icons/Close";
-import { withSnackbar } from "notistack";
 import { useState, useEffect, useRef } from 'react';
 import DataTable from "mui-datatables";
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import _ from "lodash";
-
 import dataFetch from '../lib/data-fetch';
 import PromptComponent from './PromptComponent';
 import MeshsyncStatusQuery from './graphql/queries/MeshsyncStatusQuery';
@@ -24,6 +21,8 @@ import fetchMesheryOperatorStatus from "./graphql/queries/OperatorStatusQuery";
 import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 import { DEPLOYMENT_TYPE } from '../utils/Enum';
 import { iconMedium } from '../css/icons.styles';
+import { useNotification } from '../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../lib/event-types';
 
 const styles = (theme) => ({
   operationButton : {
@@ -101,7 +100,7 @@ const styles = (theme) => ({
 const ENABLED = "ENABLED"
 const DISABLED = "DISABLED"
 
-function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updateProgress,
+function MesherySettingsNew({ classes, updateProgress,
   operatorState, k8sconfig }) {
   const [data, setData] = useState([])
   const [showMenu, setShowMenu] = useState([false])
@@ -113,6 +112,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   const [_operatorState, _setOperatorState] = useState(operatorState || []);
   const deleteCtxtRef = useRef(null);
   const meshSyncResetRef = useRef(null);
+  const { notify } = useNotification()
   const _operatorStateRef = useRef(_operatorState);
   _operatorStateRef.current = _operatorState;
 
@@ -127,13 +127,15 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   const setTableData = () => {
     let tableInfo = [];
     handleContexts(k8sconfig);
+    console.log("k8sconfig: ", k8sconfig)
     k8sconfig.forEach(ctx => {
       let data = {
         context : ctx.name,
         location : ctx.server,
         deployment_type : ctx.deployment_type === DEPLOYMENT_TYPE.IN_CLUSTER ? "In Cluster" : "Out of Cluster",
-        last_discovery : setDateTime(new Date()),
-        id : ctx.id
+        last_discovery : setDateTime(new Date()), // TODO: use the info from db
+        id : ctx.id,
+        connection_id : ctx.connection_id,
       };
       tableInfo.push(data);
     })
@@ -187,15 +189,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           next : (res) => {
             updateProgress({ showProgress : false });
             if (res.resetStatus === "PROCESSING") {
-              enqueueSnackbar(`Database reset successful.`, {
-                variant : "success",
-                action : (key) => (
-                  <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
-                    <CloseIcon style={iconMedium} />
-                  </IconButton>
-                ),
-                autohideduration : 2000,
-              })
+              notify({ message : `Database reset successful.`, event_type : EVENT_TYPES.SUCCESS })
             }
           },
           error : handleError("Database is not reachable, try restarting server.")
@@ -228,15 +222,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
   const handleError = (msg) => (error) => {
     updateProgress({ showProgress : false });
-    enqueueSnackbar(`${msg}: ${error}`, {
-      variant : "error", preventDuplicate : true,
-      action : (key) => (
-        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-          <CloseIcon style={iconMedium} />
-        </IconButton>
-      ),
-      autoHideDuration : 7000,
-    });
+    notify({ message : `${msg}: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() })
   };
 
   const handleMenuOpen = (e, index) => {
@@ -255,25 +241,16 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     setLastDiscover(newData);
   }
 
-  const handleKubernetesClick = (context, index) => {
+  const handleKubernetesClick = (connection_id, index) => {
     updateProgress({ showProgress : true });
     dataFetch(
-      "/api/system/kubernetes/ping?context=" + context,
+      "/api/system/kubernetes/ping?connection_id=" + connection_id,
       { credentials : "same-origin" },
       (result) => {
         updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
           handleLastDiscover(index);
-          enqueueSnackbar("Kubernetes was pinged!", {
-            variant : "success",
-            "data-cy" : "k8sSuccessSnackbar",
-            autoHideDuration : 2000,
-            action : (key) => (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon style={iconMedium} />
-              </IconButton>
-            ),
-          });
+          notify({ message : `Kubernetes was pinged!`, event_type : EVENT_TYPES.SUCCESS })
         }
       },
       handleError("Kubernetes config could not be validated")
@@ -313,15 +290,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
       if (errors !== undefined) {
         handleError(`Unable to ${!checked ? "Uni" : "I"}nstall operator`);
       }
-      enqueueSnackbar("Operator " + response.operatorStatus.toLowerCase(), {
-        variant : "success",
-        autoHideDuration : 2000,
-        action : (key) => (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon style={iconMedium} />
-          </IconButton>
-        ),
-      });
+      notify({ message : `Operator ${response.operatorStatus.toLowerCase()}`, event_type : EVENT_TYPES.SUCCESS })
 
       const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID : contextId }).subscribe({
         next : (res) => {
@@ -448,13 +417,12 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
           );
         },
         customBodyRender : (_, tableMeta,) => {
-          console.log("tableMeta: ", tableMeta);
           return (
             <Tooltip title={`Server: ${tableMeta.rowData[2]}`}>
               <Chip
                 label={data[tableMeta.rowIndex].context}
-                onDelete={handleConfigDelete(data[tableMeta.rowIndex].id, data[tableMeta.rowIndex].context, tableMeta.rowIndex)}
-                onClick={() => handleKubernetesClick(data[tableMeta.rowIndex].id, tableMeta.rowIndex)}
+                onDelete={handleConfigDelete(data[tableMeta.rowIndex].connection_id, data[tableMeta.rowIndex].context, tableMeta.rowIndex)}
+                onClick={() => handleKubernetesClick(data[tableMeta.rowIndex].connection_id, tableMeta.rowIndex)}
                 icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
                 variant="outlined"
                 data-cy="chipContextName"
@@ -607,7 +575,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
     },
     onRowsDelete : (td) => {
       td.data.forEach((item) => {
-        handleConfigDelete(data[item.index].id, data[item.index].context)
+        handleConfigDelete(data[item.index].connection_id, data[item.index].context)
       })
     },
     renderExpandableRow : (rowData, rowMetaData) => {
@@ -630,7 +598,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
                               >
                                 <Chip
                                   label={data[rowMetaData.rowIndex].context}
-                                  onClick={() => handleKubernetesClick(data[rowMetaData.rowIndex].id, rowMetaData.rowIndex)}
+                                  onClick={() => handleKubernetesClick(data[rowMetaData.rowIndex].connection_id, rowMetaData.rowIndex)}
                                   icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
                                   variant="outlined"
                                   data-cy="chipContextName"
@@ -807,15 +775,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
           updateProgress({ showProgress : false });
           if (!res.operator.error && res.operator.status === ENABLED ) {
-            enqueueSnackbar("Operator was pinged!", {
-              variant : "success",
-              autoHideDuration : 2000,
-              action : (key) => (
-                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                  <CloseIcon style={iconMedium} />
-                </IconButton>
-              ),
-            });
+            notify({ message : `Operator is ${res.operator.status.toLowerCase()}`, event_type : EVENT_TYPES.SUCCESS })
           } else {
             handleError("Operator could not be reached")("Operator is disabled");
           }
@@ -832,15 +792,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
         updateProgress({ showProgress : false });
         if (res.controller.name === "MesheryBroker" && res.controller.status.includes("Connected")) {
           let runningEndpoint = res.controller.status.substring("Connected".length)
-          enqueueSnackbar(`Broker was pinged. ${runningEndpoint != "" ? `Running at ${runningEndpoint}` : ""}`, {
-            variant : "success",
-            action : (key) => (
-              <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon style={iconMedium} />
-              </IconButton>
-            ),
-            autohideduration : 2000,
-          })
+          notify({ message : `Broker was pinged. ${runningEndpoint != "" ? `Running at ${runningEndpoint}` : ""}`, event_type : EVENT_TYPES.SUCCESS })
         } else {
           handleError("Meshery Broker could not be reached")("Meshery Server is not connected to Meshery Broker");
         }
@@ -885,25 +837,9 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
 
         if (res.controller.name === "MeshSync" && res.controller.status.includes("Connected")) {
           let publishEndpoint = res.controller.status.substring("Connected".length)
-          enqueueSnackbar(`MeshSync was pinged. ${publishEndpoint != "" ? `Publishing to ${publishEndpoint}` : ""}`, {
-            variant : "success",
-            action : (key) => (
-              <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon style={iconMedium} />
-              </IconButton>
-            ),
-            autohideduration : 2000,
-          })
+          notify({ message : `MeshSync was pinged. ${publishEndpoint != "" ? `Publishing to ${publishEndpoint}` : ""}` , event_type : EVENT_TYPES.SUCCESS })
         }  else if (res.controller.name === "MeshSync" && !res.controller.status.includes("Unknown")) {
-          enqueueSnackbar(`MeshSync is not publishing to Meshery Broker`, {
-            variant : "warning",
-            action : (key) => (
-              <IconButton key="close" aria-label="close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon />
-              </IconButton>
-            ),
-            autohideduration : 2000,
-          })
+          notify({ message : `MeshSync is not publishing to Meshery Broker`, event_type : EVENT_TYPES.WARNING })
         } else {
           handleError("MeshSync could not be reached")("MeshSync is unavailable");
         }
@@ -947,7 +883,7 @@ function MesherySettingsNew({ classes, enqueueSnackbar, closeSnackbar, updatePro
   return (
     <div style={{ display : 'table', tableLayout : 'fixed', width : '100%' }}>
       <div className={classes.topToolbar}>
-        < MesherySettingsEnvButtons/>
+        <MesherySettingsEnvButtons/>
       </div>
       <DataTable
         columns={columns}
@@ -972,5 +908,5 @@ const mapDispatchToProps = (dispatch) => ({
   // setMeshsyncSubscription : bindActionCreators(setMeshsyncSubscription, dispatch)
 });
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MesherySettingsNew)));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(MesherySettingsNew));
 

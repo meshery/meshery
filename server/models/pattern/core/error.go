@@ -4,11 +4,14 @@ import (
 	"github.com/layer5io/meshkit/errors"
 )
 
+// Please reference the following before contributing an error code:
+// https://docs.meshery.io/project/contributing/contributing-error
+// https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrGetK8sComponentsCode     = "2212"
-	ErrParseK8sManifestCode     = "2213"
-	ErrCreatePatternServiceCode = "2214"
-	ErrPatternFromCytoscapeCode = "2300"
+	ErrGetK8sComponentsCode     = "1400"
+	ErrParseK8sManifestCode     = "1401"
+	ErrCreatePatternServiceCode = "1402"
+	ErrPatternFromCytoscapeCode = "1403"
 )
 
 func ErrGetK8sComponents(err error) error {

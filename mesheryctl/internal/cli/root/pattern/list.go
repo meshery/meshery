@@ -18,14 +18,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 	"path/filepath"
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -52,19 +50,21 @@ mesheryctl pattern list
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			utils.Log.Error(err)
+			return nil
 		}
 
 		var response models.PatternsAPIResponse
-		client := &http.Client{}
 		req, err := utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/pattern", nil)
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 
-		res, err := client.Do(req)
+		res, err := utils.MakeRequest(req)
 		if err != nil {
-			return errors.Errorf("Unable to reach Meshery server at %s. Verify your environment's readiness for a Meshery deployment by running `mesheryctl system check`. ", mctlCfg.GetBaseMesheryURL())
+			utils.Log.Error(err)
+			return nil
 		}
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
@@ -74,11 +74,13 @@ mesheryctl pattern list
 		err = json.Unmarshal(body, &response)
 
 		if err != nil {
-			return err
+			utils.Log.Error(utils.ErrUnmarshal(err))
+			return nil
 		}
 		tokenObj, err := utils.ReadToken(utils.TokenFlag)
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 		provider := tokenObj["meshery-provider"]
 		var data [][]string
@@ -100,7 +102,7 @@ mesheryctl pattern list
 				PatternID := utils.TruncateID(v.ID.String())
 				var UserID string
 				if v.UserID != nil {
-					UserID = *v.UserID
+					UserID = utils.TruncateID(*v.UserID)
 				} else {
 					UserID = "null"
 				}
@@ -130,7 +132,7 @@ mesheryctl pattern list
 			PatternID := utils.TruncateID(v.ID.String())
 			var UserID string
 			if v.UserID != nil {
-				UserID = *v.UserID
+				UserID = utils.TruncateID(*v.UserID)
 			} else {
 				UserID = "null"
 			}

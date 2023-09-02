@@ -9,8 +9,8 @@ import (
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	meshkitmodels "github.com/layer5io/meshkit/models"
-	"github.com/layer5io/meshkit/models/meshmodel"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 )
 
 type generationPayloadItem struct {
@@ -74,7 +74,9 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 					utils.WriteSVGsOnFileSystem(&comp)
 					host := fmt.Sprintf("%s.artifacthub.meshery", gpi.Name)
 					err = h.registryManager.RegisterEntity(meshmodel.Host{
-						Hostname: host,
+						IHost:    meshmodel.ArtifactHub{},
+						Hostname: meshmodel.ArtifactHub{}.String(),
+						Metadata: host,
 					}, comp)
 					if err != nil {
 						h.log.Error(ErrGenerateComponents(err))

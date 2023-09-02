@@ -18,7 +18,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -38,7 +37,7 @@ var (
 var AppCmd = &cobra.Command{
 	Use:   "app",
 	Short: "Cloud Native Apps Management",
-	Long:  `Manage all apps operations; import, list, view, onboard and offboard`,
+	Long:  `All apps operations: import, list, view, onboard and offboard`,
 	Example: `
 // Base command
 mesheryctl app [subcommand]
@@ -70,36 +69,35 @@ func init() {
 func getSourceTypes() error {
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return err
+		utils.Log.Error(err)
+		return nil
 	}
 	validTypesURL := mctlCfg.GetBaseMesheryURL() + "/api/application/types"
-	client := &http.Client{}
 	req, err := utils.NewRequest("GET", validTypesURL, nil)
 	if err != nil {
-		return err
+		utils.Log.Error(err)
+		return nil
 	}
 
-	resp, err := client.Do(req)
+	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		return err
+		utils.Log.Error(err)
+		return nil
 	}
 
-	if resp.StatusCode != 200 {
-		return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-	}
 	defer resp.Body.Close()
 
 	var response []*models.ApplicationSourceTypesAPIResponse
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		utils.Log.Debug("failed to read response body")
-		return errors.Wrap(err, "couldn't read response from server. Please try again after some time")
+		utils.Log.Error(utils.ErrReadResponseBody(errors.Wrap(err, "couldn't read response from server. Please try again after some time")))
+		return nil
 	}
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		utils.Log.Debug("failed to unmarshal JSON response body")
-		return errors.Wrap(err, "couldn't process response received from server")
+		utils.Log.Error(utils.ErrUnmarshal(errors.Wrap(err, "couldn't process response received from server")))
+		return nil
 	}
 
 	for _, apiResponse := range response {

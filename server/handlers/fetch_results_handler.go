@@ -22,7 +22,7 @@ import (
 // ```?page={page-number}``` Default page number is 0
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
-// 
+//
 // ```?search={result_name|mesh|url}``` If search is non empty then a greedy search is performed
 // responses:
 // 	200:performanceResultsResponseWrapper
@@ -60,7 +60,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 // ```?page={page-number}``` Default page number is 0
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
-// 
+//
 // ```?search={}``` If search is non empty then a greedy search is performed
 //
 //  ```?from={date}``` Date must be in yyyy-mm-dd format
@@ -79,7 +79,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 // ```?page={page-number}``` Default page number is 0
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
-// 
+//
 // ```?search={}``` If search is non empty then a greedy search is performed
 //
 //  ```?from={date}``` Date must be in yyyy-mm-dd format
@@ -155,7 +155,7 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 	w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="result_%s.yaml"`, bdr.ID))
 	b, err := yaml.Marshal(sp)
 	if err != nil {
-		logrus.Error(ErrMarshal(err, "test result"))
+		logrus.Error(models.ErrMarshal(err, "test result"))
 		http.Error(w, "error while getting test result", http.StatusInternalServerError)
 		return
 	}
@@ -172,7 +172,7 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 // ```?page={page-number}``` Default page number is 0
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
-// 
+//
 // ```?search={status|mesh_version|mesh_name|date|id}``` If search is non empty then a greedy search is performed
 // responses:
 //

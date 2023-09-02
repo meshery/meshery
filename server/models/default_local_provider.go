@@ -131,6 +131,10 @@ func (l *DefaultLocalProvider) GetUsers(_, _, _, _, _, _ string) ([]byte, error)
 	return []byte(""), ErrLocalProviderSupport
 }
 
+func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, _, _, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
 // GetSession - returns the session
 func (l *DefaultLocalProvider) GetSession(_ *http.Request) error {
 	return nil
@@ -657,12 +661,16 @@ func (l *DefaultLocalProvider) SaveMesheryFilter(_ string, filter *MesheryFilter
 }
 
 // GetMesheryFilters gives the filters stored with the provider
-func (l *DefaultLocalProvider) GetMesheryFilters(_, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryFilters(_, page, pageSize, search, order string, visibility string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
 	if pageSize == "" {
 		pageSize = "10"
+	}
+
+	if visibility == "" {
+		visibility = Public
 	}
 
 	pg, err := strconv.ParseUint(page, 10, 32)
@@ -675,7 +683,7 @@ func (l *DefaultLocalProvider) GetMesheryFilters(_, page, pageSize, search, orde
 		return nil, ErrPageSize(err)
 	}
 
-	return l.MesheryFilterPersister.GetMesheryFilters(search, order, pg, pgs)
+	return l.MesheryFilterPersister.GetMesheryFilters(search, order, pg, pgs, visibility)
 }
 
 // GetCatalogMesheryFilters gives the catalog filters stored with the provider
@@ -821,6 +829,10 @@ func (l *DefaultLocalProvider) ShareDesign(_ *http.Request) (int, error) {
 	return http.StatusForbidden, ErrLocalProviderSupport
 }
 
+func (l *DefaultLocalProvider) ShareFilter(_ *http.Request) (int, error) {
+	return http.StatusForbidden, ErrLocalProviderSupport
+}
+
 // SavePerformanceProfile saves given performance profile with the provider
 func (l *DefaultLocalProvider) SavePerformanceProfile(_ string, performanceProfile *PerformanceProfile) ([]byte, error) {
 	var uid uuid.UUID
@@ -933,11 +945,23 @@ func (l *DefaultLocalProvider) SaveConnection(_ *http.Request, _ *ConnectionPayl
 	return ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) GetConnections(_ *http.Request, _ string, _, _ int, _, _, _ string) (*ConnectionPage, error) {
+func (l *DefaultLocalProvider) GetConnections(_ *http.Request, _ string, _, _ int, _, _ string) (*ConnectionPage, error) {
+	return nil, ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) GetConnectionsByKind(_ *http.Request, _ string, _, _ int, _, _, _ string) (*map[string]interface{}, error) {
+	return nil, ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) GetConnectionsStatus(_ *http.Request, _ string) (*ConnectionsStatusPage, error) {
 	return nil, ErrLocalProviderSupport
 }
 
 func (l *DefaultLocalProvider) UpdateConnection(_ *http.Request, _ *Connection) (*Connection, error) {
+	return nil, ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) UpdateConnectionById(_ *http.Request, _ *ConnectionPayload, _ string) (*Connection, error) {
 	return nil, ErrLocalProviderSupport
 }
 

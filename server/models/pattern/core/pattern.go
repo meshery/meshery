@@ -12,8 +12,8 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
-	"github.com/layer5io/meshkit/models/meshmodel"
 	meshmodelv1alpha1 "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils/manifests"
 	"github.com/sirupsen/logrus"
@@ -558,7 +558,7 @@ func createPatternServiceFromK8s(manifest map[string]interface{}, regManager *me
 	}
 
 	// Get MeshModel entity with the selectors
-	componentList, _ := regManager.GetEntities(&meshmodelv1alpha1.ComponentFilter{
+	componentList, _, _ := regManager.GetEntities(&meshmodelv1alpha1.ComponentFilter{
 		Name:       kind,
 		APIVersion: apiVersion,
 	})

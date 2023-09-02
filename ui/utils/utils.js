@@ -2,6 +2,7 @@ import { trueRandom } from "../lib/trueRandom";
 import jsYaml from "js-yaml";
 import { findWorkloadByName } from "./workloadFilter";
 import { EVENT_TYPES } from "./Enum";
+import _ from "lodash"
 
 /**
  * Check if an object is empty
@@ -146,3 +147,50 @@ export function updateURLs(urlsSet, newUrls, eventType) {
 
   }
 }
+
+/**
+ * Gets the raw b64 file and convert it to Binary
+ *
+ * @param {string} file
+ * @returns
+ */
+export function getDecodedFile(file) {
+  // Extract base64-encoded content
+  var encodedContent = file.split(";base64,")[1];
+
+  // Decode base64 content
+  return atob(encodedContent);
+}
+
+/**
+ * Gets the raw b64 file and convert it to uint8Array
+ *
+ * @param {string} file
+ * @returns {array} - return array of uint8Array
+ */
+export const getUnit8ArrayDecodedFile = (dataUrl) => {
+  // Extract base64 content
+  const [, base64Content] = dataUrl.split(";base64,");
+
+  // Decode base64 content
+  const decodedContent = atob(base64Content);
+
+  // Convert decoded content to Uint8Array directly
+  const uint8Array = Uint8Array.from(decodedContent, char => char.charCodeAt(0));
+
+  return Array.from(uint8Array);
+};
+
+/**
+ * Change the value of a property in RJSF schema
+ *
+ * @param {string} schema - RJSF schema
+ * @param {string} propertyPath - path of the property to be modified
+ * @param {any} newValue - new value to be set
+ * @returns {object} - modified schema
+*/
+export const modifyRJSFSchema = (schema, propertyPath, newValue) => {
+  const clonedSchema = _.cloneDeep(schema);
+  _.set(clonedSchema, propertyPath, newValue);
+  return clonedSchema;
+};

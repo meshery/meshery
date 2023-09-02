@@ -9,15 +9,13 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor : theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : '#396679',
   },
   cardButtons : {
-    display : "grid",
-    gridTemplateColumns : "repeat(5,1fr)",
+    display : "flex",
+    flexWrap : "wrap",
     marginTop : "50px",
     height : '100%',
-    width : '100%',
     gap : ".5rem"
   },
   testsButton : {
-    minWidth : "100%",
     padding : "6px 9px"
   },
   perfResultsContainer : {
@@ -72,7 +70,7 @@ const useStyles = makeStyles((theme) => ({
   },
   bottomPart : {
     display : "flex",
-    justifyContent : "flex-end",
+    justifyContent : "flex-start",
     alignItems : "center",
   },
   lastRunText : {
@@ -91,12 +89,18 @@ const useStyles = makeStyles((theme) => ({
   },
   btnText : {
     [theme.breakpoints.down(1370)] : { display : "none" },
+    [`${theme.breakpoints.up(1920)} and (max-width: 2200px)`] : {
+      display : "none",
+    },
     marginLeft : "5px",
     display : "flex",
     justifyContent : "center",
   },
   cloneBtnText : {
     [theme.breakpoints.down(1370)] : { display : "none" },
+    [`${theme.breakpoints.up(1920)} and (max-width: 2200px)`] : {
+      display : "none",
+    },
     display : "flex",
     justifyContent : "center",
     marginLeft : "3px",

@@ -7,15 +7,17 @@ const requires = createRequires(getDependencies);
 
 const useRemoteComponent = createUseRemoteComponent({ requires });
 
-const RemoteComponent = ({ url }) => {
+const RemoteComponent = ({ url, loaderType }) => {
   const [loading, err, RemoteComponent] = useRemoteComponent(url.url);
   if (loading) {
-    return (
-      <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
-    );
+    if (loaderType === "circular") {
+      return ''
+    } else {
+      return <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />;
+    }
   }
   if (err != null) {
-    return <div>Unknown Error: {err.toString()}</div>;
+    return <></>; /*<div>Unknown Error: {err.toString()}</div>*/
   }
 
   return (

@@ -51,6 +51,7 @@ import { extractURLFromScanData } from '../components/ConnectionWizard/helpers/m
 import { updateURLs } from '../utils/utils';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createRelayEnvironment } from "../lib/relayEnvironment"
+import "./styles/charts.css"
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -85,10 +86,12 @@ class MesheryApp extends App {
     super();
     this.pageContext = getPageContext();
     this.meshsyncEventsSubscriptionRef = React.createRef();
+    this.fullScreenChanged = this.fullScreenChanged.bind(this);
 
     this.state = {
       mobileOpen : false,
       isDrawerCollapsed : false,
+      isFullScreenMode : false,
       k8sContexts : [],
       activeK8sContexts : [],
       operatorSubscription : null,
@@ -137,6 +140,12 @@ class MesheryApp extends App {
     this.meshsyncEventsSubscriptionRef.current = meshSyncEventsSubscription;
   }
 
+  fullScreenChanged = () => {
+    this.setState(state => {
+      return { isFullScreenMode : !state.isFullScreenMode }
+    });
+  }
+
   componentDidMount() {
     this.loadConfigFromServer(); // this works, but sometimes other components which need data load faster than this data is obtained.
     this.initSubscriptions([]);
@@ -160,7 +169,7 @@ class MesheryApp extends App {
 
     const k8sContextSubscription = (page="", search="", pageSize="10", order="") => {
       return subscribeK8sContext((result) => {
-        this.setState({ k8sContexts : result.k8sContext }, () => this.setActiveContexts("all"))
+        this.setState({ k8sContexts : result.k8sContext }, () =>  this.setActiveContexts("all"))
         this.props.store.dispatch({ type : actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig : result.k8sContext.contexts });
       },
       {
@@ -174,6 +183,12 @@ class MesheryApp extends App {
     }
     const disposeK8sContextSubscription = k8sContextSubscription();
     this.setState({ disposeK8sContextSubscription })
+
+    document.addEventListener("fullscreenchange", this.fullScreenChanged);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("fullscreenchange", this.fullScreenChanged);
   }
 
   componentDidUpdate(prevProps) {
@@ -245,11 +260,8 @@ class MesheryApp extends App {
           activeContexts.push(ctx.id)
         );
         activeContexts.push("all");
-        this.setState(state => {
-          if (state.activeK8sContexts?.includes("all")) return { activeK8sContexts : [] };
-          return { activeK8sContexts : activeContexts };
-        },
-        () => this.activeContextChangeCallback(this.state.activeK8sContexts));
+        this.setState({ activeK8sContexts : activeContexts },
+          () => this.activeContextChangeCallback(this.state.activeK8sContexts));
         return;
       }
 
@@ -292,19 +304,6 @@ class MesheryApp extends App {
         credentials : 'include',
       }, result => {
         if (result) {
-          if (result.k8sConfig && result.k8sConfig.length != 0) {
-            const kubeConfigs = result.k8sConfig.map(config => Object.assign({
-              inClusterConfig : false,
-              k8sfile : "",
-              name : "",
-              clusterConfigured : "",
-              server : "",
-              created_at : "",
-              updated_at : "",
-              ts : new Date()
-            }, config));
-            store.dispatch({ type : actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig : kubeConfigs });
-          }
           if (result.meshAdapters && result.meshAdapters !== null && result.meshAdapters.length > 0) {
             store.dispatch({ type : actionTypes.UPDATE_ADAPTERS_INFO, meshAdapters : result.meshAdapters });
           }
@@ -365,13 +364,14 @@ class MesheryApp extends App {
     const {
       Component, pageProps, classes, isDrawerCollapsed, relayEnvironment
     } = this.props;
+
     return (
       <RelayEnvironmentProvider environment={relayEnvironment}>
         <ThemeProvider theme={this.state.theme === "dark" ? darkTheme : theme}>
           <NoSsr>
             <div className={classes.root}>
               <CssBaseline />
-              <nav className={isDrawerCollapsed
+              {!this.state.isFullScreenMode && <nav className={isDrawerCollapsed
                 ? classes.drawerCollapsed
                 : classes.drawer} data-test="navigation">
                 <Hidden smUp implementation="js">
@@ -392,6 +392,7 @@ class MesheryApp extends App {
                   />
                 </Hidden>
               </nav>
+              }
               <div className={classes.appContent}>
                 <SnackbarProvider
                   anchorOrigin={{
@@ -413,7 +414,7 @@ class MesheryApp extends App {
                   maxSnack={10}
                 >
                   <MesheryProgressBar />
-                  <Header
+                  {!this.state.isFullScreenMode &&  <Header
                     onDrawerToggle={this.handleDrawerToggle}
                     onDrawerCollapse={isDrawerCollapsed}
                     contexts={this.state.k8sContexts}
@@ -424,6 +425,7 @@ class MesheryApp extends App {
                     theme={this.state.theme}
                     themeSetter={this.themeSetter}
                   />
+                  }
                   <main className={classes.mainContent}>
                     <MuiPickersUtilsProvider utils={MomentUtils}>
                       <Component

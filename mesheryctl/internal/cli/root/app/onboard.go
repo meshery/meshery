@@ -70,11 +70,11 @@ Description: Onboard application`
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
 		var err error
-		client := &http.Client{}
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			utils.Log.Error(err)
+			return nil
 		}
 
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/application/deploy"
@@ -90,34 +90,33 @@ Description: Onboard application`
 
 			req, err = utils.NewRequest("GET", appURL+"?search="+appName, nil)
 			if err != nil {
-				return err
+				utils.Log.Error(err)
+				return nil
 			}
 
-			resp, err := client.Do(req)
+			resp, err := utils.MakeRequest(req)
 			if err != nil {
-				return err
+				utils.Log.Error(err)
+				return nil
 			}
 
 			var response *models.ApplicationsAPIResponse
-			// failsafe (bad api call)
-			if resp.StatusCode != 200 {
-				return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-			}
 			defer resp.Body.Close()
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
-				utils.Log.Debug("failed to read response body")
-				return errors.Wrap(err, "couldn't read response from server. Please try again after some time")
+				utils.Log.Error(utils.ErrReadResponseBody(err))
+				return nil
 			}
 			err = json.Unmarshal(body, &response)
 			if err != nil {
-				utils.Log.Debug("failed to unmarshal JSON response body")
-				return errors.Wrap(err, "couldn't process response received from server")
+				utils.Log.Error(utils.ErrUnmarshal(err))
+				return nil
 			}
 
 			index := 0
 			if len(response.Applications) == 0 {
-				return errors.New("no apps found with the given name")
+				utils.Log.Error(utils.ErrNotFound(errors.New("no apps found with the given name")))
+				return nil
 			} else if len(response.Applications) == 1 {
 				appFile = response.Applications[0].ApplicationFile
 			} else {
@@ -132,7 +131,8 @@ Description: Onboard application`
 			}
 			app, err := importApp(sourceType, file, appURL, !skipSave)
 			if err != nil {
-				return err
+				utils.Log.Error(err)
+				return nil
 			}
 
 			appFile = app.ApplicationFile
@@ -140,18 +140,21 @@ Description: Onboard application`
 
 		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(appFile)))
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 
-		res, err := client.Do(req)
+		res, err := utils.MakeRequest(req)
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			return err
+			utils.Log.Error(utils.ErrReadResponseBody(err))
+			return nil
 		}
 
 		if res.StatusCode == 200 {

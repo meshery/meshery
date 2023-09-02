@@ -10,17 +10,17 @@ import NoSsr from '@material-ui/core/NoSsr';
 import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
 import { withStyles } from '@material-ui/core/styles';
-import CloseIcon from "@material-ui/icons/Close";
 import classNames from 'classnames';
 import Link from "next/link";
 import { withRouter } from 'next/router';
-import { withSnackbar } from "notistack";
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dataFetch from '../lib/data-fetch';
 import { updateUser } from '../lib/store';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
+import { withNotify } from '../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../lib/event-types';
 
 
 const styles = () => ({
@@ -73,17 +73,8 @@ class User extends React.Component {
   };
 
   handleError = (error) => {
-    this.props.enqueueSnackbar(`Error performing logout: ${error}`, {
-      variant : "error",
-      action : function Action(key) {
-        return (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => this.prop.closeSnackbar(key)}>
-            <CloseIcon />
-          </IconButton>
-        );
-      },
-      autoHideDuration : 8000,
-    });
+    const notify = this.props.notify;
+    notify({ message : `Error performing logout: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() });
   };
 
   handlePreference = () => {
@@ -253,4 +244,4 @@ const mapStateToProps = state => ({
 export default withStyles(styles)(connect(
   mapStateToProps,
   mapDispatchToProps,
-)(withSnackbar((withRouter(User)))));
+)(withNotify((withRouter(User)))));

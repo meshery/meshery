@@ -8,6 +8,7 @@ import MesheryPerformanceComponent from "./MesheryPerformance";
 import dataFetch from "../lib/data-fetch";
 import PatternServiceForm from "./MesheryMeshInterface/PatternServiceForm";
 import PatternServiceFormCore from "./MesheryMeshInterface/PatternServiceFormCore";
+import RJSFWrapper from "./MesheryMeshInterface/PatternService/RJSF_wrapper";
 import { createRelayEnvironment, subscriptionClient } from "../lib/relayEnvironment";
 import subscribeMeshSyncStatusEvents from "../components/graphql/subscriptions/MeshSyncStatusSubscription"
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
@@ -16,12 +17,13 @@ import { getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
 import ConfirmationModal from "./ConfirmationModal"
 import { getComponentsinFile, generateValidatePayload } from "../utils/utils";
 import UploadImport from "./UploadImport";
-import PublishModal from "../components/PublishModal"
+import PublishModal from "../components/Modals/PublishModal"
 import ConfigurationSubscription from "../components/graphql/subscriptions/ConfigurationSubscription";
 import PromptComponent from "./PromptComponent";
 import Validation from "./Validation";
 import { CapabilitiesRegistry } from "../utils/disabledComponents";
 import TroubleshootingComponent from "./TroubleshootingComponent";
+import { useNotification } from "../utils/hooks/useNotification";
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -66,6 +68,7 @@ function NavigatorExtension({ grafana, prometheus, updateLoadTestData, url, isDr
         GrafanaCustomCharts,
         updateLoadTestData,
         PatternServiceForm,
+        RJSFWrapper,
         PatternServiceFormCore,
         grafana,
         prometheus,
@@ -96,7 +99,8 @@ function NavigatorExtension({ grafana, prometheus, updateLoadTestData, url, isDr
         generateValidatePayload,
         Validation,
         capabilitiesRegistry,
-        CapabilitiesRegistryClass : CapabilitiesRegistry
+        CapabilitiesRegistryClass : CapabilitiesRegistry,
+        useNotificationHook : useNotification
       }}
     />
   );

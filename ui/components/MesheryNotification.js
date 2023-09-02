@@ -1,6 +1,5 @@
 import React from "react";
 import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import { connect } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
 import {
@@ -11,25 +10,26 @@ import {
   Typography,
   Tabs,
   Tab,
-  ClickAwayListener
+  ClickAwayListener,
 } from '@material-ui/core';
 import BellIcon from '@material-ui/icons/Notifications';
-import InfoIcon from '@mui/icons-material/Info';
 import ClearIcon from "../assets/icons/ClearIcon";
 import ErrorIcon from '@material-ui/icons/Error';
 import { withStyles } from '@material-ui/core/styles';
 import amber from '@material-ui/core/colors/amber';
-import { eventTypes } from '../lib/event-types';
-import MesheryEventViewer from './MesheryEventViewer';
+import {  EVENT_TYPES, NOTIFICATION_STATUS, SERVER_EVENT_TYPES } from '../lib/event-types';
+import Notification from "./NotificationCenter/Notification"
 import dataFetch from '../lib/data-fetch';
-import { withSnackbar } from 'notistack'
 import { bindActionCreators } from "redux";
-import { updateEvents } from "../lib/store";
+import { loadEventsFromPersistence, toggleNotificationCenter, updateEvents } from "../lib/store";
 import { iconMedium } from "../css/icons.styles";
 import { cursorNotAllowed } from "../css/disableComponent.styles";
+import { v4 } from "uuid";
+import moment from "moment";
+import { withNotify } from "../utils/hooks/useNotification";
 
 const styles = (theme) => ({
-  sidelist : { width : 450, },
+  sidelist : { width : "35rem", },
   notificationButton : { height : '100%', },
   notificationDrawer : {
     backgroundColor : theme.palette.secondary.sideBar,
@@ -80,20 +80,42 @@ const styles = (theme) => ({
     transition : '0.3s ease-in-out !important'
   },
   peekView : {
-    right : "-26.1rem",
+    right : "-32.1rem",
     transition : '0.3s ease-in-out !important'
   },
   tabs : {
+
+    "&.MuiTabs-flexContainer" : {
+      display : "flex",
+      justifyContent : "space-around",
+    },
     "& .MuiTabs-indicator" : {
       backgroundColor : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
     },
   },
   tab : {
+    padding : "0px",
+    margin : "0px",
     "&.Mui-selected" : {
       color : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
     },
+  },
+
+  notification : {
+    margin : theme.spacing(0.5, 1)
   }
 });
+
+
+
+
+export const NOTIFICATION_FILTERS = {
+  ALL : "all",
+  ERROR : EVENT_TYPES.ERROR.type ,
+  SUCCESS : EVENT_TYPES.SUCCESS.type ,
+  WARNING : EVENT_TYPES.WARNING.type,
+  HISTORY : "history" ,
+}
 
 /**
  * getNotifications filters the notifications based on the
@@ -112,14 +134,20 @@ const styles = (theme) => ({
  *  operation_id: string
  * }[]}
  */
-function getNotifications(events, type) {
+function getNotifications(events, filter) {
   if (!Array.isArray(events)) return [];
+  if (filter == NOTIFICATION_FILTERS.HISTORY) return events.filter(ev => ev.status === NOTIFICATION_STATUS.VIEWED)
 
-  if (type === "error") return events.filter(ev => ev.event_type === 2);
-  if (type === "warning") return events.filter(ev => ev.event_type === 1)
-  if (type === "success") return events.filter(ev => ev.event_type === 0)
+  if (filter == NOTIFICATION_FILTERS.ALL) return events.filter(ev => ev.status !== NOTIFICATION_STATUS.VIEWED)
 
-  return events;
+  if (filter === NOTIFICATION_FILTERS.SUCCESS) {
+    return events.filter(ev => {
+      const ev_type = getEventType(ev).type
+      return (ev_type == (EVENT_TYPES.SUCCESS.type || ev_type == EVENT_TYPES.INFO.type) &&  ev.status !== NOTIFICATION_STATUS.VIEWED )
+    })
+  }
+  return events.filter(ev => getEventType(ev).type == filter && ev.status !== NOTIFICATION_STATUS.VIEWED )
+
 }
 
 /**
@@ -134,11 +162,20 @@ function getNotifications(events, type) {
 function getNotificationCount(events) {
   if (!Array.isArray(events)) return 0;
 
-  const errorEventCount = events.filter(ev => ev.event_type === 2).length;
-  const totalEventsCount = events.length;
-
+  const errorEventCount = getNotifications(events,NOTIFICATION_FILTERS.ERROR).length;
+  const totalEventsCount = getNotifications(events,NOTIFICATION_FILTERS.ALL).length;
   return errorEventCount || totalEventsCount;
 }
+
+
+const  getEventType = (event) => {
+  // checks if an event_type is as cardinal (0 , 1 ,2 ) or as a event_type object
+  // return the event_type object
+  let eventVariant = event.event_type
+  eventVariant = typeof eventVariant  == "number" ? SERVER_EVENT_TYPES[eventVariant] : eventVariant
+  return eventVariant  ? eventVariant :  EVENT_TYPES.INFO
+}
+
 
 /**
  * NotificationIcon is a wrapper react component for rendering
@@ -151,24 +188,45 @@ function NotificationIcon({ type, className }) {
   return <BellIcon className={className} style={iconMedium} />
 }
 
+const notificationBadgeTooltipMessage = (events) => {
+  const total_unread = getNotifications(events,NOTIFICATION_FILTERS.ALL).length
+  if (total_unread) {
+    return `${total_unread} new notifications`
+  }
+  return `No new notifications`
+}
+
+const TabLabel = ({ filterType,events }) => {
+
+  const notifCount = getNotifications(events,filterType).length
+  return (
+    <div style={{ margin : 0 , padding : 0 ,textTransform : "capitalize" , display : "flex" , gap : "0.3rem" }}>
+      {notifCount ? `${filterType} (${notifCount})` : filterType }
+    </div>
+  )
+}
+
+//TODO: Convert To functional Compoent
 class MesheryNotification extends React.Component {
   state = {
     open : false,
     dialogShow : false,
-    displayEventType : "*",
+    displayEventType : NOTIFICATION_FILTERS.ALL,
     tabValue : 0,
     anchorEl : false,
-    showFullNotificationCenter : false,
-    eventIdToOpenInNotification : undefined,
   }
 
   handleToggle = () => {
-    this.setState({ showFullNotificationCenter : !this.state.showFullNotificationCenter })
+    this.props.toggleOpen()
   };
 
   handleClose = () => {
+    if (! this.props.showFullNotificationCenter) {
+      return
+    }
     this.setState({ anchorEl : false });
-    this.setState({ showFullNotificationCenter : false })
+    this.props.toggleOpen()
+
   }
 
   /**
@@ -176,36 +234,17 @@ class MesheryNotification extends React.Component {
    * @param {number} type type of the event
    * @param {string} message message to be displayed
    */
-  notificationDispatcher(type, message, operation_id) {
-    const self = this;
-    self.props.enqueueSnackbar(message, {
-      variant : eventTypes[type]?.type,
-      autoHideDuration : 5000,
-      action : (key) => (
-        <>
-          <IconButton
-            key="eye"
-            aria-label="eye"
-            color="inherit"
-            onClick={() => self.openEventInNotificationCenter(operation_id)}
-          >
-            <InfoIcon style={iconMedium} />
-          </IconButton>
-          <IconButton
-            key="close"
-            aria-label="Close"
-            color="inherit"
-            onClick={() => self.props.closeSnackbar(key)}
-          >
-            <CloseIcon style={iconMedium} />
-          </IconButton>
-        </>
-      ),
-    });
-  }
+
+  // const {notify} = useNotification()
 
   componentDidMount() {
     this.startEventStream();
+  }
+
+  componentDidUpdate() {
+    if (this.props.user.get("user_id") && this.props.events.length == 0) {
+      this.props.loadEventsFromPersistence()
+    }
   }
 
   async startEventStream() {
@@ -215,23 +254,25 @@ class MesheryNotification extends React.Component {
     this.eventStream.onerror = this.handleError();
   }
 
-  handleEvents() {
-    const self = this;
-    return (e) => {
-      const { events, updateEvents } = this.props;
-      const data = JSON.parse(e.data);
-      // set null event field as success
-      data.event_type = data.event_type || 0
 
-      // Dispatch the notification
-      self.notificationDispatcher(data.event_type, data.summary, data.operation_id)
-      //Temperory Hack
-      // if(data.summary==="Smi conformance test completed successfully"){
-      //   self.props.updateSMIResults({smi_result: data,});
-      //   console.log("HandleEvents",{smi_result: data,});
-      // }
-      updateEvents({ events : [...events, data] })
-    };
+  handleEvents() {
+    const self = this
+    return (e) => {
+      const data = JSON.parse(e.data);
+      const event = {
+        ...data,
+        status : NOTIFICATION_STATUS.NEW,
+        event_type : getEventType(data),
+        timestamp : data.timestamp || moment.utc().valueOf() ,
+        id : data.id || v4() ,
+      }
+      self.props.notify({
+        message : event.summary ,
+        event_type : event.event_type,
+        details : event.details,
+        customEvent : event
+      })
+    }
   }
 
   handleError() {
@@ -256,12 +297,10 @@ class MesheryNotification extends React.Component {
     }
   }
 
-  deleteEvent = (ind) => () => {
+  deleteEvent = (id) => {
     const { events, updateEvents } = this.props;
-    if (events[ind]) {
-      events.splice(ind, 1);
-    }
-    updateEvents({ events : events })
+    const newEvents = events.filter(ev => ev.id !== id)
+    updateEvents({ events : newEvents })
     this.setState({ dialogShow : false });
   }
 
@@ -274,7 +313,7 @@ class MesheryNotification extends React.Component {
     const { updateEvents } = this.props;
     return () => {
       updateEvents({ events : [] })
-      self.setState({ open : false });
+      self.handleClose();
     };
   }
 
@@ -284,7 +323,7 @@ class MesheryNotification extends React.Component {
     }
   }
 
-  handleTabChange = (event, newTabValue) => {
+  handleTabChange = (_event, newTabValue) => {
     this.setState({ tabValue : newTabValue })
   }
 
@@ -295,47 +334,33 @@ class MesheryNotification extends React.Component {
     })
   }
 
-  openEventInNotificationCenter = (operation_id) => {
-    this.setState({
-      showFullNotificationCenter : true,
-      eventIdToOpenInNotification : operation_id,
+  markAsRead = (event) => {
+    const events = this.props.events.filter(ev => ev.id !== event.id)
+    events.push({
+      ...event,
+      status : NOTIFICATION_STATUS.VIEWED
+    })
+    this.props.updateEvents({
+      events
     })
   }
 
+
   render() {
-    const { classes, events } = this.props;
-    const { anchorEl, showFullNotificationCenter, show } = this.state;
-    const self = this;
+    const { classes, events ,showFullNotificationCenter  } = this.props;
+    const { anchorEl, show } = this.state;
     let open = Boolean(anchorEl);
     if (showFullNotificationCenter) {
       open = showFullNotificationCenter;
     }
 
-    let toolTipMsg;
-    if (typeof events?.length !== 'undefined') {
-      toolTipMsg = `There are ${events.length} events`;
-      switch (events?.length) {
-        case 0:
-          toolTipMsg = 'There are no events';
-          break;
-        case 1:
-          toolTipMsg = 'There is 1 event';
-          break;
-      }
-    } else { // takes care of case when (typeof events.length === undefined)
-      toolTipMsg = 'There are no events';
-    }
-    let badgeColorVariant = 'default';
-    events.forEach((eev) => {
-      if (eventTypes[eev.event_type] && eventTypes[eev.event_type].type === 'error') {
-        badgeColorVariant = 'error';
-      }
-    });
+    const newErrors =  getNotifications(events,NOTIFICATION_FILTERS.ERROR)
+    const newNotificationsType = newErrors.length > 0 ? "error" : "default"
 
     return (
       <NoSsr>
         <div style={ show ? cursorNotAllowed : {}}>
-          <Tooltip title={toolTipMsg}>
+          <Tooltip title={notificationBadgeTooltipMessage(events)}>
             <IconButton
               id="notification-button"
               className={classes.notificationButton}
@@ -355,8 +380,8 @@ class MesheryNotification extends React.Component {
                 this.setState({ anchorEl : false })
               }}
             >
-              <Badge id="notification-badge" badgeContent={getNotificationCount(events)} color={badgeColorVariant}>
-                <NotificationIcon  style={iconMedium}  type={badgeColorVariant} />
+              <Badge id="notification-badge" badgeContent={getNotificationCount(events)} color={newNotificationsType}>
+                <NotificationIcon  style={iconMedium}  type={newNotificationsType}   />
               </Badge>
             </IconButton>
           </Tooltip>
@@ -419,24 +444,22 @@ class MesheryNotification extends React.Component {
                     textColor="primary"
                     variant="fullWidth"
                   >
-                    <Tab label="All" className={classes.tab} onClick={this.handleNotifFiltering('*')} style={{ minWidth : "15%" }} />
-                    <Tab label="Error" className={classes.tab} onClick={this.handleNotifFiltering('error')} style={{ minWidth : "15%" }} />
-                    <Tab label="Warning" className={classes.tab} onClick={this.handleNotifFiltering('warning')} style={{ minWidth : "15%" }} />
-                    <Tab label="Success" className={classes.tab} onClick={this.handleNotifFiltering('success')} style={{ minWidth : "15%" }} />
+
+                    {Object.values(NOTIFICATION_FILTERS).map(filter  =>
+                      <Tab label={<TabLabel filterType={filter} events={events}/>}
+                        className={classes.tab}
+                        onClick={this.handleNotifFiltering(filter)}
+                        style={{ minWidth : "8%" }} />
+                    )}
                   </Tabs>
-                  {getNotifications(this.props.events, this.state.displayEventType).map((event, ind) => (
-                    <MesheryEventViewer
-                      key={ind}
-                      eventVariant={event.event_type}
-                      eventSummary={event.summary}
-                      deleteEvent={self.deleteEvent(ind)}
-                      eventDetails={event.details || "Details Unavailable"}
-                      eventCause={event.probable_cause}
-                      eventRemediation={event.suggested_remediation}
-                      eventErrorCode={event.error_code}
-                      componentType={event.component}
-                      componentName={event.component_name}
-                      expand={(this.state.eventIdToOpenInNotification && this.state.eventIdToOpenInNotification === event.operation_id) ? true : false}
+                  {getNotifications(this.props.events, this.state.displayEventType).map((event) => (
+                    <Notification
+                      className = {classes.notification}
+                      key={event.id}
+                      event={event}
+                      onDeleteEvent = {() => this.deleteEvent(event.id)}
+                      onMarkAsRead = {() => this.markAsRead(event) }
+                      expand={(this.props.openEventId && this.props.openEventId === ( event.id) ) ? true : false}
                     />
                   ))}
                 </div>
@@ -450,19 +473,22 @@ class MesheryNotification extends React.Component {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  updateEvents : bindActionCreators(updateEvents, dispatch)
+  updateEvents : bindActionCreators(updateEvents, dispatch),
+  toggleOpen : bindActionCreators(toggleNotificationCenter,dispatch),
+  loadEventsFromPersistence : bindActionCreators(loadEventsFromPersistence,dispatch)
 })
 
-// const mapDispatchToProps = (dispatch) => ({
-//   updateSMIResults: bindActionCreators(updateSMIResults, dispatch),
-// });
-
 const mapStateToProps = (state) => {
-  const events = state.get("events");
-  return { events };
+  const events = state.get('events')
+  return {
+    user : state.get("user"),
+    events : events.toJS(),
+    openEventId : state.get("notificationCenter").get("openEventId"),
+    showFullNotificationCenter : state.get("notificationCenter").get("showFullNotificationCenter")
+  };
 };
 
 export default withStyles(styles)(connect(
   mapStateToProps,
   mapDispatchToProps,
-)(withSnackbar(MesheryNotification)));
+)(withNotify(MesheryNotification)));

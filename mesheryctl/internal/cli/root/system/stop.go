@@ -54,6 +54,9 @@ mesheryctl system stop
 // Reset Meshery's configuration file to default settings.
 mesheryctl system stop --reset
 
+// (optional) keep the Meshery namespace during uninstallation
+mesheryctl system stop --keep-namespace
+
 // Stop Meshery forcefully (use it when system stop doesn't work)
 mesheryctl system stop --force
 	`,
@@ -80,6 +83,8 @@ mesheryctl system stop --force
 		return nil
 	},
 }
+
+var userResponse bool
 
 func stop() error {
 	// Get viper instance used for context
@@ -143,7 +148,7 @@ func stop() error {
 			return err
 		}
 		// if the platform is kubernetes, stop the deployment by uninstalling the helm charts
-		userResponse := false
+		userResponse = false
 		if utils.SilentFlag {
 			userResponse = true
 		} else {

@@ -7,8 +7,8 @@ import (
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/planner"
-	"github.com/layer5io/meshkit/models/meshmodel"
 	meshmodelv1alpha1 "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 )
 
@@ -66,11 +66,13 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 				data.PatternSvcTraitCapabilities[name],
 				act.GetRegistry(),
 			)
-			// Get annotations for the component, if any
-			comp.ObjectMeta.Annotations = helpers.MergeStringMaps(
+
+			// Get annotations for the component and merge with existing, if any
+			comp.ObjectMeta.SetAnnotations(helpers.MergeStringMaps(
 				v1alpha1.GetAnnotationsForWorkload(data.PatternSvcWorkloadCapabilities[name]),
-				comp.ObjectMeta.Annotations,
-			)
+				comp.GetAnnotations(),
+				getAdditionalAnnotations(data.Pattern),
+			))
 			if core.Format { //deprettify the component before deploying
 				comp.Spec.Settings = core.Format.DePrettify(comp.Spec.Settings, false)
 			}
@@ -102,9 +104,23 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 func processAnnotations(pattern *core.Pattern) {
 	for name, svc := range pattern.Services {
 		if svc.IsAnnotation {
+			// this particular block is present so that designs with previous filters don't break 
+			// also UI is dependent but not exactly sure how?
 			delete(pattern.Services, name)
 		}
-
+		data, ok := svc.Traits["meshmap"]
+		if ok {
+			metadata, ok2 := data.(map[string]interface{})
+			if ok2 {
+				compMetadata, ok3 := metadata["meshmodel-metadata"].(map[string]interface{})
+				if ok3 {
+					isAnnotation, ok4 := compMetadata["isAnnotation"].(bool)
+					if ok4 && isAnnotation {
+						delete(pattern.Services, name)
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -130,4 +146,13 @@ func mergeErrors(errs []error) error {
 	}
 
 	return fmt.Errorf(strings.Join(errMsg, "\n"))
+}
+
+// move into meshkit and change annotations prefix name
+
+func getAdditionalAnnotations(pattern *core.Pattern) map[string]string {
+	annotations := make(map[string]string, 2)
+	annotations[fmt.Sprintf("%s.name", v1alpha1.MesheryAnnotationPrefix)] = pattern.Name 
+	annotations[fmt.Sprintf("%s.id", v1alpha1.MesheryAnnotationPrefix)] = pattern.PatternID 
+	return annotations
 }

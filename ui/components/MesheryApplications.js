@@ -34,6 +34,10 @@ import PublishIcon from "@material-ui/icons/Publish";
 import InfoIcon from '@material-ui/icons/Info';
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import { iconMedium, iconSmall } from "../css/icons.styles";
+import SearchBar from "./searchcommon";
+import DryRunComponent from "./DryRun/DryRunComponent";
+import { useNotification } from "../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../lib/event-types";
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
@@ -56,7 +60,13 @@ const styles = (theme) => ({
     margin : "2rem auto",
     display : "flex",
     justifyContent : "space-between",
-    paddingLeft : "1rem"
+    paddingLeft : "1rem",
+    flexWrap : 'wrap',
+  },
+  searchWrapper : {
+    "@media (max-width: 1070px)" : {
+      marginTop : '20px',
+    },
   },
   viewSwitchButton : {
     justifySelf : "flex-end",
@@ -221,7 +231,7 @@ function resetSelectedApplication() {
 }
 
 function MesheryApplications({
-  updateProgress, enqueueSnackbar, closeSnackbar, user, classes, selectedK8sContexts
+  updateProgress , user, classes, selectedK8sContexts
 }) {
   const [page, setPage] = useState(0);
   const [search,setSearch] = useState("");
@@ -252,6 +262,8 @@ function MesheryApplications({
   );
   const disposeConfSubscriptionRef = useRef(null);
   const searchTimeout = useRef(null);
+
+  const { notify } = useNotification()
 
   /**
    * fetch applications when the page loads
@@ -317,11 +329,21 @@ function MesheryApplications({
     disposeConfSubscriptionRef.current = configurationSubscription
   }
 
+
   const handleModalOpen = (app_file, name, isDeploy) => {
+
+    const dryRunComponent = ( <DryRunComponent
+      design={app_file}
+      handleClose={handleModalClose}
+      numberOfElements={getComponentsinFile(app_file)}
+      selectedContexts={selectedK8sContexts}
+    />)
+
     setModalOpen({
       open : true,
       deploy : isDeploy,
       application_file : app_file,
+      dryRunComponent,
       name : name,
       count : getComponentsinFile(app_file)
     });
@@ -348,18 +370,10 @@ function MesheryApplications({
         method : "POST",
         body : application_file,
       }, () => {
-        console.log("ApplicationFile Deploy API", `/api/application/deploy`);
-        enqueueSnackbar(`"${name}" application deployed` , {
-          variant : "success",
-          action : function Action(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon style={iconMedium} />
-              </IconButton>
-            );
-          },
-          autoHideDuration : 2000,
-        });
+        notify({
+          message : `"${name}" application deployed`,
+          event_type : EVENT_TYPES.SUCCESS
+        })
         updateProgress({ showProgress : false });
       },
       handleError(ACTION_TYPES.DEPLOY_APPLICATIONS)
@@ -375,18 +389,12 @@ function MesheryApplications({
         method : "DELETE",
         body : application_file,
       }, () => {
-        console.log("ApplicationFile Undeploy API", `/api/pattern/deploy`);
-        enqueueSnackbar(`"${name}" application undeployed`, {
-          variant : "success",
-          action : function Action(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon style={iconMedium} />
-              </IconButton>
-            );
-          },
-          autoHideDuration : 2000,
-        });
+
+        notify({
+          message : `"${name}" application undeployed`,
+          event_type : EVENT_TYPES.SUCCESS
+        })
+
         updateProgress({ showProgress : false });
       },
       handleError(ACTION_TYPES.UNDEPLOY_APPLICATION)
@@ -398,16 +406,11 @@ function MesheryApplications({
     try {
       downloadFile({ id, name, source_type })
       updateProgress({ showProgress : false });
-      enqueueSnackbar(`"${name}" application downloaded`, {
-        variant : "success",
-        action : function Action(key) {
-          return (
-            <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-              <CloseIcon style={iconMedium} />
-            </IconButton>
-          );
-        }
-      });
+      notify({
+        message : `"${name}" application downloaded`,
+        event_type : EVENT_TYPES.INFO
+      })
+
 
     } catch (error) {
       console.error(error);
@@ -443,12 +446,10 @@ function MesheryApplications({
       `/api/application${query}`,
       { credentials : "include", },
       (result) => {
-        console.log(result);
-        console.log("ApplicationFile API", `/api/application${query}`);
         updateProgress({ showProgress : false });
         if (result) {
           setApplications(result.applications || []);
-          setPage(result.page || 0);
+          // setPage(result.page || 0);
           setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
           // setType()
@@ -458,22 +459,9 @@ function MesheryApplications({
       handleError(ACTION_TYPES.FETCH_APPLICATIONS)
     );
   }
-
-  // function handleError(error) {
   const handleError = (action) => (error) => {
     updateProgress({ showProgress : false });
-
-    enqueueSnackbar(`${action.error_msg}: ${error}`, {
-      variant : "error",
-      action : function Action(key) {
-        return (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon style={iconMedium} />
-          </IconButton>
-        );
-      },
-      autoHideDuration : 8000,
-    });
+    notify({ message : `${action.error_msg}: ${error}` , event_type : EVENT_TYPES.ERROR })
   };
 
   function resetSelectedRowData() {
@@ -482,7 +470,7 @@ function MesheryApplications({
     };
   }
 
-  async function handleSubmit({ data, id, name, type, source_type }) {
+  async function handleSubmit({ data, id, name, type, source_type, metadata }) {
     updateProgress({ showProgress : true })
     if (type === FILE_OPS.DELETE) {
       const response = await showModal(1);
@@ -504,22 +492,15 @@ function MesheryApplications({
         {
           credentials : "include",
           method : "PUT",
-          body : JSON.stringify({ application_data : { id, name, application_file : data }, save : true }),
+          body : JSON.stringify({ application_data : { id, name : metadata.name || name, application_file : data }, save : true }),
         },
         () => {
-          console.log("ApplicationFile API", `/api/application/${source_type}`);
           updateProgress({ showProgress : false });
-          enqueueSnackbar(`"${name}" Application updated`, {
-            variant : "success",
-            action : function Action(key) {
-              return (
-                <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                  <CloseIcon style={iconMedium} />
-                </IconButton>
-              );
-            },
-            autoHideDuration : 2000,
-          });
+          notify({
+            message : `"${name}" application updated`,
+            event_type : EVENT_TYPES.SUCCESS
+          })
+
         },
         // handleError
         handleError(ACTION_TYPES.UPDATE_APPLICATIONS)
@@ -530,11 +511,11 @@ function MesheryApplications({
       let body = { save : true }
       if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({
-          ...body, application_data : { name : name || getRandomName(), application_file : data }
+          ...body, application_data : { name : metadata.name || name || getRandomName(), application_file : data }
         })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
-        body = JSON.stringify({ ...body, url : data })
+        body = JSON.stringify({ ...body, url : data, name : metadata.name || name })
       }
       dataFetch(
         `/api/application/${source_type}`,
@@ -544,7 +525,6 @@ function MesheryApplications({
           body,
         },
         () => {
-          console.log("ApplicationFile API", `/api/application/${source_type}`);
           updateProgress({ showProgress : false });
         },
         handleError(ACTION_TYPES.UPLOAD_APPLICATION)
@@ -552,7 +532,7 @@ function MesheryApplications({
     }
   }
 
-  function uploadHandler(ev, source_type) {
+  function uploadHandler(ev, source_type, metadata) {
     if (!ev.target.files?.length) return;
 
     const file = ev.target.files[0];
@@ -563,16 +543,18 @@ function MesheryApplications({
         data : event.target.result,
         name : file?.name || "meshery_" + Math.floor(trueRandom() * 100),
         type : FILE_OPS.FILE_UPLOAD,
-        source_type : source_type
+        source_type : source_type,
+        metadata
       });
     });
     reader.readAsText(file);
   }
 
-  function urlUploadHandler(link, source_type) {
+  function urlUploadHandler(link, source_type, metadata) {
     handleSubmit({
       data : link, id : "", name : "meshery_" + Math.floor(trueRandom() * 100), type : FILE_OPS.URL_UPLOAD,
-      source_type : source_type
+      source_type : source_type,
+      metadata
     });
     console.log(link, source_type, "valid");
   }
@@ -742,16 +724,9 @@ function MesheryApplications({
       () => {
         updateProgress({ showProgress : false });
 
-        enqueueSnackbar("Application deleted.", {
-          variant : "success",
-          autoHideDuration : 2000,
-          action : function Action(key) {
-            return (
-              <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-                <CloseIcon style={iconMedium} />
-              </IconButton>
-            );
-          },
+        notify({
+          message : "Application deleted.",
+          event_type : EVENT_TYPES.SUCCESS,
         });
       },
       handleError("Failed to delete application")
@@ -761,7 +736,7 @@ function MesheryApplications({
   const options = {
     filter : false,
     sort : !(user && user.user_id === "meshery"),
-    search : !(user && user.user_id === "meshery"),
+    search : false,
     filterType : "textField",
     responsive : "standard",
     resizableColumns : true,
@@ -803,7 +778,6 @@ function MesheryApplications({
 
       switch (action) {
         case "changePage":
-          console.log("PPPPPPPPPPPPP------", tableState);
           initAppsSubscription(tableState.page.toString(), pageSize.toString(), search, order);
           break;
         case "changeRowsPerPage":
@@ -856,29 +830,51 @@ function MesheryApplications({
           <YAMLEditor application={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
         )}
         <div className={classes.topToolbar} >
-          {!selectedApplication.show && (applications.length>0 || viewType==="table") && <div className={classes.createButton}>
-            <div>
-              <Button
-                aria-label="Add Application"
-                variant="contained"
-                color="primary"
-                size="large"
-                // @ts-ignore
-                onClick={handleUploadImport}
-                style={{ marginRight : "2rem" }}
-              >
-                <PublishIcon className={classes.addIcon} style={iconMedium}  />
-              Import Application
-              </Button>
+          {!selectedApplication.show && (applications.length>0 || viewType==="table") &&
+            <div className={classes.createButton}>
+              <div>
+                <Button
+                  aria-label="Add Application"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  // @ts-ignore
+                  onClick={handleUploadImport}
+                  style={{ marginRight : "2rem" }}
+                >
+                  <PublishIcon className={classes.addIcon} style={iconMedium}  />
+                Import Application
+                </Button>
+              </div>
+            </div>
+          }
+          <div className={classes.searchWrapper} style={{ display : "flex" }}>
+            <div
+              className={classes.searchAndView}
+              style={{
+                display : 'flex',
+                alignItems : 'center',
+                justifyContent : 'center',
+                margin : 'auto',
+                height : '5ch'
+              }}
+            >
+              <SearchBar
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  initAppsSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
+                }}
+                width="55ch"
+                label={"Search Applications"}
+              />
             </div>
 
+            {!selectedApplication.show &&
+            <div className={classes.viewSwitchButton}>
+              <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true} />
+            </div>}
           </div>
-          }
-          {!selectedApplication.show &&
-          <div className={classes.viewSwitchButton}>
-            <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true} />
-          </div>
-          }
         </div>
         {
           !selectedApplication.show && viewType==="table" &&
@@ -896,6 +892,7 @@ function MesheryApplications({
             // grid vieww
             <ApplicationsGrid
               applications={applications}
+              selectedK8sContexts={selectedK8sContexts}
               handleDeploy={handleDeploy}
               handleUnDeploy={handleUnDeploy}
               handleSubmit={handleSubmit}
@@ -915,16 +912,27 @@ function MesheryApplications({
           open={modalOpen.open}
           handleClose={handleModalClose}
           submit={
-            { deploy : () => handleDeploy(modalOpen.application_file, modalOpen.name),  unDeploy : () => handleUnDeploy(modalOpen.application_file, modalOpen.name) }
+            {
+              deploy : () => handleDeploy(modalOpen.application_file, modalOpen.name),
+              unDeploy : () => handleUnDeploy(modalOpen.application_file, modalOpen.name)
+            }
           }
           isDelete={!modalOpen.deploy}
+          dryRunComponent = {modalOpen.dryRunComponent}
           title={ modalOpen.name }
           componentCount={modalOpen.count}
           tab={modalOpen.deploy ? 2 : 1}
         />
         <PromptComponent ref={modalRef} />
-        <UploadImport open={importModal.open} handleClose={handleUploadImportClose} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler}
-          supportedTypes={types} configuration="Application"  />
+        <UploadImport
+          open={importModal.open}
+          handleClose={handleUploadImportClose}
+          isApplication={true}
+          aria-label="URL upload button"
+          handleUrlUpload={urlUploadHandler}
+          handleUpload={uploadHandler}
+          supportedTypes={types}
+          configuration="Application"  />
       </NoSsr>
     </>
   );

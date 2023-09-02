@@ -60,12 +60,10 @@ mesheryctl pattern apply [pattern-name]
 	Args:        cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var req *http.Request
-		var err error
-		client := &http.Client{}
-
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			utils.Log.Error(err)
+			return nil
 		}
 
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/deploy"
@@ -81,32 +79,32 @@ mesheryctl pattern apply [pattern-name]
 
 			req, err = utils.NewRequest("GET", patternURL+"?search="+patternName, nil)
 			if err != nil {
-				return errors.Wrap(err, "could not create request ")
+				utils.Log.Error(err)
+				return nil
 			}
 
-			resp, err := client.Do(req)
+			resp, err := utils.MakeRequest(req)
 			if err != nil {
-				return errors.Errorf("unable to reach Meshery Server at %s. Verify your environment's readiness for a Meshery deployment by running `mesheryctl system check`", mctlCfg.GetBaseMesheryURL())
+				utils.Log.Error(err)
+				return nil
 			}
 
 			var response *models.PatternsAPIResponse
-			// failsafe (bad api call)
-			if resp.StatusCode != 200 {
-				return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-			}
 			defer resp.Body.Close()
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
-				return errors.Wrap(err, utils.PerfError("failed to read response body"))
+				return errors.Wrap(err, utils.PatternError("failed to read response body"))
 			}
 			err = json.Unmarshal(body, &response)
 			if err != nil {
-				return errors.Wrap(err, "failed to unmarshal response body")
+				utils.Log.Error(utils.ErrUnmarshal(err))
+				return nil
 			}
 
 			index := 0
 			if len(response.Patterns) == 0 {
-				return errors.New("no patterns found with the given name")
+				utils.Log.Error(ErrPatternNotFound())
+				return nil
 			} else if len(response.Patterns) == 1 {
 				patternFile = response.Patterns[0].PatternFile
 			} else {
@@ -116,11 +114,12 @@ mesheryctl pattern apply [pattern-name]
 			}
 		} else {
 			// Method to check if the entered file is a URL or not
-			validURL := strings.HasPrefix(file, "https://github.com")
+			validURL := strings.HasPrefix(file, "https://github.com") || strings.HasPrefix(file, "https://raw.githubusercontent.com")
 			if !validURL {
 				content, err := os.ReadFile(file)
 				if err != nil {
-					return errors.Errorf("file path %s is invalid. Enter a valid path ", file)
+					utils.Log.Error(utils.ErrFileRead(errors.Errorf("file path %s is invalid. Enter a valid path ", file)))
+					return nil
 				}
 				text := string(content)
 
@@ -138,19 +137,17 @@ mesheryctl pattern apply [pattern-name]
 					}
 					req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 					if err != nil {
-						return errors.Wrap(err, "could not create request ")
+						utils.Log.Error(err)
+						return nil
 					}
 
-					resp, err := client.Do(req)
+					resp, err := utils.MakeRequest(req)
 					if err != nil {
-						return errors.Errorf("unable to reach Meshery server at %s. Verify your environment's readiness for a Meshery deployment by running `mesheryctl system check`", mctlCfg.GetBaseMesheryURL())
+						utils.Log.Error(err)
+						return nil
 					}
 					utils.Log.Debug("saved pattern file")
 					var response []*models.MesheryPattern
-					// failsafe (bad api call)
-					if resp.StatusCode != 200 {
-						return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-					}
 					defer resp.Body.Close()
 
 					body, err := io.ReadAll(resp.Body)
@@ -169,7 +166,8 @@ mesheryctl pattern apply [pattern-name]
 				var jsonValues []byte
 				url, path, err := utils.ParseURLGithub(file)
 				if err != nil {
-					return err
+					utils.Log.Error(err)
+					return nil
 				}
 
 				utils.Log.Debug(url)
@@ -205,28 +203,28 @@ mesheryctl pattern apply [pattern-name]
 				}
 				req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 				if err != nil {
-					return errors.Wrap(err, "could not create request ")
+					utils.Log.Error(err)
+					return nil
 				}
 
-				resp, err := client.Do(req)
+				resp, err := utils.MakeRequest(req)
 				if err != nil {
-					return errors.Errorf("unable to reach Meshery Server at %s. Verify your environment's readiness for a Meshery deployment by running `mesheryctl system check`", mctlCfg.GetBaseMesheryURL())
+					utils.Log.Error(err)
+					return nil
 				}
 				utils.Log.Debug("remote hosted pattern request success")
 				var response []*models.MesheryPattern
-				// failsafe (bad api call)
-				if resp.StatusCode != 200 {
-					return errors.Errorf("Response Status Code %d, possible Server Error", resp.StatusCode)
-				}
 				defer resp.Body.Close()
 
 				body, err := io.ReadAll(resp.Body)
 				if err != nil {
-					return errors.Wrap(err, utils.PerfError("failed to read response body"))
+					utils.Log.Error(utils.ErrReadResponseBody(errors.Wrap(err, "failed to read response body")))
+					return nil
 				}
 				err = json.Unmarshal(body, &response)
 				if err != nil {
-					return errors.Wrap(err, "failed to unmarshal response body")
+					utils.Log.Error(utils.ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body")))
+					return nil
 				}
 
 				// setup pattern file here
@@ -236,26 +234,30 @@ mesheryctl pattern apply [pattern-name]
 
 		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(patternFile)))
 		if err != nil {
-			return errors.Wrap(err, "could not create request ")
+			utils.Log.Error(err)
+			return nil
 		}
 
 		pf, err := core.NewPatternFile([]byte(patternFile))
 		if err != nil {
-			return errors.Wrap(err, "Pattern appears invalid. Could not parse successfully")
+			utils.Log.Error(ErrInvalidPatternFile(err))
+			return nil
 		}
 
 		s := utils.CreateDefaultSpinner("Applying pattern "+pf.Name, "")
 		s.Start()
-		res, err := client.Do(req)
+		res, err := utils.MakeRequest(req)
 		if err != nil {
-			return errors.Errorf("unable to reach Meshery Server at %s. Verify your environment's readiness for a Meshery deployment by running `mesheryctl system check`", mctlCfg.GetBaseMesheryURL())
+			utils.Log.Error(err)
+			return nil
 		}
 
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		s.Stop()
 		if err != nil {
-			return err
+			utils.Log.Error(utils.ErrReadResponseBody(err))
+			return nil
 		}
 
 		if res.StatusCode == 200 {

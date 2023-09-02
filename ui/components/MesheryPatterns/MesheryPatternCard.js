@@ -43,6 +43,8 @@ function MesheryPatternCard({
   canPublishPattern = false
 }) {
 
+
+
   const genericClickHandler = (ev, fn) => {
     ev.stopPropagation();
     fn(ev);
@@ -76,25 +78,21 @@ function MesheryPatternCard({
         />
       }
       <FlipCard
-
         onClick={() => {
           console.log(gridProps)
           setGridProps(INITIAL_GRID_SIZE)
         }}
-
         duration={600}
         onShow={() => setTimeout(() => setShowCode(currentCodeVisibilty => !currentCodeVisibilty),500)}
       >
         {/* FRONT PART */}
-        <>
+        <div>
           <div>
-            <div style={{ display : "flex", justifyContent : "space-between" }}>
-              <Typography style={{ overflow : "hidden", textOverflow : "ellipsis", width : '20rem' }} variant="h6" component="div">
+            <div style={{ height : "max",display : "flex", justifyContent : "space-between" }}>
+              <Typography style={{ whiteSpace : 'nowrap', overflow : "hidden", textOverflow : "ellipsis", width : '20rem' }} variant="h6" component="div">
                 {name}
               </Typography>
-              <div style={{ border : "1px solid rgb(118 118 118)",color : "rgb(118 118 118)",marginTop : "auto",fontSize : "0.6rem",padding : "0.2rem 0.5rem",borderRadius : "0.2rem" }}>
-               PUBLISHED
-              </div>
+              <img  className={classes.img} src={`/static/img/${visibility}.svg`} />
             </div>
             <div className={classes.lastRunText} >
               <div>
@@ -198,7 +196,7 @@ function MesheryPatternCard({
 
             </div>
           </div>
-        </>
+        </div>
 
         {/* BACK PART */}
         <>

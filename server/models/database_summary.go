@@ -7,9 +7,9 @@ type SqliteSchema struct {
 }
 
 type DatabaseSummary struct {
-	Page         int             `json:"page"`
-	PageSize     int             `json:"page_size"`
-	TotalTables  int             `json:"total_tables"`
-	RecordCount  int             `json:"record_count"`
-	Tables       []*SqliteSchema `json:"tables"`
+	Page        int             `json:"page"`
+	PageSize    int             `json:"page_size"`
+	TotalTables int             `json:"total_tables"`
+	RecordCount int             `json:"record_count"`
+	Tables      []*SqliteSchema `json:"tables"`
 }

@@ -74,47 +74,49 @@ func NewMesheryControllersHelper(log logger.Handler, operatorDepConfig controlle
 // the meshsync data for that context is properly being handled
 func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControllersHelper {
 	// only checking those contexts whose MesheryConrollers are active
-	mch.mu.Lock()
-	defer mch.mu.Unlock()
-	for ctxID, controllerHandlers := range mch.ctxControllerHandlersMap {
-		if _, ok := mch.ctxMeshsyncDataHandlerMap[ctxID]; !ok {
-			// brokerStatus := controllerHandlers[MesheryBroker].GetStatus()
-			// do something if broker is being deployed , maybe try again after sometime
-			brokerEndpoint, err := controllerHandlers[MesheryBroker].GetPublicEndpoint()
-			if brokerEndpoint == "" {
+	go func(mch *MesheryControllersHelper) {
+		mch.mu.Lock()
+		defer mch.mu.Unlock()
+		for ctxID, controllerHandlers := range mch.ctxControllerHandlersMap {
+			if _, ok := mch.ctxMeshsyncDataHandlerMap[ctxID]; !ok {
+				// brokerStatus := controllerHandlers[MesheryBroker].GetStatus()
+				// do something if broker is being deployed , maybe try again after sometime
+				brokerEndpoint, err := controllerHandlers[MesheryBroker].GetPublicEndpoint()
+				if brokerEndpoint == "" {
+					if err != nil {
+						mch.log.Warn(err)
+					}
+					mch.log.Info(fmt.Sprintf("Meshery Broker unreachable for Kubernetes context (%v)", ctxID))
+					continue
+				}
+				mch.log.Info(fmt.Sprintf("Connected to Meshery Broker (%s) for Kubernetes context (%s)", brokerEndpoint, ctxID))
+				brokerHandler, err := nats.New(nats.Options{
+					// URLS: []string{"localhost:4222"},
+					URLS:           []string{brokerEndpoint},
+					ConnectionName: MesheryServerBrokerConnection,
+					Username:       "",
+					Password:       "",
+					ReconnectWait:  2 * time.Second,
+					MaxReconnect:   60,
+				})
 				if err != nil {
 					mch.log.Warn(err)
+					mch.log.Info(fmt.Sprintf("MeshSync not configured for Kubernetes context (%v) due to '%v'", ctxID, err.Error()))
+					continue
 				}
-				mch.log.Info(fmt.Sprintf("skipping meshsync data handler setup for contextId: %v as its public endpoint could not be found", ctxID))
-				continue
+				mch.log.Info(fmt.Sprintf("Connected to Meshery Broker (%v) for Kubernetes context (%v)", brokerEndpoint, ctxID))
+				msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log)
+				err = msDataHandler.Run()
+				if err != nil {
+					mch.log.Warn(err)
+					mch.log.Info(fmt.Sprintf("Unable to connect MeshSync for Kubernetes context (%s) due to: %s", ctxID, err.Error()))
+					continue
+				}
+				mch.ctxMeshsyncDataHandlerMap[ctxID] = *msDataHandler
+				mch.log.Info(fmt.Sprintf("MeshSync connected for Kubernetes context (%s)", ctxID))
 			}
-			mch.log.Info(fmt.Sprintf("found meshery-broker endpoint: %s for contextId: %s", brokerEndpoint, ctxID))
-			brokerHandler, err := nats.New(nats.Options{
-				// URLS: []string{"localhost:4222"},
-				URLS:           []string{brokerEndpoint},
-				ConnectionName: MesheryServerBrokerConnection,
-				Username:       "",
-				Password:       "",
-				ReconnectWait:  2 * time.Second,
-				MaxReconnect:   60,
-			})
-			if err != nil {
-				mch.log.Warn(err)
-				mch.log.Info(fmt.Sprintf("skipping meshsync data handler setup for contextId: %v due to: %v", ctxID, err.Error()))
-				continue
-			}
-			mch.log.Info(fmt.Sprintf("broker connection successfully established for contextId: %v with meshery-broker at: %v", ctxID, brokerEndpoint))
-			msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log)
-			err = msDataHandler.Run()
-			if err != nil {
-				mch.log.Warn(err)
-				mch.log.Info(fmt.Sprintf("skipping meshsync data handler setup for contextId: %s due to: %s", ctxID, err.Error()))
-				continue
-			}
-			mch.ctxMeshsyncDataHandlerMap[ctxID] = *msDataHandler
-			mch.log.Info(fmt.Sprintf("meshsync data handler successfully setup for contextId: %s", ctxID))
 		}
-	}
+	}(mch)
 
 	return mch
 }
@@ -123,26 +125,28 @@ func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControl
 // 1. the config is valid
 // 2. if it is not already attached
 func (mch *MesheryControllersHelper) UpdateCtxControllerHandlers(ctxs []K8sContext) *MesheryControllersHelper {
-	mch.mu.Lock()
-	defer mch.mu.Unlock()
-	// resetting this value as a specific controller handler instance does not have any significance opposed to
-	// a MeshsyncDataHandler instance where it signifies whether or not a listener is attached
-	mch.ctxControllerHandlersMap = make(map[string]map[MesheryController]controllers.IMesheryController)
-	for _, ctx := range ctxs {
-		ctxID := ctx.ID
-		cfg, _ := ctx.GenerateKubeConfig()
-		client, err := mesherykube.New(cfg)
-		// means that the config is invalid
-		if err != nil {
-			// invalid configs are not added to the map
-			continue
+	go func(mch *MesheryControllersHelper) {
+		mch.mu.Lock()
+		defer mch.mu.Unlock()
+		// resetting this value as a specific controller handler instance does not have any significance opposed to
+		// a MeshsyncDataHandler instance where it signifies whether or not a listener is attached
+		mch.ctxControllerHandlersMap = make(map[string]map[MesheryController]controllers.IMesheryController)
+		for _, ctx := range ctxs {
+			ctxID := ctx.ID
+			cfg, _ := ctx.GenerateKubeConfig()
+			client, err := mesherykube.New(cfg)
+			// means that the config is invalid
+			if err != nil {
+				// invalid configs are not added to the map
+				continue
+			}
+			mch.ctxControllerHandlersMap[ctxID] = map[MesheryController]controllers.IMesheryController{
+				MesheryBroker:   controllers.NewMesheryBrokerHandler(client),
+				MesheryOperator: controllers.NewMesheryOperatorHandler(client, mch.oprDepConfig),
+				Meshsync:        controllers.NewMeshsyncHandler(client),
+			}
 		}
-		mch.ctxControllerHandlersMap[ctxID] = map[MesheryController]controllers.IMesheryController{
-			MesheryBroker:   controllers.NewMesheryBrokerHandler(client),
-			MesheryOperator: controllers.NewMesheryOperatorHandler(client, mch.oprDepConfig),
-			Meshsync:        controllers.NewMeshsyncHandler(client),
-		}
-	}
+	}(mch)
 
 	return mch
 }
@@ -151,17 +155,18 @@ func (mch *MesheryControllersHelper) UpdateCtxControllerHandlers(ctxs []K8sConte
 // for whom MesheryControllers are attached
 // should be called after UpdateCtxControllerHandlers
 func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(ot *OperatorTracker) *MesheryControllersHelper {
-	mch.mu.Lock()
-	defer mch.mu.Unlock()
-	mch.ctxOperatorStatusMap = make(map[string]controllers.MesheryControllerStatus)
-	for ctxID, ctrlHandler := range mch.ctxControllerHandlersMap {
-		if ot.IsUndeployed(ctxID) {
-			mch.ctxOperatorStatusMap[ctxID] = controllers.Undeployed
-		} else {
-			mch.ctxOperatorStatusMap[ctxID] = ctrlHandler[MesheryOperator].GetStatus()
+	go func(mch *MesheryControllersHelper) {
+		mch.mu.Lock()
+		defer mch.mu.Unlock()
+		mch.ctxOperatorStatusMap = make(map[string]controllers.MesheryControllerStatus)
+		for ctxID, ctrlHandler := range mch.ctxControllerHandlersMap {
+			if ot.IsUndeployed(ctxID) {
+				mch.ctxOperatorStatusMap[ctxID] = controllers.Undeployed
+			} else {
+				mch.ctxOperatorStatusMap[ctxID] = ctrlHandler[MesheryOperator].GetStatus()
+			}
 		}
-	}
-
+	}(mch)
 	return mch
 }
 
@@ -231,7 +236,7 @@ func NewOperatorDeploymentConfig(adapterTracker AdaptersTrackerInterface) contro
 	// get meshery release version
 	mesheryReleaseVersion := viper.GetString("BUILD")
 	if mesheryReleaseVersion == "" || mesheryReleaseVersion == "Not Set" || mesheryReleaseVersion == "edge-latest" {
-		_, latestRelease, err := checkLatestVersion(mesheryReleaseVersion)
+		_, latestRelease, err := CheckLatestVersion(mesheryReleaseVersion)
 		// if unable to fetch latest release tag, meshkit helm functions handle
 		// this automatically fetch the latest one
 		if err != nil {
@@ -253,7 +258,7 @@ func NewOperatorDeploymentConfig(adapterTracker AdaptersTrackerInterface) contro
 
 // checkLatestVersion takes in the current server version compares it with the target
 // and returns the (isOutdated, latestVersion, error)
-func checkLatestVersion(serverVersion string) (*bool, string, error) {
+func CheckLatestVersion(serverVersion string) (*bool, string, error) {
 	// Inform user of the latest release version
 	versions, err := utils.GetLatestReleaseTagsSorted("meshery", "meshery")
 	latestVersion := versions[len(versions)-1]
@@ -303,9 +308,6 @@ func setOverrideValues(delete bool, adapterTracker AdaptersTrackerInterface) map
 		"meshery-kuma": map[string]interface{}{
 			"enabled": false,
 		},
-		"meshery-osm": map[string]interface{}{
-			"enabled": false,
-		},
 		"meshery-nsm": map[string]interface{}{
 			"enabled": false,
 		},
@@ -313,9 +315,6 @@ func setOverrideValues(delete bool, adapterTracker AdaptersTrackerInterface) map
 			"enabled": false,
 		},
 		"meshery-traefik-mesh": map[string]interface{}{
-			"enabled": false,
-		},
-		"meshery-cpx": map[string]interface{}{
 			"enabled": false,
 		},
 		"meshery-app-mesh": map[string]interface{}{
@@ -337,6 +336,64 @@ func setOverrideValues(delete bool, adapterTracker AdaptersTrackerInterface) map
 	if delete {
 		overrideValues["meshery-operator"] = map[string]interface{}{
 			"enabled": false,
+		}
+	}
+
+	return overrideValues
+}
+
+// setOverrideValues detects the currently insalled adapters and sets appropriate
+// overrides so as to not uninstall them.
+func SetOverrideValuesForMesheryDeploy(adapters []Adapter, adapter Adapter, install bool) map[string]interface{} {
+	installedAdapters := make([]string, 0)
+	for _, adapter := range adapters {
+		if adapter.Name != "" {
+			installedAdapters = append(installedAdapters, strings.Split(adapter.Location, ":")[0])
+		}
+	}
+
+	overrideValues := map[string]interface{}{
+		"meshery-istio": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-cilium": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-linkerd": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-consul": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-kuma": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-nsm": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-nginx-sm": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-traefik-mesh": map[string]interface{}{
+			"enabled": false,
+		},
+		"meshery-app-mesh": map[string]interface{}{
+			"enabled": false,
+		},
+	}
+
+	for _, adapter := range installedAdapters {
+		if _, ok := overrideValues[adapter]; ok {
+			overrideValues[adapter] = map[string]interface{}{
+				"enabled": true,
+			}
+		}
+	}
+
+	// based on deploy/undeploy action change the status of adapter override
+	if _, ok := overrideValues[strings.Split(adapter.Location, ":")[0]]; ok {
+		overrideValues[strings.Split(adapter.Location, ":")[0]] = map[string]interface{}{
+			"enabled": install,
 		}
 	}
 

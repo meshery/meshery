@@ -1,6 +1,7 @@
 package filter
 
 import (
+	"flag"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -9,7 +10,9 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
-func TestPatternView(t *testing.T) {
+var update = flag.Bool("update", false, "update golden files")
+
+func TestViewCmd(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
 
@@ -116,6 +119,7 @@ func TestPatternView(t *testing.T) {
 
 			utils.Equals(t, expectedResponse, actualResponse)
 		})
+		t.Log("View Filter test Passed")
 	}
 
 	// stop mock server

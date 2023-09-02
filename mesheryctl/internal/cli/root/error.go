@@ -16,16 +16,18 @@ package root
 
 import "github.com/layer5io/meshkit/errors"
 
+// Please reference the following before contributing an error code:
+// https://docs.meshery.io/project/contributing/contributing-error
+// https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrProcessingConfigCode        = "1050"
-	ErrCreatingConfigFileCode      = "1051"
-	ErrAddingTokenToConfigCode     = "1052"
-	ErrAddingContextToConfigCode   = "1053"
-	ErrUnmarshallingConfigFileCode = "1054"
-	ErrGettingRequestContextCode   = "1055"
-	ErrInvalidAPIResponseCode      = "1056"
-	ErrUnmarshallingAPIDataCode    = "1057"
-	ErrConnectingToServerCode      = "1058"
+	ErrProcessingConfigCode        = "1072"
+	ErrCreatingConfigFileCode      = "1073"
+	ErrAddingTokenToConfigCode     = "1074"
+	ErrAddingContextToConfigCode   = "1075"
+	ErrUnmarshallingConfigFileCode = "1076"
+	ErrGettingRequestContextCode   = "1077"
+	ErrUnmarshallingAPIDataCode    = "1078"
+	ErrConnectingToServerCode      = "1079"
 )
 
 var (
@@ -48,10 +50,6 @@ func ErrConnectingToServer(err error) error {
 
 func ErrGettingRequestContext(err error) error {
 	return errors.New(ErrGettingRequestContextCode, errors.Fatal, []string{"Unable to add token to config"}, []string{"Unable to add token to config", err.Error()}, []string{}, []string{})
-}
-
-func ErrInvalidAPIResponse(err error) error {
-	return errors.New(ErrInvalidAPIResponseCode, errors.Fatal, []string{"Invalid API response encountered"}, []string{"Invalid API response encountered", err.Error()}, []string{}, []string{})
 }
 
 func ErrUnmarshallingAPIData(err error) error {

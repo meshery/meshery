@@ -25,13 +25,12 @@ import { Search } from '@material-ui/icons';
 import { TextField } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import { Paper } from '@material-ui/core';
-import { useSnackbar } from "notistack";
 import { deleteKubernetesConfig, pingKubernetes } from './ConnectionWizard/helpers/kubernetesHelpers';
 import {
-  successHandlerGenerator, errorHandlerGenerator, closeButtonForSnackbarAction
+  successHandlerGenerator, errorHandlerGenerator
 } from './ConnectionWizard/helpers/common';
 import { promisifiedDataFetch } from '../lib/data-fetch';
-import { updateK8SConfig, updateProgress } from '../lib/store';
+import { updateK8SConfig, updateProgress, updateCapabilities } from '../lib/store';
 import { bindActionCreators } from 'redux';
 import BadgeAvatars from './CustomAvatar';
 import { CapabilitiesRegistry as CapabilityRegistryClass } from '../utils/disabledComponents';
@@ -41,6 +40,12 @@ import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles'
 import PromptComponent from './PromptComponent';
 import { iconMedium } from '../css/icons.styles';
 import { isExtensionOpen } from '../pages/_app';
+import ExtensionSandbox from './ExtensionSandbox';
+import RemoteComponent from './RemoteComponent';
+import { CapabilitiesRegistry } from "../utils/disabledComponents";
+import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
+import dataFetch from '../lib/data-fetch';
+import { withNotify } from '../utils/hooks/useNotification';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -264,7 +269,6 @@ function K8sContextMenu({
   const [showFullContextMenu, setShowFullContextMenu] = React.useState(false);
   const [transformProperty, setTransformProperty] = React.useState(100);
   const deleteCtxtRef = React.createRef();
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   const styleSlider = {
     position : "absolute",
@@ -332,15 +336,15 @@ function K8sContextMenu({
 
   const handleKubernetesClick = (id) => {
     updateProgress({ showProgress : true })
-
+    const notify = this.props.notify;
     pingKubernetes(
-      successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes pinged", () => updateProgress({ showProgress : false })),
-      errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes not pinged", () => updateProgress({ showProgress : false })),
+      successHandlerGenerator (notify, "Kubernetes pinged", () => updateProgress({ showProgress : false })),
+      errorHandlerGenerator(notify, "Kubernetes not pinged", () => updateProgress({ showProgress : false })),
       id
     )
   }
 
-  const handleKubernetesDelete = (name, ctxId) => async () => {
+  const handleKubernetesDelete = (name, connectionID) => async () => {
     let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
       title : `Delete ${name} context ?`,
       subtitle : `Are you sure you want to delete ${name} cluster from Meshery?`,
@@ -353,11 +357,11 @@ function K8sContextMenu({
           updateK8SConfig({ k8sConfig : updatedConfig })
         }
       }
-
+      const notify = this.props.notify;
       deleteKubernetesConfig(
-        successHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Kubernetes config removed", successCallback),
-        errorHandlerGenerator(enqueueSnackbar, closeButtonForSnackbarAction(closeSnackbar), "Not able to remove config"),
-        ctxId
+        successHandlerGenerator(notify, "Kubernetes config removed", successCallback),
+        errorHandlerGenerator(notify, "Not able to remove config"),
+        connectionID
       )
     }
   }
@@ -480,8 +484,8 @@ function K8sContextMenu({
                         />
                         <Chip
                           label={ctx?.name}
-                          onDelete={handleKubernetesDelete(ctx.name, ctx.id)}
-                          onClick={() => handleKubernetesClick(ctx.id)}
+                          onDelete={handleKubernetesDelete(ctx.name, ctx.connection_id)}
+                          onClick={() => handleKubernetesClick(ctx.connection_id)}
                           avatar={
                             meshStatus ?
                               <BadgeAvatars>
@@ -522,10 +526,31 @@ class Header extends React.Component {
       brokerStatusSubscription : null,
       brokerStatus : false,
       /** @type {CapabilityRegistryClass} */
-      capabilityregistryObj : null
+      capabilityregistryObj : null,
+      collaboratorExt : null,
     }
   }
   componentDidMount() {
+    dataFetch(
+      "/api/provider/capabilities",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      (result) => {
+        if (result) {
+          const capabilitiesRegistryObj = new CapabilitiesRegistry(result);
+
+          this.setState({
+            collaboratorExt : ExtensionPointSchemaValidator("collaborator")(result?.extensions?.collaborator),
+            capabilitiesRegistryObj,
+          });
+          this.props.updateCapabilities({ capabilitiesRegistry : result })
+        }
+      },
+      (err) => console.error(err)
+    );
+    console.log("capabilitiesRegistry (mounted header)", this.props.capabilitiesRegistry)
     this._isMounted = true;
     const brokerStatusSub = subscribeBrokerStatusEvents(data => {
       console.log({ brokerData : data })
@@ -539,9 +564,6 @@ class Header extends React.Component {
       this.setState({ capabilityregistryObj : new CapabilityRegistryClass(this.props.capabilitiesRegistry) });
     }
 
-
-
-
   }
 
   componentWillUnmount = () => {
@@ -549,8 +571,8 @@ class Header extends React.Component {
   }
 
   render() {
-    const { classes, title, onDrawerToggle, isBeta, theme, themeSetter, onDrawerCollapse } = this.props;
-
+    const { classes, title, onDrawerToggle, isBeta, theme, themeSetter, onDrawerCollapse, capabilityregistryObj } = this.props;
+    const loaderType = "circular"
     return (
       <NoSsr>
         <React.Fragment>
@@ -580,6 +602,10 @@ class Header extends React.Component {
                   </Typography>
                 </Grid>
                 <Grid item className={classes.userContainer} style={{ position : "relative", right : "-27px" }}>
+                  {/* According to the capabilities load the component */}
+                  {
+                    this.state.collaboratorExt && <ExtensionSandbox type="collaborator" Extension={(url) => RemoteComponent({ url, loaderType })} capabilitiesRegistry={capabilityregistryObj} />
+                  }
                   <div className={classes.userSpan} style={{ position : "relative" }}>
                     <K8sContextMenu
                       classes={classes}
@@ -645,7 +671,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => ({
   updateK8SConfig : bindActionCreators(updateK8SConfig, dispatch),
   updateProgress : bindActionCreators(updateProgress, dispatch),
+  updateCapabilities : bindActionCreators(updateCapabilities, dispatch),
 });
 
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Header));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withNotify(Header)));

@@ -31,7 +31,9 @@ import (
 )
 
 var (
-	verbose bool
+	pageSize   = 25
+	pageNumber int
+	verbose    bool
 )
 
 var listCmd = &cobra.Command{
@@ -40,39 +42,41 @@ var listCmd = &cobra.Command{
 	Long:  `Display list of all available filter files.`,
 	Example: `
 // List all WASM filter files present
-mesheryctl exp filter list	
+mesheryctl filter list	(maximum 25 filters)
+
+// Search for filter
+mesheryctl filter list Test (maximum 25 filters)
+
+// Search for filter with space
+mesheryctl filter list 'Test Filter' (maximum 25 filters)
 	`,
-	Args: cobra.MaximumNArgs(0),
+	Args: cobra.MinimumNArgs(0),
 	RunE: func(cmd *cobra.Command, args []string) error {
+
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return errors.Wrap(err, "error processing config")
 		}
-		var response models.FiltersAPIResponse
-		req, err := utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/filter", nil)
+		var searchString string
+		if len(args) > 0 {
+			searchString = strings.ReplaceAll(args[0], " ", "%20")
+		}
+		response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
 		if err != nil {
 			return err
 		}
-		res, err := utils.MakeRequest(req)
-		if err != nil {
-			return err
-		}
-		defer res.Body.Close()
-		body, err := io.ReadAll(res.Body)
-		if err != nil {
-			return err
-		}
-		if res.StatusCode != http.StatusOK {
-			return errors.New("Server returned with status code: " + fmt.Sprint(res.StatusCode) + "\n" + "Response: " + string(body))
-		}
-		err = json.Unmarshal(body, &response)
 
-		if err != nil {
-			return ErrUnmarshal(err)
+		if len(args) > 0 && len(response.Filters) == 0 {
+			utils.Log.Info("No WASM Filter to display with name :", strings.Join(args, " "))
+			return nil
+		} else if len(response.Filters) == 0 {
+			utils.Log.Info("No WASM Filter to display")
+			return nil
 		}
+
 		tokenObj, err := utils.ReadToken(utils.TokenFlag)
 		if err != nil {
-			return errors.New("Error reading token. Use 'mesheryctl exp filter list --help' for usage details. " + err.Error())
+			return errors.New(utils.FilterListError("error reading token\nUse 'mesheryctl filter list --help' to display usage guide\n" + err.Error()))
 		}
 		provider := tokenObj["meshery-provider"]
 		var data [][]string
@@ -123,7 +127,7 @@ mesheryctl exp filter list
 			FilterID := utils.TruncateID(v.ID.String())
 			var UserID string
 			if v.UserID != nil {
-				UserID = *v.UserID
+				UserID = utils.TruncateID(*v.UserID)
 			} else {
 				UserID = "null"
 			}
@@ -137,6 +141,47 @@ mesheryctl exp filter list
 	},
 }
 
+// Pagination(making multiple requests) to retrieve filter Data in batches
+func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*models.FiltersAPIResponse, error) {
+	var response *models.FiltersAPIResponse
+
+	url := baseURL + "/api/filter"
+
+	url = fmt.Sprintf("%s?pagesize=%d&page=%d", url, pageSize, pageNumber)
+	if searchString != "" {
+		url = url + "&search=" + searchString
+	}
+
+	utils.Log.Debug(url)
+
+	req, err := utils.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := utils.MakeRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, errors.Wrap(err, utils.FilterListError("failed to read response body"))
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.New("Server returned with status code: " + fmt.Sprint(resp.StatusCode) + "\n" + "Response: " + string(body))
+	}
+
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return nil, utils.ErrUnmarshal(err)
+	}
+	return response, nil
+}
 func init() {
 	listCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Display full length user and filter file identifiers")
+	listCmd.Flags().IntVarP(&pageNumber, "page", "p", 1, "(optional) List next set of filters with --page (default = 1)")
 }

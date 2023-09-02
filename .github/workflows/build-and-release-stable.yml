@@ -5,6 +5,80 @@ on:
       - "v*"
 
 jobs:
+
+  update-rest-api-docs:
+    name: Update REST API Documentation
+    if: github.repository == 'meshery/meshery'
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Check if handlers were modified
+        uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            modified:
+              - added|modified: "server/handlers/**"
+      - name: Setup go-swagger
+        if: steps.changes.outputs.modified == 'true'
+        uses: minchao/setup-go-swagger@v1
+        with:
+          version: v0.30.5
+      - name: swagger-spec
+        if: steps.changes.outputs.modified == 'true'
+        run: |
+          make swagger-build
+      - name: swagger-docs
+        if: steps.changes.outputs.modified == 'true'
+        run: |
+          make swagger-docs-build
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          file_pattern: docs
+          commit_user_name: l5io
+          commit_user_email: ci@layer5.io
+          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          commit_options: "--signoff"
+          commit_message: "[Docs] Updated Swagger Docs for REST API"
+  
+  update-graphql-docs:
+    name: Update GraphQL API Documentation
+    if: github.repository == 'meshery/meshery'
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+      - name: Check if schema was modified
+        uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            modified:
+              - added|modified: 'server/internal/graphql/schema/schema.graphql'
+      - name: Set up Ruby
+        if: steps.filter.outputs.modified == 'true'
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.2.2
+          bundler-cache: true
+      - name: graphql-docs
+        if: steps.filter.outputs.modified == 'true'
+        run: |
+          cd docs; bundle install; cd ..; \
+          make graphql-docs-build
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          file_pattern: docs
+          commit_user_name: l5io
+          commit_user_email: ci@layer5.io
+          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          commit_options: "--signoff"
+          commit_message: "[Docs] Updated GraphQL API Documentation"
+
   build:
     name: Docker build and push
     if: github.repository == 'meshery/meshery'
@@ -17,7 +91,7 @@ jobs:
         with:
           fetch-depth: 1
       - name: Login to DockerHub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
@@ -70,6 +144,7 @@ jobs:
         with:
           formula-name: mesheryctl
           download-url: https://github.com/meshery/meshery.git
+          formula-path: Formula/m/mesheryctl.rb
         env:
           COMMITTER_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}  
   call-dde-release-workflow:
@@ -114,3 +189,33 @@ jobs:
     uses: meshery/meshery/.github/workflows/cncf-playground-deploy-meshery.yaml@master
     secrets: inherit
 
+  email-on-failure:
+    needs: [update-rest-api-docs, update-graphql-docs, build, ctlrelease, call-dde-release-workflow, call-helm-chart-releaser, email-meshery-release-notes-workflow, call-cncf-playground-rollout]
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Find failed jobs.
+        run: |
+          curl "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs" | jq -r '.jobs[] | select(.conclusion == "failure") | "\(.name): \(.steps[] | select(.conclusion == "failure") | .name)\n\(.html_url)\n"' >> output.txt
+          # Save multi-line environment variables by using the delimiters syntex.
+          echo "EMAIL_BODY<<EOF" >> $GITHUB_ENV
+          echo "EMAIL_BODY=$(cat ./output.txt)" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+      - name: Failed jobs summary
+        run: |
+          echo "${{ env.EMAIL_BODY }}"
+      - name: Send Email Notification
+        if: ${{ env.EMAIL_BODY != '' }}
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: Job(s) failure in the build-and-release-stable workflow
+          to: support@layer5.io
+          from: Build and Release Stable workflow
+          body: |
+            The workflow failed. Here are the details:
+            ${{ env.EMAIL_BODY }}
+            Workflow run log URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
