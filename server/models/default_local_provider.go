@@ -661,12 +661,16 @@ func (l *DefaultLocalProvider) SaveMesheryFilter(_ string, filter *MesheryFilter
 }
 
 // GetMesheryFilters gives the filters stored with the provider
-func (l *DefaultLocalProvider) GetMesheryFilters(_, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryFilters(_, page, pageSize, search, order string, visibility string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
 	if pageSize == "" {
 		pageSize = "10"
+	}
+
+	if visibility == "" {
+		visibility = Public
 	}
 
 	pg, err := strconv.ParseUint(page, 10, 32)
@@ -679,7 +683,7 @@ func (l *DefaultLocalProvider) GetMesheryFilters(_, page, pageSize, search, orde
 		return nil, ErrPageSize(err)
 	}
 
-	return l.MesheryFilterPersister.GetMesheryFilters(search, order, pg, pgs)
+	return l.MesheryFilterPersister.GetMesheryFilters(search, order, pg, pgs, visibility)
 }
 
 // GetCatalogMesheryFilters gives the catalog filters stored with the provider

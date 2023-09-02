@@ -553,11 +553,22 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
       { credentials : "include", method : "POST", body : JSON.stringify(payload) },
       () => {
         updateProgress({ showProgress : false });
-        notify({ message : `Filter published!` , event_type : EVENT_TYPES.SUCCESS })
+        if (user.role_names.includes("admin")){
+
+          notify({
+            message : `${publishModal.filter?.name} filter published to Meshery Catalog`,
+            event_type : EVENT_TYPES.SUCCESS
+          })
+        } else {
+          notify({
+            message : "filters queued for publishing into Meshery Catalog. Maintainers notified for review",
+            event_type : EVENT_TYPES.SUCCESS
+          })
+        }
       },
       handleError(ACTION_TYPES.PUBLISH_CATALOG),
     );
-  }
+  };
 
   function handleClone(filterID, name) {
     updateProgress({ showProgress : true });
