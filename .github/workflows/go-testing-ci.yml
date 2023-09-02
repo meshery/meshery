@@ -86,6 +86,4 @@ jobs:
           flags: gointegrationtests   
       - name: Start Mesheryctl System
         run: |
-          cd mesheryctl/internal/cli/root/system
-          go test -update 
-          mesheryctl system start  
+         cd mesheryctl; make; ./mesheryctl system start 
