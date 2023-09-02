@@ -1,24 +1,5 @@
-Meshery resetting...
-
-Current Context: local2
-Channel: stable
-Version: latest
 Platform: docker
 
 Fetching default docker-compose file as per current-context: local2...
-Usage:
-  system reset [flags]
-
-Examples:
-
-// Resets meshery.yaml file with a copy from Meshery repo
-mesheryctl system reset
-	
-
-Flags:
-  -h, --help   help for reset
-
-Global Flags:
-  -c, --context string   (optional) temporarily change the current context.
-  -y, --yes              (optional) assume yes for user interactive prompts.
-
+...fetching Meshery Operator manifests for Kubernetes...
+...meshconfig (meshery.yaml) now reset to default settings.
