@@ -72,7 +72,7 @@ func (r *Resolver) fetchResults(ctx context.Context, provider models.Provider, s
 
 	if err := json.Unmarshal(bdr, result); err != nil {
 		obj := "result data"
-		return nil, handlers.ErrUnmarshal(err, obj)
+		return nil, models.ErrUnmarshal(err, obj)
 	}
 
 	return result, nil
@@ -178,7 +178,7 @@ func (r *Resolver) getPerformanceProfiles(ctx context.Context, provider models.P
 
 	if err := json.Unmarshal(bdr, profiles); err != nil {
 		obj := "performance profiles data"
-		return nil, handlers.ErrUnmarshal(err, obj)
+		return nil, models.ErrUnmarshal(err, obj)
 	}
 
 	return profiles, nil
@@ -198,7 +198,7 @@ func (r *Resolver) fetchAllResults(ctx context.Context, provider models.Provider
 
 	if err := json.Unmarshal(bdr, performanceResults); err != nil {
 		obj := "performance results data"
-		return nil, handlers.ErrUnmarshal(err, obj)
+		return nil, models.ErrUnmarshal(err, obj)
 	}
 
 	return performanceResults, nil

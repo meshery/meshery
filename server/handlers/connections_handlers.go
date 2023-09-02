@@ -33,8 +33,8 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 	obj := "connection"
 
 	if err != nil {
-		h.log.Error(ErrUnmarshal(err, obj))
-		http.Error(w, ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrUnmarshal(err, obj))
+		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -109,8 +109,8 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 	}
 
 	if err := json.NewEncoder(w).Encode(connectionsPage); err != nil {
-		h.log.Error(ErrEncoding(err, obj))
-		http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrEncoding(err, obj))
+		http.Error(w, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -160,8 +160,8 @@ func (h *Handler) GetConnectionsByKind(w http.ResponseWriter, req *http.Request,
 	}
 
 	if err := json.NewEncoder(w).Encode(connectionsPage); err != nil {
-		h.log.Error(ErrEncoding(err, obj))
-		http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrEncoding(err, obj))
+		http.Error(w, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -183,8 +183,8 @@ func (h *Handler) GetConnectionsStatus(w http.ResponseWriter, req *http.Request,
 	}
 
 	if err := json.NewEncoder(w).Encode(connectionsStatusPage); err != nil {
-		h.log.Error(ErrEncoding(err, obj))
-		http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrEncoding(err, obj))
+		http.Error(w, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -209,8 +209,8 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 	err = json.Unmarshal(bd, connection)
 	obj := "connection"
 	if err != nil {
-		h.log.Error(ErrUnmarshal(err, obj))
-		http.Error(w, ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrUnmarshal(err, obj))
+		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 	
@@ -265,8 +265,8 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	err = json.Unmarshal(bd, connection)
 	obj := "connection"
 	if err != nil {
-		h.log.Error(ErrUnmarshal(err, obj))
-		http.Error(w, ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrUnmarshal(err, obj))
+		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 

@@ -88,9 +88,12 @@ class MesheryApp extends App {
     this.pageContext = getPageContext();
     this.meshsyncEventsSubscriptionRef = React.createRef();
     this.eventsSubscriptionRef = React.createRef();
+    this.fullScreenChanged = this.fullScreenChanged.bind(this);
+
     this.state = {
       mobileOpen : false,
       isDrawerCollapsed : false,
+      isFullScreenMode : false,
       k8sContexts : [],
       activeK8sContexts : [],
       operatorSubscription : null,
@@ -139,6 +142,12 @@ class MesheryApp extends App {
     this.meshsyncEventsSubscriptionRef.current = meshSyncEventsSubscription;
   }
 
+  fullScreenChanged = () => {
+    this.setState(state => {
+      return { isFullScreenMode : !state.isFullScreenMode }
+    });
+  }
+
   componentDidMount() {
     this.loadConfigFromServer(); // this works, but sometimes other components which need data load faster than this data is obtained.
     this.initSubscriptions([]);
@@ -176,6 +185,12 @@ class MesheryApp extends App {
     }
     const disposeK8sContextSubscription = k8sContextSubscription();
     this.setState({ disposeK8sContextSubscription })
+
+    document.addEventListener("fullscreenchange", this.fullScreenChanged);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("fullscreenchange", this.fullScreenChanged);
   }
 
   initEventsSubscription() {
@@ -362,13 +377,14 @@ class MesheryApp extends App {
     const {
       Component, pageProps, classes, isDrawerCollapsed, relayEnvironment
     } = this.props;
+
     return (
       <RelayEnvironmentProvider environment={relayEnvironment}>
         <ThemeProvider theme={this.state.theme === "dark" ? darkTheme : theme}>
           <NoSsr>
             <div className={classes.root}>
               <CssBaseline />
-              <nav className={isDrawerCollapsed
+              {!this.state.isFullScreenMode && <nav className={isDrawerCollapsed
                 ? classes.drawerCollapsed
                 : classes.drawer} data-test="navigation">
                 <Hidden smUp implementation="js">
@@ -389,6 +405,7 @@ class MesheryApp extends App {
                   />
                 </Hidden>
               </nav>
+              }
               <div className={classes.appContent}>
                 <SnackbarProvider
                   anchorOrigin={{
@@ -410,7 +427,7 @@ class MesheryApp extends App {
                   maxSnack={10}
                 >
                   <MesheryProgressBar />
-                  <Header
+                  {!this.state.isFullScreenMode &&  <Header
                     onDrawerToggle={this.handleDrawerToggle}
                     onDrawerCollapse={isDrawerCollapsed}
                     contexts={this.state.k8sContexts}
@@ -421,6 +438,7 @@ class MesheryApp extends App {
                     theme={this.state.theme}
                     themeSetter={this.themeSetter}
                   />
+                  }
                   <main className={classes.mainContent}>
                     <MuiPickersUtilsProvider utils={MomentUtils}>
                       <Component

@@ -125,8 +125,8 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		h.config.K8scontextChannel.PublishContext()
 	}
 	if err := json.NewEncoder(w).Encode(saveK8sContextResponse); err != nil {
-		logrus.Error(ErrMarshal(err, "kubeconfig"))
-		http.Error(w, ErrMarshal(err, "kubeconfig").Error(), http.StatusInternalServerError)
+		logrus.Error(models.ErrMarshal(err, "kubeconfig"))
+		http.Error(w, models.ErrMarshal(err, "kubeconfig").Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -184,8 +184,8 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 
 	err = json.NewEncoder(w).Encode(contexts)
 	if err != nil {
-		logrus.Error(ErrMarshal(err, "kube-context"))
-		http.Error(w, ErrMarshal(err, "kube-context").Error(), http.StatusInternalServerError)
+		logrus.Error(models.ErrMarshal(err, "kube-context"))
+		http.Error(w, models.ErrMarshal(err, "kube-context").Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -233,8 +233,8 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 			"server_version": version.String(),
 		}); err != nil {
 			err = errors.Wrap(err, "unable to marshal the payload")
-			logrus.Error(ErrMarshal(err, "kube-server-version"))
-			http.Error(w, ErrMarshal(err, "kube-server-version").Error(), http.StatusInternalServerError)
+			logrus.Error(models.ErrMarshal(err, "kube-server-version"))
+			http.Error(w, models.ErrMarshal(err, "kube-server-version").Error(), http.StatusInternalServerError)
 		}
 		return
 	}
@@ -272,12 +272,12 @@ func (h *Handler) LoadContextsAndPersist(userID string, token string, prov model
 	// Get meshery instance ID
 	mid, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
 	if !ok {
-		return contexts, ErrMesheryInstanceID
+		return contexts, models.ErrMesheryInstanceID
 	}
 
 	// Attempt to get kubeconfig from the filesystem
 	if h.config == nil {
-		return contexts, ErrInvalidK8SConfig
+		return contexts, ErrInvalidK8SConfigNil
 	}
 	data, err := utils.ReadFileSource(fmt.Sprintf("file://%s", filepath.Join(h.config.KubeConfigFolder, "config")))
 
