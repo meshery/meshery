@@ -3,6 +3,8 @@ contexts:
         endpoint: http://localhost:9081
         token: default
         platform: docker
+        components:
+          - meshery-istio  
         channel: stable
         version: latest
         provider: Meshery
@@ -10,10 +12,12 @@ contexts:
         endpoint: http://localhost:9081
         token: default
         platform: kubernetes
+        components:
+          - meshery-istio  
         channel: stable
         version: latest
         provider: Meshery    
-current-context: local
+current-context: local2
 tokens:
     - name: default
       location: auth.json
