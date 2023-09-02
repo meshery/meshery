@@ -83,9 +83,9 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           files: ./coverage.txt
-          flags: gointegrationtests
+          flags: gointegrationtests   
       - name: Start Mesheryctl System
         run: |
           cd mesheryctl/internal/cli/root/system
+          go test -update 
           mesheryctl system start  
-
