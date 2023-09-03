@@ -117,7 +117,6 @@ func (r *Resolver) subscribePerfResults(ctx context.Context, provider models.Pro
 		for {
 			select {
 			case <-r.Config.PerformanceResultChannel:
-				r.Log.Info("resres")
 				results, err := r.fetchResults(ctx, provider, selector, profileID)
 				if err != nil {
 					r.Log.Error(ErrPerformanceResultSubscription(err))

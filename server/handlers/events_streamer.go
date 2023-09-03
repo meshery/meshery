@@ -12,9 +12,13 @@ import (
 
 	"encoding/json"
 
+	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/errors"
+	_events "github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/utils/events"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -30,7 +34,7 @@ var (
 // 	200:
 
 // EventStreamHandler endpoint is used for streaming events to the frontend
-func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, p models.Provider) {
+func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, p models.Provider) {
 	// if req.Method != http.MethodGet {
 	// 	w.WriteHeader(http.StatusNotFound)
 	// 	return
@@ -75,7 +79,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 		for mClient := range newAdaptersChan {
 			log.Debug("received a new mesh client, listening for events")
 			go func(mClient *meshes.MeshClient) {
-				listenForAdapterEvents(req.Context(), mClient, respChan, log, p)
+				listenForAdapterEvents(req.Context(), mClient, respChan, log, p,  h.config.EventBroadcaster, *h.SystemID, user.ID)
 				_ = mClient.Close()
 			}(mClient)
 		}
@@ -164,9 +168,9 @@ func listenForCoreEvents(ctx context.Context, eb *events.EventStreamer, resp cha
 		}
 	}
 }
-func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log *logrus.Entry, p models.Provider) {
+func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log *logrus.Entry, p models.Provider, ec *models.EventBroadcast, systemID uuid.UUID, userID string) {
 	log.Debugf("Received a stream client...")
-
+	userUUID := uuid.FromStringOrNil(userID)
 	streamClient, err := mClient.MClient.StreamEvents(ctx, &meshes.EventsRequest{})
 	if err != nil {
 		log.Error(ErrStreamEvents(err))
@@ -188,6 +192,13 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 		}
 		// log.Debugf("received an event: %+#v", event)
 		log.Debugf("Received an event.")
+		eventType := event.EventType.String()
+		eventBuilder := _events.NewEvent().FromSystem(uuid.FromStringOrNil(event.Component)).
+		WithSeverity(_events.EventSeverity(eventType)).WithDescription(event.Summary).WithCategory(event.ComponentName).WithAction("deploy").FromUser(userUUID)
+		if strings.Contains(event.Summary, "removed") {
+			eventBuilder.WithAction("undeploy")
+		}
+
 		if strings.Contains(event.Summary, "Smi conformance test") {
 			result := &models.SmiResult{}
 			err := json.Unmarshal([]byte(event.Details), result)
@@ -203,6 +214,16 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 			}
 			event.Details = fmt.Sprintf("Result-Id: %s", id)
 		}
+		if eventType == "ERROR" {
+			err := errors.New(event.ErrorCode, errors.Alert, []string{event.Summary}, []string{event.Details}, []string{event.ProbableCause}, []string{event.SuggestedRemediation})
+			eventBuilder.WithMetadata(map[string]interface{}{
+				"error": err,
+			})
+		}
+
+		_event := eventBuilder.Build()
+		_ = p.PersistEvent(_event)
+		ec.Publish(userUUID, _event)
 
 		data, err := json.Marshal(event)
 		if err != nil {

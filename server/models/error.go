@@ -95,6 +95,9 @@ const (
 	ErrShareDesignCode                    = "1530"
 	ErrUnreachableRemoteProviderCode      = "1531"
 	ErrShareFilterCode                    = "1532"
+  ErrPersistEventCode                   = "1533"
+	ErrUnreachableKubeAPICode             = "1534"
+	ErrFlushMeshSyncDataCode              = "1535"
 )
 
 var (
@@ -355,4 +358,16 @@ func ErrShareFilter(err error) error {
 
 func ErrUnreachableRemoteProvider(err error) error {
 	return errors.New(ErrUnreachableRemoteProviderCode, errors.Alert, []string{"Could not reach remote provider"}, []string{"", err.Error()}, []string{"Remote provider server may be down or not accepting requests"}, []string{"Make sure remote provider server is healthy and accepting requests"})
+}
+
+func ErrPersistEvent(err error) error {
+	return errors.New(ErrPersistEventCode, errors.Alert, []string{"Could not persist event"}, []string{err.Error()}, []string{"Database could be down or not reachable", "Meshery Database handler is not accessible to perform operations"}, []string{"Restart Meshery Server or Perform Hard Reset"})
+}
+
+func ErrUnreachableKubeAPI(err error, server string) error {
+	return errors.New(ErrUnreachableKubeAPICode, errors.Alert, []string{fmt.Sprintf("Error communicating with KubeAPI at %s.", server)}, []string{err.Error()}, []string{"The API server is not exposed.", "Credentials are malformed / invalid."}, []string{"Ensure client credential is not expired.", "Recheck the API server url.", "Remove the cluster credential and enable 'insecure-skip-tls-verify'."})
+}
+
+func ErrFlushMeshSyncData(err error, contextName, server string) error {
+	return errors.New(ErrFlushMeshSyncDataCode, errors.Alert, []string{"Unable to flush MeshSync data for context %s at %s "}, []string{err.Error()}, []string{"Meshery Database handler is not accessible to perform operations"}, []string{"Restart Meshery Server or Perform Hard Reset"})
 }
