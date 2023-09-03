@@ -120,7 +120,7 @@ func (h *Handler) MesheryControllersMiddleware(next func(http.ResponseWriter, *h
 		ctx := req.Context()
 		mk8sContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 		if !ok || len(mk8sContexts) == 0 {
-			h.log.Error(ErrInvalidK8SConfig)
+			h.log.Error(ErrInvalidK8SConfigNil)
 			// this should not block the request
 			next(w, req, prefObj, user, provider)
 			return
