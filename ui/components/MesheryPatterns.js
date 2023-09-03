@@ -2,7 +2,7 @@
 import {
   Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr, TableCell, Tooltip, Typography
 } from "@material-ui/core";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { withStyles } from "@material-ui/core/styles";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -54,6 +54,7 @@ import { modifyRJSFSchema } from "../utils/utils"
 import SearchBar from "../utils/custom-search";
 import CustomColumnVisibilityControl from "../utils/custom-column";
 import ResponsiveDataTable from "../utils/data-table";
+import useStyles from "../assets/styles/general/tool.styles";
 
 
 const styles = (theme) => ({
@@ -73,16 +74,6 @@ const styles = (theme) => ({
     width : "24px",
     height : "24px",
     filter : theme.palette.secondary.brightness
-  },
-  topToolbar : {
-    marginBottom : "3rem",
-    display : "flex",
-    justifyContent : "space-between",
-    backgroundColor : theme.palette.type === 'dark' ? theme.palette.secondary.toolbarBg2 : theme.palette.secondary.toolbarBg1,
-    boxShadow : " 0px 2px 4px -1px rgba(0,0,0,0.2)",
-    height : "4rem",
-    padding : "0.68rem",
-    borderRadius : "0.5rem"
   },
   viewSwitchButton : {
     justifySelf : "flex-end",
@@ -155,12 +146,6 @@ const styles = (theme) => ({
       display : "none",
     },
   },
-  // text : {
-  //   padding : "5px"
-  // }
-});
-
-const useStyles = makeStyles((theme) => ({
   backButton : {
     marginRight : theme.spacing(2),
   },
@@ -184,7 +169,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth : 150,
     marginRight : "auto"
   },
-  iconPatt : {
+  iconAvatar : {
     width : "10px",
     height : "10px",
     "& .MuiAvatar-img" : {
@@ -192,7 +177,10 @@ const useStyles = makeStyles((theme) => ({
       width : '60%'
     }
   }
-}));
+  // text : {
+  //   padding : "5px"
+  // }
+});
 
 function TooltipIcon({ children, onClick, title,placement }) {
   return (
@@ -308,6 +296,7 @@ function MesheryPatterns({
     ("grid")
   );
   const { notify } = useNotification()
+  const StyleClass = useStyles();
 
   const PATTERN_URL = '/api/pattern'
   const DEPLOY_URL = `${PATTERN_URL}/deploy`;
@@ -1049,7 +1038,7 @@ function MesheryPatterns({
                   }
                   }
                 >
-                  <Avatar src="/static/img/pattwhite.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
+                  <Avatar src="/static/img/pattwhite.svg" className={classes.iconAvatar} imgProps={{ height : "16px", width : "16px" }} />
                 </TooltipIcon> }
               <TooltipIcon
                 placement ="top"
@@ -1310,7 +1299,7 @@ function MesheryPatterns({
         {selectedPattern.show &&
           <DesignConfigurator onSubmit={handleSubmit} show={setSelectedPattern} pattern={selectedPattern.pattern} />
         }
-        <div className={classes.topToolbar} >
+        <div className={StyleClass.toolWrapper} >
           <div style={{ display : "flex" }}>
             {!selectedPattern.show && (patterns.length > 0 || viewType === "table") && <div className={classes.createButton}>
               <div style={{ display : 'flex', order : '1' }}>

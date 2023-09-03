@@ -2,7 +2,7 @@ import {
   Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr,
   TableCell, Tooltip, Typography, Button
 } from "@material-ui/core";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { withStyles } from "@material-ui/core/styles";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -39,6 +39,7 @@ import { EVENT_TYPES } from "../lib/event-types";
 import SearchBar from "../utils/custom-search";
 import CustomColumnVisibilityControl from "../utils/custom-column";
 import ResponsiveDataTable from "../utils/data-table";
+import useStyles from "../assets/styles/general/tool.styles";
 
 
 const styles = (theme) => ({
@@ -56,18 +57,6 @@ const styles = (theme) => ({
     width : "fit-content",
     alignSelf : "flex-start"
   },
-  topToolbar : {
-    margin : "2rem auto",
-    display : "flex",
-    justifyContent : "space-between",
-    paddingLeft : "1rem",
-    // flexWrap : 'wrap',
-    backgroundColor : theme.palette.type === 'dark' ? theme.palette.secondary.toolbarBg2 : theme.palette.secondary.toolbarBg1,
-    boxShadow : " 0px 2px 4px -1px rgba(0,0,0,0.2)",
-    height : "4rem",
-    padding : "0.68rem",
-    borderRadius : "0.5rem"
-  },
   searchWrapper : {
     justifySelf : "flex-end",
     marginLeft : "auto",
@@ -78,13 +67,6 @@ const styles = (theme) => ({
     justifySelf : "flex-end",
     marginLeft : "auto",
   },
-  // text : {
-  //   padding : theme.spacing(1)
-  // }
-});
-
-
-const useStyles = makeStyles((theme) => ({
   codeMirror : {
     '& .CodeMirror' : {
       minHeight : "300px",
@@ -111,7 +93,11 @@ const useStyles = makeStyles((theme) => ({
       height : '100%',
     }
   },
-}));
+  // text : {
+  //   padding : theme.spacing(1)
+  // }
+});
+
 
 
 function TooltipIcon({ children, onClick, title }) {
@@ -269,6 +255,7 @@ function MesheryApplications({
   const searchTimeout = useRef(null);
 
   const { notify } = useNotification()
+  const StyleClass = useStyles();
 
   /**
    * fetch applications when the page loads
@@ -850,7 +837,7 @@ function MesheryApplications({
         {selectedRowData && Object.keys(selectedRowData).length > 0 && (
           <YAMLEditor application={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
         )}
-        <div className={classes.topToolbar} >
+        <div className={StyleClass.toolWrapper} >
           {!selectedApplication.show && (applications.length>0 || viewType==="table") &&
             <div className={classes.createButton}>
 

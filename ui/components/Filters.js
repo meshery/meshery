@@ -54,6 +54,7 @@ import { EVENT_TYPES } from "../lib/event-types";
 import SearchBar from "../utils/custom-search";
 import CustomColumnVisibilityControl from "../utils/custom-column";
 import ResponsiveDataTable from "../utils/data-table";
+import useStyles from "../assets/styles/general/tool.styles";
 
 const styles = (theme) => ({
   grid : {
@@ -66,18 +67,6 @@ const styles = (theme) => ({
   createButton : {
     width : "fit-content",
     alignSelf : "flex-start"
-  },
-  topToolbar : {
-    margin : "2rem auto",
-    display : "flex",
-    justifyContent : "space-between",
-    // flexWrap : "wrap",
-    paddingLeft : "1rem",
-    backgroundColor : theme.palette.type === 'dark' ? theme.palette.secondary.toolbarBg2 : theme.palette.secondary.toolbarBg1,
-    boxShadow : " 0px 2px 4px -1px rgba(0,0,0,0.2)",
-    height : "4rem",
-    padding : "0.68rem",
-    borderRadius : "0.5rem"
   },
   viewSwitchButton : {
     justifySelf : "flex-end",
@@ -238,6 +227,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
 
   //hooks
   const { notify } = useNotification()
+  const StyleClass = useStyles();
 
   const [modalOpen, setModalOpen] = useState({
     open : false,
@@ -1097,7 +1087,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
         {selectedRowData && Object.keys(selectedRowData).length > 0 && (
           <YAMLEditor filter={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} classes={classes} />
         )}
-        <div className={classes.topToolbar} >
+        <div className={StyleClass.toolWrapper} >
           <div style={{ display : "flex" }}>
             {!selectedFilter.show && (filters.length > 0 || viewType === "table") &&
                 <div className={classes.createButton}>

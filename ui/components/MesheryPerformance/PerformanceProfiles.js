@@ -29,6 +29,7 @@ import ReusableTooltip from "../reusable-tooltip";
 import CustomColumnVisibilityControl from "../../utils/custom-column";
 import ViewSwitch from "../ViewSwitch";
 import SearchBar from "../../utils/custom-search";
+import useStyles from "../../assets/styles/general/tool.styles";
 
 const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 const styles = (theme) => ({
@@ -43,17 +44,6 @@ const styles = (theme) => ({
     backgroundColor : theme.palette.type === 'dark' ? theme.palette.secondary.headerColor: theme.palette.secondary.mainBackground,
     display : "flex",
     alignItems : "center"
-  },
-  topToolbar : {
-    margin : "2rem auto",
-    display : "flex",
-    justifyContent : "space-between",
-    paddingLeft : "1rem",
-    backgroundColor : theme.palette.type === 'dark' ? theme.palette.secondary.toolbarBg2 : theme.palette.secondary.toolbarBg1,
-    boxShadow : " 0px 2px 4px -1px rgba(0,0,0,0.2)",
-    height : "4rem",
-    padding : "0.68rem",
-    borderRadius : "0.5rem"
   },
   addButton : {
     width : "fit-content",
@@ -119,6 +109,7 @@ function PerformanceProfile({ updateProgress , classes, user, handleDelete }) {
     ("grid")
   );
   const modalRef = useRef(null)
+  const StyleClass = useStyles();
 
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
@@ -507,7 +498,7 @@ function PerformanceProfile({ updateProgress , classes, user, handleDelete }) {
   return (
     <>
       <div className={classes.pageContainer}>
-        <div className={classes.topToolbar}>
+        <div className={StyleClass.toolWrapper} >
           {(testProfiles.length > 0 || viewType == "table") && (
             <div className={classes.addButton}>
               <Button
