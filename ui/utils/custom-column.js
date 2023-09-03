@@ -3,25 +3,15 @@ import IconButton from "@mui/material/IconButton";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Tooltip from "@mui/material/Tooltip";
-import ViewColumnIcon from '@mui/icons-material/ViewColumn';
 import Popper from "@mui/material/Popper";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import { Paper } from "@mui/material";
-import { makeStyles } from "@material-ui/core/styles";
 import { withStyles } from "@mui/styles";
+import ColumnIcon from "../assets/icons/coulmn";
 
-
-const useStyles = makeStyles((theme) => ({
-  icon : {
-    color : theme.palette.type === 'dark' ? "#FFFFFF" : "#3C494F"
-  },
-  paper : {
-    padding : "1rem"
-  },
-}));
 
 const CustomColumnVisibilityControl = ({ columns, customToolsProps }) => {
-  const classes = useStyles();
+
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleOpen = event => {
@@ -50,7 +40,7 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps }) => {
             },
           }}
         >
-          <ViewColumnIcon className={classes.icon} />
+          < ColumnIcon  />
         </IconButton>
       </Tooltip>
 
@@ -69,7 +59,7 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps }) => {
         ]}
       >
         <ClickAwayListener onClickAway={handleClose}>
-          <Paper className={classes.paper} >
+          <Paper sx={{ padding : "1rem" }} >
             <div style={{ display : "flex", flexDirection : "column" }}>
               {columns.map(col => (
                 <FormControlLabel
