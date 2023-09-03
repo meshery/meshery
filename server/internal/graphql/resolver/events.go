@@ -13,7 +13,7 @@ import (
 
 func (r *Resolver) eventsResolver (ctx context.Context, provider models.Provider, user models.User) (<- chan *model.Event, error){
 	userID, _ := uuid.FromString(user.ID)
-	ch, unsubscribe := r.Config.EventsChannel.Subscribe(userID)
+	ch, unsubscribe := r.Config.EventBroadcaster.Subscribe(userID)
 
 	eventsChan := make(chan *model.Event)
 	go func(userID uuid.UUID) {

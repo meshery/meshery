@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bool, patternName string, ec *models.Signal, userID string, provider models.Provider, hostname registry.IHost, skipCrdAndOperator bool) (string, error) {
+func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bool, patternName string, ec *models.EventBroadcast, userID string, provider models.Provider, hostname registry.IHost, skipCrdAndOperator bool) (string, error) {
 	var comps []v1alpha1.Component
 	var config v1alpha1.Configuration
 	mesheryInstanceID, _ := viper.Get("INSTANCE_ID").(*uuid.UUID)

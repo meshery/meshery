@@ -13,11 +13,11 @@ type clients struct {
 	mu *sync.Mutex
 }
 
-type Signal struct {
+type EventBroadcast struct {
 	clients *sync.Map
 }
 
-func (c *Signal) Subscribe(id uuid.UUID) (chan interface{}, func()) {
+func (c *EventBroadcast) Subscribe(id uuid.UUID) (chan interface{}, func()) {
 	clientMap, _ := c.clients.LoadOrStore(id, &clients{mu: new(sync.Mutex)})
 	ch := make(chan interface{})
 	connectedClient := clientMap.(*clients)
@@ -40,7 +40,7 @@ func (c *Signal) Subscribe(id uuid.UUID) (chan interface{}, func()) {
 	return ch, unsubscribe
 }
 
-func (c *Signal) Publish(id uuid.UUID, event *events.Event) {
+func (c *EventBroadcast) Publish(id uuid.UUID, event *events.Event) {
 	clientMap, ok := c.clients.Load(id)
 	fmt.Println("entered Publish", ok, clientMap, id)
 	if !ok {
@@ -53,8 +53,8 @@ func (c *Signal) Publish(id uuid.UUID, event *events.Event) {
 	}
 }
 
-func NewSignal() *Signal {
-	return &Signal{
+func NewSignal() *EventBroadcast {
+	return &EventBroadcast{
 		clients: new(sync.Map),
 	}
 }

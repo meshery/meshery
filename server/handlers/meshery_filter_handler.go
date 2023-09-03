@@ -108,7 +108,7 @@ func (h *Handler) handleFilterPOST(
 		}).WithDescription(fmt.Sprintf("Filter %s is corrupted.", parsedBody.FilterData.Name)).Build()
 		
 		_ = provider.PersistEvent(event)
-		go h.config.EventsChannel.Publish(userID, event)
+		go h.config.EventBroadcaster.Publish(userID, event)
 
 		http.Error(rw, ErrSaveFilter(err).Error(), http.StatusBadRequest)
 		addMeshkitErr(&res, ErrGetFilter(err))
@@ -125,7 +125,7 @@ func (h *Handler) handleFilterPOST(
 		}).WithDescription("No auth token provided in the request.").Build()
 
 		_ = provider.PersistEvent(event)
-		go h.config.EventsChannel.Publish(userID, event)
+		go h.config.EventBroadcaster.Publish(userID, event)
 		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
 		addMeshkitErr(&res, ErrRetrieveUserToken(err))
 		go h.EventsBuffer.Publish(&res)
@@ -180,7 +180,7 @@ func (h *Handler) handleFilterPOST(
 				}).WithDescription(fmt.Sprintf("Failed persisting filter %s", parsedBody.FilterData.Name)).Build()
 				
 				_ = provider.PersistEvent(event)
-				go h.config.EventsChannel.Publish(userID, event)
+				go h.config.EventBroadcaster.Publish(userID, event)
 				addMeshkitErr(&res, ErrSaveFilter(err))
 				go h.EventsBuffer.Publish(&res)
 				return

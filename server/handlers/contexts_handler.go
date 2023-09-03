@@ -112,7 +112,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		}
 		event := eventBuilder.WithSeverity(events.Error).WithDescription("Error deleting Kubernetes context").WithMetadata(metadata).Build()
 		_ = provider.PersistEvent(event)
-		go h.config.EventsChannel.Publish(userID, event)
+		go h.config.EventBroadcaster.Publish(userID, event)
 
 		http.Error(w, _err.Error(), http.StatusInternalServerError)
 		return
@@ -122,10 +122,10 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
 	_ = provider.PersistEvent(event)
-	go h.config.EventsChannel.Publish(userID, event)
+	go h.config.EventBroadcaster.Publish(userID, event)
 
 	h.config.K8scontextChannel.PublishContext()
-	go models.FlushMeshSyncData(req.Context(), deletedContext, provider, h.config.EventsChannel, user.ID, h.SystemID)
+	go models.FlushMeshSyncData(req.Context(), deletedContext, provider, h.config.EventBroadcaster, user.ID, h.SystemID)
 }
 
 // func (h *Handler) GetCurrentContextHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {

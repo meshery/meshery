@@ -219,7 +219,7 @@ func main() {
 		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
 
 		ConfigurationChannel: models.NewConfigurationHelper(),
-		EventsChannel: models.NewSignal(),
+		EventBroadcaster: models.NewSignal(),
 		DashboardK8sResourcesChan: models.NewDashboardK8sResourcesHelper(),
 		MeshModelSummaryChannel:   mesherymeshmodel.NewSummaryHelper(),
 

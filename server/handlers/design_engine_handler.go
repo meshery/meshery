@@ -96,7 +96,7 @@ func (h *Handler) PatternFileHandler(
 		r.URL.Query().Get("skipCRD") == "true",
 		false,
 		h.registryManager,
-		h.config.EventsChannel,
+		h.config.EventBroadcaster,
 		h.log,
 	)
 
@@ -111,7 +111,7 @@ func (h *Handler) PatternFileHandler(
 
 		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Error %sing pattern %s", action, patternFile.Name)).WithMetadata(metadata).Build()
 		_ = provider.PersistEvent(event)
-		go h.config.EventsChannel.Publish(userID, event)
+		go h.config.EventBroadcaster.Publish(userID, event)
 
 		h.log.Error(err)
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
@@ -124,7 +124,7 @@ func (h *Handler) PatternFileHandler(
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Pattern %s deployed", patternFile.Name)).WithMetadata(metadata).Build()
 	_ = provider.PersistEvent(event)
-	go h.config.EventsChannel.Publish(userID, event)
+	go h.config.EventBroadcaster.Publish(userID, event)
 
 	ec := json.NewEncoder(rw)
 	_ = ec.Encode(response)
@@ -153,7 +153,7 @@ func _processPattern(
 	skipCrdAndOperator bool,
 	skipPrintLogs bool,
 	registry *meshmodel.RegistryManager,
-	ec *models.Signal,
+	ec *models.EventBroadcast,
 	l logger.Handler,
 ) (map[string]interface{}, error) {
 	resp := make(map[string]interface{})
@@ -309,7 +309,7 @@ type serviceActionProvider struct {
 	skipPrintLogs      bool
 	accumulatedMsgs    []string
 	err                error
-	eventsChannel      *models.Signal
+	eventsChannel      *models.EventBroadcast
 	registry           *meshmodel.RegistryManager
 	patternName        string
 }

@@ -79,7 +79,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 		for mClient := range newAdaptersChan {
 			log.Debug("received a new mesh client, listening for events")
 			go func(mClient *meshes.MeshClient) {
-				listenForAdapterEvents(req.Context(), mClient, respChan, log, p,  h.config.EventsChannel, *h.SystemID, user.ID)
+				listenForAdapterEvents(req.Context(), mClient, respChan, log, p,  h.config.EventBroadcaster, *h.SystemID, user.ID)
 				_ = mClient.Close()
 			}(mClient)
 		}
@@ -168,7 +168,7 @@ func listenForCoreEvents(ctx context.Context, eb *events.EventStreamer, resp cha
 		}
 	}
 }
-func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log *logrus.Entry, p models.Provider, ec *models.Signal, systemID uuid.UUID, userID string) {
+func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log *logrus.Entry, p models.Provider, ec *models.EventBroadcast, systemID uuid.UUID, userID string) {
 	log.Debugf("Received a stream client...")
 	userUUID := uuid.FromStringOrNil(userID)
 	streamClient, err := mClient.MClient.StreamEvents(ctx, &meshes.EventsRequest{})
