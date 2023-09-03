@@ -1,12 +1,12 @@
 // Data table for parent tables with custom column visibility control
 import MUIDataTable from "mui-datatables";
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { useWindowDimensions } from "./dimension";
 
 const ResponsiveDataTable = ({ data, columns, options, tableCols, updateCols, columnVisibility, ...props }) => {
   const { width } = useWindowDimensions();
 
-  const formatDate = (date, width) => {
+  const formatDate = useCallback ((date, width) => {
     const dateOptions = {
       day : "numeric",
       weekday : "long",
@@ -21,7 +21,7 @@ const ResponsiveDataTable = ({ data, columns, options, tableCols, updateCols, co
     }
 
     return date.toLocaleDateString("en-US", dateOptions);
-  };
+  }, [width]);
 
   const updatedOptions = {
     ...options,
@@ -68,7 +68,6 @@ const ResponsiveDataTable = ({ data, columns, options, tableCols, updateCols, co
       }
     });
     updateCols([...columns]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [width, columnVisibility]);
 
   const components = {

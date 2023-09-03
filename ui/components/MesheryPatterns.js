@@ -10,7 +10,6 @@ import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import SaveIcon from '@material-ui/icons/Save';
-import MUIDataTable from "mui-datatables";
 import CustomToolbarSelect from "./MesheryPatterns/CustomToolbarSelect";
 import { withSnackbar } from "notistack";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
@@ -45,7 +44,6 @@ import downloadFile from "../utils/fileDownloader";
 import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import ReusableTooltip from "./reusable-tooltip";
-import SearchBar from "./searchcommon";
 import Pattern from "../public/static/img/drawer-icons/pattern_svg.js";
 import DryRunComponent from "./DryRun/DryRunComponent";
 import { useNotification } from "../utils/hooks/useNotification";
@@ -53,6 +51,9 @@ import { EVENT_TYPES } from "../lib/event-types";
 import _ from "lodash"
 import { getMeshModels } from "../api/meshmodel"
 import { modifyRJSFSchema } from "../utils/utils"
+import SearchBar from "../utils/custom-search";
+import CustomColumnVisibilityControl from "../utils/custom-column";
+import ResponsiveDataTable from "../utils/data-table";
 
 
 const styles = (theme) => ({
@@ -77,11 +78,11 @@ const styles = (theme) => ({
     marginBottom : "3rem",
     display : "flex",
     justifyContent : "space-between",
-    flexWrap : 'wrap',
-    "@media (max-width: 1450px)" : {
-      justifyContent : "start",
-      paddingLeft : 0,
-    },
+    backgroundColor : theme.palette.type === 'dark' ? theme.palette.secondary.toolbarBg2 : theme.palette.secondary.toolbarBg1,
+    boxShadow : " 0px 2px 4px -1px rgba(0,0,0,0.2)",
+    height : "4rem",
+    padding : "0.68rem",
+    borderRadius : "0.5rem"
   },
   viewSwitchButton : {
     justifySelf : "flex-end",
@@ -140,9 +141,10 @@ const styles = (theme) => ({
     },
   },
   searchWrapper : {
-    "@media (max-width: 1150px)" : {
-      marginTop : '20px',
-    },
+    justifySelf : "flex-end",
+    marginLeft : "auto",
+    paddingLeft : "1rem",
+    display : "flex"
   },
   catalogFilter : {
     marginRight : '2rem',
@@ -1146,8 +1148,9 @@ function MesheryPatterns({
       <CustomToolbarSelect selectedRows={selectedRows} displayData={displayData} setSelectedRows={setSelectedRows} patterns={patterns} deletePatterns={deletePatterns} showModal={showModal}/>
     ),
     filter : false,
-    sort : !(user && user.user_id === "meshery"),
     search : false,
+    viewColumns : false,
+    sort : !(user && user.user_id === "meshery"),
     filterType : "textField",
     responsive : "standard",
     resizableColumns : true,
@@ -1286,6 +1289,17 @@ function MesheryPatterns({
     )
   }
 
+  const [tableCols, updateCols] = useState(columns);
+
+  const [columnVisibility, setColumnVisibility] = useState(() => {
+    // Initialize column visibility based on the original columns' visibility
+    const initialVisibility = {};
+    columns.forEach(col => {
+      initialVisibility[col.name] = col.options?.display !== false;
+    });
+    return initialVisibility;
+  });
+
 
   return (
     <>
@@ -1334,35 +1348,35 @@ function MesheryPatterns({
             }
           </div>
           <div className={classes.searchWrapper} style={{ display : "flex" }}>
-            <div className={classes.searchAndView}>
-              <SearchBar
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  initPatternsSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
-                }
-                }
-                label={"Search Designs"}
-                width="55ch"
-              />
-            </div>
+            <SearchBar
+              onSearch={(value) => {
+                setSearch(value);
+                initPatternsSubscription(page.toString(), pageSize.toString(), value, sortOrder);
+              }
+              }
+              placeholder="Search designs..."
+            />
+            <CustomColumnVisibilityControl
+              columns={columns}
+              customToolsProps={{ columnVisibility, setColumnVisibility }}
+            />
 
             {!selectedPattern.show &&
-              <div className={classes.viewSwitchButton} style={{ display : 'flex' }}>
                 <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true}/>
-              </div>
             }
           </div>
         </div>
         {
           !selectedPattern.show && viewType === "table" &&
-          <MUIDataTable
-            title={<div className={classes.tableHeader}>Designs</div>}
+          <ResponsiveDataTable
             data={patterns}
             columns={columns}
             // @ts-ignore
             options={options}
             className={classes.muiRow}
+            tableCols={tableCols}
+            updateCols={updateCols}
+            columnVisibility={columnVisibility}
           />
 
         }

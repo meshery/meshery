@@ -20,6 +20,16 @@ export function getWindowDimensions() {
  * console.log(width, height);
  * // 1920 1080
  */
+
+// Description:
+// useWindowDimensions, which is used to obtain and track the width and height
+//  of the browser window. It leverages the useState and useEffect hooks to update
+//  the window dimensions and provide them to the calling component.
+
+// Eg:  React component that needs to respond to changes in the browser window's dimensions, for instance,
+// to make responsive design decisions. You can use the useWindowDimensions hook to achieve this.
+
+
 export function useWindowDimensions() {
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
 

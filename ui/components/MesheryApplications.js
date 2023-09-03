@@ -665,6 +665,7 @@ function MesheryApplications({
     },
     {
       name : "Actions",
+      label : "Actions",
       options : {
         filter : false,
         sort : false,
