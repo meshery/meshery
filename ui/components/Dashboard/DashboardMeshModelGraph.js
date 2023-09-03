@@ -28,7 +28,7 @@ const spinnerStyle = {
   display : 'flex',
   justifyContent : 'center',
   alignItems : 'center',
-  height : '250px' // Increased from 200px to 250px for larger y-axis dimension
+  height : '250px'
 };
 
 function MeshModelContructs({ classes }) {
@@ -78,7 +78,7 @@ function MeshModelCategories({ classes }) {
       columns : cleanedData,
       colors : dataToColors(cleanedData),
       type : pie(),
-      labels : false  // This removes labels from the pie slices
+      labels : false
     },
     tooltip : {
       format : {

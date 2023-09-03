@@ -9,15 +9,15 @@ import Link from "next/link";
 
 export default function ConnectionStatsChart({ classes }) {
   const [chartData, setChartData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);  // New isLoading state
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsLoading(true);  // Set loading state to true when fetch begins
+    setIsLoading(true);
     getConnectionStatusSummary().then(json => {
       setChartData(json.connections_status
         .filter(data => isValidColumnName(data.status))
         .map(data => [data.status, data.count]));
-      setIsLoading(false);  // Set loading state to false when fetch completes
+      setIsLoading(false);
     });
   }, []);
 
@@ -63,12 +63,12 @@ export default function ConnectionStatsChart({ classes }) {
           justifyContent : "center",
           alignItems : "center",
           alignContent : "center",
-          height : "300px",  // Fixed height for consistency
-          width : "100%",    // Using 100% width to occupy the full width of its parent
+          height : "300px",
+          width : "100%",
         }}
       >
         {isLoading ?
-          <CircularProgress />  // Show loading spinner if isLoading is true
+          <CircularProgress />
           : chartData.length > 0 ?
             <BBChart options={chartOptions} />
             : (
