@@ -94,7 +94,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	contextID := mux.Vars(req)["id"]
 
 	eventBuilder := events.NewEvent().ActedUpon(uuid.FromStringOrNil(contextID)).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
-	
+
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		http.Error(w, "failed to get token", http.StatusInternalServerError)
@@ -112,18 +112,18 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		}
 		event := eventBuilder.WithSeverity(events.Error).WithDescription("Error deleting Kubernetes context").WithMetadata(metadata).Build()
 		_ = provider.PersistEvent(event)
-		h.config.EventsChannel.Publish(userID, event)
+		go h.config.EventsChannel.Publish(userID, event)
 
 		http.Error(w, _err.Error(), http.StatusInternalServerError)
 		return
 	}
-	
+
 	description := fmt.Sprintf("Kubernetes context %s deleted.", deletedContext.Name)
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
 	_ = provider.PersistEvent(event)
-	h.config.EventsChannel.Publish(userID, event)
-	
+	go h.config.EventsChannel.Publish(userID, event)
+
 	h.config.K8scontextChannel.PublishContext()
 	go models.FlushMeshSyncData(req.Context(), deletedContext, provider, h.config.EventsChannel, user.ID, h.SystemID)
 }

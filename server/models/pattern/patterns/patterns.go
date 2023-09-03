@@ -75,7 +75,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 						if err != nil {
 							// When unable to persist event notify the user, not inside notification center, but have a status symbol in the center to denote whether events are being persisted/subscription is active/.. such event will have category event itself handle them especially.
 							evt := events.NewEvent().FromSystem(*mesheryInstanceID).WithSeverity(events.Alert).WithCategory("event").WithAction("persist").WithDescription("Failed persisting events").FromUser(userUUID).Build()
-							ec.Publish(userUUID, evt)
+							go ec.Publish(userUUID, evt)
 						}
 						
 						continue
@@ -92,7 +92,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 					err := provider.PersistEvent(event)
 					if err != nil {
 						evt := events.NewEvent().FromSystem(*mesheryInstanceID).WithSeverity(events.Alert).WithCategory("event").WithAction("persist").WithDescription("Failed persisting events").FromUser(userUUID).Build()
-						ec.Publish(userUUID, evt)
+						go ec.Publish(userUUID, evt)
 					}
 					continue
 				}
@@ -125,7 +125,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 					err = provider.PersistEvent(event)
 					if err != nil {
 						evt := events.NewEvent().FromSystem(*mesheryInstanceID).WithSeverity(events.Alert).WithCategory("event").WithAction("persist").WithDescription("Failed persisting events").FromUser(userUUID).Build()
-						ec.Publish(userUUID, evt)		
+						go ec.Publish(userUUID, evt)		
 					}
 				}
 				//All other components will be handled directly by Kubernetes
@@ -149,7 +149,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 					err := provider.PersistEvent(event)
 					if err != nil {
 						evt := events.NewEvent().FromSystem(*mesheryInstanceID).WithSeverity(severity).WithCategory("event").WithAction("persist").WithDescription("Failed persisting events").FromUser(userUUID).Build()
-						ec.Publish(userUUID, evt)		
+						go ec.Publish(userUUID, evt)		
 					}
 					continue
 				}
@@ -164,7 +164,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 				err := provider.PersistEvent(event)
 				if err != nil {
 					evt := events.NewEvent().FromSystem(*mesheryInstanceID).WithSeverity(events.Alert).WithCategory("event").WithAction("persist").WithDescription("Failed persisting events").FromUser(userUUID).Build()
-					ec.Publish(userUUID, evt)		
+					go ec.Publish(userUUID, evt)		
 				}
 			}
 		}(kcli)

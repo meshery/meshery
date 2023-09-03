@@ -48,7 +48,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 		}
 		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Error creating connection %s", connection.Name)).WithMetadata(metadata).Build()
 		_ = provider.PersistEvent(event)
-		h.config.EventsChannel.Publish(userID, event)
+		go h.config.EventsChannel.Publish(userID, event)
 
 		h.log.Error(_err)
 		http.Error(w, _err.Error(), http.StatusInternalServerError)
@@ -59,7 +59,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
 	_ = provider.PersistEvent(event)
-	h.config.EventsChannel.Publish(userID, event)
+	go h.config.EventsChannel.Publish(userID, event)
 
 	h.log.Info(description)
 	w.WriteHeader(http.StatusCreated)
@@ -202,7 +202,7 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 		return
 	}
-	
+
 	userID := uuid.FromStringOrNil(user.ID)
 
 	connection := &models.Connection{}
@@ -213,7 +213,7 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
-	
+
 	connectionID := connection.ID
 	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
 
@@ -225,8 +225,8 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 		}
 		event := eventBuilder.WithSeverity(events.Error).WithDescription("Error updating connection").WithMetadata(metadata).Build()
 		_ = provider.PersistEvent(event)
-		h.config.EventsChannel.Publish(userID, event)
-		
+		go h.config.EventsChannel.Publish(userID, event)
+
 		h.log.Error(_err)
 		http.Error(w, _err.Error(), http.StatusInternalServerError)
 		return
@@ -236,7 +236,7 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
 	_ = provider.PersistEvent(event)
-	h.config.EventsChannel.Publish(userID, event)
+	go h.config.EventsChannel.Publish(userID, event)
 
 	h.log.Info(description)
 	w.WriteHeader(http.StatusOK)
@@ -251,7 +251,7 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
 	userID := uuid.FromStringOrNil(user.ID)
-	
+
 	bd, err := io.ReadAll(req.Body)
 	if err != nil {
 		h.log.Error(ErrRequestBody(err))
@@ -270,7 +270,6 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
-
 	updatedConnection, err := provider.UpdateConnectionById(req, connection, mux.Vars(req)["connectionId"])
 	if err != nil {
 		_err := ErrFailToSave(err, obj)
@@ -279,7 +278,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		}
 		event := eventBuilder.WithSeverity(events.Error).WithDescription("Error updating connection").WithMetadata(metadata).Build()
 		_ = provider.PersistEvent(event)
-		h.config.EventsChannel.Publish(userID, event)
+		go h.config.EventsChannel.Publish(userID, event)
 
 		h.log.Error(_err)
 		http.Error(w, _err.Error(), http.StatusInternalServerError)
@@ -290,7 +289,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
 
 	_ = provider.PersistEvent(event)
-	h.config.EventsChannel.Publish(userID, event)
+	go h.config.EventsChannel.Publish(userID, event)
 	h.log.Info(description)
 	w.WriteHeader(http.StatusOK)
 }
@@ -305,7 +304,7 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionId"])
 	userID := uuid.FromStringOrNil(user.ID)
 	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
-	
+
 	deletedConnection, err := provider.DeleteConnection(req, connectionID)
 	if err != nil {
 		obj := "connection"
@@ -315,7 +314,7 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 		}
 		event := eventBuilder.WithSeverity(events.Error).WithDescription("Error deleting connection").WithMetadata(metadata).Build()
 		_ = provider.PersistEvent(event)
-		h.config.EventsChannel.Publish(userID, event)
+		go h.config.EventsChannel.Publish(userID, event)
 
 		h.log.Error(_err)
 		http.Error(w, _err.Error(), http.StatusInternalServerError)
@@ -326,7 +325,7 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
 
 	_ = provider.PersistEvent(event)
-	h.config.EventsChannel.Publish(userID, event)
+	go h.config.EventsChannel.Publish(userID, event)
 
 	h.log.Info("connection deleted successfully")
 	w.WriteHeader(http.StatusOK)

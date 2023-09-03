@@ -19,9 +19,9 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
 	"github.com/layer5io/meshkit/logger"
+	events "github.com/layer5io/meshkit/models/events"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
-	events "github.com/layer5io/meshkit/models/events"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/sirupsen/logrus"
 	v1 "k8s.io/client-go/applyconfigurations/meta/v1"
@@ -111,7 +111,7 @@ func (h *Handler) PatternFileHandler(
 
 		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Error %sing pattern %s", action, patternFile.Name)).WithMetadata(metadata).Build()
 		_ = provider.PersistEvent(event)
-		h.config.EventsChannel.Publish(userID, event)
+		go h.config.EventsChannel.Publish(userID, event)
 
 		h.log.Error(err)
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
@@ -124,7 +124,7 @@ func (h *Handler) PatternFileHandler(
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Pattern %s deployed", patternFile.Name)).WithMetadata(metadata).Build()
 	_ = provider.PersistEvent(event)
-	h.config.EventsChannel.Publish(userID, event)
+	go h.config.EventsChannel.Publish(userID, event)
 
 	ec := json.NewEncoder(rw)
 	_ = ec.Encode(response)
@@ -211,7 +211,7 @@ func _processPattern(
 			ctxTokubeconfig:    ctxToconfig,
 			accumulatedMsgs:    []string{},
 			err:                nil,
-			eventsChannel:       ec,
+			eventsChannel:      ec,
 			patternName:        strings.ToLower(pattern.Name),
 		}
 		chain := stages.CreateChain()

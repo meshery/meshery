@@ -23,9 +23,9 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	putils "github.com/layer5io/meshery/server/models/pattern/utils"
+	"github.com/layer5io/meshkit/models/events"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils"
-	"github.com/layer5io/meshkit/models/events"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -100,11 +100,11 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			eventBuilder.ActedUpon(uuid.FromStringOrNil(k8sContext.ConnectionID))
 			if err == models.ErrContextAlreadyPersisted {
 				saveK8sContextResponse.UpdatedContexts = append(saveK8sContextResponse.UpdatedContexts, *ctx)
-				
+
 				eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Connection already exist with Kubernetes context %s at %s", k8sContext.Name, k8sContext.Server))
-				} else {
+			} else {
 				saveK8sContextResponse.ErroredContexts = append(saveK8sContextResponse.ErroredContexts, *ctx)
-				
+
 				eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Error creating connection for Kubernetes context %s", ctx.Name)).WithMetadata(map[string]interface{}{
 					"error": err,
 				})
@@ -113,10 +113,10 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			saveK8sContextResponse.InsertedContexts = append(saveK8sContextResponse.InsertedContexts, *ctx)
 			eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Connection established with Kubernetes context %s at %s", k8sContext.Name, k8sContext.Server))
 		}
-		
+
 		event := eventBuilder.Build()
 		_ = provider.PersistEvent(event)
-		h.config.EventsChannel.Publish(userID, event)
+		go h.config.EventsChannel.Publish(userID, event)
 
 	}
 	if len(saveK8sContextResponse.InsertedContexts) > 0 || len(saveK8sContextResponse.UpdatedContexts) > 0 {
