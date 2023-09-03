@@ -6,13 +6,22 @@ import Tooltip from "@mui/material/Tooltip";
 import Popper from "@mui/material/Popper";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import { Paper } from "@mui/material";
-import { withStyles } from "@mui/styles";
+import { withStyles } from "@material-ui/core/styles";
 import ColumnIcon from "../assets/icons/coulmn";
+import Slide from "@mui/material/Slide";
+import Box from "@mui/material/Box";
 
 
-const CustomColumnVisibilityControl = ({ columns, customToolsProps }) => {
+const styles = theme => ({
+  epaper : {
+    background : theme.palette.secondary.headerColor,
+    padding : "1rem"
+  } });
+
+const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) => {
 
   const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
 
   const handleOpen = event => {
     setAnchorEl(event.currentTarget);
@@ -29,6 +38,8 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps }) => {
     }));
   };
 
+
+
   return (
     <>
       <Tooltip title="View Columns">
@@ -44,43 +55,51 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps }) => {
         </IconButton>
       </Tooltip>
 
-      <Popper
-        open={Boolean(anchorEl)}
-        anchorEl={anchorEl}
-        placement="bottom-end"
-        modifiers={[
-          {
-            name : "preventOverflow",
-            enabled : true,
-            options : {
-              padding : 16
-            }
-          }
-        ]}
-      >
-        <ClickAwayListener onClickAway={handleClose}>
-          <Paper sx={{ padding : "1rem" }} >
-            <div style={{ display : "flex", flexDirection : "column" }}>
-              {columns.map(col => (
-                <FormControlLabel
-                  key={col.name}
-                  control={
-                    <Checkbox
-                      checked={customToolsProps.columnVisibility[col.name]}
-                      onChange={e =>
-                        handleColumnVisibilityChange(col.name, e.target.checked)
-                      }
-                    />
-                  }
-                  label={col.label}
-                />
-              ))}
-            </div>
-          </Paper>
-        </ClickAwayListener>
-      </Popper>
+      <Box>
+        <Popper
+          open={Boolean(anchorEl)}
+          anchorEl={anchorEl}
+          placement="bottom-start"
+          anchorOrigin={{
+            vertical : "bottom",
+            horizontal : "center",
+          }}
+          transformOrigin={{
+            vertical : "top",
+            horizontal : "center",
+          }}
+          transition
+        >
+          {({ TransitionProps }) => (
+            <Slide {...TransitionProps} direction="down" timeout={350} in={open} mountOnEnter unmountOnExit>
+              <Box>
+                <ClickAwayListener onClickAway={handleClose}>
+                  <Paper  className={classes.epaper}>
+                    <div style={{ display : "flex", flexDirection : "column" }}>
+                      {columns.map(col => (
+                        <FormControlLabel
+                          key={col.name}
+                          control={
+                            <Checkbox
+                              checked={customToolsProps.columnVisibility[col.name]}
+                              onChange={e =>
+                                handleColumnVisibilityChange(col.name, e.target.checked)
+                              }
+                            />
+                          }
+                          label={col.label}
+                        />
+                      ))}
+                    </div>
+                  </Paper>
+                </ClickAwayListener>
+              </Box>
+            </Slide>
+          )}
+        </Popper>
+      </Box>
     </>
   );
 };
 
-export default withStyles() (CustomColumnVisibilityControl);
+export default withStyles(styles) (CustomColumnVisibilityControl);

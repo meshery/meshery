@@ -10,6 +10,8 @@ const useStyles = makeStyles((theme) => ({
     height : "4rem",
     padding : "0.68rem",
     borderRadius : "0.5rem",
+    position : "relative",
+    zIndex : "1",
   },
   // Define other styles as needed
 }));
