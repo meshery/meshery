@@ -636,7 +636,7 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 	}
 
 	if len(prefs.MeshAdapters) == 0 {
-		return fmt.Errorf("!! No adapters running for health checks")
+		log.Error("!! No adapters running for health checks")
 	}
 
 	for _, adapter := range prefs.MeshAdapters {
