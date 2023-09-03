@@ -5,40 +5,39 @@ import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 import { makeStyles } from "@material-ui/core/styles";
-import { withStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
   icon : {
-    color : theme.palette.type === "dark" ? "#FFFFFF" : "#3C494F",
+    color : theme.palette.secondary.iconMain
   },
   searchInput : {
     "& .MuiOutlinedInput-root" : {
-      color : theme.palette.type === "dark" ? "#FFFFFF" : "#3C494F",
+      color : theme.palette.secondary.iconMain
     },
     "& .MuiOutlinedInput-notchedOutline" : {
-      borderColor : theme.palette.type === "dark" ? "#FFFFFF" : "#3C494F",
+      borderColor : theme.palette.secondary.iconMain
     },
     "& .MuiInputLabel-root" : {
-      color : theme.palette.type === "dark" ? "#FFFFFF" : "#3C494F",
+      color : theme.palette.secondary.iconMain
     },
     "& .MuiInputBase-input" : {
-      color : theme.palette.type === "dark" ? "#FFFFFF" : "#3C494F",
-      caretColor : theme.palette.type === "dark" ? "#FFFFFF" : "#3C494F",
+      color : theme.palette.secondary.iconMain,
+      caretColor : theme.palette.secondary.iconMain
     },
     "& .MuiInput-underline:before" : {
-      borderBottomColor : theme.palette.type === "dark" ? "#FFFFFF" : "#3C494F",
+      borderBottomColor : theme.palette.secondary.iconMain
     },
     "& .MuiInput-underline:hover:before" : {
-      borderBottomColor : theme.palette.type === "dark" ? "#FFFFFF" : "#3C494F",
+      borderBottomColor : theme.palette.secondary.iconMain
     },
     "& .MuiInput-underline:hover:after" : {
-      borderBottomColor : theme.palette.type === "dark" ? "#FFFFFF" : "#3C494F",
+      borderBottomColor : theme.palette.secondary.iconMain
     },
     "& .MuiInput-underline.Mui-focused:before" : {
-      borderBottomColor : theme.palette.type === "dark" ? "#FFFFFF" : "#3C494F",
+      borderBottomColor : theme.palette.type === theme.palette.secondary.iconMain
     },
     "& .MuiInput-underline.Mui-focused:after" : {
-      borderBottomColor : theme.palette.type === "dark" ? "#FFFFFF" : "#3C494F",
+      borderBottomColor : theme.palette.type === theme.palette.secondary.iconMain
     },
   },
 }));
@@ -121,4 +120,4 @@ const SearchBar = ({ onSearch, placeholder }) => {
   );
 };
 
-export default withStyles()(SearchBar);
+export default SearchBar;

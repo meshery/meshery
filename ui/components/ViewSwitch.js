@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme) => ({
     border : "none",
   },
   icon : {
-    color : theme.palette.type === 'dark' ? "#FFFFFF" : "#3C494F"
+    color : theme.palette.secondary.iconMain
   }
 }));
 

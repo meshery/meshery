@@ -4,7 +4,7 @@ import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
   icon : {
-    fill : theme.palette.type === 'dark' ? "#FFFFFF" : "#3C494F"
+    fill : theme.palette.secondary.iconMain
   },
 }));
 const ColumnIcon = (props) => {
