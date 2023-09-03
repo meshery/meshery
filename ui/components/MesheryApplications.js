@@ -731,6 +731,7 @@ function MesheryApplications({
 
   const options = {
     filter : false,
+    viewColumns : false,
     sort : !(user && user.user_id === "meshery"),
     search : false,
     filterType : "textField",
@@ -880,7 +881,6 @@ function MesheryApplications({
         {
           !selectedApplication.show && viewType==="table" &&
             <ResponsiveDataTable
-              title={<div className={classes.tableHeader}>Applications</div>}
               data={applications}
               columns={columns}
               // @ts-ignore
