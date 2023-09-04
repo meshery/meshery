@@ -6,6 +6,8 @@ import { donut, pie } from "billboard.js";
 import { getAllComponents, getMeshModels, getRelationshipsDetail, fetchCategories, getModelFromCategoryApi } from "../../api/meshmodel";
 import { dataToColors } from "../../utils/charts";
 import Link from "next/link";
+import { useNotification } from "../../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../../lib/event-types";
 
 const useFetchTotal = (fetchr) => {
   const [total, setTotal] = useState(0);
@@ -14,11 +16,13 @@ const useFetchTotal = (fetchr) => {
   useEffect(() => {
     fetchr().then((json) => {
       setTotal(json["total_count"]);
-      setLoading(false);
+
     }).catch(e => {
-      console.log("Api Error : ", e);
+      notify({ message : e, event_type : EVENT_TYPES.ERROR, details : e.toString() })
       setLoading(false);
-    });
+    }).finally(() => {
+      setLoading(false);
+    })
   }, []);
 
   return [total, loading];
@@ -30,6 +34,8 @@ const spinnerStyle = {
   alignItems : 'center',
   height : '250px'
 };
+
+const notify = useNotification()
 
 function MeshModelContructs({ classes }) {
   const [totalModels, loadingModels] = useFetchTotal(() => getMeshModels(1, 1));
@@ -105,9 +111,11 @@ function MeshModelCategories({ classes }) {
         setLoading(false);
       });
     }).catch(e => {
-      console.log("Api Error : ", e);
+      notify({ message : "Error while fetching Model Categories Chart Data", event_type : EVENT_TYPES.ERROR, details : e.toString() })
       setLoading(false);
-    });
+    }).finally(() => {
+      setLoading(false);
+    })
   }, []);
 
   return (

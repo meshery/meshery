@@ -6,19 +6,26 @@ import { dataToColors , isValidColumnName } from "../../utils/charts";
 import { getConnectionStatusSummary } from "../../api/connections";
 import ConnectClustersBtn from "../General/ConnectClustersBtn";
 import Link from "next/link";
+import { useNotification } from "../../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../../lib/event-types";
+
+const notify=useNotification()
 
 export default function ConnectionStatsChart({ classes }) {
   const [chartData, setChartData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsLoading(true);
     getConnectionStatusSummary().then(json => {
       setChartData(json.connections_status
         .filter(data => isValidColumnName(data.status))
         .map(data => [data.status, data.count]));
+    }).catch(e => {
+      notify({ message : e, event_type : EVENT_TYPES.ERROR, details : e.toString() })
       setIsLoading(false);
-    });
+    }).finally(() => {
+      setIsLoading(false);
+    })
   }, []);
 
   const chartOptions = {
