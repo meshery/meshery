@@ -14,7 +14,7 @@ import NoSsr from '@material-ui/core/NoSsr';
 import Link from 'next/link';
 import SettingsIcon from '@material-ui/icons/Settings';
 import Chip from '@material-ui/core/Chip';
-import MesheryNotification from './MesheryNotification';
+import MesheryNotification from './NotificationCenter';
 import User from './User';
 import subscribeBrokerStatusEvents from "./graphql/subscriptions/BrokerStatusSubscription"
 import Slide from '@material-ui/core/Slide';
