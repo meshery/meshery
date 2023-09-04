@@ -333,6 +333,7 @@ func (caps Capabilities) GetEndpointForFeature(feature Feature) (string, bool) {
 // Provider - interface for providers
 type Provider interface {
 	PreferencePersister
+	MesheryEvents
 
 	// Initialize will initialize a provider instance
 	// by loading its capabilities and other metadata in the memory
