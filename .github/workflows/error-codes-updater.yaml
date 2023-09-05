@@ -44,7 +44,7 @@ jobs:
         run: |
           cd ./mesheryctl
           ~/errorutil update -d . -i ./helpers -o ./helpers
-          $output=$(~/errorutil -d . analyze -i ./helpers -o ./helpers | wc -c)
+          output=$(~/errorutil -d . analyze -i ./helpers -o ./helpers | wc -c)
           if [ "$output" -ne 0 ]; then
             exit 1
           fi
