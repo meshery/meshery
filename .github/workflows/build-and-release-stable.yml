@@ -191,7 +191,7 @@ jobs:
 
   email-on-failure:
     needs: [update-rest-api-docs, update-graphql-docs, build, ctlrelease, call-dde-release-workflow, call-helm-chart-releaser, email-meshery-release-notes-workflow, call-cncf-playground-rollout]
-    if: ${{ always() }}
+    if: ${{ failure() }}
     runs-on: ubuntu-latest
     steps:
       - name: Find failed jobs.
