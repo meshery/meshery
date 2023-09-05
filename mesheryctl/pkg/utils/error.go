@@ -277,7 +277,7 @@ func ErrUnauthenticated() error {
 
 func ErrInvalidToken() error {
 	return errors.New(ErrInvalidTokenCode, errors.Alert,
-		[]string{"Invalid Authentication Token"},
+		[]string{"Invalid authentication Token"},
 		[]string{"The authentication token has expired or is invalid."},
 		[]string{"The token in auth.json has expired or is invalid."},
 		[]string{"Provide a valid user token by logging in with `mesheryctl system login`."})
@@ -285,7 +285,7 @@ func ErrInvalidToken() error {
 
 func ErrUnmarshal(err error) error {
 	return errors.New(ErrUnmarshalCode, errors.Alert,
-		[]string{"Error Unmarshalling Response"},
+		[]string{"Error unmarshalling response"},
 		[]string{"Unable to process JSON response from server.\n" + err.Error()},
 		[]string{"The JSON format from the response body is not valid."},
 		[]string{"Ensure a valid JSON is provided for processing."})
@@ -293,7 +293,7 @@ func ErrUnmarshal(err error) error {
 
 func ErrFileRead(err error) error {
 	return errors.New(ErrFileReadCode, errors.Alert,
-		[]string{"File Read Error"},
+		[]string{"File read error"},
 		[]string{err.Error()},
 		[]string{"The provided file is not present or has an invalid path."},
 		[]string{"To proceed, provide a valid file path with a valid file."})
@@ -405,7 +405,7 @@ func ErrJSONToYAML(err error) error {
 
 func ErrOutFormatFlag() error {
 	return errors.New(ErrOutFormatFlagCode, errors.Alert,
-		[]string{"Invalid output format Choice"},
+		[]string{"Invalid output format choice"},
 		[]string{"Output format choice is invalid, use [json|yaml]"},
 		[]string{"Invalid JSON or YAML content"},
 		[]string{"Check the JSON or YAML structure."})
