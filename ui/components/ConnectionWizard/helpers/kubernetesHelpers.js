@@ -9,7 +9,7 @@ import { EVENT_TYPES } from "../../../lib/event-types";
 export const pingKubernetes = (successHandler, errorHandler, connectionId) => {
   dataFetch(
     "/api/system/kubernetes/ping?connection_id=" + connectionId,
-    { credentials: "include" },
+    { credentials : "include" },
     successHandler,
     errorHandler
   );
@@ -41,8 +41,8 @@ export const deleteKubernetesConfig = (successCb, errorCb, connectionId) =>
   dataFetch(
     "/api/system/kubernetes/contexts/" + connectionId,
     {
-      method: "DELETE",
-      credentials: "include",
+      method : "DELETE",
+      credentials : "include",
     },
     successCb,
     errorCb
@@ -61,18 +61,18 @@ export const fetchContexts = (updateProgress, k8sfile) => {
   // formData.append('contextName', contextName);
   formData.append("k8sfile", k8sfile);
 
-  updateProgress({ showProgress: true });
+  updateProgress({ showProgress : true });
 
   return new Promise((res, rej) => {
     dataFetch(
       "/api/system/kubernetes/contexts",
       {
-        method: "POST",
-        credentials: "include",
-        body: formData,
+        method : "POST",
+        credentials : "include",
+        body : formData,
       },
       (result) => {
-        updateProgress({ showProgress: false });
+        updateProgress({ showProgress : false });
 
         if (typeof result !== "undefined") {
           let ctName = "";
@@ -82,7 +82,7 @@ export const fetchContexts = (updateProgress, k8sfile) => {
             }
           });
 
-          res({ result, currentContextName: ctName })
+          res({ result, currentContextName : ctName })
         }
       },
       (err) => rej(err)
@@ -100,25 +100,25 @@ export const submitConfig = (notify, updateProgress, updateK8SConfig, contextNam
     formData.append("contextName", contextName);
     formData.append("k8sfile", k8sfile);
   }
-  updateProgress({ showProgress: true });
+  updateProgress({ showProgress : true });
   dataFetch(
     "/api/system/kubernetes",
     {
-      method: "POST",
-      credentials: "include",
-      body: formData,
+      method : "POST",
+      credentials : "include",
+      body : formData,
     },
     (result) => {
-      updateProgress({ showProgress: false });
+      updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        notify({ message: "Kubernetes config was validated!", event_type: EVENT_TYPES.SUCCESS });
+        notify({ message : "Kubernetes config was validated!", event_type : EVENT_TYPES.SUCCESS });
         updateK8SConfig({
-          k8sConfig: {
-            inClusterConfig: inClusterConfigForm,
+          k8sConfig : {
+            inClusterConfig : inClusterConfigForm,
             k8sfile,
-            contextName: result.contextName,
-            clusterConfigured: true,
-            configuredServer: result.configuredServer,
+            contextName : result.contextName,
+            clusterConfigured : true,
+            configuredServer : result.configuredServer,
           },
         });
       }
@@ -135,16 +135,16 @@ export const submitConfig = (notify, updateProgress, updateK8SConfig, contextNam
  */
 export function extractKubernetesCredentials(data) {
   const credentials = {
-    credentialName: data.name,
-    secret: {
-      clusterName: data.cluster.name,
-      clusterServerURL: data.cluster.cluster.server,
-      auth: {
-        clusterUserName: data.auth.name,
-        clusterToken: data.auth.user.token,
-        clusterClientCertificateData: data.auth.user['client-certificate-data'],
-        clusterCertificateAuthorityData: data.cluster.cluster['certificate-authority-data'],
-        clusterClientKeyData: data.auth.user['client-key-data'],
+    credentialName : data.name,
+    secret : {
+      clusterName : data.cluster.name,
+      clusterServerURL : data.cluster.cluster.server,
+      auth : {
+        clusterUserName : data.auth.name,
+        clusterToken : data.auth.user.token,
+        clusterClientCertificateData : data.auth.user['client-certificate-data'],
+        clusterCertificateAuthorityData : data.cluster.cluster['certificate-authority-data'],
+        clusterClientKeyData : data.auth.user['client-key-data'],
       }
     }
   };
