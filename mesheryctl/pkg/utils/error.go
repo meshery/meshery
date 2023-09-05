@@ -313,5 +313,5 @@ func ErrInvalidAPIResponse(err error) error {
 
 func ErrGetKubectlClientVersion(err error) error {
 	return errors.New(ErrGetKubectlClientVersionCode, errors.Alert, []string{"Error fetching kubectl client version"}, []string{"Error fetching kubectl client version", err.Error()},
-		[]string{"You might not have the kubectl binary to fetch the version"}, []string{"Install the minimum kubectl binary from the kubernetes docs"})
+		[]string{"You do not have the kubectl binary or you do not have permission to run kubectl command to fetch the version"}, []string{"Install the kubectl binary by referring to instructions in the kubernetes docs"})
 }
