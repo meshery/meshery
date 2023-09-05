@@ -12,11 +12,12 @@ export const closeButtonForSnackbarAction = (closeSnackbar) => (key) => (
 export const successHandlerGenerator = (notify, msg, cb) => (res) => {
   if (res !== undefined) {
     if (cb !== undefined) cb(res)
-    notify({ message : `${msg}: ${res}`, event_type : EVENT_TYPES.SUCCESS })
+    notify({ message: `${msg}: ${res}`, details: res, event_type: EVENT_TYPES.SUCCESS })
   }
 }
 
 export const errorHandlerGenerator = (notify, msg, cb) => (err) => {
   if (cb !== undefined) cb(err)
-  notify({ message : `${msg}: ${err}`, event_type : EVENT_TYPES.ERROR })
+  err = typeof err !== "string" ? err.toString() : err
+  notify({ message: `${msg}`, details: err, event_type: EVENT_TYPES.ERROR })
 }
