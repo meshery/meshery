@@ -50,14 +50,14 @@ mesheryctl filter delete [filter-name | ID]
 		var filterName string
 		var isValidName bool
 
-		filterID, isValidID, err = utils.ValidId(args[0], "filter")
+		filterID, isValidID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "filter")
 		if err != nil {
 			utils.Log.Error(err)
 			return err
 		}
 
 		if !isValidID {
-			filterName, filterID, isValidName, err = utils.ValidName(args[0], "filter")
+			filterName, filterID, isValidName, err = utils.ValidName(mctlCfg.GetBaseMesheryURL(), args[0], "filter")
 			if err != nil {
 				utils.Log.Error(err)
 				return err

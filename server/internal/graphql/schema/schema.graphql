@@ -107,6 +107,34 @@ type Error {
   description: String!
 }
 
+# ================= EVENTS =================
+
+type Event {
+  id: ID!,
+  userID: ID!,
+  actedUpon: ID!,
+  operationID: ID!,
+  systemID: ID!,
+  severity: Severity!,
+  action: String!,
+  category: String!,
+  description: String!,
+  metadata: Map,
+  createdAt: Time!,
+  updatedAt: Time!,
+  deletedAt: Time
+}
+
+enum Severity {
+  alert,
+  critical,
+  debug,
+  emergency,
+  error,
+  warning,
+  informational
+}
+
 # ================ DASHBOARD ================
 
 type Resource {
@@ -642,6 +670,7 @@ type Mutation {
 }
 
 type Subscription {
+  # Publish events to user
   # Listen to changes in status of Addons available (Eg. Prometheus and Grafana)
   listenToAddonState(
     # Select Mesh Type
@@ -683,7 +712,7 @@ type Subscription {
   subscribeMesheryControllersStatus(
     k8scontextIDs: [String!]
   ): [MesheryControllersStatusListItem!]!
-  
+
   # Listen to the events that MeshSync is sending through Meshery Broker.
   # Note: It does not listen to the changes in meshery database, but to meshsync events
   subscribeMeshSyncEvents(
@@ -701,6 +730,7 @@ type Subscription {
 
   subscribeMeshModelSummary(selector: MeshModelSummarySelector!) : MeshModelSummary!
 
+  subscribeEvents : Event!
 }
 
 type OAMCapability {

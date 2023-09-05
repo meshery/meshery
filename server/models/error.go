@@ -12,89 +12,92 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrGrafanaClientCode                  = "2073"
-	ErrPageSizeCode                       = "2074"
-	ErrPageNumberCode                     = "2075"
-	ErrResultIDCode                       = "2076"
-	ErrPerfIDCode                         = "2077"
-	ErrMarshalCode                        = "2078"
-	ErrUnmarshalCode                      = "2079"
-	ErrGenerateUUIDCode                   = "2080"
-	ErrLocalProviderSupportCode           = "2081"
-	ErrGrafanaOrgCode                     = "2082"
-	ErrGrafanaBoardsCode                  = "2083"
-	ErrGrafanaDashboardCode               = "2084"
-	ErrGrafanaDataSourceCode              = "2085"
-	ErrNilQueryCode                       = "2086"
-	ErrGrafanaDataCode                    = "2087"
-	ErrApplicationFileNameCode            = "2088"
-	ErrFilterFileNameCode                 = "2089"
-	ErrPatternFileNameCode                = "2090"
-	ErrMakeDirCode                        = "2091"
-	ErrFolderStatCode                     = "2092"
-	ErrUserIDCode                         = "2093"
-	ErrDBConnectionCode                   = "2094"
-	ErrNilConfigDataCode                  = "2095"
-	ErrDBOpenCode                         = "2096"
-	ErrDBRLockCode                        = "2097"
-	ErrDBLockCode                         = "2098"
-	ErrDBReadCode                         = "2099"
-	ErrDBDeleteCode                       = "2100"
-	ErrCopyCode                           = "2101"
-	ErrDBPutCode                          = "2102"
-	ErrPrometheusGetNodesCode             = "2103"
-	ErrPrometheusLabelSeriesCode          = "2104"
-	ErrPrometheusQueryRangeCode           = "2105"
-	ErrPrometheusStaticBoardCode          = "2106"
-	ErrTokenRefreshCode                   = "2107"
-	ErrGetTokenCode                       = "2108"
-	ErrDataReadCode                       = "2109"
-	ErrTokenDecodeCode                    = "2110"
-	ErrNilJWKsCode                        = "2111"
-	ErrNilKeysCode                        = "2112"
-	ErrTokenExpiredCode                   = "2113"
-	ErrTokenClaimsCode                    = "2114"
-	ErrTokenClientCheckCode               = "2115"
-	ErrTokenPraseCode                     = "2116"
-	ErrJWKsKeysCode                       = "2117"
-	ErrDecodeBase64Code                   = "2118"
-	ErrMarshalPKIXCode                    = "2119"
-	ErrEncodingPEMCode                    = "2120"
-	ErrPraseUnverifiedCode                = "2121"
-	ErrEncodingCode                       = "2122"
-	ErrFetchCode                          = "2123"
-	ErrPostCode                           = "2124"
-	ErrDeleteCode                         = "2125"
-	ErrInvalidCapabilityCode              = "2126"
-	ErrResultDataCode                     = "2127"
-	ErrUnableToPersistsResultCode         = "2128"
-	ErrValidURLCode                       = "2129"
-	ErrTestEndpointCode                   = "2130"
-	ErrLoadgeneratorCode                  = "2131"
-	ErrProtocolCode                       = "2132"
-	ErrTestClientCode                     = "2133"
-	ErrParsingTestCode                    = "2134"
-	ErrFieldCode                          = "2135"
-	ErrFetchDataCode                      = "2147"
-	ErrIndexOutOfRangeCode                = "2148"
-	ErrSessionCopyCode                    = "2149"
-	ErrSavingSeededComponentsCode         = "2215"
-	ErrGettingSeededComponentsCode        = "2216"
-	ErrDownloadingSeededComponentsCode    = "2217"
-	ErrContextIDCode                      = "2218"
-	ErrMesheryInstanceIDCode              = "2219"
-	ErrMesheryNotInClusterCode            = "2220"
-	ErrBrokerNotFoundCode                 = "2235"
-	ErrCreateOperatorDeploymentConfigCode = "2236"
-	ErrRequestMeshsyncStoreCode           = "2237"
-	ErrBrokerSubscriptionCode             = "2238"
-	ErrContextAlreadyPersistedCode        = "2241"
-	ErrGetPackageCode                     = "2252"
-	ErrTokenRevokeCode                    = "2253"
-	ErrTokenIntrospectCode                = "2254"
-	ErrShareDesignCode                    = "2255"
-	ErrUnreachableRemoteProviderCode      = "2256"
-	ErrShareFilterCode                    = "2257"
+	ErrGrafanaClientCode                  = "1450"
+	ErrPageSizeCode                       = "1451"
+	ErrPageNumberCode                     = "1452"
+	ErrResultIDCode                       = "1453"
+	ErrPerfIDCode                         = "1454"
+	ErrMarshalCode                        = "1455"
+	ErrUnmarshalCode                      = "1456"
+	ErrGenerateUUIDCode                   = "1457"
+	ErrLocalProviderSupportCode           = "1458"
+	ErrGrafanaOrgCode                     = "1459"
+	ErrGrafanaBoardsCode                  = "1460"
+	ErrGrafanaDashboardCode               = "1461"
+	ErrGrafanaDataSourceCode              = "1462"
+	ErrNilQueryCode                       = "1463"
+	ErrGrafanaDataCode                    = "1464"
+	ErrApplicationFileNameCode            = "1465"
+	ErrFilterFileNameCode                 = "1466"
+	ErrPatternFileNameCode                = "1467"
+	ErrMakeDirCode                        = "1468"
+	ErrFolderStatCode                     = "1469"
+	ErrUserIDCode                         = "1470"
+	ErrDBConnectionCode                   = "1471"
+	ErrNilConfigDataCode                  = "1472"
+	ErrDBOpenCode                         = "1473"
+	ErrDBRLockCode                        = "1474"
+	ErrDBLockCode                         = "1475"
+	ErrDBReadCode                         = "1476"
+	ErrDBDeleteCode                       = "1477"
+	ErrCopyCode                           = "1478"
+	ErrDBPutCode                          = "1479"
+	ErrPrometheusGetNodesCode             = "1480"
+	ErrPrometheusLabelSeriesCode          = "1481"
+	ErrPrometheusQueryRangeCode           = "1482"
+	ErrPrometheusStaticBoardCode          = "1483"
+	ErrTokenRefreshCode                   = "1484"
+	ErrGetTokenCode                       = "1485"
+	ErrDataReadCode                       = "1486"
+	ErrTokenDecodeCode                    = "1487"
+	ErrNilJWKsCode                        = "1488"
+	ErrNilKeysCode                        = "1489"
+	ErrTokenExpiredCode                   = "1490"
+	ErrTokenClaimsCode                    = "1491"
+	ErrTokenClientCheckCode               = "1492"
+	ErrTokenPraseCode                     = "1493"
+	ErrJWKsKeysCode                       = "1494"
+	ErrDecodeBase64Code                   = "1495"
+	ErrMarshalPKIXCode                    = "1496"
+	ErrEncodingPEMCode                    = "1497"
+	ErrPraseUnverifiedCode                = "1498"
+	ErrEncodingCode                       = "1499"
+	ErrFetchCode                          = "1500"
+	ErrPostCode                           = "1501"
+	ErrDeleteCode                         = "1502"
+	ErrInvalidCapabilityCode              = "1503"
+	ErrResultDataCode                     = "1504"
+	ErrUnableToPersistsResultCode         = "1505"
+	ErrValidURLCode                       = "1506"
+	ErrTestEndpointCode                   = "1507"
+	ErrLoadgeneratorCode                  = "1508"
+	ErrProtocolCode                       = "1509"
+	ErrTestClientCode                     = "1510"
+	ErrParsingTestCode                    = "1511"
+	ErrFieldCode                          = "1512"
+	ErrFetchDataCode                      = "1513"
+	ErrIndexOutOfRangeCode                = "1514"
+	ErrSessionCopyCode                    = "1515"
+	ErrSavingSeededComponentsCode         = "1516"
+	ErrGettingSeededComponentsCode        = "1517"
+	ErrDownloadingSeededComponentsCode    = "1518"
+	ErrContextIDCode                      = "1519"
+	ErrMesheryInstanceIDCode              = "1520"
+	ErrMesheryNotInClusterCode            = "1521"
+	ErrBrokerNotFoundCode                 = "1522"
+	ErrCreateOperatorDeploymentConfigCode = "1523"
+	ErrRequestMeshsyncStoreCode           = "1524"
+	ErrBrokerSubscriptionCode             = "1525"
+	ErrContextAlreadyPersistedCode        = "1526"
+	ErrGetPackageCode                     = "1527"
+	ErrTokenRevokeCode                    = "1528"
+	ErrTokenIntrospectCode                = "1529"
+	ErrShareDesignCode                    = "1530"
+	ErrUnreachableRemoteProviderCode      = "1531"
+	ErrShareFilterCode                    = "1532"
+	ErrPersistEventCode                   = "1533"
+	ErrUnreachableKubeAPICode             = "replace_me"
+	ErrFlushMeshSyncDataCode              = "replace_me"
 )
 
 var (
@@ -162,15 +165,15 @@ func ErrPerfID(err error) error {
 }
 
 func ErrMarshal(err error, obj string) error {
-	return errors.New(ErrMarshalCode, errors.Alert, []string{"Unable to marshal the object", obj}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrMarshalCode, errors.Alert, []string{"Unable to marshal the : ", obj}, []string{err.Error()}, []string{"Object is not a valid json object"}, []string{"Make sure if the object passed has json tags"})
 }
 
 func ErrUnmarshal(err error, obj string) error {
-	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Unable to unmarshal the object", obj}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Unable to unmarshal the : ", obj}, []string{err.Error()}, []string{"Object is not a valid json object"}, []string{"Make sure if the object passed is a valid json"})
 }
 
 func ErrEncoding(err error, obj string) error {
-	return errors.New(ErrEncodingCode, errors.Alert, []string{"Error encoding the object", obj}, []string{err.Error()}, []string{"Unable to encode the : ", obj}, []string{})
+	return errors.New(ErrEncodingCode, errors.Alert, []string{"Error encoding the : ", obj}, []string{err.Error()}, []string{"Object is not a valid json object"}, []string{"Make sure if the object passed is a valid json"})
 }
 
 func ErrFetch(err error, obj string, statusCode int) error {
@@ -182,7 +185,7 @@ func ErrPost(err error, obj string, statusCode int) error {
 }
 
 func ErrDelete(err error, obj string, statusCode int) error {
-	return errors.New(ErrDeleteCode, errors.Alert, []string{"Unable to delete data from the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode), err.Error()}, []string{}, []string{})
+	return errors.New(ErrDeleteCode, errors.Alert, []string{"Unable to de-register Meshery Server from Remote Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode) + " ", err.Error()}, []string{"Network connectivity to Remote Provider may not be available. Session might have expired; token could be invalid."}, []string{"Verify that the Remote Provider is available. Ensure that you have an active session / valid token."})
 }
 
 func ErrDecodeBase64(err error, obj string) error {
@@ -222,7 +225,7 @@ func ErrGrafanaOrg(err error) error {
 }
 
 func ErrGrafanaBoards(err error) error {
-	return errors.New(ErrGrafanaBoardsCode, errors.Alert, []string{"Unable to get Grafana Boards"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrGrafanaBoardsCode, errors.Alert, []string{"Unable to get Grafana Boards"}, []string{err.Error()}, []string{"Grafana endpoint might not be reachable from meshery", "Grafana endpoint is incorrect"}, []string{"Check if your Grafana endpoint is correct", "Connect to Grafana from the settings page in the UI"})
 }
 
 func ErrGrafanaDashboard(err error, UID string) error {
@@ -355,4 +358,16 @@ func ErrShareFilter(err error) error {
 
 func ErrUnreachableRemoteProvider(err error) error {
 	return errors.New(ErrUnreachableRemoteProviderCode, errors.Alert, []string{"Could not reach remote provider"}, []string{"", err.Error()}, []string{"Remote provider server may be down or not accepting requests"}, []string{"Make sure remote provider server is healthy and accepting requests"})
+}
+
+func ErrPersistEvent(err error) error {
+	return errors.New(ErrPersistEventCode, errors.Alert, []string{"Could not persist event"}, []string{err.Error()}, []string{"Database could be down or not reachable", "Meshery Database handler is not accessible to perform operations"}, []string{"Restart Meshery Server or Perform Hard Reset"})
+}
+
+func ErrUnreachableKubeAPI(err error, server string) error {
+	return errors.New(ErrUnreachableKubeAPICode, errors.Alert, []string{fmt.Sprintf("Error communicating with KubeAPI at %s.", server)}, []string{err.Error()}, []string{"The API server is not exposed.", "Credentials are malformed / invalid."}, []string{"Ensure client credential is not expired.", "Recheck the API server url.", "Remove the cluster credential and enable 'insecure-skip-tls-verify'."})
+}
+
+func ErrFlushMeshSyncData(err error, contextName, server string) error {
+	return errors.New(ErrFlushMeshSyncDataCode, errors.Alert, []string{"Unable to flush MeshSync data for context %s at %s "}, []string{err.Error()}, []string{"Meshery Database handler is not accessible to perform operations"}, []string{"Restart Meshery Server or Perform Hard Reset"})
 }

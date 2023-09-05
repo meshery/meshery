@@ -8,6 +8,7 @@ port: 10011/gRPC
 project_status: alpha
 github_link: https://github.com/meshery/meshery-tanzu-sm
 image: /assets/img/service-meshes/tanzu.svg
+white_image: /assets/img/service-meshes/tanzu.svg
 permalink: service-meshes/adapters/tanzu-sm
 language: en
 ---

@@ -181,8 +181,8 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 		err := json.NewEncoder(w).Encode(prefObj.Prometheus)
 		if err != nil {
 			obj := "Prometheus config"
-			h.log.Error(ErrMarshal(err, obj))
-			http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+			h.log.Error(models.ErrMarshal(err, obj))
+			http.Error(w, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 			return
 		}
 		return
@@ -290,8 +290,8 @@ func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, 
 	err = json.NewEncoder(w).Encode(board)
 	if err != nil {
 		obj := "board instance"
-		h.log.Error(ErrMarshal(err, obj))
-		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrMarshal(err, obj))
+		http.Error(w, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -405,8 +405,8 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 	err := json.NewEncoder(w).Encode(result)
 	if err != nil {
 		obj := "board instance"
-		h.log.Error(ErrMarshal(err, obj))
-		http.Error(w, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrMarshal(err, obj))
+		http.Error(w, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
@@ -449,8 +449,8 @@ func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req
 	err = json.Unmarshal(body, &boards)
 	if err != nil {
 		obj := "request body"
-		h.log.Error(ErrUnmarshal(err, obj))
-		http.Error(w, ErrUnmarshal(err, obj).Error(), http.StatusBadRequest)
+		h.log.Error(models.ErrUnmarshal(err, obj))
+		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusBadRequest)
 		return
 	}
 	if len(boards) > 0 {

@@ -12,7 +12,6 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 )
 
 /**Meshmodel endpoints **/
@@ -45,7 +44,7 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 	if limitstr != "all" {
 		limit, _ = strconv.Atoi(limitstr)
 		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
+			limit = defaultPageSize
 		}
 	}
 	pagestr := r.URL.Query().Get("page")
@@ -1193,7 +1192,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 // request body should be of ComponentCapability format
 func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
-	var cc meshmodel.MeshModelRegistrantData
+	var cc registry.MeshModelRegistrantData
 	err := dec.Decode(&cc)
 	if err != nil {
 		http.Error(rw, err.Error(), http.StatusBadRequest)

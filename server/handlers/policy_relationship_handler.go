@@ -55,7 +55,7 @@ func (h *Handler) GetRegoPolicyForDesignFile(
 
 	data, err := yaml.Marshal(input)
 	if err != nil {
-		http.Error(rw, ErrEncoding(err, "design file").Error(), http.StatusInternalServerError)
+		http.Error(rw, models.ErrEncoding(err, "design file").Error(), http.StatusInternalServerError)
 		return
 	}
 	// evaluate all the rego policies in the policies directory
@@ -70,8 +70,8 @@ func (h *Handler) GetRegoPolicyForDesignFile(
 	ec := json.NewEncoder(rw)
 	err = ec.Encode(networkPolicy)
 	if err != nil {
-		h.log.Error(ErrEncoding(err, "networkPolicy response"))
-		http.Error(rw, ErrEncoding(err, "networkPolicy response").Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrEncoding(err, "networkPolicy response"))
+		http.Error(rw, models.ErrEncoding(err, "networkPolicy response").Error(), http.StatusInternalServerError)
 		return
 	}
 }

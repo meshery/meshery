@@ -46,10 +46,11 @@ import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubs
 import fetchCatalogFilter from "./graphql/queries/CatalogFilterQuery";
 import { iconMedium } from "../css/icons.styles";
 import Modal from "./Modal";
-import { publish_schema, publish_ui_schema } from "./schemas/publish_schema";
-import { getUnit8ArrayDecodedFile } from "../utils/utils";
+import { getUnit8ArrayDecodedFile, modifyRJSFSchema } from "../utils/utils";
 import SearchBar from "./searchcommon";
 import Filter from "../public/static/img/drawer-icons/filter_svg.js";
+import { getMeshModels } from "../api/meshmodel";
+import _ from "lodash";
 import { useNotification } from "../utils/hooks/useNotification";
 import { EVENT_TYPES } from "../lib/event-types";
 
@@ -218,6 +219,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
   const [extensionPreferences, setExtensionPreferences] = useState({});
   const [canPublishFilter, setCanPublishFilter] = useState(false);
   const [importSchema, setImportSchema] = useState({});
+  const [publishSchema, setPublishSchema] = useState({})
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ("grid")
@@ -302,6 +304,31 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
       },
       (result) => {
         setImportSchema(result);
+      },
+      handleError(ACTION_TYPES.SCHEMA_FETCH)
+    )
+    dataFetch("/api/schema/resource/publish",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      async (result) => {
+        try {
+          const { models } = await getMeshModels();
+          const modelNames = _.uniq(models?.map((model) => model.displayName));
+
+          // Modify the schema using the utility function
+          const modifiedSchema = modifyRJSFSchema(
+            result.rjsfSchema,
+            "properties.compatibility.items.enum",
+            modelNames
+          );
+
+          setPublishSchema({ rjsfSchema : modifiedSchema, uiSchema : result.uiSchema });
+        } catch (err) {
+          console.error(err);
+          setPublishSchema(result);
+        }
       },
       handleError(ACTION_TYPES.SCHEMA_FETCH)
     )
@@ -526,11 +553,22 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
       { credentials : "include", method : "POST", body : JSON.stringify(payload) },
       () => {
         updateProgress({ showProgress : false });
-        notify({ message : `Filter published!` , event_type : EVENT_TYPES.SUCCESS })
+        if (user.role_names.includes("admin")){
+
+          notify({
+            message : `${publishModal.filter?.name} filter published to Meshery Catalog`,
+            event_type : EVENT_TYPES.SUCCESS
+          })
+        } else {
+          notify({
+            message : "filters queued for publishing into Meshery Catalog. Maintainers notified for review",
+            event_type : EVENT_TYPES.SUCCESS
+          })
+        }
       },
       handleError(ACTION_TYPES.PUBLISH_CATALOG),
     );
-  }
+  };
 
   function handleClone(filterID, name) {
     updateProgress({ showProgress : true });
@@ -1127,6 +1165,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
               handleImportFilter={handleImportFilter}
               publishModal={publishModal}
               setPublishModal={setPublishModal}
+              publishSchema={publishSchema}
               fetch={() => fetchFilters(page, pageSize, search, sortOrder)}
             />
         }
@@ -1144,8 +1183,8 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
         {canPublishFilter &&
           <Modal
             open={publishModal.open}
-            schema={publish_schema}
-            uiSchema={publish_ui_schema}
+            schema={publishSchema.rjsfSchema}
+            uiSchema={publishSchema.uiSchema}
             title={publishModal.filter?.name}
             handleClose={handlePublishModalClose}
             handleSubmit={handlePublish}
