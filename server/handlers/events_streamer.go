@@ -39,7 +39,7 @@ var (
 // ```?category=[eventcategory] Returns event belonging to provided categories ```
 // ```?action=[eventaction] Returns events belonging to provided actions ```
 // ```?severity=[eventseverity] Returns events belonging to provided severities ```
-// ```?sort={field} order the records based on passed field```
+// ```?sort={field} order the records based on passed field, defaults to updated_at```
 // ```?order={[asc/desc]}``` Default behavior is asc
 // ```?page={page-number}``` Default page number is 1
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results:       ```pagesize=all```

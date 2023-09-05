@@ -42,7 +42,6 @@ func (c *EventBroadcast) Subscribe(id uuid.UUID) (chan interface{}, func()) {
 
 func (c *EventBroadcast) Publish(id uuid.UUID, event *events.Event) {
 	clientMap, ok := c.clients.Load(id)
-	fmt.Println("entered Publish", ok, clientMap, id)
 	if !ok {
 		return
 	}
@@ -53,7 +52,7 @@ func (c *EventBroadcast) Publish(id uuid.UUID, event *events.Event) {
 	}
 }
 
-func NewSignal() *EventBroadcast {
+func NewEventBroadcaster() *EventBroadcast {
 	return &EventBroadcast{
 		clients: new(sync.Map),
 	}
