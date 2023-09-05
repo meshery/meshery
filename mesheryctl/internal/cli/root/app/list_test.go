@@ -9,6 +9,7 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAppList(t *testing.T) {
@@ -102,8 +103,7 @@ func TestAppList(t *testing.T) {
 				golden.Write(actualResponse)
 			}
 			expectedResponse := golden.Load()
-
-			utils.Equals(t, expectedResponse, actualResponse)
+			assert.Equal(t, expectedResponse, actualResponse)
 		})
 	}
 

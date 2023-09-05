@@ -120,7 +120,7 @@ func (h *Handler) MesheryControllersMiddleware(next func(http.ResponseWriter, *h
 		ctx := req.Context()
 		mk8sContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 		if !ok || len(mk8sContexts) == 0 {
-			h.log.Error(ErrInvalidK8SConfig)
+			h.log.Error(ErrInvalidK8SConfigNil)
 			// this should not block the request
 			next(w, req, prefObj, user, provider)
 			return
@@ -156,14 +156,14 @@ func (h *Handler) KubernetesMiddleware(next func(http.ResponseWriter, *http.Requ
 		if err != nil || len(contexts) == 0 { //Try to load the contexts when there are no contexts available
 			logrus.Warn("failed to get kubernetes contexts")
 			// only the contexts that are successfully pinged will be persisted
-			contexts, err = h.LoadContextsAndPersist(token, provider)
+			contexts, err = h.LoadContextsAndPersist(user.UserID, token, provider)
 			if err != nil {
 				logrus.Warn("failed to load kubernetes contexts: ", err.Error())
 			}
 		}
 
 		// register kubernetes components
-		h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{RegisterK8sMeshModelComponents}, h.EventsBuffer, h.registryManager, true)
+		h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{RegisterK8sMeshModelComponents}, h.registryManager, h.config.EventBroadcaster, provider, user.ID, true)
 		go h.config.MeshModelSummaryChannel.Publish()
 
 		// Identify custom contexts, if provided

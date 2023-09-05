@@ -40,7 +40,6 @@ import Validation from "./Validation";
 import { ACTIONS, FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from "../utils/Enum";
 import CloneIcon from "../public/static/img/CloneIcon";
 import { useRouter } from "next/router";
-import { publish_schema, publish_ui_schema } from "./schemas/publish_schema";
 import Modal from "./Modal";
 import downloadFile from "../utils/fileDownloader";
 import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
@@ -51,6 +50,9 @@ import Pattern from "../public/static/img/drawer-icons/pattern_svg.js";
 import DryRunComponent from "./DryRun/DryRunComponent";
 import { useNotification } from "../utils/hooks/useNotification";
 import { EVENT_TYPES } from "../lib/event-types";
+import _ from "lodash"
+import { getMeshModels } from "../api/meshmodel"
+import { modifyRJSFSchema } from "../utils/utils"
 
 
 const styles = (theme) => ({
@@ -298,6 +300,7 @@ function MesheryPatterns({
   const [patternErrors, setPatternErrors] = useState(new Map());
 
   const [canPublishPattern, setCanPublishPattern] = useState(false);
+  const [publishSchema, setPublishSchema] = useState({})
 
   const [viewType, setViewType] = useState(
     ("grid")
@@ -516,6 +519,31 @@ function MesheryPatterns({
       },
       handleError(ACTION_TYPES.SCHEMA_FETCH)
     )
+    dataFetch("/api/schema/resource/publish",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      async (result) => {
+        try {
+          const { models } = await getMeshModels();
+          const modelNames = _.uniq(models?.map((model) => model.displayName));
+
+          // Modify the schema using the utility function
+          const modifiedSchema = modifyRJSFSchema(
+            result.rjsfSchema,
+            "properties.compatibility.items.enum",
+            modelNames
+          );
+
+          setPublishSchema({ rjsfSchema : modifiedSchema, uiSchema : result.uiSchema });
+        } catch (err) {
+          console.error(err);
+          handleError(ACTION_TYPES.SCHEMA_FETCH)
+          setPublishSchema(result);
+        }
+      }
+    )
     catalogVisibilityRef.current = catalogVisibility
     const fetchCatalogPatterns = fetchCatalogPattern({
       selector : {
@@ -733,15 +761,25 @@ function MesheryPatterns({
       { credentials : "include", method : "POST", body : JSON.stringify(payload) },
       () => {
         updateProgress({ showProgress : false });
+        if (user.role_names.includes("admin")){
 
-        notify({
-          message : "Design Published",
-          event_type : EVENT_TYPES.SUCCESS
-        })
+          notify({
+            message : `${publishModal.pattern?.name} Design Published`,
+            event_type : EVENT_TYPES.SUCCESS
+          })
+        } else {
+          notify({
+            message : "Design queued for publishing into Meshery Catalog. Maintainers notified for review",
+            event_type : EVENT_TYPES.SUCCESS
+          })
+        }
       },
       handleError(ACTION_TYPES.PUBLISH_CATALOG),
     );
-  }
+  };
+
+
+
   function handleClone(patternID, name) {
     updateProgress({ showProgress : true });
     dataFetch(PATTERN_URL.concat(CLONE_URL, "/", patternID),
@@ -880,7 +918,7 @@ function MesheryPatterns({
     try {
       downloadFile({ id, name, type : "pattern" })
       updateProgress({ showProgress : false });
-      notify({ message : `"${name}" Design Downloaded` , event_type : EVENT_TYPES.SUCCESS })
+      notify({ message : `"${name}" design downloaded` , event_type : EVENT_TYPES.INFO })
     } catch (e) {
       console.error(e);
     }
@@ -1351,6 +1389,7 @@ function MesheryPatterns({
               patternErrors={patternErrors}
               publishModal={publishModal}
               setPublishModal={setPublishModal}
+              publishSchema={publishSchema}
             />
         }
         <ConfirmationModal
@@ -1371,8 +1410,8 @@ function MesheryPatterns({
         {canPublishPattern &&
           <Modal
             open={publishModal.open}
-            schema={publish_schema}
-            uiSchema={publish_ui_schema}
+            schema={publishSchema.rjsfSchema}
+            uiSchema={publishSchema.uiSchema}
             handleClose={handlePublishModalClose}
             aria-label="catalog publish"
             title={publishModal.pattern?.name}

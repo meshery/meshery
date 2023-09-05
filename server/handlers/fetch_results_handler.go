@@ -155,7 +155,7 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 	w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="result_%s.yaml"`, bdr.ID))
 	b, err := yaml.Marshal(sp)
 	if err != nil {
-		logrus.Error(ErrMarshal(err, "test result"))
+		logrus.Error(models.ErrMarshal(err, "test result"))
 		http.Error(w, "error while getting test result", http.StatusInternalServerError)
 		return
 	}

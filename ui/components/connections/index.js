@@ -60,17 +60,20 @@ const styles = (theme) => ({
     paddingLeft : "1rem",
   },
   statusCip : {
+    minWidth : "120px !important",
+    maxWidth : "max-content !important",
+    display : "flex !important",
+    justifyContent : "flex-start !important",
+    textTransform : "capitalize",
+    borderRadius : "3px !important",
+    padding : "6px 8px",
     "& .MuiChip-label" : {
       paddingTop : "3px",
       fontWeight : "400",
     },
-    textTransform : "capitalize",
-    borderRadius : "3px !important",
-    display : "flex",
-    width : "117px",
-    padding : "6px 8px",
-    alignItems : "center",
-    gap : "5px",
+    "&:hover" : {
+      boxShadow : "0px 1px 2px 0px rgba(0, 0, 0, 0.25)"
+    }
   },
   capitalize : {
     textTransform : "capitalize",
@@ -79,32 +82,50 @@ const styles = (theme) => ({
     "& .MuiChip-label" : {
       color : `${theme.palette.secondary.default}`,
     },
-    background : `${theme.palette.secondary.default}15 !important`,
+    background : `${theme.palette.secondary.default}30 !important`,
+    "& .MuiSvgIcon-root" : {
+      color : `${theme.palette.secondary.default} !important`,
+    }
   },
   connected : {
     "& .MuiChip-label" : {
       color : theme.palette.secondary.success,
     },
-    background : `${theme.palette.secondary.success}15 !important`,
+    background : `${theme.palette.secondary.success}30 !important`,
+    "& .MuiSvgIcon-root" : {
+      color : `${theme.palette.secondary.success} !important`,
+    }
   },
   registered : {
     "& .MuiChip-label" : {
       color : theme.palette.secondary.primary,
     },
-    background : `${theme.palette.secondary.primary}15 !important`,
+    background : `${theme.palette.secondary.primary}30 !important`,
+    "& .MuiSvgIcon-root" : {
+      color : `${theme.palette.secondary.primary} !important`,
+    }
   },
   discovered : {
     "& .MuiChip-label" : {
       color : theme.palette.secondary.warning,
     },
-    background : `${theme.palette.secondary.warning}15 !important`,
+    background : `${theme.palette.secondary.warning}30 !important`,
+    "& .MuiSvgIcon-root" : {
+      color : `${theme.palette.secondary.warning} !important`,
+    }
   },
   deleted : {
     "& .MuiChip-label" : {
       color : theme.palette.secondary.error,
     },
-    background : `${theme.palette.secondary.error}15 !important`,
+    background : `${theme.palette.secondary.lightError}30 !important`,
+    "& .MuiSvgIcon-root" : {
+      color : `${theme.palette.secondary.error} !important`,
+    }
   },
+  expandedRows : {
+    background : `${theme.palette.secondary.default}10`
+  }
 });
 
 const ACTION_TYPES = {
@@ -127,21 +148,35 @@ function Connections({ classes, updateProgress }) {
   const status = (value) => {
     switch (value) {
       case 'ignored':
-        return <Chip className={classNames(classes.statusCip, classes.ignored)} avatar={<RemoveCircleIcon style={{ color : "#51636B" }} />} label={value} />
+        return <Chip className={classNames(classes.statusCip, classes.ignored)} avatar={<RemoveCircleIcon />} label={value} />
       case 'connected':
-        return <Chip className={classNames(classes.statusCip, classes.connected)} avatar={<CheckCircleIcon style={{ color : "#00B39F" }}/>} label={value} />
+        return <Chip className={classNames(classes.statusCip, classes.connected)} avatar={<CheckCircleIcon />} label={value} />
       case 'REGISTERED':
-        return <Chip className={classNames(classes.statusCip, classes.registered)} avatar={<AssignmentTurnedInIcon style={{ color : "#477E96" }} />} label={value.toLowerCase()} />
+        return <Chip className={classNames(classes.statusCip, classes.registered)} avatar={<AssignmentTurnedInIcon />} label={value.toLowerCase()} />
       case 'discovered':
-        return <Chip className={classNames(classes.statusCip, classes.discovered)} avatar={<ExploreIcon style={{ color : "#EBC017" }} />} label={value} />
+        return <Chip className={classNames(classes.statusCip, classes.discovered)} avatar={<ExploreIcon />} label={value} />
       case 'deleted':
-        return <Chip className={classNames(classes.statusCip, classes.deleted)} avatar={<DeleteForeverIcon style={{ color : "#8F1F00" }} />} label={value} />
+        return <Chip className={classNames(classes.statusCip, classes.deleted)} avatar={<DeleteForeverIcon />} label={value} />
       default:
         return "-"
     }
   }
 
   const columns = [
+    {
+      name : "name",
+      label : "Element",
+      options : {
+        display : false,
+      },
+    },
+    {
+      name : "metadata.server_location",
+      label : "Server Location",
+      options : {
+        display : false,
+      },
+    },
     {
       name : "name",
       label : "Element",
@@ -153,29 +188,19 @@ function Connections({ classes, updateProgress }) {
             </TableCell>
           );
         },
-      },
-    },
-    {
-      name : "metadata",
-      label : " ",
-      options : {
-        customHeadRender : function CustomHead({ index }) {
+        customBodyRender : (value, tableMeta) => {
           return (
-            <TableCell key={index}></TableCell>
+            <Tooltip title={tableMeta.rowData[1]} placement="top" >
+              <Link href={tableMeta.rowData[1]} target="_blank">
+                {value}
+                <sup>
+                  <LaunchIcon sx={{ fontSize : "12px" }} />
+                </sup>
+              </Link>
+            </Tooltip>
           );
-        },
-        customBodyRender : function CustomBody(value) {
-          return (
-            <>
-              <Tooltip title={value.server_location} placement="top" arrow interactive >
-                <Link href={value.server_location} target="_blank">
-                  <LaunchIcon />
-                </Link>
-              </Tooltip>
-            </>
-          );
-        },
-      },
+        }
+      }
     },
     {
       name : "type",
@@ -365,21 +390,26 @@ function Connections({ classes, updateProgress }) {
     },
     rowsExpanded : [0, 1],
     renderExpandableRow : (rowData) => {
-      const colSpan = (rowData.length-1)/3;
       return (
         <TableRow>
           <TableCell>
           </TableCell>
-          <TableCell colSpan={colSpan}>
-            <b>Server builsd SHA:</b> {rowData[8]}
+          <TableCell colSpan={2}>
+            <b>Server Build SHA:</b> {rowData[8]}
           </TableCell>
-          <TableCell colSpan={colSpan}>
-            <b>Server Version:</b> {rowData[9]}
+          <TableCell colSpan={2}>
+            <b>Server Version:</b> {rowData[10]}
           </TableCell>
-          <TableCell colSpan={colSpan}>
+          <TableCell colSpan={2}>
           </TableCell>
         </TableRow>
       );
+    },
+  };
+
+  const components = {
+    ExpandButton : function() {
+      return '';
     },
   };
 
@@ -472,6 +502,7 @@ function Connections({ classes, updateProgress }) {
           // @ts-ignore
           options={options}
           className={classes.muiRow}
+          components={components}
         />
       </NoSsr>
     </>

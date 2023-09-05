@@ -9,6 +9,7 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
 )
 
 var update = flag.Bool("update", false, "update golden files")
@@ -65,10 +66,8 @@ func TestPreflightCmdIntegration(t *testing.T) {
 			}
 			expectedResponse := golden.Load()
 
-			if expectedResponse != actualResponse {
-				utils.Equals(t, expectedResponse, actualResponse)
-				// t.Errorf("expected response %v and actual response %v don't match", expectedResponse, actualResponse)
-			}
+			assert.Equal(t, expectedResponse, actualResponse)
 		})
+		t.Log("PreflightCmdIntegration Test Passed")
 	}
 }
