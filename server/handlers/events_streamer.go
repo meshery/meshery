@@ -35,9 +35,9 @@ var (
 // ```?sort={field} order the records based on passed field, defaults to updated_at```
 // ```?order={[asc/desc]}``` Default behavior is asc
 // ```?page={page-number}``` Default page number is 1
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results:       ```pagesize=all```
+// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-// 	200:
+// 	200: EventsResponse
 
 func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	userID := uuid.FromStringOrNil(user.ID)
@@ -75,7 +75,7 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 // Handle POST request to update event status.
 // Updates event status for the event associated with the id.
 // responses:
-// 	200:
+// 	200: Event
 
 func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	eventID := uuid.FromStringOrNil(mux.Vars(req)["id"])
@@ -95,8 +95,8 @@ func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, pr
 	_ = json.Unmarshal(body, &reqBody)
 	status, ok := reqBody["status"].(string)
 	if !ok {
-		h.log.Error(ErrUnsupportedEventStatus(fmt.Errorf("status provided is not supported"), status))
-		http.Error(w, ErrUnsupportedEventStatus(fmt.Errorf("status provided is not supported"), status).Error(), http.StatusInternalServerError)
+		h.log.Error(ErrUpdateEvent(fmt.Errorf("unable to parse provided event status %s", status), eventID.String()))
+		http.Error(w, ErrUpdateEvent(fmt.Errorf("unable to parse provided event status %s", status), eventID.String()).Error(), http.StatusInternalServerError)
 		return
 	}
 	event, err := provider.UpdateEventStatus(eventID, status)
