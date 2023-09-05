@@ -13,19 +13,166 @@ import (
 	"encoding/json"
 
 	"github.com/gofrs/uuid"
+	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/errors"
-	_events "github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/utils/events"
-
+	"github.com/layer5io/meshkit/models/events"
+	_events "github.com/layer5io/meshkit/utils/events"
 	"github.com/sirupsen/logrus"
 )
+
+type EventsResponse struct {
+	Events []*events.Event `json:"events"`
+	Page     int          `json:"page"`
+	PageSize int          `json:"page_size"`
+	Count    int64       `json:"total_count"`
+}
 
 var (
 	flusherMap map[string]http.Flusher
 )
 
+// swagger:route GET /api/v2/events EventsAPI idGetEventStreamer
+// Handle GET request for events.
+// ```search={description}``` If search is non empty then a search is performed on event description
+// ```?category=[eventcategory] Returns event belonging to provided categories ```
+// ```?action=[eventaction] Returns events belonging to provided actions ```
+// ```?severity=[eventseverity] Returns events belonging to provided severities ```
+// ```?sort={field} order the records based on passed field```
+// ```?order={[asc/desc]}``` Default behavior is asc
+// ```?page={page-number}``` Default page number is 1
+// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results:       ```pagesize=all```
+// responses:
+// 	200:
+
+func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	userID := uuid.FromStringOrNil(user.ID)
+	page, offset, limit, 
+	search, order, sortOnCol, status := getPaginationParams(req)
+	// eventCategory := 
+	filter, err := getEventFilter(req)
+	if err != nil {
+		h.log.Warn(err)
+	}
+
+	filter.Limit = limit
+	filter.Offset = offset
+	filter.Order = order
+	filter.SortOn = sortOnCol
+	
+	events, count, err := provider.GetAllEvents(search, status, filter, userID)
+	if err != nil {
+		h.log.Error(ErrGetEvents(err))
+		http.Error(w, ErrGetEvents(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	res := &EventsResponse{
+		Events: events,
+		Page: page,
+		PageSize: limit,
+		Count: count,
+	}
+
+	err = json.NewEncoder(w).Encode(res)
+	if err != nil {
+		h.log.Error(models.ErrMarshal(err, "events response"))
+		http.Error(w, models.ErrMarshal(err, "events response").Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+// swagger:route POST /api/events/status/{id} idGetEventStreamer
+// Handle POST request to update event status.
+// Updates event status for the event associated with the id.
+// responses:
+// 	200:
+
+func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	eventID := uuid.FromStringOrNil(mux.Vars(req)["id"])
+
+	defer func () {
+		_ = req.Body.Close()
+	}()
+	
+	var reqBody map[string]interface{}
+	body, err := io.ReadAll(req.Body)
+	if err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	_ = json.Unmarshal(body, &reqBody)
+	status, ok := reqBody["status"].(string)
+	if !ok {
+		h.log.Error(ErrUnsupportedEventStatus(fmt.Errorf("status provided is not supported"), status))
+		http.Error(w, ErrUnsupportedEventStatus(fmt.Errorf("status provided is not supported"), status).Error(), http.StatusInternalServerError)
+		return
+	}
+	event, err := provider.UpdateEventStatus(eventID, status)
+	if err != nil {
+		_err := ErrUpdateEvent(err, eventID.String())
+		h.log.Error(_err)
+		http.Error(w, _err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = json.NewEncoder(w).Encode(event)
+	if err != nil {
+		h.log.Error(err)
+		http.Error(w, models.ErrMarshal(err, "event response").Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+// swagger:route DELETE /api/events/{id} idGetEventStreamer
+// Handle DELETE request for events.
+// Deletes event associated with the id.
+// responses:
+// 	200:
+
+func (h *Handler) DeleteEvent(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	eventID := uuid.FromStringOrNil(mux.Vars(req)["id"])
+	err := provider.DeleteEvent(eventID)
+	if err != nil {
+		_err := ErrDeleteEvent(err, eventID.String())
+		h.log.Error(_err)
+		http.Error(w, _err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func getEventFilter(req *http.Request) (*events.EventsFilter, error) {
+	urlValues := req.URL.Query()
+	category := urlValues.Get("category")
+	action := urlValues.Get("action")
+	severity := urlValues.Get("severity")
+
+	eventFilter := &events.EventsFilter{}
+	if category != "" {
+		err := json.Unmarshal([]byte(category), &eventFilter.Category)
+		if err != nil {
+			return eventFilter, models.ErrUnmarshal(err, "event category filter")
+		}
+	}
+
+	if action != "" {
+		err := json.Unmarshal([]byte(action), &eventFilter.Action)
+		if err != nil {
+			return eventFilter, models.ErrUnmarshal(err, "event action filter")
+		}
+	}
+
+	if severity != "" {
+		err := json.Unmarshal([]byte(severity), &eventFilter.Severity)
+		if err != nil {
+			return eventFilter, models.ErrUnmarshal(err, "event severity filter")
+		}
+	}
+
+	return eventFilter, nil
+}
 // swagger:route GET /api/events EventsAPI idGetEventStreamer
 // Handle GET request for events.
 // Listens for events across all of Meshery's components like adapters and server, streaming them to the UI via Server Side Events
@@ -146,7 +293,7 @@ STOP:
 	close(respChan)
 	defer log.Debug("events handler closed")
 }
-func listenForCoreEvents(ctx context.Context, eb *events.EventStreamer, resp chan []byte, log *logrus.Entry, _ models.Provider) {
+func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp chan []byte, log *logrus.Entry, _ models.Provider) {
 	datach := make(chan interface{}, 10)
 	go eb.Subscribe(datach)
 	for {
@@ -193,8 +340,8 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 		// log.Debugf("received an event: %+#v", event)
 		log.Debugf("Received an event.")
 		eventType := event.EventType.String()
-		eventBuilder := _events.NewEvent().FromSystem(uuid.FromStringOrNil(event.Component)).
-		WithSeverity(_events.EventSeverity(eventType)).WithDescription(event.Summary).WithCategory(event.ComponentName).WithAction("deploy").FromUser(userUUID)
+		eventBuilder := events.NewEvent().FromSystem(uuid.FromStringOrNil(event.Component)).
+		WithSeverity(events.EventSeverity(eventType)).WithDescription(event.Summary).WithCategory(event.ComponentName).WithAction("deploy").FromUser(userUUID)
 		if strings.Contains(event.Summary, "removed") {
 			eventBuilder.WithAction("undeploy")
 		}

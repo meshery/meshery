@@ -1,9 +1,13 @@
 package models
 
-import "github.com/layer5io/meshkit/models/events"
+import (
+	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshkit/models/events"
+)
 
 type MesheryEvents interface {
-	GetEvent(userID, eventID string) (*events.Event, error)
+	GetAllEvents(search, status string, eventFilter *events.EventsFilter, userID uuid.UUID) ([]*events.Event, int64, error)
 	PersistEvent(data *events.Event) error
-	DeleteEvent(userID, eventID string) error
+	DeleteEvent(eventID uuid.UUID) error
+	UpdateEventStatus(eventID uuid.UUID, status string) (*events.Event, error)
 }
