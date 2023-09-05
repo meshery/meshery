@@ -50,8 +50,8 @@ mesheryctl pattern view [pattern-name | ID]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(utils.ErrLoadConfig(err))
-			return utils.ErrLoadConfig(err)
+			utils.Log.Error(err)
+			return nil
 		}
 		pattern := ""
 		isID := false
@@ -63,7 +63,7 @@ mesheryctl pattern view [pattern-name | ID]
 			pattern, isID, err = utils.ValidId(args[0], "pattern")
 			if err != nil {
 				utils.Log.Error(ErrPatternInvalidNameOrID(err))
-				return ErrPatternInvalidNameOrID(err)
+				return nil
 			}
 		}
 		url := mctlCfg.GetBaseMesheryURL()
@@ -83,14 +83,14 @@ mesheryctl pattern view [pattern-name | ID]
 
 		req, err := utils.NewRequest("GET", url, nil)
 		if err != nil {
-			utils.Log.Error(utils.ErrCreatingRequest(err))
-			return utils.ErrCreatingRequest(err)
+			utils.Log.Error(err)
+			return nil
 		}
 
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(utils.ErrRequestResponse(err))
-			return utils.ErrRequestResponse(err)
+			utils.Log.Error(err)
+			return nil
 		}
 
 		defer res.Body.Close()
@@ -103,38 +103,42 @@ mesheryctl pattern view [pattern-name | ID]
 		var dat map[string]interface{}
 		if err = json.Unmarshal(body, &dat); err != nil {
 			utils.Log.Error(utils.ErrUnmarshal(err))
-			return utils.ErrUnmarshal(err)
+			return nil
 		}
 
 		if isID {
 			if body, err = json.MarshalIndent(dat, "", "  "); err != nil {
-				return utils.ErrMarshalIndent(err)
+				utils.Log.Error(utils.ErrMarshalIndent(err))
+				return nil
 			}
 		} else if viewAllFlag {
 			// only keep the pattern key from the response when viewing all the patterns
 			if body, err = json.MarshalIndent(map[string]interface{}{"patterns": dat["patterns"]}, "", "  "); err != nil {
-				return utils.ErrMarshalIndent(err)
+				utils.Log.Error(utils.ErrMarshalIndent(err))
+				return nil
 			}
 		} else {
 			// use the first match from the result when searching by pattern name
 			arr := dat["patterns"].([]interface{})
 			if len(arr) == 0 {
 				utils.Log.Error(ErrPatternNotFound())
-				utils.Log.Info(fmt.Sprintf("pattern with name: %s not found. Enter a valid pattern name or ID", pattern))
-				return ErrPatternNotFound()
+				utils.Log.Info(fmt.Sprintf("pattern with name: %s not found. Enter a valid pattern name or ID \n", pattern))
+				return nil
 			}
 			if body, err = json.MarshalIndent(arr[0], "", "  "); err != nil {
 				utils.Log.Error(utils.ErrMarshalIndent(err))
-				return utils.ErrMarshalIndent(err)
+				return nil
 			}
 		}
 
 		if outFormatFlag == "yaml" {
 			if body, err = yaml.JSONToYAML(body); err != nil {
-				return utils.ErrJSONToYAML(err)
+				utils.Log.Error(utils.ErrJSONToYAML(err))
+				return nil
 			}
 		} else if outFormatFlag != "json" {
-			return utils.ErrOutFormatFlag()
+			utils.Log.Error(utils.ErrOutFormatFlag())
+			return nil
 		}
 		utils.Log.Info(string(body))
 		return nil

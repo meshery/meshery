@@ -75,13 +75,13 @@ func getSourceTypes() error {
 	validTypesURL := mctlCfg.GetBaseMesheryURL() + "/api/application/types"
 	req, err := utils.NewRequest("GET", validTypesURL, nil)
 	if err != nil {
-		utils.Log.Error(utils.ErrCreatingRequest(err))
+		utils.Log.Error(err)
 		return nil
 	}
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		utils.Log.Error(utils.ErrRequestResponse(err))
+		utils.Log.Error(err)
 		return nil
 	}
 

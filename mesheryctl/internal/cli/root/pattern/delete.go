@@ -53,7 +53,8 @@ mesheryctl pattern delete [file | URL]
 		if len(args) > 0 {
 			pattern, isID, err = utils.ValidId(args[0], "pattern")
 			if err != nil {
-				return err
+				utils.Log.Error(ErrPatternInvalidNameOrID(err))
+				return nil
 			}
 		}
 
@@ -109,12 +110,14 @@ mesheryctl pattern delete [file | URL]
 
 			req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 			if err != nil {
-				return utils.ErrLoadConfig(err)
+				utils.Log.Error(err)
+				return nil
 			}
 
 			resp, err := utils.MakeRequest(req)
 			if err != nil {
-				return utils.ErrRequestResponse(err)
+				utils.Log.Error(err)
+				return nil
 			}
 			utils.Log.Debug("remote hosted pattern request success")
 			var response []*models.MesheryPattern
@@ -123,13 +126,13 @@ mesheryctl pattern delete [file | URL]
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
 				utils.Log.Error(utils.ErrReadResponseBody(errors.Wrap(err, "failed to read response body")))
-				return utils.ErrReadResponseBody(err)
+				return nil
 			}
 
 			err = json.Unmarshal(body, &response)
 			if err != nil {
 				utils.Log.Error(utils.ErrUnmarshal(err))
-				return utils.ErrUnmarshal(err)
+				return nil
 			}
 
 			patternFile = response[0].PatternFile
@@ -151,7 +154,7 @@ mesheryctl pattern delete [file | URL]
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
 			utils.Log.Error(utils.ErrReadResponseBody(err))
-			return utils.ErrReadResponseBody(err)
+			return nil
 		}
 
 		utils.Log.Info(string(body))

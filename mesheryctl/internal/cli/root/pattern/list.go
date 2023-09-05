@@ -50,36 +50,37 @@ mesheryctl pattern list
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(utils.ErrLoadConfig(err))
-			return utils.ErrLoadConfig(err)
+			utils.Log.Error(err)
+			return nil
 		}
 
 		var response models.PatternsAPIResponse
 		req, err := utils.NewRequest("GET", mctlCfg.GetBaseMesheryURL()+"/api/pattern", nil)
 		if err != nil {
-			utils.Log.Error(utils.ErrCreatingRequest(err))
-			return utils.ErrCreatingRequest(err)
+			utils.Log.Error(err)
+			return nil
 		}
 
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(utils.ErrRequestResponse(err))
-			return utils.ErrRequestResponse(err)
+			utils.Log.Error(err)
+			return nil
 		}
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			return utils.ErrReadResponseBody(err)
+			utils.Log.Error(utils.ErrReadResponseBody(err))
+			return nil
 		}
 		err = json.Unmarshal(body, &response)
 		if err != nil {
 			utils.Log.Error(utils.ErrUnmarshal(err))
-			return utils.ErrUnmarshal(err)
+			return nil
 		}
 		tokenObj, err := utils.ReadToken(utils.TokenFlag)
 		if err != nil {
 			utils.Log.Error(utils.ErrReadToken(err))
-			return utils.ErrReadToken(err)
+			return nil
 		}
 		provider := tokenObj["meshery-provider"]
 		var data [][]string

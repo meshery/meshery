@@ -20,6 +20,7 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -59,12 +60,13 @@ mesheryctl mesh validate istio --adapter meshery-istio --spec smi
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return utils.ErrLoadConfig(err)
+			utils.Log.Error(err)
+			return nil
 		}
 
 		prefs, err := utils.GetSessionData(mctlCfg)
 		if err != nil {
-			log.Fatalln(ErrGettingSessionData(err))
+			utils.Log.Error((ErrGettingSessionData(err)))
 		}
 		//resolve adapterUrl to adapter Location
 		for _, adapter := range prefs.MeshAdapters {
@@ -76,7 +78,7 @@ mesheryctl mesh validate istio --adapter meshery-istio --spec smi
 		}
 		//sync with available adapters
 		if err = validateAdapter(mctlCfg, meshName); err != nil {
-			log.Fatalln(err)
+			utils.Log.Error(ErrValidatingAdapters(errors.Wrap(err, "Unable to sync with available adapters. \n")))
 		}
 		log.Info("verified prerequisites")
 		return nil
@@ -86,13 +88,15 @@ mesheryctl mesh validate istio --adapter meshery-istio --spec smi
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return utils.ErrLoadConfig(err)
+			utils.Log.Error(err)
+			return nil
 		}
 		s := utils.CreateDefaultSpinner(fmt.Sprintf("Validating %s", meshName), fmt.Sprintf("\n%s validation successful", meshName))
 		s.Start()
 		_, err = sendOperationRequest(mctlCfg, meshName, false, spec)
 		if err != nil {
-			return ErrSendOperation(err)
+			utils.Log.Error(ErrSendOperation(err))
+			return nil
 		}
 		s.Stop()
 
@@ -100,7 +104,8 @@ mesheryctl mesh validate istio --adapter meshery-istio --spec smi
 			log.Infof("Verifying Operation")
 			_, err = waitForValidateResponse(mctlCfg, "Smi conformance test")
 			if err != nil {
-				return ErrWaitValidateResponse(err)
+				utils.Log.Error(ErrWaitValidateResponse(err))
+				return nil
 			}
 		}
 
