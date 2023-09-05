@@ -2,7 +2,6 @@ package system
 
 import (
 	"bytes"
-	"fmt"
 	"os"
 	"testing"
 
@@ -51,15 +50,11 @@ func setFlagValueAsUndefined(flag *pflag.Flag) {
 	_ = flag.Value.Set("")
 }
 
-func PrintSetChannel(stable, Edge string) string {
-	var ctx config.Context
-	return fmt.Sprintf("Channel set to %s-%s", ctx.Channel, ctx.Version)
-}
-
 type CmdTestInput struct {
 	Name             string
 	Args             []string
 	ExpectedResponse string
+	Token string
 }
 
 func TestViewCmd(t *testing.T) {
@@ -125,3 +120,62 @@ func TestSetCmd(t *testing.T) {
 	}
 	t.Log("Set ChannelCmd Passed")
 }
+
+//UNDER REVIEW
+// func TestSwitchCmd(t *testing.T) {
+// 	_, filename, _, ok := runtime.Caller(0)
+
+// 	if !ok {
+// 		t.Fatal("Not able to get current working directory")
+// 	}
+// 	currDir := filepath.Dir(filename)
+// 	SetupContextEnv(t)
+// 	tests := []utils.CmdTestInput{
+// 		{
+// 			Name:             "Switch docker Channel",
+// 			Args:             []string{"channel", "switch", "stable", "-y", "-c", "local"},
+// 			ExpectedResponse: "switch.docker.output.golden",
+// 		},
+// 	}
+// 	for _, tt := range tests {
+// 		t.Run(tt.Name, func(t *testing.T) {
+// 			buff := utils.SetupLogrusGrabTesting(t, false)
+// 			SystemCmd.SetOut(buff)
+// 			SystemCmd.SetArgs(tt.Args)
+// 			err := SystemCmd.Execute()
+// 			if err != nil {
+// 				if errSubstrs := tt.ErrorStringContains; len(errSubstrs) > 0 && checkErrorContains(err, errSubstrs) {
+// 					return
+// 				}
+// 				t.Error(err)
+// 			}
+// 			actualResponse := buff.String()
+// 			testdataDir := filepath.Join(currDir, "testdata/channel/")
+// 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
+// 			if *update {
+// 				golden.Write(actualResponse)
+// 			}
+// 			expectedResponse := golden.Load()
+// 			assert.Equal(t, expectedResponse, actualResponse)
+
+// 			path, err := os.Getwd()
+// 			if err != nil {
+// 				t.Error("unable to locate meshery directory")
+// 			}
+// 			filepath := path + "/testdata/channel/switch.output.golden"
+// 			content, err := os.ReadFile(filepath)
+// 			if err != nil {
+// 				t.Error(err)
+// 			}
+// 			actualResponse = string(content)
+// 			golden = utils.NewGoldenFile(t, "switchExpected.golden", testdataDir)
+// 			if *update {
+// 				golden.Write(actualResponse)
+// 			}
+// 			switchExpected := golden.Load()
+// 			assert.Equal(t, switchExpected, actualResponse)
+// 			BreakupFunc()
+// 		})
+// 	}
+// 	t.Log("Switch ChannelCmd Passed")
+// }
