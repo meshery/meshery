@@ -16,15 +16,12 @@ package perf
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/pkg/errors"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var (
@@ -54,22 +51,9 @@ mesheryctl perf result -o json
 mesheryctl perf result -o yaml
 	`,
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		if cmd.HasSubCommands() {
-			_ = cmd.Help()
-			os.Exit(0)
-		}
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
-		currCtx, err := mctlCfg.GetCurrentContext()
+		err := utils.PersistHealthCheck(cmd, args)
 		if err != nil {
 			return err
-		}
-		running, _ := utils.IsMesheryRunning(currCtx.GetPlatform())
-		if !running {
-			return errors.New(`meshery server is not running. run "mesheryctl system start" to start meshery`)
 		}
 		return nil
 	},

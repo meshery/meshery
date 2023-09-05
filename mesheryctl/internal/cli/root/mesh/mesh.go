@@ -20,7 +20,6 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"os"
 	"regexp"
 	"strings"
 	"time"
@@ -49,17 +48,9 @@ var (
 		Long:  "Provisioning, configuration, and on-going operational management of service meshes",
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			// if `mesh` command is ran without any subcommands, show Help and exit
-			if cmd.HasSubCommands() {
-				_ = cmd.Help()
-				os.Exit(0)
-			}
-			currCtx, err := mctlCfg.GetCurrentContext()
+			err := utils.PersistHealthCheck(cmd, args)
 			if err != nil {
 				return err
-			}
-			running, _ := utils.IsMesheryRunning(currCtx.GetPlatform())
-			if !running {
-				return errors.New(`meshery server is not running. run "mesheryctl system start" to start meshery`)
 			}
 			if len(args) > 0 {
 				// if a mesh name was provided, convert it the same format as adapter.Name

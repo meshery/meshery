@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"os/exec"
 	"regexp"
 	"strconv"
@@ -14,6 +15,7 @@ import (
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 
 	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -134,6 +136,27 @@ var semVer = regexp.MustCompile("(v[0-9]+.[0-9]+.[0-9]+)")
 func parseKubectlShortVersion(version string) ([3]int, error) {
 	versionString := semVer.FindString(version)
 	return getK8sVersion(versionString)
+}
+
+func PersistHealthCheck(cmd *cobra.Command, args []string) error {
+	if cmd.HasSubCommands() {
+		_ = cmd.Help()
+		os.Exit(0)
+	}
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		Log.Error(err)
+		return nil
+	}
+	currCtx, err := mctlCfg.GetCurrentContext()
+	if err != nil {
+		return err
+	}
+	running, _ := IsMesheryRunning(currCtx.GetPlatform())
+	if !running {
+		return errors.New(`meshery server is not running. run "mesheryctl system start" to start meshery`)
+	}
+	return nil
 }
 
 // IsMesheryRunning checks if the meshery server containers are up and running
