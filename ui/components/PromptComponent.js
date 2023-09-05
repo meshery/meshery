@@ -7,7 +7,9 @@ import {
   DialogActions,
   DialogContentText,
   DialogContent,
-  DialogTitle
+  DialogTitle,
+  FormControlLabel,
+  Checkbox
 } from "@material-ui/core";
 import classNames from 'classnames';
 
@@ -67,7 +69,9 @@ class PromptComponent extends React.Component {
       show : false,
       title : "",
       subtitle : "",
-      options : []
+      options : [],
+      isChecked : false,
+      showCheckbox : false
     }
     this.promiseInfo = {};
   }
@@ -80,6 +84,7 @@ class PromptComponent extends React.Component {
         title : passed.title,
         subtitle : passed.subtitle,
         options : passed.options,
+        showCheckbox : passed.showCheckbox === true,
         show : true
       });
     });
@@ -89,9 +94,20 @@ class PromptComponent extends React.Component {
     this.setState({ show : false });
   };
 
+  handleCheckboxChange = () => {
+    this.setState((prevState) => ({
+      isChecked : !prevState.isChecked,
+    }));
+  };
+
+  getCheckboxState = () => {
+    return this.state.isChecked;
+  };
+
+
   render() {
     const {
-      show, options, title, subtitle
+      show, options, title, subtitle, isChecked, showCheckbox
     } = this.state;
     const { classes } = this.props;
     const { resolve } = this.promiseInfo;
@@ -116,6 +132,20 @@ class PromptComponent extends React.Component {
                   {subtitle}
                 </Typography>
               </DialogContentText>
+              {showCheckbox && (
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={isChecked}
+                      onChange={() => {
+                        this.handleCheckboxChange();
+                      }}
+                      color="primary"
+                    />
+                  }
+                  label="Do not show again"
+                />
+              )}
             </DialogContent>
           }
           <DialogActions className={classes.actions}>
