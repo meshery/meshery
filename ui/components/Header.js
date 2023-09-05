@@ -45,159 +45,159 @@ import RemoteComponent from './RemoteComponent';
 import { CapabilitiesRegistry } from "../utils/disabledComponents";
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import dataFetch from '../lib/data-fetch';
-import { withNotify } from '../utils/hooks/useNotification';
+import { useNotification, withNotify } from '../utils/hooks/useNotification';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
-  secondaryBar : { zIndex : 0, },
-  menuButton : { marginLeft : -theme.spacing(1), },
-  iconButtonAvatar : { padding : 4, },
-  link : {
-    textDecoration : 'none',
-    color : theme.palette.secondary.link
+  secondaryBar: { zIndex: 0, },
+  menuButton: { marginLeft: -theme.spacing(1), },
+  iconButtonAvatar: { padding: 4, },
+  link: {
+    textDecoration: 'none',
+    color: theme.palette.secondary.link
 
   },
-  button : { borderColor : lightColor, },
-  notifications : {
-    paddingLeft : theme.spacing(4),
-    paddingRight : theme.spacing(0),
-    marginLeft : theme.spacing(4),
+  button: { borderColor: lightColor, },
+  notifications: {
+    paddingLeft: theme.spacing(4),
+    paddingRight: theme.spacing(0),
+    marginLeft: theme.spacing(4),
   },
-  userContainer : {
-    paddingLeft : 1,
-    display : 'flex',
+  userContainer: {
+    paddingLeft: 1,
+    display: 'flex',
 
 
-    alignItems : 'center'
+    alignItems: 'center'
   },
-  userSpan : { marginLeft : theme.spacing(1), },
-  pageTitleWrapper : {
-    flexGrow : 1,
-    marginRight : 'auto',
+  userSpan: { marginLeft: theme.spacing(1), },
+  pageTitleWrapper: {
+    flexGrow: 1,
+    marginRight: 'auto',
   },
-  betaBadge : { color : '#EEEEEE', fontWeight : '300', fontSize : '13px' },
-  pageTitle : {
-    paddingLeft : theme.spacing(2),
-    fontSize : '1.25rem',
-    [theme.breakpoints.up('sm')] : { fontSize : '1.65rem', },
+  betaBadge: { color: '#EEEEEE', fontWeight: '300', fontSize: '13px' },
+  pageTitle: {
+    paddingLeft: theme.spacing(2),
+    fontSize: '1.25rem',
+    [theme.breakpoints.up('sm')]: { fontSize: '1.65rem', },
   },
-  appBarOnDrawerOpen : {
-    backgroundColor : theme.palette.secondary.mainBackground,
-    shadowColor : " #808080",
-    zIndex : theme.zIndex.drawer + 1,
-    [theme.breakpoints.between(635, 732)] : { padding : theme.spacing(0.75, 1.4), },
-    [theme.breakpoints.between(600, 635)] : { padding : theme.spacing(0.4, 1.4), },
+  appBarOnDrawerOpen: {
+    backgroundColor: theme.palette.secondary.mainBackground,
+    shadowColor: " #808080",
+    zIndex: theme.zIndex.drawer + 1,
+    [theme.breakpoints.between(635, 732)]: { padding: theme.spacing(0.75, 1.4), },
+    [theme.breakpoints.between(600, 635)]: { padding: theme.spacing(0.4, 1.4), },
   },
-  appBarOnDrawerClosed : {
-    backgroundColor : theme.palette.secondary.mainBackground,
-    zIndex : theme.zIndex.drawer + 1,
+  appBarOnDrawerClosed: {
+    backgroundColor: theme.palette.secondary.mainBackground,
+    zIndex: theme.zIndex.drawer + 1,
   },
-  toolbarOnDrawerClosed : {
+  toolbarOnDrawerClosed: {
 
-    minHeight : 59,
-    padding : theme.spacing(2.4),
-    paddingLeft : 34,
-    paddingRight : 34,
-    backgroundColor : theme.palette.secondary.mainBackground,
+    minHeight: 59,
+    padding: theme.spacing(2.4),
+    paddingLeft: 34,
+    paddingRight: 34,
+    backgroundColor: theme.palette.secondary.mainBackground,
   },
-  toolbarOnDrawerOpen : {
-    minHeight : 58,
-    padding : theme.spacing(2.4),
-    paddingLeft : 34,
-    paddingRight : 34,
-    backgroundColor : theme.palette.secondary.mainBackground,
-    [theme.breakpoints.between(620, 732)] : { minHeight : 68, paddingLeft : 20, paddingRight : 20 },
+  toolbarOnDrawerOpen: {
+    minHeight: 58,
+    padding: theme.spacing(2.4),
+    paddingLeft: 34,
+    paddingRight: 34,
+    backgroundColor: theme.palette.secondary.mainBackground,
+    [theme.breakpoints.between(620, 732)]: { minHeight: 68, paddingLeft: 20, paddingRight: 20 },
   },
-  itemActiveItem : { color : "#00B39F" },
-  headerIcons : { fontSize : "1.5rem", height : "1.5rem", width : "1.5rem" },
-  cbadge : {
-    fontSize : "0.65rem",
-    backgroundColor : "white",
-    borderRadius : "50%",
-    color : "black",
-    height : "1.30rem",
-    width : "1.30rem",
-    display : "flex",
-    justifyContent : "center",
-    alignItems : "center",
-    position : "absolute",
-    zIndex : 1,
-    right : "-0.75rem",
-    top : "-0.29rem"
+  itemActiveItem: { color: "#00B39F" },
+  headerIcons: { fontSize: "1.5rem", height: "1.5rem", width: "1.5rem" },
+  cbadge: {
+    fontSize: "0.65rem",
+    backgroundColor: "white",
+    borderRadius: "50%",
+    color: "black",
+    height: "1.30rem",
+    width: "1.30rem",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
+    zIndex: 1,
+    right: "-0.75rem",
+    top: "-0.29rem"
   },
-  cbadgeContainer : {
-    display : "flex",
-    justifyContent : "center",
-    alignItems : "center",
-    position : "relative"
+  cbadgeContainer: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "relative"
   },
-  icon : {
-    width : 24,
-    height : 24
+  icon: {
+    width: 24,
+    height: 24
   },
-  Chip : {
-    width : '12.8rem',
-    textAlign : 'center',
-    cursor : "pointer",
-    "& .MuiChip-label" : {
-      flexGrow : 1
+  Chip: {
+    width: '12.8rem',
+    textAlign: 'center',
+    cursor: "pointer",
+    "& .MuiChip-label": {
+      flexGrow: 1
     },
-    overflow : "hidden",
-    whiteSpace : "nowrap",
-    textOverflow : "ellipsis"
+    overflow: "hidden",
+    whiteSpace: "nowrap",
+    textOverflow: "ellipsis"
   },
-  cMenuContainer : {
-    backgroundColor : theme.palette.secondary.headerColor,
-    marginTop : "-0.7rem",
-    borderRadius : "3px",
-    padding : "1rem",
-    zIndex : 1201,
-    boxShadow : "20px #979797",
-    transition : "linear .2s",
-    transitionProperty : "height"
+  cMenuContainer: {
+    backgroundColor: theme.palette.secondary.headerColor,
+    marginTop: "-0.7rem",
+    borderRadius: "3px",
+    padding: "1rem",
+    zIndex: 1201,
+    boxShadow: "20px #979797",
+    transition: "linear .2s",
+    transitionProperty: "height"
   },
-  alertEnter : {
-    opacity : "0",
-    transform : "scale(0.9)",
+  alertEnter: {
+    opacity: "0",
+    transform: "scale(0.9)",
   },
-  alertEnterActive : {
-    opacity : "1",
-    transform : "translateX(0)",
-    transition : "opacity 300ms, transform 300ms"
+  alertEnterActive: {
+    opacity: "1",
+    transform: "translateX(0)",
+    transition: "opacity 300ms, transform 300ms"
   },
-  chip : {
-    margin : "0.25rem 0",
+  chip: {
+    margin: "0.25rem 0",
   },
-  AddIcon : {
-    width : theme.spacing(2.5),
-    paddingRight : theme.spacing(0.5),
+  AddIcon: {
+    width: theme.spacing(2.5),
+    paddingRight: theme.spacing(0.5),
   },
-  searchIcon : {
-    width : theme.spacing(3.5),
+  searchIcon: {
+    width: theme.spacing(3.5),
   },
-  darkThemeToggle : {
+  darkThemeToggle: {
 
-    marginLeft : "1.5em",
+    marginLeft: "1.5em",
 
   },
 
-  toggle : {
-    appearance : "none",
-    outline : "none",
-    cursor : "pointer",
-    width : "1.5rem",
-    height : "1.5rem",
-    boxShadow : "inset calc(1.5rem * 0.33) calc(1.5rem * -0.25) 0",
-    borderRadius : "999px",
-    color : "#00B39F",
-    transition : "all 500ms",
-    zIndex : "1",
-    '&:checked' : {
-      width : "1.5rem",
-      height : "1.5rem",
-      borderRadius : "50%",
-      background : "orange",
-      boxShadow : "0 0 10px orange, 0 0 60px orange,0 0 200px yellow, inset 0 0 80px yellow",
+  toggle: {
+    appearance: "none",
+    outline: "none",
+    cursor: "pointer",
+    width: "1.5rem",
+    height: "1.5rem",
+    boxShadow: "inset calc(1.5rem * 0.33) calc(1.5rem * -0.25) 0",
+    borderRadius: "999px",
+    color: "#00B39F",
+    transition: "all 500ms",
+    zIndex: "1",
+    '&:checked': {
+      width: "1.5rem",
+      height: "1.5rem",
+      borderRadius: "50%",
+      background: "orange",
+      boxShadow: "0 0 10px orange, 0 0 60px orange,0 0 200px yellow, inset 0 0 80px yellow",
     }
   },
 
@@ -269,18 +269,18 @@ function K8sContextMenu({
   const [showFullContextMenu, setShowFullContextMenu] = React.useState(false);
   const [transformProperty, setTransformProperty] = React.useState(100);
   const deleteCtxtRef = React.createRef();
-
+  const { notify } = useNotification()
   const styleSlider = {
-    position : "absolute",
-    left : "-5rem",
-    zIndex : "-1",
-    bottom : showFullContextMenu ? "-55%" : "-110%",
-    transform : showFullContextMenu ? `translateY(${transformProperty}%)` : "translateY(0)"
+    position: "absolute",
+    left: "-5rem",
+    zIndex: "-1",
+    bottom: showFullContextMenu ? "-55%" : "-110%",
+    transform: showFullContextMenu ? `translateY(${transformProperty}%)` : "translateY(0)"
   }
 
   const ctxStyle = {
     ...disabledStyle,
-    marginRight : "0.5rem",
+    marginRight: "0.5rem",
   }
 
   const getOperatorStatus = (contextId) => {
@@ -334,33 +334,33 @@ function K8sContextMenu({
     return STATUS.NOT_CONNECTED;
   }
 
-  const handleKubernetesClick = (id) => {
-    updateProgress({ showProgress : true })
-    const notify = this.props.notify;
+  const handleKubernetesClick = (name, connectionID) => {
+
+    updateProgress({ showProgress: true })
+    // const notify = this.props.notify;
     pingKubernetes(
-      successHandlerGenerator (notify, "Kubernetes pinged", () => updateProgress({ showProgress : false })),
-      errorHandlerGenerator(notify, "Kubernetes not pinged", () => updateProgress({ showProgress : false })),
-      id
+      successHandlerGenerator(notify, `Kubernetes pinged ${name}`, () => updateProgress({ showProgress: false }),),
+      errorHandlerGenerator(notify, `Not able to  ping kubernetes ${name}`, () => updateProgress({ showProgress: false })),
+      connectionID
     )
   }
 
   const handleKubernetesDelete = (name, connectionID) => async () => {
     let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
-      title : `Delete ${name} context ?`,
-      subtitle : `Are you sure you want to delete ${name} cluster from Meshery?`,
-      options : ["CONFIRM", "CANCEL"]
+      title: `Delete ${name} context ?`,
+      subtitle: `Are you sure you want to delete ${name} cluster from Meshery?`,
+      options: ["CONFIRM", "CANCEL"]
     });
     if (responseOfDeleteK8sCtx === "CONFIRM") {
       const successCallback = async () => {
         const updatedConfig = await loadActiveK8sContexts()
         if (Array.isArray(updatedConfig)) {
-          updateK8SConfig({ k8sConfig : updatedConfig })
+          updateK8SConfig({ k8sConfig: updatedConfig })
         }
       }
-      const notify = this.props.notify;
       deleteKubernetesConfig(
-        successHandlerGenerator(notify, "Kubernetes config removed", successCallback),
-        errorHandlerGenerator(notify, "Not able to remove config"),
+        successHandlerGenerator(notify, `Kubernetes config removed for ${name}`, successCallback),
+        errorHandlerGenerator(notify, `Not able to remove config for ${name}`),
         connectionID
       )
     }
@@ -485,16 +485,16 @@ function K8sContextMenu({
                         <Chip
                           label={ctx?.name}
                           onDelete={handleKubernetesDelete(ctx.name, ctx.connection_id)}
-                          onClick={() => handleKubernetesClick(ctx.connection_id)}
+                          onClick={() => handleKubernetesClick(ctx.name, ctx.connection_id)}
                           avatar={
                             meshStatus ?
                               <BadgeAvatars>
                                 <Avatar src="/static/img/kubernetes.svg" className={classes.icon}
-                                  style={operStatus ? {} : { opacity : 0.2 }}
+                                  style={operStatus ? {} : { opacity: 0.2 }}
                                 />
                               </BadgeAvatars> :
                               <Avatar src="/static/img/kubernetes.svg" className={classes.icon}
-                                style={operStatus ? {} : { opacity : 0.2 }}
+                                style={operStatus ? {} : { opacity: 0.2 }}
                               />
                           }
                           variant="filled"
