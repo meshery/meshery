@@ -70,7 +70,8 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return utils.ErrLoadConfig(err)
+			utils.Log.Error(err)
+			return nil
 		}
 
 		deployURL := mctlCfg.GetBaseMesheryURL() + "/api/application/deploy"
@@ -86,14 +87,14 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 
 			req, err = utils.NewRequest("GET", appURL+"?search="+appName, nil)
 			if err != nil {
-				utils.Log.Error(utils.ErrCreatingRequest(err))
-				return utils.ErrCreatingRequest(err)
+				utils.Log.Error(err)
+				return nil
 			}
 
 			resp, err := utils.MakeRequest(req)
 			if err != nil {
-				utils.Log.Error(utils.ErrRequestResponse(err))
-				return utils.ErrRequestResponse(err)
+				utils.Log.Error(err)
+				return nil
 			}
 
 			var response *models.ApplicationsAPIResponse
@@ -101,18 +102,18 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 			body, err := io.ReadAll(resp.Body)
 			if err != nil {
 				utils.Log.Error(utils.ErrReadResponseBody(err))
-				return utils.ErrReadResponseBody(err)
+				return nil
 			}
 			err = json.Unmarshal(body, &response)
 			if err != nil {
 				utils.Log.Error(utils.ErrUnmarshal(err))
-				return utils.ErrUnmarshal(err)
+				return nil
 			}
 
 			index := 0
 			if len(response.Applications) == 0 {
 				utils.Log.Error(utils.ErrNotFound(errors.New("no app found with the given name")))
-				return ErrAppFound()
+				return nil
 			} else if len(response.Applications) == 1 {
 				appFile = response.Applications[0].ApplicationFile
 			} else {
@@ -127,8 +128,8 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 			}
 			app, err := importApp(sourceType, file, appURL, !skipSave)
 			if err != nil {
-				utils.Log.Error(ErrImportApp(err))
-				return ErrImportApp(err)
+				utils.Log.Error(err)
+				return nil
 			}
 
 			appFile = app.ApplicationFile
@@ -136,19 +137,21 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 
 		req, err = utils.NewRequest("POST", deployURL, bytes.NewBuffer([]byte(appFile)))
 		if err != nil {
-			return utils.ErrCreatingRequest(err)
+			utils.Log.Error(err)
+			return nil
 		}
 
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			return utils.ErrRequestResponse(err)
+			utils.Log.Error(err)
+			return nil
 		}
 
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			utils.Log.Error(utils.ErrReadResponseBody(err))
-			return utils.ErrReadResponseBody(err)
+			utils.Log.Error(err)
+			return nil
 		}
 
 		if res.StatusCode == 200 {

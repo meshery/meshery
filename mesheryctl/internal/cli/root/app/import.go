@@ -55,7 +55,8 @@ mesheryctl app import -f [file/URL] -s [source-type]
 		var err error
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return utils.ErrLoadConfig(err)
+			utils.Log.Error(err)
+			return nil
 		}
 
 		appURL := mctlCfg.GetBaseMesheryURL() + "/api/application"
@@ -68,8 +69,8 @@ mesheryctl app import -f [file/URL] -s [source-type]
 		app, err := importApp(sourceType, file, appURL, true)
 
 		if err != nil {
-			utils.Log.Error(ErrImportApp(err))
-			return ErrImportApp(err)
+			utils.Log.Error(err)
+			return nil
 		}
 
 		fmt.Printf("App file imported successfully. \nID of the app: %s \n", utils.TruncateID(app.ID.String()))
@@ -102,12 +103,12 @@ func importApp(sourceType string, file string, appURL string, save bool) (*model
 		}
 		req, err = utils.NewRequest("POST", appURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
 		if err != nil {
-			return nil, utils.ErrCreatingRequest(err)
+			return nil, err
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
-			return nil, utils.ErrRequestResponse(err)
+			return nil, err
 		}
 		utils.Log.Debug("App file saved")
 		var response []*models.MesheryApplication

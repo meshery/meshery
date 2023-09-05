@@ -61,7 +61,8 @@ mesheryctl filter view --all
 			}
 			filter, isID, err = utils.ValidId(args[0], "filter")
 			if err != nil {
-				return ErrFilterNameOrID(err)
+				utils.Log.Error(ErrFilterNameOrID(err))
+				return nil
 			}
 		}
 
@@ -82,11 +83,13 @@ mesheryctl filter view --all
 
 		req, err := utils.NewRequest("GET", urlString, nil)
 		if err != nil {
-			return utils.ErrCreatingRequest(err)
+			utils.Log.Error(err)
+			return nil
 		}
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			return utils.ErrCreatingRequest(err)
+			utils.Log.Error(err)
+			return nil
 		}
 
 		defer res.Body.Close()
@@ -97,17 +100,20 @@ mesheryctl filter view --all
 
 		var dat map[string]interface{}
 		if err = json.Unmarshal(body, &dat); err != nil {
-			return utils.ErrUnmarshal(err)
+			utils.Log.Error(utils.ErrUnmarshal(err))
+			return nil
 		}
 
 		if isID {
 			if body, err = json.MarshalIndent(dat, "", "  "); err != nil {
-				return utils.ErrMarshalIndent(err)
+				utils.Log.Error(utils.ErrMarshalIndent(err))
+				return nil
 			}
 		} else if viewAllFlag {
 			// only keep the filter key from the response when viewing all the filters
 			if body, err = json.MarshalIndent(map[string]interface{}{"filters": dat["filters"]}, "", "  "); err != nil {
-				return utils.ErrMarshalIndent(err)
+				utils.Log.Error(utils.ErrMarshalIndent(err))
+				return nil
 			}
 		} else {
 			// use the first match from the result when searching by filter name
@@ -117,16 +123,19 @@ mesheryctl filter view --all
 				return nil
 			}
 			if body, err = json.MarshalIndent(arr[0], "", "  "); err != nil {
-				return utils.ErrMarshalIndent(err)
+				utils.Log.Error(utils.ErrMarshalIndent(err))
+				return nil
 			}
 		}
 
 		if outFormatFlag == "yaml" {
 			if body, err = yaml.JSONToYAML(body); err != nil {
-				return utils.ErrJSONToYAML(err)
+				utils.Log.Error(utils.ErrJSONToYAML(err))
+				return nil
 			}
 		} else if outFormatFlag != "json" {
-			return utils.ErrOutFormatFlag()
+			utils.Log.Error(utils.ErrOutFormatFlag())
+			return nil
 		}
 		utils.Log.Info(string(body))
 		return nil

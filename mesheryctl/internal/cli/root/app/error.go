@@ -73,8 +73,8 @@ func ErrAppFound() error {
 	return errors.New(ErrAppFoundCode, errors.Alert,
 		[]string{"App not found"},
 		[]string{"No app found with a given name"},
-		[]string{"Application name not provided or doesn't exist"},
-		[]string{"Run `mesheryctl app list`to display list of applications"},
+		[]string{"Application name not provided"},
+		[]string{"Provide an app name. Use `mesheryctl app list`to display list of applications"},
 	)
 }
 
