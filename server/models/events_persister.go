@@ -8,11 +8,24 @@ import (
 )
 
 // EventsPersister assists with persisting events in local SQLite DB
-type EventsPersister struct{
+type EventsPersister struct {
 	DB *database.Handler
 }
 
-func (e *EventsPersister) GetAllEvents(search, status string, eventsFilter *events.EventsFilter, userID uuid.UUID) ([]*events.Event, int64, error) {
+type EventsResponse struct {
+	Events               []*events.Event         `json:"events"`
+	Page                 int                     `json:"page"`
+	PageSize             int                     `json:"page_size"`
+	CountBySeverityLevel []*CountBySeverityLevel `json:"count_by_severity_level"`
+	TotalCount           int64                   `json:"total_count"`
+}
+
+type CountBySeverityLevel struct {
+	Severity string `json:"severity"`
+	Count    int    `json:"count"`
+}
+
+func (e *EventsPersister) GetAllEvents(eventsFilter *events.EventsFilter, userID uuid.UUID) (*EventsResponse, error) {
 	eventsDB := []*events.Event{}
 	finder := e.DB.Model(&events.Event{}).Where("user_id = ?", userID)
 
@@ -28,12 +41,12 @@ func (e *EventsPersister) GetAllEvents(search, status string, eventsFilter *even
 		finder = finder.Where("severity IN ?", eventsFilter.Severity)
 	}
 
-	if search != "" {
-		finder = finder.Where("description LIKE ?", "%"+search+"%")
+	if eventsFilter.Search != "" {
+		finder = finder.Where("description LIKE ?", "%"+eventsFilter.Search+"%")
 	}
 
-	if status != "" {
-		finder = finder.Where("status = ?", status)
+	if eventsFilter.Status != "" {
+		finder = finder.Where("status = ?", eventsFilter.Status)
 	}
 
 	if eventsFilter.Order == "desc" {
@@ -55,10 +68,22 @@ func (e *EventsPersister) GetAllEvents(search, status string, eventsFilter *even
 
 	err := finder.Scan(&eventsDB).Error
 	if err != nil {
-		return nil, count, err
+		return nil, err
 	}
-	return eventsDB, count, nil
-}	
+
+	countBySeverity, err := e.getCountBySeverity(userID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &EventsResponse{
+		Events:        eventsDB,
+		PageSize:      eventsFilter.Limit,
+		TotalCount:    count,
+		CountBySeverityLevel: countBySeverity,
+	}, nil
+}
 
 func (e *EventsPersister) UpdateEventStatus(eventID uuid.UUID, status string) (*events.Event, error) {
 	err := e.DB.Model(&events.Event{ID: eventID}).Update("status", status).Error
@@ -88,4 +113,14 @@ func (e *EventsPersister) PersistEvent(event *events.Event) error {
 		return ErrPersistEvent(err)
 	}
 	return nil
+}
+
+func (e *EventsPersister) getCountBySeverity(userID uuid.UUID) ([]*CountBySeverityLevel, error) {
+	eventsBySeverity := []*CountBySeverityLevel{}
+	err := e.DB.Model(&events.Event{}).Select("severity, count(severity) as count").Group("severity").Find(&eventsBySeverity).Error
+	if err != nil {
+		return nil, err
+	}
+	
+	return eventsBySeverity, nil
 }

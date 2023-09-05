@@ -6,7 +6,7 @@ import (
 )
 
 type MesheryEvents interface {
-	GetAllEvents(search, status string, eventFilter *events.EventsFilter, userID uuid.UUID) ([]*events.Event, int64, error)
+	GetAllEvents(eventFilter *events.EventsFilter, userID uuid.UUID) (*EventsResponse, error)
 	PersistEvent(data *events.Event) error
 	DeleteEvent(eventID uuid.UUID) error
 	UpdateEventStatus(eventID uuid.UUID, status string) (*events.Event, error)

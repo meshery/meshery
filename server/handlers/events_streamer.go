@@ -22,13 +22,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type EventsResponse struct {
-	Events []*events.Event `json:"events"`
-	Page     int          `json:"page"`
-	PageSize int          `json:"page_size"`
-	Count    int64       `json:"total_count"`
-}
-
 var (
 	flusherMap map[string]http.Flusher
 )
@@ -60,22 +53,17 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	filter.Offset = offset
 	filter.Order = order
 	filter.SortOn = sortOnCol
+	filter.Search = search
+	filter.Status = events.EventStatus(status)
 	
-	events, count, err := provider.GetAllEvents(search, status, filter, userID)
+	eventsResult, err := provider.GetAllEvents(filter, userID)
 	if err != nil {
 		h.log.Error(ErrGetEvents(err))
 		http.Error(w, ErrGetEvents(err).Error(), http.StatusInternalServerError)
 		return
 	}
-
-	res := &EventsResponse{
-		Events: events,
-		Page: page,
-		PageSize: limit,
-		Count: count,
-	}
-
-	err = json.NewEncoder(w).Encode(res)
+	eventsResult.Page = page
+	err = json.NewEncoder(w).Encode(eventsResult)
 	if err != nil {
 		h.log.Error(models.ErrMarshal(err, "events response"))
 		http.Error(w, models.ErrMarshal(err, "events response").Error(), http.StatusInternalServerError)
@@ -341,7 +329,7 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 		log.Debugf("Received an event.")
 		eventType := event.EventType.String()
 		eventBuilder := events.NewEvent().FromSystem(uuid.FromStringOrNil(event.Component)).
-		WithSeverity(events.EventSeverity(eventType)).WithDescription(event.Summary).WithCategory(event.ComponentName).WithAction("deploy").FromUser(userUUID)
+		WithSeverity(events.Informational).WithDescription(event.Summary).WithCategory(event.ComponentName).WithAction("deploy").FromUser(userUUID)
 		if strings.Contains(event.Summary, "removed") {
 			eventBuilder.WithAction("undeploy")
 		}

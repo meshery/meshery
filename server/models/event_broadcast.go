@@ -10,7 +10,7 @@ import (
 
 type clients struct {
 	listeners []chan interface{}
-	mu *sync.Mutex
+	mu        *sync.Mutex
 }
 
 type EventBroadcast struct {
@@ -21,7 +21,7 @@ func (c *EventBroadcast) Subscribe(id uuid.UUID) (chan interface{}, func()) {
 	clientMap, _ := c.clients.LoadOrStore(id, &clients{mu: new(sync.Mutex)})
 	ch := make(chan interface{})
 	connectedClient := clientMap.(*clients)
-	
+
 	connectedClient.mu.Lock()
 	connectedClient.listeners = append(connectedClient.listeners, ch)
 	connectedClient.mu.Unlock()
@@ -33,7 +33,7 @@ func (c *EventBroadcast) Subscribe(id uuid.UUID) (chan interface{}, func()) {
 			if client == ch {
 				fmt.Println("inside listeneres: ", id)
 				close(client)
-				connectedClient.listeners = append(connectedClient.listeners[:index], connectedClient.listeners[index + 1:]...)
+				connectedClient.listeners = append(connectedClient.listeners[:index], connectedClient.listeners[index+1:]...)
 			}
 		}
 	}
