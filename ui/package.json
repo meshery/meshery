@@ -110,12 +110,12 @@
     "styled-jsx": "^4.0.1",
     "tar": "^6.1.15",
     "universal-cookie": "^4.0.4",
-    "uuid": "^8.3.2"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^2.2.3",
     "@babel/core": "^7.21.3",
-    "@babel/eslint-parser": "^7.18.2",
+    "@babel/eslint-parser": "^7.22.11",
     "@babel/traverse": "^7.20.1",
     "@babel/types": "^7.22.5",
     "cypress": "^12.0.2",

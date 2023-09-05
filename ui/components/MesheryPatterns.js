@@ -761,15 +761,25 @@ function MesheryPatterns({
       { credentials : "include", method : "POST", body : JSON.stringify(payload) },
       () => {
         updateProgress({ showProgress : false });
+        if (user.role_names.includes("admin")){
 
-        notify({
-          message : "Design Published",
-          event_type : EVENT_TYPES.SUCCESS
-        })
+          notify({
+            message : `${publishModal.pattern?.name} Design Published`,
+            event_type : EVENT_TYPES.SUCCESS
+          })
+        } else {
+          notify({
+            message : "Design queued for publishing into Meshery Catalog. Maintainers notified for review",
+            event_type : EVENT_TYPES.SUCCESS
+          })
+        }
       },
       handleError(ACTION_TYPES.PUBLISH_CATALOG),
     );
-  }
+  };
+
+
+
   function handleClone(patternID, name) {
     updateProgress({ showProgress : true });
     dataFetch(PATTERN_URL.concat(CLONE_URL, "/", patternID),
