@@ -15,6 +15,7 @@
 package system
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/layer5io/meshkit/errors"
@@ -45,10 +46,64 @@ const (
 	ErrRunPortForwardCode                = "1069"
 	ErrFailedGetEphemeralPortCode        = "1070"
 	ErrCreatingDockerClientCode          = "1071"
+	ErrWriteConfigCode                   = ""
+	ErrContextContentCode                = ""
+	ErrSwitchChannelResponseCode         = ""
+	ErrGetCurrentContextCode             = ""
+	ErrSetCurrentContextCode             = ""
 )
 
+var (
+	cmdType     string
+	contextdocs string = "See https://docs.meshery.io/reference/mesheryctl/system/context for usage details."
+	contextDir  string = "see that you have a correct context in your  meshconfig at `$HOME/.meshery/config.yaml`."
+)
+
+// A Format reference that returns Mesheryctl's URL docs for system command and sub commands
+func FormatErrorReference() string {
+	baseURL := "https://docs.meshery.io/reference/mesheryctl/system"
+	switch cmdType {
+	case "channel":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/channel")
+	case "context":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/context")
+	case "config":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/context")
+	case "dashboard":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/dashboard")
+	case "login":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/login")
+	case "logout":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/logout")
+	case "logs":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/logs")
+	case "provider":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/provider")
+	case "reset":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/reset")
+	case "restart":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/restart")
+	case "start":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/start")
+	case "status":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/status")
+	case "stop":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/stop")
+	case "token":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/token")
+	case "update":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/update")
+	}
+	return fmt.Sprintf("\nSee %s for usage details\n", baseURL)
+}
+
 func ErrHealthCheckFailed(err error) error {
-	return errors.New(ErrHealthCheckFailedCode, errors.Alert, []string{"Health checks failed"}, []string{err.Error()}, []string{"Health checks execution failed"}, []string{"Health checks execution should passed to start Meshery server successfully"})
+	return errors.New(ErrHealthCheckFailedCode,
+		errors.Alert,
+		[]string{"Health checks failed"},
+		[]string{"Failed to initialize healthchecker" + err.Error()},
+		[]string{"Health checks execution failed in starting Meshery server successfully"},
+		[]string{"Ensure Mesheryctl is running and has the right configurations."})
 }
 
 func ErrDownloadFile(err error, obj string) error {
@@ -154,4 +209,54 @@ func ErrCreatingDockerClient(err error) error {
 		[]string{"Error occurred while creating Docker client from config file", err.Error()},
 		[]string{"Missing or invalid docker config"},
 		[]string{"Please check the Docker config file for any errors or missing information. Make sure it is correctly formatted and contains all the required fields."})
+}
+
+func ErrContextContent() error {
+	return errors.New(
+		ErrContextContentCode,
+		errors.Fatal,
+		[]string{"Failed to detect context"},
+		[]string{"Unable to detect current-context"},
+		[]string{"Error while trying to fetch current-context in YML file"},
+		[]string{"Ensure a valid context name is provided"})
+}
+
+func ErrWriteConfig(err error) error {
+	return errors.New(
+		ErrWriteConfigCode,
+		errors.Fatal,
+		[]string{"Error in writing config"},
+		[]string{err.Error()},
+		[]string{"Unable to write to config file"},
+		[]string{"Ensure the right context is set. " + FormatErrorReference()})
+}
+
+func ErrSwitchChannelResponse() error {
+	return errors.New(
+		ErrSwitchChannelResponseCode,
+		errors.Alert,
+		[]string{"Unable to exectute command"},
+		[]string{"Channel switch aborted"},
+		[]string{"No user response provided"},
+		[]string{"Provide a response or use the -y flag for confirmation. " + FormatErrorReference()})
+}
+
+func ErrGetCurrentContext(err error) error {
+	return errors.New(
+		ErrGetCurrentContextCode,
+		errors.Fatal,
+		[]string{"Unable to get current-context"},
+		[]string{err.Error()},
+		[]string{"Invalid context name provided"},
+		[]string{"Ensure a valid context name is provided. " + contextdocs + "Also " + contextDir})
+}
+
+func ErrSetCurrentContext(err error) error {
+	return errors.New(
+		ErrSetCurrentContextCode,
+		errors.Fatal,
+		[]string{"Unable to set current-context"},
+		[]string{err.Error()},
+		[]string{"Invalid context name provided"},
+		[]string{"Ensure a valid context name is provided. " + contextdocs + "Also " + contextDir})
 }

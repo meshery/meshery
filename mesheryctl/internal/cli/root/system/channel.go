@@ -56,7 +56,8 @@ mesheryctl system channel view
 		}
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Fatalln(err, "error processing config")
+			utils.Log.Error(err)
+			return nil
 		}
 		focusedContext := tempContext
 		if focusedContext == "" {
@@ -74,12 +75,14 @@ mesheryctl system channel view
 
 		err = mctlCfg.SetCurrentContext(focusedContext)
 		if err != nil {
-			return err
+			utils.Log.Error(ErrSetCurrentContext(err))
+			return nil
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			return err
+			utils.Log.Error(ErrGetCurrentContext(err))
+			return nil
 		}
 		log.Print(PrintChannelAndVersionToStdout(*currCtx, focusedContext))
 		log.Println()
@@ -108,7 +111,8 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Fatalln(err, "error processing config")
+			utils.Log.Error(err)
+			return nil
 		}
 
 		focusedContext := mctlCfg.CurrentContext
@@ -144,7 +148,8 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
 		ContextContent, ok := mctlCfg.Contexts[focusedContext]
 		if !ok {
-			return errors.New("error while trying to fetch context content")
+			utils.Log.Error(ErrContextContent())
+			return nil
 		}
 
 		ContextContent.Version = version
@@ -152,14 +157,16 @@ mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
 		err = ContextContent.ValidateVersion()
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 
 		mctlCfg.Contexts[focusedContext] = ContextContent
 		viper.Set("contexts", mctlCfg.Contexts)
 		err = viper.WriteConfig()
 		if err != nil {
-			return err
+			utils.Log.Error(ErrWriteConfig(err))
+			return nil
 		}
 		log.Infof("Channel set to %s-%s", ContextContent.Channel, ContextContent.Version)
 		return nil
@@ -192,7 +199,8 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 		}
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			return errors.Wrapf(err, "failed to initialize healthchecker")
+			utils.Log.Error(ErrHealthCheckFailed(err))
+			return nil
 		}
 		return hc.RunPreflightHealthChecks()
 	},
@@ -201,7 +209,7 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Fatalln(err, "error processing config")
+			utils.Log.Error(err)
 		}
 		focusedContext := tempContext
 		if focusedContext == "" {
@@ -217,16 +225,19 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 		}
 
 		if !userResponse {
-			return errors.New("channel switch aborted")
+			utils.Log.Error(ErrSwitchChannelResponse())
+			return nil
 		}
 
 		err = setCmd.RunE(cmd, args)
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 		err = restartCmd.RunE(cmd, args)
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 		return nil
 	},
@@ -256,8 +267,8 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err = config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return fmt.Errorf("error processing config: %v", err)
-
+			utils.Log.Error(err)
+			return nil
 		}
 
 		// If no subcommands are provided, show usage
