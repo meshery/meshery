@@ -408,7 +408,7 @@ function MesheryApplications({
       updateProgress({ showProgress : false });
       notify({
         message : `"${name}" application downloaded`,
-        event_type : EVENT_TYPES.SUCCESS
+        event_type : EVENT_TYPES.INFO
       })
 
 

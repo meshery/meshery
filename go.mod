@@ -28,7 +28,7 @@ require (
 	github.com/go-errors/errors v1.4.2
 	github.com/go-openapi/runtime v0.19.15
 	github.com/go-openapi/strfmt v0.19.5
-	github.com/gofrs/uuid v4.0.0+incompatible
+	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang/protobuf v1.5.3
 	github.com/google/uuid v1.3.0
@@ -40,8 +40,8 @@ require (
 	github.com/jinzhu/copier v0.3.5
 	github.com/layer5io/gowrk2 v0.6.1
 	github.com/layer5io/meshery-operator v0.6.10
-	github.com/layer5io/meshkit v0.6.59
-	github.com/layer5io/meshsync v0.6.11
+	github.com/layer5io/meshkit v0.6.64
+	github.com/layer5io/meshsync v0.6.14
 	github.com/layer5io/nighthawk-go v1.0.6
 	github.com/layer5io/service-mesh-performance v0.6.1
 	github.com/lib/pq v1.10.7
@@ -64,11 +64,11 @@ require (
 	github.com/vmihailenco/taskq/v3 v3.2.9
 	golang.org/x/oauth2 v0.10.0
 	golang.org/x/text v0.12.0
-	gonum.org/v1/gonum v0.12.0
+	gonum.org/v1/gonum v0.14.0
 	google.golang.org/grpc v1.57.0
 	google.golang.org/protobuf v1.31.0
 	gopkg.in/yaml.v2 v2.4.0
-	gorm.io/gorm v1.25.3
+	gorm.io/gorm v1.25.4
 	k8s.io/api v0.26.1
 	k8s.io/apiextensions-apiserver v0.26.1
 	k8s.io/apimachinery v0.26.1
@@ -252,7 +252,7 @@ require (
 	golang.org/x/mod v0.12.0 // indirect
 	golang.org/x/net v0.14.0 // indirect
 	golang.org/x/sync v0.3.0 // indirect
-	golang.org/x/sys v0.11.0 // indirect
+	golang.org/x/sys v0.12.0 // indirect
 	golang.org/x/term v0.11.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	golang.org/x/tools v0.12.0 // indirect

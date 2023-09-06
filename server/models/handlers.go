@@ -41,9 +41,9 @@ type HandlerInterface interface {
 	GetUsers(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetUsersKeys(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	K8SConfigHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
-	GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request)
+	GetContextsFromK8SConfig(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	KubernetesPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	K8sRegistrationHandler(w http.ResponseWriter, req *http.Request)
+	K8sRegistrationHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	GetAllContexts(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetContext(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -70,6 +70,10 @@ type HandlerInterface interface {
 	AvailableAdaptersHandler(w http.ResponseWriter, req *http.Request)
 	EventStreamHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	AdapterPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+
+	GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	UpdateEventStatus(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	DeleteEvent(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	GrafanaConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -221,7 +225,7 @@ type HandlerConfig struct {
 	PerformanceResultChannel chan struct{}
 
 	ConfigurationChannel *ConfigurationChannel
-
+	EventBroadcaster        *EventBroadcast
 	DashboardK8sResourcesChan *DashboardK8sResourcesChan
 	MeshModelSummaryChannel   *meshmodel.SummaryChannel
 
