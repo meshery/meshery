@@ -280,4 +280,4 @@ See the [**Adapters**]({{ site.baseurl }}/concepts/architecture/adapters) sectio
 </table>
 <br>
 
-Please also see the [Troubleshooting Toolkit](https://docs.google.com/document/d/1q-aayRqx3QKIk2soTaTTTH-jmHcVXHwNYFsYkFawaME/edit#heading=h.ngupcd4j1pfm) and the [Meshery v0.7.0: Connection States (Kubnernetes) Design Review](https://discuss.layer5.io/t/meshery-v0-7-0-connection-states-kubnernetes-design-review/958)
+Please also see the [Troubleshooting Toolkit](https://docs.google.com/document/d/1q-aayRqx3QKIk2soTaTTTH-jmHcVXHwNYFsYkFawaME/edit#heading=h.ngupcd4j1pfm) and the [Meshery v0.7.0: Connection States (Kubnernetes) Design Review](http://discuss.meshery.io/t/meshery-v0-7-0-connection-states-kubnernetes-design-review/958)

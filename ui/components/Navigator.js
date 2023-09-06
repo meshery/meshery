@@ -438,7 +438,7 @@ const externlinks = [
   },
   {
     id : "forum",
-    href : "https://discuss.layer5.io",
+    href : "http://discuss.meshery.io",
     title : "Discussion Forum",
     icon : <ChatIcon style={drawerIconsStyle} />,
     external_icon : ExternalLinkIcon,

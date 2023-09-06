@@ -31,7 +31,7 @@ Use the Meshery command line interface, [mesheryctl]({{ site.baseurl }}/guides/m
  </pre>
  <br>
 
-{% include alert.html type="dark" title="All Supported Platforms" content="Don't find an answer to your question here? Ask on the <a href='https://discuss.layer5.io'>Discussion Forum</a>." %}
+{% include alert.html type="dark" title="All Supported Platforms" content="Don't find an answer to your question here? Ask on the <a href='http://discuss.meshery.io'>Discussion Forum</a>." %}
 
 
 ### Install using Docker Extension for Meshery

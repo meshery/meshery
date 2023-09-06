@@ -3,7 +3,7 @@
 # Configuration for new-issue-welcome - https://github.com/behaviorbot/new-issue-welcome
 # Comment to be posted to on first time issues
 newIssueWelcomeComment: >
-  Thanks for opening this issue. A contributor will be by to give feedback soon. In the meantime, please review the [Contributors' Welcome Guide](https://docs.meshery.io/project/community), engage in the [discussion forum](https://discuss.layer5.io), and be sure to join the [community Slack](http://slack.meshery.io/).
+  Thanks for opening this issue. A contributor will be by to give feedback soon. In the meantime, please review the [Contributors' Welcome Guide](https://docs.meshery.io/project/community), engage in the [discussion forum](http://discuss.meshery.io), and be sure to join the [community Slack](http://slack.meshery.io/).
 # Configuration for new-pr-welcome - https://github.com/behaviorbot/new-pr-welcome
 # Comment to be posted to on PRs from first time contributors in your repository
 newPRWelcomeComment: >

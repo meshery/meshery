@@ -19,7 +19,7 @@ alt="Meshery Logo" width="70%" /></picture></a><br /><br /></p>
   <img src="https://img.shields.io/github/actions/workflow/status/meshery/meshery/build-and-release-stable.yml?branch=master" /></a>
 <a href="https://bestpractices.coreinfrastructure.org/projects/3564" alt="CLI Best Practices">
   <img src="https://bestpractices.coreinfrastructure.org/projects/3564/badge" /></a>
-<a href="https://discuss.layer5.io" alt="Discuss Users">
+<a href="http://discuss.meshery.io" alt="Discuss Users">
   <img src="https://img.shields.io/discourse/users?label=discuss&logo=discourse&server=https%3A%2F%2Fdiscuss.layer5.io" /></a>
 <a href="https://slack.meshery.io" alt="Join Slack">
   <img src="https://img.shields.io/badge/Slack-@layer5.svg?logo=slack" /></a>
@@ -318,7 +318,7 @@ Find out more on the <a href="https://layer5.io/community#meshmate">Layer5 commu
 ✔️ <em><strong>Watch</strong></em> community <a href="https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0">meeting recordings</a>.<br />
 ✔️ <em>Fill-in</em> a <a href="https://layer5.io/newcomers">community member form</a> to gain access to community resources.
 <br />
-✔️ <em><strong>Discuss</strong></em> in the <a href="https://discuss.layer5.io">Community Forum</a>.<br />
+✔️ <em><strong>Discuss</strong></em> in the <a href="http://discuss.meshery.io">Community Forum</a>.<br />
 ✔️ <em><strong>Explore more</strong></em> in the <a href="https://layer5.io/community/handbook">Community Handbook</a>.<br />
 </p>
 </div><br /><br />

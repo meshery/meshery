@@ -17,7 +17,7 @@ assignees: ''
 
 - [MeshModel Repository](https://github.com/meshery/meshery/tree/master/server/meshmodel)
 - 🖥 [MeshModel Overview](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g226f5de5180_19_259)
-- 🙋🏾🙋🏼 Questions: [Discussion Forum](https://discuss.layer5.io) and [Community Slack](http://slack.layer5.io)
+- 🙋🏾🙋🏼 Questions: [Discussion Forum](http://discuss.meshery.io) and [Community Slack](http://slack.layer5.io)
 
 ## How to make updates to MeshModel
 

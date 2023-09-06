@@ -44,6 +44,6 @@ It also supports a collaborative environment, where DevOps engineers can share t
 {% include alert.html
     type="info"
     title="Help with Meshery Catalog"
-    content="If you have any questions or need assistance, please refer to the [Meshery Documentation](https://docs.meshery.io/) or reach out to our discussion form [layer5.io](https://discuss.layer5.io/)." %}
+    content="If you have any questions or need assistance, please refer to the [Meshery Documentation](https://docs.meshery.io/) or reach out to our discussion form [layer5.io](http://discuss.meshery.io/)." %}
 .
 
