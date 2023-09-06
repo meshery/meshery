@@ -326,6 +326,28 @@ const MeshModelComponent = ({ view, classes }) => {
       },
 
     },
+    {
+      name : "registrant",
+      label : "Registrant",
+      options : {
+        sort : view === COMPONENTS || view === RELATIONSHIPS ? true : false,
+        searchable : view === RELATIONSHIPS ? false : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+          return (
+            <TableCell align={"start"} key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
+            </TableCell>
+          );
+        },
+        customBodyRender : (value) => (
+          <Tooltip title={value} placement="top">
+            <div>{value}</div>
+          </Tooltip>
+        ),
+      },
+    }
   ]
 
   const meshmodel_options = {
