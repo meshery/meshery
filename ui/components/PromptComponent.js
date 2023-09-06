@@ -84,7 +84,7 @@ class PromptComponent extends React.Component {
         title : passed.title,
         subtitle : passed.subtitle,
         options : passed.options,
-        showCheckbox : passed.showCheckbox === true,
+        showCheckbox : !!passed.showCheckbox,
         show : true
       });
     });
