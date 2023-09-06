@@ -296,8 +296,7 @@ function K8sContextMenu({
       return STATUS.DISABLED;
     }
 
-    return context.operatorStatus.status === "ENABLED" ? STATUS.ACTIVE : STATUS.DISABLED;
-    
+    return context.operatorStatus.status === "ENABLED" ? STATUS.ACTIVE : STATUS.DISABLED; 
   }
 
   const getMeshSyncStatus = (contextId) => {
