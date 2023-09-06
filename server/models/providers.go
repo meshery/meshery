@@ -333,6 +333,7 @@ func (caps Capabilities) GetEndpointForFeature(feature Feature) (string, bool) {
 // Provider - interface for providers
 type Provider interface {
 	PreferencePersister
+	MesheryEvents
 
 	// Initialize will initialize a provider instance
 	// by loading its capabilities and other metadata in the memory
@@ -407,7 +408,7 @@ type Provider interface {
 	DeleteMesheryPatternResource(token, resourceID string) error
 
 	SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error)
-	GetMesheryFilters(tokenString, page, pageSize, search, order string) ([]byte, error)
+	GetMesheryFilters(tokenString, page, pageSize, search, order string, visibility string) ([]byte, error)
 	GetCatalogMesheryFilters(tokenString string, page, pageSize, search, order string) ([]byte, error)
 	PublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error)
 	UnPublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error)

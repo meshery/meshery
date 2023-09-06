@@ -15,6 +15,7 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
+	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 )
 
@@ -81,9 +82,13 @@ func (h *Handler) handleFilterPOST(
 	rw http.ResponseWriter,
 	r *http.Request,
 	_ *models.Preference,
-	_ *models.User,
+	user *models.User,
 	provider models.Provider,
 ) {
+	
+	userID := uuid.FromStringOrNil(user.ID)
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("filter").WithAction("update")
+	
 	defer func() {
 		_ = r.Body.Close()
 	}()
@@ -95,16 +100,32 @@ func (h *Handler) handleFilterPOST(
 	}
 	var parsedBody *models.MesheryFilterRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
-		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrGetFilter(err).Error(), http.StatusBadRequest)
+		invalidReqBody := ErrRequestBody(err)
+		h.log.Error(invalidReqBody)
+		
+		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": invalidReqBody,
+		}).WithDescription(fmt.Sprintf("Filter %s is corrupted.", parsedBody.FilterData.Name)).Build()
+		
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+
+		http.Error(rw, ErrSaveFilter(err).Error(), http.StatusBadRequest)
 		addMeshkitErr(&res, ErrGetFilter(err))
 		go h.EventsBuffer.Publish(&res)
 		return
 	}
 
+	eventBuilder.ActedUpon(*parsedBody.FilterData.ID)
+
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
-		h.log.Error(ErrRetrieveUserToken(err))
+		event := eventBuilder.WithSeverity(events.Critical).WithMetadata(map[string]interface{}{
+			"error": ErrRetrieveUserToken(err),
+		}).WithDescription("No auth token provided in the request.").Build()
+
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
 		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
 		addMeshkitErr(&res, ErrRetrieveUserToken(err))
 		go h.EventsBuffer.Publish(&res)
@@ -117,8 +138,6 @@ func (h *Handler) handleFilterPOST(
 	if err != nil {
 		h.log.Error(ErrEncodeFilter(err))
 		http.Error(rw, ErrEncodeFilter(err).Error(), http.StatusInternalServerError)
-		addMeshkitErr(&res, ErrEncodeFilter(err))
-		go h.EventsBuffer.Publish(&res)
 		return
 	}
 
@@ -152,15 +171,25 @@ func (h *Handler) handleFilterPOST(
 		if parsedBody.Save {
 			resp, err := provider.SaveMesheryFilter(token, &mesheryFilter)
 			if err != nil {
-				h.log.Error(ErrSaveFilter(err))
-				http.Error(rw, ErrSaveFilter(err).Error(), http.StatusInternalServerError)
+				errFilterSave := ErrSaveFilter(err)
+				h.log.Error(errFilterSave)
+				http.Error(rw, errFilterSave.Error(), http.StatusInternalServerError)
+				
+				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+					"error": errFilterSave,
+				}).WithDescription(fmt.Sprintf("Failed persisting filter %s", parsedBody.FilterData.Name)).Build()
+				
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
 				addMeshkitErr(&res, ErrSaveFilter(err))
 				go h.EventsBuffer.Publish(&res)
 				return
 			}
 
 			go h.config.ConfigurationChannel.PublishFilters()
-			h.formatFilterOutput(rw, resp, format, &res)
+			h.formatFilterOutput(rw, resp, format, &res, eventBuilder)
+
+			eventBuilder.WithSeverity(events.Informational).Build()
 			return
 		}
 
@@ -168,12 +197,11 @@ func (h *Handler) handleFilterPOST(
 		if err != nil {
 			h.log.Error(ErrEncodeFilter(err))
 			http.Error(rw, ErrEncodeFilter(err).Error(), http.StatusInternalServerError)
-			addMeshkitErr(&res, ErrEncodeFilter(err))
-			go h.EventsBuffer.Publish(&res)
 			return
 		}
-
-		h.formatFilterOutput(rw, byt, format, &res)
+		
+		h.formatFilterOutput(rw, byt, format, &res, eventBuilder)
+		_ = provider.PersistEvent(eventBuilder.Build())
 		return
 	}
 
@@ -186,7 +214,8 @@ func (h *Handler) handleFilterPOST(
 			return
 		}
 
-		h.formatFilterOutput(rw, resp, format, &res)
+		h.formatFilterOutput(rw, resp, format, &res, eventBuilder)
+		_ = provider.PersistEvent(eventBuilder.Build())
 		return
 	}
 }
@@ -203,6 +232,8 @@ func (h *Handler) handleFilterPOST(
 // ```?page={page-number}``` Default page number is 0
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
+//
+// ```?visibility={visibility}``` Default visibility is public
 // responses:
 //
 //	200: mesheryFiltersResponseWrapper
@@ -216,7 +247,7 @@ func (h *Handler) GetMesheryFiltersHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetMesheryFilters(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
+	resp, err := provider.GetMesheryFilters(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("visibility"))
 	if err != nil {
 		h.log.Error(ErrFetchFilter(err))
 		http.Error(rw, ErrFetchFilter(err).Error(), http.StatusInternalServerError)
@@ -435,13 +466,12 @@ func (h *Handler) GetMesheryFilterHandler(
 	fmt.Fprint(rw, string(resp))
 }
 
-func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, _ string, res *meshes.EventsResponse) {
+func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, _ string, res *meshes.EventsResponse, eventBuilder *events.EventBuilder) {
 	contentMesheryFilterSlice := make([]models.MesheryFilter, 0)
 	names := []string{}
 	if err := json.Unmarshal(content, &contentMesheryFilterSlice); err != nil {
 		http.Error(rw, ErrDecodeFilter(err).Error(), http.StatusInternalServerError)
-		addMeshkitErr(res, ErrDecodeFilter(err))
-		go h.EventsBuffer.Publish(res)
+		
 		return
 	}
 
@@ -450,9 +480,8 @@ func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, _ s
 	data, err := json.Marshal(&result)
 	if err != nil {
 		obj := "filter file"
-		http.Error(rw, ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
-		addMeshkitErr(res, ErrMarshal(err, obj))
-		go h.EventsBuffer.Publish(res)
+		http.Error(rw, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		
 		return
 	}
 
@@ -460,10 +489,12 @@ func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, _ s
 	fmt.Fprint(rw, string(data))
 	for _, filter := range contentMesheryFilterSlice {
 		names = append(names, filter.Name)
+		eventBuilder.ActedUpon(*filter.ID)
 	}
 	res.Details = "filters saved"
 	res.Summary = "following filters were saved: " + strings.Join(names, ",")
 	go h.EventsBuffer.Publish(res)
+	eventBuilder.WithDescription(fmt.Sprintf("Filter %s saved", strings.Join(names, ",")))
 }
 
 // swagger:route POST /api/filter/deploy FilterAPI idPostDeployFilterFile

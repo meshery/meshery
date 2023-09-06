@@ -58,9 +58,10 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 			utils.Log.Error(err)
 			return nil
 		}
-
-		searchString := strings.ReplaceAll(args[0], " ", "%20")
-
+		var searchString string
+		if len(args) > 0 {
+			searchString = strings.ReplaceAll(args[0], " ", "%20")
+		}
 		response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
 		if err != nil {
 			utils.Log.Error(ErrFetchFilter(err))
@@ -142,6 +143,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 	},
 }
 
+// Pagination(making multiple requests) to retrieve filter Data in batches
 func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*models.FiltersAPIResponse, error) {
 	var response *models.FiltersAPIResponse
 

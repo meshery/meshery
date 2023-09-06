@@ -9,6 +9,7 @@ project_status: stable
 lab: traefik-meshery-adapter
 github_link: https://github.com/meshery/meshery-traefik-mesh
 image: /assets/img/service-meshes/traefik-mesh.svg
+white_image: /assets/img/service-meshes/traefik-mesh.svg
 permalink: service-meshes/adapters/traefik-mesh
 language: en
 ---

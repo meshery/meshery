@@ -1,0 +1,126 @@
+package models
+
+import (
+	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshkit/database"
+	"github.com/layer5io/meshkit/models/events"
+	"gorm.io/gorm/clause"
+)
+
+// EventsPersister assists with persisting events in local SQLite DB
+type EventsPersister struct {
+	DB *database.Handler
+}
+
+type EventsResponse struct {
+	Events               []*events.Event         `json:"events"`
+	Page                 int                     `json:"page"`
+	PageSize             int                     `json:"page_size"`
+	CountBySeverityLevel []*CountBySeverityLevel `json:"count_by_severity_level"`
+	TotalCount           int64                   `json:"total_count"`
+}
+
+type CountBySeverityLevel struct {
+	Severity string `json:"severity"`
+	Count    int    `json:"count"`
+}
+
+func (e *EventsPersister) GetAllEvents(eventsFilter *events.EventsFilter, userID uuid.UUID) (*EventsResponse, error) {
+	eventsDB := []*events.Event{}
+	finder := e.DB.Model(&events.Event{}).Where("user_id = ?", userID)
+
+	if len(eventsFilter.Category) != 0 {
+		finder = finder.Where("category IN ?", eventsFilter.Category)
+	}
+
+	if len(eventsFilter.Action) != 0 {
+		finder = finder.Where("action IN ?", eventsFilter.Action)
+	}
+
+	if len(eventsFilter.Severity) != 0 {
+		finder = finder.Where("severity IN ?", eventsFilter.Severity)
+	}
+
+	if eventsFilter.Search != "" {
+		finder = finder.Where("description LIKE ?", "%"+eventsFilter.Search+"%")
+	}
+
+	if eventsFilter.Status != "" {
+		finder = finder.Where("status = ?", eventsFilter.Status)
+	}
+
+	if eventsFilter.Order == "desc" {
+		finder = finder.Order(clause.OrderByColumn{Column: clause.Column{Name: eventsFilter.SortOn}, Desc: true})
+	} else {
+		finder = finder.Order(eventsFilter.SortOn)
+	}
+
+	var count int64
+	finder.Count(&count)
+
+	if eventsFilter.Offset != 0 {
+		finder = finder.Offset(eventsFilter.Offset)
+	}
+
+	if eventsFilter.Limit != 0 {
+		finder = finder.Limit(eventsFilter.Limit)
+	}
+
+	err := finder.Scan(&eventsDB).Error
+	if err != nil {
+		return nil, err
+	}
+
+	countBySeverity, err := e.getCountBySeverity(userID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &EventsResponse{
+		Events:        eventsDB,
+		PageSize:      eventsFilter.Limit,
+		TotalCount:    count,
+		CountBySeverityLevel: countBySeverity,
+	}, nil
+}
+
+func (e *EventsPersister) UpdateEventStatus(eventID uuid.UUID, status string) (*events.Event, error) {
+	err := e.DB.Model(&events.Event{ID: eventID}).Update("status", status).Error
+	if err != nil {
+		return nil, err
+	}
+
+	updatedEvent := &events.Event{}
+	err = e.DB.Find(updatedEvent, "id = ?", eventID).Error
+	if err != nil {
+		return nil, err
+	}
+	return updatedEvent, nil
+}
+
+func (e *EventsPersister) DeleteEvent(eventID uuid.UUID) error {
+	err := e.DB.Delete(&events.Event{ID: eventID}).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (e *EventsPersister) PersistEvent(event *events.Event) error {
+	err := e.DB.Save(event).Error
+	if err != nil {
+		return ErrPersistEvent(err)
+	}
+	return nil
+}
+
+func (e *EventsPersister) getCountBySeverity(userID uuid.UUID) ([]*CountBySeverityLevel, error) {
+	eventsBySeverity := []*CountBySeverityLevel{}
+	err := e.DB.Model(&events.Event{}).Select("severity, count(severity) as count").Group("severity").Find(&eventsBySeverity).Error
+	if err != nil {
+		return nil, err
+	}
+	
+	return eventsBySeverity, nil
+}

@@ -69,7 +69,7 @@ mesheryctl app view --all
 			if viewAllFlag {
 				return ErrViewAppFlag()
 			}
-			applicationID, isID, err = utils.ValidId(args[0], "application")
+			applicationID, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "application")
 			if err != nil {
 				return ErrInvalidNameOrID(err)
 			}
