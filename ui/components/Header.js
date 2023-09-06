@@ -46,6 +46,7 @@ import { CapabilitiesRegistry } from "../utils/disabledComponents";
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import dataFetch from '../lib/data-fetch';
 import { withNotify } from '../utils/hooks/useNotification';
+import { useNotification } from '../utils/hooks/useNotification';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -269,6 +270,7 @@ function K8sContextMenu({
   const [showFullContextMenu, setShowFullContextMenu] = React.useState(false);
   const [transformProperty, setTransformProperty] = React.useState(100);
   const deleteCtxtRef = React.createRef();
+  const {notify} = useNotification();
 
   const styleSlider = {
     position : "absolute",
@@ -336,7 +338,6 @@ function K8sContextMenu({
 
   const handleKubernetesClick = (id) => {
     updateProgress({ showProgress : true })
-    const notify = this.props.notify;
     pingKubernetes(
       successHandlerGenerator (notify, "Kubernetes pinged", () => updateProgress({ showProgress : false })),
       errorHandlerGenerator(notify, "Kubernetes not pinged", () => updateProgress({ showProgress : false })),
@@ -357,7 +358,6 @@ function K8sContextMenu({
           updateK8SConfig({ k8sConfig : updatedConfig })
         }
       }
-      const notify = this.props.notify;
       deleteKubernetesConfig(
         successHandlerGenerator(notify, "Kubernetes config removed", successCallback),
         errorHandlerGenerator(notify, "Not able to remove config"),
