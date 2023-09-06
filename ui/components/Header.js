@@ -339,8 +339,8 @@ function K8sContextMenu({
     updateProgress({ showProgress : true })
     // const notify = this.props.notify;
     pingKubernetes(
-      successHandlerGenerator(notify, `Kubernetes pinged ${name}`, () => updateProgress({ showProgress : false }),),
-      errorHandlerGenerator(notify, `Not able to  ping kubernetes ${name}`, () => updateProgress({ showProgress : false })),
+      successHandlerGenerator(notify, `Kubernetes pinged: ${name}`, () => updateProgress({ showProgress : false }),),
+      errorHandlerGenerator(notify, `Not able to  ping kubernetes: ${name}`, () => updateProgress({ showProgress : false })),
       connectionID
     )
   }

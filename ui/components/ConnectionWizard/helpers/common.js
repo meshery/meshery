@@ -9,10 +9,16 @@ export const closeButtonForSnackbarAction = (closeSnackbar) => (key) => (
   </IconButton>
 )
 
+
+
 export const successHandlerGenerator = (notify, msg, cb) => (res) => {
+
   if (res !== undefined) {
     if (cb !== undefined) cb(res)
-    notify({ message : `${msg}: ${res}`, details : res, event_type : EVENT_TYPES.SUCCESS })
+    if (typeof res == "object") {
+      res = JSON.stringify(res)
+    }
+    notify({ message : `${msg}`, details : `${res}`, event_type : EVENT_TYPES.SUCCESS })
   }
 }
 
