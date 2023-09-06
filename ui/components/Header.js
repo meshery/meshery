@@ -270,7 +270,7 @@ function K8sContextMenu({
   const [showFullContextMenu, setShowFullContextMenu] = React.useState(false);
   const [transformProperty, setTransformProperty] = React.useState(100);
   const deleteCtxtRef = React.createRef();
-  const {notify} = useNotification();
+  const { notify } = useNotification();
 
   const styleSlider = {
     position : "absolute",
