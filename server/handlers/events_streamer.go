@@ -31,6 +31,7 @@ var (
 // ```search={description}``` If search is non empty then a search is performed on event description
 // ```?category=[eventcategory] Returns event belonging to provided categories ```
 // ```?action=[eventaction] Returns events belonging to provided actions ```
+// ```?status={[read/unread]}``` Return events filtered on event status Default is unread````
 // ```?severity=[eventseverity] Returns events belonging to provided severities ```
 // ```?sort={field} order the records based on passed field, defaults to updated_at```
 // ```?order={[asc/desc]}``` Default behavior is asc
