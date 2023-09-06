@@ -12,6 +12,7 @@ type EventsPersister struct {
 	DB *database.Handler
 }
 
+// swagger:response EventsResponse
 type EventsResponse struct {
 	Events               []*events.Event         `json:"events"`
 	Page                 int                     `json:"page"`
@@ -71,7 +72,7 @@ func (e *EventsPersister) GetAllEvents(eventsFilter *events.EventsFilter, userID
 		return nil, err
 	}
 
-	countBySeverity, err := e.getCountBySeverity(userID)
+	countBySeverity, err := e.getCountBySeverity(userID, eventsFilter.Status)
 
 	if err != nil {
 		return nil, err
@@ -115,9 +116,13 @@ func (e *EventsPersister) PersistEvent(event *events.Event) error {
 	return nil
 }
 
-func (e *EventsPersister) getCountBySeverity(userID uuid.UUID) ([]*CountBySeverityLevel, error) {
+func (e *EventsPersister) getCountBySeverity(userID uuid.UUID, eventStatus events.EventStatus) ([]*CountBySeverityLevel, error) {
+	if eventStatus == "" {
+		eventStatus = events.Unread
+	}
+
 	eventsBySeverity := []*CountBySeverityLevel{}
-	err := e.DB.Model(&events.Event{}).Select("severity, count(severity) as count").Group("severity").Find(&eventsBySeverity).Error
+	err := e.DB.Model(&events.Event{}).Select("severity, count(severity) as count").Where("status = ? and user_id = ?", eventStatus, userID).Group("severity").Find(&eventsBySeverity).Error
 	if err != nil {
 		return nil, err
 	}
