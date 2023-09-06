@@ -431,7 +431,7 @@ const externlinks = [
   },
   {
     id : "community",
-    href : "https://slack.layer5.io",
+    href : "https://slack.meshery.io",
     title : "Community",
     icon : <SlackIcon style={{ ...drawerIconsStyle,height : "1.5rem",width : "1.5rem",marginTop : "" }}/>,
     external_icon : ExternalLinkIcon,
