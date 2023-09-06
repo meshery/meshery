@@ -46,6 +46,7 @@ import { CapabilitiesRegistry } from "../utils/disabledComponents";
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import dataFetch from '../lib/data-fetch';
 import { withNotify } from '../utils/hooks/useNotification';
+import { useNotification } from '../utils/hooks/useNotification';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -269,7 +270,7 @@ function K8sContextMenu({
   const [showFullContextMenu, setShowFullContextMenu] = React.useState(false);
   const [transformProperty, setTransformProperty] = React.useState(100);
   const deleteCtxtRef = React.createRef();
-
+  const { notify } = useNotification()
   const styleSlider = {
     position : "absolute",
     left : "-5rem",
