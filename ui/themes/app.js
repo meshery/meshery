@@ -3,6 +3,14 @@ import { blueGrey } from '@material-ui/core/colors';
 import { iconMedium } from '../css/icons.styles';
 
 const drawerWidth = 256;
+
+export const Colors = {
+  darkJungleGreen : "#1E2117",
+  caribbeanGreen : "#00D3a9",
+  keppelGreen : "#00B39F",
+  charcoal : "#3C494F",
+}
+
 export var darkTheme = createTheme({
   typography : {
     useNextVariants : true,
@@ -73,7 +81,7 @@ export var darkTheme = createTheme({
       error : "#F91313",
       lightError : "#B32700",
       penColorPrimary : '#E6E6E6',
-      penColorSecondary : '#E6E6E6'
+      penColorSecondary : '#E6E6E6',
     },
   },
   p : {
