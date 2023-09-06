@@ -139,13 +139,13 @@ func (h *Handler) handleApplicationPOST(
 		addMeshkitErr(&res, ErrRetrieveData(err))
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": ErrRetrieveData(err),
-			}).WithDescription("Unable to parse uploaded application.").Build()
+		}).WithDescription("Unable to parse uploaded application.").Build()
 			
-			_ = provider.PersistEvent(event)
-			go h.EventsBuffer.Publish(&res)
-			go h.config.EventBroadcaster.Publish(userID, event)
-			return
-		}
+		_ = provider.PersistEvent(event)
+		go h.EventsBuffer.Publish(&res)
+		go h.config.EventBroadcaster.Publish(userID, event)
+		return
+	}
 		
 	actedUpon := parsedBody.ApplicationData.ID
 	if actedUpon == nil {
@@ -583,7 +583,7 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 		actedUpon = &userID
 	}
 	
-	eventBuilder.ActedUpon(userID)
+	eventBuilder.ActedUpon(*actedUpon)
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
