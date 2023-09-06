@@ -337,7 +337,6 @@ function K8sContextMenu({
 
   const handleKubernetesClick = (id) => {
     updateProgress({ showProgress : true })
-    const notify = this.props.notify;
     pingKubernetes(
       successHandlerGenerator (notify, "Kubernetes pinged", () => updateProgress({ showProgress : false })),
       errorHandlerGenerator(notify, "Kubernetes not pinged", () => updateProgress({ showProgress : false })),
@@ -358,7 +357,6 @@ function K8sContextMenu({
           updateK8SConfig({ k8sConfig : updatedConfig })
         }
       }
-      const notify = this.props.notify;
       deleteKubernetesConfig(
         successHandlerGenerator(notify, "Kubernetes config removed", successCallback),
         errorHandlerGenerator(notify, "Not able to remove config"),
