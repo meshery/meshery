@@ -323,7 +323,7 @@ Find out more on the <a href="https://layer5.io/community#meshmate">Layer5 commu
 </p>
 </div><br /><br />
 <div>
-<a href="http://slack.layer5.io">
+<a href="https://slack.meshery.io">
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/slack.svg"  width="110px" />
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/slack.svg" width="110px" />
