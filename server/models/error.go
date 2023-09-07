@@ -95,7 +95,7 @@ const (
 	ErrShareDesignCode                    = "1530"
 	ErrUnreachableRemoteProviderCode      = "1531"
 	ErrShareFilterCode                    = "1532"
-  ErrPersistEventCode                   = "1533"
+	ErrPersistEventCode                   = "1533"
 	ErrUnreachableKubeAPICode             = "1534"
 	ErrFlushMeshSyncDataCode              = "1535"
 )

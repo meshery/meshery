@@ -18,8 +18,8 @@ Meshery CLI commands are categorized by function, which are:
 - `mesheryctl` - Global flags and CLI configuration
 - `mesheryctl system` - Meshery Lifecycle and Troubleshooting
 - `mesheryctl mesh` - Cloud Native Lifecycle & Configuration Management: provisioning and configuration best practices
-- `mesheryctl perf` - Cloud Native Performance Management: Workload and service mesh performance characterization
-- `mesheryctl pattern` - Cloud Native Pattern Configuration & Management: Service mesh patterns and Open Application Model integration
+- `mesheryctl perf` - Cloud Native Performance Management: Workload and cloud native performance characterization
+- `mesheryctl pattern` - Cloud Native Pattern Configuration & Management: cloud native patterns and Open Application Model integration
 - `mesheryctl app` - Cloud Native Application Management
 - `mesheryctl filter` - Data Plane Intelligence: Registry and configuration of WebAssembly filters for Envoy
 

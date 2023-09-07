@@ -9,7 +9,6 @@ import { withStyles } from "@material-ui/core/styles";
 // import EditIcon from "@material-ui/icons/Edit";
 // import YoutubeSearchedForIcon from '@mui/icons-material/YoutubeSearchedFor';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import MUIDataTable from "mui-datatables";
 import React, { useEffect, useRef, useState } from "react";
 import Moment from "react-moment";
 import { connect } from "react-redux";
@@ -27,6 +26,10 @@ import LaunchIcon from '@mui/icons-material/Launch';
 import TableRow from '@mui/material/TableRow';
 import { useNotification } from "../../utils/hooks/useNotification";
 import { EVENT_TYPES } from "../../lib/event-types";
+import CustomColumnVisibilityControl from "../../utils/custom-column";
+import SearchBar from "../../utils/custom-search";
+import ResponsiveDataTable from "../../utils/data-table";
+import useStyles from "../../assets/styles/general/tool.styles";
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2) },
@@ -47,12 +50,6 @@ const styles = (theme) => ({
     justifyContent : "flex-start",
     alignItems : "center",
     whiteSpace : "nowrap",
-  },
-  topToolbar : {
-    margin : "2rem auto",
-    display : "flex",
-    justifyContent : "space-between",
-    paddingLeft : "1rem",
   },
   viewSwitchButton : {
     justifySelf : "flex-end",
@@ -142,6 +139,7 @@ function Connections({ classes, updateProgress }) {
   const [connections, setConnections] = useState([]);
   const [search,setSearch] = useState("");
   const { notify } = useNotification()
+  const StyleClass = useStyles();
 
   const searchTimeout = useRef(null);
 
@@ -167,20 +165,6 @@ function Connections({ classes, updateProgress }) {
       name : "name",
       label : "Element",
       options : {
-        display : false,
-      },
-    },
-    {
-      name : "metadata.server_location",
-      label : "Server Location",
-      options : {
-        display : false,
-      },
-    },
-    {
-      name : "name",
-      label : "Element",
-      options : {
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell key={index}>
@@ -190,8 +174,8 @@ function Connections({ classes, updateProgress }) {
         },
         customBodyRender : (value, tableMeta) => {
           return (
-            <Tooltip title={tableMeta.rowData[1]} placement="top" >
-              <Link href={tableMeta.rowData[1]} target="_blank">
+            <Tooltip title={connections ? connections[tableMeta.rowIndex]?.metadata?.server_location : ''} placement="top" >
+              <Link href={connections ? connections[tableMeta.rowIndex]?.metadata?.server_location : ''} target="_blank">
                 {value}
                 <sup>
                   <LaunchIcon sx={{ fontSize : "12px" }} />
@@ -312,28 +296,7 @@ function Connections({ classes, updateProgress }) {
           );
         },
       },
-    },
-    {
-      name : "metadata.server_build_sha",
-      label : "Server Version",
-      options : {
-        display : false,
-      },
-    },
-    {
-      name : "metadata.server_version",
-      label : "Server Version",
-      options : {
-        display : false,
-      },
-    },
-    {
-      name : "credential_id",
-      label : "Credential ID",
-      options : {
-        display : false,
-      },
-    },
+    }
   ];
 
   // const handleChange = () => {
@@ -342,6 +305,8 @@ function Connections({ classes, updateProgress }) {
 
   const options = {
     filter : false,
+    viewColumns : false,
+    search : false,
     responsive : "standard",
     resizableColumns : true,
     serverSide : true,
@@ -389,16 +354,16 @@ function Connections({ classes, updateProgress }) {
       return true;
     },
     rowsExpanded : [0, 1],
-    renderExpandableRow : (rowData) => {
+    renderExpandableRow : (_, tableMeta) => {
       return (
         <TableRow>
           <TableCell>
           </TableCell>
           <TableCell colSpan={2}>
-            <b>Server Build SHA:</b> {rowData[8]}
+            <b>Server Build SHA:</b> {connections ? connections[tableMeta.rowIndex]?.metadata?.server_build_sha : '-'}
           </TableCell>
           <TableCell colSpan={2}>
-            <b>Server Version:</b> {rowData[10]}
+            <b>Server Version:</b> {connections ? connections[tableMeta.rowIndex]?.metadata?.server_version : '-'}
           </TableCell>
           <TableCell colSpan={2}>
           </TableCell>
@@ -407,20 +372,16 @@ function Connections({ classes, updateProgress }) {
     },
   };
 
-  const components = {
-    ExpandButton : function() {
-      return '';
-    },
-  };
 
   /**
    * fetch connections when the page loads
    */
   useEffect(() => {
-    getConnections(page, pageSize,)
+    getConnections(page, pageSize,search)
   }, [page, pageSize, search]);
 
-  const getConnections = (page, pageSize) => {
+  const getConnections = (page, pageSize,search) => {
+    if (!search) search = "";
     dataFetch(
       `/api/integrations/connections?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(search)}`,
       {
@@ -442,13 +403,24 @@ function Connections({ classes, updateProgress }) {
     notify({ message : `${action.error_msg}: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() })
   };
 
+  const [tableCols, updateCols] = useState(columns);
+
+  const [columnVisibility, setColumnVisibility] = useState(() => {
+    // Initialize column visibility based on the original columns' visibility
+    const initialVisibility = {};
+    columns.forEach(col => {
+      initialVisibility[col.name] = col.options?.display !== false;
+    });
+    return initialVisibility;
+  });
+
   return (
     <>
       <NoSsr>
-        {/* <div className={classes.topToolbar}>
+        <div className={StyleClass.toolWrapper} >
           <div className={classes.createButton}>
             <div>
-              <Button
+              {/* <Button
                 aria-label="Rediscover"
                 variant="contained"
                 color="primary"
@@ -459,19 +431,16 @@ function Connections({ classes, updateProgress }) {
               >
                 <YoutubeSearchedForIcon style={iconMedium} />
                 Rediscover
-              </Button>
+              </Button> */}
             </div>
           </div>
           <div
             className={classes.searchAndView}
             style={{
               display : "flex",
-              alignItems : "center",
-              justifyContent : "flex-end",
-              height : "5ch",
             }}
           >
-            <Button
+            {/* <Button
               aria-label="Edit"
               variant="contained"
               color="primary"
@@ -481,8 +450,9 @@ function Connections({ classes, updateProgress }) {
               style={{ marginRight : "0.5rem" }}
             >
               <EditIcon style={iconMedium} />
-            </Button>
-            <Button
+            </Button> */}
+
+            {/* <Button
               aria-label="Delete"
               variant="contained"
               color="primary"
@@ -493,16 +463,32 @@ function Connections({ classes, updateProgress }) {
             >
               <DeleteForeverIcon style={iconMedium} />
               Delete
-            </Button>
+            </Button> */}
+
+            <SearchBar
+              onSearch={(value) => {
+                setSearch(value);
+                getConnections(page, pageSize, value);
+              }}
+              placeholder="Search"
+            />
+
+            <CustomColumnVisibilityControl
+              columns={columns}
+              customToolsProps={{ columnVisibility, setColumnVisibility }}
+            />
+
           </div>
-        </div> */}
-        <MUIDataTable
+        </div>
+        <ResponsiveDataTable
           data={connections}
           columns={columns}
           // @ts-ignore
           options={options}
           className={classes.muiRow}
-          components={components}
+          tableCols={tableCols}
+          updateCols={updateCols}
+          columnVisibility={columnVisibility}
         />
       </NoSsr>
     </>

@@ -7,7 +7,7 @@
     "dev": "next lint --fix && node ui_dev_server.js",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "build": "npm run clean && npm run relay && cross-env next build",
+    "build": "npm run clean && cross-env next build",
     "start": "NODE_ENV=production node ui_dev_server.js",
     "export": "next export",
     "export-playground": "PLAYGROUND=true next export -o playground",
@@ -114,7 +114,7 @@
     "styled-jsx": "^4.0.1",
     "tar": "^6.1.15",
     "universal-cookie": "^4.0.4",
-    "uuid": "^8.3.2"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^2.2.3",
