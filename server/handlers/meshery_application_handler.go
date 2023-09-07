@@ -133,7 +133,6 @@ func (h *Handler) handleApplicationPOST(
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
-
 	var parsedBody *MesheryApplicationRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		http.Error(rw, ErrRetrieveData(err).Error(), http.StatusBadRequest)
@@ -141,14 +140,18 @@ func (h *Handler) handleApplicationPOST(
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": ErrRetrieveData(err),
 		}).WithDescription("Unable to parse uploaded application.").Build()
-
+			
 		_ = provider.PersistEvent(event)
 		go h.EventsBuffer.Publish(&res)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
-
-	eventBuilder.ActedUpon(*parsedBody.ApplicationData.ID)
+		
+	actedUpon := parsedBody.ApplicationData.ID
+	if actedUpon == nil {
+		actedUpon = &userID
+	}
+	eventBuilder.ActedUpon(*actedUpon)
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
 		event := eventBuilder.WithSeverity(events.Critical).WithMetadata(map[string]interface{}{
@@ -575,7 +578,12 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 		return
 	}
 
-	eventBuilder.ActedUpon(*parsedBody.ApplicationData.ID)
+	actedUpon := parsedBody.ApplicationData.ID
+	if actedUpon == nil {
+		actedUpon = &userID
+	}
+	
+	eventBuilder.ActedUpon(*actedUpon)
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {

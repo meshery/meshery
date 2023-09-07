@@ -16,8 +16,6 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-const defaultPageSize = 10
-
 // swagger:route GET /api/system/database GetSystemDatabase idGetSystemDatabase
 // Handle GET request for getting summary about the system database.
 //

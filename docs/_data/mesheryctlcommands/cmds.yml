@@ -452,7 +452,7 @@ perf:
         file:
           name: --file
           arg: apply
-          description: "Path to service mesh performance test configuration file (default: empty string)."
+          description: "Path to cloud native performance test configuration file (default: empty string)."
           usage: mesheryctl perf apply [profile-name] --url [URL] --file [path to file]
           example: mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --file perf-config.yaml
         load-generator:
@@ -465,7 +465,7 @@ perf:
         mesh:
           name: --mesh
           arg: apply
-          description: Name of the service mesh.
+          description: Name of the system under test.
           usage: mesheryctl perf apply [profile-name] --url [URL] --mesh [name]
           example: mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --mesh istio
         name:
@@ -550,12 +550,12 @@ perf:
 
 mesh:
   name: mesh
-  description: Lifecycle management of service meshes
+  description: Lifecycle management of cloud native infrastructure
 
   subcommands:
     validate:
       name: validate
-      description: validate service mesh conformance to different standard specifications
+      description: validate configuration conformance to different standard specifications
       flags:
         adapter:
           name: --adapter, -a
@@ -580,7 +580,7 @@ mesh:
 
     remove:
       name: remove
-      description: Remove service mesh in the connected kubernetes cluster
+      description: Remove service mesh in the connected Kubernetes cluster
       usage: mesheryctl mesh remove [args] [flags] [args]
       flags:
         namespace:
@@ -615,7 +615,7 @@ mesh:
 
 pattern:
   name: pattern
-  description: Manage service meshes using predefined patterns
+  description: Manage cloud native infrastructure using predefined patterns
   usage: mesheryctl pattern [flags] or mesheryctl pattern [command]
   example: mesheryctl pattern list
   flags:
@@ -643,7 +643,7 @@ pattern:
 
     delete:
       name: delete
-      description: Deprovision the resources/ service mesh using the pattern file
+      description: Deprovision cloud native infrastructure using a design /pattern file
       usage: mesheryctl pattern delete [flags]
       flags:
         file:
@@ -680,7 +680,7 @@ pattern:
 
 app:
   name: app
-  description: Service Mesh application management
+  description: Cloud native infrastructure and application management
   usage: mesheryctl app [command] [app-name/flag] [flags]
   # flags:
   #   file:
