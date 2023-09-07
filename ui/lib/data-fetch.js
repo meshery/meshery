@@ -5,6 +5,11 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
   // const signal = controller.signal;
   // options.signal = signal;
   // setTimeout(() => controller.abort(), 10000); // nice to have but will mess with the load test
+  if (errorFn === undefined) {
+    errorFn = (err) => {
+      console.error(`Error fetching ${url} --DataFetch`, err);
+    };
+  }
   fetch(url, options)
     .then(res => {
       if (res.status === 401 || res.redirected) {
@@ -33,7 +38,7 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
 
     }).then(successFn)
     .catch((e) => {
-      if(e.then) {
+      if (e.then) {
         e.then(text => errorFn(text))
         return;
       }

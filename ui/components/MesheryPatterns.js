@@ -2,7 +2,7 @@
 import {
   Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr, TableCell, Tooltip, Typography
 } from "@material-ui/core";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { withStyles } from "@material-ui/core/styles";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -10,7 +10,6 @@ import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import SaveIcon from '@material-ui/icons/Save';
-import MUIDataTable from "mui-datatables";
 import CustomToolbarSelect from "./MesheryPatterns/CustomToolbarSelect";
 import { withSnackbar } from "notistack";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
@@ -40,17 +39,22 @@ import Validation from "./Validation";
 import { ACTIONS, FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from "../utils/Enum";
 import CloneIcon from "../public/static/img/CloneIcon";
 import { useRouter } from "next/router";
-import { publish_schema, publish_ui_schema } from "./schemas/publish_schema";
 import Modal from "./Modal";
 import downloadFile from "../utils/fileDownloader";
 import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import ReusableTooltip from "./reusable-tooltip";
-import SearchBar from "./searchcommon";
 import Pattern from "../public/static/img/drawer-icons/pattern_svg.js";
 import DryRunComponent from "./DryRun/DryRunComponent";
 import { useNotification } from "../utils/hooks/useNotification";
 import { EVENT_TYPES } from "../lib/event-types";
+import _ from "lodash"
+import { getMeshModels } from "../api/meshmodel"
+import { modifyRJSFSchema } from "../utils/utils"
+import SearchBar from "../utils/custom-search";
+import CustomColumnVisibilityControl from "../utils/custom-column";
+import ResponsiveDataTable from "../utils/data-table";
+import useStyles from "../assets/styles/general/tool.styles";
 
 
 const styles = (theme) => ({
@@ -70,16 +74,6 @@ const styles = (theme) => ({
     width : "24px",
     height : "24px",
     filter : theme.palette.secondary.brightness
-  },
-  topToolbar : {
-    marginBottom : "3rem",
-    display : "flex",
-    justifyContent : "space-between",
-    flexWrap : 'wrap',
-    "@media (max-width: 1450px)" : {
-      justifyContent : "start",
-      paddingLeft : 0,
-    },
   },
   viewSwitchButton : {
     justifySelf : "flex-end",
@@ -138,9 +132,13 @@ const styles = (theme) => ({
     },
   },
   searchWrapper : {
-    "@media (max-width: 1150px)" : {
-      marginTop : '20px',
-    },
+    justifySelf : "flex-end",
+    marginLeft : "auto",
+    paddingLeft : "1rem",
+    display : "flex",
+    "@media (max-width: 965px)" : {
+      width : "max-content",
+    }
   },
   catalogFilter : {
     marginRight : '2rem',
@@ -151,12 +149,6 @@ const styles = (theme) => ({
       display : "none",
     },
   },
-  // text : {
-  //   padding : "5px"
-  // }
-});
-
-const useStyles = makeStyles((theme) => ({
   backButton : {
     marginRight : theme.spacing(2),
   },
@@ -180,7 +172,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth : 150,
     marginRight : "auto"
   },
-  iconPatt : {
+  iconAvatar : {
     width : "10px",
     height : "10px",
     "& .MuiAvatar-img" : {
@@ -188,7 +180,10 @@ const useStyles = makeStyles((theme) => ({
       width : '60%'
     }
   }
-}));
+  // text : {
+  //   padding : "5px"
+  // }
+});
 
 function TooltipIcon({ children, onClick, title,placement }) {
   return (
@@ -298,11 +293,13 @@ function MesheryPatterns({
   const [patternErrors, setPatternErrors] = useState(new Map());
 
   const [canPublishPattern, setCanPublishPattern] = useState(false);
+  const [publishSchema, setPublishSchema] = useState({})
 
   const [viewType, setViewType] = useState(
     ("grid")
   );
   const { notify } = useNotification()
+  const StyleClass = useStyles();
 
   const PATTERN_URL = '/api/pattern'
   const DEPLOY_URL = `${PATTERN_URL}/deploy`;
@@ -515,6 +512,31 @@ function MesheryPatterns({
         setImportSchema(result);
       },
       handleError(ACTION_TYPES.SCHEMA_FETCH)
+    )
+    dataFetch("/api/schema/resource/publish",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      async (result) => {
+        try {
+          const { models } = await getMeshModels();
+          const modelNames = _.uniq(models?.map((model) => model.displayName));
+
+          // Modify the schema using the utility function
+          const modifiedSchema = modifyRJSFSchema(
+            result.rjsfSchema,
+            "properties.compatibility.items.enum",
+            modelNames
+          );
+
+          setPublishSchema({ rjsfSchema : modifiedSchema, uiSchema : result.uiSchema });
+        } catch (err) {
+          console.error(err);
+          handleError(ACTION_TYPES.SCHEMA_FETCH)
+          setPublishSchema(result);
+        }
+      }
     )
     catalogVisibilityRef.current = catalogVisibility
     const fetchCatalogPatterns = fetchCatalogPattern({
@@ -733,15 +755,25 @@ function MesheryPatterns({
       { credentials : "include", method : "POST", body : JSON.stringify(payload) },
       () => {
         updateProgress({ showProgress : false });
+        if (user.role_names.includes("admin")){
 
-        notify({
-          message : "Design Published",
-          event_type : EVENT_TYPES.SUCCESS
-        })
+          notify({
+            message : `${publishModal.pattern?.name} Design Published`,
+            event_type : EVENT_TYPES.SUCCESS
+          })
+        } else {
+          notify({
+            message : "Design queued for publishing into Meshery Catalog. Maintainers notified for review",
+            event_type : EVENT_TYPES.SUCCESS
+          })
+        }
       },
       handleError(ACTION_TYPES.PUBLISH_CATALOG),
     );
-  }
+  };
+
+
+
   function handleClone(patternID, name) {
     updateProgress({ showProgress : true });
     dataFetch(PATTERN_URL.concat(CLONE_URL, "/", patternID),
@@ -973,6 +1005,7 @@ function MesheryPatterns({
     },
     {
       name : "Actions",
+      label : "Actions",
       options : {
         filter : false,
         sort : false,
@@ -1009,7 +1042,7 @@ function MesheryPatterns({
                   }
                   }
                 >
-                  <Avatar src="/static/img/pattwhite.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
+                  <Avatar src="/static/img/pattwhite.svg" className={classes.iconAvatar} imgProps={{ height : "16px", width : "16px" }} />
                 </TooltipIcon> }
               <TooltipIcon
                 placement ="top"
@@ -1069,6 +1102,17 @@ function MesheryPatterns({
     }
   });
 
+  const [tableCols, updateCols] = useState(columns);
+
+  const [columnVisibility, setColumnVisibility] = useState(() => {
+    // Initialize column visibility based on the original columns' visibility
+    const initialVisibility = {};
+    columns.forEach(col => {
+      initialVisibility[col.name] = col.options?.display !== false;
+    });
+    return initialVisibility;
+  });
+
   async function showModal(count, patterns) {
     console.log("patterns to be deleted", count, patterns);
     let response = await modalRef.current.show({
@@ -1108,8 +1152,9 @@ function MesheryPatterns({
       <CustomToolbarSelect selectedRows={selectedRows} displayData={displayData} setSelectedRows={setSelectedRows} patterns={patterns} deletePatterns={deletePatterns} showModal={showModal}/>
     ),
     filter : false,
-    sort : !(user && user.user_id === "meshery"),
     search : false,
+    viewColumns : false,
+    sort : !(user && user.user_id === "meshery"),
     filterType : "textField",
     responsive : "standard",
     resizableColumns : true,
@@ -1249,6 +1294,8 @@ function MesheryPatterns({
   }
 
 
+
+
   return (
     <>
       <NoSsr>
@@ -1258,7 +1305,7 @@ function MesheryPatterns({
         {selectedPattern.show &&
           <DesignConfigurator onSubmit={handleSubmit} show={setSelectedPattern} pattern={selectedPattern.pattern} />
         }
-        <div className={classes.topToolbar} >
+        <div className={StyleClass.toolWrapper} >
           <div style={{ display : "flex" }}>
             {!selectedPattern.show && (patterns.length > 0 || viewType === "table") && <div className={classes.createButton}>
               <div style={{ display : 'flex', order : '1' }}>
@@ -1281,7 +1328,7 @@ function MesheryPatterns({
                   size="large"
                   // @ts-ignore
                   onClick={handleUploadImport}
-                  style={{ display : 'flex', marginRight : "2rem" }}
+                  style={{ display : 'flex', marginRight : "2rem", marginLeft : '-0.6rem' }}
                 >
                   <PublishIcon className={classes.addIcon} />
                   <span className={classes.btnText}> Import Design </span>
@@ -1296,35 +1343,37 @@ function MesheryPatterns({
             }
           </div>
           <div className={classes.searchWrapper} style={{ display : "flex" }}>
-            <div className={classes.searchAndView}>
-              <SearchBar
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  initPatternsSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
-                }
-                }
-                label={"Search Designs"}
-                width="55ch"
-              />
-            </div>
+            <SearchBar
+              onSearch={(value) => {
+                setSearch(value);
+                initPatternsSubscription(page.toString(), pageSize.toString(), value, sortOrder);
+              }
+              }
+              placeholder="Search designs..."
+            />
+            {viewType === "table" &&
+            <CustomColumnVisibilityControl
+              columns={columns}
+              customToolsProps={{ columnVisibility, setColumnVisibility }}
+            />
+            }
 
             {!selectedPattern.show &&
-              <div className={classes.viewSwitchButton} style={{ display : 'flex' }}>
                 <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true}/>
-              </div>
             }
           </div>
         </div>
         {
           !selectedPattern.show && viewType === "table" &&
-          <MUIDataTable
-            title={<div className={classes.tableHeader}>Designs</div>}
+          <ResponsiveDataTable
             data={patterns}
             columns={columns}
             // @ts-ignore
             options={options}
             className={classes.muiRow}
+            tableCols={tableCols}
+            updateCols={updateCols}
+            columnVisibility={columnVisibility}
           />
 
         }
@@ -1351,6 +1400,7 @@ function MesheryPatterns({
               patternErrors={patternErrors}
               publishModal={publishModal}
               setPublishModal={setPublishModal}
+              publishSchema={publishSchema}
             />
         }
         <ConfirmationModal
@@ -1371,8 +1421,8 @@ function MesheryPatterns({
         {canPublishPattern &&
           <Modal
             open={publishModal.open}
-            schema={publish_schema}
-            uiSchema={publish_ui_schema}
+            schema={publishSchema.rjsfSchema}
+            uiSchema={publishSchema.uiSchema}
             handleClose={handlePublishModalClose}
             aria-label="catalog publish"
             title={publishModal.pattern?.name}

@@ -2,7 +2,7 @@
 layout: default
 title: Adapters
 permalink: concepts/architecture/adapters
-type: concepts
+type: components
 redirect_from: architecture/adapters
 abstract: "Meshery offers support for more adapters than any other project or product in the world. Meshery uses adapters for managing the various cloud native infrastructure."
 language: en
@@ -22,7 +22,7 @@ Meshery has adapters for managing the following cloud native infrastructure.
 | :------------: | :----------: | :--: | :------------------------: |
 {% for adapter in sorted -%}
 {% if adapter.project_status -%}
-| {{ adapter.project_status }} | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.port }} | {{adapter.earliest_version}} |
+| {{ adapter.project_status }} | <img src="{{ adapter.image }}" style="width:20px" data-logo-for-dark="{{ adapter.white_image }}" data-logo-for-light="{{ adapter.image }}" id="logo-dark-light" loading="lazy"/> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.port }} | {{adapter.earliest_version}} |
 {% endif -%}
 {% endfor %}
 

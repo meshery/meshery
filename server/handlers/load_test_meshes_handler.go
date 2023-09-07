@@ -31,8 +31,8 @@ func (h *Handler) GetSMPServiceMeshes(w http.ResponseWriter, _ *http.Request, _ 
 
 	if err := json.NewEncoder(w).Encode(meshes); err != nil {
 		obj := "meshlist object"
-		h.log.Error(ErrEncoding(err, obj))
-		http.Error(w, ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrEncoding(err, obj))
+		http.Error(w, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 }
