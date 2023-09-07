@@ -135,7 +135,10 @@ const styles = (theme) => ({
     justifySelf : "flex-end",
     marginLeft : "auto",
     paddingLeft : "1rem",
-    display : "flex"
+    display : "flex",
+    "@media (max-width: 965px)" : {
+      width : "max-content",
+    }
   },
   catalogFilter : {
     marginRight : '2rem',
