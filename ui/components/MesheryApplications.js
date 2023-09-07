@@ -632,23 +632,26 @@ function MesheryApplications({
           );
         },
         customBodyRender : function CustomBody(_, tableMeta) {
-          const rowData = applications[tableMeta.rowIndex];
+          const rowData = applications[tableMeta.rowIndex]?.type?.String;
 
-          console.log("this is data",rowData?.type.String);
-          if (rowData && rowData.type && rowData.type.String){
-            return (
-              <>
-                <IconButton
-                  title="click to download"
-                  onClick={() => handleAppDownload(rowData.id ,rowData?.type.String, rowData.name)}
-                >
-                  <img src={`/public/img/${(rowData.type.String).replaceAll(" ", "_").toLowerCase()}.svg`} width="45px" height="45px" />
-                </IconButton>
-              </>
-            );
+          // Check if rowData is undefined or null
+          if (rowData === undefined || rowData === null) {
+            // Display a loading state or placeholder
+            return <div>Loading...</div>;
           }
-        },
-      },
+
+          return (
+            <>
+              <IconButton
+                title="click to download"
+                onClick={() => handleAppDownload(rowData.id, rowData?.type.String, rowData.name)}
+              >
+                <img src={`/static/img/${rowData.replaceAll(" ", "_").toLowerCase()}.svg`} height="45px" width="45px" />
+              </IconButton>
+            </>
+          );
+        }
+      }
     },
     {
       name : "Actions",
@@ -686,6 +689,8 @@ function MesheryApplications({
       },
     }
   ];
+
+  console.log("applications", applications)
 
   columns.forEach((column, idx) => {
     if (column.name === sortOrder.split(" ")[0]) {

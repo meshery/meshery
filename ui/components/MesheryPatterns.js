@@ -1098,6 +1098,17 @@ function MesheryPatterns({
     }
   });
 
+  const [tableCols, updateCols] = useState(columns);
+
+  const [columnVisibility, setColumnVisibility] = useState(() => {
+    // Initialize column visibility based on the original columns' visibility
+    const initialVisibility = {};
+    columns.forEach(col => {
+      initialVisibility[col.name] = col.options?.display !== false;
+    });
+    return initialVisibility;
+  });
+
   async function showModal(count, patterns) {
     console.log("patterns to be deleted", count, patterns);
     let response = await modalRef.current.show({
@@ -1278,16 +1289,7 @@ function MesheryPatterns({
     )
   }
 
-  const [tableCols, updateCols] = useState(columns);
 
-  const [columnVisibility, setColumnVisibility] = useState(() => {
-    // Initialize column visibility based on the original columns' visibility
-    const initialVisibility = {};
-    columns.forEach(col => {
-      initialVisibility[col.name] = col.options?.display !== false;
-    });
-    return initialVisibility;
-  });
 
 
   return (
