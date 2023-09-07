@@ -520,7 +520,7 @@ func ErrGetEvents(err error) error {
 }
 
 func ErrUpdateEvent(err error, id string) error {
-	return errors.New(ErrUpdateEventCode, errors.Alert, []string{fmt.Sprintf("Could not update event status for %s", id)}, []string{err.Error()}, []string{"Event has been deleted or does not exist.", "Database is corrupt."}, []string{"Verify event filter settings.","Reset database."})
+	return errors.New(ErrUpdateEventCode, errors.Alert, []string{fmt.Sprintf("Could not update event status for %s", id)}, []string{err.Error()}, []string{"Provided event status not supported", "Event has been deleted or does not exist.", "Database is corrupt."}, []string{"Verify event filter settings.","Reset database."})
 }
 
 func ErrDeleteEvent(err error, id string) error {

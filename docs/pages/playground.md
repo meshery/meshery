@@ -10,7 +10,7 @@ list: include
 
 _Try out Meshery Playground at [https://playground.meshery.io/](https://playground.meshery.io/)_
 
-Meshery Playground is a web-based interactive environment that provides users with the ability to explore not only Meshery as a cloud native manager but also all of the infrastructure that it manages, including multiple Kubernetes clusters and various Service Mesh implementations as Meshery offers supports for more service meshes than any other project in the world. The Meshery Playground provides a sandboxed environment to experiment with different infrastructure configurations and deployment options. It's multi-player plugins allow you to collaborate in real-time with your teammates on infrastructure configuration and operation.
+Meshery Playground is a web-based, collaborative environment that provides you with the ability to explore not only Meshery as a cloud native manager, but also all of the infrastructure that it manages, including multiple Kubernetes clusters, every CNCF project and application, service, or operator that runs on Kubernetes. Meshery Playground provides a sandboxed environment to experiment with different infrastructure configurations and deployment options. Its multi-player plugins allow you to collaborate in real-time with your teammates on infrastructure design and operation.
 
 With Meshery Playground, you can:
 
@@ -19,7 +19,7 @@ With Meshery Playground, you can:
 - Design new cloud native scenarios and easily deploy them in the Playground environment. Keep your designs and deploy them in your own environment when you’re ready.
 
 
-It allows users to interactively explore some service meshes like Istio, Linkerd, Consul Connect etc., without having to install them on their local machines. Users can create virtual services and deploy sample applications using these meshes and observe their behavior in real-time.
+You can interactively explore any service mesh like Istio, Linkerd, Consul, Kuma, and so on without having to install them on your local machine. You can create virtual services and deploy sample applications using these meshes and observe their behavior in real-time.
 
 Meshery Playground also has pre-built scenarios that demonstrate how to implement specific use-cases such as traffic splitting, circuit breaking, and other cloud native patterns.
 
@@ -49,3 +49,6 @@ _In other words, only MeshMap Visualizer is reset. All of your work in Meshery U
 _Creating your own account ensures that any designs you create or save will be stored and accessible across sessions, preventing any loss of work._
 
 _To ensure accountability in the Playground, it's crucial to promote the use of individual named accounts. This helps prevent bad actors from hiding behind anonymous general-use accounts and maliciously abusing the Playground. Therefore, the use of named accounts is an essential step towards achieving this goal._
+
+### Question:Can I deploy the Meshery on-premises?
+**Answer:** _Yes, Meshery can be deployed on-premises with a single command to download, install, and run your own instance of Meshery in your environment. See all supported platforms to deploy your own Meshery instance at https://meshery.io_

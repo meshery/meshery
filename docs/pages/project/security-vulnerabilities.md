@@ -35,7 +35,7 @@ Don't send a vulnerability report if:
 - You need help applying security related updates.
 - Your issue is not security related.
 
-Instead, join the community [Slack](https://slack.layer5.io/) and ask questions.
+Instead, join the community [Slack](https://slack.meshery.io/) and ask questions.
 
 ### Evaluation
 
@@ -71,7 +71,7 @@ branches.
 - Once the binaries are available, an announcement is sent out on the following channels:
   - The [Meshery blog](https://meshery.io/blog/)
   - The [Meshery Twitter feed](https://twitter.com/mesheryio)
-  - The [#announcements](https://layer5io.slack.com/archives/CSF3PSZT9) channel on community [Slack](https://slack.layer5.io/)
+  - The [#announcements](https://layer5io.slack.com/archives/CSF3PSZT9) channel on community [Slack](https://slack.meshery.io/)
 
 As much as possible this announcement will be actionable, and include any mitigating steps customers can take prior to upgrading to a fixed version.
 

@@ -11,7 +11,7 @@ list: include
 {% include alert.html 
     type="warning" 
     title="What are Cloud Native Patterns?" 
-    content='This feature area is under active development. Until additional documentation is published,see the <a href="https://docs.google.com/document/d/1B2N78EdRiZF-yVo1-HY3syppwBBDumgMuYg6seD-AJ4/edit#">Meshery and Service Mesh Patterns</a> design specification for further details.' %}
+    content='This feature area is under active development. Until additional documentation is published,see the <a href="https://docs.google.com/document/d/1B2N78EdRiZF-yVo1-HY3syppwBBDumgMuYg6seD-AJ4/edit#">Meshery and cloud native patterns</a> design specification for further details.' %}
 
 ## Use Meshery to Deploy a Cloud Native Pattern
 
@@ -22,7 +22,7 @@ You can use Meshery to deploy a cloud native pattern. Cloud native patterns are 
 
 _See [Meshery Catalog](https://meshery.io/catalog)_.
 
-You may bring your own patterns or find them available through your chosen provider. Each service mesh pattern carries a unique identifier for reference. The patterns in this repository serve in an educational capacity, facilitating learning, and also serve in an operational capacity, facilitating implementation and validation of your service mesh deployment’s adherence to a pattern.
+You may bring your own patterns or find them available through your chosen provider. Each cloud native pattern carries a unique identifier for reference. The patterns in this repository serve in an educational capacity, facilitating learning, and also serve in an operational capacity, facilitating implementation and validation of your cloud native deployment’s adherence to a pattern.
 
 {% include alert.html
     type="info"
@@ -68,9 +68,9 @@ Pattern successfully applied.
 
 From here, output and behavior will vary based upon the specific pattern you’re deploying. Should you find that your pattern is not successfully deployed, refer to the pattern troubleshooting guide in the Meshery documentation.
 
-As you step through each pattern, you might choose to modify the pattern to suit your specific environment and workload, exploring in-context of your specific situation. Optionally, you may choose to use a plugin like MeshMap, or another visual service mesh topology tool, to facilitate your comprehension of the patterns and to literally see the patterns in-action.
+As you step through each pattern, you might choose to modify the pattern to suit your specific environment and workload, exploring in-context of your specific situation. Optionally, you may choose to use a plugin like MeshMap, or another visual cloud native topology tool, to facilitate your comprehension of the patterns and to literally see the patterns in-action.
 
-Take time to explore. Try deploying one service mesh’s sample application onto a different service mesh and compare differences in behavior and each service mesh’s ability to manage it. If using Meshery to do so, execute the following commands as an example to deploy the sample application, BookCatalog, onto Open Service Mesh:
+Take time to explore. Try deploying one cloud native’s sample application onto a different cloud native and compare differences in behavior and each cloud native’s ability to manage it. If using Meshery to do so, execute the following commands as an example to deploy the sample application, BookCatalog, onto Open cloud native:
 
 ```
 $ mesheryctl pattern apply -f book-catalog
