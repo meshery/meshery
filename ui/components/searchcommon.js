@@ -32,6 +32,9 @@ const styles = ((theme) => ({
     '& .MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline' : {
       borderColor : theme.palette.type === 'dark'? '#00B39F': theme.palette.grey[800],
     },
+    '& .MuiInputLabel-root.Mui-focused' : {
+      color : theme.palette.type === 'dark'? '#F6F8F8': '#3C494F',
+    },
   }
 }));
 
