@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import MesherySMIResults from "../components/MesherySMIResults";
 import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
@@ -11,27 +11,25 @@ const styles = { paper : { maxWidth : '90%',
   margin : 'auto',
   overflow : 'hidden', } };
 
-class SMIResults extends React.Component {
-  componentDidMount () {
+const SMIResults = ({ updatepagepath, classes }) => {
+  useEffect(() => {
     console.log(`path: ${getPath()}`);
-    this.props.updatepagepath({ path : getPath() });
-  }
+    updatepagepath({ path: getPath() });
+  }, [updatepagepath]);
 
-  render () {
-    return (
-      <React.Fragment>
-        <Head>
-          <title>SMI Results | Meshery</title>
-        </Head>
-        <Paper className={this.props.classes.paper}>
-          <MesherySMIResults />
-        </Paper>
-      </React.Fragment>
-    );
-  }
-}
+  return (
+    <React.Fragment>
+      <Head>
+        <title>SMI Results | Meshery</title>
+      </Head>
+      <Paper className={this.props.classes.paper}>
+        <MesherySMIResults />
+      </Paper>
+    </React.Fragment>
+  );
+};
 
-const mapDispatchToProps = dispatch => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch) })
+const mapDispatchToProps = dispatch => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch) });
 
 export default withStyles(styles)(connect(
   null,
