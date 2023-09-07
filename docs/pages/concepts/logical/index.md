@@ -2,7 +2,6 @@
 layout: default
 title: Concepts
 permalink: concepts/logical
-redirect_from: concepts/logical
 language: en
 list: exclude
 ---
