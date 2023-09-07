@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import IconButton from "@mui/material/IconButton";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -22,6 +22,7 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) =
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const containerRef = useRef(null);
 
   const handleOpen = event => {
     setAnchorEl(event.currentTarget);
@@ -41,64 +42,67 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) =
 
 
   return (
-    <>
-      <Tooltip title="View Columns">
-        <IconButton
-          onClick={handleOpen}
-          sx={{
-            "&:hover" : {
-              borderRadius : "4px"
-            },
-          }}
-        >
-          < ColumnIcon  />
-        </IconButton>
-      </Tooltip>
 
-      <Box>
-        <Popper
-          open={Boolean(anchorEl)}
-          anchorEl={anchorEl}
-          placement="bottom-start"
-          anchorOrigin={{
-            vertical : "bottom",
-            horizontal : "center",
-          }}
-          transformOrigin={{
-            vertical : "top",
-            horizontal : "center",
-          }}
-          transition
-        >
-          {({ TransitionProps }) => (
-            <Slide {...TransitionProps} direction="down" timeout={350} in={open} mountOnEnter unmountOnExit>
-              <Box>
-                <ClickAwayListener onClickAway={handleClose}>
-                  <Paper  className={classes.epaper}>
-                    <div style={{ display : "flex", flexDirection : "column" }}>
-                      {columns.map(col => (
-                        <FormControlLabel
-                          key={col.name}
-                          control={
-                            <Checkbox
-                              checked={customToolsProps.columnVisibility[col.name]}
-                              onChange={e =>
-                                handleColumnVisibilityChange(col.name, e.target.checked)
-                              }
-                            />
-                          }
-                          label={col.label}
-                        />
-                      ))}
-                    </div>
-                  </Paper>
-                </ClickAwayListener>
-              </Box>
-            </Slide>
-          )}
-        </Popper>
-      </Box>
-    </>
+    <Box>
+      <div>
+        <Tooltip title="View Columns">
+          <IconButton
+            onClick={handleOpen}
+            sx={{
+              "&:hover" : {
+                borderRadius : "4px"
+              },
+            }}
+          >
+            < ColumnIcon  />
+          </IconButton>
+        </Tooltip>
+
+        <Box sx={{ overflow : 'hidden' }} ref={containerRef}>
+          <Popper
+            open={Boolean(anchorEl)}
+            anchorEl={anchorEl}
+            placement="bottom-start"
+            anchorOrigin={{
+              vertical : "bottom",
+              horizontal : "center",
+            }}
+            transformOrigin={{
+              vertical : "top",
+              horizontal : "center",
+            }}
+            transition
+          >
+            {({ TransitionProps }) => (
+              <Slide {...TransitionProps} direction="down" in={open} timeout={400} mountOnEnter unmountOnExit container={containerRef.current}>
+                <Box>
+                  <ClickAwayListener onClickAway={handleClose}>
+                    <Paper  className={classes.epaper}>
+                      <div style={{ display : "flex", flexDirection : "column" }}>
+                        {columns.map(col => (
+                          <FormControlLabel
+                            key={col.name}
+                            control={
+                              <Checkbox
+                                checked={customToolsProps.columnVisibility[col.name]}
+                                onChange={e =>
+                                  handleColumnVisibilityChange(col.name, e.target.checked)
+                                }
+                              />
+                            }
+                            label={col.label}
+                          />
+                        ))}
+                      </div>
+                    </Paper>
+                  </ClickAwayListener>
+                </Box>
+              </Slide>
+            )}
+          </Popper>
+        </Box>
+      </div>
+    </Box>
   );
 };
 
