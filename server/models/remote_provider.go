@@ -35,6 +35,7 @@ import (
 type RemoteProvider struct {
 	ProviderProperties
 	*SessionPreferencePersister
+	*EventsPersister
 
 	SaaSTokenName     string
 	RemoteProviderURL string
@@ -663,8 +664,8 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8
 	logrus.Infof("attempting to save %s context to remote provider with ID %s", k8sContext.Name, k8sContext.ID)
 	err := l.SaveConnection(nil, conn, token, true)
 	if err != nil {
-		logrus.Errorf("unable to save K8s connection: %v", err)
-		return k8sContext, fmt.Errorf("unable to save K8s connection: %v", err)
+		logrus.Errorf(err.Error())
+		return k8sContext, err
 	}
 
 	return k8sContext, nil
@@ -2044,7 +2045,7 @@ func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFi
 }
 
 // GetMesheryFilters gives the filters stored with the provider
-func (l *RemoteProvider) GetMesheryFilters(tokenString string, page, pageSize, search, order string) ([]byte, error) {
+func (l *RemoteProvider) GetMesheryFilters(tokenString string, page, pageSize, search, order string, visibility string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryFilters) {
 		logrus.Error("operation not available")
 		return []byte{}, ErrInvalidCapability("PersistMesheryFilters", l.ProviderName)
@@ -2067,6 +2068,9 @@ func (l *RemoteProvider) GetMesheryFilters(tokenString string, page, pageSize, s
 	}
 	if order != "" {
 		q.Set("order", order)
+	}
+	if visibility != "" {
+		q.Set("visibility", visibility)
 	}
 	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("constructed filters url: %s", remoteProviderURL.String())
@@ -3565,7 +3569,7 @@ func (l *RemoteProvider) SaveConnection(req *http.Request, conn *ConnectionPaylo
 		return nil
 	}
 
-	return ErrFetch(fmt.Errorf("failed to save the connection"), fmt.Sprint(bdr), resp.StatusCode)
+	return ErrPost(fmt.Errorf("failed to save the connection"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, pageSize int, search, order string) (*ConnectionPage, error) {

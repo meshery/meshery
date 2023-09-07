@@ -51,7 +51,7 @@ mesheryctl pattern delete [file | URL]
 		pattern := ""
 		isID := false
 		if len(args) > 0 {
-			pattern, isID, err = utils.ValidId(args[0], "pattern")
+			pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
 			if err != nil {
 				return err
 			}

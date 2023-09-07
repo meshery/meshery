@@ -1,18 +1,18 @@
 @import "https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i";
 html {
-  font-size: 62.5%;
+  font-size: 72.5%;
   box-sizing: border-box;
 
   @media (max-width: 75em) {
-    font-size: 56.25%;
+    font-size: 66.25%;
   }
 
   @media (max-width: 56.25em) {
-    font-size: 50%;
+    font-size: 60%;
   }
 
   @media (max-width: 37.5em) {
-    font-size: 43.75%;
+    font-size: 53.75%;
   }
 }
 
@@ -33,8 +33,7 @@ body {
   background-repeat: no-repeat;
   color: var(--color-secondary-dark);
   background: var(--background-light);
-  font-family: "Open Sans", -apple-system, BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, sans-serif,
-    apple color emoji, segoe ui emoji, segoe ui symbol;
+  font-family: "Qanelas Soft", "Open Sans", sans-serif, -apple-system, BlinkMacSystemFont, segoe ui, Roboto, apple color emoji, segoe ui emoji, segoe ui symbol;
 }
 
 ul,

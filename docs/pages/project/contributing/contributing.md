@@ -29,7 +29,7 @@ Follow these steps and you'll be right at home.
 - **Identify** your area of interest: Use the time with your MeshMate to familiarize yourself with the architecture and technologies used in the projects. Inform your MeshMate of your current skills and what skills you aim to develop.
 - **Run** Meshery: Put on your user hat and walk-through all of Meshery’s features and functions as a user.
 - **Build** Meshery: Confirm that you have a usable development environment.
-- **Discuss** with the community by engaging in the [discussion forum](https://discuss.layer5.io).
+- **Discuss** with the community by engaging in the [discussion forum](http://discuss.meshery.io).
 - **Contribute** by grabbing any open issue with the [help-wanted label](https://github.com/meshery/meshery/issues/) and jump in. If needed, create a [new issue](https://github.com/meshery/meshery/issues/new/choose). All [pull requests](https://github.com/meshery/meshery/pulls) should reference an open issue. Include keywords in your pull request descriptions, as well as commit messages, to [automatically close issues in GitHub](https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords).
 - **Fill-in** a [community member form](https://layer5.io/newcomers) community member form to gain access to community resources.
 
