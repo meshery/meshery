@@ -22,8 +22,8 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrFilterNameOrIDCode = "1034"
-	ErrFetchFilterCode    = "1035"
+	ErrFilterNameOrIDCode = "replace_me"
+	ErrFetchFilterCode    = "replace_me"
 )
 
 func ErrFilterNameOrID(err error) error {

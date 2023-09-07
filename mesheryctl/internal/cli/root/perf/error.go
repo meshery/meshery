@@ -10,21 +10,21 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrReadFilepathCode             = "1056"
-	ErrNoProfileNameCode            = "1057"
-	ErrNoTestURLCode                = "1058"
-	ErrNotValidURLCode              = "1059"
-	ErrFailMarshalCode              = "1060"
-	ErrFailUnmarshalCode            = "1061"
-	ErrNoProfileFoundCode           = "1062"
-	ErrInvalidOutputChoiceCode      = "1063"
-	ErrUnauthenticatedCode          = "1064"
-	ErrFailUnmarshalFileCode        = "1065"
-	ErrInvalidTestConfigFileCode    = "1066"
-	ErrArgumentOverflowCode         = "1067"
-	ErrInvalidJSONFileCode          = "1068"
-	ErrHealthCheckerCode            = "1069"
-	ErrPerformanceProfileResultCode = "1070"
+	ErrReadFilepathCode             = "replace_me"
+	ErrNoProfileNameCode            = "replace_me"
+	ErrNoTestURLCode                = "replace_me"
+	ErrNotValidURLCode              = "replace_me"
+	ErrFailMarshalCode              = "replace_me"
+	ErrFailUnmarshalCode            = "replace_me"
+	ErrNoProfileFoundCode           = "replace_me"
+	ErrInvalidOutputChoiceCode      = "replace_me"
+	ErrUnauthenticatedCode          = "replace_me"
+	ErrFailUnmarshalFileCode        = "replace_me"
+	ErrInvalidTestConfigFileCode    = "replace_me"
+	ErrArgumentOverflowCode         = "replace_me"
+	ErrInvalidJSONFileCode          = "replace_me"
+	ErrHealthCheckerCode            = "replace_me"
+	ErrPerformanceProfileResultCode = "replace_me"
 )
 
 func ErrReadFilepath(err error) error {

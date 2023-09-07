@@ -54,13 +54,13 @@ mesheryctl mesh deploy linkerd --watch
 			log.Infof("Verifying prerequisites...")
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				utils.Log.Error(utils.ErrLoadConfig(err))
+				utils.Log.Error(err)
 				return nil
 			}
 
 			if err = validateAdapter(mctlCfg, meshName); err != nil {
 				// ErrValidatingAdapter
-				utils.Log.Error(ErrValidatingAdapters(err))
+				utils.Log.Error(err)
 				return nil
 			}
 			return nil
@@ -75,7 +75,7 @@ mesheryctl mesh deploy linkerd --watch
 			s.Start()
 			_, err = sendOperationRequest(mctlCfg, strings.ToLower(meshName), false, "null")
 			if err != nil {
-				utils.Log.Error(ErrSendOperation(err))
+				utils.Log.Error(err)
 				return nil
 			}
 			s.Stop()
@@ -84,7 +84,7 @@ mesheryctl mesh deploy linkerd --watch
 				log.Infof("Verifying Operation")
 				_, err = waitForDeployResponse(mctlCfg, "mesh is now installed")
 				if err != nil {
-					utils.Log.Error(ErrWaitValidateResponse(err))
+					utils.Log.Error(err)
 					return nil
 				}
 			}

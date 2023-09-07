@@ -20,34 +20,50 @@ import "github.com/layer5io/meshkit/errors"
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrGettingSessionDataCode                = "1036"
-	ErrNoAdaptersCode                        = "1037"
-	ErrPromptCode                            = "1038"
-	ErrCreatingDeployRequestCode             = "1039"
-	ErrCreatingDeployResponseRequestCode     = "1040"
-	ErrCreatingDeployResponseStreamCode      = "1041"
-	ErrCreatingValidateResponseStreamCode    = "1042"
-	ErrTimeoutWaitingForDeployResponseCode   = "1043"
-	ErrFailedDeployingMeshCode               = "1044"
-	ErrCreatingValidateRequestCode           = "1045"
-	ErrCreatingValidateResponseRequestCode   = "1046"
-	ErrTimeoutWaitingForValidateResponseCode = "1047"
-	ErrSMIConformanceTestsFailedCode         = "1048"
-	ErrValidateAdapterCode                   = "1049"
-	ErrSendOperationCode                     = "1050"
-	ErrValidMeshNameCode                     = "1051"
-	ErrWaitValidateResponseCode              = "1052"
+	ErrGettingSessionDataCode                = "replace_me"
+	ErrNoAdaptersCode                        = "replace_me"
+	ErrPromptCode                            = "replace_me"
+	ErrCreatingDeployRequestCode             = "replace_me"
+	ErrCreatingDeployResponseRequestCode     = "replace_me"
+	ErrCreatingDeployResponseStreamCode      = "replace_me"
+	ErrCreatingValidateResponseStreamCode    = "replace_me"
+	ErrTimeoutWaitingForDeployResponseCode   = "replace_me"
+	ErrFailedDeployingMeshCode               = "replace_me"
+	ErrCreatingValidateRequestCode           = "replace_me"
+	ErrCreatingValidateResponseRequestCode   = "replace_me"
+	ErrTimeoutWaitingForValidateResponseCode = "replace_me"
+	ErrSMIConformanceTestsFailedCode         = "replace_me"
+	ErrValidateAdapterCode                   = "replace_me"
+	ErrSendOperationCode                     = "replace_me"
+	ErrValidMeshNameCode                     = "replace_me"
+	ErrWaitValidateResponseCode              = "replace_me"
 )
 
 var (
 	// no adapters found
-	ErrNoAdapters = errors.New(ErrNoAdaptersCode, errors.Fatal, []string{"Adapter for required mesh not found"}, []string{"Adapter for required mesh not found"}, []string{""}, []string{"Deploy the proper Meshery Adapter for your service mesh"})
+	ErrNoAdapters = errors.New(ErrNoAdaptersCode, errors.Fatal,
+		[]string{"Unable to validate adapter"},
+		[]string{"Adapter for required mesh not found"},
+		[]string{"Unable to fetch Mesh adapter, adapter not valid."},
+		[]string{"Deploy a proper Meshery Adapter for your service mesh. See https://docs.meshery.io/concepts/architecture/adapters for list of adapters"})
 
-	ErrFailedDeployingMesh = errors.New(ErrFailedDeployingMeshCode, errors.Fatal, []string{"Failed to deploy the service mesh"}, []string{"Failed to deploy the service mesh"}, []string{}, []string{"Check your environment and try again"})
+	ErrFailedDeployingMesh = errors.New(ErrFailedDeployingMeshCode, errors.Fatal,
+		[]string{"Failed to deploy the service mesh"},
+		[]string{"Failed to deploy the service mesh"},
+		[]string{"Network error or wrong environment configurations"},
+		[]string{"Ensure your have a strong connection and the right environment configuration"})
 
-	ErrTimeoutWaitingForDeployResponse = errors.New(ErrTimeoutWaitingForDeployResponseCode, errors.Fatal, []string{"Timed out waiting for deploy event"}, []string{"Timed out waiting for deployment"}, []string{}, []string{"Check your environment and try again"})
+	ErrTimeoutWaitingForDeployResponse = errors.New(ErrTimeoutWaitingForDeployResponseCode, errors.Fatal,
+		[]string{"Timed out waiting for deploy event"},
+		[]string{"Timed out waiting for deployment"},
+		[]string{"Network error or wrong environment configurations"},
+		[]string{"Ensure your have a strong connection and the right environment configuration"})
 
-	ErrTimeoutWaitingForValidateResponse = errors.New(ErrTimeoutWaitingForValidateResponseCode, errors.Fatal, []string{"Timed out waiting for validate response"}, []string{"Timed out waiting for validate response"}, []string{""}, []string{"Check your environment and try again"})
+	ErrTimeoutWaitingForValidateResponse = errors.New(ErrTimeoutWaitingForValidateResponseCode, errors.Fatal,
+		[]string{"Timed out waiting for validate response"},
+		[]string{"Timed out waiting for validate response"},
+		[]string{"Network error or wrong environment configurations"},
+		[]string{"Ensure your have a strong connection and the right environment configuration"})
 
 	ErrSMIConformanceTestsFailed = errors.New(ErrSMIConformanceTestsFailedCode, errors.Fatal, []string{"SMI conformance tests failed"}, []string{"SMI conformance tests failed"}, []string{}, []string{"Join https://layer5io.slack.com/archives/C010H0HE2E6"})
 )

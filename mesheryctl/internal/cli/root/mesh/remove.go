@@ -41,12 +41,12 @@ mesheryctl mesh remove linkerd --namespace linkerd-ns
 			utils.Log.Info("Verifying prerequisites...")
 			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 			if err != nil {
-				utils.Log.Error(utils.ErrLoadConfig(err))
+				utils.Log.Error(err)
 				return nil
 			}
 
 			if err = validateAdapter(mctlCfg, meshName); err != nil {
-				utils.Log.Error(ErrValidatingAdapters(err))
+				utils.Log.Error(err)
 				return nil
 			}
 			return nil
@@ -67,7 +67,7 @@ mesheryctl mesh remove linkerd --namespace linkerd-ns
 			s.Start()
 			_, err = sendOperationRequest(mctlCfg, strings.ToLower(meshName), true, "null")
 			if err != nil {
-				utils.Log.Error(errors.Wrap(ErrSendOperation(err), "error removing service mesh"))
+				utils.Log.Error(ErrSendOperation(errors.Wrap(err, "error removing service mesh")))
 				return nil
 			}
 			s.Stop()
