@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import MesherySMIResults from "../components/MesherySMIResults";
 import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
@@ -7,31 +7,31 @@ import Head from 'next/head';
 import { getPath } from "../lib/path";
 import { Paper, withStyles } from '@material-ui/core';
 
-const styles = { paper : { maxWidth : '90%',
+const styles = { paper : { 
+  maxWidth : '90%',
   margin : 'auto',
   overflow : 'hidden', } };
 
-class SMIResults extends React.Component {
-  componentDidMount () {
-    console.log(`path: ${getPath()}`);
-    this.props.updatepagepath({ path : getPath() });
-  }
 
-  render () {
+function SMIResults({updatepagepath, classes}){
+  useEffect(() => {
+    console.log(`path: ${getPath()}`);
+    updatepagepath({ path : getPath() });
+}, [updatepagepath]);
+
     return (
       <React.Fragment>
         <Head>
           <title>SMI Results | Meshery</title>
         </Head>
-        <Paper className={this.props.classes.paper}>
+        <Paper className={classes.paper}>
           <MesherySMIResults />
         </Paper>
       </React.Fragment>
     );
   }
-}
 
-const mapDispatchToProps = dispatch => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch) })
+const mapDispatchToProps = dispatch => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch) });
 
 export default withStyles(styles)(connect(
   null,
