@@ -34,12 +34,20 @@ jobs:
       - name: Run Utility For Meshery Server
         run: |
           ~/errorutil update -d . -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl
+          output=$(~/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl | wc -c)
+          if [ "$output" -ne 0 ]; then
+            exit 1
+          fi
           echo '{ "errors_export": "" }' | jq --slurpfile export ./server/helpers/errorutil_errors_export.json '.errors_export = $export[0]' > ./docs/_data/errorref/meshery-server_errors_export.json
 
       - name: Run Utility For Mesheryctl
         run: |
           cd ./mesheryctl
           ~/errorutil update -d . -i ./helpers -o ./helpers
+          output=$(~/errorutil -d . analyze -i ./helpers -o ./helpers | wc -c)
+          if [ "$output" -ne 0 ]; then
+            exit 1
+          fi
           echo '{ "errors_export": "" }' | jq --slurpfile export ../server/helpers/errorutil_errors_export.json '.errors_export = $export[0]' > ../docs/_data/errorref/mesheryctl_errors_export.json
 
       - name: Commit changes

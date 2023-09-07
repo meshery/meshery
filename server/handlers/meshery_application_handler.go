@@ -18,6 +18,7 @@ import (
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
 	pCore "github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshkit/models/events"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
@@ -104,7 +105,7 @@ func (h *Handler) handleApplicationPOST(
 	rw http.ResponseWriter,
 	r *http.Request,
 	_ *models.Preference,
-	_ *models.User,
+	user *models.User,
 	provider models.Provider,
 ) {
 	defer func() {
@@ -116,23 +117,49 @@ func (h *Handler) handleApplicationPOST(
 		OperationId:   guid.NewString(),
 		EventType:     meshes.EventType_INFO,
 	}
+	userID := uuid.FromStringOrNil(user.ID)
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("application").WithAction("create").ActedUpon(userID)
+
 	sourcetype := mux.Vars(r)["sourcetype"]
 	if sourcetype == "" {
 		http.Error(rw, "missing route variable \"source-type\"", http.StatusBadRequest)
 		addMeshkitErr(&res, ErrSaveApplication(fmt.Errorf("missing route variable \"source-type\"")))
+		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": ErrSaveApplication(fmt.Errorf("missing route variable \"source-type\" (one of %s, %s, %s)",  models.K8sManifest, models.DockerCompose, models.HelmChart)),
+		}).WithDescription("Please provide application source-type").Build()
+		
+		_ = provider.PersistEvent(event)
 		go h.EventsBuffer.Publish(&res)
+		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
 	var parsedBody *MesheryApplicationRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		http.Error(rw, ErrRetrieveData(err).Error(), http.StatusBadRequest)
 		addMeshkitErr(&res, ErrRetrieveData(err))
+		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": ErrRetrieveData(err),
+		}).WithDescription("Unable to parse uploaded application.").Build()
+			
+		_ = provider.PersistEvent(event)
 		go h.EventsBuffer.Publish(&res)
+		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
-
+		
+	actedUpon := parsedBody.ApplicationData.ID
+	if actedUpon == nil {
+		actedUpon = &userID
+	}
+	eventBuilder.ActedUpon(*actedUpon)
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
+		event := eventBuilder.WithSeverity(events.Critical).WithMetadata(map[string]interface{}{
+			"error": ErrRetrieveUserToken(err),
+		}).WithDescription("No auth token provided in the request.").Build()
+
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
 		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
 		addMeshkitErr(&res, ErrRetrieveData(err))
 		go h.EventsBuffer.Publish(&res)
@@ -164,8 +191,17 @@ func (h *Handler) handleApplicationPOST(
 				k8sres, err = kompose.Convert(bytApplication) // convert the docker compose file into kubernetes manifest
 				if err != nil {
 					obj := "convert"
-					h.log.Error(ErrApplicationFailure(err, obj))
-					http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
+					conversionErr := ErrApplicationFailure(err, obj)
+					h.log.Error(conversionErr)
+
+					event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+						"error": conversionErr,
+					}).WithDescription(fmt.Sprintf("Failed converting Docker Compose application %s", mesheryApplication.Name)).Build()
+
+					_ = provider.PersistEvent(event)
+					go h.config.EventBroadcaster.Publish(userID, event)
+
+					http.Error(rw, conversionErr.Error(), http.StatusInternalServerError)
 					addMeshkitErr(&res, ErrApplicationFailure(err, obj))
 					go h.EventsBuffer.Publish(&res)
 					return
@@ -184,8 +220,16 @@ func (h *Handler) handleApplicationPOST(
 			pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false, h.registryManager)
 			if err != nil {
 				obj := "convert"
-				h.log.Error(ErrApplicationFailure(err, obj))
-				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
+				conversionErr := ErrApplicationFailure(err, obj)
+				h.log.Error(conversionErr)
+
+				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+					"error": conversionErr,
+				}).WithDescription(fmt.Sprintf("Failed converting Docker Compose application %s to Pattern file format.", mesheryApplication.Name)).Build()
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
+
+				http.Error(rw, conversionErr.Error(), http.StatusInternalServerError)
 				addMeshkitErr(&res, err)                                                                //this error is already a meshkit error so no further wrapping required
 				go h.EventsBuffer.Publish(&res)
 				return
@@ -193,8 +237,16 @@ func (h *Handler) handleApplicationPOST(
 			response, err := yaml.Marshal(pattern)
 			if err != nil {
 				obj := "convert"
-				h.log.Error(ErrApplicationFailure(err, obj))
-				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
+				conversionErr := ErrApplicationFailure(err, obj)
+				h.log.Error(conversionErr)
+
+				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+					"error": conversionErr,
+				}).WithDescription(fmt.Sprintf("Failed converting Docker Compose application %s to Pattern file format.", mesheryApplication.Name)).Build()
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
+
+				http.Error(rw, conversionErr.Error(), http.StatusInternalServerError)
 				addMeshkitErr(&res, ErrApplicationFailure(err, obj))
 				go h.EventsBuffer.Publish(&res)
 				return
@@ -202,8 +254,16 @@ func (h *Handler) handleApplicationPOST(
 			mesheryApplication.ApplicationFile = string(response)
 		} else {
 			obj := "convert"
-			h.log.Error(ErrApplicationFailure(fmt.Errorf("invalid source type"), obj))
-			http.Error(rw, ErrApplicationFailure(fmt.Errorf("invalid source type"), obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
+			sourceTypeErr := ErrApplicationFailure(fmt.Errorf("invalid source type"), obj)
+			h.log.Error(sourceTypeErr)
+
+			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+				"error": sourceTypeErr,
+			}).WithDescription(fmt.Sprintf("Source Type \"%s\" not supported.", sourcetype)).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+
+			http.Error(rw, sourceTypeErr.Error(), http.StatusInternalServerError)
 			addMeshkitErr(&res, ErrApplicationFailure(err, obj))
 			go h.EventsBuffer.Publish(&res)
 			return
@@ -218,7 +278,16 @@ func (h *Handler) handleApplicationPOST(
 			}()
 			if err != nil {
 				obj := "import"
-				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
+				importErr := ErrApplicationFailure(err, obj)
+				h.log.Error(importErr)
+
+				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+					"error": importErr,
+				}).WithDescription(fmt.Sprintf("Failed importing application from URL %s.", parsedBody.URL)).Build()
+				_ = provider.PersistEvent(event)
+
+				go h.config.EventBroadcaster.Publish(userID, event)
+				http.Error(rw, importErr.Error(), http.StatusInternalServerError)
 				addMeshkitErr(&res, ErrApplicationFailure(err, obj))
 				go h.EventsBuffer.Publish(&res)
 				return
@@ -226,6 +295,12 @@ func (h *Handler) handleApplicationPOST(
 			sourceContent, err := io.ReadAll(helmSourceResp.Body)
 			if err != nil {
 				http.Error(rw, "error read body", http.StatusInternalServerError)
+				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+					"error": ErrSaveApplication(err),
+				}).WithDescription(fmt.Sprintf("error reading application from the remote URL %s, URL is malformed or not reachable.", parsedBody.URL)).Build()
+
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
 				addMeshkitErr(&res, ErrSaveApplication(fmt.Errorf("error reading body")))
 				go h.EventsBuffer.Publish(&res)
 				return
@@ -236,31 +311,56 @@ func (h *Handler) handleApplicationPOST(
 			})
 			if err != nil {
 				obj := "import"
-				h.log.Error(ErrApplicationFailure(err, obj))
-				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
+				importErr := ErrApplicationFailure(err, obj)
+				h.log.Error(importErr)
+				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+					"error": importErr,
+				}).WithDescription(fmt.Sprintf("error converting helm chart %s to Kubernetes manifest, URL might be malformed or not reachable.", parsedBody.URL)).Build()
+				
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
+
+				http.Error(rw, importErr.Error(), http.StatusInternalServerError)
 				addMeshkitErr(&res, ErrApplicationFailure(err, obj))
 				go h.EventsBuffer.Publish(&res)
 				return
 			}
+
 			result := string(resp)
 			pattern, err := pCore.NewPatternFileFromK8sManifest(result, false, h.registryManager)
 			if err != nil {
 				obj := "convert"
-				h.log.Error(ErrApplicationFailure(err, obj))
-				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
+				convertErr := ErrApplicationFailure(err, obj)
+				h.log.Error(convertErr)
+				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+					"error": convertErr,
+				}).WithDescription(fmt.Sprintf("Failed converting Helm Chart %s to Pattern file format", parsedBody.URL)).Build()
+				
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
 				addMeshkitErr(&res, err)
 				go h.EventsBuffer.Publish(&res)
 				return
 			}
+
 			response, err := yaml.Marshal(pattern)
 			if err != nil {
 				obj := "convert"
-				h.log.Error(ErrApplicationFailure(err, obj))
-				http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
+				convertErr := ErrApplicationFailure(err, obj)
+				h.log.Error(convertErr)
+				http.Error(rw, convertErr.Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
+				
+				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+					"error": convertErr,
+				}).WithDescription(fmt.Sprintf("Failed converting Helm Chart %s to Pattern file format", parsedBody.URL)).Build()
+				
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
 				addMeshkitErr(&res, ErrApplicationFailure(err, obj))
 				go h.EventsBuffer.Publish(&res)
 				return
 			}
+
 			url := strings.Split(parsedBody.URL, "/")
 			mesheryApplication = &models.MesheryApplication{
 				Name:            strings.TrimSuffix(url[len(url)-1], ".tgz"),
@@ -280,9 +380,15 @@ func (h *Handler) handleApplicationPOST(
 		} else if sourcetype == string(models.DockerCompose) || sourcetype == string(models.K8sManifest) {
 			parsedURL, err := url.Parse(parsedBody.URL)
 			if err != nil {
-				http.Error(rw, "error parsing provided URL", http.StatusInternalServerError)
+				err := ErrSaveApplication(fmt.Errorf("error parsing URL"))
+				http.Error(rw, err.Error(), http.StatusInternalServerError)
+				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+					"error": err,
+				}).WithDescription(fmt.Sprintf("Invalid URL provided %s", parsedBody.URL)).Build()
 				addMeshkitErr(&res, ErrSaveApplication(fmt.Errorf("error parsing URL")))
 				go h.EventsBuffer.Publish(&res)
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
 				return
 			}
 
@@ -309,7 +415,15 @@ func (h *Handler) handleApplicationPOST(
 
 				pfs, err := githubRepoApplicationScan(owner, repo, path, branch, sourcetype, h.registryManager)
 				if err != nil {
-					http.Error(rw, ErrRemoteApplication(err).Error(), http.StatusInternalServerError)
+					remoteApplicationErr := ErrRemoteApplication(err)
+					http.Error(rw, remoteApplicationErr.Error(), http.StatusInternalServerError)
+
+					event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+						"error": err,
+					}).WithDescription(fmt.Sprintf("Failed to retrieve remote application at %s", parsedBody.URL)).Build()
+				
+					_ = provider.PersistEvent(event)
+					go h.config.EventBroadcaster.Publish(userID, event)
 					addMeshkitErr(&res, err) //error guaranteed to be meshkit error
 					go h.EventsBuffer.Publish(&res)
 					return
@@ -320,7 +434,14 @@ func (h *Handler) handleApplicationPOST(
 				// Fallback to generic HTTP import
 				pfs, err := genericHTTPApplicationFile(parsedBody.URL, sourcetype, h.registryManager)
 				if err != nil {
-					http.Error(rw, ErrRemoteApplication(err).Error(), http.StatusInternalServerError)
+					remoteApplicationErr := ErrRemoteApplication(err)
+					http.Error(rw, remoteApplicationErr.Error(), http.StatusInternalServerError)
+
+					event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+						"error": err,
+					}).WithDescription(fmt.Sprintf("Failed to retrieve remote application at %s", parsedBody.URL)).Build()
+					_ = provider.PersistEvent(event)
+					go h.config.EventBroadcaster.Publish(userID, event)
 					addMeshkitErr(&res, err) //error guaranteed to be meshkit error
 					go h.EventsBuffer.Publish(&res)
 					return
@@ -329,8 +450,16 @@ func (h *Handler) handleApplicationPOST(
 			}
 		} else {
 			obj := "convert"
-			h.log.Error(ErrApplicationFailure(fmt.Errorf("invalid source type"), obj))
-			http.Error(rw, ErrApplicationFailure(fmt.Errorf("invalid source type"), obj).Error(), http.StatusInternalServerError) // sending a 500 when we cannot convert the file into kuberentes manifest
+			sourceTypeErr := ErrApplicationFailure(fmt.Errorf("invalid source type"), obj)
+			h.log.Error(sourceTypeErr)
+
+			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+				"error": sourceTypeErr,
+			}).WithDescription(fmt.Sprintf("Source Type \"%s\" not supported.", sourcetype)).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+
+			http.Error(rw, sourceTypeErr.Error(), http.StatusInternalServerError)
 			addMeshkitErr(&res, ErrApplicationFailure(fmt.Errorf("error parsing URL"), obj))
 			go h.EventsBuffer.Publish(&res)
 			return
@@ -343,12 +472,26 @@ func (h *Handler) handleApplicationPOST(
 		resp, err := provider.SaveMesheryApplication(token, mesheryApplication)
 		if err != nil {
 			obj := "save"
-			h.log.Error(ErrApplicationFailure(err, obj))
-			http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
+			
+			saveErr := ErrApplicationFailure(err, obj)
+			h.log.Error(saveErr)
+			http.Error(rw, saveErr.Error(), http.StatusInternalServerError)
+			
+			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+				"error": saveErr,
+			}).WithDescription(fmt.Sprintf("Failed persisting application %s", parsedBody.Name)).Build()
+			
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
 			addMeshkitErr(&res, ErrApplicationFailure(err, obj))
 			go h.EventsBuffer.Publish(&res)
 			return
 		}
+		
+		h.formatApplicationOutput(rw, resp, format, &res, eventBuilder)
+		
+		eventBuilder.WithSeverity(events.Informational)
+		_ = provider.PersistEvent(eventBuilder.Build())
 
 		var mesheryApplicationContent []models.MesheryApplication
 		err = json.Unmarshal(resp, &mesheryApplicationContent)
@@ -356,8 +499,6 @@ func (h *Handler) handleApplicationPOST(
 			obj := "application"
 			h.log.Error(models.ErrEncoding(err, obj))
 			http.Error(rw, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
-			addMeshkitErr(&res, models.ErrEncoding(err, obj))
-			go h.EventsBuffer.Publish(&res)
 			return
 		}
 		savedApplicationID = mesheryApplicationContent[0].ID
@@ -365,14 +506,25 @@ func (h *Handler) handleApplicationPOST(
 
 		if err != nil {
 			obj := "upload"
-			h.log.Error(ErrApplicationSourceContent(err, obj))
-			http.Error(rw, ErrApplicationSourceContent(err, obj).Error(), http.StatusInternalServerError)
+			uploadSourceContentErr := ErrApplicationSourceContent(err, obj)
+
+			h.log.Error(uploadSourceContentErr)
+			http.Error(rw, uploadSourceContentErr.Error(), http.StatusInternalServerError)
+
+			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+				"error": uploadSourceContentErr,
+			}).WithDescription("Failed uploading original application content to remote provider.").Build()
+			
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
 			addMeshkitErr(&res, ErrApplicationSourceContent(err, obj))
 			go h.EventsBuffer.Publish(&res)
 			return
 		}
 
 		go h.config.ConfigurationChannel.PublishApplications()
+		eb := eventBuilder
+		_ = provider.PersistEvent(eb.WithDescription(fmt.Sprintf("Application %s  Source content uploaded", mesheryApplicationContent[0].Name)).Build())
 	}
 
 	mesheryApplication.ID = savedApplicationID
@@ -381,32 +533,41 @@ func (h *Handler) handleApplicationPOST(
 		obj := "application"
 		h.log.Error(models.ErrEncoding(err, obj))
 		http.Error(rw, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
-		addMeshkitErr(&res, models.ErrEncoding(err, obj))
-		go h.EventsBuffer.Publish(&res)
 		return
 	}
 
-	h.formatApplicationOutput(rw, byt, format, &res)
+	h.formatApplicationOutput(rw, byt, format, &res, eventBuilder)
 }
 
 func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 	r *http.Request,
 	_ *models.Preference,
-	_ *models.User,
+	user *models.User,
 	provider models.Provider) {
 	defer func() {
 		_ = r.Body.Close()
 	}()
+	userID := uuid.FromStringOrNil(user.ID)
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("application").WithAction("update").ActedUpon(userID)
+
 	res := meshes.EventsResponse{
 		Component:     "core",
 		ComponentName: "Design",
 		OperationId:   guid.NewString(),
 		EventType:     meshes.EventType_INFO,
 	}
+
 	sourcetype := mux.Vars(r)["sourcetype"]
 	if sourcetype == "" {
 		http.Error(rw, "missing route variable \"source-type\"", http.StatusBadRequest)
 		addMeshkitErr(&res, ErrSaveApplication(fmt.Errorf("missing route \"source-type\"")))
+
+		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": ErrSaveApplication(fmt.Errorf("missing route variable \"source-type\" (one of %s, %s, %s)",  models.K8sManifest, models.DockerCompose, models.HelmChart)),
+		}).WithDescription("Please provide application source-type").Build()
+		
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
 		go h.EventsBuffer.Publish(&res)
 		return
 	}
@@ -414,16 +575,25 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 	var parsedBody *MesheryApplicationRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		http.Error(rw, ErrRetrieveData(err).Error(), http.StatusBadRequest)
-		addMeshkitErr(&res, ErrRetrieveData(err))
-		go h.EventsBuffer.Publish(&res)
 		return
 	}
 
+	actedUpon := parsedBody.ApplicationData.ID
+	if actedUpon == nil {
+		actedUpon = &userID
+	}
+	
+	eventBuilder.ActedUpon(*actedUpon)
+
 	token, err := provider.GetProviderToken(r)
 	if err != nil {
+		event := eventBuilder.WithSeverity(events.Critical).WithMetadata(map[string]interface{}{
+			"error": ErrRetrieveUserToken(err),
+		}).WithDescription("No auth token provided in the request.").Build()
+
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
 		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
-		addMeshkitErr(&res, ErrRetrieveUserToken(err))
-		go h.EventsBuffer.Publish(&res)
 		return
 	}
 	format := r.URL.Query().Get("output")
@@ -431,8 +601,16 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 	if parsedBody.CytoscapeJSON != "" {
 		pf, err := pCore.NewPatternFileFromCytoscapeJSJSON(parsedBody.Name, []byte(parsedBody.CytoscapeJSON))
 		if err != nil {
+			errAppSave := ErrSaveApplication(err)
 			rw.WriteHeader(http.StatusBadRequest)
 			fmt.Fprintf(rw, "%s", err)
+
+			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+				"error": errAppSave,
+			}).WithDescription(fmt.Sprintf("Error saving application %s", parsedBody.ApplicationData.Name)).Build()
+
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
 			addMeshkitErr(&res, ErrSavePattern(err))
 			go h.EventsBuffer.Publish(&res)
 			return
@@ -475,15 +653,29 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 		if parsedBody.Save {
 			resp, err := provider.SaveMesheryApplication(token, mesheryApplication)
 			if err != nil {
-				h.log.Error(ErrSavePattern(err))
-				http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
+				errAppSave := ErrSaveApplication(err)
+				h.log.Error(errAppSave)
+
+				rw.WriteHeader(http.StatusBadRequest)
+				fmt.Fprintf(rw, "%s", err)
+
+				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+					"error": errAppSave,
+				}).WithDescription(fmt.Sprintf("Error saving application %s", parsedBody.ApplicationData.Name)).Build()
+
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
 				addMeshkitErr(&res, ErrSavePattern(err))
 				go h.EventsBuffer.Publish(&res)
 				return
 			}
 
+			eventBuilder.WithSeverity(events.Informational)
+			
 			go h.config.ConfigurationChannel.PublishApplications()
-			h.formatApplicationOutput(rw, resp, format, &res)
+			h.formatApplicationOutput(rw, resp, format, &res, eventBuilder)
+			_ = provider.PersistEvent(eventBuilder.Build())
+
 			return
 		}
 
@@ -491,12 +683,10 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 		if err != nil {
 			h.log.Error(ErrEncodePattern(err))
 			http.Error(rw, ErrEncodePattern(err).Error(), http.StatusInternalServerError)
-			addMeshkitErr(&res, ErrEncodePattern(err))
-			go h.EventsBuffer.Publish(&res)
 			return
 		}
 
-		h.formatApplicationOutput(rw, byt, format, &res)
+		h.formatApplicationOutput(rw, byt, format, &res, eventBuilder)
 		return
 	}
 	mesheryApplication := parsedBody.ApplicationData
@@ -507,8 +697,18 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 	resp, err := provider.SaveMesheryApplication(token, mesheryApplication)
 	if err != nil {
 		obj := "save"
-		h.log.Error(ErrApplicationFailure(err, obj))
-		http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
+		errAppSave := ErrSaveApplication(err)
+		h.log.Error(errAppSave)
+
+		rw.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(rw, "%s", err)
+
+		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": errAppSave,
+		}).WithDescription(fmt.Sprintf("Error saving application %s", parsedBody.ApplicationData.Name)).Build()
+
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
 		addMeshkitErr(&res, ErrApplicationFailure(err, obj))
 		go h.EventsBuffer.Publish(&res)
 		return
@@ -516,7 +716,9 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 
 	go h.config.ConfigurationChannel.PublishApplications()
 
-	h.formatApplicationOutput(rw, resp, format, &res)
+	eventBuilder.WithSeverity(events.Informational)
+	h.formatApplicationOutput(rw, resp, format, &res, eventBuilder)
+	_ = provider.PersistEvent(eventBuilder.Build())
 }
 
 // swagger:route GET /api/application ApplicationsAPI idGetMesheryApplications
@@ -541,17 +743,25 @@ func (h *Handler) GetMesheryApplicationsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
 	_ *models.Preference,
-	_ *models.User,
+	user *models.User,
 	provider models.Provider,
 ) {
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
-
+	userID := uuid.FromStringOrNil(user.ID)
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("application").WithAction("fetch").ActedUpon(userID)
+	
 	resp, err := provider.GetMesheryApplications(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("updated_after"))
+	
 	if err != nil {
-		obj := "fetch"
-		h.log.Error(ErrApplicationFailure(err, obj))
-		http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
+		errAppFetch := ErrFetchApplication(err)
+		h.log.Error(errAppFetch)
+		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": errAppFetch,
+		}).WithDescription("Error fetching applications").Build()
+		http.Error(rw, errAppFetch.Error(), http.StatusInternalServerError)
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
 
@@ -571,17 +781,29 @@ func (h *Handler) DeleteMesheryApplicationHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
 	_ *models.Preference,
-	_ *models.User,
+	user *models.User,
 	provider models.Provider,
 ) {
 	applicationID := mux.Vars(r)["id"]
+	userID := uuid.FromStringOrNil(user.ID)
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("application").WithAction("delete").ActedUpon(uuid.FromStringOrNil(applicationID))
 	resp, err := provider.DeleteMesheryApplication(r, applicationID)
+
 	if err != nil {
-		obj := "delete"
-		h.log.Error(ErrApplicationFailure(err, obj))
-		http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusInternalServerError)
+		errAppDelete := ErrDeleteApplication(err)
+		h.log.Error(errAppDelete)
+		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": errAppDelete,
+		}).WithDescription("Error deleting application.").Build()
+		http.Error(rw, errAppDelete.Error(), http.StatusInternalServerError)
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
+
+	event := eventBuilder.WithSeverity(events.Informational).WithDescription("Application deleted.").Build()
+	_ = provider.PersistEvent(event)
+	go h.config.EventBroadcaster.Publish(userID, event)
 
 	go h.config.ConfigurationChannel.PublishApplications()
 	rw.Header().Set("Content-Type", "application/json")
@@ -718,7 +940,7 @@ func (h *Handler) GetMesheryApplicationSourceHandler(
 	}
 }
 
-func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte, _ string, res *meshes.EventsResponse) {
+func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte, _ string, res *meshes.EventsResponse, eventBuilder *events.EventBuilder) {
 	contentMesheryApplicationSlice := make([]models.MesheryApplication, 0)
 	names := []string{}
 
@@ -726,8 +948,6 @@ func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte
 		obj := "application data into go slice"
 		h.log.Error(ErrDecoding(err, obj))
 		http.Error(rw, ErrDecoding(err, obj).Error(), http.StatusInternalServerError)
-		addMeshkitErr(res, ErrDecoding(err, obj))
-		go h.EventsBuffer.Publish(res)
 		return
 	}
 
@@ -736,18 +956,17 @@ func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte
 		obj := "application file"
 		h.log.Error(models.ErrMarshal(err, obj))
 		http.Error(rw, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
-		addMeshkitErr(res, models.ErrMarshal(err, obj))
-		go h.EventsBuffer.Publish(res)
 		return
 	}
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(data))
 	for _, app := range contentMesheryApplicationSlice {
 		names = append(names, app.Name)
+		eventBuilder.ActedUpon(*app.ID)
 	}
+	eventBuilder.WithDescription(fmt.Sprintf("Application %s saved", strings.Join(names, ",")))
 	res.Details = "\"" + strings.Join(names, ",") + "\" application saved"
 	res.Summary = "Changes to the \"" + strings.Join(names, ",") + "\" application have been saved."
-	// go h.EventsBuffer.Publish(res)
 }
 
 // Note: This function is guaranteed to return meshkit errors

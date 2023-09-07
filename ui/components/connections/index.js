@@ -165,20 +165,6 @@ function Connections({ classes, updateProgress }) {
       name : "name",
       label : "Element",
       options : {
-        display : false,
-      },
-    },
-    {
-      name : "metadata.server_location",
-      label : "Server Location",
-      options : {
-        display : false,
-      },
-    },
-    {
-      name : "name",
-      label : "Element",
-      options : {
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell key={index}>
@@ -188,8 +174,8 @@ function Connections({ classes, updateProgress }) {
         },
         customBodyRender : (value, tableMeta) => {
           return (
-            <Tooltip title={tableMeta.rowData[1]} placement="top" >
-              <Link href={tableMeta.rowData[1]} target="_blank">
+            <Tooltip title={connections ? connections[tableMeta.rowIndex]?.metadata?.server_location : ''} placement="top" >
+              <Link href={connections ? connections[tableMeta.rowIndex]?.metadata?.server_location : ''} target="_blank">
                 {value}
                 <sup>
                   <LaunchIcon sx={{ fontSize : "12px" }} />
@@ -310,28 +296,7 @@ function Connections({ classes, updateProgress }) {
           );
         },
       },
-    },
-    {
-      name : "metadata.server_build_sha",
-      label : "Server Version",
-      options : {
-        display : false,
-      },
-    },
-    {
-      name : "metadata.server_version",
-      label : "Server Version",
-      options : {
-        display : false,
-      },
-    },
-    {
-      name : "credential_id",
-      label : "Credential ID",
-      options : {
-        display : false,
-      },
-    },
+    }
   ];
 
   // const handleChange = () => {
@@ -389,16 +354,16 @@ function Connections({ classes, updateProgress }) {
       return true;
     },
     rowsExpanded : [0, 1],
-    renderExpandableRow : (rowData) => {
+    renderExpandableRow : (_, tableMeta) => {
       return (
         <TableRow>
           <TableCell>
           </TableCell>
           <TableCell colSpan={2}>
-            <b>Server Build SHA:</b> {rowData[9]}
+            <b>Server Build SHA:</b> {connections ? connections[tableMeta.rowIndex]?.metadata?.server_build_sha : '-'}
           </TableCell>
           <TableCell colSpan={2}>
-            <b>Server Version:</b> {rowData[10]}
+            <b>Server Version:</b> {connections ? connections[tableMeta.rowIndex]?.metadata?.server_version : '-'}
           </TableCell>
           <TableCell colSpan={2}>
           </TableCell>
