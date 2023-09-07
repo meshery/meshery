@@ -247,10 +247,26 @@ paths:
             operationId: idGetEventStreamer
             responses:
                 "200":
-                    $ref: '#/responses/EventsResponse'
+                    description: ""
             summary: Handle GET request for events.
             tags:
                 - EventsAPI
+    /api/events/{id}:
+        delete:
+            description: Deletes event associated with the id.
+            operationId: idGetEventStreamer
+            responses:
+                "200":
+                    description: ""
+            summary: Handle DELETE request for events.
+    /api/events/status/{id}:
+        post:
+            description: Updates event status for the event associated with the id.
+            operationId: idGetEventStreamer
+            responses:
+                "200":
+                    $ref: '#/responses/Event'
+            summary: Handle POST request to update event status.
     /api/filter:
         get:
             description: |-
@@ -263,6 +279,8 @@ paths:
                 ```?page={page-number}``` Default page number is 0
 
                 ```?pagesize={pagesize}``` Default pagesize is 10
+
+                ```?visibility={visibility}``` Default visibility is public
             operationId: idGetFilterFiles
             responses:
                 "200":
@@ -521,11 +539,12 @@ paths:
                 - PutConnection
     /api/integrations/connections/status:
         get:
-            description: Handle GET request for getting all connections status
+            description: Get all connections status
             operationId: idGetConnectionsStatus
             responses:
                 "200":
-                    $ref: '#/responses/ConnectionsStatusPage'
+                    $ref: '#/responses/mesheryConnectionsStatusPage'
+            summary: Handle GET request for getting all connections status
             tags:
                 - GetConnectionsStatus
     /api/meshmodel/components/register:
@@ -1412,9 +1431,9 @@ paths:
             operationId: ResetSystemDatabase
             responses:
                 "200":
-                    $ref: '#/responses/successfulResponse'
+                    description: ""
                 "500":
-                    $ref: '#/responses/errorResponse'
+                    description: ""
             summary: Reset the system database to its initial state.
     /api/system/kubernetes:
         delete:
@@ -1463,7 +1482,7 @@ paths:
             summary: Handle POST requests for Kubernetes Context list
             tags:
                 - SystemAPI
-    /api/system/kubernetes/ping?contexts={id}:
+    /api/system/kubernetes/ping?connection_id={id}:
         get:
             description: Fetches server version to simulate ping
             operationId: idGetKubernetesPing
@@ -2008,6 +2027,25 @@ paths:
             summary: Handle POST request for tokens
             tags:
                 - UserAPI
+    /api/v2/events:
+        get:
+            description: |-
+                ```search={description}``` If search is non empty then a search is performed on event description
+                ```?category=[eventcategory] Returns event belonging to provided categories ```
+                ```?action=[eventaction] Returns events belonging to provided actions ```
+                ```?status={[read/unread]}``` Return events filtered on event status Default is unread````
+                ```?severity=[eventseverity] Returns events belonging to provided severities ```
+                ```?sort={field} order the records based on passed field, defaults to updated_at```
+                ```?order={[asc/desc]}``` Default behavior is asc
+                ```?page={page-number}``` Default page number is 1
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetEventStreamer
+            responses:
+                "200":
+                    $ref: '#/responses/EventsResponse'
+            summary: Handle GET request for events.
+            tags:
+                - EventsAPI
     /provider:
         get:
             description: Servers providers UI
@@ -2102,6 +2140,24 @@ responses:
             connections_status:
                 items: {}
                 type: array
+    EventsResponse:
+        description: ""
+        headers:
+            count_by_severity_level:
+                items: {}
+                type: array
+            events:
+                items: {}
+                type: array
+            page:
+                format: int64
+                type: integer
+            page_size:
+                format: int64
+                type: integer
+            total_count:
+                format: int64
+                type: integer
     FilterFilesResponseWrapper:
         description: Returns the response of the Filter files
     Model:
@@ -2185,6 +2241,8 @@ responses:
         description: Returns all meshery applications
     mesheryConnectionResponseWrapper:
         description: Returns a single connection
+    mesheryConnectionsStatusPage:
+        description: Returns all connections Status
     mesheryFilterResponseWrapper:
         description: Returns a single meshery filter
     mesheryFiltersResponseWrapper:
