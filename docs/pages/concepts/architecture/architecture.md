@@ -40,12 +40,12 @@ _Figure: Meshery deploys inside or outside of a Kubernetes cluster_
 
 #### Adapters and Capabilities Registry
 
-Each Meshery Adapter delivers its own unique service mesh-specific functionality. As such, at time of deployment, the Meshery Adapter will register its service mesh-specific capabilities (its operations) with Meshery Server's capability registry.
+Each Meshery Adapter delivers its own unique specific functionality. As such, at time of deployment, the Meshery Adapter will register its cloud native infrastructure-specific capabilities (its operations) with Meshery Server's capability registry.
 
 [![Meshery Adapter Operation Registration]({{ site.baseurl }}/assets/img/adapters/meshery-adapter-operation-registration.svg
 )]({{ site.baseurl }}/assets/img/adapters/meshery-adapter-operation-registration.svg)
 
-_Figure: Service Mesh Adapter Operation Registration_
+_Figure: Meshery Adapter Operation Registration_
 
 ### Clients
 
@@ -69,7 +69,7 @@ This diagram outlines logical constructs within Meshery and their relationships.
 
 ## Meshery Operator and MeshSync
 
-Meshery Operator is the multi-service mesh operator (a Kubernetes custom controller) that manages MeshSync and it's messaging broker.
+Meshery Operator is the multi-cluster Kubernetes operator that manages MeshSync and Meshery Broker.
 
 [![Meshery Operator and MeshSync]({{ site.baseurl }}/assets/img/architecture/meshery-operator-and-meshsync.svg
 )]({{ site.baseurl }}/assets/img/architecture/meshery-operator-and-meshsync.svg)
@@ -86,7 +86,7 @@ _See the [**Database**]({{ site.baseurl }}/concepts/architecture/database) secti
 
 ## Meshery Docker Extension 
 
-Meshery's Docker extension provides a simple and flexible way to deploy service meshes on top of Kubernetes using Docker containers. The architecture of this extension is designed to be modular and extensible, with each component serving a specific purpose within the overall deployment process.
+Meshery's Docker extension provides a simple and flexible way to design and operate cloud native infrastructure on top of Kubernetes using Docker containers. The architecture of this extension is designed to be modular and extensible, with each component serving a specific purpose within the overall deployment process.
 
 [![Meshery Database]({{ site.baseurl }}/assets/img/architecture/meshery-docker-extension.svg)]({{ site.baseurl }}/assets/img/architecture/meshery-docker-extension.svg)
 
@@ -99,7 +99,7 @@ concerned with a long-lived configuration, while others have no state at all.
 | Components        | Persistence  | Description                                                           |
 | :---------------- | :----------- | :-------------------------------------------------------------------- |
 | [mesheryctl](/guides/mesheryctl/working-with-mesheryctl)        | stateless    | command line interface that has a configuration file                  |
-| [Meshery Adapters](/concepts/architecture/adapters)  | stateless    | interface with service meshes on a transactional basis                |
+| [Meshery Adapters](/concepts/architecture/adapters)  | stateless    | interface with cloud native infrastructure on a transactional basis                |
 | Meshery Server    | caches state | application cache is stored in `$HOME/.meshery/` folder               |
 | [Meshery Providers](/extensibility/providers) | stateful     | location of persistent user preferences, environment, tests and so on |
 | [Meshery Operator](/concepts/architecture/operator)  | stateless    | operator of Meshery custom controllers, notably MeshSync              |

@@ -72,9 +72,9 @@ Run connectivity tests and verify the health of your Meshery system. Verify Mesh
 <img style="width:min(100%,650px);height=auto;" src="/assets/img/adapters/meshery-ui.png" />
 </a>
 
-## Operate service meshes and their workloads
+## Design and operate Kubernetes clusters and their workloads
 
-You may now proceed to install and work with any [service mesh]({{ site.baseurl }}/service-meshes) supported by Meshery.
+You may now proceed to install and work with any cloud native infrastructurex supported by Meshery.
 
 <video class="videoTest" style="width:min(100%,650px)" height="auto" autoplay muted loop>
   <source src="/assets/img/adapters/meshery-ui-setup.mp4" type="video/mp4">
