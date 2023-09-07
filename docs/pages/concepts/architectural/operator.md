@@ -2,7 +2,7 @@
 layout: default
 title: Operator
 permalink: concepts/architecture/operator
-type: concepts
+type: components
 redirect_from: architecture/operator
 abstract: "Meshery Operator controls and manages the lifecycle of components deployed inside a kubernetes cluster"
 language: en

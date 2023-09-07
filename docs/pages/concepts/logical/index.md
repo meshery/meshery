@@ -1,8 +1,8 @@
 ---
 layout: default
 title: Concepts
-permalink: concepts
-redirect_from: concepts/
+permalink: concepts/logical
+redirect_from: concepts/logical
 language: en
 list: exclude
 ---
@@ -10,19 +10,6 @@ list: exclude
 Concepts for understanding Meshery's various features and components.
 
 {% assign sorted_pages = site.pages | sort: "name" %}
-
-<h2>Architectural Components</h2>
-<ul>
-    {% for item in sorted_pages %}
-    {% if item.type=="components" and item.language=="en" -%}
-      <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-      {% if item.abstract != " " %}
-        -  {{ item.abstract }}
-      {% endif %}
-      </li>
-      {% endif %}
-    {% endfor %}
-</ul>
 
 <h2>Logical Concepts</h2>
 <ul>
@@ -36,3 +23,7 @@ Concepts for understanding Meshery's various features and components.
       {% endif %}
     {% endfor %}
 </ul>
+
+[![Meshery Extension Points]({{site.baseurl}}/assets/img/architecture/meshery_extension_points.svg)]({{site.baseurl}}/assets/img/architecture/meshery_extension_points.svg)
+
+_Figure: Extension points available throughout Meshery_

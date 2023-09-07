@@ -3,7 +3,7 @@ layout: default
 title: Architecture
 permalink: concepts/architecture
 redirect_from: architecture
-type: concepts
+type: components
 abstract: overview of different individual components of Meshery architecture and how they interact as a system.
 language: en
 list: include

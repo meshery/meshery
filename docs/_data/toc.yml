@@ -63,7 +63,7 @@
 - title: 🧠 Concepts
   url: concepts
   links:
-    - title: Architecture ↆ
+    - title: Architectural ↆ
       url: concepts/architecture
       children: 
         - title: Adapters
@@ -76,11 +76,18 @@
           url: concepts/architecture/meshsync     
         - title: Operator
           url: concepts/architecture/operator   
-    - title: Catalog ↆ
-      url: concepts/catalog
-      children:
-        - title: Envoy WASM Filters
-          url: tasks/filter-management
+    - title: Conceptual ↆ
+      url: concepts/logical
+      children: 
+        - title: Designs
+          url: concepts/designs
+        - title: Environments
+          url: concepts/environments
+        - title: MeshModel
+          url: concepts/meshmodel
+        - title: Workspaces
+          url: concepts/workspaces
+
 - title: ⚙️ Tasks (all)
   url: tasks
   links:

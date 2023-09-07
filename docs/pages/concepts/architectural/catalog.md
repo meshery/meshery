@@ -3,7 +3,7 @@ layout: default
 title: Catalog
 permalink: concepts/catalog
 redirect_from: catalog
-type: concepts
+type: components
 abstract: Browsing and using cloud native patterns
 language: en
 list: include
