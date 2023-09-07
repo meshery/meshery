@@ -336,7 +336,7 @@ const TroubleshootingModal = props => {
                     {" "}
                     <a
                       className={classes.troubleshootHelpLink}
-                      href="https://discuss.layer5.io/t/what-are-some-troubleshooting-tips-for-meshmap"
+                      href="http://discuss.meshery.io/t/what-are-some-troubleshooting-tips-for-meshmap"
                       target="_blank"
                       rel="noreferrer"
                     >
@@ -361,7 +361,7 @@ const TroubleshootingModal = props => {
               or{" "}
               <a
                 className={classes.contactHelpLink}
-                href="https://discuss.layer5.io"
+                href="http://discuss.meshery.io"
                 target="_blank"
                 rel="noreferrer"
               >
