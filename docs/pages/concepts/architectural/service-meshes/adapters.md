@@ -2,7 +2,7 @@
 layout: default
 title: Adapters
 permalink: concepts/architecture/adapters
-type: concepts
+type: components
 redirect_from: architecture/adapters
 abstract: "Meshery offers support for more adapters than any other project or product in the world. Meshery uses adapters for managing the various cloud native infrastructure."
 language: en
