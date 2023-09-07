@@ -10,8 +10,9 @@ function CatalogFilter({ catalogVisibility, handleCatalogVisibility, hideCatalog
       { !hideCatalog &&  // In application we  don't have catalog, hence this check
         <Button
           style={{
-            marginBottom : '0.2rem',
-            alignItems : 'center'
+            // marginBottom : '0.2rem',
+            alignItems : 'center',
+            marginLeft : "-0.6rem"
           }}
           size="large"
           onClick = {handleCatalogVisibility} variant="contained" color="primary">

@@ -1121,10 +1121,13 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
               }
               placeholder="Search"
             />
+            {viewType === "table" &&
             <CustomColumnVisibilityControl
               columns={columns}
               customToolsProps={{ columnVisibility, setColumnVisibility }}
             />
+            }
+
 
             {!selectedFilter.show &&
 

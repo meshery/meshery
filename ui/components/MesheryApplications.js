@@ -871,11 +871,13 @@ function MesheryApplications({
               }}
               placeholder="Search Applications..."
             />
+            {viewType === "table" &&
             <CustomColumnVisibilityControl
-              classes={classes}
               columns={columns}
               customToolsProps={{ columnVisibility, setColumnVisibility }}
             />
+            }
+
 
             {!selectedApplication.show &&
 

@@ -1002,6 +1002,7 @@ function MesheryPatterns({
     },
     {
       name : "Actions",
+      label : "Actions",
       options : {
         filter : false,
         sort : false,
@@ -1324,7 +1325,7 @@ function MesheryPatterns({
                   size="large"
                   // @ts-ignore
                   onClick={handleUploadImport}
-                  style={{ display : 'flex', marginRight : "2rem" }}
+                  style={{ display : 'flex', marginRight : "2rem", marginLeft : '-0.6rem' }}
                 >
                   <PublishIcon className={classes.addIcon} />
                   <span className={classes.btnText}> Import Design </span>
@@ -1347,10 +1348,12 @@ function MesheryPatterns({
               }
               placeholder="Search designs..."
             />
+            {viewType === "table" &&
             <CustomColumnVisibilityControl
               columns={columns}
               customToolsProps={{ columnVisibility, setColumnVisibility }}
             />
+            }
 
             {!selectedPattern.show &&
                 <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true}/>
