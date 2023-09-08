@@ -18,7 +18,7 @@ jobs:
                 cd meshery
                 git pull
                 docker compose -f install/playground/docker/docker-compose.yaml pull
-                docker compose -f install/playground/docker/docker-compose.yaml up -d
+                docker compose -f install/playground/docker/docker-compose.yaml up -d --remove-orphans
 #         steps:
 #          - uses: azure/setup-kubectl@v3
 #          - name: Extract kubeconfig

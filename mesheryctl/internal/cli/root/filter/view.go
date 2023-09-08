@@ -60,7 +60,7 @@ mesheryctl filter view --all
 			if viewAllFlag {
 				return errors.New(utils.FilterViewError("--all cannot be used when filter name or ID is specified\nUse 'mesheryctl filter view --help' to display usage guide\n"))
 			}
-			filter, isID, err = utils.ValidId(args[0], "filter")
+			filter, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "filter")
 			if err != nil {
 				utils.Log.Error(err)
 				return nil

@@ -44,7 +44,7 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 	if limitstr != "all" {
 		limit, _ = strconv.Atoi(limitstr)
 		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
+			limit = defaultPageSize
 		}
 	}
 	pagestr := r.URL.Query().Get("page")
