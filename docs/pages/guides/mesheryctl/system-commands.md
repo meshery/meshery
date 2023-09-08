@@ -27,7 +27,7 @@ Let's get familiar with mesheryctl system commands. The syntax of commands goes 
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/skipbrowser.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/skipbrowser.png" /></a>
 
-`mesheryctl system start --platform string` : It allows you specify a platform for deploying meshery.
+`mesheryctl system start --platform string` : It allows you specify a platform for deploying Meshery.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/platform.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/platform.png" /></a>
 
