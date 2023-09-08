@@ -15,7 +15,7 @@ Let's get familiar with mesheryctl system commands. The syntax of commands goes 
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/start.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/start.png" /></a>
 
-`mesheryctl system start --skip-browser` : If you don't want to open the URL on your default browser you can use this command. It will provide the URL, so that you can open the URL on any browser.
+`mesheryctl system start --skip-browser` : It skips opening your browser with the provided URL.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/skipbrowser.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/skipbrowser.png" /></a>
 
@@ -27,7 +27,7 @@ Let's get familiar with mesheryctl system commands. The syntax of commands goes 
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/skipbrowser.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/skipbrowser.png" /></a>
 
-`mesheryctl system start --platform string` : It allows you to specify the platform for running Meshery.
+`mesheryctl system start --platform string` : It allows you specify a platform for deploying meshery.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/platform.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/platform.png" /></a>
 
@@ -96,25 +96,25 @@ Let's get familiar with mesheryctl system commands. The syntax of commands goes 
 <a href="{{ site.baseurl }}/assets/img/syscmd/system login.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/system login.png" /></a>
 
 ### check
-`mesheryctl system check` : Performs checks for mesh deployment.
+`mesheryctl system check` : Performs checks for both pre & post  mesh deployment scenarios on Meshery.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/system check.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/system check.png" /></a>
 
 `mesheryctl system check --preflight` : Runs pre-deployment checks.
 
-`mesheryctl system check --adapter` : Runs checks for specific adapter
+`mesheryctl system check --adapter` : Runs checks for a specific Mesh adapter.
 
-`mesheryctl system check --adapters` : Runs checks for adapters
+`mesheryctl system check --adapters` : Runs checks for Meshery adapters
 
-`mesheryctl system check --components` : Runs checks for components
+`mesheryctl system check --components` : Runs checks for Meshery components
 
 `mesheryctl system check --operator` : Runs checks for Meshery Operator
 
 ## Main_command : system channel
 ### channel
-`mesheyctl system channel --set [stable|stable-version|edge|edge-version]` : Used to set the channel.
+`mesheyctl system channel set [stable|stable-version|edge|edge-version]` : Used to set the channel.
 
-`mesheyctl system channel --switch [stable|stable-version|edge|edge-version]` : Used to switch between channels.
+`mesheyctl system channel switch [stable|stable-version|edge|edge-version]` : Used to switch between channels.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/channel set.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/channel set.png" /></a>
 
