@@ -24,7 +24,7 @@ import (
 //
 // ```?search={contextname}``` If search is non empty then a greedy search is performed
 // responses:
-//
+// 
 //	200: systemK8sContextsResponseWrapper
 func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
@@ -34,8 +34,8 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *mo
 	}
 
 	q := req.URL.Query()
-
-	vals, err := provider.GetK8sContexts(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
+	// Don't fetch credentials as UI has no use case.
+	vals, err := provider.GetK8sContexts(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), false)
 	if err != nil {
 		http.Error(w, "failed to get contexts", http.StatusInternalServerError)
 		return
