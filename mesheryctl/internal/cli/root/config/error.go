@@ -18,9 +18,18 @@ import "github.com/layer5io/meshkit/errors"
 
 const (
 	ErrInvalidMeshConfigCode = "replace_me"
+	ErrUpdateConfigCode      = "replace_me"
 )
 
 func ErrInvalidMeshConfig(err error) error {
 	return errors.New(ErrInvalidMeshConfigCode, errors.Alert, []string{"Invalid Meshconfig"},
 		[]string{err.Error()}, []string{"Loading the Invalid MeshConfig data caused error"}, []string{"Make sure that your 'config.yaml' file in your '.meshery' is valid"})
+}
+
+func ErrUpdateConfig(err error) error {
+	return errors.New(ErrUpdateConfigCode, errors.Fatal,
+		[]string{"Error in writing config"},
+		[]string{err.Error()},
+		[]string{"Unable to Update config file"},
+		[]string{"Ensure that you have the correct context in your  meshconfig at `$HOME/.meshery/config.yaml`."})
 }

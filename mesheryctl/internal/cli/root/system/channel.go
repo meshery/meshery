@@ -199,7 +199,7 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 		}
 		hc, err := NewHealthChecker(hcOptions)
 		if err != nil {
-			utils.Log.Error(ErrHealthCheckFailed(err))
+			utils.Log.Error(err)
 			return nil
 		}
 		return hc.RunPreflightHealthChecks()
