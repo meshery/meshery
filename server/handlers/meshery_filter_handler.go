@@ -99,6 +99,10 @@ func (h *Handler) handleFilterPOST(
 		EventType:     meshes.EventType_INFO,
 	}
 	var parsedBody *models.MesheryFilterRequestBody
+	actedUpon := parsedBody.FilterData.ID
+	if actedUpon == nil {
+		actedUpon = &userID
+	}
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		invalidReqBody := ErrRequestBody(err)
 		h.log.Error(invalidReqBody)
@@ -116,7 +120,7 @@ func (h *Handler) handleFilterPOST(
 		return
 	}
 
-	eventBuilder.ActedUpon(*parsedBody.FilterData.ID)
+	eventBuilder.ActedUpon(*actedUpon)
 
 	token, err := provider.GetProviderToken(r)
 	if err != nil {

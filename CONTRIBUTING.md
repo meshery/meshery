@@ -8,9 +8,9 @@ Please do! Thank you for your help in improving Meshery! :balloon:
   
   <summary><h3>Find the complete set of contributor guides at https://docs.meshery.io/project/contributing</h3></summary>
 
-All contributors are welcome. Not sure where to start? Please see the [newcomers welcome guide](https://layer5.io/community/handbook/repository-overview) for how, where, and why to contribute. This project is community-built and welcomes collaboration. Contributors are expected to adhere to our [Code of Conduct](CODE_OF_CONDUCT.md).
+All contributors are welcome. Not sure where to start? Please see the [newcomers welcome guide](https://layer5.io/community/newcomers) for how, where, and why to contribute. This project is community-built and welcomes collaboration. Contributors are expected to adhere to our [Code of Conduct](CODE_OF_CONDUCT.md).
 
-All set to contribute? Grab an open issue with the [help-wanted label](../../labels/help%20wanted) and jump in. Join our [Slack channel](http://slack.layer5.io) and engage in conversation. Create a [new issue](/../../issues/new/choose) if needed. All [pull requests](/../../pulls) should ideally reference an open [issue](/../../issues). Include keywords in your pull request descriptions, as well as commit messages, to [automatically close related issues in GitHub](https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords).
+All set to contribute? Grab an open issue with the [help-wanted label](../../labels/help%20wanted) and jump in. Join our [Slack channel](https://slack.meshery.io) and engage in conversation. Create a [new issue](/../../issues/new/choose) if needed. All [pull requests](/../../pulls) should ideally reference an open [issue](/../../issues). Include keywords in your pull request descriptions, as well as commit messages, to [automatically close related issues in GitHub](https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords).
   
 **Sections**
 
@@ -283,7 +283,7 @@ We are using ES-Lint to maintain code quality & consistency in our UI Code. To m
 - Remember to run `make ui-lint` & `make ui-provider-lint` if you are making changes in Meshery-UI & Provider-UI respectively.
 - The above commands will only fix some basic indenting rules. You will have to manually check your code to ensure there are no duplications, un-used variables or un-declared constants.
 - We will soon be adding Pre-Commit Hooks to make sure you get to know your errors before you commit the code.
-- In case you are unable to fix your lint errors, ping us on our [Slack](http://slack.layer5.io).
+- In case you are unable to fix your lint errors, ping us on our [Slack](https://slack.meshery.io).
 
 ## <a name="contributing-mesheryctl">Mesheryctl Documentation</a>
 

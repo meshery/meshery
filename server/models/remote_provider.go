@@ -670,7 +670,7 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8
 
 	return k8sContext, nil
 }
-func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order string) ([]byte, error) {
+func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order string, withCredentials bool) ([]byte, error) {
 	MesheryInstanceID, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
 	if !ok {
 		return nil, ErrMesheryInstanceID
@@ -695,6 +695,10 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 	}
 	if order != "" {
 		q.Set("order", order)
+	}
+
+	if !withCredentials {
+		q.Set("with_credentials", "false")
 	}
 	q.Set("meshery_instance_id", mi)
 	remoteProviderURL.RawQuery = q.Encode()
@@ -731,7 +735,7 @@ func (l *RemoteProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) 
 	results := []*K8sContext{}
 
 	for {
-		res, err := l.GetK8sContexts(token, strconv.Itoa(page), strconv.Itoa(pageSize), "", "")
+		res, err := l.GetK8sContexts(token, strconv.Itoa(page), strconv.Itoa(pageSize), "", "", true)
 		if err != nil {
 			return results, err
 		}
