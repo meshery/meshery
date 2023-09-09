@@ -330,8 +330,8 @@ const MeshModelComponent = ({ view, classes }) => {
       name : "registrant",
       label : "Registrant",
       options : {
-        sort : view === COMPONENTS || view === RELATIONSHIPS ? true : false,
-        searchable : view === RELATIONSHIPS ? false : true,
+        sort : view === COMPONENTS || view === RELATIONSHIPS ,
+        searchable :  view !== RELATIONSHIPS 
         customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
           return (
             <TableCell align={"start"} key={index} onClick={() => sortColumn(index)}>
