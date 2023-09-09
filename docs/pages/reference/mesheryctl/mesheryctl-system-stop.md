@@ -43,6 +43,14 @@ mesheryctl system stop --reset
 </div>
 </pre> 
 
+(optional) keep the Meshery namespace during uninstallation
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system stop --keep-namespace
+
+</div>
+</pre> 
+
 Stop Meshery forcefully (use it when system stop doesn't work)
 <pre class='codeblock-pre'>
 <div class='codeblock'>

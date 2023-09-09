@@ -39,6 +39,14 @@ mesheryctl system dashboard --port-forward
 </div>
 </pre> 
 
+(optional) skip opening of MesheryUI in browser.
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system dashboard --skip-browser
+
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>

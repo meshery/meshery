@@ -150,7 +150,7 @@ excluded_in_search: true
 }
 
 html {
-    font-family: sans-serif;
+    font-family: "Qanelas Soft", sans-serif;
     line-height: 1.15;
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
@@ -177,7 +177,7 @@ section {
 
 body {
     margin: 0;
-    font-family: open sans, -apple-system, BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, sans-serif, apple color emoji, segoe ui emoji, segoe ui symbol;
+    font-family: "Qanelas Soft", "Open Sans", sans-serif, -apple-system, BlinkMacSystemFont, segoe ui, Roboto, helvetica neue, Arial, sans-serif, apple color emoji, segoe ui emoji, segoe ui symbol;
     font-size: .9rem;
     font-weight: 400;
     line-height: 1.5;
@@ -483,7 +483,7 @@ h1,h2,h3,h4,h5,h6,.h1,.h2,.h3,
 .h6 {
     margin-bottom: .5rem;
     margin-top: .9rem;
-    font-family: inherit;
+    font-family: "Qanelas Soft", "Open Sans", sans-serif;
     font-weight: 500;
     color: inherit
 }

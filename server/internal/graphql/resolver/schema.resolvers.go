@@ -364,6 +364,13 @@ func (r *subscriptionResolver) SubscribeMeshModelSummary(ctx context.Context, se
 	return r.subscribeMeshModelSummary(ctx, provider, selector)
 }
 
+// SubscribeEvents is the resolver for the subscribeEvents field.
+func (r *subscriptionResolver) SubscribeEvents(ctx context.Context) (<-chan *model.Event, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	user := ctx.Value(models.UserCtxKey).(*models.User)
+	return r.eventsResolver(ctx, provider, *user)
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 

@@ -15,9 +15,9 @@ jobs:
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
       - name: Fetch data for mesheryctl tag
-        run: curl https://discuss.layer5.io/tag/mesheryctl.json -o docs/_data/discuss/mesheryctl.json
+        run: curl http://discuss.meshery.io/tag/mesheryctl.json -o docs/_data/discuss/mesheryctl.json
       - name: Fetch data for meshery tag
-        run: curl https://discuss.layer5.io/tag/meshery.json -o docs/_data/discuss/meshery.json
+        run: curl http://discuss.meshery.io/tag/meshery.json -o docs/_data/discuss/meshery.json
       - name: Commit changes 
         uses: stefanzweifel/git-auto-commit-action@v4 
         with: 

@@ -60,7 +60,8 @@ mesheryctl perf result -o yaml
 		}
 		hc, err := system.NewHealthChecker(hcOptions)
 		if err != nil {
-			return errors.Wrapf(err, "failed to initialize healthchecker")
+			utils.Log.Error(ErrHealthChecker(err))
+			return nil
 		}
 		return hc.RunPreflightHealthChecks()
 	},

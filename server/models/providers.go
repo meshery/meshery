@@ -333,6 +333,7 @@ func (caps Capabilities) GetEndpointForFeature(feature Feature) (string, bool) {
 // Provider - interface for providers
 type Provider interface {
 	PreferencePersister
+	MesheryEvents
 
 	// Initialize will initialize a provider instance
 	// by loading its capabilities and other metadata in the memory
@@ -372,7 +373,7 @@ type Provider interface {
 	RecordPreferences(req *http.Request, userID string, data *Preference) error
 
 	SaveK8sContext(token string, k8sContext K8sContext) (K8sContext, error)
-	GetK8sContexts(token, page, pageSize, search, order string) ([]byte, error)
+	GetK8sContexts(token, page, pageSize, search, order string, withCredentials bool) ([]byte, error)
 	DeleteK8sContext(token, id string) (K8sContext, error)
 	GetK8sContext(token, id string) (K8sContext, error)
 	LoadAllK8sContext(token string) ([]*K8sContext, error)
@@ -407,7 +408,7 @@ type Provider interface {
 	DeleteMesheryPatternResource(token, resourceID string) error
 
 	SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error)
-	GetMesheryFilters(tokenString, page, pageSize, search, order string) ([]byte, error)
+	GetMesheryFilters(tokenString, page, pageSize, search, order string, visibility string) ([]byte, error)
 	GetCatalogMesheryFilters(tokenString string, page, pageSize, search, order string) ([]byte, error)
 	PublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error)
 	UnPublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error)
