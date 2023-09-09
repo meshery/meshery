@@ -304,9 +304,9 @@ func start() error {
 		}
 
 		// Create the group_add option and add GID of docker group to meshery container
-		groupAdd := viper.GetStringSlice(fmt.Sprintf("services.meshery.group_add"))
+		groupAdd := viper.GetStringSlice("services.meshery.group_add")
 		groupAdd = append(groupAdd, group.Gid)
-		utils.ViperCompose.Set(fmt.Sprintf("services.meshery.group_add"), groupAdd)
+		utils.ViperCompose.Set("services.meshery.group_add", groupAdd)
 
 		// Write the modified configuration back to the Docker Compose file
 		if err := utils.ViperCompose.WriteConfig(); err != nil {
