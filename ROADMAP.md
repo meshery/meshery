@@ -26,6 +26,6 @@ Milestone | Features
 [v0.8.0](../../milestone/5) | <p><li>gRPC (streaming of status and events)</li><p><p><li>Colorizing output</li><li>Refactoring `system` commands for docker-compose</li><li>Mesheryctl Code coverage goal: 50%</li></p>
 [v0.9.0](../../milestone/6) | <p><Li>`system report` - diagnostics reporting</li><li>Mesheryctl Code coverage goal: 60%</li></p>
 [v1.0.0](../../milestone/7) | 
-[v1.1.0](../../milestone/8) | 
+[v1.1.0](../../milestone/8) |  
 
 Refer to the [Meshery Roadmap](https://docs.google.com/document/d/1kvcz8jdvFwXmYBBaY2-3fHHUUoy1GJLpZZXuoxZQoOk/edit#) document for detailed info.
