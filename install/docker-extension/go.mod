@@ -1,6 +1,6 @@
 module github.com/docker/meshery-extension
 
-go 1.19
+go 1.21
 
 require (
 	github.com/Microsoft/go-winio v0.6.0

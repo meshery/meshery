@@ -20,7 +20,7 @@ GIT_COMMITSHA = $(shell git rev-list -1 HEAD)
 GIT_STRIPPED_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1` | cut -c 2-)
 REMOTE_PROVIDER="Meshery"
 LOCAL_PROVIDER="None"
-GOVERSION = 1.19
+GOVERSION = 1.21
 GOPATH = $(shell go env GOPATH)
 GOBIN  = $(GOPATH)/bin
 
