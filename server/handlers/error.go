@@ -118,6 +118,10 @@ const (
 	ErrPerformanceTestCode              = "1123"
 	ErrFetchApplicationCode             = "1124"
 	ErrDeleteApplicationCode            = "1125"
+	ErrGetEventsCode                    = "1126"
+	ErrUpdateEventCode                  = "1127"
+	ErrDeleteEventCode                  = "1128"
+	ErrUnsupportedEventStatusCode       = "1129"
 )
 
 var (
@@ -509,4 +513,20 @@ func ErrLoadCertificate(err error) error {
 
 func ErrCleanupCertificate(err error, obj string) error {
 	return errors.New(ErrCleanupCertificateCode, errors.Alert, []string{"Could not delete certificates from ", obj}, []string{err.Error()}, []string{"might be due to insufficient permissions", "file was deleted manually"}, []string{"please delete the file if present, path: ", obj})
+}
+
+func ErrGetEvents(err error) error {
+	return errors.New(ErrGetEventsCode, errors.Alert, []string{"Could not retrieve events"}, []string{err.Error()}, []string{"Request contains unknown query variables.", "Database is not reachable or corrupt."}, []string{"Check the request URL and try again."})
+}
+
+func ErrUpdateEvent(err error, id string) error {
+	return errors.New(ErrUpdateEventCode, errors.Alert, []string{fmt.Sprintf("Could not update event status for %s", id)}, []string{err.Error()}, []string{"Provided event status not supported", "Event has been deleted or does not exist.", "Database is corrupt."}, []string{"Verify event filter settings.","Reset database."})
+}
+
+func ErrDeleteEvent(err error, id string) error {
+	return errors.New(ErrDeleteEventCode, errors.Alert, []string{fmt.Sprintf("Could not delete event %s", id)}, []string{err.Error()}, []string{"Event might have been deleted and doesn't exist.", "Database is corrupt."}, []string{"Verify event filter settings.","Reset database."})
+}
+
+func ErrUnsupportedEventStatus(err error, status string) error {
+	return errors.New(ErrUnsupportedEventStatusCode, errors.Alert, []string{fmt.Sprintf("Event status %s not supported.", status)}, []string{err.Error()}, []string{"Unsupported event status for the current Meshery Server."}, []string{"Try upgrading Meshery to latest version.", "Use one of the supported event statuses."})
 }

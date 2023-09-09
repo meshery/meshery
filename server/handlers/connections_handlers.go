@@ -38,7 +38,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 		return
 	}
 
-	eventBuilder := events.NewEvent().ActedUpon(uuid.Nil).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
+	eventBuilder := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
 
 	err = provider.SaveConnection(req, &connection, "", false)
 	if err != nil {

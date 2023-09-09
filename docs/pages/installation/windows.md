@@ -181,4 +181,4 @@ docker-desktop</div></div>
 
   3.Restart Meshery.
 
-Stuck at another error? [Tell us about it](http://slack.layer5.io/)
+Stuck at another error? [Tell us about it](https://slack.meshery.io/)

@@ -21,7 +21,7 @@ jobs:
   golangci:
     strategy:
       matrix:
-        go: [1.19]
+        go: [1.21]
         os: [ubuntu-22.04]
     name: golangci-lint
     if: github.repository == 'meshery/meshery'
@@ -49,7 +49,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@master
         with:
-          go-version: "1.19"
+          go-version: "1.21"
       - name: Run coverage
         run: go test --short ./... -race -coverprofile=coverage.txt -covermode=atomic
       - name: Upload coverage to Codecov
@@ -71,7 +71,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@master
         with:
-          go-version: "1.19"
+          go-version: "1.21"
       - name: Create k8s Kind Cluster
         uses: helm/kind-action@v1.1.0
         with:

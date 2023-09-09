@@ -83,7 +83,7 @@ function CustomErrorMessage(){
         </div>
         <img src="/static/img/service-mesh.svg" alt="service meshed" className={classes.mesh}/>
         <Typography variant="body1">
-          <p className={classes.helpMessage}>Start a conversation at Layer5 community <Link className={classes.discussionforumlink} underline="none" href="https://discuss.layer5.io/c/meshery/5" target="_blank">discussion forum</Link>.</p>
+          <p className={classes.helpMessage}>Start a conversation at Layer5 community <Link className={classes.discussionforumlink} underline="none" href="http://discuss.meshery.io/c/meshery/5" target="_blank">discussion forum</Link>.</p>
         </Typography>
       </div>
     </NoSsr>
