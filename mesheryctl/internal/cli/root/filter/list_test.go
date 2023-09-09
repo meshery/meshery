@@ -4,7 +4,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"testing"
-
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
