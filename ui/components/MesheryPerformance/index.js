@@ -47,6 +47,7 @@ import { ctxUrl, getK8sClusterIdsFromCtxId } from "../../utils/multi-ctx";
 import { iconMedium } from "../../css/icons.styles";
 import { withNotify } from "../../utils/hooks/useNotification";
 import { EVENT_TYPES } from "../../lib/event-types";
+import safeJsonParse from "../ConnectionWizard/helpers/safeJsonParse";
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -264,7 +265,7 @@ class MesheryPerformanceComponent extends React.Component {
 
   isJsonString(str) {
     try {
-      JSON.parse(str);
+      safeJsonParse(str);
     } catch (e) {
       return false;
     }
@@ -318,7 +319,7 @@ class MesheryPerformanceComponent extends React.Component {
             try {
               const fileContent = event.target.result;
               // Validate JSON
-              JSON.parse(fileContent);
+              safeJsonParse(fileContent);
               this.setState({
                 additional_options : fileContent,
                 jsonError : false,
@@ -336,7 +337,7 @@ class MesheryPerformanceComponent extends React.Component {
         // Handle text input
         try {
           // empty text input exception
-          if (value !== "") JSON.parse(value);
+          if (value !== "") safeJsonParse(value);
           this.setState({
             additional_options : value,
             jsonError : false,
@@ -567,7 +568,7 @@ class MesheryPerformanceComponent extends React.Component {
     const notify = self.props.notify;
     let track = 0;
     return (e) => {
-      const data = JSON.parse(e.data);
+      const data = safeJsonParse(e.data);
       switch (data.status) {
         case "info":
           notify({ message : data.message, event_type : EVENT_TYPES.INFO });

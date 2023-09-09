@@ -16,6 +16,7 @@ import moment from "moment";
 import dataFetch from "../../lib/data-fetch";
 import { MESHERY_CLOUD_PROD } from "../../constants/endpoints";
 import ReusableTooltip from "../reusable-tooltip";
+import safeJsonParse from "../ConnectionWizard/helpers/safeJsonParse";
 
 const useStyles = makeStyles((theme) => ({
   cardButtons : {
@@ -135,7 +136,7 @@ function PerformanceCard({
     },
     {
       name : "Additional Option",
-      value : (metadata?.additional_options && metadata?.additional_options[0] !== '') ? JSON.parse(metadata?.additional_options[0]) : ''
+      value : (metadata?.additional_options && metadata?.additional_options[0] !== '') ? safeJsonParse(metadata?.additional_options[0]) : ''
     },
     {
       name : "Certifcate Name",

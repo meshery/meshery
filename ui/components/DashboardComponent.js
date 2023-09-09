@@ -34,6 +34,7 @@ import DashboardMeshModelGraph from './Dashboard/DashboardMeshModelGraph'
 import ConnectionStatsChart from "./Dashboard/ConnectionCharts.js";
 import { EVENT_TYPES } from "../lib/event-types";
 import { withNotify } from "../utils/hooks/useNotification";
+import safeJsonParse from "./ConnectionWizard/helpers/safeJsonParse";
 
 const styles = (theme) => ({
   rootClass : { backgroundColor : theme.palette.secondary.elevatedComponents2, },
@@ -279,7 +280,7 @@ class DashboardComponent extends React.Component {
         let prometheusURLs = [];
         let grafanaURLs = [];
         components.telemetryComps?.forEach((component) => {
-          const data = { spec : JSON.parse(component.spec), status : JSON.parse(component.status) };
+          const data = { spec : safeJsonParse(component.spec), status : safeJsonParse(component.status) };
           if (component.name === "grafana") {
             grafanaURLs = grafanaURLs.concat(extractURLFromScanData(data));
           } else {

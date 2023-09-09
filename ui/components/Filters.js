@@ -55,6 +55,7 @@ import SearchBar from "../utils/custom-search";
 import CustomColumnVisibilityControl from "../utils/custom-column";
 import ResponsiveDataTable from "../utils/data-table";
 import useStyles from "../assets/styles/general/tool.styles";
+import safeJsonParse from "./ConnectionWizard/helpers/safeJsonParse";
 
 const styles = (theme) => ({
   grid : {
@@ -124,7 +125,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
 
   let resourceData;
   try {
-    resourceData = JSON.parse(filter.filter_resource);
+    resourceData = safeJsonParse(filter.filter_resource);
   } catch (error) {
     // Handling the error or provide a default value
     console.error("Error parsing JSON:", error);

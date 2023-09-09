@@ -10,6 +10,7 @@ import PatternServiceForm from "../../MesheryMeshInterface/PatternServiceForm";
 import * as Types from "../MeshModel/hooks/types";
 import { useNotification } from "../../../utils/hooks/useNotification";
 import { EVENT_TYPES } from "../../../lib/event-types";
+import safeJsonParse from "../../ConnectionWizard/helpers/safeJsonParse";
 // import { isEmptyObj } from "../../utils/utils";
 // import PatternServiceForm from "./PatternServiceForm";
 
@@ -51,7 +52,7 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
         const res = await getMeshModelComponent(modelName, kind, version, apiVersion);
         if (res.components[0]) {
           setSchemaSet({
-            workload : JSON.parse(res.components[0].schema), // has to be removed
+            workload : safeJsonParse(res.components[0].schema), // has to be removed
           })
         } else {
           throw new Error("found null in component definition")
