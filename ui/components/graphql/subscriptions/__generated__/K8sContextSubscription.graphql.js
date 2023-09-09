@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<e5329bb8772403c10972129fbe02be88>>
+ * @generated SignedSource<<b3ff0b1931138b2a628d036eb6f80bd7>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -64,20 +64,6 @@ v1 = [
             "alias": null,
             "args": null,
             "kind": "ScalarField",
-            "name": "auth",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "cluster",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
             "name": "server",
             "storageKey": null
           },
@@ -136,6 +122,13 @@ v1 = [
             "kind": "ScalarField",
             "name": "version",
             "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "connection_id",
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -162,16 +155,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "7e7d2789e340a7c3fd56badc433c0ffc",
+    "cacheID": "6c554db6a024337ed225dbb949aa970f",
     "id": null,
     "metadata": {},
     "name": "K8sContextSubscription",
     "operationKind": "subscription",
-    "text": "subscription K8sContextSubscription(\n  $selector: PageFilter!\n) {\n  k8sContext: subscribeK8sContext(selector: $selector) {\n    total_count\n    contexts {\n      id\n      name\n      auth\n      cluster\n      server\n      owner\n      created_by\n      meshery_instance_id\n      kubernetes_server_id\n      deployment_type\n      updated_at\n      created_at\n      version\n    }\n  }\n}\n"
+    "text": "subscription K8sContextSubscription(\n  $selector: PageFilter!\n) {\n  k8sContext: subscribeK8sContext(selector: $selector) {\n    total_count\n    contexts {\n      id\n      name\n      server\n      owner\n      created_by\n      meshery_instance_id\n      kubernetes_server_id\n      deployment_type\n      updated_at\n      created_at\n      version\n      connection_id\n    }\n  }\n}\n"
   }
 };
 })();
 
-node.hash = "c905518498312d5141459c30dd8d0e41";
+node.hash = "8b7ae007f5dced76f0d0b1b3c90a4525";
 
 module.exports = node;

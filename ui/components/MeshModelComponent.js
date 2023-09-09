@@ -1,13 +1,21 @@
-import {  withStyles } from '@material-ui/core'
+import { withStyles } from '@material-ui/core'
 import { withSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react'
 import MUIDataTable from 'mui-datatables';
-import { Grid, TableCell, Tooltip, TableSortLabel } from '@material-ui/core';
+import { Grid, TableCell, Tooltip, TableSortLabel, Switch, FormControlLabel } from '@material-ui/core';
+
 import DuplicatesDataTable from './DuplicatesDataTable';
 import { getComponentsDetailWithPageSize, getMeshModels, getRelationshipsDetailWithPageSize, searchModels, searchComponents } from '../api/meshmodel'
 import debounce from '../utils/debounce';
 import { MODELS, COMPONENTS, RELATIONSHIPS } from '../constants/navigator';
+import { SORT } from '../constants/endpoints';
 
+//TODO : This Should derive the indices of rendered rows
+const ROWS_INDICES = {
+  KIND : 0 ,
+  VERSION : 1 ,
+  MODEL : 3 ,
+}
 const meshmodelStyles = (theme) => ({
   wrapperClss : {
     flexGrow : 1,
@@ -28,11 +36,13 @@ const meshmodelStyles = (theme) => ({
     },
   },
   dashboardSection : {
-    padding : theme.spacing(2), borderRadius : 4,height : "100%",overflowY : "scroll"
+    padding : theme.spacing(2), borderRadius : 4, height : "100%", overflowY : "scroll"
   },
-
-
+  duplicatesModelStyle : {
+    backgroundColor : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
+  }
 })
+
 
 const MeshModelComponent = ({ view, classes }) => {
   const [resourcesDetail, setResourcesDetail] = useState();
@@ -41,45 +51,63 @@ const MeshModelComponent = ({ view, classes }) => {
   const [page, setPage] = useState(0);
   const [searchText, setSearchText] = useState(null);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
+  const [sortOrder, setSortOrder] = useState({
+    "sort" : SORT.ASCENDING,
+    "order" : ""
+  });
+  const [checked, setChecked] = useState(false);
 
   const getModels = async (page) => {
+
     try {
-      const { total_count, models } = await getMeshModels(page+1, rowsPerPage); // page+1 due to server side indexing starting from 1
+      const { total_count, models } = await getMeshModels(page + 1, rowsPerPage); // page+1 due to server side indexing starting from 1
       setCount(total_count);
+
       if (!isRequestCancelled) {
         setResourcesDetail(models);
       }
+
     } catch (error) {
       console.error('Failed to fetch models:', error);
     }
   };
 
-  const getComponents = async (page) => {
+  const getComponents = async (page, sortOrder) => {
+    // if (typeof sortOrder === "undefined" || sortOrder === null) {
+    //   setSortOrder("");
+    // }
+
     try {
-      const { total_count, components } = await getComponentsDetailWithPageSize(page+1, rowsPerPage); // page+1 due to server side indexing starting from 1
+      const { total_count, components } = await getComponentsDetailWithPageSize(page + 1, rowsPerPage, sortOrder.sort , sortOrder.order); // page+1 due to server side indexing starting from 1
       setCount(total_count);
       if (!isRequestCancelled) {
         setResourcesDetail(components);
+        setSortOrder(sortOrder);
       }
     } catch (error) {
       console.error('Failed to fetch components:', error);
     }
   };
 
-  const getRelationships = async (page) => {
+  const getRelationships = async (page, sortOrder) => {
+
+    // if (typeof sortOrder === "undefined" || sortOrder === null) {
+    //   setSortOrder("");
+    // }
+
     try {
-      const { total_count, relationships } = await getRelationshipsDetailWithPageSize(page+1, rowsPerPage);
+      const { total_count, relationships } = await getRelationshipsDetailWithPageSize(page + 1, rowsPerPage, sortOrder.sort,sortOrder.order);
       setCount(total_count);
       if (!isRequestCancelled) {
         setResourcesDetail(relationships);
+        setSortOrder(sortOrder);
       }
     } catch (error) {
       console.error('Failed to fetch relationships:', error);
     }
   };
 
-  const getSearchedModels =  async (searchText) => {
+  const getSearchedModels = async (searchText) => {
     try {
       const { total_count, models } = await searchModels(searchText);
       setCount(total_count);
@@ -103,15 +131,19 @@ const MeshModelComponent = ({ view, classes }) => {
     }
   };
 
+  const handleToggleDuplicates = () => {
+    setChecked(!checked);
+  }
+
   useEffect(() => {
     setRequestCancelled(false);
 
     if (view === MODELS && searchText === null) {
       getModels(page);
     } else if (view === COMPONENTS && searchText === null) {
-      getComponents(page);
+      getComponents(page, sortOrder);
     } else if (view === RELATIONSHIPS) {
-      getRelationships(page);
+      getRelationships(page, sortOrder);
     } else if (view === MODELS && searchText) {
       getSearchedModels(searchText);
     } else if (view === COMPONENTS && searchText) {
@@ -128,9 +160,7 @@ const MeshModelComponent = ({ view, classes }) => {
       name : (view === COMPONENTS || view === RELATIONSHIPS) ? 'kind' : 'displayName',
       label : `Name`,
       options : {
-        sort : true,
-        sortDescFirst : true,
-        sortThirdClickReset : true,
+        sort : view === COMPONENTS || view === RELATIONSHIPS ? true : false,
         searchable : view === RELATIONSHIPS ? false : true,
         customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
           return (
@@ -152,16 +182,12 @@ const MeshModelComponent = ({ view, classes }) => {
       name : (view === COMPONENTS || view === RELATIONSHIPS) ? 'apiVersion' : 'version',
       label : (view === COMPONENTS || view === RELATIONSHIPS) ? 'Api Version' : 'Version',
       options : {
-        sort : true,
-        sortDescFirst : true,
-        sortThirdClickReset : true,
-        searchable : view === RELATIONSHIPS ?  false : true,
-        customHeadRender : function CustomHead({ index, ...column }, sortColumn) {
+        sort : false,
+        searchable : view === RELATIONSHIPS ? false : true,
+        customHeadRender : function CustomHead({ index, ...column }) {
           return (
-            <TableCell align={"start"} key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel active={column.sortDirection != null} direction={column.sortDirection || "asc"}>
-                <b>{column.label}</b>
-              </TableSortLabel>
+            <TableCell align={"start"} key={index}>
+              <b>{column.label}</b>
             </TableCell>
           );
         },
@@ -182,9 +208,7 @@ const MeshModelComponent = ({ view, classes }) => {
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell align={"start"} key={index}>
-              <TableSortLabel>
-                <b>{column.label}</b>
-              </TableSortLabel>
+              <b>{column.label}</b>
             </TableCell>
           );
         },
@@ -211,9 +235,7 @@ const MeshModelComponent = ({ view, classes }) => {
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell align={"start"} key={index}>
-              <TableSortLabel>
-                <b>{column.label}</b>
-              </TableSortLabel>
+              <b>{column.label}</b>
             </TableCell>
           );
         },
@@ -239,9 +261,7 @@ const MeshModelComponent = ({ view, classes }) => {
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell align={"start"} key={index}>
-              <TableSortLabel>
-                <b>{column.label}</b>
-              </TableSortLabel>
+              <b>{column.label}</b>
             </TableCell>
           );
         },
@@ -265,9 +285,7 @@ const MeshModelComponent = ({ view, classes }) => {
         customHeadRender : function CustomHead({ index, ...column }) {
           return (
             <TableCell align={"start"} key={index}>
-              <TableSortLabel>
-                <b>{column.label}</b>
-              </TableSortLabel>
+              <b>{column.label}</b>
             </TableCell>
           );
         },
@@ -285,28 +303,34 @@ const MeshModelComponent = ({ view, classes }) => {
     },
     {
       name : 'duplicates',
-      label : 'Duplicate Component',
+      label : 'Duplicates',
       options : {
         sort : false,
-        display : false,
-        searchable : false,
-      },
-      customBodyRender : (value) => {
-        if (view === RELATIONSHIPS) {
-          const { displayName } = value
-          return (
-            <Tooltip title={displayName} placement="top">
-              <div>{displayName}</div>
-            </Tooltip>
-          )
+        searchable : true,
+        customHeadRender : function CustomHead({ index, ...column }) {
+          if (view !== RELATIONSHIPS)
+            return (
+              <TableCell align={"start"} key={index}>
+                <b>{column.label}</b>
+              </TableCell>
+            );
+        },
+        customBodyRender : (value) => {
+          if (view !== RELATIONSHIPS)
+            return (
+              <Tooltip title={value} placement="top">
+                <div>{value}</div>
+              </Tooltip>
+            )
         }
       },
+
     },
   ]
 
   const meshmodel_options = {
     rowsPerPage : rowsPerPage,
-    rowsPerPageOptions : [10, 25, 50, 100],
+    rowsPerPageOptions : [10, 25],
     page : page,
     count : count,
     sort : true,
@@ -316,24 +340,64 @@ const MeshModelComponent = ({ view, classes }) => {
     selectableRows : false,
     search : view === RELATIONSHIPS ? false : true,
     serverSide : true,
-    expandableRows : true,
-    onChangePage : debounce((p) =>  setPage(p), 200),
+    expandableRows : (view !== RELATIONSHIPS && checked === true) && true,
+    onChangePage : debounce((p) => setPage(p), 200),
     onSearchChange : debounce((searchText) => (setSearchText(searchText))),
     onChangeRowsPerPage : debounce((rowsPerPage) => {
       setRowsPerPage(rowsPerPage);
       setPage(0);
     }),
-    setRowProps : (row) => {
-      return {
-        style : {
-          backgroundColor : row[6] !== 0 ? '#eaeff1f7' : 'inherit',
-        },
+    onTableChange : (action, tableState) => {
+      const sortInfo = tableState.announceText
+        ? tableState.announceText.split(" : ")
+        : [];
+      let order = {
+        sort : "",
+        order : ""
       };
-    },
 
+      if (tableState.activeColumn || tableState.activeColumn === 0) {
+        //order = `${meshmodel_columns[tableState.activeColumn].name} desc`;
+        order = {
+          order : meshmodel_columns[tableState.activeColumn].name ,
+          sort : SORT.ASCENDING
+        }
+        console.log('name', meshmodel_columns[tableState.activeColumn].name)
+        switch (action) {
+          case "sort":
+
+            if (sortInfo.length == 2) {
+              if (sortInfo[1] === "ascending") {
+                order.sort = SORT.ASCENDING
+              } else {
+                order.sort = SORT.DESCENDING;
+              }
+            }
+
+            if (order !== sortOrder && view === COMPONENTS && meshmodel_columns[tableState.activeColumn].name === 'kind') {
+              getComponents(page, order);
+            }
+
+            if (order !== sortOrder && view === RELATIONSHIPS && meshmodel_columns[tableState.activeColumn].name === 'kind') {
+              getRelationships(page, order)
+            }
+
+            break;
+
+          case "default":
+            break;
+        }
+      }
+    },
     renderExpandableRow : (rowData) => {
+      //TODO: Index The data by id and then extract directly from api resp rather than component props
+      const data = {
+        kind : rowData[ROWS_INDICES.KIND]?.props?.children?.props?.children,
+        model : rowData[ROWS_INDICES.MODEL]?.props?.children?.props?.children,
+        version : rowData[ROWS_INDICES.VERSION]?.props?.children?.props?.children,
+      }
       return (
-        rowData[6] > 0 &&
+        rowData[6].props.children.props.children > 0 ? (
           <TableCell
             colSpan={6}
             sx={{
@@ -355,12 +419,33 @@ const MeshModelComponent = ({ view, classes }) => {
             >
               <DuplicatesDataTable
                 view={view}
-                rowData={rowData}
+                rowData={data}
                 classes={classes}
               >
               </DuplicatesDataTable>
             </Grid>
           </TableCell>
+        ) : (
+          <TableCell
+            colSpan={6}
+            sx={{
+              padding : "0.5rem",
+            }}
+          >
+            <Grid
+              container
+              spacing={1}
+              sx={{
+                justifyContent : "center",
+                margin : "auto",
+                paddingLeft : "0.5rem",
+                borderRadius : "0.25rem",
+              }}
+            >
+              <b>No duplicates found</b>
+            </Grid>
+          </TableCell>
+        )
       );
     },
   };
@@ -369,7 +454,7 @@ const MeshModelComponent = ({ view, classes }) => {
   return (
     <div data-test="workloads">
       <MUIDataTable
-        title={<div className={classes.tableHeader}></div>}
+        title={<div className={classes.tableHeader}>{view !== RELATIONSHIPS && <FormControlLabel control={<Switch color="primary" checked={checked} onChange={handleToggleDuplicates} inputProps={{ 'aria-label' : 'controlled' }} />} label="Duplicates" />}</div>}
         data={resourcesDetail && resourcesDetail}
         columns={meshmodel_columns}
         options={meshmodel_options}

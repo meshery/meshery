@@ -1,14 +1,14 @@
 import dataFetch from "../../../lib/data-fetch";
-import { updateProgress } from "../../../lib/store";
+import { EVENT_TYPES } from "../../../lib/event-types";
 
 /**
   * Pings kuberenetes server endpoint
   * @param  {(res) => void} successHandler
   * @param  {(err) => void} errorHandler
 */
-export const pingKubernetes = (successHandler,errorHandler, context) => {
+export const pingKubernetes = (successHandler, errorHandler, connectionId) => {
   dataFetch(
-    "/api/system/kubernetes/ping?context=" + context,
+    "/api/system/kubernetes/ping?connection_id=" + connectionId,
     { credentials : "include" },
     successHandler,
     errorHandler
@@ -27,9 +27,9 @@ export const pingKubernetes = (successHandler,errorHandler, context) => {
   *
   * @return {true|false}
 */
-export const isKubernetesConnected = (isClusterConfigured,kubernetesPingStatus) => {
+export const isKubernetesConnected = (isClusterConfigured, kubernetesPingStatus) => {
 
-  if (isClusterConfigured){
+  if (isClusterConfigured) {
     if (kubernetesPingStatus) return true
   }
 
@@ -37,13 +37,13 @@ export const isKubernetesConnected = (isClusterConfigured,kubernetesPingStatus) 
 }
 
 
-export const deleteKubernetesConfig = (successCb,errorCb, id) =>
+export const deleteKubernetesConfig = (successCb, errorCb, connectionId) =>
   dataFetch(
-    "/api/system/kubernetes/contexts/" + id,
+    "/api/system/kubernetes/contexts/" + connectionId,
     {
       method : "DELETE",
-      credentials : "include", },
-    updateProgress({ showProgress : false }),
+      credentials : "include",
+    },
     successCb,
     errorCb
   )
@@ -92,8 +92,7 @@ export const fetchContexts = (updateProgress, k8sfile) => {
 };
 
 
-export const submitConfig = (enqueueSnackbar, updateProgress, updateK8SConfig, action, contextName, k8sfile) => {
-
+export const submitConfig = (notify, updateProgress, updateK8SConfig, contextName, k8sfile) => {
   const inClusterConfigForm = false
   const formData = new FormData();
   formData.append("inClusterConfig", inClusterConfigForm ? "on" : ""); // to simulate form behaviour of a checkbox
@@ -112,16 +111,16 @@ export const submitConfig = (enqueueSnackbar, updateProgress, updateK8SConfig, a
     (result) => {
       updateProgress({ showProgress : false });
       if (typeof result !== "undefined") {
-        enqueueSnackbar("Kubernetes config was validated!", { variant : "success",
-          autoHideDuration : 2000,
-          action });
-        updateK8SConfig({ k8sConfig : {
-          inClusterConfig : inClusterConfigForm,
-          k8sfile,
-          contextName : result.contextName,
-          clusterConfigured : true,
-          configuredServer : result.configuredServer,
-        }, });
+        notify({ message : "Kubernetes config was validated!", event_type : EVENT_TYPES.SUCCESS });
+        updateK8SConfig({
+          k8sConfig : {
+            inClusterConfig : inClusterConfigForm,
+            k8sfile,
+            contextName : result.contextName,
+            clusterConfigured : true,
+            configuredServer : result.configuredServer,
+          },
+        });
       }
     },
     (err) => alert(err)

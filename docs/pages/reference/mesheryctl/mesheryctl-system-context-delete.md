@@ -12,7 +12,7 @@ subcommand: context
 
 # mesheryctl system context delete
 
-delete context
+Delete context
 
 ## Synopsis
 
@@ -20,14 +20,14 @@ Delete an existing context (a named Meshery deployment) from Meshery config file
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system context delete context-name [flags]
+mesheryctl system context delete [context-name] [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Delete context
+### Delete context
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system context delete [context name]

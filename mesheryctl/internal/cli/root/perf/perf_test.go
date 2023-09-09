@@ -32,5 +32,6 @@ func TestPerfCmd(t *testing.T) {
 			}
 			t.Error("Failed")
 		})
+		t.Log("Perf tests Passed")
 	}
 }

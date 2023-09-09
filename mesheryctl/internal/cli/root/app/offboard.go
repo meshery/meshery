@@ -47,18 +47,19 @@ mesheryctl app offboard -f [filepath]
 		}
 		var req *http.Request
 		var err error
-
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			utils.Log.Error(err)
+			return nil
 		}
 
 		app := ""
 		isID := false
 		if len(args) > 0 {
-			app, isID, err = utils.ValidId(args[0], "application")
+			app, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "application")
 			if err != nil {
-				return err
+				utils.Log.Error(err)
+				return nil
 			}
 		}
 
@@ -66,6 +67,7 @@ mesheryctl app offboard -f [filepath]
 		if isID {
 			err := utils.DeleteConfiguration(mctlCfg.GetBaseMesheryURL(), app, "application")
 			if err != nil {
+				utils.Log.Error(err)
 				return errors.Wrap(err, utils.AppError(fmt.Sprintf("failed to delete application %s", args[0])))
 			}
 			utils.Log.Info("Application ", args[0], " deleted successfully")
@@ -79,7 +81,8 @@ mesheryctl app offboard -f [filepath]
 		if !govalidator.IsURL(file) {
 			content, err := os.ReadFile(file)
 			if err != nil {
-				return errors.New(utils.AppError(fmt.Sprintf("failed to read file %s\n", file)))
+				utils.Log.Error(utils.ErrFileRead(err))
+				return utils.ErrFileRead(err)
 			}
 
 			appFile = string(content)
@@ -94,12 +97,14 @@ mesheryctl app offboard -f [filepath]
 
 		req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 		defer resp.Body.Close()
 
@@ -107,12 +112,14 @@ mesheryctl app offboard -f [filepath]
 
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
-			return errors.Wrap(err, utils.PerfError("failed to read response body"))
+			utils.Log.Error(utils.ErrReadResponseBody(err))
+			return nil
 		}
 
 		err = json.Unmarshal(body, &response)
 		if err != nil {
-			return errors.Wrap(err, "failed to unmarshal response body")
+			utils.Log.Error(utils.ErrUnmarshal(err))
+			return nil
 		}
 
 		utils.Log.Debug("application file converted to pattern file")
@@ -121,18 +128,21 @@ mesheryctl app offboard -f [filepath]
 
 		req, err = utils.NewRequest("DELETE", deployURL, bytes.NewBuffer([]byte(patternFile)))
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 
 		defer res.Body.Close()
 		body, err = io.ReadAll(res.Body)
 		if err != nil {
-			return err
+			utils.Log.Error(utils.ErrReadResponseBody(err))
+			return nil
 		}
 
 		if res.StatusCode == 200 {

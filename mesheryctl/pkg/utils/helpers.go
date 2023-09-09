@@ -64,7 +64,9 @@ const (
 	filterListURL     = docsBaseURL + "reference/mesheryctl/filter/list"
 	filterViewURL     = docsBaseURL + "reference/mesheryctl/filter/view"
 	patternUsageURL   = docsBaseURL + "reference/mesheryctl/pattern"
+	patternViewURL    = docsBaseURL + "reference/mesheryctl/pattern/view"
 	appUsageURL       = docsBaseURL + "reference/mesheryctl/app"
+	appViewURL        = docsBaseURL + "reference/mesheryctl/app/view"
 	contextDeleteURL  = docsBaseURL + "reference/mesheryctl/system/context/delete"
 	contextViewURL    = docsBaseURL + "reference/mesheryctl/system/context/view"
 	contextCreateURL  = docsBaseURL + "reference/mesheryctl/system/context/create"
@@ -104,7 +106,9 @@ const (
 	cmdFilterList     cmdType = "filter list"
 	cmdFilterView     cmdType = "filter view"
 	cmdPattern        cmdType = "pattern"
+	cmdPatternView    cmdType = "pattern view"
 	cmdApp            cmdType = "app"
+	cmdAppView        cmdType = "app view"
 	cmdContext        cmdType = "context"
 	cmdContextDelete  cmdType = "delete"
 	cmdContextCreate  cmdType = "create"
@@ -197,7 +201,7 @@ var CfgFile string
 // TODO: add "meshery-perf" as a component
 
 // ListOfComponents returns the list of components available
-var ListOfComponents = []string{"meshery-app-mesh", "meshery-istio", "meshery-linkerd", "meshery-consul", "meshery-nsm", "meshery-kuma", "meshery-traefik-mesh", "meshery-nginx-sm", "meshery-cilium"}
+var ListOfComponents = []string{}
 
 // TemplateContext is the template context provided when creating a config file
 var TemplateContext = config.Context{
@@ -480,8 +484,8 @@ func StringInSlice(str string, slice []string) bool {
 }
 
 // GetID returns a array of IDs from meshery server endpoint /api/{configurations}
-func GetID(configuration string) ([]string, error) {
-	url := MesheryEndpoint + "/api/" + configuration + "?page_size=10000"
+func GetID(mesheryServerUrl, configuration string) ([]string, error) {
+	url := mesheryServerUrl + "/api/" + configuration + "?page_size=10000"
 	configType := configuration + "s"
 	var idList []string
 	req, err := NewRequest("GET", url, nil)
@@ -497,17 +501,17 @@ func GetID(configuration string) ([]string, error) {
 	defer res.Body.Close()
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return idList, err
+		return idList, ErrReadResponseBody(err)
 	}
 	var dat map[string]interface{}
 	if err = json.Unmarshal(body, &dat); err != nil {
-		return idList, errors.Wrap(err, "failed to unmarshal response body")
+		return idList, ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
 	}
 	if dat == nil {
-		return idList, errors.New("no data found")
+		return idList, ErrNotFound(errors.New("no data found"))
 	}
 	if dat[configType] == nil {
-		return idList, errors.New("no results found")
+		return idList, ErrNotFound(errors.New("no results found"))
 	}
 	for _, config := range dat[configType].([]interface{}) {
 		idList = append(idList, config.(map[string]interface{})["id"].(string))
@@ -516,8 +520,8 @@ func GetID(configuration string) ([]string, error) {
 }
 
 // GetName returns a of name:id from meshery server endpoint /api/{configurations}
-func GetName(configuration string) (map[string]string, error) {
-	url := MesheryEndpoint + "/api/" + configuration + "?page_size=10000"
+func GetName(mesheryServerUrl, configuration string) (map[string]string, error) {
+	url := mesheryServerUrl + "/api/" + configuration + "?page_size=10000"
 	configType := configuration + "s"
 	nameIdMap := make(map[string]string)
 	req, err := NewRequest("GET", url, nil)
@@ -533,17 +537,17 @@ func GetName(configuration string) (map[string]string, error) {
 	defer res.Body.Close()
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nameIdMap, err
+		return nameIdMap, ErrReadResponseBody(err)
 	}
 	var dat map[string]interface{}
 	if err = json.Unmarshal(body, &dat); err != nil {
-		return nameIdMap, errors.Wrap(err, "failed to unmarshal response body")
+		return nameIdMap, ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
 	}
 	if dat == nil {
-		return nameIdMap, errors.New("no data found")
+		return nameIdMap, ErrNotFound(errors.New("no data found"))
 	}
 	if dat[configType] == nil {
-		return nameIdMap, errors.New("no results found")
+		return nameIdMap, ErrNotFound(errors.New("no results found"))
 	}
 	for _, config := range dat[configType].([]interface{}) {
 		nameIdMap[config.(map[string]interface{})["name"].(string)] = config.(map[string]interface{})["id"].(string)
@@ -552,8 +556,8 @@ func GetName(configuration string) (map[string]string, error) {
 }
 
 // Delete configuration from meshery server endpoint /api/{configurations}/{id}
-func DeleteConfiguration(baseUrl, id, configuration string) error {
-	url := baseUrl + "/api/" + configuration + "/" + id
+func DeleteConfiguration(mesheryServerUrl, id, configuration string) error {
+	url := mesheryServerUrl + "/api/" + configuration + "/" + id
 	req, err := NewRequest("DELETE", url, nil)
 	if err != nil {
 		return err
@@ -567,27 +571,29 @@ func DeleteConfiguration(baseUrl, id, configuration string) error {
 }
 
 // ValidId - Check if args is a valid ID or a valid ID prefix and returns the full ID
-func ValidId(args string, configuration string) (string, bool, error) {
+func ValidId(mesheryServerUrl, args string, configuration string) (string, bool, error) {
 	isID := false
-	configID, err := GetID(configuration)
+	configID, err := GetID(mesheryServerUrl, configuration)
 	if err == nil {
 		for _, id := range configID {
 			if strings.HasPrefix(id, args) {
 				args = id
 			}
 		}
+	} else {
+		return "", false, err
 	}
 	isID, err = regexp.MatchString("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$", args)
 	if err != nil {
-		return "", false, err
+		return "", false, ErrInvalidNameOrID(err)
 	}
 	return args, isID, nil
 }
 
 // ValidId - Check if args is a valid name or a valid name prefix and returns the full name and ID
-func ValidName(args string, configuration string) (string, string, bool, error) {
+func ValidName(mesheryServerUrl, args string, configuration string) (string, string, bool, error) {
 	isName := false
-	nameIdMap, err := GetName(configuration)
+	nameIdMap, err := GetName(mesheryServerUrl, configuration)
 
 	if err != nil {
 		return "", "", false, err
@@ -635,7 +641,7 @@ func ParseURLGithub(URL string) (string, string, error) {
 	// - https://raw.githubusercontent.com/layer5io/meshery/master/.goreleaser.yml
 	parsedURL, err := url.Parse(URL)
 	if err != nil {
-		return "", "", fmt.Errorf("failed to retrieve file from URL: %s", URL)
+		return "", "", ErrParsingUrl(fmt.Errorf("failed to retrieve file from URL: %s", URL))
 	}
 	host := parsedURL.Host
 	path := parsedURL.Path
@@ -643,18 +649,18 @@ func ParseURLGithub(URL string) (string, string, error) {
 	paths := strings.Split(path, "/")
 	if host == "github.com" {
 		if len(paths) < 5 {
-			return "", "", fmt.Errorf("failed to retrieve file from URL: %s", URL)
+			return "", "", ErrParsingUrl(fmt.Errorf("failed to retrieve file from URL: %s", URL))
 		}
 		resURL := "https://" + host + strings.Join(paths[:4], "/")
 		return resURL, strings.Join(paths[4:], "/"), nil
 	} else if host == "raw.githubusercontent.com" {
 		if len(paths) < 5 {
-			return "", "", fmt.Errorf("failed to retrieve file from URL: %s", URL)
+			return "", "", ErrParsingUrl(fmt.Errorf("failed to retrieve file from URL: %s", URL))
 		}
 		resURL := "https://" + "raw.githubusercontent.com" + path
 		return resURL, "", nil
 	}
-	return URL, "", errors.New("only github urls are supported")
+	return URL, "", ErrParsingUrl(errors.New("only github urls are supported"))
 }
 
 // PrintToTableInStringFormat prints the given data into a table format but return as a string
@@ -679,6 +685,7 @@ func PrintToTableInStringFormat(header []string, data [][]string) string {
 	return tableString.String()
 }
 
+// Indicate an ongoing Process at a given time on CLI
 func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 	s := spinner.New(spinner.CharSets[11], 100*time.Millisecond)
 
@@ -687,24 +694,25 @@ func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 	return s
 }
 
+// Get Meshery Session Data/Details (Adapters)
 func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error) {
 	path := mctlCfg.GetBaseMesheryURL() + "/api/system/sync"
 	method := "GET"
 	client := &http.Client{}
 	req, err := NewRequest(method, path, nil)
 	if err != nil {
-		return nil, err
+		return nil, ErrCreatingRequest(err)
 	}
 
 	res, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, ErrRequestResponse(err)
 	}
 	defer res.Body.Close()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nil, err
+		return nil, ErrReadResponseBody(err)
 	}
 
 	prefs := &models.Preference{}

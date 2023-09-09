@@ -1,97 +1,36 @@
-import { Button, Typography,FormGroup,TextField,InputAdornment, IconButton } from '@material-ui/core'
+import { Button, Typography,FormGroup,TextField,InputAdornment } from '@material-ui/core'
 import React from 'react'
 import { useRef } from 'react';
 import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder'
-import CloseIcon from "@material-ui/icons/Close";
 import PromptComponent from './PromptComponent';
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
-import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
+import { promisifiedDataFetch } from "../lib/data-fetch";
 import { updateProgress } from '../lib/store';
-import { withSnackbar } from 'notistack';
-import { extractKubernetesCredentials } from './ConnectionWizard/helpers/kubernetesHelpers';
+import { useNotification } from '../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../lib/event-types';
 
-const MesherySettingsEnvButtons = ({ enqueueSnackbar,closeSnackbar }) => {
+const MesherySettingsEnvButtons = () => {
   let k8sfileElementVal = "";
   let formData = new FormData();
   const ref = useRef(null)
+  const { notify } = useNotification()
 
   const handleConfigSnackbars = ctxs => {
     updateProgress({ showProgress : false });
-    for (let ctx of ctxs.inserted_contexts) {
-      handleCredentialsPost(ctx);
-      const msg = `Cluster ${ctx.name} at ${ctx.server} connected`
-      enqueueSnackbar(msg, {
-        variant : "success",
-        action : (key) => (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon />
-          </IconButton>
-        ),
-        autoHideDuration : 7000,
-      });
-    }
     for (let ctx of ctxs.updated_contexts) {
       const msg = `Cluster ${ctx.name} at ${ctx.server} already exists`
-      enqueueSnackbar(msg, {
-        variant : "info",
-        action : (key) => (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon />
-          </IconButton>
-        ),
-        autoHideDuration : 7000,
-      });
+      notify({ message : msg, event_type : EVENT_TYPES.INFO })
     }
 
     for (let ctx of ctxs.errored_contexts) {
       const msg = `Failed to add cluster ${ctx.name} at ${ctx.server}`
-      enqueueSnackbar(msg, {
-        variant : "error",
-        action : (key) => (
-          <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-            <CloseIcon />
-          </IconButton>
-        ),
-        autoHideDuration : 7000,
-      });
+      notify({ message : msg, event_type : EVENT_TYPES.ERROR , details : ctx.error.toString() })
     }
-  }
-
-  function handleCredentialsPost(obj){
-    // right now we just posting the credentials when we insert a new context
-    const data = {
-      name : obj.name,
-      type : "kubernetes",
-      secret : extractKubernetesCredentials(obj),
-    }
-
-    dataFetch(
-      "/api/integrations/credentials",
-      {
-        credentials : "include",
-        method : "POST",
-        body : JSON.stringify(data),
-      },
-      () => {
-        enqueueSnackbar("Credentials saved successfully!", {
-          variant : "success",
-          autoHideDuration : 2000,
-        });
-      }
-    );
   }
 
   const handleError = (msg) => (error) => {
     updateProgress({ showProgress : false });
-    enqueueSnackbar(`${msg}: ${error}`, {
-      variant : "error", preventDuplicate : true,
-      action : (key) => (
-        <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
-          <CloseIcon />
-        </IconButton>
-      ),
-      autoHideDuration : 7000,
-    });
+    notify({ message : `${msg}: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() })
   };
   const handleChange = () => {
     const field = document.getElementById("k8sfile");
@@ -217,4 +156,4 @@ const MesherySettingsEnvButtons = ({ enqueueSnackbar,closeSnackbar }) => {
   )
 }
 
-export default withSnackbar(MesherySettingsEnvButtons)
+export default MesherySettingsEnvButtons

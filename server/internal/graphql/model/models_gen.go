@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"strconv"
+	"time"
 )
 
 type AdapterStatusInput struct {
@@ -136,6 +137,22 @@ type Error struct {
 	Description string `json:"description"`
 }
 
+type Event struct {
+	ID          string                 `json:"id"`
+	UserID      string                 `json:"userID"`
+	ActedUpon   string                 `json:"actedUpon"`
+	OperationID string                 `json:"operationID"`
+	SystemID    string                 `json:"systemID"`
+	Severity    Severity               `json:"severity"`
+	Action      string                 `json:"action"`
+	Category    string                 `json:"category"`
+	Description string                 `json:"description"`
+	Metadata    map[string]interface{} `json:"metadata,omitempty"`
+	CreatedAt   time.Time              `json:"createdAt"`
+	UpdatedAt   time.Time              `json:"updatedAt"`
+	DeletedAt   *time.Time             `json:"deletedAt,omitempty"`
+}
+
 type FilterPage struct {
 	Page       int             `json:"page"`
 	PageSize   int             `json:"page_size"`
@@ -170,6 +187,7 @@ type K8sContext struct {
 	Version            string                 `json:"version"`
 	UpdatedAt          string                 `json:"updated_at"`
 	CreatedAt          string                 `json:"created_at"`
+	ConnectionID       string                 `json:"connection_id"`
 }
 
 type K8sContextsPage struct {
@@ -524,6 +542,57 @@ func (e *MesheryControllerStatus) UnmarshalGQL(v interface{}) error {
 }
 
 func (e MesheryControllerStatus) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type Severity string
+
+const (
+	SeverityAlert         Severity = "alert"
+	SeverityCritical      Severity = "critical"
+	SeverityDebug         Severity = "debug"
+	SeverityEmergency     Severity = "emergency"
+	SeverityError         Severity = "error"
+	SeverityWarning       Severity = "warning"
+	SeverityInformational Severity = "informational"
+)
+
+var AllSeverity = []Severity{
+	SeverityAlert,
+	SeverityCritical,
+	SeverityDebug,
+	SeverityEmergency,
+	SeverityError,
+	SeverityWarning,
+	SeverityInformational,
+}
+
+func (e Severity) IsValid() bool {
+	switch e {
+	case SeverityAlert, SeverityCritical, SeverityDebug, SeverityEmergency, SeverityError, SeverityWarning, SeverityInformational:
+		return true
+	}
+	return false
+}
+
+func (e Severity) String() string {
+	return string(e)
+}
+
+func (e *Severity) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = Severity(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Severity", str)
+	}
+	return nil
+}
+
+func (e Severity) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

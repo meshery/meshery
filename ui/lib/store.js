@@ -175,11 +175,11 @@ export const reducer = (state = initialState, action) => {
       return state.mergeDeep({ selectedAdapter : action.selectedAdapter });
 
     case actionTypes.UPDATE_EVENTS:
-      return state.merge({ events : action.events.sort((a,b)=> b.timestamp-a.timestamp) })
+      return state.merge({ events : action.events.sort((a,b)=> b.get('timestamp') -  a.get('timestamp') ) })
 
     case actionTypes.PUSH_EVENT :
       return state.merge({
-        events : state.get("events").push(action.event).sort((a,b)=>b.timestamp - a.timestamp)
+        events : state.get("events").push(action.event).sort((a,b)=>b.get('timestamp') - a.get('timestamp'))
       })
     case actionTypes.SET_CATALOG_CONTENT:
       return state.mergeDeep({ catalogVisibility : action.catalogVisibility })
@@ -288,21 +288,70 @@ export const setAdapter = ({selectedAdapter}) => dispatch => {
   return dispatch({ type : actionTypes.SET_ADAPTER, selectedAdapter });
 }
 
-export const updateEvents = ({ events }) => dispatch => {
+// the localStorage key for events
+const getEventsKey = (userId) => {
+  // whenever the event schema changes bump the version
+  const version = 1
+  return `events-version-${version}-${userId}`
+}
+
+const persistEvents = (events,userId) => {
+  try {
+    localStorage.setItem(getEventsKey(userId),JSON.stringify(events))
+  } catch (e) {
+    console.error("Error Persisting events ",e)
+  }
+}
+
+export const updateEvents = ({ events }) => (dispatch,getState) => {
   if (typeof events === 'object') {
     events = fromJS(events)
   }
-  return dispatch({ type: actionTypes.UPDATE_EVENTS, events :events });
+  const result = dispatch({ type: actionTypes.UPDATE_EVENTS, events });
+  const user = getState().get('user').toJS()
+  const newEvents = getState().get('events').toJS()
+  if (user && user.user_id) {
+    persistEvents(newEvents,user.user_id)
+  }
+  return result
 }
 
-export const pushEvent = (event) => dispatch => {
-  return dispatch({
+
+export const pushEvent = ({event}) => (dispatch,getState) => {
+  if( typeof event == 'object') {
+    event = fromJS(event)
+  }
+  const res = dispatch({
     type : actionTypes.PUSH_EVENT ,
     event
   })
+
+  const user = getState().get('user').toJS()
+  const events = getState().get('events').toJS()
+  if (user && user.user_id) {
+    persistEvents(events,user.user_id)
+  }
+  return res
 }
 
-
+export const loadEventsFromPersistence = () => (dispatch,getState) => {
+  const user = getState().get('user').toJS()
+  if(getState().get("events").length > 0 ||  !user.user_id)  {
+    return
+  }
+  const rawData = localStorage.getItem(getEventsKey(user.user_id))
+  let events ;
+  try {
+    events = JSON.parse(rawData) || []
+  }catch(e) {
+    console.error("error parsing events json",e,rawData)
+    events = []
+  }
+  return dispatch({
+      type : actionTypes.UPDATE_EVENTS,
+      events : fromJS(events)
+  })
+}
 
 export const toggleCatalogContent = ({ catalogVisibility }) => dispatch => {
   return dispatch({ type: actionTypes.SET_CATALOG_CONTENT, catalogVisibility });

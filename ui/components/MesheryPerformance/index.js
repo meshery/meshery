@@ -25,10 +25,8 @@ import {
   ExpansionPanelDetails,
 } from "@material-ui/core";
 import TextField from "@material-ui/core/TextField";
-import { withSnackbar } from "notistack";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import CloseIcon from "@material-ui/icons/Close";
 import GetAppIcon from "@material-ui/icons/GetApp";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import HelpOutlineOutlinedIcon from "@material-ui/icons/HelpOutlineOutlined";
@@ -47,6 +45,8 @@ import { durationOptions } from "../../lib/prePopulatedOptions";
 import fetchControlPlanes from "../graphql/queries/ControlPlanesQuery";
 import { ctxUrl, getK8sClusterIdsFromCtxId } from "../../utils/multi-ctx";
 import { iconMedium } from "../../css/icons.styles";
+import { withNotify } from "../../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../../lib/event-types";
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -457,35 +457,16 @@ class MesheryPerformanceComponent extends React.Component {
           });
 
           if (generateNotif) {
-            this.props.enqueueSnackbar("Performance Profile Created!", {
-              variant : "success",
-              autoHideDuration : 2000,
-              action : (key) => (
-                <IconButton
-                  key="close"
-                  aria-label="Close"
-                  color="inherit"
-                  onClick={() => this.props.closeSnackbar(key)}
-                >
-                  <CloseIcon />
-                </IconButton>
-              ),
-            });
+            const notify = this.props.notify;
+            notify({ message : "Performance Profile Created!", event_type : EVENT_TYPES.SUCCESS });
           }
         }
       },
       (err) => {
         console.error(err);
         this.props.updateProgress({ showProgress : false });
-        this.props.enqueueSnackbar("Failed to create performance profile", {
-          variant : "error",
-          autoHideDuration : 2000,
-          action : (key) => (
-            <IconButton style={iconMedium} key="close" aria-label="Close" color="inherit" onClick={() => this.props.closeSnackbar(key)}>
-              <CloseIcon />
-            </IconButton>
-          ),
-        });
+        const notify = this.props.notify;
+        notify({ message : "Failed to create performance profile", event_type : EVENT_TYPES.ERROR, details : err.toString() });
       }
     );
   };
@@ -549,15 +530,8 @@ class MesheryPerformanceComponent extends React.Component {
     return (result) => {
       const { testName, meshName, url, qps, c, t, loadGenerator } = this.state;
       if (typeof result !== "undefined" && typeof result.runner_results !== "undefined") {
-        self.props.enqueueSnackbar("fetched the data.", {
-          variant : "success",
-          autoHideDuration : 2000,
-          action : (key) => (
-            <IconButton style={iconMedium} key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-              <CloseIcon style={iconMedium} />
-            </IconButton>
-          ),
-        });
+        const notify = self.props.notify;
+        notify({ message : "fetched the data.", event_type : EVENT_TYPES.SUCCESS });
         self.props.updateLoadTestData({
           loadTest : {
             testName,
@@ -584,33 +558,19 @@ class MesheryPerformanceComponent extends React.Component {
     this.eventStream.onerror = this.handleError(
       "Connection to the server got disconnected. Load test might be running in the background. Please check the results page in a few."
     );
-    this.props.enqueueSnackbar("Load test has been submitted", {
-      variant : "info",
-      autoHideDuration : 1000,
-      action : (key) => (
-        <IconButton style={iconMedium} key="close" aria-label="Close" color="inherit" onClick={() => this.props.closeSnackbar(key)}>
-          <CloseIcon style={iconMedium} />
-        </IconButton>
-      ),
-    });
+    const notify = this.props.notify;
+    notify({ message : "Load test has been submitted", event_type : EVENT_TYPES.SUCCESS });
   }
 
   handleEvents() {
     const self = this;
+    const notify = self.props.notify;
     let track = 0;
     return (e) => {
       const data = JSON.parse(e.data);
       switch (data.status) {
         case "info":
-          self.props.enqueueSnackbar(data.message, {
-            variant : "info",
-            autoHideDuration : 1000,
-            action : (key) => (
-              <IconButton style={iconMedium} key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-                <CloseIcon style={iconMedium} />
-              </IconButton>
-            ),
-          });
+          notify({ message : data.message, event_type : EVENT_TYPES.INFO });
           if (track === 0) {
             self.setState({ timerDialogOpen : true, result : {} });
             track++;
@@ -768,15 +728,8 @@ class MesheryPerformanceComponent extends React.Component {
       if (typeof error === "string") {
         finalMsg = `${msg}: ${error}`;
       }
-      self.props.enqueueSnackbar(finalMsg, {
-        variant : "error",
-        action : (key) => (
-          <IconButton style={iconMedium} key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-            <CloseIcon style={iconMedium}/>
-          </IconButton>
-        ),
-        autoHideDuration : 4000,
-      });
+      const notify = self.props.notify;
+      notify({ message : finalMsg, event_type : EVENT_TYPES.ERROR, details : error.toString() });
     };
   }
 
@@ -1118,7 +1071,7 @@ class MesheryPerformanceComponent extends React.Component {
                           onChange={this.handleChange("reqBody")}
                         ></TextField>
                       </Grid>
-                      <Grid item xs={12} md={12}>
+                      <Grid container xs={12} md={12}>
                         <Grid item xs={6}>
                           <TextField
                             id="additional_options"
@@ -1131,11 +1084,15 @@ class MesheryPerformanceComponent extends React.Component {
                             multiline
                             margin="normal"
                             variant="outlined"
+                            size="small"
                             onChange={this.handleChange("additional_options")}
                           />
+                        </Grid>
+                        <Grid item xs={6}>
                           <label htmlFor="upload-additional-options"
                             style={{ paddingLeft : '0' }}
                             className={classes.upload}
+                            fullWidth
                           >
                             <Button
                               variant="outlined"
@@ -1143,6 +1100,7 @@ class MesheryPerformanceComponent extends React.Component {
                               aria-label="Upload Button"
                               component="span"
                               className={classes.button}
+                              style={{ margin : "0.5rem", marginTop : "1.15rem" }}
                             >
                               <input id="upload-additional-options"  type="file" accept={".json"} name="upload-button" hidden  data-cy="additional-options-upload-button" />
                               Browse
@@ -1158,10 +1116,14 @@ class MesheryPerformanceComponent extends React.Component {
                           <TextField
                             size="small"
                             variant="outlined"
+                            margin="mormal"
+                            fullWidth
                             label={this.state.caCertificate?.name || "Upload SSL Certificate e.g. .crt file"}
                             style={{ width : "100%", margin : '0.5rem 0' }}
                             value={metadata?.ca_certificate.name}
                           />
+                        </Grid>
+                        <Grid item xs={6}>
                           <label htmlFor="upload-cacertificate"
                             className={classes.upload}
                             style={{ paddingLeft : '0' }}
@@ -1169,8 +1131,10 @@ class MesheryPerformanceComponent extends React.Component {
                             <Button
                               variant="outlined"
                               aria-label="Upload Button"
-                              onChange={this.handleChange("caCertificate")} component="span"
+                              onChange={this.handleChange("caCertificate")}
+                              component="span"
                               className={classes.button}
+                              style={{ margin : "0.5rem" }}
                             >
                               <input id="upload-cacertificate" type="file" accept={".crt"} name="upload-button"  hidden data-cy="cacertificate-upload-button" onChange={this.handleCertificateUpload}/>
                               Browse
@@ -1320,5 +1284,5 @@ const mapStateToProps = (state) => {
 };
 
 export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withSnackbar(MesheryPerformanceComponent))
+  connect(mapStateToProps, mapDispatchToProps)(withNotify(MesheryPerformanceComponent))
 );

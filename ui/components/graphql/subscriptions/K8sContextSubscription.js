@@ -7,9 +7,7 @@ subscription K8sContextSubscription($selector: PageFilter!) {
       total_count
       contexts {
         id 
-        name 
-        auth
-        cluster
+        name
         server
         owner
         created_by
@@ -18,7 +16,8 @@ subscription K8sContextSubscription($selector: PageFilter!) {
         deployment_type
         updated_at
         created_at
-        version
+        version,
+        connection_id
       }  
     }
 }

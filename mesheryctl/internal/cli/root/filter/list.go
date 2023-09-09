@@ -55,14 +55,17 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			utils.Log.Error(err)
+			return nil
 		}
-
-		searchString := strings.ReplaceAll(args[0], " ", "%20")
-
+		var searchString string
+		if len(args) > 0 {
+			searchString = strings.ReplaceAll(args[0], " ", "%20")
+		}
 		response, err := fetchFilters(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
 		if err != nil {
-			return err
+			utils.Log.Error(ErrFetchFilter(err))
+			return nil
 		}
 
 		if len(args) > 0 && len(response.Filters) == 0 {
@@ -140,6 +143,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 	},
 }
 
+// Pagination(making multiple requests) to retrieve filter Data in batches
 func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*models.FiltersAPIResponse, error) {
 	var response *models.FiltersAPIResponse
 
@@ -154,12 +158,12 @@ func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*mode
 
 	req, err := utils.NewRequest("GET", url, nil)
 	if err != nil {
-		return nil, err
+		return nil, utils.ErrCreatingRequest(err)
 	}
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		return nil, err
+		return nil, utils.ErrRequestResponse(err)
 	}
 
 	defer resp.Body.Close()
@@ -175,7 +179,7 @@ func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*mode
 
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		return nil, ErrUnmarshal(err)
+		return nil, utils.ErrUnmarshal(err)
 	}
 	return response, nil
 }
