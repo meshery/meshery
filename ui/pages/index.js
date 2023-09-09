@@ -1,3 +1,4 @@
+import { NoSsr } from "@material-ui/core";
 import Head from 'next/head';
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
