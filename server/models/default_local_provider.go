@@ -547,14 +547,20 @@ func (l *DefaultLocalProvider) SaveMesheryPattern(_ string, pattern *MesheryPatt
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
-func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, order string, updatedAfter string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, order string, visibility string, updatedAfter string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
 	if pageSize == "" {
 		pageSize = "10"
 	}
-
+	if visibility == "private" {
+		visibility = Private
+	} else if visibility == "published" {
+		visibility = Published
+	} else {
+		visibility = Public
+	}
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, ErrPageNumber(err)
@@ -564,7 +570,7 @@ func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, ord
 	if err != nil {
 		return nil, ErrPageSize(err)
 	}
-	return l.MesheryPatternPersister.GetMesheryPatterns(search, order, pg, pgs, updatedAfter)
+	return l.MesheryPatternPersister.GetMesheryPatterns(search, order, pg, pgs, visibility, updatedAfter)
 }
 
 // GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
@@ -572,7 +578,7 @@ func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(_, page, pageSize, sear
 	return l.MesheryPatternPersister.GetMesheryCatalogPatterns(page, pageSize, search, order)
 }
 
-// PublishCatalogPattern publishes pattern to catalog
+// PublishCatalogPattern publishes pattern to catalogx
 // Not supported by local provider
 func (l *DefaultLocalProvider) PublishCatalogPattern(_ *http.Request, _ *MesheryCatalogPatternRequestBody) ([]byte, error) {
 	return []byte(""), ErrLocalProviderSupport
