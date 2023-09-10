@@ -5,29 +5,27 @@ import { connect } from "react-redux";
 import Head from 'next/head';
 import { bindActionCreators } from 'redux';
 import { getPath } from "../lib/path";
-import React from "react";
+import React, { useEffect } from "react";
 
 const styles = { paper : { maxWidth : '90%',
   margin : 'auto',
   overflow : 'hidden', } };
 
-class Settings extends React.Component {
-  componentDidMount () {
+function Settings(props) {
+  useEffect(() => {
     console.log(`path: ${getPath()}`);
-    this.props.updatepagepath({ path : getPath() });
-    this.props.updatepagetitle({ title : "Settings" });
-  }
+    props.updatepagepath({ path : getPath() });
+    props.updatepagetitle({ title : "Settings" });
+  }, []);
 
-  render () {
-    return (
-      <NoSsr>
-        <Head>
-          <title>Settings | Meshery</title>
-        </Head>
-        <MesherySettings />
-      </NoSsr>
-    );
-  }
+  return (
+    <NoSsr>
+      <Head>
+        <title>Settings | Meshery</title>
+      </Head>
+      <MesherySettings />
+    </NoSsr>
+  );
 }
 
 const mapDispatchToProps = dispatch => ({
