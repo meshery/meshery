@@ -521,7 +521,8 @@ function MesheryPatterns({
       async (result) => {
         try {
           const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName));
+          const modelNames = _.uniq(models?.map((model) => model.displayName.toUpperCase()));
+          modelNames.sort();
 
           // Modify the schema using the utility function
           const modifiedSchema = modifyRJSFSchema(
@@ -529,8 +530,6 @@ function MesheryPatterns({
             "properties.compatibility.items.enum",
             modelNames
           );
-          const uppercaseTechnology = modifiedSchema.properties.compatibility.items.enum.map(item => item.toUpperCase());
-          modifiedSchema.properties.compatibility.items.enum = uppercaseTechnology.sort();
 
           setPublishSchema({ rjsfSchema : modifiedSchema, uiSchema : result.uiSchema });
         } catch (err) {

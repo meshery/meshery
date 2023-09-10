@@ -21,7 +21,8 @@ export default function PublishModal(props) {
       async (result) => {
         try {
           const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName));
+          const modelNames = _.uniq(models?.map((model) => model.displayName.toUpperCase()));
+          modelNames.sort();
 
           // Modify the schema using the utility function
           const modifiedSchema = modifyRJSFSchema(result.rjsfSchema, "properties.compatibility.items.enum", modelNames);
