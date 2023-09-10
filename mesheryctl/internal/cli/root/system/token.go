@@ -153,12 +153,14 @@ mesheryctl system token list
 		viper.SetConfigFile(utils.DefaultConfigPath)
 		err := viper.ReadInConfig()
 		if err != nil {
-			return err
+			utils.Log.Error(utils.ErrReadConfigFile(err))
+			return nil
 		}
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			utils.Log.Error(err)
+			return nil
 		}
 		log.Print("Available tokens: ")
 		for _, t := range *mctlCfg.GetTokens() {
@@ -183,12 +185,14 @@ mesheryctl system token view (show token of current context)
 		viper.SetConfigFile(utils.DefaultConfigPath)
 		err := viper.ReadInConfig()
 		if err != nil {
-			return err
+			utils.Log.Error(utils.ErrReadConfigFile(err))
+			return nil
 		}
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			utils.Log.Error(err)
+			return nil
 		}
 		if viewAllTokens {
 			log.Info("Listing all available tokens...\n")
@@ -202,7 +206,8 @@ mesheryctl system token view (show token of current context)
 		if len(args) == 0 {
 			token, err := mctlCfg.GetTokenForContext(viper.GetString("current-context"))
 			if err != nil {
-				return errors.Wrap(err, "Could not get token for the current context")
+				utils.Log.Error(ErrTokenContext(err))
+				return nil
 			}
 			log.Warnf("Token unspecified. Displaying token for current context \"%s\"\n", viper.GetString("current-context"))
 			log.Info("token: ", token.Name)

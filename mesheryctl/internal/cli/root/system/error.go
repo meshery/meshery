@@ -15,6 +15,7 @@
 package system
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/layer5io/meshkit/errors"
@@ -24,31 +25,89 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrHealthCheckFailedCode             = "1047"
-	ErrDownloadFileCode                  = "1048"
-	ErrStopMesheryCode                   = "1049"
-	ErrResetMeshconfigCode               = "1050"
-	ErrApplyManifestCode                 = "1051"
-	ErrApplyOperatorManifestCode         = "1052"
-	ErrCreateDirCode                     = "1053"
-	ErrUnmarshalDockerComposeCode        = "1054"
-	ErrUnsupportedPlatformCode           = "1055"
-	ErrRetrievingCurrentContextCode      = "1060"
-	ErrSettingDefaultContextToConfigCode = "1061"
-	ErrSettingTemporaryContextCode       = "1062"
-	ErrCreateManifestsFolderCode         = "1063"
-	ErrProcessingMctlConfigCode          = "1064"
-	ErrRestartMesheryCode                = "1065"
-	ErrK8sQueryCode                      = "1066"
-	ErrK8sConfigCode                     = "1067"
-	ErrInitPortForwardCode               = "1068"
-	ErrRunPortForwardCode                = "1069"
-	ErrFailedGetEphemeralPortCode        = "1070"
-	ErrCreatingDockerClientCode          = "1071"
+	ErrHealthCheckFailedCode             = "replace_me"
+	ErrDownloadFileCode                  = "replace_me"
+	ErrStopMesheryCode                   = "replace_me"
+	ErrResetMeshconfigCode               = "replace_me"
+	ErrApplyManifestCode                 = "replace_me"
+	ErrApplyOperatorManifestCode         = "replace_me"
+	ErrCreateDirCode                     = "replace_me"
+	ErrUnsupportedPlatformCode           = "replace_me"
+	ErrRetrievingCurrentContextCode      = "replace_me"
+	ErrSettingDefaultContextToConfigCode = "replace_me"
+	ErrSettingTemporaryContextCode       = "replace_me"
+	ErrCreateManifestsFolderCode         = "replace_me"
+	ErrRestartMesheryCode                = "replace_me"
+	ErrK8sQueryCode                      = "replace_me"
+	ErrK8sConfigCode                     = "replace_me"
+	ErrInitPortForwardCode               = "replace_me"
+	ErrRunPortForwardCode                = "replace_me"
+	ErrFailedGetEphemeralPortCode        = "replace_me"
+	ErrUnmarshalDockerComposeCode        = "replace_me"
+	ErrCreatingDockerClientCode          = "replace_me"
+	ErrWriteConfigCode                   = "replace_me"
+	ErrContextContentCode                = "replace_me"
+	ErrSwitchChannelResponseCode         = "replace_me"
+	ErrGetCurrentContextCode             = "replace_me"
+	ErrSetCurrentContextCode             = "replace_me"
+	ErrTokenContextCode                  = "replace_me"
+	ErrProviderInfoCode                  = "replace_me"
+	ErrValidProviderCode                 = "replace_me"
+	ErrUnmarshallConfigCode              = "replace_me"
+	ErrUploadFileParamsCode              = "replace_me"
 )
 
+var (
+	cmdType     string
+	contextdocs string = "See https://docs.meshery.io/reference/mesheryctl/system/context for usage details."
+	contextDir  string = "see that you have a correct context in your  meshconfig at `$HOME/.meshery/config.yaml`."
+)
+
+// A Format reference that returns Mesheryctl's URL docs for system command and sub commands
+func FormatErrorReference() string {
+	baseURL := "https://docs.meshery.io/reference/mesheryctl/system"
+	switch cmdType {
+	case "channel":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/channel")
+	case "context":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/context")
+	case "config":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/context")
+	case "dashboard":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/dashboard")
+	case "login":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/login")
+	case "logout":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/logout")
+	case "logs":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/logs")
+	case "provider":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/provider")
+	case "reset":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/reset")
+	case "restart":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/restart")
+	case "start":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/start")
+	case "status":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/status")
+	case "stop":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/stop")
+	case "token":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/token")
+	case "update":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/update")
+	}
+	return fmt.Sprintf("\nSee %s for usage details\n", baseURL)
+}
+
 func ErrHealthCheckFailed(err error) error {
-	return errors.New(ErrHealthCheckFailedCode, errors.Alert, []string{"Health checks failed"}, []string{err.Error()}, []string{"Health checks execution failed"}, []string{"Health checks execution should passed to start Meshery server successfully"})
+	return errors.New(ErrHealthCheckFailedCode,
+		errors.Alert,
+		[]string{"Health checks failed"},
+		[]string{"Failed to initialize healthchecker" + err.Error()},
+		[]string{"Health checks execution failed in starting Meshery server successfully"},
+		[]string{"Ensure Mesheryctl is running and has the right configurations."})
 }
 
 func ErrDownloadFile(err error, obj string) error {
@@ -60,7 +119,13 @@ func ErrStopMeshery(err error) error {
 }
 
 func ErrResetMeshconfig(err error) error {
-	return errors.New(ErrResetMeshconfigCode, errors.Alert, []string{"Error resetting meshconfig to default settings"}, []string{err.Error()}, []string{"Meshery server config file is not reset to default settings"}, []string{"Verify Meshery server config file is reset to default settings by executing `mesheryctl system context view`"})
+	return errors.New(
+		ErrResetMeshconfigCode,
+		errors.Alert,
+		[]string{"Error resetting meshconfig to default settings"},
+		[]string{err.Error()},
+		[]string{"Meshery server config file is not reset to default settings"},
+		[]string{"Verify Meshery server config file is reset to default settings by executing `mesheryctl system context view`" + FormatErrorReference()})
 }
 
 func ErrApplyManifest(err error, deleteStatus, updateStatus bool) error {
@@ -76,15 +141,33 @@ func ErrCreateDir(err error, obj string) error {
 }
 
 func ErrUnmarshalDockerCompose(err error, obj string) error {
-	return errors.New(ErrUnmarshalDockerComposeCode, errors.Alert, []string{"Error processing JSON response from Meshery Server", obj}, []string{err.Error()}, []string{}, []string{"Either the JSON response or the Response is distorted"})
+	return errors.New(
+		ErrUnmarshalDockerComposeCode,
+		errors.Alert,
+		[]string{"Error processing JSON response from Meshery Server", obj},
+		[]string{err.Error()},
+		[]string{"Either the JSON response is invalid or the Response is distorted"},
+		[]string{"Ensure Meshery Server is running and you have a strong newtwork connection"})
 }
 
 func ErrUnsupportedPlatform(platform string, config string) error {
-	return errors.New(ErrUnsupportedPlatformCode, errors.Alert, []string{}, []string{"The platform ", platform, " is not supported for the deployment of Meshery. Supported platforms are:\n\n- docker\n- kubernetes\n\nVerify this setting in your meshconfig at ", config, " or verify by executing `mesheryctl system context view`"}, []string{}, []string{})
+	return errors.New(
+		ErrUnsupportedPlatformCode,
+		errors.Alert,
+		[]string{"Unsupported platform"},
+		[]string{"The provided platform is not supprted"},
+		[]string{"The platform ", platform, " is not supported for the deployment of Meshery. "},
+		[]string{"Supported platforms are:\n\n- docker\n- kubernetes\n\n Verify this setting in your meshconfig at ", config, " or verify by executing `mesheryctl system context view`"})
 }
 
 func ErrRetrievingCurrentContext(err error) error {
-	return errors.New(ErrRetrievingCurrentContextCode, errors.Alert, []string{"Error retrieving current context"}, []string{err.Error()}, []string{"current context is not retrieved successfully"}, []string{"Verify current context is retrieved successfully and valid"})
+	return errors.New(
+		ErrRetrievingCurrentContextCode,
+		errors.Alert,
+		[]string{"Error retrieving current-context"},
+		[]string{err.Error()},
+		[]string{"current-context is not retrieved successfully"},
+		[]string{"Verify current-context is retrieved successfully and valid" + FormatErrorReference()})
 }
 
 func ErrSettingDefaultContextToConfig(err error) error {
@@ -97,10 +180,6 @@ func ErrSettingTemporaryContext(err error) error {
 
 func ErrCreateManifestsFolder(err error) error {
 	return errors.New(ErrCreateManifestsFolderCode, errors.Alert, []string{"Error creating manifest folder"}, []string{err.Error()}, []string{"system error in creating manifest folder"}, []string{"Make sure manifest folder (.meshery/manifests) is created properly"})
-}
-
-func ErrProcessingMctlConfig(err error) error {
-	return errors.New(ErrProcessingMctlConfigCode, errors.Alert, []string{"Error processing config"}, []string{err.Error()}, []string{"Error due to invalid format of Mesheryctl config"}, []string{"Make sure Mesheryctl config is in correct format and valid"})
 }
 
 func ErrRestartMeshery(err error) error {
@@ -118,10 +197,11 @@ func ErrK8SQuery(err error) error {
 func ErrInitPortForward(err error) error {
 	return errors.New(
 		ErrInitPortForwardCode,
-		errors.Alert, []string{"Failed to initialize port-forward"},
+		errors.Alert,
+		[]string{"Failed to initialize port-forward"},
 		[]string{err.Error(), "Failed to create new Port Forward instance"},
-		[]string{""}, []string{""},
-	)
+		[]string{"Connection not established"},
+		[]string{"Ensure you have a strong network connection"})
 }
 
 func ErrRunPortForward(err error) error {
@@ -142,7 +222,8 @@ func ErrFailedGetEphemeralPort(err error) error {
 		errors.Fatal,
 		[]string{"Failed to get a free port"},
 		[]string{err.Error(), "Failed to start port-forwarding"},
-		[]string{""}, []string{""},
+		[]string{"Unable to provide a free port to connect to a kuberentes cluster"},
+		[]string{"Ensure your Meshery Server is running,", "Ensure mesheryctl is connected to kubernetes cluster with `mesheryctl system check`"},
 	)
 }
 
@@ -154,4 +235,105 @@ func ErrCreatingDockerClient(err error) error {
 		[]string{"Error occurred while creating Docker client from config file", err.Error()},
 		[]string{"Missing or invalid docker config"},
 		[]string{"Please check the Docker config file for any errors or missing information. Make sure it is correctly formatted and contains all the required fields."})
+}
+
+func ErrContextContent() error {
+	return errors.New(
+		ErrContextContentCode,
+		errors.Fatal,
+		[]string{"Failed to detect context"},
+		[]string{"Unable to detect current-context"},
+		[]string{"Error while trying to fetch current-context in YML file"},
+		[]string{"Ensure a valid context name is provided"})
+}
+
+func ErrWriteConfig(err error) error {
+	return errors.New(
+		ErrWriteConfigCode,
+		errors.Fatal,
+		[]string{"Error in writing config"},
+		[]string{err.Error()},
+		[]string{"Unable to write to config file"},
+		[]string{"Ensure the right context is set. " + FormatErrorReference()})
+}
+
+func ErrSwitchChannelResponse() error {
+	return errors.New(
+		ErrSwitchChannelResponseCode,
+		errors.Alert,
+		[]string{"Unable to exectute command"},
+		[]string{"Channel switch aborted"},
+		[]string{"No user response provided"},
+		[]string{"Provide a response or use the -y flag for confirmation. " + FormatErrorReference()})
+}
+
+func ErrGetCurrentContext(err error) error {
+	return errors.New(
+		ErrGetCurrentContextCode,
+		errors.Fatal,
+		[]string{"Unable to get current-context"},
+		[]string{err.Error()},
+		[]string{"Invalid context name provided"},
+		[]string{"Ensure a valid context name is provided. " + contextdocs + "Also " + contextDir})
+}
+
+func ErrSetCurrentContext(err error) error {
+	return errors.New(
+		ErrSetCurrentContextCode,
+		errors.Fatal,
+		[]string{"Unable to set current-context"},
+		[]string{err.Error()},
+		[]string{"Invalid context name provided"},
+		[]string{"Ensure a valid context name is provided. " + contextdocs + "Also " + contextDir})
+}
+
+func ErrTokenContext(err error) error {
+	return errors.New(
+		ErrTokenContextCode,
+		errors.Fatal,
+		[]string{"Unable to get token"},
+		[]string{err.Error()},
+		[]string{"No token found for the Current context"},
+		[]string{"Ensure your Meshconfig file has valid token provided." + FormatErrorReference()})
+}
+
+func ErrProviderInfo(err error) error {
+	return errors.New(
+		ErrProviderInfoCode,
+		errors.Fatal,
+		[]string{"Unable to verify provider"},
+		[]string{err.Error()},
+		[]string{"Unable to verify provider  as Meshery server was unreachable"},
+		[]string{"Start Meshery to verify provider. Run `mesheryctl system provider set [provider] --force` to force set the provider" + FormatErrorReference()})
+}
+
+func ErrValidProvider() error {
+	return errors.New(
+		ErrProviderInfoCode,
+		errors.Fatal,
+		[]string{"Invalid provider"},
+		[]string{"Unable to validate provider"},
+		[]string{"A wrong provider was specified"},
+		[]string{"Specify a valid provider" + FormatErrorReference()})
+}
+
+func ErrUnmarshallConfig(err error) error {
+	return errors.New(
+		ErrUnmarshallConfigCode,
+		errors.Fatal,
+		[]string{"Invalid config"},
+		[]string{err.Error()},
+		[]string{"Unable to decode Meshconfig."},
+		[]string{"Ensure you have the right configuration set in your Meshconfig file." + FormatErrorReference()})
+}
+
+func ErrUploadFileParams(err error) error {
+	return errors.New(
+		ErrUploadFileParamsCode,
+		errors.Fatal,
+		[]string{"Unable to upload"},
+		[]string{err.Error()},
+		[]string{"Unable to upload parameters from config file with provided context"},
+		[]string{"Ensure you have a strong network connection and the right configuration set in your Meshconfig file." + FormatErrorReference()})
+
 }

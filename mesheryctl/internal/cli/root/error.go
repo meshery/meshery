@@ -20,14 +20,14 @@ import "github.com/layer5io/meshkit/errors"
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrProcessingConfigCode        = "1072"
-	ErrCreatingConfigFileCode      = "1073"
-	ErrAddingTokenToConfigCode     = "1074"
-	ErrAddingContextToConfigCode   = "1075"
-	ErrUnmarshallingConfigFileCode = "1076"
-	ErrGettingRequestContextCode   = "1077"
-	ErrUnmarshallingAPIDataCode    = "1078"
-	ErrConnectingToServerCode      = "1079"
+	ErrProcessingConfigCode        = "replace_me"
+	ErrCreatingConfigFileCode      = "replace_me"
+	ErrAddingTokenToConfigCode     = "replace_me"
+	ErrAddingContextToConfigCode   = "replace_me"
+	ErrUnmarshallingConfigFileCode = "replace_me"
+	ErrGettingRequestContextCode   = "replace_me"
+	ErrUnmarshallingAPIDataCode    = "replace_me"
+	ErrConnectingToServerCode      = "replace_me"
 )
 
 var (
