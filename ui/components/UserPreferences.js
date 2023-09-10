@@ -1,3 +1,4 @@
+//import useState from "react"
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -232,7 +233,7 @@ function UserPreference(props) {
       (result) => {
         props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          console.log(result);
+          // console.log(result);
 
           notify({ message : msg, event_type : val ? EVENT_TYPES.SUCCESS : EVENT_TYPES.INFO });
         }
@@ -262,7 +263,7 @@ function UserPreference(props) {
       },
       (result) => {
         if (result) {
-          console.log(result);
+          // console.log(result);
           setExtensionPreferences(result?.usersExtensionPreferences);
           setCatalogContent(result?.usersExtensionPreferences?.catalogContent);
         }

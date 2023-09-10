@@ -20,7 +20,7 @@ const UserPref = (props) => {
   }, [props]);
 
   const handleFetchData = async () => {
-    console.log(`path: ${getPath()}`);
+    // console.log(`path: ${getPath()}`);
     props.updatepagepath({ path : getPath() });
     props.updatepagetitle({ title : "User Preferences" });
 
@@ -33,9 +33,7 @@ const UserPref = (props) => {
         },
         (result) => {
           resolve();
-          console.log("result", result);
           if (typeof result !== "undefined") {
-            console.log("result", "here");
             setAnonymousStats(result.anonymousUsageStats);
             setPerfResultStats(result.anonymousPerfResults);
           }
