@@ -4,6 +4,9 @@ import {
   // Button,
   Tooltip,
   Link,
+  FormControl,
+  Select,
+  MenuItem,
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 // import EditIcon from "@material-ui/icons/Edit";
@@ -130,6 +133,10 @@ const ACTION_TYPES = {
     name : "FETCH_CONNECTIONS",
     error_msg : "Failed to fetch connections"
   },
+  UPDATE_CONNECTION : {
+    name : "UPDATE_CONNECTION",
+    error_msg : "Failed to update connection"
+  },
 };
 
 function Connections({ classes, updateProgress }) {
@@ -143,24 +150,70 @@ function Connections({ classes, updateProgress }) {
 
   const searchTimeout = useRef(null);
 
+  const statuses = [
+    'ignored', 'connected', 'REGISTERED', 'discovered', 'deleted'
+  ]
+
   const status = (value) => {
     switch (value) {
       case 'ignored':
-        return <Chip className={classNames(classes.statusCip, classes.ignored)} avatar={<RemoveCircleIcon />} label={value} />
+        return (
+          <MenuItem value={value}>
+            <Chip className={classNames(classes.statusCip, classes.ignored)} avatar={<RemoveCircleIcon />} label={value} />
+          </MenuItem>
+        )
       case 'connected':
-        return <Chip className={classNames(classes.statusCip, classes.connected)} avatar={<CheckCircleIcon />} label={value} />
+        return (
+          <MenuItem value={value}>
+            <Chip className={classNames(classes.statusCip, classes.connected)} value={value} avatar={<CheckCircleIcon />} label={value} />
+          </MenuItem>
+        )
       case 'REGISTERED':
-        return <Chip className={classNames(classes.statusCip, classes.registered)} avatar={<AssignmentTurnedInIcon />} label={value.toLowerCase()} />
+        return (
+          <MenuItem value={value}>
+            <Chip className={classNames(classes.statusCip, classes.registered)} value={value} avatar={<AssignmentTurnedInIcon />} label={value.toLowerCase()} />
+          </MenuItem>
+        )
       case 'discovered':
-        return <Chip className={classNames(classes.statusCip, classes.discovered)} avatar={<ExploreIcon />} label={value} />
+        return (
+          (
+            <MenuItem value={value}>
+              <Chip className={classNames(classes.statusCip, classes.discovered)} value={value} avatar={<ExploreIcon />} label={value} />
+            </MenuItem>
+          )
+        )
       case 'deleted':
-        return <Chip className={classNames(classes.statusCip, classes.deleted)} avatar={<DeleteForeverIcon />} label={value} />
+        return (
+          <MenuItem value={value}>
+            <Chip className={classNames(classes.statusCip, classes.deleted)} value={value} avatar={<DeleteForeverIcon />} label={value} />
+          </MenuItem>
+        )
       default:
-        return "-"
+        return (
+          (
+            <MenuItem value={value}>
+              <Chip className={classNames(classes.statusCip, classes.discovered)} value={value} avatar={<ExploreIcon />} label={value} />
+            </MenuItem>
+          )
+        )
     }
   }
 
   const columns = [
+    {
+      name : "id",
+      label : "ID",
+      options : {
+        display : false,
+      },
+    },
+    {
+      name : "metadata.server_location",
+      label : "Server Location",
+      options : {
+        display : false,
+      },
+    },
     {
       name : "name",
       label : "Element",
@@ -174,8 +227,8 @@ function Connections({ classes, updateProgress }) {
         },
         customBodyRender : (value, tableMeta) => {
           return (
-            <Tooltip title={connections ? connections[tableMeta.rowIndex]?.metadata?.server_location : ''} placement="top" >
-              <Link href={connections ? connections[tableMeta.rowIndex]?.metadata?.server_location : ''} target="_blank">
+            <Tooltip title={tableMeta.rowData[1]} placement="top" >
+              <Link href={tableMeta.rowData[1]} target="_blank">
                 {value}
                 <sup>
                   <LaunchIcon sx={{ fontSize : "12px" }} />
@@ -290,9 +343,22 @@ function Connections({ classes, updateProgress }) {
             </TableCell>
           );
         },
-        customBodyRender : function CustomBody(value) {
+        customBodyRender : function CustomBody(value, tableMeta) {
           return (
-            status(value)
+            <>
+              <FormControl>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={value}
+                  onChange={(e) => handleStatusChange(e, tableMeta.rowData[0])}
+                >
+                  {
+                    statuses.map(s => status(s))
+                  }
+                </Select>
+              </FormControl>
+            </>
           );
         },
       },
@@ -359,13 +425,13 @@ function Connections({ classes, updateProgress }) {
         <TableRow>
           <TableCell>
           </TableCell>
-          <TableCell colSpan={2}>
+          <TableCell colSpan={3}>
             <b>Server Build SHA:</b> {connections ? connections[tableMeta.rowIndex]?.metadata?.server_build_sha : '-'}
           </TableCell>
-          <TableCell colSpan={2}>
+          <TableCell colSpan={3}>
             <b>Server Version:</b> {connections ? connections[tableMeta.rowIndex]?.metadata?.server_version : '-'}
           </TableCell>
-          <TableCell colSpan={2}>
+          <TableCell>
           </TableCell>
         </TableRow>
       );
@@ -402,6 +468,21 @@ function Connections({ classes, updateProgress }) {
     updateProgress({ showProgress : false });
     notify({ message : `${action.error_msg}: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() })
   };
+
+  const handleStatusChange = (e, connectionId) => {
+    const requestBody = JSON.stringify({
+      "status" : e.target.value,
+    });
+    dataFetch(`/api/integrations/connections/${connectionId}`, {
+      method : 'PUT',
+      credentials : 'include',
+      headers : { 'Content-Type' : 'application/json', },
+      body : requestBody,
+    },
+    () => {
+      getConnections(page, pageSize,search);
+    }, handleError(ACTION_TYPES.UPDATE_CONNECTION));
+  }
 
   const [tableCols, updateCols] = useState(columns);
 
