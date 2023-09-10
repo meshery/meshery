@@ -12,12 +12,12 @@ import React, { useEffect, useState } from "react";
 const styles = { paper : { maxWidth : "90%", margin : "auto", overflow : "hidden" } };
 
 const UserPref = (props) => {
-  const [anonymousStats, setAnonymousStats] = useState(false);
-  const [perfResultStats, setPerfResultStats] = useState(false);
+  const [anonymousStats, setAnonymousStats] = useState(undefined);
+  const [perfResultStats, setPerfResultStats] = useState(undefined);
 
   useEffect(() => {
     handleFetchData();
-  }, []);
+  }, [props]);
 
   const handleFetchData = async () => {
     console.log(`path: ${getPath()}`);
@@ -33,10 +33,11 @@ const UserPref = (props) => {
         },
         (result) => {
           resolve();
-          console.log(result);
+          console.log("result", result);
           if (typeof result !== "undefined") {
+            console.log("result", "here");
             setAnonymousStats(result.anonymousUsageStats);
-            setPerfResultStats(result.perfResultDeletionPolicy);
+            setPerfResultStats(result.anonymousPerfResults);
           }
         },
         // Ignore error because we will fallback to default state
@@ -48,7 +49,7 @@ const UserPref = (props) => {
 
   return (
     <>
-      {anonymousStats === undefined ? (
+      {anonymousStats === undefined || perfResultStats === undefined ? (
         <div></div>
       ) : (
         <NoSsr>

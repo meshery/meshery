@@ -1,4 +1,3 @@
-//import useState from 'react';
 import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -23,8 +22,8 @@ import { ctxUrl } from "../utils/multi-ctx";
 import { iconMedium } from "../css/icons.styles";
 import { getTheme, setTheme } from "../utils/theme";
 import { isExtensionOpen } from "../pages/_app";
-import { withNotify } from "../utils/hooks/useNotification";
 import { EVENT_TYPES } from "../lib/event-types";
+import { useNotification } from "../utils/hooks/useNotification";
 
 const styles = (theme) => ({
   statsWrapper : {
@@ -100,9 +99,10 @@ const styles = (theme) => ({
   },
 });
 
-function ThemeToggler({ theme, themeSetter, notify, classes }) {
+function ThemeToggler({ theme, themeSetter, classes }) {
   const [themeToggle, setthemeToggle] = useState(false);
   const defaultTheme = "light";
+  const { notify } = useNotification();
   const handle = () => {
     if (isExtensionOpen()) {
       return;
@@ -161,6 +161,8 @@ function UserPreference(props) {
   const [extensionPreferences, setExtensionPreferences] = useState({});
   const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false);
 
+  const { notify } = useNotification();
+
   const handleCatalogContentToggle = () => {
     props.toggleCatalogContent({ catalogVisibility : !catalogContent });
 
@@ -175,7 +177,6 @@ function UserPreference(props) {
       "/api/user/prefs",
       { credentials : "include", method : "POST", body : JSON.stringify({ usersExtensionPreferences : body }) },
       () => {
-        const notify = props.notify;
         notify({
           message : `Catalog Content was ${catalogContent ? "enab" : "disab"}led`,
           event_type : EVENT_TYPES.SUCCESS,
@@ -197,7 +198,7 @@ function UserPreference(props) {
 
   const handleError = (name) => () => {
     props.updateProgress({ showProgress : false });
-    const notify = props.notify;
+
     notify({ message : name, event_type : EVENT_TYPES.ERROR });
   };
 
@@ -232,7 +233,7 @@ function UserPreference(props) {
         props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
           console.log(result);
-          const notify = props.notify;
+
           notify({ message : msg, event_type : val ? EVENT_TYPES.SUCCESS : EVENT_TYPES.INFO });
         }
       },
@@ -393,12 +394,7 @@ function UserPreference(props) {
                   <FormControlLabel
                     key="ThemePreference"
                     control={
-                      <ThemeToggler
-                        classes={props.classes}
-                        theme={props.theme}
-                        themeSetter={props.themeSetter}
-                        notify={props.notify}
-                      />
+                      <ThemeToggler classes={props.classes} theme={props.theme} themeSetter={props.themeSetter} />
                     }
                     labelPlacement="end"
                     // label="Theme"
@@ -434,4 +430,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withRouter(withNotify(UserPreference))));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withRouter(UserPreference)));
