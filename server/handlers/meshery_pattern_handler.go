@@ -315,6 +315,8 @@ func (h *Handler) handlePatternPOST(
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
+//
+// ```?visibility={visibility}``` Default visibility is public
 // responses:
 //
 //	200: mesheryPatternsResponseWrapper
@@ -328,7 +330,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 	updateAfter := q.Get("updated_after")
-	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter)
+	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("visibility"), updateAfter)
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
