@@ -370,10 +370,13 @@ table {
 }
 
 a {
-  color: #00b39f;
+  color: var(--brand-color-primary);
   text-decoration: none;
   background-color: transparent;
   -webkit-text-decoration-skip: objects;
+  &:hover {
+    color: var(--brand-color-secondary);
+  }
 }
 
 .nav {
