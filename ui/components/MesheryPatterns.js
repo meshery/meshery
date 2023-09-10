@@ -529,6 +529,8 @@ function MesheryPatterns({
             "properties.compatibility.items.enum",
             modelNames
           );
+          const uppercaseTechnology = modifiedSchema.properties.compatibility.items.enum.map(item => item.toUpperCase());
+          modifiedSchema.properties.compatibility.items.enum = uppercaseTechnology.sort();
 
           setPublishSchema({ rjsfSchema : modifiedSchema, uiSchema : result.uiSchema });
         } catch (err) {
