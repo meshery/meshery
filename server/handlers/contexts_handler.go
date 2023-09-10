@@ -2,10 +2,13 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/models/events"
 )
 
 // swagger:route GET /api/system/kubernetes/contexts GetAllContexts idGetAllContexts
@@ -21,7 +24,7 @@ import (
 //
 // ```?search={contextname}``` If search is non empty then a greedy search is performed
 // responses:
-//
+// 
 //	200: systemK8sContextsResponseWrapper
 func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
@@ -31,8 +34,8 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *mo
 	}
 
 	q := req.URL.Query()
-
-	vals, err := provider.GetK8sContexts(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
+	// Don't fetch credentials as UI has no use case.
+	vals, err := provider.GetK8sContexts(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), false)
 	if err != nil {
 		http.Error(w, "failed to get contexts", http.StatusInternalServerError)
 		return
@@ -41,8 +44,8 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *mo
 	err = json.Unmarshal(vals, &mesheryK8sContextPage)
 	if err != nil {
 		obj := "k8s context"
-		h.log.Error(ErrUnmarshal(err, obj))
-		http.Error(w, ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrUnmarshal(err, obj))
+		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
 	}
 	if err := json.NewEncoder(w).Encode(mesheryK8sContextPage); err != nil {
 		http.Error(w, "failed to encode contexts", http.StatusInternalServerError)
@@ -86,21 +89,43 @@ func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models
 	}
 }
 
-func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	userID := uuid.FromStringOrNil(user.ID)
+	contextID := mux.Vars(req)["id"]
+
+	eventBuilder := events.NewEvent().ActedUpon(uuid.FromStringOrNil(contextID)).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
+
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		http.Error(w, "failed to get token", http.StatusInternalServerError)
 		return
 	}
 
+	obj := "connection"
+
 	// id is the connection_id of the specific cluster in connections table
-	_, err := provider.DeleteK8sContext(token, mux.Vars(req)["id"])
+	deletedContext, err := provider.DeleteK8sContext(token, contextID)
 	if err != nil {
-		http.Error(w, "failed to delete context", http.StatusInternalServerError)
+		_err := ErrFailToDelete(err, obj)
+		metadata := map[string]interface{}{
+			"error": _err,
+		}
+		event := eventBuilder.WithSeverity(events.Error).WithDescription("Error deleting Kubernetes context").WithMetadata(metadata).Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+
+		http.Error(w, _err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	description := fmt.Sprintf("Kubernetes context %s deleted.", deletedContext.Name)
+
+	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
+	_ = provider.PersistEvent(event)
+	go h.config.EventBroadcaster.Publish(userID, event)
+
 	h.config.K8scontextChannel.PublishContext()
-	go models.FlushMeshSyncData(req.Context(), mux.Vars(req)["id"], provider, h.EventsBuffer)
+	go models.FlushMeshSyncData(req.Context(), deletedContext, provider, h.config.EventBroadcaster, user.ID, h.SystemID)
 }
 
 // func (h *Handler) GetCurrentContextHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {

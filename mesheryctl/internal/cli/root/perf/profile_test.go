@@ -202,6 +202,7 @@ func TestProfileCmd(t *testing.T) {
 			utils.Equals(t, expectedResponse, actualResponse)
 			resetVariables()
 		})
+		t.Log("Profile Perf test Passed")
 	}
 
 	// stop mock server

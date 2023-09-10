@@ -36,7 +36,7 @@ Highlighting Meshery Cloud's seamless integration with third-party OAuth provide
 
 * As the team admin or owner, you can now invite other team members by following the steps outlined earlier in the conversation.
 
-By following these steps, you can successfully join an existing team or create a new team within Meshery Cloud, allowing you to collaborate and contribute to the team's service mesh management activities.
+By following these steps, you can successfully join an existing team or create a new team within Meshery Cloud, allowing you to collaborate and contribute to the team'scloud native infrastructure management activities.
 
 ## Notifying Team Members about Updates
 
