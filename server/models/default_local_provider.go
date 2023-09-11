@@ -578,7 +578,7 @@ func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(_, page, pageSize, sear
 	return l.MesheryPatternPersister.GetMesheryCatalogPatterns(page, pageSize, search, order)
 }
 
-// PublishCatalogPattern publishes pattern to catalogx
+// PublishCatalogPattern publishes pattern to catalog
 // Not supported by local provider
 func (l *DefaultLocalProvider) PublishCatalogPattern(_ *http.Request, _ *MesheryCatalogPatternRequestBody) ([]byte, error) {
 	return []byte(""), ErrLocalProviderSupport
