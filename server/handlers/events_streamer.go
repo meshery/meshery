@@ -72,7 +72,7 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	}
 }
 
-// swagger:route GET /api/v2/events EventsAPI idGetEventStreamer
+// swagger:route GET /api/events/types EventsAPI idGetEventStreamer
 // Handle GET request for available event categories and actions.
 // responses:
 // 200: 
