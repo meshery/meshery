@@ -40,7 +40,7 @@ func (e *EventsPersister) GetEventTypes(userID uuid.UUID) (map[string]interface{
 		return nil, err
 	}
 
-	eventTypes["actions"] = actions
+	eventTypes["action"] = actions
 	return eventTypes, err
 }
 
