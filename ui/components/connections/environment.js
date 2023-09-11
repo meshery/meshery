@@ -18,7 +18,7 @@ const styles = (theme) => ({
     color : theme.palette.secondary.focused,
   },
   wrapper : {
-    background : theme.palette.secondary.mainBackground,
+    background : theme.palette.type === 'dark' ? theme.palette.secondary.toolbarBg2 : theme.palette.secondary.toolbarBg1,
   },
   autocompleteOptions : {
     "& .MuiAutocomplete-option" : {
@@ -124,10 +124,12 @@ function MySelectComponent({ classes }) {
         clearOnBlur
         handleHomeEndKeys
         renderOption={(props, option) => (
-          <li className={classes.wrapper} {...props} style={{ display : "flex", justifyContent : "space-between" }}>
-            <div className={classes.heading}>{option.inputValue ? <>{option.title}</> : option.title}</div>
-            <div>{option.inputValue && <AddIcon />}</div>
-          </li>
+          <div className={classes.wrapper}>
+            <li className={classes.wrapper} {...props} style={{ display : "flex", justifyContent : "space-between" }}>
+              <div className={classes.heading}>{option.inputValue ? <>{option.title}</> : option.title}</div>
+              <div>{option.inputValue && <AddIcon />}</div>
+            </li>
+          </div>
         )}
         sx={{ "& fieldset" : { border : "none" }, width : 250 }}
         renderInput={(params) => (
