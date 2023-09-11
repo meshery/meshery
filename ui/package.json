@@ -58,6 +58,7 @@
     "@open-policy-agent/opa-wasm": "^1.8.0",
     "@paciolan/remote-component": "^2.13.0",
     "@redux-devtools/extension": "^3.2.3",
+    "@reduxjs/toolkit": "^1.9.5",
     "@rjsf/core": "^5.8.1",
     "@rjsf/material-ui": "^5.8.2",
     "@rjsf/utils": "^5.8.1",

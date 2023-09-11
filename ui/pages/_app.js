@@ -53,6 +53,10 @@ import { RelayEnvironmentProvider } from 'react-relay';
 import { createRelayEnvironment } from "../lib/relayEnvironment"
 import "./styles/charts.css"
 import subscribeEvents from '../components/graphql/subscriptions/EventsSubscription';
+import { store as rtkStore } from '../store';
+import { pushEvent } from '../store/slices/events';
+
+
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -199,7 +203,8 @@ class MesheryApp extends App {
     }
 
     const eventsSubscription = subscribeEvents(result => {
-      console.log("event: ", result);
+      console.log("event received", result);
+      rtkStore.dispatch(pushEvent(result.event))
     })
     this.eventsSubscriptionRef.current = eventsSubscription;
   }
