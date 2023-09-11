@@ -25,7 +25,8 @@ const styles = (theme) => ({
     minWidth : 400,
     overflowWrap : 'anywhere',
     textAlign : 'center',
-    padding : '5px'
+    padding : '5px',
+    color : theme.palette.secondary.text
   },
   actions : {
     display : 'flex',
@@ -62,7 +63,6 @@ const styles = (theme) => ({
   },
   checkboxLabelStyle : {
     fontSize : "1rem",
-    color : theme.palette.secondary.lightText
   },
   checkbox : {
     color : theme.palette.secondary.focused,
@@ -149,6 +149,7 @@ class PromptComponent extends React.Component {
                       checked={isChecked}
                       onChange={this.handleCheckboxChange}
                       className={classes.checkbox}
+                      color="primary"
                     />
                   }
                   label={
