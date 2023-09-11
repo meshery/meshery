@@ -59,6 +59,16 @@ const styles = (theme) => ({
     "&:hover" : {
       backgroundColor : "#B32700",
     }
+  },
+  checkboxLabelStyle : {
+    fontSize : "1rem",
+    color : theme.palette.secondary.lightText
+  },
+  checkbox : {
+    color : theme.palette.secondary.focused,
+    "&$checked" : {
+      color : theme.palette.secondary.focused,
+    }
   }
 });
 
@@ -137,13 +147,15 @@ class PromptComponent extends React.Component {
                   control={
                     <Checkbox
                       checked={isChecked}
-                      onChange={() => {
-                        this.handleCheckboxChange();
-                      }}
-                      color="primary"
+                      onChange={this.handleCheckboxChange}
+                      className={classes.checkbox}
                     />
                   }
-                  label="Do not show again"
+                  label={
+                    <span className={classes.checkboxLabelStyle}>
+                      Do not show again
+                    </span>
+                  }
                 />
               )}
             </DialogContent>
