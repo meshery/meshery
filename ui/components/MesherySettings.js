@@ -132,7 +132,6 @@ function TabContainer(props) {
 
 TabContainer.propTypes = { children: PropTypes.node.isRequired };
 
-//TODO: Tabs are hardcoded everywhere
 const MesherySettings = (props) => {
   const { k8sconfig, meshAdapters, grafana, prometheus, classes } = props;
   const router = useRouter();
