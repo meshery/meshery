@@ -29,13 +29,13 @@ type CountBySeverityLevel struct {
 func (e *EventsPersister) GetEventTypes(userID uuid.UUID) (map[string]interface{}, error) {
 	eventTypes := make(map[string]interface{}, 2)
 	var  categories, actions []string
-	err := e.DB.Table("events").Distinct("category").Find(&categories).Error
+	err := e.DB.Table("events").Distinct("category").Where("user_id = ?", userID).Find(&categories).Error
 	if err != nil {
 		return nil, err
 	}
 
 	eventTypes["category"] = categories
-	err = e.DB.Table("events").Distinct("action").Find(&actions).Error
+	err = e.DB.Table("events").Distinct("action").Where("user_id = ?", userID).Find(&actions).Error
 	if err != nil {
 		return nil, err
 	}
