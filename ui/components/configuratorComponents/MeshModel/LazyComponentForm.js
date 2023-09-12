@@ -44,11 +44,11 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
     }
 
     setExpanded(true);
-    const { apiVersion, kind, model } = component;
+    const { apiVersion, kind, hostName, host, model } = component;
     const { name : modelName, version } = model
     try {
       if (isEmpty(schemaSet)) {
-        const res = await getMeshModelComponent(modelName, kind, version, apiVersion);
+        const res = await getMeshModelComponent(modelName, kind, version, apiVersion, hostName, host);
         if (res.components[0]) {
           setSchemaSet({
             workload : JSON.parse(res.components[0].schema), // has to be removed

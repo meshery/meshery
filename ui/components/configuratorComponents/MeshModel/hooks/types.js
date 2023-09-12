@@ -3,6 +3,8 @@
  * @property {string} kind
  * @property {string} apiVersion
  * @property {string} displayName
+ * @property {string} hostName
+ * @property {string} host
  * @property {string} format
  * @property {object} metadata
  * @property {string} metadata.genealogy

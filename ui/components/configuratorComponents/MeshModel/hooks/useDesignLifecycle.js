@@ -26,7 +26,7 @@ export default function useDesignLifecycle() {
    * @param {Types.ComponentDefinition} componentDefinition
    */
   function onSettingsChange(componentDefinition, formReference) {
-    const { kind, apiVersion, model } = componentDefinition;
+    const { kind, apiVersion, model, hostName, host } = componentDefinition;
     const modelVersion = model.version;
     const modelName = model.name;
 
@@ -46,6 +46,8 @@ export default function useDesignLifecycle() {
         annotations,
         type : kind,
         apiVersion,
+        host,
+        hostName,
         model : modelName,
         version : modelVersion,
         settings
