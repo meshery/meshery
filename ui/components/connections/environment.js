@@ -15,10 +15,20 @@ const filter = createFilterOptions();
 
 const styles = (theme) => ({
   heading : {
-    color : theme.palette.secondary.focused,
+    color : theme.palette.secondary.iconMain,
+    "& .MuiInputLabel-root" : {
+      color : theme.palette.secondary.iconMain,
+    },
+    "& .MuiOutlinedInput-root" : {
+      color : theme.palette.secondary.iconMain,
+    },
+    "& .MuiSvgIcon-root" : {
+      color : theme.palette.secondary.iconMain,
+    }
   },
   wrapper : {
     background : theme.palette.type === 'dark' ? theme.palette.secondary.toolbarBg2 : theme.palette.secondary.toolbarBg1,
+    padding : '8px'
   },
   autocompleteOptions : {
     "& .MuiAutocomplete-option" : {
@@ -44,6 +54,9 @@ const styles = (theme) => ({
       backgroundColor : theme.palette.secondary.focused,
     },
     color : "#fff"
+  },
+  icon : {
+    color : theme.palette.secondary.iconMain,
   },
 });
 
@@ -134,7 +147,7 @@ function MySelectComponent({ classes }) {
           <div className={classes.wrapper}>
             <li className={classes.wrapper} {...props} style={{ display : "flex", justifyContent : "space-between" }}>
               <div className={classes.heading}>{option.inputValue ? <>{option.title}</> : option.title}</div>
-              <div>{option.inputValue && <AddIcon />}</div>
+              <div>{option.inputValue && <AddIcon className={classes.icon} />}</div>
             </li>
           </div>
         )}
@@ -145,9 +158,6 @@ function MySelectComponent({ classes }) {
             {...params}
             label={labelVisible ? "Choose an environment" : ""}
             placeholder="Environment"
-            // inputProps={{
-            //   className: classes.heading,
-            // }}
           />
         )}
       />

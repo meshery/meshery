@@ -4,7 +4,7 @@ import {
   // Button,
   Tooltip,
   Link,
-  FormControl
+  // FormControl
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 // import EditIcon from "@material-ui/icons/Edit";
@@ -31,7 +31,7 @@ import CustomColumnVisibilityControl from "../../utils/custom-column";
 import SearchBar from "../../utils/custom-search";
 import ResponsiveDataTable from "../../utils/data-table";
 import useStyles from "../../assets/styles/general/tool.styles";
-import MySelectComponent from "./environment";
+// import MySelectComponent from "./environment";
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2) },
@@ -199,13 +199,13 @@ function Connections({ classes, updateProgress }) {
             </TableCell>
           );
         },
-        customBodyRender : function CustomBody() {
-          return (
-            <FormControl sx={{ m : 1, minWidth : 150, maxWidth : 150 }} size="small">
-              <MySelectComponent />
-            </FormControl>
-          );
-        },
+        // customBodyRender : function CustomBody() {
+        //   return (
+        //     <FormControl sx={{ m : 1, minWidth : 150, maxWidth : 150 }} size="small">
+        //       <MySelectComponent />
+        //     </FormControl>
+        //   );
+        // },
       },
     },
     {
