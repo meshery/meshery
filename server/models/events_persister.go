@@ -26,6 +26,24 @@ type CountBySeverityLevel struct {
 	Count    int    `json:"count"`
 }
 
+func (e *EventsPersister) GetEventTypes(userID uuid.UUID) (map[string]interface{}, error) {
+	eventTypes := make(map[string]interface{}, 2)
+	var  categories, actions []string
+	err := e.DB.Table("events").Distinct("category").Find(&categories).Error
+	if err != nil {
+		return nil, err
+	}
+
+	eventTypes["category"] = categories
+	err = e.DB.Table("events").Distinct("action").Find(&actions).Error
+	if err != nil {
+		return nil, err
+	}
+
+	eventTypes["action"] = actions
+	return eventTypes, err
+}
+
 func (e *EventsPersister) GetAllEvents(eventsFilter *events.EventsFilter, userID uuid.UUID) (*EventsResponse, error) {
 	eventsDB := []*events.Event{}
 	finder := e.DB.Model(&events.Event{}).Where("user_id = ?", userID)
