@@ -16,7 +16,7 @@ import ContentFilterIcon from "../../assets/icons/ContentFilterIcon";
 import { useEffect, useReducer, useRef, useState } from "react";
 import CrossCircleIcon from "../../assets/icons/CrossCircleIcon";
 import clsx from "clsx";
-import { SEVERITY } from "./constants";
+import { SEVERITY, STATUS } from "./constants";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -78,6 +78,14 @@ const FILTERS = {
     values: Object.values(SEVERITY),
   },
 
+  STATUS: {
+    value: "status",
+    label: "Status",
+    description: "Filter by status",
+    values: Object.values(STATUS),
+    type: "string"
+  },
+
   TYPE: {
     value: "type",
     label: "Type",
@@ -119,18 +127,32 @@ const Delimiter = {
   FILTER_VALUE: ":",
 };
 
-//return a filter object of form { type : {values} , type2 : {values}  }
-//from the filter string of form "type:value type2:value2 type:value2"
+/**
+ * Parses a filter string and returns a filter object.
+ *
+ * @param {string} filterString - The input filter string of the form "type:value type2:value2 type:value2".
+ * @returns {Object} - The filter object with types as keys and arrays of values as values.
+ */
 const getFilters = (filterString) => {
   const filters = {};
   const filterValuePairs = filterString.split(Delimiter.FILTER);
   filterValuePairs.forEach((filterValuePair) => {
     const [filter, value] = filterValuePair.split(Delimiter.FILTER_VALUE);
+
+    if (filter == FILTERS.STATUS.value) {
+      filters[filter] = value;
+      return
+    }
+
     if (filter && value) {
-      filters[filter] = filters[filter] || new Set();
-      filters[filter].add(value);
+      filters[filter] = filters[filter] || [];
+      if (!filters[filter].includes(value)) {
+        filters[filter].push(value)
+      }
     }
   });
+
+
   return filters;
 };
 
@@ -370,9 +392,9 @@ const FilterValueSuggestions = ({ filterStateMachine, dispatchFilterMachine }) =
   );
 };
 
-const Filter = ({ initialFilter, handleFilter }) => {
+const Filter = ({ handleFilter }) => {
   const theme = useTheme();
-  console.log("initialFilter", initialFilter)
+  // console.log("initialFilter", initialFilter)
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const isPopperOpen = Boolean(anchorEl);

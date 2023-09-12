@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Box, Button, Collapse, Divider, Grid, IconButton,  Popover, Typography, alpha, useTheme } from "@material-ui/core"
+import { Box, Button, Collapse, Divider, Grid, IconButton, Popover, Typography, alpha, useTheme } from "@material-ui/core"
 import { makeStyles } from "@material-ui/core"
-import {  SEVERITY_STYLE } from "./constants"
+import { SEVERITY_STYLE, STATUS } from "./constants"
 import { iconLarge, iconMedium } from "../../css/icons.styles"
 import { MoreVert } from "@material-ui/icons"
 import { Avatar } from "@mui/material"
@@ -11,7 +11,8 @@ import TwitterIcon from "../../assets/icons/TwitterIcon"
 import ShareIcon from "../../assets/icons/ShareIcon"
 import DeleteIcon from "../../assets/icons/DeleteIcon"
 import moment from 'moment';
-
+import { Done } from '@mui/icons-material';
+import { useUpdateStatusMutation } from "../../rtk-query/notificationCenter"
 
 const useStyles = makeStyles(() => ({
   root: (props) => ({
@@ -164,6 +165,22 @@ function BasicMenu() {
   );
 }
 
+const ChangeStatus = ({ event }) => {
+
+  const newStatus = event.status === STATUS.READ ? STATUS.UNREAD : STATUS.READ
+  const [updateStatusMutation, { isLoading }] = useUpdateStatusMutation()
+
+  const updateStatus = () => {
+    updateStatusMutation({ id: event.id, status: newStatus })
+  }
+  return (
+    <IconButton onClick={updateStatus} disabled={isLoading}>
+      <Done />
+    </IconButton>
+  )
+
+}
+
 export const Notification = ({ event }) => {
   const severityStyles = SEVERITY_STYLE[event.severity]
   const classes = useStyles({
@@ -184,13 +201,16 @@ export const Notification = ({ event }) => {
           <severityStyles.icon {...iconLarge} fill={severityStyles.color} />
         </Grid>
         <Grid item sm={7} className={classes.gridItem} >
-          <Typography variant="body1" className={classes.message}> {event.description} </Typography>
+          <Typography variant="body1" className={classes.message}> {event.description}   </Typography>
         </Grid>
         <Grid item sm={3} className={classes.gridItem} >
           <Typography variant="body1"> {formatTimestamp(event.update_at)} </Typography>
         </Grid>
         <Grid item sm={1} >
-          <BasicMenu />
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <ChangeStatus event={event} />
+            <BasicMenu />
+          </Box>
         </Grid>
       </Grid>
       <Collapse in={expanded}>
@@ -205,6 +225,7 @@ export const Notification = ({ event }) => {
                   Details
                 </Typography>
                 <Typography variant="body1" >
+                  {event.id}
                   {event.description}
                 </Typography>
               </div>

@@ -9,12 +9,12 @@ import { loadEventsFromPersistence, toggleNotificationCenter, updateEvents } fro
 import { iconMedium } from "../../css/icons.styles";
 import { bindActionCreators } from "redux";
 import { SEVERITY, SEVERITY_STYLE, STATUS, STATUS_STYLE } from "./constants";
-import axios from "axios";
 import classNames from "classnames";
 import Notification from "./notification";
 import { store } from "../../store";
 import { useStyles } from "./notificationCenter.style";
-import { clearEvents, setEvents, setEventsSummary } from "../../store/slices/events";
+import { loadEvents, loadNextPage } from "../../store/slices/events";
+import {  useGetEventsSummaryQuery, useLazyGetEventsQuery } from "../../rtk-query/notificationCenter";
 
 
 
@@ -35,8 +35,12 @@ const NotificationCountChip = ({ classes, notificationStyle, count }) => {
 }
 
 const Header = () => {
-  useLoadEventsSummary()
-  const { count_by_severity_level,  total_count } = useSelector((state) => state.events.summary);
+
+  const { data } = useGetEventsSummaryQuery();
+  const { count_by_severity_level, total_count } = data || {
+    count_by_severity_level: [],
+    total_count: 0
+  }
   const classes = useStyles()
   const getSeverityCount = (severity) => {
     return count_by_severity_level.find((item) => item.severity === severity)?.count || 0
@@ -44,7 +48,6 @@ const Header = () => {
 
   const archivedCount = count_by_severity_level
     .reduce((acc, item) => acc + item.count, 0) - total_count
-  console.log("count_by_severity_level", count_by_severity_level,total_count)
   return (
     <div className={classNames(classes.container, classes.header)}>
       <div className={classes.title}>
@@ -66,91 +69,38 @@ const Header = () => {
   )
 }
 
-const useLoadEvents = (filters, page) => {
 
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [hasMore, setHasMore] = useState(true)
+// }
+
+const EventsView = () => {
   const events = useSelector((state) => state.events.events);
-  const dispatch = useDispatch()
-  useEffect(() => {
-    setLoading(true)
-    const parsedFilters = {}
-    Object.keys(filters).forEach((key) => {
-      if (filters[key]) {
-        parsedFilters[key] = JSON.stringify(filters[key], (_key, value) => (value instanceof Set ? [...value] : value))
-      }
-    })
-    axios.get(`/api/v2/events`,
-      {
-        params: {
-          ...parsedFilters,
-          page: page,
-          page_size: 15
-        }
-      }
-    ).then(({ data }) => {
-      if (data.events.length === 0) {
-        setHasMore(false)
-        return
-      }
-      dispatch(setEvents([...events, ...data.events]))
-    }).catch((err) => {
-      setError(err)
-    }).finally(() => {
-      setLoading(false)
-    })
+  const validEvents = events.filter((event) => event.id)
+  const page = useSelector((state) => state.events.current_view.page);
 
-  }, [page, filters])
-
-  const reset = () => {
-    dispatch(clearEvents())
-    setHasMore(true)
-  }
-
-  return {
-    loading,
-    error,
-    hasMore,
-    reset,
-  }
+  return (
+    <>
+      <div>Page {page}</div>
+      {validEvents.map((event) => <Notification key={event.id} event={event} />)}
+    </>
+  )
 }
 
-const useLoadEventsSummary = () => {
-
-
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const dispatch = useDispatch()
-  useEffect(() => {
-    setLoading(true)
-    axios.get(`/api/v2/events?page=$1&page_size=15`).then(({ data }) => {
-      dispatch(setEventsSummary({
-        count_by_severity_level: data.count_by_severity_level,
-        total_count: data.total_count
-      }))
-    }).catch((err) => {
-      setError(err)
-    }).finally(() => {
-      setLoading(false)
-    })
-
-  }, [])
-
-  return {
-    loading,
-    error,
-  }
-}
 
 const MesheryNotification = (props) => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [filters, setFilters] = useState({})
-  const [page, setPage] = useState(1)
+  const dispatch = useDispatch()
 
-  const events = useSelector((state) => state.events.events);
+  const [fetchEvents, { isLoading }] = useLazyGetEventsQuery()
+  const hasMore = useSelector((state) => state.events.current_view.has_more);
+
+  useEffect(() => {
+    dispatch(loadEvents(fetchEvents, 1, {
+      status: STATUS.UNREAD,
+    }))
+  }, [])
+
   const loadMore = () => {
-    setPage(page => page + 1)
+    dispatch(loadNextPage(fetchEvents))
   }
 
   const handleToggle = () => {
@@ -168,35 +118,30 @@ const MesheryNotification = (props) => {
   const { showFullNotificationCenter } = props;
   const open = Boolean(anchorEl) || showFullNotificationCenter;
 
-  const { loading, hasMore, reset } = useLoadEvents(filters, page)
 
-  const loader = React.useRef(null);
-  const handleObserver = React.useCallback((entries) => {
-    const target = entries[0];
-    if (target.isIntersecting && !loading && hasMore) {
-      loadMore();
-    }
-  }, [loading]);
-
-
-  useEffect(() => {
-    const option = {
-      root: null,
-      rootMargin: "20px",
-      threshold: 0
-    };
-    const observer = new IntersectionObserver(handleObserver, option);
-    if (loader.current) observer.observe(loader.current);
-  }, [handleObserver]);
+  // const loader = React.useRef(null);
+  // const handleObserver = React.useCallback((entries) => {
+  //   const target = entries[0];
+  //   if (target.isIntersecting && !isLoading && hasMore) {
+  //     loadMore();
+  //   }
+  // }, [hasMore, isLoading]);
+  //
+  //
+  // useEffect(() => {
+  //   const option = {
+  //     root: null,
+  //     rootMargin: "20px",
+  //     threshold: 0
+  //   };
+  //   const observer = new IntersectionObserver(handleObserver, option);
+  //   if (loader.current) observer.observe(loader.current);
+  // }, [handleObserver]);
 
   const handleFilter = (filters) => {
-    reset()
-    setFilters(filters)
-    setPage(1)
+    console.log("filtering", filters)
+    dispatch(loadEvents(fetchEvents, 1, filters))
   }
-
-  const value = useSelector((state) => state.events.value);
-  console.log("value", value)
 
   return (
     <NoSsr>
@@ -250,9 +195,8 @@ const MesheryNotification = (props) => {
                 <Divider light />
                 <div className={classes.container}>
                   <Filter handleFilter={handleFilter}  ></Filter>
-                  {events.map((event) => <Notification key={event.id} event={event} />)}
-                  {loading && <div>Loading...</div>}
-                  {!loading && <button onClick={loadMore}>LoadMore</button>}
+                  <EventsView />
+                  {!isLoading && hasMore && <button onClick={loadMore}>LoadMore</button>}
                 </div>
               </div>
             </div>
