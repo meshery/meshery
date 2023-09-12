@@ -50,6 +50,7 @@ const styles = (theme) => ({
 function MySelectComponent({ classes }) {
   const [value, setValue] = React.useState(null);
   const [open, toggleOpen] = React.useState(false);
+  const [labelVisible, setLabelVisible] = React.useState(true);
 
   const handleClose = () => {
     setDialogValue({
@@ -72,6 +73,12 @@ function MySelectComponent({ classes }) {
     });
     handleClose();
   };
+
+  React.useEffect(() => {
+    if (value) {
+      setLabelVisible(false);
+    }
+  }, [value]);
 
   return (
     <React.Fragment>
@@ -136,7 +143,7 @@ function MySelectComponent({ classes }) {
           <TextField
             className={classes.heading}
             {...params}
-            label="Choose an environment"
+            label={labelVisible ? "Choose an environment" : ""}
             placeholder="Environment"
             // inputProps={{
             //   className: classes.heading,
