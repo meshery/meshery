@@ -196,15 +196,18 @@ jobs:
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+      - name: Build Meshery UI and Provider
+        run: |
+          make ui-setup && make ui-meshery-build && make ui-provider-build
       - name: Run Meshery UI and Server
         env:
           PROVIDER_BASE_URLS: http://localhost:9876
           PORT: 9081
           ADAPTER_URLS: "localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10009 localhost:10007"
         run: |
-          chmod +x ./main
+          # chmod +x ./main
           # ./main &
-          make ui-server &
+          make server &
           sleep 60
       - name: Cypress run
         uses: cypress-io/github-action@v5
