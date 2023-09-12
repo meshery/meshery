@@ -55,12 +55,9 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 	`,
 	Annotations: linkDocAppOnboard,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = `Usage: mesheryctl app onboard -f [filepath] -s [source type]
-Example: mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
-Description: Onboard application`
 
 		if file == "" && len(args) == 0 {
-			return fmt.Errorf("file path or application name not provided. Provide file/app name \n\n%v", errMsg)
+			return ErrOnboardApp()
 		}
 		return nil
 	},
@@ -115,7 +112,7 @@ Description: Onboard application`
 
 			index := 0
 			if len(response.Applications) == 0 {
-				utils.Log.Error(utils.ErrNotFound(errors.New("no apps found with the given name")))
+				utils.Log.Error(utils.ErrNotFound(errors.New("no app found with the given name")))
 				return nil
 			} else if len(response.Applications) == 1 {
 				appFile = response.Applications[0].ApplicationFile
@@ -127,7 +124,7 @@ Description: Onboard application`
 		} else {
 			// Check if a valid source type is set
 			if !isValidSource(sourceType) {
-				return errors.Errorf("application source type (-s) invalid or not passed.\nAllowed source types: %s", strings.Join(validSourceTypes, ", "))
+				return ErrValidSource(validSourceTypes)
 			}
 			app, err := importApp(sourceType, file, appURL, !skipSave)
 			if err != nil {
@@ -153,7 +150,7 @@ Description: Onboard application`
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			utils.Log.Error(utils.ErrReadResponseBody(err))
+			utils.Log.Error(err)
 			return nil
 		}
 
