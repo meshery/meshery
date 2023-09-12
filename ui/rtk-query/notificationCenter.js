@@ -19,7 +19,7 @@ function parseFilters(filters) {
     return parsedFilters;
   }, {});
 }
-const PROVIDER_TAGS = {
+export const PROVIDER_TAGS = {
   EVENT: "event"
 }
 export const notificationCenterApi = api
@@ -41,6 +41,8 @@ export const notificationCenterApi = api
             params: {
               ...parsedFilters,
               page: page,
+              sort: "updated_at",
+              order: "desc",
               page_size: 15
             }
           }
@@ -88,7 +90,7 @@ export const notificationCenterApi = api
 export const {
   useGetEventsSummaryQuery,
   useUpdateStatusMutation,
+  useDeleteEventMutation,
   useLazyGetEventsQuery,
 } = notificationCenterApi
-
 

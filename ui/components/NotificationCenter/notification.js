@@ -11,14 +11,16 @@ import TwitterIcon from "../../assets/icons/TwitterIcon"
 import ShareIcon from "../../assets/icons/ShareIcon"
 import DeleteIcon from "../../assets/icons/DeleteIcon"
 import moment from 'moment';
-import { Done } from '@mui/icons-material';
-import { useUpdateStatusMutation } from "../../rtk-query/notificationCenter"
+import { useUpdateStatusMutation, useDeleteEventMutation } from "../../rtk-query/notificationCenter"
+import { useDispatch } from 'react-redux';
+import { changeEventStatus, deleteEvent } from '../../store/slices/events';
 
 const useStyles = makeStyles(() => ({
   root: (props) => ({
     width: "100%",
     borderRadius: "3px",
     border: `1px solid ${props.notificationColor}`,
+    borderLeftWidth: props.status === STATUS.READ ? "4px" : "1px",
     marginBlock: "8px",
   }),
 
@@ -86,6 +88,14 @@ const useMenuStyles = makeStyles((theme) => {
       // justifyContent: "center",
     },
 
+    button: {
+      padding: "0rem",
+      display: "flex",
+      gridGap: "0.5rem",
+      alignItems: "center",
+      justifyContent: "start",
+    },
+
   }
 })
 
@@ -100,17 +110,22 @@ const formatTimestamp = (utcTimestamp) => {
   // return moment(utcTimestamp).fromNow()
 }
 
-function BasicMenu() {
+function BasicMenu({ event }) {
 
   const classes = useMenuStyles()
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+
+
   const handleClick = (event) => {
+    event.stopPropagation()
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = () => {
+  const handleClose = (e) => {
+    e.stopPropagation()
     setAnchorEl(null);
   };
+
   const theme = useTheme()
   return (
     <div className="mui-fixed">
@@ -151,47 +166,82 @@ function BasicMenu() {
             </Box>
           </div>
 
-          <div className={classes.list}>
-            <Button style={{ padding: "0rem" }}>
-              <div style={{ display: "flex", gap: "0.5rem" }}>
-                <DeleteIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
-                <Typography variant="body1" > Delete </Typography>
-              </div>
-            </Button>
-          </div>
+          <DeleteEvent event={event} />
+          <ChangeStatus event={event} />
         </Box>
       </Popover>
     </div>
   );
 }
 
-const ChangeStatus = ({ event }) => {
+export const DeleteEvent = ({ event }) => {
 
-  const newStatus = event.status === STATUS.READ ? STATUS.UNREAD : STATUS.READ
-  const [updateStatusMutation, { isLoading }] = useUpdateStatusMutation()
-
-  const updateStatus = () => {
-    updateStatusMutation({ id: event.id, status: newStatus })
+  const classes = useMenuStyles()
+  const dispatch = useDispatch()
+  const [deleteEventMutation] = useDeleteEventMutation()
+  const theme = useTheme()
+  const handleDelete = (e) => {
+    e.stopPropagation()
+    dispatch(deleteEvent(deleteEventMutation, event.id))
   }
   return (
-    <IconButton onClick={updateStatus} disabled={isLoading}>
-      <Done />
-    </IconButton>
+    <div className={classes.list}>
+      <Button className={classes.button} onClick={handleDelete}>
+        <DeleteIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
+        <Typography variant="body1" > Delete </Typography>
+      </Button>
+    </div>
   )
 
+}
+
+
+
+export const ChangeStatus = ({ event }) => {
+
+  const classes = useMenuStyles()
+  const newStatus = event.status === STATUS.READ ? STATUS.UNREAD : STATUS.READ
+  const [updateStatusMutation] = useUpdateStatusMutation()
+
+  const dispatch = useDispatch()
+
+  const updateStatus = (e) => {
+    e.stopPropagation()
+    dispatch(changeEventStatus(updateStatusMutation, event.id, newStatus))
+  }
+  return (
+    <div className={classes.list}>
+      <Button className={classes.button} onClick={updateStatus}>
+        <Typography variant="body1" > Mark As Read  </Typography>
+      </Button>
+    </div>
+  )
+
+}
+
+const BulletList = ({ items }) => {
+  return <ol style={{ paddingInline: "12px", paddingBlock: "0.3rem", margin: "0rem" }}>
+    {[items].map((i) => <li key={i} >
+      <Typography variant="body1" > {i} </Typography>
+    </li>)}
+  </ol>
 }
 
 export const Notification = ({ event }) => {
   const severityStyles = SEVERITY_STYLE[event.severity]
   const classes = useStyles({
-    notificationColor: severityStyles.color
+    notificationColor: severityStyles.color,
+    status: event.status
   })
-
   const [expanded, setExpanded] = React.useState(false)
   const handleExpandClick = (e) => {
     e.stopPropagation()
     setExpanded(!expanded);
   };
+
+  const longDescription = event?.metadata?.error?.LongDescription || []
+  const probableCause = event?.metadata?.error?.ProbableCause || []
+  const suggestedRemediation = event?.metadata?.error?.SuggestedRemediation || []
 
 
   return (
@@ -207,9 +257,8 @@ export const Notification = ({ event }) => {
           <Typography variant="body1"> {formatTimestamp(event.update_at)} </Typography>
         </Grid>
         <Grid item sm={1} >
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <ChangeStatus event={event} />
-            <BasicMenu />
+          <Box>
+            <BasicMenu event={event} />
           </Box>
         </Grid>
       </Grid>
@@ -221,34 +270,17 @@ export const Notification = ({ event }) => {
           <Grid item sm={10}>
             <Grid container  >
               <div>
-                <Typography variant="h6" className={classes.descriptionHeading}  >
-                  Details
-                </Typography>
-                <Typography variant="body1" >
-                  {event.id}
-                  {event.description}
-                </Typography>
+                <NestedData classes={classes} heading="Description" data={event.description} />
+                <div style={{ marginTop: "0.3rem" }}>
+                  <NestedData classes={classes} heading="Details" data={longDescription} />
+                </div>
               </div>
-              <Grid container spacing={4} style={{ marginTop: "0.5rem" }}>
-                <Grid item sm={6}>
-                  <Typography variant="h6" className={classes.descriptionHeading}  >
-                    Probable Cause
-                  </Typography>
-                  <ol style={{ paddingInline: "12px" }}>
-                    {[1, 2, 3].map((i) => <li key={i} >  <Typography variant="body1" >
-                      Error Removing Cpx from Kubernetes Context id 23959 .
-                    </Typography> </li>)}
-                  </ol>
+              <Grid container spacing={1} style={{ marginTop: "0.5rem" }}>
+                <Grid item sm={suggestedRemediation?.length > 0 ? 6 : 12}>
+                  <NestedData classes={classes} heading="Probable Cause" data={probableCause} />
                 </Grid>
-                <Grid item sm={6} >
-                  <Typography variant="h6" className={classes.descriptionHeading}  >
-                    Suggested Remediation
-                  </Typography>
-                  <ol style={{ paddingInline: "12px" }}>
-                    {[1, 2, 3].map((i) => <li key={i} >  <Typography variant="body1" >
-                      Error Removing Cpx from Kubernetes Context id 23959 .
-                    </Typography> </li>)}
-                  </ol>
+                <Grid item sm={probableCause?.length > 0 ? 6 : 12} >
+                  <NestedData classes={classes} heading="Suggested Remediation" data={suggestedRemediation} />
                 </Grid>
               </Grid>
             </Grid>
@@ -259,5 +291,25 @@ export const Notification = ({ event }) => {
   )
 
 }
+
+const NestedData = ({ heading, data, classes }) => {
+
+  if (!data || data?.length == 0) return null
+  return (
+    <>
+      <Typography variant="h6" className={classes.descriptionHeading}  >
+        {heading}
+      </Typography>
+      {typeof data === "string" ?
+        <Typography variant="body1" >
+          {data}
+        </Typography> :
+        <BulletList items={data} />
+      }
+    </>
+  )
+}
+
+
 
 export default Notification

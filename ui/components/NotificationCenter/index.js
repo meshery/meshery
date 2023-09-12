@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import IconButton from "@material-ui/core/IconButton";
 import { Provider, connect, useDispatch, useSelector } from "react-redux";
 import NoSsr from "@material-ui/core/NoSsr";
@@ -13,8 +13,8 @@ import classNames from "classnames";
 import Notification from "./notification";
 import { store } from "../../store";
 import { useStyles } from "./notificationCenter.style";
-import { loadEvents, loadNextPage } from "../../store/slices/events";
-import {  useGetEventsSummaryQuery, useLazyGetEventsQuery } from "../../rtk-query/notificationCenter";
+import { loadEvents, loadNextPage, selectEvents } from "../../store/slices/events";
+import { useGetEventsSummaryQuery, useLazyGetEventsQuery } from "../../rtk-query/notificationCenter";
 
 
 
@@ -70,17 +70,39 @@ const Header = () => {
 }
 
 
-// }
 
-const EventsView = () => {
-  const events = useSelector((state) => state.events.events);
-  const validEvents = events.filter((event) => event.id)
-  const page = useSelector((state) => state.events.current_view.page);
+const EventsView = ({ handleLoadNextPage, isLoading, hasMore }) => {
+  const events = useSelector(selectEvents)
+  // const page = useSelector((state) => state.events.current_view.page);
+
+  const lastEventRef = useRef(null)
+  const intersectionObserver = useRef(new IntersectionObserver((entries) => {
+    const firstEntry = entries[0]
+    if (firstEntry.isIntersecting) {
+      handleLoadNextPage()
+    }
+  }, { threshold: 1 }))
+
+  useEffect(() => {
+    const currentObserver = intersectionObserver.current;
+    if (lastEventRef.current) {
+      currentObserver.observe(lastEventRef.current);
+    }
+    return () => {
+      if (lastEventRef.current) {
+        currentObserver.unobserve(lastEventRef.current);
+      }
+    };
+  }, [lastEventRef.current]);
 
   return (
     <>
-      <div>Page {page}</div>
-      {validEvents.map((event) => <Notification key={event.id} event={event} />)}
+      {events.map((event, idx) => <div key={event.id+idx}  >
+        <Notification event={event} />
+      </div>)}
+      {!isLoading && hasMore &&
+        <div ref={lastEventRef} ></div>}
+      {isLoading && <div>Loading...</div>}
     </>
   )
 }
@@ -119,27 +141,7 @@ const MesheryNotification = (props) => {
   const open = Boolean(anchorEl) || showFullNotificationCenter;
 
 
-  // const loader = React.useRef(null);
-  // const handleObserver = React.useCallback((entries) => {
-  //   const target = entries[0];
-  //   if (target.isIntersecting && !isLoading && hasMore) {
-  //     loadMore();
-  //   }
-  // }, [hasMore, isLoading]);
-  //
-  //
-  // useEffect(() => {
-  //   const option = {
-  //     root: null,
-  //     rootMargin: "20px",
-  //     threshold: 0
-  //   };
-  //   const observer = new IntersectionObserver(handleObserver, option);
-  //   if (loader.current) observer.observe(loader.current);
-  // }, [handleObserver]);
-
   const handleFilter = (filters) => {
-    console.log("filtering", filters)
     dispatch(loadEvents(fetchEvents, 1, filters))
   }
 
@@ -195,8 +197,7 @@ const MesheryNotification = (props) => {
                 <Divider light />
                 <div className={classes.container}>
                   <Filter handleFilter={handleFilter}  ></Filter>
-                  <EventsView />
-                  {!isLoading && hasMore && <button onClick={loadMore}>LoadMore</button>}
+                  <EventsView handleLoadNextPage={loadMore} isLoading={isLoading} hasMore={hasMore} />
                 </div>
               </div>
             </div>
