@@ -92,7 +92,7 @@ mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --q
 </div>
 </pre> 
 
-Execute a Performance test with specified system under test
+Execute a Performance test with specified service mesh
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --mesh istio

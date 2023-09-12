@@ -79,12 +79,14 @@ mesheryctl perf result saturday-profile --view
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return ErrMesheryConfig(err)
+			utils.Log.Error(err)
+			return nil
 		}
 
 		// Throw error if a profile name is not provided
 		if len(args) == 0 {
-			return ErrNoProfileName()
+			utils.Log.Error(ErrNoProfileName())
+			return nil
 		}
 
 		// handles spaces in args if quoted args passed
@@ -96,11 +98,12 @@ mesheryctl perf result saturday-profile --view
 
 		profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 
 		if len(profiles) == 0 {
-			utils.Log.Info("No Performance Profiles found with the given name")
+			utils.Log.Info(ErrNoProfileFound())
 			return nil
 		}
 
@@ -113,7 +116,8 @@ mesheryctl perf result saturday-profile --view
 			// user prompt to select profile
 			selectedProfileIndex, err := userPrompt("profile", "Found multiple profiles with given name, select a profile", data)
 			if err != nil {
-				return err
+				utils.Log.Error(err)
+				return nil
 			}
 			// ids got shifted with 1 in userPrompt()
 			profileID = data[selectedProfileIndex][2]
@@ -121,7 +125,8 @@ mesheryctl perf result saturday-profile --view
 
 		results, _, err := fetchPerformanceProfileResults(mctlCfg.GetBaseMesheryURL(), profileID, pageSize, pageNumber-1)
 		if err != nil {
-			return err
+			utils.Log.Error(ErrPerformanceProfileResult(err))
+			return nil
 		}
 
 		if len(data) == 0 {
@@ -141,7 +146,8 @@ mesheryctl perf result saturday-profile --view
 			if outputFormatFlag == "yaml" {
 				body, _ = yaml.JSONToYAML(body)
 			} else if outputFormatFlag != "json" {
-				return ErrInvalidOutputChoice()
+				utils.Log.Error(ErrInvalidOutputChoice())
+				return nil
 			}
 			utils.Log.Info(string(body))
 		} else if !viewSingleResult { // print all results

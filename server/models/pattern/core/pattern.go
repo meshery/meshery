@@ -6,9 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
-	mathrand "math/rand"
 	"strings"
-	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
@@ -698,8 +696,4 @@ func getCytoscapeJSPosition(svc *Service) (cytoscapejs.Position, error) {
 	}
 
 	return pos, nil
-}
-
-func init() {
-	mathrand.Seed(time.Now().Unix())
 }

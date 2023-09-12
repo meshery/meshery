@@ -4,9 +4,8 @@ import { useRef } from 'react';
 import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder'
 import PromptComponent from './PromptComponent';
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
-import dataFetch, { promisifiedDataFetch } from "../lib/data-fetch";
+import { promisifiedDataFetch } from "../lib/data-fetch";
 import { updateProgress } from '../lib/store';
-import { extractKubernetesCredentials } from './ConnectionWizard/helpers/kubernetesHelpers';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 
@@ -18,11 +17,6 @@ const MesherySettingsEnvButtons = () => {
 
   const handleConfigSnackbars = ctxs => {
     updateProgress({ showProgress : false });
-    for (let ctx of ctxs.inserted_contexts) {
-      handleCredentialsPost(ctx);
-      const msg = `Cluster ${ctx.name} at ${ctx.server} connected`
-      notify({ message : msg, event_type : EVENT_TYPES.SUCCESS })
-    }
     for (let ctx of ctxs.updated_contexts) {
       const msg = `Cluster ${ctx.name} at ${ctx.server} already exists`
       notify({ message : msg, event_type : EVENT_TYPES.INFO })
@@ -32,27 +26,6 @@ const MesherySettingsEnvButtons = () => {
       const msg = `Failed to add cluster ${ctx.name} at ${ctx.server}`
       notify({ message : msg, event_type : EVENT_TYPES.ERROR , details : ctx.error.toString() })
     }
-  }
-
-  function handleCredentialsPost(obj){
-    // right now we just posting the credentials when we insert a new context
-    const data = {
-      name : obj.name,
-      type : "kubernetes",
-      secret : extractKubernetesCredentials(obj),
-    }
-
-    dataFetch(
-      "/api/integrations/credentials",
-      {
-        credentials : "include",
-        method : "POST",
-        body : JSON.stringify(data),
-      },
-      () => {
-        notify({ message : "Credentials saved successfully!", event_type : EVENT_TYPES.SUCCESS })
-      }
-    );
   }
 
   const handleError = (msg) => (error) => {

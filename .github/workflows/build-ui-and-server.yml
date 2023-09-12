@@ -34,7 +34,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@master
         with:
-          go-version: "1.20"
+          go-version: "1.21"
       - name: Setup Cache
         uses: actions/cache@v3
         with:
@@ -151,6 +151,10 @@ jobs:
         uses: actions/setup-go@master
         with:
           go-version: "1.20"
+      - name: Create k8s Kind Cluster
+        uses: helm/kind-action@v1.8.0
+        with:
+          cluster_name: "kind-cluster"
       - name: Run meshery-istio
         run: |
           mkdir -p /home/runner/.meshery/bin
@@ -168,10 +172,6 @@ jobs:
           cd ./meshery-consul
           go run main.go &
           sleep 60
-      - name: Create k8s Kind Cluster
-        uses: helm/kind-action@v1.8.0
-        with:
-          cluster_name: "kind-cluster"
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
