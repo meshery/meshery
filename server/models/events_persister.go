@@ -68,10 +68,10 @@ func (e *EventsPersister) GetAllEvents(eventsFilter *events.EventsFilter, userID
 		finder = finder.Where("status = ?", eventsFilter.Status)
 	}
 
-	if eventsFilter.Order == "desc" {
-		finder = finder.Order(clause.OrderByColumn{Column: clause.Column{Name: eventsFilter.SortOn}, Desc: true})
-	} else {
+	if eventsFilter.Order == "asc" {
 		finder = finder.Order(eventsFilter.SortOn)
+	} else {
+		finder = finder.Order(clause.OrderByColumn{Column: clause.Column{Name: eventsFilter.SortOn}, Desc: true})
 	}
 
 	var count int64
@@ -105,7 +105,7 @@ func (e *EventsPersister) GetAllEvents(eventsFilter *events.EventsFilter, userID
 }
 
 func (e *EventsPersister) UpdateEventStatus(eventID uuid.UUID, status string) (*events.Event, error) {
-	err := e.DB.Model(&events.Event{ID: eventID}).Update("status", status).Error
+	err := e.DB.Model(&events.Event{ID: eventID, Status: events.EventStatus(status)}).Update("status", status).Error
 	if err != nil {
 		return nil, err
 	}
