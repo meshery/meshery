@@ -117,6 +117,7 @@ type Event {
   systemID: ID!,
   severity: Severity!,
   action: String!,
+  status: String!,
   category: String!,
   description: String!,
   metadata: Map,
