@@ -452,4 +452,6 @@ type Provider interface {
 	GetUserCredentials(req *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error)
 	UpdateUserCredential(req *http.Request, credential *Credential) (*Credential, error)
 	DeleteUserCredential(req *http.Request, credentialID uuid.UUID) (*Credential, error)
+
+	GetEnvironments(token, page, pageSize, search, order, filter string) ([]byte, error)
 }
