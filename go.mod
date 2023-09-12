@@ -1,6 +1,6 @@
 module github.com/layer5io/meshery
 
-go 1.19
+go 1.21
 
 replace (
 	github.com/Sirupsen/logrus => github.com/sirupsen/logrus v1.9.3
@@ -19,7 +19,7 @@ require (
 	fortio.org/fortio v1.58.0
 	github.com/99designs/gqlgen v0.17.36
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef
-	github.com/briandowns/spinner v1.19.0
+	github.com/briandowns/spinner v1.23.0
 	github.com/docker/cli v20.10.21+incompatible
 	github.com/docker/docker v20.10.23+incompatible
 	github.com/docker/go-connections v0.4.0
@@ -112,7 +112,7 @@ require (
 	github.com/cockroachdb/apd/v2 v2.0.2 // indirect
 	github.com/containerd/cgroups v1.1.0 // indirect
 	github.com/containerd/containerd v1.6.19 // indirect
-	github.com/cyphar/filepath-securejoin v0.2.3 // indirect
+	github.com/cyphar/filepath-securejoin v0.2.4 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/deckarep/golang-set v1.8.0 // indirect
 	github.com/dgryski/go-farm v0.0.0-20200201041132-a6ae2369ad13 // indirect
