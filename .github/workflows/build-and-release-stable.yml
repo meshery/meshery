@@ -189,24 +189,33 @@ jobs:
     uses: meshery/meshery/.github/workflows/cncf-playground-deploy-meshery.yaml@master
     secrets: inherit
 
-  notify-via-email:
-    runs-on: ubuntu-latest
+  email-on-failure:
     needs: [update-rest-api-docs, update-graphql-docs, build, ctlrelease, call-dde-release-workflow, call-helm-chart-releaser, email-meshery-release-notes-workflow, call-cncf-playground-rollout]
-    if: ${{ always() && contains(needs.*.result, 'failure') }}
+    if: ${{ failure() }}
+    runs-on: ubuntu-latest
     steps:
-      - name: Send email notification on failure
+      - name: Find failed jobs.
+        run: |
+          curl "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs" | jq -r '.jobs[] | select(.conclusion == "failure") | "\(.name): \(.steps[] | select(.conclusion == "failure") | .name)\n\(.html_url)\n"' >> output.txt
+          # Save multi-line environment variables by using the delimiters syntex.
+          echo "EMAIL_BODY<<EOF" >> $GITHUB_ENV
+          echo "$(cat ./output.txt)" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+      - name: Failed jobs summary
+        run: |
+          echo "${{ env.EMAIL_BODY }}"
+      - name: Send Email Notification
+        if: env.EMAIL_BODY != ''
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 465
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
-          subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
+          subject: Job(s) failure in the build-and-release-stable workflow
           to: support@layer5.io
           from: Build and Release Stable workflow
           body: |
             The workflow failed. Here are the details:
-
-            Job: ${{ job.status }}
-            Job Name: ${{ job.job_name }}
-            Error: ${{ job.steps[*].outcome }}
+            ${{ env.EMAIL_BODY }}
+            Workflow run log URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}

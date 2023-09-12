@@ -131,7 +131,7 @@ export default function Provider() {
           }}
         >
           <a onClick={handleModalOpen} style={{
-            color : 'darkcyan',
+            color : '#00D3A9',
             cursor : 'pointer',
             fontWeight : 700
           }}>
@@ -152,9 +152,7 @@ export default function Provider() {
         </CustomDialogTitle>
         <DialogContent dividers>
           <DialogContentText id="customized-dialog-content">
-                        Login to Meshery by choosing from the available providers. Providers offer authentication, session
-                        management and long-term persistence of user preferences, performance tests, service mesh adapter
-                        configurations and so on.
+                        Login to Meshery by choosing from the available providers. Providers extend Meshery by offering various plugins and services, including identity services, long-term persistence, advanced performance analysis,  multi-player user collaboration, and so on.
 
             {Object.keys(availableProviders).map((key) => {
               return (
@@ -166,10 +164,11 @@ export default function Provider() {
                 </React.Fragment>
               )
             })}
-            <p style={{ fontWeight : 700 }}>SMI Conformance</p>
+            <p style={{ fontWeight : 700 }}>MIT</p>
             <ul>
-              <li>Remote provider for SMI Conformance Testing</li>
+              <li>Remote provider for Performance Testing</li>
               <li>Provides provenence of test results and their persistence</li>
+              <li>Adaptive performance analysis - predictive optimization</li>
             </ul>
             <p style={{ fontWeight : 700 }}>The University of Texas at Austin</p>
             <ul>
@@ -239,14 +238,14 @@ export default function Provider() {
                     </MenuItem>
                   ))}
                   <Divider sx={{ my : 0.5 }} />
-                  <MenuProviderDisabled disabled={true} key="SMI">
-                                        SMI Conformance <span>Disabled</span>
+                  <MenuProviderDisabled disabled={true} key="MIT">
+                                        Massachusetts Institute of Technology (MIT) <span>Disabled</span>
                   </MenuProviderDisabled>
                   <MenuProviderDisabled disabled={true} key="UT Austin">
                                         The University of Texas at Austin{'\u00A0'}<span>Disabled</span>
                   </MenuProviderDisabled>
-                  <MenuProviderDisabled disabled={true} key="CNCF Cluster">
-                                        CNCF Cluster{'\u00A0'}<span>Disabled</span>
+                  <MenuProviderDisabled disabled={true} key="CNCF Labs">
+                                        CNCF Labs{'\u00A0'}<span>Disabled</span>
                   </MenuProviderDisabled>
                 </MenuList>
               </ClickAwayListener>

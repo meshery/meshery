@@ -10,7 +10,6 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 )
 
 // swagger:route GET /api/meshmodels/models/{model}/relationships/{name} GetMeshmodelRelationshipByName idGetMeshmodelRelationshipByName
@@ -191,7 +190,7 @@ func (h *Handler) GetAllMeshmodelRelationships(rw http.ResponseWriter, r *http.R
 
 func (h *Handler) RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http.Request) {
 	dec := json.NewDecoder(r.Body)
-	var cc meshmodel.MeshModelRegistrantData
+	var cc registry.MeshModelRegistrantData
 	err := dec.Decode(&cc)
 	if err != nil {
 		http.Error(rw, err.Error(), http.StatusBadRequest)

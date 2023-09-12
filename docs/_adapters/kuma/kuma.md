@@ -9,6 +9,7 @@ project_status: stable
 lab: kuma-meshery-adapter
 github_link: https://github.com/meshery/meshery-kuma
 image: /assets/img/service-meshes/kuma.svg
+white_image: /assets/img/service-meshes/kuma-white.svg
 permalink: service-meshes/adapters/kuma
 language: en
 ---

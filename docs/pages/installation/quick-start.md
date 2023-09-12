@@ -31,7 +31,7 @@ Use the Meshery command line interface, [mesheryctl]({{ site.baseurl }}/guides/m
  </pre>
  <br>
 
-{% include alert.html type="dark" title="All Supported Platforms" content="Don't find an answer to your question here? Ask on the <a href='https://discuss.layer5.io'>Discussion Forum</a>." %}
+{% include alert.html type="dark" title="All Supported Platforms" content="Don't find an answer to your question here? Ask on the <a href='http://discuss.meshery.io'>Discussion Forum</a>." %}
 
 
 ### Install using Docker Extension for Meshery
@@ -72,9 +72,9 @@ Run connectivity tests and verify the health of your Meshery system. Verify Mesh
 <img style="width:min(100%,650px);height=auto;" src="/assets/img/adapters/meshery-ui.png" />
 </a>
 
-## Operate service meshes and their workloads
+## Design and operate Kubernetes clusters and their workloads
 
-You may now proceed to install and work with any [service mesh]({{ site.baseurl }}/service-meshes) supported by Meshery.
+You may now proceed to install and work with any cloud native infrastructurex supported by Meshery.
 
 <video class="videoTest" style="width:min(100%,650px)" height="auto" autoplay muted loop>
   <source src="/assets/img/adapters/meshery-ui-setup.mp4" type="video/mp4">
