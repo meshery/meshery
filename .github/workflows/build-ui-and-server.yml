@@ -1,11 +1,5 @@
 name: Meshery UI and Server
 on:
-  #   push:
-  #     branches:
-  #       - 'master'
-  #     paths-ignore:
-  #       - 'docs/**'
-  #       - 'mesheryctl/**'
   pull_request:
     branches:
       - "master"
@@ -35,15 +29,20 @@ jobs:
         uses: actions/setup-go@master
         with:
           go-version: "1.21"
-      - name: Setup Cache
+      - name: Setup Cache - Go
         uses: actions/cache@v3
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
-      - run: |
-          GOPROXY=https://proxy.golang.org,direct GOSUMDB=off GO111MODULE=on go build -tags draft ./server/cmd/main.go ./server/cmd/error.go
+      - name: Build Meshery Server
+        env:
+          PROVIDER_BASE_URLS: http://localhost:9876
+          PORT: 9081
+          ADAPTER_URLS: "localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10009 localhost:10007"
+        run: |
+          make build-server
       - name: Upload artifacts
         uses: actions/upload-artifact@v3.0.0
         with:
@@ -90,48 +89,16 @@ jobs:
       - name: build provider-ui
         run: |
           make ui-provider-build
-  # tests-ui:
-  #   needs: [ui-build]
-  #   name: UI integration tests
-  #   if: github.repository == 'meshery/meshery'
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - name: Check out code
-  #       uses: actions/checkout@v3
-  #       with:
-  #         fetch-depth: 0
-  #     - uses: actions/setup-node@v3
-  #       with:
-  #         node-version: 18
-  #     - name: Cache node modules
-  #       id: node-cache
-  #       uses: actions/cache@v3
-  #       with:
-  #         path: |
-  #           ~/cache
-  #           ~/.cache
-  #           !~/cache/exclude
-  #           **/node_modules
-  #           /home/runner/.cache
-  #           ~/.npm
-  #           ${{ github.workspace }}/.next/cache
-  #         key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-  #     - name: Run tests
-  #       run: |
-  #         cd ui
-  #         npm i
-  #         npm run ci-test-integration
-  #         cd ..
-  #         cd provider-ui
-  #         npm i
-  #         npm test
-  #         cd ..
-  #     - name: Upload coverage to Codecov (ui)
-  #       uses: codecov/codecov-action@v3
-  #       with:
-  #         files: ./provider-ui/coverage/coverage-summary.json
-  #         directory: ./provider-ui/coverage/lcov-report
-  #         flags: integrationtests
+      - name: Upload meshery-ui artifacts
+        uses: actions/upload-artifact@v3.0.0
+        with:
+          name: meshery-ui
+          path: /home/runner/work/meshery/meshery/ui/out
+      - name: Upload provider-ui artifacts
+        uses: actions/upload-artifact@v3.0.0
+        with:
+          name: provider-ui
+          path: /home/runner/work/meshery/meshery/provider-ui/out
   tests-ui-e2e:
     needs: [build-backend, ui-build]
     name: UI end-to-end tests
@@ -147,10 +114,13 @@ jobs:
         with:
           repository: layer5io/meshery-istio
           path: ./meshery-istio
-      - name: Setup go
-        uses: actions/setup-go@master
+      - name: Restore Go from Cache
+        uses: actions/cache@v3
         with:
-          go-version: "1.21"
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
       - name: Create k8s Kind Cluster
         uses: helm/kind-action@v1.8.0
         with:
@@ -172,7 +142,7 @@ jobs:
           cd ./meshery-consul
           go run main.go &
           sleep 60
-      - name: Download artifacts
+      - name: Download Meshery Server from artifacts
         uses: actions/download-artifact@v3
         with:
           name: meshery
@@ -180,7 +150,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Cache node modules
+      - name: Restore node cache
         id: node-cache
         uses: actions/cache@v3
         with:
@@ -196,24 +166,32 @@ jobs:
           key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
-      - name: Build Meshery UI and Provider
-        run: |
-          make ui-setup && make ui-meshery-build && make ui-provider-build
+      - name: Download Meshery Server artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: meshery
+      - name: Download meshery-ui artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: meshery-ui
+          path: /home/runner/work/meshery/meshery/ui/out
+      - name: Download provider-ui artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: provider-ui
+          path: /home/runner/work/meshery/meshery/provider-ui/out
       - name: Run Meshery UI and Server
         env:
           PROVIDER_BASE_URLS: http://localhost:9876
           PORT: 9081
           ADAPTER_URLS: "localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10009 localhost:10007"
         run: |
-          # chmod +x ./main
-          # ./main &
           make server &
           sleep 60
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with:
           working-directory: ui
-          # start: npm run dev
           wait-on: http://localhost:9081
           spec: cypress/e2e/e2e/**/*
           browser: chrome
