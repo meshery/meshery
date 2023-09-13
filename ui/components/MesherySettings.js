@@ -224,7 +224,7 @@ const MesherySettings = (props) => {
         //   newRoute += '#performance'
         //   break;
       }
-      if (router.route != newRoute) router.push(newRoute);
+      if (router.route != newRoute)router.push(newRoute)
       setTabVal(newVal);
     } else if (val === 'subTabVal') {
       let newRoute = router.route;
@@ -245,7 +245,7 @@ const MesherySettings = (props) => {
           else if (tabVal == 4) newRoute += '#metrics/relationships';
           break;
       }
-      if (router.route !== newRoute) router.push(newRoute);
+      if (router.route !== newRoute)router.push(newRoute);
       setSubTabVal(newVal);
     }
   };
