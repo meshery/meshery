@@ -26,6 +26,7 @@ jobs:
         with:
           fetch-depth: 1
       - name: Cache Go modules
+        id: go-cache
         uses: actions/cache@v3
         with:
           path: |
@@ -35,6 +36,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
       - name: Setup Go
+        if: steps.go-cache.outputs.cache-hit != 'true'
         uses: actions/setup-go@master
         with:
           go-version: "1.21"
@@ -45,6 +47,14 @@ jobs:
           ADAPTER_URLS: "localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10009 localhost:10007"
         run: |
           make build-server
+      - name: Run Meshery Server
+        env:
+          PROVIDER_BASE_URLS: http://localhost:9876
+          PORT: 9081
+          ADAPTER_URLS: "localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10009 localhost:10007"
+        run: |
+          chmod +x ./main
+          ./main
       - name: Upload artifacts
         uses: actions/upload-artifact@v3.0.0
         with:
@@ -126,13 +136,6 @@ jobs:
         uses: helm/kind-action@v1.8.0
         with:
           cluster_name: "kind-cluster"
-      - name: Cache Go modules
-        uses: actions/cache@v3
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
       - name: Setup Go
         uses: actions/setup-go@master
         with:
