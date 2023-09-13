@@ -168,7 +168,7 @@ func AddAuthDetails(req *http.Request, filepath string) error {
 func UpdateAuthDetails(filepath string) error {
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return errors.Wrap(err, "error processing config")
+		return ErrLoadConfig(err)
 	}
 
 	// TODO: get this from the global config

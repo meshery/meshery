@@ -145,6 +145,7 @@ type Event struct {
 	SystemID    string                 `json:"systemID"`
 	Severity    Severity               `json:"severity"`
 	Action      string                 `json:"action"`
+	Status      string                 `json:"status"`
 	Category    string                 `json:"category"`
 	Description string                 `json:"description"`
 	Metadata    map[string]interface{} `json:"metadata,omitempty"`
@@ -174,20 +175,18 @@ type FilterResult struct {
 }
 
 type K8sContext struct {
-	ID                 string                 `json:"id"`
-	Name               string                 `json:"name"`
-	Auth               map[string]interface{} `json:"auth"`
-	Cluster            map[string]interface{} `json:"cluster"`
-	Server             string                 `json:"server"`
-	Owner              string                 `json:"owner"`
-	CreatedBy          string                 `json:"created_by"`
-	MesheryInstanceID  string                 `json:"meshery_instance_id"`
-	KubernetesServerID string                 `json:"kubernetes_server_id"`
-	DeploymentType     string                 `json:"deployment_type"`
-	Version            string                 `json:"version"`
-	UpdatedAt          string                 `json:"updated_at"`
-	CreatedAt          string                 `json:"created_at"`
-	ConnectionID       string                 `json:"connection_id"`
+	ID                 string `json:"id"`
+	Name               string `json:"name"`
+	Server             string `json:"server"`
+	Owner              string `json:"owner"`
+	CreatedBy          string `json:"created_by"`
+	MesheryInstanceID  string `json:"meshery_instance_id"`
+	KubernetesServerID string `json:"kubernetes_server_id"`
+	DeploymentType     string `json:"deployment_type"`
+	Version            string `json:"version"`
+	UpdatedAt          string `json:"updated_at"`
+	CreatedAt          string `json:"created_at"`
+	ConnectionID       string `json:"connection_id"`
 }
 
 type K8sContextsPage struct {

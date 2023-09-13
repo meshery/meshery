@@ -97,7 +97,7 @@ mesheryctl pattern apply [pattern-name]
 			}
 			err = json.Unmarshal(body, &response)
 			if err != nil {
-				utils.Log.Error(utils.ErrUnmarshal(err))
+				utils.Log.Error(err)
 				return nil
 			}
 
@@ -152,11 +152,12 @@ mesheryctl pattern apply [pattern-name]
 
 					body, err := io.ReadAll(resp.Body)
 					if err != nil {
-						return errors.Wrap(err, utils.PerfError("failed to read response body"))
+						return errors.Wrap(err, utils.PatternError("failed to read response body"))
 					}
 					err = json.Unmarshal(body, &response)
 					if err != nil {
-						return errors.Wrap(err, "failed to unmarshal response body")
+						utils.Log.Error(utils.ErrUnmarshal(err))
+						return nil
 					}
 				}
 
@@ -166,7 +167,7 @@ mesheryctl pattern apply [pattern-name]
 				var jsonValues []byte
 				url, path, err := utils.ParseURLGithub(file)
 				if err != nil {
-					utils.Log.Error(err)
+					utils.Log.Error(utils.ErrParseGithubFile(err, file))
 					return nil
 				}
 
@@ -240,7 +241,7 @@ mesheryctl pattern apply [pattern-name]
 
 		pf, err := core.NewPatternFile([]byte(patternFile))
 		if err != nil {
-			utils.Log.Error(ErrInvalidPatternFile(err))
+			utils.Log.Error(err)
 			return nil
 		}
 

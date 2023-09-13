@@ -38,10 +38,8 @@ function RJSFWrapper(props) {
   }, [data]);
 
   React.useEffect(() => {
-    let rjsfSchema = getRefinedJsonSchema(jsonSchema, hideTitle, errorHandler)
+    const rjsfSchema = getRefinedJsonSchema(jsonSchema, hideTitle, errorHandler)
     // UI schema builds responsible for customizations in the RJSF fields shown to user
-    const sortedElements = rjsfSchema.properties.compatibility.items.enum.map(item => item.toUpperCase())
-    rjsfSchema.properties.compatibility.items.enum = sortedElements.sort()
     const uiSchema = buildUiSchema(rjsfSchema)
     setSchema({ rjsfSchema, uiSchema });
   }, [jsonSchema]) // to reduce heavy lifting on every react render
