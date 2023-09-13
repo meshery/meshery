@@ -1,8 +1,6 @@
-/* eslint-disable no-unused-vars */
-
 
 import {
-  Button, Card, CardContent, CardHeader, Chip,
+  Button,Chip,
   MenuItem, NoSsr, Paper, Select, TableCell, TableSortLabel, Tooltip, Typography
 } from "@material-ui/core";
 // import {Table, TableBody, TableContainer, TableHead, TableRow,} from "@material-ui/core"
@@ -19,7 +17,7 @@ import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
 import { updateGrafanaConfig, updateProgress, updatePrometheusConfig, updateTelemetryUrls } from "../lib/store";
 import { getK8sClusterIdsFromCtxId, getK8sClusterNamesFromCtxId } from "../utils/multi-ctx";
-import { versionMapper } from "../utils/nameMapper";
+// import { versionMapper } from "../utils/nameMapper";
 import { submitGrafanaConfigure } from "./telemetry/grafana/GrafanaComponent";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
@@ -136,9 +134,9 @@ const DashboardComponent=(props) => {
   const { notify } = useNotification();
 
   const _isMounted = useRef(false);
-  const [meshAdapters, setMeshAdapters] = useState(props.meshAdapters);
+  // const [meshAdapters, setMeshAdapters] = useState(props.meshAdapters);
   // const [contextsFromFile, setContextsFromFile] = useState([]);
-  const [availableAdapters, setAvailableAdapters] = useState([]);
+  // const [availableAdapters, setAvailableAdapters] = useState([]);
   const [mts, setMts] = useState(new Date());
   // const [meshLocationURLError, setMeshLocationURLError] = useState(false);
   // const [grafanaUrl, setGrafanaUrl] = useState(props.grafana.grafanaURL);
@@ -153,12 +151,12 @@ const DashboardComponent=(props) => {
   const [grafanaURL, setGrafanaURL] = useState(props.grafana.grafanaURL);
   // const [grafanaAPIKey, setGrafanaAPIKey] = useState(props.grafana.grafanaAPIKey);
   // const [grafanaBoards, setGrafanaBoards] = useState(props.grafana.grafanaBoards);
-  const [selectedBoardsConfigs, setSelectedBoardsConfigs] = useState(props.grafana.selectedBoardsConfigs);
+  // const [selectedBoardsConfigs, setSelectedBoardsConfigs] = useState(props.grafana.selectedBoardsConfigs);
   // const [ts, setTs] = useState(props.grafana.ts);
   const [meshScan, setMeshScan] = useState([]);
-  const [activeMeshScanNamespace, setActiveMeshScanNamespace] = useState({});
-  const [meshScanNamespaces, setMeshScanNamespaces] = useState({});
-  const [isMetricsConfigured, setIsMetricsConfigured] = useState(grafana.grafanaURL !== '' && prometheus.prometheusURL !== '');
+  // const [activeMeshScanNamespace, setActiveMeshScanNamespace] = useState({});
+  // const [meshScanNamespaces, setMeshScanNamespaces] = useState({});
+  // const [isMetricsConfigured, setIsMetricsConfigured] = useState(grafana.grafanaURL !== '' && prometheus.prometheusURL !== '');
   const [controlPlaneState, setControlPlaneState] = useState("");
   const [dataPlaneState, setDataPlaneState] = useState("");
   const [clusterResources, setClusterResources] = useState([]);
@@ -174,10 +172,11 @@ const DashboardComponent=(props) => {
   const prevDataPlaneState = useRef();
   const prevSelectedNamespace = useRef();
   const prevProps = useRef(props);
+  const isMetricsConfigured = grafana.grafanaURL !== "" && prometheus.prometheusURL !== "";
 
   useEffect(() => {
     if (props.meshAdaptersts > mts) {
-      setMeshAdapters(props.meshAdapters);
+      // setMeshAdapters(props.meshAdapters);
       setMts(props.meshAdaptersts);
     }
     setGrafana(props.grafana);
@@ -462,12 +461,17 @@ const DashboardComponent=(props) => {
       (result) => {
         props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
+          /* eslint-disable no-unused-vars */
           const options = result.map((res) => ({
             value : res.adapter_location,
             label : res.adapter_location,
           }));
+
+
+
+
           // this.setState({ availableAdapters : options });
-          setAvailableAdapters(options);
+          // setAvailableAdapters(options);
         }
       },
       handleError("Unable to fetch list of adapters.")
@@ -521,8 +525,8 @@ const DashboardComponent=(props) => {
     });
 
     setMeshScan(processedControlPlanesData?.filter(data => !!data).filter((data) => data.members?.length > 0));
-    setMeshScanNamespaces(namespaces);
-    setActiveMeshScanNamespace(activeNamespaces);
+    // setMeshScanNamespaces(namespaces);
+    // setActiveMeshScanNamespace(activeNamespaces);
   };
   /**
    * generateMeshScanPodName takes in the podname and the hash
@@ -532,29 +536,29 @@ const DashboardComponent=(props) => {
    * @param {string | undefined} custom
    * @returns {{full, trimmed}}
    */
-  const generateMeshScanPodName = (podname, hash, custom) => {
-    const str = custom || podname;
-    return {
-      full : podname,
-      trimmed : str.substring(0, (hash ? str.indexOf(hash) : str.length) - 1),
-    };
-  };
-        /**
+  // const generateMeshScanPodName = (podname, hash, custom) => {
+  //   const str = custom || podname;
+  //   return {
+  //     full : podname,
+  //     trimmed : str.substring(0, (hash ? str.indexOf(hash) : str.length) - 1),
+  //   };
+  // };
+  /**
    * generateMeshScanVersion takes in the string from which version
    * is to be extracted and returns the version. If the version string
    * is undefined then it returns "NA"
    * @param {string | undefined} versionStr is the string from which version is to be extracted
    * @returns {string}
    */
-  const generateMeshScanVersion = (versionStr) => {
-    if (typeof versionStr !== "string") return "NA";
+  // const generateMeshScanVersion = (versionStr) => {
+  //   if (typeof versionStr !== "string") return "NA";
 
-    const matchResult = versionStr.match(/\d+(\.\d+){2,}/g);
-    if (!matchResult) return "NA";
+  //   const matchResult = versionStr.match(/\d+(\.\d+){2,}/g);
+  //   if (!matchResult) return "NA";
 
-    // Add "v" iff we have a valid match result
-    return `v${matchResult[0]}`;
-  };
+  //   // Add "v" iff we have a valid match result
+  //   return `v${matchResult[0]}`;
+  // };
   const handleError = (msg) => (error) => {
     props.updateProgress({ showProgress : false });
     notify({ message : `${msg}: ${error}`, event_type : EVENT_TYPES.ERROR });
@@ -571,41 +575,41 @@ const DashboardComponent=(props) => {
   //   console.error(error);
   //   console.groupEnd();
   // };
-  const handleAdapterPingError = (msg) => () => {
-    props.updateProgress({ showProgress : false });
+  // const handleAdapterPingError = (msg) => () => {
+  //   props.updateProgress({ showProgress : false });
 
 
-    // If you want to use the snackbar code, you might need additional logic or hooks
-    // based on your functional component setup.
+  //   // If you want to use the snackbar code, you might need additional logic or hooks
+  //   // based on your functional component setup.
 
-    notify({ message : `${msg}`, event_type : EVENT_TYPES.ERROR });
-  };
-  function handleDelete() {
-    return false;
-  }
+  //   notify({ message : `${msg}`, event_type : EVENT_TYPES.ERROR });
+  // };
+  // function handleDelete() {
+  //   return false;
+  // }
 
-  const handleAdapterClick = (adapterLoc) => () => {
-    // const { meshAdapters } = this.state;
-    props.updateProgress({ showProgress : true });
+  // const handleAdapterClick = (adapterLoc) => () => {
+  //   // const { meshAdapters } = this.state;
+  //   props.updateProgress({ showProgress : true });
 
-    dataFetch(
-          `/api/system/adapters?adapter=${encodeURIComponent(adapterLoc)}`,
-          {
-            credentials : "include",
-          },
-          (result) => {
-            props.updateProgress({ showProgress : false });
-            if (typeof result !== "undefined") {
-              notify({ message : `Meshery Adapter connected at ${adapterLoc}`, event_type : EVENT_TYPES.SUCCESS })
-            }
-          },
-          handleAdapterPingError("Could not connect to " + adapterLoc)
-    );
-  };
+  //   dataFetch(
+  //         `/api/system/adapters?adapter=${encodeURIComponent(adapterLoc)}`,
+  //         {
+  //           credentials : "include",
+  //         },
+  //         (result) => {
+  //           props.updateProgress({ showProgress : false });
+  //           if (typeof result !== "undefined") {
+  //             notify({ message : `Meshery Adapter connected at ${adapterLoc}`, event_type : EVENT_TYPES.SUCCESS })
+  //           }
+  //         },
+  //         handleAdapterPingError("Could not connect to " + adapterLoc)
+  //   );
+  // };
 
-  const handleConfigure = (val) => {
-    router.push(`/settings#metrics/${val}`);
-  };
+  // const handleConfigure = (val) => {
+  //   router.push(`/settings#metrics/${val}`);
+  // };
   const getSelectedK8sContextsNames = () => {
     return getK8sClusterNamesFromCtxId(props.selectedK8sContexts, props.k8sconfig);
   };
@@ -650,24 +654,24 @@ const DashboardComponent=(props) => {
       handleError("Could not connect to Kubernetes")
     );
   };
-  const handleGrafanaClick = () => {
-    props.updateProgress({ showProgress : true });
-    const grafanaURL = grafana.grafanaURL;  // Assuming grafana is a state or prop
+  // const handleGrafanaClick = () => {
+  //   props.updateProgress({ showProgress : true });
+  //   const grafanaURL = grafana.grafanaURL;  // Assuming grafana is a state or prop
 
-    dataFetch(
-      "/api/telemetry/metrics/grafana/ping",
-      {
-        credentials : "include",
-      },
-      (result) => {
-        props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined") {
-          notify({ message : `Grafana connected at ${grafanaURL}`, event_type : EVENT_TYPES.SUCCESS });
-        }
-      },
-      handleError("Could not connect to Grafana")
-    );
-  };
+  //   dataFetch(
+  //     "/api/telemetry/metrics/grafana/ping",
+  //     {
+  //       credentials : "include",
+  //     },
+  //     (result) => {
+  //       props.updateProgress({ showProgress : false });
+  //       if (typeof result !== "undefined") {
+  //         notify({ message : `Grafana connected at ${grafanaURL}`, event_type : EVENT_TYPES.SUCCESS });
+  //       }
+  //     },
+  //     handleError("Could not connect to Grafana")
+  //   );
+  // };
   /**
    * Meshcard takes in the mesh related data
    * and renders a table along with other information of
@@ -675,253 +679,253 @@ const DashboardComponent=(props) => {
    * @param {{name, icon, tag}} mesh
    * @param {{name, component, version, namespace}[]} components Array of components data
    */
-  const MeshCard = (mesh, components = []) => {
-    let componentSort = "asc";
-    let versionSort = "asc";
-    let proxySort = "asc";
-    let tempComp = [];
-    const { theme } = props;
+  // const MeshCard = (mesh, components = []) => {
+  //   let componentSort = "asc";
+  //   let versionSort = "asc";
+  //   let proxySort = "asc";
+  //   let tempComp = [];
+  //   const { theme } = props;
 
-    components
-      .filter(comp => comp.namespace === props.activeMeshScanNamespace[mesh.name])
-      .map(component => tempComp.push(component));
+  //   components
+  //     .filter(comp => comp.namespace === props.activeMeshScanNamespace[mesh.name])
+  //     .map(component => tempComp.push(component));
 
-    components = tempComp;
+  //   components = tempComp;
 
-    const switchSortOrder = type => {
-      if (type === "componentSort") {
-        componentSort = componentSort === "asc" ? "desc" : "asc";
-        versionSort = "asc";
-        proxySort = "asc";
-      } else if (type === "versionSort") {
-        versionSort = versionSort === "asc" ? "desc" : "asc";
-        componentSort = "asc";
-        proxySort = "asc";
-      } else if (type === "proxySort") {
-        proxySort = proxySort === "asc" ? "desc" : "asc";
-        componentSort = "asc";
-        versionSort = "asc";
-      }
-    };
+  //   const switchSortOrder = type => {
+  //     if (type === "componentSort") {
+  //       componentSort = componentSort === "asc" ? "desc" : "asc";
+  //       versionSort = "asc";
+  //       proxySort = "asc";
+  //     } else if (type === "versionSort") {
+  //       versionSort = versionSort === "asc" ? "desc" : "asc";
+  //       componentSort = "asc";
+  //       proxySort = "asc";
+  //     } else if (type === "proxySort") {
+  //       proxySort = proxySort === "asc" ? "desc" : "asc";
+  //       componentSort = "asc";
+  //       versionSort = "asc";
+  //     }
+  //   };
 
-    const columns = [
-      {
-        name : "name",
-        label : "Component",
-        options : {
-          filter : false,
-          sort : true,
-          searchable : true,
-          setCellProps : () => ({ style : { textAlign : "center" } }),
-          customHeadRender : ({ index, ...column }, sortColumn) => {
-            return (
-              <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
-                sortColumn(index); switchSortOrder("componentSort");
-              }}>
-                <TableSortLabel active={column.sortDirection != null} direction={componentSort} >
-                  <b>{column.label}</b>
-                </TableSortLabel>
-              </TableCell>
+  //   const columns = [
+  //     {
+  //       name : "name",
+  //       label : "Component",
+  //       options : {
+  //         filter : false,
+  //         sort : true,
+  //         searchable : true,
+  //         setCellProps : () => ({ style : { textAlign : "center" } }),
+  //         customHeadRender : ({ index, ...column }, sortColumn) => {
+  //           return (
+  //             <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
+  //               sortColumn(index); switchSortOrder("componentSort");
+  //             }}>
+  //               <TableSortLabel active={column.sortDirection != null} direction={componentSort} >
+  //                 <b>{column.label}</b>
+  //               </TableSortLabel>
+  //             </TableCell>
 
-            )
-          }
-        },
-        customBodyRender : (value) => {
-          const modifiedName = value.replace(/-[a-zA-Z0-9]*$/, ''); // Remove last hyphen and alphanumeric characters after it
-          return <span>{modifiedName}</span>;
-        },
-      },
-      {
-        name : "version",
-        label : "Version",
-        options : {
-          filter : false,
-          sort : true,
-          searchable : true,
-          setCellProps : () => ({ style : { textAlign : "center" } }),
-          customHeadRender : ({ index, ...column }, sortColumn) => {
-            return (
-              <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
-                sortColumn(index); switchSortOrder("versionSort");
-              }}>
-                <TableSortLabel active={column.sortDirection != null} direction={versionSort} >
-                  <b>{column.label}</b>
-                </TableSortLabel>
-              </TableCell>
+  //           )
+  //         }
+  //       },
+  //       customBodyRender : (value) => {
+  //         const modifiedName = value.replace(/-[a-zA-Z0-9]*$/, ''); // Remove last hyphen and alphanumeric characters after it
+  //         return <span>{modifiedName}</span>;
+  //       },
+  //     },
+  //     {
+  //       name : "version",
+  //       label : "Version",
+  //       options : {
+  //         filter : false,
+  //         sort : true,
+  //         searchable : true,
+  //         setCellProps : () => ({ style : { textAlign : "center" } }),
+  //         customHeadRender : ({ index, ...column }, sortColumn) => {
+  //           return (
+  //             <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
+  //               sortColumn(index); switchSortOrder("versionSort");
+  //             }}>
+  //               <TableSortLabel active={column.sortDirection != null} direction={versionSort} >
+  //                 <b>{column.label}</b>
+  //               </TableSortLabel>
+  //             </TableCell>
 
-            );
-          },
-          customBodyRender : (value) => {
-            return (versionMapper(value))
-          },
-        },
-      },
-      {
-        name : "data_planes",
-        label : "Proxy",
-        options : {
-          filter : false,
-          sort : true,
-          searchable : true,
-          setCellProps : () => ({ style : { textAlign : "center" } }),
-          customHeadRender : ({ index, ...column }, sortColumn) => {
-            return (
-              <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
-                sortColumn(index); switchSortOrder("proxySort");
-              }}>
-                <TableSortLabel active={column.sortDirection != null} direction={proxySort} >
-                  <b>{column.label}</b>
-                </TableSortLabel>
-              </TableCell>
-            )
-          },
-          customBodyRender : (value) => {
-            return (
-              <>
-                <Tooltip
-                  key={`component-${value}`}
-                  title={
-                    Array.isArray(value) && value?.length > 0 ? (
-                      value.map((cont) => {
-                        return (
-                          <div key={cont.name} style={{ fontSize : "15px", color : '#fff', paddingBottom : '10px', padding : '1vh' }}>
-                            <p>Name: {cont?.containerName ? cont.containerName : 'Unspecified'}</p>
-                            <p>Status: {cont?.status?.ready ? 'ready' : 'not ready'}</p>
-                            {!cont?.status?.ready && (
-                              typeof cont?.status?.lastState === 'object' && cont?.status?.lastState !== null && Object.keys(cont.status.lastState).length > 0 && (
-                                <div>
-                                  <p>Last state: {Object.keys(cont?.status?.lastState)[0]} <br /> Error: {Object.values(cont?.status?.lastState)[0]?.exitCode} <br /> Finished at: {Object.values(cont?.status?.lastState)[0]?.finishedAt}</p>
-                                </div>
-                              )
-                            )}
-                            {typeof cont?.status?.state === 'object' && cont?.status?.state !== null && Object.keys(cont.status.state).length > 0 && (
-                              <p>State: {Object.keys(cont.status.state)[0]}</p>
-                            )}
-                            {cont?.status?.restartCount && (
-                              <p>Restart count: {cont?.status.restartCount}</p>
-                            )}
-                            <p>Image: {cont.image}</p>
-                            <p>Ports: <br /> {cont?.ports && cont.ports.map(port => `[ ${port?.name ? port.name : 'Unknown'}, ${port?.containerPort ? port.containerPort : 'Unknown'}, ${port?.protocol ? port.protocol : 'Unknown'} ]`).join(', ')}</p>
-                            {cont?.resources && (
-                              <div>
-                                    Resources used: <br />
+  //           );
+  //         },
+  //         customBodyRender : (value) => {
+  //           return (versionMapper(value))
+  //         },
+  //       },
+  //     },
+  //     {
+  //       name : "data_planes",
+  //       label : "Proxy",
+  //       options : {
+  //         filter : false,
+  //         sort : true,
+  //         searchable : true,
+  //         setCellProps : () => ({ style : { textAlign : "center" } }),
+  //         customHeadRender : ({ index, ...column }, sortColumn) => {
+  //           return (
+  //             <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
+  //               sortColumn(index); switchSortOrder("proxySort");
+  //             }}>
+  //               <TableSortLabel active={column.sortDirection != null} direction={proxySort} >
+  //                 <b>{column.label}</b>
+  //               </TableSortLabel>
+  //             </TableCell>
+  //           )
+  //         },
+  //         customBodyRender : (value) => {
+  //           return (
+  //             <>
+  //               <Tooltip
+  //                 key={`component-${value}`}
+  //                 title={
+  //                   Array.isArray(value) && value?.length > 0 ? (
+  //                     value.map((cont) => {
+  //                       return (
+  //                         <div key={cont.name} style={{ fontSize : "15px", color : '#fff', paddingBottom : '10px', padding : '1vh' }}>
+  //                           <p>Name: {cont?.containerName ? cont.containerName : 'Unspecified'}</p>
+  //                           <p>Status: {cont?.status?.ready ? 'ready' : 'not ready'}</p>
+  //                           {!cont?.status?.ready && (
+  //                             typeof cont?.status?.lastState === 'object' && cont?.status?.lastState !== null && Object.keys(cont.status.lastState).length > 0 && (
+  //                               <div>
+  //                                 <p>Last state: {Object.keys(cont?.status?.lastState)[0]} <br /> Error: {Object.values(cont?.status?.lastState)[0]?.exitCode} <br /> Finished at: {Object.values(cont?.status?.lastState)[0]?.finishedAt}</p>
+  //                               </div>
+  //                             )
+  //                           )}
+  //                           {typeof cont?.status?.state === 'object' && cont?.status?.state !== null && Object.keys(cont.status.state).length > 0 && (
+  //                             <p>State: {Object.keys(cont.status.state)[0]}</p>
+  //                           )}
+  //                           {cont?.status?.restartCount && (
+  //                             <p>Restart count: {cont?.status.restartCount}</p>
+  //                           )}
+  //                           <p>Image: {cont.image}</p>
+  //                           <p>Ports: <br /> {cont?.ports && cont.ports.map(port => `[ ${port?.name ? port.name : 'Unknown'}, ${port?.containerPort ? port.containerPort : 'Unknown'}, ${port?.protocol ? port.protocol : 'Unknown'} ]`).join(', ')}</p>
+  //                           {cont?.resources && (
+  //                             <div>
+  //                                   Resources used: <br />
 
-                                <div style={{ paddingLeft : '2vh' }}>
-                                  {cont?.resources?.limits && (
-                                    <div>
-                                      <p>Limits: <br />
-                                            CPU: {cont?.resources?.limits?.cpu} - Memory: {cont?.resources?.limits?.memory}</p>
-                                    </div>
-                                  )}
-                                  {cont?.resources?.requests && (
-                                    <div>
-                                      <p>Requests: <br />
-                                            CPU: {cont?.resources?.requests?.cpu} - Memory: {cont?.resources?.requests?.memory}</p>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        )
-                      })
-                    ) : "No proxy attached"}
-                >
-                  <TableCell align="center">{value?.length || 0}</TableCell>
-                </Tooltip>
-              </>
-            );
-          }
-        },
-      },
-    ]
+  //                               <div style={{ paddingLeft : '2vh' }}>
+  //                                 {cont?.resources?.limits && (
+  //                                   <div>
+  //                                     <p>Limits: <br />
+  //                                           CPU: {cont?.resources?.limits?.cpu} - Memory: {cont?.resources?.limits?.memory}</p>
+  //                                   </div>
+  //                                 )}
+  //                                 {cont?.resources?.requests && (
+  //                                   <div>
+  //                                     <p>Requests: <br />
+  //                                           CPU: {cont?.resources?.requests?.cpu} - Memory: {cont?.resources?.requests?.memory}</p>
+  //                                   </div>
+  //                                 )}
+  //                               </div>
+  //                             </div>
+  //                           )}
+  //                         </div>
+  //                       )
+  //                     })
+  //                   ) : "No proxy attached"}
+  //               >
+  //                 <TableCell align="center">{value?.length || 0}</TableCell>
+  //               </Tooltip>
+  //             </>
+  //           );
+  //         }
+  //       },
+  //     },
+  //   ]
 
-    const options = {
-      filter : false,
-      selectableRows : "none",
-      responsive : "standard",
-      print : false,
-      download : false,
-      viewColumns : false,
-      pagination : false,
-      fixedHeader : true,
-      customToolbar : () => {
-        return (
-          <>
-            {activeMeshScanNamespace[mesh.name] && (
-              <Select
-                value={activeMeshScanNamespace[mesh.name]}
-                onChange={(e) =>
-                // self.setState((state) => ({ activeMeshScanNamespace : { ...state.activeMeshScanNamespace, [mesh.name] : e.target.value }, }))
-                  setActiveMeshScanNamespace(prevState => ({
-                    ...prevState,
-                    [mesh.name] : e.target.value
-                  }))
-                }
-              >
-                {self.state.meshScanNamespaces[mesh.name] &&
-                      self.state.meshScanNamespaces[mesh.name].map((ns) => <MenuItem key={ns.uniqueID} value={ns}>{ns}</MenuItem>)}
-              </Select>
-            )}
-          </>
-        )
-      },
-    }
+  //   const options = {
+  //     filter : false,
+  //     selectableRows : "none",
+  //     responsive : "standard",
+  //     print : false,
+  //     download : false,
+  //     viewColumns : false,
+  //     pagination : false,
+  //     fixedHeader : true,
+  //     customToolbar : () => {
+  //       return (
+  //         <>
+  //           {activeMeshScanNamespace[mesh.name] && (
+  //             <Select
+  //               value={activeMeshScanNamespace[mesh.name]}
+  //               onChange={(e) =>
+  //               // self.setState((state) => ({ activeMeshScanNamespace : { ...state.activeMeshScanNamespace, [mesh.name] : e.target.value }, }))
+  //                 setActiveMeshScanNamespace(prevState => ({
+  //                   ...prevState,
+  //                   [mesh.name] : e.target.value
+  //                 }))
+  //               }
+  //             >
+  //               {self.state.meshScanNamespaces[mesh.name] &&
+  //                     self.state.meshScanNamespaces[mesh.name].map((ns) => <MenuItem key={ns.uniqueID} value={ns}>{ns}</MenuItem>)}
+  //             </Select>
+  //           )}
+  //         </>
+  //       )
+  //     },
+  //   }
 
-    if (Array.isArray(components) && components.length)
-      return (
-        <Paper elevation={1} style={{ padding : "2rem", marginTop : "1rem" }}>
-          <MuiThemeProvider theme={theme.palette.type === "dark" ? configurationTableThemeDark() : configurationTableTheme()}>
-            <MUIDataTable
-              className={classes.datatable}
-              title={
-                <>
-                  <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
-                    <img src={mesh.icon} className={classes.icon} style={{ marginRight : "0.75rem" }} />
-                    <Typography variant="h6">{mesh.tag}</Typography>
-                  </div>
-                </>
-              }
-              data={components}
-              options={options}
-              columns={columns}
-            />
-          </MuiThemeProvider>
-        </Paper>
-      );
+  //   if (Array.isArray(components) && components.length)
+  //     return (
+  //       <Paper elevation={1} style={{ padding : "2rem", marginTop : "1rem" }}>
+  //         <MuiThemeProvider theme={theme.palette.type === "dark" ? configurationTableThemeDark() : configurationTableTheme()}>
+  //           <MUIDataTable
+  //             className={classes.datatable}
+  //             title={
+  //               <>
+  //                 <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
+  //                   <img src={mesh.icon} className={classes.icon} style={{ marginRight : "0.75rem" }} />
+  //                   <Typography variant="h6">{mesh.tag}</Typography>
+  //                 </div>
+  //               </>
+  //             }
+  //             data={components}
+  //             options={options}
+  //             columns={columns}
+  //           />
+  //         </MuiThemeProvider>
+  //       </Paper>
+  //     );
 
-    return null;
-  };
-  const handlePrometheusClick = () => {
-    props.updateProgress({ showProgress : true });
-    const prometheusURL = prometheusURL;  // Assuming you have prometheusURL in state
+  //   return null;
+  // };
+  // const handlePrometheusClick = () => {
+  //   props.updateProgress({ showProgress : true });
+  //   const prometheusURL = prometheusURL;  // Assuming you have prometheusURL in state
 
-    dataFetch(
-      "/api/telemetry/metrics/ping",
-      { credentials : "include" },
-      result => {
-        props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined") {
-          notify({ message : `Prometheus connected at ${prometheusURL}`, event_type : EVENT_TYPES.SUCCESS });
-        }
-      },
-      handleError("Could not connect to Prometheus")
-    );
-  };
-  const showCard=(title, content) => {
+  //   dataFetch(
+  //     "/api/telemetry/metrics/ping",
+  //     { credentials : "include" },
+  //     result => {
+  //       props.updateProgress({ showProgress : false });
+  //       if (typeof result !== "undefined") {
+  //         notify({ message : `Prometheus connected at ${prometheusURL}`, event_type : EVENT_TYPES.SUCCESS });
+  //       }
+  //     },
+  //     handleError("Could not connect to Prometheus")
+  //   );
+  // };
+  // const showCard=(title, content) => {
 
-    return (
-      <Card className={classes.card}>
-        <CardHeader
-          disableTypography
-          title={title}
-          // action={iconComponent}
-          className={classes.cardHeader}
-        />
-        <CardContent className={classes.cardContent}>{content}</CardContent>
-      </Card>
-    );
-  }
+  //   return (
+  //     <Card className={classes.card}>
+  //       <CardHeader
+  //         disableTypography
+  //         title={title}
+  //         // action={iconComponent}
+  //         className={classes.cardHeader}
+  //       />
+  //       <CardContent className={classes.cardContent}>{content}</CardContent>
+  //     </Card>
+  //   );
+  // }
   /**
      * ClusterResourcesCard takes in the cluster related data
      * and renders a table with cluster resources information of
