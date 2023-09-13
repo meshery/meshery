@@ -18,14 +18,14 @@ import { changeEventStatus, deleteEvent } from '../../store/slices/events';
 const useStyles = makeStyles(() => ({
   root: (props) => ({
     width: "100%",
-    borderRadius: "3px",
-    border: `1px solid ${props.notificationColor}`,
-    borderLeftWidth: props.status === STATUS.READ ? "4px" : "1px",
-    marginBlock: "8px",
+    borderRadius: "0.25rem",
+    border: `0.1rem solid ${props.notificationColor}`,
+    borderLeftWidth: props.status === STATUS.READ ? "0.25rem" : "0.1rem",
+    marginBlock: "0.5rem",
   }),
 
   summary: (props) => ({
-    paddingBlock: "8px",
+    paddingBlock: "0,5rem",
     cursor: "pointer",
     backgroundColor: alpha(props.notificationColor, 0.20),
   }),
@@ -46,7 +46,7 @@ const useStyles = makeStyles(() => ({
     width: "100%",
   },
   expanded: {
-    paddingBlock: "12px",
+    paddingBlock: "0.75rem",
   },
   actorAvatar: {
     display: "flex",
@@ -55,7 +55,6 @@ const useStyles = makeStyles(() => ({
   },
 
   descriptionHeading: {
-    fontSize: "16px",
     fontWeight: "bolder !important",
     textTransform: "uppercase",
   },
@@ -68,10 +67,10 @@ const useMenuStyles = makeStyles((theme) => {
     paper: {
       color: theme.palette.secondary.iconMain,
       boxShadow: theme.shadows[4],
-      borderRadius: "3px",
+      borderRadius: "0.25",
       paddingInline: "0.5rem",
       paddingBlock: "0.25rem",
-      width: "200px",
+      width: "12.5rem",
     },
 
     list: {
@@ -80,7 +79,7 @@ const useMenuStyles = makeStyles((theme) => {
       flexDirection: "column",
       gridGap: "0.5rem",
       marginBlock: "0.5rem",
-      borderRadius: "4px",
+      borderRadius: "0.25rem",
       backgroundColor: theme.palette.secondary.honeyComb,
     },
 
@@ -223,7 +222,7 @@ export const ChangeStatus = ({ event }) => {
 }
 
 const BulletList = ({ items }) => {
-  return <ol style={{ paddingInline: "12px", paddingBlock: "0.3rem", margin: "0rem" }}>
+  return <ol style={{ paddingInline: "0.75rem", paddingBlock: "0.3rem", margin: "0rem" }}>
     {[items].map((i) => <li key={i} >
       <Typography variant="body1" > {i} </Typography>
     </li>)}

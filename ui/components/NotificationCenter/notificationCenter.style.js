@@ -32,7 +32,7 @@ export const useStyles = makeStyles((theme) => ({
   },
 
   container: {
-    padding: "20px"
+    padding: "1.25rem"
   },
   header: {
     display: "flex",
@@ -47,8 +47,8 @@ export const useStyles = makeStyles((theme) => ({
     gap: "0.5rem",
   },
   titleBellIcon: {
-    width: "36px",
-    height: "36px",
+    width: "2.25rem",
+    height: "2.25rem",
     borderRadius: "100%",
     backgroundColor: "black",
     display: "flex",
@@ -57,18 +57,18 @@ export const useStyles = makeStyles((theme) => ({
     alignItems: "center"
   },
   severityChip: {
-    borderRadius: "4px",
+    borderRadius: "0.25rem",
     display: "flex",
-    gap: "4px",
+    gap: "0.25rem",
     justifyContent: "start",
     alignItems: "center",
-    fontSize: "16px",
+    fontSize: "1rem",
     cursor: "pointer",
   },
 
   severityChips: {
     display: "flex",
-    gap: "12px",
+    gap: "0.75rem",
     alignItems: "center",
 
   },
