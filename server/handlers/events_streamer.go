@@ -34,7 +34,7 @@ var (
 // ```?status={[read/unread]}``` Return events filtered on event status Default is unread````
 // ```?severity=[eventseverity] Returns events belonging to provided severities ```
 // ```?sort={field} order the records based on passed field, defaults to updated_at```
-// ```?order={[asc/desc]}``` Default behavior is asc
+// ```?order={[asc/desc]}``` Default behavior is desc
 // ```?page={page-number}``` Default page number is 1
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
