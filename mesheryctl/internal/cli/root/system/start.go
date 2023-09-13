@@ -310,7 +310,7 @@ func start() error {
 
 		// Write the modified configuration back to the Docker Compose file
 		if err := utils.ViperCompose.WriteConfig(); err != nil {
-			return errors.Wrap(err, utils.SystemError("unable to add group_add option"))
+			return errors.Wrap(err, utils.SystemError("unable to add group_add option. Meshery Server cannot perform this privileged action"))
 		}
 
 		log.Info("Starting Meshery...")
