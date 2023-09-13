@@ -45,11 +45,11 @@ jobs:
           ADAPTER_URLS: "localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10009 localhost:10007"
         run: |
           make build-server
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v3.0.0
-        with:
-          name: meshery
-          path: ./main
+      # - name: Upload artifacts
+      #   uses: actions/upload-artifact@v3.0.0
+      #   with:
+      #     name: meshery
+      #     path: ./main
   ui-build:
     name: UI build
     if: github.repository == 'meshery/meshery'
@@ -130,6 +130,15 @@ jobs:
         uses: actions/setup-go@master
         with:
           go-version: "1.21"
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
       - name: Setup node
         uses: actions/setup-node@v3
         with:
@@ -162,10 +171,10 @@ jobs:
           cd ./meshery-consul
           go run main.go &
           sleep 60
-      - name: Download Meshery Server artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: meshery
+      # - name: Download Meshery Server artifacts
+      #   uses: actions/download-artifact@v3
+      #   with:
+      #     name: meshery
       - name: Download meshery-ui artifacts
         uses: actions/download-artifact@v3
         with:
@@ -182,9 +191,7 @@ jobs:
           PORT: 9081
           ADAPTER_URLS: "localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10009 localhost:10007"
         run: |
-          chmod +x ./main
-          ./main &
-          sleep 60
+          make server
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with:
