@@ -2,20 +2,20 @@ import { withStyles } from '@material-ui/core'
 import { withSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react'
 import MUIDataTable from 'mui-datatables';
-import { Grid, TableCell, Tooltip, TableSortLabel, Switch, FormControlLabel } from '@material-ui/core';
+import { TableCell, Tooltip, TableSortLabel, Switch, FormControlLabel } from '@material-ui/core';
 
-import DuplicatesDataTable from './DuplicatesDataTable';
+
 import { getComponentsDetailWithPageSize, getMeshModels, getRelationshipsDetailWithPageSize, searchModels, searchComponents } from '../api/meshmodel'
 import debounce from '../utils/debounce';
 import { MODELS, COMPONENTS, RELATIONSHIPS } from '../constants/navigator';
 import { SORT } from '../constants/endpoints';
 
 //TODO : This Should derive the indices of rendered rows
-const ROWS_INDICES = {
-  KIND : 0 ,
-  VERSION : 1 ,
-  MODEL : 3 ,
-}
+// const ROWS_INDICES = {
+//   KIND : 0 ,
+//   VERSION : 1 ,
+//   MODEL : 3 ,
+// }
 const meshmodelStyles = (theme) => ({
   wrapperClss : {
     flexGrow : 1,
@@ -45,7 +45,7 @@ const meshmodelStyles = (theme) => ({
 
 
 const MeshModelComponent = ({ view, classes }) => {
-  const [resourcesDetail, setResourcesDetail] = useState();
+  const [resourcesDetail, setResourcesDetail] = useState([]);
   const [isRequestCancelled, setRequestCancelled] = useState(false);
   const [count, setCount] = useState();
   const [page, setPage] = useState(0);
@@ -134,6 +134,20 @@ const MeshModelComponent = ({ view, classes }) => {
   const handleToggleDuplicates = () => {
     setChecked(!checked);
   }
+
+  const filteredData = checked
+    ? resourcesDetail // Show all data, including duplicates
+    : resourcesDetail.filter((item, index, self) => {
+      // Filter out duplicates based on your criteria (e.g., name and version)
+      return (
+        index ===
+        self.findIndex(
+          (otherItem) =>
+            item.name === otherItem.name && item.version === otherItem.version
+        )
+      );
+    });
+
 
   useEffect(() => {
     setRequestCancelled(false);
@@ -340,8 +354,8 @@ const MeshModelComponent = ({ view, classes }) => {
     selectableRows : false,
     search : view === RELATIONSHIPS ? false : true,
     serverSide : true,
-    expandableRows : (view !== RELATIONSHIPS && checked === true) && true,
-    onChangePage : debounce((p) => setPage(p), 200),
+    // expandableRows : (view !== RELATIONSHIPS && checked === true) && true,
+    // onChangePage : debounce((p) => setPage(p), 200),
     onSearchChange : debounce((searchText) => (setSearchText(searchText))),
     onChangeRowsPerPage : debounce((rowsPerPage) => {
       setRowsPerPage(rowsPerPage);
@@ -389,65 +403,65 @@ const MeshModelComponent = ({ view, classes }) => {
         }
       }
     },
-    renderExpandableRow : (rowData) => {
-      //TODO: Index The data by id and then extract directly from api resp rather than component props
-      const data = {
-        kind : rowData[ROWS_INDICES.KIND]?.props?.children?.props?.children,
-        model : rowData[ROWS_INDICES.MODEL]?.props?.children?.props?.children,
-        version : rowData[ROWS_INDICES.VERSION]?.props?.children?.props?.children,
-      }
-      return (
-        rowData[6].props.children.props.children > 0 ? (
-          <TableCell
-            colSpan={6}
-            sx={{
-              padding : "0.5rem",
-              backgroundColor : "rgba(0, 0, 0, 0.05)"
-            }}
-          >
-            <Grid
-              container
-              xs={12}
-              spacing={1}
-              sx={{
-                margin : "auto",
-                backgroundColor : "#f3f1f1",
-                paddingLeft : "0.5rem",
-                borderRadius : "0.25rem",
-                width : "inherit"
-              }}
-            >
-              <DuplicatesDataTable
-                view={view}
-                rowData={data}
-                classes={classes}
-              >
-              </DuplicatesDataTable>
-            </Grid>
-          </TableCell>
-        ) : (
-          <TableCell
-            colSpan={6}
-            sx={{
-              padding : "0.5rem",
-            }}
-          >
-            <Grid
-              container
-              spacing={1}
-              sx={{
-                justifyContent : "center",
-                margin : "auto",
-                paddingLeft : "0.5rem",
-                borderRadius : "0.25rem",
-              }}
-            >
-              <b>No duplicates found</b>
-            </Grid>
-          </TableCell>
-        )
-      );
-    },
+    // renderExpandableRow : (rowData) => {
+    //   //TODO: Index The data by id and then extract directly from api resp rather than component props
+    //   const data = {
+    //     kind : rowData[ROWS_INDICES.KIND]?.props?.children?.props?.children,
+    //     model : rowData[ROWS_INDICES.MODEL]?.props?.children?.props?.children,
+    //     version : rowData[ROWS_INDICES.VERSION]?.props?.children?.props?.children,
+    //   }
+    //   return (
+    //     rowData[6].props.children.props.children > 0 ? (
+    //       <TableCell
+    //         colSpan={6}
+    //         sx={{
+    //           padding : "0.5rem",
+    //           backgroundColor : "rgba(0, 0, 0, 0.05)"
+    //         }}
+    //       >
+    //         <Grid
+    //           container
+    //           xs={12}
+    //           spacing={1}
+    //           sx={{
+    //             margin : "auto",
+    //             backgroundColor : "#f3f1f1",
+    //             paddingLeft : "0.5rem",
+    //             borderRadius : "0.25rem",
+    //             width : "inherit"
+    //           }}
+    //         >
+    //           <DuplicatesDataTable
+    //             view={view}
+    //             rowData={data}
+    //             classes={classes}
+    //           >
+    //           </DuplicatesDataTable>
+    //         </Grid>
+    //       </TableCell>
+    //     ) : (
+    //       <TableCell
+    //         colSpan={6}
+    //         sx={{
+    //           padding : "0.5rem",
+    //         }}
+    //       >
+    //         <Grid
+    //           container
+    //           spacing={1}
+    //           sx={{
+    //             justifyContent : "center",
+    //             margin : "auto",
+    //             paddingLeft : "0.5rem",
+    //             borderRadius : "0.25rem",
+    //           }}
+    //         >
+    //           <b>No duplicates found</b>
+    //         </Grid>
+    //       </TableCell>
+    //     )
+    //   );
+    // },
   };
 
 
@@ -455,7 +469,7 @@ const MeshModelComponent = ({ view, classes }) => {
     <div data-test="workloads">
       <MUIDataTable
         title={<div className={classes.tableHeader}>{view !== RELATIONSHIPS && <FormControlLabel control={<Switch color="primary" checked={checked} onChange={handleToggleDuplicates} inputProps={{ 'aria-label' : 'controlled' }} />} label="Duplicates" />}</div>}
-        data={resourcesDetail && resourcesDetail}
+        data={filteredData}
         columns={meshmodel_columns}
         options={meshmodel_options}
       />
