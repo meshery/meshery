@@ -96,14 +96,15 @@ server-without-k8s: dep-check
 	go run main.go error.go;
 
 build-server: dep-check
-	cd server; cd cmd; go mod tidy; cd "../.."
+	cd server; cd cmd; go mod tidy; cd "../.." \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	GOPROXY=https://proxy.golang.org,direct GOSUMDB=off GO111MODULE=on go build -tags draft ./server/cmd/main.go ./server/cmd/error.go
+	go build ./server/cmd/main.go ./server/cmd/error.go
+	chmod +x ./main
 
 server: dep-check
 	cd server; cd cmd; go mod tidy; \
