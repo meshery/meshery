@@ -23,7 +23,7 @@ import App from 'next/app';
 import Head from 'next/head';
 import { SnackbarProvider } from 'notistack';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { connect, Provider } from "react-redux";
 import Header from '../components/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
@@ -57,6 +57,8 @@ import { store as rtkStore } from '../store';
 import { pushEvent } from '../store/slices/events';
 import { api as mesheryApi } from "../rtk-query"
 import { PROVIDER_TAGS } from '../rtk-query/notificationCenter';
+import { useNotification } from '../utils/hooks/useNotification';
+
 
 
 if (typeof window !== 'undefined') {
@@ -72,6 +74,39 @@ if (typeof window !== 'undefined') {
     // jsonlint did not work well with codemirror json-lint. Hence, found an alternative (jsonlint-mod) based on https://github.com/scniro/react-codemirror2/issues/21
     window.jsonlint = require('jsonlint-mod');
   }
+}
+
+const EventsSubsciptionProvider = () => {
+
+  const { notify } = useNotification();
+
+  const eventsSubscription = useCallback(() => subscribeEvents(result => {
+    console.log("event received", result);
+    rtkStore.dispatch(pushEvent({
+      ...result.event,
+      user_id: result.event.userID,
+      updated_at: result.event.updatedAt,
+      created_at: result.event.createdAt,
+      deleted_at: result.event.deletedAt,
+    }))
+    rtkStore.dispatch(mesheryApi.util.invalidateTags([PROVIDER_TAGS.EVENT]))
+    notify({
+      message: result.event.description,
+      event_type: result.event.severity,
+      id: result.event.id,
+      showInNotificationCenter: true,
+    })
+  }), [])
+
+  useEffect(() => {
+    const subscription = eventsSubscription();
+    return () => {
+      subscription.dispose();
+    }
+  }, [])
+
+  return null;
+
 }
 
 async function fetchContexts(number = 10, search = "") {
@@ -94,7 +129,6 @@ class MesheryApp extends App {
     this.meshsyncEventsSubscriptionRef = React.createRef();
     this.eventsSubscriptionRef = React.createRef();
     this.fullScreenChanged = this.fullScreenChanged.bind(this);
-
     this.state = {
       mobileOpen: false,
       isDrawerCollapsed: false,
@@ -106,9 +140,10 @@ class MesheryApp extends App {
       disposeK8sContextSubscription: null,
       theme: 'light',
       isOpen: false,
-      relayEnvironment: createRelayEnvironment(),
+      relayEnvironment: createRelayEnvironment()
     };
   }
+
 
   initMeshSyncEventsSubscription(contexts = []) {
     if (this.meshsyncEventsSubscriptionRef.current) {
@@ -173,7 +208,7 @@ class MesheryApp extends App {
     )
 
     this.initMeshSyncEventsSubscription(this.state.activeK8sContexts);
-    this.initEventsSubscription()
+    // this.initEventsSubscription()
     const k8sContextSubscription = (page = "", search = "", pageSize = "10", order = "") => {
       return subscribeK8sContext((result) => {
         this.setState({ k8sContexts: result.k8sContext }, () => this.setActiveContexts("all"))
@@ -198,24 +233,29 @@ class MesheryApp extends App {
     document.removeEventListener("fullscreenchange", this.fullScreenChanged);
   }
 
-  initEventsSubscription() {
-    if (this.eventsSubscriptionRef.current) {
-      this.eventsSubscriptionRef.current.dispose();
-    }
-
-    const eventsSubscription = subscribeEvents(result => {
-      console.log("event received", result);
-      rtkStore.dispatch(pushEvent({
-        ...result.event,
-        user_id: result.event.userID,
-        updated_at: result.event.updatedAt,
-        created_at: result.event.createdAt,
-        deleted_at: result.event.deletedAt,
-      }))
-      rtkStore.dispatch(mesheryApi.util.invalidateTags([PROVIDER_TAGS.EVENT]))
-    })
-    this.eventsSubscriptionRef.current = eventsSubscription;
-  }
+  // initEventsSubscription() {
+  //   if (this.eventsSubscriptionRef.current) {
+  //     this.eventsSubscriptionRef.current.dispose();
+  //   }
+  //   const notify = this.props.notify;
+  //   const eventsSubscription = subscribeEvents(result => {
+  //     console.log("event received", result);
+  //     rtkStore.dispatch(pushEvent({
+  //       ...result.event,
+  //       user_id: result.event.userID,
+  //       updated_at: result.event.updatedAt,
+  //       created_at: result.event.createdAt,
+  //       deleted_at: result.event.deletedAt,
+  //     }))
+  //     rtkStore.dispatch(mesheryApi.util.invalidateTags([PROVIDER_TAGS.EVENT]))
+  //     notify({
+  //       message: result.event.description,
+  //       severity: result.event.severity,
+  //       id: result.event.id,
+  //     })
+  //   })
+  //   this.eventsSubscriptionRef.current = eventsSubscription;
+  // }
 
   componentDidUpdate(prevProps) {
     const { k8sConfig, capabilitiesRegistry } = this.props;
@@ -439,6 +479,8 @@ class MesheryApp extends App {
                   }}
                   maxSnack={10}
                 >
+
+                  <EventsSubsciptionProvider />
                   <MesheryProgressBar />
                   {!this.state.isFullScreenMode && <Header
                     onDrawerToggle={this.handleDrawerToggle}

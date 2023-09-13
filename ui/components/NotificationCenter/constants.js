@@ -17,7 +17,7 @@ export const STATUS = {
 }
 
 export const STATUS_STYLE = {
-  [STATUS.UNREAD]: {
+  [STATUS.READ]: {
     icon: ArchiveIcon,
     color: Colors.charcoal
   }

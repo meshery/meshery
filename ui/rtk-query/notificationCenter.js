@@ -41,7 +41,7 @@ export const notificationCenterApi = api
             params: {
               ...parsedFilters,
               page: page,
-              sort: "updated_at",
+              sort: "created_at",
               order: "desc",
               page_size: 15
             }
@@ -93,4 +93,3 @@ export const {
   useDeleteEventMutation,
   useLazyGetEventsQuery,
 } = notificationCenterApi
-

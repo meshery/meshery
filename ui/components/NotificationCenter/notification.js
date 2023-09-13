@@ -40,6 +40,9 @@ const useStyles = makeStyles(() => ({
     overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
+    overflowWrap: "break-word",
+    // max of min of 20rem or 50vw
+    maxWidth: "min(25rem, 50vw)",
     width: "100%",
   },
   expanded: {
@@ -101,13 +104,13 @@ const useMenuStyles = makeStyles((theme) => {
 
 
 const formatTimestamp = (utcTimestamp) => {
-  // const curretUtcTimestamp = moment.utc().valueOf()
+  const currentUtcTimestamp = moment.utc().valueOf()
 
-  // const timediff = currentUtcTimestamp - utcTimestamp
-  // if (timediff >= 24 * 60 * 60 * 1000) {
-  return moment(utcTimestamp).local().format('MMM DD, YYYY')
-  // }
-  // return moment(utcTimestamp).fromNow()
+  const timediff = currentUtcTimestamp - utcTimestamp
+  if (timediff >= 24 * 60 * 60 * 1000) {
+    return moment(utcTimestamp).local().format('MMM DD, YYYY')
+  }
+  return moment(utcTimestamp).fromNow()
 }
 
 function BasicMenu({ event }) {
@@ -212,7 +215,7 @@ export const ChangeStatus = ({ event }) => {
   return (
     <div className={classes.list}>
       <Button className={classes.button} onClick={updateStatus}>
-        <Typography variant="body1" > Mark As Read  </Typography>
+        <Typography variant="body1" > Mark as {newStatus}  </Typography>
       </Button>
     </div>
   )
@@ -254,7 +257,7 @@ export const Notification = ({ event }) => {
           <Typography variant="body1" className={classes.message}> {event.description}   </Typography>
         </Grid>
         <Grid item sm={3} className={classes.gridItem} >
-          <Typography variant="body1"> {formatTimestamp(event.update_at)} </Typography>
+          <Typography variant="body1"> {formatTimestamp(event.created_at)} </Typography>
         </Grid>
         <Grid item sm={1} >
           <Box>

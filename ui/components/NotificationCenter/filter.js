@@ -408,6 +408,11 @@ const Filter = ({ handleFilter }) => {
   });
 
   const handleFilterChange = (e) => {
+
+    if (!anchorEl) {
+      setAnchorEl(e.currentTarget)
+    }
+
     if (e.target.value === "") {
       return dispatch({
         type: FILTER_EVENTS.CLEAR,

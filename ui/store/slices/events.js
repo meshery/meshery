@@ -9,7 +9,9 @@ const initialState = {
       initial: true,
     },
     has_more: true,
-  }
+  },
+
+  isNotificationCenterOpen: false,
 }
 
 const defaultEventProperties = {
@@ -21,8 +23,8 @@ const eventsEntityAdapter = createEntityAdapter({
   selectId: (event) => event.id,
   //sort based on update_at timestamp(utc)
   sortComparer: (a, b) => {
-    if (b?.updated_at?.localeCompare && a?.updated_at?.localeCompare) {
-      return b.updated_at?.localeCompare(a.updated_at)
+    if (b?.created_at?.localeCompare && a?.created_at?.localeCompare) {
+      return b.created_at?.localeCompare(a.created_at)
     }
     return 0
   }
@@ -41,18 +43,15 @@ export const eventsSlice = createSlice({
       // state.events = action.payload || []
       eventsEntityAdapter.removeAll(state)
       eventsEntityAdapter.addMany(state, action.payload)
-      if (action.payload.length == 0) {
-        state.current_view.has_more = false
-      }
+
+      state.current_view.has_more = action.payload.length == 0 ? false : true
     },
 
 
     pushEvents: (state, action) => {
       // state.events = [...state.events, ...action.payload]
       eventsEntityAdapter.addMany(state, action.payload)
-      if (action.payload.length == 0) {
-        state.current_view.has_more = false
-      }
+      state.current_view.has_more = action.payload.length == 0 ? false : true
     },
 
     pushEvent: (state, action) => {
@@ -75,7 +74,15 @@ export const eventsSlice = createSlice({
 
     setCurrentView: (state, action) => {
       state.current_view = action.payload
-    }
+    },
+
+    toggleNotificationCenter: (state) => {
+      state.isNotificationCenterOpen = !state.isNotificationCenterOpen
+    },
+
+    closeNotificationCenter: (state) => {
+      state.isNotificationCenterOpen = false
+    },
 
   },
 })
@@ -83,7 +90,8 @@ export const eventsSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const { pushEvent, clearEvents, setEvents,
   clearCurrentView,
-  pushEvents, setCurrentView, updateEvent, deleteEvent: removeEvent
+  pushEvents, setCurrentView, updateEvent, deleteEvent: removeEvent,
+  toggleNotificationCenter, closeNotificationCenter
 } = eventsSlice.actions
 
 export default eventsSlice.reducer

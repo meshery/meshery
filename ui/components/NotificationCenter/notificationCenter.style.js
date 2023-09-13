@@ -1,7 +1,10 @@
 import { makeStyles } from "@material-ui/core"
 
 export const useStyles = makeStyles((theme) => ({
-  sidelist: { width: "45rem" },
+  sidelist: {
+    width: "45rem",
+    maxWidth: "90vw",
+  },
   notificationButton: { height: "100%" },
   notificationDrawer: {
     backgroundColor: theme.palette.secondary.drawer,
@@ -57,9 +60,10 @@ export const useStyles = makeStyles((theme) => ({
     borderRadius: "4px",
     display: "flex",
     gap: "4px",
-    // alignItems: "center",
-    padding: "4px 12px",
+    justifyContent: "start",
+    alignItems: "center",
     fontSize: "16px",
+    cursor: "pointer",
   },
 
   severityChips: {
@@ -72,5 +76,4 @@ export const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(0.5, 1),
   },
 }));
-
 
