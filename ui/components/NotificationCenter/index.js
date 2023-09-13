@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import IconButton from "@material-ui/core/IconButton";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import NoSsr from "@material-ui/core/NoSsr";
-import { Drawer, Tooltip, Divider, ClickAwayListener, Typography, alpha, Chip, Button, Badge } from "@material-ui/core";
+import { Drawer, Tooltip, Divider, ClickAwayListener, Typography, alpha, Chip, Button, Badge, CircularProgress, Box, useTheme } from "@material-ui/core";
 import Filter from "./filter";
 import BellIcon from "../../assets/icons/BellIcon.js"
 import { iconMedium } from "../../css/icons.styles";
@@ -14,12 +14,21 @@ import { useNavNotificationIconStyles, useStyles } from "./notificationCenter.st
 import { closeNotificationCenter, loadEvents, loadNextPage, selectEvents, toggleNotificationCenter } from "../../store/slices/events";
 import { useGetEventsSummaryQuery, useLazyGetEventsQuery } from "../../rtk-query/notificationCenter";
 import _ from "lodash";
+import DoneIcon from "../../assets/icons/DoneIcon";
 
 
 const getSeverityCount = (count_by_severity_level, severity) => {
   return count_by_severity_level.find((item) => item.severity === severity)?.count || 0
 }
 
+const EmptyState = () => {
+  const theme = useTheme().palette.secondary
+  return (
+    <Box sx={{ display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1rem" , marginY:"5rem" }}>
+      <DoneIcon height="10rem" width="8rem" fill={theme.icon2} />
+      <Typography variant="h6" style={{ margin: "auto" }}> No notifications to show </Typography>
+    </Box >)
+}
 
 const NavbarNotificationIcon = () => {
 
@@ -66,7 +75,7 @@ const NotificationCountChip = ({ classes, notificationStyle, count, handleClick 
   )
 }
 
-const Header = ({ handleFilter , handleClose }) => {
+const Header = ({ handleFilter, handleClose }) => {
 
   const { data } = useGetEventsSummaryQuery();
   const { count_by_severity_level, total_count } = data || {
@@ -112,6 +121,12 @@ const Header = ({ handleFilter , handleClose }) => {
   )
 }
 
+const Loading = () => {
+  return (
+    <Box sx={{ display: 'flex' }}>
+      <CircularProgress />
+    </Box >)
+}
 
 
 const EventsView = ({ handleLoadNextPage, isLoading, hasMore }) => {
@@ -120,6 +135,9 @@ const EventsView = ({ handleLoadNextPage, isLoading, hasMore }) => {
 
   const lastEventRef = useRef(null)
   const intersectionObserver = useRef(new IntersectionObserver((entries) => {
+    if (isLoading && !hasMore) {
+      return
+    }
     const firstEntry = entries[0]
     if (firstEntry.isIntersecting) {
       handleLoadNextPage()
@@ -145,9 +163,13 @@ const EventsView = ({ handleLoadNextPage, isLoading, hasMore }) => {
       {events.map((event, idx) => <div key={event.id + idx}  >
         <Notification event={event} />
       </div>)}
-      {!isLoading && hasMore &&
-        <div ref={lastEventRef} ></div>}
-      {isLoading && <div>Loading...</div>}
+
+      {events.length === 0 && <EmptyState />}
+
+      <div ref={lastEventRef}  >
+        {!Loading && hasMore && <Loading />}
+      </div>
+      {isLoading && <Loading />}
     </>
   )
 }

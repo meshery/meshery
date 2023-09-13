@@ -99,7 +99,6 @@ export default eventsSlice.reducer
 
 export const loadEvents = (fetch, page, filters) => async (dispatch, getState) => {
   const currentView = getState().events.current_view
-
   try {
     const { data } = await fetch({ page, filters })
     dispatch(setCurrentView({

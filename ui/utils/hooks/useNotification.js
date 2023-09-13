@@ -22,7 +22,6 @@ import { toggleNotificationCenter } from "../../store/slices/events";
  */
 export const useNotification = () => {
   const x = useSnackbar()
-  console.log("useSnackbar", x)
   const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
 
