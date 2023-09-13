@@ -26,7 +26,6 @@ jobs:
         with:
           fetch-depth: 1
       - name: Cache Go modules
-        id: go-cache
         uses: actions/cache@v3
         with:
           path: |
@@ -36,7 +35,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
       - name: Setup Go
-        if: steps.go-cache.outputs.cache-hit != 'true'
         uses: actions/setup-go@master
         with:
           go-version: "1.21"
