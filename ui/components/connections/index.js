@@ -48,6 +48,16 @@ const styles = (theme) => ({
       textTransform : "capitalize",
     },
   },
+  statusSelect : {
+    "& .MuiSelect-select.MuiSelect-select" : {
+      padding : "0 2px"
+    },
+    "& .MuiSelect-icon" : {
+      color : "#ff",
+      marginTop : "2px",
+      rotate : "270deg"
+    }
+  },
   createButton : {
     display : "flex",
     justifyContent : "flex-start",
@@ -352,6 +362,8 @@ function Connections({ classes, updateProgress }) {
                   id="demo-simple-select"
                   value={value}
                   onChange={(e) => handleStatusChange(e, tableMeta.rowData[0])}
+                  className={classes.statusSelect}
+                  disableUnderline
                 >
                   {
                     statuses.map(s => status(s))
