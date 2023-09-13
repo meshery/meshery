@@ -28,7 +28,7 @@ docker-build:
 docker-playground-build:
 	# `make docker-playground-build` builds Meshery inside of a multi-stage Docker container.
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
-	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} --build-arg PROVIDER=$(LOCAL_PROVIDER) --build-arg PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) .	
+	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} --build-arg PROVIDER=$(LOCAL_PROVIDER) --build-arg PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) .
 
 ## Meshery Cloud for user authentication.
 ## Runs Meshery in a container locally and points to locally-running
@@ -94,6 +94,16 @@ server-without-k8s: dep-check
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go run main.go error.go;
+
+build-server: dep-check
+	cd server; cd cmd; go mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	go build main.go error.go;
 
 server: dep-check
 	cd server; cd cmd; go mod tidy; \
@@ -202,10 +212,10 @@ UI_DEV_SCRIPT = dev16
 
 ifeq ($(findstring v19, $(shell node --version)), v19)
 	UI_BUILD_SCRIPT = build
-	UI_DEV_SCRIPT = dev 
+	UI_DEV_SCRIPT = dev
 else ifeq ($(findstring v18, $(shell node --version)), v18)
 	UI_BUILD_SCRIPT = build
-	UI_DEV_SCRIPT = dev 
+	UI_DEV_SCRIPT = dev
 else ifeq ($(findstring v17, $(shell node --version)), v17)
 	UI_BUILD_SCRIPT = build
 	UI_DEV_SCRIPT = dev
@@ -343,12 +353,12 @@ graphql-build: dep-check
 INSTALLED_GO_VERSION=$(shell go version)
 
 dep-check:
-	
+
 ifeq (,$(findstring $(GOVERSION), $(INSTALLED_GO_VERSION)))
 # Only send a warning.
-	@echo "Dependency missing: go$(GOVERSION). Ensure 'go$(GOVERSION).x' is installed and available in your 'PATH'"	
+	@echo "Dependency missing: go$(GOVERSION). Ensure 'go$(GOVERSION).x' is installed and available in your 'PATH'"
 	@echo "GOVERSION: " $(GOVERSION)
-	@echo "INSTALLED_GO_VERSION: " $(INSTALLED_GO_VERSION) 
+	@echo "INSTALLED_GO_VERSION: " $(INSTALLED_GO_VERSION)
 # Force error and stop.
 #	$(error Found $(INSTALLED_GO_VERSION). \
 #	 Required golang version is: 'go$(GOVERSION).x'. \
