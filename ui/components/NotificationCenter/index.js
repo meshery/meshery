@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import IconButton from "@material-ui/core/IconButton";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import NoSsr from "@material-ui/core/NoSsr";
-import { Drawer, Tooltip, Divider, ClickAwayListener, Typography, alpha, Chip, Button } from "@material-ui/core";
+import { Drawer, Tooltip, Divider, ClickAwayListener, Typography, alpha, Chip, Button, Badge } from "@material-ui/core";
 import Filter from "./filter";
 import BellIcon from "../../assets/icons/BellIcon.js"
 import { iconMedium } from "../../css/icons.styles";
@@ -10,11 +10,41 @@ import { SEVERITY, SEVERITY_STYLE, STATUS, STATUS_STYLE } from "./constants";
 import classNames from "classnames";
 import Notification from "./notification";
 import { store } from "../../store";
-import { useStyles } from "./notificationCenter.style";
+import { useNavNotificationIconStyles, useStyles } from "./notificationCenter.style";
 import { closeNotificationCenter, loadEvents, loadNextPage, selectEvents, toggleNotificationCenter } from "../../store/slices/events";
 import { useGetEventsSummaryQuery, useLazyGetEventsQuery } from "../../rtk-query/notificationCenter";
 import _ from "lodash";
 
+
+const getSeverityCount = (count_by_severity_level, severity) => {
+  return count_by_severity_level.find((item) => item.severity === severity)?.count || 0
+}
+
+
+const NavbarNotificationIcon = () => {
+
+  const { data } = useGetEventsSummaryQuery()
+  const count_by_severity_level = data?.count_by_severity_level || []
+
+  const currentTopSeverity = getSeverityCount(count_by_severity_level, SEVERITY.ERROR) > 0
+    ? SEVERITY.ERROR :
+    getSeverityCount(count_by_severity_level, SEVERITY.WARNING) > 0 ? SEVERITY.WARNING : null
+  const currentSeverityStyle = currentTopSeverity ? SEVERITY_STYLE[currentTopSeverity] : null
+  const topSeverityCount = getSeverityCount(count_by_severity_level, currentTopSeverity)
+  const classes = useNavNotificationIconStyles({
+    badgeColor: currentSeverityStyle?.color
+  })
+  if (currentTopSeverity) {
+    return (
+      <Badge id="notification-badge" badgeContent={topSeverityCount} className={classes.root}>
+        <currentSeverityStyle.icon {...iconMedium} fill="#fff" />
+      </Badge>
+    )
+  }
+  return (
+    <BellIcon className={iconMedium} fill="#fff" />
+  )
+}
 
 
 const NotificationCountChip = ({ classes, notificationStyle, count, handleClick }) => {
@@ -44,10 +74,6 @@ const Header = ({ handleFilter }) => {
     total_count: 0
   }
   const classes = useStyles()
-  const getSeverityCount = (severity) => {
-    return count_by_severity_level.find((item) => item.severity === severity)?.count || 0
-  }
-
   const onClickSeverity = (severity) => {
     handleFilter({
       severity: [severity]
@@ -60,8 +86,8 @@ const Header = ({ handleFilter }) => {
     })
   }
 
-  const archivedCount = count_by_severity_level
-    .reduce((acc, item) => acc + item.count, 0) - total_count
+  const archivedCount = total_count - count_by_severity_level
+    .reduce((acc, item) => acc + item.count, 0)
   return (
     <div className={classNames(classes.container, classes.header)}>
       <div className={classes.title}>
@@ -74,7 +100,7 @@ const Header = ({ handleFilter }) => {
         {Object.values(SEVERITY).map(severity => (
           <NotificationCountChip key={severity} classes={classes} handleClick={() => onClickSeverity(severity)}
             notificationStyle={SEVERITY_STYLE[severity]}
-            count={getSeverityCount(severity)} />)
+            count={getSeverityCount(count_by_severity_level, severity)} />)
         )}
         <NotificationCountChip classes={classes}
           notificationStyle={STATUS_STYLE[STATUS.READ]}
@@ -225,9 +251,7 @@ const MesheryNotification = () => {
               setAnchorEl(null);
             }}
           >
-            <BellIcon className={iconMedium} fill="#fff" />
-            {/* <Badge id="notification-badge" badgeContent={getNotificationCount(events)} color={newNotificationsType}>
-              </Badge> */}
+            <NavbarNotificationIcon />
           </IconButton>
         </Tooltip>
       </div>

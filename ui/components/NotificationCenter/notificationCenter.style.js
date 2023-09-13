@@ -77,3 +77,11 @@ export const useStyles = makeStyles((theme) => ({
   },
 }));
 
+
+export const useNavNotificationIconStyles = makeStyles(() => ({
+  root: (props) => ({
+    '& .MuiBadge-badge': {
+      backgroundColor: props.badgeColor,
+    },
+  }),
+}))

@@ -512,7 +512,7 @@ export const styles = (theme) => ({
     color: `${notificationColors.info} !important`, pointerEvents: "auto !important"
   },
   notifWarn: {
-    backgroundColor: "rgba(240, 163, 3, 0.04) !important",
+    backgroundColor: "#fff !important",
     color: `${notificationColors.warning} !important`, pointerEvents: "auto !important"
   },
   notifError: {
