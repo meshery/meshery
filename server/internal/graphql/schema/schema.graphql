@@ -117,6 +117,7 @@ type Event {
   systemID: ID!,
   severity: Severity!,
   action: String!,
+  status: String!,
   category: String!,
   description: String!,
   metadata: Map,
@@ -315,8 +316,6 @@ type NameSpace {
 type K8sContext {
   id: String!,
   name: String!,
-  auth: Map!,
-  cluster: Map!,
   server: String!,
   owner: ID!,
   created_by: ID!,

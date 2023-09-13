@@ -45,7 +45,7 @@ import RemoteComponent from './RemoteComponent';
 import { CapabilitiesRegistry } from "../utils/disabledComponents";
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import dataFetch from '../lib/data-fetch';
-import { withNotify } from '../utils/hooks/useNotification';
+import { useNotification, withNotify } from '../utils/hooks/useNotification';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -269,7 +269,7 @@ function K8sContextMenu({
   const [showFullContextMenu, setShowFullContextMenu] = React.useState(false);
   const [transformProperty, setTransformProperty] = React.useState(100);
   const deleteCtxtRef = React.createRef();
-
+  const { notify } = useNotification()
   const styleSlider = {
     position : "absolute",
     left : "-5rem",
@@ -334,13 +334,13 @@ function K8sContextMenu({
     return STATUS.NOT_CONNECTED;
   }
 
-  const handleKubernetesClick = (id) => {
+  const handleKubernetesClick = (name, connectionID) => {
+
     updateProgress({ showProgress : true })
-    const notify = this.props.notify;
     pingKubernetes(
-      successHandlerGenerator (notify, "Kubernetes pinged", () => updateProgress({ showProgress : false })),
-      errorHandlerGenerator(notify, "Kubernetes not pinged", () => updateProgress({ showProgress : false })),
-      id
+      successHandlerGenerator(notify, `Kubernetes pinged: ${name}`, () => updateProgress({ showProgress : false }),),
+      errorHandlerGenerator(notify, `Not able to  ping kubernetes: ${name}`, () => updateProgress({ showProgress : false })),
+      connectionID
     )
   }
 
@@ -357,10 +357,9 @@ function K8sContextMenu({
           updateK8SConfig({ k8sConfig : updatedConfig })
         }
       }
-      const notify = this.props.notify;
       deleteKubernetesConfig(
-        successHandlerGenerator(notify, "Kubernetes config removed", successCallback),
-        errorHandlerGenerator(notify, "Not able to remove config"),
+        successHandlerGenerator(notify, `Kubernetes config removed for ${name}`, successCallback),
+        errorHandlerGenerator(notify, `Not able to remove config for ${name}`),
         connectionID
       )
     }
@@ -377,7 +376,7 @@ function K8sContextMenu({
   }, [])
   return (
     <>
-      <div style={ show ? cursorNotAllowed : {}}>
+      <div style={show ? cursorNotAllowed : {}}>
         <IconButton
           aria-label="contexts"
           className="k8s-icon-button"
@@ -399,7 +398,7 @@ function K8sContextMenu({
             ? 'menu-list-grow'
             : undefined}
           aria-haspopup="true"
-          style={show? ctxStyle  : { marginRight : "0.5rem" }}
+          style={show ? ctxStyle : { marginRight : "0.5rem" }}
         >
           <div className={classes.cbadgeContainer}>
             <img className="k8s-image" src="/static/img/kubernetes.svg" width="24px" height="24px" style={{ zIndex : "2" }} />
@@ -430,7 +429,7 @@ function K8sContextMenu({
                   InputProps={{
                     endAdornment :
                       (
-                        <Search className={classes.searchIcon}  style={iconMedium} />
+                        <Search className={classes.searchIcon} style={iconMedium} />
                       )
                   }}
                 />
@@ -461,7 +460,7 @@ function K8sContextMenu({
                       </Button>
                     </Link>
                 }
-                {contexts?.contexts?.map((ctx,idx) => {
+                {contexts?.contexts?.map((ctx, idx) => {
                   const meshStatus = getMeshSyncStatus(ctx.id);
                   const brokerStatus = getBrokerStatus(ctx.id);
                   const operStatus = getOperatorStatus(ctx.id);
@@ -485,7 +484,7 @@ function K8sContextMenu({
                         <Chip
                           label={ctx?.name}
                           onDelete={handleKubernetesDelete(ctx.name, ctx.connection_id)}
-                          onClick={() => handleKubernetesClick(ctx.connection_id)}
+                          onClick={() => handleKubernetesClick(ctx.name, ctx.connection_id)}
                           avatar={
                             meshStatus ?
                               <BadgeAvatars>

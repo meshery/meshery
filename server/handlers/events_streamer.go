@@ -31,13 +31,14 @@ var (
 // ```search={description}``` If search is non empty then a search is performed on event description
 // ```?category=[eventcategory] Returns event belonging to provided categories ```
 // ```?action=[eventaction] Returns events belonging to provided actions ```
+// ```?status={[read/unread]}``` Return events filtered on event status Default is unread````
 // ```?severity=[eventseverity] Returns events belonging to provided severities ```
 // ```?sort={field} order the records based on passed field, defaults to updated_at```
-// ```?order={[asc/desc]}``` Default behavior is asc
+// ```?order={[asc/desc]}``` Default behavior is desc
 // ```?page={page-number}``` Default page number is 1
-// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results:       ```pagesize=all```
+// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-// 	200:
+// 	200: EventsResponse
 
 func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	userID := uuid.FromStringOrNil(user.ID)
@@ -71,11 +72,32 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	}
 }
 
+// swagger:route GET /api/events/types EventsAPI idGetEventStreamer
+// Handle GET request for available event categories and actions.
+// responses:
+// 200: 
+func (h *Handler) GetEventTypes (w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	userID := uuid.FromStringOrNil(user.ID)
+
+	eventTypes, err := provider.GetEventTypes(userID)
+	if err != nil {
+		http.Error(w, fmt.Errorf("error retrieving event cagegories and actions").Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(eventTypes)
+	if err != nil {
+		h.log.Error(models.ErrMarshal(err, "event types response"))
+		http.Error(w, models.ErrMarshal(err, "event types response").Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 // swagger:route POST /api/events/status/{id} idGetEventStreamer
 // Handle POST request to update event status.
 // Updates event status for the event associated with the id.
 // responses:
-// 	200:
+// 	200: Event
 
 func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	eventID := uuid.FromStringOrNil(mux.Vars(req)["id"])
@@ -95,8 +117,8 @@ func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, pr
 	_ = json.Unmarshal(body, &reqBody)
 	status, ok := reqBody["status"].(string)
 	if !ok {
-		h.log.Error(ErrUnsupportedEventStatus(fmt.Errorf("status provided is not supported"), status))
-		http.Error(w, ErrUnsupportedEventStatus(fmt.Errorf("status provided is not supported"), status).Error(), http.StatusInternalServerError)
+		h.log.Error(ErrUpdateEvent(fmt.Errorf("unable to parse provided event status %s", status), eventID.String()))
+		http.Error(w, ErrUpdateEvent(fmt.Errorf("unable to parse provided event status %s", status), eventID.String()).Error(), http.StatusInternalServerError)
 		return
 	}
 	event, err := provider.UpdateEventStatus(eventID, status)
