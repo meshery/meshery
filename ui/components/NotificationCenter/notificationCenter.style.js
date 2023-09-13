@@ -3,7 +3,7 @@ import { makeStyles } from "@material-ui/core"
 export const useStyles = makeStyles((theme) => ({
   sidelist: {
     width: "45rem",
-    maxWidth: "90vw",
+    maxWidth: "95vw",
   },
   notificationButton: { height: "100%" },
   notificationDrawer: {
@@ -54,7 +54,8 @@ export const useStyles = makeStyles((theme) => ({
     display: "flex",
     padding: "0.2rem",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    cursor:"pointer"
   },
   severityChip: {
     borderRadius: "0.25rem",

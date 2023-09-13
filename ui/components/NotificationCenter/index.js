@@ -66,7 +66,7 @@ const NotificationCountChip = ({ classes, notificationStyle, count, handleClick 
   )
 }
 
-const Header = ({ handleFilter }) => {
+const Header = ({ handleFilter , handleClose }) => {
 
   const { data } = useGetEventsSummaryQuery();
   const { count_by_severity_level, total_count } = data || {
@@ -91,7 +91,7 @@ const Header = ({ handleFilter }) => {
   return (
     <div className={classNames(classes.container, classes.header)}>
       <div className={classes.title}>
-        <div className={classes.titleBellIcon}>
+        <div className={classes.titleBellIcon} onClick={handleClose} >
           <BellIcon height="30" width="30" fill="#fff" />
         </div>
         <Typography variant="h6"> Notifications</Typography>
@@ -279,7 +279,7 @@ const MesheryNotification = () => {
           <div>
             <div>
               <div className={classes.sidelist}>
-                <Header handleFilter={handleFilter} ></Header>
+                <Header handleFilter={handleFilter} handleClose={handleClose} ></Header>
                 <Divider light />
                 <div className={classes.container}>
                   <Filter handleFilter={handleFilter}  ></Filter>

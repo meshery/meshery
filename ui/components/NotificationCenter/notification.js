@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Box, Button, Collapse, Divider, Grid, IconButton, Popover, Typography, alpha, useTheme } from "@material-ui/core"
+import { Box, Button, Collapse, Divider, Grid, Hidden, IconButton, Popover, Typography, alpha, useTheme } from "@material-ui/core"
 import { makeStyles } from "@material-ui/core"
 import { SEVERITY_STYLE, STATUS } from "./constants"
 import { iconLarge, iconMedium } from "../../css/icons.styles"
 import { MoreVert } from "@material-ui/icons"
-import { Avatar } from "@mui/material"
+// import { Avatar } from "@mui/material"
 import FacebookIcon from "../../assets/icons/FacebookIcon"
 import LinkedInIcon from "../../assets/icons/LinkedInIcon"
 import TwitterIcon from "../../assets/icons/TwitterIcon"
@@ -47,6 +47,7 @@ const useStyles = makeStyles(() => ({
   },
   expanded: {
     paddingBlock: "0.75rem",
+    paddingInline: "0.2rem",
   },
   actorAvatar: {
     display: "flex",
@@ -252,12 +253,14 @@ export const Notification = ({ event }) => {
         <Grid item sm={1} className={classes.gridItem} >
           <severityStyles.icon {...iconLarge} fill={severityStyles.color} />
         </Grid>
-        <Grid item sm={7} className={classes.gridItem} >
+        <Grid item xs={9} md={7} className={classes.gridItem} >
           <Typography variant="body1" className={classes.message}> {event.description}   </Typography>
         </Grid>
-        <Grid item sm={3} className={classes.gridItem} >
-          <Typography variant="body1"> {formatTimestamp(event.created_at)} </Typography>
-        </Grid>
+        <Hidden smDown>
+          <Grid item sm={3} className={classes.gridItem} >
+            <Typography variant="body1"> {formatTimestamp(event.created_at)} </Typography>
+          </Grid>
+        </Hidden>
         <Grid item sm={1} >
           <Box>
             <BasicMenu event={event} />
@@ -267,7 +270,7 @@ export const Notification = ({ event }) => {
       <Collapse in={expanded}>
         <Grid container className={classes.expanded}>
           <Grid item sm={1} className={classes.actorAvatar} >
-            <Avatar > S </Avatar>
+
           </Grid>
           <Grid item sm={10}>
             <Grid container  >
