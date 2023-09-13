@@ -45,7 +45,6 @@ jobs:
           ADAPTER_URLS: "localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10009 localhost:10007"
         run: |
           make build-server
-        run: make server
       - name: Upload artifacts
         uses: actions/upload-artifact@v3.0.0
         with:
