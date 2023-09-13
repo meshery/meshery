@@ -77,7 +77,7 @@ func UpdateContextInConfig(context *Context, name string) error {
 	viper.Set("contexts."+name, context)
 	err := viper.WriteConfig()
 	if err != nil {
-		return err
+		return ErrUpdateConfig(err)
 	}
 
 	return nil

@@ -82,7 +82,7 @@ mesheryctl app offboard -f [filepath]
 			content, err := os.ReadFile(file)
 			if err != nil {
 				utils.Log.Error(utils.ErrFileRead(err))
-				return nil
+				return utils.ErrFileRead(err)
 			}
 
 			appFile = string(content)

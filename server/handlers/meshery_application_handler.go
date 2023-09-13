@@ -147,9 +147,9 @@ func (h *Handler) handleApplicationPOST(
 		return
 	}
 		
-	actedUpon := parsedBody.ApplicationData.ID
-	if actedUpon == nil {
-		actedUpon = &userID
+	actedUpon := &userID
+	if parsedBody.ApplicationData != nil && parsedBody.ApplicationData.ID != nil {
+		actedUpon = parsedBody.ApplicationData.ID
 	}
 	eventBuilder.ActedUpon(*actedUpon)
 	token, err := provider.GetProviderToken(r)
@@ -578,9 +578,9 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 		return
 	}
 
-	actedUpon := parsedBody.ApplicationData.ID
-	if actedUpon == nil {
-		actedUpon = &userID
+	actedUpon := &userID
+	if parsedBody.ApplicationData != nil && parsedBody.ApplicationData.ID != nil {
+		actedUpon = parsedBody.ApplicationData.ID
 	}
 	
 	eventBuilder.ActedUpon(*actedUpon)
