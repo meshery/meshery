@@ -96,7 +96,7 @@ server-without-k8s: dep-check
 	go run main.go error.go;
 
 build-server: dep-check
-	cd server; cd cmd; go mod tidy; cd ../.. \
+	cd server; cd cmd; go mod tidy; cd ..; cd .. \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
 	PORT=9081 \
