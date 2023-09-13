@@ -25,12 +25,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 1
-      - name: Setup Go
-        uses: actions/setup-go@master
-        with:
-          go-version: "1.21"
       - name: Cache Go modules
-        id: go-cache
         uses: actions/cache@v3
         with:
           path: |
@@ -39,6 +34,10 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
+      - name: Setup Go
+        uses: actions/setup-go@master
+        with:
+          go-version: "1.21"
       - name: Build Meshery Server
         env:
           PROVIDER_BASE_URLS: http://localhost:9876
@@ -127,18 +126,17 @@ jobs:
         uses: helm/kind-action@v1.8.0
         with:
           cluster_name: "kind-cluster"
-      - name: Setup Go
-        uses: actions/setup-go@master
-        with:
-          go-version: "1.21"
       - name: Cache Go modules
-        id: go-cache
         uses: actions/cache@v3
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
+      - name: Setup Go
+        uses: actions/setup-go@master
+        with:
+          go-version: "1.21"
       - name: Setup node
         uses: actions/setup-node@v3
         with:
