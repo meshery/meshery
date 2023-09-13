@@ -7,25 +7,23 @@ type : Guides
 category : mesheryctl
 ---
 
-Let's get familiar with mesheryctl system commands. The syntax of commands goes like this : `mesheryctl <Main_command> <Argument> <Flags>`
+Let's get familiar with mesheryctl system commands. The syntax of the mesheryctl commands goes as follws : `mesheryctl <Main_command> <Argument> <Flags>`
 
 ## Main_command : system
 ### start 
-`mesheryctl system start` : it will initiate the Meshery & automatically open it in your default web browser.
+`mesheryctl system start` : This will initiate Meshery & automatically open it in your default web browser.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/start.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/start.png" /></a>
 
-`mesheryctl system start --skip-browser` : It skips opening your browser with the provided URL.
+`mesheryctl system start --skip-browser` : It skips opening Meshery in your browser with the provided URL.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/skipbrowser.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/skipbrowser.png" /></a>
 
 `mesheryctl system start --skip-update` : It is used when you want to skip updating Meshery if an update is available.
 
-<a href="{{ site.baseurl }}/assets/img/syscmd/context view.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/context view.png" /></a>
+<a href="{{ site.baseurl }}/assets/img/syscmd/system update.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/system update.png" /></a>
 
-`mesheryctl system start --reset` : It reset your Meshery configuration file to its default configuration.
-
-<a href="{{ site.baseurl }}/assets/img/syscmd/skipbrowser.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/skipbrowser.png" /></a>
+`mesheryctl system start --reset` : It resets your Meshery configuration file to its default configuration.
 
 `mesheryctl system start --platform string` : It allows you specify a platform for deploying Meshery.
 
@@ -33,7 +31,7 @@ Let's get familiar with mesheryctl system commands. The syntax of commands goes 
 
 
 ### stop 
-`mesheryctl system stop` : it stops Meshery resources & delete the associated namespaces.
+`mesheryctl system stop` : It stops Meshery resources & delete its associated namespaces.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/stop.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/stop.png" /></a>
 
@@ -45,7 +43,7 @@ Let's get familiar with mesheryctl system commands. The syntax of commands goes 
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/keep namespace.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/keep namespace.png" /></a>
 
-`mesheryctl system stop --force` : Use this in emergency situations when `mesheryctl system stop` can't halt Meshery.
+`mesheryctl system stop --force` : Force stops Meshery instead of gentle way. This is only in emergency situations when `mesheryctl system stop` can't halt Meshery.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/force stop.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/force stop.png" /></a>
 
@@ -96,7 +94,7 @@ Let's get familiar with mesheryctl system commands. The syntax of commands goes 
 <a href="{{ site.baseurl }}/assets/img/syscmd/system login.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/system login.png" /></a>
 
 ### check
-`mesheryctl system check` : Performs checks for both pre & post  mesh deployment scenarios on Meshery.
+`mesheryctl system check` : Performs checks for both pre & post mesh deployment scenarios on Meshery.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/system check.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/system check.png" /></a>
 
@@ -131,31 +129,29 @@ Let's get familiar with mesheryctl system commands. The syntax of commands goes 
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/context create.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/context create.png" /></a>
 
-`mesheryctl system context create --component stringArray` : specifies the component.
+`mesheryctl system context create --component stringArray` : Specifies the component to be created in the context.
 
 `mesheryctl system context create --platform string` : Specifies the platform.
 
 `mesheryctl system context create --set` : Sets this  context as default context.
 
-`mesheryctl system context create --url string` : Specifies the URL
+`mesheryctl system context create --url string` : Specifies the target URL.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/context flag.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/context flag.png" /></a>
 
 
 ###  switch
-`mesheryctl system context switch` :  Switches between different contexts.
-
-<a href="{{ site.baseurl }}/assets/img/syscmd/context flag.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/context flag.png" /></a>
+`mesheryctl system context switch` : Easily switch between different contexts.
 
 ###  list
-`mesheryctl system context list` : lists all your contexts.
+`mesheryctl system context list` : Lists all your available Meshery contexts.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/context list.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/context list.png" /></a>
 
 ###  delete
 `mesheryctl system context delete` : Delete context.
 
-<a href="{{ site.baseurl }}/assets/img/syscmd/context delete.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/context flag.png" /></a>
+<a href="{{ site.baseurl }}/assets/img/syscmd/context delete.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/context delete.png" /></a>
 
 
 ###  view
