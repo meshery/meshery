@@ -24,9 +24,9 @@ const getSeverityCount = (count_by_severity_level, severity) => {
 const EmptyState = () => {
   const theme = useTheme().palette.secondary
   return (
-    <Box sx={{ display: 'flex', flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "1rem" , marginY:"5rem" }}>
+    <Box sx={{ display : 'flex', flexDirection : "column", alignItems : "center", justifyContent : "center", gap : "1rem" , marginY : "5rem" }}>
       <DoneIcon height="10rem" width="8rem" fill={theme.icon2} />
-      <Typography variant="h6" style={{ margin: "auto" }}> No notifications to show </Typography>
+      <Typography variant="h6" style={{ margin : "auto" }}> No notifications to show </Typography>
     </Box >)
 }
 
@@ -41,7 +41,7 @@ const NavbarNotificationIcon = () => {
   const currentSeverityStyle = currentTopSeverity ? SEVERITY_STYLE[currentTopSeverity] : null
   const topSeverityCount = getSeverityCount(count_by_severity_level, currentTopSeverity)
   const classes = useNavNotificationIconStyles({
-    badgeColor: currentSeverityStyle?.color
+    badgeColor : currentSeverityStyle?.color
   })
   if (currentTopSeverity) {
     return (
@@ -58,13 +58,13 @@ const NavbarNotificationIcon = () => {
 
 const NotificationCountChip = ({ classes, notificationStyle, count, handleClick }) => {
   const chipStyles = {
-    fill: notificationStyle.color,
-    height: "20px",
-    width: "20px",
+    fill : notificationStyle.color,
+    height : "20px",
+    width : "20px",
   }
-  count = Number(count).toLocaleString('en', { useGrouping: true })
+  count = Number(count).toLocaleString('en', { useGrouping : true })
   return (
-    <Button style={{ backgroundColor: alpha(chipStyles.fill, 0.20) }} onClick={handleClick}  >
+    <Button style={{ backgroundColor : alpha(chipStyles.fill, 0.20) }} onClick={handleClick}  >
       <div className={classes.severityChip} >
         {<notificationStyle.icon {...chipStyles} />}
         <span>
@@ -79,19 +79,19 @@ const Header = ({ handleFilter, handleClose }) => {
 
   const { data } = useGetEventsSummaryQuery();
   const { count_by_severity_level, total_count } = data || {
-    count_by_severity_level: [],
-    total_count: 0
+    count_by_severity_level : [],
+    total_count : 0
   }
   const classes = useStyles()
   const onClickSeverity = (severity) => {
     handleFilter({
-      severity: [severity]
+      severity : [severity]
     })
   }
 
   const onClickStatus = (status) => {
     handleFilter({
-      status: status
+      status : status
     })
   }
 
@@ -123,7 +123,7 @@ const Header = ({ handleFilter, handleClose }) => {
 
 const Loading = () => {
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display : 'flex' }}>
       <CircularProgress />
     </Box >)
 }
@@ -144,7 +144,7 @@ const EventsView = ({ handleLoadNextPage, isLoading, hasMore }) => {
 
       console.log("intersecting")
     }
-  }, { threshold: 1 }))
+  }, { threshold : 1 }))
 
   useEffect(() => {
     const currentObserver = intersectionObserver.current;
@@ -181,7 +181,7 @@ const CurrentFilterView = ({ handleFilter }) => {
   const onDelete = (key, value) => {
     const newFilters = {
       ...currentFilters,
-      [key]: typeof currentFilters[key] === "string" ? null : currentFilters[key].filter((item) => item !== value)
+      [key] : typeof currentFilters[key] === "string" ? null : currentFilters[key].filter((item) => item !== value)
     }
     handleFilter(newFilters)
   }
@@ -193,7 +193,7 @@ const CurrentFilterView = ({ handleFilter }) => {
 
     if (_.isArray(value) && value.length > 0) {
       return (
-        <div style={{ display: "flex", gap: "0.2rem" }}>
+        <div style={{ display : "flex", gap : "0.2rem" }}>
           {value.map((item) => <Chip key={item} label={item} onDelete={() => onDelete(type, item)} />)}
         </div>
       )
@@ -206,8 +206,8 @@ const CurrentFilterView = ({ handleFilter }) => {
     <div>
       {Object.entries(currentFilters).map(([key, value]) => {
         if (value && value?.length > 0) {
-          return <div key={key} style={{ display: "flex", gap: "0.3rem", alignItems: "center", paddingBlock: "0.25rem" }} >
-            <Typography variant="subtitle2" style={{ textTransform: "capitalize" }} > {key}:</Typography>
+          return <div key={key} style={{ display : "flex", gap : "0.3rem", alignItems : "center", paddingBlock : "0.25rem" }} >
+            <Typography variant="subtitle2" style={{ textTransform : "capitalize" }} > {key}:</Typography>
             <Chips value={value} type={key} />
           </div>
         }
@@ -227,7 +227,7 @@ const MesheryNotification = () => {
 
   useEffect(() => {
     dispatch(loadEvents(fetchEvents, 1, {
-      status: STATUS.UNREAD,
+      status : STATUS.UNREAD,
     }))
   }, [])
 
@@ -294,8 +294,8 @@ const MesheryNotification = () => {
           variant="persistent"
           open={open}
           classes={{
-            paper: classes.notificationDrawer,
-            paperAnchorRight: isNotificationCenterOpen ? classes.fullView : classes.peekView,
+            paper : classes.notificationDrawer,
+            paperAnchorRight : isNotificationCenterOpen ? classes.fullView : classes.peekView,
           }}
         >
           <div>

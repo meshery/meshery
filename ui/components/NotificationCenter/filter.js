@@ -19,112 +19,112 @@ import clsx from "clsx";
 import { SEVERITY, STATUS } from "./constants";
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    position: "relative",
-    backgroundColor: theme.palette.secondary.elevatedComponents,
+  root : {
+    position : "relative",
+    backgroundColor : theme.palette.secondary.elevatedComponents,
   },
-  input: {
-    width: "100%",
-    "& .MuiOutlinedInput-root": {
-      borderRadius: "6px",
-      backgroundColor: theme.palette.secondary.searchBackground,
-      "& fieldset": {
-        borderRadius: "6px",
-        border: `2px solid ${theme.palette.secondary.searchBorder}`,
+  input : {
+    width : "100%",
+    "& .MuiOutlinedInput-root" : {
+      borderRadius : "6px",
+      backgroundColor : theme.palette.secondary.searchBackground,
+      "& fieldset" : {
+        borderRadius : "6px",
+        border : `2px solid ${theme.palette.secondary.searchBorder}`,
       },
     },
   },
 
-  dropDown: {
-    backgroundColor: theme.palette.secondary.searchBackground,
-    borderRadius: "6px",
-    boxShadow:
+  dropDown : {
+    backgroundColor : theme.palette.secondary.searchBackground,
+    borderRadius : "6px",
+    boxShadow :
       "0px 2px 4px 0px rgba(0, 0, 0, 0.20), 0px 1px 10px 0px rgba(0, 0, 0, 0.12), 0px 4px 5px 0px rgba(0, 0, 0, 0.14)",
-    border: `2px solid ${theme.palette.secondary.searchBorder}`,
-    marginTop: "0.2rem",
+    border : `2px solid ${theme.palette.secondary.searchBorder}`,
+    marginTop : "0.2rem",
   },
 }));
 
 const useFilterStyles = makeStyles((theme) => ({
-  item: {
-    fontFamily: "Qanelas Soft, sans-serif",
-    display: "flex",
-    gap: "0.3rem",
-    margin: "0.3rem",
-    padding: "0.3rem",
-    paddingInline: "1rem",
-    borderRadius: "6px",
-    cursor: "pointer",
-    "&:hover": {
-      backgroundColor: alpha(theme.palette.secondary.link2, 0.25),
+  item : {
+    fontFamily : "Qanelas Soft, sans-serif",
+    display : "flex",
+    gap : "0.3rem",
+    margin : "0.3rem",
+    padding : "0.3rem",
+    paddingInline : "1rem",
+    borderRadius : "6px",
+    cursor : "pointer",
+    "&:hover" : {
+      backgroundColor : alpha(theme.palette.secondary.link2, 0.25),
     },
   },
 
-  label: {
-    fontWeight: 500,
-    color: theme.palette.secondary.icon,
+  label : {
+    fontWeight : 500,
+    color : theme.palette.secondary.icon,
   },
-  description: {
-    fontWeight: 400,
-    color: theme.palette.secondary.number,
+  description : {
+    fontWeight : 400,
+    color : theme.palette.secondary.number,
   },
 }));
 
 const FILTERS = {
-  SEVERITY: {
-    value: "severity",
-    label: "Severity",
-    description: "Filter by severity",
-    values: Object.values(SEVERITY),
+  SEVERITY : {
+    value : "severity",
+    label : "Severity",
+    description : "Filter by severity",
+    values : Object.values(SEVERITY),
   },
 
-  STATUS: {
-    value: "status",
-    label: "Status",
-    description: "Filter by status",
-    values: Object.values(STATUS),
-    type: "string"
+  STATUS : {
+    value : "status",
+    label : "Status",
+    description : "Filter by status",
+    values : Object.values(STATUS),
+    type : "string"
   },
 
-  TYPE: {
-    value: "type",
-    label: "Type",
-    description: "Filter by type",
+  TYPE : {
+    value : "type",
+    label : "Type",
+    description : "Filter by type",
   },
 
-  AUTHOR: {
-    value: "author",
-    label: "Author",
-    description: "Filter by any user or system",
+  AUTHOR : {
+    value : "author",
+    label : "Author",
+    description : "Filter by any user or system",
   },
 
-  CATEGORY: {
-    value: "category",
-    label: "Category",
-    description: "Filter by category",
-    values: ["pattern", "connection"],
+  CATEGORY : {
+    value : "category",
+    label : "Category",
+    description : "Filter by category",
+    values : ["pattern", "connection"],
   },
 };
 
 const FILTERING_STATE = {
-  IDLE: "idle",
-  SELECTING_FILTER: "selecting_filter",
-  SELECTING_VALUE: "selecting_value",
+  IDLE : "idle",
+  SELECTING_FILTER : "selecting_filter",
+  SELECTING_VALUE : "selecting_value",
 };
 
 const FILTER_EVENTS = {
-  START: "start",
-  SELECT: "select_filter",
-  SELECT_FILTER: "select_filter",
-  INPUT_CHANGE: "input_change",
-  SELECT_FILTER_VALUE: "select_filter_value",
-  CLEAR: "clear",
-  EXIT: "exit",
+  START : "start",
+  SELECT : "select_filter",
+  SELECT_FILTER : "select_filter",
+  INPUT_CHANGE : "input_change",
+  SELECT_FILTER_VALUE : "select_filter_value",
+  CLEAR : "clear",
+  EXIT : "exit",
 };
 
 const Delimiter = {
-  FILTER: " ",
-  FILTER_VALUE: ":",
+  FILTER : " ",
+  FILTER_VALUE : ":",
 };
 
 /**
@@ -171,21 +171,21 @@ const commonReducer = (stateMachine, action) => {
   switch (action.type) {
     case FILTER_EVENTS.CLEAR:
       return {
-        state: FILTERING_STATE.SELECTING_FILTER,
-        context: {
+        state : FILTERING_STATE.SELECTING_FILTER,
+        context : {
           ...context,
-          value: "",
-          prevValue: [""],
+          value : "",
+          prevValue : [""],
         },
       };
 
     case FILTER_EVENTS.EXIT:
       return {
-        state: FILTERING_STATE.IDLE,
-        context: {
+        state : FILTERING_STATE.IDLE,
+        context : {
           ...context,
-          value: "",
-          prevValue: [""],
+          value : "",
+          prevValue : [""],
         },
       };
 
@@ -204,11 +204,11 @@ const filterSelectionReducer = (stateMachine, action, nextState, nextValue) => {
     case FILTER_EVENTS.SELECT: {
       const newValue = nextValue(context.prevValue.at(-1), action.payload.value); // ":" is used to separate the filter and its value)
       return {
-        state: nextState,
-        context: {
+        state : nextState,
+        context : {
           ...context,
-          value: newValue + nextDelimiter,
-          prevValue: [...context.prevValue, newValue],
+          value : newValue + nextDelimiter,
+          prevValue : [...context.prevValue, newValue],
         },
       };
     }
@@ -226,11 +226,11 @@ const filterSelectionReducer = (stateMachine, action, nextState, nextValue) => {
 
       if (action.payload.value == context.prevValue.at(-1)) {
         return {
-          state: prevState,
-          context: {
+          state : prevState,
+          context : {
             ...context,
-            prevValue: context.prevValue.slice(0, -1),
-            value: action.payload.value,
+            prevValue : context.prevValue.slice(0, -1),
+            value : action.payload.value,
           },
         };
       }
@@ -238,20 +238,20 @@ const filterSelectionReducer = (stateMachine, action, nextState, nextValue) => {
       if (action.payload.value.endsWith(nextDelimiter)) {
         const newValue = action.payload.value;
         return {
-          state: nextState,
-          context: {
+          state : nextState,
+          context : {
             ...context,
-            value: action.payload.value,
-            prevValue: [...context.prevValue, newValue.slice(0, -1)],
+            value : action.payload.value,
+            prevValue : [...context.prevValue, newValue.slice(0, -1)],
           },
         };
       }
 
       return {
         state, // stay in the same state
-        context: {
+        context : {
           ...context,
-          value: action.payload.value,
+          value : action.payload.value,
         },
       };
     default:
@@ -269,7 +269,7 @@ const filterReducer = (stateMachine, action) => {
         case "START":
           return {
             ...stateMachine,
-            state: FILTERING_STATE.SELECTING_FILTER,
+            state : FILTERING_STATE.SELECTING_FILTER,
           };
         default:
           return stateMachine;
@@ -304,8 +304,8 @@ const getCurrentFilterAndValue = (filteringState) => {
   const currentFilter = currentFilterValue.split(Delimiter.FILTER_VALUE)?.[0] || "";
   const currentValue = currentFilterValue.split(Delimiter.FILTER_VALUE)?.[1] || "";
   return {
-    filter: currentFilter,
-    value: currentValue,
+    filter : currentFilter,
+    value : currentValue,
   };
 };
 
@@ -313,14 +313,14 @@ const Filters = ({ filterStateMachine, dispatchFilterMachine }) => {
   const classes = useFilterStyles();
   const selectFilter = (filter) => {
     dispatchFilterMachine({
-      type: FILTER_EVENTS.SELECT,
-      payload: {
-        value: filter,
+      type : FILTER_EVENTS.SELECT,
+      payload : {
+        value : filter,
       },
     });
   };
 
-  const { filter: currentFilter } = getCurrentFilterAndValue(filterStateMachine);
+  const { filter : currentFilter } = getCurrentFilterAndValue(filterStateMachine);
   const matchingFilters = currentFilter
     ? Object.values(FILTERS).filter((filter) => filter.value.startsWith(currentFilter))
     : Object.values(FILTERS);
@@ -357,8 +357,8 @@ const FilterValueSuggestions = ({ filterStateMachine, dispatchFilterMachine }) =
 
   const selectValue = (value) => {
     dispatchFilterMachine({
-      type: FILTER_EVENTS.SELECT,
-      payload: {
+      type : FILTER_EVENTS.SELECT,
+      payload : {
         value,
       },
     });
@@ -400,11 +400,11 @@ const Filter = ({ handleFilter }) => {
   const isPopperOpen = Boolean(anchorEl);
   const inputFieldRef = useRef(null);
   const [filteringState, dispatch] = useReducer(filterReducer, {
-    context: {
-      value: "",
-      prevValue: [""],
+    context : {
+      value : "",
+      prevValue : [""],
     },
-    state: FILTERING_STATE.IDLE,
+    state : FILTERING_STATE.IDLE,
   });
 
   const handleFilterChange = (e) => {
@@ -415,21 +415,21 @@ const Filter = ({ handleFilter }) => {
 
     if (e.target.value === "") {
       return dispatch({
-        type: FILTER_EVENTS.CLEAR,
+        type : FILTER_EVENTS.CLEAR,
       });
     }
 
     return dispatch({
-      type: FILTER_EVENTS.INPUT_CHANGE,
-      payload: {
-        value: e.target.value,
+      type : FILTER_EVENTS.INPUT_CHANGE,
+      payload : {
+        value : e.target.value,
       },
     });
   };
 
   const handleClear = () => {
     dispatch({
-      type: FILTER_EVENTS.EXIT,
+      type : FILTER_EVENTS.EXIT,
     });
 
     handleFilter({})
@@ -437,7 +437,7 @@ const Filter = ({ handleFilter }) => {
 
   const handleFocus = (e) => {
     setAnchorEl(e.currentTarget);
-    dispatch({ type: "START" });
+    dispatch({ type : "START" });
   };
 
   const handleClickAway = (e) => {
@@ -483,13 +483,13 @@ const Filter = ({ handleFilter }) => {
         onChange={handleFilterChange}
         onFocus={handleFocus}
         InputProps={{
-          startAdornment: (
+          startAdornment : (
             <InputAdornment position="start">
               {" "}
               <ContentFilterIcon fill={theme.palette.secondary.iconMain} />{" "}
             </InputAdornment>
           ),
-          endAdornment: (
+          endAdornment : (
             <InputAdornment position="end">
               <IconButton onClick={handleClear}>
                 {filteringState.state !== FILTERING_STATE.IDLE && (
@@ -505,7 +505,7 @@ const Filter = ({ handleFilter }) => {
         open={filteringState.state != FILTERING_STATE.IDLE && isPopperOpen}
         anchorEl={inputFieldRef.current}
         placement="bottom-start"
-        style={{ zIndex: 2000 }}
+        style={{ zIndex : 2000 }}
         transition
         className="mui-fixed"
       >
@@ -516,7 +516,7 @@ const Filter = ({ handleFilter }) => {
                 <div
                   className={classes.dropDown}
                   style={{
-                    width: inputFieldRef.current ? inputFieldRef.current.clientWidth : 0,
+                    width : inputFieldRef.current ? inputFieldRef.current.clientWidth : 0,
                   }}
                 >
                   {filteringState.state == FILTERING_STATE.SELECTING_FILTER && (

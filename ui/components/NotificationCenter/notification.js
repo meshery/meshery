@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, Button, Collapse, Divider, Grid, Hidden, IconButton, Popover, Typography, alpha, useTheme } from "@material-ui/core"
+import { Avatar, Box, Button, Collapse, Divider, Grid, Hidden, IconButton, Popover, Tooltip, Typography, alpha, useTheme } from "@material-ui/core"
 import { makeStyles } from "@material-ui/core"
 import { SEVERITY_STYLE, STATUS } from "./constants"
 import { iconLarge, iconMedium } from "../../css/icons.styles"
@@ -14,50 +14,51 @@ import moment from 'moment';
 import { useUpdateStatusMutation, useDeleteEventMutation } from "../../rtk-query/notificationCenter"
 import { useDispatch } from 'react-redux';
 import { changeEventStatus, deleteEvent } from '../../store/slices/events';
+import { useGetUserByIdQuery } from '../../rtk-query/user';
 
 const useStyles = makeStyles(() => ({
-  root: (props) => ({
-    width: "100%",
-    borderRadius: "0.25rem",
-    border: `0.1rem solid ${props.notificationColor}`,
-    borderLeftWidth: props.status === STATUS.READ ? "0.25rem" : "0.1rem",
-    marginBlock: "0.5rem",
+  root : (props) => ({
+    width : "100%",
+    borderRadius : "0.25rem",
+    border : `0.1rem solid ${props.notificationColor}`,
+    borderLeftWidth : props.status === STATUS.READ ? "0.25rem" : "0.1rem",
+    marginBlock : "0.5rem",
   }),
 
-  summary: (props) => ({
-    paddingBlock: "0,5rem",
-    cursor: "pointer",
-    backgroundColor: alpha(props.notificationColor, 0.20),
+  summary : (props) => ({
+    paddingBlock : "0,5rem",
+    cursor : "pointer",
+    backgroundColor : alpha(props.notificationColor, 0.20),
   }),
 
-  gridItem: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+  gridItem : {
+    display : "flex",
+    alignItems : "center",
+    justifyContent : "center",
   },
 
-  message: {
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-    overflowWrap: "break-word",
+  message : {
+    overflow : "hidden",
+    textOverflow : "ellipsis",
+    whiteSpace : "nowrap",
+    overflowWrap : "break-word",
     // max of min of 20rem or 50vw
-    maxWidth: "min(25rem, 50vw)",
-    width: "100%",
+    maxWidth : "min(25rem, 50vw)",
+    width : "100%",
   },
-  expanded: {
-    paddingBlock: "0.75rem",
-    paddingInline: "0.2rem",
+  expanded : {
+    paddingBlock : "0.75rem",
+    paddingInline : "0.2rem",
   },
-  actorAvatar: {
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "start",
+  actorAvatar : {
+    display : "flex",
+    justifyContent : "center",
+    alignItems : "start",
   },
 
-  descriptionHeading: {
-    fontWeight: "bolder !important",
-    textTransform: "uppercase",
+  descriptionHeading : {
+    fontWeight : "bolder !important",
+    textTransform : "uppercase",
   },
 
 
@@ -65,38 +66,38 @@ const useStyles = makeStyles(() => ({
 
 const useMenuStyles = makeStyles((theme) => {
   return {
-    paper: {
-      color: theme.palette.secondary.iconMain,
-      boxShadow: theme.shadows[4],
-      borderRadius: "0.25",
-      paddingInline: "0.5rem",
-      paddingBlock: "0.25rem",
-      width: "12.5rem",
+    paper : {
+      color : theme.palette.secondary.iconMain,
+      boxShadow : theme.shadows[4],
+      borderRadius : "0.25",
+      paddingInline : "0.5rem",
+      paddingBlock : "0.25rem",
+      width : "12.5rem",
     },
 
-    list: {
-      padding: "0.5rem",
-      display: "flex",
-      flexDirection: "column",
-      gridGap: "0.5rem",
-      marginBlock: "0.5rem",
-      borderRadius: "0.25rem",
-      backgroundColor: theme.palette.secondary.honeyComb,
+    list : {
+      padding : "0.5rem",
+      display : "flex",
+      flexDirection : "column",
+      gridGap : "0.5rem",
+      marginBlock : "0.5rem",
+      borderRadius : "0.25rem",
+      backgroundColor : theme.palette.secondary.honeyComb,
     },
 
-    listItem: {
-      display: "flex",
-      gridGap: "0.5rem",
-      alignItems: "center",
+    listItem : {
+      display : "flex",
+      gridGap : "0.5rem",
+      alignItems : "center",
       // justifyContent: "center",
     },
 
-    button: {
-      padding: "0rem",
-      display: "flex",
-      gridGap: "0.5rem",
-      alignItems: "center",
-      justifyContent: "start",
+    button : {
+      padding : "0rem",
+      display : "flex",
+      gridGap : "0.5rem",
+      alignItems : "center",
+      justifyContent : "start",
     },
 
   }
@@ -146,8 +147,8 @@ function BasicMenu({ event }) {
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
+          vertical : 'bottom',
+          horizontal : 'left',
         }}
       >
         <Box className={classes.paper}>
@@ -158,7 +159,7 @@ function BasicMenu({ event }) {
             </Box>
             <Divider />
             <Box className={classes.listItem} >
-              <IconButton style={{ paddingLeft: "0rem" }}>
+              <IconButton style={{ paddingLeft : "0rem" }}>
                 <FacebookIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />  </IconButton>
               <IconButton>
                 <LinkedInIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
@@ -223,7 +224,7 @@ export const ChangeStatus = ({ event }) => {
 }
 
 const BulletList = ({ items }) => {
-  return <ol style={{ paddingInline: "0.75rem", paddingBlock: "0.3rem", margin: "0rem" }}>
+  return <ol style={{ paddingInline : "0.75rem", paddingBlock : "0.3rem", margin : "0rem" }}>
     {[items].map((i) => <li key={i} >
       <Typography variant="body1" > {i} </Typography>
     </li>)}
@@ -233,14 +234,19 @@ const BulletList = ({ items }) => {
 export const Notification = ({ event }) => {
   const severityStyles = SEVERITY_STYLE[event.severity]
   const classes = useStyles({
-    notificationColor: severityStyles.color,
-    status: event.status
+    notificationColor : severityStyles.color,
+    status : event.status
   })
   const [expanded, setExpanded] = React.useState(false)
   const handleExpandClick = (e) => {
     e.stopPropagation()
     setExpanded(!expanded);
   };
+
+  const { data : user } = useGetUserByIdQuery(event.user_id)
+
+  const userName = `${user?.first_name || ""} ${user?.last_name || ""}`
+  const userAvatarUrl = user?.avatar_url || ""
 
   const longDescription = event?.metadata?.error?.LongDescription || []
   const probableCause = event?.metadata?.error?.ProbableCause || []
@@ -270,17 +276,19 @@ export const Notification = ({ event }) => {
       <Collapse in={expanded}>
         <Grid container className={classes.expanded}>
           <Grid item sm={1} className={classes.actorAvatar} >
-
+            <Tooltip title={userName} placement="top" >
+              <Avatar alt={userName} src={userAvatarUrl} />
+            </Tooltip>
           </Grid>
           <Grid item sm={10}>
             <Grid container  >
               <div>
                 <NestedData classes={classes} heading="Description" data={event.description} />
-                <div style={{ marginTop: "0.3rem" }}>
+                <div style={{ marginTop : "0.3rem" }}>
                   <NestedData classes={classes} heading="Details" data={longDescription} />
                 </div>
               </div>
-              <Grid container spacing={1} style={{ marginTop: "0.5rem" }}>
+              <Grid container spacing={1} style={{ marginTop : "0.5rem" }}>
                 <Grid item sm={suggestedRemediation?.length > 0 ? 6 : 12}>
                   <NestedData classes={classes} heading="Probable Cause" data={probableCause} />
                 </Grid>

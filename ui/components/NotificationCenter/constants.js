@@ -5,9 +5,9 @@ import ErrorIcon from "../../assets/icons/ErrorIcon.js"
 import { Colors } from "../../themes/app";
 
 export const SEVERITY = {
-  INFO: "informational",
-  ERROR: "error",
-  WARNING: "warning",
+  INFO : "informational",
+  ERROR : "error",
+  WARNING : "warning",
   // SUCCESS: "success"
 }
 
@@ -17,24 +17,24 @@ export const STATUS = {
 }
 
 export const STATUS_STYLE = {
-  [STATUS.READ]: {
-    icon: ArchiveIcon,
-    color: Colors.charcoal
+  [STATUS.READ] : {
+    icon : ArchiveIcon,
+    color : Colors.charcoal
   }
 }
 
 export const SEVERITY_STYLE = {
-  [SEVERITY.INFO]: {
-    icon: ErrorIcon,
-    color: NOTIFICATIONCOLORS.INFO
+  [SEVERITY.INFO] : {
+    icon : ErrorIcon,
+    color : NOTIFICATIONCOLORS.INFO
   },
-  [SEVERITY.ERROR]: {
-    icon: ErrorIcon,
-    color: NOTIFICATIONCOLORS.ERROR
+  [SEVERITY.ERROR] : {
+    icon : ErrorIcon,
+    color : NOTIFICATIONCOLORS.ERROR
   },
-  [SEVERITY.WARNING]: {
-    icon: AlertIcon,
-    color: NOTIFICATIONCOLORS.WARNING
+  [SEVERITY.WARNING] : {
+    icon : AlertIcon,
+    color : NOTIFICATIONCOLORS.WARNING
   },
 
 }
