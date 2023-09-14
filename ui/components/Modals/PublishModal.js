@@ -33,7 +33,7 @@ export default function PublishModal(props) {
         }
       }
     );
-  });
+  },[]);
 
   return (
     <Modal
