@@ -146,7 +146,7 @@ func cleanupDuplicatesAndPreferEmptyComponentField(out []map[string]string, grou
 }
 
 func docsUpdater(output []map[string]string) {
-	if len(os.Args) < 8 {
+	if len(os.Args) < 6 {
 		log.Fatal("docsUpdater: invalid number of arguments; missing website and docs path")
 		return
 	}
