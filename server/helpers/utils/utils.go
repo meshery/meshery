@@ -307,3 +307,17 @@ func SanitizeFileName(fileName string) string {
 	finalPath = append(finalPath, "-*.", suffixPath)
 	return strings.Join(finalPath, "")
 }
+
+func GetComponentFieldPathFromK8sFieldPath(path string) (newpath string) {
+	if strings.HasPrefix(path, "metadata.") {
+		path = strings.TrimPrefix(path, "metadata.")
+		paths := strings.Split(path, ".")
+		if len(paths) != 0 {
+			if paths[0] == "name" || paths[0] == "namespace" || paths[0] == "labels" || paths[0] == "annotations" {
+				return paths[0]
+			}
+		}
+		return
+	}
+	return fmt.Sprintf("%s.%s", "settings", path)
+}

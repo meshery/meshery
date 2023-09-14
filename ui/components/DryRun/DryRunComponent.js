@@ -193,7 +193,7 @@ const ExpandableComponentErrors = withStyles(styles)(({
 
 export const dryRunAndFormatErrors = (design,selectedContexts) => {
   function getErrors(error) {
-    if (error?.Causes) {
+    if (error?.Causes && error?.Causes.length > 0) {
       return error.Causes;
     }
     // if causes aren't present use the status
