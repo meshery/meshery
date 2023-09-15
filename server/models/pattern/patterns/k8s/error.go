@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	ErrDryRunCode = "replace_me"
+	ErrDryRunCode = "1536"
 )
 
 func isErrKubeStatusErr(err error) bool {
