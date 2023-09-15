@@ -484,7 +484,7 @@ function MesheryApplications({
         {
           credentials : "include",
           method : "PUT",
-          body : JSON.stringify({ application_data : { id, name : metadata.name || name, application_file : data }, save : true }),
+          body : JSON.stringify({ application_data : { id, name : metadata?.name || name, application_file : data }, save : true }),
         },
         () => {
           updateProgress({ showProgress : false });
