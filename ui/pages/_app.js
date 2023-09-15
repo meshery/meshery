@@ -85,6 +85,7 @@ const EventsSubsciptionProvider = () => {
     rtkStore.dispatch(pushEvent({
       ...result.event,
       user_id : result.event.userID,
+      system_id : result.event.systemID,
       updated_at : result.event.updatedAt,
       created_at : result.event.createdAt,
       deleted_at : result.event.deletedAt,

@@ -15,6 +15,8 @@ import { useUpdateStatusMutation, useDeleteEventMutation } from "../../rtk-query
 import { useDispatch } from 'react-redux';
 import { changeEventStatus, deleteEvent } from '../../store/slices/events';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
+import { FacebookShareButton, LinkedinShareButton, TwitterShareButton } from 'react-share';
+import DoneIcon from '../../assets/icons/DoneIcon';
 
 const useStyles = makeStyles(() => ({
   root : (props) => ({
@@ -26,7 +28,7 @@ const useStyles = makeStyles(() => ({
   }),
 
   summary : (props) => ({
-    paddingBlock : "0,5rem",
+    paddingBlock : "0.5rem",
     cursor : "pointer",
     backgroundColor : alpha(props.notificationColor, 0.20),
   }),
@@ -95,7 +97,6 @@ const useMenuStyles = makeStyles((theme) => {
     button : {
       padding : "0rem",
       display : "flex",
-      gridGap : "0.5rem",
       alignItems : "center",
       justifyContent : "start",
     },
@@ -107,7 +108,8 @@ const useMenuStyles = makeStyles((theme) => {
 const formatTimestamp = (utcTimestamp) => {
   const currentUtcTimestamp = moment.utc().valueOf()
 
-  const timediff = currentUtcTimestamp - utcTimestamp
+
+  const timediff = currentUtcTimestamp - moment(utcTimestamp).valueOf()
   if (timediff >= 24 * 60 * 60 * 1000) {
     return moment(utcTimestamp).local().format('MMM DD, YYYY')
   }
@@ -159,22 +161,23 @@ function BasicMenu({ event }) {
             </Box>
             <Divider />
             <Box className={classes.listItem} >
-              <IconButton style={{ paddingLeft : "0rem" }}>
-                <FacebookIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />  </IconButton>
-              <IconButton>
+              <FacebookShareButton url={"https://meshery.io"} quote={event.description} >
+                <FacebookIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
+              </FacebookShareButton>
+              <LinkedinShareButton url={"https://meshery.io"} summary={event.description} >
                 <LinkedInIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
-              </IconButton>
-              <IconButton>
+              </LinkedinShareButton>
+              <TwitterShareButton url={"https://meshery.io"} title={event.description} >
                 <TwitterIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
-              </IconButton>
+              </TwitterShareButton>
             </Box>
           </div>
 
           <DeleteEvent event={event} />
           <ChangeStatus event={event} />
-        </Box>
-      </Popover>
-    </div>
+        </Box >
+      </Popover >
+    </div >
   );
 }
 
@@ -192,7 +195,7 @@ export const DeleteEvent = ({ event }) => {
     <div className={classes.list}>
       <Button className={classes.button} onClick={handleDelete}>
         <DeleteIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
-        <Typography variant="body1" > Delete </Typography>
+        <Typography variant="body1" style={{ marginLeft : '0.5rem' }} > Delete </Typography>
       </Button>
     </div>
   )
@@ -206,7 +209,7 @@ export const ChangeStatus = ({ event }) => {
   const classes = useMenuStyles()
   const newStatus = event.status === STATUS.READ ? STATUS.UNREAD : STATUS.READ
   const [updateStatusMutation] = useUpdateStatusMutation()
-
+  const theme = useTheme()
   const dispatch = useDispatch()
 
   const updateStatus = (e) => {
@@ -216,7 +219,8 @@ export const ChangeStatus = ({ event }) => {
   return (
     <div className={classes.list}>
       <Button className={classes.button} onClick={updateStatus}>
-        <Typography variant="body1" > Mark as {newStatus}  </Typography>
+        <DoneIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
+        <Typography variant="body1" style={{ marginLeft : '0.5rem' }}> Mark as {newStatus}  </Typography>
       </Button>
     </div>
   )
@@ -276,9 +280,20 @@ export const Notification = ({ event }) => {
       <Collapse in={expanded}>
         <Grid container className={classes.expanded}>
           <Grid item sm={1} className={classes.actorAvatar} >
-            <Tooltip title={userName} placement="top" >
-              <Avatar alt={userName} src={userAvatarUrl} />
-            </Tooltip>
+            <Box sx={{ display : "flex", gridGap : "0.5rem", flexDirection : { xs : "row", md : "column" } }} >
+
+              {event.user_id &&
+                <Tooltip title={userName} placement="top" >
+                  <Avatar alt={userName} src={userAvatarUrl} />
+                </Tooltip>
+              }
+              {event.system_id &&
+                <Tooltip title={`System ID: ${event.system_id}`} placement="top" >
+                  <Avatar src="/static/img/meshery-logo.png" />
+                </Tooltip>
+              }
+
+            </Box>
           </Grid>
           <Grid item sm={10}>
             <Grid container  >
