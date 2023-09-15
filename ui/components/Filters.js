@@ -1190,9 +1190,9 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
           componentCount={modalOpen.count}
           tab={modalOpen.deploy ? 2 : 1}
         />
-        {canPublishFilter &&
+        {(canPublishFilter && publishModal.open) &&
           <Modal
-            open={publishModal.open}
+            open={true}
             schema={publishSchema.rjsfSchema}
             uiSchema={publishSchema.uiSchema}
             title={publishModal.filter?.name}
@@ -1204,17 +1204,19 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
           />
         }
         <PromptComponent ref={modalRef} />
-        <Modal
-          open={importModal.open}
-          schema={importSchema.rjsfSchema}
-          uiSchema={importSchema.uiSchema}
-          handleClose={handleUploadImportClose}
-          handleSubmit={handleImportFilter}
-          title="Import Filter"
-          submitBtnText="Import"
-          leftHeaderIcon={<Filter fill="#fff" style={{ height : "24px", width : "24px", fonSize : "1.45rem" }} />}
-          submitBtnIcon={<PublishIcon/>}
-        />
+        {importModal.open &&
+          <Modal
+            open={true}
+            schema={importSchema.rjsfSchema}
+            uiSchema={importSchema.uiSchema}
+            handleClose={handleUploadImportClose}
+            handleSubmit={handleImportFilter}
+            title="Import Filter"
+            submitBtnText="Import"
+            leftHeaderIcon={<Filter fill="#fff" style={{ height : "24px", width : "24px", fonSize : "1.45rem" }} />}
+            submitBtnIcon={<PublishIcon/>}
+          />
+        }
         {/* REMOVE this with its deps <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchFilters(page, pageSize, search, sortOrder) } configuration="Filter" /> */}
       </NoSsr>
     </>
