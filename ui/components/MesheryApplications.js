@@ -690,8 +690,6 @@ function MesheryApplications({
     }
   ];
 
-  console.log("applications", applications)
-
   columns.forEach((column, idx) => {
     if (column.name === sortOrder.split(" ")[0]) {
       columns[idx].options.sortDirection = sortOrder.split(" ")[1];
