@@ -503,11 +503,11 @@ function MesheryApplications({
       let body = { save : true }
       if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({
-          ...body, application_data : { name : metadata.name || name || getRandomName(), application_file : data }
+          ...body, application_data : { name : metadata?.name || name || getRandomName(), application_file : data }
         })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
-        body = JSON.stringify({ ...body, url : data, name : metadata.name || name })
+        body = JSON.stringify({ ...body, url : data, name : metadata?.name || name })
       }
       dataFetch(
         `/api/application/${source_type}`,
