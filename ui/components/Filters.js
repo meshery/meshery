@@ -313,7 +313,8 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
       async (result) => {
         try {
           const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName));
+          const modelNames = _.uniq(models?.map((model) => model.displayName.toUpperCase()));
+          modelNames.sort()
 
           // Modify the schema using the utility function
           const modifiedSchema = modifyRJSFSchema(
