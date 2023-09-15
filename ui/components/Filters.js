@@ -1114,7 +1114,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
           <div className={classes.searchWrapper} style={{ display : "flex" }}>
 
             <SearchBar
-              onChange={(value) => {
+              onSearch={(value) => {
                 setSearch(value);
                 initFiltersSubscription(page.toString(), pageSize.toString(), value, sortOrder);
               }

@@ -26,6 +26,24 @@ type CountBySeverityLevel struct {
 	Count    int    `json:"count"`
 }
 
+func (e *EventsPersister) GetEventTypes(userID uuid.UUID) (map[string]interface{}, error) {
+	eventTypes := make(map[string]interface{}, 2)
+	var  categories, actions []string
+	err := e.DB.Table("events").Distinct("category").Where("user_id = ?", userID).Find(&categories).Error
+	if err != nil {
+		return nil, err
+	}
+
+	eventTypes["category"] = categories
+	err = e.DB.Table("events").Distinct("action").Where("user_id = ?", userID).Find(&actions).Error
+	if err != nil {
+		return nil, err
+	}
+
+	eventTypes["action"] = actions
+	return eventTypes, err
+}
+
 func (e *EventsPersister) GetAllEvents(eventsFilter *events.EventsFilter, userID uuid.UUID) (*EventsResponse, error) {
 	eventsDB := []*events.Event{}
 	finder := e.DB.Model(&events.Event{}).Where("user_id = ?", userID)
@@ -50,10 +68,10 @@ func (e *EventsPersister) GetAllEvents(eventsFilter *events.EventsFilter, userID
 		finder = finder.Where("status = ?", eventsFilter.Status)
 	}
 
-	if eventsFilter.Order == "desc" {
-		finder = finder.Order(clause.OrderByColumn{Column: clause.Column{Name: eventsFilter.SortOn}, Desc: true})
-	} else {
+	if eventsFilter.Order == "asc" {
 		finder = finder.Order(eventsFilter.SortOn)
+	} else {
+		finder = finder.Order(clause.OrderByColumn{Column: clause.Column{Name: eventsFilter.SortOn}, Desc: true})
 	}
 
 	var count int64
@@ -87,7 +105,7 @@ func (e *EventsPersister) GetAllEvents(eventsFilter *events.EventsFilter, userID
 }
 
 func (e *EventsPersister) UpdateEventStatus(eventID uuid.UUID, status string) (*events.Event, error) {
-	err := e.DB.Model(&events.Event{ID: eventID}).Update("status", status).Error
+	err := e.DB.Model(&events.Event{ID: eventID, Status: events.EventStatus(status)}).Update("status", status).Error
 	if err != nil {
 		return nil, err
 	}
