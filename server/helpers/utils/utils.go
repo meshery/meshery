@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -320,4 +321,21 @@ func GetComponentFieldPathFromK8sFieldPath(path string) (newpath string) {
 		return
 	}
 	return fmt.Sprintf("%s.%s", "settings", path)
+}
+
+// Prunes the diff part present in the k8s response message.
+// Diff corresponds to the previous change and applied change, and doesn't contain any info which can be helpful to the user.
+// If we want we can show this in a CodeEditor component.
+func FormatK8sMessage(message string) string {
+	exp, err := regexp.Compile(`(/?[a-zA-Z]).*\n([-,+])+`)
+	if err != nil {
+		return message
+	}
+	index := exp.FindStringIndex(message)
+	if index == nil {
+		return message
+	}
+	// If index is not nil, there will always be an array of length 2.
+	// 0th index since we want the start index of matched string.
+	return message[:index[0]]
 }

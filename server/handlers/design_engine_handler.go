@@ -90,7 +90,7 @@ func (h *Handler) PatternFileHandler(
 		provider,
 		patternFile,
 		prefObj,
-		user.UserID,
+		user.ID,
 		isDel,
 		r.URL.Query().Get("verify") == "true",
 		r.URL.Query().Get("dryRun") == "true",

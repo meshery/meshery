@@ -33,9 +33,8 @@ func formatKubeStatusErrToMeshkitErr(status *[]byte, componentName string) error
 	if err != nil {
 		return err
 	}
-	var st string
 
-	st = string(kubeStatus.Status)
+	st := string(kubeStatus.Status)
 
 	if kubeStatus.Details != nil {
 
@@ -43,11 +42,11 @@ func formatKubeStatusErrToMeshkitErr(status *[]byte, componentName string) error
 
 		sd = fmt.Sprintf("%s %s", sd, st)
 
-		sd = fmt.Sprintf("%s %s", sd, kubeStatus.Details.Name)
+		sd = fmt.Sprintf("%s \"%s\"", sd, kubeStatus.Details.Name)
 
 		for _, cause := range kubeStatus.Details.Causes {
 			var shortDes, longDes, field string
-			longDes = cause.Message
+			longDes = utils.FormatK8sMessage(cause.Message)
 			longDescription = append(longDescription, longDes)
 			sd = fmt.Sprintf("%s %s", sd, cause.Type)
 			field = componentName + "." + utils.GetComponentFieldPathFromK8sFieldPath(cause.Field)
