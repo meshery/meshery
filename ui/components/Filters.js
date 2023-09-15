@@ -1212,7 +1212,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
           handleSubmit={handleImportFilter}
           title="Import Filter"
           submitBtnText="Import"
-          leftHeaderIcon={<Filter fill="#fff" style={{ height : "24px", width : "24px", fonSize : "1.45rem" }} />}
+          leftHeaderIcon={<Filter fill="#fff" style={{ ...iconMedium }} />}
           submitBtnIcon={<PublishIcon/>}
         />
         {/* REMOVE this with its deps <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchFilters(page, pageSize, search, sortOrder) } configuration="Filter" /> */}
