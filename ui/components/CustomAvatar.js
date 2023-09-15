@@ -6,7 +6,7 @@ const StyledBadge = withStyles((theme) => ({
   badge : {
     backgroundColor : ({ color }) => color || '#44b700',
     color : ({ color }) => color || '#44b700',
-    boxShadow : `0 0 0 2px ${theme.palette.background.paper}`,
+    boxShadow : `0 0 0 0px ${theme.palette.background.paper}`,
     '&::after' : {
       position : 'absolute',
       top : 0,
