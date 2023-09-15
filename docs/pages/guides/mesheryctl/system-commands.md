@@ -43,7 +43,7 @@ Let's get familiar with mesheryctl system commands. The syntax of the mesheryctl
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/keep namespace.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/keep namespace.png" /></a>
 
-`mesheryctl system stop --force` : Force stops Meshery instead of gentle way. This is only in emergency situations when `mesheryctl system stop` can't halt Meshery.
+`mesheryctl system stop --force` : Force stops Meshery instead of gentle way. This is only used in emergency situations when `mesheryctl system stop` can't halt Meshery.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/force stop.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/force stop.png" /></a>
 
