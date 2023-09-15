@@ -1445,7 +1445,6 @@ function MesheryPatterns({
             submitBtnIcon={<PublishIcon  className={classes.addIcon} data-cy="import-button"/>}
           />
         }
-        {/* <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchPatterns(page, pageSize, search, sortOrder)} configuration="Design" /> */}
         <PromptComponent ref={modalRef} />
       </NoSsr>
     </>

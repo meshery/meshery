@@ -1161,9 +1161,9 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
               canPublishFilter={canPublishFilter}
               handlePublish={handlePublish}
               handleUnpublishModal={handleUnpublishModal}
+              handleUploadImport={handleUploadImport}
               handleClone={handleClone}
               handleDownload={handleDownload}
-              urlUploadHandler={urlUploadHandler}
               uploadHandler={uploadHandler}
               setSelectedFilter={setSelectedFilter}
               selectedFilter={selectedFilter}
@@ -1171,8 +1171,6 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
               importSchema={importSchema}
               setPage={setPage}
               selectedPage={page}
-              UploadImport={UploadImport}
-              handleImportFilter={handleImportFilter}
               publishModal={publishModal}
               setPublishModal={setPublishModal}
               publishSchema={publishSchema}
@@ -1217,7 +1215,6 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
             submitBtnIcon={<PublishIcon/>}
           />
         }
-        {/* REMOVE this with its deps <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchFilters(page, pageSize, search, sortOrder) } configuration="Filter" /> */}
       </NoSsr>
     </>
   );
