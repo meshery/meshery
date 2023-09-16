@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { Avatar, Box, Button, Collapse, Divider, Grid, Hidden, IconButton, Popover, Tooltip, Typography, alpha, useTheme } from "@material-ui/core"
+import { Avatar, Box, Button, Collapse,  Grid, Hidden, IconButton, Popover, Slide, Tooltip, Typography, alpha, useTheme } from "@material-ui/core"
 import { makeStyles } from "@material-ui/core"
 import { SEVERITY_STYLE, STATUS } from "./constants"
 import { iconLarge, iconMedium } from "../../css/icons.styles"
 import { MoreVert } from "@material-ui/icons"
-// import { Avatar } from "@mui/material"
 import FacebookIcon from "../../assets/icons/FacebookIcon"
 import LinkedInIcon from "../../assets/icons/LinkedInIcon"
 import TwitterIcon from "../../assets/icons/TwitterIcon"
@@ -12,11 +11,12 @@ import ShareIcon from "../../assets/icons/ShareIcon"
 import DeleteIcon from "../../assets/icons/DeleteIcon"
 import moment from 'moment';
 import { useUpdateStatusMutation, useDeleteEventMutation } from "../../rtk-query/notificationCenter"
-import { useDispatch } from 'react-redux';
-import { changeEventStatus, deleteEvent } from '../../store/slices/events';
+import { useDispatch, useSelector } from 'react-redux';
+import { changeEventStatus, deleteEvent, selectEventById } from '../../store/slices/events';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { FacebookShareButton, LinkedinShareButton, TwitterShareButton } from 'react-share';
-import DoneIcon from '../../assets/icons/DoneIcon';
+import ReadIcon from '../../assets/icons/ReadIcon';
+import UnreadIcon from '../../assets/icons/UnreadIcon';
 
 const useStyles = makeStyles(() => ({
   root : (props) => ({
@@ -95,7 +95,7 @@ const useMenuStyles = makeStyles((theme) => {
     },
 
     button : {
-      padding : "0rem",
+      padding : "0.2rem",
       display : "flex",
       alignItems : "center",
       justifyContent : "start",
@@ -116,7 +116,7 @@ const formatTimestamp = (utcTimestamp) => {
   return moment(utcTimestamp).fromNow()
 }
 
-function BasicMenu({ event }) {
+function BasicMenu({ event } ) {
 
   const classes = useMenuStyles()
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -132,9 +132,15 @@ function BasicMenu({ event }) {
     setAnchorEl(null);
   };
 
+  const [isSocialShareOpen, setIsSocialShareOpen] = React.useState(false)
+  const toggleSocialShare = (e) => {
+    e.stopPropagation()
+    setIsSocialShareOpen(prev => !prev)
+  }
+
   const theme = useTheme()
   return (
-    <div className="mui-fixed">
+    <div className="mui-fixed" onClick={(e) => e.stopPropagation()} >
       <IconButton
         id="basic-button"
         aria-controls={open ? 'basic-menu' : undefined}
@@ -155,22 +161,25 @@ function BasicMenu({ event }) {
       >
         <Box className={classes.paper}>
           <div className={classes.list}>
-            <Box className={classes.listItem} >
-              <ShareIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
-              <Typography variant="body1" > Share </Typography>
+            <Box className={classes.listItem} sx={{ width : '100%' }} >
+              <Button onClick={toggleSocialShare} className={classes.button} >
+                <ShareIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
+                <Typography variant="body1" style={{ marginLeft : '0.5rem' }} >Share</Typography>
+              </Button>
             </Box>
-            <Divider />
-            <Box className={classes.listItem} >
-              <FacebookShareButton url={"https://meshery.io"} quote={event.description} >
-                <FacebookIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
-              </FacebookShareButton>
-              <LinkedinShareButton url={"https://meshery.io"} summary={event.description} >
-                <LinkedInIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
-              </LinkedinShareButton>
-              <TwitterShareButton url={"https://meshery.io"} title={event.description} >
-                <TwitterIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
-              </TwitterShareButton>
-            </Box>
+            <Collapse in={isSocialShareOpen}>
+              <Box className={classes.listItem} >
+                <FacebookShareButton url={"https://meshery.io"} quote={event.description} >
+                  <FacebookIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
+                </FacebookShareButton>
+                <LinkedinShareButton url={"https://meshery.io"} summary={event.description} >
+                  <LinkedInIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
+                </LinkedinShareButton>
+                <TwitterShareButton url={"https://meshery.io"} title={event.description} >
+                  <TwitterIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
+                </TwitterShareButton>
+              </Box>
+            </Collapse>
           </div>
 
           <DeleteEvent event={event} />
@@ -219,7 +228,10 @@ export const ChangeStatus = ({ event }) => {
   return (
     <div className={classes.list}>
       <Button className={classes.button} onClick={updateStatus}>
-        <DoneIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
+        {newStatus === STATUS.READ ?
+          <ReadIcon {...iconMedium} fill={theme.palette.secondary.iconMain} /> :
+          <UnreadIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
+        }
         <Typography variant="body1" style={{ marginLeft : '0.5rem' }}> Mark as {newStatus}  </Typography>
       </Button>
     </div>
@@ -235,7 +247,11 @@ const BulletList = ({ items }) => {
   </ol>
 }
 
-export const Notification = ({ event }) => {
+
+
+export const Notification = ({ event_id }) => {
+  const event = useSelector(state => selectEventById(state, event_id))
+  const isVisible = event.is_visible === undefined ? true : event.is_visible
   const severityStyles = SEVERITY_STYLE[event.severity]
   const classes = useStyles({
     notificationColor : severityStyles.color,
@@ -258,68 +274,69 @@ export const Notification = ({ event }) => {
 
 
   return (
-    <div className={classes.root}>
-      <Grid container className={classes.summary} onClick={handleExpandClick} >
-        <Grid item sm={1} className={classes.gridItem} >
-          <severityStyles.icon {...iconLarge} fill={severityStyles.color} />
-        </Grid>
-        <Grid item xs={9} md={7} className={classes.gridItem} >
-          <Typography variant="body1" className={classes.message}> {event.description}   </Typography>
-        </Grid>
-        <Hidden smDown>
-          <Grid item sm={3} className={classes.gridItem} >
-            <Typography variant="body1"> {formatTimestamp(event.created_at)} </Typography>
+    <Slide in={isVisible} timeout={250} direction="left" appear={false} enter={false}  mountOnEnter unmountOnExit  >
+      <div className={classes.root}>
+        <Grid container className={classes.summary} onClick={handleExpandClick} >
+          <Grid item sm={1} className={classes.gridItem} >
+            <severityStyles.icon {...iconLarge} fill={severityStyles.color} />
           </Grid>
-        </Hidden>
-        <Grid item sm={1} >
-          <Box>
-            <BasicMenu event={event} />
-          </Box>
-        </Grid>
-      </Grid>
-      <Collapse in={expanded}>
-        <Grid container className={classes.expanded}>
-          <Grid item sm={1} className={classes.actorAvatar} >
-            <Box sx={{ display : "flex", gridGap : "0.5rem", flexDirection : { xs : "row", md : "column" } }} >
-
-              {event.user_id &&
-                <Tooltip title={userName} placement="top" >
-                  <Avatar alt={userName} src={userAvatarUrl} />
-                </Tooltip>
-              }
-              {event.system_id &&
-                <Tooltip title={`System ID: ${event.system_id}`} placement="top" >
-                  <Avatar src="/static/img/meshery-logo.png" />
-                </Tooltip>
-              }
-
+          <Grid item xs={9} md={7} className={classes.gridItem} >
+            <Typography variant="body1" className={classes.message}> {event.description}   </Typography>
+          </Grid>
+          <Hidden smDown>
+            <Grid item sm={3} className={classes.gridItem} >
+              <Typography variant="body1"> {formatTimestamp(event.created_at)} </Typography>
+            </Grid>
+          </Hidden>
+          <Grid item sm={1} >
+            <Box>
+              <BasicMenu event={event}/>
             </Box>
           </Grid>
-          <Grid item sm={10}>
-            <Grid container  >
-              <div>
-                <NestedData classes={classes} heading="Description" data={event.description} />
-                <div style={{ marginTop : "0.3rem" }}>
-                  <NestedData classes={classes} heading="Details" data={longDescription} />
+        </Grid>
+        <Collapse in={expanded}>
+          <Grid container className={classes.expanded}>
+            <Grid item sm={1} className={classes.actorAvatar} >
+              <Box sx={{ display : "flex", gridGap : "0.5rem", flexDirection : { xs : "row", md : "column" } }} >
+
+                {event.user_id &&
+                  <Tooltip title={userName} placement="top" >
+                    <Avatar alt={userName} src={userAvatarUrl} />
+                  </Tooltip>
+                }
+                {event.system_id &&
+                  <Tooltip title={`System ID: ${event.system_id}`} placement="top" >
+                    <Avatar src="/static/img/meshery-logo.png" />
+                  </Tooltip>
+                }
+
+              </Box>
+            </Grid>
+            <Grid item sm={10}>
+              <Grid container  >
+                <div>
+                  <NestedData classes={classes} heading="Description" data={event.description} />
+                  <div style={{ marginTop : "0.3rem" }}>
+                    <NestedData classes={classes} heading="Details" data={longDescription} />
+                  </div>
                 </div>
-              </div>
-              <Grid container spacing={1} style={{ marginTop : "0.5rem" }}>
-                <Grid item sm={suggestedRemediation?.length > 0 ? 6 : 12}>
-                  <NestedData classes={classes} heading="Probable Cause" data={probableCause} />
-                </Grid>
-                <Grid item sm={probableCause?.length > 0 ? 6 : 12} >
-                  <NestedData classes={classes} heading="Suggested Remediation" data={suggestedRemediation} />
+                <Grid container spacing={1} style={{ marginTop : "0.5rem" }}>
+                  <Grid item sm={suggestedRemediation?.length > 0 ? 6 : 12}>
+                    <NestedData classes={classes} heading="Probable Cause" data={probableCause} />
+                  </Grid>
+                  <Grid item sm={probableCause?.length > 0 ? 6 : 12} >
+                    <NestedData classes={classes} heading="Suggested Remediation" data={suggestedRemediation} />
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
           </Grid>
-        </Grid>
-      </Collapse>
-    </div >
+        </Collapse>
+      </div >
+    </Slide>
   )
 
 }
-
 const NestedData = ({ heading, data, classes }) => {
 
   if (!data || data?.length == 0) return null

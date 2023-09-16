@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import IconButton from "@material-ui/core/IconButton";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import NoSsr from "@material-ui/core/NoSsr";
-import { Drawer, Tooltip, Divider, ClickAwayListener, Typography, alpha, Chip, Button, Badge, CircularProgress, Box, useTheme } from "@material-ui/core";
+import { Drawer,  Divider, ClickAwayListener, Typography, alpha, Chip, Button, Badge, CircularProgress, Box, useTheme } from "@material-ui/core";
 import Filter from "./filter";
 import BellIcon from "../../assets/icons/BellIcon.js"
 import { iconMedium } from "../../css/icons.styles";
@@ -123,26 +123,24 @@ const Header = ({ handleFilter, handleClose }) => {
 
 const Loading = () => {
   return (
-    <Box sx={{ display : 'flex' }}>
+    <Box sx={{ display : 'flex' , justifyContent : 'center' }}>
       <CircularProgress />
     </Box >)
 }
 
 
-const EventsView = ({ handleLoadNextPage, isLoading, hasMore }) => {
+const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
   const events = useSelector(selectEvents)
   // const page = useSelector((state) => state.events.current_view.page);
 
   const lastEventRef = useRef(null)
   const intersectionObserver = useRef(new IntersectionObserver((entries) => {
-    if (isLoading && !hasMore) {
+    if (isFetching && !hasMore) {
       return
     }
     const firstEntry = entries[0]
     if (firstEntry.isIntersecting) {
       handleLoadNextPage()
-
-      console.log("intersecting")
     }
   }, { threshold : 1 }))
 
@@ -161,15 +159,15 @@ const EventsView = ({ handleLoadNextPage, isLoading, hasMore }) => {
   return (
     <>
       {events.map((event, idx) => <div key={event.id + idx}  >
-        <Notification event={event} />
+        <Notification event_id={event.id} />
       </div>)}
 
       {events.length === 0 && <EmptyState />}
 
       <div ref={lastEventRef}  >
-        {!Loading && hasMore && <Loading />}
+        {!isFetching && hasMore && <Loading />}
       </div>
-      {isLoading && <Loading />}
+      {isFetching && <Loading />}
     </>
   )
 }
@@ -222,7 +220,7 @@ const MesheryNotification = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch()
   const isNotificationCenterOpen = useSelector((state) => state.events.isNotificationCenterOpen);
-  const [fetchEvents, { isLoading }] = useLazyGetEventsQuery()
+  const [fetchEvents, { isFetching }] = useLazyGetEventsQuery()
   const hasMore = useSelector((state) => state.events.current_view.has_more);
 
   useEffect(() => {
@@ -258,24 +256,22 @@ const MesheryNotification = () => {
   return (
     <NoSsr>
       <div>
-        <Tooltip title={"errors"}>
-          <IconButton
-            id="notification-button"
-            className={classes.notificationButton}
-            color="inherit"
-            onClick={handleToggle}
-            onMouseOver={(e) => {
-              e.preventDefault();
-              setAnchorEl(e.currentTarget);
-            }}
-            onMouseLeave={(e) => {
-              e.preventDefault();
-              setAnchorEl(null);
-            }}
-          >
-            <NavbarNotificationIcon />
-          </IconButton>
-        </Tooltip>
+        <IconButton
+          id="notification-button"
+          className={classes.notificationButton}
+          color="inherit"
+          onClick={handleToggle}
+          onMouseOver={(e) => {
+            e.preventDefault();
+            setAnchorEl(e.currentTarget);
+          }}
+          onMouseLeave={(e) => {
+            e.preventDefault();
+            setAnchorEl(null);
+          }}
+        >
+          <NavbarNotificationIcon />
+        </IconButton>
       </div>
 
       <ClickAwayListener
@@ -306,7 +302,7 @@ const MesheryNotification = () => {
                 <div className={classes.container}>
                   <Filter handleFilter={handleFilter}  ></Filter>
                   <CurrentFilterView handleFilter={handleFilter} />
-                  <EventsView handleLoadNextPage={loadMore} isLoading={isLoading} hasMore={hasMore} />
+                  <EventsView handleLoadNextPage={loadMore} isFetching={isFetching} hasMore={hasMore} />
                 </div>
               </div>
             </div>
