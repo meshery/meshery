@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import IconButton from "@material-ui/core/IconButton";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import NoSsr from "@material-ui/core/NoSsr";
-import { Drawer,  Divider, ClickAwayListener, Typography, alpha, Chip, Button, Badge, CircularProgress, Box, useTheme } from "@material-ui/core";
+import { Drawer,  Divider, ClickAwayListener, Typography, alpha, Chip, Button, Badge, CircularProgress, Box, useTheme, Tooltip } from "@material-ui/core";
 import Filter from "./filter";
 import BellIcon from "../../assets/icons/BellIcon.js"
 import { iconMedium } from "../../css/icons.styles";
@@ -56,7 +56,7 @@ const NavbarNotificationIcon = () => {
 }
 
 
-const NotificationCountChip = ({ classes, notificationStyle, count, handleClick }) => {
+const NotificationCountChip = ({ classes, notificationStyle, count,type, handleClick }) => {
   const chipStyles = {
     fill : notificationStyle.color,
     height : "20px",
@@ -64,14 +64,16 @@ const NotificationCountChip = ({ classes, notificationStyle, count, handleClick 
   }
   count = Number(count).toLocaleString('en', { useGrouping : true })
   return (
-    <Button style={{ backgroundColor : alpha(chipStyles.fill, 0.20) }} onClick={handleClick}  >
-      <div className={classes.severityChip} >
-        {<notificationStyle.icon {...chipStyles} />}
-        <span>
-          {count}
-        </span>
-      </div>
-    </Button>
+    <Tooltip title={type} placement="bottom">
+      <Button style={{ backgroundColor : alpha(chipStyles.fill, 0.20) }} onClick={handleClick}  >
+        <div className={classes.severityChip} >
+          {<notificationStyle.icon {...chipStyles} />}
+          <span>
+            {count}
+          </span>
+        </div>
+      </Button>
+    </Tooltip>
   )
 }
 
@@ -109,11 +111,13 @@ const Header = ({ handleFilter, handleClose }) => {
         {Object.values(SEVERITY).map(severity => (
           <NotificationCountChip key={severity} classes={classes} handleClick={() => onClickSeverity(severity)}
             notificationStyle={SEVERITY_STYLE[severity]}
+            type={`Unread ${severity}(s)`}
             count={getSeverityCount(count_by_severity_level, severity)} />)
         )}
         <NotificationCountChip classes={classes}
           notificationStyle={STATUS_STYLE[STATUS.READ]}
           handleClick={() => onClickStatus(STATUS.READ)}
+          type={STATUS.READ}
           count={archivedCount} />
 
       </div>
@@ -165,9 +169,8 @@ const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
       {events.length === 0 && <EmptyState />}
 
       <div ref={lastEventRef}  >
-        {!isFetching && hasMore && <Loading />}
       </div>
-      {isFetching && <Loading />}
+      {isFetching && hasMore && <Loading />}
     </>
   )
 }

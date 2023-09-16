@@ -1,8 +1,8 @@
 import { NOTIFICATIONCOLORS } from "../../themes"
 import AlertIcon from "../../assets/icons/AlertIcon";
-import ArchiveIcon from "../../assets/icons/ArchiveIcon";
 import ErrorIcon from "../../assets/icons/ErrorIcon.js"
 import { Colors } from "../../themes/app";
+import ReadIcon from "../../assets/icons/ReadIcon";
 
 export const SEVERITY = {
   INFO : "informational",
@@ -18,7 +18,7 @@ export const STATUS = {
 
 export const STATUS_STYLE = {
   [STATUS.READ] : {
-    icon : ArchiveIcon,
+    icon : ReadIcon,
     color : Colors.charcoal
   }
 }

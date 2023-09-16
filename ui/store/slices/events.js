@@ -122,8 +122,13 @@ export const loadNextPage = (fetch) => async (dispatch, getState) => {
   dispatch(loadEvents(fetch, currentView.page + 1, currentView.filters))
 }
 
-export const changeEventStatus = (mutator, id, status) => async (dispatch) => {
-  dispatch(updateEvent({ id, changes : { status } }))
+export const changeEventStatus = (mutator, id, status) => async (dispatch,getState) => {
+  const currentView = getState().events.current_view
+
+  dispatch(updateEvent({ id, changes : {
+    status,
+    is_visible : currentView?.filters?.status ? false : true  //if status filter is applied, then remove the event from view
+  } }))
   mutator({ id, status })
 }
 
