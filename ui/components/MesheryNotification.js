@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import IconButton from '@material-ui/core/IconButton';
 import { connect } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
@@ -17,7 +17,7 @@ import ClearIcon from "../assets/icons/ClearIcon";
 import ErrorIcon from '@material-ui/icons/Error';
 import { withStyles } from '@material-ui/core/styles';
 import amber from '@material-ui/core/colors/amber';
-import {  EVENT_TYPES, NOTIFICATION_STATUS, SERVER_EVENT_TYPES } from '../lib/event-types';
+import { EVENT_TYPES, NOTIFICATION_STATUS, SERVER_EVENT_TYPES } from '../lib/event-types';
 import Notification from "./NotificationCenter/Notification"
 import dataFetch from '../lib/data-fetch';
 import { bindActionCreators } from "redux";
@@ -29,8 +29,8 @@ import moment from "moment";
 import { withNotify } from "../utils/hooks/useNotification";
 
 const styles = (theme) => ({
-  sidelist : { width : "35rem", },
-  notificationButton : { height : '100%', },
+  sidelist : { width : "35rem" },
+  notificationButton : { height : '100%' },
   notificationDrawer : {
     backgroundColor : theme.palette.secondary.sideBar,
     display : 'flex',
@@ -46,17 +46,17 @@ const styles = (theme) => ({
     paddingRight : theme.spacing(1),
     paddingBottom : theme.spacing(2),
   },
-  notificationTitle : { textAlign : 'left', },
-  notifSelector : { display : 'flex', },
-  icon : { fontSize : 20, },
+  notificationTitle : { textAlign : 'left' },
+  notifSelector : { display : 'flex' },
+  icon : { fontSize : 20 },
   iconVariant : {
     opacity : 0.9,
     marginRight : theme.spacing(1),
     marginTop : theme.spacing(1) * 3 / 4,
   },
-  error : { backgroundColor : theme.palette.error.dark, },
-  info : { backgroundColor : theme.palette.primary.dark, },
-  warning : { backgroundColor : amber[700], },
+  error : { backgroundColor : theme.palette.error.dark },
+  info : { backgroundColor : theme.palette.primary.dark },
+  warning : { backgroundColor : amber[700] },
   message : {
     display : 'flex',
     // alignItems: 'center',
@@ -106,15 +106,12 @@ const styles = (theme) => ({
   }
 });
 
-
-
-
 export const NOTIFICATION_FILTERS = {
   ALL : "all",
-  ERROR : EVENT_TYPES.ERROR.type ,
-  SUCCESS : EVENT_TYPES.SUCCESS.type ,
+  ERROR : EVENT_TYPES.ERROR.type,
+  SUCCESS : EVENT_TYPES.SUCCESS.type,
   WARNING : EVENT_TYPES.WARNING.type,
-  HISTORY : "history" ,
+  HISTORY : "history",
 }
 
 /**
@@ -143,11 +140,10 @@ function getNotifications(events, filter) {
   if (filter === NOTIFICATION_FILTERS.SUCCESS) {
     return events.filter(ev => {
       const ev_type = getEventType(ev).type
-      return (ev_type == (EVENT_TYPES.SUCCESS.type || ev_type == EVENT_TYPES.INFO.type) &&  ev.status !== NOTIFICATION_STATUS.VIEWED )
+      return (ev_type == (EVENT_TYPES.SUCCESS.type || ev_type == EVENT_TYPES.INFO.type) && ev.status !== NOTIFICATION_STATUS.VIEWED)
     })
   }
-  return events.filter(ev => getEventType(ev).type == filter && ev.status !== NOTIFICATION_STATUS.VIEWED )
-
+  return events.filter(ev => getEventType(ev).type == filter && ev.status !== NOTIFICATION_STATUS.VIEWED)
 }
 
 /**
@@ -162,18 +158,17 @@ function getNotifications(events, filter) {
 function getNotificationCount(events) {
   if (!Array.isArray(events)) return 0;
 
-  const errorEventCount = getNotifications(events,NOTIFICATION_FILTERS.ERROR).length;
-  const totalEventsCount = getNotifications(events,NOTIFICATION_FILTERS.ALL).length;
+  const errorEventCount = getNotifications(events, NOTIFICATION_FILTERS.ERROR).length;
+  const totalEventsCount = getNotifications(events, NOTIFICATION_FILTERS.ALL).length;
   return errorEventCount || totalEventsCount;
 }
 
-
-const  getEventType = (event) => {
+const getEventType = (event) => {
   // checks if an event_type is as cardinal (0 , 1 ,2 ) or as a event_type object
   // return the event_type object
   let eventVariant = event.event_type
-  eventVariant = typeof eventVariant  == "number" ? SERVER_EVENT_TYPES[eventVariant] : eventVariant
-  return eventVariant  ? eventVariant :  EVENT_TYPES.INFO
+  eventVariant = typeof eventVariant == "number" ? SERVER_EVENT_TYPES[eventVariant] : eventVariant
+  return eventVariant ? eventVariant : EVENT_TYPES.INFO
 }
 
 
@@ -189,44 +184,44 @@ function NotificationIcon({ type, className }) {
 }
 
 const notificationBadgeTooltipMessage = (events) => {
-  const total_unread = getNotifications(events,NOTIFICATION_FILTERS.ALL).length
+  const total_unread = getNotifications(events, NOTIFICATION_FILTERS.ALL).length
   if (total_unread) {
     return `${total_unread} new notifications`
   }
   return `No new notifications`
 }
 
-const TabLabel = ({ filterType,events }) => {
-
-  const notifCount = getNotifications(events,filterType).length
+const TabLabel = ({ filterType, events }) => {
+  const notifCount = getNotifications(events, filterType).length
   return (
-    <div style={{ margin : 0 , padding : 0 ,textTransform : "capitalize" , display : "flex" , gap : "0.3rem" }}>
-      {notifCount ? `${filterType} (${notifCount})` : filterType }
+    <div style={{ margin : 0, padding : 0, textTransform : "capitalize", display : "flex", gap : "0.3rem" }}>
+      {notifCount ? `${filterType} (${notifCount})` : filterType}
     </div>
   )
 }
 
-//TODO: Convert To functional Compoent
-class MesheryNotification extends React.Component {
-  state = {
-    open : false,
-    dialogShow : false,
-    displayEventType : NOTIFICATION_FILTERS.ALL,
-    tabValue : 0,
-    anchorEl : false,
-  }
+function MesheryNotification(props) {
+  const [open, setOpen] = useState(false);
+  const [displayEventType, setDisplayEventType] = useState(NOTIFICATION_FILTERS.ALL);
+  const [tabValue, setTabValue] = useState(0);
+  const [show, setShow] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [buttonClicked, setButtonClicked] = useState(false);
 
-  handleToggle = () => {
-    this.props.toggleOpen()
+  const handleToggle = () => {
+    props.toggleOpen();
+    setShow(!show);
+    setButtonClicked(true);
   };
 
-  handleClose = () => {
-    if (! this.props.showFullNotificationCenter) {
+  const handleClose = () => {
+    if (!showFullNotificationCenter) {
       return
     }
-    this.setState({ anchorEl : false });
-    this.props.toggleOpen()
-
+    setAnchorEl(false);
+    setOpen(false);
+    setButtonClicked(false);
+    props.toggleOpen()
   }
 
   /**
@@ -237,37 +232,35 @@ class MesheryNotification extends React.Component {
 
   // const {notify} = useNotification()
 
-  componentDidMount() {
-    this.startEventStream();
-  }
+  useEffect(() => {
+    startEventStream();
+  }, []);
 
-  componentDidUpdate() {
-    if (this.props.user.get("user_id") && this.props.events.length == 0) {
-      this.props.loadEventsFromPersistence()
+  useEffect(() => {
+    if (props.user.get("user_id") && props.events.length === 0) {
+      props.loadEventsFromPersistence()
     }
+  }, [props.user, props.events]);
+
+  const startEventStream = () => {
+    closeEventStream();
+    const eventStream = new EventSource('/api/events');
+    eventStream.onmessage = handleEvents();
+    eventStream.onerror = handleError();
   }
 
-  async startEventStream() {
-    this.closeEventStream();
-    this.eventStream = new EventSource('/api/events');
-    this.eventStream.onmessage = this.handleEvents();
-    this.eventStream.onerror = this.handleError();
-  }
-
-
-  handleEvents() {
-    const self = this
+  const handleEvents = () => {
     return (e) => {
       const data = JSON.parse(e.data);
       const event = {
         ...data,
         status : NOTIFICATION_STATUS.NEW,
         event_type : getEventType(data),
-        timestamp : data.timestamp || moment.utc().valueOf() ,
-        id : data.id || v4() ,
+        timestamp : data.timestamp || moment.utc().valueOf(),
+        id : data.id || v4(),
       }
-      self.props.notify({
-        message : event.summary ,
+      props.notify({
+        message : event.summary,
         event_type : event.event_type,
         details : event.details,
         customEvent : event
@@ -275,15 +268,14 @@ class MesheryNotification extends React.Component {
     }
   }
 
-  handleError() {
-    const self = this;
+  const handleError = () => {
     return () => {
-      self.closeEventStream();
+      closeEventStream();
       // check if server is available
       dataFetch('/api/user', { credentials : 'same-origin' }, () => {
         // attempting to reestablish connection
         // setTimeout(() => function() {
-        self.startEventStream();
+        startEventStream();
         // }, 2000);
       }, () => {
         // do nothing here
@@ -291,191 +283,177 @@ class MesheryNotification extends React.Component {
     };
   }
 
-  closeEventStream() {
-    if (this.eventStream && this.eventStream.close) {
-      this.eventStream.close();
+  const closeEventStream = () => {
+    const eventStream = new EventSource('/api/events');
+    if (eventStream && eventStream.close) {
+      eventStream.close();
     }
   }
 
-  deleteEvent = (id) => {
-    const { events, updateEvents } = this.props;
-    const newEvents = events.filter(ev => ev.id !== id)
-    updateEvents({ events : newEvents })
-    this.setState({ dialogShow : false });
+  const deleteEvent = (id) => {
+    const newEvents = props.events.filter(ev => ev.id !== id)
+    props.updateEvents({ events : newEvents })
   }
 
-  handleDialogClose = () => {
-    this.setState({ dialogShow : false });
+  const handleClearAllNotifications = () => {
+    const newEvents = [];
+    props.updateEvents({ events : newEvents });
+    handleClose();
   };
 
-  handleClearAllNotifications() {
-    const self = this;
-    const { updateEvents } = this.props;
+  const handleNotifFiltering = (type) => {
     return () => {
-      updateEvents({ events : [] })
-      self.handleClose();
-    };
-  }
-
-  handleNotifFiltering(type) {
-    return () => {
-      this.setState({ displayEventType : type })
+      setDisplayEventType(type);
     }
   }
 
-  handleTabChange = (_event, newTabValue) => {
-    this.setState({ tabValue : newTabValue })
+  const handleTabChange = (_event, newTabValue) => {
+    setTabValue(newTabValue);
   }
 
-  handleBellButtonClick = () => {
-    this.setState({
-      tabValue : 0,
-      displayEventType : '*'
-    })
+  const handleBellButtonClick = () => {
+    setTabValue(0);
+    setDisplayEventType('*');
   }
 
-  markAsRead = (event) => {
-    const events = this.props.events.filter(ev => ev.id !== event.id)
+  const markAsRead = (event) => {
+    const events = props.events.filter(ev => ev.id !== event.id)
     events.push({
       ...event,
       status : NOTIFICATION_STATUS.VIEWED
     })
-    this.props.updateEvents({
+    props.updateEvents({
       events
     })
   }
 
-
-  render() {
-    const { classes, events ,showFullNotificationCenter  } = this.props;
-    const { anchorEl, show } = this.state;
-    let open = Boolean(anchorEl);
+  const { classes, events, showFullNotificationCenter } = props;
+  useEffect(() => {
     if (showFullNotificationCenter) {
-      open = showFullNotificationCenter;
+      setOpen(Boolean(showFullNotificationCenter));
     }
+  }, [showFullNotificationCenter]);
+  useEffect(() => {
+    setOpen(Boolean(anchorEl));
+  }, [anchorEl]);
 
-    const newErrors =  getNotifications(events,NOTIFICATION_FILTERS.ERROR)
-    const newNotificationsType = newErrors.length > 0 ? "error" : "default"
+  const newErrors = getNotifications(events, NOTIFICATION_FILTERS.ERROR)
+  const newNotificationsType = newErrors.length > 0 ? "error" : "default"
 
-    return (
-      <NoSsr>
-        <div style={ show ? cursorNotAllowed : {}}>
-          <Tooltip title={notificationBadgeTooltipMessage(events)}>
-            <IconButton
-              id="notification-button"
-              className={classes.notificationButton}
-              buttonRef={(node) => {
-                this.anchorEl = node;
-              }}
-              color="inherit"
-              onClick={this.handleToggle}
-
-              onMouseOver={(e) => {
-                e.preventDefault();
-                this.setState({ anchorEl : true })
-              }}
-
-              onMouseLeave={(e) => {
-                e.preventDefault();
-                this.setState({ anchorEl : false })
-              }}
-            >
-              <Badge id="notification-badge" badgeContent={getNotificationCount(events)} color={newNotificationsType}>
-                <NotificationIcon  style={iconMedium}  type={newNotificationsType}   />
-              </Badge>
-            </IconButton>
-          </Tooltip>
-        </div>
-
-        <ClickAwayListener onClickAway={(e) => {
-          if (e.target.className.baseVal !== "" && e.target.className.baseVal !== "MuiSvgIcon-root" &&
-              ((typeof e.target.className === "string")? !e.target.className?.includes("MesheryNotification"): null)) {
-            this.handleClose();
-          }
-        }}>
-          <Drawer
-            anchor="right"
-            variant="persistent"
-            open={open}
-            classes={{
-              paper : classes.notificationDrawer,
-              paperAnchorRight : showFullNotificationCenter? classes.fullView : classes.peekView,
+  return (
+    <NoSsr>
+      <div style={show ? cursorNotAllowed : {}}>
+        <Tooltip title={notificationBadgeTooltipMessage(events)}>
+          <IconButton
+            id="notification-button"
+            className={classes.notificationButton}
+            color="inherit"
+            onClick={handleToggle}
+            onMouseOver={(e) => {
+              e.preventDefault();
+              setAnchorEl(true);
+            }}
+            onMouseLeave={(e) => {
+              e.preventDefault();
+              if (!buttonClicked){
+                setAnchorEl(false);
+              }
             }}
           >
-            <div>
-              <div>
-                <div className={classes.sidelist}>
-                  <div className={classes.listTop}>
-                    <div className={classes.notifSelector}>
-                      <Tooltip title="Show all notifications">
-                        <IconButton
-                          color="inherit"
-                          className={classes.drawerButton}
-                          onClick={this.handleBellButtonClick}
-                        >
-                          <BellIcon  style={iconMedium}  />
-                        </IconButton>
-                      </Tooltip>
-                    </div>
-                    <div className={classes.notificationTitle}>
-                      <Typography variant="subtitle1" align="center">
-                            Notifications
-                      </Typography>
-                    </div>
-                    <div
-                      className={classes.clearAllButton}>
-                      <Tooltip title="Clear all notifications">
-                        <IconButton
-                          color="inherit"
-                          className={classes.drawerButton}
-                          onClick={this.handleClearAllNotifications()}
-                        >
-                          <ClearIcon width={'1em'} height={'1em'} fill={'white'}/>
-                        </IconButton>
-                      </Tooltip>
-                    </div>
-                  </div>
-                  <Divider light />
-                  <Tabs
-                    value={this.state.tabValue}
-                    onChange={this.handleTabChange}
-                    indicatorColor="primary"
-                    className={classes.tabs}
-                    textColor="primary"
-                    variant="fullWidth"
-                  >
+            <Badge id="notification-badge" badgeContent={getNotificationCount(events)} color={newNotificationsType}>
+              <NotificationIcon style={iconMedium} type={newNotificationsType} />
+            </Badge>
+          </IconButton>
+        </Tooltip>
+      </div>
 
-                    {Object.values(NOTIFICATION_FILTERS).map(filter  =>
-                      <Tab label={<TabLabel filterType={filter} events={events}/>}
-                        className={classes.tab}
-                        onClick={this.handleNotifFiltering(filter)}
-                        style={{ minWidth : "8%" }} />
-                    )}
-                  </Tabs>
-                  {getNotifications(this.props.events, this.state.displayEventType).map((event) => (
-                    <Notification
-                      className = {classes.notification}
-                      key={event.id}
-                      event={event}
-                      onDeleteEvent = {() => this.deleteEvent(event.id)}
-                      onMarkAsRead = {() => this.markAsRead(event) }
-                      expand={(this.props.openEventId && this.props.openEventId === ( event.id) ) ? true : false}
-                    />
-                  ))}
+      <ClickAwayListener onClickAway={(e) => {
+        if (e.target.className.baseVal !== "" && e.target.className.baseVal !== "MuiSvgIcon-root" &&
+          ((typeof e.target.className === "string") ? !e.target.className?.includes("MesheryNotification") : null)) {
+          handleClose();
+        }
+      }}>
+        <Drawer
+          anchor="right"
+          variant="persistent"
+          open={open}
+          classes={{
+            paper : classes.notificationDrawer,
+            paperAnchorRight : showFullNotificationCenter ? classes.fullView : classes.peekView,
+          }}
+        >
+          <div>
+            <div>
+              <div className={classes.sidelist}>
+                <div className={classes.listTop}>
+                  <div className={classes.notifSelector}>
+                    <Tooltip title="Show all notifications">
+                      <IconButton
+                        color="inherit"
+                        className={classes.drawerButton}
+                        onClick={handleBellButtonClick}
+                      >
+                        <BellIcon style={iconMedium} />
+                      </IconButton>
+                    </Tooltip>
+                  </div>
+                  <div className={classes.notificationTitle}>
+                    <Typography variant="subtitle1" align="center">
+                      Notifications
+                    </Typography>
+                  </div>
+                  <div
+                    className={classes.clearAllButton}>
+                    <Tooltip title="Clear all notifications">
+                      <IconButton
+                        color="inherit"
+                        className={classes.drawerButton}
+                        onClick={handleClearAllNotifications}
+                      >
+                        <ClearIcon width={'1em'} height={'1em'} fill={'white'} />
+                      </IconButton>
+                    </Tooltip>
+                  </div>
                 </div>
+                <Divider light />
+                <Tabs
+                  value={tabValue}
+                  onChange={handleTabChange}
+                  indicatorColor="primary"
+                  className={classes.tabs}
+                  textColor="primary"
+                  variant="fullWidth"
+                >
+                  {Object.values(NOTIFICATION_FILTERS).map(filter =>
+                    <Tab label={<TabLabel filterType={filter} events={events} />}
+                      className={classes.tab}
+                      onClick={handleNotifFiltering(filter)}
+                      style={{ minWidth : "8%" }} />
+                  )}
+                </Tabs>
+                {getNotifications(props.events, displayEventType).map((event) => (
+                  <Notification
+                    className={classes.notification}
+                    key={event.id}
+                    event={event}
+                    onDeleteEvent={() => deleteEvent(event.id)}
+                    onMarkAsRead={() => markAsRead(event)}
+                    expand={(props.openEventId && props.openEventId === (event.id)) ? true : false}
+                  />
+                ))}
               </div>
             </div>
-          </Drawer>
-        </ClickAwayListener>
-      </NoSsr>
-    );
-  }
+          </div>
+        </Drawer>
+      </ClickAwayListener>
+    </NoSsr>
+  );
 }
 
 const mapDispatchToProps = (dispatch) => ({
   updateEvents : bindActionCreators(updateEvents, dispatch),
-  toggleOpen : bindActionCreators(toggleNotificationCenter,dispatch),
-  loadEventsFromPersistence : bindActionCreators(loadEventsFromPersistence,dispatch)
+  toggleOpen : bindActionCreators(toggleNotificationCenter, dispatch),
+  loadEventsFromPersistence : bindActionCreators(loadEventsFromPersistence, dispatch)
 })
 
 const mapStateToProps = (state) => {
