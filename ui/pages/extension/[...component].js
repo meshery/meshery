@@ -50,30 +50,15 @@ function matchComponentURI(extensionURI, currentURI) {
 
 
 const RemoteExtension=(props) => {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     componentTitle : '',
-  //     isLoading : true,
-  //     capabilitiesRegistryObj : null,
-  //   }
-  // }
+
   const [componentTitle, setComponentTitle] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [capabilitiesRegistryObj, setCapabilitiesRegistryObj] = useState(null);
   const router = useRouter();
   const prevProps = useRef();
 
-  // componentWillUnmount() {
-  //   this.setState({
-  //     componentTitle : '',
-  //     isLoading : true,
-  //     capabilitiesRegistryObj : null,
-  //   })
-  // }
   useEffect(() => {
-    prevProps.current = props;``
-
+    prevProps.current = props;
   },[props])
 
   useEffect(() => {
@@ -83,27 +68,6 @@ const RemoteExtension=(props) => {
       setCapabilitiesRegistryObj(null);
     }
   },[])
-
-  // componentDidMount() {
-  //   dataFetch(
-  //     "/api/provider/capabilities",
-  //     {
-  //       method : "GET",
-  //       credentials : "include",
-  //     },
-  //     (result) => {
-  //       this.props.updatepagepath({ path : getPath() });
-  //       if (result) {
-  //         this.setState({
-  //           capabilitiesRegistryObj : result,
-  //         });
-  //         this.props.updateCapabilities({ capabilitiesRegistry : result })
-  //         this.renderExtension();
-  //       }
-  //     },
-  //     (err) => console.error(err)
-  //   );
-  // }
 
   useEffect(() => {
     dataFetch(
@@ -124,12 +88,6 @@ const RemoteExtension=(props) => {
     );
   },[])
 
-
-  // componentDidUpdate(prevProps, prevState) {
-  //   if (this.props.extensionType !== prevProps.extensionType || this.props.router.query.component != prevProps.router.query.component) {
-  //     this.renderExtension();
-  //   }
-  // }
   useEffect(() => {
     if (props.extensionType !== prevProps.current.extensionType || router.query.component != prevProps.current.router.query.component) {
       renderExtension();
