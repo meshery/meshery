@@ -34,7 +34,7 @@ var (
 // ```?status={[read/unread]}``` Return events filtered on event status Default is unread````
 // ```?severity=[eventseverity] Returns events belonging to provided severities ```
 // ```?sort={field} order the records based on passed field, defaults to updated_at```
-// ```?order={[asc/desc]}``` Default behavior is asc
+// ```?order={[asc/desc]}``` Default behavior is desc
 // ```?page={page-number}``` Default page number is 1
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
@@ -68,6 +68,27 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	if err != nil {
 		h.log.Error(models.ErrMarshal(err, "events response"))
 		http.Error(w, models.ErrMarshal(err, "events response").Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+// swagger:route GET /api/events/types EventsAPI idGetEventStreamer
+// Handle GET request for available event categories and actions.
+// responses:
+// 200: 
+func (h *Handler) GetEventTypes (w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	userID := uuid.FromStringOrNil(user.ID)
+
+	eventTypes, err := provider.GetEventTypes(userID)
+	if err != nil {
+		http.Error(w, fmt.Errorf("error retrieving event cagegories and actions").Error(), http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(eventTypes)
+	if err != nil {
+		h.log.Error(models.ErrMarshal(err, "event types response"))
+		http.Error(w, models.ErrMarshal(err, "event types response").Error(), http.StatusInternalServerError)
 		return
 	}
 }

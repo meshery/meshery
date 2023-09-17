@@ -167,6 +167,7 @@ type ComplexityRoot struct {
 		Metadata    func(childComplexity int) int
 		OperationID func(childComplexity int) int
 		Severity    func(childComplexity int) int
+		Status      func(childComplexity int) int
 		SystemID    func(childComplexity int) int
 		UpdatedAt   func(childComplexity int) int
 		UserID      func(childComplexity int) int
@@ -193,8 +194,6 @@ type ComplexityRoot struct {
 	}
 
 	K8sContext struct {
-		Auth               func(childComplexity int) int
-		Cluster            func(childComplexity int) int
 		ConnectionID       func(childComplexity int) int
 		CreatedAt          func(childComplexity int) int
 		CreatedBy          func(childComplexity int) int
@@ -1026,6 +1025,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Event.Severity(childComplexity), true
 
+	case "Event.status":
+		if e.complexity.Event.Status == nil {
+			break
+		}
+
+		return e.complexity.Event.Status(childComplexity), true
+
 	case "Event.systemID":
 		if e.complexity.Event.SystemID == nil {
 			break
@@ -1144,20 +1150,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.FilterResult.Visibility(childComplexity), true
-
-	case "K8sContext.auth":
-		if e.complexity.K8sContext.Auth == nil {
-			break
-		}
-
-		return e.complexity.K8sContext.Auth(childComplexity), true
-
-	case "K8sContext.cluster":
-		if e.complexity.K8sContext.Cluster == nil {
-			break
-		}
-
-		return e.complexity.K8sContext.Cluster(childComplexity), true
 
 	case "K8sContext.connection_id":
 		if e.complexity.K8sContext.ConnectionID == nil {
@@ -2645,6 +2637,7 @@ type Event {
   systemID: ID!,
   severity: Severity!,
   action: String!,
+  status: String!,
   category: String!,
   description: String!,
   metadata: Map,
@@ -2843,8 +2836,6 @@ type NameSpace {
 type K8sContext {
   id: String!,
   name: String!,
-  auth: Map!,
-  cluster: Map!,
   server: String!,
   owner: ID!,
   created_by: ID!,
@@ -7305,6 +7296,50 @@ func (ec *executionContext) fieldContext_Event_action(ctx context.Context, field
 	return fc, nil
 }
 
+func (ec *executionContext) _Event_status(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Event_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Event_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Event",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Event_category(ctx context.Context, field graphql.CollectedField, obj *model.Event) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Event_category(ctx, field)
 	if err != nil {
@@ -8287,94 +8322,6 @@ func (ec *executionContext) fieldContext_K8sContext_name(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _K8sContext_auth(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_K8sContext_auth(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Auth, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(map[string]interface{})
-	fc.Result = res
-	return ec.marshalNMap2map(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_K8sContext_auth(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "K8sContext",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Map does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _K8sContext_cluster(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_K8sContext_cluster(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Cluster, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(map[string]interface{})
-	fc.Result = res
-	return ec.marshalNMap2map(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_K8sContext_cluster(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "K8sContext",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Map does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _K8sContext_server(ctx context.Context, field graphql.CollectedField, obj *model.K8sContext) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_K8sContext_server(ctx, field)
 	if err != nil {
@@ -8902,10 +8849,6 @@ func (ec *executionContext) fieldContext_K8sContextsPage_contexts(ctx context.Co
 				return ec.fieldContext_K8sContext_id(ctx, field)
 			case "name":
 				return ec.fieldContext_K8sContext_name(ctx, field)
-			case "auth":
-				return ec.fieldContext_K8sContext_auth(ctx, field)
-			case "cluster":
-				return ec.fieldContext_K8sContext_cluster(ctx, field)
 			case "server":
 				return ec.fieldContext_K8sContext_server(ctx, field)
 			case "owner":
@@ -15852,6 +15795,8 @@ func (ec *executionContext) fieldContext_Subscription_subscribeEvents(ctx contex
 				return ec.fieldContext_Event_severity(ctx, field)
 			case "action":
 				return ec.fieldContext_Event_action(ctx, field)
+			case "status":
+				return ec.fieldContext_Event_status(ctx, field)
 			case "category":
 				return ec.fieldContext_Event_category(ctx, field)
 			case "description":
@@ -18960,6 +18905,11 @@ func (ec *executionContext) _Event(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "status":
+			out.Values[i] = ec._Event_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "category":
 			out.Values[i] = ec._Event_category(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -19151,16 +19101,6 @@ func (ec *executionContext) _K8sContext(ctx context.Context, sel ast.SelectionSe
 			}
 		case "name":
 			out.Values[i] = ec._K8sContext_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "auth":
-			out.Values[i] = ec._K8sContext_auth(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "cluster":
-			out.Values[i] = ec._K8sContext_cluster(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -21873,27 +21813,6 @@ func (ec *executionContext) marshalNLocation2ᚖgithubᚗcomᚋlayer5ioᚋmesher
 		return graphql.Null
 	}
 	return ec._Location(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNMap2map(ctx context.Context, v interface{}) (map[string]interface{}, error) {
-	res, err := graphql.UnmarshalMap(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNMap2map(ctx context.Context, sel ast.SelectionSet, v map[string]interface{}) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	res := graphql.MarshalMap(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-	}
-	return res
 }
 
 func (ec *executionContext) marshalNMeshModelComponent2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐMeshModelComponent(ctx context.Context, sel ast.SelectionSet, v *model.MeshModelComponent) graphql.Marshaler {

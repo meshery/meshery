@@ -9,7 +9,6 @@ import { getComponentsinFile } from "../../utils/utils";
 import PublishIcon from "@material-ui/icons/Publish";
 import useStyles from "../MesheryPatterns/Grid.styles";
 import Modal from "../Modal";
-import Filter from "../../public/static/img/drawer-icons/filter_svg.js";
 import PublicIcon from '@material-ui/icons/Public';
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
@@ -102,20 +101,15 @@ function FiltersGrid({
   pages = 1,
   setPage,
   selectedPage,
-  importSchema,
   canPublishFilter,
+  handleUploadImport,
   handlePublish,
   handleUnpublishModal,
-  handleImportFilter,
   publishModal,
   setPublishModal,
   publishSchema
 }) {
   const classes = useStyles();
-
-  const [importModal, setImportModal] = useState({
-    open : false,
-  });
 
   const handlePublishModal = (filter) => {
     if (canPublishFilter) {
@@ -132,18 +126,6 @@ function FiltersGrid({
       open : false,
       filter : {},
       name : "",
-    });
-  };
-
-  const handleUploadImport = () => {
-    setImportModal({
-      open : true,
-    });
-  };
-
-  const handleUploadImportClose = () => {
-    setImportModal({
-      open : false,
     });
   };
 
@@ -244,9 +226,9 @@ function FiltersGrid({
         componentCount={modalOpen.count}
         tab={modalOpen.deploy ? 2 : 1}
       />
-      {canPublishFilter && (
+      {(canPublishFilter && publishModal.open)&& (
         <Modal
-          open={publishModal.open}
+          open={true}
           schema={publishSchema.rjsfSchema}
           uiSchema={publishSchema.uiSchema}
           title={publishModal.filter?.name}
@@ -257,17 +239,6 @@ function FiltersGrid({
           submitBtnIcon={<PublicIcon/>}
         />
       )}
-      <Modal
-        open={importModal.open}
-        schema={importSchema.rjsfSchema}
-        uiSchema={importSchema.uiSchema}
-        handleClose={handleUploadImportClose}
-        handleSubmit={handleImportFilter}
-        title="Import Filter"
-        submitBtnText="Import"
-        leftHeaderIcon={<Filter fill="#fff" style={{ height : "24px", width : "24px", fonSize : "1.45rem" }} />}
-        submitBtnIcon={<PublishIcon/>}
-      />
     </div>
   );
 }
