@@ -1,4 +1,3 @@
-import safeJsonParse from "../../../../ui/components/ConnectionWizard/helpers/safeJsonParse";
 
 function is_youtubelink(url) {
     var p = /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/;
@@ -14,7 +13,7 @@ function is_vimeolink(url,el) {
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == XMLHttpRequest.DONE) {   // XMLHttpRequest.DONE == 4
             if (xmlhttp.status == 200) {
-                var response = safeJsonParse(xmlhttp.responseText);
+                var response = JSON.parse(xmlhttp.responseText);
                 id = response.video_id;
                 console.log(id);
                 el.classList.add('lightbox-vimeo');
