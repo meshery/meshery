@@ -87,7 +87,6 @@ func TestViewCmd(t *testing.T) {
 			BreakupFunc()
 		})
 	}
-	t.Log("View channelCmd Passed")
 }
 
 func TestSetCmd(t *testing.T) {
@@ -179,3 +178,4 @@ func TestSetCmd(t *testing.T) {
 // 	}
 // 	t.Log("Switch ChannelCmd Passed")
 // }
+
