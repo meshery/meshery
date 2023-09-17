@@ -25,7 +25,6 @@ import { toggleCatalogContent, updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
 import PromptComponent from "./PromptComponent";
-import UploadImport from "./Modals/ImportModal";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import { FILE_OPS, MesheryFiltersCatalog, VISIBILITY } from "../utils/Enum";
@@ -737,16 +736,6 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
 
     });
     reader.readAsArrayBuffer(file);
-  }
-
-  function urlUploadHandler(link, _, metadata,) {
-
-    handleSubmit({
-      data : link,
-      name : "meshery_" + Math.floor(trueRandom() * 100),
-      type : FILE_OPS.URL_UPLOAD,
-      metadata : metadata
-    });
   }
 
   const columns = [
