@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
+
 import Grid from "@material-ui/core/Grid";
-import { NoSsr, Chip, Button, TextField, Tooltip, Avatar } from "@material-ui/core";
+import { NoSsr, Chip, Button, TextField, Tooltip, Avatar, makeStyles } from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -11,17 +11,68 @@ import ReactSelectWrapper from "./ReactSelectWrapper";
 import { updateAdaptersInfo, updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
 import changeAdapterState from './graphql/mutations/AdapterStatusMutation';
-import { withNotify } from "../utils/hooks/useNotification";
+import { withNotify,useNotification } from "../utils/hooks/useNotification";
 import { EVENT_TYPES } from "../lib/event-types";
 import BadgeAvatars from './CustomAvatar';
 
-const styles = (theme) => ({
+// const styles = (theme) => ({
+//   wrapperClass : {
+//     padding : theme.spacing(5),
+//     backgroundColor : theme.palette.secondary.elevatedComponents,
+//     borderBottomLeftRadius : theme.spacing(1),
+//     borderBottomRightRadius : theme.spacing(1),
+//     marginTop : theme.spacing(2),
+//   },
+//   buttons : {
+//     display : "flex",
+//     justifyContent : "flex-end", paddingTop : "2rem"
+//   },
+//   button : {
+//     marginLeft : theme.spacing(1),
+//   },
+//   margin : { margin : theme.spacing(1), },
+//   alreadyConfigured : {
+//     textAlign : "center",
+//     padding : theme.spacing(20),
+//   },
+//   colorSwitchBase : {
+//     color : blue[300],
+//     "&$colorChecked" : {
+//       color : blue[500],
+//       "& + $colorBar" : { backgroundColor : blue[500], },
+//     },
+//   },
+//   colorBar : {},
+//   colorChecked : {},
+//   fileLabel : { width : "100%", },
+//   fileLabelText : {},
+//   inClusterLabel : { paddingRight : theme.spacing(2), },
+//   alignCenter : { textAlign : "center", },
+//   alignRight : {
+//     textAlign : "right",
+//     marginBottom : theme.spacing(2),
+//   },
+//   fileInputStyle : { opacity : "0.01", },
+//   // icon : { width : theme.spacing(2.5), },
+//   icon : {
+//     width : 20,
+//     height : 20
+//   },
+//   istioIcon : { width : theme.spacing(1.5), },
+//   chip : {
+//     marginRight : theme.spacing(1),
+//     marginBottom : theme.spacing(1),
+//   }
+// });
+
+const useStyles = makeStyles((theme) => ({
   wrapperClass : {
     padding : theme.spacing(5),
     backgroundColor : theme.palette.secondary.elevatedComponents,
     borderBottomLeftRadius : theme.spacing(1),
     borderBottomRightRadius : theme.spacing(1),
     marginTop : theme.spacing(2),
+    marginBottom : theme.spacing(2),
   },
   buttons : {
     display : "flex",
@@ -41,6 +92,7 @@ const styles = (theme) => ({
       color : blue[500],
       "& + $colorBar" : { backgroundColor : blue[500], },
     },
+    "&$colorChecked + $colorBar" : { backgroundColor : blue[500], },
   },
   colorBar : {},
   colorChecked : {},
@@ -63,8 +115,7 @@ const styles = (theme) => ({
     marginRight : theme.spacing(1),
     marginBottom : theme.spacing(1),
   }
-});
-
+}));
 const STATUS = {
   DEPLOYED : "DEPLOYED",
   UNDEPLOYED : "UNDEPLOYED",
@@ -72,43 +123,48 @@ const STATUS = {
   UNDEPLOYING : "UNDEPLOYING",
 }
 
-class  MeshAdapterConfigComponent extends React.Component {
-  constructor(props) {
-    super(props);
-    const { meshAdapters } = props;
-    this.labelRef = React.createRef();
-    this.state = {
-      meshAdapters,
-      setAdapterURLs : [],
-      availableAdapters : [],
-      ts : new Date(),
-      meshLocationURLError : false,
-      selectedAvailableAdapterError : false,
-      adapterStates : {},
-    };
-  }
+const MeshAdapterConfigComponent = (props) => {
 
-  static getDerivedStateFromProps(props, state) {
-    const { meshAdapters, meshAdaptersts } = props;
-    // if(meshAdapters.sort().join(',') !== state.meshAdapters.sort().join(',')){
-    if (meshAdaptersts > state.ts) {
-      return {
-        meshAdapters,
-        ts : meshAdaptersts
-      };
+  const labelRef = useRef(null)
+  // this.state = {
+  //   meshAdapters,
+  //   setAdapterURLs : [],
+  //   availableAdapters : [],
+  //   ts : new Date(),
+  //   meshLocationURLError : false,
+  //   selectedAvailableAdapterError : false,
+  //   adapterStates : {},
+  // };
+  const [meshAdapters, setMeshAdapters] = useState(props.meshAdapters);
+  const [setAdapterURLs, setSetAdapterURLs] = useState([]);
+  const [availableAdapters, setAvailableAdapters] = useState([]);
+  const [ts, setTs] = useState(props.meshAdaptersts);
+  const [meshLocationURLError, setMeshLocationURLError] = useState(false);
+  const [selectedAvailableAdapterError, setSelectedAvailableAdapterError] = useState(false);
+  const [adapterStates, setAdapterStates] = useState(props.meshAdapterStates);
+  const [meshLocationURL,setMeshLocationURL] = useState();
+  const [meshDeployURL,setMeshDeployURL] = useState();
+  const [meshDeployURLError, setMeshDeployURLError] = useState();
+  const [selectedAvailableAdapter, setSelectedAvailableAdapter] = useState();
+  const classes = useStyles();
+  const { notify } = useNotification();
+
+  useEffect(() => {
+    if (props.meshAdaptersts > ts) {
+      setMeshAdapters(props.meshAdapters);
+      setTs(props.meshAdaptersts);
     }
-    return {};
-  }
+  }, [props.meshAdaptersts, ts]);
 
-  componentDidMount = () => {
-    this.fetchSetAdapterURLs();
-    this.fetchAvailableAdapters();
-    this.setAdapterStates();
-  }
+  useEffect(() => {
+    fetchSetAdapterURLs();
+    fetchAvailableAdapters();
+    setAdapterStatesFunction();
+  }, []);
 
-  fetchSetAdapterURLs = () => {
-    const self = this;
-    this.props.updateProgress({ showProgress : true });
+  const fetchSetAdapterURLs = () => {
+    updateProgress({ showProgress : true });
+
     dataFetch(
       "/api/system/adapters",
       {
@@ -116,22 +172,22 @@ class  MeshAdapterConfigComponent extends React.Component {
         credentials : "include",
       },
       (result) => {
-        this.props.updateProgress({ showProgress : false });
+        updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
           const options = result.map((res) => ({
             value : res.adapter_location,
             label : res.adapter_location,
           }));
-          this.setState({ setAdapterURLs : options });
+          setSetAdapterURLs(options);
         }
       },
-      self.handleError("Unable to fetch available adapters")
+      handleError("Unable to fetch available adapters")
     );
   };
 
-  fetchAvailableAdapters = () => {
-    const self = this;
-    this.props.updateProgress({ showProgress : true });
+  const fetchAvailableAdapters = () => {
+    updateProgress({ showProgress : true });
+
     dataFetch(
       "/api/system/availableAdapters",
       {
@@ -139,34 +195,31 @@ class  MeshAdapterConfigComponent extends React.Component {
         credentials : "include",
       },
       (result) => {
-        this.props.updateProgress({ showProgress : false });
+        updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
           const options = result.map((res) => ({
             value : res.adapter_location,
             label : res.name,
           }));
-          this.setState({ availableAdapters : options });
+          setAvailableAdapters(options);
         }
       },
-      self.handleError("Unable to fetch available adapters")
+      handleError("Unable to fetch available adapters")
     );
   };
 
-  setAdapterStates = () => {
-    const { meshAdapters } = this.state;
+  const setAdapterStatesFunction = () => {
     const initialAdapterStates = {};
 
     meshAdapters.forEach((adapter) => {
-      const lable = adapter.name.toUpperCase()
-      initialAdapterStates[lable] = STATUS.UNDEPLOYED;
+      const label = adapter.name.toUpperCase();
+      initialAdapterStates[label] = STATUS.UNDEPLOYED;
     });
 
-    this.setState({
-      adapterStates : initialAdapterStates,
-    });
-  }
+    setAdapterStates(initialAdapterStates);
+  };
 
-  getStatusColor = (status) => {
+  const getStatusColor = (status) => {
     if (status === STATUS.DEPLOYED) {
       return "#00B39F";
     } else if (status === STATUS.UNDEPLOYED) {
@@ -178,53 +231,58 @@ class  MeshAdapterConfigComponent extends React.Component {
     }
   }
 
-  handleChange = (name) => (event) => {
-    if (name === "meshLocationURL" && event.target.value !== "") {
-      this.setState({ meshLocationURLError : false });
-    }
-    this.setState({ [name] : event.target.value });
-  };
+  // const handleChange = (name) => (event) => {
+  //   if (name === "meshLocationURL" && event.target.value !== "") {
+  //     setMeshLocationURLError(false);
+  //   }
 
-  handleMeshLocURLChange = (newValue) => {
+  //   setStateValues(prevState => ({
+  //     ...prevState,
+  //     [name] : event.target.value
+  //   }));
+  // };
+  const handleMeshLocURLChange = (newValue) => {
     // console.log(newValue);
     // console.log(`action: ${actionMeta.action}`);
     // console.groupEnd();
+
     if (typeof newValue !== "undefined") {
-      this.setState({ meshLocationURL : newValue, meshLocationURLError : false });
+      setMeshLocationURL(newValue);
+      setMeshLocationURLError(false);
+    }
+  };
+  const handleDeployPortChange = (newValue) => {
+    if (typeof newValue !== "undefined") {
+      console.log("port change to " + (newValue.value))
+      setMeshDeployURL(newValue.value);
+      setMeshDeployURLError(false);
     }
   };
 
-  handleDeployPortChange = (newValue) => {
-    if (typeof newValue !== "undefined") {
-      console.log("port change to " + (newValue.value))
-      this.setState({ meshDeployURL : newValue.value, meshDeployURLError : false });
-    }
-  }
-
-  handleAvailableAdapterChange = (newValue) => {
+  const handleAvailableAdapterChange = (newValue) => {
     if (typeof newValue !== "undefined") {
       // Trigger label animation manually
-      this.labelRef.current.querySelector('label').classList.add('MuiInputLabel-shrink');
-      this.setState({ selectedAvailableAdapter : newValue, selectedAvailableAdapterError : false });
+      labelRef.current.querySelector('label').classList.add('MuiInputLabel-shrink');
+      setSelectedAvailableAdapter(newValue);
+      setSelectedAvailableAdapterError(false);
+
       if (newValue !== null) {
-        this.setState({ meshDeployURL : newValue.value, meshDeployURLError : false });
+        setMeshDeployURL(newValue.value);
+        setMeshDeployURLError(false);
       }
     }
   };
 
-  handleSubmit = () => {
-    const { meshLocationURL } = this.state;
 
+  const handleSubmit = () => {
     if (!meshLocationURL || !meshLocationURL.value || meshLocationURL.value === "") {
-      this.setState({ meshLocationURLError : true });
+      setMeshLocationURLError(true);
       return;
     }
 
-    this.submitConfig();
+    submitConfig();
   };
-
-  submitConfig = () => {
-    const { meshLocationURL } = this.state;
+  const submitConfig = () => {
 
     const data = { meshLocationURL : meshLocationURL.value };
 
@@ -232,8 +290,8 @@ class  MeshAdapterConfigComponent extends React.Component {
       .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
       .join("&");
 
-    this.props.updateProgress({ showProgress : true });
-    const self = this;
+    updateProgress({ showProgress : true });
+
     dataFetch(
       "/api/system/adapter/manage",
       {
@@ -244,85 +302,80 @@ class  MeshAdapterConfigComponent extends React.Component {
         body : params,
       },
       (result) => {
-        self.props.updateProgress({ showProgress : false });
+        updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          self.setState({ meshAdapters : result, meshLocationURL : "" });
-          const notify = self.props.notify;
+          // self.setState({ meshAdapters : result, meshLocationURL : "" });
+          setMeshAdapters(result);
+          setMeshLocationURL("");
+
           notify({ message : "Adapter was configured!", event_type : EVENT_TYPES.SUCCESS })
-          self.props.updateAdaptersInfo({ meshAdapters : result });
-          self.fetchSetAdapterURLs();
+          updateAdaptersInfo({ meshAdapters : result });
+          fetchSetAdapterURLs();
         }
       },
-      self.handleError("Adapter was not configured due to an error")
+      handleError("Adapter was not configured due to an error")
     );
   };
+  const handleDelete = (adapterLoc) => () => {
+    updateProgress({ showProgress : true });
 
-  handleDelete = (adapterLoc) => () => {
-    // const { meshAdapters } = this.state;
-    this.props.updateProgress({ showProgress : true });
-    const self = this;
     dataFetch(
       `/api/system/adapter/manage?adapter=${encodeURIComponent(adapterLoc)}`,
       {
-
         method : "DELETE",
         credentials : "include",
       },
       (result) => {
-        this.props.updateProgress({ showProgress : false });
+        updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          this.setState({ meshAdapters : result });
-          const notify = self.props.notify;
-          notify({ message : "Adapter was removed!", event_type : EVENT_TYPES.SUCCESS })
-          this.props.updateAdaptersInfo({ meshAdapters : result });
+          setMeshAdapters(result);
+          notify({ message : "Adapter was removed!", event_type : EVENT_TYPES.SUCCESS });
+          updateAdaptersInfo({ meshAdapters : result });
         }
       },
-      self.handleError("Adapter was not removed due to an error")
+      handleError("Adapter was not removed due to an error")
     );
   };
 
-  handleClick = (adapterLoc) => () => {
-    // const { meshAdapters } = this.state;
-    this.props.updateProgress({ showProgress : true });
-    const self = this;
+  const handleClick = (adapterLoc) => () => {
+    updateProgress({ showProgress : true });
+
     dataFetch(
       `/api/system/adapters?adapter=${encodeURIComponent(adapterLoc)}`,
       {
         credentials : "include",
       },
       (result) => {
-        this.props.updateProgress({ showProgress : false });
+        updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          const notify = self.props.notify;
-          notify({ message : "Adapter was pinged!", event_type : EVENT_TYPES.SUCCESS })
+          notify({ message : "Adapter was pinged!", event_type : EVENT_TYPES.SUCCESS });
         }
       },
-      self.handleError("error")
+      handleError("error")
     );
   };
 
-  handleAdapterDeploy = () => {
-    const { selectedAvailableAdapter, meshDeployURL } = this.state;
+
+
+  const handleAdapterDeploy = () => {
     if (!selectedAvailableAdapter || !selectedAvailableAdapter.value || selectedAvailableAdapter.value === "") {
-      this.setState({ selectedAvailableAdapterError : true });
+      setSelectedAvailableAdapterError(true);
       return;
     }
 
     const adapterLabel = selectedAvailableAdapter.label.replace(/^meshery-/, '').toUpperCase();
-    this.setState(prevState => ({
-      adapterStates : {
-        ...prevState.adapterStates,
-        [adapterLabel] : STATUS.DEPLOYING,
-      },
+    setAdapterStates(prevState => ({
+      ...prevState,
+      [adapterLabel] : STATUS.DEPLOYING,
     }));
 
     if (!meshDeployURL || meshDeployURL === "") {
-      console.log(meshDeployURL)
-      this.setState({ meshDeployURLError : true });
+      console.log(meshDeployURL);
+      setMeshDeployURLError(true);
       return;
     }
 
-    this.props.updateProgress({ showProgress : true });
+    updateProgress({ showProgress : true });
 
     const variables = {
       status : "ENABLED",
@@ -331,70 +384,61 @@ class  MeshAdapterConfigComponent extends React.Component {
     };
 
     changeAdapterState((response, errors) => {
-      this.props.updateProgress({ showProgress : false });
+      updateProgress({ showProgress : false });
 
       if (errors !== undefined) {
-        this.handleError("Unable to Deploy adapter");
-        this.setState(prevState => ({
-          adapterStates : {
-            ...prevState.adapterStates,
-            [adapterLabel] : STATUS.UNDEPLOYED,
-          },
-        }))
+        handleError("Unable to Deploy adapter");
+        setAdapterStates(prevState => ({
+          ...prevState,
+          [adapterLabel] : STATUS.UNDEPLOYED,
+        }));
       }
 
-      this.setState(prevState => ({
-        adapterStates : {
-          ...prevState.adapterStates,
-          [adapterLabel] : STATUS.DEPLOYED,
-        },
-      }))
-      const notify = this.props.notify;
-      notify({ message : "Adapter " + response.adapterStatus.toLowerCase(), event_type : EVENT_TYPES.SUCCESS })
+      setAdapterStates(prevState => ({
+        ...prevState,
+        [adapterLabel] : STATUS.DEPLOYED,
+      }));
+      notify({ message : "Adapter " + response.adapterStatus.toLowerCase(), event_type : EVENT_TYPES.SUCCESS });
     }, variables);
   };
 
-  handleAdapterUndeploy = () => {
-    const { meshLocationURL, availableAdapters } = this.state;
-
+  const handleAdapterUndeploy = () => {
     if (!meshLocationURL || !meshLocationURL.value || meshLocationURL.value === "") {
-      this.setState({ meshLocationURLError : true });
+      setMeshLocationURLError(true);
       return;
     }
 
-    this.props.updateProgress({ showProgress : true });
+    updateProgress({ showProgress : true });
 
-    const targetPort = function getTargetPort(location) {
-      if (!location.value) {
-        return null
+    const targetPort = (() => {
+      if (!meshLocationURL.value) {
+        return null;
       }
 
-      if (location.value.includes(":")) {
-        return location.value.split(":")[1]
+      if (meshLocationURL.value.includes(":")) {
+        return meshLocationURL.value.split(":")[1];
       }
 
-      return location.value;
-    }(meshLocationURL)
+      return meshLocationURL.value;
+    })();
 
-    const adapterName = function getAdapterName(location) {
-      if (!location.value) {
-        return null
+    const adapterName = (() => {
+      if (!meshLocationURL.value) {
+        return null;
       }
 
-      if (location.value.includes(":")) {
-        return location.value.split(":")[0]
+      if (meshLocationURL.value.includes(":")) {
+        return meshLocationURL.value.split(":")[0];
       }
 
-      return location.value;
-    }(meshLocationURL)
+      return meshLocationURL.value;
+    })();
 
     const adapterLabel = (availableAdapters.find(adapter => adapter.value === targetPort)?.label || "").replace(/^meshery-/, '').toUpperCase();
 
-    this.setState(prevState => ({
-      adapterStates : {
-        ...prevState.adapterStates,
-        [adapterLabel] : STATUS.UNDEPLOYING,
-      },
+    setAdapterStates(prevState => ({
+      ...prevState,
+      [adapterLabel] : STATUS.UNDEPLOYING,
     }));
 
     const variables = {
@@ -404,43 +448,36 @@ class  MeshAdapterConfigComponent extends React.Component {
     };
 
     changeAdapterState((response, errors) => {
-      this.props.updateProgress({ showProgress : false });
+      updateProgress({ showProgress : false });
 
       if (errors !== undefined) {
-        console.error(errors)
-        this.handleError("Unable to Deploy adapter");
-        this.setState(prevState => ({
-          adapterStates : {
-            ...prevState.adapterStates,
-            [adapterLabel] : STATUS.DEPLOYED,
-          },
-        }))
+        console.error(errors);
+        handleError("Unable to Deploy adapter");
+        setAdapterStates(prevState => ({
+          ...prevState,
+          [adapterLabel] : STATUS.DEPLOYED,
+        }));
       }
-      const notify = this.props.notify;
-      notify({ message : "Adapter " + response.adapterStatus.toLowerCase(), event_type : EVENT_TYPES.SUCCESS })
-      this.setState(prevState => ({
-        adapterStates : {
-          ...prevState.adapterStates,
-          [adapterLabel] : STATUS.UNDEPLOYED,
-        },
+
+      notify({ message : "Adapter " + response.adapterStatus.toLowerCase(), event_type : EVENT_TYPES.SUCCESS });
+
+      setAdapterStates(prevState => ({
+        ...prevState,
+        [adapterLabel] : STATUS.UNDEPLOYED,
       }));
     }, variables);
   };
 
-  handleError = (msg) => (error) => {
-    this.props.updateProgress({ showProgress : false });
-    const notify = this.props.notify;
+  const handleError = (msg) => (error) => {
+    updateProgress({ showProgress : false });
     notify({ message : msg, event_type : EVENT_TYPES.ERROR, details : error.toString() })
   };
 
-  configureTemplate = () => {
-    const { classes } = this.props;
-    const {
-      availableAdapters, setAdapterURLs, meshAdapters, meshLocationURL, meshLocationURLError, meshDeployURLError, selectedAvailableAdapter, selectedAvailableAdapterError, meshDeployURL, adapterStates
-    } = this.state;
+  const configureTemplate = () => {
+
+
 
     let showAdapters = "";
-    const self = this;
     if (meshAdapters.length > 0) {
       showAdapters = (
         <div className={classes.alignRight}>
@@ -466,11 +503,11 @@ class  MeshAdapterConfigComponent extends React.Component {
                 <Chip
                   className={classes.chip}
                   label={adapter.adapter_location}
-                  onDelete={self.handleDelete(adapter.adapter_location)}
-                  onClick={self.handleClick(adapter.adapter_location)}
+                  onDelete={handleDelete(adapter.adapter_location)}
+                  onClick={handleClick(adapter.adapter_location)}
                   icon={
                     // logoIcon
-                    <BadgeAvatars color={this.getStatusColor(adapterStates[adapter.name])}>
+                    <BadgeAvatars color={getStatusColor(adapterStates[adapter.name])}>
                       <Avatar alt={adapter.name} src={image} className={classes.icon} />
                     </BadgeAvatars>
                   }
@@ -492,7 +529,7 @@ class  MeshAdapterConfigComponent extends React.Component {
           <Grid container spacing={1} alignItems="flex-end">
             <Grid item xs={12} data-cy="mesh-adapter-url">
               <ReactSelectWrapper
-                onChange={this.handleMeshLocURLChange}
+                onChange={handleMeshLocURLChange}
                 options={setAdapterURLs}
                 value={meshLocationURL}
                 // placeholder={'Mesh Adapter URL'}
@@ -508,7 +545,7 @@ class  MeshAdapterConfigComponent extends React.Component {
                 variant="contained"
                 color="primary"
                 size="large"
-                onClick={this.handleAdapterUndeploy}
+                onClick={handleAdapterUndeploy}
                 className={classes.button}
               >
                 Undeploy
@@ -518,7 +555,7 @@ class  MeshAdapterConfigComponent extends React.Component {
                 variant="contained"
                 color="primary"
                 size="large"
-                onClick={this.handleSubmit}
+                onClick={handleSubmit}
                 className={classes.button}
                 data-cy="btnSubmitMeshAdapter"
               >
@@ -529,7 +566,7 @@ class  MeshAdapterConfigComponent extends React.Component {
           <Grid container spacing={1} alignItems="flex-end" style={{ marginTop : '50px' }}>
             <Grid item xs={12}>
               <ReactSelectWrapper
-                onChange={this.handleAvailableAdapterChange}
+                onChange={handleAvailableAdapterChange}
                 options={availableAdapters}
                 value={selectedAvailableAdapter}
                 // placeholder={'Mesh Adapter URL'}
@@ -539,12 +576,12 @@ class  MeshAdapterConfigComponent extends React.Component {
             </Grid>
           </Grid>
           <Grid container spacing={1} alignItems="flex-end" justifyContent="flex-end">
-            <div ref={this.labelRef}>
+            <div ref={labelRef}>
               <TextField
                 id="deployPort"
                 type="text"
                 label="Enter Port"
-                onChange={(e) => this.handleDeployPortChange(e.target)}
+                onChange={(e) => handleDeployPortChange(e.target)}
                 value={meshDeployURL}
                 error={meshDeployURLError}
               />
@@ -556,7 +593,7 @@ class  MeshAdapterConfigComponent extends React.Component {
                   variant="contained"
                   color="primary"
                   size="large"
-                  onClick={this.handleAdapterDeploy}
+                  onClick={handleAdapterDeploy}
                   className={classes.button}
                 >
                   Deploy
@@ -569,9 +606,9 @@ class  MeshAdapterConfigComponent extends React.Component {
     );
   };
 
-  render() {
-    return this.configureTemplate();
-  }
+  return (
+    configureTemplate()
+  )
 }
 
 MeshAdapterConfigComponent.propTypes = { classes : PropTypes.object.isRequired, };
@@ -588,6 +625,4 @@ const mapStateToProps = (state) => {
   return { meshAdapters, meshAdaptersts };
 };
 
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(withNotify(MeshAdapterConfigComponent)))
-);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withNotify(MeshAdapterConfigComponent)));
