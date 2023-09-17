@@ -484,7 +484,7 @@ function MesheryApplications({
         {
           credentials : "include",
           method : "PUT",
-          body : JSON.stringify({ application_data : { id, name : metadata.name || name, application_file : data }, save : true }),
+          body : JSON.stringify({ application_data : { id, name : metadata?.name || name, application_file : data }, save : true }),
         },
         () => {
           updateProgress({ showProgress : false });
@@ -503,11 +503,11 @@ function MesheryApplications({
       let body = { save : true }
       if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({
-          ...body, application_data : { name : metadata.name || name || getRandomName(), application_file : data }
+          ...body, application_data : { name : metadata?.name || name || getRandomName(), application_file : data }
         })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
-        body = JSON.stringify({ ...body, url : data, name : metadata.name || name })
+        body = JSON.stringify({ ...body, url : data, name : metadata?.name || name })
       }
       dataFetch(
         `/api/application/${source_type}`,
@@ -689,8 +689,6 @@ function MesheryApplications({
       },
     }
   ];
-
-  console.log("applications", applications)
 
   columns.forEach((column, idx) => {
     if (column.name === sortOrder.split(" ")[0]) {
