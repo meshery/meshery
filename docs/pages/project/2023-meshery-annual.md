@@ -79,7 +79,7 @@ As a self-service engineering platform, Meshery enables collaborative design and
 
 Meshery has greatly expanded beyond it's initial service mesh-centric focus to support integrations (~220 currently) across the entire cloud native ecosystem. Meshery's configuration and orchestration abilities include a growing list of supported infrastructure.
 
-
+Meshery's [roadmap](https://github.com/meshery/meshery/blob/master/ROADMAP.md) has remained consistent over this past year. The community of contributors has been in execution mode, dialing now on it's final, planned architectural components to a v1.0. Signicant strides have been made with [Meshery's architecture](https://docs.meshery.io/concepts), including incorporation of WASM for OPA execution in it's UI client, a client-side user permissioning framework, delivery a [Docker Extension](https://docs.meshery.io/installation/platforms/docker-extension), the addition of support for Postgres, 6 new [extension points](https://docs.meshery.io/extensibility), self-documenting end-to-end test framework that includes a published [platform compability matrix](https://docs.meshery.io/installation/platforms), and a number of other features. Additionally, Meshery's community is blooming with Meshery LFX internship being the #1 most popular out of all of the LF.
 
 ## How can the CNCF help?
 
