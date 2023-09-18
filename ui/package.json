@@ -130,7 +130,7 @@
     "@storybook/testing-library": "^0.0.13",
     "ajv": "^8.12.0",
     "babel-loader": "^9.1.2",
-    "cypress": "^12.0.2",
+    "cypress": "^13.2.0",
     "cypress-file-upload": "^5.0.8",
     "eslint": "^8.35.0",
     "eslint-config-next": "^13.1.2",
