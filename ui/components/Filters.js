@@ -25,7 +25,6 @@ import { toggleCatalogContent, updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
 import PromptComponent from "./PromptComponent";
-import UploadImport from "./Modals/ImportModal";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import { FILE_OPS, MesheryFiltersCatalog, VISIBILITY } from "../utils/Enum";
@@ -313,7 +312,8 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
       async (result) => {
         try {
           const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName));
+          const modelNames = _.uniq(models?.map((model) => model.displayName.toUpperCase()));
+          modelNames.sort()
 
           // Modify the schema using the utility function
           const modifiedSchema = modifyRJSFSchema(
@@ -738,16 +738,6 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
     reader.readAsArrayBuffer(file);
   }
 
-  function urlUploadHandler(link, _, metadata,) {
-
-    handleSubmit({
-      data : link,
-      name : "meshery_" + Math.floor(trueRandom() * 100),
-      type : FILE_OPS.URL_UPLOAD,
-      metadata : metadata
-    });
-  }
-
   const columns = [
     {
       name : "name",
@@ -1114,7 +1104,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
           <div className={classes.searchWrapper} style={{ display : "flex" }}>
 
             <SearchBar
-              onChange={(value) => {
+              onSearch={(value) => {
                 setSearch(value);
                 initFiltersSubscription(page.toString(), pageSize.toString(), value, sortOrder);
               }
@@ -1161,9 +1151,9 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
               canPublishFilter={canPublishFilter}
               handlePublish={handlePublish}
               handleUnpublishModal={handleUnpublishModal}
+              handleUploadImport={handleUploadImport}
               handleClone={handleClone}
               handleDownload={handleDownload}
-              urlUploadHandler={urlUploadHandler}
               uploadHandler={uploadHandler}
               setSelectedFilter={setSelectedFilter}
               selectedFilter={selectedFilter}
@@ -1171,8 +1161,6 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
               importSchema={importSchema}
               setPage={setPage}
               selectedPage={page}
-              UploadImport={UploadImport}
-              handleImportFilter={handleImportFilter}
               publishModal={publishModal}
               setPublishModal={setPublishModal}
               publishSchema={publishSchema}
@@ -1190,9 +1178,9 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
           componentCount={modalOpen.count}
           tab={modalOpen.deploy ? 2 : 1}
         />
-        {canPublishFilter &&
+        {(canPublishFilter && publishModal.open) &&
           <Modal
-            open={publishModal.open}
+            open={true}
             schema={publishSchema.rjsfSchema}
             uiSchema={publishSchema.uiSchema}
             title={publishModal.filter?.name}
@@ -1204,18 +1192,19 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
           />
         }
         <PromptComponent ref={modalRef} />
-        <Modal
-          open={importModal.open}
-          schema={importSchema.rjsfSchema}
-          uiSchema={importSchema.uiSchema}
-          handleClose={handleUploadImportClose}
-          handleSubmit={handleImportFilter}
-          title="Import Filter"
-          submitBtnText="Import"
-          leftHeaderIcon={<Filter fill="#fff" style={{ height : "24px", width : "24px", fonSize : "1.45rem" }} />}
-          submitBtnIcon={<PublishIcon/>}
-        />
-        {/* REMOVE this with its deps <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchFilters(page, pageSize, search, sortOrder) } configuration="Filter" /> */}
+        {importModal.open &&
+          <Modal
+            open={true}
+            schema={importSchema.rjsfSchema}
+            uiSchema={importSchema.uiSchema}
+            handleClose={handleUploadImportClose}
+            handleSubmit={handleImportFilter}
+            title="Import Filter"
+            submitBtnText="Import"
+            leftHeaderIcon={<Filter fill="#fff" style={{ height : "24px", width : "24px", fonSize : "1.45rem" }} />}
+            submitBtnIcon={<PublishIcon/>}
+          />
+        }
       </NoSsr>
     </>
   );

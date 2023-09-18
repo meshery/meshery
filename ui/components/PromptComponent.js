@@ -7,7 +7,9 @@ import {
   DialogActions,
   DialogContentText,
   DialogContent,
-  DialogTitle
+  DialogTitle,
+  FormControlLabel,
+  Checkbox
 } from "@material-ui/core";
 import classNames from 'classnames';
 
@@ -23,7 +25,8 @@ const styles = (theme) => ({
     minWidth : 400,
     overflowWrap : 'anywhere',
     textAlign : 'center',
-    padding : '5px'
+    padding : '5px',
+    color : theme.palette.secondary.text
   },
   actions : {
     display : 'flex',
@@ -57,6 +60,15 @@ const styles = (theme) => ({
     "&:hover" : {
       backgroundColor : "#B32700",
     }
+  },
+  checkboxLabelStyle : {
+    fontSize : "1rem",
+  },
+  checkbox : {
+    color : theme.palette.secondary.focused,
+    "&$checked" : {
+      color : theme.palette.secondary.focused,
+    }
   }
 });
 
@@ -67,7 +79,9 @@ class PromptComponent extends React.Component {
       show : false,
       title : "",
       subtitle : "",
-      options : []
+      options : [],
+      isChecked : false,
+      showCheckbox : false
     }
     this.promiseInfo = {};
   }
@@ -80,6 +94,7 @@ class PromptComponent extends React.Component {
         title : passed.title,
         subtitle : passed.subtitle,
         options : passed.options,
+        showCheckbox : !!passed.showCheckbox,
         show : true
       });
     });
@@ -89,9 +104,20 @@ class PromptComponent extends React.Component {
     this.setState({ show : false });
   };
 
+  handleCheckboxChange = () => {
+    this.setState((prevState) => ({
+      isChecked : !prevState.isChecked,
+    }));
+  };
+
+  getCheckboxState = () => {
+    return this.state.isChecked;
+  };
+
+
   render() {
     const {
-      show, options, title, subtitle
+      show, options, title, subtitle, isChecked, showCheckbox
     } = this.state;
     const { classes } = this.props;
     const { resolve } = this.promiseInfo;
@@ -116,6 +142,23 @@ class PromptComponent extends React.Component {
                   {subtitle}
                 </Typography>
               </DialogContentText>
+              {showCheckbox && (
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={isChecked}
+                      onChange={this.handleCheckboxChange}
+                      className={classes.checkbox}
+                      color="primary"
+                    />
+                  }
+                  label={
+                    <span className={classes.checkboxLabelStyle}>
+                      Do not show again
+                    </span>
+                  }
+                />
+              )}
             </DialogContent>
           }
           <DialogActions className={classes.actions}>

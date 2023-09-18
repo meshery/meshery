@@ -43,6 +43,7 @@ const BaseInput = (props) => {
           focused={focused}
           type={props.options?.inputType}
           key={props.id}
+          disabled={props?.disabled || props?.readonly}
           value={
             props.options?.inputType === "file"
               ? null
