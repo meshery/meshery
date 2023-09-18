@@ -11,7 +11,7 @@ import ReactSelectWrapper from "./ReactSelectWrapper";
 import { updateAdaptersInfo, updateProgress } from "../lib/store";
 import dataFetch from "../lib/data-fetch";
 import changeAdapterState from './graphql/mutations/AdapterStatusMutation';
-import { withNotify,useNotification } from "../utils/hooks/useNotification";
+import { useNotification } from "../utils/hooks/useNotification";
 import { EVENT_TYPES } from "../lib/event-types";
 import BadgeAvatars from './CustomAvatar';
 
@@ -568,4 +568,4 @@ const mapStateToProps = (state) => {
   return { meshAdapters, meshAdaptersts };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withNotify(MeshAdapterConfigComponent)));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(MeshAdapterConfigComponent));
