@@ -2,7 +2,7 @@ As a self-service engineering platform, Meshery enables collaborative design and
 
 ## Devstats
 
-- Contributors from 130 companies (all-time)
+- [130 companies represented by contributors (all-time)](https://meshery.devstats.cncf.io/d/5/companies-table?orgId=1)
 - [89 PR authors this past year](https://meshery.devstats.cncf.io/d/22/prs-authors-table?orgId=1&var-period_name=Last%20year&var-repogroup_name=All)
 
 ## Maintainers ([link](https://github.com/meshery/meshery/blob/master/MAINTAINERS.md))
