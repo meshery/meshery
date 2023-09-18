@@ -89,7 +89,7 @@ function getFieldPathString(fieldPath) {
     return "";
   }
 
-  return fieldPath.split(".").splice(2).join(" > ");
+  return fieldPath.split(".").splice(2).join(".");
 }
 
 // errors - [{type, fieldPath, message}]
