@@ -9,7 +9,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
-import { withRouter,useRouter } from "next/router";
+import { useRouter } from "next/router";
 import PropTypes from "prop-types";
 import React,{ useEffect, useState, useRef } from "react";
 import { connect } from "react-redux";
@@ -35,7 +35,7 @@ import { configurationTableTheme, configurationTableThemeDark } from '../themes/
 import DashboardMeshModelGraph from './Dashboard/DashboardMeshModelGraph'
 import ConnectionStatsChart from "./Dashboard/ConnectionCharts.js";
 import { EVENT_TYPES } from "../lib/event-types";
-import { withNotify,useNotification } from "../utils/hooks/useNotification";
+import { useNotification } from "../utils/hooks/useNotification";
 
 const useStyles = makeStyles((theme) => ({
   rootClass : {
@@ -181,7 +181,6 @@ const DashboardComponent=(props) => {
     }
     setGrafana(props.grafana);
     setPrometheus(props.prometheus);
-    // If k8sconfig state was defined in the provided state, then:
     // setK8sconfig(props.k8sconfig);
   }, [props.meshAdaptersts, props.meshAdapters, props.grafana, props.prometheus, props.k8sconfig, mts]);
 
@@ -1220,4 +1219,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withNotify(DashboardComponent)));
+export default connect(mapStateToProps, mapDispatchToProps)((DashboardComponent));
