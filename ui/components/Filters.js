@@ -18,7 +18,6 @@ import { UnControlled as CodeMirror } from "react-codemirror2";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import MUIDataTable from "mui-datatables";
 import Moment from "react-moment";
 import CloseIcon from "@material-ui/icons/Close";
 import EditIcon from "@material-ui/icons/Edit";
@@ -26,7 +25,6 @@ import { toggleCatalogContent, updateProgress } from "../lib/store";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import dataFetch from "../lib/data-fetch";
 import PromptComponent from "./PromptComponent";
-import UploadImport from "./Modals/ImportModal";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import { FILE_OPS, MesheryFiltersCatalog, VISIBILITY } from "../utils/Enum";
@@ -47,12 +45,15 @@ import fetchCatalogFilter from "./graphql/queries/CatalogFilterQuery";
 import { iconMedium } from "../css/icons.styles";
 import Modal from "./Modal";
 import { getUnit8ArrayDecodedFile, modifyRJSFSchema } from "../utils/utils";
-import SearchBar from "./searchcommon";
 import Filter from "../public/static/img/drawer-icons/filter_svg.js";
 import { getMeshModels } from "../api/meshmodel";
 import _ from "lodash";
 import { useNotification } from "../utils/hooks/useNotification";
 import { EVENT_TYPES } from "../lib/event-types";
+import SearchBar from "../utils/custom-search";
+import CustomColumnVisibilityControl from "../utils/custom-column";
+import ResponsiveDataTable from "../utils/data-table";
+import useStyles from "../assets/styles/general/tool.styles";
 
 const styles = (theme) => ({
   grid : {
@@ -63,17 +64,8 @@ const styles = (theme) => ({
     fontSize : 18,
   },
   createButton : {
-    display : "flex",
-    justifyContent : "flex-start",
-    alignItems : "center",
-    whiteSpace : "nowrap",
-  },
-  topToolbar : {
-    margin : "2rem auto",
-    display : "flex",
-    justifyContent : "space-between",
-    flexWrap : "wrap",
-    paddingLeft : "1rem"
+    width : "fit-content",
+    alignSelf : "flex-start"
   },
   viewSwitchButton : {
     justifySelf : "flex-end",
@@ -84,9 +76,10 @@ const styles = (theme) => ({
     alignItems : "center"
   },
   searchWrapper : {
-    "@media (max-width: 1150px)" : {
-      marginTop : '20px',
-    },
+    justifySelf : "flex-end",
+    marginLeft : "auto",
+    paddingLeft : "1rem",
+    display : "flex"
   },
 
   ymlDialogTitleText : {
@@ -101,10 +94,13 @@ const styles = (theme) => ({
   },
   visibilityImg : {
     filter : theme.palette.secondary.img,
-  }
-  // text : {
-  //   padding : "5px"
-  // }
+  },
+  btnText : {
+    display : 'block',
+    "@media (max-width: 1450px)" : {
+      display : "none",
+    },
+  },
 });
 
 function TooltipIcon({ children, onClick, title }) {
@@ -230,6 +226,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
 
   //hooks
   const { notify } = useNotification()
+  const StyleClass = useStyles();
 
   const [modalOpen, setModalOpen] = useState({
     open : false,
@@ -315,7 +312,8 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
       async (result) => {
         try {
           const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName));
+          const modelNames = _.uniq(models?.map((model) => model.displayName.toUpperCase()));
+          modelNames.sort()
 
           // Modify the schema using the utility function
           const modifiedSchema = modifyRJSFSchema(
@@ -740,16 +738,6 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
     reader.readAsArrayBuffer(file);
   }
 
-  function urlUploadHandler(link, _, metadata,) {
-
-    handleSubmit({
-      data : link,
-      name : "meshery_" + Math.floor(trueRandom() * 100),
-      type : FILE_OPS.URL_UPLOAD,
-      metadata : metadata
-    });
-  }
-
   const columns = [
     {
       name : "name",
@@ -826,7 +814,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
           );
         },
         customBodyRender : function CustomBody(_, tableMeta) {
-          const visibility = filters[tableMeta.rowIndex].visibility
+          const visibility = filters[tableMeta.rowIndex]?.visibility
           return (
             <>
               <img className={classes.visibilityImg} src={`/static/img/${visibility}.svg`} />
@@ -837,6 +825,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
     },
     {
       name : "Actions",
+      label : "Actions",
       options : {
         filter : false,
         sort : false,
@@ -850,7 +839,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
         },
         customBodyRender : function CustomBody(_, tableMeta) {
           const rowData = filters[tableMeta.rowIndex];
-          const visibility = filters[tableMeta.rowIndex].visibility
+          const visibility = filters[tableMeta.rowIndex]?.visibility
           return (
             <>
               {visibility === VISIBILITY.PUBLISHED ? <TooltipIcon
@@ -938,6 +927,7 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
 
   const options = {
     filter : false,
+    viewColumns : false,
     sort : !(user && user.user_id === "meshery"),
     search : false,
     filterType : "textField",
@@ -1070,13 +1060,24 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
     )
   }
 
+  const [tableCols, updateCols] = useState(columns);
+
+  const [columnVisibility, setColumnVisibility] = useState(() => {
+    // Initialize column visibility based on the original columns' visibility
+    const initialVisibility = {};
+    columns.forEach(col => {
+      initialVisibility[col.name] = col.options?.display !== false;
+    });
+    return initialVisibility;
+  });
+
   return (
     <>
       <NoSsr>
         {selectedRowData && Object.keys(selectedRowData).length > 0 && (
           <YAMLEditor filter={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} classes={classes} />
         )}
-        <div className={classes.topToolbar} >
+        <div className={StyleClass.toolWrapper} >
           <div style={{ display : "flex" }}>
             {!selectedFilter.show && (filters.length > 0 || viewType === "table") &&
                 <div className={classes.createButton}>
@@ -1091,49 +1092,48 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
                       style={{ marginRight : "2rem" }}
                     >
                       <PublishIcon  style={iconMedium} className={classes.addIcon} data-cy="import-button"/>
-                      Import Filters
+                      <span className={classes.btnText}> Import Filters  </span>
                     </Button>
                   </div>
                 </div>
             }
-            <div style={{ justifySelf : "flex-end", marginLeft : "auto", paddingRight : "1rem", paddingTop : "0.2rem" }}>
+            <div style={{ jdisplay : 'flex' }}>
               <CatalogFilter catalogVisibility={catalogVisibility} handleCatalogVisibility={handleCatalogVisibility} classes={classes} />
             </div>
           </div>
           <div className={classes.searchWrapper} style={{ display : "flex" }}>
-            <div
-              className={classes.searchAndView}
-              style={{
-                display : 'flex',
-                alignItems : 'center',
-                justifyContent : 'center',
-                margin : 'auto',
-              }}
-            >
-              <SearchBar
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  initFiltersSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
-                }
-                }
-                label={"Search Filters"}
-                width="55ch"
-              />
-            </div>
+
+            <SearchBar
+              onSearch={(value) => {
+                setSearch(value);
+                initFiltersSubscription(page.toString(), pageSize.toString(), value, sortOrder);
+              }
+              }
+              placeholder="Search"
+            />
+            {viewType === "table" &&
+            <CustomColumnVisibilityControl
+              columns={columns}
+              customToolsProps={{ columnVisibility, setColumnVisibility }}
+            />
+            }
+
+
             {!selectedFilter.show &&
-                <div className={classes.viewSwitchButton}>
+
                   <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
-                </div>
+
             }
           </div>
         </div>
         {
           !selectedFilter.show && viewType === "table" &&
-          <MUIDataTable
-            title={<div className={classes.tableHeader}>Filters</div>}
+          <ResponsiveDataTable
             data={filters}
             columns={columns}
+            tableCols={tableCols}
+            updateCols={updateCols}
+            columnVisibility={columnVisibility}
             // @ts-ignore
             options={options}
             className={classes.muiRow}
@@ -1151,9 +1151,9 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
               canPublishFilter={canPublishFilter}
               handlePublish={handlePublish}
               handleUnpublishModal={handleUnpublishModal}
+              handleUploadImport={handleUploadImport}
               handleClone={handleClone}
               handleDownload={handleDownload}
-              urlUploadHandler={urlUploadHandler}
               uploadHandler={uploadHandler}
               setSelectedFilter={setSelectedFilter}
               selectedFilter={selectedFilter}
@@ -1161,8 +1161,6 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
               importSchema={importSchema}
               setPage={setPage}
               selectedPage={page}
-              UploadImport={UploadImport}
-              handleImportFilter={handleImportFilter}
               publishModal={publishModal}
               setPublishModal={setPublishModal}
               publishSchema={publishSchema}
@@ -1180,9 +1178,9 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
           componentCount={modalOpen.count}
           tab={modalOpen.deploy ? 2 : 1}
         />
-        {canPublishFilter &&
+        {(canPublishFilter && publishModal.open) &&
           <Modal
-            open={publishModal.open}
+            open={true}
             schema={publishSchema.rjsfSchema}
             uiSchema={publishSchema.uiSchema}
             title={publishModal.filter?.name}
@@ -1194,18 +1192,19 @@ function MesheryFilters({ updateProgress, user, classes, selectedK8sContexts, ca
           />
         }
         <PromptComponent ref={modalRef} />
-        <Modal
-          open={importModal.open}
-          schema={importSchema.rjsfSchema}
-          uiSchema={importSchema.uiSchema}
-          handleClose={handleUploadImportClose}
-          handleSubmit={handleImportFilter}
-          title="Import Filter"
-          submitBtnText="Import"
-          leftHeaderIcon={<Filter fill="#fff" style={{ height : "24px", width : "24px", fonSize : "1.45rem" }} />}
-          submitBtnIcon={<PublishIcon/>}
-        />
-        {/* REMOVE this with its deps <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchFilters(page, pageSize, search, sortOrder) } configuration="Filter" /> */}
+        {importModal.open &&
+          <Modal
+            open={true}
+            schema={importSchema.rjsfSchema}
+            uiSchema={importSchema.uiSchema}
+            handleClose={handleUploadImportClose}
+            handleSubmit={handleImportFilter}
+            title="Import Filter"
+            submitBtnText="Import"
+            leftHeaderIcon={<Filter fill="#fff" style={{ height : "24px", width : "24px", fonSize : "1.45rem" }} />}
+            submitBtnIcon={<PublishIcon/>}
+          />
+        }
       </NoSsr>
     </>
   );

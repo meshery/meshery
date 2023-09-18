@@ -11,21 +11,32 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 var (
-	ErrFailRequestCode             = "1000"
-	ErrInvalidTokenCode            = "1001"
-	ErrFailReqStatusCode           = "1002"
-	ErrAttachAuthTokenCode         = "1003"
-	ErrUnmarshalCode               = "1004"
-	ErrFileReadCode                = "1005"
-	ErrCreatingRequestCode         = "1006"
-	ErrMarhallingCode              = "1007"
-	ErrReadResponseBodyCode        = "1008"
-	ErrParsingUrlCode              = "1009"
-	ErrNotFoundCode                = "1010"
-	ErrUnauthenticatedCode         = "1011"
-	ErrInvalidFileCode             = "1012"
-	ErrInvalidNameOrIDCode         = "1013"
-	ErrInvalidAPIResponseCode      = "1014"
+	ErrFailRequestCode             = "replace_me"
+	ErrInvalidTokenCode            = "replace_me"
+	ErrFailReqStatusCode           = "replace_me"
+	ErrAttachAuthTokenCode         = "replace_me"
+	ErrUnmarshalCode               = "replace_me"
+	ErrFileReadCode                = "replace_me"
+	ErrCreatingRequestCode         = "replace_me"
+	ErrMarshalCode                 = "replace_me"
+	ErrReadResponseBodyCode        = "replace_me"
+	ErrParsingUrlCode              = "replace_me"
+	ErrNotFoundCode                = "replace_me"
+	ErrUnauthenticatedCode         = "replace_me"
+	ErrInvalidFileCode             = "replace_me"
+	ErrInvalidNameOrIDCode         = "replace_me"
+	ErrInvalidAPIResponseCode      = "replace_me"
+	ErrReadConfigFileCode          = "replace_me"
+	ErrMarshalIndentCode           = "replace_me"
+	ErrLoadConfigCode              = "replace_me"
+	ErrResponseStatusBodyCode      = "replace_me"
+	ErrResponseStatusCode          = "replace_me"
+	ErrJSONToYAMLCode              = "replace_me"
+	ErrOutFormatFlagCode           = "replace_me"
+	ErrInvalidAPICallCode          = "replace_me"
+	ErrParseGithubFileCode         = "replace_me"
+	ErrReadTokenCode               = "replace_me"
+	ErrRequestResponseCode         = "replace_me"
 	ErrGetKubectlClientVersionCode = "replace_me"
 )
 
@@ -159,9 +170,19 @@ func PatternError(msg string) string {
 	return formatError(msg, cmdPattern)
 }
 
+// PatternViewError returns a formatted error message with a link to the 'pattern view' commad usage page in addition to the error message
+func PatternViewError(msg string) string {
+	return formatError(msg, cmdPatternView)
+}
+
 // AppError returns a formatted error message with a link to 'app' command usage page in addition to the error message
 func AppError(msg string) string {
 	return formatError(msg, cmdApp)
+}
+
+// AppError returns a formatted error message with a link to 'app view' command usage page in addition to the error message
+func AppViewError(msg string) string {
+	return formatError(msg, cmdAppView)
 }
 
 // formatError returns a formatted error message with a link to the meshery command URL
@@ -199,7 +220,11 @@ func formatError(msg string, cmd cmdType) string {
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, filterViewURL)
 	case cmdPattern:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, patternUsageURL)
+	case cmdPatternView:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, patternViewURL)
 	case cmdApp:
+		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, appViewURL)
+	case cmdAppView:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, appUsageURL)
 	case cmdContextDelete:
 		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, contextDeleteURL)
@@ -236,79 +261,203 @@ func formatError(msg string, cmd cmdType) string {
 	}
 }
 
-func ErrAttachAuthToken(err error) error {
-	return errors.New(ErrAttachAuthTokenCode, errors.Alert, []string{err.Error()},
-		[]string{"Authentication token not found. Login with `mesheryctl system login` or supply a valid user token using the --token (or -t) flag."}, []string{}, []string{})
-}
-
 func ErrFailRequest(err error) error {
-	return errors.New(ErrFailRequestCode, errors.Alert, []string{"Failed to make a request"},
-		[]string{err.Error()}, []string{"Meshery server isn't running or not reachable"}, []string{"Please check your kubernetes cluster is running or not and Run `mesheryctl system restart`"})
+	return errors.New(ErrFailRequestCode, errors.Alert,
+		[]string{"Failed to make a request"},
+		[]string{err.Error()},
+		[]string{"Meshery server is not reachable."},
+		[]string{"Ensure your Kubernetes cluster is running and your network connection is active. You can also try running 'mesheryctl system restart'."})
 }
 
 func ErrUnauthenticated() error {
-	return errors.New(ErrUnauthenticatedCode, errors.Alert, []string{"UnAuthenticated User"},
-		[]string{"You are UnAuthenticated to access any resource"}, []string{"You haven't login to meshery"}, []string{"Login with `mesheryctl system login`"})
+	return errors.New(ErrUnauthenticatedCode, errors.Alert, []string{"Unauthenticated User"},
+		[]string{"Access to this resource is unauthorized."},
+		[]string{"You haven't logged in to Meshery."},
+		[]string{"To proceed, log in using `mesheryctl system login`."})
 }
 
 func ErrInvalidToken() error {
-	return errors.New(ErrInvalidTokenCode, errors.Alert, []string{"Authentication token invalid"},
-		[]string{"Authentication got expired or is invalid"}, []string{"Authentication token present in auth.json expired or is invalid"}, []string{"Please supply a valid user token. Login with `mesheryctl system login`"})
-}
-
-func ErrFailReqStatus(statusCode int) error {
-	return errors.New(ErrFailReqStatusCode, errors.Alert, []string{},
-		[]string{"Response Status Code " + strconv.Itoa(statusCode) + ", possible Server Error"}, []string{}, []string{})
+	return errors.New(ErrInvalidTokenCode, errors.Alert,
+		[]string{"Invalid authentication Token"},
+		[]string{"The authentication token has expired or is invalid."},
+		[]string{"The token in auth.json has expired or is invalid."},
+		[]string{"Provide a valid user token by logging in with `mesheryctl system login`."})
 }
 
 func ErrUnmarshal(err error) error {
-	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Error unmarshalling response"},
-		[]string{"Error processing JSON response from server.\n" + err.Error()},
-		[]string{"JSON format from response body is not valid"}, []string{"Check if valid JSON is given to process"})
+	return errors.New(ErrUnmarshalCode, errors.Alert,
+		[]string{"Error unmarshalling response"},
+		[]string{"Unable to process JSON response from server.\n" + err.Error()},
+		[]string{"The JSON format from the response body is not valid."},
+		[]string{"Ensure a valid JSON is provided for processing."})
 }
 
 func ErrFileRead(err error) error {
-	return errors.New(ErrFileReadCode, errors.Alert, []string{"Unable to read file"},
-		[]string{err.Error()}, []string{"Provided file is not present or invalid path"}, []string{"Please provide a valid file path with a valid file"})
+	return errors.New(ErrFileReadCode, errors.Alert,
+		[]string{"File read error"},
+		[]string{err.Error()},
+		[]string{"The provided file is not present or has an invalid path."},
+		[]string{"To proceed, provide a valid file path with a valid file."})
 }
 
 func ErrCreatingRequest(err error) error {
-	return errors.New(ErrCreatingRequestCode, errors.Fatal, []string{err.Error()},
-		[]string{"Error occured while making an http request"}, []string{"Meshery is not running or there is a network issue"}, []string{"Check your network connection and check the status of meshery server via 'mesheryctl system status'"})
+	return errors.New(ErrCreatingRequestCode, errors.Fatal,
+		[]string{"Error occurred while making an HTTP request."},
+		[]string{err.Error()},
+		[]string{"Meshery is not running or there is a network issue."},
+		[]string{"Check your network connection and verify the status of the Meshery server using `mesheryctl system status`."})
 }
 
-func ErrMarhalling(err error) error {
-	return errors.New(ErrMarhallingCode, errors.Fatal, []string{"Error while Marshalling the content"},
-		[]string{err.Error()}, []string{"The Content provided to Marshall is invalid"}, []string{"Please check the data structure you are providing for Marshalling"})
+func ErrMarshal(err error) error {
+	return errors.New(ErrMarshalCode, errors.Fatal,
+		[]string{"Error while marshalling the content"},
+		[]string{err.Error()},
+		[]string{"The content provided for marshalling is invalid."},
+		[]string{"Check the data structure you are providing for marshalling."})
 }
 
 func ErrReadResponseBody(err error) error {
-	return errors.New(ErrReadResponseBodyCode, errors.Alert, []string{"Error Reading Response Body"},
-		[]string{err.Error()}, []string{"There might be connection failure with Meshery Server"}, []string{"Check the status via 'mesheryctl system status'"})
+	return errors.New(ErrReadResponseBodyCode, errors.Alert,
+		[]string{"Failed to read response body from request"},
+		[]string{err.Error()},
+		[]string{"There might be connection failure with Meshery Server"},
+		[]string{"Check the status via `mesheryctl system status`"})
 }
 
 func ErrParsingUrl(err error) error {
-	return errors.New(ErrParsingUrlCode, errors.Fatal, []string{"Error while Paring the URL"},
-		[]string{err.Error()}, []string{"The URL Provided doesn't exit or the relative path is wrong"}, []string{"Check the correctness of URL that you have inputed"})
+	return errors.New(ErrParsingUrlCode, errors.Fatal,
+		[]string{"Error parsing the URL"},
+		[]string{err.Error()},
+		[]string{"The provided URL does not exist or the relative path is incorrect."},
+		[]string{"Double-check the correctness of the URL you have inputted."})
 }
 
 func ErrNotFound(err error) error {
-	return errors.New(ErrNotFoundCode, errors.Fatal, []string{"Not Found"}, []string{err.Error()},
-		[]string{"The item you are searching for is not present"}, []string{"Check whether that item is present"})
+	return errors.New(ErrNotFoundCode, errors.Fatal,
+		[]string{"Item Not Found"},
+		[]string{err.Error()},
+		[]string{"The item you are searching for is not present."},
+		[]string{"Check whether the item is present."})
 }
 
 func ErrInvalidFile(err error) error {
-	return errors.New(ErrInvalidFileCode, errors.Fatal, []string{"Invalid File Provided"}, []string{err.Error()},
-		[]string{"File Provided doesn't passes the criteria"}, []string{"Please check the validity of file"})
+	return errors.New(ErrInvalidFileCode, errors.Fatal,
+		[]string{"Invalid File"},
+		[]string{err.Error()},
+		[]string{"File does not meet the criteria."},
+		[]string{"Check the file's validity."})
 }
 
 func ErrInvalidNameOrID(err error) error {
-	return errors.New(ErrInvalidNameOrIDCode, errors.Fatal, []string{"Provided Name or ID not present"}, []string{err.Error()},
-		[]string{"Provided Name or ID would be invalid"}, []string{"Please Provide a valid name or ID by using list command with the appropriate subcommand"})
+	return errors.New(ErrInvalidNameOrIDCode, errors.Fatal,
+		[]string{"Invalid Name or ID Provided"},
+		[]string{err.Error()},
+		[]string{"The provided Name or ID is either not present or invalid."},
+		[]string{"Provide a valid Name or ID using the `list` command with the appropriate subcommand."})
+}
+
+func ErrAttachAuthToken(err error) error {
+	return errors.New(ErrAttachAuthTokenCode, errors.Alert,
+		[]string{"Authentication token Not Found"},
+		[]string{"Authentication token not found: " + err.Error()},
+		[]string{"The user is not logged in to generate a token."},
+		[]string{"Log in with `mesheryctl system login` or supply a valid user token using the --token (or -t) flag."})
+}
+
+func ErrFailReqStatus(statusCode int) error {
+	return errors.New(ErrFailReqStatusCode, errors.Alert,
+		[]string{"Failed response server error"},
+		[]string{"Response Status Code " + strconv.Itoa(statusCode) + ", possibly Server error"},
+		[]string{"Invalid API call"},
+		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
+}
+
+func ErrMarshalIndent(err error) error {
+	return errors.New(ErrMarshalIndentCode, errors.Alert,
+		[]string{"Error indenting JSON body"},
+		[]string{err.Error()},
+		[]string{"Unable to format the JSON body filters due to invalid content"},
+		[]string{"Check the data structure provided for proper formatting."})
+}
+
+func ErrResponseStatusBody(statusCode int, body string) error {
+	return errors.New(ErrResponseStatusBodyCode, errors.Alert,
+		[]string{"Incorrect status code"},
+		[]string{"Server returned with status code: " + fmt.Sprint(statusCode) + "\n" + "Response: " + body},
+		[]string{"Error occurred while generating a response body"},
+		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
+}
+
+func ErrResponseStatus(statusCode int) error {
+	return errors.New(ErrResponseStatusCode, errors.Alert,
+		[]string{"Incorrect status code"},
+		[]string{"Server returned with status code: " + fmt.Sprint(statusCode)},
+		[]string{"Error occurred while generating a response"},
+		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
+}
+
+func ErrJSONToYAML(err error) error {
+	return errors.New(ErrJSONToYAMLCode, errors.Alert,
+		[]string{"Failed to convert JSON to YAML"},
+		[]string{"Error occurred while converting JSON to YAML: " + err.Error()},
+		[]string{"The content provided for marshalling is invalid."},
+		[]string{"Check the JSON structure you are providing for YAML conversion."})
+}
+
+func ErrOutFormatFlag() error {
+	return errors.New(ErrOutFormatFlagCode, errors.Alert,
+		[]string{"Invalid output format choice"},
+		[]string{"Output format choice is invalid, use [json|yaml]"},
+		[]string{"Invalid JSON or YAML content"},
+		[]string{"Check the JSON or YAML structure."})
+}
+
+func ErrReadConfigFile(err error) error {
+	return errors.New(ErrReadConfigFileCode, errors.Alert,
+		[]string{"Unable to read meshconfig file"},
+		[]string{"Unable to read the meshconfig file from the specified path: " + err.Error()},
+		[]string{"The provided file is not present or has an invalid path"},
+		[]string{"Provide a valid file path with a valid meshconfig file."})
 }
 
 func ErrInvalidAPIResponse(err error) error {
-	return errors.New(ErrInvalidAPIResponseCode, errors.Fatal, []string{"Invalid API response encountered"}, []string{"Invalid API response encountered", err.Error()}, []string{}, []string{})
+	return errors.New(ErrInvalidAPIResponseCode, errors.Fatal,
+		[]string{"Invalid API response encountered"},
+		[]string{"Invalid API response encountered: " + err.Error()},
+		[]string{"Error occurred while generating a response body"},
+		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
+}
+
+func ErrLoadConfig(err error) error {
+	return errors.New(ErrLoadConfigCode, errors.Alert,
+		[]string{"Error processing config"},
+		[]string{"Error processing config:" + err.Error()},
+		[]string{"Unable to load meshconfig due to wrong configurations"},
+		[]string{"Ensure your `config.yaml` file in your `.meshery` is valid, or run `mesheryctl system config`."})
+}
+
+func ErrParseGithubFile(err error, URL string) error {
+	return errors.New(ErrParseGithubFileCode, errors.Alert,
+		[]string{"Failed to parse github file"},
+		[]string{"Failed to parse github file" + err.Error()},
+		[]string{"Unable to retrieve file from URL: %s", URL},
+		[]string{"Ensure you have a github url in file path"})
+}
+
+func ErrReadToken(err error) error {
+	return errors.New(ErrReadTokenCode, errors.Alert,
+		[]string{"Could not read token"},
+		[]string{err.Error()},
+		[]string{"Token file is invalid"},
+		[]string{"Provide a valid user token by logging in with `mesheryctl system login`."})
+}
+
+func ErrRequestResponse(err error) error {
+	return errors.New(ErrRequestResponseCode, errors.Alert,
+		[]string{"Failed to handle request"},
+		[]string{"Unable to create a response from request" + err.Error()},
+		[]string{"Error occurred while generating a response"},
+		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
 }
 
 func ErrGetKubectlClientVersion(err error) error {

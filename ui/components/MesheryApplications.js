@@ -2,14 +2,13 @@ import {
   Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr,
   TableCell, Tooltip, Typography, Button
 } from "@material-ui/core";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { withStyles } from "@material-ui/core/styles";
 import TableSortLabel from "@material-ui/core/TableSortLabel";
 import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import SaveIcon from '@material-ui/icons/Save';
-import MUIDataTable from "mui-datatables";
 import { withSnackbar } from "notistack";
 import React, { useEffect, useRef, useState } from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
@@ -34,10 +33,14 @@ import PublishIcon from "@material-ui/icons/Publish";
 import InfoIcon from '@material-ui/icons/Info';
 import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
 import { iconMedium, iconSmall } from "../css/icons.styles";
-import SearchBar from "./searchcommon";
 import DryRunComponent from "./DryRun/DryRunComponent";
 import { useNotification } from "../utils/hooks/useNotification";
 import { EVENT_TYPES } from "../lib/event-types";
+import SearchBar from "../utils/custom-search";
+import CustomColumnVisibilityControl from "../utils/custom-column";
+import ResponsiveDataTable from "../utils/data-table";
+import useStyles from "../assets/styles/general/tool.styles";
+
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2), },
@@ -51,35 +54,19 @@ const styles = (theme) => ({
     }
   },
   createButton : {
-    display : "flex",
-    justifyContent : "flex-start",
-    alignItems : "center",
-    whiteSpace : "nowrap",
-  },
-  topToolbar : {
-    margin : "2rem auto",
-    display : "flex",
-    justifyContent : "space-between",
-    paddingLeft : "1rem",
-    flexWrap : 'wrap',
+    width : "fit-content",
+    alignSelf : "flex-start"
   },
   searchWrapper : {
-    "@media (max-width: 1070px)" : {
-      marginTop : '20px',
-    },
+    justifySelf : "flex-end",
+    marginLeft : "auto",
+    paddingLeft : "1rem",
+    display : "flex"
   },
   viewSwitchButton : {
     justifySelf : "flex-end",
     marginLeft : "auto",
-    paddingLeft : "1rem"
   },
-  // text : {
-  //   padding : theme.spacing(1)
-  // }
-});
-
-
-const useStyles = makeStyles((theme) => ({
   codeMirror : {
     '& .CodeMirror' : {
       minHeight : "300px",
@@ -106,7 +93,11 @@ const useStyles = makeStyles((theme) => ({
       height : '100%',
     }
   },
-}));
+  // text : {
+  //   padding : theme.spacing(1)
+  // }
+});
+
 
 
 function TooltipIcon({ children, onClick, title }) {
@@ -264,6 +255,7 @@ function MesheryApplications({
   const searchTimeout = useRef(null);
 
   const { notify } = useNotification()
+  const StyleClass = useStyles();
 
   /**
    * fetch applications when the page loads
@@ -492,7 +484,7 @@ function MesheryApplications({
         {
           credentials : "include",
           method : "PUT",
-          body : JSON.stringify({ application_data : { id, name : metadata.name || name, application_file : data }, save : true }),
+          body : JSON.stringify({ application_data : { id, name : metadata?.name || name, application_file : data }, save : true }),
         },
         () => {
           updateProgress({ showProgress : false });
@@ -511,11 +503,11 @@ function MesheryApplications({
       let body = { save : true }
       if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({
-          ...body, application_data : { name : metadata.name || name || getRandomName(), application_file : data }
+          ...body, application_data : { name : metadata?.name || name || getRandomName(), application_file : data }
         })
       }
       if (type === FILE_OPS.URL_UPLOAD) {
-        body = JSON.stringify({ ...body, url : data, name : metadata.name || name })
+        body = JSON.stringify({ ...body, url : data, name : metadata?.name || name })
       }
       dataFetch(
         `/api/application/${source_type}`,
@@ -640,23 +632,30 @@ function MesheryApplications({
           );
         },
         customBodyRender : function CustomBody(_, tableMeta) {
-          const rowData = applications[tableMeta.rowIndex];
-          console.log(rowData);
+          const rowData = applications[tableMeta.rowIndex]?.type?.String;
+
+          // Check if rowData is undefined or null
+          if (rowData === undefined || rowData === null) {
+            // Display a loading state or placeholder
+            return <div>Loading...</div>;
+          }
+
           return (
             <>
               <IconButton
                 title="click to download"
-                onClick={() => handleAppDownload(rowData.id ,rowData.type.String, rowData.name)}
+                onClick={() => handleAppDownload(rowData.id, rowData?.type.String, rowData.name)}
               >
-                <img src={`/static/img/${(rowData.type.String).replaceAll(" ", "_").toLowerCase()}.svg`} width="45px" height="45px" />
+                <img src={`/static/img/${rowData.replaceAll(" ", "_").toLowerCase()}.svg`} height="45px" width="45px" />
               </IconButton>
             </>
           );
-        },
-      },
+        }
+      }
     },
     {
       name : "Actions",
+      label : "Actions",
       options : {
         filter : false,
         sort : false,
@@ -735,6 +734,7 @@ function MesheryApplications({
 
   const options = {
     filter : false,
+    viewColumns : false,
     sort : !(user && user.user_id === "meshery"),
     search : false,
     filterType : "textField",
@@ -822,6 +822,18 @@ function MesheryApplications({
     }
   };
 
+
+  const [tableCols, updateCols] = useState(columns);
+
+  const [columnVisibility, setColumnVisibility] = useState(() => {
+    // Initialize column visibility based on the original columns' visibility
+    const initialVisibility = {};
+    columns.forEach(col => {
+      initialVisibility[col.name] = col.options?.display !== false;
+    });
+    return initialVisibility;
+  });
+
   return (
     <>
 
@@ -829,62 +841,59 @@ function MesheryApplications({
         {selectedRowData && Object.keys(selectedRowData).length > 0 && (
           <YAMLEditor application={selectedRowData} onClose={resetSelectedRowData()} onSubmit={handleSubmit} />
         )}
-        <div className={classes.topToolbar} >
+        <div className={StyleClass.toolWrapper} >
           {!selectedApplication.show && (applications.length>0 || viewType==="table") &&
             <div className={classes.createButton}>
-              <div>
-                <Button
-                  aria-label="Add Application"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  // @ts-ignore
-                  onClick={handleUploadImport}
-                  style={{ marginRight : "2rem" }}
-                >
-                  <PublishIcon className={classes.addIcon} style={iconMedium}  />
+
+              <Button
+                aria-label="Add Application"
+                variant="contained"
+                color="primary"
+                size="large"
+                // @ts-ignore
+                onClick={handleUploadImport}
+
+              >
+                <PublishIcon className={classes.addIcon} style={iconMedium}  />
                 Import Application
-                </Button>
-              </div>
+              </Button>
+
             </div>
           }
           <div className={classes.searchWrapper} style={{ display : "flex" }}>
-            <div
-              className={classes.searchAndView}
-              style={{
-                display : 'flex',
-                alignItems : 'center',
-                justifyContent : 'center',
-                margin : 'auto',
-                height : '5ch'
+
+            <SearchBar
+              onSearch={(value) => {
+                setSearch(value)
+                initAppsSubscription(page.toString(), pageSize.toString(), value, sortOrder)
               }}
-            >
-              <SearchBar
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  initAppsSubscription(page.toString(), pageSize.toString(), e.target.value, sortOrder);
-                }}
-                width="55ch"
-                label={"Search Applications"}
-              />
-            </div>
+              placeholder="Search Applications..."
+            />
+            {viewType === "table" &&
+            <CustomColumnVisibilityControl
+              columns={columns}
+              customToolsProps={{ columnVisibility, setColumnVisibility }}
+            />
+            }
+
 
             {!selectedApplication.show &&
-            <div className={classes.viewSwitchButton}>
+
               <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true} />
-            </div>}
+            }
           </div>
         </div>
         {
           !selectedApplication.show && viewType==="table" &&
-            <MUIDataTable
-              title={<div className={classes.tableHeader}>Applications</div>}
+            <ResponsiveDataTable
               data={applications}
               columns={columns}
               // @ts-ignore
               options={options}
               className={classes.muiRow}
+              tableCols={tableCols}
+              updateCols={updateCols}
+              columnVisibility={columnVisibility}
             />
         }
         {

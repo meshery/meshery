@@ -226,7 +226,7 @@ func (r *Resolver) subscribeK8sContexts(ctx context.Context, provider models.Pro
 
 func (r *Resolver) getK8sContexts(ctx context.Context, provider models.Provider, selector model.PageFilter) (*model.K8sContextsPage, error) {
 	tokenString := ctx.Value(models.TokenCtxKey).(string)
-	resp, err := provider.GetK8sContexts(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order)
+	resp, err := provider.GetK8sContexts(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order, false)
 	if err != nil {
 		return nil, err
 	}

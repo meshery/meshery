@@ -4,7 +4,7 @@ title: "Extensibility: Load Generators"
 permalink: extensibility/load-generators
 type: Extensibility
 #redirect_from: architecture/adapters
-abstract: "Meshery offers support for more adapters than any other project or product in the world. Meshery uses adapters for managing the various service meshes."
+abstract: "Meshery offers support for more types of Kubernetes and cloud native infrastructure than any other project or product in the world. Meshery uses adapters for more deeply managing specific types of infrastructure."
 language: en
 list: include
 ---

@@ -62,7 +62,7 @@ mesheryctl perf profile test --view
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return ErrMesheryConfig(err)
+			utils.Log.Error(err)
 		}
 
 		// handles spaces in args if quoted args passed
@@ -74,7 +74,8 @@ mesheryctl perf profile test --view
 
 		profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), searchString, pageSize, pageNumber-1)
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 
 		if len(profiles) == 0 {
@@ -91,7 +92,8 @@ mesheryctl perf profile test --view
 			if outputFormatFlag == "yaml" {
 				body, _ = yaml.JSONToYAML(body)
 			} else if outputFormatFlag != "json" {
-				return ErrInvalidOutputChoice()
+				utils.Log.Error(ErrInvalidOutputChoice())
+				return nil
 			}
 			utils.Log.Info(string(body))
 		} else if !viewSingleProfile { // print all profiles
@@ -233,7 +235,7 @@ func userPrompt(key string, label string, data [][]string) (int, error) {
 
 	index, err := strconv.Atoi(result)
 	if err != nil {
-		return -1, err
+		return -1, errors.Wrap(err, "Failed to convert result from prompt")
 	}
 	return index, nil
 }

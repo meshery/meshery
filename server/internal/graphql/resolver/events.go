@@ -2,7 +2,6 @@ package resolver
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 
 	"github.com/gofrs/uuid"
@@ -22,21 +21,21 @@ func (r *Resolver) eventsResolver (ctx context.Context, provider models.Provider
 			select {
 			case ech := <- ch:
 				event := ech.(*events.Event)
-				m := make(map[string]interface{})
-				_ = json.Unmarshal(event.Metadata, &m)
 				_event := &model.Event{
 					ID: event.ID.String(),
 					UserID: event.UserID.String(),
 					ActedUpon: event.ActedUpon.String(),
 					OperationID: event.OperationID.String(),
+					Severity: model.Severity(event.Severity),
 					Description: event.Description,
 					Category: event.Category,
 					Action: event.Action,
-					CreatedAt: event.CreatedAt, // change graphql type for date to scalar data
+					CreatedAt: event.CreatedAt,
 					DeletedAt: event.DeletedAt,
 					UpdatedAt: event.UpdatedAt,
-					Metadata: m,
-
+					Metadata: event.Metadata,
+					Status: string(event.Status),
+					SystemID: event.SystemID.String(),
 				}
 				
 				r.Log.Info(fmt.Sprintf("event received for id %s %v: ", userID, ch))
