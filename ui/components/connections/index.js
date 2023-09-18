@@ -178,9 +178,9 @@ function ConnectionManagementPage(props) {
           uiSchema={createConnection.uiSchema}
           handleClose={handleCreateConnectionModalClose}
           handleSubmit={handleCreateConnectionSubmit}
-          title="Create Connection"
-          submitBtnText="Create"
-          // leftHeaderIcon={<Pattern fill="#fff" style={{ height : "24px", width : "24px", fonSize : "1.45rem" }} className={undefined} />}
+          title="Connect Helm Repository"
+          submitBtnText="Connect"
+          // leftHeaderIcon={ }
           // submitBtnIcon={<PublishIcon  className={classes.addIcon} data-cy="import-button"/>}
         />
       )}
@@ -539,7 +539,7 @@ function Connections({
                 onClick={handleCreateConnectionModalOpen}
                 style={{ marginRight : "2rem" }}
               >
-                Create Connection
+                Connect Helm Repository
               </Button>
             </div>
           </div>
