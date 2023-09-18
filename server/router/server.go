@@ -279,9 +279,13 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.PathPrefix("/api/extensions").
 		Handler(h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ExtensionsHandler), models.ProviderAuth))).
 		Methods("GET", "POST", "OPTIONS", "PUT", "DELETE")
-	// Handlers for User Credentials
+	
 
 	gMux.Handle("/api/integrations/environments", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetEnvironments), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/integrations/environments/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetEnvironmentByIDHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/integrations/environments", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveEnvironment), models.ProviderAuth))).
 		Methods("GET")
 
 	

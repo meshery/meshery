@@ -4191,7 +4191,7 @@ func (l *RemoteProvider) ShareFilter(req *http.Request) (int, error) {
 }
 
 func (l *RemoteProvider) GetEnvironments(token, page, pageSize, search, order, filter string) ([]byte, error) {
-	logrus.Infof("Environments remote prvider handler called")
+	
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments")
 	q := remoteProviderURL.Query()
 	if page != "" {
@@ -4230,11 +4230,88 @@ func (l *RemoteProvider) GetEnvironments(token, page, pageSize, search, order, f
 		return nil, ErrDataRead(err, "Environments Data")
 	}
 
-	if resp.StatusCode == http.StatusOK {
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
 		logrus.Infof("Environments data successfully retrieved from remote provider")
 		return bd, nil
 	}
 	err = ErrFetch(err, "Environments Data", resp.StatusCode)
 	logrus.Errorf(err.Error())
 	return nil, err
+}
+
+func (l *RemoteProvider) GetEnvironmentsByID(req *http.Request, environmentID string) ([]byte, error) {
+	logrus.Infof("Environments remote provider handler called")
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments/" + environmentID)
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Environment data", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("Environment successfully retrieved from remote provider")
+		return bdr, nil
+	}
+	err = ErrFetch(err, "Environment", resp.StatusCode)
+	logrus.Errorf(err.Error())
+	return nil, err
+}
+
+func (l *RemoteProvider) SaveEnvironment(req *http.Request, env *EnvironmentPayload, token string, skipTokenCheck bool) error {
+
+	_env, err := json.Marshal(env)
+	if err != nil {
+		return err
+	}
+	bf := bytes.NewBuffer(_env)
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments/")
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+	tokenString := token
+	if !skipTokenCheck {
+		tokenString, err = l.GetToken(req)
+		if err != nil {
+			logrus.Error("error getting token: ", err)
+			return err
+		}
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		if resp == nil {
+			return ErrUnreachableRemoteProvider(err)
+		}
+		return ErrFetch(err, "Save Environment", resp.StatusCode)
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return ErrDataRead(err, "Save Environment")
+	}
+
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
+		return nil
+	}
+
+	return ErrPost(fmt.Errorf("failed to save the environment"), fmt.Sprint(bdr), resp.StatusCode)
 }
