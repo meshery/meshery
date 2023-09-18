@@ -1,35 +1,30 @@
-import {
-  NoSsr,
-  TableCell,
-  // Button,
-  Tooltip,
-  Link,
-} from "@material-ui/core";
+import { NoSsr, TableCell, Button, Tooltip, Link } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 // import EditIcon from "@material-ui/icons/Edit";
 // import YoutubeSearchedForIcon from '@mui/icons-material/YoutubeSearchedFor';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import React, { useEffect, useRef, useState } from "react";
 import Moment from "react-moment";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { updateProgress } from "../../lib/store";
-import { /* Avatar, */ Chip, /* FormControl, */ } from "@mui/material";
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import ExploreIcon from '@mui/icons-material/Explore';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import { /* Avatar, */ Chip /* FormControl, */ } from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
+import ExploreIcon from "@mui/icons-material/Explore";
+import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import classNames from "classnames";
 // import ReactSelectWrapper from "../ReactSelectWrapper";
 import dataFetch from "../../lib/data-fetch";
-import LaunchIcon from '@mui/icons-material/Launch';
-import TableRow from '@mui/material/TableRow';
+import LaunchIcon from "@mui/icons-material/Launch";
+import TableRow from "@mui/material/TableRow";
 import { useNotification } from "../../utils/hooks/useNotification";
 import { EVENT_TYPES } from "../../lib/event-types";
 import CustomColumnVisibilityControl from "../../utils/custom-column";
 import SearchBar from "../../utils/custom-search";
 import ResponsiveDataTable from "../../utils/data-table";
 import useStyles from "../../assets/styles/general/tool.styles";
+import Modal from "../Modal";
 
 const styles = (theme) => ({
   grid : { padding : theme.spacing(2) },
@@ -69,8 +64,8 @@ const styles = (theme) => ({
       fontWeight : "400",
     },
     "&:hover" : {
-      boxShadow : "0px 1px 2px 0px rgba(0, 0, 0, 0.25)"
-    }
+      boxShadow : "0px 1px 2px 0px rgba(0, 0, 0, 0.25)",
+    },
   },
   capitalize : {
     textTransform : "capitalize",
@@ -82,7 +77,7 @@ const styles = (theme) => ({
     background : `${theme.palette.secondary.default}30 !important`,
     "& .MuiSvgIcon-root" : {
       color : `${theme.palette.secondary.default} !important`,
-    }
+    },
   },
   connected : {
     "& .MuiChip-label" : {
@@ -91,7 +86,7 @@ const styles = (theme) => ({
     background : `${theme.palette.secondary.success}30 !important`,
     "& .MuiSvgIcon-root" : {
       color : `${theme.palette.secondary.success} !important`,
-    }
+    },
   },
   registered : {
     "& .MuiChip-label" : {
@@ -100,7 +95,7 @@ const styles = (theme) => ({
     background : `${theme.palette.secondary.primary}30 !important`,
     "& .MuiSvgIcon-root" : {
       color : `${theme.palette.secondary.primary} !important`,
-    }
+    },
   },
   discovered : {
     "& .MuiChip-label" : {
@@ -109,7 +104,7 @@ const styles = (theme) => ({
     background : `${theme.palette.secondary.warning}30 !important`,
     "& .MuiSvgIcon-root" : {
       color : `${theme.palette.secondary.warning} !important`,
-    }
+    },
   },
   deleted : {
     "& .MuiChip-label" : {
@@ -118,47 +113,142 @@ const styles = (theme) => ({
     background : `${theme.palette.secondary.lightError}30 !important`,
     "& .MuiSvgIcon-root" : {
       color : `${theme.palette.secondary.error} !important`,
-    }
+    },
   },
   expandedRows : {
-    background : `${theme.palette.secondary.default}10`
-  }
+    background : `${theme.palette.secondary.default}10`,
+  },
 });
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS : {
     name : "FETCH_CONNECTIONS",
-    error_msg : "Failed to fetch connections"
+    error_msg : "Failed to fetch connections",
   },
 };
 
-function Connections({ classes, updateProgress }) {
+/**
+ * Parent Component for Connection Component
+ *
+ * @important
+ * - Keep the component's responsibilities focused on connection management. Avoid adding unrelated functionality and state.
+*/
+
+function ConnectionManagementPage(props) {
+  const [createConnectionModal, setCreateConnectionModal] = useState({
+    open : false,
+  });
+  const [createConnection, setCreateConnection] = useState({});
+
+  const handleCreateConnectionModalOpen = () => {
+    setCreateConnectionModal({ open : true });
+  };
+
+  const handleCreateConnectionModalClose = () => {
+    setCreateConnectionModal({ open : false });
+  };
+
+  const handleCreateConnectionSubmit = () => {};
+
+  useEffect(() => {
+    dataFetch(
+      "/api/schema/resource/helmRepo",
+      {
+        method : "GET",
+        credentials : "include",
+      },
+      (result) => {
+        setCreateConnection(result);
+      }
+    );
+  }, []);
+
+  return (
+    <>
+      <Connections
+        createConnectionModal={createConnectionModal}
+        onOpenCreateConnectionModal={handleCreateConnectionModalOpen}
+        onCloseCreateConnectionModal={handleCreateConnectionModalClose}
+        {...props}
+      />
+      {createConnectionModal.open && (
+        <Modal
+          open={true}
+          schema={createConnection.rjsfSchema}
+          uiSchema={createConnection.uiSchema}
+          handleClose={handleCreateConnectionModalClose}
+          handleSubmit={handleCreateConnectionSubmit}
+          title="Connect Helm Repository"
+          submitBtnText="Connect"
+          // leftHeaderIcon={ }
+          // submitBtnIcon={<PublishIcon  className={classes.addIcon} data-cy="import-button"/>}
+        />
+      )}
+    </>
+  );
+}
+
+function Connections({
+  classes,
+  updateProgress,
+  onOpenCreateConnectionModal
+}) {
   const [page, setPage] = useState(0);
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(0);
   const [connections, setConnections] = useState([]);
-  const [search,setSearch] = useState("");
-  const { notify } = useNotification()
+  const [search, setSearch] = useState("");
+  const { notify } = useNotification();
   const StyleClass = useStyles();
 
   const searchTimeout = useRef(null);
 
+  const handleCreateConnectionModalOpen = () => {
+    onOpenCreateConnectionModal();
+  };
+
   const status = (value) => {
     switch (value) {
-      case 'ignored':
-        return <Chip className={classNames(classes.statusCip, classes.ignored)} avatar={<RemoveCircleIcon />} label={value} />
-      case 'connected':
-        return <Chip className={classNames(classes.statusCip, classes.connected)} avatar={<CheckCircleIcon />} label={value} />
-      case 'REGISTERED':
-        return <Chip className={classNames(classes.statusCip, classes.registered)} avatar={<AssignmentTurnedInIcon />} label={value.toLowerCase()} />
-      case 'discovered':
-        return <Chip className={classNames(classes.statusCip, classes.discovered)} avatar={<ExploreIcon />} label={value} />
-      case 'deleted':
-        return <Chip className={classNames(classes.statusCip, classes.deleted)} avatar={<DeleteForeverIcon />} label={value} />
+      case "ignored":
+        return (
+          <Chip
+            className={classNames(classes.statusCip, classes.ignored)}
+            avatar={<RemoveCircleIcon />}
+            label={value}
+          />
+        );
+      case "connected":
+        return (
+          <Chip
+            className={classNames(classes.statusCip, classes.connected)}
+            avatar={<CheckCircleIcon />}
+            label={value}
+          />
+        );
+      case "REGISTERED":
+        return (
+          <Chip
+            className={classNames(classes.statusCip, classes.registered)}
+            avatar={<AssignmentTurnedInIcon />}
+            label={value.toLowerCase()}
+          />
+        );
+      case "discovered":
+        return (
+          <Chip className={classNames(classes.statusCip, classes.discovered)} avatar={<ExploreIcon />} label={value} />
+        );
+      case "deleted":
+        return (
+          <Chip
+            className={classNames(classes.statusCip, classes.deleted)}
+            avatar={<DeleteForeverIcon />}
+            label={value}
+          />
+        );
       default:
-        return "-"
+        return "-";
     }
-  }
+  };
 
   const columns = [
     {
@@ -174,8 +264,14 @@ function Connections({ classes, updateProgress }) {
         },
         customBodyRender : (value, tableMeta) => {
           return (
-            <Tooltip title={connections ? connections[tableMeta.rowIndex]?.metadata?.server_location : ''} placement="top" >
-              <Link href={connections ? connections[tableMeta.rowIndex]?.metadata?.server_location : ''} target="_blank">
+            <Tooltip
+              title={connections ? connections[tableMeta.rowIndex]?.metadata?.server_location : ""}
+              placement="top"
+            >
+              <Link
+                href={connections ? connections[tableMeta.rowIndex]?.metadata?.server_location : ""}
+                target="_blank"
+              >
                 {value}
                 <sup>
                   <LaunchIcon sx={{ fontSize : "12px" }} />
@@ -183,8 +279,8 @@ function Connections({ classes, updateProgress }) {
               </Link>
             </Tooltip>
           );
-        }
-      }
+        },
+      },
     },
     {
       name : "type",
@@ -252,7 +348,16 @@ function Connections({ classes, updateProgress }) {
         },
         customBodyRender : function CustomBody(value) {
           return (
-            <Tooltip title={<Moment startOf="day" format="LLL">{value}</Moment>} placement="top" arrow interactive >
+            <Tooltip
+              title={
+                <Moment startOf="day" format="LLL">
+                  {value}
+                </Moment>
+              }
+              placement="top"
+              arrow
+              interactive
+            >
               <Moment format="LL">{value}</Moment>
             </Tooltip>
           );
@@ -272,7 +377,16 @@ function Connections({ classes, updateProgress }) {
         },
         customBodyRender : function CustomBody(value) {
           return (
-            <Tooltip title={<Moment startOf="day" format="LLL">{value}</Moment>} placement="top" arrow interactive >
+            <Tooltip
+              title={
+                <Moment startOf="day" format="LLL">
+                  {value}
+                </Moment>
+              }
+              placement="top"
+              arrow
+              interactive
+            >
               <Moment format="LL">{value}</Moment>
             </Tooltip>
           );
@@ -291,12 +405,10 @@ function Connections({ classes, updateProgress }) {
           );
         },
         customBodyRender : function CustomBody(value) {
-          return (
-            status(value)
-          );
+          return status(value);
         },
       },
-    }
+    },
   ];
 
   // const handleChange = () => {
@@ -322,9 +434,9 @@ function Connections({ classes, updateProgress }) {
         text : "connection(s) selected",
       },
     },
-    enableNestedDataAccess : '.',
+    enableNestedDataAccess : ".",
     onSearchClose : () => {
-      setSearch("")
+      setSearch("");
     },
     onTableChange : (action, tableState) => {
       switch (action) {
@@ -357,30 +469,27 @@ function Connections({ classes, updateProgress }) {
     renderExpandableRow : (_, tableMeta) => {
       return (
         <TableRow>
-          <TableCell>
+          <TableCell></TableCell>
+          <TableCell colSpan={2}>
+            <b>Server Build SHA:</b> {connections ? connections[tableMeta.rowIndex]?.metadata?.server_build_sha : "-"}
           </TableCell>
           <TableCell colSpan={2}>
-            <b>Server Build SHA:</b> {connections ? connections[tableMeta.rowIndex]?.metadata?.server_build_sha : '-'}
+            <b>Server Version:</b> {connections ? connections[tableMeta.rowIndex]?.metadata?.server_version : "-"}
           </TableCell>
-          <TableCell colSpan={2}>
-            <b>Server Version:</b> {connections ? connections[tableMeta.rowIndex]?.metadata?.server_version : '-'}
-          </TableCell>
-          <TableCell colSpan={2}>
-          </TableCell>
+          <TableCell colSpan={2}></TableCell>
         </TableRow>
       );
     },
   };
 
-
   /**
    * fetch connections when the page loads
    */
   useEffect(() => {
-    getConnections(page, pageSize,search)
+    getConnections(page, pageSize, search);
   }, [page, pageSize, search]);
 
-  const getConnections = (page, pageSize,search) => {
+  const getConnections = (page, pageSize, search) => {
     if (!search) search = "";
     dataFetch(
       `/api/integrations/connections?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(search)}`,
@@ -389,26 +498,27 @@ function Connections({ classes, updateProgress }) {
         method : "GET",
       },
       (res) => {
-        setConnections(res?.connections)
-        setPage(res?.page || 0)
-        setCount(res?.total_count || 0)
-        setPageSize(res?.page_size || 0)
+        setConnections(res?.connections);
+        setPage(res?.page || 0);
+        setCount(res?.total_count || 0);
+        setPageSize(res?.page_size || 0);
       },
       handleError(ACTION_TYPES.FETCH_CONNECTIONS)
     );
-  }
+  };
 
   const handleError = (action) => (error) => {
     updateProgress({ showProgress : false });
-    notify({ message : `${action.error_msg}: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() })
+    notify({ message : `${action.error_msg}: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() });
   };
 
+  console.log("connection page renders");
   const [tableCols, updateCols] = useState(columns);
 
   const [columnVisibility, setColumnVisibility] = useState(() => {
     // Initialize column visibility based on the original columns' visibility
     const initialVisibility = {};
-    columns.forEach(col => {
+    columns.forEach((col) => {
       initialVisibility[col.name] = col.options?.display !== false;
     });
     return initialVisibility;
@@ -417,21 +527,20 @@ function Connections({ classes, updateProgress }) {
   return (
     <>
       <NoSsr>
-        <div className={StyleClass.toolWrapper} >
+        <div className={StyleClass.toolWrapper}>
           <div className={classes.createButton}>
             <div>
-              {/* <Button
+              <Button
                 aria-label="Rediscover"
                 variant="contained"
                 color="primary"
                 size="large"
                 // @ts-ignore
-                onClick={() => {}}
+                onClick={handleCreateConnectionModalOpen}
                 style={{ marginRight : "2rem" }}
               >
-                <YoutubeSearchedForIcon style={iconMedium} />
-                Rediscover
-              </Button> */}
+                Connect Helm Repository
+              </Button>
             </div>
           </div>
           <div
@@ -477,7 +586,6 @@ function Connections({ classes, updateProgress }) {
               columns={columns}
               customToolsProps={{ columnVisibility, setColumnVisibility }}
             />
-
           </div>
         </div>
         <ResponsiveDataTable
@@ -502,4 +610,5 @@ const mapStateToProps = (state) => {
 };
 
 // @ts-ignore
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Connections));
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(ConnectionManagementPage));
+
