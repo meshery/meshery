@@ -135,11 +135,34 @@ const styles = (theme) => ({
   },
   tabs: {
     marginLeft: 0,
+    boxShadow: 'rgba(0, 179, 159, 0.4) 0px 4px 4px',
+    backgroundColor:
+      theme.palette.type === 'light'
+        ? theme.palette.secondary.tabsBackground
+        : theme.palette.secondary.selected,
+    '&.MuiTab-root': {
+      margin: '0px',
+    },
     '& .MuiTab-root.Mui-selected': {
       backgroundColor:
         theme.palette.type == 'light'
           ? theme.palette.secondary.modalTabs
           : theme.palette.secondary.mainBackground,
+    },
+    '& .MuiTabs-indicator': {
+      height: '2px',
+      borderBottom: `2px solid ${theme.palette.secondary.selected}`,
+    },
+  },
+  tab: {
+    padding: '0px',
+    margin: '0px',
+    color: theme.palette.secondary.tabText,
+    '&.Mui-selected': {
+      color:
+        theme.palette.type === 'light'
+          ? theme.palette.secondary.iconMain
+          : theme.palette.secondary.selected,
     },
   },
   tabLabel: {
@@ -151,7 +174,6 @@ const styles = (theme) => ({
         fontSize: '0.8em',
       },
     },
-    color: theme.palette.secondary.iconMain,
   },
   AddIcon: {
     width: theme.spacing(2.5),
