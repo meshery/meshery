@@ -1,15 +1,17 @@
+/* eslint-disable no-unused-vars */
+//NOTE: This file is being refactored to use the new notification center
 import { IconButton } from "@material-ui/core"
 import { ToggleButtonGroup } from "@mui/material"
 import { useSnackbar } from "notistack"
 import { iconMedium } from "../../css/icons.styles"
 import CloseIcon from "@material-ui/icons/Close";
 import { useDispatch } from "react-redux";
-import { pushEvent ,openEventInNotificationCenter, toggleNotificationCenter } from "../../lib/store";
 import moment from "moment";
 import { v4 } from "uuid";
 import BellIcon from '@material-ui/icons/Notifications';
 import { NOTIFICATION_STATUS } from "../../lib/event-types";
-
+import { store as rtkStore } from "../../store/index"
+import { toggleNotificationCenter } from "../../store/slices/events";
 
 /**
  * A React hook to facilitate emitting events from the client.
@@ -19,10 +21,9 @@ import { NOTIFICATION_STATUS } from "../../lib/event-types";
  * @returns {Object} An object with the `notify` property.
  */
 export const useNotification = () => {
+  const x = useSnackbar()
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar()
 
-  const { enqueueSnackbar,closeSnackbar }= useSnackbar()
-
-  const dispatch = useDispatch()
 
   /**
    * Opens an event in the notification center.
@@ -30,11 +31,9 @@ export const useNotification = () => {
    * @param {string} eventId - The ID of the event to be opened.
    */
   const openEvent = (eventId) => {
-    dispatch(toggleNotificationCenter())
-    dispatch(openEventInNotificationCenter({
-      eventId
-    }))
+    rtkStore.dispatch(toggleNotificationCenter())
   }
+
 
   /**
    * Notifies and stores the event.
@@ -47,34 +46,32 @@ export const useNotification = () => {
    * @param {number} options.timestamp - UTC timestamp for the event. If not provided, it is generated on the client.
    * @param {Object} options.customEvent - Additional properties related to the event.
    * @param {boolean} options.showInNotificationCenter - Whether to show the event in the notification center. Defaults to `true`.
+   * @param {boolean} options.pushToServer - Whether to push the event to the server. Defaults to `false`.
    */
-  const notify = ({ id=null,message,details=null,event_type,timestamp=null,customEvent=null,showInNotificationCenter=true }) => {
+  const notify = ({
+    id = null, message,
+    details = null, event_type,
+    timestamp = null, customEvent = null,
+    showInNotificationCenter = false,
+    pushToServer = false }) => {
 
     timestamp = timestamp ?? moment.utc().valueOf()
-    id = id  || v4()
+    id = id || v4()
 
-    if (showInNotificationCenter) {
-      dispatch(pushEvent({ event : {
-        ...customEvent,
-        summary : message ,
-        id,
-        status : NOTIFICATION_STATUS.NEW,
-        event_type,
-        timestamp,
-        details,
-      } }))
-    }
+
 
     enqueueSnackbar(
-      message,{
-        variant : event_type.type,
-        action : function Action(key) {
+      message,
+      {
+        //NOTE: Need to Consolidate the variant and event_type
+        variant: typeof event_type === "string" ? event_type : event_type?.type,
+        action: function Action(key) {
           return (
             <ToggleButtonGroup>
               {showInNotificationCenter &&
-              <IconButton key={`openevent-${id}`} aria-label="Open" color="inherit" onClick={() => openEvent(id)}>
-                <BellIcon style={iconMedium} />
-              </IconButton> }
+                <IconButton key={`openevent-${id}`} aria-label="Open" color="inherit" onClick={() => openEvent(id)}>
+                  <BellIcon style={iconMedium} />
+                </IconButton>}
               <IconButton key={`closeevent-${id}`} aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
                 <CloseIcon style={iconMedium} />
               </IconButton>
@@ -95,7 +92,7 @@ export const useNotification = () => {
  * @param {React.Component} Component - The class-based component to be wrapped.
  * @returns {React.Component} The wrapped component with the `notify` prop.
  */
-export function withNotify( Component ){
+export function withNotify(Component) {
   return function WrappedWithNotify(props) {
     const { notify } = useNotification()
     return <Component {...props} notify={notify} />

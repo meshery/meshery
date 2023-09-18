@@ -208,9 +208,9 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
         dryRunComponent={modalOpen.dryRunComponent}
         validationBody={modalOpen.validationBody}
       />
-      {canPublishPattern &&
+      {(canPublishPattern && publishModal.open) &&
        <Modal
-         open={publishModal.open}
+         open={true}
          schema={publishSchema.rjsfSchema}
          uiSchema={publishSchema.uiSchema}
          handleClose={handlePublishModalClose}
