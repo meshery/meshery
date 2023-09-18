@@ -15,55 +15,6 @@ import { withNotify,useNotification } from "../utils/hooks/useNotification";
 import { EVENT_TYPES } from "../lib/event-types";
 import BadgeAvatars from './CustomAvatar';
 
-// const styles = (theme) => ({
-//   wrapperClass : {
-//     padding : theme.spacing(5),
-//     backgroundColor : theme.palette.secondary.elevatedComponents,
-//     borderBottomLeftRadius : theme.spacing(1),
-//     borderBottomRightRadius : theme.spacing(1),
-//     marginTop : theme.spacing(2),
-//   },
-//   buttons : {
-//     display : "flex",
-//     justifyContent : "flex-end", paddingTop : "2rem"
-//   },
-//   button : {
-//     marginLeft : theme.spacing(1),
-//   },
-//   margin : { margin : theme.spacing(1), },
-//   alreadyConfigured : {
-//     textAlign : "center",
-//     padding : theme.spacing(20),
-//   },
-//   colorSwitchBase : {
-//     color : blue[300],
-//     "&$colorChecked" : {
-//       color : blue[500],
-//       "& + $colorBar" : { backgroundColor : blue[500], },
-//     },
-//   },
-//   colorBar : {},
-//   colorChecked : {},
-//   fileLabel : { width : "100%", },
-//   fileLabelText : {},
-//   inClusterLabel : { paddingRight : theme.spacing(2), },
-//   alignCenter : { textAlign : "center", },
-//   alignRight : {
-//     textAlign : "right",
-//     marginBottom : theme.spacing(2),
-//   },
-//   fileInputStyle : { opacity : "0.01", },
-//   // icon : { width : theme.spacing(2.5), },
-//   icon : {
-//     width : 20,
-//     height : 20
-//   },
-//   istioIcon : { width : theme.spacing(1.5), },
-//   chip : {
-//     marginRight : theme.spacing(1),
-//     marginBottom : theme.spacing(1),
-//   }
-// });
 
 const useStyles = makeStyles((theme) => ({
   wrapperClass : {
@@ -126,15 +77,7 @@ const STATUS = {
 const MeshAdapterConfigComponent = (props) => {
 
   const labelRef = useRef(null)
-  // this.state = {
-  //   meshAdapters,
-  //   setAdapterURLs : [],
-  //   availableAdapters : [],
-  //   ts : new Date(),
-  //   meshLocationURLError : false,
-  //   selectedAvailableAdapterError : false,
-  //   adapterStates : {},
-  // };
+
   const [meshAdapters, setMeshAdapters] = useState(props.meshAdapters);
   const [setAdapterURLs, setSetAdapterURLs] = useState([]);
   const [availableAdapters, setAvailableAdapters] = useState([]);
