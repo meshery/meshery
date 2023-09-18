@@ -1,31 +1,31 @@
 module.exports = {
-  "env" : {
-    "browser" : true,
-    "es6" : true,
-    "node" : true // tells the parser that we are using nodejs
+  env : {
+    browser : true,
+    es6 : true,
+    node : true, // tells the parser that we are using nodejs
   },
 
-  'settings' : {
-    'react' : {
-      'version' : require('./package.json').dependencies.react
-    }
-  },
-  "extends" : ["eslint:recommended", "plugin:react/recommended", "plugin:cypress/recommended", "next"],
-  "globals" : {
-    "Atomics" : "readonly",
-    "SharedArrayBuffer" : "readonly",
-    "globalThis" : "readonly"
-  },
-  "parser" : "@babel/eslint-parser",
-  "parserOptions" : {
-    "ecmaFeatures" : {
-      "jsx" : true
+  settings : {
+    react : {
+      version : require("./package.json").dependencies.react,
     },
-    "ecmaVersion" : 2018,
-    "sourceType" : "module"
   },
-  "plugins" : ["react", "cypress"],
-  "rules" : {
+  extends : ["eslint:recommended", "plugin:react/recommended", "plugin:cypress/recommended", "next"],
+  globals : {
+    Atomics : "readonly",
+    SharedArrayBuffer : "readonly",
+    globalThis : "readonly",
+  },
+  parser : "@babel/eslint-parser",
+  parserOptions : {
+    ecmaFeatures : {
+      jsx : true,
+    },
+    ecmaVersion : 2018,
+    sourceType : "module",
+  },
+  plugins : ["react", "cypress"],
+  rules : {
     "@next/next/no-img-element" : "off",
     // turn off next img/image warning
     "react-hooks/rules-of-hooks" : "warn",
@@ -43,33 +43,43 @@ module.exports = {
     "keyword-spacing" : "error",
     "no-trailing-spaces" : "error",
     "object-curly-spacing" : ["error", "always"],
-    "arrow-spacing" : ["error", {
-      "before" : true,
-      "after" : true
-    }],
-    "key-spacing" : ["error", {
-      "beforeColon" : true,
-      "afterColon" : true
-    }],
+    "arrow-spacing" : [
+      "error",
+      {
+        before : true,
+        after : true,
+      },
+    ],
+    "key-spacing" : [
+      "error",
+      {
+        afterColon : true,
+        beforeColon : true
+      },
+    ],
     "block-spacing" : "error",
     "brace-style" : ["error", "1tbs"],
-    'indent' : ['error', 2, {
-      "FunctionExpression" : {
-        "parameters" : "first"
+    indent : [
+      "error",
+      2,
+      {
+        FunctionExpression : {
+          parameters : "first",
+        },
+        FunctionDeclaration : {
+          parameters : "first",
+        },
+        MemberExpression : 1,
+        SwitchCase : 1,
+        outerIIFEBody : 0,
+        VariableDeclarator : {
+          var : 2,
+          let : 2,
+          const : 3,
+        },
+        ignoredNodes : ["TemplateLiteral"],
       },
-      "FunctionDeclaration" : {
-        "parameters" : "first"
-      },
-      "MemberExpression" : 1,
-      "SwitchCase" : 1,
-      "outerIIFEBody" : 0,
-      "VariableDeclarator" : {
-        "var" : 2,
-        "let" : 2,
-        "const" : 3
-      },
-      ignoredNodes : ['TemplateLiteral']
-    }],
+    ],
     "react/react-in-jsx-scope" : "off",
     "no-undef" : "error",
     "react/jsx-uses-vars" : [2],
@@ -78,9 +88,12 @@ module.exports = {
     "no-unused-vars" : "error",
     "react/jsx-key" : "warn",
     "no-dupe-keys" : "error",
-    "react/jsx-filename-extension" : [1, {
-      "extensions" : [".js", ".jsx"]
-    }],
-    "react/prop-types" : "off"
-  }
+    "react/jsx-filename-extension" : [
+      1,
+      {
+        extensions : [".js", ".jsx"],
+      },
+    ],
+    "react/prop-types" : "off",
+  },
 };
