@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { IconButton, Menu, MenuItem, Tooltip, Button, Typography } from "@material-ui/core";
 import { Dialog, DialogActions, makeStyles } from "@material-ui/core";
 import { CustomTextTooltip } from "./MesheryMeshInterface/PatternService/CustomTextTooltip";
@@ -162,7 +162,7 @@ function Modal(props) {
 
   const [canNotSubmit, setCanNotSubmit] = useState(false);
   const [snackbar, setSnackbar] = useState(false);
-  const [formState, setFormState] = useState({});
+  const formStateRef = useRef({});
   const formRef = React.createRef();
 
   const renderTooltipContent = () => (
@@ -207,7 +207,7 @@ function Modal(props) {
   }, [title]);
 
   const handleFormChange = (data) => {
-    setFormState(data.formData);
+    formStateRef.current = data;
   };
 
   return (
@@ -230,7 +230,7 @@ function Modal(props) {
 
         <RJSFWrapper
           key={type}
-          formData={formState}
+          formData={formStateRef.current}
           jsonSchema={schema || getSchema(type)}
           uiSchema={uiSchema}
           onChange={handleFormChange}
@@ -286,4 +286,4 @@ function Modal(props) {
   );
 }
 
-export default Modal;
+export default React.memo(Modal);
