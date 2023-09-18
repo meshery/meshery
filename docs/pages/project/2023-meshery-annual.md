@@ -1,9 +1,23 @@
 As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.
 
-## Devstats
+## [Devstats](https://meshery.devstats.cncf.io/)
 
 - Contributors from 130 companies (all-time)
 - [89 PR authors this past year](https://meshery.devstats.cncf.io/d/22/prs-authors-table?orgId=1&var-period_name=Last%20year&var-repogroup_name=All)
+- [41 countries represented by contributors (all-time)](https://meshery.devstats.cncf.io/d/18/overall-project-statistics-table?orgId=1&var-period_name=Last%20decade&var-repogroup_name=All)
+
+
+| Type | 2023-22 | 2022-21 | 2021-20
+| --- | --- | --- | --- |
+| Commits | 13.5K | 11.02K | 11.03K |
+| Pull Requests | 2.3K | 1.9K | 2K |
+| Contributions | 31.3K | 25.29K | 28.72K |
+| New Contributors | 226 | 127 |177 |
+| Forks | 731 | 305 | 306 |
+| Contributors from Companies | 55 | 37 | 36 |
+
+
+
 
 ## Maintainers ([link](https://github.com/meshery/meshery/blob/master/MAINTAINERS.md))
 
