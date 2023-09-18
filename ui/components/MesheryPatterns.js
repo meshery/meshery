@@ -521,7 +521,8 @@ function MesheryPatterns({
       async (result) => {
         try {
           const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName));
+          const modelNames = _.uniq(models?.map((model) => model.displayName.toUpperCase()));
+          modelNames.sort();
 
           // Modify the schema using the utility function
           const modifiedSchema = modifyRJSFSchema(
@@ -1418,9 +1419,9 @@ function MesheryPatterns({
           dryRunComponent={modalOpen.dryRunComponent}
           errors={modalOpen.errors}
         />
-        {canPublishPattern &&
+        {(canPublishPattern && publishModal.open) &&
           <Modal
-            open={publishModal.open}
+            open={true}
             schema={publishSchema.rjsfSchema}
             uiSchema={publishSchema.uiSchema}
             handleClose={handlePublishModalClose}
@@ -1432,18 +1433,19 @@ function MesheryPatterns({
             submitBtnIcon={<PublicIcon/>}
           />
         }
-        <Modal
-          open={importModal.open}
-          schema={importSchema.rjsfSchema}
-          uiSchema={importSchema.uiSchema}
-          handleClose={handleUploadImportClose}
-          handleSubmit={handleImportDesign}
-          title="Import Design"
-          submitBtnText="Import"
-          leftHeaderIcon={<Pattern fill="#fff" style={{ height : "24px", width : "24px", fonSize : "1.45rem" }} className={undefined} />}
-          submitBtnIcon={<PublishIcon  className={classes.addIcon} data-cy="import-button"/>}
-        />
-        {/* <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchPatterns(page, pageSize, search, sortOrder)} configuration="Design" /> */}
+        { importModal.open &&
+          <Modal
+            open={true}
+            schema={importSchema.rjsfSchema}
+            uiSchema={importSchema.uiSchema}
+            handleClose={handleUploadImportClose}
+            handleSubmit={handleImportDesign}
+            title="Import Design"
+            submitBtnText="Import"
+            leftHeaderIcon={<Pattern fill="#fff" style={{ height : "24px", width : "24px", fonSize : "1.45rem" }} className={undefined} />}
+            submitBtnIcon={<PublishIcon  className={classes.addIcon} data-cy="import-button"/>}
+          />
+        }
         <PromptComponent ref={modalRef} />
       </NoSsr>
     </>
