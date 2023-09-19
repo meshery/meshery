@@ -58,7 +58,7 @@ const NavbarNotificationIcon = () => {
 
 const NotificationCountChip = ({ classes, notificationStyle, count,type, handleClick }) => {
   const chipStyles = {
-    fill : notificationStyle.color,
+    fill : notificationStyle?.color,
     height : "20px",
     width : "20px",
   }
