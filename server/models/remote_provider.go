@@ -4239,7 +4239,7 @@ func (l *RemoteProvider) GetEnvironments(token, page, pageSize, search, order, f
 	return nil, err
 }
 
-func (l *RemoteProvider) GetEnvironmentsByID(req *http.Request, environmentID string) ([]byte, error) {
+func (l *RemoteProvider) GetEnvironmentByID(req *http.Request, environmentID string) ([]byte, error) {
 	logrus.Infof("Environments remote provider handler called")
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments/" + environmentID)
@@ -4284,7 +4284,7 @@ func (l *RemoteProvider) SaveEnvironment(req *http.Request, env *EnvironmentPayl
 	}
 	bf := bytes.NewBuffer(_env)
 
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments/")
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments")
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 	tokenString := token
 	if !skipTokenCheck {

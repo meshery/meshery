@@ -140,8 +140,8 @@ func (l *DefaultLocalProvider) GetEnvironmentByID(_ *http.Request, _ string) ([]
 	return []byte(""), ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, _ string, _, _ int, _, _ string) (*ConnectionPage, error) {
-	return nil, ErrLocalProviderSupport
+func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, _ *EnvironmentPayload, _ string, _ bool) error {
+	return ErrLocalProviderSupport
 }
 
 func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, _, _, _ string) ([]byte, error) {
@@ -958,7 +958,7 @@ func (l *DefaultLocalProvider) SaveConnection(_ *http.Request, _ *ConnectionPayl
 	return ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) GetConnections(_ *http.Request, _ string, _, _ int, _, _ string) (*EnvironmentPage, error) {
+func (l *DefaultLocalProvider) GetConnections(_ *http.Request, _ string, _, _ int, _, _ string) (*ConnectionPage, error) {
 	return nil, ErrLocalProviderSupport
 }
 
