@@ -130,6 +130,7 @@ func (h *Handler) handleApplicationPOST(
 		
 		_ = provider.PersistEvent(event)
 		go h.EventsBuffer.Publish(&res)
+		fmt.Print("inside app post: ", userID)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
@@ -523,8 +524,8 @@ func (h *Handler) handleApplicationPOST(
 			go h.EventsBuffer.Publish(&res)
 			return
 		}
-
-		go h.config.ConfigurationChannel.PublishApplications()
+		fmt.Print("inside app post 525: ", userID)
+		go h.config.ApplicationChannel.Publish(userID, struct{}{})
 		eb := eventBuilder
 		_ = provider.PersistEvent(eb.WithDescription(fmt.Sprintf("Application %s  Source content uploaded", mesheryApplicationContent[0].Name)).Build())
 	}
@@ -677,8 +678,8 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 			}
 
 			eventBuilder.WithSeverity(events.Informational)
-			
-			go h.config.ConfigurationChannel.PublishApplications()
+			fmt.Print("inside app update: ", userID)
+			go h.config.ApplicationChannel.Publish(userID, struct{}{})
 			h.formatApplicationOutput(rw, resp, format, &res, eventBuilder)
 			event := eventBuilder.Build()
 			go h.config.EventBroadcaster.Publish(userID, event)
@@ -721,8 +722,8 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 		go h.EventsBuffer.Publish(&res)
 		return
 	}
-
-	go h.config.ConfigurationChannel.PublishApplications()
+	fmt.Print("inside app update 717: ", userID)
+	go h.config.ApplicationChannel.Publish(userID, struct{}{})
 
 	eventBuilder.WithSeverity(events.Informational)
 	h.formatApplicationOutput(rw, resp, format, &res, eventBuilder)
@@ -818,8 +819,9 @@ func (h *Handler) DeleteMesheryApplicationHandler(
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Application %s deleted.", mesheryApplication.Name)).Build()
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userID, event)
-
-	go h.config.ConfigurationChannel.PublishApplications()
+	
+	fmt.Print("inside app post 809: ", userID)
+	go h.config.ApplicationChannel.Publish(userID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }

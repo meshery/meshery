@@ -42,9 +42,9 @@ var (
 
 func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	userID := uuid.FromStringOrNil(user.ID)
-	page, offset, limit, 
-	search, order, sortOnCol, status := getPaginationParams(req)
-	// eventCategory := 
+	page, offset, limit,
+		search, order, sortOnCol, status := getPaginationParams(req)
+	// eventCategory :=
 	filter, err := getEventFilter(req)
 	if err != nil {
 		h.log.Warn(err)
@@ -56,7 +56,7 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	filter.SortOn = sortOnCol
 	filter.Search = search
 	filter.Status = events.EventStatus(status)
-	
+
 	eventsResult, err := provider.GetAllEvents(filter, userID)
 	if err != nil {
 		h.log.Error(ErrGetEvents(err))
@@ -102,10 +102,10 @@ func (h *Handler) GetEventTypes (w http.ResponseWriter, req *http.Request, prefO
 func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	eventID := uuid.FromStringOrNil(mux.Vars(req)["id"])
 
-	defer func () {
+	defer func() {
 		_ = req.Body.Close()
 	}()
-	
+
 	var reqBody map[string]interface{}
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
@@ -183,6 +183,7 @@ func getEventFilter(req *http.Request) (*events.EventsFilter, error) {
 
 	return eventFilter, nil
 }
+
 // swagger:route GET /api/events EventsAPI idGetEventStreamer
 // Handle GET request for events.
 // Listens for events across all of Meshery's components like adapters and server, streaming them to the UI via Server Side Events
@@ -236,7 +237,7 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 		for mClient := range newAdaptersChan {
 			log.Debug("received a new mesh client, listening for events")
 			go func(mClient *meshes.MeshClient) {
-				listenForAdapterEvents(req.Context(), mClient, respChan, log, p,  h.config.EventBroadcaster, *h.SystemID, user.ID)
+				listenForAdapterEvents(req.Context(), mClient, respChan, log, p, h.config.EventBroadcaster, *h.SystemID, user.ID)
 				_ = mClient.Close()
 			}(mClient)
 		}
@@ -325,7 +326,7 @@ func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp ch
 		}
 	}
 }
-func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log *logrus.Entry, p models.Provider, ec *models.EventBroadcast, systemID uuid.UUID, userID string) {
+func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log *logrus.Entry, p models.Provider, ec *models.Broadcast, systemID uuid.UUID, userID string) {
 	log.Debugf("Received a stream client...")
 	userUUID := uuid.FromStringOrNil(userID)
 	streamClient, err := mClient.MClient.StreamEvents(ctx, &meshes.EventsRequest{})
@@ -351,7 +352,7 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 		log.Debugf("Received an event.")
 		eventType := event.EventType.String()
 		eventBuilder := events.NewEvent().FromSystem(uuid.FromStringOrNil(event.Component)).
-		WithSeverity(events.Informational).WithDescription(event.Summary).WithCategory(event.ComponentName).WithAction("deploy").FromUser(userUUID)
+			WithSeverity(events.Informational).WithDescription(event.Summary).WithCategory(event.ComponentName).WithAction("deploy").FromUser(userUUID)
 		if strings.Contains(event.Summary, "removed") {
 			eventBuilder.WithAction("undeploy")
 		}

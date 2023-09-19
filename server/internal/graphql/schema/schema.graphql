@@ -7,6 +7,7 @@
 scalar Map
 scalar Time
 scalar Any
+directive @KubernetesMiddleware on FIELD_DEFINITION
 
 # Service Mesh Types
 enum MeshType {
@@ -561,56 +562,46 @@ type Query {
   getAvailableAddons(
     # Select Mesh Type
      filter: ServiceMeshFilter
-  ): [AddonList!]!
+  ): [AddonList!]! @KubernetesMiddleware
 
   # Query Control Plane data for a Service Mesh (or all) in your cluster
   getControlPlanes(
     # Filter Control Plane Query
     filter: ServiceMeshFilter
-  ): [ControlPlane!]!
+  ): [ControlPlane!]! @KubernetesMiddleware
 
   # Query Data Plane information for a Service Mesh (or all) in your cluster
   getDataPlanes(
     # Filter Control Plane Query
     filter: ServiceMeshFilter
-  ): [DataPlane!]!
+  ): [DataPlane!]! @KubernetesMiddleware
 
   # Query status of Meshery Operator in your cluster
   getOperatorStatus(
         k8scontextID: String!
-  ): OperatorStatus
+  ): OperatorStatus @KubernetesMiddleware
 
   # Query to resync the cluster discovery
   resyncCluster(
     # Selector to control several resync actions
     selector: ReSyncActions
     k8scontextID: String!
-  ): Status!
+  ): Status!  @KubernetesMiddleware
 
   # Check the Meshsync Status
   getMeshsyncStatus(
         k8scontextID: String!
-  ): OperatorControllerStatus!
-
-  # Check the Meshsync Status and deploy if not enabled
-  deployMeshsync( # what to do in-order to deploy meshsync on multiple clusters/contexts
-        k8scontextID: String!
-  ): Status!
+  ): OperatorControllerStatus!  @KubernetesMiddleware
 
   # Check is Meshey Server is connected to NATS
   getNatsStatus(
         k8scontextID: String!
-  ): OperatorControllerStatus!
-
-  # Check is Meshey Server is connected to NATS, if not connect to the NATS Server
-  connectToNats(
-        k8scontextID: String!
-  ): Status!
+  ): OperatorControllerStatus! @KubernetesMiddleware
 
   # Query available Namesapces in your cluster
   getAvailableNamespaces(
         k8sClusterIDs: [String!]
-  ): [NameSpace!]!
+  ): [NameSpace!]! @KubernetesMiddleware
 
   # Query for performance result
   getPerfResult(id: ID!): MesheryResult
@@ -642,7 +633,7 @@ type Query {
   getMeshModelSummary(selector: MeshModelSummarySelector!): MeshModelSummary!
 
   # Query for telemetry components
-  fetchTelemetryComponents(contexts: [String!]) : [TelemetryComp]!
+  fetchTelemetryComponents(contexts: [String!]) : [TelemetryComp]! @KubernetesMiddleware
 }
 
 
@@ -671,41 +662,38 @@ type Mutation {
 type Subscription {
   # Publish events to user
   # Listen to changes in status of Addons available (Eg. Prometheus and Grafana)
-  listenToAddonState(
+  #listenToAddonState(
     # Select Mesh Type
-    filter: ServiceMeshFilter
-  ): [AddonList!]!
+  #  filter: ServiceMeshFilter
+  #): [AddonList!]! @KubernetesMiddleware
 
   # Listen to changes in Control Plane data for a Service Mesh (or all) in your cluster
-  listenToControlPlaneState(
+  #listenToControlPlaneState(
     # Filter Control Plane Query
-    filter: ServiceMeshFilter
-  ): [ControlPlane!]!
+  #  filter: ServiceMeshFilter
+  #): [ControlPlane!]! @KubernetesMiddleware
 
   # Listen to changes in Data Plane data for a Service Mesh (or all) in your cluster
-  listenToDataPlaneState(
+  #listenToDataPlaneState(
     # Filter Control Plane Query
-    filter: ServiceMeshFilter
-  ): [DataPlane!]!
+   # filter: ServiceMeshFilter
+  #): [DataPlane!]! @KubernetesMiddleware
 
   # Listen to changes in status of Meshery Operator in your cluster
   listenToOperatorState(
     k8scontextIDs: [String!]
-  ): OperatorStatusPerK8sContext
+  ): OperatorStatusPerK8sContext @KubernetesMiddleware
 
   # Listen to changes in the list of available Namesapces in your cluster
   listenToMeshSyncEvents(
     k8scontextIDs: [String!]
-  ): OperatorControllerStatusPerK8sContext
+  ): OperatorControllerStatusPerK8sContext @KubernetesMiddleware
 
   # Listen to changes in Performance Profiles
   subscribePerfProfiles(selector: PageFilter!): PerfPageProfiles!
 
   # Listen to all results for profile ID
   subscribePerfResults(selector: PageFilter!, profileID: String!): PerfPageResult!
-
-  # Listen to changes in Broker (NATS) Connection
-  subscribeBrokerConnection: Boolean!
 
   # Listen to changes in the status of meshery controllers
   subscribeMesheryControllersStatus(
@@ -723,7 +711,7 @@ type Subscription {
   subscribeClusterResources(
     k8scontextIDs: [String!],
     namespace: String!
-  ): ClusterResources!
+  ): ClusterResources!  @KubernetesMiddleware
 
   subscribeK8sContext(selector: PageFilter!) : K8sContextsPage!
 

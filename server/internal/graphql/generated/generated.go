@@ -44,6 +44,7 @@ type ResolverRoot interface {
 }
 
 type DirectiveRoot struct {
+	KubernetesMiddleware func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
 }
 
 type ComplexityRoot struct {
@@ -373,8 +374,6 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		ConnectToNats              func(childComplexity int, k8scontextID string) int
-		DeployMeshsync             func(childComplexity int, k8scontextID string) int
 		FetchAllResults            func(childComplexity int, selector model.PageFilter) int
 		FetchFilterCatalogContent  func(childComplexity int, selector *model.CatalogSelector) int
 		FetchPatternCatalogContent func(childComplexity int, selector *model.CatalogSelector) int
@@ -402,12 +401,8 @@ type ComplexityRoot struct {
 	}
 
 	Subscription struct {
-		ListenToAddonState                func(childComplexity int, filter *model.ServiceMeshFilter) int
-		ListenToControlPlaneState         func(childComplexity int, filter *model.ServiceMeshFilter) int
-		ListenToDataPlaneState            func(childComplexity int, filter *model.ServiceMeshFilter) int
 		ListenToMeshSyncEvents            func(childComplexity int, k8scontextIDs []string) int
 		ListenToOperatorState             func(childComplexity int, k8scontextIDs []string) int
-		SubscribeBrokerConnection         func(childComplexity int) int
 		SubscribeClusterResources         func(childComplexity int, k8scontextIDs []string, namespace string) int
 		SubscribeConfiguration            func(childComplexity int, applicationSelector model.PageFilter, patternSelector model.PageFilter, filterSelector model.PageFilter) int
 		SubscribeEvents                   func(childComplexity int) int
@@ -437,9 +432,7 @@ type QueryResolver interface {
 	GetOperatorStatus(ctx context.Context, k8scontextID string) (*model.OperatorStatus, error)
 	ResyncCluster(ctx context.Context, selector *model.ReSyncActions, k8scontextID string) (model.Status, error)
 	GetMeshsyncStatus(ctx context.Context, k8scontextID string) (*model.OperatorControllerStatus, error)
-	DeployMeshsync(ctx context.Context, k8scontextID string) (model.Status, error)
 	GetNatsStatus(ctx context.Context, k8scontextID string) (*model.OperatorControllerStatus, error)
-	ConnectToNats(ctx context.Context, k8scontextID string) (model.Status, error)
 	GetAvailableNamespaces(ctx context.Context, k8sClusterIDs []string) ([]*model.NameSpace, error)
 	GetPerfResult(ctx context.Context, id string) (*model.MesheryResult, error)
 	FetchResults(ctx context.Context, selector model.PageFilter, profileID string) (*model.PerfPageResult, error)
@@ -454,14 +447,10 @@ type QueryResolver interface {
 	FetchTelemetryComponents(ctx context.Context, contexts []string) ([]*model.TelemetryComp, error)
 }
 type SubscriptionResolver interface {
-	ListenToAddonState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.AddonList, error)
-	ListenToControlPlaneState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.ControlPlane, error)
-	ListenToDataPlaneState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.DataPlane, error)
 	ListenToOperatorState(ctx context.Context, k8scontextIDs []string) (<-chan *model.OperatorStatusPerK8sContext, error)
 	ListenToMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.OperatorControllerStatusPerK8sContext, error)
 	SubscribePerfProfiles(ctx context.Context, selector model.PageFilter) (<-chan *model.PerfPageProfiles, error)
 	SubscribePerfResults(ctx context.Context, selector model.PageFilter, profileID string) (<-chan *model.PerfPageResult, error)
-	SubscribeBrokerConnection(ctx context.Context) (<-chan bool, error)
 	SubscribeMesheryControllersStatus(ctx context.Context, k8scontextIDs []string) (<-chan []*model.MesheryControllersStatusListItem, error)
 	SubscribeMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.MeshSyncEvent, error)
 	SubscribeConfiguration(ctx context.Context, applicationSelector model.PageFilter, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error)
@@ -1931,30 +1920,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PerfProfile.UserID(childComplexity), true
 
-	case "Query.connectToNats":
-		if e.complexity.Query.ConnectToNats == nil {
-			break
-		}
-
-		args, err := ec.field_Query_connectToNats_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.ConnectToNats(childComplexity, args["k8scontextID"].(string)), true
-
-	case "Query.deployMeshsync":
-		if e.complexity.Query.DeployMeshsync == nil {
-			break
-		}
-
-		args, err := ec.field_Query_deployMeshsync_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.DeployMeshsync(childComplexity, args["k8scontextID"].(string)), true
-
 	case "Query.fetchAllResults":
 		if e.complexity.Query.FetchAllResults == nil {
 			break
@@ -2197,42 +2162,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Resource.Kind(childComplexity), true
 
-	case "Subscription.listenToAddonState":
-		if e.complexity.Subscription.ListenToAddonState == nil {
-			break
-		}
-
-		args, err := ec.field_Subscription_listenToAddonState_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Subscription.ListenToAddonState(childComplexity, args["filter"].(*model.ServiceMeshFilter)), true
-
-	case "Subscription.listenToControlPlaneState":
-		if e.complexity.Subscription.ListenToControlPlaneState == nil {
-			break
-		}
-
-		args, err := ec.field_Subscription_listenToControlPlaneState_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Subscription.ListenToControlPlaneState(childComplexity, args["filter"].(*model.ServiceMeshFilter)), true
-
-	case "Subscription.listenToDataPlaneState":
-		if e.complexity.Subscription.ListenToDataPlaneState == nil {
-			break
-		}
-
-		args, err := ec.field_Subscription_listenToDataPlaneState_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Subscription.ListenToDataPlaneState(childComplexity, args["filter"].(*model.ServiceMeshFilter)), true
-
 	case "Subscription.listenToMeshSyncEvents":
 		if e.complexity.Subscription.ListenToMeshSyncEvents == nil {
 			break
@@ -2256,13 +2185,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Subscription.ListenToOperatorState(childComplexity, args["k8scontextIDs"].([]string)), true
-
-	case "Subscription.subscribeBrokerConnection":
-		if e.complexity.Subscription.SubscribeBrokerConnection == nil {
-			break
-		}
-
-		return e.complexity.Subscription.SubscribeBrokerConnection(childComplexity), true
 
 	case "Subscription.subscribeClusterResources":
 		if e.complexity.Subscription.SubscribeClusterResources == nil {
@@ -2527,6 +2449,7 @@ var sources = []*ast.Source{
 scalar Map
 scalar Time
 scalar Any
+directive @KubernetesMiddleware on FIELD_DEFINITION
 
 # Service Mesh Types
 enum MeshType {
@@ -3081,56 +3004,46 @@ type Query {
   getAvailableAddons(
     # Select Mesh Type
      filter: ServiceMeshFilter
-  ): [AddonList!]!
+  ): [AddonList!]! @KubernetesMiddleware
 
   # Query Control Plane data for a Service Mesh (or all) in your cluster
   getControlPlanes(
     # Filter Control Plane Query
     filter: ServiceMeshFilter
-  ): [ControlPlane!]!
+  ): [ControlPlane!]! @KubernetesMiddleware
 
   # Query Data Plane information for a Service Mesh (or all) in your cluster
   getDataPlanes(
     # Filter Control Plane Query
     filter: ServiceMeshFilter
-  ): [DataPlane!]!
+  ): [DataPlane!]! @KubernetesMiddleware
 
   # Query status of Meshery Operator in your cluster
   getOperatorStatus(
         k8scontextID: String!
-  ): OperatorStatus
+  ): OperatorStatus @KubernetesMiddleware
 
   # Query to resync the cluster discovery
   resyncCluster(
     # Selector to control several resync actions
     selector: ReSyncActions
     k8scontextID: String!
-  ): Status!
+  ): Status!  @KubernetesMiddleware
 
   # Check the Meshsync Status
   getMeshsyncStatus(
         k8scontextID: String!
-  ): OperatorControllerStatus!
-
-  # Check the Meshsync Status and deploy if not enabled
-  deployMeshsync( # what to do in-order to deploy meshsync on multiple clusters/contexts
-        k8scontextID: String!
-  ): Status!
+  ): OperatorControllerStatus!  @KubernetesMiddleware
 
   # Check is Meshey Server is connected to NATS
   getNatsStatus(
         k8scontextID: String!
-  ): OperatorControllerStatus!
-
-  # Check is Meshey Server is connected to NATS, if not connect to the NATS Server
-  connectToNats(
-        k8scontextID: String!
-  ): Status!
+  ): OperatorControllerStatus! @KubernetesMiddleware
 
   # Query available Namesapces in your cluster
   getAvailableNamespaces(
         k8sClusterIDs: [String!]
-  ): [NameSpace!]!
+  ): [NameSpace!]! @KubernetesMiddleware
 
   # Query for performance result
   getPerfResult(id: ID!): MesheryResult
@@ -3162,7 +3075,7 @@ type Query {
   getMeshModelSummary(selector: MeshModelSummarySelector!): MeshModelSummary!
 
   # Query for telemetry components
-  fetchTelemetryComponents(contexts: [String!]) : [TelemetryComp]!
+  fetchTelemetryComponents(contexts: [String!]) : [TelemetryComp]! @KubernetesMiddleware
 }
 
 
@@ -3191,41 +3104,38 @@ type Mutation {
 type Subscription {
   # Publish events to user
   # Listen to changes in status of Addons available (Eg. Prometheus and Grafana)
-  listenToAddonState(
+  #listenToAddonState(
     # Select Mesh Type
-    filter: ServiceMeshFilter
-  ): [AddonList!]!
+  #  filter: ServiceMeshFilter
+  #): [AddonList!]! @KubernetesMiddleware
 
   # Listen to changes in Control Plane data for a Service Mesh (or all) in your cluster
-  listenToControlPlaneState(
+  #listenToControlPlaneState(
     # Filter Control Plane Query
-    filter: ServiceMeshFilter
-  ): [ControlPlane!]!
+  #  filter: ServiceMeshFilter
+  #): [ControlPlane!]! @KubernetesMiddleware
 
   # Listen to changes in Data Plane data for a Service Mesh (or all) in your cluster
-  listenToDataPlaneState(
+  #listenToDataPlaneState(
     # Filter Control Plane Query
-    filter: ServiceMeshFilter
-  ): [DataPlane!]!
+   # filter: ServiceMeshFilter
+  #): [DataPlane!]! @KubernetesMiddleware
 
   # Listen to changes in status of Meshery Operator in your cluster
   listenToOperatorState(
     k8scontextIDs: [String!]
-  ): OperatorStatusPerK8sContext
+  ): OperatorStatusPerK8sContext @KubernetesMiddleware
 
   # Listen to changes in the list of available Namesapces in your cluster
   listenToMeshSyncEvents(
     k8scontextIDs: [String!]
-  ): OperatorControllerStatusPerK8sContext
+  ): OperatorControllerStatusPerK8sContext @KubernetesMiddleware
 
   # Listen to changes in Performance Profiles
   subscribePerfProfiles(selector: PageFilter!): PerfPageProfiles!
 
   # Listen to all results for profile ID
   subscribePerfResults(selector: PageFilter!, profileID: String!): PerfPageResult!
-
-  # Listen to changes in Broker (NATS) Connection
-  subscribeBrokerConnection: Boolean!
 
   # Listen to changes in the status of meshery controllers
   subscribeMesheryControllersStatus(
@@ -3243,7 +3153,7 @@ type Subscription {
   subscribeClusterResources(
     k8scontextIDs: [String!],
     namespace: String!
-  ): ClusterResources!
+  ): ClusterResources!  @KubernetesMiddleware
 
   subscribeK8sContext(selector: PageFilter!) : K8sContextsPage!
 
@@ -3314,36 +3224,6 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_connectToNats_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["k8scontextID"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("k8scontextID"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["k8scontextID"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_deployMeshsync_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["k8scontextID"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("k8scontextID"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["k8scontextID"] = arg0
 	return args, nil
 }
 
@@ -3674,51 +3554,6 @@ func (ec *executionContext) field_Query_resyncCluster_args(ctx context.Context, 
 		}
 	}
 	args["k8scontextID"] = arg1
-	return args, nil
-}
-
-func (ec *executionContext) field_Subscription_listenToAddonState_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 *model.ServiceMeshFilter
-	if tmp, ok := rawArgs["filter"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
-		arg0, err = ec.unmarshalOServiceMeshFilter2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐServiceMeshFilter(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["filter"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Subscription_listenToControlPlaneState_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 *model.ServiceMeshFilter
-	if tmp, ok := rawArgs["filter"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
-		arg0, err = ec.unmarshalOServiceMeshFilter2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐServiceMeshFilter(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["filter"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Subscription_listenToDataPlaneState_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 *model.ServiceMeshFilter
-	if tmp, ok := rawArgs["filter"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filter"))
-		arg0, err = ec.unmarshalOServiceMeshFilter2ᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐServiceMeshFilter(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["filter"] = arg0
 	return args, nil
 }
 
@@ -13146,8 +12981,28 @@ func (ec *executionContext) _Query_getAvailableAddons(ctx context.Context, field
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetAvailableAddons(rctx, fc.Args["filter"].(*model.ServiceMeshFilter))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetAvailableAddons(rctx, fc.Args["filter"].(*model.ServiceMeshFilter))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.KubernetesMiddleware == nil {
+				return nil, errors.New("directive KubernetesMiddleware is not implemented")
+			}
+			return ec.directives.KubernetesMiddleware(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.AddonList); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/layer5io/meshery/server/internal/graphql/model.AddonList`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13207,8 +13062,28 @@ func (ec *executionContext) _Query_getControlPlanes(ctx context.Context, field g
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetControlPlanes(rctx, fc.Args["filter"].(*model.ServiceMeshFilter))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetControlPlanes(rctx, fc.Args["filter"].(*model.ServiceMeshFilter))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.KubernetesMiddleware == nil {
+				return nil, errors.New("directive KubernetesMiddleware is not implemented")
+			}
+			return ec.directives.KubernetesMiddleware(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.ControlPlane); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/layer5io/meshery/server/internal/graphql/model.ControlPlane`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13268,8 +13143,28 @@ func (ec *executionContext) _Query_getDataPlanes(ctx context.Context, field grap
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetDataPlanes(rctx, fc.Args["filter"].(*model.ServiceMeshFilter))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetDataPlanes(rctx, fc.Args["filter"].(*model.ServiceMeshFilter))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.KubernetesMiddleware == nil {
+				return nil, errors.New("directive KubernetesMiddleware is not implemented")
+			}
+			return ec.directives.KubernetesMiddleware(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.DataPlane); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/layer5io/meshery/server/internal/graphql/model.DataPlane`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13329,8 +13224,28 @@ func (ec *executionContext) _Query_getOperatorStatus(ctx context.Context, field 
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetOperatorStatus(rctx, fc.Args["k8scontextID"].(string))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetOperatorStatus(rctx, fc.Args["k8scontextID"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.KubernetesMiddleware == nil {
+				return nil, errors.New("directive KubernetesMiddleware is not implemented")
+			}
+			return ec.directives.KubernetesMiddleware(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.OperatorStatus); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/layer5io/meshery/server/internal/graphql/model.OperatorStatus`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13393,8 +13308,28 @@ func (ec *executionContext) _Query_resyncCluster(ctx context.Context, field grap
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ResyncCluster(rctx, fc.Args["selector"].(*model.ReSyncActions), fc.Args["k8scontextID"].(string))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().ResyncCluster(rctx, fc.Args["selector"].(*model.ReSyncActions), fc.Args["k8scontextID"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.KubernetesMiddleware == nil {
+				return nil, errors.New("directive KubernetesMiddleware is not implemented")
+			}
+			return ec.directives.KubernetesMiddleware(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(model.Status); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be github.com/layer5io/meshery/server/internal/graphql/model.Status`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13448,8 +13383,28 @@ func (ec *executionContext) _Query_getMeshsyncStatus(ctx context.Context, field 
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetMeshsyncStatus(rctx, fc.Args["k8scontextID"].(string))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetMeshsyncStatus(rctx, fc.Args["k8scontextID"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.KubernetesMiddleware == nil {
+				return nil, errors.New("directive KubernetesMiddleware is not implemented")
+			}
+			return ec.directives.KubernetesMiddleware(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.OperatorControllerStatus); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/layer5io/meshery/server/internal/graphql/model.OperatorControllerStatus`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13502,61 +13457,6 @@ func (ec *executionContext) fieldContext_Query_getMeshsyncStatus(ctx context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_deployMeshsync(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_deployMeshsync(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().DeployMeshsync(rctx, fc.Args["k8scontextID"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(model.Status)
-	fc.Result = res
-	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_deployMeshsync(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Status does not have child fields")
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_deployMeshsync_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Query_getNatsStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_getNatsStatus(ctx, field)
 	if err != nil {
@@ -13570,8 +13470,28 @@ func (ec *executionContext) _Query_getNatsStatus(ctx context.Context, field grap
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetNatsStatus(rctx, fc.Args["k8scontextID"].(string))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetNatsStatus(rctx, fc.Args["k8scontextID"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.KubernetesMiddleware == nil {
+				return nil, errors.New("directive KubernetesMiddleware is not implemented")
+			}
+			return ec.directives.KubernetesMiddleware(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.OperatorControllerStatus); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/layer5io/meshery/server/internal/graphql/model.OperatorControllerStatus`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13624,61 +13544,6 @@ func (ec *executionContext) fieldContext_Query_getNatsStatus(ctx context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_connectToNats(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_connectToNats(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().ConnectToNats(rctx, fc.Args["k8scontextID"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(model.Status)
-	fc.Result = res
-	return ec.marshalNStatus2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐStatus(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_connectToNats(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Status does not have child fields")
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_connectToNats_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Query_getAvailableNamespaces(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_getAvailableNamespaces(ctx, field)
 	if err != nil {
@@ -13692,8 +13557,28 @@ func (ec *executionContext) _Query_getAvailableNamespaces(ctx context.Context, f
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetAvailableNamespaces(rctx, fc.Args["k8sClusterIDs"].([]string))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().GetAvailableNamespaces(rctx, fc.Args["k8sClusterIDs"].([]string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.KubernetesMiddleware == nil {
+				return nil, errors.New("directive KubernetesMiddleware is not implemented")
+			}
+			return ec.directives.KubernetesMiddleware(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.NameSpace); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/layer5io/meshery/server/internal/graphql/model.NameSpace`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -14422,8 +14307,28 @@ func (ec *executionContext) _Query_fetchTelemetryComponents(ctx context.Context,
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().FetchTelemetryComponents(rctx, fc.Args["contexts"].([]string))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().FetchTelemetryComponents(rctx, fc.Args["contexts"].([]string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.KubernetesMiddleware == nil {
+				return nil, errors.New("directive KubernetesMiddleware is not implemented")
+			}
+			return ec.directives.KubernetesMiddleware(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.TelemetryComp); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/layer5io/meshery/server/internal/graphql/model.TelemetryComp`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -14689,231 +14594,6 @@ func (ec *executionContext) fieldContext_Resource_count(ctx context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _Subscription_listenToAddonState(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
-	fc, err := ec.fieldContext_Subscription_listenToAddonState(ctx, field)
-	if err != nil {
-		return nil
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = nil
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().ListenToAddonState(rctx, fc.Args["filter"].(*model.ServiceMeshFilter))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return nil
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return nil
-	}
-	return func(ctx context.Context) graphql.Marshaler {
-		select {
-		case res, ok := <-resTmp.(<-chan []*model.AddonList):
-			if !ok {
-				return nil
-			}
-			return graphql.WriterFunc(func(w io.Writer) {
-				w.Write([]byte{'{'})
-				graphql.MarshalString(field.Alias).MarshalGQL(w)
-				w.Write([]byte{':'})
-				ec.marshalNAddonList2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐAddonListᚄ(ctx, field.Selections, res).MarshalGQL(w)
-				w.Write([]byte{'}'})
-			})
-		case <-ctx.Done():
-			return nil
-		}
-	}
-}
-
-func (ec *executionContext) fieldContext_Subscription_listenToAddonState(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Subscription",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "name":
-				return ec.fieldContext_AddonList_name(ctx, field)
-			case "owner":
-				return ec.fieldContext_AddonList_owner(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type AddonList", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Subscription_listenToAddonState_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Subscription_listenToControlPlaneState(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
-	fc, err := ec.fieldContext_Subscription_listenToControlPlaneState(ctx, field)
-	if err != nil {
-		return nil
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = nil
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().ListenToControlPlaneState(rctx, fc.Args["filter"].(*model.ServiceMeshFilter))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return nil
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return nil
-	}
-	return func(ctx context.Context) graphql.Marshaler {
-		select {
-		case res, ok := <-resTmp.(<-chan []*model.ControlPlane):
-			if !ok {
-				return nil
-			}
-			return graphql.WriterFunc(func(w io.Writer) {
-				w.Write([]byte{'{'})
-				graphql.MarshalString(field.Alias).MarshalGQL(w)
-				w.Write([]byte{':'})
-				ec.marshalNControlPlane2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐControlPlaneᚄ(ctx, field.Selections, res).MarshalGQL(w)
-				w.Write([]byte{'}'})
-			})
-		case <-ctx.Done():
-			return nil
-		}
-	}
-}
-
-func (ec *executionContext) fieldContext_Subscription_listenToControlPlaneState(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Subscription",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "name":
-				return ec.fieldContext_ControlPlane_name(ctx, field)
-			case "members":
-				return ec.fieldContext_ControlPlane_members(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type ControlPlane", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Subscription_listenToControlPlaneState_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Subscription_listenToDataPlaneState(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
-	fc, err := ec.fieldContext_Subscription_listenToDataPlaneState(ctx, field)
-	if err != nil {
-		return nil
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = nil
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().ListenToDataPlaneState(rctx, fc.Args["filter"].(*model.ServiceMeshFilter))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return nil
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return nil
-	}
-	return func(ctx context.Context) graphql.Marshaler {
-		select {
-		case res, ok := <-resTmp.(<-chan []*model.DataPlane):
-			if !ok {
-				return nil
-			}
-			return graphql.WriterFunc(func(w io.Writer) {
-				w.Write([]byte{'{'})
-				graphql.MarshalString(field.Alias).MarshalGQL(w)
-				w.Write([]byte{':'})
-				ec.marshalNDataPlane2ᚕᚖgithubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐDataPlaneᚄ(ctx, field.Selections, res).MarshalGQL(w)
-				w.Write([]byte{'}'})
-			})
-		case <-ctx.Done():
-			return nil
-		}
-	}
-}
-
-func (ec *executionContext) fieldContext_Subscription_listenToDataPlaneState(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Subscription",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "name":
-				return ec.fieldContext_DataPlane_name(ctx, field)
-			case "proxies":
-				return ec.fieldContext_DataPlane_proxies(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type DataPlane", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Subscription_listenToDataPlaneState_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Subscription_listenToOperatorState(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
 	fc, err := ec.fieldContext_Subscription_listenToOperatorState(ctx, field)
 	if err != nil {
@@ -14927,8 +14607,28 @@ func (ec *executionContext) _Subscription_listenToOperatorState(ctx context.Cont
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().ListenToOperatorState(rctx, fc.Args["k8scontextIDs"].([]string))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Subscription().ListenToOperatorState(rctx, fc.Args["k8scontextIDs"].([]string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.KubernetesMiddleware == nil {
+				return nil, errors.New("directive KubernetesMiddleware is not implemented")
+			}
+			return ec.directives.KubernetesMiddleware(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(<-chan *model.OperatorStatusPerK8sContext); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be <-chan *github.com/layer5io/meshery/server/internal/graphql/model.OperatorStatusPerK8sContext`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -14999,8 +14699,28 @@ func (ec *executionContext) _Subscription_listenToMeshSyncEvents(ctx context.Con
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().ListenToMeshSyncEvents(rctx, fc.Args["k8scontextIDs"].([]string))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Subscription().ListenToMeshSyncEvents(rctx, fc.Args["k8scontextIDs"].([]string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.KubernetesMiddleware == nil {
+				return nil, errors.New("directive KubernetesMiddleware is not implemented")
+			}
+			return ec.directives.KubernetesMiddleware(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(<-chan *model.OperatorControllerStatusPerK8sContext); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be <-chan *github.com/layer5io/meshery/server/internal/graphql/model.OperatorControllerStatusPerK8sContext`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -15212,64 +14932,6 @@ func (ec *executionContext) fieldContext_Subscription_subscribePerfResults(ctx c
 	if fc.Args, err = ec.field_Subscription_subscribePerfResults_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Subscription_subscribeBrokerConnection(ctx context.Context, field graphql.CollectedField) (ret func(ctx context.Context) graphql.Marshaler) {
-	fc, err := ec.fieldContext_Subscription_subscribeBrokerConnection(ctx, field)
-	if err != nil {
-		return nil
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = nil
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().SubscribeBrokerConnection(rctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return nil
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return nil
-	}
-	return func(ctx context.Context) graphql.Marshaler {
-		select {
-		case res, ok := <-resTmp.(<-chan bool):
-			if !ok {
-				return nil
-			}
-			return graphql.WriterFunc(func(w io.Writer) {
-				w.Write([]byte{'{'})
-				graphql.MarshalString(field.Alias).MarshalGQL(w)
-				w.Write([]byte{':'})
-				ec.marshalNBoolean2bool(ctx, field.Selections, res).MarshalGQL(w)
-				w.Write([]byte{'}'})
-			})
-		case <-ctx.Done():
-			return nil
-		}
-	}
-}
-
-func (ec *executionContext) fieldContext_Subscription_subscribeBrokerConnection(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Subscription",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
 	}
 	return fc, nil
 }
@@ -15518,8 +15180,28 @@ func (ec *executionContext) _Subscription_subscribeClusterResources(ctx context.
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().SubscribeClusterResources(rctx, fc.Args["k8scontextIDs"].([]string), fc.Args["namespace"].(string))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Subscription().SubscribeClusterResources(rctx, fc.Args["k8scontextIDs"].([]string), fc.Args["namespace"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.KubernetesMiddleware == nil {
+				return nil, errors.New("directive KubernetesMiddleware is not implemented")
+			}
+			return ec.directives.KubernetesMiddleware(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(<-chan *model.ClusterResources); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be <-chan *github.com/layer5io/meshery/server/internal/graphql/model.ClusterResources`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -20428,28 +20110,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "deployMeshsync":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_deployMeshsync(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "getNatsStatus":
 			field := field
 
@@ -20460,28 +20120,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getNatsStatus(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "connectToNats":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_connectToNats(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -20843,12 +20481,6 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 	}
 
 	switch fields[0].Name {
-	case "listenToAddonState":
-		return ec._Subscription_listenToAddonState(ctx, fields[0])
-	case "listenToControlPlaneState":
-		return ec._Subscription_listenToControlPlaneState(ctx, fields[0])
-	case "listenToDataPlaneState":
-		return ec._Subscription_listenToDataPlaneState(ctx, fields[0])
 	case "listenToOperatorState":
 		return ec._Subscription_listenToOperatorState(ctx, fields[0])
 	case "listenToMeshSyncEvents":
@@ -20857,8 +20489,6 @@ func (ec *executionContext) _Subscription(ctx context.Context, sel ast.Selection
 		return ec._Subscription_subscribePerfProfiles(ctx, fields[0])
 	case "subscribePerfResults":
 		return ec._Subscription_subscribePerfResults(ctx, fields[0])
-	case "subscribeBrokerConnection":
-		return ec._Subscription_subscribeBrokerConnection(ctx, fields[0])
 	case "subscribeMesheryControllersStatus":
 		return ec._Subscription_subscribeMesheryControllersStatus(ctx, fields[0])
 	case "subscribeMeshSyncEvents":
