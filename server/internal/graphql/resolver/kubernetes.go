@@ -117,6 +117,7 @@ func (r *Resolver) getKubectlDescribe(_ context.Context, name, kind, namespace s
 
 func (r *Resolver) subscribeClusterResources(ctx context.Context, provider models.Provider, k8scontextIDs []string, namespace string) (<-chan *model.ClusterResources, error) {
 	ch := make(chan struct{}, 1)
+	ch <- struct{}{}
 	respChan := make(chan *model.ClusterResources)
 
 	r.Config.DashboardK8sResourcesChan.SubscribeDashbordK8Resources(ch)

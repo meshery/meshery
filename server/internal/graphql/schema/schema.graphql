@@ -627,7 +627,7 @@ type Query {
   fetchFilterCatalogContent(selector: CatalogSelector): [CatalogFilter!]!
 
   # Query for getting cluster info
-  getClusterResources(k8scontextIDs: [String!], namespace: String!): ClusterResources!
+  # getClusterResources(k8scontextIDs: [String!], namespace: String!): ClusterResources!
 
   # Query for meshmodel summary
   getMeshModelSummary(selector: MeshModelSummarySelector!): MeshModelSummary!

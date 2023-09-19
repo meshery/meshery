@@ -22,15 +22,14 @@ import { submitGrafanaConfigure } from "./telemetry/grafana/GrafanaComponent";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
 import fetchDataPlanes from "./graphql/queries/DataPlanesQuery";
-import fetchClusterResources from "./graphql/queries/ClusterResourcesQuery";
+
 import subscribeClusterResources from "./graphql/subscriptions/ClusterResourcesSubscription";
 import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
-import fetchTelemetryCompsQuery from '../components/graphql/queries/TelemetryComponentsQuery';
-import { submitPrometheusConfigure } from "./telemetry/prometheus/PrometheusComponent";
+
+
 import MUIDataTable from "mui-datatables";
 import Popup from "./Popup";
 import { iconMedium } from "../css/icons.styles";
-import { extractURLFromScanData } from "./ConnectionWizard/helpers/metrics";
 import { configurationTableTheme, configurationTableThemeDark } from '../themes/configurationTableTheme';
 import DashboardMeshModelGraph from './Dashboard/DashboardMeshModelGraph'
 import ConnectionStatsChart from "./Dashboard/ConnectionCharts.js";
