@@ -1,17 +1,20 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"io"
+	"github.com/gorilla/mux"
 
 	"github.com/layer5io/meshery/server/models"
 	"github.com/sirupsen/logrus"
 )
 
 // swagger:route GET /api/integrations/environments UserAPI idGetAllEnvironmentsHandler
-// Handles GET for all Users
+// Handles GET for all Environments
 //
-// # Users can be further filtered through query parameters
+// # Environments can be further filtered through query parameters
 //
 // ```?order={field}``` orders on the passed field
 //
@@ -23,7 +26,7 @@ import (
 //
 // ```?filter={condition}```
 // responses:
-// 	200: users
+// 	200: environments
 
 func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	logrus.Infof("Environments handler called")
@@ -81,7 +84,7 @@ func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *m
 	}
 
 	environment := models.EnvironmentPayload{}
-	err = json.Unmarshal(bd, &connection)
+	err = json.Unmarshal(bd, &environment)
 	obj := "environment"
 
 	if err != nil {
@@ -97,7 +100,7 @@ func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *m
 		return
 	}
 
-	description := fmt.Sprintf("Connection %s created.", connection.Name)
+	description := fmt.Sprintf("Connection %s created.", environment.Name)
 
 	h.log.Info(description)
 	w.WriteHeader(http.StatusCreated)
