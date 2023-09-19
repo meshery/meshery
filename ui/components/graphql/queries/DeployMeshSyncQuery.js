@@ -1,5 +1,5 @@
-import { fetchQuery, graphql } from "react-relay";
-import { createRelayEnvironment } from "../../../lib/relayEnvironment";
+import { fetchQuery, graphql } from 'react-relay';
+import { createRelayEnvironment } from '../../../lib/relayEnvironment';
 
 /**
  *
@@ -11,7 +11,7 @@ export default function deployMeshSync(variable) {
 
   const DeployMeshSyncQueryNode = graphql`
     query DeployMeshSyncQuery($k8scontextID: String!) {
-    deployMeshsync (k8scontextID: $k8scontextID)
+      deployMeshsync(k8scontextID: $k8scontextID)
     }
   `;
 

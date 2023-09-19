@@ -26,7 +26,7 @@ services:
                 config_source:
                   ads: {}
                   initial_fetch_timeout: 0s
-                type_urls: ["type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm"]
+                type_urls: ['type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm']
       workloadSelector:
         labels:
           app: api
@@ -45,14 +45,14 @@ services:
             value:
               name: envoy.filter.http.wasm
               typed_config:
-                "@type": type.googleapis.com/udpa.type.v1.TypedStruct
+                '@type': type.googleapis.com/udpa.type.v1.TypedStruct
                 type_url: type.googleapis.com/envoy.extensions.filters.http.wasm.v3.Wasm
                 value:
                   config:
                     configuration:
-                      "@type": type.googleapis.com/google.protobuf.StringValue
-                      value: "rate_limit_filter"
-                    root_id: "rate_limit_filter"
+                      '@type': type.googleapis.com/google.protobuf.StringValue
+                      value: 'rate_limit_filter'
+                    root_id: 'rate_limit_filter'
                     vm_config:
                       code:
                         remote:
@@ -62,8 +62,8 @@ services:
                       runtime: envoy.wasm.runtime.v8
                       vm_id: rate_limit_filter
                       configuration:
-                        "@type": type.googleapis.com/google.protobuf.StringValue
-                        value: "WwogIHsKICAgICJuYW1lIjogIi9wdWxsIiwKICAgICJydWxlIjp7CiAgICAgICJydWxlVHlwZSI6ICJyYXRlLWxpbWl0ZXIiLAogICAgICAicGFyYW1ldGVycyI6WwogICAgICAgIHsiaWRlbnRpZmllciI6ICJFbnRlcnByaXNlIiwgImxpbWl0IjogMTAwMH0sCiAgICAgICAgeyJpZGVudGlmaWVyIjogIlRlYW0iLCAibGltaXQiOiAxMDB9LAogICAgICAgIHsiaWRlbnRpZmllciI6ICJQZXJzb25hbCIsICJsaW1pdCI6IDEwfQogICAgICBdCiAgICB9CiAgfSwKICB7CiAgICAibmFtZSI6ICIvYXV0aCIsCiAgICAicnVsZSI6ewogICAgICAicnVsZVR5cGUiOiAibm9uZSIKICAgIH0KICB9LAogIHsKICAgICJuYW1lIjogIi9zaWdudXAiLAogICAgInJ1bGUiOnsKICAgICAgInJ1bGVUeXBlIjogIm5vbmUiCiAgICB9CiAgfSwKICB7CiAgICAibmFtZSI6ICIvdXBncmFkZSIsCiAgICAicnVsZSI6ewogICAgICAicnVsZVR5cGUiOiAibm9uZSIKICAgIH0KICB9Cl0="
+                        '@type': type.googleapis.com/google.protobuf.StringValue
+                        value: 'WwogIHsKICAgICJuYW1lIjogIi9wdWxsIiwKICAgICJydWxlIjp7CiAgICAgICJydWxlVHlwZSI6ICJyYXRlLWxpbWl0ZXIiLAogICAgICAicGFyYW1ldGVycyI6WwogICAgICAgIHsiaWRlbnRpZmllciI6ICJFbnRlcnByaXNlIiwgImxpbWl0IjogMTAwMH0sCiAgICAgICAgeyJpZGVudGlmaWVyIjogIlRlYW0iLCAibGltaXQiOiAxMDB9LAogICAgICAgIHsiaWRlbnRpZmllciI6ICJQZXJzb25hbCIsICJsaW1pdCI6IDEwfQogICAgICBdCiAgICB9CiAgfSwKICB7CiAgICAibmFtZSI6ICIvYXV0aCIsCiAgICAicnVsZSI6ewogICAgICAicnVsZVR5cGUiOiAibm9uZSIKICAgIH0KICB9LAogIHsKICAgICJuYW1lIjogIi9zaWdudXAiLAogICAgInJ1bGUiOnsKICAgICAgInJ1bGVUeXBlIjogIm5vbmUiCiAgICB9CiAgfSwKICB7CiAgICAibmFtZSI6ICIvdXBncmFkZSIsCiAgICAicnVsZSI6ewogICAgICAicnVsZVR5cGUiOiAibm9uZSIKICAgIH0KICB9Cl0='
                       allow_precompiled: true
       workloadSelector:
         labels:

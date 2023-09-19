@@ -13,21 +13,26 @@ import MesheryChart from './MesheryChart';
 import { clearResultsSelection } from '../lib/store';
 
 const defaultToolbarSelectStyles = {
-  iconButton : {
-    marginRight : '24px',
-    top : '50%',
-    display : 'inline-block',
-    position : 'relative',
+  iconButton: {
+    marginRight: '24px',
+    top: '50%',
+    display: 'inline-block',
+    position: 'relative',
   },
-  icon : {
-    color : '#000',
+  icon: {
+    color: '#000',
   },
-  inverseIcon : {
-    transform : 'rotate(90deg)',
+  inverseIcon: {
+    transform: 'rotate(90deg)',
   },
 };
 
-function CustomToolbarSelect({ classes, results_selection, setSelectedRows, clearResultsSelection }) {
+function CustomToolbarSelect({
+  classes,
+  results_selection,
+  setSelectedRows,
+  clearResultsSelection,
+}) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [data, setData] = useState([]);
   const [, setChartCompare] = useState([]);
@@ -58,7 +63,7 @@ function CustomToolbarSelect({ classes, results_selection, setSelectedRows, clea
       Object.keys(rs[k1]).forEach((k2) => {
         if (typeof rs[k1][k2] !== 'undefined') {
           // Directly update the data state.
-          setData(prevData => [...prevData, rs[k1][k2].runner_results]);
+          setData((prevData) => [...prevData, rs[k1][k2].runner_results]);
 
           const row = rs[k1][k2].runner_results;
           const startTime = new Date(row.StartTime);
@@ -67,13 +72,16 @@ function CustomToolbarSelect({ classes, results_selection, setSelectedRows, clea
           const serverMetrics = rs[k1][k2].server_metrics;
 
           // Directly update the chartCompare state.
-          setChartCompare(prevChartCompare => [...prevChartCompare, {
-            label : row.Labels,
-            startTime,
-            endTime,
-            boardConfig,
-            serverMetrics,
-          }]);
+          setChartCompare((prevChartCompare) => [
+            ...prevChartCompare,
+            {
+              label: row.Labels,
+              startTime,
+              endTime,
+              boardConfig,
+              serverMetrics,
+            },
+          ]);
         }
       });
     });
@@ -120,14 +128,18 @@ function CustomToolbarSelect({ classes, results_selection, setSelectedRows, clea
       <MesheryChartDialog
         handleClose={handleDialogClose}
         open={dialogOpen}
-        content={<div><MesheryChart data={data} /></div>}
+        content={
+          <div>
+            <MesheryChart data={data} />
+          </div>
+        }
       />
     </NoSsr>
   );
 }
 
 const mapDispatchToProps = (dispatch) => ({
-  clearResultsSelection : bindActionCreators(clearResultsSelection, dispatch),
+  clearResultsSelection: bindActionCreators(clearResultsSelection, dispatch),
 });
 
 const mapStateToProps = (state) => {
@@ -135,9 +147,6 @@ const mapStateToProps = (state) => {
   return { results_selection };
 };
 
-export default withStyles(defaultToolbarSelectStyles, { name : 'CustomToolbarSelect' })(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  )(CustomToolbarSelect),
+export default withStyles(defaultToolbarSelectStyles, { name: 'CustomToolbarSelect' })(
+  connect(mapStateToProps, mapDispatchToProps)(CustomToolbarSelect),
 );
