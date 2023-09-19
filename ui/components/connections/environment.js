@@ -165,7 +165,7 @@ function MySelectComponent({ classes }) {
         <form onSubmit={handleSubmit}>
           <DialogTitle className={classes.dialogTitle}>Add new environment</DialogTitle>
           <DialogContent>
-            <DialogContentText className={classes.subtitle}>Create a new environment</DialogContentText>
+            <DialogContentText className={classes.subtitle}>Create new environment</DialogContentText>
             <Grid container spacing={1} alignItems="center">
               <Grid item xs={3}>
                 <h4 className={classes.heading} >Name</h4>
