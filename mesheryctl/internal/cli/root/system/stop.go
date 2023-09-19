@@ -18,6 +18,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/docker/docker/client"
@@ -147,28 +148,28 @@ func stop() error {
 		rows := [][]string{}
 
 		for _, container := range contaienrs {
-			// removes container forcefullu
+			// removes container forcefully
 			err = cli.ContainerRemove(context.Background(), container.ID, types.ContainerRemoveOptions{Force: true})
 			if err != nil {
-				log.Errorf("Error whil removing %s: %s", container.Names[0], err.Error())
+				log.Errorf("Error while removing %s: %s", container.Names[0], err.Error())
 				continue
 			}
 			image := container.Image
 			// containers those are deployed programatically have image sha256 key
 			// in Container.Image field instead of image name
-			if strings.Contains(container.Image, "sha256") {
+			if isSha256(container.Image) {
 				image = getImageName(cli, container.Image)
 			}
 			names := strings.Join(container.Names, ",")
 			rows = append(rows, []string{container.ID[0:12], image, names, "removed"})
 		}
 
+		spinner.FinalMSG = fmt.Sprintf("Removed %d containers from docker\n\n", len(rows))
+		spinner.Stop()
+
 		if len(rows) > 0 {
 			utils.PrintToTable(headers, rows)
 		}
-
-		spinner.FinalMSG = fmt.Sprintf("\nRemoved %d containers from docker\n", len(rows))
-		spinner.Stop()
 
 	case "kubernetes":
 		client, err := meshkitkube.New([]byte(""))
@@ -255,6 +256,13 @@ func stop() error {
 		}
 	}
 	return nil
+}
+
+func isSha256(input string) bool {
+	// hexadecimal regular expression pattern
+	pattern := `^sha256:[0-9a-fA-F]{64}$`
+	re := regexp.MustCompile(pattern)
+	return re.MatchString(input)
 }
 
 // get image name by image SHA256 key
