@@ -9,15 +9,14 @@ As a self-service engineering platform, Meshery enables collaborative design and
 - [41 countries represented by contributors (all-time)](https://meshery.devstats.cncf.io/d/18/overall-project-statistics-table?orgId=1&var-period_name=Last%20decade&var-repogroup_name=All)
 - [3350 stars (all-time)](https://meshery.devstats.cncf.io/d/18/overall-project-statistics-table?orgId=1&var-period_name=Last%20decade&var-repogroup_name=All)
 
-
-| Type | 2023-22 | 2022-21 | 2021-20
+| Type | Sep 2020 - Sep 2021 | Sep 2021 - Sep 2022 | Sep 2022 - Sep 2023 |
 | --- | --- | --- | --- |
-| Commits | 13.5K | 11.02K | 11.03K |
-| Pull Requests | 2.3K | 1.9K | 2K |
-| Contributions | 31.3K | 25.29K | 28.72K |
-| New Contributors | 226 | 127 | 177 |
-| Forks | 731 | 305 | 306 |
-| Contributors from Companies | 55 | 37 | 36 |
+| Commits | 11.03K | 11.02K (-0.09%) | 13.5K (+22.45%) |
+| Pull Requests | 2K | 1.9K (-5%) | 2.3K (+21.05%) |
+| Contributions | 28.72K | 25.29K (-11.94%) | 31.3K (+23.73%) |
+| New Contributors | 177 | 127 (-28.25%) | 226 (+77.95%) |
+| Forks | 306 | 305 (-0.33%) | 731 (+139.67%) |
+| Enterprise Contributors | 36 | 37 (+2.78%) | 55 (+48.65%) |
 
 
 
