@@ -64,8 +64,8 @@ export const useNotification = () => {
       message,
       {
         //NOTE: Need to Consolidate the variant and event_type
-        variant: typeof event_type === "string" ? event_type : event_type?.type,
-        action: function Action(key) {
+        variant : typeof event_type === "string" ? event_type : event_type?.type,
+        action : function Action(key) {
           return (
             <ToggleButtonGroup>
               {showInNotificationCenter &&
