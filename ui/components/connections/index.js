@@ -429,22 +429,22 @@ function Connections({
     page,
     print : false,
     download : false,
+    selectableRows : "none",
     textLabels : {
       selectedRows : {
         text : "connection(s) selected",
       },
     },
+    selectToolbarPlacement : "none",
+
     enableNestedDataAccess : ".",
-    onSearchClose : () => {
-      setSearch("");
-    },
     onTableChange : (action, tableState) => {
       switch (action) {
         case "changePage":
-          getConnections(tableState.page.toString(), pageSize.toString());
+          getConnections(tableState.page.toString(), pageSize.toString(), search);
           break;
         case "changeRowsPerPage":
-          getConnections(page.toString(), tableState.rowsPerPage.toString());
+          getConnections(page.toString(), tableState.rowsPerPage.toString(), search);
           break;
         case "search":
           if (searchTimeout.current) {
@@ -465,18 +465,18 @@ function Connections({
     isRowExpandable : () => {
       return true;
     },
-    rowsExpanded : [0, 1],
+    // rowsExpanded : [0, 1],
     renderExpandableRow : (_, tableMeta) => {
       return (
         <TableRow>
           <TableCell></TableCell>
-          <TableCell colSpan={2}>
+          <TableCell colSpan={4}>
             <b>Server Build SHA:</b> {connections ? connections[tableMeta.rowIndex]?.metadata?.server_build_sha : "-"}
           </TableCell>
-          <TableCell colSpan={2}>
+          <TableCell colSpan={4}>
             <b>Server Version:</b> {connections ? connections[tableMeta.rowIndex]?.metadata?.server_version : "-"}
           </TableCell>
-          <TableCell colSpan={2}></TableCell>
+          {/* <TableCell colSpan={2}></TableCell> */}
         </TableRow>
       );
     },
@@ -498,7 +498,7 @@ function Connections({
         method : "GET",
       },
       (res) => {
-        setConnections(res?.connections);
+        setConnections(res?.connections || []);
         setPage(res?.page || 0);
         setCount(res?.total_count || 0);
         setPageSize(res?.page_size || 0);
@@ -579,7 +579,7 @@ function Connections({
                 setSearch(value);
                 getConnections(page, pageSize, value);
               }}
-              placeholder="Search"
+              placeholder="Search connections..."
             />
 
             <CustomColumnVisibilityControl
