@@ -158,6 +158,7 @@ func stop() error {
 			// containers those are deployed programatically have image sha256 key
 			// in Container.Image field instead of image name
 			if isSha256(container.Image) {
+				// default value of getImageName is shorten image SHA key (first 12 chars)
 				image = getImageName(cli, container.Image)
 			}
 			names := strings.Join(container.Names, ",")
@@ -269,7 +270,8 @@ func isSha256(input string) bool {
 func getImageName(cli *client.Client, imageShaKey string) string {
 	imageInspect, _, err := cli.ImageInspectWithRaw(context.Background(), imageShaKey)
 	if err != nil {
-		return "N/A"
+		// if there is an error in getting image name return shorten SHA key for reference
+		return imageShaKey[7:19]
 	}
 	return imageInspect.RepoTags[0]
 }
