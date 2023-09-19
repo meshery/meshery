@@ -462,4 +462,5 @@ type Provider interface {
 	GetEnvironments(token, page, pageSize, search, order, filter string) ([]byte, error)
 	GetEnvironmentByID(req *http.Request, environmentID string) ([]byte, error)
 	SaveEnvironment(req *http.Request, conn *EnvironmentPayload, token string, skipTokenCheck bool) error
+	DeleteEnvironment(req *http.Request, environmentID string) ([]byte, error)
 }

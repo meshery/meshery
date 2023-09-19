@@ -11,7 +11,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// swagger:route GET /api/integrations/environments UserAPI idGetAllEnvironmentsHandler
+// swagger:route GET /api/integrations/environments EnvironmentsAPI idGetEnvironments
 // Handles GET for all Environments
 //
 // # Environments can be further filtered through query parameters
@@ -69,7 +69,7 @@ func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Reque
 	fmt.Fprint(w, string(resp))
 }
 
-// swagger:route POST /api/integrations/connections PostEnvironment
+// swagger:route POST /api/integrations/connections PostEnvironment idSaveEnvironment
 // Handle POST request for creating a new environment
 //
 // Creates a new environment
@@ -104,4 +104,24 @@ func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *m
 
 	h.log.Info(description)
 	w.WriteHeader(http.StatusCreated)
+}
+
+// swagger:route GET /api/integrations/environments/{id} EnvironmentAPI idDeleteEnvironmentHandler
+// Handle GET for Environment info by ID
+//
+// Returns Environment info
+// responses:
+//   200: environmentInfo
+
+func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+	environmentID := mux.Vars(r)["id"]
+	resp, err := provider.DeleteEnvironment(r, environmentID)
+	if err != nil {
+		h.log.Error(ErrGetResult(err))
+		http.Error(w, ErrGetResult(err).Error(), http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(w, string(resp))
 }

@@ -140,6 +140,10 @@ func (l *DefaultLocalProvider) GetEnvironmentByID(_ *http.Request, _ string) ([]
 	return []byte(""), ErrLocalProviderSupport
 }
 
+func (l *DefaultLocalProvider) DeleteEnvironment(_ *http.Request, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
 func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, _ *EnvironmentPayload, _ string, _ bool) error {
 	return ErrLocalProviderSupport
 }
