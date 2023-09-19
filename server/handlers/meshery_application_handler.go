@@ -135,10 +135,10 @@ func (h *Handler) handleApplicationPOST(
 	}
 	var parsedBody *MesheryApplicationRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
-		http.Error(rw, ErrRetrieveData(err).Error(), http.StatusBadRequest)
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
 		addMeshkitErr(&res, ErrRetrieveData(err))
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": ErrRetrieveData(err),
+			"error": ErrRequestBody(err),
 		}).WithDescription("Unable to parse uploaded application.").Build()
 			
 		_ = provider.PersistEvent(event)
@@ -491,7 +491,9 @@ func (h *Handler) handleApplicationPOST(
 		h.formatApplicationOutput(rw, resp, format, &res, eventBuilder)
 		
 		eventBuilder.WithSeverity(events.Informational)
-		_ = provider.PersistEvent(eventBuilder.Build())
+		event := eventBuilder.Build()
+		go h.config.EventBroadcaster.Publish(userID, event)
+		_ = provider.PersistEvent(event)
 
 		var mesheryApplicationContent []models.MesheryApplication
 		err = json.Unmarshal(resp, &mesheryApplicationContent)
@@ -537,6 +539,10 @@ func (h *Handler) handleApplicationPOST(
 	}
 
 	h.formatApplicationOutput(rw, byt, format, &res, eventBuilder)
+
+	event := eventBuilder.Build()
+	_ = provider.PersistEvent(event)
+	go h.config.EventBroadcaster.Publish(userID, event)
 }
 
 func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
@@ -674,7 +680,9 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 			
 			go h.config.ConfigurationChannel.PublishApplications()
 			h.formatApplicationOutput(rw, resp, format, &res, eventBuilder)
-			_ = provider.PersistEvent(eventBuilder.Build())
+			event := eventBuilder.Build()
+			go h.config.EventBroadcaster.Publish(userID, event)
+			_ = provider.PersistEvent(event)
 
 			return
 		}
@@ -718,7 +726,10 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 
 	eventBuilder.WithSeverity(events.Informational)
 	h.formatApplicationOutput(rw, resp, format, &res, eventBuilder)
-	_ = provider.PersistEvent(eventBuilder.Build())
+	event := eventBuilder.Build()
+	_ = provider.PersistEvent(event)
+	go h.config.EventBroadcaster.Publish(userID, event)
+
 }
 
 // swagger:route GET /api/application ApplicationsAPI idGetMesheryApplications
@@ -789,6 +800,9 @@ func (h *Handler) DeleteMesheryApplicationHandler(
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("application").WithAction("delete").ActedUpon(uuid.FromStringOrNil(applicationID))
 	resp, err := provider.DeleteMesheryApplication(r, applicationID)
 
+	mesheryApplication := models.MesheryApplication{}
+	_ = json.Unmarshal(resp, &mesheryApplication)
+
 	if err != nil {
 		errAppDelete := ErrDeleteApplication(err)
 		h.log.Error(errAppDelete)
@@ -801,7 +815,7 @@ func (h *Handler) DeleteMesheryApplicationHandler(
 		return
 	}
 
-	event := eventBuilder.WithSeverity(events.Informational).WithDescription("Application deleted.").Build()
+	event := eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Application %s deleted.", mesheryApplication.Name)).Build()
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
