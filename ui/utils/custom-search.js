@@ -96,8 +96,8 @@ const SearchBar = ({ onSearch, placeholder }) => {
         }}
       />
 
-      <ClickAwayListener onClickAway={handleClearIconClick}>
-        {expanded ? (
+      {expanded ? (
+        <ClickAwayListener onClickAway={handleClearIconClick}>
           <Tooltip title="Close">
             <IconButton
               onClick={handleClearIconClick}
@@ -110,23 +110,23 @@ const SearchBar = ({ onSearch, placeholder }) => {
               <CloseIcon className={classes.icon} />
             </IconButton>
           </Tooltip>
-        ) : (
-          <Tooltip title="Search">
-            <IconButton
-              onClick={handleSearchIconClick}
-              sx={
-                {
-                  "&:hover" : {
-                    borderRadius : "4px"
-                  }
+        </ClickAwayListener>
+      ) : (
+        <Tooltip title="Search">
+          <IconButton
+            onClick={handleSearchIconClick}
+            sx={
+              {
+                "&:hover" : {
+                  borderRadius : "4px"
                 }
               }
-            >
-              <SearchIcon className={classes.icon} />
-            </IconButton>
-          </Tooltip>
-        )}
-      </ClickAwayListener>
+            }
+          >
+            <SearchIcon className={classes.icon} />
+          </IconButton>
+        </Tooltip>
+      )}
     </div>
   );
 };
