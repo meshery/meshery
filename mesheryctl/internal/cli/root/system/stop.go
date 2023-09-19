@@ -18,8 +18,9 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"os/exec"
+	"strings"
 
+	"github.com/docker/docker/client"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -34,6 +35,8 @@ import (
 	"github.com/spf13/viper"
 	controllerConfig "sigs.k8s.io/controller-runtime/pkg/client/config"
 
+	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/filters"
 	"github.com/layer5io/meshery-operator/api/v1alpha1"
 )
 
@@ -123,25 +126,50 @@ func stop() error {
 			}
 		}
 
-		log.Info("Stopping Meshery resources...")
-
-		// Stop all Docker containers
-		stop := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "stop")
-		stop.Stdout = os.Stdout
-		stop.Stderr = os.Stderr
-
-		if err := stop.Run(); err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to stop meshery - could not stop some containers."))
+		cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+		if err != nil {
+			return errors.Wrap(err, "unable to create docker client")
 		}
 
-		// Remove all Docker containers
-		stop = exec.Command("docker-compose", "-f", utils.DockerComposeFile, "rm", "-f")
-		stop.Stderr = os.Stderr
+		spinner := utils.CreateDefaultSpinner("Removing meshery containers in docker\n", "")
+		spinner.Start()
 
-		if err := stop.Run(); err != nil {
-			return ErrStopMeshery(err)
+		options := types.ContainerListOptions{
+			Filters: filters.NewArgs(
+				filters.Arg("name", "meshery"),
+				filters.Arg("network", "meshery_default"),
+				filters.Arg("label", "com.centurylinklabs.watchtower.enable=true"),
+			),
 		}
-		log.Info("Meshery resources is stopped.")
+		contaienrs, err := cli.ContainerList(context.Background(), options)
+
+		headers := []string{"Container ID", "Image", "Names", "Status"}
+		rows := [][]string{}
+
+		for _, container := range contaienrs {
+			// removes container forcefullu
+			err = cli.ContainerRemove(context.Background(), container.ID, types.ContainerRemoveOptions{Force: true})
+			if err != nil {
+				log.Errorf("Error whil removing %s: %s", container.Names[0], err.Error())
+				continue
+			}
+			image := container.Image
+			// containers those are deployed programatically have image sha256 key
+			// in Container.Image field instead of image name
+			if strings.Contains(container.Image, "sha256") {
+				image = getImageName(cli, container.Image)
+			}
+			names := strings.Join(container.Names, ",")
+			rows = append(rows, []string{container.ID[0:12], image, names, "removed"})
+		}
+
+		if len(rows) > 0 {
+			utils.PrintToTable(headers, rows)
+		}
+
+		spinner.FinalMSG = fmt.Sprintf("\nRemoved %d containers from docker\n", len(rows))
+		spinner.Stop()
+
 	case "kubernetes":
 		client, err := meshkitkube.New([]byte(""))
 		if err != nil {
@@ -227,6 +255,15 @@ func stop() error {
 		}
 	}
 	return nil
+}
+
+// get image name by image SHA256 key
+func getImageName(cli *client.Client, imageShaKey string) string {
+	imageInspect, _, err := cli.ImageInspectWithRaw(context.Background(), imageShaKey)
+	if err != nil {
+		return "N/A"
+	}
+	return imageInspect.RepoTags[0]
 }
 
 // invokeDeleteCRs is a wrapper of deleteCR to delete CR instances (brokers and meshsyncs)
