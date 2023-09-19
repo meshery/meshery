@@ -131,7 +131,7 @@ export default function Provider() {
           }}
         >
           <a onClick={handleModalOpen} style={{
-            color : '#00D3A9',
+            color : '#00B39F',
             cursor : 'pointer',
             fontWeight : 700
           }}>

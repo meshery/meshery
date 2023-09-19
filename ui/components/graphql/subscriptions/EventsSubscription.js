@@ -9,6 +9,7 @@ subscription EventsSubscription {
     actedUpon
     operationID
     systemID
+    status
     severity
     action
     category
