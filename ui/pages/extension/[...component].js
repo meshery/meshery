@@ -57,17 +57,7 @@ const RemoteExtension=(props) => {
   const router = useRouter();
   const prevProps = useRef();
 
-  useEffect(() => {
-    prevProps.current = props;
-  },[props])
-
-  useEffect(() => {
-    return () => {
-      setComponentTitle('');
-      setIsLoading(true);
-      setCapabilitiesRegistryObj(null);
-    }
-  },[])
+  prevProps.current = props;
 
   useEffect(() => {
     dataFetch(
@@ -80,13 +70,20 @@ const RemoteExtension=(props) => {
         props.updatepagepath({ path : getPath() });
         if (result) {
           setCapabilitiesRegistryObj(result);
-          props.updateCapabilities({ capabilitiesRegistry : result })
+          props.updateCapabilities({ capabilitiesRegistry : result });
           renderExtension();
         }
       },
       (err) => console.error(err)
     );
-  },[])
+
+    return () => {
+      setComponentTitle('');
+      setIsLoading(true);
+      setCapabilitiesRegistryObj(null);
+    };
+  }, []);
+
 
   useEffect(() => {
     if (props.extensionType !== prevProps.current.extensionType || router.query.component != prevProps.current.router.query.component) {
