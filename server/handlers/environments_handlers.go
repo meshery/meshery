@@ -69,7 +69,7 @@ func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Reque
 	fmt.Fprint(w, string(resp))
 }
 
-// swagger:route POST /api/integrations/connections PostEnvironment idSaveEnvironment
+// swagger:route POST /api/integrations/environments PostEnvironment idSaveEnvironment
 // Handle POST request for creating a new environment
 //
 // Creates a new environment
@@ -111,7 +111,7 @@ func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *m
 //
 // Returns Environment info
 // responses:
-//   200: environmentInfo
+// 201: noContentWrapper
 
 func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	environmentID := mux.Vars(r)["id"]
@@ -126,12 +126,12 @@ func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Reques
 	fmt.Fprint(w, string(resp))
 }
 
-// swagger:route PUT /api/integrations/connections/{id} PostEnvironment idUpdateEnvironmentHandler
-// Handle POST request for creating a new environment
+// swagger:route PUT /api/integrations/environments/{id} PostEnvironment idUpdateEnvironmentHandler
+// Handle POST request for updating a environment
 //
 // Updates a environment
 // responses:
-// 201: noContentWrapper
+//   200: environmentInfo
 func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	environmentID := mux.Vars(req)["id"]
 	bd, err := io.ReadAll(req.Body)
