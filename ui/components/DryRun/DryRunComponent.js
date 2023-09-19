@@ -89,7 +89,7 @@ function getFieldPathString(fieldPath) {
     return "";
   }
 
-  return fieldPath.split(".").splice(2).join(" > ");
+  return fieldPath.split(".").splice(2).join(".");
 }
 
 // errors - [{type, fieldPath, message}]
@@ -193,7 +193,7 @@ const ExpandableComponentErrors = withStyles(styles)(({
 
 export const dryRunAndFormatErrors = (design,selectedContexts) => {
   function getErrors(error) {
-    if (error?.Causes) {
+    if (error?.Causes && error?.Causes.length > 0) {
       return error.Causes;
     }
     // if causes aren't present use the status
