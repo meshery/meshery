@@ -177,7 +177,8 @@ class MesheryApp extends App {
       }
     },
     {
-      contexts : contexts
+      contexts : contexts,
+      eventTypes : ["ADDED", "DELETED"],
     });
 
     this.meshsyncEventsSubscriptionRef.current = meshSyncEventsSubscription;
