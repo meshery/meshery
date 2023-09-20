@@ -197,7 +197,7 @@ func (h *Handler) AddConnectionToEnvironmentHandler(w http.ResponseWriter, r *ht
 	fmt.Fprint(w, string(resp))
 }
 
-// swagger:route GET /api/integrations/environments/{environmentID}/connections/{connectionID} EnvironmentAPI idRemoveConnectionFromEnvironmentHandler
+// swagger:route DELETE /api/integrations/environments/{environmentID}/connections/{connectionID} EnvironmentAPI idRemoveConnectionFromEnvironmentHandler
 // Handle DELETE to remove Connection from Environment by ID
 //
 // Removes connection from environment
