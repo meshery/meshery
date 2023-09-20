@@ -22,12 +22,12 @@ function Fallback({ error }) {
   )
 }
 
-const reportError = (error) => {
+const reportError = (error,info) => {
   // This is where you'd send the error to Sentry,etc
-  console.log("Error Caught Inside Boundary", error);
+  console.log("Error Caught Inside Boundary --reportError", error,"Info",info);
 }
 
-export const ErrorBoundary = ({ children, ...props }) => {
+export const ErrorBoundary = ({ children, ...props  }) => {
   return (
     <ReactErrorBoundary FallbackComponent={Fallback} onError={reportError}  {...props}>
       {children}
