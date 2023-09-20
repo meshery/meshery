@@ -1564,7 +1564,7 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		logrus.Errorf("unable to get design: %v", err)
+		logrus.Errorf("unable to get designs: %v", err)
 		return nil, err
 	}
 	defer func() {
