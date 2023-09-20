@@ -176,7 +176,7 @@ func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Requ
 	}
 }
 
-// swagger:route GET /api/integrations/environments/{environmentID}/connections/{connectionID} EnvironmentAPI idAddConnectionToEnvironmentHandler
+// swagger:route POST /api/integrations/environments/{environmentID}/connections/{connectionID} EnvironmentAPI idAddConnectionToEnvironmentHandler
 // Handle POST to add Connection in Environment by ID
 //
 // Returns Environment connection mapping info
