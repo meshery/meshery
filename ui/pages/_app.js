@@ -177,7 +177,7 @@ class MesheryApp extends App {
       }
     },
     {
-      contexts : contexts,
+      k8scontextIDs : contexts,
       eventTypes : ["ADDED", "DELETED"],
     });
 

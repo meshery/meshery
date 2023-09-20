@@ -11,11 +11,11 @@ const meshSyncEventsSubscription = graphql`
       }
 `;
 
-export default function subscribeMeshSyncEvents(dataCB) {
+export default function subscribeMeshSyncEvents(dataCB, variables) {
   const environment = createRelayEnvironment({});
   return requestSubscription(environment, {
     subscription : meshSyncEventsSubscription,
-    variables : { k8scontextIDs : [""], eventTypes : [""] },
+    variables : variables,
     onNext : dataCB,
     onError : (error) => console.log(`An error occured:`, error),
   });
