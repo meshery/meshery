@@ -250,6 +250,14 @@ type ControlPlaneMember {
   data_planes: [Container!]
 }
 
+# ============== MESHSYNC =============================
+
+enum MeshSyncEventType {
+  ADDED,
+  MODIFIED,
+  DELETED
+}
+
 # ============== OPERATOR =============================
 
 # Input for status change of Meshery Operator
@@ -716,6 +724,7 @@ type Subscription {
   # Note: It does not listen to the changes in meshery database, but to meshsync events
   subscribeMeshSyncEvents(
     k8scontextIDs: [String!]
+    eventTypes: [MeshSyncEventType!]
   ) : MeshSyncEvent!
 
   subscribeConfiguration(applicationSelector: PageFilter!, patternSelector: PageFilter!, filterSelector: PageFilter!) : ConfigurationPage!
@@ -744,4 +753,5 @@ type OAMCapability {
 type KctlDescribeDetails {
   describe: String
   ctxid: String
+
 }
