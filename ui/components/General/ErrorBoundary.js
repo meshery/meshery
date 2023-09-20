@@ -1,6 +1,7 @@
+import { Button } from "@material-ui/core";
 import { ErrorBoundary as ReactErrorBoundary } from "react-error-boundary";
 
-function Fallback({ error }) {
+function Fallback({ error , resetErrorBoundary }) {
   // Call resetErrorBoundary() to reset the error boundary and retry the render.
 
   return (
@@ -12,11 +13,13 @@ function Fallback({ error }) {
           backgroundColor : "#1E2117",
           color : "#FFFFFF",
           padding : ".85rem",
-          borderRadius : ".2rem"
+          borderRadius : ".2rem",
+          marginBlock : ".5rem"
         }}
       >
         <code>{error.message}</code>
       </div>
+      <Button color="primary" variant="contained"  onClick={resetErrorBoundary}>Try again</Button>
     </div>
 
   )

@@ -62,7 +62,6 @@ import { validateEvent } from '../components/NotificationCenter/constants';
 import { ErrorBoundary, withSuppressedErrorBoundary } from '../components/General/ErrorBoundary';
 
 
-
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
   require('codemirror/mode/javascript/javascript');
@@ -250,29 +249,7 @@ class MesheryApp extends App {
     document.removeEventListener("fullscreenchange", this.fullScreenChanged);
   }
 
-  // initEventsSubscription() {
-  //   if (this.eventsSubscriptionRef.current) {
-  //     this.eventsSubscriptionRef.current.dispose();
-  //   }
-  //   const notify = this.props.notify;
-  //   const eventsSubscription = subscribeEvents(result => {
-  //     console.log("event received", result);
-  //     rtkStore.dispatch(pushEvent({
-  //       ...result.event,
-  //       user_id: result.event.userID,
-  //       updated_at: result.event.updatedAt,
-  //       created_at: result.event.createdAt,
-  //       deleted_at: result.event.deletedAt,
-  //     }))
-  //     rtkStore.dispatch(mesheryApi.util.invalidateTags([PROVIDER_TAGS.EVENT]))
-  //     notify({
-  //       message: result.event.description,
-  //       severity: result.event.severity,
-  //       id: result.event.id,
-  //     })
-  //   })
-  //   this.eventsSubscriptionRef.current = eventsSubscription;
-  // }
+
 
   componentDidUpdate(prevProps) {
     const { k8sConfig, capabilitiesRegistry } = this.props;
