@@ -70,7 +70,7 @@ func (h *Handler) handlePatternPOST(
 
 	var err error
 	userID := uuid.FromStringOrNil(user.ID)
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("create").ActedUpon(userID)
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("create").ActedUpon(userID).WithSeverity(events.Informational)
 
 	res := meshes.EventsResponse{
 		Component:     "core",
@@ -723,7 +723,9 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 	result := []models.MesheryPattern{}
 	names := []string{}
 	for _, content := range contentMesheryPatternSlice {
-		eventBuilder.ActedUpon(*content.ID)
+		if content.ID != nil {
+			eventBuilder.ActedUpon(*content.ID)
+		}
 		if format == "cytoscape" {
 			patternFile, err := pCore.NewPatternFile([]byte(content.PatternFile))
 			if err != nil {
