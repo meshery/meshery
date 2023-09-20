@@ -127,7 +127,7 @@ func (mpp *MesheryPatternPersister) CloneMesheryPattern(patternID string, cloneP
 	patternUUID, _ := uuid.FromString(patternID)
 	err := mpp.DB.First(&mesheryPattern, patternUUID).Error
 	if err != nil || *mesheryPattern.ID == uuid.Nil {
-		return nil, fmt.Errorf("unable to get pattern: %w", err)
+		return nil, fmt.Errorf("unable to get design: %w", err)
 	}
 
 	id, err := uuid.NewV4()
