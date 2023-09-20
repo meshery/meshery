@@ -72,7 +72,15 @@ jobs:
           cd ..
           cd provider-ui
           npm i
+      - name: Cache meshery-ui
+        id: meshery-ui-cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            /home/runner/work/meshery/meshery/ui/out
+          key: ${{ runner.os }}-meshery-ui-${{ hashFiles('/home/runner/work/meshery/meshery/ui/out/**') }}
       - name: build meshery-ui
+        if: steps.meshery-ui-cache.outputs.cache-hit != 'true'
         run: |
           make ui-meshery-build
       - name: build provider-ui
@@ -141,13 +149,13 @@ jobs:
           mkdir -p /home/runner/.meshery/bin
           cd ./meshery-istio
           go run main.go &
-          sleep 60
+          sleep 30
       - name: Run meshery-consul
         run: |
           mkdir -p /home/runner/.meshery/bin
           cd ./meshery-consul
           go run main.go &
-          sleep 60
+          sleep 30
       - name: Download meshery-ui artifacts
         uses: actions/download-artifact@v3
         with:
@@ -165,7 +173,7 @@ jobs:
           ADAPTER_URLS: "localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10009 localhost:10007"
         run: |
           make server &
-          sleep 60
+          sleep 30
       - name: Cypress run
         uses: cypress-io/github-action@v5
         with:
