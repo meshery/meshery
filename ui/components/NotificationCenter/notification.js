@@ -169,13 +169,13 @@ function BasicMenu({ event } ) {
             </Box>
             <Collapse in={isSocialShareOpen}>
               <Box className={classes.listItem} >
-                <FacebookShareButton url={"https://meshery.io"} quote={event.description} >
+                <FacebookShareButton url={"https://meshery.io"} quote={event.description || "" } >
                   <FacebookIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
                 </FacebookShareButton>
-                <LinkedinShareButton url={"https://meshery.io"} summary={event.description} >
+                <LinkedinShareButton url={"https://meshery.io"} summary={event.description || ""} >
                   <LinkedInIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
                 </LinkedinShareButton>
-                <TwitterShareButton url={"https://meshery.io"} title={event.description} >
+                <TwitterShareButton url={"https://meshery.io"} title={event.description || ""} >
                   <TwitterIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
                 </TwitterShareButton>
               </Box>
@@ -263,7 +263,7 @@ export const Notification = ({ event_id }) => {
     setExpanded(!expanded);
   };
 
-  const { data : user } = useGetUserByIdQuery(event.user_id)
+  const { data : user } = useGetUserByIdQuery(event.user_id || "")
 
   const userName = `${user?.first_name || ""} ${user?.last_name || ""}`
   const userAvatarUrl = user?.avatar_url || ""

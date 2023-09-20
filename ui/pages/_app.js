@@ -58,6 +58,7 @@ import { pushEvent } from '../store/slices/events';
 import { api as mesheryApi } from "../rtk-query"
 import { PROVIDER_TAGS } from '../rtk-query/notificationCenter';
 import { useNotification } from '../utils/hooks/useNotification';
+import { validateEvent } from '../components/NotificationCenter/constants';
 
 
 
@@ -82,19 +83,30 @@ const EventsSubsciptionProvider = () => {
 
   const eventsSubscription = useCallback(() => subscribeEvents(result => {
     console.log("event received", result);
-    rtkStore.dispatch(pushEvent({
+    if (!result.event) {
+      console.error("Invalid event received", result)
+      return;
+    }
+    const [isValid,validatedEvent] = validateEvent({
       ...result.event,
       user_id : result.event.userID,
       system_id : result.event.systemID,
       updated_at : result.event.updatedAt,
       created_at : result.event.createdAt,
       deleted_at : result.event.deletedAt,
-    }))
+      operation_id : result.event.operationID,
+    })
+    if (!isValid) {
+      console.error("Invalid event received",result)
+      return;
+    }
+
+    rtkStore.dispatch(pushEvent(validatedEvent))
     rtkStore.dispatch(mesheryApi.util.invalidateTags([PROVIDER_TAGS.EVENT]))
     notify({
-      message : result.event.description,
-      event_type : result.event.severity,
-      id : result.event.id,
+      message : validatedEvent.description,
+      event_type : validatedEvent.severity,
+      id : validatedEvent.id,
       showInNotificationCenter : true,
     })
   }), [])

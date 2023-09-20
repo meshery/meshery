@@ -97,7 +97,7 @@ const Header = ({ handleFilter, handleClose }) => {
     })
   }
 
-  const archivedCount = total_count - count_by_severity_level
+  const unreadCount = total_count - count_by_severity_level
     .reduce((acc, item) => acc + item.count, 0)
   return (
     <div className={classNames(classes.container, classes.header)}>
@@ -118,7 +118,7 @@ const Header = ({ handleFilter, handleClose }) => {
           notificationStyle={STATUS_STYLE[STATUS.READ]}
           handleClick={() => onClickStatus(STATUS.READ)}
           type={STATUS.READ}
-          count={archivedCount} />
+          count={unreadCount} />
 
       </div>
     </div>
