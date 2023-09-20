@@ -3,7 +3,6 @@ import {
   Button,Chip,
   MenuItem, NoSsr, Paper, Select, TableCell, TableSortLabel, Tooltip, Typography
 } from "@material-ui/core";
-// import {Table, TableBody, TableContainer, TableHead, TableRow,} from "@material-ui/core"
 import blue from "@material-ui/core/colors/blue";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
@@ -17,20 +16,16 @@ import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
 import { updateGrafanaConfig, updateProgress, updatePrometheusConfig, updateTelemetryUrls } from "../lib/store";
 import { getK8sClusterIdsFromCtxId, getK8sClusterNamesFromCtxId } from "../utils/multi-ctx";
-// import { versionMapper } from "../utils/nameMapper";
-import { submitGrafanaConfigure } from "./telemetry/grafana/GrafanaComponent";
-import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
 import fetchDataPlanes from "./graphql/queries/DataPlanesQuery";
-import fetchClusterResources from "./graphql/queries/ClusterResourcesQuery";
+
 import subscribeClusterResources from "./graphql/subscriptions/ClusterResourcesSubscription";
 import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
-import fetchTelemetryCompsQuery from '../components/graphql/queries/TelemetryComponentsQuery';
-import { submitPrometheusConfigure } from "./telemetry/prometheus/PrometheusComponent";
+
+
 import MUIDataTable from "mui-datatables";
 import Popup from "./Popup";
 import { iconMedium } from "../css/icons.styles";
-import { extractURLFromScanData } from "./ConnectionWizard/helpers/metrics";
 import { configurationTableTheme, configurationTableThemeDark } from '../themes/configurationTableTheme';
 import DashboardMeshModelGraph from './Dashboard/DashboardMeshModelGraph'
 import ConnectionStatsChart from "./Dashboard/ConnectionCharts.js";
@@ -140,15 +135,13 @@ const DashboardComponent=(props) => {
   const [mts, setMts] = useState(new Date());
   // const [meshLocationURLError, setMeshLocationURLError] = useState(false);
   // const [grafanaUrl, setGrafanaUrl] = useState(props.grafana.grafanaURL);
-  const [prometheusURL, setPrometheusURL] = useState(props.prometheus.prometheusURL);
+
   // const [k8sfileError, setK8sfileError] = useState(false);
   // const [kts, setKts] = useState(new Date());
-  const [grafana, setGrafana] = useState(props.grafana);
-  const [prometheus, setPrometheus] = useState(props.prometheus);
   // const [urlError, setUrlError] = useState(false);
   // const [grafanaConfigSuccess, setGrafanaConfigSuccess] = useState(props.grafana.grafanaURL !== "");
   // const [grafanaBoardSearch, setGrafanaBoardSearch] = useState("");
-  const [grafanaURL, setGrafanaURL] = useState(props.grafana.grafanaURL);
+
   // const [grafanaAPIKey, setGrafanaAPIKey] = useState(props.grafana.grafanaAPIKey);
   // const [grafanaBoards, setGrafanaBoards] = useState(props.grafana.grafanaBoards);
   // const [selectedBoardsConfigs, setSelectedBoardsConfigs] = useState(props.grafana.selectedBoardsConfigs);
@@ -165,28 +158,25 @@ const DashboardComponent=(props) => {
   const [dataPlaneSubscription, setDataPlaneSubscription] = useState(null);
   const [controlPlaneSubscription, setControlPlaneSubscription] = useState(null);
   const [clusterResourcesSubscription, setClusterResourcesSubscription] = useState(null);
-  const [clusterResourcesQuery, setClusterResourcesQuery] = useState(null);
+
   const [namespaceQuery, setNamespaceQuery] = useState(null);
-  const [telemetryQuery, setTelemetryQuery] = useState(null);
+
   const prevControlPlaneState = useRef();
   const prevDataPlaneState = useRef();
   const prevSelectedNamespace = useRef();
   const prevProps = useRef(props);
-  const isMetricsConfigured = grafana.grafanaURL !== "" && prometheus.prometheusURL !== "";
 
   useEffect(() => {
     if (props.meshAdaptersts > mts) {
       // setMeshAdapters(props.meshAdapters);
       setMts(props.meshAdaptersts);
     }
-    setGrafana(props.grafana);
-    setPrometheus(props.prometheus);
+
     // setK8sconfig(props.k8sconfig);
   }, [props.meshAdaptersts, props.meshAdapters, props.grafana, props.prometheus, props.k8sconfig, mts]);
 
   const disposeWorkloadWidgetSubscription = () => {
     namespaceQuery && namespaceQuery.unsubscribe();
-    clusterResourcesQuery && clusterResourcesQuery.unsubscribe();
     clusterResourcesSubscription && clusterResourcesSubscription.dispose();
   };
 
@@ -197,9 +187,7 @@ const DashboardComponent=(props) => {
     if (controlPlaneSubscription) {
       controlPlaneSubscription.unsubscribe();
     }
-    if (telemetryQuery) {
-      telemetryQuery.unsubscribe();
-    }
+
     disposeWorkloadWidgetSubscription();
   };
   const initMeshSyncControlPlaneSubscription = () => {
@@ -242,22 +230,6 @@ const DashboardComponent=(props) => {
     setNamespaceQuery(namespaceQuery);
   };
 
-  const initDashboardClusterResourcesQuery = () => {
-    let k8s = getK8sClusterIds();
-
-    if (_isMounted.current) {
-      const clusterResourcesQuery = fetchClusterResources(k8s, selectedNamespace).subscribe({
-        next : res => {
-          setClusterResources(res?.clusterResources);
-        },
-        error : err => console.log(err),
-      });
-
-      setClusterResourcesQuery(clusterResourcesQuery);
-    }
-  }
-
-
   const initDashboardClusterResourcesSubscription = () => {
     let k8s = getK8sClusterIds();
 
@@ -273,29 +245,6 @@ const DashboardComponent=(props) => {
     }
   };
 
-  const initTelemetryComponentQuery = () => {
-    const contextIDs = getK8sClusterIds();
-
-    if (_isMounted.current) {
-      const query = fetchTelemetryCompsQuery({ contexts : contextIDs }).subscribe({
-        next : (components) => {
-          let prometheusURLs = [];
-          let grafanaURLs = [];
-          components.telemetryComps?.forEach((component) => {
-            const data = { spec : JSON.parse(component.spec), status : JSON.parse(component.status) };
-            if (component.name === "grafana") {
-              grafanaURLs = grafanaURLs.concat(extractURLFromScanData(data));
-            } else {
-              prometheusURLs = prometheusURLs.concat(extractURLFromScanData(data));
-            }
-          });
-          updateTelemetryUrls({ telemetryURLs : { "grafana" : grafanaURLs, "prometheus" : prometheusURLs } });
-        },
-        error : (err) => console.error(err),
-      });
-      setTelemetryQuery(query);
-    }
-  };
   useEffect(() => {
     return () => {
       _isMounted.current = false;
@@ -306,15 +255,9 @@ const DashboardComponent=(props) => {
   useEffect(() => {
     fetchAvailableAdapters();
 
-    if (isMetricsConfigured) {
-      fetchMetricComponents();
-    }
-
     initMeshSyncControlPlaneSubscription();
-    initDashboardClusterResourcesQuery();
     initDashboardClusterResourcesSubscription();
     initNamespaceQuery();
-    initTelemetryComponentQuery();
   }, []);
 
   useEffect(() => {
@@ -345,10 +288,8 @@ const DashboardComponent=(props) => {
             || prevProps.current.k8sconfig !== props.k8sconfig) {
       disposeSubscriptions();
       initMeshSyncControlPlaneSubscription();
-      initDashboardClusterResourcesQuery();
       initDashboardClusterResourcesSubscription();
       initNamespaceQuery();
-      initTelemetryComponentQuery();
     }
 
     // Update the ref with the current props
@@ -359,7 +300,6 @@ const DashboardComponent=(props) => {
     if (prevSelectedNamespace.current !== selectedNamespace) {
       disposeWorkloadWidgetSubscription();
       initDashboardClusterResourcesSubscription();
-      initDashboardClusterResourcesQuery();
       initNamespaceQuery();
     }
 
@@ -372,82 +312,7 @@ const DashboardComponent=(props) => {
     return getK8sClusterIdsFromCtxId(props.selectedK8sContexts, props.k8sconfig);
   };
 
-  const fetchMetricComponents = () => {
-    let selector = { type : "ALL_MESH", k8sClusterIDs : getK8sClusterIds() };
 
-    dataFetch(
-      "/api/telemetry/metrics/config",
-      {
-        method : "GET",
-        credentials : "include",
-        headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8" },
-      },
-      (result) => {
-        props.updateProgress({ showProgress : false });
-        if (result?.prometheusURL && result?.prometheusURL !== "") {
-          fetchAvailableAddons(selector).subscribe({
-            next : (res) => {
-              res?.addonsState?.forEach((addon) => {
-                if (addon.name === "prometheus" && (!prometheusURL || prometheusURL === "")) {
-                  setPrometheusURL("http://" + addon.endpoint);
-                  submitPrometheusConfigure(() => console.log("Prometheus added"));
-                }
-              });
-            },
-            error : (err) => console.error("error registering prometheus:", err),
-          });
-        }
-      },
-      handleError("Error getting prometheus config")
-    );
-
-    dataFetch(
-      "/api/telemetry/metrics/grafana/config",
-      {
-        method : "GET",
-        credentials : "include",
-        headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8" },
-      },
-      (result) => {
-        props.updateProgress({ showProgress : false });
-        if (result?.grafanaURL && result?.grafanaURL !== "") {
-          fetchAvailableAddons(selector).subscribe({
-            next : (res) => {
-              res?.addonsState?.forEach((addon) => {
-                if (addon.name === "grafana" && (!grafanaURL || grafanaURL === "")) {
-                  setGrafanaURL("http://" + addon.endpoint);
-                  submitGrafanaConfigure(() => {
-                    // setSelectedBoardsConfigs((prevConfigs) => [...prevConfigs, boardConfigs]);
-                    console.info("Grafana added");
-                  });
-                }
-              });
-            },
-            error : (err) => console.error("error registering grafana:", err),
-          });
-        }
-      },
-      handleError("There was an error communicating with grafana config")
-    );
-
-    fetchAvailableAddons(selector).subscribe({
-      next : (res) => {
-        res?.addonsState?.forEach((addon) => {
-          if (addon.name === "prometheus" && (!prometheusURL || prometheusURL === "")) {
-            setPrometheusURL("http://" + addon.endpoint);
-            submitPrometheusConfigure(() => console.log("Prometheus connected"));
-          } else if (addon.name === "grafana" && (!grafanaURL || grafanaURL === "")) {
-            setGrafanaURL("http://" + addon.endpoint);
-            submitGrafanaConfigure(() => {
-              // setSelectedBoardsConfigs((prevConfigs) => [...prevConfigs, boardConfigs]);
-              console.log("Grafana added");
-            });
-          }
-        });
-      },
-      error : (err) => console.error("error registering addons:", err),
-    });
-  };
   const fetchAvailableAdapters = () => {
 
     props.updateProgress({ showProgress : true });

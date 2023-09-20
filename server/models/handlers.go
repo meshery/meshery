@@ -233,8 +233,10 @@ type HandlerConfig struct {
 	PerformanceChannel       chan struct{}
 	PerformanceResultChannel chan struct{}
 
-	ConfigurationChannel *ConfigurationChannel
-	EventBroadcaster        *EventBroadcast
+	ApplicationChannel *Broadcast
+	PatternChannel *Broadcast
+	FilterChannel *Broadcast
+	EventBroadcaster        *Broadcast
 	DashboardK8sResourcesChan *DashboardK8sResourcesChan
 	MeshModelSummaryChannel   *meshmodel.SummaryChannel
 

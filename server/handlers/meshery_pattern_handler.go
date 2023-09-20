@@ -6,7 +6,6 @@ import (
 	"io"
 	"net/http"
 	"strings"
-
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/meshes"
@@ -180,8 +179,13 @@ func (h *Handler) handlePatternPOST(
 				return
 			}
 
-			go h.config.ConfigurationChannel.PublishPatterns()
+			
 			h.formatPatternOutput(rw, resp, format, &res, eventBuilder)
+			event := eventBuilder.Build()
+			_ = provider.PersistEvent(event)
+			// Do not send pattern save event if pattern is in cyto format as user is on meshmap and every node move will result in save request flooding user's screen.
+			// go h.config.EventBroadcaster.Publish(userID, event)
+			go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 			return
 		}
 
@@ -252,11 +256,12 @@ func (h *Handler) handlePatternPOST(
 				go h.config.EventBroadcaster.Publish(userID, event)
 				return
 			}
+
 			h.formatPatternOutput(rw, resp, format, &res, eventBuilder)
 			event := eventBuilder.Build()
 			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userID, event)
-			go h.config.ConfigurationChannel.PublishPatterns()
+			go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 			return
 		}
 
@@ -343,7 +348,7 @@ func (h *Handler) handlePatternPOST(
 	// 			return
 	// 		}
 
-	// 		go h.config.ConfigurationChannel.PublishPatterns()
+	// 		go h.config.PatternChannel.Publish(userID, struct{}{})
 	// 		h.formatPatternOutput(rw, resp, format, &res)
 	// 		return
 	// 	}
@@ -483,11 +488,11 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	}
 
 	_ = json.Unmarshal(resp, &mesheryPattern)
-
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Pattern %s deleted.", mesheryPattern.Name)).Build()
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userID, event)
-	go h.config.ConfigurationChannel.PublishPatterns()
+	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
+
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
@@ -546,7 +551,7 @@ func (h *Handler) CloneMesheryPatternHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
 	_ *models.Preference,
-	_ *models.User,
+	user *models.User,
 	provider models.Provider,
 ) {
 	patternID := mux.Vars(r)["id"]
@@ -563,8 +568,7 @@ func (h *Handler) CloneMesheryPatternHandler(
 		http.Error(rw, ErrClonePattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
-
-	go h.config.ConfigurationChannel.PublishPatterns()
+	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
@@ -582,7 +586,7 @@ func (h *Handler) PublishCatalogPatternHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
 	_ *models.Preference,
-	_ *models.User,
+	user *models.User,
 	provider models.Provider,
 ) {
 	defer func() {
@@ -601,8 +605,7 @@ func (h *Handler) PublishCatalogPatternHandler(
 		http.Error(rw, ErrPublishCatalogPattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
-
-	go h.config.ConfigurationChannel.PublishPatterns()
+	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	rw.WriteHeader(http.StatusAccepted)
 	fmt.Fprint(rw, string(resp))
@@ -621,7 +624,7 @@ func (h *Handler) UnPublishCatalogPatternHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
 	_ *models.Preference,
-	_ *models.User,
+	user *models.User,
 	provider models.Provider,
 ) {
 	defer func() {
@@ -640,8 +643,7 @@ func (h *Handler) UnPublishCatalogPatternHandler(
 		http.Error(rw, ErrPublishCatalogPattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
-
-	go h.config.ConfigurationChannel.PublishPatterns()
+	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
@@ -654,14 +656,13 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
 	_ *models.Preference,
-	_ *models.User,
+	user *models.User,
 	provider models.Provider,
 ) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		logrus.Error(rw, "err deleting pattern, converting bytes: ", err)
 	}
-
 	var patterns models.MesheryPatternDeleteRequestBody
 	err = json.Unmarshal([]byte(body), &patterns)
 	if err != nil {
@@ -676,8 +677,7 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 		http.Error(rw, fmt.Sprintf("failed to delete the pattern: %s", err), http.StatusInternalServerError)
 		return
 	}
-
-	go h.config.ConfigurationChannel.PublishPatterns()
+	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
 }
