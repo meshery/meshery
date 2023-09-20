@@ -137,10 +137,9 @@ Potential Solution:
 -  Go to your meshery folder in your local-system where you’ve cloned it.
 Execute: 
 
-
-- Restart the meshery server.
-- Make sure that `BUILD="v0.X.X"` is logged in some starting line while starting the server.
-
+- `git remote add upstream https://github.com/meshery/meshery`
+- `git fetch upstream`
+- Restart the meshery server
 - Addionally, before restarting the server, if you like to pull the latest changes, you can do: `git pull upstream master`
 ### UI Development Server
 

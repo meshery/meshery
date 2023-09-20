@@ -495,7 +495,9 @@ func (h *Handler) formatFilterOutput(rw http.ResponseWriter, content []byte, _ s
 	fmt.Fprint(rw, string(data))
 	for _, filter := range contentMesheryFilterSlice {
 		names = append(names, filter.Name)
-		eventBuilder.ActedUpon(*filter.ID)
+		if filter.ID != nil {
+			eventBuilder.ActedUpon(*filter.ID)
+		}
 	}
 	res.Details = "filters saved"
 	res.Summary = "following filters were saved: " + strings.Join(names, ",")
