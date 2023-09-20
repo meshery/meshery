@@ -13,6 +13,7 @@ const BaseInput = (props) => {
   const xRjsfGridArea = props.schema?.["x-rjsf-grid-area"]; // check if the field is used in different modal (e.g. publish)
   const name = (additional ? "Value" : props.label) // || props.id?.split('_')[-1].trim()
   const focused = props.options?.focused // true for datetime-local
+  const isRequired = props?.required;
   const prettifiedName = name || 'Enter a value'
   const [isFocused, setIsFocused] = React.useState(false);
   const style = {
@@ -35,7 +36,7 @@ const BaseInput = (props) => {
     <>
       <div key={props.id} style={xRjsfGridArea ? {} : style}>
         { xRjsfGridArea &&
-        <InputLabel htmlFor={props.id}>{prettifiedName}</InputLabel>
+        <InputLabel htmlFor={props.id} required={isRequired}>{prettifiedName}</InputLabel>
         }
         <TextField
           variant={additional ? "standard" : "outlined"}
@@ -43,6 +44,7 @@ const BaseInput = (props) => {
           focused={focused}
           type={props.options?.inputType}
           key={props.id}
+          disabled={props?.disabled || props?.readonly}
           value={
             props.options?.inputType === "file"
               ? null

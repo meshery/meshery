@@ -3,9 +3,18 @@ import { blueGrey } from '@material-ui/core/colors';
 import { iconMedium } from '../css/icons.styles';
 
 const drawerWidth = 256;
+
+export const Colors = {
+  darkJungleGreen : "#1E2117",
+  caribbeanGreen : "#00D3a9",
+  keppelGreen : "#00B39F",
+  charcoal : "#3C494F",
+}
+
 export var darkTheme = createTheme({
   typography : {
     useNextVariants : true,
+    fontFamily : ['Qanelas Soft', 'Roboto', 'Helvectica', 'Arial', 'sans-serif'].join(','),
     h5 : {
       fontWeight : 'bolder',
       fontSize : 26,
@@ -58,6 +67,8 @@ export var darkTheme = createTheme({
       switcherButtons : '#1e1e1e',
       honeyComb : '#303030',
       filterChipBackground : '#222222',
+      searchBackground : "#294957",
+      searchBorder : "#396679",
       tabs : '#202020',
       modalTabs : '#363636',
       tabHover : '#212121',
@@ -232,6 +243,8 @@ darkTheme = {
 
 let theme = createTheme({
   typography : {
+
+    fontFamily : ['Qanelas Soft', 'Roboto', 'Helvectica', 'Arial', 'sans-serif'].join(','),
     useNextVariants : true,
     h5 : {
       fontWeight : 'bolder',
@@ -283,6 +296,8 @@ let theme = createTheme({
       switcherButtons : '#335c6d',
       honeyComb : '#F0F0F0',
       filterChipBackground : '#CCCCCC',
+      searchBackground : "#fff",
+      searchBorder : "#CCCCCC",
       tabs : '#eeeeee87',
       modalTabs : '#dddddd',
       tabHover : '#e3e3e3',
@@ -497,7 +512,7 @@ export const styles = (theme) => ({
     color : `${notificationColors.info} !important`, pointerEvents : "auto !important"
   },
   notifWarn : {
-    backgroundColor : "rgba(240, 163, 3, 0.04) !important",
+    backgroundColor : "#fff !important",
     color : `${notificationColors.warning} !important`, pointerEvents : "auto !important"
   },
   notifError : {

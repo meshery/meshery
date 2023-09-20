@@ -464,7 +464,7 @@ func ErrDecodePattern(err error) error {
 }
 
 func ErrParsePattern(err error) error {
-	return errors.New(ErrParsePatternCode, errors.Alert, []string{"Error failed to parse design file"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrParsePatternCode, errors.Alert, []string{"Error failed to parse pattern file"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrConvertPattern(err error) error {
