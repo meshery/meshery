@@ -8,7 +8,6 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/layer5io/meshery/server/models"
-	"github.com/sirupsen/logrus"
 )
 
 // swagger:route GET /api/integrations/environments EnvironmentsAPI idGetEnvironments
