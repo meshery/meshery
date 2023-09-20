@@ -126,7 +126,7 @@ func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Reques
 }
 
 // swagger:route PUT /api/integrations/environments/{id} PostEnvironment idUpdateEnvironmentHandler
-// Handle POST request for updating a environment
+// Handle PUT request for updating a environment
 //
 // Updates a environment
 // responses:
