@@ -40,10 +40,14 @@ After running Meshery server, you will need to select your **Cloud Provider** by
 </a>
 
 Potential Solution: 
-From the root of your cloned repo, execute: 
 
-- `CTL+C` to stop Meshery Server.
-- `export BUILD="v0.X.X"` prior to building Meshery Server again, setting this value to the desired Meshery version (git tag).
+-  Go to your meshery folder in your local-system where you’ve cloned it.
+Execute: 
+
+- `git remote add upstream https://github.com/meshery/meshery`
+- `git fetch upstream`
+- Restart the meshery server
+- Addionally, before restarting the server, if you like to pull the latest changes, you can do: `git pull upstream master`
 #### Building Docker image
 
 To build a Docker image of Meshery, please ensure you have `Docker` installed to be able to build the image. Now, run the following command to build the Docker image:
