@@ -18,7 +18,7 @@ func init() {
 	var err error
 	FillerRegex, err = regexp.Compile(FillerPattern)
 	if err != nil {
-		log.Fatal("failed to compile filler pattern regex")
+		log.Fatal("failed to compile filler design regex")
 	}
 }
 
