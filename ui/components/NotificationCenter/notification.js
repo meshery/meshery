@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Avatar, Box, Button, Collapse,  Grid, Hidden, IconButton, Popover, Slide, Tooltip, Typography, alpha, useTheme } from "@material-ui/core"
+import { Avatar, Box, Button, Collapse, Grid, Hidden, IconButton, Popover, Slide, Tooltip, Typography, alpha, useTheme } from "@material-ui/core"
 import { makeStyles } from "@material-ui/core"
 import { SEVERITY_STYLE, STATUS } from "./constants"
 import { iconLarge, iconMedium } from "../../css/icons.styles"
@@ -17,6 +17,7 @@ import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { FacebookShareButton, LinkedinShareButton, TwitterShareButton } from 'react-share';
 import ReadIcon from '../../assets/icons/ReadIcon';
 import UnreadIcon from '../../assets/icons/UnreadIcon';
+import { ErrorBoundary, withErrorBoundary } from '../General/ErrorBoundary';
 
 const useStyles = makeStyles(() => ({
   root : (props) => ({
@@ -116,7 +117,7 @@ const formatTimestamp = (utcTimestamp) => {
   return moment(utcTimestamp).fromNow()
 }
 
-function BasicMenu({ event } ) {
+const  BasicMenu = withErrorBoundary(({ event }) =>  {
 
   const classes = useMenuStyles()
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -169,13 +170,13 @@ function BasicMenu({ event } ) {
             </Box>
             <Collapse in={isSocialShareOpen}>
               <Box className={classes.listItem} >
-                <FacebookShareButton url={"https://meshery.io"} quote={event.description} >
+                <FacebookShareButton url={"https://meshery.io"} quote={event.description || ""} >
                   <FacebookIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
                 </FacebookShareButton>
-                <LinkedinShareButton url={"https://meshery.io"} summary={event.description} >
+                <LinkedinShareButton url={"https://meshery.io"} summary={event.description || ""} >
                   <LinkedInIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
                 </LinkedinShareButton>
-                <TwitterShareButton url={"https://meshery.io"} title={event.description} >
+                <TwitterShareButton url={"https://meshery.io"} title={event.description || ""} >
                   <TwitterIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
                 </TwitterShareButton>
               </Box>
@@ -188,7 +189,7 @@ function BasicMenu({ event } ) {
       </Popover >
     </div >
   );
-}
+})
 
 export const DeleteEvent = ({ event }) => {
 
@@ -249,7 +250,7 @@ const BulletList = ({ items }) => {
 
 
 
-export const Notification = ({ event_id }) => {
+export const Notification = withErrorBoundary(({ event_id }) => {
   const event = useSelector(state => selectEventById(state, event_id))
   const isVisible = event.is_visible === undefined ? true : event.is_visible
   const severityStyles = SEVERITY_STYLE[event.severity]
@@ -263,7 +264,7 @@ export const Notification = ({ event_id }) => {
     setExpanded(!expanded);
   };
 
-  const { data : user } = useGetUserByIdQuery(event.user_id)
+  const { data : user } = useGetUserByIdQuery(event.user_id || "")
 
   const userName = `${user?.first_name || ""} ${user?.last_name || ""}`
   const userAvatarUrl = user?.avatar_url || ""
@@ -272,9 +273,8 @@ export const Notification = ({ event_id }) => {
   const probableCause = event?.metadata?.error?.ProbableCause || []
   const suggestedRemediation = event?.metadata?.error?.SuggestedRemediation || []
 
-
   return (
-    <Slide in={isVisible} timeout={250} direction="left" appear={false} enter={false}  mountOnEnter unmountOnExit  >
+    <Slide in={isVisible} timeout={250} direction="left" appear={false} enter={false} mountOnEnter unmountOnExit  >
       <div className={classes.root}>
         <Grid container className={classes.summary} onClick={handleExpandClick} >
           <Grid item sm={1} className={classes.gridItem} >
@@ -290,53 +290,56 @@ export const Notification = ({ event_id }) => {
           </Hidden>
           <Grid item sm={1} >
             <Box>
-              <BasicMenu event={event}/>
+              <BasicMenu event={event} />
             </Box>
           </Grid>
         </Grid>
         <Collapse in={expanded}>
-          <Grid container className={classes.expanded}>
-            <Grid item sm={1} className={classes.actorAvatar} >
-              <Box sx={{ display : "flex", gridGap : "0.5rem", flexDirection : { xs : "row", md : "column" } }} >
+          <ErrorBoundary>
 
-                {event.user_id &&
-                  <Tooltip title={userName} placement="top" >
-                    <Avatar alt={userName} src={userAvatarUrl} />
-                  </Tooltip>
-                }
-                {event.system_id &&
-                  <Tooltip title={`System ID: ${event.system_id}`} placement="top" >
-                    <Avatar src="/static/img/meshery-logo.png" />
-                  </Tooltip>
-                }
+            <Grid container className={classes.expanded}>
+              <Grid item sm={1} className={classes.actorAvatar} >
+                <Box sx={{ display : "flex", gridGap : "0.5rem", flexDirection : { xs : "row", md : "column" } }} >
 
-              </Box>
-            </Grid>
-            <Grid item sm={10}>
-              <Grid container  >
-                <div>
-                  <NestedData classes={classes} heading="Description" data={event.description} />
-                  <div style={{ marginTop : "0.3rem" }}>
-                    <NestedData classes={classes} heading="Details" data={longDescription} />
+                  {event.user_id &&
+                    <Tooltip title={userName} placement="top" >
+                      <Avatar alt={userName} src={userAvatarUrl} />
+                    </Tooltip>
+                  }
+                  {event.system_id &&
+                    <Tooltip title={`System ID: ${event.system_id}`} placement="top" >
+                      <Avatar src="/static/img/meshery-logo.png" />
+                    </Tooltip>
+                  }
+
+                </Box>
+              </Grid>
+              <Grid item sm={10}>
+                <Grid container  >
+                  <div>
+                    <NestedData classes={classes} heading="Description" data={event.description} />
+                    <div style={{ marginTop : "0.3rem" }}>
+                      <NestedData classes={classes} heading="Details" data={longDescription} />
+                    </div>
                   </div>
-                </div>
-                <Grid container spacing={1} style={{ marginTop : "0.5rem" }}>
-                  <Grid item sm={suggestedRemediation?.length > 0 ? 6 : 12}>
-                    <NestedData classes={classes} heading="Probable Cause" data={probableCause} />
-                  </Grid>
-                  <Grid item sm={probableCause?.length > 0 ? 6 : 12} >
-                    <NestedData classes={classes} heading="Suggested Remediation" data={suggestedRemediation} />
+                  <Grid container spacing={1} style={{ marginTop : "0.5rem" }}>
+                    <Grid item sm={suggestedRemediation?.length > 0 ? 6 : 12}>
+                      <NestedData classes={classes} heading="Probable Cause" data={probableCause} />
+                    </Grid>
+                    <Grid item sm={probableCause?.length > 0 ? 6 : 12} >
+                      <NestedData classes={classes} heading="Suggested Remediation" data={suggestedRemediation} />
+                    </Grid>
                   </Grid>
                 </Grid>
               </Grid>
             </Grid>
-          </Grid>
+          </ErrorBoundary>
         </Collapse>
       </div >
     </Slide>
   )
 
-}
+})
 const NestedData = ({ heading, data, classes }) => {
 
   if (!data || data?.length == 0) return null
