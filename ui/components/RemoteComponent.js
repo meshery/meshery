@@ -18,7 +18,7 @@ const RemoteComponent = ({ url, loaderType }) => {
   }
   if (err != null) {
     /* Debugging log */
-    console.log(`Unknown Error: ${err.toString()}`)
+    console.error(`Unknown Error: ${err.toString()}`)
     return <></>;
   }
 
