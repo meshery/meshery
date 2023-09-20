@@ -973,7 +973,9 @@ func (h *Handler) formatApplicationOutput(rw http.ResponseWriter, content []byte
 	fmt.Fprint(rw, string(data))
 	for _, app := range contentMesheryApplicationSlice {
 		names = append(names, app.Name)
-		eventBuilder.ActedUpon(*app.ID)
+		if app.ID != nil {
+			eventBuilder.ActedUpon(*app.ID)
+		}
 	}
 	eventBuilder.WithDescription(fmt.Sprintf("Application %s saved", strings.Join(names, ",")))
 	res.Details = "\"" + strings.Join(names, ",") + "\" application saved"
