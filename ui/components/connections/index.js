@@ -533,7 +533,7 @@ function Connections({
                                 <ListItemText primary="Server Location" secondary={connection ? connection?.metadata?.server_location : '-'} />
                               </ListItem>
                               <ListItem>
-                                <ListItemText primary="Server Location" secondary={connection ? connection?.metadata?.server_build_sha : '-'} />
+                                <ListItemText primary="Server Build SHA" secondary={connection ? connection?.metadata?.server_build_sha : '-'} />
                               </ListItem>
                             </ListItem>
                           </List>
@@ -550,10 +550,10 @@ function Connections({
                           <List>
                             <ListItem>
                               <ListItem>
-                                <ListItemText primary="Connecetion Type" secondary={connection ? connection?.type : '-'} />
+                                <ListItemText primary="Connections Type" secondary={connection ? connection?.type : '-'} />
                               </ListItem>
                               <ListItem>
-                                <ListItemText primary="Connecetion Sub Type" secondary={connection ? connection?.sub_type : '-'} />
+                                <ListItemText primary="Connections Sub Type" secondary={connection ? connection?.sub_type : '-'} />
                               </ListItem>
                             </ListItem>
                           </List>
