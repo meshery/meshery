@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/gofrs/uuid"
@@ -38,6 +39,7 @@ func (c *Broadcast) Subscribe(id uuid.UUID) (chan interface{}, func()) {
 }
 
 func (c *Broadcast) Publish(id uuid.UUID, data interface{}) {
+	fmt.Println("test----", data, id)
 	clientMap, ok := c.clients.Load(id)
 	if !ok {
 		return

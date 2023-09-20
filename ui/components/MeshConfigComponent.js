@@ -787,7 +787,6 @@ function MesherySettingsNew({ classes, updateProgress,
 
   const handleNATSClick = (index) => {
     updateProgress({ showProgress : true });
-    console.log("handle-ns-click: ", contexts[index]);
     NatsStatusQuery({ connectionID : contexts[index].connection_id }).subscribe({
       next : (res) => {
         updateProgress({ showProgress : false });
@@ -830,7 +829,6 @@ function MesherySettingsNew({ classes, updateProgress,
     updateProgress({ showProgress : true });
     const ctxId = contexts[index].id;
     const connectionID = contexts[index].connection_id;
-    console.log("test-ms-click: ", contexts[index]);
     MeshsyncStatusQuery(({ connectionID : connectionID })).subscribe({
       next : (res) => {
         updateProgress({ showProgress : false });

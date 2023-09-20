@@ -1401,7 +1401,7 @@ function MesheryPatterns({
               patternErrors={patternErrors}
               publishModal={publishModal}
               setPublishModal={setPublishModal}
-              // publishSchema={publishSchema}
+              publishSchema={publishSchema}
             />
         }
         <ConfirmationModal
