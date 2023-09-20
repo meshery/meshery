@@ -25,7 +25,7 @@ import (
 //
 // ```?filter={condition}```
 // responses:
-// 	200: environments
+// 	200: environmentsResponseWrapper
 
 func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
@@ -52,7 +52,7 @@ func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *m
 //
 // Returns Environment info
 // responses:
-//   200: environmentInfo
+//   200: environmentResponseWrapper
 
 func (h *Handler) GetEnvironmentByIDHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	environmentID := mux.Vars(r)["id"]
@@ -129,7 +129,7 @@ func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Reques
 //
 // Updates a environment
 // responses:
-//   200: environmentInfo
+//   200: environmentResponseWrapper
 func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	environmentID := mux.Vars(req)["id"]
 	bd, err := io.ReadAll(req.Body)
@@ -180,7 +180,7 @@ func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Requ
 //
 // Returns Environment connection mapping info
 // responses:
-//   200: environmentInfo
+//   200: environmentResponseWrapper
 
 func (h *Handler) AddConnectionToEnvironmentHandler(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	environmentID := mux.Vars(r)["environmentID"]
