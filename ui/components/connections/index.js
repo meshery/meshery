@@ -4,6 +4,13 @@ import {
   // Button,
   Tooltip,
   Link,
+  TableContainer,
+  Table,
+  Paper,
+  Grid,
+  List,
+  ListItem,
+  ListItemText,
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 // import EditIcon from "@material-ui/icons/Edit";
@@ -23,7 +30,6 @@ import classNames from "classnames";
 // import ReactSelectWrapper from "../ReactSelectWrapper";
 import dataFetch from "../../lib/data-fetch";
 import LaunchIcon from '@mui/icons-material/Launch';
-import TableRow from '@mui/material/TableRow';
 import { useNotification } from "../../utils/hooks/useNotification";
 import { EVENT_TYPES } from "../../lib/event-types";
 import CustomColumnVisibilityControl from "../../utils/custom-column";
@@ -122,7 +128,13 @@ const styles = (theme) => ({
   },
   expandedRows : {
     background : `${theme.palette.secondary.default}10`
-  }
+  },
+  contentContainer : {
+    [theme.breakpoints.down(1050)] : {
+      flexDirection : "column",
+    },
+    flexWrap : "noWrap",
+  },
 });
 
 const ACTION_TYPES = {
@@ -162,6 +174,20 @@ function Connections({ classes, updateProgress }) {
 
   const columns = [
     {
+      name : "id",
+      label : "ID",
+      options : {
+        display : false,
+      },
+    },
+    {
+      name : "metadata.server_location",
+      label : "Server Location",
+      options : {
+        display : false,
+      },
+    },
+    {
       name : "name",
       label : "Element",
       options : {
@@ -174,8 +200,8 @@ function Connections({ classes, updateProgress }) {
         },
         customBodyRender : (value, tableMeta) => {
           return (
-            <Tooltip title={connections ? connections[tableMeta.rowIndex]?.metadata?.server_location : ''} placement="top" >
-              <Link href={connections ? connections[tableMeta.rowIndex]?.metadata?.server_location : ''} target="_blank">
+            <Tooltip title={tableMeta.rowData[1]} placement="top" >
+              <Link href={tableMeta.rowData[1]} target="_blank">
                 {value}
                 <sup>
                   <LaunchIcon sx={{ fontSize : "12px" }} />
@@ -353,21 +379,80 @@ function Connections({ classes, updateProgress }) {
     isRowExpandable : () => {
       return true;
     },
-    rowsExpanded : [0, 1],
-    renderExpandableRow : (_, tableMeta) => {
+    renderExpandableRow : (rowData, tableMeta) => {
+      const colSpan = rowData.length;
+      const connection = connections && connections[tableMeta.rowIndex]
       return (
-        <TableRow>
-          <TableCell>
-          </TableCell>
-          <TableCell colSpan={2}>
-            <b>Server Build SHA:</b> {connections ? connections[tableMeta.rowIndex]?.metadata?.server_build_sha : '-'}
-          </TableCell>
-          <TableCell colSpan={2}>
-            <b>Server Version:</b> {connections ? connections[tableMeta.rowIndex]?.metadata?.server_version : '-'}
-          </TableCell>
-          <TableCell colSpan={2}>
-          </TableCell>
-        </TableRow>
+        <TableCell colSpan={colSpan}
+          style={{
+            padding : "0 0 0.5rem 2rem",
+            backgroundColor : "rgba(0, 0, 0, 0.05)"
+          }}
+        >
+          <TableContainer>
+            <Table>
+              {/* <TableRow> */}
+              <TableCell>
+                <Paper>
+                  <div>
+                    <Grid container spacing={1} >
+                      <Grid item xs={12} md={12} className={classes.contentContainer}>
+                        {/* <List>
+                        <ListItem>
+                          <ListItem sx={{ padding: "0"}}>
+                          <Tooltip title={`Server: ${connection ? connection.name : ''}`}
+                            >
+                              <Chip
+                                label={connection ? connection.name : ''}
+                                variant="outlined"
+                                data-cy="chipContextName"
+                              />
+                            </Tooltip>
+                          </ListItem>
+                        </ListItem>
+                      </List> */}
+                        <List>
+                          <ListItem>
+                            <ListItem>
+                              <ListItemText primary="Server Version" secondary={connection ? connection?.metadata?.server_version : '-'} />
+                            </ListItem>
+                            <ListItem>
+                              <ListItemText primary="Server Location" secondary={connection ? connection?.metadata?.server_location : '-'} />
+                            </ListItem>
+                            <ListItem>
+                              <ListItemText primary="Server Location" secondary={connection ? connection?.metadata?.server_build_sha : '-'} />
+                            </ListItem>
+                          </ListItem>
+                        </List>
+                      </Grid>
+                    </Grid>
+                  </div>
+                </Paper>
+              </TableCell>
+              <TableCell>
+                <Paper>
+                  <div>
+                    <Grid container spacing={1} >
+                      <Grid item xs={12} md={12} className={classes.contentContainer}>
+                        <List>
+                          <ListItem>
+                            <ListItem>
+                              <ListItemText primary="Connecetion Type" secondary={connection ? connection?.type : '-'} />
+                            </ListItem>
+                            <ListItem>
+                              <ListItemText primary="Connecetion Sub Type" secondary={connection ? connection?.sub_type : '-'} />
+                            </ListItem>
+                          </ListItem>
+                        </List>
+                      </Grid>
+                    </Grid>
+                  </div>
+                </Paper>
+              </TableCell>
+              {/* </TableRow> */}
+            </Table>
+          </TableContainer>
+        </TableCell>
       );
     },
   };
