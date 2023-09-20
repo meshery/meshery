@@ -510,20 +510,6 @@ function Connections({
                     <div>
                       <Grid container spacing={1} >
                         <Grid item xs={12} md={12} className={classes.contentContainer}>
-                          {/* <List>
-                        <ListItem>
-                          <ListItem sx={{ padding: "0"}}>
-                          <Tooltip title={`Server: ${connection ? connection.name : ''}`}
-                            >
-                              <Chip
-                                label={connection ? connection.name : ''}
-                                variant="outlined"
-                                data-cy="chipContextName"
-                              />
-                            </Tooltip>
-                          </ListItem>
-                        </ListItem>
-                      </List> */}
                           <List>
                             <ListItem>
                               <ListItem>
