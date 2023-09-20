@@ -4,24 +4,50 @@ function Fallback({ error }) {
   // Call resetErrorBoundary() to reset the error boundary and retry the render.
 
   return (
-    <div role="alert">
-      <p>Something went wrong:</p>
-      <pre style={{ color : "red" }}>{error.message}</pre>
+
+    <div role="alert" >
+      <h2>Uh-oh!😔 Please pardon our mesh.</h2>
+      <div
+        style={{
+          backgroundColor : "#1E2117",
+          color : "#FFFFFF",
+          padding : ".85rem",
+          borderRadius : ".2rem"
+        }}
+      >
+        <code>{error.message}</code>
+      </div>
     </div>
+
   )
 }
 
-export const ErrorBoundary = ({ children ,...props }) => {
+const reportError = (error) => {
+  // This is where you'd send the error to Sentry,etc
+  console.log("Error Caught Inside Boundary", error);
+}
+
+export const ErrorBoundary = ({ children, ...props }) => {
   return (
-    <ReactErrorBoundary FallbackComponent={Fallback} {...props}>
+    <ReactErrorBoundary FallbackComponent={Fallback} onError={reportError}  {...props}>
       {children}
     </ReactErrorBoundary>
   );
 }
 
-export const withErrorBoundary = (Component) => {
+export const withErrorBoundary = (Component,errorHandlingProps={}) => {
   const WrappedWithErrorBoundary = (props) => (
-    <ErrorBoundary FallbackComponent>
+    <ErrorBoundary  {...errorHandlingProps}>
+      <Component {...props} />
+    </ErrorBoundary>
+  );
+
+  return WrappedWithErrorBoundary;
+}
+
+export const withSuppressedErrorBoundary = (Component) => {
+  const WrappedWithErrorBoundary = (props) => (
+    <ErrorBoundary  FallbackComponent={() => null }>
       <Component {...props} />
     </ErrorBoundary>
   );
