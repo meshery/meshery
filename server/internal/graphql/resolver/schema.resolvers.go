@@ -227,9 +227,10 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 }
 
 // SubscribeMeshSyncEvents is the resolver for the subscribeMeshSyncEvents field.
-func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.MeshSyncEvent, error) {
+func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8scontextIDs []string, eventTypes []model.MeshSyncEventType) (<-chan *model.MeshSyncEvent, error) {
 	resChan := make(chan *model.MeshSyncEvent)
 	isSubscriptionFlushed := false
+	brokerEventTypes := model.GetMesheryBrokerEventTypesFromArray(eventTypes)
 
 	meshSyncDataHandlers, ok := ctx.Value(models.MeshSyncDataHandlersKey).(map[string]models.MeshsyncDataHandler)
 	if !ok || len(meshSyncDataHandlers) == 0 || meshSyncDataHandlers == nil {
@@ -250,6 +251,11 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 			for event := range brokerEventsChan {
 				if event.EventType == broker.ErrorEvent || isSubscriptionFlushed { // better close the parent channel, but it is throwing panic
 					// TODO: Handle errors accordingly
+					continue
+				}
+
+				// skip event that UI doesn't want to listen to
+				if !model.CheckIfBrokerEventExistsInArray(event.EventType, brokerEventTypes) {
 					continue
 				}
 
