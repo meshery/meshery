@@ -547,6 +547,81 @@ paths:
             summary: Handle GET request for getting all connections status
             tags:
                 - GetConnectionsStatus
+    /api/integrations/environments:
+        get:
+            description: |-
+                ```?order={field}``` orders on the passed field
+
+                ```?search={}``` If search is non empty then a greedy search is performed
+
+                ```?page={page-number}``` Default page number is 0
+
+                ```?pagesize={pagesize}``` Default pagesize is 10
+
+                ```?filter={condition}```
+            operationId: idGetEnvironments
+            responses:
+                "200":
+                    $ref: '#/responses/EnvironmentPage'
+            summary: Handle GET request for getting all environments
+            tags:
+                - GetEnvironments
+        post:
+            description: Creates a new environment
+            operationId: idSaveEnvironment
+            responses:
+                "201":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle POST request for creating a new connection
+            tags:
+                - PostEnvironment
+    /api/integrations/environments/{environmentID}:
+        get:
+            description: Return single environment
+            operationId: idGetEnvironmentByIDHandler
+            responses:
+                "200":
+                    $ref: '#/responses/Environment'
+            summary: Handle GET request for getting single environment
+            tags:
+                - GetSingleEnvironment
+        delete:
+            description: Deletes existing environment
+            operationId: idDeleteEnvironmentHandler
+            responses:
+                "200":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle DELETE request for deleting an existing environment by environment ID
+            tags:
+                - DeleteEnvironment
+        put:
+            description: Updates existing environment using ID
+            operationId: idUpdateEnvironmentHandler
+            responses:
+                "200":
+                    $ref: '#/responses/mesheryEnvironmentResponseWrapper'
+            summary: Handle PUT request for updating an existing environment by environment ID
+            tags:
+                - idUpdateEnvironmentHandler
+    /api/integrations/environments/{environmentID}/connections/{connectionID}:
+        post:
+            description: Add single connection to environment by ID
+            operationId: idAddConnectionToEnvironmentHandler
+            responses:
+                "200":
+                    $ref: '#/responses/mesheryAddConnectionToEnvironmentResponseWrapper'
+            summary: Handle GET request for adding a connection to an environment by ID
+            tags:
+                - AddConnectionToEnvironment
+        delete:
+            description: Remove existing connection from environment
+            operationId: idRemoveConnectionFromEnvironmentHandler
+            responses:
+                "200":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle DELETE request for removing an existing connection from environment by environment ID and connection ID
+            tags:
+                - RemoveConnectionFromEnvironment
     /api/meshmodel/components/register:
         post:
             description: Validate the given value with the given schema
@@ -2140,6 +2215,38 @@ responses:
             connections_status:
                 items: {}
                 type: array
+    EnvironmentPage:
+        description: ""
+        headers:
+            environments:
+                items: {}
+                type: array
+            page:
+                format: int64
+                type: integer
+            page_size:
+                format: int64
+                type: integer
+            total_count:
+                format: int64
+                type: integer
+    Environment:
+        description: ""
+        headers:
+            id: {}
+            created_at:
+                format: date-time
+                type: string
+            deleted_at: {}
+            name:
+                type: string
+            description:
+                type: string
+            updated_at:
+                format: date-time
+                type: string
+            owner: {}
+            org_id: {}
     EventsResponse:
         description: ""
         headers:
@@ -2241,6 +2348,10 @@ responses:
         description: Returns all meshery applications
     mesheryConnectionResponseWrapper:
         description: Returns a single connection
+    mesheryEnvironmentResponseWrapper:
+        description: Returns a single environment
+    mesheryAddConnectionToEnvironmentResponseWrapper:
+        description: Returns a mapping data of connection to environment
     mesheryConnectionsStatusPage:
         description: Returns all connections Status
     mesheryFilterResponseWrapper:

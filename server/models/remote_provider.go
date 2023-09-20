@@ -4189,3 +4189,279 @@ func (l *RemoteProvider) ShareFilter(req *http.Request) (int, error) {
 	}
 	return resp.StatusCode, nil
 }
+
+func (l *RemoteProvider) GetEnvironments(token, page, pageSize, search, order, filter string) ([]byte, error) {
+	
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments")
+	q := remoteProviderURL.Query()
+	if page != "" {
+		q.Set("page", page)
+	}
+	if pageSize != "" {
+		q.Set("pagesize", pageSize)
+	}
+	if search != "" {
+		q.Set("search", search)
+	}
+	if order != "" {
+		q.Set("order", order)
+	}
+	if filter != "" {
+		q.Set("filter", filter)
+	}
+	remoteProviderURL.RawQuery = q.Encode()
+
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Users Data", http.StatusUnauthorized)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bd, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, ErrDataRead(err, "Environments Data")
+	}
+
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+		logrus.Infof("Environments data successfully retrieved from remote provider")
+		return bd, nil
+	}
+	err = ErrFetch(err, "Environments Data", resp.StatusCode)
+	logrus.Errorf(err.Error())
+	return nil, err
+}
+
+func (l *RemoteProvider) GetEnvironmentByID(req *http.Request, environmentID string) ([]byte, error) {
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments/" + environmentID)
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Environment data", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("Environment successfully retrieved from remote provider")
+		return bdr, nil
+	}
+	err = ErrFetch(err, "Environment", resp.StatusCode)
+	logrus.Errorf(err.Error())
+	return nil, err
+}
+
+func (l *RemoteProvider) SaveEnvironment(req *http.Request, env *EnvironmentPayload, token string, skipTokenCheck bool) error {
+
+	_env, err := json.Marshal(env)
+	if err != nil {
+		return err
+	}
+	bf := bytes.NewBuffer(_env)
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments")
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+	tokenString := token
+	if !skipTokenCheck {
+		tokenString, err = l.GetToken(req)
+		if err != nil {
+			logrus.Error("error getting token: ", err)
+			return err
+		}
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		if resp == nil {
+			return ErrUnreachableRemoteProvider(err)
+		}
+		return ErrFetch(err, "Save Environment", resp.StatusCode)
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return ErrDataRead(err, "Save Environment")
+	}
+
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
+		return nil
+	}
+
+	return ErrPost(fmt.Errorf("failed to save the environment"), fmt.Sprint(bdr), resp.StatusCode)
+}
+
+func (l *RemoteProvider) DeleteEnvironment(req *http.Request, environmentID string) ([]byte, error) {
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments/" + environmentID)
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Environment data", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+		logrus.Infof("Environment successfully deleted from remote provider")
+		return bdr, nil
+	}
+	err = ErrFetch(err, "Environment", resp.StatusCode)
+	logrus.Errorf(err.Error())
+	return nil, err
+}
+
+func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *EnvironmentPayload, environmentID string) (*EnvironmentData, error) {
+
+	_env, err := json.Marshal(env)
+	if err != nil {
+		return nil, err
+	}
+	bf := bytes.NewBuffer(_env)
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments/" + environmentID)
+	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Environment data", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, ErrDataRead(err, "Update Environment")
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		var environment EnvironmentData
+		if err = json.Unmarshal(bdr, &environment); err != nil {
+			return nil, err
+		}
+		return &environment, nil
+	}
+
+	return nil, ErrFetch(fmt.Errorf("failed to update the connection"), fmt.Sprint(bdr), resp.StatusCode)
+}
+
+func (l *RemoteProvider) AddConnectionToEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error) {
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments/" + environmentID + "/connections/" + connectionID)
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Environment data", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+		logrus.Infof("Connection successfully added to environment")
+		return bdr, nil
+	}
+	err = ErrFetch(err, "Environment", resp.StatusCode)
+	logrus.Errorf(err.Error())
+	return nil, err
+}
+
+func (l *RemoteProvider) RemoveConnectionFromEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error) {
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments/" + environmentID + "/connections/" + connectionID)
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Environment data", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+		logrus.Infof("Connection successfully removed from environment")
+		return bdr, nil
+	}
+	err = ErrFetch(err, "Environment", resp.StatusCode)
+	logrus.Errorf(err.Error())
+	return nil, err
+}

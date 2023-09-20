@@ -214,6 +214,12 @@ type ConnectionPayload struct {
 	Name             string                 `json:"name,omitempty"`
 }
 
+type EnvironmentPayload struct {
+	Name             string                 `json:"name,omitempty"`
+	Description 	 string					`json:"description,omitempty"`
+	OrgID 	         string					`json:"org_id,omitempty"`
+}
+
 type ExtensionProxyResponse struct {
 	Body       []byte `json:"body,omitempty"`
 	StatusCode int    `json:"status_code,omitempty"`
@@ -453,4 +459,12 @@ type Provider interface {
 	GetUserCredentials(req *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error)
 	UpdateUserCredential(req *http.Request, credential *Credential) (*Credential, error)
 	DeleteUserCredential(req *http.Request, credentialID uuid.UUID) (*Credential, error)
+
+	GetEnvironments(token, page, pageSize, search, order, filter string) ([]byte, error)
+	GetEnvironmentByID(req *http.Request, environmentID string) ([]byte, error)
+	SaveEnvironment(req *http.Request, env *EnvironmentPayload, token string, skipTokenCheck bool) error
+	DeleteEnvironment(req *http.Request, environmentID string) ([]byte, error)
+	UpdateEnvironment(req *http.Request, env *EnvironmentPayload, environmentID string) (*EnvironmentData, error)
+	AddConnectionToEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error)
+	RemoveConnectionFromEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error)
 }
