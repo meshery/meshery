@@ -386,8 +386,8 @@ type ComplexityRoot struct {
 		GetDataPlanes              func(childComplexity int, filter *model.ServiceMeshFilter) int
 		GetKubectlDescribe         func(childComplexity int, name string, kind string, namespace string) int
 		GetMeshModelSummary        func(childComplexity int, selector model.MeshModelSummarySelector) int
-		GetMeshsyncStatus          func(childComplexity int, k8scontextID string) int
-		GetNatsStatus              func(childComplexity int, k8scontextID string) int
+		GetMeshsyncStatus          func(childComplexity int, connectionID string) int
+		GetNatsStatus              func(childComplexity int, connectionID string) int
 		GetOperatorStatus          func(childComplexity int, k8scontextID string) int
 		GetPerfResult              func(childComplexity int, id string) int
 		GetPerformanceProfiles     func(childComplexity int, selector model.PageFilter) int
@@ -429,8 +429,8 @@ type QueryResolver interface {
 	GetDataPlanes(ctx context.Context, filter *model.ServiceMeshFilter) ([]*model.DataPlane, error)
 	GetOperatorStatus(ctx context.Context, k8scontextID string) (*model.OperatorStatus, error)
 	ResyncCluster(ctx context.Context, selector *model.ReSyncActions, k8scontextID string) (model.Status, error)
-	GetMeshsyncStatus(ctx context.Context, k8scontextID string) (*model.OperatorControllerStatus, error)
-	GetNatsStatus(ctx context.Context, k8scontextID string) (*model.OperatorControllerStatus, error)
+	GetMeshsyncStatus(ctx context.Context, connectionID string) (*model.OperatorControllerStatus, error)
+	GetNatsStatus(ctx context.Context, connectionID string) (*model.OperatorControllerStatus, error)
 	GetAvailableNamespaces(ctx context.Context, k8sClusterIDs []string) ([]*model.NameSpace, error)
 	GetPerfResult(ctx context.Context, id string) (*model.MesheryResult, error)
 	FetchResults(ctx context.Context, selector model.PageFilter, profileID string) (*model.PerfPageResult, error)
@@ -2070,7 +2070,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetMeshsyncStatus(childComplexity, args["k8scontextID"].(string)), true
+		return e.complexity.Query.GetMeshsyncStatus(childComplexity, args["connectionID"].(string)), true
 
 	case "Query.getNatsStatus":
 		if e.complexity.Query.GetNatsStatus == nil {
@@ -2082,7 +2082,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetNatsStatus(childComplexity, args["k8scontextID"].(string)), true
+		return e.complexity.Query.GetNatsStatus(childComplexity, args["connectionID"].(string)), true
 
 	case "Query.getOperatorStatus":
 		if e.complexity.Query.GetOperatorStatus == nil {
@@ -3004,13 +3004,13 @@ type Query {
 
   # Check the Meshsync Status
   getMeshsyncStatus(
-        k8scontextID: String!
-  ): OperatorControllerStatus!  @KubernetesMiddleware
+        connectionID: String!
+  ): OperatorControllerStatus!
 
   # Check is Meshey Server is connected to NATS
   getNatsStatus(
-        k8scontextID: String!
-  ): OperatorControllerStatus! @KubernetesMiddleware
+        connectionID: String!
+  ): OperatorControllerStatus!
 
   # Query available Namesapces in your cluster
   getAvailableNamespaces(
@@ -3387,14 +3387,14 @@ func (ec *executionContext) field_Query_getMeshsyncStatus_args(ctx context.Conte
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["k8scontextID"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("k8scontextID"))
+	if tmp, ok := rawArgs["connectionID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectionID"))
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["k8scontextID"] = arg0
+	args["connectionID"] = arg0
 	return args, nil
 }
 
@@ -3402,14 +3402,14 @@ func (ec *executionContext) field_Query_getNatsStatus_args(ctx context.Context, 
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["k8scontextID"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("k8scontextID"))
+	if tmp, ok := rawArgs["connectionID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("connectionID"))
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["k8scontextID"] = arg0
+	args["connectionID"] = arg0
 	return args, nil
 }
 
@@ -13273,28 +13273,8 @@ func (ec *executionContext) _Query_getMeshsyncStatus(ctx context.Context, field 
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetMeshsyncStatus(rctx, fc.Args["k8scontextID"].(string))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.KubernetesMiddleware == nil {
-				return nil, errors.New("directive KubernetesMiddleware is not implemented")
-			}
-			return ec.directives.KubernetesMiddleware(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*model.OperatorControllerStatus); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/layer5io/meshery/server/internal/graphql/model.OperatorControllerStatus`, tmp)
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetMeshsyncStatus(rctx, fc.Args["connectionID"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13360,28 +13340,8 @@ func (ec *executionContext) _Query_getNatsStatus(ctx context.Context, field grap
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().GetNatsStatus(rctx, fc.Args["k8scontextID"].(string))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.KubernetesMiddleware == nil {
-				return nil, errors.New("directive KubernetesMiddleware is not implemented")
-			}
-			return ec.directives.KubernetesMiddleware(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*model.OperatorControllerStatus); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/layer5io/meshery/server/internal/graphql/model.OperatorControllerStatus`, tmp)
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetNatsStatus(rctx, fc.Args["connectionID"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

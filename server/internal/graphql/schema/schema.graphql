@@ -590,13 +590,13 @@ type Query {
 
   # Check the Meshsync Status
   getMeshsyncStatus(
-        k8scontextID: String!
-  ): OperatorControllerStatus!  @KubernetesMiddleware
+        connectionID: String!
+  ): OperatorControllerStatus!
 
   # Check is Meshey Server is connected to NATS
   getNatsStatus(
-        k8scontextID: String!
-  ): OperatorControllerStatus! @KubernetesMiddleware
+        connectionID: String!
+  ): OperatorControllerStatus!
 
   # Query available Namesapces in your cluster
   getAvailableNamespaces(

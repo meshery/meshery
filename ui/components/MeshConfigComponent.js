@@ -787,7 +787,8 @@ function MesherySettingsNew({ classes, updateProgress,
 
   const handleNATSClick = (index) => {
     updateProgress({ showProgress : true });
-    NatsStatusQuery({ k8scontextID : contexts[index].id }).subscribe({
+    console.log("handle-ns-click: ", contexts[index]);
+    NatsStatusQuery({ connectionID : contexts[index].connection_id }).subscribe({
       next : (res) => {
         updateProgress({ showProgress : false });
         if (res.controller.name === "MesheryBroker" && res.controller.status.includes("Connected")) {
@@ -828,7 +829,9 @@ function MesherySettingsNew({ classes, updateProgress,
   const handleMeshSyncClick = (index) => {
     updateProgress({ showProgress : true });
     const ctxId = contexts[index].id;
-    MeshsyncStatusQuery(({ k8scontextID : ctxId })).subscribe({
+    const connectionID = contexts[index].connection_id;
+    console.log("test-ms-click: ", contexts[index]);
+    MeshsyncStatusQuery(({ connectionID : connectionID })).subscribe({
       next : (res) => {
         updateProgress({ showProgress : false });
         if (res.controller.name === "MeshSync") {

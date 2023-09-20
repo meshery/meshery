@@ -72,15 +72,15 @@ func (r *queryResolver) ResyncCluster(ctx context.Context, selector *model.ReSyn
 }
 
 // GetMeshsyncStatus is the resolver for the getMeshsyncStatus field.
-func (r *queryResolver) GetMeshsyncStatus(ctx context.Context, k8scontextID string) (*model.OperatorControllerStatus, error) {
+func (r *queryResolver) GetMeshsyncStatus(ctx context.Context, connectionID string) (*model.OperatorControllerStatus, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.getMeshsyncStatus(ctx, provider, k8scontextID)
+	return r.getMeshsyncStatus(ctx, provider, connectionID)
 }
 
 // GetNatsStatus is the resolver for the getNatsStatus field.
-func (r *queryResolver) GetNatsStatus(ctx context.Context, k8scontextID string) (*model.OperatorControllerStatus, error) {
+func (r *queryResolver) GetNatsStatus(ctx context.Context, connectionID string) (*model.OperatorControllerStatus, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.getNatsStatus(ctx, provider, k8scontextID)
+	return r.getNatsStatus(ctx, provider, connectionID)
 }
 
 // GetAvailableNamespaces is the resolver for the getAvailableNamespaces field.
