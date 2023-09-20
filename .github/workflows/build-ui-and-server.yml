@@ -78,7 +78,7 @@ jobs:
         with:
           path: |
             /home/runner/work/meshery/meshery/ui/out
-          key: ${{ runner.os }}-meshery-ui-${{ hashFiles('/home/runner/work/meshery/meshery/ui/out/**') }}
+          key: ${{ runner.os }}-meshery-ui-${{ hashFiles('/home/runner/work/meshery/meshery/ui/out/**/*') }}
       - name: build meshery-ui
         if: steps.meshery-ui-cache.outputs.cache-hit != 'true'
         run: |
