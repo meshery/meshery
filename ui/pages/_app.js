@@ -100,15 +100,18 @@ const EventsSubsciptionProvider = () => {
       console.error("Invalid event received",result)
       return;
     }
-
-    rtkStore.dispatch(pushEvent(validatedEvent))
-    rtkStore.dispatch(mesheryApi.util.invalidateTags([PROVIDER_TAGS.EVENT]))
-    notify({
-      message : validatedEvent.description,
-      event_type : validatedEvent.severity,
-      id : validatedEvent.id,
-      showInNotificationCenter : true,
-    })
+    try {
+      rtkStore.dispatch(pushEvent(validatedEvent))
+      rtkStore.dispatch(mesheryApi.util.invalidateTags([PROVIDER_TAGS.EVENT]))
+      notify({
+        message : validatedEvent.description,
+        event_type : validatedEvent.severity,
+        id : validatedEvent.id,
+        showInNotificationCenter : true,
+      })
+    } catch (e) {
+      console.error("Error While Storing Event --Event-Subscription ",e)
+    }
   }), [])
 
   useEffect(() => {
