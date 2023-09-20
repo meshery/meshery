@@ -1577,7 +1577,7 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("design successfully retrieved from remote provider")
+		logrus.Infof("designs successfully retrieved from remote provider")
 		return bdr, nil
 	}
 	logrus.Errorf("error while fetching design: %s", bdr)
