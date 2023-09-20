@@ -29,7 +29,6 @@ import (
 // 	200: environments
 
 func (h *Handler) GetEnvironments(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	logrus.Infof("Environments handler called")
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		http.Error(w, "failed to get token", http.StatusInternalServerError)
