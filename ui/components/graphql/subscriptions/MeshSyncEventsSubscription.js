@@ -2,7 +2,7 @@ import { graphql, requestSubscription } from "react-relay";
 import { createRelayEnvironment } from "../../../lib/relayEnvironment";
 
 const meshSyncEventsSubscription = graphql`
- subscription MeshSyncEventsSubscription($k8scontextIDs: [String!], $eventTypes: [MeshSyncEventType]) {
+ subscription MeshSyncEventsSubscription($k8scontextIDs: [String!], $eventTypes: [MeshSyncEventType!]) {
     meshsyncevents: subscribeMeshSyncEvents(k8scontextIDs: $k8scontextIDs, eventTypes: $eventTypes) {
          type
     		 object
