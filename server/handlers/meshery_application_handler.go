@@ -492,7 +492,7 @@ func (h *Handler) handleApplicationPOST(
 
 		eventBuilder.WithSeverity(events.Informational)
 		event := eventBuilder.Build()
-		// go h.config.EventBroadcaster.Publish(userID, event)
+		go h.config.EventBroadcaster.Publish(userID, event)
 		_ = provider.PersistEvent(event)
 
 		var mesheryApplicationContent []models.MesheryApplication
@@ -541,7 +541,7 @@ func (h *Handler) handleApplicationPOST(
 
 	event := eventBuilder.Build()
 	_ = provider.PersistEvent(event)
-	// go h.config.EventBroadcaster.Publish(userID, event)
+	go h.config.EventBroadcaster.Publish(userID, event)
 }
 
 func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
@@ -726,7 +726,7 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 	h.formatApplicationOutput(rw, resp, format, &res, eventBuilder)
 	event := eventBuilder.Build()
 	_ = provider.PersistEvent(event)
-	// go h.config.EventBroadcaster.Publish(userID, event)
+	go h.config.EventBroadcaster.Publish(userID, event)
 
 }
 

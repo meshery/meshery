@@ -183,7 +183,8 @@ func (h *Handler) handlePatternPOST(
 			h.formatPatternOutput(rw, resp, format, &res, eventBuilder)
 			event := eventBuilder.Build()
 			_ = provider.PersistEvent(event)
-			go h.config.EventBroadcaster.Publish(userID, event)
+			// Do not send pattern save event if pattern is in cyto format as user is on meshmap and every node move will result in save request flooding user's screen.
+			// go h.config.EventBroadcaster.Publish(userID, event)
 			go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 			return
 		}
