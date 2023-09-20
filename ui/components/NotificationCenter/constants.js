@@ -66,6 +66,7 @@ const EVENT_SCHEMA = {
     system_id : { type : "string" },
     operation_id : { type : "string" },
     action : { type : "string" },
+    category : { type : "string" },
     metadata : {
       type : "object",
     }
@@ -79,7 +80,6 @@ export const validateEvent = (event) => {
   const eventCopy = _.cloneDeep(event) || {};
   const ajv = new Ajv({
     useDefaults : true,
-
   });
   const validate = ajv.compile(EVENT_SCHEMA);
   const valid = validate(eventCopy);

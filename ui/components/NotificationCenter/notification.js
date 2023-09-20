@@ -17,7 +17,7 @@ import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { FacebookShareButton, LinkedinShareButton, TwitterShareButton } from 'react-share';
 import ReadIcon from '../../assets/icons/ReadIcon';
 import UnreadIcon from '../../assets/icons/UnreadIcon';
-import { ErrorBoundary, withErrorBoundary } from '../General/ErrorBoundary';
+import { ErrorBoundary, withErrorBoundary, withSuppressedErrorBoundary } from '../General/ErrorBoundary';
 
 const useStyles = makeStyles(() => ({
   root : (props) => ({
@@ -117,12 +117,11 @@ const formatTimestamp = (utcTimestamp) => {
   return moment(utcTimestamp).fromNow()
 }
 
-const  BasicMenu = withErrorBoundary(({ event }) =>  {
+const  BasicMenu = withSuppressedErrorBoundary(({ event }) =>  {
 
   const classes = useMenuStyles()
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
-
 
   const handleClick = (event) => {
     event.stopPropagation()
