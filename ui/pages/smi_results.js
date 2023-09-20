@@ -12,13 +12,6 @@ const styles = { paper : { maxWidth : '90%',
   overflow : 'hidden', } };
 
 const SMIResults=(props) => {
-  // componentDidMount () {
-  //   console.log(`path: ${getPath()}`);
-  //   this.props.updatepagepath({ path : getPath() });
-  // }
-
-
-
 
   useEffect(() => {
     console.log(`path: ${getPath()}`);
