@@ -7,6 +7,7 @@
 scalar Map
 scalar Time
 scalar Any
+directive @KubernetesMiddleware on FIELD_DEFINITION
 
 # Service Mesh Types
 enum MeshType {
@@ -586,34 +587,24 @@ type Query {
   # Query status of Meshery Operator in your cluster
   getOperatorStatus(
         k8scontextID: String!
-  ): OperatorStatus
+  ): OperatorStatus @KubernetesMiddleware
 
   # Query to resync the cluster discovery
   resyncCluster(
     # Selector to control several resync actions
     selector: ReSyncActions
     k8scontextID: String!
-  ): Status!
+  ): Status!  @KubernetesMiddleware
 
   # Check the Meshsync Status
   getMeshsyncStatus(
-        k8scontextID: String!
+        connectionID: String!
   ): OperatorControllerStatus!
-
-  # Check the Meshsync Status and deploy if not enabled
-  deployMeshsync( # what to do in-order to deploy meshsync on multiple clusters/contexts
-        k8scontextID: String!
-  ): Status!
 
   # Check is Meshey Server is connected to NATS
   getNatsStatus(
-        k8scontextID: String!
+        connectionID: String!
   ): OperatorControllerStatus!
-
-  # Check is Meshey Server is connected to NATS, if not connect to the NATS Server
-  connectToNats(
-        k8scontextID: String!
-  ): Status!
 
   # Query available Namesapces in your cluster
   getAvailableNamespaces(
@@ -644,7 +635,7 @@ type Query {
   fetchFilterCatalogContent(selector: CatalogSelector): [CatalogFilter!]!
 
   # Query for getting cluster info
-  getClusterResources(k8scontextIDs: [String!], namespace: String!): ClusterResources!
+  # getClusterResources(k8scontextIDs: [String!], namespace: String!): ClusterResources!
 
   # Query for meshmodel summary
   getMeshModelSummary(selector: MeshModelSummarySelector!): MeshModelSummary!
@@ -670,41 +661,17 @@ input AdapterStatusInput {
 
 type Mutation {
   # Change the Operator Status
-  changeOperatorStatus(input: OperatorStatusInput): Status!
+  changeOperatorStatus(input: OperatorStatusInput): Status! @KubernetesMiddleware
 
   # Change the Adapter Status
-  changeAdapterStatus(input: AdapterStatusInput): Status!
+  changeAdapterStatus(input: AdapterStatusInput): Status! @KubernetesMiddleware
 }
 
 type Subscription {
-  # Publish events to user
-  # Listen to changes in status of Addons available (Eg. Prometheus and Grafana)
-  listenToAddonState(
-    # Select Mesh Type
-    filter: ServiceMeshFilter
-  ): [AddonList!]!
-
-  # Listen to changes in Control Plane data for a Service Mesh (or all) in your cluster
-  listenToControlPlaneState(
-    # Filter Control Plane Query
-    filter: ServiceMeshFilter
-  ): [ControlPlane!]!
-
-  # Listen to changes in Data Plane data for a Service Mesh (or all) in your cluster
-  listenToDataPlaneState(
-    # Filter Control Plane Query
-    filter: ServiceMeshFilter
-  ): [DataPlane!]!
-
   # Listen to changes in status of Meshery Operator in your cluster
   listenToOperatorState(
     k8scontextIDs: [String!]
-  ): OperatorStatusPerK8sContext
-
-  # Listen to changes in the list of available Namesapces in your cluster
-  listenToMeshSyncEvents(
-    k8scontextIDs: [String!]
-  ): OperatorControllerStatusPerK8sContext
+  ): OperatorStatusPerK8sContext @KubernetesMiddleware
 
   # Listen to changes in Performance Profiles
   subscribePerfProfiles(selector: PageFilter!): PerfPageProfiles!
@@ -712,20 +679,17 @@ type Subscription {
   # Listen to all results for profile ID
   subscribePerfResults(selector: PageFilter!, profileID: String!): PerfPageResult!
 
-  # Listen to changes in Broker (NATS) Connection
-  subscribeBrokerConnection: Boolean!
-
   # Listen to changes in the status of meshery controllers
   subscribeMesheryControllersStatus(
     k8scontextIDs: [String!]
-  ): [MesheryControllersStatusListItem!]!
+  ): [MesheryControllersStatusListItem!]! @KubernetesMiddleware
 
   # Listen to the events that MeshSync is sending through Meshery Broker.
   # Note: It does not listen to the changes in meshery database, but to meshsync events
   subscribeMeshSyncEvents(
     k8scontextIDs: [String!]
     eventTypes: [MeshSyncEventType!]
-  ) : MeshSyncEvent!
+  ) : MeshSyncEvent! @KubernetesMiddleware
 
   subscribeConfiguration(applicationSelector: PageFilter!, patternSelector: PageFilter!, filterSelector: PageFilter!) : ConfigurationPage!
 
@@ -738,6 +702,7 @@ type Subscription {
 
   subscribeMeshModelSummary(selector: MeshModelSummarySelector!) : MeshModelSummary!
 
+  # Publish events to user
   subscribeEvents : Event!
 }
 

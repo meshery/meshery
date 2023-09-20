@@ -26,10 +26,8 @@ func Deploy(kubeClient *meshkube.Client, comp v1alpha1.Component, _ v1alpha1.Con
 		Delete:    isDel,
 	})
 	if err != nil {
-		fmt.Println("29: ", err)
 		if isErrKubeStatusErr(err) {
 			status, _ := json.Marshal(err)
-			fmt.Println("31: ", string(status))
 			return formatKubeStatusErrToMeshkitErr(&status, comp.Name)
 		} else {
 			return meshkube.ErrApplyManifest(err)
@@ -77,7 +75,6 @@ func dryRun(rClient rest.Interface, k8sResource map[string]interface{}, namespac
 	
 	// ignoring the error since this client-go treats failure of dryRun as an error
 	resp, err := res.Raw()
-	fmt.Println("\n\n\n", string(resp))
 	switch err.(type) {
 	case *errors.StatusError:
 		st, success, err = formatDryRunResponse(resp, err)

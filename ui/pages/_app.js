@@ -29,7 +29,7 @@ import Header from '../components/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import Navigator from '../components/Navigator';
 import getPageContext from '../components/PageContext';
-import { MESHSYNC_EVENT_SUBSCRIPTION, OPERATOR_EVENT_SUBSCRIPTION } from '../components/subscription/helpers';
+import { OPERATOR_EVENT_SUBSCRIPTION } from '../components/subscription/helpers';
 import { GQLSubscription } from '../components/subscription/subscriptionhandler';
 import dataFetch, { promisifiedDataFetch } from '../lib/data-fetch';
 import { actionTypes, makeStore, toggleCatalogContent, updateTelemetryUrls } from '../lib/store';
@@ -58,6 +58,7 @@ import { pushEvent } from '../store/slices/events';
 import { api as mesheryApi } from "../rtk-query"
 import { PROVIDER_TAGS } from '../rtk-query/notificationCenter';
 import { useNotification } from '../utils/hooks/useNotification';
+import { validateEvent } from '../components/NotificationCenter/constants';
 
 
 
@@ -82,21 +83,35 @@ const EventsSubsciptionProvider = () => {
 
   const eventsSubscription = useCallback(() => subscribeEvents(result => {
     console.log("event received", result);
-    rtkStore.dispatch(pushEvent({
+    if (!result.event) {
+      console.error("Invalid event received", result)
+      return;
+    }
+    const [isValid,validatedEvent] = validateEvent({
       ...result.event,
       user_id : result.event.userID,
       system_id : result.event.systemID,
       updated_at : result.event.updatedAt,
       created_at : result.event.createdAt,
       deleted_at : result.event.deletedAt,
-    }))
-    rtkStore.dispatch(mesheryApi.util.invalidateTags([PROVIDER_TAGS.EVENT]))
-    notify({
-      message : result.event.description,
-      event_type : result.event.severity,
-      id : result.event.id,
-      showInNotificationCenter : true,
+      operation_id : result.event.operationID,
     })
+    if (!isValid) {
+      console.error("Invalid event received",result)
+      return;
+    }
+    try {
+      rtkStore.dispatch(pushEvent(validatedEvent))
+      rtkStore.dispatch(mesheryApi.util.invalidateTags([PROVIDER_TAGS.EVENT]))
+      notify({
+        message : validatedEvent.description,
+        event_type : validatedEvent.severity,
+        id : validatedEvent.id,
+        showInNotificationCenter : true,
+      })
+    } catch (e) {
+      console.error("Error While Storing Event --Event-Subscription ",e)
+    }
   }), [])
 
   useEffect(() => {
@@ -291,14 +306,10 @@ class MesheryApp extends App {
       this.props.store.dispatch({ type : actionTypes.SET_OPERATOR_SUBSCRIPTION, operatorState : data });
     }
 
-    const meshSyncCallback = (data) => {
-      this.props.store.dispatch({ type : actionTypes.SET_MESHSYNC_SUBSCRIPTION, meshSyncState : data });
-    }
-
     const operatorSubscription = new GQLSubscription({ type : OPERATOR_EVENT_SUBSCRIPTION, contextIds : contexts, callbackFunction : operatorCallback })
-    const meshSyncSubscription = new GQLSubscription({ type : MESHSYNC_EVENT_SUBSCRIPTION, contextIds : contexts, callbackFunction : meshSyncCallback })
+    // const meshSyncSubscription = new GQLSubscription({ type : MESHSYNC_EVENT_SUBSCRIPTION, contextIds : contexts, callbackFunction : meshSyncCallback }) above uses old listenToMeshSyncEvents subscription, instead new subscribeMeshSyncEvents is used
 
-    this.setState({ operatorSubscription, meshSyncSubscription });
+    this.setState({ operatorSubscription });
   }
 
   handleDrawerToggle = () => {
