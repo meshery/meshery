@@ -1536,7 +1536,7 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
 
-	logrus.Infof("attempting to fetch design from cloud")
+	logrus.Infof("attempting to fetch designs from cloud")
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
