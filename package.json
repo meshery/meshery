@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "google-sheet-cli": "^1.6.0"
+    "google-sheet-cli": "^1.6.0",
+    "react-error-boundary": "^4.0.11"
   }
 }
