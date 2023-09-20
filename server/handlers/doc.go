@@ -498,3 +498,18 @@ type mesheryConnectionsStatusPage struct {
 	// in: body
 	Body *models.ConnectionsStatusPage
 }
+
+
+// Returns all connections Status
+// swagger:response environmentResponseWrapper
+type environmentResponseWrapper struct {
+	// in: body
+	Body *models.Environment
+}
+
+// Returns all connections Status
+// swagger:response environmentsResponseWrapper
+type environmentsResponseWrapper struct {
+	// in: body
+	Body *models.EnvironmentPage
+}
