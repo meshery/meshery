@@ -26,7 +26,7 @@ const EmptyState = () => {
   return (
     <Box sx={{ display : 'flex', flexDirection : "column", alignItems : "center", justifyContent : "center", gap : "1rem" , marginY : "5rem" }}>
       <DoneIcon height="10rem" width="8rem" fill={theme.icon2} />
-      <Typography variant="h6" style={{ margin : "auto" }}> No notifications to show </Typography>
+      <Typography variant="h6" style={{ margin : "auto", color : theme.icon2  }}> No notifications to show </Typography>
     </Box >)
 }
 
@@ -58,7 +58,7 @@ const NavbarNotificationIcon = () => {
 
 const NotificationCountChip = ({ classes, notificationStyle, count,type, handleClick }) => {
   const chipStyles = {
-    fill : notificationStyle.color,
+    fill : notificationStyle?.color,
     height : "20px",
     width : "20px",
   }

@@ -254,8 +254,8 @@ export const Notification = ({ event_id }) => {
   const isVisible = event.is_visible === undefined ? true : event.is_visible
   const severityStyles = SEVERITY_STYLE[event.severity]
   const classes = useStyles({
-    notificationColor : severityStyles.color,
-    status : event.status
+    notificationColor : severityStyles?.color,
+    status : event?.status
   })
   const [expanded, setExpanded] = React.useState(false)
   const handleExpandClick = (e) => {
@@ -278,7 +278,7 @@ export const Notification = ({ event_id }) => {
       <div className={classes.root}>
         <Grid container className={classes.summary} onClick={handleExpandClick} >
           <Grid item sm={1} className={classes.gridItem} >
-            <severityStyles.icon {...iconLarge} fill={severityStyles.color} />
+            <severityStyles.icon {...iconLarge} fill={severityStyles?.color} />
           </Grid>
           <Grid item xs={9} md={7} className={classes.gridItem} >
             <Typography variant="body1" className={classes.message}> {event.description}   </Typography>
