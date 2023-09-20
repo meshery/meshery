@@ -77,7 +77,8 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 							evt := events.NewEvent().FromSystem(*mesheryInstanceID).WithSeverity(events.Alert).WithCategory("event").WithAction("persist").WithDescription("Failed persisting events").FromUser(userUUID).Build()
 							go ec.Publish(userUUID, evt)
 						}
-						
+						go ec.Publish(userUUID, event)
+
 						continue
 					}
 					var description string
@@ -127,6 +128,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 						evt := events.NewEvent().FromSystem(*mesheryInstanceID).WithSeverity(events.Alert).WithCategory("event").WithAction("persist").WithDescription("Failed persisting events").FromUser(userUUID).Build()
 						go ec.Publish(userUUID, evt)		
 					}
+					go ec.Publish(userUUID, event)
 				}
 				//All other components will be handled directly by Kubernetes
 				//TODO: Add a Mapper utility function which carries the logic for X hosts can handle Y components under Z circumstances.
@@ -151,6 +153,8 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 						evt := events.NewEvent().FromSystem(*mesheryInstanceID).WithSeverity(severity).WithCategory("event").WithAction("persist").WithDescription("Failed persisting events").FromUser(userUUID).Build()
 						go ec.Publish(userUUID, evt)		
 					}
+					
+				    go ec.Publish(userUUID, event)
 					continue
 				}
 				if !isDel {
@@ -166,6 +170,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 					evt := events.NewEvent().FromSystem(*mesheryInstanceID).WithSeverity(events.Alert).WithCategory("event").WithAction("persist").WithDescription("Failed persisting events").FromUser(userUUID).Build()
 					go ec.Publish(userUUID, evt)		
 				}
+				go ec.Publish(userUUID, event)
 			}
 		}(kcli)
 	}
