@@ -355,7 +355,7 @@ const MeshModelComponent = ({ view, classes }) => {
     search : view === RELATIONSHIPS ? false : true,
     serverSide : true,
     // expandableRows : (view !== RELATIONSHIPS && checked === true) && true,
-    // onChangePage : debounce((p) => setPage(p), 200),
+    onChangePage : debounce((p) => setPage(p), 200),
     onSearchChange : debounce((searchText) => (setSearchText(searchText))),
     onChangeRowsPerPage : debounce((rowsPerPage) => {
       setRowsPerPage(rowsPerPage);
