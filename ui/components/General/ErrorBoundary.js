@@ -7,7 +7,7 @@ function Fallback({ error , resetErrorBoundary }) {
   return (
 
     <div role="alert" >
-      <h2>Uh-oh!😔 Please pardon our mesh.</h2>
+      <h2>Uh-oh!😔 Please pardon the mesh.</h2>
       <div
         style={{
           backgroundColor : "#1E2117",
