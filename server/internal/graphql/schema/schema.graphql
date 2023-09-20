@@ -562,19 +562,19 @@ type Query {
   getAvailableAddons(
     # Select Mesh Type
      filter: ServiceMeshFilter
-  ): [AddonList!]! @KubernetesMiddleware
+  ): [AddonList!]!
 
   # Query Control Plane data for a Service Mesh (or all) in your cluster
   getControlPlanes(
     # Filter Control Plane Query
     filter: ServiceMeshFilter
-  ): [ControlPlane!]! @KubernetesMiddleware
+  ): [ControlPlane!]!
 
   # Query Data Plane information for a Service Mesh (or all) in your cluster
   getDataPlanes(
     # Filter Control Plane Query
     filter: ServiceMeshFilter
-  ): [DataPlane!]! @KubernetesMiddleware
+  ): [DataPlane!]!
 
   # Query status of Meshery Operator in your cluster
   getOperatorStatus(
@@ -601,7 +601,7 @@ type Query {
   # Query available Namesapces in your cluster
   getAvailableNamespaces(
         k8sClusterIDs: [String!]
-  ): [NameSpace!]! @KubernetesMiddleware
+  ): [NameSpace!]!
 
   # Query for performance result
   getPerfResult(id: ID!): MesheryResult
@@ -633,7 +633,7 @@ type Query {
   getMeshModelSummary(selector: MeshModelSummarySelector!): MeshModelSummary!
 
   # Query for telemetry components
-  fetchTelemetryComponents(contexts: [String!]) : [TelemetryComp]! @KubernetesMiddleware
+  fetchTelemetryComponents(contexts: [String!]) : [TelemetryComp]!
 }
 
 
@@ -653,41 +653,17 @@ input AdapterStatusInput {
 
 type Mutation {
   # Change the Operator Status
-  changeOperatorStatus(input: OperatorStatusInput): Status!
+  changeOperatorStatus(input: OperatorStatusInput): Status! @KubernetesMiddleware
 
   # Change the Adapter Status
-  changeAdapterStatus(input: AdapterStatusInput): Status!
+  changeAdapterStatus(input: AdapterStatusInput): Status! @KubernetesMiddleware
 }
 
 type Subscription {
-  # Publish events to user
-  # Listen to changes in status of Addons available (Eg. Prometheus and Grafana)
-  #listenToAddonState(
-    # Select Mesh Type
-  #  filter: ServiceMeshFilter
-  #): [AddonList!]! @KubernetesMiddleware
-
-  # Listen to changes in Control Plane data for a Service Mesh (or all) in your cluster
-  #listenToControlPlaneState(
-    # Filter Control Plane Query
-  #  filter: ServiceMeshFilter
-  #): [ControlPlane!]! @KubernetesMiddleware
-
-  # Listen to changes in Data Plane data for a Service Mesh (or all) in your cluster
-  #listenToDataPlaneState(
-    # Filter Control Plane Query
-   # filter: ServiceMeshFilter
-  #): [DataPlane!]! @KubernetesMiddleware
-
   # Listen to changes in status of Meshery Operator in your cluster
   listenToOperatorState(
     k8scontextIDs: [String!]
   ): OperatorStatusPerK8sContext @KubernetesMiddleware
-
-  # Listen to changes in the list of available Namesapces in your cluster
-  listenToMeshSyncEvents(
-    k8scontextIDs: [String!]
-  ): OperatorControllerStatusPerK8sContext @KubernetesMiddleware
 
   # Listen to changes in Performance Profiles
   subscribePerfProfiles(selector: PageFilter!): PerfPageProfiles!
@@ -698,25 +674,26 @@ type Subscription {
   # Listen to changes in the status of meshery controllers
   subscribeMesheryControllersStatus(
     k8scontextIDs: [String!]
-  ): [MesheryControllersStatusListItem!]!
+  ): [MesheryControllersStatusListItem!]! @KubernetesMiddleware
 
   # Listen to the events that MeshSync is sending through Meshery Broker.
   # Note: It does not listen to the changes in meshery database, but to meshsync events
   subscribeMeshSyncEvents(
     k8scontextIDs: [String!]
-  ) : MeshSyncEvent!
+  ) : MeshSyncEvent! @KubernetesMiddleware
 
   subscribeConfiguration(applicationSelector: PageFilter!, patternSelector: PageFilter!, filterSelector: PageFilter!) : ConfigurationPage!
 
   subscribeClusterResources(
     k8scontextIDs: [String!],
     namespace: String!
-  ): ClusterResources!  @KubernetesMiddleware
+  ): ClusterResources!
 
   subscribeK8sContext(selector: PageFilter!) : K8sContextsPage!
 
   subscribeMeshModelSummary(selector: MeshModelSummarySelector!) : MeshModelSummary!
 
+  # Publish events to user
   subscribeEvents : Event!
 }
 

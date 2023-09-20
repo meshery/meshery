@@ -155,13 +155,6 @@ func (r *subscriptionResolver) ListenToOperatorState(ctx context.Context, k8scon
 	return r.listenToOperatorsState(ctx, provider, k8scontextIDs)
 }
 
-// ListenToMeshSyncEvents is the resolver for the listenToMeshSyncEvents field.
-func (r *subscriptionResolver) ListenToMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.OperatorControllerStatusPerK8sContext, error) {
-	// provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	// return r.listenToMeshSyncEvents(ctx, provider)
-	return nil, nil
-}
-
 // SubscribePerfProfiles is the resolver for the subscribePerfProfiles field.
 func (r *subscriptionResolver) SubscribePerfProfiles(ctx context.Context, selector model.PageFilter) (<-chan *model.PerfPageProfiles, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
@@ -338,6 +331,11 @@ type subscriptionResolver struct{ *Resolver }
 //   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //     it when you're done.
 //   - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *subscriptionResolver) ListenToMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.OperatorControllerStatusPerK8sContext, error) {
+	// provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	// return r.listenToMeshSyncEvents(ctx, provider)
+	return nil, nil
+}
 func (r *queryResolver) GetClusterResources(ctx context.Context, k8scontextIDs []string, namespace string) (*model.ClusterResources, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.getClusterResources(ctx, provider, k8scontextIDs, namespace)
