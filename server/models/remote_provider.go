@@ -1580,7 +1580,7 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 		logrus.Infof("designs successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	logrus.Errorf("error while fetching design: %s", bdr)
+	logrus.Errorf("error while fetching designs: %s", bdr)
 	return nil, fmt.Errorf("error while fetching design - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
