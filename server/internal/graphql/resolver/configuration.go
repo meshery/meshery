@@ -2,7 +2,6 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/internal/graphql/model"
@@ -33,7 +32,6 @@ func (r *Resolver) subscribeConfiguration(ctx context.Context, provider models.P
 		for {
 			select {
 			case <-chp:
-				fmt.Println("tetetetet----------")
 				patterns, err = r.fetchPatterns(ctx, provider, patternSelector)
 				if err != nil {
 					r.Log.Error(ErrPatternsSubscription(err))

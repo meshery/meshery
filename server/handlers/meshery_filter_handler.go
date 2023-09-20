@@ -191,7 +191,6 @@ func (h *Handler) handleFilterPOST(
 				go h.EventsBuffer.Publish(&res)
 				return
 			}
-	fmt.Print("inside filter post: 192", user.ID)
 
 			go h.config.FilterChannel.Publish(userID, struct{}{})
 			h.formatFilterOutput(rw, resp, format, &res, eventBuilder)
@@ -326,8 +325,6 @@ func (h *Handler) DeleteMesheryFilterHandler(
 		return
 	}
 
-	fmt.Print("inside filter delete: 326", user.ID)
-
 	go h.config.FilterChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
@@ -363,8 +360,6 @@ func (h *Handler) CloneMesheryFilterHandler(
 		http.Error(rw, ErrCloneFilter(err).Error(), http.StatusInternalServerError)
 		return
 	}
-	fmt.Print("inside filter clone: 361", user.ID)
-
 
 	go h.config.FilterChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
@@ -443,7 +438,6 @@ func (h *Handler) UnPublishCatalogFilterHandler(
 		http.Error(rw, ErrPublishCatalogFilter(err).Error(), http.StatusInternalServerError)
 		return
 	}
-	fmt.Print("inside filter unpublish: 439", user.ID)
 
 	go h.config.FilterChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 	rw.Header().Set("Content-Type", "application/json")

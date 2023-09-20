@@ -567,7 +567,6 @@ func (h *Handler) CloneMesheryPatternHandler(
 		http.Error(rw, ErrClonePattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
-fmt.Println("inside pattern clone: 208", user.ID)
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
@@ -605,7 +604,6 @@ func (h *Handler) PublishCatalogPatternHandler(
 		http.Error(rw, ErrPublishCatalogPattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
-fmt.Println("inside pattern publish: 208", user.ID)
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	rw.WriteHeader(http.StatusAccepted)
@@ -644,7 +642,6 @@ func (h *Handler) UnPublishCatalogPatternHandler(
 		http.Error(rw, ErrPublishCatalogPattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
-fmt.Println("inside pattern unpublish: 208", user.ID)
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
@@ -665,7 +662,6 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 	if err != nil {
 		logrus.Error(rw, "err deleting pattern, converting bytes: ", err)
 	}
-fmt.Println("inside pattern delete: 208", user.ID)
 	var patterns models.MesheryPatternDeleteRequestBody
 	err = json.Unmarshal([]byte(body), &patterns)
 	if err != nil {
@@ -680,7 +676,6 @@ fmt.Println("inside pattern delete: 208", user.ID)
 		http.Error(rw, fmt.Sprintf("failed to delete the pattern: %s", err), http.StatusInternalServerError)
 		return
 	}
-fmt.Println("inside pattern delete multi: 208", user.ID)
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))

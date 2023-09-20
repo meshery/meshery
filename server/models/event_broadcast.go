@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/gofrs/uuid"
@@ -19,7 +18,6 @@ type Broadcast struct {
 func (c *Broadcast) Subscribe(id uuid.UUID) (chan interface{}, func()) {
 	clientMap, _ := c.clients.LoadOrStore(id, &clients{mu: new(sync.Mutex)})
 	ch := make(chan interface{}, 1)
-	fmt.Println("line 22:=========", id)
 	connectedClient := clientMap.(*clients)
 
 	connectedClient.mu.Lock()
@@ -31,7 +29,6 @@ func (c *Broadcast) Subscribe(id uuid.UUID) (chan interface{}, func()) {
 		defer connectedClient.mu.Unlock()
 		for index, client := range connectedClient.listeners {
 			if client == ch {
-				fmt.Println("inside listeneres: ", id)
 				close(client)
 				connectedClient.listeners = append(connectedClient.listeners[:index], connectedClient.listeners[index+1:]...)
 			}
@@ -41,7 +38,6 @@ func (c *Broadcast) Subscribe(id uuid.UUID) (chan interface{}, func()) {
 }
 
 func (c *Broadcast) Publish(id uuid.UUID, data interface{}) {
-	fmt.Println("test------------", id)
 	clientMap, ok := c.clients.Load(id)
 	if !ok {
 		return
@@ -49,7 +45,6 @@ func (c *Broadcast) Publish(id uuid.UUID, data interface{}) {
 	
 	clientToPublish, _ := clientMap.(*clients)
 	for _, client := range clientToPublish.listeners {
-		fmt.Println("test------------mmmmmmmmm", id)
 		client <- data
 	}
 }
