@@ -914,6 +914,37 @@ definitions:
                 type: integer
         type: object
         x-go-package: github.com/layer5io/meshery/server/models
+    EnvironmentData:
+        properties:
+            created_at:
+                format: date-time
+                type: string
+                x-go-name: CreatedAt
+            deleted_at:
+                $ref: '#/definitions/NullTime'
+            description:
+                type: string
+                x-go-name: Description
+            id:
+                format: uuid
+                type: string
+                x-go-name: ID
+            name:
+                type: string
+                x-go-name: Name
+            org_id:
+                format: uuid
+                type: string
+                x-go-name: OrganizationID
+            owner:
+                type: string
+                x-go-name: Owner
+            updated_at:
+                format: date-time
+                type: string
+                x-go-name: UpdatedAt
+        type: object
+        x-go-package: github.com/layer5io/meshery/server/models
     EnvironmentPage:
         properties:
             environments:
@@ -1018,6 +1049,32 @@ definitions:
         title: EventStatus Status for the event.
         type: string
         x-go-package: github.com/layer5io/meshkit/models/events
+    EventsResponse:
+        properties:
+            count_by_severity_level:
+                items:
+                    $ref: '#/definitions/CountBySeverityLevel'
+                type: array
+                x-go-name: CountBySeverityLevel
+            events:
+                items:
+                    $ref: '#/definitions/Event'
+                type: array
+                x-go-name: Events
+            page:
+                format: int64
+                type: integer
+                x-go-name: Page
+            page_size:
+                format: int64
+                type: integer
+                x-go-name: PageSize
+            total_count:
+                format: int64
+                type: integer
+                x-go-name: TotalCount
+        type: object
+        x-go-package: github.com/layer5io/meshery/server/models
     Extensions:
         description: Extensions defines the UI extension points
         properties:
@@ -5428,9 +5485,7 @@ paths:
             operationId: idGetEventStreamer
             responses:
                 "200":
-                    description: Event
-                    schema:
-                        $ref: '#/definitions/Event'
+                    $ref: '#/responses/eventResponseWrapper'
             summary: Handle POST request to update event status.
     /api/events/types:
         get:
@@ -7300,7 +7355,7 @@ paths:
             operationId: idGetEventStreamer
             responses:
                 "200":
-                    $ref: '#/responses/EventsResponse'
+                    $ref: '#/responses/eventsResponseWrapper'
             summary: Handle GET request for events.
             tags:
                 - EventsAPI
@@ -7487,13 +7542,21 @@ responses:
         schema:
             $ref: '#/definitions/MesheryApplication'
     environmentResponseWrapper:
-        description: Returns all connections Status
+        description: Returns environment
         schema:
-            $ref: '#/definitions/Environment'
+            $ref: '#/definitions/EnvironmentData'
     environmentsResponseWrapper:
-        description: Returns all connections Status
+        description: Returns all environements
         schema:
             $ref: '#/definitions/EnvironmentPage'
+    eventResponseWrapper:
+        description: Returns event
+        schema:
+            $ref: '#/definitions/Event'
+    eventsResponseWrapper:
+        description: Returns all events
+        schema:
+            $ref: '#/definitions/EventsResponse'
     grafanaBoardsResponseWrapper:
         description: Returns Grafana boards and panels
         schema:

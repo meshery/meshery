@@ -38,7 +38,7 @@ var (
 // ```?page={page-number}``` Default page number is 1
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
-// 	200: EventsResponse
+// 	200: eventsResponseWrapper
 
 func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	userID := uuid.FromStringOrNil(user.ID)
@@ -97,7 +97,7 @@ func (h *Handler) GetEventTypes (w http.ResponseWriter, req *http.Request, prefO
 // Handle POST request to update event status.
 // Updates event status for the event associated with the id.
 // responses:
-// 	200: Event
+// 	200: eventResponseWrapper
 
 func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	eventID := uuid.FromStringOrNil(mux.Vars(req)["id"])
