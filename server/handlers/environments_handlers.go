@@ -105,7 +105,7 @@ func (h *Handler) SaveEnvironment(w http.ResponseWriter, req *http.Request, _ *m
 	w.WriteHeader(http.StatusCreated)
 }
 
-// swagger:route GET /api/integrations/environments/{id} EnvironmentAPI idDeleteEnvironmentHandler
+// swagger:route DELETE /api/integrations/environments/{id} EnvironmentAPI idDeleteEnvironmentHandler
 // Handle GET for Environment info by ID
 //
 // Returns Environment info
