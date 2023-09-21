@@ -189,7 +189,7 @@ const CurrentFilterView = withErrorBoundary( ({ handleFilter }) => {
 
   const Chips = ({ type, value }) => {
     if (typeof value === "string") {
-      return <Chip label={value} onDelete={() => onDelete(type, value)} />
+      return <Chip label={value} style={{ paddingTop : "0rem", }} onDelete={() => onDelete(type, value)} />
     }
 
     if (_.isArray(value) && value.length > 0) {
@@ -207,7 +207,7 @@ const CurrentFilterView = withErrorBoundary( ({ handleFilter }) => {
     <div>
       {Object.entries(currentFilters).map(([key, value]) => {
         if (value && value?.length > 0) {
-          return <div key={key} style={{ display : "flex", gap : "0.3rem", alignItems : "center", paddingBlock : "0.25rem" }} >
+          return <div key={key} style={{ display : "flex", gap : "0.3rem", alignItems : "center", marginLeft : "1rem", paddingTop : ".35rem" }} >
             <Typography variant="subtitle2" style={{ textTransform : "capitalize" }} > {key}:</Typography>
             <Chips value={value} type={key} />
           </div>

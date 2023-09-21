@@ -7,6 +7,7 @@ export const useStyles = makeStyles((theme) => ({
   },
   input : {
     width : "100%",
+    marginBottom : ".1rem",
     "& .MuiOutlinedInput-root" : {
       borderRadius : "6px",
       backgroundColor : theme.palette.secondary.searchBackground,
@@ -34,7 +35,7 @@ export const useFilterStyles = makeStyles((theme) => ({
     gap : "0.3rem",
     margin : "0.3rem",
     padding : "0.3rem",
-    paddingInline : "1rem",
+    paddingInline : "3rem",
     borderRadius : "6px",
     cursor : "pointer",
     "&:hover" : {

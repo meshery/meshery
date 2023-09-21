@@ -24,7 +24,7 @@ const useStyles = makeStyles(() => ({
     width : "100%",
     borderRadius : "0.25rem",
     border : `0.1rem solid ${props.notificationColor}`,
-    borderLeftWidth : props.status === STATUS.UNREAD ? "0.25rem" : "0.1rem",
+    borderLeftWidth : props.status === STATUS.READ ? "0.25rem" : "0.1rem",
     marginBlock : "0.5rem",
   }),
 
@@ -62,6 +62,7 @@ const useStyles = makeStyles(() => ({
   descriptionHeading : {
     fontWeight : "bolder !important",
     textTransform : "uppercase",
+    fontSize : "0.9rem",
   },
 
 
@@ -79,24 +80,34 @@ const useMenuStyles = makeStyles((theme) => {
     },
 
     list : {
-      padding : "0.5rem",
       display : "flex",
       flexDirection : "column",
       gridGap : "0.5rem",
       marginBlock : "0.5rem",
       borderRadius : "0.25rem",
       backgroundColor : theme.palette.secondary.honeyComb,
+      "&:hover" : {
+        backgroundColor : alpha(theme.palette.secondary.link2, 0.25),
+      },
     },
 
     listItem : {
       display : "flex",
       gridGap : "0.5rem",
       alignItems : "center",
-      // justifyContent: "center",
+      justifyContent : "space-around",
+    },
+    socialListItem : {
+      display : "flex",
+      backgroundColor : alpha(theme.palette.secondary.honeyComb, 1.25),
+      alignItems : "center",
+      justifyContent : "space-around",
+      padding : ".65rem",
     },
 
     button : {
-      padding : "0.2rem",
+      height : "100%",
+      width : "100%",
       display : "flex",
       alignItems : "center",
       justifyContent : "start",
@@ -168,8 +179,8 @@ const  BasicMenu = withSuppressedErrorBoundary(({ event }) =>  {
               </Button>
             </Box>
             <Collapse in={isSocialShareOpen}>
-              <Box className={classes.listItem} >
-                <FacebookShareButton url={"https://meshery.io"} quote={event.description || ""} >
+              <Box className={classes.socialListItem} >
+                <FacebookShareButton  url={"https://meshery.io"} quote={event.description || ""} >
                   <FacebookIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
                 </FacebookShareButton>
                 <LinkedinShareButton url={"https://meshery.io"} summary={event.description || ""} >
@@ -241,7 +252,7 @@ export const ChangeStatus = ({ event }) => {
 
 const BulletList = ({ items }) => {
   return <ol style={{ paddingInline : "0.75rem", paddingBlock : "0.3rem", margin : "0rem" }}>
-    {items.map((i) => <li key={i} >
+    {[items].map((i) => <li key={i} >
       <Typography variant="body1" > {i} </Typography>
     </li>)}
   </ol>
@@ -264,6 +275,7 @@ export const Notification = withErrorBoundary(({ event_id }) => {
   };
 
   const { data : user } = useGetUserByIdQuery(event.user_id || "")
+
   const userName = `${user?.first_name || ""} ${user?.last_name || ""}`
   const userAvatarUrl = user?.avatar_url || ""
 
@@ -299,7 +311,7 @@ export const Notification = withErrorBoundary(({ event_id }) => {
               <Grid item sm={1} className={classes.actorAvatar} >
                 <Box sx={{ display : "flex", gridGap : "0.5rem", flexDirection : { xs : "row", md : "column" } }} >
 
-                  {event.user_id && user &&
+                  {event.user_id &&
                     <Tooltip title={userName} placement="top" >
                       <Avatar alt={userName} src={userAvatarUrl} />
                     </Tooltip>
@@ -316,7 +328,7 @@ export const Notification = withErrorBoundary(({ event_id }) => {
                 <Grid container  >
                   <div>
                     <NestedData classes={classes} heading="Description" data={event.description} />
-                    <div style={{ marginTop : "0.3rem" }}>
+                    <div style={{ marginTop : "1rem" }}>
                       <NestedData classes={classes} heading="Details" data={longDescription} />
                     </div>
                   </div>
