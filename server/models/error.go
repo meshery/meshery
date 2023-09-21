@@ -365,7 +365,7 @@ func ErrPersistEvent(err error) error {
 }
 
 func ErrUnreachableKubeAPI(err error, server string) error {
-	return errors.New(ErrUnreachableKubeAPICode, errors.Alert, []string{fmt.Sprintf("Error communicating with KubeAPI at %s.", server)}, []string{err.Error()}, []string{"The API server is not exposed.", "Credentials are malformed / invalid."}, []string{"Ensure client credential is not expired.", "Recheck the API server url.", "Remove the cluster credential and enable 'insecure-skip-tls-verify'."})
+	return errors.New(ErrUnreachableKubeAPICode, errors.Alert, []string{fmt.Sprintf("Error communicating with KubeAPI at %s.", server)}, []string{err.Error()}, []string{"The API server is not reachable.", "Credentials are malformed/invalid."}, []string{"Ensure client credential is not expired.", "Recheck the API server url.", "Remove the cluster credential and enable 'insecure-skip-tls-verify'."})
 }
 
 func ErrFlushMeshSyncData(err error, contextName, server string) error {
