@@ -13,6 +13,12 @@ export const SEVERITY = {
   // SUCCESS: "success"
 }
 
+export const SEVERITY_TO_NOTIFICATION_TYPE_MAPPING = {
+  [SEVERITY.INFO] : "info",
+  [SEVERITY.ERROR] : "error",
+  [SEVERITY.WARNING] : "warning",
+}
+
 export const STATUS = {
   READ : "read",
   UNREAD : "unread",
@@ -68,7 +74,7 @@ const EVENT_SCHEMA = {
     action : { type : "string" },
     category : { type : "string" },
     metadata : {
-      type : "object",
+      type : ["object","null"],
     }
   },
   required : ["id", "severity", "status", "created_at", "updated_at", "user_id", "system_id", "action"]
@@ -78,6 +84,8 @@ const EVENT_SCHEMA = {
 // Validate event against EVENT_SCHEMA and return [isValid,validatedEvent]
 export const validateEvent = (event) => {
   const eventCopy = _.cloneDeep(event) || {};
+  eventCopy.status = eventCopy.status.trim() || STATUS.UNREAD;
+  eventCopy.severity= eventCopy.severity.trim() || SEVERITY.INFO
   const ajv = new Ajv({
     useDefaults : true,
   });

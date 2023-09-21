@@ -241,7 +241,7 @@ export const ChangeStatus = ({ event }) => {
 
 const BulletList = ({ items }) => {
   return <ol style={{ paddingInline : "0.75rem", paddingBlock : "0.3rem", margin : "0rem" }}>
-    {[items].map((i) => <li key={i} >
+    {items.map((i) => <li key={i} >
       <Typography variant="body1" > {i} </Typography>
     </li>)}
   </ol>
