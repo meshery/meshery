@@ -26,8 +26,8 @@ import { iconMedium } from "../css/icons.styles";
 import { ACTIONS } from "../utils/Enum";
 import { getModelByName } from "../api/meshmodel";
 import { EVENT_TYPES } from "../lib/event-types";
-import { withNotify } from "../utils/hooks/useNotification";
 import { usePrevious } from "../hooks/usePrevious";
+import { useNotification } from "../utils/hooks/useNotification";
 
 const styles = (theme) => ({
   smWrapper : { backgroundColor : theme.palette.secondary.elevatedComponents2, },
@@ -173,6 +173,7 @@ const MesheryAdapterPlayComponent = (props) => {
   const [modalOpen, setModalOpen] = useState(false);
 
   const prevProps = usePrevious(props);
+  const { notify } = useNotification();
 
   // initializing menuState;
   useEffect(() => {
@@ -412,7 +413,6 @@ const MesheryAdapterPlayComponent = (props) => {
         }
 
         if (typeof result !== "undefined") {
-          const notify = props.notify;
           notify({
             message : "Operation executing...",
             event_type : EVENT_TYPES.INFO,
@@ -433,7 +433,6 @@ const MesheryAdapterPlayComponent = (props) => {
       (result) => {
         props.updateProgress({ showProgress : false });
         if (typeof result !== "undefined") {
-          const notify = props.notify;
           notify({
             message : "Adapter pinged!",
             event_type : EVENT_TYPES.SUCCESS,
@@ -464,7 +463,6 @@ const MesheryAdapterPlayComponent = (props) => {
       setAddonSwitchGroup({ ...addonSwitchGroup, [selectedOp] : deleteOp });
 
       props.updateProgress({ showProgress : false });
-      const notify = props.notify;
       notify({
         message : `Operation submission failed: ${error}`,
         event_type : EVENT_TYPES.ERROR,
@@ -921,5 +919,5 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(withNotify(MesheryAdapterPlayComponent)))
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(MesheryAdapterPlayComponent))
 );
