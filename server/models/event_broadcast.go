@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/gofrs/uuid"
@@ -43,7 +42,7 @@ func (c *Broadcast) Publish(id uuid.UUID, data interface{}) {
 	if !ok {
 		return
 	}
-	
+
 	clientToPublish, _ := clientMap.(*clients)
 	for _, client := range clientToPublish.listeners {
 		client <- data
