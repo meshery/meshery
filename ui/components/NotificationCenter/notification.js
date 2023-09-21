@@ -24,7 +24,7 @@ const useStyles = makeStyles(() => ({
     width : "100%",
     borderRadius : "0.25rem",
     border : `0.1rem solid ${props.notificationColor}`,
-    borderLeftWidth : props.status === STATUS.READ ? "0.25rem" : "0.1rem",
+    borderLeftWidth : props.status === STATUS.UNREAD ? "0.25rem" : "0.1rem",
     marginBlock : "0.5rem",
   }),
 
