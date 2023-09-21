@@ -7,7 +7,6 @@ import NoSsr from "@material-ui/core/NoSsr";
 import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import PlayIcon from "@material-ui/icons/PlayArrow";
-import { withRouter } from "next/router";
 import PropTypes from "prop-types";
 import React, { useEffect, useRef, useState } from "react";
 import { Controlled as CodeMirror } from "react-codemirror2";
@@ -28,6 +27,7 @@ import { getModelByName } from "../api/meshmodel";
 import { EVENT_TYPES } from "../lib/event-types";
 import { usePrevious } from "../hooks/usePrevious";
 import { useNotification } from "../utils/hooks/useNotification";
+import { useRouter } from "next/router";
 
 const styles = (theme) => ({
   smWrapper : { backgroundColor : theme.palette.secondary.elevatedComponents2, },
@@ -174,6 +174,7 @@ const MesheryAdapterPlayComponent = (props) => {
 
   const prevProps = usePrevious(props);
   const { notify } = useNotification();
+  const router = useRouter();
 
   // initializing menuState;
   useEffect(() => {
@@ -764,7 +765,7 @@ const MesheryAdapterPlayComponent = (props) => {
         boardConfigs={boardConfigs}
         grafanaAPIKey={grafanaAPIKey}
         grafanaURL={grafanaURL}
-        handleGrafanaChartAddition={() => props.router.push("/settings/#metrics")}
+        handleGrafanaChartAddition={() => router.push("/settings/#metrics")}
       />
     );
   };
@@ -919,5 +920,5 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(MesheryAdapterPlayComponent))
+  connect(mapStateToProps, mapDispatchToProps)(MesheryAdapterPlayComponent)
 );
