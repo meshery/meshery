@@ -1,4 +1,3 @@
-// @ts-check
 import {
   Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr, TableCell, Tooltip, Typography
 } from "@material-ui/core";
@@ -566,11 +565,13 @@ function MesheryPatterns({
   }, [catalogVisibility])
 
   const handleSetPatterns = (patterns) => {
+    console.log("Patterns",patterns)
     if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
-      setPatterns([...catalogContentRef.current, ...patterns.filter(content => content.visibility !== VISIBILITY.PUBLISHED)])
+      setPatterns([...(catalogContentRef.current || []), ...(patterns?.filter(content => content.visibility !== VISIBILITY.PUBLISHED) || [] )])
       return
     }
-    setPatterns(patterns.filter(content => content.visibility !== VISIBILITY.PUBLISHED))
+
+    setPatterns(patterns?.filter(content => content.visibility !== VISIBILITY.PUBLISHED)||[])
   }
 
   useEffect(() => {
@@ -808,13 +809,13 @@ function MesheryPatterns({
       (result) => {
         console.log("PatternFile API", `/api/pattern${query}`);
         updateProgress({ showProgress : false });
-        page === 0 && stillLoading(false);
+        stillLoading(false);
         if (result) {
           // setPage(result.page || 0);
-          setPageSize(result.page_size || 0);
+          // setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
           handleSetPatterns(result.patterns || [])
-          setPatterns(result.patterns || []);
+          // setPatterns(result.patterns || []);
         }
       },
       handleError(ACTION_TYPES.FETCH_PATTERNS)
