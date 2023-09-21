@@ -146,7 +146,7 @@ func cleanupDuplicatesAndPreferEmptyComponentField(out []map[string]string, grou
 }
 
 func docsUpdater(output []map[string]string) {
-	if len(os.Args) < 8 {
+	if len(os.Args) < 7 {
 		log.Fatal("docsUpdater: invalid number of arguments; missing website and docs path")
 		return
 	}
@@ -154,8 +154,8 @@ func docsUpdater(output []map[string]string) {
 	pathToIntegrationsMeshery := os.Args[5]
 	pathToIntegrationsMesheryDocs := os.Args[6]	
 	updateOnlyPublished := true
-	if len(os.Args) > 7 {
-		if os.Args[7] == "--published-only" {
+	if len(os.Args) > 6 {
+		if os.Args[6] == "--published-only" {
 			updateOnlyPublished = true
 		}
 	}
