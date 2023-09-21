@@ -241,7 +241,7 @@ export const ChangeStatus = ({ event }) => {
 
 const BulletList = ({ items }) => {
   return <ol style={{ paddingInline : "0.75rem", paddingBlock : "0.3rem", margin : "0rem" }}>
-    {[items].map((i) => <li key={i} >
+    {items.map((i) => <li key={i} >
       <Typography variant="body1" > {i} </Typography>
     </li>)}
   </ol>
@@ -264,7 +264,6 @@ export const Notification = withErrorBoundary(({ event_id }) => {
   };
 
   const { data : user } = useGetUserByIdQuery(event.user_id || "")
-
   const userName = `${user?.first_name || ""} ${user?.last_name || ""}`
   const userAvatarUrl = user?.avatar_url || ""
 
@@ -300,7 +299,7 @@ export const Notification = withErrorBoundary(({ event_id }) => {
               <Grid item sm={1} className={classes.actorAvatar} >
                 <Box sx={{ display : "flex", gridGap : "0.5rem", flexDirection : { xs : "row", md : "column" } }} >
 
-                  {event.user_id &&
+                  {event.user_id && user &&
                     <Tooltip title={userName} placement="top" >
                       <Avatar alt={userName} src={userAvatarUrl} />
                     </Tooltip>

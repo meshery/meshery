@@ -58,7 +58,7 @@ import { pushEvent } from '../store/slices/events';
 import { api as mesheryApi } from "../rtk-query"
 import { PROVIDER_TAGS } from '../rtk-query/notificationCenter';
 import { useNotification } from '../utils/hooks/useNotification';
-import { validateEvent } from '../components/NotificationCenter/constants';
+import { SEVERITY_TO_NOTIFICATION_TYPE_MAPPING, validateEvent } from '../components/NotificationCenter/constants';
 import { ErrorBoundary, withSuppressedErrorBoundary } from '../components/General/ErrorBoundary';
 
 
@@ -105,7 +105,7 @@ const EventsSubsciptionProvider = withSuppressedErrorBoundary(() => {
       rtkStore.dispatch(mesheryApi.util.invalidateTags([PROVIDER_TAGS.EVENT]))
       notify({
         message : validatedEvent.description,
-        event_type : validatedEvent.severity,
+        event_type : SEVERITY_TO_NOTIFICATION_TYPE_MAPPING[validatedEvent.severity],
         id : validatedEvent.id,
         showInNotificationCenter : true,
       })
