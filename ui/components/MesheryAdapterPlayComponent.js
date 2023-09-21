@@ -1,27 +1,20 @@
 import {
   Card, CardActions, CardHeader, Chip, Dialog, DialogActions, DialogContent,
   DialogTitle, Divider, FormControl, FormControlLabel, FormGroup, FormLabel, Grid,
-  IconButton, Menu, MenuItem, Switch, Typography, withStyles
-  // Table, TableBody, TableCell, TableHead, TableRow, Tooltip
-} from "@material-ui/core";
+  IconButton, Menu, MenuItem, Switch, Typography, withStyles } from "@material-ui/core";
 import { blue } from "@material-ui/core/colors";
 import NoSsr from "@material-ui/core/NoSsr";
 import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import PlayIcon from "@material-ui/icons/PlayArrow";
-// import MUIDataTable from "mui-datatables";
 import { withRouter } from "next/router";
 import PropTypes from "prop-types";
 import React, { useEffect, useRef, useState } from "react";
 import { Controlled as CodeMirror } from "react-codemirror2";
-// import Moment from "react-moment";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import dataFetch from "../lib/data-fetch";
-// import { updateSMIResults } from '../lib/store';
-import { setK8sContexts, updateProgress,
-  // actionTypes
-} from "../lib/store";
+import { setK8sContexts, updateProgress } from "../lib/store";
 import { ctxUrl, getK8sClusterIdsFromCtxId } from "../utils/multi-ctx";
 import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
 import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
@@ -152,43 +145,31 @@ const MesheryAdapterPlayComponent = (props) => {
 
   // States
   const [adapter,] = useState(props.adapter);
-  // const [adapter, setAdapter] = useState(props.adapter);
   const [namespaceList, setNameSpaceList] = useState([]);
   const [namespaceSubscription, setNamespaceSubscription] = useState(null);
   const [menuState, setMenuState] = useState({});
-  // const [activeContexts, setActiveContexts] = useState([]);
   const [, setActiveContexts] = useState([]);
   const [addonSwitchGroup, setAddonSwitchGroup] = useState({});
   const [versionList, setVersionList] = useState([]);
   const [version, setVersion] = useState({ labeL : "", value : "" });
   const [versionError, setVersionError] = useState(false);
   const [, setSelectionError] = useState(false);
-  // const [selectionError, setSelectionError] = useState(false);
   const [cmEditorValDel, setCmEditorValDel] = useState("");
   const [, setCmEditorValDelError] = useState(false);
-  // const [cmEditorValDelError, setCmEditorValDelError] = useState(false);
   const [cmEditorValAdd, setCmEditorValAdd] = useState("");
   const [, setCmEditorValAddError] = useState(false);
-  // const [cmEditorValAddError, setCmEditorValAddError] = useState(false);
   const [namespace, setNamespace] = useState({
     value : "default",
     label : "default",
   });
   const [namespaceError, setNamespaceError] = useState(false);
   const [selectedRowData, setSelectedRowData] = useState(null);
-  // const [customDialogSMI, setCustomDialogSMI] = useState(false);
   const [customDialogAdd, setCustomDialogAdd] = useState(false);
   const [customDialogDel, setCustomDialogDel] = useState(false);
   const [category, setCategory] = useState(0);
   const [selectedOp, setSelectedOp] = useState("");
   const [isDeleteOp, setIsDeleteOp] = useState(false);
   const [operationName, setOperationName] = useState("");
-  // const [smi_result, setSmi_result] = useState([]);
-  // const [page, setPage] = useState(0);
-  // const [search, setSearch] = useState("");
-  // const [sortOrder, setSortOrder] = useState("");
-  // const [pageSize, setPageSize] = useState(10);
-  // const [deployModalOpen, setDeployModalOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
   const prevProps = usePrevious(props);
@@ -343,31 +324,11 @@ const MesheryAdapterPlayComponent = (props) => {
     };
   };
 
-  // Unused Function
-  // const handleSMIClose = () => {
-  //   return () => {
-  //     setCustomDialogSMI(false);
-  //   };
-  // };
-
   const resetSelectedRowData = () => {
     return () => {
       setSelectedRowData(null);
     };
   };
-
-  /**
-   * Unused Functions
-    const handleModalOpen = (isDelete) => {
-      return () => {
-        if (isDelete) {
-          setCustomDialogDel(true);
-        } else {
-          setCustomDialogAdd(true);
-        }
-      };
-    };
-   */
 
   const handleSubmit = (cat, selectedOp, deleteOp = false) => {
     return () => {
@@ -483,50 +444,6 @@ const MesheryAdapterPlayComponent = (props) => {
     );
   };
 
-  // Unused Function
-  // const fetchSMIResults = (adapterName, page, pageSize, search, sortOrder) => {
-  //   let query = "";
-  //   if (typeof search === "undefined" || search === null) {
-  //     search = "";
-  //   }
-  //   if (typeof sortOrder === "undefined" || sortOrder === null) {
-  //     sortOrder = "";
-  //   }
-  //   query = `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
-  //     sortOrder
-  //   )}`;
-
-  //   dataFetch(
-  //     `/api/smi/results${query}`,
-  //     {
-  //       method: "GET",
-  //       credentials: "include",
-  //     },
-  //     (result) => {
-  //       if (typeof result !== "undefined" && result.results) {
-  //         const results = result.results.filter((val) => val.mesh_name.toLowerCase() == adapterName.toLowerCase());
-  //         setSmi_result({
-  //           ...result,
-  //           results: results,
-  //           total_count: results.length,
-  //         });
-  //       }
-  //     },
-  //     (error) => console.log("Could not fetch SMI results.", error)
-  //   );
-  // };
-
-  /**Used Function
-   *
-  const handleSMIClick = (adapterName) => () => {
-    props.updateProgress({ showProgress: true });
-
-    fetchSMIResults(adapterName, page, pageSize, search, sortOrder);
-    props.updateProgress({ showProgress: false });
-    setCustomDialogSMI(true);
-  };
-  */
-
   const handleError = (cat, deleteOp, selectedOp) => {
     return (error) => {
       if (cat && deleteOp) {
@@ -555,28 +472,6 @@ const MesheryAdapterPlayComponent = (props) => {
       });
     };
   };
-
-  // const handleDeployModalOpen = () => {
-  //   setDeployModalOpen(true);
-  // };
-
-  // const handleDeployModalClose = () => {
-  //   setDeployModalOpen(false);
-  // };
-
-  /**
-   * Sets the selected k8s context on global level.
-   * @param {Array.<string>} activeK8sContexts
-   */
-  // const activeContextChangeCallback = (activeK8sContexts) => {
-  //   if (activeK8sContexts.includes("all")) {
-  //     activeK8sContexts = ["all"];
-  //   }
-  //   props.setK8sContexts({
-  //     type: actionTypes.SET_K8S_CONTEXT,
-  //     selectedK8sContexts: activeK8sContexts,
-  //   });
-  // };
 
   /**
    * generateMenu generates the management menus for the adapater management plane
@@ -614,256 +509,6 @@ const MesheryAdapterPlayComponent = (props) => {
   const handleClose = () => {
     setModalOpen(false);
   };
-
-  // The function code is not called anywhere in the component
-  /**
-   *
-  const generateSMIResult = () => {
-    const { user, classes } = props;
-    const smi_columns = [
-      {
-        name: "ID",
-        label: "ID",
-        options: {
-          filter: true,
-          sort: true,
-          searchable: true,
-          customHeadRender: ({ index, ...column }) => {
-            return (
-              <TableCell key={index}>
-                <b>{column.label}</b>
-              </TableCell>
-            );
-          },
-          customBodyRender: (value) => (
-            <Tooltip title={value} placement="top">
-              <div>{value.slice(0, 5) + "..."}</div>
-            </Tooltip>
-          ),
-        },
-      },
-      {
-        name: "Date",
-        label: "Date",
-        options: {
-          filter: true,
-          sort: true,
-          searchable: true,
-          customHeadRender: ({ index, ...column }) => {
-            return (
-              <TableCell key={index}>
-                <b>{column.label}</b>
-              </TableCell>
-            );
-          },
-          customBodyRender: (value) => <Moment format="LLLL">{value}</Moment>,
-        },
-      },
-      {
-        name: "Service Mesh",
-        label: "Service Mesh",
-        options: {
-          filter: true,
-          sort: true,
-          searchable: true,
-          customHeadRender: ({ index, ...column }) => {
-            return (
-              <TableCell key={index}>
-                <b>{column.label}</b>
-              </TableCell>
-            );
-          },
-        },
-      },
-      {
-        name: "Service Mesh Version",
-        label: "Service Mesh Version",
-        options: {
-          filter: true,
-          sort: true,
-          searchable: true,
-          customHeadRender: ({ index, ...column }) => {
-            return (
-              <TableCell key={index}>
-                <b>{column.label}</b>
-              </TableCell>
-            );
-          },
-        },
-      },
-      {
-        name: "% Passed",
-        label: "% Passed",
-        options: {
-          filter: true,
-          sort: true,
-          searchable: true,
-          customHeadRender: ({ index, ...column }) => {
-            return (
-              <TableCell key={index}>
-                <b>{column.label}</b>
-              </TableCell>
-            );
-          },
-        },
-      },
-      {
-        name: "status",
-        label: "Status",
-        options: {
-          filter: true,
-          sort: true,
-          searchable: true,
-          customHeadRender: ({ index, ...column }) => {
-            return (
-              <TableCell key={index}>
-                <b>{column.label}</b>
-              </TableCell>
-            );
-          },
-        },
-      },
-    ];
-
-    const smi_options = {
-      sort: !(user && user.user_id === "meshery"),
-      search: !(user && user.user_id === "meshery"),
-      filterType: "textField",
-      expandableRows: true,
-      selectableRows: false,
-      rowsPerPage: pageSize,
-      rowsPerPageOptions: [10, 20, 25],
-      fixedHeader: true,
-      print: false,
-      download: false,
-      renderExpandableRow: (rowData, rowMeta) => {
-        const column = ["Specification", "Assertions", "Time", "Version", "Capability", "Result", "Reason"];
-        const data = smi_result.results[rowMeta.dataIndex].more_details.map((val) => {
-          return [
-            val.smi_specification,
-            val.assertions,
-            val.time,
-            val.smi_version,
-            val.capability,
-            val.status,
-            val.reason,
-          ];
-        });
-        const colSpan = rowData.length + 1;
-        return (
-          <TableRow>
-            <TableCell colSpan={colSpan}>
-              <div className={classes.secondaryTable}>
-                <Table aria-label="a dense table">
-                  <TableHead>
-                    <TableRow>
-                      {column.map((val) => (
-                        <TableCell colSpan={colSpan} key={val}>
-                          {val}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {data.map((row) => (
-                      <TableRow key={row?.uniqueID}>
-                        {row.map((val) => {
-                          if (val && val.match(/[0-9]+m[0-9]+.+[0-9]+s/i) != null) {
-                            const time = val.split(/m|s/);
-                            return (
-                              <TableCell colSpan={colSpan} key={val}>
-                                {time[0] + "m " + parseFloat(time[1]).toFixed(1) + "s"}
-                              </TableCell>
-                            );
-                          } else {
-                            return (
-                              <TableCell colSpan={colSpan} key={val}>
-                                {val}
-                              </TableCell>
-                            );
-                          }
-                        })}
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </TableCell>
-          </TableRow>
-        );
-      },
-      onTableChange: (action, tableState) => {
-        const sortInfo = tableState.announceText ? tableState.announceText.split(" : ") : [];
-        let order = "";
-        if (tableState.activeColumn) {
-          order = `${smi_columns[tableState.activeColumn].name} desc`;
-        }
-
-        switch (action) {
-          case "changePage":
-            fetchSMIResults(props.adapter.name, tableState.page, pageSize, search, sortOrder);
-            break;
-          case "changeRowsPerPage":
-            fetchSMIResults(props.adapter.name, page, tableState.rowsPerPage, search, sortOrder);
-            break;
-          case "search":
-            if (searchTimeout) {
-              clearTimeout(searchTimeout);
-            }
-            searchTimeout = setTimeout(() => {
-              if (search !== tableState.searchText) {
-                fetchSMIResults(
-                  props.adapter.name,
-                  page,
-                  pageSize,
-                  tableState.searchText !== null ? tableState.searchText : "",
-                  sortOrder
-                );
-              }
-            }, 500);
-            break;
-          case "sort":
-            if (sortInfo.length === 2) {
-              if (sortInfo[1] === "ascending") {
-                order = `${smi_columns[tableState.activeColumn].name} asc`;
-              } else {
-                order = `${smi_columns[tableState.activeColumn].name} desc`;
-              }
-            }
-            if (order !== sortOrder) {
-              fetchSMIResults(props.adapter.name, page, pageSize, search, order);
-            }
-            break;
-        }
-      },
-    };
-
-    var data = [];
-    if (smi_result && smi_result.results) {
-      data = smi_result.results.map((val) => {
-        return [val.id, val.date, val.mesh_name, val.mesh_version, val.passing_percentage, val.status];
-      });
-    }
-
-    return (
-      <Dialog
-        onClose={handleSMIClose()}
-        aria-labelledby="adapter-dialog-title"
-        open={customDialogSMI}
-        fullWidth
-        maxWidth="md"
-      >
-        <MUIDataTable
-          title={<div className={classes.tableHeader}>Service Mesh Interface Conformance Results</div>}
-          data={data}
-          columns={smi_columns}
-          options={smi_options}
-        />
-      </Dialog>
-    );
-  };
-  *
-  */
 
   const generateYAMLEditor = (cat, isDelete) => {
     const { adapter } = props;
@@ -1273,7 +918,6 @@ const mapStateToProps = (st) => {
 const mapDispatchToProps = (dispatch) => ({
   updateProgress : bindActionCreators(updateProgress, dispatch),
   setK8sContexts : bindActionCreators(setK8sContexts, dispatch)
-  // updateSMIResults: bindActionCreators(updateSMIResults, dispatch),
 });
 
 export default withStyles(styles)(
