@@ -54,6 +54,7 @@ import SearchBar from "../utils/custom-search";
 import CustomColumnVisibilityControl from "../utils/custom-column";
 import ResponsiveDataTable from "../utils/data-table";
 import useStyles from "../assets/styles/general/tool.styles";
+import { Edit as EditIcon } from "@material-ui/icons";
 
 
 const styles = (theme) => ({
@@ -920,6 +921,14 @@ function MesheryPatterns({
     }
   }
 
+  const userCanEdit = (pattern) => {
+    return  (user?.role_names?.includes("admin") || user.user_id === "meshery" || user.user_id == pattern.owner_id )
+  }
+
+  const handleOpenInConfigurator = (id) => {
+    router.push("/configuration/designs/configurator?design_id="+id)
+  }
+
   const columns = [
     {
       name : "name",
@@ -1024,6 +1033,18 @@ function MesheryPatterns({
           const visibility = patterns[tableMeta.rowIndex]?.visibility
           return (
             <>
+
+              { userCanEdit(rowData) && <TooltipIcon
+                placement ="top"
+                title={"Edit"}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOpenInConfigurator(rowData.id)
+                }
+                }>
+                <EditIcon fill="currentColor" className={classes.iconPatt} />
+              </TooltipIcon>
+              }
               { visibility === VISIBILITY.PUBLISHED ? <TooltipIcon
                 placement ="top"
                 title={"Clone"}
@@ -1091,6 +1112,7 @@ function MesheryPatterns({
                   <PublicIcon fill="#F91313" data-cy="unpublish-button" />
                 </TooltipIcon>)
               }
+
             </>
           );
         },
@@ -1403,6 +1425,7 @@ function MesheryPatterns({
               publishModal={publishModal}
               setPublishModal={setPublishModal}
               publishSchema={publishSchema}
+              user={user}
             />
         }
         <ConfirmationModal
