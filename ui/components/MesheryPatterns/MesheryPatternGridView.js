@@ -1,4 +1,3 @@
-//@ts-check
 import { Grid, Paper, Typography } from "@material-ui/core";
 import { Pagination } from "@material-ui/lab";
 import React, { useState } from "react";
@@ -15,14 +14,15 @@ import DryRunComponent from "../DryRun/DryRunComponent";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
-function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublishModal, handleUnpublishModal, handleUnDeploy, handleClone, handleSubmit, setSelectedPatterns, canPublishPattern = false }) {
+function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublishModal, handleUnpublishModal, handleUnDeploy, handleClone, handleSubmit, setSelectedPatterns, canPublishPattern = false ,user }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(pattern.pattern_file);
 
   return (
     <Grid item {...gridProps}>
       <MesheryPatternCard
-        // id={pattern.id}
+        id={pattern.id}
+        user={user}
         canPublishPattern={canPublishPattern}
         name={pattern.name}
         updated_at={pattern.updated_at}
@@ -42,6 +42,7 @@ function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublis
         setYaml={setYaml}
         description={pattern.description}
         visibility={pattern.visibility}
+        pattern={pattern}
       />
     </Grid>
   );
@@ -78,7 +79,7 @@ function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublis
  * }} props props
  */
 
-function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUnpublishModal, handleDeploy, handleUnDeploy, handleClone, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage, patternErrors, canPublishPattern = false, publishModal, setPublishModal, selectedK8sContexts, publishSchema }) {
+function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUnpublishModal, handleDeploy, handleUnDeploy, handleClone, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage, patternErrors, canPublishPattern = false, publishModal, setPublishModal, selectedK8sContexts, publishSchema ,user }) {
 
   const classes = useStyles()
   const handlePublishModal = (pattern) => {
@@ -151,6 +152,7 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
         {patterns.map((pattern) => (
           <PatternCardGridItem
             key={pattern.id}
+            user={user}
             pattern={pattern}
             canPublishPattern={canPublishPattern}
             handleClone={() => handleClone(pattern.id, pattern.name)}
