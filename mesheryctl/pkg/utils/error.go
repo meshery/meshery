@@ -33,7 +33,6 @@ var (
 	ErrResponseStatusCode     = "1182"
 	ErrJSONToYAMLCode         = "1183"
 	ErrOutFormatFlagCode      = "1184"
-	ErrInvalidAPICallCode     = "1185"
 	ErrParseGithubFileCode    = "1186"
 	ErrReadTokenCode          = "1187"
 	ErrRequestResponseCode    = "1188"
