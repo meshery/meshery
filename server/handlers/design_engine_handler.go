@@ -73,12 +73,20 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	isDel := r.Method == http.MethodDelete
+	isDryRun := r.URL.Query().Get("dryRun") == "true"
 	action := "deploy"
 	if isDel {
 		action = "undeploy"
 	}
-	// Generate the pattern file object
+	
 	patternFile, err := core.NewPatternFile(body)
+	// Generate the pattern file object
+	description := fmt.Sprintf("Pattern %s %sed", patternFile.Name, action)
+	if isDryRun {
+		action = "dryrun"
+		description = fmt.Sprintf("Pattern %s %s", patternFile.Name, action)
+	}
+
 	if err != nil {
 		h.log.Error(ErrPatternFile(err))
 		http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
@@ -93,7 +101,7 @@ func (h *Handler) PatternFileHandler(
 		user.ID,
 		isDel,
 		r.URL.Query().Get("verify") == "true",
-		r.URL.Query().Get("dryRun") == "true",
+		isDryRun,
 		r.URL.Query().Get("skipCRD") == "true",
 		false,
 		h.registryManager,
@@ -122,8 +130,8 @@ func (h *Handler) PatternFileHandler(
 	metadata := map[string]interface{}{
 		"summary": response,
 	}
-
-	event := eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Pattern %s %sed", patternFile.Name, action)).WithMetadata(metadata).Build()
+	
+	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
