@@ -27,7 +27,7 @@ export const useStyles = makeStyles((theme) => ({
     transition : "0.3s ease-in-out !important",
   },
   peekView : {
-    right : "-42.1rem",
+    right : "-42.8rem",
     transition : "0.3s ease-in-out !important",
   },
 
@@ -57,21 +57,22 @@ export const useStyles = makeStyles((theme) => ({
     alignItems : "center",
     cursor : "pointer"
   },
+  // Aggregrate Level Chips
   severityChip : {
     borderRadius : "0.25rem",
     display : "flex",
-    gap : "0.25rem",
+    gap : "0.45rem",
     justifyContent : "start",
     alignItems : "center",
-    fontSize : "1rem",
+    fontSize : ".95rem",
+    fontWeight : 600,
     cursor : "pointer",
   },
-
+  // Aggregrate Level Chips
   severityChips : {
     display : "flex",
     gap : "0.75rem",
     alignItems : "center",
-
   },
   notification : {
     margin : theme.spacing(0.5, 1),

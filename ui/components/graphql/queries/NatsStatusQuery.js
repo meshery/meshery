@@ -5,8 +5,8 @@ export default function NatsStatusQuery(vars) {
   const environment = createRelayEnvironment({});
 
   const NatsStatusQueryNode = graphql`
-    query NatsStatusQuery($k8scontextID: String!) {
-      controller: getNatsStatus(k8scontextID: $k8scontextID){
+    query NatsStatusQuery($connectionID: String!) {
+      controller: getNatsStatus(connectionID: $connectionID){
             name
             version
             status

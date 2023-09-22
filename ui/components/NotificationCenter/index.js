@@ -6,7 +6,7 @@ import { Drawer,  Divider, ClickAwayListener, Typography, alpha, Chip, Button, B
 import Filter from "./filter";
 import BellIcon from "../../assets/icons/BellIcon.js"
 import { iconMedium } from "../../css/icons.styles";
-import { SEVERITY, SEVERITY_STYLE, STATUS, STATUS_STYLE } from "./constants";
+import { NOTIFICATION_CENTER_TOGGLE_CLASS, SEVERITY, SEVERITY_STYLE, STATUS, STATUS_STYLE } from "./constants";
 import classNames from "classnames";
 import Notification from "./notification";
 import { store } from "../../store";
@@ -15,6 +15,8 @@ import { closeNotificationCenter, loadEvents, loadNextPage, selectEvents, toggle
 import { useGetEventsSummaryQuery, useLazyGetEventsQuery } from "../../rtk-query/notificationCenter";
 import _ from "lodash";
 import DoneIcon from "../../assets/icons/DoneIcon";
+import { ErrorBoundary, withErrorBoundary } from "../General/ErrorBoundary";
+import { hasClass } from "../../utils/Elements";
 
 
 const getSeverityCount = (count_by_severity_level, severity) => {
@@ -26,11 +28,11 @@ const EmptyState = () => {
   return (
     <Box sx={{ display : 'flex', flexDirection : "column", alignItems : "center", justifyContent : "center", gap : "1rem" , marginY : "5rem" }}>
       <DoneIcon height="10rem" width="8rem" fill={theme.icon2} />
-      <Typography variant="h6" style={{ margin : "auto" }}> No notifications to show </Typography>
+      <Typography variant="h6" style={{ margin : "auto", color : theme.icon2  }}> No notifications to show </Typography>
     </Box >)
 }
 
-const NavbarNotificationIcon = () => {
+const NavbarNotificationIcon = withErrorBoundary(() => {
 
   const { data } = useGetEventsSummaryQuery()
   const count_by_severity_level = data?.count_by_severity_level || []
@@ -53,12 +55,12 @@ const NavbarNotificationIcon = () => {
   return (
     <BellIcon className={iconMedium} fill="#fff" />
   )
-}
+})
 
 
-const NotificationCountChip = ({ classes, notificationStyle, count,type, handleClick }) => {
+const NotificationCountChip = withErrorBoundary(({ classes, notificationStyle, count,type, handleClick }) => {
   const chipStyles = {
-    fill : notificationStyle.color,
+    fill : notificationStyle?.color,
     height : "20px",
     width : "20px",
   }
@@ -75,9 +77,9 @@ const NotificationCountChip = ({ classes, notificationStyle, count,type, handleC
       </Button>
     </Tooltip>
   )
-}
+})
 
-const Header = ({ handleFilter, handleClose }) => {
+const Header = withErrorBoundary(({ handleFilter, handleClose }) => {
 
   const { data } = useGetEventsSummaryQuery();
   const { count_by_severity_level, total_count } = data || {
@@ -97,7 +99,7 @@ const Header = ({ handleFilter, handleClose }) => {
     })
   }
 
-  const archivedCount = total_count - count_by_severity_level
+  const unreadCount = total_count - count_by_severity_level
     .reduce((acc, item) => acc + item.count, 0)
   return (
     <div className={classNames(classes.container, classes.header)}>
@@ -118,12 +120,12 @@ const Header = ({ handleFilter, handleClose }) => {
           notificationStyle={STATUS_STYLE[STATUS.READ]}
           handleClick={() => onClickStatus(STATUS.READ)}
           type={STATUS.READ}
-          count={archivedCount} />
+          count={unreadCount} />
 
       </div>
     </div>
   )
-}
+})
 
 const Loading = () => {
   return (
@@ -133,7 +135,7 @@ const Loading = () => {
 }
 
 
-const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
+const EventsView =  withErrorBoundary(({ handleLoadNextPage, isFetching, hasMore }) => {
   const events = useSelector(selectEvents)
   // const page = useSelector((state) => state.events.current_view.page);
 
@@ -173,12 +175,11 @@ const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
       {isFetching && hasMore && <Loading />}
     </>
   )
-}
+})
 
-const CurrentFilterView = ({ handleFilter }) => {
+const CurrentFilterView = withErrorBoundary( ({ handleFilter }) => {
 
   const currentFilters = useSelector((state) => state.events.current_view.filters);
-
   const onDelete = (key, value) => {
     const newFilters = {
       ...currentFilters,
@@ -189,7 +190,7 @@ const CurrentFilterView = ({ handleFilter }) => {
 
   const Chips = ({ type, value }) => {
     if (typeof value === "string") {
-      return <Chip label={value} onDelete={() => onDelete(type, value)} />
+      return <Chip label={value} style={{ paddingTop : "0rem", }} onDelete={() => onDelete(type, value)} />
     }
 
     if (_.isArray(value) && value.length > 0) {
@@ -207,7 +208,7 @@ const CurrentFilterView = ({ handleFilter }) => {
     <div>
       {Object.entries(currentFilters).map(([key, value]) => {
         if (value && value?.length > 0) {
-          return <div key={key} style={{ display : "flex", gap : "0.3rem", alignItems : "center", paddingBlock : "0.25rem" }} >
+          return <div key={key} style={{ display : "flex", gap : "0.3rem", alignItems : "center", marginLeft : "1rem", paddingTop : ".35rem" }} >
             <Typography variant="subtitle2" style={{ textTransform : "capitalize" }} > {key}:</Typography>
             <Chips value={value} type={key} />
           </div>
@@ -216,7 +217,9 @@ const CurrentFilterView = ({ handleFilter }) => {
 
     </div>
   )
-}
+})
+
+
 
 
 const MesheryNotification = () => {
@@ -255,10 +258,29 @@ const MesheryNotification = () => {
   const handleFilter = (filters) => {
     dispatch(loadEvents(fetchEvents, 1, filters))
   }
+  const drawerRef = useRef()
+  const toggleButtonRef = useRef()
+
+  const clickwayHandler = (e) => {
+    // checks if event has occured/bubbled up from clicking inside notificationcenter or on the bell icon
+    if (drawerRef.current.contains(e.target) || toggleButtonRef.current.contains(e.target)){
+      return
+    }
+    // check for element with toggle class
+    if (hasClass(e.target, NOTIFICATION_CENTER_TOGGLE_CLASS)  ) {
+      return
+    }
+    // check for svg icon (special case) , not checking the toggle class as it is not added to svg
+    if (e.target?.className?.baseVal?.includes('MuiSvgIcon')){
+      return
+    }
+    handleClose()
+  }
 
   return (
-    <NoSsr>
-      <div>
+    <>
+      <div ref={toggleButtonRef} >
+
         <IconButton
           id="notification-button"
           className={classes.notificationButton}
@@ -278,20 +300,13 @@ const MesheryNotification = () => {
       </div>
 
       <ClickAwayListener
-        onClickAway={(e) => {
-          if (
-            e.target.className.baseVal !== "" &&
-            e.target.className.baseVal !== "MuiSvgIcon-root" &&
-            (typeof e.target.className === "string" ? !e.target.className?.includes("MesheryNotification") : null)
-          ) {
-            handleClose();
-          }
-        }}
+        onClickAway={clickwayHandler}
       >
         <Drawer
           anchor="right"
           variant="persistent"
           open={open}
+          ref={drawerRef}
           classes={{
             paper : classes.notificationDrawer,
             paperAnchorRight : isNotificationCenterOpen ? classes.fullView : classes.peekView,
@@ -312,7 +327,7 @@ const MesheryNotification = () => {
           </div>
         </Drawer>
       </ClickAwayListener>
-    </NoSsr>
+    </>
   );
 };
 
@@ -334,11 +349,14 @@ const MesheryNotification = () => {
 const NotificationCenter = (props) => {
 
   return (
-    <>
-      <Provider store={store} >
-        <MesheryNotification {...props} />
-      </Provider >
-    </>
+
+    <NoSsr>
+      <ErrorBoundary FallbackComponent={() => null} onError={e => console.error("Error in NotificationCenter",e)}>
+        <Provider store={store} >
+          <MesheryNotification {...props} />
+        </Provider >
+      </ErrorBoundary>
+    </NoSsr>
   )
 
 };
