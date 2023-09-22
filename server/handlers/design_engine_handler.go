@@ -123,7 +123,7 @@ func (h *Handler) PatternFileHandler(
 		"summary": response,
 	}
 
-	event := eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Pattern %s deployed", patternFile.Name)).WithMetadata(metadata).Build()
+	event := eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Pattern %s %sed", patternFile.Name, action)).WithMetadata(metadata).Build()
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
