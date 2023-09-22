@@ -4,7 +4,7 @@ import {
   MenuItem, NoSsr, Paper, Select, TableCell, TableSortLabel, Tooltip, Typography
 } from "@material-ui/core";
 import blue from "@material-ui/core/colors/blue";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import { MuiThemeProvider } from "@material-ui/core/styles";
 import AddIcon from "@material-ui/icons/AddCircleOutline";
@@ -253,8 +253,7 @@ const DashboardComponent=(props) => {
   }, []);
 
   useEffect(() => {
-    fetchAvailableAdapters();
-
+    _isMounted.current = true;
     initMeshSyncControlPlaneSubscription();
     initDashboardClusterResourcesSubscription();
     initNamespaceQuery();
@@ -312,35 +311,6 @@ const DashboardComponent=(props) => {
     return getK8sClusterIdsFromCtxId(props.selectedK8sContexts, props.k8sconfig);
   };
 
-
-  const fetchAvailableAdapters = () => {
-
-    props.updateProgress({ showProgress : true });
-    dataFetch(
-      "/api/system/adapters",
-      {
-        method : "GET",
-        credentials : "include",
-      },
-      (result) => {
-        props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined") {
-          /* eslint-disable no-unused-vars */
-          const options = result.map((res) => ({
-            value : res.adapter_location,
-            label : res.adapter_location,
-          }));
-
-
-
-
-          // this.setState({ availableAdapters : options });
-          // setAvailableAdapters(options);
-        }
-      },
-      handleError("Unable to fetch list of adapters.")
-    );
-  };
   const setMeshScanData = (controlPlanesData, dataPlanesData) => {
 
     const namespaces = {};
@@ -797,10 +767,9 @@ const DashboardComponent=(props) => {
      * @param {{kind, number}[]} resources
      */
   const ClusterResourcesCard = (resources = []) => {
-
     let kindSort = "asc";
     let countSort = "asc";
-    const { theme } = this.props;
+    const theme = useTheme();
     const switchSortOrder = (type) => {
       if (type === "kindSort") {
         kindSort = (kindSort === "asc") ? "desc" : "asc";
