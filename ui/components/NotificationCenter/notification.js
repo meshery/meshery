@@ -62,6 +62,7 @@ const useStyles = makeStyles(() => ({
   descriptionHeading : {
     fontWeight : "bolder !important",
     textTransform : "uppercase",
+    fontSize : "0.9rem",
   },
 
 
@@ -79,24 +80,34 @@ const useMenuStyles = makeStyles((theme) => {
     },
 
     list : {
-      padding : "0.5rem",
       display : "flex",
       flexDirection : "column",
       gridGap : "0.5rem",
       marginBlock : "0.5rem",
       borderRadius : "0.25rem",
       backgroundColor : theme.palette.secondary.honeyComb,
+      "&:hover" : {
+        backgroundColor : alpha(theme.palette.secondary.link2, 0.25),
+      },
     },
 
     listItem : {
       display : "flex",
       gridGap : "0.5rem",
       alignItems : "center",
-      // justifyContent: "center",
+      justifyContent : "space-around",
+    },
+    socialListItem : {
+      display : "flex",
+      backgroundColor : alpha(theme.palette.secondary.honeyComb, 1.25),
+      alignItems : "center",
+      justifyContent : "space-around",
+      padding : ".65rem",
     },
 
     button : {
-      padding : "0.2rem",
+      height : "100%",
+      width : "100%",
       display : "flex",
       alignItems : "center",
       justifyContent : "start",
@@ -168,8 +179,8 @@ const  BasicMenu = withSuppressedErrorBoundary(({ event }) =>  {
               </Button>
             </Box>
             <Collapse in={isSocialShareOpen}>
-              <Box className={classes.listItem} >
-                <FacebookShareButton url={"https://meshery.io"} quote={event.description || ""} >
+              <Box className={classes.socialListItem} >
+                <FacebookShareButton  url={"https://meshery.io"} quote={event.description || ""} >
                   <FacebookIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
                 </FacebookShareButton>
                 <LinkedinShareButton url={"https://meshery.io"} summary={event.description || ""} >
@@ -317,7 +328,7 @@ export const Notification = withErrorBoundary(({ event_id }) => {
                 <Grid container  >
                   <div>
                     <NestedData classes={classes} heading="Description" data={event.description} />
-                    <div style={{ marginTop : "0.3rem" }}>
+                    <div style={{ marginTop : "1rem" }}>
                       <NestedData classes={classes} heading="Details" data={longDescription} />
                     </div>
                   </div>
