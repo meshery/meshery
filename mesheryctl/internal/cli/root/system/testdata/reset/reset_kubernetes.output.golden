@@ -6,5 +6,5 @@ Version: latest
 Platform: kubernetes
 
 Fetching Meshery Server and Meshery Operator manifests for  local context...
-downloading manifest files from https://github.com/meshery/meshery/tree/v0.6.140/install/deployment_yamls/k8s
+downloading manifest files from https://github.com/meshery/meshery/tree/v0.6.143/install/deployment_yamls/k8s
 ...meshconfig has been reset to default settings.
