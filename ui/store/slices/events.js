@@ -1,5 +1,5 @@
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit'
-import { SEVERITY, STATUS } from '../../components/NotificationCenter/constants'
+import { SEVERITY, STATUS, validateEvents } from '../../components/NotificationCenter/constants'
 
 const initialState = {
   current_view : {
@@ -107,10 +107,10 @@ export const loadEvents = (fetch, page, filters) => async (dispatch, getState) =
       filters
     }))
     if (page <= 1) {
-      dispatch(setEvents(data?.events))
+      dispatch(setEvents(validateEvents(data?.events || []) ))
       return
     }
-    dispatch(pushEvents(data?.events || []))
+    dispatch(pushEvents( validateEvents(data?.events || [])))
   } catch (e) {
     console.error("Error while setting events in store --loadEvents", e)
     return
