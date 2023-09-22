@@ -6,7 +6,7 @@ import { Drawer,  Divider, ClickAwayListener, Typography, alpha, Chip, Button, B
 import Filter from "./filter";
 import BellIcon from "../../assets/icons/BellIcon.js"
 import { iconMedium } from "../../css/icons.styles";
-import { SEVERITY, SEVERITY_STYLE, STATUS, STATUS_STYLE } from "./constants";
+import { NOTIFICATION_CENTER_TOGGLE_CLASS, SEVERITY, SEVERITY_STYLE, STATUS, STATUS_STYLE } from "./constants";
 import classNames from "classnames";
 import Notification from "./notification";
 import { store } from "../../store";
@@ -16,6 +16,7 @@ import { useGetEventsSummaryQuery, useLazyGetEventsQuery } from "../../rtk-query
 import _ from "lodash";
 import DoneIcon from "../../assets/icons/DoneIcon";
 import { ErrorBoundary, withErrorBoundary } from "../General/ErrorBoundary";
+import { hasClass } from "../../utils/Elements";
 
 
 const getSeverityCount = (count_by_severity_level, severity) => {
@@ -219,6 +220,8 @@ const CurrentFilterView = withErrorBoundary( ({ handleFilter }) => {
 })
 
 
+
+
 const MesheryNotification = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch()
@@ -255,10 +258,29 @@ const MesheryNotification = () => {
   const handleFilter = (filters) => {
     dispatch(loadEvents(fetchEvents, 1, filters))
   }
+  const drawerRef = useRef()
+  const toggleButtonRef = useRef()
+
+  const clickwayHandler = (e) => {
+    // checks if event has occured/bubbled up from clicking inside notificationcenter or on the bell icon
+    if (drawerRef.current.contains(e.target) || toggleButtonRef.current.contains(e.target)){
+      return
+    }
+    // check for element with toggle class
+    if (hasClass(e.target, NOTIFICATION_CENTER_TOGGLE_CLASS)  ) {
+      return
+    }
+    // check for svg icon (special case) , not checking the toggle class as it is not added to svg
+    if (e.target?.className?.baseVal?.includes('MuiSvgIcon')){
+      return
+    }
+    handleClose()
+  }
 
   return (
     <>
-      <div>
+      <div ref={toggleButtonRef} >
+
         <IconButton
           id="notification-button"
           className={classes.notificationButton}
@@ -278,20 +300,13 @@ const MesheryNotification = () => {
       </div>
 
       <ClickAwayListener
-        onClickAway={(e) => {
-          if (
-            e.target.className.baseVal !== "" &&
-            e.target.className.baseVal !== "MuiSvgIcon-root" &&
-            (typeof e.target.className === "string" ? !e.target.className?.includes("MesheryNotification") : null)
-          ) {
-            handleClose();
-          }
-        }}
+        onClickAway={clickwayHandler}
       >
         <Drawer
           anchor="right"
           variant="persistent"
           open={open}
+          ref={drawerRef}
           classes={{
             paper : classes.notificationDrawer,
             paperAnchorRight : isNotificationCenterOpen ? classes.fullView : classes.peekView,
