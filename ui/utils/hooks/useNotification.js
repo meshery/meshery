@@ -8,10 +8,14 @@ import CloseIcon from "@material-ui/icons/Close";
 import { useDispatch } from "react-redux";
 import moment from "moment";
 import { v4 } from "uuid";
-import BellIcon from '@material-ui/icons/Notifications';
 import { NOTIFICATION_STATUS } from "../../lib/event-types";
 import { store as rtkStore } from "../../store/index"
 import { toggleNotificationCenter } from "../../store/slices/events";
+import { NOTIFICATION_CENTER_TOGGLE_CLASS } from "../../components/NotificationCenter/constants";
+import React from "react";
+import BellIcon from "../../assets/icons/BellIcon";
+import { AddClassRecursively } from "../Elements";
+
 
 /**
  * A React hook to facilitate emitting events from the client.
@@ -68,9 +72,12 @@ export const useNotification = () => {
           return (
             <ToggleButtonGroup>
               {showInNotificationCenter &&
-                <IconButton key={`openevent-${id}`} aria-label="Open" color="inherit" onClick={() => openEvent(id)}>
-                  <BellIcon style={iconMedium} />
-                </IconButton>}
+                <AddClassRecursively className={NOTIFICATION_CENTER_TOGGLE_CLASS} >
+                  <IconButton key={`openevent-${id}`} aria-label="Open"   color="inherit" onClick={() => openEvent(id)}>
+                    <BellIcon {...iconMedium}  />
+                  </IconButton>
+                </AddClassRecursively>
+              }
               <IconButton key={`closeevent-${id}`} aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
                 <CloseIcon style={iconMedium} />
               </IconButton>

@@ -27,7 +27,7 @@ export const useStyles = makeStyles((theme) => ({
     transition : "0.3s ease-in-out !important",
   },
   peekView : {
-    right : "-42.1rem",
+    right : "-42.8rem",
     transition : "0.3s ease-in-out !important",
   },
 
