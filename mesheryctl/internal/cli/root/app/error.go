@@ -78,7 +78,7 @@ func ErrAppFound() error {
 	)
 }
 
-func ErrInvalidNameOrID(err error) error {
+func ErrInvalidAppNameOrID(err error) error {
 	return errors.New(ErrInvalidAppNameOrIDCode, errors.Alert,
 		[]string{"Invalid application"},
 		[]string{"Failed to get application based on input"},
