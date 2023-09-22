@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{ useEffect } from 'react';
 import MesherySMIResults from "../components/MesherySMIResults";
 import { updatepagepath } from "../lib/store";
 import { connect } from "react-redux";
@@ -11,24 +11,34 @@ const styles = { paper : { maxWidth : '90%',
   margin : 'auto',
   overflow : 'hidden', } };
 
-class SMIResults extends React.Component {
-  componentDidMount () {
-    console.log(`path: ${getPath()}`);
-    this.props.updatepagepath({ path : getPath() });
-  }
+const SMIResults=(props) => {
+  // componentDidMount () {
+  //   console.log(`path: ${getPath()}`);
+  //   this.props.updatepagepath({ path : getPath() });
+  // }
 
-  render () {
-    return (
-      <React.Fragment>
-        <Head>
-          <title>SMI Results | Meshery</title>
-        </Head>
-        <Paper className={this.props.classes.paper}>
-          <MesherySMIResults />
-        </Paper>
-      </React.Fragment>
-    );
-  }
+
+
+
+  useEffect(() => {
+    console.log(`path: ${getPath()}`);
+    props.updatepagepath({ path : getPath() });
+
+  },[props.updatepagepath])
+
+
+
+  return (
+    <React.Fragment>
+      <Head>
+        <title>SMI Results | Meshery</title>
+      </Head>
+      <Paper className={props.classes.paper}>
+        <MesherySMIResults />
+      </Paper>
+    </React.Fragment>
+  );
+
 }
 
 const mapDispatchToProps = dispatch => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch) })
