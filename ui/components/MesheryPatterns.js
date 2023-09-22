@@ -922,7 +922,7 @@ function MesheryPatterns({
   }
 
   const userCanEdit = (pattern) => {
-    return  (user?.role_names?.includes("admin") || user.user_id === "meshery" || user.user_id == pattern.owner_id )
+    return  (user?.role_names?.includes("admin") || user?.user_id === "meshery" || user?.user_id == pattern.user_id )
   }
 
   const handleOpenInConfigurator = (id) => {
