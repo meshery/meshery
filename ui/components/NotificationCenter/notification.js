@@ -24,7 +24,7 @@ const useStyles = makeStyles(() => ({
     width : "100%",
     borderRadius : "0.25rem",
     border : `0.1rem solid ${props.notificationColor}`,
-    borderLeftWidth : props.status === STATUS.READ ? "0.25rem" : "0.1rem",
+    borderLeftWidth : props.status === STATUS.UNREAD ? "0.25rem" : "0.1rem",
     marginBlock : "0.5rem",
   }),
 
@@ -223,6 +223,48 @@ export const DeleteEvent = ({ event }) => {
 }
 
 
+export const FormattedErrorMetadata = ({ metadata }) => {
+  const classes = useStyles()
+  const longDescription = metadata?.LongDescription || []
+  const probableCause = metadata?.ProbableCause || []
+  const suggestedRemediation = metadata?.SuggestedRemediation || []
+
+  return (
+    <Grid container  >
+      <div>
+        <div style={{ marginTop : "1rem" }}>
+          <NestedData classes={classes} heading="Details" data={longDescription} />
+        </div>
+      </div>
+      <Grid container spacing={1} style={{ marginTop : "0.5rem" }}>
+        <Grid item sm={suggestedRemediation?.length > 0 ? 6 : 12}>
+          <NestedData classes={classes} heading="Probable Cause" data={probableCause} />
+        </Grid>
+        <Grid item sm={probableCause?.length > 0 ? 6 : 12} >
+          <NestedData classes={classes} heading="Suggested Remediation" data={suggestedRemediation} />
+        </Grid>
+      </Grid>
+    </Grid>
+  )
+}
+
+const METADATA_FORMATTER = {
+  "error" : FormattedErrorMetadata,
+}
+
+// Maps the metadata to the appropriate formatter component
+export const FormattedMetadata = ({ event }) => {
+  if (!event || !event.metadata ) return null
+
+  const metdataKeys = Object.keys(event.metadata)
+  return metdataKeys.map((key) => {
+    const formatter = METADATA_FORMATTER[key]
+    if (!formatter) return null
+    return <formatter key={key}  metadata={event.metadata[key]} event={event} />
+  })
+}
+
+
 
 export const ChangeStatus = ({ event }) => {
 
@@ -252,7 +294,7 @@ export const ChangeStatus = ({ event }) => {
 
 const BulletList = ({ items }) => {
   return <ol style={{ paddingInline : "0.75rem", paddingBlock : "0.3rem", margin : "0rem" }}>
-    {[items].map((i) => <li key={i} >
+    {items.map((i) => <li key={i} >
       <Typography variant="body1" > {i} </Typography>
     </li>)}
   </ol>
@@ -311,7 +353,7 @@ export const Notification = withErrorBoundary(({ event_id }) => {
               <Grid item sm={1} className={classes.actorAvatar} >
                 <Box sx={{ display : "flex", gridGap : "0.5rem", flexDirection : { xs : "row", md : "column" } }} >
 
-                  {event.user_id &&
+                  {event.user_id  && user &&
                     <Tooltip title={userName} placement="top" >
                       <Avatar alt={userName} src={userAvatarUrl} />
                     </Tooltip>
