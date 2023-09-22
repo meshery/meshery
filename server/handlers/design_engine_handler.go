@@ -154,7 +154,7 @@ func _processPattern(
 	skipCrdAndOperator bool,
 	skipPrintLogs bool,
 	registry *meshmodel.RegistryManager,
-	ec *models.EventBroadcast,
+	ec *models.Broadcast,
 	l logger.Handler,
 ) (map[string]interface{}, error) {
 	resp := make(map[string]interface{})
@@ -310,7 +310,7 @@ type serviceActionProvider struct {
 	skipPrintLogs      bool
 	accumulatedMsgs    []string
 	err                error
-	eventsChannel      *models.EventBroadcast
+	eventsChannel      *models.Broadcast
 	registry           *meshmodel.RegistryManager
 	patternName        string
 }

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a75b202ee81b8046d5b95519965ac914>>
+ * @generated SignedSource<<49e3869624d07be085d19ab99c102219>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,7 +13,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "k8scontextID"
+    "name": "connectionID"
   }
 ],
 v1 = [
@@ -22,8 +22,8 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "k8scontextID",
-        "variableName": "k8scontextID"
+        "name": "connectionID",
+        "variableName": "connectionID"
       }
     ],
     "concreteType": "OperatorControllerStatus",
@@ -74,16 +74,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "e02d86123c1155db14fdabb73d68a596",
+    "cacheID": "f232d0001a24e998f5d993786cfed5f6",
     "id": null,
     "metadata": {},
     "name": "NatsStatusQuery",
     "operationKind": "query",
-    "text": "query NatsStatusQuery(\n  $k8scontextID: String!\n) {\n  controller: getNatsStatus(k8scontextID: $k8scontextID) {\n    name\n    version\n    status\n  }\n}\n"
+    "text": "query NatsStatusQuery(\n  $connectionID: String!\n) {\n  controller: getNatsStatus(connectionID: $connectionID) {\n    name\n    version\n    status\n  }\n}\n"
   }
 };
 })();
 
-node.hash = "4dc5b2d81433e73a9eab8bd581d16b46";
+node.hash = "10628d273554398f8d127aaa764a94fd";
 
 module.exports = node;
