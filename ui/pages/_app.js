@@ -473,7 +473,6 @@ class MesheryApp extends App {
                   >
 
                     <EventsSubsciptionProvider />
-                    {console.log("rendering _app")}
                     <MesheryProgressBar />
                     {!this.state.isFullScreenMode && <Header
                       onDrawerToggle={this.handleDrawerToggle}

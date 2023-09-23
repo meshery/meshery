@@ -378,7 +378,6 @@ function ExtensionSandbox ({ type, Extension, isDrawerCollapsed, toggleDrawer, c
                   : (type === "collaborator")?
                     (
                       getComponentURIFromPathForCollaborator(extension).map(uri => {
-                        console.log("rendering collaborator ext")
                         updateCollaboratorExtState({ collaboratorExtState : true });
                         return <Extension url={createPathForRemoteComponent(uri)} key={uri} />
                       })
