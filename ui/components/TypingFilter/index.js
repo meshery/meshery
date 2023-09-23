@@ -148,9 +148,10 @@ const FilterValueSuggestions = ({ filterStateMachine, dispatchFilterMachine, fil
  * @param {object} props - Component props.
  * @param {FilterSchema} filterSchema - The schema defining available filter options.
  * @param {function} handleFilter - A callback function to handle filter changes.
+ * @param {boolean} autoFilter - A boolean to indicate if the filter should be applied automatically (on user input) .
  * @returns {JSX.Element} - A React JSX element representing the TypingFilter component.
  */
-const TypingFilter = ({ filterSchema, handleFilter }) => {
+const TypingFilter = ({ filterSchema, handleFilter , autoFilter=false }) => {
   const theme = useTheme();
   // console.log("initialFilter", initialFilter)
   const classes = useStyles();
@@ -165,6 +166,7 @@ const TypingFilter = ({ filterSchema, handleFilter }) => {
     state : FILTERING_STATE.IDLE,
   });
 
+
   const handleFilterChange = (e) => {
 
     if (!anchorEl) {
@@ -177,12 +179,13 @@ const TypingFilter = ({ filterSchema, handleFilter }) => {
       });
     }
 
-    return dispatch({
+    dispatch({
       type : FILTER_EVENTS.INPUT_CHANGE,
       payload : {
         value : e.target.value,
       },
     });
+
   };
 
   const handleClear = () => {
@@ -226,6 +229,12 @@ const TypingFilter = ({ filterSchema, handleFilter }) => {
     }
   }, [inputFieldRef.current])
 
+
+  useEffect(() => {
+    if (autoFilter && filteringState.state == FILTERING_STATE.SELECTING_FILTER) {
+      handleFilter(getFilters(filteringState.context.value, filterSchema))
+    }
+  }, [filteringState.state])
 
 
   return (

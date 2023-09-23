@@ -308,15 +308,16 @@ class MesheryApp extends App {
     }
     this.props.store.dispatch({ type : actionTypes.SET_K8S_CONTEXT, selectedK8sContexts : activeK8sContexts });
   }
-
   setActiveContexts = (id) => {
     if (this.state.k8sContexts?.contexts) {
-      if (id === "all") {
+      if (id === "all"  ) {
         let activeContexts = [];
-        this.state.k8sContexts.contexts.forEach(ctx =>
-          activeContexts.push(ctx.id)
-        );
-        activeContexts.push("all");
+        if ( !this.state.activeK8sContexts?.includes("all")) {
+          this.state.k8sContexts.contexts.forEach(ctx =>
+            activeContexts.push(ctx.id)
+          );
+          activeContexts.push("all");
+        }
         this.setState({ activeK8sContexts : activeContexts },
           () => this.activeContextChangeCallback(this.state.activeK8sContexts));
         return;

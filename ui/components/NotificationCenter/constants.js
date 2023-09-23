@@ -13,6 +13,10 @@ export const SEVERITY = {
   // SUCCESS: "success"
 }
 
+// This class is required to add to any svg or button that opens notification center
+// To prevent the clickaway listner from blocking it
+export const NOTIFICATION_CENTER_TOGGLE_CLASS = "toggle-notification-center"
+
 export const SEVERITY_TO_NOTIFICATION_TYPE_MAPPING = {
   [SEVERITY.INFO] : "info",
   [SEVERITY.ERROR] : "error",

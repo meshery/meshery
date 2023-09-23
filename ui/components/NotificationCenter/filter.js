@@ -43,7 +43,7 @@ const useFilterSchema = () => {
 
 const Filter = withErrorBoundary(({ handleFilter }) => {
   const filterSchema = useFilterSchema();
-  return <TypingFilter handleFilter={handleFilter} filterSchema={filterSchema} />;
+  return <TypingFilter handleFilter={handleFilter} filterSchema={filterSchema} autoFilter={true} />;
 });
 
 export default Filter;
