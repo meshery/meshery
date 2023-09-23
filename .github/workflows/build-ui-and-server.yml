@@ -72,15 +72,15 @@ jobs:
           cd ..
           cd provider-ui
           npm i
-      - name: Cache meshery-ui
-        id: meshery-ui-cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            /home/runner/work/meshery/meshery/ui/out
-          key: ${{ runner.os }}-meshery-ui-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+      # - name: Cache meshery-ui
+      #   id: meshery-ui-cache
+      #   uses: actions/cache@v3
+      #   with:
+      #     path: |
+      #       /home/runner/work/meshery/meshery/ui/out
+      #     key: ${{ runner.os }}-meshery-ui-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
       - name: build meshery-ui
-        if: steps.meshery-ui-cache.outputs.cache-hit != 'true'
+        # if: steps.meshery-ui-cache.outputs.cache-hit != 'true'
         run: |
           make ui-meshery-build
       - name: build provider-ui
