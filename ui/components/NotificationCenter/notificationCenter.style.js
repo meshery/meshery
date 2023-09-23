@@ -1,4 +1,4 @@
-import { makeStyles } from "@material-ui/core"
+import { makeStyles } from "@material-ui/core";
 
 export const useStyles = makeStyles((theme) => ({
   sidelist : {
@@ -32,7 +32,7 @@ export const useStyles = makeStyles((theme) => ({
   },
 
   container : {
-    padding : "1.25rem"
+    padding : "1.25rem",
   },
   header : {
     display : "flex",
@@ -55,7 +55,7 @@ export const useStyles = makeStyles((theme) => ({
     padding : "0.2rem",
     justifyContent : "center",
     alignItems : "center",
-    cursor : "pointer"
+    cursor : "pointer",
   },
   // Aggregrate Level Chips
   severityChip : {
@@ -79,11 +79,10 @@ export const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
 export const useNavNotificationIconStyles = makeStyles(() => ({
   root : (props) => ({
-    '& .MuiBadge-badge' : {
+    "& .MuiBadge-badge" : {
       backgroundColor : props.badgeColor,
     },
   }),
-}))
+}));
