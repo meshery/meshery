@@ -1203,6 +1203,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     let adapterChip = (
       <Chip
         label={adapter.adapter_location}
+        data-cy="adapter-chip-ping"
         onClick={this.handleAdapterClick(adapter.adapter_location)}
         icon={<img src={imageSrc} className={classes.icon} />}
         className={classes.chip}
