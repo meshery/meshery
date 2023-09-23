@@ -78,6 +78,12 @@ jobs:
         uses: helm/kind-action@v1.5.0
         with:
           cluster_name: "kind-cluster"
+      - name: Start Mesheryctl System
+        run: |
+           cd mesheryctl; make; ./mesheryctl system start 
+      - name: Check Meshery System Readiness
+        run: |
+           cd mesheryctl; make; ./mesheryctl system check --preflight     
       - name: Run coverage
         run: go test -run Integration ./... -race -coverprofile=coverage.txt -covermode=atomic -timeout 40m
       - name: Upload coverage to Codecov
@@ -85,10 +91,4 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           files: ./coverage.txt
-          flags: gointegrationtests   
-      - name: Start Mesheryctl System
-        run: |
-         cd mesheryctl; make; ./mesheryctl system start 
-      - name: Check Meshery System Readiness
-        run: |
-         cd mesheryctl; make; ./mesheryctl system check --preflight   
+          flags: gointegrationtests     
