@@ -250,8 +250,6 @@ class MesheryApp extends App {
     document.removeEventListener("fullscreenchange", this.fullScreenChanged);
   }
 
-
-
   componentDidUpdate(prevProps) {
     const { k8sConfig, capabilitiesRegistry } = this.props;
 
@@ -475,6 +473,7 @@ class MesheryApp extends App {
                   >
 
                     <EventsSubsciptionProvider />
+                    {console.log("rendering _app")}
                     <MesheryProgressBar />
                     {!this.state.isFullScreenMode && <Header
                       onDrawerToggle={this.handleDrawerToggle}

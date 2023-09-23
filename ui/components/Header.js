@@ -29,11 +29,9 @@ import {
   successHandlerGenerator, errorHandlerGenerator
 } from './ConnectionWizard/helpers/common';
 import { promisifiedDataFetch } from '../lib/data-fetch';
-import { updateK8SConfig, updateProgress, updateCapabilities } from '../lib/store';
+import { updateK8SConfig, updateProgress, updateCapabilities, updateCollaboratorExtState } from '../lib/store';
 import { bindActionCreators } from 'redux';
 import BadgeAvatars from './CustomAvatar';
-import { CapabilitiesRegistry as CapabilityRegistryClass } from '../utils/disabledComponents';
-import _ from 'lodash';
 import { SETTINGS } from '../constants/navigator';
 import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
 import PromptComponent from './PromptComponent';
@@ -516,7 +514,7 @@ function K8sContextMenu({
   )
 }
 
-class Header extends React.Component {
+class Header extends React.PureComponent {
 
   constructor(props) {
     super(props);
@@ -527,6 +525,7 @@ class Header extends React.Component {
     }
   }
   componentDidMount() {
+    console.log("header component mounted")
     dataFetch(
       "/api/provider/capabilities",
       {
@@ -551,13 +550,12 @@ class Header extends React.Component {
 
   }
 
-  componentDidUpdate(prevProps) {
-    if (!_.isEqual(prevProps.capabilitiesRegistry, this.props.capabilitiesRegistry)) {
-      this.setState({ capabilityregistryObj : new CapabilityRegistryClass(this.props.capabilitiesRegistry) });
+  shouldComponentUpdate(nextProps) {
+    if (!nextProps?.collaboratorExtState) {
+      return true;
     }
-
+    return false;
   }
-
   componentWillUnmount = () => {
     this._isMounted = false;
   }
@@ -656,7 +654,8 @@ const mapStateToProps = (state) => {
     k8sconfig : state.get('k8sConfig'),
     operatorState : state.get('operatorState'),
     meshSyncState : state.get('meshSyncState'),
-    capabilitiesRegistry : state.get("capabilitiesRegistry")
+    capabilitiesRegistry : state.get("capabilitiesRegistry"),
+    collaboratorExtState : state.get("collaboratorExtState"),
   })
 };
 
@@ -664,6 +663,7 @@ const mapDispatchToProps = (dispatch) => ({
   updateK8SConfig : bindActionCreators(updateK8SConfig, dispatch),
   updateProgress : bindActionCreators(updateProgress, dispatch),
   updateCapabilities : bindActionCreators(updateCapabilities, dispatch),
+  updateCollaboratorExtState : bindActionCreators(updateCollaboratorExtState, dispatch),
 });
 
 
