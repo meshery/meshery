@@ -1,9 +1,8 @@
 import { Avatar, CircularProgress, FormControl, Grid, IconButton, MenuItem, NoSsr, TextField, Toolbar, Tooltip } from "@material-ui/core";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import AppBarComponent from "./styledComponents/AppBar";
 
 import DeleteIcon from "@material-ui/icons/Delete";
-import FileCopyIcon from '@material-ui/icons/FileCopy';
 import SaveIcon from '@material-ui/icons/Save';
 import { AvatarGroup } from "@mui/material";
 import { iconMedium } from "../../../css/icons.styles";
@@ -12,13 +11,27 @@ import { getWebAdress } from "../../../utils/webApis";
 import CodeEditor from "../CodeEditor";
 import LazyComponentForm from "./LazyComponentForm";
 import useDesignLifecycle from "./hooks/useDesignLifecycle";
+import { useRouter } from "next/router";
+import { ArrowBack  } from "@material-ui/icons";
+import TooltipButton from "../../../utils/TooltipButton";
+import { SaveAs as SaveAsIcon } from "@mui/icons-material";
 
 export default function DesignConfigurator() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedModel, setSelectedModel] = useState(null);
   const { models, meshmodelComponents, getModelFromCategory, getComponentsFromModel, categories } = useMeshModelComponents();
-  const { onSettingsChange, designSave, designUpdate, designYaml, designJson, designId, designDelete } = useDesignLifecycle();
+  const { onSettingsChange, designSave, designUpdate, designYaml, designJson, designId, designDelete ,updateDesignName,designName ,loadDesign ,updateDesignData } = useDesignLifecycle();
   const formReference = useRef();
+
+  const router = useRouter();
+  const { design_id } = router.query;
+  console.log("design_id", design_id)
+
+  useEffect(function loadDesignOnMount() {
+    if (design_id) {
+      loadDesign(design_id)
+    }
+  }, [design_id])
 
   function handleCategoryChange(event) {
     setSelectedCategory(event.target.value);
@@ -34,6 +47,11 @@ export default function DesignConfigurator() {
 
   return (
     <NoSsr>
+      <TooltipButton title="Back" placement="left">
+        <IconButton onClick={() => router.back()}>
+          <ArrowBack />
+        </IconButton>
+      </TooltipButton>
       <AppBarComponent position="static" elevation={0}>
         <Toolbar>
           <div style={{ flexGrow : 1 }}>
@@ -113,13 +131,16 @@ export default function DesignConfigurator() {
           </div>
 
           {/* Action Toolbar */}
+          <TextField label="Design Name" value={designName} onChange={(e) => updateDesignName(e.target.value) } />
+
+
           <Tooltip title="Save Design as New File">
             <IconButton
               aria-label="Save"
               color="primary"
               onClick={designSave}
             >
-              <SaveIcon style={iconMedium} />
+              <SaveAsIcon style={iconMedium} />
             </IconButton>
           </Tooltip>
           {
@@ -131,7 +152,7 @@ export default function DesignConfigurator() {
                     color="primary"
                     onClick={designUpdate}
                   >
-                    <FileCopyIcon style={iconMedium} />
+                    <SaveIcon style={iconMedium} />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title="Delete Design">
@@ -162,7 +183,13 @@ export default function DesignConfigurator() {
           }
         </Grid>}
         <Grid item xs={12} md={selectedCategory && selectedModel ? 6 : 12}>
-          <CodeEditor yaml={designYaml} saveCodeEditorChanges={() => { }} fullWidth={!(selectedCategory && selectedModel)} />
+          <CodeEditor yaml={designYaml}
+            onChange={(_val,_view,update) => {
+              updateDesignData({ yamlData : update })
+            }}
+            saveCodeEditorChanges={(args) => {
+              console.log("onSave",args)
+            }} fullWidth={!(selectedCategory && selectedModel)} />
           {
             designJson?.services && Object.keys(designJson.services).length > 0 && (
               <AvatarGroup max={10} style={{

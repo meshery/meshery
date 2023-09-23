@@ -1,4 +1,3 @@
-//@ts-check
 import React, { useState } from "react";
 import {
   Avatar, Divider, Grid, IconButton, Typography, Tooltip
@@ -20,10 +19,13 @@ import TooltipButton from '../../utils/TooltipButton'
 import CloneIcon from "../../public/static/img/CloneIcon";
 import { VISIBILITY } from "../../utils/Enum";
 import { useTheme } from "@material-ui/core/styles";
+import { useRouter } from "next/router";
+import { Edit } from "@material-ui/icons";
 
 const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
 
 function MesheryPatternCard({
+  id,
   name,
   updated_at,
   created_at,
@@ -40,10 +42,13 @@ function MesheryPatternCard({
   setYaml,
   description={},
   visibility,
-  canPublishPattern = false
+  canPublishPattern = false,
+  user ,
+  pattern,
 }) {
 
 
+  const router = useRouter()
 
   const genericClickHandler = (ev, fn) => {
     ev.stopPropagation();
@@ -62,6 +67,12 @@ function MesheryPatternCard({
   const catalogContentValues = Object.values(description);
   const classes = useStyles()
   const theme = useTheme()
+
+  const editInConfigurator = () => {
+    router.push("/configuration/designs/configurator?design_id="+id)
+  }
+  const userCanEdit = (user?.role_names?.includes("admin") || user?.user_id === "meshery" || user?.user_id == pattern?.user_id )
+
 
   return (
     <>
@@ -193,6 +204,20 @@ function MesheryPatternCard({
                 <CloneIcon fill="#ffffff" className={classes.iconPatt} />
                 <span className={classes.cloneBtnText}> Clone </span>
               </TooltipButton>  }
+
+              { userCanEdit && <TooltipButton
+                title="Edit In Configurator"
+                variant="contained"
+                color="primary"
+                onClick={(ev) =>
+                  genericClickHandler(ev, editInConfigurator  )
+                }
+                className={classes.testsButton}
+              >
+                <Edit style={{ fill : "#fff" }} className={classes.iconPatt} />
+                <span className={classes.cloneBtnText}> Edit  </span>
+              </TooltipButton>
+              }
 
             </div>
           </div>

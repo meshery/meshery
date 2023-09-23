@@ -30,7 +30,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function CodeEditor({ yaml, saveCodeEditorChanges, fullWidth }) {
+export default function CodeEditor({ yaml, saveCodeEditorChanges, fullWidth,onChange  }) {
   const [style, setStyle] = useState(67)
   const classes = useStyles({ scrollPos : style, fullWidth });
 
@@ -63,6 +63,10 @@ export default function CodeEditor({ yaml, saveCodeEditorChanges, fullWidth }) {
               lineWrapping : true,
               gutters : ["CodeMirror-lint-markers"],
               mode : "text/x-yaml",
+            }}
+            onChange = {(a,b,c) => {
+              console.log("onChange",a,b,c)
+              onChange(a,b,c)
             }}
             onBlur={(a) => saveCodeEditorChanges(a)}
             style={{

@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Avatar, Box, Button, Collapse,  Grid, Hidden, IconButton, Popover, Slide, Tooltip, Typography, alpha, useTheme } from "@material-ui/core"
+import { Avatar, Box, Button, Collapse, Grid, Hidden, IconButton, Popover, Slide, Tooltip, Typography, alpha, useTheme } from "@material-ui/core"
 import { makeStyles } from "@material-ui/core"
 import { SEVERITY_STYLE, STATUS } from "./constants"
 import { iconLarge, iconMedium } from "../../css/icons.styles"
-import { MoreVert } from "@material-ui/icons"
+import { Launch as LaunchIcon , MoreVert as MoreVertIcon } from "@material-ui/icons"
 import FacebookIcon from "../../assets/icons/FacebookIcon"
 import LinkedInIcon from "../../assets/icons/LinkedInIcon"
 import TwitterIcon from "../../assets/icons/TwitterIcon"
@@ -17,13 +17,14 @@ import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { FacebookShareButton, LinkedinShareButton, TwitterShareButton } from 'react-share';
 import ReadIcon from '../../assets/icons/ReadIcon';
 import UnreadIcon from '../../assets/icons/UnreadIcon';
+import { ErrorBoundary, withErrorBoundary, withSuppressedErrorBoundary } from '../General/ErrorBoundary';
 
 const useStyles = makeStyles(() => ({
   root : (props) => ({
     width : "100%",
     borderRadius : "0.25rem",
     border : `0.1rem solid ${props.notificationColor}`,
-    borderLeftWidth : props.status === STATUS.READ ? "0.25rem" : "0.1rem",
+    borderLeftWidth : props.status === STATUS.UNREAD ? "0.25rem" : "0.1rem",
     marginBlock : "0.5rem",
   }),
 
@@ -61,6 +62,7 @@ const useStyles = makeStyles(() => ({
   descriptionHeading : {
     fontWeight : "bolder !important",
     textTransform : "uppercase",
+    fontSize : "0.9rem",
   },
 
 
@@ -78,24 +80,34 @@ const useMenuStyles = makeStyles((theme) => {
     },
 
     list : {
-      padding : "0.5rem",
       display : "flex",
       flexDirection : "column",
       gridGap : "0.5rem",
       marginBlock : "0.5rem",
       borderRadius : "0.25rem",
       backgroundColor : theme.palette.secondary.honeyComb,
+      "&:hover" : {
+        backgroundColor : alpha(theme.palette.secondary.link2, 0.25),
+      },
     },
 
     listItem : {
       display : "flex",
       gridGap : "0.5rem",
       alignItems : "center",
-      // justifyContent: "center",
+      justifyContent : "space-around",
+    },
+    socialListItem : {
+      display : "flex",
+      backgroundColor : alpha(theme.palette.secondary.honeyComb, 0.25),
+      alignItems : "center",
+      justifyContent : "space-around",
+      padding : ".65rem",
     },
 
     button : {
-      padding : "0.2rem",
+      height : "100%",
+      width : "100%",
       display : "flex",
       alignItems : "center",
       justifyContent : "start",
@@ -116,12 +128,11 @@ const formatTimestamp = (utcTimestamp) => {
   return moment(utcTimestamp).fromNow()
 }
 
-function BasicMenu({ event } ) {
+const  BasicMenu = withSuppressedErrorBoundary(({ event }) =>  {
 
   const classes = useMenuStyles()
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
-
 
   const handleClick = (event) => {
     event.stopPropagation()
@@ -148,7 +159,7 @@ function BasicMenu({ event } ) {
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
       >
-        <MoreVert />
+        <MoreVertIcon />
       </IconButton>
       <Popover
         open={open}
@@ -168,14 +179,14 @@ function BasicMenu({ event } ) {
               </Button>
             </Box>
             <Collapse in={isSocialShareOpen}>
-              <Box className={classes.listItem} >
-                <FacebookShareButton url={"https://meshery.io"} quote={event.description} >
+              <Box className={classes.socialListItem} >
+                <FacebookShareButton  url={"https://meshery.io"} quote={event.description || ""} >
                   <FacebookIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
                 </FacebookShareButton>
-                <LinkedinShareButton url={"https://meshery.io"} summary={event.description} >
+                <LinkedinShareButton url={"https://meshery.io"} summary={event.description || ""} >
                   <LinkedInIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
                 </LinkedinShareButton>
-                <TwitterShareButton url={"https://meshery.io"} title={event.description} >
+                <TwitterShareButton url={"https://meshery.io"} title={event.description || ""} >
                   <TwitterIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
                 </TwitterShareButton>
               </Box>
@@ -188,7 +199,7 @@ function BasicMenu({ event } ) {
       </Popover >
     </div >
   );
-}
+})
 
 export const DeleteEvent = ({ event }) => {
 
@@ -208,6 +219,59 @@ export const DeleteEvent = ({ event }) => {
       </Button>
     </div>
   )
+
+}
+
+
+export const ErrorMetadataFormatter = ({ metadata , event ,classes }) => {
+  const longDescription = metadata?.LongDescription || []
+  const probableCause = metadata?.ProbableCause || []
+  const suggestedRemediation = metadata?.SuggestedRemediation || []
+  const errorCode = metadata?.error_code  || ""
+  const code = metadata?.Code || ""
+  const formattedErrorCode = errorCode ? `${errorCode}-${code}` : code
+  const errorLink = `https://docs.meshery.io/reference/error-codes#${formattedErrorCode}`
+  return (
+    <Grid container  >
+      <div>
+
+        <a href={errorLink} target="_blank" rel="noopener noreferrer" style={{ color : "inherit" }} >
+          <Typography variant="h5" className={classes.descriptionHeading} style={{ textDecorationLine : "underline", cursor : "pointer",  marginBottom : "0.5rem" }}  >
+            {formattedErrorCode}
+            <sup>
+              <LaunchIcon style={{ width : "1rem",height : "1rem" }} />
+            </sup>
+          </Typography>
+        </a>
+        <NestedData classes={classes}  data={event.description} />
+        <div style={{ marginTop : "1rem" }}>
+          <NestedData classes={classes} heading="Details" data={longDescription} />
+        </div>
+      </div>
+      <Grid container spacing={1} style={{ marginTop : "0.5rem" }}>
+        <Grid item sm={suggestedRemediation?.length > 0 ? 6 : 12}>
+          <NestedData classes={classes} heading="Probable Cause" data={probableCause} />
+        </Grid>
+        <Grid item sm={probableCause?.length > 0 ? 6 : 12} >
+          <NestedData classes={classes} heading="Suggested Remediation" data={suggestedRemediation} />
+        </Grid>
+      </Grid>
+    </Grid>
+  )
+}
+const METADATA_FORMATTER = {
+  "error" : ErrorMetadataFormatter,
+}
+
+// Maps the metadata to the appropriate formatter component
+const FormattedMetadata = ({ event ,classes }) => {
+  if (!event || !event.metadata ) return null
+  const metdataKeys = Object.keys(event.metadata)
+  return metdataKeys.map((key) => {
+    const Formatter = METADATA_FORMATTER[key]
+    if (!Formatter) return null
+    return <Formatter key={key}  metadata={event.metadata[key]} event={event} classes={classes} />
+  })
 
 }
 
@@ -241,7 +305,7 @@ export const ChangeStatus = ({ event }) => {
 
 const BulletList = ({ items }) => {
   return <ol style={{ paddingInline : "0.75rem", paddingBlock : "0.3rem", margin : "0rem" }}>
-    {[items].map((i) => <li key={i} >
+    {items.map((i) => <li key={i} >
       <Typography variant="body1" > {i} </Typography>
     </li>)}
   </ol>
@@ -249,7 +313,7 @@ const BulletList = ({ items }) => {
 
 
 
-export const Notification = ({ event_id }) => {
+export const Notification = withErrorBoundary(({ event_id }) => {
   const event = useSelector(state => selectEventById(state, event_id))
   const isVisible = event.is_visible === undefined ? true : event.is_visible
   const severityStyles = SEVERITY_STYLE[event.severity]
@@ -263,18 +327,13 @@ export const Notification = ({ event_id }) => {
     setExpanded(!expanded);
   };
 
-  const { data : user } = useGetUserByIdQuery(event.user_id)
+  const { data : user } = useGetUserByIdQuery(event.user_id || "")
 
   const userName = `${user?.first_name || ""} ${user?.last_name || ""}`
   const userAvatarUrl = user?.avatar_url || ""
 
-  const longDescription = event?.metadata?.error?.LongDescription || []
-  const probableCause = event?.metadata?.error?.ProbableCause || []
-  const suggestedRemediation = event?.metadata?.error?.SuggestedRemediation || []
-
-
   return (
-    <Slide in={isVisible} timeout={250} direction="left" appear={false} enter={false}  mountOnEnter unmountOnExit  >
+    <Slide in={isVisible} timeout={250} direction="left" appear={false} enter={false} mountOnEnter unmountOnExit  >
       <div className={classes.root}>
         <Grid container className={classes.summary} onClick={handleExpandClick} >
           <Grid item sm={1} className={classes.gridItem} >
@@ -290,53 +349,38 @@ export const Notification = ({ event_id }) => {
           </Hidden>
           <Grid item sm={1} >
             <Box>
-              <BasicMenu event={event}/>
+              <BasicMenu event={event} />
             </Box>
           </Grid>
         </Grid>
         <Collapse in={expanded}>
-          <Grid container className={classes.expanded}>
-            <Grid item sm={1} className={classes.actorAvatar} >
-              <Box sx={{ display : "flex", gridGap : "0.5rem", flexDirection : { xs : "row", md : "column" } }} >
-
-                {event.user_id &&
-                  <Tooltip title={userName} placement="top" >
-                    <Avatar alt={userName} src={userAvatarUrl} />
-                  </Tooltip>
-                }
-                {event.system_id &&
-                  <Tooltip title={`System ID: ${event.system_id}`} placement="top" >
-                    <Avatar src="/static/img/meshery-logo.png" />
-                  </Tooltip>
-                }
-
-              </Box>
-            </Grid>
-            <Grid item sm={10}>
-              <Grid container  >
-                <div>
-                  <NestedData classes={classes} heading="Description" data={event.description} />
-                  <div style={{ marginTop : "0.3rem" }}>
-                    <NestedData classes={classes} heading="Details" data={longDescription} />
-                  </div>
-                </div>
-                <Grid container spacing={1} style={{ marginTop : "0.5rem" }}>
-                  <Grid item sm={suggestedRemediation?.length > 0 ? 6 : 12}>
-                    <NestedData classes={classes} heading="Probable Cause" data={probableCause} />
-                  </Grid>
-                  <Grid item sm={probableCause?.length > 0 ? 6 : 12} >
-                    <NestedData classes={classes} heading="Suggested Remediation" data={suggestedRemediation} />
-                  </Grid>
-                </Grid>
+          <ErrorBoundary>
+            <Grid container className={classes.expanded}>
+              <Grid item sm={1} className={classes.actorAvatar} >
+                <Box sx={{ display : "flex", gridGap : "0.5rem", flexDirection : { xs : "row", md : "column" } }} >
+                  {event.user_id  && user &&
+                    <Tooltip title={userName} placement="top" >
+                      <Avatar alt={userName} src={userAvatarUrl} />
+                    </Tooltip>
+                  }
+                  {event.system_id &&
+                    <Tooltip title={`System ID: ${event.system_id}`} placement="top" >
+                      <Avatar src="/static/img/meshery-logo.png" />
+                    </Tooltip>
+                  }
+                </Box>
+              </Grid>
+              <Grid item sm={10}>
+                <FormattedMetadata event={event} classes={classes} />
               </Grid>
             </Grid>
-          </Grid>
+          </ErrorBoundary>
         </Collapse>
       </div >
     </Slide>
   )
 
-}
+})
 const NestedData = ({ heading, data, classes }) => {
 
   if (!data || data?.length == 0) return null
