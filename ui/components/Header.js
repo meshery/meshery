@@ -538,7 +538,7 @@ class Header extends React.PureComponent {
 
           this.setState({
             collaboratorExt : ExtensionPointSchemaValidator("collaborator")(result?.extensions?.collaborator),
-            capabilitiesRegistryObj,
+            capabilityregistryObj : capabilitiesRegistryObj,
           });
           this.props.updateCapabilities({ capabilitiesRegistry : result })
         }
@@ -551,7 +551,7 @@ class Header extends React.PureComponent {
   }
 
   shouldComponentUpdate(nextProps) {
-    if (!nextProps?.collaboratorExtState) {
+    if (!nextProps?.collaboratorExtState && this.state.capabilityregistryObj !== null) {
       return true;
     }
     return false;
