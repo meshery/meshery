@@ -1,13 +1,11 @@
+import { Avatar, IconButton, Paper } from '@layer5/sistent-components';
 import { List, ListItem } from '@material-ui/core';
-import Avatar from '@material-ui/core/Avatar';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Grow from '@material-ui/core/Grow';
-import IconButton from '@material-ui/core/IconButton';
 import ListItemText from '@material-ui/core/ListItemText';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import NoSsr from '@material-ui/core/NoSsr';
-import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';

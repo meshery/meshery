@@ -7,12 +7,12 @@ import {
   IconButton,
   Tooltip,
   Typography,
-} from '@material-ui/core';
+} from '@layer5/sistent-components';
 import useStyles from './MesheryPatterns/Cards.styles';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
-import FullscreenExit from '@material-ui/icons/FullscreenExit';
-import DeleteIcon from '@material-ui/icons/Delete';
-import Fullscreen from '@material-ui/icons/Fullscreen';
+import FullScreenExitIcon from '@layer5/sistent-svg';
+import DeleteIcon from '@layer5/sistent-svg';
+import FullScreenIcon from '@layer5/sistent-svg';
 import Save from '@material-ui/icons/Save';
 
 const YAMLDialog = ({
@@ -39,7 +39,7 @@ const YAMLDialog = ({
         </Typography>
         <Tooltip title="Exit Fullscreen" arrow interactive placement="bottom">
           <IconButton onClick={toggleFullScreen}>
-            {fullScreen ? <FullscreenExit /> : <Fullscreen />}
+            {fullScreen ? <FullScreenExitIcon /> : <FullScreenIcon />}
           </IconButton>
         </Tooltip>
       </DialogTitle>

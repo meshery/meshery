@@ -8,9 +8,9 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
-} from '@material-ui/core';
+  Slide,
+} from '@layer5/sistent-components';
 import CloseIcon from '@material-ui/icons/Close';
-import Slide from '@material-ui/core/Slide';
 
 const styles = makeStyles((theme) => ({
   root: {
