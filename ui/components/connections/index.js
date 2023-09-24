@@ -61,9 +61,7 @@ const styles = (theme) => ({
       padding : "0 2px"
     },
     "& .MuiSelect-icon" : {
-      color : "#ff",
-      marginTop : "2px",
-      rotate : "270deg"
+      display : "none"
     }
   },
   createButton : {
@@ -77,7 +75,7 @@ const styles = (theme) => ({
     marginLeft : "auto",
     paddingLeft : "1rem",
   },
-  statusCip : {
+  statusChip : {
     minWidth : "120px !important",
     maxWidth : "max-content !important",
     display : "flex !important",
@@ -91,6 +89,7 @@ const styles = (theme) => ({
     },
     "&:hover" : {
       boxShadow : "0px 1px 2px 0px rgba(0, 0, 0, 0.25)",
+      cursor : "pointer"
     },
   },
   capitalize : {
@@ -248,40 +247,40 @@ function Connections({
       case 'ignored':
         return (
           <MenuItem value={value}>
-            <Chip className={classNames(classes.statusCip, classes.ignored)} avatar={<RemoveCircleIcon />} label={value} />
+            <Chip className={classNames(classes.statusChip, classes.ignored)} avatar={<RemoveCircleIcon />} label={value} />
           </MenuItem>
         )
       case 'connected':
         return (
           <MenuItem value={value}>
-            <Chip className={classNames(classes.statusCip, classes.connected)} value={value} avatar={<CheckCircleIcon />} label={value} />
+            <Chip className={classNames(classes.statusChip, classes.connected)} value={value} avatar={<CheckCircleIcon />} label={value} />
           </MenuItem>
         )
       case 'REGISTERED':
         return (
           <MenuItem value={value}>
-            <Chip className={classNames(classes.statusCip, classes.registered)} value={value} avatar={<AssignmentTurnedInIcon />} label={value.toLowerCase()} />
+            <Chip className={classNames(classes.statusChip, classes.registered)} value={value} avatar={<AssignmentTurnedInIcon />} label={value.toLowerCase()} />
           </MenuItem>
         )
       case 'discovered':
         return (
           (
             <MenuItem value={value}>
-              <Chip className={classNames(classes.statusCip, classes.discovered)} value={value} avatar={<ExploreIcon />} label={value} />
+              <Chip className={classNames(classes.statusChip, classes.discovered)} value={value} avatar={<ExploreIcon />} label={value} />
             </MenuItem>
           )
         )
       case 'deleted':
         return (
           <MenuItem value={value}>
-            <Chip className={classNames(classes.statusCip, classes.deleted)} value={value} avatar={<DeleteForeverIcon />} label={value} />
+            <Chip className={classNames(classes.statusChip, classes.deleted)} value={value} avatar={<DeleteForeverIcon />} label={value} />
           </MenuItem>
         )
       default:
         return (
           (
             <MenuItem value={value}>
-              <Chip className={classNames(classes.statusCip, classes.discovered)} value={value} avatar={<ExploreIcon />} label={value} />
+              <Chip className={classNames(classes.statusChip, classes.discovered)} value={value} avatar={<ExploreIcon />} label={value} />
             </MenuItem>
           )
         )
