@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
 	meshkitKube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -16,33 +15,10 @@ import (
 func (r *Resolver) getAvailableNamespaces(ctx context.Context, provider models.Provider, k8sClusterIDs []string) ([]*model.NameSpace, error) {
 	var cids []string
 	if len(k8sClusterIDs) != 0 {
-		k8sCtxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
-		if !ok || len(k8sCtxs) == 0 {
-			return nil, ErrMesheryClient(nil)
-		}
-		if len(k8sClusterIDs) == 1 && k8sClusterIDs[0] == "all" {
-			for _, k8sContext := range k8sCtxs {
-				if k8sContext.KubernetesServerID != nil {
-					clusterID := k8sContext.KubernetesServerID.String()
-					cids = append(cids, clusterID)
-				}
-			}
-		} else {
-			cids = k8sClusterIDs
-		}
-	} else { //This is a fallback
-		k8sctxs, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
-		if !ok || len(k8sctxs) == 0 {
-			r.Log.Error(ErrEmptyCurrentK8sContext)
-			return nil, ErrEmptyCurrentK8sContext
-		}
-		for _, context := range k8sctxs {
-			if context.KubernetesServerID == nil {
-				r.Log.Error(ErrEmptyCurrentK8sContext)
-				return nil, ErrEmptyCurrentK8sContext
-			}
-			cids = append(cids, context.KubernetesServerID.String())
-		}
+		cids = k8sClusterIDs
+	} else {
+		r.Log.Error(ErrEmptyCurrentK8sContext)
+		return nil, ErrEmptyCurrentK8sContext
 	}
 	// resourceobjects := make([]meshsyncmodel.ResourceObjectMeta, 0)
 	namespaces, err := model.SelectivelyFetchNamespaces(cids, provider)
@@ -101,7 +77,7 @@ func (r *Resolver) getKubectlDescribe(_ context.Context, name, kind, namespace s
 
 	client, err := meshkitKube.New([]byte(""))
 	if err != nil {
-		r.Log.Error(ErrMesheryClient(err))
+		r.Log.Error(model.ErrMesheryClient(err))
 		return nil, err
 	}
 
@@ -118,6 +94,7 @@ func (r *Resolver) getKubectlDescribe(_ context.Context, name, kind, namespace s
 
 func (r *Resolver) subscribeClusterResources(ctx context.Context, provider models.Provider, k8scontextIDs []string, namespace string) (<-chan *model.ClusterResources, error) {
 	ch := make(chan struct{}, 1)
+	ch <- struct{}{}
 	respChan := make(chan *model.ClusterResources)
 
 	r.Config.DashboardK8sResourcesChan.SubscribeDashbordK8Resources(ch)
@@ -157,21 +134,11 @@ func (r *Resolver) getClusterResources(ctx context.Context, provider models.Prov
 
 	var rows *sql.Rows
 	var err error
-	k8sCtxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
-	if !ok || len(k8sCtxs) == 0 {
-		return nil, ErrMesheryClient(nil)
+	if len(k8scontextIDs) == 0 {
+		return nil, ErrEmptyCurrentK8sContext
 	}
 
-	if len(k8scontextIDs) == 1 && k8scontextIDs[0] == "all" {
-		for _, k8sContext := range k8sCtxs {
-			if k8sContext.KubernetesServerID != nil {
-				clusterID := k8sContext.KubernetesServerID.String()
-				cids = append(cids, clusterID)
-			}
-		}
-	} else {
-		cids = k8scontextIDs
-	}
+	cids = k8scontextIDs
 
 	rows, err = provider.GetGenericPersister().Raw(query, cids, namespace, cids, cids).Rows()
 
@@ -227,7 +194,7 @@ func (r *Resolver) subscribeK8sContexts(ctx context.Context, provider models.Pro
 
 func (r *Resolver) getK8sContexts(ctx context.Context, provider models.Provider, selector model.PageFilter) (*model.K8sContextsPage, error) {
 	tokenString := ctx.Value(models.TokenCtxKey).(string)
-	resp, err := provider.GetK8sContexts(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order)
+	resp, err := provider.GetK8sContexts(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order, false)
 	if err != nil {
 		return nil, err
 	}
@@ -235,7 +202,7 @@ func (r *Resolver) getK8sContexts(ctx context.Context, provider models.Provider,
 	err = json.Unmarshal(resp, &k8sContext)
 	if err != nil {
 		obj := "k8s context"
-		return nil, handlers.ErrEncoding(err, obj)
+		return nil, models.ErrEncoding(err, obj)
 	}
 	return &k8sContext, nil
 }

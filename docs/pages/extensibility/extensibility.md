@@ -10,7 +10,7 @@ redirect_from:
 language: en
 ---
 
-Meshery has an extensible architecture with several extension points. Meshery provides several extension points for working with different service meshes via [adapters]({{site.baseurl}}/extensibility/adapters), different [load generators]({{site.baseurl}}/extensibility/load-generators) and different [providers]({{site.baseurl}}/extensibility/providers). Meshery also offers a REST API.
+Meshery has an extensible architecture with several extension points. Meshery provides several extension points for working with different cloud and cloud native infrastructure via [adapters]({{site.baseurl}}/extensibility/adapters), different [load generators]({{site.baseurl}}/extensibility/load-generators) and different [providers]({{site.baseurl}}/extensibility/providers). Meshery also offers a REST API.
 
 **Guiding Principles for Extensibility**
 

@@ -8,52 +8,44 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrResolverInvalidRequestCode           = "2222"
-	ErrResolverNilClientCode                = "2223"
-	ErrResolverCreateDataCode               = "2224"
-	ErrResolverMeshsyncSubscriptionCode     = "2226"
-	ErrResolverOperatorSubscriptionCode     = "2227"
-	ErrResolverAddonSubscriptionCode        = "2228"
-	ErrResolverControlPlaneSubscriptionCode = "2229"
-	ErrResolverMesheryClientCode            = "2230"
-	ErrResolverPublishBrokerCode            = "2232"
-	ErrResolverNoMeshSyncCode               = "2233"
-	ErrDataPlaneSubscriptionCode            = "1013"
-	ErrBrokerNotConnectedCode               = "2221"
-	ErrGettingNamespaceCode                 = "1014"
-	ErrFetchingPatternsCode                 = "1015"
-	ErrInvalidOAMTypeCode                   = "2178"
-	ErrKubectlDescribeCode                  = "2179"
-	ErrEmptyCurrentK8sContextCode           = "2180"
-	ErrConfigurationPatternsCode            = "2242"
-	ErrConfigurationApplicationsCode        = "2243"
-	ErrConfigurationFiltersCode             = "2244"
-	ErrK8sContextCode                       = "2245"
-	ErrClusterResourcesSubscriptionCode     = "2246"
-	ErrGettingClusterResourcesCode          = "2247"
-	ErrMeshModelSummarySubscriptionCode     = "2248"
-	ErrGettingMeshModelSummaryCode          = "2249"
-	ErrGettingRegistryManagerCode           = "2250"
-	ErrGettingTelemetryComponentsCode       = "2251"
-	ErrAdapterInsufficientInformationCode   = "2252"
+	ErrResolverInvalidRequestCode           = "1350"
+	ErrResolverNilClientCode                = "1351"
+	ErrResolverMeshsyncSubscriptionCode     = "1353"
+	ErrResolverOperatorSubscriptionCode     = "1354"
+	ErrAddonSubscriptionCode                = "1355"
+	ErrResolverControlPlaneSubscriptionCode = "1356"
+	ErrMesheryClientCode                    = "1357"
+	ErrResolverPublishBrokerCode            = "1358"
+	ErrNoMeshSyncCode                       = "1359"
+	ErrDataPlaneSubscriptionCode            = "1360"
+	ErrBrokerNotConnectedCode               = "1361"
+	ErrGettingNamespaceCode                 = "1362"
+	ErrFetchingPatternsCode                 = "1363"
+	ErrInvalidOAMTypeCode                   = "1364"
+	ErrKubectlDescribeCode                  = "1365"
+	ErrEmptyCurrentK8sContextCode           = "1366"
+	ErrConfigurationPatternsCode            = "1367"
+	ErrConfigurationApplicationsCode        = "1368"
+	ErrConfigurationFiltersCode             = "1369"
+	ErrK8sContextCode                       = "1370"
+	ErrClusterResourcesSubscriptionCode     = "1371"
+	ErrGettingClusterResourcesCode          = "1372"
+	ErrMeshModelSummarySubscriptionCode     = "1373"
+	ErrGettingMeshModelSummaryCode          = "1374"
+	ErrGettingRegistryManagerCode           = "1375"
+	ErrGettingTelemetryComponentsCode       = "1376"
+	ErrAdapterInsufficientInformationCode   = "1377"
+	ErrPerformanceProfilesSubscriptionCode  = "1378"
+	ErrPerformanceResultSubscriptionCode    = "1379"
 )
 
 var (
 	ErrNilClient              = errors.New(ErrResolverNilClientCode, errors.Alert, []string{"Kubernetes client not initialized"}, []string{"Kubernetes config is not initialized with Meshery"}, []string{}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
 	ErrInvalidRequest         = errors.New(ErrResolverInvalidRequestCode, errors.Alert, []string{"Invalid query, please check syntax"}, []string{"The Graphql query requested is invalid"}, []string{}, []string{"Check the query parameters and syntax of the query being run"})
-	ErrNoMeshSync             = errors.New(ErrResolverNoMeshSyncCode, errors.Alert, []string{"MeshSync disabled"}, []string{"MeshSync custom controller is not running in your kubernetes cluster"}, []string{"Meshery Operator is not running in your cluster or is crashing"}, []string{"Enable Meshery Operator from the settings page in the UI", "Check for logs in the meshery-operator pods from inside the application for more information"})
-	ErrEmptyHandler           = errors.New(ErrResolverNoMeshSyncCode, errors.Alert, []string{"Database handler not initialized"}, []string{"Meshery Database handler is not accessible to perform operations"}, []string{"Meshery Database is crashed or not reachable"}, []string{"Restart Meshery Server", "Please check if Meshery server is accessible to the Database"})
+	ErrNoMeshSync             = errors.New(ErrNoMeshSyncCode, errors.Alert, []string{"MeshSync disabled"}, []string{"MeshSync custom controller is not running in your kubernetes cluster"}, []string{"Meshery Operator is not running in your cluster or is crashing"}, []string{"Enable Meshery Operator from the settings page in the UI", "Check for logs in the meshery-operator pods from inside the application for more information"})
 	ErrBrokerNotConnected     = errors.New(ErrBrokerNotConnectedCode, errors.Alert, []string{"Broker not connected"}, []string{"Meshery Broker is not connected to Meshery Server"}, []string{"Meshery Broker is crashed or not reachable"}, []string{"Restart Meshery Server", "Please check if Meshery server has access to the Broker"})
 	ErrEmptyCurrentK8sContext = errors.New(ErrEmptyCurrentK8sContextCode, errors.Alert, []string{"Current kubernetes context is empty"}, []string{"Meshery is not able to get the current kubernetes context"}, []string{"Meshery is crashed or not reachable"}, []string{"Restart Meshery Server", "Please check if Meshery server is accessible to the Database"})
 )
-
-func ErrUpdateData(err error) error {
-	return errors.New(ErrResolverCreateDataCode, errors.Alert, []string{"Error while updating meshsync data", err.Error()}, []string{"Unable to update MeshSync data to the Meshery Database"}, []string{"Meshery Database is crashed or not reachable"}, []string{"Restart Meshery Server", "Please check if Meshery server is accessible to the Database"})
-}
-
-func ErrDeleteData(err error) error {
-	return errors.New(ErrResolverCreateDataCode, errors.Alert, []string{"Error while deleting meshsync data", err.Error()}, []string{"Unable to read MeshSync data to the Meshery Database"}, []string{"Meshery Database is crashed or not reachable"}, []string{"Restart Meshery Server", "Please check if Meshery server is accessible to the Database"})
-}
 
 func ErrMeshsyncSubscription(err error) error {
 	return errors.New(ErrResolverMeshsyncSubscriptionCode, errors.Alert, []string{"MeshSync Subscription failed", err.Error()}, []string{"GraphQL subscription for MeshSync stopped"}, []string{"Could be a network issue"}, []string{"Check if meshery server is reachable from the browser"})
@@ -64,15 +56,15 @@ func ErrOperatorSubscription(err error) error {
 }
 
 func ErrAddonSubscription(err error) error {
-	return errors.New(ErrResolverAddonSubscriptionCode, errors.Alert, []string{"Addons Subscription failed", err.Error()}, []string{"GraphQL subscription for Addons stopped"}, []string{"Could be a network issue"}, []string{"Check if meshery server is reachable from the browser"})
+	return errors.New(ErrAddonSubscriptionCode, errors.Alert, []string{"Addons Subscription failed", err.Error()}, []string{"GraphQL subscription for Addons stopped"}, []string{"Could be a network issue"}, []string{"Check if meshery server is reachable from the browser"})
 }
 
 func ErrPerformanceProfilesSubscription(err error) error {
-	return errors.New(ErrResolverAddonSubscriptionCode, errors.Alert, []string{"PerformanceProfiles Subscription failed", err.Error()}, []string{"GraphQL subscription for PerformanceProfiles stopped"}, []string{"Could be a network issue"}, []string{"Confirm that Meshery Server is reachable from your browser."})
+	return errors.New(ErrPerformanceProfilesSubscriptionCode, errors.Alert, []string{"PerformanceProfiles Subscription failed", err.Error()}, []string{"GraphQL subscription for PerformanceProfiles stopped"}, []string{"Could be a network issue"}, []string{"Confirm that Meshery Server is reachable from your browser."})
 }
 
 func ErrPerformanceResultSubscription(err error) error {
-	return errors.New(ErrResolverAddonSubscriptionCode, errors.Alert, []string{"PerformanceResult Subscription failed", err.Error()}, []string{"GraphQL subscription for PerformanceResult stopped"}, []string{"Could be a network issue"}, []string{"Confirm that Meshery Server is reachable from your browser."})
+	return errors.New(ErrPerformanceResultSubscriptionCode, errors.Alert, []string{"PerformanceResult Subscription failed", err.Error()}, []string{"GraphQL subscription for PerformanceResult stopped"}, []string{"Could be a network issue"}, []string{"Confirm that Meshery Server is reachable from your browser."})
 }
 
 func ErrControlPlaneSubscription(err error) error {
@@ -87,17 +79,12 @@ func ErrPublishBroker(err error) error {
 	return errors.New(ErrResolverPublishBrokerCode, errors.Alert, []string{"Unable to publish to broker", err.Error()}, []string{"Unable to create a broker publisher"}, []string{"Could be a network issue", "Meshery Broker could have crashed"}, []string{"Check if Meshery Broker is reachable from Meshery Server", "Check if Meshery Broker is up and running inside the configured cluster"})
 }
 
-func ErrMesheryClient(err error) error {
-	if err != nil {
-		return errors.New(ErrResolverMesheryClientCode, errors.Alert, []string{"Meshery kubernetes client not initialized", err.Error()}, []string{"Kubernetes config is not initialized with Meshery 4"}, []string{}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
-	}
-	return errors.New(ErrResolverMesheryClientCode, errors.Alert, []string{"Meshery kubernetes client not initialized"}, []string{"Kubernetes config is not initialized with Meshery 5"}, []string{}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
-}
 func ErrGettingNamespace(err error) error {
 	return errors.New(ErrGettingNamespaceCode, errors.Alert, []string{"Cannot get available namespaces"}, []string{err.Error()}, []string{"The table in the database might not exist"}, []string{})
 }
+
 func ErrFetchingPatterns(err error) error {
-	return errors.New(ErrFetchingPatternsCode, errors.Alert, []string{"Cannot fetch patterns"}, []string{err.Error()}, []string{"There might be something wrong with the Meshery or Meshery Cloud"}, []string{"Try again, if still exist, please post an issue on Meshery repository"})
+	return errors.New(ErrFetchingPatternsCode, errors.Alert, []string{"Cannot fetch designs"}, []string{err.Error()}, []string{"There might be something wrong with the Meshery or Meshery Cloud"}, []string{"Try again, if still exist, please post an issue on Meshery repository"})
 }
 
 func ErrInvalidOAMType() error {
@@ -121,7 +108,7 @@ func ErrKubectlDescribe(err error) error {
 }
 
 func ErrPatternsSubscription(err error) error {
-	return errors.New(ErrConfigurationPatternsCode, errors.Alert, []string{"Configuration Subscription failed", err.Error()}, []string{"GraphQL subscription for Patterns stopped"}, []string{"Could be a network issue"}, []string{"Confirm that Meshery Server is reachable from your browser."})
+	return errors.New(ErrConfigurationPatternsCode, errors.Alert, []string{"Configuration Subscription failed", err.Error()}, []string{"GraphQL subscription for designs stopped"}, []string{"Could be a network issue"}, []string{"Confirm that Meshery Server is reachable from your browser."})
 }
 
 func ErrApplicationsSubscription(err error) error {
@@ -149,7 +136,7 @@ func ErrGettingClusterResources(err error) error {
 		[]string{"Unable to retrieve cluster resources"},
 		[]string{err.Error()},
 		[]string{"Table in the database might not exists"},
-		nil,
+		[]string{""},
 	)
 }
 
@@ -170,7 +157,7 @@ func ErrGettingMeshModelSummary(err error) error {
 		[]string{"Unable to retrieve MeshModel Summary"},
 		[]string{err.Error()},
 		[]string{"Table in the database might not exists"},
-		nil,
+		[]string{""},
 	)
 }
 
@@ -181,12 +168,12 @@ func ErrGettingRegistryManager(err error) error {
 		[]string{"Unable to retrieve Registry Manager"},
 		[]string{err.Error()},
 		[]string{"Registry Manager might not exists"},
-		nil,
+		[]string{""},
 	)
 }
 
 func ErrK8sContextSubscription(err error) error {
-	return errors.New(ErrK8sContextCode, errors.Alert, []string{"Failed to get k8s context from remote provider", err.Error()}, []string{"There might be something wrong with the Meshery or Meshery Cloud"}, []string{"Could be a network issue"}, nil)
+	return errors.New(ErrK8sContextCode, errors.Alert, []string{"Failed to get k8s context from remote provider", err.Error()}, []string{"There might be something wrong with the Meshery or Meshery Cloud"}, []string{"Could be a network issue"}, []string{""})
 }
 
 func ErrGettingTelemetryComponents(err error) error {

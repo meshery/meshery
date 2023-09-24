@@ -92,7 +92,7 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 			logrus.Debugf("Fortio config: %+#v", o)
 			err := json.Unmarshal([]byte(opts.Options), &o)
 			if err != nil {
-				return nil, nil, ErrUnmarshal(err, "options string")
+				return nil, nil, models.ErrUnmarshal(err, "options string")
 			}
 			logrus.Debugf("Fortio config with options: %+#v", o)
 		}
@@ -121,7 +121,7 @@ func FortioLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *peri
 	resultsMap := map[string]interface{}{}
 	err = json.Unmarshal(bd, &resultsMap)
 	if err != nil {
-		return nil, nil, ErrUnmarshal(err, "data to map")
+		return nil, nil, models.ErrUnmarshal(err, "data to map")
 	}
 	logrus.Debugf("Mapped version of the test: %+#v", resultsMap)
 	return resultsMap, result, nil
@@ -150,7 +150,7 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 		logrus.Debugf("GoWrk2 config: %+#v", ro)
 		err := json.Unmarshal([]byte(opts.Options), &ro)
 		if err != nil {
-			return nil, nil, ErrUnmarshal(err, "options string")
+			return nil, nil, models.ErrUnmarshal(err, "options string")
 		}
 		logrus.Debugf("GoWrk2 config with options: %+#v", ro)
 	}
@@ -190,7 +190,7 @@ func WRK2LoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *period
 	resultsMap := map[string]interface{}{}
 	err = json.Unmarshal(bd, &resultsMap)
 	if err != nil {
-		return nil, nil, ErrUnmarshal(err, "data to map")
+		return nil, nil, models.ErrUnmarshal(err, "data to map")
 	}
 	logrus.Debugf("Mapped version of the test: %+#v", resultsMap)
 	return resultsMap, result, nil
@@ -397,7 +397,7 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		// logrus.Debugf("Nighthawk CommandLineOptions: %+#v", ro)
 		err := json.Unmarshal([]byte(opts.Options), &ro)
 		if err != nil {
-			return nil, nil, ErrUnmarshal(err, "options string")
+			return nil, nil, models.ErrUnmarshal(err, "options string")
 		}
 		// logrus.Debugf("Nighthawk CommandLineOptions with options: %+#v", ro)
 	}
@@ -451,25 +451,25 @@ func NighthawkLoadTest(opts *models.LoadTestOptions) (map[string]interface{}, *p
 		gres := &fgrpc.GRPCRunnerResults{}
 		err := json.Unmarshal(d, gres)
 		if err != nil {
-			return nil, nil, ErrUnmarshal(err, "data to object")
+			return nil, nil, models.ErrUnmarshal(err, "data to object")
 		}
 		result = gres.Result()
 	} else {
 		hres := &HTTPRunnerResults{}
 		err := json.Unmarshal(d, hres)
 		if err != nil {
-			return nil, nil, ErrUnmarshal(err, "data to object")
+			return nil, nil, models.ErrUnmarshal(err, "data to object")
 		}
 		result = hres.Result()
 	}
 	if err != nil {
-		return nil, nil, ErrUnmarshal(err, "results to map")
+		return nil, nil, models.ErrUnmarshal(err, "results to map")
 	}
 
 	resultsMap := map[string]interface{}{}
 	err = json.Unmarshal(d, &resultsMap)
 	if err != nil {
-		return nil, nil, ErrUnmarshal(err, "data to map")
+		return nil, nil, models.ErrUnmarshal(err, "data to map")
 	}
 	logrus.Debugf("Mapped version of the test: %+#v", resultsMap)
 	return resultsMap, result, nil

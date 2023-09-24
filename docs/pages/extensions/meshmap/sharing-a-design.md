@@ -47,6 +47,6 @@ Add email address and choose access type. Access type can be Public or Private, 
 
 <div class="alert alert-dark" role="alert">
 <h4 class="alert-heading">Discussion Forum</h4>
-Not finding what you're looking for? Ask on the <a href="https://discuss.layer5.io">Discussion Forum</a>.
+Not finding what you're looking for? Ask on the <a href="http://discuss.meshery.io">Discussion Forum</a>.
 </div>
 

@@ -1,13 +1,16 @@
 package graphql
 
 import (
+	"context"
 	"net/http"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gorilla/websocket"
+	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/internal/graphql/generated"
 	"github.com/layer5io/meshery/server/internal/graphql/resolver"
 	"github.com/layer5io/meshery/server/models"
@@ -35,9 +38,27 @@ func New(opts Options) http.Handler {
 		Broadcast: opts.Broadcaster,
 	}
 
-	srv := handler.New(generated.NewExecutableSchema(generated.Config{
+	config := generated.Config{
 		Resolvers: res,
-	}))
+	}
+	config.Directives.KubernetesMiddleware = func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error) {
+
+		handler, _ := ctx.Value(models.HandlerKey).(*handlers.Handler)
+		user, _ := ctx.Value(models.UserCtxKey).(*models.User)
+		provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
+		ctx, err = handlers.KubernetesMiddleware(ctx, handler, provider, user, []string{})
+		if err != nil {
+			return nil, err
+		}
+
+		ctx, err = handlers.MesheryControllersMiddleware(ctx, handler)
+		if err != nil {
+			return nil, err
+		}
+		return next(ctx)
+	}
+	
+	srv := handler.New(generated.NewExecutableSchema(config))
 
 	srv.AddTransport(transport.POST{})
 	srv.AddTransport(transport.GET{})

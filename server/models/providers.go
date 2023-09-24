@@ -211,6 +211,13 @@ type ConnectionPayload struct {
 	MetaData         map[string]interface{} `json:"metadata,omitempty"`
 	Status           ConnectionStatus       `json:"status,omitempty"`
 	CredentialSecret map[string]interface{} `json:"credential_secret,omitempty"`
+	Name             string                 `json:"name,omitempty"`
+}
+
+type EnvironmentPayload struct {
+	Name             string                 `json:"name,omitempty"`
+	Description 	 string					`json:"description,omitempty"`
+	OrgID 	         string					`json:"org_id,omitempty"`
 }
 
 type ExtensionProxyResponse struct {
@@ -299,6 +306,7 @@ const (
 
 	RegistryManagerKey ContextKey = "registrymanagerkey"
 
+	HandlerKey ContextKey = "handlerkey"	
 	MesheryServerURL         ContextKey = "mesheryserverurl"
 	MesheryServerCallbackURL ContextKey = "mesheryservercallbackurl"
 )
@@ -332,6 +340,7 @@ func (caps Capabilities) GetEndpointForFeature(feature Feature) (string, bool) {
 // Provider - interface for providers
 type Provider interface {
 	PreferencePersister
+	MesheryEvents
 
 	// Initialize will initialize a provider instance
 	// by loading its capabilities and other metadata in the memory
@@ -371,9 +380,9 @@ type Provider interface {
 	RecordPreferences(req *http.Request, userID string, data *Preference) error
 
 	SaveK8sContext(token string, k8sContext K8sContext) (K8sContext, error)
-	GetK8sContexts(token, page, pageSize, search, order string) ([]byte, error)
+	GetK8sContexts(token, page, pageSize, search, order string, withCredentials bool) ([]byte, error)
 	DeleteK8sContext(token, id string) (K8sContext, error)
-	GetK8sContext(token, id string) (K8sContext, error)
+	GetK8sContext(token, connectionID string) (K8sContext, error)
 	LoadAllK8sContext(token string) ([]*K8sContext, error)
 	// SetCurrentContext(token, id string) (K8sContext, error)
 	// GetCurrentContext(token string) (K8sContext, error)
@@ -406,7 +415,7 @@ type Provider interface {
 	DeleteMesheryPatternResource(token, resourceID string) error
 
 	SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error)
-	GetMesheryFilters(tokenString, page, pageSize, search, order string) ([]byte, error)
+	GetMesheryFilters(tokenString, page, pageSize, search, order string, visibility string) ([]byte, error)
 	GetCatalogMesheryFilters(tokenString string, page, pageSize, search, order string) ([]byte, error)
 	PublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error)
 	UnPublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error)
@@ -450,4 +459,12 @@ type Provider interface {
 	GetUserCredentials(req *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error)
 	UpdateUserCredential(req *http.Request, credential *Credential) (*Credential, error)
 	DeleteUserCredential(req *http.Request, credentialID uuid.UUID) (*Credential, error)
+
+	GetEnvironments(token, page, pageSize, search, order, filter string) ([]byte, error)
+	GetEnvironmentByID(req *http.Request, environmentID string) ([]byte, error)
+	SaveEnvironment(req *http.Request, env *EnvironmentPayload, token string, skipTokenCheck bool) error
+	DeleteEnvironment(req *http.Request, environmentID string) ([]byte, error)
+	UpdateEnvironment(req *http.Request, env *EnvironmentPayload, environmentID string) (*EnvironmentData, error)
+	AddConnectionToEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error)
+	RemoveConnectionFromEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error)
 }

@@ -12,6 +12,7 @@ import (
 
 	"github.com/ghodss/yaml"
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
@@ -19,9 +20,9 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
 	"github.com/layer5io/meshkit/logger"
+	events "github.com/layer5io/meshkit/models/events"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
-	"github.com/layer5io/meshkit/utils/events"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/sirupsen/logrus"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -49,6 +50,8 @@ func (h *Handler) PatternFileHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
+	userID := uuid.FromStringOrNil(user.ID)
+
 	// Read the PatternFile
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -70,9 +73,20 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	isDel := r.Method == http.MethodDelete
-
-	// Generate the pattern file object
+	isDryRun := r.URL.Query().Get("dryRun") == "true"
+	action := "deploy"
+	if isDel {
+		action = "undeploy"
+	}
+	
 	patternFile, err := core.NewPatternFile(body)
+	// Generate the pattern file object
+	description := fmt.Sprintf("Pattern %s %sed", patternFile.Name, action)
+	if isDryRun {
+		action = "dryrun"
+		description = fmt.Sprintf("Pattern %s %s", patternFile.Name, action)
+	}
+
 	if err != nil {
 		h.log.Error(ErrPatternFile(err))
 		http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
@@ -84,21 +98,43 @@ func (h *Handler) PatternFileHandler(
 		provider,
 		patternFile,
 		prefObj,
-		user.UserID,
+		user.ID,
 		isDel,
 		r.URL.Query().Get("verify") == "true",
-		r.URL.Query().Get("dryRun") == "true",
+		isDryRun,
 		r.URL.Query().Get("skipCRD") == "true",
 		false,
 		h.registryManager,
-		h.EventsBuffer,
+		h.config.EventBroadcaster,
 		h.log,
 	)
+
+	patternID := uuid.FromStringOrNil(patternFile.PatternID)
+	eventBuilder := events.NewEvent().ActedUpon(patternID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(action)
+
 	if err != nil {
-		h.log.Error(ErrCompConfigPairs(err))
-		http.Error(rw, ErrCompConfigPairs(err).Error(), http.StatusInternalServerError)
+		err := ErrCompConfigPairs(err)
+		metadata := map[string]interface{}{
+			"error": err,
+		}
+
+		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Error %sing pattern %s", action, patternFile.Name)).WithMetadata(metadata).Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+
+		h.log.Error(err)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	metadata := map[string]interface{}{
+		"summary": response,
+	}
+	
+	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
+	_ = provider.PersistEvent(event)
+	go h.config.EventBroadcaster.Publish(userID, event)
+
 	ec := json.NewEncoder(rw)
 	_ = ec.Encode(response)
 }
@@ -126,7 +162,7 @@ func _processPattern(
 	skipCrdAndOperator bool,
 	skipPrintLogs bool,
 	registry *meshmodel.RegistryManager,
-	eb *events.EventStreamer,
+	ec *models.Broadcast,
 	l logger.Handler,
 ) (map[string]interface{}, error) {
 	resp := make(map[string]interface{})
@@ -184,7 +220,8 @@ func _processPattern(
 			ctxTokubeconfig:    ctxToconfig,
 			accumulatedMsgs:    []string{},
 			err:                nil,
-			eventbuffer:        eb,
+			eventsChannel:      ec,
+			patternName:        strings.ToLower(pattern.Name),
 		}
 		chain := stages.CreateChain()
 		chain.
@@ -281,8 +318,9 @@ type serviceActionProvider struct {
 	skipPrintLogs      bool
 	accumulatedMsgs    []string
 	err                error
-	eventbuffer        *events.EventStreamer
+	eventsChannel      *models.Broadcast
 	registry           *meshmodel.RegistryManager
+	patternName        string
 }
 
 func (sap *serviceActionProvider) GetRegistry() *meshmodel.RegistryManager {
@@ -317,7 +355,7 @@ func (sap *serviceActionProvider) Mutate(p *core.Pattern) {
 // v1.StatusApplyConfiguration has deprecated, needed to find a different option to do this
 // NOTE: Currently tied to kubernetes
 // Returns ComponentName->ContextID->Response
-func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[string]map[string]core.DryRunResponse2, err error) {
+func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[string]map[string]core.DryRunResponseWrapper, err error) {
 	for _, cmp := range comps {
 		for ctxID, kc := range sap.ctxTokubeconfig {
 			cl, err := meshkube.New([]byte(kc))
@@ -329,10 +367,10 @@ func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[s
 				return resp, err
 			}
 			if resp == nil {
-				resp = make(map[string]map[string]core.DryRunResponse2)
+				resp = make(map[string]map[string]core.DryRunResponseWrapper)
 			}
 			if resp[cmp.Name] == nil {
-				resp[cmp.Name] = make(map[string]core.DryRunResponse2)
+				resp[cmp.Name] = make(map[string]core.DryRunResponseWrapper)
 			}
 			resp[cmp.Name][ctxID] = dResp
 		}
@@ -453,7 +491,10 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 				[]string{string(jsonComp)},
 				string(jsonConfig),
 				sap.opIsDelete,
-				sap.eventbuffer,
+				sap.patternName,
+				sap.eventsChannel,
+				sap.userID,
+				sap.provider,
 				host.IHost,
 				sap.skipCrdAndOperator,
 			)

@@ -8,7 +8,7 @@ Usage: (order of flags matters)
 
 Examples:
 
-	1. ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system docs layer5/src/collections/integrations meshery.io/integrations --published-only
+	1. ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system docs layer5/src/collections/integrations meshery.io/integrations docs/ --published-only
 	2. ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system remote-provider <remote-provider>/meshmodels/models <remote-provider>/ui/public/img/meshmodels
 	3. ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system meshery ../../server/meshmodel
 
@@ -152,6 +152,7 @@ func docsUpdater(output []map[string]string) {
 	}
 	pathToIntegrationsLayer5 := os.Args[4]
 	pathToIntegrationsMeshery := os.Args[5]
+	pathToIntegrationsMesheryDocs := os.Args[6]	
 	updateOnlyPublished := true
 	if len(os.Args) > 6 {
 		if os.Args[6] == "--published-only" {
@@ -212,6 +213,7 @@ func docsUpdater(output []map[string]string) {
 		modelName := strings.TrimSpace(out["model"])
 		pathToIntegrationsLayer5, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5, modelName))
 		pathToIntegrationsMeshery, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsMeshery))
+		pathToIntegrationsMesheryDocs, _ := filepath.Abs(filepath.Join("../../", pathToIntegrationsMesheryDocs, "assets/img/meshmodel/", modelName))	
 		err = os.MkdirAll(pathToIntegrationsLayer5, 0777)
 		if err != nil {
 			panic(err)
@@ -239,7 +241,7 @@ func docsUpdater(output []map[string]string) {
 			panic(err)
 		}
 
-		// Write SVGs to Meshery docs
+		// Write SVGs to Meshery website
 		err = os.MkdirAll(filepath.Join(pathToIntegrationsMeshery, "../", "images"), 0777)
 		if err != nil {
 			panic(err)
@@ -254,11 +256,31 @@ func docsUpdater(output []map[string]string) {
 		if err != nil {
 			panic(err)
 		}
+
+		// Write SVGs to Meshery docs
+		err = os.MkdirAll(filepath.Join(pathToIntegrationsMesheryDocs), 0777)
+		if err != nil {
+			panic(err)
+		}
+
+		err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMesheryDocs, modelName+"-color.svg"), svgcolor) //CHANGE PATH
+		if err != nil {
+			panic(err)
+		}
+
+		err = pkg.WriteSVG(filepath.Join(pathToIntegrationsMesheryDocs, modelName+"-white.svg"), svgwhite) //CHANGE PATH
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	mesheryDocsJSON = strings.TrimSuffix(mesheryDocsJSON, ",")
 	mesheryDocsJSON += "]; export default data"
 	if err := pkg.WriteToFile(filepath.Join("../../../", pathToIntegrationsMeshery, "data.js"), mesheryDocsJSON); err != nil {
+		log.Fatal(err)
+	}
+
+	if err := pkg.WriteToFile(filepath.Join("../../", pathToIntegrationsMesheryDocs, "_data/integrations/", "data.js"), mesheryDocsJSON); err != nil {
 		log.Fatal(err)
 	}
 }

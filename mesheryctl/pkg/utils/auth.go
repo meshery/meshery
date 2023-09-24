@@ -32,7 +32,7 @@ func NewRequest(method string, url string, body io.Reader) (*http.Request, error
 	// create new request
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
-		return nil, err
+		return nil, ErrCreatingRequest(err)
 	}
 
 	// Grab token from the flag --token
@@ -77,7 +77,7 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 	// If statuscode = 302, then we either have an expired or invalid token
 	// We return the response and correct error message
 	if resp.StatusCode == 302 {
-		return nil, InvalidToken()
+		return nil, ErrInvalidToken()
 	}
 
 	// failsafe for not being authenticated
@@ -168,7 +168,7 @@ func AddAuthDetails(req *http.Request, filepath string) error {
 func UpdateAuthDetails(filepath string) error {
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return errors.Wrap(err, "error processing config")
+		return ErrLoadConfig(err)
 	}
 
 	// TODO: get this from the global config
@@ -208,12 +208,12 @@ func ReadToken(filepath string) (map[string]string, error) {
 	file, err := os.ReadFile(filepath)
 	if err != nil {
 		err = errors.Wrap(err, "could not read token: ")
-		return nil, err
+		return nil, ErrFileRead(err)
 	}
 	var tokenObj map[string]string
 	if err := json.Unmarshal(file, &tokenObj); err != nil {
 		err = errors.Wrap(err, "token file invalid: ")
-		return nil, err
+		return nil, ErrUnmarshal(err)
 	}
 	return tokenObj, nil
 }

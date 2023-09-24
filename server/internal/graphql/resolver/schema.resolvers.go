@@ -72,27 +72,15 @@ func (r *queryResolver) ResyncCluster(ctx context.Context, selector *model.ReSyn
 }
 
 // GetMeshsyncStatus is the resolver for the getMeshsyncStatus field.
-func (r *queryResolver) GetMeshsyncStatus(ctx context.Context, k8scontextID string) (*model.OperatorControllerStatus, error) {
+func (r *queryResolver) GetMeshsyncStatus(ctx context.Context, connectionID string) (*model.OperatorControllerStatus, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.getMeshsyncStatus(ctx, provider, k8scontextID)
-}
-
-// DeployMeshsync is the resolver for the deployMeshsync field.
-func (r *queryResolver) DeployMeshsync(ctx context.Context, k8scontextID string) (model.Status, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.deployMeshsync(ctx, provider, k8scontextID)
+	return r.getMeshsyncStatus(ctx, provider, connectionID)
 }
 
 // GetNatsStatus is the resolver for the getNatsStatus field.
-func (r *queryResolver) GetNatsStatus(ctx context.Context, k8scontextID string) (*model.OperatorControllerStatus, error) {
+func (r *queryResolver) GetNatsStatus(ctx context.Context, connectionID string) (*model.OperatorControllerStatus, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.getNatsStatus(ctx, provider, k8scontextID)
-}
-
-// ConnectToNats is the resolver for the connectToNats field.
-func (r *queryResolver) ConnectToNats(ctx context.Context, k8scontextID string) (model.Status, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.connectToNats(ctx, provider, k8scontextID)
+	return r.getNatsStatus(ctx, provider, connectionID)
 }
 
 // GetAvailableNamespaces is the resolver for the getAvailableNamespaces field.
@@ -149,12 +137,6 @@ func (r *queryResolver) FetchFilterCatalogContent(ctx context.Context, selector 
 	return r.fetchCatalogFilter(ctx, provider, selector)
 }
 
-// GetClusterResources is the resolver for the getClusterResources field.
-func (r *queryResolver) GetClusterResources(ctx context.Context, k8scontextIDs []string, namespace string) (*model.ClusterResources, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.getClusterResources(ctx, provider, k8scontextIDs, namespace)
-}
-
 // GetMeshModelSummary is the resolver for the getMeshModelSummary field.
 func (r *queryResolver) GetMeshModelSummary(ctx context.Context, selector model.MeshModelSummarySelector) (*model.MeshModelSummary, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
@@ -167,47 +149,10 @@ func (r *queryResolver) FetchTelemetryComponents(ctx context.Context, contexts [
 	return r.getTelemetryComps(ctx, provider, contexts)
 }
 
-// ListenToAddonState is the resolver for the listenToAddonState field.
-func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.AddonList, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	if filter != nil {
-		return r.listenToAddonState(ctx, provider, filter)
-	}
-
-	return nil, ErrInvalidRequest
-}
-
-// ListenToControlPlaneState is the resolver for the listenToControlPlaneState field.
-func (r *subscriptionResolver) ListenToControlPlaneState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.ControlPlane, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	if filter != nil {
-		return r.listenToControlPlaneState(ctx, provider, filter)
-	}
-
-	return nil, ErrInvalidRequest
-}
-
-// ListenToDataPlaneState is the resolver for the listenToDataPlaneState field.
-func (r *subscriptionResolver) ListenToDataPlaneState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.DataPlane, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	if filter != nil {
-		return r.listenToDataPlaneState(ctx, provider, filter)
-	}
-
-	return nil, ErrInvalidRequest
-}
-
 // ListenToOperatorState is the resolver for the listenToOperatorState field.
 func (r *subscriptionResolver) ListenToOperatorState(ctx context.Context, k8scontextIDs []string) (<-chan *model.OperatorStatusPerK8sContext, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.listenToOperatorsState(ctx, provider, k8scontextIDs)
-}
-
-// ListenToMeshSyncEvents is the resolver for the listenToMeshSyncEvents field.
-func (r *subscriptionResolver) ListenToMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.OperatorControllerStatusPerK8sContext, error) {
-	// provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	// return r.listenToMeshSyncEvents(ctx, provider)
-	return nil, nil
 }
 
 // SubscribePerfProfiles is the resolver for the subscribePerfProfiles field.
@@ -220,11 +165,6 @@ func (r *subscriptionResolver) SubscribePerfProfiles(ctx context.Context, select
 func (r *subscriptionResolver) SubscribePerfResults(ctx context.Context, selector model.PageFilter, profileID string) (<-chan *model.PerfPageResult, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.subscribePerfResults(ctx, provider, selector, profileID)
-}
-
-// SubscribeBrokerConnection is the resolver for the subscribeBrokerConnection field.
-func (r *subscriptionResolver) SubscribeBrokerConnection(ctx context.Context) (<-chan bool, error) {
-	return r.subscribeBrokerConnection(ctx)
 }
 
 // SubscribeMesheryControllersStatus is the resolver for the subscribeMesheryControllersStatus field.
@@ -287,9 +227,10 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 }
 
 // SubscribeMeshSyncEvents is the resolver for the subscribeMeshSyncEvents field.
-func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.MeshSyncEvent, error) {
+func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8scontextIDs []string, eventTypes []model.MeshSyncEventType) (<-chan *model.MeshSyncEvent, error) {
 	resChan := make(chan *model.MeshSyncEvent)
 	isSubscriptionFlushed := false
+	brokerEventTypes := model.GetMesheryBrokerEventTypesFromArray(eventTypes)
 
 	meshSyncDataHandlers, ok := ctx.Value(models.MeshSyncDataHandlersKey).(map[string]models.MeshsyncDataHandler)
 	if !ok || len(meshSyncDataHandlers) == 0 || meshSyncDataHandlers == nil {
@@ -310,6 +251,11 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 			for event := range brokerEventsChan {
 				if event.EventType == broker.ErrorEvent || isSubscriptionFlushed { // better close the parent channel, but it is throwing panic
 					// TODO: Handle errors accordingly
+					continue
+				}
+
+				// skip event that UI doesn't want to listen to
+				if !model.CheckIfBrokerEventExistsInArray(event.EventType, brokerEventTypes) {
 					continue
 				}
 
@@ -343,7 +289,8 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 // SubscribeConfiguration is the resolver for the subscribeConfiguration field.
 func (r *subscriptionResolver) SubscribeConfiguration(ctx context.Context, applicationSelector model.PageFilter, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.subscribeConfiguration(ctx, provider, applicationSelector, patternSelector, filterSelector)
+	user := ctx.Value(models.UserCtxKey).(*models.User)
+	return r.subscribeConfiguration(ctx, provider, *user, applicationSelector, patternSelector, filterSelector)
 }
 
 // SubscribeClusterResources is the resolver for the subscribeClusterResources field.
@@ -362,6 +309,13 @@ func (r *subscriptionResolver) SubscribeK8sContext(ctx context.Context, selector
 func (r *subscriptionResolver) SubscribeMeshModelSummary(ctx context.Context, selector model.MeshModelSummarySelector) (<-chan *model.MeshModelSummary, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.subscribeMeshModelSummary(ctx, provider, selector)
+}
+
+// SubscribeEvents is the resolver for the subscribeEvents field.
+func (r *subscriptionResolver) SubscribeEvents(ctx context.Context) (<-chan *model.Event, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	user := ctx.Value(models.UserCtxKey).(*models.User)
+	return r.eventsResolver(ctx, provider, *user)
 }
 
 // Mutation returns generated.MutationResolver implementation.
@@ -383,6 +337,50 @@ type subscriptionResolver struct{ *Resolver }
 //   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //     it when you're done.
 //   - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *subscriptionResolver) ListenToMeshSyncEvents(ctx context.Context, k8scontextIDs []string) (<-chan *model.OperatorControllerStatusPerK8sContext, error) {
+	// provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	// return r.listenToMeshSyncEvents(ctx, provider)
+	return nil, nil
+}
+func (r *queryResolver) GetClusterResources(ctx context.Context, k8scontextIDs []string, namespace string) (*model.ClusterResources, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.getClusterResources(ctx, provider, k8scontextIDs, namespace)
+}
+func (r *queryResolver) DeployMeshsync(ctx context.Context, k8scontextID string) (model.Status, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.deployMeshsync(ctx, provider, k8scontextID)
+}
+func (r *queryResolver) ConnectToNats(ctx context.Context, k8scontextID string) (model.Status, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.connectToNats(ctx, provider, k8scontextID)
+}
+func (r *subscriptionResolver) ListenToAddonState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.AddonList, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	if filter != nil {
+		return r.listenToAddonState(ctx, provider, filter)
+	}
+
+	return nil, ErrInvalidRequest
+}
+func (r *subscriptionResolver) ListenToControlPlaneState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.ControlPlane, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	if filter != nil {
+		return r.listenToControlPlaneState(ctx, provider, filter)
+	}
+
+	return nil, ErrInvalidRequest
+}
+func (r *subscriptionResolver) ListenToDataPlaneState(ctx context.Context, filter *model.ServiceMeshFilter) (<-chan []*model.DataPlane, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	if filter != nil {
+		return r.listenToDataPlaneState(ctx, provider, filter)
+	}
+
+	return nil, ErrInvalidRequest
+}
+func (r *subscriptionResolver) SubscribeBrokerConnection(ctx context.Context) (<-chan bool, error) {
+	return r.subscribeBrokerConnection(ctx)
+}
 func processAndRateLimitTheResponseOnGqlChannel(publishChannel chan *model.MeshSyncEvent, r *subscriptionResolver, d time.Duration) func(meshsyncEvent *model.MeshSyncEvent) {
 	shouldWait := false
 	type syncedProcessMap struct {

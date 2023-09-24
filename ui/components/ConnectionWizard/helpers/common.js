@@ -1,25 +1,26 @@
 /* eslint-disable react/display-name */
-import { IconButton } from "@material-ui/core"
-import CloseIcon from "@material-ui/icons/Close";
+import { IconButton } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
+import { EVENT_TYPES } from '../../../lib/event-types';
 
 export const closeButtonForSnackbarAction = (closeSnackbar) => (key) => (
   <IconButton key="close" aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
     <CloseIcon />
   </IconButton>
-)
+);
 
-export const successHandlerGenerator = (snackbar, action, msg, cb) => (res) => {
+export const successHandlerGenerator = (notify, msg, cb) => (res) => {
   if (res !== undefined) {
-    if (cb !== undefined) cb(res)
-    snackbar(msg, { variant : "success",
-      action,
-      autoHideDuration : 3000, })
+    if (cb !== undefined) cb(res);
+    if (typeof res == 'object') {
+      res = JSON.stringify(res);
+    }
+    notify({ message: `${msg}`, details: `${res}`, event_type: EVENT_TYPES.SUCCESS });
   }
-}
+};
 
-export const errorHandlerGenerator = (snackbar, action,msg, cb) => (err) => {
-  if (cb !== undefined) cb(err)
-  snackbar(`${msg}: ${err}`, { variant : "error",
-    action,
-    autoHideDuration : 3000, })
-}
+export const errorHandlerGenerator = (notify, msg, cb) => (err) => {
+  if (cb !== undefined) cb(err);
+  err = typeof err !== 'string' ? err.toString() : err;
+  notify({ message: `${msg}`, details: err, event_type: EVENT_TYPES.ERROR });
+};

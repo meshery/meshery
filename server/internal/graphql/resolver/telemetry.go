@@ -18,21 +18,12 @@ func (r *Resolver) getTelemetryComps(ctx context.Context, provider models.Provid
 	var err error
 	var ctxIDs []string
 
-	k8sCtxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
-	if !ok || len(k8sCtxs) == 0 {
-		return nil, ErrMesheryClient(nil)
+	if len(k8sContextIDs) == 0 {
+		return nil, ErrEmptyCurrentK8sContext
 	}
 
-	if len(k8sContextIDs) == 1 && k8sContextIDs[0] == "all" {
-		for _, k8sContext := range k8sCtxs {
-			if k8sContext.KubernetesServerID != nil {
-				clusterID := k8sContext.KubernetesServerID.String()
-				ctxIDs = append(ctxIDs, clusterID)
-			}
-		}
-	} else {
-		ctxIDs = k8sContextIDs
-	}
+	ctxIDs = k8sContextIDs
+
 	rows, err = provider.GetGenericPersister().Raw(query, ctxIDs).Rows()
 
 	if err != nil {

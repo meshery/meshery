@@ -32,7 +32,7 @@ definitions:
         type: object
         x-go-package: github.com/layer5io/meshery/server/models
     AccountExtensions:
-        description: NavigatorExtensions is a collection of NavigatorExtension
+        description: NavigatorExtensions is a collection of AccountExtension
         items:
             $ref: '#/definitions/AccountExtension'
         type: array
@@ -367,6 +367,23 @@ definitions:
         title: ClientIPConfig represents the configurations of Client IP based session affinity.
         type: object
         x-go-package: k8s.io/api/core/v1
+    CollaboratorExtension:
+        description: CollaboratorsExtension is the struct for collaborators extension
+        properties:
+            component:
+                type: string
+                x-go-name: Component
+            type:
+                type: string
+                x-go-name: Type
+        type: object
+        x-go-package: github.com/layer5io/meshery/server/models
+    CollaboratorExtensions:
+        description: CollaboratorExtension describes the Collaborator extension point in the UI
+        items:
+            $ref: '#/definitions/CollaboratorExtension'
+        type: array
+        x-go-package: github.com/layer5io/meshery/server/models
     Column:
         description: for a table
         properties:
@@ -444,8 +461,18 @@ definitions:
             displayName:
                 type: string
                 x-go-name: DisplayName
+            displayhostname:
+                type: string
+                x-go-name: DisplayHostName
             format:
                 $ref: '#/definitions/ComponentFormat'
+            hostID:
+                format: uuid
+                type: string
+                x-go-name: HostID
+            hostname:
+                type: string
+                x-go-name: HostName
             kind:
                 type: string
                 x-go-name: Kind
@@ -603,6 +630,26 @@ definitions:
     ConnectionStatus:
         type: string
         x-go-package: github.com/layer5io/meshery/server/models
+    ConnectionStatusInfo:
+        properties:
+            count:
+                format: int64
+                type: integer
+                x-go-name: Count
+            status:
+                type: string
+                x-go-name: Status
+        type: object
+        x-go-package: github.com/layer5io/meshery/server/models
+    ConnectionsStatusPage:
+        properties:
+            connections_status:
+                items:
+                    $ref: '#/definitions/ConnectionStatusInfo'
+                type: array
+                x-go-name: ConnectionsStatus
+        type: object
+        x-go-package: github.com/layer5io/meshery/server/models
     ContainerChangeResponseItem:
         description: ContainerChangeResponseItem change item in response to ContainerChanges operation
         properties:
@@ -691,6 +738,17 @@ definitions:
                 type: string
         type: object
         x-go-package: github.com/docker/docker/api/types/container
+    CountBySeverityLevel:
+        properties:
+            count:
+                format: int64
+                type: integer
+                x-go-name: Count
+            severity:
+                type: string
+                x-go-name: Severity
+        type: object
+        x-go-package: github.com/layer5io/meshery/server/models
     DatabaseSummary:
         properties:
             page:
@@ -783,12 +841,22 @@ definitions:
             displayName:
                 type: string
                 x-go-name: DisplayName
+            displayhostname:
+                type: string
+                x-go-name: DisplayHostName
             duplicates:
                 format: int64
                 type: integer
                 x-go-name: Duplicates
             format:
                 $ref: '#/definitions/ComponentFormat'
+            hostID:
+                format: uuid
+                type: string
+                x-go-name: HostID
+            hostname:
+                type: string
+                x-go-name: HostName
             kind:
                 type: string
                 x-go-name: Kind
@@ -810,10 +878,20 @@ definitions:
             displayName:
                 type: string
                 x-go-name: DisplayName
+            displayhostname:
+                type: string
+                x-go-name: DisplayHostName
             duplicates:
                 format: int64
                 type: integer
                 x-go-name: Duplicates
+            hostID:
+                format: uuid
+                type: string
+                x-go-name: HostID
+            hostname:
+                type: string
+                x-go-name: HostName
             metadata:
                 additionalProperties: {}
                 type: object
@@ -824,6 +902,68 @@ definitions:
             version:
                 type: string
                 x-go-name: Version
+        type: object
+        x-go-package: github.com/layer5io/meshery/server/models
+    Environment:
+        description: Environment - represents a kubernetes environment
+        properties:
+            Kubernetes:
+                type: string
+            NodeCount:
+                format: int64
+                type: integer
+        type: object
+        x-go-package: github.com/layer5io/meshery/server/models
+    EnvironmentData:
+        properties:
+            created_at:
+                format: date-time
+                type: string
+                x-go-name: CreatedAt
+            deleted_at:
+                $ref: '#/definitions/NullTime'
+            description:
+                type: string
+                x-go-name: Description
+            id:
+                format: uuid
+                type: string
+                x-go-name: ID
+            name:
+                type: string
+                x-go-name: Name
+            org_id:
+                format: uuid
+                type: string
+                x-go-name: OrganizationID
+            owner:
+                type: string
+                x-go-name: Owner
+            updated_at:
+                format: date-time
+                type: string
+                x-go-name: UpdatedAt
+        type: object
+        x-go-package: github.com/layer5io/meshery/server/models
+    EnvironmentPage:
+        properties:
+            environments:
+                items:
+                    $ref: '#/definitions/Environment'
+                type: array
+                x-go-name: Environments
+            page:
+                format: int64
+                type: integer
+                x-go-name: Page
+            page_size:
+                format: int64
+                type: integer
+                x-go-name: PageSize
+            total_count:
+                format: int64
+                type: integer
+                x-go-name: TotalCount
         type: object
         x-go-package: github.com/layer5io/meshery/server/models
     ErrorResponse:
@@ -837,15 +977,111 @@ definitions:
         title: ErrorResponse Represents an error.
         type: object
         x-go-package: github.com/docker/docker/api/types
-    EventType:
-        format: int32
-        type: integer
-        x-go-package: github.com/layer5io/meshery/server/meshes
+    Event:
+        description: Event Defines model for event_trackers
+        properties:
+            acted_upon:
+                description: ActedUpon UUID of the entity on which the event was performed.
+                format: uuid
+                type: string
+                x-go-name: ActedUpon
+            action:
+                description: Action Action taken on the resource.
+                type: string
+                x-go-name: Action
+            category:
+                description: Category Resource name on which the operation is invoked.
+                type: string
+                x-go-name: Category
+            created_at:
+                description: CreatedAt Timestamp when the resource was created.
+                format: date-time
+                type: string
+                x-go-name: CreatedAt
+            deleted_at:
+                description: DeletedAt Timestamp when the resource was deleted.
+                format: date-time
+                type: string
+                x-go-name: DeletedAt
+            description:
+                description: Description A summary/receipt of event that occured.
+                type: string
+                x-go-name: Description
+            id:
+                format: uuid
+                type: string
+                x-go-name: ID
+            metadata:
+                additionalProperties: {}
+                description: |-
+                    Metadata Contains meaningful information, specific to the type of event.
+                    Structure of metadata can be different for different events.
+                type: object
+                x-go-name: Metadata
+            operation_id:
+                format: uuid
+                type: string
+                x-go-name: OperationID
+            severity:
+                $ref: '#/definitions/EventSeverity'
+            status:
+                $ref: '#/definitions/EventStatus'
+            system_id:
+                format: uuid
+                type: string
+                x-go-name: SystemID
+            updated_at:
+                description: UpdatedAt Timestamp when the resource was updated.
+                format: date-time
+                type: string
+                x-go-name: UpdatedAt
+            user_id:
+                format: uuid
+                type: string
+                x-go-name: UserID
+        type: object
+        x-go-package: github.com/layer5io/meshkit/models/events
+    EventSeverity:
+        title: EventSeverity A set of seven standard event levels.
+        type: string
+        x-go-package: github.com/layer5io/meshkit/models/events
+    EventStatus:
+        title: EventStatus Status for the event.
+        type: string
+        x-go-package: github.com/layer5io/meshkit/models/events
+    EventsResponse:
+        properties:
+            count_by_severity_level:
+                items:
+                    $ref: '#/definitions/CountBySeverityLevel'
+                type: array
+                x-go-name: CountBySeverityLevel
+            events:
+                items:
+                    $ref: '#/definitions/Event'
+                type: array
+                x-go-name: Events
+            page:
+                format: int64
+                type: integer
+                x-go-name: Page
+            page_size:
+                format: int64
+                type: integer
+                x-go-name: PageSize
+            total_count:
+                format: int64
+                type: integer
+                x-go-name: TotalCount
+        type: object
+        x-go-package: github.com/layer5io/meshery/server/models
     Extensions:
         description: Extensions defines the UI extension points
         properties:
             account:
                 $ref: '#/definitions/AccountExtensions'
+            collaborator:
+                $ref: '#/definitions/CollaboratorExtensions'
             graphql:
                 $ref: '#/definitions/GraphQLExtensions'
             navigator:
@@ -1393,6 +1629,9 @@ definitions:
                 $ref: '#/definitions/Map'
             cluster:
                 $ref: '#/definitions/Map'
+            connection_id:
+                type: string
+                x-go-name: ConnectionID
             created_at:
                 format: date-time
                 type: string
@@ -1904,6 +2143,28 @@ definitions:
                 x-go-name: Count
         type: object
         x-go-package: github.com/layer5io/meshery/server/models
+    MeshmodelPoliciesAPIResponse:
+        description: API response model for meshmodel relationships API
+        properties:
+            page:
+                format: int64
+                type: integer
+                x-go-name: Page
+            page_size:
+                format: int64
+                type: integer
+                x-go-name: PageSize
+            policies:
+                items:
+                    $ref: '#/definitions/PolicyDefinition'
+                type: array
+                x-go-name: Policies
+            total_count:
+                format: int64
+                type: integer
+                x-go-name: Count
+        type: object
+        x-go-package: github.com/layer5io/meshery/server/models
     MeshmodelRelationshipsAPIResponse:
         description: API response model for meshmodel relationships API
         properties:
@@ -1970,50 +2231,6 @@ definitions:
                 x-go-name: Count
         type: object
         x-go-package: github.com/layer5io/meshery/server/models
-    MessageState:
-        description: |-
-            Example generated code:
-
-            type M struct {
-            state protoimpl.MessageState
-
-            Field1 int32
-            Field2 string
-            Field3 *BarMessage
-            ...
-            }
-
-            func (m *M) ProtoReflect() protoreflect.Message {
-            mi := &file_fizz_buzz_proto_msgInfos[5]
-            if protoimpl.UnsafeEnabled && m != nil {
-            ms := protoimpl.X.MessageStateOf(Pointer(m))
-            if ms.LoadMessageInfo() == nil {
-            ms.StoreMessageInfo(mi)
-            }
-            return ms
-            }
-            return mi.MessageOf(m)
-            }
-
-            The MessageState type holds a *MessageInfo, which must be atomically set to
-            the message info associated with a given message instance.
-            By unsafely converting a *M into a *MessageState, the MessageState object
-            has access to all the information needed to implement protobuf reflection.
-            It has access to the message info as its first field, and a pointer to the
-            MessageState is identical to a pointer to the concrete message value.
-
-            Requirements:
-            The type M must implement protoreflect.ProtoMessage.
-            The address of m must not be nil.
-            The address of m and the address of m.state must be equal,
-            even though they are different Go types.
-        title: |-
-            MessageState is a data structure that is nested as the first field in a
-            concrete message. It provides a way to implement the ProtoReflect method
-            in an allocation-free way without needing to have a shadow Go type generated
-            for every message type. This technique only works using unsafe.
-        type: object
-        x-go-package: google.golang.org/protobuf/internal/impl
     Model:
         properties:
             category:
@@ -2021,6 +2238,16 @@ definitions:
             displayName:
                 type: string
                 x-go-name: DisplayName
+            displayhostname:
+                type: string
+                x-go-name: DisplayHostName
+            hostID:
+                format: uuid
+                type: string
+                x-go-name: HostID
+            hostname:
+                type: string
+                x-go-name: HostName
             metadata:
                 additionalProperties: {}
                 type: object
@@ -2965,6 +3192,9 @@ definitions:
         x-go-package: github.com/layer5io/service-mesh-performance/spec
     PerformanceTestConfig_Client:
         properties:
+            additional_options:
+                type: string
+                x-go-name: AdditionalOptions
             body:
                 type: string
                 x-go-name: Body
@@ -3002,6 +3232,9 @@ definitions:
                 format: int64
                 type: integer
                 x-go-name: Rps
+            ssl_certificate:
+                type: string
+                x-go-name: SslCertificate
         type: object
         x-go-package: github.com/layer5io/service-mesh-performance/spec
     PerformanceTestConfig_Client_Protocol:
@@ -3386,6 +3619,25 @@ definitions:
         title: PluginSettings Settings that can be modified by users.
         type: object
         x-go-package: github.com/docker/docker/api/types
+    PolicyDefinition:
+        properties:
+            apiVersion:
+                type: string
+                x-go-name: APIVersion
+            expression:
+                additionalProperties: {}
+                type: object
+                x-go-name: Expression
+            kind:
+                type: string
+                x-go-name: Kind
+            model:
+                $ref: '#/definitions/Model'
+            subType:
+                type: string
+                x-go-name: SubType
+        type: object
+        x-go-package: github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1
     Port:
         description: Port An open port on a container
         properties:
@@ -3553,6 +3805,16 @@ definitions:
             apiVersion:
                 type: string
                 x-go-name: APIVersion
+            displayhostname:
+                type: string
+                x-go-name: DisplayHostName
+            hostID:
+                format: uuid
+                type: string
+                x-go-name: HostID
+            hostname:
+                type: string
+                x-go-name: HostName
             kind:
                 type: string
                 x-go-name: Kind
@@ -4857,6 +5119,37 @@ definitions:
                 x-go-name: UserID
         type: object
         x-go-package: github.com/layer5io/meshery/server/models
+    UserKeys:
+        properties:
+            category:
+                type: string
+                x-go-name: Category
+            created_at:
+                type: string
+                x-go-name: Created_at
+            deleted_at:
+                type: string
+                x-go-name: Deleted_at
+            description:
+                type: string
+                x-go-name: Description
+            function:
+                type: string
+                x-go-name: Function
+            id:
+                type: string
+                x-go-name: ID
+            owner:
+                type: string
+                x-go-name: Owner
+            subcategory:
+                type: string
+                x-go-name: Subcategory
+            updated_at:
+                type: string
+                x-go-name: Updated_at
+        type: object
+        x-go-package: github.com/layer5io/meshery/server/models
     UserPrefsExtension:
         description: UserPrefsExtension describes the user preference extension point in the UI
         properties:
@@ -5174,8 +5467,33 @@ paths:
             operationId: idGetEventStreamer
             responses:
                 "200":
-                    $ref: '#/responses/EventsResponse'
+                    description: ""
             summary: Handle GET request for events.
+            tags:
+                - EventsAPI
+    /api/events/{id}:
+        delete:
+            description: Deletes event associated with the id.
+            operationId: idGetEventStreamer
+            responses:
+                "200":
+                    description: ""
+            summary: Handle DELETE request for events.
+    /api/events/status/{id}:
+        post:
+            description: Updates event status for the event associated with the id.
+            operationId: idGetEventStreamer
+            responses:
+                "200":
+                    $ref: '#/responses/eventResponseWrapper'
+            summary: Handle POST request to update event status.
+    /api/events/types:
+        get:
+            operationId: idGetEventStreamer
+            responses:
+                "200":
+                    description: ""
+            summary: Handle GET request for available event categories and actions.
             tags:
                 - EventsAPI
     /api/filter:
@@ -5190,6 +5508,8 @@ paths:
                 ```?page={page-number}``` Default page number is 0
 
                 ```?pagesize={pagesize}``` Default pagesize is 10
+
+                ```?visibility={visibility}``` Default visibility is public
             operationId: idGetFilterFiles
             responses:
                 "200":
@@ -5367,11 +5687,12 @@ paths:
                 - UserAPI
     /api/identity/users/keys:
         get:
-            description: Handles GET for all Keys for users
+            description: Returns all keys for user
             operationId: idGetAllUsersKeysHandler
             responses:
                 "200":
                     $ref: '#/responses/keys'
+            summary: Handles GET for all Keys for users
             tags:
                 - UserKeysAPI
     /api/integrations/connections:
@@ -5447,13 +5768,91 @@ paths:
                 - PutConnection
     /api/integrations/connections/status:
         get:
-            description: Handle GET request for getting all connections status
+            description: Get all connections status
             operationId: idGetConnectionsStatus
             responses:
                 "200":
-                    $ref: '#/responses/ConnectionsStatusPage'
+                    $ref: '#/responses/mesheryConnectionsStatusPage'
+            summary: Handle GET request for getting all connections status
             tags:
                 - GetConnectionsStatus
+    /api/integrations/environments:
+        get:
+            description: |-
+                # Environments can be further filtered through query parameters
+
+                ```?order={field}``` orders on the passed field
+
+                ```?page={page-number}``` Default page number is 0
+
+                ```?pagesize={pagesize}``` Default pagesize is 20
+
+                ```?search={environments_name}``` If search is non empty then a greedy search is performed
+
+                ```?filter={condition}```
+            operationId: idGetEnvironments
+            responses:
+                "200":
+                    $ref: '#/responses/environmentsResponseWrapper'
+            summary: Handles GET for all Environments
+            tags:
+                - EnvironmentsAPI
+        post:
+            description: Creates a new environment
+            operationId: idSaveEnvironment
+            responses:
+                "201":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle POST request for creating a new environment
+            tags:
+                - PostEnvironment
+    /api/integrations/environments/{environmentID}/connections/{connectionID}:
+        delete:
+            description: Removes connection from environment
+            operationId: idRemoveConnectionFromEnvironmentHandler
+            responses:
+                "201":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle DELETE to remove Connection from Environment by ID
+            tags:
+                - EnvironmentAPI
+        post:
+            description: Returns Environment connection mapping info
+            operationId: idAddConnectionToEnvironmentHandler
+            responses:
+                "200":
+                    $ref: '#/responses/environmentResponseWrapper'
+            summary: Handle POST to add Connection in Environment by ID
+            tags:
+                - EnvironmentAPI
+    /api/integrations/environments/{id}:
+        delete:
+            description: Returns Environment info
+            operationId: idDeleteEnvironmentHandler
+            responses:
+                "201":
+                    $ref: '#/responses/noContentWrapper'
+            summary: Handle DELETE for Environment based on ID
+            tags:
+                - EnvironmentAPI
+        get:
+            description: Returns Environment info
+            operationId: idGetEnvironmentByIDHandler
+            responses:
+                "200":
+                    $ref: '#/responses/environmentResponseWrapper'
+            summary: Handle GET for Environment info by ID
+            tags:
+                - EnvironmentAPI
+        put:
+            description: Updates a environment
+            operationId: idUpdateEnvironmentHandler
+            responses:
+                "200":
+                    $ref: '#/responses/environmentResponseWrapper'
+            summary: Handle PUT request for updating a environment
+            tags:
+                - PostEnvironment
     /api/meshmodel/components/register:
         post:
             description: Validate the given value with the given schema
@@ -5830,6 +6229,48 @@ paths:
             summary: Handle GET request for getting meshmodel components of a specific  model.
             tags:
                 - GetMeshmodelComponentsByNameByModel
+    /api/meshmodels/models/{model}/policies/:
+        get:
+            description: |-
+                Example: ```/api/meshmodels/models/kubernetes/policies```
+
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetMeshmodelPolicies
+            responses:
+                "200":
+                    $ref: '#/responses/meshmodelPoliciesResponseWrapper'
+            summary: Handle GET request for getting meshmodel policies of a specific model by name.
+            tags:
+                - GetMeshmodelPolicies
+    /api/meshmodels/models/{model}/policies/{name}:
+        get:
+            description: |-
+                Example: ```/api/meshmodels/models/kubernetes/policies/{name}```
+
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetMeshmodelPoliciesByName
+            responses:
+                "200":
+                    $ref: '#/responses/meshmodelPoliciesResponseWrapper'
+            summary: Handle GET request for getting meshmodel policies of a specific model by name.
+            tags:
+                - GetMeshmodelPoliciesByName
     /api/meshmodels/models/{model}/relationships:
         get:
             description: |-
@@ -6157,6 +6598,11 @@ paths:
             summary: Handle GET request for list of providers
             tags:
                 - ProvidersAPI
+    /api/schema/resource/{resourceName}:
+        get:
+            operationId: HandleResourceSchemas
+            responses: {}
+            summary: Handles the request to retrieve and merge resource JSON schema and UI schema.
     /api/smi/results:
         get:
             description: |-
@@ -6283,6 +6729,20 @@ paths:
             summary: Handle GET request for getting summary about the system database.
             tags:
                 - GetSystemDatabase
+    /api/system/database/reset:
+        delete:
+            description: |-
+                This endpoint resets the system database to its initial state by performing the following steps:
+                Creates an archive of the current database contents.
+                Drops all existing tables in the database.
+                Applies auto migration to recreate the necessary tables.
+            operationId: ResetSystemDatabase
+            responses:
+                "200":
+                    description: ""
+                "500":
+                    description: ""
+            summary: Reset the system database to its initial state.
     /api/system/kubernetes:
         delete:
             description: Used to delete kubernetes config to System
@@ -6330,7 +6790,7 @@ paths:
             summary: Handle POST requests for Kubernetes Context list
             tags:
                 - SystemAPI
-    /api/system/kubernetes/ping?contexts={id}:
+    /api/system/kubernetes/ping?connection_id={id}:
         get:
             description: Fetches server version to simulate ping
             operationId: idGetKubernetesPing
@@ -6880,6 +7340,25 @@ paths:
             summary: Handle POST request for tokens
             tags:
                 - UserAPI
+    /api/v2/events:
+        get:
+            description: |-
+                ```search={description}``` If search is non empty then a search is performed on event description
+                ```?category=[eventcategory] Returns event belonging to provided categories ```
+                ```?action=[eventaction] Returns events belonging to provided actions ```
+                ```?status={[read/unread]}``` Return events filtered on event status Default is unread````
+                ```?severity=[eventseverity] Returns events belonging to provided severities ```
+                ```?sort={field} order the records based on passed field, defaults to updated_at```
+                ```?order={[asc/desc]}``` Default behavior is desc
+                ```?page={page-number}``` Default page number is 1
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetEventStreamer
+            responses:
+                "200":
+                    $ref: '#/responses/eventsResponseWrapper'
+            summary: Handle GET request for events.
+            tags:
+                - EventsAPI
     /provider:
         get:
             description: Servers providers UI
@@ -6912,7 +7391,9 @@ responses:
             displayhostname:
                 type: string
             format: {}
-            hostID: {}
+            hostID:
+                format: uuid
+                type: string
             hostname:
                 type: string
             kind:
@@ -6961,7 +7442,7 @@ responses:
     ConnectionPage:
         description: ""
         headers:
-            connection:
+            connections:
                 items:
                     $ref: '#/definitions/Connection'
                 type: array
@@ -6978,37 +7459,33 @@ responses:
         description: ""
         schema:
             type: string
+    ConnectionsStatusPage:
+        description: ""
+        headers:
+            connections_status:
+                items:
+                    $ref: '#/definitions/ConnectionStatusInfo'
+                type: array
     EventsResponse:
         description: ""
         headers:
-            component:
-                type: string
-            component_name:
-                type: string
-            details:
-                type: string
-            error_code:
-                type: string
-            event_type: {}
-            operation_id:
-                type: string
-            probable_cause:
-                type: string
-            sizeCache:
-                format: int32
-                type: integer
-            state: {}
-            suggested_remediation:
-                type: string
-            summary:
-                type: string
-            unknownFields:
+            count_by_severity_level:
                 items:
-                    format: uint8
-                    type: integer
+                    $ref: '#/definitions/CountBySeverityLevel'
                 type: array
-        schema:
-            $ref: '#/definitions/EventType'
+            events:
+                items:
+                    $ref: '#/definitions/Event'
+                type: array
+            page:
+                format: int64
+                type: integer
+            page_size:
+                format: int64
+                type: integer
+            total_count:
+                format: int64
+                type: integer
     FilterFilesResponseWrapper:
         description: Returns the response of the Filter files
         schema:
@@ -7021,7 +7498,9 @@ responses:
                 type: string
             displayhostname:
                 type: string
-            hostID: {}
+            hostID:
+                format: uuid
+                type: string
             hostname:
                 type: string
             metadata: {}
@@ -7042,7 +7521,9 @@ responses:
                 type: string
             displayhostname:
                 type: string
-            hostID: {}
+            hostID:
+                format: uuid
+                type: string
             hostname:
                 type: string
             kind:
@@ -7060,6 +7541,22 @@ responses:
         description: Returns the response of the application files
         schema:
             $ref: '#/definitions/MesheryApplication'
+    environmentResponseWrapper:
+        description: Returns environment
+        schema:
+            $ref: '#/definitions/EnvironmentData'
+    environmentsResponseWrapper:
+        description: Returns all environements
+        schema:
+            $ref: '#/definitions/EnvironmentPage'
+    eventResponseWrapper:
+        description: Returns event
+        schema:
+            $ref: '#/definitions/Event'
+    eventsResponseWrapper:
+        description: Returns all events
+        schema:
+            $ref: '#/definitions/EventsResponse'
     grafanaBoardsResponseWrapper:
         description: Returns Grafana boards and panels
         schema:
@@ -7078,6 +7575,8 @@ responses:
         description: Returns users Keys
         headers:
             Body: {}
+        schema:
+            $ref: '#/definitions/UserKeys'
     listProvidersRespWrapper:
         description: Returns a list of available providers
         schema:
@@ -7110,6 +7609,12 @@ responses:
             $ref: '#/definitions/ApplicationsAPIResponse'
     mesheryConnectionResponseWrapper:
         description: Returns a single connection
+        schema:
+            $ref: '#/definitions/Connection'
+    mesheryConnectionsStatusPage:
+        description: Returns all connections Status
+        schema:
+            $ref: '#/definitions/ConnectionsStatusPage'
     mesheryFilterResponseWrapper:
         description: Returns a single meshery filter
         schema:
@@ -7150,6 +7655,10 @@ responses:
         description: Returns meshmodel models
         schema:
             $ref: '#/definitions/MeshmodelsAPIResponse'
+    meshmodelPoliciesResponseWrapper:
+        description: Returns meshmodel policies
+        schema:
+            $ref: '#/definitions/MeshmodelPoliciesAPIResponse'
     meshmodelRelationshipsResponseWrapper:
         description: Returns meshmodel relationships
         schema:

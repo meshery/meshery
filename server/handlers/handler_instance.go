@@ -2,6 +2,7 @@
 package handlers
 
 import (
+	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
@@ -24,6 +25,7 @@ type Handler struct {
 	K8sCompRegHelper   *models.ComponentsRegistrationHelper
 	MesheryCtrlsHelper *models.MesheryControllersHelper
 	Provider           string // When set, all endpoints consider tokens / identities / capabilities valid from the single, designated provider.
+	SystemID           *uuid.UUID
 	dbHandler          *database.Handler
 	registryManager    *meshmodel.RegistryManager
 	EventsBuffer       *events.EventStreamer
@@ -44,6 +46,7 @@ func NewHandlerInstance(
 	provider string,
 	rego *policies.Rego,
 ) models.HandlerInterface {
+	
 	h := &Handler{
 		config:             handlerConfig,
 		meshsyncChannel:    meshSyncCh,
@@ -56,6 +59,7 @@ func NewHandlerInstance(
 		registryManager:    regManager,
 		Provider:           provider,
 		Rego:               rego,
+		SystemID:           viper.Get("INSTANCE_ID").(*uuid.UUID),
 	}
 
 	h.task = taskq.RegisterTask(&taskq.QueueConfig{

@@ -1,44 +1,28 @@
-import WarningIcon from '@material-ui/icons/Warning';
-import ErrorIcon from '@material-ui/icons/Error';
-import InfoIcon from '@material-ui/icons/Info';
+export const NOTIFICATION_STATUS = {
+  VIEWED: 'viewed',
+  NEW: 'new',
+};
 
-// TODO: rename to serverEventType or better integrate wiht EVENT_TYPES
-export const eventTypes = {
-  0: {
-    icon: InfoIcon,
+export const EVENT_TYPES = {
+  SUCCESS: {
     type: 'success',
   },
-  1: {
-    icon: WarningIcon,
+  DEFAULT: {
+    type: 'default',
+  },
+  INFO: {
+    type: 'info',
+  },
+  WARNING: {
     type: 'warning',
   },
-  2: {
-    icon: ErrorIcon,
+  ERROR: {
     type: 'error',
   },
 };
 
-export const ALL_EVENT_TYPES = new Set(Object.values(eventTypes).map(e=>e.type))
-
-export const EVENT_TYPES = {
-  SUCCESS: {
-    icon: InfoIcon,
-    type: 'success',
-  },
-  DEFAULT: {
-    icon: InfoIcon,
-    type: 'default',
-  },
-  INFO: {
-    icon: InfoIcon,
-    type: 'info',
-  },
-  WARNING: {
-    icon: WarningIcon,
-    type: 'warning',
-  },
-  ERROR: {
-    icon: ErrorIcon,
-    type: 'error',
-  },
-}
+export const SERVER_EVENT_TYPES = {
+  0: EVENT_TYPES.SUCCESS,
+  1: EVENT_TYPES.WARNING,
+  2: EVENT_TYPES.ERROR,
+};

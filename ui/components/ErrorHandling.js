@@ -1,7 +1,5 @@
-import { IconButton } from "@material-ui/core";
-import { Cancel } from "@material-ui/icons";
-import { useSnackbar } from "notistack";
-import { iconMedium } from "../css/icons.styles";
+import { useNotification } from '../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../lib/event-types';
 
 /**
  *  Show Snackbar when error occurs. Can be used in catch blocks
@@ -9,34 +7,23 @@ import { iconMedium } from "../css/icons.styles";
  *
  */
 function HandleError() {
-  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { notify } = useNotification();
   /**
-    *
-    * @param {Object} err
-    * @param {string} prefixMessage
-    * @param {("error"|"warning")} variant
-    */
+   *
+   * @param {Object} err
+   * @param {string} prefixMessage
+   * @param {("error"|"warning")} variant
+   */
   const errorH = (err, prefixMessage, variant) => {
-    console.error("an error occured with severity: ", variant, { err })
-    return enqueueSnackbar(
-      `${prefixMessage}: ${err?.message}`,
-      {
-        variant : variant || "error",
-        autoHideDuration : 8000,
-        preventDuplicate : true,
-        action : (key) => (
-          <IconButton
-            onClick={() => closeSnackbar(key)}
-            color="secondary"
-            style={iconMedium}
-          >
-            <Cancel />
-          </IconButton>
-        )
-      })
-  }
+    console.error('an error occured with severity: ', variant, { err });
+    return notify({
+      message: `${prefixMessage}: ${err?.message}`,
+      event_type: EVENT_TYPES.ERROR,
+      details: err.toString(),
+    });
+  };
 
-  return errorH
+  return errorH;
 }
 
-export default HandleError
+export default HandleError;

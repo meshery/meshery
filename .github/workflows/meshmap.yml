@@ -3,7 +3,7 @@ on: # rebuild any PRs and main branch changes
   pull_request_target:
     types: [opened, synchronize, reopened]
 
-permissions: 
+permissions:
   actions: read
   contents: write
   security-events: write
@@ -13,6 +13,7 @@ permissions:
 
 jobs:
   MeshMapScreenshot:
+    if: ${{ github.event.pull_request.head.repo.full_name == github.repository && always() }}
     runs-on: ubuntu-latest
     steps:
       - name: Set PR number # To comment the final status on the Pull-request opened in any repository
@@ -32,4 +33,3 @@ jobs:
           prNumber: ${{ env.PULL_NO }} # auto-filled from the above step
           application_type: "Kubernetes Manifest" # your application type, could be any of three: "Kubernetes Manifest", "Docker Compose", "Helm Chart"
           filePath: "install/deployment_yamls/k8s" # relative file-path from the root directory in the github-runner env, you might require to checkout the repository as described in step 2
-        
