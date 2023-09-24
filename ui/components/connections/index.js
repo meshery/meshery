@@ -11,7 +11,8 @@ import {
   List,
   ListItem,
   ListItemText,
-  TableRow
+  TableRow,
+  TableSortLabel
 } from "@material-ui/core";
 import { withStyles } from "@material-ui/core/styles";
 // import EditIcon from "@material-ui/icons/Edit";
@@ -217,6 +218,8 @@ function Connections({
   const [pageSize, setPageSize] = useState(0);
   const [connections, setConnections] = useState([]);
   const [search, setSearch] = useState("");
+  const [sortOrder, setSortOrder] = useState("");
+
   const { notify } = useNotification();
   const StyleClass = useStyles();
 
@@ -288,10 +291,14 @@ function Connections({
       name : "name",
       label : "Element",
       options : {
-        customHeadRender : function CustomHead({ index, ...column }) {
+        sort : true,
+        sortThirdClickReset : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
+            <TableCell key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={columnMeta.name === column.name} direction={columnMeta.direction || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
             </TableCell>
           );
         },
@@ -313,10 +320,14 @@ function Connections({
       name : "type",
       label : "Type",
       options : {
-        customHeadRender : function CustomHead({ index, ...column }) {
+        sort : true,
+        sortThirdClickReset : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
+            <TableCell key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={columnMeta.name === column.name} direction={columnMeta.direction || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
             </TableCell>
           );
         },
@@ -337,10 +348,14 @@ function Connections({
       name : "sub_type",
       label : "Sub Type",
       options : {
-        customHeadRender : function CustomHead({ index, ...column }) {
+        sort : true,
+        sortThirdClickReset : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
+            <TableCell key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={columnMeta.name === column.name} direction={columnMeta.direction || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
             </TableCell>
           );
         },
@@ -353,10 +368,14 @@ function Connections({
       name : "kind",
       label : "Kind",
       options : {
-        customHeadRender : function CustomHead({ index, ...column }) {
+        sort : true,
+        sortThirdClickReset : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
+            <TableCell key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={columnMeta.name === column.name} direction={columnMeta.direction || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
             </TableCell>
           );
         },
@@ -366,10 +385,14 @@ function Connections({
       name : "updated_at",
       label : "Updated At",
       options : {
-        customHeadRender : function CustomHead({ index, ...column }) {
+        sort : true,
+        sortThirdClickReset : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
+            <TableCell key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={columnMeta.name === column.name} direction={columnMeta.direction || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
             </TableCell>
           );
         },
@@ -392,13 +415,17 @@ function Connections({
       },
     },
     {
-      name : "discoverd_at",
+      name : "created_at",
       label : "Discovered At",
       options : {
-        customHeadRender : function CustomHead({ index, ...column }) {
+        sort : true,
+        sortThirdClickReset : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
+            <TableCell key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={columnMeta.name === column.name} direction={columnMeta.direction || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
             </TableCell>
           );
         },
@@ -424,10 +451,14 @@ function Connections({
       name : "status",
       label : "Status",
       options : {
-        customHeadRender : function CustomHead({ index, ...column }) {
+        sort : true,
+        sortThirdClickReset : true,
+        customHeadRender : function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
+            <TableCell key={index} onClick={() => sortColumn(index)}>
+              <TableSortLabel active={columnMeta.name === column.name} direction={columnMeta.direction || "asc"}>
+                <b>{column.label}</b>
+              </TableSortLabel>
             </TableCell>
           );
         },
@@ -466,12 +497,32 @@ function Connections({
 
     enableNestedDataAccess : ".",
     onTableChange : (action, tableState) => {
+      const sortInfo = tableState.announceText
+        ? tableState.announceText.split(" : ")
+        : [];
+      let order = "";
+      if (tableState.activeColumn) {
+        order = `${columns[tableState.activeColumn].name} desc`;
+      }
       switch (action) {
         case "changePage":
           getConnections(tableState.page.toString(), pageSize.toString(), search);
           break;
         case "changeRowsPerPage":
           getConnections(page.toString(), tableState.rowsPerPage.toString(), search);
+          break;
+        case "sort":
+          if (sortInfo.length == 2) {
+            if (sortInfo[1] === "ascending") {
+              order = `${columns[tableState.activeColumn].name} asc`;
+            } else {
+              order = `${columns[tableState.activeColumn].name} desc`;
+            }
+          }
+          if (order !== sortOrder) {
+            setSortOrder(order)
+            getConnections(page, pageSize, search, order);
+          }
           break;
         case "search":
           if (searchTimeout.current) {
@@ -560,13 +611,14 @@ function Connections({
    * fetch connections when the page loads
    */
   useEffect(() => {
-    getConnections(page, pageSize, search);
+    getConnections(page, pageSize, search, sortOrder);
   }, [page, pageSize, search]);
 
-  const getConnections = (page, pageSize, search) => {
+  const getConnections = (page, pageSize, search, sortOrder) => {
     if (!search) search = "";
+    if (!sortOrder) sortOrder = "";
     dataFetch(
-      `/api/integrations/connections?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(search)}`,
+      `/api/integrations/connections?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(sortOrder)}`,
       {
         credentials : "include",
         method : "GET",
