@@ -59,12 +59,12 @@ language: en
           e.style.visibility = 'visible';
           }
     }
-    // Example JavaScript code to handle anchor links
-document.addEventListener('click', function (event) {
-  if (event.target.tagName === 'A' && event.target.getAttribute('href').startsWith('#')) {
-    window.location.hash = event.target.getAttribute('href');
-  }
-});
+    // Function to handle anchor links
+    document.addEventListener('click', function (event) {
+      if (event.target.tagName === 'A' && event.target.getAttribute('href').startsWith('#')) {
+        window.location.hash = event.target.getAttribute('href');
+      }
+    });
 
 </script>
 
