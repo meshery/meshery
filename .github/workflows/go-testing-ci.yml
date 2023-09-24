@@ -83,19 +83,19 @@ jobs:
           cd mesheryctl;
           make; 
           ./mesheryctl system start -p docker;
-          ./mesheryctl system update;
-          ./mesheryctl system status;
-          ./mesheryctl system restart;
-          ./mesheryctl system check --preflight  
-          ./mesheryctl system stop;
+          ./mesheryctl system update -y;
+          ./mesheryctl system status -y;
+          ./mesheryctl system restart -y;
+          ./mesheryctl system check --preflight;  
+          ./mesheryctl system stop -y;
           echo "Running Mesheryctl with Docker completed."
         
           ./mesheryctl system start -p kubernetes;
-          ./mesheryctl system update;
-          ./mesheryctl system status;
-          ./mesheryctl system restart;
-          ./mesheryctl system check --preflight
-          ./mesheryctl system stop;
+          ./mesheryctl system update -y;
+          ./mesheryctl system status -y;
+          ./mesheryctl system restart -y;
+          ./mesheryctl system check --preflight;
+          ./mesheryctl system stop -y;
           echo "Running Mesheryctl with Kubernetes completed."
           
       - name: Upload coverage to Codecov
