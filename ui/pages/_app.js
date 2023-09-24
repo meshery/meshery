@@ -250,6 +250,8 @@ class MesheryApp extends App {
     document.removeEventListener("fullscreenchange", this.fullScreenChanged);
   }
 
+
+
   componentDidUpdate(prevProps) {
     const { k8sConfig, capabilitiesRegistry } = this.props;
 
