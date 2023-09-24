@@ -145,6 +145,7 @@ type Event struct {
 	SystemID    string                 `json:"systemID"`
 	Severity    Severity               `json:"severity"`
 	Action      string                 `json:"action"`
+	Status      string                 `json:"status"`
 	Category    string                 `json:"category"`
 	Description string                 `json:"description"`
 	Metadata    map[string]interface{} `json:"metadata,omitempty"`
@@ -174,20 +175,18 @@ type FilterResult struct {
 }
 
 type K8sContext struct {
-	ID                 string                 `json:"id"`
-	Name               string                 `json:"name"`
-	Auth               map[string]interface{} `json:"auth"`
-	Cluster            map[string]interface{} `json:"cluster"`
-	Server             string                 `json:"server"`
-	Owner              string                 `json:"owner"`
-	CreatedBy          string                 `json:"created_by"`
-	MesheryInstanceID  string                 `json:"meshery_instance_id"`
-	KubernetesServerID string                 `json:"kubernetes_server_id"`
-	DeploymentType     string                 `json:"deployment_type"`
-	Version            string                 `json:"version"`
-	UpdatedAt          string                 `json:"updated_at"`
-	CreatedAt          string                 `json:"created_at"`
-	ConnectionID       string                 `json:"connection_id"`
+	ID                 string `json:"id"`
+	Name               string `json:"name"`
+	Server             string `json:"server"`
+	Owner              string `json:"owner"`
+	CreatedBy          string `json:"created_by"`
+	MesheryInstanceID  string `json:"meshery_instance_id"`
+	KubernetesServerID string `json:"kubernetes_server_id"`
+	DeploymentType     string `json:"deployment_type"`
+	Version            string `json:"version"`
+	UpdatedAt          string `json:"updated_at"`
+	CreatedAt          string `json:"created_at"`
+	ConnectionID       string `json:"connection_id"`
 }
 
 type K8sContextsPage struct {
@@ -388,6 +387,49 @@ type TelemetryComp struct {
 	Name   string `json:"name"`
 	Spec   string `json:"spec"`
 	Status string `json:"status"`
+}
+
+type MeshSyncEventType string
+
+const (
+	MeshSyncEventTypeAdded    MeshSyncEventType = "ADDED"
+	MeshSyncEventTypeModified MeshSyncEventType = "MODIFIED"
+	MeshSyncEventTypeDeleted  MeshSyncEventType = "DELETED"
+)
+
+var AllMeshSyncEventType = []MeshSyncEventType{
+	MeshSyncEventTypeAdded,
+	MeshSyncEventTypeModified,
+	MeshSyncEventTypeDeleted,
+}
+
+func (e MeshSyncEventType) IsValid() bool {
+	switch e {
+	case MeshSyncEventTypeAdded, MeshSyncEventTypeModified, MeshSyncEventTypeDeleted:
+		return true
+	}
+	return false
+}
+
+func (e MeshSyncEventType) String() string {
+	return string(e)
+}
+
+func (e *MeshSyncEventType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = MeshSyncEventType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid MeshSyncEventType", str)
+	}
+	return nil
+}
+
+func (e MeshSyncEventType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 type MeshType string

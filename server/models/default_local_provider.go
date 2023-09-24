@@ -132,6 +132,34 @@ func (l *DefaultLocalProvider) GetUsers(_, _, _, _, _, _ string) ([]byte, error)
 	return []byte(""), ErrLocalProviderSupport
 }
 
+func (l *DefaultLocalProvider) GetEnvironments(_, _, _, _, _, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) GetEnvironmentByID(_ *http.Request, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) DeleteEnvironment(_ *http.Request, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, _ *EnvironmentPayload, _ string, _ bool) error {
+	return ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, _ *EnvironmentPayload, _ string) (*EnvironmentData, error) {
+	return nil, ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) AddConnectionToEnvironment(_ *http.Request, _ string, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) RemoveConnectionFromEnvironment(_ *http.Request, _ string, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
 func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, _, _, _ string) ([]byte, error) {
 	return []byte(""), ErrLocalProviderSupport
 }
@@ -160,7 +188,7 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (
 	return l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
 }
 
-func (l *DefaultLocalProvider) GetK8sContexts(_, page, pageSize, search, order string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetK8sContexts(_, page, pageSize, search, order string, withCredentials bool) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -195,7 +223,7 @@ func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, e
 	results := []*K8sContext{}
 
 	for {
-		res, err := l.GetK8sContexts(token, strconv.Itoa(page), strconv.Itoa(pageSize), "", "")
+		res, err := l.GetK8sContexts(token, strconv.Itoa(page), strconv.Itoa(pageSize), "", "", true)
 		if err != nil {
 			return results, err
 		}

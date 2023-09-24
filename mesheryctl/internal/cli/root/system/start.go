@@ -20,6 +20,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"os/user"
 	"path"
 	"strconv"
 	"strings"
@@ -91,15 +92,18 @@ mesheryctl system start -p docker
 		}
 		cfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 		ctx, err := cfg.GetCurrentContext()
 		if err != nil {
-			return err
+			utils.Log.Error(ErrGetCurrentContext(err))
+			return nil
 		}
 		err = ctx.ValidateVersion()
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 		return nil
 	},
@@ -256,12 +260,6 @@ func start() error {
 			AllowedServices[v] = services[v]
 		}
 
-		utils.ViperCompose.Set("services", AllowedServices)
-		err = utils.ViperCompose.WriteConfig()
-		if err != nil {
-			return err
-		}
-
 		//////// FLAGS
 		// Control whether to pull for new Meshery container images
 		if skipUpdateFlag {
@@ -303,6 +301,21 @@ func start() error {
 		}
 		endpoint.Port = int32(tempPort)
 
+		group, err := user.LookupGroup("docker")
+		if err != nil {
+			return errors.Wrap(err, utils.SystemError("unable to get GID of docker group"))
+		}
+
+		// Create the group_add option and add GID of docker group to meshery container
+		groupAdd := viper.GetStringSlice("services.meshery.group_add")
+		groupAdd = append(groupAdd, group.Gid)
+		utils.ViperCompose.Set("services.meshery.group_add", groupAdd)
+
+		// Write the modified configuration back to the Docker Compose file
+		if err := utils.ViperCompose.WriteConfig(); err != nil {
+			return errors.Wrap(err, utils.SystemError("unable to add group_add option. Meshery Server cannot perform this privileged action"))
+		}
+
 		log.Info("Starting Meshery...")
 		start := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "up", "-d")
 		start.Stdout = os.Stdout
@@ -323,7 +336,8 @@ func start() error {
 		//connection to docker-client
 		cli, err := dockerCmd.NewAPIClientFromFlags(cliflags.NewCommonOptions(), dockerCfg)
 		if err != nil {
-			return ErrCreatingDockerClient(err)
+			utils.Log.Error(ErrCreatingDockerClient(err))
+			return nil
 		}
 
 		containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{})
@@ -385,7 +399,8 @@ func start() error {
 		spinner.Start()
 
 		if err := utils.CreateManifestsFolder(); err != nil {
-			return err
+			utils.Log.Error(ErrCreateManifestsFolder(err))
+			return nil
 		}
 
 		// Applying Meshery Helm charts for installing Meshery

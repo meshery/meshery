@@ -64,7 +64,9 @@ const (
 	filterListURL     = docsBaseURL + "reference/mesheryctl/filter/list"
 	filterViewURL     = docsBaseURL + "reference/mesheryctl/filter/view"
 	patternUsageURL   = docsBaseURL + "reference/mesheryctl/pattern"
+	patternViewURL    = docsBaseURL + "reference/mesheryctl/pattern/view"
 	appUsageURL       = docsBaseURL + "reference/mesheryctl/app"
+	appViewURL        = docsBaseURL + "reference/mesheryctl/app/view"
 	contextDeleteURL  = docsBaseURL + "reference/mesheryctl/system/context/delete"
 	contextViewURL    = docsBaseURL + "reference/mesheryctl/system/context/view"
 	contextCreateURL  = docsBaseURL + "reference/mesheryctl/system/context/create"
@@ -104,7 +106,9 @@ const (
 	cmdFilterList     cmdType = "filter list"
 	cmdFilterView     cmdType = "filter view"
 	cmdPattern        cmdType = "pattern"
+	cmdPatternView    cmdType = "pattern view"
 	cmdApp            cmdType = "app"
+	cmdAppView        cmdType = "app view"
 	cmdContext        cmdType = "context"
 	cmdContextDelete  cmdType = "delete"
 	cmdContextCreate  cmdType = "create"
@@ -480,8 +484,8 @@ func StringInSlice(str string, slice []string) bool {
 }
 
 // GetID returns a array of IDs from meshery server endpoint /api/{configurations}
-func GetID(configuration string) ([]string, error) {
-	url := MesheryEndpoint + "/api/" + configuration + "?page_size=10000"
+func GetID(mesheryServerUrl, configuration string) ([]string, error) {
+	url := mesheryServerUrl + "/api/" + configuration + "?page_size=10000"
 	configType := configuration + "s"
 	var idList []string
 	req, err := NewRequest("GET", url, nil)
@@ -516,8 +520,8 @@ func GetID(configuration string) ([]string, error) {
 }
 
 // GetName returns a of name:id from meshery server endpoint /api/{configurations}
-func GetName(configuration string) (map[string]string, error) {
-	url := MesheryEndpoint + "/api/" + configuration + "?page_size=10000"
+func GetName(mesheryServerUrl, configuration string) (map[string]string, error) {
+	url := mesheryServerUrl + "/api/" + configuration + "?page_size=10000"
 	configType := configuration + "s"
 	nameIdMap := make(map[string]string)
 	req, err := NewRequest("GET", url, nil)
@@ -552,8 +556,8 @@ func GetName(configuration string) (map[string]string, error) {
 }
 
 // Delete configuration from meshery server endpoint /api/{configurations}/{id}
-func DeleteConfiguration(baseUrl, id, configuration string) error {
-	url := baseUrl + "/api/" + configuration + "/" + id
+func DeleteConfiguration(mesheryServerUrl, id, configuration string) error {
+	url := mesheryServerUrl + "/api/" + configuration + "/" + id
 	req, err := NewRequest("DELETE", url, nil)
 	if err != nil {
 		return err
@@ -567,9 +571,9 @@ func DeleteConfiguration(baseUrl, id, configuration string) error {
 }
 
 // ValidId - Check if args is a valid ID or a valid ID prefix and returns the full ID
-func ValidId(args string, configuration string) (string, bool, error) {
+func ValidId(mesheryServerUrl, args string, configuration string) (string, bool, error) {
 	isID := false
-	configID, err := GetID(configuration)
+	configID, err := GetID(mesheryServerUrl, configuration)
 	if err == nil {
 		for _, id := range configID {
 			if strings.HasPrefix(id, args) {
@@ -587,9 +591,9 @@ func ValidId(args string, configuration string) (string, bool, error) {
 }
 
 // ValidId - Check if args is a valid name or a valid name prefix and returns the full name and ID
-func ValidName(args string, configuration string) (string, string, bool, error) {
+func ValidName(mesheryServerUrl, args string, configuration string) (string, string, bool, error) {
 	isName := false
-	nameIdMap, err := GetName(configuration)
+	nameIdMap, err := GetName(mesheryServerUrl, configuration)
 
 	if err != nil {
 		return "", "", false, err
@@ -697,18 +701,18 @@ func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error
 	client := &http.Client{}
 	req, err := NewRequest(method, path, nil)
 	if err != nil {
-		return nil, err
+		return nil, ErrCreatingRequest(err)
 	}
 
 	res, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return nil, ErrRequestResponse(err)
 	}
 	defer res.Body.Close()
 
 	body, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nil, err
+		return nil, ErrReadResponseBody(err)
 	}
 
 	prefs := &models.Preference{}

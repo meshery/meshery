@@ -1,8 +1,8 @@
-import { Button, makeStyles, NoSsr, Container, Typography } from "@material-ui/core";
-import SettingsIcon from "@material-ui/icons/Settings";
-import Head from "next/head";
-import { useRouter } from "next/router";
-import React from "react";
+import { Button, makeStyles, NoSsr, Container, Typography } from '@material-ui/core';
+import SettingsIcon from '@material-ui/icons/Settings';
+import Head from 'next/head';
+import { useRouter } from 'next/router';
+import React from 'react';
 
 /**
  * getPath returns the current pathname
@@ -19,7 +19,7 @@ function getPath() {
  * @returns {string}
  */
 function extractComponentName(path) {
-  return path.substring(path.lastIndexOf("/") + 1);
+  return path.substring(path.lastIndexOf('/') + 1);
 }
 
 /**
@@ -33,47 +33,47 @@ function extractComponentName(path) {
  * @returns {string}
  */
 function capitalize(string) {
-  if (typeof string === "string") return string.charAt(0).toUpperCase() + string.slice(1);
-  return "";
+  if (typeof string === 'string') return string.charAt(0).toUpperCase() + string.slice(1);
+  return '';
 }
 
 const useStyles = makeStyles((theme) => ({
-  alreadyConfigured : {
-    textAlign : "center",
-    padding : theme.spacing(20),
+  alreadyConfigured: {
+    textAlign: 'center',
+    padding: theme.spacing(20),
   },
-  container : {
-    textAlign : "center",
-    transform : "translateY(-20%)"
+  container: {
+    textAlign: 'center',
+    transform: 'translateY(-20%)',
   },
-  wrapper : {
-    display : "flex",
-    alignItems : "center",
-    height : "100%"
+  wrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    height: '100%',
   },
-  settings : {
-    flexBasis : "100%",
-    height : "0",
-    padding : "2rem"
+  settings: {
+    flexBasis: '100%',
+    height: '0',
+    padding: '2rem',
   },
-  btn : {
-    marginBottom : theme.spacing(2),
+  btn: {
+    marginBottom: theme.spacing(2),
   },
-  icon : {
-    width : theme.spacing(2.5),
-    marginRight : theme.spacing(0.5),
-    alignSelf : "flex-start"
-  }
-}))
+  icon: {
+    width: theme.spacing(2.5),
+    marginRight: theme.spacing(0.5),
+    alignSelf: 'flex-start',
+  },
+}));
 
 function Mesh() {
   const name = extractComponentName(getPath());
-  const classes = useStyles()
+  const classes = useStyles();
   const router = useRouter();
 
   const handleConfigure = () => {
-    router.push("/settings#service-mesh");
-  }
+    router.push('/settings#service-mesh');
+  };
 
   return (
     <NoSsr>
@@ -83,12 +83,8 @@ function Mesh() {
       <NoSsr>
         <div className={classes.wrapper}>
           <Container className={classes.container}>
-            <Typography variant="h6">
-              Adapter Unavailable
-            </Typography>
-            <Typography variant="subtitle">
-              Connect Meshery Adapter(s) in Settings
-            </Typography>
+            <Typography variant="h6">Adapter Unavailable</Typography>
+            <Typography variant="subtitle">Connect Meshery Adapter(s) in Settings</Typography>
             <div className={classes.settings}>
               <Button
                 variant="contained"

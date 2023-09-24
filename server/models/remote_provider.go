@@ -670,7 +670,7 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8
 
 	return k8sContext, nil
 }
-func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order string) ([]byte, error) {
+func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order string, withCredentials bool) ([]byte, error) {
 	MesheryInstanceID, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
 	if !ok {
 		return nil, ErrMesheryInstanceID
@@ -695,6 +695,10 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 	}
 	if order != "" {
 		q.Set("order", order)
+	}
+
+	if !withCredentials {
+		q.Set("with_credentials", "false")
 	}
 	q.Set("meshery_instance_id", mi)
 	remoteProviderURL.RawQuery = q.Encode()
@@ -731,7 +735,7 @@ func (l *RemoteProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) 
 	results := []*K8sContext{}
 
 	for {
-		res, err := l.GetK8sContexts(token, strconv.Itoa(page), strconv.Itoa(pageSize), "", "")
+		res, err := l.GetK8sContexts(token, strconv.Itoa(page), strconv.Itoa(pageSize), "", "", true)
 		if err != nil {
 			return results, err
 		}
@@ -1260,18 +1264,18 @@ func (l *RemoteProvider) PublishMetrics(tokenString string, result *MesheryResul
 func (l *RemoteProvider) SaveMesheryPatternResource(token string, resource *PatternResource) (*PatternResource, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatternResources) {
 		logrus.Error("operation not available")
-		return nil, ErrInvalidCapability("PersistMesheryPatternResources", l.ProviderName)
+		return nil, ErrInvalidCapability("PersistMesheryDesignResources", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatternResources)
 
 	data, err := json.Marshal(resource)
 	if err != nil {
-		return nil, ErrMarshal(err, "meshery pattern resource")
+		return nil, ErrMarshal(err, "meshery design resource")
 	}
 
-	logrus.Debugf("Pattern Resource: %s, size: %d", data, len(data))
-	logrus.Infof("attempting to save pattern resource to remote provider")
+	logrus.Debugf("Design resource: %s, size: %d", data, len(data))
+	logrus.Infof("attempting to save design resource to remote provider")
 	bf := bytes.NewBuffer(data)
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
@@ -1286,8 +1290,8 @@ func (l *RemoteProvider) SaveMesheryPatternResource(token string, resource *Patt
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		logrus.Errorf("unable to send pattern resource: %v", err)
-		return nil, ErrPost(err, "pattern", cReq.Response.StatusCode)
+		logrus.Errorf("unable to send design resource: %v", err)
+		return nil, ErrPost(err, "design", cReq.Response.StatusCode)
 	}
 
 	defer func() {
@@ -1297,10 +1301,10 @@ func (l *RemoteProvider) SaveMesheryPatternResource(token string, resource *Patt
 	if resp.StatusCode == http.StatusOK {
 		var pr PatternResource
 		if err := json.NewDecoder(resp.Body).Decode(&pr); err != nil {
-			return nil, ErrUnmarshal(err, "Pattern Resource")
+			return nil, ErrUnmarshal(err, "Design Resource")
 		}
 
-		logrus.Infof("pattern successfully sent to remote provider: %+v", pr)
+		logrus.Infof("design successfully sent to remote provider: %+v", pr)
 		return &pr, nil
 	}
 
@@ -1315,10 +1319,10 @@ func (l *RemoteProvider) GetMesheryPatternResource(token, resourceID string) (*P
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatternResources)
 
-	logrus.Infof("attempting to fetch pattern resource from cloud for id: %s", resourceID)
+	logrus.Infof("attempting to fetch design resource from cloud for id: %s", resourceID)
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, resourceID))
-	logrus.Debugf("constructed pattern url: %s", remoteProviderURL.String())
+	logrus.Debugf("constructed design url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
 	resp, err := l.DoRequest(cReq, token)
@@ -1326,7 +1330,7 @@ func (l *RemoteProvider) GetMesheryPatternResource(token, resourceID string) (*P
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		return nil, ErrFetch(err, "Pattern Resource", resp.StatusCode)
+		return nil, ErrFetch(err, "Design resource", resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -1335,19 +1339,19 @@ func (l *RemoteProvider) GetMesheryPatternResource(token, resourceID string) (*P
 	if resp.StatusCode == http.StatusOK {
 		var pr PatternResource
 		if err := json.NewDecoder(resp.Body).Decode(&pr); err != nil {
-			return nil, ErrUnmarshal(err, "Pattern resource")
+			return nil, ErrUnmarshal(err, "Design resource")
 		}
 
-		logrus.Infof("pattern resource successfully retrieved from remote provider")
+		logrus.Infof("design resource successfully retrieved from remote provider")
 		return &pr, nil
 	}
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, ErrDataRead(err, "Pattern Resource")
+		return nil, ErrDataRead(err, "Design resource")
 	}
 
-	logrus.Errorf("error while fetching pattern resource: %s", bdr)
+	logrus.Errorf("error while fetching design resource: %s", bdr)
 	return nil, ErrFetch(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
@@ -1368,7 +1372,7 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatternResources)
-	logrus.Infof("attempting to fetch patterns resource from cloud")
+	logrus.Infof("attempting to fetch designs resource from cloud")
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
@@ -1398,7 +1402,7 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 	}
 
 	remoteProviderURL.RawQuery = q.Encode()
-	logrus.Debugf("constructed pattern resource url: %s", remoteProviderURL.String())
+	logrus.Debugf("constructed design resource url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
 	resp, err := l.DoRequest(cReq, token)
@@ -1406,8 +1410,8 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		logrus.Errorf("unable to get pattern resource: %v", err)
-		return nil, ErrFetch(err, "Patterns Page Resource", resp.StatusCode)
+		logrus.Errorf("unable to get design resource: %v", err)
+		return nil, ErrFetch(err, "design Page Resource", resp.StatusCode)
 	}
 
 	defer func() {
@@ -1418,20 +1422,20 @@ func (l *RemoteProvider) GetMesheryPatternResources(
 		var pr PatternResourcePage
 		if err := json.NewDecoder(resp.Body).Decode(&pr); err != nil {
 			logrus.Errorf("unable to read response body: %v", err)
-			return nil, ErrUnmarshal(err, "Patterns Page Resource")
+			return nil, ErrUnmarshal(err, "design Page Resource")
 		}
 
-		logrus.Infof("pattern resources successfully retrieved from remote provider")
+		logrus.Infof("design resources successfully retrieved from remote provider")
 		return &pr, nil
 	}
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, ErrDataRead(err, "Patterns Page Resource")
+		return nil, ErrDataRead(err, "design Page Resource")
 	}
 
-	logrus.Errorf("error while fetching pattern resource: %s", bdr)
-	return nil, ErrFetch(fmt.Errorf("error while fetching pattern resource: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
+	logrus.Errorf("error while fetching design resource: %s", bdr)
+	return nil, ErrFetch(fmt.Errorf("error while fetching design resource: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 func (l *RemoteProvider) DeleteMesheryPatternResource(token, resourceID string) error {
@@ -1441,10 +1445,10 @@ func (l *RemoteProvider) DeleteMesheryPatternResource(token, resourceID string) 
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatternResources)
 
-	logrus.Infof("attempting to fetch pattern from cloud for id: %s", resourceID)
+	logrus.Infof("attempting to fetch design from cloud for id: %s", resourceID)
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, resourceID))
-	logrus.Debugf("constructed pattern url: %s", remoteProviderURL.String())
+	logrus.Debugf("constructed design url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
 
 	resp, err := l.DoRequest(cReq, token)
@@ -1452,19 +1456,19 @@ func (l *RemoteProvider) DeleteMesheryPatternResource(token, resourceID string) 
 		if resp == nil {
 			return ErrUnreachableRemoteProvider(err)
 		}
-		return ErrDelete(err, "pattern: "+resourceID, resp.StatusCode)
+		return ErrDelete(err, "design: "+resourceID, resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
 
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("pattern resource successfully deleted from remote provider")
+		logrus.Infof("design resource successfully deleted from remote provider")
 		return nil
 	}
 
-	logrus.Errorf("error while deleting pattern resource")
-	return ErrDelete(fmt.Errorf("error while deleting pattern resource"), "pattern: "+resourceID, resp.StatusCode)
+	logrus.Errorf("error while deleting design resource")
+	return ErrDelete(fmt.Errorf("error while deleting design resource"), "design: "+resourceID, resp.StatusCode)
 }
 
 // SaveMesheryPattern saves given pattern with the provider
@@ -1485,15 +1489,15 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 		return nil, err
 	}
 
-	logrus.Debugf("Pattern: %s, size: %d", data, len(data))
-	logrus.Infof("attempting to save pattern to remote provider")
+	logrus.Debugf("design: %s, size: %d", data, len(data))
+	logrus.Infof("attempting to save design to remote provider")
 	bf := bytes.NewBuffer(data)
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 
 	if err != nil {
-		logrus.Errorf("unable to get pattern: %v", err)
+		logrus.Errorf("unable to get design: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
@@ -1501,7 +1505,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		logrus.Errorf("unable to send pattern: %v", err)
+		logrus.Errorf("unable to send design: %v", err)
 		return nil, err
 	}
 
@@ -1515,12 +1519,12 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("pattern successfully sent to remote provider: %s", string(bdr))
+		logrus.Infof("design successfully sent to remote provider: %s", string(bdr))
 		return bdr, nil
 	}
 
-	logrus.Errorf("error while sending pattern: %s", bdr)
-	return bdr, fmt.Errorf("error while sending pattern - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	logrus.Errorf("error while sending design: %s", bdr)
+	return bdr, fmt.Errorf("error while sending design - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
@@ -1532,7 +1536,7 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
 
-	logrus.Infof("attempting to fetch patterns from cloud")
+	logrus.Infof("attempting to fetch designs from cloud")
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
@@ -1552,7 +1556,7 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 		q.Set("updated_after", updatedAfter)
 	}
 	remoteProviderURL.RawQuery = q.Encode()
-	logrus.Debugf("constructed patterns url: %s", remoteProviderURL.String())
+	logrus.Debugf("constructed design url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
 	resp, err := l.DoRequest(cReq, tokenString)
@@ -1560,7 +1564,7 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		logrus.Errorf("unable to get patterns: %v", err)
+		logrus.Errorf("unable to get designs: %v", err)
 		return nil, err
 	}
 	defer func() {
@@ -1573,11 +1577,11 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("patterns successfully retrieved from remote provider")
+		logrus.Infof("designs successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	logrus.Errorf("error while fetching patterns: %s", bdr)
-	return nil, fmt.Errorf("error while fetching patterns - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	logrus.Errorf("error while fetching designs: %s", bdr)
+	return nil, fmt.Errorf("error while fetching design - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
 // GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
@@ -1589,7 +1593,7 @@ func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pag
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(MesheryPatternsCatalog)
 
-	logrus.Infof("attempting to fetch catalog patterns from cloud")
+	logrus.Infof("attempting to fetch catalog designs from cloud")
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
@@ -1606,7 +1610,7 @@ func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pag
 		q.Set("order", order)
 	}
 	remoteProviderURL.RawQuery = q.Encode()
-	logrus.Debugf("constructed catalog patterns url: %s", remoteProviderURL.String())
+	logrus.Debugf("constructed catalog design url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
 	resp, err := l.DoRequest(cReq, tokenString)
@@ -1614,22 +1618,22 @@ func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pag
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		return nil, ErrFetch(err, "Pattern Page - Catalog", resp.StatusCode)
+		return nil, ErrFetch(err, "design Page - Catalog", resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, ErrDataRead(err, "Pattern Page - Catalog")
+		return nil, ErrDataRead(err, "design Page - Catalog")
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("catalog patterns successfully retrieved from remote provider")
+		logrus.Infof("catalog design successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	logrus.Errorf("error while fetching catalog patterns: %s", bdr)
-	return nil, ErrFetch(fmt.Errorf("error while fetching catalog patterns: %s", bdr), "Patterns page - Catalog", resp.StatusCode)
+	logrus.Errorf("error while fetching catalog design: %s", bdr)
+	return nil, ErrFetch(fmt.Errorf("error while fetching catalog design: %s", bdr), "design page - Catalog", resp.StatusCode)
 }
 
 // GetMesheryPattern gets pattern for the given patternID
@@ -1641,15 +1645,15 @@ func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string) 
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
 
-	logrus.Infof("attempting to fetch pattern from cloud for id: %s", patternID)
+	logrus.Infof("attempting to fetch design from cloud for id: %s", patternID)
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, patternID))
-	logrus.Debugf("constructed pattern url: %s", remoteProviderURL.String())
+	logrus.Debugf("constructed design url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to get patterns: %v", err)
+		logrus.Errorf("unable to get design: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
@@ -1657,8 +1661,8 @@ func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string) 
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		logrus.Errorf("unable to get patterns: %v", err)
-		return nil, ErrFetch(err, "Pattern:"+patternID, resp.StatusCode)
+		logrus.Errorf("unable to get design: %v", err)
+		return nil, ErrFetch(err, "design:"+patternID, resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
@@ -1666,15 +1670,15 @@ func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string) 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
 		logrus.Errorf("unable to read response body: %v", err)
-		return nil, ErrDataRead(err, "Pattern:"+patternID)
+		return nil, ErrDataRead(err, "design:"+patternID)
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("pattern successfully retrieved from remote provider")
+		logrus.Infof("design successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	logrus.Errorf("error while fetching pattern: %s", bdr)
-	return nil, ErrFetch(fmt.Errorf("could not retrieve pattern from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
+	logrus.Errorf("error while fetching design: %s", bdr)
+	return nil, ErrFetch(fmt.Errorf("could not retrieve design from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // DeleteMesheryPattern deletes a meshery pattern with the given id
@@ -1686,15 +1690,15 @@ func (l *RemoteProvider) DeleteMesheryPattern(req *http.Request, patternID strin
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
 
-	logrus.Infof("attempting to fetch pattern from cloud for id: %s", patternID)
+	logrus.Infof("attempting to fetch design from cloud for id: %s", patternID)
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, patternID))
-	logrus.Debugf("constructed pattern url: %s", remoteProviderURL.String())
+	logrus.Debugf("constructed design url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to get patterns: %v", err)
+		logrus.Errorf("unable to get design: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
@@ -1702,7 +1706,7 @@ func (l *RemoteProvider) DeleteMesheryPattern(req *http.Request, patternID strin
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		logrus.Errorf("unable to get patterns: %v", err)
+		logrus.Errorf("unable to get design: %v", err)
 		return nil, err
 	}
 	defer func() {
@@ -1715,11 +1719,11 @@ func (l *RemoteProvider) DeleteMesheryPattern(req *http.Request, patternID strin
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("pattern successfully retrieved from remote provider")
+		logrus.Infof("design successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	logrus.Errorf("error while fetching pattern: %s", bdr)
-	return nil, fmt.Errorf("error while getting pattern - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	logrus.Errorf("error while fetching design: %s", bdr)
+	return nil, fmt.Errorf("error while getting design - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
 // CloneMesheryPattern clones a meshery pattern with the given id
@@ -1731,10 +1735,10 @@ func (l *RemoteProvider) CloneMesheryPattern(req *http.Request, patternID string
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(CloneMesheryPatterns)
 
-	logrus.Infof("attempting to clone pattern from cloud for id: %s", patternID)
+	logrus.Infof("attempting to clone design from cloud for id: %s", patternID)
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, patternID))
-	logrus.Debugf("constructed pattern url: %s", remoteProviderURL.String())
+	logrus.Debugf("constructed design url: %s", remoteProviderURL.String())
 
 	data, err := json.Marshal(clonePatternRequest)
 	if err != nil {
@@ -1748,7 +1752,7 @@ func (l *RemoteProvider) CloneMesheryPattern(req *http.Request, patternID string
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to clone patterns: %v", err)
+		logrus.Errorf("unable to clone design: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
@@ -1756,7 +1760,7 @@ func (l *RemoteProvider) CloneMesheryPattern(req *http.Request, patternID string
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		logrus.Errorf("unable to clone patterns: %v", err)
+		logrus.Errorf("unable to clone design: %v", err)
 		return nil, err
 	}
 	defer func() {
@@ -1769,11 +1773,11 @@ func (l *RemoteProvider) CloneMesheryPattern(req *http.Request, patternID string
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("pattern successfully cloned from remote provider")
+		logrus.Infof("design successfully cloned from remote provider")
 		return bdr, nil
 	}
-	logrus.Errorf("error while cloning pattern file with id %s: %s", patternID, bdr)
-	return nil, fmt.Errorf("error while cloning pattern - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	logrus.Errorf("error while cloning design file with id %s: %s", patternID, bdr)
+	return nil, fmt.Errorf("error while cloning design - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
 // PublishMesheryPattern publishes a meshery pattern with the given id to catalog
@@ -1785,14 +1789,14 @@ func (l *RemoteProvider) PublishCatalogPattern(req *http.Request, publishPattern
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(MesheryPatternsCatalog)
 
-	logrus.Infof("attempting to pubish pattern with id: %s", publishPatternRequest.ID)
+	logrus.Infof("attempting to pubish design with id: %s", publishPatternRequest.ID)
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
-	logrus.Debugf("constructed pattern url: %s", remoteProviderURL.String())
+	logrus.Debugf("constructed design url: %s", remoteProviderURL.String())
 
 	data, err := json.Marshal(publishPatternRequest)
 	if err != nil {
-		return nil, ErrMarshal(err, "pattern request to publish to catalog")
+		return nil, ErrMarshal(err, "design request to publish to catalog")
 	}
 	bf := bytes.NewBuffer(data)
 
@@ -1800,7 +1804,7 @@ func (l *RemoteProvider) PublishCatalogPattern(req *http.Request, publishPattern
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to publish pattern to catalog: %v", err)
+		logrus.Errorf("unable to publish design to catalog: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
@@ -1808,7 +1812,7 @@ func (l *RemoteProvider) PublishCatalogPattern(req *http.Request, publishPattern
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		logrus.Errorf("unable to publish pattern to catalog: %v", err)
+		logrus.Errorf("unable to publish design to catalog: %v", err)
 		return nil, err
 	}
 	defer func() {
@@ -1821,11 +1825,11 @@ func (l *RemoteProvider) PublishCatalogPattern(req *http.Request, publishPattern
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("pattern successfully published to catalog")
+		logrus.Infof("design successfully published to catalog")
 		return bdr, nil
 	}
-	logrus.Errorf("error while publishing pattern file to catalog with id %s: %s", publishPatternRequest.ID, bdr)
-	return nil, fmt.Errorf("error while publishing pattern file to catalog - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	logrus.Errorf("error while publishing design file to catalog with id %s: %s", publishPatternRequest.ID, bdr)
+	return nil, fmt.Errorf("error while publishing design file to catalog - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
 // UnPublishMesheryPattern publishes a meshery pattern with the given id to catalog
@@ -1837,14 +1841,14 @@ func (l *RemoteProvider) UnPublishCatalogPattern(req *http.Request, publishPatte
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(MesheryPatternsCatalog)
 
-	logrus.Infof("attempting to unpubish pattern with id: %s", publishPatternRequest.ID)
+	logrus.Infof("attempting to unpubish design with id: %s", publishPatternRequest.ID)
 
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
-	logrus.Debugf("constructed pattern url: %s", remoteProviderURL.String())
+	logrus.Debugf("constructed design url: %s", remoteProviderURL.String())
 
 	data, err := json.Marshal(publishPatternRequest)
 	if err != nil {
-		return nil, ErrMarshal(err, "pattern request to unpublish from catalog")
+		return nil, ErrMarshal(err, "design request to unpublish from catalog")
 	}
 	bf := bytes.NewBuffer(data)
 
@@ -1852,7 +1856,7 @@ func (l *RemoteProvider) UnPublishCatalogPattern(req *http.Request, publishPatte
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to unpublish pattern from catalog: %v", err)
+		logrus.Errorf("unable to unpublish design from catalog: %v", err)
 		return nil, err
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
@@ -1860,7 +1864,7 @@ func (l *RemoteProvider) UnPublishCatalogPattern(req *http.Request, publishPatte
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		logrus.Errorf("unable to unpublish pattern from catalog: %v", err)
+		logrus.Errorf("unable to unpublish design from catalog: %v", err)
 		return nil, err
 	}
 	defer func() {
@@ -1873,11 +1877,11 @@ func (l *RemoteProvider) UnPublishCatalogPattern(req *http.Request, publishPatte
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("pattern successfully unpublished from catalog")
+		logrus.Infof("design successfully unpublished from catalog")
 		return bdr, nil
 	}
-	logrus.Errorf("error while unpublishing pattern file from catalog with id %s: %s", publishPatternRequest.ID, bdr)
-	return nil, fmt.Errorf("error while unpublishing pattern file from catalog - Status code: %d, Body: %s", resp.StatusCode, bdr)
+	logrus.Errorf("error while unpublishing design file from catalog with id %s: %s", publishPatternRequest.ID, bdr)
+	return nil, fmt.Errorf("error while unpublishing design file from catalog - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
 // DeleteMesheryPatterns deletes meshery patterns with the given ids and names
@@ -1896,13 +1900,13 @@ func (l *RemoteProvider) DeleteMesheryPatterns(req *http.Request, patterns Meshe
 
 	// Create remote provider-url
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s", l.RemoteProviderURL, ep))
-	logrus.Debugf("constructed pattern url: %s", remoteProviderURL.String())
+	logrus.Debugf("constructed design url: %s", remoteProviderURL.String())
 
 	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), &reqBodyBuffer)
 
 	tokenString, err := l.GetToken(req)
 	if err != nil {
-		logrus.Errorf("unable to get patterns: %v", err)
+		logrus.Errorf("unable to get design: %v", err)
 		return nil, err
 	}
 
@@ -1912,7 +1916,7 @@ func (l *RemoteProvider) DeleteMesheryPatterns(req *http.Request, patterns Meshe
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		logrus.Errorf("unable to get patterns: %v", err)
+		logrus.Errorf("unable to get design: %v", err)
 		return nil, err
 	}
 	defer func() {
@@ -1925,11 +1929,11 @@ func (l *RemoteProvider) DeleteMesheryPatterns(req *http.Request, patterns Meshe
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("pattern successfully retrieved from remote provider")
+		logrus.Infof("design successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	logrus.Errorf("error while fetching pattern: %s", bdr)
-	return nil, fmt.Errorf("error while getting pattern - Status code: %d, Body: %s", 200, bdr)
+	logrus.Errorf("error while fetching design: %s", bdr)
+	return nil, fmt.Errorf("error while getting design - Status code: %d, Body: %s", 200, bdr)
 }
 
 func (l *RemoteProvider) RemotePatternFile(req *http.Request, resourceURL, path string, save bool) ([]byte, error) {
@@ -1951,8 +1955,8 @@ func (l *RemoteProvider) RemotePatternFile(req *http.Request, resourceURL, path 
 		return nil, ErrMarshal(err, "meshery metrics for shipping")
 	}
 
-	logrus.Debugf("Pattern: %s, size: %d", data, len(data))
-	logrus.Infof("attempting to save pattern to remote provider")
+	logrus.Debugf("design: %s, size: %d", data, len(data))
+	logrus.Infof("attempting to save design to remote provider")
 	bf := bytes.NewBuffer(data)
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
@@ -1971,8 +1975,8 @@ func (l *RemoteProvider) RemotePatternFile(req *http.Request, resourceURL, path 
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		logrus.Errorf("unable to send pattern: %v", err)
-		return nil, ErrPost(err, "Pattern File", resp.StatusCode)
+		logrus.Errorf("unable to send design: %v", err)
+		return nil, ErrPost(err, "design File", resp.StatusCode)
 	}
 
 	defer func() {
@@ -1980,15 +1984,15 @@ func (l *RemoteProvider) RemotePatternFile(req *http.Request, resourceURL, path 
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, ErrDataRead(err, "Pattern File")
+		return nil, ErrDataRead(err, "design File")
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("pattern successfully sent to remote provider: %s", string(bdr))
+		logrus.Infof("design successfully sent to remote provider: %s", string(bdr))
 		return bdr, nil
 	}
 
-	return bdr, ErrPost(fmt.Errorf("could not send pattern to remote provider: %s", string(bdr)), fmt.Sprint(bdr), resp.StatusCode)
+	return bdr, ErrPost(fmt.Errorf("could not send design to remote provider: %s", string(bdr)), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // SaveMesheryFilter saves given filter with the provider
@@ -4184,4 +4188,280 @@ func (l *RemoteProvider) ShareFilter(req *http.Request) (int, error) {
 		return resp.StatusCode, ErrShareFilter(fmt.Errorf("unable to share filter"))
 	}
 	return resp.StatusCode, nil
+}
+
+func (l *RemoteProvider) GetEnvironments(token, page, pageSize, search, order, filter string) ([]byte, error) {
+	
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments")
+	q := remoteProviderURL.Query()
+	if page != "" {
+		q.Set("page", page)
+	}
+	if pageSize != "" {
+		q.Set("pagesize", pageSize)
+	}
+	if search != "" {
+		q.Set("search", search)
+	}
+	if order != "" {
+		q.Set("order", order)
+	}
+	if filter != "" {
+		q.Set("filter", filter)
+	}
+	remoteProviderURL.RawQuery = q.Encode()
+
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Users Data", http.StatusUnauthorized)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bd, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, ErrDataRead(err, "Environments Data")
+	}
+
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+		logrus.Infof("Environments data successfully retrieved from remote provider")
+		return bd, nil
+	}
+	err = ErrFetch(err, "Environments Data", resp.StatusCode)
+	logrus.Errorf(err.Error())
+	return nil, err
+}
+
+func (l *RemoteProvider) GetEnvironmentByID(req *http.Request, environmentID string) ([]byte, error) {
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments/" + environmentID)
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Environment data", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("Environment successfully retrieved from remote provider")
+		return bdr, nil
+	}
+	err = ErrFetch(err, "Environment", resp.StatusCode)
+	logrus.Errorf(err.Error())
+	return nil, err
+}
+
+func (l *RemoteProvider) SaveEnvironment(req *http.Request, env *EnvironmentPayload, token string, skipTokenCheck bool) error {
+
+	_env, err := json.Marshal(env)
+	if err != nil {
+		return err
+	}
+	bf := bytes.NewBuffer(_env)
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments")
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+	tokenString := token
+	if !skipTokenCheck {
+		tokenString, err = l.GetToken(req)
+		if err != nil {
+			logrus.Error("error getting token: ", err)
+			return err
+		}
+	}
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		if resp == nil {
+			return ErrUnreachableRemoteProvider(err)
+		}
+		return ErrFetch(err, "Save Environment", resp.StatusCode)
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return ErrDataRead(err, "Save Environment")
+	}
+
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
+		return nil
+	}
+
+	return ErrPost(fmt.Errorf("failed to save the environment"), fmt.Sprint(bdr), resp.StatusCode)
+}
+
+func (l *RemoteProvider) DeleteEnvironment(req *http.Request, environmentID string) ([]byte, error) {
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments/" + environmentID)
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Environment data", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+		logrus.Infof("Environment successfully deleted from remote provider")
+		return bdr, nil
+	}
+	err = ErrFetch(err, "Environment", resp.StatusCode)
+	logrus.Errorf(err.Error())
+	return nil, err
+}
+
+func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *EnvironmentPayload, environmentID string) (*EnvironmentData, error) {
+
+	_env, err := json.Marshal(env)
+	if err != nil {
+		return nil, err
+	}
+	bf := bytes.NewBuffer(_env)
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments/" + environmentID)
+	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Environment data", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, ErrDataRead(err, "Update Environment")
+	}
+
+	if resp.StatusCode == http.StatusOK {
+		var environment EnvironmentData
+		if err = json.Unmarshal(bdr, &environment); err != nil {
+			return nil, err
+		}
+		return &environment, nil
+	}
+
+	return nil, ErrFetch(fmt.Errorf("failed to update the connection"), fmt.Sprint(bdr), resp.StatusCode)
+}
+
+func (l *RemoteProvider) AddConnectionToEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error) {
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments/" + environmentID + "/connections/" + connectionID)
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Environment data", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+		logrus.Infof("Connection successfully added to environment")
+		return bdr, nil
+	}
+	err = ErrFetch(err, "Environment", resp.StatusCode)
+	logrus.Errorf(err.Error())
+	return nil, err
+}
+
+func (l *RemoteProvider) RemoveConnectionFromEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error) {
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments/" + environmentID + "/connections/" + connectionID)
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
+	token, err := l.GetToken(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Environment data", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Errorf("unable to read response body: %v", err)
+		return nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
+		logrus.Infof("Connection successfully removed from environment")
+		return bdr, nil
+	}
+	err = ErrFetch(err, "Environment", resp.StatusCode)
+	logrus.Errorf(err.Error())
+	return nil, err
 }

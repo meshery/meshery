@@ -1,19 +1,25 @@
 //@ts-check
-import { Grid, Paper, Typography, Button } from "@material-ui/core";
-import { Pagination } from "@material-ui/lab";
-import React, { useState } from "react";
-import MesheryApplicationCard from "./ApplicationsCard";
-import ConfirmationModal from "../ConfirmationModal";
-import { getComponentsinFile } from "../../utils/utils";
-import PublishIcon from "@material-ui/icons/Publish";
-import useStyles from "../MesheryPatterns/Grid.styles";
-import { FILE_OPS } from "../../utils/Enum";
-import DryRunComponent from "../DryRun/DryRunComponent";
+import { Grid, Paper, Typography, Button } from '@material-ui/core';
+import { Pagination } from '@material-ui/lab';
+import React, { useState } from 'react';
+import MesheryApplicationCard from './ApplicationsCard';
+import ConfirmationModal from '../ConfirmationModal';
+import { getComponentsinFile } from '../../utils/utils';
+import PublishIcon from '@material-ui/icons/Publish';
+import useStyles from '../MesheryPatterns/Grid.styles';
+import { FILE_OPS } from '../../utils/Enum';
+import DryRunComponent from '../DryRun/DryRunComponent';
 
+const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
-const INITIAL_GRID_SIZE = { xl : 4, md : 6, xs : 12 };
-
-function ApplicationsGridItem({ application,  handleDeploy, handleUnDeploy, handleSubmit, setSelectedApplications, handleAppDownload }) {
+function ApplicationsGridItem({
+  application,
+  handleDeploy,
+  handleUnDeploy,
+  handleSubmit,
+  setSelectedApplications,
+  handleAppDownload,
+}) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(application.application_file);
 
@@ -25,13 +31,30 @@ function ApplicationsGridItem({ application,  handleDeploy, handleUnDeploy, hand
         updated_at={application.updated_at}
         created_at={application.created_at}
         application_file={application.application_file}
-        requestFullSize={() => setGridProps({ xl : 12, md : 12, xs : 12 })}
+        requestFullSize={() => setGridProps({ xl: 12, md: 12, xs: 12 })}
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
         handleDeploy={handleDeploy}
         handleUnDeploy={handleUnDeploy}
-        deleteHandler={() => handleSubmit({ data : yaml, id : application.id, type : FILE_OPS.DELETE ,name : application.name })}
-        updateHandler={() => handleSubmit({ data : yaml, id : application.id, type : FILE_OPS.UPDATE ,name : application.name, source_type : application.type.String })}
-        setSelectedApplications={() => setSelectedApplications({ application : application, show : true })}
+        deleteHandler={() =>
+          handleSubmit({
+            data: yaml,
+            id: application.id,
+            type: FILE_OPS.DELETE,
+            name: application.name,
+          })
+        }
+        updateHandler={() =>
+          handleSubmit({
+            data: yaml,
+            id: application.id,
+            type: FILE_OPS.UPDATE,
+            name: application.name,
+            source_type: application.type.String,
+          })
+        }
+        setSelectedApplications={() =>
+          setSelectedApplications({ application: application, show: true })
+        }
         setYaml={setYaml}
         source_type={application.type.String}
         handleAppDownload={handleAppDownload}
@@ -65,125 +88,151 @@ function ApplicationsGridItem({ application,  handleDeploy, handleUnDeploy, hand
  * }} props props
  */
 
-function MesheryApplicationGrid({ applications=[],handleDeploy, handleUnDeploy, handleSubmit,urlUploadHandler,uploadHandler, setSelectedApplication, selectedApplication, pages = 1,setPage, selectedPage, UploadImport, fetch, handleAppDownload ,selectedK8sContexts }) {
-
-  const classes = useStyles()
+function MesheryApplicationGrid({
+  applications = [],
+  handleDeploy,
+  handleUnDeploy,
+  handleSubmit,
+  urlUploadHandler,
+  uploadHandler,
+  setSelectedApplication,
+  selectedApplication,
+  pages = 1,
+  setPage,
+  selectedPage,
+  UploadImport,
+  fetch,
+  handleAppDownload,
+  selectedK8sContexts,
+}) {
+  const classes = useStyles();
 
   const [importModal, setImportModal] = useState({
-    open : false
+    open: false,
   });
 
   const handleUploadImport = () => {
     setImportModal({
-      open : true
+      open: true,
     });
-  }
+  };
 
   const handleUploadImportClose = () => {
     setImportModal({
-      open : false
+      open: false,
     });
-  }
+  };
 
   const [modalOpen, setModalOpen] = useState({
-    open : false,
-    deploy : false,
-    application_file : null,
-    name : "",
-    count : 0,
-    dryRunComponent : null
+    open: false,
+    deploy: false,
+    application_file: null,
+    name: '',
+    count: 0,
+    dryRunComponent: null,
   });
 
   const handleModalClose = () => {
     setModalOpen((prevState) => ({
       ...prevState,
-      open : false,
-      application_file : null,
-      name : "",
-      count : 0
-    } ))
-  }
+      open: false,
+      application_file: null,
+      name: '',
+      count: 0,
+    }));
+  };
 
   const handleModalOpen = (app, isDeploy) => {
-
-    const dryRunComponent =(
+    const dryRunComponent = (
       <DryRunComponent
         design={app.application_file}
         noOfElements={getComponentsinFile(app.application_file)}
         selectedContexts={selectedK8sContexts}
-      ></DryRunComponent>)
+      ></DryRunComponent>
+    );
 
     setModalOpen({
-      open : true,
-      deploy : isDeploy,
-      application_file : app.application_file,
-      name : app.name,
+      open: true,
+      deploy: isDeploy,
+      application_file: app.application_file,
+      name: app.name,
       dryRunComponent,
-      count : getComponentsinFile(app.application_file)
+      count: getComponentsinFile(app.application_file),
     });
-  }
+  };
 
   return (
     <div>
-      {!selectedApplication.show &&
-      <Grid container spacing={3} style={{ padding : "1rem" }}>
-        {applications.map((application) => (
-          <ApplicationsGridItem
-            key={application.id}
-            application={application}
-            handleDeploy={() => handleModalOpen(application, true)}
-            handleUnDeploy={() => handleModalOpen(application, false)}
-            handleSubmit={handleSubmit}
-            setSelectedApplications={setSelectedApplication}
-            handleAppDownload={handleAppDownload}
-          />
-        ))}
-
-      </Grid>
-      }
-      {!selectedApplication.show && applications.length === 0 &&
-          <Paper className={classes.noPaper}>
-            <div className={classes.noContainer}>
-              <Typography align="center" color="textSecondary" className={classes.noText}>
-                No Applications Found
-              </Typography>
-              <div>
-                <Button
-                  aria-label="Add Application"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  // @ts-ignore
-                  onClick={handleUploadImport}
-                  style={{ marginRight : "2rem" }}
-                >
-                  <PublishIcon className={classes.addIcon} />
-              Import Application
-                </Button>
-              </div>
+      {!selectedApplication.show && (
+        <Grid container spacing={3} style={{ padding: '1rem' }}>
+          {applications.map((application) => (
+            <ApplicationsGridItem
+              key={application.id}
+              application={application}
+              handleDeploy={() => handleModalOpen(application, true)}
+              handleUnDeploy={() => handleModalOpen(application, false)}
+              handleSubmit={handleSubmit}
+              setSelectedApplications={setSelectedApplication}
+              handleAppDownload={handleAppDownload}
+            />
+          ))}
+        </Grid>
+      )}
+      {!selectedApplication.show && applications.length === 0 && (
+        <Paper className={classes.noPaper}>
+          <div className={classes.noContainer}>
+            <Typography align="center" color="textSecondary" className={classes.noText}>
+              No Applications Found
+            </Typography>
+            <div>
+              <Button
+                aria-label="Add Application"
+                variant="contained"
+                color="primary"
+                size="large"
+                // @ts-ignore
+                onClick={handleUploadImport}
+                style={{ marginRight: '2rem' }}
+              >
+                <PublishIcon className={classes.addIcon} />
+                Import Application
+              </Button>
             </div>
-          </Paper>
-      }
-      {applications.length
-        ? (
-          <div className={classes.pagination} >
-            <Pagination count={pages} page={selectedPage+1} onChange={(_, page) => setPage(page - 1)} />
           </div>
-        )
-        : null}
+        </Paper>
+      )}
+      {applications.length ? (
+        <div className={classes.pagination}>
+          <Pagination
+            count={pages}
+            page={selectedPage + 1}
+            onChange={(_, page) => setPage(page - 1)}
+          />
+        </div>
+      ) : null}
       <ConfirmationModal
         open={modalOpen.open}
         handleClose={handleModalClose}
-        submit={
-          { deploy : () => handleDeploy(modalOpen.application_file, modalOpen.name), unDeploy : () => handleUnDeploy (modalOpen.application_file, modalOpen.name) }
-        }
+        submit={{
+          deploy: () => handleDeploy(modalOpen.application_file, modalOpen.name),
+          unDeploy: () => handleUnDeploy(modalOpen.application_file, modalOpen.name),
+        }}
         isDelete={!modalOpen.deploy}
-        title={ modalOpen.name }
-        componentCount={ modalOpen.count }
+        title={modalOpen.name}
+        componentCount={modalOpen.count}
         dryRunComponent={modalOpen.dryRunComponent}
         tab={modalOpen.deploy ? 2 : 1}
       />
-      <UploadImport open={importModal.open} handleClose={handleUploadImportClose} isApplication = {true} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetch()} configuration="Application"  />
+      <UploadImport
+        open={importModal.open}
+        handleClose={handleUploadImportClose}
+        isApplication={true}
+        aria-label="URL upload button"
+        handleUrlUpload={urlUploadHandler}
+        handleUpload={uploadHandler}
+        fetch={() => fetch()}
+        configuration="Application"
+      />
     </div>
   );
 }

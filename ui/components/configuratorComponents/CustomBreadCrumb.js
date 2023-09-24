@@ -1,38 +1,38 @@
-import { ClickAwayListener, withStyles } from "@material-ui/core"
-import React, { useEffect, useState } from "react"
+import { ClickAwayListener, withStyles } from '@material-ui/core';
+import React, { useEffect, useState } from 'react';
 
 const styles = (theme) => ({
-  designWrapper : {
-    width : "100%",
-    color : "#fff",
-    position : "fixed",
-    top : 80,
+  designWrapper: {
+    width: '100%',
+    color: '#fff',
+    position: 'fixed',
+    top: 80,
     // left: 0,
-    backgroundColor : theme.palette.type === 'dark' ? "#222222" : "#477E96",
-    zIndex : "1",
-    marginLeft : "4px",
-    padding : "4px 50px",
-    transform : 'translateX(-40px)',
+    backgroundColor: theme.palette.type === 'dark' ? '#222222' : '#477E96',
+    zIndex: '1',
+    marginLeft: '4px',
+    padding: '4px 50px',
+    transform: 'translateX(-40px)',
   },
-  span : {
+  span: {
     // marginLeft: 300,
-    color : "#fff",
-    fontStyle : "italic",
-    "&:hover" : {
-      cursor : "pointer",
-      textDecoration : "underline"
-    }
+    color: '#fff',
+    fontStyle: 'italic',
+    '&:hover': {
+      cursor: 'pointer',
+      textDecoration: 'underline',
+    },
   },
-  input : {
-    background : "transparent",
-    border : "none",
-    color : "#fff",
-    textDecoration : "underline",
-    '&:focus' : {
-      outline : "none",
-      border : "none"
-    }
-  }
+  input: {
+    background: 'transparent',
+    border: 'none',
+    color: '#fff',
+    textDecoration: 'underline',
+    '&:focus': {
+      outline: 'none',
+      border: 'none',
+    },
+  },
 });
 
 function CustomBreadCrumb({ title, onBack, titleChangeHandler, classes }) {
@@ -41,49 +41,38 @@ function CustomBreadCrumb({ title, onBack, titleChangeHandler, classes }) {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      titleChangeHandler(name.trim())
+      titleChangeHandler(name.trim());
     }, 400);
 
-    return () => clearTimeout(timer)
-  }, [name])
+    return () => clearTimeout(timer);
+  }, [name]);
 
   useEffect(() => {
-    setName(title)
-  }, [title])
+    setName(title);
+  }, [title]);
 
-  const handleInputChange = event => {
-    setName(event.target.value)
-  }
+  const handleInputChange = (event) => {
+    setName(event.target.value);
+  };
 
   return (
     <div className={classes.designWrapper}>
-      {"> "}
-      <span
-        className={classes.span}
-        onClick={onBack}
-      >
+      {'> '}
+      <span className={classes.span} onClick={onBack}>
         Designs
       </span>
-      {" > "}
+      {' > '}
 
-      {editing
-        ?
-        <ClickAwayListener
-          onClickAway={() => setEditing(false)}
-        >
-          <input
-            className={classes.input}
-            value={name}
-            onChange={handleInputChange}
-            autoFocus
-          />
+      {editing ? (
+        <ClickAwayListener onClickAway={() => setEditing(false)}>
+          <input className={classes.input} value={name} onChange={handleInputChange} autoFocus />
         </ClickAwayListener>
-        : <span
-          className={classes.span}
-          onClick={() => setEditing(true)}
-        >{title}</span>
-      }
+      ) : (
+        <span className={classes.span} onClick={() => setEditing(true)}>
+          {title}
+        </span>
+      )}
     </div>
-  )
+  );
 }
 export default withStyles(styles)(CustomBreadCrumb);

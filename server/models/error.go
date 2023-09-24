@@ -96,8 +96,8 @@ const (
 	ErrUnreachableRemoteProviderCode      = "1531"
 	ErrShareFilterCode                    = "1532"
 	ErrPersistEventCode                   = "1533"
-	ErrUnreachableKubeAPICode             = "replace_me"
-	ErrFlushMeshSyncDataCode              = "replace_me"
+	ErrUnreachableKubeAPICode             = "1534"
+	ErrFlushMeshSyncDataCode              = "1535"
 )
 
 var (
@@ -353,11 +353,11 @@ func ErrShareDesign(err error) error {
 }
 
 func ErrShareFilter(err error) error {
-	return errors.New(ErrShareFilterCode, errors.Alert, []string{"cannot make filter public"}, []string{err.Error()}, []string{"email address provided might not be valid", "insufficient permission"}, []string{"Ensure that you are the owner of the filter you are sharing", "Try again later", "Try using an alternate email address"})
+	return errors.New(ErrShareFilterCode, errors.Alert, []string{"Cannot make filter public"}, []string{err.Error()}, []string{"Email address provided might not be valid", "Verify that you have sufficient permission to share the filter. You should be the owner of the filter"}, []string{"Verify the spelling of the email address. Try using an alternate email address.", "Ensure that you are the owner of the filter you are sharing or have sharing permission assigned.", ""})
 }
 
 func ErrUnreachableRemoteProvider(err error) error {
-	return errors.New(ErrUnreachableRemoteProviderCode, errors.Alert, []string{"Could not reach remote provider"}, []string{"", err.Error()}, []string{"Remote provider server may be down or not accepting requests"}, []string{"Make sure remote provider server is healthy and accepting requests"})
+	return errors.New(ErrUnreachableRemoteProviderCode, errors.Alert, []string{"Could not reach remote provider"}, []string{"", err.Error()}, []string{"Remote provider server may be down or not accepting requests."}, []string{"Make sure remote provider server is healthy and accepting requests."})
 }
 
 func ErrPersistEvent(err error) error {
@@ -365,7 +365,7 @@ func ErrPersistEvent(err error) error {
 }
 
 func ErrUnreachableKubeAPI(err error, server string) error {
-	return errors.New(ErrUnreachableKubeAPICode, errors.Alert, []string{fmt.Sprintf("Error communicating with KubeAPI at %s.", server)}, []string{err.Error()}, []string{"The API server is not exposed.", "Credentials are malformed / invalid."}, []string{"Ensure client credential is not expired.", "Recheck the API server url.", "Remove the cluster credential and enable 'insecure-skip-tls-verify'."})
+	return errors.New(ErrUnreachableKubeAPICode, errors.Alert, []string{fmt.Sprintf("Error communicating with KubeAPI at %s.", server)}, []string{err.Error()}, []string{"The Kubernetes API server is not reachable.", "Credentials are invalid."}, []string{"Verify network connectivity and Kubernetes API responsiveness between Meshery Server and your cluster.", "Ensure client credential is not expired and is properly formed.", "Remove the cluster credential and enable 'insecure-skip-tls-verify'."})
 }
 
 func ErrFlushMeshSyncData(err error, contextName, server string) error {

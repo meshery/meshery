@@ -44,7 +44,7 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 	if limitstr != "all" {
 		limit, _ = strconv.Atoi(limitstr)
 		if limit == 0 { //If limit is unspecified then it defaults to 25
-			limit = DefaultPageSizeForMeshModelComponents
+			limit = defaultPageSize
 		}
 	}
 	pagestr := r.URL.Query().Get("page")
@@ -215,11 +215,13 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 			ModelName: mod.Name,
 		}
 		entities, _, _ := h.registryManager.GetEntities(filter)
-		host := h.registryManager.GetRegistrant(entities[0])
-		mod.HostID = host.ID
-		mod.HostName = host.Hostname
-		mod.DisplayHostName = registry.HostnameToPascalCase(host.Hostname)
-		meshmodel = append(meshmodel, mod)
+		if len(entities) > 0 { //checking if entities is non empty
+			host := h.registryManager.GetRegistrant(entities[0])
+			mod.HostID = host.ID
+			mod.HostName = host.Hostname
+			mod.DisplayHostName = registry.HostnameToPascalCase(host.Hostname)
+			meshmodel = append(meshmodel, mod)
+		}
 	}
 	var pgSize int64
 	if limitstr == "all" {

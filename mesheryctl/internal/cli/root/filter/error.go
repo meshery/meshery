@@ -15,8 +15,6 @@
 package filter
 
 import (
-	"strconv"
-
 	"github.com/layer5io/meshkit/errors"
 )
 
@@ -24,9 +22,26 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrInvalidAPICallCode = "1016"
+	ErrFilterNameOrIDCode = "1096"
+	ErrFetchFilterCode    = "1097"
 )
 
-func ErrInvalidAPICall(statusCode int) error {
-	return errors.New(ErrInvalidAPICallCode, errors.Alert, []string{"Response Status Code ", strconv.Itoa(statusCode), " possible Server Error"}, []string{"Response Status Code " + strconv.Itoa(statusCode) + " possible Server Error"}, []string{}, []string{})
+func ErrFilterNameOrID(err error) error {
+	return errors.New(
+		ErrFilterNameOrIDCode,
+		errors.Alert,
+		[]string{"Unable to fetch filter"},
+		[]string{err.Error()},
+		[]string{"Probable invalid filter name or id"},
+		[]string{"Run `mesheryctl filter list` to view all available filters."})
+}
+
+func ErrFetchFilter(err error) error {
+	return errors.New(
+		ErrFetchFilterCode,
+		errors.Alert,
+		[]string{"Unable to Fetch Filter"},
+		[]string{err.Error()},
+		[]string{"Filter name or id doesn't exist"},
+		[]string{"Run `mesheryctl filter view -a` to view all available filters."})
 }

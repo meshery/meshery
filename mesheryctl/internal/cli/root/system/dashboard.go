@@ -78,11 +78,13 @@ mesheryctl system dashboard --skip-browser
 		// check if meshery is running or not
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			utils.Log.Error(err)
+			return nil
 		}
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			return err
+			utils.Log.Error(ErrGetCurrentContext(err))
+			return nil
 		}
 		running, _ := utils.IsMesheryRunning(currCtx.GetPlatform())
 		if !running {
@@ -94,11 +96,13 @@ mesheryctl system dashboard --skip-browser
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			utils.Log.Error(err)
+			return nil
 		}
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			return err
+			utils.Log.Error(ErrGetCurrentContext(err))
+			return nil
 		}
 		log.Debug("Fetching Meshery-UI endpoint")
 
@@ -122,7 +126,8 @@ mesheryctl system dashboard --skip-browser
 				// get a free port number to bind port-forwarding
 				port, err := utils.GetEphemeralPort()
 				if err != nil {
-					return ErrFailedGetEphemeralPort(err)
+					utils.Log.Error(ErrFailedGetEphemeralPort(err))
+					return nil
 				}
 
 				portforward, err := utils.NewPortForward(
@@ -136,7 +141,8 @@ mesheryctl system dashboard --skip-browser
 					false,
 				)
 				if err != nil {
-					return ErrInitPortForward(err)
+					utils.Log.Error(ErrInitPortForward(err))
+					return nil
 
 				}
 
@@ -184,7 +190,8 @@ mesheryctl system dashboard --skip-browser
 
 			endpoint, err = meshkitkube.GetServiceEndpoint(context.TODO(), clientset, &opts)
 			if err != nil {
-				return err
+				utils.Log.Error(err)//the func return a meshkit error
+				return nil
 			}
 
 			mesheryEndpoint = fmt.Sprintf("%s://%s:%d", utils.EndpointProtocol, endpoint.Internal.Address, endpoint.Internal.Port)
@@ -212,7 +219,8 @@ mesheryctl system dashboard --skip-browser
 			if err == nil {
 				err = config.UpdateContextInConfig(currCtx, mctlCfg.GetCurrentContextName())
 				if err != nil {
-					return err
+					utils.Log.Error(err)
+					return nil
 				}
 			}
 
