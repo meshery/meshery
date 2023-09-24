@@ -4,7 +4,7 @@ import AppBarComponent from "./styledComponents/AppBar";
 
 import DeleteIcon from "@material-ui/icons/Delete";
 import SaveIcon from '@material-ui/icons/Save';
-import { AvatarGroup } from "@mui/material";
+import { AvatarGroup } from "@material-ui/core";
 import { iconMedium } from "../../../css/icons.styles";
 import { useMeshModelComponents } from "../../../utils/hooks/useMeshModelComponents";
 import { getWebAdress } from "../../../utils/webApis";
