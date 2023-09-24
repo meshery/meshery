@@ -62,8 +62,7 @@ The `TypingFilter` component accepts the following props:
 
 - `handleFilter` (function, required): A callback function that is called when the user applies a filter. This function receives the filtered data as an argument.
 
-- `autoFilter` (boolean,optional) :  A boolean to indicate if the filter should be applied automatically (on user input) .
- 
+- `autoFilter` (boolean,optional) : A boolean to indicate if the filter should be applied automatically (on user input) .
 
 # Finite State Machine (FSM) for `TypingFilter` Component
 
