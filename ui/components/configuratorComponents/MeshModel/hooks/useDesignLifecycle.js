@@ -86,59 +86,73 @@ export default function useDesignLifecycle() {
 
   async function designUpdate() {
     try {
-      await promisifiedDataFetch("/api/pattern", {
-        body : JSON.stringify({
-          pattern_data : {
-            name : designName,
-            pattern_file : designYaml,
-            id : designId
-          }
+      await promisifiedDataFetch('/api/pattern', {
+        body: JSON.stringify({
+          pattern_data: {
+            name: designName,
+            pattern_file: designYaml,
+            id: designId,
+          },
         }),
-        method : "POST"
+        method: 'POST',
       });
-      notify({ message : `"${designName}" updated successfully`, event_type : EVENT_TYPES.SUCCESS });
+      notify({ message: `"${designName}" updated successfully`, event_type: EVENT_TYPES.SUCCESS });
     } catch (err) {
-      notify({ message : `failed to update design file`, event_type : EVENT_TYPES.ERROR, details : err.toString() });
+      notify({
+        message: `failed to update design file`,
+        event_type: EVENT_TYPES.ERROR,
+        details: err.toString(),
+      });
     }
   }
 
   async function designDelete() {
     try {
-      await promisifiedDataFetch("/api/pattern/" + designId, { method : "DELETE" });
-      notify({ message : `Design "${designName}" Deleted`, event_type : EVENT_TYPES.SUCCESS });
+      await promisifiedDataFetch('/api/pattern/' + designId, { method: 'DELETE' });
+      notify({ message: `Design "${designName}" Deleted`, event_type: EVENT_TYPES.SUCCESS });
       setDesignId(undefined);
-      setDesignName("Unitled Design");
+      setDesignName('Unitled Design');
     } catch (err) {
-      return notify({ message : `failed to delete design file`, event_type : EVENT_TYPES.ERROR, details : err.toString() });
+      return notify({
+        message: `failed to delete design file`,
+        event_type: EVENT_TYPES.ERROR,
+        details: err.toString(),
+      });
     }
   }
 
   const updateDesignName = (name) => {
     setDesignName(name);
-  }
+  };
 
   const loadDesign = async (design_id) => {
     try {
-      const data = await promisifiedDataFetch("/api/pattern/" + design_id);
-      console.log("loaded data file", data);
+      const data = await promisifiedDataFetch('/api/pattern/' + design_id);
+      console.log('loaded data file', data);
       setDesignId(design_id);
       setDesignName(data.name);
       setDesignJson(jsYaml.load(data.pattern_file));
     } catch (err) {
-      notify({ message : `failed to load design file`, event_type : EVENT_TYPES.ERROR, details : err.toString() });
+      notify({
+        message: `failed to load design file`,
+        event_type: EVENT_TYPES.ERROR,
+        details: err.toString(),
+      });
     }
-  }
+  };
 
-  const updateDesignData =({ yamlData }) => {
+  const updateDesignData = ({ yamlData }) => {
     try {
       const designData = jsYaml.load(yamlData);
       setDesignJson(designData);
     } catch (err) {
-      notify({ message : `Invalid Yaml Data`, event_type : EVENT_TYPES.ERROR, details : err.toString() });
+      notify({
+        message: `Invalid Yaml Data`,
+        event_type: EVENT_TYPES.ERROR,
+        details: err.toString(),
+      });
     }
-  }
-
-
+  };
 
   return {
     designJson,
@@ -153,6 +167,6 @@ export default function useDesignLifecycle() {
     designName,
     updateDesignName,
     loadDesign,
-    updateDesignData
-  }
+    updateDesignData,
+  };
 }

@@ -24,7 +24,7 @@ const RemoteComponent = ({ url, loaderType }) => {
   }
   if (err != null) {
     /* Debugging log */
-    console.error(`Extension Error: ${err.toString()}`)
+    console.error(`Extension Error: ${err.toString()}`);
     return <></>;
   }
 

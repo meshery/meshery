@@ -1,20 +1,32 @@
-import { Grid, Paper, Typography } from "@material-ui/core";
-import { Pagination } from "@material-ui/lab";
-import React, { useState } from "react";
-import MesheryPatternCard from "./MesheryPatternCard";
-import DesignConfigurator from "../configuratorComponents/MeshModel";
-import { FILE_OPS, ACTIONS } from "../../utils/Enum";
-import ConfirmationMsg from "../ConfirmationModal";
-import { getComponentsinFile } from "../../utils/utils";
-import useStyles from "./Grid.styles";
-import Validation from "../Validation";
-import Modal from "../Modal";
+import { Grid, Paper, Typography } from '@material-ui/core';
+import { Pagination } from '@material-ui/lab';
+import React, { useState } from 'react';
+import MesheryPatternCard from './MesheryPatternCard';
+import DesignConfigurator from '../configuratorComponents/MeshModel';
+import { FILE_OPS, ACTIONS } from '../../utils/Enum';
+import ConfirmationMsg from '../ConfirmationModal';
+import { getComponentsinFile } from '../../utils/utils';
+import useStyles from './Grid.styles';
+import Validation from '../Validation';
+import Modal from '../Modal';
 import PublicIcon from '@material-ui/icons/Public';
 import DryRunComponent from '../DryRun/DryRunComponent';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
-function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublishModal, handleUnpublishModal, handleUnDeploy, handleClone, handleSubmit, setSelectedPatterns, canPublishPattern = false ,user }) {
+function PatternCardGridItem({
+  pattern,
+  handleDeploy,
+  handleVerify,
+  handlePublishModal,
+  handleUnpublishModal,
+  handleUnDeploy,
+  handleClone,
+  handleSubmit,
+  setSelectedPatterns,
+  canPublishPattern = false,
+  user,
+}) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(pattern.pattern_file);
 
@@ -83,9 +95,29 @@ function PatternCardGridItem({ pattern, handleDeploy, handleVerify, handlePublis
  * }} props props
  */
 
-function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUnpublishModal, handleDeploy, handleUnDeploy, handleClone, handleSubmit, setSelectedPattern, selectedPattern, pages = 1,setPage, selectedPage, patternErrors, canPublishPattern = false, publishModal, setPublishModal, selectedK8sContexts, publishSchema ,user }) {
-
-  const classes = useStyles()
+function MesheryPatternGrid({
+  patterns = [],
+  handleVerify,
+  handlePublish,
+  handleUnpublishModal,
+  handleDeploy,
+  handleUnDeploy,
+  handleClone,
+  handleSubmit,
+  setSelectedPattern,
+  selectedPattern,
+  pages = 1,
+  setPage,
+  selectedPage,
+  patternErrors,
+  canPublishPattern = false,
+  publishModal,
+  setPublishModal,
+  selectedK8sContexts,
+  publishSchema,
+  user,
+}) {
+  const classes = useStyles();
   const handlePublishModal = (pattern) => {
     if (canPublishPattern) {
       setPublishModal({
@@ -151,38 +183,41 @@ function MesheryPatternGrid({ patterns=[], handleVerify, handlePublish, handleUn
 
   return (
     <div>
-      {selectedPattern.show &&
-      <DesignConfigurator pattern={selectedPattern.pattern} show={setSelectedPattern}  onSubmit={handleSubmit} />
-      }
-      {!selectedPattern.show &&
-      <Grid container spacing={3}>
-        {patterns.map((pattern) => (
-          <PatternCardGridItem
-            key={pattern.id}
-            user={user}
-            pattern={pattern}
-            canPublishPattern={canPublishPattern}
-            handleClone={() => handleClone(pattern.id, pattern.name)}
-            handleDeploy={() => handleModalOpen(pattern, ACTIONS.DEPLOY)}
-            handleUnDeploy={() => handleModalOpen(pattern, ACTIONS.UNDEPLOY)}
-            handleVerify={(e) => handleVerify(e, pattern.pattern_file, pattern.id)}
-            handlePublishModal={() => handlePublishModal(pattern)}
-            handleUnpublishModal={(e) => handleUnpublishModal(e, pattern)()}
-            handleSubmit={handleSubmit}
-            setSelectedPatterns={setSelectedPattern}
-          />
-        ))}
-
-      </Grid>
-      }
-      {!selectedPattern.show && patterns.length === 0 &&
-          <Paper className={classes.noPaper}>
-            <div className={classes.noContainer}>
-              <Typography align="center" color="textSecondary" className={classes.noText}>
-                No Designs Found
-              </Typography>
-              <div>
-                {/* <Button
+      {selectedPattern.show && (
+        <DesignConfigurator
+          pattern={selectedPattern.pattern}
+          show={setSelectedPattern}
+          onSubmit={handleSubmit}
+        />
+      )}
+      {!selectedPattern.show && (
+        <Grid container spacing={3}>
+          {patterns.map((pattern) => (
+            <PatternCardGridItem
+              key={pattern.id}
+              user={user}
+              pattern={pattern}
+              canPublishPattern={canPublishPattern}
+              handleClone={() => handleClone(pattern.id, pattern.name)}
+              handleDeploy={() => handleModalOpen(pattern, ACTIONS.DEPLOY)}
+              handleUnDeploy={() => handleModalOpen(pattern, ACTIONS.UNDEPLOY)}
+              handleVerify={(e) => handleVerify(e, pattern.pattern_file, pattern.id)}
+              handlePublishModal={() => handlePublishModal(pattern)}
+              handleUnpublishModal={(e) => handleUnpublishModal(e, pattern)()}
+              handleSubmit={handleSubmit}
+              setSelectedPatterns={setSelectedPattern}
+            />
+          ))}
+        </Grid>
+      )}
+      {!selectedPattern.show && patterns.length === 0 && (
+        <Paper className={classes.noPaper}>
+          <div className={classes.noContainer}>
+            <Typography align="center" color="textSecondary" className={classes.noText}>
+              No Designs Found
+            </Typography>
+            <div>
+              {/* <Button
                   aria-label="Add Application"
                   variant="contained"
                   color="primary"

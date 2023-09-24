@@ -1,4 +1,4 @@
-import { makeStyles } from "@material-ui/core";
+import { makeStyles } from '@material-ui/core';
 
 export const useStyles = makeStyles((theme) => ({
   sidelist: {
@@ -26,13 +26,13 @@ export const useStyles = makeStyles((theme) => ({
     right: 0,
     transition: '0.3s ease-in-out !important',
   },
-  peekView : {
-    right : "-42.8rem",
-    transition : "0.3s ease-in-out !important",
+  peekView: {
+    right: '-42.8rem',
+    transition: '0.3s ease-in-out !important',
   },
 
-  container : {
-    padding : "1.25rem",
+  container: {
+    padding: '1.25rem',
   },
   header: {
     display: 'flex',
@@ -46,33 +46,33 @@ export const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     gap: '0.5rem',
   },
-  titleBellIcon : {
-    width : "2.25rem",
-    height : "2.25rem",
-    borderRadius : "100%",
-    backgroundColor : "black",
-    display : "flex",
-    padding : "0.2rem",
-    justifyContent : "center",
-    alignItems : "center",
-    cursor : "pointer",
+  titleBellIcon: {
+    width: '2.25rem',
+    height: '2.25rem',
+    borderRadius: '100%',
+    backgroundColor: 'black',
+    display: 'flex',
+    padding: '0.2rem',
+    justifyContent: 'center',
+    alignItems: 'center',
+    cursor: 'pointer',
   },
   // Aggregrate Level Chips
-  severityChip : {
-    borderRadius : "0.25rem",
-    display : "flex",
-    gap : "0.45rem",
-    justifyContent : "start",
-    alignItems : "center",
-    fontSize : ".95rem",
-    fontWeight : 600,
-    cursor : "pointer",
+  severityChip: {
+    borderRadius: '0.25rem',
+    display: 'flex',
+    gap: '0.45rem',
+    justifyContent: 'start',
+    alignItems: 'center',
+    fontSize: '.95rem',
+    fontWeight: 600,
+    cursor: 'pointer',
   },
   // Aggregrate Level Chips
-  severityChips : {
-    display : "flex",
-    gap : "0.75rem",
-    alignItems : "center",
+  severityChips: {
+    display: 'flex',
+    gap: '0.75rem',
+    alignItems: 'center',
   },
   notification: {
     margin: theme.spacing(0.5, 1),
@@ -80,9 +80,9 @@ export const useStyles = makeStyles((theme) => ({
 }));
 
 export const useNavNotificationIconStyles = makeStyles(() => ({
-  root : (props) => ({
-    "& .MuiBadge-badge" : {
-      backgroundColor : props.badgeColor,
+  root: (props) => ({
+    '& .MuiBadge-badge': {
+      backgroundColor: props.badgeColor,
     },
   }),
 }));

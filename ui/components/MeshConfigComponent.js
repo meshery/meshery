@@ -882,13 +882,21 @@ function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig 
   };
 
   const handleNATSClick = (index) => {
-    updateProgress({ showProgress : true });
-    NatsStatusQuery({ connectionID : contexts[index].connection_id }).subscribe({
-      next : (res) => {
-        updateProgress({ showProgress : false });
-        if (res.controller.name === "MesheryBroker" && res.controller.status.includes("Connected")) {
-          let runningEndpoint = res.controller.status.substring("Connected".length)
-          notify({ message : `Broker was pinged. ${runningEndpoint != "" ? `Running at ${runningEndpoint}` : ""}`, event_type : EVENT_TYPES.SUCCESS })
+    updateProgress({ showProgress: true });
+    NatsStatusQuery({ connectionID: contexts[index].connection_id }).subscribe({
+      next: (res) => {
+        updateProgress({ showProgress: false });
+        if (
+          res.controller.name === 'MesheryBroker' &&
+          res.controller.status.includes('Connected')
+        ) {
+          let runningEndpoint = res.controller.status.substring('Connected'.length);
+          notify({
+            message: `Broker was pinged. ${
+              runningEndpoint != '' ? `Running at ${runningEndpoint}` : ''
+            }`,
+            event_type: EVENT_TYPES.SUCCESS,
+          });
         } else {
           handleError('Meshery Broker could not be reached')(
             'Meshery Server is not connected to Meshery Broker',
@@ -937,11 +945,11 @@ function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig 
     updateProgress({ showProgress: true });
     const ctxId = contexts[index].id;
     const connectionID = contexts[index].connection_id;
-    MeshsyncStatusQuery(({ connectionID : connectionID })).subscribe({
-      next : (res) => {
-        updateProgress({ showProgress : false });
-        if (res.controller.name === "MeshSync") {
-          setMeshSyncStatusForGivenContext(ctxId, res.controller)
+    MeshsyncStatusQuery({ connectionID: connectionID }).subscribe({
+      next: (res) => {
+        updateProgress({ showProgress: false });
+        if (res.controller.name === 'MeshSync') {
+          setMeshSyncStatusForGivenContext(ctxId, res.controller);
         }
 
         if (res.controller.name === 'MeshSync' && res.controller.status.includes('Connected')) {

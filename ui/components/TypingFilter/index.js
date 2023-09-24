@@ -160,7 +160,7 @@ const FilterValueSuggestions = ({ filterStateMachine, dispatchFilterMachine, fil
  * @param {boolean} autoFilter - A boolean to indicate if the filter should be applied automatically (on user input) .
  * @returns {JSX.Element} - A React JSX element representing the TypingFilter component.
  */
-const TypingFilter = ({ filterSchema, handleFilter , autoFilter=false }) => {
+const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false }) => {
   const theme = useTheme();
   // console.log("initialFilter", initialFilter)
   const classes = useStyles();
@@ -175,7 +175,6 @@ const TypingFilter = ({ filterSchema, handleFilter , autoFilter=false }) => {
     state: FILTERING_STATE.IDLE,
   });
 
-
   const handleFilterChange = (e) => {
     if (!anchorEl) {
       setAnchorEl(e.currentTarget);
@@ -188,12 +187,11 @@ const TypingFilter = ({ filterSchema, handleFilter , autoFilter=false }) => {
     }
 
     dispatch({
-      type : FILTER_EVENTS.INPUT_CHANGE,
-      payload : {
-        value : e.target.value,
+      type: FILTER_EVENTS.INPUT_CHANGE,
+      payload: {
+        value: e.target.value,
       },
     });
-
   };
 
   const handleClear = () => {
@@ -232,17 +230,15 @@ const TypingFilter = ({ filterSchema, handleFilter , autoFilter=false }) => {
     };
     inputFieldRef?.current?.addEventListener('keydown', handleKeyDown);
     return () => {
-      inputFieldRef?.current?.removeEventListener("keydown", handleKeyDown)
-    }
-  }, [inputFieldRef.current])
-
+      inputFieldRef?.current?.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [inputFieldRef.current]);
 
   useEffect(() => {
     if (autoFilter && filteringState.state == FILTERING_STATE.SELECTING_FILTER) {
-      handleFilter(getFilters(filteringState.context.value, filterSchema))
+      handleFilter(getFilters(filteringState.context.value, filterSchema));
     }
-  }, [filteringState.state])
-
+  }, [filteringState.state]);
 
   return (
     <div className={clsx(classes.root, 'mui-fixed')}>

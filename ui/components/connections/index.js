@@ -11,9 +11,9 @@ import {
   List,
   ListItem,
   ListItemText,
-  TableRow
-} from "@material-ui/core";
-import { withStyles } from "@material-ui/core/styles";
+  TableRow,
+} from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
 // import EditIcon from "@material-ui/icons/Edit";
 // import YoutubeSearchedForIcon from '@mui/icons-material/YoutubeSearchedFor';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -29,15 +29,15 @@ import ExploreIcon from '@mui/icons-material/Explore';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import classNames from 'classnames';
 // import ReactSelectWrapper from "../ReactSelectWrapper";
-import dataFetch from "../../lib/data-fetch";
+import dataFetch from '../../lib/data-fetch';
 import LaunchIcon from '@mui/icons-material/Launch';
-import { useNotification } from "../../utils/hooks/useNotification";
-import { EVENT_TYPES } from "../../lib/event-types";
-import CustomColumnVisibilityControl from "../../utils/custom-column";
-import SearchBar from "../../utils/custom-search";
-import ResponsiveDataTable from "../../utils/data-table";
-import useStyles from "../../assets/styles/general/tool.styles";
-import Modal from "../Modal";
+import { useNotification } from '../../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../../lib/event-types';
+import CustomColumnVisibilityControl from '../../utils/custom-column';
+import SearchBar from '../../utils/custom-search';
+import ResponsiveDataTable from '../../utils/data-table';
+import useStyles from '../../assets/styles/general/tool.styles';
+import Modal from '../Modal';
 
 const styles = (theme) => ({
   grid: { padding: theme.spacing(2) },
@@ -128,14 +128,14 @@ const styles = (theme) => ({
       color: `${theme.palette.secondary.error} !important`,
     },
   },
-  expandedRows : {
-    background : `${theme.palette.secondary.default}10`
+  expandedRows: {
+    background: `${theme.palette.secondary.default}10`,
   },
-  contentContainer : {
-    [theme.breakpoints.down(1050)] : {
-      flexDirection : "column",
+  contentContainer: {
+    [theme.breakpoints.down(1050)]: {
+      flexDirection: 'column',
     },
-    flexWrap : "noWrap",
+    flexWrap: 'noWrap',
   },
 });
 
@@ -271,24 +271,24 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
 
   const columns = [
     {
-      name : "id",
-      label : "ID",
-      options : {
-        display : false,
+      name: 'id',
+      label: 'ID',
+      options: {
+        display: false,
       },
     },
     {
-      name : "metadata.server_location",
-      label : "Server Location",
-      options : {
-        display : false,
+      name: 'metadata.server_location',
+      label: 'Server Location',
+      options: {
+        display: false,
       },
     },
     {
-      name : "name",
-      label : "Element",
-      options : {
-        customHeadRender : function CustomHead({ index, ...column }) {
+      name: 'name',
+      label: 'Element',
+      options: {
+        customHeadRender: function CustomHead({ index, ...column }) {
           return (
             <TableCell key={index}>
               <b>{column.label}</b>
@@ -297,7 +297,7 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
         },
         customBodyRender: (value, tableMeta) => {
           return (
-            <Tooltip title={tableMeta.rowData[1]} placement="top" >
+            <Tooltip title={tableMeta.rowData[1]} placement="top">
               <Link href={tableMeta.rowData[1]} target="_blank">
                 {value}
                 <sup>
@@ -496,14 +496,15 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
     isRowExpandable: () => {
       return true;
     },
-    renderExpandableRow : (rowData, tableMeta) => {
+    renderExpandableRow: (rowData, tableMeta) => {
       const colSpan = rowData.length;
-      const connection = connections && connections[tableMeta.rowIndex]
+      const connection = connections && connections[tableMeta.rowIndex];
       return (
-        <TableCell colSpan={colSpan}
+        <TableCell
+          colSpan={colSpan}
           style={{
-            padding : "0 0 0.5rem 2rem",
-            backgroundColor : "rgba(0, 0, 0, 0.05)"
+            padding: '0 0 0.5rem 2rem',
+            backgroundColor: 'rgba(0, 0, 0, 0.05)',
           }}
         >
           <TableContainer>
@@ -512,18 +513,33 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
                 <TableCell>
                   <Paper>
                     <div>
-                      <Grid container spacing={1} >
+                      <Grid container spacing={1}>
                         <Grid item xs={12} md={12} className={classes.contentContainer}>
                           <List>
                             <ListItem>
                               <ListItem>
-                                <ListItemText primary="Server Version" secondary={connection ? connection?.metadata?.server_version : '-'} />
+                                <ListItemText
+                                  primary="Server Version"
+                                  secondary={
+                                    connection ? connection?.metadata?.server_version : '-'
+                                  }
+                                />
                               </ListItem>
                               <ListItem>
-                                <ListItemText primary="Server Location" secondary={connection ? connection?.metadata?.server_location : '-'} />
+                                <ListItemText
+                                  primary="Server Location"
+                                  secondary={
+                                    connection ? connection?.metadata?.server_location : '-'
+                                  }
+                                />
                               </ListItem>
                               <ListItem>
-                                <ListItemText primary="Server Build SHA" secondary={connection ? connection?.metadata?.server_build_sha : '-'} />
+                                <ListItemText
+                                  primary="Server Build SHA"
+                                  secondary={
+                                    connection ? connection?.metadata?.server_build_sha : '-'
+                                  }
+                                />
                               </ListItem>
                             </ListItem>
                           </List>
@@ -535,15 +551,21 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
                 <TableCell>
                   <Paper>
                     <div>
-                      <Grid container spacing={1} >
+                      <Grid container spacing={1}>
                         <Grid item xs={12} md={12} className={classes.contentContainer}>
                           <List>
                             <ListItem>
                               <ListItem>
-                                <ListItemText primary="Connections Type" secondary={connection ? connection?.type : '-'} />
+                                <ListItemText
+                                  primary="Connections Type"
+                                  secondary={connection ? connection?.type : '-'}
+                                />
                               </ListItem>
                               <ListItem>
-                                <ListItemText primary="Connections Sub Type" secondary={connection ? connection?.sub_type : '-'} />
+                                <ListItemText
+                                  primary="Connections Sub Type"
+                                  secondary={connection ? connection?.sub_type : '-'}
+                                />
                               </ListItem>
                             </ListItem>
                           </List>

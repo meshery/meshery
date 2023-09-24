@@ -571,7 +571,6 @@ class Header extends React.Component {
     );
     console.log('capabilitiesRegistry (mounted header)', this.props.capabilitiesRegistry);
     this._isMounted = true;
-
   }
 
   componentDidUpdate(prevProps) {

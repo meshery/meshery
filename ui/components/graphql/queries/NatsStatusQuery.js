@@ -6,11 +6,11 @@ export default function NatsStatusQuery(vars) {
 
   const NatsStatusQueryNode = graphql`
     query NatsStatusQuery($connectionID: String!) {
-      controller: getNatsStatus(connectionID: $connectionID){
-            name
-            version
-            status
-        }
+      controller: getNatsStatus(connectionID: $connectionID) {
+        name
+        version
+        status
+      }
     }
   `;
 
