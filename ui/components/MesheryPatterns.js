@@ -1,4 +1,3 @@
-// @ts-check
 import {
   Avatar, Button, Dialog, DialogActions, DialogContent, DialogTitle, Divider, IconButton, NoSsr, TableCell, Tooltip, Typography
 } from "@material-ui/core";
@@ -55,6 +54,7 @@ import SearchBar from "../utils/custom-search";
 import CustomColumnVisibilityControl from "../utils/custom-column";
 import ResponsiveDataTable from "../utils/data-table";
 import useStyles from "../assets/styles/general/tool.styles";
+import { Edit as EditIcon } from "@material-ui/icons";
 
 
 const styles = (theme) => ({
@@ -521,7 +521,8 @@ function MesheryPatterns({
       async (result) => {
         try {
           const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName));
+          const modelNames = _.uniq(models?.map((model) => model.displayName.toUpperCase()));
+          modelNames.sort();
 
           // Modify the schema using the utility function
           const modifiedSchema = modifyRJSFSchema(
@@ -565,11 +566,13 @@ function MesheryPatterns({
   }, [catalogVisibility])
 
   const handleSetPatterns = (patterns) => {
+    console.log("Patterns",patterns)
     if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
-      setPatterns([...catalogContentRef.current, ...patterns.filter(content => content.visibility !== VISIBILITY.PUBLISHED)])
+      setPatterns([...(catalogContentRef.current || []), ...(patterns?.filter(content => content.visibility !== VISIBILITY.PUBLISHED) || [] )])
       return
     }
-    setPatterns(patterns.filter(content => content.visibility !== VISIBILITY.PUBLISHED))
+
+    setPatterns(patterns?.filter(content => content.visibility !== VISIBILITY.PUBLISHED)||[])
   }
 
   useEffect(() => {
@@ -807,13 +810,13 @@ function MesheryPatterns({
       (result) => {
         console.log("PatternFile API", `/api/pattern${query}`);
         updateProgress({ showProgress : false });
-        page === 0 && stillLoading(false);
+        stillLoading(false);
         if (result) {
           // setPage(result.page || 0);
-          setPageSize(result.page_size || 0);
+          // setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
           handleSetPatterns(result.patterns || [])
-          setPatterns(result.patterns || []);
+          // setPatterns(result.patterns || []);
         }
       },
       handleError(ACTION_TYPES.FETCH_PATTERNS)
@@ -916,6 +919,14 @@ function MesheryPatterns({
     } catch (e) {
       console.error(e);
     }
+  }
+
+  const userCanEdit = (pattern) => {
+    return  (user?.role_names?.includes("admin") || user?.user_id === "meshery" || user?.user_id == pattern.user_id )
+  }
+
+  const handleOpenInConfigurator = (id) => {
+    router.push("/configuration/designs/configurator?design_id="+id)
   }
 
   const columns = [
@@ -1022,6 +1033,18 @@ function MesheryPatterns({
           const visibility = patterns[tableMeta.rowIndex]?.visibility
           return (
             <>
+
+              { userCanEdit(rowData) && <TooltipIcon
+                placement ="top"
+                title={"Edit"}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOpenInConfigurator(rowData.id)
+                }
+                }>
+                <EditIcon fill="currentColor" className={classes.iconPatt} />
+              </TooltipIcon>
+              }
               { visibility === VISIBILITY.PUBLISHED ? <TooltipIcon
                 placement ="top"
                 title={"Clone"}
@@ -1089,6 +1112,7 @@ function MesheryPatterns({
                   <PublicIcon fill="#F91313" data-cy="unpublish-button" />
                 </TooltipIcon>)
               }
+
             </>
           );
         },
@@ -1401,6 +1425,7 @@ function MesheryPatterns({
               publishModal={publishModal}
               setPublishModal={setPublishModal}
               publishSchema={publishSchema}
+              user={user}
             />
         }
         <ConfirmationModal
@@ -1418,9 +1443,9 @@ function MesheryPatterns({
           dryRunComponent={modalOpen.dryRunComponent}
           errors={modalOpen.errors}
         />
-        {canPublishPattern &&
+        {(canPublishPattern && publishModal.open) &&
           <Modal
-            open={publishModal.open}
+            open={true}
             schema={publishSchema.rjsfSchema}
             uiSchema={publishSchema.uiSchema}
             handleClose={handlePublishModalClose}
@@ -1432,18 +1457,19 @@ function MesheryPatterns({
             submitBtnIcon={<PublicIcon/>}
           />
         }
-        <Modal
-          open={importModal.open}
-          schema={importSchema.rjsfSchema}
-          uiSchema={importSchema.uiSchema}
-          handleClose={handleUploadImportClose}
-          handleSubmit={handleImportDesign}
-          title="Import Design"
-          submitBtnText="Import"
-          leftHeaderIcon={<Pattern fill="#fff" style={{ height : "24px", width : "24px", fonSize : "1.45rem" }} className={undefined} />}
-          submitBtnIcon={<PublishIcon  className={classes.addIcon} data-cy="import-button"/>}
-        />
-        {/* <UploadImport open={importModal.open} handleClose={handleUploadImportClose} aria-label="URL upload button" handleUrlUpload={urlUploadHandler} handleUpload={uploadHandler} fetch={() => fetchPatterns(page, pageSize, search, sortOrder)} configuration="Design" /> */}
+        { importModal.open &&
+          <Modal
+            open={true}
+            schema={importSchema.rjsfSchema}
+            uiSchema={importSchema.uiSchema}
+            handleClose={handleUploadImportClose}
+            handleSubmit={handleImportDesign}
+            title="Import Design"
+            submitBtnText="Import"
+            leftHeaderIcon={<Pattern fill="#fff" style={{ height : "24px", width : "24px", fonSize : "1.45rem" }} className={undefined} />}
+            submitBtnIcon={<PublishIcon  className={classes.addIcon} data-cy="import-button"/>}
+          />
+        }
         <PromptComponent ref={modalRef} />
       </NoSsr>
     </>

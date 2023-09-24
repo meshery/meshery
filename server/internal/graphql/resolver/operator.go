@@ -220,33 +220,23 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, _ models.Provider, ctx
 	}, nil
 }
 
-func (r *Resolver) getMeshsyncStatus(ctx context.Context, _ models.Provider, k8scontextID string) (*model.OperatorControllerStatus, error) {
+func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provider, connectionID string) (*model.OperatorControllerStatus, error) {
 	var kubeclient *mesherykube.Client
 	var err error
-	if k8scontextID != "" {
-		k8scontexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
-		if !ok || len(k8scontexts) == 0 {
+	
+	tokenString := ctx.Value(models.TokenCtxKey).(string)
+
+	if connectionID != "" {
+		k8scontext, err := provider.GetK8sContext(tokenString, connectionID)
+		if err != nil {
 			return nil, model.ErrMesheryClientNil
 		}
-		for _, ctx := range k8scontexts {
-			if ctx.ID == k8scontextID {
-				kubeclient, err = ctx.GenerateKubeHandler()
-				if err != nil {
-					return nil, model.ErrMesheryClient(err)
-				}
-				break
-			}
-		}
-	} else {
-		k8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
-		if !ok || len(k8scontexts) == 0 {
-			return nil, model.ErrMesheryClientNil
-		}
-		kubeclient, err = k8scontexts[0].GenerateKubeHandler()
+		kubeclient, err = k8scontext.GenerateKubeHandler()
 		if err != nil {
 			return nil, model.ErrMesheryClient(err)
 		}
 	}
+
 	if kubeclient == nil {
 		return nil, model.ErrMesheryClientNil
 	}
@@ -262,33 +252,23 @@ func (r *Resolver) getMeshsyncStatus(ctx context.Context, _ models.Provider, k8s
 	return &status, nil
 }
 
-func (r *Resolver) getNatsStatus(ctx context.Context, _ models.Provider, k8scontextID string) (*model.OperatorControllerStatus, error) {
+func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider, connectionID string) (*model.OperatorControllerStatus, error) {
 	var kubeclient *mesherykube.Client
 	var err error
-	if k8scontextID != "" {
-		k8scontexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
-		if !ok || len(k8scontexts) == 0 {
+	
+	tokenString := ctx.Value(models.TokenCtxKey).(string)
+
+	if connectionID != "" {
+		k8scontext, err := provider.GetK8sContext(tokenString, connectionID)
+		if err != nil {
 			return nil, model.ErrMesheryClientNil
 		}
-		for _, ctx := range k8scontexts {
-			if ctx.ID == k8scontextID {
-				kubeclient, err = ctx.GenerateKubeHandler()
-				if err != nil {
-					return nil, model.ErrMesheryClient(err)
-				}
-				break
-			}
-		}
-	} else {
-		k8scontexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
-		if !ok || len(k8scontexts) == 0 {
-			return nil, model.ErrMesheryClientNil
-		}
-		kubeclient, err = k8scontexts[0].GenerateKubeHandler()
+		kubeclient, err = k8scontext.GenerateKubeHandler()
 		if err != nil {
 			return nil, model.ErrMesheryClient(err)
 		}
 	}
+
 	if kubeclient == nil {
 		return nil, model.ErrMesheryClientNil
 	}

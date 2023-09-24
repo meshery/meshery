@@ -47,7 +47,7 @@ import dataFetch from "../lib/data-fetch";
 import { Collapse } from "@material-ui/core";
 import { cursorNotAllowed, disabledStyle, disabledStyleWithOutOpacity } from "../css/disableComponent.styles";
 import { CapabilitiesRegistry } from "../utils/disabledComponents";
-import { APPLICATION, DESIGN, CONFIGURATION,   DASHBOARD, FILTER,  LIFECYCLE,SERVICE_MESH,  PERFORMANCE,  PROFILES, TOGGLER, CONNECTION } from "../constants/navigator"
+import { APPLICATION, DESIGN, CONFIGURATION,   DASHBOARD, FILTER,  LIFECYCLE,SERVICE_MESH,  PERFORMANCE,  PROFILES, TOGGLER } from "../constants/navigator"
 import { iconSmall } from "../css/icons.styles";
 
 const styles = (theme) => ({
@@ -329,13 +329,13 @@ const getNavigatorComponents = (  /** @type {CapabilitiesRegistry} */  capabilit
     show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE]),
     submenu : true,
     children : [
-      {
-        id : CONNECTION,
-        href : "/management/connections",
-        title : "Connections",
-        show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CONNECTION]),
-        link : true,
-      },
+      // {
+      //   id : CONNECTION,
+      //   href : "/management/connections",
+      //   title : "Connections",
+      //   show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CONNECTION]),
+      //   link : true,
+      // },
       {
         id : SERVICE_MESH,
         href : "/management",

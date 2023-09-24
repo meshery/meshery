@@ -1,11 +1,9 @@
 package models
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshkit/models/events"
 )
 
 type clients struct {
@@ -13,13 +11,13 @@ type clients struct {
 	mu        *sync.Mutex
 }
 
-type EventBroadcast struct {
+type Broadcast struct {
 	clients *sync.Map
 }
 
-func (c *EventBroadcast) Subscribe(id uuid.UUID) (chan interface{}, func()) {
+func (c *Broadcast) Subscribe(id uuid.UUID) (chan interface{}, func()) {
 	clientMap, _ := c.clients.LoadOrStore(id, &clients{mu: new(sync.Mutex)})
-	ch := make(chan interface{})
+	ch := make(chan interface{}, 1)
 	connectedClient := clientMap.(*clients)
 
 	connectedClient.mu.Lock()
@@ -31,7 +29,6 @@ func (c *EventBroadcast) Subscribe(id uuid.UUID) (chan interface{}, func()) {
 		defer connectedClient.mu.Unlock()
 		for index, client := range connectedClient.listeners {
 			if client == ch {
-				fmt.Println("inside listeneres: ", id)
 				close(client)
 				connectedClient.listeners = append(connectedClient.listeners[:index], connectedClient.listeners[index+1:]...)
 			}
@@ -40,7 +37,7 @@ func (c *EventBroadcast) Subscribe(id uuid.UUID) (chan interface{}, func()) {
 	return ch, unsubscribe
 }
 
-func (c *EventBroadcast) Publish(id uuid.UUID, event *events.Event) {
+func (c *Broadcast) Publish(id uuid.UUID, data interface{}) {
 	clientMap, ok := c.clients.Load(id)
 	if !ok {
 		return
@@ -48,12 +45,12 @@ func (c *EventBroadcast) Publish(id uuid.UUID, event *events.Event) {
 
 	clientToPublish, _ := clientMap.(*clients)
 	for _, client := range clientToPublish.listeners {
-		client <- event
+		client <- data
 	}
 }
 
-func NewEventBroadcaster() *EventBroadcast {
-	return &EventBroadcast{
+func NewBroadcaster() *Broadcast {
+	return &Broadcast{
 		clients: new(sync.Map),
 	}
 }

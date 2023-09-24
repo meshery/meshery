@@ -98,12 +98,13 @@ Now, Meshery will run on the default port `http://localhost:9081`.
 
 Potential Solution: 
 
--  Go to your `meshery` clone.
+-  Go to your meshery folder in your local-system where you’ve cloned it.
 Execute: 
 
-
-- Restart Meshery Server.
-- `export BUILD="v0.X.X"`before building Meshery Server again.
+- `git remote add upstream https://github.com/meshery/meshery`
+- `git fetch upstream`
+- Restart the meshery server
+- Addionally, before restarting the server, if you like to pull the latest changes, you can do: `git pull upstream master`
 
 
 ### UI Development Server

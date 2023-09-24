@@ -20,13 +20,13 @@ import (
 )
 
 const (
-	ErrImportAppCode       = "replace_me"
-	ErrValidSourceCode     = "replace_me"
-	ErrAppManifestcode     = "replace_me"
-	ErrOnboardAppCode      = "replace_me"
-	ErrAppFoundCode        = "replace_me"
-	ErrInvalidNameOrIDCode = "replace_me"
-	ErrAppFlagCode         = "replace_me"
+	ErrImportAppCode       = "1080"
+	ErrValidSourceCode     = "1081"
+	ErrAppManifestCode     = "1189"
+	ErrOnboardAppCode      = "1082"
+	ErrAppFoundCode        = "1083"
+	ErrInvalidNameOrIDCode = "1084"
+	ErrAppFlagCode         = "1085"
 )
 const (
 	errAppMsg = `Usage: mesheryctl app import -f [file/url] -s [source-type]
@@ -54,7 +54,7 @@ func ErrValidSource(validSourceTypes []string) error {
 }
 
 func ErrAppManifest() error {
-	return errors.New(ErrAppManifestcode, errors.Alert,
+	return errors.New(ErrAppManifestCode, errors.Alert,
 		[]string{"No file path detected"},
 		[]string{"No manifest file path detected"},
 		[]string{"Manifest path not provided"},

@@ -1,6 +1,7 @@
 import { fetchQuery, graphql } from "react-relay";
 import { createRelayEnvironment } from "../../../lib/relayEnvironment";
 
+// not in use
 export default function fetchMeshModelSummary(selector) {
   const environment = createRelayEnvironment({});
 
