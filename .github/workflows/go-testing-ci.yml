@@ -78,15 +78,28 @@ jobs:
         uses: helm/kind-action@v1.5.0
         with:
           cluster_name: "kind-cluster"
-      - name: Start Mesheryctl System
-        run: |
-           cd mesheryctl; make; ./mesheryctl system start 
-      - name: Check Meshery System Readiness
-        run: |
-           cd mesheryctl; make; ./mesheryctl system check --preflight     
       - name: Run coverage
         run: |
-          cd mesheryctl; make; ./mesheryctl system check --preflight  
+          cd mesheryctl;
+          make; 
+          ./mesheryctl system start -p docker;
+          ./mesheryctl system update;
+          ./mesheryctl system status;
+          ./mesheryctl system restart;
+          ./mesheryctl system check --preflight  
+          ./mesheryctl system stop;
+          echo "Running Mesheryctl with Docker completed."
+          
+          cd mesheryctl;
+          make; 
+          ./mesheryctl system start -p kubernetes;
+          ./mesheryctl system update;
+          ./mesheryctl system status;
+          ./mesheryctl system restart;
+          ./mesheryctl system check --preflight
+          ./mesheryctl system stop;
+          echo "Running Mesheryctl with Kubernetes completed."
+          
       - name: Upload coverage to Codecov
         if: github.repository == 'meshery/meshery'
         uses: codecov/codecov-action@v3
