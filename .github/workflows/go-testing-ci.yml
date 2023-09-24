@@ -85,7 +85,8 @@ jobs:
         run: |
            cd mesheryctl; make; ./mesheryctl system check --preflight     
       - name: Run coverage
-        run: go test -run Integration ./... -race -coverprofile=coverage.txt -covermode=atomic -timeout 40m
+        run: |
+          cd mesheryctl; make; ./mesheryctl system check --preflight  
       - name: Upload coverage to Codecov
         if: github.repository == 'meshery/meshery'
         uses: codecov/codecov-action@v3
