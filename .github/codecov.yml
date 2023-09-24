@@ -20,7 +20,6 @@ coverage:
       backend:
         flags:
           - unittests
-          - gointegrationtests
 
 flags:
   # Filter the folders to be measured by each flag
