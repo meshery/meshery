@@ -7,7 +7,6 @@ import normalizeURI from "../utils/normalizeURI";
 import dataFetch from "../lib/data-fetch";
 import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
 import LoadingScreen from "./LoadingComponents/LoadingComponent";
-import { updateCollaboratorExtState } from "../lib/store";
 
 /**
  * getPath returns the current pathname
@@ -311,7 +310,7 @@ function createPathForRemoteComponent(componentName) {
  *  4. collaborator - for collaborator extension
  * @param {{ type: "navigator" | "user_prefs" | "account" | "collaborator", Extension: JSX.Element }} props
  */
-function ExtensionSandbox ({ type, Extension, isDrawerCollapsed, toggleDrawer, capabilitiesRegistry, updateCollaboratorExtState }) {
+function ExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer, capabilitiesRegistry }) {
   const [extension, setExtension] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -378,7 +377,6 @@ function ExtensionSandbox ({ type, Extension, isDrawerCollapsed, toggleDrawer, c
                   : (type === "collaborator")?
                     (
                       getComponentURIFromPathForCollaborator(extension).map(uri => {
-                        updateCollaboratorExtState({ collaboratorExtState : true });
                         return <Extension url={createPathForRemoteComponent(uri)} key={uri} />
                       })
                     )
@@ -396,7 +394,6 @@ function ExtensionSandbox ({ type, Extension, isDrawerCollapsed, toggleDrawer, c
 
 const mapDispatchToProps = (dispatch) => ({
   toggleDrawer : bindActionCreators(toggleDrawer, dispatch),
-  updateCollaboratorExtState : bindActionCreators(updateCollaboratorExtState, dispatch),
 });
 
 const mapStateToProps = (state) => ({
