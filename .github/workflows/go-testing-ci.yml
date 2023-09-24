@@ -89,9 +89,7 @@ jobs:
           ./mesheryctl system check --preflight  
           ./mesheryctl system stop;
           echo "Running Mesheryctl with Docker completed."
-          
-          cd mesheryctl;
-          make; 
+        
           ./mesheryctl system start -p kubernetes;
           ./mesheryctl system update;
           ./mesheryctl system status;
