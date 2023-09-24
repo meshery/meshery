@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import LinkIcon from '@material-ui/icons/Link';
-import { Tooltip, IconButton, TextField, Button, Grid } from '@material-ui/core';
+import { Tooltip, IconButton, TextField, Button, Grid } from '@layer5/sistent-components';
 import { withStyles } from '@material-ui/core/styles';
-// import { createTheme } from '@material-ui/core/styles';
 import { URLValidator } from '../utils/URLValidator';
 
+// Remove this as this won't be needed in the MUI v5 migration
+// import { createTheme } from '@material-ui/core/styles';
 // const getMuiTheme = () => createTheme({
 //   palette : {
 //     primary : {

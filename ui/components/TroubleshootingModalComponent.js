@@ -1,13 +1,16 @@
 import * as React from 'react';
-import Typography from '@material-ui/core/Typography';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Paper,
+  Typography,
+} from '@layer5/sistent-components';
 import { Modal } from '@material-ui/core';
 import InfoIcon from '@material-ui/icons/Info';
-import Accordion from '@material-ui/core/Accordion';
-import AccordionDetails from '@material-ui/core/AccordionDetails';
-import AccordionSummary from '@material-ui/core/AccordionSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import CloseIcon from '@material-ui/icons/Close';
-import { makeStyles, Paper } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { IconButton } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({

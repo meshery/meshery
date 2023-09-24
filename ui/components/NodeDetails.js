@@ -1,6 +1,5 @@
 import React from 'react';
 import { NoSsr, TableCell } from '@material-ui/core';
-// import { createTheme } from '@material-ui/core/styles';
 import MUIDataTable from 'mui-datatables';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 

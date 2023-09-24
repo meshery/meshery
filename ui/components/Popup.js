@@ -1,4 +1,4 @@
-import { Button, Grid, IconButton, Typography } from '@material-ui/core';
+import { Button, Grid, IconButton, Typography } from '@layer5/sistent-components';
 import { makeStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
 import { useRouter } from 'next/router';

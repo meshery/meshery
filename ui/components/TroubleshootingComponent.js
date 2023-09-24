@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Button from '@material-ui/core/Button';
+import { Button } from '@layer5/sistent-components';
 import TroubleshootingModal from './TroubleshootingModalComponent';
 
 const Troubleshoot = (props) => {

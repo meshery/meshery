@@ -48,7 +48,7 @@ import {
   setAdapter,
   updateCapabilities,
 } from '../lib/store';
-import { ButtonGroup, IconButton, Tooltip } from '@material-ui/core';
+import { ButtonGroup, IconButton, Tooltip } from '@layer5/sistent-components';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import dataFetch from '../lib/data-fetch';
 import { Collapse } from '@material-ui/core';

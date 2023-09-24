@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { TextField, Button, Grid, NativeSelect, Divider, Typography } from '@material-ui/core';
 import { createTheme, MuiThemeProvider, useTheme, withStyles } from '@material-ui/core/styles';
 import { URLValidator } from '../utils/URLValidator';
-import { Dialog, DialogActions, DialogContent, DialogTitle } from '@material-ui/core';
+import { Dialog, DialogActions, DialogContent, DialogTitle } from '@layer5/sistent-components';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 
 const getMuiTheme = () =>

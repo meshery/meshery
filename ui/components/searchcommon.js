@@ -1,7 +1,5 @@
 import React from 'react';
-import TextField from '@mui/material/TextField';
-import Box from '@mui/material/Box';
-import { InputAdornment } from '@mui/material';
+import { Box, InputAdornment, TextField } from '@layer5/sistent-components';
 import SearchIcon from '@mui/icons-material/Search';
 import { withStyles } from '@material-ui/core/styles';
 

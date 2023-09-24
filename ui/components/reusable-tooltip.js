@@ -1,3 +1,4 @@
+/*
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Tooltip } from '@mui/material';
@@ -23,3 +24,7 @@ ReusableTooltip.defaultProps = {
 };
 
 export default ReusableTooltip;
+*/
+
+import { StyledTooltip } from '@layer5/sistent-components';
+export { StyledTooltip as ResuableTooltip };
