@@ -349,6 +349,35 @@ func GetInternalControllerStatus(status controllers.MesheryControllerStatus) Mes
 	return ""
 }
 
+func CheckIfBrokerEventExistsInArray(event broker.EventType, events []broker.EventType) bool {
+	for _, e := range events {
+		if e == event {
+			return true
+		}
+	}
+	return false
+}
+
+func GetMesheryBrokerEventTypesFromArray(events []MeshSyncEventType) []broker.EventType{
+	var brokerEvents []broker.EventType
+	for _, event := range events {
+		brokerEvents = append(brokerEvents, GetMesheryBrokerEventTypes(event))
+	}
+	return brokerEvents
+}
+
+func GetMesheryBrokerEventTypes(event MeshSyncEventType) broker.EventType {
+	switch event {
+	case MeshSyncEventTypeAdded:
+		return broker.Add
+	case MeshSyncEventTypeDeleted:
+		return broker.Delete
+	case MeshSyncEventTypeModified:
+		return broker.Update
+	}
+	return ""
+}
+
 // SelectivelyFetchNamespaces fetches the an array of namespaces from DB based on ClusterIDs (or KubernetesServerIDs) passed as param
 func SelectivelyFetchNamespaces(cids []string, provider models.Provider) ([]string, error) {
 	namespaces := make([]string, 0)

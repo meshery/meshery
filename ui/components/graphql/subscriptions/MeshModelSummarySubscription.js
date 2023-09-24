@@ -1,6 +1,7 @@
 import { graphql, requestSubscription } from 'react-relay';
 import { createRelayEnvironment } from '../../../lib/relayEnvironment';
 
+// not in use
 export const meshmodelSummarySubscription = graphql`
   subscription MeshModelSummarySubscription($selector: MeshModelSummarySelector!) {
     meshmodelSummary: subscribeMeshModelSummary(selector: $selector) {

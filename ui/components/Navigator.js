@@ -39,39 +39,17 @@ import {
   faAngleLeft,
   faCaretDown,
   faExternalLinkAlt,
-  faDigitalTachograph,
-} from '@fortawesome/free-solid-svg-icons';
-import {
-  updatepagetitle,
-  updatebetabadge,
-  toggleDrawer,
-  setAdapter,
-  updateCapabilities,
-} from '../lib/store';
-import { ButtonGroup, IconButton, Tooltip } from '@material-ui/core';
-import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
-import dataFetch from '../lib/data-fetch';
-import { Collapse } from '@material-ui/core';
-import {
-  cursorNotAllowed,
-  disabledStyle,
-  disabledStyleWithOutOpacity,
-} from '../css/disableComponent.styles';
-import { CapabilitiesRegistry } from '../utils/disabledComponents';
-import {
-  APPLICATION,
-  DESIGN,
-  CONFIGURATION,
-  DASHBOARD,
-  FILTER,
-  LIFECYCLE,
-  SERVICE_MESH,
-  PERFORMANCE,
-  PROFILES,
-  TOGGLER,
-  CONNECTION,
-} from '../constants/navigator';
-import { iconSmall } from '../css/icons.styles';
+  faDigitalTachograph
+} from "@fortawesome/free-solid-svg-icons";
+import { updatepagetitle, updatebetabadge, toggleDrawer, setAdapter, updateCapabilities } from "../lib/store";
+import { ButtonGroup, IconButton, Tooltip } from "@material-ui/core";
+import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
+import dataFetch from "../lib/data-fetch";
+import { Collapse } from "@material-ui/core";
+import { cursorNotAllowed, disabledStyle, disabledStyleWithOutOpacity } from "../css/disableComponent.styles";
+import { CapabilitiesRegistry } from "../utils/disabledComponents";
+import { APPLICATION, DESIGN, CONFIGURATION,   DASHBOARD, FILTER,  LIFECYCLE,SERVICE_MESH,  PERFORMANCE,  PROFILES, TOGGLER } from "../constants/navigator"
+import { iconSmall } from "../css/icons.styles";
 
 const styles = (theme) => ({
   root: {
@@ -343,22 +321,22 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
     submenu: false,
   },
   {
-    id: LIFECYCLE,
-    icon: <LifecycleIcon style={drawerIconsStyle} />,
-    hovericon: <LifecycleHover style={drawerIconsStyle} />,
-    title: 'Lifecycle',
-    link: true,
-    href: '/management',
-    show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE]),
-    submenu: true,
-    children: [
-      {
-        id: CONNECTION,
-        href: '/management/connections',
-        title: 'Connections',
-        show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CONNECTION]),
-        link: true,
-      },
+    id : LIFECYCLE,
+    icon : <LifecycleIcon style={drawerIconsStyle} />,
+    hovericon : <LifecycleHover style={drawerIconsStyle} />,
+    title : "Lifecycle",
+    link : true,
+    href : "/management",
+    show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE]),
+    submenu : true,
+    children : [
+      // {
+      //   id : CONNECTION,
+      //   href : "/management/connections",
+      //   title : "Connections",
+      //   show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CONNECTION]),
+      //   link : true,
+      // },
       {
         id: SERVICE_MESH,
         href: '/management',

@@ -1,4 +1,3 @@
-// @ts-check
 import {
   Avatar,
   Button,
@@ -41,31 +40,33 @@ import UndeployIcon from '../public/static/img/UndeployIcon';
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import DoneIcon from '@material-ui/icons/Done';
 import PublicIcon from '@material-ui/icons/Public';
-import ConfirmationModal from './ConfirmationModal';
-import PublishIcon from '@material-ui/icons/Publish';
-import PromptComponent from './PromptComponent';
-import LoadingScreen from './LoadingComponents/LoadingComponent';
-import { SchemaContext } from '../utils/context/schemaSet';
-import Validation from './Validation';
-import { ACTIONS, FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from '../utils/Enum';
-import CloneIcon from '../public/static/img/CloneIcon';
-import { useRouter } from 'next/router';
-import Modal from './Modal';
-import downloadFile from '../utils/fileDownloader';
-import fetchCatalogPattern from './graphql/queries/CatalogPatternQuery';
-import ConfigurationSubscription from './graphql/subscriptions/ConfigurationSubscription';
-import ReusableTooltip from './reusable-tooltip';
-import Pattern from '../public/static/img/drawer-icons/pattern_svg.js';
-import DryRunComponent from './DryRun/DryRunComponent';
-import { useNotification } from '../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../lib/event-types';
-import _ from 'lodash';
-import { getMeshModels } from '../api/meshmodel';
-import { modifyRJSFSchema } from '../utils/utils';
-import SearchBar from '../utils/custom-search';
-import CustomColumnVisibilityControl from '../utils/custom-column';
-import ResponsiveDataTable from '../utils/data-table';
-import useStyles from '../assets/styles/general/tool.styles';
+import ConfirmationModal from "./ConfirmationModal";
+import PublishIcon from "@material-ui/icons/Publish";
+import PromptComponent from "./PromptComponent";
+import LoadingScreen from "./LoadingComponents/LoadingComponent";
+import { SchemaContext } from "../utils/context/schemaSet";
+import Validation from "./Validation";
+import { ACTIONS, FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from "../utils/Enum";
+import CloneIcon from "../public/static/img/CloneIcon";
+import { useRouter } from "next/router";
+import Modal from "./Modal";
+import downloadFile from "../utils/fileDownloader";
+import fetchCatalogPattern from "./graphql/queries/CatalogPatternQuery";
+import ConfigurationSubscription from "./graphql/subscriptions/ConfigurationSubscription";
+import ReusableTooltip from "./reusable-tooltip";
+import Pattern from "../public/static/img/drawer-icons/pattern_svg.js";
+import DryRunComponent from "./DryRun/DryRunComponent";
+import { useNotification } from "../utils/hooks/useNotification";
+import { EVENT_TYPES } from "../lib/event-types";
+import _ from "lodash"
+import { getMeshModels } from "../api/meshmodel"
+import { modifyRJSFSchema } from "../utils/utils"
+import SearchBar from "../utils/custom-search";
+import CustomColumnVisibilityControl from "../utils/custom-column";
+import ResponsiveDataTable from "../utils/data-table";
+import useStyles from "../assets/styles/general/tool.styles";
+import { Edit as EditIcon } from "@material-ui/icons";
+
 
 const styles = (theme) => ({
   grid: {
@@ -597,15 +598,14 @@ function MesheryPatterns({
   }, [catalogVisibility]);
 
   const handleSetPatterns = (patterns) => {
+    console.log("Patterns",patterns)
     if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
-      setPatterns([
-        ...catalogContentRef.current,
-        ...patterns.filter((content) => content.visibility !== VISIBILITY.PUBLISHED),
-      ]);
-      return;
+      setPatterns([...(catalogContentRef.current || []), ...(patterns?.filter(content => content.visibility !== VISIBILITY.PUBLISHED) || [] )])
+      return
     }
-    setPatterns(patterns.filter((content) => content.visibility !== VISIBILITY.PUBLISHED));
-  };
+
+    setPatterns(patterns?.filter(content => content.visibility !== VISIBILITY.PUBLISHED)||[])
+  }
 
   useEffect(() => {
     setPage(0);
@@ -845,15 +845,15 @@ function MesheryPatterns({
       `/api/pattern${query}`,
       { credentials: 'include' },
       (result) => {
-        console.log('PatternFile API', `/api/pattern${query}`);
-        updateProgress({ showProgress: false });
-        page === 0 && stillLoading(false);
+        console.log("PatternFile API", `/api/pattern${query}`);
+        updateProgress({ showProgress : false });
+        stillLoading(false);
         if (result) {
           // setPage(result.page || 0);
-          setPageSize(result.page_size || 0);
+          // setPageSize(result.page_size || 0);
           setCount(result.total_count || 0);
-          handleSetPatterns(result.patterns || []);
-          setPatterns(result.patterns || []);
+          handleSetPatterns(result.patterns || [])
+          // setPatterns(result.patterns || []);
         }
       },
       handleError(ACTION_TYPES.FETCH_PATTERNS),
@@ -956,7 +956,15 @@ function MesheryPatterns({
     } catch (e) {
       console.error(e);
     }
-  };
+  }
+
+  const userCanEdit = (pattern) => {
+    return  (user?.role_names?.includes("admin") || user?.user_id === "meshery" || user?.user_id == pattern.user_id )
+  }
+
+  const handleOpenInConfigurator = (id) => {
+    router.push("/configuration/designs/configurator?design_id="+id)
+  }
 
   const columns = [
     {
@@ -1071,18 +1079,29 @@ function MesheryPatterns({
           const visibility = patterns[tableMeta.rowIndex]?.visibility;
           return (
             <>
-              {visibility === VISIBILITY.PUBLISHED ? (
-                <TooltipIcon
-                  placement="top"
-                  title={'Clone'}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleClone(rowData.id, rowData.name);
-                  }}
-                >
-                  <CloneIcon fill="currentColor" className={classes.iconPatt} />
-                </TooltipIcon>
-              ) : (
+
+              { userCanEdit(rowData) && <TooltipIcon
+                placement ="top"
+                title={"Edit"}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOpenInConfigurator(rowData.id)
+                }
+                }>
+                <EditIcon fill="currentColor" className={classes.iconPatt} />
+              </TooltipIcon>
+              }
+              { visibility === VISIBILITY.PUBLISHED ? <TooltipIcon
+                placement ="top"
+                title={"Clone"}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleClone(rowData.id, rowData.name)
+                }
+                }>
+                <CloneIcon fill="currentColor" className={classes.iconPatt} />
+              </TooltipIcon> :
+
                 <TooltipIcon
                   title={'Design'}
                   placement={'top'}
@@ -1157,8 +1176,9 @@ function MesheryPatterns({
                   onClick={(ev) => handleUnpublishModal(ev, rowData)()}
                 >
                   <PublicIcon fill="#F91313" data-cy="unpublish-button" />
-                </TooltipIcon>
-              )}
+                </TooltipIcon>)
+              }
+
             </>
           );
         },
@@ -1472,32 +1492,35 @@ function MesheryPatterns({
             updateCols={updateCols}
             columnVisibility={columnVisibility}
           />
-        )}
-        {!selectedPattern.show && viewType === 'grid' && (
-          // grid vieww
-          <MesheryPatternGrid
-            selectedK8sContexts={selectedK8sContexts}
-            canPublishPattern={canPublishPattern}
-            patterns={patterns}
-            handleDeploy={handleDeploy}
-            handleVerify={handleVerify}
-            handlePublish={handlePublish}
-            handleUnpublishModal={handleUnpublishModal}
-            handleUnDeploy={handleUnDeploy}
-            handleClone={handleClone}
-            supportedTypes="null"
-            handleSubmit={handleSubmit}
-            setSelectedPattern={setSelectedPattern}
-            selectedPattern={selectedPattern}
-            pages={Math.ceil(count / pageSize)}
-            setPage={setPage}
-            selectedPage={page}
-            patternErrors={patternErrors}
-            publishModal={publishModal}
-            setPublishModal={setPublishModal}
-            publishSchema={publishSchema}
-          />
-        )}
+
+        }
+        {
+          !selectedPattern.show && viewType==="grid" &&
+            // grid vieww
+            <MesheryPatternGrid
+              selectedK8sContexts={selectedK8sContexts}
+              canPublishPattern={canPublishPattern}
+              patterns={patterns}
+              handleDeploy={handleDeploy}
+              handleVerify={handleVerify}
+              handlePublish={handlePublish}
+              handleUnpublishModal={handleUnpublishModal}
+              handleUnDeploy={handleUnDeploy}
+              handleClone={handleClone}
+              supportedTypes="null"
+              handleSubmit={handleSubmit}
+              setSelectedPattern={setSelectedPattern}
+              selectedPattern={selectedPattern}
+              pages={Math.ceil(count / pageSize)}
+              setPage={setPage}
+              selectedPage={page}
+              patternErrors={patternErrors}
+              publishModal={publishModal}
+              setPublishModal={setPublishModal}
+              publishSchema={publishSchema}
+              user={user}
+            />
+        }
         <ConfirmationModal
           open={modalOpen.open}
           handleClose={handleModalClose}

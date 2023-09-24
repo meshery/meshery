@@ -1,27 +1,31 @@
-//@ts-check
-import React, { useState } from 'react';
-import { Avatar, Divider, Grid, IconButton, Typography, Tooltip } from '@material-ui/core';
-import DeleteIcon from '@material-ui/icons/Delete';
-import Save from '@material-ui/icons/Save';
-import Fullscreen from '@material-ui/icons/Fullscreen';
-import Moment from 'react-moment';
-import FlipCard from '../FlipCard';
-import { UnControlled as CodeMirror } from 'react-codemirror2';
-import FullscreenExit from '@material-ui/icons/FullscreenExit';
-import UndeployIcon from '../../public/static/img/UndeployIcon';
+import React, { useState } from "react";
+import {
+  Avatar, Divider, Grid, IconButton, Typography, Tooltip
+} from "@material-ui/core";
+import DeleteIcon from "@material-ui/icons/Delete";
+import Save from "@material-ui/icons/Save";
+import Fullscreen from "@material-ui/icons/Fullscreen";
+import Moment from "react-moment";
+import FlipCard from "../FlipCard";
+import { UnControlled as CodeMirror } from "react-codemirror2";
+import FullscreenExit from "@material-ui/icons/FullscreenExit";
+import UndeployIcon from "../../public/static/img/UndeployIcon";
 import DoneAllIcon from '@material-ui/icons/DoneAll';
 import DoneIcon from '@material-ui/icons/Done';
 import useStyles from './Cards.styles';
 import YAMLDialog from '../YamlDialog';
 import PublicIcon from '@material-ui/icons/Public';
-import TooltipButton from '../../utils/TooltipButton';
-import CloneIcon from '../../public/static/img/CloneIcon';
-import { VISIBILITY } from '../../utils/Enum';
-import { useTheme } from '@material-ui/core/styles';
+import TooltipButton from '../../utils/TooltipButton'
+import CloneIcon from "../../public/static/img/CloneIcon";
+import { VISIBILITY } from "../../utils/Enum";
+import { useTheme } from "@material-ui/core/styles";
+import { useRouter } from "next/router";
+import { Edit } from "@material-ui/icons";
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
 function MesheryPatternCard({
+  id,
   name,
   updated_at,
   created_at,
@@ -39,7 +43,13 @@ function MesheryPatternCard({
   description = {},
   visibility,
   canPublishPattern = false,
+  user ,
+  pattern,
 }) {
+
+
+  const router = useRouter()
+
   const genericClickHandler = (ev, fn) => {
     ev.stopPropagation();
     fn(ev);
@@ -54,8 +64,14 @@ function MesheryPatternCard({
 
   const catalogContentKeys = Object.keys(description);
   const catalogContentValues = Object.values(description);
-  const classes = useStyles();
-  const theme = useTheme();
+  const classes = useStyles()
+  const theme = useTheme()
+
+  const editInConfigurator = () => {
+    router.push("/configuration/designs/configurator?design_id="+id)
+  }
+  const userCanEdit = (user?.role_names?.includes("admin") || user?.user_id === "meshery" || user?.user_id == pattern?.user_id )
+
 
   return (
     <>
@@ -171,33 +187,44 @@ function MesheryPatternCard({
                 <span className={classes.btnText}>Undeploy</span>
               </TooltipButton>
 
-              {visibility === VISIBILITY.PRIVATE ? (
-                <TooltipButton
-                  title="Design"
-                  variant="contained"
-                  color="primary"
-                  onClick={(ev) => genericClickHandler(ev, setSelectedPatterns)}
-                  className={classes.testsButton}
-                >
-                  <Avatar
-                    src="/static/img/pattern_trans.svg"
-                    className={classes.iconPatt}
-                    imgProps={{ height: '16px', width: '16px' }}
-                  />
-                  <span className={classes.btnText}> Design </span>
-                </TooltipButton>
-              ) : (
-                <TooltipButton
-                  title="Clone"
-                  variant="contained"
-                  color="primary"
-                  onClick={(ev) => genericClickHandler(ev, handleClone)}
-                  className={classes.testsButton}
-                >
-                  <CloneIcon fill="#ffffff" className={classes.iconPatt} />
-                  <span className={classes.cloneBtnText}> Clone </span>
-                </TooltipButton>
-              )}
+              { visibility === VISIBILITY.PRIVATE ?  <TooltipButton
+                title="Design"
+                variant="contained"
+                color="primary"
+                onClick={(ev) =>
+                  genericClickHandler(ev, setSelectedPatterns)
+                }
+                className={classes.testsButton}
+              >
+                <Avatar src="/static/img/pattern_trans.svg" className={classes.iconPatt} imgProps={{ height : "16px", width : "16px" }} />
+                <span className={classes.btnText}> Design </span>
+              </TooltipButton> : <TooltipButton
+                title="Clone"
+                variant="contained"
+                color="primary"
+                onClick={(ev) =>
+                  genericClickHandler(ev, handleClone)
+                }
+                className={classes.testsButton}
+              >
+                <CloneIcon fill="#ffffff" className={classes.iconPatt} />
+                <span className={classes.cloneBtnText}> Clone </span>
+              </TooltipButton>  }
+
+              { userCanEdit && <TooltipButton
+                title="Edit In Configurator"
+                variant="contained"
+                color="primary"
+                onClick={(ev) =>
+                  genericClickHandler(ev, editInConfigurator  )
+                }
+                className={classes.testsButton}
+              >
+                <Edit style={{ fill : "#fff" }} className={classes.iconPatt} />
+                <span className={classes.cloneBtnText}> Edit  </span>
+              </TooltipButton>
+              }
+
             </div>
           </div>
         </div>

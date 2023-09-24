@@ -73,28 +73,26 @@ const initialState = fromJS({
 });
 
 export const actionTypes = {
-  UPDATE_PAGE: 'UPDATE_PAGE',
-  UPDATE_TITLE: 'UPDATE_TITLE',
-  UPDATE_USER: 'UPDATE_USER',
-  UPDATE_BETA_BADGE: 'UPDATE_BETA_BADGE',
-  UPDATE_CLUSTER_CONFIG: 'UPDATE_CLUSTER_CONFIG',
-  SET_K8S_CONTEXT: 'SET_K8S_CONTEXT',
-  UPDATE_LOAD_TEST_DATA: 'UPDATE_LOAD_TEST_DATA',
-  UPDATE_ADAPTERS_INFO: 'UPDATE_ADAPTERS_INFO',
-  UPDATE_RESULTS_SELECTION: 'UPDATE_RESULTS_SELECTION',
-  CLEAR_RESULTS_SELECTION: 'CLEAR_RESULTS_SELECTION',
-  UPDATE_GRAFANA_CONFIG: 'UPDATE_GRAFANA_CONFIG',
-  UPDATE_PROMETHEUS_CONFIG: 'UPDATE_PROMETHEUS_CONFIG',
-  UPDATE_STATIC_BOARD_CONFIG: 'UPDATE_STATIC_BOARD_CONFIG',
-  UPDATE_LOAD_GEN_CONFIG: 'UPDATE_LOAD_GEN_CONFIG',
-  UPDATE_ANONYMOUS_USAGE_STATS: 'UPDATE_ANONYMOUS_USAGE_STATS',
-  UPDATE_ANONYMOUS_PERFORMANCE_RESULTS: 'UPDATE_ANONYMOUS_PERFORMANCE_RESULTS',
-  UPDATE_PROGRESS: 'UPDATE_PROGRESS',
-  TOOGLE_DRAWER: 'TOOGLE_DRAWER',
-  SET_ADAPTER: 'SET_ADAPTER',
-  UPDATE_EVENTS: 'UPDATE_EVENTS',
-  PUSH_EVENT: 'PUSH_EVENT',
-  SET_CATALOG_CONTENT: 'SET_CATALOG_CONTENT',
+  UPDATE_PAGE : 'UPDATE_PAGE',
+  UPDATE_TITLE : 'UPDATE_TITLE',
+  UPDATE_USER : 'UPDATE_USER',
+  UPDATE_BETA_BADGE : 'UPDATE_BETA_BADGE',
+  UPDATE_CLUSTER_CONFIG : 'UPDATE_CLUSTER_CONFIG',
+  SET_K8S_CONTEXT : 'SET_K8S_CONTEXT',
+  UPDATE_LOAD_TEST_DATA : 'UPDATE_LOAD_TEST_DATA',
+  UPDATE_ADAPTERS_INFO : 'UPDATE_ADAPTERS_INFO',
+  UPDATE_RESULTS_SELECTION : 'UPDATE_RESULTS_SELECTION',
+  CLEAR_RESULTS_SELECTION : 'CLEAR_RESULTS_SELECTION',
+  UPDATE_GRAFANA_CONFIG : 'UPDATE_GRAFANA_CONFIG',
+  UPDATE_PROMETHEUS_CONFIG : 'UPDATE_PROMETHEUS_CONFIG',
+  UPDATE_STATIC_BOARD_CONFIG : 'UPDATE_STATIC_BOARD_CONFIG',
+  UPDATE_LOAD_GEN_CONFIG : 'UPDATE_LOAD_GEN_CONFIG',
+  UPDATE_ANONYMOUS_USAGE_STATS : 'UPDATE_ANONYMOUS_USAGE_STATS',
+  UPDATE_ANONYMOUS_PERFORMANCE_RESULTS : 'UPDATE_ANONYMOUS_PERFORMANCE_RESULTS',
+  UPDATE_PROGRESS : 'UPDATE_PROGRESS',
+  TOOGLE_DRAWER : 'TOOGLE_DRAWER',
+  SET_ADAPTER : 'SET_ADAPTER',
+  SET_CATALOG_CONTENT : 'SET_CATALOG_CONTENT',
   SET_OPERATOR_SUBSCRIPTION: 'SET_OPERATOR_SUBSCRIPTION',
   SET_MESHSYNC_SUBSCRIPTION: 'SET_MESHSYNC_SUBSCRIPTION',
   // UPDATE_SMI_RESULT: 'UPDATE_SMI_RESULT',
@@ -102,8 +100,6 @@ export const actionTypes = {
   UPDATE_CAPABILITY_REGISTRY: 'UPDATE_CAPABILITY_REGISTRY',
   UPDATE_TELEMETRY_URLS: 'UPDATE_TELEMETRY_URLS',
 
-  OPEN_EVENT_IN_NOTIFICATION_CENTER: 'OPEN_EVENT_IN_NOTIFICATION_CENTER',
-  TOGGLE_NOTIFICATION_CENTER: 'TOGGLE_NOTIFICATION_CENTER',
 };
 
 // REDUCERS
@@ -176,18 +172,7 @@ export const reducer = (state = initialState, action) => {
     case actionTypes.SET_ADAPTER:
       return state.mergeDeep({ selectedAdapter: action.selectedAdapter });
 
-    case actionTypes.UPDATE_EVENTS:
-      return state.merge({
-        events: action.events.sort((a, b) => b.get('timestamp') - a.get('timestamp')),
-      });
 
-    case actionTypes.PUSH_EVENT:
-      return state.merge({
-        events: state
-          .get('events')
-          .push(action.event)
-          .sort((a, b) => b.get('timestamp') - a.get('timestamp')),
-      });
     case actionTypes.SET_CATALOG_CONTENT:
       return state.mergeDeep({ catalogVisibility: action.catalogVisibility });
 
@@ -205,17 +190,6 @@ export const reducer = (state = initialState, action) => {
 
     case actionTypes.UPDATE_TELEMETRY_URLS:
       return state.updateIn(['telemetryURLs'], (val) => fromJS(action.telemetryURLs));
-
-    case actionTypes.OPEN_EVENT_IN_NOTIFICATION_CENTER:
-      return state
-        .setIn(['notificationCenter', 'showFullNotificationCenter'], true)
-        .setIn(['notificationCenter', 'openEventId'], action.eventId);
-
-    case actionTypes.TOGGLE_NOTIFICATION_CENTER:
-      return state.setIn(
-        ['notificationCenter', 'showFullNotificationCenter'],
-        !state.get('notificationCenter').get('showFullNotificationCenter'),
-      );
 
     default:
       return state;
@@ -335,73 +309,6 @@ export const setAdapter =
     return dispatch({ type: actionTypes.SET_ADAPTER, selectedAdapter });
   };
 
-// the localStorage key for events
-const getEventsKey = (userId) => {
-  // whenever the event schema changes bump the version
-  const version = 1;
-  return `events-version-${version}-${userId}`;
-};
-
-const persistEvents = (events, userId) => {
-  try {
-    localStorage.setItem(getEventsKey(userId), JSON.stringify(events));
-  } catch (e) {
-    console.error('Error Persisting events ', e);
-  }
-};
-
-export const updateEvents =
-  ({ events }) =>
-  (dispatch, getState) => {
-    if (typeof events === 'object') {
-      events = fromJS(events);
-    }
-    const result = dispatch({ type: actionTypes.UPDATE_EVENTS, events });
-    const user = getState().get('user').toJS();
-    const newEvents = getState().get('events').toJS();
-    if (user && user.user_id) {
-      persistEvents(newEvents, user.user_id);
-    }
-    return result;
-  };
-
-export const pushEvent =
-  ({ event }) =>
-  (dispatch, getState) => {
-    if (typeof event == 'object') {
-      event = fromJS(event);
-    }
-    const res = dispatch({
-      type: actionTypes.PUSH_EVENT,
-      event,
-    });
-
-    const user = getState().get('user').toJS();
-    const events = getState().get('events').toJS();
-    if (user && user.user_id) {
-      persistEvents(events, user.user_id);
-    }
-    return res;
-  };
-
-export const loadEventsFromPersistence = () => (dispatch, getState) => {
-  const user = getState().get('user').toJS();
-  if (getState().get('events').length > 0 || !user.user_id) {
-    return;
-  }
-  const rawData = localStorage.getItem(getEventsKey(user.user_id));
-  let events;
-  try {
-    events = JSON.parse(rawData) || [];
-  } catch (e) {
-    console.error('error parsing events json', e, rawData);
-    events = [];
-  }
-  return dispatch({
-    type: actionTypes.UPDATE_EVENTS,
-    events: fromJS(events),
-  });
-};
 
 export const toggleCatalogContent =
   ({ catalogVisibility }) =>
@@ -448,11 +355,7 @@ export const openEventInNotificationCenter =
     });
   };
 
-export const toggleNotificationCenter = () => (dispatch) => {
-  return dispatch({
-    type: actionTypes.TOGGLE_NOTIFICATION_CENTER,
-  });
-};
+
 export const makeStore = (initialState, options) => {
   return createStore(reducer, initialState, composeWithDevTools(applyMiddleware(thunkMiddleware)));
 };

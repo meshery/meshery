@@ -22,8 +22,8 @@ type Router struct {
 func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Handler, gp http.Handler) *Router {
 	gMux := mux.NewRouter()
 
-	gMux.Handle("/api/system/graphql/query", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.MesheryControllersMiddleware(h.GraphqlMiddleware(g)))), models.ProviderAuth))).Methods("GET", "POST")
-	gMux.Handle("/api/system/graphql/playground", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.MesheryControllersMiddleware(h.GraphqlMiddleware(gp)))), models.ProviderAuth))).Methods("GET", "POST")
+	gMux.Handle("/api/system/graphql/query", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GraphqlMiddleware(g)), models.ProviderAuth))).Methods("GET", "POST")
+	gMux.Handle("/api/system/graphql/playground", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GraphqlMiddleware(gp)), models.ProviderAuth))).Methods("GET", "POST")
 
 	gMux.HandleFunc("/api/system/version", h.ServerVersionHandler).
 		Methods("GET")
@@ -279,7 +279,23 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.PathPrefix("/api/extensions").
 		Handler(h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ExtensionsHandler), models.ProviderAuth))).
 		Methods("GET", "POST", "OPTIONS", "PUT", "DELETE")
+	
 
+	gMux.Handle("/api/integrations/environments", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetEnvironments), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/integrations/environments/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetEnvironmentByIDHandler), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/api/integrations/environments/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteEnvironmentHandler), models.ProviderAuth))).
+		Methods("DELETE")
+	gMux.Handle("/api/integrations/environments", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveEnvironment), models.ProviderAuth))).
+		Methods("POST")
+	gMux.Handle("/api/integrations/environments/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateEnvironmentHandler), models.ProviderAuth))).
+	    Methods("PUT")
+	gMux.Handle("/api/integrations/environments/{environmentID}/connections/{connectionID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.AddConnectionToEnvironmentHandler), models.ProviderAuth))).
+	    Methods("POST")
+	gMux.Handle("/api/integrations/environments/{environmentID}/connections/{connectionID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.RemoveConnectionFromEnvironmentHandler), models.ProviderAuth))).
+	    Methods("DELETE")
+	
 	//gMux.PathPrefix("/api/system/graphql").Handler(h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GraphqlSystemHandler)))).Methods("GET", "POST")
 
 	gMux.Handle("/user/logout", h.ProviderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {

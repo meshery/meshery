@@ -1,6 +1,8 @@
-import { useGetEventFiltersQuery } from '../../rtk-query/notificationCenter';
-import TypingFilter from '../TypingFilter';
-import { SEVERITY, STATUS } from './constants';
+import { useGetEventFiltersQuery } from "../../rtk-query/notificationCenter";
+import { withErrorBoundary } from "../General/ErrorBoundary";
+import TypingFilter from "../TypingFilter";
+import { SEVERITY, STATUS } from "./constants";
+
 
 const useFilterSchema = () => {
   const { data } = useGetEventFiltersQuery();
@@ -38,9 +40,9 @@ const useFilterSchema = () => {
   };
 };
 
-const Filter = ({ handleFilter }) => {
+const Filter = withErrorBoundary(({ handleFilter }) => {
   const filterSchema = useFilterSchema();
-  return <TypingFilter handleFilter={handleFilter} filterSchema={filterSchema} />;
-};
+  return <TypingFilter handleFilter={handleFilter} filterSchema={filterSchema} autoFilter={true} />;
+});
 
 export default Filter;

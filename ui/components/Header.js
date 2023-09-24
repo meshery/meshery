@@ -16,7 +16,6 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import Chip from '@material-ui/core/Chip';
 import MesheryNotification from './NotificationCenter';
 import User from './User';
-import subscribeBrokerStatusEvents from './graphql/subscriptions/BrokerStatusSubscription';
 import Slide from '@material-ui/core/Slide';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { Checkbox, Button } from '@material-ui/core';
@@ -543,8 +542,6 @@ class Header extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      brokerStatusSubscription: null,
-      brokerStatus: false,
       /** @type {CapabilityRegistryClass} */
       capabilityregistryObj: null,
       collaboratorExt: null,
@@ -574,11 +571,7 @@ class Header extends React.Component {
     );
     console.log('capabilitiesRegistry (mounted header)', this.props.capabilitiesRegistry);
     this._isMounted = true;
-    const brokerStatusSub = subscribeBrokerStatusEvents((data) => {
-      console.log({ brokerData: data });
-      this.setState({ brokerStatus: data?.subscribeBrokerConnection });
-    });
-    this.setState({ brokerStatusSubscription: brokerStatusSub });
+
   }
 
   componentDidUpdate(prevProps) {

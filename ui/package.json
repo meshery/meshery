@@ -95,6 +95,7 @@
     "react-countdown-clock": "^2.9.0",
     "react-dom": "^17.0.2",
     "react-draggable": "^4.4.5",
+    "react-error-boundary": "^4.0.11",
     "react-jss": "^10.9.0",
     "react-lazyload": "^3.2.0",
     "react-moment": "^1.1.2",

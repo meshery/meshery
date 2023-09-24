@@ -1,18 +1,19 @@
-import { makeStyles, alpha } from '@material-ui/core';
+import { makeStyles, alpha } from "@material-ui/core";
 
 export const useStyles = makeStyles((theme) => ({
   root: {
     position: 'relative',
     backgroundColor: theme.palette.secondary.elevatedComponents,
   },
-  input: {
-    width: '100%',
-    '& .MuiOutlinedInput-root': {
-      borderRadius: '6px',
-      backgroundColor: theme.palette.secondary.searchBackground,
-      '& fieldset': {
-        borderRadius: '6px',
-        border: `2px solid ${theme.palette.secondary.searchBorder}`,
+  input : {
+    width : "100%",
+    marginBottom : ".1rem",
+    "& .MuiOutlinedInput-root" : {
+      borderRadius : "6px",
+      backgroundColor : theme.palette.secondary.searchBackground,
+      "& fieldset" : {
+        borderRadius : "6px",
+        border : `2px solid ${theme.palette.secondary.searchBorder}`,
       },
     },
   },
@@ -28,17 +29,17 @@ export const useStyles = makeStyles((theme) => ({
 }));
 
 export const useFilterStyles = makeStyles((theme) => ({
-  item: {
-    fontFamily: 'Qanelas Soft, sans-serif',
-    display: 'flex',
-    gap: '0.3rem',
-    margin: '0.3rem',
-    padding: '0.3rem',
-    paddingInline: '1rem',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    '&:hover': {
-      backgroundColor: alpha(theme.palette.secondary.link2, 0.25),
+  item : {
+    fontFamily : "Qanelas Soft, sans-serif",
+    display : "flex",
+    gap : "0.3rem",
+    margin : "0.3rem",
+    padding : "0.3rem",
+    paddingInline : "3rem",
+    borderRadius : "6px",
+    cursor : "pointer",
+    "&:hover" : {
+      backgroundColor : alpha(theme.palette.secondary.link2, 0.25),
     },
   },
 
