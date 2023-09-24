@@ -311,29 +311,9 @@ function createPathForRemoteComponent(componentName) {
  *  4. collaborator - for collaborator extension
  * @param {{ type: "navigator" | "user_prefs" | "account" | "collaborator", Extension: JSX.Element }} props
  */
-function ExtensionSandbox ({ type, Extension, isDrawerCollapsed, toggleDrawer, capabilitiesRegistry, updateCollaboratorExtState }) {
+const ExtensionSandbox = React.memo(function MemoizedExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer, capabilitiesRegistry, updateCollaboratorExtState }) {
   const [extension, setExtension] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
-
-  useEffect(() => {
-    if (type === "navigator" && !isDrawerCollapsed) {
-      toggleDrawer({ isDrawerCollapsed : !isDrawerCollapsed });
-    }
-    if (capabilitiesRegistry) {
-      const data = ExtensionPointSchemaValidator(type)(capabilitiesRegistry?.extensions[type]);
-      if (data !== undefined) {
-        setExtension(data);
-        setIsLoading(false);
-      }
-    }
-    // necessary to cleanup states on each unmount to prevent memory leaks and unwanted clashes between extension points
-    return () => {
-      setExtension([]);
-      setIsLoading(true);
-    }
-  }, []);
-
 
   useEffect(() => {
     if (type === "navigator" && !isDrawerCollapsed) {
@@ -392,7 +372,11 @@ function ExtensionSandbox ({ type, Extension, isDrawerCollapsed, toggleDrawer, c
       }
     </>
   )
-}
+}, (prevProps, nextProps) => {
+  return prevProps.type === nextProps.type
+})
+
+
 
 const mapDispatchToProps = (dispatch) => ({
   toggleDrawer : bindActionCreators(toggleDrawer, dispatch),

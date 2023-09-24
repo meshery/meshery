@@ -549,13 +549,6 @@ class Header extends React.PureComponent {
     this._isMounted = true;
 
   }
-
-  shouldComponentUpdate(nextProps) {
-    if (!nextProps?.collaboratorExtState && this.state.capabilityregistryObj !== null) {
-      return true;
-    }
-    return false;
-  }
   componentWillUnmount = () => {
     this._isMounted = false;
   }
