@@ -13,15 +13,12 @@ import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import Link from "next/link";
 import { withRouter } from 'next/router';
-import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import React, { useState, useEffect , useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import dataFetch from '../lib/data-fetch';
 import { updateUser } from '../lib/store';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { withNotify } from '../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../lib/event-types';
-
 
 const styles = () => ({
   link : {
@@ -48,72 +45,64 @@ function exportToJsonFile(jsonData, filename) {
   linkElement.remove()
 }
 
-class User extends React.Component {
-  state = {
-    user : null,
-    open : false,
-    account : ExtensionPointSchemaValidator("account")(),
-    providerType : '',
-    capabilitiesLoaded : false
-  }
+function User(props){
+  const [user, setUser] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [account, setAccount] = useState([]);
+  const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false);
+  const anchorEl = useRef(null);
+  const dispatch = useDispatch();
 
-  handleToggle = () => {
-    this.setState((state) => ({ open : !state.open }));
+  const capabilitiesRegistry = useSelector(state => state.get("capabilitiesRegistry"));
+
+  const handleToggle = () => {
+    setOpen(!open);
   };
 
-  handleClose = (event) => {
-    if (this.anchorEl.contains(event.target)) {
+  const handleClose = (event) => {
+    if (anchorEl.current && anchorEl.current.contains(event.target)) {
       return;
     }
-    this.setState({ open : false });
+    setOpen(false);
   }
 
-  handleLogout = () => {
+  const handleLogout = () => {
     window.location = '/user/logout'
   };
 
-  handleError = (error) => {
-    const notify = this.props.notify;
-    notify({ message : `Error performing logout: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() });
-  };
+  const handlePreference = () => {
+    props.router.push('/user/preferences');
+  }
 
-  handlePreference = () => {
-    this.props.router.push('/user/preferences');
-  };
-
-  handleGetToken = () => {
+  const handleGetToken = () => {
     dataFetch('/api/token', { credentials : 'same-origin' }, (data) => {
       exportToJsonFile(data, "auth.json");
     }, (error) => ({ error, }));
-  };
+  }
 
-  componentDidMount() {
+  useEffect(() => {
     dataFetch('/api/user', {
       credentials : 'same-origin'
-    }, (user) => {
-      this.setState({ user });
-      this.props.updateUser({ user });
+    }, (userData) => {
+      setUser(userData);
+      dispatch(updateUser({ user : userData }));
     }, (error) => ({
       error,
     }));
-  }
+  }, [dispatch])
 
-  componentDidUpdate() {
-    const { capabilitiesRegistry } = this.props;
-    if (!this.state.capabilitiesLoaded && capabilitiesRegistry) {
-      this.setState({
-        capabilitiesLoaded : true, // to prevent re-compute
-        account : ExtensionPointSchemaValidator("account")(capabilitiesRegistry?.extensions?.account),
-        providerType : capabilitiesRegistry?.provider_type,
-      })
+  useEffect(() => {
+    const { capabilitiesRegistry } = props;
+    if (!capabilitiesLoaded && capabilitiesRegistry) {
+      setCapabilitiesLoaded(true); // to prevent re-compute
+      setAccount(ExtensionPointSchemaValidator("account")(capabilitiesRegistry?.extensions?.account));
     }
-  }
+  }, [capabilitiesRegistry, capabilitiesLoaded])
 
   /**
    * @param {import("../utils/ExtensionPointSchemaValidator").AccountSchema[]} children
    */
-  renderAccountExtension(children) {
-
+  function renderAccountExtension(children) {
     if (children && children.length > 0) {
       return (
         <List disablePadding>
@@ -129,7 +118,7 @@ class User extends React.Component {
                   button
                   key={id}
                 >
-                  {this.extensionPointContent(href, title)}
+                  {extensionPointContent(href, title)}
                 </ListItem>
               </React.Fragment>
             );
@@ -139,8 +128,8 @@ class User extends React.Component {
     }
   }
 
-  extensionPointContent(href, name) {
-    const { classes } = this.props;
+  function extensionPointContent(href, name) {
+    const { classes } = props;
 
     const content = (
       <div className={classNames(classes.link)} >
@@ -156,7 +145,7 @@ class User extends React.Component {
         <Link href={href}>
           <span
             className={classNames(classes.link)}
-            onClick={() => this.props.updateExtensionType(name)}
+            onClick={() => props.updateExtensionType(name)}
           >
             {content}
           </span>
@@ -167,81 +156,61 @@ class User extends React.Component {
     return content;
   }
 
-  render() {
-    const {
-      color, iconButtonClassName, avatarClassName, classes,
-    } = this.props;
-    let avatar_url;
-    if (this.state.user && this.state.user !== null) {
-      avatar_url = this.state.user.avatar_url;
-    }
-    const { open } = this.state;
-    return (
-      <div>
-        <NoSsr>
-          <div data-test="profile-button">
-            <IconButton
-              color={color}
-              className={iconButtonClassName}
-              buttonRef={(node) => {
-                this.anchorEl = node;
-              }}
-              aria-owns={open
-                ? 'menu-list-grow'
-                : undefined}
-              aria-haspopup="true"
-              onClick={this.handleToggle}
-            >
-              <Avatar className={avatarClassName} src={avatar_url} imgProps={{ referrerPolicy : "no-referrer" }} />
-            </IconButton>
-          </div>
-          <Popper open={open} anchorEl={this.anchorEl} transition style={{ zIndex : 10000 }} placement="top-end">
-            {({ TransitionProps, placement }) => (
-              <Grow
-                {...TransitionProps}
-                id="menu-list-grow"
-                style={{
-                  transformOrigin : placement === 'bottom'
-                    ? 'left top'
-                    : 'left bottom'
-                }}
-              >
-                <Paper className={classes.popover}>
-                  <ClickAwayListener onClickAway={this.handleClose}>
-
-                    <MenuList>
-
-                      {
-                        this.state.account && this.state.account.length ?
-                          (
-                            <>
-                              {this.renderAccountExtension(this.state.account)}
-                            </>
-                          )
-                          :
-                          null
-                      }
-                      <MenuItem onClick={this.handleGetToken}>Get Token</MenuItem>
-                      <MenuItem onClick={this.handlePreference}>Preferences</MenuItem>
-                      <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
-                    </MenuList>
-                  </ClickAwayListener>
-                </Paper>
-              </Grow>
-            )}
-          </Popper>
-        </NoSsr>
-      </div>
-    );
+  const { color, iconButtonClassName, avatarClassName, classes } = props;
+  let avatar_url;
+  if (user && user !== null) {
+    avatar_url = user.avatar_url;
   }
+
+  return (
+    <div>
+      <NoSsr>
+        <div data-test="profile-button">
+          <IconButton
+            color={color}
+            className={iconButtonClassName}
+            ref = {anchorEl}
+            aria-owns={open
+              ? 'menu-list-grow'
+              : undefined}
+            aria-haspopup="true"
+            onClick={handleToggle}
+          >
+            <Avatar className={avatarClassName} src={avatar_url} imgProps={{ referrerPolicy : "no-referrer" }} />
+          </IconButton>
+        </div>
+        <Popper open={open} anchorEl={anchorEl} transition style={{ zIndex : 10000 }} placement="top-end">
+          {({ TransitionProps, placement }) => (
+            <Grow
+              {...TransitionProps}
+              id="menu-list-grow"
+              style={{
+                transformOrigin : placement === 'bottom'
+                  ? 'left top'
+                  : 'left bottom'
+              }}
+            >
+              <Paper className={classes.popover}>
+                <ClickAwayListener onClickAway={handleClose}>
+                  <MenuList>
+                    {account && account.length ? (
+                      <>
+                        {renderAccountExtension(account)}
+                      </>
+                    ) : null}
+                    <MenuItem onClick={handleGetToken}>Get Token</MenuItem>
+                    <MenuItem onClick={handlePreference}>Preferences</MenuItem>
+                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                  </MenuList>
+                </ClickAwayListener>
+              </Paper>
+            </Grow>
+          )}
+        </Popper>
+      </NoSsr>
+    </div>
+  );
+
 }
 
-const mapDispatchToProps = (dispatch) => ({ updateUser : bindActionCreators(updateUser, dispatch), });
-const mapStateToProps = state => ({
-  capabilitiesRegistry : state.get("capabilitiesRegistry")
-})
-
-export default withStyles(styles)(connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withNotify((withRouter(User)))));
+export default withStyles(styles)((withNotify((withRouter(User)))));
