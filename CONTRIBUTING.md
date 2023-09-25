@@ -99,11 +99,11 @@ Practices for Production Environments](https://peter.bourgon.org/go-in-productio
 
 ### Prerequisites for building Meshery in your development environment:
 
-1. Go version 1.19.1 must be installed if you want to build and/or make changes to the existing code. The binary `go1.19.1` should be available in your path. If you don't want to disturb your existing version of Go, then follow these [instructions](https://go.dev/doc/manage-install#:~:text=and%20run%20them.-,Installing%20multiple%20Go%20versions,-You%20can%20install) to keep multiple versions of Go in your system.
-1. `GOPATH` environment variable should be configured appropriately
-1. `npm` and `node` should be installed on your machine, preferably the latest versions.
-1. Fork this repository (`git clone https://github.com/meshery/meshery.git`), and clone your forked version of Meshery to your development environment, preferably outside `GOPATH`.
-1. `golangci-lint` should be installed if you want to test Go code, for MacOS and linux users.
+1. Go version 1.21.1 must be installed if you want to build and/or make changes to the existing code. The binary `go1.21.1` should be available in your path. If you don't want to disturb your existing version of Go, then follow these [instructions](https://go.dev/doc/manage-install#:~:text=and%20run%20them.-,Installing%20multiple%20Go%20versions,-You%20can%20install) to keep multiple versions of Go in your system.
+2. `GOPATH` environment variable should be configured appropriately
+3. `npm` and `node` should be installed on your machine, preferably the latest versions.
+4. Fork this repository (`git clone https://github.com/meshery/meshery.git`), and clone your forked version of Meshery to your development environment, preferably outside `GOPATH`.
+5. `golangci-lint` should be installed if you want to test Go code, for MacOS and linux users.
 
 #### Build and Run Meshery Server
 
@@ -137,10 +137,9 @@ Potential Solution:
 -  Go to your meshery folder in your local-system where you’ve cloned it.
 Execute: 
 
-
-- Restart the meshery server.
-- Make sure that `BUILD="v0.X.X"` is logged in some starting line while starting the server.
-
+- `git remote add upstream https://github.com/meshery/meshery`
+- `git fetch upstream`
+- Restart the meshery server
 - Addionally, before restarting the server, if you like to pull the latest changes, you can do: `git pull upstream master`
 ### UI Development Server
 

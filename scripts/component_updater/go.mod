@@ -1,6 +1,6 @@
 module github.com/layer5io/component_scraper
 
-go 1.19
+go 1.21
 
 require github.com/layer5io/meshkit v0.6.52
 
