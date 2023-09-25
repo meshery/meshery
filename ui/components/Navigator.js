@@ -806,15 +806,16 @@ class Navigator extends React.Component {
    * Removes id from openitems if present
    * Adds id in openitems if not present already
    */
-  toggleItemCollapse(id) {
+  toggleItemCollapse = (itemId) => {
+    const isItemOpen = this.state.openItems.includes(itemId);
     const activeItems = [...this.state.openItems];
-    if (this.state.openItems.includes(id)) {
-      this.setState({ openItems: activeItems.filter((item) => item !== id) });
+    if (isItemOpen) {
+      this.setState({ openItems: activeItems.filter((item) => item !== itemId) });
     } else {
-      activeItems.push(id);
-      this.setState({ openItems: activeItems });
+      activeItems.push(itemId);
+      this.setState({ openItems: [itemId] });
     }
-  }
+  };
 
   /**
    * @param {String} idname

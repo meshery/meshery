@@ -33,8 +33,6 @@ import { promisifiedDataFetch } from '../lib/data-fetch';
 import { updateK8SConfig, updateProgress, updateCapabilities } from '../lib/store';
 import { bindActionCreators } from 'redux';
 import BadgeAvatars from './CustomAvatar';
-import { CapabilitiesRegistry as CapabilityRegistryClass } from '../utils/disabledComponents';
-import _ from 'lodash';
 import { SETTINGS } from '../constants/navigator';
 import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
 import PromptComponent from './PromptComponent';
@@ -538,7 +536,7 @@ function K8sContextMenu({
   );
 }
 
-class Header extends React.Component {
+class Header extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -548,6 +546,7 @@ class Header extends React.Component {
     };
   }
   componentDidMount() {
+    console.log('header component mounted');
     dataFetch(
       '/api/provider/capabilities',
       {
@@ -562,7 +561,7 @@ class Header extends React.Component {
             collaboratorExt: ExtensionPointSchemaValidator('collaborator')(
               result?.extensions?.collaborator,
             ),
-            capabilitiesRegistryObj,
+            capabilityregistryObj: capabilitiesRegistryObj,
           });
           this.props.updateCapabilities({ capabilitiesRegistry: result });
         }
@@ -572,15 +571,6 @@ class Header extends React.Component {
     console.log('capabilitiesRegistry (mounted header)', this.props.capabilitiesRegistry);
     this._isMounted = true;
   }
-
-  componentDidUpdate(prevProps) {
-    if (!_.isEqual(prevProps.capabilitiesRegistry, this.props.capabilitiesRegistry)) {
-      this.setState({
-        capabilityregistryObj: new CapabilityRegistryClass(this.props.capabilitiesRegistry),
-      });
-    }
-  }
-
   componentWillUnmount = () => {
     this._isMounted = false;
   };
