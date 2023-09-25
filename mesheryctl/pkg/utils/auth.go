@@ -13,6 +13,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/manifoldco/promptui"
@@ -446,4 +447,16 @@ func getTokenObjFromMesheryServer(mctl *config.MesheryCtlConfig, provider, token
 	defer resp.Body.Close()
 
 	return io.ReadAll(resp.Body)
+}
+
+func IsServerRunning(serverAddr string) error {
+	serverAddr, _ = strings.CutPrefix(serverAddr, "http://")
+	// Attempt to establish a connection to the server
+	conn, err := net.DialTimeout("tcp", serverAddr, 2*time.Second)
+	if err != nil {
+		// Connection failed, server is not running
+		return errors.WithMessage(err, "Mehsery server is not reachable")
+	}
+	defer conn.Close()
+	return nil
 }

@@ -55,22 +55,12 @@ mesheryctl system model list --page 2
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
-		hcOptions := &HealthCheckOptions{
-			IsPreRunE:  true,
-			PrintLogs:  false,
-			Subcommand: cmd.Use,
-		}
-		hc, err := NewHealthChecker(hcOptions)
+
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return ErrHealthCheckFailed(err)
-		}
-		// execute healthchecks
-		err = hc.RunPreflightHealthChecks()
-		if err != nil {
-			cmd.SilenceUsage = true
 			return err
 		}
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
 		if err != nil {
 			return err
 		}
@@ -159,22 +149,12 @@ mesheryctl system model view [model-name]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
-		hcOptions := &HealthCheckOptions{
-			IsPreRunE:  true,
-			PrintLogs:  false,
-			Subcommand: cmd.Use,
-		}
-		hc, err := NewHealthChecker(hcOptions)
+
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return ErrHealthCheckFailed(err)
-		}
-		// execute healthchecks
-		err = hc.RunPreflightHealthChecks()
-		if err != nil {
-			cmd.SilenceUsage = true
 			return err
 		}
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
 		if err != nil {
 			return err
 		}
