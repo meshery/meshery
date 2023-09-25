@@ -29,7 +29,7 @@ import {
   successHandlerGenerator, errorHandlerGenerator
 } from './ConnectionWizard/helpers/common';
 import { promisifiedDataFetch } from '../lib/data-fetch';
-import { updateK8SConfig, updateProgress, updateCapabilities, updateCollaboratorExtState } from '../lib/store';
+import { updateK8SConfig, updateProgress, updateCapabilities } from '../lib/store';
 import { bindActionCreators } from 'redux';
 import BadgeAvatars from './CustomAvatar';
 import { SETTINGS } from '../constants/navigator';
@@ -648,7 +648,6 @@ const mapStateToProps = (state) => {
     operatorState : state.get('operatorState'),
     meshSyncState : state.get('meshSyncState'),
     capabilitiesRegistry : state.get("capabilitiesRegistry"),
-    collaboratorExtState : state.get("collaboratorExtState"),
   })
 };
 
@@ -656,7 +655,6 @@ const mapDispatchToProps = (dispatch) => ({
   updateK8SConfig : bindActionCreators(updateK8SConfig, dispatch),
   updateProgress : bindActionCreators(updateProgress, dispatch),
   updateCapabilities : bindActionCreators(updateCapabilities, dispatch),
-  updateCollaboratorExtState : bindActionCreators(updateCollaboratorExtState, dispatch),
 });
 
 

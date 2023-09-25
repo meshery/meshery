@@ -70,7 +70,6 @@ const initialState = fromJS({
   // global gql-subscriptions
   operatorState: null,
   meshSyncState: null,
-  collaboratorExtState: false,
 });
 
 export const actionTypes = {
@@ -100,7 +99,6 @@ export const actionTypes = {
   UPDATE_EXTENSION_TYPE: 'UPDATE_EXTENSION_TYPE',
   UPDATE_CAPABILITY_REGISTRY: 'UPDATE_CAPABILITY_REGISTRY',
   UPDATE_TELEMETRY_URLS : 'UPDATE_TELEMETRY_URLS',
-  UPDATE_COLLABORTOR_EXT_STATE: 'UPDATE_COLLABORTOR_EXT_STATE',
 };
 
 // REDUCERS
@@ -184,8 +182,6 @@ export const reducer = (state = initialState, action) => {
     case actionTypes.UPDATE_EXTENSION_TYPE:
       return state.merge({ extensionType: action.extensionType });
     
-    case actionTypes.UPDATE_COLLABORTOR_EXT_STATE:
-      return state.merge({ collaboratorExtState: action.collaboratorExtState });
 
     case actionTypes.UPDATE_CAPABILITY_REGISTRY:
       return state.merge({capabilitiesRegistry: action.capabilitiesRegistry})
@@ -289,9 +285,6 @@ export const updateExtensionType = ({ extensionType }) => dispatch => {
   return dispatch({type: actionTypes.UPDATE_EXTENSION_TYPE, extensionType})
 }
 
-export const updateCollaboratorExtState = ({ collaboratorExtState }) => dispatch => {
-  return dispatch({type: actionTypes.UPDATE_COLLABORTOR_EXT_STATE, collaboratorExtState})
-}
 
 export const updateCapabilities = ({capabilitiesRegistry}) => dispatch => {
   return dispatch({type: actionTypes.UPDATE_CAPABILITY_REGISTRY, capabilitiesRegistry})
