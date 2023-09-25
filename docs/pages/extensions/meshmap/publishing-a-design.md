@@ -10,7 +10,7 @@ type: meshmap
 
 # Publishing a Design
 
-Publishing a design lets you make your content visible to any anonymous visitior of meshery.io/catalog and any Meshery Cloud user. Anyone with the link can view the design.
+Publishing a design lets you make your content visible to any anonymous visitor of meshery.io/catalog and any Meshery Cloud user. Anyone with the link can view the design.
 
 You can publish design into Meshery's Catalog using Extensions. Let's discuss the process below.
 
