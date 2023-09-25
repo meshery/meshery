@@ -24,10 +24,11 @@ import { Search } from '@material-ui/icons';
 import { TextField } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import { Paper } from '@material-ui/core';
-import { deleteKubernetesConfig, pingKubernetes } from './ConnectionWizard/helpers/kubernetesHelpers';
 import {
-  successHandlerGenerator, errorHandlerGenerator
-} from './ConnectionWizard/helpers/common';
+  deleteKubernetesConfig,
+  pingKubernetes,
+} from './ConnectionWizard/helpers/kubernetesHelpers';
+import { successHandlerGenerator, errorHandlerGenerator } from './ConnectionWizard/helpers/common';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 import { updateK8SConfig, updateProgress, updateCapabilities } from '../lib/store';
 import { bindActionCreators } from 'redux';
@@ -39,196 +40,187 @@ import { iconMedium } from '../css/icons.styles';
 import { isExtensionOpen } from '../pages/_app';
 import ExtensionSandbox from './ExtensionSandbox';
 import RemoteComponent from './RemoteComponent';
-import { CapabilitiesRegistry } from "../utils/disabledComponents";
+import { CapabilitiesRegistry } from '../utils/disabledComponents';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import dataFetch from '../lib/data-fetch';
 import { useNotification, withNotify } from '../utils/hooks/useNotification';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
-  secondaryBar : { zIndex : 0, },
-  menuButton : { marginLeft : -theme.spacing(1), },
-  iconButtonAvatar : { padding : 4, },
-  link : {
-    textDecoration : 'none',
-    color : theme.palette.secondary.link
+  secondaryBar: { zIndex: 0 },
+  menuButton: { marginLeft: -theme.spacing(1) },
+  iconButtonAvatar: { padding: 4 },
+  link: {
+    textDecoration: 'none',
+    color: theme.palette.secondary.link,
+  },
+  button: { borderColor: lightColor },
+  notifications: {
+    paddingLeft: theme.spacing(4),
+    paddingRight: theme.spacing(0),
+    marginLeft: theme.spacing(4),
+  },
+  userContainer: {
+    paddingLeft: 1,
+    display: 'flex',
 
+    alignItems: 'center',
   },
-  button : { borderColor : lightColor, },
-  notifications : {
-    paddingLeft : theme.spacing(4),
-    paddingRight : theme.spacing(0),
-    marginLeft : theme.spacing(4),
+  userSpan: { marginLeft: theme.spacing(1) },
+  pageTitleWrapper: {
+    flexGrow: 1,
+    marginRight: 'auto',
   },
-  userContainer : {
-    paddingLeft : 1,
-    display : 'flex',
-
-
-    alignItems : 'center'
+  betaBadge: { color: '#EEEEEE', fontWeight: '300', fontSize: '13px' },
+  pageTitle: {
+    paddingLeft: theme.spacing(2),
+    fontSize: '1.25rem',
+    [theme.breakpoints.up('sm')]: { fontSize: '1.65rem' },
   },
-  userSpan : { marginLeft : theme.spacing(1), },
-  pageTitleWrapper : {
-    flexGrow : 1,
-    marginRight : 'auto',
+  appBarOnDrawerOpen: {
+    backgroundColor: theme.palette.secondary.mainBackground,
+    shadowColor: ' #808080',
+    zIndex: theme.zIndex.drawer + 1,
+    [theme.breakpoints.between(635, 732)]: { padding: theme.spacing(0.75, 1.4) },
+    [theme.breakpoints.between(600, 635)]: { padding: theme.spacing(0.4, 1.4) },
   },
-  betaBadge : { color : '#EEEEEE', fontWeight : '300', fontSize : '13px' },
-  pageTitle : {
-    paddingLeft : theme.spacing(2),
-    fontSize : '1.25rem',
-    [theme.breakpoints.up('sm')] : { fontSize : '1.65rem', },
+  appBarOnDrawerClosed: {
+    backgroundColor: theme.palette.secondary.mainBackground,
+    zIndex: theme.zIndex.drawer + 1,
   },
-  appBarOnDrawerOpen : {
-    backgroundColor : theme.palette.secondary.mainBackground,
-    shadowColor : " #808080",
-    zIndex : theme.zIndex.drawer + 1,
-    [theme.breakpoints.between(635, 732)] : { padding : theme.spacing(0.75, 1.4), },
-    [theme.breakpoints.between(600, 635)] : { padding : theme.spacing(0.4, 1.4), },
+  toolbarOnDrawerClosed: {
+    minHeight: 59,
+    padding: theme.spacing(2.4),
+    paddingLeft: 34,
+    paddingRight: 34,
+    backgroundColor: theme.palette.secondary.mainBackground,
   },
-  appBarOnDrawerClosed : {
-    backgroundColor : theme.palette.secondary.mainBackground,
-    zIndex : theme.zIndex.drawer + 1,
+  toolbarOnDrawerOpen: {
+    minHeight: 58,
+    padding: theme.spacing(2.4),
+    paddingLeft: 34,
+    paddingRight: 34,
+    backgroundColor: theme.palette.secondary.mainBackground,
+    [theme.breakpoints.between(620, 732)]: { minHeight: 68, paddingLeft: 20, paddingRight: 20 },
   },
-  toolbarOnDrawerClosed : {
-
-    minHeight : 59,
-    padding : theme.spacing(2.4),
-    paddingLeft : 34,
-    paddingRight : 34,
-    backgroundColor : theme.palette.secondary.mainBackground,
+  itemActiveItem: { color: '#00B39F' },
+  headerIcons: { fontSize: '1.5rem', height: '1.5rem', width: '1.5rem' },
+  cbadge: {
+    fontSize: '0.65rem',
+    backgroundColor: 'white',
+    borderRadius: '50%',
+    color: 'black',
+    height: '1.30rem',
+    width: '1.30rem',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    zIndex: 1,
+    right: '-0.75rem',
+    top: '-0.29rem',
   },
-  toolbarOnDrawerOpen : {
-    minHeight : 58,
-    padding : theme.spacing(2.4),
-    paddingLeft : 34,
-    paddingRight : 34,
-    backgroundColor : theme.palette.secondary.mainBackground,
-    [theme.breakpoints.between(620, 732)] : { minHeight : 68, paddingLeft : 20, paddingRight : 20 },
+  cbadgeContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
   },
-  itemActiveItem : { color : "#00B39F" },
-  headerIcons : { fontSize : "1.5rem", height : "1.5rem", width : "1.5rem" },
-  cbadge : {
-    fontSize : "0.65rem",
-    backgroundColor : "white",
-    borderRadius : "50%",
-    color : "black",
-    height : "1.30rem",
-    width : "1.30rem",
-    display : "flex",
-    justifyContent : "center",
-    alignItems : "center",
-    position : "absolute",
-    zIndex : 1,
-    right : "-0.75rem",
-    top : "-0.29rem"
+  icon: {
+    width: 24,
+    height: 24,
   },
-  cbadgeContainer : {
-    display : "flex",
-    justifyContent : "center",
-    alignItems : "center",
-    position : "relative"
-  },
-  icon : {
-    width : 24,
-    height : 24
-  },
-  Chip : {
-    width : '12.8rem',
-    textAlign : 'center',
-    cursor : "pointer",
-    "& .MuiChip-label" : {
-      flexGrow : 1
+  Chip: {
+    width: '12.8rem',
+    textAlign: 'center',
+    cursor: 'pointer',
+    '& .MuiChip-label': {
+      flexGrow: 1,
     },
-    overflow : "hidden",
-    whiteSpace : "nowrap",
-    textOverflow : "ellipsis"
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
   },
-  cMenuContainer : {
-    backgroundColor : theme.palette.secondary.headerColor,
-    marginTop : "-0.7rem",
-    borderRadius : "3px",
-    padding : "1rem",
-    zIndex : 1201,
-    boxShadow : "20px #979797",
-    transition : "linear .2s",
-    transitionProperty : "height"
+  cMenuContainer: {
+    backgroundColor: theme.palette.secondary.headerColor,
+    marginTop: '-0.7rem',
+    borderRadius: '3px',
+    padding: '1rem',
+    zIndex: 1201,
+    boxShadow: '20px #979797',
+    transition: 'linear .2s',
+    transitionProperty: 'height',
   },
-  alertEnter : {
-    opacity : "0",
-    transform : "scale(0.9)",
+  alertEnter: {
+    opacity: '0',
+    transform: 'scale(0.9)',
   },
-  alertEnterActive : {
-    opacity : "1",
-    transform : "translateX(0)",
-    transition : "opacity 300ms, transform 300ms"
+  alertEnterActive: {
+    opacity: '1',
+    transform: 'translateX(0)',
+    transition: 'opacity 300ms, transform 300ms',
   },
-  chip : {
-    margin : "0.25rem 0",
+  chip: {
+    margin: '0.25rem 0',
   },
-  AddIcon : {
-    width : theme.spacing(2.5),
-    paddingRight : theme.spacing(0.5),
+  AddIcon: {
+    width: theme.spacing(2.5),
+    paddingRight: theme.spacing(0.5),
   },
-  searchIcon : {
-    width : theme.spacing(3.5),
+  searchIcon: {
+    width: theme.spacing(3.5),
   },
-  darkThemeToggle : {
-
-    marginLeft : "1.5em",
-
+  darkThemeToggle: {
+    marginLeft: '1.5em',
   },
 
-  toggle : {
-    appearance : "none",
-    outline : "none",
-    cursor : "pointer",
-    width : "1.5rem",
-    height : "1.5rem",
-    boxShadow : "inset calc(1.5rem * 0.33) calc(1.5rem * -0.25) 0",
-    borderRadius : "999px",
-    color : "#00B39F",
-    transition : "all 500ms",
-    zIndex : "1",
-    '&:checked' : {
-      width : "1.5rem",
-      height : "1.5rem",
-      borderRadius : "50%",
-      background : "orange",
-      boxShadow : "0 0 10px orange, 0 0 60px orange,0 0 200px yellow, inset 0 0 80px yellow",
-    }
+  toggle: {
+    appearance: 'none',
+    outline: 'none',
+    cursor: 'pointer',
+    width: '1.5rem',
+    height: '1.5rem',
+    boxShadow: 'inset calc(1.5rem * 0.33) calc(1.5rem * -0.25) 0',
+    borderRadius: '999px',
+    color: '#00B39F',
+    transition: 'all 500ms',
+    zIndex: '1',
+    '&:checked': {
+      width: '1.5rem',
+      height: '1.5rem',
+      borderRadius: '50%',
+      background: 'orange',
+      boxShadow: '0 0 10px orange, 0 0 60px orange,0 0 200px yellow, inset 0 0 80px yellow',
+    },
   },
-
-}
-);
+});
 
 const CONTROLLERS = {
-  BROKER : 0,
-  MESHSYNC : 1,
-}
+  BROKER: 0,
+  MESHSYNC: 1,
+};
 
 const STATUS = {
-  DISABLED : "Disabled",
-  NOT_CONNECTED : "Not Connected",
-  ACTIVE : "Active"
-}
+  DISABLED: 'Disabled',
+  NOT_CONNECTED: 'Not Connected',
+  ACTIVE: 'Active',
+};
 
 async function loadActiveK8sContexts() {
   try {
-    const res = await promisifiedDataFetch("/api/system/sync")
+    const res = await promisifiedDataFetch('/api/system/sync');
     if (res?.k8sConfig) {
-      return res.k8sConfig
+      return res.k8sConfig;
     } else {
-      throw new Error("No kubernetes configurations found")
+      throw new Error('No kubernetes configurations found');
     }
   } catch (e) {
-    console.error("An error occurred while loading k8sconfig", e)
+    console.error('An error occurred while loading k8sconfig', e);
   }
 }
 
-function LoadTheme({
-  themeSetter
-}) {
-  const defaultTheme = "light";
+function LoadTheme({ themeSetter }) {
+  const defaultTheme = 'light';
 
   useLayoutEffect(() => {
     // disable dark mode in extension
@@ -237,17 +229,14 @@ function LoadTheme({
       return;
     }
 
-    if (localStorage.getItem("Theme") === null) {
+    if (localStorage.getItem('Theme') === null) {
       themeSetter(defaultTheme);
     } else {
-      themeSetter(localStorage.getItem("Theme"));
+      themeSetter(localStorage.getItem('Theme'));
     }
   }, []);
 
-  return (
-    <>
-    </>
-  )
+  return <></>;
 }
 
 function K8sContextMenu({
@@ -259,26 +248,26 @@ function K8sContextMenu({
   updateK8SConfig,
   updateProgress,
 
-  setActiveContexts = () => { },
-  searchContexts = () => { }
+  setActiveContexts = () => {},
+  searchContexts = () => {},
 }) {
   const [anchorEl, setAnchorEl] = React.useState(false);
   const [showFullContextMenu, setShowFullContextMenu] = React.useState(false);
   const [transformProperty, setTransformProperty] = React.useState(100);
   const deleteCtxtRef = React.createRef();
-  const { notify } = useNotification()
+  const { notify } = useNotification();
   const styleSlider = {
-    position : "absolute",
-    left : "-5rem",
-    zIndex : "-1",
-    bottom : showFullContextMenu ? "-55%" : "-110%",
-    transform : showFullContextMenu ? `translateY(${transformProperty}%)` : "translateY(0)"
-  }
+    position: 'absolute',
+    left: '-5rem',
+    zIndex: '-1',
+    bottom: showFullContextMenu ? '-55%' : '-110%',
+    transform: showFullContextMenu ? `translateY(${transformProperty}%)` : 'translateY(0)',
+  };
 
   const ctxStyle = {
     ...disabledStyle,
-    marginRight : "0.5rem",
-  }
+    marginRight: '0.5rem',
+  };
 
   const getOperatorStatus = (contextId) => {
     const state = runningStatus.operatorStatus;
@@ -286,13 +275,13 @@ function K8sContextMenu({
       return STATUS.DISABLED;
     }
 
-    const context = state.find(st => st.contextID === contextId)
+    const context = state.find((st) => st.contextID === contextId);
     if (!context) {
       return STATUS.DISABLED;
     }
 
-    return context.operatorStatus.status === "ENABLED" ? STATUS.ACTIVE : STATUS.DISABLED;
-  }
+    return context.operatorStatus.status === 'ENABLED' ? STATUS.ACTIVE : STATUS.DISABLED;
+  };
 
   const getMeshSyncStatus = (contextId) => {
     const state = runningStatus.operatorStatus;
@@ -300,17 +289,17 @@ function K8sContextMenu({
       return STATUS.DISABLED;
     }
 
-    const context = state.find(st => st.contextID === contextId)
+    const context = state.find((st) => st.contextID === contextId);
     if (!context) {
       return STATUS.DISABLED;
     }
 
-    const status = context.operatorStatus.controllers[CONTROLLERS.MESHSYNC]?.status
-    if (status?.includes("ENABLED")) {
-      return status.split(" ")[1].trim()
+    const status = context.operatorStatus.controllers[CONTROLLERS.MESHSYNC]?.status;
+    if (status?.includes('ENABLED')) {
+      return status.split(' ')[1].trim();
     }
     return status;
-  }
+  };
 
   const getBrokerStatus = (contextId) => {
     const state = runningStatus.operatorStatus;
@@ -318,50 +307,52 @@ function K8sContextMenu({
       return STATUS.NOT_CONNECTED;
     }
 
-    const context = state.find(st => st.contextID === contextId)
+    const context = state.find((st) => st.contextID === contextId);
     if (!context) {
       return STATUS.NOT_CONNECTED;
     }
 
-    const status = context.operatorStatus.controllers[CONTROLLERS.BROKER]?.status
-    if (status?.includes("CONNECTED")) {
-      return status.split(" ")[1].trim()
+    const status = context.operatorStatus.controllers[CONTROLLERS.BROKER]?.status;
+    if (status?.includes('CONNECTED')) {
+      return status.split(' ')[1].trim();
     }
 
     return STATUS.NOT_CONNECTED;
-  }
+  };
 
   const handleKubernetesClick = (name, connectionID) => {
-
-    updateProgress({ showProgress : true })
+    updateProgress({ showProgress: true });
     pingKubernetes(
-      successHandlerGenerator(notify, `Kubernetes pinged: ${name}`, () => updateProgress({ showProgress : false }),),
-      errorHandlerGenerator(notify, `Not able to  ping kubernetes: ${name}`, () => updateProgress({ showProgress : false })),
-      connectionID
-    )
-  }
+      successHandlerGenerator(notify, `Kubernetes pinged: ${name}`, () =>
+        updateProgress({ showProgress: false }),
+      ),
+      errorHandlerGenerator(notify, `Not able to  ping kubernetes: ${name}`, () =>
+        updateProgress({ showProgress: false }),
+      ),
+      connectionID,
+    );
+  };
 
   const handleKubernetesDelete = (name, connectionID) => async () => {
     let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
-      title : `Delete ${name} context ?`,
-      subtitle : `Are you sure you want to delete ${name} cluster from Meshery?`,
-      options : ["CONFIRM", "CANCEL"]
+      title: `Delete ${name} context ?`,
+      subtitle: `Are you sure you want to delete ${name} cluster from Meshery?`,
+      options: ['CONFIRM', 'CANCEL'],
     });
-    if (responseOfDeleteK8sCtx === "CONFIRM") {
+    if (responseOfDeleteK8sCtx === 'CONFIRM') {
       const successCallback = async () => {
-        const updatedConfig = await loadActiveK8sContexts()
+        const updatedConfig = await loadActiveK8sContexts();
         if (Array.isArray(updatedConfig)) {
-          updateK8SConfig({ k8sConfig : updatedConfig })
+          updateK8SConfig({ k8sConfig: updatedConfig });
         }
-      }
+      };
       deleteKubernetesConfig(
         successHandlerGenerator(notify, `Kubernetes config removed for ${name}`, successCallback),
         errorHandlerGenerator(notify, `Not able to remove config for ${name}`),
-        connectionID
-      )
+        connectionID,
+      );
     }
-  }
-
+  };
 
   let open = Boolean(anchorEl);
   if (showFullContextMenu) {
@@ -369,8 +360,10 @@ function K8sContextMenu({
   }
 
   useEffect(() => {
-    setTransformProperty(prev => (prev + (contexts.total_count ? contexts.total_count * 3.125 : 0)))
-  }, [])
+    setTransformProperty(
+      (prev) => prev + (contexts.total_count ? contexts.total_count * 3.125 : 0),
+    );
+  }, []);
   return (
     <>
       <div style={show ? cursorNotAllowed : {}}>
@@ -379,41 +372,55 @@ function K8sContextMenu({
           className="k8s-icon-button"
           onClick={(e) => {
             e.preventDefault();
-            setShowFullContextMenu(prev => !prev);
+            setShowFullContextMenu((prev) => !prev);
           }}
           onMouseOver={(e) => {
             e.preventDefault();
             setAnchorEl(true);
           }}
-
           onMouseLeave={(e) => {
             e.preventDefault();
-            setAnchorEl(false)
+            setAnchorEl(false);
           }}
-
-          aria-owns={open
-            ? 'menu-list-grow'
-            : undefined}
+          aria-owns={open ? 'menu-list-grow' : undefined}
           aria-haspopup="true"
-          style={show ? ctxStyle : { marginRight : "0.5rem" }}
+          style={show ? ctxStyle : { marginRight: '0.5rem' }}
         >
           <div className={classes.cbadgeContainer}>
-            <img className="k8s-image" src="/static/img/kubernetes.svg" width="24px" height="24px" style={{ zIndex : "2" }} />
+            <img
+              className="k8s-image"
+              src="/static/img/kubernetes.svg"
+              width="24px"
+              height="24px"
+              style={{ zIndex: '2' }}
+            />
             <div className={classes.cbadge}>{contexts?.total_count || 0}</div>
           </div>
         </IconButton>
       </div>
 
-      <Slide direction="down" style={styleSlider} timeout={400} in={open} mountOnEnter unmountOnExit>
+      <Slide
+        direction="down"
+        style={styleSlider}
+        timeout={400}
+        in={open}
+        mountOnEnter
+        unmountOnExit
+      >
         <div>
-          <ClickAwayListener onClickAway={(e) => {
-
-            if (typeof e.target.className == "string" && !e.target.className?.includes("cbadge") && e.target?.className != "k8s-image" && !e.target.className.includes("k8s-icon-button")) {
-              setAnchorEl(false)
-              setShowFullContextMenu(false)
-            }
-          }}>
-
+          <ClickAwayListener
+            onClickAway={(e) => {
+              if (
+                typeof e.target.className == 'string' &&
+                !e.target.className?.includes('cbadge') &&
+                e.target?.className != 'k8s-image' &&
+                !e.target.className.includes('k8s-icon-button')
+              ) {
+                setAnchorEl(false);
+                setShowFullContextMenu(false);
+              }
+            }}
+          >
             <Paper className={classes.cMenuContainer}>
               <div>
                 <TextField
@@ -421,42 +428,41 @@ function K8sContextMenu({
                   label="Search"
                   size="small"
                   variant="outlined"
-                  onChange={ev => searchContexts(ev.target.value)}
-                  style={{ width : "100%", backgroundColor : "rgba(102, 102, 102, 0.12)", margin : "1px 0px" }}
+                  onChange={(ev) => searchContexts(ev.target.value)}
+                  style={{
+                    width: '100%',
+                    backgroundColor: 'rgba(102, 102, 102, 0.12)',
+                    margin: '1px 0px',
+                  }}
                   InputProps={{
-                    endAdornment :
-                      (
-                        <Search className={classes.searchIcon} style={iconMedium} />
-                      )
+                    endAdornment: <Search className={classes.searchIcon} style={iconMedium} />,
                   }}
                 />
               </div>
               <div>
-                {
-                  contexts?.total_count
-                    ?
-                    <>
-                      <Checkbox
-                        checked={activeContexts.includes("all")}
-                        onChange={() => setActiveContexts("all")}
-                        color="primary"
-                      />
-                      <span style={{ fontWeight : "bolder" }}>select all</span>
-                    </>
-                    :
-                    <Link href="/settings">
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        size="large"
-                        style={{ margin : "0.5rem 0.5rem", whiteSpace : "nowrap" }}
-                      >
-                        <AddIcon className={classes.AddIcon} style={iconMedium} />
-                        Connect Clusters
-                      </Button>
-                    </Link>
-                }
+                {contexts?.total_count ? (
+                  <>
+                    <Checkbox
+                      checked={activeContexts.includes('all')}
+                      onChange={() => setActiveContexts('all')}
+                      color="primary"
+                    />
+                    <span style={{ fontWeight: 'bolder' }}>select all</span>
+                  </>
+                ) : (
+                  <Link href="/settings">
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      style={{ margin: '0.5rem 0.5rem', whiteSpace: 'nowrap' }}
+                    >
+                      <AddIcon className={classes.AddIcon} style={iconMedium} />
+                      Connect Clusters
+                    </Button>
+                  </Link>
+                )}
                 {contexts?.contexts?.map((ctx, idx) => {
                   const meshStatus = getMeshSyncStatus(ctx.id);
                   const brokerStatus = getBrokerStatus(ctx.id);
@@ -464,109 +470,139 @@ function K8sContextMenu({
 
                   function getStatus(status) {
                     if (status) {
-                      return STATUS.ACTIVE
+                      return STATUS.ACTIVE;
                     } else {
-                      return STATUS.DISABLED
+                      return STATUS.DISABLED;
                     }
                   }
 
-                  return <div key={`${ctx.uniqueID}-${idx}`} id={ctx.id} className={classes.chip} >
-                    <Tooltip title={`Server: ${ctx.server},  Operator: ${getStatus(operStatus)}, MeshSync: ${getStatus(meshStatus)}, Broker: ${getStatus(brokerStatus)}`}>
-                      <div style={{ display : "flex", justifyContent : "flex-start", alignItems : "center" }}>
-                        <Checkbox
-                          checked={activeContexts.includes(ctx.id)}
-                          onChange={() => setActiveContexts(ctx.id)}
-                          color="primary"
-                        />
-                        <Chip
-                          label={ctx?.name}
-                          onDelete={handleKubernetesDelete(ctx.name, ctx.connection_id)}
-                          onClick={() => handleKubernetesClick(ctx.name, ctx.connection_id)}
-                          avatar={
-                            meshStatus ?
-                              <BadgeAvatars>
-                                <Avatar src="/static/img/kubernetes.svg" className={classes.icon}
-                                  style={operStatus ? {} : { opacity : 0.2 }}
+                  return (
+                    <div key={`${ctx.uniqueID}-${idx}`} id={ctx.id} className={classes.chip}>
+                      <Tooltip
+                        title={`Server: ${ctx.server},  Operator: ${getStatus(
+                          operStatus,
+                        )}, MeshSync: ${getStatus(meshStatus)}, Broker: ${getStatus(brokerStatus)}`}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'flex-start',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <Checkbox
+                            checked={activeContexts.includes(ctx.id)}
+                            onChange={() => setActiveContexts(ctx.id)}
+                            color="primary"
+                          />
+                          <Chip
+                            label={ctx?.name}
+                            onDelete={handleKubernetesDelete(ctx.name, ctx.connection_id)}
+                            onClick={() => handleKubernetesClick(ctx.name, ctx.connection_id)}
+                            avatar={
+                              meshStatus ? (
+                                <BadgeAvatars>
+                                  <Avatar
+                                    src="/static/img/kubernetes.svg"
+                                    className={classes.icon}
+                                    style={operStatus ? {} : { opacity: 0.2 }}
+                                  />
+                                </BadgeAvatars>
+                              ) : (
+                                <Avatar
+                                  src="/static/img/kubernetes.svg"
+                                  className={classes.icon}
+                                  style={operStatus ? {} : { opacity: 0.2 }}
                                 />
-                              </BadgeAvatars> :
-                              <Avatar src="/static/img/kubernetes.svg" className={classes.icon}
-                                style={operStatus ? {} : { opacity : 0.2 }}
-                              />
-                          }
-                          variant="filled"
-                          className={classes.Chip}
-                          data-cy="chipContextName"
-                        />
-                      </div>
-                    </Tooltip>
-                  </div>
+                              )
+                            }
+                            variant="filled"
+                            className={classes.Chip}
+                            data-cy="chipContextName"
+                          />
+                        </div>
+                      </Tooltip>
+                    </div>
+                  );
                 })}
-
               </div>
             </Paper>
-
           </ClickAwayListener>
         </div>
       </Slide>
 
       <PromptComponent ref={deleteCtxtRef} />
     </>
-  )
+  );
 }
 
 class Header extends React.PureComponent {
-
   constructor(props) {
     super(props);
     this.state = {
       /** @type {CapabilityRegistryClass} */
-      capabilityregistryObj : null,
-      collaboratorExt : null,
-    }
+      capabilityregistryObj: null,
+      collaboratorExt: null,
+    };
   }
   componentDidMount() {
-    console.log("header component mounted")
+    console.log('header component mounted');
     dataFetch(
-      "/api/provider/capabilities",
+      '/api/provider/capabilities',
       {
-        method : "GET",
-        credentials : "include",
+        method: 'GET',
+        credentials: 'include',
       },
       (result) => {
         if (result) {
           const capabilitiesRegistryObj = new CapabilitiesRegistry(result);
 
           this.setState({
-            collaboratorExt : ExtensionPointSchemaValidator("collaborator")(result?.extensions?.collaborator),
-            capabilityregistryObj : capabilitiesRegistryObj,
+            collaboratorExt: ExtensionPointSchemaValidator('collaborator')(
+              result?.extensions?.collaborator,
+            ),
+            capabilityregistryObj: capabilitiesRegistryObj,
           });
-          this.props.updateCapabilities({ capabilitiesRegistry : result })
+          this.props.updateCapabilities({ capabilitiesRegistry: result });
         }
       },
-      (err) => console.error(err)
+      (err) => console.error(err),
     );
-    console.log("capabilitiesRegistry (mounted header)", this.props.capabilitiesRegistry)
+    console.log('capabilitiesRegistry (mounted header)', this.props.capabilitiesRegistry);
     this._isMounted = true;
-
   }
   componentWillUnmount = () => {
     this._isMounted = false;
-  }
+  };
 
   render() {
-    const { classes, title, onDrawerToggle, isBeta, theme, themeSetter, onDrawerCollapse, capabilityregistryObj } = this.props;
-    const loaderType = "circular"
+    const {
+      classes,
+      title,
+      onDrawerToggle,
+      isBeta,
+      theme,
+      themeSetter,
+      onDrawerCollapse,
+      capabilityregistryObj,
+    } = this.props;
+    const loaderType = 'circular';
     return (
       <NoSsr>
         <React.Fragment>
           <LoadTheme theme={theme} themeSetter={themeSetter} />
-          <AppBar color="primary" position="sticky" elevation={2} className={onDrawerCollapse
-            ? classes.appBarOnDrawerClosed
-            : classes.appBarOnDrawerOpen}>
-            <Toolbar className={onDrawerCollapse
-              ? classes.toolbarOnDrawerClosed
-              : classes.toolbarOnDrawerOpen}>
-              <Grid container alignItems="center" >
+          <AppBar
+            color="primary"
+            position="sticky"
+            elevation={2}
+            className={onDrawerCollapse ? classes.appBarOnDrawerClosed : classes.appBarOnDrawerOpen}
+          >
+            <Toolbar
+              className={
+                onDrawerCollapse ? classes.toolbarOnDrawerClosed : classes.toolbarOnDrawerOpen
+              }
+            >
+              <Grid container alignItems="center">
                 <Hidden smUp>
                   <Grid item>
                     <IconButton
@@ -580,16 +616,30 @@ class Header extends React.PureComponent {
                   </Grid>
                 </Hidden>
                 <Grid item xs container alignItems="center" className={classes.pageTitleWrapper}>
-                  <Typography color="inherit" variant="h5" className={classes.pageTitle} data-cy="headerPageTitle">
-                    {title}{isBeta ? <sup className={classes.betaBadge}>BETA</sup> : ""}
+                  <Typography
+                    color="inherit"
+                    variant="h5"
+                    className={classes.pageTitle}
+                    data-cy="headerPageTitle"
+                  >
+                    {title}
+                    {isBeta ? <sup className={classes.betaBadge}>BETA</sup> : ''}
                   </Typography>
                 </Grid>
-                <Grid item className={classes.userContainer} style={{ position : "relative", right : "-27px" }}>
+                <Grid
+                  item
+                  className={classes.userContainer}
+                  style={{ position: 'relative', right: '-27px' }}
+                >
                   {/* According to the capabilities load the component */}
-                  {
-                    this.state.collaboratorExt && <ExtensionSandbox type="collaborator" Extension={(url) => RemoteComponent({ url, loaderType })} capabilitiesRegistry={capabilityregistryObj} />
-                  }
-                  <div className={classes.userSpan} style={{ position : "relative" }}>
+                  {this.state.collaboratorExt && (
+                    <ExtensionSandbox
+                      type="collaborator"
+                      Extension={(url) => RemoteComponent({ url, loaderType })}
+                      capabilitiesRegistry={capabilityregistryObj}
+                    />
+                  )}
+                  <div className={classes.userSpan} style={{ position: 'relative' }}>
                     <K8sContextMenu
                       classes={classes}
                       contexts={this.props.contexts}
@@ -597,65 +647,92 @@ class Header extends React.PureComponent {
                       activeContexts={this.props.activeContexts}
                       setActiveContexts={this.props.setActiveContexts}
                       searchContexts={this.props.searchContexts}
-                      runningStatus={{ operatorStatus : this.props.operatorState, meshSyncStatus : this.props.meshSyncState }}
+                      runningStatus={{
+                        operatorStatus: this.props.operatorState,
+                        meshSyncStatus: this.props.meshSyncState,
+                      }}
                       updateK8SConfig={this.props.updateK8SConfig}
                       updateProgress={this.props.updateProgress}
                     />
                   </div>
 
-                  <div data-test="settings-button" style={!this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS]) ? cursorNotAllowed : {}}>
+                  <div
+                    data-test="settings-button"
+                    style={
+                      !this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS])
+                        ? cursorNotAllowed
+                        : {}
+                    }
+                  >
                     <Link href="/settings">
-                      <IconButton style={!this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS]) ? disabledStyle : {}} color="inherit">
-                        <SettingsIcon className={classes.headerIcons + " " + (title === 'Settings'
-                          ? classes.itemActiveItem
-                          : '')} style={iconMedium} />
+                      <IconButton
+                        style={
+                          !this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS])
+                            ? disabledStyle
+                            : {}
+                        }
+                        color="inherit"
+                      >
+                        <SettingsIcon
+                          className={
+                            classes.headerIcons +
+                            ' ' +
+                            (title === 'Settings' ? classes.itemActiveItem : '')
+                          }
+                          style={iconMedium}
+                        />
                       </IconButton>
                     </Link>
                   </div>
-
 
                   <div data-test="notification-button">
                     <MesheryNotification />
                   </div>
                   <span className={classes.userSpan}>
-                    <User classes={classes} theme={theme} themeSetter={themeSetter} color="inherit" iconButtonClassName={classes.iconButtonAvatar} avatarClassName={classes.avatar} updateExtensionType={this.props.updateExtensionType} />
+                    <User
+                      classes={classes}
+                      theme={theme}
+                      themeSetter={themeSetter}
+                      color="inherit"
+                      iconButtonClassName={classes.iconButtonAvatar}
+                      avatarClassName={classes.avatar}
+                      updateExtensionType={this.props.updateExtensionType}
+                    />
                   </span>
                   {/* <div className="dark-theme-toggle">
                       <input id="toggle" className="toggle" type="checkbox" onChange={themeToggler} checked={!themeToggle} />
                     </div> */}
-
                 </Grid>
               </Grid>
             </Toolbar>
           </AppBar>
         </React.Fragment>
-      </NoSsr >
+      </NoSsr>
     );
   }
 }
 
 Header.propTypes = {
-  classes : PropTypes.object.isRequired,
-  onDrawerToggle : PropTypes.func.isRequired,
+  classes: PropTypes.object.isRequired,
+  onDrawerToggle: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => {
-  return ({
-    title : state.get('page').get('title'),
-    isBeta : state.get('page').get('isBeta'),
-    selectedK8sContexts : state.get('selectedK8sContexts'),
-    k8sconfig : state.get('k8sConfig'),
-    operatorState : state.get('operatorState'),
-    meshSyncState : state.get('meshSyncState'),
-    capabilitiesRegistry : state.get("capabilitiesRegistry"),
-  })
+  return {
+    title: state.get('page').get('title'),
+    isBeta: state.get('page').get('isBeta'),
+    selectedK8sContexts: state.get('selectedK8sContexts'),
+    k8sconfig: state.get('k8sConfig'),
+    operatorState: state.get('operatorState'),
+    meshSyncState: state.get('meshSyncState'),
+    capabilitiesRegistry: state.get('capabilitiesRegistry'),
+  };
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  updateK8SConfig : bindActionCreators(updateK8SConfig, dispatch),
-  updateProgress : bindActionCreators(updateProgress, dispatch),
-  updateCapabilities : bindActionCreators(updateCapabilities, dispatch),
+  updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch),
+  updateProgress: bindActionCreators(updateProgress, dispatch),
+  updateCapabilities: bindActionCreators(updateCapabilities, dispatch),
 });
-
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withNotify(Header)));
