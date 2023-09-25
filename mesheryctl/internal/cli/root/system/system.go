@@ -46,7 +46,8 @@ var SystemCmd = &cobra.Command{
 		}
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			utils.Log.Error(err)
+			return nil
 		}
 		mctlCfg.GetBaseMesheryURL()
 		return nil

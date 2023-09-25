@@ -1,11 +1,9 @@
-import React, { useEffect } from 'react'
+import React, { useEffect } from 'react';
 import LinkIcon from '@material-ui/icons/Link';
 import { Tooltip, IconButton, TextField, Button, Grid } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 // import { createTheme } from '@material-ui/core/styles';
 import { URLValidator } from '../utils/URLValidator';
-
-
 
 // const getMuiTheme = () => createTheme({
 //   palette : {
@@ -22,28 +20,24 @@ import { URLValidator } from '../utils/URLValidator';
 //   }
 // })
 
-
 const styles = (theme) => ({
-  paper : {
-    position : 'absolute',
-    width : 600,
-    backgroundColor : theme.palette.background.paper,
-    border : '0px solid #000',
-    boxShadow : theme.shadows[5],
-    padding : theme.spacing(2, 4, 3),
-    top : '50%',
-    left : '50%',
-    transform : `translate(-50%, -50%)`,
-    borderRadius : 10,
+  paper: {
+    position: 'absolute',
+    width: 600,
+    backgroundColor: theme.palette.background.paper,
+    border: '0px solid #000',
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+    top: '50%',
+    left: '50%',
+    transform: `translate(-50%, -50%)`,
+    borderRadius: 10,
   },
-  grid : {
-    width : '100%'
+  grid: {
+    width: '100%',
   },
-
-
 });
-import GenericModal from "./GenericModal";
-
+import GenericModal from './GenericModal';
 
 const URLUploader = ({ onSubmit, classes }) => {
   const [open, setOpen] = React.useState(false);
@@ -52,9 +46,9 @@ const URLUploader = ({ onSubmit, classes }) => {
 
   useEffect(() => {
     if (input) {
-      setIsError(!URLValidator(input))
+      setIsError(!URLValidator(input));
     }
-  }, [input])
+  }, [input]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -65,14 +59,13 @@ const URLUploader = ({ onSubmit, classes }) => {
   };
 
   const handleSubmit = () => {
-    onSubmit(input)
-    handleClose()
-  }
+    onSubmit(input);
+    handleClose();
+  };
 
   return (
     <>
       <label htmlFor="url-upload-button">
-
         <Tooltip title="Upload URL">
           <IconButton aria-label="URL-Upload" component="span" onClick={handleOpen}>
             <LinkIcon />
@@ -82,41 +75,44 @@ const URLUploader = ({ onSubmit, classes }) => {
           open={open}
           handleClose={handleClose}
           Content={
-            <div
-              className={classes.paper}
-            >
-              <Grid
-                container spacing={2}
-              >
-                <Grid
-                  item xs={12}>
+            <div className={classes.paper}>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
                   <h2 id="simple-modal-title">Import using URL</h2>
                 </Grid>
-                <Grid
-                  item xs={12}>
+                <Grid item xs={12}>
                   <TextField
                     error={isError}
-                    helperText={isError && "Invalid URL"}
+                    helperText={isError && 'Invalid URL'}
                     variant="outlined"
                     label="Paste URL here"
                     fullWidth
-                    onChange={(e) => setInput(e.target.value)} />
+                    onChange={(e) => setInput(e.target.value)}
+                  />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <Button fullWidth variant="contained" onClick={handleClose}>Cancel</Button>
+                  <Button fullWidth variant="contained" onClick={handleClose}>
+                    Cancel
+                  </Button>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <Button disabled={isError || !input} fullWidth variant="contained" color="primary" onClick={() => handleSubmit()}>Import</Button>
+                  <Button
+                    disabled={isError || !input}
+                    fullWidth
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleSubmit()}
+                  >
+                    Import
+                  </Button>
                 </Grid>
               </Grid>
-
             </div>
-
           }
         />
       </label>
     </>
-  )
-}
+  );
+};
 
 export default withStyles(styles)(URLUploader);

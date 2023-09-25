@@ -6,9 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"math/big"
-	mathrand "math/rand"
 	"strings"
-	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
@@ -126,7 +124,7 @@ func isSpecialKey(k string) bool {
 // In case of any breaking change or bug caused by this, set this to false and the whitespace addition in schema generated/consumed would be removed(will go back to default behavior)
 const Format prettifier = true
 
-type DryRunResponse2 struct {
+type DryRunResponseWrapper struct {
 	//When success is true, error will be nil and Component will contain the structure of the component as it will look after deployment
 	//When success is false, error will contain the errors. And Component will be set to Nil
 	Success   bool            `json:"success"`
@@ -516,7 +514,7 @@ func NewPatternFileFromK8sManifest(data string, ignoreErrors bool, reg *meshmode
 			if ignoreErrors {
 				continue
 			}
-			return pattern, ErrCreatePatternService(fmt.Errorf("failed to create pattern service from kubernetes component: %s", err))
+			return pattern, ErrCreatePatternService(fmt.Errorf("failed to create design service from kubernetes component: %s", err))
 		}
 
 		pattern.Services[name] = &svc
@@ -698,8 +696,4 @@ func getCytoscapeJSPosition(svc *Service) (cytoscapejs.Position, error) {
 	}
 
 	return pos, nil
-}
-
-func init() {
-	mathrand.Seed(time.Now().Unix())
 }

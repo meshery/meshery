@@ -17,8 +17,9 @@ package pattern
 import "github.com/layer5io/meshkit/errors"
 
 const (
-	ErrPatternsNotFoundCode   = "1031"
-	ErrInvalidPatternFileCode = "1032"
+	ErrPatternsNotFoundCode       = "1115"
+	ErrInvalidPatternFileCode     = "1116"
+	ErrPatternInvalidNameOrIDCode = "1117"
 )
 
 func ErrPatternNotFound() error {
@@ -27,4 +28,14 @@ func ErrPatternNotFound() error {
 
 func ErrInvalidPatternFile(err error) error {
 	return errors.New(ErrInvalidPatternFileCode, errors.Fatal, []string{err.Error()}, []string{"Pattern appears invalid. Could not parse successfully"}, []string{"Pattern file provided is not valid"}, []string{"Please check that your pattern file is a valid yaml file"})
+}
+
+func ErrPatternInvalidNameOrID(err error) error {
+	return errors.New(
+		ErrPatternInvalidNameOrIDCode,
+		errors.Alert,
+		[]string{"Unable to fetch Pattern"},
+		[]string{err.Error()},
+		[]string{"Invalid pattern name or ID"},
+		[]string{"Run `mesheryctl pattern view -a` to view all available patterns."})
 }
