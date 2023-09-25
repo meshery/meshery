@@ -1,129 +1,142 @@
-
 import {
-  Button,Chip,
-  MenuItem, NoSsr, Paper, Select, TableCell, TableSortLabel, Tooltip, Typography
-} from "@material-ui/core";
-import blue from "@material-ui/core/colors/blue";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-import { MuiThemeProvider } from "@material-ui/core/styles";
-import AddIcon from "@material-ui/icons/AddCircleOutline";
-import { useRouter } from "next/router";
-import PropTypes from "prop-types";
-import React,{ useEffect, useState, useRef } from "react";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import dataFetch from "../lib/data-fetch";
-import { updateGrafanaConfig, updateProgress, updatePrometheusConfig, updateTelemetryUrls } from "../lib/store";
-import { getK8sClusterIdsFromCtxId, getK8sClusterNamesFromCtxId } from "../utils/multi-ctx";
-import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
-import fetchDataPlanes from "./graphql/queries/DataPlanesQuery";
+  Button,
+  Chip,
+  MenuItem,
+  NoSsr,
+  Paper,
+  Select,
+  TableCell,
+  TableSortLabel,
+  Tooltip,
+  Typography,
+} from '@material-ui/core';
+import blue from '@material-ui/core/colors/blue';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import { MuiThemeProvider } from '@material-ui/core/styles';
+import AddIcon from '@material-ui/icons/AddCircleOutline';
+import { useRouter } from 'next/router';
+import PropTypes from 'prop-types';
+import React, { useEffect, useState, useRef } from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import dataFetch from '../lib/data-fetch';
+import {
+  updateGrafanaConfig,
+  updateProgress,
+  updatePrometheusConfig,
+  updateTelemetryUrls,
+} from '../lib/store';
+import { getK8sClusterIdsFromCtxId, getK8sClusterNamesFromCtxId } from '../utils/multi-ctx';
+import fetchControlPlanes from './graphql/queries/ControlPlanesQuery';
+import fetchDataPlanes from './graphql/queries/DataPlanesQuery';
 
-import subscribeClusterResources from "./graphql/subscriptions/ClusterResourcesSubscription";
-import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
+import subscribeClusterResources from './graphql/subscriptions/ClusterResourcesSubscription';
+import fetchAvailableNamespaces from './graphql/queries/NamespaceQuery';
 
-
-import MUIDataTable from "mui-datatables";
-import Popup from "./Popup";
-import { iconMedium } from "../css/icons.styles";
-import { configurationTableTheme, configurationTableThemeDark } from '../themes/configurationTableTheme';
-import DashboardMeshModelGraph from './Dashboard/DashboardMeshModelGraph'
-import ConnectionStatsChart from "./Dashboard/ConnectionCharts.js";
-import { EVENT_TYPES } from "../lib/event-types";
-import { useNotification } from "../utils/hooks/useNotification";
+import MUIDataTable from 'mui-datatables';
+import Popup from './Popup';
+import { iconMedium } from '../css/icons.styles';
+import {
+  configurationTableTheme,
+  configurationTableThemeDark,
+} from '../themes/configurationTableTheme';
+import DashboardMeshModelGraph from './Dashboard/DashboardMeshModelGraph';
+import ConnectionStatsChart from './Dashboard/ConnectionCharts.js';
+import { EVENT_TYPES } from '../lib/event-types';
+import { useNotification } from '../utils/hooks/useNotification';
 
 const useStyles = makeStyles((theme) => ({
-  rootClass : {
-    backgroundColor : theme.palette.secondary.elevatedComponents2,
+  rootClass: {
+    backgroundColor: theme.palette.secondary.elevatedComponents2,
   },
-  datatable : {
-    boxShadow : "none",
+  datatable: {
+    boxShadow: 'none',
   },
-  chip : {
-    marginRight : theme.spacing(1),
-    marginBottom : theme.spacing(1),
+  chip: {
+    marginRight: theme.spacing(1),
+    marginBottom: theme.spacing(1),
   },
-  buttons : {
-    display : "flex",
-    justifyContent : "flex-end",
+  buttons: {
+    display: 'flex',
+    justifyContent: 'flex-end',
   },
-  button : {
-    marginTop : theme.spacing(3),
-    marginLeft : theme.spacing(1),
+  button: {
+    marginTop: theme.spacing(3),
+    marginLeft: theme.spacing(1),
   },
-  link : {
-    cursor : "pointer",
-    textDecoration : "none"
+  link: {
+    cursor: 'pointer',
+    textDecoration: 'none',
   },
-  metricsButton : {
-    width : "240px",
+  metricsButton: {
+    width: '240px',
   },
-  alreadyConfigured : {
-    textAlign : "center",
+  alreadyConfigured: {
+    textAlign: 'center',
   },
-  margin : {
-    margin : theme.spacing(1),
+  margin: {
+    margin: theme.spacing(1),
   },
-  colorSwitchBase : {
-    color : blue[300],
-    "&$colorChecked" : {
-      color : blue[500],
-      "& + $colorBar" : {
-        backgroundColor : blue[500],
+  colorSwitchBase: {
+    color: blue[300],
+    '&$colorChecked': {
+      color: blue[500],
+      '& + $colorBar': {
+        backgroundColor: blue[500],
       },
     },
   },
-  colorBar : {},
-  colorChecked : {},
-  fileLabel : {
-    width : "100%",
+  colorBar: {},
+  colorChecked: {},
+  fileLabel: {
+    width: '100%',
   },
-  fileLabelText : {},
-  inClusterLabel : {
-    paddingRight : theme.spacing(2),
+  fileLabelText: {},
+  inClusterLabel: {
+    paddingRight: theme.spacing(2),
   },
-  alignCenter : {
-    textAlign : "center",
+  alignCenter: {
+    textAlign: 'center',
   },
-  icon : {
-    width : theme.spacing(2.5),
+  icon: {
+    width: theme.spacing(2.5),
   },
-  istioIcon : {
-    width : theme.spacing(1.5),
+  istioIcon: {
+    width: theme.spacing(1.5),
   },
-  settingsIcon : {
-    width : theme.spacing(2.5),
-    paddingRight : theme.spacing(0.5),
+  settingsIcon: {
+    width: theme.spacing(2.5),
+    paddingRight: theme.spacing(0.5),
   },
-  addIcon : {
-    width : theme.spacing(2.5),
-    paddingRight : theme.spacing(0.5),
+  addIcon: {
+    width: theme.spacing(2.5),
+    paddingRight: theme.spacing(0.5),
   },
-  cardHeader : {
-    fontSize : theme.spacing(2),
+  cardHeader: {
+    fontSize: theme.spacing(2),
   },
-  card : {
-    height : "100%",
-    marginTop : theme.spacing(2),
+  card: {
+    height: '100%',
+    marginTop: theme.spacing(2),
   },
-  cardContent : {
-    height : "100%",
+  cardContent: {
+    height: '100%',
   },
-  redirectButton : {
-    marginLeft : "-.5em",
-    color : "#000",
+  redirectButton: {
+    marginLeft: '-.5em',
+    color: '#000',
   },
-  dashboardSection : {
-    backgroundColor : theme.palette.secondary.elevatedComponents,
-    padding : theme.spacing(2),
-    borderRadius : 4,
-    height : "100%",
-    marginBottom : theme.spacing(2),
+  dashboardSection: {
+    backgroundColor: theme.palette.secondary.elevatedComponents,
+    padding: theme.spacing(2),
+    borderRadius: 4,
+    height: '100%',
+    marginBottom: theme.spacing(2),
   },
 }));
 
-const DashboardComponent=(props) => {
-
+const DashboardComponent = (props) => {
   const router = useRouter();
   const classes = useStyles();
   const { notify } = useNotification();
@@ -150,11 +163,11 @@ const DashboardComponent=(props) => {
   // const [activeMeshScanNamespace, setActiveMeshScanNamespace] = useState({});
   // const [meshScanNamespaces, setMeshScanNamespaces] = useState({});
   // const [isMetricsConfigured, setIsMetricsConfigured] = useState(grafana.grafanaURL !== '' && prometheus.prometheusURL !== '');
-  const [controlPlaneState, setControlPlaneState] = useState("");
-  const [dataPlaneState, setDataPlaneState] = useState("");
+  const [controlPlaneState, setControlPlaneState] = useState('');
+  const [dataPlaneState, setDataPlaneState] = useState('');
   const [clusterResources, setClusterResources] = useState([]);
   const [namespaceList, setNamespaceList] = useState([]);
-  const [selectedNamespace, setSelectedNamespace] = useState("default");
+  const [selectedNamespace, setSelectedNamespace] = useState('default');
   const [dataPlaneSubscription, setDataPlaneSubscription] = useState(null);
   const [controlPlaneSubscription, setControlPlaneSubscription] = useState(null);
   const [clusterResourcesSubscription, setClusterResourcesSubscription] = useState(null);
@@ -173,7 +186,14 @@ const DashboardComponent=(props) => {
     }
 
     // setK8sconfig(props.k8sconfig);
-  }, [props.meshAdaptersts, props.meshAdapters, props.grafana, props.prometheus, props.k8sconfig, mts]);
+  }, [
+    props.meshAdaptersts,
+    props.meshAdapters,
+    props.grafana,
+    props.prometheus,
+    props.k8sconfig,
+    mts,
+  ]);
 
   const disposeWorkloadWidgetSubscription = () => {
     namespaceQuery && namespaceQuery.unsubscribe();
@@ -191,21 +211,21 @@ const DashboardComponent=(props) => {
     disposeWorkloadWidgetSubscription();
   };
   const initMeshSyncControlPlaneSubscription = () => {
-    const ALL_MESH = { type : "ALL_MESH", k8sClusterIDs : getK8sClusterIds() };
+    const ALL_MESH = { type: 'ALL_MESH', k8sClusterIDs: getK8sClusterIds() };
 
     if (_isMounted.current) {
       const controlPlaneSubscription = fetchControlPlanes(ALL_MESH).subscribe({
-        next : (controlPlaneRes) => {
+        next: (controlPlaneRes) => {
           setControlPlaneState(controlPlaneRes);
         },
-        error : (err) => console.error(err),
+        error: (err) => console.error(err),
       });
 
       const dataPlaneSubscription = fetchDataPlanes(ALL_MESH).subscribe({
-        next : (dataPlaneRes) => {
+        next: (dataPlaneRes) => {
           setDataPlaneState(dataPlaneRes);
         },
-        error : (err) => console.error(err),
+        error: (err) => console.error(err),
       });
 
       setDataPlaneSubscription(dataPlaneSubscription);
@@ -214,18 +234,19 @@ const DashboardComponent=(props) => {
   };
 
   const initNamespaceQuery = () => {
-    const namespaceQuery = fetchAvailableNamespaces({ k8sClusterIDs : getK8sClusterIds() })
-      .subscribe({
-        next : res => {
-          let namespaces = [];
-          res?.namespaces?.map(ns => {
-            namespaces.push(ns?.namespace);
-          });
-          namespaces.sort((a, b) => (a > b ? 1 : -1));
-          setNamespaceList(namespaces);
-        },
-        error : err => console.log("error at namespace fetch: " + err),
-      });
+    const namespaceQuery = fetchAvailableNamespaces({
+      k8sClusterIDs: getK8sClusterIds(),
+    }).subscribe({
+      next: (res) => {
+        let namespaces = [];
+        res?.namespaces?.map((ns) => {
+          namespaces.push(ns?.namespace);
+        });
+        namespaces.sort((a, b) => (a > b ? 1 : -1));
+        setNamespaceList(namespaces);
+      },
+      error: (err) => console.log('error at namespace fetch: ' + err),
+    });
 
     setNamespaceQuery(namespaceQuery);
   };
@@ -234,12 +255,15 @@ const DashboardComponent=(props) => {
     let k8s = getK8sClusterIds();
 
     if (_isMounted.current) {
-      const clusterResourcesSubscription = subscribeClusterResources((res) => {
-        setClusterResources(res?.clusterResources);
-      }, {
-        k8scontextIDs : k8s,
-        namespace : selectedNamespace
-      });
+      const clusterResourcesSubscription = subscribeClusterResources(
+        (res) => {
+          setClusterResources(res?.clusterResources);
+        },
+        {
+          k8scontextIDs: k8s,
+          namespace: selectedNamespace,
+        },
+      );
 
       setClusterResourcesSubscription(clusterResourcesSubscription);
     }
@@ -273,7 +297,7 @@ const DashboardComponent=(props) => {
     if (updateDataPlane || updateControlPlane) {
       setMeshScanData(
         updateControlPlane ? controlPlaneState : prevControlPlaneState.current,
-        updateDataPlane ? dataPlaneState : prevDataPlaneState.current
+        updateDataPlane ? dataPlaneState : prevDataPlaneState.current,
       );
     }
 
@@ -283,8 +307,10 @@ const DashboardComponent=(props) => {
   }, [controlPlaneState, dataPlaneState]);
 
   useEffect(() => {
-    if (prevProps.current.selectedK8sContexts !== props.selectedK8sContexts
-            || prevProps.current.k8sconfig !== props.k8sconfig) {
+    if (
+      prevProps.current.selectedK8sContexts !== props.selectedK8sContexts ||
+      prevProps.current.k8sconfig !== props.k8sconfig
+    ) {
       disposeSubscriptions();
       initMeshSyncControlPlaneSubscription();
       initDashboardClusterResourcesSubscription();
@@ -306,13 +332,11 @@ const DashboardComponent=(props) => {
     prevSelectedNamespace.current = selectedNamespace;
   }, [selectedNamespace]);
 
-
   const getK8sClusterIds = () => {
     return getK8sClusterIdsFromCtxId(props.selectedK8sContexts, props.k8sconfig);
   };
 
   const setMeshScanData = (controlPlanesData, dataPlanesData) => {
-
     const namespaces = {};
     const activeNamespaces = {};
 
@@ -323,7 +347,7 @@ const DashboardComponent=(props) => {
       let proxies = [];
 
       if (Array.isArray(dataPlanesData?.dataPlanesState)) {
-        const dataplane = dataPlanesData.dataPlanesState.find(mesh_ => mesh_.name === mesh.name);
+        const dataplane = dataPlanesData.dataPlanesState.find((mesh_) => mesh_.name === mesh.name);
 
         if (Array.isArray(dataplane?.proxies)) proxies = dataplane.proxies;
       }
@@ -336,12 +360,14 @@ const DashboardComponent=(props) => {
         }
 
         if (proxies.length > 0) {
-          const controlPlaneMemberProxies = proxies.filter(proxy => proxy.controlPlaneMemberName === member.name);
+          const controlPlaneMemberProxies = proxies.filter(
+            (proxy) => proxy.controlPlaneMemberName === member.name,
+          );
 
           if (controlPlaneMemberProxies.length > 0) {
             member = {
               ...member,
-              data_planes : controlPlaneMemberProxies
+              data_planes: controlPlaneMemberProxies,
             };
           }
         }
@@ -350,15 +376,19 @@ const DashboardComponent=(props) => {
       });
 
       namespaces[mesh.name] = [...namespaces[mesh.name]];
-      activeNamespaces[mesh.name] = namespaces[mesh.name][0] || "";
+      activeNamespaces[mesh.name] = namespaces[mesh.name][0] || '';
 
       return {
         ...mesh,
-        members : processedMember
+        members: processedMember,
       };
     });
 
-    setMeshScan(processedControlPlanesData?.filter(data => !!data).filter((data) => data.members?.length > 0));
+    setMeshScan(
+      processedControlPlanesData
+        ?.filter((data) => !!data)
+        .filter((data) => data.members?.length > 0),
+    );
     // setMeshScanNamespaces(namespaces);
     // setActiveMeshScanNamespace(activeNamespaces);
   };
@@ -394,8 +424,8 @@ const DashboardComponent=(props) => {
   //   return `v${matchResult[0]}`;
   // };
   const handleError = (msg) => (error) => {
-    props.updateProgress({ showProgress : false });
-    notify({ message : `${msg}: ${error}`, event_type : EVENT_TYPES.ERROR });
+    props.updateProgress({ showProgress: false });
+    notify({ message: `${msg}: ${error}`, event_type: EVENT_TYPES.ERROR });
   };
   /**
    * redirectErrorToConsole returns a function which redirects
@@ -411,7 +441,6 @@ const DashboardComponent=(props) => {
   // };
   // const handleAdapterPingError = (msg) => () => {
   //   props.updateProgress({ showProgress : false });
-
 
   //   // If you want to use the snackbar code, you might need additional logic or hooks
   //   // based on your functional component setup.
@@ -450,42 +479,42 @@ const DashboardComponent=(props) => {
   const emptyStateMessageForServiceMeshesInfo = () => {
     const clusters = getSelectedK8sContextsNames();
     if (clusters.length === 0) {
-      return "No Cluster is selected to show the Service Mesh Information";
+      return 'No Cluster is selected to show the Service Mesh Information';
     }
-    if (clusters.includes("all")) {
+    if (clusters.includes('all')) {
       return `No service meshes detected in any of the cluster.`;
     }
-    return `No service meshes detected in the ${clusters.join(", ")} cluster(s).`;
+    return `No service meshes detected in the ${clusters.join(', ')} cluster(s).`;
   };
   const emptyStateMessageForClusterResources = () => {
     const clusters = getSelectedK8sContextsNames();
     if (clusters.length === 0) {
-      return "No Cluster is selected to show the discovered resources";
+      return 'No Cluster is selected to show the discovered resources';
     }
-    if (clusters.includes("all")) {
+    if (clusters.includes('all')) {
       return `No resources detected in any of the cluster.`;
     }
-    return `No resources detected in the ${clusters.join(", ")} cluster(s).`;
+    return `No resources detected in the ${clusters.join(', ')} cluster(s).`;
   };
 
   const handleKubernetesClick = (id) => {
-    props.updateProgress({ showProgress : true });
+    props.updateProgress({ showProgress: true });
     const selectedCtx = props.k8sconfig?.find((ctx) => ctx.id === id);
     if (!selectedCtx) return;
 
     const { server, name } = selectedCtx;
     dataFetch(
-      "/api/system/kubernetes/ping?connection_id=" + id,
+      '/api/system/kubernetes/ping?connection_id=' + id,
       {
-        credentials : "include",
+        credentials: 'include',
       },
       (result) => {
-        props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined") {
-          notify({ message : `${name} is connected at ${server}`, event_type : EVENT_TYPES.SUCCESS });
+        props.updateProgress({ showProgress: false });
+        if (typeof result !== 'undefined') {
+          notify({ message: `${name} is connected at ${server}`, event_type: EVENT_TYPES.SUCCESS });
         }
       },
-      handleError("Could not connect to Kubernetes")
+      handleError('Could not connect to Kubernetes'),
     );
   };
   // const handleGrafanaClick = () => {
@@ -761,81 +790,91 @@ const DashboardComponent=(props) => {
   //   );
   // }
   /**
-     * ClusterResourcesCard takes in the cluster related data
-     * and renders a table with cluster resources information of
-     * the selected cluster and namespace
-     * @param {{kind, number}[]} resources
-     */
+   * ClusterResourcesCard takes in the cluster related data
+   * and renders a table with cluster resources information of
+   * the selected cluster and namespace
+   * @param {{kind, number}[]} resources
+   */
   const ClusterResourcesCard = (resources = []) => {
-    let kindSort = "asc";
-    let countSort = "asc";
+    let kindSort = 'asc';
+    let countSort = 'asc';
     const theme = useTheme();
     const switchSortOrder = (type) => {
-      if (type === "kindSort") {
-        kindSort = (kindSort === "asc") ? "desc" : "asc";
-        countSort = "asc";
-      } else if (type === "countSort") {
-        countSort = (countSort === "asc") ? "desc" : "asc";
-        kindSort = "asc";
+      if (type === 'kindSort') {
+        kindSort = kindSort === 'asc' ? 'desc' : 'asc';
+        countSort = 'asc';
+      } else if (type === 'countSort') {
+        countSort = countSort === 'asc' ? 'desc' : 'asc';
+        kindSort = 'asc';
       }
-    }
+    };
 
     const columns = [
       {
-        name : "kind",
-        label : "Resources",
-        options : {
-          filter : false,
-          sort : true,
-          searchable : true,
-          setCellProps : () => ({ style : { textAlign : "center" } }),
-          customHeadRender : ({ index, ...column }, sortColumn) => {
+        name: 'kind',
+        label: 'Resources',
+        options: {
+          filter: false,
+          sort: true,
+          searchable: true,
+          setCellProps: () => ({ style: { textAlign: 'center' } }),
+          customHeadRender: ({ index, ...column }, sortColumn) => {
             return (
-              <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
-                sortColumn(index); switchSortOrder("kindSort");
-              }}>
-                <TableSortLabel active={column.sortDirection != null} direction={kindSort} >
+              <TableCell
+                key={index}
+                style={{ textAlign: 'center' }}
+                onClick={() => {
+                  sortColumn(index);
+                  switchSortOrder('kindSort');
+                }}
+              >
+                <TableSortLabel active={column.sortDirection != null} direction={kindSort}>
                   <b>{column.label}</b>
                 </TableSortLabel>
               </TableCell>
-
-            )
-          }
-        },
-      },
-      {
-        name : "count",
-        label : "Count",
-        options : {
-          filter : false,
-          sort : true,
-          searchable : true,
-          setCellProps : () => ({ style : { textAlign : "center" } }),
-          customHeadRender : ({ index, ...column }, sortColumn) => {
-            return (
-              <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
-                sortColumn(index); switchSortOrder("countSort");
-              }}>
-                <TableSortLabel active={column.sortDirection != null} direction={countSort} >
-                  <b>{column.label}</b>
-                </TableSortLabel>
-              </TableCell>
-            )
+            );
           },
         },
       },
-    ]
+      {
+        name: 'count',
+        label: 'Count',
+        options: {
+          filter: false,
+          sort: true,
+          searchable: true,
+          setCellProps: () => ({ style: { textAlign: 'center' } }),
+          customHeadRender: ({ index, ...column }, sortColumn) => {
+            return (
+              <TableCell
+                key={index}
+                style={{ textAlign: 'center' }}
+                onClick={() => {
+                  sortColumn(index);
+                  switchSortOrder('countSort');
+                }}
+              >
+                <TableSortLabel active={column.sortDirection != null} direction={countSort}>
+                  <b>{column.label}</b>
+                </TableSortLabel>
+              </TableCell>
+            );
+          },
+        },
+      },
+    ];
 
     const options = {
-      filter : false,
-      selectableRows : "none",
-      responsive : "standard",namespaceList,
-      print : false,
-      download : false,
-      viewColumns : false,
-      pagination : false,
-      fixedHeader : true,
-      customToolbar : () => {
+      filter: false,
+      selectableRows: 'none',
+      responsive: 'standard',
+      namespaceList,
+      print: false,
+      download: false,
+      viewColumns: false,
+      pagination: false,
+      fixedHeader: true,
+      customToolbar: () => {
         return (
           <>
             {namespaceList && (
@@ -847,23 +886,38 @@ const DashboardComponent=(props) => {
                 }
               >
                 {/* {self.state.namespaceList && self.state.namespaceList.map((ns) => <MenuItem key={ns.uniqueID} value={ns}>{ns}</MenuItem>)} */}
-                {namespaceList && namespaceList.map((ns) => <MenuItem key={ns.uniqueID} value={ns}>{ns}</MenuItem>)}
+                {namespaceList &&
+                  namespaceList.map((ns) => (
+                    <MenuItem key={ns.uniqueID} value={ns}>
+                      {ns}
+                    </MenuItem>
+                  ))}
               </Select>
             )}
           </>
-        )
-      }
-    }
+        );
+      },
+    };
 
     if (Array.isArray(resources) && resources.length)
       return (
-        <Paper elevation={1} style={{ padding : "2rem" }}>
-          <MuiThemeProvider theme={theme.palette.type === "dark" ? configurationTableThemeDark() : configurationTableTheme()}>
+        <Paper elevation={1} style={{ padding: '2rem' }}>
+          <MuiThemeProvider
+            theme={
+              theme.palette.type === 'dark'
+                ? configurationTableThemeDark()
+                : configurationTableTheme()
+            }
+          >
             <MUIDataTable
               title={
                 <>
-                  <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
-                    <img src={"/static/img/all_mesh.svg"} className={classes.icon} style={{ marginRight : "0.75rem" }} />
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+                    <img
+                      src={'/static/img/all_mesh.svg'}
+                      className={classes.icon}
+                      style={{ marginRight: '0.75rem' }}
+                    />
                     <Typography variant="h6">All Workloads</Typography>
                   </div>
                 </>
@@ -879,11 +933,10 @@ const DashboardComponent=(props) => {
     return null;
   };
   const configureTemplate = () => {
-
-    let showConfigured = "Not connected to Kubernetes.";
+    let showConfigured = 'Not connected to Kubernetes.';
     let chp = (
       <div>
-        {props.k8sconfig?.map(ctx => (
+        {props.k8sconfig?.map((ctx) => (
           <Tooltip key={ctx.uniqueID} title={`Server: ${ctx.server}`}>
             <Chip
               label={ctx?.name}
@@ -904,83 +957,79 @@ const DashboardComponent=(props) => {
 
     showConfigured = <div>{chp}</div>;
 
-    const showServiceMesh =(
+    const showServiceMesh = (
       <>
-        {meshScan && Object.keys(meshScan).length
-          ? (
-            <>
-              {meshScan.map((mesh) => {
-                let tag = "";
-                mesh.name
-                  .split("_")
-                  .forEach((element) => {
-                    tag = tag + " " + element[0].toUpperCase() + element.slice(1, element.length);
-                  });
-                return self.Meshcard(
-                  { name : mesh.name, tag : tag, icon : "/static/img/" + mesh.name + ".svg" },
-                  mesh.members
-                );
-              })}
-            </>
-          )
-          : (
-            <div
-              style={{
-                padding : "2rem",
-                display : "flex",
-                justifyContent : "center",
-                alignItems : "center",
-                flexDirection : "column",
-              }}
+        {meshScan && Object.keys(meshScan).length ? (
+          <>
+            {meshScan.map((mesh) => {
+              let tag = '';
+              mesh.name.split('_').forEach((element) => {
+                tag = tag + ' ' + element[0].toUpperCase() + element.slice(1, element.length);
+              });
+              return self.Meshcard(
+                { name: mesh.name, tag: tag, icon: '/static/img/' + mesh.name + '.svg' },
+                mesh.members,
+              );
+            })}
+          </>
+        ) : (
+          <div
+            style={{
+              padding: '2rem',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'column',
+            }}
+          >
+            <Typography style={{ fontSize: '1.5rem', marginBottom: '2rem' }} align="center">
+              {emptyStateMessageForServiceMeshesInfo()}
+            </Typography>
+            <Button
+              aria-label="Add Meshes"
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={() => router.push('/management')}
             >
-              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" >
-                {emptyStateMessageForServiceMeshesInfo()}
-              </Typography>
-              <Button
-                aria-label="Add Meshes"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={() => router.push("/management")}
-              >
-                <AddIcon style={iconMedium} className={classes.addIcon} />
-                    Install Service Mesh
-              </Button>
-            </div>
-          )}
+              <AddIcon style={iconMedium} className={classes.addIcon} />
+              Install Service Mesh
+            </Button>
+          </div>
+        )}
       </>
     );
     const showClusterResources = (
       <>
-        {clusterResources && Object.keys(clusterResources) && clusterResources?.resources?.length > 0
-          ? (
-            ClusterResourcesCard(clusterResources?.resources)
-          )
-          : (
-            <div
-              style={{
-                padding : "2rem",
-                display : "flex",
-                justifyContent : "center",
-                alignItems : "center",
-                flexDirection : "column",
-              }}
+        {clusterResources &&
+        Object.keys(clusterResources) &&
+        clusterResources?.resources?.length > 0 ? (
+          ClusterResourcesCard(clusterResources?.resources)
+        ) : (
+          <div
+            style={{
+              padding: '2rem',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'column',
+            }}
+          >
+            <Typography style={{ fontSize: '1.5rem', marginBottom: '2rem' }} align="center">
+              {emptyStateMessageForClusterResources()}
+            </Typography>
+            <Button
+              aria-label="Connect K8s cluster"
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={() => router.push('/settings')}
             >
-              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" >
-                {emptyStateMessageForClusterResources()}
-              </Typography>
-              <Button
-                aria-label="Connect K8s cluster"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={() => router.push("/settings")}
-              >
-                <AddIcon style={iconMedium} className={classes.addIcon} />
-                    Connect Cluster
-              </Button>
-            </div>
-          )}
+              <AddIcon style={iconMedium} className={classes.addIcon} />
+              Connect Cluster
+            </Button>
+          </div>
+        )}
       </>
     );
 
@@ -995,7 +1044,7 @@ const DashboardComponent=(props) => {
             <Grid item xs={12} md={12}>
               <div className={classes.dashboardSection} data-test="workloads">
                 <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-                      Workloads
+                  Workloads
                 </Typography>
                 {showClusterResources}
               </div>
@@ -1009,7 +1058,7 @@ const DashboardComponent=(props) => {
                 <Grid item xs={12} md={8}>
                   <div className={classes.dashboardSection} data-test="service-mesh">
                     <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-                          Service Mesh
+                      Service Mesh
                     </Typography>
                     {showServiceMesh}
                   </div>
@@ -1023,24 +1072,23 @@ const DashboardComponent=(props) => {
   };
 
   return configureTemplate();
-
-}
+};
 DashboardComponent.propTypes = {
-  classes : PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired,
 };
 const mapDispatchToProps = (dispatch) => ({
-  updateProgress : bindActionCreators(updateProgress, dispatch),
-  updateGrafanaConfig : bindActionCreators(updateGrafanaConfig, dispatch),
-  updatePrometheusConfig : bindActionCreators(updatePrometheusConfig, dispatch),
-  updateTelemetryUrls : bindActionCreators(updateTelemetryUrls, dispatch),
+  updateProgress: bindActionCreators(updateProgress, dispatch),
+  updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
+  updatePrometheusConfig: bindActionCreators(updatePrometheusConfig, dispatch),
+  updateTelemetryUrls: bindActionCreators(updateTelemetryUrls, dispatch),
 });
 
 const mapStateToProps = (state) => {
-  const k8sconfig = state.get("k8sConfig");
-  const meshAdapters = state.get("meshAdapters");
-  const meshAdaptersts = state.get("meshAdaptersts");
-  const grafana = state.get("grafana").toJS();
-  const prometheus = state.get("prometheus").toJS();
+  const k8sconfig = state.get('k8sConfig');
+  const meshAdapters = state.get('meshAdapters');
+  const meshAdaptersts = state.get('meshAdaptersts');
+  const grafana = state.get('grafana').toJS();
+  const prometheus = state.get('prometheus').toJS();
   const selectedK8sContexts = state.get('selectedK8sContexts');
 
   return {
@@ -1049,8 +1097,8 @@ const mapStateToProps = (state) => {
     k8sconfig,
     grafana,
     prometheus,
-    selectedK8sContexts
+    selectedK8sContexts,
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)((DashboardComponent));
+export default connect(mapStateToProps, mapDispatchToProps)(DashboardComponent);

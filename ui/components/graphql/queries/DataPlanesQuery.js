@@ -1,10 +1,10 @@
-import { fetchQuery, graphql } from "react-relay";
-import { createRelayEnvironment } from "../../../lib/relayEnvironment";
+import { fetchQuery, graphql } from 'react-relay';
+import { createRelayEnvironment } from '../../../lib/relayEnvironment';
 
 export default function fetchDataPlanes(variables) {
   const environment = createRelayEnvironment({});
   const vars = {
-    filter : variables,
+    filter: variables,
   };
 
   const DataPlanesQueryNode = graphql`

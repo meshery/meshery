@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 function useStateCB(initState, changeTrackCB) {
   const [state, _setState] = React.useState(initState);
@@ -23,7 +23,7 @@ function useStateCB(initState, changeTrackCB) {
     _setState(state);
   };
 
-  const getStateRefValue = () => stateRef.current
+  const getStateRefValue = () => stateRef.current;
 
   return [state, setState, getStateRefValue];
 }
