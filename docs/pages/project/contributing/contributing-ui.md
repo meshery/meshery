@@ -104,7 +104,7 @@ Execute:
 - `git remote add upstream https://github.com/meshery/meshery`
 - `git fetch upstream`
 - Restart the meshery server
-- Addionally, before restarting the server, if you like to pull the latest changes, you can do: `git pull upstream master`
+- Additionally, before restarting the server, if you like to pull the latest changes, you can do: `git pull upstream master`
 
 
 ### UI Development Server
