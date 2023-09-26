@@ -16,11 +16,11 @@ Meshery chart for deploying Meshery
 |-----|------|---------|-------------|
 | affinity | object | `{}` |  |
 | annotations | object | `{}` |  |
-| env.ADAPTER_URLS | string | `"meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-kuma:10007 meshery-nginx-sm:10010 meshery-nsm:10004 meshery-app-mesh:10005 meshery-traefik-mesh:10006 meshery-cilium:10012"` | Optional, Meshery Server adapters with which to pre-configure Meshery Server. |
+| env.ADAPTER_URLS | string | `"meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-kuma:10007 meshery-nginx-sm:10010 meshery-nsm:10004 meshery-app-mesh:10005 meshery-traefik-mesh:10006 meshery-cilium:10012"` | Optionally, pre-configure Meshery Server with the set of Meshery Adapters used in the deployment. |
 | env.EVENT | string | `"mesheryLocal"` |  |
-| env.PROVIDER | string | `"Local"` | Use this security-related setting to enforce selection of one and only one Provider. In this way, your Meshery deployment will only trust and only allow users to authenticate using the Provider you have configured in this setting.  |
+| env.PROVIDER | string | `"Local"` | Use this security-related setting to enforce selection of one and only one Provider. In this way, your Meshery deployment will only trust and only allow users to authenticate using the Provider you have configured in this setting. See the [Remote Provider documentation](https://docs.meshery.io/extensibility/providers) for a description of what a Provider is.  |
 | env.MESHERY_SERVER_CALLBACK_URL | string | `""` | Configure an OAuth callback URL for Meshery Server to use when signing into a Remote Provider and your Meshery Server instance is not directly reachable by that Remote Provider. See the [Remote Provider documentation](https://docs.meshery.io/extensibility/providers#configurable-oauth-callback-url) for more details. |
-| env.PROVIDER_BASE_URLS | string | `"https://meshery.layer5.io"` |  |
+| env.PROVIDER_BASE_URLS | string | `"https://meshery.layer5.io"` | Configure your Remote Provider of choice. See the [Remote Provider documentation](https://docs.meshery.io/extensibility/providers) for a description of what a Provider is. |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"Always"` |  |
 | image.repository | string | `"layer5/meshery"` |  |
@@ -31,38 +31,38 @@ Meshery chart for deploying Meshery
 | ingress.hosts[0].host | string | `"chart-example.local"` |  |
 | ingress.hosts[0].paths | list | `[]` |  |
 | ingress.tls | list | `[]` |  |
-| meshery-app-mesh.enabled | bool | `false` |  |
+| meshery-app-mesh.enabled | bool | `false` | Enable to deploy this Meshery Adapter upon initial deployment. Meshery Adapters can be deployed post-installation using either Meshery CLI or UI. |
 | meshery-app-mesh.fullnameOverride | string | `"meshery-app-mesh"` |  |
 | meshery-app-mesh.serviceAccountNameOverride | string | `"meshery-server"` |  |
-| meshery-cilium.enabled | bool | `false` |  |
+| meshery-cilium.enabled | bool | `false` | Enable to deploy this Meshery Adapter upon initial deployment. Meshery Adapters can be deployed post-installation using either Meshery CLI or UI. |
 | meshery-cilium.fullnameOverride | string | `"meshery-cilium"` |  |
-| meshery-consul.enabled | bool | `false` |  |
+| meshery-consul.enabled | bool | `false` | Enable to deploy this Meshery Adapter upon initial deployment. Meshery Adapters can be deployed post-installation using either Meshery CLI or UI. |
 | meshery-consul.fullnameOverride | string | `"meshery-consul"` |  |
 | meshery-consul.serviceAccountNameOverride | string | `"meshery-server"` |  |
-| meshery-istio.enabled | bool | `false` |  |
+| meshery-istio.enabled | bool | `false` | Enable to deploy this Meshery Adapter upon initial deployment. Meshery Adapters can be deployed post-installation using either Meshery CLI or UI. |
 | meshery-istio.fullnameOverride | string | `"meshery-istio"` |  |
 | meshery-istio.serviceAccountNameOverride | string | `"meshery-server"` |  |
-| meshery-kuma.enabled | bool | `false` |  |
+| meshery-kuma.enabled | bool | `false` | Enable to deploy this Meshery Adapter upon initial deployment. Meshery Adapters can be deployed post-installation using either Meshery CLI or UI. |
 | meshery-kuma.fullnameOverride | string | `"meshery-kuma"` |  |
 | meshery-kuma.serviceAccountNameOverride | string | `"meshery-server"` |  |
-| meshery-linkerd.enabled | bool | `false` |  |
+| meshery-linkerd.enabled | bool | `false` | Enable to deploy this Meshery Adapter upon initial deployment. Meshery Adapters can be deployed post-installation using either Meshery CLI or UI. |
 | meshery-linkerd.fullnameOverride | string | `"meshery-linkerd"` |  |
 | meshery-linkerd.serviceAccountNameOverride | string | `"meshery-server"` |  |
-| meshery-nginx-sm.enabled | bool | `false` |  |
+| meshery-nginx-sm.enabled | bool | `false` | Enable to deploy this Meshery Adapter upon initial deployment. Meshery Adapters can be deployed post-installation using either Meshery CLI or UI. |
 | meshery-nginx-sm.fullnameOverride | string | `"meshery-nginx-sm"` |  |
 | meshery-nginx-sm.serviceAccountNameOverride | string | `"meshery-server"` |  |
-| meshery-nsm.enabled | bool | `false` |  |
+| meshery-nsm.enabled | bool | `false` | Enable to deploy this Meshery Adapter upon initial deployment. Meshery Adapters can be deployed post-installation using either Meshery CLI or UI. |
 | meshery-nsm.fullnameOverride | string | `"meshery-nsm"` |  |
 | meshery-nsm.serviceAccountNameOverride | string | `"meshery-server"` |  |
-| meshery-operator.enabled | bool | `true` |  |
+| meshery-operator.enabled | bool | `true` | Enable to deploy this Meshery Operator upon initial deploymeent. Meshery Operator can be deployed post-installation using Meshery UI. |
 | meshery-operator.fullnameOverride | string | `"meshery-operator"` |  |
-| meshery-osm.enabled | bool | `false` |  |
+| meshery-osm.enabled | bool | `false` | OSM is an archived project. |
 | meshery-osm.fullnameOverride | string | `"meshery-osm"` |  |
 | meshery-osm.serviceAccountNameOverride | string | `"meshery-server"` |  |
 | meshery-perf.enabled | bool | `false` |  |
 | meshery-perf.fullnameOverride | string | `"meshery-perf"` |  |
 | meshery-perf.serviceAccountNameOverride | string | `"meshery-server"` |  |
-| meshery-traefik-mesh.enabled | bool | `false` |  |
+| meshery-traefik-mesh.enabled | bool | `false` | Enable to deploy this Meshery Adapter upon initial deployment. Meshery Adapters can be deployed post-installation using either Meshery CLI or UI. |
 | meshery-traefik-mesh.fullnameOverride | string | `"meshery-traefik-mesh"` |  |
 | meshery-traefik-mesh.serviceAccountNameOverride | string | `"meshery-server"` |  |
 | mesherygateway.enabled | bool | `false` |  |
