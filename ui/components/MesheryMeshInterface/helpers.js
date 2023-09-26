@@ -1,8 +1,8 @@
 // @ts-check
 // ********************************** TYPE DEFINTIONS **********************************
 
-import { trueRandom } from "../../lib/trueRandom";
-import { userPromptKeys } from "./PatternService/helper";
+import { trueRandom } from '../../lib/trueRandom';
+import { userPromptKeys } from './PatternService/helper';
 
 /**
  * getPatternAttributeName will take a json schema and will return a pattern
@@ -11,7 +11,7 @@ import { userPromptKeys } from "./PatternService/helper";
  * @returns {string} pattern attribute name
  */
 export function getPatternAttributeName(jsonSchema) {
-  return jsonSchema?._internal?.patternAttributeName || "NA";
+  return jsonSchema?._internal?.patternAttributeName || 'NA';
 }
 
 /**
@@ -21,13 +21,13 @@ export function getPatternAttributeName(jsonSchema) {
  */
 export function recursiveCleanObject(obj) {
   for (const k in obj) {
-    if (!obj[k] || typeof obj[k] !== "object") continue;
+    if (!obj[k] || typeof obj[k] !== 'object') continue;
 
     recursiveCleanObject(obj[k]);
 
     if (Object.keys(obj[k]).length === 0) delete obj[k];
   }
-  return obj
+  return obj;
 }
 
 /**
@@ -37,7 +37,7 @@ export function recursiveCleanObject(obj) {
  */
 export function recursiveCleanObjectExceptEmptyArray(obj) {
   for (const k in obj) {
-    if (!obj[k] || typeof obj[k] !== "object" || Array.isArray(obj[k])) continue;
+    if (!obj[k] || typeof obj[k] !== 'object' || Array.isArray(obj[k])) continue;
 
     recursiveCleanObjectExceptEmptyArray(obj[k]);
 
@@ -55,8 +55,8 @@ export function recursiveCleanObjectExceptEmptyArray(obj) {
  */
 export function createPatternFromConfig(config, namespace, partialClean = false) {
   const pattern = {
-    name : `pattern-${trueRandom().toString(36).substr(2, 5)}`,
-    services : {},
+    name: `pattern-${trueRandom().toString(36).substr(2, 5)}`,
+    services: {},
   };
   partialClean ? recursiveCleanObjectExceptEmptyArray(config) : recursiveCleanObject(config);
 
@@ -78,7 +78,6 @@ export function createPatternFromConfig(config, namespace, partialClean = false)
   return pattern;
 }
 
-
 /**
  * The rjsf json schema builder for the ui
  * inplace builds the obj recursively according
@@ -89,46 +88,51 @@ export function createPatternFromConfig(config, namespace, partialClean = false)
  * @returns
  */
 function jsonSchemaBuilder(schema, uiSchema) {
-  if (!schema) return
+  if (!schema) return;
 
   userPromptKeys.forEach((key) => {
     if (Object.prototype.hasOwnProperty.call(schema, key)) {
       schema[key]?.forEach((item) => {
         jsonSchemaBuilder(item, uiSchema);
-      })
+      });
     }
-  })
+  });
 
-  if (schema.type === 'object' || Object.prototype.hasOwnProperty.call(schema, "properties")) { // to handle objects as well as oneof, anyof and allof fields
+  if (schema.type === 'object' || Object.prototype.hasOwnProperty.call(schema, 'properties')) {
+    // to handle objects as well as oneof, anyof and allof fields
     for (let key in schema.properties) {
       uiSchema[key] = {};
 
       // handle percentage for range widget
-      if ((schema.properties?.[key]["type"] === 'number' || schema.properties?.[key].type === 'integer')
-        && key.toLowerCase().includes("percent")) {
-        uiSchema[key]["ui:widget"] = "range"
+      if (
+        (schema.properties?.[key]['type'] === 'number' ||
+          schema.properties?.[key].type === 'integer') &&
+        key.toLowerCase().includes('percent')
+      ) {
+        uiSchema[key]['ui:widget'] = 'range';
       }
 
       jsonSchemaBuilder(schema.properties?.[key], uiSchema[key]);
     }
-    return
+    return;
   }
 
   if (schema.type === 'array') {
-    uiSchema["items"] = {
-      "ui:label" : false
-    }
-    jsonSchemaBuilder(schema.items, uiSchema["items"]);
-    return
+    uiSchema['items'] = {
+      'ui:label': false,
+    };
+    jsonSchemaBuilder(schema.items, uiSchema['items']);
+    return;
   }
 
-  if (uiSchema["ui:widget"]) { // if widget is already assigned, don't go over
-    return
+  if (uiSchema['ui:widget']) {
+    // if widget is already assigned, don't go over
+    return;
   }
 
   if (schema.type === 'number' || schema.type === 'integer') {
-    schema["maximum"] = 99999;
-    schema["minimum"] = 0;
+    schema['maximum'] = 99999;
+    schema['minimum'] = 0;
   }
 }
 
@@ -145,8 +149,8 @@ export function buildUiSchema(schema) {
   jsonSchemaBuilder(schema, uiSchemaObj);
 
   // 2. Set the ordering of the components
-  uiSchemaObj["ui:order"] = ["name", "namespace", "label", "annotation", "*"]
+  uiSchemaObj['ui:order'] = ['name', 'namespace', 'label', 'annotation', '*'];
 
   //3. Return the final uiSchema Object
-  return uiSchemaObj
+  return uiSchemaObj;
 }

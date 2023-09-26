@@ -9,27 +9,27 @@ import {
   TextField,
   Typography,
   useTheme,
-} from "@material-ui/core";
-import ContentFilterIcon from "../../assets/icons/ContentFilterIcon";
-import { useEffect, useReducer, useRef, useState } from "react";
-import CrossCircleIcon from "../../assets/icons/CrossCircleIcon";
-import clsx from "clsx";
-import { useStyles, useFilterStyles } from "./style";
-import { FILTERING_STATE, FILTER_EVENTS, filterReducer } from "./state";
-import { getFilters,getCurrentFilterAndValue } from "./utils"
+} from '@material-ui/core';
+import ContentFilterIcon from '../../assets/icons/ContentFilterIcon';
+import { useEffect, useReducer, useRef, useState } from 'react';
+import CrossCircleIcon from '../../assets/icons/CrossCircleIcon';
+import clsx from 'clsx';
+import { useStyles, useFilterStyles } from './style';
+import { FILTERING_STATE, FILTER_EVENTS, filterReducer } from './state';
+import { getFilters, getCurrentFilterAndValue } from './utils';
 
 const Filters = ({ filterStateMachine, dispatchFilterMachine, filterSchema }) => {
   const classes = useFilterStyles();
   const selectFilter = (filter) => {
     dispatchFilterMachine({
-      type : FILTER_EVENTS.SELECT,
-      payload : {
-        value : filter,
+      type: FILTER_EVENTS.SELECT,
+      payload: {
+        value: filter,
       },
     });
   };
 
-  const { filter : currentFilter } = getCurrentFilterAndValue(filterStateMachine);
+  const { filter: currentFilter } = getCurrentFilterAndValue(filterStateMachine);
   const matchingFilters = currentFilter
     ? Object.values(filterSchema).filter((filter) => filter.value.startsWith(currentFilter))
     : Object.values(filterSchema);
@@ -45,7 +45,12 @@ const Filters = ({ filterStateMachine, dispatchFilterMachine, filterSchema }) =>
       {matchingFilters.map((filter) => {
         return (
           <>
-            <div key={filter.value} className={classes.item} disableGutters onClick={() => selectFilter(filter.value)}>
+            <div
+              key={filter.value}
+              className={classes.item}
+              disableGutters
+              onClick={() => selectFilter(filter.value)}
+            >
               <Typography variant="body1" className={classes.label}>
                 {filter.value}:
               </Typography>
@@ -66,8 +71,8 @@ const FilterValueSuggestions = ({ filterStateMachine, dispatchFilterMachine, fil
 
   const selectValue = (value) => {
     dispatchFilterMachine({
-      type : FILTER_EVENTS.SELECT,
-      payload : {
+      type: FILTER_EVENTS.SELECT,
+      payload: {
         value,
       },
     });
@@ -88,7 +93,12 @@ const FilterValueSuggestions = ({ filterStateMachine, dispatchFilterMachine, fil
       {suggestions.map((value) => {
         return (
           <>
-            <div key={value.value} className={classes.item} disableGutters onClick={() => selectValue(value)}>
+            <div
+              key={value.value}
+              className={classes.item}
+              disableGutters
+              onClick={() => selectValue(value)}
+            >
               <Typography variant="body1" className={classes.description}>
                 {value}
               </Typography>
@@ -100,7 +110,6 @@ const FilterValueSuggestions = ({ filterStateMachine, dispatchFilterMachine, fil
     </List>
   );
 };
-
 
 /**
  * Filter Schema Object
@@ -148,9 +157,10 @@ const FilterValueSuggestions = ({ filterStateMachine, dispatchFilterMachine, fil
  * @param {object} props - Component props.
  * @param {FilterSchema} filterSchema - The schema defining available filter options.
  * @param {function} handleFilter - A callback function to handle filter changes.
+ * @param {boolean} autoFilter - A boolean to indicate if the filter should be applied automatically (on user input) .
  * @returns {JSX.Element} - A React JSX element representing the TypingFilter component.
  */
-const TypingFilter = ({ filterSchema, handleFilter }) => {
+const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false }) => {
   const theme = useTheme();
   // console.log("initialFilter", initialFilter)
   const classes = useStyles();
@@ -158,44 +168,43 @@ const TypingFilter = ({ filterSchema, handleFilter }) => {
   const isPopperOpen = Boolean(anchorEl);
   const inputFieldRef = useRef(null);
   const [filteringState, dispatch] = useReducer(filterReducer, {
-    context : {
-      value : "",
-      prevValue : [""],
+    context: {
+      value: '',
+      prevValue: [''],
     },
-    state : FILTERING_STATE.IDLE,
+    state: FILTERING_STATE.IDLE,
   });
 
   const handleFilterChange = (e) => {
-
     if (!anchorEl) {
-      setAnchorEl(e.currentTarget)
+      setAnchorEl(e.currentTarget);
     }
 
-    if (e.target.value === "") {
+    if (e.target.value === '') {
       return dispatch({
-        type : FILTER_EVENTS.CLEAR,
+        type: FILTER_EVENTS.CLEAR,
       });
     }
 
-    return dispatch({
-      type : FILTER_EVENTS.INPUT_CHANGE,
-      payload : {
-        value : e.target.value,
+    dispatch({
+      type: FILTER_EVENTS.INPUT_CHANGE,
+      payload: {
+        value: e.target.value,
       },
     });
   };
 
   const handleClear = () => {
     dispatch({
-      type : FILTER_EVENTS.EXIT,
+      type: FILTER_EVENTS.EXIT,
     });
 
-    handleFilter({})
+    handleFilter({});
   };
 
   const handleFocus = (e) => {
     setAnchorEl(e.currentTarget);
-    dispatch({ type : "START" });
+    dispatch({ type: 'START' });
   };
 
   const handleClickAway = (e) => {
@@ -209,27 +218,30 @@ const TypingFilter = ({ filterSchema, handleFilter }) => {
   //add enter event listener to the input fieldse
   //add esc event listener to the input fields
   useEffect(() => {
-
     if (!inputFieldRef.current) {
       return;
     }
 
     const handleKeyDown = (e) => {
-      if (e.key == "Enter") {
-        handleFilter(getFilters(e.target.value, filterSchema))
+      if (e.key == 'Enter') {
+        handleFilter(getFilters(e.target.value, filterSchema));
         setAnchorEl(null);
       }
-    }
-    inputFieldRef?.current?.addEventListener("keydown", handleKeyDown)
+    };
+    inputFieldRef?.current?.addEventListener('keydown', handleKeyDown);
     return () => {
-      inputFieldRef?.current?.removeEventListener("keydown", handleKeyDown)
+      inputFieldRef?.current?.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [inputFieldRef.current]);
+
+  useEffect(() => {
+    if (autoFilter && filteringState.state == FILTERING_STATE.SELECTING_FILTER) {
+      handleFilter(getFilters(filteringState.context.value, filterSchema));
     }
-  }, [inputFieldRef.current])
-
-
+  }, [filteringState.state]);
 
   return (
-    <div className={clsx(classes.root, "mui-fixed")} >
+    <div className={clsx(classes.root, 'mui-fixed')}>
       <TextField
         ref={inputFieldRef}
         variant="outlined"
@@ -241,13 +253,13 @@ const TypingFilter = ({ filterSchema, handleFilter }) => {
         onChange={handleFilterChange}
         onFocus={handleFocus}
         InputProps={{
-          startAdornment : (
+          startAdornment: (
             <InputAdornment position="start">
-              {" "}
-              <ContentFilterIcon fill={theme.palette.secondary.iconMain} />{" "}
+              {' '}
+              <ContentFilterIcon fill={theme.palette.secondary.iconMain} />{' '}
             </InputAdornment>
           ),
-          endAdornment : (
+          endAdornment: (
             <InputAdornment position="end">
               <IconButton onClick={handleClear}>
                 {filteringState.state !== FILTERING_STATE.IDLE && (
@@ -263,7 +275,7 @@ const TypingFilter = ({ filterSchema, handleFilter }) => {
         open={filteringState.state != FILTERING_STATE.IDLE && isPopperOpen}
         anchorEl={inputFieldRef.current}
         placement="bottom-start"
-        style={{ zIndex : 2000 }}
+        style={{ zIndex: 2000 }}
         transition
         className="mui-fixed"
       >
@@ -274,14 +286,22 @@ const TypingFilter = ({ filterSchema, handleFilter }) => {
                 <div
                   className={classes.dropDown}
                   style={{
-                    width : inputFieldRef.current ? inputFieldRef.current.clientWidth : 0,
+                    width: inputFieldRef.current ? inputFieldRef.current.clientWidth : 0,
                   }}
                 >
                   {filteringState.state == FILTERING_STATE.SELECTING_FILTER && (
-                    <Filters filterStateMachine={filteringState} dispatchFilterMachine={dispatch} filterSchema={filterSchema} />
+                    <Filters
+                      filterStateMachine={filteringState}
+                      dispatchFilterMachine={dispatch}
+                      filterSchema={filterSchema}
+                    />
                   )}
                   {filteringState.state == FILTERING_STATE.SELECTING_VALUE && (
-                    <FilterValueSuggestions filterStateMachine={filteringState} dispatchFilterMachine={dispatch} filterSchema={filterSchema} />
+                    <FilterValueSuggestions
+                      filterStateMachine={filteringState}
+                      dispatchFilterMachine={dispatch}
+                      filterSchema={filterSchema}
+                    />
                   )}
                 </div>
               </ClickAwayListener>

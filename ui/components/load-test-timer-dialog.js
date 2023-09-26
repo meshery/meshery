@@ -35,13 +35,15 @@ const LoadTestTimerDialog = ({ countDownComplete, t, open }) => {
 
   return (
     <NoSsr>
-      <div style={{
-        marginLeft : 'auto',
-        marginRight : 'auto',
-        width : '400px',
-        position : "relative",
-        zIndex : "0"
-      }}>
+      <div
+        style={{
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          width: '400px',
+          position: 'relative',
+          zIndex: '0',
+        }}
+      >
         <ReactCountdownClock
           seconds={dur}
           color="#667C89"
@@ -52,6 +54,6 @@ const LoadTestTimerDialog = ({ countDownComplete, t, open }) => {
       </div>
     </NoSsr>
   );
-}
+};
 
 export default LoadTestTimerDialog;

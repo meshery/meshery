@@ -138,32 +138,30 @@ func NewK8sContextWithServerID(
 
 // K8sContextsFromKubeconfig takes in a kubeconfig and meshery instance ID and generates
 // kubernetes contexts from it
-func K8sContextsFromKubeconfig(provider Provider, userID string, eventChan *Broadcast, kubeconfig []byte, instanceID *uuid.UUID) ([]*K8sContext, string) {
-	respMessage := ""
+func K8sContextsFromKubeconfig(provider Provider, userID string, eventChan *Broadcast, kubeconfig []byte, instanceID *uuid.UUID) ([]*K8sContext) {
 	kcs := []*K8sContext{}
 	parsed, err := clientcmd.Load(kubeconfig)
 	if err != nil {
-		return kcs, err.Error()
+		return kcs
 	}
 	
 	userUUID := uuid.FromStringOrNil(userID)
 
 	kcfg := InternalKubeConfig{}
 	if err := yaml.Unmarshal(kubeconfig, &kcfg); err != nil {
-		return kcs, err.Error()
+		return kcs
 	}
-
 	
 	for name := range parsed.Contexts {
-		kc, msg := kcfg.K8sContext(name, instanceID)
+		var msg string
+		kc, _ := kcfg.K8sContext(name, instanceID)
 		eventBuilder := events.NewEvent().ActedUpon(uuid.FromStringOrNil(kc.ConnectionID)).WithCategory("connection").WithAction("register").FromSystem(*instanceID).FromUser(userUUID)
 
-		respMessage += msg
 		handler, err := kc.GenerateKubeHandler()
 		if err != nil {
-			msg = fmt.Sprintf("error generating kubernetes handler: %v\n Skipping context", err)
+			msg = fmt.Sprintf("error generating kubernetes handler, skipping context %s: %v", err, kc.Name)
 
-			event := eventBuilder.WithSeverity(events.Alert).WithDescription(fmt.Sprintf("Error connecting with kubernetes context at %s, skipping %s", kc.Server, kc.Name)).WithMetadata(map[string]interface{}{
+			event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Error connecting with kubernetes context at %s, skipping %s", kc.Server, kc.Name)).WithMetadata(map[string]interface{}{
 				"error": err,
 			}).Build()
 			
@@ -171,14 +169,13 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, eventChan *Broa
 			eventChan.Publish(userUUID, event)
 
 			logrus.Warnf(msg)
-			respMessage += msg
 			continue
 		}
 
 		// Perform Ping test on the cluster
 		if err := kc.PingTest(); err != nil {
-			msg = fmt.Sprintf("Skipping context: %v \n", err)
-			event := eventBuilder.WithSeverity(events.Warning).WithDescription(fmt.Sprintf("Error connecting with kubernetes context at %s, skipping %s", kc.Server, kc.Name)).WithMetadata(map[string]interface{}{
+			msg = fmt.Sprintf("unable to ping kubernetes context at %s, skipping context %s %v \n", kc.Server, kc.Name, err)
+			event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to ping kubernetes context at %s, skipping %s", kc.Server, kc.Name)).WithMetadata(map[string]interface{}{
 				"error": err,
 			}).Build()
 
@@ -186,14 +183,26 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, eventChan *Broa
 			eventChan.Publish(userUUID, event)
 
 			logrus.Warn(msg)
-			respMessage += msg
+			continue
+		}
+
+		if err := kc.AssignServerID(handler); err != nil {
+			msg = fmt.Sprintf("could not retrieve kubernetes cluster ID, skipping context %s: %v", kc.Name, err)
+
+			event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Could not assign server id, skipping context %s", kc.Name)).WithMetadata(map[string]interface{}{
+				"error": err,
+			}).Build()
+
+			_ = provider.PersistEvent(event)
+			eventChan.Publish(userUUID, event)
+			logrus.Warn(msg)
 			continue
 		}
 
 		err = kc.AssignVersion(handler)
 		if err != nil {
-			msg = fmt.Sprintf("Skipping context: Could not retrieve Kubernetes version: %v ", err)
-			event := eventBuilder.WithSeverity(events.Warning).WithDescription(fmt.Sprintf("Could not retrieve Kubernetes version, skipping %s", kc.Name)).WithMetadata(map[string]interface{}{
+			msg = fmt.Sprintf("could not retrieve kubernetes version for context %s: %v ", kc.Name, err)
+			event := eventBuilder.WithSeverity(events.Warning).WithDescription(fmt.Sprintf("Could not retrieve Kubernetes version for %s", kc.Name)).WithMetadata(map[string]interface{}{
 				"error": err,
 			}).Build()
 
@@ -201,29 +210,14 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, eventChan *Broa
 			eventChan.Publish(userUUID, event)
 
 			logrus.Warnf(msg)
-			respMessage += msg
-			continue
-		}
-
-		if err := kc.AssignServerID(handler); err != nil {
-			msg = fmt.Sprintf("Skipping context: Could not retrieve Kubernetes cluster ID (%v)", err)
-
-			event := eventBuilder.WithSeverity(events.Warning).WithDescription(fmt.Sprintf("Could not assign server id, skipping %s", kc.Name)).WithMetadata(map[string]interface{}{
-				"error": err,
-			}).Build()
-				
-			_ = provider.PersistEvent(event)
-			eventChan.Publish(userUUID, event)
-
-			logrus.Warn(msg)
-			respMessage += msg
+			kcs = append(kcs, &kc)
 			continue
 		}
 
 		kcs = append(kcs, &kc)
 	}
 
-	return kcs, respMessage
+	return kcs
 }
 
 func NewK8sContextFromInClusterConfig(contextName string, instanceID *uuid.UUID) (*K8sContext, error) {

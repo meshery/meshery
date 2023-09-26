@@ -1,6 +1,6 @@
-import React, {  useRef } from 'react';
-import useStyles from "../MesheryPatterns/Cards.styles";
-import RJSFModal from "../Modal";
+import React, { useRef } from 'react';
+import useStyles from '../MesheryPatterns/Cards.styles';
+import RJSFModal from '../Modal';
 import { Button } from '@material-ui/core';
 import { capitalize } from 'lodash';
 
@@ -35,5 +35,5 @@ export default function ImportModal(props) {
         Import {capitalize(importType)}
       </Button>
     </RJSFModal>
-  )
+  );
 }

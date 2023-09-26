@@ -1,29 +1,27 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import {
-  NoSsr, TextField, Grid, Button,
-} from '@material-ui/core';
-import ReactSelectWrapper from '../../ReactSelectWrapper'
+import { NoSsr, TextField, Grid, Button } from '@material-ui/core';
+import ReactSelectWrapper from '../../ReactSelectWrapper';
 
 const grafanaStyles = (theme) => ({
-  wrapper : {
-    padding : theme.spacing(5),
-    backgroundColor : theme.palette.secondary.elevatedComponents,
-    borderBottomLeftRadius : theme.spacing(1),
-    borderBottomRightRadius : theme.spacing(1),
-    marginTop : theme.spacing(2),
+  wrapper: {
+    padding: theme.spacing(5),
+    backgroundColor: theme.palette.secondary.elevatedComponents,
+    borderBottomLeftRadius: theme.spacing(1),
+    borderBottomRightRadius: theme.spacing(1),
+    marginTop: theme.spacing(2),
   },
-  buttons : {
-    display : 'flex',
-    justifyContent : 'flex-end',
+  buttons: {
+    display: 'flex',
+    justifyContent: 'flex-end',
   },
-  inputContainer : {
-    marginTop : theme.spacing(2),
-    marginBottom : theme.spacing(1)
+  inputContainer: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(1),
   },
-  button : {
-    marginTop : theme.spacing(3),
+  button: {
+    marginTop: theme.spacing(3),
     //   marginLeft: theme.spacing(1),
   },
 });
@@ -31,7 +29,14 @@ const grafanaStyles = (theme) => ({
 class GrafanaConfigComponent extends Component {
   render = () => {
     const {
-      classes, grafanaURL, grafanaAPIKey, urlError, handleChange, handleGrafanaConfigure, options, handleChangeApiKey
+      classes,
+      grafanaURL,
+      grafanaAPIKey,
+      urlError,
+      handleChange,
+      handleGrafanaConfigure,
+      options,
+      handleChangeApiKey,
     } = this.props;
     return (
       <NoSsr>
@@ -81,15 +86,15 @@ class GrafanaConfigComponent extends Component {
         </React.Fragment>
       </NoSsr>
     );
-  }
+  };
 }
 
 GrafanaConfigComponent.propTypes = {
-  classes : PropTypes.object.isRequired,
-  grafanaURL : PropTypes.object.isRequired,
-  grafanaAPIKey : PropTypes.string.isRequired,
-  handleChange : PropTypes.func.isRequired,
-  handleGrafanaConfigure : PropTypes.func.isRequired,
+  classes: PropTypes.object.isRequired,
+  grafanaURL: PropTypes.object.isRequired,
+  grafanaAPIKey: PropTypes.string.isRequired,
+  handleChange: PropTypes.func.isRequired,
+  handleGrafanaConfigure: PropTypes.func.isRequired,
 };
 
 export default withStyles(grafanaStyles)(GrafanaConfigComponent);
