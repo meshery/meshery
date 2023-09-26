@@ -139,7 +139,7 @@ function FiltersCard({
                 </TooltipButton>
               ) : null}
               <TooltipButton
-                title="Edit pattern info"
+                title="Filter Information"
                 variant="contained"
                 color="primary"
                 onClick={(ev) => genericClickHandler(ev, handleInfoModal)}

@@ -228,7 +228,7 @@ function MesheryPatternCard({
                 </TooltipButton>
               )}
               <TooltipButton
-                title="Edit pattern info"
+                title="Pattern Information"
                 variant="contained"
                 color="primary"
                 onClick={(ev) => genericClickHandler(ev, handleInfoModal)}
