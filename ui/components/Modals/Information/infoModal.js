@@ -44,10 +44,10 @@ const InfoModal = (props) => {
   const {
     infoModalOpen,
     handleInfoModalClose,
-    resourceOwnerID, //id to get data of user to get name of that person
+    resourceOwnerID,
     dataName,
     selectedResource,
-    currentUserID, // id of current user
+    currentUserID,
     formSchema,
   } = props;
 
