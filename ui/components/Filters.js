@@ -54,6 +54,8 @@ import SearchBar from '../utils/custom-search';
 import CustomColumnVisibilityControl from '../utils/custom-column';
 import ResponsiveDataTable from '../utils/data-table';
 import useStyles from '../assets/styles/general/tool.styles';
+import InfoModal from './Modals/Information/InfoModal';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 
 const styles = (theme) => ({
   grid: {
@@ -249,6 +251,12 @@ function MesheryFilters({
   const { notify } = useNotification();
   const StyleClass = useStyles();
 
+  const [infoModal, setInfoModal] = useState({
+    open: false,
+    ownerID: '',
+    selectedResource: {},
+  });
+
   const [modalOpen, setModalOpen] = useState({
     open: false,
     filter_file: null,
@@ -343,7 +351,6 @@ function MesheryFilters({
             'properties.compatibility.items.enum',
             modelNames,
           );
-
           setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
         } catch (err) {
           console.error(err);
@@ -393,6 +400,20 @@ function MesheryFilters({
         filter: filter,
       });
     }
+  };
+
+  const handleInfoModalClose = () => {
+    setInfoModal({
+      open: false,
+    });
+  };
+
+  const handleInfoModal = (filter) => {
+    setInfoModal({
+      open: true,
+      ownerID: filter.user_id,
+      selectedResource: filter,
+    });
   };
 
   const handleUnpublishModal = (ev, filter) => {
@@ -521,9 +542,7 @@ function MesheryFilters({
     if (!search) search = '';
     if (!sortOrder) sortOrder = '';
 
-    const query = `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
-      search,
-    )}&order=${encodeURIComponent(sortOrder)}`;
+    const query = `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(search,)}&order=${encodeURIComponent(sortOrder)}`;
 
     updateProgress({ showProgress: true });
 
@@ -933,6 +952,9 @@ function MesheryFilters({
               >
                 <GetAppIcon data-cy="download-button" />
               </TooltipIcon>
+              <TooltipIcon title="Filter Information" onClick={() => handleInfoModal(rowData)}>
+                <InfoOutlinedIcon data-cy="information-button" />
+              </TooltipIcon>
               {canPublishFilter && visibility !== VISIBILITY.PUBLISHED ? (
                 <TooltipIcon title="Publish" onClick={(ev) => handlePublishModal(ev, rowData)}>
                   <PublicIcon fill="#F91313" data-cy="publish-button" />
@@ -1246,6 +1268,7 @@ function MesheryFilters({
             setPublishModal={setPublishModal}
             publishSchema={publishSchema}
             fetch={() => fetchFilters(page, pageSize, search, sortOrder)}
+            handleInfoModal={handleInfoModal}
           />
         )}
         <ConfirmationMsg
@@ -1292,6 +1315,17 @@ function MesheryFilters({
               <Filter fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
             }
             submitBtnIcon={<PublishIcon />}
+          />
+        )}
+        {infoModal.open && (
+          <InfoModal
+            infoModalOpen={true}
+            handleInfoModalClose={handleInfoModalClose}
+            dataName="pattern"
+            selectedResource={infoModal.selectedResource}
+            resourceOwnerID={infoModal.ownerID}
+            currentUserID={user?.id}
+            formSchema={publishSchema}
           />
         )}
       </NoSsr>

@@ -25,6 +25,7 @@ function FilterCardGridItem({
   handlePublishModal,
   handleUnpublishModal,
   canPublishFilter,
+  handleInfoModal,
 }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(yamlConfig);
@@ -55,6 +56,7 @@ function FilterCardGridItem({
         setYaml={setYaml}
         description={filter.desciption}
         visibility={filter.visibility}
+        handleInfoModal={handleInfoModal}
       />
     </Grid>
   );
@@ -90,6 +92,7 @@ function FilterCardGridItem({
  *  },
  *  setPublishModal: (publishModal: { open: boolean, filter: any, name: string }) => void,
  *  publishSchema: object,
+ *  handleInfoModal: (filter: object) => void
  * }} props props
  */
 
@@ -112,6 +115,7 @@ function FiltersGrid({
   publishModal,
   setPublishModal,
   publishSchema,
+  handleInfoModal,
 }) {
   const classes = useStyles();
 
@@ -186,6 +190,7 @@ function FiltersGrid({
               canPublishFilter={canPublishFilter}
               handlePublishModal={() => handlePublishModal(filter)}
               handleUnpublishModal={(e) => handleUnpublishModal(e, filter)()}
+              handleInfoModal={() => handleInfoModal(filter)}
             />
           ))}
         </Grid>
