@@ -47,7 +47,7 @@ const InfoModal = (props) => {
     resourceOwnerID, //id to get data of user to get name of that person
     dataName,
     selectedResource,
-    currentUserID, // id of current user
+    currentUserID,
     formSchema,
   } = props;
 
