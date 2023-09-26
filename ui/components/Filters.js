@@ -542,7 +542,9 @@ function MesheryFilters({
     if (!search) search = '';
     if (!sortOrder) sortOrder = '';
 
-    const query = `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(search,)}&order=${encodeURIComponent(sortOrder)}`;
+    const query = `?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
+      search,
+    )}&order=${encodeURIComponent(sortOrder)}`;
 
     updateProgress({ showProgress: true });
 
