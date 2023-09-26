@@ -1,6 +1,6 @@
 # TypingFilter Component
 
-The `TypingFilter` component is a customizable React component that enables real-time filtering and selection based on user input. 
+The `TypingFilter` component is a customizable React component that enables real-time filtering and selection based on user input.
 It provides a user-friendly interface for filtering data in your application.
 
 ## Table of Contents
@@ -23,10 +23,10 @@ function MyComponent() {
     // Define your filter categories here
     // Example:
     SEVERITY: {
-      value: "severity",
-      description: "Filter by severity",
-      values: ["Low", "Medium", "High"],
-      multiple : true // default
+      value: 'severity',
+      description: 'Filter by severity',
+      values: ['Low', 'Medium', 'High'],
+      multiple: true, // default
     },
     // Add more filter categories as needed
   };
@@ -35,15 +35,12 @@ function MyComponent() {
   const handleFilterChange = (filteredData) => {
     // Implement your logic to react to the filtered data.
     // This function will be called when the user applies a filter. ( on presing enter in input)
-    console.log("Filtered data:", filteredData);
+    console.log('Filtered data:', filteredData);
   };
 
   return (
     <div>
-      <TypingFilter
-        filterSchema={filterSchema}
-        handleFilter={handleFilterChange}
-      />
+      <TypingFilter filterSchema={filterSchema} handleFilter={handleFilterChange} />
       {/* Your other components */}
     </div>
   );
@@ -57,6 +54,7 @@ export default MyComponent;
 The `TypingFilter` component accepts the following props:
 
 - `filterSchema` (object, required): An object that defines available filter options. Each property of this object represents a filter category with the following properties:
+
   - `value` (string, required): The filter name used for filtering within the category.
   - `description` (string, required): Description of the filter category.
   - `type` (string, optional): The data type of the filter (e.g., "string", "number").
@@ -64,12 +62,11 @@ The `TypingFilter` component accepts the following props:
 
 - `handleFilter` (function, required): A callback function that is called when the user applies a filter. This function receives the filtered data as an argument.
 
-- `autoFilter` (boolean,optional) :  A boolean to indicate if the filter should be applied automatically (on user input) .
- 
+- `autoFilter` (boolean,optional) : A boolean to indicate if the filter should be applied automatically (on user input) .
 
 # Finite State Machine (FSM) for `TypingFilter` Component
 
-This README provides an overview of the Finite State Machine (FSM) implementation used to manage the state of the `TypingFilter` component. 
+This README provides an overview of the Finite State Machine (FSM) implementation used to manage the state of the `TypingFilter` component.
 The FSM is responsible for handling user interactions, such as selecting filters, entering values, and clearing the filter, within the component.
 
 ## Table of Contents
@@ -82,7 +79,7 @@ The FSM is responsible for handling user interactions, such as selecting filters
 
 ## Overview
 
-The FSM implementation within the `TypingFilter` component ensures that user interactions are correctly processed and managed, resulting in a smooth and intuitive filtering experience. 
+The FSM implementation within the `TypingFilter` component ensures that user interactions are correctly processed and managed, resulting in a smooth and intuitive filtering experience.
 
 ## State Definitions
 
@@ -91,6 +88,7 @@ The FSM code defines three sets of constants to represent important elements wit
 ### 1. `FILTERING_STATE`
 
 Defines the possible states that the `TypingFilter` component can be in. These states include:
+
 - `IDLE`: Represents the initial state when the component is not actively filtering.
 - `SELECTING_FILTER`: Indicates that the user is selecting a filter.
 - `SELECTING_VALUE`: Indicates that the user is entering a filter value.
@@ -98,6 +96,7 @@ Defines the possible states that the `TypingFilter` component can be in. These s
 ### 2. `FILTER_EVENTS`
 
 Represents the events that trigger state transitions within the FSM. Some of the events include:
+
 - `START`: Initiates the filtering process.
 - `SELECT`: Indicates the selection of a filter.
 - `INPUT_CHANGE`: Represents a change in the filter input.
@@ -107,6 +106,7 @@ Represents the events that trigger state transitions within the FSM. Some of the
 ### 3. `Delimiter`
 
 Defines delimiters used to separate filter and value entries within the component. Delimiters include:
+
 - `FILTER`: Separates multiple filters.
 - `FILTER_VALUE`: Separates filters from their corresponding values.
 

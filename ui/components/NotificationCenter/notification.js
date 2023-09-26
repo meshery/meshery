@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from 'react';
 import {
   Avatar,
   Box,
@@ -13,116 +13,123 @@ import {
   Typography,
   alpha,
   useTheme,
-} from "@material-ui/core";
-import { makeStyles } from "@material-ui/core";
-import { SEVERITY_STYLE, STATUS } from "./constants";
-import { iconLarge, iconMedium } from "../../css/icons.styles";
-import { Launch as LaunchIcon, MoreVert as MoreVertIcon } from "@material-ui/icons";
-import FacebookIcon from "../../assets/icons/FacebookIcon";
-import LinkedInIcon from "../../assets/icons/LinkedInIcon";
-import TwitterIcon from "../../assets/icons/TwitterIcon";
-import ShareIcon from "../../assets/icons/ShareIcon";
-import DeleteIcon from "../../assets/icons/DeleteIcon";
-import moment from "moment";
-import { useUpdateStatusMutation, useDeleteEventMutation } from "../../rtk-query/notificationCenter";
-import { useDispatch, useSelector } from "react-redux";
-import { changeEventStatus, deleteEvent, selectEventById } from "../../store/slices/events";
-import { useGetUserByIdQuery } from "../../rtk-query/user";
-import { FacebookShareButton, LinkedinShareButton, TwitterShareButton } from "react-share";
-import ReadIcon from "../../assets/icons/ReadIcon";
-import UnreadIcon from "../../assets/icons/UnreadIcon";
-import { ErrorBoundary, withErrorBoundary, withSuppressedErrorBoundary } from "../General/ErrorBoundary";
+} from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
+import { SEVERITY_STYLE, STATUS } from './constants';
+import { iconLarge, iconMedium } from '../../css/icons.styles';
+import { Launch as LaunchIcon, MoreVert as MoreVertIcon } from '@material-ui/icons';
+import FacebookIcon from '../../assets/icons/FacebookIcon';
+import LinkedInIcon from '../../assets/icons/LinkedInIcon';
+import TwitterIcon from '../../assets/icons/TwitterIcon';
+import ShareIcon from '../../assets/icons/ShareIcon';
+import DeleteIcon from '../../assets/icons/DeleteIcon';
+import moment from 'moment';
+import {
+  useUpdateStatusMutation,
+  useDeleteEventMutation,
+} from '../../rtk-query/notificationCenter';
+import { useDispatch, useSelector } from 'react-redux';
+import { changeEventStatus, deleteEvent, selectEventById } from '../../store/slices/events';
+import { useGetUserByIdQuery } from '../../rtk-query/user';
+import { FacebookShareButton, LinkedinShareButton, TwitterShareButton } from 'react-share';
+import ReadIcon from '../../assets/icons/ReadIcon';
+import UnreadIcon from '../../assets/icons/UnreadIcon';
+import {
+  ErrorBoundary,
+  withErrorBoundary,
+  withSuppressedErrorBoundary,
+} from '../General/ErrorBoundary';
 
 const useStyles = makeStyles(() => ({
-  root : (props) => ({
-    width : "100%",
-    borderRadius : "0.25rem",
-    border : `0.1rem solid ${props.notificationColor}`,
-    borderLeftWidth : props.status === STATUS.UNREAD ? "0.5rem" : "0.1rem",
-    marginBlock : "0.5rem",
+  root: (props) => ({
+    width: '100%',
+    borderRadius: '0.25rem',
+    border: `0.1rem solid ${props.notificationColor}`,
+    borderLeftWidth: props.status === STATUS.UNREAD ? '0.5rem' : '0.1rem',
+    marginBlock: '0.5rem',
   }),
 
-  summary : (props) => ({
-    paddingBlock : "0.5rem",
-    cursor : "pointer",
-    backgroundColor : alpha(props.notificationColor, 0.2),
+  summary: (props) => ({
+    paddingBlock: '0.5rem',
+    cursor: 'pointer',
+    backgroundColor: alpha(props.notificationColor, 0.2),
   }),
 
-  gridItem : {
-    display : "flex",
-    alignItems : "center",
-    justifyContent : "center",
+  gridItem: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
-  message : {
-    overflow : "hidden",
-    textOverflow : "ellipsis",
-    whiteSpace : "nowrap",
-    overflowWrap : "break-word",
+  message: {
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    overflowWrap: 'break-word',
     // max of min of 20rem or 50vw
-    maxWidth : "min(25rem, 50vw)",
-    width : "100%",
+    maxWidth: 'min(25rem, 50vw)',
+    width: '100%',
   },
-  expanded : {
-    paddingBlock : "0.75rem",
-    paddingInline : "0.2rem",
+  expanded: {
+    paddingBlock: '0.75rem',
+    paddingInline: '0.2rem',
   },
-  actorAvatar : {
-    display : "flex",
-    justifyContent : "center",
-    alignItems : "start",
+  actorAvatar: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'start',
   },
 
-  descriptionHeading : {
-    fontWeight : "bolder !important",
-    textTransform : "uppercase",
-    fontSize : "0.9rem",
+  descriptionHeading: {
+    fontWeight: 'bolder !important',
+    textTransform: 'uppercase',
+    fontSize: '0.9rem',
   },
 }));
 
 const useMenuStyles = makeStyles((theme) => {
   return {
-    paper : {
-      color : theme.palette.secondary.iconMain,
-      boxShadow : theme.shadows[4],
-      borderRadius : "0.25",
-      paddingInline : "0.5rem",
-      paddingBlock : "0.25rem",
-      width : "12.5rem",
+    paper: {
+      color: theme.palette.secondary.iconMain,
+      boxShadow: theme.shadows[4],
+      borderRadius: '0.25',
+      paddingInline: '0.5rem',
+      paddingBlock: '0.25rem',
+      width: '12.5rem',
     },
 
-    list : {
-      display : "flex",
-      flexDirection : "column",
-      gridGap : "0.5rem",
-      marginBlock : "0.5rem",
-      borderRadius : "0.25rem",
-      backgroundColor : theme.palette.secondary.honeyComb,
-      "&:hover" : {
-        backgroundColor : alpha(theme.palette.secondary.link2, 0.25),
+    list: {
+      display: 'flex',
+      flexDirection: 'column',
+      gridGap: '0.5rem',
+      marginBlock: '0.5rem',
+      borderRadius: '0.25rem',
+      backgroundColor: theme.palette.secondary.honeyComb,
+      '&:hover': {
+        backgroundColor: alpha(theme.palette.secondary.link2, 0.25),
       },
     },
 
-    listItem : {
-      display : "flex",
-      gridGap : "0.5rem",
-      alignItems : "center",
-      justifyContent : "space-around",
+    listItem: {
+      display: 'flex',
+      gridGap: '0.5rem',
+      alignItems: 'center',
+      justifyContent: 'space-around',
     },
-    socialListItem : {
-      display : "flex",
-      backgroundColor : alpha(theme.palette.secondary.honeyComb, 0.25),
-      alignItems : "center",
-      justifyContent : "space-around",
-      padding : ".65rem",
+    socialListItem: {
+      display: 'flex',
+      backgroundColor: alpha(theme.palette.secondary.honeyComb, 0.25),
+      alignItems: 'center',
+      justifyContent: 'space-around',
+      padding: '.65rem',
     },
 
-    button : {
-      height : "100%",
-      width : "100%",
-      display : "flex",
-      alignItems : "center",
-      justifyContent : "start",
+    button: {
+      height: '100%',
+      width: '100%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'start',
     },
   };
 });
@@ -132,7 +139,7 @@ const formatTimestamp = (utcTimestamp) => {
 
   const timediff = currentUtcTimestamp - moment(utcTimestamp).valueOf();
   if (timediff >= 24 * 60 * 60 * 1000) {
-    return moment(utcTimestamp).local().format("MMM DD, YYYY");
+    return moment(utcTimestamp).local().format('MMM DD, YYYY');
   }
   return moment(utcTimestamp).fromNow();
 };
@@ -162,9 +169,9 @@ const BasicMenu = withSuppressedErrorBoundary(({ event }) => {
     <div className="mui-fixed" onClick={(e) => e.stopPropagation()}>
       <IconButton
         id="basic-button"
-        aria-controls={open ? "basic-menu" : undefined}
+        aria-controls={open ? 'basic-menu' : undefined}
         aria-haspopup="true"
-        aria-expanded={open ? "true" : undefined}
+        aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
       >
         <MoreVertIcon />
@@ -174,29 +181,29 @@ const BasicMenu = withSuppressedErrorBoundary(({ event }) => {
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{
-          vertical : "bottom",
-          horizontal : "left",
+          vertical: 'bottom',
+          horizontal: 'left',
         }}
       >
         <Box className={classes.paper}>
           <div className={classes.list}>
-            <Box className={classes.listItem} sx={{ width : "100%" }}>
+            <Box className={classes.listItem} sx={{ width: '100%' }}>
               <Button onClick={toggleSocialShare} className={classes.button}>
                 <ShareIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
-                <Typography variant="body1" style={{ marginLeft : "0.5rem" }}>
+                <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
                   Share
                 </Typography>
               </Button>
             </Box>
             <Collapse in={isSocialShareOpen}>
               <Box className={classes.socialListItem}>
-                <FacebookShareButton url={"https://meshery.io"} quote={event.description || ""}>
+                <FacebookShareButton url={'https://meshery.io'} quote={event.description || ''}>
                   <FacebookIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
                 </FacebookShareButton>
-                <LinkedinShareButton url={"https://meshery.io"} summary={event.description || ""}>
+                <LinkedinShareButton url={'https://meshery.io'} summary={event.description || ''}>
                   <LinkedInIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
                 </LinkedinShareButton>
-                <TwitterShareButton url={"https://meshery.io"} title={event.description || ""}>
+                <TwitterShareButton url={'https://meshery.io'} title={event.description || ''}>
                   <TwitterIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
                 </TwitterShareButton>
               </Box>
@@ -224,9 +231,9 @@ export const DeleteEvent = ({ event }) => {
     <div className={classes.list}>
       <Button className={classes.button} onClick={handleDelete}>
         <DeleteIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
-        <Typography variant="body1" style={{ marginLeft : "0.5rem" }}>
-          {" "}
-          Delete{" "}
+        <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
+          {' '}
+          Delete{' '}
         </Typography>
       </Button>
     </div>
@@ -237,43 +244,47 @@ export const ErrorMetadataFormatter = ({ metadata, event, classes }) => {
   const longDescription = metadata?.LongDescription || [];
   const probableCause = metadata?.ProbableCause || [];
   const suggestedRemediation = metadata?.SuggestedRemediation || [];
-  const errorCode = metadata?.error_code || "";
-  const code = metadata?.Code || "";
+  const errorCode = metadata?.error_code || '';
+  const code = metadata?.Code || '';
   const formattedErrorCode = errorCode ? `${errorCode}-${code}` : code;
   const errorLink = `https://docs.meshery.io/reference/error-codes#${formattedErrorCode}`;
   return (
     <Grid container>
       <div>
-        <a href={errorLink} target="_blank" rel="noopener noreferrer" style={{ color : "inherit" }}>
+        <a href={errorLink} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>
           <Typography
             variant="h5"
             className={classes.descriptionHeading}
-            style={{ textDecorationLine : "underline", cursor : "pointer", marginBottom : "0.5rem" }}
+            style={{ textDecorationLine: 'underline', cursor: 'pointer', marginBottom: '0.5rem' }}
           >
             {formattedErrorCode}
             <sup>
-              <LaunchIcon style={{ width : "1rem", height : "1rem" }} />
+              <LaunchIcon style={{ width: '1rem', height: '1rem' }} />
             </sup>
           </Typography>
         </a>
         <NestedData classes={classes} data={event.description} />
-        <div style={{ marginTop : "1rem" }}>
+        <div style={{ marginTop: '1rem' }}>
           <NestedData classes={classes} heading="Details" data={longDescription} />
         </div>
       </div>
-      <Grid container spacing={1} style={{ marginTop : "0.5rem" }}>
+      <Grid container spacing={1} style={{ marginTop: '0.5rem' }}>
         <Grid item sm={suggestedRemediation?.length > 0 ? 6 : 12}>
           <NestedData classes={classes} heading="Probable Cause" data={probableCause} />
         </Grid>
         <Grid item sm={probableCause?.length > 0 ? 6 : 12}>
-          <NestedData classes={classes} heading="Suggested Remediation" data={suggestedRemediation} />
+          <NestedData
+            classes={classes}
+            heading="Suggested Remediation"
+            data={suggestedRemediation}
+          />
         </Grid>
       </Grid>
     </Grid>
   );
 };
 const METADATA_FORMATTER = {
-  error : ErrorMetadataFormatter,
+  error: ErrorMetadataFormatter,
 };
 
 // Maps the metadata to the appropriate formatter component
@@ -306,9 +317,9 @@ export const ChangeStatus = ({ event }) => {
         ) : (
           <UnreadIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
         )}
-        <Typography variant="body1" style={{ marginLeft : "0.5rem" }}>
-          {" "}
-          Mark as {newStatus}{" "}
+        <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
+          {' '}
+          Mark as {newStatus}{' '}
         </Typography>
       </Button>
     </div>
@@ -317,7 +328,7 @@ export const ChangeStatus = ({ event }) => {
 
 const BulletList = ({ items }) => {
   return (
-    <ol style={{ paddingInline : "0.75rem", paddingBlock : "0.3rem", margin : "0rem" }}>
+    <ol style={{ paddingInline: '0.75rem', paddingBlock: '0.3rem', margin: '0rem' }}>
       {items.map((i) => (
         <li key={i}>
           <Typography variant="body1"> {i} </Typography>
@@ -332,8 +343,8 @@ export const Notification = withErrorBoundary(({ event_id }) => {
   const isVisible = event.is_visible === undefined ? true : event.is_visible;
   const severityStyles = SEVERITY_STYLE[event.severity];
   const classes = useStyles({
-    notificationColor : severityStyles?.color,
-    status : event?.status,
+    notificationColor: severityStyles?.color,
+    status: event?.status,
   });
   const [expanded, setExpanded] = React.useState(false);
   const handleExpandClick = (e) => {
@@ -341,13 +352,21 @@ export const Notification = withErrorBoundary(({ event_id }) => {
     setExpanded(!expanded);
   };
 
-  const { data : user } = useGetUserByIdQuery(event.user_id || "");
+  const { data: user } = useGetUserByIdQuery(event.user_id || '');
 
-  const userName = `${user?.first_name || ""} ${user?.last_name || ""}`;
-  const userAvatarUrl = user?.avatar_url || "";
+  const userName = `${user?.first_name || ''} ${user?.last_name || ''}`;
+  const userAvatarUrl = user?.avatar_url || '';
 
   return (
-    <Slide in={isVisible} timeout={250} direction="left" appear={false} enter={false} mountOnEnter unmountOnExit>
+    <Slide
+      in={isVisible}
+      timeout={250}
+      direction="left"
+      appear={false}
+      enter={false}
+      mountOnEnter
+      unmountOnExit
+    >
       <div className={classes.root}>
         <Grid container className={classes.summary} onClick={handleExpandClick}>
           <Grid item sm={1} className={classes.gridItem}>
@@ -355,8 +374,8 @@ export const Notification = withErrorBoundary(({ event_id }) => {
           </Grid>
           <Grid item xs={9} md={7} className={classes.gridItem}>
             <Typography variant="body1" className={classes.message}>
-              {" "}
-              {event.description}{" "}
+              {' '}
+              {event.description}{' '}
             </Typography>
           </Grid>
           <Hidden smDown>
@@ -374,7 +393,13 @@ export const Notification = withErrorBoundary(({ event_id }) => {
           <ErrorBoundary>
             <Grid container className={classes.expanded}>
               <Grid item sm={1} className={classes.actorAvatar}>
-                <Box sx={{ display : "flex", gridGap : "0.5rem", flexDirection : { xs : "row", md : "column" } }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    gridGap: '0.5rem',
+                    flexDirection: { xs: 'row', md: 'column' },
+                  }}
+                >
                   {event.user_id && user && (
                     <Tooltip title={userName} placement="top">
                       <Avatar alt={userName} src={userAvatarUrl} />
@@ -404,7 +429,11 @@ const NestedData = ({ heading, data, classes }) => {
       <Typography variant="h6" className={classes.descriptionHeading}>
         {heading}
       </Typography>
-      {typeof data === "string" ? <Typography variant="body1">{data}</Typography> : <BulletList items={data} />}
+      {typeof data === 'string' ? (
+        <Typography variant="body1">{data}</Typography>
+      ) : (
+        <BulletList items={data} />
+      )}
     </>
   );
 };

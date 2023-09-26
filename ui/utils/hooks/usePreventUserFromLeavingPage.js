@@ -1,6 +1,5 @@
-
 import SingletonRouter, { Router } from 'next/router';
-import React from "react";
+import React from 'react';
 
 /**
  * Restrict the user to navigate away to another page
