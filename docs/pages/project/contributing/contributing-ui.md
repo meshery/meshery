@@ -31,7 +31,7 @@ Meshery provides a REST API available through the default port of `9081/tcp` at 
 
 ### GraphQL API
 
-Meshery provides a GraphQl API available through the default port of `9081/tcp` at `<hostname>:<port>/api/graphql/query`. See the [GraphQL API Referencee](https://docs.meshery.io/reference/graphql-apis) [Relay](https://relay.dev) is the client used.
+Meshery provides a GraphQl API available through the default port of `9081/tcp` at `<hostname>:<port>/api/graphql/query`. See the [GraphQL API Reference](https://docs.meshery.io/reference/graphql-apis) [Relay](https://relay.dev) is the client used.
 
 ## Design
 
@@ -104,7 +104,7 @@ Execute:
 - `git remote add upstream https://github.com/meshery/meshery`
 - `git fetch upstream`
 - Restart the meshery server
-- Addionally, before restarting the server, if you like to pull the latest changes, you can do: `git pull upstream master`
+- Additionally, before restarting the server, if you like to pull the latest changes, you can do: `git pull upstream master`
 
 
 ### UI Development Server
