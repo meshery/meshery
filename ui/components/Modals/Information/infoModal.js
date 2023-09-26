@@ -5,46 +5,61 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import InfoIcon from '@material-ui/icons/Info';
 import CloseIcon from '@material-ui/icons/Close';
-import PatternIcon from '../../styles/assets/Pattern';
-import { Chip, Typography, IconButton, Button, Grid, Avatar, Tooltip } from '@material-ui/core';
-import useStyles from '../../Share/styles';
+import PatternIcon from '../../../assets/icons/Pattern';
 import {
-  getSharableCommonHostAndprotocolLink,
-  iconSmall,
-} from '../../../../sections/MesheryDesignerComponent/PatternServiceFormWrapper/utils';
-import OriginalApplicationFileIcon from '../../styles/assets/OriginalApplicationIcon';
+  Chip,
+  Typography,
+  IconButton,
+  Button,
+  Grid,
+  Avatar,
+  Tooltip,
+  Box,
+} from '@material-ui/core';
+import useStyles from './styles';
+import { iconSmall } from '../../../css/icons.styles';
+import { useTheme } from '@material-ui/core/styles';
+// import {
+//   getSharableCommonHostAndprotocolLink,
+// } from '../../../../sections/MesheryDesignerComponent/PatternServiceFormWrapper/utils';
+import OriginalApplicationFileIcon from '../../../assets/icons/OriginalApplicationIcon';
 import moment from 'moment';
-import { APPLICATION_PLURAL, FILTER_PLURAL, PATTERN_PLURAL } from '@/utils/constants';
-import ApplicationIcon from '../../styles/assets/ApplicationIcon';
-import { uiTheme } from '../../../../globals/theme';
+import Application from '../../../public/static/img/drawer-icons/application_svg.js';
 import { useSnackbar } from 'notistack';
-import FilterIcon from '../../styles/assets/FilterIcon';
-import { RJSF_SCHEMAS, PATTERN_ENDPOINT, FILTER_ENDPOINT } from '@/utils/constants';
-import { useNotification, EVENT_TYPES } from '../../../../globals/notifications';
-import { getUserProfile } from '@/components/api';
-import { getMeshModels } from '@/components/api';
+import Filter from '../../../public/static/img/drawer-icons/filter_svg.js';
+import { PATTERN_ENDPOINT, FILTER_ENDPOINT } from '../../../constants/endpoints';
+import { useNotification } from '../../../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../../../lib/event-types';
 import axios from 'axios';
 import _ from 'lodash';
 import RJSFWrapper from '../../MesheryMeshInterface/PatternService/RJSF_wrapper';
+import dataFetch from '../../../lib/data-fetch';
+import CircularProgress from '@mui/material/CircularProgress';
+
+const APPLICATION_PLURAL = 'applications';
+const FILTER_PLURAL = 'filters';
+const PATTERN_PLURAL = 'patterns';
 
 const InfoModal = (props) => {
   const {
     infoModalOpen,
     handleInfoModalClose,
-    designOwnerName,
-    ownerAvatar,
+    resourceOwnerID, //id to get data of user to get name of that person
     dataName,
-    selectedDesign: selectedResource,
+    selectedResource,
+    currentUserID, // id of current user
+    formSchema,
   } = props;
 
-  const theme = uiTheme.theme;
-  const [formSchema, setFormSchema] = useState({});
+  // const theme = uiTheme.theme;
   const formRef = React.createRef();
   const [formState, setFormState] = useState(selectedResource?.catalog_data || {});
   const [isCatalogDataEqual, setIsCatalogDataEqual] = useState(false);
-  const [userProfile, setUserProfile] = useState({});
+  const [resourceUserProfile, setResourceUserProfile] = useState(null);
+  const [saveFormLoading, setSaveFormLoading] = useState(false);
   const [uiSchema, setUiSchema] = useState({});
   const { notify } = useNotification();
+  const theme = useTheme();
 
   const classes = useStyles();
   const formatDate = (date) => {
@@ -53,7 +68,7 @@ const InfoModal = (props) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(getSharableCommonHostAndprotocolLink(selectedResource));
+    // navigator.clipboard.writeText(getSharableCommonHostAndprotocolLink(selectedResource));
     enqueueSnackbar(`Link to "${selectedResource.name}" is copied to clipboard`, {
       variant: 'info',
       autoHideDuration: 2000,
@@ -62,6 +77,7 @@ const InfoModal = (props) => {
 
   const handleSubmit = () => {
     if (formRef.current && formRef.current.validateForm()) {
+      setSaveFormLoading(true);
       let body = null;
       if (dataName === PATTERN_PLURAL) {
         body = {
@@ -73,6 +89,7 @@ const InfoModal = (props) => {
           }),
         };
       } else if (dataName === FILTER_PLURAL) {
+        setSaveFormLoading(true);
         body = {
           body: JSON.stringify({
             filter_data: {
@@ -84,18 +101,16 @@ const InfoModal = (props) => {
       }
 
       axios
-        .post(dataName === PATTERN_PLURAL ? PATTERN_ENDPOINT : FILTER_ENDPOINT, body, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        })
+        .post(dataName === PATTERN_PLURAL ? PATTERN_ENDPOINT : FILTER_ENDPOINT, body)
         .then(() => {
+          setSaveFormLoading(false);
           notify({
             message: `${selectedResource.name} data saved successfully`,
             event_type: EVENT_TYPES.SUCCESS,
           });
         })
         .catch((error) => {
+          setSaveFormLoading(false);
           const errorMessage = error.response?.data?.message || error.message;
 
           notify({
@@ -121,41 +136,30 @@ const InfoModal = (props) => {
   }, [selectedResource?.catalog_data]);
 
   useEffect(() => {
-    const newUiSchema = { ...formSchema.uiSchema };
+    if (formSchema) {
+      const newUiSchema = { ...formSchema.uiSchema };
 
-    newUiSchema['ui:readonly'] = userProfile?.id !== selectedResource?.user_id;
+      newUiSchema['ui:readonly'] = currentUserID !== resourceOwnerID;
 
-    setUiSchema(newUiSchema);
-  }, [userProfile, selectedResource]);
-
-  const modifyRJSFSchema = (schema, propertyPath, newValue) => {
-    const clonedSchema = _.cloneDeep(schema);
-    _.set(clonedSchema, propertyPath, newValue);
-    return clonedSchema;
-  };
+      setUiSchema(newUiSchema);
+    }
+  }, [resourceOwnerID, formSchema, currentUserID]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(`${RJSF_SCHEMAS}/publish`);
-        const reponseData = await getMeshModels();
-        const userProfile = await getUserProfile();
-        const modelNames = _.uniq(reponseData.data.models?.map((model) => model.displayName));
-
-        const modifiedSchema = modifyRJSFSchema(
-          response.data.rjsfSchema,
-          'properties.compatibility.items.enum',
-          modelNames,
-        );
-
-        setFormSchema({ rjsfSchema: modifiedSchema, uiSchema: response.data.uiSchema });
-        setUserProfile(userProfile.data);
-      } catch (error) {
-        console.error('Error fetching schema:', error);
-      }
-    };
-
-    fetchData();
+    dataFetch(
+      `/api/user/profile/${resourceOwnerID}`,
+      {
+        method: 'GET',
+        credentials: 'include',
+      },
+      async (response) => {
+        try {
+          setResourceUserProfile(response);
+        } catch (error) {
+          console.error('Error fetching user profile with id in info modal:', error);
+        }
+      },
+    );
   }, []);
 
   const renderIcon = () => {
@@ -163,10 +167,10 @@ const InfoModal = (props) => {
       return <PatternIcon style={{ ...iconSmall }} fill="#FFF" />;
     }
     if (dataName === APPLICATION_PLURAL) {
-      return <ApplicationIcon style={{ ...iconSmall }} fill="#FFF" />;
+      return <Application style={{ ...iconSmall }} fill="#FFF" />;
     }
     if (dataName === FILTER_PLURAL) {
-      return <FilterIcon style={{ ...iconSmall }} fill="#FFF" />;
+      return <Filter style={{ ...iconSmall }} fill="#FFF" />;
     }
   };
 
@@ -221,10 +225,27 @@ const InfoModal = (props) => {
                 <Grid item xs={dataName === APPLICATION_PLURAL ? 12 : 6}>
                   <Typography gutterBottom variant="subtitle1" className={classes.text}>
                     <span style={{ fontWeight: 'bold', paddingRight: '0.2rem' }}>Owner:</span>
-                    <Tooltip title={`Owner: ${designOwnerName}`}>
+                    <Tooltip
+                      title={`Owner: ${
+                        resourceUserProfile?.first_name + ' ' + resourceUserProfile?.last_name
+                      }`}
+                    >
                       <Chip
-                        avatar={<Avatar src={ownerAvatar} className={classes.chipIcon} />}
-                        label={designOwnerName}
+                        avatar={
+                          <Avatar
+                            src={resourceUserProfile?.avatar_url}
+                            className={classes.chipIcon}
+                          />
+                        }
+                        label={
+                          resourceUserProfile ? (
+                            resourceUserProfile?.first_name + ' ' + resourceUserProfile?.last_name
+                          ) : (
+                            <Box sx={{ display: 'flex' }}>
+                              <CircularProgress color="inherit" size="1rem" />
+                            </Box>
+                          )
+                        }
                         variant="outlined"
                         data-cy="chipDesignDetails"
                         className={classes.chip}
@@ -249,7 +270,7 @@ const InfoModal = (props) => {
                     />
                   </Typography>
                 </Grid>
-                {dataName === APPLICATION_PLURAL ? null : (
+                {dataName === APPLICATION_PLURAL && formSchema ? null : (
                   <Grid item className={classes.rjsfInfoModalForm}>
                     <RJSFWrapper
                       formData={formState}
@@ -301,15 +322,21 @@ const InfoModal = (props) => {
           <Button variant="outlined" onClick={handleCopy} className={classes.copyButton}>
             Copy Link
           </Button>
-          {userProfile?.id === selectedResource?.user_id ? (
+          {currentUserID === resourceOwnerID ? (
             <Button
               variant="contained"
               color="primary"
               className={classes.submitButton}
               onClick={handleSubmit}
-              disabled={isCatalogDataEqual}
+              disabled={isCatalogDataEqual || saveFormLoading}
             >
-              Save
+              {saveFormLoading ? (
+                <Box sx={{ display: 'flex' }}>
+                  <CircularProgress color="inherit" size="1.4rem" />
+                </Box>
+              ) : (
+                'Save'
+              )}
             </Button>
           ) : null}
           {dataName === PATTERN_PLURAL && (
