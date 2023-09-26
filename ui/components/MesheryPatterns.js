@@ -66,6 +66,8 @@ import CustomColumnVisibilityControl from '../utils/custom-column';
 import ResponsiveDataTable from '../utils/data-table';
 import useStyles from '../assets/styles/general/tool.styles';
 import { Edit as EditIcon } from '@material-ui/icons';
+import InfoModal from './Modals/Information/InfoModal';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 
 const styles = (theme) => ({
   grid: {
@@ -321,6 +323,11 @@ function MesheryPatterns({
 
   const [canPublishPattern, setCanPublishPattern] = useState(false);
   const [publishSchema, setPublishSchema] = useState({});
+  const [infoModal, setInfoModal] = useState({
+    open: false,
+    ownerID: '',
+    selectedResource: {},
+  });
 
   const [viewType, setViewType] = useState('grid');
   const { notify } = useNotification();
@@ -668,6 +675,20 @@ function MesheryPatterns({
   const handleUploadImportClose = () => {
     setImportModal({
       open: false,
+    });
+  };
+
+  const handleInfoModalClose = () => {
+    setInfoModal({
+      open: false,
+    });
+  };
+
+  const handleInfoModal = (pattern) => {
+    setInfoModal({
+      open: true,
+      ownerID: pattern.user_id,
+      selectedResource: pattern,
     });
   };
 
@@ -1169,6 +1190,10 @@ function MesheryPatterns({
                 <GetAppIcon data-cy="download-button" />
               </TooltipIcon>
 
+              <TooltipIcon title="Design Information" onClick={() => handleInfoModal(rowData)}>
+                <InfoOutlinedIcon data-cy="information-button" />
+              </TooltipIcon>
+
               {canPublishPattern && visibility !== VISIBILITY.PUBLISHED ? (
                 <TooltipIcon
                   placement="bottom"
@@ -1523,6 +1548,7 @@ function MesheryPatterns({
             setPublishModal={setPublishModal}
             publishSchema={publishSchema}
             user={user}
+            handleInfoModal={handleInfoModal}
           />
         )}
         <ConfirmationModal
@@ -1574,6 +1600,17 @@ function MesheryPatterns({
               />
             }
             submitBtnIcon={<PublishIcon className={classes.addIcon} data-cy="import-button" />}
+          />
+        )}
+        {infoModal.open && (
+          <InfoModal
+            infoModalOpen={true}
+            handleInfoModalClose={handleInfoModalClose}
+            dataName="pattern"
+            selectedResource={infoModal.selectedResource}
+            resourceOwnerID={infoModal.ownerID}
+            currentUserID={user?.id}
+            formSchema={publishSchema}
           />
         )}
         <PromptComponent ref={modalRef} />
