@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { toggleDrawer } from "../lib/store";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import React, { useEffect, useState } from 'react';
+import { toggleDrawer } from '../lib/store';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 // import { CircularProgress, Typography } from "@material-ui/core";
-import normalizeURI from "../utils/normalizeURI";
-import dataFetch from "../lib/data-fetch";
-import ExtensionPointSchemaValidator from "../utils/ExtensionPointSchemaValidator";
-import LoadingScreen from "./LoadingComponents/LoadingComponent";
-import { updateCollaboratorExtState } from "../lib/store";
+import normalizeURI from '../utils/normalizeURI';
+import dataFetch from '../lib/data-fetch';
+import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
+import LoadingScreen from './LoadingComponents/LoadingComponent';
 
 /**
  * getPath returns the current pathname
@@ -26,21 +25,21 @@ function getPath() {
  */
 export function getCapabilities(type, cb) {
   dataFetch(
-    "/api/provider/capabilities",
+    '/api/provider/capabilities',
     {
-      method : "GET",
-      credentials : "include",
+      method: 'GET',
+      credentials: 'include',
     },
     (result) => {
-      if (typeof result !== "undefined") {
+      if (typeof result !== 'undefined') {
         cb(ExtensionPointSchemaValidator(type)(result?.extensions[type]));
       }
     },
     (err) => {
-      console.group("extension error");
+      console.group('extension error');
       console.error(err);
       console.groupEnd();
-    }
+    },
   );
 }
 
@@ -52,32 +51,32 @@ export function getCapabilities(type, cb) {
 export function getFullPageExtensions(cb) {
   let extNames = [];
   dataFetch(
-    "/api/provider/capabilities",
+    '/api/provider/capabilities',
     {
-      method : "GET",
-      credentials : "include",
+      method: 'GET',
+      credentials: 'include',
     },
     (result) => {
       for (var key of Object.keys(result?.extensions)) {
         if (Array.isArray(result?.extensions[key])) {
           result?.extensions[key].forEach((comp) => {
-            if (comp?.type === "full_page") {
+            if (comp?.type === 'full_page') {
               let ext = {
-                name : key,
-                uri : comp?.href?.uri
-              }
-              extNames.push(ext)
+                name: key,
+                uri: comp?.href?.uri,
+              };
+              extNames.push(ext);
             }
-          })
+          });
         }
       }
-      cb(extNames)
+      cb(extNames);
     },
     (err) => {
-      console.group("extension error");
+      console.group('extension error');
       console.error(err);
       console.groupEnd();
-    }
+    },
   );
 }
 
@@ -95,7 +94,7 @@ function getComponentURIFromPathForNavigator(extensions, path) {
 
   if (Array.isArray(extensions)) {
     const fext = extensions.find((item) => item?.href === path);
-    if (fext) return fext.component || "";
+    if (fext) return fext.component || '';
 
     // If not found then start searching in the child of each extension
     for (const ext of extensions) {
@@ -104,7 +103,7 @@ function getComponentURIFromPathForNavigator(extensions, path) {
     }
   }
 
-  return "";
+  return '';
 }
 
 /**
@@ -121,7 +120,7 @@ export function getComponentTitleFromPathForNavigator(extensions, path) {
 
   if (Array.isArray(extensions)) {
     const fext = extensions.find((item) => item?.href === path);
-    if (fext) return fext.title || "";
+    if (fext) return fext.title || '';
 
     // If not found then start searching in the child of each extension
     for (const ext of extensions) {
@@ -130,7 +129,7 @@ export function getComponentTitleFromPathForNavigator(extensions, path) {
     }
   }
 
-  return "";
+  return '';
 }
 
 /**
@@ -147,7 +146,7 @@ function getComponentURIFromPathForAccount(extensions, path) {
 
   if (Array.isArray(extensions)) {
     const fext = extensions.find((item) => item?.href === path);
-    if (fext) return fext.component || "";
+    if (fext) return fext.component || '';
 
     // If not found then start searching in the child of each extension
     for (const ext of extensions) {
@@ -156,7 +155,7 @@ function getComponentURIFromPathForAccount(extensions, path) {
     }
   }
 
-  return "";
+  return '';
 }
 
 /**
@@ -173,7 +172,7 @@ export function getComponentTitleFromPathForAccount(extensions, path) {
 
   if (Array.isArray(extensions)) {
     const fext = extensions.find((item) => item?.href === path);
-    if (fext) return fext.title || "";
+    if (fext) return fext.title || '';
 
     // If not found then start searching in the child of each extension
     for (const ext of extensions) {
@@ -182,7 +181,7 @@ export function getComponentTitleFromPathForAccount(extensions, path) {
     }
   }
 
-  return "";
+  return '';
 }
 
 /**
@@ -199,7 +198,7 @@ function getComponentURIFromPath(extensions, path) {
 
   if (Array.isArray(extensions)) {
     const fext = extensions.find((item) => item?.href === path);
-    if (fext) return fext.component || "";
+    if (fext) return fext.component || '';
 
     // If not found then start searching in the child of each extension
     for (const ext of extensions) {
@@ -208,7 +207,7 @@ function getComponentURIFromPath(extensions, path) {
     }
   }
 
-  return "";
+  return '';
 }
 
 /**
@@ -225,7 +224,7 @@ export function getComponentTitleFromPath(extensions, path) {
 
   if (Array.isArray(extensions)) {
     const fext = extensions.find((item) => item?.href === path);
-    if (fext) return fext.title || "";
+    if (fext) return fext.title || '';
 
     // If not found then start searching in the child of each extension
     for (const ext of extensions) {
@@ -234,9 +233,8 @@ export function getComponentTitleFromPath(extensions, path) {
     }
   }
 
-  return "";
+  return '';
 }
-
 
 /**
  * getComponentIsBetaFromPath takes in the extensions and the current
@@ -251,7 +249,7 @@ export function getComponentIsBetaFromPath(extensions, path) {
 
   if (Array.isArray(extensions)) {
     const extension = extensions.find((item) => item?.href === path);
-    if (extension) return extension.isBeta ?? false
+    if (extension) return extension.isBeta ?? false;
   }
 
   return false;
@@ -264,12 +262,11 @@ export function getComponentIsBetaFromPath(extensions, path) {
  * @returns {string[]}
  */
 function getComponentURIFromPathForUserPrefs(extensions) {
-
   if (Array.isArray(extensions)) {
-    return extensions.map(ext => ext.component)
+    return extensions.map((ext) => ext.component);
   }
 
-  return []
+  return [];
 }
 
 /**
@@ -279,12 +276,11 @@ function getComponentURIFromPathForUserPrefs(extensions) {
  * @returns {string[]}
  */
 function getComponentURIFromPathForCollaborator(extensions) {
-
   if (Array.isArray(extensions)) {
-    return extensions.map(ext => ext.component)
+    return extensions.map((ext) => ext.component);
   }
 
-  return []
+  return [];
 }
 
 /**
@@ -296,7 +292,7 @@ function getComponentURIFromPathForCollaborator(extensions) {
  * @returns {string} url
  */
 function createPathForRemoteComponent(componentName) {
-  let prefix = "/api/provider/extension";
+  let prefix = '/api/provider/extension';
   return prefix + normalizeURI(componentName);
 }
 
@@ -311,97 +307,82 @@ function createPathForRemoteComponent(componentName) {
  *  4. collaborator - for collaborator extension
  * @param {{ type: "navigator" | "user_prefs" | "account" | "collaborator", Extension: JSX.Element }} props
  */
-function ExtensionSandbox ({ type, Extension, isDrawerCollapsed, toggleDrawer, capabilitiesRegistry, updateCollaboratorExtState }) {
-  const [extension, setExtension] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+const ExtensionSandbox = React.memo(
+  function MemoizedExtensionSandbox({
+    type,
+    Extension,
+    isDrawerCollapsed,
+    toggleDrawer,
+    capabilitiesRegistry,
+  }) {
+    const [extension, setExtension] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-
-  useEffect(() => {
-    if (type === "navigator" && !isDrawerCollapsed) {
-      toggleDrawer({ isDrawerCollapsed : !isDrawerCollapsed });
-    }
-    if (capabilitiesRegistry) {
-      const data = ExtensionPointSchemaValidator(type)(capabilitiesRegistry?.extensions[type]);
-      if (data !== undefined) {
-        setExtension(data);
-        setIsLoading(false);
+    useEffect(() => {
+      if (type === 'navigator' && !isDrawerCollapsed) {
+        toggleDrawer({ isDrawerCollapsed: !isDrawerCollapsed });
       }
-    }
-    // necessary to cleanup states on each unmount to prevent memory leaks and unwanted clashes between extension points
-    return () => {
-      setExtension([]);
-      setIsLoading(true);
-    }
-  }, []);
-
-
-  useEffect(() => {
-    if (type === "navigator" && !isDrawerCollapsed) {
-      toggleDrawer({ isDrawerCollapsed : !isDrawerCollapsed });
-    }
-    if (capabilitiesRegistry) {
-      const data = ExtensionPointSchemaValidator(type)(capabilitiesRegistry?.extensions[type]);
-      if (data !== undefined) {
-        setExtension(data);
-        setIsLoading(false);
+      if (capabilitiesRegistry) {
+        const data = ExtensionPointSchemaValidator(type)(capabilitiesRegistry?.extensions[type]);
+        if (data !== undefined) {
+          setExtension(data);
+          setIsLoading(false);
+        }
       }
-    }
-    // necessary to cleanup states on each unmount to prevent memory leaks and unwanted clashes between extension points
-    return () => {
-      setExtension([]);
-      setIsLoading(true);
-    }
-  }, [type]);
+      // necessary to cleanup states on each unmount to prevent memory leaks and unwanted clashes between extension points
+      return () => {
+        setExtension([]);
+        setIsLoading(true);
+      };
+    }, [type]);
 
-  return (
-    <>
-      {
-        (
-          isLoading ? (
-            (type === "collaborator") ? (
-              ''
-            ) : (
-              <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
-            )
-          ) :
-            (
-              (type === "navigator")?
-                (
-                  <Extension url={createPathForRemoteComponent(getComponentURIFromPathForNavigator(extension, getPath()))} />
-                )
-                : (type === "user_prefs")?
-                  (
-                    getComponentURIFromPathForUserPrefs(extension).map(uri => {
-                      return <Extension url={createPathForRemoteComponent(uri)} key={uri} />
-                    })
-                  )
-                  : (type === "collaborator")?
-                    (
-                      getComponentURIFromPathForCollaborator(extension).map(uri => {
-                        updateCollaboratorExtState({ collaboratorExtState : true });
-                        return <Extension url={createPathForRemoteComponent(uri)} key={uri} />
-                      })
-                    )
-                    : (type === "account")?
-                      (
-                        <Extension url={createPathForRemoteComponent(getComponentURIFromPathForAccount(extension, getPath()))} />
-                      )
-                      : null
-            )
-        )
-      }
-    </>
-  )
-}
+    return (
+      <>
+        {isLoading ? (
+          type === 'collaborator' ? (
+            ''
+          ) : (
+            <LoadingScreen
+              animatedIcon="AnimatedMeshery"
+              message="Establishing Remote Connection"
+            />
+          )
+        ) : type === 'navigator' ? (
+          <Extension
+            url={createPathForRemoteComponent(
+              getComponentURIFromPathForNavigator(extension, getPath()),
+            )}
+          />
+        ) : type === 'user_prefs' ? (
+          getComponentURIFromPathForUserPrefs(extension).map((uri) => {
+            return <Extension url={createPathForRemoteComponent(uri)} key={uri} />;
+          })
+        ) : type === 'collaborator' ? (
+          getComponentURIFromPathForCollaborator(extension).map((uri) => {
+            return <Extension url={createPathForRemoteComponent(uri)} key={uri} />;
+          })
+        ) : type === 'account' ? (
+          <Extension
+            url={createPathForRemoteComponent(
+              getComponentURIFromPathForAccount(extension, getPath()),
+            )}
+          />
+        ) : null}
+      </>
+    );
+  },
+  (prevProps, nextProps) => {
+    return prevProps.type === nextProps.type;
+  },
+);
 
 const mapDispatchToProps = (dispatch) => ({
-  toggleDrawer : bindActionCreators(toggleDrawer, dispatch),
-  updateCollaboratorExtState : bindActionCreators(updateCollaboratorExtState, dispatch),
+  toggleDrawer: bindActionCreators(toggleDrawer, dispatch),
 });
 
 const mapStateToProps = (state) => ({
-  isDrawerCollapsed : state.get("isDrawerCollapsed"),
-  capabilitiesRegistry : state.get("capabilitiesRegistry"),
+  isDrawerCollapsed: state.get('isDrawerCollapsed'),
+  capabilitiesRegistry: state.get('capabilitiesRegistry'),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ExtensionSandbox);
