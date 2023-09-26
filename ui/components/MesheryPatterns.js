@@ -1606,7 +1606,7 @@ function MesheryPatterns({
           <InfoModal
             infoModalOpen={true}
             handleInfoModalClose={handleInfoModalClose}
-            dataName="pattern"
+            dataName="patterns"
             selectedResource={infoModal.selectedResource}
             resourceOwnerID={infoModal.ownerID}
             currentUserID={user?.id}

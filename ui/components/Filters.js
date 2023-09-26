@@ -1321,7 +1321,7 @@ function MesheryFilters({
           <InfoModal
             infoModalOpen={true}
             handleInfoModalClose={handleInfoModalClose}
-            dataName="pattern"
+            dataName="filters"
             selectedResource={infoModal.selectedResource}
             resourceOwnerID={infoModal.ownerID}
             currentUserID={user?.id}
