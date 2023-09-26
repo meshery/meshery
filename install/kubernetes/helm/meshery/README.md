@@ -16,10 +16,10 @@ Meshery chart for deploying Meshery
 |-----|------|---------|-------------|
 | affinity | object | `{}` |  |
 | annotations | object | `{}` |  |
-| env.ADAPTER_URLS | string | `"meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-kuma:10007 meshery-osm:10009 meshery-nginx-sm:10010 meshery-nsm:10004 meshery-app-mesh:10005 meshery-traefik-mesh:10006 meshery-cilium:10012"` |  |
+| env.ADAPTER_URLS | string | `"meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-kuma:10007 meshery-nginx-sm:10010 meshery-nsm:10004 meshery-app-mesh:10005 meshery-traefik-mesh:10006 meshery-cilium:10012"` | Optional, Meshery Server adapters with which to pre-configure Meshery Server. |
 | env.EVENT | string | `"mesheryLocal"` |  |
-| env.PROVIDER | string | `""` |  |
-| env.MESHERY_SERVER_CALLBACK_URL | string | `""` | The OAuth callback URL to use when Meshery Server is not directly exposed. Refer [docs](https://docs.meshery.io/extensibility/providers#configurable-oauth-callback-url) for more details. |
+| env.PROVIDER | string | `"Local"` | Use this security-related setting to enforce selection of one and only one Provider. In this way, your Meshery deployment will only trust and only allow users to authenticate using the Provider you have configured in this setting.  |
+| env.MESHERY_SERVER_CALLBACK_URL | string | `""` | Configure an OAuth callback URL for Meshery Server to use when signing into a Remote Provider and your Meshery Server instance is not directly reachable by that Remote Provider. See the [Remote Provider documentation](https://docs.meshery.io/extensibility/providers#configurable-oauth-callback-url) for more details. |
 | env.PROVIDER_BASE_URLS | string | `"https://meshery.layer5.io"` |  |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"Always"` |  |
