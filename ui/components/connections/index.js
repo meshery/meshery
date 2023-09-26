@@ -521,7 +521,6 @@ function Connections({
           }
           if (order !== sortOrder) {
             setSortOrder(order)
-            getConnections(page, pageSize, search, order);
           }
           break;
         case "search":
@@ -612,7 +611,7 @@ function Connections({
    */
   useEffect(() => {
     getConnections(page, pageSize, search, sortOrder);
-  }, [page, pageSize, search]);
+  }, [page, pageSize, search, sortOrder]);
 
   const getConnections = (page, pageSize, search, sortOrder) => {
     if (!search) search = "";
