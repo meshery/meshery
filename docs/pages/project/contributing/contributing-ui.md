@@ -24,7 +24,7 @@ The following is a list of top-level frameworks, libraries, design system used i
 
 ## Meshery Server APIs
 
-The [API overview](https://docs.meshery.io/extensibility/api) in the Extensibility guide offers high-level insight, while each API reference (below) offers details pertainting to each API endpoints' behavior and use.
+The [API overview](https://docs.meshery.io/extensibility/api) in the Extensibility guide offers high-level insight, while each API reference (below) offers details pertaining to each API endpoints' behavior and use.
 
 ### REST API
 Meshery provides a REST API available through the default port of `9081/tcp` at `<hostname>:<port>/api/`. See the [REST API Reference](https://docs.meshery.io/reference/rest-apis) for a complete list of endpoints available with short description of their purpose and example code.
@@ -60,8 +60,8 @@ We recommend using Node 18 LTS. Meshery UI's build script supports other Node ve
 
 When contributing to Meshery UI, it is advisable to:
 
-  - Use [eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) plugin for Visual Studio Code.
-  - Disable plugins other than `eslint` for formatting and linting, if any.
+  - Use [prettier](https://marketplace.visualstudio.com/items?itemName=SimonSiefke.prettier-vscode) and [eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) plugin for Visual Studio Code.
+  - Disable plugins other than `prettier` and `eslint` for formatting and linting, if any.
 
 ### Install UI dependencies
 
