@@ -586,7 +586,6 @@ class Header extends React.PureComponent {
       onDrawerCollapse,
       capabilityregistryObj,
     } = this.props;
-    console.log('rendering header');
     const loaderType = 'circular';
     return (
       <NoSsr>
