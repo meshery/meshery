@@ -6,8 +6,14 @@ describe('User Preferences', () => {
       cy.selectProviderNone();
 
       cy.visit('/user/preferences');
-      cy.get(':nth-child(1) > .MuiFormControl-root > .MuiFormLabel-root').should('have.text', 'Extensions');
-      cy.get(':nth-child(2) > .MuiFormControl-root > .MuiFormLabel-root').should('have.text', 'Analytics and Improvement Program');
+      cy.get(':nth-child(1) > .MuiFormControl-root > .MuiFormLabel-root').should(
+        'have.text',
+        'Extensions',
+      );
+      cy.get(':nth-child(2) > .MuiFormControl-root > .MuiFormLabel-root').should(
+        'have.text',
+        'Analytics and Improvement Program',
+      );
       cy.wait('@getUserStats');
     });
 
@@ -23,45 +29,48 @@ describe('User Preferences', () => {
         cy.get('[data-cy="CatalogContentPreference"]').click();
         cy.wait('@postUserStatsForExtensions');
       });
-
-    })
+    });
 
     context('Analytics and Improvement Program', () => {
-      it.skip('deactivates "Send Anonymous Usage Statistics"', { retries: { runMode: 3 } } , () => {
+      it.skip('deactivates "Send Anonymous Usage Statistics"', { retries: { runMode: 3 } }, () => {
         cy.intercept('POST', '/api/user/prefs?contexts=all').as('postUserStats');
 
         cy.get('[data-cy="UsageStatsPreference"]').click();
         cy.wait('@postUserStats', { timeout: 60_000 });
-        cy.wait(2000)
+        cy.wait(2000);
         cy.get('[data-cy="UsageStatsPreference"]').should('not.have.class', 'Mui-checked');
       });
 
-      it.skip('activates "Send Anonymous Usage Statistics"', { retries: { runMode: 3 } } , () => {
+      it.skip('activates "Send Anonymous Usage Statistics"', { retries: { runMode: 3 } }, () => {
         cy.intercept('POST', '/api/user/prefs?contexts=all').as('postUserStats');
 
         cy.get('[data-cy="UsageStatsPreference"]').click();
         cy.wait('@postUserStats', { timeout: 60_000 });
-        cy.wait(2000)
+        cy.wait(2000);
         cy.get('[data-cy="UsageStatsPreference"]').should('have.class', 'Mui-checked');
       });
 
-      it.skip('deactivates "Send Anonymous Performance Results"', { retries: { runMode: 3 } } , () => {
+      it.skip(
+        'deactivates "Send Anonymous Performance Results"',
+        { retries: { runMode: 3 } },
+        () => {
+          cy.intercept('POST', '/api/user/prefs?contexts=all').as('postUserStats');
+
+          cy.get('[data-cy="PerfResultPreference"]').click();
+          cy.wait('@postUserStats', { timeout: 60_000 });
+          cy.wait(2000);
+          cy.get('[data-cy="PerfResultPreference"]').should('not.have.class', 'Mui-checked');
+        },
+      );
+
+      it.skip('activates "Send Anonymous Performance Results"', { retries: { runMode: 3 } }, () => {
         cy.intercept('POST', '/api/user/prefs?contexts=all').as('postUserStats');
 
         cy.get('[data-cy="PerfResultPreference"]').click();
         cy.wait('@postUserStats', { timeout: 60_000 });
-        cy.wait(2000)
-        cy.get('[data-cy="PerfResultPreference"]').should('not.have.class', 'Mui-checked');
-      });
-
-      it.skip('activates "Send Anonymous Performance Results"', { retries: { runMode: 3 } } , () => {
-        cy.intercept('POST', '/api/user/prefs?contexts=all').as('postUserStats');
-
-        cy.get('[data-cy="PerfResultPreference"]').click();
-        cy.wait('@postUserStats', { timeout: 60_000 });
-        cy.wait(2000)
+        cy.wait(2000);
         cy.get('[data-cy="PerfResultPreference"]').should('have.class', 'Mui-checked');
       });
-    })
+    });
   });
 });

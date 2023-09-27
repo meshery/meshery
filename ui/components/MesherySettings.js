@@ -3,154 +3,157 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withRouter } from 'next/router';
 import { connect } from 'react-redux';
-import { bindActionCreators } from "redux";
+import { bindActionCreators } from 'redux';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import {
-  AppBar, Paper, Tooltip, Typography
-} from '@material-ui/core';
+import { AppBar, Paper, Tooltip, Typography } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faCloud, faPoll, faDatabase, faFileInvoice } from '@fortawesome/free-solid-svg-icons';
+import {
+  faArrowLeft,
+  faCloud,
+  faPoll,
+  faDatabase,
+  faFileInvoice,
+} from '@fortawesome/free-solid-svg-icons';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import Link from 'next/link';
 import MeshConfigComponent from './MeshConfigComponent';
 import GrafanaComponent from './telemetry/grafana/GrafanaComponent';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
 import PrometheusComponent from './telemetry/prometheus/PrometheusComponent';
-import { updateProgress } from "../lib/store";
+import { updateProgress } from '../lib/store';
 import PromptComponent from './PromptComponent';
 import { iconMedium } from '../css/icons.styles';
 import MeshModelComponent from './MeshModelComponent';
 import CredentialIcon from '../assets/icons/CredentialIcon';
 import MesheryCredentialComponent from './MesheryCredentialComponent';
 import DatabaseSummary from './DatabaseSummary';
-import { getComponentsDetail, getModelsDetail, getRelationshipsDetail } from '../api/meshmodel'
+import { getComponentsDetail, getModelsDetail, getRelationshipsDetail } from '../api/meshmodel';
 import { withNotify } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 
-
 const styles = (theme) => ({
-  wrapperClss : {
-    flexGrow : 1,
-    maxWidth : '100%',
-    height : 'auto',
+  wrapperClss: {
+    flexGrow: 1,
+    maxWidth: '100%',
+    height: 'auto',
   },
-  tab : {
-    minWidth : 40,
-    paddingLeft : 0,
-    paddingRight : 0,
-    "&.Mui-selected" : {
-      color : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
+  tab: {
+    minWidth: 40,
+    paddingLeft: 0,
+    paddingRight: 0,
+    '&.Mui-selected': {
+      color: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
     },
   },
-  tabs : {
-    "& .MuiTabs-indicator" : {
-      backgroundColor : theme.palette.type === 'dark' ? "#00B39F" : theme.palette.primary,
+  tabs: {
+    '& .MuiTabs-indicator': {
+      backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
     },
   },
-  icon : {
-    display : 'inline',
-    verticalAlign : 'text-top',
-    width : theme.spacing(1.75),
-    marginLeft : theme.spacing(0.5),
+  icon: {
+    display: 'inline',
+    verticalAlign: 'text-top',
+    width: theme.spacing(1.75),
+    marginLeft: theme.spacing(0.5),
   },
 
-  iconText : {
-    display : 'inline',
-    verticalAlign : 'middle',
+  iconText: {
+    display: 'inline',
+    verticalAlign: 'middle',
   },
-  backToPlay : { margin : theme.spacing(2), },
-  link : { cursor : 'pointer', },
-  container : {
-    display : "flex",
-    justifyContent : "center",
-    marginTop : theme.spacing(2),
+  backToPlay: { margin: theme.spacing(2) },
+  link: { cursor: 'pointer' },
+  container: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: theme.spacing(2),
   },
-  paper : {
-    maxWidth : '90%',
-    margin : 'auto',
-    overflow : 'hidden',
+  paper: {
+    maxWidth: '90%',
+    margin: 'auto',
+    overflow: 'hidden',
   },
-  topToolbar : {
-    marginBottom : "2rem",
-    display : "flex",
-    justifyContent : "space-between",
-    paddingLeft : "1rem",
-    maxWidth : "90%"
+  topToolbar: {
+    marginBottom: '2rem',
+    display: 'flex',
+    justifyContent: 'space-between',
+    paddingLeft: '1rem',
+    maxWidth: '90%',
   },
-  dashboardSection : {
-    backgroundColor : theme.palette.secondary.elevatedComponents,
-    padding : theme.spacing(2),
-    borderRadius : 4,
-    height : "100%",
+  dashboardSection: {
+    backgroundColor: theme.palette.secondary.elevatedComponents,
+    padding: theme.spacing(2),
+    borderRadius: 4,
+    height: '100%',
   },
-  cardHeader : { fontSize : theme.spacing(2), },
-  card : {
-    height : "100%",
-    marginTop : theme.spacing(2),
+  cardHeader: { fontSize: theme.spacing(2) },
+  card: {
+    height: '100%',
+    marginTop: theme.spacing(2),
   },
-  cardContent : { height : "100%", },
-  boxWrapper : {
-    display : "flex",
-    justifyContent : "center",
-    alignItems : "end",
-    flexDirection : "row",
-    flexWrap : "wrap",
-    height : "60vh",
-    borderRadius : 0,
-    color : 'white',
-    ["@media (max-width: 455px)"] : {
-      width : "100%"
+  cardContent: { height: '100%' },
+  boxWrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'end',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    height: '60vh',
+    borderRadius: 0,
+    color: 'white',
+    ['@media (max-width: 455px)']: {
+      width: '100%',
     },
-    zIndex : 5
+    zIndex: 5,
   },
-  box : {
-    display : "flex",
-    justifyContent : "center",
-    alignItems : "center",
-    flexDirection : "column",
-    width : 300,
-    height : 300,
-    backgroundColor : theme.palette.secondary.dark,
-    border : '0px solid #000',
-    boxShadow : theme.shadows[5],
-    margin : theme.spacing(2),
-    cursor : 'pointer',
-  }
+  box: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+    width: 300,
+    height: 300,
+    backgroundColor: theme.palette.secondary.dark,
+    border: '0px solid #000',
+    boxShadow: theme.shadows[5],
+    margin: theme.spacing(2),
+    cursor: 'pointer',
+  },
 });
 
 function TabContainer(props) {
   return (
-    <Typography
-      component="div"
-      style={{ paddingTop : 2, }}
-    >
+    <Typography component="div" style={{ paddingTop: 2 }}>
       {props.children}
     </Typography>
   );
 }
 
-TabContainer.propTypes = { children : PropTypes.node.isRequired, };
-
+TabContainer.propTypes = { children: PropTypes.node.isRequired };
 
 //TODO: Tabs are hardcoded everywhere
 class MesherySettings extends React.Component {
   constructor(props) {
     super(props);
     const {
-      k8sconfig, meshAdapters, grafana, prometheus, router : { asPath }
+      k8sconfig,
+      meshAdapters,
+      grafana,
+      prometheus,
+      router: { asPath },
     } = props;
 
     this._isMounted = false;
 
     //TODO: Extract this logic and clean it
-    let tabVal = 0, subTabVal = 0;
+    let tabVal = 0,
+      subTabVal = 0;
     const splittedPath = asPath.split('#');
     if (splittedPath.length >= 2 && splittedPath[1]) {
       const subTabPath = splittedPath[1].split('/');
 
       switch (subTabPath[0]) {
-
         case 'environment':
           tabVal = 0;
           break;
@@ -162,10 +165,10 @@ class MesherySettings extends React.Component {
           break;
         case 'system':
           tabVal = 3;
-          break
-        case 'meshmodel-summary' :
+          break;
+        case 'meshmodel-summary':
           tabVal = 4;
-          break
+          break;
         // case 'performance':
         //   tabVal = 3;
         //   break;
@@ -188,22 +191,22 @@ class MesherySettings extends React.Component {
       }
     }
     this.state = {
-      completed : {},
+      completed: {},
       k8sconfig,
       meshAdapters,
       grafana,
       prometheus,
       tabVal,
       subTabVal,
-      modelsCount : 0,
-      componentsCount : 0,
-      relationshipsCount : 0,
-      isMeshConfigured : k8sconfig.clusterConfigured,
+      modelsCount: 0,
+      componentsCount: 0,
+      relationshipsCount: 0,
+      isMeshConfigured: k8sconfig.clusterConfigured,
 
       // Array of scanned prometheus urls
-      scannedPrometheus : [],
+      scannedPrometheus: [],
       // Array of scanned grafan urls
-      scannedGrafana : [],
+      scannedGrafana: [],
     };
 
     this.systemResetPromptRef = React.createRef();
@@ -211,23 +214,31 @@ class MesherySettings extends React.Component {
 
   static getDerivedStateFromProps(props, state) {
     let st = {};
-    if (JSON.stringify(props.k8sconfig) !== JSON.stringify(state.k8sconfig)
-      || JSON.stringify(props.meshAdapters) !== JSON.stringify(state.meshAdapters)) {
+    if (
+      JSON.stringify(props.k8sconfig) !== JSON.stringify(state.k8sconfig) ||
+      JSON.stringify(props.meshAdapters) !== JSON.stringify(state.meshAdapters)
+    ) {
       st = {
-        k8sconfig : props.k8sconfig,
-        meshAdapters : props.meshAdapters,
-        grafana : props.grafana,
-        prometheus : props.prometheus,
+        k8sconfig: props.k8sconfig,
+        meshAdapters: props.meshAdapters,
+        grafana: props.grafana,
+        prometheus: props.prometheus,
       };
     }
-    const compare = (arr1, arr2) => arr1.every((val, ind) => val === arr2[ind])
+    const compare = (arr1, arr2) => arr1.every((val, ind) => val === arr2[ind]);
 
-    if (props.telemetryUrls.grafana.length !== state.scannedGrafana.length || !(compare(props.telemetryUrls.grafana, state.scannedGrafana))) {
-      st.scannedGrafana = props.telemetryUrls.grafana
+    if (
+      props.telemetryUrls.grafana.length !== state.scannedGrafana.length ||
+      !compare(props.telemetryUrls.grafana, state.scannedGrafana)
+    ) {
+      st.scannedGrafana = props.telemetryUrls.grafana;
     }
 
-    if (props.telemetryUrls.prometheus.length !== state.scannedPrometheus.length || !(compare(props.telemetryUrls.prometheus, state.scannedPrometheus))) {
-      st.scannedPrometheus = props.telemetryUrls.prometheus
+    if (
+      props.telemetryUrls.prometheus.length !== state.scannedPrometheus.length ||
+      !compare(props.telemetryUrls.prometheus, state.scannedPrometheus)
+    ) {
+      st.scannedPrometheus = props.telemetryUrls.prometheus;
     }
     return st;
   }
@@ -245,90 +256,78 @@ class MesherySettings extends React.Component {
       this.setState({
         modelsCount,
         componentsCount,
-        relationshipsCount
+        relationshipsCount,
       });
     } catch (error) {
       console.error(error);
     }
   }
 
-
   handleError = (msg) => (error) => {
-    this.props.updateProgress({ showProgress : false });
+    this.props.updateProgress({ showProgress: false });
     const notify = this.props.notify;
-    notify({ message : `${msg}: ${error}`, event_type : EVENT_TYPES.ERROR, details : error.toString() });
+    notify({
+      message: `${msg}: ${error}`,
+      event_type: EVENT_TYPES.ERROR,
+      details: error.toString(),
+    });
   };
 
   handleChange = (val) => {
-
     const self = this;
     return (event, newVal) => {
-
       if (val === 'tabVal') {
         let newRoute = this.props.router.route;
 
         switch (newVal) {
           case 0:
-            newRoute += '#environment'
+            newRoute += '#environment';
             break;
           case 1:
-            newRoute += '#service-mesh'
+            newRoute += '#service-mesh';
             break;
           case 2:
-            newRoute += '#metrics'
+            newRoute += '#metrics';
             break;
           case 3:
-            newRoute += '#system'
+            newRoute += '#system';
             break;
           case 4:
-            newRoute += '#meshmodel-summary'
+            newRoute += '#meshmodel-summary';
           // case 3:
           //   newRoute += '#performance'
           //   break;
         }
-        if (this.props.router.route != newRoute)
-          this.props.router.push(newRoute)
-        self.setState({ tabVal : newVal });
+        if (this.props.router.route != newRoute) this.props.router.push(newRoute);
+        self.setState({ tabVal: newVal });
       } else if (val === 'subTabVal') {
         let newRoute = this.props.router.route;
         switch (newVal) {
           case 0:
-            if (self.state.tabVal == 0)
-              newRoute += '#environment/outclusterconfig'
-            else if (self.state.tabVal == 2)
-              newRoute += '#metrics/grafana'
-            else if (self.state.tabVal == 4)
-              newRoute += '#metrics/models'
+            if (self.state.tabVal == 0) newRoute += '#environment/outclusterconfig';
+            else if (self.state.tabVal == 2) newRoute += '#metrics/grafana';
+            else if (self.state.tabVal == 4) newRoute += '#metrics/models';
             break;
           case 1:
-            if (self.state.tabVal == 0)
-              newRoute += '#environment/inclusterconfig'
-            else if (self.state.tabVal == 2)
-              newRoute += '#metrics/prometheus'
-            else if (self.state.tabVal == 4)
-              newRoute += '#metrics/components'
+            if (self.state.tabVal == 0) newRoute += '#environment/inclusterconfig';
+            else if (self.state.tabVal == 2) newRoute += '#metrics/prometheus';
+            else if (self.state.tabVal == 4) newRoute += '#metrics/components';
             break;
           case 2:
-            if (self.state.tabVal == 0)
-              newRoute += '#environment/inclusterconfig'
-            else if (self.state.tabVal == 2)
-              newRoute += '#metrics/prometheus'
-            else if (self.state.tabVal == 4)
-              newRoute += '#metrics/relationships'
+            if (self.state.tabVal == 0) newRoute += '#environment/inclusterconfig';
+            else if (self.state.tabVal == 2) newRoute += '#metrics/prometheus';
+            else if (self.state.tabVal == 4) newRoute += '#metrics/relationships';
             break;
         }
-        if (this.props.router.route != newRoute)
-          this.props.router.push(newRoute)
-        self.setState({ subTabVal : newVal });
+        if (this.props.router.route != newRoute) this.props.router.push(newRoute);
+        self.setState({ subTabVal: newVal });
       }
     };
-  }
+  };
 
   render() {
     const { classes } = this.props;
-    const {
-      tabVal, subTabVal, k8sconfig, meshAdapters,
-    } = this.state;
+    const { tabVal, subTabVal, k8sconfig, meshAdapters } = this.state;
 
     let backToPlay = '';
     if (k8sconfig.clusterConfigured === true && meshAdapters.length > 0) {
@@ -345,7 +344,6 @@ class MesherySettings extends React.Component {
     }
     return (
       <div className={classes.wrapperClss}>
-
         <Paper square className={classes.wrapperClss}>
           <Tabs
             value={tabVal}
@@ -358,9 +356,7 @@ class MesherySettings extends React.Component {
             <Tooltip title="Identify your cluster" placement="top">
               <Tab
                 className={classes.tab}
-                icon={
-                  <FontAwesomeIcon icon={faCloud}  style={iconMedium} />
-                }
+                icon={<FontAwesomeIcon icon={faCloud} style={iconMedium} />}
                 label="Environment"
                 data-cy="tabEnvironment"
               />
@@ -368,9 +364,7 @@ class MesherySettings extends React.Component {
             <Tooltip title="Connect Meshery Adapters" placement="top">
               <Tab
                 className={classes.tab}
-                icon={
-                  <FontAwesomeIcon icon={faMendeley}  style={iconMedium}/>
-                }
+                icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
                 label="Adapters"
                 data-cy="tabServiceMeshes"
               />
@@ -378,9 +372,7 @@ class MesherySettings extends React.Component {
             <Tooltip title="Configure Metrics backends" placement="top">
               <Tab
                 className={classes.tab}
-                icon={
-                  <FontAwesomeIcon icon={faPoll}   style={iconMedium}/>
-                }
+                icon={<FontAwesomeIcon icon={faPoll} style={iconMedium} />}
                 label="Metrics"
                 tab="tabMetrics"
               />
@@ -388,9 +380,7 @@ class MesherySettings extends React.Component {
             <Tooltip title="Reset System" placement="top">
               <Tab
                 className={classes.tab}
-                icon={
-                  <FontAwesomeIcon icon={faDatabase}  style={iconMedium} />
-                }
+                icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
                 label="Reset"
                 tab="systemReset"
               />
@@ -398,9 +388,7 @@ class MesherySettings extends React.Component {
             <Tooltip title="MeshModel Summary" placement="top">
               <Tab
                 className={classes.tab}
-                icon={
-                  <FontAwesomeIcon icon={faFileInvoice}  style={iconMedium} />
-                }
+                icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
                 label="MeshModel Summary"
                 tab="meshmodelSummary"
               />
@@ -408,9 +396,7 @@ class MesherySettings extends React.Component {
             <Tooltip title="Credential" placement="top">
               <Tab
                 className={classes.tab}
-                icon={
-                  <CredentialIcon width="1.5rem" />
-                }
+                icon={<CredentialIcon width="1.5rem" />}
                 label="Credentials"
                 tab="credential"
               />
@@ -430,60 +416,70 @@ class MesherySettings extends React.Component {
               </Tooltip> */}
           </Tabs>
         </Paper>
-        {tabVal === 0 && (
-          <MeshConfigComponent/>
-        )}
+        {tabVal === 0 && <MeshConfigComponent />}
         {tabVal === 1 && (
           <TabContainer>
             <MeshAdapterConfigComponent />
           </TabContainer>
         )}
-        {tabVal === 2
-          && (
-            <TabContainer>
-              <AppBar position="static" color="default">
-                <Tabs
-                  value={subTabVal}
-                  className={classes.tabs}
-                  onChange={this.handleChange('subTabVal')}
-                  indicatorColor="primary"
-                  textColor="primary"
-                  variant="fullWidth"
-                >
-                  <Tab className={classes.tab} label={(
+        {tabVal === 2 && (
+          <TabContainer>
+            <AppBar position="static" color="default">
+              <Tabs
+                value={subTabVal}
+                className={classes.tabs}
+                onChange={this.handleChange('subTabVal')}
+                indicatorColor="primary"
+                textColor="primary"
+                variant="fullWidth"
+              >
+                <Tab
+                  className={classes.tab}
+                  label={
                     <div className={classes.iconText}>
                       Grafana
                       <img src="/static/img/grafana_icon.svg" className={classes.icon} />
                     </div>
-                  )}
-                  />
-                  <Tab className={classes.tab} label={(
+                  }
+                />
+                <Tab
+                  className={classes.tab}
+                  label={
                     <div className={classes.iconText}>
                       Prometheus
-                      <img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.icon} />
+                      <img
+                        src="/static/img/prometheus_logo_orange_circle.svg"
+                        className={classes.icon}
+                      />
                     </div>
-                  )}
-                  />
-                </Tabs>
-              </AppBar>
-              {subTabVal === 0 && (
-                <TabContainer>
-                  <GrafanaComponent scannedGrafana={this.state.scannedGrafana} isMeshConfigured={this.state.isMeshConfigured} />
-                </TabContainer>
-              )}
-              {subTabVal === 1 && (
-                <TabContainer>
-                  <PrometheusComponent scannedPrometheus={this.state.scannedPrometheus} isMeshConfigured={this.state.isMeshConfigured} />
-                </TabContainer>
-              )}
-            </TabContainer>
-          )}
+                  }
+                />
+              </Tabs>
+            </AppBar>
+            {subTabVal === 0 && (
+              <TabContainer>
+                <GrafanaComponent
+                  scannedGrafana={this.state.scannedGrafana}
+                  isMeshConfigured={this.state.isMeshConfigured}
+                />
+              </TabContainer>
+            )}
+            {subTabVal === 1 && (
+              <TabContainer>
+                <PrometheusComponent
+                  scannedPrometheus={this.state.scannedPrometheus}
+                  isMeshConfigured={this.state.isMeshConfigured}
+                />
+              </TabContainer>
+            )}
+          </TabContainer>
+        )}
         {tabVal === 3 && (
           <TabContainer>
             <DatabaseSummary promptRef={this.systemResetPromptRef} />
           </TabContainer>
         )}
-        {(tabVal === 4) && (
+        {tabVal === 4 && (
           <TabContainer>
             <TabContainer>
               <AppBar position="static" color="default">
@@ -495,29 +491,40 @@ class MesherySettings extends React.Component {
                   textColor="primary"
                   variant="fullWidth"
                 >
-                  <Tab className={classes.tab} label={(
-                    <div className={classes.iconText}>
-                      Models <span style={{ fontWeight : 'bold' }}>({this.state.modelsCount})</span>
-                    </div>
-                  )}
+                  <Tab
+                    className={classes.tab}
+                    label={
+                      <div className={classes.iconText}>
+                        Models{' '}
+                        <span style={{ fontWeight: 'bold' }}>({this.state.modelsCount})</span>
+                      </div>
+                    }
                   />
-                  <Tab className={classes.tab} label={(
-                    <div className={classes.iconText}>
-                      Components <span style={{ fontWeight : 'bold' }}>({this.state.componentsCount})</span>
-                    </div>
-                  )}
+                  <Tab
+                    className={classes.tab}
+                    label={
+                      <div className={classes.iconText}>
+                        Components{' '}
+                        <span style={{ fontWeight: 'bold' }}>({this.state.componentsCount})</span>
+                      </div>
+                    }
                   />
-                  <Tab className={classes.tab} label={(
-                    <div className={classes.iconText}>
-                      Relationships <span style={{ fontWeight : 'bold' }}>({this.state.relationshipsCount})</span>
-                    </div>
-                  )}
+                  <Tab
+                    className={classes.tab}
+                    label={
+                      <div className={classes.iconText}>
+                        Relationships{' '}
+                        <span style={{ fontWeight: 'bold' }}>
+                          ({this.state.relationshipsCount})
+                        </span>
+                      </div>
+                    }
                   />
                 </Tabs>
               </AppBar>
               {subTabVal === 0 && (
                 <TabContainer>
-                  <MeshModelComponent view="models"  />
+                  <MeshModelComponent view="models" />
                 </TabContainer>
               )}
               {subTabVal === 1 && (
@@ -527,7 +534,7 @@ class MesherySettings extends React.Component {
               )}
               {subTabVal === 2 && (
                 <TabContainer>
-                  <MeshModelComponent view="relationships"/>
+                  <MeshModelComponent view="relationships" />
                 </TabContainer>
               )}
             </TabContainer>
@@ -571,10 +578,12 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => ({ updateProgress : bindActionCreators(updateProgress, dispatch) });
+const mapDispatchToProps = (dispatch) => ({
+  updateProgress: bindActionCreators(updateProgress, dispatch),
+});
 
-MesherySettings.propTypes = { classes : PropTypes.object, };
+MesherySettings.propTypes = { classes: PropTypes.object };
 
-export default withStyles(styles, { withTheme : true })(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(withNotify(MesherySettings)))
+export default withStyles(styles, { withTheme: true })(
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(withNotify(MesherySettings))),
 );

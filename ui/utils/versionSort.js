@@ -1,5 +1,5 @@
-import { compose } from "lodash/fp";
-import { WILDCARD_V } from "./hooks/useMeshModelComponents";
+import { compose } from 'lodash/fp';
+import { WILDCARD_V } from './hooks/useMeshModelComponents';
 
 /**
  * returns the API Version that should be used and is most stable
@@ -14,10 +14,10 @@ export default function getMostRecentVersion(versionList) {
   const alphaList = [];
   const betaList = [];
 
-  versionList.forEach(apiVersion => {
+  versionList.forEach((apiVersion) => {
     const isStable = /^v[0-9]$/.test(apiVersion); // returns true if matches v1-v9
-    const isAlpha = apiVersion.includes("alpha"); // returns true if matches alpha in string
-    const isBeta = apiVersion.includes("beta"); // returns true if matches beta in string
+    const isAlpha = apiVersion.includes('alpha'); // returns true if matches alpha in string
+    const isBeta = apiVersion.includes('beta'); // returns true if matches beta in string
 
     isStable && stableList.push(apiVersion);
     isAlpha && alphaList.push(apiVersion);
@@ -44,13 +44,13 @@ export function versionSortComparatorFn(versionA, versionB) {
     return;
   }
 
-  if (versionA === WILDCARD_V || versionB === WILDCARD_V) { // wildcard support
+  if (versionA === WILDCARD_V || versionB === WILDCARD_V) {
+    // wildcard support
     return -1;
   }
 
-  const verA = versionA.split(".");
-  const verB = versionB.split(".");
-
+  const verA = versionA.split('.');
+  const verB = versionB.split('.');
 
   for (let i = 0; i < verA.length && i < verB.length; i++) {
     let vA = verA[i];
@@ -70,7 +70,7 @@ export function versionSortComparatorFn(versionA, versionB) {
 
 function removeVFromVersion(version) {
   if (!version) return;
-  if (version.startsWith("v")) {
+  if (version.startsWith('v')) {
     return version.substring(1);
   }
   return version;
@@ -84,7 +84,7 @@ function removeVFromVersion(version) {
  * @param {Array.<string>} versions
  * @returns Versions sorted in decreasing order
  */
-export const sortByVersionInDecreasingOrder = versions => {
+export const sortByVersionInDecreasingOrder = (versions) => {
   if (!versions) {
     return;
   }
@@ -92,7 +92,7 @@ export const sortByVersionInDecreasingOrder = versions => {
   // add wildcard only in the case of multiple distinct versions
   let wildCardV = [];
   if (versions.length > 1) {
-    wildCardV = [WILDCARD_V]
+    wildCardV = [WILDCARD_V];
   }
 
   return [...wildCardV, ...[...versions].sort(versionSortComparatorFn).reverse()];
@@ -114,7 +114,6 @@ export function getGreaterVersion(v1, v2) {
   return v2;
 }
 
-
 /*
     MeshModel Specific
 */
@@ -130,12 +129,10 @@ function groupModelsByVersion(models) {
   }
 
   let modelMap = {};
-  models.forEach(model => {
+  models.forEach((model) => {
     const modelMapCurr = modelMap[model.name];
     if (modelMapCurr) {
-      modelMap[model.name].version = [
-        ...new Set([...modelMapCurr.version, model.version])
-      ]; // remove duplicate entries for version
+      modelMap[model.name].version = [...new Set([...modelMapCurr.version, model.version])]; // remove duplicate entries for version
     } else {
       model.version = [model.version]; // the version is a string, to derive consistency the version is changed to array
       modelMap[model.name] = model;
@@ -146,13 +143,10 @@ function groupModelsByVersion(models) {
 }
 
 function sortVersionsInModel(models) {
-  return [...models].map(model => ({
+  return [...models].map((model) => ({
     ...model,
-    version : sortByVersionInDecreasingOrder(model.version)
+    version: sortByVersionInDecreasingOrder(model.version),
   }));
 }
 
-export const sortAndGroupVersionsInModel = compose(
-  sortVersionsInModel,
-  groupModelsByVersion
-);
+export const sortAndGroupVersionsInModel = compose(sortVersionsInModel, groupModelsByVersion);

@@ -37,7 +37,7 @@ func (l *RemoteProvider) DoRequest(req *http.Request, tokenString string) (*http
 		return nil, ErrTokenRefresh(err)
 	}
 
-	if resp.StatusCode == 401 || resp.StatusCode == 403 {
+	if resp.StatusCode == 401 {
 		// Read and close response body before reusing request
 		// https://github.com/golang/go/issues/19653#issuecomment-341540384
 		_, _ = io.ReadAll(resp.Body)

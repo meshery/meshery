@@ -48,13 +48,13 @@
  */
 export default function ExtensionPointSchemaValidator(type) {
   switch (type) {
-    case "navigator":
+    case 'navigator':
       return NavigatorExtensionSchemaDecoder;
-    case "user_prefs":
+    case 'user_prefs':
       return UserPrefsExtensionSchemaDecoder;
-    case "collaborator":
+    case 'collaborator':
       return CollaboratorExtensionSchemaDecoder;
-    case "account":
+    case 'account':
       return AccountExtensionSchemaDecoder;
     default:
       return () => {};
@@ -70,15 +70,15 @@ function NavigatorExtensionSchemaDecoder(content) {
   if (Array.isArray(content)) {
     return content.map((item) => {
       return {
-        title : item.title || "",
-        href : prepareHref(item.href),
-        component : item.component || "",
-        onClickCallback : item?.on_click_callback || 0,
-        icon : (item.icon && "/api/provider/extension/" + item.icon) || "",
-        show : !!item.show,
-        children : NavigatorExtensionSchemaDecoder(item.children),
-        full_page : item.full_page,
-        isBeta : item.isBeta ?? false
+        title: item.title || '',
+        href: prepareHref(item.href),
+        component: item.component || '',
+        onClickCallback: item?.on_click_callback || 0,
+        icon: (item.icon && '/api/provider/extension/' + item.icon) || '',
+        show: !!item.show,
+        children: NavigatorExtensionSchemaDecoder(item.children),
+        full_page: item.full_page,
+        isBeta: item.isBeta ?? false,
       };
     });
   }
@@ -94,7 +94,7 @@ function NavigatorExtensionSchemaDecoder(content) {
 function UserPrefsExtensionSchemaDecoder(content) {
   if (Array.isArray(content)) {
     return content.map((item) => {
-      return { component : item.component || "", };
+      return { component: item.component || '' };
     });
   }
 
@@ -107,10 +107,10 @@ function UserPrefsExtensionSchemaDecoder(content) {
  * @returns {CollaboratorSchema[]}
  */
 function CollaboratorExtensionSchemaDecoder(content) {
-  console.log("content", content)
+  console.log('content', content);
   if (Array.isArray(content)) {
     return content.map((item) => {
-      return { component : item.component || "", };
+      return { component: item.component || '' };
     });
   }
 
@@ -126,13 +126,13 @@ function AccountExtensionSchemaDecoder(content) {
   if (Array.isArray(content)) {
     return content.map((item) => {
       return {
-        title : item.title || "",
-        href : prepareHref(item.href),
-        component : item.component || "",
-        onClickCallback : item?.on_click_callback || 0,
-        show : !!item.show,
-        children : AccountExtensionSchemaDecoder(item.children),
-        full_page : item.full_page
+        title: item.title || '',
+        href: prepareHref(item.href),
+        component: item.component || '',
+        onClickCallback: item?.on_click_callback || 0,
+        show: !!item.show,
+        children: AccountExtensionSchemaDecoder(item.children),
+        full_page: item.full_page,
       };
     });
   }
@@ -141,7 +141,7 @@ function AccountExtensionSchemaDecoder(content) {
 }
 
 function prepareHref(href) {
-  if (href.external) return href.uri || "";
+  if (href.external) return href.uri || '';
 
-  return "/extension" + (href.uri || "");
+  return '/extension' + (href.uri || '');
 }
