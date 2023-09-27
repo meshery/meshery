@@ -48,7 +48,6 @@ import DashboardMeshModelGraph from './Dashboard/DashboardMeshModelGraph';
 import ConnectionStatsChart from './Dashboard/ConnectionCharts.js';
 import { EVENT_TYPES } from '../lib/event-types';
 import { withNotify } from '../utils/hooks/useNotification';
-import { useTheme } from '@emotion/react';
 
 const styles = (theme) => ({
   rootClass: { backgroundColor: theme.palette.secondary.elevatedComponents2 },
@@ -778,7 +777,7 @@ class DashboardComponent extends React.Component {
     const self = this;
     let kindSort = 'asc';
     let countSort = 'asc';
-    const theme = useTheme();
+    const { theme } = this.props;
     const switchSortOrder = (type) => {
       if (type === 'kindSort') {
         kindSort = kindSort === 'asc' ? 'desc' : 'asc';
