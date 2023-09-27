@@ -23,6 +23,8 @@ import { SnackbarProvider } from 'notistack';
 import PropTypes from 'prop-types';
 import React, { useCallback, useEffect } from 'react';
 import { connect, Provider } from 'react-redux';
+import { AbilityContext } from '../utils/can';
+import ability from '../utils/ability';
 import Header from '../components/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import Navigator from '../components/Navigator';
@@ -509,63 +511,65 @@ class MesheryApp extends App {
                   </nav>
                 )}
                 <div className={classes.appContent}>
-                  <SnackbarProvider
-                    anchorOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'right',
-                    }}
-                    iconVariant={{
-                      success: <CheckCircle style={{ marginRight: '0.5rem' }} />,
-                      error: <Error style={{ marginRight: '0.5rem' }} />,
-                      warning: <Warning style={{ marginRight: '0.5rem' }} />,
-                      info: <Info style={{ marginRight: '0.5rem' }} />,
-                    }}
-                    classes={{
-                      variantSuccess:
-                        this.state.theme === 'dark'
-                          ? classes.darknotifSuccess
-                          : classes.notifSuccess,
-                      variantError:
-                        this.state.theme === 'dark' ? classes.darknotifError : classes.notifError,
-                      variantWarning:
-                        this.state.theme === 'dark' ? classes.darknotifWarn : classes.notifWarn,
-                      variantInfo:
-                        this.state.theme === 'dark' ? classes.darknotifInfo : classes.notifInfo,
-                    }}
-                    maxSnack={10}
-                  >
-                    <EventsSubsciptionProvider />
-                    <MesheryProgressBar />
-                    {!this.state.isFullScreenMode && (
-                      <Header
-                        onDrawerToggle={this.handleDrawerToggle}
-                        onDrawerCollapse={isDrawerCollapsed}
-                        contexts={this.state.k8sContexts}
-                        activeContexts={this.state.activeK8sContexts}
-                        setActiveContexts={this.setActiveContexts}
-                        searchContexts={this.searchContexts}
-                        updateExtensionType={this.updateExtensionType}
-                        theme={this.state.theme}
-                        themeSetter={this.themeSetter}
-                      />
-                    )}
-                    <main className={classes.mainContent}>
-                      <MuiPickersUtilsProvider utils={MomentUtils}>
-                        <ErrorBoundary>
-                          <Component
-                            pageContext={this.pageContext}
-                            contexts={this.state.k8sContexts}
-                            activeContexts={this.state.activeK8sContexts}
-                            setActiveContexts={this.setActiveContexts}
-                            searchContexts={this.searchContexts}
-                            theme={this.state.theme}
-                            themeSetter={this.themeSetter}
-                            {...pageProps}
-                          />
-                        </ErrorBoundary>
-                      </MuiPickersUtilsProvider>
-                    </main>
-                  </SnackbarProvider>
+                  <AbilityContext.Provider value={ability}>
+                    <SnackbarProvider
+                      anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'right',
+                      }}
+                      iconVariant={{
+                        success: <CheckCircle style={{ marginRight: '0.5rem' }} />,
+                        error: <Error style={{ marginRight: '0.5rem' }} />,
+                        warning: <Warning style={{ marginRight: '0.5rem' }} />,
+                        info: <Info style={{ marginRight: '0.5rem' }} />,
+                      }}
+                      classes={{
+                        variantSuccess:
+                          this.state.theme === 'dark'
+                            ? classes.darknotifSuccess
+                            : classes.notifSuccess,
+                        variantError:
+                          this.state.theme === 'dark' ? classes.darknotifError : classes.notifError,
+                        variantWarning:
+                          this.state.theme === 'dark' ? classes.darknotifWarn : classes.notifWarn,
+                        variantInfo:
+                          this.state.theme === 'dark' ? classes.darknotifInfo : classes.notifInfo,
+                      }}
+                      maxSnack={10}
+                    >
+                      <EventsSubsciptionProvider />
+                      <MesheryProgressBar />
+                      {!this.state.isFullScreenMode && (
+                        <Header
+                          onDrawerToggle={this.handleDrawerToggle}
+                          onDrawerCollapse={isDrawerCollapsed}
+                          contexts={this.state.k8sContexts}
+                          activeContexts={this.state.activeK8sContexts}
+                          setActiveContexts={this.setActiveContexts}
+                          searchContexts={this.searchContexts}
+                          updateExtensionType={this.updateExtensionType}
+                          theme={this.state.theme}
+                          themeSetter={this.themeSetter}
+                        />
+                      )}
+                      <main className={classes.mainContent}>
+                        <MuiPickersUtilsProvider utils={MomentUtils}>
+                          <ErrorBoundary>
+                            <Component
+                              pageContext={this.pageContext}
+                              contexts={this.state.k8sContexts}
+                              activeContexts={this.state.activeK8sContexts}
+                              setActiveContexts={this.setActiveContexts}
+                              searchContexts={this.searchContexts}
+                              theme={this.state.theme}
+                              themeSetter={this.themeSetter}
+                              {...pageProps}
+                            />
+                          </ErrorBoundary>
+                        </MuiPickersUtilsProvider>
+                      </main>
+                    </SnackbarProvider>
+                  </AbilityContext.Provider>
                   <footer
                     className={
                       this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted
