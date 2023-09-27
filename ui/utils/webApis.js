@@ -22,7 +22,7 @@ export function getProtocol() {
  * @example http://localhost:9081
  */
 export function getWebAdress() {
-  return getProtocol() + "//" + getHost();
+  return getProtocol() + '//' + getHost();
 }
 
 /**
@@ -34,14 +34,14 @@ export function getWebAdress() {
  */
 export function getQueryParam(queryKey) {
   let queryParamString = window.location.search;
-  queryParamString = queryParamString.replace("?", "");
+  queryParamString = queryParamString.replace('?', '');
 
-  let queryVal = "";
+  let queryVal = '';
 
-  queryParamString.split("&").forEach(query => {
-    if (query.split("=")[0] === queryKey) {
+  queryParamString.split('&').forEach((query) => {
+    if (query.split('=')[0] === queryKey) {
       if (!queryVal) {
-        queryVal = query.split("=")[1];
+        queryVal = query.split('=')[1];
       }
     }
   });
@@ -53,13 +53,13 @@ export function getRawUrlFromCssUrlString(url) {
   if (!url) return;
 
   // turns url(http://localhost:9081/path/to/svg) to http://localhost:9081/path/to/svg
-  if (url.startsWith("url")) {
+  if (url.startsWith('url')) {
     url = url.slice(4).slice(0, -1);
   }
 
   // turns http://localhost:9081/path/to/svg to "/path/to/svg"
-  if (url.startsWith("http")) {
-    return url.split("//")?.[1]?.split("/")?.slice(1)?.join("/");
+  if (url.startsWith('http')) {
+    return url.split('//')?.[1]?.split('/')?.slice(1)?.join('/');
   }
 
   return url;

@@ -1,8 +1,7 @@
-
 export const NOTIFICATION_STATUS = {
-  VIEWED : "viewed" ,
-  NEW : "new"
-}
+  VIEWED: 'viewed',
+  NEW: 'new',
+};
 
 export const EVENT_TYPES = {
   SUCCESS: {
@@ -20,8 +19,7 @@ export const EVENT_TYPES = {
   ERROR: {
     type: 'error',
   },
-}
-
+};
 
 export const SERVER_EVENT_TYPES = {
   0: EVENT_TYPES.SUCCESS,

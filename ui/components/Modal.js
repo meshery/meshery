@@ -1,80 +1,80 @@
-import React, { useState, useEffect, useRef } from "react";
-import { IconButton, Menu, MenuItem, Tooltip, Button, Typography } from "@material-ui/core";
-import { Dialog, DialogActions, makeStyles } from "@material-ui/core";
-import { CustomTextTooltip } from "./MesheryMeshInterface/PatternService/CustomTextTooltip";
-import CloseIcon from "@material-ui/icons/Close";
+import React, { useState, useEffect, useRef } from 'react';
+import { IconButton, Menu, MenuItem, Tooltip, Button, Typography } from '@material-ui/core';
+import { Dialog, DialogActions, makeStyles } from '@material-ui/core';
+import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
+import CloseIcon from '@material-ui/icons/Close';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
-import RJSFWrapper from "./MesheryMeshInterface/PatternService/RJSF_wrapper";
-import { ArrowDropDown } from "@material-ui/icons";
-import { getSchema } from "./MesheryMeshInterface/PatternService/helper";
-import Link from "next/link";
-import { Snackbar } from "@material-ui/core";
-import { Alert } from "@material-ui/lab";
+import RJSFWrapper from './MesheryMeshInterface/PatternService/RJSF_wrapper';
+import { ArrowDropDown } from '@material-ui/icons';
+import { getSchema } from './MesheryMeshInterface/PatternService/helper';
+import Link from 'next/link';
+import { Snackbar } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 
 const useStyles = makeStyles((theme) => ({
-  "@keyframes rotateCloseIcon" : {
-    from : {
-      transform : "rotate(0deg)",
+  '@keyframes rotateCloseIcon': {
+    from: {
+      transform: 'rotate(0deg)',
     },
-    to : {
-      transform : "rotate(360deg)",
-    },
-  },
-  infoIcon : {
-    position : "absolute",
-    right : 10,
-    color : theme.palette.type === "dark" ? "#00B39F" : "#607d8b",
-  },
-  modalHeader : {
-    display : "flex",
-    justifyContent : "space-between",
-    alignItems : "center",
-    paddingBottom : 10,
-    padding : "0 .5rem",
-    paddingTop : 10,
-    backgroundColor : theme.palette.secondary.mainBackground,
-  },
-  modelHeader : {
-    fontSize : "1rem",
-    color : "#fff",
-  },
-  iconStyle : {
-    color : "#fff",
-  },
-  iconContainer : {
-    transition : "all .3s",
-    "&:hover" : {
-      backgroundColor : "transparent !important",
-      animation : "$rotateCloseIcon 1s",
+    to: {
+      transform: 'rotate(360deg)',
     },
   },
-  submitButton : {
-    backgroundColor : theme.palette.secondary.focused,
-    color : "#fff",
+  infoIcon: {
+    position: 'absolute',
+    right: 10,
+    color: theme.palette.type === 'dark' ? '#00B39F' : '#607d8b',
   },
-  iconPatt : {
-    display : "flex",
-    alignItems : "center",
-    marginRight : theme.spacing(1),
+  modalHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingBottom: 10,
+    padding: '0 .5rem',
+    paddingTop: 10,
+    backgroundColor: theme.palette.secondary.mainBackground,
   },
-  btnText : {
-    textTransform : "none",
+  modelHeader: {
+    fontSize: '1rem',
+    color: '#fff',
   },
-  toolTip : {
-    textDecoration : "underline",
-    color : theme.palette.secondary.link2,
+  iconStyle: {
+    color: '#fff',
   },
-  dialogAction : {
-    display : "flex",
-    justifyContent : "center",
-    padding : "0.5rem 1rem",
+  iconContainer: {
+    transition: 'all .3s',
+    '&:hover': {
+      backgroundColor: 'transparent !important',
+      animation: '$rotateCloseIcon 1s',
+    },
   },
-  snackbar : {
-    backgroundColor : theme.palette.secondary.elevatedComponents,
+  submitButton: {
+    backgroundColor: theme.palette.secondary.focused,
+    color: '#fff',
   },
-  leftHeaderIcon : {
-    paddingLeft : "0.45rem"
-  }
+  iconPatt: {
+    display: 'flex',
+    alignItems: 'center',
+    marginRight: theme.spacing(1),
+  },
+  btnText: {
+    textTransform: 'none',
+  },
+  toolTip: {
+    textDecoration: 'underline',
+    color: theme.palette.secondary.link2,
+  },
+  dialogAction: {
+    display: 'flex',
+    justifyContent: 'center',
+    padding: '0.5rem 1rem',
+  },
+  snackbar: {
+    backgroundColor: theme.palette.secondary.elevatedComponents,
+  },
+  leftHeaderIcon: {
+    paddingLeft: '0.45rem',
+  },
 }));
 
 const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
@@ -87,7 +87,7 @@ const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
     <div>
       <Tooltip title="Schema_Changer">
         <IconButton component="span" onClick={(e) => setAnchorEl(e.currentTarget)}>
-          <ArrowDropDown style={{ color : "#000" }} />
+          <ArrowDropDown style={{ color: '#000' }} />
         </IconButton>
       </Tooltip>
       <Menu id="schema-menu" anchorEl={anchorEl} open={open} handleClose={handleClose}>
@@ -109,18 +109,17 @@ const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
   );
 };
 
-const RJSFWrapperComponentDefault = (uiSchema) =>
+const RJSFWrapperComponentDefault =
+  (uiSchema) =>
   (
-    /** @type {{ jsonSchema: any; children: React.DetailedReactHTMLElement<any, HTMLElement>; }} */ props
+    /** @type {{ jsonSchema: any; children: React.DetailedReactHTMLElement<any, HTMLElement>; }} */ props,
   ) => {
-
     // Clone the child to pass in additional props
     return React.cloneElement(props.children, {
       ...(props.children?.props || {}),
-      uiSchema
+      uiSchema,
     });
   };
-
 
 /**
  * Renders common dialog component.
@@ -156,7 +155,7 @@ function Modal(props) {
     leftHeaderIcon,
     submitBtnIcon,
     uiSchema = {},
-    RJSFWrapperComponent=null
+    RJSFWrapperComponent = null,
   } = props;
   const classes = useStyles();
 
@@ -189,14 +188,14 @@ function Modal(props) {
     setCanNotSubmit(false);
     const handleDesignNameCheck = () => {
       const designName = title?.toLowerCase();
-      const forbiddenWords = ["untitled design", "Untitled", "lfx"];
+      const forbiddenWords = ['untitled design', 'Untitled', 'lfx'];
 
       for (const word of forbiddenWords) {
         if (designName?.includes(word)) {
           setSnackbar({
-            severity : "warning",
-            message : `Design name should not contain Untitled Design, Untitled, LFX`,
-            open : true,
+            severity: 'warning',
+            message: `Design name should not contain Untitled Design, Untitled, LFX`,
+            open: true,
           });
           setCanNotSubmit(true);
           break;
@@ -212,7 +211,7 @@ function Modal(props) {
 
   return (
     <>
-      <Dialog style={{ zIndex : 9999 }} open={open} onClose={handleClose}>
+      <Dialog style={{ zIndex: 9999 }} open={open} onClose={handleClose}>
         <div className={classes.modalHeader}>
           <Typography className={classes.leftHeaderIcon}>
             {leftHeaderIcon ? leftHeaderIcon : null}
@@ -220,7 +219,11 @@ function Modal(props) {
           <Typography className={classes.modelHeader} variant="h5">
             {title}
             {schema_array?.length < 1 && (
-              <SchemaVersion schema_array={schema_array} type={type} schemaChangeHandler={schemaChangeHandler} />
+              <SchemaVersion
+                schema_array={schema_array}
+                type={type}
+                schemaChangeHandler={schemaChangeHandler}
+              />
             )}
           </Typography>
           <IconButton className={classes.iconContainer} onClick={handleClose}>
@@ -242,19 +245,15 @@ function Modal(props) {
 
         <DialogActions className={classes.dialogAction}>
           <Button
-            title={submitBtnText ? submitBtnText : "Submit"}
+            title={submitBtnText ? submitBtnText : 'Submit'}
             variant="contained"
             color="primary"
             className={classes.submitButton}
             disabled={canNotSubmit}
             onClick={handleFormSubmit}
           >
-            {submitBtnIcon ? (
-              <div className={classes.iconPatt}>
-                {submitBtnIcon}
-              </div>
-            ) : null}
-            <span className={classes.btnText}>{submitBtnText ? submitBtnText : "Submit"}</span>
+            {submitBtnIcon ? <div className={classes.iconPatt}>{submitBtnIcon}</div> : null}
+            <span className={classes.btnText}>{submitBtnText ? submitBtnText : 'Submit'}</span>
           </Button>
           {showInfoIcon && (
             <CustomTextTooltip
@@ -271,12 +270,16 @@ function Modal(props) {
         </DialogActions>
         {snackbar && (
           <Snackbar
-            anchorOrigin={{ vertical : "bottom", horizontal : "right" }}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             open={snackbar.open}
             autoHideDuration={6000}
             onClose={() => setSnackbar(null)}
           >
-            <Alert className={classes.snackbar} onClose={() => setSnackbar(null)} severity={snackbar.severity}>
+            <Alert
+              className={classes.snackbar}
+              onClose={() => setSnackbar(null)}
+              severity={snackbar.severity}
+            >
               {snackbar.message}
             </Alert>
           </Snackbar>

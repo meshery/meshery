@@ -9,7 +9,7 @@ type: project
 category: contributing
 ---
 
-As a new contributor, you’re going to want to familiarize with the project in order to resolve the issues in the best way. Installing and playing around with Meshery will give you context for the any issues that you might work on.
+As a new contributor, you’re going to want to familiarize with the project in order to resolve the issues in the best way. Installing and playing around with Meshery will give you context for any issues that you might work on.
 
 Once an issue has been addressed, you’ll need to test it as well. Ideally, these tests are run from the user’s perspective (someone running Meshery in a container), not from a contributor’s perspective (someone running Meshery as a locally-compiled service).
 
@@ -29,7 +29,7 @@ make ui-build{% endcapture %}
 {% capture code_content %}make server{% endcapture %}
 {% include code.html code=code_content %}
 
-Any time changes are made to the GO code, you will have to stop the server and run the above command again.
+Any time changes are made to the Go code, you will have to stop the server and run the above command again.
 Once the Meshery server is up and running, you should be able to access Meshery on your `localhost` on port `9081` at `http://localhost:9081`. One thing to note, you might NOT see the [Meshery UI](#contributing-ui) until the UI code is built as well.
 After running Meshery server, you will need to select your **Cloud Provider** by navigating to `localhost:9081`. Only then you will be able to use the Meshery UI on port `3000`.
 
@@ -47,7 +47,7 @@ Execute:
 - `git remote add upstream https://github.com/meshery/meshery`
 - `git fetch upstream`
 - Restart the meshery server
-- Addionally, before restarting the server, if you like to pull the latest changes, you can do: `git pull upstream master`
+- Additionally, before restarting the server, if you like to pull the latest changes, you can do: `git pull upstream master`
 #### Building Docker image
 
 To build a Docker image of Meshery, please ensure you have `Docker` installed to be able to build the image. Now, run the following command to build the Docker image:
@@ -57,7 +57,7 @@ To build a Docker image of Meshery, please ensure you have `Docker` installed to
 
 #### Define and validate errors
 
-Every Golang-based project that belongs to Layer5 incorporates a utility to define and manage error messages for every error instance. This is internally done with several make commands, but one can explicitely validate with the help of the following make command. This checks and validates the errors that are present in the particular project.
+Every Golang-based project that belongs to Layer5 incorporates a utility to define and manage error messages for every error instance. This is internally done with several make commands, but one can explicitly validate with the help of the following make command. This checks and validates the errors that are present in the particular project.
 
 {% capture code_content %}make error{% endcapture %}
 {% include code.html code=code_content %}

@@ -59,6 +59,13 @@ language: en
           e.style.visibility = 'visible';
           }
     }
+    // Function to handle anchor links
+    document.addEventListener('click', function (event) {
+      if (event.target.tagName === 'A' && event.target.getAttribute('href').startsWith('#')) {
+        window.location.hash = event.target.getAttribute('href');
+      }
+    });
+
 </script>
 
 ## Error Codes and Troubleshooting
