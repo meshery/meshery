@@ -12,13 +12,12 @@ import Popper from '@material-ui/core/Popper';
 import { withStyles } from '@material-ui/core/styles';
 import classNames from 'classnames';
 import Link from "next/link";
-import { withRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import React, { useState, useEffect , useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import dataFetch from '../lib/data-fetch';
 import { updateUser } from '../lib/store';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
-import { withNotify } from '../utils/hooks/useNotification';
 
 const styles = () => ({
   link : {
@@ -45,13 +44,14 @@ function exportToJsonFile(jsonData, filename) {
   linkElement.remove()
 }
 
-function User(props){
+const User = (props) => {
   const [user, setUser] = useState(null);
   const [open, setOpen] = useState(false);
   const [account, setAccount] = useState([]);
   const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false);
   const anchorEl = useRef(null);
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const capabilitiesRegistry = useSelector(state => state.get("capabilitiesRegistry"));
 
@@ -71,7 +71,7 @@ function User(props){
   };
 
   const handlePreference = () => {
-    props.router.push('/user/preferences');
+    router.push('/user/preferences');
   }
 
   const handleGetToken = () => {
@@ -213,4 +213,4 @@ function User(props){
 
 }
 
-export default withStyles(styles)((withNotify((withRouter(User)))));
+export default withStyles(styles)(User);
