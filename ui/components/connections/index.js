@@ -147,6 +147,18 @@ const ACTION_TYPES = {
   },
 };
 
+const SortableTableCell = ({ index, columnData, columnMeta, onSort }) => {
+  return (
+    <TableCell key={index} onClick={onSort}>
+      <TableSortLabel
+        active={columnMeta.name === columnData.name}
+        direction={columnMeta.direction || 'asc'}
+      >
+        <b>{columnData.label}</b>
+      </TableSortLabel>
+    </TableCell>
+  );
+};
 /**
  * Parent Component for Connection Component
  *
@@ -295,14 +307,12 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
         sortThirdClickReset: true,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel
-                active={columnMeta.name === column.name}
-                direction={columnMeta.direction || 'asc'}
-              >
-                <b>{column.label}</b>
-              </TableSortLabel>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
         customBodyRender: (value, tableMeta) => {
@@ -327,14 +337,12 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
         sortThirdClickReset: true,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel
-                active={columnMeta.name === column.name}
-                direction={columnMeta.direction || 'asc'}
-              >
-                <b>{column.label}</b>
-              </TableSortLabel>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
         // customBodyRender : function CustomBody(value) {
@@ -358,14 +366,12 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
         sortThirdClickReset: true,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel
-                active={columnMeta.name === column.name}
-                direction={columnMeta.direction || 'asc'}
-              >
-                <b>{column.label}</b>
-              </TableSortLabel>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
         // customBodyRender : function CustomBody(value) {
@@ -381,14 +387,12 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
         sortThirdClickReset: true,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel
-                active={columnMeta.name === column.name}
-                direction={columnMeta.direction || 'asc'}
-              >
-                <b>{column.label}</b>
-              </TableSortLabel>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
       },
@@ -401,14 +405,12 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
         sortThirdClickReset: true,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel
-                active={columnMeta.name === column.name}
-                direction={columnMeta.direction || 'asc'}
-              >
-                <b>{column.label}</b>
-              </TableSortLabel>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
         customBodyRender: function CustomBody(value) {
@@ -437,14 +439,12 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
         sortThirdClickReset: true,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel
-                active={columnMeta.name === column.name}
-                direction={columnMeta.direction || 'asc'}
-              >
-                <b>{column.label}</b>
-              </TableSortLabel>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
         customBodyRender: function CustomBody(value) {
@@ -473,14 +473,12 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
         sortThirdClickReset: true,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel
-                active={columnMeta.name === column.name}
-                direction={columnMeta.direction || 'asc'}
-              >
-                <b>{column.label}</b>
-              </TableSortLabel>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
         customBodyRender: function CustomBody(value) {
