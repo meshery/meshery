@@ -964,7 +964,7 @@ function MesheryPatterns({
     return (
       user?.role_names?.includes('admin') ||
       user?.user_id === 'meshery' ||
-      user?.user_id == pattern.user_id
+      user?.user_id == pattern?.user_id
     );
   };
 
