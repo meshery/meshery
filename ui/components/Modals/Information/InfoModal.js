@@ -1,8 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import InfoIcon from '@material-ui/icons/Info';
 import CloseIcon from '@material-ui/icons/Close';
 import PatternIcon from '../../../assets/icons/Pattern';
@@ -15,13 +11,16 @@ import {
   Avatar,
   Tooltip,
   Box,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  DialogActions,
+  Dialog,
 } from '@material-ui/core';
 import useStyles from './styles';
 import { iconSmall } from '../../../css/icons.styles';
 import { useTheme } from '@material-ui/core/styles';
-// import {
-//   getSharableCommonHostAndprotocolLink,
-// } from '../../../../sections/MesheryDesignerComponent/PatternServiceFormWrapper/utils';
+import { getSharableCommonHostAndprotocolLink } from '../../../utils/utils';
 import OriginalApplicationFileIcon from '../../../assets/icons/OriginalApplicationIcon';
 import moment from 'moment';
 import Application from '../../../public/static/img/drawer-icons/application_svg.js';
@@ -33,7 +32,7 @@ import { EVENT_TYPES } from '../../../lib/event-types';
 import axios from 'axios';
 import _ from 'lodash';
 import RJSFWrapper from '../../MesheryMeshInterface/PatternService/RJSF_wrapper';
-import dataFetch from '../../../lib/data-fetch';
+import { promisifiedDataFetch } from '../../../lib/data-fetch';
 import CircularProgress from '@mui/material/CircularProgress';
 
 const APPLICATION_PLURAL = 'applications';
@@ -51,7 +50,6 @@ const InfoModal = (props) => {
     formSchema,
   } = props;
 
-  // const theme = uiTheme.theme;
   const formRef = React.createRef();
   const [formState, setFormState] = useState(selectedResource?.catalog_data || {});
   const [isCatalogDataEqual, setIsCatalogDataEqual] = useState(false);
@@ -68,7 +66,7 @@ const InfoModal = (props) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const handleCopy = () => {
-    // navigator.clipboard.writeText(getSharableCommonHostAndprotocolLink(selectedResource));
+    navigator.clipboard.writeText(getSharableCommonHostAndprotocolLink(selectedResource));
     enqueueSnackbar(`Link to "${selectedResource.name}" is copied to clipboard`, {
       variant: 'info',
       autoHideDuration: 2000,
@@ -139,28 +137,41 @@ const InfoModal = (props) => {
     if (formSchema) {
       const newUiSchema = { ...formSchema.uiSchema };
 
-      newUiSchema['ui:readonly'] = currentUserID !== resourceOwnerID;
+      // Only make form readonly if resource is private and user is not owner
+      if (selectedResources?.visibility === 'private' && currentUserID !== resourceOwnerID) {
+        newUiSchema['ui:readonly'] = currentUserID !== resourceOwnerID;
+      }
 
       setUiSchema(newUiSchema);
     }
   }, [resourceOwnerID, formSchema, currentUserID]);
 
   useEffect(() => {
-    dataFetch(
-      `/api/user/profile/${resourceOwnerID}`,
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      async (response) => {
-        try {
+    let isMounted = true;
+
+    const fetchData = async () => {
+      try {
+        const response = await promisifiedDataFetch(`/api/user/profile/${resourceOwnerID}`, {
+          method: 'GET',
+          credentials: 'include',
+        });
+
+        // Check if the component is still mounted before setting the state
+        if (isMounted) {
           setResourceUserProfile(response);
-        } catch (error) {
-          console.error('Error fetching user profile with id in info modal:', error);
         }
-      },
-    );
-  }, []);
+      } catch (error) {
+        console.error('Error fetching user profile with id in info modal:', error);
+      }
+    };
+
+    fetchData();
+
+    // Cleanup function
+    return () => {
+      isMounted = false;
+    };
+  }, [resourceOwnerID]);
 
   const renderIcon = () => {
     if (dataName === PATTERN_PLURAL) {
@@ -172,6 +183,13 @@ const InfoModal = (props) => {
     if (dataName === FILTER_PLURAL) {
       return <Filter style={{ ...iconSmall }} fill="#FFF" />;
     }
+  };
+
+  const shouldRenderSaveButton = () => {
+    const isPrivate = selectedResource?.visibility === 'private';
+    const isOwner = currentUserID === resourceOwnerID;
+
+    return (isPrivate && !isOwner) || !isPrivate;
   };
 
   return (
@@ -322,7 +340,7 @@ const InfoModal = (props) => {
           <Button variant="outlined" onClick={handleCopy} className={classes.copyButton}>
             Copy Link
           </Button>
-          {currentUserID === resourceOwnerID ? (
+          {shouldRenderSaveButton() ? (
             <Button
               variant="contained"
               color="primary"
@@ -339,23 +357,6 @@ const InfoModal = (props) => {
               )}
             </Button>
           ) : null}
-          {dataName === PATTERN_PLURAL && (
-            <Chip
-              style={{
-                backgroundColor: `${theme.palette.secondary.mainBackground2}`,
-                border: '0',
-                display: 'flex',
-                justifyContent: 'center',
-              }}
-              size="small"
-              avatar={<InfoIcon />}
-              label={
-                selectedResource?.visibility === 'published'
-                  ? 'Clone the design to edit'
-                  : 'Public designs cannot be cloned'
-              }
-            />
-          )}
         </DialogActions>
       </Dialog>
     </div>
@@ -363,3 +364,4 @@ const InfoModal = (props) => {
 };
 
 export default InfoModal;
+
