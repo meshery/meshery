@@ -54,6 +54,9 @@ import SearchBar from '../utils/custom-search';
 import CustomColumnVisibilityControl from '../utils/custom-column';
 import ResponsiveDataTable from '../utils/data-table';
 import useStyles from '../assets/styles/general/tool.styles';
+import { updateVisibleColumns } from '../utils/responsive-column';
+import { useWindowDimensions } from '../utils/dimension';
+import { Box } from '@mui/material';
 
 const styles = (theme) => ({
   grid: {
@@ -237,6 +240,7 @@ function MesheryFilters({
   const [canPublishFilter, setCanPublishFilter] = useState(false);
   const [importSchema, setImportSchema] = useState({});
   const [publishSchema, setPublishSchema] = useState({});
+  const { width } = useWindowDimensions();
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ('grid'),
@@ -792,6 +796,14 @@ function MesheryFilters({
     reader.readAsArrayBuffer(file);
   }
 
+  let colViews = [
+    ['name', 'xs'],
+    ['created_at', 'm'],
+    ['updated_at', 'l'],
+    ['visibility', 's'],
+    ['Actions', 'xs'],
+  ];
+
   const columns = [
     {
       name: 'name',
@@ -904,7 +916,11 @@ function MesheryFilters({
           const rowData = filters[tableMeta.rowIndex];
           const visibility = filters[tableMeta.rowIndex]?.visibility;
           return (
-            <>
+            <Box
+              sx={{
+                display: 'flex',
+              }}
+            >
               {visibility === VISIBILITY.PUBLISHED ? (
                 <TooltipIcon
                   placement="top"
@@ -945,7 +961,7 @@ function MesheryFilters({
                   <PublicIcon fill="#F91313" data-cy="unpublish-button" />
                 </TooltipIcon>
               )}
-            </>
+            </Box>
           );
         },
       },
@@ -1139,10 +1155,11 @@ function MesheryFilters({
   const [tableCols, updateCols] = useState(columns);
 
   const [columnVisibility, setColumnVisibility] = useState(() => {
+    let showCols = updateVisibleColumns(colViews, width);
     // Initialize column visibility based on the original columns' visibility
     const initialVisibility = {};
     columns.forEach((col) => {
-      initialVisibility[col.name] = col.options?.display !== false;
+      initialVisibility[col.name] = showCols[col.name];
     });
     return initialVisibility;
   });
