@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import InfoIcon from '@material-ui/icons/Info';
 import CloseIcon from '@material-ui/icons/Close';
 import PatternIcon from '../../../assets/icons/Pattern';
 import {
@@ -14,12 +13,10 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  DialogActions,
   Dialog,
 } from '@material-ui/core';
 import useStyles from './styles';
 import { iconSmall } from '../../../css/icons.styles';
-import { useTheme } from '@material-ui/core/styles';
 import { getSharableCommonHostAndprotocolLink } from '../../../utils/utils';
 import OriginalApplicationFileIcon from '../../../assets/icons/OriginalApplicationIcon';
 import moment from 'moment';
@@ -57,7 +54,6 @@ const InfoModal = (props) => {
   const [saveFormLoading, setSaveFormLoading] = useState(false);
   const [uiSchema, setUiSchema] = useState({});
   const { notify } = useNotification();
-  const theme = useTheme();
 
   const classes = useStyles();
   const formatDate = (date) => {
@@ -138,7 +134,7 @@ const InfoModal = (props) => {
       const newUiSchema = { ...formSchema.uiSchema };
 
       // Only make form readonly if resource is private and user is not owner
-      if (selectedResources?.visibility === 'private' && currentUserID !== resourceOwnerID) {
+      if (selectedResource?.visibility === 'private' && currentUserID !== resourceOwnerID) {
         newUiSchema['ui:readonly'] = currentUserID !== resourceOwnerID;
       }
 
@@ -364,4 +360,3 @@ const InfoModal = (props) => {
 };
 
 export default InfoModal;
-

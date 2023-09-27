@@ -3,7 +3,8 @@ import jsYaml from 'js-yaml';
 import { findWorkloadByName } from './workloadFilter';
 import { EVENT_TYPES } from './Enum';
 import _ from 'lodash';
-import { getWebAdress } from "./webApis"
+import { getWebAdress } from './webApis';
+import { APPLICATION, DESIGN, FILTER } from '../constants/navigator';
 
 /**
  * Check if an object is empty
@@ -201,7 +202,7 @@ export const modifyRJSFSchema = (schema, propertyPath, newValue) => {
  * @returns {string}
  */
 export function getSharableCommonHostAndprotocolLink(sharedResource) {
-  const webAddr = getWebAdress() + "/extension/meshmap";
+  const webAddr = getWebAdress() + '/extension/meshmap';
   if (sharedResource?.application_file) {
     return `${webAddr}?${APPLICATION}=${sharedResource.id}`;
   }
@@ -212,5 +213,5 @@ export function getSharableCommonHostAndprotocolLink(sharedResource) {
     return `${webAddr}?${FILTER}=${sharedResource.id}`;
   }
 
-  return "";
+  return '';
 }
