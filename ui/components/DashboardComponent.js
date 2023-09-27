@@ -267,7 +267,6 @@ class DashboardComponent extends React.Component {
 
   componentDidMount = () => {
     this._isMounted = true;
-    this.fetchAvailableAdapters();
     if (this._isMounted) {
       this.initMeshSyncControlPlaneSubscription();
       this.initDashboardClusterResourcesSubscription();
@@ -295,7 +294,6 @@ class DashboardComponent extends React.Component {
         updateDataPlane ? this.state.dataPlaneState : prevState.dataPlaneState,
       );
     }
-
     // handle subscriptions update on switching K8s Contexts
     if (
       prevProps?.selectedK8sContexts !== this.props?.selectedK8sContexts ||
@@ -317,29 +315,6 @@ class DashboardComponent extends React.Component {
   getK8sClusterIds = () => {
     const self = this;
     return getK8sClusterIdsFromCtxId(self.props?.selectedK8sContexts, self.props.k8sconfig);
-  };
-
-  fetchAvailableAdapters = () => {
-    const self = this;
-    this.props.updateProgress({ showProgress: true });
-    dataFetch(
-      '/api/system/adapters',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        this.props.updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          const options = result.map((res) => ({
-            value: res.adapter_location,
-            label: res.adapter_location,
-          }));
-          this.setState({ availableAdapters: options });
-        }
-      },
-      self.handleError('Unable to fetch list of adapters.'),
-    );
   };
 
   setMeshScanData = (controlPlanesData, dataPlanesData) => {
@@ -448,63 +423,9 @@ class DashboardComponent extends React.Component {
     console.groupEnd();
   };
 
-  handleAdapterPingError = (msg) => () => {
-    this.props.updateProgress({ showProgress: false });
-    const notify = this.props.notify;
-    // this.props.enqueueSnackbar(`${msg}. To configure an adapter, visit`, {
-    //   variant : "error",
-    //   autoHideDuration : 3000,
-    //   action : (key) => (
-    //     <>
-    //       <Button
-    //         variant="contained"
-    //         key="configure-close"
-    //         aria-label="Configure"
-    //         className={classes.redirectButton}
-    //         onClick={() => {
-    //           self.props.router.push("/settings#service-mesh");
-    //           self.props.closeSnackbar(key);
-    //         }}
-    //       >
-    //         <SettingsIcon className={classes.settingsIcon}  />
-    //         Settings
-    //       </Button>
-
-    //       <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-    //         <CloseIcon  style={iconMedium} />
-    //       </IconButton>
-    //     </>
-    //   ),
-    // });
-    notify({ message: `${msg}`, event_type: EVENT_TYPES.ERROR });
-  };
-
   handleDelete() {
     return false;
   }
-
-  handleAdapterClick = (adapterLoc) => () => {
-    // const { meshAdapters } = this.state;
-    this.props.updateProgress({ showProgress: true });
-    const self = this;
-    const notify = this.props.notify;
-    dataFetch(
-      `/api/system/adapters?adapter=${encodeURIComponent(adapterLoc)}`,
-      {
-        credentials: 'include',
-      },
-      (result) => {
-        this.props.updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          notify({
-            message: `Meshery Adapter connected at ${adapterLoc}`,
-            event_type: EVENT_TYPES.SUCCESS,
-          });
-        }
-      },
-      self.handleAdapterPingError('Could not connect to ' + adapterLoc),
-    );
-  };
 
   handleConfigure = (val) => {
     this.props.router.push(`/settings#metrics/${val}`);
@@ -556,29 +477,6 @@ class DashboardComponent extends React.Component {
         }
       },
       self.handleError('Could not connect to Kubernetes'),
-    );
-  };
-
-  handleGrafanaClick = () => {
-    this.props.updateProgress({ showProgress: true });
-    const self = this;
-    const notify = this.props.notify;
-    const { grafanaURL } = this.state.grafana;
-    dataFetch(
-      '/api/telemetry/metrics/grafana/ping',
-      {
-        credentials: 'include',
-      },
-      (result) => {
-        this.props.updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          notify({
-            message: `Grafana connected at ${grafanaURL}`,
-            event_type: EVENT_TYPES.SUCCESS,
-          });
-        }
-      },
-      self.handleError('Could not connect to Grafana'),
     );
   };
 
