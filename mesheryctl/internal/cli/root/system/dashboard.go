@@ -190,7 +190,7 @@ mesheryctl system dashboard --skip-browser
 
 			endpoint, err = meshkitkube.GetServiceEndpoint(context.TODO(), clientset, &opts)
 			if err != nil {
-				utils.Log.Error(err)//the func return a meshkit error
+				utils.Log.Error(err) //the func return a meshkit error
 				return nil
 			}
 
