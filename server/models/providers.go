@@ -205,7 +205,7 @@ type K8sContextPersistResponse struct {
 }
 
 type ConnectionPayload struct {
-	Kind             string                 `json:"kind,omitempty"`
+	Kind             ConnectionKind                 `json:"kind,omitempty"`
 	SubType          string                 `json:"sub_type,omitempty"`
 	Type             string                 `json:"type,omitempty"`
 	MetaData         map[string]interface{} `json:"metadata,omitempty"`
@@ -309,6 +309,9 @@ const (
 	HandlerKey ContextKey = "handlerkey"	
 	MesheryServerURL         ContextKey = "mesheryserverurl"
 	MesheryServerCallbackURL ContextKey = "mesheryservercallbackurl"
+	ConnectionKindKey  ContextKey = "connectionKind"
+	SystemID        ContextKey = "systemID"
+	UserID          ContextKey = "userID"
 )
 
 // IsSupported returns true if the given feature is listed as one of
@@ -454,7 +457,9 @@ type Provider interface {
 	UpdateConnectionById(req *http.Request, conn *ConnectionPayload, connId string) (*Connection, error)
 	DeleteConnection(req *http.Request, connID uuid.UUID) (*Connection, error)
 	DeleteMesheryConnection() error
-
+	RegisterConnection(req *http.Request, kind string, body interface{}) (*Connection, error)
+	GetConnectionById(req *http.Request, connectionID *uuid.UUID, kind ConnectionKind) (*Connection, error)
+	UpdateConnectionMetadata(req *http.Request, kind string, body interface{}) (*Connection, error)
 	SaveUserCredential(req *http.Request, credential *Credential) error
 	GetUserCredentials(req *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error)
 	UpdateUserCredential(req *http.Request, credential *Credential) (*Credential, error)

@@ -347,12 +347,24 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("DELETE")
 
 	// Handlers for User Connections
-	gMux.Handle("/api/integrations/connections", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveConnection), models.ProviderAuth))).
+	gMux.Handle("/api/integrations/connections/{connectionKind}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.SaveConnection), models.ProviderAuth))).
 		Methods("POST")
 	gMux.Handle("/api/integrations/connections", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetConnections), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/api/integrations/connections/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetConnectionsStatus), models.ProviderAuth))).
 		Methods("GET")
+	
+	gMux.Handle("/api/integrations/connections/{connectionKind}/status", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.HandleConnectionStatus), models.ProviderAuth))).
+		Methods("POST")
+	gMux.Handle("/api/integrations/connections/{connectionKind}/metadata", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.HandleConnectionMetadata), models.ProviderAuth))).
+		Methods("POST")
+	gMux.Handle("/api/integrations/connections/{connectionKind}/configure", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ConfigureConnection), models.ProviderAuth))).
+		Methods("POST")
+	gMux.Handle("/api/integrations/connections/{connectionKind}/details", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetConnectionDetails), models.ProviderAuth))).
+		Methods("GET")
+	gMux.Handle("/integrations/connections/{connectionKind}/verify", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.VerifyConnection), models.ProviderAuth))).
+		Methods("POST")
+
 	gMux.Handle("/api/integrations/connections/{connectionKind}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetConnectionsByKind), models.ProviderAuth))).
 		Methods("GET")
 	// gMux.Handle("/api/integrations/connections/{connectionKind}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateConnection), models.ProviderAuth))).

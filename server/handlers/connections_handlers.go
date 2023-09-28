@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -20,6 +21,20 @@ import (
 // responses:
 // 201: noContentWrapper
 func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	connKind := mux.Vars(req)[string(models.ConnectionKindKey)]
+	ctx := req.Context()
+	ctx = context.WithValue(ctx, models.ConnectionKindKey, connKind)
+	ctx = context.WithValue(ctx, models.UserID, user.ID)
+	ctx = context.WithValue(ctx, models.SystemID, h.SystemID)
+
+	connInstance := NewConnectionInstance(ctx, provider, &h.log, h.config.EventBroadcaster)
+
+	if connInstance != nil {
+		newReq := req.WithContext(ctx)
+		connInstance.Register(w, newReq)
+		return
+	} 
+
 	bd, err := io.ReadAll(req.Body)
 	userID := uuid.FromStringOrNil(user.ID)
 	if err != nil {
@@ -64,6 +79,101 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 	h.log.Info(description)
 	w.WriteHeader(http.StatusCreated)
 }
+
+func (h *Handler) HandleConnectionStatus(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	connKind := mux.Vars(req)[string(models.ConnectionKindKey)]
+	
+	ctx := req.Context()
+	ctx = context.WithValue(ctx, models.ConnectionKindKey, connKind)
+	ctx = context.WithValue(ctx, models.UserID, user.ID)
+	ctx = context.WithValue(ctx, models.SystemID, h.SystemID)
+
+	connInstance := NewConnectionInstance(ctx, provider, &h.log, h.config.EventBroadcaster)
+
+	if connInstance != nil {
+		newReq := req.WithContext(ctx)
+		connInstance.Status(w, newReq)
+		return
+	} 
+	
+	http.Error(w, fmt.Errorf("Operation for connection kind %s not supported.", connKind).Error(), http.StatusNotImplemented)
+}
+
+func (h *Handler) HandleConnectionMetadata(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	connKind := mux.Vars(req)[string(models.ConnectionKindKey)]
+	
+	ctx := req.Context()
+	ctx = context.WithValue(ctx, models.ConnectionKindKey, connKind)
+	ctx = context.WithValue(ctx, models.UserID, user.ID)
+	ctx = context.WithValue(ctx, models.SystemID, h.SystemID)
+
+	connInstance := NewConnectionInstance(ctx, provider, &h.log, h.config.EventBroadcaster)
+
+	if connInstance != nil {
+		newReq := req.WithContext(ctx)
+		connInstance.AddMetadata(w, newReq)
+		return
+	} 
+	
+	http.Error(w, fmt.Errorf("Operation for connection kind %s not supported.", connKind).Error(), http.StatusNotImplemented)
+}
+
+func (h *Handler) ConfigureConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	connKind := mux.Vars(req)[string(models.ConnectionKindKey)]
+	
+	ctx := req.Context()
+	ctx = context.WithValue(ctx, models.ConnectionKindKey, connKind)
+	ctx = context.WithValue(ctx, models.UserID, user.ID)
+	ctx = context.WithValue(ctx, models.SystemID, h.SystemID)
+	ctx = context.WithValue(ctx, models.RegistryManagerKey, h.registryManager)
+	connInstance := NewConnectionInstance(ctx, provider, &h.log, h.config.EventBroadcaster)
+
+	if connInstance != nil {
+		newReq := req.WithContext(ctx)
+		connInstance.Configure(w, newReq)
+		return
+	} 
+	
+	http.Error(w, fmt.Errorf("Operation for connection kind %s not supported.", connKind).Error(), http.StatusNotImplemented)
+}
+
+func (h *Handler) GetConnectionDetails(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	connKind := mux.Vars(req)[string(models.ConnectionKindKey)]
+	
+	ctx := req.Context()
+	ctx = context.WithValue(ctx, models.ConnectionKindKey, connKind)
+	ctx = context.WithValue(ctx, models.UserID, user.ID)
+	ctx = context.WithValue(ctx, models.SystemID, h.SystemID)
+
+	connInstance := NewConnectionInstance(ctx, provider, &h.log, h.config.EventBroadcaster)
+
+	if connInstance != nil {
+		newReq := req.WithContext(ctx)
+		connInstance.Details(w, newReq)
+		return
+	} 
+	
+	http.Error(w, fmt.Errorf("Operation for connection kind %s not supported.", connKind).Error(), http.StatusNotImplemented)
+}
+
+func (h *Handler) VerifyConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	connKind := mux.Vars(req)[string(models.ConnectionKindKey)]
+	
+	ctx := req.Context()
+	ctx = context.WithValue(ctx, models.ConnectionKindKey, connKind)
+	ctx = context.WithValue(ctx, models.UserID, user.ID)
+	ctx = context.WithValue(ctx, models.SystemID, h.SystemID)
+	connInstance := NewConnectionInstance(ctx, provider, &h.log, h.config.EventBroadcaster)
+
+	if connInstance != nil {
+		newReq := req.WithContext(ctx)
+		connInstance.Verify(w, newReq)
+		return
+	} 
+	
+	http.Error(w, fmt.Errorf("Operation for connection kind %s not supported.", connKind).Error(), http.StatusNotImplemented)
+}
+
 
 // swagger:route GET /api/integrations/connections GetConnections idGetConnections
 // Handle GET request for getting all connections
@@ -330,3 +440,4 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	h.log.Info("connection deleted successfully")
 	w.WriteHeader(http.StatusOK)
 }
+
