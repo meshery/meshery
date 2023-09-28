@@ -87,7 +87,6 @@ const styles = (theme) => ({
   appBarOnDrawerClosed: {
     backgroundColor: theme.palette.secondary.mainBackground,
     zIndex: theme.zIndex.drawer + 1,
-    boxShadow: '0px 3px 4px #00b39f',
   },
   toolbarOnDrawerClosed: {
     minHeight: 59,
