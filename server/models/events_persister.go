@@ -28,7 +28,7 @@ type CountBySeverityLevel struct {
 
 func (e *EventsPersister) GetEventTypes(userID uuid.UUID) (map[string]interface{}, error) {
 	eventTypes := make(map[string]interface{}, 2)
-	var  categories, actions []string
+	var categories, actions []string
 	err := e.DB.Table("events").Distinct("category").Where("user_id = ?", userID).Find(&categories).Error
 	if err != nil {
 		return nil, err
@@ -97,9 +97,9 @@ func (e *EventsPersister) GetAllEvents(eventsFilter *events.EventsFilter, userID
 	}
 
 	return &EventsResponse{
-		Events:        eventsDB,
-		PageSize:      eventsFilter.Limit,
-		TotalCount:    count,
+		Events:               eventsDB,
+		PageSize:             eventsFilter.Limit,
+		TotalCount:           count,
 		CountBySeverityLevel: countBySeverity,
 	}, nil
 }
@@ -144,6 +144,6 @@ func (e *EventsPersister) getCountBySeverity(userID uuid.UUID, eventStatus event
 	if err != nil {
 		return nil, err
 	}
-	
+
 	return eventsBySeverity, nil
 }
