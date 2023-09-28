@@ -246,7 +246,7 @@ func ErrParseForm(err error) error {
 }
 
 func ErrQueryGet(obj string) error {
-	return errors.New(ErrQueryGetCode, errors.Alert, []string{"unable to get: ", obj}, []string{}, []string{"Query parameter is not a part of the request"}, []string{"Make sure to pass the query paramater in the request"})
+	return errors.New(ErrQueryGetCode, errors.Alert, []string{"unable to get: ", obj}, []string{}, []string{"Query parameter is not a part of the request", "Query parameter is malformed."}, []string{"Make sure to pass the query paramater in the request", "Make sure to pass valid query parameter"})
 }
 
 func ErrGetResult(err error) error {

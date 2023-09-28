@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 	"sync"
 
@@ -165,19 +166,14 @@ func (h *Helm) Status(res http.ResponseWriter, req *http.Request) {
 
 	var description string
 
-	requestBody := make(map[string]string, 1)
-	defer func() {
-		_ = req.Body.Close()
-	}()
-
-	err := json.NewDecoder(req.Body).Decode(&requestBody)
+	// The repo url serves as a id for helm connection
+	id := req.URL.Query().Get("id")
+	repoURL, err := url.QueryUnescape(id)
 	if err != nil {
-		unmarshalErr := models.ErrUnmarshal(err, "connection request body")
-		h.log.Error(unmarshalErr)
-		
-		description = "Cannot read repository url from the request body."
+		invalidQueryParamErr := ErrQueryGet("id")
+		description = "Query parameter \"id\" is invalid."
 		eb.WithDescription(description).WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": unmarshalErr,
+			"error": invalidQueryParamErr,
 		})
 		event := eb.Build()
 
@@ -185,18 +181,17 @@ func (h *Helm) Status(res http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			h.log.Warn(fmt.Errorf("unable to create event: %s", err.Error()))
 		}
-
-		go h.eb.Publish(*h.userID, event)
-		res.WriteHeader(http.StatusInternalServerError)
-		data, _ := json.Marshal(event)
+		
+		res.WriteHeader(http.StatusBadRequest)
+		data, _ := json.Marshal(invalidQueryParamErr)
+		go h.eb.Publish(*h.userID, invalidQueryParamErr)
 		_, err = res.Write(data)
 		if err != nil {
 			h.log.Error(ErrWriteResponse)
 		}
-		return
 	}
-
-	repoURL, _err := extractURL(requestBody["repoURL"], eb)
+	
+	repoURL, _err := extractURL(repoURL, eb)
 	if _err != nil {		
 		err = h.provider.PersistEvent(_err)
 		if err != nil {
