@@ -129,6 +129,8 @@ sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libre
 
 - Use docs here [Jekyll installation](https://jekyllrb.com/docs/installation/macos/)
 
+**Note:** In case of any installation issues, use the [discussion forum](https://discuss.layer5.io/).
+
 ### Get the code
 
 - Fork and then clone the [Meshery repository](https://github.com/meshery/meshery)
