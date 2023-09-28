@@ -573,6 +573,7 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
       },
       onRowExpansionChange: (_, allRowsExpanded) => {
         setRowsExpanded(allRowsExpanded.slice(-1).map((item) => item.index));
+        setShowMore(false);
       },
       renderExpandableRow: (rowData, tableMeta) => {
         const colSpan = rowData.length;
