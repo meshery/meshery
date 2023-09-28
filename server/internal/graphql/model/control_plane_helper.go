@@ -15,11 +15,11 @@ func GetControlPlaneState(ctx context.Context, selectors []MeshType, provider mo
 	object := []meshsyncmodel.Object{}
 	controlplanelist := make([]*ControlPlane, 0)
 	cidMap := make(map[string]bool)
-	
+
 	for _, c := range cid {
 		cidMap[c] = true
 	}
-	
+
 	for _, selector := range selectors {
 		result := provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
 			Preload("ObjectMeta", "namespace IN ?", controlPlaneNamespace[MeshType(selector)]).
