@@ -1,6 +1,7 @@
-import { graphql, requestSubscription } from "react-relay";
-import { createRelayEnvironment } from "../../../lib/relayEnvironment";
+import { graphql, requestSubscription } from 'react-relay';
+import { createRelayEnvironment } from '../../../lib/relayEnvironment';
 
+// not in use
 const operatorStatusSubscription = graphql`
   subscription OperatorStatusSubscription($k8scontextIDs: [String!]) {
     operator: listenToOperatorState(k8scontextIDs: $k8scontextIDs) {
@@ -9,9 +10,9 @@ const operatorStatusSubscription = graphql`
         status
         version
         controllers {
-            name
-            version
-            status
+          name
+          version
+          status
         }
         error {
           code
@@ -24,10 +25,10 @@ const operatorStatusSubscription = graphql`
 
 export default function subscribeOperatorStatusEvents(dataCB, contextIds) {
   const environment = createRelayEnvironment({});
-  return  requestSubscription(environment, {
-    subscription : operatorStatusSubscription,
-    variables : { k8scontextIDs : contextIds },
-    onNext : dataCB,
-    onError : (error) => console.log(`An error occured:`, error),
+  return requestSubscription(environment, {
+    subscription: operatorStatusSubscription,
+    variables: { k8scontextIDs: contextIds },
+    onNext: dataCB,
+    onError: (error) => console.log(`An error occured:`, error),
   });
 }

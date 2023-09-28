@@ -1,8 +1,8 @@
-import React from "react";
-import BaseInput from "./CustomBaseInput";
+import React from 'react';
+import BaseInput from './CustomBaseInput';
 
 const CustomFileWidget = (props) => {
-  const inputType = "file";
+  const inputType = 'file';
 
   /**
    * @param {React.ChangeEvent<HTMLInputElement>} event
@@ -18,7 +18,7 @@ const CustomFileWidget = (props) => {
     })
       .then(props.onChange)
       .catch((error) => {
-        console.error("Error processing file:", error);
+        console.error('Error processing file:', error);
       });
   };
 
@@ -26,4 +26,3 @@ const CustomFileWidget = (props) => {
 };
 
 export default CustomFileWidget;
-

@@ -7,6 +7,7 @@
     "dev": "next lint --fix && node ui_dev_server.js",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
+    "format": "prettier --write '**/*.(ts|tsx|js|jsx|md|json)'",
     "build": "npm run clean && cross-env next build",
     "start": "NODE_ENV=production node ui_dev_server.js",
     "export": "next export",
@@ -27,11 +28,6 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "eslint --fix"
-    ]
   },
   "keywords": [],
   "author": "Layer5",
@@ -99,6 +95,7 @@
     "react-countdown-clock": "^2.9.0",
     "react-dom": "^17.0.2",
     "react-draggable": "^4.4.5",
+    "react-error-boundary": "^4.0.11",
     "react-jss": "^10.9.0",
     "react-lazyload": "^3.2.0",
     "react-moment": "^1.1.2",
@@ -135,7 +132,9 @@
     "cypress-file-upload": "^5.0.8",
     "eslint": "^8.35.0",
     "eslint-config-next": "^13.1.2",
+    "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-cypress": "^2.13.3",
+    "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-react": "^7.31.8",
     "http-proxy": "^1.18.1",
     "husky": "^7.0.2",
@@ -143,6 +142,7 @@
     "node-polyfill-webpack-plugin": "^2.0.1",
     "nodemon": "^2.0.20",
     "nyc": "^15.1.0",
+    "prettier": "^3.0.3",
     "relay-compiler": "^15.0.0",
     "start-server-and-test": "^1.13.1",
     "webpack": "^5.76.0",

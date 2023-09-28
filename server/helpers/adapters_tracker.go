@@ -125,6 +125,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 						ExposedPorts: nat.PortSet{
 							port: struct{}{},
 						},
+						Labels: map[string]string{"com.centurylinklabs.watchtower.enable": "true"},
 					}, &container.HostConfig{
 						NetworkMode: container.NetworkMode(netName),
 						PortBindings: nat.PortMap{

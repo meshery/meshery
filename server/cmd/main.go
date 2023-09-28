@@ -218,8 +218,10 @@ func main() {
 		PrometheusClient:         models.NewPrometheusClient(),
 		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
 
-		ConfigurationChannel: models.NewConfigurationHelper(),
-		EventBroadcaster: models.NewEventBroadcaster(),
+		ApplicationChannel: models.NewBroadcaster(),
+		PatternChannel: models.NewBroadcaster(),
+		FilterChannel: models.NewBroadcaster(),
+		EventBroadcaster: models.NewBroadcaster(),
 		DashboardK8sResourcesChan: models.NewDashboardK8sResourcesHelper(),
 		MeshModelSummaryChannel:   mesherymeshmodel.NewSummaryHelper(),
 
