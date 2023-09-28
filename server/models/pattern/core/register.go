@@ -14,6 +14,7 @@ import (
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/manifests"
+	"github.com/layer5io/meshkit/utils/patterns"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -101,23 +102,23 @@ type crdhelper struct {
 func GetK8Components(ctxt context.Context, config []byte) (*manifests.Component, error) {
 	cli, err := kubernetes.New(config)
 	if err != nil {
-		return nil, ErrGetK8sComponents(err)
+		return nil, patterns.ErrGetK8sComponents(err)
 	}
 	req := cli.KubeClient.RESTClient().Get().RequestURI("/openapi/v2")
 	k8version, err := cli.KubeClient.ServerVersion()
 	if err != nil {
-		return nil, ErrGetK8sComponents(err)
+		return nil, patterns.ErrGetK8sComponents(err)
 	}
 	var customResources = make(map[string]bool)
 	crdresult, err := cli.KubeClient.RESTClient().Get().RequestURI("/apis/apiextensions.k8s.io/v1/customresourcedefinitions").Do(context.Background()).Raw()
 	if err != nil {
-		return nil, ErrGetK8sComponents(err)
+		return nil, patterns.ErrGetK8sComponents(err)
 	}
 
 	var xcrd crd
 	err = json.Unmarshal(crdresult, &xcrd)
 	if err != nil {
-		return nil, ErrGetK8sComponents(err)
+		return nil, patterns.ErrGetK8sComponents(err)
 	}
 	for _, item := range xcrd.Items {
 		customResources[item.Metadata["name"].(string)] = true
@@ -125,11 +126,11 @@ func GetK8Components(ctxt context.Context, config []byte) (*manifests.Component,
 	res := req.Do(context.Background())
 	content, err := res.Raw()
 	if err != nil {
-		return nil, ErrGetK8sComponents(err)
+		return nil, patterns.ErrGetK8sComponents(err)
 	}
 	apiResources, err := getAPIRes(cli)
 	if err != nil {
-		return nil, ErrGetK8sComponents(err)
+		return nil, patterns.ErrGetK8sComponents(err)
 	}
 
 	var arrAPIResources []string
@@ -268,7 +269,7 @@ func GetK8Components(ctxt context.Context, config []byte) (*manifests.Component,
 		},
 	})
 	if err != nil {
-		return nil, ErrGetK8sComponents(err)
+		return nil, patterns.ErrGetK8sComponents(err)
 	}
 	return man, nil
 }

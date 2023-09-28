@@ -10,6 +10,7 @@ import (
 	meshmodelv1alpha1 "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
+	"github.com/layer5io/meshkit/utils/patterns"
 )
 
 type CompConfigPair struct {
@@ -51,7 +52,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 		errs := []error{}
 
 		// Execute the plan
-		_ = plan.Execute(func(name string, svc core.Service) bool {
+		_ = plan.Execute(func(name string, svc patterns.Service) bool {
 			ccp := CompConfigPair{}
 
 			// Create application component
@@ -73,8 +74,8 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 				comp.GetAnnotations(),
 				getAdditionalAnnotations(data.Pattern),
 			))
-			if core.Format { //deprettify the component before deploying
-				comp.Spec.Settings = core.Format.DePrettify(comp.Spec.Settings, false)
+			if patterns.Format { //deprettify the component before deploying
+				comp.Spec.Settings = patterns.Format.DePrettify(comp.Spec.Settings, false)
 			}
 			ccp.Component = comp
 			// Add configuration only if traits are applied to the component
@@ -101,7 +102,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 	}
 }
 
-func processAnnotations(pattern *core.Pattern) {
+func processAnnotations(pattern *patterns.Pattern) {
 	for name, svc := range pattern.Services {
 		if svc.IsAnnotation {
 			// this particular block is present so that designs with previous filters don't break 
@@ -150,7 +151,7 @@ func mergeErrors(errs []error) error {
 
 // move into meshkit and change annotations prefix name
 
-func getAdditionalAnnotations(pattern *core.Pattern) map[string]string {
+func getAdditionalAnnotations(pattern *patterns.Pattern) map[string]string {
 	annotations := make(map[string]string, 2)
 	annotations[fmt.Sprintf("%s.name", v1alpha1.MesheryAnnotationPrefix)] = pattern.Name 
 	annotations[fmt.Sprintf("%s.id", v1alpha1.MesheryAnnotationPrefix)] = pattern.PatternID 

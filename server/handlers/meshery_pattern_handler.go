@@ -6,14 +6,15 @@ import (
 	"io"
 	"net/http"
 	"strings"
+
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/errors"
 	"github.com/layer5io/meshkit/models/events"
+	"github.com/layer5io/meshkit/utils/patterns"
 
-	pCore "github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
 	"github.com/sirupsen/logrus"
 )
@@ -114,7 +115,7 @@ func (h *Handler) handlePatternPOST(
 	format := r.URL.Query().Get("output")
 
 	if parsedBody.CytoscapeJSON != "" {
-		pf, err := pCore.NewPatternFileFromCytoscapeJSJSON(parsedBody.Name, []byte(parsedBody.CytoscapeJSON))
+		pf, err := patterns.NewPatternFileFromCytoscapeJSJSON(parsedBody.Name, []byte(parsedBody.CytoscapeJSON))
 		if err != nil {
 			rw.WriteHeader(http.StatusBadRequest)
 			fmt.Fprintf(rw, "%s", err)
@@ -205,7 +206,7 @@ func (h *Handler) handlePatternPOST(
 	// If Content is not empty then assume it's a local upload
 	if parsedBody.PatternData != nil {
 		// Check if the pattern is valid
-		err := pCore.IsValidPattern(parsedBody.PatternData.PatternFile)
+		err := patterns.IsValidPattern(parsedBody.PatternData.PatternFile)
 		if err != nil {
 			h.log.Error(ErrInvalidPattern(err))
 			http.Error(rw, ErrInvalidPattern(err).Error(), http.StatusBadRequest)
@@ -727,7 +728,7 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 			eventBuilder.ActedUpon(*content.ID)
 		}
 		if format == "cytoscape" {
-			patternFile, err := pCore.NewPatternFile([]byte(content.PatternFile))
+			patternFile, err := patterns.NewPatternFile([]byte(content.PatternFile))
 			if err != nil {
 				http.Error(rw, ErrParsePattern(err).Error(), http.StatusBadRequest)
 				
@@ -777,7 +778,7 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 
 // Since the client currently does not support pattern imports and externalized variables, the first(import) stage of pattern engine
 // is evaluated here to simplify the pattern file such that it is valid when a deploy takes place
-func evalImportAndReferenceStage(p *pCore.Pattern) (newp pCore.Pattern) {
+func evalImportAndReferenceStage(p *patterns.Pattern) (newp patterns.Pattern) {
 	sap := &serviceActionProvider{}
 	sip := &serviceInfoProvider{}
 	chain := stages.CreateChain()

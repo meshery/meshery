@@ -8,10 +8,10 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/core"
 	"gopkg.in/yaml.v2"
 
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/utils/patterns"
 
 	"github.com/sirupsen/logrus"
 )
@@ -41,7 +41,7 @@ func (h *Handler) GetRegoPolicyForDesignFile(
 		return
 	}
 
-	var input core.Pattern
+	var input patterns.Pattern
 	err = yaml.Unmarshal((body), &input)
 
 	if err != nil {
@@ -50,7 +50,7 @@ func (h *Handler) GetRegoPolicyForDesignFile(
 	}
 
 	for _, svc := range input.Services {
-		svc.Settings = core.Format.DePrettify(svc.Settings, false)
+		svc.Settings = patterns.Format.DePrettify(svc.Settings, false)
 	}
 
 	data, err := yaml.Marshal(input)

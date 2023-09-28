@@ -15,14 +15,14 @@ import (
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/core"
-	"github.com/layer5io/meshery/server/models/pattern/patterns"
 	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
 	"github.com/layer5io/meshkit/logger"
 	events "github.com/layer5io/meshkit/models/events"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
+	"github.com/layer5io/meshkit/utils/patterns"
+	_patterns "github.com/layer5io/meshery/server/models/pattern/patterns"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/sirupsen/logrus"
 	v1 "k8s.io/client-go/applyconfigurations/meta/v1"
@@ -79,7 +79,7 @@ func (h *Handler) PatternFileHandler(
 		action = "undeploy"
 	}
 	
-	patternFile, err := core.NewPatternFile(body)
+	patternFile, err := patterns.NewPatternFile(body)
 	// Generate the pattern file object
 	description := fmt.Sprintf("Pattern %s %sed", patternFile.Name, action)
 	if isDryRun {
@@ -153,7 +153,7 @@ func mergeMsgs(msgs []string) string {
 func _processPattern(
 	ctx context.Context,
 	provider models.Provider,
-	pattern core.Pattern,
+	pattern patterns.Pattern,
 	prefObj *models.Preference,
 	userID string,
 	isDelete bool,
@@ -338,7 +338,7 @@ func (sap *serviceActionProvider) Terminate(err error) {
 	}
 	sap.err = err
 }
-func (sap *serviceActionProvider) Mutate(p *core.Pattern) {
+func (sap *serviceActionProvider) Mutate(p *patterns.Pattern) {
 	//TODO: externalize these mutation rules with policies.
 	//1. Enforce the deployment of CRDs before other resources
 	for name, svc := range p.Services {
@@ -354,7 +354,7 @@ func (sap *serviceActionProvider) Mutate(p *core.Pattern) {
 
 // NOTE: Currently tied to kubernetes
 // Returns ComponentName->ContextID->Response
-func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[string]map[string]core.DryRunResponseWrapper, err error) {
+func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[string]map[string]patterns.DryRunResponseWrapper, err error) {
 	for _, cmp := range comps {
 		for ctxID, kc := range sap.ctxTokubeconfig {
 			cl, err := meshkube.New([]byte(kc))
@@ -364,7 +364,7 @@ func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[s
 
 			// status represents kubernetes status object
 			status, ok, err := k8s.DryRunHelper(cl, cmp)
-			dResp := core.DryRunResponseWrapper{Success: ok, Component: &core.Service{
+			dResp := patterns.DryRunResponseWrapper{Success: ok, Component: &patterns.Service{
 				Name:        cmp.Name,
 				Type:        cmp.Spec.Type,
 				Namespace:   cmp.Namespace,
@@ -385,7 +385,7 @@ func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[s
 					dResp.Component.Settings[k] = v
 				}
 			} else if err != nil { //Dry run failed due to some error eg: K8s server could not identify the resource
-				dResp.Error = &core.DryRunResponse{
+				dResp.Error = &patterns.DryRunResponse{
 					Status: err.Error(),
 				}
 			} else { //Dry run failure returned with an error wrapped in kubernetes custom error					
@@ -395,10 +395,10 @@ func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[s
 				}
 			}
 			if resp == nil {
-				resp = make(map[string]map[string]core.DryRunResponseWrapper)
+				resp = make(map[string]map[string]patterns.DryRunResponseWrapper)
 			}
 			if resp[cmp.Name] == nil {
-				resp[cmp.Name] = make(map[string]core.DryRunResponseWrapper)
+				resp[cmp.Name] = make(map[string]patterns.DryRunResponseWrapper)
 			}
 			resp[cmp.Name][ctxID] = dResp
 		}
@@ -406,8 +406,8 @@ func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[s
 	return
 }
 
-func convertRawDryRunResponse(componentName string, status map[string]interface{}) (*core.DryRunResponse, error) {
-	response := core.DryRunResponse{}
+func convertRawDryRunResponse(componentName string, status map[string]interface{}) (*patterns.DryRunResponse, error) {
+	response := patterns.DryRunResponse{}
 
 	byt, err := json.Marshal(status)
 	if err != nil {
@@ -424,7 +424,7 @@ func convertRawDryRunResponse(componentName string, status map[string]interface{
 		response.Status = *a.Status
 	}
 
-	response.Causes = make([]core.DryRunFailureCause, 0)
+	response.Causes = make([]patterns.DryRunFailureCause, 0)
 	if a.Details != nil {
 		for _, cause := range a.Details.Causes {
 			msg := ""
@@ -439,7 +439,7 @@ func convertRawDryRunResponse(componentName string, status map[string]interface{
 			if cause.Type != nil {
 				typ = string(*cause.Type)
 			}
-			failureCase := core.DryRunFailureCause{Message: msg, FieldPath: field, Type: typ}
+			failureCase := patterns.DryRunFailureCause{Message: msg, FieldPath: field, Type: typ}
 			response.Causes = append(response.Causes, failureCase)
 		}
 	}
@@ -476,7 +476,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 			for _, v := range sap.ctxTokubeconfig {
 				kconfigs = append(kconfigs, v)
 			}
-			resp, err := patterns.ProcessOAM(
+			resp, err := _patterns.ProcessOAM(
 				kconfigs,
 				[]string{string(jsonComp)},
 				string(jsonConfig),
@@ -539,7 +539,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) (string, 
 	return "", nil
 }
 
-func (sap *serviceActionProvider) Persist(name string, svc core.Service, isUpdate bool) error {
+func (sap *serviceActionProvider) Persist(name string, svc patterns.Service, isUpdate bool) error {
 	if !sap.opIsDelete {
 		if isUpdate {
 			// Do nothing

@@ -3,7 +3,7 @@ package stages
 import (
 	"testing"
 
-	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshkit/utils/patterns"
 )
 
 func TestFiller(t *testing.T) {
@@ -36,7 +36,7 @@ services:
     namespace: "$(#ref.services.entity1.namespace)"
     settings:
 `
-	p, err := core.NewPatternFile([]byte(samplePattern))
+	p, err := patterns.NewPatternFile([]byte(samplePattern))
 	if err != nil {
 		t.Fatal("failed to generate design file: ", err)
 	}

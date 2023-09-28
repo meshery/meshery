@@ -9,7 +9,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshkit/utils/patterns"
 	"gopkg.in/yaml.v2"
 )
 
@@ -24,7 +24,7 @@ Otherwise we push the service onto importingstack. This happens until the import
 */
 type servicewrapper struct {
 	parentname string
-	svc        *core.Service
+	svc        *patterns.Service
 	name       string
 	imported   map[string]bool
 }
@@ -46,7 +46,7 @@ func (ss *servicestack) pop() (s *servicewrapper) {
 func (ss *servicestack) isEmpty() bool {
 	return len(ss.sws) == 0
 }
-func (ss *servicestack) runOnStack(fn func(svc *core.Service)) {
+func (ss *servicestack) runOnStack(fn func(svc *patterns.Service)) {
 	for _, s := range ss.sws {
 		fn(s.svc)
 	}
@@ -87,7 +87,7 @@ func Import(_ ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction
 						return
 					}
 				}
-				*data.Pattern, err = core.NewPatternFile(patternYaml)
+				*data.Pattern, err = patterns.NewPatternFile(patternYaml)
 				if err != nil {
 					act.Terminate(err)
 					return
@@ -102,8 +102,8 @@ func Import(_ ServiceInfoProvider, act ServiceActionProvider) ChainStageFunction
 	}
 }
 
-func stackToServices(s *servicestack) (services map[string]*core.Service) {
-	services = make(map[string]*core.Service)
+func stackToServices(s *servicestack) (services map[string]*patterns.Service) {
+	services = make(map[string]*patterns.Service)
 	if s.isEmpty() {
 		return
 	}
@@ -168,7 +168,7 @@ func changeReferenceInPattern(old string, new string, sw []*servicewrapper) erro
 			return err
 		}
 		yamls := string(yamlp)
-		newsvc := core.Service{}
+		newsvc := patterns.Service{}
 		yamls = strings.ReplaceAll(yamls, "$(#ref.services."+old+".", "$(#ref.services."+new+".")
 		err = yaml.Unmarshal([]byte(yamls), &newsvc)
 		if err != nil {
@@ -186,7 +186,7 @@ func changeVarsInPattern(old string, new string, sw []*servicewrapper) error {
 			return err
 		}
 		yamls := string(yamlp)
-		newsvc := core.Service{}
+		newsvc := patterns.Service{}
 		yamls = strings.ReplaceAll(yamls, "$(#ref.vars."+old+")", "$(#ref.vars."+new+")")
 		err = yaml.Unmarshal([]byte(yamls), &newsvc)
 		if err != nil {
@@ -198,19 +198,19 @@ func changeVarsInPattern(old string, new string, sw []*servicewrapper) error {
 }
 func pushSvcToStack(sw []*servicewrapper, imst *servicestack, nonimst *servicestack) {
 	for _, s := range sw {
-		imst.runOnStack(func(svc *core.Service) {
+		imst.runOnStack(func(svc *patterns.Service) {
 			addInDependsOn(s.parentname, s.name, &svc.DependsOn)
 		})
-		nonimst.runOnStack(func(svc *core.Service) {
+		nonimst.runOnStack(func(svc *patterns.Service) {
 			addInDependsOn(s.parentname, s.name, &svc.DependsOn)
 		})
 	}
 
 	for _, s := range sw {
-		imst.runOnStack(func(svc *core.Service) {
+		imst.runOnStack(func(svc *patterns.Service) {
 			removeInDependsOn(s.parentname, &svc.DependsOn)
 		})
-		nonimst.runOnStack(func(svc *core.Service) {
+		nonimst.runOnStack(func(svc *patterns.Service) {
 			removeInDependsOn(s.parentname, &svc.DependsOn)
 		})
 	}
@@ -244,7 +244,7 @@ func removeInDependsOn(old string, do *[]string) {
 	}
 }
 
-func getPatternFromLocation(loc string) (p core.Pattern, err error) {
+func getPatternFromLocation(loc string) (p patterns.Pattern, err error) {
 	if strings.HasPrefix(loc, "https://") {
 		resp, err := http.Get(loc)
 		if err != nil {
@@ -257,12 +257,12 @@ func getPatternFromLocation(loc string) (p core.Pattern, err error) {
 		if err != nil {
 			return p, err
 		}
-		return core.NewPatternFile(pat)
+		return patterns.NewPatternFile(pat)
 	}
 	return p, nil
 }
 
-func getHashOfService(s *core.Service) string {
+func getHashOfService(s *patterns.Service) string {
 	b, _ := yaml.Marshal(s)
 	h := sha1.New()
 	h.Write(b)
@@ -271,7 +271,7 @@ func getHashOfService(s *core.Service) string {
 	return str[0:8]
 }
 
-func getHashOfPattern(s *core.Pattern) string {
+func getHashOfPattern(s *patterns.Pattern) string {
 	b, _ := yaml.Marshal(s)
 	h := sha1.New()
 	h.Write(b)
