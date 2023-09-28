@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   NoSsr,
   TableCell,
@@ -250,11 +250,10 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
   const [sortOrder, setSortOrder] = useState('');
   const [showMore, setShowMore] = useState(false);
   const [rowsExpanded, setRowsExpanded] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const { notify } = useNotification();
   const StyleClass = useStyles();
-
-  const searchTimeout = useRef(null);
 
   const statuses = ['ignored', 'connected', 'REGISTERED', 'discovered', 'deleted'];
 
@@ -525,7 +524,7 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
       serverSide: true,
       count,
       rowsPerPage: pageSize,
-      rowsPerPageOptions: [10, 20, 25],
+      rowsPerPageOptions: [10, 20, 30],
       fixedHeader: true,
       page,
       print: false,
@@ -546,10 +545,10 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
         }
         switch (action) {
           case 'changePage':
-            getConnections(tableState.page.toString(), pageSize.toString(), search);
+            setPage(tableState.page.toString());
             break;
           case 'changeRowsPerPage':
-            getConnections(page.toString(), tableState.rowsPerPage.toString(), search);
+            setPageSize(tableState.rowsPerPage.toString());
             break;
           case 'sort':
             if (sortInfo.length == 2) {
@@ -562,21 +561,6 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
             if (order !== sortOrder) {
               setSortOrder(order);
             }
-            break;
-          case 'search':
-            if (searchTimeout.current) {
-              clearTimeout(searchTimeout.current);
-            }
-            searchTimeout.current = setTimeout(() => {
-              if (search !== tableState.searchText) {
-                getConnections(
-                  page,
-                  pageSize,
-                  tableState.searchText !== null ? tableState.searchText : '',
-                );
-                setSearch(tableState.searchText);
-              }
-            }, 500);
             break;
         }
       },
@@ -667,17 +651,20 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
         );
       },
     }),
-    [rowsExpanded, showMore],
+    [rowsExpanded, showMore, page, pageSize],
   );
 
   /**
    * fetch connections when the page loads
    */
   useEffect(() => {
-    getConnections(page, pageSize, search, sortOrder);
+    if (!loading) {
+      getConnections(page, pageSize, search, sortOrder);
+    }
   }, [page, pageSize, search, sortOrder]);
 
   const getConnections = (page, pageSize, search, sortOrder) => {
+    setLoading(true);
     if (!search) search = '';
     if (!sortOrder) sortOrder = '';
     dataFetch(
@@ -693,6 +680,7 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
         setPage(res?.page || 0);
         setCount(res?.total_count || 0);
         setPageSize(res?.page_size || 0);
+        setLoading(false);
       },
       handleError(ACTION_TYPES.FETCH_CONNECTIONS),
     );
@@ -720,7 +708,7 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
         body: requestBody,
       },
       () => {
-        getConnections(page, pageSize, search);
+        getConnections(page, pageSize, search, sortOrder);
       },
       handleError(ACTION_TYPES.UPDATE_CONNECTION),
     );
@@ -790,7 +778,6 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
             <SearchBar
               onSearch={(value) => {
                 setSearch(value);
-                getConnections(page, pageSize, value);
               }}
               placeholder="Search connections..."
             />
