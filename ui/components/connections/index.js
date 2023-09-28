@@ -1,3 +1,4 @@
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   NoSsr,
   TableCell,
@@ -9,24 +10,24 @@ import {
   MenuItem,
   TableContainer,
   Table,
-  Paper,
   Grid,
   List,
   ListItem,
   ListItemText,
   TableRow,
   TableSortLabel,
+  Chip,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 // import EditIcon from "@material-ui/icons/Edit";
 // import YoutubeSearchedForIcon from '@mui/icons-material/YoutubeSearchedFor';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import React, { useEffect, useRef, useState } from 'react';
 import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import JsonFormatter from 'react-json-formatter';
+
 import { updateProgress } from '../../lib/store';
-import { /* Avatar, */ Chip /* FormControl, */ } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
@@ -42,6 +43,7 @@ import SearchBar from '../../utils/custom-search';
 import ResponsiveDataTable from '../../utils/data-table';
 import useStyles from '../../assets/styles/general/tool.styles';
 import Modal from '../Modal';
+import { Colors } from '../../themes/app';
 
 const styles = (theme) => ({
   grid: { padding: theme.spacing(2) },
@@ -150,6 +152,21 @@ const styles = (theme) => ({
     },
     flexWrap: 'noWrap',
   },
+  innerTableWrapper: {
+    backgroundColor: theme.palette.secondary.primeColor,
+    padding: '0',
+  },
+  listItem: {
+    paddingTop: '0',
+    paddingBottom: '0',
+  },
+  noGutter: {
+    padding: '0',
+  },
+  showMore: {
+    color: Colors.keppelGreen,
+    cursor: 'pointer',
+  },
 });
 
 const ACTION_TYPES = {
@@ -163,18 +180,6 @@ const ACTION_TYPES = {
   },
 };
 
-const SortableTableCell = ({ index, columnData, columnMeta, onSort }) => {
-  return (
-    <TableCell key={index} onClick={onSort}>
-      <TableSortLabel
-        active={columnMeta.name === columnData.name}
-        direction={columnMeta.direction || 'asc'}
-      >
-        <b>{columnData.label}</b>
-      </TableSortLabel>
-    </TableCell>
-  );
-};
 /**
  * Parent Component for Connection Component
  *
@@ -243,6 +248,8 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
   const [connections, setConnections] = useState([]);
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
+  const [showMore, setShowMore] = useState(false);
+  const [rowsExpanded, setRowsExpanded] = useState([]);
 
   const { notify } = useNotification();
   const StyleClass = useStyles();
@@ -338,7 +345,7 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
     },
     {
       name: 'name',
-      label: 'Element',
+      label: 'Name',
       options: {
         sort: true,
         sortThirdClickReset: true,
@@ -362,74 +369,6 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
                 </sup>
               </Link>
             </Tooltip>
-          );
-        },
-      },
-    },
-    {
-      name: 'type',
-      label: 'Type',
-      options: {
-        sort: true,
-        sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-          return (
-            <SortableTableCell
-              index={index}
-              columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
-            />
-          );
-        },
-        // customBodyRender : function CustomBody(value) {
-        //   return (
-        //     <FormControl sx={{ m : 1, minWidth : 200, maxWidth : 200 }} size="small">
-        //       <ReactSelectWrapper
-        //         onChange={handleChange}
-        //         options={[{ value : "environment 1", label : "environment 1" }, { value : "environment 2", label : "environment 2" }]}
-        //         value={{ value : value, label : value }}
-        //       />
-        //     </FormControl>
-        //   );
-        // },
-      },
-    },
-    {
-      name: 'sub_type',
-      label: 'Sub Type',
-      options: {
-        sort: true,
-        sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-          return (
-            <SortableTableCell
-              index={index}
-              columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
-            />
-          );
-        },
-        // customBodyRender : function CustomBody(value) {
-        //   return <Chip avatar={<Avatar>M</Avatar>} label={value} />;
-        // },
-      },
-    },
-    {
-      name: 'kind',
-      label: 'Kind',
-      options: {
-        sort: true,
-        sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-          return (
-            <SortableTableCell
-              index={index}
-              columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
-            />
           );
         },
       },
@@ -503,6 +442,42 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
       },
     },
     {
+      name: 'type',
+      label: 'Type',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
+        },
+      },
+    },
+    {
+      name: 'sub_type',
+      label: 'Sub Type',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
+        },
+      },
+    },
+    {
       name: 'status',
       label: 'Status',
       options: {
@@ -540,166 +515,160 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
     },
   ];
 
-  // const handleChange = () => {
-  //   // Select change
-  // }
-
-  const options = {
-    filter: false,
-    viewColumns: false,
-    search: false,
-    responsive: 'standard',
-    resizableColumns: true,
-    serverSide: true,
-    count,
-    rowsPerPage: pageSize,
-    rowsPerPageOptions: [10, 20, 25],
-    fixedHeader: true,
-    page,
-    print: false,
-    download: false,
-    selectableRows: 'none',
-    textLabels: {
-      selectedRows: {
-        text: 'connection(s) selected',
+  const options = useMemo(
+    () => ({
+      filter: false,
+      viewColumns: false,
+      search: false,
+      responsive: 'standard',
+      resizableColumns: true,
+      serverSide: true,
+      count,
+      rowsPerPage: pageSize,
+      rowsPerPageOptions: [10, 20, 25],
+      fixedHeader: true,
+      page,
+      print: false,
+      download: false,
+      textLabels: {
+        selectedRows: {
+          text: 'connection(s) selected',
+        },
       },
-    },
-    selectToolbarPlacement: 'none',
+      selectToolbarPlacement: 'none',
 
-    enableNestedDataAccess: '.',
-    onTableChange: (action, tableState) => {
-      const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
-      let order = '';
-      if (tableState.activeColumn) {
-        order = `${columns[tableState.activeColumn].name} desc`;
-      }
-      switch (action) {
-        case 'changePage':
-          getConnections(tableState.page.toString(), pageSize.toString(), search);
-          break;
-        case 'changeRowsPerPage':
-          getConnections(page.toString(), tableState.rowsPerPage.toString(), search);
-          break;
-        case 'sort':
-          if (sortInfo.length == 2) {
-            if (sortInfo[1] === 'ascending') {
-              order = `${columns[tableState.activeColumn].name} asc`;
-            } else {
-              order = `${columns[tableState.activeColumn].name} desc`;
+      enableNestedDataAccess: '.',
+      onTableChange: (action, tableState) => {
+        const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
+        let order = '';
+        if (tableState.activeColumn) {
+          order = `${columns[tableState.activeColumn].name} desc`;
+        }
+        switch (action) {
+          case 'changePage':
+            getConnections(tableState.page.toString(), pageSize.toString(), search);
+            break;
+          case 'changeRowsPerPage':
+            getConnections(page.toString(), tableState.rowsPerPage.toString(), search);
+            break;
+          case 'sort':
+            if (sortInfo.length == 2) {
+              if (sortInfo[1] === 'ascending') {
+                order = `${columns[tableState.activeColumn].name} asc`;
+              } else {
+                order = `${columns[tableState.activeColumn].name} desc`;
+              }
             }
-          }
-          if (order !== sortOrder) {
-            setSortOrder(order);
-          }
-          break;
-        case 'search':
-          if (searchTimeout.current) {
-            clearTimeout(searchTimeout.current);
-          }
-          searchTimeout.current = setTimeout(() => {
-            if (search !== tableState.searchText) {
-              getConnections(
-                page,
-                pageSize,
-                tableState.searchText !== null ? tableState.searchText : '',
-              );
-              setSearch(tableState.searchText);
+            if (order !== sortOrder) {
+              setSortOrder(order);
             }
-          }, 500);
-          break;
-      }
-    },
-    expandableRows: true,
-    expandableRowsHeader: false,
-    expandableRowsOnClick: true,
-    isRowExpandable: () => {
-      return true;
-    },
-    renderExpandableRow: (rowData, tableMeta) => {
-      const colSpan = rowData.length;
-      const connection = connections && connections[tableMeta.rowIndex];
-      return (
-        <TableCell
-          colSpan={colSpan}
-          style={{
-            padding: '0 0 0.5rem 2rem',
-            backgroundColor: 'rgba(0, 0, 0, 0.05)',
-          }}
-        >
-          <TableContainer>
-            <Table>
-              <TableRow>
-                <TableCell>
-                  <Paper>
-                    <div>
-                      <Grid container spacing={1}>
-                        <Grid item xs={12} md={12} className={classes.contentContainer}>
-                          <List>
-                            <ListItem>
-                              <ListItem>
-                                <ListItemText
-                                  primary="Server Version"
-                                  secondary={
-                                    connection ? connection?.metadata?.server_version : '-'
-                                  }
-                                />
+            break;
+          case 'search':
+            if (searchTimeout.current) {
+              clearTimeout(searchTimeout.current);
+            }
+            searchTimeout.current = setTimeout(() => {
+              if (search !== tableState.searchText) {
+                getConnections(
+                  page,
+                  pageSize,
+                  tableState.searchText !== null ? tableState.searchText : '',
+                );
+                setSearch(tableState.searchText);
+              }
+            }, 500);
+            break;
+        }
+      },
+      expandableRows: true,
+      expandableRowsHeader: false,
+      expandableRowsOnClick: true,
+      rowsExpanded: rowsExpanded,
+      isRowExpandable: () => {
+        return true;
+      },
+      onRowExpansionChange: (_, allRowsExpanded) => {
+        setRowsExpanded(allRowsExpanded.slice(-1).map((item) => item.index));
+      },
+      renderExpandableRow: (rowData, tableMeta) => {
+        const colSpan = rowData.length;
+        const connection = connections && connections[tableMeta.rowIndex];
+
+        return (
+          <TableCell colSpan={colSpan} className={classes.innerTableWrapper}>
+            <TableContainer>
+              <Table>
+                <TableRow className={classes.noGutter}>
+                  <TableCell style={{ padding: '10px 0' }}>
+                    <Grid container spacing={1}>
+                      <Grid item xs={12} md={6} className={classes.contentContainer}>
+                        <Grid container spacing={1}>
+                          <Grid item xs={12} md={12} className={classes.contentContainer}>
+                            <List className={classes.noGutter}>
+                              <ListItem className={classes.listItem}>
+                                <ListItem className={classes.listItem}>
+                                  <ListItemText
+                                    primary="Credential ID"
+                                    secondary={connection ? connection?.credential_id : '-'}
+                                  />
+                                </ListItem>
+                                <ListItem className={classes.listItem}>
+                                  <ListItemText
+                                    primary="Kind"
+                                    secondary={connection ? connection?.kind : '_'}
+                                  />
+                                </ListItem>
                               </ListItem>
-                              <ListItem>
-                                <ListItemText
-                                  primary="Server Location"
-                                  secondary={
-                                    connection ? connection?.metadata?.server_location : '-'
-                                  }
-                                />
-                              </ListItem>
-                              <ListItem>
-                                <ListItemText
-                                  primary="Server Build SHA"
-                                  secondary={
-                                    connection ? connection?.metadata?.server_build_sha : '-'
-                                  }
-                                />
-                              </ListItem>
-                            </ListItem>
-                          </List>
+                            </List>
+                          </Grid>
                         </Grid>
                       </Grid>
-                    </div>
-                  </Paper>
-                </TableCell>
-                <TableCell>
-                  <Paper>
-                    <div>
-                      <Grid container spacing={1}>
-                        <Grid item xs={12} md={12} className={classes.contentContainer}>
-                          <List>
-                            <ListItem>
-                              <ListItem>
-                                <ListItemText
-                                  primary="Connections Type"
-                                  secondary={connection ? connection?.type : '-'}
-                                />
-                              </ListItem>
-                              <ListItem>
-                                <ListItemText
-                                  primary="Connections Sub Type"
-                                  secondary={connection ? connection?.sub_type : '-'}
-                                />
-                              </ListItem>
+                      <Grid item xs={12} md={6} className={classes.contentContainer}>
+                        <List>
+                          <ListItem
+                            className={classes.listItem}
+                            style={{ display: 'flex', flexDirection: 'column' }}
+                          >
+                            <ListItem className={classes.listItem}>
+                              <ListItemText
+                                style={{
+                                  maxHeight: `${showMore ? 'unset' : '100px'}`,
+                                  overflow: 'hidden',
+                                }}
+                                primary="Meta Data"
+                                secondary={
+                                  connection ? (
+                                    <>
+                                      <JsonFormatter json={connection?.metadata} tabWith={4} />
+                                    </>
+                                  ) : (
+                                    ''
+                                  )
+                                }
+                              />
                             </ListItem>
-                          </List>
-                        </Grid>
+                            <ListItem>
+                              <span
+                                className={classes.showMore}
+                                onClick={() => setShowMore(!showMore)}
+                              >
+                                {showMore ? '...show Less' : '...show More'}
+                              </span>
+                            </ListItem>
+                          </ListItem>
+                        </List>
                       </Grid>
-                    </div>
-                  </Paper>
-                </TableCell>
-              </TableRow>
-            </Table>
-          </TableContainer>
-        </TableCell>
-      );
-    },
-  };
+                    </Grid>
+                  </TableCell>
+                </TableRow>
+              </Table>
+            </TableContainer>
+          </TableCell>
+        );
+      },
+    }),
+    [rowsExpanded, showMore],
+  );
 
   /**
    * fetch connections when the page loads
@@ -738,7 +707,6 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
     });
   };
 
-  console.log('connection page renders');
   const handleStatusChange = (e, connectionId) => {
     const requestBody = JSON.stringify({
       status: e.target.value,
@@ -847,6 +815,19 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
     </>
   );
 }
+
+const SortableTableCell = ({ index, columnData, columnMeta, onSort }) => {
+  return (
+    <TableCell key={index} onClick={onSort}>
+      <TableSortLabel
+        active={columnMeta.name === columnData.name}
+        direction={columnMeta.direction || 'asc'}
+      >
+        <b>{columnData.label}</b>
+      </TableSortLabel>
+    </TableCell>
+  );
+};
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),

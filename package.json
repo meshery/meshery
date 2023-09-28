@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "google-sheet-cli": "^1.6.0"
+    "google-sheet-cli": "^1.6.0",
+    "react-json-formatter": "^0.4.0"
   }
 }
