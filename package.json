@@ -1,7 +1,5 @@
 {
   "dependencies": {
-    "@casl/ability": "^6.5.0",
-    "@casl/react": "^3.1.0",
     "google-sheet-cli": "^1.6.0"
   }
 }
