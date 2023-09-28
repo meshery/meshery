@@ -1,5 +1,6 @@
-import { createContext } from 'react';
-import { createContextualCan } from '@casl/react';
+import { PureAbility } from '@casl/ability';
 
-export const AbilityContext = createContext();
-export const Can = createContextualCan(AbilityContext.Consumer);
+export const ability = new PureAbility([]);
+export default (action, subject) => {
+  return ability.can(action, subject);
+};
