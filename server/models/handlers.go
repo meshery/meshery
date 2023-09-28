@@ -135,6 +135,8 @@ type HandlerInterface interface {
 	GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.Request)
 	RegisterMeshmodelRelationships(rw http.ResponseWriter, r *http.Request)
 
+	GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Request)
+
 	PatternFileRequestHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteMesheryPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	CloneMesheryPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -188,9 +190,9 @@ type HandlerInterface interface {
 	UpdateConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	UpdateConnectionById(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	
+
 	GetRegoPolicyForDesignFile(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
-	
+
 	GetEnvironments(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetEnvironmentByIDHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	SaveEnvironment(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -233,10 +235,10 @@ type HandlerConfig struct {
 	PerformanceChannel       chan struct{}
 	PerformanceResultChannel chan struct{}
 
-	ApplicationChannel *Broadcast
-	PatternChannel *Broadcast
-	FilterChannel *Broadcast
-	EventBroadcaster        *Broadcast
+	ApplicationChannel        *Broadcast
+	PatternChannel            *Broadcast
+	FilterChannel             *Broadcast
+	EventBroadcaster          *Broadcast
 	DashboardK8sResourcesChan *DashboardK8sResourcesChan
 	MeshModelSummaryChannel   *meshmodel.SummaryChannel
 
