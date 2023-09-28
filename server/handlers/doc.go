@@ -514,7 +514,6 @@ type environmentsResponseWrapper struct {
 	Body *models.EnvironmentPage
 }
 
-
 // Returns event
 // swagger:response eventResponseWrapper
 type eventResponseWrapper struct {

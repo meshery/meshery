@@ -78,7 +78,7 @@ func (h *Handler) PatternFileHandler(
 	if isDel {
 		action = "undeploy"
 	}
-	
+
 	patternFile, err := core.NewPatternFile(body)
 	// Generate the pattern file object
 	description := fmt.Sprintf("Pattern %s %sed", patternFile.Name, action)
@@ -130,7 +130,7 @@ func (h *Handler) PatternFileHandler(
 	metadata := map[string]interface{}{
 		"summary": response,
 	}
-	
+
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userID, event)
@@ -388,7 +388,7 @@ func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[s
 				dResp.Error = &core.DryRunResponse{
 					Status: err.Error(),
 				}
-			} else { //Dry run failure returned with an error wrapped in kubernetes custom error					
+			} else { //Dry run failure returned with an error wrapped in kubernetes custom error
 				dResp.Error, err = convertRawDryRunResponse(cmp.Name, status)
 				if err != nil {
 					return nil, err
@@ -419,7 +419,7 @@ func convertRawDryRunResponse(componentName string, status map[string]interface{
 	if err != nil {
 		return nil, err
 	}
-	
+
 	if a.Status != nil {
 		response.Status = *a.Status
 	}
