@@ -117,7 +117,7 @@ func (h *Handler) validateAuth(provider models.Provider, req *http.Request) bool
 // getting status, reconciling their deployments etc.
 func (h *Handler) MesheryControllersMiddleware(next func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider)) func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider) {
 	return func(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-		ctx := req.Context()	
+		ctx := req.Context()
 		ctx, err := MesheryControllersMiddleware(ctx, h)
 		if err != nil {
 			h.log.Error(err)
@@ -207,69 +207,69 @@ func (h *Handler) GraphqlMiddleware(next http.Handler) func(http.ResponseWriter,
 
 func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provider, user *models.User, k8sContextIDs []string) (context.Context, error) {
 	token, ok := ctx.Value(models.TokenCtxKey).(string)
-		if !ok {
-			err := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
-			logrus.Error(err)
-			return nil, err
-		}
+	if !ok {
+		err := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
+		logrus.Error(err)
+		return nil, err
+	}
 
-		contexts, err := provider.LoadAllK8sContext(token)
-		if err != nil || len(contexts) == 0 { //Try to load the contexts when there are no contexts available
-			logrus.Warn("failed to get kubernetes contexts")
-			// only the contexts that are successfully pinged will be persisted
-			contexts, err = h.LoadContextsAndPersist(user.UserID, token, provider)
-			if err != nil {
-				logrus.Warn("failed to load kubernetes contexts: ", err.Error())
+	contexts, err := provider.LoadAllK8sContext(token)
+	if err != nil || len(contexts) == 0 { //Try to load the contexts when there are no contexts available
+		logrus.Warn("failed to get kubernetes contexts")
+		// only the contexts that are successfully pinged will be persisted
+		contexts, err = h.LoadContextsAndPersist(user.UserID, token, provider)
+		if err != nil {
+			logrus.Warn("failed to load kubernetes contexts: ", err.Error())
+		}
+	}
+
+	// register kubernetes components
+	h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{RegisterK8sMeshModelComponents}, h.registryManager, h.config.EventBroadcaster, provider, user.ID, true)
+	go h.config.MeshModelSummaryChannel.Publish()
+
+	// Identify custom contexts, if provided
+	// k8sContextIDs := req.URL.Query()["contexts"]
+	k8scontexts := []models.K8sContext{}    //The contexts passed by the user
+	allk8scontexts := []models.K8sContext{} //All contexts to track all the connected clusters
+
+	if len(k8sContextIDs) == 0 { //This is for backwards compabitibility with clients. This will work fine for single cluster.
+		//For multi cluster, it is expected of clients to explicitly pass the k8scontextID.
+		//So for now, randomly one of the contexts from available ones will be pushed to the array to stop anything from breaking in case of no contexts received(with single cluster, the behavior would be as expected).
+		if len(contexts) > 0 && contexts[0] != nil {
+			k8scontexts = append(k8scontexts, *contexts[0])
+		}
+	} else if len(k8sContextIDs) == 1 && k8sContextIDs[0] == "all" {
+		for _, c := range contexts {
+			if c != nil {
+				k8scontexts = append(k8scontexts, *c)
 			}
 		}
-
-		// register kubernetes components
-		h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{RegisterK8sMeshModelComponents}, h.registryManager, h.config.EventBroadcaster, provider, user.ID, true)
-		go h.config.MeshModelSummaryChannel.Publish()
-
-		// Identify custom contexts, if provided
-		// k8sContextIDs := req.URL.Query()["contexts"]
-		k8scontexts := []models.K8sContext{}    //The contexts passed by the user
-		allk8scontexts := []models.K8sContext{} //All contexts to track all the connected clusters
-
-		if len(k8sContextIDs) == 0 { //This is for backwards compabitibility with clients. This will work fine for single cluster.
-			//For multi cluster, it is expected of clients to explicitly pass the k8scontextID.
-			//So for now, randomly one of the contexts from available ones will be pushed to the array to stop anything from breaking in case of no contexts received(with single cluster, the behavior would be as expected).
-			if len(contexts) > 0 && contexts[0] != nil {
-				k8scontexts = append(k8scontexts, *contexts[0])
-			}
-		} else if len(k8sContextIDs) == 1 && k8sContextIDs[0] == "all" {
+	} else {
+		for _, kctxID := range k8sContextIDs {
 			for _, c := range contexts {
-				if c != nil {
+				if c != nil && c.ID == kctxID {
 					k8scontexts = append(k8scontexts, *c)
 				}
 			}
-		} else {
-			for _, kctxID := range k8sContextIDs {
-				for _, c := range contexts {
-					if c != nil && c.ID == kctxID {
-						k8scontexts = append(k8scontexts, *c)
-					}
-				}
-				// kctx, err := provider.GetK8sContext(token, kctxID)
-				// if err != nil {
-				// 	logrus.Warn("invalid context ID found")
-				// 	continue
-				// }
-				// k8scontexts = append(k8scontexts, kctx)
-			}
+			// kctx, err := provider.GetK8sContext(token, kctxID)
+			// if err != nil {
+			// 	logrus.Warn("invalid context ID found")
+			// 	continue
+			// }
+			// k8scontexts = append(k8scontexts, kctx)
 		}
-		for _, k8scontext := range contexts {
-			if k8scontext != nil {
-				allk8scontexts = append(allk8scontexts, *k8scontext)
-			}
+	}
+	for _, k8scontext := range contexts {
+		if k8scontext != nil {
+			allk8scontexts = append(allk8scontexts, *k8scontext)
 		}
+	}
 
-		ctx = context.WithValue(ctx, models.KubeClustersKey, k8scontexts)
-		ctx = context.WithValue(ctx, models.AllKubeClusterKey, allk8scontexts)
-		return ctx, nil
-		// req1 := req.WithContext(ctx)
-		// next(w, req1, prefObj, user, provider)
+	ctx = context.WithValue(ctx, models.KubeClustersKey, k8scontexts)
+	ctx = context.WithValue(ctx, models.AllKubeClusterKey, allk8scontexts)
+	return ctx, nil
+	// req1 := req.WithContext(ctx)
+	// next(w, req1, prefObj, user, provider)
 }
 
 func MesheryControllersMiddleware(ctx context.Context, h *Handler) (context.Context, error) {
