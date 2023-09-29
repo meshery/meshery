@@ -220,6 +220,20 @@ class MesheryApp extends App {
     });
   };
 
+  debouncedContextSubscriptionCallback = _.debounce(
+    (result) => {
+      this.setState({ k8sContexts: result.k8sContext }, () => this.setActiveContexts('all'));
+      this.props.store.dispatch({
+        type: actionTypes.UPDATE_CLUSTER_CONFIG,
+        k8sConfig: result.k8sContext.contexts,
+      });
+    },
+    5000,
+    {
+      leading: true,
+    },
+  );
+
   componentDidMount() {
     this.loadConfigFromServer(); // this works, but sometimes other components which need data load faster than this data is obtained.
     this.initSubscriptions([]);
@@ -241,24 +255,16 @@ class MesheryApp extends App {
 
     this.initMeshSyncEventsSubscription(this.state.activeK8sContexts);
     // this.initEventsSubscription()
+
     const k8sContextSubscription = (page = '', search = '', pageSize = '10', order = '') => {
-      return subscribeK8sContext(
-        (result) => {
-          this.setState({ k8sContexts: result.k8sContext }, () => this.setActiveContexts('all'));
-          this.props.store.dispatch({
-            type: actionTypes.UPDATE_CLUSTER_CONFIG,
-            k8sConfig: result.k8sContext.contexts,
-          });
+      return subscribeK8sContext(this.debouncedContextSubscriptionCallback, {
+        selector: {
+          page: page,
+          pageSize: pageSize,
+          order: order,
+          search: search,
         },
-        {
-          selector: {
-            page: page,
-            pageSize: pageSize,
-            order: order,
-            search: search,
-          },
-        },
-      );
+      });
     };
     const disposeK8sContextSubscription = k8sContextSubscription();
     this.setState({ disposeK8sContextSubscription });
