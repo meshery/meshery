@@ -363,7 +363,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/integrations/connections/{connectionKind}/details", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetConnectionDetails), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/integrations/connections/{connectionKind}/verify", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.VerifyConnection), models.ProviderAuth))).
-		Methods("POST")
+		Methods("GET")
 
 	gMux.Handle("/api/integrations/connections/{connectionKind}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetConnectionsByKind), models.ProviderAuth))).
 		Methods("GET")

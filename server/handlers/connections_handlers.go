@@ -82,12 +82,12 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 
 
 // swagger:route GET /api/integrations/connections/{connectionKind}/status HandleConnectionStatus idPutConnection
-// Handle GET request for the status of particular connection
-// ```?id={field}``` id is not always the connection UUID, as an example, for Helm connection, id used is the repoURL (it is used to check and update UI accordingly if the connection already exists).
-// Returns Connection object if it exists otherwise empty response is send.
-// Creates a new connection
+// Handle GET request for the status of particular connection.
+// ```?id={field}``` "id" is not always the connection UUID, as an example, for Helm connection, it is the repoURL. The API is used to check the status and update UI accordingly.
 // responses:
-// 200: Connection
+// 200: 
+// 	schema:
+// 		Connection
 func (h *Handler) HandleConnectionStatus(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connKind := mux.Vars(req)[string(models.ConnectionKindKey)]
 	
@@ -172,7 +172,7 @@ func (h *Handler) GetConnectionDetails(w http.ResponseWriter, req *http.Request,
 		return
 	} 
 	
-	http.Error(w, fmt.Errorf("operation for connection kind %s not supported.", connKind).Error(), http.StatusNotImplemented)
+	http.Error(w, fmt.Errorf("operation for connection kind %s not supported", connKind).Error(), http.StatusNotImplemented)
 }
 
 func (h *Handler) VerifyConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
@@ -190,7 +190,7 @@ func (h *Handler) VerifyConnection(w http.ResponseWriter, req *http.Request, _ *
 		return
 	} 
 	
-	http.Error(w, fmt.Errorf("operation for connection kind %s not supported.", connKind).Error(), http.StatusNotImplemented)
+	http.Error(w, fmt.Errorf("operation for connection kind %s not supported", connKind).Error(), http.StatusNotImplemented)
 }
 
 

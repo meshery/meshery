@@ -227,18 +227,14 @@ func (h *Helm) Verify(res http.ResponseWriter, req *http.Request) {
 
 	var description string
 
-	requestBody := make(map[string]string, 1)
-	defer func() {
-		_ = req.Body.Close()
-	}()
-
-	err := json.NewDecoder(req.Body).Decode(&requestBody)
+	// The repo url serves as a id for helm connection
+	id := req.URL.Query().Get("id")
+	repoURL, err := url.QueryUnescape(id)
 	if err != nil {
-		unmarshalErr := models.ErrUnmarshal(err, "connection request body")
-		h.log.Error(unmarshalErr)
-		description = "Cannot read repository url from the request body."
+		invalidQueryParamErr := ErrQueryGet("id")
+		description = "Query parameter \"id\" is invalid."
 		eb.WithDescription(description).WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": unmarshalErr,
+			"error": invalidQueryParamErr,
 		})
 		event := eb.Build()
 
@@ -246,18 +242,17 @@ func (h *Helm) Verify(res http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			h.log.Warn(fmt.Errorf("unable to create event: %s", err.Error()))
 		}
-
-		res.WriteHeader(http.StatusInternalServerError)
-		data, _ := json.Marshal(event)
-		go h.eb.Publish(*h.userID, event)
+		
+		res.WriteHeader(http.StatusBadRequest)
+		data, _ := json.Marshal(invalidQueryParamErr)
+		go h.eb.Publish(*h.userID, invalidQueryParamErr)
 		_, err = res.Write(data)
 		if err != nil {
 			h.log.Error(ErrWriteResponse)
 		}
-		return
 	}
-
-	repoURL, _err := extractURL(requestBody["repoURL"], eb)
+	
+	repoURL, _err := extractURL(repoURL, eb)
 	if _err != nil {
 		err = h.provider.PersistEvent(_err)
 		if err != nil {
@@ -318,19 +313,13 @@ func (h *Helm) Details(res http.ResponseWriter, req *http.Request) {
 	eb := events.NewEvent().ActedUpon(*h.userID).FromSystem(*h.systemID).FromUser(*h.userID).WithCategory("connection").WithAction("fetch") // change
 
 	var description string
-
-	requestBody := make(map[string]string, 1)
-	defer func() {
-		_ = req.Body.Close()
-	}()
-
-	err := json.NewDecoder(req.Body).Decode(&requestBody)
+	repoURL := req.URL.Query().Get("id")
+	repoURL, err := url.QueryUnescape(repoURL)
 	if err != nil {
-		unmarshalErr := models.ErrUnmarshal(err, "connection request body")
-		h.log.Error(unmarshalErr)
-		description = "Cannot read repository url from the request body, unable to connect."
+		invalidQueryParamErr := ErrQueryGet("id")
+		description = "Query parameter \"id\" is invalid."
 		eb.WithDescription(description).WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": err,
+			"error": invalidQueryParamErr,
 		})
 		event := eb.Build()
 
@@ -338,13 +327,17 @@ func (h *Helm) Details(res http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			h.log.Warn(fmt.Errorf("unable to create event: %s", err.Error()))
 		}
-		data, _ := json.Marshal(event)
-		res.Write(data)
-		go h.eb.Publish(*h.userID, event)
-		return
+		
+		res.WriteHeader(http.StatusBadRequest)
+		data, _ := json.Marshal(invalidQueryParamErr)
+		go h.eb.Publish(*h.userID, invalidQueryParamErr)
+		_, err = res.Write(data)
+		if err != nil {
+			h.log.Error(ErrWriteResponse)
+		}
 	}
-
-	repoURL, _err := extractURL(requestBody["repoURL"], eb)
+	
+	repoURL, _err := extractURL(repoURL, eb)
 	if _err != nil {		
 		err = h.provider.PersistEvent(_err)
 		if err != nil {
@@ -530,9 +523,28 @@ func (h *Helm) Configure(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 	charts, ok := existingConnection.Metadata["charts"]
-	
+	if !ok {
+		emptyChasrtsErr := ErrApplicationFailure(fmt.Errorf("%s connection %s has no configured charts", existingConnection.Kind, existingConnection.Name), "import")
+		h.log.Error(emptyChasrtsErr)
+		description := "No charts selected, please choose atleast 1."
+		event := eb.WithDescription(description).WithSeverity(events.Error).
+		WithMetadata(map[string]interface{}{
+			"error": emptyChasrtsErr,
+		}).
+		Build()
+		_ = h.provider.PersistEvent(event)
+		go h.eb.Publish(*h.userID, event)
+		
+		res.WriteHeader(http.StatusBadRequest)
+		data, _ := json.Marshal(event)
+		_, err = res.Write(data)
+		if err != nil {
+			h.log.Error(ErrWriteResponse)
+		}
+		return
+	}
 	marshalledCharts, err := json.Marshal(charts)
-	if !ok || err != nil {
+	if err != nil {
 		marshallErr := models.ErrMarshal(err, "helm charts")
 		h.log.Error(marshallErr)
 		description := fmt.Sprintf("Unable to import helm chart %s as meshery application", existingConnection.Name)
@@ -544,6 +556,13 @@ func (h *Helm) Configure(res http.ResponseWriter, req *http.Request) {
 		_ = h.provider.PersistEvent(event)
 		
 		go h.eb.Publish(*h.userID, event)
+
+		res.WriteHeader(http.StatusInternalServerError)
+		data, _ := json.Marshal(event)
+		_, err = res.Write(data)
+		if err != nil {
+			h.log.Error(ErrWriteResponse)
+		}
 		return
 	}
 
