@@ -105,7 +105,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 func processAnnotations(pattern *patterns.Pattern) {
 	for name, svc := range pattern.Services {
 		if svc.IsAnnotation {
-			// this particular block is present so that designs with previous filters don't break 
+			// this particular block is present so that designs with previous filters don't break
 			// also UI is dependent but not exactly sure how?
 			delete(pattern.Services, name)
 		}
@@ -153,7 +153,7 @@ func mergeErrors(errs []error) error {
 
 func getAdditionalAnnotations(pattern *patterns.Pattern) map[string]string {
 	annotations := make(map[string]string, 2)
-	annotations[fmt.Sprintf("%s.name", v1alpha1.MesheryAnnotationPrefix)] = pattern.Name 
-	annotations[fmt.Sprintf("%s.id", v1alpha1.MesheryAnnotationPrefix)] = pattern.PatternID 
+	annotations[fmt.Sprintf("%s.name", v1alpha1.MesheryAnnotationPrefix)] = pattern.Name
+	annotations[fmt.Sprintf("%s.id", v1alpha1.MesheryAnnotationPrefix)] = pattern.PatternID
 	return annotations
 }

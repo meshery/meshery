@@ -3,9 +3,11 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+
 	"io"
 	"net/http"
 	"strings"
+
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -13,7 +15,13 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/errors"
 	"github.com/layer5io/meshkit/models/events"
+
 	"github.com/layer5io/meshkit/utils/patterns"
+
+	"io"
+	"net/http"
+	"strings"
+
 
 	"github.com/layer5io/meshery/server/models/pattern/stages"
 	"github.com/sirupsen/logrus"
@@ -120,8 +128,8 @@ func (h *Handler) handlePatternPOST(
 			rw.WriteHeader(http.StatusBadRequest)
 			fmt.Fprintf(rw, "%s", err)
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": ErrSavePattern(err),
-		}).WithDescription("Pattern save failed, cytoJSON could be malformed.").Build()
+				"error": ErrSavePattern(err),
+			}).WithDescription("Pattern save failed, cytoJSON could be malformed.").Build()
 
 			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userID, event)
@@ -133,7 +141,7 @@ func (h *Handler) handlePatternPOST(
 			rw.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(rw, "%s", err)
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": ErrSavePattern(err),
+				"error": ErrSavePattern(err),
 			}).WithDescription(ErrSavePattern(err).Error()).Build()
 
 			_ = provider.PersistEvent(event)
@@ -146,7 +154,7 @@ func (h *Handler) handlePatternPOST(
 			h.log.Error(ErrSavePattern(err))
 			http.Error(rw, ErrSavePattern(err).Error(), http.StatusBadRequest)
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": ErrSavePattern(err),
+				"error": ErrSavePattern(err),
 			}).WithDescription("unable to get \"name\" from the pattern.").Build()
 
 			_ = provider.PersistEvent(event)
@@ -172,7 +180,7 @@ func (h *Handler) handlePatternPOST(
 				h.log.Error(ErrSavePattern(err))
 				http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-				"error": ErrSavePattern(err),
+					"error": ErrSavePattern(err),
 				}).WithDescription(ErrSavePattern(err).Error()).Build()
 
 				_ = provider.PersistEvent(event)
@@ -180,7 +188,6 @@ func (h *Handler) handlePatternPOST(
 				return
 			}
 
-			
 			h.formatPatternOutput(rw, resp, format, &res, eventBuilder)
 			event := eventBuilder.Build()
 			_ = provider.PersistEvent(event)
@@ -200,7 +207,7 @@ func (h *Handler) handlePatternPOST(
 		}
 
 		h.formatPatternOutput(rw, byt, format, &res, eventBuilder)
-	
+
 		return
 	}
 	// If Content is not empty then assume it's a local upload
@@ -221,7 +228,7 @@ func (h *Handler) handlePatternPOST(
 				h.log.Error(ErrSavePattern(err))
 				http.Error(rw, ErrSavePattern(err).Error(), http.StatusBadRequest)
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-				"error": ErrSavePattern(err),
+					"error": ErrSavePattern(err),
 				}).WithDescription("unable to get \"name\" from the pattern.").Build()
 
 				_ = provider.PersistEvent(event)
@@ -248,9 +255,9 @@ func (h *Handler) handlePatternPOST(
 			if err != nil {
 				h.log.Error(ErrSavePattern(err))
 				http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
-				
+
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-				"error": ErrSavePattern(err),
+					"error": ErrSavePattern(err),
 				}).WithDescription(ErrSavePattern(err).Error()).Build()
 
 				_ = provider.PersistEvent(event)
@@ -289,7 +296,7 @@ func (h *Handler) handlePatternPOST(
 			h.log.Error(ErrImportPattern(err))
 			http.Error(rw, ErrImportPattern(err).Error(), http.StatusInternalServerError)
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": ErrImportPattern(err),
+				"error": ErrImportPattern(err),
 			}).WithDescription(ErrImportPattern(err).Error()).Build()
 
 			_ = provider.PersistEvent(event)
@@ -731,9 +738,9 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 			patternFile, err := patterns.NewPatternFile([]byte(content.PatternFile))
 			if err != nil {
 				http.Error(rw, ErrParsePattern(err).Error(), http.StatusBadRequest)
-				
+
 				eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-				"error": ErrParsePattern(err),
+					"error": ErrParsePattern(err),
 				}).WithDescription("Unable to parse pattern file, pattern could be malformed.").Build()
 				return
 			}

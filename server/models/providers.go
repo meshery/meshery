@@ -215,9 +215,9 @@ type ConnectionPayload struct {
 }
 
 type EnvironmentPayload struct {
-	Name             string                 `json:"name,omitempty"`
-	Description 	 string					`json:"description,omitempty"`
-	OrgID 	         string					`json:"org_id,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+	OrgID       string `json:"org_id,omitempty"`
 }
 
 type ExtensionProxyResponse struct {
@@ -306,7 +306,7 @@ const (
 
 	RegistryManagerKey ContextKey = "registrymanagerkey"
 
-	HandlerKey ContextKey = "handlerkey"	
+	HandlerKey               ContextKey = "handlerkey"
 	MesheryServerURL         ContextKey = "mesheryserverurl"
 	MesheryServerCallbackURL ContextKey = "mesheryservercallbackurl"
 	ConnectionKindKey  ContextKey = "connectionKind"

@@ -223,7 +223,7 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, _ models.Provider, ctx
 func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provider, connectionID string) (*model.OperatorControllerStatus, error) {
 	var kubeclient *mesherykube.Client
 	var err error
-	
+
 	tokenString := ctx.Value(models.TokenCtxKey).(string)
 
 	if connectionID != "" {
@@ -255,7 +255,7 @@ func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provid
 func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider, connectionID string) (*model.OperatorControllerStatus, error) {
 	var kubeclient *mesherykube.Client
 	var err error
-	
+
 	tokenString := ctx.Value(models.TokenCtxKey).(string)
 
 	if connectionID != "" {
