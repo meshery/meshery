@@ -267,6 +267,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
                 id: pattern.id,
                 name: pattern.name,
                 type: FILE_OPS.UPDATE,
+                catalog_data: pattern.catalog_data,
               })
             }
           >
@@ -283,6 +284,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
                 id: pattern.id,
                 name: pattern.name,
                 type: FILE_OPS.DELETE,
+                catalog_data: pattern.catalog_data,
               })
             }
           >
@@ -898,7 +900,7 @@ function MesheryPatterns({
     };
   }
 
-  async function handleSubmit({ data, id, name, type, metadata }) {
+  async function handleSubmit({ data, id, name, type, metadata, catalog_data }) {
     updateProgress({ showProgress: true });
     if (type === FILE_OPS.DELETE) {
       const response = await showModal(1, name);
@@ -928,7 +930,10 @@ function MesheryPatterns({
         {
           credentials: 'include',
           method: 'POST',
-          body: JSON.stringify({ pattern_data: { id, pattern_file: data }, save: true }),
+          body: JSON.stringify({
+            pattern_data: { id, pattern_file: data, catalog_data },
+            save: true,
+          }),
         },
         () => {
           console.log('PatternFile API', `/api/pattern`);
@@ -946,12 +951,18 @@ function MesheryPatterns({
           pattern_data: {
             name: metadata?.name || name,
             pattern_file: data,
+            catalog_data,
           },
           save: true,
         });
       }
       if (type === FILE_OPS.URL_UPLOAD) {
-        body = JSON.stringify({ url: data, save: true, name: metadata?.name || name });
+        body = JSON.stringify({
+          url: data,
+          save: true,
+          name: metadata?.name || name,
+          catalog_data,
+        });
       }
       dataFetch(
         `/api/pattern`,

@@ -51,10 +51,22 @@ function PatternCardGridItem({
         handleClone={handleClone}
         handleInfoModal={handleInfoModal}
         deleteHandler={() =>
-          handleSubmit({ data: yaml, id: pattern.id, type: FILE_OPS.DELETE, name: pattern.name })
+          handleSubmit({
+            data: yaml,
+            id: pattern.id,
+            type: FILE_OPS.DELETE,
+            name: pattern.name,
+            catalog_data: pattern.catalog_data,
+          })
         }
         updateHandler={() =>
-          handleSubmit({ data: yaml, id: pattern.id, type: FILE_OPS.UPDATE, name: pattern.name })
+          handleSubmit({
+            data: yaml,
+            id: pattern.id,
+            type: FILE_OPS.UPDATE,
+            name: pattern.name,
+            catalog_data: pattern.catalog_data,
+          })
         }
         setSelectedPatterns={() => setSelectedPatterns({ pattern: pattern, show: true })}
         setYaml={setYaml}
