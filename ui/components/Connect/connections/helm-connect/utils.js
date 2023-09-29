@@ -10,10 +10,6 @@ export const postHelmInstall = async (body, installationId) => {
   return res.data;
 };
 
-export const VerifyHelmRepoLink = async (url) => {
-  return await axios.post("/api/integrations/helm/status", url);
-};
-
 export const modifiedArrayOfObjects = (source, res) => {
   const newArray = source.map(obj => ({ ...obj }));
 

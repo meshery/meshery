@@ -5,7 +5,7 @@ import { ColorlibConnector, useStyles } from '../styles2';
 import Checkbox from '@material-ui/core/Checkbox';
 import { useRouter } from 'next/router';
 import TipsCarousel from '../../General/TipsCarousel';
-import { ConnectionStepperTips } from '../helm-connect/constants'; //TODO: move this to common
+import { ConnectionStepperTips } from '../connections/helm-connect/constants'; //TODO: move this to common
 import Stepper from '@material-ui/core/Stepper';
 
 function StepperIcon(props) {

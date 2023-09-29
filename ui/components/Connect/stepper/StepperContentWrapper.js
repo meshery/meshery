@@ -55,8 +55,8 @@ const StepperContent = ({
           <Button
             className={classes.cancelButton}
             style={{
-              background: theme.palette.limedSpruce,
-              color: theme.palette.white,
+              background: theme.palette.secondary.penColorPrimary,
+              color: theme.palette.secondary.primaryModalText,
               margin: 0
             }}
             onClick={cancelCallback}

@@ -48,14 +48,6 @@ const ConnectionWizardNew = ({user}) => {
           }
         }
         console.log("shouldRedirect", shouldRedirect);
-        // if (shouldRedirect && newConnection.connectionType !== "helm") {
-        //   const redirectUrl = `${GITHUB_NEW_CONNECTION}/${profileData.id}${queryString}`;
-        //   router.replace(redirectUrl);
-        // }
-        // if (shouldRedirect) {
-        //   const redirectUrl = `${GITHUB_NEW_CONNECTION}/${newConnection.connectionType}/${newConnection.connectionAction}/${newConnection.connectionId}${queryString}`;
-        //   router.replace(redirectUrl);
-        // }
       }
     }
   }, [router.query]);

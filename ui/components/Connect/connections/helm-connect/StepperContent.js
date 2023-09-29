@@ -1,23 +1,24 @@
-import React from "react";
-import { Alert, AlertTitle, Button, Stack } from "@material-ui/core";
-import { ConnectAppContent, FinishContent, SelectRepositoryContent } from "./constants";
-import Router, { useRouter } from "next/router";
-import { useTheme } from "@material-ui/core"
-import { useNotification } from '../../../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../../../lib/event-types';
-import { VerifyHelmRepoLink, modifiedArrayOfObjects, postHelmInstall } from "./utils";
-import StepperContent from "../stepper/stepper-content-wrapper";
-import RJSFWrapper from '../../MesheryMeshInterface/PatternService/RJSF_wrapper';
+import React from 'react';
+import { Alert, AlertTitle, Button, Stack } from '@material-ui/core';
+import { ConnectAppContent, FinishContent, SelectRepositoryContent } from './constants';
+import Router, { useRouter } from 'next/router';
+import { useTheme } from '@material-ui/core';
+import { useNotification } from '../../../../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../../../../lib/event-types';
+import { postHelmInstall } from './utils';
+import { VerifyConnectionKind } from '../../helpers/common.js';
+import StepperContent from '../../stepper/StepperContentWrapper';
+import RJSFWrapper from '../../../MesheryMeshInterface/PatternService/RJSF_wrapper';
 // import { useGetSchemaQuery, useUpsertApplicationMutation } from "@/api/api";
-import DesignsIcon from "../../../assets/icons/DesignIcon";
-import { promisifiedDataFetch } from '../../../lib/data-fetch';
+import DesignsIcon from '../../../../assets/icons/DesignIcon';
+import { promisifiedDataFetch } from '../../../../lib/data-fetch';
 
 export const ConnectApp = ({ handleNext }) => {
   const [isConnected, setIsConnected] = React.useState(false);
   const formRef = React.createRef();
   const formStateRef = React.createRef();
   const [schema, setSchema] = React.useState({});
-  const [isSchemaFetched, setIsSchemaFetched] = React.useState(false)
+  const [isSchemaFetched, setIsSchemaFetched] = React.useState(false);
   // const { data: schema, isSuccess: isSchemaFetched } = useGetSchemaQuery({
   //   name: "helmRepo"
   // });
@@ -30,18 +31,21 @@ export const ConnectApp = ({ handleNext }) => {
       handleNext();
     }
   };
-  console.log("formRef", formRef);
+  console.log('formRef', formRef);
 
   const cancelCallback = () => {
-    Router.push("/dashboard");
+    Router.push('/dashboard');
   };
-  const handleChange = data => {
+  const handleChange = (data) => {
     formStateRef.current = data;
     setFormData(data);
   };
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
     let isMounted = true;
+    VerifyConnectionKind('helm')
+      .then(() => setIsConnected(true))
+      .catch((error) => setIsConnected(false));
 
     const fetchData = async () => {
       try {
@@ -53,7 +57,7 @@ export const ConnectApp = ({ handleNext }) => {
         // Check if the component is still mounted before setting the state
         if (isMounted) {
           setSchema(response);
-          setIsSchemaFetched(true)
+          setIsSchemaFetched(true);
         }
       } catch (error) {
         console.error('Error fetching schema in connection wizard', error);
@@ -66,7 +70,7 @@ export const ConnectApp = ({ handleNext }) => {
     return () => {
       isMounted = false;
     };
-  }, [])
+  }, []);
 
   return (
     <StepperContent
@@ -74,7 +78,7 @@ export const ConnectApp = ({ handleNext }) => {
       handleCallback={handleCallback}
       cancelCallback={cancelCallback}
       disabled={Object.keys(formData).length !== 3}
-      btnText={isConnected ? "Update" : "Connect"}
+      btnText={isConnected ? 'Update' : 'Connect'}
     >
       {isSchemaFetched && (
         <RJSFWrapper
@@ -110,21 +114,21 @@ export const SelectRepository = ({ handleNext }) => {
       // dummy data
       let data = [
         {
-          name: "oci chart",
-          charData: "/ yaml data /"
+          name: 'oci chart',
+          charData: '/ yaml data /',
         },
         {
-          name: "oci backend",
-          charData: "/ yaml data /"
+          name: 'oci backend',
+          charData: '/ yaml data /',
         },
         {
-          name: "Meshery chart",
-          charData: "/ yaml data /"
+          name: 'Meshery chart',
+          charData: '/ yaml data /',
         },
         {
-          name: "Meshery cloud chart",
-          charData: "/ yaml data /"
-        }
+          name: 'Meshery cloud chart',
+          charData: '/ yaml data /',
+        },
       ];
 
       if (data.length === 0) {
@@ -132,13 +136,13 @@ export const SelectRepository = ({ handleNext }) => {
         setLoading(false);
         return;
       }
-      const helmRepoNames = data.map(helmRepo => helmRepo.name);
+      const helmRepoNames = data.map((helmRepo) => helmRepo.name);
       let updatedRepositories = [...helmRepoNames];
       setAvailableRepos(updatedRepositories);
       setLoading(false);
     } catch (err) {
       setLoading(false);
-      notify({messgae: err, type: EVENT_TYPES.ERROR});
+      notify({ messgae: err, type: EVENT_TYPES.ERROR });
     }
   };
 
@@ -172,23 +176,23 @@ export const SelectRepository = ({ handleNext }) => {
   const schema = {
     properties: {
       selectedHelmRepos: {
-        description: "Select one or more Helm charts from the available options",
+        description: 'Select one or more Helm charts from the available options',
         items: {
           enum: availableRepos,
-          type: "string"
+          type: 'string',
         },
         minItems: 1,
-        title: "Select one or more helm chart",
-        type: "array",
+        title: 'Select one or more helm chart',
+        type: 'array',
         uniqueItems: true,
-        "x-rjsf-grid-area": 12
-      }
+        'x-rjsf-grid-area': 12,
+      },
     },
-    required: ["selectedHelmRepos"],
-    type: "object"
+    required: ['selectedHelmRepos'],
+    type: 'object',
   };
 
-  const handleChange = data => {
+  const handleChange = (data) => {
     setFormState(data);
   };
 
@@ -214,30 +218,30 @@ export const SelectRepository = ({ handleNext }) => {
 const HelmChartsStatus = ({ configuredRepository, handleInstall }) => {
   const router = useRouter();
   const theme = useTheme();
-  const meshMapRedirect = id => {
+  const meshMapRedirect = (id) => {
     let letHyperLink = `https://playground.meshery.io/extension/meshmap?application=${id}`;
     router.replace(letHyperLink);
   };
   return (
     <Stack
-      style={{ width: "100%", marginBottom: "2rem", height: "21rem", overflow: "auto" }}
+      style={{ width: '100%', marginBottom: '2rem', height: '21rem', overflow: 'auto' }}
       spacing={2}
     >
       {configuredRepository?.map((item, index) => {
         const { name, status, id } = item;
-        const isSuccess = status === "created";
+        const isSuccess = status === 'created';
         return (
           <Alert
             key={index}
             icon={false}
-            severity={isSuccess ? "success" : "error"}
+            severity={isSuccess ? 'success' : 'error'}
             // color: isSuccess ? theme.palette.success.dark : theme.palette.error.dark
             style={{
-              display: "flex",
-              alignItems: "center",
-              lineHeight: "0",
-              color: "#000",
-              backgroundColor: isSuccess ? theme.palette.keppelGreenLight : null
+              display: 'flex',
+              alignItems: 'center',
+              lineHeight: '0',
+              color: '#000',
+              backgroundColor: isSuccess ? theme.palette.keppelGreenLight : null,
             }}
             action={
               !isSuccess ? (
@@ -254,19 +258,13 @@ const HelmChartsStatus = ({ configuredRepository, handleInstall }) => {
                   size="small"
                   onClick={() => meshMapRedirect(id)}
                 >
-                  <DesignsIcon
-                    width="28"
-                    height="28"
-                    fill={theme.palette.keppelGreen}
-                  />
-                  <p style={{marginLeft: "0.2rem"}}>
-                      Open Design
-                  </p>
+                  <DesignsIcon width="28" height="28" fill={theme.palette.keppelGreen} />
+                  <p style={{ marginLeft: '0.2rem' }}>Open Design</p>
                 </Button>
               )
             }
           >
-            <AlertTitle style={{ fontSize: "1.4rem" }}>{name}</AlertTitle>
+            <AlertTitle style={{ fontSize: '1.4rem' }}>{name}</AlertTitle>
             {isSuccess ? (
               <div>
                 <p>{`Design ${name} created`}</p>
@@ -283,48 +281,44 @@ const HelmChartsStatus = ({ configuredRepository, handleInstall }) => {
   );
 };
 
-export const Finish = ({
-  configuredRepository,
-  setConfiguredRepository,
-  installationId
-}) => {
+export const Finish = ({ configuredRepository, setConfiguredRepository, installationId }) => {
   const router = useRouter();
   const { notify } = useNotification();
   const [chartCount, setChartCount] = React.useState({
     importedChartCount: 0,
-    totalChartCount: configuredRepository.length
+    totalChartCount: configuredRepository.length,
   });
 
   const handleCallback = () => {
-    router.push("/connections");
+    router.push('/connections');
   };
 
   let statusData = [
     {
-      id: "uuid-uuid-uuid",
-      name: "oci chart",
-      status: "created",
-      chart_yaml: "/ yaml data /"
+      id: 'uuid-uuid-uuid',
+      name: 'oci chart',
+      status: 'created',
+      chart_yaml: '/ yaml data /',
     },
     {
-      id: "uuid-uuid-uuid",
-      name: "oci chart",
-      status: "created",
-      chart_yaml: "/ yaml data /"
+      id: 'uuid-uuid-uuid',
+      name: 'oci chart',
+      status: 'created',
+      chart_yaml: '/ yaml data /',
     },
     {
-      id: "uuid-uuid-uuid",
-      name: "oci chart",
-      status: "failed",
-      chart_yaml: "/ yaml data /"
-    }
+      id: 'uuid-uuid-uuid',
+      name: 'oci chart',
+      status: 'failed',
+      chart_yaml: '/ yaml data /',
+    },
   ];
 
   React.useEffect(() => {
-    let importedChartCount = statusData.filter(item => item.status === "created").length;
+    let importedChartCount = statusData.filter((item) => item.status === 'created').length;
     setChartCount({
       importedChartCount: importedChartCount,
-      totalChartCount: statusData.length
+      totalChartCount: statusData.length,
     });
     setConfiguredRepository(statusData);
   }, []);
@@ -333,17 +327,17 @@ export const Finish = ({
   // write logic to update chart count
   //   }, [])
 
-  const handleInstall = repository => () => {
+  const handleInstall = (repository) => () => {
     const body = {
-      repositories: [repository]
+      repositories: [repository],
     };
     postHelmInstall(JSON.stringify(body), installationId)
-      .then(res => {
+      .then((res) => {
         // update configure repos based on new updated repo
         // setConfiguredRepository(modifiedArrayOfObjects(configuredRepository, res));
       })
-      .catch(error => {
-        notify({message: error, type: EVENT_TYPES.ERROR});
+      .catch((error) => {
+        notify({ message: error, type: EVENT_TYPES.ERROR });
       });
   };
 
@@ -353,10 +347,7 @@ export const Finish = ({
       title={`${chartCount.importedChartCount} of ${configuredRepository.length} charts imported`}
       handleCallback={handleCallback}
     >
-      <HelmChartsStatus
-        configuredRepository={configuredRepository}
-        handleInstall={handleInstall}
-      />
+      <HelmChartsStatus configuredRepository={configuredRepository} handleInstall={handleInstall} />
     </StepperContent>
   );
 };

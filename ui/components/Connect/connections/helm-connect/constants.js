@@ -1,12 +1,12 @@
 import GitHubIcon from '@material-ui/icons/GitHub';
-import FolderIcon from "../../../assets/icons/FolderIcon";
-import FinishFlagIcon from "../../../assets/icons/FinishFlagIcon";
+import FolderIcon from "../../../../assets/icons/FolderIcon";
+import FinishFlagIcon from "../../../../assets/icons/FinishFlagIcon";
 import {
   ConnectApp,
   Finish,
   SelectRepository
-} from "./stepper-content";
-import HelmIcon from "../../../assets/icons/technology/HelmIcon"
+} from "./StepperContent";
+import HelmIcon from "../../../../assets/icons/technology/HelmIcon"
 
 export const helmSteps = [
   "Connect Repo",
