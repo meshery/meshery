@@ -74,24 +74,24 @@ const InfoModal = (props) => {
       setSaveFormLoading(true);
       let body = null;
       if (dataName === PATTERN_PLURAL) {
-        body = {
-          body: JSON.stringify({
-            pattern_data: {
-              catalog_data: formState,
-              id: selectedResource.id,
-            },
-          }),
-        };
+        body = JSON.stringify({
+          pattern_data: {
+            catalog_data: formState,
+            pattern_file: selectedResource.pattern_file,
+            id: selectedResource.id,
+          },
+          save: true,
+        });
       } else if (dataName === FILTER_PLURAL) {
         setSaveFormLoading(true);
-        body = {
-          body: JSON.stringify({
-            filter_data: {
-              catalog_data: formState,
-              id: selectedResource.id,
-            },
-          }),
-        };
+        body = JSON.stringify({
+          filter_data: {
+            catalog_data: formState,
+            id: selectedResource.id,
+            filter_file: selectedResource.filter_file,
+          },
+          save: true,
+        });
       }
 
       axios
