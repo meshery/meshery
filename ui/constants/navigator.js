@@ -38,3 +38,4 @@ export const CONTEXT_SWITCHER = 'contextSwitcher';
 export const MODELS = 'models';
 export const COMPONENTS = 'components';
 export const RELATIONSHIPS = 'relationships';
+export const REGISTRANTS = 'registrants';

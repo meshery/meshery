@@ -28,7 +28,12 @@ import MeshModelComponent from './MeshModelComponent';
 import CredentialIcon from '../assets/icons/CredentialIcon';
 import MesheryCredentialComponent from './MesheryCredentialComponent';
 import DatabaseSummary from './DatabaseSummary';
-import { getComponentsDetail, getModelsDetail, getRelationshipsDetail } from '../api/meshmodel';
+import {
+  getComponentsDetail,
+  getModelsDetail,
+  getRelationshipsDetail,
+  getRegistrantsDetail,
+} from '../api/meshmodel';
 import { withNotify } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 
@@ -201,6 +206,7 @@ class MesherySettings extends React.Component {
       modelsCount: 0,
       componentsCount: 0,
       relationshipsCount: 0,
+      registrantsCount: 0,
       isMeshConfigured: k8sconfig.clusterConfigured,
 
       // Array of scanned prometheus urls
@@ -248,15 +254,18 @@ class MesherySettings extends React.Component {
       const modelsResponse = await getModelsDetail();
       const componentsResponse = await getComponentsDetail();
       const relationshipsResponse = await getRelationshipsDetail();
+      const registrantsResponse = await getRegistrantsDetail();
 
       const modelsCount = modelsResponse.total_count;
       const componentsCount = componentsResponse.total_count;
       const relationshipsCount = relationshipsResponse.total_count;
+      const registrantsCount = registrantsResponse.total_count;
 
       this.setState({
         modelsCount,
         componentsCount,
         relationshipsCount,
+        registrantsCount,
       });
     } catch (error) {
       console.error(error);
@@ -520,6 +529,15 @@ class MesherySettings extends React.Component {
                       </div>
                     }
                   />
+                  <Tab
+                    className={classes.tab}
+                    label={
+                      <div className={classes.iconText}>
+                        Registrants{' '}
+                        <span style={{ fontWeight: 'bold' }}>({this.state.registrantsCount})</span>
+                      </div>
+                    }
+                  />
                 </Tabs>
               </AppBar>
               {subTabVal === 0 && (
@@ -535,6 +553,11 @@ class MesherySettings extends React.Component {
               {subTabVal === 2 && (
                 <TabContainer>
                   <MeshModelComponent view="relationships" />
+                </TabContainer>
+              )}
+              {subTabVal === 3 && (
+                <TabContainer>
+                  <MeshModelComponent view="registrants" />
                 </TabContainer>
               )}
             </TabContainer>
