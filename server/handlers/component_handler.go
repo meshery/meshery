@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -1203,4 +1204,188 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 		return
 	}
 	go h.config.MeshModelSummaryChannel.Publish()
+}
+
+// swagger:route GET /api/meshmodels/registrants GetMeshmodelModels idGetMeshmodelModels
+// Handle GET request for getting all meshmodel models
+//
+// # Returns a list of registered models across all categories
+//
+// ```?version={version}``` If version is unspecified then all models are returned
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?search={modelname}``` If search is non empty then a greedy search is performed
+//
+// ```?sort={[asc/desc]}``` Default behavior is asc
+//
+// ```?page={page-number}``` Default page number is 1
+//
+// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+// responses:
+//
+//	200: meshmodelModelsDuplicateResponseWrapper
+
+func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Add("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+	v := r.URL.Query().Get("version")
+	limitstr := r.URL.Query().Get("pagesize")
+	var limit int
+	if limitstr != "all" {
+		limit, _ = strconv.Atoi(limitstr)
+		if limit == 0 { //If limit is unspecified then it defaults to 25
+			limit = DefaultPageSizeForMeshModelComponents
+		}
+	}
+	pagestr := r.URL.Query().Get("page")
+	page, _ := strconv.Atoi(pagestr)
+	if page <= 0 {
+		page = 1
+	}
+	offset := (page - 1) * limit
+	filter := &v1alpha1.ModelFilter{
+		Version: v,
+		Limit:   limit,
+		Offset:  offset,
+		OrderOn: r.URL.Query().Get("order"),
+		Sort:    r.URL.Query().Get("sort"),
+	}
+
+	filter_model := &v1alpha1.ModelFilter{
+		Version: v,
+		OrderOn: r.URL.Query().Get("order"),
+		Sort:    r.URL.Query().Get("sort"),
+	}
+	if r.URL.Query().Get("search") != "" {
+		filter.DisplayName = r.URL.Query().Get("search")
+		filter.Greedy = true
+	}
+	meshmodels, count, _ := h.registryManager.GetModels(h.dbHandler, filter)
+	meshmodels_counts, _, _ := h.registryManager.GetModels(h.dbHandler, filter_model)
+	var rels []v1alpha1.RegistrantDetails
+	hostnameCount := make(map[string]int)
+	hostnameCount_com := make(map[string]int)
+	hostnameCount_rel := make(map[string]int)
+
+	for _, mod := range meshmodels_counts {
+		filter := &v1alpha1.ComponentFilter{
+			ModelName: mod.Name,
+		}
+		entities, _, _ := h.registryManager.GetEntities(filter)
+		if len(entities) > 0 {
+			host := h.registryManager.GetRegistrant(entities[0])
+			mod.DisplayHostName = registry.HostnameToPascalCase(host.Hostname)
+
+			if count, exists := hostnameCount[mod.DisplayHostName]; exists {
+				hostnameCount[mod.DisplayHostName] = count + 1
+			} else {
+
+				hostnameCount[mod.DisplayHostName] = 1
+			}
+		}
+	}
+
+	filter_com := &v1alpha1.ComponentFilter{
+		Version:    v,
+		Trim:       r.URL.Query().Get("trim") == "true",
+		APIVersion: r.URL.Query().Get("apiVersion"),
+		OrderOn:    r.URL.Query().Get("order"),
+		Sort:       r.URL.Query().Get("sort"),
+	}
+	entities, _, _ := h.registryManager.GetEntities(filter_com)
+	for _, r := range entities {
+		comp, ok := r.(v1alpha1.ComponentDefinition)
+		host := h.registryManager.GetRegistrant(r)
+		if ok {
+			comp.DisplayHostName = registry.HostnameToPascalCase(host.Hostname)
+
+			if count, exists := hostnameCount_com[comp.DisplayHostName]; exists {
+				hostnameCount_com[comp.DisplayHostName] = count + 1
+			} else {
+
+				hostnameCount_com[comp.DisplayHostName] = 1
+			}
+		} else {
+			fmt.Println("Error getting the count components")
+		}
+
+	}
+
+	typ := mux.Vars(r)["model"]
+
+	filter_rel, _, _ := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
+		Version:   r.URL.Query().Get("version"),
+		ModelName: typ,
+
+		OrderOn: r.URL.Query().Get("order"),
+		Sort:    r.URL.Query().Get("sort"),
+	})
+
+	for _, entity := range filter_rel {
+		host := h.registryManager.GetRegistrant(entity)
+		rel, ok := entity.(v1alpha1.RelationshipDefinition)
+		if ok {
+
+			rel.DisplayHostName = registry.HostnameToPascalCase(host.Hostname)
+			if count, exists := hostnameCount_rel[rel.DisplayHostName]; exists {
+				hostnameCount_rel[rel.DisplayHostName] = count + 1
+			} else {
+
+				hostnameCount_rel[rel.DisplayHostName] = 1
+			}
+		} else {
+			fmt.Println("Error getting the realtionship")
+		}
+	}
+
+	for _, mod := range meshmodels {
+		filter := &v1alpha1.ComponentFilter{
+			ModelName: mod.Name,
+		}
+		entities, _, _ := h.registryManager.GetEntities(filter)
+		if len(entities) > 0 { //checking if entities is non empty
+			host := h.registryManager.GetRegistrant(entities[0])
+
+			mod.HostID = host.ID
+			mod.HostName = host.Hostname
+			mod.DisplayHostName = registry.HostnameToPascalCase(host.Hostname)
+			mod.Port = host.Port
+			Count_model := hostnameCount[mod.DisplayHostName]
+			Count_comp := hostnameCount_com[mod.DisplayHostName]
+			Count_rel := hostnameCount_rel[mod.DisplayHostName]
+			registrant := v1alpha1.RegistrantDetails{
+
+				RegistrantID: host.ID,
+				Port:         mod.Port,
+				Hostname:     mod.DisplayHostName,
+				Endpoint:     host.Metadata,
+				Summary: v1alpha1.RegistrantSummary{
+					Model_count:        Count_model,
+					Components_count:   Count_comp,
+					Relationship_count: Count_rel,
+				},
+			}
+
+			rels = append(rels, registrant)
+		}
+	}
+	var pgSize int64
+	if limitstr == "all" {
+		pgSize = count
+	} else {
+		pgSize = int64(limit)
+	}
+
+	res := v1alpha1.MeshModelRegistrant{
+		Page:        page,
+		PageSize:    int(pgSize),
+		Count:       count,
+		Registrants: rels,
+	}
+
+	if err := enc.Encode(res); err != nil {
+		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+	}
 }

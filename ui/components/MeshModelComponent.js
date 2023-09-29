@@ -8,11 +8,12 @@ import {
   getComponentsDetailWithPageSize,
   getMeshModels,
   getRelationshipsDetailWithPageSize,
+  getRegistrantsDetail,
   searchModels,
   searchComponents,
 } from '../api/meshmodel';
 import debounce from '../utils/debounce';
-import { MODELS, COMPONENTS, RELATIONSHIPS } from '../constants/navigator';
+import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../constants/navigator';
 import { SORT } from '../constants/endpoints';
 
 //TODO : This Should derive the indices of rendered rows
@@ -121,6 +122,19 @@ const MeshModelComponent = ({ view, classes }) => {
     }
   };
 
+  const getRegistrants = async (page) => {
+    try {
+      const { total_count, registrants } = await getRegistrantsDetail(page + 1, rowsPerPage); // page+1 due to server side indexing starting from 1
+      setCount(total_count);
+
+      if (!isRequestCancelled) {
+        setResourcesDetail(registrants);
+      }
+    } catch (error) {
+      console.error('Failed to fetch registrants:', error);
+    }
+  };
+
   const getSearchedModels = async (searchText) => {
     try {
       const { total_count, models } = await searchModels(searchText);
@@ -171,6 +185,8 @@ const MeshModelComponent = ({ view, classes }) => {
       getRelationships(page, sortOrder);
     } else if (view === MODELS && searchText) {
       getSearchedModels(searchText);
+    } else if (view === REGISTRANTS) {
+      getRegistrants(page);
     } else if (view === COMPONENTS && searchText) {
       getSearchedComponents(searchText);
     }
@@ -182,10 +198,20 @@ const MeshModelComponent = ({ view, classes }) => {
 
   const meshmodel_columns = [
     {
-      name: view === COMPONENTS || view === RELATIONSHIPS ? 'kind' : 'displayName',
+      name:
+        view === COMPONENTS || view === RELATIONSHIPS
+          ? 'kind'
+          : view === REGISTRANTS
+          ? 'Hostname'
+          : 'displayName',
       label: `Name`,
       options: {
-        sort: view === COMPONENTS || view === RELATIONSHIPS ? true : false,
+        sort:
+          view === COMPONENTS || view === RELATIONSHIPS
+            ? true
+            : view === REGISTRANTS
+            ? true
+            : false,
         searchable: view === RELATIONSHIPS ? false : true,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
           return (
@@ -207,8 +233,18 @@ const MeshModelComponent = ({ view, classes }) => {
       },
     },
     {
-      name: view === COMPONENTS || view === RELATIONSHIPS ? 'apiVersion' : 'version',
-      label: view === COMPONENTS || view === RELATIONSHIPS ? 'Api Version' : 'Version',
+      name:
+        view === COMPONENTS || view === RELATIONSHIPS
+          ? 'apiVersion'
+          : view === REGISTRANTS
+          ? 'RegistrantID'
+          : 'version',
+      label:
+        view === COMPONENTS || view === RELATIONSHIPS
+          ? 'Api Version'
+          : view === REGISTRANTS
+          ? 'ContextID'
+          : 'Version',
       options: {
         sort: false,
         searchable: view === RELATIONSHIPS ? false : true,
@@ -226,6 +262,7 @@ const MeshModelComponent = ({ view, classes }) => {
         ),
       },
     },
+
     {
       name: 'category',
       label: 'Category Name',
@@ -241,7 +278,7 @@ const MeshModelComponent = ({ view, classes }) => {
           );
         },
         customBodyRender: (value) => {
-          if (!(view === RELATIONSHIPS || view === COMPONENTS)) {
+          if (!(view === RELATIONSHIPS || view === COMPONENTS || view == REGISTRANTS)) {
             const { modelDisplayName, name } = value;
             return (
               <Tooltip title={view === MODELS ? name : modelDisplayName} placement="top">
@@ -252,6 +289,7 @@ const MeshModelComponent = ({ view, classes }) => {
         },
       },
     },
+
     {
       name: 'metadata',
       label: 'Model',
@@ -267,7 +305,7 @@ const MeshModelComponent = ({ view, classes }) => {
           );
         },
         customBodyRender: (value) => {
-          if (!(view === MODELS || view === RELATIONSHIPS)) {
+          if (!(view === MODELS || view === RELATIONSHIPS || view === REGISTRANTS)) {
             const { modelDisplayName } = value;
             return (
               <Tooltip title={modelDisplayName} placement="top">
@@ -293,18 +331,20 @@ const MeshModelComponent = ({ view, classes }) => {
           );
         },
         customBodyRender: (value) => {
-          const { subCategory } = value;
-          return (
-            <Tooltip title={subCategory} placement="top">
-              <div>{subCategory}</div>
-            </Tooltip>
-          );
+          if (view === RELATIONSHIPS) {
+            const { subCategory } = value;
+            return (
+              <Tooltip title={subCategory} placement="top">
+                <div>{subCategory}</div>
+              </Tooltip>
+            );
+          }
         },
       },
     },
     {
-      name: 'model',
-      label: 'Model',
+      name: view == REGISTRANTS ? 'Summary' : 'model',
+      label: view == REGISTRANTS ? 'Summary' : 'Model',
       options: {
         sort: false,
         display: view === RELATIONSHIPS ? 'true' : 'false',
@@ -325,12 +365,25 @@ const MeshModelComponent = ({ view, classes }) => {
               </Tooltip>
             );
           }
+          if (view === REGISTRANTS) {
+            const summary = value;
+            const { Components_count, Model_count, Relationship_count } = summary;
+            return (
+              <div>
+                <b>Components Count:</b> {Components_count}
+                <br />
+                <b>Model Count:</b> {Model_count}
+                <br />
+                <b>Relationships Count:</b> {Relationship_count}
+              </div>
+            );
+          }
         },
       },
     },
     {
-      name: 'duplicates',
-      label: 'Duplicates',
+      name: view === REGISTRANTS ? 'Port' : 'duplicates',
+      label: view === REGISTRANTS ? 'Port' : 'Duplicates',
       options: {
         sort: false,
         searchable: true,
