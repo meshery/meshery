@@ -1,5 +1,10 @@
 import { promisifiedDataFetch } from '../lib/data-fetch';
-import { MESHMODEL_ENDPOINT, MESHMODEL_RELATIONSHIPS_ENDPOINT, SORT } from '../constants/endpoints';
+import {
+  MESHMODEL_ENDPOINT,
+  MESHMODEL_RELATIONSHIPS_ENDPOINT,
+  MESHMODEL_REGISTRANTS_ENDPOINT,
+  SORT,
+} from '../constants/endpoints';
 
 const COMPONENTS_ENDPOINT = '/api/meshmodels/components';
 const CATEGORIES_ENDPOINT = '/api/meshmodels/categories';
@@ -41,6 +46,12 @@ export async function getMeshModels(page = 1, pageSize = 'all') {
 export async function getComponentFromModelApi(model, pageSize = 'all', trim = true) {
   return await promisifiedDataFetch(
     `${MESHMODEL_ENDPOINT}/${model}/components?pagesize=${pageSize}&trim=${trim}`,
+  );
+}
+
+export async function getRegistrantsDetail(page = 1, pageSize = 'all') {
+  return await promisifiedDataFetch(
+    `${MESHMODEL_REGISTRANTS_ENDPOINT}?page=${page}&pagesize=${pageSize}`,
   );
 }
 
@@ -143,6 +154,14 @@ export async function getModelFromCategoryApi(category) {
 export async function searchModels(queryString, options = defaultOptions) {
   return promisifiedDataFetch(
     `${MESHMODEL_ENDPOINT}?search=${encodeURI(queryString)}&${optionToQueryConvertor(options)}`,
+  );
+}
+
+export async function searchRegistrants(queryString, options = defaultOptions) {
+  return promisifiedDataFetch(
+    `/api/meshmodels/registrants?search=${encodeURI(queryString)}&${optionToQueryConvertor(
+      options,
+    )}`,
   );
 }
 

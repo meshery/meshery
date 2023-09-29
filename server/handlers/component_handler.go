@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -1250,17 +1251,24 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 		OrderOn: r.URL.Query().Get("order"),
 		Sort:    r.URL.Query().Get("sort"),
 	}
+
+	filter_model := &v1alpha1.ModelFilter{
+		Version: v,
+		OrderOn: r.URL.Query().Get("order"),
+		Sort:    r.URL.Query().Get("sort"),
+	}
 	if r.URL.Query().Get("search") != "" {
 		filter.DisplayName = r.URL.Query().Get("search")
 		filter.Greedy = true
 	}
 	meshmodels, count, _ := h.registryManager.GetModels(h.dbHandler, filter)
+	meshmodels_counts, _, _ := h.registryManager.GetModels(h.dbHandler, filter_model)
 	var rels []v1alpha1.RegistrantDetails
 	hostnameCount := make(map[string]int)
 	hostnameCount_com := make(map[string]int)
 	hostnameCount_rel := make(map[string]int)
 
-	for _, mod := range meshmodels {
+	for _, mod := range meshmodels_counts {
 		filter := &v1alpha1.ComponentFilter{
 			ModelName: mod.Name,
 		}
@@ -1282,14 +1290,8 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 		Version:    v,
 		Trim:       r.URL.Query().Get("trim") == "true",
 		APIVersion: r.URL.Query().Get("apiVersion"),
-		Limit:      limit,
-		Offset:     offset,
 		OrderOn:    r.URL.Query().Get("order"),
 		Sort:       r.URL.Query().Get("sort"),
-	}
-	if r.URL.Query().Get("search") != "" {
-		filter_com.Greedy = true
-		filter_com.DisplayName = r.URL.Query().Get("search")
 	}
 	entities, _, _ := h.registryManager.GetEntities(filter_com)
 	for _, r := range entities {
@@ -1304,7 +1306,10 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 
 				hostnameCount_com[comp.DisplayHostName] = 1
 			}
+		} else {
+			fmt.Println("Error getting the count components")
 		}
+
 	}
 
 	typ := mux.Vars(r)["model"]
@@ -1312,10 +1317,9 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	filter_rel, _, _ := h.registryManager.GetEntities(&v1alpha1.RelationshipFilter{
 		Version:   r.URL.Query().Get("version"),
 		ModelName: typ,
-		Limit:     limit,
-		Offset:    offset,
-		OrderOn:   r.URL.Query().Get("order"),
-		Sort:      r.URL.Query().Get("sort"),
+
+		OrderOn: r.URL.Query().Get("order"),
+		Sort:    r.URL.Query().Get("sort"),
 	})
 
 	for _, entity := range filter_rel {
@@ -1330,6 +1334,8 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 
 				hostnameCount_rel[rel.DisplayHostName] = 1
 			}
+		} else {
+			fmt.Println("Error getting the realtionship")
 		}
 	}
 
