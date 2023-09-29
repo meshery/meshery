@@ -353,7 +353,8 @@ export const openEventInNotificationCenter =
   };
 
 export const makeStore = (initialState, options) => {
-  return createStore(reducer, initialState, composeWithDevTools(applyMiddleware(thunkMiddleware)));
+  const composeEnhancers = composeWithDevTools({ trace: true, traceLimit: 50 });
+  return createStore(reducer, initialState, composeEnhancers(applyMiddleware(thunkMiddleware)));
 };
 
 export const resultsMerge = (arr1, arr2) => {
