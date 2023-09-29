@@ -228,7 +228,7 @@ class MesheryApp extends App {
         k8sConfig: result.k8sContext.contexts,
       });
     },
-    5000,
+    2000,
     {
       leading: true,
     },
