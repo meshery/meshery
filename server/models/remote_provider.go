@@ -4191,7 +4191,7 @@ func (l *RemoteProvider) ShareFilter(req *http.Request) (int, error) {
 }
 
 func (l *RemoteProvider) GetEnvironments(token, page, pageSize, search, order, filter string) ([]byte, error) {
-	
+
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments")
 	q := remoteProviderURL.Query()
 	if page != "" {
