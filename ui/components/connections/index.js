@@ -44,6 +44,7 @@ import ResponsiveDataTable from '../../utils/data-table';
 import useStyles from '../../assets/styles/general/tool.styles';
 import Modal from '../Modal';
 import { Colors } from '../../themes/app';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 const styles = (theme) => ({
   grid: { padding: theme.spacing(2) },
@@ -167,6 +168,10 @@ const styles = (theme) => ({
     color: Colors.keppelGreen,
     cursor: 'pointer',
   },
+  metadataActions: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
 });
 
 const ACTION_TYPES = {
@@ -251,6 +256,7 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
   const [showMore, setShowMore] = useState(false);
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const { notify } = useNotification();
   const StyleClass = useStyles();
@@ -574,6 +580,7 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
       onRowExpansionChange: (_, allRowsExpanded) => {
         setRowsExpanded(allRowsExpanded.slice(-1).map((item) => item.index));
         setShowMore(false);
+        setCopied(false);
       },
       renderExpandableRow: (rowData, tableMeta) => {
         const colSpan = rowData.length;
@@ -632,13 +639,18 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
                                 }
                               />
                             </ListItem>
-                            <ListItem>
+                            <ListItem className={classes.metadataActions}>
                               <span
                                 className={classes.showMore}
                                 onClick={() => setShowMore(!showMore)}
                               >
                                 {showMore ? '...show Less' : '...show More'}
                               </span>
+                              <Tooltip title={copied ? 'Copied' : 'Copy'}>
+                                <ContentCopyIcon
+                                  onClick={() => handleCopy(connection ? connection?.metadata : {})}
+                                />
+                              </Tooltip>
                             </ListItem>
                           </ListItem>
                         </List>
@@ -652,7 +664,7 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
         );
       },
     }),
-    [rowsExpanded, showMore, page, pageSize],
+    [rowsExpanded, showMore, page, pageSize, copied],
   );
 
   /**
@@ -725,6 +737,11 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
     });
     return initialVisibility;
   });
+
+  const handleCopy = (metadata) => {
+    navigator.clipboard.writeText(JSON.stringify(metadata));
+    setCopied(true);
+  };
 
   return (
     <>
