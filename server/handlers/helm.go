@@ -17,7 +17,10 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
 	helm "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/patterns"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	"gopkg.in/yaml.v2"
+	"helm.sh/helm/v3/pkg/chart"
 )
 
 var helmIndexes = []string{"index.yml", "index.yaml"}
@@ -398,9 +401,9 @@ func (h *Helm) AddMetadata(res http.ResponseWriter, req *http.Request) {
 	repoURL := requestBody["repoURL"]
 	updatedConnection, err := h.provider.UpdateConnectionMetadata(req, string(models.Helm), requestBody)
 	if updatedConnection == nil && err == nil {
-		description = fmt.Sprintf("%s connection with repository %s doesn't exist or has been deleted.", models.Helm, repoURL)
+		description = fmt.Sprintf("%s connection with repository %s doesn't exist or has been deleted.", formatCase(models.Helm), repoURL)
 		event := eb.WithDescription(description).WithSeverity(events.Informational).WithMetadata(map[string]interface{}{
-			"summary": fmt.Sprintf("Helm connection with %s doesn't exist or has been deleted, please create one from the connections page.", repoURL),
+			"summary": fmt.Sprintf("%s connection with %s doesn't exist or has been deleted, please create one from the connections page.", formatCase(models.Helm),repoURL),
 		}).Build()
 		
 		err = h.provider.PersistEvent(event)
@@ -408,6 +411,7 @@ func (h *Helm) AddMetadata(res http.ResponseWriter, req *http.Request) {
 		if err != nil {
 			h.log.Warn(fmt.Errorf("unable to create event: %s", err.Error()))
 		}
+		return
 	}
 
 	if err != nil {
@@ -601,6 +605,8 @@ func(h *Helm) importChartsAsApps(ctx context.Context, chartsToInstall []*helm.He
 		go func(chart helm.HelmEntryMetadata) {
 			defer wg.Done()
 			eb := events.NewEvent().ActedUpon(*h.userID).FromSystem(*h.systemID).WithCategory("application").WithAction("import").FromUser(*h.userID)
+
+			overrideValues := getValuesToOverride(chart.Dependencies)
 			cfg := helm.ApplyHelmChartConfig{
 				ChartLocation: helm.HelmChartLocation{
 					Repository: repoURL,
@@ -608,6 +614,7 @@ func(h *Helm) importChartsAsApps(ctx context.Context, chartsToInstall []*helm.He
 					Version: chart.Version,
 					AppVersion: chart.AppVersion,
 				},
+				OverrideValues: overrideValues,
 			}
 
 			helmManifest, err := helm.ConvertHelmChartToK8sManifest(cfg)
@@ -703,6 +710,23 @@ func(h *Helm) importChartsAsApps(ctx context.Context, chartsToInstall []*helm.He
 	return msgs
 }
 
+func getValuesToOverride(dependencies []*chart.Dependency) map[string]interface{} {
+	overrideValues := make(map[string]interface{})
+
+	if len(dependencies) == 0 {
+		return nil
+	}
+
+	for _, dependency := range dependencies {
+		if dependency.Enabled {
+			overrideValues[dependency.Name] = map[string]interface{}{
+				"enabled": true,
+			}
+		}
+	}
+	return overrideValues
+}
+
 func convertAppToPattern(pattern *patterns.Pattern, repoURL, name, version string) (*models.MesheryApplication, error) {
 	data, err := yaml.Marshal(pattern)
 	if err != nil {
@@ -785,4 +809,9 @@ func(h *Helm) getHelmEntries(repoURL string, eb *events.EventBuilder, res http.R
 		helmEntries = append(helmEntries, helmIndex.Entries[key]...)
 	}
 	_ = json.NewEncoder(res).Encode(helmEntries)
+}
+
+func formatCase(kind models.ConnectionKind) string {
+	c := cases.Title(language.English)
+	return c.String(string(kind))
 }
