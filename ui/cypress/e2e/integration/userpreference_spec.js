@@ -4,7 +4,10 @@ describe('User Preferences', () => {
       cy.intercept('GET', '/api/user/prefs', { fixture: 'stats.json' }).as('getUserStats');
 
       cy.visit('/user/preferences', { responseTimeout: 35_000 });
-      cy.get(':nth-child(2) > .MuiFormControl-root > .MuiFormLabel-root').should('have.text', 'Analytics and Improvement Program');
+      cy.get(':nth-child(2) > .MuiFormControl-root > .MuiFormLabel-root').should(
+        'have.text',
+        'Analytics and Improvement Program',
+      );
       cy.wait('@getUserStats');
     });
 

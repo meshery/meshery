@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
-import IconButton from "@material-ui/core/IconButton";
-import { Provider, useDispatch, useSelector } from "react-redux";
-import NoSsr from "@material-ui/core/NoSsr";
+import React, { useEffect, useRef, useState } from 'react';
+import IconButton from '@material-ui/core/IconButton';
+import { Provider, useDispatch, useSelector } from 'react-redux';
+import NoSsr from '@material-ui/core/NoSsr';
 import {
   Drawer,
   Divider,
@@ -15,27 +15,36 @@ import {
   Box,
   useTheme,
   Tooltip,
-} from "@material-ui/core";
-import Filter from "./filter";
-import BellIcon from "../../assets/icons/BellIcon.js";
-import { iconMedium } from "../../css/icons.styles";
-import { NOTIFICATION_CENTER_TOGGLE_CLASS, SEVERITY, SEVERITY_STYLE, STATUS, STATUS_STYLE } from "./constants";
-import classNames from "classnames";
-import Notification from "./notification";
-import { store } from "../../store";
-import { useNavNotificationIconStyles, useStyles } from "./notificationCenter.style";
+} from '@material-ui/core';
+import Filter from './filter';
+import BellIcon from '../../assets/icons/BellIcon.js';
+import { iconMedium } from '../../css/icons.styles';
+import {
+  NOTIFICATION_CENTER_TOGGLE_CLASS,
+  SEVERITY,
+  SEVERITY_STYLE,
+  STATUS,
+  STATUS_STYLE,
+} from './constants';
+import classNames from 'classnames';
+import Notification from './notification';
+import { store } from '../../store';
+import { useNavNotificationIconStyles, useStyles } from './notificationCenter.style';
 import {
   closeNotificationCenter,
   loadEvents,
   loadNextPage,
   selectEvents,
   toggleNotificationCenter,
-} from "../../store/slices/events";
-import { useGetEventsSummaryQuery, useLazyGetEventsQuery } from "../../rtk-query/notificationCenter";
-import _ from "lodash";
-import DoneIcon from "../../assets/icons/DoneIcon";
-import { ErrorBoundary, withErrorBoundary } from "../General/ErrorBoundary";
-import { hasClass } from "../../utils/Elements";
+} from '../../store/slices/events';
+import {
+  useGetEventsSummaryQuery,
+  useLazyGetEventsQuery,
+} from '../../rtk-query/notificationCenter';
+import _ from 'lodash';
+import DoneIcon from '../../assets/icons/DoneIcon';
+import { ErrorBoundary, withErrorBoundary } from '../General/ErrorBoundary';
+import { hasClass } from '../../utils/Elements';
 
 const getSeverityCount = (count_by_severity_level, severity) => {
   return count_by_severity_level.find((item) => item.severity === severity)?.count || 0;
@@ -46,18 +55,18 @@ const EmptyState = () => {
   return (
     <Box
       sx={{
-        display : "flex",
-        flexDirection : "column",
-        alignItems : "center",
-        justifyContent : "center",
-        gap : "1rem",
-        marginY : "5rem",
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '1rem',
+        marginY: '5rem',
       }}
     >
       <DoneIcon height="10rem" width="8rem" fill={theme.icon2} />
-      <Typography variant="h6" style={{ margin : "auto", color : theme.icon2 }}>
-        {" "}
-        No notifications to show{" "}
+      <Typography variant="h6" style={{ margin: 'auto', color: theme.icon2 }}>
+        {' '}
+        No notifications to show{' '}
       </Typography>
     </Box>
   );
@@ -71,12 +80,12 @@ const NavbarNotificationIcon = withErrorBoundary(() => {
     getSeverityCount(count_by_severity_level, SEVERITY.ERROR) > 0
       ? SEVERITY.ERROR
       : getSeverityCount(count_by_severity_level, SEVERITY.WARNING) > 0
-        ? SEVERITY.WARNING
-        : null;
+      ? SEVERITY.WARNING
+      : null;
   const currentSeverityStyle = currentTopSeverity ? SEVERITY_STYLE[currentTopSeverity] : null;
   const topSeverityCount = getSeverityCount(count_by_severity_level, currentTopSeverity);
   const classes = useNavNotificationIconStyles({
-    badgeColor : currentSeverityStyle?.color,
+    badgeColor: currentSeverityStyle?.color,
   });
   if (currentTopSeverity) {
     return (
@@ -88,45 +97,48 @@ const NavbarNotificationIcon = withErrorBoundary(() => {
   return <BellIcon className={iconMedium} fill="#fff" />;
 });
 
-const NotificationCountChip = withErrorBoundary(({ classes, notificationStyle, count, type, handleClick }) => {
-  const chipStyles = {
-    fill : notificationStyle?.color,
-    height : "20px",
-    width : "20px",
-  };
-  count = Number(count).toLocaleString("en", { useGrouping : true });
-  return (
-    <Tooltip title={type} placement="bottom">
-      <Button style={{ backgroundColor : alpha(chipStyles.fill, 0.2) }} onClick={handleClick}>
-        <div className={classes.severityChip}>
-          {<notificationStyle.icon {...chipStyles} />}
-          <span>{count}</span>
-        </div>
-      </Button>
-    </Tooltip>
-  );
-});
+const NotificationCountChip = withErrorBoundary(
+  ({ classes, notificationStyle, count, type, handleClick }) => {
+    const chipStyles = {
+      fill: notificationStyle?.color,
+      height: '20px',
+      width: '20px',
+    };
+    count = Number(count).toLocaleString('en', { useGrouping: true });
+    return (
+      <Tooltip title={type} placement="bottom">
+        <Button style={{ backgroundColor: alpha(chipStyles.fill, 0.2) }} onClick={handleClick}>
+          <div className={classes.severityChip}>
+            {<notificationStyle.icon {...chipStyles} />}
+            <span>{count}</span>
+          </div>
+        </Button>
+      </Tooltip>
+    );
+  },
+);
 
 const Header = withErrorBoundary(({ handleFilter, handleClose }) => {
   const { data } = useGetEventsSummaryQuery();
   const { count_by_severity_level, total_count } = data || {
-    count_by_severity_level : [],
-    total_count : 0,
+    count_by_severity_level: [],
+    total_count: 0,
   };
   const classes = useStyles();
   const onClickSeverity = (severity) => {
     handleFilter({
-      severity : [severity],
+      severity: [severity],
     });
   };
 
   const onClickStatus = (status) => {
     handleFilter({
-      status : status,
+      status: status,
     });
   };
 
-  const unreadCount = total_count - count_by_severity_level.reduce((acc, item) => acc + item.count, 0);
+  const unreadCount =
+    total_count - count_by_severity_level.reduce((acc, item) => acc + item.count, 0);
   return (
     <div className={classNames(classes.container, classes.header)}>
       <div className={classes.title}>
@@ -160,7 +172,7 @@ const Header = withErrorBoundary(({ handleFilter, handleClose }) => {
 
 const Loading = () => {
   return (
-    <Box sx={{ display : "flex", justifyContent : "center" }}>
+    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
       <CircularProgress />
     </Box>
   );
@@ -182,8 +194,8 @@ const EventsView = withErrorBoundary(({ handleLoadNextPage, isFetching, hasMore 
           handleLoadNextPage();
         }
       },
-      { threshold : 1 }
-    )
+      { threshold: 1 },
+    ),
   );
 
   useEffect(() => {
@@ -219,19 +231,24 @@ const CurrentFilterView = withErrorBoundary(({ handleFilter }) => {
   const onDelete = (key, value) => {
     const newFilters = {
       ...currentFilters,
-      [key] : typeof currentFilters[key] === "string" ? null : currentFilters[key].filter((item) => item !== value),
+      [key]:
+        typeof currentFilters[key] === 'string'
+          ? null
+          : currentFilters[key].filter((item) => item !== value),
     };
     handleFilter(newFilters);
   };
 
   const Chips = ({ type, value }) => {
-    if (typeof value === "string") {
-      return <Chip label={value} style={{ paddingTop : "0rem" }} onDelete={() => onDelete(type, value)} />;
+    if (typeof value === 'string') {
+      return (
+        <Chip label={value} style={{ paddingTop: '0rem' }} onDelete={() => onDelete(type, value)} />
+      );
     }
 
     if (_.isArray(value) && value.length > 0) {
       return (
-        <div style={{ display : "flex", gap : "0.2rem" }}>
+        <div style={{ display: 'flex', gap: '0.2rem' }}>
           {value.map((item) => (
             <Chip key={item} label={item} onDelete={() => onDelete(type, item)} />
           ))}
@@ -249,10 +266,16 @@ const CurrentFilterView = withErrorBoundary(({ handleFilter }) => {
           return (
             <div
               key={key}
-              style={{ display : "flex", gap : "0.3rem", alignItems : "center", marginLeft : "1rem", paddingTop : ".35rem" }}
+              style={{
+                display: 'flex',
+                gap: '0.3rem',
+                alignItems: 'center',
+                marginLeft: '1rem',
+                paddingTop: '.35rem',
+              }}
             >
-              <Typography variant="subtitle2" style={{ textTransform : "capitalize" }}>
-                {" "}
+              <Typography variant="subtitle2" style={{ textTransform: 'capitalize' }}>
+                {' '}
                 {key}:
               </Typography>
               <Chips value={value} type={key} />
@@ -274,8 +297,8 @@ const MesheryNotification = () => {
   useEffect(() => {
     dispatch(
       loadEvents(fetchEvents, 1, {
-        status : STATUS.UNREAD,
-      })
+        status: STATUS.UNREAD,
+      }),
     );
   }, []);
 
@@ -314,7 +337,7 @@ const MesheryNotification = () => {
       return;
     }
     // check for svg icon (special case) , not checking the toggle class as it is not added to svg
-    if (e.target?.className?.baseVal?.includes("MuiSvgIcon")) {
+    if (e.target?.className?.baseVal?.includes('MuiSvgIcon')) {
       return;
     }
     handleClose();
@@ -348,8 +371,8 @@ const MesheryNotification = () => {
           open={open}
           ref={drawerRef}
           classes={{
-            paper : classes.notificationDrawer,
-            paperAnchorRight : isNotificationCenterOpen ? classes.fullView : classes.peekView,
+            paper: classes.notificationDrawer,
+            paperAnchorRight: isNotificationCenterOpen ? classes.fullView : classes.peekView,
           }}
         >
           <div>
@@ -360,7 +383,11 @@ const MesheryNotification = () => {
                 <div className={classes.container}>
                   <Filter handleFilter={handleFilter}></Filter>
                   <CurrentFilterView handleFilter={handleFilter} />
-                  <EventsView handleLoadNextPage={loadMore} isFetching={isFetching} hasMore={hasMore} />
+                  <EventsView
+                    handleLoadNextPage={loadMore}
+                    isFetching={isFetching}
+                    hasMore={hasMore}
+                  />
                 </div>
               </div>
             </div>
@@ -389,7 +416,10 @@ const MesheryNotification = () => {
 const NotificationCenter = (props) => {
   return (
     <NoSsr>
-      <ErrorBoundary FallbackComponent={() => null} onError={(e) => console.error("Error in NotificationCenter", e)}>
+      <ErrorBoundary
+        FallbackComponent={() => null}
+        onError={(e) => console.error('Error in NotificationCenter', e)}
+      >
         <Provider store={store}>
           <MesheryNotification {...props} />
         </Provider>
