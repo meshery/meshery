@@ -47,10 +47,22 @@ function FilterCardGridItem({
         handleClone={handleClone}
         handleDownload={(ev) => handleDownload(ev, filter.id, filter.name)}
         deleteHandler={() =>
-          handleSubmit({ data: yaml, id: filter.id, type: FILE_OPS.DELETE, name: filter.name })
+          handleSubmit({
+            data: yaml,
+            id: filter.id,
+            type: FILE_OPS.DELETE,
+            name: filter.name,
+            catalog_data: filter.catalog_data,
+          })
         }
         updateHandler={() =>
-          handleSubmit({ data: yaml, id: filter.id, type: FILE_OPS.UPDATE, name: filter.name })
+          handleSubmit({
+            data: yaml,
+            id: filter.id,
+            type: FILE_OPS.UPDATE,
+            name: filter.name,
+            catalog_data: filter.catalog_data,
+          })
         }
         setSelectedFilters={() => setSelectedFilters({ filter: filter, show: true })}
         setYaml={setYaml}

@@ -187,6 +187,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
                 id: filter.id,
                 name: filter.name,
                 type: FILE_OPS.UPDATE,
+                catalog_data: filter.catalog_data,
               })
             }
           >
@@ -203,6 +204,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
                 id: filter.id,
                 name: filter.name,
                 type: FILE_OPS.DELETE,
+                catalog_data: filter.catalog_data,
               })
             }
           >
@@ -647,14 +649,18 @@ function MesheryFilters({
   };
 
   const handleSetFilters = (filters) => {
-    if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
-      setFilters([
-        ...catalogContentRef.current,
-        ...filters.filter((content) => content.visibility !== VISIBILITY.PUBLISHED),
-      ]);
-      return;
+    console.log('filters != undefined', filters != undefined);
+    if (filters != undefined) {
+      if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
+        setFilters([
+          ...catalogContentRef.current,
+          ...filters.filter((content) => content.visibility !== VISIBILITY.PUBLISHED),
+        ]);
+        return;
+      }
+      console.log('filters---', filters);
+      setFilters(filters.filter((content) => content.visibility !== VISIBILITY.PUBLISHED));
     }
-    setFilters(filters.filter((content) => content.visibility !== VISIBILITY.PUBLISHED));
   };
 
   const initFiltersSubscription = (
@@ -668,10 +674,14 @@ function MesheryFilters({
     }
     const configurationSubscription = ConfigurationSubscription(
       (result) => {
+        console.log('FilterFile Subscription API', result);
+
+        // if (result.configuration?.filters != null) {
         setPage(result.configuration?.filters?.page || 0);
         setPageSize(result.configuration?.filters?.page_size || 0);
         setCount(result.configuration?.filters?.total_count || 0);
         handleSetFilters(result.configuration?.filters?.filters);
+        // }
       },
       {
         applicationSelector: {
@@ -712,7 +722,7 @@ function MesheryFilters({
     };
   }
 
-  async function handleSubmit({ data, name, id, type, metadata }) {
+  async function handleSubmit({ data, name, id, type, metadata, catalog_data }) {
     // TODO: use filter name
     updateProgress({ showProgress: true });
     if (type === FILE_OPS.DELETE) {
@@ -725,7 +735,6 @@ function MesheryFilters({
         `/api/filter/${id}`,
         { credentials: 'include', method: 'DELETE' },
         () => {
-          console.log('FilterFile API', `/api/filter/${id}`);
           updateProgress({ showProgress: false });
           notify({ message: `"${name}" filter deleted`, event_type: EVENT_TYPES.SUCCESS });
           resetSelectedRowData()();
@@ -772,7 +781,11 @@ function MesheryFilters({
         {
           credentials: 'include',
           method: 'POST',
-          body: JSON.stringify({ filter_data: { id, name: name }, config: data, save: true }),
+          body: JSON.stringify({
+            filter_data: { id, name: name, catalog_data },
+            config: data,
+            save: true,
+          }),
         },
         () => {
           updateProgress({ showProgress: false });
