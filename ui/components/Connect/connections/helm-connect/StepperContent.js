@@ -19,18 +19,34 @@ export const ConnectApp = ({ handleNext }) => {
   const formStateRef = React.createRef();
   const [schema, setSchema] = React.useState({});
   const [isSchemaFetched, setIsSchemaFetched] = React.useState(false);
-  // const { data: schema, isSuccess: isSchemaFetched } = useGetSchemaQuery({
-  //   name: "helmRepo"
-  // });
   const [formData, setFormData] = React.useState({});
 
   const handleCallback = () => {
     if (formRef.current && formRef.current.validateForm()) {
-      // Only allow user to go on next step if this URL get verified
-      //   axios.post("/api/integrations/helm/data", formData).then(()=>handleNext())
-      handleNext();
+      // Check if the URL is valid via an API 
+      axios
+        .post(`/api/integrations/connections/helm/verify`, { url: formData.url })
+        .then((response) => {
+          if (response.data.isValid) {
+            // URL is valid, allow the user to proceed
+            handleNext();
+          } else {
+            // URL is not valid, show an error or update the form's error state
+            // You can display an error message or update the form to indicate the URL is invalid
+            // For example, you can use formRef to set a specific field's error message:
+            formRef.current.setError('url', {
+              type: 'custom',
+              message: 'Invalid URL. Please check the URL and try again.',
+            });
+          }
+        })
+        .catch((error) => {
+          // Handle API request error, you can show an error message to the user
+          console.error('Error validating URL:', error);
+        });
     }
   };
+  
   console.log('formRef', formRef);
 
   const cancelCallback = () => {
@@ -45,7 +61,7 @@ export const ConnectApp = ({ handleNext }) => {
     let isMounted = true;
     VerifyConnectionKind('helm')
       .then(() => setIsConnected(true))
-      .catch((error) => setIsConnected(false));
+      .catch(() => setIsConnected(false));
 
     const fetchData = async () => {
       try {
