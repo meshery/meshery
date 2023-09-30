@@ -84,12 +84,15 @@ const InfoModal = (props) => {
         });
       } else if (dataName === FILTER_PLURAL) {
         setSaveFormLoading(true);
+        let config = JSON.parse(selectedResource.filter_resource).settings.config; // send the config inorder to prevent over-write of the config
         body = JSON.stringify({
           filter_data: {
             catalog_data: formState,
             id: selectedResource.id,
+            name: selectedResource.name,
             filter_file: selectedResource.filter_file,
           },
+          config: config,
           save: true,
         });
       }
