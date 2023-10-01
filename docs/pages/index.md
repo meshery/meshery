@@ -3,6 +3,7 @@ layout: page
 title: Meshery Documentation
 permalink: /
 display-title: "false"
+display-toc: "false"
 language: en
 ---
 
@@ -10,7 +11,7 @@ language: en
 
 <div style="display: block; padding: clamp(30px, calc(30px + (100 - 30) * ((100vw - 1000px) / (1600 - 1000))), 100px); padding-top:0px; padding-bottom:0px; text-align: center;">
         {% include svg/meshery-logo.html %}
-        <p style="margin-top:2rem;">As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.</p>
+        <h3>As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.</h3>
 </div>
 
 <div class="flex flex-col--2"  style="text-align: left; padding:1.6rem ;--col-gap:1rem">
