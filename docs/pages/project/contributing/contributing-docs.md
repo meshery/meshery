@@ -304,7 +304,7 @@ Control the display of this intra-page navigator with either page level or layou
 
 Set to `true` (make "editable" toolbar visible) or `false` (hide "editable" toolbar)
 
-### `if` condititional
+### `if` conditional
 
 This executes the block of code only if the given condition is true. It is executed in the following manner:
 
