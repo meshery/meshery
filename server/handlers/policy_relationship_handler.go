@@ -117,7 +117,7 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	}
 	offset := (page - 1) * limit
 	entities, _, _ := h.registryManager.GetEntities(&v1alpha1.PolicyFilter{
-		Kind: name,
+		Kind:      name,
 		ModelName: typ,
 		Greedy:    greedy,
 		Offset:    offset,
@@ -129,7 +129,7 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 		policy, ok := p.(v1alpha1.PolicyDefinition)
 		if ok {
 			policies = append(policies, policy)
-		} 
+		}
 	}
 
 	var pgSize int64
@@ -140,10 +140,10 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 	}
 
 	response := models.MeshmodelPoliciesAPIResponse{
-		Page:          page,
-		PageSize:      int(pgSize),
-		Count:         0,
-		Policies: 	   policies,
+		Page:     page,
+		PageSize: int(pgSize),
+		Count:    0,
+		Policies: policies,
 	}
 
 	if err := enc.Encode(response); err != nil {
@@ -151,7 +151,6 @@ func (h *Handler) GetAllMeshmodelPoliciesByName(rw http.ResponseWriter, r *http.
 		http.Error(rw, ErrWorkloadDefinition(err).Error(), http.StatusInternalServerError)
 	}
 }
-
 
 // swagger:route GET /api/meshmodels/models/{model}/policies/ GetMeshmodelPolicies idGetMeshmodelPolicies
 // Handle GET request for getting meshmodel policies of a specific model by name.
@@ -174,7 +173,7 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 	typ := mux.Vars(r)["model"]
-	
+
 	var greedy bool
 	if r.URL.Query().Get("search") == "true" {
 		greedy = true
@@ -205,10 +204,10 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 		policy, ok := p.(v1alpha1.PolicyDefinition)
 		if ok {
 			policies = append(policies, policy)
-		} 
+		}
 	}
 	var pgSize int64
-	
+
 	if limitstr == "all" {
 		pgSize = 0
 	} else {
@@ -216,10 +215,10 @@ func (h *Handler) GetAllMeshmodelPolicies(rw http.ResponseWriter, r *http.Reques
 	}
 
 	response := models.MeshmodelPoliciesAPIResponse{
-		Page:          page,
-		PageSize:      int(pgSize),
-		Count:         0,
-		Policies: 	   policies,
+		Page:     page,
+		PageSize: int(pgSize),
+		Count:    0,
+		Policies: policies,
 	}
 
 	if err := enc.Encode(response); err != nil {
