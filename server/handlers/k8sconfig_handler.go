@@ -22,7 +22,6 @@ import (
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
-	putils "github.com/layer5io/meshery/server/models/pattern/utils"
 	"github.com/layer5io/meshkit/models/events"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils"
@@ -352,15 +351,15 @@ func writeK8sMetadata(comp *meshmodelv1alpha1.ComponentDefinition, reg *meshmode
 	})
 	//If component was not available in the registry, then use the generic model level metadata
 	if len(ent) == 0 {
-		putils.MergeMaps(comp.Metadata, k8sMeshModelMetadata)
+		utils.MergeMaps(comp.Metadata, k8sMeshModelMetadata)
 		mutil.WriteSVGsOnFileSystem(comp)
 	} else {
 		existingComp, ok := ent[0].(meshmodelv1alpha1.ComponentDefinition)
 		if !ok {
-			putils.MergeMaps(comp.Metadata, k8sMeshModelMetadata)
+			utils.MergeMaps(comp.Metadata, k8sMeshModelMetadata)
 			return
 		}
-		putils.MergeMaps(comp.Metadata, existingComp.Metadata)
+		utils.MergeMaps(comp.Metadata, existingComp.Metadata)
 		comp.Model = existingComp.Model
 	}
 }

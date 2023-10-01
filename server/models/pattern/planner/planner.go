@@ -1,10 +1,10 @@
 package planner
 
-import "github.com/layer5io/meshery/server/models/pattern/core"
+import "github.com/layer5io/meshkit/utils/patterns"
 
 // Plan struct represents a node of an execution plan
 type Plan struct {
-	Data core.Pattern
+	Data patterns.Pattern
 	*Graph
 }
 
@@ -15,14 +15,14 @@ func (p *Plan) IsFeasible() bool {
 
 // Execute traverses the plan and calls the callback function
 // on each of the node
-func (p *Plan) Execute(cb func(string, core.Service) bool) error {
+func (p *Plan) Execute(cb func(string, patterns.Service) bool) error {
 	parallelGraph := NewParallelProcessGraph(p.Graph)
 	parallelGraph.Traverse(cb)
 	return nil
 }
 
 // CreatePlan takes in the application components and creates a plan of execution for it
-func CreatePlan(pattern core.Pattern, invert bool) (*Plan, error) {
+func CreatePlan(pattern patterns.Pattern, invert bool) (*Plan, error) {
 	g := NewGraph()
 
 	for name, svc := range pattern.Services {

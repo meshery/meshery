@@ -122,6 +122,7 @@ const (
 	ErrUpdateEventCode                  = "1127"
 	ErrDeleteEventCode                  = "1128"
 	ErrUnsupportedEventStatusCode       = "1129"
+	ErrInvalidRepoURLCode               = "1537"
 )
 
 var (
@@ -245,7 +246,7 @@ func ErrParseForm(err error) error {
 }
 
 func ErrQueryGet(obj string) error {
-	return errors.New(ErrQueryGetCode, errors.Alert, []string{"unable to get: ", obj}, []string{}, []string{"Query parameter is not a part of the request"}, []string{"Make sure to pass the query paramater in the request"})
+	return errors.New(ErrQueryGetCode, errors.Alert, []string{"unable to get: ", obj}, []string{}, []string{"Query parameter is not a part of the request", "Query parameter is malformed."}, []string{"Make sure to pass the query paramater in the request", "Make sure to pass valid query parameter"})
 }
 
 func ErrGetResult(err error) error {
@@ -529,4 +530,8 @@ func ErrDeleteEvent(err error, id string) error {
 
 func ErrUnsupportedEventStatus(err error, status string) error {
 	return errors.New(ErrUnsupportedEventStatusCode, errors.Alert, []string{fmt.Sprintf("Event status %s not supported.", status)}, []string{err.Error()}, []string{"Unsupported event status for the current Meshery Server."}, []string{"Try upgrading Meshery to latest version.", "Use one of the supported event statuses."})
+}
+
+func ErrInvalidRepoURL(err error) error {
+	return errors.New(ErrInvalidRepoURLCode, errors.Alert, []string{"cannot get url from the request body"}, []string{err.Error()}, []string{"request body is empty/do not contain repository URL"}, []string{"provide a valid request body"})
 }

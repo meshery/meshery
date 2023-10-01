@@ -6,7 +6,7 @@ import (
 	"sync"
 
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshkit/utils/patterns"
 	"gopkg.in/yaml.v2"
 )
 
@@ -84,7 +84,7 @@ func (mc *ContentModifier) isPatternSupported(ctx context.Context, patternfile s
 	if err != nil {
 		return err.Error(), false
 	}
-	patternFile, err := core.NewPatternFile([]byte(patternfile))
+	patternFile, err := patterns.NewPatternFile([]byte(patternfile))
 	if err != nil {
 		return err.Error(), false
 	}

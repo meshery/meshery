@@ -198,6 +198,12 @@ type HandlerInterface interface {
 	UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	AddConnectionToEnvironmentHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	RemoveConnectionFromEnvironmentHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+
+	HandleConnectionStatus(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	HandleConnectionMetadata(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	ConfigureConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetConnectionDetails(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	VerifyConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 }
 
 // HandlerConfig holds all the config pieces needed by handler methods

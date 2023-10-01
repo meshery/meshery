@@ -17,11 +17,11 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
-	pCore "github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/events"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
+	"github.com/layer5io/meshkit/utils/patterns"
 	"github.com/layer5io/meshkit/utils/walker"
 	"gopkg.in/yaml.v2"
 )
@@ -217,7 +217,7 @@ func (h *Handler) handleApplicationPOST(
 					Valid:  true,
 				}
 			}
-			pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false, h.registryManager)
+			pattern, err := patterns.NewPatternFileFromK8sManifest(k8sres, false, h.registryManager)
 			if err != nil {
 				obj := "convert"
 				conversionErr := ErrApplicationFailure(err, obj)
@@ -327,7 +327,7 @@ func (h *Handler) handleApplicationPOST(
 			}
 
 			result := string(resp)
-			pattern, err := pCore.NewPatternFileFromK8sManifest(result, false, h.registryManager)
+			pattern, err := patterns.NewPatternFileFromK8sManifest(result, false, h.registryManager)
 			if err != nil {
 				obj := "convert"
 				convertErr := ErrApplicationFailure(err, obj)
@@ -604,7 +604,7 @@ func (h *Handler) handleApplicationUpdate(rw http.ResponseWriter,
 	format := r.URL.Query().Get("output")
 
 	if parsedBody.CytoscapeJSON != "" {
-		pf, err := pCore.NewPatternFileFromCytoscapeJSJSON(parsedBody.Name, []byte(parsedBody.CytoscapeJSON))
+		pf, err := patterns.NewPatternFileFromCytoscapeJSJSON(parsedBody.Name, []byte(parsedBody.CytoscapeJSON))
 		if err != nil {
 			errAppSave := ErrSaveApplication(err)
 			rw.WriteHeader(http.StatusBadRequest)
@@ -1012,7 +1012,7 @@ func githubRepoApplicationScan(
 						return ErrRemoteApplication(err)
 					}
 				}
-				pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false, reg)
+				pattern, err := patterns.NewPatternFileFromK8sManifest(k8sres, false, reg)
 				if err != nil {
 					return err //always a meshkit error
 				}
@@ -1075,7 +1075,7 @@ func genericHTTPApplicationFile(fileURL, sourceType string, reg *meshmodel.Regis
 		}
 	}
 
-	pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, false, reg)
+	pattern, err := patterns.NewPatternFileFromK8sManifest(k8sres, false, reg)
 	if err != nil {
 		return nil, err //This error is already a meshkit error
 	}

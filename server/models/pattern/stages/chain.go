@@ -5,11 +5,12 @@ import (
 
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/utils/patterns"
 )
 
 // Data is the struct that will be passed on each stage
 type Data struct {
-	Pattern                        *core.Pattern
+	Pattern                        *patterns.Pattern
 	PatternSvcWorkloadCapabilities map[string]meshmodel.ComponentDefinition
 	PatternSvcTraitCapabilities    map[string][]core.TraitCapability //Deprecated. This will be removed and is currently being used to carry properties
 

@@ -9,6 +9,7 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/jsonschema"
 	"github.com/layer5io/meshery/server/models/pattern/resource/selector"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/utils/patterns"
 	"gopkg.in/yaml.v2"
 )
 
@@ -79,8 +80,8 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider, skipValidati
 				return
 			}
 			act.Log(fmt.Sprintf("%s version for %s: %s", svc.Model, svc.Name, wc.Model.Version)) //Eg: kubernetes version for Namespace: v1.25.0
-			if core.Format {
-				svc.Settings = core.Format.DePrettify(svc.Settings, false)
+			if patterns.Format {
+				svc.Settings = patterns.Format.DePrettify(svc.Settings, false)
 			}
 			//Validate component definition
 			if !skipValidation {

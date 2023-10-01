@@ -13,10 +13,9 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/core"
-	"github.com/layer5io/meshery/server/models/pattern/utils"
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+	"github.com/layer5io/meshkit/utils/patterns"
 )
 
 // swagger:route GET /api/filter/file/{id} FiltersAPI idGetFilterFile
@@ -152,7 +151,7 @@ func (h *Handler) handleFilterPOST(
 		// Assign a name if no name is provided
 		if parsedBody.FilterData.Name == "" {
 			// TODO: Dynamically generate names or get the name of the file from the UI (@navendu-pottekkat)
-			parsedBody.FilterData.Name = "meshery-filter-" + utils.GetRandomAlphabetsOfDigit(5)
+			parsedBody.FilterData.Name = "meshery-filter-" + patterns.GetRandomAlphabetsOfDigit(5)
 		}
 		// Assign a location if no location is specified
 		if parsedBody.FilterData.Location == nil || len(parsedBody.FilterData.Location) == 0 {
@@ -545,9 +544,9 @@ func (h *Handler) generateFilterComponent(config string) (string, error) {
 		filterCompDef, ok := filterEntity.(v1alpha1.ComponentDefinition)
 		if ok {
 			filterID, _ := uuid.NewV4()
-			filterSvc := core.Service{
+			filterSvc := patterns.Service{
 				ID:           &filterID,
-				Name:         strings.ToLower(filterCompDef.Kind) + utils.GetRandomAlphabetsOfDigit(5),
+				Name:         strings.ToLower(filterCompDef.Kind) + patterns.GetRandomAlphabetsOfDigit(5),
 				Type:         filterCompDef.Kind,
 				APIVersion:   filterCompDef.APIVersion,
 				Version:      filterCompDef.Model.Version,

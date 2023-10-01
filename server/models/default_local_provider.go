@@ -994,6 +994,18 @@ func (l *DefaultLocalProvider) UpdateConnectionById(_ *http.Request, _ *Connecti
 	return nil, ErrLocalProviderSupport
 }
 
+func (l *DefaultLocalProvider) GetConnectionById(_ *http.Request, connectionID *uuid.UUID, kind ConnectionKind) (*Connection, error) {
+	return nil, ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) RegisterConnection(req *http.Request, kind string, body interface{}) (*Connection, error) {
+	return nil, ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) UpdateConnectionMetadata(req *http.Request, kind string, body interface{}) (*Connection, error) {
+	return nil, ErrLocalProviderSupport
+}
+
 func (l *DefaultLocalProvider) DeleteConnection(_ *http.Request, _ uuid.UUID) (*Connection, error) {
 	return nil, ErrLocalProviderSupport
 }

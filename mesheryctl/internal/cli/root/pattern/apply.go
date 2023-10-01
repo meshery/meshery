@@ -29,7 +29,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshkit/utils/patterns"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -239,7 +239,7 @@ mesheryctl pattern apply [pattern-name]
 			return nil
 		}
 
-		pf, err := core.NewPatternFile([]byte(patternFile))
+		pf, err := patterns.NewPatternFile([]byte(patternFile))
 		if err != nil {
 			utils.Log.Error(err)
 			return nil

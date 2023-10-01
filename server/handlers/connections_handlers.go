@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -20,6 +21,20 @@ import (
 // responses:
 // 201: noContentWrapper
 func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	connKind := mux.Vars(req)[string(models.ConnectionKindKey)]
+	ctx := req.Context()
+	ctx = context.WithValue(ctx, models.ConnectionKindKey, connKind)
+	ctx = context.WithValue(ctx, models.UserID, user.ID)
+	ctx = context.WithValue(ctx, models.SystemID, h.SystemID)
+
+	connInstance := NewConnectionInstance(ctx, provider, &h.log, h.config.EventBroadcaster)
+
+	if connInstance != nil {
+		newReq := req.WithContext(ctx)
+		connInstance.Register(w, newReq)
+		return
+	} 
+
 	bd, err := io.ReadAll(req.Body)
 	userID := uuid.FromStringOrNil(user.ID)
 	if err != nil {
@@ -64,6 +79,120 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 	h.log.Info(description)
 	w.WriteHeader(http.StatusCreated)
 }
+
+
+// swagger:route GET /api/integrations/connections/{connectionKind}/status HandleConnectionStatus idPutConnection
+// Handle GET request for the status of particular connection.
+// ```?id={field}``` "id" is not always the connection UUID, as an example, for Helm connection, it is the repoURL. The API is used to check the status and update UI accordingly.
+// responses:
+// 200: 
+// 	schema:
+// 		Connection
+func (h *Handler) HandleConnectionStatus(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	connKind := mux.Vars(req)[string(models.ConnectionKindKey)]
+	
+	ctx := req.Context()
+	ctx = context.WithValue(ctx, models.ConnectionKindKey, connKind)
+	ctx = context.WithValue(ctx, models.UserID, user.ID)
+	ctx = context.WithValue(ctx, models.SystemID, h.SystemID)
+
+	connInstance := NewConnectionInstance(ctx, provider, &h.log, h.config.EventBroadcaster)
+
+	if connInstance != nil {
+		newReq := req.WithContext(ctx)
+		connInstance.Status(w, newReq)
+		return
+	} 
+	
+	http.Error(w, fmt.Errorf("operation for connection kind %s not supported", connKind).Error(), http.StatusNotImplemented)
+}
+
+// swagger:route POST /api/integrations/connections/{connectionKind}/metadata PostConnection idPostConnection
+// Handle POST request for updating a connection metadata only.
+// The schema for the metadata varies according to connectionkind, the metadata attribute is the core and the lifecycle for a connection depends on it. Hence the endpoint is exposed and only deals with metadata.
+//
+// responses:
+// 200: Connection
+
+func (h *Handler) HandleConnectionMetadata(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	connKind := mux.Vars(req)[string(models.ConnectionKindKey)]
+	
+	ctx := req.Context()
+	ctx = context.WithValue(ctx, models.ConnectionKindKey, connKind)
+	ctx = context.WithValue(ctx, models.UserID, user.ID)
+	ctx = context.WithValue(ctx, models.SystemID, h.SystemID)
+
+	connInstance := NewConnectionInstance(ctx, provider, &h.log, h.config.EventBroadcaster)
+
+	if connInstance != nil {
+		newReq := req.WithContext(ctx)
+		connInstance.AddMetadata(w, newReq)
+		return
+	} 
+	
+	http.Error(w, fmt.Errorf("operation for connection kind %s not supported", connKind).Error(), http.StatusNotImplemented)
+}
+
+// swagger:route POST /api/integrations/connections/{connectionKind}/configure PostConnection idPostConnection
+// Handle POST request for configuring a connection. Configuration action could be one of the connections lifecycle method.
+// responses:
+// 200: 
+func (h *Handler) ConfigureConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	connKind := mux.Vars(req)[string(models.ConnectionKindKey)]
+	
+	ctx := req.Context()
+	ctx = context.WithValue(ctx, models.ConnectionKindKey, connKind)
+	ctx = context.WithValue(ctx, models.UserID, user.ID)
+	ctx = context.WithValue(ctx, models.SystemID, h.SystemID)
+	ctx = context.WithValue(ctx, models.RegistryManagerKey, h.registryManager)
+	connInstance := NewConnectionInstance(ctx, provider, &h.log, h.config.EventBroadcaster)
+
+	if connInstance != nil {
+		newReq := req.WithContext(ctx)
+		connInstance.Configure(w, newReq)
+		return
+	} 
+	
+	http.Error(w, fmt.Errorf("operation for connection kind %s not supported", connKind).Error(), http.StatusNotImplemented)
+}
+
+func (h *Handler) GetConnectionDetails(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	connKind := mux.Vars(req)[string(models.ConnectionKindKey)]
+	
+	ctx := req.Context()
+	ctx = context.WithValue(ctx, models.ConnectionKindKey, connKind)
+	ctx = context.WithValue(ctx, models.UserID, user.ID)
+	ctx = context.WithValue(ctx, models.SystemID, h.SystemID)
+
+	connInstance := NewConnectionInstance(ctx, provider, &h.log, h.config.EventBroadcaster)
+
+	if connInstance != nil {
+		newReq := req.WithContext(ctx)
+		connInstance.Details(w, newReq)
+		return
+	} 
+	
+	http.Error(w, fmt.Errorf("operation for connection kind %s not supported", connKind).Error(), http.StatusNotImplemented)
+}
+
+func (h *Handler) VerifyConnection(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	connKind := mux.Vars(req)[string(models.ConnectionKindKey)]
+	
+	ctx := req.Context()
+	ctx = context.WithValue(ctx, models.ConnectionKindKey, connKind)
+	ctx = context.WithValue(ctx, models.UserID, user.ID)
+	ctx = context.WithValue(ctx, models.SystemID, h.SystemID)
+	connInstance := NewConnectionInstance(ctx, provider, &h.log, h.config.EventBroadcaster)
+
+	if connInstance != nil {
+		newReq := req.WithContext(ctx)
+		connInstance.Verify(w, newReq)
+		return
+	} 
+	
+	http.Error(w, fmt.Errorf("operation for connection kind %s not supported", connKind).Error(), http.StatusNotImplemented)
+}
+
 
 // swagger:route GET /api/integrations/connections GetConnections idGetConnections
 // Handle GET request for getting all connections
@@ -330,3 +459,4 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	h.log.Info("connection deleted successfully")
 	w.WriteHeader(http.StatusOK)
 }
+

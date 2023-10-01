@@ -8,10 +8,10 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/meshmodel/core/types"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
+	"github.com/layer5io/meshkit/utils/patterns"
 )
 
 /**Meshmodel endpoints **/
@@ -499,7 +499,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 		if ok {
 			m := make(map[string]interface{})
 			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = core.Format.Prettify(m, true)
+			m = patterns.Format.Prettify(m, true)
 			b, _ := json.Marshal(m)
 			comp.Schema = string(b)
 			comps = append(comps, comp)
@@ -592,7 +592,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 		if ok {
 			m := make(map[string]interface{})
 			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = core.Format.Prettify(m, true)
+			m = patterns.Format.Prettify(m, true)
 			b, _ := json.Marshal(m)
 			comp.Schema = string(b)
 			comps = append(comps, comp)
@@ -682,7 +682,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 		if ok {
 			m := make(map[string]interface{})
 			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = core.Format.Prettify(m, true)
+			m = patterns.Format.Prettify(m, true)
 			b, _ := json.Marshal(m)
 			comp.Schema = string(b)
 			comps = append(comps, comp)
@@ -775,7 +775,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 		if ok {
 			m := make(map[string]interface{})
 			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = core.Format.Prettify(m, true)
+			m = patterns.Format.Prettify(m, true)
 			b, _ := json.Marshal(m)
 			comp.Schema = string(b)
 			comps = append(comps, comp)
@@ -865,7 +865,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		if ok {
 			m := make(map[string]interface{})
 			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = core.Format.Prettify(m, true)
+			m = patterns.Format.Prettify(m, true)
 			b, _ := json.Marshal(m)
 			comp.Schema = string(b)
 			comps = append(comps, comp)
@@ -959,7 +959,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		if ok {
 			m := make(map[string]interface{})
 			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = core.Format.Prettify(m, true)
+			m = patterns.Format.Prettify(m, true)
 			b, _ := json.Marshal(m)
 			comp.Schema = string(b)
 			comps = append(comps, comp)
@@ -1049,7 +1049,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		if ok {
 			m := make(map[string]interface{})
 			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = core.Format.Prettify(m, true)
+			m = patterns.Format.Prettify(m, true)
 			b, _ := json.Marshal(m)
 			comp.Schema = string(b)
 			comps = append(comps, comp)
@@ -1139,7 +1139,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 		if ok {
 			m := make(map[string]interface{})
 			_ = json.Unmarshal([]byte(comp.Schema), &m)
-			m = core.Format.Prettify(m, true)
+			m = patterns.Format.Prettify(m, true)
 			b, _ := json.Marshal(m)
 			comp.Schema = string(b)
 			comp.HostID = host.ID

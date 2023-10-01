@@ -10,6 +10,9 @@ import (
 // swagger:response ConnectionStatus
 type ConnectionStatus string
 
+// swagger:response ConnectionKind
+type ConnectionKind string
+
 const (
 	DISCOVERED   ConnectionStatus = "discovered"
 	REGISTERED   ConnectionStatus = "registered"
@@ -21,6 +24,17 @@ const (
 	NOTFOUND     ConnectionStatus = "not found"
 )
 
+const (
+	PLATFORM      string = "platform"
+	TELEMETRY     string = "telemetry"
+	COLLABORATION string = "collaboration"
+	ORCHESTRATOR string = "orchestrator"
+)
+
+const (
+	Kubernetes  ConnectionKind = "kubernetes"
+	Helm  ConnectionKind = "helm"
+)
 // swagger:response Connection
 type Connection struct {
 	ID           uuid.UUID              `json:"id,omitempty" db:"id"`
