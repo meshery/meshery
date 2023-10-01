@@ -649,7 +649,6 @@ function MesheryFilters({
   };
 
   const handleSetFilters = (filters) => {
-    console.log('filters != undefined', filters != undefined);
     if (filters != undefined) {
       if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
         setFilters([
@@ -658,7 +657,6 @@ function MesheryFilters({
         ]);
         return;
       }
-      console.log('filters---', filters);
       setFilters(filters.filter((content) => content.visibility !== VISIBILITY.PUBLISHED));
     }
   };
@@ -674,14 +672,10 @@ function MesheryFilters({
     }
     const configurationSubscription = ConfigurationSubscription(
       (result) => {
-        console.log('FilterFile Subscription API', result);
-
-        // if (result.configuration?.filters != null) {
         setPage(result.configuration?.filters?.page || 0);
         setPageSize(result.configuration?.filters?.page_size || 0);
         setCount(result.configuration?.filters?.total_count || 0);
         handleSetFilters(result.configuration?.filters?.filters);
-        // }
       },
       {
         applicationSelector: {
