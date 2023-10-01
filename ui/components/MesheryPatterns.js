@@ -66,6 +66,8 @@ import CustomColumnVisibilityControl from '../utils/custom-column';
 import ResponsiveDataTable from '../utils/data-table';
 import useStyles from '../assets/styles/general/tool.styles';
 import { Edit as EditIcon } from '@material-ui/icons';
+import InfoModal from './Modals/Information/InfoModal';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 
 const styles = (theme) => ({
   grid: {
@@ -265,6 +267,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
                 id: pattern.id,
                 name: pattern.name,
                 type: FILE_OPS.UPDATE,
+                catalog_data: pattern.catalog_data,
               })
             }
           >
@@ -281,6 +284,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
                 id: pattern.id,
                 name: pattern.name,
                 type: FILE_OPS.DELETE,
+                catalog_data: pattern.catalog_data,
               })
             }
           >
@@ -321,6 +325,11 @@ function MesheryPatterns({
 
   const [canPublishPattern, setCanPublishPattern] = useState(false);
   const [publishSchema, setPublishSchema] = useState({});
+  const [infoModal, setInfoModal] = useState({
+    open: false,
+    ownerID: '',
+    selectedResource: {},
+  });
 
   const [viewType, setViewType] = useState('grid');
   const { notify } = useNotification();
@@ -671,6 +680,20 @@ function MesheryPatterns({
     });
   };
 
+  const handleInfoModalClose = () => {
+    setInfoModal({
+      open: false,
+    });
+  };
+
+  const handleInfoModal = (pattern) => {
+    setInfoModal({
+      open: true,
+      ownerID: pattern.user_id,
+      selectedResource: pattern,
+    });
+  };
+
   const handlePublishModal = (ev, pattern) => {
     if (canPublishPattern) {
       ev.stopPropagation();
@@ -877,7 +900,7 @@ function MesheryPatterns({
     };
   }
 
-  async function handleSubmit({ data, id, name, type, metadata }) {
+  async function handleSubmit({ data, id, name, type, metadata, catalog_data }) {
     updateProgress({ showProgress: true });
     if (type === FILE_OPS.DELETE) {
       const response = await showModal(1, name);
@@ -907,7 +930,10 @@ function MesheryPatterns({
         {
           credentials: 'include',
           method: 'POST',
-          body: JSON.stringify({ pattern_data: { id, pattern_file: data }, save: true }),
+          body: JSON.stringify({
+            pattern_data: { id, pattern_file: data, catalog_data },
+            save: true,
+          }),
         },
         () => {
           console.log('PatternFile API', `/api/pattern`);
@@ -925,12 +951,18 @@ function MesheryPatterns({
           pattern_data: {
             name: metadata?.name || name,
             pattern_file: data,
+            catalog_data,
           },
           save: true,
         });
       }
       if (type === FILE_OPS.URL_UPLOAD) {
-        body = JSON.stringify({ url: data, save: true, name: metadata?.name || name });
+        body = JSON.stringify({
+          url: data,
+          save: true,
+          name: metadata?.name || name,
+          catalog_data,
+        });
       }
       dataFetch(
         `/api/pattern`,
@@ -1167,6 +1199,10 @@ function MesheryPatterns({
                 onClick={(e) => handleDownload(e, rowData.id, rowData.name)}
               >
                 <GetAppIcon data-cy="download-button" />
+              </TooltipIcon>
+
+              <TooltipIcon title="Design Information" onClick={() => handleInfoModal(rowData)}>
+                <InfoOutlinedIcon data-cy="information-button" />
               </TooltipIcon>
 
               {canPublishPattern && visibility !== VISIBILITY.PUBLISHED ? (
@@ -1523,6 +1559,7 @@ function MesheryPatterns({
             setPublishModal={setPublishModal}
             publishSchema={publishSchema}
             user={user}
+            handleInfoModal={handleInfoModal}
           />
         )}
         <ConfirmationModal
@@ -1574,6 +1611,17 @@ function MesheryPatterns({
               />
             }
             submitBtnIcon={<PublishIcon className={classes.addIcon} data-cy="import-button" />}
+          />
+        )}
+        {infoModal.open && (
+          <InfoModal
+            infoModalOpen={true}
+            handleInfoModalClose={handleInfoModalClose}
+            dataName="patterns"
+            selectedResource={infoModal.selectedResource}
+            resourceOwnerID={infoModal.ownerID}
+            currentUserID={user?.id}
+            formSchema={publishSchema}
           />
         )}
         <PromptComponent ref={modalRef} />
