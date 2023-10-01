@@ -84,7 +84,10 @@ const InfoModal = (props) => {
         });
       } else if (dataName === FILTER_PLURAL) {
         setSaveFormLoading(true);
-        let config = JSON.parse(selectedResource.filter_resource).settings.config; // send the config inorder to prevent over-write of the config
+        let config = '';
+        if (selectedResource.filter_resource !== null || selectedResource.filter_resource !== '') {
+          config = JSON.parse(selectedResource.filter_resource).settings.config; // send the config inorder to prevent over-write of the config
+        }
         body = JSON.stringify({
           filter_data: {
             catalog_data: formState,
