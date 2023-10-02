@@ -122,6 +122,8 @@ const (
 	ErrUpdateEventCode                  = "1127"
 	ErrDeleteEventCode                  = "1128"
 	ErrUnsupportedEventStatusCode       = "1129"
+	ErrBulkUpdateEventCode              = "1537"
+	ErrBulkDeleteEventCode              = "1538"
 )
 
 var (
@@ -523,8 +525,16 @@ func ErrUpdateEvent(err error, id string) error {
 	return errors.New(ErrUpdateEventCode, errors.Alert, []string{fmt.Sprintf("Could not update event status for %s", id)}, []string{err.Error()}, []string{"Provided event status not supported", "Event has been deleted or does not exist", "Database is corrupt."}, []string{"Verify event filter settings", "Reset database."})
 }
 
+func ErrBulkUpdateEvent(err error) error {
+	return errors.New(ErrBulkUpdateEventCode, errors.Alert, []string{"Could not update status for events associated with provided ids"}, []string{err.Error()}, []string{"Provided event status not supported", "Event has been deleted or does not exist", "Database is corrupt."}, []string{"Verify event filter settings", "Reset database."})
+}
+
 func ErrDeleteEvent(err error, id string) error {
 	return errors.New(ErrDeleteEventCode, errors.Alert, []string{fmt.Sprintf("Could not delete event %s", id)}, []string{err.Error()}, []string{"Event might have been deleted and doesn't exist", "Database is corrupt."}, []string{"Verify event filter settings", "Reset database."})
+}
+
+func ErrBulkDeleteEvent(err error) error {
+	return errors.New(ErrBulkDeleteEventCode, errors.Alert, []string{"Could not delete events associated with provided ids"}, []string{err.Error()}, []string{"Provided events might have been deleted and doesn't exist", "Database is corrupt."}, []string{"Verify event filter settings", "Reset database."})
 }
 
 func ErrUnsupportedEventStatus(err error, status string) error {
