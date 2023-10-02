@@ -1009,10 +1009,13 @@ function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig 
 
   return (
     <div style={{ display: 'table', tableLayout: 'fixed', width: '100%' }}>
-      <div className={classes.topToolbar}>
-        <MesherySettingsEnvButtons />
-      </div>
-      <DataTable columns={columns} data={data} options={options} className={classes.table} />
+      <DataTable
+        title={<MesherySettingsEnvButtons />}
+        columns={columns}
+        data={data}
+        options={options}
+        className={classes.table}
+      />
       <PromptComponent ref={meshSyncResetRef} />
       <PromptComponent ref={deleteCtxtRef} />
     </div>
