@@ -21,7 +21,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@babel/eslint-parser": "^7.22.11",
-    "@cypress/code-coverage": "^3.11.0",
+    "@cypress/code-coverage": "^3.12.1",
     "@emotion/cache": "^11.10.5",
     "@emotion/react": "^11.11.1",
     "@emotion/server": "^11.11.0",
