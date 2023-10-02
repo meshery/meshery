@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -66,6 +67,8 @@ import CustomColumnVisibilityControl from '../utils/custom-column';
 import ResponsiveDataTable from '../utils/data-table';
 import useStyles from '../assets/styles/general/tool.styles';
 import { Edit as EditIcon } from '@material-ui/icons';
+import { updateVisibleColumns } from '../utils/responsive-column';
+import { useWindowDimensions } from '../utils/dimension';
 import InfoModal from './Modals/Information/InfoModal';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 
@@ -361,6 +364,7 @@ function MesheryPatterns({
   });
 
   const [loading, stillLoading] = useState(true);
+  const { width } = useWindowDimensions();
 
   const catalogVisibilityRef = useRef(false);
   const catalogContentRef = useRef();
@@ -1004,6 +1008,14 @@ function MesheryPatterns({
     router.push('/configuration/designs/configurator?design_id=' + id);
   };
 
+  let colViews = [
+    ['name', 'xs'],
+    ['created_at', 'm'],
+    ['updated_at', 'l'],
+    ['visibility', 's'],
+    ['Actions', 'xs'],
+  ];
+
   const columns = [
     {
       name: 'name',
@@ -1116,7 +1128,11 @@ function MesheryPatterns({
           const rowData = patterns[tableMeta.rowIndex];
           const visibility = patterns[tableMeta.rowIndex]?.visibility;
           return (
-            <>
+            <Box
+              sx={{
+                display: 'flex',
+              }}
+            >
               {userCanEdit(rowData) && (
                 <TooltipIcon
                   placement="top"
@@ -1221,7 +1237,7 @@ function MesheryPatterns({
                   <PublicIcon fill="#F91313" data-cy="unpublish-button" />
                 </TooltipIcon>
               )}
-            </>
+            </Box>
           );
         },
       },
@@ -1237,10 +1253,11 @@ function MesheryPatterns({
   const [tableCols, updateCols] = useState(columns);
 
   const [columnVisibility, setColumnVisibility] = useState(() => {
+    let showCols = updateVisibleColumns(colViews, width);
     // Initialize column visibility based on the original columns' visibility
     const initialVisibility = {};
     columns.forEach((col) => {
-      initialVisibility[col.name] = col.options?.display !== false;
+      initialVisibility[col.name] = showCols[col.name];
     });
     return initialVisibility;
   });
