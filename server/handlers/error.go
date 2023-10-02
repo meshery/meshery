@@ -526,7 +526,7 @@ func ErrUpdateEvent(err error, id string) error {
 }
 
 func ErrBulkUpdateEvent(err error) error {
-	return errors.New(ErrBulkUpdateEventCode, errors.Alert, []string{"Could not update status for events associated with provided ids"}, []string{err.Error()}, []string{"Provided event status not supported", "Event has been deleted or does not exist", "Database is corrupt."}, []string{"Verify event filter settings", "Reset database."})
+	return errors.New(ErrBulkUpdateEventCode, errors.Alert, []string{"Could not update status for one or more events."}, []string{err.Error()}, []string{"Event has been deleted or does not exist.", "The requested event status is invalid.", "Meshery Database is corrupt."}, []string{"Verify that the event still exists.", "Verify that the requested event status is supported.", "Visit Settings and reset the Meshery database."})
 }
 
 func ErrDeleteEvent(err error, id string) error {
@@ -534,9 +534,9 @@ func ErrDeleteEvent(err error, id string) error {
 }
 
 func ErrBulkDeleteEvent(err error) error {
-	return errors.New(ErrBulkDeleteEventCode, errors.Alert, []string{"Could not delete events associated with provided ids"}, []string{err.Error()}, []string{"Provided events might have been deleted and doesn't exist", "Database is corrupt."}, []string{"Verify event filter settings", "Reset database."})
+	return errors.New(ErrBulkDeleteEventCode, errors.Alert, []string{"Could not delete one or more events."}, []string{err.Error()}, []string{"Event has been deleted or does not exist.", "Meshery Database is corrupt."}, []string{"Confirm that the status you are using is valid and a supported event status. Refer to Meshery Docs for a list of event statuses. Check for availability of a new version of Meshery Server. Try upgrading to the latest version.", "Visit Settings and reset the Meshery database."})
 }
 
 func ErrUnsupportedEventStatus(err error, status string) error {
-	return errors.New(ErrUnsupportedEventStatusCode, errors.Alert, []string{fmt.Sprintf("Event status %s not supported.", status)}, []string{err.Error()}, []string{"Unsupported event status for the current Meshery Server."}, []string{"Try upgrading Meshery to latest version.", "Use one of the supported event statuses."})
+	return errors.New(ErrUnsupportedEventStatusCode, errors.Alert, []string{fmt.Sprintf("Event status '%s' is not a supported status.", status)}, []string{err.Error()}, []string{"Unsupported event status for your current version of Meshery Server."}, []string{"Confirm that the status you are using is valid and a supported event status. Refer to Meshery Docs for a list of event statuses.", "Check for availability of a new version of Meshery Server. Try upgrading to the latest version." })
 }
