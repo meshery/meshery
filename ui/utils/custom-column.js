@@ -28,6 +28,8 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) =
   const open = Boolean(anchorEl);
   const containerRef = useRef(null);
 
+  const transitionDuration = Math.min(300 + columns.length * 50, 1000);
+
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -77,7 +79,7 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) =
               {
                 name: 'offset',
                 options: {
-                  offset: [4, 8],
+                  offset: [0, 8],
                 },
               },
               {
@@ -97,7 +99,7 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) =
               {...TransitionProps}
               direction="down"
               in={open}
-              timeout={600}
+              timeout={transitionDuration}
               mountOnEnter
               unmountOnExit
               container={containerRef.current}

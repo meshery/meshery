@@ -18,7 +18,7 @@ const ResponsiveDataTable = ({
     (date, width) => {
       const dateOptions = {
         day: 'numeric',
-        weekday: 'long',
+        weekday: 'short',
         month: 'long',
         year: 'numeric',
       };
