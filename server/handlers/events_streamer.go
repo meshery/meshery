@@ -75,8 +75,8 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 // swagger:route GET /api/events/types EventsAPI idGetEventStreamer
 // Handle GET request for available event categories and actions.
 // responses:
-// 200: 
-func (h *Handler) GetEventTypes (w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+// 200:
+func (h *Handler) GetEventTypes(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	userID := uuid.FromStringOrNil(user.ID)
 
 	eventTypes, err := provider.GetEventTypes(userID)
