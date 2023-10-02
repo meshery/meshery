@@ -302,12 +302,11 @@ func start() error {
 		}
 		endpoint.Port = int32(tempPort)
 		_, host, _ := strings.Cut(client.DefaultDockerHost, "://")
-		var stat *syscall.Stat_t
-		err = syscall.Stat(host, stat)
+		var stat syscall.Stat_t
+		err = syscall.Stat(host, &stat)
 		if err != nil {
 			utils.Log.Info("Error while accessing docker socket `", host, "` file\n", err.Error(),
-				"\nYou may not have permission to access the file, please check and give appriopriate permission to the user",
-				"Due to this error, you won't be able to provision adapters from either Meshery UI and mesheryctl")
+				"\nDue to this error, you won't be able to provision adapters from either Meshery UI and mesheryctl\n")
 		} else {
 			groupAdd := utils.ViperCompose.GetStringSlice("services.meshery.group_add")
 			groupAdd = append(groupAdd, fmt.Sprintf("%d", stat.Gid))
