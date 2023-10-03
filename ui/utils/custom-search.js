@@ -17,6 +17,9 @@ const useStyles = makeStyles((theme) => ({
     },
     '& .MuiOutlinedInput-notchedOutline': {
       borderColor: theme.palette.secondary.iconMain,
+      '&:hover': {
+        borderColor: '#00b39f',
+      },
     },
     '& .MuiInputLabel-root': {
       color: theme.palette.secondary.iconMain,
@@ -29,16 +32,16 @@ const useStyles = makeStyles((theme) => ({
       borderBottomColor: theme.palette.secondary.iconMain,
     },
     '& .MuiInput-underline:hover:before': {
-      borderBottomColor: theme.palette.secondary.iconMain,
+      borderBottomColor: '#00b39f',
     },
     '& .MuiInput-underline:hover:after': {
-      borderBottomColor: theme.palette.secondary.iconMain,
+      borderBottomColor: '#00b39f',
     },
     '& .MuiInput-underline.Mui-focused:before': {
-      borderBottomColor: theme.palette.type === theme.palette.secondary.iconMain,
+      borderBottomColor: '#00b39f',
     },
     '& .MuiInput-underline.Mui-focused:after': {
-      borderBottomColor: theme.palette.type === theme.palette.secondary.iconMain,
+      borderBottomColor: '#00b39f',
     },
   },
 }));

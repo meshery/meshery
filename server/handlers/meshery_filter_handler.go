@@ -99,7 +99,7 @@ func (h *Handler) handleFilterPOST(
 		EventType:     meshes.EventType_INFO,
 	}
 	var parsedBody *models.MesheryFilterRequestBody
-	
+
 	actedUpon := &userID
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		invalidReqBody := ErrRequestBody(err)
@@ -117,7 +117,7 @@ func (h *Handler) handleFilterPOST(
 		go h.EventsBuffer.Publish(&res)
 		return
 	}
-	
+
 	if parsedBody.FilterData != nil && parsedBody.FilterData.ID != nil {
 		actedUpon = parsedBody.FilterData.ID
 	}
@@ -151,7 +151,6 @@ func (h *Handler) handleFilterPOST(
 	if parsedBody.FilterData != nil {
 		// Assign a name if no name is provided
 		if parsedBody.FilterData.Name == "" {
-			// TODO: Dynamically generate names or get the name of the file from the UI (@navendu-pottekkat)
 			parsedBody.FilterData.Name = "meshery-filter-" + utils.GetRandomAlphabetsOfDigit(5)
 		}
 		// Assign a location if no location is specified
@@ -172,6 +171,7 @@ func (h *Handler) handleFilterPOST(
 			UpdatedAt:      parsedBody.FilterData.UpdatedAt,
 			Location:       parsedBody.FilterData.Location,
 			FilterResource: filterResource,
+			CatalogData: 	parsedBody.FilterData.CatalogData,
 		}
 
 		if parsedBody.Save {

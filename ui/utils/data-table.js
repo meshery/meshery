@@ -18,15 +18,21 @@ const ResponsiveDataTable = ({
     (date, width) => {
       const dateOptions = {
         day: 'numeric',
-        weekday: 'long',
+        weekday: 'short',
         month: 'long',
         year: 'numeric',
       };
 
-      if (width < 1140) {
+      if (width < 1240 && width >= 915) {
         dateOptions.month = 'short';
         dateOptions.day = 'numeric';
         dateOptions.year = 'numeric';
+        dateOptions.weekday = 'short';
+      } else if (width < 915) {
+        dateOptions.month = 'short';
+        dateOptions.day = '2-digit';
+        dateOptions.year = 'numeric';
+        dateOptions.weekday = undefined;
       }
 
       return date.toLocaleDateString('en-US', dateOptions);
