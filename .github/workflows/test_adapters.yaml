@@ -242,6 +242,7 @@ jobs:
           path: ./${{ inputs.output_filename }}
       - name: exit
         run: |
-          if [ "$exitstatus" -eq 1 ];then
-              exit 1
-          fi
+         if [ ! "$outer_exitstatus" -eq 1 ];then
+          exit 1
+         fi
+      
