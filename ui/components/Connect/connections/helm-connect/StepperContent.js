@@ -44,7 +44,6 @@ export const ConnectApp = ({ handleNext, setSharedData }) => {
 
   const handleCallback = async () => {
     setExtraErrors({});
-    // replace !isUrlValid to isUrlValid after testing
     if (formRef.current && formRef.current.validateForm() && isUrlValid) {
       // Check if we can fetch charts from this URL
       // URL is already verified if this function is running
@@ -139,8 +138,7 @@ export const ConnectApp = ({ handleNext, setSharedData }) => {
       {...ConnectAppContent}
       handleCallback={handleCallback}
       cancelCallback={cancelCallback}
-      // disabled={Object.keys(formData).length !== 3 || !isUrlValid} //uncomment this
-      disabled={Object.keys(formData).length !== 3} // remove this after testing
+      disabled={Object.keys(formData).length !== 3 || !isUrlValid}
       btnText={isConnected ? 'Update' : 'Connect'}
     >
       {isSchemaFetched && (
