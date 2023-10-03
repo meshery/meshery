@@ -44,7 +44,6 @@ export const ConnectApp = ({ handleNext, setSharedData }) => {
 
   const handleCallback = async () => {
     setExtraErrors({});
-    // replace !isUrlValid to isUrlValid after testing
     if (formRef.current && formRef.current.validateForm() && isUrlValid) {
       // Check if we can fetch charts from this URL
       // URL is already verified if this function is running
