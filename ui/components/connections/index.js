@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   NoSsr,
   TableCell,
@@ -11,8 +11,6 @@ import {
   TableContainer,
   Table,
   Grid,
-  List,
-  ListItem,
   ListItemText,
   TableRow,
   TableSortLabel,
@@ -40,6 +38,8 @@ import ResponsiveDataTable from '../../utils/data-table';
 import useStyles from '../../assets/styles/general/tool.styles';
 import Modal from '../Modal';
 import { Colors } from '../../themes/app';
+import { iconMedium } from '../../css/icons.styles';
+import PromptComponent from '../PromptComponent';
 
 const styles = (theme) => ({
   grid: { padding: theme.spacing(2) },
@@ -48,9 +48,6 @@ const styles = (theme) => ({
     fontSize: 18,
   },
   muiRow: {
-    '& .MuiTableRow-root': {
-      cursor: 'pointer',
-    },
     '& .MuiTableCell-root': {
       textTransform: 'capitalize',
     },
@@ -138,6 +135,9 @@ const styles = (theme) => ({
     '& .MuiSvgIcon-root': {
       color: `${theme.palette.secondary.error} !important`,
     },
+    '&:hover': {
+      cursor: 'initial',
+    },
   },
   expandedRows: {
     background: `${theme.palette.secondary.default}10`,
@@ -175,9 +175,10 @@ const styles = (theme) => ({
     color: Colors.keppelGreen,
     cursor: 'pointer',
   },
-  metadataActions: {
+  bulkAction: {
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
+    width: '100%',
   },
 });
 
@@ -189,6 +190,10 @@ const ACTION_TYPES = {
   UPDATE_CONNECTION: {
     name: 'UPDATE_CONNECTION',
     error_msg: 'Failed to update connection',
+  },
+  DELETE_CONNECTION: {
+    name: 'DELETE_CONNECTION',
+    error_msg: 'Failed to delete connection',
   },
 };
 
@@ -254,6 +259,7 @@ function ConnectionManagementPage(props) {
 }
 
 function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
+  const modalRef = useRef(null);
   const [page, setPage] = useState(0);
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(0);
@@ -263,7 +269,6 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
   const [showMore, setShowMore] = useState(false);
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   const { notify } = useNotification();
   const StyleClass = useStyles();
@@ -356,6 +361,13 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
       },
     },
     {
+      name: 'metadata.server',
+      label: 'Server Location',
+      options: {
+        display: false,
+      },
+    },
+    {
       name: 'name',
       label: 'Name',
       options: {
@@ -373,14 +385,68 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
         },
         customBodyRender: (value, tableMeta) => {
           return (
-            <Tooltip title={tableMeta.rowData[1]} placement="top">
-              <Link href={tableMeta.rowData[1]} target="_blank">
+            <Tooltip title={tableMeta.rowData[1] || tableMeta.rowData[2]} placement="top">
+              <Link href={tableMeta.rowData[1] || tableMeta.rowData[2]} target="_blank">
                 {value}
                 <sup>
                   <LaunchIcon sx={{ fontSize: '12px' }} />
                 </sup>
               </Link>
             </Tooltip>
+          );
+        },
+      },
+    },
+    {
+      name: 'kind',
+      label: 'Kind',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
+        },
+      },
+    },
+    {
+      name: 'type',
+      label: 'Category',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
+        },
+      },
+    },
+    {
+      name: 'sub_type',
+      label: 'Sub Category',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
       },
@@ -454,42 +520,6 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
       },
     },
     {
-      name: 'type',
-      label: 'Type',
-      options: {
-        sort: true,
-        sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-          return (
-            <SortableTableCell
-              index={index}
-              columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
-            />
-          );
-        },
-      },
-    },
-    {
-      name: 'sub_type',
-      label: 'Sub Type',
-      options: {
-        sort: true,
-        sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-          return (
-            <SortableTableCell
-              index={index}
-              columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
-            />
-          );
-        },
-      },
-    },
-    {
       name: 'status',
       label: 'Status',
       options: {
@@ -506,12 +536,14 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
           );
         },
         customBodyRender: function CustomBody(value, tableMeta) {
+          const disabled = value === 'deleted' ? true : false;
           return (
             <>
               <FormControl>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
+                  disabled={disabled}
                   value={value}
                   onChange={(e) => handleStatusChange(e, tableMeta.rowData[0])}
                   className={classes.statusSelect}
@@ -547,8 +579,19 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
           text: 'connection(s) selected',
         },
       },
-      selectToolbarPlacement: 'none',
-
+      customToolbarSelect: (selected) => (
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          // @ts-ignore
+          onClick={() => handleDeleteConnections(selected)}
+          style={{ background: '#8F1F00', marginRight: '10px' }}
+        >
+          <DeleteForeverIcon style={iconMedium} />
+          Delete
+        </Button>
+      ),
       enableNestedDataAccess: '.',
       onTableChange: (action, tableState) => {
         const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
@@ -587,7 +630,6 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
       onRowExpansionChange: (_, allRowsExpanded) => {
         setRowsExpanded(allRowsExpanded.slice(-1).map((item) => item.index));
         setShowMore(false);
-        setCopied(false);
       },
       renderExpandableRow: (rowData, tableMeta) => {
         const colSpan = rowData.length;
@@ -598,23 +640,32 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
             <TableContainer className={classes.innerTableContainer}>
               <Table>
                 <TableRow className={classes.noGutter}>
-                  <TableCell style={{ padding: '10px 0' }}>
+                  <TableCell style={{ padding: '20px 0' }}>
                     <Grid container spacing={1}>
-                      <Grid item xs={12} md={6} className={classes.contentContainer}>
+                      <Grid item xs={12} md={12} className={classes.contentContainer}>
                         <Grid container spacing={1}>
-                          <Grid item xs={12} md={12} className={classes.contentContainer}>
-                            <List className={classes.noGutter}>
-                              {Object.entries(connection).map(([key, value]) => {
-                                return (
-                                  <ListItem key={key} className={classes.listItem}>
-                                    <ListItemText
-                                      primary={key}
-                                      secondary={typeof value === 'string' ? value : ''}
-                                    />
-                                  </ListItem>
-                                );
-                              })}
-                            </List>
+                          <Grid
+                            item
+                            xs={12}
+                            md={12}
+                            style={{ display: 'flex', flexWrap: 'wrap', padding: '0 20px' }}
+                            className={classes.contentContainer}
+                          >
+                            {Object.entries(connection.metadata).map(([key, value]) => {
+                              return (
+                                <ListItemText
+                                  key={key}
+                                  style={{
+                                    width: '20%',
+                                    maxWidth: '20%',
+                                    lineBreak: 'anywhere',
+                                    padding: '0 5px',
+                                  }}
+                                  primary={key.replaceAll('_', ' ')}
+                                  secondary={value}
+                                />
+                              );
+                            })}
                           </Grid>
                         </Grid>
                       </Grid>
@@ -627,7 +678,7 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
         );
       },
     }),
-    [rowsExpanded, showMore, page, pageSize, copied],
+    [rowsExpanded, showMore, page, pageSize],
   );
 
   /**
@@ -687,6 +738,36 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
         getConnections(page, pageSize, search, sortOrder);
       },
       handleError(ACTION_TYPES.UPDATE_CONNECTION),
+    );
+  };
+
+  const handleDeleteConnections = async (selected) => {
+    if (selected) {
+      let response = await modalRef.current.show({
+        title: `Delete Connections`,
+        subtitle: `Are you sure that you want to delete connections"?`,
+        options: ['Delete', 'No'],
+      });
+      if (response === 'Delete') {
+        selected.data.map(({ index }) => {
+          deleteConnection(connections[index].id);
+        });
+      }
+    }
+  };
+
+  const deleteConnection = (connectionId) => {
+    dataFetch(
+      `/api/integrations/connections/${connectionId}`,
+      {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+      },
+      () => {
+        getConnections(page, pageSize, search, sortOrder);
+      },
+      handleError(ACTION_TYPES.DELETE_CONNECTION),
     );
   };
 
@@ -764,6 +845,24 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
             />
           </div>
         </div>
+        {/* <div className={StyleClass.toolWrapper}>
+          <div
+            className={classes.bulkAction}
+          >
+            <Button
+              aria-label="Delete"
+              variant="contained"
+              color="primary"
+              size="large"
+              // @ts-ignore
+              onClick={() => {}}
+              style={{ background : "#8F1F00" }}
+            >
+              <DeleteForeverIcon style={iconMedium} />
+              Delete
+            </Button>
+          </div>
+        </div> */}
         <ResponsiveDataTable
           data={connections}
           columns={columns}
@@ -774,6 +873,7 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
           updateCols={updateCols}
           columnVisibility={columnVisibility}
         />
+        <PromptComponent ref={modalRef} />
       </NoSsr>
     </>
   );
