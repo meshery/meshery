@@ -138,7 +138,7 @@ export const ConnectApp = ({ handleNext, setSharedData }) => {
       {...ConnectAppContent}
       handleCallback={handleCallback}
       cancelCallback={cancelCallback}
-      // disabled={Object.keys(formData).length !== 3 || !isUrlValid} //uncomment this
+      disabled={Object.keys(formData).length !== 3 || !isUrlValid}
       disabled={Object.keys(formData).length !== 3} // remove this after testing
       btnText={isConnected ? 'Update' : 'Connect'}
     >
