@@ -1,99 +1,193 @@
 import React from 'react';
-import { Alert, AlertTitle, Button, Stack } from '@material-ui/core';
+import { Button, Grid, Box } from '@material-ui/core';
+import { Alert, AlertTitle } from '@material-ui/lab';
 import { ConnectAppContent, FinishContent, SelectRepositoryContent } from './constants';
 import Router, { useRouter } from 'next/router';
 import { useTheme } from '@material-ui/core';
 import { useNotification } from '../../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../../lib/event-types';
-import { postHelmInstall } from './utils';
-import { VerifyConnectionKind } from '../../helpers/common.js';
+import { generateSelectedHelmRepo, selectRepoSchema, addStatusToCharts } from './utils';
+import {
+  useGetConnectionStatusQuery,
+  // useLazyGetConnectionDetailsQuery,
+  useVerifyConnectionURLMutation,
+  useConnectionMetaDataMutation,
+  useConfigureConnectionMutation,
+} from '../../../../rtk-query/connection';
+import { useGetSchemaQuery } from '../../../../rtk-query/schema';
 import StepperContent from '../../stepper/StepperContentWrapper';
 import RJSFWrapper from '../../../MesheryMeshInterface/PatternService/RJSF_wrapper';
-// import { useGetSchemaQuery, useUpsertApplicationMutation } from "@/api/api";
-import DesignsIcon from '../../../../assets/icons/DesignIcon';
-import { promisifiedDataFetch } from '../../../../lib/data-fetch';
+import debounce from 'lodash/debounce';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 
-export const ConnectApp = ({ handleNext }) => {
+export const ConnectApp = ({ handleNext, setSharedData }) => {
   const [isConnected, setIsConnected] = React.useState(false);
   const formRef = React.createRef();
-  const formStateRef = React.createRef();
-  const [schema, setSchema] = React.useState({});
-  const [isSchemaFetched, setIsSchemaFetched] = React.useState(false);
   const [formData, setFormData] = React.useState({});
+  const [isUrlValid, setIsUrlValid] = React.useState(false);
+  const [extraErrors, setExtraErrors] = React.useState();
 
-  const handleCallback = () => {
-    if (formRef.current && formRef.current.validateForm()) {
-      // Check if the URL is valid via an API 
-      axios
-        .post(`/api/integrations/connections/helm/verify`, { url: formData.url })
-        .then((response) => {
-          if (response.data.isValid) {
-            // URL is valid, allow the user to proceed
+  /**
+   * RTK queries and mutations
+   */
+  // const [triggerGetConnectionDetails] = useLazyGetConnectionDetailsQuery({
+  //   connectionKind: 'helm',
+  //   repoURL: '',
+  // }); //using lazy fetching
+  const [verifyConnectionURL] = useVerifyConnectionURLMutation();
+  const { data: schema, isSuccess: isSchemaFetched } = useGetSchemaQuery({
+    schemaName: 'helmRepo',
+  });
+  const { data: connectionStatusData, isSuccess: isConnectionStatusDataFetched } =
+    useGetConnectionStatusQuery('helm');
+
+  const handleCallback = async () => {
+    setExtraErrors({});
+    const payloadTestdata = [
+      {
+        APIVersion: 'v2',
+        AppVersion: 'v0.6.151',
+        Name: 'meshery',
+        Version: 'v0.6.151',
+        Description: "Meshery chart for deploying Meshery and Meshery's adapters.",
+        icon: 'https://meshery.io/images/logos/meshery-logo.png',
+        Dependencies: [
+          {
+            name: 'meshery-istio',
+            version: '0.5.0',
+            repository: '',
+            condition: 'meshery-istio.enabled',
+          },
+          {
+            name: 'meshery-celum',
+            version: '0.5.0',
+            repository: '',
+            condition: 'meshery-celum.enabled',
+          },
+        ],
+      },
+      {
+        APIVersion: 'v2',
+        AppVersion: 'v0.6.151',
+        Name: 'meshery Cloud',
+        Version: 'v0.6.151',
+        Description: "Meshery chart for deploying Meshery and Meshery's adapters.",
+        Icon: 'https://meshery.io/images/logos/meshery-logo.png',
+      },
+    ];
+    // replace !isUrlValid to isUrlValid after testing
+    if (formRef.current && formRef.current.validateForm() && !isUrlValid) {
+      // Check if we can fetch charts from this URL
+      // URL is already verified if this function is running
+      // If payload doesn't contain any chart don't allow user to go on next step
+      setSharedData((prev) => {
+        if (prev) {
+          return {
+            ...prev,
+            repoURL: formData.url,
+            helmRepoChartsData: payloadTestdata,
+          };
+        } else {
+          return {
+            repoURL: formData.url,
+            helmRepoChartsData: payloadTestdata,
+          };
+        }
+      });
+      handleNext();
+      /*
+      triggerGetConnectionDetails({
+        connectionKind: 'helm',
+        repoURL: formData.url,
+      })
+        .unwrap()
+        .then((payload) => {
+          if (payload) {
+            setSharedData((prev) => {
+              if (prev) {
+                return {
+                  ...prev,
+                  repoURL: formData.url,
+                  helmRepoChartsData: payload,
+                };
+              } else {
+                return {
+                  repoURL: formData.url,
+                  helmRepoChartsData: payload,
+                };
+              }
+            });
             handleNext();
           } else {
-            // URL is not valid, show an error or update the form's error state
-            // You can display an error message or update the form to indicate the URL is invalid
-            // For example, you can use formRef to set a specific field's error message:
-            formRef.current.setError('url', {
-              type: 'custom',
-              message: 'Invalid URL. Please check the URL and try again.',
+            setExtraErrors({
+              url: {
+                __errors: ['This Helm repo does not contain charts'],
+              },
             });
           }
         })
         .catch((error) => {
-          // Handle API request error, you can show an error message to the user
-          console.error('Error validating URL:', error);
+          // TODO: use notify here
+          console.error('Error coming when fetching connection details', error);
         });
+      */
     }
   };
-  
-  console.log('formRef', formRef);
 
   const cancelCallback = () => {
     Router.push('/dashboard');
   };
+
+  const debouncedValidateUrl = debounce(async (url) => {
+    verifyConnectionURL({
+      connectionKind: 'helm',
+      repoURL: url,
+    })
+      .unwrap()
+      .then((payload) => {
+        if (payload) {
+          setExtraErrors({});
+          setIsUrlValid(true);
+        } else {
+          setExtraErrors({
+            url: {
+              __errors: ['URL is not reachable, please provide valid URL'],
+            },
+          });
+        }
+      })
+      .catch((error) => {
+        notify({
+          message: error.data
+            ? JSON.stringify(error.data)
+            : `${error.status} error coming, please check console for more info`,
+          type: EVENT_TYPES.ERROR,
+        });
+      });
+  }, 400);
+
   const handleChange = (data) => {
-    formStateRef.current = data;
     setFormData(data);
+    if (formData.url) {
+      debouncedValidateUrl(formData.url);
+    }
   };
 
   React.useEffect(() => {
-    let isMounted = true;
-    VerifyConnectionKind('helm')
-      .then(() => setIsConnected(true))
-      .catch(() => setIsConnected(false));
-
-    const fetchData = async () => {
-      try {
-        const response = await promisifiedDataFetch(`/api/schema/resource/helmRepo`, {
-          method: 'GET',
-          credentials: 'include',
-        });
-
-        // Check if the component is still mounted before setting the state
-        if (isMounted) {
-          setSchema(response);
-          setIsSchemaFetched(true);
-        }
-      } catch (error) {
-        console.error('Error fetching schema in connection wizard', error);
+    if (isConnectionStatusDataFetched) {
+      if (connectionStatusData) {
+        setIsConnected(true);
       }
-    };
-
-    fetchData();
-
-    // Cleanup function
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+    }
+  }, [isConnectionStatusDataFetched]);
 
   return (
     <StepperContent
       {...ConnectAppContent}
       handleCallback={handleCallback}
       cancelCallback={cancelCallback}
-      disabled={Object.keys(formData).length !== 3}
+      // disabled={Object.keys(formData).length !== 3 || !isUrlValid} //uncomment this
+      disabled={Object.keys(formData).length !== 3} // remove this after testing
       btnText={isConnected ? 'Update' : 'Connect'}
     >
       {isSchemaFetched && (
@@ -105,118 +199,111 @@ export const ConnectApp = ({ handleNext }) => {
           jsonSchema={schema.rjsfSchema}
           liveValidate={false}
           formRef={formRef}
-          // setErrors={setErrors}
+          extraErrors={extraErrors}
         />
       )}
     </StepperContent>
   );
 };
 
-export const SelectRepository = ({ handleNext }) => {
+export const SelectRepository = ({ handleNext, sharedData, setSharedData }) => {
   const [availableRepos, setAvailableRepos] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
-  const [page, setPage] = React.useState(0);
   const { notify } = useNotification();
   const formRef = React.createRef();
-  // const [upsertApplication] = useUpsertApplicationMutation();
   const [formState, setFormState] = React.useState({});
+  const [selectedCharts, setSelectedCharts] = React.useState([]);
+  const [connectionMetaData] = useConnectionMetaDataMutation();
 
   const getHelmRepository = async () => {
     setLoading(true);
     try {
-      //   const { data } = await axios.get(
-      //     process.env.API_ENDPOINT_PREFIX + HELM_INTEGRATION_ENDPOINT
-      //   );
-      // dummy data
-      let data = [
-        {
-          name: 'oci chart',
-          charData: '/ yaml data /',
-        },
-        {
-          name: 'oci backend',
-          charData: '/ yaml data /',
-        },
-        {
-          name: 'Meshery chart',
-          charData: '/ yaml data /',
-        },
-        {
-          name: 'Meshery cloud chart',
-          charData: '/ yaml data /',
-        },
-      ];
+      const formData = [];
+      sharedData.helmRepoChartsData.forEach((helmRepo) => {
+        formData.push(helmRepo.Name);
 
-      if (data.length === 0) {
-        setHasMore(false);
-        setLoading(false);
-        return;
-      }
-      const helmRepoNames = data.map((helmRepo) => helmRepo.name);
-      let updatedRepositories = [...helmRepoNames];
-      setAvailableRepos(updatedRepositories);
+        // Check if the Helm repo has sub charts (dependencies)
+        if (helmRepo.Dependencies && helmRepo.Dependencies.length > 0) {
+          helmRepo.Dependencies.forEach((dependency) => {
+            formData.push(`${helmRepo.Name}/${dependency.name}`);
+          });
+        }
+      });
+
+      setAvailableRepos(formData);
+      console.log("AvailableRepos", formData)
       setLoading(false);
-    } catch (err) {
+    } catch (error) {
       setLoading(false);
-      notify({ messgae: err, type: EVENT_TYPES.ERROR });
+      notify({
+        message: error,
+        type: EVENT_TYPES.ERROR,
+      });
     }
   };
 
   React.useEffect(() => {
     getHelmRepository();
-  }, [page]);
+  }, []);
 
   const handleCallback = async () => {
     if (formRef.current && formRef.current.validateForm()) {
-      handleNext(); // Proceed to the next step
-      // try {
-      //   setLoading(true);
-      //   const formData = formStateRef.current;
-      //   const selectedRepos = formData.selectedHelmRepos;
+      setSharedData((prev) => {
+        return {
+          ...prev,
+          selectedCharts: selectedCharts,
+          selectedChartsTotalCount: formState.selectedHelmRepos.length, // Helps to not loop again in next step
+        };
+      });
+      console.log("FormState on handleCallback-->", formState.selectedHelmRepos)
 
-      //   // Filter the selected repositories from the data array
-      //   const selectedReposWithChartData = data.filter(repo =>
-      //     selectedRepos.includes(repo.name.toLowerCase())
-      //   );
-
-      //   // write logic if we will create application of selected repo from frontend
-      //   setLoading(false);
-
-      // } catch (error) {
-      //   setLoading(false);
-      //   handleError(error);
-      // }
+      handleNext();
+      connectionMetaData({
+        connectionKind: 'helm',
+        body: {
+          repoURL: sharedData.repoURL,
+          charts: selectedCharts,
+        },
+      })
+        .unwrap()
+        .then((payload) => {
+          // payload should be updated connection object
+          if (payload) {
+            setSharedData((prev) => {
+              return {
+                ...prev,
+                selectedCharts: selectedCharts,
+                selectedChartsTotalCount: formData.selectedHelmRepos.length, // Helps to not loop again in next step
+              };
+            });
+            handleNext();
+          }
+        })
+        .catch((error) => {
+          notify({
+            message: error.data
+              ? JSON.stringify(error.data)
+              : `${error.status} error coming, please check console for more info`,
+            type: EVENT_TYPES.ERROR,
+          });
+        });
     }
   };
 
-  const schema = {
-    properties: {
-      selectedHelmRepos: {
-        description: 'Select one or more Helm charts from the available options',
-        items: {
-          enum: availableRepos,
-          type: 'string',
-        },
-        minItems: 1,
-        title: 'Select one or more helm chart',
-        type: 'array',
-        uniqueItems: true,
-        'x-rjsf-grid-area': 12,
-      },
-    },
-    required: ['selectedHelmRepos'],
-    type: 'object',
-  };
+  const schema = selectRepoSchema(availableRepos);
 
   const handleChange = (data) => {
-    setFormState(data);
+    const { updatedData, arrayOfSelected } = generateSelectedHelmRepo(data, sharedData);
+    setFormState(updatedData);
+    setSelectedCharts(arrayOfSelected);
+    console.log("FormState onChange-->", updatedData)
   };
 
   return (
     <StepperContent
       {...SelectRepositoryContent}
       handleCallback={handleCallback}
-      disabled={!formState}
+      disabled={!formState || loading}
     >
       <RJSFWrapper
         key="select-helm-repo-rjsf-form"
@@ -225,7 +312,6 @@ export const SelectRepository = ({ handleNext }) => {
         jsonSchema={schema}
         liveValidate={false}
         formRef={formRef}
-        // setErrors={setErrors}
       />
     </StepperContent>
   );
@@ -238,132 +324,138 @@ const HelmChartsStatus = ({ configuredRepository, handleInstall }) => {
     let letHyperLink = `https://playground.meshery.io/extension/meshmap?application=${id}`;
     router.replace(letHyperLink);
   };
-  return (
-    <Stack
-      style={{ width: '100%', marginBottom: '2rem', height: '21rem', overflow: 'auto' }}
-      spacing={2}
-    >
-      {configuredRepository?.map((item, index) => {
-        const { name, status, id } = item;
-        const isSuccess = status === 'created';
-        return (
-          <Alert
-            key={index}
-            icon={false}
-            severity={isSuccess ? 'success' : 'error'}
-            // color: isSuccess ? theme.palette.success.dark : theme.palette.error.dark
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              lineHeight: '0',
-              color: '#000',
-              backgroundColor: isSuccess ? theme.palette.keppelGreenLight : null,
-            }}
-            action={
-              !isSuccess ? (
-                <Button
-                  style={{ backgroundColor: theme.palette.error.main, color: theme.palette.white }}
-                  size="small"
-                  onClick={() => handleInstall(item)}
-                >
-                  Retry
-                </Button>
-              ) : (
-                <Button
-                  style={{ color: theme.palette.keppelGreen }}
-                  size="small"
-                  onClick={() => meshMapRedirect(id)}
-                >
-                  <DesignsIcon width="28" height="28" fill={theme.palette.keppelGreen} />
-                  <p style={{ marginLeft: '0.2rem' }}>Open Design</p>
-                </Button>
-              )
-            }
-          >
-            <AlertTitle style={{ fontSize: '1.4rem' }}>{name}</AlertTitle>
-            {isSuccess ? (
-              <div>
-                <p>{`Design ${name} created`}</p>
-              </div>
+
+  const renderChart = (chart) => {
+    const { name, status } = chart;
+    const isSuccess = status === true;
+
+    return (
+      <Grid item key={name} style={{ width: '100%' }}>
+        <Alert
+          icon={false}
+          severity={isSuccess ? 'success' : 'error'}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            lineHeight: '0',
+            color: '#000',
+            backgroundColor: isSuccess ? theme.palette.keppelGreenLight : null,
+          }}
+          action={
+            !isSuccess ? (
+              <Button
+                style={{
+                  backgroundColor: theme.palette.error.main,
+                  color: theme.palette.secondary.primaryTextModal,
+                }}
+                size="small"
+                onClick={() => handleInstall(chart)}
+              >
+                Retry
+              </Button>
             ) : (
-              <div>
-                <p>{`Unable to import ${name}.yaml`}</p>
-              </div>
-            )}
-          </Alert>
-        );
+              <Box style={{color: '#00B39F', display: 'flex', alignItems: 'center'}}>
+                <CheckCircleIcon size="small" style={{marginRight: '0.3rem'}}/>
+                Installed
+              </Box>
+            )
+          }
+        >
+          <AlertTitle style={{ fontSize: '1.4rem' }}>{name}</AlertTitle>
+          {isSuccess ? (
+            <div>
+              <p>{`Design ${name} created`}</p>
+            </div>
+          ) : (
+            <div>
+              <p>{`Unable to import ${name}.yaml`}</p>
+            </div>
+          )}
+        </Alert>
+      </Grid>
+    );
+  };
+
+  return (
+    <Grid
+      container
+      spacing={2}
+      style={{ width: '100%', marginBottom: '2rem', maxHeight: '21rem', overflow: 'auto' }}
+    >
+      {configuredRepository?.map((chart) => {
+        return renderChart(chart);
       })}
-    </Stack>
+    </Grid>
   );
 };
 
-export const Finish = ({ configuredRepository, setConfiguredRepository, installationId }) => {
+export const Finish = ({ sharedData }) => {
   const router = useRouter();
   const { notify } = useNotification();
-  const [chartCount, setChartCount] = React.useState({
-    importedChartCount: 0,
-    totalChartCount: configuredRepository.length,
-  });
-
+  const [unDigestedCharts, setUnDigestedCharts] = React.useState([]);
   const handleCallback = () => {
     router.push('/connections');
   };
 
-  let statusData = [
-    {
-      id: 'uuid-uuid-uuid',
-      name: 'oci chart',
-      status: 'created',
-      chart_yaml: '/ yaml data /',
-    },
-    {
-      id: 'uuid-uuid-uuid',
-      name: 'oci chart',
-      status: 'created',
-      chart_yaml: '/ yaml data /',
-    },
-    {
-      id: 'uuid-uuid-uuid',
-      name: 'oci chart',
-      status: 'failed',
-      chart_yaml: '/ yaml data /',
-    },
-  ];
+  const [configureConnection] = useConfigureConnectionMutation();
 
-  React.useEffect(() => {
-    let importedChartCount = statusData.filter((item) => item.status === 'created').length;
-    setChartCount({
-      importedChartCount: importedChartCount,
-      totalChartCount: statusData.length,
-    });
-    setConfiguredRepository(statusData);
-  }, []);
-
-  //   React.useEffect(()=>{
-  // write logic to update chart count
-  //   }, [])
-
-  const handleInstall = (repository) => () => {
-    const body = {
-      repositories: [repository],
-    };
-    postHelmInstall(JSON.stringify(body), installationId)
-      .then((res) => {
-        // update configure repos based on new updated repo
-        // setConfiguredRepository(modifiedArrayOfObjects(configuredRepository, res));
+  const configureCharts = () => {
+    setUnDigestedCharts([
+      {
+        name: 'meshery-istio',
+        version: '0.5.0',
+        repository: '',
+        condition: 'meshery-istio.enabled',
+      },
+    ]);
+    configureConnection({
+      connectionKind: 'helm',
+      body: sharedData.repoURL,
+    })
+      .unwrap()
+      .then((payload) => {
+        // payload charts are which didn't got digested
+        if (payload) {
+          setUnDigestedCharts(payload);
+        }
       })
       .catch((error) => {
-        notify({ message: error, type: EVENT_TYPES.ERROR });
+        console.error(error);
+        notify({
+          message: error.data
+            ? JSON.stringify(error.data)
+            : `${error.status} error coming, please check console for more info`,
+          type: EVENT_TYPES.ERROR,
+        });
       });
+  };
+  const updatedConfiguredRepository = addStatusToCharts(
+    sharedData.selectedCharts,
+    unDigestedCharts,
+  );
+
+  React.useEffect(() => {
+    configureCharts();
+  }, []);
+
+  const handleInstall = (repository) => () => {
+    // for retry
   };
 
   return (
     <StepperContent
       {...FinishContent}
-      title={`${chartCount.importedChartCount} of ${configuredRepository.length} charts imported`}
+      title={`${
+        unDigestedCharts
+          ? sharedData.selectedChartsTotalCount - unDigestedCharts?.length
+          : sharedData.selectedChartsTotalCount
+      } of ${sharedData.selectedChartsTotalCount} charts imported`}
       handleCallback={handleCallback}
     >
-      <HelmChartsStatus configuredRepository={configuredRepository} handleInstall={handleInstall} />
+      <HelmChartsStatus
+        configuredRepository={updatedConfiguredRepository}
+        handleInstall={handleInstall}
+      />
     </StepperContent>
   );
 };

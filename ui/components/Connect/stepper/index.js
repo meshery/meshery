@@ -1,24 +1,24 @@
-import React, { useEffect, useState } from "react";
-import CustomizedSteppers from "./Stepper";
-import { useStyles } from "../styles2";
-import { helmStepContent, helmStepIcons, helmSteps } from "../connections/helm-connect/constants";
-import { Paper, Box } from "@material-ui/core"
+import React, { useEffect, useState } from 'react';
+import CustomizedSteppers from './Stepper';
+import { useStyles } from '../styles2';
+import { helmStepContent, helmStepIcons, helmSteps } from '../connections/helm-connect/constants';
+import { Paper, Box } from '@material-ui/core';
 
 function ConnectionStepper({ connectionType }) {
   const classes = useStyles();
   const [stepData, setStepData] = useState({
     stepContent: {},
     stepIcons: {},
-    steps: []
+    steps: [],
   });
 
   useEffect(() => {
     switch (connectionType) {
-      case "helm":
+      case 'helm':
         setStepData({
           stepContent: helmStepContent,
           stepIcons: helmStepIcons,
-          steps: helmSteps
+          steps: helmSteps,
         });
         break;
       default:

@@ -44,4 +44,4 @@ const mapDispatchToProps = (dispatch) => ({
   updatepagetitle: bindActionCreators(updatepagetitle, dispatch),
 });
 
-export default connect(null, mapDispatchToProps)(ConnectionWizardNew);
+export default connect(null, mapDispatchToProps)(ConnectionWizard);

@@ -1,12 +1,12 @@
-import React from "react";
-import { Box, Typography, Divider, Button } from "@material-ui/core";
-import { useStyles } from "../styles2";
-import { useTheme } from "@material-ui/core/styles"
+import React from 'react';
+import { Box, Typography, Divider, Button } from '@material-ui/core';
+import { useStyles } from '../styles2';
+import { useTheme } from '@material-ui/core/styles';
 
 const ContentHeader = ({ title }) => (
   <>
-    <Typography style={{ fontSize: "1.4rem", fontWeight: "bold" }}>{title}</Typography>
-    <Divider style={{ margin: "1rem 0 1.5rem 0" }} />
+    <Typography style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>{title}</Typography>
+    <Divider style={{ margin: '1rem 0 1.5rem 0' }} />
   </>
 );
 
@@ -19,7 +19,7 @@ const StepperContent = ({
   cancel,
   handleCallback,
   cancelCallback,
-  disabled
+  disabled,
 }) => {
   const theme = useTheme();
   const classes = useStyles();
@@ -29,26 +29,26 @@ const StepperContent = ({
         <ContentHeader title={title} />
         {subtitle && (
           <Box className={classes.contentBody}>
-            <Typography style={{ fontSize: "1rem" }}>{subtitle}</Typography>
+            <Typography style={{ fontSize: '1rem' }}>{subtitle}</Typography>
           </Box>
         )}
         {children}
         {tips && (
           <Box
             style={{
-              background: "rgba(0, 211, 169, 0.05)",
-              padding: "0.6rem",
-              margin: "2rem 0"
+              background: 'rgba(0, 211, 169, 0.05)',
+              padding: '0.6rem',
+              margin: '2rem 0',
             }}
           >
-            <Typography style={{ fontSize: "1rem" }}>{tips}</Typography>
+            <Typography style={{ fontSize: '1rem' }}>{tips}</Typography>
           </Box>
         )}
       </div>
       <Box
         style={{
-          display: "flex",
-          justifyContent: cancel ? "space-between" : "flex-end"
+          display: 'flex',
+          justifyContent: cancel ? 'space-between' : 'flex-end',
         }}
       >
         {cancel && (
@@ -57,7 +57,7 @@ const StepperContent = ({
             style={{
               background: theme.palette.secondary.penColorPrimary,
               color: theme.palette.secondary.primaryModalText,
-              margin: 0
+              margin: 0,
             }}
             onClick={cancelCallback}
             variant="contained"

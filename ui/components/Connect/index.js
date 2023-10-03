@@ -1,28 +1,31 @@
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import ConnectionStepper from "./stepper";
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import ConnectionStepper from './stepper';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { updateProgress } from '../../lib/store';
+import { Provider } from 'react-redux';
+import NoSsr from '@material-ui/core/NoSsr';
+import { store } from '../../store';
+import { ErrorBoundary } from '../General/ErrorBoundary';
 // import Verify from "./verify";
 
-const ConnectionWizardNew = ({user}) => {
+const ConnectionWizard = ({ user }) => {
   const router = useRouter();
   const [connection, setConnection] = useState({
-    connectionType: "", // github, kubernetes, etc
-    connectionAction: "", // new, callback
-    connectionId: "" // id of the connection, rn it is just the user uuid
+    connectionType: '', // github, kubernetes, etc
+    connectionAction: '', // new, callback
+    connectionId: '', // id of the connection, rn it is just the user uuid
   });
-  console.log("user from connection wizard", user)
+  console.log('user from connection wizard', user);
 
   useEffect(() => {
-    const { connection, id, githubLogin } = router.query;
-    console.log("connection", connection);
+    const { connection } = router.query;
     if (connection) {
       const newConnection = {
         connectionType: connection[0],
         connectionAction: connection[1],
-        connectionId: connection[2]
+        connectionId: connection[2],
       };
 
       // Check if the new connection is different from the current connection
@@ -34,33 +37,47 @@ const ConnectionWizardNew = ({user}) => {
         setConnection(newConnection);
 
         const shouldRedirect =
-          newConnection.connectionAction === "new" &&
+          newConnection.connectionAction === 'new' &&
           user &&
           (!newConnection.connectionType ||
             !newConnection.connectionAction ||
             !newConnection.connectionId);
-// profileData.id !== newConnection.connectionId
-        let queryString = "";
-        if (githubLogin) {
-          queryString = `?githubLogin=${githubLogin}`;
-          if (id) {
-            queryString = `${queryString}&id=${id}`;
-          }
-        }
-        console.log("shouldRedirect", shouldRedirect);
+        // profileData.id !== newConnection.connectionId
+        // let queryString = '';
+        // if (githubLogin) {
+        //   queryString = `?githubLogin=${githubLogin}`;
+        //   if (id) {
+        //     queryString = `${queryString}&id=${id}`;
+        //   }
+        // }
+        console.log('shouldRedirect', shouldRedirect);
       }
     }
   }, [router.query]);
 
   return (
     <>
-      {connection.connectionAction === "new" && (
+      {connection.connectionAction === 'new' && (
         <ConnectionStepper connectionType={connection.connectionType} />
       )}
-      {/* {connection.connectionAction === "verify" && <Verify />} TODO: enable if required */}
     </>
   );
-}
+};
+
+const ConnectionWizardNew = (props) => {
+  return (
+    <NoSsr>
+      <ErrorBoundary
+        FallbackComponent={() => null}
+        onError={(e) => console.error('Error in NotificationCenter', e)}
+      >
+        <Provider store={store}>
+          <ConnectionWizard {...props} />
+        </Provider>
+      </ErrorBoundary>
+    </NoSsr>
+  );
+};
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
@@ -68,7 +85,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state) => {
   return {
-    user: state.get('user')?.toObject()
+    user: state.get('user')?.toObject(),
   };
 };
 

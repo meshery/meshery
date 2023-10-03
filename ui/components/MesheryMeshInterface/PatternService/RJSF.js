@@ -47,6 +47,7 @@ function RJSFForm({
   override,
   formRef = null,
   uiSchema = {},
+  ...restProps
 }) {
   const globalTheme = useTheme();
   useEffect(() => {
@@ -94,6 +95,7 @@ function RJSFForm({
           showErrorList={false}
           noHtml5Validate
           transformErrors={transformErrors}
+          {...restProps}
         >
           <div></div>
         </MuiRJSFForm>
