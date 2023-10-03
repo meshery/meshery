@@ -1,14 +1,12 @@
 import * as React from 'react';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
-import { ColorlibConnector, useStyles, useColorlibStepIconStyles } from '../styles2';
+import { ColorlibConnector, useStyles, useColorlibStepIconStyles } from '../styles';
 import { useRouter } from 'next/router';
 import TipsCarousel from '../../General/TipsCarousel';
 import { ConnectionStepperTips } from '../connections/helm-connect/constants'; //TODO: move this to common
 import Stepper from '@material-ui/core/Stepper';
 import clsx from 'clsx';
-
-// const StepperIcon = makeStyles({ removePadding: { padding: '0 !important' } });
 
 function StepperIcon(props) {
   const classes = useColorlibStepIconStyles();
@@ -41,15 +39,10 @@ export default function CustomizedSteppers({ stepData }) {
   const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
   const router = useRouter();
-  console.log('customise stepper');
-  const { githubLogin, id } = router.query;
-  // eslint-disable-line
-  const installationId = id;
+  const { githubLogin } = router.query;
   // State to store data that will be shared with other steppers
   // To have less conflict, use sharedData as object with descriptive key
   const [sharedData, setSharedData] = React.useState(null);
-  const [selectedRepository, setSelectedRepository] = React.useState([]);
-  const [configuredRepository, setConfiguredRepository] = React.useState([]);
 
   const ActiveStepContent = stepContent[String(activeStep + 1)].component;
 

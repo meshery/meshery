@@ -9,7 +9,7 @@ import { EVENT_TYPES } from '../../../../lib/event-types';
 import { generateSelectedHelmRepo, selectRepoSchema, addStatusToCharts } from './utils';
 import {
   useGetConnectionStatusQuery,
-  // useLazyGetConnectionDetailsQuery,
+  useLazyGetConnectionDetailsQuery,
   useVerifyConnectionURLMutation,
   useConnectionMetaDataMutation,
   useConfigureConnectionMutation,
@@ -30,10 +30,10 @@ export const ConnectApp = ({ handleNext, setSharedData }) => {
   /**
    * RTK queries and mutations
    */
-  // const [triggerGetConnectionDetails] = useLazyGetConnectionDetailsQuery({
-  //   connectionKind: 'helm',
-  //   repoURL: '',
-  // }); //using lazy fetching
+  const [triggerGetConnectionDetails] = useLazyGetConnectionDetailsQuery({
+    connectionKind: 'helm',
+    repoURL: '',
+  }); //using lazy fetching
   const [verifyConnectionURL] = useVerifyConnectionURLMutation();
   const { data: schema, isSuccess: isSchemaFetched } = useGetSchemaQuery({
     schemaName: 'helmRepo',
@@ -43,59 +43,12 @@ export const ConnectApp = ({ handleNext, setSharedData }) => {
 
   const handleCallback = async () => {
     setExtraErrors({});
-    const payloadTestdata = [
-      {
-        APIVersion: 'v2',
-        AppVersion: 'v0.6.151',
-        Name: 'meshery',
-        Version: 'v0.6.151',
-        Description: "Meshery chart for deploying Meshery and Meshery's adapters.",
-        icon: 'https://meshery.io/images/logos/meshery-logo.png',
-        Dependencies: [
-          {
-            name: 'meshery-istio',
-            version: '0.5.0',
-            repository: '',
-            condition: 'meshery-istio.enabled',
-          },
-          {
-            name: 'meshery-celum',
-            version: '0.5.0',
-            repository: '',
-            condition: 'meshery-celum.enabled',
-          },
-        ],
-      },
-      {
-        APIVersion: 'v2',
-        AppVersion: 'v0.6.151',
-        Name: 'meshery Cloud',
-        Version: 'v0.6.151',
-        Description: "Meshery chart for deploying Meshery and Meshery's adapters.",
-        Icon: 'https://meshery.io/images/logos/meshery-logo.png',
-      },
-    ];
     // replace !isUrlValid to isUrlValid after testing
-    if (formRef.current && formRef.current.validateForm() && !isUrlValid) {
+    if (formRef.current && formRef.current.validateForm() && isUrlValid) {
       // Check if we can fetch charts from this URL
       // URL is already verified if this function is running
       // If payload doesn't contain any chart don't allow user to go on next step
-      setSharedData((prev) => {
-        if (prev) {
-          return {
-            ...prev,
-            repoURL: formData.url,
-            helmRepoChartsData: payloadTestdata,
-          };
-        } else {
-          return {
-            repoURL: formData.url,
-            helmRepoChartsData: payloadTestdata,
-          };
-        }
-      });
-      handleNext();
-      /*
+      handleNext()
       triggerGetConnectionDetails({
         connectionKind: 'helm',
         repoURL: formData.url,
@@ -130,7 +83,6 @@ export const ConnectApp = ({ handleNext, setSharedData }) => {
           // TODO: use notify here
           console.error('Error coming when fetching connection details', error);
         });
-      */
     }
   };
 
@@ -231,7 +183,6 @@ export const SelectRepository = ({ handleNext, sharedData, setSharedData }) => {
       });
 
       setAvailableRepos(formData);
-      console.log("AvailableRepos", formData)
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -248,16 +199,6 @@ export const SelectRepository = ({ handleNext, sharedData, setSharedData }) => {
 
   const handleCallback = async () => {
     if (formRef.current && formRef.current.validateForm()) {
-      setSharedData((prev) => {
-        return {
-          ...prev,
-          selectedCharts: selectedCharts,
-          selectedChartsTotalCount: formState.selectedHelmRepos.length, // Helps to not loop again in next step
-        };
-      });
-      console.log("FormState on handleCallback-->", formState.selectedHelmRepos)
-
-      handleNext();
       connectionMetaData({
         connectionKind: 'helm',
         body: {
@@ -296,7 +237,6 @@ export const SelectRepository = ({ handleNext, sharedData, setSharedData }) => {
     const { updatedData, arrayOfSelected } = generateSelectedHelmRepo(data, sharedData);
     setFormState(updatedData);
     setSelectedCharts(arrayOfSelected);
-    console.log("FormState onChange-->", updatedData)
   };
 
   return (
@@ -400,14 +340,6 @@ export const Finish = ({ sharedData }) => {
   const [configureConnection] = useConfigureConnectionMutation();
 
   const configureCharts = () => {
-    setUnDigestedCharts([
-      {
-        name: 'meshery-istio',
-        version: '0.5.0',
-        repository: '',
-        condition: 'meshery-istio.enabled',
-      },
-    ]);
     configureConnection({
       connectionKind: 'helm',
       body: sharedData.repoURL,

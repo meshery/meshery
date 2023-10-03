@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, Divider, Button } from '@material-ui/core';
-import { useStyles } from '../styles2';
+import { useStyles } from '../styles';
 import { useTheme } from '@material-ui/core/styles';
 
 const ContentHeader = ({ title }) => (

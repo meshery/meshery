@@ -17,7 +17,6 @@ const ConnectionWizard = ({ user }) => {
     connectionAction: '', // new, callback
     connectionId: '', // id of the connection, rn it is just the user uuid
   });
-  console.log('user from connection wizard', user);
 
   useEffect(() => {
     const { connection } = router.query;
