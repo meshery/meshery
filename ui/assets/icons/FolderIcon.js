@@ -1,11 +1,12 @@
 import React from "react";
 
-const FolderIcon = ({ width, height, fill, style = {} }) => (
+const FolderIcon = ({ width="1.5rem", height="1.5rem", fill, style = {} }) => (
   <svg
-    width="1.5rem"
-    height="1.5rem"
+    width={width}
+    height={height}
     viewBox="0 0 31 30"
     fill="none"
+    style={style}
     xmlns="http://www.w3.org/2000/svg"
   >
     <g clipPath="url(#a)">

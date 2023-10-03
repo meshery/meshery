@@ -27,7 +27,7 @@ export const useColorlibStepIconStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
     cursor: 'pointer',
-        '@media (max-width:780px)': {
+    '@media (max-width:780px)': {
       width: 40,
       height: 40,
     },
@@ -97,7 +97,7 @@ export const useStyles = makeStyles((theme) => ({
   cancelButton: {
     background: theme.palette.secondary.penColorPrimary,
     color: theme.palette.secondary.primaryModalText,
-    margin: 0
+    margin: 0,
   },
   stepperButton: {
     marginTop: '1rem',

@@ -1,23 +1,24 @@
 import React from "react";
 
-const TipsIcon = ({ width, height, fill, style = {} }) => (
+const TipsIcon = ({ width="127", height="156", fill="#00B39F", style = {} }) => (
   <svg
-    width="127"
-    height="156"
+    width={width}
+    height={height}
     viewBox="0 0 127 156"
     fill="none"
+    style={style}
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
       d="M65.5547 152.888C64.7849 154.221 62.8604 154.221 62.0906 152.888L42.3059 118.62C41.5361 117.286 42.4984 115.62 44.038 115.62H83.6073C85.1469 115.62 86.1091 117.286 85.3393 118.62L65.5547 152.888Z"
-      fill="#00B39F"
+      fill={fill}
     />
     <circle
       cx="63.5"
       cy="63.5"
       r="63.5"
       transform="rotate(90 63.5 63.5)"
-      fill="#00B39F"
+      fill={fill}
     />
     <g filter="url(#filter0_d_13672_38173)">
       <circle
@@ -25,7 +26,7 @@ const TipsIcon = ({ width, height, fill, style = {} }) => (
         cy="63.5"
         r="53.5"
         transform="rotate(90 63.5 63.5)"
-        fill="#00B39F"
+        fill={fill}
       />
       <circle
         cx="63.5"

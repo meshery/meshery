@@ -15,8 +15,8 @@ function StepperIcon(props) {
   const iconComponent = stepIcons[String(props.icon)];
 
   const additionalProps = {
-    fill: completed ? "white" : "currentColor",
-  }
+    fill: completed ? 'white' : 'currentColor',
+  };
 
   return (
     <div
@@ -30,7 +30,6 @@ function StepperIcon(props) {
     </div>
   );
 }
-
 
 /* eslint-disable */
 

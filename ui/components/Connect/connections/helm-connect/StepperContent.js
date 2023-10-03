@@ -26,6 +26,7 @@ export const ConnectApp = ({ handleNext, setSharedData }) => {
   const [formData, setFormData] = React.useState({});
   const [isUrlValid, setIsUrlValid] = React.useState(false);
   const [extraErrors, setExtraErrors] = React.useState();
+  const { notify } = useNotification();
 
   /**
    * RTK queries and mutations
@@ -48,7 +49,7 @@ export const ConnectApp = ({ handleNext, setSharedData }) => {
       // Check if we can fetch charts from this URL
       // URL is already verified if this function is running
       // If payload doesn't contain any chart don't allow user to go on next step
-      handleNext()
+      handleNext();
       triggerGetConnectionDetails({
         connectionKind: 'helm',
         repoURL: formData.url,
@@ -214,7 +215,7 @@ export const SelectRepository = ({ handleNext, sharedData, setSharedData }) => {
               return {
                 ...prev,
                 selectedCharts: selectedCharts,
-                selectedChartsTotalCount: formData.selectedHelmRepos.length, // Helps to not loop again in next step
+                selectedChartsTotalCount: formState.selectedHelmRepos.length, // Helps to not loop again in next step
               };
             });
             handleNext();
@@ -258,13 +259,7 @@ export const SelectRepository = ({ handleNext, sharedData, setSharedData }) => {
 };
 
 const HelmChartsStatus = ({ configuredRepository, handleInstall }) => {
-  const router = useRouter();
   const theme = useTheme();
-  const meshMapRedirect = (id) => {
-    let letHyperLink = `https://playground.meshery.io/extension/meshmap?application=${id}`;
-    router.replace(letHyperLink);
-  };
-
   const renderChart = (chart) => {
     const { name, status } = chart;
     const isSuccess = status === true;
@@ -294,8 +289,8 @@ const HelmChartsStatus = ({ configuredRepository, handleInstall }) => {
                 Retry
               </Button>
             ) : (
-              <Box style={{color: '#00B39F', display: 'flex', alignItems: 'center'}}>
-                <CheckCircleIcon size="small" style={{marginRight: '0.3rem'}}/>
+              <Box style={{ color: '#00B39F', display: 'flex', alignItems: 'center' }}>
+                <CheckCircleIcon size="small" style={{ marginRight: '0.3rem' }} />
                 Installed
               </Box>
             )
@@ -370,7 +365,7 @@ export const Finish = ({ sharedData }) => {
     configureCharts();
   }, []);
 
-  const handleInstall = (repository) => () => {
+  const handleInstall = () => {
     // for retry
   };
 

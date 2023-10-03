@@ -47,13 +47,13 @@ export const generateSelectedHelmRepo = (data, sharedData) => {
                 : [],
             };
             arrayOfSelected.push(existingParent);
-            if(!selectedNameOfCharts.includes(existingParent.name)){
+            if (!selectedNameOfCharts.includes(existingParent.name)) {
               selectedNameOfCharts.push(existingParent.name);
             }
           } else {
             // If parentChart already exists, add enabled: true only to the selected dependency
             const existingDependency = existingParent.dependencies.find(
-              (dependency) => dependency.name === dependencyName
+              (dependency) => dependency.name === dependencyName,
             );
             if (existingDependency) {
               existingDependency.enabled = true;
@@ -82,7 +82,7 @@ export const generateSelectedHelmRepo = (data, sharedData) => {
                 })
               : [], // Initialize dependencies array
           });
-          if(!selectedNameOfCharts.includes(selectedChart.Name)){
+          if (!selectedNameOfCharts.includes(selectedChart.Name)) {
             selectedNameOfCharts.push(selectedChart.Name);
           }
         }
@@ -93,6 +93,7 @@ export const generateSelectedHelmRepo = (data, sharedData) => {
     arrayOfSelected = arrayOfSelected.map((item) => {
       if (item.dependencies.length === 0) {
         // Remove the dependencies property if there are no dependencies
+        // eslint-disable-next-line no-unused-vars
         const { dependencies, ...itemWithoutDependencies } = item;
         return itemWithoutDependencies;
       }
@@ -124,7 +125,7 @@ export const selectRepoSchema = (availableRepos) => {
     },
     required: ['selectedHelmRepos'],
     type: 'object',
-  }
+  };
 };
 
 /**

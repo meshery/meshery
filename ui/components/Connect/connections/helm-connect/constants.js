@@ -18,18 +18,11 @@ export const helmStepContent = {
   },
   2: {
     component: <SelectRepository />,
-    props: [
-      'handleNext',
-      'sharedData',
-      'setSharedData',
-    ],
+    props: ['handleNext', 'sharedData', 'setSharedData'],
   },
   3: {
     component: <Finish />,
-    props: [
-      'sharedData',
-      'setSharedData',
-    ],
+    props: ['sharedData', 'setSharedData'],
   },
 };
 
