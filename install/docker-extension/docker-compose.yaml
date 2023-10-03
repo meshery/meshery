@@ -14,6 +14,7 @@ services:
       - "EVENT=mesheryLocal"
       - "KUBECONFIG_FOLDER=/home/appuser/.kube"
       - "PORT=9081"
+      - PROVIDER=Meshery
     volumes:
       - $HOME/.kube:/home/appuser/.kube:ro
       - $HOME/.minikube:$HOME/.minikube:ro

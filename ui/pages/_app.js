@@ -277,6 +277,7 @@ class MesheryApp extends App {
     if (isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry)) {
       Router.push(mesheryExtensionRoute);
     }
+    console.log('prevProps.k8sConfig', prevProps.k8sConfig, 'k8sConfig', k8sConfig);
 
     if (!_.isEqual(prevProps.k8sConfig, k8sConfig)) {
       const { operatorSubscription, meshSyncSubscription } = this.state;
@@ -344,15 +345,7 @@ class MesheryApp extends App {
     if (this.state.k8sContexts?.contexts) {
       if (id === 'all') {
         let activeContexts = [];
-        if (this.state.activeK8sContexts.includes('all')) {
-          // If 'all' is already present, remove all elements and clear activeContexts
-          this.setState({ activeK8sContexts: [] }, () =>
-            this.activeContextChangeCallback(this.state.activeK8sContexts),
-          );
-          return;
-        }
         this.state.k8sContexts.contexts.forEach((ctx) => activeContexts.push(ctx.id));
-        // If 'all' is not present, set activeContexts to all context IDs plus 'all'
         activeContexts.push('all');
         this.setState({ activeK8sContexts: activeContexts }, () =>
           this.activeContextChangeCallback(this.state.activeK8sContexts),
@@ -365,8 +358,8 @@ class MesheryApp extends App {
           let ids = [...(state.activeK8sContexts || [])];
           //pop event
           if (ids.includes(id)) {
-            ids = ids.filter((cid) => cid !== 'all' && cid !== id);
-            return { activeK8sContexts: ids };
+            ids = ids.filter((id) => id !== 'all');
+            return { activeK8sContexts: ids.filter((cid) => cid !== id) };
           }
 
           //push event

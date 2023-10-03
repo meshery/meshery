@@ -48,31 +48,31 @@ func dryRun(rClient rest.Interface, k8sResource map[string]interface{}, namespac
 		err = ErrDryRun(fmt.Errorf("invalid resource or namespace not provided"), "\"kind\" and \"apiVersion\" cannot be empty")
 		return
 	}
-	
+
 	aV := k8sResource["apiVersion"].(string)
 	// for non-core resources, the endpoint should use 'apis' instead of 'api'
 	apiString := "api"
 	if len(strings.Split(aV, "/")) > 1 {
 		apiString = apiString + "s"
 	}
-	
+
 	var path string
-	
+
 	if namespace != "" {
 		path = fmt.Sprintf("/%s/%s/namespaces/%s/%s", apiString, aV, namespace, kindToResource(k8sResource["kind"].(string)))
 	} else {
 		path = fmt.Sprintf("/%s/%s/%s", apiString, aV, kindToResource(k8sResource["kind"].(string)))
 	}
-	
+
 	data, err := json.Marshal(k8sResource)
 	if err != nil {
 		err = models.ErrMarshal(err, "k8s resource")
 		return
 	}
-	
+
 	req := rClient.Post().AbsPath(path).Body(data).SetHeader("Content-Type", "application/json").SetHeader("Accept", "application/json").Param("dryRun", "All").Param("fieldValidation", "Strict").Param("fieldManager", "meshery")
 	res := req.Do(context.Background())
-	
+
 	// ignoring the error since this client-go treats failure of dryRun as an error
 	resp, err := res.Raw()
 	switch err.(type) {
@@ -81,7 +81,7 @@ func dryRun(rClient rest.Interface, k8sResource map[string]interface{}, namespac
 	case *errors.UnexpectedObjectError:
 		st, success, err = formatDryRunResponse(resp, err)
 	default:
-		return 
+		return
 	}
 	return
 }
@@ -115,7 +115,7 @@ func createK8sResourceStructure(comp v1alpha1.Component) map[string]interface{} 
 }
 
 func formatDryRunResponse(resp []byte, err error) (status map[string]interface{}, success bool, meshkiterr error) {
-	
+
 	e := json.Unmarshal(resp, &status)
 	if e != nil {
 		meshkiterr = models.ErrMarshal(err, fmt.Sprintf("cannot serialize Status object from the server: %s", e.Error()))

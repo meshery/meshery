@@ -19,6 +19,7 @@ import { VISIBILITY } from '../../utils/Enum';
 import { useTheme } from '@material-ui/core/styles';
 import { useRouter } from 'next/router';
 import { Edit } from '@material-ui/icons';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
@@ -43,6 +44,7 @@ function MesheryPatternCard({
   canPublishPattern = false,
   user,
   pattern,
+  handleInfoModal,
 }) {
   const router = useRouter();
 
@@ -225,6 +227,16 @@ function MesheryPatternCard({
                   <span className={classes.cloneBtnText}> Edit </span>
                 </TooltipButton>
               )}
+              <TooltipButton
+                title="Pattern Information"
+                variant="contained"
+                color="primary"
+                onClick={(ev) => genericClickHandler(ev, handleInfoModal)}
+                className={classes.testsButton}
+              >
+                <InfoOutlinedIcon style={{ fill: '#fff' }} className={classes.iconPatt} />
+                <span className={classes.btnText}> Info </span>
+              </TooltipButton>
             </div>
           </div>
         </div>
