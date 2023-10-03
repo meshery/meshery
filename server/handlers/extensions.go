@@ -8,7 +8,9 @@ import (
 	"plugin"
 	"sync"
 
+	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/models/events"
 )
 
 var (
@@ -72,13 +74,19 @@ func (h *Handler) LoadExtensionFromPackage(_ http.ResponseWriter, _ *http.Reques
 	return nil
 }
 
-func (h *Handler) ExtensionsVersionHandler(w http.ResponseWriter, _ *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+func (h *Handler) ExtensionsVersionHandler(w http.ResponseWriter, _ *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	userID := uuid.FromStringOrNil(user.ID)
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("extensions_version").WithAction("get")
 	if provider.GetProviderType() == models.LocalProviderType {
+		eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Extension not available for %s provider", models.LocalProviderType))
 		err := json.NewEncoder(w).Encode("extension not available for current provider")
 		if err != nil {
 			h.log.Error(models.ErrEncoding(err, "extension version"))
 			http.Error(w, models.ErrEncoding(err, "extension version").Error(), http.StatusNotFound)
 		}
+		event := eventBuilder.Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
 
