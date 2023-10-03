@@ -23,17 +23,15 @@ func (s *Selector) Workload(name string, version string, model string, apiVersio
 		APIVersion: apiVersion,
 	})
 	found := false
-	if len(entities) != 0 {
-		for _, en := range entities {
-			if en != nil {
-				var ok bool
-				comp, ok = en.(v1alpha1.ComponentDefinition)
-				if ok {
-					found = true
-				}
-				if comp.Model.Version == version { //prefer to use the correct version, if available
-					break
-				}
+	for _, en := range entities {
+		if en != nil {
+			var ok bool
+			comp, ok = en.(v1alpha1.ComponentDefinition)
+			if ok {
+				found = true
+			}
+			if comp.Model.Version == version { //prefer to use the correct version, if available
+				break
 			}
 		}
 	}
