@@ -161,10 +161,12 @@ func (h *Handler) handlePatternPOST(
 				"path": "",
 				"type": "local",
 			},
+			CatalogData: parsedBody.PatternData.CatalogData,
 		}
 		if parsedBody.PatternData != nil {
 			mesheryPattern.ID = parsedBody.PatternData.ID
 		}
+
 		if parsedBody.Save {
 			resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
 			if err != nil {

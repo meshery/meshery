@@ -26,6 +26,7 @@ function PatternCardGridItem({
   setSelectedPatterns,
   canPublishPattern = false,
   user,
+  handleInfoModal,
 }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(pattern.pattern_file);
@@ -48,11 +49,24 @@ function PatternCardGridItem({
         handleUnDeploy={handleUnDeploy}
         handleUnpublishModal={handleUnpublishModal}
         handleClone={handleClone}
+        handleInfoModal={handleInfoModal}
         deleteHandler={() =>
-          handleSubmit({ data: yaml, id: pattern.id, type: FILE_OPS.DELETE, name: pattern.name })
+          handleSubmit({
+            data: yaml,
+            id: pattern.id,
+            type: FILE_OPS.DELETE,
+            name: pattern.name,
+            catalog_data: pattern.catalog_data,
+          })
         }
         updateHandler={() =>
-          handleSubmit({ data: yaml, id: pattern.id, type: FILE_OPS.UPDATE, name: pattern.name })
+          handleSubmit({
+            data: yaml,
+            id: pattern.id,
+            type: FILE_OPS.UPDATE,
+            name: pattern.name,
+            catalog_data: pattern.catalog_data,
+          })
         }
         setSelectedPatterns={() => setSelectedPatterns({ pattern: pattern, show: true })}
         setYaml={setYaml}
@@ -116,6 +130,7 @@ function MesheryPatternGrid({
   selectedK8sContexts,
   publishSchema,
   user,
+  handleInfoModal,
 }) {
   const classes = useStyles();
   const handlePublishModal = (pattern) => {
@@ -181,6 +196,8 @@ function MesheryPatternGrid({
     });
   };
 
+  console.log('user-->', user);
+
   return (
     <div>
       {selectedPattern.show && (
@@ -204,12 +221,14 @@ function MesheryPatternGrid({
               handleVerify={(e) => handleVerify(e, pattern.pattern_file, pattern.id)}
               handlePublishModal={() => handlePublishModal(pattern)}
               handleUnpublishModal={(e) => handleUnpublishModal(e, pattern)()}
+              handleInfoModal={() => handleInfoModal(pattern)}
               handleSubmit={handleSubmit}
               setSelectedPatterns={setSelectedPattern}
             />
           ))}
         </Grid>
       )}
+
       {!selectedPattern.show && patterns.length === 0 && (
         <Paper className={classes.noPaper}>
           <div className={classes.noContainer}>

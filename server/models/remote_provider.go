@@ -2041,7 +2041,7 @@ func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFi
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("filter successfully sent to remote provider: %s", string(bdr))
+		// logrus.Infof("filter successfully sent to remote provider: %s", string(bdr)) stop logging filter data
 		return bdr, nil
 	}
 
@@ -2492,7 +2492,7 @@ func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path s
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("filter successfully sent to remote provider: %s", string(bdr))
+		// logrus.Infof("filter successfully sent to remote provider: %s", string(bdr)) stop logging filter data
 		return bdr, nil
 	}
 
