@@ -21,7 +21,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@babel/eslint-parser": "^7.22.11",
-    "@cypress/code-coverage": "^3.11.0",
+    "@cypress/code-coverage": "^3.12.1",
     "@emotion/cache": "^11.10.5",
     "@emotion/react": "^11.11.1",
     "@emotion/server": "^11.11.0",
@@ -31,16 +31,16 @@
     "babel-plugin-istanbul": "^6.1.1",
     "http-proxy": "^1.18.1",
     "isomorphic-unfetch": "^4.0.2",
-    "next": "^13.4.12",
+    "next": "^13.5.3",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "cypress": "^13.1.0",
+    "cypress": "^13.3.0",
     "eslint": "^8.48.0",
-    "eslint-config-next": "^13.4.19",
-    "eslint-plugin-cypress": "^2.14.0",
+    "eslint-config-next": "^13.5.3",
+    "eslint-plugin-cypress": "^2.15.1",
     "start-server-and-test": "^2.0.0"
   },
   "engines": {

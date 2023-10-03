@@ -28,6 +28,8 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) =
   const open = Boolean(anchorEl);
   const containerRef = useRef(null);
 
+  const transitionDuration = Math.min(300 + columns.length * 50, 1000);
+
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -42,12 +44,6 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) =
       [columnName]: isVisible,
     }));
   };
-
-  // const paperStyle = {
-  //   background : theme.palette.secondary.link,
-  //   color: theme.palette.secondary.textMain,
-  //   fontWeight: "bold",
-  // };
 
   return (
     <div>
@@ -78,16 +74,36 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) =
             horizontal: 'center',
           }}
           transition
+          popperOptions={{
+            modifiers: [
+              {
+                name: 'offset',
+                options: {
+                  offset: [0, 8],
+                },
+              },
+              {
+                name: 'preventOverflow',
+                options: {
+                  altAxis: true, // true by default
+                  tether: true,
+                  rootBoundary: 'document',
+                  padding: 8,
+                },
+              },
+            ],
+          }}
         >
           {({ TransitionProps }) => (
             <Slide
               {...TransitionProps}
               direction="down"
               in={open}
-              timeout={400}
+              timeout={transitionDuration}
               mountOnEnter
               unmountOnExit
               container={containerRef.current}
+              easing="cubic-bezier(0.25, 0.1, 1, 1)"
             >
               <Box>
                 <ClickAwayListener onClickAway={handleClose}>

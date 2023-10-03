@@ -121,7 +121,10 @@ darkTheme = {
     MuiCheckbox: {
       colorPrimary: {
         '&$checked': {
-          color: 'rgba(255, 255, 255, 0.7)',
+          color: '#00B39F',
+        },
+        '&.MuiCheckbox-indeterminate': {
+          color: '#00B39F',
         },
       },
     },
@@ -395,6 +398,17 @@ theme = {
       root: {
         width: 32,
         height: 32,
+      },
+    },
+
+    MuiCheckbox: {
+      colorPrimary: {
+        '&$checked': {
+          color: '#00B39F',
+        },
+        '&.MuiCheckbox-indeterminate': {
+          color: '#00B39F',
+        },
       },
     },
 
