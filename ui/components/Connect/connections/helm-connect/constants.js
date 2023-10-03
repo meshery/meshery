@@ -45,7 +45,7 @@ export const HELM_INTEGRATION_ENDPOINT = '/api/integrations/github';
 
 export const SelectRepositoryContent = {
   title: 'Select Helm Repository',
-  tips: 'Meshery Cloud is optimized for codebases that are actively undergoing development.',
+  tips: 'Meshery is optimized for codebases that are actively undergoing development.',
   btnText: 'Next',
 };
 
