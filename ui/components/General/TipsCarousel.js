@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Box, Typography } from '@material-ui/core';
-import TipsIcon from '../../assets/icons/TipsIcon'; // add this icon
+import TipsIcon from '../../assets/icons/Tipsicon'; // add this icon
 import { useTheme } from '@material-ui/core';
 
 const TipsCarousel = ({ tips }) => {
