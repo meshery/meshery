@@ -139,7 +139,6 @@ export const ConnectApp = ({ handleNext, setSharedData }) => {
       handleCallback={handleCallback}
       cancelCallback={cancelCallback}
       disabled={Object.keys(formData).length !== 3 || !isUrlValid}
-      disabled={Object.keys(formData).length !== 3} // remove this after testing
       btnText={isConnected ? 'Update' : 'Connect'}
     >
       {isSchemaFetched && (
