@@ -19,13 +19,10 @@ import {
   Chip,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-// import EditIcon from "@material-ui/icons/Edit";
-// import YoutubeSearchedForIcon from '@mui/icons-material/YoutubeSearchedFor';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import JsonFormatter from 'react-json-formatter';
 
 import { updateProgress } from '../../lib/store';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -33,7 +30,6 @@ import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import classNames from 'classnames';
-// import ReactSelectWrapper from "../ReactSelectWrapper";
 import dataFetch from '../../lib/data-fetch';
 import LaunchIcon from '@mui/icons-material/Launch';
 import { useNotification } from '../../utils/hooks/useNotification';
@@ -44,7 +40,6 @@ import ResponsiveDataTable from '../../utils/data-table';
 import useStyles from '../../assets/styles/general/tool.styles';
 import Modal from '../Modal';
 import { Colors } from '../../themes/app';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 const styles = (theme) => ({
   grid: { padding: theme.spacing(2) },
@@ -154,8 +149,20 @@ const styles = (theme) => ({
     flexWrap: 'noWrap',
   },
   innerTableWrapper: {
-    backgroundColor: theme.palette.secondary.primeColor,
+    backgroundColor: '#cccccc',
+    borderTop: '1px solid #E0E0E0',
+    borderBottom: '1px solid #E0E0E0',
+    borderRadius: 0,
+    background: '#FFF',
+    boxShadow:
+      '0px 4px 8px 0px rgba(0, 0, 0, 0.08) inset, 0px 0px 4px 0px rgba(0, 0, 0, 0.25) inset, 1px 0px 4px 0px rgba(0, 0, 0, 0.25) inset, 0px -1px 4px 0px rgba(0, 0, 0, 0.25) inset',
     padding: '0',
+  },
+  innerTableContainer: {
+    background: 'linear-gradient(90deg, #F2F0F0 0%, #FFF 100%)',
+    margin: '1px',
+    marginLeft: '18px',
+    width: 'calc(100% - 20px)',
   },
   listItem: {
     paddingTop: '0',
@@ -588,7 +595,7 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
 
         return (
           <TableCell colSpan={colSpan} className={classes.innerTableWrapper}>
-            <TableContainer>
+            <TableContainer className={classes.innerTableContainer}>
               <Table>
                 <TableRow className={classes.noGutter}>
                   <TableCell style={{ padding: '10px 0' }}>
@@ -597,63 +604,19 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
                         <Grid container spacing={1}>
                           <Grid item xs={12} md={12} className={classes.contentContainer}>
                             <List className={classes.noGutter}>
-                              <ListItem className={classes.listItem}>
-                                <ListItem className={classes.listItem}>
-                                  <ListItemText
-                                    primary="Credential ID"
-                                    secondary={connection ? connection?.credential_id : '-'}
-                                  />
-                                </ListItem>
-                                <ListItem className={classes.listItem}>
-                                  <ListItemText
-                                    primary="Kind"
-                                    secondary={connection ? connection?.kind : '_'}
-                                  />
-                                </ListItem>
-                              </ListItem>
+                              {Object.entries(connection).map(([key, value]) => {
+                                return (
+                                  <ListItem key={key} className={classes.listItem}>
+                                    <ListItemText
+                                      primary={key}
+                                      secondary={typeof value === 'string' ? value : ''}
+                                    />
+                                  </ListItem>
+                                );
+                              })}
                             </List>
                           </Grid>
                         </Grid>
-                      </Grid>
-                      <Grid item xs={12} md={6} className={classes.contentContainer}>
-                        <List>
-                          <ListItem
-                            className={classes.listItem}
-                            style={{ display: 'flex', flexDirection: 'column' }}
-                          >
-                            <ListItem className={classes.listItem}>
-                              <ListItemText
-                                style={{
-                                  maxHeight: `${showMore ? 'unset' : '100px'}`,
-                                  overflow: 'hidden',
-                                }}
-                                primary="Meta Data"
-                                secondary={
-                                  connection ? (
-                                    <>
-                                      <JsonFormatter json={connection?.metadata} tabWith={4} />
-                                    </>
-                                  ) : (
-                                    ''
-                                  )
-                                }
-                              />
-                            </ListItem>
-                            <ListItem className={classes.metadataActions}>
-                              <span
-                                className={classes.showMore}
-                                onClick={() => setShowMore(!showMore)}
-                              >
-                                {showMore ? '...show Less' : '...show More'}
-                              </span>
-                              <Tooltip title={copied ? 'Copied' : 'Copy'}>
-                                <ContentCopyIcon
-                                  onClick={() => handleCopy(connection ? connection?.metadata : {})}
-                                />
-                              </Tooltip>
-                            </ListItem>
-                          </ListItem>
-                        </List>
                       </Grid>
                     </Grid>
                   </TableCell>
@@ -737,11 +700,6 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
     });
     return initialVisibility;
   });
-
-  const handleCopy = (metadata) => {
-    navigator.clipboard.writeText(JSON.stringify(metadata));
-    setCopied(true);
-  };
 
   return (
     <>
