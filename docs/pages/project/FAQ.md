@@ -36,6 +36,18 @@ _Popular Installers:_
 - _Kubernetes user._
 - _[Scoop user](https://github.com/meshery/scoop-bucket)._ 
 
+#### Question: Is Meshery a service mesh?
+
+**Answer:** _No, as the cloud native management plane, Meshery provisions and manages the lifecycle of service meshes and all other kinds of cloud native infrastructure._
+
+#### Is Meshery open source?
+
+**Answer:** _Yes, Meshery is a Cloud Native Computing Foundation (CNCF) project and is licensed under Apache v2. As the cloud native management plane, Meshery is an extensible platform, offering multiple extension points within which users and partners can customize and extend Meshery's functionality._
+
+#### Question: Why should I use Meshery?
+
+**Answer:** _Meshery is an open source, vendor neutral project that facilitates testing across meshes. Other performance benchmark tools are not packaged into a mesh testing utility, but are only load-generators unto their own._
+
 
 #### Question: What is the difference between `make server` and `mesheryctl system start`? Do they both run Meshery on my local machine?
 
@@ -48,8 +60,6 @@ _Popular Installers:_
 #### Question: What systems does Meshery manage?
 
   **Answer:** _Many. See Meshery's [Integrations](https://meshery.io/integrations)._
-
-
 
 #### Question: Why is Meshery Server only receiving MeshSync updates from one of my Kubernetes Clusters?
 
