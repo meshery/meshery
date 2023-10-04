@@ -422,7 +422,7 @@ const MeshAdapterConfigComponent = (props) => {
 
   const handleError = (msg, error) => {
     updateProgress({ showProgress: false });
-    notify({ message: msg, event_type: EVENT_TYPES.ERROR, details: error.toString() });
+    notify({ message: msg, event_type: EVENT_TYPES.ERROR, details: error ? error.toString() : '' });
   };
 
   const configureTemplate = () => {
