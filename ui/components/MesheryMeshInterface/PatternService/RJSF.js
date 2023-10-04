@@ -17,6 +17,7 @@ import { CustomCheckboxWidget } from './RJSFCustomComponents/CustomCheckboxWidge
 import MesheryCustomSelectWidget from './RJSFCustomComponents/CustomSelectWidget';
 import CustomTextAreaWidget from './RJSFCustomComponents/CustomTextAreaWidget';
 import CustomFileWidget from './RJSFCustomComponents/CustomFileWidget';
+import CustomURLWidget from './RJSFCustomComponents/CustomURLWidget';
 import ErrorBoundary from '../../ErrorBoundary';
 
 const MuiRJSFForm = withTheme(MaterialUITheme);
@@ -90,6 +91,7 @@ function RJSFForm({
             CheckboxWidget: CustomCheckboxWidget,
             TextareaWidget: CustomTextAreaWidget,
             FileWidget: CustomFileWidget,
+            URLWidget: CustomURLWidget,
           }}
           liveValidate={liveValidate}
           showErrorList={false}
