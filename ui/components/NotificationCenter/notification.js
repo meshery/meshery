@@ -31,9 +31,8 @@ import {
 } from '../../rtk-query/notificationCenter';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  changeEventStatus,
-  deleteEvent,
   selectEventById,
+  selectIsEventVisible,
   updateIsEventChecked,
 } from '../../store/slices/events';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
@@ -234,12 +233,11 @@ const BasicMenu = withSuppressedErrorBoundary(({ event }) => {
 
 export const DeleteEvent = ({ event }) => {
   const classes = useMenuStyles();
-  const dispatch = useDispatch();
   const [deleteEventMutation] = useDeleteEventMutation();
   const theme = useTheme();
   const handleDelete = (e) => {
     e.stopPropagation();
-    dispatch(deleteEvent(deleteEventMutation, event.id));
+    deleteEventMutation({ id: event.id });
   };
   return (
     <div className={classes.list}>
@@ -317,11 +315,10 @@ export const ChangeStatus = ({ event }) => {
   const newStatus = event.status === STATUS.READ ? STATUS.UNREAD : STATUS.READ;
   const [updateStatusMutation] = useUpdateStatusMutation();
   const theme = useTheme();
-  const dispatch = useDispatch();
 
   const updateStatus = (e) => {
     e.stopPropagation();
-    dispatch(changeEventStatus(updateStatusMutation, event.id, newStatus));
+    updateStatusMutation({ id: event.id, status: newStatus });
   };
   return (
     <div className={classes.list}>
@@ -354,7 +351,7 @@ const BulletList = ({ items }) => {
 
 export const Notification = withErrorBoundary(({ event_id }) => {
   const event = useSelector((state) => selectEventById(state, event_id));
-  const isVisible = event.is_visible === undefined ? true : event.is_visible;
+  const isVisible = useSelector((state) => selectIsEventVisible(state, event.id));
   const severityStyles = SEVERITY_STYLE[event.severity];
   const classes = useStyles({
     notificationColor: severityStyles?.color,

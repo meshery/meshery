@@ -43,8 +43,10 @@ import {
   updateCheckAllEvents,
 } from '../../store/slices/events';
 import {
+  useDeleteEventsMutation,
   useGetEventsSummaryQuery,
   useLazyGetEventsQuery,
+  useUpdateEventsMutation,
 } from '../../rtk-query/notificationCenter';
 import _ from 'lodash';
 import DoneIcon from '../../assets/icons/DoneIcon';
@@ -188,6 +190,15 @@ const Loading = () => {
 
 const BulkActions = () => {
   const checkedEvents = useSelector(selectCheckedEvents);
+  const [deleteEvents, { isLoading: isDeleting }] = useDeleteEventsMutation();
+  const [updateEvents, { isLoading: isUpdatingStatus }] = useUpdateEventsMutation();
+
+  // stores which update is currently going on , usefull to know which action is going
+  // if multiple updates can be triggered from same mutator , only single bulk action is allowed at a time
+  const [curentOngoingUpdate, setCurrentOngoingUpdate] = useState(null);
+  console.log(curentOngoingUpdate);
+  const isActionInProgress = isDeleting || isUpdatingStatus;
+
   const theme = useTheme();
 
   const dispatch = useDispatch();
@@ -195,25 +206,50 @@ const BulkActions = () => {
   const handleCheckboxChange = (_e, v) => {
     dispatch(updateCheckAllEvents(v));
   };
+  const resetSelection = () => {
+    dispatch(updateCheckAllEvents(false));
+  };
+
+  const handleDelete = () => {
+    deleteEvents({
+      ids: checkedEvents.map((e) => e.id),
+    }).then(resetSelection);
+  };
+
+  const handleChangeStatus = (status) => {
+    setCurrentOngoingUpdate(status);
+    updateEvents({
+      ids: checkedEvents.map((e) => e.id),
+      updatedFields: {
+        status,
+      },
+    }).then(resetSelection);
+  };
 
   return (
     <Collapse in={checkedEvents.length > 0}>
       <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
           <Tooltip title="Delete selected notifications" placement="top">
-            <IconButton>
+            <IconButton onClick={handleDelete} disabled={isActionInProgress}>
               <DeleteIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
             </IconButton>
           </Tooltip>
 
           <Tooltip title="Mark selected notifications as read" placement="top">
-            <IconButton>
+            <IconButton
+              onClick={() => handleChangeStatus(STATUS.READ)}
+              disabled={isActionInProgress}
+            >
               <ReadIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
             </IconButton>
           </Tooltip>
 
           <Tooltip title="Mark selected notifications as unread" placement="top">
-            <IconButton>
+            <IconButton
+              onClick={() => handleChangeStatus(STATUS.UNREAD)}
+              disabled={isActionInProgress}
+            >
               <UnreadIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
             </IconButton>
           </Tooltip>

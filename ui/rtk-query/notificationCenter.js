@@ -1,3 +1,4 @@
+import { deleteEvent, deleteEvents, updateEventStatus, updateEvents } from '../store/slices/events';
 import { api } from './index';
 
 /**
@@ -67,6 +68,16 @@ function parseFilters(filters) {
 export const PROVIDER_TAGS = {
   EVENT: 'event',
 };
+
+const safeQueryResolve = async (queryFulfilled) => {
+  try {
+    return await queryFulfilled;
+  } catch {
+    console.error('Error while resolving query', queryFulfilled);
+    return null;
+  }
+};
+
 export const notificationCenterApi = api
   .enhanceEndpoints({
     addTagTypes: Object.values(PROVIDER_TAGS),
@@ -112,6 +123,10 @@ export const notificationCenterApi = api
             status: status,
           },
         }),
+        onQueryStarted: async ({ id, status }, { dispatch, queryFulfilled }) => {
+          const res = await safeQueryResolve(queryFulfilled);
+          res && dispatch(updateEventStatus({ id, status }));
+        },
         invalidatesTags: [PROVIDER_TAGS.EVENT],
       }),
 
@@ -120,6 +135,10 @@ export const notificationCenterApi = api
           url: `events/${id}`,
           method: 'DELETE',
         }),
+        async onQueryStarted({ id }, { dispatch, queryFulfilled }) {
+          const res = await safeQueryResolve(queryFulfilled);
+          res && dispatch(deleteEvent({ id }));
+        },
         invalidatesTags: [PROVIDER_TAGS.EVENT],
       }),
 
@@ -137,6 +156,23 @@ export const notificationCenterApi = api
             ...updatedFields,
           },
         }),
+
+        async onQueryStarted({ ids, updatedFields }, { dispatch, queryFulfilled, getState }) {
+          const res = safeQueryResolve(queryFulfilled);
+          res &&
+            dispatch(
+              updateEvents(
+                ids.map((id) => ({
+                  id,
+                  changes: {
+                    ...updatedFields,
+                  },
+                })),
+              ),
+            );
+        },
+
+        invalidatesTags: [PROVIDER_TAGS.EVENT],
       }),
 
       deleteEvents: builder.mutation({
@@ -147,6 +183,11 @@ export const notificationCenterApi = api
             ids,
           },
         }),
+        async onQueryStarted({ ids }, { dispatch, queryFulfilled, getState }) {
+          const res = safeQueryResolve(queryFulfilled);
+          res && dispatch(deleteEvents({ ids }));
+        },
+        invalidatesTags: [PROVIDER_TAGS.EVENT],
       }),
     }),
     overrideExisting: false,

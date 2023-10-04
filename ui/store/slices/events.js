@@ -63,8 +63,7 @@ export const eventsSlice = createSlice({
     },
 
     updateEvent: eventsEntityAdapter.updateOne,
-    deleteEvent: eventsEntityAdapter.removeOne,
-
+    updateEvents: eventsEntityAdapter.updateMany,
     updateIsEventChecked: (state, { payload }) => {
       const { id, value } = payload;
       eventsEntityAdapter.updateOne(state, {
@@ -116,9 +115,9 @@ export const {
   pushEvents,
   setCurrentView,
   updateEvent,
-  deleteEvent: removeEvent,
   toggleNotificationCenter,
   closeNotificationCenter,
+  updateEvents,
 } = eventsSlice.actions;
 
 export default eventsSlice.reducer;
@@ -150,25 +149,42 @@ export const loadNextPage = (fetch) => async (dispatch, getState) => {
   dispatch(loadEvents(fetch, currentView.page + 1, currentView.filters));
 };
 
-export const changeEventStatus = (mutator, id, status) => async (dispatch, getState) => {
-  const currentView = getState().events.current_view;
+export const updateEventStatus =
+  ({ id, status }) =>
+  (dispatch, getState) => {
+    //const currentView = getState().events.current_view;
+    dispatch(
+      updateEvent({
+        id,
+        changes: {
+          status,
+        },
+      }),
+    );
+  };
 
-  dispatch(
-    updateEvent({
-      id,
-      changes: {
-        status,
-        is_visible: currentView?.filters?.status ? false : true, //if status filter is applied, then remove the event from view
-      },
-    }),
-  );
-  mutator({ id, status });
-};
+// does a soft deletion on ui
+export const deleteEvent =
+  ({ id }) =>
+  (dispatch) => {
+    dispatch(updateEvent({ id, changes: { is_deleted: true } }));
+    //mutator({ id });
+  };
 
-export const deleteEvent = (mutator, id) => async (dispatch) => {
-  dispatch(updateEvent({ id, changes: { is_visible: false } }));
-  mutator({ id });
-};
+export const deleteEvents =
+  ({ ids }) =>
+  (dispatch) => {
+    dispatch(
+      updateEvents(
+        ids.map((id) => ({
+          id,
+          changes: {
+            is_deleted: true,
+          },
+        })),
+      ),
+    );
+  };
 
 //selectors
 
@@ -191,4 +207,14 @@ export const selectIsEventChecked = (state) => {
 
 export const selectAreAllEventsChecked = (state) => {
   return selectEvents(state).reduce((selected, event) => (event.checked ? selected : false), true);
+};
+
+export const selectIsEventVisible = (state, id) => {
+  const event = selectEventById(state, id);
+  const currentFilters = state.events.current_view?.filters || {};
+  const shouldBeInCurrentFilteredView = currentFilters.status
+    ? currentFilters.status == event.status
+    : true;
+  const isDeleted = event.is_deleted || false;
+  return !isDeleted && shouldBeInCurrentFilteredView;
 };
