@@ -138,6 +138,7 @@ const Header = withErrorBoundary(({ handleFilter, handleClose }) => {
   const onClickSeverity = (severity) => {
     handleFilter({
       severity: [severity],
+      status: STATUS.UNREAD,
     });
   };
 
@@ -237,7 +238,12 @@ const BulkActions = () => {
     return (
       <Tooltip title={tooltip} placement="top">
         <IconButton onClick={onClick} disabled={disabled}>
-          <Icon {...iconMedium} fill={theme.palette.secondary.iconMain} />
+          <Icon
+            {...iconMedium}
+            fill={
+              disabled ? theme.palette.secondary.iconDisabled : theme.palette.secondary.iconMain
+            }
+          />
         </IconButton>
       </Tooltip>
     );
@@ -267,7 +273,7 @@ const BulkActions = () => {
           />
         </Box>
         <Box>
-          <Checkbox checked={areAllEventsChecked} onChange={handleCheckboxChange} />
+          <Checkbox checked={areAllEventsChecked} color="primary" onChange={handleCheckboxChange} />
         </Box>
       </Box>
     </Collapse>

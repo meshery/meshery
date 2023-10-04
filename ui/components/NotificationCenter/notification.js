@@ -151,6 +151,7 @@ const formatTimestamp = (utcTimestamp) => {
   const currentUtcTimestamp = moment.utc().valueOf();
 
   const timediff = currentUtcTimestamp - moment(utcTimestamp).valueOf();
+
   if (timediff >= 24 * 60 * 60 * 1000) {
     return moment(utcTimestamp).local().format('MMM DD, YYYY');
   }
@@ -401,10 +402,11 @@ export const Notification = withErrorBoundary(({ event_id }) => {
             </Typography>
           </Grid>
           <Hidden smDown>
-            <Grid item sm={2} className={classes.gridItem}>
+            <Grid item sm={3} className={classes.gridItem}>
               <Typography variant="body1"> {formatTimestamp(event.created_at)} </Typography>
             </Grid>
           </Hidden>
+
           <Grid
             item
             sm={1}
@@ -414,12 +416,10 @@ export const Notification = withErrorBoundary(({ event_id }) => {
               onClick={eventstopPropagation}
               checked={Boolean(event.checked)}
               onChange={handleSelectEvent}
+              style={{ margin: '0rem', padding: '0rem' }}
+              color="primary"
             />
-          </Grid>
-          <Grid item sm={1}>
-            <Box>
-              <BasicMenu event={event} />
-            </Box>
+            <BasicMenu event={event} />
           </Grid>
         </Grid>
         <Collapse in={expanded}>
