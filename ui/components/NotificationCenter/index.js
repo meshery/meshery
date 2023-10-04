@@ -15,6 +15,8 @@ import {
   Box,
   useTheme,
   Tooltip,
+  Checkbox,
+  Collapse,
 } from '@material-ui/core';
 import Filter from './filter';
 import BellIcon from '../../assets/icons/BellIcon.js';
@@ -34,8 +36,11 @@ import {
   closeNotificationCenter,
   loadEvents,
   loadNextPage,
+  selectAreAllEventsChecked,
+  selectCheckedEvents,
   selectEvents,
   toggleNotificationCenter,
+  updateCheckAllEvents,
 } from '../../store/slices/events';
 import {
   useGetEventsSummaryQuery,
@@ -45,6 +50,9 @@ import _ from 'lodash';
 import DoneIcon from '../../assets/icons/DoneIcon';
 import { ErrorBoundary, withErrorBoundary } from '../General/ErrorBoundary';
 import { hasClass } from '../../utils/Elements';
+import ReadIcon from '../../assets/icons/ReadIcon';
+import UnreadIcon from '../../assets/icons/UnreadIcon';
+import DeleteIcon from '../../assets/icons/DeleteIcon';
 
 const getSeverityCount = (count_by_severity_level, severity) => {
   return count_by_severity_level.find((item) => item.severity === severity)?.count || 0;
@@ -178,10 +186,49 @@ const Loading = () => {
   );
 };
 
+const BulkActions = () => {
+  const checkedEvents = useSelector(selectCheckedEvents);
+  const theme = useTheme();
+
+  const dispatch = useDispatch();
+  const areAllEventsChecked = useSelector(selectAreAllEventsChecked);
+  const handleCheckboxChange = (_e, v) => {
+    dispatch(updateCheckAllEvents(v));
+  };
+
+  return (
+    <Collapse in={checkedEvents.length > 0}>
+      <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <Tooltip title="Delete selected notifications" placement="top">
+            <IconButton>
+              <DeleteIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Mark selected notifications as read" placement="top">
+            <IconButton>
+              <ReadIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Mark selected notifications as unread" placement="top">
+            <IconButton>
+              <UnreadIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
+            </IconButton>
+          </Tooltip>
+        </Box>
+        <Box>
+          <Checkbox checked={areAllEventsChecked} onChange={handleCheckboxChange} />
+        </Box>
+      </Box>
+    </Collapse>
+  );
+};
+
 const EventsView = withErrorBoundary(({ handleLoadNextPage, isFetching, hasMore }) => {
   const events = useSelector(selectEvents);
   // const page = useSelector((state) => state.events.current_view.page);
-
   const lastEventRef = useRef(null);
   const intersectionObserver = useRef(
     new IntersectionObserver(
@@ -383,6 +430,7 @@ const MesheryNotification = () => {
                 <div className={classes.container}>
                   <Filter handleFilter={handleFilter}></Filter>
                   <CurrentFilterView handleFilter={handleFilter} />
+                  <BulkActions />
                   <EventsView
                     handleLoadNextPage={loadMore}
                     isFetching={isFetching}

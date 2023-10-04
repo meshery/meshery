@@ -65,6 +65,27 @@ export const eventsSlice = createSlice({
     updateEvent: eventsEntityAdapter.updateOne,
     deleteEvent: eventsEntityAdapter.removeOne,
 
+    updateIsEventChecked: (state, { payload }) => {
+      const { id, value } = payload;
+      eventsEntityAdapter.updateOne(state, {
+        id,
+        changes: {
+          checked: value,
+        },
+      });
+    },
+
+    updateCheckAllEvents: (state, { payload }) => {
+      const updates = Object.keys(state.entities).map((id) => ({
+        id,
+        changes: {
+          checked: payload,
+        },
+      }));
+      console.log('updates', updates);
+      eventsEntityAdapter.updateMany(state, updates);
+    },
+
     clearCurrentView: (state) => {
       state.current_view = initialState.current_view;
       state.events = [];
@@ -90,6 +111,8 @@ export const {
   clearEvents,
   setEvents,
   clearCurrentView,
+  updateIsEventChecked,
+  updateCheckAllEvents,
   pushEvents,
   setCurrentView,
   updateEvent,
@@ -154,6 +177,18 @@ export const selectEvents = (state) => {
   return eventsEntityAdapter.getSelectors().selectAll(state.events);
 };
 
+export const selectCheckedEvents = (state) => {
+  return selectEvents(state).filter((e) => e.checked);
+};
+
 export const selectEventById = (state, id) => {
   return eventsEntityAdapter.getSelectors().selectById(state.events, id);
+};
+
+export const selectIsEventChecked = (state) => {
+  return Boolean(selectEventById(state, id).checked);
+};
+
+export const selectAreAllEventsChecked = (state) => {
+  return selectEvents(state).reduce((selected, event) => (event.checked ? selected : false), true);
 };

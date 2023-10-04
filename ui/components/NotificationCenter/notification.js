@@ -13,6 +13,7 @@ import {
   Typography,
   alpha,
   useTheme,
+  Checkbox,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core';
 import { SEVERITY_STYLE, STATUS } from './constants';
@@ -29,7 +30,12 @@ import {
   useDeleteEventMutation,
 } from '../../rtk-query/notificationCenter';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeEventStatus, deleteEvent, selectEventById } from '../../store/slices/events';
+import {
+  changeEventStatus,
+  deleteEvent,
+  selectEventById,
+  updateIsEventChecked,
+} from '../../store/slices/events';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { FacebookShareButton, LinkedinShareButton, TwitterShareButton } from 'react-share';
 import ReadIcon from '../../assets/icons/ReadIcon';
@@ -86,6 +92,14 @@ const useStyles = makeStyles(() => ({
     fontSize: '0.9rem',
   },
 }));
+
+export const eventPreventDefault = (e) => {
+  e.preventDefault();
+};
+
+export const eventstopPropagation = (e) => {
+  e.stopPropagation();
+};
 
 const useMenuStyles = makeStyles((theme) => {
   return {
@@ -346,6 +360,7 @@ export const Notification = withErrorBoundary(({ event_id }) => {
     notificationColor: severityStyles?.color,
     status: event?.status,
   });
+  const dispatch = useDispatch();
   const [expanded, setExpanded] = React.useState(false);
   const handleExpandClick = (e) => {
     e.stopPropagation();
@@ -356,6 +371,16 @@ export const Notification = withErrorBoundary(({ event_id }) => {
 
   const userName = `${user?.first_name || ''} ${user?.last_name || ''}`;
   const userAvatarUrl = user?.avatar_url || '';
+
+  const handleSelectEvent = (e, value) => {
+    e.stopPropagation();
+    dispatch(
+      updateIsEventChecked({
+        id: event.id,
+        value,
+      }),
+    );
+  };
 
   return (
     <Slide
@@ -372,17 +397,28 @@ export const Notification = withErrorBoundary(({ event_id }) => {
           <Grid item sm={1} className={classes.gridItem}>
             <severityStyles.icon {...iconLarge} fill={severityStyles?.color} />
           </Grid>
-          <Grid item xs={9} md={7} className={classes.gridItem}>
+          <Grid item xs={8} md={7} className={classes.gridItem}>
             <Typography variant="body1" className={classes.message}>
               {' '}
               {event.description}{' '}
             </Typography>
           </Grid>
           <Hidden smDown>
-            <Grid item sm={3} className={classes.gridItem}>
+            <Grid item sm={2} className={classes.gridItem}>
               <Typography variant="body1"> {formatTimestamp(event.created_at)} </Typography>
             </Grid>
           </Hidden>
+          <Grid
+            item
+            sm={1}
+            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+          >
+            <Checkbox
+              onClick={eventstopPropagation}
+              checked={Boolean(event.checked)}
+              onChange={handleSelectEvent}
+            />
+          </Grid>
           <Grid item sm={1}>
             <Box>
               <BasicMenu event={event} />
