@@ -11,4 +11,6 @@ type MesheryEvents interface {
 	PersistEvent(data *events.Event) error
 	DeleteEvent(eventID uuid.UUID) error
 	UpdateEventStatus(eventID uuid.UUID, status string) (*events.Event, error)
+	BulkUpdateEventStatus(eventID []*uuid.UUID, status string) ([]*events.Event, error)
+	BulkDeleteEvent(eventID []*uuid.UUID) (error)
 }

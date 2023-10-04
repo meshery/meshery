@@ -107,7 +107,7 @@ export const notificationCenterApi = api
       updateStatus: builder.mutation({
         query: ({ id, status }) => ({
           url: `events/status/${id}`,
-          method: 'POST',
+          method: 'PUT',
           body: {
             status: status,
           },
