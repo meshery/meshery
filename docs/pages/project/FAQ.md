@@ -40,7 +40,7 @@ _Popular Installers:_
 
 **Answer:** _No, as the cloud native management plane, Meshery provisions and manages the lifecycle of service meshes and all other kinds of cloud native infrastructure._
 
-#### Is Meshery open source?
+#### Is Meshery open source project?
 
 **Answer:** _Yes, Meshery is a Cloud Native Computing Foundation (CNCF) project and is licensed under Apache v2. As the cloud native management plane, Meshery is an extensible platform, offering multiple extension points within which users and partners can customize and extend Meshery's functionality._
 
