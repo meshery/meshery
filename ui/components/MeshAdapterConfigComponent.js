@@ -193,6 +193,7 @@ const MeshAdapterConfigComponent = (props) => {
       setMeshLocationURLError(false);
     }
   };
+
   const handleDeployPortChange = (newValue) => {
     if (typeof newValue !== 'undefined') {
       console.log('port change to ' + newValue.value);
@@ -255,7 +256,7 @@ const MeshAdapterConfigComponent = (props) => {
       handleError('Adapter was not configured due to an error'),
     );
   };
-  const handleDelete = (adapterLoc) => () => {
+  const handleDelete = (adapterLoc) => {
     updateProgress({ showProgress: true });
 
     dataFetch(
@@ -276,7 +277,7 @@ const MeshAdapterConfigComponent = (props) => {
     );
   };
 
-  const handleClick = (adapterLoc) => () => {
+  const handleClick = (adapterLoc) => {
     updateProgress({ showProgress: true });
 
     dataFetch(
@@ -419,9 +420,9 @@ const MeshAdapterConfigComponent = (props) => {
     }, variables);
   };
 
-  const handleError = (msg) => (error) => {
+  const handleError = (msg, error) => {
     updateProgress({ showProgress: false });
-    notify({ message: msg, event_type: EVENT_TYPES.ERROR, details: error.toString() });
+    notify({ message: msg, event_type: EVENT_TYPES.ERROR, details: error ? error.toString() : '' });
   };
 
   const configureTemplate = () => {
@@ -552,7 +553,6 @@ const MeshAdapterConfigComponent = (props) => {
       </NoSsr>
     );
   };
-
   return configureTemplate();
 };
 

@@ -1,39 +1,28 @@
-import { Component } from 'react';
 import { withSnackbar } from 'notistack';
-import { connect } from 'react-redux';
+import { useEffect } from 'react';
+import { connect, useSelector } from 'react-redux';
 import { LinearProgress } from '@material-ui/core';
 
-class MesheryProgressBar extends Component {
-  key = '';
+let key = '';
 
-  shouldComponentUpdate(nextProps) {
-    const { showProgress } = this.props;
-    // if ((this.key !== '' && !showProgress) || (this.key === '' && showProgress)){
-    //     return true;
-    // }
-    return showProgress !== nextProps.showProgress;
-  }
+const MesheryProgressBar = ({ enqueueSnackbar, closeSnackbar }) => {
+  const showProgress = useSelector((state) => state.get('showProgress'));
 
-  componentDidUpdate() {
-    const { showProgress } = this.props;
+  useEffect(() => {
     if (showProgress) {
-      // const notify = this.props.enqueueSnackbar;
-      this.key = this.props.enqueueSnackbar(
+      key = enqueueSnackbar(
         <div style={{ width: 250 }}>
           <LinearProgress />
         </div>,
         { variant: 'default', persist: true },
       );
-    } else {
-      this.props.closeSnackbar(this.key);
+    } else if (key) {
+      closeSnackbar(key);
+      key = '';
     }
-  }
+  }, [showProgress, enqueueSnackbar, closeSnackbar]);
 
-  render() {
-    return null;
-  }
-}
+  return null;
+};
 
-const mapStateToProps = (state) => ({ showProgress: state.get('showProgress') });
-
-export default connect(mapStateToProps)(withSnackbar(MesheryProgressBar));
+export default connect()(withSnackbar(MesheryProgressBar));
