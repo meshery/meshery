@@ -243,5 +243,5 @@ jobs:
       - name: exit
         run: |
           if [ "$exitstatus" -eq 1 ];then
-              exit 0
+              exit 1
           fi
