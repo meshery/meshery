@@ -62,7 +62,7 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) =
 
       <Box sx={{ overflow: 'hidden' }} ref={containerRef}>
         <Popper
-          style={{ zIndex: 150 }}
+          style={{ zIndex: 120 }}
           open={Boolean(anchorEl)}
           anchorEl={anchorEl}
           placement="bottom-start"
