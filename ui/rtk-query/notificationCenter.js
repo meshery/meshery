@@ -158,7 +158,7 @@ export const notificationCenterApi = api
         }),
 
         async onQueryStarted({ ids, updatedFields }, { dispatch, queryFulfilled, getState }) {
-          const res = safeQueryResolve(queryFulfilled);
+          const res = await safeQueryResolve(queryFulfilled);
           res &&
             dispatch(
               updateEvents(
@@ -184,7 +184,7 @@ export const notificationCenterApi = api
           },
         }),
         async onQueryStarted({ ids }, { dispatch, queryFulfilled, getState }) {
-          const res = safeQueryResolve(queryFulfilled);
+          const res = await safeQueryResolve(queryFulfilled);
           res && dispatch(deleteEvents({ ids }));
         },
         invalidatesTags: [PROVIDER_TAGS.EVENT],

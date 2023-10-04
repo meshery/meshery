@@ -196,7 +196,6 @@ const BulkActions = () => {
   // stores which update is currently going on , usefull to know which action is going
   // if multiple updates can be triggered from same mutator , only single bulk action is allowed at a time
   const [curentOngoingUpdate, setCurrentOngoingUpdate] = useState(null);
-  console.log(curentOngoingUpdate);
   const isActionInProgress = isDeleting || isUpdatingStatus;
 
   const theme = useTheme();
@@ -226,33 +225,46 @@ const BulkActions = () => {
     }).then(resetSelection);
   };
 
+  const BulkActionButton = ({ isLoading, isDisabled, tooltip, Icon, onClick }) => {
+    const disabled = isDisabled || isActionInProgress;
+    if (isLoading) {
+      return (
+        <div style={iconMedium}>
+          <CircularProgress size={iconMedium.height} />
+        </div>
+      );
+    }
+    return (
+      <Tooltip title={tooltip} placement="top">
+        <IconButton onClick={onClick} disabled={disabled}>
+          <Icon {...iconMedium} fill={theme.palette.secondary.iconMain} />
+        </IconButton>
+      </Tooltip>
+    );
+  };
+
   return (
     <Collapse in={checkedEvents.length > 0}>
       <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <Tooltip title="Delete selected notifications" placement="top">
-            <IconButton onClick={handleDelete} disabled={isActionInProgress}>
-              <DeleteIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
-            </IconButton>
-          </Tooltip>
-
-          <Tooltip title="Mark selected notifications as read" placement="top">
-            <IconButton
-              onClick={() => handleChangeStatus(STATUS.READ)}
-              disabled={isActionInProgress}
-            >
-              <ReadIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
-            </IconButton>
-          </Tooltip>
-
-          <Tooltip title="Mark selected notifications as unread" placement="top">
-            <IconButton
-              onClick={() => handleChangeStatus(STATUS.UNREAD)}
-              disabled={isActionInProgress}
-            >
-              <UnreadIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
-            </IconButton>
-          </Tooltip>
+          <BulkActionButton
+            tooltip="Delete selected notifications"
+            Icon={DeleteIcon}
+            isLoading={isDeleting}
+            onClick={handleDelete}
+          />
+          <BulkActionButton
+            tooltip="Mark selected notifications as read"
+            Icon={ReadIcon}
+            isLoading={isUpdatingStatus && curentOngoingUpdate == STATUS.READ}
+            onClick={() => handleChangeStatus(STATUS.READ)}
+          />
+          <BulkActionButton
+            tooltip="Mark selected notifications as unread"
+            Icon={UnreadIcon}
+            isLoading={isUpdatingStatus && curentOngoingUpdate == STATUS.UNREAD}
+            onClick={() => handleChangeStatus(STATUS.UNREAD)}
+          />
         </Box>
         <Box>
           <Checkbox checked={areAllEventsChecked} onChange={handleCheckboxChange} />
