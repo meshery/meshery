@@ -323,13 +323,29 @@ export const Notification = withErrorBoundary(({ event_id }) => {
     >
       <div className={classes.root}>
         <Grid container className={classes.summary} onClick={handleExpandClick}>
-          <Grid item sm={1} className={classes.gridItem}>
+          <Grid
+            item
+            sm="auto"
+            className={classes.gridItem}
+            style={{
+              justifyContent: 'center',
+              alignItems: 'center',
+              gap: '0.25rem',
+              paddingInline: '0.25rem',
+            }}
+          >
+            <Checkbox
+              onClick={eventstopPropagation}
+              checked={Boolean(event.checked)}
+              onChange={handleSelectEvent}
+              style={{ margin: '0rem', padding: '0rem' }}
+              color="primary"
+            />
             <severityStyles.icon {...iconLarge} fill={severityStyles?.color} />
           </Grid>
-          <Grid item xs={8} md={7} className={classes.gridItem}>
+          <Grid item xs className={classes.gridItem}>
             <Typography variant="body1" className={classes.message}>
-              {' '}
-              {event.description}{' '}
+              {event.description}
             </Typography>
           </Grid>
           <Hidden smDown>
@@ -340,16 +356,9 @@ export const Notification = withErrorBoundary(({ event_id }) => {
 
           <Grid
             item
-            sm={1}
+            sm={0.5}
             style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
           >
-            <Checkbox
-              onClick={eventstopPropagation}
-              checked={Boolean(event.checked)}
-              onChange={handleSelectEvent}
-              style={{ margin: '0rem', padding: '0rem' }}
-              color="primary"
-            />
             <BasicMenu event={event} />
           </Grid>
         </Grid>

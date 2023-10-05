@@ -250,8 +250,11 @@ const BulkActions = () => {
   };
 
   return (
-    <Collapse in={checkedEvents.length > 0}>
-      <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Box>
+        <Checkbox checked={areAllEventsChecked} color="primary" onChange={handleCheckboxChange} />
+      </Box>
+      <Collapse in={checkedEvents.length > 0}>
         <Box style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
           <BulkActionButton
             tooltip="Delete selected notifications"
@@ -272,11 +275,8 @@ const BulkActions = () => {
             onClick={() => handleChangeStatus(STATUS.UNREAD)}
           />
         </Box>
-        <Box>
-          <Checkbox checked={areAllEventsChecked} color="primary" onChange={handleCheckboxChange} />
-        </Box>
-      </Box>
-    </Collapse>
+      </Collapse>
+    </Box>
   );
 };
 
