@@ -279,20 +279,8 @@ export const ErrorMetadataFormatter = ({ metadata, event, classes }) => {
   );
 };
 
-const EmptyState = () => {
-  return (
-    <div>
-      <Typography
-        variant="h6"
-        style={{
-          textAlign: 'center',
-          marginBlock: '1rem',
-        }}
-      >
-        No Further Details Available{' '}
-      </Typography>
-    </div>
-  );
+const EmptyState = ({ event }) => {
+  return <SectionBody body={event.description} />;
 };
 
 const METADATA_FORMATTER = {
