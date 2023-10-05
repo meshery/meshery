@@ -81,52 +81,54 @@ const SearchBar = ({ onSearch, placeholder }) => {
   };
 
   return (
-    <div>
-      <TextField
-        className={classes.searchInput}
-        id="standard-basic"
-        variant="standard"
-        value={searchText}
-        onChange={handleSearchChange}
-        inputRef={searchRef}
-        placeholder={placeholder}
-        style={{
-          width: expanded ? '200px' : '0',
-          opacity: expanded ? 1 : 0,
-          transition: 'width 0.3s ease, opacity 0.3s ease',
-        }}
-      />
-
-      {expanded ? (
-        <ClickAwayListener onClickAway={handleClearIconClick}>
-          <Tooltip title="Close">
-            <IconButton
-              onClick={handleClearIconClick}
-              sx={{
-                '&:hover': {
-                  borderRadius: '4px',
-                },
-              }}
-            >
-              <CloseIcon className={classes.icon} />
-            </IconButton>
-          </Tooltip>
-        </ClickAwayListener>
-      ) : (
-        <Tooltip title="Search">
-          <IconButton
-            onClick={handleSearchIconClick}
-            sx={{
-              '&:hover': {
-                borderRadius: '4px',
-              },
+    <>
+      <ClickAwayListener onClickAway={handleClearIconClick}>
+        <div>
+          <TextField
+            className={classes.searchInput}
+            id="standard-basic"
+            variant="standard"
+            value={searchText}
+            onChange={handleSearchChange}
+            inputRef={searchRef}
+            placeholder={placeholder}
+            style={{
+              width: expanded ? '200px' : '0',
+              opacity: expanded ? 1 : 0,
+              transition: 'width 0.3s ease, opacity 0.3s ease',
             }}
-          >
-            <SearchIcon className={classes.icon} />
-          </IconButton>
-        </Tooltip>
-      )}
-    </div>
+          />
+
+          {expanded ? (
+            <Tooltip title="Close">
+              <IconButton
+                onClick={handleClearIconClick}
+                sx={{
+                  '&:hover': {
+                    borderRadius: '4px',
+                  },
+                }}
+              >
+                <CloseIcon className={classes.icon} />
+              </IconButton>
+            </Tooltip>
+          ) : (
+            <Tooltip title="Search">
+              <IconButton
+                onClick={handleSearchIconClick}
+                sx={{
+                  '&:hover': {
+                    borderRadius: '4px',
+                  },
+                }}
+              >
+                <SearchIcon className={classes.icon} />
+              </IconButton>
+            </Tooltip>
+          )}
+        </div>
+      </ClickAwayListener>
+    </>
   );
 };
 
