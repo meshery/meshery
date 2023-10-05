@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { Grid, Tooltip, Typography } from '@material-ui/core';
+import { Divider, Grid, Tooltip, Typography } from '@material-ui/core';
 import { Launch as LaunchIcon } from '@material-ui/icons';
 import _ from 'lodash';
 
-export const Link = ({ url, title }) => {
+export const Link = ({ href, title }) => {
   return (
     <a
-      href={url}
+      href={href}
       target="_blank"
       rel="noopener noreferrer"
       style={{
@@ -23,12 +23,79 @@ export const Link = ({ url, title }) => {
     </a>
   );
 };
+function truncateString(str, maxLength) {
+  if (str.length > maxLength) {
+    return str.slice(0, maxLength) + '...';
+  }
+  return str;
+}
+function captureLinkData(url) {
+  for (const [title, siteUrl] of Object.entries(SITE_URLS)) {
+    if (url.startsWith(siteUrl)) {
+      return {
+        href: url,
+        title,
+      };
+    }
+  }
+
+  return {
+    href: url,
+    title: truncateString(url, 50),
+  };
+}
+
+const SITE_URLS = {
+  Doc: 'https://docs.meshery.io',
+};
+
+export const TextWithLinks = ({ text, ...typographyProps }) => {
+  // Regular expression to find HTTP links in the text
+  const linkRegex = /(https?:\/\/[^\s]+)/g;
+
+  // Split the text into parts, alternating between text and link components
+  const parts = text.split(linkRegex);
+
+  // Map the parts to React elements
+  const elements = parts.map((part) => {
+    if (part.match(linkRegex)) {
+      // If the part is a link, wrap it in a Link component
+      const link_data = captureLinkData(part);
+      return <Link href={link_data.href} title={link_data.title} />;
+    } else {
+      return <span>{part}</span>;
+    }
+  });
+
+  return <Typography {...typographyProps}>{elements}</Typography>;
+};
+
+function isEmptyAtAllDepths(input) {
+  if (_.isArray(input)) {
+    // If the input is an array, check if all items are empty at all depths
+    return input.every(isEmptyAtAllDepths);
+  } else if (_.isObject(input)) {
+    // If the input is an object, check if all properties are empty at all depths
+    return _.every(input, isEmptyAtAllDepths);
+  } else {
+    // If the input is not an array or object, check if it's empty
+    return _.isEmpty(input);
+  }
+}
 
 export const KeyValue = ({ Key, Value }) => {
   return (
-    <Typography variant="body1">
-      <b>{Key} :</b> {Value}
-    </Typography>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'end',
+        gap: '0.25rem',
+        flexWrap: 'wrap',
+        marginBlock: '0.25rem',
+      }}
+    >
+      <SectionBody body={Key} style={{ fontWeight: 'bold' }} /> <SectionBody body={Value} />
+    </div>
   );
 };
 
@@ -40,7 +107,7 @@ const NestedData = ({ heading, data, classes }) => {
         {heading}
       </Typography>
       {typeof data === 'string' ? (
-        <Typography variant="body1">{data}</Typography>
+        <SectionBody body={data}></SectionBody>
       ) : (
         <BulletList items={data} />
       )}
@@ -66,6 +133,20 @@ export const MetaDataSectionHeading = ({ children, level, ...props }) => {
   );
 };
 
+export const SectionBody = ({ body, style = {} }) => {
+  return (
+    <TextWithLinks
+      variant="body1"
+      style={{
+        textTransform: 'capitalize',
+        wordWrap: 'break-word',
+        ...style,
+      }}
+      text={body}
+    ></TextWithLinks>
+  );
+};
+
 const DryRunResponse = ({ response }) => {
   const cleanedResponse = [];
   Object.entries(response).forEach(([componentKind, components]) => {
@@ -85,9 +166,10 @@ const DryRunResponse = ({ response }) => {
   const formattedResponse = cleanedResponse.filter(componentHasErrors).map((component) => (
     <div style={{ marginBottom: '1rem' }} key={component.id}>
       <Tooltip title="dkje" placement="top">
-        <MetaDataSectionHeading level={3}>{component.name}</MetaDataSectionHeading>
+        <MetaDataSectionHeading level={2}>{component.name}</MetaDataSectionHeading>
       </Tooltip>
       <DynamicMetadataFormatter metadata={component.error} />
+      <Divider light />
     </div>
   ));
 
@@ -103,16 +185,7 @@ const DryRunResponse = ({ response }) => {
 
 const DynamicMetadataFormatter = ({ metadata, level = 1 }) => {
   if (_.isString(metadata)) {
-    return (
-      <Typography
-        variant="body1"
-        style={{
-          wordWrap: 'break-word',
-        }}
-      >
-        {metadata}
-      </Typography>
-    );
+    return <SectionBody body={metadata}></SectionBody>;
   }
   if (_.isArray(metadata)) {
     return <BulletList items={metadata} />;
@@ -124,6 +197,9 @@ const DynamicMetadataFormatter = ({ metadata, level = 1 }) => {
         return null;
       }
       if (typeof data == 'string') {
+        if (title == 'doc') {
+          return <Link title="Doc" href={data} />;
+        }
         return <KeyValue key={title} Key={title} Value={data} />;
       }
       if (title === 'dryRunResponse') {
@@ -206,7 +282,15 @@ export const ErrorMetadataFormatter = ({ metadata, event, classes }) => {
 const EmptyState = () => {
   return (
     <div>
-      <Typography variant="h4">No Further Details Available </Typography>
+      <Typography
+        variant="h6"
+        style={{
+          textAlign: 'center',
+          marginBlock: '1rem',
+        }}
+      >
+        No Further Details Available{' '}
+      </Typography>
     </div>
   );
 };
@@ -219,11 +303,10 @@ const METADATA_FORMATTER = {
 
 // Maps the metadata to the appropriate formatter component
 export const FormattedMetadata = ({ event, classes }) => {
-  if (!event || !event.metadata) return null;
-  const metdataKeys = Object.keys(event.metadata);
-  if (!event.metadata) {
+  if (!event || !event.metadata || isEmptyAtAllDepths(event.metadata)) {
     return <EmptyState event={event} />;
   }
+  const metdataKeys = Object.keys(event.metadata);
   return metdataKeys.map((key) => {
     const Formatter = METADATA_FORMATTER[key] || METADATA_FORMATTER.default;
     return <Formatter key={key} metadata={event.metadata[key]} event={event} classes={classes} />;
