@@ -25,9 +25,9 @@ function ViewSwitch({ view, changeView }) {
       aria-label="Switch View"
     >
       {view === 'grid' ? (
-        <GridOnIcon className={classes.icon} />
-      ) : (
         <TableChartIcon className={classes.icon} />
+      ) : (
+        <GridOnIcon className={classes.icon} />
       )}
     </ToggleButton>
   );
