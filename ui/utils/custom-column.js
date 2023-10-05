@@ -60,7 +60,7 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) =
         </IconButton>
       </Tooltip>
 
-      <Box sx={{ overflow: 'hidden' }} ref={containerRef}>
+      <Box sx={{ overflow: 'hidden' }}>
         <Popper
           open={Boolean(anchorEl)}
           anchorEl={anchorEl}
@@ -73,28 +73,28 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) =
             vertical: 'top',
             horizontal: 'center',
           }}
-          transition
-          popperOptions={{
-            modifiers: [
-              {
-                name: 'offset',
-                options: {
-                  offset: [0, 8],
-                },
-              },
-              {
-                name: 'preventOverflow',
-                options: {
-                  altAxis: true, // true by default
-                  tether: true,
-                  rootBoundary: 'document',
-                  padding: 8,
-                },
-              },
-            ],
-          }}
+          // transition
+          // popperOptions={{
+          //   modifiers: [
+          //     {
+          //       name: 'offset',
+          //       options: {
+          //         offset: [0, 8],
+          //       },
+          //     },
+          //     {
+          //       name: 'preventOverflow',
+          //       options: {
+          //         altAxis: true, // true by default
+          //         tether: true,
+          //         rootBoundary: 'document',
+          //         padding: 8,
+          //       },
+          //     },
+          //   ],
+          // }}
         >
-          {({ TransitionProps }) => (
+          {/* {({ TransitionProps }) => (
             <Slide
               {...TransitionProps}
               direction="down"
@@ -104,36 +104,34 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) =
               unmountOnExit
               container={containerRef.current}
               easing="cubic-bezier(0.25, 0.1, 1, 1)"
-            >
-              <Box>
-                <ClickAwayListener onClickAway={handleClose}>
-                  <Card className={classes.epaper} elevation={2}>
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      {columns.map((col) => (
-                        <FormControlLabel
-                          key={col.name}
-                          control={
-                            <Checkbox
-                              checked={customToolsProps.columnVisibility[col.name]}
-                              onChange={(e) =>
-                                handleColumnVisibilityChange(col.name, e.target.checked)
-                              }
-                              sx={{
-                                '&.Mui-checked': {
-                                  color: '#00B39F',
-                                },
-                              }}
-                            />
-                          }
-                          label={col.label}
+            > */}
+          <Box>
+            <ClickAwayListener onClickAway={handleClose}>
+              <Card className={classes.epaper} elevation={2}>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {columns.map((col) => (
+                    <FormControlLabel
+                      key={col.name}
+                      control={
+                        <Checkbox
+                          checked={customToolsProps.columnVisibility[col.name]}
+                          onChange={(e) => handleColumnVisibilityChange(col.name, e.target.checked)}
+                          sx={{
+                            '&.Mui-checked': {
+                              color: '#00B39F',
+                            },
+                          }}
                         />
-                      ))}
-                    </div>
-                  </Card>
-                </ClickAwayListener>
-              </Box>
-            </Slide>
-          )}
+                      }
+                      label={col.label}
+                    />
+                  ))}
+                </div>
+              </Card>
+            </ClickAwayListener>
+          </Box>
+          {/* </Slide>
+          )} */}
         </Popper>
       </Box>
     </div>
