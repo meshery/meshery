@@ -302,14 +302,35 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 //	 400:
 //	 500:
 func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	userID := uuid.FromStringOrNil(user.ID)
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("kube_context").WithAction("register")
+
 	k8sConfigBytes, err := readK8sConfigFromBody(req)
 	if err != nil {
+		eventBuilder.WithSeverity(events.Error).WithDescription("Failed to retrieve kubeconfig file from request").
+			WithMetadata(map[string]interface{}{
+				"error":                 err,
+				"probable_cause":        "Request body may have empty kubeconfig file.",
+				"suggested_remediation": "Please make sure that you've passed valid kubeconfig file.",
+			})
+		h.broadcastEvent(eventBuilder, provider, userID)
 		logrus.Error(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	contexts := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID)
+	contextNames := []string{}
+	for _, context := range contexts {
+		contextNames = append(contextNames, context.Name)
+	}
+	if len(contexts) > 0 {
+		eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Retrieved %d kubernetes contexts successfully from kubeconfig.", len(contexts))).
+			WithMetadata(map[string]interface{}{
+				"context_name": strings.Join(contextNames, ","),
+			})
+		h.broadcastEvent(eventBuilder, provider, userID)
+	}
 	h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{RegisterK8sMeshModelComponents}, h.registryManager, h.config.EventBroadcaster, provider, user.ID, false)
 	if _, err = w.Write([]byte(http.StatusText(http.StatusAccepted))); err != nil {
 		logrus.Error(ErrWriteResponse)
