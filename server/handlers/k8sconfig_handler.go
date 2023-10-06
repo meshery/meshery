@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	mutil "github.com/layer5io/meshery/server/helpers/utils"
 
@@ -157,16 +158,37 @@ func (h *Handler) deleteK8SConfig(_ *models.User, _ *models.Preference, w http.R
 
 // GetContextsFromK8SConfig returns the context list for a given k8s config
 func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-
+	userID := uuid.FromStringOrNil(user.ID)
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("kube_context").WithAction("get")
 	k8sConfigBytes, err := readK8sConfigFromBody(req)
 	if err != nil {
+		eventBuilder.WithSeverity(events.Error).WithDescription("Failed to retrieve kubeconfig file from request").
+			WithMetadata(map[string]interface{}{
+				"error":                 err,
+				"probable_cause":        "Request body may have empty kubeconfig file.",
+				"suggested_remediation": "Please make sure that you've passed valid kubeconfig file.",
+			})
+		h.broadcastEvent(eventBuilder, provider, userID)
 		logrus.Error(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	contexts := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID)
+	eventBuilder.WithSeverity(events.Success).WithDescription("Retrieved kubeconfig file successfully")
+	h.broadcastEvent(eventBuilder, provider, userID)
 
+	contexts := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID)
+	contextNames := []string{}
+	for _, context := range contexts {
+		contextNames = append(contextNames, context.Name)
+	}
+	if len(contexts) > 0 {
+		eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Retrieved %d kubernetes contexts successfully from kubeconfig.", len(contexts))).
+			WithMetadata(map[string]interface{}{
+				"context_name": strings.Join(contextNames, ","),
+			})
+		h.broadcastEvent(eventBuilder, provider, userID)
+	}
 	err = json.NewEncoder(w).Encode(contexts)
 	if err != nil {
 		logrus.Error(models.ErrMarshal(err, "kube-context"))
@@ -247,8 +269,8 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		}
 		eventBuilder.WithSeverity(events.Success).WithDescription("Generated kubernetes client successfully").
 			WithMetadata(map[string]interface{}{
-				"kubeernetes_version": version,
-				"host":                kubeclient.RestConfig.Host,
+				"kubernetes_version": version,
+				"host":               kubeclient.RestConfig.Host,
 			})
 		h.broadcastEvent(eventBuilder, provider, userID)
 		if err = json.NewEncoder(w).Encode(map[string]string{
