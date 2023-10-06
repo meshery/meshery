@@ -37,7 +37,6 @@ import { SETTINGS } from '../constants/navigator';
 import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
 import PromptComponent from './PromptComponent';
 import { iconMedium } from '../css/icons.styles';
-import { isExtensionOpen } from '../pages/_app';
 import ExtensionSandbox from './ExtensionSandbox';
 import RemoteComponent from './RemoteComponent';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
@@ -226,10 +225,6 @@ function LoadTheme({ themeSetter }) {
 
   useLayoutEffect(() => {
     // disable dark mode in extension
-    if (isExtensionOpen()) {
-      themeSetter(defaultTheme);
-      return;
-    }
 
     if (localStorage.getItem('Theme') === null) {
       themeSetter(defaultTheme);
