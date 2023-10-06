@@ -74,7 +74,7 @@ func NewMesheryControllersHelper(log logger.Handler, operatorDepConfig controlle
 // the meshsync data for that context is properly being handled
 func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControllersHelper {
 	// only checking those contexts whose MesheryConrollers are active
-	go func(mch *MesheryControllersHelper) {
+	
 		mch.mu.Lock()
 		defer mch.mu.Unlock()
 		for ctxID, controllerHandlers := range mch.ctxControllerHandlersMap {
@@ -116,7 +116,6 @@ func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControl
 				mch.log.Info(fmt.Sprintf("MeshSync connected for Kubernetes context (%s)", ctxID))
 			}
 		}
-	}(mch)
 
 	return mch
 }
@@ -125,7 +124,6 @@ func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControl
 // 1. the config is valid
 // 2. if it is not already attached
 func (mch *MesheryControllersHelper) UpdateCtxControllerHandlers(ctxs []K8sContext) *MesheryControllersHelper {
-	go func(mch *MesheryControllersHelper) {
 		mch.mu.Lock()
 		defer mch.mu.Unlock()
 		// resetting this value as a specific controller handler instance does not have any significance opposed to
@@ -146,7 +144,6 @@ func (mch *MesheryControllersHelper) UpdateCtxControllerHandlers(ctxs []K8sConte
 				Meshsync:        controllers.NewMeshsyncHandler(client),
 			}
 		}
-	}(mch)
 
 	return mch
 }
@@ -155,7 +152,7 @@ func (mch *MesheryControllersHelper) UpdateCtxControllerHandlers(ctxs []K8sConte
 // for whom MesheryControllers are attached
 // should be called after UpdateCtxControllerHandlers
 func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(ot *OperatorTracker) *MesheryControllersHelper {
-	go func(mch *MesheryControllersHelper) {
+	
 		mch.mu.Lock()
 		defer mch.mu.Unlock()
 		mch.ctxOperatorStatusMap = make(map[string]controllers.MesheryControllerStatus)
@@ -166,7 +163,7 @@ func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(ot *OperatorTracke
 				mch.ctxOperatorStatusMap[ctxID] = ctrlHandler[MesheryOperator].GetStatus()
 			}
 		}
-	}(mch)
+	
 	return mch
 }
 
@@ -214,7 +211,7 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 	if ot.DisableOperator { //Return true everytime so that operators stay in undeployed state across all contexts
 		return mch
 	}
-	go func(mch *MesheryControllersHelper) {
+	
 		mch.mu.Lock()
 		defer mch.mu.Unlock()
 		for ctxID, ctrlHandler := range mch.ctxControllerHandlersMap {
@@ -227,7 +224,7 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 				}
 			}
 		}
-	}(mch)
+	
 
 	return mch
 }
