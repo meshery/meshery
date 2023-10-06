@@ -159,7 +159,7 @@ func (h *Handler) deleteK8SConfig(_ *models.User, _ *models.Preference, w http.R
 // GetContextsFromK8SConfig returns the context list for a given k8s config
 func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	userID := uuid.FromStringOrNil(user.ID)
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("kube_context").WithAction("get")
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("retrieve")
 	k8sConfigBytes, err := readK8sConfigFromBody(req)
 	if err != nil {
 		eventBuilder.WithSeverity(events.Error).WithDescription("Encountered an issue retrieving kubeconfig file from request").
@@ -303,7 +303,7 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 //	 500:
 func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	userID := uuid.FromStringOrNil(user.ID)
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("kube_context").WithAction("register")
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("register")
 
 	k8sConfigBytes, err := readK8sConfigFromBody(req)
 	if err != nil {
