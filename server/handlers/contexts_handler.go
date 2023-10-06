@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
@@ -26,7 +27,10 @@ import (
 // responses:
 //
 //	200: systemK8sContextsResponseWrapper
-func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	userID := uuid.FromStringOrNil(user.ID)
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("kube_context").WithAction("register")
+
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		http.Error(w, "failed to get token", http.StatusInternalServerError)
@@ -37,6 +41,13 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *mo
 	// Don't fetch credentials as UI has no use case.
 	vals, err := provider.GetK8sContexts(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), false)
 	if err != nil {
+		eventBuilder.WithSeverity(events.Error).WithDescription("Failed to retrieve kubernetes contexts").
+			WithMetadata(map[string]interface{}{
+				"error":                 err,
+				"probable_cause":        "You might have passed wrong query params or connectivity isn't established between meshery and kubernetes.",
+				"suggested_remediation": "Please make sure that you've passed valid query params (page, pagesize, search, order) and kubernetes is reachable from meshery.",
+			})
+		h.broadcastEvent(eventBuilder, provider, userID)
 		http.Error(w, "failed to get contexts", http.StatusInternalServerError)
 		return
 	}
@@ -46,7 +57,21 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *mo
 		obj := "k8s context"
 		h.log.Error(models.ErrUnmarshal(err, obj))
 		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
+		return
 	}
+
+	contextNames := []string{}
+	for _, context := range mesheryK8sContextPage.Contexts {
+		contextNames = append(contextNames, context.Name)
+	}
+	if len(contextNames) > 0 {
+		eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Retrieved %d kubernetes contexts successfully.", len(contextNames))).
+			WithMetadata(map[string]interface{}{
+				"context_name": strings.Join(contextNames, ","),
+			})
+		h.broadcastEvent(eventBuilder, provider, userID)
+	}
+
 	if err := json.NewEncoder(w).Encode(mesheryK8sContextPage); err != nil {
 		http.Error(w, "failed to encode contexts", http.StatusInternalServerError)
 		return
