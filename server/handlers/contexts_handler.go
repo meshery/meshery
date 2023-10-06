@@ -29,7 +29,7 @@ import (
 //	200: systemK8sContextsResponseWrapper
 func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	userID := uuid.FromStringOrNil(user.ID)
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("kube_context").WithAction("register")
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("kube_context").WithAction("get")
 
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
@@ -41,11 +41,11 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *mo
 	// Don't fetch credentials as UI has no use case.
 	vals, err := provider.GetK8sContexts(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), false)
 	if err != nil {
-		eventBuilder.WithSeverity(events.Error).WithDescription("Failed to retrieve kubernetes contexts").
+		eventBuilder.WithSeverity(events.Error).WithDescription("Encountered an issue while retrieving Kubernetes contexts.").
 			WithMetadata(map[string]interface{}{
 				"error":                 err,
-				"probable_cause":        "You might have passed wrong query params or connectivity isn't established between meshery and kubernetes.",
-				"suggested_remediation": "Please make sure that you've passed valid query params (page, pagesize, search, order) and kubernetes is reachable from meshery.",
+				"probable_cause":        "You might have provided incorrect query params or there may be an issue with connectivity between Meshery and kubernetes.",
+				"suggested_remediation": "Please ensure that you've provided valid query params (page, pagesize, search, order) and Meshery can establish connectivity with kubernetes.",
 			})
 		h.broadcastEvent(eventBuilder, provider, userID)
 		http.Error(w, "failed to get contexts", http.StatusInternalServerError)
@@ -65,7 +65,7 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *mo
 		contextNames = append(contextNames, context.Name)
 	}
 	if len(contextNames) > 0 {
-		eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Retrieved %d kubernetes contexts successfully.", len(contextNames))).
+		eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Successfully retrieved %d kubernetes contexts.", len(contextNames))).
 			WithMetadata(map[string]interface{}{
 				"context_name": strings.Join(contextNames, ","),
 			})
@@ -79,7 +79,7 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *mo
 }
 
 // not being used....
-func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	// if req.URL.Query().Get("current") != "" {
 	// 	context, ok := req.Context().Value(models.KubeContextKey).(*models.K8sContext)
 	// 	if !ok || context == nil {
@@ -95,15 +95,27 @@ func (h *Handler) GetContext(w http.ResponseWriter, req *http.Request, _ *models
 	// 	return
 	// }
 
+	userID := uuid.FromStringOrNil(user.ID)
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("kube_context").WithAction("get")
+
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		http.Error(w, "failed to get token", http.StatusInternalServerError)
 		return
 	}
-
+	id := mux.Vars(req)["id"]
+	connectionID := uuid.FromStringOrNil(id)
+	eventBuilder.ActedUpon(connectionID)
 	h.log.Info("this is being used\n\n\n")
-	val, err := provider.GetK8sContext(token, mux.Vars(req)["id"])
+	val, err := provider.GetK8sContext(token, id)
 	if err != nil {
+		eventBuilder.WithSeverity(events.Error).WithDescription("Encountered an issue while retrieving Kubernetes context.").
+			WithMetadata(map[string]interface{}{
+				"error":                 err,
+				"probable_cause":        "You might have passed incorrect query params or there may be an issue with the connectivity between meshery and kubernetes.",
+				"suggested_remediation": "Please ensure that you've provided valid query params (page, pagesize, search, order), and Meshery can establish connectivity with kubernetes.",
+			})
+		h.broadcastEvent(eventBuilder, provider, userID)
 		http.Error(w, "failed to get context", http.StatusInternalServerError)
 		return
 	}
