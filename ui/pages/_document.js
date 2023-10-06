@@ -28,6 +28,8 @@ class MesheryDocument extends Document {
                   w[l] = []; // Clear the dataLayer array
                   w['ga-disable-'+i] = true; // Disable Google Analytics tracking
                 }
+              }).catch((err) => {
+                console.error("error while fetching user prefs for googletagmanag",err);
               });
           })(window,document,'script','dataLayer','GTM-TFLZDSQ');`,
             }}
