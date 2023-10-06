@@ -3,6 +3,10 @@ package handlers
 import (
 	"net/http"
 	"strconv"
+
+	"github.com/layer5io/meshkit/models/events"
+	"github.com/layer5io/meshery/server/models"
+	"github.com/gofrs/uuid"
 )
 
 const (
@@ -35,4 +39,10 @@ func getPaginationParams(req *http.Request) (page, offset, limit int, search, or
 		sortOnCol = "updated_at"
 	}
 	return
+}
+
+func (h *Handler) broadcastEvent(eventBuilder *events.EventBuilder, provider models.Provider, userID uuid.UUID) {
+	event := eventBuilder.Build()
+	_ = provider.PersistEvent(event)
+	go h.config.EventBroadcaster.Publish(userID, event)
 }

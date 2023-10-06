@@ -114,9 +114,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Connection established with Kubernetes context %s at %s", k8sContext.Name, k8sContext.Server))
 		}
 
-		event := eventBuilder.Build()
-		_ = provider.PersistEvent(event)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.broadcastEvent(eventBuilder, provider, userID)
 
 	}
 	if len(saveK8sContextResponse.InsertedContexts) > 0 || len(saveK8sContextResponse.UpdatedContexts) > 0 {
@@ -185,7 +183,8 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 // 	200:
 
 // KubernetesPingHandler - fetches server version to simulate ping
-func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	userID := uuid.FromStringOrNil(user.ID)
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
 	if !ok {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -194,28 +193,64 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 	}
 
 	connectionID := req.URL.Query().Get("connection_id")
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("ping")
 	if connectionID != "" {
 		// Get the context associated with this ID
 		k8sContext, err := provider.GetK8sContext(token, connectionID)
+		eventBuilder.ActedUpon(uuid.FromStringOrNil(k8sContext.ConnectionID))
 		if err != nil {
+			eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to retrieve kubernetes context for connection ID `%s`", connectionID)).
+				WithMetadata(map[string]interface{}{
+					"error":                 err,
+					"probable_cause":        "Meshery might not be able to access Kubeconfig.",
+					"suggested_remediation": "Please make sure that connectivity has been established between meshery and your kubernetes cluster.",
+				})
+			h.broadcastEvent(eventBuilder, provider, userID)
 			w.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(w, "failed to get kubernetes context for the given ID")
 			return
 		}
-
+		eventBuilder.WithSeverity(events.Success).WithDescription("Retrieved kubernetes context successfully").
+			WithMetadata(map[string]interface{}{
+				"context_name": k8sContext.Name,
+				"server":       k8sContext.Server,
+			})
+		h.broadcastEvent(eventBuilder, provider, userID)
 		// Create handler for the context
 		kubeclient, err := k8sContext.GenerateKubeHandler()
 		if err != nil {
+			eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to get kubernetes client for the context `%s`", k8sContext.Name)).
+				WithMetadata(map[string]interface{}{
+					"error":                 err,
+					"server":                k8sContext.Server,
+					"probable_cause":        "Meshery might not be able to access Kubernetes cluster.",
+					"suggested_remediation": "Please make sure that connectivity has been established between meshery and your kubernetes cluster.",
+				})
+			h.broadcastEvent(eventBuilder, provider, userID)
 			w.WriteHeader(http.StatusBadRequest)
 			fmt.Fprintf(w, "failed to get kubernetes config for the user")
 			return
 		}
 		version, err := kubeclient.KubeClient.ServerVersion()
 		if err != nil {
+			eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to retrieve kubernetes version for context `%s`", k8sContext.Name)).
+				WithMetadata(map[string]interface{}{
+					"error":                 err,
+					"server":                k8sContext.Server,
+					"probable_cause":        "Meshery might not be able to access Kubernetes cluster.",
+					"suggested_remediation": "Please make sure that connectivity has been established between meshery and your kubernetes cluster.",
+				})
+			h.broadcastEvent(eventBuilder, provider, userID)
 			logrus.Error(ErrKubeVersion(err))
 			http.Error(w, ErrKubeVersion(err).Error(), http.StatusInternalServerError)
 			return
 		}
+		eventBuilder.WithSeverity(events.Success).WithDescription("Generated kubernetes client successfully").
+			WithMetadata(map[string]interface{}{
+				"kubeernetes_version": version,
+				"host":                kubeclient.RestConfig.Host,
+			})
+		h.broadcastEvent(eventBuilder, provider, userID)
 		if err = json.NewEncoder(w).Encode(map[string]string{
 			"server_version": version.String(),
 		}); err != nil {
@@ -225,6 +260,13 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		}
 		return
 	}
+	eventBuilder.WithSeverity(events.Error).WithDescription("Failed to retrieve context ID").
+		WithMetadata(map[string]interface{}{
+			"error":                 "empty context ID",
+			"probable_cause":        "you've passed empty connection ID in query parameter.",
+			"suggested_remediation": "Please make sure that you've passed context ID(in query parameter \"context\") of the kuberenetes cluster you want to be pinged.",
+		})
+	h.broadcastEvent(eventBuilder, provider, userID)
 	http.Error(w, "Empty contextID. Pass the context ID(in query parameter \"context\") of the kuberenetes to be pinged", http.StatusBadRequest)
 }
 
