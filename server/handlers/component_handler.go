@@ -1204,3 +1204,64 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 	}
 	go h.config.MeshModelSummaryChannel.Publish()
 }
+
+// swagger:route GET /api/meshmodels/registrants GetMeshmodelModels idGetMeshmodelModels
+// Handle GET request for getting all meshmodel models
+//
+// # Returns a list of registrants and their respective models components and relationships
+//
+// ```?page={page-number}``` Default page number is 1
+//
+// ```?search={Hostaname}``` Gets host by the name
+//
+// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+// responses:
+//
+//	200: meshmodelModelsDuplicateResponseWrapper
+
+func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Add("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+	limitstr := r.URL.Query().Get("pagesize")
+	var limit int
+	if limitstr != "all" {
+		limit, _ = strconv.Atoi(limitstr)
+
+		if limit == 0 {
+			limit = DefaultPageSizeForMeshModelComponents
+		}
+	} else {
+		limit = -1
+	}
+	pagestr := r.URL.Query().Get("page")
+	page, _ := strconv.Atoi(pagestr)
+	if page <= 0 {
+		page = 1
+	}
+
+	searchQuery := r.URL.Query().Get("search")
+	hosts, totalHostsCount, err := h.GetMesheryHosts(limit, page, searchQuery)
+	if err != nil {
+		http.Error(rw, "Failed to retrieve hosts: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var pgSize int64
+
+	if limitstr == "all" {
+		pgSize = totalHostsCount
+	} else {
+		pgSize = int64(limit)
+	}
+	res := MesheryHostsContextPage{
+		Page:        page,
+		PageSize:    int(pgSize),
+		Count:       totalHostsCount,
+		Registrants: hosts,
+	}
+
+	if err := enc.Encode(res); err != nil {
+		h.log.Error(ErrGetMeshModels(err))
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+	}
+}
