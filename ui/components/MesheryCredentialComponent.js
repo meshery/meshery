@@ -268,7 +268,7 @@ const MesheryCredentialComponent = ({ updateProgress, classes }) => {
         customBodyRender: (_, tableMeta) => {
           const rowData = credentials[tableMeta.rowIndex];
           return (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
               <Tooltip key={`edit_credential-${tableMeta.rowIndex}`} title="Edit Credential">
                 <IconButton
                   aria-label="edit"

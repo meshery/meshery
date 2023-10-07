@@ -309,7 +309,7 @@ func ErrProviderInfo(err error) error {
 
 func ErrValidProvider() error {
 	return errors.New(
-		ErrProviderInfoCode,
+		ErrValidProviderCode,
 		errors.Fatal,
 		[]string{"Invalid provider"},
 		[]string{"Unable to validate provider"},

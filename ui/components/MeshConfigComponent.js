@@ -482,7 +482,7 @@ function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig 
       name: 'location',
       label: 'Location',
       options: {
-        filter: true,
+        filter: false,
         sort: true,
         searchable: true,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
@@ -503,7 +503,7 @@ function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig 
       name: 'last_discovery',
       label: 'Last Discovery',
       options: {
-        filter: true,
+        filter: false,
         sort: true,
         searchable: true,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
