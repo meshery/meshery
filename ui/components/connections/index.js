@@ -12,6 +12,7 @@ import {
   ListItem,
   ListItemText,
   TableRow,
+  Chip,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 // import EditIcon from "@material-ui/icons/Edit";
@@ -22,7 +23,6 @@ import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { updateProgress } from '../../lib/store';
-import { /* Avatar, */ Chip /* FormControl, */ } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
