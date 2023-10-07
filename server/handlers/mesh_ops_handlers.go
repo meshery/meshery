@@ -5,12 +5,14 @@ import (
 	"context"
 	"encoding/gob"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/models/events"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -136,29 +138,83 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 		meshAdapters = []*models.Adapter{}
 	}
 	var err error
-
+	userID := uuid.FromStringOrNil(user.ID)
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("mesh_adapter")
 	switch req.Method {
 	case http.MethodPost:
+		eventBuilder.WithAction("add")
 		meshLocationURL := req.FormValue("meshLocationURL")
 
 		h.log.Debug("meshLocationURL: ", meshLocationURL)
 		if strings.TrimSpace(meshLocationURL) == "" {
+			eventBuilder.WithSeverity(events.Error).WithDescription("Encountered an issue while parsing meshLocationURL").
+				WithMetadata(map[string]interface{}{
+					"error":                 "meshLocationURL is empty",
+					"probable_cause":        "The request body is missing value for `meshLocationURL` field.",
+					"suggested_remediation": "Please ensure that you're providing a valid adapter location URL in the request body",
+				})
+			h.broadcastEvent(eventBuilder, provider, userID)
 			h.log.Error(ErrAddAdapter)
 			http.Error(w, ErrAddAdapter.Error(), http.StatusBadRequest)
 			return
 		}
 		meshAdapters, err = h.addAdapter(req.Context(), meshAdapters, prefObj, meshLocationURL, provider)
 		if err != nil {
+			eventBuilder.WithSeverity(events.Error).WithDescription("Encountered an issue while retrieving adapter information.").
+				WithMetadata(map[string]interface{}{
+					"error":                 "Meshery encounters issues when attempting to add and connect with adapter.",
+					"probable_cause":        "The requested adapter service might not be up and running.",
+					"suggested_remediation": "Please ensure that adapter service is up and running and adapter has been deployed successfully.",
+				})
+			h.broadcastEvent(eventBuilder, provider, userID)
 			// h.log.Error(ErrRetrieveData(err))
 			http.Error(w, ErrRetrieveData(err).Error(), http.StatusInternalServerError)
 			return // error is handled appropriately in the relevant method
 		}
+		// if h.addAdapter succeeds the last adapter in meshAdapters slice is the recently added adapter.
+		adapter := meshAdapters[len(meshAdapters)-1]
+		eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Successfully connected to `%s` adapter", adapter.Name)).
+			WithMetadata(map[string]interface{}{
+				"name":     adapter.Name,
+				"location": adapter.Location,
+				"version":  adapter.Version,
+			})
+		h.broadcastEvent(eventBuilder, provider, userID)
 	case http.MethodDelete:
+		eventBuilder.WithAction("delete")
 		meshAdapters, err = h.deleteAdapter(meshAdapters, w, req)
 		if err != nil {
+			eventBuilder.WithSeverity(events.Error).WithDescription("Encountered an issue while deleting adapter.").
+				WithMetadata(map[string]interface{}{
+					"error":                 "Meshery encounters issues when attempting to delete adapter.",
+					"probable_cause":        "The requested adapter might not have been deployed and added in preferences.",
+					"suggested_remediation": "Please ensure that adapter had been deployed successfully.",
+				})
+			h.broadcastEvent(eventBuilder, provider, userID)
 			return // error is handled appropriately in the relevant method
 		}
+		adapterLocation := req.URL.Query().Get("adapter")
+		var adapter *models.Adapter
+		for _, ad := range meshAdapters {
+			if ad.Location == adapterLocation {
+				adapter = ad
+			}
+		}
+		eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Successfully deleted adapter `%s`", adapter.Name)).
+			WithMetadata(map[string]interface{}{
+				"name":     adapter.Name,
+				"location": adapter.Location,
+				"version":  adapter.Version,
+			})
+		h.broadcastEvent(eventBuilder, provider, userID)
 	default:
+		eventBuilder.WithAction("manage").WithSeverity(events.Error).WithDescription(fmt.Sprintf("The method `%s` is not allowed while managing adapter", req.Method)).
+			WithMetadata(map[string]interface{}{
+				"error":                 "Unsupported http verb",
+				"probable_cause":        "You've called api endpoint with wronge method.",
+				"suggested_remediation": "Please ensure that you're using the allowed HTTP methods (POST, DELETE) for this operation.",
+			})
+		h.broadcastEvent(eventBuilder, provider, userID)
 		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		return
 	}
@@ -166,6 +222,13 @@ func (h *Handler) MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Requ
 	prefObj.MeshAdapters = meshAdapters
 	err = provider.RecordPreferences(req, user.UserID, prefObj)
 	if err != nil {
+		eventBuilder.WithSeverity(events.Error).WithDescription("Encountered an issue while persisting user config data.").
+			WithMetadata(map[string]interface{}{
+				"error":                 "Unable to persist user config data",
+				"probable_cause":        "User token might be invalid or db migh have been corrupted.",
+				"suggested_remediation": "Logging out and then logging in again may resolve the issue.",
+			})
+		h.broadcastEvent(eventBuilder, provider, userID)
 		h.log.Error(ErrRecordPreferences(err))
 		http.Error(w, ErrRecordPreferences(err).Error(), http.StatusInternalServerError)
 		return
