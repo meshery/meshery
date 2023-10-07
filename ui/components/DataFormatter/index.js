@@ -88,7 +88,7 @@ export const KeyValue = ({ Key, Value }) => {
         marginBlock: '0.5rem',
       }}
     >
-      <SectionBody body={Key} style={{ fontWeight: 'bold' }} /> <SectionBody body={Value} />
+      <SectionBody body={Key + ':'} style={{ fontWeight: 'bold' }} /> <SectionBody body={Value} />
     </div>
   );
 };
