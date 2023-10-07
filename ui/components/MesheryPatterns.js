@@ -1478,7 +1478,7 @@ function MesheryPatterns({
             pattern={selectedPattern.pattern}
           />
         )}
-        <div className={StyleClass.toolWrapper} style={{ zIndex: 125 }}>
+        <div className={StyleClass.toolWrapper}>
           <div style={{ display: 'flex' }}>
             {!selectedPattern.show && (patterns.length > 0 || viewType === 'table') && (
               <div className={classes.createButton}>
