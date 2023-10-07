@@ -1,1 +1,24 @@
-Get "http://localhost:9081/api/application?page_size=10000": no responder found
+Error: Failed to get application based on input
+Usage:
+  app view application name [flags]
+
+Examples:
+
+// View applictaions with name
+mesheryctl app view [app-name]
+
+// View applications with id
+mesheryctl app view [app-id]
+
+// View all applications
+mesheryctl app view --all
+	
+
+Flags:
+  -a, --all                    (optional) view all applications available
+  -h, --help                   help for view
+  -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
+
+Global Flags:
+  -t, --token string   Path to token file default from current context
+
