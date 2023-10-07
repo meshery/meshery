@@ -11,6 +11,7 @@ export const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
+    boxShadow: theme.shadows[2],
   },
   drawerButton: {
     padding: '0.45rem',
@@ -39,6 +40,7 @@ export const useStyles = makeStyles((theme) => ({
     gap: '0.5rem',
     justifyContent: 'space-between',
     alignItems: 'start',
+    flexWrap: 'wrap',
     background: theme.palette.secondary.headerColor,
   },
   title: {

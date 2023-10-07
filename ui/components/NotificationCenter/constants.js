@@ -5,6 +5,7 @@ import { Colors } from '../../themes/app';
 import ReadIcon from '../../assets/icons/ReadIcon';
 import Ajv from 'ajv';
 import _ from 'lodash';
+import InfoIcon from '../../assets/icons/InfoIcon';
 
 export const SEVERITY = {
   INFO: 'informational',
@@ -37,7 +38,7 @@ export const STATUS_STYLE = {
 
 export const SEVERITY_STYLE = {
   [SEVERITY.INFO]: {
-    icon: ErrorIcon,
+    icon: InfoIcon,
     color: NOTIFICATIONCOLORS.INFO,
   },
   [SEVERITY.ERROR]: {

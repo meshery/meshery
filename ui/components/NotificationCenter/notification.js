@@ -45,6 +45,7 @@ import {
   withSuppressedErrorBoundary,
 } from '../General/ErrorBoundary';
 import { FormattedMetadata } from './metadata';
+import theme from '../../themes/app';
 
 const useStyles = makeStyles(() => ({
   root: (props) => ({
@@ -79,6 +80,9 @@ const useStyles = makeStyles(() => ({
   expanded: {
     paddingBlock: '0.75rem',
     paddingInline: '0.2rem',
+    [theme.breakpoints.down('md')]: {
+      padding: '0.5rem',
+    },
   },
   actorAvatar: {
     display: 'flex',
@@ -325,10 +329,11 @@ export const Notification = withErrorBoundary(({ event_id }) => {
         <Grid container className={classes.summary} onClick={handleExpandClick}>
           <Grid
             item
-            sm="auto"
+            xs="auto"
+            sm={2}
             className={classes.gridItem}
             style={{
-              justifyContent: 'center',
+              justifyContent: 'start',
               alignItems: 'center',
               gap: '0.25rem',
               paddingInline: '0.25rem',
@@ -343,22 +348,21 @@ export const Notification = withErrorBoundary(({ event_id }) => {
             />
             <severityStyles.icon {...iconLarge} fill={severityStyles?.color} />
           </Grid>
-          <Grid item xs className={classes.gridItem}>
+          <Grid item xs={8} sm={6} className={classes.gridItem}>
             <Typography variant="body1" className={classes.message}>
               {event.description}
             </Typography>
           </Grid>
-          <Hidden smDown>
-            <Grid item sm={3} className={classes.gridItem}>
-              <Typography variant="body1"> {formatTimestamp(event.created_at)} </Typography>
-            </Grid>
-          </Hidden>
-
           <Grid
             item
-            sm={0.5}
-            style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+            xs={1}
+            sm={4}
+            className={classes.gridItem}
+            style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}
           >
+            <Hidden smDown>
+              <Typography variant="body1"> {formatTimestamp(event.created_at)} </Typography>
+            </Hidden>
             <BasicMenu event={event} />
           </Grid>
         </Grid>
