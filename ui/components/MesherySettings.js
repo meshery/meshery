@@ -25,7 +25,7 @@ import { updateProgress } from '../lib/store';
 import PromptComponent from './PromptComponent';
 import { iconMedium } from '../css/icons.styles';
 import MeshModelComponent from './MeshModelComponent';
-{/*import CredentialIcon from '../assets/icons/CredentialIcon';*/}
+{ /*import CredentialIcon from '../assets/icons/CredentialIcon';*/ }
 import MesheryCredentialComponent from './MesheryCredentialComponent';
 import DatabaseSummary from './DatabaseSummary';
 import { getComponentsDetail, getModelsDetail, getRelationshipsDetail } from '../api/meshmodel';
@@ -393,7 +393,7 @@ class MesherySettings extends React.Component {
                 tab="registry"
               />
             </Tooltip>
-            {/*<Tooltip title="Credential" placement="top">
+            { /*<Tooltip title="Credential" placement="top">
               <Tab
                 className={classes.tab}
                 icon={<CredentialIcon width="1.5rem" />}
@@ -402,7 +402,7 @@ class MesherySettings extends React.Component {
               />
             </Tooltip>*/}
 
-            {/*NOTE: Functionality of performance tab will be modified, until then keeping it and the related code commented */}
+            {/*NOTE: Functionality of performance tab will be modified, until then keeping it and the related code commented */ }
 
             {/* <Tooltip title="Choose Performance Test Defaults" placement="top">
                 <Tab
