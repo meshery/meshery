@@ -107,7 +107,6 @@ Practices for Production Environments](https://peter.bourgon.org/go-in-productio
 <li> <code>npm</code> and <code>node</code> should be installed on your machine, `node` version 19 or higher is not supported right now.</li>
 <li> Fork this repository <code>git clone https://github.com/meshery/meshery.git</code>, and clone your forked version of Meshery to your development environment, preferably outside `GOPATH`.</li>
 <li> <code>golangci-lint</code> should be installed if you want to test Go code, for MacOS and linux users.</li>
-<li> <code>golangci-lint</code> should be installed if you want to test Go code, for MacOS and linux users.</li>
 </ol>
 
 </details>

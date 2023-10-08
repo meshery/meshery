@@ -10,7 +10,7 @@ type: meshmap
 
 # Sharing a Design
 
-Sharing a design lets you make your content visible to any anonymous visitior of meshery.io/catalog and any Meshery Cloud user. Anyone with the link can view the design.
+Sharing a design lets you make your content visible to any anonymous visitor of meshery.io/catalog and any Meshery Cloud user. Anyone with the link can view the design.
 
 You can share your design with your friends and teams using Extensions. Let's discuss the process below.
 

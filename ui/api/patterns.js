@@ -1,13 +1,11 @@
-import api from "./index"
-import { ctxUrl } from "../utils/multi-ctx";
-export const PATTERN_ENDPOINT = "/api/pattern"
-
-
+import api from './index';
+import { ctxUrl } from '../utils/multi-ctx';
+export const PATTERN_ENDPOINT = '/api/pattern';
 
 export async function dryRunPattern(patternFileData, contexts) {
   return deployPatternWithData(patternFileData, contexts, {
-    verify : false,
-    dryRun : true
+    verify: false,
+    dryRun: true,
   });
 }
 
@@ -21,8 +19,8 @@ export async function dryRunPattern(patternFileData, contexts) {
  */
 export async function deployPatternWithData(patternFileData, contexts, options) {
   const { verify = false, dryRun = false } = options;
-  const endpoint = `${ctxUrl(PATTERN_ENDPOINT+"/deploy",contexts)}${
-    verify ? "&verify=true" : ""
-  }${dryRun ? "&dryRun=true" : ""}`;
-  return await api.post(endpoint, patternFileData) ;
+  const endpoint = `${ctxUrl(PATTERN_ENDPOINT + '/deploy', contexts)}${
+    verify ? '&verify=true' : ''
+  }${dryRun ? '&dryRun=true' : ''}`;
+  return await api.post(endpoint, patternFileData);
 }

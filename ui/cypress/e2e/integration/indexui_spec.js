@@ -1,7 +1,7 @@
 describe('Test if UI components are displayed on Index Page', () => {
   beforeEach(() => {
     cy.visit('/');
-  })
+  });
 
   it('Left Navigation Panel', () => {
     cy.get('[data-test=navigation]').should('be.visible');
@@ -22,5 +22,4 @@ describe('Test if UI components are displayed on Index Page', () => {
   it('Service Mesh Section', () => {
     cy.get('[data-test=service-mesh]').should('be.visible');
   });
-
 });

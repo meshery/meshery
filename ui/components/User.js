@@ -3,7 +3,7 @@ import Avatar from '@material-ui/core/Avatar';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Grow from '@material-ui/core/Grow';
 import IconButton from '@material-ui/core/IconButton';
-import ListItemText from "@material-ui/core/ListItemText";
+import ListItemText from '@material-ui/core/ListItemText';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
 import NoSsr from '@material-ui/core/NoSsr';
@@ -20,16 +20,13 @@ import { updateUser } from '../lib/store';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 
 const styles = () => ({
-  link : {
-    display : "inline-flex",
-    width : "100%",
-    height : "30px",
-    alignItems : "self-end"
+  link: {
+    display: 'inline-flex',
+    width: '100%',
+    height: '30px',
+    alignItems: 'self-end',
   },
 });
-
-
-
 
 function exportToJsonFile(jsonData, filename) {
   let dataStr = JSON.stringify(jsonData);
@@ -41,8 +38,9 @@ function exportToJsonFile(jsonData, filename) {
   linkElement.setAttribute('href', dataUri);
   linkElement.setAttribute('download', exportFileDefaultName);
   linkElement.click();
-  linkElement.remove()
+  linkElement.remove();
 }
+
 
 const User = (props) => {
   const [user, setUser] = useState(null);
@@ -106,11 +104,9 @@ const User = (props) => {
     if (children && children.length > 0) {
       return (
         <List disablePadding>
-          {children.map(({
-            id, href, title, show : showc
-          }) => {
-            if (typeof showc !== "undefined" && !showc) {
-              return "";
+          {children.map(({ id, href, title, show: showc }) => {
+            if (typeof showc !== 'undefined' && !showc) {
+              return '';
             }
             return (
               <React.Fragment key={id}>
@@ -132,12 +128,8 @@ const User = (props) => {
     const { classes } = props;
 
     const content = (
-      <div className={classNames(classes.link)} >
-        <ListItemText
-          classes={{ primary : classes.itemPrimary, }}
-        >
-          {name}
-        </ListItemText>
+      <div className={classNames(classes.link)}>
+        <ListItemText classes={{ primary: classes.itemPrimary }}>{name}</ListItemText>
       </div>
     );
     if (href) {
@@ -150,7 +142,7 @@ const User = (props) => {
             {content}
           </span>
         </Link>
-      )
+      );
     }
 
     return content;

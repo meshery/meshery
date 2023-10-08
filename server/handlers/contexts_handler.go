@@ -24,7 +24,7 @@ import (
 //
 // ```?search={contextname}``` If search is non empty then a greedy search is performed
 // responses:
-// 
+//
 //	200: systemK8sContextsResponseWrapper
 func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)

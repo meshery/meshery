@@ -1,35 +1,33 @@
 //@ts-check
-import React, { useState, useRef, useEffect } from "react";
-import { withStyles } from "@material-ui/core/styles";
+import React, { useState, useRef, useEffect } from 'react';
+import { withStyles } from '@material-ui/core/styles';
 
 const styles = (theme) => ({
-  card : {
-    height : '100%',
-    backgroundColor : "transparent",
-    perspective : theme.spacing(125),
+  card: {
+    height: '100%',
+    backgroundColor: 'transparent',
+    perspective: theme.spacing(125),
   },
-  innerCard : {
-    padding : theme.spacing(2),
-    borderRadius : theme.spacing(1),
-    transformStyle : "preserve-3d",
-    boxShadow : "0 4px 8px 0 rgba(0,0,0,0.2)",
-    backgroundColor : theme.palette.secondary.elevatedComponents,
-    cursor : "pointer",
+  innerCard: {
+    padding: theme.spacing(2),
+    borderRadius: theme.spacing(1),
+    transformStyle: 'preserve-3d',
+    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+    backgroundColor: theme.palette.secondary.elevatedComponents,
+    cursor: 'pointer',
   },
-  content : { backfaceVisibility : "hidden", },
-  frontContent : {},
-  backContent : { transform : "scale(-1, 1)",maxWidth : "50vw", wordBreak : "break-word" }
+  content: { backfaceVisibility: 'hidden' },
+  frontContent: {},
+  backContent: { transform: 'scale(-1, 1)', maxWidth: '50vw', wordBreak: 'break-word' },
 });
 
 function GetChild(children, key) {
-  if (children.length != 2) throw Error("FlipCard requires exactly two child components");
+  if (children.length != 2) throw Error('FlipCard requires exactly two child components');
 
   return children[key];
 }
 
-function FlipCard({
-  classes, duration = 500, onClick, onShow, children
-}) {
+function FlipCard({ classes, duration = 500, onClick, onShow, children }) {
   const [flipped, setFlipped] = useState(false);
   const [activeBack, setActiveBack] = useState(false);
 
@@ -67,26 +65,20 @@ function FlipCard({
       <div
         className={classes.innerCard}
         style={{
-          transform : flipped
-            ? "scale(-1,1)"
-            : undefined,
-          transition : `transform ${duration}ms`,
-          transformOrigin : "50% 50% 10%"
+          transform: flipped ? 'scale(-1,1)' : undefined,
+          transition: `transform ${duration}ms`,
+          transformOrigin: '50% 50% 10%',
         }}
       >
-        {!activeBack
-          ? (
-            <div className={`${classes.content} ${classes.frontContent}`}>
-              {React.isValidElement(Front)
-                ? Front
-                : null}
-            </div>
-          )
-          : (
-            <div className={`${classes.content} ${classes.backContent}`}>{React.isValidElement(Back)
-              ? Back
-              : null}</div>
-          )}
+        {!activeBack ? (
+          <div className={`${classes.content} ${classes.frontContent}`}>
+            {React.isValidElement(Front) ? Front : null}
+          </div>
+        ) : (
+          <div className={`${classes.content} ${classes.backContent}`}>
+            {React.isValidElement(Back) ? Back : null}
+          </div>
+        )}
       </div>
     </div>
   );

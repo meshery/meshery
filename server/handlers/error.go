@@ -122,6 +122,8 @@ const (
 	ErrUpdateEventCode                  = "1127"
 	ErrDeleteEventCode                  = "1128"
 	ErrUnsupportedEventStatusCode       = "1129"
+	ErrBulkUpdateEventCode              = "1537"
+	ErrBulkDeleteEventCode              = "1538"
 )
 
 var (
@@ -193,11 +195,11 @@ func ErrScopeDefinition(err error) error {
 }
 
 func ErrPatternFile(err error) error {
-	return errors.New(ErrPatternFileCode, errors.Alert, []string{"Failed to Parse Pattern File", err.Error()}, []string{err.Error()}, []string{"Trait Definition is invalid or unable to process"}, []string{"Check Trait Definition"})
+	return errors.New(ErrPatternFileCode, errors.Alert, []string{"Failed to Parse design File", err.Error()}, []string{err.Error()}, []string{"Trait Definition is invalid or unable to process"}, []string{"Check Trait Definition"})
 }
 
 func ErrInvalidPattern(err error) error {
-	return errors.New(ErrInvalidPatternCode, errors.Alert, []string{"Invalid Pattern, execution is infeasible", err.Error()}, []string{err.Error()}, []string{"Trait Definition is invalid or unable to process"}, []string{"Check Trait Definition"})
+	return errors.New(ErrInvalidPatternCode, errors.Alert, []string{"Invalid design, execution is infeasible", err.Error()}, []string{err.Error()}, []string{"Trait Definition is invalid or unable to process"}, []string{"Check Trait Definition"})
 }
 
 func ErrExecutionPlan(err error) error {
@@ -436,15 +438,15 @@ func ErrDeleteApplication(err error) error {
 }
 
 func ErrGetPattern(err error) error {
-	return errors.New(ErrGetPatternCode, errors.Alert, []string{"Error failed to get pattern"}, []string{err.Error()}, []string{"Cannot get the Pattern with the given Pattern ID"}, []string{"Check if the given Pattern ID is correct"})
+	return errors.New(ErrGetPatternCode, errors.Alert, []string{"Error failed to get design"}, []string{err.Error()}, []string{"Cannot get the design with the given design ID"}, []string{"Check if the given design ID is correct"})
 }
 
 func ErrDeletePattern(err error) error {
-	return errors.New(ErrDeletePatternCode, errors.Alert, []string{"Error failed to delete pattern"}, []string{err.Error()}, []string{"Failed to delete Pattern with the given ID"}, []string{"Check if the Pattern ID is correct"})
+	return errors.New(ErrDeletePatternCode, errors.Alert, []string{"Error failed to delete design"}, []string{err.Error()}, []string{"Failed to delete design with the given ID"}, []string{"Check if the design ID is correct"})
 }
 
 func ErrFetchPattern(err error) error {
-	return errors.New(ErrFetchPatternCode, errors.Alert, []string{"Error failed to fetch pattern"}, []string{err.Error()}, []string{"Failed to retrieve the list of all the Patterns"}, []string{})
+	return errors.New(ErrFetchPatternCode, errors.Alert, []string{"Error failed to fetch design"}, []string{err.Error()}, []string{"Failed to retrieve the list of all the designs"}, []string{})
 }
 
 func ErrFetchProfile(err error) error {
@@ -452,23 +454,23 @@ func ErrFetchProfile(err error) error {
 }
 
 func ErrImportPattern(err error) error {
-	return errors.New(ErrImportPatternCode, errors.Alert, []string{"Error failed to import pattern"}, []string{err.Error()}, []string{"Cannot save the Pattern due to wrong path or URL"}, []string{"Check if the given path or URL of the Pattern is correct"})
+	return errors.New(ErrImportPatternCode, errors.Alert, []string{"Error failed to import design"}, []string{err.Error()}, []string{"Cannot save the design due to wrong path or URL"}, []string{"Check if the given path or URL of the design is correct"})
 }
 
 func ErrEncodePattern(err error) error {
-	return errors.New(ErrEncodePatternCode, errors.Alert, []string{"Error failed to encode pattern"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrEncodePatternCode, errors.Alert, []string{"Error failed to encode design"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrDecodePattern(err error) error {
-	return errors.New(ErrDecodePatternCode, errors.Alert, []string{"Error failed to decode patterns data into go slice"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrDecodePatternCode, errors.Alert, []string{"Error failed to decode design data into go slice"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrParsePattern(err error) error {
-	return errors.New(ErrParsePatternCode, errors.Alert, []string{"Error failed to parse pattern file from cytoJSON format"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrParsePatternCode, errors.Alert, []string{"Error failed to parse pattern file"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrConvertPattern(err error) error {
-	return errors.New(ErrConvertPatternCode, errors.Alert, []string{"Error failed to convert PatternFile to Cytoscape object"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrConvertPatternCode, errors.Alert, []string{"Error failed to convert design file to Cytoscape object"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrRemoteApplication(err error) error {
@@ -476,7 +478,7 @@ func ErrRemoteApplication(err error) error {
 }
 
 func ErrClonePattern(err error) error {
-	return errors.New(ErrClonePatternCode, errors.Alert, []string{"Error failed to clone pattern"}, []string{err.Error()}, []string{"Failed to clone Pattern with the given ID"}, []string{"Check if the Pattern ID is correct and the pattern is published"})
+	return errors.New(ErrClonePatternCode, errors.Alert, []string{"Error failed to clone design"}, []string{err.Error()}, []string{"Failed to clone design with the given ID"}, []string{"Check if the design ID is correct and the design is published"})
 }
 
 func ErrCloneFilter(err error) error {
@@ -484,7 +486,7 @@ func ErrCloneFilter(err error) error {
 }
 
 func ErrPublishCatalogPattern(err error) error {
-	return errors.New(ErrPublishCatalogPatternCode, errors.Alert, []string{"Error failed to publish catalog pattern"}, []string{err.Error()}, []string{"Failed to publish catalog pattern"}, []string{"Check if the pattern ID is correct and you are admin"})
+	return errors.New(ErrPublishCatalogPatternCode, errors.Alert, []string{"Error failed to publish catalog design"}, []string{err.Error()}, []string{"Failed to publish catalog design"}, []string{"Check if the design ID is correct and you are admin"})
 }
 
 func ErrPublishCatalogFilter(err error) error {
@@ -523,10 +525,18 @@ func ErrUpdateEvent(err error, id string) error {
 	return errors.New(ErrUpdateEventCode, errors.Alert, []string{fmt.Sprintf("Could not update event status for %s", id)}, []string{err.Error()}, []string{"Provided event status not supported", "Event has been deleted or does not exist", "Database is corrupt."}, []string{"Verify event filter settings", "Reset database."})
 }
 
+func ErrBulkUpdateEvent(err error) error {
+	return errors.New(ErrBulkUpdateEventCode, errors.Alert, []string{"Could not update status for one or more events."}, []string{err.Error()}, []string{"Event has been deleted or does not exist.", "The requested event status is invalid.", "Meshery Database is corrupt."}, []string{"Verify that the event still exists.", "Verify that the requested event status is supported.", "Visit Settings and reset the Meshery database."})
+}
+
 func ErrDeleteEvent(err error, id string) error {
 	return errors.New(ErrDeleteEventCode, errors.Alert, []string{fmt.Sprintf("Could not delete event %s", id)}, []string{err.Error()}, []string{"Event might have been deleted and doesn't exist", "Database is corrupt."}, []string{"Verify event filter settings", "Reset database."})
 }
 
+func ErrBulkDeleteEvent(err error) error {
+	return errors.New(ErrBulkDeleteEventCode, errors.Alert, []string{"Could not delete one or more events."}, []string{err.Error()}, []string{"Event has been deleted or does not exist.", "Meshery Database is corrupt."}, []string{"Confirm that the status you are using is valid and a supported event status. Refer to Meshery Docs for a list of event statuses. Check for availability of a new version of Meshery Server. Try upgrading to the latest version.", "Visit Settings and reset the Meshery database."})
+}
+
 func ErrUnsupportedEventStatus(err error, status string) error {
-	return errors.New(ErrUnsupportedEventStatusCode, errors.Alert, []string{fmt.Sprintf("Event status %s not supported.", status)}, []string{err.Error()}, []string{"Unsupported event status for the current Meshery Server."}, []string{"Try upgrading Meshery to latest version.", "Use one of the supported event statuses."})
+	return errors.New(ErrUnsupportedEventStatusCode, errors.Alert, []string{fmt.Sprintf("Event status '%s' is not a supported status.", status)}, []string{err.Error()}, []string{"Unsupported event status for your current version of Meshery Server."}, []string{"Confirm that the status you are using is valid and a supported event status. Refer to Meshery Docs for a list of event statuses.", "Check for availability of a new version of Meshery Server. Try upgrading to the latest version." })
 }
