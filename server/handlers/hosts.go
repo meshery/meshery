@@ -19,7 +19,7 @@ type MesheryHostsDisplay struct {
 	ID       uuid.UUID           `json:"id"`
 	Hostname string              `json:"hostname"`
 	Port     int                 `json:"port"`
-	Summary  hostIndivitualCount `json:"summary"`
+	Summary  hostIndividualCount `json:"summary"`
 }
 type MesheryHostsContextPage struct {
 	Page        int                   `json:"page"`
@@ -27,10 +27,10 @@ type MesheryHostsContextPage struct {
 	Count       int64                 `json:"total_count"`
 	Registrants []MesheryHostsDisplay `json:"registrants"`
 }
-type hostIndivitualCount struct {
-	Count_model        int64
-	Count_component    int64
-	Count_relationship int64
+type hostIndividualCount struct {
+	Models        int64 `json:"models"`
+	Components    int64 `json:"components"`
+	Relationships int64 `json:"relationships"`
 }
 
 func (h Handler) GetMesheryHosts(limit int, page int, search string) ([]MesheryHostsDisplay, int64, error) {
@@ -55,32 +55,32 @@ func (h Handler) GetMesheryHosts(limit int, page int, search string) ([]MesheryH
 	}
 	var result []MesheryHostsDisplay
 	for _, host := range hosts {
-		var hostCounts hostIndivitualCount
+		var hostCounts hostIndividualCount
 		if count, err := getCountForHostAndType(db, host.ID, "model"); err != nil {
 			return nil, 0, err
 		} else {
-			hostCounts.Count_model = count
+			hostCounts.Models = count
 		}
 
 		if count, err := getCountForHostAndType(db, host.ID, "component"); err != nil {
 			return nil, 0, err
 		} else {
-			hostCounts.Count_component = count
+			hostCounts.Components = count
 		}
 
 		if count, err := getCountForHostAndType(db, host.ID, "relationship"); err != nil {
 			return nil, 0, err
 		} else {
-			hostCounts.Count_relationship = count
+			hostCounts.Relationships = count
 		}
 		res := MesheryHostsDisplay{
 			ID:       host.ID,
 			Hostname: host.Hostname,
 			Port:     host.Port,
-			Summary: hostIndivitualCount{
-				Count_model:        hostCounts.Count_model,
-				Count_component:    hostCounts.Count_component,
-				Count_relationship: hostCounts.Count_relationship,
+			Summary: hostIndividualCount{
+				Models:        hostCounts.Models,
+				Components:    hostCounts.Components,
+				Relationships: hostCounts.Relationships,
 			},
 		}
 		result = append(result, res)

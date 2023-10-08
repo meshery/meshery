@@ -1205,8 +1205,8 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 	go h.config.MeshModelSummaryChannel.Publish()
 }
 
-// swagger:route GET /api/meshmodels/registrants GetMeshmodelModels idGetMeshmodelModels
-// Handle GET request for getting all meshmodel models
+// swagger:route GET /api/meshmodels/registrants GetMeshmodelRegistrants
+// Handle GET request for getting all meshmodel registrants
 //
 // # Returns a list of registrants and their respective models components and relationships
 //
@@ -1217,7 +1217,7 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 // responses:
 //
-//	200: meshmodelModelsDuplicateResponseWrapper
+//	200: []MesheryHostsContextPage
 
 func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
