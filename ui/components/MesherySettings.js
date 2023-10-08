@@ -393,14 +393,14 @@ class MesherySettings extends React.Component {
                 tab="meshmodelSummary"
               />
             </Tooltip>
-            <Tooltip title="Credential" placement="top">
+            {/* <Tooltip title="Credential" placement="top">
               <Tab
                 className={classes.tab}
                 icon={<CredentialIcon width="1.5rem" />}
                 label="Credentials"
                 tab="credential"
               />
-            </Tooltip>
+            </Tooltip> */}
 
             {/*NOTE: Functionality of performance tab will be modified, until then keeping it and the related code commented */}
 
