@@ -7,9 +7,10 @@ import Popper from '@mui/material/Popper';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import { withStyles } from '@material-ui/core/styles';
 import ColumnIcon from '../assets/icons/coulmn';
-import Slide from '@mui/material/Slide';
+// import Slide from '@mui/material/Slide';
 import Box from '@mui/material/Box';
 import { Card } from '@material-ui/core';
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 
 const styles = (theme) => ({
   epaper: {
@@ -21,14 +22,22 @@ const styles = (theme) => ({
     boxShadow:
       '0px 4px 0px -2px rgb(0 179 159 / 10%), 0px 4px 0px -2px rgb(0 179 159 / 10%), 0px 4px 0px -2px rgb(0 179 159 / 10%)',
   },
+  icon: {
+    color: theme.palette.secondary.iconMain,
+  },
 });
 
 const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) => {
   const [anchorEl, setAnchorEl] = useState(null);
+
+  /* 
+  ESLint error: values are never used
+  
   const open = Boolean(anchorEl);
   const containerRef = useRef(null);
 
   const transitionDuration = Math.min(300 + columns.length * 50, 1000);
+  */
 
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -60,8 +69,9 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) =
         </IconButton>
       </Tooltip>
 
-      <Box sx={{ overflow: 'hidden' }} ref={containerRef}>
+      <Box sx={{ overflow: 'hidden' }}>
         <Popper
+          style={{ zIndex: 120 }}
           open={Boolean(anchorEl)}
           anchorEl={anchorEl}
           placement="bottom-start"
@@ -73,28 +83,28 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) =
             vertical: 'top',
             horizontal: 'center',
           }}
-          transition
-          popperOptions={{
-            modifiers: [
-              {
-                name: 'offset',
-                options: {
-                  offset: [0, 8],
-                },
-              },
-              {
-                name: 'preventOverflow',
-                options: {
-                  altAxis: true, // true by default
-                  tether: true,
-                  rootBoundary: 'document',
-                  padding: 8,
-                },
-              },
-            ],
-          }}
+          // transition
+          // popperOptions={{
+          //   modifiers: [
+          //     {
+          //       name: 'offset',
+          //       options: {
+          //         offset: [0, 8],
+          //       },
+          //     },
+          //     {
+          //       name: 'preventOverflow',
+          //       options: {
+          //         altAxis: true, // true by default
+          //         tether: true,
+          //         rootBoundary: 'document',
+          //         padding: 8,
+          //       },
+          //     },
+          //   ],
+          // }}
         >
-          {({ TransitionProps }) => (
+          {/* {({ TransitionProps }) => (
             <Slide
               {...TransitionProps}
               direction="down"
@@ -104,36 +114,36 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) =
               unmountOnExit
               container={containerRef.current}
               easing="cubic-bezier(0.25, 0.1, 1, 1)"
-            >
-              <Box>
-                <ClickAwayListener onClickAway={handleClose}>
-                  <Card className={classes.epaper} elevation={2}>
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      {columns.map((col) => (
-                        <FormControlLabel
-                          key={col.name}
-                          control={
-                            <Checkbox
-                              checked={customToolsProps.columnVisibility[col.name]}
-                              onChange={(e) =>
-                                handleColumnVisibilityChange(col.name, e.target.checked)
-                              }
-                              sx={{
-                                '&.Mui-checked': {
-                                  color: '#00B39F',
-                                },
-                              }}
-                            />
-                          }
-                          label={col.label}
+            > */}
+          <Box>
+            <ClickAwayListener onClickAway={handleClose}>
+              <Card className={classes.epaper} elevation={2}>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {columns.map((col) => (
+                    <FormControlLabel
+                      key={col.name}
+                      control={
+                        <Checkbox
+                          className={classes.checkbox}
+                          checked={customToolsProps.columnVisibility[col.name]}
+                          onChange={(e) => handleColumnVisibilityChange(col.name, e.target.checked)}
+                          icon={<CheckBoxOutlineBlankIcon className={classes.icon} />}
+                          sx={{
+                            '&.Mui-checked': {
+                              color: '#00B39F',
+                            },
+                          }}
                         />
-                      ))}
-                    </div>
-                  </Card>
-                </ClickAwayListener>
-              </Box>
-            </Slide>
-          )}
+                      }
+                      label={col.label}
+                    />
+                  ))}
+                </div>
+              </Card>
+            </ClickAwayListener>
+          </Box>
+          {/* </Slide>
+          )} */}
         </Popper>
       </Box>
     </div>
