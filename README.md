@@ -57,11 +57,11 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
 <br />
 
 - [Functionality](#functionality)
-- [Meshery Architecture](#meshery-architecture)
-- [Join the Meshery community!](#join-the-meshery-community)
-- [Contributing](#contributing)
-  - [Stargazers](#stargazers)
-  - [License](#license)
+  - [Meshery Architecture](#meshery-architecture)
+  - [Join the Meshery community!](#join-the-meshery-community)
+  - [Contributing](#contributing)
+    - [Stargazers](#stargazers)
+    - [License](#license)
 
 <!-- <p style="clear:both;">&nbsp;</p>
 <a href="https://meshery.io"><picture>
@@ -80,7 +80,7 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
 
 <p style="clear:both;">
 <h2>Cloud Native Lifecycle Management</h2>
-Meshery manages the provisioning, configuration and operation of your Kubernetes clusters while supporting hundreds of different types of cloud native infrastructure integrations. Meshery also offers a [catalog of curated design templates](https://meshery.io/catalog) filled with configuration best practices.
+Meshery manages the provisioning, configuration and operation of your Kubernetes clusters while supporting hundreds of different types of cloud native infrastructure integrations. Meshery also offers a <a href="https://meshery.io/catalog">catalog of curated design templates</a> filled with configuration best practices.
 
 Using a GitOps-centric approach, visually and collaboratively design and manage your infrastructure and microservices. Use Meshery to interoperate your various cloud native systems. With both REST and GraphQL APIs, integrating with Meshery as an extensible platform is facilitated through NATS, CloudEvents, and gRPC.
 
