@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Typography, Divider, Button } from '@material-ui/core';
 import { useStyles } from '../styles';
 import { useTheme } from '@material-ui/core/styles';
+import { Colors } from '../../../themes/app'
 
 const ContentHeader = ({ title }) => (
   <>
@@ -55,7 +56,7 @@ const StepperContent = ({
           <Button
             className={classes.cancelButton}
             style={{
-              background: theme.palette.secondary.penColorPrimary,
+              background: Colors.charcoal,
               color: theme.palette.secondary.primaryModalText,
               margin: 0,
             }}

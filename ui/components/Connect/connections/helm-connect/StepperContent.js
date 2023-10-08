@@ -87,7 +87,7 @@ export const ConnectApp = ({ handleNext, setSharedData }) => {
   };
 
   const cancelCallback = () => {
-    Router.push('/dashboard');
+    Router.push('/management/connections');
   };
 
   const debouncedValidateUrl = debounce(async (url) => {

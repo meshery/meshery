@@ -1,28 +1,29 @@
 import { makeStyles, withStyles } from '@material-ui/core';
 import StepConnector from '@material-ui/core/StepConnector';
 
-export const ColorlibConnector = withStyles({
+export const ColorlibConnector = withStyles((theme) => ({
   alternativeLabel: { top: 22 },
   active: { '& $line': { background: '#00B39F', transition: 'all 1s ease-in' } },
   completed: { '& $line': { background: '#00B39F', transition: 'all 1s ease-in' } },
   line: {
     height: 3,
     border: 0,
-    backgroundColor: '#eaeaf0',
+    backgroundColor:
+      theme.palette.type === 'dark' ? theme.palette.secondary.elevatedComponents2 : '#eaeaf0',
     borderRadius: 1,
     transition: 'all 0.5s ease-out ',
   },
-})(StepConnector);
+}))(StepConnector);
 
 export const useColorlibStepIconStyles = makeStyles((theme) => ({
   icnlist: {
-    backgroundColor: '#ccc',
+    backgroundColor: theme.palette.secondary.filterChipBackground,
     zIndex: 1,
     color: '#fff',
     width: 50,
     height: 50,
     display: 'flex',
-    border: '.2rem solid #ccc',
+    border: `.2rem solid ${theme.palette.secondary.filterChipBackground}`,
     borderRadius: '50%',
     justifyContent: 'center',
     alignItems: 'center',

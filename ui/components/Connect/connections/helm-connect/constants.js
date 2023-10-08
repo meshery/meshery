@@ -36,12 +36,10 @@ export const ConnectAppContent = {
   title: 'Connecting your Helm Repository',
   subtitle:
     'Integrate Meshery seamlessly with your existing Helm-based process. Connect Meshery to one or more Helm repositories and import one or all Helm charts from your repo.',
-  tips: 'Meshery is optimized for GitOps-centric workflows. Connect your  GitHub repositories for a full experience.',
+  tips: 'Meshery is optimized for GitOps-centric workflows. Connect your  Helm repositories for a full experience.',
   btnText: 'Connect',
   cancel: true,
 };
-
-export const HELM_INTEGRATION_ENDPOINT = '/api/integrations/github';
 
 export const SelectRepositoryContent = {
   title: 'Select Helm Repository',
@@ -52,10 +50,3 @@ export const SelectRepositoryContent = {
 export const FinishContent = {
   btnText: 'Finish',
 };
-
-export const FinishSteppedContent = [
-  'GitHub account connected',
-  'Repository selected',
-  'Accounts secrets configured',
-  'Workflow file added to the repository',
-];
