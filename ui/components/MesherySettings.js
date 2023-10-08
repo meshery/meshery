@@ -385,11 +385,11 @@ class MesherySettings extends React.Component {
                 tab="systemReset"
               />
             </Tooltip>
-            <Tooltip title="MeshModel Summary" placement="top">
+            <Tooltip title="Registry" placement="top">
               <Tab
                 className={classes.tab}
                 icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
-                label="MeshModel Summary"
+                label="Registry"
                 tab="meshmodelSummary"
               />
             </Tooltip>
