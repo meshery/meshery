@@ -1,1 +1,0 @@
-Authentication token not found. Login with `mesheryctl system login` or supply a valid user token using the --token (or -t) flag.
