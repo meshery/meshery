@@ -33,6 +33,7 @@ export const STATUS_STYLE = {
   [STATUS.READ]: {
     icon: ReadIcon,
     color: Colors.charcoal,
+    darkColor: '#BCC7CC',
   },
 };
 
@@ -40,14 +41,17 @@ export const SEVERITY_STYLE = {
   [SEVERITY.INFO]: {
     icon: InfoIcon,
     color: NOTIFICATIONCOLORS.INFO,
+    darkColor: NOTIFICATIONCOLORS.INFO,
   },
   [SEVERITY.ERROR]: {
     icon: ErrorIcon,
     color: NOTIFICATIONCOLORS.ERROR,
+    darlColor: NOTIFICATIONCOLORS.ERROR_DARK,
   },
   [SEVERITY.WARNING]: {
     icon: AlertIcon,
     color: NOTIFICATIONCOLORS.WARNING,
+    darkColor: NOTIFICATIONCOLORS.WARNING,
   },
 };
 

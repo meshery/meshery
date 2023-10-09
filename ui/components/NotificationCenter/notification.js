@@ -336,7 +336,7 @@ export const Notification = withErrorBoundary(({ event_id }) => {
               justifyContent: 'start',
               alignItems: 'center',
               gap: '0.25rem',
-              paddingInline: '0.25rem',
+              paddingInline: '0.55rem',
             }}
           >
             <Checkbox

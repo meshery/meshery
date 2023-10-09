@@ -50,7 +50,6 @@ export var darkTheme = createTheme({
       icon: 'rgba(255, 255, 255, 0.54)',
       icon2: '#E6E6E6',
       iconMain: '#F6F8F8',
-      iconDisabled: '#808080',
       disabledIcon: 'rgba(255, 255, 255, 0.26)',
       chevron: 'rgb(255, 255, 255, 0.2)',
       link: 'rgba(255, 255, 255, 0.7)',
@@ -197,7 +196,20 @@ darkTheme = {
           '0px 4px 0px -2px rgb(0 179 159 / 10%), 0px 4px 0px 0px rgb(0 179 159 / 10%), 0px 2px 0px 0px rgb(0 179 159 / 20%)',
       },
     },
-    MuiIconButton: { root: { padding: darkTheme.spacing(1) }, colorPrimary: { color: '#FFF' } },
+    MuiIconButton: {
+      root: {
+        padding: darkTheme.spacing(1),
+        color: '#F6F8F8',
+        '&:hover': {
+          color: '#00B39F',
+        },
+      },
+      colorPrimary: {
+        color: '#F6F8F8',
+      },
+
+      //focusedStyles
+    },
     MuiTooltip: { tooltip: { borderRadius: 4 } },
     MuiDivider: { root: { backgroundColor: '#404854' } },
     MuiListItemText: { primary: { fontWeight: darkTheme.typography.fontWeightMedium } },
@@ -293,7 +305,6 @@ let theme = createTheme({
       icon: 'rgba(0, 0, 0, 0.54)',
       icon2: 'gray',
       iconMain: '#3C494F',
-      iconDisabled: '#CCCCCC',
       disabledIcon: 'rgba(0, 0, 0, 0.26)',
       chevron: '#FFF',
       link: '#000',
@@ -394,7 +405,16 @@ theme = {
         // },
       },
     },
-    MuiIconButton: { root: { padding: theme.spacing(1) }, colorPrimary: { color: '#607d8b' } },
+    MuiIconButton: {
+      root: {
+        padding: theme.spacing(1),
+        '&:hover': {
+          color: '#00B39F',
+        },
+        color: '#607d8b',
+      },
+      colorPrimary: { color: '#607d8b' },
+    },
     MuiTooltip: { tooltip: { borderRadius: 4 } },
     MuiDivider: { root: { backgroundColor: '#404854' } },
     MuiListItemText: { primary: { fontWeight: theme.typography.fontWeightMedium } },
@@ -424,7 +444,16 @@ theme = {
         },
       },
     },
-
+    MuiOutlinedInput: {
+      root: {
+        '&:hover $notchedOutline': {
+          borderColor: '#00B39F',
+        },
+        '&$focused $notchedOutline': {
+          borderColor: '#00B39F',
+        },
+      },
+    },
     // global style for body throughout meshery-ui
     MuiCssBaseline: {
       '@global': {

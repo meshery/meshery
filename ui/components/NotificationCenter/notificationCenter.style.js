@@ -12,6 +12,7 @@ export const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     justifyContent: 'space-between',
     boxShadow: theme.shadows[2],
+    zIndex: 1500,
   },
   drawerButton: {
     padding: '0.45rem',

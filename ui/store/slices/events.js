@@ -206,6 +206,9 @@ export const selectIsEventChecked = (state) => {
 };
 
 export const selectAreAllEventsChecked = (state) => {
+  if (selectEvents(state).length == 0) {
+    return false;
+  }
   return selectEvents(state).reduce((selected, event) => (event.checked ? selected : false), true);
 };
 

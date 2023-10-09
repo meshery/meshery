@@ -56,6 +56,21 @@ import ReadIcon from '../../assets/icons/ReadIcon';
 import UnreadIcon from '../../assets/icons/UnreadIcon';
 import DeleteIcon from '../../assets/icons/DeleteIcon';
 
+const NotificationCenterContext = React.createContext({
+  drawerPortals: null,
+  setDrawerPortals: () => {},
+});
+
+export const NotificationCenterProvider = ({ children }) => {
+  const [drawerPortals, setDrawerPortals] = useState(null);
+  return (
+    <NotificationCenterContext.Provider value={{ drawerPortals, setDrawerPortals }}>
+      {children}
+      {drawerPortals}
+    </NotificationCenterContext.Provider>
+  );
+};
+
 const getSeverityCount = (count_by_severity_level, severity) => {
   return count_by_severity_level.find((item) => item.severity === severity)?.count || 0;
 };
@@ -109,8 +124,10 @@ const NavbarNotificationIcon = withErrorBoundary(() => {
 
 const NotificationCountChip = withErrorBoundary(
   ({ classes, notificationStyle, count, type, handleClick }) => {
+    const theme = useTheme();
+    const darkColor = notificationStyle?.darkColor || notificationStyle?.color;
     const chipStyles = {
-      fill: notificationStyle?.color,
+      fill: theme.palette.type === 'dark' ? darkColor : notificationStyle?.color,
       height: '20px',
       width: '20px',
     };
@@ -191,6 +208,7 @@ const Loading = () => {
 
 const BulkActions = () => {
   const checkedEvents = useSelector(selectCheckedEvents);
+  const noEventsPresent = useSelector((state) => selectEvents(state).length === 0);
   const [deleteEvents, { isLoading: isDeleting }] = useDeleteEventsMutation();
   const [updateEvents, { isLoading: isUpdatingStatus }] = useUpdateEventsMutation();
 
@@ -198,8 +216,6 @@ const BulkActions = () => {
   // if multiple updates can be triggered from same mutator , only single bulk action is allowed at a time
   const [curentOngoingUpdate, setCurrentOngoingUpdate] = useState(null);
   const isActionInProgress = isDeleting || isUpdatingStatus;
-
-  const theme = useTheme();
 
   const dispatch = useDispatch();
   const areAllEventsChecked = useSelector(selectAreAllEventsChecked);
@@ -240,14 +256,19 @@ const BulkActions = () => {
         <IconButton onClick={onClick} disabled={disabled}>
           <Icon
             {...iconMedium}
-            fill={
-              disabled ? theme.palette.secondary.iconDisabled : theme.palette.secondary.iconMain
-            }
+            style={{
+              opacity: disabled ? 0.5 : 1,
+            }}
+            fill="currentColor"
           />
         </IconButton>
       </Tooltip>
     );
   };
+
+  if (noEventsPresent) {
+    return null;
+  }
 
   return (
     <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
