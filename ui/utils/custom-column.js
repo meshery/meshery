@@ -29,10 +29,15 @@ const styles = (theme) => ({
 
 const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) => {
   const [anchorEl, setAnchorEl] = useState(null);
+
+  /* 
+  ESLint error: values are never used
+  
   const open = Boolean(anchorEl);
   const containerRef = useRef(null);
 
   const transitionDuration = Math.min(300 + columns.length * 50, 1000);
+  */
 
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -66,6 +71,7 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) =
 
       <Box sx={{ overflow: 'hidden' }}>
         <Popper
+          style={{ zIndex: 120 }}
           open={Boolean(anchorEl)}
           anchorEl={anchorEl}
           placement="bottom-start"
