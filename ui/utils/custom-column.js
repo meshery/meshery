@@ -75,11 +75,9 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) =
             horizontal: 'center',
           }}
 
-          /*
-            These code is commented out now because it was having anomalies in the UI at different sections while slide in, 
-            had to find better solution for this which will taken care from sistent by spring animation because the clickawaylistner
-            having issues while having inline transition style/slider in the popper.            
-          */
+          // These code is commented out now because it was having anomalies in the UI at different sections while slide in,
+          // had to find better solution for this which will taken care from sistent by spring animation because the clickawaylistner
+          // having issues while having inline transition style/slider in the popper.
 
           // transition
           // popperOptions={{
