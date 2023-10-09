@@ -110,7 +110,7 @@ const EventsSubsciptionProvider_ = withSuppressedErrorBoundary(() => {
   useEffect(() => {
     const subscription = eventsSubscription();
     return () => {
-      subscription && subscription.dispose();
+      subscription.dispose();
     };
   }, []);
 
@@ -350,7 +350,14 @@ const BulkActions = () => {
   }
 
   return (
-    <Box style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <Box
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '0.15rem',
+      }}
+    >
       <Box>
         <Checkbox checked={areAllEventsChecked} color="primary" onChange={handleCheckboxChange} />
       </Box>

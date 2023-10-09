@@ -58,6 +58,7 @@ const useStyles = makeStyles(() => ({
 
   summary: (props) => ({
     paddingBlock: '0.5rem',
+    paddingInline: '0.25rem',
     cursor: 'pointer',
     backgroundColor: alpha(props.notificationColor, 0.2),
   }),
@@ -337,7 +338,6 @@ export const Notification = withErrorBoundary(({ event_id }) => {
               justifyContent: 'start',
               alignItems: 'center',
               gap: '0.25rem',
-              paddingInline: '0.55rem',
             }}
           >
             <Checkbox
