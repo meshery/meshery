@@ -159,6 +159,8 @@
       url: guides/troubleshooting
     - title: Upgrading Meshery
       url: guides/upgrade
+    - title: Send Events From Meshery Server Using Golang
+      url: guides/send-events
     - title: Using mesheryctl ↆ
       url: guides/mesheryctl
       children:
