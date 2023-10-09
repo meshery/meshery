@@ -63,7 +63,27 @@ export const eventsSlice = createSlice({
     },
 
     updateEvent: eventsEntityAdapter.updateOne,
-    deleteEvent: eventsEntityAdapter.removeOne,
+    updateEvents: eventsEntityAdapter.updateMany,
+    updateIsEventChecked: (state, { payload }) => {
+      const { id, value } = payload;
+      eventsEntityAdapter.updateOne(state, {
+        id,
+        changes: {
+          checked: value,
+        },
+      });
+    },
+
+    updateCheckAllEvents: (state, { payload }) => {
+      const updates = Object.keys(state.entities).map((id) => ({
+        id,
+        changes: {
+          checked: payload,
+        },
+      }));
+      console.log('updates', updates);
+      eventsEntityAdapter.updateMany(state, updates);
+    },
 
     clearCurrentView: (state) => {
       state.current_view = initialState.current_view;
@@ -90,12 +110,14 @@ export const {
   clearEvents,
   setEvents,
   clearCurrentView,
+  updateIsEventChecked,
+  updateCheckAllEvents,
   pushEvents,
   setCurrentView,
   updateEvent,
-  deleteEvent: removeEvent,
   toggleNotificationCenter,
   closeNotificationCenter,
+  updateEvents,
 } = eventsSlice.actions;
 
 export default eventsSlice.reducer;
@@ -127,25 +149,42 @@ export const loadNextPage = (fetch) => async (dispatch, getState) => {
   dispatch(loadEvents(fetch, currentView.page + 1, currentView.filters));
 };
 
-export const changeEventStatus = (mutator, id, status) => async (dispatch, getState) => {
-  const currentView = getState().events.current_view;
+export const updateEventStatus =
+  ({ id, status }) =>
+  (dispatch, getState) => {
+    //const currentView = getState().events.current_view;
+    dispatch(
+      updateEvent({
+        id,
+        changes: {
+          status,
+        },
+      }),
+    );
+  };
 
-  dispatch(
-    updateEvent({
-      id,
-      changes: {
-        status,
-        is_visible: currentView?.filters?.status ? false : true, //if status filter is applied, then remove the event from view
-      },
-    }),
-  );
-  mutator({ id, status });
-};
+// does a soft deletion on ui
+export const deleteEvent =
+  ({ id }) =>
+  (dispatch) => {
+    dispatch(updateEvent({ id, changes: { is_deleted: true } }));
+    //mutator({ id });
+  };
 
-export const deleteEvent = (mutator, id) => async (dispatch) => {
-  dispatch(updateEvent({ id, changes: { is_visible: false } }));
-  mutator({ id });
-};
+export const deleteEvents =
+  ({ ids }) =>
+  (dispatch) => {
+    dispatch(
+      updateEvents(
+        ids.map((id) => ({
+          id,
+          changes: {
+            is_deleted: true,
+          },
+        })),
+      ),
+    );
+  };
 
 //selectors
 
@@ -154,6 +193,31 @@ export const selectEvents = (state) => {
   return eventsEntityAdapter.getSelectors().selectAll(state.events);
 };
 
+export const selectCheckedEvents = (state) => {
+  return selectEvents(state).filter((e) => e.checked);
+};
+
 export const selectEventById = (state, id) => {
   return eventsEntityAdapter.getSelectors().selectById(state.events, id);
+};
+
+export const selectIsEventChecked = (state) => {
+  return Boolean(selectEventById(state, id).checked);
+};
+
+export const selectAreAllEventsChecked = (state) => {
+  if (selectEvents(state).length == 0) {
+    return false;
+  }
+  return selectEvents(state).reduce((selected, event) => (event.checked ? selected : false), true);
+};
+
+export const selectIsEventVisible = (state, id) => {
+  const event = selectEventById(state, id);
+  const currentFilters = state.events.current_view?.filters || {};
+  const shouldBeInCurrentFilteredView = currentFilters.status
+    ? currentFilters.status == event.status
+    : true;
+  const isDeleted = event.is_deleted || false;
+  return !isDeleted && shouldBeInCurrentFilteredView;
 };
