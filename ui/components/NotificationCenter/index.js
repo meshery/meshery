@@ -110,7 +110,7 @@ const EventsSubsciptionProvider_ = withSuppressedErrorBoundary(() => {
   useEffect(() => {
     const subscription = eventsSubscription();
     return () => {
-      subscription.dispose();
+      subscription && subscription.dispose();
     };
   }, []);
 

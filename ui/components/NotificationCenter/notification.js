@@ -293,6 +293,7 @@ export const Notification = withErrorBoundary(({ event_id }) => {
     notificationColor: severityStyles?.color,
     status: event?.status,
   });
+  const theme = useTheme();
   const dispatch = useDispatch();
   const [expanded, setExpanded] = React.useState(false);
   const handleExpandClick = (e) => {
@@ -389,7 +390,13 @@ export const Notification = withErrorBoundary(({ event_id }) => {
                   )}
                 </Box>
               </Grid>
-              <Grid item sm={10}>
+              <Grid
+                item
+                sm={10}
+                style={{
+                  color: theme.palette.secondary.textMain,
+                }}
+              >
                 <FormattedMetadata event={event} classes={classes} />
               </Grid>
             </Grid>

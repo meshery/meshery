@@ -82,7 +82,7 @@ export const KeyValue = ({ Key, Value }) => {
     <div
       style={{
         display: 'flex',
-        alignItems: 'end',
+        alignItems: 'baseline',
         gap: '0.25rem',
         flexWrap: 'wrap',
         marginBlock: '0.5rem',

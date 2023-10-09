@@ -492,23 +492,23 @@ class MesheryApp extends App {
                           themeSetter={this.themeSetter}
                         />
                       )}
-                      <main className={classes.mainContent}>
-                        <MuiPickersUtilsProvider utils={MomentUtils}>
-                          <ErrorBoundary>
-                            <Component
-                              pageContext={this.pageContext}
-                              contexts={this.state.k8sContexts}
-                              activeContexts={this.state.activeK8sContexts}
-                              setActiveContexts={this.setActiveContexts}
-                              searchContexts={this.searchContexts}
-                              theme={this.state.theme}
-                              themeSetter={this.themeSetter}
-                              {...pageProps}
-                            />
-                          </ErrorBoundary>
-                        </MuiPickersUtilsProvider>
-                      </main>
                     </NotificationCenterProvider>
+                    <main className={classes.mainContent}>
+                      <MuiPickersUtilsProvider utils={MomentUtils}>
+                        <ErrorBoundary>
+                          <Component
+                            pageContext={this.pageContext}
+                            contexts={this.state.k8sContexts}
+                            activeContexts={this.state.activeK8sContexts}
+                            setActiveContexts={this.setActiveContexts}
+                            searchContexts={this.searchContexts}
+                            theme={this.state.theme}
+                            themeSetter={this.themeSetter}
+                            {...pageProps}
+                          />
+                        </ErrorBoundary>
+                      </MuiPickersUtilsProvider>
+                    </main>
                   </SnackbarProvider>
                   <footer
                     className={
