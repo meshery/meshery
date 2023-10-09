@@ -1222,42 +1222,75 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	limitstr := r.URL.Query().Get("pagesize")
-	var limit int
-	if limitstr != "all" {
-		limit, _ = strconv.Atoi(limitstr)
 
-		if limit == 0 {
-			limit = DefaultPageSizeForMeshModelComponents
-		}
-	} else {
-		limit = -1
-	}
+	limitstr := r.URL.Query().Get("pagesize")
 	pagestr := r.URL.Query().Get("page")
+	searchQuery := r.URL.Query().Get("search")
+
+	limit, _ := strconv.Atoi(limitstr)
+	if limitstr != "all" && limit == 0 {
+		limit = DefaultPageSizeForMeshModelComponents
+	}
+
 	page, _ := strconv.Atoi(pagestr)
 	if page <= 0 {
 		page = 1
 	}
 
-	searchQuery := r.URL.Query().Get("search")
-	hosts, totalHostsCount, err := h.GetMesheryHosts(limit, page, searchQuery)
+	offset := (page - 1) * limit
+
+	hosts, hostsCount, err := h.registryManager.GetHostsForModels(h.dbHandler.DB, limit, offset, searchQuery)
 	if err != nil {
-		http.Error(rw, "Failed to retrieve hosts: "+err.Error(), http.StatusInternalServerError)
-		return
+		h.log.Error(ErrGetMeshModels(err))
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+	}
+
+	result := make([]MesheryHostsDisplay, 0, len(hosts))
+
+	for _, host := range hosts {
+		hostCounts := hostIndividualCount{}
+		types := []string{"model", "component", "relationship", "policies"}
+
+		for _, t := range types {
+			count, err := h.registryManager.GetCountForHostAndType(h.dbHandler.DB, host.ID, t)
+			if err != nil {
+				h.log.Error(ErrGetMeshModels(err))
+				http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+			}
+
+			switch t {
+			case "model":
+				hostCounts.Models = count
+			case "component":
+				hostCounts.Components = count
+			case "relationship":
+				hostCounts.Relationships = count
+			case "policies":
+				hostCounts.Policies = count
+			}
+		}
+
+		res := MesheryHostsDisplay{
+			ID:       host.ID,
+			Hostname: registry.HostnameToPascalCase(host.Hostname),
+			Port:     host.Port,
+			Summary:  hostCounts,
+		}
+		result = append(result, res)
 	}
 
 	var pgSize int64
 
 	if limitstr == "all" {
-		pgSize = totalHostsCount
+		pgSize = hostsCount
 	} else {
 		pgSize = int64(limit)
 	}
 	res := MesheryHostsContextPage{
 		Page:        page,
 		PageSize:    int(pgSize),
-		Count:       totalHostsCount,
-		Registrants: hosts,
+		Count:       hostsCount,
+		Registrants: result,
 	}
 
 	if err := enc.Encode(res); err != nil {
