@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -31,11 +31,8 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) =
   const [anchorEl, setAnchorEl] = useState(null);
 
   /* 
-  ESLint error: values are never used
-  
   const open = Boolean(anchorEl);
   const containerRef = useRef(null);
-
   const transitionDuration = Math.min(300 + columns.length * 50, 1000);
   */
 
@@ -83,6 +80,15 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) =
             vertical: 'top',
             horizontal: 'center',
           }}
+
+          /*
+
+            These code is commented out now because it was having anomalies in the UI at different sections while slide in, 
+            had to find better solution for this which will taken care from sistent by spring animation because the clickawaylistner
+            having issues while having inline transition style/slider in the popper.
+            
+          */
+
           // transition
           // popperOptions={{
           //   modifiers: [
