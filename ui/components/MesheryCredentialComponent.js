@@ -9,7 +9,6 @@ import {
   withStyles,
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import DataTable from 'mui-datatables';
 import Modal from './Modal';
 import { CON_OPS } from '../utils/Enum';
 import dataFetch from '../lib/data-fetch';
@@ -23,6 +22,11 @@ import { bindActionCreators } from 'redux';
 import { updateProgress } from '../lib/store';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
+import ResponsiveDataTable from '../utils/data-table';
+import CustomColumnVisibilityControl from '../utils/custom-column';
+import { updateVisibleColumns } from '../utils/responsive-column';
+import { useWindowDimensions } from '../utils/dimension';
+import useStyles from '../assets/styles/general/tool.styles';
 
 const styles = (theme) => ({
   muiRow: {
@@ -50,6 +54,8 @@ const MesheryCredentialComponent = ({ updateProgress, classes }) => {
   const [credentialType, setCredentialType] = useState(schema_array[0]);
   const [credentialName, setCredentialName] = useState(null);
   const { notify } = useNotification();
+  const { width } = useWindowDimensions();
+  const StyleClass = useStyles();
 
   useEffect(() => {
     fetchCredential();
@@ -132,6 +138,14 @@ const MesheryCredentialComponent = ({ updateProgress, classes }) => {
         return;
     }
   };
+
+  let colViews = [
+    ['name', 'xs'],
+    ['type', 'l'],
+    ['created_at', 'xl'],
+    ['updated_at', 'xl'],
+    ['actions', 'xs'],
+  ];
 
   const columns = [
     {
@@ -254,7 +268,7 @@ const MesheryCredentialComponent = ({ updateProgress, classes }) => {
         customBodyRender: (_, tableMeta) => {
           const rowData = credentials[tableMeta.rowIndex];
           return (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
               <Tooltip key={`edit_credential-${tableMeta.rowIndex}`} title="Edit Credential">
                 <IconButton
                   aria-label="edit"
@@ -283,6 +297,8 @@ const MesheryCredentialComponent = ({ updateProgress, classes }) => {
     filterType: 'textField',
     responsive: 'standard',
     print: false,
+    search: false,
+    viewColumns: false,
     download: false,
     selectToolbarPlacement: 'none',
     selectableRows: false,
@@ -290,33 +306,6 @@ const MesheryCredentialComponent = ({ updateProgress, classes }) => {
     draggableColumns: {
       enabled: true,
     },
-    customToolbar: () => (
-      <>
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          size="large"
-          onClick={(ev) => handleOpen(ev)(null, 'create', null)}
-          style={{
-            padding: '0.5rem',
-            borderRadius: 5,
-            marginRight: '2rem',
-          }}
-          data-cy="btnResetDatabase"
-        >
-          <AddIconCircleBorder style={{ width: '1.25rem' }} />
-          <Typography
-            style={{
-              paddingLeft: '0.25rem',
-              marginRight: '0.25rem',
-            }}
-          >
-            Create
-          </Typography>
-        </Button>
-      </>
-    ),
   };
 
   // control the entire submit
@@ -390,17 +379,75 @@ const MesheryCredentialComponent = ({ updateProgress, classes }) => {
     }
   };
 
+  const [tableCols, updateCols] = useState(columns);
+
+  const [columnVisibility, setColumnVisibility] = useState(() => {
+    let showCols = updateVisibleColumns(colViews, width);
+    // Initialize column visibility based on the original columns' visibility
+    const initialVisibility = {};
+    columns.forEach((col) => {
+      initialVisibility[col.name] = showCols[col.name];
+    });
+    return initialVisibility;
+  });
+
+  const customInlineStyle = {
+    marginBottom: '0.5rem',
+    marginTop: '1rem',
+  };
+
   if (loading) {
     return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Credentials" />;
   }
   return (
     <div style={{ display: 'table', tableLayout: 'fixed', width: '100%' }}>
-      <DataTable
+      <div className={StyleClass.toolWrapper} style={customInlineStyle}>
+        <div>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={(ev) => handleOpen(ev)(null, 'create', null)}
+            style={{
+              padding: '0.5rem',
+              borderRadius: 5,
+              marginRight: '2rem',
+            }}
+            data-cy="btnResetDatabase"
+          >
+            <AddIconCircleBorder style={{ width: '1.25rem' }} />
+            <Typography
+              style={{
+                paddingLeft: '0.25rem',
+                marginRight: '0.25rem',
+              }}
+            >
+              Create
+            </Typography>
+          </Button>
+        </div>
+        <div>
+          {/* <SearchBar
+          onSearch={(value) => {
+
+          } */}
+          <CustomColumnVisibilityControl
+            columns={columns}
+            customToolsProps={{ columnVisibility, setColumnVisibility }}
+          />
+        </div>
+      </div>
+      <ResponsiveDataTable
         columns={columns}
         data={credentials}
         options={options}
         className={classes.muiRow}
+        tableCols={tableCols}
+        updateCols={updateCols}
+        columnVisibility={columnVisibility}
       />
+
       <Modal
         open={credModal.open}
         formData={credModal.data}

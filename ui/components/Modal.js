@@ -84,7 +84,7 @@ const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
     setAnchorEl(null);
   };
   return (
-    <div>
+    <div id="searchClick">
       <Tooltip title="Schema_Changer">
         <IconButton component="span" onClick={(e) => setAnchorEl(e.currentTarget)}>
           <ArrowDropDown style={{ color: '#000' }} />

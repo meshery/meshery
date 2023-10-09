@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { getPath } from '../../lib/path';
 import Head from 'next/head';
-import dataFetch from '../../lib/data-fetch';
+import { promisifiedDataFetch } from '../../lib/data-fetch';
 import { ctxUrl } from '../../utils/multi-ctx';
 import React, { useEffect, useState } from 'react';
 
@@ -16,33 +16,29 @@ const UserPref = (props) => {
   const [perfResultStats, setPerfResultStats] = useState(undefined);
 
   useEffect(() => {
-    handleFetchData();
-  }, [props]);
+    handleFetchData(props.selectedK8sContexts);
+  }, [props.selectedK8sContext]);
 
-  const handleFetchData = async () => {
-    // console.log(`path: ${getPath()}`);
+  useEffect(() => {
     props.updatepagepath({ path: getPath() });
     props.updatepagetitle({ title: 'User Preferences' });
+  }, []);
 
-    await new Promise((resolve) => {
-      dataFetch(
-        ctxUrl('/api/user/prefs', props.selectedK8sContexts),
-        {
-          method: 'GET',
-          credentials: 'include',
-        },
-        (result) => {
-          resolve();
-          if (typeof result !== 'undefined') {
-            setAnonymousStats(result.anonymousUsageStats);
-            setPerfResultStats(result.anonymousPerfResults);
-          }
-        },
-        // Ignore error because we will fallback to default state
-        // and to avoid try catch due to async await functions
-        resolve,
-      );
-    });
+  const handleFetchData = async (selectedK8sContexts) => {
+    // console.log(`path: ${getPath()}`);
+
+    try {
+      const result = await promisifiedDataFetch(ctxUrl('/api/user/prefs', selectedK8sContexts), {
+        method: 'GET',
+        credentials: 'include',
+      });
+      if (result) {
+        setAnonymousStats(result.anonymousUsageStats);
+        setPerfResultStats(result.anonymousPerfResults);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
