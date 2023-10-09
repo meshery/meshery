@@ -1,66 +1,76 @@
-import React, { useState, useRef } from "react";
-import TextField from "@mui/material/TextField";
-import { Tooltip } from "@mui/material";
-import IconButton from "@mui/material/IconButton";
-import SearchIcon from "@mui/icons-material/Search";
-import CloseIcon from "@mui/icons-material/Close";
-import { makeStyles } from "@material-ui/core/styles";
+import React, { useState, useRef } from 'react';
+import TextField from '@mui/material/TextField';
+import { Tooltip } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import SearchIcon from '../assets/icons/search';
+import CloseIcon from '@mui/icons-material/Close';
+import { makeStyles } from '@material-ui/core/styles';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
+import debounce from './debounce';
 
 const useStyles = makeStyles((theme) => ({
-  icon : {
-    color : theme.palette.secondary.iconMain
+  icon: {
+    color: theme.palette.secondary.iconMain,
+    width: '1.5rem',
+    height: '1.5rem',
   },
-  searchInput : {
-    "& .MuiOutlinedInput-root" : {
-      color : theme.palette.secondary.iconMain
+  searchInput: {
+    '& .MuiOutlinedInput-root': {
+      color: theme.palette.secondary.iconMain,
     },
-    "& .MuiOutlinedInput-notchedOutline" : {
-      borderColor : theme.palette.secondary.iconMain
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderColor: theme.palette.secondary.iconMain,
+      '&:hover': {
+        borderColor: '#00b39f',
+      },
     },
-    "& .MuiInputLabel-root" : {
-      color : theme.palette.secondary.iconMain
+    '& .MuiInputLabel-root': {
+      color: theme.palette.secondary.iconMain,
     },
-    "& .MuiInputBase-input" : {
-      color : theme.palette.secondary.iconMain,
-      caretColor : theme.palette.secondary.iconMain
+    '& .MuiInputBase-input': {
+      color: theme.palette.secondary.iconMain,
+      caretColor: theme.palette.secondary.iconMain,
     },
-    "& .MuiInput-underline:before" : {
-      borderBottomColor : theme.palette.secondary.iconMain
+    '& .MuiInput-underline:before': {
+      borderBottomColor: theme.palette.secondary.iconMain,
     },
-    "& .MuiInput-underline:hover:before" : {
-      borderBottomColor : theme.palette.secondary.iconMain
+    '& .MuiInput-underline:hover:before': {
+      borderBottomColor: '#00b39f',
     },
-    "& .MuiInput-underline:hover:after" : {
-      borderBottomColor : theme.palette.secondary.iconMain
+    '& .MuiInput-underline:hover:after': {
+      borderBottomColor: '#00b39f',
     },
-    "& .MuiInput-underline.Mui-focused:before" : {
-      borderBottomColor : theme.palette.type === theme.palette.secondary.iconMain
+    '& .MuiInput-underline.Mui-focused:before': {
+      borderBottomColor: '#00b39f',
     },
-    "& .MuiInput-underline.Mui-focused:after" : {
-      borderBottomColor : theme.palette.type === theme.palette.secondary.iconMain
+    '& .MuiInput-underline.Mui-focused:after': {
+      borderBottomColor: '#00b39f',
     },
   },
 }));
 
 const SearchBar = ({ onSearch, placeholder }) => {
   const [expanded, setExpanded] = useState(false);
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState('');
   const searchRef = useRef(null);
   const classes = useStyles();
 
+  const debouncedOnSearch = debounce(onSearch, 500);
+
   const handleSearchChange = (event) => {
-    onSearch(event.target.value);
+    debouncedOnSearch(event.target.value);
     setSearchText(event.target.value);
   };
 
   const handleClearIconClick = () => {
-    setSearchText("");
+    setSearchText('');
+    debouncedOnSearch('');
     setExpanded(false);
   };
 
   const handleSearchIconClick = () => {
     if (expanded) {
-      setSearchText("");
+      setSearchText('');
       setExpanded(false);
     } else {
       setExpanded(true);
@@ -74,45 +84,56 @@ const SearchBar = ({ onSearch, placeholder }) => {
     <div>
       <TextField
         className={classes.searchInput}
-        id="standard-basic"
+        id="searchClick"
         variant="standard"
         value={searchText}
         onChange={handleSearchChange}
         inputRef={searchRef}
         placeholder={placeholder}
         style={{
-          width : expanded ? "200px" : "0",
-          opacity : expanded ? 1 : 0,
-          transition : "width 0.3s ease, opacity 0.3s ease",
+          width: expanded ? '200px' : '0',
+          opacity: expanded ? 1 : 0,
+          transition: 'width 0.3s ease, opacity 0.3s ease',
         }}
       />
 
       {expanded ? (
-        <Tooltip title="Close">
-          <IconButton
-            onClick={handleClearIconClick}
-            sx={{
-              "&:hover" : {
-                borderRadius : "4px",
-              },
-            }}
-          >
-            <CloseIcon className={classes.icon} />
-          </IconButton>
-        </Tooltip>
+        <ClickAwayListener
+          onClickAway={(event) => {
+            //when user clicks on actions menu, search bar should not close
+            const isSearchBar = event.target.closest('#your-search-bar-id');
+            const isTable = event.target.closest('#searchClick');
+
+            if (!isSearchBar && !isTable) {
+              // The click is outside the search bar and table, so you can close the search bar
+              handleClearIconClick(); // Close the search bar as needed
+            }
+          }}
+        >
+          <Tooltip title="Close">
+            <IconButton
+              onClick={handleClearIconClick}
+              sx={{
+                '&:hover': {
+                  borderRadius: '4px',
+                },
+              }}
+            >
+              <CloseIcon className={classes.icon} />
+            </IconButton>
+          </Tooltip>
+        </ClickAwayListener>
       ) : (
         <Tooltip title="Search">
           <IconButton
             onClick={handleSearchIconClick}
-            sx={
-              {
-                "&:hover" : {
-                  borderRadius : "4px"
-                }
-              }
-            }
+            sx={{
+              '&:hover': {
+                borderRadius: '4px',
+              },
+            }}
           >
-            <SearchIcon className={classes.icon} />
+            <SearchIcon />
           </IconButton>
         </Tooltip>
       )}

@@ -10,52 +10,14 @@ services:
     pull_policy: always
     environment:
       - "PROVIDER_BASE_URLS=https://meshery.layer5.io"
-      - "ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nginx-sm:10010 meshery-app-mesh:10005 meshery-kuma:10007 meshery-traefik-mesh:10006  meshery-cilium:10012"
+      # - "ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nginx-sm:10010 meshery-app-mesh:10005 meshery-kuma:10007 meshery-traefik-mesh:10006  meshery-cilium:10012"
       - "EVENT=mesheryLocal"
+      - "KUBECONFIG_FOLDER=/home/appuser/.kube"
       - "PORT=9081"
+      - PROVIDER=Meshery
     volumes:
       - $HOME/.kube:/home/appuser/.kube:ro
       - $HOME/.minikube:$HOME/.minikube:ro
+      - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - "9081:9081"
-  meshery-istio:
-    image: layer5/meshery-istio:stable-latest
-    pull_policy: always
-    ports:
-      - "10000:10000"
-  meshery-linkerd:
-    image: layer5/meshery-linkerd:stable-latest
-    pull_policy: always
-    ports:
-      - "10001:10001"
-  meshery-consul:
-    image: layer5/meshery-consul:stable-latest
-    pull_policy: always
-    ports:
-      - "10002:10002"
-  meshery-app-mesh:
-    image: layer5/meshery-app-mesh:stable-latest
-    pull_policy: always
-    ports:
-      - "10005:10005"
-  meshery-traefik-mesh:
-    image: layer5/meshery-traefik-mesh:stable-latest
-    pull_policy: always
-    ports:
-      - "10006:10006"
-  meshery-kuma:
-    image: layer5/meshery-kuma:stable-latest
-    pull_policy: always
-    ports:
-      - "10007:10007"
-  meshery-nginx-sm:
-    image: layer5/meshery-nginx-sm:stable-latest
-    pull_policy: always
-    ports:
-      - "10010:10010"
-  meshery-cilium:
-    image: layer5/meshery-cilium:stable-latest
-    pull_policy: always
-    ports:
-      - "10012:10012"
-

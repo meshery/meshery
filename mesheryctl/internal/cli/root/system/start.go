@@ -259,13 +259,6 @@ func start() error {
 			AllowedServices[v] = services[v]
 		}
 
-		utils.ViperCompose.Set("services", AllowedServices)
-		err = utils.ViperCompose.WriteConfig()
-		if err != nil {
-			utils.Log.Error(ErrWriteConfig(errors.Wrap(err, "Unable to write context to docker.")))
-			return nil
-		}
-
 		//////// FLAGS
 		// Control whether to pull for new Meshery container images
 		if skipUpdateFlag {
@@ -306,6 +299,21 @@ func start() error {
 			return err
 		}
 		endpoint.Port = int32(tempPort)
+
+		// group, err := user.LookupGroup("docker")
+		// if err != nil {
+		// 	return errors.Wrap(err, utils.SystemError("unable to get GID of docker group"))
+		// }
+
+		// // Create the group_add option and add GID of docker group to meshery container
+		// groupAdd := viper.GetStringSlice("services.meshery.group_add")
+		// groupAdd = append(groupAdd, group.Gid)
+		// utils.ViperCompose.Set("services.meshery.group_add", groupAdd)
+
+		// // Write the modified configuration back to the Docker Compose file
+		// if err := utils.ViperCompose.WriteConfig(); err != nil {
+		// 	return errors.Wrap(err, utils.SystemError("unable to add group_add option. Meshery Server cannot perform this privileged action"))
+		// }
 
 		log.Info("Starting Meshery...")
 		start := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "up", "-d")

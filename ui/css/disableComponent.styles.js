@@ -1,25 +1,25 @@
-import { makeStyles } from "@material-ui/core"
+import { makeStyles } from '@material-ui/core';
 
-const opacity = 0.5
+const opacity = 0.5;
 
 export const disabledStyle = {
-  pointerEvents : 'none',
-  opacity
-}
+  pointerEvents: 'none',
+  opacity,
+};
 export const disabledStyleWithOutOpacity = {
-  pointerEvents : 'none',
-}
+  pointerEvents: 'none',
+};
 
 export const cursorNotAllowed = {
-  cursor : "not-allowed",
-}
+  cursor: 'not-allowed',
+};
 
 export const cursorNotAllowedWithLowOpacity = {
-  cursor : "not-allowed",
-  opacity
-}
+  cursor: 'not-allowed',
+  opacity,
+};
 
 export const disabledStylesMui = makeStyles(() => ({
-  disabled : disabledStyle,
-  cursorNotAllowed
-}))
+  disabled: disabledStyle,
+  cursorNotAllowed,
+}));
