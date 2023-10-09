@@ -30,11 +30,6 @@ const styles = (theme) => ({
 const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
-  /* 
-  const open = Boolean(anchorEl);
-  const containerRef = useRef(null);
-  */
-
   const handleOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
