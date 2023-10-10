@@ -19,16 +19,18 @@ include install/Makefile.show-help.mk
 # Docker-based Builds
 #-----------------------------------------------------------------------------
 .PHONY: docker-build docker-local-cloud docker-cloud docker-playground-build
-## Build Meshery Server and UI containers.
+
+## Build Meshery Server and UI container.
 docker-build:
 	# `make docker-build` builds Meshery inside of a multi-stage Docker container.
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
 	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
 
+## Build Meshery Server and UI container in Playground mode. 
 docker-playground-build:
 	# `make docker-playground-build` builds Meshery inside of a multi-stage Docker container.
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
-	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} --build-arg PROVIDER=$(LOCAL_PROVIDER) --build-arg PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) .	
+	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} --build-arg PROVIDER=$(LOCAL_PROVIDER) --build-arg PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) .
 
 ## Meshery Cloud for user authentication.
 ## Runs Meshery in a container locally and points to locally-running
@@ -65,13 +67,14 @@ wrk2-setup:
 	echo "setup-wrk does not work on Mac Catalina at the moment"
 	cd server; cd cmd; git clone https://github.com/layer5io/wrk2.git; cd wrk2; make; cd ..
 
-## ## Setup nighthawk for local development.
+## Setup nighthawk for local development.
 nighthawk-setup: dep-check
 	cd server; cd cmd; git clone https://github.com/layer5io/nighthawk-go.git; cd nighthawk-go; make setup; cd ..
 
 run-local: server-local error
+
 ## Build and run Meshery Server on your local machine
-## and point to (expect) a locally running Meshery Cloud or other Provider(s)
+## and point to (expect) a locally running Remote Provider
 ## for user authentication.
 server-local: dep-check
 	cd server; cd cmd; go clean; go mod tidy; \
@@ -83,7 +86,56 @@ server-local: dep-check
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go run main.go error.go
 
+## Build Meshery Server on your local machine.
+build-server: dep-check
+	cd server; cd cmd; go mod tidy; cd "../.."
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	GOPROXY=https://proxy.golang.org,direct GOSUMDB=off GO111MODULE=on go build ./server/cmd/main.go ./server/cmd/error.go
+	chmod +x ./main
+
 ## Build and run Meshery Server on your local machine.
+server: dep-check
+	cd server; cd cmd; go mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	go run main.go error.go;
+
+## Build and run Meshery Server on your local machine.
+## Disable deployment of the Meshery Operator to your Kubernetes cluster(s).
+server-without-operator: dep-check
+	cd server; cd cmd; go mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DISABLE_OPERATOR=true \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	go run main.go error.go;
+
+## Build and run Meshery Server with no Kubernetes components on your local machine.
+server-skip-compgen:
+	cd server; cd cmd; go mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+ 	SKIP_COMP_GEN=true \
+	go run main.go error.go;
+	
+## Build and run Meshery Server on your local machine.
+## Do not generate and register Kubernetes models.
 server-without-k8s: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -95,25 +147,6 @@ server-without-k8s: dep-check
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go run main.go error.go;
 
-server: dep-check
-	cd server; cd cmd; go mod tidy; \
-	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
-	PORT=9081 \
-	DEBUG=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
-	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	go run main.go error.go;
-server-without-operator: dep-check
-	cd server; cd cmd; go mod tidy; \
-	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
-	PORT=9081 \
-	DISABLE_OPERATOR=true \
-	DEBUG=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
-	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	go run main.go error.go;
 server-remote-provider: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -134,18 +167,6 @@ server-local-provider: dep-check
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	go run main.go error.go;
-
-## Build and run Meshery Server with no Kubernetes components on your local machine.
-server-skip-compgen:
-	cd server; cd cmd; go mod tidy; \
-	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
-	PORT=9081 \
-	DEBUG=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
-	APP_PATH=$(APPLICATIONCONFIGPATH) \
- 	SKIP_COMP_GEN=true \
 	go run main.go error.go;
 
 ## Build and run Meshery Server with no seed content.
@@ -206,10 +227,10 @@ UI_DEV_SCRIPT = dev16
 
 ifeq ($(findstring v19, $(shell node --version)), v19)
 	UI_BUILD_SCRIPT = build
-	UI_DEV_SCRIPT = dev 
+	UI_DEV_SCRIPT = dev
 else ifeq ($(findstring v18, $(shell node --version)), v18)
 	UI_BUILD_SCRIPT = build
-	UI_DEV_SCRIPT = dev 
+	UI_DEV_SCRIPT = dev
 else ifeq ($(findstring v17, $(shell node --version)), v17)
 	UI_BUILD_SCRIPT = build
 	UI_DEV_SCRIPT = dev
@@ -347,12 +368,12 @@ graphql-build: dep-check
 INSTALLED_GO_VERSION=$(shell go version)
 
 dep-check:
-	
+
 ifeq (,$(findstring $(GOVERSION), $(INSTALLED_GO_VERSION)))
 # Only send a warning.
-	@echo "Dependency missing: go$(GOVERSION). Ensure 'go$(GOVERSION).x' is installed and available in your 'PATH'"	
+	@echo "Dependency missing: go$(GOVERSION). Ensure 'go$(GOVERSION).x' is installed and available in your 'PATH'"
 	@echo "GOVERSION: " $(GOVERSION)
-	@echo "INSTALLED_GO_VERSION: " $(INSTALLED_GO_VERSION) 
+	@echo "INSTALLED_GO_VERSION: " $(INSTALLED_GO_VERSION)
 # Force error and stop.
 #	$(error Found $(INSTALLED_GO_VERSION). \
 #	 Required golang version is: 'go$(GOVERSION).x'. \

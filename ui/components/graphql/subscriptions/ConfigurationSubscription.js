@@ -1,9 +1,17 @@
-import { graphql, requestSubscription } from "react-relay";
-import { createRelayEnvironment } from "../../../lib/relayEnvironment";
+import { graphql, requestSubscription } from 'react-relay';
+import { createRelayEnvironment } from '../../../lib/relayEnvironment';
 
 const configurationSubscription = graphql`
-  subscription ConfigurationSubscription($applicationSelector: PageFilter!, $patternSelector: PageFilter!, $filterSelector: PageFilter!) {
-    configuration: subscribeConfiguration(applicationSelector: $applicationSelector, patternSelector: $patternSelector, filterSelector: $filterSelector) {
+  subscription ConfigurationSubscription(
+    $applicationSelector: PageFilter!
+    $patternSelector: PageFilter!
+    $filterSelector: PageFilter!
+  ) {
+    configuration: subscribeConfiguration(
+      applicationSelector: $applicationSelector
+      patternSelector: $patternSelector
+      filterSelector: $filterSelector
+    ) {
       applications {
         page
         page_size
@@ -62,9 +70,9 @@ const configurationSubscription = graphql`
 export default function ConfigurationSubscription(onNext, variables) {
   const environment = createRelayEnvironment({});
   return requestSubscription(environment, {
-    subscription : configurationSubscription,
-    variables : variables,
-    onNext : onNext,
-    onError : error => console.log("ERROR OCCURED IN CONFIGURATION SUBCRIPTION", error)
+    subscription: configurationSubscription,
+    variables: variables,
+    onNext: onNext,
+    onError: (error) => console.log('ERROR OCCURED IN CONFIGURATION SUBCRIPTION', error),
   });
 }

@@ -1,22 +1,23 @@
 import { MuiThemeProvider, useTheme } from '@material-ui/core/styles';
-import { withTheme } from "@rjsf/core";
-import { Theme as MaterialUITheme } from "@rjsf/material-ui";
-import ajv8validator from "@rjsf/validator-ajv8";
-import React, { useEffect } from "react";
-import { rjsfTheme } from "../../../themes";
+import { withTheme } from '@rjsf/core';
+import { Theme as MaterialUITheme } from '@rjsf/material-ui';
+import ajv8validator from '@rjsf/validator-ajv8';
+import React, { useEffect } from 'react';
+import { rjsfTheme } from '../../../themes';
 import darkRjsfTheme from '../../../themes/rjsf';
 import { CustomTextTooltip } from './CustomTextTooltip';
-import MesheryArrayFieldTemplate from "./RJSFCustomComponents/ArrayFieldTemlate";
+import MesheryArrayFieldTemplate from './RJSFCustomComponents/ArrayFieldTemlate';
 import CustomDateTimeWidget from './RJSFCustomComponents/CustomDateTimeWidget';
 import CustomTextWidget from './RJSFCustomComponents/CustomTextWidget';
 import { CustomFieldTemplate } from './RJSFCustomComponents/FieldTemplate';
-import MesheryCustomObjFieldTemplate from "./RJSFCustomComponents/ObjectFieldTemplate";
+import MesheryCustomObjFieldTemplate from './RJSFCustomComponents/ObjectFieldTemplate';
 import MesheryWrapIfAdditionalTemplate from './RJSFCustomComponents/WrapIfAdditionalTemplate';
-import _ from "lodash"
+import _ from 'lodash';
 import { CustomCheckboxWidget } from './RJSFCustomComponents/CustomCheckboxWidget';
 import MesheryCustomSelectWidget from './RJSFCustomComponents/CustomSelectWidget';
 import CustomTextAreaWidget from './RJSFCustomComponents/CustomTextAreaWidget';
-import CustomFileWidget from './RJSFCustomComponents/CustomFileWidget'
+import CustomFileWidget from './RJSFCustomComponents/CustomFileWidget';
+import CustomURLWidget from './RJSFCustomComponents/CustomURLWidget';
 import ErrorBoundary from '../../ErrorBoundary';
 
 const MuiRJSFForm = withTheme(MaterialUITheme);
@@ -46,25 +47,27 @@ function RJSFForm({
   transformErrors,
   override,
   formRef = null,
-  uiSchema = {}
+  uiSchema = {},
+  ...restProps
 }) {
   const globalTheme = useTheme();
   useEffect(() => {
-    const extensionTooltipPortal = document.getElementById("extension-tooltip-portal");
+    const extensionTooltipPortal = document.getElementById('extension-tooltip-portal');
     if (extensionTooltipPortal) {
       rjsfTheme.props.MuiMenu.container = extensionTooltipPortal;
     }
     rjsfTheme.zIndex.modal = 99999;
-  }, [])
+  }, []);
 
   if (isLoading && LoadingComponent) {
-    return <LoadingComponent />
+    return <LoadingComponent />;
   }
 
   return (
-    <ErrorBoundary> {/* Putting RJSF into error boundary, so that error can be catched.. */}
-      <MuiThemeProvider
-        theme={globalTheme.palette.type === "dark" ? darkRjsfTheme : rjsfTheme}>
+    <ErrorBoundary>
+      {' '}
+      {/* Putting RJSF into error boundary, so that error can be catched.. */}
+      <MuiThemeProvider theme={globalTheme.palette.type === 'dark' ? darkRjsfTheme : rjsfTheme}>
         <MuiRJSFForm
           schema={schema.rjsfSchema}
           idPrefix={jsonSchema?.title}
@@ -76,29 +79,31 @@ function RJSFForm({
             ArrayFieldTemplate,
             ObjectFieldTemplate,
             WrapIfAdditionalTemplate,
-            FieldTemplate : CustomFieldTemplate, // applying field template universally to every field type.
+            FieldTemplate: CustomFieldTemplate, // applying field template universally to every field type.
           }}
-          formContext={{ overrideFlag : override, CustomTextTooltip : CustomTextTooltip }}
+          formContext={{ overrideFlag: override, CustomTextTooltip: CustomTextTooltip }}
           uiSchema={_.merge(schema.uiSchema, uiSchema)}
           widgets={{
             // Custom components to be added here
-            TextWidget : CustomTextWidget,
-            DateTimeWidget : CustomDateTimeWidget,
+            TextWidget: CustomTextWidget,
+            DateTimeWidget: CustomDateTimeWidget,
             SelectWidget,
-            CheckboxWidget : CustomCheckboxWidget,
-            TextareaWidget : CustomTextAreaWidget,
-            FileWidget : CustomFileWidget
+            CheckboxWidget: CustomCheckboxWidget,
+            TextareaWidget: CustomTextAreaWidget,
+            FileWidget: CustomFileWidget,
+            URLWidget: CustomURLWidget,
           }}
           liveValidate={liveValidate}
           showErrorList={false}
           noHtml5Validate
           transformErrors={transformErrors}
+          {...restProps}
         >
           <div></div>
         </MuiRJSFForm>
       </MuiThemeProvider>
     </ErrorBoundary>
-  )
+  );
 }
 
 export default RJSFForm;

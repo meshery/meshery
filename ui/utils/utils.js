@@ -1,8 +1,10 @@
-import { trueRandom } from "../lib/trueRandom";
-import jsYaml from "js-yaml";
-import { findWorkloadByName } from "./workloadFilter";
-import { EVENT_TYPES } from "./Enum";
-import _ from "lodash"
+import { trueRandom } from '../lib/trueRandom';
+import jsYaml from 'js-yaml';
+import { findWorkloadByName } from './workloadFilter';
+import { EVENT_TYPES } from './Enum';
+import _ from 'lodash';
+import { getWebAdress } from './webApis';
+import { APPLICATION, DESIGN, FILTER } from '../constants/navigator';
 
 /**
  * Check if an object is empty
@@ -12,10 +14,10 @@ import _ from "lodash"
  * @returns {Boolean} if obj is empty
  */
 export function isEmptyObj(obj) {
-  return !obj
-    || obj
-    && Object.keys(obj).length === 0
-    && Object.getPrototypeOf(obj) === Object.prototype;
+  return (
+    !obj ||
+    (obj && Object.keys(obj).length === 0 && Object.getPrototypeOf(obj) === Object.prototype)
+  );
 }
 
 /**
@@ -42,8 +44,8 @@ export function isEqualArr(arr1, arr2, orderMatters = true) {
   if (arr1.length !== arr2.length) return false;
 
   if (!orderMatters) {
-    arr1.sort()
-    arr2.sort()
+    arr1.sort();
+    arr2.sort();
   }
 
   for (var i = 0; i < arr1.length; ++i) {
@@ -64,13 +66,13 @@ export function isEqualArr(arr1, arr2, orderMatters = true) {
  * |"unset"
  * )} behavior : scroll-behaviour, see https://developer.mozilla.org/en-US/docs/Web/CSS/scroll-behavior
  */
-export function scrollToTop(behavior = "smooth") {
+export function scrollToTop(behavior = 'smooth') {
   setTimeout(() => {
     window.scrollTo({
-      top : 0,
-      left : 0,
+      top: 0,
+      left: 0,
       behavior,
-    })
+    });
   }, 0);
 }
 
@@ -78,7 +80,7 @@ export function scrollToTop(behavior = "smooth") {
  * Generates random Pattern Name with the prefix meshery_
  */
 export function randomPatternNameGenerator() {
-  return "meshery_" + Math.floor(trueRandom() * 100)
+  return 'meshery_' + Math.floor(trueRandom() * 100);
 }
 
 /**
@@ -90,8 +92,8 @@ export function getComponentsinFile(file) {
       let keys = Object.keys(jsYaml.load(file).services);
       return keys.length;
     } catch (e) {
-      if (e.reason?.includes("expected a single document")) {
-        return file.split("---").length
+      if (e.reason?.includes('expected a single document')) {
+        return file.split('---').length;
       }
     }
   }
@@ -99,10 +101,10 @@ export function getComponentsinFile(file) {
 }
 
 export function generateValidatePayload(pattern_file, workloadTraitSet) {
-  let pattern = jsYaml.loadAll(pattern_file)
+  let pattern = jsYaml.loadAll(pattern_file);
   const services = pattern[0]?.services;
   if (!services) {
-    return { err : "Services not found in the design" };
+    return { err: 'Services not found in the design' };
   }
 
   const validationPayloads = {};
@@ -120,11 +122,11 @@ export function generateValidatePayload(pattern_file, workloadTraitSet) {
     if (!value) {
       continue;
     }
-    valueType = "JSON";
+    valueType = 'JSON';
     const validationPayload = {
       schema,
-      value : JSON.stringify(value),
-      valueType
+      value: JSON.stringify(value),
+      valueType,
     };
     validationPayloads[serviceId] = validationPayload;
   }
@@ -135,16 +137,15 @@ export function generateValidatePayload(pattern_file, workloadTraitSet) {
 export function updateURLs(urlsSet, newUrls, eventType) {
   switch (eventType) {
     case EVENT_TYPES.DELETED:
-      newUrls.forEach(url => {
+      newUrls.forEach((url) => {
         urlsSet.delete(url);
-      })
+      });
       break;
     case EVENT_TYPES.ADDED:
     case EVENT_TYPES.MODIFIED:
-      newUrls.forEach(url => {
+      newUrls.forEach((url) => {
         urlsSet.add(url);
-      })
-
+      });
   }
 }
 
@@ -156,7 +157,7 @@ export function updateURLs(urlsSet, newUrls, eventType) {
  */
 export function getDecodedFile(file) {
   // Extract base64-encoded content
-  var encodedContent = file.split(";base64,")[1];
+  var encodedContent = file.split(';base64,')[1];
 
   // Decode base64 content
   return atob(encodedContent);
@@ -170,13 +171,13 @@ export function getDecodedFile(file) {
  */
 export const getUnit8ArrayDecodedFile = (dataUrl) => {
   // Extract base64 content
-  const [, base64Content] = dataUrl.split(";base64,");
+  const [, base64Content] = dataUrl.split(';base64,');
 
   // Decode base64 content
   const decodedContent = atob(base64Content);
 
   // Convert decoded content to Uint8Array directly
-  const uint8Array = Uint8Array.from(decodedContent, char => char.charCodeAt(0));
+  const uint8Array = Uint8Array.from(decodedContent, (char) => char.charCodeAt(0));
 
   return Array.from(uint8Array);
 };
@@ -188,9 +189,29 @@ export const getUnit8ArrayDecodedFile = (dataUrl) => {
  * @param {string} propertyPath - path of the property to be modified
  * @param {any} newValue - new value to be set
  * @returns {object} - modified schema
-*/
+ */
 export const modifyRJSFSchema = (schema, propertyPath, newValue) => {
   const clonedSchema = _.cloneDeep(schema);
   _.set(clonedSchema, propertyPath, newValue);
   return clonedSchema;
 };
+
+/**
+ * get sharable link with same and host and protocol, here until meshery cloud interception
+ * @param {Object.<string,string>} sharedResource
+ * @returns {string}
+ */
+export function getSharableCommonHostAndprotocolLink(sharedResource) {
+  const webAddr = getWebAdress() + '/extension/meshmap';
+  if (sharedResource?.application_file) {
+    return `${webAddr}?${APPLICATION}=${sharedResource.id}`;
+  }
+  if (sharedResource?.pattern_file) {
+    return `${webAddr}?${DESIGN}=${sharedResource.id}`;
+  }
+  if (sharedResource?.filter_resource) {
+    return `${webAddr}?${FILTER}=${sharedResource.id}`;
+  }
+
+  return '';
+}

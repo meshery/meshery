@@ -25,4 +25,4 @@ Cypress.on('uncaught:exception', (err, runnable) => {
   // of Meshery UI / Meshery Server has been affected in order to identify root cause of defects besides the fact that there's some error being printed to
   // browser dev tool's console so we've decided to disable the default behavior of cypress to fail on such circumstances as part of issue #8640
   return false;
-})
+});

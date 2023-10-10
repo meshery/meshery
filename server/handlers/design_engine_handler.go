@@ -73,12 +73,20 @@ func (h *Handler) PatternFileHandler(
 	}
 
 	isDel := r.Method == http.MethodDelete
-	action := "deploy"
+	isDryRun := r.URL.Query().Get("dryRun") == "true"
+	action := "Deploy"
 	if isDel {
-		action = "undeploy"
+		action = "Undeploy"
 	}
-	// Generate the pattern file object
+
 	patternFile, err := core.NewPatternFile(body)
+	// Generate the pattern file object
+	description := fmt.Sprintf("%sed design '%s'", action, patternFile.Name)
+	if isDryRun {
+		action = "Dry Run"
+		description = fmt.Sprintf("%s design '%s'", action, patternFile.Name)
+	}
+
 	if err != nil {
 		h.log.Error(ErrPatternFile(err))
 		http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
@@ -93,7 +101,7 @@ func (h *Handler) PatternFileHandler(
 		user.ID,
 		isDel,
 		r.URL.Query().Get("verify") == "true",
-		r.URL.Query().Get("dryRun") == "true",
+		isDryRun,
 		r.URL.Query().Get("skipCRD") == "true",
 		false,
 		h.registryManager,
@@ -110,7 +118,7 @@ func (h *Handler) PatternFileHandler(
 			"error": err,
 		}
 
-		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Error %sing pattern %s", action, patternFile.Name)).WithMetadata(metadata).Build()
+		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("%s error for design '%s'", action, patternFile.Name)).WithMetadata(metadata).Build()
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
@@ -123,7 +131,7 @@ func (h *Handler) PatternFileHandler(
 		"summary": response,
 	}
 
-	event := eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Pattern %s deployed", patternFile.Name)).WithMetadata(metadata).Build()
+	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
@@ -185,7 +193,7 @@ func _processPattern(
 	for _, ctx := range k8scontexts {
 		cfg, err := ctx.GenerateKubeConfig()
 		if err != nil {
-			return nil, ErrInvalidKubeConfig(fmt.Errorf("failed to find k8s config"), "_processPattern couldn't find a valid k8s config")
+			return nil, ErrInvalidKubeConfig(fmt.Errorf("failed to find Kubernetes config"), "_processPattern couldn't find a valid Kubernetes config")
 		}
 		ctxToconfig[ctx.ID] = string(cfg)
 		// configs = append(configs, string(cfg))
@@ -380,7 +388,7 @@ func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[s
 				dResp.Error = &core.DryRunResponse{
 					Status: err.Error(),
 				}
-			} else { //Dry run failure returned with an error wrapped in kubernetes custom error					
+			} else { //Dry run failure returned with an error wrapped in kubernetes custom error
 				dResp.Error, err = convertRawDryRunResponse(cmp.Name, status)
 				if err != nil {
 					return nil, err
@@ -411,7 +419,7 @@ func convertRawDryRunResponse(componentName string, status map[string]interface{
 	if err != nil {
 		return nil, err
 	}
-	
+
 	if a.Status != nil {
 		response.Status = *a.Status
 	}

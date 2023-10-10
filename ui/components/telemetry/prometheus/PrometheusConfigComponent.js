@@ -1,27 +1,33 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { NoSsr, Grid, Button, } from '@material-ui/core';
-import ReactSelectWrapper from "../../ReactSelectWrapper";
+import { NoSsr, Grid, Button } from '@material-ui/core';
+import ReactSelectWrapper from '../../ReactSelectWrapper';
 
 const promStyles = (theme) => ({
-  promRoot : {
-    padding : theme.spacing(5),
-    backgroundColor : theme.palette.secondary.elevatedComponents ,
-    borderBottomLeftRadius : theme.spacing(1),
-    borderBottomRightRadius : theme.spacing(1),
-    marginTop : theme.spacing(2),
+  promRoot: {
+    padding: theme.spacing(5),
+    backgroundColor: theme.palette.secondary.elevatedComponents,
+    borderBottomLeftRadius: theme.spacing(1),
+    borderBottomRightRadius: theme.spacing(1),
+    marginTop: theme.spacing(2),
   },
-  buttons : { display : 'flex',
-    justifyContent : 'flex-end', },
-  button : { marginTop : theme.spacing(3),
-  //   marginLeft: theme.spacing(1),
-  }, });
+  buttons: { display: 'flex', justifyContent: 'flex-end' },
+  button: {
+    marginTop: theme.spacing(3),
+    //   marginLeft: theme.spacing(1),
+  },
+});
 
 class PrometheusConfigComponent extends Component {
   render = () => {
     const {
-      classes, prometheusURL, urlError, handleChange, handlePrometheusConfigure, options = []
+      classes,
+      prometheusURL,
+      urlError,
+      handleChange,
+      handlePrometheusConfigure,
+      options = [],
     } = this.props;
     return (
       <NoSsr>
@@ -49,22 +55,22 @@ class PrometheusConfigComponent extends Component {
                 onClick={handlePrometheusConfigure}
                 className={classes.button}
               >
-                  Submit
+                Submit
               </Button>
             </div>
           </div>
         </React.Fragment>
       </NoSsr>
     );
-  }
+  };
 }
 
 PrometheusConfigComponent.propTypes = {
-  classes : PropTypes.object.isRequired,
-  prometheusURL : PropTypes.object.isRequired,
-  handleChange : PropTypes.func.isRequired,
-  handlePrometheusConfigure : PropTypes.func.isRequired,
-  options : PropTypes.array.isRequired
+  classes: PropTypes.object.isRequired,
+  prometheusURL: PropTypes.object.isRequired,
+  handleChange: PropTypes.func.isRequired,
+  handlePrometheusConfigure: PropTypes.func.isRequired,
+  options: PropTypes.array.isRequired,
 };
 
 export default withStyles(promStyles)(PrometheusConfigComponent);
