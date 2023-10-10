@@ -30,8 +30,7 @@ The connection is administratively processed to be ignored from Meshery's view o
 The connection is administratively processed to be offline for maintenance tasks. This is different from being [Disconnected](#6-disconnected)/[Ignored](#4-ignored). 
 
 ### 6. Disconnected: 
-The connection was previously [discovered](#1-discovered)/[registered](#2-registered)/[connected](#3-connected) but is not available currently. This could happen due to connectivity issue/AuthN-AuthZ/connection was deleted outside meshery or any other issue.
-    Meshery will always try re-connecting on session refresh/periodically (not yet supported).
+The connection was previously [discovered](#1-discovered)/[registered](#2-registered)/[connected](#3-connected) but is not available currently. This could happen due to connectivity issue/AuthN-AuthZ/connection was deleted outside meshery/administratively disconnected.
  
 >Eg: Prometheus crashed/API token provided at time of registration is revoked.
 
@@ -40,14 +39,14 @@ The connection is administratively processed to be deleted and removed from Mesh
 >Eg: Prometheus metrics will no longer be accessible to you from the Meshery UI.
 
 ### 8. Not Found: 
-User tried registering the connection **manually** but Meshery could not connect to it or is unreachable/unavailable now. User can delete the connection or try re-registering.
+User tried registering the connection **manually** but Meshery could not connect to it or if the connection is unavailable now. User can delete the connection or try re-registering.
 
 
 #### Ignored vs Disconnected
 A user intentionally chooses to have Meshery ignore a given Prometheus, explicitly leaving in Meshery’s field of view, but identifying it as a connection not to manage. This is distinctly different than a Prometheus that Meshery was managing, but has been turned off/uninstalled and now Meshery is disconnected from the Prometheus.
 
 #### Not Found vs Disconnected
-A user manually tried to connect with a connection, but Meshery could not reach. This is distinctly different than a cluster with 2 Prometheuses installed, one for `cluster monitoring` to which Meshery do not have all required permissions, hence Mehery could not connect versus the other for `application monitoring` which was connected previously but is now unreachable from Meshery's view of management.
+A user manually tried to transition to Connected state but the connection is unavaialble now due to being deleted/some other reason. This is distinctly different than a cluster with Prometheuses installed for `application monitoring` which was connected previously but is now unreachable from Meshery's view of management due to change in API token/similar issue.
 
 #### Disconnected vs Deleted
 The connection was previously connected but is unreachable due to connectivity issue/AuthN-AuthZ/connection was **deleted outside Meshery** i.e. Connection was deleted beyond the Meshery's view of management.
