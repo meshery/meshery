@@ -1,19 +1,17 @@
 import {
-  Button,
   Chip,
   IconButton,
   TableCell,
   TableSortLabel,
   Tooltip,
-  Typography,
   withStyles,
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import Modal from './Modal';
 import { CON_OPS } from '../utils/Enum';
 import dataFetch from '../lib/data-fetch';
-import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder';
-import EditIcon from '@material-ui/icons/Edit';
+// import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder';
+// import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Moment from 'react-moment';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
@@ -61,16 +59,16 @@ const MesheryCredentialComponent = ({ updateProgress, classes }) => {
     fetchCredential();
   }, []);
 
-  const handleOpen = (ev) => (data, type, id) => {
-    ev.stopPropagation();
-    data && setCredentialType(data?.type);
-    setCredModal({
-      open: true,
-      data: data?.secret || null,
-      actionType: type,
-      id: id,
-    });
-  };
+  // const handleOpen = (ev) => (data, type, id) => {
+  //   ev.stopPropagation();
+  //   data && setCredentialType(data?.type);
+  //   setCredModal({
+  //     open: true,
+  //     data: data?.secret || null,
+  //     actionType: type,
+  //     id: id,
+  //   });
+  // };
 
   const schemaChangeHandler = (type) => {
     setCredentialType(type);

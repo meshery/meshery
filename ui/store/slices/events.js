@@ -151,7 +151,7 @@ export const loadNextPage = (fetch) => async (dispatch, getState) => {
 
 export const updateEventStatus =
   ({ id, status }) =>
-  (dispatch, getState) => {
+  (dispatch) => {
     //const currentView = getState().events.current_view;
     dispatch(
       updateEvent({
@@ -201,7 +201,7 @@ export const selectEventById = (state, id) => {
   return eventsEntityAdapter.getSelectors().selectById(state.events, id);
 };
 
-export const selectIsEventChecked = (state) => {
+export const selectIsEventChecked = (state, id) => {
   return Boolean(selectEventById(state, id).checked);
 };
 
