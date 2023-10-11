@@ -24,11 +24,6 @@
     "postinstall": "patch-package",
     "clean": "rm -rf .next,out"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "keywords": [],
   "author": "Layer5",
   "repository": "https://github.com/meshery/meshery",
