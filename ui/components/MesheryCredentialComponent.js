@@ -269,14 +269,14 @@ const MesheryCredentialComponent = ({ updateProgress, classes }) => {
           const rowData = credentials[tableMeta.rowIndex];
           return (
             <div style={{ display: 'flex', alignItems: 'center' }}>
-              <Tooltip key={`edit_credential-${tableMeta.rowIndex}`} title="Edit Credential">
+              {/* <Tooltip key={`edit_credential-${tableMeta.rowIndex}`} title="Edit Credential">
                 <IconButton
                   aria-label="edit"
                   onClick={(ev) => handleOpen(ev)(rowData, 'update', rowData['id'])}
                 >
                   <EditIcon />
                 </IconButton>
-              </Tooltip>
+              </Tooltip> */}
               <Tooltip key={`delete_credential-${tableMeta.rowIndex}`} title="Delete Credential">
                 <IconButton
                   aria-label="delete"
@@ -403,7 +403,8 @@ const MesheryCredentialComponent = ({ updateProgress, classes }) => {
     <div style={{ display: 'table', tableLayout: 'fixed', width: '100%' }}>
       <div className={StyleClass.toolWrapper} style={customInlineStyle}>
         <div>
-          <Button
+          {/* TODO: Uncomment this when schema spec is ready to support various credential */}
+          {/* <Button
             type="submit"
             variant="contained"
             color="primary"
@@ -425,7 +426,7 @@ const MesheryCredentialComponent = ({ updateProgress, classes }) => {
             >
               Create
             </Typography>
-          </Button>
+          </Button> */}
         </div>
         <div>
           {/* <SearchBar
