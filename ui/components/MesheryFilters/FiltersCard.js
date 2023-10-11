@@ -15,6 +15,7 @@ import PublicIcon from '@material-ui/icons/Public';
 import TooltipButton from '../../utils/TooltipButton.js';
 import { VISIBILITY } from '../../utils/Enum';
 import GetAppIcon from '@material-ui/icons/GetApp';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
@@ -33,6 +34,7 @@ function FiltersCard({
   handleUnpublishModal,
   updateHandler,
   canPublishFilter = false,
+  handleInfoModal,
 }) {
   const genericClickHandler = (ev, fn) => {
     ev.stopPropagation();
@@ -136,6 +138,16 @@ function FiltersCard({
                   <span className={classes.cloneBtnText}>Clone</span>
                 </TooltipButton>
               ) : null}
+              <TooltipButton
+                title="Filter Information"
+                variant="contained"
+                color="primary"
+                onClick={(ev) => genericClickHandler(ev, handleInfoModal)}
+                className={classes.testsButton}
+              >
+                <InfoOutlinedIcon style={{ fill: '#fff' }} className={classes.iconPatt} />
+                <span className={classes.btnText}> Info </span>
+              </TooltipButton>
             </div>
           </div>
         </>

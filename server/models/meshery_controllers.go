@@ -74,7 +74,7 @@ func NewMesheryControllersHelper(log logger.Handler, operatorDepConfig controlle
 // the meshsync data for that context is properly being handled
 func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControllersHelper {
 	// only checking those contexts whose MesheryConrollers are active
-	go func(mch *MesheryControllersHelper) {
+	go func (mch *MesheryControllersHelper) {
 		mch.mu.Lock()
 		defer mch.mu.Unlock()
 		for ctxID, controllerHandlers := range mch.ctxControllerHandlersMap {
@@ -147,7 +147,6 @@ func (mch *MesheryControllersHelper) UpdateCtxControllerHandlers(ctxs []K8sConte
 			}
 		}
 	}(mch)
-
 	return mch
 }
 
