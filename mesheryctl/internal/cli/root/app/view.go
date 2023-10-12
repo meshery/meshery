@@ -71,7 +71,7 @@ mesheryctl app view --all
 			}
 			applicationID, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "application")
 			if err != nil {
-				return ErrInvalidNameOrID(err)
+				return ErrInvalidAppNameOrID(err)
 			}
 		}
 		var req *http.Request

@@ -3,6 +3,8 @@ import jsYaml from 'js-yaml';
 import { findWorkloadByName } from './workloadFilter';
 import { EVENT_TYPES } from './Enum';
 import _ from 'lodash';
+import { getWebAdress } from './webApis';
+import { APPLICATION, DESIGN, FILTER } from '../constants/navigator';
 
 /**
  * Check if an object is empty
@@ -193,3 +195,23 @@ export const modifyRJSFSchema = (schema, propertyPath, newValue) => {
   _.set(clonedSchema, propertyPath, newValue);
   return clonedSchema;
 };
+
+/**
+ * get sharable link with same and host and protocol, here until meshery cloud interception
+ * @param {Object.<string,string>} sharedResource
+ * @returns {string}
+ */
+export function getSharableCommonHostAndprotocolLink(sharedResource) {
+  const webAddr = getWebAdress() + '/extension/meshmap';
+  if (sharedResource?.application_file) {
+    return `${webAddr}?${APPLICATION}=${sharedResource.id}`;
+  }
+  if (sharedResource?.pattern_file) {
+    return `${webAddr}?${DESIGN}=${sharedResource.id}`;
+  }
+  if (sharedResource?.filter_resource) {
+    return `${webAddr}?${FILTER}=${sharedResource.id}`;
+  }
+
+  return '';
+}

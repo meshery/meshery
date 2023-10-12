@@ -129,6 +129,8 @@ sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libre
 
 - Use docs here [Jekyll installation](https://jekyllrb.com/docs/installation/macos/)
 
+**Note:** In case of any installation issues, use the [discussion forum](http://discuss.meshery.io).
+
 ### Get the code
 
 - Fork and then clone the [Meshery repository](https://github.com/meshery/meshery)
@@ -271,7 +273,7 @@ The following is a concise summary of the steps to contribute to Meshery documen
    `git push origin <my-changes>`
 7. Open a pull request (in your web browser) against the repo: https://github.com/layer5io/meshery.
 
-### Table of Contents in Sidebar (toc)
+### Navigation Table of Contents in Sidebar (toc)
 
 Sidebars use toc to create a table of contents. It is written in the following manner:
 
@@ -296,7 +298,15 @@ The output of the code snippet would be:
       Thing 3
 ```
 
-### `if` condititional
+### Editable Intra-page Table of Contents Toolbar
+
+Control the display of this intra-page navigator with either page level or layout level frontmatter variables:
+
+`display-toolbar`
+
+Set to `true` (make "editable" toolbar visible) or `false` (hide "editable" toolbar)
+
+### `if` conditional
 
 This executes the block of code only if the given condition is true. It is executed in the following manner:
 

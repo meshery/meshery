@@ -19,12 +19,14 @@ include install/Makefile.show-help.mk
 # Docker-based Builds
 #-----------------------------------------------------------------------------
 .PHONY: docker-build docker-local-cloud docker-cloud docker-playground-build
-## Build Meshery Server and UI containers.
+
+## Build Meshery Server and UI container.
 docker-build:
 	# `make docker-build` builds Meshery inside of a multi-stage Docker container.
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
 	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
 
+## Build Meshery Server and UI container in Playground mode. 
 docker-playground-build:
 	# `make docker-playground-build` builds Meshery inside of a multi-stage Docker container.
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
@@ -65,13 +67,14 @@ wrk2-setup:
 	echo "setup-wrk does not work on Mac Catalina at the moment"
 	cd server; cd cmd; git clone https://github.com/layer5io/wrk2.git; cd wrk2; make; cd ..
 
-## ## Setup nighthawk for local development.
+## Setup nighthawk for local development.
 nighthawk-setup: dep-check
 	cd server; cd cmd; git clone https://github.com/layer5io/nighthawk-go.git; cd nighthawk-go; make setup; cd ..
 
 run-local: server-local error
+
 ## Build and run Meshery Server on your local machine
-## and point to (expect) a locally running Meshery Cloud or other Provider(s)
+## and point to (expect) a locally running Remote Provider
 ## for user authentication.
 server-local: dep-check
 	cd server; cd cmd; go clean; go mod tidy; \
@@ -83,18 +86,7 @@ server-local: dep-check
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go run main.go error.go
 
-## Build and run Meshery Server on your local machine.
-server-without-k8s: dep-check
-	cd server; cd cmd; go mod tidy; \
-	BUILD="$(GIT_VERSION)" \
-	REGISTER_STATIC_K8S=false \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
-	PORT=9081 \
-	DEBUG=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
-	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	go run main.go error.go;
-
+## Build Meshery Server on your local machine.
 build-server: dep-check
 	cd server; cd cmd; go mod tidy; cd "../.."
 	BUILD="$(GIT_VERSION)" \
@@ -106,6 +98,7 @@ build-server: dep-check
 	GOPROXY=https://proxy.golang.org,direct GOSUMDB=off GO111MODULE=on go build ./server/cmd/main.go ./server/cmd/error.go
 	chmod +x ./main
 
+## Build and run Meshery Server on your local machine.
 server: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -115,6 +108,9 @@ server: dep-check
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go run main.go error.go;
+
+## Build and run Meshery Server on your local machine.
+## Disable deployment of the Meshery Operator to your Kubernetes cluster(s).
 server-without-operator: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -125,6 +121,32 @@ server-without-operator: dep-check
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	go run main.go error.go;
+
+## Build and run Meshery Server with no Kubernetes components on your local machine.
+server-skip-compgen:
+	cd server; cd cmd; go mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+ 	SKIP_COMP_GEN=true \
+	go run main.go error.go;
+	
+## Build and run Meshery Server on your local machine.
+## Do not generate and register Kubernetes models.
+server-without-k8s: dep-check
+	cd server; cd cmd; go mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	REGISTER_STATIC_K8S=false \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	go run main.go error.go;
+
 server-remote-provider: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
@@ -145,18 +167,6 @@ server-local-provider: dep-check
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
-	go run main.go error.go;
-
-## Build and run Meshery Server with no Kubernetes components on your local machine.
-server-skip-compgen:
-	cd server; cd cmd; go mod tidy; \
-	BUILD="$(GIT_VERSION)" \
-	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
-	PORT=9081 \
-	DEBUG=true \
-	ADAPTER_URLS=$(ADAPTER_URLS) \
-	APP_PATH=$(APPLICATIONCONFIGPATH) \
- 	SKIP_COMP_GEN=true \
 	go run main.go error.go;
 
 ## Build and run Meshery Server with no seed content.
