@@ -1225,7 +1225,6 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 
 	limitstr := r.URL.Query().Get("pagesize")
 	pagestr := r.URL.Query().Get("page")
-	searchQuery := r.URL.Query().Get("search")
 
 	limit, _ := strconv.Atoi(limitstr)
 	if limitstr != "all" && limit == 0 {
@@ -1238,8 +1237,15 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	}
 
 	offset := (page - 1) * limit
-
-	hosts, hostsCount, err := h.registryManager.GetHostsForModels(h.dbHandler.DB, limit, offset, searchQuery)
+	filter := &v1alpha1.ComponentFilter{
+		Limit:  limit,
+		Offset: offset,
+	}
+	if r.URL.Query().Get("search") != "" {
+		filter.Greedy = true
+		filter.DisplayName = r.URL.Query().Get("search")
+	}
+	hosts, hostsCount, err := h.registryManager.GetHostsForModels(filter)
 	if err != nil {
 		h.log.Error(ErrGetMeshModels(err))
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
@@ -1252,7 +1258,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 		types := []string{"model", "component", "relationship", "policies"}
 
 		for _, t := range types {
-			count, err := h.registryManager.GetCountForHostAndType(h.dbHandler.DB, host.ID, t)
+			count, err := h.registryManager.GetCountForHostAndType(host.ID, t)
 			if err != nil {
 				h.log.Error(ErrGetMeshModels(err))
 				http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
