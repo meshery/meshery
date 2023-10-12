@@ -68,6 +68,13 @@ type DuplicateResponseModels struct {
 	Duplicates int `json:"duplicates"`
 }
 
+type MesheryHostsContextPage struct {
+	Page        int                            `json:"page"`
+	PageSize    int                            `json:"page_size"`
+	Count       int64                          `json:"total_count"`
+	Registrants []v1alpha1.MesheryHostsDisplay `json:"registrants"`
+}
+
 func FindDuplicateComponents(components []v1alpha1.ComponentDefinition) []DuplicateResponseComponent {
 	set := make(map[string]int)
 

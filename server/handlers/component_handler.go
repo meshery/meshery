@@ -1251,10 +1251,10 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
 
-	result := make([]MesheryHostsDisplay, 0, len(hosts))
+	result := make([]v1alpha1.MesheryHostsDisplay, 0, len(hosts))
 
 	for _, host := range hosts {
-		hostCounts := hostIndividualCount{}
+		hostCounts := v1alpha1.HostIndividualCount{}
 		types := []string{"model", "component", "relationship", "policies"}
 
 		for _, t := range types {
@@ -1276,7 +1276,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 			}
 		}
 
-		res := MesheryHostsDisplay{
+		res := v1alpha1.MesheryHostsDisplay{
 			ID:       host.ID,
 			Hostname: registry.HostnameToPascalCase(host.Hostname),
 			Port:     host.Port,
@@ -1292,7 +1292,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	} else {
 		pgSize = int64(limit)
 	}
-	res := MesheryHostsContextPage{
+	res := models.MesheryHostsContextPage{
 		Page:        page,
 		PageSize:    int(pgSize),
 		Count:       hostsCount,
