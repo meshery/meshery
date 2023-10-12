@@ -157,7 +157,7 @@ export const notificationCenterApi = api
           },
         }),
 
-        async onQueryStarted({ ids, updatedFields }, { dispatch, queryFulfilled, getState }) {
+        async onQueryStarted({ ids, updatedFields }, { dispatch, queryFulfilled }) {
           const res = await safeQueryResolve(queryFulfilled);
           res &&
             dispatch(
@@ -183,7 +183,7 @@ export const notificationCenterApi = api
             ids,
           },
         }),
-        async onQueryStarted({ ids }, { dispatch, queryFulfilled, getState }) {
+        async onQueryStarted({ ids }, { dispatch, queryFulfilled }) {
           const res = await safeQueryResolve(queryFulfilled);
           res && dispatch(deleteEvents({ ids }));
         },
