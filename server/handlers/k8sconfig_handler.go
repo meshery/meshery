@@ -334,7 +334,7 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 		}, c)
 		count++
 	}
-	event := events.NewEvent().ActedUpon(connectionUUID).WithCategory("kubernetes_components").WithAction("registration").FromSystem(mesheryInstanceID).FromUser(userUUID).WithSeverity(events.Informational).WithDescription(fmt.Sprintf("%d Kubernetes components registered for horse %s", count, ctxName)).WithMetadata(map[string]interface{}{
+	event := events.NewEvent().ActedUpon(connectionUUID).WithCategory("kubernetes_components").WithAction("registration").FromSystem(mesheryInstanceID).FromUser(userUUID).WithSeverity(events.Informational).WithDescription(fmt.Sprintf("%d Kubernetes components registered for %s", count, ctxName)).WithMetadata(map[string]interface{}{
 		"doc": "https://docs.meshery.io/tasks/lifecycle-management",
 	}).Build()
 
