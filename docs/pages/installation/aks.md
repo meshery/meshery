@@ -44,6 +44,8 @@ Meshery should now be running in your AKS cluster and Meshery UI should be acces
 </div>
 <br/>
 
+If you encounter any authentication issues, you can use `mesheryctl system login`. For more information, click [here](/guides/mesheryctl/authenticate-with-meshery-via-cli) to learn more.
+
 ### [Optional] Connecting to an Azure Kubernetes Services Cluster using Azure CLI
 
 Alternatively, you may choose to configure Meshery to connect to your AKS cluster manually. Follow these steps:
