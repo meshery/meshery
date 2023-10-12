@@ -1245,58 +1245,40 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 		filter.Greedy = true
 		filter.DisplayName = r.URL.Query().Get("search")
 	}
-	hosts, hostsCount, err := h.registryManager.GetHostsForModels(filter)
+	hosts, count, err := h.registryManager.GetHostsForModels(filter)
 	if err != nil {
 		h.log.Error(ErrGetMeshModels(err))
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 	}
 
-	result := make([]v1alpha1.MesheryHostsDisplay, 0, len(hosts))
+	var resposnse []v1alpha1.MesheryHostsDisplay
 
 	for _, host := range hosts {
-		hostCounts := v1alpha1.HostIndividualCount{}
-		types := []string{"model", "component", "relationship", "policies"}
-
-		for _, t := range types {
-			count, err := h.registryManager.GetCountForHostAndType(host.ID, t)
-			if err != nil {
-				h.log.Error(ErrGetMeshModels(err))
-				http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
-			}
-
-			switch t {
-			case "model":
-				hostCounts.Models = count
-			case "component":
-				hostCounts.Components = count
-			case "relationship":
-				hostCounts.Relationships = count
-			case "policies":
-				hostCounts.Policies = count
-			}
-		}
-
 		res := v1alpha1.MesheryHostsDisplay{
-			ID:       host.ID,
+			ID:       host.HostID,
 			Hostname: registry.HostnameToPascalCase(host.Hostname),
 			Port:     host.Port,
-			Summary:  hostCounts,
+			Summary: v1alpha1.HostIndividualCount{
+				Models:        host.Models,
+				Components:    host.Components,
+				Relationships: host.Relationships,
+			},
 		}
-		result = append(result, res)
+		resposnse = append(resposnse, res)
 	}
 
 	var pgSize int64
 
 	if limitstr == "all" {
-		pgSize = hostsCount
+		pgSize = count
 	} else {
 		pgSize = int64(limit)
 	}
 	res := models.MesheryHostsContextPage{
 		Page:        page,
 		PageSize:    int(pgSize),
-		Count:       hostsCount,
-		Registrants: result,
+		Count:       count,
+		Registrants: resposnse,
 	}
 
 	if err := enc.Encode(res); err != nil {
