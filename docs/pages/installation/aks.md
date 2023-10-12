@@ -17,7 +17,6 @@ Manage your AKS clusters with Meshery. Deploy Meshery on AKS or outside of AKS.
 
 ### Install Meshery on an AKS Cluster using mesheryctl
 
-
 ## Connect to Azure Kubernetes Services Cluster using mesheryctl
 
 Use Meshery's CLI to streamline your connection to your AKS cluster. Configure Meshery to connect to your AKS cluster by executing:
@@ -31,6 +30,19 @@ Once configured, install Meshery with this command:
 {% capture code_content %}$ mesheryctl system start{% endcapture %}
 {% include code.html code=code_content %}
  <br>
+
+<button class="toggle-button" onclick="HideToggleFunction()">Optional</button> Customize your Meshery Provider Callback URL
+
+<div id="hiddendiv">
+Meshery Server supports customizing authentication flow callback URL, which can be configured in the following way
+<br>
+{% capture code_content %}$ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start{% endcapture %}
+{% include code.html code=code_content %}
+ <br>
+Meshery should now be running in your AKS cluster and Meshery UI should be accessible at the `EXTERNAL IP` of `meshery` service.
+<br/>
+</div>
+<br/>
 
 ### [Optional] Connecting to an Azure Kubernetes Services Cluster using Azure CLI
 
