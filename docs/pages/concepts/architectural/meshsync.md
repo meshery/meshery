@@ -15,14 +15,13 @@ list: include
         <img src="{{site.baseurl}}/assets/img/meshsync/meshsync.svg"
         style="margin-right:2rem;margin-bottom:2rem;max-width:30%;" />
     </div>
-    <div style="flex: 1;">
+    <div style="flex: 2;">
         <h1>MeshSync</h1>
         <p>
         Managed by the <a href="{{site.baseurl}}/concepts/architecture/operator">Meshery Operator</a>, MeshSync is a custom Kubernetes controller that provides tiered discovery and continual synchronization with Meshery Server as to the state of the Kubernetes clusters and their workloads.
         </p>
     </div>
 </div>
-
 
 ### Key Features
 
