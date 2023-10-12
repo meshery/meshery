@@ -9,7 +9,15 @@ list: include
 image: /assets/img/platforms/eks.png
 ---
 
-{% include installation_prerequisites.html %}
+<h1>Quick Start with {{ page.title }} <img src="{{ page.image }}" style="width:35px;height:35px;" /></h1>
+
+<div class="prereqs"><p><strong style="font-size: 20px;">Prerequisites</strong> </p> 
+  <ol>
+    <li>Install the Meshery command line client, <a href="{{ site.baseurl }}/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
+    <li></li>
+    <li></li>
+  </ol>
+</div>
 
 ## Set up and run Meshery on EKS:
 
@@ -21,8 +29,9 @@ In order to install Meshery, `mesheryctl` needs to access your EKS cluster. For 
 
 Once you fulfil the above two requirements, you should be able to install Meshery:
 
-- [Install Meshery into your EKS cluster](#install-meshery-into-your-eks-cluster)
-- [Install Meshery in Docker and connect it to your EKS cluster](#install-meshery-in-docker-and-connect-it-to-your-eks-cluster)
+- [Set up and run Meshery on EKS:](#set-up-and-run-meshery-on-eks)
+  - [Install Meshery into your EKS cluster](#install-meshery-into-your-eks-cluster)
+  - [Install Meshery in Docker and connect it to your EKS cluster](#install-meshery-in-docker-and-connect-it-to-your-eks-cluster)
 
 **_Note: It is advisable to [Install Meshery into your EKS clusters](#install-meshery-into-your-eks-cluster)_**
 
