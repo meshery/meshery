@@ -13,11 +13,12 @@ import {
   Typography,
   alpha,
   useTheme,
+  Checkbox,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core';
 import { SEVERITY_STYLE, STATUS } from './constants';
 import { iconLarge, iconMedium } from '../../css/icons.styles';
-import { Launch as LaunchIcon, MoreVert as MoreVertIcon } from '@material-ui/icons';
+import { MoreVert as MoreVertIcon } from '@material-ui/icons';
 import FacebookIcon from '../../assets/icons/FacebookIcon';
 import LinkedInIcon from '../../assets/icons/LinkedInIcon';
 import TwitterIcon from '../../assets/icons/TwitterIcon';
@@ -29,7 +30,11 @@ import {
   useDeleteEventMutation,
 } from '../../rtk-query/notificationCenter';
 import { useDispatch, useSelector } from 'react-redux';
-import { changeEventStatus, deleteEvent, selectEventById } from '../../store/slices/events';
+import {
+  selectEventById,
+  selectIsEventVisible,
+  updateIsEventChecked,
+} from '../../store/slices/events';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { FacebookShareButton, LinkedinShareButton, TwitterShareButton } from 'react-share';
 import ReadIcon from '../../assets/icons/ReadIcon';
@@ -39,6 +44,8 @@ import {
   withErrorBoundary,
   withSuppressedErrorBoundary,
 } from '../General/ErrorBoundary';
+import { FormattedMetadata } from './metadata';
+import theme from '../../themes/app';
 
 const useStyles = makeStyles(() => ({
   root: (props) => ({
@@ -51,6 +58,7 @@ const useStyles = makeStyles(() => ({
 
   summary: (props) => ({
     paddingBlock: '0.5rem',
+    paddingInline: '0.25rem',
     cursor: 'pointer',
     backgroundColor: alpha(props.notificationColor, 0.2),
   }),
@@ -73,6 +81,9 @@ const useStyles = makeStyles(() => ({
   expanded: {
     paddingBlock: '0.75rem',
     paddingInline: '0.2rem',
+    [theme.breakpoints.down('md')]: {
+      padding: '0.5rem',
+    },
   },
   actorAvatar: {
     display: 'flex',
@@ -86,6 +97,14 @@ const useStyles = makeStyles(() => ({
     fontSize: '0.9rem',
   },
 }));
+
+export const eventPreventDefault = (e) => {
+  e.preventDefault();
+};
+
+export const eventstopPropagation = (e) => {
+  e.stopPropagation();
+};
 
 const useMenuStyles = makeStyles((theme) => {
   return {
@@ -138,6 +157,7 @@ const formatTimestamp = (utcTimestamp) => {
   const currentUtcTimestamp = moment.utc().valueOf();
 
   const timediff = currentUtcTimestamp - moment(utcTimestamp).valueOf();
+
   if (timediff >= 24 * 60 * 60 * 1000) {
     return moment(utcTimestamp).local().format('MMM DD, YYYY');
   }
@@ -220,12 +240,11 @@ const BasicMenu = withSuppressedErrorBoundary(({ event }) => {
 
 export const DeleteEvent = ({ event }) => {
   const classes = useMenuStyles();
-  const dispatch = useDispatch();
   const [deleteEventMutation] = useDeleteEventMutation();
   const theme = useTheme();
   const handleDelete = (e) => {
     e.stopPropagation();
-    dispatch(deleteEvent(deleteEventMutation, event.id));
+    deleteEventMutation({ id: event.id });
   };
   return (
     <div className={classes.list}>
@@ -240,74 +259,15 @@ export const DeleteEvent = ({ event }) => {
   );
 };
 
-export const ErrorMetadataFormatter = ({ metadata, event, classes }) => {
-  const longDescription = metadata?.LongDescription || [];
-  const probableCause = metadata?.ProbableCause || [];
-  const suggestedRemediation = metadata?.SuggestedRemediation || [];
-  const errorCode = metadata?.error_code || '';
-  const code = metadata?.Code || '';
-  const formattedErrorCode = errorCode ? `${errorCode}-${code}` : code;
-  const errorLink = `https://docs.meshery.io/reference/error-codes#${formattedErrorCode}`;
-  return (
-    <Grid container>
-      <div>
-        <a href={errorLink} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>
-          <Typography
-            variant="h5"
-            className={classes.descriptionHeading}
-            style={{ textDecorationLine: 'underline', cursor: 'pointer', marginBottom: '0.5rem' }}
-          >
-            {formattedErrorCode}
-            <sup>
-              <LaunchIcon style={{ width: '1rem', height: '1rem' }} />
-            </sup>
-          </Typography>
-        </a>
-        <NestedData classes={classes} data={event.description} />
-        <div style={{ marginTop: '1rem' }}>
-          <NestedData classes={classes} heading="Details" data={longDescription} />
-        </div>
-      </div>
-      <Grid container spacing={1} style={{ marginTop: '0.5rem' }}>
-        <Grid item sm={suggestedRemediation?.length > 0 ? 6 : 12}>
-          <NestedData classes={classes} heading="Probable Cause" data={probableCause} />
-        </Grid>
-        <Grid item sm={probableCause?.length > 0 ? 6 : 12}>
-          <NestedData
-            classes={classes}
-            heading="Suggested Remediation"
-            data={suggestedRemediation}
-          />
-        </Grid>
-      </Grid>
-    </Grid>
-  );
-};
-const METADATA_FORMATTER = {
-  error: ErrorMetadataFormatter,
-};
-
-// Maps the metadata to the appropriate formatter component
-const FormattedMetadata = ({ event, classes }) => {
-  if (!event || !event.metadata) return null;
-  const metdataKeys = Object.keys(event.metadata);
-  return metdataKeys.map((key) => {
-    const Formatter = METADATA_FORMATTER[key];
-    if (!Formatter) return null;
-    return <Formatter key={key} metadata={event.metadata[key]} event={event} classes={classes} />;
-  });
-};
-
 export const ChangeStatus = ({ event }) => {
   const classes = useMenuStyles();
   const newStatus = event.status === STATUS.READ ? STATUS.UNREAD : STATUS.READ;
   const [updateStatusMutation] = useUpdateStatusMutation();
   const theme = useTheme();
-  const dispatch = useDispatch();
 
   const updateStatus = (e) => {
     e.stopPropagation();
-    dispatch(changeEventStatus(updateStatusMutation, event.id, newStatus));
+    updateStatusMutation({ id: event.id, status: newStatus });
   };
   return (
     <div className={classes.list}>
@@ -326,26 +286,16 @@ export const ChangeStatus = ({ event }) => {
   );
 };
 
-const BulletList = ({ items }) => {
-  return (
-    <ol style={{ paddingInline: '0.75rem', paddingBlock: '0.3rem', margin: '0rem' }}>
-      {items.map((i) => (
-        <li key={i}>
-          <Typography variant="body1"> {i} </Typography>
-        </li>
-      ))}
-    </ol>
-  );
-};
-
 export const Notification = withErrorBoundary(({ event_id }) => {
   const event = useSelector((state) => selectEventById(state, event_id));
-  const isVisible = event.is_visible === undefined ? true : event.is_visible;
+  const isVisible = useSelector((state) => selectIsEventVisible(state, event.id));
   const severityStyles = SEVERITY_STYLE[event.severity];
   const classes = useStyles({
     notificationColor: severityStyles?.color,
     status: event?.status,
   });
+  const theme = useTheme();
+  const dispatch = useDispatch();
   const [expanded, setExpanded] = React.useState(false);
   const handleExpandClick = (e) => {
     e.stopPropagation();
@@ -356,6 +306,16 @@ export const Notification = withErrorBoundary(({ event_id }) => {
 
   const userName = `${user?.first_name || ''} ${user?.last_name || ''}`;
   const userAvatarUrl = user?.avatar_url || '';
+
+  const handleSelectEvent = (e, value) => {
+    e.stopPropagation();
+    dispatch(
+      updateIsEventChecked({
+        id: event.id,
+        value,
+      }),
+    );
+  };
 
   return (
     <Slide
@@ -369,24 +329,42 @@ export const Notification = withErrorBoundary(({ event_id }) => {
     >
       <div className={classes.root}>
         <Grid container className={classes.summary} onClick={handleExpandClick}>
-          <Grid item sm={1} className={classes.gridItem}>
+          <Grid
+            item
+            xs="auto"
+            sm={2}
+            className={classes.gridItem}
+            style={{
+              justifyContent: 'start',
+              alignItems: 'center',
+              gap: '0.25rem',
+            }}
+          >
+            <Checkbox
+              onClick={eventstopPropagation}
+              checked={Boolean(event.checked)}
+              onChange={handleSelectEvent}
+              style={{ margin: '0rem', padding: '0rem' }}
+              color="primary"
+            />
             <severityStyles.icon {...iconLarge} fill={severityStyles?.color} />
           </Grid>
-          <Grid item xs={9} md={7} className={classes.gridItem}>
+          <Grid item xs={8} sm={6} className={classes.gridItem}>
             <Typography variant="body1" className={classes.message}>
-              {' '}
-              {event.description}{' '}
+              {event.description}
             </Typography>
           </Grid>
-          <Hidden smDown>
-            <Grid item sm={3} className={classes.gridItem}>
+          <Grid
+            item
+            xs={1}
+            sm={4}
+            className={classes.gridItem}
+            style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}
+          >
+            <Hidden smDown>
               <Typography variant="body1"> {formatTimestamp(event.created_at)} </Typography>
-            </Grid>
-          </Hidden>
-          <Grid item sm={1}>
-            <Box>
-              <BasicMenu event={event} />
-            </Box>
+            </Hidden>
+            <BasicMenu event={event} />
           </Grid>
         </Grid>
         <Collapse in={expanded}>
@@ -412,7 +390,13 @@ export const Notification = withErrorBoundary(({ event_id }) => {
                   )}
                 </Box>
               </Grid>
-              <Grid item sm={10}>
+              <Grid
+                item
+                sm={10}
+                style={{
+                  color: theme.palette.secondary.textMain,
+                }}
+              >
                 <FormattedMetadata event={event} classes={classes} />
               </Grid>
             </Grid>
@@ -422,20 +406,5 @@ export const Notification = withErrorBoundary(({ event_id }) => {
     </Slide>
   );
 });
-const NestedData = ({ heading, data, classes }) => {
-  if (!data || data?.length == 0) return null;
-  return (
-    <>
-      <Typography variant="h6" className={classes.descriptionHeading}>
-        {heading}
-      </Typography>
-      {typeof data === 'string' ? (
-        <Typography variant="body1">{data}</Typography>
-      ) : (
-        <BulletList items={data} />
-      )}
-    </>
-  );
-};
 
 export default Notification;
