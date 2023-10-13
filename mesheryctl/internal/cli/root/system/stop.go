@@ -18,6 +18,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"os/exec"
 	"regexp"
 	"strings"
 
@@ -129,47 +130,65 @@ func stop() error {
 
 		cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 		if err != nil {
-			return errors.Wrap(err, "unable to create docker client")
-		}
+			// If there is any error while creating docker client
+			// docker-compose CLI is used to stop meshery so that user experience should not interrupt.
+			stop := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "stop")
+			stop.Stdout = os.Stdout
+			stop.Stderr = os.Stderr
 
-		spinner := utils.CreateDefaultSpinner("Removing meshery containers in docker\n", "")
-		spinner.Start()
+			if err := stop.Run(); err != nil {
+				return errors.Wrap(err, utils.SystemError("failed to stop meshery - could not stop some containers."))
+			}
 
-		options := types.ContainerListOptions{
-			Filters: filters.NewArgs(
-				filters.Arg("name", "meshery"),
-				filters.Arg("network", "meshery_default"),
-				filters.Arg("label", "com.centurylinklabs.watchtower.enable=true"),
-			),
-		}
-		contaienrs, err := cli.ContainerList(context.Background(), options)
+			// Remove all Docker containers
+			stop = exec.Command("docker-compose", "-f", utils.DockerComposeFile, "rm", "-f")
+			stop.Stderr = os.Stderr
 
-		headers := []string{"Container ID", "Image", "Names", "Status"}
-		rows := [][]string{}
+			if err := stop.Run(); err != nil {
+				return ErrStopMeshery(err)
+			}
+		} else {
+			spinner := utils.CreateDefaultSpinner("Removing meshery containers in docker\n", "")
+			spinner.Start()
 
-		for _, container := range contaienrs {
-			// removes container forcefully
-			err = cli.ContainerRemove(context.Background(), container.ID, types.ContainerRemoveOptions{Force: true})
+			options := types.ContainerListOptions{
+				Filters: filters.NewArgs(
+					filters.Arg("name", "meshery"),
+					filters.Arg("network", "meshery_default"),
+					filters.Arg("label", "com.centurylinklabs.watchtower.enable=true"),
+				),
+			}
+			contaienrs, err := cli.ContainerList(context.Background(), options)
 			if err != nil {
-				log.Errorf("Error while removing %s: %s", container.Names[0], err.Error())
-				continue
+				return ErrListingContainers(err)
 			}
-			image := container.Image
-			// containers those are deployed programatically have image sha256 key
-			// in Container.Image field instead of image name
-			if isSha256(container.Image) {
-				// default value of getImageName is shorten image SHA key (first 12 chars)
-				image = getImageName(cli, container.Image)
+			headers := []string{"Container ID", "Image", "Names", "Status"}
+			rows := [][]string{}
+
+			for _, container := range contaienrs {
+				// removes container forcefully
+				err = cli.ContainerRemove(context.Background(), container.ID, types.ContainerRemoveOptions{Force: true})
+				if err != nil {
+					log.Errorf("Encountered an error while removing %s\n%s", container.Names[0], err.Error())
+					continue
+				}
+				image := container.Image
+				// containers those are deployed programatically have image sha256 key
+				// in Container.Image field instead of image name
+				if isSha256(image) {
+					// default value of getImageName is shorten image SHA key (first 12 chars)
+					image = getImageName(cli, image)
+				}
+				names := strings.Join(container.Names, ",")
+				rows = append(rows, []string{container.ID[0:12], image, names, "removed"})
 			}
-			names := strings.Join(container.Names, ",")
-			rows = append(rows, []string{container.ID[0:12], image, names, "removed"})
-		}
 
-		spinner.FinalMSG = fmt.Sprintf("Removed %d containers from docker\n\n", len(rows))
-		spinner.Stop()
+			spinner.FinalMSG = fmt.Sprintf("Removed %d containers from docker\n\n", len(rows))
+			spinner.Stop()
 
-		if len(rows) > 0 {
-			utils.PrintToTable(headers, rows)
+			if len(rows) > 0 {
+				utils.PrintToTable(headers, rows)
+			}
 		}
 
 	case "kubernetes":

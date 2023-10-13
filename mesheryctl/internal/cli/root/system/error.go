@@ -55,6 +55,7 @@ const (
 	ErrValidProviderCode                 = "1160"
 	ErrUnmarshallConfigCode              = "1161"
 	ErrUploadFileParamsCode              = "1162"
+	ErrListingContainersCode             = "1189"
 )
 
 var (
@@ -336,4 +337,14 @@ func ErrUploadFileParams(err error) error {
 		[]string{"Unable to upload parameters from config file with provided context"},
 		[]string{"Ensure you have a strong network connection and the right configuration set in your Meshconfig file." + FormatErrorReference()})
 
+}
+
+func ErrListingContainers(err error) error {
+	return errors.New(
+		ErrListingContainersCode,
+		errors.Critical,
+		[]string{"Encountered an error while listing meshery stack containers."},
+		[]string{err.Error()},
+		[]string{"Docker daemon may not be running", "You don't have permission to access docker daemon"},
+		[]string{"Check that docker daemon is up and running and you have permission to access docker daemon"})
 }
