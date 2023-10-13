@@ -55,11 +55,11 @@ func NewComponentsRegistrationHelper(logger logger.Handler) *ComponentsRegistrat
 func (cg *ComponentsRegistrationHelper) UpdateContexts(ctxs []*K8sContext) *ComponentsRegistrationHelper {
 	for _, ctx := range ctxs {
 		ctxID := ctx.ID
+		cg.mx.Lock()
 		if _, ok := cg.ctxRegStatusMap[ctxID]; !ok {
-			cg.mx.Lock()
 			cg.ctxRegStatusMap[ctxID] = NotRegistered
-			cg.mx.Unlock()
 		}
+		cg.mx.Unlock()
 	}
 	return cg
 }
@@ -81,17 +81,18 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 	for _, ctx := range ctxs {
 		ctxID := ctx.ID
 		connectionID, _ := uuid.FromString(ctx.ConnectionID)
+		ctxName := ctx.Name
+
+		cg.mx.Lock()
 		// do not do anything about the contexts that are not present in the ctxRegStatusMap
 		// only start registering components for contexts whose status is NotRegistered
 		status, ok := cg.ctxRegStatusMap[ctxID]
 		if !ok || status != NotRegistered {
+			cg.mx.Unlock()
 			continue
 		}
 
-		ctxName := ctx.Name
-
 		// update the status
-		cg.mx.Lock()
 		cg.ctxRegStatusMap[ctxID] = Registering
 		cg.mx.Unlock()
 		cg.log.Info("Registration of ", ctxName, " components started for contextID: ", ctxID)

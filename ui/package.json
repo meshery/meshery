@@ -24,11 +24,6 @@
     "postinstall": "patch-package",
     "clean": "rm -rf .next,out"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "keywords": [],
   "author": "Layer5",
   "repository": "https://github.com/meshery/meshery",
@@ -40,7 +35,7 @@
     "@date-io/moment": "^2.11.0",
     "@emotion/react": "^11.10.8",
     "@emotion/styled": "^11.11.0",
-    "@fortawesome/fontawesome-svg-core": "^6.2.0",
+    "@fortawesome/fontawesome-svg-core": "^6.4.2",
     "@fortawesome/free-brands-svg-icons": "^6.4.0",
     "@fortawesome/free-regular-svg-icons": "^6.1.2",
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
@@ -89,7 +84,7 @@
     "patch-package": "^6.4.7",
     "path-parse": "^1.0.7",
     "pluralize": "^8.0.0",
-    "postcss": "^8.4.21",
+    "postcss": "^8.4.31",
     "prop-types": "latest",
     "react": "^17.0.2",
     "react-big-calendar": "^0.35.0",

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
@@ -15,6 +15,8 @@ import {
   Box,
   useTheme,
   Tooltip,
+  Checkbox,
+  Collapse,
 } from '@material-ui/core';
 import Filter from './filter';
 import BellIcon from '../../assets/icons/BellIcon.js';
@@ -23,8 +25,10 @@ import {
   NOTIFICATION_CENTER_TOGGLE_CLASS,
   SEVERITY,
   SEVERITY_STYLE,
+  SEVERITY_TO_NOTIFICATION_TYPE_MAPPING,
   STATUS,
   STATUS_STYLE,
+  validateEvent,
 } from './constants';
 import classNames from 'classnames';
 import Notification from './notification';
@@ -34,17 +38,117 @@ import {
   closeNotificationCenter,
   loadEvents,
   loadNextPage,
+  pushEvent,
+  selectAreAllEventsChecked,
+  selectCheckedEvents,
   selectEvents,
   toggleNotificationCenter,
+  updateCheckAllEvents,
 } from '../../store/slices/events';
 import {
+  PROVIDER_TAGS,
+  useDeleteEventsMutation,
   useGetEventsSummaryQuery,
   useLazyGetEventsQuery,
+  useUpdateEventsMutation,
 } from '../../rtk-query/notificationCenter';
 import _ from 'lodash';
 import DoneIcon from '../../assets/icons/DoneIcon';
-import { ErrorBoundary, withErrorBoundary } from '../General/ErrorBoundary';
+import {
+  ErrorBoundary,
+  withErrorBoundary,
+  withSuppressedErrorBoundary,
+} from '../General/ErrorBoundary';
 import { hasClass } from '../../utils/Elements';
+import ReadIcon from '../../assets/icons/ReadIcon';
+import UnreadIcon from '../../assets/icons/UnreadIcon';
+import DeleteIcon from '../../assets/icons/DeleteIcon';
+import subscribeEvents from '../graphql/subscriptions/EventsSubscription';
+import { useNotification } from '../../utils/hooks/useNotification';
+import { api as mesheryApi } from '../../rtk-query';
+
+const EventsSubsciptionProvider_ = withSuppressedErrorBoundary(() => {
+  const { notify } = useNotification();
+  const dispatch = useDispatch();
+  const eventsSubscription = useCallback(
+    () =>
+      subscribeEvents((result) => {
+        console.log('event received', result);
+        if (!result.event) {
+          console.error('Invalid event received', result);
+          return;
+        }
+        const [isValid, validatedEvent] = validateEvent({
+          ...result.event,
+          user_id: result.event.userID,
+          system_id: result.event.systemID,
+          updated_at: result.event.updatedAt,
+          created_at: result.event.createdAt,
+          deleted_at: result.event.deletedAt,
+          operation_id: result.event.operationID,
+        });
+        if (!isValid) {
+          console.error('Invalid event received', result);
+          return;
+        }
+        try {
+          dispatch(pushEvent(validatedEvent));
+          dispatch(mesheryApi.util.invalidateTags([PROVIDER_TAGS.EVENT]));
+          notify({
+            message: validatedEvent.description,
+            event_type: SEVERITY_TO_NOTIFICATION_TYPE_MAPPING[validatedEvent.severity],
+            id: validatedEvent.id,
+            showInNotificationCenter: true,
+          });
+        } catch (e) {
+          console.error('Error While Storing Event --Event-Subscription ', e);
+        }
+      }),
+    [],
+  );
+
+  useEffect(() => {
+    const subscription = eventsSubscription();
+    return () => {
+      subscription.dispose();
+    };
+  }, []);
+
+  return null;
+});
+
+const EventsSubsciptionProvider = () => {
+  return (
+    <Provider store={store}>
+      <EventsSubsciptionProvider_ />
+    </Provider>
+  );
+};
+
+const NotificationCenterContext = React.createContext({
+  drawerAnchorEl: null,
+  setDrawerAnchor: () => {},
+  toggleButtonRef: null,
+});
+
+export const NotificationCenterProvider = ({ children }) => {
+  const [drawerAnchorEl, setDrawerAnchor] = useState(null);
+  const toggleButtonRef = useRef(null);
+
+  return (
+    <NotificationCenterContext.Provider
+      value={{
+        drawerAnchorEl,
+        setDrawerAnchor,
+        toggleButtonRef,
+      }}
+    >
+      <EventsSubsciptionProvider />
+      {children}
+      <NotificationCenter />
+    </NotificationCenterContext.Provider>
+  );
+};
 
 const getSeverityCount = (count_by_severity_level, severity) => {
   return count_by_severity_level.find((item) => item.severity === severity)?.count || 0;
@@ -99,8 +203,10 @@ const NavbarNotificationIcon = withErrorBoundary(() => {
 
 const NotificationCountChip = withErrorBoundary(
   ({ classes, notificationStyle, count, type, handleClick }) => {
+    const theme = useTheme();
+    const darkColor = notificationStyle?.darkColor || notificationStyle?.color;
     const chipStyles = {
-      fill: notificationStyle?.color,
+      fill: theme.palette.type === 'dark' ? darkColor : notificationStyle?.color,
       height: '20px',
       width: '20px',
     };
@@ -128,6 +234,7 @@ const Header = withErrorBoundary(({ handleFilter, handleClose }) => {
   const onClickSeverity = (severity) => {
     handleFilter({
       severity: [severity],
+      status: STATUS.UNREAD,
     });
   };
 
@@ -178,10 +285,111 @@ const Loading = () => {
   );
 };
 
+const BulkActions = () => {
+  const checkedEvents = useSelector(selectCheckedEvents);
+  const noEventsPresent = useSelector((state) => selectEvents(state).length === 0);
+  const [deleteEvents, { isLoading: isDeleting }] = useDeleteEventsMutation();
+  const [updateEvents, { isLoading: isUpdatingStatus }] = useUpdateEventsMutation();
+
+  // stores which update is currently going on , usefull to know which action is going
+  // if multiple updates can be triggered from same mutator , only single bulk action is allowed at a time
+  const [curentOngoingUpdate, setCurrentOngoingUpdate] = useState(null);
+  const isActionInProgress = isDeleting || isUpdatingStatus;
+
+  const dispatch = useDispatch();
+  const areAllEventsChecked = useSelector(selectAreAllEventsChecked);
+  const handleCheckboxChange = (_e, v) => {
+    dispatch(updateCheckAllEvents(v));
+  };
+  const resetSelection = () => {
+    dispatch(updateCheckAllEvents(false));
+  };
+
+  const handleDelete = () => {
+    deleteEvents({
+      ids: checkedEvents.map((e) => e.id),
+    }).then(resetSelection);
+  };
+
+  const handleChangeStatus = (status) => {
+    setCurrentOngoingUpdate(status);
+    updateEvents({
+      ids: checkedEvents.map((e) => e.id),
+      updatedFields: {
+        status,
+      },
+    }).then(resetSelection);
+  };
+
+  const BulkActionButton = ({ isLoading, isDisabled, tooltip, Icon, onClick }) => {
+    const disabled = isDisabled || isActionInProgress;
+    if (isLoading) {
+      return (
+        <div style={iconMedium}>
+          <CircularProgress size={iconMedium.height} />
+        </div>
+      );
+    }
+    return (
+      <Tooltip title={tooltip} placement="top">
+        <IconButton onClick={onClick} disabled={disabled}>
+          <Icon
+            {...iconMedium}
+            style={{
+              opacity: disabled ? 0.5 : 1,
+            }}
+            fill="currentColor"
+          />
+        </IconButton>
+      </Tooltip>
+    );
+  };
+
+  if (noEventsPresent) {
+    return null;
+  }
+
+  return (
+    <Box
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '0.15rem',
+      }}
+    >
+      <Box>
+        <Checkbox checked={areAllEventsChecked} color="primary" onChange={handleCheckboxChange} />
+      </Box>
+      <Collapse in={checkedEvents.length > 0}>
+        <Box style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          <BulkActionButton
+            tooltip="Delete selected notifications"
+            Icon={DeleteIcon}
+            isLoading={isDeleting}
+            onClick={handleDelete}
+          />
+          <BulkActionButton
+            tooltip="Mark selected notifications as read"
+            Icon={ReadIcon}
+            isLoading={isUpdatingStatus && curentOngoingUpdate == STATUS.READ}
+            onClick={() => handleChangeStatus(STATUS.READ)}
+          />
+          <BulkActionButton
+            tooltip="Mark selected notifications as unread"
+            Icon={UnreadIcon}
+            isLoading={isUpdatingStatus && curentOngoingUpdate == STATUS.UNREAD}
+            onClick={() => handleChangeStatus(STATUS.UNREAD)}
+          />
+        </Box>
+      </Collapse>
+    </Box>
+  );
+};
+
 const EventsView = withErrorBoundary(({ handleLoadNextPage, isFetching, hasMore }) => {
   const events = useSelector(selectEvents);
   // const page = useSelector((state) => state.events.current_view.page);
-
   const lastEventRef = useRef(null);
   const intersectionObserver = useRef(
     new IntersectionObserver(
@@ -287,9 +495,13 @@ const CurrentFilterView = withErrorBoundary(({ handleFilter }) => {
   );
 });
 
-const MesheryNotification = () => {
-  const [anchorEl, setAnchorEl] = useState(null);
+const NotificationCenterDrawer = () => {
   const dispatch = useDispatch();
+  const {
+    toggleButtonRef,
+    drawerAnchorEl: anchorEl,
+    setDrawerAnchor: setAnchorEl,
+  } = useContext(NotificationCenterContext);
   const isNotificationCenterOpen = useSelector((state) => state.events.isNotificationCenterOpen);
   const [fetchEvents, { isFetching }] = useLazyGetEventsQuery();
   const hasMore = useSelector((state) => state.events.current_view.has_more);
@@ -304,10 +516,6 @@ const MesheryNotification = () => {
 
   const loadMore = () => {
     dispatch(loadNextPage(fetchEvents));
-  };
-
-  const handleToggle = () => {
-    dispatch(toggleNotificationCenter());
   };
 
   const handleClose = () => {
@@ -325,8 +533,6 @@ const MesheryNotification = () => {
     dispatch(loadEvents(fetchEvents, 1, filters));
   };
   const drawerRef = useRef();
-  const toggleButtonRef = useRef();
-
   const clickwayHandler = (e) => {
     // checks if event has occured/bubbled up from clicking inside notificationcenter or on the bell icon
     if (drawerRef.current.contains(e.target) || toggleButtonRef.current.contains(e.target)) {
@@ -345,25 +551,6 @@ const MesheryNotification = () => {
 
   return (
     <>
-      <div ref={toggleButtonRef}>
-        <IconButton
-          id="notification-button"
-          className={classes.notificationButton}
-          color="inherit"
-          onClick={handleToggle}
-          onMouseOver={(e) => {
-            e.preventDefault();
-            setAnchorEl(e.currentTarget);
-          }}
-          onMouseLeave={(e) => {
-            e.preventDefault();
-            setAnchorEl(null);
-          }}
-        >
-          <NavbarNotificationIcon />
-        </IconButton>
-      </div>
-
       <ClickAwayListener onClickAway={clickwayHandler}>
         <Drawer
           anchor="right"
@@ -383,6 +570,7 @@ const MesheryNotification = () => {
                 <div className={classes.container}>
                   <Filter handleFilter={handleFilter}></Filter>
                   <CurrentFilterView handleFilter={handleFilter} />
+                  <BulkActions />
                   <EventsView
                     handleLoadNextPage={loadMore}
                     isFetching={isFetching}
@@ -398,21 +586,43 @@ const MesheryNotification = () => {
   );
 };
 
-// const mapDispatchToProps = (dispatch) => ({
-//   updateEvents: bindActionCreators(updateEvents, dispatch),
-//   toggleOpen: bindActionCreators(toggleNotificationCenter, dispatch),
-//   loadEventsFromPersistence: bindActionCreators(loadEventsFromPersistence, dispatch),
-// });
-//
-// const mapStateToProps = (state) => {
-//   const events = state.get("events");
-//   return {
-//     user: state.get("user"),
-//     events: events.toJS(),
-//     openEventId: state.get("notificationCenter").get("openEventId"),
-//     showFullNotificationCenter: state.get("notificationCenter").get("showFullNotificationCenter"),
-//   };
-// };
+const NotificationDrawerButton_ = () => {
+  const classes = useStyles();
+  const { setDrawerAnchor, toggleButtonRef } = useContext(NotificationCenterContext);
+  const dispatch = useDispatch();
+  const handleToggle = () => {
+    dispatch(toggleNotificationCenter());
+  };
+  return (
+    <div ref={toggleButtonRef}>
+      <IconButton
+        id="notification-button"
+        className={classes.notificationButton}
+        color="inherit"
+        onClick={handleToggle}
+        onMouseOver={(e) => {
+          e.preventDefault();
+          setDrawerAnchor(e.currentTarget);
+        }}
+        onMouseLeave={(e) => {
+          e.preventDefault();
+          setDrawerAnchor(null);
+        }}
+      >
+        <NavbarNotificationIcon />
+      </IconButton>
+    </div>
+  );
+};
+
+export const NotificationDrawerButton = () => {
+  return (
+    <Provider store={store}>
+      <NotificationDrawerButton_ />
+    </Provider>
+  );
+};
+
 const NotificationCenter = (props) => {
   return (
     <NoSsr>
@@ -421,7 +631,7 @@ const NotificationCenter = (props) => {
         onError={(e) => console.error('Error in NotificationCenter', e)}
       >
         <Provider store={store}>
-          <MesheryNotification {...props} />
+          <NotificationCenterDrawer {...props} />
         </Provider>
       </ErrorBoundary>
     </NoSsr>
