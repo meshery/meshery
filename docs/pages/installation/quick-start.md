@@ -5,7 +5,6 @@ permalink: installation/quick-start
 redirect_from: installation/quick-start/
 language: en
 ---
-<!-- <link href="/assets/css/terminal.css" rel="stylesheet"> -->
 <a name="getting-started"></a>
 
 Getting Meshery up and running locally on a Docker-enabled system or in Kubernetes is easy. Meshery deploys as a set of Docker containers, which can be deployed to either a Docker host or Kubernetes cluster. See the complete list of its [supported platforms]({{ site.baseurl }}/installation/platforms).
