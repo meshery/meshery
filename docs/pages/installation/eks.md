@@ -16,7 +16,7 @@ Manage your EKS clusters with Meshery. Deploy Meshery in EKS [in-cluster](#in-cl
 <div class="prereqs"><p><strong style="font-size: 20px;">Prerequisites</strong> </p> 
   <ol>
     <li>Install the Meshery command line client, <a href="{{ site.baseurl }}/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
-    <li>Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> installed on your local machine.</li>
+    <li>Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> on your local machine.</li>
     <li>Install <a href="https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html">AWS CLI</a>, configured for your environment.</li>
     <li>Access to an active EKS cluster in AWS Account.</li>
   </ol>
