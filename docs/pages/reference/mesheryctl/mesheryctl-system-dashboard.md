@@ -70,6 +70,19 @@ mesheryctl system dashboard --skip-browser
 </div>
 </pre>
 
+## [Optional] Port-forward Meshery as Kubernetes Service
+
+Ensure [kubectl](https://kubernetes.io/docs/tasks/tools/) is installed on your local machine.
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+  kubectl port-forward svc/meshery --namespace meshery 9081:9081
+  
+</div>
+</pre>
+
+Meshery UI should now be accessible at [http://localhost:9081](http://localhost:9081).
+
 ## See Also
 
 Go back to [command reference index](/reference/mesheryctl/) 
