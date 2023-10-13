@@ -89,4 +89,4 @@ For detailed instructions on installing Meshery using Helm V3, please refer to t
 
 ## Access Meshery UI
 
-To access Meshery's UI via port-forwarding, please refer to the [port-forwarding](/services/port-forward) guide for detailed instructions.'s UI via port-forwarding, please refer to the [port-forwarding](/services/port-forward) guide for detailed instructions.
+To access Meshery's UI, please refer to the [instruction](/reference/mesheryctl/system/dashboard) for detailed guidance..

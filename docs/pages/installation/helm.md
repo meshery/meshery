@@ -18,8 +18,6 @@ list: exclude
 
 ## Install Meshery on Your Kubernetes Cluster Using Helm V3
 
-We strongly recommend using Helm v3 because this version no longer includes the Tiller component, making it lighter and safer.
-
 {% capture code_content %}helm repo add meshery https://meshery.io/charts/
 helm install meshery meshery/meshery --namespace meshery --create-namespace{% endcapture %}
 {% include code.html code=code_content %}
