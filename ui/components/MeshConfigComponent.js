@@ -238,7 +238,7 @@ function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig 
     notify({
       message: `${msg}: ${error}`,
       event_type: EVENT_TYPES.ERROR,
-      details: error.toString(),
+      details: error,
     });
   };
 
@@ -276,7 +276,7 @@ function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig 
 
   const updateCtxInfo = (ctxId, newInfo) => {
     if (newInfo.operator.error) {
-      handleError('There is problem With operator')(newInfo.operator.error);
+      handleError('There is problem With operator')(newInfo.operator.error.description);
       return;
     }
 
@@ -482,7 +482,7 @@ function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig 
       name: 'location',
       label: 'Location',
       options: {
-        filter: true,
+        filter: false,
         sort: true,
         searchable: true,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
@@ -503,7 +503,7 @@ function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig 
       name: 'last_discovery',
       label: 'Last Discovery',
       options: {
-        filter: true,
+        filter: false,
         sort: true,
         searchable: true,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
@@ -1009,10 +1009,13 @@ function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig 
 
   return (
     <div style={{ display: 'table', tableLayout: 'fixed', width: '100%' }}>
-      <div className={classes.topToolbar}>
-        <MesherySettingsEnvButtons />
-      </div>
-      <DataTable columns={columns} data={data} options={options} className={classes.table} />
+      <DataTable
+        title={<MesherySettingsEnvButtons />}
+        columns={columns}
+        data={data}
+        options={options}
+        className={classes.table}
+      />
       <PromptComponent ref={meshSyncResetRef} />
       <PromptComponent ref={deleteCtxtRef} />
     </div>

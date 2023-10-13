@@ -22,7 +22,7 @@ func (r *Resolver) subscribeConfiguration(ctx context.Context, provider models.P
 	cha, unsubscribeApps := r.Config.ApplicationChannel.Subscribe(userID)
 	chp, unsubscribePatterns := r.Config.PatternChannel.Subscribe(userID)
 	chf, unsubscribeFilters := r.Config.FilterChannel.Subscribe(userID)
-	
+
 	r.Config.ApplicationChannel.Publish(userID, struct{}{})
 	r.Config.PatternChannel.Publish(userID, struct{}{})
 	r.Config.FilterChannel.Publish(userID, struct{}{})
@@ -39,7 +39,7 @@ func (r *Resolver) subscribeConfiguration(ctx context.Context, provider models.P
 				}
 
 				conf = &model.ConfigurationPage{
-					Patterns:     patterns,
+					Patterns: patterns,
 				}
 				configuration <- conf
 
@@ -63,7 +63,7 @@ func (r *Resolver) subscribeConfiguration(ctx context.Context, provider models.P
 				}
 
 				conf = &model.ConfigurationPage{
-					Filters:      filters,
+					Filters: filters,
 				}
 				configuration <- conf
 

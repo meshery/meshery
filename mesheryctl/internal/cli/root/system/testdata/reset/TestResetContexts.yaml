@@ -12,7 +12,7 @@ contexts:
             - meshery-kuma
             - meshery-traefik-mesh
             - meshery-nginx-sm
-            - meshery-cilium
+            - meshery-cilium 
         channel: stable
         version: latest
         provider: Meshery

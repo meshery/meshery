@@ -24,7 +24,7 @@ import (
 //
 // ```?search={contextname}``` If search is non empty then a greedy search is performed
 // responses:
-// 
+//
 //	200: systemK8sContextsResponseWrapper
 func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	token, ok := req.Context().Value(models.TokenCtxKey).(string)
@@ -118,7 +118,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		return
 	}
 
-	description := fmt.Sprintf("Kubernetes context %s deleted.", deletedContext.Name)
+	description := fmt.Sprintf("Kubernetes context \"%s\" deleted.", deletedContext.Name)
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
 	_ = provider.PersistEvent(event)

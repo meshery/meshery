@@ -353,12 +353,12 @@ function PerformanceCard({
 export default PerformanceCard;
 
 function DetailsTable({ rowKey, value, omitEmpty }) {
+  const [isExpanded, setIsExpanded] = useState(false);
   if (omitEmpty && (value === undefined || value === null)) {
     return null;
   }
 
   const MAX_TEXT_LENGTH = 150;
-  const [isExpanded, setIsExpanded] = useState(false);
   const shouldShowButton =
     rowKey === 'Additional Option' && value && JSON.stringify(value).length > MAX_TEXT_LENGTH;
   const displayText =

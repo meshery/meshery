@@ -882,7 +882,7 @@ class MesheryPerformanceComponent extends React.Component {
     return (
       <NoSsr>
         <React.Fragment>
-          <div className={classes.wrapperClss} style={this.props.style || {}}>
+          <div className={classes.wrapperClss} style={this.props.style || {}} id="searchClick">
             <Grid container spacing={1}>
               <Grid item xs={12} md={6}>
                 <TextField
