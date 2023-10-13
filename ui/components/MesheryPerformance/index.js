@@ -117,6 +117,10 @@ const generateTestName = (name, meshName) => {
   return name;
 };
 
+function generateUUID() {
+  const { v4: uuid } = require('uuid');
+  return uuid();
+}
 // =============================== PERFORMANCE COMPONENT =======================
 
 const loadGenerators = ['fortio', 'wrk2', 'nighthawk'];
@@ -178,6 +182,9 @@ const styles = (theme) => ({
       backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : '#607d8b',
     },
     color: '#fff',
+  },
+  iconColor: {
+    color: '#929292',
   },
   upload: {
     paddingLeft: '0.7rem',
@@ -269,8 +276,6 @@ const MesheryPerformanceComponent = (props) => {
   const [cookiesState, setCookies] = useState(cookies || '');
   const [reqBodyState, setReqBody] = useState(reqBody || '');
   const [contentTypeState, setContentType] = useState(contentType || '');
-  // const [certificateState, setCertificate] = useState({});
-  // const [certificateKeyState, setCertificateKey] = useState({});
   const [caCertificateState, setCaCertificate] = useState({});
   const [profileNameState, setProfileName] = useState(profileName || '');
   const [performanceProfileIDState, setPerformanceProfileID] = useState(performanceProfileID || '');
@@ -286,10 +291,6 @@ const MesheryPerformanceComponent = (props) => {
   const [selectedMeshState, setSelectedMesh] = useState('');
   const [availableAdaptersState, setAvailableAdapters] = useState([]);
   const [availableSMPMeshesState, setAvailableSMPMeshes] = useState([]);
-  // const [disableAvailableOptionsUploadButtonState, setDisableAvailableOptionsUploadButton] =
-  //   useState(false);
-  // const [disableAvailableOptionsInputFieldState, setDisableAvailableOptionsInputField] =
-  //   useState(false);
   const [metadataState, setMetadata] = useState(metadata);
   const [staticPrometheusBoardConfigState, setStaticPrometheusBoardConfig] = useState(
     staticPrometheusBoardConfig,
@@ -740,11 +741,6 @@ const MesheryPerformanceComponent = (props) => {
     );
   };
 
-  function generateUUID() {
-    const { v4: uuid } = require('uuid');
-    return uuid();
-  }
-
   function handleError(msg) {
     return (error) => {
       setBlockRunTest(false);
@@ -877,7 +873,7 @@ const MesheryPerformanceComponent = (props) => {
                 InputProps={{
                   endAdornment: (
                     <Tooltip title="Create a profile providing a name, if a profile name is not provided, a random one will be generated for you.">
-                      <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
+                      <HelpOutlineOutlinedIcon className={classes.iconColor} />
                     </Tooltip>
                   ),
                 }}
@@ -935,7 +931,7 @@ const MesheryPerformanceComponent = (props) => {
                 InputProps={{
                   endAdornment: (
                     <Tooltip title="The Endpoint where the load will be generated and the perfromance test will run against.">
-                      <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
+                      <HelpOutlineOutlinedIcon className={classes.iconColor} />
                     </Tooltip>
                   ),
                 }}
@@ -958,7 +954,7 @@ const MesheryPerformanceComponent = (props) => {
                 InputProps={{
                   endAdornment: (
                     <Tooltip title="Load Testing tool will create this many concurrent request against the endpoint.">
-                      <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
+                      <HelpOutlineOutlinedIcon className={classes.iconColor} />
                     </Tooltip>
                   ),
                 }}
@@ -981,7 +977,7 @@ const MesheryPerformanceComponent = (props) => {
                 InputProps={{
                   endAdornment: (
                     <Tooltip title="The Number of queries/second. If not provided then the MAX number of queries/second will be requested">
-                      <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
+                      <HelpOutlineOutlinedIcon className={classes.iconColor} />
                     </Tooltip>
                   ),
                 }}
@@ -1013,7 +1009,7 @@ const MesheryPerformanceComponent = (props) => {
                   InputProps={{
                     endAdornment: (
                       <Tooltip title="Default duration is 30 seconds">
-                        <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
+                        <HelpOutlineOutlinedIcon className={classes.iconColor} />
                       </Tooltip>
                     ),
                   }}
