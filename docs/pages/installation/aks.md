@@ -65,11 +65,11 @@ Read through the following considerations prior to deploying Meshery on AKS.
 {% capture code_content %}$ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start{% endcapture %}
 {% include code.html code=code_content %}
 
-Meshery should now be running in your EKS cluster and Meshery UI should be accessible at the `EXTERNAL IP` of `meshery` service.
+Meshery should now be running in your AKS cluster and Meshery UI should be accessible at the `EXTERNAL IP` of `meshery` service.
 
 ## Installation: Using `mesheryctl`
 
-Use Meshery's CLI to streamline your connection to your EKS cluster. Configure Meshery to connect to your EKS cluster by executing:
+Use Meshery's CLI to streamline your connection to your AKS cluster. Configure Meshery to connect to your AKS cluster by executing:
 
 {% capture code_content %}$ mesheryctl system config aks{% endcapture %}
 {% include code.html code=code_content %}
