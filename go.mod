@@ -15,7 +15,7 @@ replace (
 )
 
 require (
-	cuelang.org/go v0.5.0
+	cuelang.org/go v0.6.0
 	fortio.org/fortio v1.58.0
 	github.com/99designs/gqlgen v0.17.36
 	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef
@@ -109,7 +109,7 @@ require (
 	github.com/chai2010/gettext-go v1.0.2 // indirect
 	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e // indirect
 	github.com/cncf/xds/go v0.0.0-20230607035331-e9ce68804cb4 // indirect
-	github.com/cockroachdb/apd/v2 v2.0.2 // indirect
+	github.com/cockroachdb/apd/v3 v3.2.0 // indirect
 	github.com/containerd/cgroups v1.1.0 // indirect
 	github.com/containerd/containerd v1.6.19 // indirect
 	github.com/cyphar/filepath-securejoin v0.2.4 // indirect
