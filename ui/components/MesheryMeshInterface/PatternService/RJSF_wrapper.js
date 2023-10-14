@@ -17,6 +17,7 @@ function RJSFWrapper(props) {
     formRef = null,
     liveValidate = true,
     RJSFWrapperComponent = React.Fragment,
+    ...restProps
     //.. temporarily ignoring till handler is attached successfully
   } = props;
 
@@ -64,6 +65,7 @@ function RJSFWrapper(props) {
           setData(e.formData);
         }}
         jsonSchema={jsonSchema}
+        {...restProps}
       />
     </RJSFWrapperComponent>
   );
