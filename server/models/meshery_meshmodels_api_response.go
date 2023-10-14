@@ -68,7 +68,7 @@ type DuplicateResponseModels struct {
 	Duplicates int `json:"duplicates"`
 }
 
-type MesheryHostsContextPage struct {
+type MeshmodelRegistrantsAPIResponse struct {
 	Page        int                            `json:"page"`
 	PageSize    int                            `json:"page_size"`
 	Count       int64                          `json:"total_count"`

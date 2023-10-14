@@ -1221,7 +1221,7 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 //
 // responses:
-//	200: []MesheryHostsContextPage
+//	200: []meshmodelRegistrantsResponseWrapper
 
 func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
@@ -1245,9 +1245,9 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 
 	offset := (page - 1) * limit
 	filter := &v1alpha1.HostFilter{
-		Limit:  limit,
-		Offset: offset,
-		Sort:  r.URL.Query().Get("sort"),
+		Limit:   limit,
+		Offset:  offset,
+		Sort:    r.URL.Query().Get("sort"),
 		OrderOn: r.URL.Query().Get("order"),
 	}
 	if r.URL.Query().Get("search") != "" {
@@ -1268,7 +1268,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	} else {
 		pgSize = int64(limit)
 	}
-	res := models.MesheryHostsContextPage{
+	res := models.MeshmodelRegistrantsAPIResponse{
 		Page:        page,
 		PageSize:    int(pgSize),
 		Count:       count,
