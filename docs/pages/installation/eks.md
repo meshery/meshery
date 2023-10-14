@@ -108,3 +108,5 @@ Configure Meshery to connect to your cluster by executing:
 {% include code.html code=code_content %}
 
 Once you have verified that all the services are up and running, Meshery UI will be accessible on your local machine on port 9081. Open your browser and access Meshery at [`http://localhost:9081`](http://localhost:9081).
+
+Note:   _You can also verify health of your system using [mesheryctl system check](/reference/mesheryctl/system/check)_
