@@ -18,7 +18,7 @@ require (
 	cuelang.org/go v0.6.0
 	fortio.org/fortio v1.60.2
 	github.com/99designs/gqlgen v0.17.36
-	github.com/asaskevich/govalidator v0.0.0-20200907205600-7a23bdc65eef
+	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/briandowns/spinner v1.23.0
 	github.com/docker/cli v20.10.21+incompatible
 	github.com/docker/docker v20.10.23+incompatible
