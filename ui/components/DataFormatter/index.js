@@ -65,12 +65,12 @@ export const TextWithLinks = ({ text, ...typographyProps }) => {
   const parts = text.split(linkRegex);
 
   // Map the parts to React elements
-  const elements = parts.map((part) => {
+  const elements = parts.map((part, idx) => {
     if (part.match(linkRegex)) {
       // If the part is a link, wrap it in a Link component
       return getFormattedLink(part);
     } else {
-      return <span>{part}</span>;
+      return <span key={idx}>{part}</span>;
     }
   });
 

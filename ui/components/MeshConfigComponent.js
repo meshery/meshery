@@ -238,7 +238,7 @@ function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig 
     notify({
       message: `${msg}: ${error}`,
       event_type: EVENT_TYPES.ERROR,
-      details: error.toString(),
+      details: error,
     });
   };
 
@@ -276,7 +276,7 @@ function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig 
 
   const updateCtxInfo = (ctxId, newInfo) => {
     if (newInfo.operator.error) {
-      handleError('There is problem With operator')(newInfo.operator.error);
+      handleError('There is problem With operator')(newInfo.operator.error.description);
       return;
     }
 
