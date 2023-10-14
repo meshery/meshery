@@ -89,4 +89,8 @@ For detailed instructions on installing Meshery using Helm V3, please refer to t
 
 ## Access Meshery UI
 
-To access Meshery's UI, please refer to the [instruction](/reference/mesheryctl/system/dashboard) for detailed guidance..
+To access Meshery's UI, please refer to the [instruction](/reference/mesheryctl/system/dashboard) for detailed guidance.
+
+Note: _You can also verify health of your system using [mesheryctl system check](/reference/mesheryctl/system/check)_
+
+
