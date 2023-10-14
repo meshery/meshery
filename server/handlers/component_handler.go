@@ -1208,15 +1208,19 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 // swagger:route GET /api/meshmodels/registrants GetMeshmodelRegistrants
 // Handle GET request for getting all meshmodel registrants
 //
-// # Returns a list of registrants and their respective models components and relationships
+// # Returns a list of registrants and summary count of its models, components, and relationships
 //
-// ```?page={page-number}``` Default page number is 1
+// ```?page={pagenumber}``` Default page number is 1
 //
-// ```?search={Hostaname}``` Gets host by the name
+// ```?order={field}``` orders on the passed field
+//
+// ```?search={Hostname}``` Gets host by the name
+//
+// ```?sort={[asc/desc]}``` Default behavior is asc
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-// responses:
 //
+// responses:
 //	200: []MesheryHostsContextPage
 
 func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Request) {
@@ -1226,9 +1230,12 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	limitstr := r.URL.Query().Get("pagesize")
 	pagestr := r.URL.Query().Get("page")
 
-	limit, _ := strconv.Atoi(limitstr)
-	if limitstr != "all" && limit == 0 {
-		limit = DefaultPageSizeForMeshModelComponents
+	var limit int
+	if limitstr != "all" {
+		limit, _ = strconv.Atoi(limitstr)
+		if limit == 0 { //If limit is unspecified then it defaults to 25
+			limit = DefaultPageSizeForMeshModelComponents
+		}
 	}
 
 	page, _ := strconv.Atoi(pagestr)
@@ -1237,34 +1244,21 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	}
 
 	offset := (page - 1) * limit
-	filter := &v1alpha1.ComponentFilter{
+	filter := &v1alpha1.HostFilter{
 		Limit:  limit,
 		Offset: offset,
+		Sort:  r.URL.Query().Get("sort"),
+		OrderOn: r.URL.Query().Get("order"),
 	}
 	if r.URL.Query().Get("search") != "" {
 		filter.Greedy = true
 		filter.DisplayName = r.URL.Query().Get("search")
 	}
-	hosts, count, err := h.registryManager.GetHostsForModels(filter)
+	hosts, count, err := h.registryManager.GetRegistrants(filter)
 	if err != nil {
 		h.log.Error(ErrGetMeshModels(err))
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
-	}
-
-	var resposnse []v1alpha1.MesheryHostsDisplay
-
-	for _, host := range hosts {
-		res := v1alpha1.MesheryHostsDisplay{
-			ID:       host.HostID,
-			Hostname: registry.HostnameToPascalCase(host.Hostname),
-			Port:     host.Port,
-			Summary: v1alpha1.HostIndividualCount{
-				Models:        host.Models,
-				Components:    host.Components,
-				Relationships: host.Relationships,
-			},
-		}
-		resposnse = append(resposnse, res)
+		return
 	}
 
 	var pgSize int64
@@ -1278,7 +1272,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 		Page:        page,
 		PageSize:    int(pgSize),
 		Count:       count,
-		Registrants: resposnse,
+		Registrants: hosts,
 	}
 
 	if err := enc.Encode(res); err != nil {
