@@ -29,6 +29,8 @@
           url: project/contributing/contributing-cypress
         - title: Meshery Docker Extension
           url: project/contributing/contributing-docker-extension
+        - title: Server Events (Golang)
+          url: project/contributing/send-events  
     - title: Releases
       url: project/releases
     - title: Vulnerabilities
@@ -159,8 +161,6 @@
       url: guides/troubleshooting
     - title: Upgrading Meshery
       url: guides/upgrade
-    - title: Send Events From Meshery Server Using Golang
-      url: guides/send-events
     - title: Using mesheryctl ↆ
       url: guides/mesheryctl
       children:

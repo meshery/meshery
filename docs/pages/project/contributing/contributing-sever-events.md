@@ -1,13 +1,14 @@
 ---
 layout: default
-title: Send Events From Meshery Server Using Golang
+title: Contributing to Server Events Using Golang
 description: This guide is to help backend contributors how to send server events using Golang.
-permalink: guides/send-events
-type: Guides
+permalink: project/contributing/send-events
+type: project
+category: contributing
 language: en
 ---
 
-&emsp;&emsp;&emsp;Meshery incorporates an internal events publication mechanism that serves to provide users with real-time updates on the processes occuring within the Meshery API when they interact with its endpoints. it ensures that users are kept in the loop regarding the ongoing activities within the API, and guides users towards future steps to resolve issues. This guide will provide step-by-step instructions on how to send events from the server codebase, including when to trigger events and what information to include in.
+Meshery incorporates an internal events publication mechanism that serves to provide users with real-time updates on the processes occuring within the Meshery API when they interact with its endpoints. it ensures that users are kept in the loop regarding the ongoing activities within the API, and guides users towards future steps to resolve issues. This guide will provide step-by-step instructions on how to send events from the server codebase, including when to trigger events and what information to include in.
 
 
 First, let's take a look at how the event object is constructed,
@@ -28,7 +29,7 @@ First, let's take a look at how the event object is constructed,
  </pre>
 &nbsp;&nbsp;
 
-*Note: events is a package **(github.com/layer5io/meshkit/models/events)** from meshkit containing source code of event related functionality*
+*Note: `events` is a package [github.com/meshery/meshkit/models/events](https://github.com/meshery/meshkit) from MeshKit containing source code of event related functionality*
 
 The event mechanism utilizes [builder pattern](https://en.wikipedia.org/wiki/Builder_pattern) to construct event objects, `events.NewEvent()` creates an instance of [EventBuilder](https://github.com/meshery/meshkit/blob/ea3c60907a1cd1902902a4113206579992772083/models/events/build.go#L9) type, which functions as a builder class for constructing [Event](https://github.com/meshery/meshkit/blob/ea3c60907a1cd1902902a4113206579992772083/models/events/events.go#L37) objects. 
 
@@ -43,6 +44,11 @@ The event mechanism utilizes [builder pattern](https://en.wikipedia.org/wiki/Bui
       example actions: **"remove_from_organization", "add_to_organization"**.
 
 - `WithSeverity`: it takes [EventSeverity](https://github.com/meshery/meshkit/blob/ea3c60907a1cd1902902a4113206579992772083/models/events/events.go#L75) (underlying type is string), to specify severity of the event to bring user's attention to the event accordingly.
+
+*Note: In certain conditions you must add some fields with specific  keys:*
+- If the severity is "Error", include a field in Metadata using the key `err` with the corresponding error value.
+- When you want to add a link to meshery docs, include a field in Metadata using the key `doc` with the corresponding link value.
+
 - `WithDescription` : The string argument provides a detailed, descriptive message that depicts the specific operation or action being executed on the server.
 - `WithMetadata`: it takes a Map `map[string]interface{}` data structure containing any supplementary information that the developer/contributor deems essential for the user to be informed about.
 - `Build` : returns the [Event](https://github.com/meshery/meshkit/blob/ea3c60907a1cd1902902a4113206579992772083/models/events/events.go#L37) instance constructed upon the previously described functions and prepares it for publication through the [Broadcast](https://github.com/meshery/meshery/blob/1b5d78ed34648e0a91df8c2273026b930f748fbc/server/models/event_broadcast.go#L14), which is responsible for disseminating events.
@@ -70,11 +76,9 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 		eventBuilder.ActedUpon(uuid.FromStringOrNil(connectionID))
 		if err != nil {
 			eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Encountered an issue while retrieving kubernetes context for connection ID `%s`", connectionID)).
-				WithMetadata(map[string]interface{}{
-					"error":                 err,
-					"probable_cause":        "Meshery might not be able to access Kubeconfig.",
-					"suggested_remediation": "Please ensure that Mehsery can establish connectivity with kubernetes.",
-				})
+			WithMetadata(map[string]interface{}{
+				"error": err,
+			})
 			event := eventBuilder.Build()
 		    _ = provider.PersistEvent(event)
 		    go h.config.EventBroadcaster.Publish(userID, event)
@@ -83,13 +87,13 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 			return
 		}
 		eventBuilder.WithSeverity(events.Success).WithDescription("Retrieved kubernetes context successfully").
-			WithMetadata(map[string]interface{}{
-		 		"context_name": k8sContext.Name,
-				"server":       k8sContext.Server,
-			})
-		    event := eventBuilder.Build()
-		    _ = provider.PersistEvent(event)
-		    go h.config.EventBroadcaster.Publish(userID, event)
+		WithMetadata(map[string]interface{}{
+			"Context Name":   k8sContext.Name,
+			"Server Address": k8sContext.Server,
+		})
+		event := eventBuilder.Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
 
 		// Remaining code ...
     }
