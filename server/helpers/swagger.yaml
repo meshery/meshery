@@ -1132,7 +1132,7 @@ paths:
             operationId: GetMeshmodelRegistrants
             responses:
                 "200":
-                    $ref: '#/responses/MeshmodelRegistrantsAPIResponse'
+                    $ref: '#/responses/meshmodelRegistrantsResponseWrapper'
             summary: Handle GET request for getting all meshmodel registrants
     /api/meshmodels/relationships:
         get:

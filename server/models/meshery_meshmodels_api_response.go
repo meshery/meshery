@@ -69,10 +69,10 @@ type DuplicateResponseModels struct {
 }
 
 type MeshmodelRegistrantsAPIResponse struct {
-	Page        int                            `json:"page"`
-	PageSize    int                            `json:"page_size"`
-	Count       int64                          `json:"total_count"`
-	Registrants []v1alpha1.MesheryHostsDisplay `json:"registrants"`
+	Page        int                                        `json:"page"`
+	PageSize    int                                        `json:"page_size"`
+	Count       int64                                      `json:"total_count"`
+	Registrants []v1alpha1.MeshModelHostsWithEntitySummary `json:"registrants"`
 }
 
 func FindDuplicateComponents(components []v1alpha1.ComponentDefinition) []DuplicateResponseComponent {
