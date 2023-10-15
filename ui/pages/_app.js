@@ -596,7 +596,12 @@ class MesheryApp extends App {
                             {' '}
                             Built with{' '}
                             <FavoriteIcon
-                              style={{ color: '#00b39f' }}
+                              style={{
+                                color:
+                                  this.state.theme === 'dark'
+                                    ? theme.palette.secondary.focused
+                                    : '#00b39f',
+                              }}
                               className={classes.footerIcon}
                             />{' '}
                             by the Layer5 Community
