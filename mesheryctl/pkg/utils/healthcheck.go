@@ -75,7 +75,7 @@ func getK8sVersion(versionString string) ([3]int, error) {
 // CheckKubectlVersion validates whether the installed kubectl version is
 // running a minimum kubectl version.
 func CheckKubectlVersion() error {
-	cmd := exec.Command("kubectl", "version", "--client", "--short")
+	cmd := exec.Command("kubectl", "version")
 	bytes, err := cmd.Output()
 	if err != nil {
 		return err

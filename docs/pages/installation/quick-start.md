@@ -5,7 +5,6 @@ permalink: installation/quick-start
 redirect_from: installation/quick-start/
 language: en
 ---
-<!-- <link href="/assets/css/terminal.css" rel="stylesheet"> -->
 <a name="getting-started"></a>
 
 Getting Meshery up and running locally on a Docker-enabled system or in Kubernetes is easy. Meshery deploys as a set of Docker containers, which can be deployed to either a Docker host or Kubernetes cluster. See the complete list of its [supported platforms]({{ site.baseurl }}/installation/platforms).
@@ -31,14 +30,12 @@ Use the Meshery command line interface, [mesheryctl]({{ site.baseurl }}/guides/m
  </pre>
  <br>
 
-{% include alert.html type="dark" title="All Supported Platforms" content="Don't find an answer to your question here? Ask on the <a href='http://discuss.meshery.io'>Discussion Forum</a>." %}
+{% include alert.html type="dark" title="All Supported Platforms" content="Download, install, and run Meshery in a single command. See all <a href='/installation'>installation methods</a>." %}
 
 
 ### Install using Docker Extension for Meshery
 You can visit the [Docker Hub](https://hub.docker.com/extensions/meshery/docker-extension-meshery) marketplace to directly install Meshery extension in your Docker Desktop.
 
-
-_Download, install, and run Meshery in a single command. See all [installation methods]({{ site.baseurl }}/installation)._
 
 ## Access Meshery
 

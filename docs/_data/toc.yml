@@ -141,8 +141,10 @@
 - title: 📚 Guides (all)
   url: guides
   links:
-    - title: Deploying Sample Applications
-      url: guides/sample-apps
+    # - title: Deploying Designs
+    #   url: guides/deploying-designs
+    # - title: Deploying Sample Applications
+    #   url: guides/sample-apps
     # - title: Running SMI Conformance Tests
       # url: guides/smi-conformance
     - title: Integrating Prometheus and Grafana

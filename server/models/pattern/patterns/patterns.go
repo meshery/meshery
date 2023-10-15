@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bool, patternName string, ec *models.EventBroadcast, userID string, provider models.Provider, hostname registry.IHost, skipCrdAndOperator bool) (string, error) {
+func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bool, patternName string, ec *models.Broadcast, userID string, provider models.Provider, hostname registry.IHost, skipCrdAndOperator bool) (string, error) {
 	var comps []v1alpha1.Component
 	var config v1alpha1.Configuration
 	mesheryInstanceID, _ := viper.Get("INSTANCE_ID").(*uuid.UUID)
@@ -51,7 +51,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 		}
 		kclis = append(kclis, cli)
 	}
-	
+
 	var wg sync.WaitGroup
 	for _, kcli := range kclis {
 		wg.Add(1)
@@ -68,7 +68,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 							description = fmt.Sprintf("Error deploying application %s", comp.Name)
 						}
 						errs = append(errs, err)
-						
+
 						// Format bove ProbableCause, SuggestedRemediation,..... as meshkit er and add to metadata
 						event := events.NewEvent().FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("pattern").WithAction(action).WithDescription(description).FromUser(userUUID).Build()
 						err := provider.PersistEvent(event)
@@ -77,7 +77,8 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 							evt := events.NewEvent().FromSystem(*mesheryInstanceID).WithSeverity(events.Alert).WithCategory("event").WithAction("persist").WithDescription("Failed persisting events").FromUser(userUUID).Build()
 							go ec.Publish(userUUID, evt)
 						}
-						
+						go ec.Publish(userUUID, event)
+
 						continue
 					}
 					var description string
@@ -110,7 +111,7 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 					// Deploys resources that are required inside cluster for successful deployment of the design.
 					result, err := hostname.HandleDependents(comp, kcli, !isDel)
 					// If dependencies were not resolved fail forward, there can be case that dependency already exist in the cluster.
-					
+
 					eventMetadata := map[string]interface{}{
 						"summary": result,
 					}
@@ -120,13 +121,14 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 						severity = events.Error
 						errs = append(errs, err)
 					}
-	
+
 					event := events.NewEvent().FromSystem(*mesheryInstanceID).WithSeverity(severity).WithCategory("pattern").WithAction(action).WithDescription(description).FromUser(userUUID).WithMetadata(eventMetadata).Build()
 					err = provider.PersistEvent(event)
 					if err != nil {
 						evt := events.NewEvent().FromSystem(*mesheryInstanceID).WithSeverity(events.Alert).WithCategory("event").WithAction("persist").WithDescription("Failed persisting events").FromUser(userUUID).Build()
-						go ec.Publish(userUUID, evt)		
+						go ec.Publish(userUUID, evt)
 					}
+					go ec.Publish(userUUID, event)
 				}
 				//All other components will be handled directly by Kubernetes
 				//TODO: Add a Mapper utility function which carries the logic for X hosts can handle Y components under Z circumstances.
@@ -144,28 +146,31 @@ func ProcessOAM(kconfigs []string, oamComps []string, oamConfig string, isDel bo
 					} else {
 						description = fmt.Sprintf("Error deploying %s/%s", patternName, comp.Name)
 					}
-	
+
 					event := events.NewEvent().FromSystem(*mesheryInstanceID).WithSeverity(severity).WithCategory("pattern").WithAction(action).WithDescription(description).FromUser(userUUID).WithMetadata(eventMetadata).Build()
 					err := provider.PersistEvent(event)
 					if err != nil {
 						evt := events.NewEvent().FromSystem(*mesheryInstanceID).WithSeverity(severity).WithCategory("event").WithAction("persist").WithDescription("Failed persisting events").FromUser(userUUID).Build()
-						go ec.Publish(userUUID, evt)		
+						go ec.Publish(userUUID, evt)
 					}
+
+					go ec.Publish(userUUID, event)
 					continue
 				}
 				if !isDel {
 					msgs = append(msgs, fmt.Sprintf("Deployed %s: %s", comp.Spec.Type, comp.Name))
 				} else {
 					description = fmt.Sprintf("Undeployed %s/%s.", patternName, comp.Name)
-	
+
 					msgs = append(msgs, fmt.Sprintf("Deleted %s: %s", comp.Spec.Type, comp.Name))
 				}
 				event := events.NewEvent().FromSystem(*mesheryInstanceID).WithSeverity(severity).WithCategory("pattern").WithAction(action).WithDescription(description).FromUser(userUUID).Build()
 				err := provider.PersistEvent(event)
 				if err != nil {
 					evt := events.NewEvent().FromSystem(*mesheryInstanceID).WithSeverity(events.Alert).WithCategory("event").WithAction("persist").WithDescription("Failed persisting events").FromUser(userUUID).Build()
-					go ec.Publish(userUUID, evt)		
+					go ec.Publish(userUUID, evt)
 				}
+				go ec.Publish(userUUID, event)
 			}
 		}(kcli)
 	}

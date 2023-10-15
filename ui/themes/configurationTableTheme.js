@@ -1,73 +1,89 @@
-import { createTheme } from "@material-ui/core";
+import { createTheme } from '@mui/material/styles';
 
-function configurationTableTheme ( style = {} ) {
-  const theme = Object.assign({
-    shadows : ["none"],
-    overrides : {
-      MUIDataTable : {
-      },
-      MuiInput : {
-        underline : {
-          "&:hover:not(.Mui-disabled):before" : {
-            borderBottom : "2px solid #222"
-          },
-          "&:after" : {
-            borderBottom : "2px solid #222"
-          }
-        }
-      },
-      MUIDataTableSearch : {
-        searchIcon : {
-          color : "#607d8b",
-          marginTop : "7px",
-          marginRight : "8px",
-        },
-        clearIcon : {
-          "&:hover" : {
-            color : "#607d8b"
-          }
-        },
-      },
-      MUIDataTableSelectCell : {
-        checkboxRoot : {
-          '&$checked' : {
-            color : '#607d8b',
+function configurationTableTheme(style = {}) {
+  const theme = createTheme({
+    shadows: ['none'],
+    components: {
+      MuiInput: {
+        styleOverrides: {
+          underline: {
+            '&:hover:not(.Mui-disabled):before': {
+              borderBottom: '2px solid #222',
+            },
+            '&:after': {
+              borderBottom: '2px solid #222',
+            },
           },
         },
       },
-      MUIDataTableToolbar : {
-        iconActive : {
-          color : "#222"
-        },
-        icon : {
-          "&:hover" : {
-            color : "#607d8b"
-          }
+      MUIDataTableSearch: {
+        styleOverrides: {
+          searchIcon: {
+            color: '#607d8b',
+            marginTop: '7px',
+            marginRight: '8px',
+          },
+          clearIcon: {
+            '&:hover': {
+              color: '#607d8b',
+            },
+          },
         },
       },
-    }
-  }, style)
-  return createTheme(theme);
+      MUIDataTableSelectCell: {
+        styleOverrides: {
+          checkboxRoot: {
+            '&$checked': {
+              color: '#607d8b',
+            },
+          },
+        },
+      },
+      MUIDataTableToolbar: {
+        styleOverrides: {
+          iconActive: {
+            color: '#222',
+          },
+          icon: {
+            '&:hover': {
+              color: '#607d8b',
+            },
+          },
+        },
+      },
+    },
+    ...style,
+  });
+  return theme;
 }
 
-function configurationTableThemeDark ( style = {} )  {
-  const theme = Object.assign({
-    shadows : ["none"],
-    palette : {
-      type : "dark",
+function configurationTableThemeDark(style = {}) {
+  const theme = createTheme({
+    shadows: ['none'],
+    palette: {
+      mode: 'dark', // Use mode instead of type for dark theme
     },
-    overrides : {
-      MuiPaper : { root : { backgroundColor : '#363636' } },
-      MuiFormLabel : {
-        root : {
-          "&$focused" : {
-            color : "#00B39F",
+    components: {
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#363636',
           },
-        }
+        },
       },
-    }
-  }, style)
-  return createTheme(theme);
+      MuiFormLabel: {
+        styleOverrides: {
+          root: {
+            '&$focused': {
+              color: '#00B39F',
+            },
+          },
+        },
+      },
+    },
+    ...style,
+  });
+  return theme;
 }
 
 export { configurationTableTheme, configurationTableThemeDark };

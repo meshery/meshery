@@ -74,7 +74,7 @@ Follow [this guidance](https://docs.cypress.io/guides/getting-started/testing-yo
 
 ### Directory: `./integration/e2e/` ([code](https://github.com/meshery/meshery/tree/master/ui/cypress/integration/e2e))
 
-End-to-end tests for both Meshery UI and Meshery Server where its usually necessary to [seed data](https://docs.cypress.io/guides/getting-started/testing-your-app#Seeding-data), ocassionally [bypass our UI](https://docs.cypress.io/guides/getting-started/testing-your-app#Bypassing-your-UI), use [actual server responses](https://docs.cypress.io/guides/guides/network-requests#Use-Server-Responses) and define cypress [routes](https://docs.cypress.io/guides/guides/network-requests#Routing) to [wait](https://docs.cypress.io/guides/guides/network-requests#Waiting) and [assert](https://docs.cypress.io/guides/guides/network-requests#Assertions) on requests and/or their responses.
+End-to-end tests for both Meshery UI and Meshery Server where its usually necessary to [seed data](https://docs.cypress.io/guides/getting-started/testing-your-app#Seeding-data), occasionally [bypass our UI](https://docs.cypress.io/guides/getting-started/testing-your-app#Bypassing-your-UI), use [actual server responses](https://docs.cypress.io/guides/guides/network-requests#Use-Server-Responses) and define cypress [routes](https://docs.cypress.io/guides/guides/network-requests#Routing) to [wait](https://docs.cypress.io/guides/guides/network-requests#Waiting) and [assert](https://docs.cypress.io/guides/guides/network-requests#Assertions) on requests and/or their responses.
 
 ### Directory: `./plugins/` ([code](https://github.com/meshery/meshery/tree/master/ui/cypress/plugins))
 

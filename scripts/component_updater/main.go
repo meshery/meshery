@@ -43,7 +43,7 @@ var (
 	ColumnNamesToExtractForDocs = []string{"modelDisplayName", "Page Subtitle", "Docs URL", "category", "subCategory", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "svgColor", "svgWhite", "Full Page", "model"}
 	PrimaryColumnName           = "model"
 	OutputPath                  = ""
-	ExcludeDirs = []string{"relationships", "policies"}
+	ExcludeDirs                 = []string{"relationships", "policies"}
 )
 
 var System string
@@ -146,16 +146,16 @@ func cleanupDuplicatesAndPreferEmptyComponentField(out []map[string]string, grou
 }
 
 func docsUpdater(output []map[string]string) {
-	if len(os.Args) < 8 {
+	if len(os.Args) < 7 {
 		log.Fatal("docsUpdater: invalid number of arguments; missing website and docs path")
 		return
 	}
 	pathToIntegrationsLayer5 := os.Args[4]
 	pathToIntegrationsMeshery := os.Args[5]
-	pathToIntegrationsMesheryDocs := os.Args[6]	
+	pathToIntegrationsMesheryDocs := os.Args[6]
 	updateOnlyPublished := true
-	if len(os.Args) > 7 {
-		if os.Args[7] == "--published-only" {
+	if len(os.Args) > 6 {
+		if os.Args[6] == "--published-only" {
 			updateOnlyPublished = true
 		}
 	}
@@ -213,7 +213,7 @@ func docsUpdater(output []map[string]string) {
 		modelName := strings.TrimSpace(out["model"])
 		pathToIntegrationsLayer5, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5, modelName))
 		pathToIntegrationsMeshery, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsMeshery))
-		pathToIntegrationsMesheryDocs, _ := filepath.Abs(filepath.Join("../../", pathToIntegrationsMesheryDocs, "assets/img/meshmodel/", modelName))	
+		pathToIntegrationsMesheryDocs, _ := filepath.Abs(filepath.Join("../../", pathToIntegrationsMesheryDocs, "assets/img/meshmodel/", modelName))
 		err = os.MkdirAll(pathToIntegrationsLayer5, 0777)
 		if err != nil {
 			panic(err)

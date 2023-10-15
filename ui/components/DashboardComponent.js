@@ -1,161 +1,171 @@
 import {
-  Button, Card, CardContent, CardHeader, Chip,
-  MenuItem, NoSsr, Paper, Select, TableCell, TableSortLabel, Tooltip, Typography
-} from "@material-ui/core";
-// import {Table, TableBody, TableContainer, TableHead, TableRow,} from "@material-ui/core"
-import blue from "@material-ui/core/colors/blue";
-import Grid from "@material-ui/core/Grid";
-import { withStyles, MuiThemeProvider } from "@material-ui/core/styles";
-import AddIcon from "@material-ui/icons/AddCircleOutline";
-import { withRouter } from "next/router";
-import PropTypes from "prop-types";
-import React from "react";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import dataFetch from "../lib/data-fetch";
-import { updateGrafanaConfig, updateProgress, updatePrometheusConfig, updateTelemetryUrls } from "../lib/store";
-import { getK8sClusterIdsFromCtxId, getK8sClusterNamesFromCtxId } from "../utils/multi-ctx";
-import { versionMapper } from "../utils/nameMapper";
-import { submitGrafanaConfigure } from "./telemetry/grafana/GrafanaComponent";
-import fetchAvailableAddons from "./graphql/queries/AddonsStatusQuery";
-import fetchControlPlanes from "./graphql/queries/ControlPlanesQuery";
-import fetchDataPlanes from "./graphql/queries/DataPlanesQuery";
-import fetchClusterResources from "./graphql/queries/ClusterResourcesQuery";
-import subscribeClusterResources from "./graphql/subscriptions/ClusterResourcesSubscription";
-import fetchAvailableNamespaces from "./graphql/queries/NamespaceQuery";
-import fetchTelemetryCompsQuery from '../components/graphql/queries/TelemetryComponentsQuery';
-import { submitPrometheusConfigure } from "./telemetry/prometheus/PrometheusComponent";
-import MUIDataTable from "mui-datatables";
-import Popup from "./Popup";
-import { iconMedium } from "../css/icons.styles";
-import { extractURLFromScanData } from "./ConnectionWizard/helpers/metrics";
-import { configurationTableTheme, configurationTableThemeDark } from '../themes/configurationTableTheme';
-import DashboardMeshModelGraph from './Dashboard/DashboardMeshModelGraph'
-import ConnectionStatsChart from "./Dashboard/ConnectionCharts.js";
-import { EVENT_TYPES } from "../lib/event-types";
-import { withNotify } from "../utils/hooks/useNotification";
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Chip,
+  MenuItem,
+  NoSsr,
+  Paper,
+  Select,
+  TableCell,
+  TableSortLabel,
+  Tooltip,
+  Typography,
+} from '@material-ui/core';
+import blue from '@material-ui/core/colors/blue';
+import Grid from '@material-ui/core/Grid';
+import { withStyles, MuiThemeProvider } from '@material-ui/core/styles';
+import AddIcon from '@material-ui/icons/AddCircleOutline';
+import { withRouter } from 'next/router';
+import PropTypes from 'prop-types';
+import React from 'react';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import dataFetch from '../lib/data-fetch';
+import {
+  updateGrafanaConfig,
+  updateProgress,
+  updatePrometheusConfig,
+  updateTelemetryUrls,
+} from '../lib/store';
+import { getK8sClusterIdsFromCtxId, getK8sClusterNamesFromCtxId } from '../utils/multi-ctx';
+import { versionMapper } from '../utils/nameMapper';
+import fetchControlPlanes from './graphql/queries/ControlPlanesQuery';
+import fetchDataPlanes from './graphql/queries/DataPlanesQuery';
 
+import subscribeClusterResources from './graphql/subscriptions/ClusterResourcesSubscription';
+import fetchAvailableNamespaces from './graphql/queries/NamespaceQuery';
+
+import MUIDataTable from 'mui-datatables';
+import Popup from './Popup';
+import { iconMedium } from '../css/icons.styles';
+import {
+  configurationTableTheme,
+  configurationTableThemeDark,
+} from '../themes/configurationTableTheme';
+import DashboardMeshModelGraph from './Dashboard/DashboardMeshModelGraph';
+import ConnectionStatsChart from './Dashboard/ConnectionCharts.js';
+import { EVENT_TYPES } from '../lib/event-types';
+import { withNotify } from '../utils/hooks/useNotification';
+import _ from 'lodash';
 const styles = (theme) => ({
-  rootClass : { backgroundColor : theme.palette.secondary.elevatedComponents2, },
-  datatable : {
-    boxShadow : "none",
+  rootClass: { backgroundColor: theme.palette.secondary.elevatedComponents2 },
+  datatable: {
+    boxShadow: 'none',
   },
-  chip : {
-    marginRight : theme.spacing(1),
-    marginBottom : theme.spacing(1),
+  chip: {
+    marginRight: theme.spacing(1),
+    marginBottom: theme.spacing(1),
   },
-  buttons : {
-    display : "flex",
-    justifyContent : "flex-end",
+  buttons: {
+    display: 'flex',
+    justifyContent: 'flex-end',
   },
-  button : {
-    marginTop : theme.spacing(3),
-    marginLeft : theme.spacing(1),
+  button: {
+    marginTop: theme.spacing(3),
+    marginLeft: theme.spacing(1),
   },
-  link : {
-    cursor : "pointer",
-    textDecoration : "none"
+  link: {
+    cursor: 'pointer',
+    textDecoration: 'none',
   },
-  metricsButton : { width : "240px", },
-  alreadyConfigured : { textAlign : "center", },
-  margin : { margin : theme.spacing(1), },
-  colorSwitchBase : {
-    color : blue[300],
-    "&$colorChecked" : {
-      color : blue[500],
-      "& + $colorBar" : { backgroundColor : blue[500], },
+  metricsButton: { width: '240px' },
+  alreadyConfigured: { textAlign: 'center' },
+  margin: { margin: theme.spacing(1) },
+  colorSwitchBase: {
+    color: blue[300],
+    '&$colorChecked': {
+      color: blue[500],
+      '& + $colorBar': { backgroundColor: blue[500] },
     },
   },
-  colorBar : {},
-  colorChecked : {},
-  fileLabel : { width : "100%", },
-  fileLabelText : {},
-  inClusterLabel : { paddingRight : theme.spacing(2), },
-  alignCenter : { textAlign : "center", },
-  icon : { width : theme.spacing(2.5), },
-  istioIcon : { width : theme.spacing(1.5), },
-  settingsIcon : {
-    width : theme.spacing(2.5),
-    paddingRight : theme.spacing(0.5),
+  colorBar: {},
+  colorChecked: {},
+  fileLabel: { width: '100%' },
+  fileLabelText: {},
+  inClusterLabel: { paddingRight: theme.spacing(2) },
+  alignCenter: { textAlign: 'center' },
+  icon: { width: theme.spacing(2.5) },
+  istioIcon: { width: theme.spacing(1.5) },
+  settingsIcon: {
+    width: theme.spacing(2.5),
+    paddingRight: theme.spacing(0.5),
   },
-  addIcon : {
-    width : theme.spacing(2.5),
-    paddingRight : theme.spacing(0.5),
+  addIcon: {
+    width: theme.spacing(2.5),
+    paddingRight: theme.spacing(0.5),
   },
-  cardHeader : { fontSize : theme.spacing(2), },
-  card : {
-    height : "100%",
-    marginTop : theme.spacing(2),
+  cardHeader: { fontSize: theme.spacing(2) },
+  card: {
+    height: '100%',
+    marginTop: theme.spacing(2),
   },
-  cardContent : { height : "100%", },
-  redirectButton : {
-    marginLeft : "-.5em",
-    color : "#000",
+  cardContent: { height: '100%' },
+  redirectButton: {
+    marginLeft: '-.5em',
+    color: '#000',
   },
-  dashboardSection : {
-    backgroundColor : theme.palette.secondary.elevatedComponents,
-    padding : theme.spacing(2),
-    borderRadius : 4,
-    height : "100%",
-    marginBottom : theme.spacing(2),
+  dashboardSection: {
+    backgroundColor: theme.palette.secondary.elevatedComponents,
+    padding: theme.spacing(2),
+    borderRadius: 4,
+    height: '100%',
+    marginBottom: theme.spacing(2),
   },
 });
 class DashboardComponent extends React.Component {
   constructor(props) {
     super(props);
-    const {
-      meshAdapters, grafana, prometheus
-    } = props;
+    const { meshAdapters, grafana, prometheus } = props;
     this._isMounted = false;
     this.state = {
       meshAdapters,
-      contextsFromFile : [],
-      availableAdapters : [],
-      mts : new Date(),
-      meshLocationURLError : false,
+      contextsFromFile: [],
+      availableAdapters: [],
+      mts: new Date(),
+      meshLocationURLError: false,
 
-      grafanaUrl : grafana.grafanaURL,
-      prometheusUrl : prometheus.prometheusURL,
-      k8sfileError : false,
-      kts : new Date(),
+      grafanaUrl: grafana.grafanaURL,
+      prometheusUrl: prometheus.prometheusURL,
+      k8sfileError: false,
+      kts: new Date(),
 
       grafana,
       prometheus,
 
-      urlError : false,
-      grafanaConfigSuccess : props.grafana.grafanaURL !== "",
-      grafanaBoardSearch : "",
-      grafanaURL : props.grafana.grafanaURL,
-      grafanaAPIKey : props.grafana.grafanaAPIKey,
-      grafanaBoards : props.grafana.grafanaBoards,
-      selectedBoardsConfigs : props.grafana.selectedBoardsConfigs,
-      ts : props.grafana.ts,
+      urlError: false,
+      grafanaConfigSuccess: props.grafana.grafanaURL !== '',
+      grafanaBoardSearch: '',
+      grafanaURL: props.grafana.grafanaURL,
+      grafanaAPIKey: props.grafana.grafanaAPIKey,
+      grafanaBoards: props.grafana.grafanaBoards,
+      selectedBoardsConfigs: props.grafana.selectedBoardsConfigs,
+      ts: props.grafana.ts,
 
-      meshScan : [],
-      activeMeshScanNamespace : {},
-      meshScanNamespaces : {},
+      meshScan: [],
+      activeMeshScanNamespace: {},
+      meshScanNamespaces: {},
 
-      isMetricsConfigured : grafana.grafanaURL !== '' && prometheus.prometheusURL !== '',
-      controlPlaneState : "",
-      dataPlaneState : "",
-      clusterResources : [],
-      namespaceList : [],
-      selectedNamespace : "default",
+      isMetricsConfigured: grafana.grafanaURL !== '' && prometheus.prometheusURL !== '',
+      controlPlaneState: '',
+      dataPlaneState: '',
+      clusterResources: [],
+      namespaceList: [],
+      selectedNamespace: 'default',
 
       // subscriptions disposable
-      dataPlaneSubscription : null,
-      controlPlaneSubscription : null,
-      clusterResourcesSubscription : null,
-      clusterResourcesQuery : null,
-      namespaceQuery : null,
-      telemetryQuery : null
+      dataPlaneSubscription: null,
+      controlPlaneSubscription: null,
+      clusterResourcesSubscription: null,
+      clusterResourcesQuery: null,
+      namespaceQuery: null,
+      telemetryQuery: null,
     };
   }
 
   static getDerivedStateFromProps(props, state) {
-    const {
-      meshAdapters, meshAdaptersts, grafana, prometheus
-    } = props;
+    const { meshAdapters, meshAdaptersts, grafana, prometheus } = props;
     const st = {};
     if (meshAdaptersts > state.mts) {
       st.meshAdapters = meshAdapters;
@@ -163,28 +173,24 @@ class DashboardComponent extends React.Component {
     }
     st.grafana = grafana;
     st.prometheus = prometheus;
-    st.k8sconfig = props.k8sconfig
+    st.k8sconfig = props.k8sconfig;
     return st;
   }
 
   disposeWorkloadWidgetSubscription = () => {
     this.state.namespaceQuery && this.state.namespaceQuery.unsubscribe();
-    this.state.clusterResourcesQuery && this.state.clusterResourcesQuery.unsubscribe()
     this.state.clusterResourcesSubscription && this.state.clusterResourcesSubscription.dispose();
-  }
+  };
 
   disposeSubscriptions = () => {
     if (this.state.dataPlaneSubscription) {
-      this.state.dataPlaneSubscription.unsubscribe()
+      this.state.dataPlaneSubscription.unsubscribe();
     }
     if (this.state.controlPlaneSubscription) {
-      this.state.controlPlaneSubscription.unsubscribe()
-    }
-    if (this.state.telemetryQuery) {
-      this.state.telemetryQuery.unsubscribe();
+      this.state.controlPlaneSubscription.unsubscribe();
     }
     this.disposeWorkloadWidgetSubscription();
-  }
+  };
 
   initMeshSyncControlPlaneSubscription = () => {
     /**
@@ -192,65 +198,46 @@ class DashboardComponent extends React.Component {
      * component of all of the service meshes supported by meshsync v2
      */
     const self = this;
-    const ALL_MESH = { type : "ALL_MESH", k8sClusterIDs : self.getK8sClusterIds() };
+    const ALL_MESH = { type: 'ALL_MESH', k8sClusterIDs: self.getK8sClusterIds() };
 
     if (self._isMounted) {
       const controlPlaneSubscription = fetchControlPlanes(ALL_MESH).subscribe({
-        next : (controlPlaneRes) => {
-          this.setState({ controlPlaneState : controlPlaneRes })
+        next: (controlPlaneRes) => {
+          this.setState({ controlPlaneState: controlPlaneRes });
         },
-        error : (err) => console.error(err),
+        error: (err) => console.error(err),
       });
 
       const dataPlaneSubscription = fetchDataPlanes(ALL_MESH).subscribe({
-        next : (dataPlaneRes) => {
-          this.setState({ dataPlaneState : dataPlaneRes })
+        next: (dataPlaneRes) => {
+          this.setState({ dataPlaneState: dataPlaneRes });
         },
-        error : (err) => console.error(err),
+        error: (err) => console.error(err),
       });
 
       this.setState({ controlPlaneSubscription, dataPlaneSubscription });
     }
-  }
+  };
 
   initNamespaceQuery = () => {
     const self = this;
 
-    const namespaceQuery = fetchAvailableNamespaces({ k8sClusterIDs : self.getK8sClusterIds() })
-      .subscribe({
-        next : res => {
-          let namespaces = []
-          res?.namespaces?.map(ns => {
-            namespaces.push(ns?.namespace)
-          })
-          namespaces.sort((a, b) => (
-            a > b ? 1 : -1
-          ))
-          self.setState({ namespaceList : namespaces })
-        },
-        error : (err) => console.log("error at namespace fetch: " + err),
-      })
+    const namespaceQuery = fetchAvailableNamespaces({
+      k8sClusterIDs: self.getK8sClusterIds(),
+    }).subscribe({
+      next: (res) => {
+        let namespaces = [];
+        res?.namespaces?.map((ns) => {
+          namespaces.push(ns?.namespace);
+        });
+        namespaces.sort((a, b) => (a > b ? 1 : -1));
+        self.setState({ namespaceList: namespaces });
+      },
+      error: (err) => console.log('error at namespace fetch: ' + err),
+    });
 
-    this.setState({ namespaceQuery })
-  }
-
-  initDashboardClusterResourcesQuery = () => {
-    const self = this;
-    let k8s = self.getK8sClusterIds();
-    let namespace = self.state.selectedNamespace;
-
-    if (self._isMounted) {
-      // @ts-ignore
-      const clusterResourcesQuery = fetchClusterResources(k8s, namespace).subscribe({
-        next : (res) => {
-          this.setState({ clusterResources : res?.clusterResources })
-        },
-        error : (err) => console.log(err),
-      })
-
-      this.setState({ clusterResourcesQuery });
-    }
-  }
+    this.setState({ namespaceQuery });
+  };
 
   initDashboardClusterResourcesSubscription = () => {
     const self = this;
@@ -259,58 +246,30 @@ class DashboardComponent extends React.Component {
 
     if (self._isMounted) {
       // @ts-ignore
-      const clusterResourcesSubscription = subscribeClusterResources((res) => {
-        this.setState({ clusterResources : res?.clusterResources })
-      }, {
-        k8scontextIDs : k8s,
-        namespace : namespace
-      });
+      const clusterResourcesSubscription = subscribeClusterResources(
+        (res) => {
+          this.setState({ clusterResources: res?.clusterResources });
+        },
+        {
+          k8scontextIDs: k8s,
+          namespace: namespace,
+        },
+      );
       this.setState({ clusterResourcesSubscription });
     }
-  }
+  };
 
-  initTelemetryComponentQuery = () => {
-    const self = this;
-    const contextIDs = self.getK8sClusterIds();
-    const telemetryQuery = fetchTelemetryCompsQuery({
-      contexts : contextIDs
-    }).subscribe({
-      next : (components) => {
-        let prometheusURLs = [];
-        let grafanaURLs = [];
-        components.telemetryComps?.forEach((component) => {
-          const data = { spec : JSON.parse(component.spec), status : JSON.parse(component.status) };
-          if (component.name === "grafana") {
-            grafanaURLs = grafanaURLs.concat(extractURLFromScanData(data));
-          } else {
-            prometheusURLs = prometheusURLs.concat(extractURLFromScanData(data));
-          }
-        })
-
-        this.props.updateTelemetryUrls({ telemetryURLs : { "grafana" : grafanaURLs, "prometheus" : prometheusURLs } });
-      }
-    })
-    this.setState({ telemetryQuery });
-  }
   componentWillUnmount = () => {
-    this._isMounted = false
-    this.disposeSubscriptions()
-  }
+    this._isMounted = false;
+    this.disposeSubscriptions();
+  };
 
   componentDidMount = () => {
-    this._isMounted = true
-    this.fetchAvailableAdapters();
-
-    if (this.state.isMetricsConfigured) {
-      this.fetchMetricComponents();
-    }
-
+    this._isMounted = true;
     if (this._isMounted) {
       this.initMeshSyncControlPlaneSubscription();
-      this.initDashboardClusterResourcesQuery();
       this.initDashboardClusterResourcesSubscription();
       this.initNamespaceQuery();
-      this.initTelemetryComponentQuery();
     }
   };
 
@@ -319,7 +278,9 @@ class DashboardComponent extends React.Component {
     let updateDataPlane = false;
 
     // deep compare very limited, order of object fields is important
-    if (JSON.stringify(prevState.controlPlaneState) !== JSON.stringify(this.state.controlPlaneState)) {
+    if (
+      JSON.stringify(prevState.controlPlaneState) !== JSON.stringify(this.state.controlPlaneState)
+    ) {
       updateControlPlane = true;
     }
     if (JSON.stringify(prevState.dataPlaneState) !== JSON.stringify(this.state.dataPlaneState)) {
@@ -329,135 +290,30 @@ class DashboardComponent extends React.Component {
     if (updateDataPlane || updateControlPlane) {
       this.setMeshScanData(
         updateControlPlane ? this.state.controlPlaneState : prevState.controlPlaneState,
-        updateDataPlane ? this.state.dataPlaneState : prevState.dataPlaneState
-      )
+        updateDataPlane ? this.state.dataPlaneState : prevState.dataPlaneState,
+      );
     }
-
     // handle subscriptions update on switching K8s Contexts
-    if (prevProps?.selectedK8sContexts !== this.props?.selectedK8sContexts
-      || prevProps.k8sconfig !== this.props.k8sconfig) {
+    if (
+      !_.isEqual(prevProps?.selectedK8sContexts, this.props?.selectedK8sContexts) ||
+      !_.isEqual(prevProps.k8sconfig, this.props.k8sconfig)
+    ) {
       this.disposeSubscriptions();
       this.initMeshSyncControlPlaneSubscription();
-      this.initDashboardClusterResourcesQuery();
       this.initDashboardClusterResourcesSubscription();
       this.initNamespaceQuery();
-      this.initTelemetryComponentQuery();
     }
 
-    if (prevState?.selectedNamespace !== this.state?.selectedNamespace) {
+    if (!_.isEqual(prevState?.selectedNamespace, this.state?.selectedNamespace)) {
       this.disposeWorkloadWidgetSubscription();
       this.initDashboardClusterResourcesSubscription();
-      this.initDashboardClusterResourcesQuery();
       this.initNamespaceQuery();
     }
-
   }
 
   getK8sClusterIds = () => {
     const self = this;
-    return getK8sClusterIdsFromCtxId(self.props?.selectedK8sContexts, self.props.k8sconfig)
-  }
-
-  fetchMetricComponents = () => {
-    const self = this;
-    let selector = { type : "ALL_MESH", k8sClusterIDs : this.getK8sClusterIds() };
-
-    dataFetch(
-      "/api/telemetry/metrics/config",
-      {
-        method : "GET",
-        credentials : "include",
-        headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8", },
-      },
-      (result) => {
-        self.props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined" && result?.prometheusURL && result?.prometheusURL != "") {
-          fetchAvailableAddons(selector).subscribe({
-            next : (res) => {
-              res?.addonsState?.forEach((addon) => {
-                if (addon.name === "prometheus" && (self.state.prometheusURL === "" || self.state.prometheusURL == undefined)) {
-                  self.setState({ prometheusURL : "http://" + addon.endpoint })
-                  submitPrometheusConfigure(self, () => console.log("Prometheus added"));
-                }
-              });
-            },
-            error : (err) => console.log("error registering prometheus: " + err),
-          });
-        }
-      },
-      self.handleError("Error getting prometheus config")
-    );
-
-    dataFetch(
-      "/api/telemetry/metrics/grafana/config",
-      {
-        method : "GET",
-        credentials : "include",
-        headers : { "Content-Type" : "application/x-www-form-urlencoded;charset=UTF-8", },
-      },
-      (result) => {
-        self.props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined" && result?.grafanaURL && result?.grafanaURL != "") {
-          fetchAvailableAddons(selector).subscribe({
-            next : (res) => {
-              res?.addonsState?.forEach((addon) => {
-                if (addon.name === "grafana" && (self.state.grafanaURL === "" || self.state.grafanaURL == undefined)) {
-                  self.setState({ grafanaURL : "http://" + addon.endpoint })
-                  submitGrafanaConfigure(self, () => {
-                    self.state.selectedBoardsConfigs.push(self.state.boardConfigs);
-                    console.info("Grafana added");
-                  });
-                }
-              });
-            },
-            error : (err) => console.log("error registering grafana: " + err),
-          });
-        }
-      },
-      self.handleError("There was an error communicating with grafana config")
-    );
-
-
-    fetchAvailableAddons(selector).subscribe({
-      next : (res) => {
-        res?.addonsState?.forEach((addon) => {
-          if (addon.name === "prometheus" && (self.state.prometheusURL === "" || self.state.prometheusURL == undefined)) {
-            self.setState({ prometheusURL : "http://" + addon.endpoint })
-            submitPrometheusConfigure(self, () => console.log("Prometheus connected"));
-          } else if (addon.name === "grafana" && (self.state.grafanaURL === "" || self.state.grafanaURL == undefined)) {
-            self.setState({ grafanaURL : "http://" + addon.endpoint })
-            submitGrafanaConfigure(self, () => {
-              self.state.selectedBoardsConfigs.push(self.state.boardConfigs);
-              console.log("Grafana added");
-            });
-          }
-        });
-      },
-      error : (err) => console.log("error registering addons: " + err),
-    });
-  };
-
-  fetchAvailableAdapters = () => {
-    const self = this;
-    this.props.updateProgress({ showProgress : true });
-    dataFetch(
-      "/api/system/adapters",
-      {
-        method : "GET",
-        credentials : "include",
-      },
-      (result) => {
-        this.props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined") {
-          const options = result.map((res) => ({
-            value : res.adapter_location,
-            label : res.adapter_location,
-          }));
-          this.setState({ availableAdapters : options });
-        }
-      },
-      self.handleError("Unable to fetch list of adapters.")
-    );
+    return getK8sClusterIdsFromCtxId(self.props?.selectedK8sContexts, self.props.k8sconfig);
   };
 
   setMeshScanData = (controlPlanesData, dataPlanesData) => {
@@ -468,12 +324,12 @@ class DashboardComponent extends React.Component {
       if (!mesh?.members?.length) {
         return;
       }
-      let proxies = []
+      let proxies = [];
 
       if (Array.isArray(dataPlanesData?.dataPlanesState)) {
-        const dataplane = dataPlanesData.dataPlanesState.find(mesh_ => mesh_.name === mesh.name)
+        const dataplane = dataPlanesData.dataPlanesState.find((mesh_) => mesh_.name === mesh.name);
 
-        if (Array.isArray(dataplane?.proxies)) proxies = dataplane.proxies
+        if (Array.isArray(dataplane?.proxies)) proxies = dataplane.proxies;
       }
       const processedMember = mesh?.members?.map((member) => {
         if (namespaces[mesh.name]) {
@@ -484,28 +340,34 @@ class DashboardComponent extends React.Component {
 
         // retrieve data planes according to mesh name
         if (proxies.length > 0) {
-          const controlPlaneMemberProxies = proxies.filter(proxy => proxy.controlPlaneMemberName === member.name)
+          const controlPlaneMemberProxies = proxies.filter(
+            (proxy) => proxy.controlPlaneMemberName === member.name,
+          );
 
           if (controlPlaneMemberProxies.length > 0) {
             member = {
               ...member,
-              data_planes : controlPlaneMemberProxies
-            }
+              data_planes: controlPlaneMemberProxies,
+            };
           }
         }
 
-        return member
+        return member;
       });
       namespaces[mesh.name] = [...namespaces[mesh.name]];
-      activeNamespaces[mesh.name] = namespaces[mesh.name][0] || "";
+      activeNamespaces[mesh.name] = namespaces[mesh.name][0] || '';
 
       return {
         ...mesh,
-        members : processedMember
-      }
+        members: processedMember,
+      };
     });
-    self.setState({ meshScan : processedControlPlanesData?.filter(data => !!data).filter((data) => data.members?.length > 0) });
-    self.setState({ meshScanNamespaces : namespaces, activeMeshScanNamespace : activeNamespaces });
+    self.setState({
+      meshScan: processedControlPlanesData
+        ?.filter((data) => !!data)
+        .filter((data) => data.members?.length > 0),
+    });
+    self.setState({ meshScanNamespaces: namespaces, activeMeshScanNamespace: activeNamespaces });
   };
 
   /**
@@ -519,9 +381,8 @@ class DashboardComponent extends React.Component {
   generateMeshScanPodName = (podname, hash, custom) => {
     const str = custom || podname;
     return {
-      full : podname,
-      trimmed : str.substring(0, (hash ? str.indexOf(hash)
-        : str.length) - 1),
+      full: podname,
+      trimmed: str.substring(0, (hash ? str.indexOf(hash) : str.length) - 1),
     };
   };
 
@@ -533,19 +394,19 @@ class DashboardComponent extends React.Component {
    * @returns {string}
    */
   generateMeshScanVersion = (versionStr) => {
-    if (typeof versionStr !== "string") return "NA";
+    if (typeof versionStr !== 'string') return 'NA';
 
     const matchResult = versionStr.match(/\d+(\.\d+){2,}/g);
-    if (!matchResult) return "NA";
+    if (!matchResult) return 'NA';
 
     // Add "v" iff we have a valid match result
     return `v${matchResult[0]}`;
   };
 
   handleError = (msg) => (error) => {
-    this.props.updateProgress({ showProgress : false });
+    this.props.updateProgress({ showProgress: false });
     const notify = this.props.notify;
-    notify({ message : `${msg}: ${error}`, event_type : EVENT_TYPES.ERROR })
+    notify({ message: `${msg}: ${error}`, event_type: EVENT_TYPES.ERROR });
   };
 
   /**
@@ -555,99 +416,48 @@ class DashboardComponent extends React.Component {
    * @param {string} msg
    */
   redirectErrorToConsole = (msg) => (error) => {
-    this.props.updateProgress({ showProgress : false });
+    this.props.updateProgress({ showProgress: false });
     console.group(msg);
     console.error(error);
     console.groupEnd();
-  };
-
-  handleAdapterPingError = (msg) => () => {
-    this.props.updateProgress({ showProgress : false });
-    const notify = this.props.notify;
-    // this.props.enqueueSnackbar(`${msg}. To configure an adapter, visit`, {
-    //   variant : "error",
-    //   autoHideDuration : 3000,
-    //   action : (key) => (
-    //     <>
-    //       <Button
-    //         variant="contained"
-    //         key="configure-close"
-    //         aria-label="Configure"
-    //         className={classes.redirectButton}
-    //         onClick={() => {
-    //           self.props.router.push("/settings#service-mesh");
-    //           self.props.closeSnackbar(key);
-    //         }}
-    //       >
-    //         <SettingsIcon className={classes.settingsIcon}  />
-    //         Settings
-    //       </Button>
-
-    //       <IconButton key="close" aria-label="Close" color="inherit" onClick={() => self.props.closeSnackbar(key)}>
-    //         <CloseIcon  style={iconMedium} />
-    //       </IconButton>
-    //     </>
-    //   ),
-    // });
-    notify({ message : `${msg}`, event_type : EVENT_TYPES.ERROR })
   };
 
   handleDelete() {
     return false;
   }
 
-  handleAdapterClick = (adapterLoc) => () => {
-    // const { meshAdapters } = this.state;
-    this.props.updateProgress({ showProgress : true });
-    const self = this;
-    const notify = this.props.notify;
-    dataFetch(
-      `/api/system/adapters?adapter=${encodeURIComponent(adapterLoc)}`,
-      {
-        credentials : "include",
-      },
-      (result) => {
-        this.props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined") {
-          notify({ message : `Meshery Adapter connected at ${adapterLoc}`, event_type : EVENT_TYPES.SUCCESS })
-        }
-      },
-      self.handleAdapterPingError("Could not connect to " + adapterLoc)
-    );
-  };
-
   handleConfigure = (val) => {
     this.props.router.push(`/settings#metrics/${val}`);
   };
 
   getSelectedK8sContextsNames = () => {
-    return getK8sClusterNamesFromCtxId(this.props.selectedK8sContexts, this.props.k8sconfig)
-  }
+    return getK8sClusterNamesFromCtxId(this.props.selectedK8sContexts, this.props.k8sconfig);
+  };
 
   emptyStateMessageForServiceMeshesInfo = () => {
     const clusters = this.getSelectedK8sContextsNames();
     if (clusters.length === 0) {
-      return "No Cluster is selected to show the Service Mesh Information"
+      return 'No Cluster is selected to show the Service Mesh Information';
     }
-    if (clusters.includes("all")) {
-      return `No service meshes detected in any of the cluster.`
+    if (clusters.includes('all')) {
+      return `No service meshes detected in any of the cluster.`;
     }
-    return `No service meshes detected in the ${clusters.join(", ")} cluster(s).`
-  }
+    return `No service meshes detected in the ${clusters.join(', ')} cluster(s).`;
+  };
 
   emptyStateMessageForClusterResources = () => {
     const clusters = this.getSelectedK8sContextsNames();
     if (clusters.length === 0) {
-      return "No Cluster is selected to show the discovered resources"
+      return 'No Cluster is selected to show the discovered resources';
     }
-    if (clusters.includes("all")) {
-      return `No resources detected in any of the cluster.`
+    if (clusters.includes('all')) {
+      return `No resources detected in any of the cluster.`;
     }
-    return `No resources detected in the ${clusters.join(", ")} cluster(s).`
-  }
+    return `No resources detected in the ${clusters.join(', ')} cluster(s).`;
+  };
 
   handleKubernetesClick = (id) => {
-    this.props.updateProgress({ showProgress : true });
+    this.props.updateProgress({ showProgress: true });
     const self = this;
     const notify = this.props.notify;
     const selectedCtx = this.props.k8sconfig?.find((ctx) => ctx.id === id);
@@ -655,37 +465,17 @@ class DashboardComponent extends React.Component {
 
     const { server, name } = selectedCtx;
     dataFetch(
-      "/api/system/kubernetes/ping?connection_id=" + id,
+      '/api/system/kubernetes/ping?connection_id=' + id,
       {
-        credentials : "include",
+        credentials: 'include',
       },
       (result) => {
-        this.props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined") {
-          notify({ message : `${name} is connected at ${server}`, event_type : EVENT_TYPES.SUCCESS })
+        this.props.updateProgress({ showProgress: false });
+        if (typeof result !== 'undefined') {
+          notify({ message: `${name} is connected at ${server}`, event_type: EVENT_TYPES.SUCCESS });
         }
       },
-      self.handleError("Could not connect to Kubernetes")
-    );
-  };
-
-  handleGrafanaClick = () => {
-    this.props.updateProgress({ showProgress : true });
-    const self = this;
-    const notify = this.props.notify;
-    const { grafanaURL } = this.state.grafana;
-    dataFetch(
-      "/api/telemetry/metrics/grafana/ping",
-      {
-        credentials : "include",
-      },
-      (result) => {
-        this.props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined") {
-          notify({ message : `Grafana connected at ${grafanaURL}`, event_type : EVENT_TYPES.SUCCESS })
-        }
-      },
-      self.handleError("Could not connect to Grafana")
+      self.handleError('Could not connect to Kubernetes'),
     );
   };
 
@@ -698,204 +488,270 @@ class DashboardComponent extends React.Component {
    */
   Meshcard = (mesh, components = []) => {
     const self = this;
-    let componentSort = "asc";
-    let versionSort = "asc";
-    let proxySort = "asc";
+    let componentSort = 'asc';
+    let versionSort = 'asc';
+    let proxySort = 'asc';
     let tempComp = [];
     const { theme } = this.props;
     components
       .filter((comp) => comp.namespace === self.state.activeMeshScanNamespace[mesh.name])
-      .map((component) => tempComp.push(component))
+      .map((component) => tempComp.push(component));
 
     components = tempComp;
 
     const switchSortOrder = (type) => {
-      if (type === "componentSort") {
-        componentSort = (componentSort === "asc") ? "desc" : "asc";
-        versionSort = "asc";
-        proxySort = "asc";
-      } else if (type === "versionSort") {
-        versionSort = (versionSort === "asc") ? "desc" : "asc";
-        componentSort = "asc";
-        proxySort = "asc";
-      } else if (type === "proxySort") {
-        proxySort = (proxySort === "asc") ? "desc" : "asc";
-        componentSort = "asc";
-        versionSort = "asc";
+      if (type === 'componentSort') {
+        componentSort = componentSort === 'asc' ? 'desc' : 'asc';
+        versionSort = 'asc';
+        proxySort = 'asc';
+      } else if (type === 'versionSort') {
+        versionSort = versionSort === 'asc' ? 'desc' : 'asc';
+        componentSort = 'asc';
+        proxySort = 'asc';
+      } else if (type === 'proxySort') {
+        proxySort = proxySort === 'asc' ? 'desc' : 'asc';
+        componentSort = 'asc';
+        versionSort = 'asc';
       }
-    }
+    };
 
     const columns = [
       {
-        name : "name",
-        label : "Component",
-        options : {
-          filter : false,
-          sort : true,
-          searchable : true,
-          setCellProps : () => ({ style : { textAlign : "center" } }),
-          customHeadRender : ({ index, ...column }, sortColumn) => {
+        name: 'name',
+        label: 'Component',
+        options: {
+          filter: false,
+          sort: true,
+          searchable: true,
+          setCellProps: () => ({ style: { textAlign: 'center' } }),
+          customHeadRender: ({ index, ...column }, sortColumn) => {
             return (
-              <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
-                sortColumn(index); switchSortOrder("componentSort");
-              }}>
-                <TableSortLabel active={column.sortDirection != null} direction={componentSort} >
+              <TableCell
+                key={index}
+                style={{ textAlign: 'center' }}
+                onClick={() => {
+                  sortColumn(index);
+                  switchSortOrder('componentSort');
+                }}
+              >
+                <TableSortLabel active={column.sortDirection != null} direction={componentSort}>
                   <b>{column.label}</b>
                 </TableSortLabel>
               </TableCell>
-
-            )
-          }
+            );
+          },
         },
-        customBodyRender : (value) => {
+        customBodyRender: (value) => {
           const modifiedName = value.replace(/-[a-zA-Z0-9]*$/, ''); // Remove last hyphen and alphanumeric characters after it
           return <span>{modifiedName}</span>;
         },
       },
       {
-        name : "version",
-        label : "Version",
-        options : {
-          filter : false,
-          sort : true,
-          searchable : true,
-          setCellProps : () => ({ style : { textAlign : "center" } }),
-          customHeadRender : ({ index, ...column }, sortColumn) => {
+        name: 'version',
+        label: 'Version',
+        options: {
+          filter: false,
+          sort: true,
+          searchable: true,
+          setCellProps: () => ({ style: { textAlign: 'center' } }),
+          customHeadRender: ({ index, ...column }, sortColumn) => {
             return (
-              <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
-                sortColumn(index); switchSortOrder("versionSort");
-              }}>
-                <TableSortLabel active={column.sortDirection != null} direction={versionSort} >
+              <TableCell
+                key={index}
+                style={{ textAlign: 'center' }}
+                onClick={() => {
+                  sortColumn(index);
+                  switchSortOrder('versionSort');
+                }}
+              >
+                <TableSortLabel active={column.sortDirection != null} direction={versionSort}>
                   <b>{column.label}</b>
                 </TableSortLabel>
               </TableCell>
-
             );
           },
-          customBodyRender : (value) => {
-            return (versionMapper(value))
+          customBodyRender: (value) => {
+            return versionMapper(value);
           },
         },
       },
       {
-        name : "data_planes",
-        label : "Proxy",
-        options : {
-          filter : false,
-          sort : true,
-          searchable : true,
-          setCellProps : () => ({ style : { textAlign : "center" } }),
-          customHeadRender : ({ index, ...column }, sortColumn) => {
+        name: 'data_planes',
+        label: 'Proxy',
+        options: {
+          filter: false,
+          sort: true,
+          searchable: true,
+          setCellProps: () => ({ style: { textAlign: 'center' } }),
+          customHeadRender: ({ index, ...column }, sortColumn) => {
             return (
-              <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
-                sortColumn(index); switchSortOrder("proxySort");
-              }}>
-                <TableSortLabel active={column.sortDirection != null} direction={proxySort} >
+              <TableCell
+                key={index}
+                style={{ textAlign: 'center' }}
+                onClick={() => {
+                  sortColumn(index);
+                  switchSortOrder('proxySort');
+                }}
+              >
+                <TableSortLabel active={column.sortDirection != null} direction={proxySort}>
                   <b>{column.label}</b>
                 </TableSortLabel>
               </TableCell>
-            )
+            );
           },
-          customBodyRender : (value) => {
+          customBodyRender: (value) => {
             return (
               <>
                 <Tooltip
                   key={`component-${value}`}
                   title={
-                    Array.isArray(value) && value?.length > 0 ? (
-                      value.map((cont) => {
-                        return (
-                          <div key={cont.name} style={{ fontSize : "15px", color : '#fff', paddingBottom : '10px', padding : '1vh' }}>
-                            <p>Name: {cont?.containerName ? cont.containerName : 'Unspecified'}</p>
-                            <p>Status: {cont?.status?.ready ? 'ready' : 'not ready'}</p>
-                            {!cont?.status?.ready && (
-                              typeof cont?.status?.lastState === 'object' && cont?.status?.lastState !== null && Object.keys(cont.status.lastState).length > 0 && (
+                    Array.isArray(value) && value?.length > 0
+                      ? value.map((cont) => {
+                          return (
+                            <div
+                              key={cont.name}
+                              style={{
+                                fontSize: '15px',
+                                color: '#fff',
+                                paddingBottom: '10px',
+                                padding: '1vh',
+                              }}
+                            >
+                              <p>
+                                Name: {cont?.containerName ? cont.containerName : 'Unspecified'}
+                              </p>
+                              <p>Status: {cont?.status?.ready ? 'ready' : 'not ready'}</p>
+                              {!cont?.status?.ready &&
+                                typeof cont?.status?.lastState === 'object' &&
+                                cont?.status?.lastState !== null &&
+                                Object.keys(cont.status.lastState).length > 0 && (
+                                  <div>
+                                    <p>
+                                      Last state: {Object.keys(cont?.status?.lastState)[0]} <br />{' '}
+                                      Error: {Object.values(cont?.status?.lastState)[0]?.exitCode}{' '}
+                                      <br /> Finished at:{' '}
+                                      {Object.values(cont?.status?.lastState)[0]?.finishedAt}
+                                    </p>
+                                  </div>
+                                )}
+                              {typeof cont?.status?.state === 'object' &&
+                                cont?.status?.state !== null &&
+                                Object.keys(cont.status.state).length > 0 && (
+                                  <p>State: {Object.keys(cont.status.state)[0]}</p>
+                                )}
+                              {cont?.status?.restartCount && (
+                                <p>Restart count: {cont?.status.restartCount}</p>
+                              )}
+                              <p>Image: {cont.image}</p>
+                              <p>
+                                Ports: <br />{' '}
+                                {cont?.ports &&
+                                  cont.ports
+                                    .map(
+                                      (port) =>
+                                        `[ ${port?.name ? port.name : 'Unknown'}, ${
+                                          port?.containerPort ? port.containerPort : 'Unknown'
+                                        }, ${port?.protocol ? port.protocol : 'Unknown'} ]`,
+                                    )
+                                    .join(', ')}
+                              </p>
+                              {cont?.resources && (
                                 <div>
-                                  <p>Last state: {Object.keys(cont?.status?.lastState)[0]} <br /> Error: {Object.values(cont?.status?.lastState)[0]?.exitCode} <br /> Finished at: {Object.values(cont?.status?.lastState)[0]?.finishedAt}</p>
+                                  Resources used: <br />
+                                  <div style={{ paddingLeft: '2vh' }}>
+                                    {cont?.resources?.limits && (
+                                      <div>
+                                        <p>
+                                          Limits: <br />
+                                          CPU: {cont?.resources?.limits?.cpu} - Memory:{' '}
+                                          {cont?.resources?.limits?.memory}
+                                        </p>
+                                      </div>
+                                    )}
+                                    {cont?.resources?.requests && (
+                                      <div>
+                                        <p>
+                                          Requests: <br />
+                                          CPU: {cont?.resources?.requests?.cpu} - Memory:{' '}
+                                          {cont?.resources?.requests?.memory}
+                                        </p>
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
-                              )
-                            )}
-                            {typeof cont?.status?.state === 'object' && cont?.status?.state !== null && Object.keys(cont.status.state).length > 0 && (
-                              <p>State: {Object.keys(cont.status.state)[0]}</p>
-                            )}
-                            {cont?.status?.restartCount && (
-                              <p>Restart count: {cont?.status.restartCount}</p>
-                            )}
-                            <p>Image: {cont.image}</p>
-                            <p>Ports: <br /> {cont?.ports && cont.ports.map(port => `[ ${port?.name ? port.name : 'Unknown'}, ${port?.containerPort ? port.containerPort : 'Unknown'}, ${port?.protocol ? port.protocol : 'Unknown'} ]`).join(', ')}</p>
-                            {cont?.resources && (
-                              <div>
-                                Resources used: <br />
-
-                                <div style={{ paddingLeft : '2vh' }}>
-                                  {cont?.resources?.limits && (
-                                    <div>
-                                      <p>Limits: <br />
-                                        CPU: {cont?.resources?.limits?.cpu} - Memory: {cont?.resources?.limits?.memory}</p>
-                                    </div>
-                                  )}
-                                  {cont?.resources?.requests && (
-                                    <div>
-                                      <p>Requests: <br />
-                                        CPU: {cont?.resources?.requests?.cpu} - Memory: {cont?.resources?.requests?.memory}</p>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        )
-                      })
-                    ) : "No proxy attached"}
+                              )}
+                            </div>
+                          );
+                        })
+                      : 'No proxy attached'
+                  }
                 >
                   <TableCell align="center">{value?.length || 0}</TableCell>
                 </Tooltip>
               </>
             );
-          }
+          },
         },
       },
-    ]
+    ];
 
     const options = {
-      filter : false,
-      selectableRows : "none",
-      responsive : "standard",
-      print : false,
-      download : false,
-      viewColumns : false,
-      pagination : false,
-      fixedHeader : true,
-      customToolbar : () => {
+      filter: false,
+      selectableRows: 'none',
+      responsive: 'standard',
+      print: false,
+      download: false,
+      viewColumns: false,
+      pagination: false,
+      fixedHeader: true,
+      customToolbar: () => {
         return (
           <>
             {self.state.activeMeshScanNamespace[mesh.name] && (
               <Select
                 value={self.state.activeMeshScanNamespace[mesh.name]}
                 onChange={(e) =>
-                  self.setState((state) => ({ activeMeshScanNamespace : { ...state.activeMeshScanNamespace, [mesh.name] : e.target.value }, }))
+                  self.setState((state) => ({
+                    activeMeshScanNamespace: {
+                      ...state.activeMeshScanNamespace,
+                      [mesh.name]: e.target.value,
+                    },
+                  }))
                 }
               >
                 {self.state.meshScanNamespaces[mesh.name] &&
-                  self.state.meshScanNamespaces[mesh.name].map((ns) => <MenuItem key={ns.uniqueID} value={ns}>{ns}</MenuItem>)}
+                  self.state.meshScanNamespaces[mesh.name].map((ns) => (
+                    <MenuItem key={ns.uniqueID} value={ns}>
+                      {ns}
+                    </MenuItem>
+                  ))}
               </Select>
             )}
           </>
-        )
+        );
       },
-    }
+    };
 
     if (Array.isArray(components) && components.length)
       return (
-        <Paper elevation={1} style={{ padding : "2rem", marginTop : "1rem" }}>
-          <MuiThemeProvider theme={theme.palette.type == "dark" ? configurationTableThemeDark() : configurationTableTheme() }>
-
+        <Paper elevation={1} style={{ padding: '2rem', marginTop: '1rem' }}>
+          <MuiThemeProvider
+            theme={
+              theme.palette.type == 'dark'
+                ? configurationTableThemeDark()
+                : configurationTableTheme()
+            }
+          >
             <MUIDataTable
               className={this.props.classes.datatable}
               title={
                 <>
-                  <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
-                    <img src={mesh.icon} className={this.props.classes.icon} style={{ marginRight : "0.75rem" }} />
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+                    <img
+                      src={mesh.icon}
+                      className={this.props.classes.icon}
+                      style={{ marginRight: '0.75rem' }}
+                    />
                     <Typography variant="h6">{mesh.tag}</Typography>
                   </div>
                 </>
@@ -904,7 +760,7 @@ class DashboardComponent extends React.Component {
               options={options}
               columns={columns}
             />
-          </MuiThemeProvider >
+          </MuiThemeProvider>
         </Paper>
       );
 
@@ -919,102 +775,123 @@ class DashboardComponent extends React.Component {
    */
   ClusterResourcesCard = (resources = []) => {
     const self = this;
-    let kindSort = "asc";
-    let countSort = "asc";
+    let kindSort = 'asc';
+    let countSort = 'asc';
     const { theme } = this.props;
     const switchSortOrder = (type) => {
-      if (type === "kindSort") {
-        kindSort = (kindSort === "asc") ? "desc" : "asc";
-        countSort = "asc";
-      } else if (type === "countSort") {
-        countSort = (countSort === "asc") ? "desc" : "asc";
-        kindSort = "asc";
+      if (type === 'kindSort') {
+        kindSort = kindSort === 'asc' ? 'desc' : 'asc';
+        countSort = 'asc';
+      } else if (type === 'countSort') {
+        countSort = countSort === 'asc' ? 'desc' : 'asc';
+        kindSort = 'asc';
       }
-    }
+    };
 
     const columns = [
       {
-        name : "kind",
-        label : "Resources",
-        options : {
-          filter : false,
-          sort : true,
-          searchable : true,
-          setCellProps : () => ({ style : { textAlign : "center" } }),
-          customHeadRender : ({ index, ...column }, sortColumn) => {
+        name: 'kind',
+        label: 'Resources',
+        options: {
+          filter: false,
+          sort: true,
+          searchable: true,
+          setCellProps: () => ({ style: { textAlign: 'center' } }),
+          customHeadRender: ({ index, ...column }, sortColumn) => {
             return (
-              <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
-                sortColumn(index); switchSortOrder("kindSort");
-              }}>
-                <TableSortLabel active={column.sortDirection != null} direction={kindSort} >
+              <TableCell
+                key={index}
+                style={{ textAlign: 'center' }}
+                onClick={() => {
+                  sortColumn(index);
+                  switchSortOrder('kindSort');
+                }}
+              >
+                <TableSortLabel active={column.sortDirection != null} direction={kindSort}>
                   <b>{column.label}</b>
                 </TableSortLabel>
               </TableCell>
-
-            )
-          }
+            );
+          },
         },
       },
       {
-        name : "count",
-        label : "Count",
-        options : {
-          filter : false,
-          sort : true,
-          searchable : true,
-          setCellProps : () => ({ style : { textAlign : "center" } }),
-          customHeadRender : ({ index, ...column }, sortColumn) => {
+        name: 'count',
+        label: 'Count',
+        options: {
+          filter: false,
+          sort: true,
+          searchable: true,
+          setCellProps: () => ({ style: { textAlign: 'center' } }),
+          customHeadRender: ({ index, ...column }, sortColumn) => {
             return (
-              <TableCell key={index} style={{ textAlign : "center" }} onClick={() => {
-                sortColumn(index); switchSortOrder("countSort");
-              }}>
-                <TableSortLabel active={column.sortDirection != null} direction={countSort} >
+              <TableCell
+                key={index}
+                style={{ textAlign: 'center' }}
+                onClick={() => {
+                  sortColumn(index);
+                  switchSortOrder('countSort');
+                }}
+              >
+                <TableSortLabel active={column.sortDirection != null} direction={countSort}>
                   <b>{column.label}</b>
                 </TableSortLabel>
               </TableCell>
-
-            )
-          }
+            );
+          },
         },
       },
-    ]
+    ];
 
     const options = {
-      filter : false,
-      selectableRows : "none",
-      responsive : "standard",
-      print : false,
-      download : false,
-      viewColumns : false,
-      pagination : false,
-      fixedHeader : true,
-      customToolbar : () => {
+      filter: false,
+      selectableRows: 'none',
+      responsive: 'standard',
+      print: false,
+      download: false,
+      viewColumns: false,
+      pagination: false,
+      fixedHeader: true,
+      customToolbar: () => {
         return (
           <>
             {self.state.namespaceList && (
               <Select
                 value={self.state.selectedNamespace}
-                onChange={(e) =>
-                  self.setState({ selectedNamespace : e.target.value })
-                }
+                onChange={(e) => self.setState({ selectedNamespace: e.target.value })}
               >
-                {self.state.namespaceList && self.state.namespaceList.map((ns) => <MenuItem key={ns.uniqueID} value={ns}>{ns}</MenuItem>)}
+                {self.state.namespaceList &&
+                  self.state.namespaceList.map((ns) => (
+                    <MenuItem key={ns.uniqueID} value={ns}>
+                      {ns}
+                    </MenuItem>
+                  ))}
               </Select>
             )}
           </>
-        )
-      }
-    }
+        );
+      },
+    };
 
     if (Array.isArray(resources) && resources.length)
       return (
-        <Paper elevation={1} style={{ padding : "2rem" }}>
-          <MuiThemeProvider theme={theme.palette.type === "dark" ? configurationTableThemeDark() : configurationTableTheme()}>
+        <Paper elevation={1} style={{ padding: '2rem' }}>
+          <MuiThemeProvider
+            theme={
+              theme.palette.type === 'dark'
+                ? configurationTableThemeDark()
+                : configurationTableTheme()
+            }
+          >
             <MUIDataTable
               title={
                 <>
-                  <div style={{ display : "flex", alignItems : "center", marginBottom : "1rem" }}>
-                    <img src={"/static/img/all_mesh.svg"} className={this.props.classes.icon} style={{ marginRight : "0.75rem" }} />
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '1rem' }}>
+                    <img
+                      src={'/static/img/all_mesh.svg'}
+                      className={this.props.classes.icon}
+                      style={{ marginRight: '0.75rem' }}
+                    />
                     <Typography variant="h6">All Workloads</Typography>
                   </div>
                 </>
@@ -1031,22 +908,25 @@ class DashboardComponent extends React.Component {
   };
 
   handlePrometheusClick = () => {
-    this.props.updateProgress({ showProgress : true });
+    this.props.updateProgress({ showProgress: true });
     const self = this;
     const notify = this.props.notify;
     const { prometheusURL } = this.state.prometheus;
     dataFetch(
-      "/api/telemetry/metrics/ping",
+      '/api/telemetry/metrics/ping',
       {
-        credentials : "include",
+        credentials: 'include',
       },
       (result) => {
-        this.props.updateProgress({ showProgress : false });
-        if (typeof result !== "undefined") {
-          notify({ message : `Prometheus connected at ${prometheusURL}`, event_type : EVENT_TYPES.SUCCESS })
+        this.props.updateProgress({ showProgress: false });
+        if (typeof result !== 'undefined') {
+          notify({
+            message: `Prometheus connected at ${prometheusURL}`,
+            event_type: EVENT_TYPES.SUCCESS,
+          });
         }
       },
-      self.handleError("Could not connect to Prometheus")
+      self.handleError('Could not connect to Prometheus'),
     );
   };
 
@@ -1068,10 +948,10 @@ class DashboardComponent extends React.Component {
   configureTemplate = () => {
     const { classes, k8sconfig } = this.props;
     const self = this;
-    let showConfigured = "Not connected to Kubernetes.";
+    let showConfigured = 'Not connected to Kubernetes.';
     let chp = (
       <div>
-        {k8sconfig?.map(ctx => (
+        {k8sconfig?.map((ctx) => (
           <Tooltip key={ctx.uniqueID} title={`Server: ${ctx.server}`}>
             <Chip
               label={ctx?.name}
@@ -1092,83 +972,79 @@ class DashboardComponent extends React.Component {
 
     showConfigured = <div>{chp}</div>;
 
-    const showServiceMesh =(
+    const showServiceMesh = (
       <>
-        {self?.state?.meshScan && Object.keys(self?.state?.meshScan).length
-          ? (
-            <>
-              {self.state.meshScan.map((mesh) => {
-                let tag = "";
-                mesh.name
-                  .split("_")
-                  .forEach((element) => {
-                    tag = tag + " " + element[0].toUpperCase() + element.slice(1, element.length);
-                  });
-                return self.Meshcard(
-                  { name : mesh.name, tag : tag, icon : "/static/img/" + mesh.name + ".svg" },
-                  mesh.members
-                );
-              })}
-            </>
-          )
-          : (
-            <div
-              style={{
-                padding : "2rem",
-                display : "flex",
-                justifyContent : "center",
-                alignItems : "center",
-                flexDirection : "column",
-              }}
+        {self?.state?.meshScan && Object.keys(self?.state?.meshScan).length ? (
+          <>
+            {self.state.meshScan.map((mesh) => {
+              let tag = '';
+              mesh.name.split('_').forEach((element) => {
+                tag = tag + ' ' + element[0].toUpperCase() + element.slice(1, element.length);
+              });
+              return self.Meshcard(
+                { name: mesh.name, tag: tag, icon: '/static/img/' + mesh.name + '.svg' },
+                mesh.members,
+              );
+            })}
+          </>
+        ) : (
+          <div
+            style={{
+              padding: '2rem',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'column',
+            }}
+          >
+            <Typography style={{ fontSize: '1.5rem', marginBottom: '2rem' }} align="center">
+              {this.emptyStateMessageForServiceMeshesInfo()}
+            </Typography>
+            <Button
+              aria-label="Add Meshes"
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={() => self.props.router.push('/management')}
             >
-              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" >
-                {this.emptyStateMessageForServiceMeshesInfo()}
-              </Typography>
-              <Button
-                aria-label="Add Meshes"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={() => self.props.router.push("/management")}
-              >
-                <AddIcon style={iconMedium} className={classes.addIcon} />
-                Install Service Mesh
-              </Button>
-            </div>
-          )}
+              <AddIcon style={iconMedium} className={classes.addIcon} />
+              Install Service Mesh
+            </Button>
+          </div>
+        )}
       </>
     );
     const showClusterResources = (
       <>
-        {self?.state?.clusterResources && Object.keys(self?.state?.clusterResources) && self?.state?.clusterResources?.resources?.length > 0
-          ? (
-            self.ClusterResourcesCard(self?.state?.clusterResources?.resources)
-          )
-          : (
-            <div
-              style={{
-                padding : "2rem",
-                display : "flex",
-                justifyContent : "center",
-                alignItems : "center",
-                flexDirection : "column",
-              }}
+        {self?.state?.clusterResources &&
+        Object.keys(self?.state?.clusterResources) &&
+        self?.state?.clusterResources?.resources?.length > 0 ? (
+          self.ClusterResourcesCard(self?.state?.clusterResources?.resources)
+        ) : (
+          <div
+            style={{
+              padding: '2rem',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'column',
+            }}
+          >
+            <Typography style={{ fontSize: '1.5rem', marginBottom: '2rem' }} align="center">
+              {this.emptyStateMessageForClusterResources()}
+            </Typography>
+            <Button
+              aria-label="Connect K8s cluster"
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={() => self.props.router.push('/settings')}
             >
-              <Typography style={{ fontSize : "1.5rem", marginBottom : "2rem" }} align="center" >
-                {this.emptyStateMessageForClusterResources()}
-              </Typography>
-              <Button
-                aria-label="Connect K8s cluster"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={() => self.props.router.push("/settings")}
-              >
-                <AddIcon style={iconMedium} className={classes.addIcon} />
-                Connect Cluster
-              </Button>
-            </div>
-          )}
+              <AddIcon style={iconMedium} className={classes.addIcon} />
+              Connect Cluster
+            </Button>
+          </div>
+        )}
       </>
     );
 
@@ -1216,21 +1092,21 @@ class DashboardComponent extends React.Component {
   }
 }
 
-DashboardComponent.propTypes = { classes : PropTypes.object.isRequired, };
+DashboardComponent.propTypes = { classes: PropTypes.object.isRequired };
 
 const mapDispatchToProps = (dispatch) => ({
-  updateProgress : bindActionCreators(updateProgress, dispatch),
-  updateGrafanaConfig : bindActionCreators(updateGrafanaConfig, dispatch),
-  updatePrometheusConfig : bindActionCreators(updatePrometheusConfig, dispatch),
-  updateTelemetryUrls : bindActionCreators(updateTelemetryUrls, dispatch),
+  updateProgress: bindActionCreators(updateProgress, dispatch),
+  updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
+  updatePrometheusConfig: bindActionCreators(updatePrometheusConfig, dispatch),
+  updateTelemetryUrls: bindActionCreators(updateTelemetryUrls, dispatch),
 });
 
 const mapStateToProps = (state) => {
-  const k8sconfig = state.get("k8sConfig");
-  const meshAdapters = state.get("meshAdapters");
-  const meshAdaptersts = state.get("meshAdaptersts");
-  const grafana = state.get("grafana").toJS();
-  const prometheus = state.get("prometheus").toJS();
+  const k8sconfig = state.get('k8sConfig');
+  const meshAdapters = state.get('meshAdapters');
+  const meshAdaptersts = state.get('meshAdaptersts');
+  const grafana = state.get('grafana').toJS();
+  const prometheus = state.get('prometheus').toJS();
   const selectedK8sContexts = state.get('selectedK8sContexts');
 
   return {
@@ -1239,10 +1115,10 @@ const mapStateToProps = (state) => {
     k8sconfig,
     grafana,
     prometheus,
-    selectedK8sContexts
+    selectedK8sContexts,
   };
 };
 
-export default withStyles(styles, { withTheme : true })(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(withNotify(DashboardComponent)))
+export default withStyles(styles, { withTheme: true })(
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(withNotify(DashboardComponent))),
 );

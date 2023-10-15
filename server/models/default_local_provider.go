@@ -132,6 +132,34 @@ func (l *DefaultLocalProvider) GetUsers(_, _, _, _, _, _ string) ([]byte, error)
 	return []byte(""), ErrLocalProviderSupport
 }
 
+func (l *DefaultLocalProvider) GetEnvironments(_, _, _, _, _, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) GetEnvironmentByID(_ *http.Request, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) DeleteEnvironment(_ *http.Request, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, _ *EnvironmentPayload, _ string, _ bool) error {
+	return ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, _ *EnvironmentPayload, _ string) (*EnvironmentData, error) {
+	return nil, ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) AddConnectionToEnvironment(_ *http.Request, _ string, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) RemoveConnectionFromEnvironment(_ *http.Request, _ string, _ string) ([]byte, error) {
+	return []byte(""), ErrLocalProviderSupport
+}
+
 func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, _, _, _ string) ([]byte, error) {
 	return []byte(""), ErrLocalProviderSupport
 }

@@ -74,7 +74,9 @@ type HandlerInterface interface {
 	GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetEventTypes(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	UpdateEventStatus(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteEvent(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	BulkDeleteEvent(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	GrafanaConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -190,6 +192,14 @@ type HandlerInterface interface {
 	DeleteConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	GetRegoPolicyForDesignFile(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+
+	GetEnvironments(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetEnvironmentByIDHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	SaveEnvironment(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	DeleteEnvironmentHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	AddConnectionToEnvironmentHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	RemoveConnectionFromEnvironmentHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 }
 
 // HandlerConfig holds all the config pieces needed by handler methods
@@ -225,8 +235,10 @@ type HandlerConfig struct {
 	PerformanceChannel       chan struct{}
 	PerformanceResultChannel chan struct{}
 
-	ConfigurationChannel *ConfigurationChannel
-	EventBroadcaster        *EventBroadcast
+	ApplicationChannel        *Broadcast
+	PatternChannel            *Broadcast
+	FilterChannel             *Broadcast
+	EventBroadcaster          *Broadcast
 	DashboardK8sResourcesChan *DashboardK8sResourcesChan
 	MeshModelSummaryChannel   *meshmodel.SummaryChannel
 

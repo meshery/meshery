@@ -1,40 +1,57 @@
 // Data table for parent tables with custom column visibility control
-import MUIDataTable from "mui-datatables";
-import React, { useEffect, useCallback } from "react";
-import { useWindowDimensions } from "./dimension";
+import MUIDataTable from 'mui-datatables';
+import React, { useEffect, useCallback } from 'react';
+import { useWindowDimensions } from './dimension';
 
-const ResponsiveDataTable = ({ data, columns, options, tableCols, updateCols, columnVisibility, ...props }) => {
+const ResponsiveDataTable = ({
+  data,
+  columns,
+  options,
+  tableCols,
+  updateCols,
+  columnVisibility,
+  ...props
+}) => {
   const { width } = useWindowDimensions();
 
-  const formatDate = useCallback ((date, width) => {
-    const dateOptions = {
-      day : "numeric",
-      weekday : "long",
-      month : "long",
-      year : "numeric",
-    };
+  const formatDate = useCallback(
+    (date, width) => {
+      const dateOptions = {
+        day: 'numeric',
+        weekday: 'short',
+        month: 'long',
+        year: 'numeric',
+      };
 
-    if (width < 1140) {
-      dateOptions.month = "short";
-      dateOptions.day = "numeric";
-      dateOptions.year = "numeric";
-    }
+      if (width < 1240 && width >= 915) {
+        dateOptions.month = 'short';
+        dateOptions.day = 'numeric';
+        dateOptions.year = 'numeric';
+        dateOptions.weekday = 'short';
+      } else if (width < 915) {
+        dateOptions.month = 'short';
+        dateOptions.day = '2-digit';
+        dateOptions.year = 'numeric';
+        dateOptions.weekday = undefined;
+      }
 
-    return date.toLocaleDateString("en-US", dateOptions);
-  }, [width]);
+      return date.toLocaleDateString('en-US', dateOptions);
+    },
+    [width],
+  );
 
   const updatedOptions = {
     ...options,
     // viewColumns: false,
-    onViewColumnsChange : (column, action) => {
+    onViewColumnsChange: (column, action) => {
       let colToChange;
       switch (action) {
-        case "add":
+        case 'add':
           colToChange = columns.find((obj) => obj.name === column);
           colToChange.options.display = true;
           updateCols([...columns]);
           break;
-        case "remove":
+        case 'remove':
           colToChange = columns.find((obj) => obj.name === column);
           colToChange.options.display = false;
           updateCols([...columns]);
@@ -51,15 +68,25 @@ const ResponsiveDataTable = ({ data, columns, options, tableCols, updateCols, co
       // Set the display option based on columnVisibility state
       col.options.display = columnVisibility[col.name];
 
-      if (["updated_at", "created_at", "deleted_at", "last_login_time", "joined_at"].includes(col.name)) {
+      if (
+        [
+          'updated_at',
+          'created_at',
+          'deleted_at',
+          'last_login_time',
+          'joined_at',
+          'last_run',
+          'next_run',
+        ].includes(col.name)
+      ) {
         col.options.customBodyRender = (value) => {
-          if (value === "NA") {
+          if (value === 'NA') {
             return value;
           } else if (value?.Valid === true) {
             const date = new Date(value.Time);
             return formatDate(date, width);
           } else if (value?.Valid === false) {
-            return "NA";
+            return 'NA';
           } else {
             const date = new Date(value);
             return formatDate(date, width);
@@ -71,12 +98,22 @@ const ResponsiveDataTable = ({ data, columns, options, tableCols, updateCols, co
   }, [width, columnVisibility]);
 
   const components = {
-    ExpandButton : function () {
-      return "";
+    ExpandButton: function () {
+      return '';
     },
   };
 
-  return <MUIDataTable components={components} columns={tableCols} data={data} options={updatedOptions} {...props} />;
+  return (
+    <div id="searchClick">
+      <MUIDataTable
+        components={components}
+        columns={tableCols}
+        data={data}
+        options={updatedOptions}
+        {...props}
+      />
+    </div>
+  );
 };
 
 export default ResponsiveDataTable;

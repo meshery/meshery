@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import Modal from "../Modal";
-import PublicIcon from "@material-ui/icons/Public";
-import _ from "lodash";
-import { getMeshModels } from "../../api/meshmodel";
-import { modifyRJSFSchema } from "../../utils/utils";
-import dataFetch from "../../lib/data-fetch";
+import React, { useState, useEffect } from 'react';
+import Modal from '../Modal';
+import PublicIcon from '@material-ui/icons/Public';
+import _ from 'lodash';
+import { getMeshModels } from '../../api/meshmodel';
+import { modifyRJSFSchema } from '../../utils/utils';
+import dataFetch from '../../lib/data-fetch';
 
 // This modal is used in MeshMap also
 export default function PublishModal(props) {
@@ -13,27 +13,32 @@ export default function PublishModal(props) {
 
   useEffect(() => {
     dataFetch(
-      "/api/schema/resource/publish",
+      '/api/schema/resource/publish',
       {
-        method : "GET",
-        credentials : "include",
+        method: 'GET',
+        credentials: 'include',
       },
       async (result) => {
         try {
           const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName));
+          const modelNames = _.uniq(models?.map((model) => model.displayName.toUpperCase()));
+          modelNames.sort();
 
           // Modify the schema using the utility function
-          const modifiedSchema = modifyRJSFSchema(result.rjsfSchema, "properties.compatibility.items.enum", modelNames);
+          const modifiedSchema = modifyRJSFSchema(
+            result.rjsfSchema,
+            'properties.compatibility.items.enum',
+            modelNames,
+          );
 
-          setPublishSchema({ rjsfSchema : modifiedSchema, uiSchema : result.uiSchema });
+          setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
         } catch (err) {
           console.error(err);
           setPublishSchema(result);
         }
-      }
+      },
     );
-  });
+  }, []);
 
   return (
     <Modal
@@ -46,8 +51,8 @@ export default function PublishModal(props) {
       submitBtnText="Submit for Approval"
       submitBtnIcon={<PublicIcon data-cy="import-button" />}
       showInfoIcon={{
-        text : "Upon submitting your catalog item, an approval flow will be initiated.",
-        link : "https://docs.meshery.io/concepts/catalog",
+        text: 'Upon submitting your catalog item, an approval flow will be initiated.',
+        link: 'https://docs.meshery.io/concepts/catalog',
       }}
     />
   );

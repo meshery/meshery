@@ -389,6 +389,49 @@ type TelemetryComp struct {
 	Status string `json:"status"`
 }
 
+type MeshSyncEventType string
+
+const (
+	MeshSyncEventTypeAdded    MeshSyncEventType = "ADDED"
+	MeshSyncEventTypeModified MeshSyncEventType = "MODIFIED"
+	MeshSyncEventTypeDeleted  MeshSyncEventType = "DELETED"
+)
+
+var AllMeshSyncEventType = []MeshSyncEventType{
+	MeshSyncEventTypeAdded,
+	MeshSyncEventTypeModified,
+	MeshSyncEventTypeDeleted,
+}
+
+func (e MeshSyncEventType) IsValid() bool {
+	switch e {
+	case MeshSyncEventTypeAdded, MeshSyncEventTypeModified, MeshSyncEventTypeDeleted:
+		return true
+	}
+	return false
+}
+
+func (e MeshSyncEventType) String() string {
+	return string(e)
+}
+
+func (e *MeshSyncEventType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = MeshSyncEventType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid MeshSyncEventType", str)
+	}
+	return nil
+}
+
+func (e MeshSyncEventType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
 type MeshType string
 
 const (

@@ -457,7 +457,7 @@ const ExtensionsComponent = () => {
                   backgroundColor: isDarkTheme ? '#393F49' : '#D7DADE',
                 }}
               >
-                {!emptystate ? (
+                {/* {!emptystate ? (
                   <div>
                     <Typography sx={{ marginBottom: '1rem' }}>
                       Deploy a Service Mesh
@@ -513,9 +513,9 @@ const ExtensionsComponent = () => {
                       meshes
                     </i>
                   </div>
-                )}
+                )} */}
               </ExtensionWrapper>
-              <Tooltip title="Meshery server version">
+              <Tooltip title="Meshery Server version">
                 <VersionText variant="p" component="p" align="end">
                   {mesheryVersion}
                 </VersionText>

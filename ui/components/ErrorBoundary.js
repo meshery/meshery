@@ -1,5 +1,5 @@
-import { Button } from "@material-ui/core";
-import React from "react";
+import { Button } from '@material-ui/core';
+import React from 'react';
 
 /**
  * ErrorBoundary is a React component that catches JavaScript errors in its child components and renders a fallback UI when an error occurs.
@@ -8,17 +8,17 @@ import React from "react";
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError : false, error : null };
+    this.state = { hasError: false, error: null };
   }
 
   /** Update state so the next render will show the fallback UI. */
   static getDerivedStateFromError(error) {
-    return { hasError : true, error : error };
+    return { hasError: true, error: error };
   }
 
   resetErrorBoundary = () => {
-    this.setState({ hasError : false, error : null });
-  }
+    this.setState({ hasError: false, error: null });
+  };
 
   /** You can render any custom fallback UI */
   render() {

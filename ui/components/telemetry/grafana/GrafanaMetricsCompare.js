@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { MenuItem, NoSsr, TextField } from '@material-ui/core';
 import { connect } from 'react-redux';
 
-const grafanaStyles = () => ({ root : { width : '100%', }, });
+const grafanaStyles = () => ({ root: { width: '100%' } });
 
 class GrafanaMetricsCompare extends Component {
   constructor(props) {
@@ -14,9 +14,9 @@ class GrafanaMetricsCompare extends Component {
     this.state = {
       chartCompare,
       panels,
-      panel : '',
-      selectedSeries : '',
-      series : [],
+      panel: '',
+      selectedSeries: '',
+      series: [],
     };
   }
 
@@ -24,7 +24,12 @@ class GrafanaMetricsCompare extends Component {
     const panels = {};
     if (chartCompare && chartCompare !== null && chartCompare.length > 0) {
       chartCompare.forEach((cc) => {
-        if (cc.boardConfig && cc.boardConfig !== null && cc.boardConfig.panels && cc.boardConfig.panels !== null) {
+        if (
+          cc.boardConfig &&
+          cc.boardConfig !== null &&
+          cc.boardConfig.panels &&
+          cc.boardConfig.panels !== null
+        ) {
           cc.boardConfig.panels.forEach((panel) => {
             // if(panels.indexOf(panel.title) === -1){
             //   panels.push(panel);
@@ -44,11 +49,7 @@ class GrafanaMetricsCompare extends Component {
     if (panels[panel] && panels[panel].targets) {
       series = panels[panel].targets.map((target) => target.expr);
     }
-    this.setState({ panel,
-      series,
-      selectedSeries : series.length > 0
-        ? series[0]
-        : '', });
+    this.setState({ panel, series, selectedSeries: series.length > 0 ? series[0] : '' });
   }
 
   handleChange(name) {
@@ -61,21 +62,15 @@ class GrafanaMetricsCompare extends Component {
         if (panels[panel] && panels[panel].targets) {
           series = panels[panel].targets.map((target) => target.expr);
         }
-        self.setState({ panel,
-          series,
-          selectedSeries : series.length > 0
-            ? series[0]
-            : '', });
+        self.setState({ panel, series, selectedSeries: series.length > 0 ? series[0] : '' });
       } else if (name === 'series') {
-        self.setState({ selectedSeries : event.target.value });
+        self.setState({ selectedSeries: event.target.value });
       }
     };
   }
 
   render() {
-    const {
-      panels, panel, selectedSeries, series,
-    } = this.state;
+    const { panels, panel, selectedSeries, series } = this.state;
 
     return (
       <NoSsr>
@@ -90,7 +85,12 @@ class GrafanaMetricsCompare extends Component {
           variant="outlined"
           onChange={this.handleChange('panel')}
         >
-          {panels && Object.keys(panels).map((p) => <MenuItem key={p} value={p}>{p}</MenuItem>)}
+          {panels &&
+            Object.keys(panels).map((p) => (
+              <MenuItem key={p} value={p}>
+                {p}
+              </MenuItem>
+            ))}
         </TextField>
         <TextField
           select
@@ -103,19 +103,23 @@ class GrafanaMetricsCompare extends Component {
           variant="outlined"
           onChange={this.handleChange('series')}
         >
-          {series && series.map((s) => <MenuItem key={s} value={s}>{s}</MenuItem>)}
+          {series &&
+            series.map((s) => (
+              <MenuItem key={s} value={s}>
+                {s}
+              </MenuItem>
+            ))}
         </TextField>
       </NoSsr>
     );
   }
 }
 
-GrafanaMetricsCompare.propTypes = { classes : PropTypes.object.isRequired,
-  chartCompare : PropTypes.array.isRequired, };
+GrafanaMetricsCompare.propTypes = {
+  classes: PropTypes.object.isRequired,
+  chartCompare: PropTypes.array.isRequired,
+};
 
 const mapDispatchToProps = () => ({});
 
-export default withStyles(grafanaStyles)(connect(
-  null,
-  mapDispatchToProps,
-)(GrafanaMetricsCompare));
+export default withStyles(grafanaStyles)(connect(null, mapDispatchToProps)(GrafanaMetricsCompare));

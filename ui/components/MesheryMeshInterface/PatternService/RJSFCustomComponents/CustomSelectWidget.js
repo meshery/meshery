@@ -1,5 +1,13 @@
 import React from 'react';
-import { Checkbox, IconButton, InputAdornment, ListItemText, MenuItem, TextField, InputLabel } from '@material-ui/core';
+import {
+  Checkbox,
+  IconButton,
+  InputAdornment,
+  ListItemText,
+  MenuItem,
+  TextField,
+  InputLabel,
+} from '@material-ui/core';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import { ERROR_COLOR } from '../../../../constants/colors';
@@ -37,27 +45,30 @@ export default function CustomSelectWidget({
   formContext,
   ...textFieldProps
 }) {
-  const { enumOptions, enumDisabled, emptyValue : optEmptyVal } = options;
-  const xRjsfGridArea = schema?.["x-rjsf-grid-area"]; // check if the field is used in different modal (e.g. publish)
+  const { enumOptions, enumDisabled, emptyValue: optEmptyVal } = options;
+  const xRjsfGridArea = schema?.['x-rjsf-grid-area']; // check if the field is used in different modal (e.g. publish)
 
   multiple = typeof multiple === 'undefined' ? false : !!multiple;
 
   const emptyValue = multiple ? [] : '';
-  const isEmpty = typeof value === 'undefined' || (multiple && value.length < 1) || (!multiple && value === emptyValue);
+  const isEmpty =
+    typeof value === 'undefined' ||
+    (multiple && value.length < 1) ||
+    (!multiple && value === emptyValue);
 
-  const _onChange = ({ target : { value } }) =>
+  const _onChange = ({ target: { value } }) =>
     onChange(enumOptionsValueForIndex(value, enumOptions, optEmptyVal));
-  const _onBlur = ({ target : { value } }) =>
+  const _onBlur = ({ target: { value } }) =>
     onBlur(id, enumOptionsValueForIndex(value, enumOptions, optEmptyVal));
-  const _onFocus = ({ target : { value } }) =>
+  const _onFocus = ({ target: { value } }) =>
     onFocus(id, enumOptionsValueForIndex(value, enumOptions, optEmptyVal));
   const selectedIndexes = enumOptionsIndexForValue(value, enumOptions, multiple);
 
   return (
     <>
-      { xRjsfGridArea &&
+      {xRjsfGridArea && (
         <InputLabel htmlFor={id}>{labelValue(label, hideLabel || !label, false)}</InputLabel>
-      }
+      )}
       <TextField
         id={id}
         name={id}
@@ -66,14 +77,14 @@ export default function CustomSelectWidget({
         disabled={disabled || readonly}
         autoFocus={autofocus}
         placeholder={placeholder}
-        label={xRjsfGridArea ? "" : labelValue(label, hideLabel || !label, false)}
+        label={xRjsfGridArea ? '' : labelValue(label, hideLabel || !label, false)}
         error={rawErrors?.length > 0}
         onChange={_onChange}
         onBlur={_onBlur}
         onFocus={_onFocus}
         InputProps={{
-          endAdornment :
-            (<InputAdornment position="start">
+          endAdornment: (
+            <InputAdornment position="start">
               {rawErrors?.length > 0 && (
                 <CustomTextTooltip
                   backgroundColor={ERROR_COLOR}
@@ -84,36 +95,50 @@ export default function CustomSelectWidget({
                         <div key={index}>{error}</div>
                       ))}
                     </div>
-
                   }
-                  interactive={true}>
+                  interactive={true}
+                >
                   <IconButton component="span" size="small">
-                    <ErrorOutlineIcon width="14px" height="14px" fill={ERROR_COLOR} style={{ verticalAlign : "middle", ...iconSmall }} />
+                    <ErrorOutlineIcon
+                      width="14px"
+                      height="14px"
+                      fill={ERROR_COLOR}
+                      style={{ verticalAlign: 'middle', ...iconSmall }}
+                    />
                   </IconButton>
                 </CustomTextTooltip>
               )}
               {schema?.description && (
-                <CustomTextTooltip backgroundColor="#3C494F" flag={formContext?.overrideFlag} title={getHyperLinkDiv(schema?.description)} interactive={true}>
+                <CustomTextTooltip
+                  backgroundColor="#3C494F"
+                  flag={formContext?.overrideFlag}
+                  title={getHyperLinkDiv(schema?.description)}
+                  interactive={true}
+                >
                   <IconButton component="span" size="small">
-                    <HelpOutlineIcon width="14px" height="14px" fill={theme.palette.type === 'dark' ? "white" : "gray"} style={{ verticalAlign : "middle", ...iconSmall }} />
+                    <HelpOutlineIcon
+                      width="14px"
+                      height="14px"
+                      fill={theme.palette.type === 'dark' ? 'white' : 'gray'}
+                      style={{ verticalAlign: 'middle', ...iconSmall }}
+                    />
                   </IconButton>
                 </CustomTextTooltip>
               )}
-            </InputAdornment>)
+            </InputAdornment>
+          ),
         }}
         {...textFieldProps}
         select
         InputLabelProps={{
           ...textFieldProps.InputLabelProps,
-          shrink : !isEmpty,
+          shrink: !isEmpty,
         }}
         SelectProps={{
           ...textFieldProps.SelectProps,
-          renderValue : (selected) => {
+          renderValue: (selected) => {
             if (multiple) {
-              return selected
-                .map((index) => enumOptions[index].label)
-                .join(', ');
+              return selected.map((index) => enumOptions[index].label).join(', ');
             }
             return enumOptions[selected].label;
           },
