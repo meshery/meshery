@@ -37,7 +37,7 @@ jobs:
           version: v1.52.0
           args: --config=.golangci.yml --timeout=10m
   mesheryserver-unittests:
-    name: MesheryServer tests
+    name: MesheryServer unit tests
     runs-on: ubuntu-22.04
     needs: golangci
     steps:
@@ -59,7 +59,7 @@ jobs:
           files: ./coverage.txt
           flags: serverunittests
   mesheryctl-unittests:
-    name: MesheryServer tests
+    name: Mesheryctl unit tests
     runs-on: ubuntu-22.04
     needs: golangci
     steps:
