@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Typography, Grid } from '@material-ui/core';
 import { Launch as LaunchIcon } from '@material-ui/icons';
-import { FormatStructuredData, LinkFormatters } from '../DataFormatter';
+import { FormatStructuredData, SectionBody, reorderObjectProperties } from '../DataFormatter';
 import { isEmptyAtAllDepths } from '../../utils/objects';
 
 const DryRunResponse = ({ response }) => {
@@ -24,7 +24,36 @@ const DryRunResponse = ({ response }) => {
   return <FormatStructuredData data={cleanedResponse} />;
 };
 
-export const ErrorMetadataFormatter = ({ metadata, event, classes }) => {
+const TitleLink = ({ href, children, ...props }) => {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{ color: 'inherit' }}
+      {...props}
+    >
+      <Typography
+        variant="h5"
+        style={{
+          textDecorationLine: 'underline',
+          cursor: 'pointer',
+          marginBottom: '0.5rem',
+          fontWeight: 'bolder !important',
+          textTransform: 'uppercase',
+          fontSize: '0.9rem',
+        }}
+      >
+        {children}
+        <sup>
+          <LaunchIcon style={{ width: '1rem', height: '1rem' }} />
+        </sup>
+      </Typography>
+    </a>
+  );
+};
+
+export const ErrorMetadataFormatter = ({ metadata, event }) => {
   const longDescription = metadata?.LongDescription || [];
   const probableCause = metadata?.ProbableCause || [];
   const suggestedRemediation = metadata?.SuggestedRemediation || [];
@@ -35,18 +64,7 @@ export const ErrorMetadataFormatter = ({ metadata, event, classes }) => {
   return (
     <Grid container>
       <div>
-        <a href={errorLink} target="_blank" rel="noopener noreferrer" style={{ color: 'inherit' }}>
-          <Typography
-            variant="h5"
-            className={classes.descriptionHeading}
-            style={{ textDecorationLine: 'underline', cursor: 'pointer', marginBottom: '0.5rem' }}
-          >
-            {formattedErrorCode}
-            <sup>
-              <LaunchIcon style={{ width: '1rem', height: '1rem' }} />
-            </sup>
-          </Typography>
-        </a>
+        <TitleLink href={errorLink}> {formattedErrorCode} </TitleLink>
         <FormatStructuredData data={event.description} />
         <div style={{ marginTop: '1rem' }}>
           <FormatStructuredData
@@ -80,15 +98,29 @@ const EmptyState = ({ event }) => {
   return <Typography variant="body1"> {event.description} </Typography>;
 };
 
-export const FormattedMetadata = ({ event, classes }) => {
+export const FormattedMetadata = ({ event }) => {
   const PropertyFormatters = {
-    Doc: (value) => LinkFormatters.DOC.formatter(value),
-    error: (value) => <ErrorMetadataFormatter metadata={value} event={event} classes={classes} />,
+    doc: (value) => <TitleLink href={value}>Doc</TitleLink>,
+    ShortDescription: (value) => <SectionBody body={value} style={{ marginBlock: '0.5rem' }} />,
+    error: (value) => <ErrorMetadataFormatter metadata={value} event={event} />,
     dryRunResponse: (value) => <DryRunResponse response={value} />,
   };
   if (!event || !event.metadata || isEmptyAtAllDepths(event.metadata)) {
     return <EmptyState event={event} />;
   }
+  const metadata = {
+    ...event.metadata,
+    ShortDescription: event.metadata.error ? null : event.description,
+  };
 
-  return <FormatStructuredData propertyFormatters={PropertyFormatters} data={event.metadata} />;
+  const order = ['doc', 'ShortDescription', 'LongDescription', 'Summary'];
+
+  const orderdMetadata = reorderObjectProperties(metadata, order);
+  return (
+    <FormatStructuredData
+      propertyFormatters={PropertyFormatters}
+      data={orderdMetadata}
+      order={order}
+    />
+  );
 };
