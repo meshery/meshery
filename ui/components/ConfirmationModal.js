@@ -18,7 +18,6 @@ import {
 import CloseIcon from '@material-ui/icons/Close';
 import { withStyles } from '@material-ui/core/styles';
 import { Search } from '@material-ui/icons';
-import { withSnackbar } from 'notistack';
 import { connect } from 'react-redux';
 import { setK8sContexts, updateProgress } from '../lib/store';
 import { errorHandlerGenerator, successHandlerGenerator } from './ConnectionWizard/helpers/common';
@@ -622,9 +621,10 @@ function ConfirmationMsg(props) {
 }
 
 const mapStateToProps = (state) => {
-  const selectedK8sContexts = state.get('selectedK8sContexts');
-  const k8scontext = state.get('k8sConfig');
-  return { selectedK8sContexts: selectedK8sContexts, k8scontext: k8scontext };
+  return {
+    selectedK8sContexts: state.get('selectedK8sContexts'),
+    k8scontext: state.get('k8sConfig'),
+  };
 };
 
 const mapDispatchToProps = (dispatch) => ({
@@ -632,6 +632,4 @@ const mapDispatchToProps = (dispatch) => ({
   setK8sContexts: bindActionCreators(setK8sContexts, dispatch),
 });
 
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withSnackbar(ConfirmationMsg)),
-);
+export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(ConfirmationMsg));
