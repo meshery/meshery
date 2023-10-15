@@ -30,7 +30,7 @@ ARG GIT_STRIPPED_VERSION
 ARG GIT_VERSION
 ARG RELEASE_CHANNEL
 LABEL org.opencontainers.image.title="Meshery" \
-  org.opencontainers.image.description="Meshery is the open source, cloud native manager that enables the adoption, operation, and management of Kubernetes, any service mesh, and their workloads. Collaboratively design and operate your cloud native deployments with teammates in real-time." \
+  org.opencontainers.image.description="Meshery is the open source, cloud native manager that enables the adoption, operation, and management of Kubernetes. Collaboratively design and operate your cloud native deployments with teammates in real-time." \
   org.opencontainers.image.vendor="Layer5, Inc." \
   com.docker.desktop.extension.api.version=">= 0.2.0" \
    com.docker.extension.screenshots="[ \
