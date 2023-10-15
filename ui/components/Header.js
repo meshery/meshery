@@ -14,7 +14,7 @@ import NoSsr from '@material-ui/core/NoSsr';
 import Link from 'next/link';
 import SettingsIcon from '@material-ui/icons/Settings';
 import Chip from '@material-ui/core/Chip';
-import MesheryNotification from './NotificationCenter';
+import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
 import Slide from '@material-ui/core/Slide';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
@@ -683,7 +683,7 @@ class Header extends React.PureComponent {
                   </div>
 
                   <div data-test="notification-button">
-                    <MesheryNotification />
+                    <NotificationDrawerButton />
                   </div>
                   <span className={classes.userSpan}>
                     <User

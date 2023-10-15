@@ -223,7 +223,7 @@ const darkRjsfTheme = createTheme({
   palette: {
     type: 'dark',
     primary: {
-      main: '#607d8b',
+      main: '#00B39F',
     },
   },
   typography: {
