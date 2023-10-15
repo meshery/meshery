@@ -57,11 +57,11 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
 <br />
 
 - [Functionality](#functionality)
-- [Meshery Architecture](#meshery-architecture)
-- [Join the Meshery community!](#join-the-meshery-community)
-- [Contributing](#contributing)
-  - [Stargazers](#stargazers)
-  - [License](#license)
+  - [Meshery Architecture](#meshery-architecture)
+  - [Join the Meshery community!](#join-the-meshery-community)
+  - [Contributing](#contributing)
+    - [Stargazers](#stargazers)
+    - [License](#license)
 
 <!-- <p style="clear:both;">&nbsp;</p>
 <a href="https://meshery.io"><picture>
@@ -80,7 +80,7 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
 
 <p style="clear:both;">
 <h2>Cloud Native Lifecycle Management</h2>
-Meshery manages the provisioning, configuration and operation of your Kubernetes clusters while supporting hundreds of different types of cloud native infrastructure integrations. Meshery also offers a [catalog of curated design templates](https://meshery.io/catalog) filled with configuration best practices.
+Meshery manages the provisioning, configuration and operation of your Kubernetes clusters while supporting hundreds of different types of cloud native infrastructure integrations. Meshery also offers a <a href="https://meshery.io/catalog">catalog of curated design templates</a> filled with configuration best practices.
 
 Using a GitOps-centric approach, visually and collaboratively design and manage your infrastructure and microservices. Use Meshery to interoperate your various cloud native systems. With both REST and GraphQL APIs, integrating with Meshery as an extensible platform is facilitated through NATS, CloudEvents, and gRPC.
 
@@ -316,7 +316,7 @@ Find out more on the <a href="https://layer5.io/community#meshmate">Layer5 commu
 <p>
 ✔️ <em><strong>Join</strong></em> any or all of the weekly meetings on <a href="https://meshery.io/calendar">community calendar</a>.<br />
 ✔️ <em><strong>Watch</strong></em> community <a href="https://www.youtube.com/playlist?list=PL3A-A6hPO2IMPPqVjuzgqNU5xwnFFn3n0">meeting recordings</a>.<br />
-✔️ <em>Fill-in</em> a <a href="https://layer5.io/newcomers">community member form</a> to gain access to community resources.
+✔️ <em><strong>Fill-in</strong></em> a <a href="https://layer5.io/newcomers">community member form</a> to gain access to community resources.
 <br />
 ✔️ <em><strong>Discuss</strong></em> in the <a href="http://discuss.meshery.io">Community Forum</a>.<br />
 ✔️ <em><strong>Explore more</strong></em> in the <a href="https://layer5.io/community/handbook">Community Handbook</a>.<br />
