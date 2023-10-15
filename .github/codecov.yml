@@ -2,7 +2,7 @@ codecov:
   require_ci_to_pass: yes
 
 github_checks:
-    annotations: true #Annotations for Pull Request
+  annotations: true #Annotations for Pull Request
 coverage:
   precision: 2
   round: down
@@ -19,7 +19,10 @@ coverage:
           - e2etests
       backend:
         flags:
-          - unittests
+          - serverunittests
+      mesheryctl-backend:
+        flags:
+          - mesheryctlunittests
 
 flags:
   # Filter the folders to be measured by each flag
@@ -31,14 +34,16 @@ flags:
     paths:
       - ui/cypress/integration/e2e
     carryforward: true
-  backend:
+  mesheryctl-backend:
     paths:
-    # Accepts only glob patterns, not regex
+      - "*/mesheryctl/**"
+  mesheryserver- backend:
+    paths:
+      # Accepts only glob patterns, not regex
       - "*/cmd/**"
       - "*/handlers/**"
       - "*/helpers/**"
       - "*/internal/**"
-      - "*/mesheryctl/**" 
       - "*/meshes/**"
       - "*/models/**"
       - "*/router/**"

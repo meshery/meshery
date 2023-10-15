@@ -36,8 +36,8 @@ jobs:
         with:
           version: v1.52.0
           args: --config=.golangci.yml --timeout=10m
-  unit-tests:
-    name: Unit tests
+  mesheryserver-unittests:
+    name: MesheryServer tests
     runs-on: ubuntu-22.04
     needs: golangci
     steps:
@@ -57,7 +57,30 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           files: ./coverage.txt
-          flags: unittests
+          flags: serverunittests
+  mesheryctl-unittests:
+    name: MesheryServer tests
+    runs-on: ubuntu-22.04
+    needs: golangci
+    steps:
+      - uses: actions/checkout@master
+        with:
+          fetch-depth: 2
+      - name: Install lynx for xdg-open support
+        run: sudo apt-get install lynx
+      - name: Setup Go
+        uses: actions/setup-go@master
+        with:
+          go-version: "1.21"
+      - name: Run coverage
+        run: go test --short ./... -race -coverprofile=coverage.txt -covermode=atomic
+      - name: Upload coverage to Codecov
+        if: github.repository == 'meshery/meshery'
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage.txt
+          flags: mesheryctlunittests        
+
   integration-tests:
     name: Integration tests
     runs-on: ubuntu-22.04
