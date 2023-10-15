@@ -48,6 +48,8 @@ _Popular Installers:_
 
 **Answer:** _Meshery is an open source, vendor neutral project that facilitates testing across meshes. Other performance benchmark tools are not packaged into a mesh testing utility, but are only load-generators unto their own._
 
+#### Question: What architecture does Meshery have?
+  **Answer:** _.There's several compotents and languages. See Meshery's [Architecture](https://docs.meshery.io/concepts/architecture)._ 
 
 #### Question: What is the difference between `make server` and `mesheryctl system start`? Do they both run Meshery on my local machine?
 
@@ -60,6 +62,11 @@ _Popular Installers:_
 #### Question: What systems does Meshery manage?
 
   **Answer:** _Many. See Meshery's [Integrations](https://meshery.io/integrations)._
+
+#### Question: Getting error while running `make server`?
+
+  **Answer:** _On windows, set up the project on Ubuntu WSL2 and you will be able to run the Meshery UI and the server. For more information please visit [Supported Platforms](https://docs.meshery.io/installation/platforms)._
+
 
 #### Question: Why is Meshery Server only receiving MeshSync updates from one of my Kubernetes Clusters?
 
