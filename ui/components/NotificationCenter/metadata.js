@@ -3,6 +3,7 @@ import { Typography, Grid } from '@material-ui/core';
 import { Launch as LaunchIcon } from '@material-ui/icons';
 import { FormatStructuredData, SectionBody, reorderObjectProperties } from '../DataFormatter';
 import { isEmptyAtAllDepths } from '../../utils/objects';
+import { canTruncateDescription } from './notification';
 
 const DryRunResponse = ({ response }) => {
   const cleanedResponse = {};
@@ -110,7 +111,10 @@ export const FormattedMetadata = ({ event }) => {
   }
   const metadata = {
     ...event.metadata,
-    ShortDescription: event.metadata.error ? null : event.description,
+    ShortDescription:
+      event.metadata.error || !canTruncateDescription(event.description || '')
+        ? null
+        : event.description,
   };
 
   const order = ['doc', 'ShortDescription', 'LongDescription', 'Summary'];

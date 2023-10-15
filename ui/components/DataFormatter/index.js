@@ -196,7 +196,6 @@ const DynamicFormatter = ({ data }) => {
 
 export const FormatStructuredData = ({ propertyFormatters = {}, data }) => {
   if (!data || isEmptyAtAllDepths(data)) {
-    console.log('data is empty', data);
     return null;
   }
 
