@@ -166,7 +166,7 @@ class MesherySettings extends React.Component {
         case 'system':
           tabVal = 3;
           break;
-        case 'meshmodel-summary':
+        case 'registry':
           tabVal = 4;
           break;
         // case 'performance':
@@ -293,7 +293,7 @@ class MesherySettings extends React.Component {
             newRoute += '#system';
             break;
           case 4:
-            newRoute += '#meshmodel-summary';
+            newRoute += '#registry';
           // case 3:
           //   newRoute += '#performance'
           //   break;
@@ -385,12 +385,12 @@ class MesherySettings extends React.Component {
                 tab="systemReset"
               />
             </Tooltip>
-            <Tooltip title="MeshModel Summary" placement="top">
+            <Tooltip title="Registry" placement="top">
               <Tab
                 className={classes.tab}
                 icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
-                label="MeshModel Summary"
-                tab="meshmodelSummary"
+                label="Registry"
+                tab="registry"
               />
             </Tooltip>
             {/* <Tooltip title="Credential" placement="top">

@@ -11,6 +11,8 @@ export const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
+    boxShadow: theme.shadows[2],
+    zIndex: 1205,
   },
   drawerButton: {
     padding: '0.45rem',
@@ -38,7 +40,8 @@ export const useStyles = makeStyles((theme) => ({
     display: 'flex',
     gap: '0.5rem',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'start',
+    flexWrap: 'wrap',
     background: theme.palette.secondary.headerColor,
   },
   title: {
@@ -71,6 +74,7 @@ export const useStyles = makeStyles((theme) => ({
   // Aggregrate Level Chips
   severityChips: {
     display: 'flex',
+    flexWrap: 'wrap',
     gap: '0.75rem',
     alignItems: 'center',
   },
