@@ -620,7 +620,7 @@ function ConfirmationMsg(props) {
   );
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = function (state) {
   return {
     selectedK8sContexts: state.get('selectedK8sContexts'),
     k8scontext: state.get('k8sConfig'),
