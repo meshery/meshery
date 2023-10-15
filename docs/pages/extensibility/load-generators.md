@@ -9,11 +9,11 @@ language: en
 list: include
 ---
 
-Users may prefer to use one load generator over the next given the difference of capabilities between load generators, so Meshery provides a `load generator interface` (a gRPC interface) behind which a load generator can be implemented. Meshery provides users with choice of which load generator they prefer to use for a given performance test. Users may set their configure their own preference of load generator different that the default load generator.
+Users may prefer to use one load generator over the next given the difference of capabilities between load generators, so Meshery provides a `load generator interface` (a gRPC interface) behind which a load generator can be implemented. Meshery provides users with choice of which load generator they prefer to use for a given performance test. Users may configure their own preference for the load generator, different from the default load generator.
 
 ### What function do load generators in Meshery provide? 
 
-Load generators will provide the capability to run load tests from Meshery. As of today the load generators are embedded as libraries in Meshery and Meshery invokes the load generators APIs with the right load test options to run the load test. At the moment, Meshery has support for HTTP load generators. Support for GRPC and TCP load testing is on the roadmap. Meshery has functional integration with fortio, wrk2, and nighthawk.
+Load generators will provide the capability to run load tests from Meshery. As of today the load generators are embedded as libraries in Meshery and Meshery invokes the load generators APIs with the right load test options to run the load test. At the moment, Meshery only supports HTTP load generators. Support for gRPC and TCP load generators is on the roadmap. Meshery has functional integration with fortio, wrk2, and nighthawk.
 
 ### Why support multiple load generators?
 
