@@ -108,7 +108,7 @@ const styles = (theme) => ({
   headerIcons: { fontSize: '1.5rem', height: '1.5rem', width: '1.5rem' },
   cbadge: {
     fontSize: '0.65rem',
-    backgroundColor: 'ffffffd4',
+    backgroundColor: 'white',
     borderRadius: '50%',
     color: 'black',
     height: '1.30rem',
