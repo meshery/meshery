@@ -126,11 +126,8 @@ var _ = Describe("Tests for Doc", func() {
 	Context("Test getManuallyAddedContentMap function", func() {
 		It("should return nil", func() {
 
-			// filename
-			filename := "test.md"
-
 			// call getManuallyAddedContentMap
-			_, err := getManuallyAddedContentMap(filename)
+			_, err := getManuallyAddedContentMap("test.md")
 
 			// check if err is nil
 			Expect(err).To(BeNil())
