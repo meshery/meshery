@@ -502,6 +502,16 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 			m = core.Format.Prettify(m, true)
 			b, _ := json.Marshal(m)
 			comp.Schema = string(b)
+
+			// If component support credential
+			// Then only send credential schema
+			if comp.CredentialSchema != "" {
+				credentialSchema := make(map[string]interface{})
+				_ = json.Unmarshal([]byte(comp.CredentialSchema), &credentialSchema)
+				credentialSchema = core.Format.Prettify(credentialSchema, true)
+				t, _ := json.Marshal(credentialSchema)
+				comp.CredentialSchema = string(t)
+			}
 			comps = append(comps, comp)
 		}
 	}
@@ -595,6 +605,16 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 			m = core.Format.Prettify(m, true)
 			b, _ := json.Marshal(m)
 			comp.Schema = string(b)
+
+			// If component support credential
+			// Then only send credential schema
+			if comp.CredentialSchema != "" {
+				credentialSchema := make(map[string]interface{})
+				_ = json.Unmarshal([]byte(comp.CredentialSchema), &credentialSchema)
+				credentialSchema = core.Format.Prettify(credentialSchema, true)
+				t, _ := json.Marshal(credentialSchema)
+				comp.CredentialSchema = string(t)
+			}
 			comps = append(comps, comp)
 		}
 	}
@@ -677,6 +697,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 		Sort:       r.URL.Query().Get("sort"),
 	})
 	var comps []v1alpha1.ComponentDefinition
+
 	for _, r := range entities {
 		comp, ok := r.(v1alpha1.ComponentDefinition)
 		if ok {
@@ -685,6 +706,17 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 			m = core.Format.Prettify(m, true)
 			b, _ := json.Marshal(m)
 			comp.Schema = string(b)
+
+			// If component support credential
+			// Then only send credential schema
+			if comp.CredentialSchema != "" {
+				credentialSchema := make(map[string]interface{})
+				_ = json.Unmarshal([]byte(comp.CredentialSchema), &credentialSchema)
+				credentialSchema = core.Format.Prettify(credentialSchema, true)
+				t, _ := json.Marshal(credentialSchema)
+				comp.CredentialSchema = string(t)
+			}
+			
 			comps = append(comps, comp)
 		}
 	}
@@ -778,6 +810,17 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 			m = core.Format.Prettify(m, true)
 			b, _ := json.Marshal(m)
 			comp.Schema = string(b)
+
+			// If component support credential
+			// Then only send credential schema
+			if comp.CredentialSchema != "" {
+				credentialSchema := make(map[string]interface{})
+				_ = json.Unmarshal([]byte(comp.CredentialSchema), &credentialSchema)
+				credentialSchema = core.Format.Prettify(credentialSchema, true)
+				t, _ := json.Marshal(credentialSchema)
+				comp.CredentialSchema = string(t)
+			}
+
 			comps = append(comps, comp)
 		}
 	}
@@ -868,6 +911,17 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 			m = core.Format.Prettify(m, true)
 			b, _ := json.Marshal(m)
 			comp.Schema = string(b)
+
+			// If component support credential
+			// Then only send credential schema
+			if comp.CredentialSchema != "" {
+				credentialSchema := make(map[string]interface{})
+				_ = json.Unmarshal([]byte(comp.CredentialSchema), &credentialSchema)
+				credentialSchema = core.Format.Prettify(credentialSchema, true)
+				t, _ := json.Marshal(credentialSchema)
+				comp.CredentialSchema = string(t)
+			}
+
 			comps = append(comps, comp)
 		}
 	}
@@ -962,6 +1016,17 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 			m = core.Format.Prettify(m, true)
 			b, _ := json.Marshal(m)
 			comp.Schema = string(b)
+
+			// If component support credential
+			// Then only send credential schema
+			if comp.CredentialSchema != "" {
+				credentialSchema := make(map[string]interface{})
+				_ = json.Unmarshal([]byte(comp.CredentialSchema), &credentialSchema)
+				credentialSchema = core.Format.Prettify(credentialSchema, true)
+				t, _ := json.Marshal(credentialSchema)
+				comp.CredentialSchema = string(t)
+			}
+
 			comps = append(comps, comp)
 		}
 	}
@@ -1052,6 +1117,16 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 			m = core.Format.Prettify(m, true)
 			b, _ := json.Marshal(m)
 			comp.Schema = string(b)
+
+			// If component support credential
+			// Then only send credential schema
+			if comp.CredentialSchema != "" {
+				credentialSchema := make(map[string]interface{})
+				_ = json.Unmarshal([]byte(comp.CredentialSchema), &credentialSchema)
+				credentialSchema = core.Format.Prettify(credentialSchema, true)
+				t, _ := json.Marshal(credentialSchema)
+				comp.CredentialSchema = string(t)
+			}
 			comps = append(comps, comp)
 		}
 	}
@@ -1145,6 +1220,16 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 			comp.HostID = host.ID
 			comp.HostName = host.Hostname
 			comp.DisplayHostName = registry.HostnameToPascalCase(host.Hostname)
+
+			// If component support credential
+			// Then only send credential schema
+			if comp.CredentialSchema != "" {
+				credentialSchema := make(map[string]interface{})
+				_ = json.Unmarshal([]byte(comp.CredentialSchema), &credentialSchema)
+				credentialSchema = core.Format.Prettify(credentialSchema, true)
+				t, _ := json.Marshal(credentialSchema)
+				comp.CredentialSchema = string(t)
+			}
 			comps = append(comps, comp)
 		}
 	}
