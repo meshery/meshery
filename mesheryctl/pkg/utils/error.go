@@ -33,10 +33,9 @@ var (
 	ErrResponseStatusCode     = "1182"
 	ErrJSONToYAMLCode         = "1183"
 	ErrOutFormatFlagCode      = "1184"
-	ErrInvalidAPICallCode     = "1185"
-	ErrParseGithubFileCode    = "1186"
-	ErrReadTokenCode          = "1187"
-	ErrRequestResponseCode    = "1188"
+	ErrParseGithubFileCode    = "1185"
+	ErrReadTokenCode          = "1186"
+	ErrRequestResponseCode    = "1187"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at

@@ -7,8 +7,7 @@ type: Guides
 language: en
 ---
 
-Sample Applications are used to interact and exemplify the features of your service mesh. They are often a collection of microservices which you can be used by the user as a sandbox playground to experiment and learn about the service mesh and it's exhaustive set of features.
-Before deploying a sample app on top of your service mesh, the application needs to be exposed and allowed external access to the available services in a cluster. There are a myriad of ways to do this, specific to the service mesh you are using.
+Meshery includes a few sample applications to help you explore cloud native infrastructure. Each is a collection of microservices for experimental purposes of learning about running workloads in Kubernetes clusters both on and off of a service mesh. When deploying a sample app onto your service mesh, your sample application needs will need to be externaally exposed from the cluster, if you would like to access it externally. There are a myriad of ways to do this, specific to the service mesh you are using.
 
 A popular way of exposing your cluster is by using [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/), an API object that defines rules which allow external access to services in a cluster. 
 

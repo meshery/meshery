@@ -1,12 +1,11 @@
-import { createTheme } from '@material-ui/core';
+import { createTheme } from '@mui/material/styles';
 
 function configurationTableTheme(style = {}) {
-  const theme = Object.assign(
-    {
-      shadows: ['none'],
-      overrides: {
-        MUIDataTable: {},
-        MuiInput: {
+  const theme = createTheme({
+    shadows: ['none'],
+    components: {
+      MuiInput: {
+        styleOverrides: {
           underline: {
             '&:hover:not(.Mui-disabled):before': {
               borderBottom: '2px solid #222',
@@ -16,7 +15,9 @@ function configurationTableTheme(style = {}) {
             },
           },
         },
-        MUIDataTableSearch: {
+      },
+      MUIDataTableSearch: {
+        styleOverrides: {
           searchIcon: {
             color: '#607d8b',
             marginTop: '7px',
@@ -28,14 +29,18 @@ function configurationTableTheme(style = {}) {
             },
           },
         },
-        MUIDataTableSelectCell: {
+      },
+      MUIDataTableSelectCell: {
+        styleOverrides: {
           checkboxRoot: {
             '&$checked': {
               color: '#607d8b',
             },
           },
         },
-        MUIDataTableToolbar: {
+      },
+      MUIDataTableToolbar: {
+        styleOverrides: {
           iconActive: {
             color: '#222',
           },
@@ -47,21 +52,27 @@ function configurationTableTheme(style = {}) {
         },
       },
     },
-    style,
-  );
-  return createTheme(theme);
+    ...style,
+  });
+  return theme;
 }
 
 function configurationTableThemeDark(style = {}) {
-  const theme = Object.assign(
-    {
-      shadows: ['none'],
-      palette: {
-        type: 'dark',
+  const theme = createTheme({
+    shadows: ['none'],
+    palette: {
+      mode: 'dark', // Use mode instead of type for dark theme
+    },
+    components: {
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            backgroundColor: '#363636',
+          },
+        },
       },
-      overrides: {
-        MuiPaper: { root: { backgroundColor: '#363636' } },
-        MuiFormLabel: {
+      MuiFormLabel: {
+        styleOverrides: {
           root: {
             '&$focused': {
               color: '#00B39F',
@@ -70,9 +81,9 @@ function configurationTableThemeDark(style = {}) {
         },
       },
     },
-    style,
-  );
-  return createTheme(theme);
+    ...style,
+  });
+  return theme;
 }
 
 export { configurationTableTheme, configurationTableThemeDark };

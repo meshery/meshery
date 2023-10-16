@@ -1,7 +1,6 @@
 import { withStyles } from '@material-ui/core';
 import { withSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react';
-import MUIDataTable from 'mui-datatables';
 import { TableCell, Tooltip, TableSortLabel, Switch, FormControlLabel } from '@material-ui/core';
 
 import {
@@ -14,6 +13,10 @@ import {
 import debounce from '../utils/debounce';
 import { MODELS, COMPONENTS, RELATIONSHIPS } from '../constants/navigator';
 import { SORT } from '../constants/endpoints';
+import ResponsiveDataTable from '../utils/data-table';
+import CustomColumnVisibilityControl from '../utils/custom-column';
+import useStyles from '../assets/styles/general/tool.styles';
+import SearchBar from '../utils/custom-search';
 
 //TODO : This Should derive the indices of rendered rows
 // const ROWS_INDICES = {
@@ -51,7 +54,7 @@ const meshmodelStyles = (theme) => ({
   },
 });
 
-const MeshModelComponent = ({ view, classes }) => {
+const MeshModelComponent = ({ view }) => {
   const [resourcesDetail, setResourcesDetail] = useState([]);
   const [isRequestCancelled, setRequestCancelled] = useState(false);
   const [count, setCount] = useState();
@@ -63,6 +66,7 @@ const MeshModelComponent = ({ view, classes }) => {
     order: '',
   });
   const [checked, setChecked] = useState(false);
+  const StyleClass = useStyles();
 
   const getModels = async (page) => {
     try {
@@ -360,11 +364,13 @@ const MeshModelComponent = ({ view, classes }) => {
     page: page,
     count: count,
     sort: true,
+    search: false,
+    viewColumns: false,
     download: false,
     print: false,
     filter: false,
     selectableRows: false,
-    search: view === RELATIONSHIPS ? false : true,
+    // search: view === RELATIONSHIPS ? false : true,
     serverSide: true,
     // expandableRows : (view !== RELATIONSHIPS && checked === true) && true,
     onChangePage: debounce((p) => setPage(p), 200),
@@ -481,29 +487,61 @@ const MeshModelComponent = ({ view, classes }) => {
     // },
   };
 
+  const [tableCols, updateCols] = useState(meshmodel_columns);
+
+  const [columnVisibility, setColumnVisibility] = useState(() => {
+    // let showCols = updateVisibleColumns(colViews, width);
+    // Initialize column visibility based on the original columns' visibility
+    const initialVisibility = {};
+    meshmodel_columns.forEach((col) => {
+      initialVisibility[col.name] = col.options?.display !== false;
+    });
+    return initialVisibility;
+  });
+
+  const customInlineStyle = {
+    marginBottom: '0.5rem',
+    marginTop: '1rem',
+  };
+
   return (
     <div data-test="workloads">
-      <MUIDataTable
-        title={
-          <div className={classes.tableHeader}>
-            {view !== RELATIONSHIPS && (
-              <FormControlLabel
-                control={
-                  <Switch
-                    color="primary"
-                    checked={checked}
-                    onChange={handleToggleDuplicates}
-                    inputProps={{ 'aria-label': 'controlled' }}
-                  />
-                }
-                label="Duplicates"
-              />
-            )}
-          </div>
-        }
+      <div className={StyleClass.toolWrapper} style={customInlineStyle}>
+        <div>
+          {view !== RELATIONSHIPS && (
+            <FormControlLabel
+              control={
+                <Switch
+                  color="primary"
+                  checked={checked}
+                  onChange={handleToggleDuplicates}
+                  inputProps={{ 'aria-label': 'controlled' }}
+                />
+              }
+              label="Duplicates"
+            />
+          )}
+        </div>
+        <div style={{ display: 'flex' }}>
+          <SearchBar
+            onSearch={(value) => {
+              setSearchText(value);
+            }}
+            placeholder="Search"
+          />
+          <CustomColumnVisibilityControl
+            columns={meshmodel_columns}
+            customToolsProps={{ columnVisibility, setColumnVisibility }}
+          />
+        </div>
+      </div>
+      <ResponsiveDataTable
         data={filteredData}
         columns={meshmodel_columns}
         options={meshmodel_options}
+        tableCols={tableCols}
+        updateCols={updateCols}
+        columnVisibility={columnVisibility}
       />
     </div>
   );

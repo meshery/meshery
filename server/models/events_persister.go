@@ -118,8 +118,32 @@ func (e *EventsPersister) UpdateEventStatus(eventID uuid.UUID, status string) (*
 	return updatedEvent, nil
 }
 
+func (e *EventsPersister) BulkUpdateEventStatus(eventIDs []*uuid.UUID, status string) ([]*events.Event, error) {
+
+	err := e.DB.Model(&events.Event{Status: events.EventStatus(status)}).Where("id IN ?", eventIDs).Update("status", status).Error
+	if err != nil {
+		return nil, err
+	}
+	
+	updatedEvent := &[]*events.Event{}
+	err = e.DB.Find(updatedEvent, "id IN ?", eventIDs).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return *updatedEvent, nil
+}
+
 func (e *EventsPersister) DeleteEvent(eventID uuid.UUID) error {
 	err := e.DB.Delete(&events.Event{ID: eventID}).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (e *EventsPersister) BulkDeleteEvent(eventIDs []*uuid.UUID) error {
+	err := e.DB.Where("id IN ?", eventIDs).Delete(&events.Event{}).Error
 	if err != nil {
 		return err
 	}

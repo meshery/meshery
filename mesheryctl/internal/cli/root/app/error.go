@@ -20,13 +20,13 @@ import (
 )
 
 const (
-	ErrImportAppCode       = "1080"
-	ErrValidSourceCode     = "1081"
-	ErrAppManifestCode     = "1189"
-	ErrOnboardAppCode      = "1082"
-	ErrAppFoundCode        = "1083"
-	ErrInvalidNameOrIDCode = "1084"
-	ErrAppFlagCode         = "1085"
+	ErrImportAppCode          = "1080"
+	ErrValidSourceCode        = "1081"
+	ErrOnboardAppCode         = "1082"
+	ErrAppFoundCode           = "1083"
+	ErrInvalidAppNameOrIDCode = "1084"
+	ErrAppFlagCode            = "1085"
+	ErrAppManifestCode        = "1188"
 )
 const (
 	errAppMsg = `Usage: mesheryctl app import -f [file/url] -s [source-type]
@@ -78,8 +78,8 @@ func ErrAppFound() error {
 	)
 }
 
-func ErrInvalidNameOrID(err error) error {
-	return errors.New(ErrInvalidNameOrIDCode, errors.Alert,
+func ErrInvalidAppNameOrID(err error) error {
+	return errors.New(ErrInvalidAppNameOrIDCode, errors.Alert,
 		[]string{"Invalid application"},
 		[]string{"Failed to get application based on input"},
 		[]string{"Application name|id is invalid"},
@@ -87,7 +87,7 @@ func ErrInvalidNameOrID(err error) error {
 }
 
 func ErrViewAppFlag() error {
-	return errors.New(ErrInvalidNameOrIDCode, errors.Alert,
+	return errors.New(ErrAppFlagCode, errors.Alert,
 		[]string{"Invalid command"},
 		[]string{"Wrong use of command flags"},
 		[]string{"-a/all flag is being used while an app is specified"},

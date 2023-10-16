@@ -348,7 +348,7 @@ func (kc K8sContext) GenerateKubeConfig() ([]byte, error) {
 	return data, nil
 }
 
-func (kc K8sContext) GenerateKubeHandler() (*kubernetes.Client, error) {
+func (kc *K8sContext) GenerateKubeHandler() (*kubernetes.Client, error) {
 	cfg, err := kc.GenerateKubeConfig()
 	if err != nil {
 		return nil, err

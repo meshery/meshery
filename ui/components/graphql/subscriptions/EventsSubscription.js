@@ -25,7 +25,7 @@ const eventsSubscription = graphql`
 export default function subscribeEvents(dataCB) {
   const environment = createRelayEnvironment({});
 
-  requestSubscription(environment, {
+  return requestSubscription(environment, {
     subscription: eventsSubscription,
     onNext: dataCB,
     onError: (error) => console.log(`An error occured:`, error),

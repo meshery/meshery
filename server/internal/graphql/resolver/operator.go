@@ -87,6 +87,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 			return
 		}
 		op, _ := ctx.Value(models.MesheryControllerHandlersKey).(map[string]map[models.MesheryController]controllers.IMesheryController)
+		
 		var err error
 		if del {
 			err = op[ctxID][models.MesheryOperator].Undeploy()
