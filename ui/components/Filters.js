@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-// import { createTheme } from '@material-ui/core/styles';
+import { NoSsr, TableCell } from '@material-ui/core';
 import {
-  NoSsr,
-  TableCell,
+  Box,
   IconButton,
   Dialog,
   DialogTitle,
@@ -13,7 +12,7 @@ import {
   Tooltip,
   Typography,
   Button,
-} from '@material-ui/core';
+} from '@layer5/sistent-components';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { connect } from 'react-redux';
@@ -25,8 +24,8 @@ import { toggleCatalogContent, updateProgress } from '../lib/store';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import dataFetch from '../lib/data-fetch';
 import PromptComponent from './PromptComponent';
-import FullscreenIcon from '@material-ui/icons/Fullscreen';
-import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
+import FullScreenIcon from '@layer5/sistent-svg';
+import FullScreenExitIcon from '@layer5/sistent-svg';
 import { FILE_OPS, MesheryFiltersCatalog, VISIBILITY } from '../utils/Enum';
 import ViewSwitch from './ViewSwitch';
 import CatalogFilter from './CatalogFilter';
@@ -56,7 +55,6 @@ import ResponsiveDataTable from '../utils/data-table';
 import useStyles from '../assets/styles/general/tool.styles';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
-import { Box } from '@mui/material';
 import InfoModal from './Modals/Information/InfoModal';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 
@@ -153,9 +151,9 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
           onClick={toggleFullScreen}
         >
           {fullScreen ? (
-            <FullscreenExitIcon style={iconMedium} />
+            <FullScreenExitIcon style={iconMedium} />
           ) : (
-            <FullscreenIcon style={iconMedium} />
+            <FullScreenIcon style={iconMedium} />
           )}
         </TooltipIcon>
         <TooltipIcon title="Exit" onClick={onClose}>
