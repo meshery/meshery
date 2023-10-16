@@ -159,50 +159,48 @@ func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *
 
 	// Process Template Variables
 	tmpDsName := map[string]string{}
-	if len(board.Templating.List) > 0 {
-		for _, tmpVar := range board.Templating.List {
-			var ds sdk.Datasource
-			var dsName string
-			if tmpVar.Type == "datasource" {
-				dsName = cases.Title(language.Und).String(strings.ToLower(fmt.Sprint(tmpVar.Query))) // datasource name can be found in the query field
-				tmpDsName[tmpVar.Name] = dsName
-			} else if tmpVar.Type == "query" && tmpVar.Datasource != nil {
-				dataSource, ok := (tmpVar.Datasource).(string)
-				if ok {
-					if !strings.HasPrefix(dataSource, "$") {
-						dsName = dataSource
-					} else {
-						dsName = tmpDsName[strings.Replace(dataSource, "$", "", 1)]
-					}
-				}
-			} else {
-				err := fmt.Errorf("unable to get datasource name for tmpvar: %+#v", tmpVar)
-				logrus.Error(err)
-				return nil, err
-			}
-			if c != nil {
-				ds, err = c.GetDatasourceByName(ctx, dsName)
-				if err != nil {
-					return nil, ErrGrafanaDataSource(err, dsName)
-				}
-			} else {
-				ds.Name = dsName
-			}
-			query, ok := tmpVar.Query.(map[string]interface{})
+	for _, tmpVar := range board.Templating.List {
+		var ds sdk.Datasource
+		var dsName string
+		if tmpVar.Type == "datasource" {
+			dsName = cases.Title(language.Und).String(strings.ToLower(fmt.Sprint(tmpVar.Query))) // datasource name can be found in the query field
+			tmpDsName[tmpVar.Name] = dsName
+		} else if tmpVar.Type == "query" && tmpVar.Datasource != nil {
+			dataSource, ok := (tmpVar.Datasource).(string)
 			if ok {
-				if pnlQuery, ok := query["query"].(string); ok {
-					tvVal := tmpVar.Current.Text
-					grafBoard.TemplateVars = append(grafBoard.TemplateVars, &GrafanaTemplateVars{
-						Name:  tmpVar.Name,
-						Query: pnlQuery,
-						Datasource: &GrafanaDataSource{
-							ID:   ds.ID,
-							Name: ds.Name,
-						},
-						Hide:  tmpVar.Hide,
-						Value: tvVal,
-					})
+				if !strings.HasPrefix(dataSource, "$") {
+					dsName = dataSource
+				} else {
+					dsName = tmpDsName[strings.Replace(dataSource, "$", "", 1)]
 				}
+			}
+		} else {
+			err := fmt.Errorf("unable to get datasource name for tmpvar: %+#v", tmpVar)
+			logrus.Error(err)
+			return nil, err
+		}
+		if c != nil {
+			ds, err = c.GetDatasourceByName(ctx, dsName)
+			if err != nil {
+				return nil, ErrGrafanaDataSource(err, dsName)
+			}
+		} else {
+			ds.Name = dsName
+		}
+		query, ok := tmpVar.Query.(map[string]interface{})
+		if ok {
+			if pnlQuery, ok := query["query"].(string); ok {
+				tvVal := tmpVar.Current.Text
+				grafBoard.TemplateVars = append(grafBoard.TemplateVars, &GrafanaTemplateVars{
+					Name:  tmpVar.Name,
+					Query: pnlQuery,
+					Datasource: &GrafanaDataSource{
+						ID:   ds.ID,
+						Name: ds.Name,
+					},
+					Hide:  tmpVar.Hide,
+					Value: tvVal,
+				})
 			}
 		}
 	}
@@ -221,7 +219,7 @@ func (g *GrafanaClient) ProcessBoard(ctx context.Context, c *sdk.Client, board *
 				}
 
 				grafBoard.Panels = append(grafBoard.Panels, p1)
-			} else if p1.OfType != sdk.TextType && p1.OfType != sdk.TableType && p1.Type == "row" && len(p1.Panels) > 0 { // Looking for Panels with Row
+			} else if p1.OfType != sdk.TextType && p1.OfType != sdk.TableType && p1.Type == "row" { // Looking for Panels with Row
 				for _, p2 := range p1.Panels { // Adding Panels inside the Row Panel to grafBoard
 					if p2.OfType != sdk.TextType && p2.OfType != sdk.TableType && p2.Type != "row" {
 						dataSource, ok := (p2.Datasource).(string)

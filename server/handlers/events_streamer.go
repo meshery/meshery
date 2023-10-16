@@ -26,6 +26,15 @@ var (
 	flusherMap map[string]http.Flusher
 )
 
+type eventStatusPayload struct {
+	Status    string `json:"status"`
+	StatusIDs []*uuid.UUID `json:"ids"`
+}
+
+type statusIDs struct {
+	IDs []*uuid.UUID `json:"ids"`
+}
+
 // swagger:route GET /api/v2/events EventsAPI idGetEventStreamer
 // Handle GET request for events.
 // ```search={description}``` If search is non empty then a search is performed on event description
@@ -93,8 +102,8 @@ func (h *Handler) GetEventTypes(w http.ResponseWriter, req *http.Request, prefOb
 	}
 }
 
-// swagger:route POST /api/events/status/{id} idGetEventStreamer
-// Handle POST request to update event status.
+// swagger:route PUT /api/events/status/{id} idGetEventStreamer
+// Handle PUT request to update event status.
 // Updates event status for the event associated with the id.
 // responses:
 // 	200: eventResponseWrapper
@@ -132,6 +141,71 @@ func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, pr
 	if err != nil {
 		h.log.Error(err)
 		http.Error(w, models.ErrMarshal(err, "event response").Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+// swagger:route PUT /api/events/status idGetEventStreamer
+// Handle PUT request to update event status in bulk.
+// Bulk update status for the events associated with the ids.
+// responses:
+// 	200: eventResponseWrapper
+
+func (h *Handler) BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+
+	defer func() {
+		_ = req.Body.Close()
+	}()
+
+	var reqBody eventStatusPayload
+	body, err := io.ReadAll(req.Body)
+	if err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	_ = json.Unmarshal(body, &reqBody)
+	event, err := provider.BulkUpdateEventStatus(reqBody.StatusIDs, reqBody.Status)
+	if err != nil {
+		_err := ErrBulkUpdateEvent(err)
+		h.log.Error(_err)
+		http.Error(w, _err.Error(), http.StatusInternalServerError)
+		return
+	}
+	err = json.NewEncoder(w).Encode(event)
+	if err != nil {
+		h.log.Error(err)
+		http.Error(w, models.ErrMarshal(err, "event response").Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+// swagger:route DELETE /api/events/bulk idGetEventStreamer
+// Handle DELETE request to delete events in bulk.
+// Bulk delete events associated with the ids.
+// responses:
+// 	200:
+
+func (h *Handler) BulkDeleteEvent(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	defer func() {
+		_ = req.Body.Close()
+	}()
+
+	var reqBody statusIDs
+	body, err := io.ReadAll(req.Body)
+	if err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	_ = json.Unmarshal(body, &reqBody)
+	err = provider.BulkDeleteEvent(reqBody.IDs)
+	if err != nil {
+		_err := ErrBulkDeleteEvent(err)
+		h.log.Error(_err)
+		http.Error(w, _err.Error(), http.StatusInternalServerError)
 		return
 	}
 }

@@ -22,6 +22,7 @@ export default function GenericModal({ open, Content, handleClose, container }) 
       BackdropComponent={Backdrop}
       BackdropProps={{ timeout: 200 }}
       container={container}
+      id="searchClick"
     >
       <Fade in={open} style={{ maxHeight: '90vh', overflow: 'auto' }}>
         {Content}
