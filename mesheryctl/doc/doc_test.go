@@ -79,11 +79,12 @@ var _ = Describe("Tests for Doc", func() {
 
 			// add Example for cmd for test
 			cmd.Example = "test_example"
+			manuallyAddedContent := getManuallyAddedContentMap("test")
 
 			// io.Writer
 			buf := &bytes.Buffer{}
 			// call GenMarkdownCustom
-			err := GenMarkdownCustom(cmd, buf)
+			err := GenMarkdownCustom(cmd, buf, manuallyAddedContent)
 			// check if err is nil
 			Expect(err).To(BeNil())
 			// check if buf is not empty
