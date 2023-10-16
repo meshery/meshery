@@ -79,7 +79,7 @@ var _ = Describe("Tests for Doc", func() {
 
 			// add Example for cmd for test
 			cmd.Example = "test_example"
-			manuallyAddedContent := getManuallyAddedContentMap("test")
+			manuallyAddedContent, _ := getManuallyAddedContentMap("test.md")
 
 			// io.Writer
 			buf := &bytes.Buffer{}
@@ -117,6 +117,21 @@ var _ = Describe("Tests for Doc", func() {
 			yamlPath := "../../docs/pages/reference/mesheryctl/"
 			// call GenYamlTreeCustom
 			err := GenYamlTreeCustom(cmd, yamlPath, prepender, linkHandler)
+			// check if err is nil
+			Expect(err).To(BeNil())
+		})
+	})
+
+	//Test getManuallyAddedContentMap
+	Context("Test getManuallyAddedContentMap function", func() {
+		It("should return nil", func() {
+
+			// filename
+			filename := "test.md"
+
+			// call getManuallyAddedContentMap
+			_, err := getManuallyAddedContentMap(filename)
+
 			// check if err is nil
 			Expect(err).To(BeNil())
 		})

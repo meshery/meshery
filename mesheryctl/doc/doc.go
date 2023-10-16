@@ -253,7 +253,7 @@ func GenMarkdownTreeCustom(cmd *cobra.Command, dir string, filePrepender, linkHa
 	basename := strings.Replace(cmd.CommandPath(), " ", "-", -1) + ".md"
 	filename := filepath.Join(dir, basename)
 
-	manuallyAddedContent := getManuallyAddedContentMap(filename)
+	manuallyAddedContent, _ := getManuallyAddedContentMap(filename)
 
 	f, err := os.Create(filename)
 	if err != nil {
@@ -273,26 +273,28 @@ func GenMarkdownTreeCustom(cmd *cobra.Command, dir string, filePrepender, linkHa
 	return nil
 }
 
-func getManuallyAddedContentMap(filename string) map[int]string {
+func getManuallyAddedContentMap(filename string) (map[int]string, error) {
 	manuallyAddedContentMap := make(map[int]string)
 
-	if _, err := os.Stat(filename); err == nil {
-		// File already exists, check for manual sections
-		existingContent, err := os.ReadFile(filename)
-		if err != nil {
-			return manuallyAddedContentMap
-		}
-
-		content := string(existingContent)
-
-		commentPattern := regexp.MustCompile(`<!--([\s\S]*?)--->`)
-		matches := commentPattern.FindAllStringSubmatch(content, -1)
-		for i, match := range matches {
-			// Store the section content in the map with order as the key
-			manuallyAddedContentMap[i] = strings.TrimSpace(match[1])
-		}
+	_, err := os.Stat(filename)
+	if err != nil {
+		return manuallyAddedContentMap, err
 	}
-	return manuallyAddedContentMap
+
+	existingContent, err := os.ReadFile(filename)
+	if err != nil {
+		return manuallyAddedContentMap, err
+	}
+
+	content := string(existingContent)
+
+	commentPattern := regexp.MustCompile(`<!--([\s\S]*?)--->`)
+	matches := commentPattern.FindAllStringSubmatch(content, -1)
+	for i, match := range matches {
+		// Store the section content in the map with order as the key
+		manuallyAddedContentMap[i] = strings.TrimSpace(match[1])
+	}
+	return manuallyAddedContentMap, nil
 }
 
 // GenYamlTreeCustom creates custom yaml output.
