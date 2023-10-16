@@ -11,7 +11,6 @@ import {
   TableContainer,
   Table,
   Grid,
-  ListItemText,
   TableRow,
   TableSortLabel,
   Chip,
@@ -40,6 +39,7 @@ import Modal from '../Modal';
 import { Colors } from '../../themes/app';
 import { iconMedium } from '../../css/icons.styles';
 import PromptComponent from '../PromptComponent';
+import { FormattedMetadata } from '../NotificationCenter/metadata';
 
 const styles = (theme) => ({
   grid: { padding: theme.spacing(2) },
@@ -90,6 +90,9 @@ const styles = (theme) => ({
   },
   capitalize: {
     textTransform: 'capitalize',
+  },
+  lowecase: {
+    textTransform: 'lowecase',
   },
   ignored: {
     '& .MuiChip-label': {
@@ -641,31 +644,22 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
               <Table>
                 <TableRow className={classes.noGutter}>
                   <TableCell style={{ padding: '20px 0' }}>
-                    <Grid container spacing={1}>
+                    <Grid container spacing={1} style={{ textTransform: 'lowercase' }}>
                       <Grid item xs={12} md={12} className={classes.contentContainer}>
                         <Grid container spacing={1}>
                           <Grid
                             item
                             xs={12}
                             md={12}
-                            style={{ display: 'flex', flexWrap: 'wrap', padding: '0 20px' }}
+                            style={{
+                              display: 'flex',
+                              flexWrap: 'wrap',
+                              padding: '0 20px',
+                              gap: 30,
+                            }}
                             className={classes.contentContainer}
                           >
-                            {Object.entries(connection.metadata).map(([key, value]) => {
-                              return (
-                                <ListItemText
-                                  key={key}
-                                  style={{
-                                    width: '20%',
-                                    maxWidth: '20%',
-                                    lineBreak: 'anywhere',
-                                    padding: '0 5px',
-                                  }}
-                                  primary={key.replaceAll('_', ' ')}
-                                  secondary={value}
-                                />
-                              );
-                            })}
+                            <FormattedMetadata event={connection} />
                           </Grid>
                         </Grid>
                       </Grid>
