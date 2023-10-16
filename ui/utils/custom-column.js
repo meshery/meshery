@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
-import IconButton from '@mui/material/IconButton';
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Tooltip from '@mui/material/Tooltip';
-import Popper from '@mui/material/Popper';
-import ClickAwayListener from '@mui/material/ClickAwayListener';
+import {
+  Box,
+  Card,
+  Checkbox,
+  ClickAwayListener,
+  IconButton,
+  Tooltip,
+} from '@layer5/sistent-components';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Popper from '@material-ui/core/Popper';
 import { withStyles } from '@material-ui/core/styles';
 import ColumnIcon from '../assets/icons/coulmn';
-// import Slide from '@mui/material/Slide';
-import Box from '@mui/material/Box';
-import { Card } from '@material-ui/core';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 
 const styles = (theme) => ({

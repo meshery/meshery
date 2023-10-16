@@ -14,7 +14,7 @@ import {
   DialogContent,
   DialogActions,
   Dialog,
-} from '@material-ui/core';
+} from '@layer5/sistent-components';
 import useStyles from './styles';
 import { iconSmall } from '../../../css/icons.styles';
 import { getSharableCommonHostAndprotocolLink } from '../../../utils/utils';
@@ -30,7 +30,7 @@ import axios from 'axios';
 import _ from 'lodash';
 import RJSFWrapper from '../../MesheryMeshInterface/PatternService/RJSF_wrapper';
 import { promisifiedDataFetch } from '../../../lib/data-fetch';
-import CircularProgress from '@mui/material/CircularProgress';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const APPLICATION_PLURAL = 'applications';
 const FILTER_PLURAL = 'filters';

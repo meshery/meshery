@@ -1,23 +1,19 @@
+import { CircularProgress, makeStyles } from '@material-ui/core';
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
-  CircularProgress,
-  makeStyles,
-} from '@material-ui/core';
-import Typography from '@material-ui/core/Typography';
+  Typography,
+} from '@layer5/sistent-components';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { isEmpty } from 'lodash';
 import React from 'react';
 import { getMeshModelComponent } from '../../../api/meshmodel';
 import { iconMedium } from '../../../css/icons.styles';
 import PatternServiceForm from '../../MesheryMeshInterface/PatternServiceForm';
-// eslint-disable-next-line no-unused-vars
-import * as Types from '../MeshModel/hooks/types';
+// import * as Types from '../MeshModel/hooks/types';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
-// import { isEmptyObj } from "../../utils/utils";
-// import PatternServiceForm from "./PatternServiceForm";
 
 const useStyles = makeStyles((theme) => ({
   accordionRoot: {
@@ -89,7 +85,6 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
               formData={{}}
               color={component?.metadata?.primaryColor}
               {...otherprops}
-              // @ts-ignore
               schemaSet={schemaSet}
             />
           )}

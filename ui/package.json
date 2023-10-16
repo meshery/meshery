@@ -47,6 +47,7 @@
     "@material-ui/lab": "^4.0.0-alpha.61",
     "@material-ui/pickers": "^3.3.10",
     "@material-ui/styles": "^4.11.5",
+    "@mui/icons-material": "^5.14.13",
     "@open-policy-agent/opa-wasm": "^1.8.0",
     "@paciolan/remote-component": "^2.13.0",
     "@redux-devtools/extension": "^3.2.3",

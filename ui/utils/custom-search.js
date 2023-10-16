@@ -1,11 +1,8 @@
 import React, { useState, useRef } from 'react';
-import TextField from '@mui/material/TextField';
-import { Tooltip } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
+import { ClickAwayListener, TextField, IconButton, Tooltip } from '@layer5/sistent-components';
 import SearchIcon from '../assets/icons/search';
 import CloseIcon from '@mui/icons-material/Close';
 import { makeStyles } from '@material-ui/core/styles';
-import ClickAwayListener from '@mui/material/ClickAwayListener';
 import debounce from './debounce';
 
 const useStyles = makeStyles((theme) => ({
