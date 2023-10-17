@@ -11,7 +11,7 @@ import (
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils/events"
 	"github.com/spf13/viper"
-	"github.com/vmihailenco/taskq/v4"
+	"github.com/vmihailenco/taskq/v3"
 )
 
 // Handler type is the bucket for configs and http handlers
@@ -63,7 +63,7 @@ func NewHandlerInstance(
 		SystemID:           viper.Get("INSTANCE_ID").(*uuid.UUID),
 	}
 
-	h.task = taskq.RegisterTask(&taskq.QueueConfig{
+	h.task = taskq.RegisterTask(&taskq.TaskOptions{
 		Name:    "submitMetrics",
 		Handler: h.CollectStaticMetrics,
 	})

@@ -30,8 +30,8 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/sirupsen/logrus"
-	"github.com/vmihailenco/taskq/memqueue/v4"
-	"github.com/vmihailenco/taskq/v4"
+	"github.com/vmihailenco/taskq/v3"
+	"github.com/vmihailenco/taskq/v3/memqueue"
 )
 
 var (
@@ -137,7 +137,7 @@ func main() {
 	// fileSessionStore.MaxLength(0)
 
 	QueueFactory := memqueue.NewFactory()
-	mainQueue := QueueFactory.RegisterQueue(&taskq.QueueConfig{
+	mainQueue := QueueFactory.RegisterQueue(&taskq.QueueOptions{
 		Name: "loadTestReporterQueue",
 	})
 
