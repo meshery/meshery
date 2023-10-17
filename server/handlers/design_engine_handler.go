@@ -12,7 +12,6 @@ import (
 
 	"github.com/ghodss/yaml"
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
@@ -78,7 +77,7 @@ func (h *Handler) PatternFileHandler(
 	if isDel {
 		action = "undeploy"
 	}
-	
+
 	patternFile, err := core.NewPatternFile(body)
 	// Generate the pattern file object
 	description := fmt.Sprintf("Pattern %s %sed", patternFile.Name, action)
@@ -130,7 +129,7 @@ func (h *Handler) PatternFileHandler(
 	metadata := map[string]interface{}{
 		"summary": response,
 	}
-	
+
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userID, event)
@@ -378,9 +377,9 @@ func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[s
 	return
 }
 
-func dryRunComponent(cl *meshkube.Client, cmp v1alpha1.Component) (core.DryRunResponse2, error) {
+func dryRunComponent(cl *meshkube.Client, cmp v1alpha1.Component) (core.DryRunResponseWrapper, error) {
 	st, ok, err := k8s.DryRunHelper(cl, cmp)
-	dResp := core.DryRunResponse2{Success: ok, Component: &core.Service{
+	dResp := core.DryRunResponseWrapper{Success: ok, Component: &core.Service{
 		Name:        cmp.Name,
 		Type:        cmp.Spec.Type,
 		Namespace:   cmp.Namespace,
