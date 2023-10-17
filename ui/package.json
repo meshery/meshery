@@ -115,7 +115,7 @@
     "@4tw/cypress-drag-drop": "^2.2.3",
     "@babel/core": "^7.21.3",
     "@babel/eslint-parser": "^7.22.11",
-    "@babel/traverse": "^7.20.1",
+    "@babel/traverse": "^7.23.2",
     "@babel/types": "^7.22.5",
     "@next/eslint-plugin-next": "^13.1.2",
     "@storybook/addon-interactions": "^6.5.16",
