@@ -11,7 +11,8 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-
+// reason for adding this constucts is because these has been removed in latest client-go
+// https://github.com/kubernetes/client-go/commit/0f17f43973be78f6dcaf6d9a8614fcb35be40d5c#diff-b49fe30cb74d2c3c9c0ca1438056432985f3cad978fd6440f91b695e16195ded
 type ListMetaApplyConfiguration struct {
  	SelfLink           *string `json:"selfLink,omitempty"`
  	ResourceVersion    *string `json:"resourceVersion,omitempty"`
