@@ -25,7 +25,6 @@ import (
 	"github.com/layer5io/meshkit/models/oam/core/v1alpha1"
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/sirupsen/logrus"
-	v1 "k8s.io/client-go/applyconfigurations/meta/v1"
 )
 
 // swagger:route POST /api/pattern/deploy PatternsAPI idPostDeployPattern
@@ -406,6 +405,7 @@ func (sap *serviceActionProvider) DryRun(comps []v1alpha1.Component) (resp map[s
 	return
 }
 
+
 func convertRawDryRunResponse(componentName string, status map[string]interface{}) (*core.DryRunResponse, error) {
 	response := core.DryRunResponse{}
 
@@ -414,7 +414,7 @@ func convertRawDryRunResponse(componentName string, status map[string]interface{
 		return nil, err
 	}
 
-	var a v1.StatusApplyConfiguration
+	var a models.StatusApplyConfiguration
 	err = json.Unmarshal(byt, &a)
 	if err != nil {
 		return nil, err
