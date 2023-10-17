@@ -14,11 +14,6 @@ replace (
 	vbom.ml/util => github.com/fvbommel/util v0.0.0-20180919145318-efcd4e0f9787
 )
 
-replace (
-	github.com/layer5io/meshkit => /Users/pranavsingh/Documents/OS/External/meshkit
-	github.com/layer5io/meshsync => /Users/pranavsingh/Documents/OS/External/meshsync
-)
-
 require (
 	cuelang.org/go v0.6.0
 	fortio.org/fortio v1.60.2
@@ -45,8 +40,8 @@ require (
 	github.com/jinzhu/copier v0.3.5
 	github.com/layer5io/gowrk2 v0.6.1
 	github.com/layer5io/meshery-operator v0.6.13
-	github.com/layer5io/meshkit v0.6.74
-	github.com/layer5io/meshsync v0.6.14
+	github.com/layer5io/meshkit v0.6.75
+	github.com/layer5io/meshsync v0.6.22
 	github.com/layer5io/nighthawk-go v1.0.6
 	github.com/layer5io/service-mesh-performance v0.6.1
 	github.com/lib/pq v1.10.9
