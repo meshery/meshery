@@ -49,7 +49,7 @@ require (
 	github.com/nsf/termbox-go v1.1.1
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/onsi/ginkgo/v2 v2.11.0
-	github.com/onsi/gomega v1.27.8
+	github.com/onsi/gomega v1.27.10
 	github.com/pkg/browser v0.0.0-20210706143420-7d21f8c997e2
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.16.0
@@ -70,10 +70,10 @@ require (
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/gorm v1.25.4
 	k8s.io/api v0.28.2
-	k8s.io/apiextensions-apiserver v0.27.3
+	k8s.io/apiextensions-apiserver v0.28.0
 	k8s.io/apimachinery v0.28.2
 	k8s.io/client-go v0.28.2
-	sigs.k8s.io/controller-runtime v0.13.0
+	sigs.k8s.io/controller-runtime v0.16.2
 )
 
 require (
@@ -271,7 +271,7 @@ require (
 	gorm.io/driver/postgres v1.4.6 // indirect
 	gorm.io/driver/sqlite v1.4.4 // indirect
 	helm.sh/helm/v3 v3.12.3 // indirect
-	k8s.io/apiserver v0.27.3 // indirect
+	k8s.io/apiserver v0.28.1 // indirect
 	k8s.io/cli-runtime v0.28.2 // indirect
 	k8s.io/component-base v0.28.2 // indirect
 	k8s.io/klog/v2 v2.100.1 // indirect
