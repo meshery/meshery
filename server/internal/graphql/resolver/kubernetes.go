@@ -123,14 +123,14 @@ func (r *Resolver) subscribeClusterResources(ctx context.Context, provider model
 func (r *Resolver) getClusterResources(ctx context.Context, provider models.Provider, k8scontextIDs []string, namespace string) (*model.ClusterResources, error) {
 	var cids []string
 	query := `
-		SELECT count(kind) as count, kind FROM objects o LEFT JOIN resource_object_meta rom on o.id = rom.id 
-			WHERE o.kind <> 'Namespace' AND rom.namespace = '' AND o.cluster_id IN (?) GROUP BY kind
+		SELECT count(kind) as count, kind FROM kubernetes_resources kr LEFT JOIN kubernetes_resource_object_meta rom on kr.id = rom.id 
+			WHERE o.kind <> 'Namespace' AND rom.namespace = '' AND kr.cluster_id IN (?) GROUP BY kind
 				UNION 
-		SELECT count(kind) as count, kind FROM objects o LEFT JOIN resource_object_meta rom on o.id = rom.id 
-			WHERE rom.namespace IN (?) AND o.cluster_id IN (?) GROUP BY kind 
+		SELECT count(kind) as count, kind FROM kubernetes_resources kr LEFT JOIN kubernetes_resource_object_meta rom on kr.id = rom.id 
+			WHERE rom.namespace IN (?) AND kr.cluster_id IN (?) GROUP BY kind 
 				UNION			
-		SELECT count(kind) as count, kind FROM objects o 
-			WHERE o.kind = 'Namespace' AND o.cluster_id IN (?) GROUP BY kind`
+		SELECT count(kind) as count, kind FROM kubernetes_resources kr 
+			WHERE kr.kind = 'Namespace' AND kr.cluster_id IN (?) GROUP BY kind`
 
 	var rows *sql.Rows
 	var err error

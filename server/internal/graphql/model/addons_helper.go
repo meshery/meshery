@@ -18,15 +18,13 @@ func GetAddonsState(ctx context.Context, selectors []MeshType, provider models.P
 	}
 
 	for _, selector := range selectors {
-		//subquery1 := r.DBHandler.Select("id").Where("kind = ? AND key = ? AND value = ?", meshsyncmodel.KindAnnotation, "meshery/component-type", "control-plane").Table("key_values")
-		//subquery2 := r.DBHandler.Select("id").Where("id IN (?) AND kind = ? AND key = ? AND value IN (?)", subquery1, meshsyncmodel.KindAnnotation, "meshery/maintainer", selectors).Table("key_values")
 		result := provider.GetGenericPersister().
 			Where("cluster_id IN ?", cid).
-			Preload("ObjectMeta", "namespace = ?", controlPlaneNamespace[selector]).
-			Preload("ObjectMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
-			Preload("ObjectMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
-			Preload("Spec").
-			Preload("Status").
+			Preload("KubernetesResourceMeta", "namespace = ?", controlPlaneNamespace[selector]).
+			Preload("KubernetesResourceMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
+			Preload("KubernetesResourceMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
+			Preload("KubernetesResourceSpec").
+			Preload("KubernetesResourceStatus").
 			Find(&objects, "kind = ?", "Service")
 
 		if result.Error != nil {
@@ -37,9 +35,9 @@ func GetAddonsState(ctx context.Context, selectors []MeshType, provider models.P
 			if !cidMap[obj.ClusterID] {
 				continue
 			}
-			if meshsyncmodel.IsObject(obj) && len(addonPortSelector[obj.ObjectMeta.Name]) > 0 {
+			if meshsyncmodel.IsObject(obj) && len(addonPortSelector[obj.KubernetesResourceMeta.Name]) > 0 {
 				addonlist = append(addonlist, &AddonList{
-					Name:  obj.ObjectMeta.Name,
+					Name:  obj.KubernetesResourceMeta.Name,
 					Owner: selector.String(),
 				})
 			}
