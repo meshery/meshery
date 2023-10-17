@@ -153,7 +153,7 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 		}
 	}
 
-	mh.log.Info("Updated database in response to ", event.EventType, " event of object: ", obj.ObjectMeta.Name, " in namespace: ", obj.ObjectMeta.Namespace, " of kind: ", obj.Kind)
+	mh.log.Info("Updated database in response to ", event.EventType, " event of object: ", obj.KubernetesResourceMeta.Name, " in namespace: ", obj.KubernetesResourceMeta.Namespace, " of kind: ", obj.Kind)
 
 	return nil
 }
@@ -168,10 +168,10 @@ func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.Kubernet
 		if result.Error != nil {
 			return ErrDBPut(result.Error)
 		}
-		mh.log.Info("Updated object: ", object.ObjectMeta.Name, "/", object.ObjectMeta.Namespace, " of kind: ", object.Kind, " in the database")
+		mh.log.Info("Updated object: ", object.KubernetesResourceMeta.Name, "/", object.KubernetesResourceMeta.Namespace, " of kind: ", object.Kind, " in the database")
 		return nil
 	}
-	mh.log.Info("Added object: ", object.ObjectMeta.Name, "/", object.ObjectMeta.Namespace, " of kind: ", object.Kind, " to the database")
+	mh.log.Info("Added object: ", object.KubernetesResourceMeta.Name, "/", object.KubernetesResourceMeta.Namespace, " of kind: ", object.Kind, " to the database")
 
 	return nil
 }
