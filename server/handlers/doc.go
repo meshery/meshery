@@ -35,6 +35,7 @@ import (
 
 	"github.com/go-openapi/strfmt"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/models/events"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	v1 "k8s.io/api/core/v1"
 )
@@ -457,6 +458,13 @@ type meshmodelCategoriesResponseWrapper struct {
 	Body *models.MeshmodelCategoriesAPIResponse
 }
 
+// Returns meshmodel registrants
+// swagger:response meshmodelRegistrantsResponseWrapper
+type meshmodelRegistrantsResponseWrapper struct {
+	// in: body
+	Body *models.MeshmodelRegistrantsAPIResponse
+}
+
 // Returns database summary
 // swagger:response systemDatabaseResponseWrapper
 type systemDatabaseResponseWrapper struct {
@@ -497,4 +505,32 @@ type mesheryConnectionResponseWrapper struct {
 type mesheryConnectionsStatusPage struct {
 	// in: body
 	Body *models.ConnectionsStatusPage
+}
+
+// Returns environment
+// swagger:response environmentResponseWrapper
+type environmentResponseWrapper struct {
+	// in: body
+	Body *models.EnvironmentData
+}
+
+// Returns all environements
+// swagger:response environmentsResponseWrapper
+type environmentsResponseWrapper struct {
+	// in: body
+	Body *models.EnvironmentPage
+}
+
+// Returns event
+// swagger:response eventResponseWrapper
+type eventResponseWrapper struct {
+	// in: body
+	Body *events.Event
+}
+
+// Returns all events
+// swagger:response eventsResponseWrapper
+type eventsResponseWrapper struct {
+	// in: body
+	Body *models.EventsResponse
 }

@@ -1,36 +1,39 @@
-import _ from "lodash";
+import _ from 'lodash';
 
-export const WILDCARD_V = "All Versions"
+export const WILDCARD_V = 'All Versions';
 
 import {
   fetchCategories,
   getComponentFromModelApi,
   getModelFromCategoryApi,
-  getVersionedComponentFromModel
-} from "../../api/meshmodel";
-import { compose } from "lodash/fp";
-import { useEffect, useState } from "react";
-import getMostRecentVersion, { versionSortComparatorFn, sortAndGroupVersionsInModel } from "../versionSort";
+  getVersionedComponentFromModel,
+} from '../../api/meshmodel';
+import { compose } from 'lodash/fp';
+import { useEffect, useState } from 'react';
+import getMostRecentVersion, {
+  versionSortComparatorFn,
+  sortAndGroupVersionsInModel,
+} from '../versionSort';
 
-const handleError = e => {
-  console.error("MeshModel axios error ocurred", e);
+const handleError = (e) => {
+  console.error('MeshModel axios error ocurred', e);
 };
 
 function componentToLatestApiVersion(components) {
   const componentToAPiVersionMap = {}; // this is for storing all the apiVersions of similar components in order to get the most recent at the end
 
-  [...components].forEach(component => {
+  [...components].forEach((component) => {
     if (componentToAPiVersionMap?.[component.kind]) {
       componentToAPiVersionMap[component.kind] = [
         ...componentToAPiVersionMap[component.kind],
-        component.apiVersion
+        component.apiVersion,
       ];
     } else {
       componentToAPiVersionMap[component.kind] = [component.apiVersion];
     }
   });
 
-  Object.keys(componentToAPiVersionMap).forEach(key => {
+  Object.keys(componentToAPiVersionMap).forEach((key) => {
     componentToAPiVersionMap[key] = getMostRecentVersion(componentToAPiVersionMap[key]);
   });
 
@@ -55,10 +58,10 @@ function removeDuplicateMeshModelComponents(components) {
       componentKindUniqueSet.add(kind);
       return true;
     })
-    .map(component => ({
+    .map((component) => ({
       // on all unique components, set the apiVersion to latest one
       ...component,
-      apiVersion : cmpToApiVersion[component.kind] || component.apiVersion // fallback in case of mishap
+      apiVersion: cmpToApiVersion[component.kind] || component.apiVersion, // fallback in case of mishap
     }));
 }
 
@@ -68,51 +71,51 @@ function sortMeshModelComponents(components) {
 
 export const removeDuplicatesAndSortByAlphabet = _.flowRight(
   sortMeshModelComponents,
-  removeDuplicateMeshModelComponents
+  removeDuplicateMeshModelComponents,
 );
 
 // processing includes sorting and deduplicating components
 function getProcessedMeshModelResponseData(meshModelResponse) {
   return [...meshModelResponse]
-    .map(meshmodel => ({
+    .map((meshmodel) => ({
       ...meshmodel,
-      components : removeDuplicatesAndSortByAlphabet(meshmodel.components)
+      components: removeDuplicatesAndSortByAlphabet(meshmodel.components),
     }))
     .sort((modelA, modelB) => versionSortComparatorFn(modelA.version, modelB.version))
     .reverse(); // sort the versions in reverse order
 }
 
 function deduplicatedListOfComponentsFromAllVersions(components) {
-  const uniqueComponents = [...new Set(components.map(comp => comp.kind))];
-  return uniqueComponents.map(compKind => components.find(c => c.kind === compKind));
+  const uniqueComponents = [...new Set(components.map((comp) => comp.kind))];
+  return uniqueComponents.map((compKind) => components.find((c) => c.kind === compKind));
 }
 
 function groupComponentsByVersion(components) {
-  const versions = [...new Set(components.map(component => component.model.version))];
+  const versions = [...new Set(components.map((component) => component.model.version))];
 
   if (versions.length > 1) {
     return [
       {
-        version : WILDCARD_V,
-        components : deduplicatedListOfComponentsFromAllVersions(components)
+        version: WILDCARD_V,
+        components: deduplicatedListOfComponentsFromAllVersions(components),
       },
-      ...versions.map(version => ({
-        version : version,
-        components : components.filter(component => component.model.version === version)
-      }))
-    ]
+      ...versions.map((version) => ({
+        version: version,
+        components: components.filter((component) => component.model.version === version),
+      })),
+    ];
   }
 
   // don't attach the wildcards
-  return versions.map(version => ({
-    version : version,
-    components : components.filter(component => component.model.version === version)
+  return versions.map((version) => ({
+    version: version,
+    components: components.filter((component) => component.model.version === version),
   }));
 }
 
 const getProcessedComponentsData = compose(
   getProcessedMeshModelResponseData,
-  groupComponentsByVersion
+  groupComponentsByVersion,
 );
 
 function convertToArray(item) {
@@ -129,7 +132,9 @@ export function useMeshModelComponents() {
   useEffect(() => {
     fetchCategories()
       .then((categoryJson) => {
-        setCategories(categoryJson.categories.sort((catA, catB) => catA.name.localeCompare(catB.name)));
+        setCategories(
+          categoryJson.categories.sort((catA, catB) => catA.name.localeCompare(catB.name)),
+        );
       })
       .catch(handleError);
   }, []);
@@ -146,9 +151,9 @@ export function useMeshModelComponents() {
           Object.assign(
             { ...models },
             {
-              [category] : sortAndGroupVersionsInModel(response.models)
-            }
-          )
+              [category]: sortAndGroupVersionsInModel(response.models),
+            },
+          ),
         );
       })
       .catch(handleError);
@@ -157,15 +162,15 @@ export function useMeshModelComponents() {
   async function getComponentsFromModel(modelName, version) {
     if (!version) {
       if (!meshmodelComponents[modelName]) {
-        const modelData = (await getComponentFromModelApi(modelName));
-        console.log("modeled data....", modelData)
+        const modelData = await getComponentFromModelApi(modelName);
+        console.log('modeled data....', modelData);
         setMeshModelComponents(
           Object.assign(
             { ...meshmodelComponents },
             {
-              [modelName] : getProcessedComponentsData(modelData.components)
-            }
-          )
+              [modelName]: getProcessedComponentsData(modelData.components),
+            },
+          ),
         );
       }
       return;
@@ -173,18 +178,16 @@ export function useMeshModelComponents() {
 
     if (
       !meshmodelComponents[modelName] ||
-      !convertToArray(meshmodelComponents[modelName])?.find(
-        model => model.version === version
-      )
+      !convertToArray(meshmodelComponents[modelName])?.find((model) => model.version === version)
     ) {
-      const modelData = (await getVersionedComponentFromModel(modelName, version));
+      const modelData = await getVersionedComponentFromModel(modelName, version);
       setMeshModelComponents(
         Object.assign(
           { ...meshmodelComponents },
           {
-            [modelName] : getProcessedComponentsData(modelData.components)
-          }
-        )
+            [modelName]: getProcessedComponentsData(modelData.components),
+          },
+        ),
       );
     }
   }
@@ -194,6 +197,6 @@ export function useMeshModelComponents() {
     meshmodelComponents,
     getModelFromCategory,
     getComponentsFromModel,
-    categories
+    categories,
   };
 }

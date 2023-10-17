@@ -11,11 +11,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 const styles = () => ({});
 
 class MesheryChartDialog extends React.Component {
-
   render() {
-    const {
-      classes, open, title, handleClose, content,
-    } = this.props;
+    const { classes, open, title, handleClose, content } = this.props;
 
     return (
       <React.Fragment>
@@ -26,13 +23,11 @@ class MesheryChartDialog extends React.Component {
           onClose={handleClose}
           aria-labelledby="chart-dialog-title"
         >
-          <DialogTitle id="chart-dialog-title">{title && title.length
-            ? title
-            : 'Comparison'}</DialogTitle>
+          <DialogTitle id="chart-dialog-title">
+            {title && title.length ? title : 'Comparison'}
+          </DialogTitle>
           <DialogContent>
-            <DialogContentText className={classes.dialogContent}>
-              {content}
-            </DialogContentText>
+            <DialogContentText className={classes.dialogContent}>{content}</DialogContentText>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} color="primary">
@@ -46,10 +41,10 @@ class MesheryChartDialog extends React.Component {
 }
 
 MesheryChartDialog.propTypes = {
-  classes : PropTypes.object.isRequired,
-  open : PropTypes.bool.isRequired,
-  handleClose : PropTypes.func.isRequired,
-  content : PropTypes.node.isRequired,
+  classes: PropTypes.object.isRequired,
+  open: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired,
+  content: PropTypes.node.isRequired,
 };
 
 export default withStyles(styles)(MesheryChartDialog);

@@ -3,7 +3,7 @@ export function mergeMeshSyncSubscription(currentState, newData) {
     return [newData];
   }
 
-  return [...currentState.filter(data => data.contextID !== newData.contextID), newData];
+  return [...currentState.filter((data) => data.contextID !== newData.contextID), newData];
 }
 
 export function mergeOperatorStateSubscription(currentState, newData) {

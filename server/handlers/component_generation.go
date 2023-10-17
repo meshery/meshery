@@ -69,21 +69,19 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 			continue
 		}
 		if gpi.Register {
-			if len(comps) != 0 {
-				for _, comp := range comps {
-					utils.WriteSVGsOnFileSystem(&comp)
-					host := fmt.Sprintf("%s.artifacthub.meshery", gpi.Name)
-					err = h.registryManager.RegisterEntity(meshmodel.Host{
-						IHost:    meshmodel.ArtifactHub{},
-						Hostname: meshmodel.ArtifactHub{}.String(),
-						Metadata: host,
-					}, comp)
-					if err != nil {
-						h.log.Error(ErrGenerateComponents(err))
-					}
-
-					h.log.Info(comp.DisplayName, " component for ", gpi.Name, " generated")
+			for _, comp := range comps {
+				utils.WriteSVGsOnFileSystem(&comp)
+				host := fmt.Sprintf("%s.artifacthub.meshery", gpi.Name)
+				err = h.registryManager.RegisterEntity(meshmodel.Host{
+					IHost:    meshmodel.ArtifactHub{},
+					Hostname: meshmodel.ArtifactHub{}.String(),
+					Metadata: host,
+				}, comp)
+				if err != nil {
+					h.log.Error(ErrGenerateComponents(err))
 				}
+
+				h.log.Info(comp.DisplayName, " component for ", gpi.Name, " generated")
 			}
 		}
 		responseItem.Components = comps

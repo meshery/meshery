@@ -1,4 +1,4 @@
-import _ from "lodash"
+import _ from 'lodash';
 
 function recursivelySearchObjKey(obj, arr, index) {
   if (index === arr.length) {
@@ -18,42 +18,41 @@ function recursivelySearchObjKey(obj, arr, index) {
   }
 }
 
-
 export class CapabilitiesRegistry {
   capabilitiesRegistry;
   isPlaygroundEnv = false;
 
-  constructor(capabilitiesRegistry){
+  constructor(capabilitiesRegistry) {
     this.capabilitiesRegistry = capabilitiesRegistry;
     this.isPlaygroundEnv = capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted || false;
   }
 
-  isNavigatorComponentEnabled(navigatorWalker){
+  isNavigatorComponentEnabled(navigatorWalker) {
     if (!this.isPlaygroundEnv) {
       return true;
     }
 
-    let walkerArray = ["restrictedAccess", "allowedComponents", "navigator", ...navigatorWalker]
+    let walkerArray = ['restrictedAccess', 'allowedComponents', 'navigator', ...navigatorWalker];
 
     const searchResult = recursivelySearchObjKey(this.capabilitiesRegistry, walkerArray, 0);
     if (_.isObject(searchResult) && _.isEmpty(searchResult)) {
       return false;
     }
-    return searchResult
+    return searchResult;
   }
 
-  isHeaderComponentEnabled(headerWalker){
+  isHeaderComponentEnabled(headerWalker) {
     if (!this.isPlaygroundEnv) {
       return true;
     }
 
-    let walkerArray = ["restrictedAccess", "allowedComponents", "header", ...headerWalker]
+    let walkerArray = ['restrictedAccess', 'allowedComponents', 'header', ...headerWalker];
 
     const searchResult = recursivelySearchObjKey(this.capabilitiesRegistry, walkerArray, 0);
     if (_.isObject(searchResult) && _.isEmpty(searchResult)) {
       return false;
     }
-    return searchResult
+    return searchResult;
   }
 
   isExtensionComponentEnabled(walkerArray) {
@@ -71,6 +70,6 @@ export class CapabilitiesRegistry {
     if (_.isObject(searchResult) && _.isEmpty(searchResult)) {
       return false;
     }
-    return searchResult
+    return searchResult;
   }
 }

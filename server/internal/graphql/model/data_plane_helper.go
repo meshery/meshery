@@ -16,21 +16,11 @@ func GetDataPlaneState(ctx context.Context, selectors []MeshType, provider model
 	object := []meshsyncmodel.Object{}
 	dataPlaneList := make([]*DataPlane, 0)
 	cidMap := make(map[string]bool)
-	if len(cid) == 1 && cid[0] == "all" {
-		k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
-		if !ok || len(k8sctxs) == 0 {
-			return nil, ErrMesheryClientNil
-		}
-		for _, k8ctx := range k8sctxs {
-			if k8ctx.KubernetesServerID != nil {
-				cidMap[k8ctx.KubernetesServerID.String()] = true
-			}
-		}
-	} else {
-		for _, c := range cid {
-			cidMap[c] = true
-		}
+
+	for _, c := range cid {
+		cidMap[c] = true
 	}
+
 	for _, selector := range selectors {
 		result := provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
 			Preload("ObjectMeta", "namespace IN ?", controlPlaneNamespace[MeshType(selector)]).

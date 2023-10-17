@@ -5,11 +5,11 @@ import { iconMedium } from '../css/icons.styles';
 const drawerWidth = 256;
 
 export const Colors = {
-  darkJungleGreen: "#1E2117",
-  caribbeanGreen: "#00D3a9",
-  keppelGreen: "#00B39F",
-  charcoal: "#3C494F",
-}
+  darkJungleGreen: '#1E2117',
+  caribbeanGreen: '#00D3a9',
+  keppelGreen: '#00B39F',
+  charcoal: '#3C494F',
+};
 
 export var darkTheme = createTheme({
   typography: {
@@ -26,10 +26,10 @@ export var darkTheme = createTheme({
     },
     h6: {
       color: '#FFF',
-    }
+    },
   },
   palette: {
-    type: "dark",
+    type: 'dark',
     primary: blueGrey,
     secondary: {
       main: '#EE5351',
@@ -39,8 +39,8 @@ export var darkTheme = createTheme({
       text: '#FFF',
       text2: '#7494a1',
       text3: '#FFF',
-      textMain: "#F6F8F8",
-      titleBackground: "#000",
+      textMain: '#F6F8F8',
+      titleBackground: '#000',
       mainBackground: '#202020',
       mainBackground2: '#303030',
       elevatedComponents: '#202020',
@@ -53,7 +53,7 @@ export var darkTheme = createTheme({
       disabledIcon: 'rgba(255, 255, 255, 0.26)',
       chevron: 'rgb(255, 255, 255, 0.2)',
       link: 'rgba(255, 255, 255, 0.7)',
-      link2: "#05FFCD",
+      link2: '#05FFCD',
       headerColor: '#202020',
       sideBar: '#1A1A1A',
       drawer: '#252E31',
@@ -67,29 +67,34 @@ export var darkTheme = createTheme({
       switcherButtons: '#1e1e1e',
       honeyComb: '#303030',
       filterChipBackground: '#222222',
-      searchBackground: "#294957",
-      searchBorder: "#396679",
+      searchBackground: '#294957',
+      searchBorder: '#396679',
       tabs: '#202020',
       modalTabs: '#363636',
       tabHover: '#212121',
       confirmationModal: '#111111',
       focused: '#00b39f',
       primaryModalText: '#FFF',
-      default: "#9FAFB6",
-      success: "#00D3A9",
-      primary: "#86B2C6",
-      warning: "#EBC017",
-      error: "#F91313",
-      lightError: "#B32700",
+      default: '#9FAFB6',
+      success: '#00D3A9',
+      primary: '#86B2C6',
+      warning: '#EBC017',
+      error: '#F91313',
+      lightError: '#B32700',
       penColorPrimary: '#E6E6E6',
       penColorSecondary: '#E6E6E6',
-      toolbarBg2: "#464646",
+      toolbarBg2: '#464646',
+      menuBg: '#363636',
+      menuActionBg: '#222',
+      menuSelectedBg: 'rgba(0, 179, 159, 0.25)',
+      menuActionText: '#FBFBFB',
+      menuItemBorder: '#979797',
     },
   },
   p: {
     color: '#FFF',
   },
-  shape: { borderRadius: 8, },
+  shape: { borderRadius: 8 },
   breakpoints: {
     values: {
       xs: 0,
@@ -105,46 +110,49 @@ darkTheme = {
   overrides: {
     MuiSvgIcon: {
       root: {
-        ...iconMedium
-      }
+        ...iconMedium,
+      },
     },
     MuiOutlinedInput: {
       root: {
-        "&:hover $notchedOutline": {
-          borderColor: "#00B39F",
+        '&:hover $notchedOutline': {
+          borderColor: '#00B39F',
         },
-        "&$focused $notchedOutline": {
-          borderColor: "#00B39F",
+        '&$focused $notchedOutline': {
+          borderColor: '#00B39F',
         },
       },
     },
     MuiCheckbox: {
       colorPrimary: {
-        "&$checked": {
-          color: "rgba(255, 255, 255, 0.7)",
-        }
+        '&$checked': {
+          color: '#00B39F',
+        },
+        '&.MuiCheckbox-indeterminate': {
+          color: '#00B39F',
+        },
       },
     },
-    MuiDrawer: { paper: { backgroundColor: '#263238', }, },
+    MuiDrawer: { paper: { backgroundColor: '#263238' } },
     MuiFormLabel: {
       root: {
-        "&$focused": {
-          color: "#00B39F",
+        '&$focused': {
+          color: '#00B39F',
         },
-      }
+      },
     },
     MuiButton: {
-      label: { textTransform: 'initial', },
+      label: { textTransform: 'initial' },
       contained: {
         boxShadow: 'none',
-        color: "rgba(255, 255, 255, 0.87)",
-        backgroundColor: "#3C494F",
-        '&:hover': { backgroundColor: "#505b61", },
-        '&:active': { boxShadow: 'none', },
+        color: 'rgba(255, 255, 255, 0.87)',
+        backgroundColor: '#3C494F',
+        '&:hover': { backgroundColor: '#505b61' },
+        '&:active': { boxShadow: 'none' },
       },
       containedPrimary: {
-        backgroundColor: "#00B39F",
-        '&:hover': { backgroundColor: "#00D3A9", },
+        backgroundColor: '#00B39F',
+        '&:hover': { backgroundColor: '#00D3A9' },
       },
     },
     MuiToggleButton: {
@@ -154,10 +162,10 @@ darkTheme = {
       },
     },
     MuiTabs: {
-      root: { marginLeft: darkTheme.spacing(1), },
+      root: { marginLeft: darkTheme.spacing(1) },
       indicator: {
         height: 3,
-        backgroundColor: "#00B39F",
+        backgroundColor: '#00B39F',
         borderTopLeftRadius: 3,
         borderTopRightRadius: 3,
       },
@@ -178,21 +186,40 @@ darkTheme = {
         // },
       },
       selected: {
-        color: "#00B39F !important"
-      }
+        color: '#00B39F !important',
+      },
     },
-    MuiPaper: { root: { backgroundColor: '#363636' }, elevation2: { boxShadow: "0px 4px 0px -2px rgb(0 179 159 / 10%), 0px 4px 0px 0px rgb(0 179 159 / 10%), 0px 2px 0px 0px rgb(0 179 159 / 20%)" } },
-    MuiIconButton: { root: { padding: darkTheme.spacing(1), }, colorPrimary: { color: "#FFF" }, },
-    MuiTooltip: { tooltip: { borderRadius: 4, }, },
-    MuiDivider: { root: { backgroundColor: '#404854', }, },
-    MuiListItemText: { primary: { fontWeight: darkTheme.typography.fontWeightMedium, }, },
+    MuiPaper: {
+      root: { backgroundColor: '#363636' },
+      elevation2: {
+        boxShadow:
+          '0px 4px 0px -2px rgb(0 179 159 / 10%), 0px 4px 0px 0px rgb(0 179 159 / 10%), 0px 2px 0px 0px rgb(0 179 159 / 20%)',
+      },
+    },
+    MuiIconButton: {
+      root: {
+        padding: darkTheme.spacing(1),
+        color: '#F6F8F8',
+        '&:hover': {
+          color: '#00B39F',
+        },
+      },
+      colorPrimary: {
+        color: '#F6F8F8',
+      },
+
+      //focusedStyles
+    },
+    MuiTooltip: { tooltip: { borderRadius: 4 } },
+    MuiDivider: { root: { backgroundColor: '#404854' } },
+    MuiListItemText: { primary: { fontWeight: darkTheme.typography.fontWeightMedium } },
     MuiListItemIcon: {
       root: {
         color: 'inherit',
         marginRight: 0,
-        '& svg': { fontSize: 20, },
+        '& svg': { fontSize: 20 },
         justifyContent: 'center',
-        minWidth: 0
+        minWidth: 0,
       },
     },
     MuiAvatar: {
@@ -237,13 +264,12 @@ darkTheme = {
     //   },
     // },
   },
-  props: { MuiTab: { disableRipple: true, }, },
-  mixins: { ...darkTheme.mixins, },
+  props: { MuiTab: { disableRipple: true } },
+  mixins: { ...darkTheme.mixins },
 };
 
 let theme = createTheme({
   typography: {
-
     fontFamily: ['Qanelas Soft', 'Roboto', 'Helvectica', 'Arial', 'sans-serif'].join(','),
     useNextVariants: true,
     h5: {
@@ -253,7 +279,7 @@ let theme = createTheme({
     },
   },
   palette: {
-    type: "light",
+    type: 'light',
     // primary: {
     //   light: '#cfd8dc',
     //   main: '#607d8b',
@@ -268,12 +294,12 @@ let theme = createTheme({
       text: '#000',
       text2: 'rgba(57, 102, 121, .9)',
       text3: '#333333',
-      textMain: "#3C494F",
-      titleBackground: "rgba(57, 102, 121, .1)",
+      textMain: '#3C494F',
+      titleBackground: 'rgba(57, 102, 121, .1)',
       mainBackground: '#396679',
       mainBackground2: '#FFF',
       elevatedComponents: '#FFF',
-      elevatedComponents2: "#eaeff1",
+      elevatedComponents2: '#eaeff1',
       elevatedComponents3: '#FFF',
       lightText: 'rgba(0, 0, 0, 0.54)',
       icon: 'rgba(0, 0, 0, 0.54)',
@@ -282,7 +308,7 @@ let theme = createTheme({
       disabledIcon: 'rgba(0, 0, 0, 0.26)',
       chevron: '#FFF',
       link: '#000',
-      link2: "#00b39F",
+      link2: '#00b39F',
       headerColor: '#eeeeee',
       sideBar: '#FFF',
       drawer: '#FFF',
@@ -296,26 +322,32 @@ let theme = createTheme({
       switcherButtons: '#335c6d',
       honeyComb: '#F0F0F0',
       filterChipBackground: '#CCCCCC',
-      searchBackground: "#fff",
-      searchBorder: "#CCCCCC",
+      searchBackground: '#fff',
+      searchBorder: '#CCCCCC',
       tabs: '#eeeeee87',
       modalTabs: '#dddddd',
       tabHover: '#e3e3e3',
       confirmationModal: 'rgb(234, 235, 236)',
       focused: '#607d8b',
       primaryModalText: '#FFF',
-      default: "#51636B",
-      success: "#00B39F",
-      primary: "#477E96",
-      warning: "#F0A303",
-      error: "#8F1F00",
-      lightError: "#8F1F00",
+      default: '#51636B',
+      success: '#00B39F',
+      primary: '#477E96',
+      warning: '#F0A303',
+      error: '#8F1F00',
+      lightError: '#8F1F00',
       penColorPrimary: '#3C494F',
       penColorSecondary: '#677E88',
-      toolbarBg1: "#FFFFFF",
+      toolbarBg1: '#FFFFFF',
+      menuBg: '#EBEFF1',
+      menuItemBg: '#EBEFF1',
+      menuActionBg: '#51636B',
+      menuSelectedBg: '#CCC',
+      menuActionText: '#FBFBFB',
+      menuItemBorder: '#979797',
     },
   },
-  shape: { borderRadius: 8, },
+  shape: { borderRadius: 8 },
   breakpoints: {
     values: {
       xs: 0,
@@ -332,15 +364,15 @@ theme = {
   overrides: {
     MuiSvgIcon: {
       root: {
-        ...iconMedium
-      }
+        ...iconMedium,
+      },
     },
-    MuiDrawer: { paper: { backgroundColor: '#263238', }, },
+    MuiDrawer: { paper: { backgroundColor: '#263238' } },
     MuiButton: {
-      label: { textTransform: 'initial', },
+      label: { textTransform: 'initial' },
       contained: {
         boxShadow: 'none',
-        '&:active': { boxShadow: 'none', },
+        '&:active': { boxShadow: 'none' },
       },
     },
     MuiToggleButton: {
@@ -350,7 +382,7 @@ theme = {
       },
     },
     MuiTabs: {
-      root: { marginLeft: theme.spacing(1), },
+      root: { marginLeft: theme.spacing(1) },
       indicator: {
         height: 3,
         borderTopLeftRadius: 3,
@@ -373,17 +405,26 @@ theme = {
         // },
       },
     },
-    MuiIconButton: { root: { padding: theme.spacing(1), }, colorPrimary: { color: "#607d8b" } },
-    MuiTooltip: { tooltip: { borderRadius: 4, }, },
-    MuiDivider: { root: { backgroundColor: '#404854', }, },
-    MuiListItemText: { primary: { fontWeight: theme.typography.fontWeightMedium, }, },
+    MuiIconButton: {
+      root: {
+        padding: theme.spacing(1),
+        '&:hover': {
+          color: '#00B39F',
+        },
+        color: '#607d8b',
+      },
+      colorPrimary: { color: '#607d8b' },
+    },
+    MuiTooltip: { tooltip: { borderRadius: 4 } },
+    MuiDivider: { root: { backgroundColor: '#404854' } },
+    MuiListItemText: { primary: { fontWeight: theme.typography.fontWeightMedium } },
     MuiListItemIcon: {
       root: {
         color: 'inherit',
         marginRight: 0,
-        '& svg': { fontSize: 20, },
+        '& svg': { fontSize: 20 },
         justifyContent: 'center',
-        minWidth: 0
+        minWidth: 0,
       },
     },
     MuiAvatar: {
@@ -393,11 +434,31 @@ theme = {
       },
     },
 
+    MuiCheckbox: {
+      colorPrimary: {
+        '&$checked': {
+          color: '#00B39F',
+        },
+        '&.MuiCheckbox-indeterminate': {
+          color: '#00B39F',
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      root: {
+        '&:hover $notchedOutline': {
+          borderColor: '#00B39F',
+        },
+        '&$focused $notchedOutline': {
+          borderColor: '#00B39F',
+        },
+      },
+    },
     // global style for body throughout meshery-ui
     MuiCssBaseline: {
-      "@global": {
+      '@global': {
         body: {
-          backgroundColor: "#eaeff1",
+          backgroundColor: '#eaeff1',
         },
       },
     },
@@ -431,26 +492,25 @@ theme = {
     //   },
     // },
   },
-  props: { MuiTab: { disableRipple: true, }, },
-  mixins: { ...theme.mixins, },
+  props: { MuiTab: { disableRipple: true } },
+  mixins: { ...theme.mixins },
 };
 
-export default theme
-
+export default theme;
 
 export const notificationColors = {
-  error: "#F91313",
-  warning: "#F0A303",
-  success: "#206D24",
-  info: "#2196F3",
-  darkRed: "#B32700"
+  error: '#F91313',
+  warning: '#F0A303',
+  success: '#206D24',
+  info: '#2196F3',
+  darkRed: '#B32700',
 };
 
 export const darkNotificationColors = {
-  error: "#F91313",
-  warning: "#F0D053",
-  success: "#78C57C",
-  info: "#5FD4FF"
+  error: '#F91313',
+  warning: '#F0D053',
+  success: '#78C57C',
+  info: '#5FD4FF',
 };
 
 export const styles = (theme) => ({
@@ -469,7 +529,7 @@ export const styles = (theme) => ({
     }),
   },
   drawerCollapsed: {
-    [theme.breakpoints.up('sm')]: { width: theme.spacing(8.4) + 1, },
+    [theme.breakpoints.up('sm')]: { width: theme.spacing(8.4) + 1 },
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -500,48 +560,51 @@ export const styles = (theme) => ({
   },
   footerIcon: {
     display: 'inline',
-    verticalAlign: 'bottom'
+    verticalAlign: 'bottom',
   },
-  icon: { fontSize: 20, },
+  icon: { fontSize: 20 },
   notifSuccess: {
-    backgroundColor: "rgb(248, 252, 248) !important",
-    color: `${notificationColors.success} !important`, pointerEvents: "auto !important"
+    backgroundColor: 'rgb(248, 252, 248) !important',
+    color: `${notificationColors.success} !important`,
+    pointerEvents: 'auto !important',
   },
   notifInfo: {
-    backgroundColor: "rgb(248, 252, 248) !important",
-    color: `${notificationColors.info} !important`, pointerEvents: "auto !important"
+    backgroundColor: 'rgb(248, 252, 248) !important',
+    color: `${notificationColors.info} !important`,
+    pointerEvents: 'auto !important',
   },
   notifWarn: {
-    backgroundColor: "#fff !important",
-    color: `${notificationColors.warning} !important`, pointerEvents: "auto !important"
+    backgroundColor: '#fff !important',
+    color: `${notificationColors.warning} !important`,
+    pointerEvents: 'auto !important',
   },
   notifError: {
-    backgroundColor: "rgb(248, 252, 248) !important",
+    backgroundColor: 'rgb(248, 252, 248) !important',
     color: `${notificationColors.error} !important`,
-    pointerEvents: "auto !important"
+    pointerEvents: 'auto !important',
   },
   darknotifSuccess: {
-    backgroundColor: "#323232 !important",
+    backgroundColor: '#323232 !important',
     color: `${darkNotificationColors.success} !important`,
-    pointerEvents: "auto !important"
+    pointerEvents: 'auto !important',
   },
   darknotifInfo: {
-    backgroundColor: "#323232 !important",
+    backgroundColor: '#323232 !important',
     color: `${darkNotificationColors.info} !important`,
-    pointerEvents: "auto !important"
+    pointerEvents: 'auto !important',
   },
   darknotifWarn: {
-    backgroundColor: "#323232 !important",
+    backgroundColor: '#323232 !important',
     color: `${darkNotificationColors.warning} !important`,
-    pointerEvents: "auto !important"
+    pointerEvents: 'auto !important',
   },
   darknotifError: {
-    backgroundColor: "#323232 !important",
+    backgroundColor: '#323232 !important',
     color: `${darkNotificationColors.error} !important`,
-    pointerEvents: "auto !important"
+    pointerEvents: 'auto !important',
   },
   playgroundFooter: {
     backgroundColor: notificationColors.warning,
     padding: theme.spacing(2),
-  }
+  },
 });

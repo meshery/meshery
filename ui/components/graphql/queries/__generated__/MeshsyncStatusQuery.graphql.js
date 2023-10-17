@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8dab43d3f31bac55596e7c1404cb167a>>
+ * @generated SignedSource<<89d91dbbc41da00eed2c37155a5b5bed>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -13,7 +13,7 @@ var v0 = [
   {
     "defaultValue": null,
     "kind": "LocalArgument",
-    "name": "k8scontextID"
+    "name": "connectionID"
   }
 ],
 v1 = [
@@ -22,8 +22,8 @@ v1 = [
     "args": [
       {
         "kind": "Variable",
-        "name": "k8scontextID",
-        "variableName": "k8scontextID"
+        "name": "connectionID",
+        "variableName": "connectionID"
       }
     ],
     "concreteType": "OperatorControllerStatus",
@@ -74,16 +74,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "88b5a4baae947adb519f9e528b995fca",
+    "cacheID": "1b2cb7cffaec7ee51423e6f26c1e6ae4",
     "id": null,
     "metadata": {},
     "name": "MeshsyncStatusQuery",
     "operationKind": "query",
-    "text": "query MeshsyncStatusQuery(\n  $k8scontextID: String!\n) {\n  controller: getMeshsyncStatus(k8scontextID: $k8scontextID) {\n    name\n    version\n    status\n  }\n}\n"
+    "text": "query MeshsyncStatusQuery(\n  $connectionID: String!\n) {\n  controller: getMeshsyncStatus(connectionID: $connectionID) {\n    name\n    version\n    status\n  }\n}\n"
   }
 };
 })();
 
-node.hash = "57b05e27fe69c3f807a81378bcbc5471";
+node.hash = "a9ff2d13ffaf332f9be4ca12e09bd7f9";
 
 module.exports = node;

@@ -1,6 +1,6 @@
-import eventsReducer from './slices/events'
-import { configureStore } from '@reduxjs/toolkit'
-import { api } from "../rtk-query/index"
+import eventsReducer from './slices/events';
+import { configureStore } from '@reduxjs/toolkit';
+import { api } from '../rtk-query/index';
 
 export const store = configureStore({
   reducer: {
@@ -8,4 +8,4 @@ export const store = configureStore({
     [api.reducerPath]: api.reducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(api.middleware),
-})
+});

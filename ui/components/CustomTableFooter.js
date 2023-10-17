@@ -11,20 +11,14 @@ import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
 import { iconSmall } from '../css/icons.styles';
 
 const actionsStyles = (theme) => ({
-  wrapper : {
-    flexShrink : 0,
-    color : theme.palette.text.secondary,
-    marginLeft : theme.spacing(2.5),
+  wrapper: {
+    flexShrink: 0,
+    color: theme.palette.text.secondary,
+    marginLeft: theme.spacing(2.5),
   },
 });
 
-const TablePaginationActions = ({
-  classes,
-  onChangePage,
-  count,
-  page,
-  rowsPerPage,
-}) => {
+const TablePaginationActions = ({ classes, onChangePage, count, page, rowsPerPage }) => {
   const theme = useTheme();
 
   const handleBackButtonClick = () => {
@@ -37,38 +31,38 @@ const TablePaginationActions = ({
 
   return (
     <div className={classes.wrapper}>
-      <IconButton
-        onClick={handleBackButtonClick}
-        disabled={page === 0}
-        aria-label="Previous Page"
-      >
-        {theme.direction === 'rtl'
-          ? <KeyboardArrowRight style={iconSmall} />
-          : <KeyboardArrowLeft style={iconSmall} />}
+      <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="Previous Page">
+        {theme.direction === 'rtl' ? (
+          <KeyboardArrowRight style={iconSmall} />
+        ) : (
+          <KeyboardArrowLeft style={iconSmall} />
+        )}
       </IconButton>
       <IconButton
         onClick={handleNextButtonClick}
         disabled={page >= Math.ceil(count / rowsPerPage) - 1}
         aria-label="Next Page"
       >
-        {theme.direction === 'rltr'
-          ? <KeyboardArrowLeft style={iconSmall} />
-          : <KeyboardArrowRight style={iconSmall} />}
+        {theme.direction === 'rltr' ? (
+          <KeyboardArrowLeft style={iconSmall} />
+        ) : (
+          <KeyboardArrowRight style={iconSmall} />
+        )}
       </IconButton>
     </div>
   );
 };
 
 TablePaginationActions.propTypes = {
-  classes : PropTypes.object.isRequired,
-  onChangePage : PropTypes.func.isRequired,
-  page : PropTypes.number.isRequired,
-  count : PropTypes.number.isRequired,
-  rowsPerPage : PropTypes.number.isRequired,
+  classes: PropTypes.object.isRequired,
+  onChangePage: PropTypes.func.isRequired,
+  page: PropTypes.number.isRequired,
+  count: PropTypes.number.isRequired,
+  rowsPerPage: PropTypes.number.isRequired,
 };
 
 const TablePaginationActionsWrapper = withStyles(actionsStyles, {
-  withTheme : true,
+  withTheme: true,
 })(TablePaginationActions);
 
 const defaultFooterStyles = {};
@@ -87,7 +81,7 @@ const CustomTableFooter = ({ changePage, rowsPerPage, page, count }) => {
           count={count}
           rowsPerPage={rowsPerPage}
           page={page}
-          SelectProps={{ native : true }}
+          SelectProps={{ native: true }}
           onChangePage={changePage}
           ActionsComponent={TablePaginationActionsWrapper}
         />
@@ -97,12 +91,10 @@ const CustomTableFooter = ({ changePage, rowsPerPage, page, count }) => {
 };
 
 CustomTableFooter.propTypes = {
-  changePage : PropTypes.func.isRequired,
-  rowsPerPage : PropTypes.number.isRequired,
-  page : PropTypes.number.isRequired,
-  count : PropTypes.number.isRequired,
+  changePage: PropTypes.func.isRequired,
+  rowsPerPage: PropTypes.number.isRequired,
+  page: PropTypes.number.isRequired,
+  count: PropTypes.number.isRequired,
 };
 
-export default withStyles(defaultFooterStyles, { name : 'CustomFooter' })(
-  CustomTableFooter,
-);
+export default withStyles(defaultFooterStyles, { name: 'CustomFooter' })(CustomTableFooter);

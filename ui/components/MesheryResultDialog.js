@@ -1,39 +1,35 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import {
-  NoSsr, Grid, Table, TableRow, TableCell, TableBody, Typography,
-} from '@material-ui/core';
+import { NoSsr, Grid, Table, TableRow, TableCell, TableBody, Typography } from '@material-ui/core';
 import MesheryChartDialog from './MesheryChartDialog';
 
-
 const defaultToolbarSelectStyles = {
-  iconButton : {
-    marginRight : '24px',
-    top : '50%',
-    display : 'inline-block',
-    position : 'relative',
+  iconButton: {
+    marginRight: '24px',
+    top: '50%',
+    display: 'inline-block',
+    position: 'relative',
   },
-  icon : { color : '#000', },
-  inverseIcon : { transform : 'rotate(90deg)', },
-  row : { borderBottom : 'none', },
+  icon: { color: '#000' },
+  inverseIcon: { transform: 'rotate(90deg)' },
+  row: { borderBottom: 'none' },
 };
 
 class MesheryResultDialog extends React.Component {
-  state = { dialogOpen : true, }
+  state = { dialogOpen: true };
 
   handleDialogClose = () => {
-    this.setState({ dialogOpen : false });
+    this.setState({ dialogOpen: false });
     this.props.close();
-  }
+  };
 
   createTableRow(key, val) {
     const { classes } = this.props;
     return (
       <TableRow>
         <TableCell align="right" component="th" scope="row" className={classes.row}>
-          {key}
-            :
+          {key}:
         </TableCell>
         <TableCell className={classes.row}>{val}</TableCell>
       </TableRow>
@@ -45,7 +41,7 @@ class MesheryResultDialog extends React.Component {
     return (
       <NoSsr>
         <Typography className={classes.title} variant="h6" id="tableTitle">
-            Environment
+          Environment
         </Typography>
         <Table className={classes.table} size="small" aria-label="Environment">
           <TableBody>
@@ -55,7 +51,7 @@ class MesheryResultDialog extends React.Component {
                 <TableRow>
                   <TableCell colSpan={2} className={classes.row} align="center">
                     <strong>
-                        Node
+                      Node
                       {ind + 1}
                     </strong>
                   </TableCell>
@@ -86,32 +82,29 @@ class MesheryResultDialog extends React.Component {
     return (
       <NoSsr>
         <Typography className={classes.title} variant="h6" id="tableTitle">
-            Service Mesh
-          {meshes.length > 1
-            ? 'es'
-            : ''}
+          Service Mesh
+          {meshes.length > 1 ? 'es' : ''}
         </Typography>
         <Table className={classes.table} size="small" aria-label="Service Mesh">
           <TableBody>
             {meshes.map(([mesh, version], ind) => (
               <NoSsr key={mesh.uniqueID}>
-                {meshes.length > 1
-                  ? (
-                    <TableRow>
-                      <TableCell colSpan={2} className={classes.row} align="center">
-                        <strong>
-                            Service Mesh
-                          {ind + 1}
-                        </strong>
-                      </TableCell>
-                    </TableRow>
-                  )
-                  : ''}
+                {meshes.length > 1 ? (
+                  <TableRow>
+                    <TableCell colSpan={2} className={classes.row} align="center">
+                      <strong>
+                        Service Mesh
+                        {ind + 1}
+                      </strong>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  ''
+                )}
                 {this.createTableRow('Name', mesh)}
                 {this.createTableRow('Version', version)}
               </NoSsr>
-            ))
-            }
+            ))}
           </TableBody>
         </Table>
       </NoSsr>
@@ -123,8 +116,13 @@ class MesheryResultDialog extends React.Component {
     let contents = '';
     if (rowData.runner_results) {
       let percentiles = '';
-      if (rowData.runner_results.DurationHistogram && rowData.runner_results.DurationHistogram.Percentiles) {
-        percentiles = rowData.runner_results.DurationHistogram.Percentiles.map((p) => this.createTableRow(`p${p.Percentile} Response Time`, p.Value));
+      if (
+        rowData.runner_results.DurationHistogram &&
+        rowData.runner_results.DurationHistogram.Percentiles
+      ) {
+        percentiles = rowData.runner_results.DurationHistogram.Percentiles.map((p) =>
+          this.createTableRow(`p${p.Percentile} Response Time`, p.Value),
+        );
       }
 
       // let reqDuration = rowData.runner_results.RequestedDuration.substring(0, rowData.runner_results.RequestedDuration.length-1);
@@ -147,7 +145,10 @@ class MesheryResultDialog extends React.Component {
         this.createTableRow('Threads', rowData.runner_results.NumThreads),
         this.createTableRow('Connections', rowData.runner_results.SocketCount),
         this.createTableRow('Requested Duration', rowData.runner_results.RequestedDuration),
-        this.createTableRow('Actual Duration', (rowData.runner_results.ActualDuration / 1000000000).toFixed(1)),
+        this.createTableRow(
+          'Actual Duration',
+          (rowData.runner_results.ActualDuration / 1000000000).toFixed(1),
+        ),
         this.createTableRow('Average Response Time', rowData.runner_results.DurationHistogram.Avg),
         ...percentiles,
         this.createTableRow('Maximum Response Time', rowData.runner_results.DurationHistogram.Max),
@@ -156,7 +157,7 @@ class MesheryResultDialog extends React.Component {
     return (
       <NoSsr>
         <Typography className={classes.title} variant="h6" id="tableTitle">
-            Load Profile
+          Load Profile
         </Typography>
         <Table className={classes.table} size="small" aria-label="Load Profile">
           <TableBody>
@@ -174,45 +175,42 @@ class MesheryResultDialog extends React.Component {
     return (
       <NoSsr>
         <MesheryChartDialog
-          title={`Details${rowData
-            ? ` - ${rowData.name}`
-            : ''}`}
+          title={`Details${rowData ? ` - ${rowData.name}` : ''}`}
           handleClose={this.handleDialogClose}
           open={this.state.dialogOpen}
-          content={(
+          content={
             <div>
               <Grid container spacing={1}>
-                {rowData && rowData.runner_results && rowData.runner_results.kubernetes
-                && (
+                {rowData && rowData.runner_results && rowData.runner_results.kubernetes && (
                   <Grid item xs={12} sm={6}>
                     {this.renderKubernetesInfo(rowData.runner_results.kubernetes)}
                   </Grid>
                 )}
-                {rowData
-                && (
+                {rowData && (
                   <Grid item xs={12} sm={6}>
                     {this.renderLoadProfile(rowData)}
                   </Grid>
                 )}
-                {rowData && rowData.runner_results && rowData.runner_results['detected-meshes']
-                && (
+                {rowData && rowData.runner_results && rowData.runner_results['detected-meshes'] && (
                   <Grid item xs={12} sm={6}>
                     {this.renderMeshesInfo(rowData.runner_results['detected-meshes'])}
                   </Grid>
                 )}
               </Grid>
             </div>
-          )}
+          }
         />
       </NoSsr>
     );
   }
 }
 
-
 MesheryResultDialog.propTypes = {
   // classes: PropTypes.object.isRequired,
-  rowData : PropTypes.object.isRequired,
-  close : PropTypes.func.isRequired, };
+  rowData: PropTypes.object.isRequired,
+  close: PropTypes.func.isRequired,
+};
 
-export default withStyles(defaultToolbarSelectStyles, { name : 'MesheryResultDialog' })(MesheryResultDialog);
+export default withStyles(defaultToolbarSelectStyles, { name: 'MesheryResultDialog' })(
+  MesheryResultDialog,
+);

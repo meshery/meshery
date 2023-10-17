@@ -1,24 +1,24 @@
-import React, { useEffect } from "react";
-import { NoSsr, withStyles } from "@material-ui/core";
-import MesheryFilters from "../../components/Filters";
-import { updatepagepath } from "../../lib/store";
-import { connect } from "react-redux";
+import React, { useEffect } from 'react';
+import { NoSsr, withStyles } from '@material-ui/core';
+import MesheryFilters from '../../components/Filters';
+import { updatepagepath } from '../../lib/store';
+import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Head from 'next/head';
-import { getPath } from "../../lib/path";
+import { getPath } from '../../lib/path';
 
 const styles = {
-  paper : {
-    maxWidth : '90%',
-    margin : 'auto',
-    overflow : 'hidden',
-  }
+  paper: {
+    maxWidth: '90%',
+    margin: 'auto',
+    overflow: 'hidden',
+  },
 };
 
 function NewFilters(props) {
   useEffect(() => {
     console.log(`path: ${getPath()}`);
-    props.updatepagepath({ path : getPath() });
+    props.updatepagepath({ path: getPath() });
   }, []);
 
   return (
@@ -29,12 +29,10 @@ function NewFilters(props) {
       <MesheryFilters />
     </NoSsr>
   );
-
 }
 
-const mapDispatchToProps = dispatch => ({ updatepagepath : bindActionCreators(updatepagepath, dispatch) })
+const mapDispatchToProps = (dispatch) => ({
+  updatepagepath: bindActionCreators(updatepagepath, dispatch),
+});
 
-export default withStyles(styles)(connect(
-  null,
-  mapDispatchToProps
-)(NewFilters));
+export default withStyles(styles)(connect(null, mapDispatchToProps)(NewFilters));
