@@ -201,6 +201,41 @@ Though the command page is generated automatically by the Cobra CLI library, the
 - [cmds.yml](https://github.com/meshery/meshery/blob/master/docs/_data/mesheryctlcommands/cmds.yml) - The YAML file containing the data about the commands
 - [mesheryctl-commands.md](https://github.com/meshery/meshery/blob/master/docs/pages/reference/mesheryctl-commands.md) - The markdown page of the command reference documentation
 
+## Preserving Manually Added Documentation with Cobra CLI
+
+We are using Cobra CLI and Github Actions to automate the generation of command documentation. To ensure that any manually added documentation is preserved even after regeneration, you enclose it within comment blocks. These comment blocks act as bookends, indicating the start and end of your manually added content. Any text or examples within these comment blocks will remain intact, while other manually added content outside the blocks will be removed when the documentation is generated. Remember to add any new changes or additions at the end of the documentation, ensuring that your documentation remains organized and consistent.
+
+{% capture code_content %}
+
+<!-- ###########################################################################
+
+                 START OF MANUAL DOCUMENTATION
+IT IS SAFE TO ADD ADDITIONAL USAGE AND EXAMPLES BELOW THIS LINE.
+MORE INFO: https://docs.meshery.io/project/contributing/contributing-cli
+
+############################################################################ -->
+
+### Sample Usage 
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
+
+\`\`\`
+mesheryctl version --config docker-compose.yaml
+\`\`\`
+
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+![screenshot of meshery](https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/meshery/meshery-logo-dark-text-side.png)
+
+<!-- ###########################################################################
+
+                 END OF MANUAL DOCUMENTATION
+
+############################################################################ --->
+
+{% endcapture %}
+{% include code.html code=code_content %}
+
 ### References
 
 - [jarcoal/httpmock](https://github.com/jarcoal/httpmock)
