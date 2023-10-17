@@ -10,6 +10,7 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/core/policies"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils/events"
+	"github.com/spf13/viper"
 	"github.com/vmihailenco/taskq/v4"
 )
 
@@ -46,7 +47,7 @@ func NewHandlerInstance(
 	provider string,
 	rego *policies.Rego,
 ) models.HandlerInterface {
-	
+
 	h := &Handler{
 		config:             handlerConfig,
 		meshsyncChannel:    meshSyncCh,
