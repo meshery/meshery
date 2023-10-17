@@ -124,7 +124,7 @@ func (r *Resolver) getClusterResources(ctx context.Context, provider models.Prov
 	var cids []string
 	query := `
 		SELECT count(kind) as count, kind FROM kubernetes_resources kr LEFT JOIN kubernetes_resource_object_meta rom on kr.id = rom.id 
-			WHERE o.kind <> 'Namespace' AND rom.namespace = '' AND kr.cluster_id IN (?) GROUP BY kind
+			WHERE kr.kind <> 'Namespace' AND rom.namespace = '' AND kr.cluster_id IN (?) GROUP BY kind
 				UNION 
 		SELECT count(kind) as count, kind FROM kubernetes_resources kr LEFT JOIN kubernetes_resource_object_meta rom on kr.id = rom.id 
 			WHERE rom.namespace IN (?) AND kr.cluster_id IN (?) GROUP BY kind 
