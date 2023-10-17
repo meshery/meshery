@@ -121,6 +121,8 @@ type HandlerInterface interface {
 	GetMeshmodelModels(rw http.ResponseWriter, r *http.Request)
 	RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Request)
 
+	GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Request)
+
 	HandleResourceSchemas(rw http.ResponseWriter, r *http.Request)
 
 	GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request)

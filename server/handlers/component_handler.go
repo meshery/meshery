@@ -1204,3 +1204,79 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 	}
 	go h.config.MeshModelSummaryChannel.Publish()
 }
+
+// swagger:route GET /api/meshmodels/registrants GetMeshmodelRegistrants
+// Handle GET request for getting all meshmodel registrants
+//
+// # Returns a list of registrants and summary count of its models, components, and relationships
+//
+// ```?page={pagenumber}``` Default page number is 1
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?search={Hostname}``` Gets host by the name
+//
+// ```?sort={[asc/desc]}``` Default behavior is asc
+//
+// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+//
+// responses:
+//	200: []meshmodelRegistrantsResponseWrapper
+
+func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Add("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+
+	limitstr := r.URL.Query().Get("pagesize")
+	pagestr := r.URL.Query().Get("page")
+
+	var limit int
+	if limitstr != "all" {
+		limit, _ = strconv.Atoi(limitstr)
+		if limit == 0 { //If limit is unspecified then it defaults to 25
+			limit = DefaultPageSizeForMeshModelComponents
+		}
+	}
+
+	page, _ := strconv.Atoi(pagestr)
+	if page <= 0 {
+		page = 1
+	}
+
+	offset := (page - 1) * limit
+	filter := &v1alpha1.HostFilter{
+		Limit:   limit,
+		Offset:  offset,
+		Sort:    r.URL.Query().Get("sort"),
+		OrderOn: r.URL.Query().Get("order"),
+	}
+	if r.URL.Query().Get("search") != "" {
+		filter.Greedy = true
+		filter.DisplayName = r.URL.Query().Get("search")
+	}
+	hosts, count, err := h.registryManager.GetRegistrants(filter)
+	if err != nil {
+		h.log.Error(ErrGetMeshModels(err))
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var pgSize int64
+
+	if limitstr == "all" {
+		pgSize = count
+	} else {
+		pgSize = int64(limit)
+	}
+	res := models.MeshmodelRegistrantsAPIResponse{
+		Page:        page,
+		PageSize:    int(pgSize),
+		Count:       count,
+		Registrants: hosts,
+	}
+
+	if err := enc.Encode(res); err != nil {
+		h.log.Error(ErrGetMeshModels(err))
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+	}
+}
