@@ -1,2 +1,0 @@
-failed to unmarshal response body.json: cannot unmarshal string into Go struct field PerformanceResultsAPIResponse.page_size of type uint.
-See https://docs.meshery.io/reference/mesheryctl/perf/result for usage details

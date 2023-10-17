@@ -610,7 +610,20 @@ class Navigator extends React.Component {
           disableTouchListener={!drawerCollapsed}
         >
           <ListItemIcon className={classes.listIcon}>
-            <img src={icon} className={classes.icon} />
+            <img
+              src={icon}
+              className={classes.icon}
+              onMouseOver={(e) => {
+                e.target.style.transform = 'translate(-20%, -25%)';
+                e.target.style.top = '0';
+                e.target.style.right = '0';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.transform = 'translate(0, 0)';
+                e.target.style.top = 'auto';
+                e.target.style.right = 'auto';
+              }}
+            />
           </ListItemIcon>
         </Tooltip>
         <ListItemText

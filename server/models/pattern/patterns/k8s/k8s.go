@@ -122,7 +122,7 @@ func formatDryRunResponse(resp []byte, err error) (status map[string]interface{}
 		return
 	}
 	if status == nil || status["kind"] == nil {
-		meshkiterr = ErrDryRun(fmt.Errorf("nil response for dryRun from kubernetes"), "")
+		meshkiterr = ErrDryRun(fmt.Errorf("nil response to dry run request to Kubernetes"), "")
 	}
 	if status["status"] == "Failure" { // The dryRun returns errors in the form of Status
 		success = false

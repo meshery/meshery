@@ -188,11 +188,11 @@ const styles = (theme) => ({
     marginRight: 'auto',
   },
   iconAvatar: {
-    width: '10px',
-    height: '10px',
+    width: '24px',
+    height: '24px',
     '& .MuiAvatar-img': {
-      height: '60%',
-      width: '60%',
+      height: '100%',
+      width: '100%',
     },
   },
   // text : {
@@ -1168,7 +1168,7 @@ function MesheryPatterns({
                   <Avatar
                     src="/static/img/pattwhite.svg"
                     className={classes.iconAvatar}
-                    imgProps={{ height: '16px', width: '16px' }}
+                    imgProps={{ height: '24px', width: '24px' }}
                   />
                 </TooltipIcon>
               )}
