@@ -24,11 +24,11 @@ func GetDataPlaneState(ctx context.Context, selectors []MeshType, provider model
 	for _, selector := range selectors {
 		result := provider.GetGenericPersister().Model(&meshsyncmodel.KubernetesResource{}).
 			Preload("KubernetesResourceMeta", "namespace IN ?", controlPlaneNamespace[MeshType(selector)]).
-			Preload("KubernetesResourceStatus").
-			Preload("KubernetesResourceSpec"). // get only resources specs that has proxy string inside its attributes
-			Where("EXISTS(SELECT 1 FROM kubernetes_resource_specs rsp WHERE rsp.attribute LIKE ? AND rsp.id = objects.id)", `%proxy%`).
+			Preload("Status").
+			Preload("Spec"). // get only resources specs that has proxy string inside its attributes
+			Where("EXISTS(SELECT 1 FROM kubernetes_resource_specs rsp WHERE rsp.attribute LIKE ? AND rsp.id = kubernetes_resources.id)", `%proxy%`).
 			// get only resources statuses that has proxy string inside its attributes
-			Where("EXISTS(SELECT 1 FROM kubernetes_resource_statuses rst WHERE rst.attribute LIKE ? AND rst.id = objects.id)", `%proxy%`).
+			Where("EXISTS(SELECT 1 FROM kubernetes_resource_statuses rst WHERE rst.attribute LIKE ? AND rst.id = kubernetes_resources.id)", `%proxy%`).
 			Find(&object, "kind = ?", "Pod")
 
 		if result.Error != nil {

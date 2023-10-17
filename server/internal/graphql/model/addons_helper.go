@@ -23,8 +23,8 @@ func GetAddonsState(ctx context.Context, selectors []MeshType, provider models.P
 			Preload("KubernetesResourceMeta", "namespace = ?", controlPlaneNamespace[selector]).
 			Preload("KubernetesResourceMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
 			Preload("KubernetesResourceMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
-			Preload("KubernetesResourceSpec").
-			Preload("KubernetesResourceStatus").
+			Preload("Spec").
+			Preload("Status").
 			Find(&objects, "kind = ?", "Service")
 
 		if result.Error != nil {

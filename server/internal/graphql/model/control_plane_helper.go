@@ -25,8 +25,8 @@ func GetControlPlaneState(ctx context.Context, selectors []MeshType, provider mo
 			Preload("KubernetesResourceMeta", "namespace IN ?", controlPlaneNamespace[MeshType(selector)]).
 			Preload("KubernetesResourceMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
 			Preload("KubernetesResourceMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
-			Preload("KubernetesResourceSpec").
-			Preload("KubernetesResourceStatus").
+			Preload("Spec").
+			Preload("Status").
 			Find(&object, "kind = ?", "Pod")
 		if result.Error != nil {
 			return nil, ErrQuery(result.Error)
