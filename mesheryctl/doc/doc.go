@@ -198,6 +198,13 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, manuallyAddedContent map
 		buf.WriteString("\n\n")
 	}
 
+	if len(manuallyAddedContent) > 0 {
+		for _, content := range manuallyAddedContent {
+			buf.WriteString("\n")
+			buf.WriteString("<!-- " + content + " --->" + "\n")
+		}
+	}
+
 	if hasSeeAlso(cmd) {
 		buf.WriteString("## See Also\n\n")
 		if cmd.HasParent() {
@@ -207,15 +214,8 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, manuallyAddedContent map
 				}
 			})
 		}
-		buf.WriteString("Go back to [command reference index](/reference/mesheryctl/) ")
+		buf.WriteString("Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation-with-cobra-cli) for guidance.")
 		buf.WriteString("\n")
-	}
-
-	if len(manuallyAddedContent) > 0 {
-		for _, content := range manuallyAddedContent {
-			buf.WriteString("\n")
-			buf.WriteString("<!-- " + content + " --->" + "\n")
-		}
 	}
 
 	if !cmd.DisableAutoGenTag {
