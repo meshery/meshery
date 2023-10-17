@@ -106,7 +106,7 @@ func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 
 		for _, object := range objectsSlice {
 			objectJSON, _ := utils.Marshal(object)
-			obj := meshsyncmodel.Object{}
+			obj := meshsyncmodel.KubernetesResource{}
 			err := utils.Unmarshal(objectJSON, &obj)
 			if err != nil {
 				mh.log.Error(ErrUnmarshal(err, objectJSON))
@@ -128,7 +128,7 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 	defer mh.dbHandler.Unlock()
 
 	objectJSON, _ := utils.Marshal(event.Object)
-	obj := meshsyncmodel.Object{}
+	obj := meshsyncmodel.KubernetesResource{}
 	err := utils.Unmarshal(objectJSON, &obj)
 
 	if err != nil {
@@ -158,7 +158,7 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 	return nil
 }
 
-func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.Object) error {
+func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.KubernetesResource) error {
 	mh.dbHandler.Lock()
 	defer mh.dbHandler.Unlock()
 
@@ -182,21 +182,21 @@ func RemoveStaleObjects(dbHandler database.Handler) error {
 
 	// Clear stale meshsync data
 	err := dbHandler.Migrator().DropTable(
-		&meshsyncmodel.KeyValue{},
-		&meshsyncmodel.Object{},
-		&meshsyncmodel.ResourceSpec{},
-		&meshsyncmodel.ResourceStatus{},
-		&meshsyncmodel.ResourceObjectMeta{},
+		&meshsyncmodel.KubernetesKeyValue{},
+		&meshsyncmodel.KubernetesResource{},
+		&meshsyncmodel.KubernetesResourceSpec{},
+		&meshsyncmodel.KubernetesResourceStatus{},
+		&meshsyncmodel.KubernetesResourceObjectMeta{},
 	)
 	if err != nil {
 		return err
 	}
 	err = dbHandler.Migrator().CreateTable(
-		&meshsyncmodel.KeyValue{},
-		&meshsyncmodel.Object{},
-		&meshsyncmodel.ResourceSpec{},
-		&meshsyncmodel.ResourceStatus{},
-		&meshsyncmodel.ResourceObjectMeta{},
+		&meshsyncmodel.KubernetesKeyValue{},
+		&meshsyncmodel.KubernetesResource{},
+		&meshsyncmodel.KubernetesResourceSpec{},
+		&meshsyncmodel.KubernetesResourceStatus{},
+		&meshsyncmodel.KubernetesResourceObjectMeta{},
 	)
 	if err != nil {
 		return err

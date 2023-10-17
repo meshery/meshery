@@ -10,7 +10,7 @@ import (
 
 func GetAddonsState(ctx context.Context, selectors []MeshType, provider models.Provider, cid []string) ([]*AddonList, error) {
 	addonlist := make([]*AddonList, 0)
-	objects := make([]meshsyncmodel.Object, 0)
+	objects := make([]meshsyncmodel.KubernetesResource, 0)
 	cidMap := make(map[string]bool)
 
 	for _, c := range cid {

@@ -83,7 +83,7 @@ func persistData(msg broker.Message,
 	objectJSON, _ := utils.Marshal(msg.Object)
 	switch msg.ObjectType {
 	case broker.MeshSync:
-		object := meshsyncmodel.Object{}
+		object := meshsyncmodel.KubernetesResource{}
 		err := utils.Unmarshal(string(objectJSON), &object)
 		if err != nil {
 			log.Error(err)
@@ -126,7 +126,7 @@ func PersistClusterNames(
 	for _, clusterConfig := range k8sContexts {
 		clusterName := clusterConfig.Cluster["name"].(string)
 		clusterID := clusterConfig.KubernetesServerID.String()
-		object := meshsyncmodel.Object{
+		object := meshsyncmodel.KubernetesResource{
 			Kind: "Cluster",
 			ObjectMeta: &meshsyncmodel.ResourceObjectMeta{
 				Name:      clusterName,

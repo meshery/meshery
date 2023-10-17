@@ -13,7 +13,7 @@ import (
 )
 
 func GetDataPlaneState(ctx context.Context, selectors []MeshType, provider models.Provider, cid []string) ([]*DataPlane, error) {
-	object := []meshsyncmodel.Object{}
+	object := []meshsyncmodel.KubernetesResource{}
 	dataPlaneList := make([]*DataPlane, 0)
 	cidMap := make(map[string]bool)
 
@@ -22,7 +22,7 @@ func GetDataPlaneState(ctx context.Context, selectors []MeshType, provider model
 	}
 
 	for _, selector := range selectors {
-		result := provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
+		result := provider.GetGenericPersister().Model(&meshsyncmodel.KubernetesResource{}).
 			Preload("ObjectMeta", "namespace IN ?", controlPlaneNamespace[MeshType(selector)]).
 			Preload("Status").
 			Preload("Spec"). // get only resources specs that has proxy string inside its attributes
