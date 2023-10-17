@@ -46,7 +46,7 @@ _Popular Installers:_
 
 #### Question: Why should I use Meshery?
 
-**Answer:** _Meshery is an open source, vendor neutral project that facilitates testing across meshes. Other performance benchmark tools are not packaged into a mesh testing utility, but are only load-generators unto their own._
+**Answer:** _Meshery is a powerful tool for managing ​service meshes and ​Kubernetes infrastructure. It seamlessly integrates with different service meshes and offers extensibility through dedicated adapters for each supported service mesh. With Meshery, you can easily configure your environment and service meshes, upload and manage applications, and analyze performance._
 
 #### Question: What architecture does Meshery have?
   **Answer:** _.There are several compotents, languages and they have different purposes. See Meshery's [Architecture](https://docs.meshery.io/concepts/architecture)._ 
