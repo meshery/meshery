@@ -2,8 +2,6 @@ module github.com/layer5io/meshery
 
 go 1.21
 
-toolchain go1.21.0
-
 replace (
 	github.com/docker/cli => github.com/docker/cli v23.0.6+incompatible
 	github.com/docker/docker => github.com/docker/docker v23.0.6+incompatible
@@ -17,7 +15,6 @@ require (
 	cuelang.org/go v0.5.0
 	fortio.org/fortio v1.57.5
 	github.com/99designs/gqlgen v0.17.36
-	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/briandowns/spinner v1.23.0
 	github.com/docker/cli v24.0.5+incompatible
