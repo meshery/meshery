@@ -358,7 +358,7 @@ func CheckIfBrokerEventExistsInArray(event broker.EventType, events []broker.Eve
 	return false
 }
 
-func GetMesheryBrokerEventTypesFromArray(events []MeshSyncEventType) []broker.EventType{
+func GetMesheryBrokerEventTypesFromArray(events []MeshSyncEventType) []broker.EventType {
 	var brokerEvents []broker.EventType
 	for _, event := range events {
 		brokerEvents = append(brokerEvents, GetMesheryBrokerEventTypes(event))

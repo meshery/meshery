@@ -610,7 +610,20 @@ class Navigator extends React.Component {
           disableTouchListener={!drawerCollapsed}
         >
           <ListItemIcon className={classes.listIcon}>
-            <img src={icon} className={classes.icon} />
+            <img
+              src={icon}
+              className={classes.icon}
+              onMouseOver={(e) => {
+                e.target.style.transform = 'translate(-20%, -25%)';
+                e.target.style.top = '0';
+                e.target.style.right = '0';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.transform = 'translate(0, 0)';
+                e.target.style.top = 'auto';
+                e.target.style.right = 'auto';
+              }}
+            />
           </ListItemIcon>
         </Tooltip>
         <ListItemText
@@ -806,15 +819,16 @@ class Navigator extends React.Component {
    * Removes id from openitems if present
    * Adds id in openitems if not present already
    */
-  toggleItemCollapse(id) {
+  toggleItemCollapse = (itemId) => {
+    const isItemOpen = this.state.openItems.includes(itemId);
     const activeItems = [...this.state.openItems];
-    if (this.state.openItems.includes(id)) {
-      this.setState({ openItems: activeItems.filter((item) => item !== id) });
+    if (isItemOpen) {
+      this.setState({ openItems: activeItems.filter((item) => item !== itemId) });
     } else {
-      activeItems.push(id);
-      this.setState({ openItems: activeItems });
+      activeItems.push(itemId);
+      this.setState({ openItems: [itemId] });
     }
-  }
+  };
 
   /**
    * @param {String} idname

@@ -12,7 +12,7 @@ Meshery’s build and release system incorporates many tools, organized into dif
 
 ## Artifacts
 
-Today, Meshery and Meshery adapters are released as Docker container images, available on Docker Hub. Meshery adapters are out-of-process adapters (meaning not compiled into the main Meshery binary), and as such, are independent build artifacts and Helm charts.The process of creating Docker images, tagging with the git commit SHA and pushing to Docker Hub is being done automatically using GitHub Actions. And When the contribution includes content of Helm chart of Meshery and Meshery Adapter was lint and merged, it will be pushing and release to [meshery.io](https://github.com/meshery/meshery.io) Github page by GitHub Action automatically.
+Today, Meshery and Meshery adapters are released as Docker container images, available on Docker Hub. Meshery adapters are out-of-process adapters (meaning not compiled into the main Meshery binary), and as such, are independent build artifacts and Helm charts. The Docker images are created and tagged with the git commit SHA, then pushed to Docker Hub automatically using GitHub Actions. Subsequently, when contributions containing content for the Helm charts of Meshery and Meshery Adapter are linted and merged, they will be pushed and released to [meshery.io](https://github.com/meshery/meshery.io) Github page by GitHub Action automatically.
 
 ### Artifact Repositories
 

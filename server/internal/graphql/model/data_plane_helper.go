@@ -16,11 +16,11 @@ func GetDataPlaneState(ctx context.Context, selectors []MeshType, provider model
 	object := []meshsyncmodel.Object{}
 	dataPlaneList := make([]*DataPlane, 0)
 	cidMap := make(map[string]bool)
-	
+
 	for _, c := range cid {
 		cidMap[c] = true
 	}
-	
+
 	for _, selector := range selectors {
 		result := provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
 			Preload("ObjectMeta", "namespace IN ?", controlPlaneNamespace[MeshType(selector)]).
