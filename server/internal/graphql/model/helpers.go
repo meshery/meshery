@@ -83,7 +83,7 @@ func persistData(msg broker.Message,
 	objectJSON, _ := utils.Marshal(msg.Object)
 	switch msg.ObjectType {
 	case broker.MeshSync:
-		object := meshsyncmodel.Object{}
+		object := meshsyncmodel.KubernetesResource{}
 		err := utils.Unmarshal(string(objectJSON), &object)
 		if err != nil {
 			log.Error(err)
@@ -91,8 +91,8 @@ func persistData(msg broker.Message,
 		}
 
 		// persist the object
-		log.Info("Incoming object: ", object.ObjectMeta.Name, ", kind: ", object.Kind)
-		if object.ObjectMeta.Name == "meshery-operator" || object.ObjectMeta.Name == "meshery-broker" || object.ObjectMeta.Name == "meshery-meshsync" {
+		log.Info("Incoming object: ", object.KubernetesResourceMeta.Name, ", kind: ", object.Kind)
+		if object.KubernetesResourceMeta.Name == "meshery-operator" || object.KubernetesResourceMeta.Name == "meshery-broker" || object.KubernetesResourceMeta.Name == "meshery-meshsync" {
 			broadcaster.Submit(broadcast.BroadcastMessage{
 				Source: broadcast.OperatorSyncChannel,
 				Data:   false,
@@ -126,9 +126,9 @@ func PersistClusterNames(
 	for _, clusterConfig := range k8sContexts {
 		clusterName := clusterConfig.Cluster["name"].(string)
 		clusterID := clusterConfig.KubernetesServerID.String()
-		object := meshsyncmodel.Object{
+		object := meshsyncmodel.KubernetesResource{
 			Kind: "Cluster",
-			ObjectMeta: &meshsyncmodel.ResourceObjectMeta{
+			KubernetesResourceMeta: &meshsyncmodel.KubernetesResourceObjectMeta{
 				Name:      clusterName,
 				ClusterID: clusterID,
 			},
@@ -136,7 +136,7 @@ func PersistClusterNames(
 		}
 
 		// persist the object
-		log.Info("Incoming object: ", object.ObjectMeta.Name, ", kind: ", object.Kind)
+		log.Info("Incoming object: ", object.KubernetesResourceMeta.Name, ", kind: ", object.Kind)
 		err := recordMeshSyncData(broker.Add, handler, &object)
 		if err != nil {
 			log.Error(err)
