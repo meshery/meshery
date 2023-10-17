@@ -9,9 +9,11 @@ language: en
 
 {% assign sorted_pages = site.pages | sort: "name" | alphabetical %}
 
-<div style="display: block; padding: clamp(30px, calc(30px + (100 - 30) * ((100vw - 1000px) / (1600 - 1000))), 100px); padding-top:0px; padding-bottom:0px; text-align: center;">
-        {% include svg/meshery-logo.html %}
-        <h3>As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.</h3>
+<div style="display: block;text-align: center;">
+  <div style="padding: clamp(30px, calc(30px + (100 - 30) * ((100vw - 1000px) / (1600 - 1000))), 400vw); padding-top:0px; padding-bottom:0px;">
+    {% include svg/meshery-logo.html %}
+  </div>
+    <h3>As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.</h3>
 </div>
 
 <div class="flex flex-col--2"  style="text-align: left; padding:1.6rem ;--col-gap:1rem">
@@ -25,15 +27,6 @@ language: en
         <li><a href="{{ site.baseurl }}/project">Overview</a> and <a href="{{ site.baseurl }}/project/community">Community</a></li>
         <li><a href="{{ site.baseurl }}/project/contributing">Contributing</a></li> 
     </ul>
-    <!-- <h6><a href="{{ site.baseurl }}/installation/platforms" class="text-black section-title">Supported Platforms</a></h6> -->
-    <!-- <ul>
-        {% for item in sorted_pages %}
-        {% if item.type=="installation" and item.list=="include" and item.language!="es"  -%}
-          <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-          </li>
-          {% endif %}
-        {% endfor %}
-      </ul> -->
   </div>
   <!-- TASKS -->
   <div class="section">
