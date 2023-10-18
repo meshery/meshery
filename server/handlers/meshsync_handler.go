@@ -27,7 +27,13 @@ import (
 //
 // ```?annotation={annotaion}``` annotation is a boolean value. If true then annotations are returned
 //
-// ```?lables={lables}``` lables is a boolean value. If true then lables are returned
+// ```?labels={labels}``` labels is a boolean value. If true then labels are returned
+//
+// ```?spec={spec}``` spec is a boolean value. If true then spec is returned
+//
+// ```?status={status}``` status is a boolean value. If true then status is returned
+//
+// ```?clusterId={clusterId}``` clusterId is a string value. If specified then resources for that cluster are returned
 //
 // responses:
 // 200: []meshsyncResourcesResponseWrapper
@@ -59,23 +65,38 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	sort := r.URL.Query().Get("sort")
 	search := r.URL.Query().Get("search")
 	apiVersion := r.URL.Query().Get("apiVersion")
+	clusterId := r.URL.Query().Get("clusterId")
+	spec, _ := strconv.ParseBool(r.URL.Query().Get("spec"))
+	status, _ := strconv.ParseBool(r.URL.Query().Get("status"))
 	isAnnotaion, _ := strconv.ParseBool(r.URL.Query().Get("annotation"))
-	isLables, _ := strconv.ParseBool(r.URL.Query().Get("lables"))
+	isLabels, _ := strconv.ParseBool(r.URL.Query().Get("labels"))
 
 	result := provider.GetGenericPersister().Model(&model.KubernetesResource{}).
-	Preload("KubernetesResourceMeta").
-	Preload("Spec").
-	Preload("Status")
+	Preload("KubernetesResourceMeta")
 
 	if apiVersion != "" {
 		result = result.Where(&model.KubernetesResource{APIVersion: apiVersion})
 	}
 
-	if isLables {
+	if isLabels {
 	 result = result.Preload("KubernetesResourceMeta.Labels")
 	}
 	if isAnnotaion {
 		result = result.Preload("KubernetesResourceMeta.Annotations")
+	}
+
+
+	if spec {
+		result = result.Preload("Spec")
+	}
+
+	if status {
+		result = result.Preload("Status")
+	}
+
+
+	if clusterId != "" {
+		result = result.Where(&model.KubernetesResource{ClusterID: clusterId})
 	}
 		
 	if search != "" {
