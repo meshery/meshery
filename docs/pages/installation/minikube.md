@@ -9,58 +9,121 @@ list: include
 image: /assets/img/platforms/minikube.png
 ---
 
-{% include installation_prerequisites.html %}
+<h1>Quick Start with {{ page.title }} <img src="{{ page.image }}" style="width:35px;height:35px;" /></h1>
 
-**To Setup and run Meshery on Minikube** :
+Manage your Minikube clusters with Meshery. Deploy Meshery in Minikube [in-cluster](#in-cluster-installation) or outside of Minikube [out-of-cluster](#out-of-cluster-installation). **_Note: It is advisable to [Install Meshery in your Minikube clusters](#install-meshery-into-your-minikube-cluster)_**
 
-- [Steps](#steps)
-  - [1. Start minikube](#1-start-minikube)
-  - [2. Install Meshery](#2-install-meshery)
-  - [3. Configure Meshery to use minikube](#3-configure-meshery-to-use-minikube)
-  - [Manual Steps](#manual-steps)
+<div class="prereqs"><p><strong style="font-size: 20px;">Prerequisites</strong> </p> 
+  <ol>
+    <li>Install the Meshery command line client, <a href="{{ site.baseurl }}/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
+    <li>Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> installed on your local machine.</li>
+  </ol>
+</div>
 
-##### Compatibility
+Also see: [Install Meshery on Kubernetes]({{ site.baseurl }}/installation/platforms/kubernetes)
+## Available Deployment Methods
 
-The following minimum component versions are required:
+- [In-cluster Installation](#in-cluster-installation)
+  - [Preflight Checks](#preflight-checks)
+    - [Preflight: Cluster Connectivity](#preflight-cluster-connectivity)
+    - [Preflight: Plan your access to Meshery UI](#preflight-plan-your-access-to-meshery-ui)
+  - [Installation: Using `mesheryctl`](#installation-using-mesheryctl)
+  - [Installation: Using Helm](#installation-using-helm)
+  - [Instalaltion: Manual Steps](#manual-steps)
+  - [Installation: Docker Driver Users](#docker-driver-users)
+- [Post-Installation Steps](#post-installation-steps)
+  - [Access Meshery UI](#access-meshery-ui)
+- [Out-of-cluster Installation](#out-of-cluster-installation)
+  - [Installation: Install Meshery on Docker](#installation-install-meshery-on-docker)
+  - [Installation: Upload Config File in Meshery Web UI](#installation-upload-config-file-in-meshery-web-ui)
 
-<table id="compatibility-table">
-  <tr>
-    <th id="model">Name</th>
-    <th id="model">Version</th>
-  </tr>
-  <tr>
-    <td><a href="https://kubernetes.io/docs/tasks/tools/install-minikube/">Minikube</a></td>
-    <td>1.0.0 </td>
-  </tr>
-  <tr>
-    <td><a href="https://istio.io/docs/setup/kubernetes/prepare/platform-setup/minikube/">Kubernetes</a></td>
-    <td>1.14.1</td>
-  </tr>
-  <tr>
-    <td><a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">kubectl</a></td>
-    <td>1.14.1</td>
-  </tr>
-</table>
+# In-cluster Installation
 
-## Steps
+Follow the steps below to install Meshery in your Minikube cluster.
 
-Perform the following steps in order:
+## Preflight Checks
 
-### 1. Start minikube
+Read through the following considerations prior to deploying Meshery on Minikube.
 
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">minikube start --cpus 4 --memory 8192 --kubernetes-version=v1.14.1</div></div>
- </pre>
+### Preflight: Cluster Connectivity
+Start the minikube, if not started using the following command: 
+{% capture code_content %}minikube start --cpus 4 --memory 8192 --kubernetes-version=v1.14.1{% endcapture %}
+{% include code.html code=code_content %}
+Check up on your minikube cluster :
+{% capture code_content %}minikube status{% endcapture %}
+{% include code.html code=code_content %}
+Verify your kubeconfig's current context.
+{% capture code_content %}kubectl cluster-info{% endcapture %}
+{% include code.html code=code_content %}
 
-_Note: minimum memory required is --memory=4096 (for Istio deployments only)_
+### Preflight: Plan your access to Meshery UI
 
-**Check up on your minikube cluster** :
+1. If you are using port-forwarding, please refer to the [port-forwarding]({{ site.baseurl }}/reference/mesheryctl/system/dashboard) guide for detailed instructions.
+2. Customize your Meshery Provider Callback URL. Meshery Server supports customizing authentication flow callback URL, which can be configured in the following way:
 
-<pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">minikube status</div></div>
- </pre>
+{% capture code_content %}$ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start{% endcapture %}
+{% include code.html code=code_content %}
 
-### 2. Install Meshery
+Meshery should now be running in your Minikube cluster and Meshery UI should be accessible at the `INTERNAL IP` of `meshery` service.
+
+## Installation: Using `mesheryctl`
+
+Use Meshery's CLI to streamline your connection to your Minikube cluster. Configure Meshery to connect to your Minikube cluster by executing:
+
+{% capture code_content %}$ mesheryctl system config minikube{% endcapture %}
+{% include code.html code=code_content %}
+
+Once configured, execute the following command to start Meshery.
+
+{% capture code_content %}$ mesheryctl system start{% endcapture %}
+{% include code.html code=code_content %}
+
+If you encounter any authentication issues, you can use `mesheryctl system login`. For more information, click [here](/guides/mesheryctl/authenticate-with-meshery-via-cli) to learn more.
+
+## Installation: Using Helm
+
+For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation](/installation/helm) guide.
+
+
+## Installation: Manual Steps
+
+You may also manually generate and load the kubeconfig file for Meshery to use:
+
+**The following configuration yaml will be used by Meshery. Copy and paste the following in your config file** :
+
+ {% capture code_content %}apiVersion: v1
+ clusters:
+ - cluster:
+     certificate-authority-data: < cert shortcutted >
+     server: https://192.168.99.100:8443
+   name: minikube
+ contexts:
+ - context:
+     cluster: minikube
+     user: minikube
+   name: minikube
+ current-context: minikube
+ kind: Config
+ preferences: {}
+ users:
+ - name: minikube
+   user:
+     client-certificate-data: < cert shortcutted >
+     client-key-data: < key shortcutted >{% endcapture %}
+{% include code.html code=code_content %}
+
+
+_Note_: Make sure _current-context_ is set to _minikube_.
+
+<br />
+**To allow Meshery to auto detect your config file, Run** :
+{% capture code_content %}kubectl config view --minify --flatten > config_minikube.yaml{% endcapture %}
+{% include code.html code=code_content %}
+
+<br />
+Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides]({{ site.baseurl }}/guides) for advanced usage tips.
+
+## Installation: Docker Driver Users
 
 Follow the [installation steps](/installation/quick-start) to setup the mesheryctl CLI and install Meshery.
 
@@ -89,24 +152,29 @@ To establish connectivity between a particular Meshery Adapter and Kubernetes se
  <div class="clipboardjs">docker network connect minikube &#60; container name of the desired adapter &#62;</div></div>
  </pre>
 
-### 3. Configure Meshery to use minikube
+# Post-Installation Steps
 
-1. Login to Meshery. Under your user profile, click _Get Token_.
+## Access Meshery UI
 
-2. Use [mesheryctl]({{ site.baseurl }}/installation#using-mesheryctl) to configure Meshery to use minikube. To allow Meshery to detect your config file, execute the following commands:
+To access Meshery's UI , please refer to the [accessing-ui](/tasks/accessing-meshery-ui) guide for detailed instructions.
 
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">mesheryctl system config minikube -t ~/Downloads/auth.json</div></div>
- </pre>
-<br/>
+# Out-of-cluster Installation
 
-**Optionally run the command below to expose the LoadBalancer services to the host machine** :
+Install Meshery on Docker (out-of-cluster) and connect it to your Minikube cluster.
 
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">minikube tunnel</div></div>
- </pre>
+## Installation: Install Meshery on Docker
 
-**Optionally configure Meshery to use minikube through the Web UI** :
+{% capture code_content %}$ mesheryctl system start -p docker{% endcapture %}
+{% include code.html code=code_content %}
+
+Configure Meshery to connect to your cluster by executing:
+
+{% capture code_content %}$ mesheryctl system config minikube{% endcapture %}
+{% include code.html code=code_content %}
+
+Once you have verified that all the services are up and running, Meshery UI will be accessible on your local machine on port 9081. Open your browser and access Meshery at [`http://localhost:9081`](http://localhost:9081).
+
+## Installation: Upload Config File in Meshery Web UI
 
 - Run the below command to generate the _"config_minikube.yaml"_ file for your cluster:
 
@@ -116,42 +184,6 @@ To establish connectivity between a particular Meshery Adapter and Kubernetes se
 
 - Upload the generated config file by navigating to _Settings > Environment > Out of Cluster Deployment_ in the Web UI and using the _"Upload kubeconfig"_ option.
 
-### Manual Steps
 
-You may also manually generate and load the kubeconfig file for Meshery to use:
 
-**The following configuration yaml will be used by Meshery. Copy and paste the following in your config file** :
-
- <pre class="codeblock-pre">
- <div class="codeblock"><div class="clipboardjs">apiVersion: v1
- clusters:
- - cluster:
-     certificate-authority-data: < cert shortcutted >
-     server: https://192.168.99.100:8443
-   name: minikube
- contexts:
- - context:
-     cluster: minikube
-     user: minikube
-   name: minikube
- current-context: minikube
- kind: Config
- preferences: {}
- users:
- - name: minikube
-   user:
-     client-certificate-data: < cert shortcutted >
-     client-key-data: < key shortcutted ></div></div>
- </pre>
-
-_Note_: Make sure _current-context_ is set to _minikube_.
-
-<br />
-**To allow Meshery to auto detect your config file, Run** :
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">kubectl config view --minify --flatten > config_minikube.yaml</div></div>
-</pre>
-
-<br />
-Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides]({{ site.baseurl }}/guides) for advanced usage tips.
 
