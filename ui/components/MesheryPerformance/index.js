@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
@@ -47,7 +47,7 @@ import { ctxUrl, getK8sClusterIdsFromCtxId } from '../../utils/multi-ctx';
 import { iconMedium } from '../../css/icons.styles';
 import { withNotify } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
-import { useEffect } from 'react';
+import { generateTestName, generateUUID } from './helper';
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -56,7 +56,7 @@ import { useEffect } from 'react';
  * profile object from it
  * @param {*} data
  */
-function generatePerformanceProfile(data) {
+export function generatePerformanceProfile(data) {
   const {
     id,
     name,
@@ -99,62 +99,6 @@ function generatePerformanceProfile(data) {
   };
 }
 
-/**
- * generateTestName takes in test name and service mesh name
- * and generates a random name (if test name is an empty string or is falsy) or
- * will return the given name
- *
- * @param {string} name
- * @param {string} meshName
- * @returns {string}
- */
-const generateTestName = (name, meshName) => {
-  if (!name || name.trim() === '') {
-    const mesh = meshName === '' || meshName === 'None' ? 'No mesh' : meshName;
-    return `${mesh}_${new Date().getTime()}`;
-  }
-
-  return name;
-};
-
-function generateUUID() {
-  const { v4: uuid } = require('uuid');
-  return uuid();
-}
-// =============================== PERFORMANCE COMPONENT =======================
-
-const loadGenerators = ['fortio', 'wrk2', 'nighthawk'];
-
-const infoFlags = <>Only .json files are supported.</>;
-
-const infoCRTCertificates = <>Only .crt files are supported.</>;
-
-const infoloadGenerators = (
-  <>
-    Which load generators does Meshery support?
-    <ul>
-      <li>
-        fortio - Fortio load testing library, command line tool, advanced echo server and web UI in
-        go (golang). Allows to specify a set query-per-second load and record latency histograms and
-        other useful stats.{' '}
-      </li>
-      <li> wrk2 - A constant throughput, correct latency recording variant of wrk.</li>
-      <li>
-        {' '}
-        nighthawk - Enables users to run distributed performance tests to better mimic real-world,
-        distributed systems scenarios.
-      </li>
-    </ul>
-    <Link
-      style={{ textDecoration: 'underline' }}
-      color="inherit"
-      href="https://docs.meshery.io/functionality/performance-management"
-    >
-      {' '}
-      Performance Management
-    </Link>
-  </>
-);
 const styles = (theme) => ({
   title: {
     textAlign: 'center',
@@ -231,6 +175,39 @@ const styles = (theme) => ({
     },
   },
 });
+// =============================== PERFORMANCE COMPONENT =======================
+const loadGenerators = ['fortio', 'wrk2', 'nighthawk'];
+
+const infoFlags = <>Only .json files are supported.</>;
+
+const infoCRTCertificates = <>Only .crt files are supported.</>;
+
+const infoloadGenerators = (
+  <>
+    Which load generators does Meshery support?
+    <ul>
+      <li>
+        fortio - Fortio load testing library, command line tool, advanced echo server and web UI in
+        go (golang). Allows to specify a set query-per-second load and record latency histograms and
+        other useful stats.{' '}
+      </li>
+      <li> wrk2 - A constant throughput, correct latency recording variant of wrk.</li>
+      <li>
+        {' '}
+        nighthawk - Enables users to run distributed performance tests to better mimic real-world,
+        distributed systems scenarios.
+      </li>
+    </ul>
+    <Link
+      style={{ textDecoration: 'underline' }}
+      color="inherit"
+      href="https://docs.meshery.io/functionality/performance-management"
+    >
+      {' '}
+      Performance Management
+    </Link>
+  </>
+);
 
 let eventStream = null;
 const MesheryPerformanceComponent = (props) => {
