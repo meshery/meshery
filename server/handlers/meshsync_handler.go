@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-// swagger:route GET /api/system/meshsync/resources Get GetMeshSyncResources idGetMeshSyncResources
+// swagger:route GET /api/system/meshsync/resources GetMeshSyncResources idGetMeshSyncResources
 // Handle GET request for meshsync discovered resources
 //
 // ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned

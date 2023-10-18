@@ -1677,7 +1677,6 @@ paths:
                     $ref: '#/responses/meshsyncResourcesResponseWrapper'
             summary: Handle GET request for meshsync discovered resources
             tags:
-                - Get
                 - GetMeshSyncResources
     /api/system/sync:
         get:
