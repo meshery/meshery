@@ -8,7 +8,6 @@ import (
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 )
 
@@ -392,8 +391,6 @@ type Provider interface {
 	SMPTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	SMPTestConfigDelete(req *http.Request, testUUID string) error
 
-	RecordMeshSyncData(model.Object) error
-	ReadMeshSyncData() ([]model.Object, error)
 	GetGenericPersister() *database.Handler
 
 	SetKubeClient(client *mesherykube.Client)
