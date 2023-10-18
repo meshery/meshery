@@ -44,13 +44,22 @@ Read through the following considerations prior to deploying Meshery on AKS.
 
 ### Preflight: Cluster Connectivity
 
-1. Verfiy you connection to an Azure Kubernetes Services Cluster using Azure CLI.
+1. Verify you connection to an Azure Kubernetes Services Cluster using Azure CLI.
 1. Login to Azure account using [az login](https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli).
 1. After a successful login, identify the subscription associated with your AKS cluster:
 {% capture code_content %}az account set --subscription [SUBSCRIPTION_ID]{% endcapture %}
 {% include code.html code=code_content %}
 1. After setting the subscription, set the cluster context.
 {% capture code_content %}az aks get-credentials --resource-group [RESOURCE_GROUP] --name [AKS_SERVICE_NAME]{% endcapture %}
+{% include code.html code=code_content %}
+
+### Preflight: Plan your access to Meshery UI
+
+1. If you are using port-forwarding, please refer to the [port-forwarding]({{ site.baseurl }}/reference/mesheryctl/system/dashboard) guide for detailed instructions.
+2. If you are using a LoadBalancer, please refer to the [LoadBalancer]({{ site.baseurl }}/installation/platforms/kubernetes#exposing-meshery-serviceloadbalancer) guide for detailed instructions.
+3. Customize your Meshery Provider Callback URL. Meshery Server supports customizing authentication flow callback URL, which can be configured in the following way:
+
+{% capture code_content %}$ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start{% endcapture %}
 {% include code.html code=code_content %}
 
 ### Installation: Using `mesheryctl`
