@@ -12,11 +12,11 @@ Milestone | Features
 [v1.0.0](../../milestone/7) | <p><li>hardening, release process, integration tests, user acceptance testing</li></p>
 [v1.1.0](../../milestone/8) | <p><li>distributed performance management</li><li>adaptive load optimizers</li></p>
 
-Refer the [Meshery Roadmap](https://docs.google.com/document/d/1kvcz8jdvFwXmYBBaY2-3fHHUUoy1GJLpZZXuoxZQoOk/edit#) document for detailed info.
+Refer to [Meshery Roadmap](https://docs.google.com/document/d/1kvcz8jdvFwXmYBBaY2-3fHHUUoy1GJLpZZXuoxZQoOk/edit#) document for detailed info.
 
-# mesheryctl Roadmap
+# Meshery CLI Roadmap
 
-Milestones on mesheryctl's high-level roadmap:
+Milestones on `mesheryctl`'s high-level roadmap:
 
 Milestone | Features
 --- | ---
@@ -28,4 +28,12 @@ Milestone | Features
 [v1.0.0](../../milestone/7) | 
 [v1.1.0](../../milestone/8) | 
 
-Refer to the [Meshery Roadmap](https://docs.google.com/document/d/1kvcz8jdvFwXmYBBaY2-3fHHUUoy1GJLpZZXuoxZQoOk/edit#) document for detailed info.
+Refer to [Meshery Roadmap](https://docs.google.com/document/d/1kvcz8jdvFwXmYBBaY2-3fHHUUoy1GJLpZZXuoxZQoOk/edit#) document for detailed info.
+
+
+v0.8.0
+Workflow engine
+
+*  Multiple Telemetry Providers and Custom Boards ([spec](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_5_21))
+*  User-defined Dashboards and Metrics ([spec](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.gcb74201a11_0_119))
+* [UI]  Support for Material UI v5
