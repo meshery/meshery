@@ -9,26 +9,27 @@ definitions:
     ContainerChangeResponseItem:
         description: ContainerChangeResponseItem change item in response to ContainerChanges operation
         x-go-package: github.com/docker/docker/api/types/container
-    ContainerCreateCreatedBody:
-        description: ContainerCreateCreatedBody OK response to ContainerCreate operation
-        x-go-package: github.com/docker/docker/api/types/container
     ContainerTopOKBody:
         description: ContainerTopOKBody OK response to ContainerTop operation
         x-go-package: github.com/docker/docker/api/types/container
     ContainerUpdateOKBody:
         description: ContainerUpdateOKBody OK response to ContainerUpdate operation
         x-go-package: github.com/docker/docker/api/types/container
-    ContainerWaitOKBody:
-        description: ContainerWaitOKBody OK response to ContainerWait operation
-        x-go-package: github.com/docker/docker/api/types/container
-    ContainerWaitOKBodyError:
-        description: ContainerWaitOKBodyError container waiting error, if any
+    CreateOptions:
+        description: Volume configuration
+        title: CreateOptions VolumeConfig
+        x-go-package: github.com/docker/docker/api/types/volume
+    CreateResponse:
+        description: OK response to ContainerCreate operation
+        title: CreateResponse ContainerCreateResponse
         x-go-package: github.com/docker/docker/api/types/container
     ErrorResponse:
         title: ErrorResponse Represents an error.
         x-go-package: github.com/docker/docker/api/types
     GraphDriverData:
-        title: GraphDriverData Information about a container's graph driver.
+        description: |-
+            GraphDriverData Information about the storage driver used to store the container's and
+            image's filesystem.
         x-go-package: github.com/docker/docker/api/types
     HistoryResponseItem:
         description: HistoryResponseItem individual image layer information in response to ImageHistory operation
@@ -43,6 +44,10 @@ definitions:
     ImageSummary:
         description: ImageSummary image summary
         x-go-package: github.com/docker/docker/api/types
+    ListResponse:
+        description: Volume list response
+        title: ListResponse VolumeListResponse
+        x-go-package: github.com/docker/docker/api/types/volume
     Plugin:
         description: Plugin A plugin for the Engine API
         x-go-package: github.com/docker/docker/api/types
@@ -88,20 +93,21 @@ definitions:
     ServiceUpdateResponse:
         description: ServiceUpdateResponse service update response
         x-go-package: github.com/docker/docker/api/types
+    UsageData:
+        description: |-
+            UsageData Usage details about the volume. This information is used by the
+            `GET /system/df` endpoint, and omitted in other endpoints.
+        x-go-package: github.com/docker/docker/api/types/volume
     Volume:
         description: Volume volume
-        x-go-package: github.com/docker/docker/api/types
-    VolumeCreateBody:
-        description: VolumeCreateBody Volume configuration
         x-go-package: github.com/docker/docker/api/types/volume
-    VolumeListOKBody:
-        description: VolumeListOKBody Volume list response
-        x-go-package: github.com/docker/docker/api/types/volume
-    VolumeUsageData:
-        description: |-
-            VolumeUsageData Usage details about the volume. This information is used by the
-            `GET /system/df` endpoint, and omitted in other endpoints.
-        x-go-package: github.com/docker/docker/api/types
+    WaitExitError:
+        description: WaitExitError container waiting error, if any
+        x-go-package: github.com/docker/docker/api/types/container
+    WaitResponse:
+        description: OK response to ContainerWait operation
+        title: WaitResponse ContainerWaitResponse
+        x-go-package: github.com/docker/docker/api/types/container
 info:
     description: |-
         the purpose of this application is to provide an application
@@ -1647,6 +1653,32 @@ paths:
             summary: Handle GET request for fetching prometheus
             tags:
                 - SystemAPI
+    /api/system/meshsync/resources:
+        get:
+            description: |-
+                ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+
+                ```?search={componentname}``` If search is non empty then a greedy search is performed
+
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+
+                ```?annotation={annotaion}``` annotation is a boolean value. If true then annotations are returned
+
+                ```?lables={lables}``` lables is a boolean value. If true then lables are returned
+            operationId: idGetMeshSyncResources
+            responses:
+                "200":
+                    $ref: '#/responses/meshsyncResourcesResponseWrapper'
+            summary: Handle GET request for meshsync discovered resources
+            tags:
+                - Get
+                - GetMeshSyncResources
     /api/system/sync:
         get:
             description: Used to send session data to the UI for initial sync
@@ -2398,6 +2430,8 @@ responses:
         description: Returns meshmodel registrants
     meshmodelRelationshipsResponseWrapper:
         description: Returns meshmodel relationships
+    meshsyncResourcesResponseWrapper:
+        description: Returns MeshSync resources
     noContentWrapper:
         description: ""
     perfSingleResultRespWrapper:
