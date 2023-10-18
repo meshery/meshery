@@ -288,7 +288,7 @@ func getManuallyAddedContentMap(filename string) (map[int]string, error) {
 
 	content := string(existingContent)
 
-	commentPattern := regexp.MustCompile(`<!--([\s\S]*?)--->`)
+	commentPattern := regexp.MustCompile(`<!---([\s\S]*?)--->`)
 	matches := commentPattern.FindAllStringSubmatch(content, -1)
 	for i, match := range matches {
 		// Store the section content in the map with order as the key

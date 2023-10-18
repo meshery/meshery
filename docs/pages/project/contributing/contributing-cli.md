@@ -207,7 +207,7 @@ We are using Cobra CLI and Github Actions to automate the generation of command 
 
 {% capture code_content %}
 
-<!-- ###########################################################################
+<!--- ###########################################################################
 
                  START OF MANUAL DOCUMENTATION
 IT IS SAFE TO ADD ADDITIONAL USAGE AND EXAMPLES BELOW THIS LINE.
