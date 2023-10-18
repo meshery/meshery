@@ -26,7 +26,7 @@ language: en
     <ul>
         <li><a href="{{ site.baseurl }}/project">Project Overview</a></li>
         <li><a href="{{ site.baseurl }}/installation/quick-start">Quick Start</a></li>
-        <li><a href="{{ site.baseurl }}/project">Essential Features</a></li> 
+        <!-- <li><a href="{{ site.baseurl }}/project">Essential Features</a></li>  -->
     </ul>
   </div>
 
@@ -35,31 +35,52 @@ language: en
     <a href="{{ site.baseurl }}/concepts">
         <div class="btn-primary">Concepts</div>
     </a>
-    <h6><a href="{{ site.baseurl }}/concepts/logical" class="text-black section-title">Conceptual</a></h6>
-    <ul>
+   <!-- <h6><a href="{{ site.baseurl }}/concepts/logical" class="text-black section-title">Conceptual</a></h6>
+     <ul>
       {% for item in sorted_pages %}
       {% if item.type=="concepts" and item.list!="exclude" and item.language!="es" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}
       {% endfor %}
-    </ul>
-    <details class="index">
-      <summary class="index"><h6><a href="{{ site.baseurl }}/concepts/logical" class="text-black section-title">Architectural</a></h6></summary>
-    <ul>
-        {% for item in sorted_pages %}
-        {% if item.type=="components" and item.language=="en" -%}
-          <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-          {% if item.abstract != " " %}
-            -  {{ item.abstract }}
-          {% endif %}
-          </li>
-          {% endif %}
-        {% endfor %}
-    </ul>
+    </ul> -->
+    <details>
+      <summary>
+        <h6 style="display:inline">
+          <a href="{{ site.baseurl }}/concepts/logical" class="text-black">Logical</a>
+        </h6>
+      </summary>
+      <ul class="section-title">
+          {% for item in sorted_pages %}
+          {% if item.type=="concepts" and item.language=="en" -%}
+            <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+            {% if item.abstract != " " %}
+              -  {{ item.abstract }}
+            {% endif %}
+            </li>
+            {% endif %}
+          {% endfor %}
+      </ul>
+    </details>
+    <details>
+      <summary>
+        <h6 style="display:inline">
+          <a href="{{ site.baseurl }}/concepts/architecture" class="text-black section-title">Architectural</a>
+        </h6>
+      </summary>
+      <ul>
+          {% for item in sorted_pages %}
+          {% if item.type=="components" and item.language=="en" -%}
+            <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+            {% if item.abstract != " " %}
+              -  {{ item.abstract }}
+            {% endif %}
+            </li>
+            {% endif %}
+          {% endfor %}
+      </ul>
     </details>
   </div>
-
 </div>
 
 <div class="flex flex-col--2"  style="text-align: left; padding:1.6rem ;--col-gap:1rem">

@@ -110,19 +110,7 @@ details {
   border-radius: 5px;
   overflow: hidden;
   font-size: 1.35rem;
-  padding: 0rem 1.5rem 1.5rem 1.5rem;
-}
-details.index {
-  width: 100%;
-  margin: 0 auto ;
-  background-color: var( --color-details-background);
-  margin-top: 0rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 .1rem 1rem -.5rem rgba(0,0,0,.4);
-  border-radius: 5px;
-  overflow: hidden;
-  font-size: 1.35rem;
-  padding: 0rem 1.5rem 1.5rem 1.5rem;
+  padding: 0rem 1.5rem 0rem 1.5rem;
 }
 
 summary {
@@ -136,20 +124,6 @@ summary {
   cursor: pointer;
   font-size: 1.5rem;
 }
-summary.index {
-  align-items: center;
-  margin-right: -1.25rem;
-  margin-left: -1.5rem;
-  display: block;
-  margin-top: auto;
-  margin-bottom: auto;
-  background-color: var(--color-summary-background);
-  padding-left: 3.2rem;
-  position: relative;
-  cursor: pointer;
-  font-size: 1.5rem;
-}
-
 
 summary:before {
   content: '';
@@ -181,7 +155,6 @@ summary:before {
 details[open] > summary:before {
   transform: rotate(90deg);
 }
-
 
 details summary::-webkit-details-marker {
   display:none;

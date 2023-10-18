@@ -40,16 +40,13 @@ h6 {
   margin: 1.6rem 0 1rem;
   font-weight: 500;
 }
-
 h1 {
   font-size: 3.6rem;
   font-weight: 700;
 }
-
 h2 {
   font-size: 3.2rem;
 }
-
 h3 {
   font-size: 2.6rem;
 }
@@ -99,6 +96,9 @@ ol {
 }
 ul {
   list-style: disc;
+  > li {
+    color: var(--color-secondary-medium)
+  }
 }
 ol {
   list-style-type: decimal;
