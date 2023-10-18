@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -11,7 +10,29 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-func (h *Handler) GetMeshSyncResources (rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+// swagger:route GET /api/system/meshsync/resources Get GetMeshSyncResources idGetMeshSyncResources
+// Handle GET request for meshsync discovered resources
+//
+// ```?apiVersion={apiVersion}``` If apiVersion is unspecified then all models are returned
+//
+// ```?search={componentname}``` If search is non empty then a greedy search is performed
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?sort={[asc/desc]}``` Default behavior is asc
+//
+// ```?page={page-number}``` Default page number is 1
+//
+// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+//
+// ```?annotation={annotaion}``` annotation is a boolean value. If true then annotations are returned
+//
+// ```?lables={lables}``` lables is a boolean value. If true then lables are returned
+//
+// responses:
+// 200: []meshsyncResourcesResponseWrapper
+
+func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
   rw.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 
@@ -37,6 +58,7 @@ func (h *Handler) GetMeshSyncResources (rw http.ResponseWriter, r *http.Request,
 	order := r.URL.Query().Get("order")
 	sort := r.URL.Query().Get("sort")
 	search := r.URL.Query().Get("search")
+	apiVersion := r.URL.Query().Get("apiVersion")
 	isAnnotaion, _ := strconv.ParseBool(r.URL.Query().Get("annotation"))
 	isLables, _ := strconv.ParseBool(r.URL.Query().Get("lables"))
 
@@ -44,6 +66,10 @@ func (h *Handler) GetMeshSyncResources (rw http.ResponseWriter, r *http.Request,
 	Preload("KubernetesResourceMeta").
 	Preload("Spec").
 	Preload("Status")
+
+	if apiVersion != "" {
+		result = result.Where(&model.KubernetesResource{APIVersion: apiVersion})
+	}
 
 	if isLables {
 	 result = result.Preload("KubernetesResourceMeta.Labels")
