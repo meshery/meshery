@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Overview
-permalink: overview
-redirect_from: overview/
+title: Project
+permalink: project
+redirect_from: project/
 language: en
 display-title: "false"
 list: exclude
