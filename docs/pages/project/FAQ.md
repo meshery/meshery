@@ -36,9 +36,6 @@ _Popular Installers:_
 - _Kubernetes user._
 - _[Scoop user](https://github.com/meshery/scoop-bucket)._ 
 
-#### Question: Is Meshery a service mesh?
-
-**Answer:** _No, as the cloud native management plane, Meshery provisions and manages the lifecycle of service meshes and all other kinds of cloud native infrastructure._
 
 #### Is Meshery open source project?
 
@@ -46,7 +43,7 @@ _Popular Installers:_
 
 #### Question: Why should I use Meshery?
 
-**Answer:** _Meshery is a powerful tool for managing ​service meshes and ​Kubernetes infrastructure. It seamlessly integrates with different service meshes and offers extensibility through dedicated adapters for each supported service mesh. With Meshery, you can easily configure your environment and service meshes, upload and manage applications, and analyze performance._
+**Answer:** _Meshery is a powerful tool for managing ​Kubernetes infrastructure. It seamlessly integrates with different hundreds of tools and offers extensibility through many different [extension points]({{site.baseurl}}/extensibility/#extension-points). With Meshery, you can easily discover your environment, collaboratively manage multiple Kubernetes clusters, connect your Git and Helm repos, and analyze app and infra performance._
 
 #### Question: What architecture does Meshery have?
   **Answer:** _.There are several compotents, languages and they have different purposes. See Meshery's [Architecture](https://docs.meshery.io/concepts/architecture)._ 
