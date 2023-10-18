@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func recordMeshSyncData(eventtype broker.EventType, handler *database.Handler, object *meshsyncmodel.Object) error {
+func recordMeshSyncData(eventtype broker.EventType, handler *database.Handler, object *meshsyncmodel.KubernetesResource) error {
 	if handler == nil {
 		return ErrEmptyHandler
 	}

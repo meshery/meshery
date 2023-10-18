@@ -161,11 +161,11 @@ func main() {
 	brokerConn := nats.NewEmptyConnection
 
 	err = dbHandler.AutoMigrate(
-		&meshsyncmodel.KeyValue{},
-		&meshsyncmodel.Object{},
-		&meshsyncmodel.ResourceSpec{},
-		&meshsyncmodel.ResourceStatus{},
-		&meshsyncmodel.ResourceObjectMeta{},
+		&meshsyncmodel.KubernetesKeyValue{},
+		&meshsyncmodel.KubernetesResource{},
+		&meshsyncmodel.KubernetesResourceSpec{},
+		&meshsyncmodel.KubernetesResourceStatus{},
+		&meshsyncmodel.KubernetesResourceObjectMeta{},
 		&models.PerformanceProfile{},
 		&models.MesheryResult{},
 		&models.MesheryPattern{},

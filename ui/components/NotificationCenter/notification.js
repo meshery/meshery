@@ -46,6 +46,7 @@ import {
 } from '../General/ErrorBoundary';
 import { FormattedMetadata } from './metadata';
 import theme from '../../themes/app';
+import { truncate } from 'lodash';
 
 const useStyles = makeStyles(() => ({
   root: (props) => ({
@@ -104,6 +105,12 @@ export const eventPreventDefault = (e) => {
 
 export const eventstopPropagation = (e) => {
   e.stopPropagation();
+};
+
+export const MAX_NOTIFICATION_DESCRIPTION_LENGTH = 45;
+
+export const canTruncateDescription = (description) => {
+  return description.length > MAX_NOTIFICATION_DESCRIPTION_LENGTH;
 };
 
 const useMenuStyles = makeStyles((theme) => {
@@ -351,7 +358,9 @@ export const Notification = withErrorBoundary(({ event_id }) => {
           </Grid>
           <Grid item xs={8} sm={6} className={classes.gridItem}>
             <Typography variant="body1" className={classes.message}>
-              {event.description}
+              {truncate(event.description, {
+                length: MAX_NOTIFICATION_DESCRIPTION_LENGTH,
+              })}
             </Typography>
           </Grid>
           <Grid

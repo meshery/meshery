@@ -5,7 +5,7 @@ permalink: installation/platforms/scoop
 type: installation
 display-title: "false"
 language: en
-list: exclude
+list: include
 image: /assets/img/platforms/scoop.png
 ---
 
