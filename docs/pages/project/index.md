@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Project
-permalink: project
-redirect_from: project/
+title: Overview
+permalink: overview
+redirect_from: overview/
 language: en
 display-title: "false"
 list: exclude
@@ -11,23 +11,6 @@ list: exclude
 # Meshery Overview
 
 As the collaborative cloud native manager plane, Meshery enables the design, operation, and management of Kubernetes clusters and their workloads. Meshery's powerful performance management functionality is accomplished through implementation of [Cloud Native Performance](https://smp-spec.io). <!-- Meshery's cloud native manager functionality leverages [Service Mesh Interface](https://smi-spec.io) (SMI) and Meshery is the conformance tool for SMI. --> Meshery Catalog enable users to capture and share cloud native design patterns. Meshery enables operators to deploy WebAssembly filters to Envoy-based data planes. Meshery facilitates learning about functionality and performance of infrastructure and incorporates the collection and display of metrics from applications.
-
-##### **Meshery as a project and its community**
-
-{% assign sorted_pages = site.pages | sort: "type" | reverse %}
-
-<ul>
-    {% for item in sorted_pages %}
-    {% if item.type=="project" and item.language=="en" and item.list != "exclude" %}
-      <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-      {% if item.description != " " %}
-        -  {{ item.description }}
-      {% endif %}
-      </li>
-      {% endif %}
-    {% endfor %}
-</ul>
----
 
 ## Meshery's Functionality
 
