@@ -177,6 +177,7 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, manuallyAddedContent map
 					buf.WriteString(strings.Replace(examples[i], "// ", "", -1) + "\n")
 				} else {
 					// Code Block Line
+
 					buf.WriteString(fmt.Sprintf("<pre class='codeblock-pre'>\n<div class='codeblock'>\n%s\n\n</div>\n</pre> \n\n", examples[i]))
 				}
 			}
