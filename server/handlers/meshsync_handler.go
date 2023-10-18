@@ -76,8 +76,8 @@ func (h *Handler) GetMeshSyncResources (rw http.ResponseWriter, r *http.Request,
 
 	err := result.Find(&resources).Error
 	if err != nil {
-		fmt.Printf("error: %v", err)
-		// define meshkit error
+		h.log.Error(ErrFetchMeshSyncResources(err))
+		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -96,7 +96,7 @@ func (h *Handler) GetMeshSyncResources (rw http.ResponseWriter, r *http.Request,
 	}
 
 	if err := enc.Encode(response); err != nil {
-		// define meshkit error
-		return
+	 h.log.Error(ErrFetchMeshSyncResources(err))
+		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
 	}
 }
