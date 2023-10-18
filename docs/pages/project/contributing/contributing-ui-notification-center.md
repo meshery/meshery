@@ -15,7 +15,7 @@ category: contributing
 
 ## <a name="contributing-ui-notification-center">Contributing to Meshery UI - Notification Center</a>
 
-<video class="videoTest" style="width:min(100%,750px)" height="auto" autoplay muted loop>
+<video style="width:min(100%,750px)" height="auto" autoplay muted loop>
   <source src="https://github.com/meshery/meshery/assets/65964225/345672de-3f61-4be0-b3c8-0e7480cc496c" type="video/mp4">
  Your browser does not support the video tag
 </video>

@@ -11,6 +11,16 @@ img {
   max-width: 100%;
   border-style: none;
 }
+img.center {
+  display:block;
+  margin-left: auto;
+  margin-right: auto;
+}
+video.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
 
 p {
   font-size: 1.5rem;
