@@ -2,13 +2,13 @@
 layout: default
 title: Installation
 type: installation
-abstract: Installation procedures for deploying Meshery.
+abstract: Installation procedures for deploying Meshery with mesheryctl.
 permalink: installation
 redirect_from: 
  - installation/
  - installation
 language: en
-list: exclude
+list: include
 ---
 
 ## Supported Platforms
