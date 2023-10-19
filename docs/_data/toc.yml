@@ -77,18 +77,21 @@
           url: concepts/architecture/database  
         - title: Meshsync
           url: concepts/architecture/meshsync     
-        - title: Operator
+        - title: "- Operator"
           url: concepts/architecture/operator   
     - title: Conceptual ↆ
       url: concepts/logical
       children: 
-        - title: Designs
+        - title: "- Designs"
           url: concepts/designs
-        - title: Environments
+        - title: "- Environments"
           url: concepts/environments
-        - title: Models
+        - title: "- Models"
           url: concepts/models
-        - title: Workspaces
+          grandchildren: 
+          - title: "- Connections"
+            url: concepts/connections
+        - title: "- Workspaces"
           url: concepts/workspaces
 - title: ⚙️ Tasks (all)
   url: tasks

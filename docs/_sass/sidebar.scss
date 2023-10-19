@@ -107,7 +107,7 @@
       &-input {
         border: none;
         width: 100%;
-        font-size: 1rem;
+        font-size: 1.1rem;
         border-radius: 21px;
         background: var(--background-neumorphic);
         padding: 8px 15px 8px 15px;
@@ -189,11 +189,11 @@
               gap: .25rem;
               padding-inline-start: 1rem;
             }
-            & ul > li {
-              & ::before {
-                content: "- ";
-              }
-            }
+            // & ul > li {
+            //   & ::before {
+            //     content: "- ";
+            //   }
+            // }
           }
         }
       }
