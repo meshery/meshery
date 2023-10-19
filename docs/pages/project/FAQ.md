@@ -37,6 +37,17 @@ _Popular Installers:_
 - _[Scoop user](https://github.com/meshery/scoop-bucket)._ 
 
 
+#### Is Meshery open source project?
+
+**Answer:** _Yes, Meshery is a Cloud Native Computing Foundation (CNCF) project and is licensed under Apache v2. As the cloud native management plane, Meshery is an extensible platform, offering multiple extension points within which users and partners can customize and extend Meshery's functionality._
+
+#### Question: Why should I use Meshery?
+
+**Answer:** _Meshery is a powerful tool for managing ​Kubernetes infrastructure. It seamlessly integrates with different hundreds of tools and offers extensibility through many different [extension points]({{site.baseurl}}/extensibility/#extension-points). With Meshery, you can easily discover your environment, collaboratively manage multiple Kubernetes clusters, connect your Git and Helm repos, and analyze app and infra performance._
+
+#### Question: What architecture does Meshery have?
+  **Answer:** _.There are several compotents, languages and they have different purposes. See Meshery's [Architecture](https://docs.meshery.io/concepts/architecture)._ 
+
 #### Question: What is the difference between `make server` and `mesheryctl system start`? Do they both run Meshery on my local machine?
 
   **Answer:** _Yes, both of them do run Meshery on your local machine. `make server` builds Meshery from source and runs it on your local OS, while `mesheryctl system start` runs Meshery as a set of containers in Docker or in Kubernetes on your local machine._ 
@@ -49,6 +60,9 @@ _Popular Installers:_
 
   **Answer:** _Many. See Meshery's [Integrations](https://meshery.io/integrations)._
 
+#### Question: Getting error while running `make server`?
+
+  **Answer:** _On windows, set up the project on Ubuntu WSL2 and you will be able to run the Meshery UI and the server. For more information please visit [Supported Platforms](https://docs.meshery.io/installation/platforms)._
 
 
 #### Question: Why is Meshery Server only receiving MeshSync updates from one of my Kubernetes Clusters?

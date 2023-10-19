@@ -437,6 +437,13 @@ type meshmodelComponentsDuplicateResponseWrapper struct {
 	Body *models.MeshmodelComponentsDuplicateAPIResponse
 }
 
+// Returns MeshSync resources
+// swagger:response meshsyncResourcesResponseWrapper
+type meshsyncResourcesResponseWrapper struct {
+	// in: body
+	Body *models.MeshSyncResourcesAPIResponse
+}
+
 // Returns meshmodel relationships
 // swagger:response meshmodelRelationshipsResponseWrapper
 type meshmodelRelationshipsResponseWrapper struct {
