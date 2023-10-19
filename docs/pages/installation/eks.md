@@ -1,7 +1,7 @@
 ---
 layout: default
 title: EKS
-permalink: installation/platforms/eks
+permalink: installation/kubernetes/eks
 type: installation
 display-title: "false"
 language: en

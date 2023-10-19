@@ -1,7 +1,7 @@
 ---
 layout: default
 title: KinD
-permalink: installation/platforms/kind
+permalink: installation/kubernetes/kind
 type: installation
 display-title: "false"
 language: en

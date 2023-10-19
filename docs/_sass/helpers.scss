@@ -53,6 +53,7 @@
   &::before {
     left: 100%;
     background: var(--section-button-hover);
+    
   }
 
   &:hover {
@@ -109,9 +110,8 @@ details {
   border-radius: 5px;
   overflow: hidden;
   font-size: 1.35rem;
-  padding: 0rem 1.5rem 1.5rem 1.5rem;
+  padding: 0rem 1.5rem 0rem 1.5rem;
 }
-
 
 summary {
   padding: 1rem 0rem;
@@ -125,6 +125,18 @@ summary {
   font-size: 1.5rem;
 }
 
+summary:before {
+  content: '';
+  border-width: .4rem;
+  border-style: solid;
+  border-color: transparent transparent transparent var( --color-secondary-dark);
+  position: absolute;
+  top: 1.65rem;
+  left: 1rem;
+  transform: rotate(0);
+  transform-origin: .2rem 50%;
+  transition: .25s transform ease;
+}
 
 summary:before {
   content: '';
@@ -143,7 +155,6 @@ summary:before {
 details[open] > summary:before {
   transform: rotate(90deg);
 }
-
 
 details summary::-webkit-details-marker {
   display:none;
