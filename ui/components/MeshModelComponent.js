@@ -1,22 +1,48 @@
-import { withStyles } from '@material-ui/core';
+import { Button, withStyles } from '@material-ui/core';
 import { withSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react';
-import { TableCell, Tooltip, TableSortLabel, Switch, FormControlLabel } from '@material-ui/core';
-
+import {
+  TableCell,
+  Tooltip,
+  TableSortLabel,
+  Box,
+  AppBar,
+  Tabs,
+  Tab,
+  Paper,
+  Switch,
+  FormControlLabel,
+} from '@material-ui/core';
+import UploadIcon from '@mui/icons-material/Upload';
+import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
 import {
   getComponentsDetailWithPageSize,
   getMeshModels,
   getRelationshipsDetailWithPageSize,
+  getComponentFromModelApi,
+  getRelationshipFromModelApi,
   searchModels,
   searchComponents,
 } from '../api/meshmodel';
 import debounce from '../utils/debounce';
-import { MODELS, COMPONENTS, RELATIONSHIPS } from '../constants/navigator';
+import {
+  OVERVIEW,
+  MODELS,
+  COMPONENTS,
+  RELATIONSHIPS,
+  POLICIES,
+  REGISTRANTS,
+} from '../constants/navigator';
 import { SORT } from '../constants/endpoints';
 import ResponsiveDataTable from '../utils/data-table';
 import CustomColumnVisibilityControl from '../utils/custom-column';
 import useStyles from '../assets/styles/general/tool.styles';
 import SearchBar from '../utils/custom-search';
+import { Colors } from '../themes/app';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import MesheryTreeView from './MesheryTreeView';
+import { Avatar, Chip, Typography } from '@mui/material';
 
 //TODO : This Should derive the indices of rendered rows
 // const ROWS_INDICES = {
@@ -54,7 +80,7 @@ const meshmodelStyles = (theme) => ({
   },
 });
 
-const MeshModelComponent = ({ view }) => {
+const MeshModelComponent = () => {
   const [resourcesDetail, setResourcesDetail] = useState([]);
   const [isRequestCancelled, setRequestCancelled] = useState(false);
   const [count, setCount] = useState();
@@ -67,10 +93,18 @@ const MeshModelComponent = ({ view }) => {
   });
   const [checked, setChecked] = useState(false);
   const StyleClass = useStyles();
+  const [view, setView] = useState(OVERVIEW);
+  const [convert, setConvert] = useState(false);
 
   const getModels = async (page) => {
     try {
       const { total_count, models } = await getMeshModels(page + 1, rowsPerPage); // page+1 due to server side indexing starting from 1
+      models.map(async (model) => {
+        const { components } = await getComponentFromModelApi(model.name);
+        const { relationships } = await getRelationshipFromModelApi(model.name);
+        model.components = components;
+        model.relationships = relationships;
+      });
       setCount(total_count);
 
       if (!isRequestCancelled) {
@@ -128,6 +162,12 @@ const MeshModelComponent = ({ view }) => {
   const getSearchedModels = async (searchText) => {
     try {
       const { total_count, models } = await searchModels(searchText);
+      models.map(async (model) => {
+        const { components } = await getComponentFromModelApi(model.name);
+        const { relationships } = await getRelationshipFromModelApi(model.name);
+        model.components = components;
+        model.relationships = relationships;
+      });
       setCount(total_count);
       if (!isRequestCancelled) {
         setResourcesDetail(models ? models : []);
@@ -166,6 +206,7 @@ const MeshModelComponent = ({ view }) => {
 
   useEffect(() => {
     setRequestCancelled(false);
+    // console.log(filteredData);
 
     if (view === MODELS && searchText === null) {
       getModels(page);
@@ -504,11 +545,16 @@ const MeshModelComponent = ({ view }) => {
     marginTop: '1rem',
   };
 
+  const customButtonDiv = {
+    display: 'flex',
+    alignItems: 'center',
+  };
+
   return (
     <div data-test="workloads">
       <div className={StyleClass.toolWrapper} style={customInlineStyle}>
-        <div>
-          {view !== RELATIONSHIPS && (
+        <div style={customButtonDiv}>
+          {/* {view !== RELATIONSHIPS && (
             <FormControlLabel
               control={
                 <Switch
@@ -520,7 +566,23 @@ const MeshModelComponent = ({ view }) => {
               }
               label="Duplicates"
             />
-          )}
+          )} */}
+          <Button
+            variant="contained"
+            style={{ background: Colors.keppelGreen, color: 'white', marginRight: '1rem' }}
+            size="large"
+            startIcon={<UploadIcon />}
+          >
+            Import
+          </Button>
+          <Button
+            variant="contained"
+            size="large"
+            style={{ background: '#51636B', color: 'white' }}
+            startIcon={<DoNotDisturbOnIcon />}
+          >
+            Ignore
+          </Button>
         </div>
         <div style={{ display: 'flex' }}>
           <SearchBar
@@ -535,14 +597,299 @@ const MeshModelComponent = ({ view }) => {
           />
         </div>
       </div>
-      <ResponsiveDataTable
+      {/* <ResponsiveDataTable
         data={filteredData}
         columns={meshmodel_columns}
         options={meshmodel_options}
         tableCols={tableCols}
         updateCols={updateCols}
         columnVisibility={columnVisibility}
-      />
+      /> */}
+      {convert ? (
+        <div
+          style={{
+            background: 'white',
+            padding: '5rem',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderRadius: '1rem',
+          }}
+        >
+          <div style={{ display: 'flex', flexDirection: 'row', marginBottom: '1rem' }}>
+            <Paper
+              elevation={3}
+              style={{
+                background: '#51636B',
+                color: 'white',
+                height: '10rem',
+                width: '13rem',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginRight: '1rem',
+                flexDirection: 'column',
+                cursor: 'pointer',
+              }}
+              onClick={() => {
+                setView(MODELS);
+                setConvert(false);
+              }}
+            >
+              <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>220</span>
+              Models
+            </Paper>
+            <Paper
+              elevation={3}
+              style={{
+                background: '#51636B',
+                color: 'white',
+                height: '10rem',
+                width: '13rem',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginRight: '1rem',
+                flexDirection: 'column',
+                cursor: 'pointer',
+              }}
+              onClick={() => {
+                setView(COMPONENTS);
+                setConvert(false);
+              }}
+            >
+              <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>1071</span>
+              Components
+            </Paper>
+            <Paper
+              elevation={3}
+              style={{
+                background: '#51636B',
+                color: 'white',
+                height: '10rem',
+                width: '13rem',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginRight: '1rem',
+                flexDirection: 'column',
+                cursor: 'pointer',
+              }}
+              onClick={() => {
+                setView(RELATIONSHIPS);
+                setConvert(false);
+              }}
+            >
+              <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>8</span>
+              Relationships
+            </Paper>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <Paper
+              elevation={3}
+              style={{
+                background: '#51636B',
+                color: 'white',
+                height: '10rem',
+                width: '13rem',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginRight: '1rem',
+                flexDirection: 'column',
+                cursor: 'pointer',
+              }}
+              onClick={() => {
+                setView(POLICIES);
+                setConvert(false);
+              }}
+            >
+              <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>12</span>
+              Policies
+            </Paper>
+            <Paper
+              elevation={3}
+              style={{
+                background: '#51636B',
+                color: 'white',
+                height: '10rem',
+                width: '13rem',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginRight: '1rem',
+                flexDirection: 'column',
+                cursor: 'pointer',
+              }}
+              onClick={() => {
+                setView(REGISTRANTS);
+                setConvert(false);
+              }}
+            >
+              <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>12</span>
+              Registrants
+            </Paper>
+          </div>
+        </div>
+      ) : (
+        <div style={{ backgroundColor: 'white', borderRadius: '6px' }}>
+          <div
+            style={{
+              backgroundColor: '#396679',
+              borderRadius: '6px 6px 0px 0px',
+              color: 'white',
+              paddingTop: '1rem',
+              paddingLeft: '1rem',
+              paddingRight: '1rem',
+            }}
+          >
+            <Button
+              style={{
+                backgroundColor: view === OVERVIEW ? 'white' : '#4a7d8d',
+                color: view === OVERVIEW ? 'black' : 'white',
+                borderRadius: '8px 8px 0px 0px',
+                marginRight: '1rem',
+                padding: view === OVERVIEW ? '0.5rem 2rem' : '0.6rem 2rem',
+                borderTop: view === OVERVIEW ? '0.3rem solid #00B39F' : '',
+              }}
+              onClick={() => {
+                setView(OVERVIEW);
+                setConvert(true);
+              }}
+            >
+              Overview
+            </Button>
+            <Button
+              style={{
+                backgroundColor: view === MODELS ? 'white' : '#4a7d8d',
+                color: view === MODELS ? 'black' : 'white',
+                borderRadius: '8px 8px 0px 0px',
+                marginRight: '1rem',
+                padding: view === MODELS ? '0.5rem 2rem' : '0.6rem 2rem',
+                borderTop: view === MODELS ? '0.3rem solid #00B39F' : '',
+              }}
+              onClick={() => setView(MODELS)}
+            >
+              Models(220+)
+            </Button>
+            <Button
+              style={{
+                backgroundColor: view === COMPONENTS ? 'white' : '#4a7d8d',
+                color: view === COMPONENTS ? 'black' : 'white',
+                borderRadius: '8px 8px 0px 0px',
+                marginRight: '1rem',
+                padding: view === COMPONENTS ? '0.5rem 2rem' : '0.6rem 2rem',
+                borderTop: view === COMPONENTS ? '0.3rem solid #00B39F' : '',
+              }}
+              onClick={() => setView(COMPONENTS)}
+            >
+              Components(1071)
+            </Button>
+            <Button
+              style={{
+                backgroundColor: view === RELATIONSHIPS ? 'white' : '#4a7d8d',
+                color: view === RELATIONSHIPS ? 'black' : 'white',
+                borderRadius: '8px 8px 0px 0px',
+                marginRight: '1rem',
+                padding: view === RELATIONSHIPS ? '0.5rem 2rem' : '0.6rem 2rem',
+                borderTop: view === RELATIONSHIPS ? '0.3rem solid #00B39F' : '',
+              }}
+              onClick={() => setView(RELATIONSHIPS)}
+            >
+              Relationships(8)
+            </Button>
+            <Button
+              style={{
+                backgroundColor: view === POLICIES ? 'white' : '#4a7d8d',
+                color: view === POLICIES ? 'black' : 'white',
+                borderRadius: '8px 8px 0px 0px',
+                marginRight: '1rem',
+                padding: view === POLICIES ? '0.5rem 2rem' : '0.6rem 2rem',
+                borderTop: view === POLICIES ? '0.3rem solid #00B39F' : '',
+              }}
+              onClick={() => setView(POLICIES)}
+            >
+              Policies(12)
+            </Button>
+            <Button
+              style={{
+                backgroundColor: view === REGISTRANTS ? 'white' : '#4a7d8d',
+                color: view === REGISTRANTS ? 'black' : 'white',
+                borderRadius: '8px 8px 0px 0px',
+                marginRight: '1rem',
+                padding: view === REGISTRANTS ? '0.5rem 2rem' : '0.6rem 2rem',
+                borderTop: view === REGISTRANTS ? '0.3rem solid #00B39F' : '',
+              }}
+              onClick={() => setView(REGISTRANTS)}
+            >
+              Registrants(12)
+            </Button>
+          </div>
+          <div style={{ display: 'flex', padding: '1rem', flexDirection: 'row' }}>
+            <div style={{ height: '30rem', width: '50%', margin: '1rem', overflowY: 'auto' }}>
+              <MesheryTreeView data={filteredData} view={view} />
+              {/* {view === MODELS && <MesheryTreeView data={filteredData} />}
+              {view === COMPONENTS && <MesheryTreeView data={filteredData} />}
+              {view === RELATIONSHIPS && <MesheryTreeView data={filteredData} />}
+              {view === POLICIES && <MesheryTreeView data={filteredData} />}
+              {view === REGISTRANTS && <MesheryTreeView data={filteredData} />} */}
+            </div>
+            <div
+              style={{
+                height: '30rem',
+                width: '50%',
+                margin: '1rem',
+                backgroundColor: '#d9dadb80',
+                borderRadius: '6px',
+                padding: '1.5rem',
+              }}
+            >
+              <div>
+                <Typography variant="h5" sx={{ marginBottom: '1rem' }}>
+                  <span style={{ fontWeight: 'bold' }}>Model:</span> Model Name
+                </Typography>
+                <Chip
+                  avatar={<Avatar src="/static/img/meshsync.svg" />}
+                  label="MeshSync"
+                  sx={{ backgroundColor: '#00B39F25' }}
+                />
+                <div
+                  style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
+                >
+                  <div>
+                    <p>Version: 6.9.5</p>
+                    <p>Components: 30</p>
+                  </div>
+                  <div>
+                    <p>Category: Cloud Native Network</p>
+                    <p>Registered At: September 29,2023</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <Typography variant="h5" sx={{ marginBottom: '1rem' }}>
+                  <span style={{ fontWeight: 'bold' }}>Component(s)</span>
+                </Typography>
+                <Typography variant="h5">Component Name</Typography>
+                <div
+                  style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
+                >
+                  <p>API Version: 0.3.6</p>
+                  <p>Sub Category: API Gateway</p>
+                </div>
+              </div>
+              <div>
+                <Typography variant="h5" sx={{ marginBottom: '1rem' }}>
+                  <span style={{ fontWeight: 'bold' }}>Relationship(s)</span>
+                </Typography>
+                <Typography variant="h6">Hierchical</Typography>
+                <p>API Version: 1.2.3</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -482,7 +482,7 @@ class MesherySettings extends React.Component {
         {tabVal === 4 && (
           <TabContainer>
             <TabContainer>
-              <AppBar position="static" color="default">
+              {/* <AppBar position="static" color="default">
                 <Tabs
                   value={subTabVal}
                   className={classes.tabs}
@@ -521,22 +521,10 @@ class MesherySettings extends React.Component {
                     }
                   />
                 </Tabs>
-              </AppBar>
-              {subTabVal === 0 && (
-                <TabContainer>
-                  <MeshModelComponent view="models" />
-                </TabContainer>
-              )}
-              {subTabVal === 1 && (
-                <TabContainer>
-                  <MeshModelComponent view="components" />
-                </TabContainer>
-              )}
-              {subTabVal === 2 && (
-                <TabContainer>
-                  <MeshModelComponent view="relationships" />
-                </TabContainer>
-              )}
+              </AppBar> */}
+              <TabContainer>
+                <MeshModelComponent />
+              </TabContainer>
             </TabContainer>
             {/* </div> */}
           </TabContainer>

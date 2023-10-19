@@ -35,6 +35,9 @@ export const TOGGLER = 'toggler';
 export const SETTINGS = 'settings';
 export const CONTEXT_SWITCHER = 'contextSwitcher';
 
+export const OVERVIEW = 'overview';
 export const MODELS = 'models';
 export const COMPONENTS = 'components';
 export const RELATIONSHIPS = 'relationships';
+export const POLICIES = 'policies';
+export const REGISTRANTS = 'registrants';
