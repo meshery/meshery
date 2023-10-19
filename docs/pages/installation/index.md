@@ -4,7 +4,9 @@ title: Installation
 type: installation
 abstract: Installation procedures for deploying Meshery.
 permalink: installation
-redirect_from: installation/
+redirect_from: 
+ - installation/
+ - installation
 language: en
 list: exclude
 ---

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Codespaces
-permalink: installation/platforms/codespaces
+permalink: installation/codespaces
 type: installation
 display-title: "false"
 language: en

@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Scoop
-permalink: installation/platforms/scoop
+permalink: installation/windows/scoop
 type: installation
 display-title: "false"
 language: en

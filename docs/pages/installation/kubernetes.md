@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Kubernetes
-permalink: installation/platforms/kubernetes
+permalink: installation/kubernetes
 type: installation
 display-title: "false"
 language: en

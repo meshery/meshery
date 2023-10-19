@@ -1,10 +1,10 @@
 ---
 layout: default
 title: Compatibility Matrix
-permalink: installation/platforms
+permalink: installation/compatibility-matrix
 type: installation
 display-title: "false"
-redirect_from: installation/platforms/
+redirect_from: installation/compatibility-matrix/
 language: en
 list: exclude
 ---

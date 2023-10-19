@@ -1,7 +1,7 @@
 ---
 layout: default
 title: GKE
-permalink: installation/platforms/gke
+permalink: installation/kubernetes/gke
 type: installation
 display-title: "false"
 language: en
@@ -18,8 +18,8 @@ Meshery will need to be assigned a *ServiceAccount*. An existing ServiceAccount 
 
 Meshery will use this *ServiceAccount* to interact with your managed Kubernetes instance. Use either of the following two methods to prepare a compatible kubeconfig file:
 
-- [Automatic Configuration](#automatic-configuration-recommended)
-- [Manual configuration](#manual-configuration-optional)
+- [Automatic Configuration (Recommended)](#automatic-configuration-recommended)
+- [Manual Configuration (Optional)](#manual-configuration-optional)
 
 ### Automatic Configuration (Recommended)
 

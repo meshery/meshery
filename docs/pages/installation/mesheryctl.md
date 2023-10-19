@@ -1,8 +1,11 @@
 ---
 layout: default
 title: Install mesheryctl
-permalink: installation/mesheryctl
+permalink: installation/operating-systems
 type: installation
+redirect_from:
+ - installation/operating-systems
+  - installation/operating-systems/
 display-title: "true"
 language: en
 list: exclude

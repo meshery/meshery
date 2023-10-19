@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Windows
-permalink: installation/platforms/windows
+permalink: installation/operating-systems/windows
 type: installation
 display-title: "false"
 language: en

@@ -63,19 +63,19 @@
                 </li>
                   {% if child.grandchildren %}
                   <ul>
-                    <li id="{{ grandchild.title | slugify }}">
                       {% for grandchild in child.grandchildren %} {% capture grandchildUrl %}{% if grandchild.url %}{{ site.baseurl
                       }}{{linkUrlSelected}}/{{ grandchild.url }}{% else %}{{ grandchild.external_url }}{% endif %} {% endcapture %} {%
                       capture grandchildUrl %}{{grandchildUrl | strip}}{% endcapture %} {% capture grandchildTitle %}{{ grandchildUrl | replace:
                       "/", "" | strip}}{% endcapture %}
-                      <a
+                      <li id="{{ grandchild.title | slugify }}">
+                        <a
                         class="sidebar-nav__section-link {% if pageUrl contains grandchildTitle %} active {% endif %}"
                         id="m-{{ section.title | slugify }}-{{ entry.title | slugify }}-{{ grandchild.title | slugify}}"
                         href="{{grandchildUrl}}"
                         >{{ grandchild.title }}</a
                       >
-                      {% endfor %}
                     </li>
+                      {% endfor %}
                   </ul>
                   {% endif %} 
 

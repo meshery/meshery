@@ -4,30 +4,41 @@
     - title: Supported Platforms ↆ
       url: installation
       children:
-        - title: AKS
-          url: installation/platforms/aks
         - title: Docker
-          url: installation/platforms/docker
-        - title: Docker Extension
-          url: installation/platforms/docker-extension
-        - title: EKS
-          url: installation/platforms/eks
+          url: installation/docker
+          grandchildren:
+            - title: Docker Extension
+              url: installation/docker/docker-extension
         - title: GitHub Codespaces
-          url: installation/platforms/codespaces
-        - title: GKE
-          url: installation/platforms/gke
-        - title: KinD
-          url: installation/platforms/kind
+          url: installation/codespaces
         - title: Kubernetes
-          url: installation/platforms/kubernetes
+          url: installation/kubernetes
+          grandchildren:
+            - title: "- AKS"
+              url: installation/kubernetes/aks
+            - title: "- EKS"
+              url: installation/kubernetes/eks
+            - title: "- GKE"
+              url: installation/kubernetes/gke
+            - title: "- KinD"
+              url: installation/kubernetes/kind
+            - title: "- Minikube"
+              url: installation/kubernetes/minikube
         - title: KubeSphere
-          url: installation/platforms/kubesphere
-        - title: Minikube
-          url: installation/platforms/minikube
+          url: installation/kubesphere
+        - title: Linux or Mac
+          grandchildren: 
+            - title: "- Bash"
+              url: installation/operating-systems#homebrew
+            - title: "- Brew"
+              url: installation/operating-systems#homebrew
         - title: Windows
-          url: installation/platforms/windows  
+          url: installation/operating-systems/windows 
+          grandchildren: 
+            - title: Scoop
+              url: installation/windows/scoop 
     - title: Compatibility Matrix
-      url: installation/platforms
+      url: installation/compatibility-matrix
 - title: 🗺 Overview
   url: project
   links:
@@ -41,14 +52,16 @@
       children:
         - title: Build & Release (CI)
           url: project/contributing/build-and-release
-        - title: "&nbsp;&nbsp; End-to-End Testing"
-          url: project/contributing/contributing-cypress
+          grandchildren:
+          - title: "End-to-End Testing"
+            url: project/contributing/contributing-cypress
         - title: Meshery Adapters
           url: project/contributing/contributing-adapters
         - title: Meshery CLI
           url: project/contributing/contributing-cli
-        - title: "&nbsp;&nbsp;&nbsp;CLI Design Principles"
-          url: project/contributing/contributing-cli-guide
+          grandchildren:
+          - title: "CLI Design Principles"
+            url: project/contributing/contributing-cli-guide
         - title: Meshery Docs
           url: project/contributing/contributing-docs
         - title: Meshery Errors
@@ -69,29 +82,30 @@
     - title: Architectural ↆ
       url: concepts/architecture
       children: 
-        - title: Adapters
+        - title: "Adapters"
           url: concepts/architecture/adapters
-        - title: Broker
-          url: concepts/architecture/broker
         - title: Database
           url: concepts/architecture/database  
-        - title: Meshsync
-          url: concepts/architecture/meshsync     
-        - title: "- Operator"
-          url: concepts/architecture/operator   
+        - title: "Operator"
+          url: concepts/architecture/operator
+          grandchildren:
+          - title: "- Broker"
+            url: concepts/architecture/broker
+          - title: "- Meshsync"
+            url: concepts/architecture/meshsync     
     - title: Conceptual ↆ
       url: concepts/logical
       children: 
-        - title: "- Designs"
+        - title: "Designs"
           url: concepts/designs
-        - title: "- Environments"
+        - title: "Environments"
           url: concepts/environments
-        - title: "- Models"
+        - title: "Models"
           url: concepts/models
           grandchildren: 
           - title: "- Connections"
             url: concepts/connections
-        - title: "- Workspaces"
+        - title: "Workspaces"
           url: concepts/workspaces
 - title: ⚙️ Tasks (all)
   url: tasks
