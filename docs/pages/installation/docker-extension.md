@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Docker Extension
-permalink: installation/platforms/docker-extension
+permalink: installation/docker/docker-extension
 type: installation
 display-title: "false"
 language: en

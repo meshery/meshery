@@ -1,21 +1,23 @@
 ---
 layout: default
-title: Supported Platforms
-permalink: installation/platforms
+title: Compatibility Matrix
+permalink: installation/compatibility-matrix
 type: installation
 display-title: "false"
-redirect_from: installation/platforms/
+redirect_from: installation/compatibility-matrix/
 language: en
 list: exclude
 ---
 
-# Supported Platforms<a name="compatibility-matrix"></a>
+<a name="compatibility-matrix"></a>
 
-Meshery deploys as a set of Docker containers, which can be deployed to either a Docker host or Kubernetes cluster. See the complete list of supported platforms in the table below. With service meshes having sprung to life in the context of Kubernetes, so too, can Meshery’s deployment models be characterized in the context of Kubernetes. A given deployment of Meshery can be described as either an _in-cluster_ or an _out-of-cluster_ deployment. Meshery deploys as a stand-alone, management plane on a Docker host (_out-of-cluster_) or as a management plane in a Kubernetes cluster (_in-cluster_).
+# Compatibility Matrix
 
-## Platform Compatibility Matrix
+Meshery Server and Meshery Adapters are tested daily for their compatibility with the infrastructure they manage and the platforms Meshery deploys on (Kubernetes and Docker). Integration test results are automatically posted to the following compatibility matrix.
 
-
+<div style="z-index:0">
+  {% include alert.html type="info" title="<span style='margin:0;'>Overview of the Integration Tests</span>" content="For a complete overview of the latest integration tests and their status please visit Meshery <a href='/project/compatibility-matrix#integration-tests'>Integration Tests</a>" %}
+</div>
 
 <style>
 .nav-link.active{
@@ -53,9 +55,6 @@ Meshery deploys as a set of Docker containers, which can be deployed to either a
       <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="kubernetes" role="tabpanel" aria-labelledby="kubernetes-tab">
             {%include compatibilityMatrix.md k8s_tests_group=k8s_tests_group %}
-            <div style="z-index:0">
-              {% include alert.html type="info" title="<span style='margin:0;'>Overview of the Integration Tests</span>" content="For a complete overview of the latest integration tests and their status please visit Meshery <a href='/project/compatibility-matrix#integration-tests'>Integration Tests</a>" %}
-            </div>
         </div>
         <div style="text-align:center" class="tab-pane fade" id="docker" role="tabpanel" aria-labelledby="docker-tab">
         <h3 style="text-align:left;">The following minimum Docker build versions are required:</h3>

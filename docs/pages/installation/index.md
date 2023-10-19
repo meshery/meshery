@@ -1,16 +1,19 @@
 ---
 layout: default
-title: Quick Start Guide
+title: Installation
 type: installation
+abstract: Installation procedures for deploying Meshery with mesheryctl.
 permalink: installation
-redirect_from: installation/
+redirect_from: 
+ - installation/
+ - installation
 language: en
-list: exclude
+list: include
 ---
 
 ## Supported Platforms
 
-Installation procedures for deploying Meshery.
+Meshery deploys as a set of Docker containers, which can be deployed to either a Docker host or Kubernetes cluster. See the complete list of supported platforms in the table below. With service meshes having sprung to life in the context of Kubernetes, so too, can Meshery’s deployment models be characterized in the context of Kubernetes. A given deployment of Meshery can be described as either an _in-cluster_ or an _out-of-cluster_ deployment. Meshery deploys as a stand-alone, management plane on a Docker host (_out-of-cluster_) or as a management plane in a Kubernetes cluster (_in-cluster_).
 
 {% assign sorted_index = site.pages | sort: "name" | alphabetical %}
 

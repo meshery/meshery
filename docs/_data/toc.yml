@@ -1,22 +1,67 @@
 - title: 🚀 Quick Start
   url: installation/quick-start
-
+  links:
+    - title: Supported Platforms ↆ
+      url: installation
+      children:
+        - title: Docker
+          url: installation/docker
+          grandchildren:
+            - title: Docker Extension
+              url: installation/docker/docker-extension
+        - title: GitHub Codespaces
+          url: installation/codespaces
+        - title: Kubernetes
+          url: installation/kubernetes
+          grandchildren:
+            - title: "- AKS"
+              url: installation/kubernetes/aks
+            - title: "- EKS"
+              url: installation/kubernetes/eks
+            - title: "- GKE"
+              url: installation/kubernetes/gke
+            - title: "- KinD"
+              url: installation/kubernetes/kind
+            - title: "- Minikube"
+              url: installation/kubernetes/minikube
+        - title: KubeSphere
+          url: installation/kubesphere
+        - title: Linux or Mac
+          grandchildren: 
+            - title: "- Bash"
+              url: installation/operating-systems#homebrew
+            - title: "- Brew"
+              url: installation/operating-systems#homebrew
+        - title: Windows
+          url: installation/operating-systems/windows 
+          grandchildren: 
+            - title: Scoop
+              url: installation/windows/scoop 
+    - title: Compatibility Matrix
+      url: installation/compatibility-matrix
 - title: 🗺 Overview
   url: project
   links:
-    - title: Community
-      url: project/community
+  - title: FAQ
+    url: project/faq
+- title: 🧑‍💻 Contributing & Community
+  url: project/community
+  links:
     - title: Contributing ↆ
       url: project/contributing
       children:
         - title: Build & Release (CI)
           url: project/contributing/build-and-release
+          grandchildren:
+          - title: "End-to-End Testing"
+            url: project/contributing/contributing-cypress
         - title: Meshery Adapters
           url: project/contributing/contributing-adapters
         - title: Meshery CLI
           url: project/contributing/contributing-cli
-        - title: " - Design Principles"
-          url: project/contributing/contributing-cli-guide
+          grandchildren:
+          - title: "CLI Design Principles"
+            url: project/contributing/contributing-cli-guide
         - title: Meshery Docs
           url: project/contributing/contributing-docs
         - title: Meshery Errors
@@ -25,69 +70,55 @@
           url: project/contributing/contributing-server
         - title: Meshery UI
           url: project/contributing/contributing-ui
-        - title: End-to-End Testing
-          url: project/contributing/contributing-cypress
         - title: Meshery Docker Extension
           url: project/contributing/contributing-docker-extension
+        - title: Meshery Server Events
+          url: project/contributing-server-events
     - title: Releases
       url: project/releases
     - title: Vulnerabilities
       url: project/security-vulnerabilities
-    - title: FAQ
-      url: project/faq
-    - title: Supported Platforms ↆ
-      url: installation/platforms
-      children:
-        - title: AKS
-          url: installation/platforms/aks
-        - title: Docker
-          url: installation/platforms/docker
-        - title: Docker Extension
-          url: installation/platforms/docker-extension
-        - title: EKS
-          url: installation/platforms/eks
-        - title: GitHub Codespaces
-          url: installation/platforms/codespaces
-        - title: GKE
-          url: installation/platforms/gke
-        - title: KinD
-          url: installation/platforms/kind
-        - title: Kubernetes
-          url: installation/platforms/kubernetes
-        - title: KubeSphere
-          url: installation/platforms/kubesphere
-        - title: Minikube
-          url: installation/platforms/minikube
-        - title: Windows
-          url: installation/platforms/windows
 - title: 🧠 Concepts
   url: concepts
   links:
     - title: Architectural ↆ
       url: concepts/architecture
       children: 
-        - title: Adapters
+        - title: "Adapters"
           url: concepts/architecture/adapters
-        - title: Broker
-          url: concepts/architecture/broker
         - title: Database
           url: concepts/architecture/database  
-        - title: Meshsync
-          url: concepts/architecture/meshsync     
-        - title: Operator
-          url: concepts/architecture/operator   
-    - title: Conceptual ↆ
+        - title: "Operator"
+          url: concepts/architecture/operator
+          grandchildren:
+          - title: "- Broker"
+            url: concepts/architecture/broker
+          - title: "- Meshsync"
+            url: concepts/architecture/meshsync     
+    - title: Logical ↆ
       url: concepts/logical
       children: 
-        - title: Designs
+        - title: "Designs"
           url: concepts/designs
-        - title: Environments
+        - title: "Environments"
           url: concepts/environments
-        - title: MeshModel
-          url: concepts/meshmodel
-        - title: Workspaces
+        - title: "Filters"
+          url: concepts/filters          
+        - title: "Models"
+          url: concepts/models
+          grandchildren: 
+          - title: "- Components"
+            url: concepts/components
+          - title: "- Relationships"
+            url: concepts/relationships
+          - title: "- Policies"
+            url: concepts/policies
+          - title: "- Connections"
+            url: concepts/connections
+          - title: "- Credentials"
+            url: concepts/credentials
+        - title: "Workspaces"
           url: concepts/workspaces
-
 - title: ⚙️ Tasks (all)
   url: tasks
   links:

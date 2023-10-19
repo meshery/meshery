@@ -1,7 +1,7 @@
 ---
 layout: page
 title: AKS
-permalink: installation/platforms/aks
+permalink: installation/kubernetes/aks
 type: installation
 display-title: "false"
 language: en
