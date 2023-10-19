@@ -1,0 +1,87 @@
+application_file: |
+  name: MyApplication # display name in Meshery UI
+  services:
+    myapp:
+      type: Application
+      namespace: test
+      settings:
+        replicas: 1
+        containers:
+          - name: meshy
+            image: utkarsh23/meshy:v5
+            ports:
+              - name: http
+                containerPort: 8080
+created_at: "2023-09-01T05:03:30.72615472Z"
+id: 2acfb2ca-8d2b-4e84-95ee-0881d1b4e6b8
+location:
+  branch: ""
+  host: ""
+  path: ""
+  type: local
+name: MyApplication
+source_content: null
+type:
+  String: ""
+  Valid: false
+updated_at: "2023-09-01T05:03:30.724699428Z"
+user_id: null
+
+application_file: |
+  name: ApplicationPatternTwo # display name in Meshery UI
+  services:
+    myapp:
+      type: Application
+      namespace: test
+      settings:
+        replicas: 1
+        containers:
+          - name: meshy
+            image: utkarsh23/meshy:v5
+            ports:
+              - name: http
+                containerPort: 8080
+created_at: "2023-09-01T05:02:54.72843855Z"
+id: 5b046f74-445c-4874-8b55-11cb7ca93a54
+location:
+  branch: ""
+  host: ""
+  path: ""
+  type: local
+name: ApplicationPatternTwo
+source_content: null
+type:
+  String: ""
+  Valid: false
+updated_at: "2023-09-01T05:02:54.72610455Z"
+user_id: null
+
+application_file: |
+  name: ApplicationPatternOne # display name in Meshery UI
+  services:
+    myapp:
+      type: Application
+      namespace: test
+      settings:
+        replicas: 1
+        containers:
+          - name: meshy
+            image: utkarsh23/meshy:v5
+            ports:
+              - name: http
+                containerPort: 8080
+created_at: "2023-09-01T05:02:31.154147678Z"
+id: d1fb41eb-c049-4352-9b95-4e2c40f94fb4
+location:
+  branch: ""
+  host: ""
+  path: ""
+  type: local
+name: ApplicationPatternOne
+source_content: null
+type:
+  String: ""
+  Valid: false
+updated_at: "2023-09-01T05:02:31.146124637Z"
+user_id: null
+

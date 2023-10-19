@@ -21,7 +21,7 @@ import App from 'next/app';
 import Head from 'next/head';
 import { SnackbarProvider } from 'notistack';
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect } from 'react';
+import React from 'react';
 import { connect, Provider } from 'react-redux';
 import Header from '../components/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
@@ -50,17 +50,9 @@ import { updateURLs } from '../utils/utils';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createRelayEnvironment } from '../lib/relayEnvironment';
 import './styles/charts.css';
-import subscribeEvents from '../components/graphql/subscriptions/EventsSubscription';
-import { store as rtkStore } from '../store';
-import { pushEvent } from '../store/slices/events';
-import { api as mesheryApi } from '../rtk-query';
-import { PROVIDER_TAGS } from '../rtk-query/notificationCenter';
-import { useNotification } from '../utils/hooks/useNotification';
-import {
-  SEVERITY_TO_NOTIFICATION_TYPE_MAPPING,
-  validateEvent,
-} from '../components/NotificationCenter/constants';
-import { ErrorBoundary, withSuppressedErrorBoundary } from '../components/General/ErrorBoundary';
+
+import { ErrorBoundary } from '../components/General/ErrorBoundary';
+import { NotificationCenterProvider } from '../components/NotificationCenter';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -76,56 +68,6 @@ if (typeof window !== 'undefined') {
     window.jsonlint = require('jsonlint-mod');
   }
 }
-
-const EventsSubsciptionProvider = withSuppressedErrorBoundary(() => {
-  const { notify } = useNotification();
-
-  const eventsSubscription = useCallback(
-    () =>
-      subscribeEvents((result) => {
-        console.log('event received', result);
-        if (!result.event) {
-          console.error('Invalid event received', result);
-          return;
-        }
-        const [isValid, validatedEvent] = validateEvent({
-          ...result.event,
-          user_id: result.event.userID,
-          system_id: result.event.systemID,
-          updated_at: result.event.updatedAt,
-          created_at: result.event.createdAt,
-          deleted_at: result.event.deletedAt,
-          operation_id: result.event.operationID,
-        });
-        if (!isValid) {
-          console.error('Invalid event received', result);
-          return;
-        }
-        try {
-          rtkStore.dispatch(pushEvent(validatedEvent));
-          rtkStore.dispatch(mesheryApi.util.invalidateTags([PROVIDER_TAGS.EVENT]));
-          notify({
-            message: validatedEvent.description,
-            event_type: SEVERITY_TO_NOTIFICATION_TYPE_MAPPING[validatedEvent.severity],
-            id: validatedEvent.id,
-            showInNotificationCenter: true,
-          });
-        } catch (e) {
-          console.error('Error While Storing Event --Event-Subscription ', e);
-        }
-      }),
-    [],
-  );
-
-  useEffect(() => {
-    const subscription = eventsSubscription();
-    return () => {
-      subscription.dispose();
-    };
-  }, []);
-
-  return null;
-});
 
 async function fetchContexts(number = 10, search = '') {
   return await promisifiedDataFetch(
@@ -277,6 +219,7 @@ class MesheryApp extends App {
     if (isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry)) {
       Router.push(mesheryExtensionRoute);
     }
+    console.log('prevProps.k8sConfig', prevProps.k8sConfig, 'k8sConfig', k8sConfig);
 
     if (!_.isEqual(prevProps.k8sConfig, k8sConfig)) {
       const { operatorSubscription, meshSyncSubscription } = this.state;
@@ -344,15 +287,7 @@ class MesheryApp extends App {
     if (this.state.k8sContexts?.contexts) {
       if (id === 'all') {
         let activeContexts = [];
-        if (this.state.activeK8sContexts.includes('all')) {
-          // If 'all' is already present, remove all elements and clear activeContexts
-          this.setState({ activeK8sContexts: [] }, () =>
-            this.activeContextChangeCallback(this.state.activeK8sContexts),
-          );
-          return;
-        }
         this.state.k8sContexts.contexts.forEach((ctx) => activeContexts.push(ctx.id));
-        // If 'all' is not present, set activeContexts to all context IDs plus 'all'
         activeContexts.push('all');
         this.setState({ activeK8sContexts: activeContexts }, () =>
           this.activeContextChangeCallback(this.state.activeK8sContexts),
@@ -365,8 +300,8 @@ class MesheryApp extends App {
           let ids = [...(state.activeK8sContexts || [])];
           //pop event
           if (ids.includes(id)) {
-            ids = ids.filter((cid) => cid !== 'all' && cid !== id);
-            return { activeK8sContexts: ids };
+            ids = ids.filter((id) => id !== 'all');
+            return { activeK8sContexts: ids.filter((cid) => cid !== id) };
           }
 
           //push event
@@ -542,21 +477,22 @@ class MesheryApp extends App {
                     }}
                     maxSnack={10}
                   >
-                    <EventsSubsciptionProvider />
-                    <MesheryProgressBar />
-                    {!this.state.isFullScreenMode && (
-                      <Header
-                        onDrawerToggle={this.handleDrawerToggle}
-                        onDrawerCollapse={isDrawerCollapsed}
-                        contexts={this.state.k8sContexts}
-                        activeContexts={this.state.activeK8sContexts}
-                        setActiveContexts={this.setActiveContexts}
-                        searchContexts={this.searchContexts}
-                        updateExtensionType={this.updateExtensionType}
-                        theme={this.state.theme}
-                        themeSetter={this.themeSetter}
-                      />
-                    )}
+                    <NotificationCenterProvider>
+                      <MesheryProgressBar />
+                      {!this.state.isFullScreenMode && (
+                        <Header
+                          onDrawerToggle={this.handleDrawerToggle}
+                          onDrawerCollapse={isDrawerCollapsed}
+                          contexts={this.state.k8sContexts}
+                          activeContexts={this.state.activeK8sContexts}
+                          setActiveContexts={this.setActiveContexts}
+                          searchContexts={this.searchContexts}
+                          updateExtensionType={this.updateExtensionType}
+                          theme={this.state.theme}
+                          themeSetter={this.themeSetter}
+                        />
+                      )}
+                    </NotificationCenterProvider>
                     <main className={classes.mainContent}>
                       <MuiPickersUtilsProvider utils={MomentUtils}>
                         <ErrorBoundary>

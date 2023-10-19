@@ -3,9 +3,9 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
-	"io"
 	"github.com/gorilla/mux"
+	"io"
+	"net/http"
 
 	"github.com/layer5io/meshery/server/models"
 )
@@ -129,7 +129,8 @@ func (h *Handler) DeleteEnvironmentHandler(w http.ResponseWriter, r *http.Reques
 //
 // Updates a environment
 // responses:
-//   200: environmentResponseWrapper
+//
+//	200: environmentResponseWrapper
 func (h *Handler) UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	environmentID := mux.Vars(req)["id"]
 	bd, err := io.ReadAll(req.Body)

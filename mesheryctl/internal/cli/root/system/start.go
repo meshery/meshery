@@ -20,7 +20,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"os/user"
 	"path"
 	"strconv"
 	"strings"
@@ -301,20 +300,20 @@ func start() error {
 		}
 		endpoint.Port = int32(tempPort)
 
-		group, err := user.LookupGroup("docker")
-		if err != nil {
-			return errors.Wrap(err, utils.SystemError("unable to get GID of docker group"))
-		}
+		// group, err := user.LookupGroup("docker")
+		// if err != nil {
+		// 	return errors.Wrap(err, utils.SystemError("unable to get GID of docker group"))
+		// }
 
-		// Create the group_add option and add GID of docker group to meshery container
-		groupAdd := viper.GetStringSlice("services.meshery.group_add")
-		groupAdd = append(groupAdd, group.Gid)
-		utils.ViperCompose.Set("services.meshery.group_add", groupAdd)
+		// // Create the group_add option and add GID of docker group to meshery container
+		// groupAdd := viper.GetStringSlice("services.meshery.group_add")
+		// groupAdd = append(groupAdd, group.Gid)
+		// utils.ViperCompose.Set("services.meshery.group_add", groupAdd)
 
-		// Write the modified configuration back to the Docker Compose file
-		if err := utils.ViperCompose.WriteConfig(); err != nil {
-			return errors.Wrap(err, utils.SystemError("unable to add group_add option. Meshery Server cannot perform this privileged action"))
-		}
+		// // Write the modified configuration back to the Docker Compose file
+		// if err := utils.ViperCompose.WriteConfig(); err != nil {
+		// 	return errors.Wrap(err, utils.SystemError("unable to add group_add option. Meshery Server cannot perform this privileged action"))
+		// }
 
 		log.Info("Starting Meshery...")
 		start := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "up", "-d")

@@ -24,7 +24,6 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/database"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -2041,7 +2040,7 @@ func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFi
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("filter successfully sent to remote provider: %s", string(bdr))
+		// logrus.Infof("filter successfully sent to remote provider: %s", string(bdr)) stop logging filter data
 		return bdr, nil
 	}
 
@@ -2492,7 +2491,7 @@ func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path s
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("filter successfully sent to remote provider: %s", string(bdr))
+		// logrus.Infof("filter successfully sent to remote provider: %s", string(bdr)) stop logging filter data
 		return bdr, nil
 	}
 
@@ -3850,33 +3849,6 @@ func (l *RemoteProvider) DeleteMesheryConnection() error {
 	return ErrDelete(fmt.Errorf("Could not delete meshery connection"), " Meshery Connection", resp.StatusCode)
 }
 
-// RecordMeshSyncData records the mesh sync data
-func (l *RemoteProvider) RecordMeshSyncData(obj model.Object) error {
-	result := l.GenericPersister.Create(&obj)
-	if result.Error != nil {
-		return result.Error
-	}
-	return nil
-}
-
-// ReadMeshSyncData records the mesh sync data
-func (l *RemoteProvider) ReadMeshSyncData() ([]model.Object, error) {
-	objects := make([]model.Object, 0)
-	result := l.GenericPersister.
-		Preload("TypeMeta").
-		Preload("ObjectMeta").
-		Preload("ObjectMeta.Labels").
-		Preload("ObjectMeta.Annotations").
-		Preload("Spec").
-		Preload("Status").
-		Find(&objects)
-
-	if result.Error != nil {
-		return nil, result.Error
-	}
-	return objects, nil
-}
-
 // TarXZF takes in a source url downloads the tar.gz file
 // uncompresses and then save the file to the destination
 func TarXZF(srcURL, destination string) error {
@@ -4191,7 +4163,7 @@ func (l *RemoteProvider) ShareFilter(req *http.Request) (int, error) {
 }
 
 func (l *RemoteProvider) GetEnvironments(token, page, pageSize, search, order, filter string) ([]byte, error) {
-	
+
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments")
 	q := remoteProviderURL.Query()
 	if page != "" {

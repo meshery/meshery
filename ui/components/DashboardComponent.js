@@ -48,7 +48,7 @@ import DashboardMeshModelGraph from './Dashboard/DashboardMeshModelGraph';
 import ConnectionStatsChart from './Dashboard/ConnectionCharts.js';
 import { EVENT_TYPES } from '../lib/event-types';
 import { withNotify } from '../utils/hooks/useNotification';
-
+import _ from 'lodash';
 const styles = (theme) => ({
   rootClass: { backgroundColor: theme.palette.secondary.elevatedComponents2 },
   datatable: {
@@ -295,8 +295,8 @@ class DashboardComponent extends React.Component {
     }
     // handle subscriptions update on switching K8s Contexts
     if (
-      prevProps?.selectedK8sContexts !== this.props?.selectedK8sContexts ||
-      prevProps.k8sconfig !== this.props.k8sconfig
+      !_.isEqual(prevProps?.selectedK8sContexts, this.props?.selectedK8sContexts) ||
+      !_.isEqual(prevProps.k8sconfig, this.props.k8sconfig)
     ) {
       this.disposeSubscriptions();
       this.initMeshSyncControlPlaneSubscription();
@@ -304,7 +304,7 @@ class DashboardComponent extends React.Component {
       this.initNamespaceQuery();
     }
 
-    if (prevState?.selectedNamespace !== this.state?.selectedNamespace) {
+    if (!_.isEqual(prevState?.selectedNamespace, this.state?.selectedNamespace)) {
       this.disposeWorkloadWidgetSubscription();
       this.initDashboardClusterResourcesSubscription();
       this.initNamespaceQuery();
