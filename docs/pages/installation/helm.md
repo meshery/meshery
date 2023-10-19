@@ -16,7 +16,7 @@ list: exclude
 </ol>
 </div> 
 
-## Install Meshery on Your Kubernetes Cluster Using Helm V3
+## Install Meshery on Your Kubernetes Cluster Using Helm
 
 {% capture code_content %}helm repo add meshery https://meshery.io/charts/
 helm install meshery meshery/meshery --namespace meshery --create-namespace{% endcapture %}
