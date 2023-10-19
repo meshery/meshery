@@ -24,10 +24,28 @@ language: en
     </a>
     <!-- <h6>Getting Started</h6> -->
     <ul>
-        <li><a href="{{ site.baseurl }}/project">Project Overview</a></li>
+        <!-- <li><a href="{{ site.baseurl }}/project">Project Overview</a></li> -->
         <li><a href="{{ site.baseurl }}/installation/quick-start">Quick Start</a></li>
         <!-- <li><a href="{{ site.baseurl }}/project">Essential Features</a></li>  -->
     </ul>
+    <details>
+      <summary>
+        <h6 style="display:inline">
+          <a href="{{ site.baseurl }}/installation/" class="text-black">Supported Platforms</a>
+        </h6>
+      </summary>
+      <ul class="section-title">
+      {% for item in sorted_pages %}
+      {% if item.type=="installation" and item.list=="include" and item.language == "en" -%}
+        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+        {% if item.abstract %}
+          -  {{ item.abstract }}
+        {% endif %}
+        </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+    </details>
   </div>
 
     <!-- CONCEPTS -->
@@ -217,4 +235,3 @@ language: en
 <img src="https://layer5.io/assets/images/meshery/meshery-logo-shadow-light-white-text-side.svg" width="60%" />
 <h1>Documentation</h1>
 </div> -->
-
