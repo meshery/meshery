@@ -1,21 +1,25 @@
 ---
 layout: page
-title: Contributing to MeshModel
-permalink: project/contributing/contributing-meshmodel
-redirect_from: project/contributing/contributing-meshmodel/
-description: How to contribute to MeshModel
+title: Contributing to Models
+permalink: project/contributing/contributing-models
+redirect_from: project/contributing/contributing-models/
+description: How to contribute to Meshery Models, Components, Relationships, Policies...
 language: en
 type: project
 category: contributing
 ---
 
-MeshModel serves as a foundational element in the Meshery ecosystem, representing the interconnectedness of various components inside the infrastructure of an architecture.
+Models serve as a foundational element in the Meshery ecosystem, representing the interconnectedness of various components inside the infrastructure of an architecture.
 
-In the context of MeshModel, the `Core Constructs` of MeshModel are represented in three forms:
+## Difference Between Model Schemas, Definition, and Instance
 
-1.  `Schema` (static): The schema represents the skeletal structure of a construct and provides a logical view of its size, shape, and characteristics. It defines the expected properties and attributes of the construct. The schema serves as a blueprint or template for creating instances of the construct. It is a static representation that defines the structure and properties but does not contain specific configuration values.
+Models are infrastructure and application deployment technologies. Model Definitions are read-only templates that contain instructions for creating a any given infrasture. A Model Definition is a snapshot or blueprint of the configuration, credentials(s) and dependencies required for an application to run.
 
-2.  `Definition` (static): The definition is an implementation of the schema. It contains specific configurations and values for the construct at hand. The definition provides the actual configuration details for a specific instance of the construct. It is static because it is created based on the schema but does not change once created. The definition is used to instantiate instances of the construct.
+Depending upon where they are in their lifecycle, Meshery Models can be referred to differently based on their are comprised of a handful of core constructs.
+
+1. `Schema` (static): The schema represents the skeletal structure of a construct and provides a logical view of its size, shape, and characteristics. It defines the expected properties and attributes of the construct. The schema serves as a blueprint or template for creating instances of the construct. It is a static representation that defines the structure and properties but does not contain specific configuration values.
+
+2. `Definition` (static): The definition is an implementation of the schema. It contains specific configurations and values for the construct at hand. The definition provides the actual configuration details for a specific instance of the construct. It is static because it is created based on the schema but does not change once created. The definition is used to instantiate instances of the construct.
 
         Things to Keep in Mind while creating RelationshipDefinitions:
 

@@ -1,42 +1,8 @@
 - title: 🚀 Quick Start
   url: installation/quick-start
-
-- title: 🗺 Overview
-  url: project
   links:
-    - title: Community
-      url: project/community
-    - title: Contributing ↆ
-      url: project/contributing
-      children:
-        - title: Build & Release (CI)
-          url: project/contributing/build-and-release
-        - title: Meshery Adapters
-          url: project/contributing/contributing-adapters
-        - title: Meshery CLI
-          url: project/contributing/contributing-cli
-        - title: " - Design Principles"
-          url: project/contributing/contributing-cli-guide
-        - title: Meshery Docs
-          url: project/contributing/contributing-docs
-        - title: Meshery Errors
-          url: project/contributing/contributing-error
-        - title: Meshery Server
-          url: project/contributing/contributing-server
-        - title: Meshery UI
-          url: project/contributing/contributing-ui
-        - title: End-to-End Testing
-          url: project/contributing/contributing-cypress
-        - title: Meshery Docker Extension
-          url: project/contributing/contributing-docker-extension
-    - title: Releases
-      url: project/releases
-    - title: Vulnerabilities
-      url: project/security-vulnerabilities
-    - title: FAQ
-      url: project/faq
     - title: Supported Platforms ↆ
-      url: installation/platforms
+      url: installation
       children:
         - title: AKS
           url: installation/platforms/aks
@@ -59,7 +25,44 @@
         - title: Minikube
           url: installation/platforms/minikube
         - title: Windows
-          url: installation/platforms/windows
+          url: installation/platforms/windows  
+    - title: Compatibility Matrix
+      url: installation/platforms
+- title: 🗺 Overview
+  url: project
+  links:
+  - title: FAQ
+    url: project/faq
+- title: 🧑‍💻 Contributing & Community
+  url: project/community
+  links:
+    - title: Contributing ↆ
+      url: project/contributing
+      children:
+        - title: Build & Release (CI)
+          url: project/contributing/build-and-release
+        - title: "&nbsp;&nbsp; End-to-End Testing"
+          url: project/contributing/contributing-cypress
+        - title: Meshery Adapters
+          url: project/contributing/contributing-adapters
+        - title: Meshery CLI
+          url: project/contributing/contributing-cli
+        - title: "&nbsp;&nbsp;&nbsp;CLI Design Principles"
+          url: project/contributing/contributing-cli-guide
+        - title: Meshery Docs
+          url: project/contributing/contributing-docs
+        - title: Meshery Errors
+          url: project/contributing/contributing-error
+        - title: Meshery Server
+          url: project/contributing/contributing-server
+        - title: Meshery UI
+          url: project/contributing/contributing-ui
+        - title: Meshery Docker Extension
+          url: project/contributing/contributing-docker-extension
+    - title: Releases
+      url: project/releases
+    - title: Vulnerabilities
+      url: project/security-vulnerabilities
 - title: 🧠 Concepts
   url: concepts
   links:
@@ -83,11 +86,10 @@
           url: concepts/designs
         - title: Environments
           url: concepts/environments
-        - title: MeshModel
-          url: concepts/meshmodel
+        - title: Models
+          url: concepts/models
         - title: Workspaces
           url: concepts/workspaces
-
 - title: ⚙️ Tasks (all)
   url: tasks
   links:
