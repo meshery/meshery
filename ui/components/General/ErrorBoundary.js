@@ -25,6 +25,18 @@ function Fallback({ error, resetErrorBoundary }) {
   );
 }
 
+function fallback({ error, resetErrorBoundary }) {
+  return (
+    <div className="alert alert-danger">
+      <p>Couldn&apos;t open form. Encountered the following error:</p>
+      <pre>{error.message}</pre>
+      <Button color="primary" variant="contained" onClick={resetErrorBoundary}>
+        Refresh Form
+      </Button>
+    </div>
+  );
+}
+
 const reportError = (error, info) => {
   // This is where you'd send the error to Sentry,etc
   console.log('Error Caught Inside Boundary --reportError', error, 'Info', info);
@@ -33,6 +45,14 @@ const reportError = (error, info) => {
 export const ErrorBoundary = ({ children, ...props }) => {
   return (
     <ReactErrorBoundary FallbackComponent={Fallback} onError={reportError} {...props}>
+      {children}
+    </ReactErrorBoundary>
+  );
+};
+
+export const ErrBoundary = ({ children, ...props }) => {
+  return (
+    <ReactErrorBoundary FallbackComponent={fallback} onError={reportError} {...props}>
       {children}
     </ReactErrorBoundary>
   );

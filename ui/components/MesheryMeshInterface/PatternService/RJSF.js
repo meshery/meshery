@@ -18,8 +18,7 @@ import MesheryCustomSelectWidget from './RJSFCustomComponents/CustomSelectWidget
 import CustomTextAreaWidget from './RJSFCustomComponents/CustomTextAreaWidget';
 import CustomFileWidget from './RJSFCustomComponents/CustomFileWidget';
 import CustomURLWidget from './RJSFCustomComponents/CustomURLWidget';
-import ErrorBoundary from '../../ErrorBoundary';
-
+import { ErrBoundary } from '../../General/ErrorBoundary';
 const MuiRJSFForm = withTheme(MaterialUITheme);
 
 /**
@@ -64,7 +63,7 @@ function RJSFForm({
   }
 
   return (
-    <ErrorBoundary>
+    <ErrBoundary>
       {' '}
       {/* Putting RJSF into error boundary, so that error can be catched.. */}
       <MuiThemeProvider theme={globalTheme.palette.type === 'dark' ? darkRjsfTheme : rjsfTheme}>
@@ -102,7 +101,7 @@ function RJSFForm({
           <div></div>
         </MuiRJSFForm>
       </MuiThemeProvider>
-    </ErrorBoundary>
+    </ErrBoundary>
   );
 }
 
