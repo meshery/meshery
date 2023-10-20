@@ -93,18 +93,28 @@
             url: concepts/architecture/broker
           - title: "- Meshsync"
             url: concepts/architecture/meshsync     
-    - title: Conceptual ↆ
+    - title: Logical ↆ
       url: concepts/logical
       children: 
         - title: "Designs"
           url: concepts/designs
         - title: "Environments"
           url: concepts/environments
+        - title: "Filters"
+          url: concepts/filters          
         - title: "Models"
           url: concepts/models
           grandchildren: 
+          - title: "- Components"
+            url: concepts/components
+          - title: "- Relationships"
+            url: concepts/relationships
+          - title: "- Policies"
+            url: concepts/policies
           - title: "- Connections"
             url: concepts/connections
+          - title: "- Credentials"
+            url: concepts/credentials
         - title: "Workspaces"
           url: concepts/workspaces
 - title: ⚙️ Tasks (all)
