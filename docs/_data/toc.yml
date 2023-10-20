@@ -72,6 +72,8 @@
           url: project/contributing/contributing-ui
         - title: Meshery Docker Extension
           url: project/contributing/contributing-docker-extension
+        - title: Meshery Server Events
+          url: project/contributing-server-events
     - title: Releases
       url: project/releases
     - title: Vulnerabilities
