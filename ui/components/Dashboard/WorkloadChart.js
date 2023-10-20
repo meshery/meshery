@@ -57,6 +57,7 @@ export default function WorkloadChart({
       className={classes.dashboardSection}
       style={{
         padding: '0.5rem',
+        paddingTop: '2rem',
       }}
     >
       <div
@@ -64,8 +65,6 @@ export default function WorkloadChart({
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          margin: '0.5rem',
-          marginTop: '2rem',
         }}
       >
         <Link href="/management/connections">
