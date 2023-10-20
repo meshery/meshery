@@ -488,13 +488,6 @@ func (h *Handler) handleApplicationPOST(
 			return
 		}
 
-		h.formatApplicationOutput(rw, resp, format, &res, eventBuilder)
-
-		eventBuilder.WithSeverity(events.Informational)
-		event := eventBuilder.Build()
-		go h.config.EventBroadcaster.Publish(userID, event)
-		_ = provider.PersistEvent(event)
-
 		var mesheryApplicationContent []models.MesheryApplication
 		err = json.Unmarshal(resp, &mesheryApplicationContent)
 		if err != nil {
