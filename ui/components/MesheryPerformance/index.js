@@ -74,7 +74,7 @@ export function generatePerformanceProfile(data) {
     caCertificate,
   } = data;
 
-  const performanceProfileName = MesheryPerformanceComponent.generateTestName(name, serviceMesh);
+  const performanceProfileName = generateTestName(name, serviceMesh);
 
   return {
     ...(id && { id }),
