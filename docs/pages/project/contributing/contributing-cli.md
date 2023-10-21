@@ -203,38 +203,7 @@ Though the command page is generated automatically by the Cobra CLI library, the
 
 ## Preserving Manually Added Documentation with Cobra CLI
 
-We are using Cobra CLI and Github Actions to automate the generation of command documentation. To ensure that any manually added documentation is preserved even after regeneration, you enclose it within comment blocks. These comment blocks act as bookends, indicating the start and end of your manually added content. Any text or examples within these comment blocks will remain intact, while other manually added content outside the blocks will be removed when the documentation is generated. Remember to add any new changes or additions at the end of the documentation, ensuring that your documentation remains organized and consistent.
-
-{% capture code_content %}
-
-<!--- ###########################################################################
-
-                 START OF MANUAL DOCUMENTATION
-IT IS SAFE TO ADD ADDITIONAL USAGE AND EXAMPLES BELOW THIS LINE.
-MORE INFO: https://docs.meshery.io/project/contributing/contributing-cli
-
-############################################################################ -->
-
-### Sample Usage 
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
-
-\`\`\`
-mesheryctl version --config docker-compose.yaml
-\`\`\`
-
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-![screenshot of meshery](https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/meshery/meshery-logo-dark-text-side.png)
-
-<!-- ###########################################################################
-
-                 END OF MANUAL DOCUMENTATION
-
-############################################################################ --->
-
-{% endcapture %}
-{% include code.html code=code_content %}
+We use Cobra CLI and GitHub Actions to automate the generation of command documentation. To protect any manually added content and ensure it remains intact after regeneration, follow this format: {% raw %}{% include folder-name/file-name %}{% endraw %}. This format should reference an external file where your manual changes are stored. Any content added using this format will not be altered during the documentation generation process. When making new changes or additions, be sure to place them at the end of the documentation to keep it organized and consistent.
 
 ### References
 
