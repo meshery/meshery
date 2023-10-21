@@ -202,7 +202,7 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, manuallyAddedContent map
 	if len(manuallyAddedContent) > 0 {
 		for _, content := range manuallyAddedContent {
 			buf.WriteString("\n")
-			buf.WriteString("<!-- " + content + " --->" + "\n")
+			buf.WriteString("{% include " + content + " %}" + "\n")
 		}
 	}
 
@@ -289,10 +289,10 @@ func getManuallyAddedContentMap(filename string) (map[int]string, error) {
 
 	content := string(existingContent)
 
-	commentPattern := regexp.MustCompile(`<!---([\s\S]*?)--->`)
-	matches := commentPattern.FindAllStringSubmatch(content, -1)
-	for i, match := range matches {
-		// Store the section content in the map with order as the key
+	includePattern := regexp.MustCompile(`\{\%\s*include\s+([^%]+)\s+\%\}`)
+	includeMatches := includePattern.FindAllStringSubmatch(content, -1)
+	for i, match := range includeMatches {
+		// Store the include content in the map with order as the key
 		manuallyAddedContentMap[i] = strings.TrimSpace(match[1])
 	}
 	return manuallyAddedContentMap, nil
