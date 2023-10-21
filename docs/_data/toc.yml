@@ -29,11 +29,11 @@
         - title: Linux or Mac
           grandchildren: 
             - title: "- Bash"
-              url: installation/operating-systems#homebrew
+              url: installation/mesheryctl#homebrew
             - title: "- Brew"
-              url: installation/operating-systems#homebrew
+              url: installation/mesheryctl#homebrew
         - title: Windows
-          url: installation/operating-systems/windows 
+          url: installation/windows 
           grandchildren: 
             - title: Scoop
               url: installation/windows/scoop 
