@@ -8,6 +8,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/database"
+	"gorm.io/gorm"
 )
 
 // MesheryFilterPersister is the persister for persisting
@@ -36,7 +37,12 @@ func (mfp *MesheryFilterPersister) GetMesheryFilters(search, order string, page,
 	count := int64(0)
 	filters := []*MesheryFilter{}
 
-	query := mfp.DB.Where("visibility in (?)", visibility).Order(order)
+	var query *gorm.DB
+	if len(visibility) == 0 {
+		query = mfp.DB.Where("visibility in (?)", visibility)
+	}
+	query = query.Order(order)
+
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"

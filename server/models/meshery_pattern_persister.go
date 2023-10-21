@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid"
+	"gorm.io/gorm"
 
 	"github.com/layer5io/meshkit/database"
 )
@@ -36,7 +37,11 @@ func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, pag
 
 	count := int64(0)
 	patterns := []*MesheryPattern{}
-	query := mpp.DB.Where("visibility in (?)", visibility).Where("updated_at > ?", updatedAfter).Order(order)
+	var query *gorm.DB
+	if len(visibility) == 0 {
+		query = mpp.DB.Where("visibility in (?)", visibility)
+	}
+	query = query.Where("updated_at > ?", updatedAfter).Order(order)
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
