@@ -222,13 +222,18 @@ func start() error {
 
 			temp, ok := services[v]
 			if !ok {
-				return errors.New("unable to extract component version")
+				return errors.New(fmt.Sprintf("no such service `%s` exists.", v))
 			}
 
 			spliter := strings.Split(temp.Image, ":")
 			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), "latest")
 			services[v] = temp
 			AllowedServices[v] = services[v]
+			utils.ViperCompose.Set(fmt.Sprintf("services.%s", v), services[v])
+			err = utils.ViperCompose.WriteConfig()
+			if err != nil {
+				return ErrWriteDockerComposeFile(err)
+			}
 		}
 
 		for _, v := range RequiredService {
