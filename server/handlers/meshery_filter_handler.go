@@ -255,7 +255,12 @@ func (h *Handler) GetMesheryFiltersHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	r.ParseForm() // necessary to get r.Form["visibility"], i.e, ?visibility=public&visbility=private
+	err := r.ParseForm() // necessary to get r.Form["visibility"], i.e, ?visibility=public&visbility=private
+	if err != nil {
+		h.log.Error(ErrFetchPattern(err))
+		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
+		return
+	}
 	resp, err := provider.GetMesheryFilters(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), r.Form["visibility"])
 	if err != nil {
 		h.log.Error(ErrFetchFilter(err))
