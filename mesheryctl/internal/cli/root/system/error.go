@@ -55,7 +55,6 @@ const (
 	ErrValidProviderCode                 = "1160"
 	ErrUnmarshallConfigCode              = "1161"
 	ErrUploadFileParamsCode              = "1162"
-	ErrWriteDockerComposeFileCode        = "1189"
 )
 
 var (
@@ -337,15 +336,4 @@ func ErrUploadFileParams(err error) error {
 		[]string{"Unable to upload parameters from config file with provided context"},
 		[]string{"Ensure you have a strong network connection and the right configuration set in your Meshconfig file." + FormatErrorReference()})
 
-}
-
-func ErrWriteDockerComposeFile(err error) error {
-	return errors.New(
-		ErrWriteDockerComposeFileCode,
-		errors.Alert,
-		[]string{"Unable to add services to docker compose file"},
-		[]string{err.Error()},
-		[]string{"You may not have permission to edit meshery configuration file (~/.meshery/config.yaml)."},
-		[]string{"Ensure you have permission to write meshery configuration file (~/.meshery/config.yaml)."},
-	)
 }
