@@ -382,7 +382,7 @@ func (h *Handler) handlePatternPOST(
 // ```?pagesize={pagesize}``` Default pagesize is 10
 //
 // ```?visibility={visibility}``` Default visibility is public + private; Can use multiple visibility flags
-// Eg: ```?visibility=public&visibility=published``` will return all public and published filters
+// Eg: ```?visibility=public&visibility=published``` will return all public and published designs
 //
 // responses:
 //
