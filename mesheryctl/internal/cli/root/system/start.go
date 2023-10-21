@@ -232,7 +232,9 @@ func start() error {
 			utils.ViperCompose.Set(fmt.Sprintf("services.%s", v), services[v])
 			err = utils.ViperCompose.WriteConfig()
 			if err != nil {
-				return ErrWriteDockerComposeFile(err)
+				// failure while adding a service to docker compose file is not a fatal error
+				// mesheryctl will continue deploying with required services (meshery, watchtower)
+				log.Infof("Encountered an error while adding `%s` service to Docker compose file, you may not have permission to write file.", v)
 			}
 		}
 
