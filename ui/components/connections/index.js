@@ -4,7 +4,6 @@ import {
   TableCell,
   Button,
   Tooltip,
-  Link,
   FormControl,
   Select,
   MenuItem,
@@ -28,7 +27,6 @@ import ExploreIcon from '@mui/icons-material/Explore';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import classNames from 'classnames';
 import dataFetch from '../../lib/data-fetch';
-import LaunchIcon from '@mui/icons-material/Launch';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import CustomColumnVisibilityControl from '../../utils/custom-column';
@@ -152,20 +150,17 @@ const styles = (theme) => ({
     flexWrap: 'noWrap',
   },
   innerTableWrapper: {
-    backgroundColor: '#cccccc',
-    borderTop: '1px solid #E0E0E0',
-    borderBottom: '1px solid #E0E0E0',
+    background: `linear-gradient(90deg, #FFF 0.04%, #ECECED 100.04%)`,
     borderRadius: 0,
-    background: '#FFF',
-    boxShadow:
-      '0px 4px 8px 0px rgba(0, 0, 0, 0.08) inset, 0px 0px 4px 0px rgba(0, 0, 0, 0.25) inset, 1px 0px 4px 0px rgba(0, 0, 0, 0.25) inset, 0px -1px 4px 0px rgba(0, 0, 0, 0.25) inset',
     padding: '0',
   },
   innerTableContainer: {
-    background: 'linear-gradient(90deg, #F2F0F0 0%, #FFF 100%)',
-    margin: '1px',
-    marginLeft: '18px',
-    width: 'calc(100% - 20px)',
+    background: theme.palette.secondary.chevron,
+    margin: '10px 10px 10px 13px',
+    borderLeft: `9px solid ${theme.palette.secondary.pinball}`,
+    borderRadius: '10px 0 0 10px',
+    width: 'calc(100% - 23px)',
+    border: 'none',
   },
   listItem: {
     paddingTop: '0',
@@ -272,6 +267,8 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
   const [showMore, setShowMore] = useState(false);
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [loading, setLoading] = useState(false);
+  // const [showMenu, setShowMenu] = useState(false);
+  // const [anchorEl, setAnchorEl] = useState(null);
 
   const { notify } = useNotification();
   const StyleClass = useStyles();
@@ -389,12 +386,11 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
         customBodyRender: (value, tableMeta) => {
           return (
             <Tooltip title={tableMeta.rowData[1] || tableMeta.rowData[2]} placement="top">
-              <Link href={tableMeta.rowData[1] || tableMeta.rowData[2]} target="_blank">
-                {value}
-                <sup>
-                  <LaunchIcon sx={{ fontSize: '12px' }} />
-                </sup>
-              </Link>
+              <Chip
+                variant="outlined"
+                label={value}
+                onDelete={() => handleDeleteConnection(tableMeta.rowData[0])}
+              />
             </Tooltip>
           );
         },
@@ -746,6 +742,19 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
         selected.data.map(({ index }) => {
           deleteConnection(connections[index].id);
         });
+      }
+    }
+  };
+
+  const handleDeleteConnection = async (id) => {
+    if (id) {
+      let response = await modalRef.current.show({
+        title: `Delete Connection`,
+        subtitle: `Are you sure that you want to delete connection"?`,
+        options: ['Delete', 'No'],
+      });
+      if (response === 'Delete') {
+        deleteConnection(id);
       }
     }
   };
