@@ -239,8 +239,8 @@ func (h *Handler) handleFilterPOST(
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
 //
-// ```?visibility={visibility}``` Default visibility is public + private; Can use multiple visibility flags
-// Eg: ```?visibility=public&visibility=published``` will return all public and published filters
+// ```?visibility={[visibility]}``` Default visibility is public + private; Mulitple visibility filters can be passed as an array
+// Eg: ```?visibility=["public", "published"]``` will return public and published filters
 //
 // responses:
 //
@@ -255,13 +255,22 @@ func (h *Handler) GetMesheryFiltersHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	err := r.ParseForm() // necessary to get r.Form["visibility"], i.e, ?visibility=public&visbility=private
-	if err != nil {
-		h.log.Error(ErrFetchPattern(err))
-		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
-		return
+	filter := struct {
+		Visibility []string `json:"visibility"`
+	}{}
+
+	visibility := q.Get("visibility")
+	if visibility != "" {
+		err := json.Unmarshal([]byte(visibility), &filter.Visibility)
+		if err != nil {
+			h.log.Error(ErrFetchFilter(err))
+			http.Error(rw, ErrFetchFilter(err).Error(), http.StatusInternalServerError)
+			return
+		}
 	}
-	resp, err := provider.GetMesheryFilters(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), r.Form["visibility"])
+
+
+	resp, err := provider.GetMesheryFilters(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), filter.Visibility)
 	if err != nil {
 		h.log.Error(ErrFetchFilter(err))
 		http.Error(rw, ErrFetchFilter(err).Error(), http.StatusInternalServerError)

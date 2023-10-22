@@ -381,8 +381,8 @@ func (h *Handler) handlePatternPOST(
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
 //
-// ```?visibility={visibility}``` Default visibility is public + private; Can use multiple visibility flags
-// Eg: ```?visibility=public&visibility=published``` will return all public and published designs
+// ```?visibility={[visibility]}``` Default visibility is public + private; Mulitple visibility filters can be passed as an array
+// Eg: ```?visibility=["public", "published"]``` will return public and published designs
 //
 // responses:
 //
@@ -404,9 +404,21 @@ func (h *Handler) GetMesheryPatternsHandler(
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
-	visibility := r.Form["visibility"]
-	logrus.Debug("visibility: ", visibility)
-	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter, visibility)
+	filter := struct {
+		Visibility []string `json:"visibility"`
+	}{}
+
+	visibility := q.Get("visibility")
+	if visibility != "" {
+		err := json.Unmarshal([]byte(visibility), &filter.Visibility)
+		if err != nil {
+			h.log.Error(ErrFetchPattern(err))
+			http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter, filter.Visibility)
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
