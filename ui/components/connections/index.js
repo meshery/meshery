@@ -13,12 +13,17 @@ import {
   TableRow,
   TableSortLabel,
   Chip,
+  IconButton,
+  Typography,
+  Switch,
+  Popover,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 import { updateProgress } from '../../lib/store';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -38,6 +43,9 @@ import { Colors } from '../../themes/app';
 import { iconMedium } from '../../css/icons.styles';
 import PromptComponent from '../PromptComponent';
 import { FormattedMetadata } from '../NotificationCenter/metadata';
+import resetDatabase from '../graphql/queries/ResetDatabaseQuery';
+import changeOperatorState from '../graphql/mutations/OperatorStatusMutation';
+import fetchMesheryOperatorStatus from '../graphql/queries/OperatorStatusQuery';
 
 const styles = (theme) => ({
   grid: { padding: theme.spacing(2) },
@@ -178,6 +186,10 @@ const styles = (theme) => ({
     justifyContent: 'flex-end',
     width: '100%',
   },
+  centerContent: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
 });
 
 const ACTION_TYPES = {
@@ -194,6 +206,10 @@ const ACTION_TYPES = {
     error_msg: 'Failed to delete connection',
   },
 };
+
+const ENABLED = 'ENABLED';
+const DISABLED = 'DISABLED';
+const KUBERNETES = 'kubernetes';
 
 /**
  * Parent Component for Connection Component
@@ -256,7 +272,7 @@ function ConnectionManagementPage(props) {
   );
 }
 
-function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
+function Connections({ classes, updateProgress, onOpenCreateConnectionModal, operatorState }) {
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);
   const [count, setCount] = useState(0);
@@ -267,9 +283,14 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
   const [showMore, setShowMore] = useState(false);
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [loading, setLoading] = useState(false);
-  // const [showMenu, setShowMenu] = useState(false);
-  // const [anchorEl, setAnchorEl] = useState(null);
+  const [rowData, setSelectedRowData] = useState({});
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [_operatorState, _setOperatorState] = useState(operatorState || []);
 
+  const open = Boolean(anchorEl);
+  const _operatorStateRef = useRef(_operatorState);
+  _operatorStateRef.current = _operatorState;
+  const meshSyncResetRef = useRef(null);
   const { notify } = useNotification();
   const StyleClass = useStyles();
 
@@ -385,10 +406,11 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
         },
         customBodyRender: (value, tableMeta) => {
           return (
-            <Tooltip title={tableMeta.rowData[1] || tableMeta.rowData[2]} placement="top">
+            <Tooltip title={value} placement="top">
               <Chip
                 variant="outlined"
                 label={value}
+                style={{ maxWidth: '120px' }}
                 onDelete={() => handleDeleteConnection(tableMeta.rowData[0])}
               />
             </Tooltip>
@@ -544,6 +566,7 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
                   id="demo-simple-select"
                   disabled={disabled}
                   value={value}
+                  onClick={(e) => e.stopPropagation()}
                   onChange={(e) => handleStatusChange(e, tableMeta.rowData[0])}
                   className={classes.statusSelect}
                   disableUnderline
@@ -552,6 +575,39 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
                 </Select>
               </FormControl>
             </>
+          );
+        },
+      },
+    },
+    {
+      name: 'Actions',
+      options: {
+        filter: false,
+        sort: false,
+        searchable: false,
+        customHeadRender: function CustomHead({ ...column }) {
+          return (
+            <TableCell>
+              <b>{column.label}</b>
+            </TableCell>
+          );
+        },
+        customBodyRender: (_, tableMeta) => {
+          return (
+            <div className={classes.centerContent}>
+              {tableMeta.rowData[4] === KUBERNETES ? (
+                <IconButton
+                  aria-label="more"
+                  id="long-button"
+                  aria-haspopup="true"
+                  onClick={(e) => handleActionMenuOpen(e, tableMeta)}
+                >
+                  <MoreVertIcon style={iconMedium} />
+                </IconButton>
+              ) : (
+                '-'
+              )}
+            </div>
           );
         },
       },
@@ -713,6 +769,7 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
   };
 
   const handleStatusChange = (e, connectionId) => {
+    e.stopPropagation();
     const requestBody = JSON.stringify({
       status: e.target.value,
     });
@@ -774,6 +831,107 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
     );
   };
 
+  const handleActionMenuOpen = (event, tableMeta) => {
+    event.stopPropagation();
+    setAnchorEl(event.currentTarget);
+    setSelectedRowData(tableMeta);
+  };
+
+  const handleActionMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleFlushMeshSync = (index) => {
+    return async () => {
+      handleActionMenuClose();
+      let response = await meshSyncResetRef.current.show({
+        title: `Flush MeshSync data for ${connections[index].metadata?.name} ?`,
+        subtitle: `Are you sure to Flush MeshSync data for “${connections[index].metadata?.name}”? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.`,
+        options: ['PROCEED', 'CANCEL'],
+      });
+      if (response === 'PROCEED') {
+        updateProgress({ showProgress: true });
+        resetDatabase({
+          selector: {
+            clearDB: 'true',
+            ReSync: 'true',
+            hardReset: 'false',
+          },
+          k8scontextID: connections[index].metadata?.id,
+        }).subscribe({
+          next: (res) => {
+            updateProgress({ showProgress: false });
+            if (res.resetStatus === 'PROCESSING') {
+              notify({ message: `Database reset successful.`, event_type: EVENT_TYPES.SUCCESS });
+            }
+          },
+          error: handleError('Database is not reachable, try restarting server.'),
+        });
+      }
+    };
+  };
+
+  function getOperatorStatus(index) {
+    const ctxId = connections[index]?.metadata?.id;
+    const operator = _operatorState?.find((op) => op.contextID === ctxId);
+    if (!operator) {
+      return {};
+    }
+    const operatorStatus = operator.operatorStatus;
+    return {
+      operatorState: operatorStatus.status === ENABLED,
+      operatorVersion: operatorStatus.version,
+    };
+  }
+
+  const handleOperatorSwitch = (index, checked) => {
+    const contextId = connections[index].metadata?.id;
+    const variables = {
+      status: `${checked ? ENABLED : DISABLED}`,
+      contextID: contextId,
+    };
+
+    updateProgress({ showProgress: true });
+
+    changeOperatorState((response, errors) => {
+      updateProgress({ showProgress: false });
+
+      if (errors !== undefined) {
+        handleError(`Unable to ${!checked ? 'Uni' : 'I'}nstall operator`);
+      }
+      notify({
+        message: `Operator ${response.operatorStatus.toLowerCase()}`,
+        event_type: EVENT_TYPES.SUCCESS,
+      });
+
+      const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID: contextId }).subscribe({
+        next: (res) => {
+          _setOperatorState(updateCtxInfo(contextId, res));
+          tempSubscription.unsubscribe();
+        },
+        error: (err) => console.log('error at operator scan: ' + err),
+      });
+    }, variables);
+  };
+
+  const updateCtxInfo = (ctxId, newInfo) => {
+    if (newInfo.operator.error) {
+      handleError('There is problem With operator')(newInfo.operator.error.description);
+      return;
+    }
+
+    const state = _operatorStateRef.current;
+    const op = state?.find((ctx) => ctx.contextID === ctxId);
+    if (!op) {
+      return [...state, { contextID: ctxId, operatorStatus: newInfo.operator }];
+    }
+
+    let ctx = { ...op };
+    const removeCtx = state?.filter((ctx) => ctx.contextID !== ctxId);
+    ctx.operatorStatus = newInfo.operator;
+    return removeCtx ? [...removeCtx, ctx] : [ctx];
+  };
+
   const [tableCols, updateCols] = useState(columns);
 
   const [columnVisibility, setColumnVisibility] = useState(() => {
@@ -810,31 +968,6 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
               display: 'flex',
             }}
           >
-            {/* <Button
-              aria-label="Edit"
-              variant="contained"
-              color="primary"
-              size="large"
-              // @ts-ignore
-              onClick={() => {}}
-              style={{ marginRight : "0.5rem" }}
-            >
-              <EditIcon style={iconMedium} />
-            </Button> */}
-
-            {/* <Button
-              aria-label="Delete"
-              variant="contained"
-              color="primary"
-              size="large"
-              // @ts-ignore
-              onClick={() => {}}
-              style={{ background : "#8F1F00" }}
-            >
-              <DeleteForeverIcon style={iconMedium} />
-              Delete
-            </Button> */}
-
             <SearchBar
               onSearch={(value) => {
                 setSearch(value);
@@ -848,28 +981,9 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
             />
           </div>
         </div>
-        {/* <div className={StyleClass.toolWrapper}>
-          <div
-            className={classes.bulkAction}
-          >
-            <Button
-              aria-label="Delete"
-              variant="contained"
-              color="primary"
-              size="large"
-              // @ts-ignore
-              onClick={() => {}}
-              style={{ background : "#8F1F00" }}
-            >
-              <DeleteForeverIcon style={iconMedium} />
-              Delete
-            </Button>
-          </div>
-        </div> */}
         <ResponsiveDataTable
           data={connections}
           columns={columns}
-          // @ts-ignore
           options={options}
           className={classes.muiRow}
           tableCols={tableCols}
@@ -877,6 +991,40 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
           columnVisibility={columnVisibility}
         />
         <PromptComponent ref={modalRef} />
+        <Popover
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleActionMenuClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+        >
+          <Grid style={{ margin: '10px' }}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={handleFlushMeshSync(rowData.rowIndex)}
+              className={classes.FlushBtn}
+              data-cy="btnResetDatabase"
+            >
+              <Typography> Flush MeshSync </Typography>
+            </Button>
+            <Typography>
+              <Switch
+                defaultChecked={getOperatorStatus(rowData.rowIndex)?.operatorState}
+                onClick={(e) => handleOperatorSwitch(rowData.rowIndex, e.target.checked)}
+                name="OperatorSwitch"
+                color="primary"
+                className={classes.OperatorSwitch}
+              />
+              Operator
+            </Typography>
+          </Grid>
+        </Popover>
+        <PromptComponent ref={meshSyncResetRef} />
       </NoSsr>
     </>
   );
@@ -900,10 +1048,10 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state) => {
-  return {
-    user: state.get('user')?.toObject(),
-    selectedK8sContexts: state.get('selectedK8sContexts'),
-  };
+  const k8sconfig = state.get('k8sConfig');
+  const selectedK8sContexts = state.get('selectedK8sContexts');
+  const operatorState = state.get('operatorState');
+  return { k8sconfig, selectedK8sContexts, operatorState };
 };
 
 // @ts-ignore
