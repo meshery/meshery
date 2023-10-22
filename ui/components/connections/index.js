@@ -46,6 +46,7 @@ import { FormattedMetadata } from '../NotificationCenter/metadata';
 import resetDatabase from '../graphql/queries/ResetDatabaseQuery';
 import changeOperatorState from '../graphql/mutations/OperatorStatusMutation';
 import fetchMesheryOperatorStatus from '../graphql/queries/OperatorStatusQuery';
+import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 
 const styles = (theme) => ({
   grid: { padding: theme.spacing(2) },
@@ -956,11 +957,12 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal, ope
                 size="large"
                 // @ts-ignore
                 onClick={onOpenCreateConnectionModal}
-                style={{ marginRight: '2rem' }}
+                style={{ marginRight: '1rem', borderRadius: '5px' }}
               >
                 Connect Helm Repository
               </Button>
             </div>
+            <MesherySettingsEnvButtons />
           </div>
           <div
             className={classes.searchAndView}
