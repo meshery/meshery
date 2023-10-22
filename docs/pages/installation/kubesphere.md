@@ -1,7 +1,7 @@
 ---
 layout: default
 title: KubeSphere
-permalink: installation/platforms/kubesphere
+permalink: installation/kubesphere
 type: installation
 display-title: "false"
 language: en

@@ -3,6 +3,11 @@ layout: default
 title: Install mesheryctl
 permalink: installation/mesheryctl
 type: installation
+redirect_from:
+ - installation/operating-systems
+ - installation/operating-systems/
+ - installation/mesheryctl
+ - installation/mesheryctl/
 display-title: "true"
 language: en
 list: exclude

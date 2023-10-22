@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Docker
-permalink: installation/platforms/docker
+permalink: installation/docker
 type: installation
 display-title: "false"
 language: en

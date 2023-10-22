@@ -147,6 +147,16 @@ const ArrayFormatter = ({ items }) => {
   );
 };
 
+export function reorderObjectProperties(obj, order) {
+  if (!_.isObject(obj) || obj == null) {
+    return obj;
+  }
+
+  const orderedProperties = _.pick(obj, order);
+  const remainingProperties = _.omit(obj, order);
+  return { ...orderedProperties, ...remainingProperties };
+}
+
 const DynamicFormatter = ({ data }) => {
   const { propertyFormatters } = useContext(FormatterContext);
   const level = useContext(LevelContext);
@@ -190,9 +200,9 @@ const DynamicFormatter = ({ data }) => {
 
 export const FormatStructuredData = ({ propertyFormatters = {}, data }) => {
   if (!data || isEmptyAtAllDepths(data)) {
-    console.log('data is empty', data);
     return null;
   }
+
   return (
     <>
       <FormatterContext.Provider
