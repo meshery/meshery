@@ -27,11 +27,12 @@
         - title: KubeSphere
           url: installation/kubesphere
         - title: Linux or Mac
+          url: installation/linux
           grandchildren: 
             - title: "- Bash"
-              url: installation/mesheryctl#homebrew
+              url: installation/linux/bash
             - title: "- Brew"
-              url: installation/mesheryctl#homebrew
+              url: installation/linux/brew
         - title: Windows
           url: installation/windows 
           grandchildren: 
