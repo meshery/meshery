@@ -29,7 +29,7 @@
         - title: Linux or Mac
           grandchildren: 
             - title: "- Bash"
-              url: installation/mesheryctl#homebrew
+              url: installation/mesheryctl#bash
             - title: "- Brew"
               url: installation/mesheryctl#homebrew
         - title: Windows
