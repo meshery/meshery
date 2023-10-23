@@ -27,13 +27,14 @@
         - title: KubeSphere
           url: installation/kubesphere
         - title: Linux or Mac
+          url: installation/linux
           grandchildren: 
             - title: "- Bash"
-              url: installation/operating-systems#homebrew
+              url: installation/linux/bash
             - title: "- Brew"
-              url: installation/operating-systems#homebrew
+              url: installation/linux/brew
         - title: Windows
-          url: installation/operating-systems/windows 
+          url: installation/windows 
           grandchildren: 
             - title: Scoop
               url: installation/windows/scoop 
