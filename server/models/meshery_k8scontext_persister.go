@@ -63,11 +63,12 @@ func (mkcp *MesheryK8sContextPersister) DeleteMesheryK8sContext(id string) (K8sC
 	return context, nil
 }
 
-func (mkcp *MesheryK8sContextPersister) SaveMesheryK8sContext(mkc K8sContext) (K8sContext, error) {
+func (mkcp *MesheryK8sContextPersister) SaveMesheryK8sContext(mkc K8sContext) (Connection, error) {
+	conn := Connection{}
 	if mkc.ID == "" {
 		id, err := K8sContextGenerateID(mkc)
 		if err != nil {
-			return mkc, ErrContextID
+			return conn, ErrContextID
 		}
 
 		mkc.ID = id
@@ -85,7 +86,7 @@ func (mkcp *MesheryK8sContextPersister) SaveMesheryK8sContext(mkc K8sContext) (K
 		return tx.Save(&mkc).Error
 	})
 
-	return mkc, err
+	return conn, err
 }
 
 func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContext(id string) (K8sContext, error) {

@@ -183,7 +183,7 @@ func (l *DefaultLocalProvider) HandleUnAuthenticated(w http.ResponseWriter, req 
 	http.Redirect(w, req, "/user/login", http.StatusFound)
 }
 
-func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (K8sContext, error) {
+func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (Connection, error) {
 	return l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
 }
 
@@ -958,8 +958,8 @@ func (l *DefaultLocalProvider) ExtensionProxy(_ *http.Request) (*ExtensionProxyR
 	return nil, ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) SaveConnection(_ *http.Request, _ *ConnectionPayload, _ string, _ bool) error {
-	return ErrLocalProviderSupport
+func (l *DefaultLocalProvider) SaveConnection(_ *http.Request, _ *ConnectionPayload, _ string, _ bool) (*Connection, error) {
+	return nil, ErrLocalProviderSupport
 }
 
 func (l *DefaultLocalProvider) GetConnections(_ *http.Request, _ string, _, _ int, _, _ string) (*ConnectionPage, error) {

@@ -98,6 +98,7 @@ const (
 	ErrPersistEventCode                   = "1533"
 	ErrUnreachableKubeAPICode             = "1534"
 	ErrFlushMeshSyncDataCode              = "1535"
+	ErrUpdateConnectionStatusCode       = "replace_me"
 )
 
 var (
@@ -370,4 +371,8 @@ func ErrUnreachableKubeAPI(err error, server string) error {
 
 func ErrFlushMeshSyncData(err error, contextName, server string) error {
 	return errors.New(ErrFlushMeshSyncDataCode, errors.Alert, []string{"Unable to flush MeshSync data for context %s at %s "}, []string{err.Error()}, []string{"Meshery Database handler is not accessible to perform operations"}, []string{"Restart Meshery Server or Perform Hard Reset"})
+}
+
+func ErrUpdateConnectionStatus(err error, statusCode int) error {
+	return errors.New(ErrUpdateConnectionStatusCode, errors.Alert, []string{}, []string{}, []string{}, []string{})
 }

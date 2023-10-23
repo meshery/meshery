@@ -378,7 +378,7 @@ type Provider interface {
 	GetResult(tokenVal string, resultID uuid.UUID) (*MesheryResult, error)
 	RecordPreferences(req *http.Request, userID string, data *Preference) error
 
-	SaveK8sContext(token string, k8sContext K8sContext) (K8sContext, error)
+	SaveK8sContext(token string, k8sContext K8sContext) (Connection, error)
 	GetK8sContexts(token, page, pageSize, search, order string, withCredentials bool) ([]byte, error)
 	DeleteK8sContext(token, id string) (K8sContext, error)
 	GetK8sContext(token, connectionID string) (K8sContext, error)
@@ -443,12 +443,13 @@ type Provider interface {
 
 	ExtensionProxy(req *http.Request) (*ExtensionProxyResponse, error)
 
-	SaveConnection(req *http.Request, conn *ConnectionPayload, token string, skipTokenCheck bool) error
+	SaveConnection(req *http.Request, conn *ConnectionPayload, token string, skipTokenCheck bool) (*Connection, error)
 	GetConnections(req *http.Request, userID string, page, pageSize int, search, order string) (*ConnectionPage, error)
 	GetConnectionsByKind(req *http.Request, userID string, page, pageSize int, search, order, connectionKind string) (*map[string]interface{}, error)
 	GetConnectionsStatus(req *http.Request, userID string) (*ConnectionsStatusPage, error)
 	UpdateConnection(req *http.Request, conn *Connection) (*Connection, error)
 	UpdateConnectionById(req *http.Request, conn *ConnectionPayload, connId string) (*Connection, error)
+	UpdateConnectionStatusByID(req *http.Request, connectionID uuid.UUID, connectionStatus ConnectionStatus) (*Connection, error)
 	DeleteConnection(req *http.Request, connID uuid.UUID) (*Connection, error)
 	DeleteMesheryConnection() error
 

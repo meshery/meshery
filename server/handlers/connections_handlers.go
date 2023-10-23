@@ -13,6 +13,8 @@ import (
 	"github.com/layer5io/meshkit/models/events"
 )
 
+type connectionStatusPayload map[uuid.UUID]models.ConnectionStatus
+
 // swagger:route POST /api/integrations/connections PostConnection idPostConnection
 // Handle POST request for creating a new connection
 //
@@ -40,7 +42,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 
 	eventBuilder := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
 
-	err = provider.SaveConnection(req, &connection, "", false)
+	_, err = provider.SaveConnection(req, &connection, "", false)
 	if err != nil {
 		_err := ErrFailToSave(err, obj)
 		metadata := map[string]interface{}{
@@ -187,6 +189,43 @@ func (h *Handler) GetConnectionsStatus(w http.ResponseWriter, req *http.Request,
 		http.Error(w, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+func (h *Handler) UpdateConnectionsStatus(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	connectionStatusPayload := &connectionStatusPayload{}
+	defer func() {
+		_ = req.Body.Close()
+	}()
+
+	userID := uuid.FromStringOrNil(user.ID)
+	eventBuilder := events.NewEvent().FromSystem(*h.SystemID).FromUser(userID).WithCategory("connection").WithAction("update").ActedUpon(userID)
+	err := json.NewDecoder(req.Body).Decode(connectionStatusPayload)
+	if err != nil {
+		errUnmarshal := models.ErrUnmarshal(err, "connection status payload")
+		eventBuilder.WithSeverity(events.Error).WithDescription("Unable to update connection status.").
+		WithMetadata(map[string]interface{}{
+			"error": errUnmarshal,
+		})
+		event := eventBuilder.Build()
+		provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+		return
+	}
+
+	for id, status := range *connectionStatusPayload {
+		eventBuilder.ActedUpon(id)
+		updatedConnection, err := provider.UpdateConnectionStatusByID(req, id, status)
+		if err != nil {
+			eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)) // Get the connection name as id doesn't convey much to the user.	
+		} else {
+			eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Connection status updated to %s for %s", status, id))
+		}
+
+		event := eventBuilder.Build()
+		provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+	}
+	go h.config.K8scontextChannel.PublishContext()
 }
 
 // swagger:route PUT /api/integrations/connections/{connectionKind} PutConnection idPutConnection

@@ -629,7 +629,7 @@ func (l *RemoteProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.
 	http.Redirect(w, req, "/provider", http.StatusFound)
 }
 
-func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8sContext, error) {
+func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (Connection, error) {
 
 	k8sServerID := *k8sContext.KubernetesServerID
 
@@ -660,14 +660,14 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8
 		MetaData:         metadata,
 		CredentialSecret: cred,
 	}
-	logrus.Infof("attempting to save %s context to remote provider with ID %s", k8sContext.Name, k8sContext.ID)
-	err := l.SaveConnection(nil, conn, token, true)
+	
+	connection, err := l.SaveConnection(nil, conn, token, true)
 	if err != nil {
 		logrus.Errorf(err.Error())
-		return k8sContext, err
+		return Connection{}, err
 	}
 
-	return k8sContext, nil
+	return *connection, nil
 }
 func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order string, withCredentials bool) ([]byte, error) {
 	MesheryInstanceID, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
@@ -3254,7 +3254,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 			CredentialSecret: cred,
 		}
 
-		err := l.SaveConnection(r, conn, tokenString, true)
+		_, err := l.SaveConnection(r, conn, tokenString, true)
 		if err != nil {
 			logrus.Errorf("unable to save Meshery connection: %v", err)
 		}
@@ -3540,16 +3540,16 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 	return nil, ErrFetch(fmt.Errorf("failed to request to remote provider"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
-func (l *RemoteProvider) SaveConnection(req *http.Request, conn *ConnectionPayload, token string, skipTokenCheck bool) error {
+func (l *RemoteProvider) SaveConnection(req *http.Request, conn *ConnectionPayload, token string, skipTokenCheck bool) (*Connection, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
-		return ErrInvalidCapability("PersistConnection", l.ProviderName)
+		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
 	_conn, err := json.Marshal(conn)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	bf := bytes.NewBuffer(_conn)
 
@@ -3560,29 +3560,32 @@ func (l *RemoteProvider) SaveConnection(req *http.Request, conn *ConnectionPaylo
 		tokenString, err = l.GetToken(req)
 		if err != nil {
 			logrus.Error("error getting token: ", err)
-			return err
+			return nil, err
 		}
 	}
+	logrus.Infof("attempting to save %s connection %s to remote provider with status %s", conn.Name, conn.Kind, conn.Status)
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		if resp == nil {
-			return ErrUnreachableRemoteProvider(err)
+			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		return ErrFetch(err, "Save Connection", resp.StatusCode)
+		return nil, ErrFetch(err, "Save Connection", resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return ErrDataRead(err, "Save Connection")
+		return nil, ErrDataRead(err, "Save Connection")
 	}
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
-		return nil
+		connection := &Connection{}
+		_ = json.Unmarshal(bdr, connection)
+		return connection, nil
 	}
 
-	return ErrPost(fmt.Errorf("failed to save the connection"), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrPost(fmt.Errorf("failed to save the connection"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, pageSize int, search, order string) (*ConnectionPage, error) {
@@ -3695,6 +3698,41 @@ func (l *RemoteProvider) GetConnectionsStatus(req *http.Request, userID string) 
 		return nil, err
 	}
 	return &cp, nil
+}
+
+func (l *RemoteProvider) UpdateConnectionStatusByID(req *http.Request, connectionID uuid.UUID, connectionStatus ConnectionStatus) (*Connection, error) {
+	if !l.Capabilities.IsSupported(PersistConnection) {
+		logrus.Error("operation not available")
+		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
+	}
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
+	bf := bytes.NewBuffer([]byte(connectionStatus))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connectionID))
+	logrus.Debugf("Making request to : %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Error("error getting token: ", err)
+		return nil, err
+	}
+
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		return nil, ErrUpdateConnectionStatus(err, resp.StatusCode)
+	}
+	if resp.StatusCode == http.StatusOK {
+		var conn Connection
+		bdr, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, ErrDataRead(err, "Update Connection")
+		}
+
+		if err = json.Unmarshal(bdr, &conn); err != nil {
+			return nil, ErrUnmarshal(err, "connection")
+		}
+		return &conn, nil
+	}
+	return nil, ErrUpdateConnectionStatus(err, resp.StatusCode)
 }
 
 // UpdateConnection - to update an existing connection
