@@ -26,12 +26,13 @@
               url: installation/kubernetes/minikube
         - title: KubeSphere
           url: installation/kubesphere
-        - title: Linux or Mac
+        - title: Linux or macOS
+          url: installation/linux-mac
           grandchildren: 
             - title: "- Bash"
-              url: installation/mesheryctl#bash
+              url: installation/linux-mac/bash
             - title: "- Brew"
-              url: installation/mesheryctl#homebrew
+              url: installation/linux-mac/brew
         - title: Windows
           url: installation/windows 
           grandchildren: 
