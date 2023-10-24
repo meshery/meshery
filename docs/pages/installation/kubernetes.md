@@ -61,6 +61,18 @@ Deploy Meshery to your Kubernetes cluster by executing:
 {% capture code_content %}$ mesheryctl system start{% endcapture %}
 {% include code.html code=code_content %}
 
+
+## Using Helm
+
+<pre class="codeblock-pre">
+<div class="codeblock">
+ <div class="clipboardjs">
+ $ kubectl create ns meshery
+ $ helm repo add meshery https://meshery.io/charts/
+ $ helm install meshery meshery/meshery -n meshery
+ </div></div>
+</pre>
+
 ### Using Helm
 
 {% capture code_content %}$ helm repo add meshery https://meshery.io/charts/
@@ -134,6 +146,14 @@ If your Kubernetes cluster has a functional Ingress Controller, then you can con
  kind: Service
  spec:
      type: NodePort{% endcapture %}
+
+
+### Sample Commands to verify Meshery UI access:
+
+{% capture code_content %}export POD_NAME=$(kubectl get pods --namespace meshery -l "app.kubernetes.io/name=meshery,app.kubernetes.io/instance=meshery" -o jsonpath="{.items[0].metadata.name}")
+
+kubectl --namespace meshery port-forward $POD_NAME 9081:8080{% endcapture %}
+{% include code.html code=code_content %}
 
 # Advanced Installations
 

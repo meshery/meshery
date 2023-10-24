@@ -1,23 +1,19 @@
----
+<!-- ---
 layout: default
 title: Compatibility Matrix
-permalink: installation/compatibility-matrix
+# permalink: installation/compatibility-matrix
 type: installation
 display-title: "false"
-redirect_from: installation/compatibility-matrix/
+# redirect_from: installation/compatibility-matrix/
 language: en
 list: exclude
----
+--- -->
 
 <a name="compatibility-matrix"></a>
 
 # Compatibility Matrix
 
 Meshery Server and Meshery Adapters are tested daily for their compatibility with the infrastructure they manage and the platforms Meshery deploys on (Kubernetes and Docker). Integration test results are automatically posted to the following compatibility matrix.
-
-<div style="z-index:0">
-  {% include alert.html type="info" title="<span style='margin:0;'>Overview of the Integration Tests</span>" content="For a complete overview of the latest integration tests and their status please visit Meshery <a href='/project/compatibility-matrix#integration-tests'>Integration Tests</a>" %}
-</div>
 
 <style>
 .nav-link.active{
@@ -72,6 +68,8 @@ Meshery Server and Meshery Adapters are tested daily for their compatibility wit
               <td><b>2.0.x</b> and above </td>
             </tr>
           </table>
+        </div>
+      </div>
         <!-- <div style="background-color:#E6E6E6; text-align:center;font-size:30px;padding:210px; color:#999999;" class="tab-pane fade" id="mac" role="tabpanel" aria-labelledby="mac-tab">Compatibility matrix not yet available<br> <a style="font-size:20px" href="{{ site.baseurl }}/installation/">Install Instruction</a></div>
         <div style="text-align:center;" class="tab-pane fade" id="windows" role="tabpanel" aria-labelledby="windows-tab">
           <h3 style="text-align:left;">The following minimum Windows build versions are required:</h3>
@@ -98,8 +96,8 @@ Meshery Server and Meshery Adapters are tested daily for their compatibility wit
             </tr>
           </table>
         <br> <a style="font-size:20px" href="{{ site.baseurl }}/installation/platforms/windows">Install Instruction</a></div> -->
-      </div>
-  </div>
 
-  
 
+<div style="z-index:0">
+  {% include alert.html type="info" title="<span style='margin:0;'>Overview of the Integration Tests</span>" content="For a complete overview of the latest integration tests and their status please visit Meshery <a href='/project/compatibility-matrix#integration-tests'>Integration Tests</a>" %}
+</div>

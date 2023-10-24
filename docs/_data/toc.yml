@@ -26,17 +26,17 @@
               url: installation/kubernetes/minikube
         - title: KubeSphere
           url: installation/kubesphere
-        - title: Linux or Mac
-          url: installation/linux
+        - title: Linux or macOS
+          url: installation/linux-mac
           grandchildren: 
             - title: "- Bash"
-              url: installation/linux/bash
+              url: installation/linux-mac/bash
             - title: "- Brew"
-              url: installation/linux/brew
+              url: installation/linux-mac/brew
         - title: Windows
           url: installation/windows 
           grandchildren: 
-            - title: Scoop
+            - title: "- Scoop"
               url: installation/windows/scoop 
     - title: Compatibility Matrix
       url: installation/compatibility-matrix
