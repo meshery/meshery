@@ -96,7 +96,6 @@ To access Meshery's UI, please refer to the [instruction](/tasks/accessing-meshe
 
 Note:   _You can also verify health of your system using [mesheryctl system check](/reference/mesheryctl/system/check)_
 
-# Suggested Reading
+{% include suggested-reading.html language="en" %}
 
-<!-- {% include suggested-reading.html diffName="true" isDiffTag="true" diffTag=tag %} -->
-{% include related-discussions.html tag="mesheryctl" %}
+{% include related-discussions.html tag="meshery" %}
