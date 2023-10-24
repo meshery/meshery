@@ -39,8 +39,6 @@ import CustomColumnVisibilityControl from '../utils/custom-column';
 import useStyles from '../assets/styles/general/tool.styles';
 import SearchBar from '../utils/custom-search';
 import { Colors } from '../themes/app';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import MesheryTreeView from './MesheryTreeView';
 import { Avatar, Chip, Typography } from '@mui/material';
 
@@ -80,7 +78,7 @@ const meshmodelStyles = (theme) => ({
   },
 });
 
-const MeshModelComponent = () => {
+const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }) => {
   const [resourcesDetail, setResourcesDetail] = useState([]);
   const [isRequestCancelled, setRequestCancelled] = useState(false);
   const [count, setCount] = useState();
@@ -94,19 +92,22 @@ const MeshModelComponent = () => {
   const [checked, setChecked] = useState(false);
   const StyleClass = useStyles();
   const [view, setView] = useState(OVERVIEW);
-  const [convert, setConvert] = useState(false);
+  const [convert, setConvert] = useState(true);
+  const [show, setShow] = useState({});
+  const [comp, setComp] = useState([]);
+  const [rela, setRela] = useState([]);
 
   const getModels = async (page) => {
     try {
       const { total_count, models } = await getMeshModels(page + 1, rowsPerPage); // page+1 due to server side indexing starting from 1
-      models.map(async (model) => {
+      const componentPromises = models.map(async (model) => {
         const { components } = await getComponentFromModelApi(model.name);
         const { relationships } = await getRelationshipFromModelApi(model.name);
         model.components = components;
         model.relationships = relationships;
       });
-      setCount(total_count);
 
+      await Promise.all(componentPromises);
       if (!isRequestCancelled) {
         setResourcesDetail(models);
       }
@@ -162,12 +163,14 @@ const MeshModelComponent = () => {
   const getSearchedModels = async (searchText) => {
     try {
       const { total_count, models } = await searchModels(searchText);
-      models.map(async (model) => {
+      const componentPromises = models.map(async (model) => {
         const { components } = await getComponentFromModelApi(model.name);
         const { relationships } = await getRelationshipFromModelApi(model.name);
         model.components = components;
         model.relationships = relationships;
       });
+
+      await Promise.all(componentPromises);
       setCount(total_count);
       if (!isRequestCancelled) {
         setResourcesDetail(models ? models : []);
@@ -206,7 +209,7 @@ const MeshModelComponent = () => {
 
   useEffect(() => {
     setRequestCancelled(false);
-    // console.log(filteredData);
+    console.log(rela);
 
     if (view === MODELS && searchText === null) {
       getModels(page);
@@ -223,7 +226,7 @@ const MeshModelComponent = () => {
     return () => {
       setRequestCancelled(true);
     };
-  }, [view, page, searchText, rowsPerPage]);
+  }, [view, page, searchText, rowsPerPage, show, comp, rela]);
 
   const meshmodel_columns = [
     {
@@ -550,6 +553,19 @@ const MeshModelComponent = () => {
     alignItems: 'center',
   };
 
+  const cardStyle = {
+    background: '#51636B',
+    color: 'white',
+    height: '10rem',
+    width: '13rem',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: '1rem',
+    flexDirection: 'column',
+    cursor: 'pointer',
+  };
+
   return (
     <div data-test="workloads">
       <div className={StyleClass.toolWrapper} style={customInlineStyle}>
@@ -606,122 +622,50 @@ const MeshModelComponent = () => {
         columnVisibility={columnVisibility}
       /> */}
       {convert ? (
-        <div
-          style={{
-            background: 'white',
-            padding: '5rem',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: '1rem',
-          }}
-        >
-          <div style={{ display: 'flex', flexDirection: 'row', marginBottom: '1rem' }}>
+        <div className={StyleClass.mainContainer}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              marginBottom: '1rem',
+            }}
+          >
             <Paper
               elevation={3}
-              style={{
-                background: '#51636B',
-                color: 'white',
-                height: '10rem',
-                width: '13rem',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginRight: '1rem',
-                flexDirection: 'column',
-                cursor: 'pointer',
-              }}
+              style={cardStyle}
               onClick={() => {
                 setView(MODELS);
                 setConvert(false);
               }}
             >
-              <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>220</span>
+              <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>{modelsCount}</span>
               Models
             </Paper>
             <Paper
               elevation={3}
-              style={{
-                background: '#51636B',
-                color: 'white',
-                height: '10rem',
-                width: '13rem',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginRight: '1rem',
-                flexDirection: 'column',
-                cursor: 'pointer',
-              }}
+              style={cardStyle}
               onClick={() => {
                 setView(COMPONENTS);
                 setConvert(false);
               }}
             >
-              <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>1071</span>
+              <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>{componentsCount}</span>
               Components
             </Paper>
             <Paper
               elevation={3}
-              style={{
-                background: '#51636B',
-                color: 'white',
-                height: '10rem',
-                width: '13rem',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginRight: '1rem',
-                flexDirection: 'column',
-                cursor: 'pointer',
-              }}
+              style={cardStyle}
               onClick={() => {
                 setView(RELATIONSHIPS);
                 setConvert(false);
               }}
             >
-              <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>8</span>
+              <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>{relationshipsCount}</span>
               Relationships
             </Paper>
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'row' }}>
             <Paper
               elevation={3}
-              style={{
-                background: '#51636B',
-                color: 'white',
-                height: '10rem',
-                width: '13rem',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginRight: '1rem',
-                flexDirection: 'column',
-                cursor: 'pointer',
-              }}
-              onClick={() => {
-                setView(POLICIES);
-                setConvert(false);
-              }}
-            >
-              <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>12</span>
-              Policies
-            </Paper>
-            <Paper
-              elevation={3}
-              style={{
-                background: '#51636B',
-                color: 'white',
-                height: '10rem',
-                width: '13rem',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                marginRight: '1rem',
-                flexDirection: 'column',
-                cursor: 'pointer',
-              }}
+              style={cardStyle}
               onClick={() => {
                 setView(REGISTRANTS);
                 setConvert(false);
@@ -742,6 +686,8 @@ const MeshModelComponent = () => {
               paddingTop: '1rem',
               paddingLeft: '1rem',
               paddingRight: '1rem',
+              display: 'flex',
+              flexDirection: 'row',
             }}
           >
             <Button
@@ -771,7 +717,7 @@ const MeshModelComponent = () => {
               }}
               onClick={() => setView(MODELS)}
             >
-              Models(220+)
+              Models({modelsCount})
             </Button>
             <Button
               style={{
@@ -784,7 +730,7 @@ const MeshModelComponent = () => {
               }}
               onClick={() => setView(COMPONENTS)}
             >
-              Components(1071)
+              Components({componentsCount})
             </Button>
             <Button
               style={{
@@ -797,20 +743,7 @@ const MeshModelComponent = () => {
               }}
               onClick={() => setView(RELATIONSHIPS)}
             >
-              Relationships(8)
-            </Button>
-            <Button
-              style={{
-                backgroundColor: view === POLICIES ? 'white' : '#4a7d8d',
-                color: view === POLICIES ? 'black' : 'white',
-                borderRadius: '8px 8px 0px 0px',
-                marginRight: '1rem',
-                padding: view === POLICIES ? '0.5rem 2rem' : '0.6rem 2rem',
-                borderTop: view === POLICIES ? '0.3rem solid #00B39F' : '',
-              }}
-              onClick={() => setView(POLICIES)}
-            >
-              Policies(12)
+              Relationships({relationshipsCount})
             </Button>
             <Button
               style={{
@@ -826,14 +759,18 @@ const MeshModelComponent = () => {
               Registrants(12)
             </Button>
           </div>
-          <div style={{ display: 'flex', padding: '1rem', flexDirection: 'row' }}>
+          <div className={StyleClass.treeWrapper}>
             <div style={{ height: '30rem', width: '50%', margin: '1rem', overflowY: 'auto' }}>
-              <MesheryTreeView data={filteredData} view={view} />
-              {/* {view === MODELS && <MesheryTreeView data={filteredData} />}
-              {view === COMPONENTS && <MesheryTreeView data={filteredData} />}
-              {view === RELATIONSHIPS && <MesheryTreeView data={filteredData} />}
-              {view === POLICIES && <MesheryTreeView data={filteredData} />}
-              {view === REGISTRANTS && <MesheryTreeView data={filteredData} />} */}
+              <MesheryTreeView
+                data={filteredData}
+                view={view}
+                show={show}
+                setShow={setShow}
+                comp={comp}
+                setComp={setComp}
+                rela={rela}
+                setRela={setRela}
+              />
             </div>
             <div
               style={{
@@ -843,14 +780,17 @@ const MeshModelComponent = () => {
                 backgroundColor: '#d9dadb80',
                 borderRadius: '6px',
                 padding: '1.5rem',
+                overflowY: 'auto',
               }}
             >
               <div>
-                <Typography variant="h5" sx={{ marginBottom: '1rem' }}>
-                  <span style={{ fontWeight: 'bold' }}>Model:</span> Model Name
+                <Typography variant="h5" sx={{ marginBottom: '0.8rem' }}>
+                  <span style={{ fontWeight: 'bold' }}>Model:</span> {show.displayName}
                 </Typography>
                 <Chip
-                  avatar={<Avatar src="/static/img/meshsync.svg" />}
+                  avatar={
+                    <Avatar src="/static/img/meshsync.svg" style={{ width: 22, height: 22 }} />
+                  }
                   label="MeshSync"
                   sx={{ backgroundColor: '#00B39F25' }}
                 />
@@ -858,34 +798,49 @@ const MeshModelComponent = () => {
                   style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
                 >
                   <div>
-                    <p>Version: 6.9.5</p>
-                    <p>Components: 30</p>
+                    <p>Version: {show.version}</p>
+                    <p>Components: {show.components?.length} </p>
                   </div>
                   <div>
-                    <p>Category: Cloud Native Network</p>
-                    <p>Registered At: September 29,2023</p>
+                    <p>Category: {show.category?.name}</p>
                   </div>
                 </div>
               </div>
-              <div>
-                <Typography variant="h5" sx={{ marginBottom: '1rem' }}>
-                  <span style={{ fontWeight: 'bold' }}>Component(s)</span>
-                </Typography>
-                <Typography variant="h5">Component Name</Typography>
-                <div
-                  style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
-                >
-                  <p>API Version: 0.3.6</p>
-                  <p>Sub Category: API Gateway</p>
+              {view !== RELATIONSHIPS && (
+                <div>
+                  <Typography variant="h5" sx={{ marginBottom: '1rem' }}>
+                    <span style={{ fontWeight: 'bold' }}>Component(s)</span>
+                  </Typography>
+                  {comp.map((component) => (
+                    <div>
+                      <Typography variant="h5">{component.displayName}</Typography>
+                      <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                        }}
+                      >
+                        <p style={{ margin: '6px 0px' }}>API Version: {component.apiVersion}</p>
+                        <p style={{ margin: '6px 0px' }}>Sub Category: {component.kind}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
-              <div>
-                <Typography variant="h5" sx={{ marginBottom: '1rem' }}>
-                  <span style={{ fontWeight: 'bold' }}>Relationship(s)</span>
-                </Typography>
-                <Typography variant="h6">Hierchical</Typography>
-                <p>API Version: 1.2.3</p>
-              </div>
+              )}
+              {view !== COMPONENTS && (
+                <div>
+                  <Typography variant="h5" sx={{ marginBottom: '1rem' }}>
+                    <span style={{ fontWeight: 'bold' }}>Relationship(s)</span>
+                  </Typography>
+                  {rela.map((relation) => (
+                    <div>
+                      <Typography variant="h6">{relation.displayhostname}</Typography>
+                      <p style={{ margin: '6px 0px' }}>API Version: {relation.apiVersion}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

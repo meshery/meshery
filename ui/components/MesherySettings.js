@@ -523,7 +523,11 @@ class MesherySettings extends React.Component {
                 </Tabs>
               </AppBar> */}
               <TabContainer>
-                <MeshModelComponent />
+                <MeshModelComponent
+                  modelsCount={this.state.modelsCount}
+                  componentsCount={this.state.componentsCount}
+                  relationshipsCount={this.state.relationshipsCount}
+                />
               </TabContainer>
             </TabContainer>
             {/* </div> */}

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
@@ -16,9 +16,8 @@ import {
 } from '../constants/navigator';
 
 const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
-  color: theme.palette.text.secondary,
+  color: theme.palette.type === 'dark' ? 'white' : 'black',
   [`& .${treeItemClasses.content}`]: {
-    color: 'black',
     fontWeight: theme.typography.fontWeightMedium,
     borderLeft: '10px solid transparent',
     '&.Mui-expanded': {
@@ -46,22 +45,8 @@ const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
 
 const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
   const theme = useTheme();
-  const {
-    bgColor,
-    color,
-    labelIcon: LabelIcon,
-    check,
-    root,
-    labelText,
-    colorForDarkMode,
-    bgColorForDarkMode,
-    ...other
-  } = props;
-
-  const styleProps = {
-    '--tree-view-color': theme.palette.mode !== 'dark' ? color : colorForDarkMode,
-    '--tree-view-bg-color': theme.palette.mode !== 'dark' ? bgColor : bgColorForDarkMode,
-  };
+  const [checked, setChecked] = useState(false);
+  const { labelIcon: LabelIcon, check, root, labelText, ...other } = props;
 
   return (
     <StyledTreeItemRoot
@@ -75,26 +60,53 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
             pr: 0,
             borderBottom: check && '1px solid #DDDDDD',
           }}
+          onClick={() => setChecked((prevcheck) => !prevcheck)}
         >
-          {/* <Box component={LabelIcon} color="inherit" sx={{ mr: 1 }} /> */}
           <Typography variant="body2" sx={{ fontWeight: 'inherit', flexGrow: 1 }}>
             {labelText}
           </Typography>
-          {check && <Checkbox size="small" />}
+          {check && (
+            <Checkbox
+              size="small"
+              checked={checked}
+              sx={{
+                color: '#00B39F',
+                '&.Mui-checked': {
+                  color: '#00B39F',
+                },
+              }}
+            />
+          )}
           {root && <Button variant="text">Collapse All</Button>}
         </Box>
       }
-      style={styleProps}
       {...other}
       ref={ref}
     />
   );
 });
 
-const MesheryTreeView = ({ data, view }) => {
-  useEffect(() => {
-    console.log(data);
-  });
+const MesheryTreeView = ({ data, view, show, setShow, comp, setComp, rela, setRela }) => {
+  const addComponent = (component) => {
+    // Check if the model is already in the comp array
+    if (comp.some((item) => item === component)) {
+      // If it exists, remove it from comp
+      setComp((prevComp) => prevComp.filter((item) => item !== component));
+    } else {
+      // If it doesn't exist, add it to comp
+      setComp((prevComp) => [...prevComp, component]);
+    }
+  };
+  const addRelationship = (relationship) => {
+    // Check if the model is already in the comp array
+    if (rela.some((item) => item === relationship)) {
+      // If it exists, remove it from comp
+      setRela((prevRela) => prevRela.filter((item) => item !== relationship));
+    } else {
+      // If it doesn't exist, add it to comp
+      setRela((prevRela) => [...prevRela, relationship]);
+    }
+  };
 
   return (
     <TreeView
@@ -106,7 +118,16 @@ const MesheryTreeView = ({ data, view }) => {
     >
       {view === MODELS &&
         data.map((model, index) => (
-          <StyledTreeItem key={index} nodeId={index} root labelText={model.displayName}>
+          <StyledTreeItem
+            key={index}
+            nodeId={index}
+            root
+            labelText={model.displayName}
+            onClick={() => {
+              setShow(data[index]), setComp((prevC) => []);
+              setRela((prevR) => []);
+            }}
+          >
             <StyledTreeItem
               nodeId={`${index}.1`}
               labelText={`Components (${model.components ? model.components.length : 0})`}
@@ -118,6 +139,7 @@ const MesheryTreeView = ({ data, view }) => {
                     nodeId={`${index}.1.${subIndex}`}
                     check
                     labelText={component.displayName}
+                    onClick={() => addComponent(component)}
                   />
                 ))}
             </StyledTreeItem>
@@ -132,6 +154,7 @@ const MesheryTreeView = ({ data, view }) => {
                     nodeId={`${index}.2.${subIndex}`}
                     check
                     labelText={relationship.displayhostname}
+                    onClick={() => addRelationship(relationship)}
                   />
                 ))}
             </StyledTreeItem>
@@ -139,7 +162,16 @@ const MesheryTreeView = ({ data, view }) => {
         ))}
       {view === COMPONENTS &&
         data.map((component, index) => (
-          <StyledTreeItem key={index} check nodeId={index} labelText={component.displayName} />
+          <StyledTreeItem
+            key={index}
+            check
+            nodeId={index}
+            labelText={component.displayName}
+            onClick={() => {
+              addComponent(data[index]);
+              setShow(data[index]?.model);
+            }}
+          />
         ))}
       {view === RELATIONSHIPS &&
         data.map((relationship, index) => (
@@ -148,6 +180,10 @@ const MesheryTreeView = ({ data, view }) => {
             check
             nodeId={index}
             labelText={relationship.displayhostname}
+            onClick={() => {
+              addRelationship(data[index]);
+              setShow(data[index]?.model);
+            }}
           />
         ))}
     </TreeView>

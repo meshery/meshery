@@ -16,6 +16,27 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative',
     zIndex: '125',
   },
+  mainContainer: {
+    backgroundColor:
+      theme.palette.type === 'dark'
+        ? theme.palette.secondary.toolbarBg2
+        : theme.palette.secondary.toolbarBg1,
+    padding: '5rem',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: '1rem',
+  },
+  treeWrapper: {
+    backgroundColor:
+      theme.palette.type === 'dark'
+        ? theme.palette.secondary.toolbarBg2
+        : theme.palette.secondary.toolbarBg1,
+    display: 'flex',
+    padding: '1rem',
+    flexDirection: 'row',
+  },
   // Define other styles as needed
 }));
 
