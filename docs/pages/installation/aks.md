@@ -49,11 +49,11 @@ Read through the following considerations prior to deploying Meshery on AKS.
 1. Verify you connection to an Azure Kubernetes Services Cluster using Azure CLI.
 1. Login to Azure account using [az login](https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli).
 1. After a successful login, identify the subscription associated with your AKS cluster:
-   {% capture code_content %}az account set --subscription [SUBSCRIPTION_ID]{% endcapture %}
-   {% include code.html code=code_content %}
+{% capture code_content %} az account set --subscription [SUBSCRIPTION_ID] {% endcapture %}
+{% include code.html code=code_content %}
 1. After setting the subscription, set the cluster context.
-   {% capture code_content %}az aks get-credentials --resource-group [RESOURCE_GROUP] --name [AKS_SERVICE_NAME]{% endcapture %}
-   {% include code.html code=code_content %}
+{% capture code_content %}az aks get-credentials --resource-group [RESOURCE_GROUP] --name [AKS_SERVICE_NAME]{% endcapture %}
+{% include code.html code=code_content %}
 
 ### Preflight: Plan your access to Meshery UI
 
@@ -86,7 +86,7 @@ For detailed instructions on installing Meshery using Helm V3, please refer to t
 
 ### Access Meshery UI
 
-To access Meshery's UI, please refer to the [instruction](/reference/mesheryctl/system/dashboard) for detailed guidance.
+To access Meshery's UI, please refer to the [instruction](/tasks/accessing-meshery-ui) for detailed guidance.
 
 Note: _You can also verify health of your system using [mesheryctl system check](/reference/mesheryctl/system/check)_
 

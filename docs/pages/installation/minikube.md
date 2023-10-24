@@ -32,11 +32,11 @@ Also see: [Install Meshery on Kubernetes]({{ site.baseurl }}/installation/platfo
   - [Installation: Using Helm](#installation-using-helm)
   - [Installation: Manual Steps](#installation-manual-steps)
   - [Installation: Docker Driver Users](#installation-docker-driver-users)
-- [Post-Installation Steps](#post-installation-steps)
-  - [Access Meshery UI](#access-meshery-ui)
 - [Out-of-cluster Installation](#out-of-cluster-installation)
   - [Installation: Install Meshery on Docker](#installation-install-meshery-on-docker)
   - [Installation: Upload Config File in Meshery Web UI](#installation-upload-config-file-in-meshery-web-ui)
+- [Post-Installation Steps](#post-installation-steps)
+  - [Access Meshery UI](#access-meshery-ui)
 
 # In-cluster Installation
 
@@ -153,12 +153,6 @@ To establish connectivity between a particular Meshery Adapter and Kubernetes se
  <div class="clipboardjs">docker network connect minikube &#60; container name of the desired adapter &#62;</div></div>
  </pre>
 
-# Post-Installation Steps
-
-## Access Meshery UI
-
-To access Meshery's UI , please refer to the [accessing-ui](/tasks/accessing-meshery-ui) guide for detailed instructions.
-
 # Out-of-cluster Installation
 
 Install Meshery on Docker (out-of-cluster) and connect it to your Minikube cluster.
@@ -184,6 +178,12 @@ Once you have verified that all the services are up and running, Meshery UI will
  </pre>
 
 - Upload the generated config file by navigating to _Settings > Environment > Out of Cluster Deployment_ in the Web UI and using the _"Upload kubeconfig"_ option.
+
+# Post-Installation Steps
+
+## Access Meshery UI
+
+To access Meshery's UI, please refer to the [instruction](/tasks/accessing-meshery-ui) for detailed guidance.
 
 {% include suggested-reading.html language="en" %}
 

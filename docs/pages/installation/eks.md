@@ -17,13 +17,13 @@ Manage your EKS clusters with Meshery. Deploy Meshery in EKS [in-cluster](#in-cl
 <div class="prereqs"><h4>Prerequisites</h4>
   <ol>
     <li>Install the Meshery command line client, <a href="{{ site.baseurl }}/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
-    <li>Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> installed on your local machine.</li>
+    <li>Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> on your local machine.</li>
     <li>Install <a href="https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html">AWS CLI</a>, configured for your environment.</li>
     <li>Access to an active EKS cluster in AWS Account.</li>
   </ol>
 </div>
 
-Also see: [Install Meshery on Kubernetes]({{ site.baseurl }}/installation/platforms/kubernetes)
+Also see: [Install Meshery on Kubernetes]({{ site.baseurl }}/installation/kubernetes)
 ## Available Deployment Methods
 
 - [In-cluster Installation](#in-cluster-installation)
@@ -84,13 +84,13 @@ If you encounter any authentication issues, you can use `mesheryctl system login
 
 ## Installation: Using Helm
 
-For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation](/installation/helm) guide.
+For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation](/installation/kubernetes/helm) guide.
 
 # Post-Installation Steps
 
 ## Access Meshery UI
 
-To access Meshery's UI via port-forwarding, please refer to the [port-forwarding](/services/port-forward) guide for detailed instructions.
+To access Meshery's UI, please refer to the [instruction](/tasks/accessing-meshery-ui) for detailed guidance.
 
 # Out-of-cluster Installation
 
