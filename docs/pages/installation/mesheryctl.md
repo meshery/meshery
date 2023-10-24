@@ -1,184 +1,50 @@
 ---
 layout: default
 title: Install mesheryctl
-permalink: installation/operating-systems
+permalink: installation/mesheryctl
 type: installation
+category: mesheryctl
 redirect_from:
- - installation/operating-systems
-  - installation/operating-systems/
+ - installation/mesheryctl
+ - installation/mesheryctl/
 display-title: "true"
 language: en
-list: exclude
+list: include
 # image: /assets/img/platforms/brew.png
 ---
 
-Meshery's command line client is `mesheryctl`. To install `mesheryctl` on your system, you may choose from any of the following supported methods.
+Meshery's command line client is `mesheryctl` and is the recommended tool for configuring and deploying one or more Meshery deployments. To install `mesheryctl` on your system, you may choose from any of the following supported methods.
 
-## Bash
+`mesheryctl` can be installed via `bash`, [Homebrew]({{site.baseurl}}/installation/linux-mac/brew), [Scoop]({{site.baseurl}}/installation/windows/scoop) or [directly downloaded](https://github.com/meshery/meshery/releases/latest).
 
-**Install** and **Upgrade**
+{% include mesheryctl/installation-brew.md %}
 
-Install `mesheryctl` command
+{% include mesheryctl/installation-bash.md %}
 
- <pre class="codeblock-pre">
- <div class="codeblock">
- <div class="clipboardjs">
-  $ curl -L https://meshery.io/install | DEPLOY_MESHERY=false bash -
- </div></div>
- </pre>
+{% include mesheryctl/installation-scoop.md %}
 
-Install `mesheryctl` command and deploy Meshery on Docker
+Continue deploying Meshery onto one of the [Supported Platforms]({{ site.baseurl }}/installation).
 
- <pre class="codeblock-pre">
- <div class="codeblock">
- <div class="clipboardjs">
-  $ curl -L https://meshery.io/install | PLATFORM=docker bash -
- </div></div>
- </pre>
+# Related Reading
 
-Install `mesheryctl` command and deploy Meshery on Kubernetes
+## Meshery CLI Guides
 
- <pre class="codeblock-pre">
- <div class="codeblock">
- <div class="clipboardjs">
-  $ curl -L https://meshery.io/install | PLATFORM=kubernetes bash -
- </div></div>
- </pre>
+Guides to using Meshery's various features and components.
 
-Install `mesheryctl` command and choose an [adapter]({{ site.baseurl }}/concepts/architecture/adapters) to be loaded.
+{% assign sorted_guides = site.pages | sort: "name" %}
 
- <pre class="codeblock-pre">
- <div class="codeblock">
- <div class="clipboardjs">
-  $ curl -L https://meshery.io/install | ADAPTERS=consul PLATFORM=kubernetes bash -
- </div></div>
- </pre>
+<ul>
+  {% for item in sorted_guides %}
+  {% if item.type=="Guides" and item.category=="mesheryctl" and item.list!="exclude" and item.language=="en" -%}
+    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+    </li>
+    {% endif %}
+  {% endfor %}
+    <li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading Meshery CLI</a></li>
+</ul>
 
-## Homebrew
+{% include suggested-reading.html language="en" %}
 
-**Install**
+{% include related-discussions.html tag="mesheryctl" %}
 
-To install `mesheryctl` using homebrew, execute the following commands.
-
-<pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">
- $ brew install mesheryctl
- </div></div>
-</pre>
-
-You need to have `brew` installed on your Mac or Linux system to perform these actions.
-
-You're ready to run Meshery. To do so, execute the following command.
-
-<pre class="codeblock-pre"><div class="codeblock">
-<div class="clipboardjs">
- $ mesheryctl system start
-
-</div></div>
-</pre>
-
-Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
-
-<pre class="codeblock-pre"><div class="codeblock">
-<div class="clipboardjs">
- $ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start
-
-</div></div>
-</pre>
-
-`mesheryctl` uses your current Kubernetes context, your KUBECONFIG environment variable (`~/.kube/config` by default). Confirm if this Kubernetes cluster you want Meshery to interact with by running the following command: `kubectl config get-contexts`.
-
-If there are multiple contexts in your kubeconfig file, specify the one you want to use with the `use-context` subcommand: `kubectl config use-context <context-to-use>`.
-
-**Upgrade**
-
-To upgrade `mesheryctl`, execute the following command.
-
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">
- $ brew upgrade mesheryctl
- </div></div>
- </pre>
-
-Example output of a successful upgrade:
-
-```
-➜  ~ brew upgrade mesheryctl
-==> Upgrading 1 outdated package:
-meshery/tap/mesheryctl 0.3.2 -> 0.3.4
-==> Upgrading meshery/tap/mesheryctl
-==> Downloading https://github.com/layer5io/meshery/releases/download/v0.3.4/mesheryctl_0.3.4_Darwin_x86_64.zip
-==> Downloading from https://github-production-release-asset-2e65be.s3.amazonaws.com/157554479/17522b00-2af0-11ea-8aef-cbfe8
-######################################################################## 100.0%
-🍺  /usr/local/Cellar/mesheryctl/0.3.4: 5 files, 10.2MB, built in 4 seconds
-Removing: /usr/local/Cellar/mesheryctl/0.3.2... (5 files, 10.2MB)
-Removing: /Users/lee/Library/Caches/Homebrew/mesheryctl--0.3.2.zip... (3.9MB)
-==> Checking for dependents of upgraded formulae...
-==> No dependents found!
-```
-
-<h6>Using Helm</h6>
-
-<pre class="codeblock-pre">
-<div class="codeblock">
- <div class="clipboardjs">
- $ kubectl create ns meshery
- $ helm repo add meshery https://meshery.io/charts/
- $ helm install meshery meshery/meshery -n meshery
- </div></div>
-</pre>
-
-Not a Helm user? Use the Meshery manifests directly.
-
-<h6>Using Manifests</h6>
-
-<pre class="codeblock-pre">
-<div class="codeblock">
- <div class="clipboardjs">
- $ git clone https://github.com/layer5io/meshery.git; cd meshery
- $ kubectl create ns meshery
- $ kubectl -n meshery apply -f install/deployment_yamls/k8s
- </div></div>
-</pre>
-
-## Scoop
-
-`mesheryctl` can be installed via Scoop (a package manager for Windows, just like apt for Ubuntu). To install `mesheryctl` using Scoop, execute the following commands.
-
-**Install**
-
-<pre class="codeblock-pre"><div class="codeblock">
-<div class="clipboardjs">
- $ scoop bucket add mesheryctl https://github.com/layer5io/scoop-bucket.git
- $ scoop install mesheryctl
-
-</div></div>
-</pre>
-
-You need to have `scoop` installed on your Windows system to perform these actions.
-
-You're ready to run Meshery. To do so, execute the following command.
-
-<pre class="codeblock-pre"><div class="codeblock">
-<div class="clipboardjs">
- $ mesheryctl system start
-
-</div></div>
-</pre>
-
-`mesheryctl` uses your current Kubernetes context, your KUBECONFIG environment variable (`~/.kube/config` by default). Confirm if this Kubernetes cluster you want Meshery to interact with by running the following command: `kubectl config get-contexts`.
-
-If there are multiple contexts in your kubeconfig file, specify the one you want to use with the `use-context` subcommand: `kubectl config use-context <context-to-use>`.
-
-**Upgrade**
-
-To upgrade `mesheryctl`, just execute the following command.
-
-<pre class="codeblock-pre"><div class="codeblock">
-<div class="clipboardjs">
- $ scoop update mesheryctl
-
-</div></div>
-</pre>
-
-Continue deploying Meshery onto one of the [Supported Platforms]({{ site.baseurl }}/installation/platforms).
+{:toc}

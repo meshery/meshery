@@ -9,7 +9,7 @@ list: include
 
 To access Meshery’s UI via port-forwarding, please refer to the port-forwarding guide for detailed instructions.
 
-Use `mesheryctl system dashboard` to open your default browser to Meshery UI. See CLI reference.
+Use `mesheryctl system dashboard` to open your default browser to Meshery UI, [click here](/reference/mesheryctl/system/dashboard) to see the reference.
 
 
 ## Docker Desktop

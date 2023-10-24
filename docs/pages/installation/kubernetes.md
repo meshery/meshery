@@ -3,6 +3,7 @@ layout: default
 title: Kubernetes
 permalink: installation/kubernetes
 type: installation
+category: kubernetes
 display-title: "false"
 language: en
 list: include
@@ -60,6 +61,18 @@ Deploy Meshery to your Kubernetes cluster by executing:
 
 {% capture code_content %}$ mesheryctl system start{% endcapture %}
 {% include code.html code=code_content %}
+
+
+## Using Helm
+
+<pre class="codeblock-pre">
+<div class="codeblock">
+ <div class="clipboardjs">
+ $ kubectl create ns meshery
+ $ helm repo add meshery https://meshery.io/charts/
+ $ helm install meshery meshery/meshery -n meshery
+ </div></div>
+</pre>
 
 ### Using Helm
 
@@ -135,6 +148,14 @@ If your Kubernetes cluster has a functional Ingress Controller, then you can con
  spec:
      type: NodePort{% endcapture %}
 
+
+### Sample Commands to verify Meshery UI access:
+
+{% capture code_content %}export POD_NAME=$(kubectl get pods --namespace meshery -l "app.kubernetes.io/name=meshery,app.kubernetes.io/instance=meshery" -o jsonpath="{.items[0].metadata.name}")
+
+kubectl --namespace meshery port-forward $POD_NAME 9081:8080{% endcapture %}
+{% include code.html code=code_content %}
+
 # Advanced Installations
 
 **Configurable OAuth Callback URL** ([learn more]({{site.baseurl}}/extensibility/providers#configurable-oauth-callback-url))
@@ -147,3 +168,7 @@ $ helm install meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL
 
 
 Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides]({{ site.baseurl }}/guides) for advanced usage tips.
+
+{% include suggested-reading.html language="en" %}
+
+{% include related-discussions.html tag="meshery" %}
