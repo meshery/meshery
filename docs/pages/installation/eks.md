@@ -13,7 +13,7 @@ image: /assets/img/platforms/eks.png
 
 Manage your EKS clusters with Meshery. Deploy Meshery in EKS [in-cluster](#in-cluster-installation) or outside of EKS [out-of-cluster](#out-of-cluster-installation). **_Note: It is advisable to [Install Meshery in your EKS clusters](#install-meshery-into-your-eks-cluster)_**
 
-<div class="prereqs"><p><strong style="font-size: 20px;">Prerequisites</strong> </p> 
+<div class="prereqs"><h4>Prerequisites</h4>
   <ol>
     <li>Install the Meshery command line client, <a href="{{ site.baseurl }}/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
     <li>Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> installed on your local machine.</li>
