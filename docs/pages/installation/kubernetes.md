@@ -3,6 +3,7 @@ layout: default
 title: Kubernetes
 permalink: installation/kubernetes
 type: installation
+category: kubernetes
 display-title: "false"
 language: en
 list: include
@@ -167,3 +168,7 @@ $ helm install meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL
 
 
 Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides]({{ site.baseurl }}/guides) for advanced usage tips.
+
+{% include suggested-reading.html language="en" %}
+
+{% include related-discussions.html tag="meshery" %}

@@ -27,10 +27,4 @@ Meshery deploys as a set of Docker containers, which can be deployed to either a
     {% endfor %}
 </ul>
 
-{% include toc.html page=reference %}
-
-{:toc}
-
-{% include suggested-reading.html diffName="false" isDiffTag="true" diffTag=tag %}
-
-{% include related-discussions.html tag="meshery" %}
+<!-- {% include toc.html page=reference %} -->

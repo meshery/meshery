@@ -3,6 +3,7 @@ layout: page
 title: AKS
 permalink: installation/kubernetes/aks
 type: installation
+category: kubernetes
 display-title: "false"
 language: en
 list: include
@@ -34,7 +35,6 @@ Also see: [Install Meshery on Kubernetes]({{ site.baseurl }}/installation/kubern
     - [Installation: Using Helm](#installation-using-helm)
 - [Post-Installation Steps](#post-installation-steps)
     - [Access Meshery UI](#access-meshery-ui)
-- [Suggested Reading](#suggested-reading)
 
 # In-cluster Installation
 
@@ -90,8 +90,6 @@ To access Meshery's UI, please refer to the [instruction](/reference/mesheryctl/
 
 Note: _You can also verify health of your system using [mesheryctl system check](/reference/mesheryctl/system/check)_
 
-# Suggested Reading
+{% include suggested-reading.html language="en" %}
 
-<!-- {% include suggested-reading.html diffName="true" isDiffTag="true" diffTag=tag %} -->
-{% include related-discussions.html tag="mesheryctl" %}
-
+{% include related-discussions.html tag="meshery" %}

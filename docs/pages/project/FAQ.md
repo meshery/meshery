@@ -1,6 +1,6 @@
 ---
 layout: page
-title: FAQ
+title: Frequently Asked Questions
 permalink: project/faq
 description: General commonly asked questions and answers about Meshery.
 language: en

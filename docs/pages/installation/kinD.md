@@ -3,6 +3,7 @@ layout: default
 title: KinD
 permalink: installation/kubernetes/kind
 type: installation
+category: kubernetes
 display-title: "false"
 language: en
 list: include
@@ -142,3 +143,7 @@ Run the following:
 {% include code.html code=code_content %}
 
 Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides]({{ site.baseurl }}/guides) for advanced usage tips.
+
+{% include suggested-reading.html language="en" %}
+
+{% include related-discussions.html tag="meshery" %}

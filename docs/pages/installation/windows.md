@@ -3,6 +3,7 @@ layout: default
 title: Install Meshery CLI on Windows
 permalink: installation/windows
 type: installation
+category: mesheryctl
 display-title: "true"
 language: en
 list: include
@@ -30,3 +31,27 @@ Optionally, move the mesheryctl binary to a directory in your PATH.
   </pre>
 
 Type `yes` when prompted to choose to configure a file. To get started, choose Docker as your platform to deploy Meshery. -->
+
+# Related Reading
+
+## Meshery CLI Guides
+
+Guides to using Meshery's various features and components.
+
+{% assign sorted_guides = site.pages | sort: "name" %}
+
+<ul>
+  {% for item in sorted_guides %}
+  {% if item.type=="Guides" and item.category=="mesheryctl" and item.list!="exclude" and item.language=="en" -%}
+    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+    </li>
+    {% endif %}
+  {% endfor %}
+    <li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading Meshery CLI</a></li>
+</ul>
+
+{% include suggested-reading.html language="en" %}
+
+{% include related-discussions.html tag="mesheryctl" %}
+
+{:toc}

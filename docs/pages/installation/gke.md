@@ -3,6 +3,7 @@ layout: default
 title: GKE
 permalink: installation/kubernetes/gke
 type: installation
+category: kubernetes
 display-title: "false"
 language: en
 list: include

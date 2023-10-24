@@ -3,6 +3,7 @@ layout: default
 title: Install Meshery with Helm
 permalink: installation/kubernetes/helm
 type: installation
+category: kubernetes
 display-title: "true"
 language: en
 list: include
@@ -30,3 +31,7 @@ Optionally, Meshery Server supports customizing the callback URL for your remote
 ### Accessing Meshery UI for Clusters
 
 To access Meshery's UI , please refer to the [accessing-ui](/tasks/accessing-meshery-ui) guide for detailed instructions.
+
+{% include suggested-reading.html language="en" %}
+
+{% include related-discussions.html tag="meshery" %}

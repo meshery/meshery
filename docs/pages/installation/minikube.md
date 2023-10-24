@@ -3,6 +3,7 @@ layout: default
 title: Minikube
 permalink: installation/kubernetes/minikube
 type: installation
+category: kubernetes
 display-title: "false"
 language: en
 list: include
@@ -29,8 +30,8 @@ Also see: [Install Meshery on Kubernetes]({{ site.baseurl }}/installation/platfo
     - [Preflight: Plan your access to Meshery UI](#preflight-plan-your-access-to-meshery-ui)
   - [Installation: Using `mesheryctl`](#installation-using-mesheryctl)
   - [Installation: Using Helm](#installation-using-helm)
-  - [Instalaltion: Manual Steps](#manual-steps)
-  - [Installation: Docker Driver Users](#docker-driver-users)
+  - [Installation: Manual Steps](#installation-manual-steps)
+  - [Installation: Docker Driver Users](#installation-docker-driver-users)
 - [Post-Installation Steps](#post-installation-steps)
   - [Access Meshery UI](#access-meshery-ui)
 - [Out-of-cluster Installation](#out-of-cluster-installation)
@@ -184,6 +185,6 @@ Once you have verified that all the services are up and running, Meshery UI will
 
 - Upload the generated config file by navigating to _Settings > Environment > Out of Cluster Deployment_ in the Web UI and using the _"Upload kubeconfig"_ option.
 
+{% include suggested-reading.html language="en" %}
 
-
-
+{% include related-discussions.html tag="meshery" %}

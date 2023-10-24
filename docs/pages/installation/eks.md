@@ -3,6 +3,7 @@ layout: default
 title: EKS
 permalink: installation/kubernetes/eks
 type: installation
+category: kubernetes
 display-title: "false"
 language: en
 list: include
@@ -108,3 +109,7 @@ Configure Meshery to connect to your cluster by executing:
 {% include code.html code=code_content %}
 
 Once you have verified that all the services are up and running, Meshery UI will be accessible on your local machine on port 9081. Open your browser and access Meshery at [`http://localhost:9081`](http://localhost:9081).
+
+{% include suggested-reading.html language="en" %}
+
+{% include related-discussions.html tag="meshery" %}
