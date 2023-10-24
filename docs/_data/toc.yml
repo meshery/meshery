@@ -20,6 +20,8 @@
               url: installation/kubernetes/eks
             - title: "- GKE"
               url: installation/kubernetes/gke
+            - title: "- Helm"
+              url: installation/kubernetes/helm
             - title: "- KinD"
               url: installation/kubernetes/kind
             - title: "- Minikube"
