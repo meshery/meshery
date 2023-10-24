@@ -23,6 +23,5 @@ Access Meshery UI by exposing it as a Kubernetes service or by port forwarding t
 
 #### [Optional] Port Forward to Meshery UI
 
-{% capture code_content %}export POD_NAME=$(kubectl get pods --namespace meshery -l "app.kubernetes.io/name=meshery,app.kubernetes.io/instance=meshery" -o jsonpath="{.items[0].metadata.name}")
-kubectl --namespace meshery port-forward $POD_NAME 9081:8080{% endcapture %}
+{% capture code_content %}kubectl port-forward svc/meshery 9081:9081 --namespace meshery{% endcapture %}
 {% include code.html code=code_content %}
