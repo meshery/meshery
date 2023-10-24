@@ -1,13 +1,16 @@
 ---
 layout: default
 title: Compatibility Matrix
-permalink: project/compatibility-matrix
-redirect_from: project/compatibility-matrix/
+permalink: installation/compatibility-matrix
+redirect_from: 
+ - project/compatibility-matrix/
+ - installation/compatibility-matrix
+ - installation/compatibility-matrix/
 description: a complete compatibility matrix and project test status dashboard.
 language: en
 display-title: "false"
-list: exclude
-type: "project"
+list: include
+type: "installation"
 ---
 
 <script type="text/javascript">
@@ -142,13 +145,14 @@ background-color: #8dbdd8;
 
 # Compatibility Matrix
 
-Compatibility of Meshery with other integrated systems.
+Meshery Server and Meshery Adapters are tested daily for their compatibility with the infrastructure they manage and the platforms Meshery deploys on (Kubernetes and Docker). End-to-end test results are automatically posted to the following compatibility matrix.
+
 
 {%include compatibilityMatrix.md k8s_tests_group=k8s_tests_group %}
 
 ## Integration Tests
 
-As a key aspect of Meshery, its integrations with other systems are routinely tested. Unit, integration testing occurs before and after every pull request (before code is to be merged into the project and after code is merged into the project). Regression tests are run nightly.
+As a key aspect of Meshery, its integrations with other systems are routinely tested. Unit and integration tests before and after every pull request (before code is to be merged into the project and after code is merged into the project). End-to-end tests are run nightly and automatically posted to the following test matrix.
 
 <div class="checkbox">
     <div>
@@ -217,7 +221,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
               </table>
             </td>
             <td>
-              <a href = "{{site.baseurl}}/project/compatibility-matrix/{{item.meshery-component}}-past-results">To see past results click here </a>
+              <a href = "{{site.baseurl}}/installation/compatibility-matrix/{{item.meshery-component}}-past-results">To see past results click here </a>
             </td>
           </tr>
 
@@ -266,7 +270,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
               </table>
             </td>
             <td>
-              <a href = "{{site.baseurl}}/project/compatibility-matrix/{{item.meshery-component}}-past-results">To see past results click here </a>
+              <a href = "{{site.baseurl}}/installation/compatibility-matrix/{{item.meshery-component}}-past-results">To see past results click here </a>
             </td>
           </tr>
         {% endif %}
@@ -313,7 +317,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
               </table>
             </td>
             <td>
-              <a href = "{{site.baseurl}}/project/compatibility-matrix/{{item.meshery-component}}-past-results">To see past results click here </a>
+              <a href = "{{site.baseurl}}/installation/compatibility-matrix/{{item.meshery-component}}-past-results">To see past results click here </a>
             </td>
           </tr>
         {% endif %}

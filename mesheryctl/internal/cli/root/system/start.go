@@ -204,32 +204,31 @@ func start() error {
 		}
 
 		//changing the port mapping in docker compose
-		services := compose.Services // Current Services
 		//extracting the custom user port from config.yaml
 		userPort := strings.Split(currCtx.GetEndpoint(), ":")
 		//extracting container port from the docker-compose
-		containerPort := strings.Split(services["meshery"].Ports[0], ":")
+		containerPort := strings.Split(utils.Services["meshery"].Ports[0], ":")
 		userPortMapping := userPort[len(userPort)-1] + ":" + containerPort[len(containerPort)-1]
-		services["meshery"].Ports[0] = userPortMapping
+		utils.Services["meshery"].Ports[0] = userPortMapping
 
 		RequiredService := []string{"meshery", "watchtower"}
 
 		AllowedServices := map[string]utils.Service{}
 		for _, v := range currCtx.GetComponents() {
-			if services[v].Image == "" {
+			if utils.Services[v].Image == "" {
 				log.Fatalf("Invalid component specified %s", v)
 			}
 
-			temp, ok := services[v]
+			temp, ok := utils.Services[v]
 			if !ok {
 				return errors.New(fmt.Sprintf("no such service `%s` exists.", v))
 			}
 
 			spliter := strings.Split(temp.Image, ":")
 			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), "latest")
-			services[v] = temp
-			AllowedServices[v] = services[v]
-			utils.ViperCompose.Set(fmt.Sprintf("services.%s", v), services[v])
+			utils.Services[v] = temp
+			AllowedServices[v] = utils.Services[v]
+			utils.ViperCompose.Set(fmt.Sprintf("services.%s", v), utils.Services[v])
 			err = utils.ViperCompose.WriteConfig()
 			if err != nil {
 				// failure while adding a service to docker compose file is not a fatal error
@@ -240,11 +239,11 @@ func start() error {
 
 		for _, v := range RequiredService {
 			if v == "watchtower" {
-				AllowedServices[v] = services[v]
+				AllowedServices[v] = utils.Services[v]
 				continue
 			}
 
-			temp, ok := services[v]
+			temp, ok := utils.Services[v]
 			if !ok {
 				return errors.New("unable to extract meshery version")
 			}
@@ -262,8 +261,8 @@ func start() error {
 
 				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), mesheryImageVersion)
 			}
-			services[v] = temp
-			AllowedServices[v] = services[v]
+			utils.Services[v] = temp
+			AllowedServices[v] = utils.Services[v]
 		}
 
 		//////// FLAGS
