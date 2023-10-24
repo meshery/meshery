@@ -98,5 +98,5 @@ Meshery Server and Meshery Adapters are tested daily for their compatibility wit
         <br> <a style="font-size:20px" href="{{ site.baseurl }}/installation/windows">Install Instruction</a></div> -->
 
 <div style="z-index:0">
-  {% include alert.html type="info" title="<span style='margin:0;'>Overview of the Integration Tests</span>" content="For a complete overview of the latest integration tests and their status please visit Meshery <a href='/project/compatibility-matrix#integration-tests'>Integration Tests</a>" %}
+  {% include alert.html type="info" title="<span style='margin:0;'>Overview of the Integration Tests</span>" content="For a complete overview of the latest integration tests and their status please visit Meshery <a href='/installation/compatibility-matrix#integration-tests'>Integration Tests</a>" %}
 </div>

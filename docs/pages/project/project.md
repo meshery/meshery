@@ -1,10 +1,12 @@
 ---
 layout: default
-title: Project
-permalink: project
-redirect_from: project/
+title: Meshery Overview
+permalink: project/overview
+redirect_from: project/overview/
 language: en
 display-title: "false"
+type: project
+category: none
 list: exclude
 ---
 

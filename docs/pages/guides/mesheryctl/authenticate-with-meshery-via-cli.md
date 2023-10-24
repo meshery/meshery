@@ -3,8 +3,9 @@ layout: default
 title: Authenticating with Meshery via CLI
 permalink: guides/mesheryctl/authenticate-with-meshery-via-cli
 language: en
-type: Guides
+type: guides
 category: mesheryctl
+list: include
 ---
 
 To authenticate with Meshery through `mesheryctl` you will use the command `mesheryctl system login`. Upon execution of this command, select your Provider of choice, then authenticate to your chosen Provider.
