@@ -36,7 +36,7 @@
         - title: Windows
           url: installation/windows 
           grandchildren: 
-            - title: Scoop
+            - title: "- Scoop"
               url: installation/windows/scoop 
     - title: Compatibility Matrix
       url: installation/compatibility-matrix
