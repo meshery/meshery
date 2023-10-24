@@ -29,14 +29,13 @@ Also see: [Install Meshery on Kubernetes]({{ site.baseurl }}/installation/platfo
     - [Preflight: Plan your access to Meshery UI](#preflight-plan-your-access-to-meshery-ui)
   - [Installation: Using `mesheryctl`](#installation-using-mesheryctl)
   - [Installation: Using Helm](#installation-using-helm)
-  - [Instalaltion: Manual Steps](#manual-steps)
-  - [Installation: Docker Driver Users](#docker-driver-users)
+  - [Installation: Manual Steps](#installation-manual-steps)
+  - [Installation: Docker Driver Users](#installation-docker-driver-users)
 - [Out-of-cluster Installation](#out-of-cluster-installation)
   - [Installation: Install Meshery on Docker](#installation-install-meshery-on-docker)
   - [Installation: Upload Config File in Meshery Web UI](#installation-upload-config-file-in-meshery-web-ui)
 - [Post-Installation Steps](#post-installation-steps)
   - [Access Meshery UI](#access-meshery-ui)
-- [Suggested Reading](#suggested-reading)
 
 # In-cluster Installation
 
@@ -185,10 +184,11 @@ Once you have verified that all the services are up and running, Meshery UI will
 
 To access Meshery's UI, please refer to the [instruction](/tasks/accessing-meshery-ui) for detailed guidance.
 
-# Suggested Reading
 
-<!-- {% include suggested-reading.html diffName="true" isDiffTag="true" diffTag=tag %} -->
-{% include related-discussions.html tag="mesheryctl" %}
+{% include suggested-reading.html language="en" %}
+
+{% include related-discussions.html tag="meshery" %}
+
 
 
 
