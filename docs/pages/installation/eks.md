@@ -54,7 +54,7 @@ Read through the following considerations prior to deploying Meshery on EKS.
 {% include code.html code=code_content %}
 1. _Optional:_ If you are using `eksctl`, follow the [AWS documentation steps](https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html).
 1. Verify your kubeconfig's current context.
-{% capture code_content %}kubectl cluster-info{% endcapture %}
+{% capture code_content %}kubectl config current-context{% endcapture %}
 {% include code.html code=code_content %}
 
 ### Preflight: Plan your access to Meshery UI

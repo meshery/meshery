@@ -56,7 +56,7 @@ Read through the following considerations prior to deploying Meshery on GKE.
 {% capture code_content %}gcloud container clusters get-credentials [CLUSTER_NAME] --zone [CLUSTER_ZONE] {% endcapture %}
 {% include code.html code=code_content %}
 1. Verify your kubeconfig's current context.
-{% capture code_content %}kubectl cluster-info{% endcapture %}
+{% capture code_content %}kubectl config current-context{% endcapture %}
 {% include code.html code=code_content %}
 
 ### Preflight: Plan your access to Meshery UI
