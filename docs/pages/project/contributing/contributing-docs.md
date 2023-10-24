@@ -332,7 +332,7 @@ The output of the code snippet would be:
 
 Here, **Subthing 1.1** and **Subthing 1.2** are the ``grandchildren`` of **Thing 1**.
 
-In the Sidebars, overall we have three sections -
+In `docs/_includes/sidebar.html` contains three levels of navigation hierarchy.
 
 - **Parent**: It serves as a top level category for related content.
 - **Children**: They are immediate subsections or topics that fall under the parent section. 
