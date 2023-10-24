@@ -6,6 +6,8 @@ description: List of released Meshery versions and their release notes.
 redirect_from: project/releases/
 language: en
 type: project
+category: none
+list: include
 ---
 
 See also Meshery's [Compatibility Matrix]({{site.baseurl}}/installation) and [Build and Release](/project/contributing/build-and-release) process.
