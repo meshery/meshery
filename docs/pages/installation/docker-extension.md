@@ -3,6 +3,7 @@ layout: default
 title: Docker Extension
 permalink: installation/docker/docker-extension
 type: installation
+category: docker
 display-title: "false"
 language: en
 list: include
@@ -57,3 +58,7 @@ Meshery runs as a set of one or more containers inside your Docker Desktop virtu
  </div>
 </pre>
 <script src="{{ site.baseurl }}/assets/js/terminal.js" data-termynal-container="#termynal2"></script>
+
+{% include suggested-reading.html language="en" %}
+
+{% include related-discussions.html tag="meshery" %}

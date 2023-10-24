@@ -3,6 +3,7 @@ layout: default
 title: Minikube
 permalink: installation/kubernetes/minikube
 type: installation
+category: kubernetes
 display-title: "false"
 language: en
 list: include
@@ -184,12 +185,6 @@ Once you have verified that all the services are up and running, Meshery UI will
 
 To access Meshery's UI, please refer to the [instruction](/tasks/accessing-meshery-ui) for detailed guidance.
 
-
 {% include suggested-reading.html language="en" %}
 
 {% include related-discussions.html tag="meshery" %}
-
-
-
-
-
