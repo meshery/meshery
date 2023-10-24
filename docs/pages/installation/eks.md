@@ -16,13 +16,13 @@ Manage your EKS clusters with Meshery. Deploy Meshery in EKS [in-cluster](#in-cl
 <div class="prereqs"><h4>Prerequisites</h4>
   <ol>
     <li>Install the Meshery command line client, <a href="{{ site.baseurl }}/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
-    <li>Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> installed on your local machine.</li>
+    <li>Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> on your local machine.</li>
     <li>Install <a href="https://docs.aws.amazon.com/eks/latest/userguide/getting-started.html">AWS CLI</a>, configured for your environment.</li>
     <li>Access to an active EKS cluster in AWS Account.</li>
   </ol>
 </div>
 
-Also see: [Install Meshery on Kubernetes]({{ site.baseurl }}/installation/platforms/kubernetes)
+Also see: [Install Meshery on Kubernetes]({{ site.baseurl }}/installation/kubernetes)
 ## Available Deployment Methods
 
 - [In-cluster Installation](#in-cluster-installation)
@@ -35,6 +35,7 @@ Also see: [Install Meshery on Kubernetes]({{ site.baseurl }}/installation/platfo
   - [Access Meshery UI](#access-meshery-ui)
 - [Out-of-cluster Installation](#out-of-cluster-installation)
   - [Install Meshery on Docker](#install-meshery-on-docker)
+- [Suggested Reading](#suggested-reading)
 
 # In-cluster Installation
 
@@ -83,13 +84,13 @@ If you encounter any authentication issues, you can use `mesheryctl system login
 
 ## Installation: Using Helm
 
-For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation](/installation/helm) guide.
+For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation](/installation/kubernetes/helm) guide.
 
 # Post-Installation Steps
 
 ## Access Meshery UI
 
-To access Meshery's UI via port-forwarding, please refer to the [port-forwarding](/services/port-forward) guide for detailed instructions.
+To access Meshery's UI, please refer to the [instruction](/tasks/accessing-meshery-ui) for detailed guidance.
 
 # Out-of-cluster Installation
 
@@ -108,3 +109,8 @@ Configure Meshery to connect to your cluster by executing:
 {% include code.html code=code_content %}
 
 Once you have verified that all the services are up and running, Meshery UI will be accessible on your local machine on port 9081. Open your browser and access Meshery at [`http://localhost:9081`](http://localhost:9081).
+
+# Suggested Reading
+
+<!-- {% include suggested-reading.html diffName="true" isDiffTag="true" diffTag=tag %} -->
+{% include related-discussions.html tag="mesheryctl" %}
