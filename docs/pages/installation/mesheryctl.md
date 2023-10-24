@@ -23,7 +23,7 @@ Meshery's command line client is `mesheryctl` and is the recommended tool for co
 
 {% include mesheryctl/installation-scoop.md %}
 
-Continue deploying Meshery onto one of the [Supported Platforms]({{ site.baseurl }}/installation/platforms).
+Continue deploying Meshery onto one of the [Supported Platforms]({{ site.baseurl }}/installation).
 
 # Related Reading
 

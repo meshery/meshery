@@ -21,7 +21,8 @@ Manage your Minikube clusters with Meshery. Deploy Meshery in Minikube [in-clust
   </ol>
 </div>
 
-Also see: [Install Meshery on Kubernetes]({{ site.baseurl }}/installation/platforms/kubernetes)
+Also see: [Install Meshery on Kubernetes]({{ site.baseurl }}/installation/kubernetes)
+
 ## Available Deployment Methods
 
 - [In-cluster Installation](#in-cluster-installation)
@@ -47,7 +48,8 @@ Follow the steps below to install Meshery in your Minikube cluster.
 Read through the following considerations prior to deploying Meshery on Minikube.
 
 ### Preflight: Cluster Connectivity
-Start the minikube, if not started using the following command: 
+
+Start the minikube, if not started using the following command:
 {% capture code_content %}minikube start --cpus 4 --memory 8192 --kubernetes-version=v1.14.1{% endcapture %}
 {% include code.html code=code_content %}
 Check up on your minikube cluster :
@@ -85,34 +87,33 @@ If you encounter any authentication issues, you can use `mesheryctl system login
 
 For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation](/installation/helm) guide.
 
-
 ## Installation: Manual Steps
 
 You may also manually generate and load the kubeconfig file for Meshery to use:
 
 **The following configuration yaml will be used by Meshery. Copy and paste the following in your config file** :
 
- {% capture code_content %}apiVersion: v1
- clusters:
- - cluster:
-     certificate-authority-data: < cert shortcutted >
-     server: https://192.168.99.100:8443
-   name: minikube
- contexts:
- - context:
-     cluster: minikube
-     user: minikube
-   name: minikube
- current-context: minikube
- kind: Config
- preferences: {}
- users:
- - name: minikube
-   user:
-     client-certificate-data: < cert shortcutted >
-     client-key-data: < key shortcutted >{% endcapture %}
-{% include code.html code=code_content %}
+{% capture code_content %}apiVersion: v1
+clusters:
 
+- cluster:
+  certificate-authority-data: < cert shortcutted >
+  server: https://192.168.99.100:8443
+  name: minikube
+  contexts:
+- context:
+  cluster: minikube
+  user: minikube
+  name: minikube
+  current-context: minikube
+  kind: Config
+  preferences: {}
+  users:
+- name: minikube
+  user:
+  client-certificate-data: < cert shortcutted >
+  client-key-data: < key shortcutted >{% endcapture %}
+  {% include code.html code=code_content %}
 
 _Note_: Make sure _current-context_ is set to _minikube_.
 
@@ -188,3 +189,4 @@ To access Meshery's UI, please refer to the [instruction](/tasks/accessing-meshe
 {% include suggested-reading.html language="en" %}
 
 {% include related-discussions.html tag="meshery" %}
+

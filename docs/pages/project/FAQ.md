@@ -59,7 +59,7 @@ _You are encouraged to use `mesheryctl` to configure and control Meshery deploym
 
 #### Question: What systems can I deploy Meshery onto?
 
-**Answer:** _Many. See Meshery's [Compatibility Matrix]({{site.baseurl}}/installation/platforms)._
+**Answer:** _Many. See Meshery's [Compatibility Matrix]({{site.baseurl}}/installation)._
 
 #### Question: What systems does Meshery manage?
 
@@ -99,7 +99,7 @@ Note: _You can also verify health of your system using [mesheryctl system check]
 
 #### Question: Getting error while running `make server`?
 
-**Answer:** _On Windows, set up the project on Ubuntu WSL2 and you will be able to run the Meshery UI and the server. For more information please visit [Supported Platforms](https://docs.meshery.io/installation/platforms)._
+**Answer:** _On Windows, set up the project on Ubuntu WSL2 and you will be able to run the Meshery UI and the server. For more information please visit [Supported Platforms](https://docs.meshery.io/installation)._
 
 {% include discuss.html %}
 
