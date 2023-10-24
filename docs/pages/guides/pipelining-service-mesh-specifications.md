@@ -3,7 +3,7 @@ layout: default
 title: Pipelining Service Mesh Specifications
 description: Using SMI and SMP specs on your CI/CD pipelines with Meshery's GitHub Actions
 permalink: guides/pipelining-service-mesh-specifications
-type: Guides
+type: guides
 language: en
 ---
 

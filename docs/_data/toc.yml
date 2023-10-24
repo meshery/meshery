@@ -43,13 +43,15 @@
     - title: Compatibility Matrix
       url: installation/compatibility-matrix
 - title: 🗺 Overview
-  url: project
+  url: project/overview
   links:
   - title: FAQ
     url: project/faq
 - title: 🧑‍💻 Contributing & Community
-  url: project/community
+  url: project
   links:
+    - title: Community
+      url: project/community
     - title: Contributing ↆ
       url: project/contributing
       children:

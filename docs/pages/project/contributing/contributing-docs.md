@@ -6,6 +6,7 @@ description: How to contribute to Meshery Docs.
 language: en
 type: project
 category: contributing
+list: include
 ---
 
 Before contributing, please review the [Documentation Contribution Flow](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow). In the following steps you will set up your development environment, fork and clone the repository, run the site locally, and finally commit, sign-off, and push any changes made for review.
