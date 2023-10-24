@@ -77,6 +77,7 @@ func (h *Handler) handlePatternPOST(
 		OperationId:   uuid.Nil.String(), // to be removed
 		EventType:     meshes.EventType_INFO,
 	}
+	sourcetype := mux.Vars(r)["sourcetype"]
 	var parsedBody *MesheryPatternRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		h.log.Error(ErrRequestBody(err))
@@ -436,7 +437,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 	if err != nil {
 		fmt.Println("Could not add metadata about pattern's current support ", err.Error())
 	}
-	rw.Header().Set("Content-Type", "application/json")
+	rw.Header().Set("Content-Type", "Pattern/json")
 	fmt.Fprint(rw, string(resp))
 }
 
@@ -472,7 +473,7 @@ func (h *Handler) GetCatalogMesheryPatternsHandler(
 		return
 	}
 
-	rw.Header().Set("Content-Type", "application/json")
+	rw.Header().Set("Content-Type", "Pattern/json")
 	fmt.Fprint(rw, string(resp))
 }
 
@@ -519,7 +520,7 @@ func (h *Handler) DeleteMesheryPatternHandler(
 	go h.config.EventBroadcaster.Publish(userID, event)
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 
-	rw.Header().Set("Content-Type", "application/json")
+	rw.Header().Set("Content-Type", "Pattern/json")
 	fmt.Fprint(rw, string(resp))
 }
 
@@ -557,7 +558,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		return
 	}
 
-	rw.Header().Set("Content-Type", "application/x-yaml")
+	rw.Header().Set("Content-Type", "Pattern/x-yaml")
 	if _, err := io.Copy(rw, strings.NewReader(pattern.PatternFile)); err != nil {
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
@@ -595,7 +596,7 @@ func (h *Handler) CloneMesheryPatternHandler(
 		return
 	}
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
-	rw.Header().Set("Content-Type", "application/json")
+	rw.Header().Set("Content-Type", "Pattern/json")
 	fmt.Fprint(rw, string(resp))
 }
 
@@ -632,7 +633,7 @@ func (h *Handler) PublishCatalogPatternHandler(
 		return
 	}
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
-	rw.Header().Set("Content-Type", "application/json")
+	rw.Header().Set("Content-Type", "Pattern/json")
 	rw.WriteHeader(http.StatusAccepted)
 	fmt.Fprint(rw, string(resp))
 }
@@ -670,7 +671,7 @@ func (h *Handler) UnPublishCatalogPatternHandler(
 		return
 	}
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
-	rw.Header().Set("Content-Type", "application/json")
+	rw.Header().Set("Content-Type", "Pattern/json")
 	fmt.Fprint(rw, string(resp))
 }
 
@@ -704,7 +705,7 @@ func (h *Handler) DeleteMultiMesheryPatternsHandler(
 		return
 	}
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
-	rw.Header().Set("Content-Type", "application/json")
+	rw.Header().Set("Content-Type", "Pattern/json")
 	fmt.Fprint(rw, string(resp))
 }
 
@@ -732,7 +733,7 @@ func (h *Handler) GetMesheryPatternHandler(
 		return
 	}
 
-	rw.Header().Set("Content-Type", "application/json")
+	rw.Header().Set("Content-Type", "Pattern/json")
 	fmt.Fprint(rw, string(resp))
 }
 
@@ -794,7 +795,7 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 		return
 	}
 	eventBuilder.WithDescription(fmt.Sprintf("Design %s saved", strings.Join(names, ",")))
-	rw.Header().Set("Content-Type", "application/json")
+	rw.Header().Set("Content-Type", "Pattern/json")
 	fmt.Fprint(rw, string(data))
 	res.Details = "\"" + strings.Join(names, ",") + "\" design saved"
 	res.Summary = "Changes to the \"" + strings.Join(names, ",") + "\" design have been saved."
@@ -830,5 +831,37 @@ func addMeshkitErr(res *meshes.EventsResponse, err error) {
 		res.Details = err.Error()
 		res.Summary = errors.GetSDescription(err)
 		res.ErrorCode = errors.GetCode(err)
+	}
+}
+
+
+// swagger:route POST /api/pattern/{sourcetype} PatternsAPI idPostPatternFileRequest
+// Handle POST request for Pattern Files
+//
+// Creates a new Pattern with source-content
+// responses:
+//  200: mesheryPatternResponseWrapper
+
+// PatternFileRequestHandler will handle requests of both type GET and POST
+// on the route /api/pattern
+func (h *Handler) PatternFileRequestHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	prefObj *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	if r.Method == http.MethodGet {
+		h.GetMesheryPatternsHandler(rw, r, prefObj, user, provider)
+		return
+	}
+
+	if r.Method == http.MethodPost {
+		h.handlePatternPOST(rw, r, prefObj, user, provider)
+		return
+	}
+
+	if r.Method == http.MethodPut {
+		h.handlePatternUpdate(rw, r, prefObj, user, provider)
 	}
 }
