@@ -809,7 +809,7 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal, ope
       <NoSsr>
         <div className={StyleClass.toolWrapper} style={{ marginBottom: "0" }}>
           <div className={classes.createButton}>
-            <div>
+            {/* <div>
               <Button
                 aria-label="Rediscover"
                 variant="contained"
@@ -821,7 +821,7 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal, ope
               >
                 Connect Helm Repository
               </Button>
-            </div>
+            </div> */}
             <MesherySettingsEnvButtons />
           </div>
           <div
