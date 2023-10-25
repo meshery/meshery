@@ -32,6 +32,8 @@ Manage your kubernetes clusters with Meshery. Deploy Meshery in kubernetes [in-c
   - [Installation: Using Helm](#installation-using-helm)
 - [Post-Installation Steps](#post-installation-steps)
   - [Access Meshery UI](#access-meshery-ui)
+- [Out-of-cluster Installation](#out-of-cluster-installation)
+  - [Installation: Upload Config File in Meshery Web UI](#installation-upload-config-file-in-meshery-web-ui)
 
 # In-cluster Installation
 
@@ -76,6 +78,20 @@ For detailed instructions on installing Meshery using Helm V3, please refer to t
 ## Access Meshery UI
 
 To access Meshery's UI, please refer to the [instruction](/tasks/accessing-meshery-ui) for detailed guidance.
+
+# Out-of-cluster Installation
+
+Install Meshery on Docker (out-of-cluster) and connect it to your Kubernetes cluster.
+
+## Installation: Upload Config File in Meshery Web UI
+
+- Run the below command to generate the _"config_minikube.yaml"_ file for your cluster:
+
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">kubectl config view --minify --flatten > config_minikube.yaml</div></div>
+ </pre>
+
+- Upload the generated config file by navigating to _Settings > Environment > Out of Cluster Deployment_ in the Web UI and using the _"Upload kubeconfig"_ option.
 
 {% include suggested-reading.html language="en" %}
 
