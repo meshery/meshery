@@ -30,9 +30,12 @@ const styles = (theme) => ({
     marginLeft: 'auto',
     paddingLeft: '1rem',
   },
+  chipFormControl: {
+    minWidth: '100%',
+  },
   statusChip: {
-    minWidth: '120px !important',
-    maxWidth: 'max-content !important',
+    minWidth: '130px !important',
+    maxWidth: '100% !important',
     display: 'flex !important',
     justifyContent: 'flex-start !important',
     textTransform: 'capitalize',
@@ -48,7 +51,7 @@ const styles = (theme) => ({
     },
   },
   appBar: {
-    marginBottom: '3rem'
+    marginBottom: '3rem',
   },
   capitalize: {
     textTransform: 'capitalize',

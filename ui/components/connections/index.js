@@ -19,7 +19,7 @@ import {
   Popover,
   AppBar,
   Tabs,
-  Tab
+  Tab,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -50,7 +50,7 @@ import changeOperatorState from '../graphql/mutations/OperatorStatusMutation';
 import fetchMesheryOperatorStatus from '../graphql/queries/OperatorStatusQuery';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import styles from './styles';
-import MeshSyncTable from './MeshsyncTable'
+import MeshSyncTable from './MeshsyncTable';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -132,7 +132,7 @@ function ConnectionManagementPage(props) {
   );
 }
 
-function Connections({ classes, updateProgress, onOpenCreateConnectionModal, operatorState }) {
+function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/ operatorState }) {
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);
   const [count, setCount] = useState(0);
@@ -146,7 +146,7 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal, ope
   const [rowData, setSelectedRowData] = useState({});
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [_operatorState, _setOperatorState] = useState(operatorState || []);
-  const [tab, setTab] = useState(0)
+  const [tab, setTab] = useState(0);
 
   const open = Boolean(anchorEl);
   const _operatorStateRef = useRef(_operatorState);
@@ -421,7 +421,7 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal, ope
           const disabled = value === 'deleted' ? true : false;
           return (
             <>
-              <FormControl>
+              <FormControl className={classes.chipFormControl}>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
@@ -431,6 +431,17 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal, ope
                   onChange={(e) => handleStatusChange(e, tableMeta.rowData[0])}
                   className={classes.statusSelect}
                   disableUnderline
+                  MenuProps={{
+                    anchorOrigin: {
+                      vertical: 'bottom',
+                      horizontal: 'left',
+                    },
+                    transformOrigin: {
+                      vertical: 'top',
+                      horizontal: 'left',
+                    },
+                    getContentAnchorEl: null,
+                  }}
                 >
                   {statuses.map((s) => status(s))}
                 </Select>
@@ -807,7 +818,7 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal, ope
   return (
     <>
       <NoSsr>
-        <div className={StyleClass.toolWrapper} style={{ marginBottom: "0" }}>
+        <div className={StyleClass.toolWrapper} style={{ marginBottom: '0' }}>
           <div className={classes.createButton}>
             {/* <div>
               <Button
@@ -847,9 +858,9 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal, ope
           <Tabs
             value={tab}
             className={classes.tabs}
-            onChange={(e, newTab)=>{
-              e.stopPropagation()
-              setTab(newTab)
+            onChange={(e, newTab) => {
+              e.stopPropagation();
+              setTab(newTab);
             }}
             indicatorColor="primary"
             textColor="primary"
@@ -878,7 +889,7 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal, ope
             />
           </Tabs>
         </AppBar>
-        {tab === 0 && 
+        {tab === 0 && (
           <ResponsiveDataTable
             data={connections}
             columns={columns}
@@ -888,11 +899,15 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal, ope
             updateCols={updateCols}
             columnVisibility={columnVisibility}
           />
-        }
-        {
-          tab === 1 &&
-          <MeshSyncTable classes={classes} updateProgress={updateProgress} columnVisibility={columnVisibility} setColumnVisibility={setColumnVisibility}/>
-        }
+        )}
+        {tab === 1 && (
+          <MeshSyncTable
+            classes={classes}
+            updateProgress={updateProgress}
+            columnVisibility={columnVisibility}
+            setColumnVisibility={setColumnVisibility}
+          />
+        )}
         <PromptComponent ref={modalRef} />
         <Popover
           open={open}

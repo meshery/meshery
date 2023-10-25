@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   TableCell,
   Tooltip,
@@ -20,15 +20,15 @@ const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
     name: 'FETCH_MESHSYNC_RESOURCES',
     error_msg: 'Failed to fetch meshsync resources',
-  }
+  },
 };
 
-export default function MeshSyncTable ({ classes, updateProgress }) {
+export default function MeshSyncTable({ classes, updateProgress }) {
   const [page, setPage] = useState(0);
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(0);
   const [meshSyncResources, setMeshSyncResources] = useState([]);
-  const [search, setSearch] = useState('');
+  const [search /*setSearch*/] = useState('');
   const [sortOrder, setSortOrder] = useState('');
   const [showMore, setShowMore] = useState(false);
   const [rowsExpanded, setRowsExpanded] = useState([]);
@@ -74,15 +74,10 @@ export default function MeshSyncTable ({ classes, updateProgress }) {
             />
           );
         },
-        customBodyRender: (value, tableMeta) => {
+        customBodyRender: (value) => {
           return (
             <Tooltip title={value} placement="top">
-              <Chip
-                variant="outlined"
-                label={value}
-                style={{ maxWidth: '120px' }}
-                onDelete={() => handleDeleteConnection(tableMeta.rowData[0])}
-              />
+              <Chip variant="outlined" label={value} style={{ maxWidth: '120px' }} />
             </Tooltip>
           );
         },
@@ -265,19 +260,19 @@ export default function MeshSyncTable ({ classes, updateProgress }) {
           text: 'connection(s) selected',
         },
       },
-    //   customToolbarSelect: (selected) => (
-    //     <Button
-    //       variant="contained"
-    //       color="primary"
-    //       size="large"
-    //       // @ts-ignore
-    //       onClick={() => handleDeleteConnections(selected)}
-    //       style={{ background: '#8F1F00', marginRight: '10px' }}
-    //     >
-    //       <DeleteForeverIcon style={iconMedium} />
-    //       Delete
-    //     </Button>
-    //   ),
+      //   customToolbarSelect: (selected) => (
+      //     <Button
+      //       variant="contained"
+      //       color="primary"
+      //       size="large"
+      //       // @ts-ignore
+      //       onClick={() => handleDeleteConnections(selected)}
+      //       style={{ background: '#8F1F00', marginRight: '10px' }}
+      //     >
+      //       <DeleteForeverIcon style={iconMedium} />
+      //       Delete
+      //     </Button>
+      //   ),
       enableNestedDataAccess: '.',
       onTableChange: (action, tableState) => {
         const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
@@ -319,7 +314,8 @@ export default function MeshSyncTable ({ classes, updateProgress }) {
       },
       renderExpandableRow: (rowData, tableMeta) => {
         const colSpan = rowData.length;
-        const meshSyncResources = meshSyncResources && meshSyncResources[tableMeta.rowIndex];
+        const meshSyncResourcesMetaData =
+          meshSyncResources && meshSyncResources[tableMeta.rowIndex];
 
         return (
           <TableCell colSpan={colSpan} className={classes.innerTableWrapper}>
@@ -342,7 +338,7 @@ export default function MeshSyncTable ({ classes, updateProgress }) {
                             }}
                             className={classes.contentContainer}
                           >
-                            <FormattedMetadata event={meshSyncResources} />
+                            <FormattedMetadata event={meshSyncResourcesMetaData} />
                           </Grid>
                         </Grid>
                       </Grid>
@@ -363,7 +359,7 @@ export default function MeshSyncTable ({ classes, updateProgress }) {
    */
   useEffect(() => {
     if (!loading) {
-        getMeshsyncResources(page, pageSize, search, sortOrder);
+      getMeshsyncResources(page, pageSize, search, sortOrder);
     }
   }, [page, pageSize, search, sortOrder]);
 
@@ -401,7 +397,7 @@ export default function MeshSyncTable ({ classes, updateProgress }) {
 
   const [tableCols, updateCols] = useState(columns);
 
-  const [columnVisibility, setColumnVisibility] = useState(() => {
+  const [columnVisibility /*setColumnVisibility*/] = useState(() => {
     // Initialize column visibility based on the original columns' visibility
     const initialVisibility = {};
     columns.forEach((col) => {
