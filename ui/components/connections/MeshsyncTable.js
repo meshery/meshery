@@ -83,6 +83,16 @@ export default function MeshSyncTable({ classes, updateProgress, search }) {
       label: 'API version',
       options: {
         display: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
+        },
       },
     },
     {
@@ -127,6 +137,7 @@ export default function MeshSyncTable({ classes, updateProgress, search }) {
       options: {
         sort: true,
         sortThirdClickReset: true,
+        display: false,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
             <SortableTableCell
@@ -201,9 +212,10 @@ export default function MeshSyncTable({ classes, updateProgress, search }) {
       responsive: 'standard',
       // resizableColumns: true,
       serverSide: true,
+      selectableRows: false,
       count,
       rowsPerPage: pageSize,
-      rowsPerPageOptions: [10, 20, 30],
+      rowsPerPageOptions: [10, 25, 30],
       fixedHeader: true,
       page,
       print: false,
@@ -213,19 +225,19 @@ export default function MeshSyncTable({ classes, updateProgress, search }) {
           text: 'connection(s) selected',
         },
       },
-      //   customToolbarSelect: (selected) => (
-      //     <Button
-      //       variant="contained"
-      //       color="primary"
-      //       size="large"
-      //       // @ts-ignore
-      //       onClick={() => handleDeleteConnections(selected)}
-      //       style={{ background: '#8F1F00', marginRight: '10px' }}
-      //     >
-      //       <DeleteForeverIcon style={iconMedium} />
-      //       Delete
-      //     </Button>
-      //   ),
+      // customToolbarSelect: (selected) => (
+      //   <Button
+      //     variant="contained"
+      //     color="primary"
+      //     size="large"
+      //     // @ts-ignore
+      //     // onClick={() => handleDeleteConnections(selected)}
+      //     style={{ background: '#8F1F00', marginRight: '10px' }}
+      //   >
+      //     <DeleteForeverIcon style={iconMedium} />
+      //     Delete
+      //   </Button>
+      // ),
       enableNestedDataAccess: '.',
       onTableChange: (action, tableState) => {
         const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
@@ -379,7 +391,7 @@ const SortableTableCell = ({ index, columnData, columnMeta, onSort }) => {
     <TableCell key={index} onClick={onSort}>
       <TableSortLabel
         active={columnMeta.name === columnData.name}
-        direction={columnMeta.direction || 'asc'}
+        // direction={columnMeta.direction || 'asc'}
       >
         <b>{columnData.label}</b>
       </TableSortLabel>
