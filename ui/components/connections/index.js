@@ -847,11 +847,12 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
               }}
               placeholder="Search connections..."
             />
-
-            <CustomColumnVisibilityControl
-              columns={columns}
-              customToolsProps={{ columnVisibility, setColumnVisibility }}
-            />
+            {tab === 0 && 
+              <CustomColumnVisibilityControl
+                columns={columns}
+                customToolsProps={{ columnVisibility, setColumnVisibility }}
+              />
+            }
           </div>
         </div>
         <AppBar position="static" color="default" className={classes.appBar}>
@@ -904,8 +905,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
           <MeshSyncTable
             classes={classes}
             updateProgress={updateProgress}
-            columnVisibility={columnVisibility}
-            setColumnVisibility={setColumnVisibility}
+            search={search}
           />
         )}
         <PromptComponent ref={modalRef} />

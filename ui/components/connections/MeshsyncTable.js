@@ -23,12 +23,11 @@ const ACTION_TYPES = {
   },
 };
 
-export default function MeshSyncTable({ classes, updateProgress }) {
+export default function MeshSyncTable({ classes, updateProgress, search }) {
   const [page, setPage] = useState(0);
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(0);
   const [meshSyncResources, setMeshSyncResources] = useState([]);
-  const [search /*setSearch*/] = useState('');
   const [sortOrder, setSortOrder] = useState('');
   const [showMore, setShowMore] = useState(false);
   const [rowsExpanded, setRowsExpanded] = useState([]);
@@ -44,20 +43,6 @@ export default function MeshSyncTable({ classes, updateProgress }) {
         display: false,
       },
     },
-    {
-      name: 'apiVersion',
-      label: 'API version',
-      options: {
-        display: false,
-      },
-    },
-    // {
-    //   name: 'Kind',
-    //   label: 'Kind',
-    //   options: {
-    //     display: false,
-    //   },
-    // },
     {
       name: 'metadata.name',
       label: 'Name',
@@ -75,12 +60,24 @@ export default function MeshSyncTable({ classes, updateProgress }) {
           );
         },
         customBodyRender: (value) => {
+          const maxCharLength = 30;
+          const shouldTruncate = value?.length > maxCharLength;
+          
           return (
             <Tooltip title={value} placement="top">
-              <Chip variant="outlined" label={value} style={{ maxWidth: '120px' }} />
+              <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: shouldTruncate ? 'ellipsis' : 'none' }}>
+                {shouldTruncate ? `${value.slice(0, maxCharLength)}...` : value}
+              </div>
             </Tooltip>
           );
         },
+      },
+    },
+    {
+      name: 'apiVersion',
+      label: 'API version',
+      options: {
+        display: true,
       },
     },
     {
@@ -135,42 +132,20 @@ export default function MeshSyncTable({ classes, updateProgress }) {
             />
           );
         },
+        customBodyRender: (value) => {
+          const maxCharLength = 30;
+          const shouldTruncate = value?.length > maxCharLength;
+          
+          return (
+            <Tooltip title={value} placement="top">
+              <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: shouldTruncate ? 'ellipsis' : 'none' }}>
+                {shouldTruncate ? `${value.slice(0, maxCharLength)}...` : value}
+              </div>
+            </Tooltip>
+          );
+        },
       },
     },
-    // {
-    //   name: 'updated_at',
-    //   label: 'Updated At',
-    //   options: {
-    //     sort: true,
-    //     sortThirdClickReset: true,
-    //     customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-    //       return (
-    //         <SortableTableCell
-    //           index={index}
-    //           columnData={column}
-    //           columnMeta={columnMeta}
-    //           onSort={() => sortColumn(index)}
-    //         />
-    //       );
-    //     },
-    //     customBodyRender: function CustomBody(value) {
-    //       return (
-    //         <Tooltip
-    //           title={
-    //             <Moment startOf="day" format="LLL">
-    //               {value}
-    //             </Moment>
-    //           }
-    //           placement="top"
-    //           arrow
-    //           interactive
-    //         >
-    //           <Moment format="LL">{value}</Moment>
-    //         </Tooltip>
-    //       );
-    //     },
-    //   },
-    // },
     {
       name: 'metadata.creationTimestamp',
       label: 'Discovered At',
@@ -205,39 +180,6 @@ export default function MeshSyncTable({ classes, updateProgress }) {
         },
       },
     },
-    // {
-    //   name: 'Actions',
-    //   options: {
-    //     filter: false,
-    //     sort: false,
-    //     searchable: false,
-    //     customHeadRender: function CustomHead({ ...column }) {
-    //       return (
-    //         <TableCell>
-    //           <b>{column.label}</b>
-    //         </TableCell>
-    //       );
-    //     },
-    //     customBodyRender: (_, tableMeta) => {
-    //       return (
-    //         <div className={classes.centerContent}>
-    //           {tableMeta.rowData[4] === KUBERNETES ? (
-    //             <IconButton
-    //               aria-label="more"
-    //               id="long-button"
-    //               aria-haspopup="true"
-    //               onClick={(e) => handleActionMenuOpen(e, tableMeta)}
-    //             >
-    //               <MoreVertIcon style={iconMedium} />
-    //             </IconButton>
-    //           ) : (
-    //             '-'
-    //           )}
-    //         </div>
-    //       );
-    //     },
-    //   },
-    // },
   ];
 
   const options = useMemo(
@@ -246,7 +188,7 @@ export default function MeshSyncTable({ classes, updateProgress }) {
       viewColumns: false,
       search: false,
       responsive: 'standard',
-      resizableColumns: true,
+      // resizableColumns: true,
       serverSide: true,
       count,
       rowsPerPage: pageSize,
