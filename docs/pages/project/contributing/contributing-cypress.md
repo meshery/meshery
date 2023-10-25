@@ -6,6 +6,7 @@ description: How to contribute to End-to-End Tests using Cypress.
 language: en
 type: project
 category: contributing
+list: include
 ---
 
 ## Introduction

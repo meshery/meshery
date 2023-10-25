@@ -515,7 +515,10 @@ input PageFilter {
   from: String
   to: String
   updated_after: String
+  visibility: [String!]
 }
+
+# ============== CATALOG =============================
 
 input CatalogSelector {
   page: String!

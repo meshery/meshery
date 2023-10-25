@@ -6,6 +6,7 @@ description: How to contribute to Meshery Command Line Interface.
 language: en
 type: project
 category: contributing
+list: include
 ---
 
 `mesheryctl` is written in Golang or the Go Programming Language. For development use Go version 1.19+.

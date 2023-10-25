@@ -102,12 +102,15 @@
         width: 100%;
         margin: 2rem 0 1rem;
         position: relative;
+        position: sticky;
+        top: 0;
+        z-index: 10;
       }
 
       &-input {
         border: none;
         width: 100%;
-        font-size: 1rem;
+        font-size: 1.1rem;
         border-radius: 21px;
         background: var(--background-neumorphic);
         padding: 8px 15px 8px 15px;
@@ -171,7 +174,7 @@
         }
 
         & > ul {
-          padding-inline-start: 2.3rem;
+          padding-inline-start: 2rem;
           list-style: none;
           margin-bottom: 0;
 
@@ -180,20 +183,21 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
-            padding-inline-start: 0px;
+            padding-inline-start: 1rem;
             margin-bottom: 0;
-            & ul li {
-              list-style: none;
-              display: flex;
+
+            & > li ul {
+              display: flex;  
+              list-style: disc;
               flex-direction: column;
               gap: .25rem;
-              padding-inline-start: 1rem;
+              // padding-inline-start: 1rem;
             }
-            & ul > li {
-              & ::before {
-                content: "- ";
-              }
-            }
+            // & ul > li {
+            //   & ::before {
+            //     content: "- ";
+            //   }
+            // }
           }
         }
       }
