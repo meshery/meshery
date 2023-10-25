@@ -5,6 +5,8 @@ permalink: project/security-vulnerabilities
 description: How the Meshery team handles security vulnerabilities.
 language: en
 type: project
+category: none
+list: include
 ---
 
 ## Reporting a vulnerability

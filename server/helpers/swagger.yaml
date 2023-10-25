@@ -311,7 +311,8 @@ paths:
 
                 ```?pagesize={pagesize}``` Default pagesize is 10
 
-                ```?visibility={visibility}``` Default visibility is public
+                ```?visibility={[visibility]}``` Default visibility is public + private; Mulitple visibility filters can be passed as an array
+                Eg: ```?visibility=["public", "published"]``` will return public and published filters
             operationId: idGetFilterFiles
             responses:
                 "200":
@@ -1174,6 +1175,9 @@ paths:
                 ```?page={page-number}``` Default page number is 1
 
                 ```?pagesize={pagesize}``` Default pagesize is 10
+
+                ```?visibility={[visibility]}``` Default visibility is public + private; Mulitple visibility filters can be passed as an array
+                Eg: ```?visibility=["public", "published"]``` will return public and published designs
             operationId: idGetPatternFiles
             responses:
                 "200":
