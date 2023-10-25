@@ -2,10 +2,6 @@
 layout: default
 title: Compatibility Matrix
 permalink: installation/compatibility-matrix
-redirect_from: 
- - project/compatibility-matrix/
- - installation/compatibility-matrix
- - installation/compatibility-matrix/
 description: a complete compatibility matrix and project test status dashboard.
 language: en
 display-title: "false"
