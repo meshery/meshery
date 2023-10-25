@@ -221,7 +221,7 @@ func start() error {
 
 			temp, ok := utils.Services[v]
 			if !ok {
-				return errors.New(fmt.Sprintf("no such service `%s` exists.", v))
+				return errors.New(fmt.Sprintf("No Docker Compose service exists for Meshery component `%s`.", v))
 			}
 
 			spliter := strings.Split(temp.Image, ":")
@@ -233,7 +233,7 @@ func start() error {
 			if err != nil {
 				// failure while adding a service to docker compose file is not a fatal error
 				// mesheryctl will continue deploying with required services (meshery, watchtower)
-				log.Infof("Encountered an error while adding `%s` service to Docker compose file, you may not have permission to write file.", v)
+				log.Infof("Encountered an error while adding `%s` service to Docker Compose file. Verify permission to write to `.meshery/meshery.yaml` file.", v)
 			}
 		}
 
