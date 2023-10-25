@@ -839,6 +839,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
             className={classes.searchAndView}
             style={{
               display: 'flex',
+              borderRadius: "0.5rem 0.5rem 0 0"
             }}
           >
             <SearchBar

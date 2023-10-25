@@ -149,6 +149,19 @@ const styles = (theme) => ({
     display: 'flex',
     justifyContent: 'center',
   },
+  tab: {
+    minWidth: 40,
+    paddingLeft: 0,
+    paddingRight: 0,
+    '&.Mui-selected': {
+      color: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
+    },
+  },
+  tabs: {
+    '& .MuiTabs-indicator': {
+      backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
+    },
+  },
 });
 
 export default styles;
