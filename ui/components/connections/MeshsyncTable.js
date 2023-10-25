@@ -7,7 +7,6 @@ import {
   Grid,
   TableRow,
   TableSortLabel,
-  Chip,
 } from '@material-ui/core';
 import Moment from 'react-moment';
 import dataFetch from '../../lib/data-fetch';
@@ -62,10 +61,16 @@ export default function MeshSyncTable({ classes, updateProgress, search }) {
         customBodyRender: (value) => {
           const maxCharLength = 30;
           const shouldTruncate = value?.length > maxCharLength;
-          
+
           return (
             <Tooltip title={value} placement="top">
-              <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: shouldTruncate ? 'ellipsis' : 'none' }}>
+              <div
+                style={{
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  textOverflow: shouldTruncate ? 'ellipsis' : 'none',
+                }}
+              >
                 {shouldTruncate ? `${value.slice(0, maxCharLength)}...` : value}
               </div>
             </Tooltip>
@@ -135,10 +140,16 @@ export default function MeshSyncTable({ classes, updateProgress, search }) {
         customBodyRender: (value) => {
           const maxCharLength = 30;
           const shouldTruncate = value?.length > maxCharLength;
-          
+
           return (
             <Tooltip title={value} placement="top">
-              <div style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: shouldTruncate ? 'ellipsis' : 'none' }}>
+              <div
+                style={{
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  textOverflow: shouldTruncate ? 'ellipsis' : 'none',
+                }}
+              >
                 {shouldTruncate ? `${value.slice(0, maxCharLength)}...` : value}
               </div>
             </Tooltip>

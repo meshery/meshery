@@ -51,8 +51,8 @@ import fetchMesheryOperatorStatus from '../graphql/queries/OperatorStatusQuery';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import styles from './styles';
 import MeshSyncTable from './MeshsyncTable';
-import ConnectionIcon from "../../assets/icons/Connection"
-import MeshsyncIcon from "../../assets/icons/Meshsync"
+import ConnectionIcon from '../../assets/icons/Connection';
+import MeshsyncIcon from '../../assets/icons/Meshsync';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -841,7 +841,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
             className={classes.searchAndView}
             style={{
               display: 'flex',
-              borderRadius: "0.5rem 0.5rem 0 0"
+              borderRadius: '0.5rem 0.5rem 0 0',
             }}
           >
             <SearchBar
@@ -850,12 +850,12 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
               }}
               placeholder="Search connections..."
             />
-            {tab === 0 && 
+            {tab === 0 && (
               <CustomColumnVisibilityControl
                 columns={columns}
                 customToolsProps={{ columnVisibility, setColumnVisibility }}
               />
-            }
+            )}
           </div>
         </div>
         <AppBar position="static" color="default" className={classes.appBar}>
@@ -903,11 +903,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
           />
         )}
         {tab === 1 && (
-          <MeshSyncTable
-            classes={classes}
-            updateProgress={updateProgress}
-            search={search}
-          />
+          <MeshSyncTable classes={classes} updateProgress={updateProgress} search={search} />
         )}
         <PromptComponent ref={modalRef} />
         <Popover
