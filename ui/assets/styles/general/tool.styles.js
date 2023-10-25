@@ -37,6 +37,47 @@ const useStyles = makeStyles((theme) => ({
     padding: '1rem',
     flexDirection: 'row',
   },
+  '@keyframes rotateCloseIcon': {
+    form: {
+      transform: 'translateY(0) translateX(0)',
+      height: '10rem',
+      marginBottom: '0rem',
+      background: '#51636B',
+      flexDirection: 'col',
+    },
+    to: {
+      transform: 'translateY(-70px) translateX(-120px)',
+      height: '4rem',
+      marginBottom: '5rem',
+      background: '#4a7d8d',
+      flexDirection: 'row-reverse'
+    },
+  },
+  cardStyle: {
+    background: '#51636B',
+    color: 'white',
+    height: '10rem',
+    width: '13rem',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: '1rem',
+    flexDirection: 'column',
+    cursor: 'pointer',
+  },
+  cardAnimateStyle: {
+    background: '#51636B',
+    color: 'white',
+    height: '10rem',
+    width: '13rem',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: '1rem',
+    flexDirection: 'column',
+    cursor: 'pointer',
+    animation: '$rotateCloseIcon 1s',
+  },
   // Define other styles as needed
 }));
 

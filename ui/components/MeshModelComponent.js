@@ -96,6 +96,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
   const [show, setShow] = useState({});
   const [comp, setComp] = useState([]);
   const [rela, setRela] = useState([]);
+  const [animate, setAnimate] = useState(false);
 
   const getModels = async (page) => {
     try {
@@ -624,6 +625,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
       {convert ? (
         <div className={StyleClass.mainContainer}>
           <div
+            className={StyleClass.cardContainer}
             style={{
               display: 'flex',
               flexDirection: 'row',
@@ -632,10 +634,13 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
           >
             <Paper
               elevation={3}
-              style={cardStyle}
+              className={animate ? StyleClass.cardAnimateStyle : StyleClass.cardStyle}
               onClick={() => {
                 setView(MODELS);
-                setConvert(false);
+                setAnimate(true);
+                setTimeout(() => {
+                  setConvert(false);
+                }, 1000);
               }}
             >
               <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>{modelsCount}</span>
@@ -643,10 +648,13 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
             </Paper>
             <Paper
               elevation={3}
-              style={cardStyle}
+              className={animate ? StyleClass.cardAnimateStyle : StyleClass.cardStyle}
               onClick={() => {
                 setView(COMPONENTS);
-                setConvert(false);
+                setAnimate(true);
+                setTimeout(() => {
+                  setConvert(false);
+                }, 1000);
               }}
             >
               <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>{componentsCount}</span>
@@ -654,10 +662,13 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
             </Paper>
             <Paper
               elevation={3}
-              style={cardStyle}
+              className={animate ? StyleClass.cardAnimateStyle : StyleClass.cardStyle}
               onClick={() => {
                 setView(RELATIONSHIPS);
-                setConvert(false);
+                setAnimate(true);
+                setTimeout(() => {
+                  setConvert(false);
+                }, 1000);
               }}
             >
               <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>{relationshipsCount}</span>
@@ -665,10 +676,13 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
             </Paper>
             <Paper
               elevation={3}
-              style={cardStyle}
+              className={animate ? StyleClass.cardAnimateStyle : StyleClass.cardStyle}
               onClick={() => {
                 setView(REGISTRANTS);
-                setConvert(false);
+                setAnimate(true);
+                setTimeout(() => {
+                  setConvert(false);
+                }, 1000);
               }}
             >
               <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>12</span>
@@ -702,6 +716,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
               onClick={() => {
                 setView(OVERVIEW);
                 setConvert(true);
+                setAnimate(false);
               }}
             >
               Overview
