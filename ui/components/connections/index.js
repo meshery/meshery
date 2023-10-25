@@ -51,6 +51,8 @@ import fetchMesheryOperatorStatus from '../graphql/queries/OperatorStatusQuery';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import styles from './styles';
 import MeshSyncTable from './MeshsyncTable';
+import ConnectionIcon from "../../assets/icons/Connection"
+import MeshsyncIcon from "../../assets/icons/Meshsync"
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -872,8 +874,9 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
               className={classes.tab}
               label={
                 <div className={classes.iconText}>
-                  Connections
-                  {/* <img src="/static/img/grafana_icon.svg" className={classes.icon} /> */}
+                  <span style={{ marginRight: '0.3rem' }}>Connections</span>
+                  <ConnectionIcon width="20" height="20" />
+                  {/* <img src="/static/img/connection-light.svg" className={classes.icon} /> */}
                 </div>
               }
             />
@@ -881,11 +884,8 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
               className={classes.tab}
               label={
                 <div className={classes.iconText}>
-                  Meshsync
-                  {/* <img
-                    src="/static/img/prometheus_logo_orange_circle.svg"
-                    className={classes.icon}
-                  /> */}
+                  <span style={{ marginRight: '0.3rem' }}>Meshsync</span>
+                  <MeshsyncIcon width="20" height="20" />
                 </div>
               }
             />

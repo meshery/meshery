@@ -162,6 +162,11 @@ const styles = (theme) => ({
       backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
     },
   },
+  iconText: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
 
 export default styles;
