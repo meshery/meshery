@@ -47,6 +47,9 @@ const styles = (theme) => ({
       cursor: 'pointer',
     },
   },
+  appBar: {
+    marginBottom: '3rem'
+  },
   capitalize: {
     textTransform: 'capitalize',
   },

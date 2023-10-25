@@ -17,6 +17,9 @@ import {
   Typography,
   Switch,
   Popover,
+  AppBar,
+  Tabs,
+  Tab
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -46,8 +49,8 @@ import resetDatabase from '../graphql/queries/ResetDatabaseQuery';
 import changeOperatorState from '../graphql/mutations/OperatorStatusMutation';
 import fetchMesheryOperatorStatus from '../graphql/queries/OperatorStatusQuery';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
-import styles from "./styles"
-
+import styles from './styles';
+import MeshSyncTable from './MeshsyncTable'
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -143,6 +146,7 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal, ope
   const [rowData, setSelectedRowData] = useState({});
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [_operatorState, _setOperatorState] = useState(operatorState || []);
+  const [tab, setTab] = useState(0)
 
   const open = Boolean(anchorEl);
   const _operatorStateRef = useRef(_operatorState);
@@ -803,7 +807,7 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal, ope
   return (
     <>
       <NoSsr>
-        <div className={StyleClass.toolWrapper}>
+        <div className={StyleClass.toolWrapper} style={{ marginBottom: "0" }}>
           <div className={classes.createButton}>
             <div>
               <Button
@@ -839,15 +843,56 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal, ope
             />
           </div>
         </div>
-        <ResponsiveDataTable
-          data={connections}
-          columns={columns}
-          options={options}
-          className={classes.muiRow}
-          tableCols={tableCols}
-          updateCols={updateCols}
-          columnVisibility={columnVisibility}
-        />
+        <AppBar position="static" color="default" className={classes.appBar}>
+          <Tabs
+            value={tab}
+            className={classes.tabs}
+            onChange={(e, newTab)=>{
+              e.stopPropagation()
+              setTab(newTab)
+            }}
+            indicatorColor="primary"
+            textColor="primary"
+            variant="fullWidth"
+          >
+            <Tab
+              className={classes.tab}
+              label={
+                <div className={classes.iconText}>
+                  Connections
+                  {/* <img src="/static/img/grafana_icon.svg" className={classes.icon} /> */}
+                </div>
+              }
+            />
+            <Tab
+              className={classes.tab}
+              label={
+                <div className={classes.iconText}>
+                  Meshsync
+                  {/* <img
+                    src="/static/img/prometheus_logo_orange_circle.svg"
+                    className={classes.icon}
+                  /> */}
+                </div>
+              }
+            />
+          </Tabs>
+        </AppBar>
+        {tab === 0 && 
+          <ResponsiveDataTable
+            data={connections}
+            columns={columns}
+            options={options}
+            className={classes.muiRow}
+            tableCols={tableCols}
+            updateCols={updateCols}
+            columnVisibility={columnVisibility}
+          />
+        }
+        {
+          tab === 1 &&
+          <MeshSyncTable classes={classes} updateProgress={updateProgress} columnVisibility={columnVisibility} setColumnVisibility={setColumnVisibility}/>
+        }
         <PromptComponent ref={modalRef} />
         <Popover
           open={open}
