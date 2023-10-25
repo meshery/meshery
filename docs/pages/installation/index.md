@@ -4,9 +4,7 @@ title: Installation
 type: installation
 abstract: Installation procedures for deploying Meshery with mesheryctl.
 permalink: installation
-redirect_from: 
- - installation/
- - installation
+redirect_from: installation/
 language: en
 list: include
 ---
@@ -29,10 +27,4 @@ Meshery deploys as a set of Docker containers, which can be deployed to either a
     {% endfor %}
 </ul>
 
-{% include toc.html page=reference %}
-
-{:toc}
-
-{% include suggested-reading.html diffName="false" isDiffTag="true" diffTag=tag %}
-
-{% include related-discussions.html tag="meshery" %}
+<!-- {% include toc.html page=reference %} -->

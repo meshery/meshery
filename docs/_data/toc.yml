@@ -20,33 +20,38 @@
               url: installation/kubernetes/eks
             - title: "- GKE"
               url: installation/kubernetes/gke
+            - title: "- Helm"
+              url: installation/kubernetes/helm
             - title: "- KinD"
               url: installation/kubernetes/kind
             - title: "- Minikube"
               url: installation/kubernetes/minikube
         - title: KubeSphere
           url: installation/kubesphere
-        - title: Linux or Mac
+        - title: Linux or macOS
+          url: installation/linux-mac
           grandchildren: 
             - title: "- Bash"
-              url: installation/operating-systems#homebrew
+              url: installation/linux-mac/bash
             - title: "- Brew"
-              url: installation/operating-systems#homebrew
+              url: installation/linux-mac/brew
         - title: Windows
-          url: installation/operating-systems/windows 
+          url: installation/windows 
           grandchildren: 
-            - title: Scoop
+            - title: "- Scoop"
               url: installation/windows/scoop 
     - title: Compatibility Matrix
       url: installation/compatibility-matrix
 - title: 🗺 Overview
-  url: project
+  url: project/overview
   links:
   - title: FAQ
     url: project/faq
 - title: 🧑‍💻 Contributing & Community
-  url: project/community
+  url: project
   links:
+    - title: Community
+      url: project/community
     - title: Contributing ↆ
       url: project/contributing
       children:

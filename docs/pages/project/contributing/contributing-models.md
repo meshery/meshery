@@ -7,6 +7,7 @@ description: How to contribute to Meshery Models, Components, Relationships, Pol
 language: en
 type: project
 category: contributing
+list: include
 ---
 
 Models serve as a foundational element in the Meshery ecosystem, representing the interconnectedness of various components inside the infrastructure of an architecture.

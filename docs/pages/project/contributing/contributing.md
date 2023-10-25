@@ -3,12 +3,14 @@ layout: page
 title: Contributing
 permalink: project/contributing
 description: How to contribute to the Meshery project.
+redirect_from:
+ - project/contributing/
+ - project/contributing
+display-title: "false"
 language: en
 type: project
-redirect_from:
-  - contributing
-  - project/contributing/
 category: contributing
+list: exclude
 ---
 
 Please do! Thanks for your help! 🎈 Meshery is community-built and welcomes collaboration. Contributors are expected to adhere to the [CNCF's Code of Conduct](https://github.com/layer5io/meshery/blob/master/CODE_OF_CONDUCT.md).
