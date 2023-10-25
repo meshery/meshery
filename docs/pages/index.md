@@ -19,7 +19,7 @@ language: en
 <div class="flex flex-col--2"  style="text-align: left; padding:1.6rem ;--col-gap:1rem">
   <!-- OVERVIEW -->
   <div class="section">
-    <a href="{{ site.baseurl }}/project">
+    <a href="{{ site.baseurl }}/project/overview">
         <div class="btn-primary">Overview</div>
     </a>
     <!-- <h6>Getting Started</h6> -->
@@ -30,9 +30,9 @@ language: en
     </ul>
     <details>
       <summary>
-        <h6 style="display:inline">
+        <p style="display:inline">
           <a href="{{ site.baseurl }}/installation/" class="text-black">Supported Platforms</a>
-        </h6>
+        </p>
       </summary>
       <ul class="section-title">
       {% for item in sorted_pages %}
@@ -64,9 +64,9 @@ language: en
     </ul> -->
     <details>
       <summary>
-        <h6 style="display:inline">
+        <p style="display:inline">
           <a href="{{ site.baseurl }}/concepts/logical" class="text-black">Logical</a>
-        </h6>
+        </p>
       </summary>
       <ul class="section-title">
           {% for item in sorted_pages %}
@@ -82,9 +82,9 @@ language: en
     </details>
     <details>
       <summary>
-        <h6 style="display:inline">
+        <p style="display:inline">
           <a href="{{ site.baseurl }}/concepts/architecture" class="text-black section-title">Architectural</a>
-        </h6>
+        </p>
       </summary>
       <ul>
           {% for item in sorted_pages %}
@@ -146,9 +146,27 @@ language: en
         <div class="btn-primary">Guides</div>
     </a>
     <!-- <h6><a href="{{ site.baseurl }}/guides" class="text-black section-title">Guides</a></h6> -->
+    <details>
+      <summary>
+        <p style="display:inline">
+          <a href="{{ site.baseurl }}/guides/mesheryctl/" class="text-black">Meshery CLI</a>
+        </p>
+      </summary>
+      <ul class="section-title">
+          {% for item in sorted_pages %}
+          {% if item.type=="guides" and item.category=="mesheryctl" and item.language=="en" -%}
+            <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+            {% if item.abstract != " " %}
+              -  {{ item.abstract }}
+            {% endif %}
+            </li>
+            {% endif %}
+          {% endfor %}
+      </ul>
+    </details>
     <ul>
       {% for item in sorted_pages %}
-      {% if item.type=="Guides" and item.list!="exclude"  and item.language!="es" -%}
+      {% if item.type=="guides" and item.category!="mesheryctl" and item.language=="en" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}
@@ -173,19 +191,31 @@ language: en
 
     <!-- CONTRIBUTING -->
   <div class="section">
-    <a href="{{ site.baseurl }}/tasks">
-        <div class="btn-primary">Contributing</div>
+    <a href="{{ site.baseurl }}/project">
+        <div class="btn-primary">Contributing and Community</div>
     </a>
     <!-- <h6><a href="{{ site.baseurl }}/tasks" class="text-black section-title">Cloud Native Management</a></h6> -->
     <ul>
-      {% for item in sorted_pages %}
-      {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" and item.language !="es" -%}
-        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-        </li>
-        {% endif %}
-      {% endfor %}
+      <li><a href="{{ site.baseurl }}/project/community" class="text-black">Community</a></li>
     </ul>
-    <!-- <h6><a href="{{ site.baseurl }}/service-meshes" class="text-black section-title">Service Mesh Specific Management</a></h6> -->
+    <details>
+      <summary>
+        <p style="display:inline">
+          <a href="{{ site.baseurl }}/project/contributing" class="text-black">Contributing</a>
+        </p>
+      </summary>
+      <ul class="section-title">
+          {% for item in sorted_pages %}
+          {% if item.category=="contributing" and item.language=="en" -%}
+            <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+            {% if item.abstract != " " %}
+              -  {{ item.abstract }}
+            {% endif %}
+            </li>
+            {% endif %}
+          {% endfor %}
+      </ul>
+    </details>
   </div>
     
 </div>
@@ -193,13 +223,15 @@ language: en
 
     <!-- PROJECT -->
   <div class="section">
-    <a href="{{ site.baseurl }}/project">
+    <a href="{{ site.baseurl }}/project/overview">
         <div class="btn-primary">Project</div>
     </a>
     <!-- <h6><a href="{{ site.baseurl }}/tasks" class="text-black section-title">Cloud Native Management</a></h6> -->
+    {% assign sorted_pages = site.pages | sort: "name" | alphabetical %}
+
     <ul>
       {% for item in sorted_pages %}
-      {% if item.type=="project" and item.category!="contributing" and item.list!="exclude" and item.language !="es" -%}
+      {% if item.type=="project" and item.category!="contributing" and item.list=="include" and item.language =="en" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}

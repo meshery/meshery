@@ -89,6 +89,7 @@ export var darkTheme = createTheme({
       menuSelectedBg: 'rgba(0, 179, 159, 0.25)',
       menuActionText: '#FBFBFB',
       menuItemBorder: '#979797',
+      pinball: '#d3d3d3',
     },
   },
   p: {
@@ -345,6 +346,7 @@ let theme = createTheme({
       menuSelectedBg: '#CCC',
       menuActionText: '#FBFBFB',
       menuItemBorder: '#979797',
+      pinball: '#d3d3d3',
     },
   },
   shape: { borderRadius: 8 },

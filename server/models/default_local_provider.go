@@ -574,7 +574,7 @@ func (l *DefaultLocalProvider) SaveMesheryPattern(_ string, pattern *MesheryPatt
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
-func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, order string, updatedAfter string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, order, updatedAfter string, visibility []string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -591,7 +591,7 @@ func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, ord
 	if err != nil {
 		return nil, ErrPageSize(err)
 	}
-	return l.MesheryPatternPersister.GetMesheryPatterns(search, order, pg, pgs, updatedAfter)
+	return l.MesheryPatternPersister.GetMesheryPatterns(search, order, pg, pgs, updatedAfter, visibility)
 }
 
 // GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
@@ -689,7 +689,7 @@ func (l *DefaultLocalProvider) SaveMesheryFilter(_ string, filter *MesheryFilter
 }
 
 // GetMesheryFilters gives the filters stored with the provider
-func (l *DefaultLocalProvider) GetMesheryFilters(_, page, pageSize, search, order string, visibility string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryFilters(_, page, pageSize, search, order string, visibility []string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -697,9 +697,6 @@ func (l *DefaultLocalProvider) GetMesheryFilters(_, page, pageSize, search, orde
 		pageSize = "10"
 	}
 
-	if visibility == "" {
-		visibility = Public
-	}
 
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
