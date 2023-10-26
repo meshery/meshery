@@ -75,6 +75,9 @@
         & svg:hover {
           fill: #0073cf;
         }
+        & svg.twitter:hover {
+          fill: var(--color-white);
+        }
       }
     }
   }
