@@ -69,7 +69,7 @@ Meshery should now be running in your kinD cluster and Meshery UI should be acce
 
 Once kinD cluster is configured as current cluster-context, execute the below command.
 
-Before executing the below command, go to ~/.meshery/config.yaml and ensure that current platform is set to kubernetes.
+Before executing the below command, go to `~/.meshery/config.yaml` and ensure that current platform is set to kubernetes.
 {% capture code_content %}$ mesheryctl system start{% endcapture %}
 {% include code.html code=code_content %}
 
