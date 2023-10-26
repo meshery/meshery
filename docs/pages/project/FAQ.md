@@ -9,30 +9,48 @@ type: project
 
 ## General FAQs
 
-#### Question: What is Meshery?
+<details>
+    <summary>
+    <h6>Question: What is Meshery?</h6>
+</summary>
 
-**Answer:** _As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure._
+<p><strong>Answer:</strong> <i>As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.</i></p>
+</details>
 
-#### Question: Why was Meshery created?
+<details>
+    <summary>
+    <h6>Question: Why was Meshery created?</h6>
+</summary>
 
-**Answer:** _As an open source, vendor neutral project, Meshery was created out of the necessity to enable platform engineers, site reliability engineers, devops engineers... engineers to collaborate in the management of their infrastucture and workloads. Meshery was created to enable you to expect more from your infrastructure and to do so with confidence._
+<p><strong>Answer:</strong> <i>As an open source, vendor neutral project, Meshery was created out of the necessity to enable platform engineers, site reliability engineers, devops engineers... engineers to collaborate in the management of their infrastucture and workloads. Meshery was created to enable you to expect more from your infrastructure and to do so with confidence.</i></p>
+</details>
 
-#### Question: What does Meshery do?
+<details>
+    <summary>
+    <h6>Question: What does Meshery do?</h6>
+</summary>
 
-**Answer:** _Infrastructure as design. Meshery enables you to design and operate cloud native infrastructure visually, collaboratively, with confidence and in partnership with your teammates. See all of Meshery's features [here]({{site.baseurl}}/features)._
+<p><strong>Answer:</strong> <i>Infrastructure as design. Meshery enables you to design and operate cloud native infrastructure visually, collaboratively, with confidence and in partnership with your teammates.</i></p>
+</details>
 
 <!-- - _offers a catalog of operational best practices._
 - _offersompare apples-to-apples performance across different infrastructure configurations._
 - _Understand behavioral differences between service deployments._
 - _Track your application performance from version to version._ -->
+  
+<details>
+    <summary>
+    <h6>Question: Is Meshery open source project?</h6>
+</summary>
+<p><strong>Answer:</strong> <i>Yes, Meshery is a Cloud Native Computing Foundation (CNCF) project and is licensed under Apache v2. As the cloud native management plane, Meshery is an extensible platform, offering multiple extension points within which users and partners can customize and extend Meshery's functionality.</i></p>
+</details>
 
-#### Is Meshery open source project?
-
-**Answer:** _Yes, Meshery is a Cloud Native Computing Foundation (CNCF) project and is licensed under Apache v2. As the cloud native management plane, Meshery is an extensible platform, offering multiple extension points within which users and partners can customize and extend Meshery's functionality._
-
-#### Question: Why should I use Meshery?
-
-**Answer:** _Meshery is a powerful tool for managing ​Kubernetes infrastructure. It seamlessly integrates with different hundreds of tools and offers extensibility through many different [extension points]({{site.baseurl}}/extensibility/#extension-points). With Meshery, you can easily discover your environment, collaboratively manage multiple Kubernetes clusters, connect your Git and Helm repos, and analyze app and infra performance._
+<details>
+    <summary>
+<h6>Question: Why should I use Meshery?</h6>
+</summary>
+<p><strong>Answer:</strong> <i>Meshery is a powerful tool for managing ​Kubernetes infrastructure. It seamlessly integrates with different hundreds of tools and offers extensibility through many different <a href="{{site.baseurl}}/extensibility/#extension-points">extension points</a>. With Meshery, you can easily discover your environment, collaboratively manage multiple Kubernetes clusters, connect your Git and Helm repos, and analyze app and infra performance.</i></p>
+</details>
 
 ## User FAQs
 

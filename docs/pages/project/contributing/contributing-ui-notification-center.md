@@ -7,6 +7,7 @@ language: en
 display-title: false
 type: project
 category: contributing
+list: include
 ---
 
 <div class="prereqs"><p><strong style="font-size: 20px;">Prerequisite Reading</strong></p>

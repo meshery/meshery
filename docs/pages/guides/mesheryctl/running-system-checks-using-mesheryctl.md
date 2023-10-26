@@ -3,8 +3,9 @@ layout: default
 title: Running system checks using Meshery CLI
 permalink: guides/mesheryctl/running-system-checks-using-mesheryctl
 language: en
-type: Guides
+type: guides
 category: mesheryctl
+list: include
 ---
 
 Meshery's CLI, `mesheryctl`, includes commands for verifying system readiness for a Meshery deployment and health checks to confirm the health of an existing Meshery deployment. Whether you have yet to deploy Meshery or have already deployed Meshery, `mesheryctl system check` is a useful utility to ensure that your Meshery deployments are healthy.

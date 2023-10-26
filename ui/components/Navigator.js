@@ -69,6 +69,7 @@ import {
   PERFORMANCE,
   PROFILES,
   TOGGLER,
+  CONNECTION,
 } from '../constants/navigator';
 import { iconSmall } from '../css/icons.styles';
 
@@ -351,13 +352,13 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
     show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE]),
     submenu: true,
     children: [
-      // {
-      //   id : CONNECTION,
-      //   href : "/management/connections",
-      //   title : "Connections",
-      //   show : capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CONNECTION]),
-      //   link : true,
-      // },
+      {
+        id: CONNECTION,
+        href: '/management/connections',
+        title: 'Connections',
+        show: capabilityRegistryObj.isNavigatorComponentEnabled([LIFECYCLE, CONNECTION]),
+        link: true,
+      },
       {
         id: SERVICE_MESH,
         href: '/management',

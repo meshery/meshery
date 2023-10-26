@@ -339,7 +339,7 @@ func start() error {
 		}
 
 		//connection to docker-client
-		cli, err := dockerCmd.NewAPIClientFromFlags(cliflags.NewCommonOptions(), dockerCfg)
+		cli, err := dockerCmd.NewAPIClientFromFlags(cliflags.NewClientOptions(), dockerCfg)
 		if err != nil {
 			utils.Log.Error(ErrCreatingDockerClient(err))
 			return nil
