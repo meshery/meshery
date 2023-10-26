@@ -92,7 +92,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
   const [checked, setChecked] = useState(false);
   const StyleClass = useStyles();
   const [view, setView] = useState(OVERVIEW);
-  const [convert, setConvert] = useState(true);
+  const [convert, setConvert] = useState(false);
   const [show, setShow] = useState({});
   const [comp, setComp] = useState([]);
   const [rela, setRela] = useState([]);
@@ -196,17 +196,18 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
     setChecked(!checked);
   };
 
-  const filteredData = checked
-    ? resourcesDetail // Show all data, including duplicates
-    : resourcesDetail.filter((item, index, self) => {
-        // Filter out duplicates based on your criteria (e.g., name and version)
-        return (
-          index ===
-          self.findIndex(
-            (otherItem) => item.name === otherItem.name && item.version === otherItem.version,
-          )
-        );
-      });
+  // const filteredData = checked
+  //   ? resourcesDetail // Show all data, including duplicates
+  //   : resourcesDetail.filter((item, index, self) => {
+  //       // Filter out duplicates based on your criteria (e.g., name and version)
+  //       return (
+  //         index ===
+  //         self.findIndex(
+  //           (otherItem) => item.name === otherItem.name && item.version === otherItem.version,
+  //         )
+  //       );
+  //     });
+  const filteredData = resourcesDetail;
 
   useEffect(() => {
     setRequestCancelled(false);
@@ -694,7 +695,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
         <div style={{ backgroundColor: 'white', borderRadius: '6px' }}>
           <div
             style={{
-              backgroundColor: '#396679',
+              backgroundColor: '#51636B',
               borderRadius: '6px 6px 0px 0px',
               color: 'white',
               paddingTop: '1rem',
@@ -706,7 +707,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
           >
             <Button
               style={{
-                backgroundColor: view === OVERVIEW ? 'white' : '#4a7d8d',
+                backgroundColor: view === OVERVIEW ? 'white' : '#677a84',
                 color: view === OVERVIEW ? 'black' : 'white',
                 borderRadius: '8px 8px 0px 0px',
                 marginRight: '1rem',
@@ -723,7 +724,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
             </Button>
             <Button
               style={{
-                backgroundColor: view === MODELS ? 'white' : '#4a7d8d',
+                backgroundColor: view === MODELS ? 'white' : '#677a84',
                 color: view === MODELS ? 'black' : 'white',
                 borderRadius: '8px 8px 0px 0px',
                 marginRight: '1rem',
@@ -736,7 +737,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
             </Button>
             <Button
               style={{
-                backgroundColor: view === COMPONENTS ? 'white' : '#4a7d8d',
+                backgroundColor: view === COMPONENTS ? 'white' : '#677a84',
                 color: view === COMPONENTS ? 'black' : 'white',
                 borderRadius: '8px 8px 0px 0px',
                 marginRight: '1rem',
@@ -749,7 +750,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
             </Button>
             <Button
               style={{
-                backgroundColor: view === RELATIONSHIPS ? 'white' : '#4a7d8d',
+                backgroundColor: view === RELATIONSHIPS ? 'white' : '#677a84',
                 color: view === RELATIONSHIPS ? 'black' : 'white',
                 borderRadius: '8px 8px 0px 0px',
                 marginRight: '1rem',
@@ -762,7 +763,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
             </Button>
             <Button
               style={{
-                backgroundColor: view === REGISTRANTS ? 'white' : '#4a7d8d',
+                backgroundColor: view === REGISTRANTS ? 'white' : '#677a84',
                 color: view === REGISTRANTS ? 'black' : 'white',
                 borderRadius: '8px 8px 0px 0px',
                 marginRight: '1rem',
@@ -796,15 +797,26 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                 borderRadius: '6px',
                 padding: '1.5rem',
                 overflowY: 'auto',
+                boxShadow: 'inset 0 0 6px 2px rgba(0, 0, 0,0.4)',
               }}
             >
               <div>
-                <Typography variant="h5" sx={{ marginBottom: '0.8rem' }}>
-                  <span style={{ fontWeight: 'bold' }}>Model:</span> {show.displayName}
-                </Typography>
+                <h3
+                  style={{
+                    margin: '0px',
+                    marginBottom: '0.8rem',
+                    padding: '0px',
+                    fontWeight: 'semibold',
+                  }}
+                >
+                  Model: <span style={{ fontWeight: 'normal' }}>{show.displayName}</span>
+                </h3>
                 <Chip
                   avatar={
-                    <Avatar src="/static/img/meshsync.svg" style={{ width: 22, height: 22 }} />
+                    <Avatar
+                      src="/static/img/meshsync.svg"
+                      style={{ width: 18, height: 18, paddingLeft: 2 }}
+                    />
                   }
                   label="MeshSync"
                   sx={{ backgroundColor: '#00B39F25' }}
@@ -812,9 +824,9 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                 <div
                   style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
                 >
-                  <div>
-                    <p>Version: {show.version}</p>
-                    <p>Components: {show.components?.length} </p>
+                  <div style={{ margin: '1rem 0px' }}>
+                    <p style={{ margin: '3px 0px' }}>Version: {show.version}</p>
+                    <p style={{ margin: '3px 0px' }}>Components: {show.components?.length} </p>
                   </div>
                   <div>
                     <p>Category: {show.category?.name}</p>
@@ -823,12 +835,19 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
               </div>
               {view !== RELATIONSHIPS && (
                 <div>
-                  <Typography variant="h5" sx={{ marginBottom: '1rem' }}>
-                    <span style={{ fontWeight: 'bold' }}>Component(s)</span>
-                  </Typography>
+                  <h3 style={{ marginBottom: '0.6rem', fontWeight: 'semibold' }}>Component(s)</h3>
                   {comp.map((component) => (
                     <div>
-                      <Typography variant="h5">{component.displayName}</Typography>
+                      <h3
+                        style={{
+                          margin: '0',
+                          marginTop: '0.4rem',
+                          padding: '0px',
+                          fontWeight: 'semibold',
+                        }}
+                      >
+                        {component.displayName}
+                      </h3>
                       <div
                         style={{
                           display: 'flex',
@@ -836,8 +855,8 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                           justifyContent: 'space-between',
                         }}
                       >
-                        <p style={{ margin: '6px 0px' }}>API Version: {component.apiVersion}</p>
-                        <p style={{ margin: '6px 0px' }}>Sub Category: {component.kind}</p>
+                        <p style={{ margin: '0px' }}>API Version: {component.apiVersion}</p>
+                        <p style={{ margin: '0px' }}>Sub Category: {component.kind}</p>
                       </div>
                     </div>
                   ))}
@@ -845,13 +864,20 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
               )}
               {view !== COMPONENTS && (
                 <div>
-                  <Typography variant="h5" sx={{ marginBottom: '1rem' }}>
-                    <span style={{ fontWeight: 'bold' }}>Relationship(s)</span>
-                  </Typography>
+                  <h3>Relationship(s)</h3>
                   {rela.map((relation) => (
                     <div>
-                      <Typography variant="h6">{relation.displayhostname}</Typography>
-                      <p style={{ margin: '6px 0px' }}>API Version: {relation.apiVersion}</p>
+                      <h3
+                        style={{
+                          margin: '0',
+                          marginTop: '0.4rem',
+                          padding: '0px',
+                          fontWeight: 'semibold',
+                        }}
+                      >
+                        {relation.displayhostname}
+                      </h3>
+                      <p style={{ margin: '0px' }}>API Version: {relation.apiVersion}</p>
                     </div>
                   ))}
                 </div>

@@ -46,10 +46,10 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: 'col',
     },
     to: {
-      transform: 'translateY(-70px) translateX(-120px)',
+      transform: 'translateY(-70px) translateX(-70px)',
       height: '4rem',
       marginBottom: '5rem',
-      background: '#4a7d8d',
+      background: '#677a84',
       flexDirection: 'row-reverse'
     },
   },
