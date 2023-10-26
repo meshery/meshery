@@ -4,7 +4,7 @@ import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { Box, Typography, Button } from '@material-ui/core';
+import { Box, Typography, Button, Avatar } from '@material-ui/core';
 import Checkbox from '@mui/material/Checkbox';
 import {
   OVERVIEW,
@@ -46,7 +46,7 @@ const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
 const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
   const theme = useTheme();
   const [checked, setChecked] = useState(false);
-  const { labelIcon: LabelIcon, check, root, labelText, ...other } = props;
+  const { labelIcon: LabelIcon, check, root, labelText, avatar, ...other } = props;
 
   return (
     <StyledTreeItemRoot
@@ -62,9 +62,16 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
           }}
           onClick={() => setChecked((prevcheck) => !prevcheck)}
         >
-          <Typography variant="body2" sx={{ fontWeight: 'inherit', flexGrow: 1 }}>
-            {labelText}
-          </Typography>
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            {avatar && (
+              <Avatar alt="Image" src={avatar} style={{ marginRight: '6px' }}>
+                IM
+              </Avatar>
+            )}
+            <Typography variant="body2" sx={{ fontWeight: 'inherit', flexGrow: 1 }}>
+              {labelText}
+            </Typography>
+          </div>
           {check && (
             <Checkbox
               size="small"
@@ -86,7 +93,18 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
   );
 });
 
-const MesheryTreeView = ({ data, view, show, setShow, comp, setComp, rela, setRela }) => {
+const MesheryTreeView = ({
+  data,
+  view,
+  show,
+  setShow,
+  comp,
+  setComp,
+  rela,
+  setRela,
+  regi,
+  setRegi,
+}) => {
   const addComponent = (component) => {
     // Check if the model is already in the comp array
     if (comp.some((item) => item === component)) {
@@ -108,6 +126,16 @@ const MesheryTreeView = ({ data, view, show, setShow, comp, setComp, rela, setRe
     }
   };
 
+  const addRegistrant = (registrant) => {
+    if (regi.some((item) => item === registrant)) {
+      // If it exists, remove it from comp
+      setRegi((prevRegi) => prevRegi.filter((item) => item !== registrant));
+    } else {
+      // If it doesn't exist, add it to comp
+      setRegi((prevRegi) => [...prevRegi, registrant]);
+    }
+  };
+
   return (
     <TreeView
       aria-label="gmail"
@@ -122,6 +150,7 @@ const MesheryTreeView = ({ data, view, show, setShow, comp, setComp, rela, setRe
             key={index}
             nodeId={index}
             root
+            avatar={model.metadata?.svgColor}
             labelText={model.displayName}
             onClick={() => {
               setShow(data[index]), setComp((prevC) => []);
@@ -183,6 +212,18 @@ const MesheryTreeView = ({ data, view, show, setShow, comp, setComp, rela, setRe
             onClick={() => {
               addRelationship(data[index]);
               setShow(data[index]?.model);
+            }}
+          />
+        ))}
+      {view === REGISTRANTS &&
+        data.map((registrant, index) => (
+          <StyledTreeItem
+            key={index}
+            check
+            nodeId={index}
+            labelText={registrant.hostname}
+            onClick={() => {
+              addRegistrant(data[index]);
             }}
           />
         ))}

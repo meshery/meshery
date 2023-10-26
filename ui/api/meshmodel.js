@@ -59,6 +59,13 @@ export async function getDuplicateComponents(componentKind, apiVersion, modelNam
     `${COMPONENTS_ENDPOINT}/${componentKind}?apiVersion=${apiVersion}&?model=${modelName}`,
   );
 }
+
+export async function getMeshModelRegistrants(page = 1, pageSize = 'all') {
+  return await promisifiedDataFetch(
+    `/api/meshmodels/registrants?page=${page}&pageSize=${pageSize}`,
+  );
+}
+
 export async function getVersionedComponentFromModel(
   model,
   version,

@@ -23,6 +23,7 @@ import {
   getRelationshipFromModelApi,
   searchModels,
   searchComponents,
+  getMeshModelRegistrants,
 } from '../api/meshmodel';
 import debounce from '../utils/debounce';
 import {
@@ -97,6 +98,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
   const [comp, setComp] = useState([]);
   const [rela, setRela] = useState([]);
   const [animate, setAnimate] = useState(false);
+  const [regi, setRegi] = useState([]);
 
   const getModels = async (page) => {
     try {
@@ -192,6 +194,18 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
     }
   };
 
+  const getRegistrants = async (page) => {
+    try {
+      const { total_count, registrants } = await getMeshModelRegistrants(page, rowsPerPage);
+      setCount(total_count);
+      if (!isRequestCancelled) {
+        setResourcesDetail(registrants);
+      }
+    } catch (error) {
+      console.error('Failed to fetch registrants:', error);
+    }
+  };
+
   const handleToggleDuplicates = () => {
     setChecked(!checked);
   };
@@ -211,7 +225,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
 
   useEffect(() => {
     setRequestCancelled(false);
-    console.log(rela);
+    console.log(regi);
 
     if (view === MODELS && searchText === null) {
       getModels(page);
@@ -223,12 +237,14 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
       getSearchedModels(searchText);
     } else if (view === COMPONENTS && searchText) {
       getSearchedComponents(searchText);
+    } else if (view === REGISTRANTS && searchText === null) {
+      getRegistrants(page);
     }
 
     return () => {
       setRequestCancelled(true);
     };
-  }, [view, page, searchText, rowsPerPage, show, comp, rela]);
+  }, [view, page, searchText, rowsPerPage, show, comp, rela, regi]);
 
   const meshmodel_columns = [
     {
@@ -786,6 +802,8 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                 setComp={setComp}
                 rela={rela}
                 setRela={setRela}
+                regi={regi}
+                setRegi={setRegi}
               />
             </div>
             <div
@@ -800,40 +818,46 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                 boxShadow: 'inset 0 0 6px 2px rgba(0, 0, 0,0.4)',
               }}
             >
-              <div>
-                <h3
-                  style={{
-                    margin: '0px',
-                    marginBottom: '0.8rem',
-                    padding: '0px',
-                    fontWeight: 'semibold',
-                  }}
-                >
-                  Model: <span style={{ fontWeight: 'normal' }}>{show.displayName}</span>
-                </h3>
-                <Chip
-                  avatar={
-                    <Avatar
-                      src="/static/img/meshsync.svg"
-                      style={{ width: 18, height: 18, paddingLeft: 2 }}
-                    />
-                  }
-                  label="MeshSync"
-                  sx={{ backgroundColor: '#00B39F25' }}
-                />
-                <div
-                  style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}
-                >
-                  <div style={{ margin: '1rem 0px' }}>
-                    <p style={{ margin: '3px 0px' }}>Version: {show.version}</p>
-                    <p style={{ margin: '3px 0px' }}>Components: {show.components?.length} </p>
-                  </div>
-                  <div>
-                    <p>Category: {show.category?.name}</p>
+              {regi.length === 0 && show && (
+                <div>
+                  <h3
+                    style={{
+                      margin: '0px',
+                      marginBottom: '0.8rem',
+                      padding: '0px',
+                      fontWeight: 'semibold',
+                    }}
+                  >
+                    Model: <span style={{ fontWeight: 'normal' }}>{show.displayName}</span>
+                  </h3>
+                  <Chip
+                    avatar={
+                      <Avatar
+                        src="/static/img/meshsync.svg"
+                        style={{ width: 18, height: 18, paddingLeft: 2 }}
+                      />
+                    }
+                    label="MeshSync"
+                    sx={{ backgroundColor: '#00B39F25' }}
+                  />
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <div style={{ margin: '1rem 0px' }}>
+                      <p style={{ margin: '3px 0px' }}>Version: {show.version}</p>
+                      <p style={{ margin: '3px 0px' }}>Components: {show.components?.length} </p>
+                    </div>
+                    <div>
+                      <p>Category: {show.category?.name}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-              {view !== RELATIONSHIPS && (
+              )}
+              {view !== RELATIONSHIPS && regi.length === 0 && comp.length !== 0 && (
                 <div>
                   <h3 style={{ marginBottom: '0.6rem', fontWeight: 'semibold' }}>Component(s)</h3>
                   {comp.map((component) => (
@@ -862,7 +886,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                   ))}
                 </div>
               )}
-              {view !== COMPONENTS && (
+              {view !== COMPONENTS && regi.length === 0 && rela.length !== 0 && (
                 <div>
                   <h3>Relationship(s)</h3>
                   {rela.map((relation) => (
@@ -882,6 +906,60 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                   ))}
                 </div>
               )}
+              {view === REGISTRANTS &&
+                regi.map((registrant) => (
+                  <div>
+                    <h3
+                      style={{
+                        margin: '0px',
+                        marginBottom: '0.8rem',
+                        padding: '0px',
+                        fontWeight: 'semibold',
+                      }}
+                    >
+                      Registrant:{' '}
+                      <span style={{ fontWeight: 'normal' }}>{registrant.hostname}</span>
+                    </h3>
+                    <h3>
+                      {' '}
+                      Port: <span style={{ fontWeight: 'normal' }}>{registrant.port}</span>
+                    </h3>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <div>
+                        <h3>
+                          Models:{' '}
+                          <span style={{ fontWeight: 'normal' }}>{registrant.summary?.models}</span>
+                        </h3>
+                        <h3>
+                          Components:{' '}
+                          <span style={{ fontWeight: 'normal' }}>
+                            {registrant.summary?.components}
+                          </span>
+                        </h3>
+                      </div>
+                      <div>
+                        <h3>
+                          Relationships:{' '}
+                          <span style={{ fontWeight: 'normal' }}>
+                            {registrant.summary?.relationships}
+                          </span>
+                        </h3>
+                        <h3>
+                          Policies:{' '}
+                          <span style={{ fontWeight: 'normal' }}>
+                            {registrant.summary?.policies}
+                          </span>
+                        </h3>
+                      </div>
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
         </div>
