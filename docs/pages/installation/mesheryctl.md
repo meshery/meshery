@@ -5,7 +5,6 @@ permalink: installation/mesheryctl
 type: installation
 category: mesheryctl
 redirect_from:
- - installation/mesheryctl
  - installation/mesheryctl/
 display-title: "true"
 language: en

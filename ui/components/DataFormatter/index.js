@@ -82,13 +82,17 @@ export const KeyValue = ({ Key, Value }) => {
     <div
       style={{
         display: 'flex',
-        alignItems: 'baseline',
+        alignItems: 'center',
         gap: '0.25rem',
         flexWrap: 'wrap',
         marginBlock: '0.5rem',
       }}
     >
-      <SectionBody body={Key + ':'} style={{ fontWeight: 'bold' }} /> <SectionBody body={Value} />
+      <SectionBody
+        body={Key.replaceAll('_', ' ') + ':'}
+        style={{ fontWeight: 'bold', textTransform: 'capitalize' }}
+      />{' '}
+      <SectionBody body={Value} />
     </div>
   );
 };
@@ -120,7 +124,7 @@ export const SectionBody = ({ body, style = {} }) => {
     <TextWithLinks
       variant="body1"
       style={{
-        textTransform: 'capitalize',
+        // textTransform: 'capitalize',
         wordWrap: 'break-word',
         ...style,
       }}
