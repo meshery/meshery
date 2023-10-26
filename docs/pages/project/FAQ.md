@@ -141,9 +141,11 @@ type: project
 
 ## Contributing FAQs
 
-#### Question: Getting an error while running `make server` on Windows?
-
-**Answer:** _On Windows, set up the project on Ubuntu WSL2 and you will be able to run the Meshery UI and the server. For more information please visit [Supported Platforms](https://docs.meshery.io/installation)._
+<details>
+<summary>
+<strong>Question: Getting an error while running <code>make server</code> on Windows?</strong>
+</summary><strong>Answer:</strong> <p>On Windows, set up the project on Ubuntu WSL2 and you will be able to run the Meshery UI and the server. For more information please visit <a href="/project/contributing/meshery-windows">Setting up Meshery Development Environment on Windows</a>.</p>
+</details>
 
 {% include discuss.html %}
 
