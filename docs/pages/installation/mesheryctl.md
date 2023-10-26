@@ -8,7 +8,7 @@ redirect_from:
  - installation/mesheryctl/
 display-title: "true"
 language: en
-list: include
+list: exclude
 # image: /assets/img/platforms/brew.png
 ---
 
