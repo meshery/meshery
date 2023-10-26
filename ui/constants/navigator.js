@@ -41,3 +41,4 @@ export const COMPONENTS = 'components';
 export const RELATIONSHIPS = 'relationships';
 export const POLICIES = 'policies';
 export const REGISTRANTS = 'registrants';
+export const ENDPOINTURL = 'https://playground.meshery.io/';

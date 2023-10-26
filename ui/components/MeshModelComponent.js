@@ -93,7 +93,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
   const [checked, setChecked] = useState(false);
   const StyleClass = useStyles();
   const [view, setView] = useState(OVERVIEW);
-  const [convert, setConvert] = useState(false);
+  const [convert, setConvert] = useState(true);
   const [show, setShow] = useState({});
   const [comp, setComp] = useState([]);
   const [rela, setRela] = useState([]);
@@ -230,13 +230,15 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
     if (view === MODELS && searchText === null) {
       getModels(page);
     } else if (view === COMPONENTS && searchText === null) {
-      getComponents(page, sortOrder);
+      getModels(page);
     } else if (view === RELATIONSHIPS) {
-      getRelationships(page, sortOrder);
+      getModels(page);
+      // getRelationships(page, sortOrder);
     } else if (view === MODELS && searchText) {
       getSearchedModels(searchText);
     } else if (view === COMPONENTS && searchText) {
-      getSearchedComponents(searchText);
+      getSearchedModels(searchText);
+      // getSearchedComponents(searchText);
     } else if (view === REGISTRANTS && searchText === null) {
       getRegistrants(page);
     }
@@ -602,17 +604,19 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
             />
           )} */}
           <Button
+            disabled
             variant="contained"
-            style={{ background: Colors.keppelGreen, color: 'white', marginRight: '1rem' }}
+            style={{ background: '#d6d6d4', color: 'white', marginRight: '1rem' }}
             size="large"
             startIcon={<UploadIcon />}
           >
             Import
           </Button>
           <Button
+            disabled
             variant="contained"
             size="large"
-            style={{ background: '#51636B', color: 'white' }}
+            style={{ background: '#d6d6d4', color: 'white' }}
             startIcon={<DoNotDisturbOnIcon />}
           >
             Ignore
@@ -702,7 +706,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                 }, 1000);
               }}
             >
-              <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>12</span>
+              <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>1</span>
               Registrants
             </Paper>
           </div>
@@ -732,8 +736,12 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
               }}
               onClick={() => {
                 setView(OVERVIEW);
-                setConvert(true);
                 setAnimate(false);
+                setConvert(true);
+                setShow({});
+                setComp([]);
+                setRegi([]);
+                setRela([]);
               }}
             >
               Overview
@@ -788,11 +796,11 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
               }}
               onClick={() => setView(REGISTRANTS)}
             >
-              Registrants(12)
+              Registrants(1)
             </Button>
           </div>
           <div className={StyleClass.treeWrapper}>
-            <div style={{ height: '30rem', width: '50%', margin: '1rem', overflowY: 'auto' }}>
+            <div style={{ width: '50%', margin: '1rem' }}>
               <MesheryTreeView
                 data={filteredData}
                 view={view}
@@ -807,23 +815,22 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
               />
             </div>
             <div
-              style={{
-                height: '30rem',
-                width: '50%',
-                margin: '1rem',
-                backgroundColor: '#d9dadb80',
-                borderRadius: '6px',
-                padding: '1.5rem',
-                overflowY: 'auto',
-                boxShadow: 'inset 0 0 6px 2px rgba(0, 0, 0,0.4)',
-              }}
+              className={
+                regi.length === 0 && rela.length === 0 && comp.length === 0 && !show.displayName
+                  ? StyleClass.emptyDetailsContainer
+                  : StyleClass.detailsContainer
+              }
             >
-              {regi.length === 0 && show && (
+              {regi.length === 0 && rela.length === 0 && comp.length === 0 && !show.displayName && (
+                <p style={{ color: '#979797' }}>Select {view} from side panel</p>
+              )}
+              {regi.length === 0 && show.displayName && (
                 <div>
                   <h3
                     style={{
                       margin: '0px',
                       marginBottom: '0.8rem',
+                      fontSize: '18px',
                       padding: '0px',
                       fontWeight: 'semibold',
                     }}
@@ -838,7 +845,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                       />
                     }
                     label="MeshSync"
-                    sx={{ backgroundColor: '#00B39F25' }}
+                    sx={{ backgroundColor: '#00B39F25', fontSize: '14px' }}
                   />
                   <div
                     style={{
@@ -848,24 +855,29 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                     }}
                   >
                     <div style={{ margin: '1rem 0px' }}>
-                      <p style={{ margin: '3px 0px' }}>Version: {show.version}</p>
-                      <p style={{ margin: '3px 0px' }}>Components: {show.components?.length} </p>
+                      <p style={{ margin: '3px 0px', fontSize: '14px' }}>Version: {show.version}</p>
+                      <p style={{ margin: '3px 0px', fontSize: '14px' }}>
+                        Components: {show.components?.length}{' '}
+                      </p>
                     </div>
                     <div>
-                      <p>Category: {show.category?.name}</p>
+                      <p style={{ fontSize: '14px' }}>Category: {show.category?.name}</p>
                     </div>
                   </div>
                 </div>
               )}
               {view !== RELATIONSHIPS && regi.length === 0 && comp.length !== 0 && (
                 <div>
-                  <h3 style={{ marginBottom: '0.6rem', fontWeight: 'semibold' }}>Component(s)</h3>
+                  <h3 style={{ marginBottom: '0.6rem', fontWeight: 'semibold', fontSize: '18px' }}>
+                    Component(s)
+                  </h3>
                   {comp.map((component) => (
                     <div>
                       <h3
                         style={{
                           margin: '0',
                           marginTop: '0.4rem',
+                          fontSize: '16px',
                           padding: '0px',
                           fontWeight: 'semibold',
                         }}
@@ -879,8 +891,12 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                           justifyContent: 'space-between',
                         }}
                       >
-                        <p style={{ margin: '0px' }}>API Version: {component.apiVersion}</p>
-                        <p style={{ margin: '0px' }}>Sub Category: {component.kind}</p>
+                        <p style={{ margin: '0px', fontSize: '14px' }}>
+                          API Version: {component.apiVersion}
+                        </p>
+                        <p style={{ margin: '0px', fontSize: '14px' }}>
+                          Sub Category: {component.kind}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -888,7 +904,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
               )}
               {view !== COMPONENTS && regi.length === 0 && rela.length !== 0 && (
                 <div>
-                  <h3>Relationship(s)</h3>
+                  <h3 style={{ fontSize: '18px' }}>Relationship(s)</h3>
                   {rela.map((relation) => (
                     <div>
                       <h3
@@ -897,11 +913,14 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                           marginTop: '0.4rem',
                           padding: '0px',
                           fontWeight: 'semibold',
+                          fontSize: '16px',
                         }}
                       >
                         {relation.displayhostname}
                       </h3>
-                      <p style={{ margin: '0px' }}>API Version: {relation.apiVersion}</p>
+                      <p style={{ margin: '0px', fontSize: '14x' }}>
+                        API Version: {relation.apiVersion}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -915,12 +934,13 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                         marginBottom: '0.8rem',
                         padding: '0px',
                         fontWeight: 'semibold',
+                        fontSize: '18px',
                       }}
                     >
                       Registrant:{' '}
                       <span style={{ fontWeight: 'normal' }}>{registrant.hostname}</span>
                     </h3>
-                    <h3>
+                    <h3 style={{ fontSize: '16px' }}>
                       {' '}
                       Port: <span style={{ fontWeight: 'normal' }}>{registrant.port}</span>
                     </h3>
@@ -932,11 +952,11 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                       }}
                     >
                       <div>
-                        <h3>
+                        <h3 style={{ fontSize: '16px' }}>
                           Models:{' '}
                           <span style={{ fontWeight: 'normal' }}>{registrant.summary?.models}</span>
                         </h3>
-                        <h3>
+                        <h3 style={{ fontSize: '16px' }}>
                           Components:{' '}
                           <span style={{ fontWeight: 'normal' }}>
                             {registrant.summary?.components}
@@ -944,13 +964,13 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                         </h3>
                       </div>
                       <div>
-                        <h3>
+                        <h3 style={{ fontSize: '16px' }}>
                           Relationships:{' '}
                           <span style={{ fontWeight: 'normal' }}>
                             {registrant.summary?.relationships}
                           </span>
                         </h3>
-                        <h3>
+                        <h3 style={{ fontSize: '16px' }}>
                           Policies:{' '}
                           <span style={{ fontWeight: 'normal' }}>
                             {registrant.summary?.policies}

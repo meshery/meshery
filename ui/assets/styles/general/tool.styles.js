@@ -43,14 +43,14 @@ const useStyles = makeStyles((theme) => ({
       height: '10rem',
       marginBottom: '0rem',
       background: '#51636B',
-      flexDirection: 'col',
+      flexDirection: 'column',
     },
     to: {
-      transform: 'translateY(-70px) translateX(-70px)',
+      transform: 'translateY(-70px) translateX(-100px)',
       height: '4rem',
       marginBottom: '5rem',
       background: '#677a84',
-      flexDirection: 'row-reverse'
+      flexDirection: 'row-reverse',
     },
   },
   cardStyle: {
@@ -77,6 +77,29 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     cursor: 'pointer',
     animation: '$rotateCloseIcon 1s',
+  },
+  detailsContainer: {
+    height: '30rem',
+    width: '50%',
+    margin: '1rem',
+    backgroundColor: '#d9dadb80',
+    borderRadius: '6px',
+    padding: '1.5rem',
+    overflowY: 'auto',
+    boxShadow: 'inset 0 0 6px 2px rgba(0, 0, 0,0.4)',
+  },
+  emptyDetailsContainer: {
+    height: '30rem',
+    width: '50%',
+    margin: '1rem',
+    backgroundColor: '#d9dadb80',
+    borderRadius: '6px',
+    padding: '1.5rem',
+    overflowY: 'auto',
+    boxShadow: 'inset 0 0 6px 2px rgba(0, 0, 0,0.4)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   // Define other styles as needed
 }));

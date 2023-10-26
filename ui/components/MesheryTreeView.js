@@ -13,11 +13,15 @@ import {
   RELATIONSHIPS,
   POLICIES,
   REGISTRANTS,
+  ENDPOINTURL,
 } from '../constants/navigator';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
   color: theme.palette.type === 'dark' ? 'white' : 'black',
   [`& .${treeItemClasses.content}`]: {
+    flexDirection: 'row-reverse',
     fontWeight: theme.typography.fontWeightMedium,
     borderLeft: '10px solid transparent',
     '&.Mui-expanded': {
@@ -27,7 +31,7 @@ const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
       backgroundColor: theme.palette.action.hover,
     },
     '&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused': {
-      backgroundColor: `var(--tree-view-bg-color, ${theme.palette.action.selected})`,
+      backgroundColor: '#ebebeb',
       borderLeft: '10px solid #00B39F',
     },
     [`& .${treeItemClasses.label}`]: {
@@ -46,21 +50,26 @@ const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
 const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
   const theme = useTheme();
   const [checked, setChecked] = useState(false);
+  const [hover, setHover] = useState(false);
   const { labelIcon: LabelIcon, check, root, labelText, avatar, ...other } = props;
 
   return (
     <StyledTreeItemRoot
+      sx={{
+        backgroundColor: checked && check && '#ebebeb',
+      }}
       label={
         <Box
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
           sx={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            p: !check && !root ? 1.2 : 0.2,
+            p: !check && !root ? 1.5 : 0.5,
             pr: 0,
             borderBottom: check && '1px solid #DDDDDD',
           }}
-          onClick={() => setChecked((prevcheck) => !prevcheck)}
         >
           <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
             {avatar && (
@@ -76,7 +85,9 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
             <Checkbox
               size="small"
               checked={checked}
+              onClick={() => setChecked((prevcheck) => !prevcheck)}
               sx={{
+                visibility: hover ? 'visible' : 'hidden',
                 color: '#00B39F',
                 '&.Mui-checked': {
                   color: '#00B39F',
@@ -84,7 +95,6 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
               }}
             />
           )}
-          {root && <Button variant="text">Collapse All</Button>}
         </Box>
       }
       {...other}
@@ -105,129 +115,175 @@ const MesheryTreeView = ({
   regi,
   setRegi,
 }) => {
+  const [expanded, setExpanded] = React.useState([]);
+
+  useEffect(() => {
+    if (view === RELATIONSHIPS || view === COMPONENTS) {
+      expandAll();
+    } else if (view === MODELS) {
+      setExpanded([]);
+    }
+    console.log(data);
+  }, [view]);
+
+  const expandAll = () => {
+    const arr = [];
+    data.map((model, index) => {
+      arr.push(index);
+      arr.push(`${index}.1`);
+      arr.push(`${index}.2`);
+    });
+    setExpanded(arr);
+  };
+
+  const handleToggle = (event, nodeIds) => {
+    setExpanded(nodeIds);
+  };
+
   const addComponent = (component) => {
-    // Check if the model is already in the comp array
     if (comp.some((item) => item === component)) {
-      // If it exists, remove it from comp
       setComp((prevComp) => prevComp.filter((item) => item !== component));
     } else {
-      // If it doesn't exist, add it to comp
       setComp((prevComp) => [...prevComp, component]);
     }
   };
   const addRelationship = (relationship) => {
-    // Check if the model is already in the comp array
     if (rela.some((item) => item === relationship)) {
-      // If it exists, remove it from comp
       setRela((prevRela) => prevRela.filter((item) => item !== relationship));
     } else {
-      // If it doesn't exist, add it to comp
       setRela((prevRela) => [...prevRela, relationship]);
     }
   };
 
   const addRegistrant = (registrant) => {
     if (regi.some((item) => item === registrant)) {
-      // If it exists, remove it from comp
       setRegi((prevRegi) => prevRegi.filter((item) => item !== registrant));
     } else {
-      // If it doesn't exist, add it to comp
       setRegi((prevRegi) => [...prevRegi, registrant]);
     }
   };
 
   return (
-    <TreeView
-      aria-label="gmail"
-      defaultExpanded={['3']}
-      defaultCollapseIcon={<ExpandMoreIcon />}
-      defaultExpandIcon={<ChevronRightIcon />}
-      defaultEndIcon={<div style={{ width: 24 }} />}
-    >
-      {view === MODELS &&
-        data.map((model, index) => (
-          <StyledTreeItem
-            key={index}
-            nodeId={index}
-            root
-            avatar={model.metadata?.svgColor}
-            labelText={model.displayName}
-            onClick={() => {
-              setShow(data[index]), setComp((prevC) => []);
-              setRela((prevR) => []);
-            }}
-          >
-            <StyledTreeItem
-              nodeId={`${index}.1`}
-              labelText={`Components (${model.components ? model.components.length : 0})`}
-            >
-              {model.components &&
-                model.components.map((component, subIndex) => (
+    <div>
+      <div
+        style={{ borderBottom: '1px solid #d2d3d4', display: 'flex', justifyContent: 'flex-end' }}
+      >
+        <Button startIcon={<KeyboardArrowDownIcon />} onClick={expandAll}>
+          Expand All
+        </Button>
+        <div style={{ backgroundColor: '#d2d3d4', height: '33px', width: '1px' }}></div>
+        <Button startIcon={<KeyboardArrowUpIcon />} onClick={() => setExpanded([])}>
+          Collapse All
+        </Button>
+      </div>
+      <div style={{ overflowY: 'auto', height: '27rem' }}>
+        <TreeView
+          aria-label="controlled"
+          defaultExpanded={['3']}
+          defaultCollapseIcon={<ExpandMoreIcon />}
+          defaultExpandIcon={<ChevronRightIcon />}
+          onNodeToggle={handleToggle}
+          multiSelect
+          expanded={expanded}
+        >
+          {view !== REGISTRANTS &&
+            data.map((model, index) => (
+              <StyledTreeItem
+                key={index}
+                nodeId={index}
+                root
+                avatar={ENDPOINTURL + model.metadata?.svgColor}
+                labelText={model.displayName}
+                onClick={() => {
+                  setShow(data[index]), setComp((prevC) => []);
+                  setRela((prevR) => []);
+                }}
+              >
+                {view !== RELATIONSHIPS && (
                   <StyledTreeItem
-                    key={subIndex}
-                    nodeId={`${index}.1.${subIndex}`}
-                    check
-                    labelText={component.displayName}
-                    onClick={() => addComponent(component)}
-                  />
-                ))}
-            </StyledTreeItem>
-            <StyledTreeItem
-              nodeId={`${index}.2`}
-              labelText={`Relationships (${model.relationships ? model.relationships.length : 0})`}
-            >
-              {model.relationships &&
-                model.relationships.map((relationship, subIndex) => (
+                    nodeId={`${index}.1`}
+                    labelText={`Components (${model.components ? model.components.length : 0})`}
+                  >
+                    {model.components &&
+                      model.components.map((component, subIndex) => (
+                        <StyledTreeItem
+                          key={subIndex}
+                          nodeId={`${index}.1.${subIndex}`}
+                          check
+                          labelText={component.displayName}
+                          onClick={() => {
+                            addComponent(component);
+                            setShow(data[index]);
+                          }}
+                        />
+                      ))}
+                  </StyledTreeItem>
+                )}
+                {view !== COMPONENTS && (
                   <StyledTreeItem
-                    key={subIndex}
-                    nodeId={`${index}.2.${subIndex}`}
-                    check
-                    labelText={relationship.displayhostname}
-                    onClick={() => addRelationship(relationship)}
-                  />
-                ))}
-            </StyledTreeItem>
-          </StyledTreeItem>
-        ))}
-      {view === COMPONENTS &&
-        data.map((component, index) => (
-          <StyledTreeItem
-            key={index}
-            check
-            nodeId={index}
-            labelText={component.displayName}
-            onClick={() => {
-              addComponent(data[index]);
-              setShow(data[index]?.model);
-            }}
-          />
-        ))}
-      {view === RELATIONSHIPS &&
-        data.map((relationship, index) => (
-          <StyledTreeItem
-            key={index}
-            check
-            nodeId={index}
-            labelText={relationship.displayhostname}
-            onClick={() => {
-              addRelationship(data[index]);
-              setShow(data[index]?.model);
-            }}
-          />
-        ))}
-      {view === REGISTRANTS &&
-        data.map((registrant, index) => (
-          <StyledTreeItem
-            key={index}
-            check
-            nodeId={index}
-            labelText={registrant.hostname}
-            onClick={() => {
-              addRegistrant(data[index]);
-            }}
-          />
-        ))}
-    </TreeView>
+                    nodeId={`${index}.2`}
+                    labelText={`Relationships (${
+                      model.relationships ? model.relationships.length : 0
+                    })`}
+                  >
+                    {model.relationships &&
+                      model.relationships.map((relationship, subIndex) => (
+                        <StyledTreeItem
+                          key={subIndex}
+                          nodeId={`${index}.2.${subIndex}`}
+                          check
+                          labelText={relationship.displayhostname}
+                          onClick={() => {
+                            addRelationship(relationship);
+                            setShow(data[index]);
+                          }}
+                        />
+                      ))}
+                  </StyledTreeItem>
+                )}
+              </StyledTreeItem>
+            ))}
+          {/* {view === COMPONENTS &&
+          data.map((component, index) => (
+            <StyledTreeItem
+              key={index}
+              check
+              nodeId={index}
+              labelText={component.displayName}
+              onClick={() => {
+                addComponent(data[index]);
+                setShow(data[index]?.model);
+              }}
+            />
+          ))}
+        {view === RELATIONSHIPS &&
+          data.map((relationship, index) => (
+            <StyledTreeItem
+              key={index}
+              check
+              nodeId={index}
+              labelText={relationship.displayhostname}
+              onClick={() => {
+                addRelationship(data[index]);
+                setShow(data[index]?.model);
+              }}
+            />
+          ))} */}
+          {view === REGISTRANTS &&
+            data.map((registrant, index) => (
+              <StyledTreeItem
+                key={index}
+                check
+                nodeId={index}
+                labelText={registrant.hostname}
+                onClick={() => {
+                  addRegistrant(data[index]);
+                }}
+              />
+            ))}
+        </TreeView>
+      </div>
+    </div>
   );
 };
 
