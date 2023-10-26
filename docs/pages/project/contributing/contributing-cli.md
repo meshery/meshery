@@ -201,9 +201,31 @@ Though the command page is generated automatically by the Cobra CLI library, the
 - [cmds.yml](https://github.com/meshery/meshery/blob/master/docs/_data/mesheryctlcommands/cmds.yml) - The YAML file containing the data about the commands
 - [mesheryctl-commands.md](https://github.com/meshery/meshery/blob/master/docs/pages/reference/mesheryctl-commands.md) - The markdown page of the command reference documentation
 
-## Preserving Manually Added Documentation with Cobra CLI
+## Preserving Manually Added Documentation
+	
+`mesheryctl` uses Cobra CLI and GitHub Actions to automate the generation of command documentation. On occasion, additional documentation beyond that included in the `mesheryctl` Golang files is ideal to capture and include in the CLI reference pages. Contributors are encouraged to add more usage examples, screenshots, video explainers and so forth to any of the CLI reference pages. To protect any manually added content and ensure it remains intact after regeneration, create a separate Jekyll `include` file. Follow file naming scheme outlined below:
 
-We use Cobra CLI and GitHub Actions to automate the generation of command documentation. To protect any manually added content and ensure it remains intact after regeneration, follow this format: {% raw %}{% include folder-name/file-name %}{% endraw %}. This format should reference an external file where your manual changes are stored. Any content added using this format will not be altered during the documentation generation process. When making new changes or additions, be sure to place them at the end of the documentation to keep it organized and consistent.
+If your mesheryctl docs end like this, add the include tag at the end of the file.
+{% capture code_content %}Example:
+
+## Options inherited from parent commands
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+  -t, --token string    Path to token file default from current context
+  -v, --verbose         verbose output
+
+</div>
+</pre>
+
+{% raw %}{% include permalink-of-file %}{% endraw %}
+{% endcapture %}
+{% include code.html code=code_content %}
+
+
+This format should reference an external file where your manual changes are stored. Any content added using this method will not be altered during the documentation generation process, but instead will be included post-auto doc generation. When making new changes or additions, understand that these additional details are positioned at the end their given CLI reference page, so bear this in mind as you organize and present your additional command details.
+
 
 ### References
 
