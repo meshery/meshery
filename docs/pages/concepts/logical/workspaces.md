@@ -9,8 +9,14 @@ list: include
 ---
 
 
-Workspaces in Meshery are powerful collaborative spaces meticulously crafted to facilitate seamless collaboration among users from diverse teams. These Workspaces serve as a virtual space where teams can efficiently share, organize, and manage a wide array of resources critical to their cloud-native operations.
-Within a Workspace, users belonging to the same team, and those granted access, can engage with the numerous resources it houses. These resources can encompass a variety of cloud-native components such as Kubernetes clusters, Prometheus instances, Jaeger traces, Nginx servers, and an extensive range of other services and tools fundamental to modern cloud-native infrastructures.
+Meshery Workspaces serve as a virtual space for your team-based work. Create a Workspace to organize your work and to serve as the central point of collaboration for you and your teams and a central point of access control to Environments and their resources. 
+
+You may create Workspaces to organize project-based work or to create domains of responsibility for your teams or segregate Designs and Environments and track team activity. 
+
+## Summary 
+
+Workspaces facilitate collaboration between you and your teams, allow you to control access to resources, and track activity and report on related events.
+
 
 ## Key Features
 - **Resource Sharing** Workspaces allow for seamless resource sharing among team members, fostering collaboration.
@@ -19,6 +25,12 @@ Within a Workspace, users belonging to the same team, and those granted access, 
 - **Simplified Management** Managing and deploying resources is made easy within Workspaces.
 - **Access Control** Workspaces allow you to control access to resources by granting permissions to users and teams.
 
+
+### Workspace Relationships and Restrictions
+- Access to Workspaces may be granted to one or more teams.
+- As a point of collaboration to facilitate work, Workspaces may have zero or more Environments associated.
+
+After creating a Workspace, of your next steps is to resource that Workspace. Like a shared drive (or or shared collection of files). Workspaces are your Google Drive, while Meshery Designs are your Google Docs.
 
 ## Key Components
 
