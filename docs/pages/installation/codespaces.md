@@ -3,6 +3,7 @@ layout: default
 title: Codespaces
 permalink: installation/codespaces
 type: installation
+category: kubernetes
 display-title: "false"
 language: en
 list: include
@@ -27,7 +28,6 @@ Use Minikube in GitHub Codespace to setup your development environment for Meshe
   - [Installation: Using `mesheryctl`](#installation-using-mesheryctl)
   - [Installation: Using Helm](#installation-using-helm)
   - [Installation: Manual Steps](#installation-manual-steps)
-- [Post-Installation Steps](#post-installation-steps)
   - [Access Meshery UI](#access-meshery-ui)
 
 # In-cluster Installation

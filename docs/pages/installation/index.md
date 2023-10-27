@@ -6,7 +6,7 @@ abstract: Installation procedures for deploying Meshery with mesheryctl.
 permalink: installation
 redirect_from: installation/
 language: en
-list: include
+list: exclude
 ---
 
 ## Supported Platforms
@@ -15,9 +15,11 @@ Meshery deploys as a set of Docker containers, which can be deployed to either a
 
 {% assign sorted_index = site.pages | sort: "name" | alphabetical %}
 
+### Install `mesheryctl`
+
 <ul>
     {% for item in sorted_index %}
-    {% if item.type=="installation" and item.list=="include" and item.language == "en" -%}
+    {% if item.type=="installation" and item.category=="mesheryctl" and item.list=="include" and item.language == "en" -%}
       <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
       {% if item.abstract %}
         -  {{ item.abstract }}
@@ -26,5 +28,34 @@ Meshery deploys as a set of Docker containers, which can be deployed to either a
       {% endif %}
     {% endfor %}
 </ul>
+
+### Install on Kubernetes
+
+<ul>
+    {% for item in sorted_index %}
+    {% if item.type=="installation" and item.category=="kubernetes" and item.list=="include" and item.language == "en" -%}
+      <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+      {% if item.abstract %}
+        -  {{ item.abstract }}
+      {% endif %}
+      </li>
+      {% endif %}
+    {% endfor %}
+</ul>
+
+### Install on Docker
+
+<ul>
+    {% for item in sorted_index %}
+    {% if item.type=="installation" and item.category=="docker" and item.list=="include" and item.language == "en" -%}
+      <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+      {% if item.abstract %}
+        -  {{ item.abstract }}
+      {% endif %}
+      </li>
+      {% endif %}
+    {% endfor %}
+</ul>
+
 
 <!-- {% include toc.html page=reference %} -->
