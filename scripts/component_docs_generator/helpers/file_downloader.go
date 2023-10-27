@@ -36,7 +36,7 @@ func GetIntegrationDocsCSVFile(csvURL string) {
 	log.Println("CSV file downloaded and saved as", destinationFile)
 }
 
-func ReadIndexJSONFile() (CSVIndices, error) {
+func ReadIndexFromJSONFile() (CSVIndices, error) {
 	var config CSVIndices
 
 	file, err := os.Open("index.json")
