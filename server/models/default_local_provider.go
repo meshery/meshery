@@ -47,6 +47,7 @@ type DefaultLocalProvider struct {
 	MesheryK8sContextPersister      *MesheryK8sContextPersister
 	GenericPersister                *database.Handler
 	KubeClient                      *mesherykube.Client
+	Log                              logger.Handler
 }
 
 // Initialize will initialize the local provider
@@ -976,6 +977,10 @@ func (l *DefaultLocalProvider) GetConnectionsStatus(_ *http.Request, _ string) (
 
 func (l *DefaultLocalProvider) UpdateConnection(_ *http.Request, _ *Connection) (*Connection, error) {
 	return nil, ErrLocalProviderSupport
+}
+
+func (l *DefaultLocalProvider) UpdateConnectionStatusByID(req *http.Request, connectionID uuid.UUID, connectionStatus ConnectionStatus) (*Connection, int, error) {
+	return nil, http.StatusForbidden, ErrLocalProviderSupport
 }
 
 func (l *DefaultLocalProvider) UpdateConnectionById(_ *http.Request, _ *ConnectionPayload, _ string) (*Connection, error) {

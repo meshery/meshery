@@ -191,7 +191,7 @@ func (h *Handler) GetConnectionsStatus(w http.ResponseWriter, req *http.Request,
 	}
 }
 
-func (h *Handler) UpdateConnectionsStatus(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionStatusPayload := &connectionStatusPayload{}
 	defer func() {
 		_ = req.Body.Close()
@@ -203,29 +203,33 @@ func (h *Handler) UpdateConnectionsStatus(w http.ResponseWriter, req *http.Reque
 	if err != nil {
 		errUnmarshal := models.ErrUnmarshal(err, "connection status payload")
 		eventBuilder.WithSeverity(events.Error).WithDescription("Unable to update connection status.").
-		WithMetadata(map[string]interface{}{
-			"error": errUnmarshal,
-		})
+			WithMetadata(map[string]interface{}{
+				"error": errUnmarshal,
+			})
 		event := eventBuilder.Build()
-		provider.PersistEvent(event)
+		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
 
 	for id, status := range *connectionStatusPayload {
 		eventBuilder.ActedUpon(id)
-		updatedConnection, err := provider.UpdateConnectionStatusByID(req, id, status)
+		updatedConnection, statusCode, err := provider.UpdateConnectionStatusByID(req, id, status)
 		if err != nil {
-			eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)) // Get the connection name as id doesn't convey much to the user.	
+			eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)).WithMetadata(map[string]interface{}{
+				"error": err,
+			})
+			// Get the connection name as id doesn't convey much to the user.
+			http.Error(w, err.Error(), statusCode)
 		} else {
-			eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Connection status updated to %s for %s", status, id))
+			eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Connection \"%s\" status updated to %s for %s", updatedConnection.Name, status, id))
+			go h.config.K8scontextChannel.PublishContext()
 		}
 
 		event := eventBuilder.Build()
-		provider.PersistEvent(event)
+		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
 	}
-	go h.config.K8scontextChannel.PublishContext()
 }
 
 // swagger:route PUT /api/integrations/connections/{connectionKind} PutConnection idPutConnection

@@ -23,6 +23,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/database"
+	"github.com/layer5io/meshkit/logger"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/sirupsen/logrus"
@@ -55,6 +56,7 @@ type RemoteProvider struct {
 	SmiResultPersister *SMIResultsPersister
 	GenericPersister   *database.Handler
 	KubeClient         *mesherykube.Client
+	Log logger.Handler
 }
 
 type userSession struct {
@@ -3700,39 +3702,41 @@ func (l *RemoteProvider) GetConnectionsStatus(req *http.Request, userID string) 
 	return &cp, nil
 }
 
-func (l *RemoteProvider) UpdateConnectionStatusByID(req *http.Request, connectionID uuid.UUID, connectionStatus ConnectionStatus) (*Connection, error) {
+func (l *RemoteProvider) UpdateConnectionStatusByID(req *http.Request, connectionID uuid.UUID, connectionStatus ConnectionStatus) (*Connection, int, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
-		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
+		return nil, http.StatusForbidden, ErrInvalidCapability("PersistConnection", l.ProviderName)
 	}
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
 	bf := bytes.NewBuffer([]byte(connectionStatus))
-	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, connectionID))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/status/%s", l.RemoteProviderURL, ep, connectionID))
 	logrus.Debugf("Making request to : %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
 	tokenString, err := l.GetToken(req)
 	if err != nil {
 		logrus.Error("error getting token: ", err)
-		return nil, err
+		return nil, http.StatusBadRequest, err
 	}
 
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		return nil, ErrUpdateConnectionStatus(err, resp.StatusCode)
+		l.Log.Error(err)
+		return nil, http.StatusInternalServerError, ErrUpdateConnectionStatus(err, resp.StatusCode)
+	}
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, http.StatusInternalServerError, ErrDataRead(err, "Update Connection")
 	}
 	if resp.StatusCode == http.StatusOK {
 		var conn Connection
-		bdr, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return nil, ErrDataRead(err, "Update Connection")
-		}
-
 		if err = json.Unmarshal(bdr, &conn); err != nil {
-			return nil, ErrUnmarshal(err, "connection")
+			return nil, http.StatusInternalServerError, ErrUnmarshal(err, "connection")
 		}
-		return &conn, nil
-	}
-	return nil, ErrUpdateConnectionStatus(err, resp.StatusCode)
+		return &conn, resp.StatusCode, nil
+	} 
+	
+	l.Log.Debug(string(bdr))
+	return nil, resp.StatusCode, ErrUpdateConnectionStatus(fmt.Errorf("unable to update connection with id %s", connectionID), resp.StatusCode)
 }
 
 // UpdateConnection - to update an existing connection
