@@ -954,40 +954,7 @@ ruby '2.7.1' //to any version you have installed
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    {% assign variable1 = true %}
 </code></pre></div></div>
 
-<h3 id="Alerts">Alerts</h3>
-The <code>alerts.html</code> file is used to format and display notes, warnings, and other informational callouts in Meshery. 
-It provides a consistent and visually appealing way to draw the user's attention to important information.
-<p>
-        To use the <code>alerts.html</code> feature, include the following code snippet in your documentation:
-    </p>
-    
-    <pre>
-&lt;div class="alert alert-{{ include.type }}"&gt;
-    &lt;h4 class="alert-heading"&gt;{% if include.title %}{{ include.title }}{% else %}{{ include.type }}{% endif %}&lt;/h4&gt;
-    {{ include.content }}
-&lt;/div&gt;
-    </pre>
-    
-    <p>
-        This code defines an HTML structure for creating alerts. It accepts three parameters:
-    </p>
-    
-    <ul>
-        <li><code>{{ include.type }}</code>: Specifies the type of alert, which can be "info," "warning," "success," or any other relevant value. This is used to style the alert.</li>
-        <li><code>{{ include.title }}</code> (optional): Sets the title of the alert. If not provided, it will default to the value of <code>{{ include.type }}</code>.</li>
-        <li><code>{{ include.content }}</code>: Contains the content of the alert, such as the message or information you want to convey.</li>
-    </ul>
-    
-    <h2>Example</h2>
-    <p>
-        Here's an example of how to use the <code>alerts.html</code> feature in your documentation:
-    </p>
-    
-    <pre>
-{% include "alerts.html" with type="info" title="Information" content="This is an example of an informational alert." %}
-{% include "alerts.html" with type="warning" title="Warning" content="This is an example of a warning alert." %}
-{% include "alerts.html" with type="success" title="Success" content="This is an example of a success alert." %}
-    </pre>
+
 <h1 id="suggested-reading">Suggested Reading</h1>
 
 <ul>
