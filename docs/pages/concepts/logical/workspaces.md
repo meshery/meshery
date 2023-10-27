@@ -3,19 +3,51 @@ layout: default
 title: Workspaces
 permalink: concepts/workspaces
 type: concepts
-abstract: "Meshery Workspaces act as central collaboration points for teams and their project work."
+abstract: "Meshery Workspaces act as central collaboration points for teams"
 language: en
 list: include
 ---
 
 
-Workspaces act as central collaboration points for teams and their project work. Often, users create a Workspace for each project or for each team as a way of organizing domains of project work to facilitate collaboration and provide access control over resources with a project. Workspaces are sometimes likened to the concept of a project - a collection of individuals responsible for the development and operation of an application or service.
+Workspaces in Meshery are powerful collaborative spaces meticulously crafted to facilitate seamless collaboration among users from diverse teams. These Workspaces serve as a virtual space where teams can efficiently share, organize, and manage a wide array of resources critical to their cloud-native operations.
+Within a Workspace, users belonging to the same team, and those granted access, can engage with the numerous resources it houses. These resources can encompass a variety of cloud-native components such as Kubernetes clusters, Prometheus instances, Jaeger traces, Nginx servers, and an extensive range of other services and tools fundamental to modern cloud-native infrastructures.
 
-## Using Workspaces
+## Key Features
+- **Resource Sharing**: Workspaces allow for seamless resource sharing among team members, fostering collaboration.
+- **Logical Grouping**: Within Workspaces, you can group related components such as environments and infrastructure designs.
+- **Flexibility**: Workspaces support various resources like Kubernetes, Prometheus, Jaeger, Nginx, and more.
+- **Simplified Management**: Managing and deploying resources is made easy within Workspaces.
+- **Access Control**: Workspaces allow you to control access to resources by granting permissions to users and teams.
 
-After creating a Workspace, of your next steps is to resource that Workspace. Like a shared drive (or or shared collection of files). Workspaces are your Google Drive, while Meshery Designs are your Google Docs.
+
+## Key Components
+
+### Environments
+- Environments are a central part of a workspace. They serve as a logical grouping for managing connections. A connection, in this context, can be either managed or discovered by Meshery. Examples of connections include Kubernetes clusters, Prometheus instances, Jaeger traces, Nginx servers, and more.
+- One or more environments can be assigned to a workspace.
+- Same environment can be assigned to multiple workspaces.
+
+See "[Environments](/concepts/environments)" section for more information.
+
+### Designs
+- Infrastructure Designs are essential for creating reusable deployment templates. Users belonging to teams with access to a workspace can utilize these designs to deploy resources in the Kubernetes clusters associated with that workspace.
+- Like a shared drive (or or shared collection of files), Workspaces are your Google Drive, while Meshery Designs are your Google Docs.
+- One ore more designs can be assigned to a workspace.
+- Same design can be assigned to multiple workspaces.
+
+See "[Meshery Designs](/concepts/designs)" section for more information.
+
+### Teams 
+- A Workspace is closely associated with Teams in Meshery. Teams are groups of users with varying permissions, and they are at the center of resource access and management within a Workspace.
+- One ore more teams can be assigned to a workspace.
+- Same team can be assigned to multiple workspaces.
+
+See "[Teams](/extensions/team-management)" section for more information.
 
 
-### Workspace Relationships and Restrictions
-- Access to Workspaces may be granted to one or more teams.
-- As a point of collaboration to facilitate work, Workspaces may have zero or more Environments associated.
+### Connections
+- Connections in Meshery refer to various resources that can be either managed or unmanaged, but are discovered and made accessible for use. Examples of Connections include Kubernetes clusters, Prometheus instances, Jaeger services, Nginx deployments, and more. These Connections serve as a fundamental part of Workspaces, as users can deploy infrastructure designs within the context of these Connections.
+- Connections can be assigned to one or more environments.
+- Same connection can be assigned to multiple environments.
+
+See "[Connections](/concepts/connections)" section for more information.
