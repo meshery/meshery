@@ -8,9 +8,6 @@ language: en
 list: include
 ---
 
-
-## Environments
-
 Environments, in the context of Meshery, serve as logical groupings of connections and credentials. Connections are the crucial aspect of your cloud-native applications, ranging from Kubernetes clusters to Prometheus instances, Jaeger services, Nginx deployments, and more. These connections could be either managed or unmanaged, depending on the tiers of discovery performed by [MeshSync](concepts/architecture/meshsync), Meshery's dynamic, and sophisticated resource discovery component. The ability to organize these resources into logical groups brings a new level of convenience and efficiency to managing your cloud-native infrastructure.
 
 
