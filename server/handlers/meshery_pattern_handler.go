@@ -563,7 +563,7 @@ func (h *Handler) handlePatternPOST(
 	}
 	}
 
-	if sourcetype == string(models.DockerCompose) || sourcetype == string(models.K8sManifest) || sourceType == string(models.HelmChart) {
+	if sourcetype == string(models.DockerCompose) || sourcetype == string(models.K8sManifest) || sourcetype == string(models.HelmChart) {
 		var savedPatternID *uuid.UUID
 
 	if parsedBody.Save {
