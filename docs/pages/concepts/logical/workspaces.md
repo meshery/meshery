@@ -13,11 +13,11 @@ Workspaces in Meshery are powerful collaborative spaces meticulously crafted to 
 Within a Workspace, users belonging to the same team, and those granted access, can engage with the numerous resources it houses. These resources can encompass a variety of cloud-native components such as Kubernetes clusters, Prometheus instances, Jaeger traces, Nginx servers, and an extensive range of other services and tools fundamental to modern cloud-native infrastructures.
 
 ## Key Features
-- **Resource Sharing**: Workspaces allow for seamless resource sharing among team members, fostering collaboration.
-- **Logical Grouping**: Within Workspaces, you can group related components such as environments and infrastructure designs.
+- **Resource Sharing** Workspaces allow for seamless resource sharing among team members, fostering collaboration.
+- **Logical Grouping** Within Workspaces, you can group related components such as environments and infrastructure designs.
 - **Flexibility**: Workspaces support various resources like Kubernetes, Prometheus, Jaeger, Nginx, and more.
-- **Simplified Management**: Managing and deploying resources is made easy within Workspaces.
-- **Access Control**: Workspaces allow you to control access to resources by granting permissions to users and teams.
+- **Simplified Management** Managing and deploying resources is made easy within Workspaces.
+- **Access Control** Workspaces allow you to control access to resources by granting permissions to users and teams.
 
 
 ## Key Components
