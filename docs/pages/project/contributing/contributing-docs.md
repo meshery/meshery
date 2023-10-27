@@ -356,4 +356,36 @@ The assign tag is used to create a new variable. It is written in the following 
 {% include code.html code=code_content %}
 
 {% include suggested-reading.html %}
+```
+### Alerts
 
+The `alerts.html` file is used to format and display notes, warnings, and other informational callouts in Meshery. 
+It provides a consistent and visually appealing way to draw the user's attention to important information.
+
+To use the `alerts.html` feature, include the following code snippet in your documentation:
+```
+   
+&lt;div class="alert alert-{{ include.type }}"&gt;
+    &lt;h4 class="alert-heading"&gt;{% if include.title %}{{ include.title }}{% else %}{{ include.type }}{% endif %}&lt;/h4&gt;
+    {{ include.content }}
+&lt;/div&gt;
+```
+    
+This code defines an HTML structure for creating alerts. It accepts three parameters:
+```
+<ul>
+        <li>`{{ include.type }}`: Specifies the type of alert, which can be "info," "warning," "success," or any other relevant value. This is used to style the alert.</li>
+        <li>`{{ include.title }}` : Sets the title of the alert. If not provided, it will default to the value of <code>{{ include.type }}</code>.</li>
+        <li>`{{ include.content }}`: Contains the content of the alert, such as the message or information you want to convey.</li>
+    </ul>
+ ``` 
+#### Example
+    
+ Here's an example of how to use the <code>alerts.html</code> feature in your documentation:
+    
+    
+```
+{% include "alerts.html" with type="info" title="Information" content="This is an example of an informational alert." %}
+{% include "alerts.html" with type="warning" title="Warning" content="This is an example of a warning alert." %}
+{% include "alerts.html" with type="success" title="Success" content="This is an example of a success alert." %}
+```
