@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
+  <head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="generator" content="Hugo 0.55.6" />
+
+<META NAME="ROBOTS" CONTENT="INDEX, FOLLOW">
+
+<link rel="alternate" type="application/rss&#43;xml" href="/v0.5/index.xml">
+
+<link rel="shortcut icon" href="/v0.5/assets/favicons/favicon.ico" >
+<link rel="apple-touch-icon" href="/v0.5/assets/favicons/apple-touch-icon.png" sizes="180x180">
+<link rel="icon" type="image/png" href="/v0.5/assets/favicons/favicon-16x16.png" sizes="16x16">
+<link rel="icon" type="image/png" href="/v0.5/assets/favicons/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/v0.5/assets/favicons/android-144x144.png" sizes="36x36">
+<link rel="icon" type="image/png" href="/v0.5/assets/favicons/android-144x144.png" sizes="48x48">
+<link rel="icon" type="image/png" href="/v0.5/assets/favicons/android-144x144.png" sizes="72x72">
+<link rel="icon" type="image/png" href="/v0.5/assets/favicons/android-144x144.png" sizes="96x196">
+<link rel="icon" type="image/png" href="/v0.5/assets/favicons/android-144x144.png" sizes="144x144">
+<link rel="icon" type="image/png" href="/v0.5/assets/favicons/android-192x192.png"sizes="192x192">
+
+<title>mesheryctl-system-token-view | Meshery</title>
+<meta property="og:title" content="mesheryctl-system-token-view" />
+<meta property="og:description" content="Meshery is the open source, cloud native management plane that enables the adoption, operation, and management of Kubernetes, any service mesh, and their workloads.
+" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="http://localhost:4000" />
+<meta property="og:site_name" content="http://localhost:4000" />
+
+<meta itemprop="name" content="mesheryctl-system-token-view">
+<meta itemprop="description" content="Meshery is the open source, cloud native management plane that enables the adoption, operation, and management of Kubernetes, any service mesh, and their workloads.
+">
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="mesheryctl-system-token-view"/>
+<meta name="twitter:description" content="Meshery is the open source, cloud native management plane that enables the adoption, operation, and management of Kubernetes, any service mesh, and their workloads.
+"/>
+
+<link rel="stylesheet" href="/v0.5/assets/css/main.css">
+<link rel="stylesheet" href="/v0.5/assets/css/palette.css">
+<link rel="stylesheet" href="/v0.5/assets/css/anchorjs.css">
+<link rel="stylesheet" href="/v0.5/assets/css/sass.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
+
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+  <!-- Anchorjs included for adding hover anchor links to headings -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
+  <script>  
+  $(function() {
+  /** AnchorJS options and selector */  
+   anchors.options = {
+      visible : 'hover',
+      placement: 'left'
+   };
+   anchors.add('h1, h2, h3, h4, h5');
+   });
+   </script>
+</head>
+<style>
+
+</style>
+  <body class="td-section">
+    <header>
+  <nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar">
+    <a class="navbar-brand" href="/v0.5/">
+      <div class="navbar-logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 279.49 51.83"><defs><style>.cls-1{fill:#00d3a9}.cls-2{fill:#00b39f}.cls-3{fill:#fff}</style></defs><title>Asset 14</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><polygon points="26.68 12.21 26.68 24.59 37.4 18.38 26.68 12.21" class="cls-1"/><polygon points="26.68 27.18 26.68 39.62 37.5 33.43 26.68 27.18" class="cls-1"/><polygon points="25.13 24.51 25.13 12.32 14.54 18.39 25.13 24.51" class="cls-2"/><path d="M3.88,39.58a26,26,0,0,0,8.22,8.27v-13Z" class="cls-2"/><polygon points="25.13 39.56 25.13 27.27 14.51 33.42 25.13 39.56" class="cls-2"/><polygon points="13.64 47.07 24.4 40.92 13.64 34.7 13.64 47.07" class="cls-1"/><polygon points="38.24 47.14 38.24 34.79 27.5 40.93 38.24 47.14" class="cls-2"/><path d="M48.76,38.14A25.71,25.71,0,0,0,51.8,27L40.6,33.44Z" class="cls-2"/><polygon points="39.78 32.13 50.58 25.95 39.78 19.75 39.78 32.13" class="cls-1"/><polygon points="38.24 17.08 38.24 4.81 27.55 10.94 38.24 17.08" class="cls-2"/><polygon points="38.24 32.07 38.24 19.68 27.52 25.89 38.24 32.07" class="cls-2"/><polygon points="25.9 51.83 25.91 51.83 25.9 51.83 25.9 51.83" class="cls-2"/><polygon points="13.64 19.66 13.64 32.14 24.43 25.89 13.64 19.66" class="cls-1"/><path d="M25.13,0A25.75,25.75,0,0,0,13.75,3L25.13,9.55Z" class="cls-2"/><polygon points="13.64 4.72 13.64 17.13 24.44 10.93 13.64 4.72" class="cls-1"/><path d="M12.1,4a26,26,0,0,0-8.22,8.27L12.1,17Z" class="cls-2"/><path d="M38.17,3.07A25.8,25.8,0,0,0,26.68,0V9.65Z" class="cls-1"/><path d="M0,26.82A25.76,25.76,0,0,0,3.1,38.24l8.32-4.82Z" class="cls-1"/><path d="M3.1,13.58A25.67,25.67,0,0,0,0,24.94l11.44-6.55Z" class="cls-1"/><path d="M13.73,48.8a25.81,25.81,0,0,0,11.4,3V42.28Z" class="cls-2"/><path d="M48,12.28A25.91,25.91,0,0,0,39.78,4V17Z" class="cls-1"/><path d="M39.78,47.8A26,26,0,0,0,48,39.48l-8.21-4.73Z" class="cls-1"/><path d="M51.8,24.88a25.84,25.84,0,0,0-3.07-11.27l-8.24,4.77Z" class="cls-2"/><path d="M26.68,51.82a25.81,25.81,0,0,0,11.37-3L26.68,42.24Z" class="cls-1"/><polygon points="12.1 32.03 12.1 19.79 1.47 25.88 12.1 32.03" class="cls-2"/><polygon points="197.13 19 197.13 20.13 197.13 25.45 197.13 31.94 197.13 41.41 222.35 41.41 222.35 36.09 202.45 36.09 202.45 31.94 202.45 30.77 217.74 30.77 217.74 25.45 202.45 25.45 202.45 20.13 222.35 20.13 222.35 14.81 197.13 14.81 197.13 19" class="cls-3"/><polygon points="100.14 19 100.14 20.13 100.14 25.45 100.14 31.94 100.14 41.41 125.35 41.41 125.35 36.09 105.46 36.09 105.46 31.94 105.46 30.77 120.74 30.77 120.74 25.45 105.46 25.45 105.46 20.13 125.35 20.13 125.35 14.81 100.14 14.81 100.14 19" class="cls-3"/><path d="M160.26,34.46a6.61,6.61,0,0,1-.55,2.69,7,7,0,0,1-1.51,2.22A7.34,7.34,0,0,1,156,40.86a6.7,6.7,0,0,1-2.71.55H128.38v-5.6h24.89a1.35,1.35,0,0,0,1.35-1.35V32.29A1.33,1.33,0,0,0,153.27,31H135.36a6.78,6.78,0,0,1-2.69-.55,7.19,7.19,0,0,1-2.24-1.51,7,7,0,0,1-1.5-2.23,6.62,6.62,0,0,1-.55-2.7V21.8a6.75,6.75,0,0,1,.55-2.72,7,7,0,0,1,1.5-2.21,7.19,7.19,0,0,1,2.24-1.51,6.61,6.61,0,0,1,2.69-.55h24.9v5.64h-24.9a1.27,1.27,0,0,0-1,.39,1.31,1.31,0,0,0-.4,1V24a1.31,1.31,0,0,0,.4,1,1.27,1.27,0,0,0,1,.39h17.91a6.7,6.7,0,0,1,2.71.55,7.11,7.11,0,0,1,3.73,3.72,6.74,6.74,0,0,1,.55,2.71Z" class="cls-3"/><path d="M193.81,41.41h-5.07V31H169V41.41h-5.08V25.31h24.86V14.81h5.07ZM169,22.81h-5.08v-8H169Z" class="cls-3"/><polygon points="266.19 24.12 259.55 14.81 252.9 14.81 263.54 30.77 263.54 41.41 268.86 41.41 268.86 30.77 279.49 14.81 272.93 14.81 266.19 24.12" class="cls-3"/><path d="M231.4,19.88H245v5.53h-11v5.08h2.52l9.65,10.92h6.57l-9.65-10.92h3.76A4.13,4.13,0,0,0,251,26.36V18.94a4.13,4.13,0,0,0-4.13-4.13H226.19v26.6h5.32Z" class="cls-3"/><path d="M96.05,41.41H90.41V22a1.38,1.38,0,0,0-.13-.6,1.56,1.56,0,0,0-.33-.5,1.77,1.77,0,0,0-.5-.34,1.53,1.53,0,0,0-.6-.12H62.78V14.81H88.85a6.88,6.88,0,0,1,2.78.57,7.08,7.08,0,0,1,3.85,3.85A6.88,6.88,0,0,1,96.05,22Zm-27.63,0H62.78v-21l5.64-1.55Zm13.8,0H76.58v-18h5.64Z" class="cls-3"/></g></g></svg><span class="font-weight-bold" style="vertical-align: bottom"
+          >Documentation</span
+        >
+      </div>
+    </a>
+    <div class="td-navbar-nav-scroll ml-md-auto" id="main_navbar">
+      <ul class="navbar-nav mt-2 mt-lg-0">
+        <!-- 
+			<li class="nav-item mr-4 mb-2 mb-lg-0">
+        <a class="nav-link" href="https://github.com/meshery/meshery" target="_blank"><span>GitHub</span></a>
+      </li>  -->
+
+        <!-- Internal links -->
+         
+            <li class="nav-item mr-4 mb-2 mb-lg-0">
+              <a
+                class="nav-link"
+                href="/v0.5/installation/quick-start"
+                ><span>Quick Start</span></a
+              >
+            </li>
+         
+            <li class="nav-item mr-4 mb-2 mb-lg-0">
+              <a
+                class="nav-link"
+                href="https://meshery.io"
+                ><span>Site</span></a
+              >
+            </li>
+         
+            <li class="nav-item mr-4 mb-2 mb-lg-0">
+              <a
+                class="nav-link"
+                href="https://discuss.layer5.io"
+                ><span>Discuss</span></a
+              >
+            </li>
+         
+            <li class="nav-item mr-4 mb-2 mb-lg-0">
+              <a
+                class="nav-link"
+                href="https://github.com/meshery/meshery"
+                ><span>GitHub</span></a
+              >
+            </li>
+        
+
+        <!--Version Selector -->
+
+        <select onchange="window.location=this.value" class="appearance-none flex-1 w-full px-0 py-1 placeholder-gray-900 tracking-wide focus:outline-none version-selector" name="versioningSelection" id="versioningSelection">
+          <!-- <option value="">Versions</option> -->
+          
+
+          <!-- we get the version selected, and put it to the right option  --><option  value="/v0.5" class="nav-item mr-4 mb-2 mb-lg-0 text-black">
+            <span>v0.5</span>
+          </option>
+          <!-- we get the version selected, and put it to the right option  --><option  value="/" class="nav-item mr-4 mb-2 mb-lg-0 text-black">
+            <span>latest</span>
+          </option>
+          <!-- we get the version selected, and put it to the right option  --><option  value="/v0.4" class="nav-item mr-4 mb-2 mb-lg-0 text-black">
+            <span>v0.4</span>
+          </option>
+          
+          </select>
+    
+        </ul>
+    </div>
+
+    <!--Search Bar
+    <div class="navbar-nav d-none d-lg-block"><input type="search" class="form-control td-search-input" placeholder="&#xf002 Search this site…" aria-label="Search this site…" autocomplete="off"></div>-->
+
+    <!-- meshery-custom-begin
+
+	<div class="navbar-nav d-none d-lg-block">
+          <a class="gh-source" data-gh-source="github" href="https://github.com/meshery/meshery" title="Go to repository" data-md-state="done">
+          <div class="gh-source__repository">
+            <i class="fab fa fa-github fa-2x" style='padding-right:20px; float:left; margin-top:5px'></i>
+            meshery/meshery
+          <ul class="gh-source__facts"><li class="gh-source__fact" id='stars'></li><li id="forks" class="gh-source__fact"></li></ul></div></a>
+        </div>
+      </div>
+
+meshery-custom-end -->
+  </nav>
+</header>
+
+<!-- meshery-custom-begin
+
+<script>
+$(document).ready(function() {
+  var url = "https://api.github.com/search/repositories?q=meshery/meshery";
+  fetch(url, { 
+      headers: {"Accept":"application/vnd.github.preview"}
+  }).then(function(e) {
+    return e.json()
+  }).then(function(r) {
+     console.log(r.items[0])
+     stars = r.items[0]['stargazers_count']
+     forks = r.items[0]['forks_count']
+     $('#stars').text(stars + " Stars")
+     $('#forks').text(forks + " Forks")
+  });
+});
+</script>
+
+meshery-custom-end -->
+
+    <div class="container-fluid td-outer">
+      <div class="td-main">
+        <div class="row flex-xl-nowrap">
+          <div class="col-12 col-md-3 col-xl-2 td-sidebar d-print-none">
+          <div id="td-sidebar-menu" class="td-sidebar__inner">  
+    <form class="td-sidebar__search d-flex align-items-center">
+   <input type="search" class="form-control td-search-input fas fa-search" placeholder="&#xf002" aria-label="Search this site…" autocomplete="off">
+      <button class="btn btn-link td-sidebar__toggle d-md-none p-0 ml-3 fas fa-bars" type="button" data-toggle="collapse" data-target="#td-section-nav" aria-controls="td-docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+      </button>
+    </form>  
+
+    <nav class="collapse td-sidebar-nav pt-1 pl-3" id="td-section-nav">
+      
+    
+    <ul class="td-sidebar-nav__section pr-md-3">
+      
+      
+      <li class="td-sidebar-nav__section-title">
+        <a  href="/v0.5/installation/quick-start" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">🚀 Quick Start</a>
+      </li>
+          
+    </ul>
+    
+    <ul class="td-sidebar-nav__section pr-md-3">
+      
+      
+      <li class="td-sidebar-nav__section-title">
+        <a  href="/v0.5/project" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">🗺 Overview</a>
+      </li>
+      
+        <ul>
+          <li class="collapse show" id="overview">
+              <ul class="td-sidebar-nav__section pr-md-3">
+                
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/project/community" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Community</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/project/contributing" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Contributing ↆ</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/project/releases" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Releases</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/project/build-and-release" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Build & Release (CI)</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/project/security-vulnerabilities" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Vulnerabilities</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/project/faq" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">FAQ</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/installation/platforms" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Supported Platforms ↆ</a>
+                </li>
+                
+              
+            </ul>
+        </ul>  
+          
+    </ul>
+    
+    <ul class="td-sidebar-nav__section pr-md-3">
+      
+      
+      <li class="td-sidebar-nav__section-title">
+        <a  href="/v0.5/concepts" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">🧠 Concepts</a>
+      </li>
+      
+        <ul>
+          <li class="collapse show" id="concepts">
+              <ul class="td-sidebar-nav__section pr-md-3">
+                
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/concepts/architecture" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Architecture</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/concepts/architecture/adapters" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Adapters</a>
+                </li>
+                
+              
+            </ul>
+        </ul>  
+          
+    </ul>
+    
+    <ul class="td-sidebar-nav__section pr-md-3">
+      
+      
+      <li class="td-sidebar-nav__section-title">
+        <a  href="/v0.5/functionality" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">⚙️ Functionality</a>
+      </li>
+      
+        <ul>
+          <li class="collapse show" id="functionality">
+              <ul class="td-sidebar-nav__section pr-md-3">
+                
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/functionality/application-management" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Application Management</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/functionality/lifecycle-management" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Lifecycle Management</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/functionality/pattern-management" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Pattern Management</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/functionality/performance-management" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Performance Management</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/functionality/service-mesh-interface" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Service Mesh Interface (SMI) Conformance</a>
+                </li>
+                
+              
+            </ul>
+        </ul>  
+          
+    </ul>
+    
+    <ul class="td-sidebar-nav__section pr-md-3">
+      
+      
+      <li class="td-sidebar-nav__section-title">
+        <a  href="/v0.5/service-meshes" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">🦾 Service Meshes</a>
+      </li>
+      
+        <ul>
+          <li class="collapse show" id="service-meshes">
+              <ul class="td-sidebar-nav__section pr-md-3">
+                
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/service-meshes/adapters/app-mesh" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">App Mesh</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/service-meshes/adapters/cpx" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Citrix Service Mesh</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/service-meshes/adapters/cilium" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Cilium Service Mesh</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/service-meshes/adapters/consul" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Consul</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/service-meshes/adapters/istio" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Istio</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/service-meshes/adapters/kuma" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Kuma</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/service-meshes/adapters/linkerd" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Linkerd</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/service-meshes/adapters/nsm" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Network Service Mesh</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/service-meshes/adapters/nginx-sm" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">NGINX Service Mesh</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/service-meshes/adapters/osm" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Open Service Mesh</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/service-meshes/adapters/tanzu-sm" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Tanzu</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/service-meshes/adapters/traefik-mesh" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Traefik Mesh</a>
+                </li>
+                
+              
+            </ul>
+        </ul>  
+          
+    </ul>
+    
+    <ul class="td-sidebar-nav__section pr-md-3">
+      
+      
+      <li class="td-sidebar-nav__section-title">
+        <a  href="/v0.5/guides" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">📚 Guides</a>
+      </li>
+      
+        <ul>
+          <li class="collapse show" id="guides">
+              <ul class="td-sidebar-nav__section pr-md-3">
+                
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/guides/sample-apps" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Deploying Sample Applications</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/guides/smi-conformance" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Running SMI Conformance Tests</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/guides/meshery-metrics" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Integrating Prometheus and Grafana</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/guides/troubleshooting" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Troubleshooting Guide</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/guides/upgrade" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Upgrading Meshery</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/guides/mesheryctl" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Using mesheryctl ↆ</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/guides/multiple-adapters" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Using Multiple Meshery Adapters</a>
+                </li>
+                
+              
+            </ul>
+        </ul>  
+          
+    </ul>
+    
+    <ul class="td-sidebar-nav__section pr-md-3">
+      
+      
+      <li class="td-sidebar-nav__section-title">
+        <a  href="/v0.5/extensibility" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">🛠 Extensibility</a>
+      </li>
+      
+        <ul>
+          <li class="collapse show" id="extensibility">
+              <ul class="td-sidebar-nav__section pr-md-3">
+                
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/extensibility/adapters" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Adapters</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/extensibility/load-generators" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Load Generators</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/extensibility/providers" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Providers</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/extensibility/api" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">REST & GraphQL APIs</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/extensibility/ui" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">UI Plugins</a>
+                </li>
+                
+              
+            </ul>
+        </ul>  
+          
+    </ul>
+    
+    <ul class="td-sidebar-nav__section pr-md-3">
+      
+      
+      <li class="td-sidebar-nav__section-title">
+        <a  href="/v0.5/reference" class="align-left pl-0 pr-2 active td-sidebar-link td-sidebar-link__section">📖 Reference</a>
+      </li>
+      
+        <ul>
+          <li class="collapse show" id="reference">
+              <ul class="td-sidebar-nav__section pr-md-3">
+                
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/reference/mesheryctl" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Meshery CLI</a>
+                </li>
+                
+                <ul>
+                  <li class="collapse show" id="">
+                    
+                  </li>
+                </ul>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/reference/error-codes" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">Error Codes</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/reference/graphql-apis" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">GraphQL API Reference</a>
+                </li>
+                
+              
+                <li class="td-sidebar-nav__section-title">
+                  <a href="/v0.5/reference/rest-apis" class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section">REST API Reference</a>
+                </li>
+                
+              
+            </ul>
+        </ul>  
+          
+    </ul>
+    
+    </nav>
+  </div>
+          </div>
+          <div class="d-none d-xl-block col-xl-2 td-toc d-print-none">
+              <div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
+                  <strong>Tools</strong>
+<a href="https://github.com/meshery/meshery/issues/new?assignees=&labels=area%2Fdocs%2C+framework%2Fjekyll&template=documentation.md&title=%5BDocs%5D" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i> Create doc issue</a>
+<a href="https://github.com/meshery/meshery/blob/master/docs/pages/reference/mesheryctl/mesheryctl-system-token-view.md" rel="noopener" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<strong>Contents</strong>
+
+
+<!-- this will parse through the header fields and add a button to open
+     an issue / ask a question on Github. The editable field should be in
+     the post frontend matter, and refer to the label to open the issue for -->
+     
+
+              </div>
+              <nav id="TableOfContents"><ul>
+              <li><ul id="TOC">
+                <!-- Links will be appended here-->
+              </ul></li>
+              </ul></nav>
+          </div>
+          <main class="col-12 col-md-9 col-xl-8 pl-md-5" role="main">
+            <nav aria-label="breadcrumb" class="d-none d-md-block d-print-none">
+	      <ol class="breadcrumb spb-1">
+                <li class="breadcrumb-item active" aria-current="page">
+      <!-- meshery-custom-begin -->
+        <div id="breadcrumbs">
+
+<a href="/v0.5/">home</a>
+
+  
+    / <a href="/v0.5/reference/">reference</a> 
+  
+
+  
+    / <a href="/v0.5/reference/mesheryctl/">mesheryctl</a> 
+  
+
+  
+    / <a href="/v0.5/reference/mesheryctl/system/">system</a> 
+  
+
+  
+    / <a href="/v0.5/reference/mesheryctl/system/token/">token</a> 
+  
+
+  
+    / mesheryctl-system-token-view
+  
+
+</div>
+
+<!-- <a href="http://idratherbewriting.com" class="noCrossRef productSubtitle"> Home </a> > <a class="noCrossRef productSubtitle" href="http://localhost:4000">Learn API Doc</a> > mesheryctl-system-token-view -->
+
+	      <!-- <a href="/v0.5/reference/mesheryctl/system/token/view">mesheryctl-system-token-view</a> -->
+		  <!-- meshery-custom-end -->
+                </li>
+	      </ol>
+           </nav>
+           <div class="td-content">
+            
+	           <h1 id="mesheryctl-system-token-view">mesheryctl system token view</h1>
+
+<p>View token</p>
+
+<h2 id="synopsis">Synopsis</h2>
+
+<p>View a specific token in meshery config</p>
+
+<pre class="codeblock-pre">
+<div class="codeblock">
+mesheryctl system token view [flags]
+
+</div>
+</pre>
+
+<h2 id="examples">Examples</h2>
+
+<pre class="codeblock-pre">
+<div class="codeblock">
+mesheryctl system token view [token-name]
+
+</div>
+</pre>
+
+<pre class="codeblock-pre">
+<div class="codeblock">
+mesheryctl system token view (show token of current context)
+
+</div>
+</pre>
+
+<h2 id="options">Options</h2>
+
+<pre class="codeblock-pre">
+<div class="codeblock">
+      --all    set the flag to view all the tokens.
+  -h, --help   help for view
+
+</div>
+</pre>
+
+<h2 id="options-inherited-from-parent-commands">Options inherited from parent commands</h2>
+
+<pre class="codeblock-pre">
+<div class="codeblock">
+      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
+  -c, --context string   (optional) temporarily change the current context.
+  -v, --verbose          verbose output
+  -y, --yes              (optional) assume yes for user interactive prompts.
+
+</div>
+</pre>
+
+<h2 id="see-also">See Also</h2>
+
+<p>Go back to <a href="/v0.5/reference/mesheryctl/">command reference index</a></p>
+	
+              
+              <br/>
+
+
+           </div>
+          </main>
+        </div>
+      </div>
+      <footer class="footer bg-dark py-3 row d-print-none">
+  <div class="container-fluid mx-sm-5">
+    <div class="row">
+<!-- meshery-custom-begin"
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+
+<ul class="list-inline mb-0">
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="" aria-label="Twitter" data-original-title="Twitter">
+    <a class="text-white" target="_blank" href="https://twitter.com/layer5">
+      <i class="fab fa-twitter"></i>
+    </a>
+  </li>
+</ul>
+</div>
+<div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+<ul class="list-inline mb-0">
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="" aria-label="GitHub" data-original-title="GitHub">
+    <a class="text-white" target="_blank" href="https://github.com/meshery/meshery">
+      <i class="fab fa-github"></i>
+    </a>
+  </li>
+</ul>
+meshery-custom-end -->
+
+<div class="col-12 col-sm-4 text-center py-2 order-sm-2">
+  <div class="text-white">&copy; 2022 The Meshery Authors</div>
+  
+
+  <!-- meshery-custom-begin -->
+
+  <p class="mt-2">
+
+  <div class="footer-icons-list">
+    <div class="footer-icons">
+      <a class="social__link social__link--forum" href="https://discuss.layer5.io" target="_blank" rel="noreferrer">
+        <img height="30px" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgLTEgMTA0IDEwNiI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOiMyMzFmMjA7fS5jbHMtMntmaWxsOiNmZmY5YWU7fS5jbHMtM3tmaWxsOiMwMGFlZWY7fS5jbHMtNHtmaWxsOiMwMGE5NGY7fS5jbHMtNXtmaWxsOiNmMTVkMjI7fS5jbHMtNntmaWxsOiNlMzFiMjM7fTwvc3R5bGU+PC9kZWZzPjx0aXRsZT5EaXNjb3Vyc2VfbG9nbzwvdGl0bGU+PGcgaWQ9IkxheWVyXzIiPjxnIGlkPSJMYXllcl8zIj48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik01MS44NywwQzIzLjcxLDAsMCwyMi44MywwLDUxYzAsLjkxLDAsNTIuODEsMCw1Mi44MWw1MS44Ni0uMDVjMjguMTYsMCw1MS0yMy43MSw1MS01MS44N1M4MCwwLDUxLjg3LDBaIi8+PHBhdGggY2xhc3M9ImNscy0yIiBkPSJNNTIuMzcsMTkuNzRBMzEuNjIsMzEuNjIsMCwwLDAsMjQuNTgsNjYuNDFsLTUuNzIsMTguNEwzOS40LDgwLjE3YTMxLjYxLDMxLjYxLDAsMSwwLDEzLTYwLjQzWiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTc3LjQ1LDMyLjEyYTMxLjYsMzEuNiwwLDAsMS0zOC4wNSw0OEwxOC44Niw4NC44MmwyMC45MS0yLjQ3QTMxLjYsMzEuNiwwLDAsMCw3Ny40NSwzMi4xMloiLz48cGF0aCBjbGFzcz0iY2xzLTQiIGQ9Ik03MS42MywyNi4yOUEzMS42LDMxLjYsMCwwLDEsMzguOCw3OEwxOC44Niw4NC44MiwzOS40LDgwLjE3QTMxLjYsMzEuNiwwLDAsMCw3MS42MywyNi4yOVoiLz48cGF0aCBjbGFzcz0iY2xzLTUiIGQ9Ik0yNi40Nyw2Ny4xMWEzMS42MSwzMS42MSwwLDAsMSw1MS0zNUEzMS42MSwzMS42MSwwLDAsMCwyNC41OCw2Ni40MWwtNS43MiwxOC40WiIvPjxwYXRoIGNsYXNzPSJjbHMtNiIgZD0iTTI0LjU4LDY2LjQxQTMxLjYxLDMxLjYxLDAsMCwxLDcxLjYzLDI2LjI5YTMxLjYxLDMxLjYxLDAsMCwwLTQ5LDM5LjYzbC0zLjc2LDE4LjlaIi8+PC9nPjwvZz48L3N2Zz4=" alt="forum">
+        <span class="footer-icons-text">Layer5 discussion forum</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link social__link--mail" href="mailto:community@layer5.io" target="_blank" rel="noreferrer">
+        <img height="30px" width="30px" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iTGF5ZXJfMSIgeD0iMCIgeT0iMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMjY1LjUgMTk5IiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAyNjUuNSAxOTkiPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+LnN0MHtmaWxsOiMwMGIzOWZ9PC9zdHlsZT48cGF0aCBkPSJNMjYwLjQsNjUuN2MyLTEuNiw1LTAuMSw1LDIuNHYxMDZjMCwxMy43LTExLjEsMjQuOS0yNC45LDI0LjlIMjQuOUMxMS4yLDE5OSwwLDE4Ny45LDAsMTc0LjF2LTEwNgljMC0yLjYsMy00LDUtMi40YzExLjYsOSwyNywyMC41LDc5LjksNTguOWMxMC45LDgsMjkuNCwyNC44LDQ3LjgsMjQuN2MxOC41LDAuMiwzNy4zLTE3LDQ3LjgtMjQuNwlDMjMzLjQsODYuMiwyNDguOCw3NC43LDI2MC40LDY1Ljd6IE0xMzIuNywxMzIuN2MxMiwwLjIsMjkuMy0xNS4xLDM4LjEtMjEuNWM2OC44LTQ5LjksNzQtNTQuMyw4OS45LTY2LjdjMy0yLjMsNC44LTYsNC44LTkuOHYtOS44CWMwLTEzLjctMTEuMS0yNC45LTI0LjktMjQuOUgyNC45QzExLjIsMCwwLDExLjEsMCwyNC45djkuOGMwLDMuOCwxLjgsNy40LDQuOCw5LjhjMTUuOSwxMi40LDIxLjEsMTYuOCw4OS45LDY2LjcJQzEwMy40LDExNy41LDEyMC43LDEzMi45LDEzMi43LDEzMi43TDEzMi43LDEzMi43eiIgY2xhc3M9InN0MCIvPjwvc3ZnPg==" alt="mail">
+        <span class="footer-icons-text">Get connected with the Layer5 community</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link social__link--slack" href="http://slack.layer5.io/" target="_blank" rel="noreferrer">
+        <img class="slack" height="30px" width="30px" src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyNCAyNCIgaGVpZ2h0PSI1MTIiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjUxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtOC44NDMgMTIuNjUxYy0xLjM5MiAwLTIuNTIxIDEuMTI5LTIuNTIxIDIuNTIxdjYuMzA2YzAgMS4zOTIgMS4xMjkgMi41MjEgMi41MjEgMi41MjFzMi41MjEtMS4xMjkgMi41MjEtMi41MjF2LTYuMzA2Yy0uMDAxLTEuMzkyLTEuMTMtMi41MjEtMi41MjEtMi41MjF6IiBmaWxsPSIjZTkxZTYzIi8+PHBhdGggZD0ibS4wMTkgMTUuMTcyYzAgMS4zOTMgMS4xMyAyLjUyMyAyLjUyMyAyLjUyM3MyLjUyMy0xLjEzIDIuNTIzLTIuNTIzdi0yLjUyM2gtMi41MjFjLS4wMDEgMC0uMDAxIDAtLjAwMiAwLTEuMzkzIDAtMi41MjMgMS4xMy0yLjUyMyAyLjUyM3oiIGZpbGw9IiNlOTFlNjMiLz48cGF0aCBkPSJtOC44NDYtLjAwMWMtLjAwMSAwLS4wMDIgMC0uMDAzIDAtMS4zOTMgMC0yLjUyMyAxLjEzLTIuNTIzIDIuNTIzczEuMTMgMi41MjMgMi41MjMgMi41MjNoMi41MjF2LTIuNTIzYzAtLjAwMSAwLS4wMDMgMC0uMDA1LS4wMDEtMS4zOTEtMS4xMjgtMi41MTgtMi41MTgtMi41MTh6IiBmaWxsPSIjMDBiY2Q0Ii8+PHBhdGggZD0ibTIuNTI1IDExLjM3aDYuMzE4YzEuMzkzIDAgMi41MjMtMS4xMyAyLjUyMy0yLjUyM3MtMS4xMy0yLjUyMy0yLjUyMy0yLjUyM2gtNi4zMThjLTEuMzkzIDAtMi41MjMgMS4xMy0yLjUyMyAyLjUyM3MxLjEzIDIuNTIzIDIuNTIzIDIuNTIzeiIgZmlsbD0iIzAwYmNkNCIvPjxwYXRoIGQ9Im0yMS40NTcgNi4zMjNjLTEuMzkxIDAtMi41MTggMS4xMjctMi41MTggMi41MTh2LjAwNSAyLjUyM2gyLjUyMWMxLjM5MyAwIDIuNTIzLTEuMTMgMi41MjMtMi41MjNzLTEuMTMtMi41MjMtMi41MjMtMi41MjNjLS4wMDEgMC0uMDAyIDAtLjAwMyAweiIgZmlsbD0iIzRjYWY1MCIvPjxwYXRoIGQ9Im0xMi42NDEgMi41MjJ2Ni4zMjVjMCAxLjM5MiAxLjEyOSAyLjUyMSAyLjUyMSAyLjUyMXMyLjUyMS0xLjEyOSAyLjUyMS0yLjUyMXYtNi4zMjVjMC0xLjM5Mi0xLjEyOS0yLjUyMS0yLjUyMS0yLjUyMS0xLjM5MiAwLTIuNTIxIDEuMTI5LTIuNTIxIDIuNTIxeiIgZmlsbD0iIzRjYWY1MCIvPjxnIGZpbGw9IiNmZjk4MDAiPjxwYXRoIGQ9Im0xNy42ODIgMjEuNDc2YzAtMS4zOTItMS4xMjktMi41MjEtMi41MjEtMi41MjFoLTIuNTIxdjIuNTIzYy4wMDEgMS4zOTEgMS4xMjkgMi41MTkgMi41MjEgMi41MTlzMi41MjEtMS4xMjkgMi41MjEtMi41MjF6Ii8+PHBhdGggZD0ibTIxLjQ3OSAxMi42NDloLTYuMzE4Yy0xLjM5MyAwLTIuNTIzIDEuMTMtMi41MjMgMi41MjNzMS4xMyAyLjUyMyAyLjUyMyAyLjUyM2g2LjMxOGMxLjM5MyAwIDIuNTIzLTEuMTMgMi41MjMtMi41MjNzLTEuMTMtMi41MjMtMi41MjMtMi41MjN6Ii8+PC9nPjwvc3ZnPg==" alt="slack">
+        <span class="footer-icons-text">Join the Layer5 Slack</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link--calendar" href="https://bit.ly/2SbrRhe">
+        <svg xmlns="http://www.w3.org/2000/svg" width="30px" height="30px" viewBox="0 0 18 18" xmlns:v="https://vecta.io/nano"><path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/><g stroke-linecap="undefined" stroke-linejoin="undefined"><path d="M-3.468 8.168h-.033m25.313-4.242l-.063-.254M7.858 4.814v9.387"/><path d="M1.833 9.507h12.051"/></g></svg>
+        <span class="footer-icons-text">Subscribe to the community calender</span>
+      </a>
+  </div>
+
+   <div class="footer-icons">
+      <a class="social__link social__link--twitter" href="https://twitter.com/layer5" target="_blank" rel="noreferrer">
+        <img class="twitter" height="30px" width="30px" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iQ2FwYV8xIiB4PSIwIiB5PSIwIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA1MTIgNTEyIj48cGF0aCBzdHlsZT0iZmlsbDojMDNhOWY0IiBkPSJNNTEyLDk3LjI0OGMtMTkuMDQsOC4zNTItMzkuMzI4LDEzLjg4OC02MC40OCwxNi41NzZjMjEuNzYtMTIuOTkyLDM4LjM2OC0zMy40MDgsNDYuMTc2LTU4LjAxNgljLTIwLjI4OCwxMi4wOTYtNDIuNjg4LDIwLjY0LTY2LjU2LDI1LjQwOEM0MTEuODcyLDYwLjcwNCwzODQuNDE2LDQ4LDM1NC40NjQsNDhjLTU4LjExMiwwLTEwNC44OTYsNDcuMTY4LTEwNC44OTYsMTA0Ljk5MgljMCw4LjMyLDAuNzA0LDE2LjMyLDIuNDMyLDIzLjkzNmMtODcuMjY0LTQuMjU2LTE2NC40OC00Ni4wOC0yMTYuMzUyLTEwOS43OTJjLTkuMDU2LDE1LjcxMi0xNC4zNjgsMzMuNjk2LTE0LjM2OCw1My4wNTYJYzAsMzYuMzUyLDE4LjcyLDY4LjU3Niw0Ni42MjQsODcuMjMyYy0xNi44NjQtMC4zMi0zMy40MDgtNS4yMTYtNDcuNDI0LTEyLjkyOGMwLDAuMzIsMCwwLjczNiwwLDEuMTUyCWMwLDUxLjAwOCwzNi4zODQsOTMuMzc2LDg0LjA5NiwxMDMuMTM2Yy04LjU0NCwyLjMzNi0xNy44NTYsMy40NTYtMjcuNTIsMy40NTZjLTYuNzIsMC0xMy41MDQtMC4zODQtMTkuODcyLTEuNzkyCWMxMy42LDQxLjU2OCw1Mi4xOTIsNzIuMTI4LDk4LjA4LDczLjEyYy0zNS43MTIsMjcuOTM2LTgxLjA1Niw0NC43NjgtMTMwLjE0NCw0NC43NjhjLTguNjA4LDAtMTYuODY0LTAuMzg0LTI1LjEyLTEuNDQJQzQ2LjQ5Niw0NDYuODgsMTAxLjYsNDY0LDE2MS4wMjQsNDY0YzE5My4xNTIsMCwyOTguNzUyLTE2MCwyOTguNzUyLTI5OC42ODhjMC00LjY0LTAuMTYtOS4xMi0wLjM4NC0xMy41NjgJQzQ4MC4yMjQsMTM2Ljk2LDQ5Ny43MjgsMTE4LjQ5Niw1MTIsOTcuMjQ4eiIvPjwvc3ZnPg==" alt="twitter">
+        <span class="footer-icons-text">Follow Layer5 on Twitter</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link" href="https://github.com/layer5io" target="_blank" rel="noreferrer">
+        <img height="30px" width="30px" class="github" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iTGF5ZXJfMSIgeD0iMCIgeT0iMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMjc0LjEgMjY3LjMiIHhtbDpzcGFjZT0icHJlc2VydmUiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDI3NC4xIDI2Ny4zIj48cGF0aCBkPSJNMTM3LjEsMEM2MS40LDAsMCw2MS4zLDAsMTM2LjlDMCwxOTYsMzcuOCwyNDguNCw5My44LDI2N2M2LjgsMS4zLDkuMy0zLDkuMy02LjZjMC0zLjMtMC4xLTExLjktMC4yLTIzLjMJYy0zOC4xLDguMy00Ni4xLTE4LjQtNDYuMS0xOC40Yy02LjItMTUuOC0xNS4yLTIwLTE1LjItMjBjLTEyLjQtOC41LDAuOS04LjMsMC45LTguM2MxMy43LDEsMjEsMTQuMSwyMSwxNC4xCWMxMi4yLDIwLjksMzIuMSwxNC45LDM5LjksMTEuNGMxLjItOC45LDQuOC0xNC45LDguNy0xOC4zYy0zMC40LTMuNS02Mi40LTE1LjItNjIuNC02Ny43Yy0wLjItMTMuNiw0LjgtMjYuOCwxNC4xLTM2LjgJYy0xLjQtMy41LTYuMS0xNy40LDEuMy0zNi4zYzAsMCwxMS41LTMuNywzNy43LDE0YzExLjItMy4xLDIyLjctNC42LDM0LjMtNC42YzExLjYsMC4xLDIzLjEsMS42LDM0LjMsNC42CWMyNi4yLTE3LjcsMzcuNi0xNCwzNy42LTE0YzcuNSwxOC45LDIuOCwzMi44LDEuNCwzNi4zYzkuMywxMCwxNC4zLDIzLjIsMTQuMSwzNi44YzAsNTIuNi0zMiw2NC4yLTYyLjUsNjcuNgljNC45LDQuMiw5LjMsMTIuNiw5LjMsMjUuNGMwLDE4LjMtMC4yLDMzLjEtMC4yLDM3LjZjMCwzLjcsMi41LDcuOSw5LjQsNi42YzcxLjgtMjQsMTEwLjUtMTAxLjcsODYuNS0xNzMuNQlDMjQ4LjMsMzcuNywxOTYsMCwxMzcuMSwwTDEzNy4xLDB6Ii8+PC9zdmc+" alt="github">
+        <span class="footer-icons-text">Contribute to Layer5 projects</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link social__link--linkedin" href="https://www.linkedin.com/company/layer5" target="_blank" rel="noreferrer">
+        <img class="linkedin" height="30px" width="30px" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnN2Z2pzPSJodHRwOi8vc3ZnanMuY29tL3N2Z2pzIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNTEyIDUxMiIgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHg9IjAiIHk9IjAiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxnPjxwYXRoIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbD0iIzA2OSIgZD0ibTQ3NS4wNzQyMTkgMGgtNDM4LjE0ODQzOGMtMjAuMzk0NTMxIDAtMzYuOTI1NzgxIDE2LjUzMTI1LTM2LjkyNTc4MSAzNi45MjU3ODF2NDM4LjE0ODQzOGMwIDIwLjM5NDUzMSAxNi41MzEyNSAzNi45MjU3ODEgMzYuOTI1NzgxIDM2LjkyNTc4MWg0MzguMTQ4NDM4YzIwLjM5NDUzMSAwIDM2LjkyNTc4MS0xNi41MzEyNSAzNi45MjU3ODEtMzYuOTI1Nzgxdi00MzguMTQ4NDM4YzAtMjAuMzk0NTMxLTE2LjUzMTI1LTM2LjkyNTc4MS0zNi45MjU3ODEtMzYuOTI1Nzgxem0tMjkzLjQ2NDg0NCAzODdoLTYyLjM0NzY1NnYtMTg3LjU3NDIxOWg2Mi4zNDc2NTZ6bS0zMS4xNzE4NzUtMjEzLjE4NzVoLS40MDYyNWMtMjAuOTIxODc1IDAtMzQuNDUzMTI1LTE0LjQwMjM0NC0zNC40NTMxMjUtMzIuNDAyMzQ0IDAtMTguNDA2MjUgMTMuOTQ1MzEzLTMyLjQxMDE1NiAzNS4yNzM0MzctMzIuNDEwMTU2IDIxLjMyODEyNiAwIDM0LjQ1MzEyNiAxNC4wMDM5MDYgMzQuODU5Mzc2IDMyLjQxMDE1NiAwIDE4LTEzLjUzMTI1IDMyLjQwMjM0NC0zNS4yNzM0MzggMzIuNDAyMzQ0em0yNTUuOTg0Mzc1IDIxMy4xODc1aC02Mi4zMzk4NDR2LTEwMC4zNDc2NTZjMC0yNS4yMTg3NS05LjAyNzM0My00Mi40MTc5NjktMzEuNTg1OTM3LTQyLjQxNzk2OS0xNy4yMjI2NTYgMC0yNy40ODA0NjkgMTEuNjAxNTYzLTMxLjk4ODI4MiAyMi44MDA3ODEtMS42NDg0MzcgNC4wMDc4MTMtMi4wNTA3ODEgOS42MDkzNzUtMi4wNTA3ODEgMTUuMjE0ODQ0djEwNC43NWgtNjIuMzQzNzVzLjgxNjQwNy0xNjkuOTc2NTYyIDAtMTg3LjU3NDIxOWg2Mi4zNDM3NXYyNi41NTg1OTRjOC4yODUxNTctMTIuNzgxMjUgMjMuMTA5Mzc1LTMwLjk2MDkzNyA1Ni4xODc1LTMwLjk2MDkzNyA0MS4wMTk1MzEgMCA3MS43NzczNDQgMjYuODA4NTkzIDcxLjc3NzM0NCA4NC40MjE4NzR6bTAgMCIgZGF0YS1vcmlnaW5hbD0iIzAwMDAwMCIvPjwvZz48L3N2Zz4=" alt="linkedin">
+        <span class="footer-icons-text">Connect to Layer5 on Linkedin</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link social__link--youtube" href="https://www.youtube.com/Layer5io?sub_confirmation=1" target="_blank" rel="noreferrer">
+        <img class="youtube" height="30px" width="30px" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iTGF5ZXJfMSIgeD0iMCIgeT0iMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgNTEyIDM1OC41IiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA1MTIgMzU4LjUiPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+LnN0MHtmaWxsOnJlZH0uc3Qxe2ZpbGw6I2ZmZn08L3N0eWxlPjxwYXRoIGQ9Ik01MDEuNSw1Ni4xYy01LjktMjEuOS0yMy4yLTM5LjItNDUuMS00NS4xQzQxNi4zLDAsMjU2LDAsMjU2LDBTOTUuNywwLDU1LjcsMTAuNQljLTIxLjUsNS45LTM5LjIsMjMuNi00NS4xLDQ1LjVDMCw5Ni4yLDAsMTc5LjIsMCwxNzkuMnMwLDgzLjUsMTAuNSwxMjMuMWM1LjksMjEuOSwyMy4yLDM5LjIsNDUuMSw0NS4xYzQwLjUsMTEsMjAwLjMsMTEsMjAwLjMsMTEJczE2MC4zLDAsMjAwLjMtMTAuNWMyMS45LTUuOSwzOS4yLTIzLjIsNDUuMS00NS4xQzUxMiwyNjIuNyw1MTIsMTc5LjcsNTEyLDE3OS43UzUxMi40LDk2LjIsNTAxLjUsNTYuMXoiIGNsYXNzPSJzdDAiLz48cGF0aCBkPSJNMjA1LDI1NmwxMzMuMy03Ni44TDIwNSwxMDIuNVYyNTZ6IiBjbGFzcz0ic3QxIi8+PC9zdmc+" alt="youtube">
+        <span class="footer-icons-text">Watch community meeting recordings</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link social__link--docker" href="https://hub.docker.com/u/layer5/" target="_blank" rel="noreferrer">
+        <img class="docker" height="30px" width="30px" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iTGF5ZXJfMSIgeD0iMCIgeT0iMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgNDYwIDMyMi4xIiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA0NjAgMzIyLjEiPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+LnN0MHtmaWxsOiMwOTljZWN9PC9zdHlsZT48ZyBpZD0iX3gzOV83LWRvY2tlciI+PGc+PGc+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDMuMiIgeD0iMjA0IiB5PSI1Mi4zIiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDIuNyIgeD0iMjA0IiB5PSIxMDQuMSIgY2xhc3M9InN0MCIvPjxyZWN0IHdpZHRoPSI0Ny41IiBoZWlnaHQ9IjQzLjIiIHg9IjE0Ny45IiB5PSI1Mi4zIiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDIuNyIgeD0iMjYwLjIiIHk9IjEwNC4xIiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDMuNiIgeD0iMjA0IiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDMuMiIgeD0iOTEuNyIgeT0iNTIuMyIgY2xhc3M9InN0MCIvPjxyZWN0IHdpZHRoPSI0Ny41IiBoZWlnaHQ9IjQyLjciIHg9IjE0Ny45IiB5PSIxMDQuMSIgY2xhc3M9InN0MCIvPjxwYXRoIGQ9Ik00NTAuNCwxMjQuMWMtMTAuNC03LTM0LjItOS41LTUyLjUtNmMtMi40LTE3LjItMTItMzIuMy0yOS41LTQ1LjhsLTEwLjEtNi43bC02LjcsMTAuMSBjLTEzLjIsMjAtMTYuOCw1Mi45LTIuNyw3NC42Yy02LjMsMy40LTE4LjUsOC0zNC44LDcuN0gxLjhjLTYuMywzNi41LDQuMiw4My45LDMxLjYsMTE2LjVDNjAsMzA2LDEwMCwzMjIuMSwxNTIuMywzMjIuMSBjMTEzLjEsMCwxOTYuOS01Mi4xLDIzNi0xNDYuOGMxNS40LDAuMyw0OC42LDAuMSw2NS42LTMyLjVjMS4xLTEuOCw0LjctOS41LDYuMS0xMi4zTDQ1MC40LDEyNC4xeiIgY2xhc3M9InN0MCIvPjxwb2x5Z29uIHBvaW50cz0iODMuMiAxMDQuMSA4My4xIDEwNC4xIDM1LjcgMTA0LjEgMzUuNyAxNDYuOCA4My4yIDE0Ni44IiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDIuNyIgeD0iOTEuNyIgeT0iMTA0LjEiIGNsYXNzPSJzdDAiLz48L2c+PC9nPjwvZz48L3N2Zz4=" alt="docker">
+        <span class="footer-icons-text">Access Docker images for Layer5 projects</span>
+      </a>
+    </div>
+  </div>
+    </p>
+  <!-- meshery-custom-end -->
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
+
+<script type="text/javascript" src="/v0.5/assets/js/lightbox.js"></script>
+<link rel="stylesheet" href="/v0.5/assets/css/lightbox.css">
+
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<script src="/v0.5/assets/js/main.js"></script>
+
+    <script async src='https://www.google-analytics.com/analytics.js'></script>
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-00000000-0', 'auto');
+	ga('send', 'pageview');
+}
+</script>
+
+  </body>
+</html>
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+
+<script>
+$(document).ready(function() {
+
+    var toc = $('#TOC');
+
+    // Select each header
+    sections = $('.td-content h1');
+        $.each(sections, function(idx, v) {
+            section = $(v);
+            var div_id = $(section).attr('id');
+            if(!section.hasClass('noTOC')){
+               var div_text = section.text().split('¶')[0];
+              var parent = $("#" + div_id)
+              var content = '<li id="link_' + div_id + '" class="md-nav__item"><a class="md-nav__link" href="#' + div_id + '" title="' + div_text +'">' + div_text +'</a></li>';
+              $(toc).append(content);
+            }
+
+            // Add section code to subnavigation
+            var children = $('<nav class="md-nav"><ul class="md-nav__list"></nav></ul>')
+            var contenders = $("#" + div_id).nextUntil("h1");
+            $.each(contenders, function(idx, contender){
+               if( !$(contender).hasClass("noTOC") && ($(contender).is('h2') || $(contender).is('h3')) ) {
+                   var contender_id = $(contender).attr('id');
+                   var contender_text = $(contender).text().split('¶')[0];
+                   var content = '<li class="md-nav__item"><a class="md-nav__link" href="#' + contender_id + '" title="' + contender_text +'">' + contender_text +'</a></li>';
+                   children.append(content);
+                }
+             })
+             $("#link_" + div_id).append(children);
+        });
+        //added 'selected' tag to the first element of toc
+        $('.md-nav__link').first().addClass('selected');
+
+        $(window).scroll(function(e){
+          // Detect how far are we from the top of the page
+          let windowTop = $(this).scrollTop();
+          // Loop through every navigation menu item
+          $('.md-nav__link').each(function (event) {       
+              if (windowTop >= $($(this).attr('href')).offset().top - 100) {
+              // Remove 'selected' from previously highlighted menu items
+              $('.selected').removeClass('selected');
+              // Highlight the current menu item by adding 'selected' class
+              $(this).addClass('selected');
+          }
+          if($(window).scrollTop() + $(window).height() > $(document).height() - 10) {
+            $('.selected').removeClass('selected');
+              $(this).addClass('selected');
+   }
+        });
+      })
+    });
+</script>
