@@ -85,7 +85,7 @@ func FilterRecordsByPublishFlag(csvIndices CSVIndices) {
 	csvWriter := csv.NewWriter(outputFile)
 	defer csvWriter.Flush()
 
-	header := records[0]
+	header := records[1]
 	if err := csvWriter.Write(header); err != nil {
 		log.Println("Error writing the header to the output file:", err)
 	}
@@ -97,7 +97,7 @@ func FilterRecordsByPublishFlag(csvIndices CSVIndices) {
 }
 
 func writeFilteredDataToCSVFile(publishColumnIndex int, records [][]string, csvWriter *csv.Writer) {
-	for _, record := range records[1:] {
+	for _, record := range records[2:] {
 		agValue := record[publishColumnIndex]
 
 		if agValue == "TRUE" {
