@@ -51,3 +51,14 @@ See "[Teams](/extensions/team-management)" section for more information.
 - Same connection can be assigned to multiple environments.
 
 See "[Connections](/concepts/connections)" section for more information.
+
+
+## Best Practices
+
+To make the most of Meshery Workspaces, here are some best practices:
+
+- Clearly define permissions in the form of team assignement to ensure proper access control.
+- Use Infrastructure Designs to standardize resource deployments.
+- Regularly review and update your Workspace's resources and configurations.
+
+Meshery Workspaces enhance collaboration within your teams, providing a structured environment for sharing and managing resources. By following best practices and understanding the core components of Workspaces, you can maximize the benefits of this feature in Meshery.
