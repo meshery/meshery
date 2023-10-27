@@ -2,20 +2,24 @@ package handlers
 
 import (
 	"encoding/json"
+	"database/sql"
 	"fmt"
+	"io"
+	"net/http"
+	"strings"
+	"net/url"
+	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
+
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/errors"
 	"github.com/layer5io/meshkit/models/events"
-	"io"
-	"net/http"
-	"strings"
-
 	pCore "github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
 	"github.com/sirupsen/logrus"
+	"gopkg.in/yaml.v2"
 )
 
 // MesheryPatternRequestBody refers to the type of request body that
@@ -113,6 +117,7 @@ func (h *Handler) handlePatternPOST(
 	}
 
 	format := r.URL.Query().Get("output")
+	var mesheryPattern *models.MesheryPattern
 
 	if parsedBody.CytoscapeJSON != "" {
 		pf, err := pCore.NewPatternFileFromCytoscapeJSJSON(parsedBody.Name, []byte(parsedBody.CytoscapeJSON))
@@ -559,10 +564,10 @@ func (h *Handler) handlePatternPOST(
 	}
 
 	if sourcetype == string(models.DockerCompose) || sourcetype == string(models.K8sManifest) || sourceType == string(models.HelmChart) {
-		var savedApplicationID *uuid.UUID
+		var savedPatternID *uuid.UUID
 
 	if parsedBody.Save {
-		resp, err := provider.SaveMesheryApplication(token, mesheryApplication)
+		resp, err := provider.SavemesheryPattern(token, mesheryPattern)
 		if err != nil {
 			obj := "save"
 
@@ -588,16 +593,16 @@ func (h *Handler) handlePatternPOST(
 		go h.config.EventBroadcaster.Publish(userID, event)
 		_ = provider.PersistEvent(event)
 
-		var mesheryApplicationContent []models.MesheryApplication
-		err = json.Unmarshal(resp, &mesheryApplicationContent)
+		var mesheryPatternContent []models.mesheryPattern
+		err = json.Unmarshal(resp, &mesheryPatternContent)
 		if err != nil {
 			obj := "application"
 			h.log.Error(models.ErrEncoding(err, obj))
 			http.Error(rw, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 			return
 		}
-		savedApplicationID = mesheryApplicationContent[0].ID
-		err = provider.SaveApplicationSourceContent(token, (savedApplicationID).String(), mesheryApplication.SourceContent)
+		savedPatternID = mesheryPatternContent[0].ID
+		err = provider.SaveApplicationSourceContent(token, (savedPatternID).String(), mesheryPattern.SourceContent)
 
 		if err != nil {
 			obj := "upload"
@@ -618,11 +623,11 @@ func (h *Handler) handlePatternPOST(
 		}
 		go h.config.ApplicationChannel.Publish(userID, struct{}{})
 		eb := eventBuilder
-		_ = provider.PersistEvent(eb.WithDescription(fmt.Sprintf("Application %s  Source content uploaded", mesheryApplicationContent[0].Name)).Build())
+		_ = provider.PersistEvent(eb.WithDescription(fmt.Sprintf("Application %s  Source content uploaded", mesheryPatternContent[0].Name)).Build())
 	}
 
-	mesheryApplication.ID = savedApplicationID
-	byt, err := json.Marshal([]models.MesheryApplication{*mesheryApplication})
+	mesheryPattern.ID = savedPatternID
+	byt, err := json.Marshal([]models.MesheryPattern{*mesheryPattern})
 	if err != nil {
 		obj := "application"
 		h.log.Error(models.ErrEncoding(err, obj))
