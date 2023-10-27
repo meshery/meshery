@@ -315,25 +315,8 @@ Just for fun, here are all the types:
 {% include alert.html type="info" content="This is useful information." %}
 {% include alert.html type="primary" content="This is a primary alert" %}
 {% include alert.html type="secondary" content="This is a secondary alert" %}
-
-
-### Alerts
-
-{% include alert.html type="info" title="What is an alert?" content="An alert is a box that can stand out to indicate important information. You can choose from levels success, warning, danger, info, and primary. This example is an info box, and the code for another might look like this:" %}
-
-```
-{%raw%}{% include alert.html type="info" title="Here is another!" %}{%endraw%}
-```
-
-Just for fun, here are all the types:
-
-{% include alert.html type="warning" content="This is a warning" %}
-{% include alert.html type="danger" content="This alerts danger!" %}
-{% include alert.html type="success" content="This alerts success" %}
-{% include alert.html type="info" content="This is useful information." %}
-{% include alert.html type="primary" content="This is a primary alert" %}
-{% include alert.html type="secondary" content="This is a secondary alert" %}
-
+{% include alert.html type="light" content="This is a light alert" %}
+{% include alert.html type="dark" content="This is a dark alert" %}
 
 ### Quotes
 
