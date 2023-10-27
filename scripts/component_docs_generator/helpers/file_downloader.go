@@ -2,6 +2,8 @@ package helpers
 
 import (
 	"encoding/csv"
+	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -34,7 +36,31 @@ func GetIntegrationDocsCSVFile(csvURL string) {
 	log.Println("CSV file downloaded and saved as", destinationFile)
 }
 
-func FilterRecordsByPublishFlag() {
+func ReadIndexJSONFile() (CSVIndices, error) {
+	var config CSVIndices
+
+	file, err := os.Open("index.json")
+	if err != nil {
+		fmt.Println("Error opening JSON file:", err)
+		return config, err
+	}
+	defer file.Close()
+
+	jsonData, err := io.ReadAll(file)
+	if err != nil {
+		fmt.Println("Error reading JSON file:", err)
+		return config, err
+	}
+
+	err = json.Unmarshal(jsonData, &config)
+	if err != nil {
+		fmt.Println("Error unmarshaling JSON:", err)
+		return config, err
+	}
+	return config, nil
+}
+
+func FilterRecordsByPublishFlag(csvIndices CSVIndices) {
 	inputFile, err := os.Open("integration.csv")
 	if err != nil {
 		log.Println("Error opening input file:", err)
@@ -64,7 +90,7 @@ func FilterRecordsByPublishFlag() {
 		log.Println("Error writing the header to the output file:", err)
 	}
 
-	publishColumnIndex := 32 // AG Column index is 32
+	publishColumnIndex := csvIndices.FlagIndex // Publish Flag Index
 
 	writeFilteredDataToCSVFile(publishColumnIndex, records, csvWriter)
 
@@ -80,4 +106,12 @@ func writeFilteredDataToCSVFile(publishColumnIndex int, records [][]string, csvW
 			}
 		}
 	}
+}
+
+type CSVIndices struct {
+	FlagIndex  int `json:"flag-index"`
+	SvgIndex   int `json:"svg-index"`
+	IndexStart int `json:"index-start"`
+	IndexEnd   int `json:"index-end"`
+	NameIndex  int `json:"name-index"`
 }

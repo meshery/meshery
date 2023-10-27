@@ -15,7 +15,8 @@ func main() {
 	csvURL := os.Args[1]
 
 	helpers.GetIntegrationDocsCSVFile(csvURL)
-	helpers.FilterRecordsByPublishFlag()
-	helpers.CreateIntegrationDocs()
+	csvIndices, _ := helpers.ReadIndexJSONFile()
+	helpers.FilterRecordsByPublishFlag(csvIndices)
+	helpers.CreateIntegrationDocs(csvIndices)
 	helpers.DeleteTempCreatedFiles()
 }

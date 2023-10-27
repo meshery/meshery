@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func CreateIntegrationDocs() {
+func CreateIntegrationDocs(csvIndices CSVIndices) {
 	inputFile, err := os.Open("filtered.csv")
 	if err != nil {
 		log.Println("Error opening input file:", err)
@@ -23,21 +23,24 @@ func CreateIntegrationDocs() {
 		log.Println("Error reading input file:", err)
 		return
 	}
-	GenerateIntegrationDocsSVG(records)
-	GenerateIntegrationDocs(records)
+	GenerateIntegrationDocsSVG(records, csvIndices)
+	GenerateIntegrationDocs(records, csvIndices)
 }
 
-func GenerateIntegrationDocsSVG(records [][]string) {
+func GenerateIntegrationDocsSVG(records [][]string, csvIndices CSVIndices) {
 	for _, record := range records[1:] {
-		svgContent := record[13]
-		createFiles("../../docs/assets/img/integrations", ".svg", record[0], svgContent)
+		svgContent := record[csvIndices.SvgIndex]
+		createFiles("../../docs/assets/img/integrations", ".svg", record[csvIndices.NameIndex], svgContent)
 	}
 }
 
-func GenerateIntegrationDocs(records [][]string) {
+func GenerateIntegrationDocs(records [][]string, csvIndices CSVIndices) {
+
 	for _, record := range records[1:] {
-		mdContent := generateMDContent(record, record[0])
-		createFiles("../../docs/pages/integrations", ".md", record[0], mdContent)
+
+		mdContent := generateMDContent(record, record[csvIndices.NameIndex], csvIndices)
+
+		createFiles("../../docs/pages/integrations", ".md", record[csvIndices.NameIndex], mdContent)
 	}
 }
 
@@ -65,11 +68,11 @@ func formatName(input string) string {
 	return formattedName
 }
 
-func generateMDContent(record []string, name string) string {
+func generateMDContent(record []string, name string, csvIndices CSVIndices) string {
 	mdContent := ""
-	for i := 21; i <= 30; i++ {
+	for i := csvIndices.IndexStart; i <= csvIndices.IndexEnd; i++ {
 		if record[i] != "" && !strings.Contains(record[i], "https") {
-			mdContent += strconv.Itoa(i-20) + `.` + ` ` + record[i] + "\n\n"
+			mdContent += strconv.Itoa(i-(csvIndices.IndexStart-1)) + `.` + ` ` + record[i] + "\n\n"
 		}
 	}
 
