@@ -5,11 +5,10 @@ permalink: installation/mesheryctl
 type: installation
 category: mesheryctl
 redirect_from:
- - installation/mesheryctl
  - installation/mesheryctl/
 display-title: "true"
 language: en
-list: include
+list: exclude
 # image: /assets/img/platforms/brew.png
 ---
 
@@ -35,7 +34,7 @@ Guides to using Meshery's various features and components.
 
 <ul>
   {% for item in sorted_guides %}
-  {% if item.type=="Guides" and item.category=="mesheryctl" and item.list!="exclude" and item.language=="en" -%}
+  {% if item.type=="guides" and item.category=="mesheryctl" and item.list!="exclude" and item.language=="en" -%}
     <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
     </li>
     {% endif %}

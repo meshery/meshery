@@ -219,7 +219,6 @@ class MesheryApp extends App {
     if (isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry)) {
       Router.push(mesheryExtensionRoute);
     }
-    
 
     if (!_.isEqual(prevProps.k8sConfig, k8sConfig)) {
       const { operatorSubscription, meshSyncSubscription } = this.state;
