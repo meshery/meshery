@@ -570,7 +570,7 @@ func (h *Handler) handlePatternPOST(
 		var savedPatternID *uuid.UUID
 
 		if parsedBody.Save {
-			resp, err := provider.SavemesheryPattern(token, mesheryPattern)
+			resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
 			if err != nil {
 				obj := "save"
 
@@ -596,7 +596,7 @@ func (h *Handler) handlePatternPOST(
 			go h.config.EventBroadcaster.Publish(userID, event)
 			_ = provider.PersistEvent(event)
 
-			var mesheryPatternContent []models.mesheryPattern
+			var mesheryPatternContent []models.MesheryPattern
 			err = json.Unmarshal(resp, &mesheryPatternContent)
 			if err != nil {
 				obj := "application"
