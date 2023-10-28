@@ -303,9 +303,21 @@ The output of the code snippet would be:
 
 {% include alert.html type="info" title="What is an alert?" content="An alert is a box that can stand out to indicate important information. You can choose from levels success, warning, danger, info, and primary. This example is an info box, and the code for another might look like this:" %}
 
+The `alert.html` file is used to format and display notes, warnings, and other informational callouts in Meshery. 
+It provides a consistent and visually appealing way to draw the user's attention to important information.
+
 ```
 {%raw%}{% include alert.html type="info" title="Here is another!" %}{%endraw%}
 ```
+
+To use the `alert.html` feature, include the following code snippet in your documentation:
+``` 
+    &lt;div class="alert alert-{{ include.type }}"&gt;
+    &lt;h4 class="alert-heading"&gt;{% if include.title %}{{ include.title }}{% else %}{{ include.type }}{% endif %}&lt;/h4&gt;
+    {{ include.content }}
+    &lt;/div&gt;
+```
+
 
 Just for fun, here are all the types:
 
@@ -382,39 +394,6 @@ The assign tag is used to create a new variable. It is written in the following 
 
 {% capture code_content %}{{ "{% assign variable1 = true " }}%}{% endcapture %}
 {% include code.html code=code_content %}
-
-### Alert
-
-The `alert.html` file is used to format and display notes, warnings, and other informational callouts in Meshery. 
-It provides a consistent and visually appealing way to draw the user's attention to important information.
-
-To use the `alert.html` feature, include the following code snippet in your documentation:
-``` 
-    &lt;div class="alert alert-{{ include.type }}"&gt;
-    &lt;h4 class="alert-heading"&gt;{% if include.title %}{{ include.title }}{% else %}{{ include.type }}{% endif %}&lt;/h4&gt;
-    {{ include.content }}
-    &lt;/div&gt;
-```
-    
-This code defines an HTML structure for creating alerts. It accepts three parameters:
-```
-
-        {{ include.type }}: Specifies the type of alert, which can be "info," "warning," "success," or any other relevant value. This is used to style the alert
-        {{ include.title }} : Sets the title of the alert. If not provided, it will default to the value of <code>{{ include.type }}</code>
-        {{ include.content }}: Contains the content of the alert, such as the message or information you want to convey.
- ``` 
-#### Example
-    
- Here's an example of how to use the `alert.html` feature in your documentation:
-
-     {% include alert.html type="warning" content="This is a warning" %}
-     {% include alert.html type="danger" content="This alerts danger!" %}
-     {% include alert.html type="success" content="This alerts success" %}
-     {% include alert.html type="info" content="This is useful information." %}
-     {% include alert.html type="primary" content="This is a primary alert" %}
-     {% include alert.html type="secondary" content="This is a secondary alert" %}
-
-
 
 {% include suggested-reading.html %}
 
