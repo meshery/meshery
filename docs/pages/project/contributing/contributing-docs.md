@@ -401,15 +401,13 @@ The assign tag is used to create a new variable. It is written in the following 
 {% capture code_content %}{{ "{% assign variable1 = true " }}%}{% endcapture %}
 {% include code.html code=code_content %}
 
-```
 ### Alert
 
 The `alert.html` file is used to format and display notes, warnings, and other informational callouts in Meshery. 
 It provides a consistent and visually appealing way to draw the user's attention to important information.
 
 To use the `alert.html` feature, include the following code snippet in your documentation:
-```
-   
+``` 
 &lt;div class="alert alert-{{ include.type }}"&gt;
     &lt;h4 class="alert-heading"&gt;{% if include.title %}{{ include.title }}{% else %}{{ include.type }}{% endif %}&lt;/h4&gt;
     {{ include.content }}
@@ -434,3 +432,7 @@ This code defines an HTML structure for creating alerts. It accepts three parame
 {% include "alert.html" with type="success" title="Success" content="This is an example of a success alert." %}
 ```
 {% include suggested-reading.html %}
+
+
+{% include suggested-reading.html %}
+
