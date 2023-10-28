@@ -1490,7 +1490,7 @@ func (h *Handler) GetMesheryDesignTypesHandler(
 // responses:
 //  200
 
-// GetMesheryApplicationHandler fetched the application with the given id
+// GetMesheryPatternHandler fetched the design using the given id and sourcetype
 func (h *Handler) GetMesheryPatternSourceHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
