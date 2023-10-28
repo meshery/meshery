@@ -317,24 +317,6 @@ Just for fun, here are all the types:
 {% include alert.html type="secondary" content="This is a secondary alert" %}
 
 
-### Alerts
-
-{% include alert.html type="info" title="What is an alert?" content="An alert is a box that can stand out to indicate important information. You can choose from levels success, warning, danger, info, and primary. This example is an info box, and the code for another might look like this:" %}
-
-```
-{%raw%}{% include alert.html type="info" title="Here is another!" %}{%endraw%}
-```
-
-Just for fun, here are all the types:
-
-{% include alert.html type="warning" content="This is a warning" %}
-{% include alert.html type="danger" content="This alerts danger!" %}
-{% include alert.html type="success" content="This alerts success" %}
-{% include alert.html type="info" content="This is useful information." %}
-{% include alert.html type="primary" content="This is a primary alert" %}
-{% include alert.html type="secondary" content="This is a secondary alert" %}
-
-
 ### Quotes
 
 You can include block quotes to emphasize text. 
@@ -408,10 +390,10 @@ It provides a consistent and visually appealing way to draw the user's attention
 
 To use the `alert.html` feature, include the following code snippet in your documentation:
 ``` 
-&lt;div class="alert alert-{{ include.type }}"&gt;
+    &lt;div class="alert alert-{{ include.type }}"&gt;
     &lt;h4 class="alert-heading"&gt;{% if include.title %}{{ include.title }}{% else %}{{ include.type }}{% endif %}&lt;/h4&gt;
     {{ include.content }}
-&lt;/div&gt;
+    &lt;/div&gt;
 ```
     
 This code defines an HTML structure for creating alerts. It accepts three parameters:
@@ -424,14 +406,14 @@ This code defines an HTML structure for creating alerts. It accepts three parame
 #### Example
     
  Here's an example of how to use the `alert.html` feature in your documentation:
-    
-    
-```
-{% include "alert.html" with type="info" title="Information" content="This is an example of an informational alert." %}
-{% include "alert.html" with type="warning" title="Warning" content="This is an example of a warning alert." %}
-{% include "alert.html" with type="success" title="Success" content="This is an example of a success alert." %}
-```
-{% include suggested-reading.html %}
+
+     {% include alert.html type="warning" content="This is a warning" %}
+     {% include alert.html type="danger" content="This alerts danger!" %}
+     {% include alert.html type="success" content="This alerts success" %}
+     {% include alert.html type="info" content="This is useful information." %}
+     {% include alert.html type="primary" content="This is a primary alert" %}
+     {% include alert.html type="secondary" content="This is a secondary alert" %}
+
 
 
 {% include suggested-reading.html %}
