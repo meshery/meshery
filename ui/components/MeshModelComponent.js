@@ -94,11 +94,15 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
   const StyleClass = useStyles();
   const [view, setView] = useState(OVERVIEW);
   const [convert, setConvert] = useState(true);
-  const [show, setShow] = useState({});
-  const [comp, setComp] = useState([]);
-  const [rela, setRela] = useState([]);
+  const [show, setShow] = useState({
+    model: {},
+    components: [],
+    relationships: [],
+  });
+  const [comp, setComp] = useState({});
+  const [rela, setRela] = useState({});
   const [animate, setAnimate] = useState(false);
-  const [regi, setRegi] = useState([]);
+  const [regi, setRegi] = useState({});
 
   const getModels = async (page) => {
     try {
@@ -225,20 +229,17 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
 
   useEffect(() => {
     setRequestCancelled(false);
-    console.log(regi);
 
     if (view === MODELS && searchText === null) {
       getModels(page);
     } else if (view === COMPONENTS && searchText === null) {
-      getModels(page);
+      getComponents(page, sortOrder);
     } else if (view === RELATIONSHIPS) {
-      getModels(page);
-      // getRelationships(page, sortOrder);
+      getRelationships(page, sortOrder);
     } else if (view === MODELS && searchText) {
       getSearchedModels(searchText);
     } else if (view === COMPONENTS && searchText) {
-      getSearchedModels(searchText);
-      // getSearchedComponents(searchText);
+      getSearchedComponents(searchText);
     } else if (view === REGISTRANTS && searchText === null) {
       getRegistrants(page);
     }
@@ -604,35 +605,21 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
             />
           )} */}
           <Button
-            disabled
             variant="contained"
-            style={{ background: '#d6d6d4', color: 'white', marginRight: '1rem' }}
+            style={{ background: Colors.keppelGreen, color: 'white', marginRight: '1rem' }}
             size="large"
             startIcon={<UploadIcon />}
           >
             Import
           </Button>
           <Button
-            disabled
             variant="contained"
             size="large"
-            style={{ background: '#d6d6d4', color: 'white' }}
+            style={{ background: '#51636B', color: 'white' }}
             startIcon={<DoNotDisturbOnIcon />}
           >
             Ignore
           </Button>
-        </div>
-        <div style={{ display: 'flex' }}>
-          <SearchBar
-            onSearch={(value) => {
-              setSearchText(value);
-            }}
-            placeholder="Search"
-          />
-          <CustomColumnVisibilityControl
-            columns={meshmodel_columns}
-            customToolsProps={{ columnVisibility, setColumnVisibility }}
-          />
         </div>
       </div>
       {/* <ResponsiveDataTable
@@ -706,7 +693,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                 }, 1000);
               }}
             >
-              <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>1</span>
+              <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>12</span>
               Registrants
             </Paper>
           </div>
@@ -732,16 +719,11 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                 borderRadius: '8px 8px 0px 0px',
                 marginRight: '1rem',
                 padding: view === OVERVIEW ? '0.5rem 2rem' : '0.6rem 2rem',
-                borderTop: view === OVERVIEW ? '0.3rem solid #00B39F' : '',
               }}
               onClick={() => {
                 setView(OVERVIEW);
-                setAnimate(false);
                 setConvert(true);
-                setShow({});
-                setComp([]);
-                setRegi([]);
-                setRela([]);
+                setAnimate(false);
               }}
             >
               Overview
@@ -753,7 +735,6 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                 borderRadius: '8px 8px 0px 0px',
                 marginRight: '1rem',
                 padding: view === MODELS ? '0.5rem 2rem' : '0.6rem 2rem',
-                borderTop: view === MODELS ? '0.3rem solid #00B39F' : '',
               }}
               onClick={() => setView(MODELS)}
             >
@@ -766,7 +747,6 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                 borderRadius: '8px 8px 0px 0px',
                 marginRight: '1rem',
                 padding: view === COMPONENTS ? '0.5rem 2rem' : '0.6rem 2rem',
-                borderTop: view === COMPONENTS ? '0.3rem solid #00B39F' : '',
               }}
               onClick={() => setView(COMPONENTS)}
             >
@@ -779,7 +759,6 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                 borderRadius: '8px 8px 0px 0px',
                 marginRight: '1rem',
                 padding: view === RELATIONSHIPS ? '0.5rem 2rem' : '0.6rem 2rem',
-                borderTop: view === RELATIONSHIPS ? '0.3rem solid #00B39F' : '',
               }}
               onClick={() => setView(RELATIONSHIPS)}
             >
@@ -792,15 +771,14 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                 borderRadius: '8px 8px 0px 0px',
                 marginRight: '1rem',
                 padding: view === REGISTRANTS ? '0.5rem 2rem' : '0.6rem 2rem',
-                borderTop: view === REGISTRANTS ? '0.3rem solid #00B39F' : '',
               }}
               onClick={() => setView(REGISTRANTS)}
             >
-              Registrants(1)
+              Registrants(12)
             </Button>
           </div>
           <div className={StyleClass.treeWrapper}>
-            <div style={{ width: '50%', margin: '1rem' }}>
+            <div style={{ height: '30rem', width: '50%', margin: '1rem' }}>
               <MesheryTreeView
                 data={filteredData}
                 view={view}
@@ -812,174 +790,526 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                 setRela={setRela}
                 regi={regi}
                 setRegi={setRegi}
+                setSearchText={setSearchText}
               />
             </div>
             <div
               className={
-                regi.length === 0 && rela.length === 0 && comp.length === 0 && !show.displayName
+                !show.model.displayName && !comp.displayName && !regi.hostname && !rela.kind
                   ? StyleClass.emptyDetailsContainer
                   : StyleClass.detailsContainer
               }
             >
-              {regi.length === 0 && rela.length === 0 && comp.length === 0 && !show.displayName && (
-                <p style={{ color: '#979797' }}>Select {view} from side panel</p>
+              {!show.model.displayName && !comp.displayName && !regi.hostname && !rela.kind && (
+                <p style={{ color: '#969696' }}>No {view} selected</p>
               )}
-              {regi.length === 0 && show.displayName && (
-                <div>
-                  <h3
-                    style={{
-                      margin: '0px',
-                      marginBottom: '0.8rem',
-                      fontSize: '18px',
-                      padding: '0px',
-                      fontWeight: 'semibold',
-                    }}
-                  >
-                    Model: <span style={{ fontWeight: 'normal' }}>{show.displayName}</span>
-                  </h3>
-                  <Chip
-                    avatar={
-                      <Avatar
-                        src="/static/img/meshsync.svg"
-                        style={{ width: 18, height: 18, paddingLeft: 2 }}
-                      />
-                    }
-                    label="MeshSync"
-                    sx={{ backgroundColor: '#00B39F25', fontSize: '14px' }}
-                  />
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    <div style={{ margin: '1rem 0px' }}>
-                      <p style={{ margin: '3px 0px', fontSize: '14px' }}>Version: {show.version}</p>
-                      <p style={{ margin: '3px 0px', fontSize: '14px' }}>
-                        Components: {show.components?.length}{' '}
-                      </p>
-                    </div>
+              {view === MODELS && (
+                <>
+                  {show.model.displayName && (
                     <div>
-                      <p style={{ fontSize: '14px' }}>Category: {show.category?.name}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-              {view !== RELATIONSHIPS && regi.length === 0 && comp.length !== 0 && (
-                <div>
-                  <h3 style={{ marginBottom: '0.6rem', fontWeight: 'semibold', fontSize: '18px' }}>
-                    Component(s)
-                  </h3>
-                  {comp.map((component) => (
-                    <div>
-                      <h3
+                      <p
                         style={{
-                          margin: '0',
-                          marginTop: '0.4rem',
-                          fontSize: '16px',
-                          padding: '0px',
                           fontWeight: 'semibold',
+                          marginTop: '0px',
+                          fontSize: '20px',
+                          fontWeight: 'bold',
                         }}
                       >
-                        {component.displayName}
-                      </h3>
+                        {show.model.displayName}
+                      </p>
                       <div
                         style={{
                           display: 'flex',
                           flexDirection: 'row',
-                          justifyContent: 'space-between',
                         }}
                       >
-                        <p style={{ margin: '0px', fontSize: '14px' }}>
-                          API Version: {component.apiVersion}
-                        </p>
-                        <p style={{ margin: '0px', fontSize: '14px' }}>
-                          Sub Category: {component.kind}
-                        </p>
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            width: '50%',
+                            paddingRight: '1rem',
+                          }}
+                        >
+                          <p
+                            style={{
+                              padding: '0',
+                              margin: '0',
+                              fontSize: '16px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            Version
+                          </p>
+                          <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                            {show.model.version}
+                          </p>
+                          <p
+                            style={{
+                              padding: '0',
+                              margin: '0',
+                              marginTop: '12px',
+                              fontSize: '16px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            Hostname
+                          </p>
+                          <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                            {show.model.hostname}
+                          </p>
+                          <p
+                            style={{
+                              padding: '0',
+                              margin: '0',
+                              marginTop: '12px',
+                              fontSize: '16px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            Components
+                          </p>
+                          <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                            {show.model.components === null ? '0' : show.model.components.length}
+                          </p>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
+                          <p
+                            style={{
+                              padding: '0',
+                              margin: '0',
+                              fontSize: '16px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            Category
+                          </p>
+                          <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                            {show.model.category?.name}
+                          </p>
+                          <p
+                            style={{
+                              padding: '0',
+                              margin: '0',
+                              marginTop: '12px',
+                              fontSize: '16px',
+                              fontWeight: '600',
+                            }}
+                          >
+                            Duplicates
+                          </p>
+                          <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                            {show.model.duplicates}
+                          </p>
+                          <p
+                            style={{
+                              padding: '0',
+                              margin: '0',
+                              marginTop: '12px',
+                              fontWeight: '600',
+                              fontSize: '16px',
+                            }}
+                          >
+                            Relationships
+                          </p>
+                          <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                            {show.model.relationships === null
+                              ? '0'
+                              : show.model.relationships.length}
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
-              {view !== COMPONENTS && regi.length === 0 && rela.length !== 0 && (
-                <div>
-                  <h3 style={{ fontSize: '18px' }}>Relationship(s)</h3>
-                  {rela.map((relation) => (
+                  )}
+                  {show.components.length !== 0 && (
                     <div>
-                      <h3
+                      <hr style={{ marginTop: '1rem' }} />
+                      <p
                         style={{
-                          margin: '0',
-                          marginTop: '0.4rem',
-                          padding: '0px',
-                          fontWeight: 'semibold',
-                          fontSize: '16px',
+                          fontSize: '20px',
+                          font: 'semibold',
+                          margin: '0.5rem 0',
+                          fontWeight: 'bold',
                         }}
                       >
-                        {relation.displayhostname}
-                      </h3>
-                      <p style={{ margin: '0px', fontSize: '14x' }}>
-                        API Version: {relation.apiVersion}
+                        Components
                       </p>
+                      {show.components.map((component) => (
+                        <div>
+                          <p
+                            style={{
+                              fontWeight: 'semibold',
+                              fontSize: '20px',
+                              margin: '0',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {component.displayName}
+                          </p>
+                          <div
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'row',
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                width: '50%',
+                                paddingRight: '1rem',
+                              }}
+                            >
+                              <p
+                                style={{
+                                  padding: '0',
+                                  margin: '0',
+                                  fontSize: '16px',
+                                  fontWeight: '600',
+                                }}
+                              >
+                                API Version
+                              </p>
+                              <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                                {component.apiVersion}
+                              </p>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
+                              <p
+                                style={{
+                                  padding: '0',
+                                  margin: '0',
+                                  fontSize: '16px',
+                                  fontWeight: '600',
+                                }}
+                              >
+                                Sub Category
+                              </p>
+                              <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                                {component.kind}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  )}
+                  {show.relationships.length !== 0 && (
+                    <div>
+                      <hr style={{ marginTop: '1rem' }} />
+                      <p
+                        style={{
+                          fontSize: '20px',
+                          font: 'semibold',
+                          margin: '0.5rem 0',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        Relationships
+                      </p>
+                      {show.relationships.map((rela) => (
+                        <div>
+                          <p
+                            style={{
+                              fontWeight: 'semibold',
+                              fontSize: '20px',
+                              margin: '0',
+                              fontWeight: 'bold',
+                            }}
+                          >
+                            {rela.kind}
+                          </p>
+                          <div
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'row',
+                            }}
+                          >
+                            <div
+                              style={{
+                                display: 'flex',
+                                flexDirection: 'column',
+                                width: '50%',
+                                paddingRight: '1rem',
+                              }}
+                            >
+                              <p
+                                style={{
+                                  padding: '0',
+                                  margin: '0',
+                                  fontSize: '16px',
+                                  fontWeight: '600',
+                                }}
+                              >
+                                API Version
+                              </p>
+                              <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                                {rela.apiVersion}
+                              </p>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
+                              <p
+                                style={{
+                                  padding: '0',
+                                  margin: '0',
+                                  fontSize: '16px',
+                                  fontWeight: '600',
+                                }}
+                              >
+                                Sub Type
+                              </p>
+                              <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                                {rela.subType}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
               )}
-              {view === REGISTRANTS &&
-                regi.map((registrant) => (
-                  <div>
-                    <h3
-                      style={{
-                        margin: '0px',
-                        marginBottom: '0.8rem',
-                        padding: '0px',
-                        fontWeight: 'semibold',
-                        fontSize: '18px',
-                      }}
-                    >
-                      Registrant:{' '}
-                      <span style={{ fontWeight: 'normal' }}>{registrant.hostname}</span>
-                    </h3>
-                    <h3 style={{ fontSize: '16px' }}>
-                      {' '}
-                      Port: <span style={{ fontWeight: 'normal' }}>{registrant.port}</span>
-                    </h3>
+              {view === COMPONENTS && comp.displayName && (
+                <div>
+                  <p
+                    style={{
+                      fontWeight: 'semibold',
+                      fontSize: '20px',
+                      fontWeight: 'bold',
+                      marginTop: '0',
+                    }}
+                  >
+                    {comp.displayName}
+                  </p>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                    }}
+                  >
                     <div
                       style={{
                         display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
+                        flexDirection: 'column',
+                        width: '50%',
+                        paddingRight: '1rem',
                       }}
                     >
-                      <div>
-                        <h3 style={{ fontSize: '16px' }}>
-                          Models:{' '}
-                          <span style={{ fontWeight: 'normal' }}>{registrant.summary?.models}</span>
-                        </h3>
-                        <h3 style={{ fontSize: '16px' }}>
-                          Components:{' '}
-                          <span style={{ fontWeight: 'normal' }}>
-                            {registrant.summary?.components}
-                          </span>
-                        </h3>
-                      </div>
-                      <div>
-                        <h3 style={{ fontSize: '16px' }}>
-                          Relationships:{' '}
-                          <span style={{ fontWeight: 'normal' }}>
-                            {registrant.summary?.relationships}
-                          </span>
-                        </h3>
-                        <h3 style={{ fontSize: '16px' }}>
-                          Policies:{' '}
-                          <span style={{ fontWeight: 'normal' }}>
-                            {registrant.summary?.policies}
-                          </span>
-                        </h3>
-                      </div>
+                      <p style={{ padding: '0', margin: '0', fontSize: '16px', fontWeight: '600' }}>
+                        API Version
+                      </p>
+                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                        {comp.apiVersion}
+                      </p>
+                      <p
+                        style={{
+                          padding: '0',
+                          margin: '0',
+                          marginTop: '12px',
+                          fontSize: '16px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Model Name
+                      </p>
+                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                        {comp.model?.displayName}
+                      </p>
+                      <p
+                        style={{
+                          padding: '0',
+                          margin: '0',
+                          marginTop: '12px',
+                          fontSize: '16px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Kind
+                      </p>
+                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>{comp.kind}</p>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
+                      <p style={{ padding: '0', margin: '0', fontSize: '16px', fontWeight: '600' }}>
+                        Sub Category
+                      </p>
+                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>{comp.kind}</p>
+                      <p
+                        style={{
+                          padding: '0',
+                          margin: '0',
+                          marginTop: '12px',
+                          fontSize: '16px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Hostname
+                      </p>
+                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                        {comp.displayhostname}
+                      </p>
+                      <p
+                        style={{
+                          padding: '0',
+                          margin: '0',
+                          marginTop: '12px',
+                          fontSize: '16px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Duplicates
+                      </p>
+                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                        {comp.duplicates}
+                      </p>
                     </div>
                   </div>
-                ))}
+                </div>
+              )}
+              {view === RELATIONSHIPS && rela.kind && (
+                <div>
+                  <p
+                    style={{
+                      fontWeight: 'semibold',
+                      fontSize: '20px',
+                      marginTop: '0',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {rela.kind}
+                  </p>
+                  <p style={{ fontWeight: '600', margin: '0' }}>Description</p>
+                  <p style={{ margin: '0' }}>{rela.metadata?.description}</p>
+                  <div
+                    style={{
+                      display: 'flex',
+                      marginTop: '12px',
+                      flexDirection: 'row',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        width: '50%',
+                        paddingRight: '1rem',
+                      }}
+                    >
+                      <p style={{ padding: '0', margin: '0', fontSize: '16px', fontWeight: '600' }}>
+                        API Version
+                      </p>
+                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                        {rela.apiVersion}
+                      </p>
+                      <p
+                        style={{
+                          padding: '0',
+                          margin: '0',
+                          marginTop: '12px',
+                          fontWeight: '600',
+                          fontSize: '16px',
+                        }}
+                      >
+                        Model Name
+                      </p>
+                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                        {rela.model?.displayName}
+                      </p>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
+                      <p style={{ padding: '0', margin: '0', fontSize: '16px', fontWeight: '600' }}>
+                        Sub Type
+                      </p>
+                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>{rela.subType}</p>
+                      <p
+                        style={{
+                          padding: '0',
+                          margin: '0',
+                          marginTop: '12px',
+                          fontSize: '16px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Hostname
+                      </p>
+                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                        {rela.displayhostname}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+              {view === REGISTRANTS && regi.hostname && (
+                <div>
+                  <p
+                    style={{
+                      fontWeight: 'semibold',
+                      fontSize: '20px',
+                      marginTop: '0',
+                      fontWeight: 'bold',
+                    }}
+                  >
+                    {regi.hostname}
+                  </p>
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        width: '50%',
+                        paddingRight: '1rem',
+                      }}
+                    >
+                      <p style={{ padding: '0', margin: '0', fontSize: '16px', fontWeight: '600' }}>
+                        Models
+                      </p>
+                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                        {regi.summary?.models}
+                      </p>
+                      <p
+                        style={{
+                          padding: '0',
+                          margin: '0',
+                          marginTop: '12px',
+                          fontSize: '16px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Components
+                      </p>
+                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                        {regi.summary?.components}
+                      </p>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
+                      <p style={{ padding: '0', margin: '0', fontSize: '16px', fontWeight: '600' }}>
+                        Relationships
+                      </p>
+                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                        {regi.summary?.relationships}
+                      </p>
+                      <p
+                        style={{
+                          padding: '0',
+                          margin: '0',
+                          marginTop: '12px',
+                          fontSize: '16px',
+                          fontWeight: '600',
+                        }}
+                      >
+                        Policies
+                      </p>
+                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                        {regi.summary?.policies}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

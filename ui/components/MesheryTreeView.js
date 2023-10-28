@@ -13,26 +13,24 @@ import {
   RELATIONSHIPS,
   POLICIES,
   REGISTRANTS,
-  ENDPOINTURL,
 } from '../constants/navigator';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
+import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
+import SearchBar from '../utils/custom-search';
 
 const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
   color: theme.palette.type === 'dark' ? 'white' : 'black',
   [`& .${treeItemClasses.content}`]: {
-    flexDirection: 'row-reverse',
     fontWeight: theme.typography.fontWeightMedium,
-    borderLeft: '10px solid transparent',
     '&.Mui-expanded': {
       fontWeight: theme.typography.fontWeightRegular,
+      borderBottom: '1px solid #DDDDDD',
     },
     '&:hover': {
       backgroundColor: theme.palette.action.hover,
     },
     '&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused': {
-      backgroundColor: '#ebebeb',
-      borderLeft: '10px solid #00B39F',
+      backgroundColor: `var(--tree-view-bg-color, ${theme.palette.action.selected})`,
     },
     [`& .${treeItemClasses.label}`]: {
       fontWeight: 'inherit',
@@ -51,41 +49,41 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
   const theme = useTheme();
   const [checked, setChecked] = useState(false);
   const [hover, setHover] = useState(false);
-  const { labelIcon: LabelIcon, check, root, labelText, avatar, ...other } = props;
+  const { labelIcon: LabelIcon, check, labelText, ...other } = props;
 
   return (
     <StyledTreeItemRoot
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
       sx={{
-        backgroundColor: checked && check && '#ebebeb',
+        backgroundColor: checked && '#ebebeb',
+        borderBottom: '1px solid #DDDDDD',
       }}
       label={
         <Box
-          onMouseEnter={() => setHover(true)}
-          onMouseLeave={() => setHover(false)}
           sx={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            p: !check && !root ? 1.5 : 0.5,
+            p: !check ? 1.5 : 0.5,
             pr: 0,
-            borderBottom: check && '1px solid #DDDDDD',
           }}
         >
-          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            {avatar && (
-              <Avatar alt="Image" src={avatar} style={{ marginRight: '6px' }}>
-                IM
-              </Avatar>
-            )}
-            <Typography variant="body2" sx={{ fontWeight: 'inherit', flexGrow: 1 }}>
-              {labelText}
-            </Typography>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginLeft: check && '1rem',
+            }}
+          >
+            <Typography variant="body2">{labelText}</Typography>
           </div>
           {check && (
             <Checkbox
+              onClick={() => setChecked((prevcheck) => !prevcheck)}
               size="small"
               checked={checked}
-              onClick={() => setChecked((prevcheck) => !prevcheck)}
               sx={{
                 visibility: hover ? 'visible' : 'hidden',
                 color: '#00B39F',
@@ -103,28 +101,8 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
   );
 });
 
-const MesheryTreeView = ({
-  data,
-  view,
-  show,
-  setShow,
-  comp,
-  setComp,
-  rela,
-  setRela,
-  regi,
-  setRegi,
-}) => {
+const MesheryTreeView = ({ data, view, setShow, setComp, setRela, setRegi, setSearchText }) => {
   const [expanded, setExpanded] = React.useState([]);
-
-  useEffect(() => {
-    if (view === RELATIONSHIPS || view === COMPONENTS) {
-      expandAll();
-    } else if (view === MODELS) {
-      setExpanded([]);
-    }
-    console.log(data);
-  }, [view]);
 
   const expandAll = () => {
     const arr = [];
@@ -140,43 +118,37 @@ const MesheryTreeView = ({
     setExpanded(nodeIds);
   };
 
-  const addComponent = (component) => {
-    if (comp.some((item) => item === component)) {
-      setComp((prevComp) => prevComp.filter((item) => item !== component));
-    } else {
-      setComp((prevComp) => [...prevComp, component]);
-    }
-  };
-  const addRelationship = (relationship) => {
-    if (rela.some((item) => item === relationship)) {
-      setRela((prevRela) => prevRela.filter((item) => item !== relationship));
-    } else {
-      setRela((prevRela) => [...prevRela, relationship]);
-    }
-  };
-
-  const addRegistrant = (registrant) => {
-    if (regi.some((item) => item === registrant)) {
-      setRegi((prevRegi) => prevRegi.filter((item) => item !== registrant));
-    } else {
-      setRegi((prevRegi) => [...prevRegi, registrant]);
-    }
-  };
-
   return (
     <div>
       <div
-        style={{ borderBottom: '1px solid #d2d3d4', display: 'flex', justifyContent: 'flex-end' }}
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: view === MODELS ? 'space-between' : 'flex-end',
+          borderBottom: '1px solid #d2d3d4',
+        }}
       >
-        <Button startIcon={<KeyboardArrowDownIcon />} onClick={expandAll}>
-          Expand All
-        </Button>
-        <div style={{ backgroundColor: '#d2d3d4', height: '33px', width: '1px' }}></div>
-        <Button startIcon={<KeyboardArrowUpIcon />} onClick={() => setExpanded([])}>
-          Collapse All
-        </Button>
+        {view === MODELS && (
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <Button startIcon={<UnfoldMoreIcon />} onClick={expandAll}>
+              Expand All
+            </Button>
+            <div style={{ backgroundColor: '#d2d3d4', height: '33px', width: '1px' }}></div>
+            <Button startIcon={<UnfoldLessIcon />} onClick={() => setExpanded([])}>
+              Collapse All
+            </Button>
+          </div>
+        )}
+        <div style={{ display: 'flex' }}>
+          <SearchBar
+            onSearch={(value) => {
+              setSearchText(value);
+            }}
+            placeholder="Search"
+          />
+        </div>
       </div>
-      <div style={{ overflowY: 'auto', height: '27rem' }}>
+      <div style={{ overflowY: 'scroll', height: '27rem' }}>
         <TreeView
           aria-label="controlled"
           defaultExpanded={['3']}
@@ -186,98 +158,128 @@ const MesheryTreeView = ({
           multiSelect
           expanded={expanded}
         >
-          {view !== REGISTRANTS &&
+          {view === MODELS &&
             data.map((model, index) => (
               <StyledTreeItem
                 key={index}
                 nodeId={index}
-                root
-                avatar={ENDPOINTURL + model.metadata?.svgColor}
+                check
                 labelText={model.displayName}
                 onClick={() => {
-                  setShow(data[index]), setComp((prevC) => []);
-                  setRela((prevR) => []);
+                  setShow({
+                    model: model,
+                    components: [],
+                    relationships: [],
+                  });
                 }}
               >
-                {view !== RELATIONSHIPS && (
-                  <StyledTreeItem
-                    nodeId={`${index}.1`}
-                    labelText={`Components (${model.components ? model.components.length : 0})`}
-                  >
-                    {model.components &&
-                      model.components.map((component, subIndex) => (
-                        <StyledTreeItem
-                          key={subIndex}
-                          nodeId={`${index}.1.${subIndex}`}
-                          check
-                          labelText={component.displayName}
-                          onClick={() => {
-                            addComponent(component);
-                            setShow(data[index]);
-                          }}
-                        />
-                      ))}
-                  </StyledTreeItem>
-                )}
-                {view !== COMPONENTS && (
-                  <StyledTreeItem
-                    nodeId={`${index}.2`}
-                    labelText={`Relationships (${
-                      model.relationships ? model.relationships.length : 0
-                    })`}
-                  >
-                    {model.relationships &&
-                      model.relationships.map((relationship, subIndex) => (
-                        <StyledTreeItem
-                          key={subIndex}
-                          nodeId={`${index}.2.${subIndex}`}
-                          check
-                          labelText={relationship.displayhostname}
-                          onClick={() => {
-                            addRelationship(relationship);
-                            setShow(data[index]);
-                          }}
-                        />
-                      ))}
-                  </StyledTreeItem>
-                )}
+                <StyledTreeItem
+                  nodeId={`${index}.1`}
+                  labelText={`Components (${model.components ? model.components.length : 0})`}
+                >
+                  {model.components &&
+                    model.components.map((component, subIndex) => (
+                      <StyledTreeItem
+                        key={subIndex}
+                        nodeId={`${index}.1.${subIndex}`}
+                        check
+                        labelText={component.displayName}
+                        onClick={() => {
+                          setShow((prevShow) => {
+                            const { components } = prevShow;
+                            const compIndex = components.findIndex((item) => item === component);
+                            if (compIndex !== -1) {
+                              return {
+                                ...prevShow,
+                                model: model,
+                                components: components.filter((item) => item !== component),
+                              };
+                            } else {
+                              return {
+                                ...prevShow,
+                                model: model,
+                                components: [...components, component],
+                              };
+                            }
+                          });
+                        }}
+                      />
+                    ))}
+                </StyledTreeItem>
+                <StyledTreeItem
+                  nodeId={`${index}.2`}
+                  labelText={`Relationships (${
+                    model.relationships ? model.relationships.length : 0
+                  })`}
+                >
+                  {model.relationships &&
+                    model.relationships.map((relationship, subIndex) => (
+                      <StyledTreeItem
+                        key={subIndex}
+                        nodeId={`${index}.2.${subIndex}`}
+                        check
+                        labelText={relationship.displayhostname}
+                        onClick={() => {
+                          setShow((prevShow) => {
+                            const { relationships } = prevShow;
+                            const relaIndex = relationships.findIndex(
+                              (item) => item === relationship,
+                            );
+                            if (relaIndex !== -1) {
+                              return {
+                                ...prevShow,
+                                model: model,
+                                relationships: relationships.filter(
+                                  (item) => item !== relationship,
+                                ),
+                              };
+                            } else {
+                              return {
+                                ...prevShow,
+                                model: model,
+                                relationships: [...relationships, relationship],
+                              };
+                            }
+                          });
+                        }}
+                      />
+                    ))}
+                </StyledTreeItem>
               </StyledTreeItem>
             ))}
-          {/* {view === COMPONENTS &&
-          data.map((component, index) => (
-            <StyledTreeItem
-              key={index}
-              check
-              nodeId={index}
-              labelText={component.displayName}
-              onClick={() => {
-                addComponent(data[index]);
-                setShow(data[index]?.model);
-              }}
-            />
-          ))}
-        {view === RELATIONSHIPS &&
-          data.map((relationship, index) => (
-            <StyledTreeItem
-              key={index}
-              check
-              nodeId={index}
-              labelText={relationship.displayhostname}
-              onClick={() => {
-                addRelationship(data[index]);
-                setShow(data[index]?.model);
-              }}
-            />
-          ))} */}
+          {view === COMPONENTS &&
+            data.map((component, index) => (
+              <StyledTreeItem
+                key={index}
+                nodeId={index}
+                check
+                labelText={component.displayName}
+                onClick={() => {
+                  setComp(component);
+                }}
+              />
+            ))}
+          {view === RELATIONSHIPS &&
+            data.map((relationship, index) => (
+              <StyledTreeItem
+                key={index}
+                nodeId={index}
+                check
+                labelText={relationship.kind}
+                onClick={() => {
+                  setRela(relationship);
+                }}
+              />
+            ))}
           {view === REGISTRANTS &&
             data.map((registrant, index) => (
               <StyledTreeItem
                 key={index}
-                check
                 nodeId={index}
+                check
                 labelText={registrant.hostname}
                 onClick={() => {
-                  addRegistrant(data[index]);
+                  setRegi(registrant);
                 }}
               />
             ))}

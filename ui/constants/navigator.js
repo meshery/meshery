@@ -35,10 +35,10 @@ export const TOGGLER = 'toggler';
 export const SETTINGS = 'settings';
 export const CONTEXT_SWITCHER = 'contextSwitcher';
 
-export const OVERVIEW = 'overview';
-export const MODELS = 'models';
-export const COMPONENTS = 'components';
-export const RELATIONSHIPS = 'relationships';
-export const POLICIES = 'policies';
-export const REGISTRANTS = 'registrants';
+export const OVERVIEW = 'Overview';
+export const MODELS = 'Models';
+export const COMPONENTS = 'Components';
+export const RELATIONSHIPS = 'Relationships';
+export const POLICIES = 'Policies';
+export const REGISTRANTS = 'Registrants';
 export const ENDPOINTURL = 'https://playground.meshery.io/';
