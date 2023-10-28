@@ -303,7 +303,8 @@ The output of the code snippet would be:
 
 {% include alert.html type="info" title="What is an alert?" content="An alert is a box that can stand out to indicate important information. You can choose from levels success, warning, danger, info, and primary. This example is an info box, and the code for another might look like this:" %}
 
-The `alert.html` file is used to format and display notes, warnings, and other informational callouts in Meshery. 
+#### alert.html
+The `alert.html` ( https://github.com/meshery/meshery/blob/master/docs/_includes/alert.html ) file is used to format and display notes, warnings, and other informational callouts in Meshery. 
 It provides a consistent and visually appealing way to draw the user's attention to important information.
 
 ```
@@ -312,10 +313,10 @@ It provides a consistent and visually appealing way to draw the user's attention
 
 To use the `alert.html` feature, include the following code snippet in your documentation:
 ``` 
-    &lt;div class="alert alert-{{ include.type }}"&gt;
-    &lt;h4 class="alert-heading"&gt;{% if include.title %}{{ include.title }}{% else %}{{ include.type }}{% endif %}&lt;/h4&gt;
+     <div class="alert alert-{{ include.type }}">
+    <h4 class="alert-heading">{% if include.title %}{{ include.title }}{% else %}{{ include.type }}{% endif %}</h4>
     {{ include.content }}
-    &lt;/div&gt;
+    </div>
 ```
 
 
