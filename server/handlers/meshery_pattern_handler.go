@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"path/filepath"
 	"sync"
+	"bytes"
 
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
 	"github.com/gofrs/uuid"
@@ -1455,3 +1456,70 @@ func (h *Handler) DesignFileRequestHandlerWithSourceType(
 	}
 }
 
+
+// swagger:route GET /api/pattern/types PatternsAPI typeGetMesheryPatternTypesHandler
+// Handle GET request for Meshery Pattern types
+//
+// Get pattern file types
+// responses:
+//
+//	200: mesheryApplicationTypesResponseWrapper
+func (h *Handler) GetMesheryDesignTypesHandler(
+	rw http.ResponseWriter,
+	_ *http.Request,
+	_ *models.Preference,
+	_ *models.User,
+	_ models.Provider,
+) {
+	response := models.GetDesignsTypes()
+	b, err := json.Marshal(response)
+	if err != nil {
+		obj := "available types"
+		h.log.Error(models.ErrMarshal(err, obj))
+		http.Error(rw, models.ErrMarshal(err, obj).Error(), http.StatusInternalServerError)
+		return
+	}
+	rw.Header().Set("Content-Type", "application/json")
+	fmt.Fprint(rw, string(b))
+}
+
+// swagger:route GET /api/pattern/download/{id}/{sourcetype} PatternsAPI typeGetApplication
+// Handle GET request for Meshery Patterns with of source content
+//
+// Get the pattern source-content
+// responses:
+//  200
+
+// GetMesheryApplicationHandler fetched the application with the given id
+func (h *Handler) GetMesheryPatternSourceHandler(
+	rw http.ResponseWriter,
+	r *http.Request,
+	_ *models.Preference,
+	_ *models.User,
+	provider models.Provider,
+) {
+	applicationID := mux.Vars(r)["id"]
+	resp, err := provider.GetApplicationSourceContent(r, applicationID)
+	if err != nil {
+		obj := "download"
+		h.log.Error(ErrApplicationFailure(err, obj))
+		http.Error(rw, ErrApplicationFailure(err, obj).Error(), http.StatusNotFound)
+		return
+	}
+
+	var mimeType string
+	sourcetype := mux.Vars(r)["sourcetype"]
+
+	if models.DesignType(sourcetype) == models.HelmChart { //serve the content in a tgz file
+		mimeType = "application/x-tar"
+	} else { // serve the content in yaml file
+		mimeType = "application/x-yaml"
+	}
+	reader := bytes.NewReader(resp)
+	rw.Header().Set("Content-Type", mimeType)
+	_, err = io.Copy(rw, reader)
+	if err != nil {
+		h.log.Error(ErrApplicationSourceContent(err, "download"))
+		http.Error(rw, ErrApplicationSourceContent(err, "download").Error(), http.StatusInternalServerError)
+	}
+}
