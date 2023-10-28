@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"bufio"
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
@@ -11,7 +12,6 @@ import (
 )
 
 func GetIntegrationDocsCSVFile(csvURL string) {
-
 	destinationFile := "integration.csv"
 
 	resp, err := http.Get(csvURL)
@@ -21,15 +21,18 @@ func GetIntegrationDocsCSVFile(csvURL string) {
 	}
 	defer resp.Body.Close()
 
-	csvContent, err := io.ReadAll(resp.Body)
+	outputFile, err := os.Create(destinationFile)
 	if err != nil {
-		log.Println("Error while reading the CSV:", err)
+		log.Println("Error while creating the destination file:", err)
 		return
 	}
+	defer outputFile.Close()
 
-	err = os.WriteFile(destinationFile, csvContent, 0644)
+	reader := bufio.NewReader(resp.Body)
+
+	_, err = io.Copy(outputFile, reader)
 	if err != nil {
-		log.Println("Error while saving the CSV to the destination file:", err)
+		log.Println("Error while copying the CSV content:", err)
 		return
 	}
 
@@ -85,18 +88,27 @@ func FilterRecordsByPublishFlag(csvIndices CSVIndices) {
 	csvWriter := csv.NewWriter(outputFile)
 	defer csvWriter.Flush()
 
-	header := records[1]
-	if err := csvWriter.Write(header); err != nil {
-		log.Println("Error writing the header to the output file:", err)
+	if len(records) > 1 {
+		header := records[1]
+		if err := csvWriter.Write(header); err != nil {
+			log.Println("Error writing the header to the output file:", err)
+		}
+
+		publishColumnIndex := csvIndices.FlagIndex // Publish Flag Index
+		writeFilteredDataToCSVFile(publishColumnIndex, records, csvWriter)
+	} else {
+		log.Println("No data records found in the input CSV file.")
+		return
 	}
-
-	publishColumnIndex := csvIndices.FlagIndex // Publish Flag Index
-
-	writeFilteredDataToCSVFile(publishColumnIndex, records, csvWriter)
 
 }
 
 func writeFilteredDataToCSVFile(publishColumnIndex int, records [][]string, csvWriter *csv.Writer) {
+	if len(records) < 3 {
+		log.Println("Not enough records to process.")
+		return
+	}
+
 	for _, record := range records[2:] {
 		agValue := record[publishColumnIndex]
 
