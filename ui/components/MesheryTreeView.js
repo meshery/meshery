@@ -1,19 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { styled, useTheme } from '@mui/material/styles';
+import React, { useState } from 'react';
+import { styled } from '@mui/material/styles';
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { Box, Typography, Button, Avatar } from '@material-ui/core';
+import { Box, Typography, Button } from '@material-ui/core';
 import Checkbox from '@mui/material/Checkbox';
-import {
-  OVERVIEW,
-  MODELS,
-  COMPONENTS,
-  RELATIONSHIPS,
-  POLICIES,
-  REGISTRANTS,
-} from '../constants/navigator';
+import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../constants/navigator';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 import SearchBar from '../utils/custom-search';
@@ -46,10 +39,9 @@ const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
 }));
 
 const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
-  const theme = useTheme();
   const [checked, setChecked] = useState(false);
   const [hover, setHover] = useState(false);
-  const { labelIcon: LabelIcon, check, labelText, ...other } = props;
+  const { check, labelText, ...other } = props;
 
   return (
     <StyledTreeItemRoot
