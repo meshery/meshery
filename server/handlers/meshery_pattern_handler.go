@@ -175,6 +175,10 @@ func (h *Handler) handlePatternPOST(
 				"type": "local",
 			},
 			CatalogData: parsedBody.PatternData.CatalogData,
+			Type: sql.NullString{
+				String: string(models.Design),
+				Valid:  true,
+			},
 		}
 		if parsedBody.PatternData != nil {
 			mesheryPattern.ID = parsedBody.PatternData.ID
@@ -298,6 +302,10 @@ func (h *Handler) handlePatternPOST(
 			}
 			mesheryPattern.PatternFile = string(response)
 		} else {
+			parsedBody.PatternData.Type = sql.NullString{
+			String: string(models.Design),
+			Valid:  true,
+		}
 		// Check if the pattern is valid
 		err := pCore.IsValidPattern(parsedBody.PatternData.PatternFile)
 		if err != nil {
@@ -546,6 +554,10 @@ func (h *Handler) handlePatternPOST(
 				mesheryPattern = &pfs[0]
 			}
 		} else {
+			parsedBody.PatternData.Type = sql.NullString{
+			String: string(models.Design),
+			Valid:  true,
+		}
 		resp, err := provider.RemotePatternFile(r, parsedBody.URL, parsedBody.Path, parsedBody.Save)
 
 		if err != nil {
