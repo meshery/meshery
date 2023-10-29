@@ -107,7 +107,7 @@ type: project
 
 <ul>
 <li>Use an external cloud provider which provides you with the LoadBalancer having an external IP address other than localhost.</li>
-<li>Use [Kind](https://kind.sigs.k8s.io) cluster with [MetalLB](https://metallb.universe.tf) configuration</li>
+<li>Use <a href="https://kind.sigs.k8s.io">Kind</a> cluster with <a href="https://metallb.universe.tf">MetalLB</a> configuration</li>
 </ul>
 </details>
 
@@ -124,19 +124,17 @@ type: project
 </ol>
 
 <p>If either is the case, Meshery Operator will make sure MeshSync and Meshery Broker deployments are again healthy, wait for some time, otherwise try redeploying Meshery Operator.</p>
-</details>
 
-<details>
-<summary>
 <p><strong>Database Corruption</strong></p>
-</summary>
+
 <p>If MeshSync, Meshery Broker and Meshery Operator are healthy, then perhaps, there is corruption in the Meshery Database. Use the following troubleshooting steps to resolve this issue:</p>
 <ul>
-    <li>Try clearing the database by clicking on the `Flush MeshSync` button associated with the corresponding cluster.</li>
-    <li>If still `Service Mesh` is not visible in UI, move on to `Hard Reset` of Database. This option is in the `Reset System` Tab in `Settings` page.</li>
+<li>Try clearing the database by clicking on the `Flush MeshSync` button associated with the corresponding cluster.</li>
+<li>If still `Service Mesh` is not visible in UI, move on to `Hard Reset` of Database. This option is in the <code>Reset System</code> Tab in <code>Settings</code> page.</li>
 </ul>
 
 <p>Note: You can also verify health of your system using <a href="{{site.baseurl}}/reference/mesheryctl/system/check">mesheryctl system check</a></p>
+
 </details>
 
 ## Contributing FAQs
@@ -150,4 +148,3 @@ type: project
 {% include discuss.html %}
 
 <!--Add other questions-->
-
