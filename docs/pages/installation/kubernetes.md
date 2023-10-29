@@ -10,164 +10,88 @@ list: include
 image: /assets/img/platforms/kubernetes.svg
 ---
 
-{% include installation_prerequisites.html %}
+<h1>Quick Start with {{ page.title }} <img src="{{ page.image }}" style="width:35px;height:35px;" /></h1>
+
+Manage your kubernetes clusters with Meshery. Deploy Meshery in kubernetes [in-cluster](#in-cluster-installation) or outside of kubernetes [out-of-cluster](#out-of-cluster-installation). **_Note: It is advisable to [Install Meshery in your kubernetes clusters](#install-meshery-into-your-kubernetes-cluster)_**
+
+<div class="prereqs"><h4>Prerequisites</h4>
+  <ol>
+    <li>Install the Meshery command line client, <a href="{{ site.baseurl }}/installation/mesheryctl" class="meshery-light">mesheryctl</a>.</li>
+    <li>Install <a href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> on your local machine.</li>
+    <li>Access to an active kubernetes cluster.</li>
+  </ol>
+</div>
 
 ## Available Deployment Methods
 
-- [Using `mesheryctl`](#using-mesheryctl)
-- [Using `helm`](#using-helm-charts)
-<!-- - [Using Kubernetes manifests](#using-kubernetes-manifests) -->
+- [In-cluster Installation](#in-cluster-installation)
+  - [Preflight Checks](#preflight-checks)
+    - [Preflight: Cluster Connectivity](#preflight-cluster-connectivity)
+    - [Preflight: Plan your access to Meshery UI](#preflight-plan-your-access-to-meshery-ui)
+  - [Installation: Using `mesheryctl`](#installation-using-mesheryctl)
+  - [Installation: Using Helm](#installation-using-helm)
+- [Post-Installation Steps](#post-installation-steps)
+  - [Access Meshery UI](#access-meshery-ui)
+- [Out-of-cluster Installation](#out-of-cluster-installation)
+  - [Installation: Upload Config File in Meshery Web UI](#installation-upload-config-file-in-meshery-web-ui)
 
-### Using mesheryctl
+# In-cluster Installation
 
-<pre class="codeblock-pre">
-<div class="codeblock">
- <div class="clipboardjs">
- $ mesheryctl system context create k8s -p kubernetes -s
- </div></div>
-</pre>
+Follow the steps below to install Meshery in your kubernetes cluster.
 
-<i>Don't have `mesheryctl`? <a href="{{site.baseurl}}/installation/mesheryctl">Install with Bash, Brew, or Scoop</a></i>.
+## Preflight Checks
 
-<details>
-<summary>Optional: Verify Step</summary>
+Read through the following considerations prior to deploying Meshery on kubernetes.
 
-<p>
-Ensure that your <code>current-context</code> has <code>platform: kubernetes</code> configured in <code>~/.meshery/config.yaml</code>. Example context:</p>
+### Preflight: Cluster Connectivity
 
-<pre>
-<code>
-➜  ~ mesheryctl system context view
-endpoint: http://localhost:9081
-token: default
-platform: kubernetes
-adapters:
-- meshery-istio
-- meshery-linkerd
-- meshery-consul
-- meshery-nsm
-- meshery-kuma
-- meshery-cpx
-- meshery-osm
-- meshery-traefik-mesh
-channel: stable
-version: latest
-</code>
-</pre>
+Verify your kubeconfig's current context is set the kubernetes cluster you want to deploy Meshery.
+{% capture code_content %}kubectl config current-context{% endcapture %}
+{% include code.html code=code_content %}
 
-</details>
+### Preflight: Plan your access to Meshery UI
 
-Deploy Meshery to your Kubernetes cluster by executing:
+1. If you are using port-forwarding, please refer to the [port-forwarding](/tasks/accessing-meshery-ui) guide for detailed instructions.
+2. Customize your Meshery Provider Callback URL. Meshery Server supports customizing authentication flow callback URL, which can be configured in the following way:
 
+{% capture code_content %}$ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start{% endcapture %}
+{% include code.html code=code_content %}
+
+Meshery should now be running in your Kubernetes cluster and Meshery UI should be accessible at the `EXTERNAL IP` of `meshery` service.
+
+## Installation: Using `mesheryctl`
+
+Once configured, execute the following command to start Meshery.
+
+Before executing the below command, go to ~/.meshery/config.yaml and ensure that current platform is set to kubernetes.
 {% capture code_content %}$ mesheryctl system start{% endcapture %}
 {% include code.html code=code_content %}
 
+If you encounter any authentication issues, you can use `mesheryctl system login`. For more information, click [here](/guides/mesheryctl/authenticate-with-meshery-via-cli) to learn more.
 
-## Using Helm
+## Installation: Using Helm
 
-<pre class="codeblock-pre">
-<div class="codeblock">
- <div class="clipboardjs">
- $ kubectl create ns meshery
- $ helm repo add meshery https://meshery.io/charts/
- $ helm install meshery meshery/meshery -n meshery
- </div></div>
-</pre>
+For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation](/installation/kubernetes/helm) guide.
 
-### Using Helm
+# Post-Installation Steps
 
-{% capture code_content %}$ helm repo add meshery https://meshery.io/charts/
-$ helm install meshery-operator meshery/meshery-operator
-$ helm install meshery meshery/meshery{% endcapture %}
-{% include code.html code=code_content %}
+## Access Meshery UI
 
-Customize of deployment the Meshery adapters:
+To access Meshery's UI, please refer to the [instruction](/tasks/accessing-meshery-ui) for detailed guidance.
 
-###### Example: Pin your deployment to a specific Meshery version
-<pre>
-<code>$ helm install meshery meshery/meshery --version v0.7.0</code>
-</pre>
+# Out-of-cluster Installation
 
+Install Meshery on Docker (out-of-cluster) and connect it to your Kubernetes cluster.
 
-###### Example: Disabled the Meshery Adapter for Linkerd and verify the deployment manifest
-<pre>
-<code>$ helm install --set meshery-linkerd.enabled=false meshery/meshery --dry-run</code>
-</pre>
+## Installation: Upload Config File in Meshery Web UI
 
-The key for Meshery Adapters can be found [here](https://artifacthub.io/packages/helm/meshery/meshery#values)
+- Run the below command to generate the _"config_minikube.yaml"_ file for your cluster:
 
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">kubectl config view --minify --flatten > config_minikube.yaml</div></div>
+ </pre>
 
-<!-- ### **[deprecated] Using Kubernetes Manifests **
-Meshery can also be deployed on an existing Kubernetes cluster. See [compatibility table](#compatibility-matrix) for version compatibility. To install Meshery on your cluster, clone the Meshery repo:
-
-{% capture code_content %} $ git clone https://github.com/layer5io/meshery.git;
- $ cd meshery{% endcapture %}
-{% include code.html code=code_content %}
-
-Create a namespace as a new logical space to host Meshery and its components:
-
-{% capture code_content %}$ kubectl create ns meshery{% endcapture %}
-{% include code.html code=code_content %}
-
-All the needed deployment yamls for deploying Meshery are included in the *install/deployment_yamls/k8s* folder inside the cloned Meshery folder. To deploy the yamls on the cluster please run the following command:
-
-{% capture code_content %}$ kubectl -n meshery apply -f install/deployment_yamls/k8s{% endcapture %}
-{% include code.html code=code_content %}
-
-Once the yaml files are deployed, we need to expose the *meshery* service to be able to access the service from outside the cluster. There are several ways a service can be exposed on Kubernetes. Here we will describe 3 common ways we can expose a service: -->
-
-#### Exposing Meshery Service
-
-If your Kubernetes cluster has a functional Ingress Controller, then you can configure an ingress to expose Meshery:
-
-* **Ingress (example)** 
-
-{% capture code_content %} apiVersion: extensions/v1beta1
- kind: Ingress
- metadata:
- name: meshery-ingress
- annotations:
-     kubernetes.io/ingress.class: "nginx"
- spec:
- rules:
- - host: *
-     http:
-     paths:
-     - path: /
-         backend:
-         serviceName: meshery-service
-         servicePort: 9081{% endcapture %}
-{% include code.html code=code_content %}
-
-* **LoadBalancer** - If your Kubernetes cluster has support of a LoadBalancer resource, this is an ideal choice.
-
-* **NodePort** - If your cluster does not have an Ingress Controller or a LoadBalancer support, then use NodePort to expose Meshery:
-
-{% capture code_content %} apiVersion: v1
- kind: Service
- spec:
-     type: NodePort{% endcapture %}
-
-
-### Sample Commands to verify Meshery UI access:
-
-{% capture code_content %}export POD_NAME=$(kubectl get pods --namespace meshery -l "app.kubernetes.io/name=meshery,app.kubernetes.io/instance=meshery" -o jsonpath="{.items[0].metadata.name}")
-
-kubectl --namespace meshery port-forward $POD_NAME 9081:8080{% endcapture %}
-{% include code.html code=code_content %}
-
-# Advanced Installations
-
-**Configurable OAuth Callback URL** ([learn more]({{site.baseurl}}/extensibility/providers#configurable-oauth-callback-url))
-
-Meshery Server supports customizing authentication flow callback URL, which can be configured in the following way:
-
-<pre><code>
-$ helm install meshery --namespace meshery --set env.MESHERY_SERVER_CALLBACK_URL=https://custom-host meshery/meshery
-</code></pre>
-
-
-Meshery should now be connected with your managed Kubernetes instance. Take a look at the [Meshery guides]({{ site.baseurl }}/guides) for advanced usage tips.
+- Upload the generated config file by navigating to _Settings > Environment > Out of Cluster Deployment_ in the Web UI and using the _"Upload kubeconfig"_ option.
 
 {% include suggested-reading.html language="en" %}
 

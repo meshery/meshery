@@ -526,6 +526,7 @@ func (h *Handler) handleApplicationPOST(
 		go h.config.ApplicationChannel.Publish(userID, struct{}{})
 		eb := eventBuilder
 		_ = provider.PersistEvent(eb.WithDescription(fmt.Sprintf("Application %s  Source content uploaded", mesheryApplicationContent[0].Name)).Build())
+		return
 	}
 
 	mesheryApplication.ID = savedApplicationID

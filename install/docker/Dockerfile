@@ -1,4 +1,4 @@
-FROM golang:1.21 as meshery-server
+FROM golang:1.20 as meshery-server
 ARG TOKEN
 ARG GIT_VERSION
 ARG GIT_COMMITSHA
@@ -11,7 +11,7 @@ RUN go clean -modcache; cd server; cd cmd; GOPROXY=https://proxy.golang.org GOSU
 
 FROM node:lts as ui
 ADD ui ui
-RUN cd ui; npm install --omit-dev; npm run build && npm run export; mv out /; mv public /
+RUN cd ui; npm install --omit=dev; npm run build && npm run export; mv out /; mv public /
 
 FROM node:lts as provider-ui
 ADD provider-ui provider-ui
@@ -28,12 +28,12 @@ FROM alpine:3.15.3 as seed_content
 RUN apk add --no-cache curl
 WORKDIR /
 RUN lines=$(curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/latest | grep "browser_download_url.*wasm" | cut -d : -f 2,3 | sed 's/"//g') \
-    && mkdir -p seed_content/filters/binaries \ 
+    && mkdir -p seed_content/filters/binaries \
     && cd seed_content/filters/binaries  \
     for line in $lines \
     do \
     curl -LO $line \
-    done 
+    done
 
 # bundling patterns
 RUN curl -L -s https://github.com/service-mesh-patterns/service-mesh-patterns/tarball/master -o service-mesh-patterns.tgz \

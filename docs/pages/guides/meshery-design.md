@@ -3,7 +3,7 @@ layout: default
 title: Meshery Designs 
 description: Get to know what is Design & how its helps in configuring components
 permalink: guides/meshery-design
-type: Guides
+type: guides
 language: en
 ---
 

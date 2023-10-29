@@ -56,7 +56,7 @@ Check up on your minikube cluster :
 {% capture code_content %}minikube status{% endcapture %}
 {% include code.html code=code_content %}
 Verify your kubeconfig's current context.
-{% capture code_content %}kubectl cluster-info{% endcapture %}
+{% capture code_content %}kubectl config current-context{% endcapture %}
 {% include code.html code=code_content %}
 
 ### Preflight: Plan your access to Meshery UI

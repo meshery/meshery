@@ -438,7 +438,7 @@ class DashboardComponent extends React.Component {
   emptyStateMessageForServiceMeshesInfo = () => {
     const clusters = this.getSelectedK8sContextsNames();
     if (clusters.length === 0) {
-      return 'No Cluster is selected to show the Service Mesh Information';
+      return 'No cluster is selected to display service mesh details.';
     }
     if (clusters.includes('all')) {
       return `No service meshes detected in any of the cluster.`;
@@ -449,10 +449,10 @@ class DashboardComponent extends React.Component {
   emptyStateMessageForClusterResources = () => {
     const clusters = this.getSelectedK8sContextsNames();
     if (clusters.length === 0) {
-      return 'No Cluster is selected to show the discovered resources';
+      return 'No Cluster is selected to display discovered resources';
     }
     if (clusters.includes('all')) {
-      return `No resources detected in any of the cluster.`;
+      return `No resources detected in any cluster`;
     }
     return `No resources detected in the ${clusters.join(', ')} cluster(s).`;
   };

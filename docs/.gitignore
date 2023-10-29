@@ -44,7 +44,9 @@ log.txt
 **/.sass-cache
 **/.jekyll-metadata
 **/.jekyll-cache
-
+v0.6/
+v0.5/
+v0.4/
 dist/
 
 */npm-debug.log
