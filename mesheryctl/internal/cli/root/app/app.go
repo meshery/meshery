@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -107,12 +108,18 @@ func getSourceTypes() error {
 	return nil
 }
 
-func isValidSource(sType string) bool {
+// returns full source name e.g. helm -> `Helm Chart`
+// user passes only helm, compose or manifest but server accepts full source type
+// e.g `Heml Chart`, `Docker Compose`, `Kubernetes Manifest`
+func getFullSourceType(sType string) (string, error) {
 	for _, validType := range validSourceTypes {
-		if validType == sType {
-			return true
+		lowerType := strings.ToLower(validType)
+		// user may pass Pascal Case source e.g Helm
+		sType = strings.ToLower(sType)
+		if strings.Contains(lowerType, sType) {
+			return validType, nil
 		}
 	}
 
-	return false
+	return sType, fmt.Errorf("no matching source type found")
 }
