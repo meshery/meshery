@@ -307,8 +307,6 @@ The output of the code snippet would be:
 {%raw%}{% include alert.html type="info" title="Here is another!" %}{%endraw%}
 ```
 
-
-
 Just for fun, here are all the types:
 
 {% include alert.html type="warning" content="This is a warning" %}
@@ -320,18 +318,25 @@ Just for fun, here are all the types:
 
 #### alert.html
 
-```
 The [alert.html](https://github.com/meshery/meshery/blob/master/docs/_includes/alert.html) file is used to format and display notes, warnings, and other informational callouts in Meshery. 
 It provides a consistent and visually appealing way to draw the user's attention to important information.
-```
+
 To use the `alert.html` feature, include the following code snippet in your documentation:
 ``` 
-     <div class="alert alert-{{ include.type }}">
-    <h4 class="alert-heading">{% if include.title %}{{ include.title }}{% else %}{{ include.type }}{% endif %}</h4>
+    &lt;div class="alert alert-{{ include.type }}"&gt;
+    &lt;h4 class="alert-heading"&gt;{% if include.title %}{{ include.title }}{% else %}{{ include.type }}{% endif %}&lt;/h4&gt;
     {{ include.content }}
-    </div>
+    &lt;/div&gt;
 ```
+#### Example
 
+ Here's an example of how to use the `alert.html` feature in your documentation:
+
+```
+{% include "alert.html" with type="info" title="Information" content="This is an example of an informational alert." %}
+{% include "alert.html" with type="warning" title="Warning" content="This is an example of a warning alert." %}
+{% include "alert.html" with type="success" title="Success" content="This is an example of a success alert." %}
+```
 ### Quotes
 
 You can include block quotes to emphasize text. 
