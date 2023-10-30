@@ -185,6 +185,7 @@ func (h *Handler) handlePatternPOST(
 		}
 
 		if parsedBody.Save {
+			fmt.Println("inside cyto save")
 			resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
 			if err != nil {
 				h.log.Error(ErrSavePattern(err))
@@ -232,8 +233,9 @@ func (h *Handler) handlePatternPOST(
 			}
 		}
 
-		mesheryPattern := parsedBody.PatternData
+		mesheryPattern = parsedBody.PatternData
 		bytPattern := []byte(mesheryPattern.PatternFile)
+		mesheryPattern.SourceContent = bytPattern
 		if sourcetype == string(models.DockerCompose) || sourcetype == string(models.K8sManifest) {
 			var k8sres string
 			if sourcetype == string(models.DockerCompose) {
@@ -302,76 +304,78 @@ func (h *Handler) handlePatternPOST(
 			}
 			mesheryPattern.PatternFile = string(response)
 		} else {
+			fmt.Printf("inside else")
 			parsedBody.PatternData.Type = sql.NullString{
-			String: string(models.Design),
-			Valid:  true,
-		}
-		// Check if the pattern is valid
-		err := pCore.IsValidPattern(parsedBody.PatternData.PatternFile)
-		if err != nil {
-			h.log.Error(ErrInvalidPattern(err))
-			http.Error(rw, ErrInvalidPattern(err).Error(), http.StatusBadRequest)
-			addMeshkitErr(&res, ErrInvalidPattern(err))
-			go h.EventsBuffer.Publish(&res)
-			return
-		}
-		// Assign a name if no name is provided
-		if parsedBody.PatternData.Name == "" {
-			patternName, err := models.GetPatternName(parsedBody.PatternData.PatternFile)
+				String: string(models.Design),
+				Valid:  true,
+			}
+			// Check if the pattern is valid
+			err := pCore.IsValidPattern(parsedBody.PatternData.PatternFile)
 			if err != nil {
-				h.log.Error(ErrSavePattern(err))
-				http.Error(rw, ErrSavePattern(err).Error(), http.StatusBadRequest)
-				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": ErrSavePattern(err),
-				}).WithDescription("unable to get \"name\" from the pattern.").Build()
-
-				_ = provider.PersistEvent(event)
-				go h.config.EventBroadcaster.Publish(userID, event)
+				h.log.Error(ErrInvalidPattern(err))
+				http.Error(rw, ErrInvalidPattern(err).Error(), http.StatusBadRequest)
+				addMeshkitErr(&res, ErrInvalidPattern(err))
+				go h.EventsBuffer.Publish(&res)
 				return
 			}
-			parsedBody.PatternData.Name = patternName
-		}
+			// Assign a name if no name is provided
+			if parsedBody.PatternData.Name == "" {
+				patternName, err := models.GetPatternName(parsedBody.PatternData.PatternFile)
+				if err != nil {
+					h.log.Error(ErrSavePattern(err))
+					http.Error(rw, ErrSavePattern(err).Error(), http.StatusBadRequest)
+					event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+						"error": ErrSavePattern(err),
+					}).WithDescription("unable to get \"name\" from the pattern.").Build()
+
+					_ = provider.PersistEvent(event)
+					go h.config.EventBroadcaster.Publish(userID, event)
+					return
+				}
+				parsedBody.PatternData.Name = patternName
+			}
 
 
-		mesheryPattern := parsedBody.PatternData
+			mesheryPattern := parsedBody.PatternData
 
-		if parsedBody.Save {
-			resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
-			if err != nil {
-				h.log.Error(ErrSavePattern(err))
-				http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
+			if parsedBody.Save {
+				fmt.Println("inside 1 save")
+				resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
+				if err != nil {
+					h.log.Error(ErrSavePattern(err))
+					http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
 
-				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-					"error": ErrSavePattern(err),
-				}).WithDescription(ErrSavePattern(err).Error()).Build()
+					event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+						"error": ErrSavePattern(err),
+					}).WithDescription(ErrSavePattern(err).Error()).Build()
 
+					_ = provider.PersistEvent(event)
+					go h.config.EventBroadcaster.Publish(userID, event)
+					return
+				}
+
+				h.formatPatternOutput(rw, resp, format, &res, eventBuilder)
+				event := eventBuilder.Build()
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
+				go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 				return
 			}
 
-			h.formatPatternOutput(rw, resp, format, &res, eventBuilder)
+			byt, err := json.Marshal([]models.MesheryPattern{*mesheryPattern})
+			if err != nil {
+				h.log.Error(ErrEncodePattern(err))
+				http.Error(rw, ErrEncodePattern(err).Error(), http.StatusInternalServerError)
+				addMeshkitErr(&res, ErrSavePattern(err))
+				go h.EventsBuffer.Publish(&res)
+				return
+			}
+
+			h.formatPatternOutput(rw, byt, format, &res, eventBuilder)
 			event := eventBuilder.Build()
 			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userID, event)
-			go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 			return
-		}
-
-		byt, err := json.Marshal([]models.MesheryPattern{*mesheryPattern})
-		if err != nil {
-			h.log.Error(ErrEncodePattern(err))
-			http.Error(rw, ErrEncodePattern(err).Error(), http.StatusInternalServerError)
-			addMeshkitErr(&res, ErrSavePattern(err))
-			go h.EventsBuffer.Publish(&res)
-			return
-		}
-
-		h.formatPatternOutput(rw, byt, format, &res, eventBuilder)
-		event := eventBuilder.Build()
-		_ = provider.PersistEvent(event)
-		go h.config.EventBroadcaster.Publish(userID, event)
-		return
 	  }
 	}
 
@@ -577,7 +581,7 @@ func (h *Handler) handlePatternPOST(
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
-	}
+		}
 	}
 
 	if sourcetype == string(models.DockerCompose) || sourcetype == string(models.K8sManifest) || sourcetype == string(models.HelmChart) {
@@ -619,7 +623,7 @@ func (h *Handler) handlePatternPOST(
 				return
 			}
 			savedPatternID = mesheryPatternContent[0].ID
-			err = provider.SaveApplicationSourceContent(token, (savedPatternID).String(), mesheryPattern.SourceContent)
+			err = provider.SaveMesheryPatternSourceContent(token, (savedPatternID).String(), mesheryPattern.SourceContent)
 
 			if err != nil {
 				obj := "upload"
