@@ -53,10 +53,15 @@ scripts/component_generation_docs/main
 log.txt
 
 # Docs
-**/docs/_site
-**/docs/.sass-cache
-**/docs/.jekyll-metadata
-**/docs/.jekyll-cache
+docs/_site
+docs/.sass-cache
+docs/.jekyll-metadata
+docs/.jekyll-cache
+
+docs/v0.4
+docs/v0.5
+docs/v0.6
+docs/v0.*
 
 dist/
 
