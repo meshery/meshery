@@ -59,7 +59,6 @@
             width: 2.8rem;
             height: 2.8rem;
           }
-
           &:hover {
             filter: none;
 
@@ -75,8 +74,8 @@
         & svg:hover {
           fill: #0073cf;
         }
-        & svg.twitter:hover {
-          fill: var(--color-white);
+        & .twitter:hover {
+          fill: #000;
         }
       }
     }
