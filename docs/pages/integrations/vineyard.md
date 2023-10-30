@@ -10,7 +10,7 @@ list: include
 image: /assets/img/integrations/vineyard.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} with Meshery <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
 #### Category: vineyard
