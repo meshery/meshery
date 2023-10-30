@@ -328,23 +328,15 @@ To use the `alert.html` feature, include the following code snippet in your docu
     {{ include.content }}
     &lt;/div&gt;
 ```
-This code defines an HTML structure for creating alerts. It accepts three parameters:
-```
 
-        {{ include.type }}: Specifies the type of alert, which can be "info," "warning," "success," or any other relevant value. This is used to style the alert
-        {{ include.title }} : Sets the title of the alert. If not provided, it will default to the value of <code>{{ include.type }}</code>
-        {{ include.content }}: Contains the content of the alert, such as the message or information you want to convey.
- ``` 
 #### Example
     
  Here's an example of how to use the `alert.html` feature in your documentation:
-     {% include alert.html type="warning" content="This is a warning" %}
+     {% include alert.html type="warning" content="This is an example of warning" %}
      {% include alert.html type="danger" content="This alerts danger!" %}
      {% include alert.html type="success" content="This alerts success" %}
      {% include alert.html type="info" content="This is useful information." %}
-     {% include alert.html type="primary" content="This is a primary alert" %}
-     {% include alert.html type="secondary" content="This is a secondary alert" %}
-
+     
 ### Quotes
 
 You can include block quotes to emphasize text. 
