@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Linux or Mac
+title: Install Meshery CLI on Linux or Mac
 permalink: installation/linux-mac
 type: installation
 category: mesheryctl

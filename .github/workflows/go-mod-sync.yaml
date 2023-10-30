@@ -1,5 +1,6 @@
 name: Meshery extensions go.mod sync
 on:
+  workflow_dispatch:
   push:
     branches:
       - "master"

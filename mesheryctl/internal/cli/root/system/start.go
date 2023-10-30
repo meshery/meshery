@@ -221,13 +221,20 @@ func start() error {
 
 			temp, ok := utils.Services[v]
 			if !ok {
-				return errors.New("unable to extract component version")
+				return errors.New(fmt.Sprintf("No Docker Compose service exists for Meshery component `%s`.", v))
 			}
 
 			spliter := strings.Split(temp.Image, ":")
 			temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), "latest")
 			utils.Services[v] = temp
 			AllowedServices[v] = utils.Services[v]
+			utils.ViperCompose.Set(fmt.Sprintf("services.%s", v), utils.Services[v])
+			err = utils.ViperCompose.WriteConfig()
+			if err != nil {
+				// failure while adding a service to docker compose file is not a fatal error
+				// mesheryctl will continue deploying with required services (meshery, watchtower)
+				log.Infof("Encountered an error while adding `%s` service to Docker Compose file. Verify permission to write to `.meshery/meshery.yaml` file.", v)
+			}
 		}
 
 		for _, v := range RequiredService {
