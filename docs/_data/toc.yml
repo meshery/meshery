@@ -183,6 +183,8 @@
     #   url: guides/sample-apps
     # - title: Running SMI Conformance Tests
       # url: guides/smi-conformance
+    - title: Configuring Kubernetes Infrastructure
+      url: guides/configuration-management
     - title: Integrating Prometheus and Grafana
       url: guides/meshery-metrics
     - title: Importing Applications

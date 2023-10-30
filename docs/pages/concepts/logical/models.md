@@ -10,9 +10,12 @@ list: include
 
 Meshery's internal object model is designed to provide a consistent and extensible way of capturing and characterizing the resources under Meshery's management. Meshery Models serve as an internal model within Meshery, defining constructs and their relationships, and enabling consistent communication between components.
 
-Key aspects and characteristics of Meshery Models
 
-Design Principles
+![Meshery Models](./meshery-models.png)
+
+# Key aspects and characteristics
+
+## Design Principles
 Meshery Models adheres to several design principles, including establishing a set of constructs, clearly defining construct boundaries, allowing construct extension, reusing existing models, being user-centric, and simplifying complex networking and distributed systems.
 
 ### Core Constructs
