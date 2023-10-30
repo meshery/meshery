@@ -10,9 +10,13 @@ language: en
 list: exclude
 ---
 
-### All Integrations by Name
 
 {% assign sorted_index = site.pages | sort: "name" | alphabetical %}
+### All Integrations by Name (forloop.length)
+
+<!-- 
+UNCOMMENT WHEN INTEGRATIONS COLLECTION IS READY
+### All Integrations by Name ({{ site.integrations.size }}) -->
 
 <ul>
     {% for item in sorted_index %}
