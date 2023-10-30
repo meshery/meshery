@@ -47,7 +47,7 @@ func NewHandlerInstance(
 	provider string,
 	rego *policies.Rego,
 ) models.HandlerInterface {
-	
+
 	h := &Handler{
 		config:             handlerConfig,
 		meshsyncChannel:    meshSyncCh,

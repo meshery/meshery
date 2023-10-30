@@ -307,84 +307,74 @@ function createPathForRemoteComponent(componentName) {
  *  4. collaborator - for collaborator extension
  * @param {{ type: "navigator" | "user_prefs" | "account" | "collaborator", Extension: JSX.Element }} props
  */
-function ExtensionSandbox({
-  type,
-  Extension,
-  isDrawerCollapsed,
-  toggleDrawer,
-  capabilitiesRegistry,
-}) {
-  const [extension, setExtension] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+const ExtensionSandbox = React.memo(
+  function MemoizedExtensionSandbox({
+    type,
+    Extension,
+    isDrawerCollapsed,
+    toggleDrawer,
+    capabilitiesRegistry,
+  }) {
+    const [extension, setExtension] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    if (type === 'navigator' && !isDrawerCollapsed) {
-      toggleDrawer({ isDrawerCollapsed: !isDrawerCollapsed });
-    }
-    if (capabilitiesRegistry) {
-      const data = ExtensionPointSchemaValidator(type)(capabilitiesRegistry?.extensions[type]);
-      if (data !== undefined) {
-        setExtension(data);
-        setIsLoading(false);
+    useEffect(() => {
+      if (type === 'navigator' && !isDrawerCollapsed) {
+        toggleDrawer({ isDrawerCollapsed: !isDrawerCollapsed });
       }
-    }
-    // necessary to cleanup states on each unmount to prevent memory leaks and unwanted clashes between extension points
-    return () => {
-      setExtension([]);
-      setIsLoading(true);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (type === 'navigator' && !isDrawerCollapsed) {
-      toggleDrawer({ isDrawerCollapsed: !isDrawerCollapsed });
-    }
-    if (capabilitiesRegistry) {
-      const data = ExtensionPointSchemaValidator(type)(capabilitiesRegistry?.extensions[type]);
-      if (data !== undefined) {
-        setExtension(data);
-        setIsLoading(false);
+      if (capabilitiesRegistry) {
+        const data = ExtensionPointSchemaValidator(type)(capabilitiesRegistry?.extensions[type]);
+        if (data !== undefined) {
+          setExtension(data);
+          setIsLoading(false);
+        }
       }
-    }
-    // necessary to cleanup states on each unmount to prevent memory leaks and unwanted clashes between extension points
-    return () => {
-      setExtension([]);
-      setIsLoading(true);
-    };
-  }, [type]);
+      // necessary to cleanup states on each unmount to prevent memory leaks and unwanted clashes between extension points
+      return () => {
+        setExtension([]);
+        setIsLoading(true);
+      };
+    }, [type]);
 
-  return (
-    <>
-      {isLoading ? (
-        type === 'collaborator' ? (
-          ''
-        ) : (
-          <LoadingScreen animatedIcon="AnimatedMeshery" message="Establishing Remote Connection" />
-        )
-      ) : type === 'navigator' ? (
-        <Extension
-          url={createPathForRemoteComponent(
-            getComponentURIFromPathForNavigator(extension, getPath()),
-          )}
-        />
-      ) : type === 'user_prefs' ? (
-        getComponentURIFromPathForUserPrefs(extension).map((uri) => {
-          return <Extension url={createPathForRemoteComponent(uri)} key={uri} />;
-        })
-      ) : type === 'collaborator' ? (
-        getComponentURIFromPathForCollaborator(extension).map((uri) => {
-          return <Extension url={createPathForRemoteComponent(uri)} key={uri} />;
-        })
-      ) : type === 'account' ? (
-        <Extension
-          url={createPathForRemoteComponent(
-            getComponentURIFromPathForAccount(extension, getPath()),
-          )}
-        />
-      ) : null}
-    </>
-  );
-}
+    return (
+      <>
+        {isLoading ? (
+          type === 'collaborator' ? (
+            ''
+          ) : (
+            <LoadingScreen
+              animatedIcon="AnimatedMeshery"
+              message="Establishing Remote Connection"
+            />
+          )
+        ) : type === 'navigator' ? (
+          <Extension
+            url={createPathForRemoteComponent(
+              getComponentURIFromPathForNavigator(extension, getPath()),
+            )}
+          />
+        ) : type === 'user_prefs' ? (
+          getComponentURIFromPathForUserPrefs(extension).map((uri) => {
+            return <Extension url={createPathForRemoteComponent(uri)} key={uri} />;
+          })
+        ) : type === 'collaborator' ? (
+          getComponentURIFromPathForCollaborator(extension).map((uri) => {
+            return <Extension url={createPathForRemoteComponent(uri)} key={uri} />;
+          })
+        ) : type === 'account' ? (
+          <Extension
+            url={createPathForRemoteComponent(
+              getComponentURIFromPathForAccount(extension, getPath()),
+            )}
+          />
+        ) : null}
+      </>
+    );
+  },
+  (prevProps, nextProps) => {
+    return prevProps.type === nextProps.type;
+  },
+);
 
 const mapDispatchToProps = (dispatch) => ({
   toggleDrawer: bindActionCreators(toggleDrawer, dispatch),

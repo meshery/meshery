@@ -14,7 +14,7 @@ import NoSsr from '@material-ui/core/NoSsr';
 import Link from 'next/link';
 import SettingsIcon from '@material-ui/icons/Settings';
 import Chip from '@material-ui/core/Chip';
-import MesheryNotification from './NotificationCenter';
+import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
 import Slide from '@material-ui/core/Slide';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
@@ -33,13 +33,10 @@ import { promisifiedDataFetch } from '../lib/data-fetch';
 import { updateK8SConfig, updateProgress, updateCapabilities } from '../lib/store';
 import { bindActionCreators } from 'redux';
 import BadgeAvatars from './CustomAvatar';
-import { CapabilitiesRegistry as CapabilityRegistryClass } from '../utils/disabledComponents';
-import _ from 'lodash';
 import { SETTINGS } from '../constants/navigator';
 import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
 import PromptComponent from './PromptComponent';
 import { iconMedium } from '../css/icons.styles';
-import { isExtensionOpen } from '../pages/_app';
 import ExtensionSandbox from './ExtensionSandbox';
 import RemoteComponent from './RemoteComponent';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
@@ -96,6 +93,7 @@ const styles = (theme) => ({
     paddingLeft: 34,
     paddingRight: 34,
     backgroundColor: theme.palette.secondary.mainBackground,
+    boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
   },
   toolbarOnDrawerOpen: {
     minHeight: 58,
@@ -104,6 +102,7 @@ const styles = (theme) => ({
     paddingRight: 34,
     backgroundColor: theme.palette.secondary.mainBackground,
     [theme.breakpoints.between(620, 732)]: { minHeight: 68, paddingLeft: 20, paddingRight: 20 },
+    boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
   },
   itemActiveItem: { color: '#00B39F' },
   headerIcons: { fontSize: '1.5rem', height: '1.5rem', width: '1.5rem' },
@@ -148,7 +147,7 @@ const styles = (theme) => ({
     marginTop: '-0.7rem',
     borderRadius: '3px',
     padding: '1rem',
-    zIndex: 1201,
+    // zIndex: 1201,
     boxShadow: '20px #979797',
     transition: 'linear .2s',
     transitionProperty: 'height',
@@ -226,10 +225,6 @@ function LoadTheme({ themeSetter }) {
 
   useLayoutEffect(() => {
     // disable dark mode in extension
-    if (isExtensionOpen()) {
-      themeSetter(defaultTheme);
-      return;
-    }
 
     if (localStorage.getItem('Theme') === null) {
       themeSetter(defaultTheme);
@@ -260,7 +255,7 @@ function K8sContextMenu({
   const { notify } = useNotification();
   const styleSlider = {
     position: 'absolute',
-    left: '-5rem',
+    left: '-7rem',
     zIndex: '-1',
     bottom: showFullContextMenu ? '-55%' : '-110%',
     transform: showFullContextMenu ? `translateY(${transformProperty}%)` : 'translateY(0)',
@@ -394,7 +389,7 @@ function K8sContextMenu({
               src="/static/img/kubernetes.svg"
               width="24px"
               height="24px"
-              style={{ zIndex: '2' }}
+              // style={{ zIndex: '2' }}
             />
             <div className={classes.cbadge}>{contexts?.total_count || 0}</div>
           </div>
@@ -538,7 +533,7 @@ function K8sContextMenu({
   );
 }
 
-class Header extends React.Component {
+class Header extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -548,6 +543,7 @@ class Header extends React.Component {
     };
   }
   componentDidMount() {
+    console.log('header component mounted');
     dataFetch(
       '/api/provider/capabilities',
       {
@@ -562,7 +558,7 @@ class Header extends React.Component {
             collaboratorExt: ExtensionPointSchemaValidator('collaborator')(
               result?.extensions?.collaborator,
             ),
-            capabilitiesRegistryObj,
+            capabilityregistryObj: capabilitiesRegistryObj,
           });
           this.props.updateCapabilities({ capabilitiesRegistry: result });
         }
@@ -572,15 +568,6 @@ class Header extends React.Component {
     console.log('capabilitiesRegistry (mounted header)', this.props.capabilitiesRegistry);
     this._isMounted = true;
   }
-
-  componentDidUpdate(prevProps) {
-    if (!_.isEqual(prevProps.capabilitiesRegistry, this.props.capabilitiesRegistry)) {
-      this.setState({
-        capabilityregistryObj: new CapabilityRegistryClass(this.props.capabilitiesRegistry),
-      });
-    }
-  }
-
   componentWillUnmount = () => {
     this._isMounted = false;
   };
@@ -604,7 +591,7 @@ class Header extends React.Component {
           <AppBar
             color="primary"
             position="sticky"
-            elevation={2}
+            // elevation={1}
             className={onDrawerCollapse ? classes.appBarOnDrawerClosed : classes.appBarOnDrawerOpen}
           >
             <Toolbar
@@ -696,7 +683,7 @@ class Header extends React.Component {
                   </div>
 
                   <div data-test="notification-button">
-                    <MesheryNotification />
+                    <NotificationDrawerButton />
                   </div>
                   <span className={classes.userSpan}>
                     <User

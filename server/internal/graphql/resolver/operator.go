@@ -87,6 +87,7 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 			return
 		}
 		op, _ := ctx.Value(models.MesheryControllerHandlersKey).(map[string]map[models.MesheryController]controllers.IMesheryController)
+		
 		var err error
 		if del {
 			err = op[ctxID][models.MesheryOperator].Undeploy()
@@ -223,7 +224,7 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, _ models.Provider, ctx
 func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provider, connectionID string) (*model.OperatorControllerStatus, error) {
 	var kubeclient *mesherykube.Client
 	var err error
-	
+
 	tokenString := ctx.Value(models.TokenCtxKey).(string)
 
 	if connectionID != "" {
@@ -255,7 +256,7 @@ func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provid
 func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider, connectionID string) (*model.OperatorControllerStatus, error) {
 	var kubeclient *mesherykube.Client
 	var err error
-	
+
 	tokenString := ctx.Value(models.TokenCtxKey).(string)
 
 	if connectionID != "" {

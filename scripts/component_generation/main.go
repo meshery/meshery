@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -64,7 +64,6 @@ var (
 	ComponentModelsFileName = path.Join(OutputDirectoryPath, "component_models.yaml")
 )
 
-
 var priorityRepos = map[string]bool{"prometheus-community": true, "grafana": true} //Append ahrepos here whose components should be respected and should be used when encountered duplicates
 
 // returns pkgs with sorted pkgs at the front
@@ -97,7 +96,7 @@ func main() {
 			return
 		}
 	}
-	
+
 	modelsFd, err := os.OpenFile(ComponentModelsFileName, os.O_CREATE|os.O_RDWR, 0644)
 	if err != nil {
 		fmt.Println(err)
@@ -207,7 +206,7 @@ func main() {
 
 	executeInStages(StartPipeline, csvChan, spreadsheetChan, dp, priority, cncf, official, verified, unverified)
 	time.Sleep(20 * time.Second)
-	
+
 	close(spreadsheetChan)
 	wg.Wait()
 }

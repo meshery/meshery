@@ -24,7 +24,6 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/database"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -1528,7 +1527,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
-func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, search, order string, updatedAfter string) ([]byte, error) {
+func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, search, order, updatedAfter string, visibility []string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
 		logrus.Error("operation not available")
 		return []byte{}, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryPatterns, l.ProviderName)
@@ -1554,6 +1553,12 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 	}
 	if updatedAfter != "" {
 		q.Set("updated_after", updatedAfter)
+	}
+	if len(visibility) > 0 {
+		for _, v := range visibility {
+			logrus.Debugf("visibility: %s", v)
+			q.Add("visibility", v)
+		}
 	}
 	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("constructed design url: %s", remoteProviderURL.String())
@@ -2041,7 +2046,7 @@ func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFi
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("filter successfully sent to remote provider: %s", string(bdr))
+		// logrus.Infof("filter successfully sent to remote provider: %s", string(bdr)) stop logging filter data
 		return bdr, nil
 	}
 
@@ -2049,7 +2054,7 @@ func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFi
 }
 
 // GetMesheryFilters gives the filters stored with the provider
-func (l *RemoteProvider) GetMesheryFilters(tokenString string, page, pageSize, search, order string, visibility string) ([]byte, error) {
+func (l *RemoteProvider) GetMesheryFilters(tokenString string, page, pageSize, search, order string, visibility []string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryFilters) {
 		logrus.Error("operation not available")
 		return []byte{}, ErrInvalidCapability("PersistMesheryFilters", l.ProviderName)
@@ -2073,9 +2078,13 @@ func (l *RemoteProvider) GetMesheryFilters(tokenString string, page, pageSize, s
 	if order != "" {
 		q.Set("order", order)
 	}
-	if visibility != "" {
-		q.Set("visibility", visibility)
+	
+	if len(visibility) > 0 {
+		for _, v := range visibility {
+			q.Add("visibility", v)
+		}
 	}
+
 	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("constructed filters url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
@@ -2492,7 +2501,7 @@ func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path s
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("filter successfully sent to remote provider: %s", string(bdr))
+		// logrus.Infof("filter successfully sent to remote provider: %s", string(bdr)) stop logging filter data
 		return bdr, nil
 	}
 
@@ -3850,33 +3859,6 @@ func (l *RemoteProvider) DeleteMesheryConnection() error {
 	return ErrDelete(fmt.Errorf("Could not delete meshery connection"), " Meshery Connection", resp.StatusCode)
 }
 
-// RecordMeshSyncData records the mesh sync data
-func (l *RemoteProvider) RecordMeshSyncData(obj model.Object) error {
-	result := l.GenericPersister.Create(&obj)
-	if result.Error != nil {
-		return result.Error
-	}
-	return nil
-}
-
-// ReadMeshSyncData records the mesh sync data
-func (l *RemoteProvider) ReadMeshSyncData() ([]model.Object, error) {
-	objects := make([]model.Object, 0)
-	result := l.GenericPersister.
-		Preload("TypeMeta").
-		Preload("ObjectMeta").
-		Preload("ObjectMeta.Labels").
-		Preload("ObjectMeta.Annotations").
-		Preload("Spec").
-		Preload("Status").
-		Find(&objects)
-
-	if result.Error != nil {
-		return nil, result.Error
-	}
-	return objects, nil
-}
-
 // TarXZF takes in a source url downloads the tar.gz file
 // uncompresses and then save the file to the destination
 func TarXZF(srcURL, destination string) error {
@@ -4191,7 +4173,7 @@ func (l *RemoteProvider) ShareFilter(req *http.Request) (int, error) {
 }
 
 func (l *RemoteProvider) GetEnvironments(token, page, pageSize, search, order, filter string) ([]byte, error) {
-	
+
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/integrations/environments")
 	q := remoteProviderURL.Query()
 	if page != "" {

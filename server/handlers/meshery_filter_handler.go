@@ -99,7 +99,7 @@ func (h *Handler) handleFilterPOST(
 		EventType:     meshes.EventType_INFO,
 	}
 	var parsedBody *models.MesheryFilterRequestBody
-	
+
 	actedUpon := &userID
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		invalidReqBody := ErrRequestBody(err)
@@ -117,7 +117,7 @@ func (h *Handler) handleFilterPOST(
 		go h.EventsBuffer.Publish(&res)
 		return
 	}
-	
+
 	if parsedBody.FilterData != nil && parsedBody.FilterData.ID != nil {
 		actedUpon = parsedBody.FilterData.ID
 	}
@@ -151,7 +151,6 @@ func (h *Handler) handleFilterPOST(
 	if parsedBody.FilterData != nil {
 		// Assign a name if no name is provided
 		if parsedBody.FilterData.Name == "" {
-			// TODO: Dynamically generate names or get the name of the file from the UI (@navendu-pottekkat)
 			parsedBody.FilterData.Name = "meshery-filter-" + utils.GetRandomAlphabetsOfDigit(5)
 		}
 		// Assign a location if no location is specified
@@ -172,6 +171,7 @@ func (h *Handler) handleFilterPOST(
 			UpdatedAt:      parsedBody.FilterData.UpdatedAt,
 			Location:       parsedBody.FilterData.Location,
 			FilterResource: filterResource,
+			CatalogData: 	parsedBody.FilterData.CatalogData,
 		}
 
 		if parsedBody.Save {
@@ -239,7 +239,9 @@ func (h *Handler) handleFilterPOST(
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
 //
-// ```?visibility={visibility}``` Default visibility is public
+// ```?visibility={[visibility]}``` Default visibility is public + private; Mulitple visibility filters can be passed as an array
+// Eg: ```?visibility=["public", "published"]``` will return public and published filters
+//
 // responses:
 //
 //	200: mesheryFiltersResponseWrapper
@@ -253,7 +255,22 @@ func (h *Handler) GetMesheryFiltersHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetMesheryFilters(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("visibility"))
+	filter := struct {
+		Visibility []string `json:"visibility"`
+	}{}
+
+	visibility := q.Get("visibility")
+	if visibility != "" {
+		err := json.Unmarshal([]byte(visibility), &filter.Visibility)
+		if err != nil {
+			h.log.Error(ErrFetchFilter(err))
+			http.Error(rw, ErrFetchFilter(err).Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
+
+	resp, err := provider.GetMesheryFilters(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), filter.Visibility)
 	if err != nil {
 		h.log.Error(ErrFetchFilter(err))
 		http.Error(rw, ErrFetchFilter(err).Error(), http.StatusInternalServerError)

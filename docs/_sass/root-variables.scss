@@ -5,6 +5,7 @@
   --brand-color-primary: #00d3a9;
   --brand-color-secondary: #00b39f;
   --color-white: #fff;
+  // #EBC017;
   // ////////////////////////////////////////////
   --brand-color: #00b39f;
   --color-primary-light: #fff;
@@ -16,6 +17,7 @@
   --color-grey-light: #ced4da;
   --color-grey-medium: #adb5bd;
   --color-grey-dark: #868e96;
+  --color-grey-dark-alpha: #868e9622;
   --color-summary-background:#bac1c8;
   --color-summary-background-hover:#8f949a;
   --color-details-background:#d3d8dd;
@@ -58,8 +60,9 @@
   --background-neumorphic: #ecf0f3;
 
   // Gradients
-  --section-button: linear-gradient(315deg, #008979 0%, rgba(0, 179, 159, 0.8617822129) 87%);
-  --section-button-hover: linear-gradient(135deg, #008979 0%, rgba(0, 179, 159, 0.8617822129) 87%);
+  --section-button: linear-gradient(315deg, #3C494F 0%, rgba(70, 86, 93, 1) 87%);
+  
+  --section-button-hover: linear-gradient(135deg, #607680 0%, rgba(0, 179, 159, 0.8617822129) 87%);
 
   // --section-button: linear-gradient(to right top, #00b39f, #00b09d, #00ae9b, #00ab99, #00a997, #00ac98, #00ae99, #00b19a, #00b99e, #00c2a2, #00caa6, #00d3a9);;
   // --section-button-hover:linear-gradient(to left bottom, #007a6c, #00b09d, #00ae9b, #00ab99, #00a997, #00ac98, #00ae99, #00b19a, #00b99e, #00c2a2, #00caa6, #00d3a9);
@@ -72,12 +75,14 @@
   --color-primary-light: #212529;
   --color-primary-medium: #343a40;
   --color-primary-dark: #495057;
-  --color-secondary-light: #f1f3f5;
+  --color-secondary-light: #f1f3f5;   
   --color-secondary-medium: #dadddf;
   --color-secondary-dark: #eee;
+  --color-primary-blonde: #eeF3C5;
   --color-grey-light: #495057;
   --color-grey-medium: #868e96;
   --color-grey-dark: #adb5bd;
+  --color-grey-dark-alpha: #adb5bd22;
   --color-summary-background:#333;
   --color-summary-background-hover:#666666;
   --color-details-background:#282828;

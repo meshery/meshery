@@ -2,6 +2,24 @@
 Meshery Component Updater
 Uses a spreadsheet of centralized information about MeshModel components and their metadata like color, icon, and so on. Script is used to update components metada (svgs, icons etc) for Meshery, Websites (Layer5.io, Meshery.io), and Remote Provider.
 
+Secret - this script expects that an environment variable `CRED` is available
+and it contains a token for Google Sheets API interactions.
+
+Example:
+	export CRED='{
+		"type": "service_account",
+		"project_id": "",
+		"private_key_id": "",
+		"private_key": "-----BEGIN PRIVATE KEY-----\nn-----END PRIVATE KEY-----\n",
+		"client_email": "",
+		"client_id": "",
+		"auth_uri": "https://accounts.google.com/o/oauth2/auth",
+		"token_uri": "https://oauth2.googleapis.com/token",
+		"auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+		"client_x509_cert_url": "",
+		"universe_domain": "googleapis.com"
+		}'
+
 Usage: (order of flags matters)
 
     ./main [path-to-spreadsheet] [--system] [<system-name>] [relative path to docs in layer5 website] [relative path to docs in meshery website] [--only-published]
@@ -43,7 +61,7 @@ var (
 	ColumnNamesToExtractForDocs = []string{"modelDisplayName", "Page Subtitle", "Docs URL", "category", "subCategory", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "svgColor", "svgWhite", "Full Page", "model"}
 	PrimaryColumnName           = "model"
 	OutputPath                  = ""
-	ExcludeDirs = []string{"relationships", "policies"}
+	ExcludeDirs                 = []string{"relationships", "policies"}
 )
 
 var System string
@@ -152,7 +170,7 @@ func docsUpdater(output []map[string]string) {
 	}
 	pathToIntegrationsLayer5 := os.Args[4]
 	pathToIntegrationsMeshery := os.Args[5]
-	pathToIntegrationsMesheryDocs := os.Args[6]	
+	pathToIntegrationsMesheryDocs := os.Args[6]
 	updateOnlyPublished := true
 	if len(os.Args) > 6 {
 		if os.Args[6] == "--published-only" {
@@ -213,7 +231,7 @@ func docsUpdater(output []map[string]string) {
 		modelName := strings.TrimSpace(out["model"])
 		pathToIntegrationsLayer5, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsLayer5, modelName))
 		pathToIntegrationsMeshery, _ := filepath.Abs(filepath.Join("../../../", pathToIntegrationsMeshery))
-		pathToIntegrationsMesheryDocs, _ := filepath.Abs(filepath.Join("../../", pathToIntegrationsMesheryDocs, "assets/img/meshmodel/", modelName))	
+		pathToIntegrationsMesheryDocs, _ := filepath.Abs(filepath.Join("../../", pathToIntegrationsMesheryDocs, "assets/img/meshmodel/", modelName))
 		err = os.MkdirAll(pathToIntegrationsLayer5, 0777)
 		if err != nil {
 			panic(err)

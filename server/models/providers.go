@@ -8,7 +8,6 @@ import (
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 )
 
@@ -215,9 +214,9 @@ type ConnectionPayload struct {
 }
 
 type EnvironmentPayload struct {
-	Name             string                 `json:"name,omitempty"`
-	Description 	 string					`json:"description,omitempty"`
-	OrgID 	         string					`json:"org_id,omitempty"`
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+	OrgID       string `json:"org_id,omitempty"`
 }
 
 type ExtensionProxyResponse struct {
@@ -306,7 +305,7 @@ const (
 
 	RegistryManagerKey ContextKey = "registrymanagerkey"
 
-	HandlerKey ContextKey = "handlerkey"	
+	HandlerKey               ContextKey = "handlerkey"
 	MesheryServerURL         ContextKey = "mesheryserverurl"
 	MesheryServerCallbackURL ContextKey = "mesheryservercallbackurl"
 )
@@ -392,15 +391,13 @@ type Provider interface {
 	SMPTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error)
 	SMPTestConfigDelete(req *http.Request, testUUID string) error
 
-	RecordMeshSyncData(model.Object) error
-	ReadMeshSyncData() ([]model.Object, error)
 	GetGenericPersister() *database.Handler
 
 	SetKubeClient(client *mesherykube.Client)
 	GetKubeClient() *mesherykube.Client
 
 	SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error)
-	GetMesheryPatterns(tokenString, page, pageSize, search, order string, updatedAfter string) ([]byte, error)
+	GetMesheryPatterns(tokenString, page, pageSize, search, order string, updatedAfter string, visbility []string) ([]byte, error)
 	GetCatalogMesheryPatterns(tokenString string, page, pageSize, search, order string) ([]byte, error)
 	PublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error)
 	UnPublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error)
@@ -415,7 +412,7 @@ type Provider interface {
 	DeleteMesheryPatternResource(token, resourceID string) error
 
 	SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error)
-	GetMesheryFilters(tokenString, page, pageSize, search, order string, visibility string) ([]byte, error)
+	GetMesheryFilters(tokenString, page, pageSize, search, order string, visibility []string) ([]byte, error)
 	GetCatalogMesheryFilters(tokenString string, page, pageSize, search, order string) ([]byte, error)
 	PublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error)
 	UnPublishCatalogFilter(req *http.Request, publishFilterRequest *MesheryCatalogFilterRequestBody) ([]byte, error)

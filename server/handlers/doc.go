@@ -437,6 +437,13 @@ type meshmodelComponentsDuplicateResponseWrapper struct {
 	Body *models.MeshmodelComponentsDuplicateAPIResponse
 }
 
+// Returns MeshSync resources
+// swagger:response meshsyncResourcesResponseWrapper
+type meshsyncResourcesResponseWrapper struct {
+	// in: body
+	Body *models.MeshSyncResourcesAPIResponse
+}
+
 // Returns meshmodel relationships
 // swagger:response meshmodelRelationshipsResponseWrapper
 type meshmodelRelationshipsResponseWrapper struct {
@@ -456,6 +463,13 @@ type meshmodelPoliciesResponseWrapper struct {
 type meshmodelCategoriesResponseWrapper struct {
 	// in: body
 	Body *models.MeshmodelCategoriesAPIResponse
+}
+
+// Returns meshmodel registrants
+// swagger:response meshmodelRegistrantsResponseWrapper
+type meshmodelRegistrantsResponseWrapper struct {
+	// in: body
+	Body *models.MeshmodelRegistrantsAPIResponse
 }
 
 // Returns database summary
@@ -513,7 +527,6 @@ type environmentsResponseWrapper struct {
 	// in: body
 	Body *models.EnvironmentPage
 }
-
 
 // Returns event
 // swagger:response eventResponseWrapper

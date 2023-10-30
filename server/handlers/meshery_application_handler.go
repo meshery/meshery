@@ -526,6 +526,7 @@ func (h *Handler) handleApplicationPOST(
 		go h.config.ApplicationChannel.Publish(userID, struct{}{})
 		eb := eventBuilder
 		_ = provider.PersistEvent(eb.WithDescription(fmt.Sprintf("Application %s  Source content uploaded", mesheryApplicationContent[0].Name)).Build())
+		return
 	}
 
 	mesheryApplication.ID = savedApplicationID
@@ -816,7 +817,7 @@ func (h *Handler) DeleteMesheryApplicationHandler(
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Application %s deleted.", mesheryApplication.Name)).Build()
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userID, event)
-	
+
 	go h.config.ApplicationChannel.Publish(userID, struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))

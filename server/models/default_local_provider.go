@@ -24,7 +24,6 @@ import (
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/walker"
-	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -575,7 +574,7 @@ func (l *DefaultLocalProvider) SaveMesheryPattern(_ string, pattern *MesheryPatt
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
-func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, order string, updatedAfter string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, order, updatedAfter string, visibility []string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -592,7 +591,7 @@ func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, ord
 	if err != nil {
 		return nil, ErrPageSize(err)
 	}
-	return l.MesheryPatternPersister.GetMesheryPatterns(search, order, pg, pgs, updatedAfter)
+	return l.MesheryPatternPersister.GetMesheryPatterns(search, order, pg, pgs, updatedAfter, visibility)
 }
 
 // GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
@@ -690,7 +689,7 @@ func (l *DefaultLocalProvider) SaveMesheryFilter(_ string, filter *MesheryFilter
 }
 
 // GetMesheryFilters gives the filters stored with the provider
-func (l *DefaultLocalProvider) GetMesheryFilters(_, page, pageSize, search, order string, visibility string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryFilters(_, page, pageSize, search, order string, visibility []string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -698,9 +697,6 @@ func (l *DefaultLocalProvider) GetMesheryFilters(_, page, pageSize, search, orde
 		pageSize = "10"
 	}
 
-	if visibility == "" {
-		visibility = Public
-	}
 
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
@@ -956,15 +952,7 @@ func (l *DefaultLocalProvider) DeleteSchedule(_ *http.Request, _ string) ([]byte
 	return []byte{}, ErrLocalProviderSupport
 }
 
-// RecordMeshSyncData records the mesh sync data
-func (l *DefaultLocalProvider) RecordMeshSyncData(obj model.Object) error {
-	result := l.GenericPersister.Create(&obj)
-	if result.Error != nil {
-		return result.Error
-	}
 
-	return nil
-}
 
 func (l *DefaultLocalProvider) ExtensionProxy(_ *http.Request) (*ExtensionProxyResponse, error) {
 	return nil, ErrLocalProviderSupport
@@ -1000,25 +988,6 @@ func (l *DefaultLocalProvider) DeleteConnection(_ *http.Request, _ uuid.UUID) (*
 
 func (l *DefaultLocalProvider) DeleteMesheryConnection() error {
 	return ErrLocalProviderSupport
-}
-
-// ReadMeshSyncData reads the mesh sync data
-func (l *DefaultLocalProvider) ReadMeshSyncData() ([]model.Object, error) {
-	objects := make([]model.Object, 0)
-	result := l.GenericPersister.
-		Preload("TypeMeta").
-		Preload("ObjectMeta").
-		Preload("ObjectMeta.Labels").
-		Preload("ObjectMeta.Annotations").
-		Preload("Spec").
-		Preload("Status").
-		Find(&objects)
-
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
-	return objects, nil
 }
 
 // GetGenericPersister - to return persister

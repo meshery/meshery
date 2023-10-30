@@ -16,7 +16,7 @@ module.exports = {
     'plugin:cypress/recommended',
     'next',
     'plugin:prettier/recommended',
-],
+  ],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
@@ -55,6 +55,6 @@ module.exports = {
       },
     ],
     'react/prop-types': 'off',
-    'prettier/prettier': 'warn',
+    'prettier/prettier': ['error', { endOfLine: 'lf' }],
   },
 };

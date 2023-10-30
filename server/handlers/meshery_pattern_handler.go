@@ -3,15 +3,15 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
-	"strings"
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/errors"
 	"github.com/layer5io/meshkit/models/events"
+	"io"
+	"net/http"
+	"strings"
 
 	pCore "github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/stages"
@@ -119,8 +119,8 @@ func (h *Handler) handlePatternPOST(
 			rw.WriteHeader(http.StatusBadRequest)
 			fmt.Fprintf(rw, "%s", err)
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": ErrSavePattern(err),
-		}).WithDescription("Pattern save failed, cytoJSON could be malformed.").Build()
+				"error": ErrSavePattern(err),
+			}).WithDescription("Pattern save failed, cytoJSON could be malformed.").Build()
 
 			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userID, event)
@@ -132,7 +132,7 @@ func (h *Handler) handlePatternPOST(
 			rw.WriteHeader(http.StatusInternalServerError)
 			fmt.Fprintf(rw, "%s", err)
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": ErrSavePattern(err),
+				"error": ErrSavePattern(err),
 			}).WithDescription(ErrSavePattern(err).Error()).Build()
 
 			_ = provider.PersistEvent(event)
@@ -145,7 +145,7 @@ func (h *Handler) handlePatternPOST(
 			h.log.Error(ErrSavePattern(err))
 			http.Error(rw, ErrSavePattern(err).Error(), http.StatusBadRequest)
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": ErrSavePattern(err),
+				"error": ErrSavePattern(err),
 			}).WithDescription("unable to get \"name\" from the pattern.").Build()
 
 			_ = provider.PersistEvent(event)
@@ -161,17 +161,19 @@ func (h *Handler) handlePatternPOST(
 				"path": "",
 				"type": "local",
 			},
+			CatalogData: parsedBody.PatternData.CatalogData,
 		}
 		if parsedBody.PatternData != nil {
 			mesheryPattern.ID = parsedBody.PatternData.ID
 		}
+
 		if parsedBody.Save {
 			resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
 			if err != nil {
 				h.log.Error(ErrSavePattern(err))
 				http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-				"error": ErrSavePattern(err),
+					"error": ErrSavePattern(err),
 				}).WithDescription(ErrSavePattern(err).Error()).Build()
 
 				_ = provider.PersistEvent(event)
@@ -179,7 +181,6 @@ func (h *Handler) handlePatternPOST(
 				return
 			}
 
-			
 			h.formatPatternOutput(rw, resp, format, &res, eventBuilder)
 			event := eventBuilder.Build()
 			_ = provider.PersistEvent(event)
@@ -199,7 +200,7 @@ func (h *Handler) handlePatternPOST(
 		}
 
 		h.formatPatternOutput(rw, byt, format, &res, eventBuilder)
-	
+
 		return
 	}
 	// If Content is not empty then assume it's a local upload
@@ -220,7 +221,7 @@ func (h *Handler) handlePatternPOST(
 				h.log.Error(ErrSavePattern(err))
 				http.Error(rw, ErrSavePattern(err).Error(), http.StatusBadRequest)
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-				"error": ErrSavePattern(err),
+					"error": ErrSavePattern(err),
 				}).WithDescription("unable to get \"name\" from the pattern.").Build()
 
 				_ = provider.PersistEvent(event)
@@ -247,9 +248,9 @@ func (h *Handler) handlePatternPOST(
 			if err != nil {
 				h.log.Error(ErrSavePattern(err))
 				http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
-				
+
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-				"error": ErrSavePattern(err),
+					"error": ErrSavePattern(err),
 				}).WithDescription(ErrSavePattern(err).Error()).Build()
 
 				_ = provider.PersistEvent(event)
@@ -288,7 +289,7 @@ func (h *Handler) handlePatternPOST(
 			h.log.Error(ErrImportPattern(err))
 			http.Error(rw, ErrImportPattern(err).Error(), http.StatusInternalServerError)
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": ErrImportPattern(err),
+				"error": ErrImportPattern(err),
 			}).WithDescription(ErrImportPattern(err).Error()).Build()
 
 			_ = provider.PersistEvent(event)
@@ -379,6 +380,10 @@ func (h *Handler) handlePatternPOST(
 // ```?page={page-number}``` Default page number is 1
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
+//
+// ```?visibility={[visibility]}``` Default visibility is public + private; Mulitple visibility filters can be passed as an array
+// Eg: ```?visibility=["public", "published"]``` will return public and published designs
+//
 // responses:
 //
 //	200: mesheryPatternsResponseWrapper
@@ -392,7 +397,28 @@ func (h *Handler) GetMesheryPatternsHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 	updateAfter := q.Get("updated_after")
-	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter)
+
+	err := r.ParseForm() // necessary to get r.Form["visibility"], i.e, ?visibility=public&visbility=private
+	if err != nil {
+		h.log.Error(ErrFetchPattern(err))
+		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
+		return
+	}
+	filter := struct {
+		Visibility []string `json:"visibility"`
+	}{}
+
+	visibility := q.Get("visibility")
+	if visibility != "" {
+		err := json.Unmarshal([]byte(visibility), &filter.Visibility)
+		if err != nil {
+			h.log.Error(ErrFetchPattern(err))
+			http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter, filter.Visibility)
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
@@ -730,9 +756,9 @@ func (h *Handler) formatPatternOutput(rw http.ResponseWriter, content []byte, fo
 			patternFile, err := pCore.NewPatternFile([]byte(content.PatternFile))
 			if err != nil {
 				http.Error(rw, ErrParsePattern(err).Error(), http.StatusBadRequest)
-				
+
 				eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-				"error": ErrParsePattern(err),
+					"error": ErrParsePattern(err),
 				}).WithDescription("Unable to parse pattern file, pattern could be malformed.").Build()
 				return
 			}

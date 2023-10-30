@@ -57,7 +57,7 @@ func New(opts Options) http.Handler {
 		}
 		return next(ctx)
 	}
-	
+
 	srv := handler.New(generated.NewExecutableSchema(config))
 
 	srv.AddTransport(transport.POST{})

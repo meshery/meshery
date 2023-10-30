@@ -5,6 +5,7 @@
 */.DS_Store
 assets/**
 .next
+package.json
 package-lock.json
 public
 node_modules
