@@ -299,6 +299,48 @@ The output of the code snippet would be:
       Thing 3
 ```
 
+In this example, **Group 1** is a ``parent`` section within the Table of Contents, and **Thing 1**, **Thing 2**, and **Thing 3** are ``children`` of **Group 1**. This is a direct hierarchy with a single level of children under the parent.
+
+``Grandchildren`` are added in the sidebars in the following manner:
+
+```
+    toc:
+  - title: Group 1
+    subfolderitems:
+      - page: Thing 1
+        url: /thing1.html
+        subfolderitems:
+          - page: Subthing 1.1
+            url: /subthing1_1.html
+          - page: Subthing 1.2
+            url: /subthing1_2.html
+      - page: Thing 2
+        url: /thing2.html
+      - page: Thing 3
+        url: /thing3.html
+```
+
+The output of the code snippet would be:
+
+```
+    Group 1
+      Thing 1
+       Subthing 1.1
+       Subthing 1.2
+      Thing 2
+      Thing 3
+```
+
+Here, **Subthing 1.1** and **Subthing 1.2** are the ``grandchildren`` of **Thing 1**.
+
+In `docs/_includes/sidebar.html` contains three levels of navigation hierarchy.
+
+- **Parent**: It serves as a top level category for related content.
+- **Children**: They are immediate subsections or topics that fall under the parent section. 
+- **Grandchildren**: They are nested under Thing 1 and provide a more detailed breakdown of information within the child section. Grandchildren are used to organize content further, offering a more detailed structure for a specific topic.
+
+These sections create a hierarchical and organized navigation experience for readers.
+
 ### Alerts
 
 {% include alert.html type="info" title="What is an alert?" content="An alert is a box that can stand out to indicate important information. You can choose from levels success, warning, danger, info, and primary. This example is an info box, and the code for another might look like this:" %}
