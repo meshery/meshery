@@ -1064,6 +1064,17 @@ class DashboardComponent extends React.Component {
                 {showClusterResources}
               </div>
             </Grid>
+            <Grid item xs={12} md={12}>
+              <DashboardMeshModelGraph classes={classes} />
+            </Grid>
+            <Grid item xs={12} md={12}>
+              <div className={classes.dashboardSection}>
+                <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+                  Resources
+                </Typography>
+                {showClusterResources}
+              </div>
+            </Grid>
 
             <Grid item xs={12}>
               <Grid container spacing={2}>
