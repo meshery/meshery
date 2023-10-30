@@ -6,7 +6,7 @@ Anyone can become a Meshery contributor simply by contributing to the project, w
 
 ## Contributors
 
-GitHub's organization members are people who have `triage` access to all repos in the organization. Community members who wish to become members of the organization should meet the following requirements, which are open to the discretion of the steering committee:
+GitHub organization members are people who have `triage` access to all repos in the organization. Community members who wish to become members of the organization should meet the following requirements, which are open to the discretion of the steering committee:
 
 ## GitHub Project Administration
 
@@ -25,11 +25,11 @@ The Meshery project consists of multiple repositories. Each repository is subjec
 
 ### Maintainers
 
-Maintainers have written access to repositories. The current maintainers of a repo can be found in [MAINTAINERS.md](./MAINTAINERS.md) file of the repo.
+Maintainers have write access to repositories. The current maintainers of a repo can be found in [MAINTAINERS.md](./MAINTAINERS.md) file of the repo.
 
 Maintainers are individuals that have demonstrated their dedication the betterment of the project and dedication to Maintainers are empowered to review, approve, merge, close issues and pull requests. Maintainers are empowered to make releases. These individuals are most experience with the given project (or specific repo) and are expected to lead its growth and improvement. Adding and removing maintainers for a given repo is the responsibility of the existing maintainer team for that repo and therefore does not require approval from the steering committee.
 
-This privilege is granted with some expectation of responsibility: maintainers are people who care about the Meshery project and want to help it grows and improve.
+This privilege is granted with some expectation of responsibility: maintainers are people who care about the Meshery project and want to help it grow and improve.
 A maintainer is not just someone who can make changes, but someone who has demonstrated his or her ability to collaborate with the community, support contributors, perform menial tasks - no task is beneath them as it pertains to the betterment of the project and its community. Maintainers uphold standards of process, code convention, architectural guiding principles, and treatment of contributors. Maintainers are the most knowledgeable individuals to review code, contribute high quality code, and follow through to fix issues (in code or tests).
 
 ### Maintainer Teams
