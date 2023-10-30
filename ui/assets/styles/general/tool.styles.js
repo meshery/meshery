@@ -21,7 +21,8 @@ const useStyles = makeStyles((theme) => ({
       theme.palette.type === 'dark'
         ? theme.palette.secondary.toolbarBg2
         : theme.palette.secondary.toolbarBg1,
-    padding: '5rem',
+    marginTop: '1rem',
+    padding: '6rem',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',

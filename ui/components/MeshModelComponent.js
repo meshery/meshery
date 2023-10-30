@@ -19,6 +19,7 @@ import { SORT } from '../constants/endpoints';
 import useStyles from '../assets/styles/general/tool.styles';
 import { Colors } from '../themes/app';
 import MesheryTreeView from './MesheryTreeView';
+// import { useGetMeshModelQuery } from '../rtk-query/meshModel';
 
 //TODO : This Should derive the indices of rendered rows
 // const ROWS_INDICES = {
@@ -70,7 +71,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
   // const [checked, setChecked] = useState(false);
   const StyleClass = useStyles();
   const [view, setView] = useState(OVERVIEW);
-  const [convert, setConvert] = useState(true);
+  const [convert, setConvert] = useState(false);
   const [show, setShow] = useState({
     model: {},
     components: [],
@@ -80,6 +81,10 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
   const [rela, setRela] = useState({});
   const [animate, setAnimate] = useState(false);
   const [regi, setRegi] = useState({});
+  // const modeldata = useGetMeshModelQuery({
+  //   page: 1,
+  //   pageSize: 10,
+  // });
 
   const getModels = async (page) => {
     try {
@@ -206,6 +211,16 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
 
   useEffect(() => {
     setRequestCancelled(false);
+
+    // if(view === MODELS){
+    //   getModels(page);
+    // } else if (view === COMPONENTS){
+    //   getComponents(page,sortOrder);
+    // } else if (view === RELATIONSHIPS){
+    //   getRelationships(page,sortOrder);
+    // } else if (view === REGISTRANTS){
+    //   getRegistrants(page);
+    // }
 
     if (view === MODELS && searchText === null) {
       getModels(page);
@@ -546,11 +561,6 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
     marginTop: '1rem',
   };
 
-  const customButtonDiv = {
-    display: 'flex',
-    alignItems: 'center',
-  };
-
   // const cardStyle = {
   //   background: '#51636B',
   //   color: 'white',
@@ -566,8 +576,8 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
 
   return (
     <div data-test="workloads">
-      <div className={StyleClass.toolWrapper} style={customInlineStyle}>
-        <div style={customButtonDiv}>
+      {!convert && (
+        <div className={StyleClass.toolWrapper} style={customInlineStyle}>
           {/* {view !== RELATIONSHIPS && (
             <FormControlLabel
               control={
@@ -582,23 +592,25 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
             />
           )} */}
           <Button
+            disabled
             variant="contained"
-            style={{ background: Colors.keppelGreen, color: 'white', marginRight: '1rem' }}
+            style={{ background: '#dddddd', color: 'white', marginRight: '1rem' }}
             size="large"
             startIcon={<UploadIcon />}
           >
             Import
           </Button>
           <Button
+            disabled
             variant="contained"
             size="large"
-            style={{ background: '#51636B', color: 'white' }}
+            style={{ background: '#dddddd', color: 'white' }}
             startIcon={<DoNotDisturbOnIcon />}
           >
             Ignore
           </Button>
         </div>
-      </div>
+      )}
       {/* <ResponsiveDataTable
         data={filteredData}
         columns={meshmodel_columns}
@@ -619,13 +631,11 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
           >
             <Paper
               elevation={3}
-              className={animate ? StyleClass.cardAnimateStyle : StyleClass.cardStyle}
+              className={StyleClass.cardStyle}
               onClick={() => {
                 setView(MODELS);
                 setAnimate(true);
-                setTimeout(() => {
-                  setConvert(false);
-                }, 1000);
+                setConvert(false);
               }}
             >
               <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>{modelsCount}</span>
@@ -633,13 +643,11 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
             </Paper>
             <Paper
               elevation={3}
-              className={animate ? StyleClass.cardAnimateStyle : StyleClass.cardStyle}
+              className={StyleClass.cardStyle}
               onClick={() => {
                 setView(COMPONENTS);
                 setAnimate(true);
-                setTimeout(() => {
-                  setConvert(false);
-                }, 1000);
+                setConvert(false);
               }}
             >
               <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>{componentsCount}</span>
@@ -647,13 +655,11 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
             </Paper>
             <Paper
               elevation={3}
-              className={animate ? StyleClass.cardAnimateStyle : StyleClass.cardStyle}
+              className={StyleClass.cardStyle}
               onClick={() => {
                 setView(RELATIONSHIPS);
                 setAnimate(true);
-                setTimeout(() => {
-                  setConvert(false);
-                }, 1000);
+                setConvert(false);
               }}
             >
               <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>{relationshipsCount}</span>
@@ -661,13 +667,11 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
             </Paper>
             <Paper
               elevation={3}
-              className={animate ? StyleClass.cardAnimateStyle : StyleClass.cardStyle}
+              className={StyleClass.cardStyle}
               onClick={() => {
                 setView(REGISTRANTS);
                 setAnimate(true);
-                setTimeout(() => {
-                  setConvert(false);
-                }, 1000);
+                setConvert(false);
               }}
             >
               <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>1</span>
@@ -713,9 +717,12 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                 marginRight: '1rem',
                 padding: view === MODELS ? '0.5rem 2rem' : '0.6rem 2rem',
               }}
-              onClick={() => setView(MODELS)}
+              onClick={() => {
+                setView(MODELS);
+                setSearchText(null);
+              }}
             >
-              Models({modelsCount})
+              Models ({modelsCount})
             </Button>
             <Button
               style={{
@@ -725,9 +732,12 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                 marginRight: '1rem',
                 padding: view === COMPONENTS ? '0.5rem 2rem' : '0.6rem 2rem',
               }}
-              onClick={() => setView(COMPONENTS)}
+              onClick={() => {
+                setView(COMPONENTS);
+                setSearchText(null);
+              }}
             >
-              Components({componentsCount})
+              Components ({componentsCount})
             </Button>
             <Button
               style={{
@@ -737,9 +747,12 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                 marginRight: '1rem',
                 padding: view === RELATIONSHIPS ? '0.5rem 2rem' : '0.6rem 2rem',
               }}
-              onClick={() => setView(RELATIONSHIPS)}
+              onClick={() => {
+                setView(RELATIONSHIPS);
+                setSearchText(null);
+              }}
             >
-              Relationships({relationshipsCount})
+              Relationships ({relationshipsCount})
             </Button>
             <Button
               style={{
@@ -749,9 +762,12 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                 marginRight: '1rem',
                 padding: view === REGISTRANTS ? '0.5rem 2rem' : '0.6rem 2rem',
               }}
-              onClick={() => setView(REGISTRANTS)}
+              onClick={() => {
+                setView(REGISTRANTS);
+                setSearchText(null);
+              }}
             >
-              Registrants(1)
+              Registrants (1)
             </Button>
           </div>
           <div className={StyleClass.treeWrapper}>
@@ -772,12 +788,18 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
             </div>
             <div
               className={
-                !show.model.displayName && !comp.displayName && !regi.hostname && !rela.kind
+                (view === MODELS && !show.model.displayName) ||
+                (view === COMPONENTS && !comp.displayName) ||
+                (view === RELATIONSHIPS && !rela.kind) ||
+                (view === REGISTRANTS && !regi.hostname)
                   ? StyleClass.emptyDetailsContainer
                   : StyleClass.detailsContainer
               }
             >
-              {!show.model.displayName && !comp.displayName && !regi.hostname && !rela.kind && (
+              {((view === MODELS && !show.model.displayName) ||
+                (view === COMPONENTS && !comp.displayName) ||
+                (view === RELATIONSHIPS && !rela.kind) ||
+                (view === REGISTRANTS && !regi.hostname)) && (
                 <p style={{ color: '#969696' }}>No {view} selected</p>
               )}
               {view === MODELS && (
@@ -829,7 +851,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                               fontWeight: '600',
                             }}
                           >
-                            Hostname
+                            Registrant
                           </p>
                           <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
                             {show.model.hostname}
@@ -1095,7 +1117,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                           fontWeight: '600',
                         }}
                       >
-                        Hostname
+                        Registrant
                       </p>
                       <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
                         {comp.displayhostname}
@@ -1130,7 +1152,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                     {rela.kind}
                   </p>
                   <p style={{ fontWeight: '600', margin: '0' }}>Description</p>
-                  <p style={{ margin: '0' }}>{rela.metadata?.description}</p>
+                  <p style={{ margin: '0', fontSize: '14px' }}>{rela.metadata?.description}</p>
                   <div
                     style={{
                       display: 'flex',
@@ -1181,7 +1203,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                           fontWeight: '600',
                         }}
                       >
-                        Hostname
+                        Registrant
                       </p>
                       <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
                         {rela.displayhostname}

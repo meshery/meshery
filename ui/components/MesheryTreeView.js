@@ -4,12 +4,13 @@ import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { Box, Typography, Button } from '@material-ui/core';
+import { Box, Typography, IconButton } from '@material-ui/core';
 import Checkbox from '@mui/material/Checkbox';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../constants/navigator';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
 import SearchBar from '../utils/custom-search';
+import ExpandAll from '../public/static/img/expand_all.svg';
 
 const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
   color: theme.palette.type === 'dark' ? 'white' : 'black',
@@ -77,7 +78,7 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
               size="small"
               checked={checked}
               sx={{
-                visibility: hover ? 'visible' : 'hidden',
+                visibility: hover || checked ? 'visible' : 'hidden',
                 color: '#00B39F',
                 '&.Mui-checked': {
                   color: '#00B39F',
@@ -118,17 +119,20 @@ const MesheryTreeView = ({ data, view, setShow, setComp, setRela, setRegi, setSe
           flexDirection: 'row',
           justifyContent: view === MODELS ? 'space-between' : 'flex-end',
           borderBottom: '1px solid #d2d3d4',
+          marginRight: '0.9rem',
         }}
       >
         {view === MODELS && (
           <div style={{ display: 'flex', flexDirection: 'row' }}>
-            <Button startIcon={<UnfoldMoreIcon />} onClick={expandAll}>
-              Expand All
-            </Button>
-            <div style={{ backgroundColor: '#d2d3d4', height: '33px', width: '1px' }}></div>
-            <Button startIcon={<UnfoldLessIcon />} onClick={() => setExpanded([])}>
-              Collapse All
-            </Button>
+            <IconButton onClick={expandAll} size="large">
+              <img src="static/img/expand_all.svg" />
+            </IconButton>
+            <div
+              style={{ backgroundColor: '#d2d3d4', height: '33px', width: '1px', margin: '0 2px' }}
+            ></div>
+            <IconButton onClick={() => setExpanded([])} size="large">
+              <img src="static/img/collapse_all.svg" />
+            </IconButton>
           </div>
         )}
         <div style={{ display: 'flex' }}>
@@ -140,12 +144,12 @@ const MesheryTreeView = ({ data, view, setShow, setComp, setRela, setRegi, setSe
           />
         </div>
       </div>
-      <div style={{ overflowY: 'scroll', height: '27rem' }}>
+      <div style={{ overflowY: 'auto', height: '27rem' }}>
         <TreeView
           aria-label="controlled"
           defaultExpanded={['3']}
-          defaultCollapseIcon={<ExpandMoreIcon />}
-          defaultExpandIcon={<ChevronRightIcon />}
+          defaultCollapseIcon={<img src="static/img/expand_more.svg" />}
+          defaultExpandIcon={<img src="static/img/chevron_right.svg" />}
           onNodeToggle={handleToggle}
           multiSelect
           expanded={expanded}
