@@ -24,7 +24,8 @@ jobs:
       - name: Run Document Generation
         run: |
             cd scripts/component_docs_generator
-      
+            go run main.go "https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub?gid=0&single=true&output=csv"
+            
       - name: Commit changes 
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
