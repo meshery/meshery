@@ -54,7 +54,7 @@ type CmdTestInput struct {
 	Name             string
 	Args             []string
 	ExpectedResponse string
-	Token string
+	Token            string
 }
 
 func TestViewCmd(t *testing.T) {
@@ -178,4 +178,3 @@ func TestSetCmd(t *testing.T) {
 // 	}
 // 	t.Log("Switch ChannelCmd Passed")
 // }
-

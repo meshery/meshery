@@ -1,7 +1,7 @@
 ---
 layout: past-results-layout
 title: Meshery-Nginx Past Results
-permalink: project/compatibility-matrix/meshery-nginx-sm-past-results
+permalink: installation/compatibility-matrix/meshery-nginx-sm-past-results
 description: a complete compatibility matrix and project test status dashboard.
 language: en
 display-title: "false"

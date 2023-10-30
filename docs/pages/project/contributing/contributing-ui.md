@@ -6,6 +6,7 @@ description: How to contribute to Meshery UI (web-based user interface).
 language: en
 type: project
 category: contributing
+list: include
 ---
 
 ## <a name="contributing-ui">UI Contribution Flow</a>

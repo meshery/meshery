@@ -6,6 +6,7 @@ description: How to contribute to Meshery Docs.
 language: en
 type: project
 category: contributing
+list: include
 ---
 
 Before contributing, please review the [Documentation Contribution Flow](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow). In the following steps you will set up your development environment, fork and clone the repository, run the site locally, and finally commit, sign-off, and push any changes made for review.
@@ -339,6 +340,51 @@ In `docs/_includes/sidebar.html` contains three levels of navigation hierarchy.
 - **Grandchildren**: They are nested under Thing 1 and provide a more detailed breakdown of information within the child section. Grandchildren are used to organize content further, offering a more detailed structure for a specific topic.
 
 These sections create a hierarchical and organized navigation experience for readers.
+
+### Alerts
+
+{% include alert.html type="info" title="What is an alert?" content="An alert is a box that can stand out to indicate important information. You can choose from levels success, warning, danger, info, and primary. This example is an info box, and the code for another might look like this:" %}
+
+```
+{%raw%}{% include alert.html type="info" title="Here is another!" %}{%endraw%}
+```
+
+Just for fun, here are all the types:
+
+{% include alert.html type="warning" content="This is a warning" %}
+{% include alert.html type="danger" content="This alerts danger!" %}
+{% include alert.html type="success" content="This alerts success" %}
+{% include alert.html type="info" content="This is useful information." %}
+{% include alert.html type="primary" content="This is a primary alert" %}
+{% include alert.html type="secondary" content="This is a secondary alert" %}
+
+
+### Alerts
+
+{% include alert.html type="info" title="What is an alert?" content="An alert is a box that can stand out to indicate important information. You can choose from levels success, warning, danger, info, and primary. This example is an info box, and the code for another might look like this:" %}
+
+```
+{%raw%}{% include alert.html type="info" title="Here is another!" %}{%endraw%}
+```
+
+Just for fun, here are all the types:
+
+{% include alert.html type="warning" content="This is a warning" %}
+{% include alert.html type="danger" content="This alerts danger!" %}
+{% include alert.html type="success" content="This alerts success" %}
+{% include alert.html type="info" content="This is useful information." %}
+{% include alert.html type="primary" content="This is a primary alert" %}
+{% include alert.html type="secondary" content="This is a secondary alert" %}
+
+
+### Quotes
+
+You can include block quotes to emphasize text. 
+
+> Here is an example. Isn't this much more prominent to the user?
+
+## Development
+
 
 ### Editable Intra-page Table of Contents Toolbar
 

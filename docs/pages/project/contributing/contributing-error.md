@@ -6,6 +6,7 @@ description: How to declare errors in Meshery components.
 language: en
 type: project
 category: contributing
+list: include
 ---
 
 Meshery pervasively uses MeshKit as a golang and service mesh management-specific library in all of its components. MeshKit helps populate error messages with a uniform and useful set of informative attributes.

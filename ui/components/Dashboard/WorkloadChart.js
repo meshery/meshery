@@ -104,7 +104,7 @@ export default function WorkloadChart({
             }}
           >
             <Typography style={{ fontSize: '1.5rem', marginBottom: '1rem' }} align="center">
-              No Worloads found in your clusters
+              No workloads found in your cluster(s).
             </Typography>
             <ConnectClustersBtn />
           </div>
