@@ -371,7 +371,7 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
     id: CONFIGURATION,
     icon: <ConfigurationIcon {...drawerIconsStyle} />,
     hovericon: <ConfigurationHover style={drawerIconsStyle} />,
-    href: '/configuration/applications',
+    href: '/configuration/designs',
     title: 'Configuration',
     show: capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION]),
     link: true,

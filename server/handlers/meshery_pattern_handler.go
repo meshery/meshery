@@ -392,7 +392,7 @@ func (h *Handler) handlePatternPOST(
 
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 					"error": importErr,
-				}).WithDescription(fmt.Sprintf("Failed importing application from URL %s.", parsedBody.URL)).Build()
+				}).WithDescription(fmt.Sprintf("Failed importing design from URL %s.", parsedBody.URL)).Build()
 				_ = provider.PersistEvent(event)
 
 				go h.config.EventBroadcaster.Publish(userID, event)
@@ -406,7 +406,7 @@ func (h *Handler) handlePatternPOST(
 				http.Error(rw, "error read body", http.StatusInternalServerError)
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 					"error": ErrSaveApplication(err),
-				}).WithDescription(fmt.Sprintf("error reading application from the remote URL %s, URL is malformed or not reachable.", parsedBody.URL)).Build()
+				}).WithDescription(fmt.Sprintf("error reading design from the remote URL %s, URL is malformed or not reachable.", parsedBody.URL)).Build()
 
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
@@ -529,7 +529,7 @@ func (h *Handler) handlePatternPOST(
 
 					event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 						"error": err,
-					}).WithDescription(fmt.Sprintf("Failed to retrieve remote application at %s", parsedBody.URL)).Build()
+					}).WithDescription(fmt.Sprintf("Failed to retrieve remote design at %s", parsedBody.URL)).Build()
 
 					_ = provider.PersistEvent(event)
 					go h.config.EventBroadcaster.Publish(userID, event)
@@ -548,7 +548,7 @@ func (h *Handler) handlePatternPOST(
 
 					event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 						"error": err,
-					}).WithDescription(fmt.Sprintf("Failed to retrieve remote application at %s", parsedBody.URL)).Build()
+					}).WithDescription(fmt.Sprintf("Failed to retrieve remote design at %s", parsedBody.URL)).Build()
 					_ = provider.PersistEvent(event)
 					go h.config.EventBroadcaster.Publish(userID, event)
 					addMeshkitErr(&res, err) //error guaranteed to be meshkit error
@@ -598,7 +598,7 @@ func (h *Handler) handlePatternPOST(
 
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 					"error": saveErr,
-				}).WithDescription(fmt.Sprintf("Failed persisting application %s", parsedBody.Name)).Build()
+				}).WithDescription(fmt.Sprintf("Failed persisting design %s", parsedBody.Name)).Build()
 
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
@@ -617,7 +617,7 @@ func (h *Handler) handlePatternPOST(
 			var mesheryPatternContent []models.MesheryPattern
 			err = json.Unmarshal(resp, &mesheryPatternContent)
 			if err != nil {
-				obj := "application"
+				obj := "pattern"
 				h.log.Error(models.ErrEncoding(err, obj))
 				http.Error(rw, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 				return
@@ -634,7 +634,7 @@ func (h *Handler) handlePatternPOST(
 
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 					"error": uploadSourceContentErr,
-				}).WithDescription("Failed uploading original application content to remote provider.").Build()
+				}).WithDescription("Failed uploading original design content to remote provider.").Build()
 
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
@@ -644,13 +644,13 @@ func (h *Handler) handlePatternPOST(
 			}
 			go h.config.ApplicationChannel.Publish(userID, struct{}{})
 			eb := eventBuilder
-			_ = provider.PersistEvent(eb.WithDescription(fmt.Sprintf("Application %s  Source content uploaded", mesheryPatternContent[0].Name)).Build())
+			_ = provider.PersistEvent(eb.WithDescription(fmt.Sprintf("Design %s  Source content uploaded", mesheryPatternContent[0].Name)).Build())
 		}
 
 		mesheryPattern.ID = savedPatternID
 		byt, err := json.Marshal([]models.MesheryPattern{*mesheryPattern})
 		if err != nil {
-			obj := "application"
+			obj := "design"
 			h.log.Error(models.ErrEncoding(err, obj))
 			http.Error(rw, models.ErrEncoding(err, obj).Error(), http.StatusInternalServerError)
 			return
@@ -1267,7 +1267,7 @@ func (h *Handler) handlePatternUpdate(
 		_ = r.Body.Close()
 	}()
 	userID := uuid.FromStringOrNil(user.ID)
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("application").WithAction("update").ActedUpon(userID)
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("update").ActedUpon(userID)
 
 	res := meshes.EventsResponse{
 		Component:     "core",
@@ -1283,7 +1283,7 @@ func (h *Handler) handlePatternUpdate(
 
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": ErrSaveApplication(fmt.Errorf("missing route variable \"source-type\" (one of %s, %s, %s)", models.K8sManifest, models.DockerCompose, models.HelmChart)),
-		}).WithDescription("Please provide application source-type").Build()
+		}).WithDescription("Please provide design source-type").Build()
 
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
@@ -1326,7 +1326,7 @@ func (h *Handler) handlePatternUpdate(
 
 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 				"error": errAppSave,
-			}).WithDescription(fmt.Sprintf("Error saving application %s", parsedBody.PatternData.Name)).Build()
+			}).WithDescription(fmt.Sprintf("Error saving design %s", parsedBody.PatternData.Name)).Build()
 
 			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userID, event)
@@ -1380,7 +1380,7 @@ func (h *Handler) handlePatternUpdate(
 
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 					"error": errAppSave,
-				}).WithDescription(fmt.Sprintf("Error saving application %s", parsedBody.PatternData.Name)).Build()
+				}).WithDescription(fmt.Sprintf("Error saving design %s", parsedBody.PatternData.Name)).Build()
 
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
@@ -1426,7 +1426,7 @@ func (h *Handler) handlePatternUpdate(
 
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": errAppSave,
-		}).WithDescription(fmt.Sprintf("Error saving application %s", parsedBody.PatternData.Name)).Build()
+		}).WithDescription(fmt.Sprintf("Error saving design %s", parsedBody.PatternData.Name)).Build()
 
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
