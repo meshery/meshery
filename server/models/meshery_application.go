@@ -15,27 +15,22 @@ type ApplicationTypeResponse struct {
 	SupportedExtensions []string        `json:"supported_extensions"`
 }
 
-func GetApplicationTypes() (r []ApplicationTypeResponse) {
-	r = append(r, ApplicationTypeResponse{
+func GetApplicationTypes() (r []DesignTypeResponse) {
+	r = append(r, DesignTypeResponse{
 		Type:                HelmChart,
 		SupportedExtensions: []string{".tgz"},
 	},
-		ApplicationTypeResponse{
+		DesignTypeResponse{
 			Type:                DockerCompose,
 			SupportedExtensions: []string{".yaml", ".yml"},
 		},
-		ApplicationTypeResponse{
+		DesignTypeResponse{
 			Type:                K8sManifest,
 			SupportedExtensions: []string{".yaml", ".yml"},
 		})
 	return
 }
 
-const (
-	HelmChart     ApplicationType = "Helm Chart"
-	DockerCompose ApplicationType = "Docker Compose"
-	K8sManifest   ApplicationType = "Kubernetes Manifest"
-)
 
 // MesheryApplication represents the applications that needs to be saved
 type MesheryApplication struct {

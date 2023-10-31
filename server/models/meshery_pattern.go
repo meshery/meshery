@@ -3,12 +3,48 @@ package models
 import (
 	"time"
 
+	"database/sql"
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/internal/sql"
+	isql "github.com/layer5io/meshery/server/internal/sql"
 	"gopkg.in/yaml.v2"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+)
+
+type DesignType string
+
+type DesignTypeResponse struct {
+	Type                DesignType `json:"design_type"`
+	SupportedExtensions []string        `json:"supported_extensions"`
+}
+
+
+func GetDesignsTypes() (r []DesignTypeResponse) {
+	r = append(r, DesignTypeResponse{
+		Type:                HelmChart,
+		SupportedExtensions: []string{".tgz"},
+	},
+		DesignTypeResponse{
+			Type:                DockerCompose,
+			SupportedExtensions: []string{".yaml", ".yml"},
+		},
+		DesignTypeResponse{
+			Type:                K8sManifest,
+			SupportedExtensions: []string{".yaml", ".yml"},
+		},
+		DesignTypeResponse{
+			Type:                Design,
+			SupportedExtensions: []string{".yaml", ".yml"},
+		})
+	return
+}
+
+const (
+	HelmChart     DesignType = "Helm Chart"
+	DockerCompose DesignType = "Docker Compose"
+	K8sManifest   DesignType = "Kubernetes Manifest"
+	Design       DesignType = "Design"
 )
 
 // reason for adding this constucts is because these has been removed in latest client-go
@@ -56,9 +92,11 @@ type MesheryPattern struct {
 	// but the remote provider is allowed to provide one
 	UserID *string `json:"user_id"`
 
-	Location    sql.Map `json:"location"`
+	Location    isql.Map `json:"location"`
 	Visibility  string  `json:"visibility"`
-	CatalogData sql.Map `json:"catalog_data,omitempty"`
+	CatalogData isql.Map `json:"catalog_data,omitempty"`
+	Type          sql.NullString `json:"type"`
+	SourceContent []byte         `json:"source_content"`
 
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
@@ -68,7 +106,7 @@ type MesheryPattern struct {
 // that PublishCatalogPattern would receive
 type MesheryCatalogPatternRequestBody struct {
 	ID          uuid.UUID `json:"id,omitempty"`
-	CatalogData sql.Map   `json:"catalog_data,omitempty"`
+	CatalogData isql.Map   `json:"catalog_data,omitempty"`
 }
 
 // MesheryCatalogPatternRequestBody refers to the type of request body
