@@ -607,7 +607,7 @@ func (h *Handler) handlePatternPOST(
 				return
 			}
 
-			h.formatApplicationOutput(rw, resp, format, &res, eventBuilder)
+			h.formatPatternOutput(rw, resp, format, &res, eventBuilder)
 
 			eventBuilder.WithSeverity(events.Informational)
 			event := eventBuilder.Build()
@@ -656,7 +656,7 @@ func (h *Handler) handlePatternPOST(
 			return
 		}
 
-		h.formatApplicationOutput(rw, byt, format, &res, eventBuilder)
+		h.formatPatternOutput(rw, byt, format, &res, eventBuilder)
 
 		event := eventBuilder.Build()
 		_ = provider.PersistEvent(event)
@@ -1392,7 +1392,7 @@ func (h *Handler) handlePatternUpdate(
 			eventBuilder.WithSeverity(events.Informational)
 
 			go h.config.ApplicationChannel.Publish(userID, struct{}{})
-			h.formatApplicationOutput(rw, resp, format, &res, eventBuilder)
+			h.formatPatternOutput(rw, resp, format, &res, eventBuilder)
 			event := eventBuilder.Build()
 			// go h.config.EventBroadcaster.Publish(userID, event)
 			_ = provider.PersistEvent(event)
@@ -1407,7 +1407,7 @@ func (h *Handler) handlePatternUpdate(
 			return
 		}
 
-		h.formatApplicationOutput(rw, byt, format, &res, eventBuilder)
+		h.formatPatternOutput(rw, byt, format, &res, eventBuilder)
 		return
 	}
 	mesheryPattern := parsedBody.PatternData
@@ -1437,7 +1437,7 @@ func (h *Handler) handlePatternUpdate(
 	go h.config.ApplicationChannel.Publish(userID, struct{}{})
 
 	eventBuilder.WithSeverity(events.Informational)
-	h.formatApplicationOutput(rw, resp, format, &res, eventBuilder)
+	h.formatPatternOutput(rw, resp, format, &res, eventBuilder)
 	event := eventBuilder.Build()
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userID, event)
