@@ -11,8 +11,6 @@ replace (
 	k8s.io/kubectl => k8s.io/kubectl v0.28.3
 )
 
-replace github.com/layer5io/meshkit => /Users/pranavsingh/Documents/OS/External/meshkit
-
 require (
 	cuelang.org/go v0.6.0
 	fortio.org/fortio v1.57.5
@@ -38,7 +36,7 @@ require (
 	github.com/jinzhu/copier v0.3.5
 	github.com/layer5io/gowrk2 v0.6.1
 	github.com/layer5io/meshery-operator v0.6.15
-	github.com/layer5io/meshkit v0.6.75
+	github.com/layer5io/meshkit v0.6.79
 	github.com/layer5io/meshsync v0.6.22
 	github.com/layer5io/nighthawk-go v1.0.3
 	github.com/layer5io/service-mesh-performance v0.3.4
