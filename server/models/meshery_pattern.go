@@ -32,6 +32,10 @@ func GetDesignsTypes() (r []DesignTypeResponse) {
 		DesignTypeResponse{
 			Type:                K8sManifest,
 			SupportedExtensions: []string{".yaml", ".yml"},
+		},
+		DesignTypeResponse{
+			Type:                Design,
+			SupportedExtensions: []string{".yaml", ".yml"},
 		})
 	return
 }
