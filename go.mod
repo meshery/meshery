@@ -13,7 +13,7 @@ replace (
 
 require (
 	cuelang.org/go v0.6.0
-	fortio.org/fortio v1.57.5
+	fortio.org/fortio v1.60.3
 	github.com/99designs/gqlgen v0.17.39
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/briandowns/spinner v1.23.0
@@ -82,10 +82,10 @@ require (
 
 require (
 	dario.cat/mergo v1.0.0 // indirect
-	fortio.org/dflag v1.5.3 // indirect
-	fortio.org/log v1.9.3 // indirect
+	fortio.org/dflag v1.6.0 // indirect
+	fortio.org/log v1.11.0 // indirect
 	fortio.org/sets v1.0.3 // indirect
-	fortio.org/version v1.0.2 // indirect
+	fortio.org/version v1.0.3 // indirect
 	github.com/AdaLogics/go-fuzz-headers v0.0.0-20230811130428-ced1acdcaa24 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 // indirect
 	github.com/BurntSushi/toml v1.3.2 // indirect
@@ -259,7 +259,7 @@ require (
 	go.starlark.net v0.0.0-20230814145427-12f4cb8177e4 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/crypto v0.14.0 // indirect
-	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
+	golang.org/x/exp v0.0.0-20231006140011-7918f672742d // indirect
 	golang.org/x/mod v0.13.0 // indirect
 	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/sync v0.4.0 // indirect
@@ -268,7 +268,7 @@ require (
 	golang.org/x/time v0.3.0 // indirect
 	golang.org/x/tools v0.14.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20230920204549-e6e6cdab5c13 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20231009173412-8bfb1ae86b6c // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
