@@ -931,8 +931,8 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                   {show.components.length !== 0 && (
                     <div>
                       <hr style={{ marginTop: '1rem' }} />
-                      {show.components.map((component) => (
-                        <div>
+                      {show.components.map((component, index) => (
+                        <div key={index}>
                           <p
                             style={{
                               fontSize: '20px',
@@ -993,8 +993,8 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                   {show.relationships.length !== 0 && (
                     <div>
                       <hr style={{ marginTop: '1rem' }} />
-                      {show.relationships.map((rela) => (
-                        <div>
+                      {show.relationships.map((rela, index) => (
+                        <div key={index}>
                           <p
                             style={{
                               fontSize: '20px',
@@ -1113,10 +1113,6 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                       <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>{comp.kind}</p>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
-                      <p style={{ padding: '0', margin: '0', fontSize: '16px', fontWeight: '600' }}>
-                        Sub Category
-                      </p>
-                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>{comp.kind}</p>
                       <p
                         style={{
                           padding: '0',
