@@ -4,10 +4,11 @@ import {
   FormGroup,
   TextField,
   InputAdornment,
-  Chip,
   Tooltip,
   makeStyles,
   Checkbox,
+  Grid,
+  Divider,
 } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { useRef } from 'react';
@@ -18,6 +19,10 @@ import { promisifiedDataFetch } from '../lib/data-fetch';
 import { updateProgress } from '../lib/store';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
+import { CONNECTION_STATES } from '../utils/Enum';
+import { ConnectionChip } from './ConnectionChip';
+import useKubernetesHook from './hooks/useKubernetesHook';
+import { K8sEmptyState } from './EmptyState/K8sContextEmptyState';
 
 // const _contexts = {
 //   inserted_contexts: [
@@ -109,6 +114,13 @@ const styles = makeStyles((theme) => ({
     width: theme.spacing(2.5),
     marginLeft: theme.spacing(0.5),
   },
+  chip: {
+    height: '50px',
+    fontSize: '15px',
+    position: 'relative',
+    top: theme.spacing(0.5),
+    [theme.breakpoints.down('md')]: { fontSize: '12px' },
+  },
 }));
 // Add links to docs
 const MesherySettingsEnvButtons = () => {
@@ -121,13 +133,8 @@ const MesherySettingsEnvButtons = () => {
 
   const handleConfigSnackbars = (ctxs) => {
     updateProgress({ showProgress: false });
-    for (let ctx of ctxs.updated_contexts) {
-      const msg = `Cluster ${ctx.name} at ${ctx.server} already exists`;
-      notify({ message: msg, event_type: EVENT_TYPES.INFO });
-    }
-
     for (let ctx of ctxs.errored_contexts) {
-      const msg = `Failed to add cluster ${ctx.name} at ${ctx.server}`;
+      const msg = `Failed to add cluster "${ctx.name}" at ${ctx.server}`;
       notify({ message: msg, event_type: EVENT_TYPES.ERROR, details: ctx.error.toString() });
     }
   };
@@ -153,6 +160,7 @@ const MesherySettingsEnvButtons = () => {
       formData = formdata;
     }
   };
+
   const uploadK8SConfig = async () => {
     return await promisifiedDataFetch('/api/system/kubernetes', {
       method: 'POST',
@@ -162,21 +170,16 @@ const MesherySettingsEnvButtons = () => {
 
   const handleChangeConnectionStatus = async () => {
     const body = {};
-    const contextsToIgnore = contextsRef.current.inserted_contexts.filter((context) => {
-      if (!contextsRef.current.contextsToRegister.includes(context.connection_id)) {
-        return context.connection_id;
+    contextsRef.current.contextsToConnect.forEach((id) => {
+      body[id] = CONNECTION_STATES.CONNECTED;
+    });
+
+    contextsRef.current.registered_contexts.map((context) => {
+      if (!contextsRef.current.contextsToConnect.includes(context.connection_id)) {
+        body[context.connection_id] = CONNECTION_STATES.IGNORED;
       }
     });
 
-    contextsRef.current.contextsToRegister.forEach((id) => {
-      body[id] = 'CONNECTED';
-    });
-
-    contextsToIgnore.forEach((id) => {
-      body[id] = 'IGNORED';
-    });
-
-    console.log('BODY: ', body);
     return await promisifiedDataFetch('/api/integrations/connections/kubernetes/status', {
       method: 'PUT',
       body: JSON.stringify(body),
@@ -185,28 +188,28 @@ const MesherySettingsEnvButtons = () => {
 
   const showUploadedContexts = async () => {
     const modal = ref.current;
-    console.log('ppp:8888 ', contextsRef.current);
-    const alreadyAddedContexts = contextsRef.current.updated_contexts.map((context) => context);
+    const registeredContexts = contextsRef.current.registered_contexts;
+    const connectedContexts = contextsRef.current.connected_contexts;
+    const ignoredContexts = contextsRef.current.ignored_contexts;
+
     let response = await modal.show({
       title: 'Select one or more contexts to manage',
       subtitle: (
         <>
           <ShowDiscoveredContexts
-            insertedContexts={contextsRef.current.inserted_contexts}
-            contextsRef={contextsRef}
-            alreadyAddedContexts={alreadyAddedContexts}
+            registeredContexts={registeredContexts}
+            connectedContexts={connectedContexts}
+            ignoredContexts={ignoredContexts}
+            allContextsRef={contextsRef}
           />
         </>
       ),
       options: ['REGISTER', 'CANCEL'],
     });
 
-    console.log('response: ', response, contextsRef.current);
-
     if (response === 'REGISTER') {
-      console.log('response: ', contextsRef.current);
       handleChangeConnectionStatus().then((res) => {
-        console.log('result: ', res);
+        console.log(res);
       });
     }
   };
@@ -274,7 +277,6 @@ const MesherySettingsEnvButtons = () => {
         .then((obj) => {
           contextsRef.current = obj;
           showUploadedContexts();
-          console.log('obj line 136: ', obj);
           handleConfigSnackbars(obj);
         })
         .catch((err) => {
@@ -315,19 +317,20 @@ const MesherySettingsEnvButtons = () => {
   );
 };
 
-const ShowDiscoveredContexts = ({ insertedContexts, contextsRef, alreadyAddedContexts }) => {
-  const classes = styles();
+const ShowDiscoveredContexts = ({
+  registeredContexts,
+  connectedContexts,
+  ignoredContexts,
+  allContextsRef,
+}) => {
   const [contextsToUpdate, setContextsToUpdate] = useState([]);
+  const ping = useKubernetesHook();
 
   useEffect(() => {
-    contextsRef.current = { ...contextsRef.current, contextsToRegister: contextsToUpdate };
-    console.log('ppp', contextsToUpdate);
+    allContextsRef.current = { ...allContextsRef.current, contextsToConnect: contextsToUpdate };
   }, [contextsToUpdate]);
 
-  const { notify } = useNotification();
-
   const setContextViewer = (id) => {
-    console.log('ppp.......lll,l,', id);
     if (contextsToUpdate?.includes(id)) {
       const filteredContexts = contextsToUpdate.filter((cid) => cid !== id);
       setContextsToUpdate(filteredContexts);
@@ -335,12 +338,81 @@ const ShowDiscoveredContexts = ({ insertedContexts, contextsRef, alreadyAddedCon
       setContextsToUpdate([...contextsToUpdate, id]);
     }
   };
-  return insertedContexts.length === 0 && alreadyAddedContexts.length == 0 ? ( // Since user cannot chage statius should we show this msg only when no new contexts are found or only show when no new and already context found.
-    <Typography variant="subtitle1">No Context found</Typography>
+  return registeredContexts.length === 0 &&
+    connectedContexts.length == 0 &&
+    ignoredContexts.length == 0 ? (
+    // Since user cannot chage status should we show this msg only when no new contexts are found or only show when no new and already context found.
+    <K8sEmptyState />
   ) : (
+    <Grid
+      direction="column"
+      justifyContent="center"
+      alignItems="center"
+      container
+      spacing={2}
+      columns={1}
+    >
+      {registeredContexts.length > 0 && (
+        <Grid item xs={8}>
+          <K8sConnectionItems
+            contexts={registeredContexts}
+            setContextViewer={setContextViewer}
+            ping={ping}
+            contextsToUpdate={contextsToUpdate}
+            title="Registered Contexts"
+          />
+        </Grid>
+      )}
+      {connectedContexts.length > 0 && (
+        <>
+          <Divider variant="middle" />
+          <Grid item xs={8}>
+            <K8sConnectionItems
+              contexts={connectedContexts}
+              setContextViewer={setContextViewer}
+              ping={ping}
+              contextsToUpdate={contextsToUpdate}
+              disableSelection
+              title="Connected Contexts"
+            />
+          </Grid>
+        </>
+      )}
+      {ignoredContexts.length > 0 && (
+        <>
+          <Divider variant="middle" />
+          <Grid item xs={8}>
+            <K8sConnectionItems
+              contexts={ignoredContexts}
+              setContextViewer={setContextViewer}
+              ping={ping}
+              contextsToUpdate={contextsToUpdate}
+              disableSelection
+              title="Ignored Contexts"
+            />
+          </Grid>
+        </>
+      )}
+    </Grid>
+  );
+};
+
+const K8sConnectionItems = ({
+  title,
+  contexts,
+  setContextViewer,
+  ping,
+  contextsToUpdate,
+  disableSelection,
+}) => {
+  const classes = styles();
+  return (
     <>
-      {alreadyAddedContexts.map((context) => (
-        <div id={context.connection_id} key={context.connection_id}>
+      <Typography variant="subtitle" className="">
+        {title}
+      </Typography>
+      {contexts.map((context) => (
+        <div id={context.connection_id} key={context.connection_id} className={classes.chip}>
           <Tooltip title={`Server: ${context.server}`}>
             <div
               style={{
@@ -349,50 +421,21 @@ const ShowDiscoveredContexts = ({ insertedContexts, contextsRef, alreadyAddedCon
                 alignItems: 'center',
               }}
             >
-              <Checkbox
-                checked={
-                  true //add support for selecting all
-                }
-                onChange={() =>
-                  notify({
-                    message: 'Connection state cannot be changed during on going process',
-                    event_type: EVENT_TYPES.INFO,
-                  })
-                }
-                color="primary"
-              />
-              <Chip
-                label={context.name}
-                onClick={() => console.log('line 103: ', context)}
+              {!disableSelection && (
+                <Checkbox
+                  checked={
+                    contextsToUpdate?.includes(context.connection_id) //add support for selecting all
+                  }
+                  onChange={() => setContextViewer(context.connection_id)}
+                  color="primary"
+                />
+              )}
+              <ConnectionChip
+                title={context.name}
+                handlePing={() => {
+                  ping(context.name, context.server, context.connection_id);
+                }}
                 icon={<img src="/static/img/kubernetes.svg" className={classes.ctxIcon} />}
-                variant="outlined"
-              />
-            </div>
-          </Tooltip>
-        </div>
-      ))}
-      {insertedContexts.map((context) => (
-        <div id={context.connection_id} key={context.connection_id}>
-          <Tooltip title={`Server: ${context.server}`}>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'flex-wrap',
-                alignItems: 'center',
-              }}
-            >
-              <Checkbox
-                checked={
-                  contextsToUpdate?.includes(context.connection_id) //add support for selecting all
-                }
-                onChange={() => setContextViewer(context.connection_id)}
-                color="primary"
-              />
-              <Chip
-                label={context.name}
-                onClick={() => console.log('line 117: ', context)}
-                icon={<img src="/static/img/kubernetes.svg" className={classes.ctxIcon} />}
-                variant="outlined"
               />
             </div>
           </Tooltip>
@@ -401,5 +444,4 @@ const ShowDiscoveredContexts = ({ insertedContexts, contextsRef, alreadyAddedCon
     </>
   );
 };
-
 export default MesherySettingsEnvButtons;

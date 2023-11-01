@@ -698,6 +698,7 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 		q.Set("order", order)
 	}
 
+	q.Set("status", string(CONNECTED))
 	if !withCredentials {
 		q.Set("with_credentials", "false")
 	}
@@ -778,8 +779,14 @@ func (l *RemoteProvider) DeleteK8sContext(token, id string) (K8sContext, error) 
 	}
 
 	if resp.StatusCode == http.StatusOK {
+		defer func() {
+			_ = resp.Body.Close()
+		}()
+		
+		deletedContext := K8sContext{}
+		_ = json.NewDecoder(resp.Body).Decode(&deletedContext)
 		logrus.Infof("kubernetes successfully deleted from remote provider")
-		return K8sContext{}, nil
+		return deletedContext, nil
 	}
 	logrus.Errorf("error while deleting kubernetes contexts")
 	return K8sContext{}, fmt.Errorf("error while deleting kubernetes context - Status code: %d", resp.StatusCode)

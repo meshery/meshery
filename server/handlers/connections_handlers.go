@@ -211,17 +211,18 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
-
+	var statusCode int 
 	for id, status := range *connectionStatusPayload {
 		eventBuilder.ActedUpon(id)
-		updatedConnection, statusCode, err := provider.UpdateConnectionStatusByID(req, id, status)
+		var updatedConnection *models.Connection
+		var err error
+		updatedConnection, statusCode, err = provider.UpdateConnectionStatusByID(req, id, status)
 		fmt.Println("tetete_", updatedConnection)
 		if err != nil {
 			eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)).WithMetadata(map[string]interface{}{
 				"error": err,
 			})
 			// Get the connection name as id doesn't convey much to the user.
-			http.Error(w, err.Error(), statusCode)
 		} else {
 			eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Connection \"%s\" status updated to %s for %s", updatedConnection.Name, status, id))
 			go h.config.K8scontextChannel.PublishContext()
@@ -231,6 +232,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
 	}
+	w.WriteHeader(statusCode)
 }
 
 // swagger:route PUT /api/integrations/connections/{connectionKind} PutConnection idPutConnection

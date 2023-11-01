@@ -33,8 +33,9 @@ import (
 
 // SaveK8sContextResponse - struct used as (json marshaled) response to requests for saving k8s contexts
 type SaveK8sContextResponse struct {
-	InsertedContexts []models.K8sContext `json:"inserted_contexts"`
-	UpdatedContexts  []models.K8sContext `json:"updated_contexts"`
+	RegisteredContexts []models.K8sContext `json:"registered_contexts"`
+	ConnectedContexts  []models.K8sContext `json:"connected_contexts"`
+	IgnoredContexts  []models.K8sContext `json:"ignored_contexts"`
 	ErroredContexts  []models.K8sContext `json:"errored_contexts"`
 }
 
@@ -61,6 +62,9 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, pre
 // responses:
 // 	200: k8sConfigRespWrapper
 
+// The function is called only when user uploads a kube config. 
+// Connections which have state as "registered" are the only new ones, hence the GraphQL K8sContext subscription only sends an update to UI if any connection has registered state.
+// A registered connection might have been regsitered previously and is not required for K8sContext Subscription to notify, but this case is not considered here.
 func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
 	userID := uuid.FromStringOrNil(user.ID)
 
@@ -86,8 +90,9 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	}
 
 	saveK8sContextResponse := SaveK8sContextResponse{
-		InsertedContexts: make([]models.K8sContext, 0),
-		UpdatedContexts:  make([]models.K8sContext, 0),
+		RegisteredContexts: make([]models.K8sContext, 0),
+		ConnectedContexts:  make([]models.K8sContext, 0),
+		IgnoredContexts: make([]models.K8sContext, 0),
 		ErroredContexts:  make([]models.K8sContext, 0),
 	}
 
@@ -97,33 +102,35 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	for _, ctx := range contexts {
 		connection, err := provider.SaveK8sContext(token, *ctx) // Ignore errors
 		if err != nil {
-			eventBuilder.ActedUpon(connection.ID)
-			if err == models.ErrContextAlreadyPersisted {
-				ctx.ConnectionID = connection.ID.String()
-				saveK8sContextResponse.UpdatedContexts = append(saveK8sContextResponse.UpdatedContexts, *ctx)
-
-				eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Connection already exist with Kubernetes context %s at %s", ctx.Name, ctx.Server))
-			} else {
-				saveK8sContextResponse.ErroredContexts = append(saveK8sContextResponse.ErroredContexts, *ctx)
-
-				eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Error creating connection for Kubernetes context %s", ctx.Name)).WithMetadata(map[string]interface{}{
-					"error": err,
-				})
-			}
+			saveK8sContextResponse.ErroredContexts = append(saveK8sContextResponse.ErroredContexts, *ctx)
+			
+			eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Error creating connection for Kubernetes context \"%s\"", ctx.Name)).WithMetadata(map[string]interface{}{
+				"error": err,
+			})
 		} else {
+			eventBuilder.ActedUpon(connection.ID)
 			ctx.ConnectionID = connection.ID.String()
-			saveK8sContextResponse.InsertedContexts = append(saveK8sContextResponse.InsertedContexts, *ctx)
-			eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Connection established with Kubernetes context %s at %s", ctx.Name, ctx.Server))
+			
+			status := connection.Status
+			
+			if status == models.CONNECTED {
+				saveK8sContextResponse.ConnectedContexts = append(saveK8sContextResponse.ConnectedContexts, *ctx)
+				eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Connection already exists with Kubernetes context \"%s\" at %s", ctx.Name, ctx.Server))
+			} else if status == models.IGNORED {
+				saveK8sContextResponse.IgnoredContexts = append(saveK8sContextResponse.IgnoredContexts, *ctx)
+				eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Kubernetes context \"%s\" is set to ignored state.", ctx.Name))
+			} else if status == models.REGISTERED {
+				saveK8sContextResponse.RegisteredContexts = append(saveK8sContextResponse.RegisteredContexts, *ctx)
+				eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Connection registered with kubernetes context \"%s\" at %s.", ctx.Name, ctx.Server))
+				h.config.K8scontextChannel.PublishContext()
+			}			
 		}
 
 		event := eventBuilder.Build()
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
-
 	}
-	if len(saveK8sContextResponse.InsertedContexts) > 0 || len(saveK8sContextResponse.UpdatedContexts) > 0 {
-		h.config.K8scontextChannel.PublishContext()
-	}
+	
 	if err := json.NewEncoder(w).Encode(saveK8sContextResponse); err != nil {
 		logrus.Error(models.ErrMarshal(err, "kubeconfig"))
 		http.Error(w, models.ErrMarshal(err, "kubeconfig").Error(), http.StatusInternalServerError)
