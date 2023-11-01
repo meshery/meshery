@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"strings"
 
+	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/database"
 	"gorm.io/gorm"
 )
@@ -63,8 +64,8 @@ func (mkcp *MesheryK8sContextPersister) DeleteMesheryK8sContext(id string) (K8sC
 	return context, nil
 }
 
-func (mkcp *MesheryK8sContextPersister) SaveMesheryK8sContext(mkc K8sContext) (Connection, error) {
-	conn := Connection{}
+func (mkcp *MesheryK8sContextPersister) SaveMesheryK8sContext(mkc K8sContext) (connections.Connection, error) {
+	conn := connections.Connection{}
 	if mkc.ID == "" {
 		id, err := K8sContextGenerateID(mkc)
 		if err != nil {

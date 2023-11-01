@@ -12,6 +12,7 @@ import (
 
 	mutil "github.com/layer5io/meshery/server/helpers/utils"
 
+	"github.com/layer5io/meshery/server/models/connections"
 	mcore "github.com/layer5io/meshery/server/models/meshmodel/core"
 	meshmodelv1alpha1 "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 
@@ -113,13 +114,13 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			
 			status := connection.Status
 			
-			if status == models.CONNECTED {
+			if status == connections.CONNECTED {
 				saveK8sContextResponse.ConnectedContexts = append(saveK8sContextResponse.ConnectedContexts, *ctx)
 				eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Connection already exists with Kubernetes context \"%s\" at %s", ctx.Name, ctx.Server))
-			} else if status == models.IGNORED {
+			} else if status == connections.IGNORED {
 				saveK8sContextResponse.IgnoredContexts = append(saveK8sContextResponse.IgnoredContexts, *ctx)
 				eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Kubernetes context \"%s\" is set to ignored state.", ctx.Name))
-			} else if status == models.REGISTERED {
+			} else if status == connections.REGISTERED {
 				saveK8sContextResponse.RegisteredContexts = append(saveK8sContextResponse.RegisteredContexts, *ctx)
 				eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Connection registered with kubernetes context \"%s\" at %s.", ctx.Name, ctx.Server))
 				h.config.K8scontextChannel.PublishContext()

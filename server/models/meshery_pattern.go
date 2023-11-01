@@ -6,7 +6,6 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/internal/sql"
 	"gopkg.in/yaml.v2"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -21,7 +20,7 @@ type ListMetaApplyConfiguration struct {
  }
 
 type StatusCauseApplyConfiguration struct {
- 	Type    *v1.CauseType `json:"reason,omitempty"`
+ 	Type    *metav1.CauseType `json:"reason,omitempty"`
  	Message *string       `json:"message,omitempty"`
  	Field   *string       `json:"field,omitempty"`
  }

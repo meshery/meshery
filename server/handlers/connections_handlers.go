@@ -10,10 +10,11 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/models/events"
 )
 
-type connectionStatusPayload map[uuid.UUID]models.ConnectionStatus
+type connectionStatusPayload map[uuid.UUID]connections.ConnectionStatus
 
 // swagger:route POST /api/integrations/connections PostConnection idPostConnection
 // Handle POST request for creating a new connection
@@ -191,6 +192,23 @@ func (h *Handler) GetConnectionsStatus(w http.ResponseWriter, req *http.Request,
 	}
 }
 
+// swagger:route GET /api/integrations/connections/{connectionKind}/transitions GetAvailableTransitionsByKind idGetConnectionsStatus
+// Handle GET request for getting all possible connection transitions
+//
+// Get all possible state transitions for a particular connection kind.
+// responses:
+// 200: mesheryConnectionsStatusPage
+func (h *Handler) GetPossibleTransitionsByKind(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	connectionKind := mux.Vars(req)["connectionKind"]
+	transitions := connections.PossibleTransitionnsMap[connectionKind]
+
+	err := json.NewEncoder(w).Encode(transitions)
+	if err != nil {
+		http.Error(w, models.ErrMarshal(err, "connection transitions").Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
 func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 	connectionStatusPayload := &connectionStatusPayload{}
 	defer func() {
@@ -214,7 +232,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 	var statusCode int 
 	for id, status := range *connectionStatusPayload {
 		eventBuilder.ActedUpon(id)
-		var updatedConnection *models.Connection
+		var updatedConnection *connections.Connection
 		var err error
 		updatedConnection, statusCode, err = provider.UpdateConnectionStatusByID(req, id, status)
 		fmt.Println("tetete_", updatedConnection)
@@ -251,7 +269,7 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 
 	userID := uuid.FromStringOrNil(user.ID)
 
-	connection := &models.Connection{}
+	connection := &connections.Connection{}
 	err = json.Unmarshal(bd, connection)
 	obj := "connection"
 	if err != nil {

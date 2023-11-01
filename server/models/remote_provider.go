@@ -22,6 +22,7 @@ import (
 	"errors"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -631,7 +632,7 @@ func (l *RemoteProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.
 	http.Redirect(w, req, "/provider", http.StatusFound)
 }
 
-func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (Connection, error) {
+func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (connections.Connection, error) {
 
 	k8sServerID := *k8sContext.KubernetesServerID
 
@@ -658,7 +659,7 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (Co
 		Kind:             "kubernetes",
 		Type:             "platform",
 		SubType:          "orchestrator",
-		Status:           REGISTERED,
+		Status:           connections.REGISTERED,
 		MetaData:         metadata,
 		CredentialSecret: cred,
 	}
@@ -666,7 +667,7 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (Co
 	connection, err := l.SaveConnection(nil, conn, token, true)
 	if err != nil {
 		logrus.Errorf(err.Error())
-		return Connection{}, err
+		return connections.Connection{}, err
 	}
 
 	return *connection, nil
@@ -698,7 +699,7 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 		q.Set("order", order)
 	}
 
-	q.Set("status", string(CONNECTED))
+	q.Set("status", string(connections.CONNECTED))
 	if !withCredentials {
 		q.Set("with_credentials", "false")
 	}
@@ -3259,7 +3260,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 			Type:             "platform",
 			SubType:          "management",
 			MetaData:         metadata,
-			Status:           DISCOVERED,
+			Status:           connections.DISCOVERED,
 			CredentialSecret: cred,
 		}
 
@@ -3549,7 +3550,7 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 	return nil, ErrFetch(fmt.Errorf("failed to request to remote provider"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
-func (l *RemoteProvider) SaveConnection(req *http.Request, conn *ConnectionPayload, token string, skipTokenCheck bool) (*Connection, error) {
+func (l *RemoteProvider) SaveConnection(req *http.Request, conn *ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -3589,7 +3590,7 @@ func (l *RemoteProvider) SaveConnection(req *http.Request, conn *ConnectionPaylo
 	}
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
-		connection := &Connection{}
+		connection := &connections.Connection{}
 		_ = json.Unmarshal(bdr, connection)
 		fmt.Println("connections, ", connection)
 		return connection, nil
@@ -3598,7 +3599,7 @@ func (l *RemoteProvider) SaveConnection(req *http.Request, conn *ConnectionPaylo
 	return nil, ErrPost(fmt.Errorf("failed to save the connection"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
-func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, pageSize int, search, order string) (*ConnectionPage, error) {
+func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, pageSize int, search, order string) (*connections.ConnectionPage, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -3630,7 +3631,7 @@ func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, 
 		return nil, ErrFetch(fmt.Errorf("could not retrieve list of connections: %d", resp.StatusCode), fmt.Sprint(bdr), resp.StatusCode)
 	}
 
-	var cp ConnectionPage
+	var cp connections.ConnectionPage
 	if err = json.Unmarshal(bdr, &cp); err != nil {
 		return nil, err
 	}
@@ -3678,7 +3679,7 @@ func (l *RemoteProvider) GetConnectionsByKind(req *http.Request, _ string, page,
 	return &res, nil
 }
 
-func (l *RemoteProvider) GetConnectionsStatus(req *http.Request, userID string) (*ConnectionsStatusPage, error) {
+func (l *RemoteProvider) GetConnectionsStatus(req *http.Request, userID string) (*connections.ConnectionsStatusPage, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -3703,14 +3704,14 @@ func (l *RemoteProvider) GetConnectionsStatus(req *http.Request, userID string) 
 		return nil, ErrFetch(fmt.Errorf("could not retrieve list of connections status: %d", resp.StatusCode), fmt.Sprint(bdr), resp.StatusCode)
 	}
 
-	var cp ConnectionsStatusPage
+	var cp connections.ConnectionsStatusPage
 	if err = json.Unmarshal(bdr, &cp); err != nil {
 		return nil, err
 	}
 	return &cp, nil
 }
 
-func (l *RemoteProvider) UpdateConnectionStatusByID(req *http.Request, connectionID uuid.UUID, connectionStatus ConnectionStatus) (*Connection, int, error) {
+func (l *RemoteProvider) UpdateConnectionStatusByID(req *http.Request, connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return nil, http.StatusForbidden, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -3736,7 +3737,7 @@ func (l *RemoteProvider) UpdateConnectionStatusByID(req *http.Request, connectio
 		return nil, http.StatusInternalServerError, ErrDataRead(err, "Update Connection")
 	}
 	if resp.StatusCode == http.StatusOK {
-		var conn Connection
+		var conn connections.Connection
 		if err = json.Unmarshal(bdr, &conn); err != nil {
 			return nil, http.StatusInternalServerError, ErrUnmarshal(err, "connection")
 		}
@@ -3748,7 +3749,7 @@ func (l *RemoteProvider) UpdateConnectionStatusByID(req *http.Request, connectio
 }
 
 // UpdateConnection - to update an existing connection
-func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *Connection) (*Connection, error) {
+func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *connections.Connection) (*connections.Connection, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -3779,7 +3780,7 @@ func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *Connect
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		var conn Connection
+		var conn connections.Connection
 		if err = json.Unmarshal(bdr, &conn); err != nil {
 			return nil, err
 		}
@@ -3790,7 +3791,7 @@ func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *Connect
 }
 
 // UpdateConnectionById - to update an existing connection using the connection id
-func (l *RemoteProvider) UpdateConnectionById(req *http.Request, connection *ConnectionPayload, connId string) (*Connection, error) {
+func (l *RemoteProvider) UpdateConnectionById(req *http.Request, connection *ConnectionPayload, connId string) (*connections.Connection, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -3825,7 +3826,7 @@ func (l *RemoteProvider) UpdateConnectionById(req *http.Request, connection *Con
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		var conn Connection
+		var conn connections.Connection
 		if err = json.Unmarshal(bdr, &conn); err != nil {
 			return nil, ErrUnmarshal(err, "connection")
 		}
@@ -3836,7 +3837,7 @@ func (l *RemoteProvider) UpdateConnectionById(req *http.Request, connection *Con
 }
 
 // DeleteConnection - to delete a saved connection
-func (l *RemoteProvider) DeleteConnection(req *http.Request, connectionID uuid.UUID) (*Connection, error) {
+func (l *RemoteProvider) DeleteConnection(req *http.Request, connectionID uuid.UUID) (*connections.Connection, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -3868,7 +3869,7 @@ func (l *RemoteProvider) DeleteConnection(req *http.Request, connectionID uuid.U
 
 	if resp.StatusCode == http.StatusOK {
 		logrus.Infof("connection successfully deleted from remote provider")
-		var conn Connection
+		var conn connections.Connection
 		if err = json.Unmarshal(bdr, &conn); err != nil {
 			return nil, err
 		}
@@ -3906,7 +3907,7 @@ func (l *RemoteProvider) DeleteMesheryConnection() error {
 		return nil
 	}
 
-	return ErrDelete(fmt.Errorf("Could not delete meshery connection"), " Meshery Connection", resp.StatusCode)
+	return ErrDelete(fmt.Errorf("could not delete meshery connection"), " Meshery Connection", resp.StatusCode)
 }
 
 // TarXZF takes in a source url downloads the tar.gz file

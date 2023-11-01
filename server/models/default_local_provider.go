@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/utils"
@@ -184,7 +185,7 @@ func (l *DefaultLocalProvider) HandleUnAuthenticated(w http.ResponseWriter, req 
 	http.Redirect(w, req, "/user/login", http.StatusFound)
 }
 
-func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (Connection, error) {
+func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (connections.Connection, error) {
 	return l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
 }
 
@@ -959,11 +960,11 @@ func (l *DefaultLocalProvider) ExtensionProxy(_ *http.Request) (*ExtensionProxyR
 	return nil, ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) SaveConnection(_ *http.Request, _ *ConnectionPayload, _ string, _ bool) (*Connection, error) {
+func (l *DefaultLocalProvider) SaveConnection(_ *http.Request, _ *ConnectionPayload, _ string, _ bool) (*connections.Connection, error) {
 	return nil, ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) GetConnections(_ *http.Request, _ string, _, _ int, _, _ string) (*ConnectionPage, error) {
+func (l *DefaultLocalProvider) GetConnections(_ *http.Request, _ string, _, _ int, _, _ string) (*connections.ConnectionPage, error) {
 	return nil, ErrLocalProviderSupport
 }
 
@@ -971,23 +972,23 @@ func (l *DefaultLocalProvider) GetConnectionsByKind(_ *http.Request, _ string, _
 	return nil, ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) GetConnectionsStatus(_ *http.Request, _ string) (*ConnectionsStatusPage, error) {
+func (l *DefaultLocalProvider) GetConnectionsStatus(_ *http.Request, _ string) (*connections.ConnectionsStatusPage, error) {
 	return nil, ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) UpdateConnection(_ *http.Request, _ *Connection) (*Connection, error) {
+func (l *DefaultLocalProvider) UpdateConnection(_ *http.Request, _ *connections.Connection) (*connections.Connection, error) {
 	return nil, ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) UpdateConnectionStatusByID(req *http.Request, connectionID uuid.UUID, connectionStatus ConnectionStatus) (*Connection, int, error) {
+func (l *DefaultLocalProvider) UpdateConnectionStatusByID(req *http.Request, connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error) {
 	return nil, http.StatusForbidden, ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) UpdateConnectionById(_ *http.Request, _ *ConnectionPayload, _ string) (*Connection, error) {
+func (l *DefaultLocalProvider) UpdateConnectionById(_ *http.Request, _ *ConnectionPayload, _ string) (*connections.Connection, error) {
 	return nil, ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) DeleteConnection(_ *http.Request, _ uuid.UUID) (*Connection, error) {
+func (l *DefaultLocalProvider) DeleteConnection(_ *http.Request, _ uuid.UUID) (*connections.Connection, error) {
 	return nil, ErrLocalProviderSupport
 }
 
