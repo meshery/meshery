@@ -1041,7 +1041,7 @@ func (h *Handler) PublishCatalogPatternHandler(
 	FromUser(userID).
 	FromSystem(*h.SystemID).
 	WithCategory("pattern").
-	WithAction("update").
+	WithAction("publish").
 	ActedUpon(userID)
 
 	var parsedBody *models.MesheryCatalogPatternRequestBody
