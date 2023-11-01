@@ -273,7 +273,11 @@ const InfoModal = (props) => {
                     </Tooltip>
                   </Typography>
                 </Grid>
-                <Grid item xs={dataName === APPLICATION_PLURAL ? 12 : 6} className={classes.visibilityGridItem}>
+                <Grid
+                  item
+                  xs={dataName === APPLICATION_PLURAL ? 12 : 6}
+                  className={classes.visibilityGridItem}
+                >
                   <Typography gutterBottom variant="subtitle1" className={classes.text}>
                     <span
                       style={{
@@ -284,7 +288,10 @@ const InfoModal = (props) => {
                       Visibility:
                     </span>{' '}
                   </Typography>
-                  <img className={classes.img} src={`/static/img/${selectedResource?.visibility}.svg`} />
+                  <img
+                    className={classes.img}
+                    src={`/static/img/${selectedResource?.visibility}.svg`}
+                  />
                 </Grid>
                 {dataName === APPLICATION_PLURAL && formSchema ? null : (
                   <Grid item className={classes.rjsfInfoModalForm}>
