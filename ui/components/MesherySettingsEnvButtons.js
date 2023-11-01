@@ -204,10 +204,10 @@ const MesherySettingsEnvButtons = () => {
           />
         </>
       ),
-      options: ['REGISTER', 'CANCEL'],
+      options: ['CONNECT', 'CANCEL'],
     });
 
-    if (response === 'REGISTER') {
+    if (response === 'CONNECT') {
       handleChangeConnectionStatus().then((res) => {
         console.log(res);
       });
