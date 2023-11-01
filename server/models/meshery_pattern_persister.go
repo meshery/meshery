@@ -216,6 +216,12 @@ func (mpp *MesheryPatternPersister) GetMesheryPattern(id uuid.UUID) ([]byte, err
 	return marshalMesheryPattern(&mesheryPattern), err
 }
 
+func (mpp *MesheryPatternPersister) GetMesheryPatternSource(id uuid.UUID) ([]byte, error) {
+	var mesheryPattern MesheryPattern
+	err := mpp.DB.First(&mesheryPattern, id).Error
+	return mesheryPattern.SourceContent, err
+}
+
 func marshalMesheryPatternPage(mpp *MesheryPatternPage) []byte {
 	res, _ := json.Marshal(mpp)
 

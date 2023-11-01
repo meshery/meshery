@@ -81,7 +81,6 @@ function UploadImport(props) {
     handleUpload,
     handleUrlUpload,
     configuration,
-    isApplication,
     isFilter,
     open,
     handleClose,
@@ -96,18 +95,19 @@ function UploadImport(props) {
   const [sourceType, setSourceType] = React.useState();
   const [supportedTypes, setSupportedTypes] = React.useState();
   const theme = useTheme();
+  const isDesign = configuration === 'patterns';
   useEffect(() => {
-    if (isApplication) {
+    if (isDesign) {
       (async () => {
-        setSupportedTypes(await promisifiedDataFetch('/api/application/types'));
+        setSupportedTypes(await promisifiedDataFetch('/api/pattern/types'));
       })();
     }
   }, []);
 
   const handleFileType = (index) => {
-    if (isApplication) {
+    if (isDesign) {
       setFileType(supportedTypes?.[index]?.supported_extensions);
-      setSourceType(supportedTypes?.[index]?.application_type);
+      setSourceType(supportedTypes?.[index]?.design_type);
     }
   };
 
@@ -118,9 +118,9 @@ function UploadImport(props) {
   }, [input]);
 
   useEffect(() => {
-    if (isApplication) {
+    if (isDesign) {
       setFileType(supportedTypes?.[0]?.supported_extensions);
-      setSourceType(supportedTypes?.[0]?.application_type);
+      setSourceType(supportedTypes?.[0]?.design_type);
     }
   }, [open]);
 
@@ -250,8 +250,8 @@ function UploadImport(props) {
               )}
 
               <Grid container spacing={24} alignItems="center">
-                {isApplication && <h4 className={classes.selectType}>SELECT TYPE </h4>}
-                {isApplication && (
+                {isDesign && <h4 className={classes.selectType}>SELECT TYPE </h4>}
+                {isDesign && (
                   <>
                     <NativeSelect
                       defaultValue={0}
@@ -263,7 +263,7 @@ function UploadImport(props) {
                     >
                       {supportedTypes?.map((type, index) => (
                         <option key={index} value={index}>
-                          {type.application_type}
+                          {type.design_type}
                         </option>
                       ))}
                     </NativeSelect>

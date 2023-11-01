@@ -9,13 +9,12 @@ language: en
 
 {% assign sorted_pages = site.pages | sort: "name" | alphabetical %}
 
-<div style="display: block;text-align: center;">
-  <div style="padding: clamp(30px, calc(30px + (100 - 30) * ((100vw - 1000px) / (1600 - 1000))), 400vw); padding-top:0px; padding-bottom:0px;">
+<div class="flex flex-col--1">
+  <div style="align-self:center; margin-bottom:0px; margin-top:0px;padding-top:0px; padding-bottom:0px;width:clamp(170px, 50%, 800px);">
     {% include svg/meshery-logo.html %}
   </div>
-    <h3>As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.</h3>
+  <h3>As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.</h3>
 </div>
-
 <div class="flex flex-col--2"  style="text-align: left; padding:1.6rem ;--col-gap:1rem">
   <!-- OVERVIEW -->
   <div class="section">

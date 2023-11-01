@@ -146,12 +146,12 @@ export default function Provider() {
         disableScrollLock={true}
         data-cy="providers-modal"
       >
-        <CustomDialogTitle id="customized-dialog-title" onClose={handleModalClose} style={{background:"#eee"}}>
+        <CustomDialogTitle id="customized-dialog-title" onClose={handleModalClose} style={{ background : "#eee" }}>
           <b>Choosing a Provider</b>
         </CustomDialogTitle>
         <DialogContent dividers>
           <DialogContentText id="customized-dialog-content">
-                        Login to Meshery by choosing from the available providers. Providers extend Meshery by offering various plugins and services, including identity services, long-term persistence, advanced performance analysis,  multi-player user collaboration, and so on. 
+                        Login to Meshery by choosing from the available providers. Providers extend Meshery by offering various plugins and services, including identity services, long-term persistence, advanced performance analysis,  multi-player user collaboration, and so on.
 
             {Object.keys(availableProviders).map((key) => {
               return (
@@ -182,8 +182,8 @@ export default function Provider() {
           </DialogContentText>
         </DialogContent>
         <CustomDialogActions>
-        <div className="learnmore">
-          <a href="https://docs.meshery.io/extensibility/providers">Learn more about Providers</a><img src="/static/img/external-link.svg" width="16px" />
+          <div className="learnmore">
+            <a href="https://docs.meshery.io/extensibility/providers">Learn more about Providers</a><img src="/static/img/external-link.svg" width="16px" />
           </div>
           <Button
             onClick={handleModalClose}

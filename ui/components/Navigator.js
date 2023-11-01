@@ -21,7 +21,6 @@ import HelpIcon from '@material-ui/icons/Help';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
 import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
-import ApplicationIcon from '../public/static/img/drawer-icons/application_svg';
 import ExtensionIcon from '../public/static/img/drawer-icons/extensions_svg';
 import FilterIcon from '../public/static/img/drawer-icons/filter_svg';
 import PatternIcon from '../public/static/img/drawer-icons/pattern_svg';
@@ -59,7 +58,6 @@ import {
 } from '../css/disableComponent.styles';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
 import {
-  APPLICATION,
   DESIGN,
   CONFIGURATION,
   DASHBOARD,
@@ -373,21 +371,12 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
     id: CONFIGURATION,
     icon: <ConfigurationIcon {...drawerIconsStyle} />,
     hovericon: <ConfigurationHover style={drawerIconsStyle} />,
-    href: '/configuration/applications',
+    href: '/configuration/designs',
     title: 'Configuration',
     show: capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION]),
     link: true,
     submenu: true,
     children: [
-      {
-        id: APPLICATION,
-        icon: <ApplicationIcon style={{ ...drawerIconsStyle }} />,
-        href: '/configuration/applications',
-        title: 'Applications',
-        show: capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, APPLICATION]),
-        link: true,
-        isBeta: true,
-      },
       {
         id: FILTER,
         icon: <FilterIcon style={{ ...drawerIconsStyle }} />,
