@@ -18,13 +18,13 @@ For more info, see [Meshery Integrations](/integrations/)
 These credentials serve to authenticate the Meshery connection when it communicates with external services.
 For example, when Meshery scrapes metrics from a Prometheus instance, it uses the credentials associated with that connection to authenticate itself to the Prometheus server.
 <br>
-For more information about connections, see "[Connections](/concepts/connections)".
+For more information, see "[Connections](/concepts/connections)".
 
 - **Reusability Across Connections**
 Credentials are not tied to a specific connection but can be shared between different connections within the same workspace. This reusability ensures that you don't have to create separate credentials for each connection.
 For example, if you have two Kubernetes clusters, you can use the same credentials for both clusters. This makes it easier to manage and maintain your credentials.
 <br>
-For more information about workspaces, see "[Workspaces](/concepts/workspaces)".
+For more information, see "[Workspaces](/concepts/workspaces)".
 
 - **Connectivity Testing**
 Credentials play a crucial role in connectivity testing within Meshery. When you initiate ad-hoc connectivity tests, the system uses the appropriate credential associated with the connection being tested. If the credential is valid and the target system is reachable, the test succeeds. This ensures the connections are actively monitored and validated.
@@ -32,7 +32,7 @@ Credentials play a crucial role in connectivity testing within Meshery. When you
 - **Granular Access Control**
 Meshery provides fine-grained access control through credentials. You can specify which credentials are associated with particular connections and workspace, giving you control over who can access and manage specific resources.
 <br>
-For more information about access control, see "[Workspaces](/concepts/workspaces)".
+For more information, see "[Workspaces](/concepts/workspaces)".
 
 
 ## Examples
