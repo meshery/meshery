@@ -128,8 +128,7 @@ const AvatarStack = ({ avatars, direction }) => {
         '& .MuiAvatar-root': {
           width: '2rem',
           height: '2rem',
-          border: '0.05rem solid ' + theme.palette.secondary.elevatedComponents2,
-          boxShadow: '0 0 0 0.1rem ' + theme.palette.secondary.elevatedComponents2,
+          border: '0.05rem solid ' + theme.palette.secondary.menuActionText,
         },
       }}
     >
