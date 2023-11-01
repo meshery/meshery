@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/layer5io/meshkit v0.6.69
-	golang.org/x/oauth2 v0.12.0
+	golang.org/x/oauth2 v0.13.0
 	google.golang.org/api v0.143.0
 	gopkg.in/yaml.v3 v3.0.1
 )
