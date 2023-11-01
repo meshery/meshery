@@ -658,7 +658,7 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (Co
 		Kind:             "kubernetes",
 		Type:             "platform",
 		SubType:          "orchestrator",
-		Status:           DISCOVERED,
+		Status:           REGISTERED,
 		MetaData:         metadata,
 		CredentialSecret: cred,
 	}
@@ -3584,6 +3584,7 @@ func (l *RemoteProvider) SaveConnection(req *http.Request, conn *ConnectionPaylo
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
 		connection := &Connection{}
 		_ = json.Unmarshal(bdr, connection)
+		fmt.Println("connections, ", connection)
 		return connection, nil
 	}
 

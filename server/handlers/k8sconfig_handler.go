@@ -99,6 +99,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		if err != nil {
 			eventBuilder.ActedUpon(connection.ID)
 			if err == models.ErrContextAlreadyPersisted {
+				ctx.ConnectionID = connection.ID.String()
 				saveK8sContextResponse.UpdatedContexts = append(saveK8sContextResponse.UpdatedContexts, *ctx)
 
 				eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Connection already exist with Kubernetes context %s at %s", ctx.Name, ctx.Server))
@@ -110,6 +111,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				})
 			}
 		} else {
+			ctx.ConnectionID = connection.ID.String()
 			saveK8sContextResponse.InsertedContexts = append(saveK8sContextResponse.InsertedContexts, *ctx)
 			eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Connection established with Kubernetes context %s at %s", ctx.Name, ctx.Server))
 		}
