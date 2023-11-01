@@ -1036,18 +1036,58 @@ func (h *Handler) PublishCatalogPatternHandler(
 		_ = r.Body.Close()
 	}()
 
+	userID := uuid.FromStringOrNil(user.ID)
+	eventBuilder := events.NewEvent().
+	FromUser(userID).
+	FromSystem(*h.SystemID).
+	WithCategory("pattern").
+	WithAction("update").
+	ActedUpon(userID)
+
 	var parsedBody *models.MesheryCatalogPatternRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		h.log.Error(ErrRequestBody(err))
+		e := eventBuilder.WithSeverity(events.Error).
+		WithMetadata(map[string]interface{}{
+			"error": ErrRequestBody(err),
+		}).
+		WithDescription("Error parsing design.").Build()
+		_ = provider.PersistEvent(e)
+		go h.config.EventBroadcaster.Publish(userID, e)
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.PublishCatalogPattern(r, parsedBody)
 	if err != nil {
 		h.log.Error(ErrPublishCatalogPattern(err))
+		e := eventBuilder.WithSeverity(events.Error).
+		WithMetadata(map[string]interface{}{
+			"error": ErrPublishCatalogPattern(err),
+		}).
+		WithDescription("Error publishing design.").Build()
+		_ = provider.PersistEvent(e)
+		go h.config.EventBroadcaster.Publish(userID, e)
 		http.Error(rw, ErrPublishCatalogPattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
+
+	var respBody *models.CatalogRequest
+	err = json.Unmarshal(resp, &respBody)
+	if err != nil {
+		h.log.Error(ErrPublishCatalogPattern(err))
+		e := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": ErrPublishCatalogPattern(err),
+		}).WithDescription("Error parsing response.").Build()
+		_ = provider.PersistEvent(e)
+		go h.config.EventBroadcaster.Publish(userID, e)
+		http.Error(rw, ErrPublishCatalogPattern(err).Error(), http.StatusInternalServerError)
+	}
+
+
+	e := eventBuilder.WithSeverity(events.Informational).ActedUpon(parsedBody.ID).WithDescription(fmt.Sprintf("'%s' design published with status: %s", respBody.ContentName, respBody.Status)).Build()
+	_ = provider.PersistEvent(e)
+	go h.config.EventBroadcaster.Publish(userID, e)
+
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 	rw.Header().Set("Content-Type", "Pattern/json")
 	rw.WriteHeader(http.StatusAccepted)
