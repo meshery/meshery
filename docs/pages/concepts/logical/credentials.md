@@ -43,4 +43,4 @@ In the case of Kubernetes connections, your credentials are typically the certif
 
 ### GitHub Connections
 
-When you authorize the Meshery GitHub app for services like the MeshMap Snapshot, Meshery stores your specific installation ID. This installation ID is then used for various processes, such as verifying Meshery's access to the repositories you assign during the setup process. Additionally, it's used for tasks like installing GitHub workflows directly into the selected repositories and fetching the chosen repositories from your GitHub organization.
+When you authorize the Meshery GitHub app for services like the [MeshMap Snapshot](/extensions/snapshot), Meshery stores your specific installation ID. This installation ID is then used for various processes, such as verifying Meshery's access to the repositories you assign during the setup process. Additionally, it's used for tasks like installing GitHub workflows directly into the selected repositories and fetching the chosen repositories from your GitHub organization.
