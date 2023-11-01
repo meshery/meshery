@@ -19,7 +19,7 @@ import { SORT } from '../constants/endpoints';
 import useStyles from '../assets/styles/general/tool.styles';
 import { Colors } from '../themes/app';
 import MesheryTreeView from './MesheryTreeView';
-// import { useGetMeshModelQuery } from '../rtk-query/meshModel';
+// import { useGetMeshModelQuery, useGetLoggedInUserQuery } from '../rtk-query/meshModel';
 
 //TODO : This Should derive the indices of rendered rows
 // const ROWS_INDICES = {
@@ -61,7 +61,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
   const [resourcesDetail, setResourcesDetail] = useState([]);
   const [isRequestCancelled, setRequestCancelled] = useState(false);
   const [, setCount] = useState();
-  const [page] = useState(0);
+  const [page, setPage] = useState(0);
   const [searchText, setSearchText] = useState(null);
   const [rowsPerPage] = useState(10);
   const [sortOrder, setSortOrder] = useState({
@@ -71,7 +71,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
   // const [checked, setChecked] = useState(false);
   const StyleClass = useStyles();
   const [view, setView] = useState(OVERVIEW);
-  const [convert, setConvert] = useState(false);
+  const [convert, setConvert] = useState(true);
   const [show, setShow] = useState({
     model: {},
     components: [],
@@ -81,10 +81,8 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
   const [rela, setRela] = useState({});
   const [animate, setAnimate] = useState(false);
   const [regi, setRegi] = useState({});
-  // const modeldata = useGetMeshModelQuery({
-  //   page: 1,
-  //   pageSize: 10,
-  // });
+  const [checked, setChecked] = useState(true);
+  // const { data: modeldata } = useGetMeshModelQuery();
 
   const getModels = async (page) => {
     try {
@@ -97,8 +95,8 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
       });
 
       await Promise.all(componentPromises);
-      if (!isRequestCancelled) {
-        setResourcesDetail(models);
+      if (!isRequestCancelled && models) {
+        setResourcesDetail((prev) => [...prev, ...models]);
       }
     } catch (error) {
       console.error('Failed to fetch models:', error);
@@ -118,8 +116,8 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
         sortOrder.order,
       ); // page+1 due to server side indexing starting from 1
       setCount(total_count);
-      if (!isRequestCancelled) {
-        setResourcesDetail(components);
+      if (!isRequestCancelled && components) {
+        setResourcesDetail((prev) => [...prev, ...components]);
         setSortOrder(sortOrder);
       }
     } catch (error) {
@@ -140,8 +138,8 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
         sortOrder.order,
       );
       setCount(total_count);
-      if (!isRequestCancelled) {
-        setResourcesDetail(relationships);
+      if (!isRequestCancelled && relationships) {
+        setResourcesDetail((prev) => [...prev, ...relationships]);
         setSortOrder(sortOrder);
       }
     } catch (error) {
@@ -196,31 +194,22 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
   //   setChecked(!checked);
   // };
 
-  // const filteredData = checked
-  //   ? resourcesDetail // Show all data, including duplicates
-  //   : resourcesDetail.filter((item, index, self) => {
-  //       // Filter out duplicates based on your criteria (e.g., name and version)
-  //       return (
-  //         index ===
-  //         self.findIndex(
-  //           (otherItem) => item.name === otherItem.name && item.version === otherItem.version,
-  //         )
-  //       );
-  //     });
-  const filteredData = resourcesDetail;
+  const filteredData = checked
+    ? resourcesDetail // Show all data, including duplicates
+    : resourcesDetail.filter((item, index, self) => {
+        // Filter out duplicates based on your criteria (e.g., name and version)
+        return (
+          index ===
+          self.findIndex(
+            (otherItem) => item.name === otherItem.name && item.version === otherItem.version,
+          )
+        );
+      });
+  // const filteredData = resourcesDetail;
 
   useEffect(() => {
     setRequestCancelled(false);
-
-    // if(view === MODELS){
-    //   getModels(page);
-    // } else if (view === COMPONENTS){
-    //   getComponents(page,sortOrder);
-    // } else if (view === RELATIONSHIPS){
-    //   getRelationships(page,sortOrder);
-    // } else if (view === REGISTRANTS){
-    //   getRegistrants(page);
-    // }
+    console.log(page);
 
     if (view === MODELS && searchText === null) {
       getModels(page);
@@ -559,20 +548,21 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
   const customInlineStyle = {
     marginBottom: '0.5rem',
     marginTop: '1rem',
+    transition: 'all 0.5s',
+    opacity: animate && !convert ? '1' : '0',
   };
 
-  // const cardStyle = {
-  //   background: '#51636B',
-  //   color: 'white',
-  //   height: '10rem',
-  //   width: '13rem',
-  //   display: 'flex',
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   marginRight: '1rem',
-  //   flexDirection: 'column',
-  //   cursor: 'pointer',
-  // };
+  const mainContainer = {
+    backgroundColor: 'white',
+    padding: animate ? '8rem 0rem' : '6rem',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: '1rem',
+    marginTop: animate ? '6rem' : '1rem',
+    transition: 'all 1s',
+  };
 
   return (
     <div data-test="workloads">
@@ -620,22 +610,29 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
         columnVisibility={columnVisibility}
       /> */}
       {convert ? (
-        <div className={StyleClass.mainContainer}>
+        <div style={mainContainer}>
           <div
-            className={StyleClass.cardContainer}
+            // className={StyleClass.cardContainer}
             style={{
               display: 'flex',
               flexDirection: 'row',
               marginBottom: '1rem',
+              transition: 'all 1s',
+              opacity: animate ? '0' : '1',
             }}
           >
             <Paper
               elevation={3}
               className={StyleClass.cardStyle}
+              // style={{
+
+              // }}
               onClick={() => {
                 setView(MODELS);
                 setAnimate(true);
-                setConvert(false);
+                setTimeout(() => {
+                  setConvert(false);
+                }, 1000);
               }}
             >
               <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>{modelsCount}</span>
@@ -680,7 +677,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
           </div>
         </div>
       ) : (
-        <div style={{ backgroundColor: 'white', borderRadius: '6px' }}>
+        <div style={{ backgroundColor: 'white', borderRadius: '6px', transition: 'ease-out' }}>
           <div
             style={{
               backgroundColor: '#51636B',
@@ -702,6 +699,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                 padding: view === OVERVIEW ? '0.5rem 2rem' : '0.6rem 2rem',
               }}
               onClick={() => {
+                setPage(0);
                 setView(OVERVIEW);
                 setConvert(true);
                 setAnimate(false);
@@ -719,7 +717,9 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
               }}
               onClick={() => {
                 setView(MODELS);
+                setPage(0);
                 setSearchText(null);
+                setResourcesDetail([]);
               }}
             >
               Models ({modelsCount})
@@ -734,7 +734,9 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
               }}
               onClick={() => {
                 setView(COMPONENTS);
+                setPage(0);
                 setSearchText(null);
+                setResourcesDetail([]);
               }}
             >
               Components ({componentsCount})
@@ -749,7 +751,9 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
               }}
               onClick={() => {
                 setView(RELATIONSHIPS);
+                setPage(0);
                 setSearchText(null);
+                setResourcesDetail([]);
               }}
             >
               Relationships ({relationshipsCount})
@@ -764,7 +768,9 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
               }}
               onClick={() => {
                 setView(REGISTRANTS);
+                setPage(0);
                 setSearchText(null);
+                setResourcesDetail([]);
               }}
             >
               Registrants (1)
@@ -784,6 +790,9 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                 regi={regi}
                 setRegi={setRegi}
                 setSearchText={setSearchText}
+                setPage={setPage}
+                checked={checked}
+                setChecked={setChecked}
               />
             </div>
             <div

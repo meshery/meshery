@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { styled } from '@mui/material/styles';
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { Box, Typography, IconButton } from '@material-ui/core';
+import { Box, Typography, IconButton, FormControlLabel, Switch } from '@material-ui/core';
 import Checkbox from '@mui/material/Checkbox';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../constants/navigator';
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
@@ -18,13 +18,12 @@ const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
     fontWeight: theme.typography.fontWeightMedium,
     '&.Mui-expanded': {
       fontWeight: theme.typography.fontWeightRegular,
-      borderBottom: '1px solid #DDDDDD',
     },
     '&:hover': {
-      backgroundColor: theme.palette.action.hover,
+      backgroundColor: `transparent`,
     },
     '&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused': {
-      backgroundColor: `var(--tree-view-bg-color, ${theme.palette.action.selected})`,
+      backgroundColor: `transparent`,
     },
     [`& .${treeItemClasses.label}`]: {
       fontWeight: 'inherit',
@@ -50,7 +49,6 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
       onMouseLeave={() => setHover(false)}
       sx={{
         backgroundColor: checked && '#ebebeb',
-        borderBottom: '1px solid #DDDDDD',
       }}
       label={
         <Box
@@ -94,8 +92,31 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
   );
 });
 
-const MesheryTreeView = ({ data, view, setShow, setComp, setRela, setRegi, setSearchText }) => {
+const MesheryTreeView = ({
+  data,
+  view,
+  setShow,
+  setComp,
+  setRela,
+  setRegi,
+  setSearchText,
+  setPage,
+  checked,
+  setChecked,
+}) => {
   const [expanded, setExpanded] = React.useState([]);
+
+  const handleScroll = () => {
+    const div = event.target;
+    console.log(data);
+    if (div.scrollTop >= div.scrollHeight - div.clientHeight - 2) {
+      setPage((prev) => prev + 1);
+    }
+  };
+
+  const handleChecked = () => {
+    setChecked(!checked);
+  };
 
   const expandAll = () => {
     const arr = [];
@@ -117,7 +138,7 @@ const MesheryTreeView = ({ data, view, setShow, setComp, setRela, setRegi, setSe
         style={{
           display: 'flex',
           flexDirection: 'row',
-          justifyContent: view === MODELS ? 'space-between' : 'flex-end',
+          justifyContent: view === MODELS || view === COMPONENTS ? 'space-between' : 'flex-end',
           borderBottom: '1px solid #d2d3d4',
           marginRight: '0.9rem',
         }}
@@ -130,9 +151,35 @@ const MesheryTreeView = ({ data, view, setShow, setComp, setRela, setRegi, setSe
             <div
               style={{ backgroundColor: '#d2d3d4', height: '33px', width: '1px', margin: '0 2px' }}
             ></div>
-            <IconButton onClick={() => setExpanded([])} size="large">
+            <IconButton onClick={() => setExpanded([])} style={{ marginRight: '4px' }} size="large">
               <img src="static/img/collapse_all.svg" />
             </IconButton>
+            <FormControlLabel
+              control={
+                <Switch
+                  color="primary"
+                  checked={checked}
+                  onClick={handleChecked}
+                  inputProps={{ 'aria-label': 'controlled' }}
+                />
+              }
+              label="Duplicates"
+            />
+          </div>
+        )}
+        {view === COMPONENTS && (
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <FormControlLabel
+              control={
+                <Switch
+                  color="primary"
+                  checked={checked}
+                  onClick={handleChecked}
+                  inputProps={{ 'aria-label': 'controlled' }}
+                />
+              }
+              label="Duplicates"
+            />
           </div>
         )}
         <div style={{ display: 'flex' }}>
@@ -144,7 +191,7 @@ const MesheryTreeView = ({ data, view, setShow, setComp, setRela, setRegi, setSe
           />
         </div>
       </div>
-      <div style={{ overflowY: 'auto', height: '27rem' }}>
+      <div style={{ overflowY: 'auto', height: '27rem' }} onScroll={handleScroll}>
         <TreeView
           aria-label="controlled"
           defaultExpanded={['3']}

@@ -21,13 +21,13 @@ const useStyles = makeStyles((theme) => ({
       theme.palette.type === 'dark'
         ? theme.palette.secondary.toolbarBg2
         : theme.palette.secondary.toolbarBg1,
-    marginTop: '1rem',
     padding: '6rem',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: '1rem',
+    marginTop: '1rem'
   },
   treeWrapper: {
     backgroundColor:
@@ -37,22 +37,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     padding: '1rem',
     flexDirection: 'row',
-  },
-  '@keyframes rotateCloseIcon': {
-    form: {
-      transform: 'translateY(0) translateX(0)',
-      height: '10rem',
-      marginBottom: '0rem',
-      background: '#51636B',
-      flexDirection: 'column',
-    },
-    to: {
-      transform: 'translateY(-70px) translateX(-100px)',
-      height: '4rem',
-      marginBottom: '5rem',
-      background: '#677a84',
-      flexDirection: 'row-reverse',
-    },
   },
   cardStyle: {
     background: '#51636B',
@@ -65,19 +49,6 @@ const useStyles = makeStyles((theme) => ({
     marginRight: '1rem',
     flexDirection: 'column',
     cursor: 'pointer',
-  },
-  cardAnimateStyle: {
-    background: '#51636B',
-    color: 'white',
-    height: '10rem',
-    width: '13rem',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: '1rem',
-    flexDirection: 'column',
-    cursor: 'pointer',
-    animation: '$rotateCloseIcon 1s',
   },
   detailsContainer: {
     height: '30rem',
