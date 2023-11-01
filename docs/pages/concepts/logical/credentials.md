@@ -9,7 +9,7 @@ list: include
 ---
 Meshery uses one or more Credentials when authenticating to a managed or unmanaged Connection.
 Credentials are pivotal in Meshery as they serve as the authentication mechanism for connections registered with the Meshery server. They ensure secure interactions between Meshery and the various services and systems Meshery is designed to work with. <br>
-For more info, see [Meshery Integrations](/integrations/)
+For more info, see [Meshery Integrations](/integrations/).
 
 
 ## Key Features
