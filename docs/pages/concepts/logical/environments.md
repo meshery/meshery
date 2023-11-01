@@ -18,12 +18,6 @@ Assign any number of Connections to an environment whether that Connection is ma
 
 Environments can share resources. For example, you might create an environment named "production" and assign three connections: a GitHub connection, a Kubernetes connection, and a Prometheus connection. Subsequently, you also define a an environment named "dev/test "and assign three connections: a different Cooper, Netties connection, a different Prometheus connection, _and_ the same GitHub connection that is also assigned to the "production" environment.
 
-
-## Summary
-
-Environments represent a collection of resources in the form of Connections - both of managed and unmanaged Connections. Environment resources are comprised of Connections (and implicitly any Credentials used by those assigned Connections). Create and use environments to organize your connections and credentials into groups, and then make these resources available to you and your teams by assigning environments to Workspaces.
-
-
 ## Key Features
 
 - **Logical Grouping** Environments allow you to logically group related connections and their associated credentials. This makes it easier to manage, share, and work with a subset of resources instead of dealing with all your connections individually.
@@ -43,3 +37,7 @@ Credentials in an Environment are the keys to securely authenticate and access m
 
 See "[Credentials](/concepts/credentials)" section for more information.
 
+
+## Summary
+
+Environments represent a collection of resources in the form of Connections - both of managed and unmanaged Connections. Environment resources are comprised of Connections (and implicitly any Credentials used by those assigned Connections). Create and use environments to organize your connections and credentials into groups, and then make these resources available to you and your teams by assigning environments to Workspaces.

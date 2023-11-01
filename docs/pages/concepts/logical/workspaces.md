@@ -13,11 +13,6 @@ Meshery Workspaces serve as a virtual space for your team-based work. Create a W
 
 You may create Workspaces to organize project-based work or to create domains of responsibility for your teams or segregate Designs and Environments and track team activity. 
 
-## Summary 
-
-Workspaces facilitate collaboration between you and your teams, allow you to control access to resources, and track activity and report on related events.
-
-
 ## Key Features
 - **Resource Sharing** Workspaces allow for seamless resource sharing among team members, fostering collaboration.
 - **Logical Grouping** Within Workspaces, you can group related components such as environments and infrastructure designs.
@@ -74,3 +69,7 @@ To make the most of Meshery Workspaces, here are some best practices:
 - Regularly review and update your Workspace's resources and configurations.
 
 Meshery Workspaces enhance collaboration within your teams, providing a structured environment for sharing and managing resources. By following best practices and understanding the core components of Workspaces, you can maximize the benefits of this feature in Meshery.
+
+## Summary
+
+Workspaces facilitate collaboration between you and your teams, allow you to control access to resources, and track activity and report on related events.
