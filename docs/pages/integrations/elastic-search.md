@@ -4,16 +4,17 @@ title: Elastic Search
 permalink: integrations/elastic-search
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/elastic-search.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: elasticsearch-operator
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: elasticsearch-operator -->
 
 ### Overview & Features:
 2. Collaborative and visual infrastructure as code for Elastic Search

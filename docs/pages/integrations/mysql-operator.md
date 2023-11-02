@@ -4,16 +4,17 @@ title: MySQL Operator
 permalink: integrations/mysql-operator
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/mysql-operator.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: mysql-operator
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: mysql-operator -->
 
 ### Overview & Features:
 1. MySQL Operator for Kubernetes manages MySQL InnoDB Cluster setups inside a Kubernetes Cluster. MySQL Operator for Kubernetes manages the full lifecycle with setup and maintenance including automating upgrades and backups. This documentation is a work in progress; expect future changes to both content and structure

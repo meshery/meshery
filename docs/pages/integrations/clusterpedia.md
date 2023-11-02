@@ -4,16 +4,17 @@ title: Clusterpedia
 permalink: integrations/clusterpedia
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/clusterpedia.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: clusterpedia
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: clusterpedia -->
 
 ### Overview & Features:
 1. Clusterpedia is used for complex resources search across multiple clusters, support simultaneous search of a single kind of resource  or multiple kinds of resources existing in multiple clusters.

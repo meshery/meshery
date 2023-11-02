@@ -20,7 +20,7 @@
   "repository": "https://github.com/meshery/meshery",
   "license": "Apache-2.0",
   "dependencies": {
-    "@babel/eslint-parser": "^7.22.11",
+    "@babel/eslint-parser": "^7.22.15",
     "@emotion/cache": "^11.10.5",
     "@emotion/react": "^11.11.1",
     "@emotion/server": "^11.11.0",
@@ -36,7 +36,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@cypress/code-coverage": "^3.12.5",
+    "@cypress/code-coverage": "^3.12.7",
     "cypress": "^13.3.0",
     "eslint": "^8.48.0",
     "eslint-config-next": "^13.5.3",

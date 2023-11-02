@@ -4,16 +4,17 @@ title: Kube Prometheus
 permalink: integrations/kube-prometheus
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/kube-prometheus.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: kube-prometheus
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: kube-prometheus -->
 
 ### Overview & Features:
 1. Prometheus is an open-source systems monitoring and alerting toolkit

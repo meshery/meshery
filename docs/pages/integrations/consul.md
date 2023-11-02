@@ -4,16 +4,17 @@ title: Consul
 permalink: integrations/consul
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/consul.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: consul
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: consul -->
 
 ### Overview & Features:
 1. Consul is a distributed, highly available, and data center aware solution to connect and configure applications across dynamic, distributed infrastructure.

@@ -4,16 +4,17 @@ title: CD Pipeline Operator
 permalink: integrations/cd-pipeline-operator
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/cd-pipeline-operator.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: cd-pipeline-operator
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: cd-pipeline-operator -->
 
 ### Overview & Features:
 1. Boost your delivery with the development culture based on the modern CI/CD stack, golden path and self-service capabilities of the EPAM Delivery Platform (EDP).

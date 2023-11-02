@@ -4,16 +4,17 @@ title: Intel Device Plugins Operator
 permalink: integrations/intel-device-plugins-operator
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/intel-device-plugins-operator.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: intel-device-plugins-operator
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: intel-device-plugins-operator -->
 
 ### Overview & Features:
 1. A Kubernetes custom controller whose goal is to serve the installation and lifecycle management of Intel device plugins for Kubernetes.

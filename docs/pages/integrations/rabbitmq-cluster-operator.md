@@ -4,16 +4,17 @@ title: RabbitMQ Cluster Operator
 permalink: integrations/rabbitmq-cluster-operator
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/rabbitmq-cluster-operator.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: rabbitmq-cluster-operator
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: rabbitmq-cluster-operator -->
 
 ### Overview & Features:
 2. Collaborative and visual infrastructure as code for RabbitMQ Cluster Operator
