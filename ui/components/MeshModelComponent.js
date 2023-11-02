@@ -549,11 +549,10 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
     marginBottom: '0.5rem',
     marginTop: '1rem',
     transition: 'all 0.5s',
-    opacity: animate && !convert ? '1' : '0',
+    opacity: !convert ? '1' : '0',
   };
 
   const mainContainer = {
-    backgroundColor: 'white',
     padding: animate ? '8rem 0rem' : '6rem',
     display: 'flex',
     flexDirection: 'column',
@@ -561,7 +560,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
     justifyContent: 'center',
     borderRadius: '1rem',
     marginTop: animate ? '6rem' : '1rem',
-    transition: 'all 1s',
+    transition: 'all 0.8s',
   };
 
   return (
@@ -610,7 +609,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
         columnVisibility={columnVisibility}
       /> */}
       {convert ? (
-        <div style={mainContainer}>
+        <div className={StyleClass.mainContainerBg} style={mainContainer}>
           <div
             // className={StyleClass.cardContainer}
             style={{
@@ -692,8 +691,8 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
           >
             <Button
               style={{
-                backgroundColor: view === OVERVIEW ? 'white' : '#677a84',
-                color: view === OVERVIEW ? 'black' : 'white',
+                backgroundColor: view !== OVERVIEW && '#677a84',
+                color: view !== OVERVIEW && 'white',
                 borderRadius: '8px 8px 0px 0px',
                 marginRight: '1rem',
                 padding: view === OVERVIEW ? '0.5rem 2rem' : '0.6rem 2rem',
@@ -708,9 +707,10 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
               Overview
             </Button>
             <Button
+              className={StyleClass.tabs}
               style={{
-                backgroundColor: view === MODELS ? 'white' : '#677a84',
-                color: view === MODELS ? 'black' : 'white',
+                backgroundColor: view !== MODELS && '#677a84',
+                color: view !== MODELS && 'white',
                 borderRadius: '8px 8px 0px 0px',
                 marginRight: '1rem',
                 padding: view === MODELS ? '0.5rem 2rem' : '0.6rem 2rem',
@@ -725,9 +725,10 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
               Models ({modelsCount})
             </Button>
             <Button
+              className={StyleClass.tabs}
               style={{
-                backgroundColor: view === COMPONENTS ? 'white' : '#677a84',
-                color: view === COMPONENTS ? 'black' : 'white',
+                backgroundColor: view !== COMPONENTS && '#677a84',
+                color: view !== COMPONENTS && 'white',
                 borderRadius: '8px 8px 0px 0px',
                 marginRight: '1rem',
                 padding: view === COMPONENTS ? '0.5rem 2rem' : '0.6rem 2rem',
@@ -742,9 +743,10 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
               Components ({componentsCount})
             </Button>
             <Button
+              className={StyleClass.tabs}
               style={{
-                backgroundColor: view === RELATIONSHIPS ? 'white' : '#677a84',
-                color: view === RELATIONSHIPS ? 'black' : 'white',
+                backgroundColor: view !== RELATIONSHIPS && '#677a84',
+                color: view !== RELATIONSHIPS && 'white',
                 borderRadius: '8px 8px 0px 0px',
                 marginRight: '1rem',
                 padding: view === RELATIONSHIPS ? '0.5rem 2rem' : '0.6rem 2rem',
@@ -759,9 +761,10 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
               Relationships ({relationshipsCount})
             </Button>
             <Button
+              className={StyleClass.tabs}
               style={{
-                backgroundColor: view === REGISTRANTS ? 'white' : '#677a84',
-                color: view === REGISTRANTS ? 'black' : 'white',
+                backgroundColor: view !== REGISTRANTS && '#677a84',
+                color: view !== REGISTRANTS && 'white',
                 borderRadius: '8px 8px 0px 0px',
                 marginRight: '1rem',
                 padding: view === REGISTRANTS ? '0.5rem 2rem' : '0.6rem 2rem',

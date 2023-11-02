@@ -16,18 +16,24 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative',
     zIndex: '125',
   },
-  mainContainer: {
+  mainContainerBg: {
     backgroundColor:
       theme.palette.type === 'dark'
         ? theme.palette.secondary.toolbarBg2
         : theme.palette.secondary.toolbarBg1,
-    padding: '6rem',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: '1rem',
-    marginTop: '1rem'
+    // padding: '6rem',
+    // display: 'flex',
+    // flexDirection: 'column',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    // borderRadius: '1rem',
+    // marginTop: '1rem'
+  },
+  tabs: {
+    backgroundColor:
+      theme.palette.type === 'dark'
+        ? theme.palette.secondary.toolbarBg2
+        : theme.palette.secondary.toolbarBg1,
   },
   treeWrapper: {
     backgroundColor:
