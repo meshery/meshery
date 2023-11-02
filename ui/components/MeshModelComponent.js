@@ -611,7 +611,6 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
       {convert ? (
         <div className={StyleClass.mainContainerBg} style={mainContainer}>
           <div
-            // className={StyleClass.cardContainer}
             style={{
               display: 'flex',
               flexDirection: 'row',
@@ -623,9 +622,6 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
             <Paper
               elevation={3}
               className={StyleClass.cardStyle}
-              // style={{
-
-              // }}
               onClick={() => {
                 setView(MODELS);
                 setAnimate(true);
