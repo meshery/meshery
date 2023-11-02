@@ -820,44 +820,6 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
   return (
     <>
       <NoSsr>
-        <div className={StyleClass.toolWrapper} style={{ marginBottom: '0' }}>
-          <div className={classes.createButton}>
-            {/* <div>
-              <Button
-                aria-label="Rediscover"
-                variant="contained"
-                color="primary"
-                size="large"
-                // @ts-ignore
-                onClick={onOpenCreateConnectionModal}
-                style={{ marginRight: '1rem', borderRadius: '5px' }}
-              >
-                Connect Helm Repository
-              </Button>
-            </div> */}
-            <MesherySettingsEnvButtons />
-          </div>
-          <div
-            className={classes.searchAndView}
-            style={{
-              display: 'flex',
-              borderRadius: '0.5rem 0.5rem 0 0',
-            }}
-          >
-            <SearchBar
-              onSearch={(value) => {
-                setSearch(value);
-              }}
-              placeholder="Search connections..."
-            />
-            {tab === 0 && (
-              <CustomColumnVisibilityControl
-                columns={columns}
-                customToolsProps={{ columnVisibility, setColumnVisibility }}
-              />
-            )}
-          </div>
-        </div>
         <AppBar position="static" color="default" className={classes.appBar}>
           <Tabs
             value={tab}
@@ -869,6 +831,9 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
             indicatorColor="primary"
             textColor="primary"
             variant="fullWidth"
+            sx={{
+              height: '10%',
+            }}
           >
             <Tab
               className={classes.tab}
@@ -891,6 +856,48 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
             />
           </Tabs>
         </AppBar>
+        {tab === 0 && (
+          <div
+            className={StyleClass.toolWrapper}
+            style={{ marginBottom: '5px', marginTop: '-30px' }}
+          >
+            <div className={classes.createButton}>
+              {/* <div>
+              <Button
+                aria-label="Rediscover"
+                variant="contained"
+                color="primary"
+                size="large"
+                // @ts-ignore
+                onClick={onOpenCreateConnectionModal}
+                style={{ marginRight: '1rem', borderRadius: '5px' }}
+              >
+                Connect Helm Repository
+              </Button>
+            </div> */}
+              <MesherySettingsEnvButtons />
+            </div>
+            <div
+              className={classes.searchAndView}
+              style={{
+                display: 'flex',
+                borderRadius: '0.5rem 0.5rem 0 0',
+              }}
+            >
+              <SearchBar
+                onSearch={(value) => {
+                  setSearch(value);
+                }}
+                placeholder="Search connections..."
+              />
+
+              <CustomColumnVisibilityControl
+                columns={columns}
+                customToolsProps={{ columnVisibility, setColumnVisibility }}
+              />
+            </div>
+          </div>
+        )}
         {tab === 0 && (
           <ResponsiveDataTable
             data={connections}
