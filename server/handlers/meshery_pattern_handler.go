@@ -645,6 +645,7 @@ func (h *Handler) handlePatternPOST(
 			go h.config.ApplicationChannel.Publish(userID, struct{}{})
 			eb := eventBuilder
 			_ = provider.PersistEvent(eb.WithDescription(fmt.Sprintf("Design %s  Source content uploaded", mesheryPatternContent[0].Name)).Build())
+			return
 		}
 
 		mesheryPattern.ID = savedPatternID
