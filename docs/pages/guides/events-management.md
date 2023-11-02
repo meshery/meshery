@@ -54,3 +54,7 @@ Events in Meshery are always persisted, ensuring that you have a complete histor
 Meshery's Notification Center simplifies the task of managing events in your Kubernetes and Cloud-Native environments. This robust feature offers a central hub to view, search, and filter events, making it effortless to identify and address critical incidents. Each event comes with detailed descriptions and additional data for efficient troubleshooting.
 
 You can easily collaborate with stakeholders by sharing event data, enhancing communication and issue resolution. What's more, Meshery enables you to track event statuses, ensuring no crucial event goes unnoticed. Plus, events are always persisted, providing a historical record for compliance and trend analysis. With Meshery's Notification Center, you can gain deep insights into your infrastructure, swiftly respond to critical events, and maintain optimal performance for your applications and services. Detailed instructions and best practices can be found in the official documentation and Meshery's user guide.
+
+{% include suggested-reading.html language="en" %}
+
+{% include related-discussions.html tag="meshery" %}
