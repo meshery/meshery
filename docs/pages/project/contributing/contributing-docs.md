@@ -364,14 +364,9 @@ Meshery Docs has a common include file [alert.html](https://github.com/meshery/m
 
 To use the `alert.html` feature in our documentation include the following code:
 ``` 
-  {%raw%}{% include alert.html type="info" title="Here ianother!" %}{%endraw%}
+  {%raw%}{% include alert.html type="info" title="Here is another!" %}{%endraw%}
 ```
 
-#### Example
-    
- Here's an example of how to use the `alert.html` feature in your documentation:
-
-     {% include alert.html type="warning" content="This is an example of warning" %}
 
 Other supported alert types include `warning`, `danger`,`success`,`primary`, `secondary`, `light`, `dark` .
 
