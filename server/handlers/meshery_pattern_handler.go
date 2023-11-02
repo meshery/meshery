@@ -1051,7 +1051,7 @@ func (h *Handler) PublishCatalogPatternHandler(
 		WithMetadata(map[string]interface{}{
 			"error": ErrRequestBody(err),
 		}).
-		WithDescription("Error parsing design.").Build()
+		WithDescription("Error parsing design payload.").Build()
 		_ = provider.PersistEvent(e)
 		go h.config.EventBroadcaster.Publish(userID, e)
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
@@ -1084,7 +1084,7 @@ func (h *Handler) PublishCatalogPatternHandler(
 	}
 
 
-	e := eventBuilder.WithSeverity(events.Informational).ActedUpon(parsedBody.ID).WithDescription(fmt.Sprintf("'%s' design published with status: %s", respBody.ContentName, respBody.Status)).Build()
+	e := eventBuilder.WithSeverity(events.Informational).ActedUpon(parsedBody.ID).WithDescription(fmt.Sprintf("Request to publish '%s' design submitted with status: %s", respBody.ContentName, respBody.Status)).Build()
 	_ = provider.PersistEvent(e)
 	go h.config.EventBroadcaster.Publish(userID, e)
 
@@ -1130,7 +1130,7 @@ func (h *Handler) UnPublishCatalogPatternHandler(
 		WithMetadata(map[string]interface{}{
 			"error": ErrRequestBody(err),
 		}).
-		WithDescription("Error parsing design.").Build()
+		WithDescription("Error parsing design payload.").Build()
 		_ = provider.PersistEvent(e)
 		go h.config.EventBroadcaster.Publish(userID, e)
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
