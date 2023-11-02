@@ -4,16 +4,17 @@ title: Devstream
 permalink: integrations/devstream
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/devstream.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: devstream
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: devstream -->
 
 ### Overview & Features:
 1. DevStream: the open-source DevOps toolchain manager (DTM).

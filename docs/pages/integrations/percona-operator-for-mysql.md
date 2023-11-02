@@ -4,16 +4,17 @@ title: Percona Operator for MySQL
 permalink: integrations/percona-operator-for-mysql
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/percona-operator-for-mysql.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: ps-operator
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: ps-operator -->
 
 ### Overview & Features:
 1. Percona Operator for MySQL allows users to deploy and manage Percona Server for MySQL Clusters on Kubernetes

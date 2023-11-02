@@ -4,16 +4,17 @@ title: Jira Service Desk Operator
 permalink: integrations/jira-service-desk-operator
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/jira-service-desk-operator.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: jira-service-desk-operator
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: jira-service-desk-operator -->
 
 ### Overview & Features:
 1. Plan, track, and manage your agile and software development projects in Jira. Customize your workflow, collaborate, and release great software.

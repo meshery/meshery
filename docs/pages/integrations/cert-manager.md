@@ -4,16 +4,17 @@ title: Cert Manager
 permalink: integrations/cert-manager
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/cert-manager.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: cert-manager
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: cert-manager -->
 
 ### Overview & Features:
 2. Cloud native certificate management with Cert Manager and Meshery
