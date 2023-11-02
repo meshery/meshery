@@ -158,6 +158,7 @@ const styles = (theme) => ({
     },
   },
   tabs: {
+    height: '55px',
     '& .MuiTabs-indicator': {
       backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
     },
