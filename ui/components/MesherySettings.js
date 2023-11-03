@@ -25,8 +25,8 @@ import { updateProgress } from '../lib/store';
 import PromptComponent from './PromptComponent';
 import { iconMedium } from '../css/icons.styles';
 import MeshModelComponent from './MeshModelComponent';
-import CredentialIcon from '../assets/icons/CredentialIcon';
-import MesheryCredentialComponent from './MesheryCredentialComponent';
+// import CredentialIcon from '../assets/icons/CredentialIcon';
+// import MesheryCredentialComponent from './MesheryCredentialComponent';
 import DatabaseSummary from './DatabaseSummary';
 import { getComponentsDetail, getModelsDetail, getRelationshipsDetail } from '../api/meshmodel';
 import { withNotify } from '../utils/hooks/useNotification';
@@ -393,14 +393,14 @@ class MesherySettings extends React.Component {
                 tab="registry"
               />
             </Tooltip>
-            <Tooltip title="Credential" placement="top">
+            {/* <Tooltip title="Credential" placement="top">
               <Tab
                 className={classes.tab}
                 icon={<CredentialIcon width="1.5rem" />}
                 label="Credentials"
                 tab="credential"
               />
-            </Tooltip>
+            </Tooltip> */}
 
             {/*NOTE: Functionality of performance tab will be modified, until then keeping it and the related code commented */}
 
@@ -548,11 +548,11 @@ class MesherySettings extends React.Component {
 
           </TabContainer>
         )} */}
-        {tabVal === 5 && (
+        {/* {tabVal === 5 && (
           <TabContainer>
             <MesheryCredentialComponent />
           </TabContainer>
-        )}
+        )} */}
 
         {backToPlay}
         <PromptComponent ref={this.systemResetPromptRef} />

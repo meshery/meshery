@@ -49,6 +49,8 @@ binding_relationship[results] {
         some comp in from
 
         some edge in comp.traits.meshmap.edges
+        contains(binding_types, lower(edge.data.subType))
+
         e := {
             "from": {
                 "id": edge.data.source

@@ -1,41 +1,32 @@
 ---
 layout: default
-title: Scoop
-permalink: installation/platforms/scoop
+title: Install Meshery CLI with Scoop
+permalink: installation/windows/scoop
 type: installation
-display-title: "false"
+category: mesheryctl
+display-title: "true"
 language: en
-list: exclude
+list: include
 image: /assets/img/platforms/scoop.png
 ---
 
-{% include installation_prerequisites.html %}
+{% include mesheryctl/installation-scoop.md %}
 
-`mesheryctl` can be installed via Scoop (a package manager for Windows, just like apt for Ubuntu). `mesheryctl` is also available through Homebrew.
+# Related Reading
 
-### Prerequisites
+## Mesherctl Guides
 
-You need to have `scoop` installed on your Windows system to perform these actions.
+Guides to using Meshery's various features and components.
 
-### Install
+{% assign sorted_guides = site.pages | sort: "name" %}
 
-To install `mesheryctl` using Scoop, execute the following commands.
+<ul>
+  {% for item in sorted_guides %}
+  {% if item.type=="guides" and item.category=="mesheryctl" and item.list!="exclude" and item.language=="en" -%}
+    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+    </li>
+    {% endif %}
+  {% endfor %}
+    <li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading Meshery CLI</a></li>
+</ul>
 
-<pre class="codeblock-pre"><div class="codeblock">
-<div class="clipboardjs">scoop bucket add mesheryctl https://github.com/layer5io/scoop-bucket.git
-scoop install mesheryctl</div></div>
-</pre>
-
-You're ready to run Meshery. To do so, execute the following command.
-
-<pre class="codeblock-pre"><div class="codeblock">
-<div class="clipboardjs">mesheryctl system start</div></div>
-</pre>
-
-### Upgrade
-
-To upgrade `mesheryctl`, just execute the following command.
-
-<pre class="codeblock-pre"><div class="codeblock">
-<div class="clipboardjs">scoop update mesheryctl</div></div>
-</pre>

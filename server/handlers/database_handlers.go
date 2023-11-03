@@ -174,11 +174,11 @@ func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ 
 		}
 
 		err = dbHandler.AutoMigrate(
-			&meshsyncmodel.KeyValue{},
-			&meshsyncmodel.Object{},
-			&meshsyncmodel.ResourceSpec{},
-			&meshsyncmodel.ResourceStatus{},
-			&meshsyncmodel.ResourceObjectMeta{},
+			&meshsyncmodel.KubernetesKeyValue{},
+			&meshsyncmodel.KubernetesResource{},
+			&meshsyncmodel.KubernetesResourceSpec{},
+			&meshsyncmodel.KubernetesResourceStatus{},
+			&meshsyncmodel.KubernetesResourceObjectMeta{},
 			&models.PerformanceProfile{},
 			&models.MesheryResult{},
 			&models.MesheryPattern{},

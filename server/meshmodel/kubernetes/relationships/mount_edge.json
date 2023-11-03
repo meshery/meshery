@@ -50,9 +50,11 @@
             "model": "kubernetes",
             "match": {
               "self": [
+                ["name"],
                 ["labels"]
               ],
               "PersistentVolumeClaim": [
+                ["settings", "spec", "volumeName"],
                 ["settings", "spec", "selector", "matchLabels"]
               ]
             }

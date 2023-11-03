@@ -50,10 +50,10 @@
     font-size: 2.4rem;
   }
   h4 {
-    font-size: 2.8rem;
+    font-size: 2.6rem;
   }
   h3 {
-    font-size: 3.2rem;
+    font-size: clamp(2rem, 1.875vw + 0.5vw, 3rem);
   }
   h2 {
     font-size: 3.6rem;

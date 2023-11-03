@@ -65,12 +65,12 @@ export const TextWithLinks = ({ text, ...typographyProps }) => {
   const parts = text.split(linkRegex);
 
   // Map the parts to React elements
-  const elements = parts.map((part) => {
+  const elements = parts.map((part, idx) => {
     if (part.match(linkRegex)) {
       // If the part is a link, wrap it in a Link component
       return getFormattedLink(part);
     } else {
-      return <span>{part}</span>;
+      return <span key={idx}>{part}</span>;
     }
   });
 
@@ -82,13 +82,17 @@ export const KeyValue = ({ Key, Value }) => {
     <div
       style={{
         display: 'flex',
-        alignItems: 'baseline',
+        alignItems: 'center',
         gap: '0.25rem',
         flexWrap: 'wrap',
         marginBlock: '0.5rem',
       }}
     >
-      <SectionBody body={Key + ':'} style={{ fontWeight: 'bold' }} /> <SectionBody body={Value} />
+      <SectionBody
+        body={Key.replaceAll('_', ' ') + ':'}
+        style={{ fontWeight: 'bold', textTransform: 'capitalize' }}
+      />{' '}
+      <SectionBody body={Value} />
     </div>
   );
 };
@@ -120,7 +124,7 @@ export const SectionBody = ({ body, style = {} }) => {
     <TextWithLinks
       variant="body1"
       style={{
-        textTransform: 'capitalize',
+        // textTransform: 'capitalize',
         wordWrap: 'break-word',
         ...style,
       }}
@@ -142,6 +146,16 @@ const ArrayFormatter = ({ items }) => {
     </ol>
   );
 };
+
+export function reorderObjectProperties(obj, order) {
+  if (!_.isObject(obj) || obj == null) {
+    return obj;
+  }
+
+  const orderedProperties = _.pick(obj, order);
+  const remainingProperties = _.omit(obj, order);
+  return { ...orderedProperties, ...remainingProperties };
+}
 
 const DynamicFormatter = ({ data }) => {
   const { propertyFormatters } = useContext(FormatterContext);
@@ -186,9 +200,9 @@ const DynamicFormatter = ({ data }) => {
 
 export const FormatStructuredData = ({ propertyFormatters = {}, data }) => {
   if (!data || isEmptyAtAllDepths(data)) {
-    console.log('data is empty', data);
     return null;
   }
+
   return (
     <>
       <FormatterContext.Provider

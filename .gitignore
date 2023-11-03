@@ -1,10 +1,3 @@
-# mesheryctl
-mesheryctl/cmd/mesheryctl/mesheryctl
-mesheryctl/.meshery/
-mesheryctl/mesheryctl
-mesheryctl/default.profraw
-main
-
 
 # Binaries for programs and plugins
 *.exe
@@ -29,21 +22,46 @@ Chart.min.js
 
 fortio_chart.js
 
+# UI
 **/node_modules/
-
 **/out/
 
 **/ui/playground/
-**/.next/
+ui/.next/
+ui/out/
+ui/node_modules/
 
+provider-ui/out/
+provider-ui/.next/
+provider-ui/node_modules/
+
+# mesheryctl
+mesheryctl/cmd/mesheryctl/mesheryctl
+mesheryctl/.meshery/
+mesheryctl/mesheryctl
+mesheryctl/default.profraw
+main
+
+# Meshery
 cmd/meshery
+
+# scripts
+scripts/component_generation/main
+scripts/component_updater/main
+scripts/component_generation_docs/main
 
 log.txt
 
-**/_site
-**/.sass-cache
-**/.jekyll-metadata
-**/.jekyll-cache
+# Docs
+docs/_site
+docs/.sass-cache
+docs/.jekyll-metadata
+docs/.jekyll-cache
+
+docs/v0.4
+docs/v0.5
+docs/v0.6
+docs/v0.*
 
 dist/
 

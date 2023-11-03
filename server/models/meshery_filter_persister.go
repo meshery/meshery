@@ -8,6 +8,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/database"
+	"gorm.io/gorm"
 )
 
 // MesheryFilterPersister is the persister for persisting
@@ -26,25 +27,22 @@ type MesheryFilterPage struct {
 
 // GetMesheryFilters returns all of the 'private' filters. Though private has no meaning here since there is only
 // one local user. We make this distinction to be consistent with the remote provider
-func (mfp *MesheryFilterPersister) GetMesheryFilters(search, order string, page, pageSize uint64, visibility string) ([]byte, error) {
+func (mfp *MesheryFilterPersister) GetMesheryFilters(search, order string, page, pageSize uint64, visibility []string) ([]byte, error) {
 	order = sanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
 		order = "updated_at desc"
 	}
 
-	if visibility == "private" {
-		visibility = Private
-	} else if visibility == "published" {
-		visibility = Published
-	} else {
-		visibility = Public
-	}
-
 	count := int64(0)
 	filters := []*MesheryFilter{}
 
-	query := mfp.DB.Where("visibility = ?", visibility).Order(order)
+	var query *gorm.DB
+	if len(visibility) == 0 {
+		query = mfp.DB.Where("visibility in (?)", visibility)
+	}
+	query = query.Order(order)
+
 
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"

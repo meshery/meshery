@@ -1,4 +1,4 @@
-import theme, { darkTheme } from '../themes/app';
+import { darkTheme } from '../themes/app';
 
 export const getTheme = () => {
   if (typeof window === 'undefined') {

@@ -239,7 +239,9 @@ func (h *Handler) handleFilterPOST(
 //
 // ```?pagesize={pagesize}``` Default pagesize is 10
 //
-// ```?visibility={visibility}``` Default visibility is public
+// ```?visibility={[visibility]}``` Default visibility is public + private; Mulitple visibility filters can be passed as an array
+// Eg: ```?visibility=["public", "published"]``` will return public and published filters
+//
 // responses:
 //
 //	200: mesheryFiltersResponseWrapper
@@ -253,7 +255,22 @@ func (h *Handler) GetMesheryFiltersHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetMesheryFilters(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("visibility"))
+	filter := struct {
+		Visibility []string `json:"visibility"`
+	}{}
+
+	visibility := q.Get("visibility")
+	if visibility != "" {
+		err := json.Unmarshal([]byte(visibility), &filter.Visibility)
+		if err != nil {
+			h.log.Error(ErrFetchFilter(err))
+			http.Error(rw, ErrFetchFilter(err).Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
+
+	resp, err := provider.GetMesheryFilters(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), filter.Visibility)
 	if err != nil {
 		h.log.Error(ErrFetchFilter(err))
 		http.Error(rw, ErrFetchFilter(err).Error(), http.StatusInternalServerError)
@@ -386,9 +403,24 @@ func (h *Handler) PublishCatalogFilterHandler(
 		_ = r.Body.Close()
 	}()
 
+	userID := uuid.FromStringOrNil(user.ID)
+	eventBuilder := events.NewEvent().
+	FromUser(userID).
+	FromSystem(*h.SystemID).
+	WithCategory("filter").
+	WithAction("publish").
+	ActedUpon(userID)
+
 	var parsedBody *models.MesheryCatalogFilterRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		h.log.Error(ErrRequestBody(err))
+		e := eventBuilder.WithSeverity(events.Error).
+		WithMetadata(map[string]interface{}{
+			"error": ErrRequestBody(err),
+		}).
+		WithDescription("Error parsing filter payload.").Build()
+		_ = provider.PersistEvent(e)
+		go h.config.EventBroadcaster.Publish(userID, e)
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
 		return
 	}
@@ -396,9 +428,34 @@ func (h *Handler) PublishCatalogFilterHandler(
 	resp, err := provider.PublishCatalogFilter(r, parsedBody)
 	if err != nil {
 		h.log.Error(ErrPublishCatalogFilter(err))
+		e := eventBuilder.WithSeverity(events.Error).
+		WithMetadata(map[string]interface{}{
+			"error": ErrPublishCatalogFilter(err),
+		}).
+		WithDescription("Error publishing filter.").Build()
+		_ = provider.PersistEvent(e)
+		go h.config.EventBroadcaster.Publish(userID, e)
 		http.Error(rw, ErrPublishCatalogFilter(err).Error(), http.StatusInternalServerError)
 		return
 	}
+
+	var respBody *models.CatalogRequest
+	err = json.Unmarshal(resp, &respBody)
+	if err != nil {
+		h.log.Error(ErrPublishCatalogFilter(err))
+		e := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": ErrPublishCatalogFilter(err),
+		}).WithDescription("Error parsing response.").Build()
+		_ = provider.PersistEvent(e)
+		go h.config.EventBroadcaster.Publish(userID, e)
+		http.Error(rw, ErrPublishCatalogFilter(err).Error(), http.StatusInternalServerError)
+	}
+
+
+	e := eventBuilder.WithSeverity(events.Informational).ActedUpon(parsedBody.ID).WithDescription(fmt.Sprintf("Request to publish '%s' filter submitted with status: %s", respBody.ContentName, respBody.Status)).Build()
+	_ = provider.PersistEvent(e)
+	go h.config.EventBroadcaster.Publish(userID, e)
+
 
 	go h.config.FilterChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
@@ -426,18 +483,59 @@ func (h *Handler) UnPublishCatalogFilterHandler(
 		_ = r.Body.Close()
 	}()
 
+	userID := uuid.FromStringOrNil(user.ID)
+	eventBuilder := events.NewEvent().
+	FromUser(userID).
+	FromSystem(*h.SystemID).
+	WithCategory("filter").
+	WithAction("unpublish_request").
+	ActedUpon(userID)
+
 	var parsedBody *models.MesheryCatalogFilterRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		h.log.Error(ErrRequestBody(err))
+		e := eventBuilder.WithSeverity(events.Error).
+		WithMetadata(map[string]interface{}{
+			"error": ErrRequestBody(err),
+		}).
+		WithDescription("Error parsing filter payload.").Build()
+		_ = provider.PersistEvent(e)
+		go h.config.EventBroadcaster.Publish(userID, e)
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
 		return
 	}
 	resp, err := provider.UnPublishCatalogFilter(r, parsedBody)
 	if err != nil {
 		h.log.Error(ErrPublishCatalogFilter(err))
+			e := eventBuilder.WithSeverity(events.Error).
+		WithMetadata(map[string]interface{}{
+			"error": ErrPublishCatalogFilter(err),
+		}).
+		WithDescription("Error publishing filter.").Build()
+		_ = provider.PersistEvent(e)
+		go h.config.EventBroadcaster.Publish(userID, e)
 		http.Error(rw, ErrPublishCatalogFilter(err).Error(), http.StatusInternalServerError)
 		return
 	}
+
+
+	var respBody *models.CatalogRequest
+	err = json.Unmarshal(resp, &respBody)
+	if err != nil {
+		h.log.Error(ErrPublishCatalogFilter(err))
+		e := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": ErrPublishCatalogFilter(err),
+		}).WithDescription("Error parsing response.").Build()
+		_ = provider.PersistEvent(e)
+		go h.config.EventBroadcaster.Publish(userID, e)
+		http.Error(rw, ErrPublishCatalogFilter(err).Error(), http.StatusInternalServerError)
+	}
+
+
+	e := eventBuilder.WithSeverity(events.Informational).ActedUpon(parsedBody.ID).WithDescription(fmt.Sprintf("'%s' filter unpublished", respBody.ContentName)).Build()
+	_ = provider.PersistEvent(e)
+	go h.config.EventBroadcaster.Publish(userID, e)
+
 
 	go h.config.FilterChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 	rw.Header().Set("Content-Type", "application/json")

@@ -24,7 +24,6 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/database"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -1471,6 +1470,37 @@ func (l *RemoteProvider) DeleteMesheryPatternResource(token, resourceID string) 
 	return ErrDelete(fmt.Errorf("error while deleting design resource"), "design: "+resourceID, resp.StatusCode)
 }
 
+func (l *RemoteProvider) SaveMesheryPatternSourceContent(tokenString string, patternID string, sourceContent []byte) error {
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
+
+	logrus.Debugf("Pattern Content size %d", len(sourceContent))
+	bf := bytes.NewBuffer(sourceContent)
+
+	uploadURL := fmt.Sprintf("%s%s%s/%s", l.RemoteProviderURL, ep, remoteUploadURL, patternID)
+	remoteProviderURL, _ := url.Parse(uploadURL)
+
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		if resp == nil {
+			return ErrUnreachableRemoteProvider(err)
+		}
+		return ErrPost(err, "Pattern Source Content", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("pattern source successfully uploaded to remote provider")
+		return nil
+	}
+
+	return ErrPost(fmt.Errorf("failed to upload pattern source to remote provider"), "", resp.StatusCode)
+}
+
 // SaveMesheryPattern saves given pattern with the provider
 func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
@@ -1478,6 +1508,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
+
 
 	data, err := json.Marshal(map[string]interface{}{
 		"pattern_data": pattern,
@@ -1489,7 +1520,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 		return nil, err
 	}
 
-	logrus.Debugf("design: %s, size: %d", data, len(data))
+	logrus.Debugf("design: %s, size: %d", pattern.Name, len(data))
 	logrus.Infof("attempting to save design to remote provider")
 	bf := bytes.NewBuffer(data)
 
@@ -1519,16 +1550,16 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("design successfully sent to remote provider: %s", string(bdr))
+		logrus.Infof("design %s successfully sent to remote provider", pattern.Name)
 		return bdr, nil
 	}
 
-	logrus.Errorf("error while sending design: %s", bdr)
+	logrus.Errorf("error while sending design %s", pattern.Name)
 	return bdr, fmt.Errorf("error while sending design - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
-func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, search, order string, updatedAfter string) ([]byte, error) {
+func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, search, order, updatedAfter string, visibility []string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
 		logrus.Error("operation not available")
 		return []byte{}, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryPatterns, l.ProviderName)
@@ -1554,6 +1585,12 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 	}
 	if updatedAfter != "" {
 		q.Set("updated_after", updatedAfter)
+	}
+	if len(visibility) > 0 {
+		for _, v := range visibility {
+			logrus.Debugf("visibility: %s", v)
+			q.Add("visibility", v)
+		}
 	}
 	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("constructed design url: %s", remoteProviderURL.String())
@@ -2049,7 +2086,7 @@ func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFi
 }
 
 // GetMesheryFilters gives the filters stored with the provider
-func (l *RemoteProvider) GetMesheryFilters(tokenString string, page, pageSize, search, order string, visibility string) ([]byte, error) {
+func (l *RemoteProvider) GetMesheryFilters(tokenString string, page, pageSize, search, order string, visibility []string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryFilters) {
 		logrus.Error("operation not available")
 		return []byte{}, ErrInvalidCapability("PersistMesheryFilters", l.ProviderName)
@@ -2073,9 +2110,13 @@ func (l *RemoteProvider) GetMesheryFilters(tokenString string, page, pageSize, s
 	if order != "" {
 		q.Set("order", order)
 	}
-	if visibility != "" {
-		q.Set("visibility", visibility)
+	
+	if len(visibility) > 0 {
+		for _, v := range visibility {
+			q.Add("visibility", v)
+		}
 	}
+
 	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("constructed filters url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
@@ -3848,33 +3889,6 @@ func (l *RemoteProvider) DeleteMesheryConnection() error {
 	}
 
 	return ErrDelete(fmt.Errorf("Could not delete meshery connection"), " Meshery Connection", resp.StatusCode)
-}
-
-// RecordMeshSyncData records the mesh sync data
-func (l *RemoteProvider) RecordMeshSyncData(obj model.Object) error {
-	result := l.GenericPersister.Create(&obj)
-	if result.Error != nil {
-		return result.Error
-	}
-	return nil
-}
-
-// ReadMeshSyncData records the mesh sync data
-func (l *RemoteProvider) ReadMeshSyncData() ([]model.Object, error) {
-	objects := make([]model.Object, 0)
-	result := l.GenericPersister.
-		Preload("TypeMeta").
-		Preload("ObjectMeta").
-		Preload("ObjectMeta.Labels").
-		Preload("ObjectMeta.Annotations").
-		Preload("Spec").
-		Preload("Status").
-		Find(&objects)
-
-	if result.Error != nil {
-		return nil, result.Error
-	}
-	return objects, nil
 }
 
 // TarXZF takes in a source url downloads the tar.gz file
