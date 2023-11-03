@@ -1520,7 +1520,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 		return nil, err
 	}
 
-	logrus.Debugf("design: %s, size: %d", data, len(data))
+	logrus.Debugf("design: %s, size: %d", pattern.Name, len(data))
 	logrus.Infof("attempting to save design to remote provider")
 	bf := bytes.NewBuffer(data)
 
@@ -1550,11 +1550,11 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("design successfully sent to remote provider: %s", string(bdr))
+		logrus.Infof("design %s successfully sent to remote provider", pattern.Name)
 		return bdr, nil
 	}
 
-	logrus.Errorf("error while sending design: %s", bdr)
+	logrus.Errorf("error while sending design %s", pattern.Name)
 	return bdr, fmt.Errorf("error while sending design - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 

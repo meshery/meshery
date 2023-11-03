@@ -4,16 +4,17 @@ title: Postgres Database (CrunchyData)
 permalink: integrations/postgres-database-(crunchydata)
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/postgres-database-(crunchydata).svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: pg-db
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: pg-db -->
 
 ### Overview & Features:
 1. Manage Postgres clusters via PGO, the open source Postgres Operator from Crunchy Data.
