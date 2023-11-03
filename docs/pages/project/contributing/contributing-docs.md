@@ -358,24 +358,17 @@ Just for fun, here are all the types:
 {% include alert.html type="primary" content="This is a primary alert" %}
 {% include alert.html type="secondary" content="This is a secondary alert" %}
 
+#### alert.html
 
-### Alerts
+Meshery Docs has a common include file [alert.html](https://github.com/meshery/meshery/blob/master/docs/_includes/alert.html), to provide consistent formatting for notes, warnings, and various informative callouts intended for the readers.
 
-{% include alert.html type="info" title="What is an alert?" content="An alert is a box that can stand out to indicate important information. You can choose from levels success, warning, danger, info, and primary. This example is an info box, and the code for another might look like this:" %}
-
+To use the `alert.html` feature in our documentation include the following code:
+``` 
+  {%raw%}{% include alert.html type="info" title="Here is another!" %}{%endraw%}
 ```
-{%raw%}{% include alert.html type="info" title="Here is another!" %}{%endraw%}
-```
 
-Just for fun, here are all the types:
 
-{% include alert.html type="warning" content="This is a warning" %}
-{% include alert.html type="danger" content="This alerts danger!" %}
-{% include alert.html type="success" content="This alerts success" %}
-{% include alert.html type="info" content="This is useful information." %}
-{% include alert.html type="primary" content="This is a primary alert" %}
-{% include alert.html type="secondary" content="This is a secondary alert" %}
-
+Other supported alert types include `warning`, `danger`,`success`,`primary`, `secondary`, `light`, `dark` .
 
 ### Quotes
 
