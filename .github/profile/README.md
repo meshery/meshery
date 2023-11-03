@@ -3,7 +3,7 @@
 
 # Welcome to Meshery - Your Multi-Mesh Manager!
 
-Meshery is a self-service engineering platform that enables collaborative design and operation of cloud native infrastructure. Whether you're a seasoned DevOps pro, a curious developer, or an infrastructure enthusiast, Meshery empowers you to seamlessly design, deploy, and operate your cloud-native systems with ease.
+Meshery is a self-service engineering platform that enables collaborative design and operation of cloud native infrastructure. Meshery empowers you to seamlessly design, deploy, and operate your cloud-native systems with ease.
 
 <div align="center">
   <img src="./meshery/.github/assets/images/meshery-full-perf-720p.mp4" alt="Meshery Teaser Video">
