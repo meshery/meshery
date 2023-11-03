@@ -75,7 +75,7 @@ jobs:
         with:
           go-version: "1.21"
           
-      - name: Run component Updation
+      - name: Run component Updater
         env:
           CRED: ${{ secrets.INTEGRATION_SPREADSHEET_CRED }}
         run: |
