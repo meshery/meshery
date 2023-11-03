@@ -61,6 +61,7 @@ jobs:
             
   update-components:
     name: Update Components
+    needs: generate-components
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
@@ -74,11 +75,11 @@ jobs:
         with:
           go-version: "1.21"
           
-      - name: Run component Updater
+      - name: Run component Updation
         env:
           CRED: ${{ secrets.INTEGRATION_SPREADSHEET_CRED }}
         run: |
-            cd scripts/component_updater
+            cd scripts/component_updation
             go build main.go
             ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system meshery ../../server/meshmodel
       - name: Commit changes 
