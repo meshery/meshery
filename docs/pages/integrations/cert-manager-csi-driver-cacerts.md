@@ -4,16 +4,17 @@ title: Cert Manager Csi Driver Cacerts
 permalink: integrations/cert-manager-csi-driver-cacerts
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/cert-manager-csi-driver-cacerts.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: cert-manager-csi-driver-cacerts
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: cert-manager-csi-driver-cacerts -->
 
 ### Overview & Features:
 2. Collaborative and visual infrastructure as code for Cert Manager Csi Driver Cacerts

@@ -4,16 +4,17 @@ title: Dapr
 permalink: integrations/dapr
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/dapr.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: dapr
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: dapr -->
 
 ### Overview & Features:
 1. Dapr is a portable, event-driven, runtime for building distributed applications across cloud and edge.

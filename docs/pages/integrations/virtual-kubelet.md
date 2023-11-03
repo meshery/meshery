@@ -4,16 +4,17 @@ title: Virtual Kubelet
 permalink: integrations/virtual-kubelet
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/virtual-kubelet.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: virtual kubelet
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: virtual kubelet -->
 
 ### Overview & Features:
 1. Virtual Kubelet is an open source Kubernetes kubelet implementation.

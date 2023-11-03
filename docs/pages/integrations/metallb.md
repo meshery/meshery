@@ -4,16 +4,17 @@ title: Metallb
 permalink: integrations/metallb
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/metallb.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: metallb
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: metallb -->
 
 ### Overview & Features:
 1. A network load-balancer implementation for Kubernetes using standard routing protocols
