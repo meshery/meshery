@@ -20,17 +20,17 @@ Meshery is a self-service engineering platform that enables collaborative design
   <a href="https://meshery.io/catalog">
     <img src="./meshery/.github/assets/images/catalog.svg" alt="Meshery Catalog">
     </a>
-    <p>Explore a curated selection of popular meshes.</p>
+    <p>Explore a curated selection of popular cloud native configurations.</p>
 
   <a href="https://play.meshery.io">
     <img src="./meshery/.github/assets/images/meshery-logo.svg" alt="Playground">
     </a>
-    <p>Experiment with service mesh configurations.</p>
+    <p>Use Meshery Playground to explore a new way of DevOps - visual and collaborative configuration management for your infrastructure.</p>
 </div> 
 
 ## 🤝 Become a Contributor
 
-Meshery is built by a vibrant and passionate community of developers, enthusiasts, and tech innovators like you. You’re more than welcome to share your ideas, expertise, and energy to help shape the future of service mesh technology. Ready to make your mark? Join us in contributing to Meshery.
+Meshery is built by a vibrant and passionate community of developers, enthusiasts, and tech innovators like you. You’re more than welcome to share your ideas, expertise, and energy to help shape the future of cloud native technology. Ready to make your mark? Join us in contributing to Meshery.
 To get started, check out our **[contributing guidelines](https://docs.meshery.io/project/contributing)** and join our **[community forum](https://discuss.meshery.io)**. Engage with our community, ask questions, and share your experiences.
 
 ## Get Started
@@ -40,5 +40,5 @@ Ready to dive into the world of Meshery? Get started with these quick links:
 - [Installation Guide](https://docs.meshery.io/installation)
 - [Getting Started with Meshery](https://docs.meshery.io/getting-started)
 
-Join us in the exciting journey of service mesh management!
+Join us in the exciting journey of cloud native management!
 
