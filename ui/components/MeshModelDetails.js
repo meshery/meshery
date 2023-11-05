@@ -209,14 +209,27 @@ const MeshModelDetails = ({ view, show, rela, regi, comp }) => {
           )}
           {show.components.length !== 0 && (
             <div>
-              <hr style={{ marginTop: '1rem' }} />
+              <hr style={{ margin: '1rem 0' }} />
+              <p
+                style={{
+                  fontSize: '18px',
+                  margin: '0.7rem 0',
+                }}
+              >
+                Components
+              </p>
               {show.components.map((component, index) => (
-                <div key={index}>
+                <div
+                  key={index}
+                  style={{
+                    margin: '0.9rem 0',
+                  }}
+                >
                   <p
                     style={{
                       fontSize: '20px',
-                      margin: '0',
                       fontWeight: 'bold',
+                      margin: '0.4rem 0',
                     }}
                   >
                     {component.displayName}
@@ -230,7 +243,6 @@ const MeshModelDetails = ({ view, show, rela, regi, comp }) => {
                     <div
                       style={{
                         display: 'flex',
-                        flexDirection: 'column',
                         width: '50%',
                         paddingRight: '1rem',
                       }}
@@ -238,8 +250,8 @@ const MeshModelDetails = ({ view, show, rela, regi, comp }) => {
                       <p
                         style={{
                           padding: '0',
-                          margin: '0',
-                          fontSize: '16px',
+                          margin: '0 0.5rem 0 0',
+                          fontSize: '14px',
                           fontWeight: '600',
                         }}
                       >
@@ -249,12 +261,12 @@ const MeshModelDetails = ({ view, show, rela, regi, comp }) => {
                         {component.apiVersion}
                       </p>
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
+                    <div style={{ display: 'flex', width: '50%' }}>
                       <p
                         style={{
                           padding: '0',
-                          margin: '0',
-                          fontSize: '16px',
+                          margin: '0 0.5rem 0 0',
+                          fontSize: '14px',
                           fontWeight: '600',
                         }}
                       >
