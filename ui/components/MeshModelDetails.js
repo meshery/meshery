@@ -99,7 +99,7 @@ const MeshModelDetails = ({ view, show, rela, regi, comp }) => {
               <p
                 style={{
                   marginTop: '0px',
-                  fontSize: '20px',
+                  fontSize: '18px',
                   fontWeight: 'bold',
                 }}
               >
@@ -259,7 +259,7 @@ const MeshModelDetails = ({ view, show, rela, regi, comp }) => {
                 >
                   <p
                     style={{
-                      fontSize: '20px',
+                      fontSize: '18px',
                       fontWeight: 'bold',
                       margin: '0.4rem 0',
                     }}
@@ -316,6 +316,14 @@ const MeshModelDetails = ({ view, show, rela, regi, comp }) => {
           {show.relationships.length !== 0 && (
             <div>
               <hr style={{ marginTop: '1rem' }} />
+              <p
+                style={{
+                  fontSize: '18px',
+                  margin: '0.7rem 0',
+                }}
+              >
+                Relationships
+              </p>
               {show.relationships.map((rela, index) => (
                 <div key={index}>
                   <p
