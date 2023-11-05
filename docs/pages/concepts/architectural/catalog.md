@@ -11,9 +11,6 @@ list: include
 
 [Meshery Catalog](https://meshery.io/catalog) functions much like a cloud marketplace, providing a user-friendly interface for browsing, discovering, and sharing configurations and patterns for cloud native infrastructure. With Meshery Catalog, you can easily find and deploy Kubernetes-based infrastructure and tools, making it easy to streamline your cloud native development and operations processes.
 
-[![Meshery Catalog Mockup]({{ site.baseurl }}/assets/img/architecture/meshery-catalog-mockup.svg
-)]({{ site.baseurl }}/assets/img/architecture/meshery-catalog-mockup.svg)
-
 ### Simplify Your Cloud Native Infrastructure Deployment and Management
 
 Meshery Catalog functions much like a cloud marketplace, providing a user-friendly interface for browsing, discovering, and sharing configurations and patterns for cloud native infrastructure. With Meshery Catalog, you can easily find and deploy Kubernetes-based infrastructure and tools, making it easy to streamline your cloud native development and operations processes.
