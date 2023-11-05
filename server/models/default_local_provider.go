@@ -521,6 +521,11 @@ func (l *DefaultLocalProvider) SMPTestConfigDelete(_ *http.Request, testUUID str
 	return l.TestProfilesPersister.DeleteTestConfig(uid)
 }
 
+// SaveMesheryPatternSourceContent nothing needs to be done as pattern is saved with source content for local provider
+func (l *DefaultLocalProvider) SaveMesheryPatternSourceContent(_, _ string, _ []byte) error {
+	return nil
+}
+
 func (l *DefaultLocalProvider) SaveMesheryPatternResource(_ string, resource *PatternResource) (*PatternResource, error) {
 	return l.MesheryPatternResourcePersister.SavePatternResource(resource)
 }

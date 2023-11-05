@@ -5,7 +5,6 @@ permalink: project/contributing
 description: How to contribute to the Meshery project.
 redirect_from:
  - project/contributing/
- - project/contributing
 display-title: "false"
 language: en
 type: project

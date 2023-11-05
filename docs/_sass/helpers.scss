@@ -111,6 +111,8 @@ details {
   overflow: hidden;
   font-size: 1.35rem;
   padding: 0rem 1.5rem 0rem 1.5rem;
+  & > h6 { color: var(--color-primary-blonde)};
+  & > p { color: var(--color-secondary-dark)};
 }
 
 summary {
@@ -119,10 +121,12 @@ summary {
   margin-left: -1.5rem;
   display: block;
   background-color: var(--color-summary-background);
+  color: var(--color-secondary-medium);
   padding-left: 2.2rem;
   position: relative;
   cursor: pointer;
   font-size: 1.5rem;
+  font-weight: normal;
 }
 
 summary:before {

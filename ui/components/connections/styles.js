@@ -117,12 +117,12 @@ const styles = (theme) => ({
     flexWrap: 'noWrap',
   },
   innerTableWrapper: {
-    background: `linear-gradient(90deg, #FFF 0.04%, #ECECED 100.04%)`,
+    background: `linear-gradient(90deg, ${theme.palette.secondary.innertableBg1} 0.04%, ${theme.palette.secondary.innertableBg2} 100.04%)`,
     borderRadius: 0,
     padding: '0',
   },
   innerTableContainer: {
-    background: theme.palette.secondary.chevron,
+    background: theme.palette.secondary.innertableBg1,
     margin: '10px 10px 10px 13px',
     borderLeft: `9px solid ${theme.palette.secondary.pinball}`,
     borderRadius: '10px 0 0 10px',
@@ -158,6 +158,7 @@ const styles = (theme) => ({
     },
   },
   tabs: {
+    height: '55px',
     '& .MuiTabs-indicator': {
       backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
     },

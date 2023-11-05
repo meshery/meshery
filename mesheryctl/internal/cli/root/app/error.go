@@ -14,6 +14,7 @@
 package app
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/layer5io/meshkit/errors"
@@ -21,7 +22,7 @@ import (
 
 const (
 	ErrImportAppCode          = "1080"
-	ErrValidSourceCode        = "1081"
+	ErrInValidSourceCode      = "1081"
 	ErrOnboardAppCode         = "1082"
 	ErrAppFoundCode           = "1083"
 	ErrInvalidAppNameOrIDCode = "1084"
@@ -45,9 +46,9 @@ func ErrImportApp(err error) error {
 		[]string{"Check your application URL/file path"})
 }
 
-func ErrValidSource(validSourceTypes []string) error {
-	return errors.New(ErrValidSourceCode, errors.Fatal,
-		[]string{"Invalid application source type"},
+func ErrInValidSource(invalidSourceType string, validSourceTypes []string) error {
+	return errors.New(ErrInValidSourceCode, errors.Fatal,
+		[]string{fmt.Sprintf("Invalid application source type: `%s`", invalidSourceType)},
 		[]string{"Invalid application source type due to wrong type/passing"},
 		[]string{"Application source type (-s) is invalid or not passed."},
 		[]string{"Ensure you pass a valid source type. \nAllowed source types: %s", strings.Join(validSourceTypes, ", ")})

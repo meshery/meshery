@@ -96,7 +96,17 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
 };
 
 const EmptyState = ({ event }) => {
-  return <Typography variant="body1"> {event.description} </Typography>;
+  return (
+    <Typography
+      variant="body1"
+      style={{
+        marginBlock: '0.5rem',
+      }}
+    >
+      {' '}
+      {event.description}{' '}
+    </Typography>
+  );
 };
 
 export const FormattedMetadata = ({ event }) => {
