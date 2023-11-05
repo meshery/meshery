@@ -19,6 +19,7 @@ import { SORT } from '../constants/endpoints';
 import useStyles from '../assets/styles/general/tool.styles';
 import { Colors } from '../themes/app';
 import MesheryTreeView from './MesheryTreeView';
+import MeshModelDetails from './MeshModelDetails';
 // import { useGetMeshModelQuery, useGetLoggedInUserQuery } from '../rtk-query/meshModel';
 
 //TODO : This Should derive the indices of rendered rows
@@ -63,7 +64,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
   const [, setCount] = useState();
   const [page, setPage] = useState(0);
   const [searchText, setSearchText] = useState(null);
-  const [rowsPerPage] = useState(10);
+  const [rowsPerPage] = useState(14);
   const [sortOrder, setSortOrder] = useState({
     sort: SORT.ASCENDING,
     order: '',
@@ -71,7 +72,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
   // const [checked, setChecked] = useState(false);
   const StyleClass = useStyles();
   const [view, setView] = useState(OVERVIEW);
-  const [convert, setConvert] = useState(true);
+  const [convert, setConvert] = useState(false);
   const [show, setShow] = useState({
     model: {},
     components: [],
@@ -180,10 +181,19 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
 
   const getRegistrants = async (page) => {
     try {
+      const { models } = await getMeshModels(page + 1, rowsPerPage); // page+1 due to server side indexing starting from 1
+      const componentPromises = models.map(async (model) => {
+        const { components } = await getComponentFromModelApi(model.name);
+        const { relationships } = await getRelationshipFromModelApi(model.name);
+        model.components = components;
+        model.relationships = relationships;
+      });
       const { total_count, registrants } = await getMeshModelRegistrants(page, rowsPerPage);
+      models.registrant = registrants;
+      await Promise.all(componentPromises);
       setCount(total_count);
       if (!isRequestCancelled) {
-        setResourcesDetail(registrants);
+        setResourcesDetail(models);
       }
     } catch (error) {
       console.error('Failed to fetch registrants:', error);
@@ -209,7 +219,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
 
   useEffect(() => {
     setRequestCancelled(false);
-    console.log(page);
+    // console.log(page);
 
     if (view === MODELS && searchText === null) {
       getModels(page);
@@ -228,7 +238,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
     return () => {
       setRequestCancelled(true);
     };
-  }, [view, page, searchText, rowsPerPage, show, comp, rela, regi]);
+  }, [view, page, searchText, rowsPerPage]);
 
   // const meshmodel_columns = [
   //   {
@@ -545,29 +555,18 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
   //   return initialVisibility;
   // });
 
-  const customInlineStyle = {
-    marginBottom: '0.5rem',
-    marginTop: '1rem',
-    transition: 'all 0.5s',
-    opacity: !convert ? '1' : '0',
-  };
-
-  const mainContainer = {
-    padding: animate ? '8rem 0rem' : '6rem',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: '1rem',
-    marginTop: animate ? '6rem' : '1rem',
-    transition: 'all 0.8s',
-  };
+  // const customInlineStyle = {
+  //   marginBottom: '0.5rem',
+  //   marginTop: '1rem',
+  //   transition: 'all 0.5s',
+  //   opacity: !convert ? '1' : '0',
+  // };
 
   return (
     <div data-test="workloads">
-      {!convert && (
-        <div className={StyleClass.toolWrapper} style={customInlineStyle}>
-          {/* {view !== RELATIONSHIPS && (
+      {/* {!convert && ( */}
+      <div className={`${StyleClass.toolWrapper} ${animate ? StyleClass.toolWrapperAnimate : ''}`}>
+        {/* {view !== RELATIONSHIPS && (
             <FormControlLabel
               control={
                 <Switch
@@ -580,26 +579,34 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
               label="Duplicates"
             />
           )} */}
-          <Button
-            disabled
-            variant="contained"
-            style={{ background: '#dddddd', color: 'white', marginRight: '1rem' }}
-            size="large"
-            startIcon={<UploadIcon />}
-          >
-            Import
-          </Button>
-          <Button
-            disabled
-            variant="contained"
-            size="large"
-            style={{ background: '#dddddd', color: 'white' }}
-            startIcon={<DoNotDisturbOnIcon />}
-          >
-            Ignore
-          </Button>
-        </div>
-      )}
+        <Button
+          disabled
+          variant="contained"
+          style={{
+            background: '#dddddd',
+            color: 'white',
+            visibility: `${animate ? 'visible' : 'hidden'}`,
+          }}
+          size="large"
+          startIcon={<UploadIcon />}
+        >
+          Import
+        </Button>
+        <Button
+          disabled
+          variant="contained"
+          size="large"
+          style={{
+            background: '#dddddd',
+            color: 'white',
+            visibility: `${animate ? 'visible' : 'hidden'}`,
+          }}
+          startIcon={<DoNotDisturbOnIcon />}
+        >
+          Ignore
+        </Button>
+      </div>
+      {/* )} */}
       {/* <ResponsiveDataTable
         data={filteredData}
         columns={meshmodel_columns}
@@ -608,174 +615,163 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
         updateCols={updateCols}
         columnVisibility={columnVisibility}
       /> */}
-      {convert ? (
-        <div className={StyleClass.mainContainerBg} style={mainContainer}>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              marginBottom: '1rem',
-              transition: 'all 1s',
-              opacity: animate ? '0' : '1',
+      <div
+        className={`${StyleClass.mainContainer} ${animate ? StyleClass.mainContainerAnimate : ''}`}
+      >
+        <div
+          className={`${StyleClass.innerContainer} ${
+            animate ? StyleClass.innerContainerAnimate : ''
+          }`}
+        >
+          <Paper
+            elevation={3}
+            className={`${StyleClass.overviewTab} ${animate ? StyleClass.overviewTabAnimate : ''}`}
+            onClick={() => {
+              setConvert(false);
+              setAnimate(false);
+              // setTimeout(() => {
+              // }, 1000);
             }}
           >
-            <Paper
-              elevation={3}
-              className={StyleClass.cardStyle}
-              onClick={() => {
-                setView(MODELS);
+            Overview
+          </Paper>
+          <Paper
+            elevation={3}
+            className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''}`}
+            style={{
+              backgroundColor: `${view === MODELS && animate ? 'white' : ''}`,
+              color: `${view === MODELS && animate ? 'black' : ''}`,
+            }}
+            onClick={() => {
+              setView(MODELS);
+              if (view !== MODELS) {
+                setSearchText(null);
+                setResourcesDetail([]);
+              }
+              if (!animate) {
                 setAnimate(true);
                 setTimeout(() => {
-                  setConvert(false);
-                }, 1000);
-              }}
-            >
-              <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>{modelsCount}</span>
-              Models
-            </Paper>
-            <Paper
-              elevation={3}
-              className={StyleClass.cardStyle}
-              onClick={() => {
-                setView(COMPONENTS);
-                setAnimate(true);
-                setConvert(false);
-              }}
-            >
-              <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>{componentsCount}</span>
-              Components
-            </Paper>
-            <Paper
-              elevation={3}
-              className={StyleClass.cardStyle}
-              onClick={() => {
-                setView(RELATIONSHIPS);
-                setAnimate(true);
-                setConvert(false);
-              }}
-            >
-              <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>{relationshipsCount}</span>
-              Relationships
-            </Paper>
-            <Paper
-              elevation={3}
-              className={StyleClass.cardStyle}
-              onClick={() => {
-                setView(REGISTRANTS);
-                setAnimate(true);
-                setConvert(false);
-              }}
-            >
-              <span style={{ fontWeight: 'bold', fontSize: '3rem' }}>1</span>
-              Registrants
-            </Paper>
-          </div>
-        </div>
-      ) : (
-        <div style={{ backgroundColor: 'white', borderRadius: '6px', transition: 'ease-out' }}>
-          <div
-            style={{
-              backgroundColor: '#51636B',
-              borderRadius: '6px 6px 0px 0px',
-              color: 'white',
-              paddingTop: '1rem',
-              paddingLeft: '1rem',
-              paddingRight: '1rem',
-              display: 'flex',
-              flexDirection: 'row',
+                  setConvert(true);
+                }, 1100);
+              }
             }}
           >
-            <Button
+            <span
               style={{
-                backgroundColor: view !== OVERVIEW && '#677a84',
-                color: view !== OVERVIEW && 'white',
-                borderRadius: '8px 8px 0px 0px',
-                marginRight: '1rem',
-                padding: view === OVERVIEW ? '0.5rem 2rem' : '0.6rem 2rem',
-              }}
-              onClick={() => {
-                setPage(0);
-                setView(OVERVIEW);
-                setConvert(true);
-                setAnimate(false);
+                fontWeight: `${animate ? 'normal' : 'bold'}`,
+                fontSize: `${animate ? '1rem' : '3rem'}`,
+                transition: 'all 0.3s',
+                marginLeft: `${animate && '4px'}`,
               }}
             >
-              Overview
-            </Button>
-            <Button
-              className={StyleClass.tabs}
-              style={{
-                backgroundColor: view !== MODELS && '#677a84',
-                color: view !== MODELS && 'white',
-                borderRadius: '8px 8px 0px 0px',
-                marginRight: '1rem',
-                padding: view === MODELS ? '0.5rem 2rem' : '0.6rem 2rem',
-              }}
-              onClick={() => {
-                setView(MODELS);
-                setPage(0);
+              {animate ? `(${modelsCount})` : `${modelsCount}`}
+            </span>
+            Models
+          </Paper>
+          <Paper
+            elevation={3}
+            className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''}`}
+            style={{
+              backgroundColor: `${view === COMPONENTS && animate ? 'white' : ''}`,
+              color: `${view === COMPONENTS && animate ? 'black' : ''}`,
+            }}
+            onClick={() => {
+              setView(COMPONENTS);
+              if (view !== COMPONENTS) {
                 setSearchText(null);
                 setResourcesDetail([]);
+              }
+              if (!animate) {
+                setAnimate(true);
+                setTimeout(() => {
+                  setConvert(true);
+                }, 1100);
+              }
+            }}
+          >
+            <span
+              style={{
+                fontWeight: `${animate ? 'normal' : 'bold'}`,
+                fontSize: `${animate ? '1rem' : '3rem'}`,
+                transition: 'all 0.3s',
+                marginLeft: `${animate && '4px'}`,
               }}
             >
-              Models ({modelsCount})
-            </Button>
-            <Button
-              className={StyleClass.tabs}
-              style={{
-                backgroundColor: view !== COMPONENTS && '#677a84',
-                color: view !== COMPONENTS && 'white',
-                borderRadius: '8px 8px 0px 0px',
-                marginRight: '1rem',
-                padding: view === COMPONENTS ? '0.5rem 2rem' : '0.6rem 2rem',
-              }}
-              onClick={() => {
-                setView(COMPONENTS);
-                setPage(0);
+              {animate ? `(${componentsCount})` : `${componentsCount}`}
+            </span>
+            Components
+          </Paper>
+          <Paper
+            elevation={3}
+            className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''}`}
+            style={{
+              backgroundColor: `${view === RELATIONSHIPS && animate ? 'white' : ''}`,
+              color: `${view === RELATIONSHIPS && animate ? 'black' : ''}`,
+            }}
+            onClick={() => {
+              setView(RELATIONSHIPS);
+              if (view !== RELATIONSHIPS) {
                 setSearchText(null);
                 setResourcesDetail([]);
+              }
+              if (!animate) {
+                setAnimate(true);
+                setTimeout(() => {
+                  setConvert(true);
+                }, 1100);
+              }
+            }}
+          >
+            <span
+              style={{
+                fontWeight: `${animate ? 'normal' : 'bold'}`,
+                fontSize: `${animate ? '1rem' : '3rem'}`,
+                transition: 'all 0.3s',
+                marginLeft: `${animate && '4px'}`,
               }}
             >
-              Components ({componentsCount})
-            </Button>
-            <Button
-              className={StyleClass.tabs}
-              style={{
-                backgroundColor: view !== RELATIONSHIPS && '#677a84',
-                color: view !== RELATIONSHIPS && 'white',
-                borderRadius: '8px 8px 0px 0px',
-                marginRight: '1rem',
-                padding: view === RELATIONSHIPS ? '0.5rem 2rem' : '0.6rem 2rem',
-              }}
-              onClick={() => {
-                setView(RELATIONSHIPS);
-                setPage(0);
+              {animate ? `(${relationshipsCount})` : `${relationshipsCount}`}
+            </span>
+            Relationships
+          </Paper>
+          <Paper
+            elevation={3}
+            className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''}`}
+            style={{
+              backgroundColor: `${view === REGISTRANTS && animate ? 'white' : ''}`,
+              color: `${view === REGISTRANTS && animate ? 'black' : ''}`,
+            }}
+            onClick={() => {
+              setView(REGISTRANTS);
+              if (view !== REGISTRANTS) {
                 setSearchText(null);
                 setResourcesDetail([]);
-              }}
-            >
-              Relationships ({relationshipsCount})
-            </Button>
-            <Button
-              className={StyleClass.tabs}
+              }
+              if (!animate) {
+                setAnimate(true);
+                setTimeout(() => {
+                  setConvert(true);
+                }, 1100);
+              }
+            }}
+          >
+            <span
               style={{
-                backgroundColor: view !== REGISTRANTS && '#677a84',
-                color: view !== REGISTRANTS && 'white',
-                borderRadius: '8px 8px 0px 0px',
-                marginRight: '1rem',
-                padding: view === REGISTRANTS ? '0.5rem 2rem' : '0.6rem 2rem',
-              }}
-              onClick={() => {
-                setView(REGISTRANTS);
-                setPage(0);
-                setSearchText(null);
-                setResourcesDetail([]);
+                fontWeight: `${animate ? 'normal' : 'bold'}`,
+                fontSize: `${animate ? '1rem' : '3rem'}`,
+                transition: 'all 0.3s',
+                marginLeft: `${animate && '4px'}`,
               }}
             >
-              Registrants (1)
-            </Button>
-          </div>
-          <div className={StyleClass.treeWrapper}>
+              {animate ? `(1)` : `1`}
+            </span>
+            Registrants
+          </Paper>
+        </div>
+        {convert && (
+          <div
+            className={`${StyleClass.treeWrapper} ${convert ? StyleClass.treeWrapperAnimate : ''}`}
+          >
             <div style={{ height: '30rem', width: '50%', margin: '1rem' }}>
               <MesheryTreeView
                 data={filteredData}
@@ -794,503 +790,10 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                 setChecked={setChecked}
               />
             </div>
-            <div
-              className={
-                (view === MODELS && !show.model.displayName) ||
-                (view === COMPONENTS && !comp.displayName) ||
-                (view === RELATIONSHIPS && !rela.kind) ||
-                (view === REGISTRANTS && !regi.hostname)
-                  ? StyleClass.emptyDetailsContainer
-                  : StyleClass.detailsContainer
-              }
-            >
-              {((view === MODELS && !show.model.displayName) ||
-                (view === COMPONENTS && !comp.displayName) ||
-                (view === RELATIONSHIPS && !rela.kind) ||
-                (view === REGISTRANTS && !regi.hostname)) && (
-                <p style={{ color: '#969696' }}>No {view} selected</p>
-              )}
-              {view === MODELS && (
-                <>
-                  {show.model.displayName && (
-                    <div>
-                      <p
-                        style={{
-                          marginTop: '0px',
-                          fontSize: '20px',
-                          fontWeight: 'bold',
-                        }}
-                      >
-                        {show.model.displayName}
-                      </p>
-                      <div
-                        style={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                        }}
-                      >
-                        <div
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            width: '50%',
-                            paddingRight: '1rem',
-                          }}
-                        >
-                          <p
-                            style={{
-                              padding: '0',
-                              margin: '0',
-                              fontSize: '16px',
-                              fontWeight: '600',
-                            }}
-                          >
-                            Version
-                          </p>
-                          <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                            {show.model.version}
-                          </p>
-                          <p
-                            style={{
-                              padding: '0',
-                              margin: '0',
-                              marginTop: '12px',
-                              fontSize: '16px',
-                              fontWeight: '600',
-                            }}
-                          >
-                            Registrant
-                          </p>
-                          <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                            {show.model.hostname}
-                          </p>
-                          <p
-                            style={{
-                              padding: '0',
-                              margin: '0',
-                              marginTop: '12px',
-                              fontSize: '16px',
-                              fontWeight: '600',
-                            }}
-                          >
-                            Components
-                          </p>
-                          <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                            {show.model.components === null ? '0' : show.model.components.length}
-                          </p>
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
-                          <p
-                            style={{
-                              padding: '0',
-                              margin: '0',
-                              fontSize: '16px',
-                              fontWeight: '600',
-                            }}
-                          >
-                            Category
-                          </p>
-                          <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                            {show.model.category?.name}
-                          </p>
-                          <p
-                            style={{
-                              padding: '0',
-                              margin: '0',
-                              marginTop: '12px',
-                              fontSize: '16px',
-                              fontWeight: '600',
-                            }}
-                          >
-                            Duplicates
-                          </p>
-                          <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                            {show.model.duplicates}
-                          </p>
-                          <p
-                            style={{
-                              padding: '0',
-                              margin: '0',
-                              marginTop: '12px',
-                              fontWeight: '600',
-                              fontSize: '16px',
-                            }}
-                          >
-                            Relationships
-                          </p>
-                          <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                            {show.model.relationships === null
-                              ? '0'
-                              : show.model.relationships.length}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  {show.components.length !== 0 && (
-                    <div>
-                      <hr style={{ marginTop: '1rem' }} />
-                      {show.components.map((component, index) => (
-                        <div key={index}>
-                          <p
-                            style={{
-                              fontSize: '20px',
-                              margin: '0',
-                              fontWeight: 'bold',
-                            }}
-                          >
-                            {component.displayName}
-                          </p>
-                          <div
-                            style={{
-                              display: 'flex',
-                              flexDirection: 'row',
-                            }}
-                          >
-                            <div
-                              style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                width: '50%',
-                                paddingRight: '1rem',
-                              }}
-                            >
-                              <p
-                                style={{
-                                  padding: '0',
-                                  margin: '0',
-                                  fontSize: '16px',
-                                  fontWeight: '600',
-                                }}
-                              >
-                                API Version
-                              </p>
-                              <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                                {component.apiVersion}
-                              </p>
-                            </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
-                              <p
-                                style={{
-                                  padding: '0',
-                                  margin: '0',
-                                  fontSize: '16px',
-                                  fontWeight: '600',
-                                }}
-                              >
-                                Sub Category
-                              </p>
-                              <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                                {component.kind}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  {show.relationships.length !== 0 && (
-                    <div>
-                      <hr style={{ marginTop: '1rem' }} />
-                      {show.relationships.map((rela, index) => (
-                        <div key={index}>
-                          <p
-                            style={{
-                              fontSize: '20px',
-                              margin: '0',
-                              fontWeight: 'bold',
-                            }}
-                          >
-                            {rela.kind}
-                          </p>
-                          <div
-                            style={{
-                              display: 'flex',
-                              flexDirection: 'row',
-                            }}
-                          >
-                            <div
-                              style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                width: '50%',
-                                paddingRight: '1rem',
-                              }}
-                            >
-                              <p
-                                style={{
-                                  padding: '0',
-                                  margin: '0',
-                                  fontSize: '16px',
-                                  fontWeight: '600',
-                                }}
-                              >
-                                API Version
-                              </p>
-                              <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                                {rela.apiVersion}
-                              </p>
-                            </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
-                              <p
-                                style={{
-                                  padding: '0',
-                                  margin: '0',
-                                  fontSize: '16px',
-                                  fontWeight: '600',
-                                }}
-                              >
-                                Sub Type
-                              </p>
-                              <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                                {rela.subType}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </>
-              )}
-              {view === COMPONENTS && comp.displayName && (
-                <div>
-                  <p
-                    style={{
-                      fontSize: '20px',
-                      fontWeight: 'bold',
-                      marginTop: '0',
-                    }}
-                  >
-                    {comp.displayName}
-                  </p>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        width: '50%',
-                        paddingRight: '1rem',
-                      }}
-                    >
-                      <p style={{ padding: '0', margin: '0', fontSize: '16px', fontWeight: '600' }}>
-                        API Version
-                      </p>
-                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                        {comp.apiVersion}
-                      </p>
-                      <p
-                        style={{
-                          padding: '0',
-                          margin: '0',
-                          marginTop: '12px',
-                          fontSize: '16px',
-                          fontWeight: '600',
-                        }}
-                      >
-                        Model Name
-                      </p>
-                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                        {comp.model?.displayName}
-                      </p>
-                      <p
-                        style={{
-                          padding: '0',
-                          margin: '0',
-                          marginTop: '12px',
-                          fontSize: '16px',
-                          fontWeight: '600',
-                        }}
-                      >
-                        Kind
-                      </p>
-                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>{comp.kind}</p>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
-                      <p
-                        style={{
-                          padding: '0',
-                          margin: '0',
-                          marginTop: '12px',
-                          fontSize: '16px',
-                          fontWeight: '600',
-                        }}
-                      >
-                        Registrant
-                      </p>
-                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                        {comp.displayhostname}
-                      </p>
-                      <p
-                        style={{
-                          padding: '0',
-                          margin: '0',
-                          marginTop: '12px',
-                          fontSize: '16px',
-                          fontWeight: '600',
-                        }}
-                      >
-                        Duplicates
-                      </p>
-                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                        {comp.duplicates}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-              {view === RELATIONSHIPS && rela.kind && (
-                <div>
-                  <p
-                    style={{
-                      fontSize: '20px',
-                      marginTop: '0',
-                      fontWeight: 'bold',
-                    }}
-                  >
-                    {rela.kind}
-                  </p>
-                  <p style={{ fontWeight: '600', margin: '0' }}>Description</p>
-                  <p style={{ margin: '0', fontSize: '14px' }}>{rela.metadata?.description}</p>
-                  <div
-                    style={{
-                      display: 'flex',
-                      marginTop: '12px',
-                      flexDirection: 'row',
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        width: '50%',
-                        paddingRight: '1rem',
-                      }}
-                    >
-                      <p style={{ padding: '0', margin: '0', fontSize: '16px', fontWeight: '600' }}>
-                        API Version
-                      </p>
-                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                        {rela.apiVersion}
-                      </p>
-                      <p
-                        style={{
-                          padding: '0',
-                          margin: '0',
-                          marginTop: '12px',
-                          fontWeight: '600',
-                          fontSize: '16px',
-                        }}
-                      >
-                        Model Name
-                      </p>
-                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                        {rela.model?.displayName}
-                      </p>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
-                      <p style={{ padding: '0', margin: '0', fontSize: '16px', fontWeight: '600' }}>
-                        Sub Type
-                      </p>
-                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>{rela.subType}</p>
-                      <p
-                        style={{
-                          padding: '0',
-                          margin: '0',
-                          marginTop: '12px',
-                          fontSize: '16px',
-                          fontWeight: '600',
-                        }}
-                      >
-                        Registrant
-                      </p>
-                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                        {rela.displayhostname}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-              {view === REGISTRANTS && regi.hostname && (
-                <div>
-                  <p
-                    style={{
-                      fontSize: '20px',
-                      marginTop: '0',
-                      fontWeight: 'bold',
-                    }}
-                  >
-                    {regi.hostname}
-                  </p>
-                  <div
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        width: '50%',
-                        paddingRight: '1rem',
-                      }}
-                    >
-                      <p style={{ padding: '0', margin: '0', fontSize: '16px', fontWeight: '600' }}>
-                        Models
-                      </p>
-                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                        {regi.summary?.models}
-                      </p>
-                      <p
-                        style={{
-                          padding: '0',
-                          margin: '0',
-                          marginTop: '12px',
-                          fontSize: '16px',
-                          fontWeight: '600',
-                        }}
-                      >
-                        Components
-                      </p>
-                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                        {regi.summary?.components}
-                      </p>
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
-                      <p style={{ padding: '0', margin: '0', fontSize: '16px', fontWeight: '600' }}>
-                        Relationships
-                      </p>
-                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                        {regi.summary?.relationships}
-                      </p>
-                      <p
-                        style={{
-                          padding: '0',
-                          margin: '0',
-                          marginTop: '12px',
-                          fontSize: '16px',
-                          fontWeight: '600',
-                        }}
-                      >
-                        Policies
-                      </p>
-                      <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                        {regi.summary?.policies}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
+            <MeshModelDetails view={view} show={show} rela={rela} regi={regi} comp={comp} />
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

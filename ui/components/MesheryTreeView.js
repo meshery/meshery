@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { styled } from '@mui/material/styles';
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
 import { Box, Typography, IconButton, FormControlLabel, Switch } from '@material-ui/core';
@@ -10,10 +9,12 @@ import ExpandAllIcon from '../assets/icons/expand_all';
 import CollapseAllIcon from '../assets/icons/collapse_all';
 import ExpandMoreIcon from '../assets/icons/expand_more';
 import ChevronRightIcon from '../assets/icons/chevron_right';
+import { alpha, styled } from '@mui/material/styles';
 
 const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
   [`& .${treeItemClasses.content}`]: {
     fontWeight: theme.typography.fontWeightMedium,
+    borderRadius: '4px',
     '&.Mui-expanded': {
       fontWeight: theme.typography.fontWeightRegular,
     },
@@ -21,40 +22,44 @@ const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
       backgroundColor: `transparent`,
     },
     '&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused': {
-      backgroundColor: `transparent`,
+      backgroundColor: `#00bfa030`,
+      borderLeft: '2px solid #00bfa0',
     },
     [`& .${treeItemClasses.label}`]: {
       fontWeight: 'inherit',
     },
   },
   [`& .${treeItemClasses.group}`]: {
-    marginLeft: 0,
-    [`& .${treeItemClasses.content}`]: {
-      paddingLeft: theme.spacing(2),
-    },
+    paddingRight: '0',
+    borderLeft: `1px solid ${alpha(theme.palette.text.primary, 0.4)}`,
+    // [`& .${treeItemClasses.content}`]: {
+    //   paddingLeft: theme.spacing(2),
+    // },
   },
 }));
 
 const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
   const [checked, setChecked] = useState(false);
   const [hover, setHover] = useState(false);
-  const { check, labelText, ...other } = props;
+  const { check, labelText, root, setSearchText, ...other } = props;
 
   return (
     <StyledTreeItemRoot
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      sx={{
-        backgroundColor: checked && '#ebebeb',
-      }}
+      sx={
+        {
+          // borderLeft:!root && '2px solid #00bfa0'
+        }
+      }
       label={
         <Box
           sx={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            p: !check ? 1.5 : 0.5,
-            pr: 0,
+            py: check ? 0.5 : root ? 0.2 : 1.5,
+            px: 0,
           }}
         >
           <div
@@ -62,10 +67,14 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
               display: 'flex',
               flexDirection: 'row',
               alignItems: 'center',
-              marginLeft: check && '1rem',
             }}
           >
-            <Typography variant="body2">{labelText}</Typography>
+            <Typography
+              variant={hover || root ? 'body' : 'body2'}
+              style={{ color: `${root && '#005711'}` }}
+            >
+              {labelText}
+            </Typography>
           </div>
           {check && (
             <Checkbox
@@ -81,6 +90,14 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
               }}
             />
           )}
+          {root && (
+            <SearchBar
+              onSearch={(value) => {
+                setSearchText(value);
+              }}
+              placeholder="Search"
+            />
+          )}
         </Box>
       }
       {...other}
@@ -92,6 +109,8 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
 const MesheryTreeView = ({
   data,
   view,
+  comp,
+  rela,
   setShow,
   setComp,
   setRela,
@@ -102,6 +121,25 @@ const MesheryTreeView = ({
   setChecked,
 }) => {
   const [expanded, setExpanded] = React.useState([]);
+  const [selected, setSelected] = React.useState([]);
+
+  useEffect(() => {
+    console.log(data);
+    setSelected([]);
+    if (view === COMPONENTS || view === RELATIONSHIPS) {
+      setExpanded([0]);
+    } else {
+      setExpanded([0]);
+    }
+    setComp({});
+    setRela({});
+    setRegi({});
+    setShow({
+      model: {},
+      components: [],
+      relationships: [],
+    });
+  }, [view]);
 
   const handleScroll = () => {
     const div = event.target;
@@ -125,224 +163,403 @@ const MesheryTreeView = ({
     setExpanded(arr);
   };
 
+  const handleSelect = (event, nodeIds) => {
+    if (nodeIds !== 0) {
+      setSelected([0, nodeIds]);
+    } else {
+      setSelected([]);
+    }
+  };
+
   const handleToggle = (event, nodeIds) => {
     setExpanded(nodeIds);
   };
 
   return (
     <div>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent:
-            view === MODELS || view === COMPONENTS || view === RELATIONSHIPS
-              ? 'space-between'
-              : 'flex-end',
-          borderBottom: '1px solid #d2d3d4',
-          marginRight: '0.9rem',
-        }}
-      >
-        {view === MODELS && (
-          <div style={{ display: 'flex', flexDirection: 'row' }}>
-            <IconButton onClick={expandAll} size="large">
-              <ExpandAllIcon />
-            </IconButton>
-            <div
-              style={{ backgroundColor: '#d2d3d4', height: '33px', width: '1px', margin: '0 2px' }}
-            ></div>
-            <IconButton onClick={() => setExpanded([])} style={{ marginRight: '4px' }} size="large">
-              <CollapseAllIcon />
-            </IconButton>
-            <FormControlLabel
-              control={
-                <Switch
-                  color="primary"
-                  checked={checked}
-                  onClick={handleChecked}
-                  inputProps={{ 'aria-label': 'controlled' }}
-                />
-              }
-              label="Duplicates"
-            />
-          </div>
-        )}
-        {view === COMPONENTS && (
-          <div style={{ display: 'flex', flexDirection: 'row' }}>
-            <FormControlLabel
-              control={
-                <Switch
-                  color="primary"
-                  checked={checked}
-                  onClick={handleChecked}
-                  inputProps={{ 'aria-label': 'controlled' }}
-                />
-              }
-              label="Duplicates"
-            />
-          </div>
-        )}
-        {view === RELATIONSHIPS && (
-          <div style={{ display: 'flex', flexDirection: 'row' }}>
-            <FormControlLabel
-              control={
-                <Switch
-                  color="primary"
-                  checked={checked}
-                  onClick={handleChecked}
-                  inputProps={{ 'aria-label': 'controlled' }}
-                />
-              }
-              label="Duplicates"
-            />
-          </div>
-        )}
-        <div style={{ display: 'flex' }}>
-          <SearchBar
-            onSearch={(value) => {
-              setSearchText(value);
+      {view === MODELS && (
+        <div>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              borderBottom: '1px solid #d2d3d4',
+              marginRight: '0.9rem',
             }}
-            placeholder="Search"
-          />
+          >
+            <div style={{ display: 'flex', flexDirection: 'row' }}>
+              <IconButton onClick={expandAll} size="large">
+                <ExpandAllIcon />
+              </IconButton>
+              <div
+                style={{
+                  backgroundColor: '#d2d3d4',
+                  height: '33px',
+                  width: '1px',
+                  margin: '0 2px',
+                }}
+              ></div>
+              <IconButton
+                onClick={() => setExpanded([])}
+                style={{ marginRight: '4px' }}
+                size="large"
+              >
+                <CollapseAllIcon />
+              </IconButton>
+              <FormControlLabel
+                control={
+                  <Switch
+                    color="primary"
+                    checked={checked}
+                    onClick={handleChecked}
+                    inputProps={{ 'aria-label': 'controlled' }}
+                  />
+                }
+                label="Duplicates"
+              />
+            </div>
+            <div style={{ display: 'flex' }}>
+              <SearchBar
+                onSearch={(value) => {
+                  setSearchText(value);
+                }}
+                placeholder="Search"
+              />
+            </div>
+          </div>
+          <div style={{ overflowY: 'auto', height: '27rem' }} onScroll={handleScroll}>
+            <TreeView
+              aria-label="controlled"
+              defaultExpanded={['3']}
+              defaultCollapseIcon={<ExpandMoreIcon />}
+              defaultExpandIcon={<ChevronRightIcon />}
+              onNodeToggle={handleToggle}
+              multiSelect
+              expanded={expanded}
+            >
+              {data.map((model, index) => (
+                <StyledTreeItem
+                  key={index}
+                  nodeId={index}
+                  check
+                  labelText={model.displayName}
+                  onClick={() => {
+                    setShow({
+                      model: model,
+                      components: [],
+                      relationships: [],
+                    });
+                  }}
+                >
+                  <StyledTreeItem
+                    nodeId={`${index}.1`}
+                    labelText={`Components (${model.components ? model.components.length : 0})`}
+                  >
+                    {model.components &&
+                      model.components.map((component, subIndex) => (
+                        <StyledTreeItem
+                          key={subIndex}
+                          nodeId={`${index}.1.${subIndex}`}
+                          check
+                          labelText={component.displayName}
+                          onClick={() => {
+                            setShow((prevShow) => {
+                              const { components } = prevShow;
+                              const compIndex = components.findIndex((item) => item === component);
+                              if (compIndex !== -1) {
+                                return {
+                                  ...prevShow,
+                                  model: model,
+                                  components: components.filter((item) => item !== component),
+                                };
+                              } else {
+                                return {
+                                  ...prevShow,
+                                  model: model,
+                                  components: [...components, component],
+                                };
+                              }
+                            });
+                          }}
+                        />
+                      ))}
+                  </StyledTreeItem>
+                  <StyledTreeItem
+                    nodeId={`${index}.2`}
+                    labelText={`Relationships (${
+                      model.relationships ? model.relationships.length : 0
+                    })`}
+                  >
+                    {model.relationships &&
+                      model.relationships.map((relationship, subIndex) => (
+                        <StyledTreeItem
+                          key={subIndex}
+                          nodeId={`${index}.2.${subIndex}`}
+                          check
+                          labelText={relationship.displayhostname}
+                          onClick={() => {
+                            setShow((prevShow) => {
+                              const { relationships } = prevShow;
+                              const relaIndex = relationships.findIndex(
+                                (item) => item === relationship,
+                              );
+                              if (relaIndex !== -1) {
+                                return {
+                                  ...prevShow,
+                                  model: model,
+                                  relationships: relationships.filter(
+                                    (item) => item !== relationship,
+                                  ),
+                                };
+                              } else {
+                                return {
+                                  ...prevShow,
+                                  model: model,
+                                  relationships: [...relationships, relationship],
+                                };
+                              }
+                            });
+                          }}
+                        />
+                      ))}
+                  </StyledTreeItem>
+                </StyledTreeItem>
+              ))}
+            </TreeView>
+          </div>
         </div>
-      </div>
-      <div style={{ overflowY: 'auto', height: '27rem' }} onScroll={handleScroll}>
+      )}
+      {view === REGISTRANTS && (
+        <div>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              borderBottom: '1px solid #d2d3d4',
+              marginRight: '0.9rem',
+            }}
+          >
+            <div style={{ display: 'flex', flexDirection: 'row' }}>
+              <IconButton onClick={expandAll} size="large">
+                <ExpandAllIcon />
+              </IconButton>
+              <div
+                style={{
+                  backgroundColor: '#d2d3d4',
+                  height: '33px',
+                  width: '1px',
+                  margin: '0 2px',
+                }}
+              ></div>
+              <IconButton
+                onClick={() => setExpanded([])}
+                style={{ marginRight: '4px' }}
+                size="large"
+              >
+                <CollapseAllIcon />
+              </IconButton>
+            </div>
+          </div>
+          <div style={{ overflowY: 'auto', height: '27rem' }} onScroll={handleScroll}>
+            <TreeView
+              aria-label="controlled"
+              defaultExpanded={['3']}
+              defaultCollapseIcon={<ExpandMoreIcon />}
+              defaultExpandIcon={<ChevronRightIcon />}
+              onNodeToggle={handleToggle}
+              multiSelect
+              expanded={expanded}
+            >
+              {data.registrant?.map((registrant) => (
+                <StyledTreeItem
+                  nodeId={0}
+                  labelText={registrant.hostname}
+                  onClick={() => setRegi(registrant)}
+                >
+                  <StyledTreeItem nodeId={1} labelText={`Models (112)`}>
+                    {data.map((model, index) => (
+                      <StyledTreeItem
+                        key={index}
+                        nodeId={index + 2}
+                        check
+                        labelText={model.displayName}
+                        onClick={() => {
+                          setShow({
+                            model: model,
+                            components: [],
+                            relationships: [],
+                          });
+                        }}
+                      >
+                        <StyledTreeItem
+                          nodeId={`${index}.1`}
+                          labelText={`Components (${
+                            model.components ? model.components.length : 0
+                          })`}
+                        >
+                          {model.components &&
+                            model.components.map((component, subIndex) => (
+                              <StyledTreeItem
+                                key={subIndex}
+                                nodeId={`${index + 2}.1.${subIndex}`}
+                                check
+                                labelText={component.displayName}
+                                onClick={() => {
+                                  setShow((prevShow) => {
+                                    const { components } = prevShow;
+                                    const compIndex = components.findIndex(
+                                      (item) => item === component,
+                                    );
+                                    if (compIndex !== -1) {
+                                      return {
+                                        ...prevShow,
+                                        model: model,
+                                        components: components.filter((item) => item !== component),
+                                      };
+                                    } else {
+                                      return {
+                                        ...prevShow,
+                                        model: model,
+                                        components: [...components, component],
+                                      };
+                                    }
+                                  });
+                                }}
+                              />
+                            ))}
+                        </StyledTreeItem>
+                        <StyledTreeItem
+                          nodeId={`${index}.2`}
+                          labelText={`Relationships (${
+                            model.relationships ? model.relationships.length : 0
+                          })`}
+                        >
+                          {model.relationships &&
+                            model.relationships.map((relationship, subIndex) => (
+                              <StyledTreeItem
+                                key={subIndex}
+                                nodeId={`${index + 2}.2.${subIndex}`}
+                                check
+                                labelText={relationship.displayhostname}
+                                onClick={() => {
+                                  setShow((prevShow) => {
+                                    const { relationships } = prevShow;
+                                    const relaIndex = relationships.findIndex(
+                                      (item) => item === relationship,
+                                    );
+                                    if (relaIndex !== -1) {
+                                      return {
+                                        ...prevShow,
+                                        model: model,
+                                        relationships: relationships.filter(
+                                          (item) => item !== relationship,
+                                        ),
+                                      };
+                                    } else {
+                                      return {
+                                        ...prevShow,
+                                        model: model,
+                                        relationships: [...relationships, relationship],
+                                      };
+                                    }
+                                  });
+                                }}
+                              />
+                            ))}
+                        </StyledTreeItem>
+                      </StyledTreeItem>
+                    ))}
+                  </StyledTreeItem>
+                </StyledTreeItem>
+              ))}
+            </TreeView>
+          </div>
+        </div>
+      )}
+      {view === COMPONENTS && (
         <TreeView
           aria-label="controlled"
           defaultExpanded={['3']}
           defaultCollapseIcon={<ExpandMoreIcon />}
           defaultExpandIcon={<ChevronRightIcon />}
           onNodeToggle={handleToggle}
+          onNodeSelect={handleSelect}
           multiSelect
           expanded={expanded}
+          selected={selected}
         >
-          {view === MODELS &&
-            data.map((model, index) => (
-              <StyledTreeItem
-                key={index}
-                nodeId={index}
-                check
-                labelText={model.displayName}
-                onClick={() => {
-                  setShow({
-                    model: model,
-                    components: [],
-                    relationships: [],
-                  });
-                }}
-              >
+          <StyledTreeItem
+            nodeId={0}
+            root
+            setSearchText={setSearchText}
+            labelText={
+              comp.model?.name ? `Model: ${comp.model?.displayName}` : 'Select a component node'
+            }
+            onClick={() => {
+              setExpanded([0]);
+              setComp({});
+              setSelected([]);
+            }}
+          >
+            <div style={{ overflowY: 'auto', height: '27rem' }} onScroll={handleScroll}>
+              {data.map((component, index) => (
                 <StyledTreeItem
-                  nodeId={`${index}.1`}
-                  labelText={`Components (${model.components ? model.components.length : 0})`}
-                >
-                  {model.components &&
-                    model.components.map((component, subIndex) => (
-                      <StyledTreeItem
-                        key={subIndex}
-                        nodeId={`${index}.1.${subIndex}`}
-                        check
-                        labelText={component.displayName}
-                        onClick={() => {
-                          setShow((prevShow) => {
-                            const { components } = prevShow;
-                            const compIndex = components.findIndex((item) => item === component);
-                            if (compIndex !== -1) {
-                              return {
-                                ...prevShow,
-                                model: model,
-                                components: components.filter((item) => item !== component),
-                              };
-                            } else {
-                              return {
-                                ...prevShow,
-                                model: model,
-                                components: [...components, component],
-                              };
-                            }
-                          });
-                        }}
-                      />
-                    ))}
-                </StyledTreeItem>
-                <StyledTreeItem
-                  nodeId={`${index}.2`}
-                  labelText={`Relationships (${
-                    model.relationships ? model.relationships.length : 0
-                  })`}
-                >
-                  {model.relationships &&
-                    model.relationships.map((relationship, subIndex) => (
-                      <StyledTreeItem
-                        key={subIndex}
-                        nodeId={`${index}.2.${subIndex}`}
-                        check
-                        labelText={relationship.displayhostname}
-                        onClick={() => {
-                          setShow((prevShow) => {
-                            const { relationships } = prevShow;
-                            const relaIndex = relationships.findIndex(
-                              (item) => item === relationship,
-                            );
-                            if (relaIndex !== -1) {
-                              return {
-                                ...prevShow,
-                                model: model,
-                                relationships: relationships.filter(
-                                  (item) => item !== relationship,
-                                ),
-                              };
-                            } else {
-                              return {
-                                ...prevShow,
-                                model: model,
-                                relationships: [...relationships, relationship],
-                              };
-                            }
-                          });
-                        }}
-                      />
-                    ))}
-                </StyledTreeItem>
-              </StyledTreeItem>
-            ))}
-          {view === COMPONENTS &&
-            data.map((component, index) => (
-              <StyledTreeItem
-                key={index}
-                nodeId={index}
-                check
-                labelText={component.displayName}
-                onClick={() => {
-                  setComp(component);
-                }}
-              />
-            ))}
-          {view === RELATIONSHIPS &&
-            data.map((relationship, index) => (
-              <StyledTreeItem
-                key={index}
-                nodeId={index}
-                check
-                labelText={relationship.kind}
-                onClick={() => {
-                  setRela(relationship);
-                }}
-              />
-            ))}
-          {view === REGISTRANTS &&
-            data.map((registrant, index) => (
-              <StyledTreeItem
-                key={index}
-                nodeId={index}
-                check
-                labelText={registrant.hostname}
-                onClick={() => {
-                  setRegi(registrant);
-                }}
-              />
-            ))}
+                  key={index}
+                  nodeId={index + 1}
+                  check
+                  labelText={component.displayName}
+                  onClick={() => {
+                    setComp(component);
+                  }}
+                />
+              ))}
+            </div>
+          </StyledTreeItem>
         </TreeView>
-      </div>
+      )}
+      {view === RELATIONSHIPS && (
+        <TreeView
+          aria-label="controlled"
+          defaultExpanded={['3']}
+          defaultCollapseIcon={<ExpandMoreIcon />}
+          defaultExpandIcon={<ChevronRightIcon />}
+          onNodeToggle={handleToggle}
+          onNodeSelect={handleSelect}
+          multiSelect
+          expanded={expanded}
+          selected={selected}
+        >
+          <StyledTreeItem
+            nodeId={0}
+            root
+            setSearchText={setSearchText}
+            labelText={
+              rela.model?.name ? `Model: ${rela.model?.displayName}` : 'Select a relationship node'
+            }
+            onClick={() => {
+              setExpanded([0]);
+              setRela({});
+              setSelected([]);
+            }}
+          >
+            <div style={{ overflowY: 'auto', height: '27rem' }} onScroll={handleScroll}>
+              {data.map((relationship, index) => (
+                <StyledTreeItem
+                  key={index}
+                  nodeId={index + 1}
+                  check
+                  labelText={relationship.kind}
+                  onClick={() => {
+                    setRela(relationship);
+                  }}
+                />
+              ))}
+            </div>
+          </StyledTreeItem>
+        </TreeView>
+      )}
     </div>
   );
 };
