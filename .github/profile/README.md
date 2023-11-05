@@ -1,5 +1,5 @@
 <!-- Banner Section -->
-![Meshery Banner](./meshery/docs/assets/img/meshery/meshery-logo-tag-light-text-side.png)
+![Meshery Banner](./meshery/.github/assets/images/meshery/meshery-logo-light-text-side.svg)
 
 # Welcome to Meshery - Collaborative Cloud Native Manager!
 
