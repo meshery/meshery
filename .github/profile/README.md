@@ -3,7 +3,7 @@
 
 # Welcome to Meshery - Collaborative Cloud Native Manager!
 
-Meshery is a self-service engineering platform that enables collaborative design and operation of cloud native infrastructure. Meshery empowers you to seamlessly design, deploy, and operate your cloud-native systems with ease.
+Meshery is a self-service engineering platform that enables collaborative design and operation of cloud native infrastructure. Meshery empowers you to seamlessly design, deploy, and operate your cloud native environments with ease.
 
 <div align="center">
   <img src="./meshery/.github/assets/images/meshery-full-perf-720p.mp4" alt="Meshery Teaser Video">
