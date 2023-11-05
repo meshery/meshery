@@ -13,6 +13,9 @@ As an cloud native management platform, Meshery has built-in support infastructu
 
 Meshery's core construct of configuration management is that of a design. A design is ultimately a document – and a document in which you capture and describe your desired state of improv the environment.
 
+[![Context Aware Design]({{ site.baseurl }}/assets/img/patterns/context-aware-design.svg
+)]({{ site.baseurl }}/assets/img/patterns/context-aware-design.svg)
+
 ## Creating a Meshery Design
 
 You have your choice of how are you would like to create an infrastructure design. You can use the design configurator inside of measure, UI or extensions, like MeshMap, or you can hand code your design, using the mesh model spec, if you like.
