@@ -119,90 +119,122 @@ const MeshModelDetails = ({ view, show, rela, regi, comp }) => {
                     paddingRight: '1rem',
                   }}
                 >
-                  <p
+                  <div
                     style={{
-                      padding: '0',
-                      margin: '0',
-                      fontSize: '16px',
-                      fontWeight: '600',
+                      display: 'flex',
                     }}
                   >
-                    Version
-                  </p>
-                  <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                    {show.model.version}
-                  </p>
-                  <p
+                    <p
+                      style={{
+                        padding: '0',
+                        margin: '0 0.5rem 0 0',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      Version
+                    </p>
+                    <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                      {show.model.version}
+                    </p>
+                  </div>
+                  <div
                     style={{
-                      padding: '0',
-                      margin: '0',
-                      marginTop: '12px',
-                      fontSize: '16px',
-                      fontWeight: '600',
+                      display: 'flex',
                     }}
                   >
-                    Registrant
-                  </p>
-                  <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                    {show.model.hostname}
-                  </p>
-                  <p
+                    <p
+                      style={{
+                        padding: '0',
+                        margin: '0 0.5rem 0 0',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      Registrant
+                    </p>
+                    <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                      {show.model.hostname}
+                    </p>
+                  </div>
+                  <div
                     style={{
-                      padding: '0',
-                      margin: '0',
-                      marginTop: '12px',
-                      fontSize: '16px',
-                      fontWeight: '600',
+                      display: 'flex',
                     }}
                   >
-                    Components
-                  </p>
-                  <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                    {show.model.components === null ? '0' : show.model.components.length}
-                  </p>
+                    <p
+                      style={{
+                        padding: '0',
+                        margin: '0 0.5rem 0 0',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      Components
+                    </p>
+                    <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                      {show.model.components === null ? '0' : show.model.components.length}
+                    </p>
+                  </div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
-                  <p
+                  <div
                     style={{
-                      padding: '0',
-                      margin: '0',
-                      fontSize: '16px',
-                      fontWeight: '600',
+                      display: 'flex',
                     }}
                   >
-                    Category
-                  </p>
-                  <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                    {show.model.category?.name}
-                  </p>
-                  <p
+                    <p
+                      style={{
+                        padding: '0',
+                        margin: '0 0.5rem 0 0',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      Category
+                    </p>
+                    <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                      {show.model.category?.name}
+                    </p>
+                  </div>
+                  <div
                     style={{
-                      padding: '0',
-                      margin: '0',
-                      marginTop: '12px',
-                      fontSize: '16px',
-                      fontWeight: '600',
+                      display: 'flex',
                     }}
                   >
-                    Duplicates
-                  </p>
-                  <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                    {show.model.duplicates}
-                  </p>
-                  <p
+                    <p
+                      style={{
+                        padding: '0',
+                        margin: '0 0.5rem 0 0',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                      }}
+                    >
+                      Duplicates
+                    </p>
+                    <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                      {show.model.duplicates}
+                    </p>
+                  </div>
+                  <div
                     style={{
-                      padding: '0',
-                      margin: '0',
-                      marginTop: '12px',
-                      fontWeight: '600',
-                      fontSize: '16px',
+                      display: 'flex',
                     }}
                   >
-                    Relationships
-                  </p>
-                  <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                    {show.model.relationships === null ? '0' : show.model.relationships.length}
-                  </p>
+                    <p
+                      style={{
+                        padding: '0',
+                        margin: '0 0.5rem 0 0',
+                        fontWeight: '600',
+                        fontSize: '14px',
+                      }}
+                    >
+                      Relationships
+                    </p>
+                    <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
+                      {show.model.relationships === null ? '0' : show.model.relationships.length}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
