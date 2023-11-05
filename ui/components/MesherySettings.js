@@ -24,7 +24,7 @@ import PrometheusComponent from './telemetry/prometheus/PrometheusComponent';
 import { updateProgress } from '../lib/store';
 import PromptComponent from './PromptComponent';
 import { iconMedium } from '../css/icons.styles';
-import MeshModelComponent from './MeshModelComponent';
+import MeshModelComponent from './MeshModelRegistry/MeshModelComponent';
 // import CredentialIcon from '../assets/icons/CredentialIcon';
 // import MesheryCredentialComponent from './MesheryCredentialComponent';
 import DatabaseSummary from './DatabaseSummary';

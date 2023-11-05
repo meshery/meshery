@@ -3,12 +3,12 @@ import { TreeView } from '@mui/x-tree-view/TreeView';
 import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
 import { Box, Typography, IconButton, FormControlLabel, Switch } from '@material-ui/core';
 import Checkbox from '@mui/material/Checkbox';
-import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../constants/navigator';
-import SearchBar from '../utils/custom-search';
-import ExpandAllIcon from '../assets/icons/expand_all';
-import CollapseAllIcon from '../assets/icons/collapse_all';
-import ExpandMoreIcon from '../assets/icons/expand_more';
-import ChevronRightIcon from '../assets/icons/chevron_right';
+import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
+import SearchBar from '../../utils/custom-search';
+import ExpandAllIcon from '../../assets/icons/expand_all';
+import CollapseAllIcon from '../../assets/icons/collapse_all';
+import ExpandMoreIcon from '../../assets/icons/expand_more';
+import ChevronRightIcon from '../../assets/icons/chevron_right';
 import { alpha, styled } from '@mui/material/styles';
 
 const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({

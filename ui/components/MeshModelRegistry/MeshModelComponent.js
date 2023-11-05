@@ -13,11 +13,17 @@ import {
   searchModels,
   searchComponents,
   getMeshModelRegistrants,
-} from '../api/meshmodel';
-import { OVERVIEW, MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../constants/navigator';
-import { SORT } from '../constants/endpoints';
-import useStyles from '../assets/styles/general/tool.styles';
-import { Colors } from '../themes/app';
+} from '../../api/meshmodel';
+import {
+  OVERVIEW,
+  MODELS,
+  COMPONENTS,
+  RELATIONSHIPS,
+  REGISTRANTS,
+} from '../../constants/navigator';
+import { SORT } from '../../constants/endpoints';
+import useStyles from '../../assets/styles/general/tool.styles';
+import { Colors } from '../../themes/app';
 import MesheryTreeView from './MesheryTreeView';
 import MeshModelDetails from './MeshModelDetails';
 // import { useGetMeshModelQuery, useGetLoggedInUserQuery } from '../rtk-query/meshModel';
