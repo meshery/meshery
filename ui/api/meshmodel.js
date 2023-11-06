@@ -44,6 +44,12 @@ export async function getComponentFromModelApi(model, pageSize = 'all', trim = t
   );
 }
 
+export async function getMeshModelsByRegistrants(page = 1, pageSize = 'all', registrant) {
+  return await promisifiedDataFetch(
+    `${MESHMODEL_ENDPOINT}?page=${page}&pagesize=${pageSize}&registrant=${registrant}`,
+  );
+}
+
 export async function getRelationshipFromModelApi(model, pageSize = 'all', trim = true) {
   return await promisifiedDataFetch(
     `${MESHMODEL_ENDPOINT}/${model}/relationships?pagesize=${pageSize}&trim=${trim}`,
