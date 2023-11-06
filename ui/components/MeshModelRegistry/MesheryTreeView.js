@@ -32,9 +32,6 @@ const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
   [`& .${treeItemClasses.group}`]: {
     paddingRight: '0',
     borderLeft: `1px solid ${alpha(theme.palette.text.primary, 0.4)}`,
-    // [`& .${treeItemClasses.content}`]: {
-    //   paddingLeft: theme.spacing(2),
-    // },
   },
 }));
 
@@ -47,11 +44,6 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
     <StyledTreeItemRoot
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      sx={
-        {
-          // borderLeft:!root && '2px solid #00bfa0'
-        }
-      }
       label={
         <Box
           sx={{
@@ -124,7 +116,6 @@ const MesheryTreeView = ({
   const [selected, setSelected] = React.useState([]);
 
   useEffect(() => {
-    // console.log(data);
     setSelected([]);
     if (view === COMPONENTS || view === RELATIONSHIPS) {
       setExpanded([0]);
@@ -142,16 +133,12 @@ const MesheryTreeView = ({
   }, [view]);
 
   const handleScroll = (scrollingView) => () => {
-    console.log('event', event);
     const div = event.target;
-    // console.log(data);
-    console.log('view: ', scrollingView);
     if (div.scrollTop >= div.scrollHeight - div.clientHeight - 2) {
       setPage((prevPage) => ({
         ...prevPage, // Keep the current values for other keys
         [scrollingView]: prevPage[scrollingView] + 1, // Increment the specific key based on the view
       }));
-      // setPage((prev) => prev + 1);
     }
   };
 
