@@ -8,6 +8,8 @@ language: en
 list: include
 ---
 
+![]({{site.baseurl}}/assets/img/architecture/meshery-server-registration-with-remote-providers.svg)
+
 ## Managed and Unmanaged Connections
 
 
