@@ -4,6 +4,8 @@ title: Install Meshery CLI with Scoop
 permalink: installation/windows/scoop
 type: installation
 category: mesheryctl
+redirect_from:
+- installation/platforms/scoop
 display-title: "true"
 language: en
 list: include

@@ -4,6 +4,8 @@ title: AKS
 permalink: installation/kubernetes/aks
 type: installation
 category: kubernetes
+redirect_from:
+- installation/platforms/aks
 display-title: "false"
 language: en
 list: include
@@ -29,8 +31,8 @@ Also see: [Install Meshery on Kubernetes]({{ site.baseurl }}/installation/kubern
 
 - [In-cluster Installation](#in-cluster-installation)
     - [Preflight Checks](#preflight-checks)
-        - [Preflight: Cluster Connectivity](#preflight-cluster-connectivity)
-        - [Preflight: Plan your access to Meshery UI](#preflight-plan-your-access-to-meshery-ui)
+    - [Preflight: Cluster Connectivity](#preflight-cluster-connectivity)
+    - [Preflight: Plan your access to Meshery UI](#preflight-plan-your-access-to-meshery-ui)
     - [Installation: Using `mesheryctl`](#installation-using-mesheryctl)
     - [Installation: Using Helm](#installation-using-helm)
 - [Post-Installation Steps](#post-installation-steps)
