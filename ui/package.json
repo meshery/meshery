@@ -59,7 +59,7 @@
     "axios": "^1.5.1",
     "babel-plugin-istanbul": "^6.0.0",
     "babel-plugin-relay": "^13.2.0",
-    "billboard.js": "^3.9.0",
+    "billboard.js": "^3.10.2",
     "caniuse-lite": "^1.0.30001387",
     "classnames": "^2.3.1",
     "codemirror": "^5.65.8",
