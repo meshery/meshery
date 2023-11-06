@@ -1,7 +1,7 @@
 import React from 'react';
 import useStyles from '../../assets/styles/general/tool.styles';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
-import { FormatStructuredData } from '../DataFormatter';
+import { FormatStructuredData, reorderObjectProperties } from '../DataFormatter';
 
 const KeyValue = ({ property, value }) => (
   <>
@@ -40,41 +40,71 @@ const Title = ({ title }) => (
   </>
 );
 
-const ModelContents = ({ model }) => (
-  <>
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-      }}
-    >
+const ModelContents = ({ model }) => {
+  const PropertyFormattersLeft = {
+    version: (value) => <KeyValue property="API Version" value={value} />,
+    hostname: (value) => <KeyValue property="Registrant" value={value} />,
+    components: (value) => <KeyValue property="Components" value={value} />,
+  };
+
+  const metaDataLeft = {
+    version: model.version,
+    hostname: model.hostname,
+    components: model.components === null ? '0' : model.components?.length.toString(),
+  };
+
+  const orderLeft = ['version', 'hostname', 'components'];
+  const orderdMetadataLeft = reorderObjectProperties(metaDataLeft, orderLeft);
+
+  const PropertyFormattersRight = {
+    category: (value) => <KeyValue property="Category" value={value} />,
+    duplicates: (value) => <KeyValue property="Duplicates" value={value} />,
+    relationships: (value) => <KeyValue property="Relationships" value={value} />,
+  };
+
+  const metaDataRight = {
+    category: model.category?.name,
+    duplicates: model.duplicates.toString(),
+    relationships: model.relationships === null ? '0' : model.relationships?.length.toString(),
+  };
+
+  const orderRight = ['category', 'duplicates', 'relationships'];
+  const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
+
+  return (
+    <>
       <div
         style={{
           display: 'flex',
-          flexDirection: 'column',
-          width: '50%',
-          paddingRight: '1rem',
+          flexDirection: 'row',
         }}
       >
-        <KeyValue property="Version" value={model.version} />
-        <KeyValue property="Registrant" value={model.hostname} />
-        <KeyValue
-          property="Components"
-          value={model.components === null ? '0' : model.components.length}
-        />
-      </div>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: '50%',
+            paddingRight: '1rem',
+          }}
+        >
+          <FormatStructuredData
+            data={orderdMetadataLeft}
+            propertyFormatters={PropertyFormattersLeft}
+            order={orderLeft}
+          />
+        </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
-        <KeyValue property="Category" value={model.category?.name} />
-        <KeyValue property="Duplicates" value={model.duplicates} />
-        <KeyValue
-          property="Relationships"
-          value={model.relationships === null ? '0' : model.relationships.length}
-        />
+        <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
+          <FormatStructuredData
+            data={orderdMetadataRight}
+            propertyFormatters={PropertyFormattersRight}
+            order={orderRight}
+          />
+        </div>
       </div>
-    </div>
-  </>
-);
+    </>
+  );
+};
 
 const ChildTypeTitle = ({ title }) => (
   <p
@@ -101,73 +131,319 @@ const ChildTitle = ({ title }) => (
   </>
 );
 
-const ComponentContents = ({ components }) => (
-  <div>
-    {components.map((component, index) => (
+const ComponentsContents = ({ components }) => {
+  return (
+    <div>
+      {components.map((component, index) => {
+        const PropertyFormattersLeft = {
+          version: (value) => <KeyValue property="API Version" value={value} />,
+        };
+
+        const metaDataLeft = {
+          version: component.apiVersion,
+        };
+
+        const orderLeft = ['version'];
+        const orderdMetadataLeft = reorderObjectProperties(metaDataLeft, orderLeft);
+
+        const PropertyFormattersRight = {
+          subCategory: (value) => <KeyValue property="Sub Category" value={value} />,
+        };
+
+        const metaDataRight = {
+          subCategory: component.kind,
+        };
+
+        const orderRight = ['subCategory'];
+        const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
+
+        return (
+          <div
+            key={index}
+            style={{
+              margin: '0.9rem 0',
+            }}
+          >
+            <ChildTitle title={component.displayName} />
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  width: '50%',
+                  paddingRight: '1rem',
+                }}
+              >
+                <FormatStructuredData
+                  data={orderdMetadataLeft}
+                  propertyFormatters={PropertyFormattersLeft}
+                  order={orderLeft}
+                />
+              </div>
+              <div style={{ display: 'flex', width: '50%' }}>
+                <FormatStructuredData
+                  data={orderdMetadataRight}
+                  propertyFormatters={PropertyFormattersRight}
+                  order={orderRight}
+                />
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+const ComponentContents = ({ component }) => {
+  const PropertyFormattersLeft = {
+    version: (value) => <KeyValue property="API Version" value={value} />,
+    modelName: (value) => <KeyValue property="Model Name" value={value} />,
+    kind: (value) => <KeyValue property="Kind" value={value} />,
+  };
+
+  const metaDataLeft = {
+    version: component.apiVersion,
+    modelName: component.model?.displayName,
+    kind: component.kind,
+  };
+
+  const orderLeft = ['version', 'modelName', 'kind'];
+  const orderdMetadataLeft = reorderObjectProperties(metaDataLeft, orderLeft);
+
+  const PropertyFormattersRight = {
+    registrant: (value) => <KeyValue property="Registrant" value={value} />,
+    duplicates: (value) => <KeyValue property="Duplicates" value={value} />,
+  };
+
+  const metaDataRight = {
+    registrant: component.displayhostname,
+    duplicates: component.duplicates.toString(),
+  };
+
+  const orderRight = ['registrant', 'duplicates'];
+  const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
+
+  return (
+    <>
       <div
-        key={index}
         style={{
-          margin: '0.9rem 0',
+          display: 'flex',
+          flexDirection: 'row',
         }}
       >
-        <ChildTitle title={component.displayName} />
         <div
           style={{
             display: 'flex',
-            flexDirection: 'row',
+            flexDirection: 'column',
+            width: '50%',
+            paddingRight: '1rem',
           }}
         >
+          <FormatStructuredData
+            data={orderdMetadataLeft}
+            propertyFormatters={PropertyFormattersLeft}
+            order={orderLeft}
+          />
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
+          <FormatStructuredData
+            data={orderdMetadataRight}
+            propertyFormatters={PropertyFormattersRight}
+            order={orderRight}
+          />
+        </div>
+      </div>
+    </>
+  );
+};
+
+const RelationshipContents = ({ relationship }) => {
+  const PropertyFormattersLeft = {
+    version: (value) => <KeyValue property="API Version" value={value} />,
+    modelName: (value) => <KeyValue property="Model Name" value={value} />,
+    kind: (value) => <KeyValue property="Kind" value={value} />,
+  };
+
+  const metaDataLeft = {
+    version: relationship.apiVersion,
+    modelName: relationship.model?.displayName,
+  };
+
+  const orderLeft = ['version', 'modelName'];
+  const orderdMetadataLeft = reorderObjectProperties(metaDataLeft, orderLeft);
+
+  const PropertyFormattersRight = {
+    registrant: (value) => <KeyValue property="Registrant" value={value} />,
+    subType: (value) => <KeyValue property="Sub Type" value={value} />,
+  };
+
+  const metaDataRight = {
+    registrant: relationship.displayhostname,
+    subType: relationship.subType,
+  };
+
+  const orderRight = ['subType', 'registrant'];
+  const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
+
+  return (
+    <>
+      <div
+        style={{
+          display: 'flex',
+          marginTop: '12px',
+          flexDirection: 'row',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: '50%',
+            paddingRight: '1rem',
+          }}
+        >
+          <FormatStructuredData
+            data={orderdMetadataLeft}
+            propertyFormatters={PropertyFormattersLeft}
+            order={orderLeft}
+          />
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
+          <FormatStructuredData
+            data={orderdMetadataRight}
+            propertyFormatters={PropertyFormattersRight}
+            order={orderRight}
+          />
+        </div>
+      </div>
+    </>
+  );
+};
+
+const RelationshipsContents = ({ relationships }) => (
+  <div>
+    {relationships.map((rela, index) => {
+      const PropertyFormattersLeft = {
+        version: (value) => <KeyValue property="API Version" value={value} />,
+      };
+
+      const metaDataLeft = {
+        version: rela.apiVersion,
+      };
+
+      const orderLeft = ['version'];
+      const orderdMetadataLeft = reorderObjectProperties(metaDataLeft, orderLeft);
+
+      const PropertyFormattersRight = {
+        subType: (value) => <KeyValue property="Sub Category" value={value} />,
+      };
+
+      const metaDataRight = {
+        subType: rela.subType,
+      };
+
+      const orderRight = ['subType'];
+      const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
+      return (
+        <div
+          key={index}
+          style={{
+            margin: '0.9rem 0',
+          }}
+        >
+          <ChildTitle title={rela.kind} />
           <div
             style={{
               display: 'flex',
-              width: '50%',
-              paddingRight: '1rem',
+              flexDirection: 'row',
             }}
           >
-            <KeyValue property="API Version" value={component.apiVersion} />
-          </div>
-          <div style={{ display: 'flex', width: '50%' }}>
-            <KeyValue property="Sub Category" value={component.kind} />
+            <div
+              style={{
+                display: 'flex',
+                width: '50%',
+                paddingRight: '1rem',
+              }}
+            >
+              <FormatStructuredData
+                data={orderdMetadataLeft}
+                propertyFormatters={PropertyFormattersLeft}
+                order={orderLeft}
+              />
+            </div>
+            <div style={{ display: 'flex', width: '50%' }}>
+              <FormatStructuredData
+                data={orderdMetadataRight}
+                propertyFormatters={PropertyFormattersRight}
+                order={orderRight}
+              />
+            </div>
           </div>
         </div>
-      </div>
-    ))}
+      );
+    })}
   </div>
 );
 
-const RelationshipContents = ({ relationships }) => (
-  <div>
-    {relationships.map((rela, index) => (
+const RegistrantContent = ({ registrant }) => {
+  const PropertyFormattersLeft = {
+    models: (value) => <KeyValue property="Models" value={value} />,
+    components: (value) => <KeyValue property="Components" value={value} />,
+  };
+
+  const metaDataLeft = {
+    models: registrant.summary?.models.toString(),
+    components: registrant.summary?.components.toString(),
+  };
+
+  const orderLeft = ['models', 'components'];
+  const orderdMetadataLeft = reorderObjectProperties(metaDataLeft, orderLeft);
+
+  const PropertyFormattersRight = {
+    relationships: (value) => <KeyValue property="Relationships" value={value} />,
+    policies: (value) => <KeyValue property="Policies" value={value} />,
+  };
+
+  const metaDataRight = {
+    relationships: registrant.summary?.relationships.toString(),
+    policies: registrant.summary?.policies.toString(),
+  };
+
+  const orderRight = ['relationships', 'policies'];
+  const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
+  return (
+    <>
       <div
-        key={index}
         style={{
-          margin: '0.9rem 0',
+          display: 'flex',
+          flexDirection: 'column',
+          width: '50%',
+          paddingRight: '1rem',
         }}
       >
-        <ChildTitle title={rela.kind} />
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              width: '50%',
-              paddingRight: '1rem',
-            }}
-          >
-            <KeyValue property="API Version" value={rela.apiVersion} />
-          </div>
-          <div style={{ display: 'flex', width: '50%' }}>
-            <KeyValue property="Sub Type" value={rela.subType} />
-          </div>
-        </div>
+        <FormatStructuredData
+          data={orderdMetadataLeft}
+          propertyFormatters={PropertyFormattersLeft}
+          order={orderLeft}
+        />
       </div>
-    ))}
-  </div>
-);
+      <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
+        <FormatStructuredData
+          data={orderdMetadataRight}
+          propertyFormatters={PropertyFormattersRight}
+          order={orderRight}
+        />
+      </div>
+    </>
+  );
+};
 
 const MeshModelDetails = ({ view, show, rela, regi, comp }) => {
   const StyleClass = useStyles();
@@ -198,21 +474,7 @@ const MeshModelDetails = ({ view, show, rela, regi, comp }) => {
               flexDirection: 'row',
             }}
           >
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                width: '50%',
-                paddingRight: '1rem',
-              }}
-            >
-              <KeyValue property="Models" value={regi.summary?.models} />
-              <KeyValue property="Components" value={regi.summary?.components} />
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
-              <KeyValue property="Relationships" value={regi.summary?.relationships} />
-              <KeyValue property="Policies" value={regi.summary?.policies} />
-            </div>
+            <RegistrantContent registrant={regi} />
           </div>
           {show.model.displayName && <hr style={{ margin: '1rem 0' }} />}
         </div>
@@ -229,14 +491,14 @@ const MeshModelDetails = ({ view, show, rela, regi, comp }) => {
             <div>
               <hr style={{ margin: '1rem 0' }} />
               <ChildTypeTitle title="Components" />
-              <ComponentContents components={show.components} />
+              <ComponentsContents components={show.components} />
             </div>
           )}
           {show.relationships.length !== 0 && (
             <div>
               <hr style={{ marginTop: '1rem 0' }} />
               <ChildTypeTitle title="Relationships" />
-              <RelationshipContents relationships={show.relationships} />
+              <RelationshipsContents relationships={show.relationships} />
             </div>
           )}
         </>
@@ -244,61 +506,15 @@ const MeshModelDetails = ({ view, show, rela, regi, comp }) => {
       {view === COMPONENTS && comp.displayName && (
         <div>
           <ChildTitle title={comp.displayName} />
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                width: '50%',
-                paddingRight: '1rem',
-              }}
-            >
-              <KeyValue property="API Version" value={comp.apiVersion} />
-              <KeyValue property="Model Name" value={comp.model?.displayName} />
-              <KeyValue property="Kind" value={comp.kind} />
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
-              <KeyValue property="Registrant" value={comp.displayhostname} />
-              <KeyValue property="Duplicates" value={comp.duplicates} />
-            </div>
-          </div>
+          <ComponentContents component={comp} />
         </div>
       )}
       {view === RELATIONSHIPS && rela.kind && (
         <div>
           <ChildTitle title={rela.kind} />
-          <p style={{ fontWeight: '600', margin: '0' }}>Description</p>
+          <p style={{ fontWeight: '600', margin: '0', fontSize: '14px' }}>Description</p>
           <p style={{ margin: '0', fontSize: '14px' }}>{rela.metadata?.description}</p>
-          <div
-            style={{
-              display: 'flex',
-              marginTop: '12px',
-              flexDirection: 'row',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                width: '50%',
-                paddingRight: '1rem',
-              }}
-            >
-              <KeyValue property="API Version" value={rela.apiVersion} />
-              <KeyValue property="Model Name" value={rela.model?.displayName} />
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
-              <KeyValue property="Sub Type" value={rela.subType} />
-              <KeyValue property="Registrant" value={rela.displayhostname} />
-            </div>
-          </div>
+          <RelationshipContents relationship={rela} />
         </div>
       )}
     </div>
