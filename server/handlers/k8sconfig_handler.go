@@ -97,7 +97,8 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		ErroredContexts:  make([]models.K8sContext, 0),
 	}
 
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create").
+	WithDescription("Kubernetes config uploaded.").WithSeverity(events.Informational)
 	contexts := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID)
 	len := len(contexts)
 
