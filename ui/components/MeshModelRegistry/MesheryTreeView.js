@@ -367,6 +367,7 @@ const MesheryTreeView = ({
             >
               {data?.map((registrant) => (
                 <StyledTreeItem
+                  key={registrant.id}
                   nodeId={0}
                   labelText={registrant.hostname}
                   onClick={() => setRegi(registrant)}
