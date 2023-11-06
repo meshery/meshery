@@ -4,8 +4,8 @@ import {
   TableCell,
   Button,
   Tooltip,
-  FormControl,
-  Select,
+  // FormControl,
+  // Select,
   TableContainer,
   Table,
   Grid,
@@ -150,7 +150,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
   const { notify } = useNotification();
   const StyleClass = useStyles();
 
-  const statuses = ['ignored', 'connected', 'REGISTERED', 'discovered', 'deleted'];
+  // const statuses = ['ignored', 'connected', 'REGISTERED', 'discovered', 'deleted'];
 
   const columns = [
     {
@@ -326,56 +326,56 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
         },
       },
     },
-    {
-      name: 'status',
-      label: 'Status',
-      options: {
-        sort: true,
-        sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-          return (
-            <SortableTableCell
-              index={index}
-              columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
-            />
-          );
-        },
-        customBodyRender: function CustomBody(value, tableMeta) {
-          const disabled = value === 'deleted' ? true : false;
-          return (
-            <>
-              <FormControl className={classes.chipFormControl}>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  disabled={disabled}
-                  value={value}
-                  onClick={(e) => e.stopPropagation()}
-                  onChange={(e) => handleStatusChange(e, tableMeta.rowData[0])}
-                  className={classes.statusSelect}
-                  disableUnderline
-                  MenuProps={{
-                    anchorOrigin: {
-                      vertical: 'bottom',
-                      horizontal: 'left',
-                    },
-                    transformOrigin: {
-                      vertical: 'top',
-                      horizontal: 'left',
-                    },
-                    getContentAnchorEl: null,
-                  }}
-                >
-                  {statuses.map((s) => status(s))}
-                </Select>
-              </FormControl>
-            </>
-          );
-        },
-      },
-    },
+    // {
+    //   name: 'status',
+    //   label: 'Status',
+    //   options: {
+    //     sort: true,
+    //     sortThirdClickReset: true,
+    //     customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+    //       return (
+    //         <SortableTableCell
+    //           index={index}
+    //           columnData={column}
+    //           columnMeta={columnMeta}
+    //           onSort={() => sortColumn(index)}
+    //         />
+    //       );
+    //     },
+    //     customBodyRender: function CustomBody(value, tableMeta) {
+    //       const disabled = value === 'deleted' ? true : false;
+    //       return (
+    //         <>
+    //           <FormControl className={classes.chipFormControl}>
+    //             <Select
+    //               labelId="demo-simple-select-label"
+    //               id="demo-simple-select"
+    //               disabled={disabled}
+    //               value={value}
+    //               onClick={(e) => e.stopPropagation()}
+    //               onChange={(e) => handleStatusChange(e, tableMeta.rowData[0])}
+    //               className={classes.statusSelect}
+    //               disableUnderline
+    //               MenuProps={{
+    //                 anchorOrigin: {
+    //                   vertical: 'bottom',
+    //                   horizontal: 'left',
+    //                 },
+    //                 transformOrigin: {
+    //                   vertical: 'top',
+    //                   horizontal: 'left',
+    //                 },
+    //                 getContentAnchorEl: null,
+    //               }}
+    //             >
+    //               {statuses.map((s) => status(s))}
+    //             </Select>
+    //           </FormControl>
+    //         </>
+    //       );
+    //     },
+    //   },
+    // },
     {
       name: 'Actions',
       options: {
@@ -565,25 +565,25 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
     });
   };
 
-  const handleStatusChange = (e, connectionId) => {
-    e.stopPropagation();
-    const requestBody = JSON.stringify({
-      status: e.target.value,
-    });
-    dataFetch(
-      `/api/integrations/connections/${connectionId}`,
-      {
-        method: 'PUT',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: requestBody,
-      },
-      () => {
-        getConnections(page, pageSize, search, sortOrder);
-      },
-      handleError(ACTION_TYPES.UPDATE_CONNECTION),
-    );
-  };
+  // const handleStatusChange = (e, connectionId) => {
+  //   e.stopPropagation();
+  //   const requestBody = JSON.stringify({
+  //     status: e.target.value,
+  //   });
+  //   dataFetch(
+  //     `/api/integrations/connections/${connectionId}`,
+  //     {
+  //       method: 'PUT',
+  //       credentials: 'include',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: requestBody,
+  //     },
+  //     () => {
+  //       getConnections(page, pageSize, search, sortOrder);
+  //     },
+  //     handleError(ACTION_TYPES.UPDATE_CONNECTION),
+  //   );
+  // };
 
   const handleDeleteConnections = async (selected) => {
     if (selected) {
