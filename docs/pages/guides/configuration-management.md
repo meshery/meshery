@@ -3,7 +3,7 @@ layout: default
 title: Configuring your Cloud Native Infrastructure and Applications with Meshery
 description: Learn how to use Meshery Designs effectively
 permalink: guides/configuration-management
-type: Guides
+type: guides
 language: en
 ---
 
@@ -13,11 +13,14 @@ As an cloud native management platform, Meshery has built-in support infastructu
 
 Meshery's core construct of configuration management is that of a design. A design is ultimately a document – and a document in which you capture and describe your desired state of improv the environment.
 
+[![Context Aware Design]({{ site.baseurl }}/assets/img/patterns/context-aware-design.svg
+)]({{ site.baseurl }}/assets/img/patterns/context-aware-design.svg)
+
 ## Creating a Meshery Design
 
- you have your choice of how are you would like to create an infrastructure design. You can use the design configurator inside of measure, UI or extensions, like MeshMap, or you can hand code your design, using the mesh model spec, if you like. 
+You have your choice of how are you would like to create an infrastructure design. You can use the design configurator inside of measure, UI or extensions, like MeshMap, or you can hand code your design, using the mesh model spec, if you like.
  
- Use Meshery UI or mesheryctl to manage [designs](../tasks/patterns.md).
+Use Meshery UI or mesheryctl to manage [designs](../tasks/patterns.md).
 
 ## Pattern Management Through Meshery UI
 

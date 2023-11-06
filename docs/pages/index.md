@@ -9,17 +9,16 @@ language: en
 
 {% assign sorted_pages = site.pages | sort: "name" | alphabetical %}
 
-<div style="display: block;text-align: center;">
-  <div style="padding: clamp(30px, calc(30px + (100 - 30) * ((100vw - 1000px) / (1600 - 1000))), 400vw); padding-top:0px; padding-bottom:0px;">
+<div class="flex flex-col--1">
+  <div style="align-self:center; margin-bottom:0px; margin-top:0px;padding-top:0px; padding-bottom:0px;width:clamp(170px, 50%, 800px);">
     {% include svg/meshery-logo.html %}
   </div>
-    <h3>As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.</h3>
+  <h3>As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.</h3>
 </div>
-
 <div class="flex flex-col--2"  style="text-align: left; padding:1.6rem ;--col-gap:1rem">
   <!-- OVERVIEW -->
   <div class="section">
-    <a href="{{ site.baseurl }}/project">
+    <a href="{{ site.baseurl }}/project/overview">
         <div class="btn-primary">Overview</div>
     </a>
     <!-- <h6>Getting Started</h6> -->
@@ -30,9 +29,9 @@ language: en
     </ul>
     <details>
       <summary>
-        <h6 style="display:inline">
+        <p style="display:inline">
           <a href="{{ site.baseurl }}/installation/" class="text-black">Supported Platforms</a>
-        </h6>
+        </p>
       </summary>
       <ul class="section-title">
       {% for item in sorted_pages %}
@@ -64,9 +63,9 @@ language: en
     </ul> -->
     <details>
       <summary>
-        <h6 style="display:inline">
+        <p style="display:inline">
           <a href="{{ site.baseurl }}/concepts/logical" class="text-black">Logical</a>
-        </h6>
+        </p>
       </summary>
       <ul class="section-title">
           {% for item in sorted_pages %}
@@ -82,9 +81,9 @@ language: en
     </details>
     <details>
       <summary>
-        <h6 style="display:inline">
+        <p style="display:inline">
           <a href="{{ site.baseurl }}/concepts/architecture" class="text-black section-title">Architectural</a>
-        </h6>
+        </p>
       </summary>
       <ul>
           {% for item in sorted_pages %}
@@ -146,9 +145,27 @@ language: en
         <div class="btn-primary">Guides</div>
     </a>
     <!-- <h6><a href="{{ site.baseurl }}/guides" class="text-black section-title">Guides</a></h6> -->
+    <details>
+      <summary>
+        <p style="display:inline">
+          <a href="{{ site.baseurl }}/guides/mesheryctl/" class="text-black">Meshery CLI</a>
+        </p>
+      </summary>
+      <ul class="section-title">
+          {% for item in sorted_pages %}
+          {% if item.type=="guides" and item.category=="mesheryctl" and item.language=="en" -%}
+            <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+            {% if item.abstract != " " %}
+              -  {{ item.abstract }}
+            {% endif %}
+            </li>
+            {% endif %}
+          {% endfor %}
+      </ul>
+    </details>
     <ul>
       {% for item in sorted_pages %}
-      {% if item.type=="Guides" and item.list!="exclude"  and item.language!="es" -%}
+      {% if item.type=="guides" and item.category!="mesheryctl" and item.language=="en" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}
@@ -173,19 +190,31 @@ language: en
 
     <!-- CONTRIBUTING -->
   <div class="section">
-    <a href="{{ site.baseurl }}/tasks">
-        <div class="btn-primary">Contributing</div>
+    <a href="{{ site.baseurl }}/project">
+        <div class="btn-primary">Contributing and Community</div>
     </a>
     <!-- <h6><a href="{{ site.baseurl }}/tasks" class="text-black section-title">Cloud Native Management</a></h6> -->
     <ul>
-      {% for item in sorted_pages %}
-      {% if item.type=="project" and item.category=="contributing" and item.list!="exclude" and item.language !="es" -%}
-        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-        </li>
-        {% endif %}
-      {% endfor %}
+      <li><a href="{{ site.baseurl }}/project/community" class="text-black">Community</a></li>
     </ul>
-    <!-- <h6><a href="{{ site.baseurl }}/service-meshes" class="text-black section-title">Service Mesh Specific Management</a></h6> -->
+    <details>
+      <summary>
+        <p style="display:inline">
+          <a href="{{ site.baseurl }}/project/contributing" class="text-black">Contributing</a>
+        </p>
+      </summary>
+      <ul class="section-title">
+          {% for item in sorted_pages %}
+          {% if item.category=="contributing" and item.language=="en" -%}
+            <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+            {% if item.abstract != " " %}
+              -  {{ item.abstract }}
+            {% endif %}
+            </li>
+            {% endif %}
+          {% endfor %}
+      </ul>
+    </details>
   </div>
     
 </div>
@@ -193,13 +222,15 @@ language: en
 
     <!-- PROJECT -->
   <div class="section">
-    <a href="{{ site.baseurl }}/project">
+    <a href="{{ site.baseurl }}/project/overview">
         <div class="btn-primary">Project</div>
     </a>
     <!-- <h6><a href="{{ site.baseurl }}/tasks" class="text-black section-title">Cloud Native Management</a></h6> -->
+    {% assign sorted_pages = site.pages | sort: "name" | alphabetical %}
+
     <ul>
       {% for item in sorted_pages %}
-      {% if item.type=="project" and item.category!="contributing" and item.list!="exclude" and item.language !="es" -%}
+      {% if item.type=="project" and item.category!="contributing" and item.list=="include" and item.language =="en" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         </li>
         {% endif %}
@@ -227,7 +258,7 @@ language: en
 
 <p width="100%">Follow on <a href="https://twitter.com/mesheryio">Twitter</a> or subscribe to our <a href="https://meshery.io/subscribe">newsletter</a> for the latest updates. Get support on our <a href="http://discuss.meshery.io">forum</a>. Join our <a href="https://slack.meshery.io">Slack</a> to interact directly with other users and contributors.</p>
 
-</div>
+
 
 
 

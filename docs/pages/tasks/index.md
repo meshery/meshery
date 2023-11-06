@@ -7,6 +7,7 @@ language: en
 ---
 
 These sections provide user guides to the functionality Meshery offers.
+
 ## Meshery Functionality
 
 {% assign sorted_functionality = site.pages | sort: "functionality" %}

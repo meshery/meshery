@@ -148,6 +148,9 @@ type HandlerInterface interface {
 	PublishCatalogPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	UnPublishCatalogPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetMesheryPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	DesignFileRequestHandlerWithSourceType(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetMesheryDesignTypesHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetMesheryPatternSourceHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	FilterFileHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetMesheryFilterFileHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)

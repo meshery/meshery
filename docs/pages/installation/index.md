@@ -4,9 +4,12 @@ title: Installation
 type: installation
 abstract: Installation procedures for deploying Meshery with mesheryctl.
 permalink: installation
-redirect_from: installation/
+redirect_from: 
+- installation/
+- installation/platforms
+- installation/platforms/
 language: en
-list: include
+list: exclude
 ---
 
 ## Supported Platforms
@@ -15,9 +18,11 @@ Meshery deploys as a set of Docker containers, which can be deployed to either a
 
 {% assign sorted_index = site.pages | sort: "name" | alphabetical %}
 
+### Install `mesheryctl`
+
 <ul>
     {% for item in sorted_index %}
-    {% if item.type=="installation" and item.list=="include" and item.language == "en" -%}
+    {% if item.type=="installation" and item.category=="mesheryctl" and item.list=="include" and item.language == "en" -%}
       <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
       {% if item.abstract %}
         -  {{ item.abstract }}
@@ -27,10 +32,33 @@ Meshery deploys as a set of Docker containers, which can be deployed to either a
     {% endfor %}
 </ul>
 
-{% include toc.html page=reference %}
+### Install on Kubernetes
 
-{:toc}
+<ul>
+    {% for item in sorted_index %}
+    {% if item.type=="installation" and item.category=="kubernetes" and item.list=="include" and item.language == "en" -%}
+      <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+      {% if item.abstract %}
+        -  {{ item.abstract }}
+      {% endif %}
+      </li>
+      {% endif %}
+    {% endfor %}
+</ul>
 
-{% include suggested-reading.html diffName="false" isDiffTag="true" diffTag=tag %}
+### Install on Docker
 
-{% include related-discussions.html tag="meshery" %}
+<ul>
+    {% for item in sorted_index %}
+    {% if item.type=="installation" and item.category=="docker" and item.list=="include" and item.language == "en" -%}
+      <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+      {% if item.abstract %}
+        -  {{ item.abstract }}
+      {% endif %}
+      </li>
+      {% endif %}
+    {% endfor %}
+</ul>
+
+
+<!-- {% include toc.html page=reference %} -->

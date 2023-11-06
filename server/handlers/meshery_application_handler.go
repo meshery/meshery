@@ -526,6 +526,7 @@ func (h *Handler) handleApplicationPOST(
 		go h.config.ApplicationChannel.Publish(userID, struct{}{})
 		eb := eventBuilder
 		_ = provider.PersistEvent(eb.WithDescription(fmt.Sprintf("Application %s  Source content uploaded", mesheryApplicationContent[0].Name)).Build())
+		return
 	}
 
 	mesheryApplication.ID = savedApplicationID
@@ -938,7 +939,7 @@ func (h *Handler) GetMesheryApplicationSourceHandler(
 	var mimeType string
 	sourcetype := mux.Vars(r)["sourcetype"]
 
-	if models.ApplicationType(sourcetype) == models.HelmChart { //serve the content in a tgz file
+	if models.DesignType(sourcetype) == models.HelmChart { //serve the content in a tgz file
 		mimeType = "application/x-tar"
 	} else { // serve the content in yaml file
 		mimeType = "application/x-yaml"
