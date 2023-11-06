@@ -1,4 +1,4 @@
-import { Chip, makeStyles } from '@material-ui/core';
+import { Chip, MenuItem, makeStyles } from '@material-ui/core';
 import classNames from 'classnames';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
@@ -77,11 +77,13 @@ const styles = makeStyles((theme) => ({
 const DiscoveredStateChip = ({ value }) => {
   const classes = styles();
   return (
-    <Chip
-      className={classNames(classes.statusCip, classes.discovered)}
-      avatar={<ExploreIcon />}
-      label={value}
-    />
+    <MenuItem value={value}>
+      <Chip
+        className={classNames(classes.statusCip, classes.discovered)}
+        avatar={<ExploreIcon />}
+        label={value}
+      />
+    </MenuItem>
   );
 };
 
@@ -89,45 +91,66 @@ const RegisteredStateChip = ({ value }) => {
   const classes = styles();
   console.log('tetsppppp', value);
   return (
-    <Chip
-      className={classNames(classes.statusCip, classes.registered)}
-      avatar={<AssignmentTurnedInIcon />}
-      label={value}
-    />
+    <MenuItem value={value}>
+      <Chip
+        className={classNames(classes.statusCip, classes.registered)}
+        avatar={<AssignmentTurnedInIcon />}
+        label={value}
+      />
+    </MenuItem>
   );
 };
 
 const ConnectedStateChip = ({ value }) => {
   const classes = styles();
   return (
-    <Chip
-      className={classNames(classes.statusCip, classes.connected)}
-      avatar={<CheckCircleIcon />}
-      label={value}
-    />
+    <MenuItem value={value}>
+      <Chip
+        className={classNames(classes.statusCip, classes.connected)}
+        avatar={<CheckCircleIcon />}
+        label={value}
+      />
+    </MenuItem>
   );
 };
 
 const IgnoredStateChip = ({ value }) => {
   const classes = styles();
   return (
-    <Chip
-      className={classNames(classes.statusCip, classes.ignored)}
-      avatar={<RemoveCircleIcon />}
-      label={value}
-    />
+    <MenuItem value={value}>
+      <Chip
+        className={classNames(classes.statusCip, classes.ignored)}
+        avatar={<RemoveCircleIcon />}
+        label={value}
+      />
+    </MenuItem>
   );
 };
 
 const DeletedStateChip = ({ value }) => {
   const classes = styles();
   return (
+    <MenuItem value={value}>
+      <Chip
+        className={classNames(classes.statusCip, classes.deleted)}
+        avatar={<DeleteForeverIcon />}
+        label={value}
+      />
+    </MenuItem>
+  );
+};
+
+const Default = ({ value }) => {
+  const classes = styles();
+
+  <MenuItem value={value}>
     <Chip
-      className={classNames(classes.statusCip, classes.deleted)}
-      avatar={<DeleteForeverIcon />}
+      className={classNames(classes.statusChip, classes.discovered)}
+      value={value}
+      avatar={<ExploreIcon />}
       label={value}
     />
-  );
+  </MenuItem>;
 };
 
 function getStatusChip(status) {
@@ -144,6 +167,8 @@ function getStatusChip(status) {
       return <DiscoveredStateChip value={status} />;
     case 'deleted':
       return <DeletedStateChip value={status} />;
+    default:
+      return <Default value={status} />;
   }
 }
 
