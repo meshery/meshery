@@ -4,16 +4,17 @@ title: Cilium
 permalink: integrations/cilium
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/cilium.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: cilium
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: cilium -->
 
 ### Overview & Features:
 1. Cilium is an open source software for providing, securing and observing network connectivity between container workloads - cloud native, and fueled by the revolutionary Kernel technology eBPF.

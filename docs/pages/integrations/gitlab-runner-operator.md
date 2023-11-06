@@ -4,16 +4,17 @@ title: Gitlab Runner Operator
 permalink: integrations/gitlab-runner-operator
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/gitlab-runner-operator.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: gitlab-runner-operator
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: gitlab-runner-operator -->
 
 ### Overview & Features:
 1. GitOps your infrastructure with Meshery and GitLab

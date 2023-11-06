@@ -4,16 +4,17 @@ title: AWS API Gateway Operator
 permalink: integrations/aws-api-gateway-operator
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/aws-api-gateway-operator.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: aws-api-gateway-operator
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: aws-api-gateway-operator -->
 
 ### Overview & Features:
 1. Amazon API Gateway is a fully managed service that makes it easy for developers to create, publish, maintain, monitor, and secure APIs at any scale.

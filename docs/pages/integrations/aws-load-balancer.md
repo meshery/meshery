@@ -4,16 +4,17 @@ title: AWS Load Balancer
 permalink: integrations/aws-load-balancer
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/aws-load-balancer.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: aws-load-balancer-controller
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: aws-load-balancer-controller -->
 
 ### Overview & Features:
 1. Distribute network traffic to improve application scalability

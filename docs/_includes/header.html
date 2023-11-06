@@ -2,17 +2,10 @@
   <nav class="js-navbar-scroll navbar">
     <a class="navbar-brand" href="{{ site.baseurl }}/{{linkUrlSelected}}">
       <div class="navbar-logo">
+        {% include svg/meshery-docs.html %}
+      </div>
+      <div class="mobile">
         {% include svg/meshery-logo.html %}
-        <span
-          class="font-weight-bold small-hide"
-          style="
-            font-size: 2rem;
-            vertical-align: bottom;
-            color: var(--meshery-logo-text-fill);
-            font-family: 'Open Sans';
-          "
-          >Documentation</span
-        >
       </div>
     </a>
 

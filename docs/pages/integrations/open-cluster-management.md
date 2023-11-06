@@ -4,16 +4,17 @@ title: Open Cluster Management
 permalink: integrations/open-cluster-management
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/open-cluster-management.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: open cluster management
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: open cluster management -->
 
 ### Overview & Features:
 1. Contains useful documentation on the OCM project. Report here if you found any issues in OCM.

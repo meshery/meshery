@@ -4,16 +4,17 @@ title: Hexa
 permalink: integrations/hexa
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/hexa.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: hexa
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: hexa -->
 
 ### Overview & Features:
 1. Hexa Policy Orchestrator enables you to manage all of your access policies consistently across software providers.

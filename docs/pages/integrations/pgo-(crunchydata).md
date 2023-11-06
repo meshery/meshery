@@ -4,16 +4,17 @@ title: PGO (CrunchyData)
 permalink: integrations/pgo-(crunchydata)
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/pgo-(crunchydata).svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: pgo
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: pgo -->
 
 ### Overview & Features:
 1. PGO, the Postgres Operator from Crunchy Data, gives you a declarative Postgres solution that automatically manages your PostgreSQL clusters. Designed for your GitOps workflows, it is easy to get started with Postgres on Kubernetes with PGO. Within a few moments, you can have a production-grade Postgres cluster complete with high availability, disaster recovery, and monitoring, all over secure TLS communications. Even better, PGO lets you easily customize your Postgres cluster to tailor it to your workload.
