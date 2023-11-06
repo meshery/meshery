@@ -22,8 +22,8 @@ const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
       backgroundColor: `transparent`,
     },
     '&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused': {
-      backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
-      borderLeft: `2px solid ${theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary}`,
+      backgroundColor: `#00bfa030`,
+      borderLeft: '2px solid #00bfa0',
     },
     [`& .${treeItemClasses.label}`]: {
       fontWeight: 'inherit',
@@ -32,7 +32,7 @@ const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
   [`& .${treeItemClasses.group}`]: {
     paddingRight: '0',
     borderLeft: `1px solid ${
-      theme.palette.type === 'dark' ? alpha('#00B39F', 0.4) : alpha(theme.palette.text.primary, 0.2)
+      theme.palette.type === 'dark' ? alpha('#00B39F', 0.4) : alpha(theme.palette.text.primary, 0.4)
     }`,
   },
 }));
@@ -63,10 +63,7 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
               alignItems: 'center',
             }}
           >
-            <Typography
-              variant={hover || root ? 'body' : 'body2'}
-              style={{ color: `${root && '#005711'}` }}
-            >
+            <Typography variant={hover || root ? 'body' : 'body2'} style={{ color: `${root}` }}>
               {labelText}
             </Typography>
           </div>
