@@ -6,7 +6,6 @@ import {
   Tooltip,
   FormControl,
   Select,
-  MenuItem,
   TableContainer,
   Table,
   Grid,
@@ -22,18 +21,11 @@ import {
   Tab,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-
 import { updateProgress } from '../../lib/store';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import ExploreIcon from '@mui/icons-material/Explore';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import classNames from 'classnames';
 import dataFetch from '../../lib/data-fetch';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
@@ -53,6 +45,7 @@ import styles from './styles';
 import MeshSyncTable from './MeshsyncTable';
 import ConnectionIcon from '../../assets/icons/Connection';
 import MeshsyncIcon from '../../assets/icons/Meshsync';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -158,76 +151,6 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
   const StyleClass = useStyles();
 
   const statuses = ['ignored', 'connected', 'REGISTERED', 'discovered', 'deleted'];
-
-  const status = (value) => {
-    switch (value) {
-      case 'ignored':
-        return (
-          <MenuItem value={value}>
-            <Chip
-              className={classNames(classes.statusChip, classes.ignored)}
-              avatar={<RemoveCircleIcon />}
-              label={value}
-            />
-          </MenuItem>
-        );
-      case 'connected':
-        return (
-          <MenuItem value={value}>
-            <Chip
-              className={classNames(classes.statusChip, classes.connected)}
-              value={value}
-              avatar={<CheckCircleIcon />}
-              label={value}
-            />
-          </MenuItem>
-        );
-      case 'REGISTERED':
-        return (
-          <MenuItem value={value}>
-            <Chip
-              className={classNames(classes.statusChip, classes.registered)}
-              value={value}
-              avatar={<AssignmentTurnedInIcon />}
-              label={value.toLowerCase()}
-            />
-          </MenuItem>
-        );
-      case 'discovered':
-        return (
-          <MenuItem value={value}>
-            <Chip
-              className={classNames(classes.statusChip, classes.discovered)}
-              value={value}
-              avatar={<ExploreIcon />}
-              label={value}
-            />
-          </MenuItem>
-        );
-      case 'deleted':
-        return (
-          <MenuItem value={value}>
-            <Chip
-              className={classNames(classes.statusChip, classes.deleted)}
-              value={value}
-              avatar={<DeleteForeverIcon />}
-              label={value}
-            />
-          </MenuItem>
-        );
-      default:
-        return (
-          <MenuItem value={value}>
-            <Chip
-              className={classNames(classes.statusChip, classes.discovered)}
-              value={value}
-              avatar={<ExploreIcon />}
-              label={value}
-            />
-          </MenuItem>
-        );
-    }
-  };
 
   const columns = [
     {
@@ -466,7 +389,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
             </TableCell>
           );
         },
-        customBodyRender: (_, tableMeta) => {
+        customBodyRender: function CustomBody(_, tableMeta) {
           return (
             <div className={classes.centerContent}>
               {tableMeta.rowData[4] === KUBERNETES ? (
