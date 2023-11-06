@@ -124,7 +124,7 @@ const MesheryTreeView = ({
   const [selected, setSelected] = React.useState([]);
 
   useEffect(() => {
-    console.log(data);
+    // console.log(data);
     setSelected([]);
     if (view === COMPONENTS || view === RELATIONSHIPS) {
       setExpanded([0]);
@@ -141,11 +141,17 @@ const MesheryTreeView = ({
     });
   }, [view]);
 
-  const handleScroll = () => {
+  const handleScroll = (scrollingView) => () => {
+    console.log('event', event);
     const div = event.target;
-    console.log(data);
+    // console.log(data);
+    console.log('view: ', scrollingView);
     if (div.scrollTop >= div.scrollHeight - div.clientHeight - 2) {
-      setPage((prev) => prev + 1);
+      setPage((prevPage) => ({
+        ...prevPage, // Keep the current values for other keys
+        [scrollingView]: prevPage[scrollingView] + 1, // Increment the specific key based on the view
+      }));
+      // setPage((prev) => prev + 1);
     }
   };
 
@@ -228,7 +234,7 @@ const MesheryTreeView = ({
               />
             </div>
           </div>
-          <div style={{ overflowY: 'auto', height: '27rem' }} onScroll={handleScroll}>
+          <div style={{ overflowY: 'auto', height: '27rem' }} onScroll={handleScroll(MODELS)}>
             <TreeView
               aria-label="controlled"
               defaultExpanded={['3']}
@@ -362,7 +368,7 @@ const MesheryTreeView = ({
               </IconButton>
             </div>
           </div>
-          <div style={{ overflowY: 'auto', height: '27rem' }} onScroll={handleScroll}>
+          <div style={{ overflowY: 'auto', height: '27rem' }}>
             <TreeView
               aria-label="controlled"
               defaultExpanded={['3']}
@@ -372,106 +378,124 @@ const MesheryTreeView = ({
               multiSelect
               expanded={expanded}
             >
-              {data.registrant?.map((registrant) => (
+              {data?.map((registrant) => (
                 <StyledTreeItem
                   nodeId={0}
                   labelText={registrant.hostname}
                   onClick={() => setRegi(registrant)}
                 >
-                  <StyledTreeItem nodeId={1} labelText={`Models (${registrant?.summary?.models})`}>
-                    {data.map((model, index) => (
-                      <StyledTreeItem
-                        key={index}
-                        nodeId={index + 2}
-                        check
-                        labelText={model.displayName}
-                        onClick={() => {
-                          setShow({
-                            model: model,
-                            components: [],
-                            relationships: [],
-                          });
-                        }}
-                      >
+                  <div
+                    style={{ overflowY: 'auto', height: '27rem' }}
+                    onScroll={handleScroll(MODELS)}
+                  >
+                    <StyledTreeItem
+                      nodeId={1}
+                      labelText={`Models (${registrant?.summary?.models})`}
+                    >
+                      {registrant?.models.map((model, index) => (
                         <StyledTreeItem
-                          nodeId={`${index}.1`}
-                          labelText={`Components (${
-                            model.components ? model.components.length : 0
-                          })`}
+                          key={index}
+                          nodeId={index + 2}
+                          check
+                          labelText={model.displayName}
+                          onClick={() => {
+                            setRegi(registrant);
+                            setShow({
+                              model: model,
+                              components: [],
+                              relationships: [],
+                            });
+                          }}
                         >
-                          {model.components &&
-                            model.components.map((component, subIndex) => (
-                              <StyledTreeItem
-                                key={subIndex}
-                                nodeId={`${index + 2}.1.${subIndex}`}
-                                check
-                                labelText={component.displayName}
-                                onClick={() => {
-                                  setShow((prevShow) => {
-                                    const { components } = prevShow;
-                                    const compIndex = components.findIndex(
-                                      (item) => item === component,
-                                    );
-                                    if (compIndex !== -1) {
-                                      return {
-                                        ...prevShow,
-                                        model: model,
-                                        components: components.filter((item) => item !== component),
-                                      };
-                                    } else {
-                                      return {
-                                        ...prevShow,
-                                        model: model,
-                                        components: [...components, component],
-                                      };
-                                    }
-                                  });
-                                }}
-                              />
-                            ))}
+                          <div onScroll={handleScroll(COMPONENTS)}>
+                            <StyledTreeItem
+                              nodeId={`${index}.1`}
+                              labelText={`Components (${
+                                model.components ? model.components.length : 0
+                              })`}
+                            >
+                              {model.components &&
+                                model.components.map((component, subIndex) => {
+                                  return (
+                                    <StyledTreeItem
+                                      key={subIndex}
+                                      nodeId={`${index + 2}.1.${subIndex}`}
+                                      check
+                                      labelText={component.displayName}
+                                      onClick={() => {
+                                        setShow((prevShow) => {
+                                          const { components } = prevShow;
+                                          const compIndex = components.findIndex(
+                                            (item) => item === component,
+                                          );
+                                          if (compIndex !== -1) {
+                                            return {
+                                              ...prevShow,
+                                              model: model,
+                                              components: components.filter(
+                                                (item) => item !== component,
+                                              ),
+                                            };
+                                          } else {
+                                            return {
+                                              ...prevShow,
+                                              model: model,
+                                              components: [...components, component],
+                                            };
+                                          }
+                                        });
+                                      }}
+                                    />
+                                  );
+                                })}
+                            </StyledTreeItem>
+                          </div>
+
+                          <div onScroll={handleScroll(RELATIONSHIPS)}>
+                            <StyledTreeItem
+                              nodeId={`${index}.2`}
+                              labelText={`Relationships (${
+                                model.relationships ? model.relationships.length : 0
+                              })`}
+                            >
+                              {model.relationships &&
+                                model.relationships.map((relationship, subIndex) => (
+                                  <StyledTreeItem
+                                    key={subIndex}
+                                    nodeId={`${index + 2}.2.${subIndex}`}
+                                    check
+                                    labelText={relationship.displayhostname}
+                                    onClick={() => {
+                                      setShow((prevShow) => {
+                                        const { relationships } = prevShow;
+                                        const relaIndex = relationships.findIndex(
+                                          (item) => item === relationship,
+                                        );
+                                        if (relaIndex !== -1) {
+                                          return {
+                                            ...prevShow,
+                                            model: model,
+                                            relationships: relationships.filter(
+                                              (item) => item !== relationship,
+                                            ),
+                                          };
+                                        } else {
+                                          return {
+                                            ...prevShow,
+                                            model: model,
+                                            relationships: [...relationships, relationship],
+                                          };
+                                        }
+                                      });
+                                    }}
+                                  />
+                                ))}
+                            </StyledTreeItem>
+                          </div>
                         </StyledTreeItem>
-                        <StyledTreeItem
-                          nodeId={`${index}.2`}
-                          labelText={`Relationships (${
-                            model.relationships ? model.relationships.length : 0
-                          })`}
-                        >
-                          {model.relationships &&
-                            model.relationships.map((relationship, subIndex) => (
-                              <StyledTreeItem
-                                key={subIndex}
-                                nodeId={`${index + 2}.2.${subIndex}`}
-                                check
-                                labelText={relationship.displayhostname}
-                                onClick={() => {
-                                  setShow((prevShow) => {
-                                    const { relationships } = prevShow;
-                                    const relaIndex = relationships.findIndex(
-                                      (item) => item === relationship,
-                                    );
-                                    if (relaIndex !== -1) {
-                                      return {
-                                        ...prevShow,
-                                        model: model,
-                                        relationships: relationships.filter(
-                                          (item) => item !== relationship,
-                                        ),
-                                      };
-                                    } else {
-                                      return {
-                                        ...prevShow,
-                                        model: model,
-                                        relationships: [...relationships, relationship],
-                                      };
-                                    }
-                                  });
-                                }}
-                              />
-                            ))}
-                        </StyledTreeItem>
-                      </StyledTreeItem>
-                    ))}
-                  </StyledTreeItem>
+                      ))}
+                    </StyledTreeItem>
+                  </div>
                 </StyledTreeItem>
               ))}
             </TreeView>
@@ -503,7 +527,7 @@ const MesheryTreeView = ({
               setSelected([]);
             }}
           >
-            <div style={{ overflowY: 'auto', height: '27rem' }} onScroll={handleScroll}>
+            <div style={{ overflowY: 'auto', height: '27rem' }} onScroll={handleScroll(COMPONENTS)}>
               {data.map((component, index) => (
                 <StyledTreeItem
                   key={index}
@@ -544,7 +568,10 @@ const MesheryTreeView = ({
               setSelected([]);
             }}
           >
-            <div style={{ overflowY: 'auto', height: '27rem' }} onScroll={handleScroll}>
+            <div
+              style={{ overflowY: 'auto', height: '27rem' }}
+              onScroll={handleScroll(RELATIONSHIPS)}
+            >
               {data.map((relationship, index) => (
                 <StyledTreeItem
                   key={index}

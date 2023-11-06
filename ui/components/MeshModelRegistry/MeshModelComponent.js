@@ -13,6 +13,7 @@ import {
   searchModels,
   searchComponents,
   getMeshModelRegistrants,
+  getMeshModelsByRegistrants,
 } from '../../api/meshmodel';
 import {
   OVERVIEW,
@@ -26,6 +27,7 @@ import useStyles from '../../assets/styles/general/tool.styles';
 import { Colors } from '../../themes/app';
 import MesheryTreeView from './MesheryTreeView';
 import MeshModelDetails from './MeshModelDetails';
+import { toLower } from 'lodash';
 // import { useGetMeshModelQuery, useGetLoggedInUserQuery } from '../rtk-query/meshModel';
 
 //TODO : This Should derive the indices of rendered rows
@@ -68,7 +70,13 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
   const [resourcesDetail, setResourcesDetail] = useState([]);
   const [isRequestCancelled, setRequestCancelled] = useState(false);
   const [, setCount] = useState();
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState({
+    Models: 0,
+    Components: 0,
+    Relationships: 0,
+    Registrants: 0,
+  });
+
   const [searchText, setSearchText] = useState(null);
   const [rowsPerPage] = useState(14);
   const [sortOrder, setSortOrder] = useState({
@@ -89,11 +97,13 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
   const [animate, setAnimate] = useState(false);
   const [regi, setRegi] = useState({});
   const [checked, setChecked] = useState(true);
+  // const [filteredData, setFilteredData] = useState([]);
   // const { data: modeldata } = useGetMeshModelQuery();
 
   const getModels = async (page) => {
+    console.log('models:', page);
     try {
-      const { models } = await getMeshModels(page + 1, rowsPerPage); // page+1 due to server side indexing starting from 1
+      const { models } = await getMeshModels(page?.Models + 1, rowsPerPage); // page+1 due to server side indexing starting from 1
       const componentPromises = models.map(async (model) => {
         const { components } = await getComponentFromModelApi(model.name);
         const { relationships } = await getRelationshipFromModelApi(model.name);
@@ -114,10 +124,10 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
     // if (typeof sortOrder === "undefined" || sortOrder === null) {
     //   setSortOrder("");
     // }
-
+    console.log('components:', page);
     try {
       const { total_count, components } = await getComponentsDetailWithPageSize(
-        page + 1,
+        page?.Components + 1,
         rowsPerPage,
         sortOrder.sort,
         sortOrder.order,
@@ -136,10 +146,10 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
     // if (typeof sortOrder === "undefined" || sortOrder === null) {
     //   setSortOrder("");
     // }
-
+    console.log('relationships:', page);
     try {
       const { total_count, relationships } = await getRelationshipsDetailWithPageSize(
-        page + 1,
+        page?.Relationships + 1,
         rowsPerPage,
         sortOrder.sort,
         sortOrder.order,
@@ -186,20 +196,66 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
   };
 
   const getRegistrants = async (page) => {
+    console.log('registrants:', page);
     try {
-      const { models } = await getMeshModels(page + 1, rowsPerPage); // page+1 due to server side indexing starting from 1
-      const componentPromises = models.map(async (model) => {
-        const { components } = await getComponentFromModelApi(model.name);
-        const { relationships } = await getRelationshipFromModelApi(model.name);
-        model.components = components;
-        model.relationships = relationships;
+      // const { models } = await getMeshModels(page?.Models + 1, rowsPerPage); // page+1 due to server side indexing starting from 1
+      // const componentPromises = models.map(async (model) => {
+      //   const { components } = await getComponentFromModelApi(model.name);
+      //   const { relationships } = await getRelationshipFromModelApi(model.name);
+      //   model.components = components;
+      //   model.relationships = relationships;
+      // });
+      const { total_count, registrants } = await getMeshModelRegistrants(
+        page?.Registrants + 1,
+        rowsPerPage,
+      );
+      let tempRegistrants = [];
+      console.log('registrants val:', registrants);
+      let registrantPromise = registrants.map(async (registrant) => {
+        let hostname = toLower(registrant?.hostname);
+        console.log('inside');
+        console.log('registrant1', registrant);
+        const { models } = await getMeshModelsByRegistrants(
+          page?.Models + 1,
+          rowsPerPage,
+          hostname,
+        ); // page+1 due to server side indexing starting from 1
+        if (models) {
+          const componentPromises = models.map(async (model) => {
+            const { components } = await getComponentFromModelApi(model.name);
+            const { relationships } = await getRelationshipFromModelApi(model.name);
+            model.components = components;
+            model.relationships = relationships;
+          });
+
+          await Promise.all(componentPromises);
+          registrant.models = models;
+          tempRegistrants.push(registrant);
+        } else {
+          tempRegistrants.push(registrant);
+        }
       });
-      const { total_count, registrants } = await getMeshModelRegistrants(page, rowsPerPage);
-      models.registrant = registrants;
-      await Promise.all(componentPromises);
+      await Promise.all(registrantPromise);
       setCount(total_count);
-      if (!isRequestCancelled) {
-        setResourcesDetail(models);
+      if (!isRequestCancelled && registrants) {
+        console.log('registrants', registrants);
+        let tempResourcesDetail = [];
+        tempRegistrants.map((registrant) => {
+          console.log('registrant', registrant);
+          let oldRegistrant = resourcesDetail.find(
+            (resource) => resource?.hostname === registrant?.hostname,
+          );
+          if (oldRegistrant !== undefined) {
+            let newModels = [...oldRegistrant.models, ...registrant.models];
+            registrant.models = newModels;
+          }
+
+          console.log('newRegistrant', registrant);
+          tempResourcesDetail.push(registrant);
+        });
+
+        console.log('tempResourcesDetail', tempResourcesDetail);
+        setResourcesDetail(tempRegistrants);
       }
     } catch (error) {
       console.error('Failed to fetch registrants:', error);
@@ -210,7 +266,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
   //   setChecked(!checked);
   // };
 
-  const filteredData = checked
+  let filteredData = checked
     ? resourcesDetail // Show all data, including duplicates
     : resourcesDetail.filter((item, index, self) => {
         // Filter out duplicates based on your criteria (e.g., name and version)
@@ -223,7 +279,28 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
       });
   // const filteredData = resourcesDetail;
 
+  useEffect(
+    () => {
+      console.log('setting filteredData');
+      filteredData = checked
+        ? resourcesDetail // Show all data, including duplicates
+        : resourcesDetail.filter((item, index, self) => {
+            // Filter out duplicates based on your criteria (e.g., name and version)
+            return (
+              index ===
+              self.findIndex(
+                (otherItem) => item.name === otherItem.name && item.version === otherItem.version,
+              )
+            );
+          });
+    },
+    resourcesDetail,
+    checked,
+  );
+
   useEffect(() => {
+    console.log('view', view);
+    console.log('searchText', searchText);
     setRequestCancelled(false);
     // console.log(page);
 
@@ -650,6 +727,12 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
             }}
             onClick={() => {
               setView(MODELS);
+              setPage({
+                Models: 0,
+                Components: 0,
+                Relationships: 0,
+                Registrants: 0,
+              });
               if (view !== MODELS) {
                 setSearchText(null);
                 setResourcesDetail([]);
@@ -683,6 +766,12 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
             }}
             onClick={() => {
               setView(COMPONENTS);
+              setPage({
+                Models: 0,
+                Components: 0,
+                Relationships: 0,
+                Registrants: 0,
+              });
               if (view !== COMPONENTS) {
                 setSearchText(null);
                 setResourcesDetail([]);
@@ -716,6 +805,12 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
             }}
             onClick={() => {
               setView(RELATIONSHIPS);
+              setPage({
+                Models: 0,
+                Components: 0,
+                Relationships: 0,
+                Registrants: 0,
+              });
               if (view !== RELATIONSHIPS) {
                 setSearchText(null);
                 setResourcesDetail([]);
@@ -749,6 +844,12 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
             }}
             onClick={() => {
               setView(REGISTRANTS);
+              setPage({
+                Models: 0,
+                Components: 0,
+                Relationships: 0,
+                Registrants: 0,
+              });
               if (view !== REGISTRANTS) {
                 setSearchText(null);
                 setResourcesDetail([]);
@@ -778,6 +879,9 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
           <div
             className={`${StyleClass.treeWrapper} ${convert ? StyleClass.treeWrapperAnimate : ''}`}
           >
+            {console.log('filteredData', filteredData)}
+            {console.log('view', view)}
+
             <div style={{ height: '30rem', width: '50%', margin: '1rem' }}>
               <MesheryTreeView
                 data={filteredData}

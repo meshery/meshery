@@ -26,7 +26,7 @@ const KeyValue = ({ property, value }) => (
   </>
 );
 
-const ModelTitle = ({ title }) => (
+const Title = ({ title }) => (
   <>
     <p
       style={{
@@ -171,7 +171,6 @@ const RelationshipContents = ({ relationships }) => (
 
 const MeshModelDetails = ({ view, show, rela, regi, comp }) => {
   const StyleClass = useStyles();
-  console.log('regi: ', regi);
 
   return (
     <div
@@ -192,15 +191,7 @@ const MeshModelDetails = ({ view, show, rela, regi, comp }) => {
       )}
       {view === REGISTRANTS && regi.hostname && (
         <div>
-          <p
-            style={{
-              fontSize: '20px',
-              marginTop: '0',
-              fontWeight: 'bold',
-            }}
-          >
-            {regi.hostname}
-          </p>
+          <Title title={regi.hostname} />
           <div
             style={{
               display: 'flex',
@@ -215,56 +206,22 @@ const MeshModelDetails = ({ view, show, rela, regi, comp }) => {
                 paddingRight: '1rem',
               }}
             >
-              <p style={{ padding: '0', margin: '0', fontSize: '16px', fontWeight: '600' }}>
-                Models
-              </p>
-              <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>{regi.summary?.models}</p>
-              <p
-                style={{
-                  padding: '0',
-                  margin: '0',
-                  marginTop: '12px',
-                  fontSize: '16px',
-                  fontWeight: '600',
-                }}
-              >
-                Components
-              </p>
-              <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                {regi.summary?.components}
-              </p>
+              <KeyValue property="Models" value={regi.summary?.models} />
+              <KeyValue property="Components" value={regi.summary?.components} />
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
-              <p style={{ padding: '0', margin: '0', fontSize: '16px', fontWeight: '600' }}>
-                Relationships
-              </p>
-              <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                {regi.summary?.relationships}
-              </p>
-              <p
-                style={{
-                  padding: '0',
-                  margin: '0',
-                  marginTop: '12px',
-                  fontSize: '16px',
-                  fontWeight: '600',
-                }}
-              >
-                Policies
-              </p>
-              <p style={{ padding: '0', margin: '0', fontSize: '14px' }}>
-                {regi.summary?.policies}
-              </p>
+              <KeyValue property="Relationships" value={regi.summary?.relationships} />
+              <KeyValue property="Policies" value={regi.summary?.policies} />
             </div>
           </div>
-          {show.model.displayName && <hr />}
+          {show.model.displayName && <hr style={{ margin: '1rem 0' }} />}
         </div>
       )}
       {(view === MODELS || view === REGISTRANTS) && (
         <>
           {show.model.displayName && (
             <div>
-              <ModelTitle title={show.model.displayName} />
+              <Title title={show.model.displayName} />
               <ModelContents model={show.model} />
             </div>
           )}
