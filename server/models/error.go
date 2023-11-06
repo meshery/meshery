@@ -98,7 +98,7 @@ const (
 	ErrPersistEventCode                   = "1533"
 	ErrUnreachableKubeAPICode             = "1534"
 	ErrFlushMeshSyncDataCode              = "1535"
-	ErrUpdateConnectionStatusCode       = "replace_me"
+	ErrUpdateConnectionStatusCode         = "1540"
 )
 
 var (
