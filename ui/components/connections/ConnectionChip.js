@@ -1,0 +1,152 @@
+import { Chip, makeStyles } from '@material-ui/core';
+import classNames from 'classnames';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+import ExploreIcon from '@mui/icons-material/Explore';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+
+export const ConnectionChip = ({ handlePing, title, icon }) => (
+  <Chip label={title} onClick={() => handlePing()} icon={icon} variant="outlined" />
+);
+
+const styles = makeStyles((theme) => ({
+  statusCip: {
+    minWidth: '120px !important',
+    maxWidth: 'max-content !important',
+    display: 'flex !important',
+    justifyContent: 'flex-start !important',
+    textTransform: 'capitalize',
+    borderRadius: '3px !important',
+    padding: '6px 8px',
+    '& .MuiChip-label': {
+      paddingTop: '3px',
+      fontWeight: '400',
+    },
+    '&:hover': {
+      boxShadow: '0px 1px 2px 0px rgba(0, 0, 0, 0.25)',
+    },
+  },
+  ignored: {
+    '& .MuiChip-label': {
+      color: `${theme.palette.secondary.default}`,
+    },
+    background: `${theme.palette.secondary.default}30 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${theme.palette.secondary.default} !important`,
+    },
+  },
+  connected: {
+    '& .MuiChip-label': {
+      color: theme.palette.secondary.success,
+    },
+    background: `${theme.palette.secondary.success}30 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${theme.palette.secondary.success} !important`,
+    },
+  },
+  registered: {
+    '& .MuiChip-label': {
+      color: theme.palette.secondary.primary,
+    },
+    background: `${theme.palette.secondary.primary}30 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${theme.palette.secondary.primary} !important`,
+    },
+  },
+  discovered: {
+    '& .MuiChip-label': {
+      color: theme.palette.secondary.warning,
+    },
+    background: `${theme.palette.secondary.warning}30 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${theme.palette.secondary.warning} !important`,
+    },
+  },
+  deleted: {
+    '& .MuiChip-label': {
+      color: theme.palette.secondary.error,
+    },
+    background: `${theme.palette.secondary.lightError}30 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${theme.palette.secondary.error} !important`,
+    },
+  },
+}));
+
+const DiscoveredStateChip = ({ value }) => {
+  const classes = styles();
+  return (
+    <Chip
+      className={classNames(classes.statusCip, classes.discovered)}
+      avatar={<ExploreIcon />}
+      label={value}
+    />
+  );
+};
+
+const RegisteredStateChip = ({ value }) => {
+  const classes = styles();
+  console.log('tetsppppp', value);
+  return (
+    <Chip
+      className={classNames(classes.statusCip, classes.registered)}
+      avatar={<AssignmentTurnedInIcon />}
+      label={value}
+    />
+  );
+};
+
+const ConnectedStateChip = ({ value }) => {
+  const classes = styles();
+  return (
+    <Chip
+      className={classNames(classes.statusCip, classes.connected)}
+      avatar={<CheckCircleIcon />}
+      label={value}
+    />
+  );
+};
+
+const IgnoredStateChip = ({ value }) => {
+  const classes = styles();
+  return (
+    <Chip
+      className={classNames(classes.statusCip, classes.ignored)}
+      avatar={<RemoveCircleIcon />}
+      label={value}
+    />
+  );
+};
+
+const DeletedStateChip = ({ value }) => {
+  const classes = styles();
+  return (
+    <Chip
+      className={classNames(classes.statusCip, classes.deleted)}
+      avatar={<DeleteForeverIcon />}
+      label={value}
+    />
+  );
+};
+
+function getStatusChip(status) {
+  console.log('inside func: ', status);
+
+  switch (status) {
+    case 'ignored':
+      return <IgnoredStateChip value={status} />;
+    case 'connected':
+      return <ConnectedStateChip value={status} />;
+    case 'registered':
+      return <RegisteredStateChip value={status} />;
+    case 'discovered':
+      return <DiscoveredStateChip value={status} />;
+    case 'deleted':
+      return <DeletedStateChip value={status} />;
+  }
+}
+
+export const ConnectionStateChip = ({ status }) => {
+  return getStatusChip(status);
+};

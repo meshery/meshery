@@ -659,7 +659,9 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (co
 		Kind:             "kubernetes",
 		Type:             "platform",
 		SubType:          "orchestrator",
-		Status:           connections.REGISTERED,
+		// Eventually the status would depend on other factors like, whether user administratively processed it or not
+		// Is clsuter reachable and other reasons.
+		Status:           connections.CONNECTED,
 		MetaData:         metadata,
 		CredentialSecret: cred,
 	}
@@ -672,7 +674,7 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (co
 
 	return *connection, nil
 }
-func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order string, withCredentials bool) ([]byte, error) {
+func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error) {
 	MesheryInstanceID, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
 	if !ok {
 		return nil, ErrMesheryInstanceID
@@ -698,8 +700,9 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 	if order != "" {
 		q.Set("order", order)
 	}
-
-	q.Set("status", string(connections.CONNECTED))
+	if (withStatus != "") {
+		q.Set("status", string(connections.CONNECTED))
+	}
 	if !withCredentials {
 		q.Set("with_credentials", "false")
 	}
@@ -738,7 +741,7 @@ func (l *RemoteProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) 
 	results := []*K8sContext{}
 
 	for {
-		res, err := l.GetK8sContexts(token, strconv.Itoa(page), strconv.Itoa(pageSize), "", "", true)
+		res, err := l.GetK8sContexts(token, strconv.Itoa(page), strconv.Itoa(pageSize), "", "", string(connections.CONNECTED), true)
 		if err != nil {
 			return results, err
 		}

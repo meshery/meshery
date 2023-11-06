@@ -380,7 +380,7 @@ type Provider interface {
 	RecordPreferences(req *http.Request, userID string, data *Preference) error
 
 	SaveK8sContext(token string, k8sContext K8sContext) (connections.Connection, error)
-	GetK8sContexts(token, page, pageSize, search, order string, withCredentials bool) ([]byte, error)
+	GetK8sContexts(token, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error)
 	DeleteK8sContext(token, id string) (K8sContext, error)
 	GetK8sContext(token, connectionID string) (K8sContext, error)
 	LoadAllK8sContext(token string) ([]*K8sContext, error)

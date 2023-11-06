@@ -14,21 +14,11 @@ import {
   TableRow,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-// import EditIcon from "@material-ui/icons/Edit";
-// import YoutubeSearchedForIcon from '@mui/icons-material/YoutubeSearchedFor';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import React, { useEffect, useRef, useState } from 'react';
 import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { updateProgress } from '../../lib/store';
-import { /* Avatar, */ Chip /* FormControl, */ } from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import ExploreIcon from '@mui/icons-material/Explore';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import classNames from 'classnames';
-// import ReactSelectWrapper from "../ReactSelectWrapper";
 import dataFetch from '../../lib/data-fetch';
 import LaunchIcon from '@mui/icons-material/Launch';
 import { useNotification } from '../../utils/hooks/useNotification';
@@ -38,6 +28,7 @@ import SearchBar from '../../utils/custom-search';
 import ResponsiveDataTable from '../../utils/data-table';
 import useStyles from '../../assets/styles/general/tool.styles';
 import Modal from '../Modal';
+import { ConnectionStateChip } from './ConnectionChip';
 
 const styles = (theme) => ({
   grid: { padding: theme.spacing(2) },
@@ -222,53 +213,6 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
     onOpenCreateConnectionModal();
   };
 
-  const status = (value) => {
-    switch (value) {
-      case 'ignored':
-        return (
-          <Chip
-            className={classNames(classes.statusCip, classes.ignored)}
-            avatar={<RemoveCircleIcon />}
-            label={value}
-          />
-        );
-      case 'connected':
-        return (
-          <Chip
-            className={classNames(classes.statusCip, classes.connected)}
-            avatar={<CheckCircleIcon />}
-            label={value}
-          />
-        );
-      case 'REGISTERED':
-        return (
-          <Chip
-            className={classNames(classes.statusCip, classes.registered)}
-            avatar={<AssignmentTurnedInIcon />}
-            label={value.toLowerCase()}
-          />
-        );
-      case 'discovered':
-        return (
-          <Chip
-            className={classNames(classes.statusCip, classes.discovered)}
-            avatar={<ExploreIcon />}
-            label={value}
-          />
-        );
-      case 'deleted':
-        return (
-          <Chip
-            className={classNames(classes.statusCip, classes.deleted)}
-            avatar={<DeleteForeverIcon />}
-            label={value}
-          />
-        );
-      default:
-        return '-';
-    }
-  };
-
   const columns = [
     {
       name: 'id',
@@ -432,7 +376,7 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
           );
         },
         customBodyRender: function CustomBody(value) {
-          return status(value);
+          return ConnectionStateChip(value);
         },
       },
     },
