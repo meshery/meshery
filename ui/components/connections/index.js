@@ -6,7 +6,6 @@ import {
   Tooltip,
   FormControl,
   Select,
-  MenuItem,
   TableContainer,
   Table,
   Grid,
@@ -22,12 +21,10 @@ import {
   Tab,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import React, { useEffect, useRef, useState } from 'react';
 import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-
 import { updateProgress } from '../../lib/store';
 import dataFetch from '../../lib/data-fetch';
 import { useNotification } from '../../utils/hooks/useNotification';
@@ -37,7 +34,6 @@ import SearchBar from '../../utils/custom-search';
 import ResponsiveDataTable from '../../utils/data-table';
 import useStyles from '../../assets/styles/general/tool.styles';
 import Modal from '../Modal';
-import { ConnectionStateChip } from './ConnectionChip';
 import { iconMedium } from '../../css/icons.styles';
 import PromptComponent from '../PromptComponent';
 import { FormattedMetadata } from '../NotificationCenter/metadata';
@@ -49,106 +45,7 @@ import styles from './styles';
 import MeshSyncTable from './MeshsyncTable';
 import ConnectionIcon from '../../assets/icons/Connection';
 import MeshsyncIcon from '../../assets/icons/Meshsync';
-
-const styles = (theme) => ({
-  grid: { padding: theme.spacing(2) },
-  tableHeader: {
-    fontWeight: 'bolder',
-    fontSize: 18,
-  },
-  muiRow: {
-    '& .MuiTableRow-root': {
-      cursor: 'pointer',
-    },
-    '& .MuiTableCell-root': {
-      textTransform: 'capitalize',
-    },
-  },
-  createButton: {
-    display: 'flex',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    whiteSpace: 'nowrap',
-  },
-  viewSwitchButton: {
-    justifySelf: 'flex-end',
-    marginLeft: 'auto',
-    paddingLeft: '1rem',
-  },
-  statusCip: {
-    minWidth: '120px !important',
-    maxWidth: 'max-content !important',
-    display: 'flex !important',
-    justifyContent: 'flex-start !important',
-    textTransform: 'capitalize',
-    borderRadius: '3px !important',
-    padding: '6px 8px',
-    '& .MuiChip-label': {
-      paddingTop: '3px',
-      fontWeight: '400',
-    },
-    '&:hover': {
-      boxShadow: '0px 1px 2px 0px rgba(0, 0, 0, 0.25)',
-    },
-  },
-  capitalize: {
-    textTransform: 'capitalize',
-  },
-  ignored: {
-    '& .MuiChip-label': {
-      color: `${theme.palette.secondary.default}`,
-    },
-    background: `${theme.palette.secondary.default}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.default} !important`,
-    },
-  },
-  connected: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.success,
-    },
-    background: `${theme.palette.secondary.success}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.success} !important`,
-    },
-  },
-  registered: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.primary,
-    },
-    background: `${theme.palette.secondary.primary}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.primary} !important`,
-    },
-  },
-  discovered: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.warning,
-    },
-    background: `${theme.palette.secondary.warning}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.warning} !important`,
-    },
-  },
-  deleted: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.error,
-    },
-    background: `${theme.palette.secondary.lightError}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.error} !important`,
-    },
-  },
-  expandedRows: {
-    background: `${theme.palette.secondary.default}10`,
-  },
-  contentContainer: {
-    [theme.breakpoints.down(1050)]: {
-      flexDirection: 'column',
-    },
-    flexWrap: 'noWrap',
-  },
-});
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -492,8 +389,23 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
             </TableCell>
           );
         },
-        customBodyRender: function CustomBody(value) {
-          return ConnectionStateChip(value);
+        customBodyRender: function CustomBody(_, tableMeta) {
+          return (
+            <div className={classes.centerContent}>
+              {tableMeta.rowData[4] === KUBERNETES ? (
+                <IconButton
+                  aria-label="more"
+                  id="long-button"
+                  aria-haspopup="true"
+                  onClick={(e) => handleActionMenuOpen(e, tableMeta)}
+                >
+                  <MoreVertIcon style={iconMedium} />
+                </IconButton>
+              ) : (
+                '-'
+              )}
+            </div>
+          );
         },
       },
     },
