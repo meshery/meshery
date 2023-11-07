@@ -437,7 +437,9 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
                   disabled={disabled}
                   value={value}
                   onClick={(e) => e.stopPropagation()}
-                  onChange={(e) => handleStatusChange(e, tableMeta.rowData[0])}
+                  onChange={(e) =>
+                    handleStatusChange(e, tableMeta.rowData[0], tableMeta.rowData[4])
+                  }
                   className={classes.statusSelect}
                   disableUnderline
                   MenuProps={{
@@ -649,13 +651,13 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
     });
   };
 
-  const handleStatusChange = (e, connectionId) => {
+  const handleStatusChange = (e, connectionId, connectionKind) => {
     e.stopPropagation();
     const requestBody = JSON.stringify({
-      status: e.target.value,
+      [connectionId]: e.target.value,
     });
     dataFetch(
-      `/api/integrations/connections/${connectionId}`,
+      `/api/integrations/connections/${connectionKind}/status`,
       {
         method: 'PUT',
         credentials: 'include',
