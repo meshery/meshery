@@ -47,14 +47,13 @@ import MeshSyncTable from './MeshsyncTable';
 import ConnectionIcon from '../../assets/icons/Connection';
 import MeshsyncIcon from '../../assets/icons/Meshsync';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import { pingKubernetes } from '../ConnectionWizard/helpers/kubernetesHelpers';
-import { errorHandlerGenerator, successHandlerGenerator } from '../ConnectionWizard/helpers/common';
 import classNames from 'classnames';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
 import { CONNECTION_STATES } from '../../utils/Enum';
+import useKubernetesHook from '../hooks/useKubernetesHook';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -151,6 +150,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [_operatorState, _setOperatorState] = useState(operatorState || []);
   const [tab, setTab] = useState(0);
+  const ping = useKubernetesHook();
 
   const open = Boolean(anchorEl);
   const _operatorStateRef = useRef(_operatorState);
@@ -277,8 +277,9 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
                 onDelete={() => handleDeleteConnection(tableMeta.rowData[0])}
                 //perform onclick on a condition
                 onClick={() => {
+                  console.log('metadata:', tableMeta.rowData);
                   if (tableMeta.rowData[4] === KUBERNETES) {
-                    handleKubernetesClick(tableMeta.rowData[3], tableMeta.rowData[0]);
+                    ping(tableMeta.rowData[3], tableMeta.rowData[2], tableMeta.rowData[0]);
                   }
                 }}
               />
@@ -681,19 +682,6 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
         });
       }
     }
-  };
-
-  const handleKubernetesClick = (name, connectionID) => {
-    updateProgress({ showProgress: true });
-    pingKubernetes(
-      successHandlerGenerator(notify, `Kubernetes pinged: ${name}`, () =>
-        updateProgress({ showProgress: false }),
-      ),
-      errorHandlerGenerator(notify, `Not able to  ping kubernetes: ${name}`, () =>
-        updateProgress({ showProgress: false }),
-      ),
-      connectionID,
-    );
   };
 
   const handleDeleteConnection = async (id) => {
