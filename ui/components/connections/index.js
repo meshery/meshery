@@ -54,6 +54,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
+import { CONNECTION_STATES } from '../../utils/Enum';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -158,11 +159,9 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
   const { notify } = useNotification();
   const StyleClass = useStyles();
 
-  const statuses = ['ignored', 'connected', 'REGISTERED', 'discovered', 'deleted'];
-
   const status = (value) => {
     switch (value) {
-      case 'ignored':
+      case CONNECTION_STATES['IGNORED']:
         return (
           <MenuItem value={value}>
             <Chip
@@ -172,7 +171,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
             />
           </MenuItem>
         );
-      case 'connected':
+      case CONNECTION_STATES['CONNECTED']:
         return (
           <MenuItem value={value}>
             <Chip
@@ -183,7 +182,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
             />
           </MenuItem>
         );
-      case 'REGISTERED':
+      case CONNECTION_STATES['REGISTERED']:
         return (
           <MenuItem value={value}>
             <Chip
@@ -194,7 +193,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
             />
           </MenuItem>
         );
-      case 'discovered':
+      case CONNECTION_STATES['DISCOVERED']:
         return (
           <MenuItem value={value}>
             <Chip
@@ -205,7 +204,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
             />
           </MenuItem>
         );
-      case 'deleted':
+      case CONNECTION_STATES['DELETED']:
         return (
           <MenuItem value={value}>
             <Chip
@@ -452,7 +451,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
                     getContentAnchorEl: null,
                   }}
                 >
-                  {statuses.map((s) => status(s))}
+                  {Object.keys(CONNECTION_STATES).map((s) => status(CONNECTION_STATES[s]))}
                 </Select>
               </FormControl>
             </>
