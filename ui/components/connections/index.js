@@ -47,6 +47,8 @@ import MeshSyncTable from './MeshsyncTable';
 import ConnectionIcon from '../../assets/icons/Connection';
 import MeshsyncIcon from '../../assets/icons/Meshsync';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import { pingKubernetes } from '../ConnectionWizard/helpers/kubernetesHelpers';
+import { errorHandlerGenerator, successHandlerGenerator } from '../ConnectionWizard/helpers/common';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -199,6 +201,12 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
                 label={value}
                 style={{ maxWidth: '120px' }}
                 onDelete={() => handleDeleteConnection(tableMeta.rowData[0])}
+                //perform onclick on a condition
+                onClick={() => {
+                  if (tableMeta.rowData[4] === KUBERNETES) {
+                    handleKubernetesClick(tableMeta.rowData[3], tableMeta.rowData[0]);
+                  }
+                }}
               />
             </Tooltip>
           );
@@ -603,6 +611,19 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
         });
       }
     }
+  };
+
+  const handleKubernetesClick = (name, connectionID) => {
+    updateProgress({ showProgress: true });
+    pingKubernetes(
+      successHandlerGenerator(notify, `Kubernetes pinged: ${name}`, () =>
+        updateProgress({ showProgress: false }),
+      ),
+      errorHandlerGenerator(notify, `Not able to  ping kubernetes: ${name}`, () =>
+        updateProgress({ showProgress: false }),
+      ),
+      connectionID,
+    );
   };
 
   const handleDeleteConnection = async (id) => {
