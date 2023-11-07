@@ -55,7 +55,7 @@ import styles from './styles';
 import MeshSyncTable from './MeshsyncTable';
 import ConnectionIcon from '../../assets/icons/Connection';
 import MeshsyncIcon from '../../assets/icons/Meshsync';
-import { FormatStructuredData, Link } from '../DataFormatter';
+import { FormatStructuredData, Link, formatDate } from '../DataFormatter';
 import { pingKubernetes } from '../ConnectionWizard/helpers/kubernetesHelpers';
 import {
   getOperatorStatusFromQueryResult,
@@ -242,10 +242,16 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
             <Grid item xs={12} md={5}>
               <List>
                 <ListItem>
-                  <ListItemText primary="Created At" secondary={connection.created_at} />
+                  <ListItemText
+                    primary="Created At"
+                    secondary={formatDate(connection.created_at)}
+                  />
                 </ListItem>
                 <ListItem>
-                  <ListItemText primary="Updated At" secondary={connection.updated_at} />
+                  <ListItemText
+                    primary="Updated At"
+                    secondary={formatDate(connection.updated_at)}
+                  />
                 </ListItem>
               </List>
             </Grid>
