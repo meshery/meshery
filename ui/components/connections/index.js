@@ -50,7 +50,6 @@ import MeshSyncTable from './MeshsyncTable';
 import ConnectionIcon from '../../assets/icons/Connection';
 import MeshsyncIcon from '../../assets/icons/Meshsync';
 import { FormatStructuredData, Link, formatDate } from '../DataFormatter';
-import { pingKubernetes } from '../ConnectionWizard/helpers/kubernetesHelpers';
 import {
   getOperatorStatusFromQueryResult,
   pingMesheryOperator,
@@ -152,23 +151,12 @@ const useKubernetesStyles = makeStyles((theme) => ({
 const KubernetesMetadataFormatter = ({ connection, metadata }) => {
   const { notify } = useNotification();
   const classes = useKubernetesStyles();
+  const ping = useKubernetesHook();
   const handleError = (mes) => {
     return notify({
       message: mes,
       event_type: EVENT_TYPES.ERROR,
     });
-  };
-
-  const handleKubernetesClick = (id) => {
-    pingKubernetes(
-      () =>
-        notify({
-          message: `Kubernetes Pinged ${metadata.name}`,
-          event_type: EVENT_TYPES.SUCCESS,
-        }),
-      handleError,
-      id,
-    );
   };
 
   const handleOperatorClick = (id) => {
@@ -222,7 +210,7 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
                       icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
                       variant="outlined"
                       data-cy="chipContextName"
-                      onClick={() => handleKubernetesClick(connection.id)}
+                      onClick={() => ping(connection.name, metadata.server, connection.id)}
                     />
                   </Tooltip>
                 </ListItem>
