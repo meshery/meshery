@@ -49,6 +49,11 @@ import MeshsyncIcon from '../../assets/icons/Meshsync';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { pingKubernetes } from '../ConnectionWizard/helpers/kubernetesHelpers';
 import { errorHandlerGenerator, successHandlerGenerator } from '../ConnectionWizard/helpers/common';
+import classNames from 'classnames';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+import ExploreIcon from '@mui/icons-material/Explore';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -154,6 +159,76 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
   const StyleClass = useStyles();
 
   const statuses = ['ignored', 'connected', 'REGISTERED', 'discovered', 'deleted'];
+
+  const status = (value) => {
+    switch (value) {
+      case 'ignored':
+        return (
+          <MenuItem value={value}>
+            <Chip
+              className={classNames(classes.statusChip, classes.ignored)}
+              avatar={<RemoveCircleIcon />}
+              label={value}
+            />
+          </MenuItem>
+        );
+      case 'connected':
+        return (
+          <MenuItem value={value}>
+            <Chip
+              className={classNames(classes.statusChip, classes.connected)}
+              value={value}
+              avatar={<CheckCircleIcon />}
+              label={value}
+            />
+          </MenuItem>
+        );
+      case 'REGISTERED':
+        return (
+          <MenuItem value={value}>
+            <Chip
+              className={classNames(classes.statusChip, classes.registered)}
+              value={value}
+              avatar={<AssignmentTurnedInIcon />}
+              label={value.toLowerCase()}
+            />
+          </MenuItem>
+        );
+      case 'discovered':
+        return (
+          <MenuItem value={value}>
+            <Chip
+              className={classNames(classes.statusChip, classes.discovered)}
+              value={value}
+              avatar={<ExploreIcon />}
+              label={value}
+            />
+          </MenuItem>
+        );
+      case 'deleted':
+        return (
+          <MenuItem value={value}>
+            <Chip
+              className={classNames(classes.statusChip, classes.deleted)}
+              value={value}
+              avatar={<DeleteForeverIcon />}
+              label={value}
+            />
+          </MenuItem>
+        );
+      default:
+        return (
+          <MenuItem value={value}>
+            <Chip
+              className={classNames(classes.statusChip, classes.discovered)}
+              value={value}
+              avatar={<ExploreIcon />}
+              label={value}
+            />
+          </MenuItem>
+        );
+    }
+  };
 
   const columns = [
     {
@@ -377,11 +452,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
                     getContentAnchorEl: null,
                   }}
                 >
-                  {statuses.map((s) => (
-                    <MenuItem value={s} key={s}>
-                      {s}
-                    </MenuItem>
-                  ))}
+                  {statuses.map((s) => status(s))}
                 </Select>
               </FormControl>
             </>
