@@ -89,7 +89,7 @@ const useKubernetesStyles = makeStyles((theme) => ({
   },
   icon: { width: theme.spacing(2.5) },
   operatorIcon: { width: theme.spacing(2.5), filter: theme.palette.secondary.brightness },
-  paper: {
+  column: {
     margin: theme.spacing(2),
     padding: theme.spacing(2),
     background: `${theme.palette.secondary.default}10`,
@@ -210,7 +210,7 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
   return (
     <Grid container spacing={1}>
       <Grid item xs={12} md={6}>
-        <div>
+        <div className={classes.column}>
           <Grid container spacing={1}>
             <Grid item xs={12} md={5} className={classes.operationButton}>
               <List>
@@ -270,7 +270,7 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
         </div>
       </Grid>
       <Grid item xs={12} md={6}>
-        <div>
+        <div className={classes.column}>
           <Grid container spacing={1}>
             <Grid item xs={12} md={4} className={classes.operationButton}>
               <List>
