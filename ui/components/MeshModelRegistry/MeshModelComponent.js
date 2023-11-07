@@ -334,8 +334,8 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
             elevation={3}
             className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''}`}
             style={{
-              backgroundColor: `${view === MODELS && animate ? 'white' : ''}`,
-              color: `${view === MODELS && animate ? 'black' : ''}`,
+              backgroundColor: `${view !== MODELS && animate ? '#677a84' : ''}`,
+              color: `${view !== MODELS && 'white'}`,
             }}
             onClick={() => {
               setView(MODELS);
@@ -373,8 +373,8 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
             elevation={3}
             className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''}`}
             style={{
-              backgroundColor: `${view === COMPONENTS && animate ? 'white' : ''}`,
-              color: `${view === COMPONENTS && animate ? 'black' : ''}`,
+              backgroundColor: `${view !== COMPONENTS && animate ? '#677a84' : ''}`,
+              color: `${view !== COMPONENTS && 'white'}`,
             }}
             onClick={() => {
               setView(COMPONENTS);
@@ -412,8 +412,8 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
             elevation={3}
             className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''}`}
             style={{
-              backgroundColor: `${view === RELATIONSHIPS && animate ? 'white' : ''}`,
-              color: `${view === RELATIONSHIPS && animate ? 'black' : ''}`,
+              backgroundColor: `${view !== RELATIONSHIPS && animate ? '#677a84' : ''}`,
+              color: `${view !== RELATIONSHIPS && 'white'}`,
             }}
             onClick={() => {
               setView(RELATIONSHIPS);
@@ -451,8 +451,8 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
             elevation={3}
             className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''}`}
             style={{
-              backgroundColor: `${view === REGISTRANTS && animate ? 'white' : ''}`,
-              color: `${view === REGISTRANTS && animate ? 'black' : ''}`,
+              backgroundColor: `${view !== REGISTRANTS && animate ? '#677a84' : ''}`,
+              color: `${view !== REGISTRANTS && 'white'}`,
             }}
             onClick={() => {
               setView(REGISTRANTS);

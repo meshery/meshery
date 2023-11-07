@@ -115,10 +115,17 @@ const useStyles = makeStyles((theme) => ({
   cardStyleAnimate: {
     marginTop: '0.7rem',
     height: '3rem',
-    backgroundColor: '#677a84',
     flexDirection: 'row-reverse',
     borderRadius: '8px 8px 0px 0px',
     paddingTop: '0.2rem',
+    backgroundColor:
+      theme.palette.type === 'dark'
+        ? theme.palette.secondary.toolbarBg2
+        : theme.palette.secondary.toolbarBg1,
+    color: 
+      theme.palette.type === 'dark'
+        ? 'white'
+        : 'black'
   },
   overviewTab: {
     background: '#51636B',
