@@ -448,80 +448,17 @@ const ExtensionsComponent = () => {
               </AccountDiv>
             </ExtensionWrapper>
           )}
-          {!!isLoggedIn && (
+        </SectionWrapper>
+        <SectionWrapper>
+        {!!isLoggedIn && (
             <div style={{ paddingTop: isLoggedIn ? '1.2rem' : null }}>
-              <ExtensionWrapper
-                className="first-step"
-                sx={{
-                  height: ['22rem', '17rem', '14rem'],
-                  backgroundColor: isDarkTheme ? '#393F49' : '#D7DADE',
-                }}
-              >
-                {/* {!emptystate ? (
-                  <div>
-                    <Typography sx={{ marginBottom: '1rem' }}>
-                      Deploy a Service Mesh
-                    </Typography>
-                    <ServiceMeshAdapters>
-                      {meshAdapters &&
-                        switchesState &&
-                        meshAdapters.map((adapter) => (
-                          <StyledDiv>
-                            <AdapterDiv
-                              inactiveAdapter={
-                                switchesState
-                                  ? !switchesState[adapter.name]
-                                  : true
-                              }
-                            >
-                              {adapters[adapter.name].icon}
-                            </AdapterDiv>
-                            <Typography sx={{ whiteSpace: 'nowrap' }}>
-                              {adapters[adapter.name].displayName}
-                            </Typography>
-                            <Switch
-                              checked={
-                                switchesState
-                                  ? switchesState[adapter.name]
-                                  : false
-                              }
-                              disabled={!isLoggedIn}
-                              onChange={() => {
-                                submitConfig(
-                                  adapter.name,
-                                  switchesState[adapter.name],
-                                  meshAdapters,
-                                )
-                                setSwitchesState({
-                                  ...switchesState,
-                                  [adapter.name]: !switchesState[adapter.name],
-                                })
-                              }}
-                              color="primary"
-                            ></Switch>
-                          </StyledDiv>
-                        ))}
-                    </ServiceMeshAdapters>
-                  </div>
-                ) : (
-                  <div>
-                    <Typography sx={{ marginBottom: '1rem' }} variant="h4">
-                      No Meshery Adapters Detected
-                    </Typography>
-                    <i>
-                      Connect one or more Meshery adapters to manage service
-                      meshes
-                    </i>
-                  </div>
-                )} */}
-              </ExtensionWrapper>
               <Tooltip title="Meshery Server version">
                 <VersionText variant="p" component="p" align="end">
                   {mesheryVersion}
                 </VersionText>
               </Tooltip>
             </div>
-          )}
+          )}``
         </SectionWrapper>
       </ComponentWrapper>
     </DockerMuiThemeProvider>
