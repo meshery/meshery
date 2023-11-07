@@ -332,11 +332,9 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
           </Paper>
           <Paper
             elevation={3}
-            className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''}`}
-            style={{
-              backgroundColor: `${view === MODELS && animate ? 'white' : ''}`,
-              color: `${view === MODELS && animate ? 'black' : ''}`,
-            }}
+            className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''} ${
+              view === MODELS && animate ? StyleClass.activeTab : ''
+            }`}
             onClick={() => {
               setView(MODELS);
               setPage({
@@ -371,11 +369,9 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
           </Paper>
           <Paper
             elevation={3}
-            className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''}`}
-            style={{
-              backgroundColor: `${view === COMPONENTS && animate ? 'white' : ''}`,
-              color: `${view === COMPONENTS && animate ? 'black' : ''}`,
-            }}
+            className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''} ${
+              view === COMPONENTS && animate ? StyleClass.activeTab : ''
+            }`}
             onClick={() => {
               setView(COMPONENTS);
               setPage({
@@ -410,11 +406,9 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
           </Paper>
           <Paper
             elevation={3}
-            className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''}`}
-            style={{
-              backgroundColor: `${view === RELATIONSHIPS && animate ? 'white' : ''}`,
-              color: `${view === RELATIONSHIPS && animate ? 'black' : ''}`,
-            }}
+            className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''} ${
+              view === RELATIONSHIPS && animate ? StyleClass.activeTab : ''
+            }`}
             onClick={() => {
               setView(RELATIONSHIPS);
               setPage({
@@ -449,11 +443,9 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
           </Paper>
           <Paper
             elevation={3}
-            className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''}`}
-            style={{
-              backgroundColor: `${view === REGISTRANTS && animate ? 'white' : ''}`,
-              color: `${view === REGISTRANTS && animate ? 'black' : ''}`,
-            }}
+            className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''} ${
+              view === REGISTRANTS && animate ? StyleClass.activeTab : ''
+            }`}
             onClick={() => {
               setView(REGISTRANTS);
               setPage({
