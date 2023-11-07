@@ -282,7 +282,9 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
 
   return (
     <div data-test="workloads">
-      <div className={`${StyleClass.toolWrapper} ${animate ? StyleClass.toolWrapperAnimate : ''}`}>
+      <div
+        className={`${StyleClass.meshModelToolbar} ${animate ? StyleClass.toolWrapperAnimate : ''}`}
+      >
         <Button
           disabled
           variant="contained"

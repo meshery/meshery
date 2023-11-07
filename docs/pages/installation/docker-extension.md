@@ -4,6 +4,8 @@ title: Docker Extension
 permalink: installation/docker/docker-extension
 type: installation
 category: docker
+redirect_from:
+- installation/platforms/docker-extension
 display-title: "false"
 language: en
 list: include

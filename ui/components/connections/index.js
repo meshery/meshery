@@ -4,9 +4,6 @@ import {
   TableCell,
   Button,
   Tooltip,
-  FormControl,
-  Select,
-  MenuItem,
   TableContainer,
   Table,
   Grid,
@@ -30,13 +27,7 @@ import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-
 import { updateProgress } from '../../lib/store';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import ExploreIcon from '@mui/icons-material/Explore';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import classNames from 'classnames';
 import dataFetch from '../../lib/data-fetch';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
@@ -484,77 +475,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
   const { notify } = useNotification();
   const StyleClass = useStyles();
 
-  const statuses = ['ignored', 'connected', 'REGISTERED', 'discovered', 'deleted'];
-
-  const status = (value) => {
-    switch (value) {
-      case 'ignored':
-        return (
-          <MenuItem value={value}>
-            <Chip
-              className={classNames(classes.statusChip, classes.ignored)}
-              avatar={<RemoveCircleIcon />}
-              label={value}
-            />
-          </MenuItem>
-        );
-      case 'connected':
-        return (
-          <MenuItem value={value}>
-            <Chip
-              className={classNames(classes.statusChip, classes.connected)}
-              value={value}
-              avatar={<CheckCircleIcon />}
-              label={value}
-            />
-          </MenuItem>
-        );
-      case 'REGISTERED':
-        return (
-          <MenuItem value={value}>
-            <Chip
-              className={classNames(classes.statusChip, classes.registered)}
-              value={value}
-              avatar={<AssignmentTurnedInIcon />}
-              label={value.toLowerCase()}
-            />
-          </MenuItem>
-        );
-      case 'discovered':
-        return (
-          <MenuItem value={value}>
-            <Chip
-              className={classNames(classes.statusChip, classes.discovered)}
-              value={value}
-              avatar={<ExploreIcon />}
-              label={value}
-            />
-          </MenuItem>
-        );
-      case 'deleted':
-        return (
-          <MenuItem value={value}>
-            <Chip
-              className={classNames(classes.statusChip, classes.deleted)}
-              value={value}
-              avatar={<DeleteForeverIcon />}
-              label={value}
-            />
-          </MenuItem>
-        );
-      default:
-        return (
-          <MenuItem value={value}>
-            <Chip
-              className={classNames(classes.statusChip, classes.discovered)}
-              value={value}
-              avatar={<ExploreIcon />}
-              label={value}
-            />
-          </MenuItem>
-        );
-    }
-  };
+  // const statuses = ['ignored', 'connected', 'REGISTERED', 'discovered', 'deleted'];
 
   const columns = [
     {
@@ -730,56 +651,56 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
         },
       },
     },
-    {
-      name: 'status',
-      label: 'Status',
-      options: {
-        sort: true,
-        sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-          return (
-            <SortableTableCell
-              index={index}
-              columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
-            />
-          );
-        },
-        customBodyRender: function CustomBody(value, tableMeta) {
-          const disabled = value === 'deleted' ? true : false;
-          return (
-            <>
-              <FormControl className={classes.chipFormControl}>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  disabled={disabled}
-                  value={value}
-                  onClick={(e) => e.stopPropagation()}
-                  onChange={(e) => handleStatusChange(e, tableMeta.rowData[0])}
-                  className={classes.statusSelect}
-                  disableUnderline
-                  MenuProps={{
-                    anchorOrigin: {
-                      vertical: 'bottom',
-                      horizontal: 'left',
-                    },
-                    transformOrigin: {
-                      vertical: 'top',
-                      horizontal: 'left',
-                    },
-                    getContentAnchorEl: null,
-                  }}
-                >
-                  {statuses.map((s) => status(s))}
-                </Select>
-              </FormControl>
-            </>
-          );
-        },
-      },
-    },
+    // {
+    //   name: 'status',
+    //   label: 'Status',
+    //   options: {
+    //     sort: true,
+    //     sortThirdClickReset: true,
+    //     customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+    //       return (
+    //         <SortableTableCell
+    //           index={index}
+    //           columnData={column}
+    //           columnMeta={columnMeta}
+    //           onSort={() => sortColumn(index)}
+    //         />
+    //       );
+    //     },
+    //     customBodyRender: function CustomBody(value, tableMeta) {
+    //       const disabled = value === 'deleted' ? true : false;
+    //       return (
+    //         <>
+    //           <FormControl className={classes.chipFormControl}>
+    //             <Select
+    //               labelId="demo-simple-select-label"
+    //               id="demo-simple-select"
+    //               disabled={disabled}
+    //               value={value}
+    //               onClick={(e) => e.stopPropagation()}
+    //               onChange={(e) => handleStatusChange(e, tableMeta.rowData[0])}
+    //               className={classes.statusSelect}
+    //               disableUnderline
+    //               MenuProps={{
+    //                 anchorOrigin: {
+    //                   vertical: 'bottom',
+    //                   horizontal: 'left',
+    //                 },
+    //                 transformOrigin: {
+    //                   vertical: 'top',
+    //                   horizontal: 'left',
+    //                 },
+    //                 getContentAnchorEl: null,
+    //               }}
+    //             >
+    //               {statuses.map((s) => status(s))}
+    //             </Select>
+    //           </FormControl>
+    //         </>
+    //       );
+    //     },
+    //   },
+    // },
     {
       name: 'Actions',
       options: {
@@ -793,7 +714,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
             </TableCell>
           );
         },
-        customBodyRender: (_, tableMeta) => {
+        customBodyRender: function CustomBody(_, tableMeta) {
           return (
             <div className={classes.centerContent}>
               {tableMeta.rowData[4] === KUBERNETES ? (
@@ -969,25 +890,25 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
     });
   };
 
-  const handleStatusChange = (e, connectionId) => {
-    e.stopPropagation();
-    const requestBody = JSON.stringify({
-      status: e.target.value,
-    });
-    dataFetch(
-      `/api/integrations/connections/${connectionId}`,
-      {
-        method: 'PUT',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: requestBody,
-      },
-      () => {
-        getConnections(page, pageSize, search, sortOrder);
-      },
-      handleError(ACTION_TYPES.UPDATE_CONNECTION),
-    );
-  };
+  // const handleStatusChange = (e, connectionId) => {
+  //   e.stopPropagation();
+  //   const requestBody = JSON.stringify({
+  //     status: e.target.value,
+  //   });
+  //   dataFetch(
+  //     `/api/integrations/connections/${connectionId}`,
+  //     {
+  //       method: 'PUT',
+  //       credentials: 'include',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: requestBody,
+  //     },
+  //     () => {
+  //       getConnections(page, pageSize, search, sortOrder);
+  //     },
+  //     handleError(ACTION_TYPES.UPDATE_CONNECTION),
+  //   );
+  // };
 
   const handleDeleteConnections = async (selected) => {
     if (selected) {
