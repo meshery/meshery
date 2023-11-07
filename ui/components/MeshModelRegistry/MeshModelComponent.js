@@ -333,7 +333,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
           <Paper
             elevation={3}
             className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''} ${
-              view === MODELS ? StyleClass.activeTab : ''
+              view === MODELS && animate ? StyleClass.activeTab : ''
             }`}
             onClick={() => {
               setView(MODELS);
@@ -370,7 +370,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
           <Paper
             elevation={3}
             className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''} ${
-              view === COMPONENTS ? StyleClass.activeTab : ''
+              view === COMPONENTS && animate ? StyleClass.activeTab : ''
             }`}
             onClick={() => {
               setView(COMPONENTS);
@@ -407,7 +407,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
           <Paper
             elevation={3}
             className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''} ${
-              view === RELATIONSHIPS ? StyleClass.activeTab : ''
+              view === RELATIONSHIPS && animate ? StyleClass.activeTab : ''
             }`}
             onClick={() => {
               setView(RELATIONSHIPS);
@@ -444,7 +444,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
           <Paper
             elevation={3}
             className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''} ${
-              view === REGISTRANTS ? StyleClass.activeTab : ''
+              view === REGISTRANTS && animate ? StyleClass.activeTab : ''
             }`}
             onClick={() => {
               setView(REGISTRANTS);
