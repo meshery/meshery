@@ -162,7 +162,7 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
     pingKubernetes(
       () =>
         notify({
-          message: 'Pinged Kubernetes',
+          message: `Kubernetes Pinged ${metadata.name}`,
           event_type: EVENT_TYPES.SUCCESS,
         }),
       handleError,
