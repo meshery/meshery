@@ -1,3 +1,5 @@
+import fetchMesheryOperatorStatus from '../../graphql/queries/OperatorStatusQuery';
+
 export const isMesheryOperatorConnected = ({ operatorInstalled }) => operatorInstalled;
 
 /**
@@ -7,8 +9,20 @@ export const isMesheryOperatorConnected = ({ operatorInstalled }) => operatorIns
  * @param  {(res) => void} successHandler
  * @param  {(err) => void} errorHandler
  */
-export const pingMesheryOperator = (fetchMesheryOperatorStatus, successcb, errorcb) => {
-  fetchMesheryOperatorStatus().subscribe({ next: successcb, error: errorcb });
+export const pingMesheryOperator = (id, successcb, errorcb) => {
+  const subscription = fetchMesheryOperatorStatus({
+    k8scontextID: id,
+  }).subscribe({
+    next: (res) => {
+      console.log('res', res);
+      successcb();
+      subscription.unsubscribe();
+    },
+    error: () => {
+      errorcb();
+      subscription.unsubscribe();
+    },
+  });
 };
 
 /**

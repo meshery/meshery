@@ -20,8 +20,11 @@ import {
   AppBar,
   Tabs,
   Tab,
+  List,
+  ListItem,
+  ListItemText,
 } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import Moment from 'react-moment';
 import { connect } from 'react-redux';
@@ -44,7 +47,6 @@ import useStyles from '../../assets/styles/general/tool.styles';
 import Modal from '../Modal';
 import { iconMedium } from '../../css/icons.styles';
 import PromptComponent from '../PromptComponent';
-import { FormattedMetadata } from '../NotificationCenter/metadata';
 import resetDatabase from '../graphql/queries/ResetDatabaseQuery';
 import changeOperatorState from '../graphql/mutations/OperatorStatusMutation';
 import fetchMesheryOperatorStatus from '../graphql/queries/OperatorStatusQuery';
@@ -53,6 +55,12 @@ import styles from './styles';
 import MeshSyncTable from './MeshsyncTable';
 import ConnectionIcon from '../../assets/icons/Connection';
 import MeshsyncIcon from '../../assets/icons/Meshsync';
+import { FormatStructuredData, Link } from '../DataFormatter';
+import { pingKubernetes } from '../ConnectionWizard/helpers/kubernetesHelpers';
+import {
+  getOperatorStatusFromQueryResult,
+  pingMesheryOperator,
+} from '../ConnectionWizard/helpers/mesheryOperator';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -72,6 +80,319 @@ const ACTION_TYPES = {
 const ENABLED = 'ENABLED';
 const DISABLED = 'DISABLED';
 const KUBERNETES = 'kubernetes';
+
+const useKubernetesStyles = makeStyles((theme) => ({
+  operationButton: {
+    [theme?.breakpoints?.down(1180)]: {
+      marginRight: '25px',
+    },
+  },
+  icon: { width: theme.spacing(2.5) },
+  operatorIcon: { width: theme.spacing(2.5), filter: theme.palette.secondary.brightness },
+  paper: {
+    margin: theme.spacing(2),
+    padding: theme.spacing(2),
+    background: `${theme.palette.secondary.default}10`,
+  },
+  heading: { textAlign: 'center' },
+  configBoxContainer: {
+    [theme?.breakpoints?.down(1050)]: {
+      flexGrow: 0,
+      maxWidth: '100%',
+      flexBasis: '100%',
+    },
+    [theme?.breakpoints?.down(1050)]: {
+      flexDirection: 'column',
+    },
+  },
+  clusterConfiguratorWrapper: { padding: theme.spacing(5), display: 'flex' },
+  contentContainer: {
+    [theme?.breakpoints?.down(1050)]: {
+      flexDirection: 'column',
+    },
+    flexWrap: 'noWrap',
+  },
+  fileInputStyle: { display: 'none' },
+  topToolbar: {
+    margin: '1rem 0',
+    paddingLeft: '1rem',
+    maxWidth: '90%',
+  },
+  button: {
+    padding: theme.spacing(1),
+    borderRadius: 5,
+  },
+  grey: {
+    background: 'WhiteSmoke',
+    padding: theme.spacing(2),
+    borderRadius: 'inherit',
+  },
+  subtitle: {
+    minWidth: 400,
+    overflowWrap: 'anywhere',
+    textAlign: 'left',
+    padding: '5px',
+  },
+  text: {
+    width: '80%',
+    wordWrap: 'break-word',
+  },
+  table: {
+    marginTop: theme.spacing(1.5),
+  },
+  uploadCluster: {
+    overflow: 'hidden',
+  },
+  OperatorSwitch: {
+    pointerEvents: 'auto',
+  },
+}));
+
+const KubernetesMetadataFormatter = ({ connection, metadata }) => {
+  const { notify } = useNotification();
+  const classes = useKubernetesStyles();
+  const handleError = (mes) => {
+    return notify({
+      message: mes,
+      event_type: EVENT_TYPES.ERROR,
+    });
+  };
+
+  const handleKubernetesClick = (id) => {
+    pingKubernetes(
+      () =>
+        notify({
+          message: 'Pinged Kubernetes',
+          event_type: EVENT_TYPES.SUCCESS,
+        }),
+      handleError,
+      id,
+    );
+  };
+
+  const handleOperatorClick = (id) => {
+    pingMesheryOperator(
+      id,
+      () =>
+        notify({
+          message: 'Pinged Meshery Operator',
+          event_type: EVENT_TYPES.SUCCESS,
+        }),
+      handleError,
+    );
+  };
+
+  const [operatorStatus, setOperatorStatus] = useState({
+    operatorState: false,
+    operatorVersion: '',
+    meshSyncState: '',
+    meshSyncVersion: '',
+    natsState: '',
+    natsVersion: '',
+  });
+
+  const { operatorState, meshSyncState, natsState } = operatorStatus;
+  const operatorVersion = operatorStatus.operatorVersion || 'Not Available';
+  const meshSyncVersion = operatorStatus.meshSyncVersion || 'Not Available';
+  const natsVersion = operatorStatus.natsVersion || 'Not Available';
+
+  useEffect(() => {
+    const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID: connection.id }).subscribe({
+      next: (res) => {
+        console.log('Operator Status: ', res);
+        setOperatorStatus(getOperatorStatusFromQueryResult(res));
+        tempSubscription.unsubscribe();
+      },
+      error: (err) => console.log('error at operator scan: ' + err),
+    });
+  }, []);
+
+  return (
+    <Grid container spacing={1}>
+      <Grid item xs={12} md={6}>
+        <div>
+          <Grid container spacing={1}>
+            <Grid item xs={12} md={5} className={classes.operationButton}>
+              <List>
+                <ListItem>
+                  <Tooltip title={`Server: ${metadata.server}`}>
+                    <Chip
+                      label={metadata.name}
+                      icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
+                      variant="outlined"
+                      data-cy="chipContextName"
+                      onClick={() => handleKubernetesClick(connection.id)}
+                    />
+                  </Tooltip>
+                </ListItem>
+              </List>
+            </Grid>
+          </Grid>
+          <Grid container spacing={1} className={classes.contentContainer}>
+            <Grid item xs={12} md={5}>
+              <List>
+                <ListItem>
+                  <ListItemText primary="Name" secondary={metadata.name} />
+                </ListItem>
+                <ListItem>
+                  <ListItemText primary="K8s Version" secondary={metadata.version} />
+                </ListItem>
+              </List>
+            </Grid>
+            <Grid item xs={12} md={5}>
+              <List>
+                <ListItem>
+                  <ListItemText primary="Created At" secondary={connection.created_at} />
+                </ListItem>
+                <ListItem>
+                  <ListItemText primary="Updated At" secondary={connection.updated_at} />
+                </ListItem>
+              </List>
+            </Grid>
+            <Grid item xs={12} md={5}>
+              <List>
+                <ListItem>
+                  <ListItemText
+                    className={classes.text}
+                    primary="Server"
+                    secondary={<Link title={metadata.server}>{metadata.server}</Link>}
+                  />
+                </ListItem>
+              </List>
+            </Grid>
+          </Grid>
+        </div>
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <div>
+          <Grid container spacing={1}>
+            <Grid item xs={12} md={4} className={classes.operationButton}>
+              <List>
+                <ListItem>
+                  <Tooltip
+                    title={operatorState ? `Version: ${operatorVersion}` : 'Not Available'}
+                    aria-label="meshSync"
+                  >
+                    <Chip
+                      // label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
+                      label={'Operator'}
+                      style={!operatorState ? { opacity: 0.5 } : {}}
+                      disabled={!operatorState}
+                      onClick={() => handleOperatorClick(connection.id)}
+                      icon={
+                        <img
+                          src="/static/img/meshery-operator.svg"
+                          className={classes.operatorIcon}
+                        />
+                      }
+                      variant="outlined"
+                      data-cy="chipOperator"
+                    />
+                  </Tooltip>
+                </ListItem>
+              </List>
+            </Grid>
+
+            {(meshSyncState || natsState) && (
+              <>
+                <Grid item xs={12} md={4}>
+                  <List>
+                    <ListItem>
+                      <Tooltip
+                        title={meshSyncState !== DISABLED ? `Ping MeshSync` : 'Not Available'}
+                        aria-label="meshSync"
+                      >
+                        <Chip
+                          label={'MeshSync'}
+                          style={meshSyncState === DISABLED ? { opacity: 0.5 } : {}}
+                          // onClick={() => handleMeshSyncClick(rowMetaData.rowIndex)}
+                          icon={<img src="/static/img/meshsync.svg" className={classes.icon} />}
+                          variant="outlined"
+                          data-cy="chipMeshSync"
+                        />
+                      </Tooltip>
+                    </ListItem>
+                  </List>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <List>
+                    <ListItem>
+                      <Tooltip
+                        title={natsState === 'Not Active' ? 'Not Available' : `Reconnect NATS`}
+                        aria-label="nats"
+                      >
+                        <Chip
+                          label={'NATS'}
+                          // onClick={() => handleNATSClick(rowMetaData.rowIndex)}
+                          style={natsState === 'Not Active' ? { opacity: 0.5 } : {}}
+                          icon={
+                            <img src="/static/img/nats-icon-color.svg" className={classes.icon} />
+                          }
+                          variant="outlined"
+                          data-cy="chipNATS"
+                        />
+                      </Tooltip>
+                    </ListItem>
+                  </List>
+                </Grid>
+              </>
+            )}
+          </Grid>
+
+          <Grid container spacing={1} className={classes.contentContainer}>
+            <Grid item xs={12} md={5}>
+              <List>
+                <ListItem>
+                  <ListItemText
+                    primary="Operator State"
+                    secondary={operatorState ? 'Active' : 'Undeployed'}
+                  />
+                </ListItem>
+                <ListItem>
+                  <ListItemText primary="Operator Version" secondary={operatorVersion} />
+                </ListItem>
+              </List>
+            </Grid>
+            <Grid item xs={12} md={5}>
+              <List>
+                <ListItem>
+                  <ListItemText
+                    primary="MeshSync State"
+                    secondary={meshSyncState || 'Undeployed'}
+                  />
+                </ListItem>
+                <ListItem>
+                  <ListItemText primary="MeshSync Version" secondary={meshSyncVersion} />
+                </ListItem>
+              </List>
+            </Grid>
+            <Grid item xs={12} md={5}>
+              <List>
+                <ListItem>
+                  <ListItemText primary="NATS State" secondary={natsState || 'Not Connected'} />
+                </ListItem>
+                <ListItem>
+                  <ListItemText primary="NATS Version" secondary={natsVersion} />
+                </ListItem>
+              </List>
+            </Grid>
+          </Grid>
+        </div>
+      </Grid>
+    </Grid>
+  );
+};
+
+const FormatConnectionMetadata = ({ connection }) => {
+  const formatterByKind = {
+    kubernetes: () => (
+      <KubernetesMetadataFormatter connection={connection} metadata={connection.metadata} />
+    ),
+    default: () => <FormatStructuredData data={connection.metadata} />,
+  };
+  const formatter = formatterByKind[connection.kind] || formatterByKind.default;
+  return formatter();
+};
 
 /**
  * Parent Component for Connection Component
@@ -563,7 +884,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
       renderExpandableRow: (rowData, tableMeta) => {
         const colSpan = rowData.length;
         const connection = connections && connections[tableMeta.rowIndex];
-
+        console.log('connection', connection);
         return (
           <TableCell colSpan={colSpan} className={classes.innerTableWrapper}>
             <TableContainer className={classes.innerTableContainer}>
@@ -585,7 +906,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
                             }}
                             className={classes.contentContainer}
                           >
-                            <FormattedMetadata event={connection} />
+                            <FormatConnectionMetadata connection={connection} />
                           </Grid>
                         </Grid>
                       </Grid>
