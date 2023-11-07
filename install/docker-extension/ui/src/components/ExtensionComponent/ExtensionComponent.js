@@ -458,7 +458,7 @@ const ExtensionsComponent = () => {
                 </VersionText>
               </Tooltip>
             </div>
-          )}``
+          )}
         </SectionWrapper>
       </ComponentWrapper>
     </DockerMuiThemeProvider>
