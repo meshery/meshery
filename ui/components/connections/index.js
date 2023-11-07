@@ -127,8 +127,6 @@ function ConnectionManagementPage(props) {
           handleSubmit={handleCreateConnectionSubmit}
           title="Connect Helm Repository"
           submitBtnText="Connect"
-          // leftHeaderIcon={ }
-          // submitBtnIcon={<PublishIcon  className={classes.addIcon} data-cy="import-button"/>}
         />
       )}
     </>
@@ -159,74 +157,15 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
   const { notify } = useNotification();
   const StyleClass = useStyles();
 
-  const status = (value) => {
-    switch (value) {
-      case CONNECTION_STATES['IGNORED']:
-        return (
-          <MenuItem value={value}>
-            <Chip
-              className={classNames(classes.statusChip, classes.ignored)}
-              avatar={<RemoveCircleIcon />}
-              label={value}
-            />
-          </MenuItem>
-        );
-      case CONNECTION_STATES['CONNECTED']:
-        return (
-          <MenuItem value={value}>
-            <Chip
-              className={classNames(classes.statusChip, classes.connected)}
-              value={value}
-              avatar={<CheckCircleIcon />}
-              label={value}
-            />
-          </MenuItem>
-        );
-      case CONNECTION_STATES['REGISTERED']:
-        return (
-          <MenuItem value={value}>
-            <Chip
-              className={classNames(classes.statusChip, classes.registered)}
-              value={value}
-              avatar={<AssignmentTurnedInIcon />}
-              label={value.toLowerCase()}
-            />
-          </MenuItem>
-        );
-      case CONNECTION_STATES['DISCOVERED']:
-        return (
-          <MenuItem value={value}>
-            <Chip
-              className={classNames(classes.statusChip, classes.discovered)}
-              value={value}
-              avatar={<ExploreIcon />}
-              label={value}
-            />
-          </MenuItem>
-        );
-      case CONNECTION_STATES['DELETED']:
-        return (
-          <MenuItem value={value}>
-            <Chip
-              className={classNames(classes.statusChip, classes.deleted)}
-              value={value}
-              avatar={<DeleteForeverIcon />}
-              label={value}
-            />
-          </MenuItem>
-        );
-      default:
-        return (
-          <MenuItem value={value}>
-            <Chip
-              className={classNames(classes.statusChip, classes.discovered)}
-              value={value}
-              avatar={<ExploreIcon />}
-              label={value}
-            />
-          </MenuItem>
-        );
-    }
+  const icons = {
+    [CONNECTION_STATES.IGNORED]: () => <RemoveCircleIcon />,
+    [CONNECTION_STATES.CONNECTED]: () => <CheckCircleIcon />,
+    [CONNECTION_STATES.REGISTERED]: () => <AssignmentTurnedInIcon />,
+    [CONNECTION_STATES.DISCOVERED]: () => <ExploreIcon />,
+    [CONNECTION_STATES.DELETED]: () => <DeleteForeverIcon />,
+    [CONNECTION_STATES.MAINTENANCE]: () => <ExploreIcon />,
+    [CONNECTION_STATES.DISCONNECTED]: () => <ExploreIcon />,
+    [CONNECTION_STATES.NOTFOUND]: () => <ExploreIcon />,
   };
 
   const columns = [
@@ -454,7 +393,15 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
                     getContentAnchorEl: null,
                   }}
                 >
-                  {Object.keys(CONNECTION_STATES).map((s) => status(CONNECTION_STATES[s]))}
+                  {Object.keys(CONNECTION_STATES).map((s) => (
+                    <MenuItem value={CONNECTION_STATES[s]}>
+                      <Chip
+                        className={classNames(classes.statusChip, classes[CONNECTION_STATES[s]])}
+                        avatar={icons[CONNECTION_STATES[s]]()}
+                        label={CONNECTION_STATES[s]}
+                      />
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </>
