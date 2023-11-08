@@ -4,16 +4,17 @@ title: Apache Shardingsphere Operator Charts
 permalink: integrations/apache-shardingsphere-operator-charts
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/apache-shardingsphere-operator-charts.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: apache-shardingsphere-operator-charts
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: apache-shardingsphere-operator-charts -->
 
 ### Overview & Features:
 1. The ShardingSphere Kubernetes Operator automates provisioning, management, and operations of ShardingSphere Proxy clusters running on Kubernetes.

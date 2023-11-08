@@ -4,16 +4,17 @@ title: Azure Active Directory (AAD)
 permalink: integrations/azure-active-directory-(aad)
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/azure-active-directory-(aad).svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: aad-pod-identity
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: aad-pod-identity -->
 
 ### Overview & Features:
 1. Enables Kubernetes applications to access cloud resources securely with Azure Active Directory (AAD).

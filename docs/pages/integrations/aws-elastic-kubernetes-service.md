@@ -4,16 +4,17 @@ title: AWS Elastic Kubernetes Service
 permalink: integrations/aws-elastic-kubernetes-service
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/aws-elastic-kubernetes-service.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: eks
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: eks -->
 
 ### Overview & Features:
 1. Amazon Elastic Kubernetes Service (EKS) is a managed service and certified Kubernetes conformant to run Kubernetes on AWS and on-premises.

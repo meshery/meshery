@@ -4,16 +4,17 @@ title: New Relic Operator
 permalink: integrations/new-relic-operator
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/new-relic-operator.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: newrelic-operator
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: newrelic-operator -->
 
 ### Overview & Features:
 1. The newrelic-kubernetes-operator is a Kubernetes Operator that facilitates management of New Relic resources from within your Kubernetes configuration. Managing New Relic resources via custom Kubernetes objects can be done the same way you manage built-in Kubernetes objects.

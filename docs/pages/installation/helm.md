@@ -4,6 +4,8 @@ title: Install Meshery with Helm
 permalink: installation/kubernetes/helm
 type: installation
 category: kubernetes
+redirect_from:
+- installation/platforms/helm
 display-title: "true"
 language: en
 list: include

@@ -4,16 +4,17 @@ title: Knative
 permalink: integrations/knative
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/knative.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: knative
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: knative -->
 
 ### Overview & Features:
 1. Knative is a developer-focused serverless application layer which is a great complement to the existing Kubernetes application constructs. Knative consists of two components: an HTTP-triggered autoscaling container runtime called “Knative Serving”, and a CloudEvents-over-HTTP asynchronous routing layer called “Knative Eventing”.
