@@ -1,4 +1,4 @@
-import { Button, withStyles } from '@material-ui/core';
+import { Button, styled, withStyles } from '@material-ui/core';
 import { withSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react';
 import { Paper } from '@material-ui/core';
@@ -280,37 +280,42 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
     };
   }, [view, page, searchText, rowsPerPage]);
 
+  const DisableButton = styled(Button)(({ theme }) => ({
+    '&.MuiButtonBase-root:disabled': {
+      cursor: 'not-allowed',
+      pointerEvents: 'auto',
+      backgroundColor: theme.palette.secondary.disableButtonBg,
+      color: theme.palette.secondary.disableButton,
+    },
+  }));
+
   return (
     <div data-test="workloads">
       <div
         className={`${StyleClass.meshModelToolbar} ${animate ? StyleClass.toolWrapperAnimate : ''}`}
       >
-        <Button
+        <DisableButton
           disabled
           variant="contained"
           style={{
-            background: '#dddddd',
-            color: 'white',
             visibility: `${animate ? 'visible' : 'hidden'}`,
           }}
           size="large"
           startIcon={<UploadIcon />}
         >
           Import
-        </Button>
-        <Button
+        </DisableButton>
+        <DisableButton
           disabled
           variant="contained"
           size="large"
           style={{
-            background: '#dddddd',
-            color: 'white',
             visibility: `${animate ? 'visible' : 'hidden'}`,
           }}
           startIcon={<DoNotDisturbOnIcon />}
         >
           Ignore
-        </Button>
+        </DisableButton>
       </div>
       <div
         className={`${StyleClass.mainContainer} ${animate ? StyleClass.mainContainerAnimate : ''}`}
