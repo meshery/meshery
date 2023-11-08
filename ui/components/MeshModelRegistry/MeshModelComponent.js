@@ -59,7 +59,12 @@ const meshmodelStyles = (theme) => ({
   },
 });
 
-const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }) => {
+const MeshModelComponent = ({
+  modelsCount,
+  componentsCount,
+  relationshipsCount,
+  registrantCount,
+}) => {
   const [resourcesDetail, setResourcesDetail] = useState([]);
   const [isRequestCancelled, setRequestCancelled] = useState(false);
   const [, setCount] = useState();
@@ -467,7 +472,7 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
                 marginLeft: `${animate && '4px'}`,
               }}
             >
-              {animate ? `(1)` : `1`}
+              {animate ? `(${registrantCount})` : `${registrantCount}`}
             </span>
             Registrants
           </Paper>
