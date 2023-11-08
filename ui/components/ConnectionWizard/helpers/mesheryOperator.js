@@ -52,6 +52,10 @@ export const getOperatorStatusFromQueryResult = (res) => {
 
   if (res.operator?.status === 'ENABLED') {
     res.operator?.controllers?.forEach((controller) => {
+      operatorInformation = {
+        ...operatorInformation,
+        [controller.name]: controller,
+      };
       if (controller.name === 'broker' && controller.status === 'ENABLED') {
         operatorInformation = {
           ...operatorInformation,

@@ -50,18 +50,18 @@ import MeshSyncTable from './MeshsyncTable';
 import ConnectionIcon from '../../assets/icons/Connection';
 import MeshsyncIcon from '../../assets/icons/Meshsync';
 import { FormatStructuredData, Link, formatDate } from '../DataFormatter';
-import { pingKubernetes } from '../ConnectionWizard/helpers/kubernetesHelpers';
-import {
-  getOperatorStatusFromQueryResult,
-  pingMesheryOperator,
-} from '../ConnectionWizard/helpers/mesheryOperator';
 import classNames from 'classnames';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
 import { CONNECTION_STATES } from '../../utils/Enum';
-import useKubernetesHook from '../hooks/useKubernetesHook';
+import useKubernetesHook, {
+  useGetOperatorInfoQuery,
+  useMesheryOperator,
+  useMeshsSyncController,
+  useNatsController,
+} from '../hooks/useKubernetesHook';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -150,63 +150,48 @@ const useKubernetesStyles = makeStyles((theme) => ({
 }));
 
 const KubernetesMetadataFormatter = ({ connection, metadata }) => {
-  const { notify } = useNotification();
   const classes = useKubernetesStyles();
-  const handleError = (mes) => {
-    return notify({
-      message: mes,
-      event_type: EVENT_TYPES.ERROR,
-    });
+  const contextID = metadata.id;
+  // const { notify } = useNotification();
+  //
+  // const dispatch = useDispatch();
+  // const handleError = (msg) => (err) => {
+  //   console.error(err);
+  //   dispatch(updateProgress({ showProgress: false }));
+  //   notify({ message: msg, event_type: EVENT_TYPES.ERROR });
+  // };
+
+  const pingKubernetes = useKubernetesHook();
+  const { ping: pingMesheryOperator } = useMesheryOperator();
+  const { ping: pingMeshSync } = useMeshsSyncController();
+  const { ping: pingNats } = useNatsController();
+
+  const handleKubernetesClick = () => {
+    pingKubernetes(metadata.name, metadata.server, connection.id);
   };
 
-  const handleKubernetesClick = (id) => {
-    pingKubernetes(
-      () =>
-        notify({
-          message: `Kubernetes Pinged ${metadata.name}`,
-          event_type: EVENT_TYPES.SUCCESS,
-        }),
-      handleError,
-      id,
-    );
+  const handleNATSClick = () => {
+    pingNats({ connectionID: connection.id });
   };
 
-  const handleOperatorClick = (id) => {
-    pingMesheryOperator(
-      id,
-      () =>
-        notify({
-          message: 'Pinged Meshery Operator',
-          event_type: EVENT_TYPES.SUCCESS,
-        }),
-      handleError,
-    );
+  const handleOperatorClick = () => {
+    pingMesheryOperator(contextID);
   };
 
-  const [operatorStatus, setOperatorStatus] = useState({
-    operatorState: false,
-    operatorVersion: '',
-    meshSyncState: '',
-    meshSyncVersion: '',
-    natsState: '',
-    natsVersion: '',
-  });
+  const handleMeshSyncClick = () => {
+    pingMeshSync({ connectionID: connection.id });
+  };
 
-  const { operatorState, meshSyncState, natsState } = operatorStatus;
+  const { operatorInfo: operatorStatus } = useGetOperatorInfoQuery({ contextID });
+  const {
+    isReachable: operatorState,
+    meshSyncStatus: meshSyncState,
+    natsStatus: natsState,
+  } = operatorStatus;
+
   const operatorVersion = operatorStatus.operatorVersion || 'Not Available';
   const meshSyncVersion = operatorStatus.meshSyncVersion || 'Not Available';
-  const natsVersion = operatorStatus.natsVersion || 'Not Available';
-
-  useEffect(() => {
-    const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID: connection.id }).subscribe({
-      next: (res) => {
-        console.log('Operator Status: ', res);
-        setOperatorStatus(getOperatorStatusFromQueryResult(res));
-        tempSubscription.unsubscribe();
-      },
-      error: (err) => console.log('error at operator scan: ' + err),
-    });
-  }, []);
+  const NATSVersion = operatorStatus.NATSVersion || 'Not Available';
 
   return (
     <Grid container spacing={1}>
@@ -312,7 +297,7 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
                         <Chip
                           label={'MeshSync'}
                           style={meshSyncState === DISABLED ? { opacity: 0.5 } : {}}
-                          // onClick={() => handleMeshSyncClick(rowMetaData.rowIndex)}
+                          onClick={() => handleMeshSyncClick()}
                           icon={<img src="/static/img/meshsync.svg" className={classes.icon} />}
                           variant="outlined"
                           data-cy="chipMeshSync"
@@ -330,7 +315,7 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
                       >
                         <Chip
                           label={'NATS'}
-                          // onClick={() => handleNATSClick(rowMetaData.rowIndex)}
+                          onClick={() => handleNATSClick()}
                           style={natsState === 'Not Active' ? { opacity: 0.5 } : {}}
                           icon={
                             <img src="/static/img/nats-icon-color.svg" className={classes.icon} />
@@ -379,7 +364,7 @@ const KubernetesMetadataFormatter = ({ connection, metadata }) => {
                   <ListItemText primary="NATS State" secondary={natsState || 'Not Connected'} />
                 </ListItem>
                 <ListItem>
-                  <ListItemText primary="NATS Version" secondary={natsVersion} />
+                  <ListItemText primary="NATS Version" secondary={NATSVersion} />
                 </ListItem>
               </List>
             </Grid>
