@@ -10,4 +10,4 @@ tabWidth: 2
 trailingComma: all
 printWidth: 100
 useTabs: false
-endOfLine: 'crlf'
+endOfLine: 'lf'
