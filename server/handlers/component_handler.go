@@ -197,6 +197,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 	offset := (page - 1) * limit
 	filter := &v1alpha1.ModelFilter{
+		Registrant: r.URL.Query().Get("registrant"),
 		Version: v,
 		Limit:   limit,
 		Offset:  offset,

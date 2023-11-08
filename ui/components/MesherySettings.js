@@ -24,9 +24,7 @@ import PrometheusComponent from './telemetry/prometheus/PrometheusComponent';
 import { updateProgress } from '../lib/store';
 import PromptComponent from './PromptComponent';
 import { iconMedium } from '../css/icons.styles';
-import MeshModelComponent from './MeshModelComponent';
-// import CredentialIcon from '../assets/icons/CredentialIcon';
-// import MesheryCredentialComponent from './MesheryCredentialComponent';
+import MeshModelComponent from './MeshModelRegistry/MeshModelComponent';
 import DatabaseSummary from './DatabaseSummary';
 import { getComponentsDetail, getModelsDetail, getRelationshipsDetail } from '../api/meshmodel';
 import { withNotify } from '../utils/hooks/useNotification';
@@ -169,9 +167,6 @@ class MesherySettings extends React.Component {
         case 'registry':
           tabVal = 4;
           break;
-        // case 'performance':
-        //   tabVal = 3;
-        //   break;
       }
       if (subTabPath.length >= 2 && subTabPath[1]) {
         switch (subTabPath[1]) {
@@ -294,9 +289,6 @@ class MesherySettings extends React.Component {
             break;
           case 4:
             newRoute += '#registry';
-          // case 3:
-          //   newRoute += '#performance'
-          //   break;
         }
         if (this.props.router.route != newRoute) this.props.router.push(newRoute);
         self.setState({ tabVal: newVal });
@@ -393,27 +385,6 @@ class MesherySettings extends React.Component {
                 tab="registry"
               />
             </Tooltip>
-            {/* <Tooltip title="Credential" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={<CredentialIcon width="1.5rem" />}
-                label="Credentials"
-                tab="credential"
-              />
-            </Tooltip> */}
-
-            {/*NOTE: Functionality of performance tab will be modified, until then keeping it and the related code commented */}
-
-            {/* <Tooltip title="Choose Performance Test Defaults" placement="top">
-                <Tab
-                  className={classes.tab}
-                  icon={
-                    <FontAwesomeIcon icon={faTachometerAlt} transform={mainIconScale} fixedWidth />
-                  }
-                  label="Performance"
-                  tab="tabPerformance"
-                />
-              </Tooltip> */}
           </Tabs>
         </Paper>
         {tabVal === 0 && <MeshConfigComponent />}
@@ -482,78 +453,17 @@ class MesherySettings extends React.Component {
         {tabVal === 4 && (
           <TabContainer>
             <TabContainer>
-              <AppBar position="static" color="default">
-                <Tabs
-                  value={subTabVal}
-                  className={classes.tabs}
-                  onChange={this.handleChange('subTabVal')}
-                  indicatorColor="primary"
-                  textColor="primary"
-                  variant="fullWidth"
-                >
-                  <Tab
-                    className={classes.tab}
-                    label={
-                      <div className={classes.iconText}>
-                        Models{' '}
-                        <span style={{ fontWeight: 'bold' }}>({this.state.modelsCount})</span>
-                      </div>
-                    }
-                  />
-                  <Tab
-                    className={classes.tab}
-                    label={
-                      <div className={classes.iconText}>
-                        Components{' '}
-                        <span style={{ fontWeight: 'bold' }}>({this.state.componentsCount})</span>
-                      </div>
-                    }
-                  />
-                  <Tab
-                    className={classes.tab}
-                    label={
-                      <div className={classes.iconText}>
-                        Relationships{' '}
-                        <span style={{ fontWeight: 'bold' }}>
-                          ({this.state.relationshipsCount})
-                        </span>
-                      </div>
-                    }
-                  />
-                </Tabs>
-              </AppBar>
-              {subTabVal === 0 && (
-                <TabContainer>
-                  <MeshModelComponent view="models" />
-                </TabContainer>
-              )}
-              {subTabVal === 1 && (
-                <TabContainer>
-                  <MeshModelComponent view="components" />
-                </TabContainer>
-              )}
-              {subTabVal === 2 && (
-                <TabContainer>
-                  <MeshModelComponent view="relationships" />
-                </TabContainer>
-              )}
+              <TabContainer>
+                <MeshModelComponent
+                  modelsCount={this.state.modelsCount}
+                  componentsCount={this.state.componentsCount}
+                  relationshipsCount={this.state.relationshipsCount}
+                />
+              </TabContainer>
             </TabContainer>
             {/* </div> */}
           </TabContainer>
         )}
-
-        {/* {tabVal === 3 && (
-          <TabContainer>
-            <MesherySettingsPerformanceComponent />
-
-          </TabContainer>
-        )} */}
-        {/* {tabVal === 5 && (
-          <TabContainer>
-            <MesheryCredentialComponent />
-          </TabContainer>
-        )} */}
-
         {backToPlay}
         <PromptComponent ref={this.systemResetPromptRef} />
       </div>
