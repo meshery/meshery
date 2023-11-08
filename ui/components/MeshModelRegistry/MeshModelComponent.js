@@ -356,7 +356,6 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
               style={{
                 fontWeight: `${animate ? 'normal' : 'bold'}`,
                 fontSize: `${animate ? '1rem' : '3rem'}`,
-                transition: 'all 0.3s',
                 marginLeft: `${animate && '4px'}`,
               }}
             >
@@ -393,7 +392,6 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
               style={{
                 fontWeight: `${animate ? 'normal' : 'bold'}`,
                 fontSize: `${animate ? '1rem' : '3rem'}`,
-                transition: 'all 0.3s',
                 marginLeft: `${animate && '4px'}`,
               }}
             >
@@ -430,7 +428,6 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
               style={{
                 fontWeight: `${animate ? 'normal' : 'bold'}`,
                 fontSize: `${animate ? '1rem' : '3rem'}`,
-                transition: 'all 0.3s',
                 marginLeft: `${animate && '4px'}`,
               }}
             >
@@ -467,7 +464,6 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
               style={{
                 fontWeight: `${animate ? 'normal' : 'bold'}`,
                 fontSize: `${animate ? '1rem' : '3rem'}`,
-                transition: 'all 0.3s',
                 marginLeft: `${animate && '4px'}`,
               }}
             >
