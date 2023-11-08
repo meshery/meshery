@@ -13,8 +13,7 @@ export const pingMesheryOperator = (id, successcb, errorcb) => {
   const subscription = fetchMesheryOperatorStatus({
     k8scontextID: id,
   }).subscribe({
-    next: (res) => {
-      console.log('res', res);
+    next: () => {
       successcb();
       subscription.unsubscribe();
     },
