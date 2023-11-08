@@ -518,7 +518,6 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
       renderExpandableRow: (rowData, tableMeta) => {
         const colSpan = rowData.length;
         const connection = connections && connections[tableMeta.rowIndex];
-        console.log('connection', connection);
         return (
           <TableCell colSpan={colSpan} className={classes.innerTableWrapper}>
             <TableContainer className={classes.innerTableContainer}>
