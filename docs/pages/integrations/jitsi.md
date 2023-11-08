@@ -4,16 +4,17 @@ title: Jitsi
 permalink: integrations/jitsi
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/jitsi.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: jitsi
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: jitsi -->
 
 ### Overview & Features:
 1. Jitsi is a set of open-source projects that allows you to easily build and deploy secure video conferencing solutions.

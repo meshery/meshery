@@ -4,16 +4,17 @@ title: Capsule Proxy
 permalink: integrations/capsule-proxy
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/capsule-proxy.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: capsule-proxy
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: capsule-proxy -->
 
 ### Overview & Features:
 1. Capsule implements a multi-tenant and policy-based environment in your Kubernetes cluster. It is designed as a micro-services-based ecosystem with the minimalist approach, leveraging only on upstream Kubernetes.

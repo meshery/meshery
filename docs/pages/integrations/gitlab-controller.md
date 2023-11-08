@@ -4,16 +4,17 @@ title: Gitlab Controller
 permalink: integrations/gitlab-controller
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/gitlab-controller.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: gitlab-controller
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: gitlab-controller -->
 
 ### Overview & Features:
 1. GitOps your infrastructure with Meshery and GitLab

@@ -4,6 +4,8 @@ title: Kubernetes
 permalink: installation/kubernetes
 type: installation
 category: kubernetes
+redirect_from:
+- installation/platforms/kubernetes
 display-title: "false"
 language: en
 list: include

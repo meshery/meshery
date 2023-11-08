@@ -4,16 +4,17 @@ title: Mimir
 permalink: integrations/mimir
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/mimir.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: mimir-distributed
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: mimir-distributed -->
 
 ### Overview & Features:
 1. Grafana Mimir lets you scale to 1 billion metrics and beyond, with high availability, multi-tenancy, durable storage, and blazing fast query performance over long periods of time.

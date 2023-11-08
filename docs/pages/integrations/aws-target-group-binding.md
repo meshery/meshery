@@ -4,16 +4,17 @@ title: AWS Target Group Binding
 permalink: integrations/aws-target-group-binding
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/aws-target-group-binding.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: aws-target-group-binding
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: aws-target-group-binding -->
 
 ### Overview & Features:
 1. Povision a TargetGroupBinding resource that can be combined with an externally provisioned AWS Loadbalancer to provide an ingress route into the defined kubernetes service.

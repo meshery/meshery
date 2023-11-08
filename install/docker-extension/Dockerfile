@@ -30,7 +30,7 @@ ARG GIT_STRIPPED_VERSION
 ARG GIT_VERSION
 ARG RELEASE_CHANNEL
 LABEL org.opencontainers.image.title="Meshery" \
-  org.opencontainers.image.description="Meshery is the open source, cloud native manager that enables the adoption, operation, and management of Kubernetes. Collaboratively design and operate your cloud native deployments with teammates in real-time." \
+  org.opencontainers.image.description="Meshery, the collaborative Kubernetes manager. Go multi-player as you design and operate your cloud native infrastructure with teammates." \
   org.opencontainers.image.vendor="Layer5, Inc." \
   com.docker.desktop.extension.api.version=">= 0.2.0" \
    com.docker.extension.screenshots="[ \
@@ -43,8 +43,8 @@ LABEL org.opencontainers.image.title="Meshery" \
       } \
     ]" \
   com.docker.extension.detailed-description="\
-  <h2>Visually and collaboratively design and operate your Kubernetes clusters.</h2> \
-  <p>The Meshery Docker Extension extends Docker Desktop’s as a multi-cluster Kubernetes manager. Meshery provides cloud native engineers with visual and collaborative interface to designing and operating cloud native infrastructure.</p> \
+  <h2>Visually and collaboratively design and operate your Kubernetes clusters (<a href='https://meshery.io/catalog'>video</a>).</h2> \
+  <p>The Meshery Docker Extension is your cloud native infrastructure designer, complete with multi-cluster Kubernetes management. Meshery provides cloud native engineers with visual and collaborative interface to designing and operating cloud native infrastructure.</p> \
   <ul> \
     <li><b>Discovery of your Kubernetes environments</b> - Meshery is a multi-cluster manager and will scan your kubeconfig, allowing you to select which of your Kubernetes contexts to connect. Switch from one K8s cluster to the next or manage multiple concurrently.</li> \
     <li><b>Support for your Docker Compose apps -</b> Import your Docker Compose apps. Configure and deploy them to Kubernetes.</li> \

@@ -4,6 +4,8 @@ title: AKS
 permalink: installation/kubernetes/aks
 type: installation
 category: kubernetes
+redirect_from:
+- installation/platforms/aks
 display-title: "false"
 language: en
 list: include

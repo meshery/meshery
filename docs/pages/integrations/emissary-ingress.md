@@ -4,16 +4,17 @@ title: Emissary Ingress
 permalink: integrations/emissary-ingress
 type: installation
 category: integrations
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/integrations/emissary-ingress.svg
 ---
 
-<h1>{{ page.title }} with <span style="font-weight: bold; color: green;">Meshery</span> <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
+<h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
-#### Category: emissary-ingress
+<!-- This needs replaced with the Category property, not the sub-category.
+ #### Category: emissary-ingress -->
 
 ### Overview & Features:
 2. Collaborative and visual infrastructure as code for Emissary Ingress

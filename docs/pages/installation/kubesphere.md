@@ -4,6 +4,8 @@ title: KubeSphere
 permalink: installation/kubesphere
 type: installation
 category: kubernetes
+redirect_from:
+- installation/platforms/kubershphere
 display-title: "false"
 language: en
 list: include
