@@ -1,4 +1,4 @@
-import { styled, alpha } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import { Button } from '@material-ui/core';
 import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
 
@@ -14,7 +14,7 @@ export const DisableButton = styled(Button)(({ theme }) => ({
 export const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
   [`& .${treeItemClasses.content}`]: {
     fontWeight: theme.typography.fontWeightMedium,
-    borderRadius: '4px',
+    borderRadius: '0px 4px 4px 0px',
     '&.Mui-expanded': {
       fontWeight: theme.typography.fontWeightRegular,
     },
@@ -23,7 +23,7 @@ export const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
     },
     '&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused': {
       backgroundColor: `#00bfa030`,
-      borderLeft: '2px solid #00bfa0',
+      borderLeft: '3px solid #00bfa0',
     },
     [`& .${treeItemClasses.label}`]: {
       fontWeight: 'inherit',
@@ -31,8 +31,5 @@ export const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
   },
   [`& .${treeItemClasses.group}`]: {
     paddingRight: '0',
-    borderLeft: `1px solid ${
-      theme.palette.type === 'dark' ? alpha('#00B39F', 0.4) : alpha(theme.palette.text.primary, 0.4)
-    }`,
   },
 }));

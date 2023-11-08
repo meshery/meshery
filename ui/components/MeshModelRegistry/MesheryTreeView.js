@@ -9,16 +9,19 @@ import CollapseAllIcon from '../../assets/icons/collapse_all';
 import ExpandMoreIcon from '../../assets/icons/expand_more';
 import ChevronRightIcon from '../../assets/icons/chevron_right';
 import { StyledTreeItemRoot } from './MeshModel.style';
+import useStyles from '../../assets/styles/general/tool.styles';
 
 const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
   const [checked, setChecked] = useState(false);
   const [hover, setHover] = useState(false);
-  const { check, labelText, root, setSearchText, ...other } = props;
+  const StyleClass = useStyles();
+  const { check, labelText, root, top, setSearchText, ...other } = props;
 
   return (
     <StyledTreeItemRoot
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
+      className={`${!top ? StyleClass.line : ''}`}
       label={
         <Box
           sx={{
@@ -206,6 +209,7 @@ const MesheryTreeView = ({
               {data.map((model, index) => (
                 <StyledTreeItem
                   key={index}
+                  top
                   nodeId={index}
                   check
                   labelText={model.displayName}
@@ -341,6 +345,7 @@ const MesheryTreeView = ({
                 <StyledTreeItem
                   key={registrant.id}
                   nodeId={0}
+                  top
                   labelText={registrant.hostname}
                   onClick={() => setRegi(registrant)}
                 >
@@ -476,6 +481,7 @@ const MesheryTreeView = ({
         >
           <StyledTreeItem
             nodeId={0}
+            top
             root
             setSearchText={setSearchText}
             labelText={
@@ -518,6 +524,7 @@ const MesheryTreeView = ({
           <StyledTreeItem
             nodeId={0}
             root
+            top
             setSearchText={setSearchText}
             labelText={
               rela.model?.name ? `Model: ${rela.model?.displayName}` : 'Select a relationship node'
