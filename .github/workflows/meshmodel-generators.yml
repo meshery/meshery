@@ -61,6 +61,7 @@ jobs:
             
   update-components:
     name: Update Components
+    needs: generate-components
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
