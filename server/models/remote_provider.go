@@ -22,9 +22,10 @@ import (
 	"errors"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/database"
+	"github.com/layer5io/meshkit/logger"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/layer5io/meshsync/pkg/model"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -56,6 +57,7 @@ type RemoteProvider struct {
 	SmiResultPersister *SMIResultsPersister
 	GenericPersister   *database.Handler
 	KubeClient         *mesherykube.Client
+	Log logger.Handler
 }
 
 type userSession struct {
@@ -630,7 +632,7 @@ func (l *RemoteProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.
 	http.Redirect(w, req, "/provider", http.StatusFound)
 }
 
-func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8sContext, error) {
+func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (connections.Connection, error) {
 
 	k8sServerID := *k8sContext.KubernetesServerID
 
@@ -657,20 +659,22 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (K8
 		Kind:             "kubernetes",
 		Type:             "platform",
 		SubType:          "orchestrator",
-		Status:           DISCOVERED,
+		// Eventually the status would depend on other factors like, whether user administratively processed it or not
+		// Is clsuter reachable and other reasons.
+		Status:           connections.CONNECTED,
 		MetaData:         metadata,
 		CredentialSecret: cred,
 	}
-	logrus.Infof("attempting to save %s context to remote provider with ID %s", k8sContext.Name, k8sContext.ID)
-	err := l.SaveConnection(nil, conn, token, true)
+	
+	connection, err := l.SaveConnection(nil, conn, token, true)
 	if err != nil {
 		logrus.Errorf(err.Error())
-		return k8sContext, err
+		return connections.Connection{}, err
 	}
 
-	return k8sContext, nil
+	return *connection, nil
 }
-func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order string, withCredentials bool) ([]byte, error) {
+func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error) {
 	MesheryInstanceID, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
 	if !ok {
 		return nil, ErrMesheryInstanceID
@@ -696,7 +700,9 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 	if order != "" {
 		q.Set("order", order)
 	}
-
+	if (withStatus != "") {
+		q.Set("status", string(connections.CONNECTED))
+	}
 	if !withCredentials {
 		q.Set("with_credentials", "false")
 	}
@@ -735,7 +741,7 @@ func (l *RemoteProvider) LoadAllK8sContext(token string) ([]*K8sContext, error) 
 	results := []*K8sContext{}
 
 	for {
-		res, err := l.GetK8sContexts(token, strconv.Itoa(page), strconv.Itoa(pageSize), "", "", true)
+		res, err := l.GetK8sContexts(token, strconv.Itoa(page), strconv.Itoa(pageSize), "", "", string(connections.CONNECTED), true)
 		if err != nil {
 			return results, err
 		}
@@ -777,8 +783,14 @@ func (l *RemoteProvider) DeleteK8sContext(token, id string) (K8sContext, error) 
 	}
 
 	if resp.StatusCode == http.StatusOK {
+		defer func() {
+			_ = resp.Body.Close()
+		}()
+		
+		deletedContext := K8sContext{}
+		_ = json.NewDecoder(resp.Body).Decode(&deletedContext)
 		logrus.Infof("kubernetes successfully deleted from remote provider")
-		return K8sContext{}, nil
+		return deletedContext, nil
 	}
 	logrus.Errorf("error while deleting kubernetes contexts")
 	return K8sContext{}, fmt.Errorf("error while deleting kubernetes context - Status code: %d", resp.StatusCode)
@@ -1471,6 +1483,37 @@ func (l *RemoteProvider) DeleteMesheryPatternResource(token, resourceID string) 
 	return ErrDelete(fmt.Errorf("error while deleting design resource"), "design: "+resourceID, resp.StatusCode)
 }
 
+func (l *RemoteProvider) SaveMesheryPatternSourceContent(tokenString string, patternID string, sourceContent []byte) error {
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
+
+	logrus.Debugf("Pattern Content size %d", len(sourceContent))
+	bf := bytes.NewBuffer(sourceContent)
+
+	uploadURL := fmt.Sprintf("%s%s%s/%s", l.RemoteProviderURL, ep, remoteUploadURL, patternID)
+	remoteProviderURL, _ := url.Parse(uploadURL)
+
+	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
+
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		if resp == nil {
+			return ErrUnreachableRemoteProvider(err)
+		}
+		return ErrPost(err, "Pattern Source Content", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	if resp.StatusCode == http.StatusOK {
+		logrus.Infof("pattern source successfully uploaded to remote provider")
+		return nil
+	}
+
+	return ErrPost(fmt.Errorf("failed to upload pattern source to remote provider"), "", resp.StatusCode)
+}
+
 // SaveMesheryPattern saves given pattern with the provider
 func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
@@ -1478,6 +1521,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
+
 
 	data, err := json.Marshal(map[string]interface{}{
 		"pattern_data": pattern,
@@ -1489,7 +1533,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 		return nil, err
 	}
 
-	logrus.Debugf("design: %s, size: %d", data, len(data))
+	logrus.Debugf("design: %s, size: %d", pattern.Name, len(data))
 	logrus.Infof("attempting to save design to remote provider")
 	bf := bytes.NewBuffer(data)
 
@@ -1519,16 +1563,16 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		logrus.Infof("design successfully sent to remote provider: %s", string(bdr))
+		logrus.Infof("design %s successfully sent to remote provider", pattern.Name)
 		return bdr, nil
 	}
 
-	logrus.Errorf("error while sending design: %s", bdr)
+	logrus.Errorf("error while sending design %s", pattern.Name)
 	return bdr, fmt.Errorf("error while sending design - Status code: %d, Body: %s", resp.StatusCode, bdr)
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
-func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, search, order string, updatedAfter string) ([]byte, error) {
+func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, search, order, updatedAfter string, visibility []string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
 		logrus.Error("operation not available")
 		return []byte{}, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryPatterns, l.ProviderName)
@@ -1554,6 +1598,12 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 	}
 	if updatedAfter != "" {
 		q.Set("updated_after", updatedAfter)
+	}
+	if len(visibility) > 0 {
+		for _, v := range visibility {
+			logrus.Debugf("visibility: %s", v)
+			q.Add("visibility", v)
+		}
 	}
 	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("constructed design url: %s", remoteProviderURL.String())
@@ -2049,7 +2099,7 @@ func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFi
 }
 
 // GetMesheryFilters gives the filters stored with the provider
-func (l *RemoteProvider) GetMesheryFilters(tokenString string, page, pageSize, search, order string, visibility string) ([]byte, error) {
+func (l *RemoteProvider) GetMesheryFilters(tokenString string, page, pageSize, search, order string, visibility []string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryFilters) {
 		logrus.Error("operation not available")
 		return []byte{}, ErrInvalidCapability("PersistMesheryFilters", l.ProviderName)
@@ -2073,9 +2123,13 @@ func (l *RemoteProvider) GetMesheryFilters(tokenString string, page, pageSize, s
 	if order != "" {
 		q.Set("order", order)
 	}
-	if visibility != "" {
-		q.Set("visibility", visibility)
+	
+	if len(visibility) > 0 {
+		for _, v := range visibility {
+			q.Add("visibility", v)
+		}
 	}
+
 	remoteProviderURL.RawQuery = q.Encode()
 	logrus.Debugf("constructed filters url: %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
@@ -3241,11 +3295,11 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 			Type:             "platform",
 			SubType:          "management",
 			MetaData:         metadata,
-			Status:           DISCOVERED,
+			Status:           connections.DISCOVERED,
 			CredentialSecret: cred,
 		}
 
-		err := l.SaveConnection(r, conn, tokenString, true)
+		_, err := l.SaveConnection(r, conn, tokenString, true)
 		if err != nil {
 			logrus.Errorf("unable to save Meshery connection: %v", err)
 		}
@@ -3531,16 +3585,16 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 	return nil, ErrFetch(fmt.Errorf("failed to request to remote provider"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
-func (l *RemoteProvider) SaveConnection(req *http.Request, conn *ConnectionPayload, token string, skipTokenCheck bool) error {
+func (l *RemoteProvider) SaveConnection(req *http.Request, conn *ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
-		return ErrInvalidCapability("PersistConnection", l.ProviderName)
+		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
 	_conn, err := json.Marshal(conn)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	bf := bytes.NewBuffer(_conn)
 
@@ -3551,32 +3605,36 @@ func (l *RemoteProvider) SaveConnection(req *http.Request, conn *ConnectionPaylo
 		tokenString, err = l.GetToken(req)
 		if err != nil {
 			logrus.Error("error getting token: ", err)
-			return err
+			return nil, err
 		}
 	}
+	logrus.Infof("attempting to save %s connection %s to remote provider with status %s", conn.Name, conn.Kind, conn.Status)
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
 		if resp == nil {
-			return ErrUnreachableRemoteProvider(err)
+			return nil, ErrUnreachableRemoteProvider(err)
 		}
-		return ErrFetch(err, "Save Connection", resp.StatusCode)
+		return nil, ErrFetch(err, "Save Connection", resp.StatusCode)
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return ErrDataRead(err, "Save Connection")
+		return nil, ErrDataRead(err, "Save Connection")
 	}
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
-		return nil
+		connection := &connections.Connection{}
+		_ = json.Unmarshal(bdr, connection)
+		fmt.Println("connections, ", connection)
+		return connection, nil
 	}
 
-	return ErrPost(fmt.Errorf("failed to save the connection"), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrPost(fmt.Errorf("failed to save the connection"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
-func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, pageSize int, search, order string) (*ConnectionPage, error) {
+func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, pageSize int, search, order string) (*connections.ConnectionPage, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -3608,7 +3666,7 @@ func (l *RemoteProvider) GetConnections(req *http.Request, userID string, page, 
 		return nil, ErrFetch(fmt.Errorf("could not retrieve list of connections: %d", resp.StatusCode), fmt.Sprint(bdr), resp.StatusCode)
 	}
 
-	var cp ConnectionPage
+	var cp connections.ConnectionPage
 	if err = json.Unmarshal(bdr, &cp); err != nil {
 		return nil, err
 	}
@@ -3656,7 +3714,7 @@ func (l *RemoteProvider) GetConnectionsByKind(req *http.Request, _ string, page,
 	return &res, nil
 }
 
-func (l *RemoteProvider) GetConnectionsStatus(req *http.Request, userID string) (*ConnectionsStatusPage, error) {
+func (l *RemoteProvider) GetConnectionsStatus(req *http.Request, userID string) (*connections.ConnectionsStatusPage, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -3681,15 +3739,52 @@ func (l *RemoteProvider) GetConnectionsStatus(req *http.Request, userID string) 
 		return nil, ErrFetch(fmt.Errorf("could not retrieve list of connections status: %d", resp.StatusCode), fmt.Sprint(bdr), resp.StatusCode)
 	}
 
-	var cp ConnectionsStatusPage
+	var cp connections.ConnectionsStatusPage
 	if err = json.Unmarshal(bdr, &cp); err != nil {
 		return nil, err
 	}
 	return &cp, nil
 }
 
+func (l *RemoteProvider) UpdateConnectionStatusByID(req *http.Request, connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error) {
+	if !l.Capabilities.IsSupported(PersistConnection) {
+		logrus.Error("operation not available")
+		return nil, http.StatusForbidden, ErrInvalidCapability("PersistConnection", l.ProviderName)
+	}
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
+	bf := bytes.NewBuffer([]byte(connectionStatus))
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/status/%s", l.RemoteProviderURL, ep, connectionID))
+	logrus.Debugf("Making request to : %s", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
+	tokenString, err := l.GetToken(req)
+	if err != nil {
+		logrus.Error("error getting token: ", err)
+		return nil, http.StatusBadRequest, err
+	}
+
+	resp, err := l.DoRequest(cReq, tokenString)
+	if err != nil {
+		l.Log.Error(err)
+		return nil, http.StatusInternalServerError, ErrUpdateConnectionStatus(err, resp.StatusCode)
+	}
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, http.StatusInternalServerError, ErrDataRead(err, "Update Connection")
+	}
+	if resp.StatusCode == http.StatusOK {
+		var conn connections.Connection
+		if err = json.Unmarshal(bdr, &conn); err != nil {
+			return nil, http.StatusInternalServerError, ErrUnmarshal(err, "connection")
+		}
+		return &conn, resp.StatusCode, nil
+	} 
+	
+	l.Log.Debug(string(bdr))
+	return nil, resp.StatusCode, ErrUpdateConnectionStatus(fmt.Errorf("unable to update connection with id %s", connectionID), resp.StatusCode)
+}
+
 // UpdateConnection - to update an existing connection
-func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *Connection) (*Connection, error) {
+func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *connections.Connection) (*connections.Connection, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -3720,7 +3815,7 @@ func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *Connect
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		var conn Connection
+		var conn connections.Connection
 		if err = json.Unmarshal(bdr, &conn); err != nil {
 			return nil, err
 		}
@@ -3731,7 +3826,7 @@ func (l *RemoteProvider) UpdateConnection(req *http.Request, connection *Connect
 }
 
 // UpdateConnectionById - to update an existing connection using the connection id
-func (l *RemoteProvider) UpdateConnectionById(req *http.Request, connection *ConnectionPayload, connId string) (*Connection, error) {
+func (l *RemoteProvider) UpdateConnectionById(req *http.Request, connection *ConnectionPayload, connId string) (*connections.Connection, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -3766,7 +3861,7 @@ func (l *RemoteProvider) UpdateConnectionById(req *http.Request, connection *Con
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		var conn Connection
+		var conn connections.Connection
 		if err = json.Unmarshal(bdr, &conn); err != nil {
 			return nil, ErrUnmarshal(err, "connection")
 		}
@@ -3777,7 +3872,7 @@ func (l *RemoteProvider) UpdateConnectionById(req *http.Request, connection *Con
 }
 
 // DeleteConnection - to delete a saved connection
-func (l *RemoteProvider) DeleteConnection(req *http.Request, connectionID uuid.UUID) (*Connection, error) {
+func (l *RemoteProvider) DeleteConnection(req *http.Request, connectionID uuid.UUID) (*connections.Connection, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -3809,7 +3904,7 @@ func (l *RemoteProvider) DeleteConnection(req *http.Request, connectionID uuid.U
 
 	if resp.StatusCode == http.StatusOK {
 		logrus.Infof("connection successfully deleted from remote provider")
-		var conn Connection
+		var conn connections.Connection
 		if err = json.Unmarshal(bdr, &conn); err != nil {
 			return nil, err
 		}
@@ -3847,34 +3942,7 @@ func (l *RemoteProvider) DeleteMesheryConnection() error {
 		return nil
 	}
 
-	return ErrDelete(fmt.Errorf("Could not delete meshery connection"), " Meshery Connection", resp.StatusCode)
-}
-
-// RecordMeshSyncData records the mesh sync data
-func (l *RemoteProvider) RecordMeshSyncData(obj model.Object) error {
-	result := l.GenericPersister.Create(&obj)
-	if result.Error != nil {
-		return result.Error
-	}
-	return nil
-}
-
-// ReadMeshSyncData records the mesh sync data
-func (l *RemoteProvider) ReadMeshSyncData() ([]model.Object, error) {
-	objects := make([]model.Object, 0)
-	result := l.GenericPersister.
-		Preload("TypeMeta").
-		Preload("ObjectMeta").
-		Preload("ObjectMeta.Labels").
-		Preload("ObjectMeta.Annotations").
-		Preload("Spec").
-		Preload("Status").
-		Find(&objects)
-
-	if result.Error != nil {
-		return nil, result.Error
-	}
-	return objects, nil
+	return ErrDelete(fmt.Errorf("could not delete meshery connection"), " Meshery Connection", resp.StatusCode)
 }
 
 // TarXZF takes in a source url downloads the tar.gz file

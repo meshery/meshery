@@ -106,7 +106,7 @@ func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 
 		for _, object := range objectsSlice {
 			objectJSON, _ := utils.Marshal(object)
-			obj := meshsyncmodel.Object{}
+			obj := meshsyncmodel.KubernetesResource{}
 			err := utils.Unmarshal(objectJSON, &obj)
 			if err != nil {
 				mh.log.Error(ErrUnmarshal(err, objectJSON))
@@ -128,7 +128,7 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 	defer mh.dbHandler.Unlock()
 
 	objectJSON, _ := utils.Marshal(event.Object)
-	obj := meshsyncmodel.Object{}
+	obj := meshsyncmodel.KubernetesResource{}
 	err := utils.Unmarshal(objectJSON, &obj)
 
 	if err != nil {
@@ -153,12 +153,12 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 		}
 	}
 
-	mh.log.Info("Updated database in response to ", event.EventType, " event of object: ", obj.ObjectMeta.Name, " in namespace: ", obj.ObjectMeta.Namespace, " of kind: ", obj.Kind)
+	mh.log.Info("Updated database in response to ", event.EventType, " event of object: ", obj.KubernetesResourceMeta.Name, " in namespace: ", obj.KubernetesResourceMeta.Namespace, " of kind: ", obj.Kind)
 
 	return nil
 }
 
-func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.Object) error {
+func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.KubernetesResource) error {
 	mh.dbHandler.Lock()
 	defer mh.dbHandler.Unlock()
 
@@ -168,10 +168,10 @@ func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.Object) 
 		if result.Error != nil {
 			return ErrDBPut(result.Error)
 		}
-		mh.log.Info("Updated object: ", object.ObjectMeta.Name, "/", object.ObjectMeta.Namespace, " of kind: ", object.Kind, " in the database")
+		mh.log.Info("Updated object: ", object.KubernetesResourceMeta.Name, "/", object.KubernetesResourceMeta.Namespace, " of kind: ", object.Kind, " in the database")
 		return nil
 	}
-	mh.log.Info("Added object: ", object.ObjectMeta.Name, "/", object.ObjectMeta.Namespace, " of kind: ", object.Kind, " to the database")
+	mh.log.Info("Added object: ", object.KubernetesResourceMeta.Name, "/", object.KubernetesResourceMeta.Namespace, " of kind: ", object.Kind, " to the database")
 
 	return nil
 }
@@ -182,21 +182,21 @@ func RemoveStaleObjects(dbHandler database.Handler) error {
 
 	// Clear stale meshsync data
 	err := dbHandler.Migrator().DropTable(
-		&meshsyncmodel.KeyValue{},
-		&meshsyncmodel.Object{},
-		&meshsyncmodel.ResourceSpec{},
-		&meshsyncmodel.ResourceStatus{},
-		&meshsyncmodel.ResourceObjectMeta{},
+		&meshsyncmodel.KubernetesKeyValue{},
+		&meshsyncmodel.KubernetesResource{},
+		&meshsyncmodel.KubernetesResourceSpec{},
+		&meshsyncmodel.KubernetesResourceStatus{},
+		&meshsyncmodel.KubernetesResourceObjectMeta{},
 	)
 	if err != nil {
 		return err
 	}
 	err = dbHandler.Migrator().CreateTable(
-		&meshsyncmodel.KeyValue{},
-		&meshsyncmodel.Object{},
-		&meshsyncmodel.ResourceSpec{},
-		&meshsyncmodel.ResourceStatus{},
-		&meshsyncmodel.ResourceObjectMeta{},
+		&meshsyncmodel.KubernetesKeyValue{},
+		&meshsyncmodel.KubernetesResource{},
+		&meshsyncmodel.KubernetesResourceSpec{},
+		&meshsyncmodel.KubernetesResourceStatus{},
+		&meshsyncmodel.KubernetesResourceObjectMeta{},
 	)
 	if err != nil {
 		return err

@@ -2,6 +2,11 @@
 import MUIDataTable from 'mui-datatables';
 import React, { useEffect, useCallback } from 'react';
 import { useWindowDimensions } from './dimension';
+import { styled } from '@mui/system';
+
+const StyledMUIDataTable = styled(MUIDataTable)(() => ({
+  padding: '5px 18px 0 18px',
+}));
 
 const ResponsiveDataTable = ({
   data,
@@ -69,9 +74,15 @@ const ResponsiveDataTable = ({
       col.options.display = columnVisibility[col.name];
 
       if (
-        ['updated_at', 'created_at', 'deleted_at', 'last_login_time', 'joined_at'].includes(
-          col.name,
-        )
+        [
+          'updated_at',
+          'created_at',
+          'deleted_at',
+          'last_login_time',
+          'joined_at',
+          'last_run',
+          'next_run',
+        ].includes(col.name)
       ) {
         col.options.customBodyRender = (value) => {
           if (value === 'NA') {
@@ -98,13 +109,15 @@ const ResponsiveDataTable = ({
   };
 
   return (
-    <MUIDataTable
-      components={components}
-      columns={tableCols}
-      data={data}
-      options={updatedOptions}
-      {...props}
-    />
+    <div id="searchClick">
+      <StyledMUIDataTable
+        components={components}
+        columns={tableCols}
+        data={data}
+        options={updatedOptions}
+        {...props}
+      />
+    </div>
   );
 };
 

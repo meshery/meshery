@@ -18,8 +18,6 @@ import (
 	"fmt"
 
 	"github.com/pkg/errors"
-
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
 	"github.com/spf13/cobra"
@@ -51,20 +49,7 @@ mesheryctl perf result sam-test
 mesheryctl perf result -o json
 mesheryctl perf result -o yaml
 	`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-		hcOptions := &system.HealthCheckOptions{
-			IsPreRunE:  true,
-			PrintLogs:  false,
-			Subcommand: cmd.Use,
-		}
-		hc, err := system.NewHealthChecker(hcOptions)
-		if err != nil {
-			utils.Log.Error(ErrHealthChecker(err))
-			return nil
-		}
-		return hc.RunPreflightHealthChecks()
-	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return cmd.Help()

@@ -3,10 +3,83 @@ package models
 import (
 	"time"
 
+	"database/sql"
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/internal/sql"
+	isql "github.com/layer5io/meshery/server/internal/sql"
 	"gopkg.in/yaml.v2"
+	types "k8s.io/apimachinery/pkg/types"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
+
+type DesignType string
+
+type DesignTypeResponse struct {
+	Type                DesignType `json:"design_type"`
+	SupportedExtensions []string        `json:"supported_extensions"`
+}
+
+
+func GetDesignsTypes() (r []DesignTypeResponse) {
+	r = append(r, DesignTypeResponse{
+		Type:                HelmChart,
+		SupportedExtensions: []string{".tgz"},
+	},
+		DesignTypeResponse{
+			Type:                DockerCompose,
+			SupportedExtensions: []string{".yaml", ".yml"},
+		},
+		DesignTypeResponse{
+			Type:                K8sManifest,
+			SupportedExtensions: []string{".yaml", ".yml"},
+		},
+		DesignTypeResponse{
+			Type:                Design,
+			SupportedExtensions: []string{".yaml", ".yml"},
+		})
+	return
+}
+
+const (
+	HelmChart     DesignType = "Helm Chart"
+	DockerCompose DesignType = "Docker Compose"
+	K8sManifest   DesignType = "Kubernetes Manifest"
+	Design       DesignType = "Design"
+)
+
+// reason for adding this constucts is because these has been removed in latest client-go
+// https://github.com/kubernetes/client-go/commit/0f17f43973be78f6dcaf6d9a8614fcb35be40d5c#diff-b49fe30cb74d2c3c9c0ca1438056432985f3cad978fd6440f91b695e16195ded
+type ListMetaApplyConfiguration struct {
+ 	SelfLink           *string `json:"selfLink,omitempty"`
+ 	ResourceVersion    *string `json:"resourceVersion,omitempty"`
+ 	Continue           *string `json:"continue,omitempty"`
+ 	RemainingItemCount *int64  `json:"remainingItemCount,omitempty"`
+ }
+
+type StatusCauseApplyConfiguration struct {
+ 	Type    *metav1.CauseType `json:"reason,omitempty"`
+ 	Message *string       `json:"message,omitempty"`
+ 	Field   *string       `json:"field,omitempty"`
+ }
+
+type StatusDetailsApplyConfiguration struct {
+ 	Name              *string                         `json:"name,omitempty"`
+ 	Group             *string                         `json:"group,omitempty"`
+ 	Kind              *string                         `json:"kind,omitempty"`
+ 	UID               *types.UID                      `json:"uid,omitempty"`
+ 	Causes            []StatusCauseApplyConfiguration `json:"causes,omitempty"`
+ 	RetryAfterSeconds *int32                          `json:"retryAfterSeconds,omitempty"`
+ }
+
+type StatusApplyConfiguration struct {
+ 	// TypeMetaApplyConfiguration  `json:",inline"` 
+ 	*ListMetaApplyConfiguration `json:"metadata,omitempty"`
+ 	Status                      *string                          `json:"status,omitempty"`
+ 	Message                     *string                          `json:"message,omitempty"`
+ 	Reason                      *metav1.StatusReason             `json:"reason,omitempty"`
+ 	Details                     *StatusDetailsApplyConfiguration `json:"details,omitempty"`
+ 	Code                        *int32                           `json:"code,omitempty"`
+ }
+
 
 // MesheryPattern represents the patterns that needs to be saved
 type MesheryPattern struct {
@@ -18,9 +91,11 @@ type MesheryPattern struct {
 	// but the remote provider is allowed to provide one
 	UserID *string `json:"user_id"`
 
-	Location    sql.Map `json:"location"`
+	Location    isql.Map `json:"location"`
 	Visibility  string  `json:"visibility"`
-	CatalogData sql.Map `json:"catalog_data,omitempty"`
+	CatalogData isql.Map `json:"catalog_data,omitempty"`
+	Type          sql.NullString `json:"type"`
+	SourceContent []byte         `json:"source_content"`
 
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
@@ -30,7 +105,7 @@ type MesheryPattern struct {
 // that PublishCatalogPattern would receive
 type MesheryCatalogPatternRequestBody struct {
 	ID          uuid.UUID `json:"id,omitempty"`
-	CatalogData sql.Map   `json:"catalog_data,omitempty"`
+	CatalogData isql.Map   `json:"catalog_data,omitempty"`
 }
 
 // MesheryCatalogPatternRequestBody refers to the type of request body
