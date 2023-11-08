@@ -14,7 +14,6 @@ export const pingMesheryOperator = (id, successcb, errorcb) => {
     k8scontextID: id,
   }).subscribe({
     next: (res) => {
-      console.log('res', res);
       successcb();
       subscription.unsubscribe();
     },
