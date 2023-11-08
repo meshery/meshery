@@ -80,9 +80,6 @@ func sortOnVerified(pkgs []artifacthub.AhPackage) (verified []artifacthub.AhPack
 		} else if pkg.VerifiedPublisher {
 			verified = append(verified, pkg)
 		} else {
-			if pkg.Name == "redis-operator" {
-				continue
-			}
 			unverified = append(unverified, pkg)
 		}
 	}
