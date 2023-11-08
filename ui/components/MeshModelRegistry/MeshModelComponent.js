@@ -1,4 +1,4 @@
-import { Button, styled, withStyles } from '@material-ui/core';
+import { withStyles } from '@material-ui/core';
 import { withSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react';
 import { Paper } from '@material-ui/core';
@@ -27,6 +27,7 @@ import useStyles from '../../assets/styles/general/tool.styles';
 import MesheryTreeView from './MesheryTreeView';
 import MeshModelDetails from './MeshModelDetails';
 import { toLower } from 'lodash';
+import { DisableButton } from './MeshModel.style';
 
 const meshmodelStyles = (theme) => ({
   wrapperClss: {
@@ -279,15 +280,6 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
       setRequestCancelled(true);
     };
   }, [view, page, searchText, rowsPerPage]);
-
-  const DisableButton = styled(Button)(({ theme }) => ({
-    '&.MuiButtonBase-root:disabled': {
-      cursor: 'not-allowed',
-      pointerEvents: 'auto',
-      backgroundColor: theme.palette.secondary.disableButtonBg,
-      color: theme.palette.secondary.disableButton,
-    },
-  }));
 
   return (
     <div data-test="workloads">

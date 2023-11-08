@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { TreeView } from '@mui/x-tree-view/TreeView';
-import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
 import { Box, Typography, IconButton, FormControlLabel, Switch } from '@material-ui/core';
 import Checkbox from '@mui/material/Checkbox';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
@@ -9,33 +8,7 @@ import ExpandAllIcon from '../../assets/icons/expand_all';
 import CollapseAllIcon from '../../assets/icons/collapse_all';
 import ExpandMoreIcon from '../../assets/icons/expand_more';
 import ChevronRightIcon from '../../assets/icons/chevron_right';
-import { alpha, styled } from '@mui/material/styles';
-
-const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
-  [`& .${treeItemClasses.content}`]: {
-    fontWeight: theme.typography.fontWeightMedium,
-    borderRadius: '4px',
-    '&.Mui-expanded': {
-      fontWeight: theme.typography.fontWeightRegular,
-    },
-    '&:hover': {
-      backgroundColor: `transparent`,
-    },
-    '&.Mui-focused, &.Mui-selected, &.Mui-selected.Mui-focused': {
-      backgroundColor: `#00bfa030`,
-      borderLeft: '2px solid #00bfa0',
-    },
-    [`& .${treeItemClasses.label}`]: {
-      fontWeight: 'inherit',
-    },
-  },
-  [`& .${treeItemClasses.group}`]: {
-    paddingRight: '0',
-    borderLeft: `1px solid ${
-      theme.palette.type === 'dark' ? alpha('#00B39F', 0.4) : alpha(theme.palette.text.primary, 0.4)
-    }`,
-  },
-}));
+import { StyledTreeItemRoot } from './MeshModel.style';
 
 const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
   const [checked, setChecked] = useState(false);
