@@ -42,11 +42,14 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 			return
 		}
 
+		fmt.Println("Generating application configuration...")
 		config, err := data.Pattern.GenerateApplicationConfiguration()
 		if err != nil {
 			act.Terminate(fmt.Errorf("failed to generate application configuration: %s", err))
 			return
 		}
+		fmt.Println("config: ", config)
+		fmt.Println("\n\n\n\n")
 
 		errs := []error{}
 
@@ -151,6 +154,8 @@ func mergeErrors(errs []error) error {
 // move into meshkit and change annotations prefix name
 
 func getAdditionalAnnotations(pattern *core.Pattern) map[string]string {
+	fmt.Println("inside getAdditionalAnnotations")
+	fmt.Printf("pattern: %#v", pattern)
 	annotations := make(map[string]string, 2)
 	annotations[fmt.Sprintf("%s.name", v1alpha1.MesheryAnnotationPrefix)] = pattern.Name
 	annotations[fmt.Sprintf("%s.id", v1alpha1.MesheryAnnotationPrefix)] = pattern.PatternID
