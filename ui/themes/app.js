@@ -96,6 +96,8 @@ export var darkTheme = createTheme({
       card: '#51636B',
       detailsContainer: '#d9dadb80',
       tabCard: '#677a84',
+      disableButtonBg: '#666666',
+      disableButton: '#9d9d9d',
     },
   },
   p: {
@@ -359,6 +361,8 @@ let theme = createTheme({
       card: '#51636B',
       detailsContainer: '#d9dadb80',
       tabCard: '#677a84',
+      disableButtonBg: '#e0e0e0',
+      disableButton: '#9d9d9d',
     },
   },
   shape: { borderRadius: 8 },
