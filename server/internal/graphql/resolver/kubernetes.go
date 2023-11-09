@@ -194,7 +194,8 @@ func (r *Resolver) subscribeK8sContexts(ctx context.Context, provider models.Pro
 
 func (r *Resolver) getK8sContexts(ctx context.Context, provider models.Provider, selector model.PageFilter) (*model.K8sContextsPage, error) {
 	tokenString := ctx.Value(models.TokenCtxKey).(string)
-	resp, err := provider.GetK8sContexts(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order, false)
+	// If the data from this subscriotion will be only used to manage then retrieve connected conns only. Right now in the settings page we need all avaliable contexts hence retireving conns of all statuses.
+	resp, err := provider.GetK8sContexts(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order, "", false)
 	if err != nil {
 		return nil, err
 	}

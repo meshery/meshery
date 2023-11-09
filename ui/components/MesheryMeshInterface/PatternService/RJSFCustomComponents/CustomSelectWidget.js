@@ -115,7 +115,7 @@ export default function CustomSelectWidget({
                   title={getHyperLinkDiv(schema?.description)}
                   interactive={true}
                 >
-                  <IconButton component="span" size="small">
+                  <IconButton component="span" size="small" style={{ marginRight: '4px' }}>
                     <HelpOutlineIcon
                       width="14px"
                       height="14px"

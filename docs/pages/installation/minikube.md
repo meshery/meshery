@@ -4,6 +4,8 @@ title: Minikube
 permalink: installation/kubernetes/minikube
 type: installation
 category: kubernetes
+redirect_from:
+- installation/platforms/minikube
 display-title: "false"
 language: en
 list: include
