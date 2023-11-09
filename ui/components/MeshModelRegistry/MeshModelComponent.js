@@ -1,4 +1,4 @@
-import { Button, withStyles } from '@material-ui/core';
+import { withStyles } from '@material-ui/core';
 import { withSnackbar } from 'notistack';
 import React, { useState, useEffect } from 'react';
 import { Paper } from '@material-ui/core';
@@ -27,6 +27,7 @@ import useStyles from '../../assets/styles/general/tool.styles';
 import MesheryTreeView from './MesheryTreeView';
 import MeshModelDetails from './MeshModelDetails';
 import { toLower } from 'lodash';
+import { DisableButton } from './MeshModel.style';
 
 const meshmodelStyles = (theme) => ({
   wrapperClss: {
@@ -58,7 +59,12 @@ const meshmodelStyles = (theme) => ({
   },
 });
 
-const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }) => {
+const MeshModelComponent = ({
+  modelsCount,
+  componentsCount,
+  relationshipsCount,
+  registrantCount,
+}) => {
   const [resourcesDetail, setResourcesDetail] = useState([]);
   const [isRequestCancelled, setRequestCancelled] = useState(false);
   const [, setCount] = useState();
@@ -285,32 +291,28 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
       <div
         className={`${StyleClass.meshModelToolbar} ${animate ? StyleClass.toolWrapperAnimate : ''}`}
       >
-        <Button
+        <DisableButton
           disabled
           variant="contained"
           style={{
-            background: '#dddddd',
-            color: 'white',
             visibility: `${animate ? 'visible' : 'hidden'}`,
           }}
           size="large"
           startIcon={<UploadIcon />}
         >
           Import
-        </Button>
-        <Button
+        </DisableButton>
+        <DisableButton
           disabled
           variant="contained"
           size="large"
           style={{
-            background: '#dddddd',
-            color: 'white',
             visibility: `${animate ? 'visible' : 'hidden'}`,
           }}
           startIcon={<DoNotDisturbOnIcon />}
         >
           Ignore
-        </Button>
+        </DisableButton>
       </div>
       <div
         className={`${StyleClass.mainContainer} ${animate ? StyleClass.mainContainerAnimate : ''}`}
@@ -359,7 +361,6 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
               style={{
                 fontWeight: `${animate ? 'normal' : 'bold'}`,
                 fontSize: `${animate ? '1rem' : '3rem'}`,
-                transition: 'all 0.3s',
                 marginLeft: `${animate && '4px'}`,
               }}
             >
@@ -396,7 +397,6 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
               style={{
                 fontWeight: `${animate ? 'normal' : 'bold'}`,
                 fontSize: `${animate ? '1rem' : '3rem'}`,
-                transition: 'all 0.3s',
                 marginLeft: `${animate && '4px'}`,
               }}
             >
@@ -433,7 +433,6 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
               style={{
                 fontWeight: `${animate ? 'normal' : 'bold'}`,
                 fontSize: `${animate ? '1rem' : '3rem'}`,
-                transition: 'all 0.3s',
                 marginLeft: `${animate && '4px'}`,
               }}
             >
@@ -470,11 +469,10 @@ const MeshModelComponent = ({ modelsCount, componentsCount, relationshipsCount }
               style={{
                 fontWeight: `${animate ? 'normal' : 'bold'}`,
                 fontSize: `${animate ? '1rem' : '3rem'}`,
-                transition: 'all 0.3s',
                 marginLeft: `${animate && '4px'}`,
               }}
             >
-              {animate ? `(1)` : `1`}
+              {animate ? `(${registrantCount})` : `${registrantCount}`}
             </span>
             Registrants
           </Paper>
