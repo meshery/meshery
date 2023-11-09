@@ -19,7 +19,12 @@ import PromptComponent from './PromptComponent';
 import { iconMedium } from '../css/icons.styles';
 import MeshModelComponent from './MeshModelRegistry/MeshModelComponent';
 import DatabaseSummary from './DatabaseSummary';
-import { getComponentsDetail, getModelsDetail, getRelationshipsDetail } from '../api/meshmodel';
+import {
+  getComponentsDetail,
+  getModelsDetail,
+  getRelationshipsDetail,
+  getMeshModelRegistrants,
+} from '../api/meshmodel';
 import { withNotify } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 
@@ -189,6 +194,7 @@ class MesherySettings extends React.Component {
       modelsCount: 0,
       componentsCount: 0,
       relationshipsCount: 0,
+      registrantCount: 0,
       isMeshConfigured: k8sconfig.clusterConfigured,
 
       // Array of scanned prometheus urls
@@ -236,15 +242,18 @@ class MesherySettings extends React.Component {
       const modelsResponse = await getModelsDetail();
       const componentsResponse = await getComponentsDetail();
       const relationshipsResponse = await getRelationshipsDetail();
+      const registrantResponce = await getMeshModelRegistrants();
 
       const modelsCount = modelsResponse.total_count;
       const componentsCount = componentsResponse.total_count;
       const relationshipsCount = relationshipsResponse.total_count;
+      const registrantCount = registrantResponce.total_count;
 
       this.setState({
         modelsCount,
         componentsCount,
         relationshipsCount,
+        registrantCount,
       });
     } catch (error) {
       console.error(error);
@@ -442,6 +451,7 @@ class MesherySettings extends React.Component {
                   modelsCount={this.state.modelsCount}
                   componentsCount={this.state.componentsCount}
                   relationshipsCount={this.state.relationshipsCount}
+                  registrantCount={this.state.registrantCount}
                 />
               </TabContainer>
             </TabContainer>

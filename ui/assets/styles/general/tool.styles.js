@@ -72,7 +72,7 @@ const useStyles = makeStyles((theme) => ({
     transform: 'translate(0%, 0%)',
     borderRadius: '6px 6px 0px 0px',
     left: '0%',
-    backgroundColor: '#51636B',
+    backgroundColor: theme.palette.secondary.tabContainer,
   },
   tabs: {
     backgroundColor:
@@ -100,7 +100,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: 'white'
   },
   cardStyle: {
-    background: '#51636B',
+    background: theme.palette.secondary.card,
     color: 'white',
     height: '10rem',
     width: '13rem',
@@ -115,13 +115,13 @@ const useStyles = makeStyles((theme) => ({
   cardStyleAnimate: {
     marginTop: '0.7rem',
     height: '3rem',
-    backgroundColor: '#677a84',
     flexDirection: 'row-reverse',
     borderRadius: '8px 8px 0px 0px',
     paddingTop: '0.2rem',
+    backgroundColor: theme.palette.secondary.tabCard,
   },
   overviewTab: {
-    background: '#51636B',
+    background: theme.palette.secondary.card,
     color: 'white',
     height: '10rem',
     width: '0rem',
@@ -150,7 +150,7 @@ const useStyles = makeStyles((theme) => ({
     height: '30rem',
     width: '50%',
     margin: '1rem',
-    backgroundColor: '#d9dadb80',
+    backgroundColor: theme.palette.secondary.detailsContainer,
     borderRadius: '6px',
     padding: '2.5rem',
     overflowY: 'auto',
@@ -160,7 +160,7 @@ const useStyles = makeStyles((theme) => ({
     height: '30rem',
     width: '50%',
     margin: '1rem',
-    backgroundColor: '#d9dadb80',
+    backgroundColor: theme.palette.secondary.detailsContainer,
     borderRadius: '6px',
     padding: '2.5rem',
     overflowY: 'auto',
@@ -169,6 +169,16 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  activeTab: {
+    backgroundColor:
+      theme.palette.type === 'dark'
+        ? theme.palette.secondary.toolbarBg2
+        : theme.palette.secondary.toolbarBg1,
+    color: theme.palette.secondary.text
+  },
+  line: {
+    borderLeft: `1px solid ${theme.palette.secondary.text}`
+  }
   // Define other styles as needed
 }));
 
