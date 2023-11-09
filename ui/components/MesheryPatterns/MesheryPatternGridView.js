@@ -190,6 +190,7 @@ function MesheryPatternGrid({
       action: action,
       pattern_file: pattern.pattern_file,
       name: pattern.name,
+      pattern_id: pattern.id,
       count: compCount,
       validationBody: validationBody,
       dryRunComponent: dryRunComponent,
