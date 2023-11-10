@@ -985,7 +985,7 @@ func (l *DefaultLocalProvider) UpdateConnection(_ *http.Request, _ *connections.
 	return nil, ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) UpdateConnectionStatusByID(req *http.Request, connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error) {
+func (l *DefaultLocalProvider) UpdateConnectionStatusByID(token string, connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error) {
 	return nil, http.StatusForbidden, ErrLocalProviderSupport
 }
 

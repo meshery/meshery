@@ -298,9 +298,15 @@ func (h *Handler) LoadContextsAndPersist(userID string, token string, prov model
 			return contexts, err
 		}
 		cc.DeploymentType = "in_cluster"
-		_, err = prov.SaveK8sContext(token, *cc)
+		conn, err := prov.SaveK8sContext(token, *cc)
 		if err != nil {
 			logrus.Warn("failed to save the context for incluster: ", err)
+			return contexts, err
+		}
+		updatedConnection, statusCode, err := prov.UpdateConnectionStatusByID(token, conn.ID, connections.CONNECTED)
+		if err != nil || statusCode != http.StatusOK {
+			logrus.Warn("failed to update connection status for connection id", conn.ID, "to", connections.CONNECTED)
+			logrus.Debug("connection: ", updatedConnection)
 			return contexts, err
 		}
 		h.config.K8scontextChannel.PublishContext()
@@ -318,13 +324,22 @@ func (h *Handler) LoadContextsAndPersist(userID string, token string, prov model
 	// Persist the generated contexts
 	for _, ctx := range ctxs {
 		ctx.DeploymentType = "out_of_cluster"
-		_, err := prov.SaveK8sContext(token, *ctx)
+		conn, err := prov.SaveK8sContext(token, *ctx)
 		if err != nil {
 			logrus.Warn("failed to save the context: ", err)
 			continue
 		}
-		h.config.K8scontextChannel.PublishContext()
+		updatedConnection, statusCode, err := prov.UpdateConnectionStatusByID(token, conn.ID, connections.CONNECTED)
+		if err != nil || statusCode != http.StatusOK {
+			logrus.Warn("failed to update connection status for connection id", conn.ID, "to", connections.CONNECTED)
+			logrus.Debug("connection: ", updatedConnection)
+			continue
+		}
+
 		contexts = append(contexts, ctx)
+	}
+	if len(contexts) > 0 {
+		h.config.K8scontextChannel.PublishContext()
 	}
 	return contexts, nil
 }

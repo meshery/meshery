@@ -451,7 +451,7 @@ type Provider interface {
 	GetConnectionsStatus(req *http.Request, userID string) (*connections.ConnectionsStatusPage, error)
 	UpdateConnection(req *http.Request, conn *connections.Connection) (*connections.Connection, error)
 	UpdateConnectionById(req *http.Request, conn *ConnectionPayload, connId string) (*connections.Connection, error)
-	UpdateConnectionStatusByID(req *http.Request, connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, int,  error)
+	UpdateConnectionStatusByID(token string, connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, int,  error)
 	DeleteConnection(req *http.Request, connID uuid.UUID) (*connections.Connection, error)
 	DeleteMesheryConnection() error
 
