@@ -653,7 +653,10 @@ function MesheryPatterns({
     );
     const dryRunComponent = (
       <DryRunComponent
-        design={pattern_file}
+        design={JSON.stringify({
+          pattern_file: pattern_file,
+          pattern_id: pattern_id,
+        })}
         noOfElements={compCount}
         selectedContexts={selectedK8sContexts}
       />

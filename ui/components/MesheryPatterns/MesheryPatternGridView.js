@@ -182,7 +182,10 @@ function MesheryPatternGrid({
 
     const dryRunComponent = (
       <DryRunComponent
-        design={pattern.pattern_file}
+        design={JSON.stringify({
+          pattern_file: pattern.pattern_file,
+          pattern_id: pattern.id,
+        })}
         noOfElements={compCount}
         selectedContexts={selectedK8sContexts}
       />
