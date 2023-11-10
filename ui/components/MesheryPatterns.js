@@ -752,7 +752,6 @@ function MesheryPatterns({
   };
 
   const handleDeploy = (pattern_file, pattern_id, name) => {
-    console.log('Deploying pattern', pattern_file, name);
     updateProgress({ showProgress: true });
     dataFetch(
       ctxUrl(DEPLOY_URL, selectedK8sContexts),
@@ -1600,7 +1599,7 @@ function MesheryPatterns({
             deploy: () => handleDeploy(modalOpen.pattern_file, modalOpen.patternID, modalOpen.name),
             unDeploy: () =>
               handleUnDeploy(modalOpen.pattern_file, modalOpen.patternID, modalOpen.name),
-            verify: () => handleVerify(modalOpen.pattern_file, modalOpen.patternID, modalOpen.name),
+            verify: () => handleVerify(modalOpen.pattern_file, modalOpen.patternID),
           }}
           title={modalOpen.name}
           componentCount={modalOpen.count}
