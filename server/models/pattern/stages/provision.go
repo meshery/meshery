@@ -42,7 +42,6 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 			return
 		}
 
-		fmt.Println("Generating application configuration...")
 		config, err := data.Pattern.GenerateApplicationConfiguration()
 		if err != nil {
 			act.Terminate(fmt.Errorf("failed to generate application configuration: %s", err))
