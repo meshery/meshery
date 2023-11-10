@@ -112,7 +112,7 @@ You can also bring in your own applications by uploading it from filesystem or i
 
 The application files can be described in following formats:
 - Kubernetes manifest
-- Meshery Design format
+- Meshery Design
 - Helm charts
 - Docker Compose Apps
 
