@@ -175,6 +175,10 @@ const useStyles = makeStyles((theme) => ({
         ? theme.palette.secondary.toolbarBg2
         : theme.palette.secondary.toolbarBg1,
     color: theme.palette.secondary.text
+  },
+  line: {
+    borderLeft: `1px dashed ${theme.palette.secondary.text}`
+
   }
   // Define other styles as needed
 }));
