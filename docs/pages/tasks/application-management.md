@@ -19,7 +19,7 @@ A single file (future: which could be split into multiple files upon user reques
 
 
 You can define the applications as 
-- Kubernetes manifest files
+- Kubernetes manifest
 - Meshery Design
 - Helm Charts
 - Docker Compose
