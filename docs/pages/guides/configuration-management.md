@@ -98,7 +98,7 @@ mesheryctl exp filter apply metrics_collector_bg
 
 ## Applications
 
-Meshery can also manage your Kubernetes applications and can onboard/offboard them of deployed service meshes.
+Meshery can also manage your Kubernetes applications and deploy them to any of your connected kubernetes cluster.
 
 ### Managing Applications Through Meshery UI
 
@@ -110,9 +110,13 @@ You can also bring in your own applications by uploading it from filesystem or i
 
 <img src="{{ site.baseurl }}/assets/img/configuration-management/meshery-applications.png" />
 
-The application files can be described in Kubernetes manifest format or pattern format.
+The application files can be described in following formats:
+- Kubernetes manifest
+- Meshery Design format
+- Helm charts
+- Docker Compose Apps
 
-You can also run the same application on different service meshes and compare the performance. See [Performance Management with Meshery](performance-management.md) for more details.
+You can also run the same application on multiple connected kubernetes clusters and compare the performance. See [Performance Management with Meshery](performance-management.md) for more details.
 
 ### Managing Applications Through Meshery CLI
 
