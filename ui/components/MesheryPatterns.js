@@ -802,14 +802,17 @@ function MesheryPatterns({
     );
   };
 
-  const handleUnDeploy = (pattern_file, name) => {
+  const handleUnDeploy = (pattern_file, pattern_id, name) => {
     updateProgress({ showProgress: true });
     dataFetch(
       ctxUrl(DEPLOY_URL, selectedK8sContexts),
       {
         credentials: 'include',
         method: 'DELETE',
-        body: pattern_file,
+        body: JSON.stringify({
+          pattern_file: pattern_file,
+          pattern_id: pattern_id,
+        }),
       },
       () => {
         updateProgress({ showProgress: false });

@@ -154,6 +154,7 @@ function MesheryPatternGrid({
     open: false,
     deploy: false,
     pattern_file: null,
+    pattern_id: '',
     name: '',
     count: 0,
     dryRunComponent: null,
@@ -164,6 +165,7 @@ function MesheryPatternGrid({
       open: false,
       pattern_file: null,
       name: '',
+      pattern_id: '',
       count: 0,
     });
   };
@@ -266,8 +268,9 @@ function MesheryPatternGrid({
         open={modalOpen.open}
         handleClose={handleModalClose}
         submit={{
-          deploy: () => handleDeploy(modalOpen.pattern_file, modalOpen.name),
-          unDeploy: () => handleUnDeploy(modalOpen.pattern_file, modalOpen.name),
+          deploy: () => handleDeploy(modalOpen.pattern_file, modalOpen.pattern_id, modalOpen.name),
+          unDeploy: () =>
+            handleUnDeploy(modalOpen.pattern_file, modalOpen.pattern_id, modalOpen.name),
         }}
         title={modalOpen.name}
         componentCount={modalOpen.count}
