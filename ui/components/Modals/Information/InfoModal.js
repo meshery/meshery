@@ -131,7 +131,13 @@ const InfoModal = (props) => {
 
   useEffect(() => {
     if (selectedResource?.catalog_data) {
-      setFormState(selectedResource.catalog_data);
+      let uppercaseCompatibility = selectedResource?.catalog_data?.compatibility?.map(compatibility => compatibility.toUpperCase());
+      let modifiedData = {
+        ...selectedResource.catalog_data,
+        compatibility: uppercaseCompatibility,
+        type: _.startCase(selectedResource?.catalog_data?.type)
+      };
+      setFormState(modifiedData);
     }
   }, [selectedResource?.catalog_data]);
 
