@@ -229,7 +229,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
-	var statusCode int 
+	var statusCode int
 	for id, status := range *connectionStatusPayload {
 		eventBuilder.ActedUpon(id)
 		var updatedConnection *connections.Connection
@@ -241,7 +241,6 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 			return
 		}
 		updatedConnection, statusCode, err = provider.UpdateConnectionStatusByID(token, id, status)
-		fmt.Println("tetete_", updatedConnection)
 		if err != nil {
 			eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)).WithMetadata(map[string]interface{}{
 				"error": err,

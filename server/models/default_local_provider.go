@@ -48,7 +48,7 @@ type DefaultLocalProvider struct {
 	MesheryK8sContextPersister      *MesheryK8sContextPersister
 	GenericPersister                *database.Handler
 	KubeClient                      *mesherykube.Client
-	Log                              logger.Handler
+	Log                             logger.Handler
 }
 
 // Initialize will initialize the local provider
@@ -189,7 +189,7 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (
 	return l.MesheryK8sContextPersister.SaveMesheryK8sContext(k8sContext)
 }
 
-func (l *DefaultLocalProvider) GetK8sContexts(_, page, pageSize, search, order string,  withStatus string, withCredentials bool) ([]byte, error) {
+func (l *DefaultLocalProvider) GetK8sContexts(_, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
@@ -224,7 +224,7 @@ func (l *DefaultLocalProvider) LoadAllK8sContext(token string) ([]*K8sContext, e
 	results := []*K8sContext{}
 
 	for {
-		res, err := l.GetK8sContexts(token, strconv.Itoa(page), strconv.Itoa(pageSize), "", "", string(connections.CONNECTED),  true)
+		res, err := l.GetK8sContexts(token, strconv.Itoa(page), strconv.Itoa(pageSize), "", "", string(connections.CONNECTED), true)
 		if err != nil {
 			return results, err
 		}
@@ -704,7 +704,6 @@ func (l *DefaultLocalProvider) GetMesheryFilters(_, page, pageSize, search, orde
 		pageSize = "10"
 	}
 
-
 	pg, err := strconv.ParseUint(page, 10, 32)
 	if err != nil {
 		return nil, ErrPageNumber(err)
@@ -958,8 +957,6 @@ func (l *DefaultLocalProvider) GetSchedule(_ *http.Request, _ string) ([]byte, e
 func (l *DefaultLocalProvider) DeleteSchedule(_ *http.Request, _ string) ([]byte, error) {
 	return []byte{}, ErrLocalProviderSupport
 }
-
-
 
 func (l *DefaultLocalProvider) ExtensionProxy(_ *http.Request) (*ExtensionProxyResponse, error) {
 	return nil, ErrLocalProviderSupport
