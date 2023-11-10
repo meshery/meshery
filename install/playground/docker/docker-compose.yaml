@@ -51,10 +51,10 @@ services:
        ports:
             - 10010:10010
        restart: always
-#    meshery-cilium:
-#       image: layer5/meshery-cilium:stable-latest
-#       ports:
-#            - 10012:10012
-#       restart: always
+    meshery-cilium:
+        image: layer5/meshery-cilium:stable-latest
+        ports:
+            - 10012:10012
+        restart: always
 
 version: "3"
