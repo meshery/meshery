@@ -10,7 +10,7 @@ var PossibleTransitionnsMap = map[string]map[ConnectionStatus][]ConnectionStatus
 			DISCONNECTED, MAINTENANCE, DELETED, NOTFOUND,
 		},
 		IGNORED: {
-		 	DELETED, NOTFOUND,
+			DELETED, NOTFOUND,
 		},
 		MAINTENANCE: {
 			REGISTERED, CONNECTED, IGNORED, NOTFOUND,

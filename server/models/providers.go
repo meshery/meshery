@@ -205,13 +205,13 @@ type K8sContextPersistResponse struct {
 }
 
 type ConnectionPayload struct {
-	Kind             string                 `json:"kind,omitempty"`
-	SubType          string                 `json:"sub_type,omitempty"`
-	Type             string                 `json:"type,omitempty"`
-	MetaData         map[string]interface{} `json:"metadata,omitempty"`
-	Status           connections.ConnectionStatus       `json:"status,omitempty"`
-	CredentialSecret map[string]interface{} `json:"credential_secret,omitempty"`
-	Name             string                 `json:"name,omitempty"`
+	Kind             string                       `json:"kind,omitempty"`
+	SubType          string                       `json:"sub_type,omitempty"`
+	Type             string                       `json:"type,omitempty"`
+	MetaData         map[string]interface{}       `json:"metadata,omitempty"`
+	Status           connections.ConnectionStatus `json:"status,omitempty"`
+	CredentialSecret map[string]interface{}       `json:"credential_secret,omitempty"`
+	Name             string                       `json:"name,omitempty"`
 }
 
 type EnvironmentPayload struct {
@@ -451,7 +451,7 @@ type Provider interface {
 	GetConnectionsStatus(req *http.Request, userID string) (*connections.ConnectionsStatusPage, error)
 	UpdateConnection(req *http.Request, conn *connections.Connection) (*connections.Connection, error)
 	UpdateConnectionById(req *http.Request, conn *ConnectionPayload, connId string) (*connections.Connection, error)
-	UpdateConnectionStatusByID(req *http.Request, connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, int,  error)
+	UpdateConnectionStatusByID(token string, connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error)
 	DeleteConnection(req *http.Request, connID uuid.UUID) (*connections.Connection, error)
 	DeleteMesheryConnection() error
 
