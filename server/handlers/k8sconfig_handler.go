@@ -36,8 +36,8 @@ import (
 type SaveK8sContextResponse struct {
 	RegisteredContexts []models.K8sContext `json:"registered_contexts"`
 	ConnectedContexts  []models.K8sContext `json:"connected_contexts"`
-	IgnoredContexts  []models.K8sContext `json:"ignored_contexts"`
-	ErroredContexts  []models.K8sContext `json:"errored_contexts"`
+	IgnoredContexts    []models.K8sContext `json:"ignored_contexts"`
+	ErroredContexts    []models.K8sContext `json:"errored_contexts"`
 }
 
 // K8SConfigHandler is used for persisting kubernetes config and context info
@@ -63,7 +63,7 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, pre
 // responses:
 // 	200: k8sConfigRespWrapper
 
-// The function is called only when user uploads a kube config. 
+// The function is called only when user uploads a kube config.
 // Connections which have state as "registered" are the only new ones, hence the GraphQL K8sContext subscription only sends an update to UI if any connection has registered state.
 // A registered connection might have been regsitered previously and is not required for K8sContext Subscription to notify, but this case is not considered here.
 func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
@@ -93,12 +93,12 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	saveK8sContextResponse := SaveK8sContextResponse{
 		RegisteredContexts: make([]models.K8sContext, 0),
 		ConnectedContexts:  make([]models.K8sContext, 0),
-		IgnoredContexts: make([]models.K8sContext, 0),
-		ErroredContexts:  make([]models.K8sContext, 0),
+		IgnoredContexts:    make([]models.K8sContext, 0),
+		ErroredContexts:    make([]models.K8sContext, 0),
 	}
 
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create").
-	WithDescription("Kubernetes config uploaded.").WithSeverity(events.Informational)
+		WithDescription("Kubernetes config uploaded.").WithSeverity(events.Informational)
 	contexts := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID)
 	len := len(contexts)
 
@@ -122,21 +122,21 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			} else if status == connections.REGISTERED {
 				saveK8sContextResponse.RegisteredContexts = append(saveK8sContextResponse.RegisteredContexts, *ctx)
 				metadata["description"] = fmt.Sprintf("Connection registered with kubernetes context \"%s\" at %s.", ctx.Name, ctx.Server)
-			}			
+			}
 		}
 
 		eventBuilder.WithMetadata(map[string]interface{}{
 			ctx.Name: metadata,
 		})
 
-		if idx == len - 1 {
+		if idx == len-1 {
 			event := eventBuilder.Build()
 			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userID, event)
 			h.config.K8scontextChannel.PublishContext()
 		}
 	}
-	
+
 	if err := json.NewEncoder(w).Encode(saveK8sContextResponse); err != nil {
 		logrus.Error(models.ErrMarshal(err, "kubeconfig"))
 		http.Error(w, models.ErrMarshal(err, "kubeconfig").Error(), http.StatusInternalServerError)
@@ -298,9 +298,15 @@ func (h *Handler) LoadContextsAndPersist(userID string, token string, prov model
 			return contexts, err
 		}
 		cc.DeploymentType = "in_cluster"
-		_, err = prov.SaveK8sContext(token, *cc)
+		conn, err := prov.SaveK8sContext(token, *cc)
 		if err != nil {
 			logrus.Warn("failed to save the context for incluster: ", err)
+			return contexts, err
+		}
+		updatedConnection, statusCode, err := prov.UpdateConnectionStatusByID(token, conn.ID, connections.CONNECTED)
+		if err != nil || statusCode != http.StatusOK {
+			logrus.Warn("failed to update connection status for connection id", conn.ID, "to", connections.CONNECTED)
+			logrus.Debug("connection: ", updatedConnection)
 			return contexts, err
 		}
 		h.config.K8scontextChannel.PublishContext()
@@ -318,13 +324,22 @@ func (h *Handler) LoadContextsAndPersist(userID string, token string, prov model
 	// Persist the generated contexts
 	for _, ctx := range ctxs {
 		ctx.DeploymentType = "out_of_cluster"
-		_, err := prov.SaveK8sContext(token, *ctx)
+		conn, err := prov.SaveK8sContext(token, *ctx)
 		if err != nil {
 			logrus.Warn("failed to save the context: ", err)
 			continue
 		}
-		h.config.K8scontextChannel.PublishContext()
+		updatedConnection, statusCode, err := prov.UpdateConnectionStatusByID(token, conn.ID, connections.CONNECTED)
+		if err != nil || statusCode != http.StatusOK {
+			logrus.Warn("failed to update connection status for connection id", conn.ID, "to", connections.CONNECTED)
+			logrus.Debug("connection: ", updatedConnection)
+			continue
+		}
+
 		contexts = append(contexts, ctx)
+	}
+	if len(contexts) > 0 {
+		h.config.K8scontextChannel.PublishContext()
 	}
 	return contexts, nil
 }
