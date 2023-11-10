@@ -11,6 +11,22 @@ export const Colors = {
   charcoal: '#3C494F',
 };
 
+export const common = {
+  overrides: {
+    MuiSwitch: {
+      switchBase: {
+        color: '#647881',
+        '&$checked': {
+          color: '#00b39f !important',
+        },
+        '&$checked + $track': {
+          backgroundColor: 'rgba(0,179,159,0.5)',
+        },
+      },
+    },
+  },
+};
+
 export var darkTheme = createTheme({
   typography: {
     useNextVariants: true,
@@ -117,6 +133,7 @@ export var darkTheme = createTheme({
 darkTheme = {
   ...darkTheme,
   overrides: {
+    ...common.overrides,
     MuiSvgIcon: {
       root: {
         ...iconMedium,
@@ -380,6 +397,7 @@ let theme = createTheme({
 theme = {
   ...theme,
   overrides: {
+    ...common.overrides,
     MuiSvgIcon: {
       root: {
         ...iconMedium,

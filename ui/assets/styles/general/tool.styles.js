@@ -177,7 +177,8 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.secondary.text
   },
   line: {
-    borderLeft: `1px solid ${theme.palette.secondary.text}`
+    borderLeft: `1px dashed ${theme.palette.secondary.text}`
+
   }
   // Define other styles as needed
 }));
