@@ -15,6 +15,12 @@ const Level = ({ children }) => {
   return <LevelContext.Provider value={level + 1}> {children} </LevelContext.Provider>;
 };
 
+export const formatDate = (date) => {
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  const formattedDate =
+    new Date(date).toLocaleDateString('en-US', options) + ' ' + new Date(date).toLocaleTimeString();
+  return formattedDate;
+};
 export const Link = ({ href, title }) => {
   return (
     <a

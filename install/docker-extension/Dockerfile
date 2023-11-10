@@ -43,8 +43,8 @@ LABEL org.opencontainers.image.title="Meshery" \
       } \
     ]" \
   com.docker.extension.detailed-description="\
-  <h2>Visually and collaboratively design and operate your Kubernetes clusters.</h2> \
-  <p>Video: https://www.youtube.com/watch?v=034nVaQUyME. The Meshery Docker Extension extends Docker Desktop’s as a multi-cluster Kubernetes manager. Meshery provides cloud native engineers with visual and collaborative interface to designing and operating cloud native infrastructure.</p> \
+  <h2>Visually and collaboratively design and operate your Kubernetes clusters (<a href='https://meshery.io/catalog'>video</a>).</h2> \
+  <p>The Meshery Docker Extension is your cloud native infrastructure designer, complete with multi-cluster Kubernetes management. Meshery provides cloud native engineers with visual and collaborative interface to designing and operating cloud native infrastructure.</p> \
   <ul> \
     <li><b>Discovery of your Kubernetes environments</b> - Meshery is a multi-cluster manager and will scan your kubeconfig, allowing you to select which of your Kubernetes contexts to connect. Switch from one K8s cluster to the next or manage multiple concurrently.</li> \
     <li><b>Support for your Docker Compose apps -</b> Import your Docker Compose apps. Configure and deploy them to Kubernetes.</li> \

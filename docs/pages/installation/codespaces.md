@@ -4,6 +4,8 @@ title: Codespaces
 permalink: installation/codespaces
 type: installation
 category: kubernetes
+redirect_from:
+- installation/platforms/codespaces
 display-title: "false"
 language: en
 list: include
