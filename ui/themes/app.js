@@ -11,6 +11,22 @@ export const Colors = {
   charcoal: '#3C494F',
 };
 
+export const common = {
+  overrides: {
+    MuiSwitch: {
+      switchBase: {
+        color: '#647881',
+        '&$checked': {
+          color: '#00b39f !important',
+        },
+        '&$checked + $track': {
+          backgroundColor: 'rgba(0,179,159,0.5)',
+        },
+      },
+    },
+  },
+};
+
 export var darkTheme = createTheme({
   typography: {
     useNextVariants: true,
@@ -96,6 +112,8 @@ export var darkTheme = createTheme({
       card: '#51636B',
       detailsContainer: '#d9dadb80',
       tabCard: '#677a84',
+      disableButtonBg: '#666666',
+      disableButton: '#9d9d9d',
     },
   },
   p: {
@@ -115,6 +133,7 @@ export var darkTheme = createTheme({
 darkTheme = {
   ...darkTheme,
   overrides: {
+    ...common.overrides,
     MuiSvgIcon: {
       root: {
         ...iconMedium,
@@ -359,6 +378,8 @@ let theme = createTheme({
       card: '#51636B',
       detailsContainer: '#d9dadb80',
       tabCard: '#677a84',
+      disableButtonBg: '#e0e0e0',
+      disableButton: '#9d9d9d',
     },
   },
   shape: { borderRadius: 8 },
@@ -376,6 +397,7 @@ let theme = createTheme({
 theme = {
   ...theme,
   overrides: {
+    ...common.overrides,
     MuiSvgIcon: {
       root: {
         ...iconMedium,

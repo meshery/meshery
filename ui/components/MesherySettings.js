@@ -8,16 +8,9 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { AppBar, Paper, Tooltip, Typography } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faArrowLeft,
-  faCloud,
-  faPoll,
-  faDatabase,
-  faFileInvoice,
-} from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faPoll, faDatabase, faFileInvoice } from '@fortawesome/free-solid-svg-icons';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import Link from 'next/link';
-import MeshConfigComponent from './MeshConfigComponent';
 import GrafanaComponent from './telemetry/grafana/GrafanaComponent';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
 import PrometheusComponent from './telemetry/prometheus/PrometheusComponent';
@@ -26,7 +19,12 @@ import PromptComponent from './PromptComponent';
 import { iconMedium } from '../css/icons.styles';
 import MeshModelComponent from './MeshModelRegistry/MeshModelComponent';
 import DatabaseSummary from './DatabaseSummary';
-import { getComponentsDetail, getModelsDetail, getRelationshipsDetail } from '../api/meshmodel';
+import {
+  getComponentsDetail,
+  getModelsDetail,
+  getRelationshipsDetail,
+  getMeshModelRegistrants,
+} from '../api/meshmodel';
 import { withNotify } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 
@@ -196,6 +194,7 @@ class MesherySettings extends React.Component {
       modelsCount: 0,
       componentsCount: 0,
       relationshipsCount: 0,
+      registrantCount: 0,
       isMeshConfigured: k8sconfig.clusterConfigured,
 
       // Array of scanned prometheus urls
@@ -243,15 +242,18 @@ class MesherySettings extends React.Component {
       const modelsResponse = await getModelsDetail();
       const componentsResponse = await getComponentsDetail();
       const relationshipsResponse = await getRelationshipsDetail();
+      const registrantResponce = await getMeshModelRegistrants();
 
       const modelsCount = modelsResponse.total_count;
       const componentsCount = componentsResponse.total_count;
       const relationshipsCount = relationshipsResponse.total_count;
+      const registrantCount = registrantResponce.total_count;
 
       this.setState({
         modelsCount,
         componentsCount,
         relationshipsCount,
+        registrantCount,
       });
     } catch (error) {
       console.error(error);
@@ -345,14 +347,6 @@ class MesherySettings extends React.Component {
             indicatorColor="primary"
             textColor="primary"
           >
-            <Tooltip title="Identify your cluster" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={<FontAwesomeIcon icon={faCloud} style={iconMedium} />}
-                label="Environment"
-                data-cy="tabEnvironment"
-              />
-            </Tooltip>
             <Tooltip title="Connect Meshery Adapters" placement="top">
               <Tab
                 className={classes.tab}
@@ -387,13 +381,12 @@ class MesherySettings extends React.Component {
             </Tooltip>
           </Tabs>
         </Paper>
-        {tabVal === 0 && <MeshConfigComponent />}
-        {tabVal === 1 && (
+        {tabVal === 0 && (
           <TabContainer>
             <MeshAdapterConfigComponent />
           </TabContainer>
         )}
-        {tabVal === 2 && (
+        {tabVal === 1 && (
           <TabContainer>
             <AppBar position="static" color="default">
               <Tabs
@@ -445,12 +438,12 @@ class MesherySettings extends React.Component {
             )}
           </TabContainer>
         )}
-        {tabVal === 3 && (
+        {tabVal === 2 && (
           <TabContainer>
             <DatabaseSummary promptRef={this.systemResetPromptRef} />
           </TabContainer>
         )}
-        {tabVal === 4 && (
+        {tabVal === 3 && (
           <TabContainer>
             <TabContainer>
               <TabContainer>
@@ -458,6 +451,7 @@ class MesherySettings extends React.Component {
                   modelsCount={this.state.modelsCount}
                   componentsCount={this.state.componentsCount}
                   relationshipsCount={this.state.relationshipsCount}
+                  registrantCount={this.state.registrantCount}
                 />
               </TabContainer>
             </TabContainer>
