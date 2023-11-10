@@ -8,16 +8,9 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { AppBar, Paper, Tooltip, Typography } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faArrowLeft,
-  faCloud,
-  faPoll,
-  faDatabase,
-  faFileInvoice,
-} from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faPoll, faDatabase, faFileInvoice } from '@fortawesome/free-solid-svg-icons';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import Link from 'next/link';
-import MeshConfigComponent from './MeshConfigComponent';
 import GrafanaComponent from './telemetry/grafana/GrafanaComponent';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
 import PrometheusComponent from './telemetry/prometheus/PrometheusComponent';
@@ -354,14 +347,6 @@ class MesherySettings extends React.Component {
             indicatorColor="primary"
             textColor="primary"
           >
-            <Tooltip title="Identify your cluster" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={<FontAwesomeIcon icon={faCloud} style={iconMedium} />}
-                label="Environment"
-                data-cy="tabEnvironment"
-              />
-            </Tooltip>
             <Tooltip title="Connect Meshery Adapters" placement="top">
               <Tab
                 className={classes.tab}
@@ -396,13 +381,12 @@ class MesherySettings extends React.Component {
             </Tooltip>
           </Tabs>
         </Paper>
-        {tabVal === 0 && <MeshConfigComponent />}
-        {tabVal === 1 && (
+        {tabVal === 0 && (
           <TabContainer>
             <MeshAdapterConfigComponent />
           </TabContainer>
         )}
-        {tabVal === 2 && (
+        {tabVal === 1 && (
           <TabContainer>
             <AppBar position="static" color="default">
               <Tabs
@@ -454,12 +438,12 @@ class MesherySettings extends React.Component {
             )}
           </TabContainer>
         )}
-        {tabVal === 3 && (
+        {tabVal === 2 && (
           <TabContainer>
             <DatabaseSummary promptRef={this.systemResetPromptRef} />
           </TabContainer>
         )}
-        {tabVal === 4 && (
+        {tabVal === 3 && (
           <TabContainer>
             <TabContainer>
               <TabContainer>

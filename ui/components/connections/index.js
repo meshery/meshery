@@ -22,6 +22,7 @@ import {
   MenuItem,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -37,7 +38,6 @@ import useStyles from '../../assets/styles/general/tool.styles';
 import Modal from '../Modal';
 import { iconMedium } from '../../css/icons.styles';
 import PromptComponent from '../PromptComponent';
-import { FormattedMetadata } from '../NotificationCenter/metadata';
 import resetDatabase from '../graphql/queries/ResetDatabaseQuery';
 import changeOperatorState from '../graphql/mutations/OperatorStatusMutation';
 import fetchMesheryOperatorStatus from '../graphql/queries/OperatorStatusQuery';
@@ -46,13 +46,13 @@ import styles from './styles';
 import MeshSyncTable from './MeshsyncTable';
 import ConnectionIcon from '../../assets/icons/Connection';
 import MeshsyncIcon from '../../assets/icons/Meshsync';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import classNames from 'classnames';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
 import { CONNECTION_STATES } from '../../utils/Enum';
+import { FormatConnectionMetadata } from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
 
 const ACTION_TYPES = {
@@ -132,7 +132,6 @@ function ConnectionManagementPage(props) {
     </>
   );
 }
-
 function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/ operatorState }) {
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);
@@ -519,7 +518,6 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
       renderExpandableRow: (rowData, tableMeta) => {
         const colSpan = rowData.length;
         const connection = connections && connections[tableMeta.rowIndex];
-
         return (
           <TableCell colSpan={colSpan} className={classes.innerTableWrapper}>
             <TableContainer className={classes.innerTableContainer}>
@@ -541,7 +539,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
                             }}
                             className={classes.contentContainer}
                           >
-                            <FormattedMetadata event={connection} />
+                            <FormatConnectionMetadata connection={connection} />
                           </Grid>
                         </Grid>
                       </Grid>
