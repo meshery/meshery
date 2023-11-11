@@ -39,7 +39,7 @@ import (
 // 200: []meshsyncResourcesResponseWrapper
 
 func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-  rw.Header().Set("Content-Type", "application/json")
+	rw.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 
 	var resources []model.KubernetesResource
@@ -72,19 +72,18 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	isLabels, _ := strconv.ParseBool(r.URL.Query().Get("labels"))
 
 	result := provider.GetGenericPersister().Model(&model.KubernetesResource{}).
-	Preload("KubernetesResourceMeta")
+		Preload("KubernetesResourceMeta")
 
 	if apiVersion != "" {
 		result = result.Where(&model.KubernetesResource{APIVersion: apiVersion})
 	}
 
 	if isLabels {
-	 result = result.Preload("KubernetesResourceMeta.Labels")
+		result = result.Preload("KubernetesResourceMeta.Labels")
 	}
 	if isAnnotaion {
 		result = result.Preload("KubernetesResourceMeta.Annotations")
 	}
-
 
 	if spec {
 		result = result.Preload("Spec")
@@ -94,13 +93,12 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 		result = result.Preload("Status")
 	}
 
-
 	if clusterId != "" {
 		result = result.Where(&model.KubernetesResource{ClusterID: clusterId})
 	}
-		
+
 	if search != "" {
-		result = result.Where(&model.KubernetesResourceObjectMeta{Name: `%`+search+`%`})
+		result = result.Where(&model.KubernetesResourceObjectMeta{Name: `%` + search + `%`})
 	}
 
 	result.Count(&totalCount)
@@ -136,14 +134,14 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	}
 
 	response := &models.MeshSyncResourcesAPIResponse{
-		Page:     page,
-		PageSize: pgSize,
+		Page:       page,
+		PageSize:   pgSize,
 		TotalCount: totalCount,
-		Resources:   resources,
+		Resources:  resources,
 	}
 
 	if err := enc.Encode(response); err != nil {
-	 h.log.Error(ErrFetchMeshSyncResources(err))
+		h.log.Error(ErrFetchMeshSyncResources(err))
 		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
 	}
 }

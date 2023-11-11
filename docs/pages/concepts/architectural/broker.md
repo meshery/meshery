@@ -11,6 +11,9 @@ list: include
 
 Broker is a custom Kubernetes controller that provides data streaming across independent components of Meshery whether those components are running inside or outside of the Kubernetes cluster.
 
+[![Meshery Log Viewer]({{ site.baseurl }}/assets/img/architecture/meshery-log-viewer.svg
+)]({{ site.baseurl }}/assets/img/architecture/meshery-log-viewer.svg)
+
 ### Broker FAQs
 
 #### How many Brokers can run?

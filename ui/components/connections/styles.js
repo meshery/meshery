@@ -107,6 +107,33 @@ const styles = (theme) => ({
       cursor: 'initial',
     },
   },
+  maintenance: {
+    '& .MuiChip-label': {
+      color: theme.palette.secondary.warning,
+    },
+    background: `${theme.palette.secondary.warning}30 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${theme.palette.secondary.warning} !important`,
+    },
+  },
+  disconnected: {
+    '& .MuiChip-label': {
+      color: theme.palette.secondary.warning,
+    },
+    background: `${theme.palette.secondary.warning}30 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${theme.palette.secondary.warning} !important`,
+    },
+  },
+  notfound: {
+    '& .MuiChip-label': {
+      color: theme.palette.secondary.warning,
+    },
+    background: `${theme.palette.secondary.warning}30 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${theme.palette.secondary.warning} !important`,
+    },
+  },
   expandedRows: {
     background: `${theme.palette.secondary.default}10`,
   },

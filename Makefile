@@ -289,7 +289,7 @@ site: docs
 
 ## Run Meshery Docs. Listen for changes.
 docs:
-	cd docs; bundle install; bundle exec jekyll serve --drafts --livereload --config _config_dev.yml
+	cd docs; bundle install; bundle exec jekyll serve --drafts --incremental --config _config_dev.yml
 
 ## Build Meshery Docs on your local machine.
 docs-build:
