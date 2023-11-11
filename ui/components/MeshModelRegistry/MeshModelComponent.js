@@ -481,7 +481,7 @@ const MeshModelComponent = ({
           <div
             className={`${StyleClass.treeWrapper} ${convert ? StyleClass.treeWrapperAnimate : ''}`}
           >
-            <div style={{ height: '30rem', width: '50%', margin: '1rem' }}>
+            <div className={StyleClass.treeContainer}>
               <MesheryTreeView
                 data={filteredData}
                 view={view}
