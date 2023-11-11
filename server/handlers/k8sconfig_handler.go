@@ -112,7 +112,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 
 		if err != nil {
 			saveK8sContextResponse.ErroredContexts = append(saveK8sContextResponse.ErroredContexts, *ctx)
-			metadata["description"] = fmt.Sprintf("Error creating connection for Kubernetes context \"%s\"", ctx.Name)
+			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", ctx.Name, ctx.Server)
 			metadata["error"] = err
 		} else {
 			eventBuilder.ActedUpon(connection.ID)
@@ -284,6 +284,8 @@ func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Reques
 
 func (h *Handler) LoadContextsAndPersist(userID string, token string, prov models.Provider) ([]*models.K8sContext, error) {
 	var contexts []*models.K8sContext
+	userUUID := uuid.FromStringOrNil(userID)
+
 	// Get meshery instance ID
 	mid, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
 	if !ok {
@@ -296,17 +298,24 @@ func (h *Handler) LoadContextsAndPersist(userID string, token string, prov model
 	}
 	kubeconfigSource := fmt.Sprintf("file://%s", filepath.Join(h.config.KubeConfigFolder, "config"))
 	data, err := utils.ReadFileSource(kubeconfigSource)
-
+	
+	eventBuilder := events.NewEvent().FromUser(userUUID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create").
+		WithDescription(fmt.Sprintf("Kubernetes config imported from %s.", kubeconfigSource)).WithSeverity(events.Informational)
+	eventMetadata := map[string]interface{}{}
+	metadata := map[string]interface{}{}
 	if err != nil {
 		// Could be an in-cluster deployment
 		ctxName := "in-cluster"
 
 		cc, err := models.NewK8sContextFromInClusterConfig(ctxName, mid)
 		if err != nil {
+			metadata["description"] = "Failed to import in-cluster kubeconfig."
+			metadata["error"] = err
 			logrus.Warn("failed to generate in cluster context: ", err)
 			return contexts, err
 		}
 		if cc == nil {
+			metadata["description"] = "No contexts detected in the in-cluster kubeconfig."
 			err := fmt.Errorf("nil context generated from in cluster config")
 			logrus.Warn(err)
 			return contexts, err
@@ -314,6 +323,8 @@ func (h *Handler) LoadContextsAndPersist(userID string, token string, prov model
 		cc.DeploymentType = "in_cluster"
 		conn, err := prov.SaveK8sContext(token, *cc)
 		if err != nil {
+			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", cc.Name, cc.Server)
+			metadata["error"] = err
 			logrus.Warn("failed to save the context for incluster: ", err)
 			return contexts, err
 		}
@@ -321,10 +332,16 @@ func (h *Handler) LoadContextsAndPersist(userID string, token string, prov model
 		if err != nil || statusCode != http.StatusOK {
 			logrus.Warn("failed to update connection status for connection id", conn.ID, "to", connections.CONNECTED)
 			logrus.Debug("connection: ", updatedConnection)
+			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", cc.Name, cc.Server)
+			metadata["error"] = err
 			return contexts, err
 		}
 		h.config.K8scontextChannel.PublishContext()
 		contexts = append(contexts, cc)
+		eventMetadata["in-cluster"] = metadata
+		event := eventBuilder.WithMetadata(eventMetadata).Build()
+		_ = prov.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userUUID, event)
 		return contexts, nil
 	}
 
@@ -332,12 +349,7 @@ func (h *Handler) LoadContextsAndPersist(userID string, token string, prov model
 	if err != nil {
 		return contexts, err
 	}
-	userUUID := uuid.FromStringOrNil(userID)
-	eventBuilder := events.NewEvent().FromUser(userUUID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create").
-		WithDescription(fmt.Sprintf("Kubernetes config imported from %s.", kubeconfigSource)).WithSeverity(events.Informational)
-
-	eventMetadata := map[string]interface{}{}
-
+	
 	ctxs := models.K8sContextsFromKubeconfig(prov, userID, h.config.EventBroadcaster, cfg, mid, eventMetadata)
 
 	// Persist the generated contexts
@@ -351,6 +363,7 @@ func (h *Handler) LoadContextsAndPersist(userID string, token string, prov model
 		if err != nil {
 			logrus.Warn("failed to save the context: ", err)
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", ctx.Name, ctx.Server)
+			metadata["error"] = err
 			continue
 		}
 		updatedConnection, statusCode, err := prov.UpdateConnectionStatusByID(token, conn.ID, connections.CONNECTED)
@@ -358,7 +371,7 @@ func (h *Handler) LoadContextsAndPersist(userID string, token string, prov model
 			logrus.Warn("failed to update connection status for connection id", conn.ID, "to", connections.CONNECTED)
 			logrus.Debug("connection: ", updatedConnection)
 
-			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", conn.Name, ctx.Server)
+			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", ctx.Name, ctx.Server)
 			metadata["error"] = err
 			continue
 		}
