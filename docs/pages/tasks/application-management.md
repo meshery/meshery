@@ -7,7 +7,7 @@ language: en
 list: include
 ---
 
-Meshery's application management features allows you to store and onboard/offboard applications onto service meshes. Meshery also comes with some sample applications out-of-the-box for you to quickly try out service mesh features.
+Meshery's application management features allows you to store, manage, configure, and un/deploy your applications to any of your connected kubernetes clusters. Meshery also comes with some sample applications out-of-the-box for you to quickly get started. Separately, you can import any of applications from [Meshery Catalog](https://meshery.io/catalog).
 
 ## What is a Meshery Application?
 
@@ -18,7 +18,11 @@ A single file (future: which could be split into multiple files upon user reques
 	"v2" Application = Services + Deployments + ReplicaSets (Rollout Strategy) 
 
 
-You can define the applications as _Kubernetes manifest files\*_ as well as [pattern files](./patterns.md).
+You can define the applications as 
+- Kubernetes manifest
+- Meshery Design
+- Helm Charts
+- Docker Compose
 
 <img src="{{ site.baseurl }}/assets/img/configuration-management/meshery-applications-seeded.png" />
 
