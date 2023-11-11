@@ -352,6 +352,7 @@ function MesheryPatterns({
     errors: {
       validationErrors: 0,
     },
+    patternID: '',
   });
 
   const [importModal, setImportModal] = useState({
@@ -634,12 +635,13 @@ function MesheryPatterns({
     setModalOpen({
       open: false,
       pattern_file: null,
+      patternID: '',
       name: '',
       count: 0,
     });
   };
 
-  const handleModalOpen = (e, pattern_file, name, errors, action) => {
+  const handleModalOpen = (e, pattern_file, name, pattern_id, errors, action) => {
     e.stopPropagation();
     const compCount = getComponentsinFile(pattern_file);
     const validationBody = (
@@ -651,7 +653,10 @@ function MesheryPatterns({
     );
     const dryRunComponent = (
       <DryRunComponent
-        design={pattern_file}
+        design={JSON.stringify({
+          pattern_file: pattern_file,
+          pattern_id: pattern_id,
+        })}
         noOfElements={compCount}
         selectedContexts={selectedK8sContexts}
       />
@@ -661,6 +666,7 @@ function MesheryPatterns({
       action: action,
       pattern_file: pattern_file,
       name: name,
+      patternID: pattern_id,
       count: compCount,
       validationBody: validationBody,
       dryRunComponent: dryRunComponent,
@@ -745,14 +751,17 @@ function MesheryPatterns({
     });
   };
 
-  const handleDeploy = (pattern_file, name) => {
+  const handleDeploy = (pattern_file, pattern_id, name) => {
     updateProgress({ showProgress: true });
     dataFetch(
       ctxUrl(DEPLOY_URL, selectedK8sContexts),
       {
         credentials: 'include',
         method: 'POST',
-        body: pattern_file,
+        body: JSON.stringify({
+          pattern_file: pattern_file,
+          pattern_id: pattern_id,
+        }),
       },
       () => {
         updateProgress({ showProgress: false });
@@ -789,20 +798,23 @@ function MesheryPatterns({
           }
         });
         setPatternErrors((prevErrors) => new Map([...prevErrors, [pattern_id, errors]]));
-        handleModalOpen(e, pattern_file, patterns[0].name, errors, ACTIONS.VERIFY);
+        handleModalOpen(e, pattern_file, patterns[0].name, pattern_id, errors, ACTIONS.VERIFY);
       },
       handleError('Error validating pattern'),
     );
   };
 
-  const handleUnDeploy = (pattern_file, name) => {
+  const handleUnDeploy = (pattern_file, pattern_id, name) => {
     updateProgress({ showProgress: true });
     dataFetch(
       ctxUrl(DEPLOY_URL, selectedK8sContexts),
       {
         credentials: 'include',
         method: 'DELETE',
-        body: pattern_file,
+        body: JSON.stringify({
+          pattern_file: pattern_file,
+          pattern_id: pattern_id,
+        }),
       },
       () => {
         updateProgress({ showProgress: false });
@@ -1188,6 +1200,7 @@ function MesheryPatterns({
                     e,
                     rowData.pattern_file,
                     rowData.name,
+                    rowData.id,
                     patternErrors.get(rowData.id),
                     ACTIONS.UNDEPLOY,
                   )
@@ -1198,15 +1211,17 @@ function MesheryPatterns({
               <TooltipIcon
                 placement="bottom"
                 title="Deploy"
-                onClick={(e) =>
+                onClick={(e) => {
+                  console.log('clicked deploy', rowData);
                   handleModalOpen(
                     e,
                     rowData.pattern_file,
                     rowData.name,
+                    rowData.id,
                     patternErrors.get(rowData.id),
                     ACTIONS.DEPLOY,
-                  )
-                }
+                  );
+                }}
               >
                 <DoneAllIcon data-cy="deploy-button" />
               </TooltipIcon>
@@ -1581,9 +1596,10 @@ function MesheryPatterns({
           open={modalOpen.open}
           handleClose={handleModalClose}
           submit={{
-            deploy: () => handleDeploy(modalOpen.pattern_file, modalOpen.name),
-            unDeploy: () => handleUnDeploy(modalOpen.pattern_file, modalOpen.name),
-            verify: () => handleVerify(modalOpen.pattern_file, modalOpen.name),
+            deploy: () => handleDeploy(modalOpen.pattern_file, modalOpen.patternID, modalOpen.name),
+            unDeploy: () =>
+              handleUnDeploy(modalOpen.pattern_file, modalOpen.patternID, modalOpen.name),
+            verify: () => handleVerify(modalOpen.pattern_file, modalOpen.patternID),
           }}
           title={modalOpen.name}
           componentCount={modalOpen.count}

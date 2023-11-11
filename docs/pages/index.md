@@ -35,7 +35,7 @@ language: en
       </summary>
       <ul class="section-title">
       {% for item in sorted_pages %}
-      {% if item.type=="installation" and item.list=="include" and item.language == "en" -%}
+      {% if item.type=="installation" and item.category!="integrations" and item.list=="include" and item.language == "en" -%}
         <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
         {% if item.abstract %}
           -  {{ item.abstract }}
