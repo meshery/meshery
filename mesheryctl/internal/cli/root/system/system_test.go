@@ -136,7 +136,7 @@ func TestSystemCmdIntegration(t *testing.T) {
 			t.Logf("Performing %s", tt.Action)
 			err := SystemCmd.Execute()
 			if err != nil {
-				t.Fatal(err)
+				t.Error("Error in executing command", err)
 			}
 
 			t.Logf("Meshery %sed", tt.Action)

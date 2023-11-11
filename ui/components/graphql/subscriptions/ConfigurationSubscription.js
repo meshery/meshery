@@ -45,6 +45,11 @@ const configurationSubscription = graphql`
           errmsg
           created_at
           updated_at
+          type {
+            String
+            Valid
+          }
+          SourceContent
         }
       }
       filters {

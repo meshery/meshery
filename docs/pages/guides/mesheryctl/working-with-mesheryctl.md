@@ -4,7 +4,7 @@ title: Using Meshery CLI
 description: How to use mesheryctl
 permalink: guides/mesheryctl/working-with-mesheryctl
 language: en
-type: Guides
+type: guides
 category: mesheryctl
 ---
 

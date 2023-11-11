@@ -40,12 +40,26 @@ cmd/meshery
 
 log.txt
 
-**/_site
-**/.sass-cache
-**/.jekyll-metadata
-**/.jekyll-cache
+# Docs
+_site
+.sass-cache
+.jekyll-metadata
+.jekyll-cache
 
+docs/_site
+docs/.sass-cache
+docs/.jekyll-metadata
+docs/.jekyll-cache
+
+v0.6/
+v0.5/
+v0.4/
 dist/
+
+docs/v0.6/
+docs/v0.5/
+docs/v0.4/
+
 
 */npm-debug.log
 

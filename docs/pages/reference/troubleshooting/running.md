@@ -3,7 +3,7 @@ layout: default
 title: Troubleshooting Errors while running Meshery 
 description: Troubleshooting Meshery errors when running make run-fast / meshery system start 
 permalink: guides/troubleshooting/running
-type: Guides
+type: guides
 category: troubleshooting
 language: en
 ---
