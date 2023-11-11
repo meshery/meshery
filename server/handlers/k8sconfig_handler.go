@@ -345,7 +345,7 @@ func (h *Handler) LoadContextsAndPersist(userID string, token string, prov model
 	for _, ctx := range ctxs {
 		metadata := map[string]interface{}{}
 		metadata["context"] = models.RedactCredentialsForContext(ctx)
-		metadata["description"] = fmt.Sprintf("Connection established with context %s at %s", ctx.Name, ctx.Server)
+		metadata["description"] = fmt.Sprintf("Connection established with context \"%s\" at %s", ctx.Name, ctx.Server)
 		ctx.DeploymentType = "out_of_cluster"
 		conn, err := prov.SaveK8sContext(token, *ctx)
 		if err != nil {
