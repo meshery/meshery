@@ -52,15 +52,15 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative',
     marginTop: '1rem',
     transition: 'all 1s',
-    [theme.breakpoints.down('sm')]:{
-      height: '47rem'
-    }
+    [theme.breakpoints.down('sm')]: {
+      height: '47rem',
+    },
   },
   mainContainerAnimate: {
     height: '36rem',
-    [theme.breakpoints.down('sm')]:{
-      height: '80rem'
-    }
+    [theme.breakpoints.down('sm')]: {
+      height: '80rem',
+    },
   },
   innerContainer: {
     display: 'flex',
@@ -71,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
     transform: 'translate(-50%, -50%)',
     transition: 'all 1s',
     [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column', 
+      flexDirection: 'column',
     },
   },
   innerContainerAnimate: {
@@ -83,9 +83,9 @@ const useStyles = makeStyles((theme) => ({
     left: '0%',
     backgroundColor: theme.palette.secondary.tabContainer,
     [theme.breakpoints.down('sm')]: {
-      flexDirection: 'row', 
+      flexDirection: 'row',
       paddingLeft: '1rem',
-      overflowX: 'auto'
+      overflowX: 'auto',
     },
   },
   tabs: {
@@ -107,14 +107,14 @@ const useStyles = makeStyles((theme) => ({
     opacity: '0',
     transition: 'all 1s',
     [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column-reverse'
-    }
+      flexDirection: 'column-reverse',
+    },
   },
   treeWrapperAnimate: {
     opacity: '1',
   },
   cardbg: {
-    backgroundColor: 'white'
+    backgroundColor: 'white',
   },
   cardStyle: {
     background: theme.palette.secondary.card,
@@ -130,8 +130,8 @@ const useStyles = makeStyles((theme) => ({
     transition: 'all 1s',
     [theme.breakpoints.down('sm')]: {
       marginTop: '0.7rem',
-      marginRight: '0.5rem'
-    }
+      marginRight: '0.5rem',
+    },
   },
   cardStyleAnimate: {
     marginTop: '0.7rem',
@@ -140,10 +140,10 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '8px 8px 0px 0px',
     paddingTop: '0.2rem',
     backgroundColor: theme.palette.secondary.tabCard,
-    [theme.breakpoints.down('sm')]:{
+    [theme.breakpoints.down('sm')]: {
       padding: '0.5rem',
-      flexDirection: 'column'
-    }
+      flexDirection: 'column',
+    },
   },
   overviewTab: {
     background: theme.palette.secondary.card,
@@ -161,8 +161,8 @@ const useStyles = makeStyles((theme) => ({
     transition: 'all 1s',
     [theme.breakpoints.down('sm')]: {
       marginRight: '0.5rem',
-      height: '0px'
-    }
+      height: '0px',
+    },
   },
   overviewTabAnimate: {
     marginTop: '0.7rem',
@@ -174,10 +174,10 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '8px 8px 0px 0px',
     visibility: 'visible',
     paddingTop: '0.2rem',
-    [theme.breakpoints.down('sm')]:{
+    [theme.breakpoints.down('sm')]: {
       padding: '0.5rem',
-      flexDirection: 'column'
-    }
+      flexDirection: 'column',
+    },
   },
   detailsContainer: {
     height: '30rem',
@@ -188,11 +188,11 @@ const useStyles = makeStyles((theme) => ({
     padding: '2.5rem',
     overflowY: 'auto',
     boxShadow: 'inset 0 0 6px 2px rgba(0, 0, 0,0.4)',
-    [theme.breakpoints.down('sm')]:{
+    [theme.breakpoints.down('sm')]: {
       width: '90%',
       padding: '0.5rem',
-      height: '40rem'
-    }
+      height: '40rem',
+    },
   },
   emptyDetailsContainer: {
     height: '30rem',
@@ -206,11 +206,11 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    [theme.breakpoints.down('sm')]:{
+    [theme.breakpoints.down('sm')]: {
       width: '90%',
       padding: '0.5rem',
-      height: '40rem'
-    }
+      height: '40rem',
+    },
   },
   activeTab: {
     backgroundColor:
@@ -220,16 +220,16 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.secondary.text,
   },
   line: {
-    borderLeft: `1px dashed ${theme.palette.secondary.text}`
+    borderLeft: `1px dashed ${theme.palette.secondary.text}`,
   },
-  treeContainer:{
+  treeContainer: {
     height: '30rem',
     width: '50%',
     margin: '1rem',
-    [theme.breakpoints.down('sm')]:{
-      width: '100%'
-    }
-  }
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+    },
+  },
   // Define other styles as needed
 }));
 
