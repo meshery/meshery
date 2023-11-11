@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Cloud Native Pattern Management
+title: Cloud Native Design Patterns
 permalink: tasks/pattern-management
 redirect_from: tasks/pattern-management/
 type: tasks
@@ -16,7 +16,6 @@ list: include
 ## Use Meshery to Deploy a Cloud Native Pattern
 
 You can use Meshery to deploy a cloud native pattern. Cloud native patterns are detailed as a YAML file. See the [Configuration Management]({{ site.baseurl }}/guides/configuration-management) guide.
-
 
 ### Pattern Repository
 

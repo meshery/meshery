@@ -27,7 +27,7 @@ var (
 )
 
 type eventStatusPayload struct {
-	Status    string `json:"status"`
+	Status    string       `json:"status"`
 	StatusIDs []*uuid.UUID `json:"ids"`
 }
 

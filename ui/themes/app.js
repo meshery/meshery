@@ -11,6 +11,22 @@ export const Colors = {
   charcoal: '#3C494F',
 };
 
+export const common = {
+  overrides: {
+    MuiSwitch: {
+      switchBase: {
+        color: '#647881',
+        '&$checked': {
+          color: '#00b39f !important',
+        },
+        '&$checked + $track': {
+          backgroundColor: 'rgba(0,179,159,0.5)',
+        },
+      },
+    },
+  },
+};
+
 export var darkTheme = createTheme({
   typography: {
     useNextVariants: true,
@@ -84,6 +100,20 @@ export var darkTheme = createTheme({
       penColorPrimary: '#E6E6E6',
       penColorSecondary: '#E6E6E6',
       toolbarBg2: '#464646',
+      menuBg: '#363636',
+      menuActionBg: '#222',
+      menuSelectedBg: 'rgba(0, 179, 159, 0.25)',
+      menuActionText: '#FBFBFB',
+      menuItemBorder: '#979797',
+      pinball: '#222222',
+      innertableBg1: 'rgb(255, 255, 255, 0.1)',
+      innertableBg2: 'rgb(255, 255, 255, 0.05)',
+      tabContainer: '#51636B',
+      card: '#51636B',
+      detailsContainer: '#d9dadb80',
+      tabCard: '#677a84',
+      disableButtonBg: '#666666',
+      disableButton: '#9d9d9d',
     },
   },
   p: {
@@ -103,6 +133,7 @@ export var darkTheme = createTheme({
 darkTheme = {
   ...darkTheme,
   overrides: {
+    ...common.overrides,
     MuiSvgIcon: {
       root: {
         ...iconMedium,
@@ -191,7 +222,20 @@ darkTheme = {
           '0px 4px 0px -2px rgb(0 179 159 / 10%), 0px 4px 0px 0px rgb(0 179 159 / 10%), 0px 2px 0px 0px rgb(0 179 159 / 20%)',
       },
     },
-    MuiIconButton: { root: { padding: darkTheme.spacing(1) }, colorPrimary: { color: '#FFF' } },
+    MuiIconButton: {
+      root: {
+        padding: darkTheme.spacing(1),
+        color: '#F6F8F8',
+        '&:hover': {
+          color: '#00B39F',
+        },
+      },
+      colorPrimary: {
+        color: '#F6F8F8',
+      },
+
+      //focusedStyles
+    },
     MuiTooltip: { tooltip: { borderRadius: 4 } },
     MuiDivider: { root: { backgroundColor: '#404854' } },
     MuiListItemText: { primary: { fontWeight: darkTheme.typography.fontWeightMedium } },
@@ -321,6 +365,21 @@ let theme = createTheme({
       penColorPrimary: '#3C494F',
       penColorSecondary: '#677E88',
       toolbarBg1: '#FFFFFF',
+      menuBg: '#EBEFF1',
+      menuItemBg: '#EBEFF1',
+      menuActionBg: '#51636B',
+      menuSelectedBg: '#CCC',
+      menuActionText: '#FBFBFB',
+      menuItemBorder: '#979797',
+      pinball: '#d3d3d3',
+      innertableBg1: '#ffffff',
+      innertableBg2: '#ECECED',
+      tabContainer: '#51636B',
+      card: '#51636B',
+      detailsContainer: '#d9dadb80',
+      tabCard: '#677a84',
+      disableButtonBg: '#e0e0e0',
+      disableButton: '#9d9d9d',
     },
   },
   shape: { borderRadius: 8 },
@@ -338,6 +397,7 @@ let theme = createTheme({
 theme = {
   ...theme,
   overrides: {
+    ...common.overrides,
     MuiSvgIcon: {
       root: {
         ...iconMedium,
@@ -381,7 +441,16 @@ theme = {
         // },
       },
     },
-    MuiIconButton: { root: { padding: theme.spacing(1) }, colorPrimary: { color: '#607d8b' } },
+    MuiIconButton: {
+      root: {
+        padding: theme.spacing(1),
+        '&:hover': {
+          color: '#00B39F',
+        },
+        color: '#607d8b',
+      },
+      colorPrimary: { color: '#607d8b' },
+    },
     MuiTooltip: { tooltip: { borderRadius: 4 } },
     MuiDivider: { root: { backgroundColor: '#404854' } },
     MuiListItemText: { primary: { fontWeight: theme.typography.fontWeightMedium } },
@@ -411,7 +480,16 @@ theme = {
         },
       },
     },
-
+    MuiOutlinedInput: {
+      root: {
+        '&:hover $notchedOutline': {
+          borderColor: '#00B39F',
+        },
+        '&$focused $notchedOutline': {
+          borderColor: '#00B39F',
+        },
+      },
+    },
     // global style for body throughout meshery-ui
     MuiCssBaseline: {
       '@global': {

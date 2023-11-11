@@ -161,11 +161,11 @@ func main() {
 	brokerConn := nats.NewEmptyConnection
 
 	err = dbHandler.AutoMigrate(
-		&meshsyncmodel.KeyValue{},
-		&meshsyncmodel.Object{},
-		&meshsyncmodel.ResourceSpec{},
-		&meshsyncmodel.ResourceStatus{},
-		&meshsyncmodel.ResourceObjectMeta{},
+		&meshsyncmodel.KubernetesKeyValue{},
+		&meshsyncmodel.KubernetesResource{},
+		&meshsyncmodel.KubernetesResourceSpec{},
+		&meshsyncmodel.KubernetesResourceStatus{},
+		&meshsyncmodel.KubernetesResourceObjectMeta{},
 		&models.PerformanceProfile{},
 		&models.MesheryResult{},
 		&models.MesheryPattern{},
@@ -197,6 +197,7 @@ func main() {
 		MesheryK8sContextPersister:      &models.MesheryK8sContextPersister{DB: dbHandler},
 		EventsPersister:                 &models.EventsPersister{DB: dbHandler},
 		GenericPersister:                dbHandler,
+		Log:                             log,
 	}
 	lProv.Initialize()
 
@@ -257,6 +258,7 @@ func main() {
 			SmiResultPersister:         &models.SMIResultsPersister{DB: dbHandler},
 			GenericPersister:           dbHandler,
 			EventsPersister:            &models.EventsPersister{DB: dbHandler},
+			Log:                        log,
 		}
 
 		cp.Initialize()

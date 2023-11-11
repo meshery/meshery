@@ -4,8 +4,8 @@
       type="search"
       class="sidebar__search-input"
       id="sidebar-search-input"
-      placeholder="Search this site"
-      aria-label="Search this site…"
+      placeholder="Search this site..."
+      aria-label="Search this site..."
       autocomplete="off"
     />
   </form>
@@ -42,35 +42,54 @@
             endcapture %}
             <li class="sidebar-nav__section-link {% if entryUrl == pageUrl %} active {% endif %}">
               <a
-                href="{% if entry.url %}{{ site.baseurl }}{{linkUrlSelected}}/{{ entry.url }}{% else %}{{
-				entry.external_url }}{% endif %}"
+                href="{% if entry.url %}{{ site.baseurl }}{{linkUrlSelected}}/{{ entry.url }}{% else %}
+                {{entry.external_url }}{% endif %}"
                 class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
                 >{{ entry.title }}</a
               >
             </li>
             {% if page.url contains entry.url or pageUrl == sectionUrl %} {% if entry.children %}
-            <ul>
-              <li id="{{ child.title | slugify }}">
-                {% for child in entry.children %} {% capture childUrl %}{% if child.url %}{{ site.baseurl
-                }}{{linkUrlSelected}}/{{ child.url }}{% else %}{{ child.external_url }}{% endif %} {% endcapture %} {%
-                capture childUrl %}{{childUrl | strip}}{% endcapture %} {% capture childTitle %}{{ childUrl | replace:
-                "/", "" | strip}}{% endcapture %}
-                <a
-                  class="sidebar-nav__section-link {% if pageUrl contains childTitle %} active {% endif %}"
-                  id="m-{{ section.title | slugify }}-{{ entry.title | slugify }}-{{ child.title | slugify
-					 }}"
-                  href="{{childUrl}}"
-                  >{{ child.title }}</a
-                >
+             <ul>
+                <li id="{{ child.title | slugify }}">
+                  {% for child in entry.children %} {% capture childUrl %}{% if child.url %}{{ site.baseurl
+                  }}{{linkUrlSelected}}/{{ child.url }}{% else %}{{ child.external_url }}{% endif %} {% endcapture %} {%
+                  capture childUrl %}{{childUrl | strip}}{% endcapture %} {% capture childTitle %}{{ childUrl | replace:
+                  "/", "" | strip}}{% endcapture %}
+                  <a
+                    class="sidebar-nav__section-link {% if pageUrl contains childTitle %} active {% endif %}"
+                    id="m-{{ section.title | slugify }}-{{ entry.title | slugify }}-{{ child.title | slugify}}"
+                    href="{{childUrl}}"
+                    >{{ child.title }}</a>
+                </li>
+                  {% if child.grandchildren %}
+                  <ul>
+                      {% for grandchild in child.grandchildren %} {% capture grandchildUrl %}{% if grandchild.url %}{{ site.baseurl
+                      }}{{linkUrlSelected}}/{{ grandchild.url }}{% else %}{{ grandchild.external_url }}{% endif %} {% endcapture %} {%
+                      capture grandchildUrl %}{{grandchildUrl | strip}}{% endcapture %} {% capture grandchildTitle %}{{ grandchildUrl | replace:
+                      "/", "" | strip}}{% endcapture %}
+                      <li id="{{ grandchild.title | slugify }}">
+                        <a
+                        class="sidebar-nav__section-link {% if pageUrl contains grandchildTitle %} active {% endif %}"
+                        id="m-{{ section.title | slugify }}-{{ entry.title | slugify }}-{{ grandchild.title | slugify}}"
+                        href="{{grandchildUrl}}"
+                        >{{ grandchild.title }}</a
+                      >
+                    </li>
+                      {% endfor %}
+                  </ul>
+                  {% endif %} 
+
                 {% endfor %}
-              </li>
-            </ul>
-            {% endif %} {% endif %} {% endfor %}
+                </ul>
+              {% endif %} 
+              </ul>
+            {% endif %} {% endfor %}
           </ul>
         </li>
       </ul>
 
       {% endif %}
+
     </ul>
     {% endfor %}
   </nav>

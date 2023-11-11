@@ -1,3 +1,5 @@
+import fetchMesheryOperatorStatus from '../../graphql/queries/OperatorStatusQuery';
+
 export const isMesheryOperatorConnected = ({ operatorInstalled }) => operatorInstalled;
 
 /**
@@ -7,8 +9,19 @@ export const isMesheryOperatorConnected = ({ operatorInstalled }) => operatorIns
  * @param  {(res) => void} successHandler
  * @param  {(err) => void} errorHandler
  */
-export const pingMesheryOperator = (fetchMesheryOperatorStatus, successcb, errorcb) => {
-  fetchMesheryOperatorStatus().subscribe({ next: successcb, error: errorcb });
+export const pingMesheryOperator = (id, successcb, errorcb) => {
+  const subscription = fetchMesheryOperatorStatus({
+    k8scontextID: id,
+  }).subscribe({
+    next: () => {
+      successcb();
+      subscription.unsubscribe();
+    },
+    error: () => {
+      errorcb();
+      subscription.unsubscribe();
+    },
+  });
 };
 
 /**
@@ -38,6 +51,10 @@ export const getOperatorStatusFromQueryResult = (res) => {
 
   if (res.operator?.status === 'ENABLED') {
     res.operator?.controllers?.forEach((controller) => {
+      operatorInformation = {
+        ...operatorInformation,
+        [controller.name]: controller,
+      };
       if (controller.name === 'broker' && controller.status === 'ENABLED') {
         operatorInformation = {
           ...operatorInformation,

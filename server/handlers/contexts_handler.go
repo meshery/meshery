@@ -35,7 +35,7 @@ func (h *Handler) GetAllContexts(w http.ResponseWriter, req *http.Request, _ *mo
 
 	q := req.URL.Query()
 	// Don't fetch credentials as UI has no use case.
-	vals, err := provider.GetK8sContexts(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), false)
+	vals, err := provider.GetK8sContexts(token, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), "", false)
 	if err != nil {
 		http.Error(w, "failed to get contexts", http.StatusInternalServerError)
 		return
@@ -118,7 +118,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		return
 	}
 
-	description := fmt.Sprintf("Kubernetes context %s deleted.", deletedContext.Name)
+	description := fmt.Sprintf("Kubernetes context \"%s\" deleted.", deletedContext.Name)
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
 	_ = provider.PersistEvent(event)

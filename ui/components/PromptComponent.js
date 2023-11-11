@@ -155,19 +155,21 @@ class PromptComponent extends React.Component {
             </DialogContent>
           )}
           <DialogActions className={classes.actions}>
-            <Button
-              onClick={() => {
-                this.hide();
-                resolve(options[1]);
-              }}
-              key={options[1]}
-              className={classes.button1}
-            >
-              <Typography variant body2>
-                {' '}
-                {options[1]}{' '}
-              </Typography>
-            </Button>
+            {options.length > 1 && (
+              <Button
+                onClick={() => {
+                  this.hide();
+                  resolve(options[1]);
+                }}
+                key={options[1]}
+                className={classes.button1}
+              >
+                <Typography variant body2>
+                  {' '}
+                  {options[1]}{' '}
+                </Typography>
+              </Button>
+            )}
             <Button
               onClick={() => {
                 this.hide();

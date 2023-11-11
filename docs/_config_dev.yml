@@ -15,8 +15,8 @@
 # in the templates via {{ site.myvariable }}.
 
 title: Documentation
-email: community@layer5.io
-author: Layer5
+email: maintainers@meshery.io
+author: Meshery Authors
 description: > # this means to ignore newlines until "baseurl:"
   As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.
 
@@ -33,9 +33,9 @@ github_repo: "meshery"
 project: https://meshery.io
 
 # Optional
-twitter: layer5
-linkedin: layer5
-dockerhub: layer5
+twitter: https://twitter.com/mesheryio
+linkedin: https://www.linkedin.com/company/meshery/
+dockerhub: https://hub.docker.com/r/meshery
 
 # Should there be feedback buttons at the bottom of pages?
 feedback: false
@@ -65,7 +65,7 @@ fixedNav: 'true' # true or false
 
 permalink: /:year/:title/
 markdown: kramdown
-exclude: [_site, CHANGELOG.md, LICENSE, README.md, vendor, Makefile]
+exclude: [_site, CHANGELOG.md, LICENSE, README.md, vendor, Makefile, v0.6, v0.5, v0.4]
 
 sass:
     sass_dir: _sass
@@ -83,7 +83,7 @@ collections:
   compatibility:
     output: true
     permalink: /project/:collection/:path
-    name: compatibility       
+    name: compatibility   
   guides:
     output: true
     permalink: /:collection/:path
@@ -97,6 +97,10 @@ collections:
     output: true
     permalink: reference/mesheryctl/:collection/:path
     name: mesheryctlcommands
+  integrations:
+    output: true
+    permalink: /:collection/:path    
+    name: integrations
 
 # Defaults
 defaults:
