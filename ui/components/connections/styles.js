@@ -1,3 +1,4 @@
+import { alpha } from '@material-ui/core';
 import { Colors } from '../../themes/app';
 
 const styles = (theme) => ({
@@ -156,10 +157,6 @@ const styles = (theme) => ({
     width: 'calc(100% - 23px)',
     border: 'none',
   },
-  listItem: {
-    paddingTop: '0',
-    paddingBottom: '0',
-  },
   noGutter: {
     padding: '0',
   },
@@ -194,6 +191,38 @@ const styles = (theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  list: {
+    display: 'flex',
+    flexDirection: 'column',
+    gridGap: '0.5rem',
+    marginBlock: '0.5rem',
+    borderRadius: '0.25rem',
+    backgroundColor: theme.palette.secondary.honeyComb,
+  },
+  listButton: {
+    '&:hover': {
+      backgroundColor: alpha(theme.palette.secondary.link2, 0.25),
+    },
+  },
+  listItem: {
+    display: 'flex',
+    gridGap: '0.5rem',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  button: {
+    width: '100%',
+    justifyContent: 'flex-start',
+    '&:hover': {
+      backgroundColor: 'transparent',
+    },
+  },
+  listContainer: {
+    width: '100%',
+    justifyContent: 'flex-start',
+    display: 'flex',
+    alignItems: 'center',
   },
 });
 

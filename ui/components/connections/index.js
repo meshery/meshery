@@ -20,6 +20,7 @@ import {
   Tabs,
   Tab,
   MenuItem,
+  Box,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -49,11 +50,13 @@ import MeshsyncIcon from '../../assets/icons/Meshsync';
 import classNames from 'classnames';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import SyncIcon from '@mui/icons-material/Sync';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
 import { CONNECTION_STATES } from '../../utils/Enum';
 import { FormatConnectionMetadata } from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
+import theme from '../../themes/app';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -877,27 +880,35 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
           }}
         >
           <Grid style={{ margin: '10px' }}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              size="large"
-              onClick={handleFlushMeshSync(rowData.rowIndex)}
-              className={classes.FlushBtn}
-              data-cy="btnResetDatabase"
-            >
-              <Typography> Flush MeshSync </Typography>
-            </Button>
-            <Typography>
-              <Switch
-                defaultChecked={getOperatorStatus(rowData.rowIndex)?.operatorState}
-                onClick={(e) => handleOperatorSwitch(rowData.rowIndex, e.target.checked)}
-                name="OperatorSwitch"
-                color="primary"
-                className={classes.OperatorSwitch}
-              />
-              Operator
-            </Typography>
+            <div className={classNames(classes.list, classes.listButton)}>
+              <Box className={classes.listItem} sx={{ width: '100%' }}>
+                <Button
+                  type="submit"
+                  onClick={handleFlushMeshSync(rowData.rowIndex)}
+                  data-cy="btnResetDatabase"
+                  className={classes.button}
+                >
+                  <SyncIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
+                  <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
+                    Flush MeshSync
+                  </Typography>
+                </Button>
+              </Box>
+            </div>
+            <div className={classes.list}>
+              <Box className={classes.listItem} sx={{ width: '100%' }}>
+                <div className={classes.listContainer}>
+                  <Switch
+                    defaultChecked={getOperatorStatus(rowData.rowIndex)?.operatorState}
+                    onClick={(e) => handleOperatorSwitch(rowData.rowIndex, e.target.checked)}
+                    name="OperatorSwitch"
+                    color="primary"
+                    className={classes.OperatorSwitch}
+                  />
+                  <Typography variant="body1">Operator</Typography>
+                </div>
+              </Box>
+            </div>
           </Grid>
         </Popover>
         <PromptComponent ref={meshSyncResetRef} />
