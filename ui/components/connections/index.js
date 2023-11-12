@@ -806,7 +806,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
               className={classes.tab}
               label={
                 <div className={classes.iconText}>
-                  <span style={{ marginRight: '0.3rem' }}>Meshsync</span>
+                  <span style={{ marginRight: '0.3rem' }}>MeshSync</span>
                   <MeshsyncIcon width="20" height="20" />
                 </div>
               }
