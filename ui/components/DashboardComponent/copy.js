@@ -1,9 +1,9 @@
 import {
-  Button,
   Card,
   CardContent,
   CardHeader,
   Chip,
+  Button,
   MenuItem,
   NoSsr,
   Paper,
@@ -22,34 +22,34 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import dataFetch from '../lib/data-fetch';
+import dataFetch from '../../lib/data-fetch.js';
 import {
   updateGrafanaConfig,
   updateProgress,
   updatePrometheusConfig,
   updateTelemetryUrls,
-} from '../lib/store';
-import { getK8sClusterIdsFromCtxId, getK8sClusterNamesFromCtxId } from '../utils/multi-ctx';
-import { versionMapper } from '../utils/nameMapper';
-import fetchControlPlanes from './graphql/queries/ControlPlanesQuery';
-import fetchDataPlanes from './graphql/queries/DataPlanesQuery';
+} from '../../lib/store.js';
+import { getK8sClusterIdsFromCtxId, getK8sClusterNamesFromCtxId } from '../../utils/multi-ctx.js';
+import { versionMapper } from '../../utils/nameMapper.js';
+import fetchControlPlanes from '../graphql/queries/ControlPlanesQuery.js';
+import fetchDataPlanes from '../graphql/queries/DataPlanesQuery.js';
 
-import subscribeClusterResources from './graphql/subscriptions/ClusterResourcesSubscription';
-import fetchAvailableNamespaces from './graphql/queries/NamespaceQuery';
+import subscribeClusterResources from '../graphql/subscriptions/ClusterResourcesSubscription.js';
+import fetchAvailableNamespaces from '../graphql/queries/NamespaceQuery.js';
 
 import MUIDataTable from 'mui-datatables';
-import Popup from './Popup';
-import { iconMedium } from '../css/icons.styles';
+import Popup from '../Popup.js';
+import { iconMedium } from '../../css/icons.styles.js';
 import {
   configurationTableTheme,
   configurationTableThemeDark,
-} from '../themes/configurationTableTheme';
-import DashboardMeshModelGraph from './Dashboard/DashboardMeshModelGraph';
-import ConnectionStatsChart from './Dashboard/ConnectionCharts.js';
-import { EVENT_TYPES } from '../lib/event-types';
-import { withNotify } from '../utils/hooks/useNotification';
+} from '../../themes/configurationTableTheme.js';
+import DashboardMeshModelGraph from '../Dashboard/DashboardMeshModelGraph.js';
+import ConnectionStatsChart from '../Dashboard/ConnectionCharts.js';
+import { EVENT_TYPES } from '../../lib/event-types.js';
+import { withNotify } from '../../utils/hooks/useNotification.js';
 import _ from 'lodash';
-import WorkloadChart from './Dashboard/WorkloadChart';
+import WorkloadChart from '../Dashboard/WorkloadChart.js';
 const styles = (theme) => ({
   rootClass: { backgroundColor: theme.palette.secondary.elevatedComponents2 },
   datatable: {
@@ -115,7 +115,8 @@ const styles = (theme) => ({
     marginBottom: theme.spacing(2),
   },
 });
-class DashboardComponent extends React.Component {
+
+class Dashboard extends React.Component {
   constructor(props) {
     super(props);
     const { meshAdapters, grafana, prometheus } = props;
@@ -1106,7 +1107,7 @@ class DashboardComponent extends React.Component {
   }
 }
 
-DashboardComponent.propTypes = { classes: PropTypes.object.isRequired };
+Dashboard.propTypes = { classes: PropTypes.object.isRequired };
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
@@ -1134,5 +1135,5 @@ const mapStateToProps = (state) => {
 };
 
 export default withStyles(styles, { withTheme: true })(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(withNotify(DashboardComponent))),
+  connect(mapStateToProps, mapDispatchToProps)(withRouter(withNotify(Dashboard))),
 );
