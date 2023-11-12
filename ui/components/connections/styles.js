@@ -16,9 +16,6 @@ const styles = (theme) => ({
     '& .MuiSelect-select.MuiSelect-select': {
       padding: '0 2px',
     },
-    '& .MuiSelect-icon': {
-      display: 'none',
-    },
   },
   createButton: {
     display: 'flex',
@@ -35,7 +32,7 @@ const styles = (theme) => ({
     minWidth: '100%',
   },
   statusChip: {
-    minWidth: '130px !important',
+    minWidth: '145px !important',
     maxWidth: '100% !important',
     display: 'flex !important',
     justifyContent: 'flex-start !important',

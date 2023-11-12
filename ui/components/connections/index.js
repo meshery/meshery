@@ -526,7 +526,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
             <TableContainer className={classes.innerTableContainer}>
               <Table>
                 <TableRow className={classes.noGutter}>
-                  <TableCell style={{ padding: '20px 0' }}>
+                  <TableCell style={{ padding: '20px 0', overflowX: 'hidden' }}>
                     <Grid container spacing={1} style={{ textTransform: 'lowercase' }}>
                       <Grid item xs={12} md={12} className={classes.contentContainer}>
                         <Grid container spacing={1}>
