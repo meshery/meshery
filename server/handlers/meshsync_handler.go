@@ -70,9 +70,14 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	status, _ := strconv.ParseBool(r.URL.Query().Get("status"))
 	isAnnotaion, _ := strconv.ParseBool(r.URL.Query().Get("annotation"))
 	isLabels, _ := strconv.ParseBool(r.URL.Query().Get("labels"))
+	kind := r.URL.Query().Get("kind")
 
 	result := provider.GetGenericPersister().Model(&model.KubernetesResource{}).
 		Preload("KubernetesResourceMeta")
+
+	if kind != "" {
+		result = result.Where(&model.KubernetesResource{Kind: kind})
+	}
 
 	if apiVersion != "" {
 		result = result.Where(&model.KubernetesResource{APIVersion: apiVersion})
