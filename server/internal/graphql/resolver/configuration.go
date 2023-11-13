@@ -16,14 +16,12 @@ var (
 	err          error
 )
 
-func (r *Resolver) subscribeConfiguration(ctx context.Context, provider models.Provider, user models.User, applicationSelector model.PageFilter, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error) {
+func (r *Resolver) subscribeConfiguration(ctx context.Context, provider models.Provider, user models.User, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error) {
 	userID, _ := uuid.FromString(user.ID)
 
-	cha, unsubscribeApps := r.Config.ApplicationChannel.Subscribe(userID)
 	chp, unsubscribePatterns := r.Config.PatternChannel.Subscribe(userID)
 	chf, unsubscribeFilters := r.Config.FilterChannel.Subscribe(userID)
 
-	r.Config.ApplicationChannel.Publish(userID, struct{}{})
 	r.Config.PatternChannel.Publish(userID, struct{}{})
 	r.Config.FilterChannel.Publish(userID, struct{}{})
 	configuration := make(chan *model.ConfigurationPage)
@@ -43,17 +41,7 @@ func (r *Resolver) subscribeConfiguration(ctx context.Context, provider models.P
 				}
 				configuration <- conf
 
-			case <-cha:
-				applications, err = r.fetchApplications(ctx, provider, applicationSelector)
-				if err != nil {
-					r.Log.Error(ErrApplicationsSubscription(err))
-					break
-				}
 
-				conf = &model.ConfigurationPage{
-					Applications: applications,
-				}
-				configuration <- conf
 
 			case <-chf:
 				filters, err = r.fetchFilters(ctx, provider, filterSelector)
@@ -68,7 +56,6 @@ func (r *Resolver) subscribeConfiguration(ctx context.Context, provider models.P
 				configuration <- conf
 
 			case <-ctx.Done():
-				unsubscribeApps()
 				unsubscribePatterns()
 				unsubscribeFilters()
 				close(configuration)
