@@ -4,12 +4,20 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
 import { withStyles } from '@material-ui/core/styles';
 import { withNotify } from '../../utils/hooks/useNotification';
-import { Tooltip, Tabs, Tab, Paper } from '@material-ui/core';
+import { Tooltip, Tabs, Tab, Paper, Typography } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPoll, faDatabase, faFileInvoice } from '@fortawesome/free-solid-svg-icons';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import { updateProgress } from '../../lib/store';
 import { iconMedium } from '../../css/icons.styles';
+import Clusters from './clusters';
+import Namespaces from './namespaces';
+import Nodes from './nodes';
+import Workloads from './workloads';
+import Storage from './storage';
+import Network from './network';
+import Security from './security';
+import Configuration from './configuration';
 
 const styles = (theme) => ({
   wrapperClss: {
@@ -110,6 +118,14 @@ const DashboardComponent = (props) => {
     setTabVal(newValue);
   };
 
+  function TabContainer(props) {
+    return (
+      <Typography component="div" style={{ paddingTop: 2 }}>
+        {props.children}
+      </Typography>
+    );
+  }
+
   return (
     <>
       <div className={classes.wrapperClss}>
@@ -126,7 +142,7 @@ const DashboardComponent = (props) => {
               <Tab
                 className={classes.tab}
                 icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
-                label="Cluster"
+                label="Clusters"
                 data-cy="tabServiceMeshes"
               />
             </Tooltip>
@@ -134,7 +150,15 @@ const DashboardComponent = (props) => {
               <Tab
                 className={classes.tab}
                 icon={<FontAwesomeIcon icon={faPoll} style={iconMedium} />}
-                label="Metrics"
+                label="Nodes"
+                tab="tabMetrics"
+              />
+            </Tooltip>
+            <Tooltip title="Configure Metrics backends" placement="top">
+              <Tab
+                className={classes.tab}
+                icon={<FontAwesomeIcon icon={faPoll} style={iconMedium} />}
+                label="Namespaces"
                 tab="tabMetrics"
               />
             </Tooltip>
@@ -142,7 +166,7 @@ const DashboardComponent = (props) => {
               <Tab
                 className={classes.tab}
                 icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
-                label="Reset"
+                label="Workloads"
                 tab="systemReset"
               />
             </Tooltip>
@@ -150,12 +174,76 @@ const DashboardComponent = (props) => {
               <Tab
                 className={classes.tab}
                 icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
-                label="Registry"
+                label="Storage"
+                tab="registry"
+              />
+            </Tooltip>
+            <Tooltip title="Registry" placement="top">
+              <Tab
+                className={classes.tab}
+                icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
+                label="Network"
+                tab="registry"
+              />
+            </Tooltip>
+            <Tooltip title="Registry" placement="top">
+              <Tab
+                className={classes.tab}
+                icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
+                label="Security"
+                tab="registry"
+              />
+            </Tooltip>
+            <Tooltip title="Registry" placement="top">
+              <Tab
+                className={classes.tab}
+                icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
+                label="Configuration"
                 tab="registry"
               />
             </Tooltip>
           </Tabs>
         </Paper>
+        {tabVal === 0 && (
+          <TabContainer>
+            <Clusters />
+          </TabContainer>
+        )}
+        {tabVal === 1 && (
+          <TabContainer>
+            <Nodes updateProgress={updateProgress} classes={classes} />
+          </TabContainer>
+        )}
+        {tabVal === 2 && (
+          <TabContainer>
+            <Namespaces />
+          </TabContainer>
+        )}
+        {tabVal === 3 && (
+          <TabContainer>
+            <Workloads />
+          </TabContainer>
+        )}
+        {tabVal === 4 && (
+          <TabContainer>
+            <Storage />
+          </TabContainer>
+        )}
+        {tabVal === 5 && (
+          <TabContainer>
+            <Network />
+          </TabContainer>
+        )}
+        {tabVal === 6 && (
+          <TabContainer>
+            <Security />
+          </TabContainer>
+        )}
+        {tabVal === 7 && (
+          <TabContainer>
+            <Configuration />
+          </TabContainer>
+        )}
       </div>
     </>
   );
