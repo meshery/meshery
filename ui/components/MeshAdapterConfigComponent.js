@@ -76,11 +76,10 @@ const STATUS = {
 
 const MeshAdapterConfigComponent = (props) => {
   const labelRef = useRef(null);
-
   const [meshAdapters, setMeshAdapters] = useState(props.meshAdapters);
   const [setAdapterURLs, setSetAdapterURLs] = useState([]);
   const [availableAdapters, setAvailableAdapters] = useState([]);
-  const [ts, setTs] = useState(props.meshAdaptersts);
+  const [ts, setTs] = useState(props.meshAdapterStates);
   const [meshLocationURLError, setMeshLocationURLError] = useState(false);
   const [selectedAvailableAdapterError, setSelectedAvailableAdapterError] = useState(false);
   const [adapterStates, setAdapterStates] = useState(props.meshAdapterStates);
@@ -92,11 +91,11 @@ const MeshAdapterConfigComponent = (props) => {
   const { notify } = useNotification();
 
   useEffect(() => {
-    if (props.meshAdaptersts > ts) {
+    if (props.meshAdapterStates > ts) {
       setMeshAdapters(props.meshAdapters);
-      setTs(props.meshAdaptersts);
+      setTs(props.meshAdapterStates);
     }
-  }, [props.meshAdaptersts, ts]);
+  }, [props.meshAdapterStates, ts]);
 
   useEffect(() => {
     fetchSetAdapterURLs();
@@ -565,9 +564,8 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state) => {
   const meshAdapters = state.get('meshAdapters').toJS();
-  const meshAdaptersts = state.get('meshAdaptersts');
-
-  return { meshAdapters, meshAdaptersts };
+  const meshAdapterStates = state.get('meshAdaptersts');
+  return { meshAdapters, meshAdapterStates };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withRouter(MeshAdapterConfigComponent));
