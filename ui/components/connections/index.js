@@ -48,15 +48,16 @@ import MeshSyncTable from './MeshsyncTable';
 import ConnectionIcon from '../../assets/icons/Connection';
 import MeshsyncIcon from '../../assets/icons/Meshsync';
 import classNames from 'classnames';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+// import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+// import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import SyncIcon from '@mui/icons-material/Sync';
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import ExploreIcon from '@mui/icons-material/Explore';
+// import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+// import ExploreIcon from '@mui/icons-material/Explore';
 import { CONNECTION_STATES } from '../../utils/Enum';
 import { FormatConnectionMetadata } from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
 import theme from '../../themes/app';
+import { ConnectionStateChip } from './ConnectionChip';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -159,16 +160,16 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
   const { notify } = useNotification();
   const StyleClass = useStyles();
 
-  const icons = {
-    [CONNECTION_STATES.IGNORED]: () => <RemoveCircleIcon />,
-    [CONNECTION_STATES.CONNECTED]: () => <CheckCircleIcon />,
-    [CONNECTION_STATES.REGISTERED]: () => <AssignmentTurnedInIcon />,
-    [CONNECTION_STATES.DISCOVERED]: () => <ExploreIcon />,
-    [CONNECTION_STATES.DELETED]: () => <DeleteForeverIcon />,
-    [CONNECTION_STATES.MAINTENANCE]: () => <ExploreIcon />,
-    [CONNECTION_STATES.DISCONNECTED]: () => <ExploreIcon />,
-    [CONNECTION_STATES.NOTFOUND]: () => <ExploreIcon />,
-  };
+  // const icons = {
+  //   [CONNECTION_STATES.IGNORED]: () => <RemoveCircleIcon />,
+  //   [CONNECTION_STATES.CONNECTED]: () => <CheckCircleIcon />,
+  //   [CONNECTION_STATES.REGISTERED]: () => <AssignmentTurnedInIcon />,
+  //   [CONNECTION_STATES.DISCOVERED]: () => <ExploreIcon />,
+  //   [CONNECTION_STATES.DELETED]: () => <DeleteForeverIcon />,
+  //   [CONNECTION_STATES.MAINTENANCE]: () => <ExploreIcon />,
+  //   [CONNECTION_STATES.DISCONNECTED]: () => <ExploreIcon />,
+  //   [CONNECTION_STATES.NOTFOUND]: () => <ExploreIcon />,
+  // };
 
   const columns = [
     {
@@ -397,11 +398,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
                 >
                   {Object.keys(CONNECTION_STATES).map((s) => (
                     <MenuItem value={CONNECTION_STATES[s]}>
-                      <Chip
-                        className={classNames(classes.statusChip, classes[CONNECTION_STATES[s]])}
-                        avatar={icons[CONNECTION_STATES[s]]()}
-                        label={CONNECTION_STATES[s]}
-                      />
+                      <ConnectionStateChip status={CONNECTION_STATES[s]} />
                     </MenuItem>
                   ))}
                 </Select>

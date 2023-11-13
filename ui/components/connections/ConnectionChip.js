@@ -182,14 +182,16 @@ const HelpToolTip = ({ classes, value }) => {
 const Default = ({ value }) => {
   const classes = styles();
 
-  <MenuItem value={value}>
-    <Chip
-      className={classNames(classes.statusChip, classes.discovered)}
-      value={value}
-      avatar={<ExploreIcon />}
-      label={value}
-    />
-  </MenuItem>;
+  return (
+    <MenuItem value={value}>
+      <Chip
+        className={classNames(classes.statusChip, classes.discovered)}
+        value={value}
+        avatar={<ExploreIcon />}
+        label={value}
+      />
+    </MenuItem>
+  );
 };
 
 function getStatusChip(status) {
