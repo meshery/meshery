@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { TableCell, Tooltip, TableSortLabel } from '@material-ui/core';
-import Moment from 'react-moment';
 import dataFetch from '../../lib/data-fetch';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
@@ -9,6 +8,7 @@ import ResponsiveDataTable from '../../utils/data-table';
 import CustomColumnVisibilityControl from '../../utils/custom-column';
 import useStyles from '../../assets/styles/general/tool.styles';
 import SearchBar from '../../utils/custom-search';
+import { getResourceStr, resourceParsers, timeAgo } from '../../utils/k8s-utils';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -35,7 +35,7 @@ const Nodes = ({ classes, updateProgress }) => {
     if (!search) search = '';
     if (!sortOrder) sortOrder = '';
     dataFetch(
-      `/api/system/meshsync/resources?kind=Node&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
+      `/api/system/meshsync/resources?kind=Node&status=true&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
         search,
       )}&order=${encodeURIComponent(sortOrder)}`,
       {
@@ -107,7 +107,55 @@ const Nodes = ({ classes, updateProgress }) => {
       },
     },
     {
-      name: 'cluster_id', // TODO: chande to cluster name
+      name: 'status.attribute',
+      label: 'CPU',
+      options: {
+        sort: false,
+        display: true,
+        customBodyRender: function CustomBody(val) {
+          let attribute = JSON.parse(val);
+          let capacity = attribute.capacity;
+          let cpu = getResourceStr(resourceParsers['cpu'](capacity.cpu), 'cpu');
+          return <>{cpu}</>;
+        },
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
+        },
+      },
+    },
+    {
+      name: 'status.attribute',
+      label: 'Memory',
+      options: {
+        sort: false,
+        display: true,
+        customBodyRender: function CustomBody(val) {
+          let attribute = JSON.parse(val);
+          let capacity = attribute.capacity;
+          let memory = getResourceStr(resourceParsers['memory'](capacity.memory), 'memory');
+          return <>{memory}</>;
+        },
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
+        },
+      },
+    },
+    {
+      name: 'cluster_id', // TODO: change to cluster name
       label: 'Cluster ID',
       options: {
         sort: false,
@@ -126,7 +174,7 @@ const Nodes = ({ classes, updateProgress }) => {
     },
     {
       name: 'metadata.creationTimestamp',
-      label: 'Discovered At',
+      label: 'Ago',
       options: {
         sort: false,
         sortThirdClickReset: true,
@@ -141,20 +189,8 @@ const Nodes = ({ classes, updateProgress }) => {
           );
         },
         customBodyRender: function CustomBody(value) {
-          return (
-            <Tooltip
-              title={
-                <Moment startOf="day" format="LLL">
-                  {value}
-                </Moment>
-              }
-              placement="top"
-              arrow
-              interactive
-            >
-              <Moment format="LL">{value}</Moment>
-            </Tooltip>
-          );
+          let time = timeAgo(value);
+          return <>{time}</>;
         },
       },
     },
