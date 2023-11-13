@@ -26,7 +26,9 @@ jobs:
 #           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
 #           restore-keys: |
 #             ${{ runner.os }}-go-
-          
+
+      - name: Pull changes from remote
+        run: git pull origin master
       - name: Run component generation
         env:
            CRED: ${{ secrets.INTEGRATION_SPREADSHEET_CRED }}
@@ -61,6 +63,7 @@ jobs:
             
   update-components:
     name: Update Components
+    needs: generate-components
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
@@ -73,7 +76,8 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: "1.21"
-          
+      - name: Pull changes from remote
+        run: git pull origin master    
       - name: Run component Updater
         env:
           CRED: ${{ secrets.INTEGRATION_SPREADSHEET_CRED }}
@@ -81,6 +85,7 @@ jobs:
             cd scripts/component_updater
             go build main.go
             ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system meshery ../../server/meshmodel
+      
       - name: Commit changes 
         uses: stefanzweifel/git-auto-commit-action@v4
         with:

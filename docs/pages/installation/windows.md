@@ -4,6 +4,8 @@ title: Install Meshery CLI on Windows
 permalink: installation/windows
 type: installation
 category: mesheryctl
+redirect_from:
+- installation/platforms/windows
 display-title: "true"
 language: en
 list: include

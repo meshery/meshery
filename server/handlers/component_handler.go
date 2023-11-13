@@ -197,11 +197,12 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 	offset := (page - 1) * limit
 	filter := &v1alpha1.ModelFilter{
-		Version: v,
-		Limit:   limit,
-		Offset:  offset,
-		OrderOn: r.URL.Query().Get("order"),
-		Sort:    r.URL.Query().Get("sort"),
+		Registrant: r.URL.Query().Get("registrant"),
+		Version:    v,
+		Limit:      limit,
+		Offset:     offset,
+		OrderOn:    r.URL.Query().Get("order"),
+		Sort:       r.URL.Query().Get("sort"),
 	}
 	if r.URL.Query().Get("search") != "" {
 		filter.DisplayName = r.URL.Query().Get("search")

@@ -4,6 +4,8 @@ title: EKS
 permalink: installation/kubernetes/eks
 type: installation
 category: kubernetes
+redirect_from:
+- installation/platforms/eks
 display-title: "false"
 language: en
 list: include

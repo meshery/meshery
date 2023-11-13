@@ -58,27 +58,29 @@
         - title: Build & Release (CI)
           url: project/contributing/build-and-release
           grandchildren:
-          - title: "End-to-End Testing"
+          - title: "- End-to-End Testing"
             url: project/contributing/contributing-cypress
-        - title: Meshery Adapters
+        - title: Adapters
           url: project/contributing/contributing-adapters
-        - title: Meshery CLI
+        - title: CLI
           url: project/contributing/contributing-cli
           grandchildren:
-          - title: "CLI Design Principles"
+          - title: "- Design Principles"
             url: project/contributing/contributing-cli-guide
-        - title: Meshery Docs
+        - title: Docs
           url: project/contributing/contributing-docs
-        - title: Meshery Errors
-          url: project/contributing/contributing-error
-        - title: Meshery Server
+        - title: Server
           url: project/contributing/contributing-server
-        - title: Meshery UI
+          grandchildren:
+          - title: "- Server Events"
+            url: project/contributing-server-events
+          - title: "- Server Errors"
+            url: project/contributing/contributing-error
+        - title: UI
           url: project/contributing/contributing-ui
-        - title: Meshery Docker Extension
+        - title: Docker Extension
           url: project/contributing/contributing-docker-extension
-        - title: Meshery Server Events
-          url: project/contributing-server-events
+        
     - title: Releases
       url: project/releases
     - title: Vulnerabilities
@@ -183,6 +185,8 @@
     #   url: guides/sample-apps
     # - title: Running SMI Conformance Tests
       # url: guides/smi-conformance
+    - title: Configuring Kubernetes Infrastructure
+      url: guides/configuration-management
     - title: Integrating Prometheus and Grafana
       url: guides/meshery-metrics
     - title: Importing Applications
@@ -219,10 +223,13 @@
       url: extensibility/load-generators
     - title: "Providers"
       url: extensibility/providers
-    - title: "REST & GraphQL APIs"
-      url: extensibility/api
+      children:
+      - title: Building a Remote Provider
+        url: extensibility/providers/building-a-remote-provider
     - title: "UI Plugins"
       url: extensibility/ui
+    - title: "REST & GraphQL APIs"
+      url: extensibility/api
 - title: 📖 Reference
   url: reference
   links:

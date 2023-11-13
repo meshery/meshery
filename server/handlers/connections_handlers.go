@@ -10,8 +10,11 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/models/events"
 )
+
+type connectionStatusPayload map[uuid.UUID]connections.ConnectionStatus
 
 // swagger:route POST /api/integrations/connections PostConnection idPostConnection
 // Handle POST request for creating a new connection
@@ -40,7 +43,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 
 	eventBuilder := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
 
-	err = provider.SaveConnection(req, &connection, "", false)
+	_, err = provider.SaveConnection(req, &connection, "", false)
 	if err != nil {
 		_err := ErrFailToSave(err, obj)
 		metadata := map[string]interface{}{
@@ -189,6 +192,72 @@ func (h *Handler) GetConnectionsStatus(w http.ResponseWriter, req *http.Request,
 	}
 }
 
+// swagger:route GET /api/integrations/connections/{connectionKind}/transitions GetAvailableTransitionsByKind idGetConnectionsStatus
+// Handle GET request for getting all possible connection transitions
+//
+// Get all possible state transitions for a particular connection kind.
+// responses:
+// 200: mesheryConnectionsStatusPage
+func (h *Handler) GetPossibleTransitionsByKind(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	connectionKind := mux.Vars(req)["connectionKind"]
+	transitions := connections.PossibleTransitionnsMap[connectionKind]
+
+	err := json.NewEncoder(w).Encode(transitions)
+	if err != nil {
+		http.Error(w, models.ErrMarshal(err, "connection transitions").Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	connectionStatusPayload := &connectionStatusPayload{}
+	defer func() {
+		_ = req.Body.Close()
+	}()
+
+	userID := uuid.FromStringOrNil(user.ID)
+	eventBuilder := events.NewEvent().FromSystem(*h.SystemID).FromUser(userID).WithCategory("connection").WithAction("update").ActedUpon(userID)
+	err := json.NewDecoder(req.Body).Decode(connectionStatusPayload)
+	if err != nil {
+		errUnmarshal := models.ErrUnmarshal(err, "connection status payload")
+		eventBuilder.WithSeverity(events.Error).WithDescription("Unable to update connection status.").
+			WithMetadata(map[string]interface{}{
+				"error": errUnmarshal,
+			})
+		event := eventBuilder.Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+		return
+	}
+	var statusCode int
+	for id, status := range *connectionStatusPayload {
+		eventBuilder.ActedUpon(id)
+		var updatedConnection *connections.Connection
+		var err error
+		token, ok := req.Context().Value(models.TokenCtxKey).(string)
+		if !ok {
+			err := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
+			h.log.Error(err)
+			return
+		}
+		updatedConnection, statusCode, err = provider.UpdateConnectionStatusByID(token, id, status)
+		if err != nil {
+			eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)).WithMetadata(map[string]interface{}{
+				"error": err,
+			})
+			// Get the connection name as id doesn't convey much to the user.
+		} else {
+			eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Connection \"%s\" status updated to %s for %s", updatedConnection.Name, status, id))
+			go h.config.K8scontextChannel.PublishContext()
+		}
+
+		event := eventBuilder.Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+	}
+	w.WriteHeader(statusCode)
+}
+
 // swagger:route PUT /api/integrations/connections/{connectionKind} PutConnection idPutConnection
 // Handle PUT request for updating an existing connection
 //
@@ -205,7 +274,7 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 
 	userID := uuid.FromStringOrNil(user.ID)
 
-	connection := &models.Connection{}
+	connection := &connections.Connection{}
 	err = json.Unmarshal(bd, connection)
 	obj := "connection"
 	if err != nil {

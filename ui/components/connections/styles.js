@@ -1,3 +1,4 @@
+import { alpha } from '@material-ui/core';
 import { Colors } from '../../themes/app';
 
 const styles = (theme) => ({
@@ -15,9 +16,6 @@ const styles = (theme) => ({
     '& .MuiSelect-select.MuiSelect-select': {
       padding: '0 2px',
     },
-    '& .MuiSelect-icon': {
-      display: 'none',
-    },
   },
   createButton: {
     display: 'flex',
@@ -34,7 +32,7 @@ const styles = (theme) => ({
     minWidth: '100%',
   },
   statusChip: {
-    minWidth: '130px !important',
+    minWidth: '145px !important',
     maxWidth: '100% !important',
     display: 'flex !important',
     justifyContent: 'flex-start !important',
@@ -107,6 +105,33 @@ const styles = (theme) => ({
       cursor: 'initial',
     },
   },
+  maintenance: {
+    '& .MuiChip-label': {
+      color: theme.palette.secondary.warning,
+    },
+    background: `${theme.palette.secondary.warning}30 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${theme.palette.secondary.warning} !important`,
+    },
+  },
+  disconnected: {
+    '& .MuiChip-label': {
+      color: theme.palette.secondary.warning,
+    },
+    background: `${theme.palette.secondary.warning}30 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${theme.palette.secondary.warning} !important`,
+    },
+  },
+  notfound: {
+    '& .MuiChip-label': {
+      color: theme.palette.secondary.warning,
+    },
+    background: `${theme.palette.secondary.warning}30 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${theme.palette.secondary.warning} !important`,
+    },
+  },
   expandedRows: {
     background: `${theme.palette.secondary.default}10`,
   },
@@ -117,21 +142,17 @@ const styles = (theme) => ({
     flexWrap: 'noWrap',
   },
   innerTableWrapper: {
-    background: `linear-gradient(90deg, #FFF 0.04%, #ECECED 100.04%)`,
+    background: `linear-gradient(90deg, ${theme.palette.secondary.innertableBg1} 0.04%, ${theme.palette.secondary.innertableBg2} 100.04%)`,
     borderRadius: 0,
     padding: '0',
   },
   innerTableContainer: {
-    background: theme.palette.secondary.chevron,
+    background: theme.palette.secondary.innertableBg1,
     margin: '10px 10px 10px 13px',
     borderLeft: `9px solid ${theme.palette.secondary.pinball}`,
     borderRadius: '10px 0 0 10px',
     width: 'calc(100% - 23px)',
     border: 'none',
-  },
-  listItem: {
-    paddingTop: '0',
-    paddingBottom: '0',
   },
   noGutter: {
     padding: '0',
@@ -158,6 +179,7 @@ const styles = (theme) => ({
     },
   },
   tabs: {
+    height: '55px',
     '& .MuiTabs-indicator': {
       backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
     },
@@ -166,6 +188,38 @@ const styles = (theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  list: {
+    display: 'flex',
+    flexDirection: 'column',
+    gridGap: '0.5rem',
+    marginBlock: '0.5rem',
+    borderRadius: '0.25rem',
+    backgroundColor: theme.palette.secondary.honeyComb,
+  },
+  listButton: {
+    '&:hover': {
+      backgroundColor: alpha(theme.palette.secondary.link2, 0.25),
+    },
+  },
+  listItem: {
+    display: 'flex',
+    gridGap: '0.5rem',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  button: {
+    width: '100%',
+    justifyContent: 'flex-start',
+    '&:hover': {
+      backgroundColor: 'transparent',
+    },
+  },
+  listContainer: {
+    width: '100%',
+    justifyContent: 'flex-start',
+    display: 'flex',
+    alignItems: 'center',
   },
 });
 

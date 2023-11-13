@@ -9,6 +9,38 @@ category: none
 list: include
 ---
 
+## List of Announced Vulnerabilities
+
+
+<table>
+<tr>
+  <th> DATE ANNOUNCED </th>
+  <th> CVE ID </th>
+  <th> DESCRIPTION </th>
+  <th> AFFECTED COMPONENT </th>
+  <th> VULNERABLE VERSION </th>
+  <th> PATCHED VERSION </th>
+  <th> FIX DETAILS </th>
+  <th> LINKS </th>
+</tr>
+{% assign vulns = site.data.vulnerabilities.announce | sort: "Date-Announced" | reverse %}
+
+{% for vuln in vulns %}
+
+<tr>
+  <td> {{vuln.DateAnnounced}} </td>
+  <td> {{vuln.CVE}} </td>
+  <td> {{vuln.Description}} </td>
+  <td> {{vuln.AffectedComponent}} </td>
+  <td> {{vuln.VulnerableVersion}} </td>
+  <td> {{vuln.PatchedVersion}} </td>
+  <td> {{vuln.FixDetails}} </td>
+  <td> {{vuln.Links}} </td>
+</tr>
+
+{% endfor %}
+</table>
+
 ## Reporting a vulnerability
 
 We are very grateful to the security researchers and users that report
@@ -77,34 +109,4 @@ branches.
 
 As much as possible this announcement will be actionable, and include any mitigating steps customers can take prior to upgrading to a fixed version.
 
-## List of Announced Vulnerabilities
 
-
-<table>
-<tr>
-  <th> DATE ANNOUNCED </th>
-  <th> CVE ID </th>
-  <th> DESCRIPTION </th>
-  <th> AFFECTED COMPONENT </th>
-  <th> VULNERABLE VERSION </th>
-  <th> PATCHED VERSION </th>
-  <th> FIX DETAILS </th>
-  <th> LINKS </th>
-</tr>
-{% assign vulns = site.data.vulnerabilities.announce | sort: "Date-Announced" | reverse %}
-
-{% for vuln in vulns %}
-
-<tr>
-  <td> {{vuln.DateAnnounced}} </td>
-  <td> {{vuln.CVE}} </td>
-  <td> {{vuln.Description}} </td>
-  <td> {{vuln.AffectedComponent}} </td>
-  <td> {{vuln.VulnerableVersion}} </td>
-  <td> {{vuln.PatchedVersion}} </td>
-  <td> {{vuln.FixDetails}} </td>
-  <td> {{vuln.Links}} </td>
-</tr>
-
-{% endfor %}
-</table>

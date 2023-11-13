@@ -11,6 +11,22 @@ export const Colors = {
   charcoal: '#3C494F',
 };
 
+export const common = {
+  overrides: {
+    MuiSwitch: {
+      switchBase: {
+        color: '#647881',
+        '&$checked': {
+          color: '#00b39f !important',
+        },
+        '&$checked + $track': {
+          backgroundColor: 'rgba(0,179,159,0.5)',
+        },
+      },
+    },
+  },
+};
+
 export var darkTheme = createTheme({
   typography: {
     useNextVariants: true,
@@ -89,7 +105,15 @@ export var darkTheme = createTheme({
       menuSelectedBg: 'rgba(0, 179, 159, 0.25)',
       menuActionText: '#FBFBFB',
       menuItemBorder: '#979797',
-      pinball: '#d3d3d3',
+      pinball: '#222222',
+      innertableBg1: 'rgb(255, 255, 255, 0.1)',
+      innertableBg2: 'rgb(255, 255, 255, 0.05)',
+      tabContainer: '#51636B',
+      card: '#51636B',
+      detailsContainer: '#d9dadb80',
+      tabCard: '#677a84',
+      disableButtonBg: '#666666',
+      disableButton: '#9d9d9d',
     },
   },
   p: {
@@ -109,6 +133,7 @@ export var darkTheme = createTheme({
 darkTheme = {
   ...darkTheme,
   overrides: {
+    ...common.overrides,
     MuiSvgIcon: {
       root: {
         ...iconMedium,
@@ -347,6 +372,14 @@ let theme = createTheme({
       menuActionText: '#FBFBFB',
       menuItemBorder: '#979797',
       pinball: '#d3d3d3',
+      innertableBg1: '#ffffff',
+      innertableBg2: '#ECECED',
+      tabContainer: '#51636B',
+      card: '#51636B',
+      detailsContainer: '#d9dadb80',
+      tabCard: '#677a84',
+      disableButtonBg: '#e0e0e0',
+      disableButton: '#9d9d9d',
     },
   },
   shape: { borderRadius: 8 },
@@ -364,6 +397,7 @@ let theme = createTheme({
 theme = {
   ...theme,
   overrides: {
+    ...common.overrides,
     MuiSvgIcon: {
       root: {
         ...iconMedium,
