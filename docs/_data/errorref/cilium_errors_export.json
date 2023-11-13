@@ -283,7 +283,7 @@
         "suggested_remediation": "Verify network connectivity.\nEnsure github.com is reachable.\nTry retrying the operation."
       },
       "1031": {
-        "name": "ErrFetchIstioVersionsCode",
+        "name": "ErrFetchCiliumVersionsCode",
         "code": "1031",
         "severity": "Alert",
         "long_description": "versions for cilium could not be fetched",
