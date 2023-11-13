@@ -1,4 +1,4 @@
-import { Chip, MenuItem, Tooltip, makeStyles } from '@material-ui/core';
+import { Chip, IconButton, MenuItem, Tooltip, makeStyles } from '@material-ui/core';
 import classNames from 'classnames';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
@@ -100,7 +100,7 @@ const DiscoveredStateChip = ({ value }) => {
         className={classNames(classes.statusCip, classes.discovered)}
         avatar={<ExploreIcon />}
         label={value}
-        helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
+        // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
       <HelpToolTip classes={classes} value="1-discovered" />
     </MenuItem>
@@ -116,7 +116,7 @@ const RegisteredStateChip = ({ value }) => {
         className={classNames(classes.statusCip, classes.registered)}
         avatar={<AssignmentTurnedInIcon />}
         label={value}
-        helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
+        // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
       <HelpToolTip classes={classes} value="2-registered" />
     </MenuItem>
@@ -131,7 +131,7 @@ const ConnectedStateChip = ({ value }) => {
         className={classNames(classes.statusCip, classes.connected)}
         avatar={<CheckCircleIcon />}
         label={value}
-        helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
+        // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
       <HelpToolTip classes={classes} value="3-connected" />
     </MenuItem>
@@ -146,8 +146,9 @@ const IgnoredStateChip = ({ value }) => {
         className={classNames(classes.statusCip, classes.ignored)}
         avatar={<RemoveCircleIcon />}
         label={value}
-        helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
+        // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
+      <HelpToolTip classes={classes} value="4-ignored" />
     </MenuItem>
   );
 };
@@ -160,8 +161,9 @@ const DeletedStateChip = ({ value }) => {
         className={classNames(classes.statusCip, classes.deleted)}
         avatar={<DeleteForeverIcon />}
         label={value}
-        helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
+        // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
+      <HelpToolTip classes={classes} value="7-deleted" />
     </MenuItem>
   );
 };
@@ -170,11 +172,14 @@ const HelpToolTip = ({ classes, value }) => {
   const url = `https://docs.meshery.io/concepts/connections#${value}`;
   const onClick = () => (e) => {
     e.preventDefault();
+    e.stopPropagation();
     window.open(url, '_blank');
   };
   return (
-    <Tooltip onClick={onClick()} title={url}>
-      <HelpIcon className={classes.helpIcon} style={{ fontSize: '1.45rem', ...iconSmall }} />
+    <Tooltip title={url}>
+      <IconButton onClick={onClick()} aria-label="help">
+        <HelpIcon className={classes.helpIcon} style={{ fontSize: '1.45rem', ...iconSmall }} />
+      </IconButton>
     </Tooltip>
   );
 };
