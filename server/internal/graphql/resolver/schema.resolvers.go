@@ -287,10 +287,10 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 }
 
 // SubscribeConfiguration is the resolver for the subscribeConfiguration field.
-func (r *subscriptionResolver) SubscribeConfiguration(ctx context.Context, applicationSelector model.PageFilter, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error) {
+func (r *subscriptionResolver) SubscribeConfiguration(ctx context.Context, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	user := ctx.Value(models.UserCtxKey).(*models.User)
-	return r.subscribeConfiguration(ctx, provider, *user, applicationSelector, patternSelector, filterSelector)
+	return r.subscribeConfiguration(ctx, provider, *user, patternSelector, filterSelector)
 }
 
 // SubscribeClusterResources is the resolver for the subscribeClusterResources field.

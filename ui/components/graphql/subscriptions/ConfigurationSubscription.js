@@ -3,33 +3,13 @@ import { createRelayEnvironment } from '../../../lib/relayEnvironment';
 
 const configurationSubscription = graphql`
   subscription ConfigurationSubscription(
-    $applicationSelector: PageFilter!
     $patternSelector: PageFilter!
     $filterSelector: PageFilter!
   ) {
     configuration: subscribeConfiguration(
-      applicationSelector: $applicationSelector
       patternSelector: $patternSelector
       filterSelector: $filterSelector
     ) {
-      applications {
-        page
-        page_size
-        total_count
-        applications {
-          id
-          name
-          application_file
-          type {
-            String
-            Valid
-          }
-          user_id
-          visibility
-          created_at
-          updated_at
-        }
-      }
       patterns {
         page
         page_size
