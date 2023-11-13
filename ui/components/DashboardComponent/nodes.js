@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { TableCell, Tooltip, TableSortLabel } from '@material-ui/core';
+import { TableCell, TableSortLabel } from '@material-ui/core';
 import dataFetch from '../../lib/data-fetch';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
@@ -10,6 +10,8 @@ import useStyles from '../../assets/styles/general/tool.styles';
 import SearchBar from '../../utils/custom-search';
 import { getResourceStr, resourceParsers, timeAgo } from '../../utils/k8s-utils';
 import { getClusterNameFromClusterId } from '../../utils/multi-ctx';
+// import { TextWithLinks } from '../DataFormatter';
+// import { Link } from '../DataFormatter';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -19,6 +21,10 @@ const ACTION_TYPES = {
 };
 
 const Nodes = ({ classes, updateProgress, k8sConfig }) => {
+  const ALL_NODES = 'all';
+  const SINGLE_NODE = 'single';
+  // const availableViews = [ALL_NODES, SINGLE_NODE];
+
   const [meshSyncResources, setMeshSyncResources] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
@@ -26,6 +32,11 @@ const Nodes = ({ classes, updateProgress, k8sConfig }) => {
   const [pageSize, setPageSize] = useState(0);
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
+  const [view, setView] = useState(ALL_NODES);
+
+  const swtichView = (view) => {
+    setView(view);
+  };
 
   const StyleClass = useStyles();
 
@@ -70,21 +81,20 @@ const Nodes = ({ classes, updateProgress, k8sConfig }) => {
         sortThirdClickReset: true,
         display: true,
         customBodyRender: (value) => {
-          const maxCharLength = 30;
-          const shouldTruncate = value?.length > maxCharLength;
-
           return (
-            <Tooltip title={value} placement="top">
+            <>
               <div
                 style={{
-                  overflow: 'hidden',
-                  whiteSpace: 'nowrap',
-                  textOverflow: shouldTruncate ? 'ellipsis' : 'none',
+                  color: 'inherit',
+                  textDecorationLine: 'underline',
+                  cursor: 'pointer',
+                  marginBottom: '0.5rem',
                 }}
+                onClick={() => swtichView(SINGLE_NODE)}
               >
-                {shouldTruncate ? `${value.slice(0, maxCharLength)}...` : value}
+                {value}
               </div>
-            </Tooltip>
+            </>
           );
         },
       },
@@ -163,7 +173,23 @@ const Nodes = ({ classes, updateProgress, k8sConfig }) => {
         sortThirdClickReset: true,
         customBodyRender: function CustomBody(val) {
           let clusterName = getClusterNameFromClusterId(val, k8sConfig);
-          return <>{clusterName}</>;
+          return (
+            <>
+              <a
+                href={'#'}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  color: 'inherit',
+                  textDecorationLine: 'underline',
+                  cursor: 'pointer',
+                  marginBottom: '0.5rem',
+                }}
+              >
+                {clusterName}
+              </a>
+            </>
+          );
         },
         customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
@@ -174,6 +200,36 @@ const Nodes = ({ classes, updateProgress, k8sConfig }) => {
               onSort={() => sortColumn(index)}
             />
           );
+        },
+      },
+    },
+    {
+      name: 'status.attribute',
+      label: 'Internal IP',
+      options: {
+        sort: false,
+        sortThirdClickReset: true,
+        customBodyRender: function CustomBody(val) {
+          let attribute = JSON.parse(val);
+          let addresses = attribute.addresses;
+          let internalIP =
+            addresses.find((address) => address.type === 'InternalIP')?.address || '';
+          return <>{internalIP}</>;
+        },
+      },
+    },
+    {
+      name: 'status.attribute',
+      label: 'External IP',
+      options: {
+        sort: false,
+        sortThirdClickReset: true,
+        customBodyRender: function CustomBody(val) {
+          let attribute = JSON.parse(val);
+          let addresses = attribute.addresses;
+          let externalIP =
+            addresses.find((address) => address.type === 'ExternalIP')?.address || '';
+          return <>{externalIP}</>;
         },
       },
     },
@@ -281,37 +337,46 @@ const Nodes = ({ classes, updateProgress, k8sConfig }) => {
 
   return (
     <>
-      <div className={StyleClass.toolWrapper} style={{ marginBottom: '5px', marginTop: '1rem' }}>
-        <div className={classes.createButton}>{/* <MesherySettingsEnvButtons /> */}</div>
-        <div
-          className={classes.searchAndView}
-          style={{
-            display: 'flex',
-            borderRadius: '0.5rem 0.5rem 0 0',
-          }}
-        >
-          <SearchBar
-            onSearch={(value) => {
-              setSearch(value);
-            }}
-            placeholder="Search nodes..."
-          />
+      {view === ALL_NODES ? (
+        <>
+          <div
+            className={StyleClass.toolWrapper}
+            style={{ marginBottom: '5px', marginTop: '1rem' }}
+          >
+            <div className={classes.createButton}>{/* <MesherySettingsEnvButtons /> */}</div>
+            <div
+              className={classes.searchAndView}
+              style={{
+                display: 'flex',
+                borderRadius: '0.5rem 0.5rem 0 0',
+              }}
+            >
+              <SearchBar
+                onSearch={(value) => {
+                  setSearch(value);
+                }}
+                placeholder="Search nodes..."
+              />
 
-          <CustomColumnVisibilityControl
+              <CustomColumnVisibilityControl
+                columns={columns}
+                customToolsProps={{ columnVisibility, setColumnVisibility }}
+              />
+            </div>
+          </div>
+          <ResponsiveDataTable
+            data={meshSyncResources}
             columns={columns}
-            customToolsProps={{ columnVisibility, setColumnVisibility }}
+            options={options}
+            className={classes.muiRow}
+            tableCols={tableCols}
+            updateCols={updateCols}
+            columnVisibility={columnVisibility}
           />
-        </div>
-      </div>
-      <ResponsiveDataTable
-        data={meshSyncResources}
-        columns={columns}
-        options={options}
-        className={classes.muiRow}
-        tableCols={tableCols}
-        updateCols={updateCols}
-        columnVisibility={columnVisibility}
-      />
+        </>
+      ) : (
+        <></>
+      )}
     </>
   );
 };
