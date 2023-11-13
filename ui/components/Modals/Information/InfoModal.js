@@ -73,10 +73,14 @@ const InfoModal = (props) => {
     if (formRef.current && formRef.current.validateForm()) {
       setSaveFormLoading(true);
       let body = null;
+      let modifiedData = {
+        ...formState,
+        type: formState?.type?.toLowerCase(),
+      };
       if (dataName === PATTERN_PLURAL) {
         body = JSON.stringify({
           pattern_data: {
-            catalog_data: formState,
+            catalog_data: modifiedData,
             pattern_file: selectedResource.pattern_file,
             id: selectedResource.id,
           },
@@ -90,7 +94,7 @@ const InfoModal = (props) => {
         }
         body = JSON.stringify({
           filter_data: {
-            catalog_data: formState,
+            catalog_data: modifiedData,
             id: selectedResource.id,
             name: selectedResource.name,
             filter_file: selectedResource.filter_file,
@@ -130,14 +134,14 @@ const InfoModal = (props) => {
   };
 
   useEffect(() => {
-    if (selectedResource?.catalog_data) {
-      let uppercaseCompatibility = selectedResource?.catalog_data?.compatibility?.map(compatibility => compatibility.toUpperCase());
+    if (selectedResource?.catalog_data && Object.keys(selectedResource?.catalog_data).length > 0) {
       let modifiedData = {
         ...selectedResource.catalog_data,
-        compatibility: uppercaseCompatibility,
-        type: _.startCase(selectedResource?.catalog_data?.type)
+        type: _.startCase(selectedResource?.catalog_data?.type),
       };
       setFormState(modifiedData);
+    } else {
+      setFormState(selectedResource?.catalog_data);
     }
   }, [selectedResource?.catalog_data]);
 
