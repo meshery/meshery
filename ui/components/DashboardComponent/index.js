@@ -110,7 +110,8 @@ const styles = (theme) => ({
 });
 
 const DashboardComponent = (props) => {
-  const { classes } = props;
+  console.log('DashboardComponent props: ', props);
+  const { classes, k8sconfig } = props;
 
   const [tabVal, setTabVal] = React.useState(0);
 
@@ -211,7 +212,7 @@ const DashboardComponent = (props) => {
         )}
         {tabVal === 1 && (
           <TabContainer>
-            <Nodes updateProgress={updateProgress} classes={classes} />
+            <Nodes updateProgress={updateProgress} classes={classes} k8sConfig={k8sconfig} />
           </TabContainer>
         )}
         {tabVal === 2 && (

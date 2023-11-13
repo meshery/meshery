@@ -9,6 +9,7 @@ import CustomColumnVisibilityControl from '../../utils/custom-column';
 import useStyles from '../../assets/styles/general/tool.styles';
 import SearchBar from '../../utils/custom-search';
 import { getResourceStr, resourceParsers, timeAgo } from '../../utils/k8s-utils';
+import { getClusterNameFromClusterId } from '../../utils/multi-ctx';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -17,7 +18,7 @@ const ACTION_TYPES = {
   },
 };
 
-const Nodes = ({ classes, updateProgress }) => {
+const Nodes = ({ classes, updateProgress, k8sConfig }) => {
   const [meshSyncResources, setMeshSyncResources] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
@@ -155,11 +156,15 @@ const Nodes = ({ classes, updateProgress }) => {
       },
     },
     {
-      name: 'cluster_id', // TODO: change to cluster name
-      label: 'Cluster ID',
+      name: 'cluster_id',
+      label: 'Cluster',
       options: {
         sort: false,
         sortThirdClickReset: true,
+        customBodyRender: function CustomBody(val) {
+          let clusterName = getClusterNameFromClusterId(val, k8sConfig);
+          return <>{clusterName}</>;
+        },
         customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
             <SortableTableCell
@@ -174,7 +179,7 @@ const Nodes = ({ classes, updateProgress }) => {
     },
     {
       name: 'metadata.creationTimestamp',
-      label: 'Ago',
+      label: 'Age',
       options: {
         sort: false,
         sortThirdClickReset: true,
