@@ -53,16 +53,6 @@ export default function MeshSyncTable({ classes, updateProgress }) {
       options: {
         sort: false,
         sortThirdClickReset: true,
-        // customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-        //   return (
-        //     <SortableTableCell
-        //       index={index}
-        //       columnData={column}
-        //       columnMeta={columnMeta}
-        //       onSort={() => sortColumn(index)}
-        //     />
-        //   );
-        // },
         customBodyRender: (value) => {
           const maxCharLength = 30;
           const shouldTruncate = value?.length > maxCharLength;
