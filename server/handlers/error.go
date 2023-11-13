@@ -200,7 +200,7 @@ func ErrPatternFile(err error) error {
 }
 
 func ErrInvalidPattern(err error) error {
-	return errors.New(ErrInvalidPatternCode, errors.Alert, []string{"Invalid design, execution is infeasible", err.Error()}, []string{err.Error()}, []string{"Trait Definition is invalid or unable to process"}, []string{"Check Trait Definition"})
+	return errors.New(ErrInvalidPatternCode, errors.Alert, []string{"Invalid design, execution is infeasible", err.Error()}, []string{err.Error()}, []string{"Services/Traits definition is invalid or unable to process"}, []string{"Ensure that Services/Traits definition present in meshery design", "Ensure that Services/Traits definition is not invalid"})
 }
 
 func ErrExecutionPlan(err error) error {

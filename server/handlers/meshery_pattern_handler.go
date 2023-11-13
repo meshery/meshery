@@ -315,6 +315,11 @@ func (h *Handler) handlePatternPOST(
 				h.log.Error(ErrInvalidPattern(err))
 				http.Error(rw, ErrInvalidPattern(err).Error(), http.StatusBadRequest)
 				addMeshkitErr(&res, ErrInvalidPattern(err))
+				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+					"error": ErrInvalidPattern(err),
+				}).WithDescription("invalid design file format").Build()
+
+				_ = provider.PersistEvent(event)
 				go h.EventsBuffer.Publish(&res)
 				return
 			}
