@@ -70,9 +70,11 @@ export const FormatId = ({ id }) => {
           {truncatedId}
         </Typography>
       </Tooltip>
-      <IconButton onClick={copyToClipboard} style={{ padding: '0.25rem' }}>
-        <CopyIcon width="1rem" height="1rem" />
-      </IconButton>
+      <Tooltip title="Copy" placement="top">
+        <IconButton onClick={copyToClipboard} style={{ padding: '0.25rem' }}>
+          <CopyIcon width="1rem" height="1rem" />
+        </IconButton>
+      </Tooltip>
     </Box>
   );
 };
