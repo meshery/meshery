@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const DisconnectIcon = ({ width, height, fill, style = {} }) => {
+export const DisconnectIcon = ({ width, height, fill}) => {
   return (
     <svg
       width={width}
