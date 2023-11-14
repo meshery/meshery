@@ -72,6 +72,11 @@ import { useWindowDimensions } from '../utils/dimension';
 import InfoModal from './Modals/Information/InfoModal';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 
+const genericClickHandler = (ev, fn) => {
+  ev.stopPropagation();
+  fn(ev);
+};
+
 const styles = (theme) => ({
   grid: {
     padding: theme.spacing(1),
@@ -1232,7 +1237,10 @@ function MesheryPatterns({
                 <GetAppIcon data-cy="download-button" />
               </TooltipIcon>
 
-              <TooltipIcon title="Design Information" onClick={() => handleInfoModal(rowData)}>
+              <TooltipIcon
+                title="Design Information"
+                onClick={(ev) => genericClickHandler(ev, handleInfoModal)}
+              >
                 <InfoOutlinedIcon data-cy="information-button" />
               </TooltipIcon>
 
