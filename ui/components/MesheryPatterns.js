@@ -566,7 +566,7 @@ function MesheryPatterns({
       async (result) => {
         try {
           const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName.toUpperCase()));
+          const modelNames = _.uniq(models?.map((model) => model.displayName));
           modelNames.sort();
 
           // Modify the schema using the utility function
