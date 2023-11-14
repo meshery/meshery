@@ -10,6 +10,7 @@ import useStyles from '../../assets/styles/general/tool.styles';
 import SearchBar from '../../utils/custom-search';
 import { getResourceStr, resourceParsers, timeAgo } from '../../utils/k8s-utils';
 import { getClusterNameFromClusterId } from '../../utils/multi-ctx';
+import View from './view';
 // import { TextWithLinks } from '../DataFormatter';
 // import { Link } from '../DataFormatter';
 
@@ -32,9 +33,11 @@ const Nodes = ({ classes, updateProgress, k8sConfig }) => {
   const [pageSize, setPageSize] = useState(0);
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
+  const [selectedNode, setSelectedNode] = useState({});
   const [view, setView] = useState(ALL_NODES);
 
-  const swtichView = (view) => {
+  const swtichView = (view, resource) => {
+    setSelectedNode(resource);
     setView(view);
   };
 
@@ -79,8 +82,7 @@ const Nodes = ({ classes, updateProgress, k8sConfig }) => {
       options: {
         sort: false,
         sortThirdClickReset: true,
-        display: true,
-        customBodyRender: (value) => {
+        customBodyRender: function CustomBody(value, tableMeta) {
           return (
             <>
               <div
@@ -90,7 +92,7 @@ const Nodes = ({ classes, updateProgress, k8sConfig }) => {
                   cursor: 'pointer',
                   marginBottom: '0.5rem',
                 }}
-                onClick={() => swtichView(SINGLE_NODE)}
+                onClick={() => swtichView(SINGLE_NODE, meshSyncResources[tableMeta.rowIndex])}
               >
                 {value}
               </div>
@@ -104,7 +106,6 @@ const Nodes = ({ classes, updateProgress, k8sConfig }) => {
       label: 'API version',
       options: {
         sort: false,
-        display: true,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
             <SortableTableCell
@@ -122,7 +123,6 @@ const Nodes = ({ classes, updateProgress, k8sConfig }) => {
       label: 'CPU',
       options: {
         sort: false,
-        display: true,
         customBodyRender: function CustomBody(val) {
           let attribute = JSON.parse(val);
           let capacity = attribute.capacity;
@@ -146,7 +146,6 @@ const Nodes = ({ classes, updateProgress, k8sConfig }) => {
       label: 'Memory',
       options: {
         sort: false,
-        display: true,
         customBodyRender: function CustomBody(val) {
           let attribute = JSON.parse(val);
           let capacity = attribute.capacity;
@@ -257,6 +256,24 @@ const Nodes = ({ classes, updateProgress, k8sConfig }) => {
     },
   ];
 
+  const [tableCols, updateCols] = useState();
+
+  useEffect(() => {
+    updateCols(columns);
+    if (!loading) {
+      getMeshsyncResources(page, pageSize, search, sortOrder);
+    }
+  }, [page, pageSize, search, sortOrder]);
+
+  const [columnVisibility, setColumnVisibility] = useState(() => {
+    // Initialize column visibility based on the original columns' visibility
+    const initialVisibility = {};
+    columns.forEach((col) => {
+      initialVisibility[col.name] = col.options?.display !== false;
+    });
+    return initialVisibility;
+  });
+
   const options = useMemo(
     () => ({
       filter: false,
@@ -309,12 +326,6 @@ const Nodes = ({ classes, updateProgress, k8sConfig }) => {
     [page, pageSize],
   );
 
-  useEffect(() => {
-    if (!loading) {
-      getMeshsyncResources(page, pageSize, search, sortOrder);
-    }
-  }, [page, pageSize, search, sortOrder]);
-
   const handleError = (action) => (error) => {
     updateProgress({ showProgress: false });
     notify({
@@ -323,18 +334,6 @@ const Nodes = ({ classes, updateProgress, k8sConfig }) => {
       details: error.toString(),
     });
   };
-
-  const [tableCols, updateCols] = useState(columns);
-
-  const [columnVisibility, setColumnVisibility] = useState(() => {
-    // Initialize column visibility based on the original columns' visibility
-    const initialVisibility = {};
-    columns.forEach((col) => {
-      initialVisibility[col.name] = col.options?.display !== false;
-    });
-    return initialVisibility;
-  });
-
   return (
     <>
       {view === ALL_NODES ? (
@@ -375,7 +374,9 @@ const Nodes = ({ classes, updateProgress, k8sConfig }) => {
           />
         </>
       ) : (
-        <></>
+        <>
+          <View type="Node" setView={setView} resource={selectedNode} />
+        </>
       )}
     </>
   );
