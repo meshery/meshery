@@ -404,7 +404,7 @@ type ComplexityRoot struct {
 	Subscription struct {
 		ListenToOperatorState             func(childComplexity int, k8scontextIDs []string) int
 		SubscribeClusterResources         func(childComplexity int, k8scontextIDs []string, namespace string) int
-		SubscribeConfiguration            func(childComplexity int, applicationSelector model.PageFilter, patternSelector model.PageFilter, filterSelector model.PageFilter) int
+		SubscribeConfiguration            func(childComplexity int, patternSelector model.PageFilter, filterSelector model.PageFilter) int
 		SubscribeEvents                   func(childComplexity int) int
 		SubscribeK8sContext               func(childComplexity int, selector model.PageFilter) int
 		SubscribeMeshModelSummary         func(childComplexity int, selector model.MeshModelSummarySelector) int
@@ -451,7 +451,7 @@ type SubscriptionResolver interface {
 	SubscribePerfResults(ctx context.Context, selector model.PageFilter, profileID string) (<-chan *model.PerfPageResult, error)
 	SubscribeMesheryControllersStatus(ctx context.Context, k8scontextIDs []string) (<-chan []*model.MesheryControllersStatusListItem, error)
 	SubscribeMeshSyncEvents(ctx context.Context, k8scontextIDs []string, eventTypes []model.MeshSyncEventType) (<-chan *model.MeshSyncEvent, error)
-	SubscribeConfiguration(ctx context.Context, applicationSelector model.PageFilter, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error)
+	SubscribeConfiguration(ctx context.Context, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error)
 	SubscribeClusterResources(ctx context.Context, k8scontextIDs []string, namespace string) (<-chan *model.ClusterResources, error)
 	SubscribeK8sContext(ctx context.Context, selector model.PageFilter) (<-chan *model.K8sContextsPage, error)
 	SubscribeMeshModelSummary(ctx context.Context, selector model.MeshModelSummarySelector) (<-chan *model.MeshModelSummary, error)
@@ -2186,7 +2186,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Subscription.SubscribeConfiguration(childComplexity, args["applicationSelector"].(model.PageFilter), args["patternSelector"].(model.PageFilter), args["filterSelector"].(model.PageFilter)), true
+		return e.complexity.Subscription.SubscribeConfiguration(childComplexity, args["patternSelector"].(model.PageFilter), args["filterSelector"].(model.PageFilter)), true
 
 	case "Subscription.subscribeEvents":
 		if e.complexity.Subscription.SubscribeEvents == nil {
@@ -2849,7 +2849,7 @@ type PatternResult {
   visibility: String!
   catalog_data: Map
   canSupport: Boolean!
-  errmsg: String
+  errmsg: String,
   created_at: String
   updated_at: String
 }
@@ -3114,7 +3114,7 @@ type Subscription {
     eventTypes: [MeshSyncEventType!]
   ) : MeshSyncEvent! @KubernetesMiddleware
 
-  subscribeConfiguration(applicationSelector: PageFilter!, patternSelector: PageFilter!, filterSelector: PageFilter!) : ConfigurationPage!
+  subscribeConfiguration( patternSelector: PageFilter!, filterSelector: PageFilter!) : ConfigurationPage!
 
   subscribeClusterResources(
     k8scontextIDs: [String!],
@@ -3142,7 +3142,8 @@ type KctlDescribeDetails {
   describe: String
   ctxid: String
 
-}`, BuiltIn: false},
+}
+`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
@@ -3544,32 +3545,23 @@ func (ec *executionContext) field_Subscription_subscribeConfiguration_args(ctx c
 	var err error
 	args := map[string]interface{}{}
 	var arg0 model.PageFilter
-	if tmp, ok := rawArgs["applicationSelector"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("applicationSelector"))
+	if tmp, ok := rawArgs["patternSelector"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("patternSelector"))
 		arg0, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["applicationSelector"] = arg0
+	args["patternSelector"] = arg0
 	var arg1 model.PageFilter
-	if tmp, ok := rawArgs["patternSelector"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("patternSelector"))
+	if tmp, ok := rawArgs["filterSelector"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterSelector"))
 		arg1, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["patternSelector"] = arg1
-	var arg2 model.PageFilter
-	if tmp, ok := rawArgs["filterSelector"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("filterSelector"))
-		arg2, err = ec.unmarshalNPageFilter2githubᚗcomᚋlayer5ioᚋmesheryᚋserverᚋinternalᚋgraphqlᚋmodelᚐPageFilter(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["filterSelector"] = arg2
+	args["filterSelector"] = arg1
 	return args, nil
 }
 
@@ -14831,7 +14823,7 @@ func (ec *executionContext) _Subscription_subscribeConfiguration(ctx context.Con
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().SubscribeConfiguration(rctx, fc.Args["applicationSelector"].(model.PageFilter), fc.Args["patternSelector"].(model.PageFilter), fc.Args["filterSelector"].(model.PageFilter))
+		return ec.resolvers.Subscription().SubscribeConfiguration(rctx, fc.Args["patternSelector"].(model.PageFilter), fc.Args["filterSelector"].(model.PageFilter))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

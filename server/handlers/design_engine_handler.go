@@ -51,6 +51,12 @@ func (h *Handler) PatternFileHandler(
 ) {
 	userID := uuid.FromStringOrNil(user.ID)
 
+	var payload struct {
+		PatternFile string `json:"pattern_file"`
+		PatternID   string `json:"pattern_id"`
+	}
+	var patternFileByte []byte
+
 	// Read the PatternFile
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -62,8 +68,19 @@ func (h *Handler) PatternFileHandler(
 		return
 	}
 
+	if err := json.Unmarshal(body, &payload); err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusInternalServerError)
+
+		rw.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(rw, "failed to unmarshal request body: %s", err)
+		return
+	}
+
+	patternFileByte = []byte(payload.PatternFile)
+
 	if r.Header.Get("Content-Type") == "application/json" {
-		body, err = yaml.JSONToYAML(body)
+		patternFileByte, err = yaml.JSONToYAML(patternFileByte)
 		if err != nil {
 			h.log.Error(ErrPatternFile(err))
 			http.Error(rw, ErrPatternFile(err).Error(), http.StatusInternalServerError)
@@ -78,7 +95,8 @@ func (h *Handler) PatternFileHandler(
 		action = "Undeploy"
 	}
 
-	patternFile, err := core.NewPatternFile(body)
+	patternFile, err := core.NewPatternFile(patternFileByte)
+	patternFile.PatternID = payload.PatternID
 	// Generate the pattern file object
 	description := fmt.Sprintf("%sed design '%s'", action, patternFile.Name)
 	if isDryRun {

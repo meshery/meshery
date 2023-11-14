@@ -197,7 +197,7 @@ func main() {
 		MesheryK8sContextPersister:      &models.MesheryK8sContextPersister{DB: dbHandler},
 		EventsPersister:                 &models.EventsPersister{DB: dbHandler},
 		GenericPersister:                dbHandler,
-		Log: log,
+		Log:                             log,
 	}
 	lProv.Initialize()
 
@@ -258,7 +258,7 @@ func main() {
 			SmiResultPersister:         &models.SMIResultsPersister{DB: dbHandler},
 			GenericPersister:           dbHandler,
 			EventsPersister:            &models.EventsPersister{DB: dbHandler},
-			Log: log,
+			Log:                        log,
 		}
 
 		cp.Initialize()

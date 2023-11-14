@@ -57,7 +57,7 @@ type RemoteProvider struct {
 	SmiResultPersister *SMIResultsPersister
 	GenericPersister   *database.Handler
 	KubeClient         *mesherykube.Client
-	Log logger.Handler
+	Log                logger.Handler
 }
 
 type userSession struct {
@@ -656,16 +656,16 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (co
 	}
 
 	conn := &ConnectionPayload{
-		Kind:             "kubernetes",
-		Type:             "platform",
-		SubType:          "orchestrator",
+		Kind:    "kubernetes",
+		Type:    "platform",
+		SubType: "orchestrator",
 		// Eventually the status would depend on other factors like, whether user administratively processed it or not
 		// Is clsuter reachable and other reasons.
 		Status:           connections.CONNECTED,
 		MetaData:         metadata,
 		CredentialSecret: cred,
 	}
-	
+
 	connection, err := l.SaveConnection(nil, conn, token, true)
 	if err != nil {
 		logrus.Errorf(err.Error())
@@ -700,7 +700,7 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 	if order != "" {
 		q.Set("order", order)
 	}
-	if (withStatus != "") {
+	if withStatus != "" {
 		q.Set("status", string(connections.CONNECTED))
 	}
 	if !withCredentials {
@@ -786,7 +786,7 @@ func (l *RemoteProvider) DeleteK8sContext(token, id string) (K8sContext, error) 
 		defer func() {
 			_ = resp.Body.Close()
 		}()
-		
+
 		deletedContext := K8sContext{}
 		_ = json.NewDecoder(resp.Body).Decode(&deletedContext)
 		logrus.Infof("kubernetes successfully deleted from remote provider")
@@ -1522,7 +1522,6 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistMesheryPatterns)
 
-
 	data, err := json.Marshal(map[string]interface{}{
 		"pattern_data": pattern,
 		"save":         true,
@@ -2123,7 +2122,7 @@ func (l *RemoteProvider) GetMesheryFilters(tokenString string, page, pageSize, s
 	if order != "" {
 		q.Set("order", order)
 	}
-	
+
 	if len(visibility) > 0 {
 		for _, v := range visibility {
 			q.Add("visibility", v)
@@ -3295,7 +3294,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 			Type:             "platform",
 			SubType:          "management",
 			MetaData:         metadata,
-			Status:           connections.DISCOVERED,
+			Status:           connections.CONNECTED,
 			CredentialSecret: cred,
 		}
 
@@ -3746,7 +3745,7 @@ func (l *RemoteProvider) GetConnectionsStatus(req *http.Request, userID string) 
 	return &cp, nil
 }
 
-func (l *RemoteProvider) UpdateConnectionStatusByID(req *http.Request, connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error) {
+func (l *RemoteProvider) UpdateConnectionStatusByID(token string, connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return nil, http.StatusForbidden, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -3756,13 +3755,8 @@ func (l *RemoteProvider) UpdateConnectionStatusByID(req *http.Request, connectio
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/status/%s", l.RemoteProviderURL, ep, connectionID))
 	logrus.Debugf("Making request to : %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
-	tokenString, err := l.GetToken(req)
-	if err != nil {
-		logrus.Error("error getting token: ", err)
-		return nil, http.StatusBadRequest, err
-	}
 
-	resp, err := l.DoRequest(cReq, tokenString)
+	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
 		l.Log.Error(err)
 		return nil, http.StatusInternalServerError, ErrUpdateConnectionStatus(err, resp.StatusCode)
@@ -3777,8 +3771,8 @@ func (l *RemoteProvider) UpdateConnectionStatusByID(req *http.Request, connectio
 			return nil, http.StatusInternalServerError, ErrUnmarshal(err, "connection")
 		}
 		return &conn, resp.StatusCode, nil
-	} 
-	
+	}
+
 	l.Log.Debug(string(bdr))
 	return nil, resp.StatusCode, ErrUpdateConnectionStatus(fmt.Errorf("unable to update connection with id %s", connectionID), resp.StatusCode)
 }

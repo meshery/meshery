@@ -43,7 +43,6 @@ func (mfp *MesheryFilterPersister) GetMesheryFilters(search, order string, page,
 	}
 	query = query.Order(order)
 
-
 	if search != "" {
 		like := "%" + strings.ToLower(search) + "%"
 		query = query.Where("(lower(meshery_filters.name) like ?)", like)

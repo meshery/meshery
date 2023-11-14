@@ -546,5 +546,5 @@ type eventsResponseWrapper struct {
 // swagger:response loadTestPreferencesWrapper
 type possibleTransitions struct {
 	//in: body
-	Body   map[string]map[connections.ConnectionStatus][]connections.ConnectionStatus
+	Body map[string]map[connections.ConnectionStatus][]connections.ConnectionStatus
 }
