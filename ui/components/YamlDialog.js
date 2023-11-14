@@ -2,18 +2,17 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle,
   Divider,
   IconButton,
   Tooltip,
-  Typography,
-} from '@material-ui/core';
+} from '@layer5/sistent-components';
 import useStyles from './MesheryPatterns/Cards.styles';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import FullscreenExit from '@material-ui/icons/FullscreenExit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Fullscreen from '@material-ui/icons/Fullscreen';
 import Save from '@material-ui/icons/Save';
+import { StyledDialog, YamlDialogTitleText } from './MesheryPatterns/style';
 
 const YAMLDialog = ({
   fullScreen,
@@ -33,16 +32,16 @@ const YAMLDialog = ({
       fullScreen={fullScreen}
       fullWidth={!fullScreen}
     >
-      <DialogTitle disableTypography id="filter-dialog-title" className={classes.yamlDialogTitle}>
-        <Typography variant="h6" className={classes.yamlDialogTitleText}>
+      <StyledDialog disableTypography id="filter-dialog-title">
+        <YamlDialogTitleText variant="h6" className={classes.yamlDialogTitleText}>
           {name}
-        </Typography>
+        </YamlDialogTitleText>
         <Tooltip title="Exit Fullscreen" arrow interactive placement="bottom">
           <IconButton onClick={toggleFullScreen}>
             {fullScreen ? <FullscreenExit /> : <Fullscreen />}
           </IconButton>
         </Tooltip>
-      </DialogTitle>
+      </StyledDialog>
       <Divider variant="fullWidth" light />
       <DialogContent>
         <CodeMirror
