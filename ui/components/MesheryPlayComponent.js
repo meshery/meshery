@@ -75,7 +75,7 @@ const styles = (theme) => ({
   },
 });
 
-function MesheryPlayComponent(props) {
+const MesheryPlayComponent = (props) => {
   const { classes, meshAdapters, setAdapter } = props;
   const router = useRouter();
   const [adapter, setAdapterState] = useState(
@@ -113,7 +113,7 @@ function MesheryPlayComponent(props) {
     return () => {
       router.events.off('routeChangeComplete', handleRouteChange);
     };
-  }, [router, meshAdapters]); // Dependencies for useEffect
+  }, [router, meshAdapters]);
 
   const handleConfigure = () => {
     router.push('/settings#service-mesh');
@@ -244,7 +244,7 @@ function MesheryPlayComponent(props) {
       </React.Fragment>
     </NoSsr>
   );
-}
+};
 
 MesheryPlayComponent.propTypes = { classes: PropTypes.object.isRequired };
 
