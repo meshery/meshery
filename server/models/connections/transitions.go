@@ -1,7 +1,7 @@
 package connections
 
 var PossibleTransitionnsMap = map[string]map[ConnectionStatus][]ConnectionStatus{
-	"Kubernetes": {
+	"kubernetes": {
 		DISCOVERED: {},
 		REGISTERED: {
 			CONNECTED, IGNORED,
@@ -21,6 +21,11 @@ var PossibleTransitionnsMap = map[string]map[ConnectionStatus][]ConnectionStatus
 		DELETED: {},
 		NOTFOUND: {
 			DISCOVERED,
+		},
+	},
+	"meshery": {
+		CONNECTED: {
+			DELETED,
 		},
 	},
 }
