@@ -37,7 +37,7 @@ import SearchBar from '../../utils/custom-search';
 import ResponsiveDataTable from '../../utils/data-table';
 import useStyles from '../../assets/styles/general/tool.styles';
 import Modal from '../Modal';
-import { iconMedium } from '../../css/icons.styles';
+import { iconMedium, iconSmall } from '../../css/icons.styles';
 import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
 import resetDatabase from '../graphql/queries/ResetDatabaseQuery';
 import changeOperatorState from '../graphql/mutations/OperatorStatusMutation';
@@ -48,15 +48,17 @@ import MeshSyncTable from './MeshsyncTable';
 import ConnectionIcon from '../../assets/icons/Connection';
 import MeshsyncIcon from '../../assets/icons/Meshsync';
 import classNames from 'classnames';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+// import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+// import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import SyncIcon from '@mui/icons-material/Sync';
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import ExploreIcon from '@mui/icons-material/Explore';
+// import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+// import ExploreIcon from '@mui/icons-material/Explore';
 import { CONNECTION_STATES } from '../../utils/Enum';
 import { FormatConnectionMetadata } from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
 import theme from '../../themes/app';
+import { ConnectionStateChip } from './ConnectionChip';
+import InfoIcon from '@material-ui/icons/Info';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -158,17 +160,18 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
   const meshSyncResetRef = useRef(null);
   const { notify } = useNotification();
   const StyleClass = useStyles();
+  const url = `https://docs.meshery.io/concepts/connections`;
 
-  const icons = {
-    [CONNECTION_STATES.IGNORED]: () => <RemoveCircleIcon />,
-    [CONNECTION_STATES.CONNECTED]: () => <CheckCircleIcon />,
-    [CONNECTION_STATES.REGISTERED]: () => <AssignmentTurnedInIcon />,
-    [CONNECTION_STATES.DISCOVERED]: () => <ExploreIcon />,
-    [CONNECTION_STATES.DELETED]: () => <DeleteForeverIcon />,
-    [CONNECTION_STATES.MAINTENANCE]: () => <ExploreIcon />,
-    [CONNECTION_STATES.DISCONNECTED]: () => <ExploreIcon />,
-    [CONNECTION_STATES.NOTFOUND]: () => <ExploreIcon />,
-  };
+  // const icons = {
+  //   [CONNECTION_STATES.IGNORED]: () => <RemoveCircleIcon />,
+  //   [CONNECTION_STATES.CONNECTED]: () => <CheckCircleIcon />,
+  //   [CONNECTION_STATES.REGISTERED]: () => <AssignmentTurnedInIcon />,
+  //   [CONNECTION_STATES.DISCOVERED]: () => <ExploreIcon />,
+  //   [CONNECTION_STATES.DELETED]: () => <DeleteForeverIcon />,
+  //   [CONNECTION_STATES.MAINTENANCE]: () => <ExploreIcon />,
+  //   [CONNECTION_STATES.DISCONNECTED]: () => <ExploreIcon />,
+  //   [CONNECTION_STATES.NOTFOUND]: () => <ExploreIcon />,
+  // };
 
   const columns = [
     {
@@ -357,14 +360,23 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
       options: {
         sort: true,
         sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+        customHeadRender: function CustomHead({ index, ...column }) {
           return (
-            <SortableTableCell
-              index={index}
-              columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
-            />
+            <TableCell key={index}>
+              <Tooltip title="Click to know about connection and status" placement="top">
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <b>{column.label}</b>
+                  <InfoIcon
+                    color={theme.palette.secondary.iconMain}
+                    style={iconSmall}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(url, '_blank');
+                    }}
+                  />
+                </div>
+              </Tooltip>
+            </TableCell>
           );
         },
         customBodyRender: function CustomBody(value, tableMeta) {
@@ -396,12 +408,8 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
                   }}
                 >
                   {Object.keys(CONNECTION_STATES).map((s) => (
-                    <MenuItem value={CONNECTION_STATES[s]} key={s}>
-                      <Chip
-                        className={classNames(classes.statusChip, classes[CONNECTION_STATES[s]])}
-                        avatar={icons[CONNECTION_STATES[s]]()}
-                        label={CONNECTION_STATES[s]}
-                      />
+                    <MenuItem value={CONNECTION_STATES[s]}>
+                      <ConnectionStateChip status={CONNECTION_STATES[s]} />
                     </MenuItem>
                   ))}
                 </Select>
