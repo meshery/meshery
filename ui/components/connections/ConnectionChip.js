@@ -1,4 +1,4 @@
-import { Chip, MenuItem, Tooltip, makeStyles } from '@material-ui/core';
+import { Chip, MenuItem, Tooltip, makeStyles, Avatar } from '@material-ui/core';
 import classNames from 'classnames';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
@@ -7,10 +7,54 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import HelpIcon from '@material-ui/icons/Help';
 import { iconSmall } from '../../css/icons.styles';
+import BadgeAvatars from '../CustomAvatar';
 
-export const ConnectionChip = ({ handlePing, title, icon }) => (
-  <Chip label={title} onClick={() => handlePing()} icon={icon} variant="outlined" />
-);
+const useChipStyles = makeStyles(() => ({
+  Chip: {
+    width: '12.8rem',
+    textAlign: 'center',
+    cursor: 'pointer',
+    '& .MuiChip-label': {
+      flexGrow: 1,
+    },
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+  },
+  icon: {
+    width: '1.5rem',
+    height: '1.5rem',
+  },
+}));
+
+export const ConnectionChip = ({ handlePing, onDelete, title, tooltip, iconSrc, status }) => {
+  const classes = useChipStyles();
+  return (
+    <Tooltip title={tooltip || title} placement="bottom">
+      <Chip
+        label={title}
+        onClick={handlePing}
+        onDelete={onDelete}
+        avatar={
+          status ? (
+            <BadgeAvatars>
+              <Avatar
+                src={iconSrc}
+                className={classes.icon}
+                style={status ? {} : { opacity: 0.2 }}
+              />
+            </BadgeAvatars>
+          ) : (
+            <Avatar src={iconSrc} className={classes.icon} style={status ? {} : { opacity: 0.2 }} />
+          )
+        }
+        variant="filled"
+        className={classes.Chip}
+        data-cy="chipContextName"
+      />
+    </Tooltip>
+  );
+};
 
 const styles = makeStyles((theme) => ({
   statusCip: {

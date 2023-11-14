@@ -35,7 +35,7 @@ import { bindActionCreators } from 'redux';
 import BadgeAvatars from './CustomAvatar';
 import { SETTINGS } from '../constants/navigator';
 import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
-import PromptComponent from './PromptComponent';
+import PromptComponent, { PROMPT_VARIANTS } from './PromptComponent';
 import { iconMedium } from '../css/icons.styles';
 import ExtensionSandbox from './ExtensionSandbox';
 import RemoteComponent from './RemoteComponent';
@@ -335,6 +335,7 @@ function K8sContextMenu({
       title: `Delete ${name} context ?`,
       subtitle: `Are you sure you want to delete ${name} cluster from Meshery?`,
       options: ['CONFIRM', 'CANCEL'],
+      variant: PROMPT_VARIANTS.DANGER,
     });
     if (responseOfDeleteK8sCtx === 'CONFIRM') {
       const successCallback = async () => {

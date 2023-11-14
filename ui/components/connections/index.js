@@ -38,7 +38,7 @@ import ResponsiveDataTable from '../../utils/data-table';
 import useStyles from '../../assets/styles/general/tool.styles';
 import Modal from '../Modal';
 import { iconMedium } from '../../css/icons.styles';
-import PromptComponent from '../PromptComponent';
+import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
 import resetDatabase from '../graphql/queries/ResetDatabaseQuery';
 import changeOperatorState from '../graphql/mutations/OperatorStatusMutation';
 import fetchMesheryOperatorStatus from '../graphql/queries/OperatorStatusQuery';
@@ -396,7 +396,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
                   }}
                 >
                   {Object.keys(CONNECTION_STATES).map((s) => (
-                    <MenuItem value={CONNECTION_STATES[s]}>
+                    <MenuItem value={CONNECTION_STATES[s]} key={s}>
                       <Chip
                         className={classNames(classes.statusChip, classes[CONNECTION_STATES[s]])}
                         avatar={icons[CONNECTION_STATES[s]]()}
@@ -530,18 +530,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
                     <Grid container spacing={1} style={{ textTransform: 'lowercase' }}>
                       <Grid item xs={12} md={12} className={classes.contentContainer}>
                         <Grid container spacing={1}>
-                          <Grid
-                            item
-                            xs={12}
-                            md={12}
-                            style={{
-                              display: 'flex',
-                              flexWrap: 'wrap',
-                              padding: '0 20px',
-                              gap: 30,
-                            }}
-                            className={classes.contentContainer}
-                          >
+                          <Grid item xs={12} md={12} className={classes.contentContainer}>
                             <FormatConnectionMetadata connection={connection} />
                           </Grid>
                         </Grid>
@@ -625,6 +614,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
         title: `Delete Connections`,
         subtitle: `Are you sure that you want to delete connections"?`,
         options: ['Delete', 'No'],
+        variant: PROMPT_VARIANTS.DANGER,
       });
       if (response === 'Delete') {
         selected.data.map(({ index }) => {
@@ -640,6 +630,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
         title: `Delete Connection`,
         subtitle: `Are you sure that you want to delete connection"?`,
         options: ['Delete', 'No'],
+        variant: PROMPT_VARIANTS.DANGER,
       });
       if (response === 'Delete') {
         deleteConnection(id);
@@ -679,6 +670,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
         title: `Flush MeshSync data for ${connections[index].metadata?.name} ?`,
         subtitle: `Are you sure to Flush MeshSync data for “${connections[index].metadata?.name}”? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.`,
         options: ['PROCEED', 'CANCEL'],
+        variant: PROMPT_VARIANTS.WARNING,
       });
       if (response === 'PROCEED') {
         updateProgress({ showProgress: true });
