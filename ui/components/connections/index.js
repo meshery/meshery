@@ -37,7 +37,7 @@ import SearchBar from '../../utils/custom-search';
 import ResponsiveDataTable from '../../utils/data-table';
 import useStyles from '../../assets/styles/general/tool.styles';
 import Modal from '../Modal';
-import { iconMedium } from '../../css/icons.styles';
+import { iconMedium, iconSmall } from '../../css/icons.styles';
 import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
 import resetDatabase from '../graphql/queries/ResetDatabaseQuery';
 import changeOperatorState from '../graphql/mutations/OperatorStatusMutation';
@@ -58,6 +58,7 @@ import { FormatConnectionMetadata } from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
 import theme from '../../themes/app';
 import { ConnectionStateChip } from './ConnectionChip';
+import InfoIcon from '@material-ui/icons/Info';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -159,6 +160,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
   const meshSyncResetRef = useRef(null);
   const { notify } = useNotification();
   const StyleClass = useStyles();
+  const url = `https://docs.meshery.io/concepts/connections`;
 
   // const icons = {
   //   [CONNECTION_STATES.IGNORED]: () => <RemoveCircleIcon />,
@@ -358,14 +360,23 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
       options: {
         sort: true,
         sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+        customHeadRender: function CustomHead({ index, ...column }) {
           return (
-            <SortableTableCell
-              index={index}
-              columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
-            />
+            <TableCell key={index}>
+              <Tooltip title="Click to know about connection and status" placement="top">
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <b>{column.label}</b>
+                  <InfoIcon
+                    color={theme.palette.secondary.iconMain}
+                    style={iconSmall}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(url, '_blank');
+                    }}
+                  />
+                </div>
+              </Tooltip>
+            </TableCell>
           );
         },
         customBodyRender: function CustomBody(value, tableMeta) {

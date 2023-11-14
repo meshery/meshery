@@ -544,6 +544,7 @@ export const notificationColors = {
   success: '#206D24',
   info: '#2196F3',
   darkRed: '#B32700',
+  lightwarning: '#E75225',
 };
 
 export const darkNotificationColors = {
