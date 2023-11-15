@@ -5,6 +5,8 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshkit/logger"
+
 )
 
 // Represents an event in the system/machine
@@ -61,6 +63,8 @@ type StateMachine struct {
 	Context interface{} 
 	
 	mx sync.RWMutex
+
+	log logger.Handler
 }
 
 func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
@@ -73,7 +77,7 @@ func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 		if events != nil {
 			nextState, ok := events[event]
 			if ok {
-				fmt.Println(nextState)
+				sm.log.Info("next state: ", nextState)
 				return nextState, nil
 			}
 		}
@@ -87,7 +91,8 @@ func (sm *StateMachine) SendEvent(event EventType) (error) {
 
 	nextState, err := sm.getNextState(event)
 	if err != nil {
-		return nil
+		sm.log.Error(err)
+		return err
 	}
 
 	state, ok := sm.States[nextState]
@@ -105,20 +110,22 @@ func (sm *StateMachine) SendEvent(event EventType) (error) {
 	if prerequisiteAction != nil {
 		_, _, err := prerequisiteAction.Action(sm.Context)
 		if err != nil {
+			sm.log.Error(err)
 			return err
 		}
 	}
 
 	_, nextEvent, err := state.Action.Action(sm.Context)
 	if err != nil {
+		sm.log.Error(err)
 		return err
 	}
 
-	fmt.Println(nextEvent)
+	sm.log.Info(nextEvent)
 	sm.PreviousState = sm.CurrentState
 	sm.CurrentState = nextState
-	fmt.Println("previous state for ", sm.Name, " ", sm.States[sm.PreviousState])
-	fmt.Println("next state for ", sm.Name, " ", sm.States[sm.CurrentState])
+	sm.log.Info("previous state for ", sm.Name, " ", sm.States[sm.PreviousState])
+	sm.log.Info("next state for ", sm.Name, " ", sm.States[sm.CurrentState])
 	return nil
 }
 
