@@ -57,7 +57,7 @@ import (
 )
 
 var (
-	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logoURL", "svgColor", "svgWhite", "Publish?", "CRDs", "component", "svgComplete", "genealogy", "styleOverrides"}
+	ColumnNamesToExtract        = []string{"modelDisplayName", "model", "category", "subCategory", "shape", "primaryColor", "secondaryColor", "logoURL", "svgColor", "svgWhite", "isAnnotation", "PublishToRegistry", "CRDs", "component", "svgComplete", "genealogy", "styleOverrides"}
 	ColumnNamesToExtractForDocs = []string{"modelDisplayName", "Page Subtitle", "Docs URL", "category", "subCategory", "Feature 1", "Feature 2", "Feature 3", "howItWorks", "howItWorksDetails", "Publish?", "About Project", "Standard Blurb", "svgColor", "svgWhite", "Full Page", "model"}
 	PrimaryColumnName           = "model"
 	OutputPath                  = ""
@@ -318,7 +318,7 @@ func mesheryUpdater(output []map[string]string) {
 		if changeFields["CRDs"] == "" {
 			countWithoutCrds++
 		}
-		if changeFields["Publish?"] == "TRUE" { //For a component level field
+		if changeFields["PublishToRegistry"] == "TRUE" { //For a component level field
 			publishedModels[changeFields[PrimaryColumnName]] = true
 		}
 		return nil
@@ -398,13 +398,19 @@ func mesheryUpdater(output []map[string]string) {
 						component.Metadata["isNamespaced"] = false
 					}
 					//Either component is set to published or the parent model is set to published
-					if component.Metadata["Publish?"] == "TRUE" || publishedModels[component.Model.Name] { //Publish? is an invalid field for putting inside kubernetes annotations
+					if component.Metadata["PublishToRegistry"] == "TRUE" || publishedModels[component.Model.Name] { //Publish? is an invalid field for putting inside kubernetes annotations
 						component.Metadata["published"] = true
 					} else {
 						component.Metadata["published"] = false
 					}
+					if component.Metadata["isAnnotation"] == "TRUE" {
+						component.Metadata["isAnnotation"] = true
+					} else {
+						component.Metadata["isAnnotation"] = false
+					}
 					fmt.Println("updating for ", changeFields["modelDisplayName"], "--", component.Kind, "-- published=", component.Metadata["published"])
 					delete(component.Metadata, "Publish?")
+					delete(component.Metadata, "PublishToRegistry")
 					delete(component.Metadata, "CRDs")
 					delete(component.Metadata, "component")
 					modelDisplayName := component.Metadata["modelDisplayName"].(string)
