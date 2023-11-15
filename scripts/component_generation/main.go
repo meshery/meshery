@@ -288,15 +288,17 @@ func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, spreadsheet
 		for pkgs := range in {
 			ahPkgs := make([]artifacthub.AhPackage, 0)
 			for _, ap := range pkgs {
-				fmt.Println("[DEBUG] Updating package data for: ", ap.Name)
-				err := ap.UpdatePackageData()
-				if err != nil {
-					fmt.Println(err)
-					continue
+				if ap.Name == "meshery" {
+						fmt.Println("[DEBUG] Updating package data for: ", ap.Name)
+						err := ap.UpdatePackageData()
+						if err != nil {
+							fmt.Println(err)
+						continue
+					}
+					ahPkgs = append(ahPkgs, ap)
 				}
-				ahPkgs = append(ahPkgs, ap)
+				pkgsChan <- ahPkgs
 			}
-			pkgsChan <- ahPkgs
 		}
 		close(pkgsChan)
 	}()
@@ -381,7 +383,6 @@ func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, spreadsheet
 				helmURL: ap.ChartUrl,
 			}
 		}
-
 	}
 	return nil
 }
@@ -564,16 +565,16 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 			batchSize--
 			fmt.Println("Batch size: ", batchSize)
 			if batchSize <= 0 {
-				row := &sheets.ValueRange{
-					Values: values,
-				}
-				response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, sheetName, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
-				values = make([][]interface{}, 0)
-				batchSize = 100
-				if err != nil || response2.HTTPStatusCode != 200 {
-					fmt.Println(err)
-					continue
-				}
+				// row := &sheets.ValueRange{
+				// 	Values: values,
+				// }
+				// response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, sheetName, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
+				// values = make([][]interface{}, 0)
+				// batchSize = 100
+				// if err != nil || response2.HTTPStatusCode != 200 {
+				// 	fmt.Println(err)
+				// 	continue
+				// }
 			}
 		}
 		if am[entry.model] != nil {
@@ -591,26 +592,26 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 		batchSize--
 		fmt.Println("Batch size: ", batchSize)
 		if batchSize <= 0 {
-			row := &sheets.ValueRange{
-				Values: values,
-			}
-			response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, sheetName, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
-			values = make([][]interface{}, 0)
-			batchSize = 100
-			if err != nil || response2.HTTPStatusCode != 200 {
-				fmt.Println(err)
-				continue
-			}
+			// row := &sheets.ValueRange{
+			// 	Values: values,
+			// }
+			// response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, sheetName, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
+			// values = make([][]interface{}, 0)
+			// batchSize = 100
+			// if err != nil || response2.HTTPStatusCode != 200 {
+			// 	fmt.Println(err)
+			// 	continue
+			// }
 		}
 	}
 	if len(values) != 0 {
-		row := &sheets.ValueRange{
-			Values: values,
-		}
-		response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, sheetName, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
-		if err != nil || response2.HTTPStatusCode != 200 {
-			fmt.Println(err)
-		}
+		// row := &sheets.ValueRange{
+		// 	Values: values,
+		// }
+		// response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, sheetName, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
+		// if err != nil || response2.HTTPStatusCode != 200 {
+		// 	fmt.Println(err)
+		// }
 	}
 	elapsed := time.Now().Sub(start)
 	fmt.Printf("Time taken by spreadsheet updater in minutes (including the time it required to generate components): %f", elapsed.Minutes())
