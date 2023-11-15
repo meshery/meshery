@@ -61,39 +61,43 @@ export const useNotification = () => {
   }) => {
     timestamp = timestamp ?? moment.utc().valueOf();
     id = id || v4();
+    // Check if the notification center toggle class exists
+    const notificationCenterExists = document.querySelector(`.${NOTIFICATION_CENTER_TOGGLE_CLASS}`);
 
-    enqueueSnackbar(message, {
-      //NOTE: Need to Consolidate the variant and event_type
-      variant: typeof event_type === 'string' ? event_type : event_type?.type,
-      action: function Action(key) {
-        return (
-          <ToggleButtonGroup>
-            {showInNotificationCenter && (
-              <AddClassRecursively className={NOTIFICATION_CENTER_TOGGLE_CLASS}>
-                <IconButton
-                  key={`openevent-${id}`}
-                  aria-label="Open"
-                  color="inherit"
-                  onClick={() => openEvent(id)}
-                >
-                  <BellIcon {...iconMedium} />
-                </IconButton>
-              </AddClassRecursively>
-            )}
-            <IconButton
-              key={`closeevent-${id}`}
-              aria-label="Close"
-              color="inherit"
-              onClick={() => closeSnackbar(key)}
-            >
-              <CloseIcon style={iconMedium} />
-            </IconButton>
-          </ToggleButtonGroup>
-        );
-      },
-    });
+    // Only show the notification if the notification center toggle class is not present
+    if (!notificationCenterExists) {
+      enqueueSnackbar(message, {
+        //NOTE: Need to Consolidate the variant and event_type
+        variant: typeof event_type === 'string' ? event_type : event_type?.type,
+        action: function Action(key) {
+          return (
+            <ToggleButtonGroup>
+              {showInNotificationCenter && (
+                <AddClassRecursively className={NOTIFICATION_CENTER_TOGGLE_CLASS}>
+                  <IconButton
+                    key={`openevent-${id}`}
+                    aria-label="Open"
+                    color="inherit"
+                    onClick={() => openEvent(id)}
+                  >
+                    <BellIcon {...iconMedium} />
+                  </IconButton>
+                </AddClassRecursively>
+              )}
+              <IconButton
+                key={`closeevent-${id}`}
+                aria-label="Close"
+                color="inherit"
+                onClick={() => closeSnackbar(key)}
+              >
+                <CloseIcon style={iconMedium} />
+              </IconButton>
+            </ToggleButtonGroup>
+          );
+        },
+      });
+    }
   };
-
   return {
     notify,
   };
