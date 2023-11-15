@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Typography, Button, Tooltip } from '@mui/material'
+import { Typography, Button, Tooltip, Grid } from '@mui/material'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import ConsulIcon from '../../img/SVGs/consulIcon'
 import IstioIcon from '../../img/SVGs/IstioIcon'
@@ -27,11 +27,12 @@ import {
   LogoutButton,
   StyledButton,
   StyledLink,
+  MeshModels,
 } from './styledComponents'
 import { MesheryAnimation } from '../MesheryAnimation/MesheryAnimation'
 import { randomApplicationNameGenerator } from '../../utils'
 import CatalogChart from '../Catalog/Chart'
-
+import CatalogCard from '../Catalog/CatalogCard';
 const AuthenticatedMsg = 'Authenticated'
 const UnauthenticatedMsg = 'Unauthenticated'
 const proxyUrl = 'http://127.0.0.1:7877'
@@ -111,6 +112,10 @@ const ExtensionsComponent = () => {
   const [pattern, setPattern] = useState(null)
   const [emptyFilter, setEmptyFilter] = useState(true)
   const [filter, setFilter] = useState(null)
+  const [emptyMeshmodelCategories, isEmptyMeshmodelCategories] = useState(true)
+  const [meshmodelsCategories, setMeshmodelsCategories] = useState(null)
+  const [emptysetCatalogs, isEmptysetCatalogs] = useState(true)
+  const [catalogs, setCatalogs] = useState(null)
 
   useEffect(() => {
     if (meshAdapters && meshAdapters.length !== 0) {
@@ -183,6 +188,20 @@ const ExtensionsComponent = () => {
               setEmptyFilter(false);
             })
             .catch(console.error);
+          fetch(proxyUrl + '/api/meshmodels/categories')
+            .then((result) => result.text())
+            .then((result) => {
+              setMeshmodelsCategories(JSON.parse(result))
+              isEmptyMeshmodelCategories(false)
+            })
+            .catch(console.error)
+          // fetch("https://meshery.layer5.io/api/catalog/content/pattern")
+          //   .then((result) => result.text())
+          //   .then((result) => {
+          //     setCatalogs(JSON.parse(result));
+          //     isEmptysetCatalogs(false);
+          //   })
+          //   .catch(console.error);
         }
       })
       .catch(console.error)
@@ -476,8 +495,55 @@ const ExtensionsComponent = () => {
         {isLoggedIn &&
           (<SectionWrapper>
             <CatalogChart filter={filter} pattern={pattern} isTheme={isDarkTheme} />
+            {/* {!!isLoggedIn && ( */}
+            <Grid sx={{ backgroundColor: isDarkTheme ? '#666A75' : '#D7DADE', borderRadius: "15px", height: "23rem", display: "flex", justifyContent: "center" }}>
+
+              <div style={{ paddingTop: isLoggedIn ? '1.2rem' : null, margin: "10px 0" }}>
+                <ExtensionWrapper
+                  className="first-step"
+                  sx={{
+                    height: ['22rem', '17rem', '14rem'],
+                  }}
+                >
+                  {!emptyMeshmodelCategories ? (
+                    <div>
+                      <Typography sx={{ padding: '3rem 0 1rem 0' }}>
+                        Meshery Catalogs
+                      </Typography>
+                      <MeshModels>
+                        {
+                          pattern?.patterns?.slice(0, 2).map((pattern, index) => {
+                            console.log("p", pattern, index)
+                            let patternType =
+                              pattern.catalog_data && pattern.catalog_data.type && pattern.catalog_data.type !== ""
+                                ? pattern.catalog_data.type
+                                : "deployment";
+                            return (
+                              <CatalogCard
+                                pattern={pattern}
+                                key={`design-${index}`}
+                                patternType={patternType}
+                                catalog={true}
+                              />
+                            )
+                          })
+                        }
+                      </MeshModels>
+                    </div>
+                  ) : (
+                    <div>
+                      <Typography sx={{ marginBottom: '1rem' }} variant="h4">
+                        No Mesh Models Category
+                      </Typography>
+                    </div>
+                  )}
+                </ExtensionWrapper>
+              </div>
+            </Grid>
+            {/* )} */}
           </SectionWrapper>)
         }
+
         <SectionWrapper>
           {!!isLoggedIn && (
             <div style={{ paddingTop: isLoggedIn ? '1.2rem' : null }}>
@@ -485,15 +551,15 @@ const ExtensionsComponent = () => {
                 <VersionText variant="span" component="span" align="end">
                   {mesheryVersion}
                 </VersionText>
-                  </Tooltip>
-                  <a
-                  href={`https://docs.meshery.io/project/releases/${mesheryVersion}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{ color: 'white' }}
-                  >
-                  <OpenInNewIcon style={{ width: '0.85rem', verticalAlign: 'middle' }} />
-                </a>
+              </Tooltip>
+              <a
+                href={`https://docs.meshery.io/project/releases/${mesheryVersion}`}
+                target="_blank"
+                rel="noreferrer"
+                style={{ color: 'white' }}
+              >
+                <OpenInNewIcon style={{ width: '0.85rem', verticalAlign: 'middle' }} />
+              </a>
             </div>
           )}
         </SectionWrapper>

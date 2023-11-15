@@ -106,3 +106,12 @@ export const StyledLink = styled('a')(() => ({
   borderRadius: "5px",
   color: "white",
 }));
+
+export const MeshModels = styled('div')(({ theme }) => ({
+  display: "flex",
+  alignItems: 'center',
+  flexWrap: "wrap",
+  [theme.breakpoints.down("md")]: {
+    display: "flex",
+  },
+}));
