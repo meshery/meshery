@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { Grid, Box, Button, Switch, Typography, Tooltip } from '@mui/material'
+import { Typography, Button, Tooltip } from '@mui/material'
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import ConsulIcon from '../../img/SVGs/consulIcon'
 import IstioIcon from '../../img/SVGs/IstioIcon'
 import KumaIcon from '../../img/SVGs/kumaIcon'
-import Joyride from 'react-joyride'
 import Tour from '../Walkthrough/Tour'
-import { createTheme } from '@mui/material/styles'
 import LinkerdIcon from '../../img/SVGs/linkerdIcon'
-
 import { Avatar } from '@mui/material'
-
 import NginxIcon from '../../img/SVGs/nginxIcon'
-import OsmIcon from '../../img/SVGs/osmIcon'
 import AppmeshIcon from '../../img/SVGs/appmeshIcon'
 import CiliumIcon from '../../img/SVGs/ciliumIcon'
 import TraefikIcon from '../../img/SVGs/traefikIcon'
@@ -22,19 +18,19 @@ import CssBaseline from '@mui/material/CssBaseline'
 import { LoadComp } from '../LoadingComponent/LoadComp'
 import {
   LoadingDiv,
-  StyledDiv,
   AccountDiv,
-  ServiceMeshAdapters,
   ExtensionWrapper,
-  AdapterDiv,
+  LinkButton,
   ComponentWrapper,
   SectionWrapper,
   VersionText,
   LogoutButton,
-  StatCard,
+  StyledButton,
+  StyledLink,
 } from './styledComponents'
 import { MesheryAnimation } from '../MesheryAnimation/MesheryAnimation'
-import { trueRandom, randomApplicationNameGenerator } from '../../utils'
+import { randomApplicationNameGenerator } from '../../utils'
+import CatalogChart from '../Catalog/Chart'
 
 const AuthenticatedMsg = 'Authenticated'
 const UnauthenticatedMsg = 'Unauthenticated'
@@ -323,9 +319,6 @@ const ExtensionsComponent = () => {
             sx={{ backgroundColor: isDarkTheme ? '#393F49' : '#D7DADE' }}
           >
             <AccountDiv>
-              <Typography sx={{ marginBottom: '1rem', whiteSpace: 'nowrap' }}>
-                Launch Meshery
-              </Typography>
               <div style={{ marginBottom: '0.5rem' }}>
                 <a
                   style={{ textDecoration: 'none' }}
@@ -353,6 +346,19 @@ const ExtensionsComponent = () => {
                     <Meshery height={70} width={72} />
                   )}
                 </a>
+                <LinkButton>
+                  <StyledLink
+                    style={{ textDecoration: 'none', color: "white" }}
+                    href={
+                      token &&
+                      'http://localhost:9081/api/user/token?token=' +
+                      token +
+                      '&provider=Meshery'
+                    }
+                  >
+                    Launch Meshery
+                  </StyledLink>
+                </LinkButton>
               </div>
               {!isLoggedIn ? (
                 <Button
@@ -374,7 +380,6 @@ const ExtensionsComponent = () => {
               )}
             </AccountDiv>
           </ExtensionWrapper>
-
           {isLoggedIn && (
             <ExtensionWrapper
               className="second-step"
@@ -388,7 +393,7 @@ const ExtensionsComponent = () => {
                 </Typography>
                 <div style={{ paddingBottom: '2rem' }}>
                   <label htmlFor="upload-button">
-                    <Button
+                    <StyledButton
                       variant="contained"
                       color="primary"
                       disabled={!isLoggedIn}
@@ -404,7 +409,7 @@ const ExtensionsComponent = () => {
                         onChange={handleImport}
                       />
                       Browse...
-                    </Button>
+                    </StyledButton>
                   </label>
                 </div>
               </AccountDiv>
@@ -468,46 +473,27 @@ const ExtensionsComponent = () => {
             </div>
           )}
         </SectionWrapper>
-        <SectionWrapper>
-          {isLoggedIn && (
-            <>
-              <StatCard
-                className="second-step"
-                sx={{ backgroundColor: isDarkTheme ? '#393F49' : '#D7DADE' }}
-              >
-                <Typography
-                  sx={{ whiteSpace: ' nowrap' }}
-                >
-                  Total Designs
-                </Typography>
-                <Typography sx={{ fontSize: "32px" }}>
-                  {pattern?.total_count}
-                </Typography>
-              </StatCard>
-              <StatCard
-                className="second-step"
-                sx={{ backgroundColor: isDarkTheme ? '#393F49' : '#D7DADE' }}
-              >
-                <Typography
-                  sx={{ whiteSpace: ' nowrap' }}
-                >
-                  Total Designs
-                </Typography>
-                <Typography sx={{ fontSize: "32px" }}>
-                  {filter?.total_count}
-                </Typography>
-              </StatCard>
-            </>
-          )}
-        </SectionWrapper>
+        {isLoggedIn &&
+          (<SectionWrapper>
+            <CatalogChart filter={filter} pattern={pattern} isTheme={isDarkTheme} />
+          </SectionWrapper>)
+        }
         <SectionWrapper>
           {!!isLoggedIn && (
             <div style={{ paddingTop: isLoggedIn ? '1.2rem' : null }}>
               <Tooltip title="Meshery Server version">
-                <VersionText variant="p" component="p" align="end">
+                <VersionText variant="span" component="span" align="end">
                   {mesheryVersion}
                 </VersionText>
-              </Tooltip>
+                  </Tooltip>
+                  <a
+                  href={`https://docs.meshery.io/project/releases/${mesheryVersion}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{ color: 'white' }}
+                  >
+                  <OpenInNewIcon style={{ width: '0.85rem', verticalAlign: 'middle' }} />
+                </a>
             </div>
           )}
         </SectionWrapper>

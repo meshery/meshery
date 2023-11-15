@@ -1,6 +1,6 @@
 
 import { styled } from "@mui/material/styles";
-import {Typography} from "@mui/material";
+import { ButtonBase, Typography } from "@mui/material";
 
 export const StyledDiv = styled('div')(() => ({
   paddingLeft: "0.2rem",
@@ -42,7 +42,7 @@ export const ExtensionWrapper = styled('div')(({ theme }) => ({
 
 export const ComponentWrapper = styled('div')(({ theme }) => ({
   textAlign: "center",
-  padding: "5rem",
+  padding: "3rem 5rem",
   maxHeight: "100vh",
 }))
 
@@ -66,7 +66,7 @@ export const VersionDiv = styled('div')(({theme}) => ({
 }))
 
 export const VersionText = styled(Typography)(({ theme }) => ({
-  padding: "0rem 3rem",
+  padding: "0rem 0.5rem",
   paddingBottom: "0",
   width: "fit-content",
   marginLeft: "auto",
@@ -77,14 +77,32 @@ export const LogoutButton = styled('div')(({ theme }) => ({
   width: "fit-content",
 }));
 
-export const StatCard = styled('div')(({ theme }) => ({
-  margin: theme.spacing(2),
-  display: "flex",
-  justifyContent: 'center',
-  alignItems: 'center',
-  height: "5rem",
-  borderRadius: "20px ",
-  padding: "4rem",
-  textAlign: "center",
-  flexDirection: "column"
+export const StyledButton = styled(ButtonBase)(() => ({
+  marginTop: '1rem',
+  whiteSpace: 'nowrap',
+  backgroundColor: "#00B39F",
+  borderRadius: "5px",
+  color: "white",
+  padding: "10px 20px",
+  "&:hover": {
+    boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.19)",
+  },
+}));
+
+export const LinkButton = styled(ButtonBase)(() => ({
+  marginTop: '1rem',
+  whiteSpace: 'nowrap',
+  padding: "0",
+  backgroundColor: "#00B39F",
+  borderRadius: "5px",
+  color: "white",
+  "&:hover": {
+    boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.19)",
+  },
+}));
+
+export const StyledLink = styled('a')(() => ({
+  padding: "10px 20px",
+  borderRadius: "5px",
+  color: "white",
 }));
