@@ -1,18 +1,17 @@
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
-  dialogTitle: {
-    textAlign: 'center',
-    minWidth: 400,
-    padding: '10px',
-    color: '#fff',
-    backgroundColor:
-      theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : '#396679',
-  },
+  // dialogTitle: {
+  //   textAlign: 'center',
+  //   minWidth: 400,
+  //   padding: '10px',
+  //   color: '#fff',
+  //   backgroundColor:
+  //     theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : '#396679',
+  // },
   cardButtons: {
     display: 'flex',
     flexWrap: 'wrap',
-    marginTop: '50px',
     height: '100%',
     gap: '.5rem',
   },
@@ -73,9 +72,14 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'flex-start',
     alignItems: 'center',
+    marginTop: '1rem',
   },
   lastRunText: {
     marginRight: '0.5rem',
+  },
+  avatarLink: {
+    display: 'block',
+    marginTop: '2.4rem',
   },
   iconPatt: {
     width: '24px',
