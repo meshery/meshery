@@ -1,14 +1,14 @@
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
-  // dialogTitle: {
-  //   textAlign: 'center',
-  //   minWidth: 400,
-  //   padding: '10px',
-  //   color: '#fff',
-  //   backgroundColor:
-  //     theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : '#396679',
-  // },
+  dialogTitle: {
+    textAlign: 'center',
+    minWidth: 400,
+    padding: '10px',
+    color: '#fff',
+    backgroundColor:
+      theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : '#396679',
+  },
   cardButtons: {
     display: 'flex',
     flexWrap: 'wrap',
