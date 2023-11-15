@@ -1,0 +1,42 @@
+{
+    "kind": "Connection",
+    "apiVersion": "meshery.layer5.io/v1alpha1",
+    "displayName": "Kubernetes Connection" ,
+    "format": "JSON",
+    "model": {
+        "name": "kubernetes",
+        "version": "*",
+        "displayName": "Kubernetes",
+        "category": {
+            "name": "Orchestration \u0026 Management",
+            "metadata": null
+        },
+        "metadata": {
+            "transitions": {
+                "discovered": [
+                    "registered", "not found", "deleted"
+                ],
+                "registered": [
+                    "connected", "ignored"
+                ],
+                "connected": [
+                    "disconnected", "maintenance", "deleted", "not found"
+                ],
+                "ignored": [
+                    "deleted", "registered"
+                ],
+                "maintenance": [
+                    "registered", "connected", "ignored", "not found"
+                ],
+                "disconnected": [
+                    "connected", "deleted"
+                ],
+                "deleted": [],
+                "not found": [
+                    "discovered"
+                ]
+            }
+        }
+    },
+    "schema": "$ref:https://raw.githubusercontent.com/meshery/schemas/master/openapi/schemas/k8scontext.yml"
+}
