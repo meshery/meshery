@@ -43,7 +43,7 @@ import DoneIcon from '@material-ui/icons/Done';
 import PublicIcon from '@material-ui/icons/Public';
 import ConfirmationModal from './ConfirmationModal';
 import PublishIcon from '@material-ui/icons/Publish';
-import PromptComponent from './PromptComponent';
+import PromptComponent, { PROMPT_VARIANTS } from './PromptComponent';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { SchemaContext } from '../utils/context/schemaSet';
 import Validation from './Validation';
@@ -64,13 +64,18 @@ import { getMeshModels } from '../api/meshmodel';
 import { modifyRJSFSchema } from '../utils/utils';
 import SearchBar from '../utils/custom-search';
 import CustomColumnVisibilityControl from '../utils/custom-column';
-import ResponsiveDataTable from '../utils/data-table';
+import { ResponsiveDataTable } from '@layer5/sistent-components';
 import useStyles from '../assets/styles/general/tool.styles';
 import { Edit as EditIcon } from '@material-ui/icons';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
 import InfoModal from './Modals/Information/InfoModal';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+
+const genericClickHandler = (ev, fn) => {
+  ev.stopPropagation();
+  fn(ev);
+};
 
 const styles = (theme) => ({
   grid: {
@@ -1232,7 +1237,10 @@ function MesheryPatterns({
                 <GetAppIcon data-cy="download-button" />
               </TooltipIcon>
 
-              <TooltipIcon title="Design Information" onClick={() => handleInfoModal(rowData)}>
+              <TooltipIcon
+                title="Design Information"
+                onClick={(ev) => genericClickHandler(ev, handleInfoModal)}
+              >
                 <InfoOutlinedIcon data-cy="information-button" />
               </TooltipIcon>
 
@@ -1283,7 +1291,7 @@ function MesheryPatterns({
       title: `Delete ${count ? count : ''} Design${count > 1 ? 's' : ''}?`,
 
       subtitle: `Are you sure you want to delete the ${patterns} design${count > 1 ? 's' : ''}?`,
-
+      variant: PROMPT_VARIANTS.DANGER,
       options: ['Yes', 'No'],
     });
     return response;

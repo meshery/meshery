@@ -13,10 +13,10 @@ import dataFetch from '../../lib/data-fetch';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import ResponsiveDataTable from '../../utils/data-table';
-import { FormattedMetadata } from '../NotificationCenter/metadata';
 import CustomColumnVisibilityControl from '../../utils/custom-column';
 import useStyles from '../../assets/styles/general/tool.styles';
 import SearchBar from '../../utils/custom-search';
+import { MeshSyncDataFormatter } from './metadata';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -298,7 +298,7 @@ export default function MeshSyncTable({ classes, updateProgress }) {
                             }}
                             className={classes.contentContainer}
                           >
-                            <FormattedMetadata event={meshSyncResourcesMetaData} />
+                            <MeshSyncDataFormatter metadata={meshSyncResourcesMetaData.metadata} />
                           </Grid>
                         </Grid>
                       </Grid>
