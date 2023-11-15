@@ -76,3 +76,15 @@ export const LogoutButton = styled('div')(({ theme }) => ({
   transform:" translateX(39%)",
   width: "fit-content",
 }));
+
+export const StatCard = styled('div')(({ theme }) => ({
+  margin: theme.spacing(2),
+  display: "flex",
+  justifyContent: 'center',
+  alignItems: 'center',
+  height: "5rem",
+  borderRadius: "20px ",
+  padding: "4rem",
+  textAlign: "center",
+  flexDirection: "column"
+}));

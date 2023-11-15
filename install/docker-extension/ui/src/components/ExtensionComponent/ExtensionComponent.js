@@ -31,6 +31,7 @@ import {
   SectionWrapper,
   VersionText,
   LogoutButton,
+  StatCard,
 } from './styledComponents'
 import { MesheryAnimation } from '../MesheryAnimation/MesheryAnimation'
 import { trueRandom, randomApplicationNameGenerator } from '../../utils'
@@ -110,6 +111,11 @@ const ExtensionsComponent = () => {
   const [changing, isChanging] = useState(false)
   const [emptystate, isEmptystate] = useState(true)
   const [meshAdapters, setMeshAdapters] = useState(null)
+  const [emptyPattern, setEmptyPattern] = useState(true)
+  const [pattern, setPattern] = useState(null)
+  const [emptyFilter, setEmptyFilter] = useState(true)
+  const [filter, setFilter] = useState(null)
+
   useEffect(() => {
     if (meshAdapters && meshAdapters.length !== 0) {
       setSwitchesState(
@@ -165,6 +171,22 @@ const ExtensionsComponent = () => {
             .then((result) => result.text())
             .then((result) => setMesheryVersion(JSON.parse(result)?.build))
             .catch(console.error)
+          fetch("https://meshery.layer5.io/api/catalog/content/pattern")
+            .then((result) => result.text())
+            .then((result) => {
+              console.log("🚀 ~ file: ExtensionComponent.js:178 ~ .then ~ result:", JSON.parse(result))
+              setPattern(JSON.parse(result));
+              setEmptyPattern(false);
+            })
+            .catch(console.error);
+          fetch("https://meshery.layer5.io/api/catalog/content/filter")
+            .then((result) => result.text())
+            .then((result) => {
+              console.log("🚀 ~ file: ExtensionComponent.js:186 ~ .then ~ result:", result)
+              setFilter(JSON.parse(result));
+              setEmptyFilter(false);
+            })
+            .catch(console.error);
         }
       })
       .catch(console.error)
@@ -216,15 +238,13 @@ const ExtensionsComponent = () => {
     })
       .then(() => {
         window.ddClient.desktopUI.toast.success(
-          `Request received. ${
-            deprovision ? 'Deprovisioning' : 'Provisioning'
+          `Request received. ${deprovision ? 'Deprovisioning' : 'Provisioning'
           } Service Mesh...`,
         )
       })
       .catch(() => {
         window.ddClient.desktopUI.toast.error(
-          `Could not ${
-            deprovision ? 'Deprovision' : 'Provision'
+          `Could not ${deprovision ? 'Deprovision' : 'Provision'
           } the Service Mesh due to some error.`,
         )
       })
@@ -295,7 +315,101 @@ const ExtensionsComponent = () => {
               extensible management plane, Meshery.
             </Typography>
           </div>
+        </div>
 
+        <SectionWrapper>
+          <ExtensionWrapper
+            className="third-step"
+            sx={{ backgroundColor: isDarkTheme ? '#393F49' : '#D7DADE' }}
+          >
+            <AccountDiv>
+              <Typography sx={{ marginBottom: '1rem', whiteSpace: 'nowrap' }}>
+                Launch Meshery
+              </Typography>
+              <div style={{ marginBottom: '0.5rem' }}>
+                <a
+                  style={{ textDecoration: 'none' }}
+                  href={
+                    token &&
+                    'http://localhost:9081/api/user/token?token=' +
+                    token +
+                    '&provider=Meshery'
+                  }
+                >
+                  {isLoggedIn ? (
+                    <div
+                      onMouseEnter={() => setIsHovered(!isHovered)}
+                      onMouseLeave={onMouseOut}
+                      onClick={onClick}
+                      onMouseOver={onMouseOver}
+                    >
+                      {isHovered ? (
+                        <MesheryAnimation height={70} width={72} />
+                      ) : (
+                        <Meshery height={70} width={72} />
+                      )}
+                    </div>
+                  ) : (
+                    <Meshery height={70} width={72} />
+                  )}
+                </a>
+              </div>
+              {!isLoggedIn ? (
+                <Button
+                  sx={{ marginTop: '0.3rem' }}
+                  variant="contained"
+                  disabled={isLoggedIn}
+                  color="primary"
+                  component="span"
+                  onClick={() => {
+                    window.ddClient.host.openExternal(
+                      'https://meshery.layer5.io?source=aHR0cDovL2xvY2FsaG9zdDo3ODc3L3Rva2VuL3N0b3Jl&provider_version=v0.3.14',
+                    )
+                  }}
+                >
+                  Login
+                </Button>
+              ) : (
+                <div sx={{ display: 'none' }}></div>
+              )}
+            </AccountDiv>
+          </ExtensionWrapper>
+
+          {isLoggedIn && (
+            <ExtensionWrapper
+              className="second-step"
+              sx={{ backgroundColor: isDarkTheme ? '#393F49' : '#D7DADE' }}
+            >
+              <AccountDiv>
+                <Typography
+                  sx={{ marginBottom: '2rem', whiteSpace: ' nowrap' }}
+                >
+                  Import Compose App
+                </Typography>
+                <div style={{ paddingBottom: '2rem' }}>
+                  <label htmlFor="upload-button">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      disabled={!isLoggedIn}
+                      aria-label="Upload Button"
+                      component="span"
+                    >
+                      <input
+                        id="upload-button"
+                        type="file"
+                        accept=".yaml, .yml"
+                        hidden
+                        name="upload-button"
+                        onChange={handleImport}
+                      />
+                      Browse...
+                    </Button>
+                  </label>
+                </div>
+              </AccountDiv>
+            </ExtensionWrapper>
+          )}
           {!isLoggedIn ? (
             <div sx={{ display: 'none' }}></div>
           ) : (
@@ -353,104 +467,41 @@ const ExtensionsComponent = () => {
               </ExtensionWrapper>
             </div>
           )}
-        </div>
-
+        </SectionWrapper>
         <SectionWrapper>
-          <ExtensionWrapper
-            className="third-step"
-            sx={{ backgroundColor: isDarkTheme ? '#393F49' : '#D7DADE' }}
-          >
-            <AccountDiv>
-              <Typography sx={{ marginBottom: '1rem', whiteSpace: 'nowrap' }}>
-                Launch Meshery
-              </Typography>
-              <div style={{ marginBottom: '0.5rem' }}>
-                <a
-                  style={{ textDecoration: 'none' }}
-                  href={
-                    token &&
-                    'http://localhost:9081/api/user/token?token=' +
-                      token +
-                      '&provider=Meshery'
-                  }
-                >
-                  {isLoggedIn ? (
-                    <div
-                      onMouseEnter={() => setIsHovered(!isHovered)}
-                      onMouseLeave={onMouseOut}
-                      onClick={onClick}
-                      onMouseOver={onMouseOver}
-                    >
-                      {isHovered ? (
-                        <MesheryAnimation height={70} width={72} />
-                      ) : (
-                        <Meshery height={70} width={72} />
-                      )}
-                    </div>
-                  ) : (
-                    <Meshery height={70} width={72} />
-                  )}
-                </a>
-              </div>
-              {!isLoggedIn ? (
-                <Button
-                  sx={{ marginTop: '0.3rem' }}
-                  variant="contained"
-                  disabled={isLoggedIn}
-                  color="primary"
-                  component="span"
-                  onClick={() => {
-                    window.ddClient.host.openExternal(
-                      'https://meshery.layer5.io?source=aHR0cDovL2xvY2FsaG9zdDo3ODc3L3Rva2VuL3N0b3Jl&provider_version=v0.3.14',
-                    )
-                  }}
-                >
-                  Login
-                </Button>
-              ) : (
-                <div sx={{display: 'none'}}></div>
-              )}
-            </AccountDiv>
-          </ExtensionWrapper>
-
           {isLoggedIn && (
-            <ExtensionWrapper
-              className="second-step"
-              sx={{ backgroundColor: isDarkTheme ? '#393F49' : '#D7DADE' }}
-            >
-              <AccountDiv>
+            <>
+              <StatCard
+                className="second-step"
+                sx={{ backgroundColor: isDarkTheme ? '#393F49' : '#D7DADE' }}
+              >
                 <Typography
-                  sx={{ marginBottom: '2rem', whiteSpace: ' nowrap' }}
+                  sx={{ whiteSpace: ' nowrap' }}
                 >
-                  Import Compose App
+                  Total Designs
                 </Typography>
-                <div style={{ paddingBottom: '2rem' }}>
-                  <label htmlFor="upload-button">
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      disabled={!isLoggedIn}
-                      aria-label="Upload Button"
-                      component="span"
-                    >
-                      <input
-                        id="upload-button"
-                        type="file"
-                        accept=".yaml, .yml"
-                        hidden
-                        name="upload-button"
-                        onChange={handleImport}
-                      />
-                      Browse...
-                    </Button>
-                  </label>
-                </div>
-              </AccountDiv>
-            </ExtensionWrapper>
+                <Typography sx={{ fontSize: "32px" }}>
+                  {pattern?.total_count}
+                </Typography>
+              </StatCard>
+              <StatCard
+                className="second-step"
+                sx={{ backgroundColor: isDarkTheme ? '#393F49' : '#D7DADE' }}
+              >
+                <Typography
+                  sx={{ whiteSpace: ' nowrap' }}
+                >
+                  Total Designs
+                </Typography>
+                <Typography sx={{ fontSize: "32px" }}>
+                  {filter?.total_count}
+                </Typography>
+              </StatCard>
+            </>
           )}
         </SectionWrapper>
         <SectionWrapper>
-        {!!isLoggedIn && (
+          {!!isLoggedIn && (
             <div style={{ paddingTop: isLoggedIn ? '1.2rem' : null }}>
               <Tooltip title="Meshery Server version">
                 <VersionText variant="p" component="p" align="end">
