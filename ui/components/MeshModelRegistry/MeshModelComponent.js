@@ -351,9 +351,7 @@ const MeshModelComponent = ({
               }
               if (!animate) {
                 setAnimate(true);
-                setTimeout(() => {
-                  setConvert(true);
-                }, 1100);
+                setConvert(true);
               }
             }}
           >
@@ -387,9 +385,7 @@ const MeshModelComponent = ({
               }
               if (!animate) {
                 setAnimate(true);
-                setTimeout(() => {
-                  setConvert(true);
-                }, 1100);
+                setConvert(true);
               }
             }}
           >
@@ -423,9 +419,7 @@ const MeshModelComponent = ({
               }
               if (!animate) {
                 setAnimate(true);
-                setTimeout(() => {
-                  setConvert(true);
-                }, 1100);
+                setConvert(true);
               }
             }}
           >
@@ -459,9 +453,7 @@ const MeshModelComponent = ({
               }
               if (!animate) {
                 setAnimate(true);
-                setTimeout(() => {
-                  setConvert(true);
-                }, 1100);
+                setConvert(true);
               }
             }}
           >
