@@ -11,8 +11,6 @@ replace (
 	k8s.io/kubectl => k8s.io/kubectl v0.28.3
 )
 
-replace github.com/layer5io/meshkit => /Users/pranavsingh/Documents/OS/External/meshkit
-
 require (
 	cuelang.org/go v0.6.0
 	fortio.org/fortio v1.60.3
