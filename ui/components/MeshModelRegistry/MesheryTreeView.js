@@ -321,7 +321,7 @@ const MesheryTreeView = ({
               </IconButton>
             </div>
           </div>
-          <div style={{ overflowY: 'auto', height: '27rem' }}>
+          <div style={{ overflowY: 'auto', height: '27rem' }} onScroll={handleScroll(MODELS)}>
             <TreeView
               aria-label="controlled"
               defaultExpanded={['3']}
@@ -340,7 +340,7 @@ const MesheryTreeView = ({
                   labelText={registrant.hostname}
                   onClick={() => setRegi(registrant)}
                 >
-                  <div onScroll={handleScroll(MODELS)}>
+                  <div>
                     <StyledTreeItem
                       nodeId={1}
                       labelText={`Models (${registrant?.summary?.models})`}
