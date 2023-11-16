@@ -1,12 +1,31 @@
 package machines
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/logger"
 
+)
+
+const (
+	Discovery EventType = "discovery"
+	Register EventType = "register"
+	Connect EventType = "connect"
+	Disconnect EventType = "disconnect"
+	Ignore EventType = "ignore"
+	NotFound EventType = "not found"
+	Delete EventType = "delete"
+
+	DISCOVERED   StateType = "discovered"
+	REGISTERED   StateType = "registered"
+	CONNECTED    StateType = "connected"
+	IGNORED      StateType = "ignored"
+	MAINTENANCE  StateType = "maintenance"
+	DISCONNECTED StateType = "disconnected"
+	DELETED      StateType = "deleted"
+	NOTFOUND     StateType = "not found"
+	
 )
 
 // Represents an event in the system/machine
@@ -16,8 +35,15 @@ type EventType string
 type StateType string
 
 // Action to be executed in a given state.
-type Action interface{
-	Action(ctx interface{}) (State, EventType, error)
+type Action interface {
+
+	// Used as guards/prerequisites checks and actions to be performed when the machine enters a given state.
+	ExecuteOnEntry(ctx interface{}) (EventType, error)
+
+	Execute(ctx interface{}) (State, EventType, error)
+
+	// Used for cleanup actions to perform when the machine exits a given state
+	ExecuteOnExit(ctx interface{}) (EventType, error)
 }
 
 // Represents the mapping between event and the next state in the event's response
@@ -26,12 +52,6 @@ type Events map[EventType]StateType
 type State struct {
 	Events Events
 	Action Action
-
-	// Used as guards/prerequisites checks and actions to be performed when the machine enters a given state.
-	EntryAction Action
-
-	// Used for cleanup actions to perform when the machine exits a given state
-	ExitAction Action
 }
 
 // Represents mapping between state name and the state
@@ -40,10 +60,10 @@ type States map[StateType]State
 var DefaultState StateType = ""
 
 type StateMachine struct {
-	// ID to trace the events originated from the machine, also used in logs
+	// ID to trace the events originated from the machine, also used in Logs
 	ID uuid.UUID
 
-	// Given name for the machine, used in logs to track issues
+	// Given name for the machine, used in Logs to track issues
 	Name string
 
 	// Configuration of states managed by the machine
@@ -64,7 +84,7 @@ type StateMachine struct {
 	
 	mx sync.RWMutex
 
-	log logger.Handler
+	Log logger.Handler
 }
 
 func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
@@ -77,7 +97,7 @@ func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 		if events != nil {
 			nextState, ok := events[event]
 			if ok {
-				sm.log.Info("next state: ", nextState)
+				sm.Log.Info("next state: ", nextState)
 				return nextState, nil
 			}
 		}
@@ -91,41 +111,45 @@ func (sm *StateMachine) SendEvent(event EventType) (error) {
 
 	nextState, err := sm.getNextState(event)
 	if err != nil {
-		sm.log.Error(err)
+		sm.Log.Error(err)
 		return err
 	}
 
+	// next state to transition
 	state, ok := sm.States[nextState]
 	if !ok || state.Action == nil {
 		return ErrInvalidTransition
 	}
 
-	exitAction := sm.States[sm.CurrentState].Action
-	if exitAction != nil {
-		exitAction.Action(sm.Context)
-	}
+	// Execute exit actions before entreing new state.
+	action := sm.States[sm.CurrentState].Action
+	if action != nil {
+		action.ExecuteOnExit(sm.Context)
+	} 
 
+	
+	var nextEvent EventType
+	if state.Action != nil {
 
-	prerequisiteAction := state.EntryAction
-	if prerequisiteAction != nil {
-		_, _, err := prerequisiteAction.Action(sm.Context)
+		// Execute entry actions for the state entered.
+		_, err :=  state.Action.ExecuteOnEntry(sm.Context)
 		if err != nil {
-			sm.log.Error(err)
+			sm.Log.Error(err)
+			return err
+		}
+	
+		_, nextEvent, err = state.Action.Execute(sm.Context)
+		if err != nil {
+			sm.Log.Error(err)
 			return err
 		}
 	}
 
-	_, nextEvent, err := state.Action.Action(sm.Context)
-	if err != nil {
-		sm.log.Error(err)
-		return err
-	}
-
-	sm.log.Info(nextEvent)
+	sm.Log.Info(nextEvent)
 	sm.PreviousState = sm.CurrentState
 	sm.CurrentState = nextState
-	sm.log.Info("previous state for ", sm.Name, " ", sm.States[sm.PreviousState])
-	sm.log.Info("next state for ", sm.Name, " ", sm.States[sm.CurrentState])
+	sm.Log.Info("previous state for ", sm.Name, " ", sm.States[sm.PreviousState])
+	sm.Log.Info("next state for ", sm.Name, " ", sm.States[sm.CurrentState])
 	return nil
 }
 
