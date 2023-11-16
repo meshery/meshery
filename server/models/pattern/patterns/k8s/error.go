@@ -60,5 +60,5 @@ func formatKubeStatusErrToMeshkitErr(status *[]byte, componentName string) error
 }
 
 func ErrDryRun(err error, obj string) error {
-	return errors.New(ErrDryRunCode, errors.Alert, []string{"error running dry run on the design"}, []string{err.Error()}, []string{obj}, []string{})
+	return errors.New(ErrDryRunCode, errors.Alert, []string{"error performing a dry run on the design"}, []string{err.Error()}, []string{obj}, []string{})
 }

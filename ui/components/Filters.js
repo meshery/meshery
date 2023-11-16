@@ -54,6 +54,11 @@ import SearchBar from '../utils/custom-search';
 import CustomColumnVisibilityControl from '../utils/custom-column';
 import ResponsiveDataTable from '../utils/data-table';
 import useStyles from '../assets/styles/general/tool.styles';
+import { updateVisibleColumns } from '../utils/responsive-column';
+import { useWindowDimensions } from '../utils/dimension';
+import { Box } from '@mui/material';
+import InfoModal from './Modals/Information/InfoModal';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 
 const styles = (theme) => ({
   grid: {
@@ -185,6 +190,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
                 id: filter.id,
                 name: filter.name,
                 type: FILE_OPS.UPDATE,
+                catalog_data: filter.catalog_data,
               })
             }
           >
@@ -201,6 +207,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
                 id: filter.id,
                 name: filter.name,
                 type: FILE_OPS.DELETE,
+                catalog_data: filter.catalog_data,
               })
             }
           >
@@ -237,6 +244,7 @@ function MesheryFilters({
   const [canPublishFilter, setCanPublishFilter] = useState(false);
   const [importSchema, setImportSchema] = useState({});
   const [publishSchema, setPublishSchema] = useState({});
+  const { width } = useWindowDimensions();
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ('grid'),
@@ -248,6 +256,12 @@ function MesheryFilters({
   //hooks
   const { notify } = useNotification();
   const StyleClass = useStyles();
+
+  const [infoModal, setInfoModal] = useState({
+    open: false,
+    ownerID: '',
+    selectedResource: {},
+  });
 
   const [modalOpen, setModalOpen] = useState({
     open: false,
@@ -343,7 +357,6 @@ function MesheryFilters({
             'properties.compatibility.items.enum',
             modelNames,
           );
-
           setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
         } catch (err) {
           console.error(err);
@@ -393,6 +406,20 @@ function MesheryFilters({
         filter: filter,
       });
     }
+  };
+
+  const handleInfoModalClose = () => {
+    setInfoModal({
+      open: false,
+    });
+  };
+
+  const handleInfoModal = (filter) => {
+    setInfoModal({
+      open: true,
+      ownerID: filter.user_id,
+      selectedResource: filter,
+    });
   };
 
   const handleUnpublishModal = (ev, filter) => {
@@ -626,14 +653,16 @@ function MesheryFilters({
   };
 
   const handleSetFilters = (filters) => {
-    if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
-      setFilters([
-        ...catalogContentRef.current,
-        ...filters.filter((content) => content.visibility !== VISIBILITY.PUBLISHED),
-      ]);
-      return;
+    if (filters != undefined) {
+      if (catalogVisibilityRef.current && catalogContentRef.current?.length > 0) {
+        setFilters([
+          ...catalogContentRef.current,
+          ...filters.filter((content) => content.visibility !== VISIBILITY.PUBLISHED),
+        ]);
+        return;
+      }
+      setFilters(filters.filter((content) => content.visibility !== VISIBILITY.PUBLISHED));
     }
-    setFilters(filters.filter((content) => content.visibility !== VISIBILITY.PUBLISHED));
   };
 
   const initFiltersSubscription = (
@@ -691,7 +720,7 @@ function MesheryFilters({
     };
   }
 
-  async function handleSubmit({ data, name, id, type, metadata }) {
+  async function handleSubmit({ data, name, id, type, metadata, catalog_data }) {
     // TODO: use filter name
     updateProgress({ showProgress: true });
     if (type === FILE_OPS.DELETE) {
@@ -704,7 +733,6 @@ function MesheryFilters({
         `/api/filter/${id}`,
         { credentials: 'include', method: 'DELETE' },
         () => {
-          console.log('FilterFile API', `/api/filter/${id}`);
           updateProgress({ showProgress: false });
           notify({ message: `"${name}" filter deleted`, event_type: EVENT_TYPES.SUCCESS });
           resetSelectedRowData()();
@@ -751,7 +779,11 @@ function MesheryFilters({
         {
           credentials: 'include',
           method: 'POST',
-          body: JSON.stringify({ filter_data: { id, name: name }, config: data, save: true }),
+          body: JSON.stringify({
+            filter_data: { id, name: name, catalog_data },
+            config: data,
+            save: true,
+          }),
         },
         () => {
           updateProgress({ showProgress: false });
@@ -791,6 +823,14 @@ function MesheryFilters({
     });
     reader.readAsArrayBuffer(file);
   }
+
+  let colViews = [
+    ['name', 'xs'],
+    ['created_at', 'm'],
+    ['updated_at', 'l'],
+    ['visibility', 's'],
+    ['Actions', 'xs'],
+  ];
 
   const columns = [
     {
@@ -904,7 +944,11 @@ function MesheryFilters({
           const rowData = filters[tableMeta.rowIndex];
           const visibility = filters[tableMeta.rowIndex]?.visibility;
           return (
-            <>
+            <Box
+              sx={{
+                display: 'flex',
+              }}
+            >
               {visibility === VISIBILITY.PUBLISHED ? (
                 <TooltipIcon
                   placement="top"
@@ -933,6 +977,9 @@ function MesheryFilters({
               >
                 <GetAppIcon data-cy="download-button" />
               </TooltipIcon>
+              <TooltipIcon title="Filter Information" onClick={() => handleInfoModal(rowData)}>
+                <InfoOutlinedIcon data-cy="information-button" />
+              </TooltipIcon>
               {canPublishFilter && visibility !== VISIBILITY.PUBLISHED ? (
                 <TooltipIcon title="Publish" onClick={(ev) => handlePublishModal(ev, rowData)}>
                   <PublicIcon fill="#F91313" data-cy="publish-button" />
@@ -945,7 +992,7 @@ function MesheryFilters({
                   <PublicIcon fill="#F91313" data-cy="unpublish-button" />
                 </TooltipIcon>
               )}
-            </>
+            </Box>
           );
         },
       },
@@ -1139,10 +1186,11 @@ function MesheryFilters({
   const [tableCols, updateCols] = useState(columns);
 
   const [columnVisibility, setColumnVisibility] = useState(() => {
+    let showCols = updateVisibleColumns(colViews, width);
     // Initialize column visibility based on the original columns' visibility
     const initialVisibility = {};
     columns.forEach((col) => {
-      initialVisibility[col.name] = col.options?.display !== false;
+      initialVisibility[col.name] = showCols[col.name];
     });
     return initialVisibility;
   });
@@ -1246,6 +1294,7 @@ function MesheryFilters({
             setPublishModal={setPublishModal}
             publishSchema={publishSchema}
             fetch={() => fetchFilters(page, pageSize, search, sortOrder)}
+            handleInfoModal={handleInfoModal}
           />
         )}
         <ConfirmationMsg
@@ -1292,6 +1341,17 @@ function MesheryFilters({
               <Filter fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
             }
             submitBtnIcon={<PublishIcon />}
+          />
+        )}
+        {infoModal.open && (
+          <InfoModal
+            infoModalOpen={true}
+            handleInfoModalClose={handleInfoModalClose}
+            dataName="filters"
+            selectedResource={infoModal.selectedResource}
+            resourceOwnerID={infoModal.ownerID}
+            currentUserID={user?.id}
+            formSchema={publishSchema}
           />
         )}
       </NoSsr>

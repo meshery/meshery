@@ -72,7 +72,7 @@ function MeshModelContructs({ classes }) {
 
   return (
     <div className={classes.dashboardSection}>
-      <Link href="/settings#meshmodel-summary">
+      <Link href="/settings#registry">
         <Typography variant="h6" gutterBottom className={classes.link}>
           Models
         </Typography>
@@ -129,7 +129,7 @@ function MeshModelCategories({ classes }) {
 
   return (
     <div className={classes.dashboardSection}>
-      <Link href="/settings#meshmodel-summary">
+      <Link href="/settings#registry">
         <Typography variant="h6" gutterBottom className={classes.link}>
           Model Categories
         </Typography>

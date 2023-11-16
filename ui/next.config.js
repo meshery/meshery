@@ -7,7 +7,6 @@ const nextConfig = {
   exportPathMap : function () {
     return {
       '/404' : { page : '/404' },
-      '/configuration/applications' : { page : '/configuration/applications' },
       '/configuration/filters' : { page : '/configuration/filters' },
       '/configuration/designs' : { page : '/configuration/designs' },
       '/configuration/designs/configurator' : { page : '/configuration/designs/configurator' },

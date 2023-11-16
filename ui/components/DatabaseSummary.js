@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { updateProgress } from '../lib/store';
 import { Button, Typography, withStyles } from '@material-ui/core';
 import dataFetch from '../lib/data-fetch';
-import DataTable from 'mui-datatables';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
@@ -10,6 +9,10 @@ import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 import debounce from '../utils/debounce';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
+import ResponsiveDataTable from '../utils/data-table';
+import SearchBar from '../utils/custom-search';
+import useStyles from '../assets/styles/general/tool.styles';
+import { PROMPT_VARIANTS } from './PromptComponent';
 
 const styles = (theme) => ({
   textCenter: {
@@ -49,6 +52,7 @@ const DatabaseSummary = (props) => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchText, setSearchText] = useState('');
   const { notify } = useNotification();
+  const StyleClass = useStyles();
 
   const handleError = (msg) => (error) => {
     props.updateProgress({ showProgress: false });
@@ -94,6 +98,7 @@ const DatabaseSummary = (props) => {
         title: 'Reset Meshery Database?',
         subtitle: 'Are you sure that you want to purge all data?',
         options: ['RESET', 'CANCEL'],
+        variant: PROMPT_VARIANTS.DANGER,
       });
       if (responseOfResetDatabase === 'RESET') {
         props.updateProgress({ showProgress: true });
@@ -126,6 +131,7 @@ const DatabaseSummary = (props) => {
     print: false,
     download: false,
     viewColumns: false,
+    search: false,
     fixedHeader: true,
     serverSide: true,
     rowsPerPage: rowsPerPage,
@@ -137,44 +143,70 @@ const DatabaseSummary = (props) => {
       if (searchText) setPage(0);
       setSearchText(searchText != null ? searchText : '');
     }),
-    customToolbar: () => (
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
-        size="medium"
-        onClick={handleResetDatabase()}
-        className={classes.DBBtn}
-        data-cy="btnResetDatabase"
-      >
-        <Typography align="center" variant="subtitle2">
-          {' '}
-          RESET DATABASE{' '}
-        </Typography>
-      </Button>
-    ),
+  };
+
+  const columns = [
+    {
+      name: 'name',
+      label: 'Name',
+    },
+    {
+      name: 'count',
+      label: 'Count',
+    },
+  ];
+
+  const [tableCols, updateCols] = useState(columns);
+
+  const [columnVisibility] = useState(() => {
+    // Initialize column visibility based on the original columns' visibility
+    const initialVisibility = {};
+    columns.forEach((col) => {
+      initialVisibility[col.name] = col.options?.display !== false;
+    });
+    return initialVisibility;
+  });
+
+  const customInlineStyle = {
+    marginBottom: '0.5rem',
+    marginTop: '1rem',
   };
 
   return (
     <>
-      <DataTable
-        title={
-          <>
-            <Typography>Database Overview</Typography>
-          </>
-        }
+      <div className={StyleClass.toolWrapper} style={customInlineStyle}>
+        <div>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            size="medium"
+            onClick={handleResetDatabase()}
+            className={classes.DBBtn}
+            data-cy="btnResetDatabase"
+          >
+            <Typography align="center" variant="subtitle2">
+              {' '}
+              RESET DATABASE{' '}
+            </Typography>
+          </Button>
+        </div>
+        <div>
+          <SearchBar
+            onSearch={(value) => {
+              setSearchText(value);
+            }}
+            placeholder="Search"
+          />
+        </div>
+      </div>
+      <ResponsiveDataTable
         data={databaseSummary?.tables}
         options={table_options}
-        columns={[
-          {
-            name: 'name',
-            label: 'Name',
-          },
-          {
-            name: 'count',
-            label: 'Count',
-          },
-        ]}
+        columns={columns}
+        tableCols={tableCols}
+        updateCols={updateCols}
+        columnVisibility={columnVisibility}
       />
     </>
   );

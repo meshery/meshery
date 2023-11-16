@@ -197,11 +197,12 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 	offset := (page - 1) * limit
 	filter := &v1alpha1.ModelFilter{
-		Version: v,
-		Limit:   limit,
-		Offset:  offset,
-		OrderOn: r.URL.Query().Get("order"),
-		Sort:    r.URL.Query().Get("sort"),
+		Registrant: r.URL.Query().Get("registrant"),
+		Version:    v,
+		Limit:      limit,
+		Offset:     offset,
+		OrderOn:    r.URL.Query().Get("order"),
+		Sort:       r.URL.Query().Get("sort"),
 	}
 	if r.URL.Query().Get("search") != "" {
 		filter.DisplayName = r.URL.Query().Get("search")
@@ -209,20 +210,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	meshmodels, count, _ := h.registryManager.GetModels(h.dbHandler, filter)
-	var meshmodel []v1alpha1.Model
-	for _, mod := range meshmodels {
-		filter := &v1alpha1.ComponentFilter{
-			ModelName: mod.Name,
-		}
-		entities, _, _ := h.registryManager.GetEntities(filter)
-		if len(entities) > 0 { //checking if entities is non empty
-			host := h.registryManager.GetRegistrant(entities[0])
-			mod.HostID = host.ID
-			mod.HostName = host.Hostname
-			mod.DisplayHostName = registry.HostnameToPascalCase(host.Hostname)
-			meshmodel = append(meshmodel, mod)
-		}
-	}
+
 	var pgSize int64
 	if limitstr == "all" {
 		pgSize = count
@@ -234,7 +222,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		Page:     page,
 		PageSize: int(pgSize),
 		Count:    count,
-		Models:   models.FindDuplicateModels(meshmodel),
+		Models:   models.FindDuplicateModels(meshmodels),
 	}
 
 	if err := enc.Encode(res); err != nil {
@@ -1216,4 +1204,80 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 		return
 	}
 	go h.config.MeshModelSummaryChannel.Publish()
+}
+
+// swagger:route GET /api/meshmodels/registrants GetMeshmodelRegistrants
+// Handle GET request for getting all meshmodel registrants
+//
+// # Returns a list of registrants and summary count of its models, components, and relationships
+//
+// ```?page={pagenumber}``` Default page number is 1
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?search={Hostname}``` Gets host by the name
+//
+// ```?sort={[asc/desc]}``` Default behavior is asc
+//
+// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+//
+// responses:
+//	200: []meshmodelRegistrantsResponseWrapper
+
+func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Add("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+
+	limitstr := r.URL.Query().Get("pagesize")
+	pagestr := r.URL.Query().Get("page")
+
+	var limit int
+	if limitstr != "all" {
+		limit, _ = strconv.Atoi(limitstr)
+		if limit == 0 { //If limit is unspecified then it defaults to 25
+			limit = DefaultPageSizeForMeshModelComponents
+		}
+	}
+
+	page, _ := strconv.Atoi(pagestr)
+	if page <= 0 {
+		page = 1
+	}
+
+	offset := (page - 1) * limit
+	filter := &v1alpha1.HostFilter{
+		Limit:   limit,
+		Offset:  offset,
+		Sort:    r.URL.Query().Get("sort"),
+		OrderOn: r.URL.Query().Get("order"),
+	}
+	if r.URL.Query().Get("search") != "" {
+		filter.Greedy = true
+		filter.DisplayName = r.URL.Query().Get("search")
+	}
+	hosts, count, err := h.registryManager.GetRegistrants(filter)
+	if err != nil {
+		h.log.Error(ErrGetMeshModels(err))
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var pgSize int64
+
+	if limitstr == "all" {
+		pgSize = count
+	} else {
+		pgSize = int64(limit)
+	}
+	res := models.MeshmodelRegistrantsAPIResponse{
+		Page:        page,
+		PageSize:    int(pgSize),
+		Count:       count,
+		Registrants: hosts,
+	}
+
+	if err := enc.Encode(res); err != nil {
+		h.log.Error(ErrGetMeshModels(err))
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+	}
 }

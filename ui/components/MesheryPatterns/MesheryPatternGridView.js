@@ -26,6 +26,7 @@ function PatternCardGridItem({
   setSelectedPatterns,
   canPublishPattern = false,
   user,
+  handleInfoModal,
 }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(pattern.pattern_file);
@@ -48,11 +49,24 @@ function PatternCardGridItem({
         handleUnDeploy={handleUnDeploy}
         handleUnpublishModal={handleUnpublishModal}
         handleClone={handleClone}
+        handleInfoModal={handleInfoModal}
         deleteHandler={() =>
-          handleSubmit({ data: yaml, id: pattern.id, type: FILE_OPS.DELETE, name: pattern.name })
+          handleSubmit({
+            data: yaml,
+            id: pattern.id,
+            type: FILE_OPS.DELETE,
+            name: pattern.name,
+            catalog_data: pattern.catalog_data,
+          })
         }
         updateHandler={() =>
-          handleSubmit({ data: yaml, id: pattern.id, type: FILE_OPS.UPDATE, name: pattern.name })
+          handleSubmit({
+            data: yaml,
+            id: pattern.id,
+            type: FILE_OPS.UPDATE,
+            name: pattern.name,
+            catalog_data: pattern.catalog_data,
+          })
         }
         setSelectedPatterns={() => setSelectedPatterns({ pattern: pattern, show: true })}
         setYaml={setYaml}
@@ -116,6 +130,7 @@ function MesheryPatternGrid({
   selectedK8sContexts,
   publishSchema,
   user,
+  handleInfoModal,
 }) {
   const classes = useStyles();
   const handlePublishModal = (pattern) => {
@@ -139,6 +154,7 @@ function MesheryPatternGrid({
     open: false,
     deploy: false,
     pattern_file: null,
+    pattern_id: '',
     name: '',
     count: 0,
     dryRunComponent: null,
@@ -149,6 +165,7 @@ function MesheryPatternGrid({
       open: false,
       pattern_file: null,
       name: '',
+      pattern_id: '',
       count: 0,
     });
   };
@@ -165,7 +182,10 @@ function MesheryPatternGrid({
 
     const dryRunComponent = (
       <DryRunComponent
-        design={pattern.pattern_file}
+        design={JSON.stringify({
+          pattern_file: pattern.pattern_file,
+          pattern_id: pattern.id,
+        })}
         noOfElements={compCount}
         selectedContexts={selectedK8sContexts}
       />
@@ -175,11 +195,14 @@ function MesheryPatternGrid({
       action: action,
       pattern_file: pattern.pattern_file,
       name: pattern.name,
+      pattern_id: pattern.id,
       count: compCount,
       validationBody: validationBody,
       dryRunComponent: dryRunComponent,
     });
   };
+
+  console.log('user-->', user);
 
   return (
     <div>
@@ -204,12 +227,14 @@ function MesheryPatternGrid({
               handleVerify={(e) => handleVerify(e, pattern.pattern_file, pattern.id)}
               handlePublishModal={() => handlePublishModal(pattern)}
               handleUnpublishModal={(e) => handleUnpublishModal(e, pattern)()}
+              handleInfoModal={() => handleInfoModal(pattern)}
               handleSubmit={handleSubmit}
               setSelectedPatterns={setSelectedPattern}
             />
           ))}
         </Grid>
       )}
+
       {!selectedPattern.show && patterns.length === 0 && (
         <Paper className={classes.noPaper}>
           <div className={classes.noContainer}>
@@ -246,8 +271,9 @@ function MesheryPatternGrid({
         open={modalOpen.open}
         handleClose={handleModalClose}
         submit={{
-          deploy: () => handleDeploy(modalOpen.pattern_file, modalOpen.name),
-          unDeploy: () => handleUnDeploy(modalOpen.pattern_file, modalOpen.name),
+          deploy: () => handleDeploy(modalOpen.pattern_file, modalOpen.pattern_id, modalOpen.name),
+          unDeploy: () =>
+            handleUnDeploy(modalOpen.pattern_file, modalOpen.pattern_id, modalOpen.name),
         }}
         title={modalOpen.name}
         componentCount={modalOpen.count}

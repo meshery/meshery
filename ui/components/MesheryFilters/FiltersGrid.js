@@ -25,6 +25,7 @@ function FilterCardGridItem({
   handlePublishModal,
   handleUnpublishModal,
   canPublishFilter,
+  handleInfoModal,
 }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(yamlConfig);
@@ -46,15 +47,28 @@ function FilterCardGridItem({
         handleClone={handleClone}
         handleDownload={(ev) => handleDownload(ev, filter.id, filter.name)}
         deleteHandler={() =>
-          handleSubmit({ data: yaml, id: filter.id, type: FILE_OPS.DELETE, name: filter.name })
+          handleSubmit({
+            data: yaml,
+            id: filter.id,
+            type: FILE_OPS.DELETE,
+            name: filter.name,
+            catalog_data: filter.catalog_data,
+          })
         }
         updateHandler={() =>
-          handleSubmit({ data: yaml, id: filter.id, type: FILE_OPS.UPDATE, name: filter.name })
+          handleSubmit({
+            data: yaml,
+            id: filter.id,
+            type: FILE_OPS.UPDATE,
+            name: filter.name,
+            catalog_data: filter.catalog_data,
+          })
         }
         setSelectedFilters={() => setSelectedFilters({ filter: filter, show: true })}
         setYaml={setYaml}
         description={filter.desciption}
         visibility={filter.visibility}
+        handleInfoModal={handleInfoModal}
       />
     </Grid>
   );
@@ -90,6 +104,7 @@ function FilterCardGridItem({
  *  },
  *  setPublishModal: (publishModal: { open: boolean, filter: any, name: string }) => void,
  *  publishSchema: object,
+ *  handleInfoModal: (filter: object) => void
  * }} props props
  */
 
@@ -112,6 +127,7 @@ function FiltersGrid({
   publishModal,
   setPublishModal,
   publishSchema,
+  handleInfoModal,
 }) {
   const classes = useStyles();
 
@@ -186,6 +202,7 @@ function FiltersGrid({
               canPublishFilter={canPublishFilter}
               handlePublishModal={() => handlePublishModal(filter)}
               handleUnpublishModal={(e) => handleUnpublishModal(e, filter)()}
+              handleInfoModal={() => handleInfoModal(filter)}
             />
           ))}
         </Grid>

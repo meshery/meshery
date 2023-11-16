@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { useEffect, useState, useRef } from 'react';
-import PromptComponent from '../PromptComponent';
+import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
 import CloseIcon from '@material-ui/icons/Close';
 import PerformanceProfileGrid from './PerformanceProfileGrid';
 import dataFetch from '../../lib/data-fetch';
@@ -30,6 +30,8 @@ import CustomColumnVisibilityControl from '../../utils/custom-column';
 import ViewSwitch from '../ViewSwitch';
 import SearchBar from '../../utils/custom-search';
 import useStyles from '../../assets/styles/general/tool.styles';
+import { updateVisibleColumns } from '../../utils/responsive-column';
+import { useWindowDimensions } from '../../utils/dimension';
 
 const MESHERY_PERFORMANCE_URL = '/api/user/performance/profiles';
 const styles = (theme) => ({
@@ -121,6 +123,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
   const [testProfiles, setTestProfiles] = useState([]);
   const [profileForModal, setProfileForModal] = useState();
   const { notify } = useNotification();
+  const { width } = useWindowDimensions();
   // const [loading, setLoading] = useState(false);
   /**
    * fetch performance profiles when the page loads
@@ -199,7 +202,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
       subtitle: `Are you sure you want to delete ${count > 1 ? 'these' : 'this'} ${
         count ? count : ''
       } performance profile${count > 1 ? 's' : ''}?`,
-
+      variant: PROMPT_VARIANTS.DANGER,
       options: ['Yes', 'No'],
     });
     return response;
@@ -238,6 +241,15 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
   }, [selectedProfile]);
 
   const searchTimeout = useRef(null);
+
+  let colViews = [
+    ['name', 'xs'],
+    ['endpoints', 'l'],
+    ['last_run', 'l'],
+    ['next_run', 'xl'],
+    ['updated_at', 'l'],
+    ['Actions', 'xs'],
+  ];
 
   const columns = [
     {
@@ -415,10 +427,11 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
   const [tableCols, updateCols] = useState(columns);
 
   const [columnVisibility, setColumnVisibility] = useState(() => {
+    let showCols = updateVisibleColumns(colViews, width);
     // Initialize column visibility based on the original columns' visibility
     const initialVisibility = {};
     columns.forEach((col) => {
-      initialVisibility[col.name] = col.options?.display !== false;
+      initialVisibility[col.name] = showCols[col.name];
     });
     return initialVisibility;
   });

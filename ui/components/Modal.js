@@ -84,7 +84,7 @@ const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
     setAnchorEl(null);
   };
   return (
-    <div>
+    <div id="searchClick">
       <Tooltip title="Schema_Changer">
         <IconButton component="span" onClick={(e) => setAnchorEl(e.currentTarget)}>
           <ArrowDropDown style={{ color: '#000' }} />
@@ -140,6 +140,8 @@ const RJSFWrapperComponentDefault =
  * @param {string} props.submitBtnText - The text for the submit button.
  * @param {Object} props.uiSchema - The UI schema for the form fields.
  */
+
+// Meshery extensions also uses this modal
 function Modal(props) {
   const {
     open,

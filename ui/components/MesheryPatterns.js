@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -42,7 +43,7 @@ import DoneIcon from '@material-ui/icons/Done';
 import PublicIcon from '@material-ui/icons/Public';
 import ConfirmationModal from './ConfirmationModal';
 import PublishIcon from '@material-ui/icons/Publish';
-import PromptComponent from './PromptComponent';
+import PromptComponent, { PROMPT_VARIANTS } from './PromptComponent';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { SchemaContext } from '../utils/context/schemaSet';
 import Validation from './Validation';
@@ -63,9 +64,18 @@ import { getMeshModels } from '../api/meshmodel';
 import { modifyRJSFSchema } from '../utils/utils';
 import SearchBar from '../utils/custom-search';
 import CustomColumnVisibilityControl from '../utils/custom-column';
-import ResponsiveDataTable from '../utils/data-table';
+import { ResponsiveDataTable } from '@layer5/sistent-components';
 import useStyles from '../assets/styles/general/tool.styles';
 import { Edit as EditIcon } from '@material-ui/icons';
+import { updateVisibleColumns } from '../utils/responsive-column';
+import { useWindowDimensions } from '../utils/dimension';
+import InfoModal from './Modals/Information/InfoModal';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+
+const genericClickHandler = (ev, fn) => {
+  ev.stopPropagation();
+  fn(ev);
+};
 
 const styles = (theme) => ({
   grid: {
@@ -183,11 +193,11 @@ const styles = (theme) => ({
     marginRight: 'auto',
   },
   iconAvatar: {
-    width: '10px',
-    height: '10px',
+    width: '24px',
+    height: '24px',
     '& .MuiAvatar-img': {
-      height: '60%',
-      width: '60%',
+      height: '100%',
+      width: '100%',
     },
   },
   // text : {
@@ -265,6 +275,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
                 id: pattern.id,
                 name: pattern.name,
                 type: FILE_OPS.UPDATE,
+                catalog_data: pattern.catalog_data,
               })
             }
           >
@@ -281,6 +292,7 @@ function YAMLEditor({ pattern, onClose, onSubmit }) {
                 id: pattern.id,
                 name: pattern.name,
                 type: FILE_OPS.DELETE,
+                catalog_data: pattern.catalog_data,
               })
             }
           >
@@ -321,6 +333,11 @@ function MesheryPatterns({
 
   const [canPublishPattern, setCanPublishPattern] = useState(false);
   const [publishSchema, setPublishSchema] = useState({});
+  const [infoModal, setInfoModal] = useState({
+    open: false,
+    ownerID: '',
+    selectedResource: {},
+  });
 
   const [viewType, setViewType] = useState('grid');
   const { notify } = useNotification();
@@ -340,6 +357,7 @@ function MesheryPatterns({
     errors: {
       validationErrors: 0,
     },
+    patternID: '',
   });
 
   const [importModal, setImportModal] = useState({
@@ -352,6 +370,7 @@ function MesheryPatterns({
   });
 
   const [loading, stillLoading] = useState(true);
+  const { width } = useWindowDimensions();
 
   const catalogVisibilityRef = useRef(false);
   const catalogContentRef = useRef();
@@ -552,7 +571,7 @@ function MesheryPatterns({
       async (result) => {
         try {
           const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName.toUpperCase()));
+          const modelNames = _.uniq(models?.map((model) => model.displayName));
           modelNames.sort();
 
           // Modify the schema using the utility function
@@ -621,12 +640,13 @@ function MesheryPatterns({
     setModalOpen({
       open: false,
       pattern_file: null,
+      patternID: '',
       name: '',
       count: 0,
     });
   };
 
-  const handleModalOpen = (e, pattern_file, name, errors, action) => {
+  const handleModalOpen = (e, pattern_file, name, pattern_id, errors, action) => {
     e.stopPropagation();
     const compCount = getComponentsinFile(pattern_file);
     const validationBody = (
@@ -638,7 +658,10 @@ function MesheryPatterns({
     );
     const dryRunComponent = (
       <DryRunComponent
-        design={pattern_file}
+        design={JSON.stringify({
+          pattern_file: pattern_file,
+          pattern_id: pattern_id,
+        })}
         noOfElements={compCount}
         selectedContexts={selectedK8sContexts}
       />
@@ -648,6 +671,7 @@ function MesheryPatterns({
       action: action,
       pattern_file: pattern_file,
       name: name,
+      patternID: pattern_id,
       count: compCount,
       validationBody: validationBody,
       dryRunComponent: dryRunComponent,
@@ -668,6 +692,20 @@ function MesheryPatterns({
   const handleUploadImportClose = () => {
     setImportModal({
       open: false,
+    });
+  };
+
+  const handleInfoModalClose = () => {
+    setInfoModal({
+      open: false,
+    });
+  };
+
+  const handleInfoModal = (pattern) => {
+    setInfoModal({
+      open: true,
+      ownerID: pattern.user_id,
+      selectedResource: pattern,
     });
   };
 
@@ -718,14 +756,17 @@ function MesheryPatterns({
     });
   };
 
-  const handleDeploy = (pattern_file, name) => {
+  const handleDeploy = (pattern_file, pattern_id, name) => {
     updateProgress({ showProgress: true });
     dataFetch(
       ctxUrl(DEPLOY_URL, selectedK8sContexts),
       {
         credentials: 'include',
         method: 'POST',
-        body: pattern_file,
+        body: JSON.stringify({
+          pattern_file: pattern_file,
+          pattern_id: pattern_id,
+        }),
       },
       () => {
         updateProgress({ showProgress: false });
@@ -762,20 +803,23 @@ function MesheryPatterns({
           }
         });
         setPatternErrors((prevErrors) => new Map([...prevErrors, [pattern_id, errors]]));
-        handleModalOpen(e, pattern_file, patterns[0].name, errors, ACTIONS.VERIFY);
+        handleModalOpen(e, pattern_file, patterns[0].name, pattern_id, errors, ACTIONS.VERIFY);
       },
       handleError('Error validating pattern'),
     );
   };
 
-  const handleUnDeploy = (pattern_file, name) => {
+  const handleUnDeploy = (pattern_file, pattern_id, name) => {
     updateProgress({ showProgress: true });
     dataFetch(
       ctxUrl(DEPLOY_URL, selectedK8sContexts),
       {
         credentials: 'include',
         method: 'DELETE',
-        body: pattern_file,
+        body: JSON.stringify({
+          pattern_file: pattern_file,
+          pattern_id: pattern_id,
+        }),
       },
       () => {
         updateProgress({ showProgress: false });
@@ -877,7 +921,7 @@ function MesheryPatterns({
     };
   }
 
-  async function handleSubmit({ data, id, name, type, metadata }) {
+  async function handleSubmit({ data, id, name, type, metadata, catalog_data }) {
     updateProgress({ showProgress: true });
     if (type === FILE_OPS.DELETE) {
       const response = await showModal(1, name);
@@ -907,7 +951,10 @@ function MesheryPatterns({
         {
           credentials: 'include',
           method: 'POST',
-          body: JSON.stringify({ pattern_data: { id, pattern_file: data }, save: true }),
+          body: JSON.stringify({
+            pattern_data: { id, pattern_file: data, catalog_data },
+            save: true,
+          }),
         },
         () => {
           console.log('PatternFile API', `/api/pattern`);
@@ -925,12 +972,18 @@ function MesheryPatterns({
           pattern_data: {
             name: metadata?.name || name,
             pattern_file: data,
+            catalog_data,
           },
           save: true,
         });
       }
       if (type === FILE_OPS.URL_UPLOAD) {
-        body = JSON.stringify({ url: data, save: true, name: metadata?.name || name });
+        body = JSON.stringify({
+          url: data,
+          save: true,
+          name: metadata?.name || name,
+          catalog_data,
+        });
       }
       dataFetch(
         `/api/pattern`,
@@ -971,6 +1024,14 @@ function MesheryPatterns({
   const handleOpenInConfigurator = (id) => {
     router.push('/configuration/designs/configurator?design_id=' + id);
   };
+
+  let colViews = [
+    ['name', 'xs'],
+    ['created_at', 'm'],
+    ['updated_at', 'l'],
+    ['visibility', 's'],
+    ['Actions', 'xs'],
+  ];
 
   const columns = [
     {
@@ -1084,7 +1145,11 @@ function MesheryPatterns({
           const rowData = patterns[tableMeta.rowIndex];
           const visibility = patterns[tableMeta.rowIndex]?.visibility;
           return (
-            <>
+            <Box
+              sx={{
+                display: 'flex',
+              }}
+            >
               {userCanEdit(rowData) && (
                 <TooltipIcon
                   placement="top"
@@ -1120,7 +1185,7 @@ function MesheryPatterns({
                   <Avatar
                     src="/static/img/pattwhite.svg"
                     className={classes.iconAvatar}
-                    imgProps={{ height: '16px', width: '16px' }}
+                    imgProps={{ height: '24px', width: '24px' }}
                   />
                 </TooltipIcon>
               )}
@@ -1140,6 +1205,7 @@ function MesheryPatterns({
                     e,
                     rowData.pattern_file,
                     rowData.name,
+                    rowData.id,
                     patternErrors.get(rowData.id),
                     ACTIONS.UNDEPLOY,
                   )
@@ -1150,15 +1216,17 @@ function MesheryPatterns({
               <TooltipIcon
                 placement="bottom"
                 title="Deploy"
-                onClick={(e) =>
+                onClick={(e) => {
+                  console.log('clicked deploy', rowData);
                   handleModalOpen(
                     e,
                     rowData.pattern_file,
                     rowData.name,
+                    rowData.id,
                     patternErrors.get(rowData.id),
                     ACTIONS.DEPLOY,
-                  )
-                }
+                  );
+                }}
               >
                 <DoneAllIcon data-cy="deploy-button" />
               </TooltipIcon>
@@ -1167,6 +1235,13 @@ function MesheryPatterns({
                 onClick={(e) => handleDownload(e, rowData.id, rowData.name)}
               >
                 <GetAppIcon data-cy="download-button" />
+              </TooltipIcon>
+
+              <TooltipIcon
+                title="Design Information"
+                onClick={(ev) => genericClickHandler(ev, handleInfoModal)}
+              >
+                <InfoOutlinedIcon data-cy="information-button" />
               </TooltipIcon>
 
               {canPublishPattern && visibility !== VISIBILITY.PUBLISHED ? (
@@ -1185,7 +1260,7 @@ function MesheryPatterns({
                   <PublicIcon fill="#F91313" data-cy="unpublish-button" />
                 </TooltipIcon>
               )}
-            </>
+            </Box>
           );
         },
       },
@@ -1201,10 +1276,11 @@ function MesheryPatterns({
   const [tableCols, updateCols] = useState(columns);
 
   const [columnVisibility, setColumnVisibility] = useState(() => {
+    let showCols = updateVisibleColumns(colViews, width);
     // Initialize column visibility based on the original columns' visibility
     const initialVisibility = {};
     columns.forEach((col) => {
-      initialVisibility[col.name] = col.options?.display !== false;
+      initialVisibility[col.name] = showCols[col.name];
     });
     return initialVisibility;
   });
@@ -1215,7 +1291,7 @@ function MesheryPatterns({
       title: `Delete ${count ? count : ''} Design${count > 1 ? 's' : ''}?`,
 
       subtitle: `Are you sure you want to delete the ${patterns} design${count > 1 ? 's' : ''}?`,
-
+      variant: PROMPT_VARIANTS.DANGER,
       options: ['Yes', 'No'],
     });
     return response;
@@ -1375,7 +1451,7 @@ function MesheryPatterns({
   function handleImportDesign(data) {
     console.log('data....', data);
     updateProgress({ showProgress: true });
-    const { uploadType, name, url, file } = data;
+    const { uploadType, name, url, file, designType } = data;
     let requestBody = null;
     switch (uploadType) {
       case 'File Upload':
@@ -1391,15 +1467,13 @@ function MesheryPatterns({
         requestBody = JSON.stringify({
           save: true,
           url,
-          pattern_data: {
-            name,
-          },
+          name,
         });
         break;
     }
 
     dataFetch(
-      '/api/pattern',
+      `/api/pattern/${designType}`,
       { credentials: 'include', method: 'POST', body: requestBody },
       () => {
         updateProgress({ showProgress: false });
@@ -1523,15 +1597,17 @@ function MesheryPatterns({
             setPublishModal={setPublishModal}
             publishSchema={publishSchema}
             user={user}
+            handleInfoModal={handleInfoModal}
           />
         )}
         <ConfirmationModal
           open={modalOpen.open}
           handleClose={handleModalClose}
           submit={{
-            deploy: () => handleDeploy(modalOpen.pattern_file, modalOpen.name),
-            unDeploy: () => handleUnDeploy(modalOpen.pattern_file, modalOpen.name),
-            verify: () => handleVerify(modalOpen.pattern_file, modalOpen.name),
+            deploy: () => handleDeploy(modalOpen.pattern_file, modalOpen.patternID, modalOpen.name),
+            unDeploy: () =>
+              handleUnDeploy(modalOpen.pattern_file, modalOpen.patternID, modalOpen.name),
+            verify: () => handleVerify(modalOpen.pattern_file, modalOpen.patternID),
           }}
           title={modalOpen.name}
           componentCount={modalOpen.count}
@@ -1574,6 +1650,17 @@ function MesheryPatterns({
               />
             }
             submitBtnIcon={<PublishIcon className={classes.addIcon} data-cy="import-button" />}
+          />
+        )}
+        {infoModal.open && (
+          <InfoModal
+            infoModalOpen={true}
+            handleInfoModalClose={handleInfoModalClose}
+            dataName="patterns"
+            selectedResource={infoModal.selectedResource}
+            resourceOwnerID={infoModal.ownerID}
+            currentUserID={user?.id}
+            formSchema={publishSchema}
           />
         )}
         <PromptComponent ref={modalRef} />

@@ -302,13 +302,14 @@ type OperatorStatusPerK8sContext struct {
 }
 
 type PageFilter struct {
-	Page         string  `json:"page"`
-	PageSize     string  `json:"pageSize"`
-	Order        *string `json:"order,omitempty"`
-	Search       *string `json:"search,omitempty"`
-	From         *string `json:"from,omitempty"`
-	To           *string `json:"to,omitempty"`
-	UpdatedAfter *string `json:"updated_after,omitempty"`
+	Page         string   `json:"page"`
+	PageSize     string   `json:"pageSize"`
+	Order        *string  `json:"order,omitempty"`
+	Search       *string  `json:"search,omitempty"`
+	From         *string  `json:"from,omitempty"`
+	To           *string  `json:"to,omitempty"`
+	UpdatedAfter *string  `json:"updated_after,omitempty"`
+	Visibility   []string `json:"visibility,omitempty"`
 }
 
 type PatternPageResult struct {

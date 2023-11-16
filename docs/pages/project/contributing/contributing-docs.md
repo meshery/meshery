@@ -6,6 +6,7 @@ description: How to contribute to Meshery Docs.
 language: en
 type: project
 category: contributing
+list: include
 ---
 
 Before contributing, please review the [Documentation Contribution Flow](https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow). In the following steps you will set up your development environment, fork and clone the repository, run the site locally, and finally commit, sign-off, and push any changes made for review.
@@ -128,6 +129,8 @@ sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libre
 ### For MacOS
 
 - Use docs here [Jekyll installation](https://jekyllrb.com/docs/installation/macos/)
+
+**Note:** In case of any installation issues, use the [discussion forum](http://discuss.meshery.io).
 
 ### Get the code
 
@@ -271,7 +274,7 @@ The following is a concise summary of the steps to contribute to Meshery documen
    `git push origin <my-changes>`
 7. Open a pull request (in your web browser) against the repo: https://github.com/layer5io/meshery.
 
-### Table of Contents in Sidebar (toc)
+### Navigation Table of Contents in Sidebar (toc)
 
 Sidebars use toc to create a table of contents. It is written in the following manner:
 
@@ -296,7 +299,95 @@ The output of the code snippet would be:
       Thing 3
 ```
 
-### `if` condititional
+In this example, **Group 1** is a ``parent`` section within the Table of Contents, and **Thing 1**, **Thing 2**, and **Thing 3** are ``children`` of **Group 1**. This is a direct hierarchy with a single level of children under the parent.
+
+``Grandchildren`` are added in the sidebars in the following manner:
+
+```
+    toc:
+  - title: Group 1
+    subfolderitems:
+      - page: Thing 1
+        url: /thing1.html
+        subfolderitems:
+          - page: Subthing 1.1
+            url: /subthing1_1.html
+          - page: Subthing 1.2
+            url: /subthing1_2.html
+      - page: Thing 2
+        url: /thing2.html
+      - page: Thing 3
+        url: /thing3.html
+```
+
+The output of the code snippet would be:
+
+```
+    Group 1
+      Thing 1
+       Subthing 1.1
+       Subthing 1.2
+      Thing 2
+      Thing 3
+```
+
+Here, **Subthing 1.1** and **Subthing 1.2** are the ``grandchildren`` of **Thing 1**.
+
+In `docs/_includes/sidebar.html` contains three levels of navigation hierarchy.
+
+- **Parent**: It serves as a top level category for related content.
+- **Children**: They are immediate subsections or topics that fall under the parent section. 
+- **Grandchildren**: They are nested under Thing 1 and provide a more detailed breakdown of information within the child section. Grandchildren are used to organize content further, offering a more detailed structure for a specific topic.
+
+These sections create a hierarchical and organized navigation experience for readers.
+
+### Alerts
+
+{% include alert.html type="info" title="What is an alert?" content="An alert is a box that can stand out to indicate important information. You can choose from levels success, warning, danger, info, and primary. This example is an info box, and the code for another might look like this:" %}
+
+```
+{%raw%}{% include alert.html type="info" title="Here is another!" %}{%endraw%}
+```
+
+Just for fun, here are all the types:
+
+{% include alert.html type="warning" content="This is a warning" %}
+{% include alert.html type="danger" content="This alerts danger!" %}
+{% include alert.html type="success" content="This alerts success" %}
+{% include alert.html type="info" content="This is useful information." %}
+{% include alert.html type="primary" content="This is a primary alert" %}
+{% include alert.html type="secondary" content="This is a secondary alert" %}
+
+#### alert.html
+
+Meshery Docs has a common include file [alert.html](https://github.com/meshery/meshery/blob/master/docs/_includes/alert.html), to provide consistent formatting for notes, warnings, and various informative callouts intended for the readers.
+
+To use the `alert.html` feature in our documentation include the following code:
+``` 
+  {%raw%}{% include alert.html type="info" title="Here is another!" %}{%endraw%}
+```
+
+
+Other supported alert types include `warning`, `danger`,`success`,`primary`, `secondary`, `light`, `dark` .
+
+### Quotes
+
+You can include block quotes to emphasize text. 
+
+> Here is an example. Isn't this much more prominent to the user?
+
+## Development
+
+
+### Editable Intra-page Table of Contents Toolbar
+
+Control the display of this intra-page navigator with either page level or layout level frontmatter variables:
+
+`display-toolbar`
+
+Set to `true` (make "editable" toolbar visible) or `false` (hide "editable" toolbar)
+
+### `if` conditional
 
 This executes the block of code only if the given condition is true. It is executed in the following manner:
 

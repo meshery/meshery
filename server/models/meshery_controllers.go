@@ -147,7 +147,6 @@ func (mch *MesheryControllersHelper) UpdateCtxControllerHandlers(ctxs []K8sConte
 			}
 		}
 	}(mch)
-
 	return mch
 }
 

@@ -6,11 +6,12 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net"
 	"os"
 	"time"
-	"errors"
+
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/internal/sql"
@@ -138,35 +139,43 @@ func NewK8sContextWithServerID(
 
 // K8sContextsFromKubeconfig takes in a kubeconfig and meshery instance ID and generates
 // kubernetes contexts from it
-func K8sContextsFromKubeconfig(provider Provider, userID string, eventChan *Broadcast, kubeconfig []byte, instanceID *uuid.UUID) ([]*K8sContext) {
+func K8sContextsFromKubeconfig(provider Provider, userID string, eventChan *Broadcast, kubeconfig []byte, instanceID *uuid.UUID, eventMetadata map[string]interface{}) []*K8sContext {
 	kcs := []*K8sContext{}
 	parsed, err := clientcmd.Load(kubeconfig)
 	if err != nil {
 		return kcs
 	}
-	
+
 	userUUID := uuid.FromStringOrNil(userID)
 
 	kcfg := InternalKubeConfig{}
 	if err := yaml.Unmarshal(kubeconfig, &kcfg); err != nil {
 		return kcs
 	}
-	
+
 	for name := range parsed.Contexts {
 		var msg string
+		metadata := map[string]interface{}{}
 		kc, _ := kcfg.K8sContext(name, instanceID)
 		eventBuilder := events.NewEvent().ActedUpon(uuid.FromStringOrNil(kc.ConnectionID)).WithCategory("connection").WithAction("register").FromSystem(*instanceID).FromUser(userUUID)
+
+		metadata["context"] = RedactCredentialsForContext(&kc)
 
 		handler, err := kc.GenerateKubeHandler()
 		if err != nil {
 			msg = fmt.Sprintf("error generating kubernetes handler, skipping context %s: %v", err, kc.Name)
 
-			event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Error connecting with kubernetes context at %s, skipping %s", kc.Server, kc.Name)).WithMetadata(map[string]interface{}{
+			_ = eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Error connecting with kubernetes context at %s, skipping %s", kc.Server, kc.Name)).WithMetadata(map[string]interface{}{
 				"error": err,
 			}).Build()
-			
-			_ = provider.PersistEvent(event)
-			eventChan.Publish(userUUID, event)
+			metadata["error"] = err
+			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
+			eventMetadata[name] = metadata
+
+			// Preventing the publishing of event as the event details would be present in the reciept.
+			// Publishing again would lead to duplicate events and confusion to the user.
+			// _ = provider.PersistEvent(event)
+			// eventChan.Publish(userUUID, event)
 
 			logrus.Warnf(msg)
 			continue
@@ -175,12 +184,18 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, eventChan *Broa
 		// Perform Ping test on the cluster
 		if err := kc.PingTest(); err != nil {
 			msg = fmt.Sprintf("unable to ping kubernetes context at %s, skipping context %s %v \n", kc.Server, kc.Name, err)
-			event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to ping kubernetes context at %s, skipping %s", kc.Server, kc.Name)).WithMetadata(map[string]interface{}{
+			_ = eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to ping kubernetes context at %s, skipping %s", kc.Server, kc.Name)).WithMetadata(map[string]interface{}{
 				"error": err,
 			}).Build()
 
-			_ = provider.PersistEvent(event)
-			eventChan.Publish(userUUID, event)
+			metadata["error"] = err
+			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
+			eventMetadata[name] = metadata
+
+			// Preventing the publishing of event as the event details would be present in the reciept.
+			// Publishing again would lead to duplicate events and confusion to the user.
+			// _ = provider.PersistEvent(event)
+			// eventChan.Publish(userUUID, event)
 
 			logrus.Warn(msg)
 			continue
@@ -189,12 +204,18 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, eventChan *Broa
 		if err := kc.AssignServerID(handler); err != nil {
 			msg = fmt.Sprintf("could not retrieve kubernetes cluster ID, skipping context %s: %v", kc.Name, err)
 
-			event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Could not assign server id, skipping context %s", kc.Name)).WithMetadata(map[string]interface{}{
+			_ = eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Could not assign server id, skipping context %s", kc.Name)).WithMetadata(map[string]interface{}{
 				"error": err,
 			}).Build()
 
-			_ = provider.PersistEvent(event)
-			eventChan.Publish(userUUID, event)
+			metadata["error"] = err
+			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
+			eventMetadata[name] = metadata
+
+			// Preventing the publishing of event as the event details would be present in the reciept.
+			// Publishing again would lead to duplicate events and confusion to the user.
+			// _ = provider.PersistEvent(event)
+			// eventChan.Publish(userUUID, event)
 			logrus.Warn(msg)
 			continue
 		}
@@ -202,12 +223,17 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, eventChan *Broa
 		err = kc.AssignVersion(handler)
 		if err != nil {
 			msg = fmt.Sprintf("could not retrieve kubernetes version for context %s: %v ", kc.Name, err)
-			event := eventBuilder.WithSeverity(events.Warning).WithDescription(fmt.Sprintf("Could not retrieve Kubernetes version for %s", kc.Name)).WithMetadata(map[string]interface{}{
+			_ = eventBuilder.WithSeverity(events.Warning).WithDescription(fmt.Sprintf("Could not retrieve Kubernetes version for %s", kc.Name)).WithMetadata(map[string]interface{}{
 				"error": err,
 			}).Build()
 
-			_ = provider.PersistEvent(event)
-			eventChan.Publish(userUUID, event)
+			// Preventing the publishing of event as the event details would be present in the reciept.
+			// Publishing again would lead to duplicate events and confusion to the user.
+			// _ = provider.PersistEvent(event)
+			// eventChan.Publish(userUUID, event)
+			metadata["error"] = err
+			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
+			eventMetadata[name] = metadata
 
 			logrus.Warnf(msg)
 			kcs = append(kcs, &kc)
@@ -343,12 +369,12 @@ func (kc K8sContext) GenerateKubeConfig() ([]byte, error) {
 
 	data, err := yaml.Marshal(cfg)
 	if err != nil {
-		return []byte{}, ErrMarshal(err, "kube config") 
+		return []byte{}, ErrMarshal(err, "kube config")
 	}
 	return data, nil
 }
 
-func (kc K8sContext) GenerateKubeHandler() (*kubernetes.Client, error) {
+func (kc *K8sContext) GenerateKubeHandler() (*kubernetes.Client, error) {
 	cfg, err := kc.GenerateKubeConfig()
 	if err != nil {
 		return nil, err
@@ -439,7 +465,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 	// because this means its the last contextID referring to that Kubernetes Server
 	if refCount == 1 {
 		if provider.GetGenericPersister() == nil {
-			
+
 			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
 				"error": ErrFlushMeshSyncData(errors.New("meshery Database handler is not accessible to perform operations"), ctxName, serverURL),
 			}).Build()
@@ -451,53 +477,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 			return
 		}
 
-		err := provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KeyValue{}).Error
-		if err != nil {
-			
-			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
-				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
-			}).Build()
-			err := provider.PersistEvent(event)
-			if err != nil {
-				logrus.Error(err)
-			}
-
-			eventsChan.Publish(userUUID, event)
-			return
-		}
-
-		err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.ResourceSpec{}).Error
-		if err != nil {
-			
-			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
-				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
-			}).Build()
-			err := provider.PersistEvent(event)
-			if err != nil {
-				logrus.Error(err)
-			}
-
-			eventsChan.Publish(userUUID, event)
-			return
-		}
-
-		err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.ResourceStatus{}).Error
-		if err != nil {
-
-			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
-				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
-			}).Build()
-			
-			err := provider.PersistEvent(event)
-			if err != nil {
-				logrus.Error(err)
-			}
-
-			eventsChan.Publish(userUUID, event)
-			return
-		}
-
-		err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.ResourceObjectMeta{}).Error
+		err := provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KubernetesKeyValue{}).Error
 		if err != nil {
 
 			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
@@ -512,7 +492,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 			return
 		}
 
-		err = provider.GetGenericPersister().Where("cluster_id = ?", sid).Delete(&meshsyncmodel.Object{}).Error
+		err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KubernetesResourceSpec{}).Error
 		if err != nil {
 
 			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
@@ -526,7 +506,53 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 			eventsChan.Publish(userUUID, event)
 			return
 		}
-		
+
+		err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KubernetesResourceStatus{}).Error
+		if err != nil {
+
+			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
+				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
+			}).Build()
+
+			err := provider.PersistEvent(event)
+			if err != nil {
+				logrus.Error(err)
+			}
+
+			eventsChan.Publish(userUUID, event)
+			return
+		}
+
+		err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KubernetesResourceObjectMeta{}).Error
+		if err != nil {
+
+			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
+				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
+			}).Build()
+			err := provider.PersistEvent(event)
+			if err != nil {
+				logrus.Error(err)
+			}
+
+			eventsChan.Publish(userUUID, event)
+			return
+		}
+
+		err = provider.GetGenericPersister().Where("cluster_id = ?", sid).Delete(&meshsyncmodel.KubernetesResource{}).Error
+		if err != nil {
+
+			event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("Error flushing MeshSync data for %s", ctxName)).FromUser(userUUID).WithMetadata(map[string]interface{}{
+				"error": ErrFlushMeshSyncData(err, ctxName, serverURL),
+			}).Build()
+			err := provider.PersistEvent(event)
+			if err != nil {
+				logrus.Error(err)
+			}
+
+			eventsChan.Publish(userUUID, event)
+			return
+		}
+
 		event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Informational).WithCategory("meshsync").WithAction("flush").WithDescription(fmt.Sprintf("MeshSync data flushed successfully for context %s", ctxName)).FromUser(userUUID).Build()
 		// Also add context name, as id is not helpful
 		err = provider.PersistEvent(event)
@@ -535,4 +561,18 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 		}
 		eventsChan.Publish(userUUID, event)
 	}
+}
+
+func RedactCredentialsForContext(ctx *K8sContext) (redactedContext K8sContext) {
+	redactedContext = *ctx
+	redactedContext.Auth = sql.Map{}
+	redactedContext.Cluster = sql.Map{}
+	redactedContext.DeploymentType = ""
+	redactedContext.ID = ""
+	redactedContext.Name = ""
+	redactedContext.Server = ""
+	redactedContext.ConnectionID = ""
+	redactedContext.KubernetesServerID = nil
+	redactedContext.MesheryInstanceID = nil
+	return
 }

@@ -12,19 +12,19 @@ import (
 )
 
 func GetControlPlaneState(ctx context.Context, selectors []MeshType, provider models.Provider, cid []string) ([]*ControlPlane, error) {
-	object := []meshsyncmodel.Object{}
+	object := []meshsyncmodel.KubernetesResource{}
 	controlplanelist := make([]*ControlPlane, 0)
 	cidMap := make(map[string]bool)
-	
+
 	for _, c := range cid {
 		cidMap[c] = true
 	}
-	
+
 	for _, selector := range selectors {
-		result := provider.GetGenericPersister().Model(&meshsyncmodel.Object{}).
-			Preload("ObjectMeta", "namespace IN ?", controlPlaneNamespace[MeshType(selector)]).
-			Preload("ObjectMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
-			Preload("ObjectMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
+		result := provider.GetGenericPersister().Model(&meshsyncmodel.KubernetesResource{}).
+			Preload("KubernetesResourceMeta", "namespace IN ?", controlPlaneNamespace[MeshType(selector)]).
+			Preload("KubernetesResourceMeta.Labels", "kind = ?", meshsyncmodel.KindLabel).
+			Preload("KubernetesResourceMeta.Annotations", "kind = ?", meshsyncmodel.KindAnnotation).
 			Preload("Spec").
 			Preload("Status").
 			Find(&object, "kind = ?", "Pod")
@@ -59,10 +59,10 @@ func GetControlPlaneState(ctx context.Context, selectors []MeshType, provider mo
 				}
 
 				members = append(members, &ControlPlaneMember{
-					Name:      obj.ObjectMeta.Name,
-					Component: strings.Split(obj.ObjectMeta.GenerateName, "-")[0],
+					Name:      obj.KubernetesResourceMeta.Name,
+					Component: strings.Split(obj.KubernetesResourceMeta.GenerateName, "-")[0],
 					Version:   strings.Split(version, "@")[0],
-					Namespace: obj.ObjectMeta.Namespace,
+					Namespace: obj.KubernetesResourceMeta.Namespace,
 				})
 			}
 		}

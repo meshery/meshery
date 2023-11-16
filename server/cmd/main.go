@@ -21,11 +21,11 @@ import (
 	"github.com/layer5io/meshery/server/router"
 	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/logger"
+	_events "github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/policies"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils/broadcast"
 	"github.com/layer5io/meshkit/utils/events"
-	_events "github.com/layer5io/meshkit/models/events"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
 
@@ -161,11 +161,11 @@ func main() {
 	brokerConn := nats.NewEmptyConnection
 
 	err = dbHandler.AutoMigrate(
-		&meshsyncmodel.KeyValue{},
-		&meshsyncmodel.Object{},
-		&meshsyncmodel.ResourceSpec{},
-		&meshsyncmodel.ResourceStatus{},
-		&meshsyncmodel.ResourceObjectMeta{},
+		&meshsyncmodel.KubernetesKeyValue{},
+		&meshsyncmodel.KubernetesResource{},
+		&meshsyncmodel.KubernetesResourceSpec{},
+		&meshsyncmodel.KubernetesResourceStatus{},
+		&meshsyncmodel.KubernetesResourceObjectMeta{},
 		&models.PerformanceProfile{},
 		&models.MesheryResult{},
 		&models.MesheryPattern{},
@@ -195,8 +195,9 @@ func main() {
 		MesheryApplicationPersister:     &models.MesheryApplicationPersister{DB: dbHandler},
 		MesheryPatternResourcePersister: &models.PatternResourcePersister{DB: dbHandler},
 		MesheryK8sContextPersister:      &models.MesheryK8sContextPersister{DB: dbHandler},
-		EventsPersister: 				 &models.EventsPersister{DB: dbHandler},
+		EventsPersister:                 &models.EventsPersister{DB: dbHandler},
 		GenericPersister:                dbHandler,
+		Log:                             log,
 	}
 	lProv.Initialize()
 
@@ -218,10 +219,10 @@ func main() {
 		PrometheusClient:         models.NewPrometheusClient(),
 		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
 
-		ApplicationChannel: models.NewBroadcaster(),
-		PatternChannel: models.NewBroadcaster(),
-		FilterChannel: models.NewBroadcaster(),
-		EventBroadcaster: models.NewBroadcaster(),
+		ApplicationChannel:        models.NewBroadcaster(),
+		PatternChannel:            models.NewBroadcaster(),
+		FilterChannel:             models.NewBroadcaster(),
+		EventBroadcaster:          models.NewBroadcaster(),
 		DashboardK8sResourcesChan: models.NewDashboardK8sResourcesHelper(),
 		MeshModelSummaryChannel:   mesherymeshmodel.NewSummaryHelper(),
 
@@ -256,7 +257,8 @@ func main() {
 			ProviderVersion:            version,
 			SmiResultPersister:         &models.SMIResultsPersister{DB: dbHandler},
 			GenericPersister:           dbHandler,
-			EventsPersister: &models.EventsPersister{DB: dbHandler},
+			EventsPersister:            &models.EventsPersister{DB: dbHandler},
+			Log:                        log,
 		}
 
 		cp.Initialize()
