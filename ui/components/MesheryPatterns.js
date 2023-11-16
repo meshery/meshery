@@ -1472,7 +1472,6 @@ function MesheryPatterns({
         break;
     }
 
-    console.log('requestBody', requestBody);
 
     dataFetch(
       `/api/pattern/${designType}`,
