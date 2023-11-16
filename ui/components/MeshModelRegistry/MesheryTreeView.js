@@ -7,7 +7,7 @@ import SearchBar from '../../utils/custom-search';
 import { StyledTreeItemRoot } from './MeshModel.style';
 import MinusSquare from '../../assets/icons/MinusSquare';
 import PlusSquare from '../../assets/icons/PlusSquare';
-import CloseSquare from '../../assets/icons/CloseSquare';
+import DotSquare from '../../assets/icons/DotSquare';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
@@ -197,7 +197,7 @@ const MesheryTreeView = ({
               defaultExpanded={['3']}
               defaultCollapseIcon={<MinusSquare />}
               defaultExpandIcon={<PlusSquare />}
-              defaultEndIcon={<CloseSquare />}
+              defaultEndIcon={<DotSquare />}
               onNodeToggle={handleToggle}
               multiSelect
               expanded={expanded}
@@ -327,7 +327,7 @@ const MesheryTreeView = ({
               defaultExpanded={['3']}
               defaultCollapseIcon={<MinusSquare />}
               defaultExpandIcon={<PlusSquare />}
-              defaultEndIcon={<CloseSquare />}
+              defaultEndIcon={<DotSquare />}
               onNodeToggle={handleToggle}
               multiSelect
               expanded={expanded}
@@ -461,7 +461,7 @@ const MesheryTreeView = ({
           defaultExpanded={['3']}
           defaultCollapseIcon={<MinusSquare />}
           defaultExpandIcon={<PlusSquare />}
-          defaultEndIcon={<CloseSquare />}
+          defaultEndIcon={<DotSquare />}
           onNodeToggle={handleToggle}
           onNodeSelect={handleSelect}
           multiSelect
@@ -505,7 +505,7 @@ const MesheryTreeView = ({
           defaultExpanded={['3']}
           defaultCollapseIcon={<MinusSquare />}
           defaultExpandIcon={<PlusSquare />}
-          defaultEndIcon={<CloseSquare />}
+          defaultEndIcon={<DotSquare />}
           onNodeToggle={handleToggle}
           onNodeSelect={handleSelect}
           multiSelect

@@ -1,7 +1,7 @@
 import React from 'react';
 import SvgIcon from '@material-ui/core/SvgIcon';
 
-export function CloseSquare(props) {
+export function DotSquare(props) {
   return (
     <SvgIcon
       className="close"
@@ -26,4 +26,4 @@ export function CloseSquare(props) {
   );
 }
 
-export default CloseSquare;
+export default DotSquare;
