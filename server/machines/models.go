@@ -5,7 +5,6 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/logger"
-
 )
 
 const (
@@ -25,7 +24,6 @@ const (
 	DISCONNECTED StateType = "disconnected"
 	DELETED      StateType = "deleted"
 	NOTFOUND     StateType = "not found"
-	
 )
 
 // Represents an event in the system/machine
@@ -59,6 +57,8 @@ type States map[StateType]State
 
 var DefaultState StateType = ""
 
+var InitialState StateType = "initialized"
+
 type StateMachine struct {
 	// ID to trace the events originated from the machine, also used in Logs
 	ID uuid.UUID
@@ -87,6 +87,13 @@ type StateMachine struct {
 	Log logger.Handler
 }
 
+func (sm *StateMachine) ResetState() {
+	sm.mx.Lock()
+	defer sm.mx.Unlock()
+
+	sm.CurrentState = DISCOVERED
+}
+
 func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 	sm.mx.RLock()
 	defer sm.mx.RUnlock()
@@ -105,7 +112,7 @@ func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 	return DefaultState, ErrInvalidTransition	
 }
 
-func (sm *StateMachine) SendEvent(event EventType) (error) {
+func (sm *StateMachine) SendEvent(event EventType, payload interface{}) (error) {
 	sm.mx.Lock()
 	defer sm.mx.Unlock()
 

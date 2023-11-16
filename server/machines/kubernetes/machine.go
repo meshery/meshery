@@ -1,4 +1,4 @@
-package machines
+package kubernetes
 
 import (
 	"github.com/gofrs/uuid"
@@ -67,13 +67,17 @@ var Delete = machines.State{
 	Action: &actions.DeleteAction{},
 }
 
-func NewK8SMachine(initialState machines.StateType, connectionID uuid.UUID, machineName string, log logger.Handler) *machines.StateMachine {
+const (
+	machineName = "kubernetes"
+)
+
+func NewK8SMachine(connectionID uuid.UUID, log logger.Handler) *machines.StateMachine {
 	return &machines.StateMachine{
 		ID: connectionID,
 		Name: machineName,
 		PreviousState: machines.DefaultState,
-		InitialState: initialState,
-		CurrentState: initialState,
+		InitialState: machines.InitialState,
+		CurrentState: machines.InitialState,
 		Context: nil,
 		Log: log,
 		States: machines.States{

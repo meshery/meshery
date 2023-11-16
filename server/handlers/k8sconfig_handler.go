@@ -282,7 +282,7 @@ func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Reques
 	}
 }
 
-func (h *Handler) LoadContextsAndPersist(userID string, token string, prov models.Provider) ([]*models.K8sContext, error) {
+func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, prov models.Provider) ([]*models.K8sContext, error) {
 	var contexts []*models.K8sContext
 	userUUID := uuid.FromStringOrNil(userID)
 
@@ -321,23 +321,24 @@ func (h *Handler) LoadContextsAndPersist(userID string, token string, prov model
 			return contexts, err
 		}
 		cc.DeploymentType = "in_cluster"
-		conn, err := prov.SaveK8sContext(token, *cc)
-		if err != nil {
-			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", cc.Name, cc.Server)
-			metadata["error"] = err
-			logrus.Warn("failed to save the context for incluster: ", err)
-			return contexts, err
-		}
-		updatedConnection, statusCode, err := prov.UpdateConnectionStatusByID(token, conn.ID, connections.CONNECTED)
-		if err != nil || statusCode != http.StatusOK {
-			logrus.Warn("failed to update connection status for connection id", conn.ID, "to", connections.CONNECTED)
-			logrus.Debug("connection: ", updatedConnection)
-			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", cc.Name, cc.Server)
-			metadata["error"] = err
-			return contexts, err
-		}
-		h.config.K8scontextChannel.PublishContext()
+		// conn, err := prov.SaveK8sContext(token, *cc)
+		// if err != nil {
+		// 	metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", cc.Name, cc.Server)
+		// 	metadata["error"] = err
+		// 	logrus.Warn("failed to save the context for incluster: ", err)
+		// 	return contexts, err
+		// }
+		// updatedConnection, statusCode, err := prov.UpdateConnectionStatusByID(token, conn.ID, connections.CONNECTED)
+		// if err != nil || statusCode != http.StatusOK {
+		// 	logrus.Warn("failed to update connection status for connection id", conn.ID, "to", connections.CONNECTED)
+		// 	logrus.Debug("connection: ", updatedConnection)
+		// 	metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", cc.Name, cc.Server)
+		// 	metadata["error"] = err
+		// 	return contexts, err
+		// }
+		// h.config.K8scontextChannel.PublishContext()
 		contexts = append(contexts, cc)
+		metadata["context"] = models.RedactCredentialsForContext(cc)
 		eventMetadata["in-cluster"] = metadata
 		event := eventBuilder.WithMetadata(eventMetadata).Build()
 		_ = prov.PersistEvent(event)
@@ -352,35 +353,36 @@ func (h *Handler) LoadContextsAndPersist(userID string, token string, prov model
 	
 	ctxs := models.K8sContextsFromKubeconfig(prov, userID, h.config.EventBroadcaster, cfg, mid, eventMetadata)
 
-	// Persist the generated contexts
+	// Do not persist the generated contexts
 	// consolidate this func and addK8sConfig. In this we explicitly updated status as well as this func perfomr greeedy upload so while consolidating make sure to handle the case.
 	for _, ctx := range ctxs {
 		metadata := map[string]interface{}{}
 		metadata["context"] = models.RedactCredentialsForContext(ctx)
-		metadata["description"] = fmt.Sprintf("Connection established with context \"%s\" at %s", ctx.Name, ctx.Server)
-		ctx.DeploymentType = "out_of_cluster"
-		conn, err := prov.SaveK8sContext(token, *ctx)
-		if err != nil {
-			logrus.Warn("failed to save the context: ", err)
-			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", ctx.Name, ctx.Server)
-			metadata["error"] = err
-			continue
-		}
-		updatedConnection, statusCode, err := prov.UpdateConnectionStatusByID(token, conn.ID, connections.CONNECTED)
-		if err != nil || statusCode != http.StatusOK {
-			logrus.Warn("failed to update connection status for connection id", conn.ID, "to", connections.CONNECTED)
-			logrus.Debug("connection: ", updatedConnection)
+		metadata["description"] = fmt.Sprintf("K8S context \"%s\" discovered with cluster at %s", ctx.Name, ctx.Server)
+		// metadata["description"] = fmt.Sprintf("Connection established with context \"%s\" at %s", ctx.Name, ctx.Server)
+		// ctx.DeploymentType = "out_of_cluster"
+		// conn, err := prov.SaveK8sContext(token, *ctx)
+		// if err != nil {
+		// 	logrus.Warn("failed to save the context: ", err)
+		// 	metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", ctx.Name, ctx.Server)
+		// 	metadata["error"] = err
+		// 	continue
+		// }
+		// updatedConnection, statusCode, err := prov.UpdateConnectionStatusByID(token, conn.ID, connections.CONNECTED)
+		// if err != nil || statusCode != http.StatusOK {
+		// 	logrus.Warn("failed to update connection status for connection id", conn.ID, "to", connections.CONNECTED)
+		// 	logrus.Debug("connection: ", updatedConnection)
 
-			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", ctx.Name, ctx.Server)
-			metadata["error"] = err
-			continue
-		}
+		// 	metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", ctx.Name, ctx.Server)
+		// 	metadata["error"] = err
+		// 	continue
+		// }
 
 		contexts = append(contexts, ctx)
 	}
-	if len(contexts) > 0 {
-		h.config.K8scontextChannel.PublishContext()
-	}
+	// if len(contexts) > 0 {
+	// 	h.config.K8scontextChannel.PublishContext()
+	// }
 	event := eventBuilder.WithMetadata(eventMetadata).Build()
 	_ = prov.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userUUID, event)
@@ -477,6 +479,23 @@ func readK8sConfigFromBody(req *http.Request) (*[]byte, error) {
 	return &k8sConfigBytes, nil
 }
 
+
+// func buildK8sConnectionFromContext(context models.K8sContext) (conn *connections.Connection) {
+// 	metadata := map[string]string{
+// 		"id":                   context.ID,
+// 		"server":               context.Server,
+// 		"meshery_instance_id":  context.MesheryInstanceID.String(),
+// 		"deployment_type":      context.DeploymentType,
+// 		"version":              context.Version,
+// 		"name":                 context.Name,
+// 		"kubernetes_server_id": "", // assign afterwards
+// 	}
+	
+// 	conn = &connections.Connection{
+		
+// 	}
+
+// }
 // func writeDefK8sOnFileSystem(def string, path string) {
 // 	err := ioutil.WriteFile(path, []byte(def), 0777)
 // 	if err != nil {

@@ -31,6 +31,7 @@ type Handler struct {
 	registryManager    *meshmodel.RegistryManager
 	EventsBuffer       *events.EventStreamer
 	Rego               *policies.Rego
+	ConnectionToStateMachineInstanceTracker ConnectionToStateMachineInstanceTracker
 }
 
 // NewHandlerInstance returns a Handler instance
@@ -46,6 +47,7 @@ func NewHandlerInstance(
 	regManager *meshmodel.RegistryManager,
 	provider string,
 	rego *policies.Rego,
+	connToInstanceTracker ConnectionToStateMachineInstanceTracker,
 ) models.HandlerInterface {
 
 	h := &Handler{
@@ -61,6 +63,7 @@ func NewHandlerInstance(
 		Provider:           provider,
 		Rego:               rego,
 		SystemID:           viper.Get("INSTANCE_ID").(*uuid.UUID),
+		ConnectionToStateMachineInstanceTracker: connToInstanceTracker,
 	}
 
 	h.task = taskq.RegisterTask(&taskq.TaskOptions{
