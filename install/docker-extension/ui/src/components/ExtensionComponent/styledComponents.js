@@ -9,6 +9,7 @@ export const StyledDiv = styled('div')(() => ({
 
 
 export const AccountDiv = styled('div')(() => ({
+  minWidth: "200px",
   width: "50%",
   display: "flex",
   flexDirection: "column",
@@ -114,4 +115,33 @@ export const MeshModels = styled('div')(({ theme }) => ({
   [theme.breakpoints.down("md")]: {
     display: "flex",
   },
+}));
+
+export const PublishCard = styled("div")(({ theme }) => ({
+  width: "14rem",
+  height: "17rem",
+  border: `1px solid #cccccc`,
+  color: "#000000",
+  position: "relative",
+  textAlign: "center",
+  boxShadow: `0 4px 8px 0 rgba(0, 0, 0, 0.2), 2px 2px 3px 0px #00B39F`,
+  marginBottom: "1.25rem",
+  display: "block",
+  perspective: "1000px",
+  "&:hover": {
+    cursor: "pointer"
+  },
+  ["@media (max-width:1200px)"]: {
+    height: "18rem"
+  },
+  fontSize: "1.125rem",
+  borderRadius: "0.9375rem",
+  background: `linear-gradient(to left bottom, #EBEFF1, #f4f5f7, #f7f7f9, #ffffff, #ffffff, #ffffff, #ffffff, #ffffff, #ffffff, #f7f7f9, #f4f5f7, #EBEFF1);`,
+  paddingTop: "30%",
+  paddingLeft: "10%",
+  paddingRight: "10%",
+  "&:active": {
+    transition: "all 0.1s ease-in",
+    boxShadow: "none"
+  }
 }));

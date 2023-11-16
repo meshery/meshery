@@ -6,6 +6,7 @@ import IstioIcon from '../../img/SVGs/IstioIcon'
 import KumaIcon from '../../img/SVGs/kumaIcon'
 import Tour from '../Walkthrough/Tour'
 import LinkerdIcon from '../../img/SVGs/linkerdIcon'
+import PublishIcon from '../../assets/design'
 import { Avatar } from '@mui/material'
 import NginxIcon from '../../img/SVGs/nginxIcon'
 import AppmeshIcon from '../../img/SVGs/appmeshIcon'
@@ -28,11 +29,14 @@ import {
   StyledButton,
   StyledLink,
   MeshModels,
+  PublishCard,
 } from './styledComponents'
 import { MesheryAnimation } from '../MesheryAnimation/MesheryAnimation'
 import { randomApplicationNameGenerator } from '../../utils'
 import CatalogChart from '../Catalog/Chart'
 import CatalogCard from '../Catalog/CatalogCard';
+import { MESHMAP, mesheryCloudUrl } from '../utils/constants';
+
 const AuthenticatedMsg = 'Authenticated'
 const UnauthenticatedMsg = 'Unauthenticated'
 const proxyUrl = 'http://127.0.0.1:7877'
@@ -102,20 +106,14 @@ const ExtensionsComponent = () => {
   const [isHovered, setIsHovered] = useState(false)
   const isDarkTheme = useThemeDetector()
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [userName, setUserName] = useState('')
-  const [avatar, setAvatar] = useState('')
+  const [user, setUser] = useState('')
   const [token, setToken] = useState()
   const [changing, isChanging] = useState(false)
   const [emptystate, isEmptystate] = useState(true)
   const [meshAdapters, setMeshAdapters] = useState(null)
-  const [emptyPattern, setEmptyPattern] = useState(true)
   const [pattern, setPattern] = useState(null)
-  const [emptyFilter, setEmptyFilter] = useState(true)
   const [filter, setFilter] = useState(null)
-  const [emptyMeshmodelCategories, isEmptyMeshmodelCategories] = useState(true)
-  const [meshmodelsCategories, setMeshmodelsCategories] = useState(null)
-  const [emptysetCatalogs, isEmptysetCatalogs] = useState(true)
-  const [catalogs, setCatalogs] = useState(null)
+  const [userDesigns, setUserDesigns] = useState(null)
 
   useEffect(() => {
     if (meshAdapters && meshAdapters.length !== 0) {
@@ -156,9 +154,7 @@ const ExtensionsComponent = () => {
           fetch(proxyUrl + '/api/user')
             .then((res) => res.text())
             .then((res) => {
-              setUserName(JSON.parse(res)?.user_id)
-              setAvatar(JSON.parse(res)?.avatar_url)
-              console.log(res)
+              setUser(JSON.parse(res))
             })
             .catch(console.error)
           fetch(proxyUrl + '/api/system/sync')
@@ -172,40 +168,33 @@ const ExtensionsComponent = () => {
             .then((result) => result.text())
             .then((result) => setMesheryVersion(JSON.parse(result)?.build))
             .catch(console.error)
-          fetch("https://meshery.layer5.io/api/catalog/content/pattern")
+          fetch(`${mesheryCloudUrl}/api/catalog/content/pattern`)
             .then((result) => result.text())
             .then((result) => {
-              console.log("🚀 ~ file: ExtensionComponent.js:178 ~ .then ~ result:", JSON.parse(result))
-              setPattern(JSON.parse(result));
-              setEmptyPattern(false);
-            })
-            .catch(console.error);
-          fetch("https://meshery.layer5.io/api/catalog/content/filter")
-            .then((result) => result.text())
-            .then((result) => {
-              console.log("🚀 ~ file: ExtensionComponent.js:186 ~ .then ~ result:", result)
-              setFilter(JSON.parse(result));
-              setEmptyFilter(false);
-            })
-            .catch(console.error);
-          fetch(proxyUrl + '/api/meshmodels/categories')
-            .then((result) => result.text())
-            .then((result) => {
-              setMeshmodelsCategories(JSON.parse(result))
-              isEmptyMeshmodelCategories(false)
+              setPattern(JSON.parse(result))
             })
             .catch(console.error)
-          // fetch("https://meshery.layer5.io/api/catalog/content/pattern")
-          //   .then((result) => result.text())
-          //   .then((result) => {
-          //     setCatalogs(JSON.parse(result));
-          //     isEmptysetCatalogs(false);
-          //   })
-          //   .catch(console.error);
+          fetch(`${mesheryCloudUrl}/api/catalog/content/filter`)
+            .then((result) => result.text())
+            .then((result) => {
+              setFilter(JSON.parse(result))
+            })
+            .catch(console.error)
         }
       })
       .catch(console.error)
   }, [isLoggedIn])
+
+  useEffect(() => {
+    if (user?.id) {
+      fetch(`${mesheryCloudUrl}/api/content/patterns?user_id=${user?.id}`)
+        .then((result) => result.text())
+        .then((result) => {
+          setUserDesigns(JSON.parse(result))
+        })
+        .catch(console.error)
+    }
+  }, [user])
 
   const onMouseOver = (e) => {
     let target = e.target.closest('div')
@@ -292,7 +281,6 @@ const ExtensionsComponent = () => {
         body,
       })
         .then((res) => {
-          console.log(res)
           window.ddClient.desktopUI.toast.success(
             'Compose file has been uploaded with name: ' + name,
           )
@@ -365,22 +353,24 @@ const ExtensionsComponent = () => {
                     <Meshery height={70} width={72} />
                   )}
                 </a>
-                <LinkButton>
-                  <StyledLink
-                    style={{ textDecoration: 'none', color: "white" }}
-                    href={
-                      token &&
-                      'http://localhost:9081/api/user/token?token=' +
-                      token +
-                      '&provider=Meshery'
-                    }
-                  >
-                    Launch Meshery
-                  </StyledLink>
-                </LinkButton>
+                {isLoggedIn ? (
+                  <LinkButton>
+                    <StyledLink
+                      style={{ textDecoration: 'none', color: "white" }}
+                      href={
+                        token &&
+                        'http://localhost:9081/api/user/token?token=' +
+                        token +
+                        '&provider=Meshery'
+                      }
+                    >
+                      Launch Meshery
+                    </StyledLink>
+                  </LinkButton>
+                ) : ""}
               </div>
               {!isLoggedIn ? (
-                <Button
+                <StyledButton
                   sx={{ marginTop: '0.3rem' }}
                   variant="contained"
                   disabled={isLoggedIn}
@@ -393,10 +383,8 @@ const ExtensionsComponent = () => {
                   }}
                 >
                   Login
-                </Button>
-              ) : (
-                <div sx={{ display: 'none' }}></div>
-              )}
+                </StyledButton>
+              ) : ( <></> )}
             </AccountDiv>
           </ExtensionWrapper>
           {isLoggedIn && (
@@ -450,7 +438,7 @@ const ExtensionsComponent = () => {
                       alignItems: 'center',
                     }}
                   >
-                    {userName && (
+                    {user?.user_id && (
                       <Typography
                         sx={{
                           display: 'flex',
@@ -459,9 +447,9 @@ const ExtensionsComponent = () => {
                           marginBottom: '1.5rem',
                         }}
                       >
-                        {userName}
+                        {user?.user_id}
                         <Avatar
-                          src={avatar}
+                          src={user?.avatar_url}
                           sx={{
                             width: '5rem',
                             height: '5rem',
@@ -495,7 +483,6 @@ const ExtensionsComponent = () => {
         {isLoggedIn &&
           (<SectionWrapper>
             <CatalogChart filter={filter} pattern={pattern} isTheme={isDarkTheme} />
-            {/* {!!isLoggedIn && ( */}
             <Grid sx={{ backgroundColor: isDarkTheme ? '#666A75' : '#D7DADE', borderRadius: "15px", height: "23rem", display: "flex", justifyContent: "center" }}>
 
               <div style={{ paddingTop: isLoggedIn ? '1.2rem' : null, margin: "10px 0" }}>
@@ -505,15 +492,14 @@ const ExtensionsComponent = () => {
                     height: ['22rem', '17rem', '14rem'],
                   }}
                 >
-                  {!emptyMeshmodelCategories ? (
+                  {userDesigns?.patterns.length > 0 ? (
                     <div>
-                      <Typography sx={{ padding: '3rem 0 1rem 0' }}>
-                        Meshery Catalogs
+                      <Typography variant="h5" sx={{ padding: '3rem 0 1rem 0', fontWeight: "bold" }}>
+                        Designs
                       </Typography>
                       <MeshModels>
                         {
-                          pattern?.patterns?.slice(0, 2).map((pattern, index) => {
-                            console.log("p", pattern, index)
+                          userDesigns?.patterns?.slice(0, 2).map((pattern, index) => {
                             let patternType =
                               pattern.catalog_data && pattern.catalog_data.type && pattern.catalog_data.type !== ""
                                 ? pattern.catalog_data.type
@@ -532,20 +518,25 @@ const ExtensionsComponent = () => {
                     </div>
                   ) : (
                     <div>
-                      <Typography sx={{ marginBottom: '1rem' }} variant="h4">
-                        No Mesh Models Category
+                      <Typography variant="h5" sx={{ padding: '3rem 0 1rem 0', fontWeight: "bold" }}>
+                        Designs
                       </Typography>
+                      <a href={user?.role_names?.includes(MESHMAP) ? "https://playground.meshery.io/extension/meshmap" : "https://play.meshery.io"} style={{ textDecoration: "none" }}>
+                      <PublishCard>
+                        <PublishIcon width={"60"} height={"60"} />
+                        <h5>Publish your own design</h5>
+                      </PublishCard>
+                      </a>
                     </div>
                   )}
                 </ExtensionWrapper>
               </div>
             </Grid>
-            {/* )} */}
           </SectionWrapper>)
         }
 
         <SectionWrapper>
-          {!!isLoggedIn && (
+          {isLoggedIn && (
             <div style={{ paddingTop: isLoggedIn ? '1.2rem' : null }}>
               <Tooltip title="Meshery Server version">
                 <VersionText variant="span" component="span" align="end">
@@ -556,7 +547,7 @@ const ExtensionsComponent = () => {
                 href={`https://docs.meshery.io/project/releases/${mesheryVersion}`}
                 target="_blank"
                 rel="noreferrer"
-                style={{ color: 'white' }}
+                style={{ color: isDarkTheme ? 'white' : 'black' }}
               >
                 <OpenInNewIcon style={{ width: '0.85rem', verticalAlign: 'middle' }} />
               </a>

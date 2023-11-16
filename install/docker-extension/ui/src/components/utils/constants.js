@@ -15,3 +15,7 @@ export const topicsList = [
   { label: "Scaling", value: "scaling" },
   { label: "Resiliency", value: "resiliency" },
 ];
+
+export const mesheryCloudUrl = 'https://meshery.layer5.io'
+
+export const MESHMAP = 'meshmap'

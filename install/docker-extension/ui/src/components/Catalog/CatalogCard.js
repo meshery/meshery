@@ -17,19 +17,26 @@ import ServiceMeshIcon from "../../assets/service-mesh";
 import WhiteDesignIcon from "../../assets/design-white";
 import DesignIcon from "../../assets/design";
 import CopyIcon from "../../assets/copy-button";
+import { mesheryCloudUrl } from '../utils/constants';
 
 function CatalogCard({ pattern, patternType, catalog }) {
   const [copied, setCopied] = useState(false);
 
-  const handleCopyClick = event => {
+  const handleCopyClick = async event => {
     event.preventDefault();
 
-    navigator.clipboard.writeText(`MESHERY${pattern.id.split("-")[2]}`);
-    setCopied(true);
-
-    setTimeout(() => {
-      setCopied(false);
-    }, 2000);
+    try {
+      await navigator.clipboard.writeText(
+        `${mesheryCloudUrl}/catalog/${pattern.id}`
+      );
+      setCopied(true);
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    } catch (error) {
+      // Handle clipboard write error
+      console.error("Error copying to clipboard:", error);
+    }
   };
 
   return pattern?.visibility == "published" ? (
