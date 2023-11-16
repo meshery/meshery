@@ -372,7 +372,7 @@ const Nodes = ({ classes, updateProgress, k8sConfig }) => {
         </>
       ) : (
         <>
-          <View type="Node" setView={setView} resource={selectedNode} />
+          <View type="Node" setView={setView} resource={selectedNode} classes={classes} />
         </>
       )}
     </>

@@ -8,13 +8,12 @@ import NameValueTable from '../DataFormatter/NameValueTable';
 import ResponsiveDataTable from '../../utils/data-table';
 
 const View = (props) => {
-  const { type, setView, resource } = props;
+  const { type, setView, resource, classes } = props;
   console.log(type, setView, resource);
   console.log('inside view component');
 
   // TODO: handle the condition for images
   function RenderDynamicTable(key, value) {
-    console.log('inside render dynamic table');
     const allKeys = value.reduce((keys, obj) => {
       Object.keys(obj).forEach((key) => {
         if (!keys.includes(key)) {
@@ -44,14 +43,12 @@ const View = (props) => {
       responsive: 'standard',
     };
 
-    console.log('columns', columns);
-    console.log('value', value);
-
     return (
       <>
         {key}
 
         <ResponsiveDataTable
+          classes={classes.muiRow}
           data={value}
           columns={columns}
           options={options}
@@ -64,14 +61,12 @@ const View = (props) => {
   }
 
   const RenderObject = (obj) => {
-    const processObjForKeyValTable = (obj, parentKey = '') => {
-      let rows = [];
-      for (const [key, value] of Object.entries(obj)) {
-        if (Array.isArray(value)) {
-          continue;
-        }
-
+    function processObjForKeyValTable(obj, parentKey = '') {
+      return Object.entries(obj).flatMap(([key, value]) => {
         const currentKey = parentKey ? `${parentKey}.${key}` : key;
+        if (Array.isArray(value)) {
+          return []; // Skip processing arrays
+        }
         if (typeof value === 'object' && value !== null) {
           return processObjForKeyValTable(value, currentKey);
         } else {
@@ -79,20 +74,12 @@ const View = (props) => {
             return processObjForKeyValTable(JSON.parse(value), currentKey);
           }
           if (key === 'id') {
-            return rows.push({ name: currentKey, value: value, hide: true });
+            return { name: currentKey, value: value, hide: true };
           }
-          return rows.push({ name: currentKey, value });
+          return { name: currentKey, value };
         }
-      }
-
-      console.log('rows', rows);
-
-      return (
-        <>
-          <NameValueTable rows={rows} />
-        </>
-      );
-    };
+      });
+    }
 
     const processObjForKeyDataTable = (obj, parentKey = '') => {
       let results = [];
@@ -122,57 +109,10 @@ const View = (props) => {
     return (
       <>
         {processObjForKeyDataTable(obj)}
-        {processObjForKeyValTable(obj)}
+        <NameValueTable rows={processObjForKeyValTable(obj)} />
       </>
     );
   };
-
-  //   const RecursiveTable = ({ data }) => {
-  //     const [accumulatedData, setAccumulatedData] = useState([]);
-  //     let currentArray = [];
-
-  //     const renderTable = () => {
-  //       if (accumulatedData.length > 0) {
-  //         const result = <NameValueTable rows={accumulatedData} />;
-  //         setAccumulatedData([]);
-  //         return result;
-  //       }
-  //       return null;
-  //     };
-
-  //     const renderRecursiveTable = (obj, parentKey = '') => {
-  //     const rows = [];
-
-  //     for (const [key, value] of Object.entries(obj)) {
-  //       const currentKey = parentKey ? `${parentKey}.${key}` : key;
-
-  //       if (Array.isArray(value)) {
-  //         // If value is an array, render a subtable
-  //         rows.push(<RenderDynamicTable key={currentKey} value={value} />);
-  //       } else if (typeof value === 'object' && value !== null) {
-  //         // If value is an object, recursively render a subtable
-  //         rows.push(renderRecursiveTable(value, currentKey));
-  //       } else if (key === 'attribute') {
-  //           return rows.push(renderRecursiveTable(JSON.parse(value), currentKey));
-  //         }
-  //         else if (key === 'id') {
-  //           return rows.push({ name: currentKey, value: value, hide: true });
-  //         } else {
-  //         // For non-object values, accumulate data for rendering a NameValueTable
-  //         rows.push({ name: currentKey, value });
-  //       }
-  //     }
-
-  //     if (rows.length > 0) {
-  //       // If there are accumulated rows, render a NameValueTable
-  //       return <NameValueTable rows={rows} />;
-  //     }
-
-  //     return null;
-  //     };
-
-  //      return <>{renderRecursiveTable(data)}</>;
-  // };
 
   const router = useRouter();
 
@@ -192,26 +132,6 @@ const View = (props) => {
     return <></>;
   };
 
-  // const ResourceDetails = (resource) => {
-  //   console.log(resource);
-  //   return (
-  //     <>
-  //       <div
-  //         style={{
-  //           margin: '1rem auto',
-  //         }}
-  //       >
-  //         {/* <FormatStructuredData data={resource} /> */}
-  //         <NameValueTable rows={resource.resource} />
-  //       </div>
-  //     </>
-  //   );
-  // };
-
-  // let cleanedResourceMetadata = sanitizeResource(resource?.metadata);
-  // let cleanedResourceStatus = sanitizeResource(resource?.status);
-  // let cleanedResourceSpec = sanitizeResource(resource?.spec);
-
   return (
     <>
       <div
@@ -223,13 +143,7 @@ const View = (props) => {
           <HeaderComponent />
           <div style={{ margin: '1rem 7rem' }}>
             <ResourceMetrics />
-            {/* <ResourceDetails resource={cleanedResourceMetadata} />
-            <ResourceDetails resource={cleanedResourceStatus} /> */}
-            {/* <SanitizeResourceCopy obj={resource?.status} /> */}
-            {/* <RecursiveTable data={resource?.metadata} />
-            <RecursiveTable data={resource?.status} /> */}
-            <RenderObject obj={resource?.metadata} />
-            <RenderObject obj={resource?.status} />
+            <RenderObject obj={resource} />
           </div>
         </Paper>
       </div>
