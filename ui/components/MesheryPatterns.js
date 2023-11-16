@@ -1442,7 +1442,7 @@ function MesheryPatterns({
    * Gets the data of Import Filter and handles submit operation
    *
    * @param {{
-   * uploadType: ("File Upload"| "URL Upload");
+   * uploadType: ("File Upload"| "URL Import");
    * name: string;
    * url: string;
    * file: string;
@@ -1463,7 +1463,7 @@ function MesheryPatterns({
           },
         });
         break;
-      case 'URL Upload':
+      case 'URL Import':
         requestBody = JSON.stringify({
           save: true,
           url,
@@ -1471,6 +1471,8 @@ function MesheryPatterns({
         });
         break;
     }
+
+    console.log('requestBody', requestBody);
 
     dataFetch(
       `/api/pattern/${designType}`,
