@@ -131,9 +131,6 @@ export const PublishCard = styled("div")(({ theme }) => ({
   "&:hover": {
     cursor: "pointer"
   },
-  ["@media (max-width:1200px)"]: {
-    height: "18rem"
-  },
   fontSize: "1.125rem",
   borderRadius: "0.9375rem",
   background: `linear-gradient(to left bottom, #EBEFF1, #f4f5f7, #f7f7f9, #ffffff, #ffffff, #ffffff, #ffffff, #ffffff, #ffffff, #f7f7f9, #f4f5f7, #EBEFF1);`,

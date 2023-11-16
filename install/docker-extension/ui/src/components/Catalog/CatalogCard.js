@@ -39,7 +39,7 @@ function CatalogCard({ pattern, patternType, catalog }) {
     }
   };
 
-  return pattern?.visibility == "published" ? (
+  return pattern?.visibility === "published" ? (
       <DesignCard>
         <DesignInnerCard>
           <CardFront>

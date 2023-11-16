@@ -8,11 +8,6 @@ export const ChartDiv = styled(Box)(() => ({
   height: "23rem",
   marginRight: "1rem",
   display: "block",
-  ["@media (max-width:900px)"]: {
-    height: "18rem",
-    marginInline: "0",
-    padding: "0.5rem"
-  }
 }));
 
 export const DesignCardUrl = styled("a")(() => ({
@@ -32,7 +27,6 @@ export const DesignCard = styled("div")(() => ({
   textAlign: "center",
   transformStyle: "preserve-3d",
   boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
-  transition: "0.4s ease-out",
   marginBottom: "1.25rem",
   marginLeft: "10px",
   marginRight: "10px",
@@ -43,9 +37,6 @@ export const DesignCard = styled("div")(() => ({
     cursor: "pointer",
     transform: "rotateY(180deg)"
   },
-  ["@media (max-width:1200px)"]: {
-    height: "18rem"
-  }
 }));
 
 export const DesignInnerCard = styled("div")(() => ({
@@ -92,7 +83,6 @@ export const DesignType = styled("span")(() => ({
   padding: "0 0.75rem",
   fontSize: "0.875rem",
   textTransform: "capitalize",
-  background: "00d3a9",
   color: "black",
   borderRadius: "0 1rem 0 2rem",
   background: "rgb(0, 211, 169)"
@@ -154,9 +144,6 @@ export const DesignDetailsDiv = styled("div")(() => ({
   padding: "0rem 1.5rem",
   justifyContent: "start",
   alignItems: "start",
-  ["@media (max-width:1200px)"]: {
-    height: "8.2rem"
-  }
 }));
 
 export const DesignDetails = styled("p")(() => ({
