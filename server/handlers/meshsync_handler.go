@@ -68,7 +68,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	clusterId := r.URL.Query().Get("clusterId")
 	spec, _ := strconv.ParseBool(r.URL.Query().Get("spec"))
 	status, _ := strconv.ParseBool(r.URL.Query().Get("status"))
-	isAnnotaion, _ := strconv.ParseBool(r.URL.Query().Get("annotation"))
+	isAnnotaion, _ := strconv.ParseBool(r.URL.Query().Get("annotations"))
 	isLabels, _ := strconv.ParseBool(r.URL.Query().Get("labels"))
 	kind := r.URL.Query().Get("kind")
 
@@ -84,10 +84,10 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	}
 
 	if isLabels {
-		result = result.Preload("KubernetesResourceMeta.Labels")
+		result = result.Preload("KubernetesResourceMeta.Labels", "kind = ?", model.KindLabel)
 	}
 	if isAnnotaion {
-		result = result.Preload("KubernetesResourceMeta.Annotations")
+		result = result.Preload("KubernetesResourceMeta.Annotations", "kind = ?", model.KindAnnotation)
 	}
 
 	if spec {
