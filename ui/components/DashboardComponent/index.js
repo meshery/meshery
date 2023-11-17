@@ -15,9 +15,9 @@ import Namespaces from './namespaces';
 import Nodes from './nodes';
 import Workloads from './workloads';
 import Storage from './storage';
-import Network from './networks';
+import Network from './network';
 import Security from './security';
-import Configuration from './configuration';
+import Config from './configuration';
 
 const styles = (theme) => ({
   wrapperClss: {
@@ -226,7 +226,7 @@ const DashboardComponent = (props) => {
         )}
         {tabVal === 4 && (
           <TabContainer>
-            <Storage />
+            <Storage updateProgress={updateProgress} classes={classes} k8sConfig={k8sconfig} />
           </TabContainer>
         )}
         {tabVal === 5 && (
@@ -236,12 +236,12 @@ const DashboardComponent = (props) => {
         )}
         {tabVal === 6 && (
           <TabContainer>
-            <Security />
+            <Security updateProgress={updateProgress} classes={classes} k8sConfig={k8sconfig} />
           </TabContainer>
         )}
         {tabVal === 7 && (
           <TabContainer>
-            <Configuration />
+            <Config updateProgress={updateProgress} classes={classes} k8sConfig={k8sconfig} />
           </TabContainer>
         )}
       </div>
