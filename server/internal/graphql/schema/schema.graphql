@@ -694,7 +694,7 @@ type Subscription {
     eventTypes: [MeshSyncEventType!]
   ) : MeshSyncEvent! @KubernetesMiddleware
 
-  subscribeConfiguration(applicationSelector: PageFilter!, patternSelector: PageFilter!, filterSelector: PageFilter!) : ConfigurationPage!
+  subscribeConfiguration( patternSelector: PageFilter!, filterSelector: PageFilter!) : ConfigurationPage!
 
   subscribeClusterResources(
     k8scontextIDs: [String!],

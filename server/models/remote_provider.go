@@ -3294,7 +3294,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 			Type:             "platform",
 			SubType:          "management",
 			MetaData:         metadata,
-			Status:           connections.DISCOVERED,
+			Status:           connections.CONNECTED,
 			CredentialSecret: cred,
 		}
 

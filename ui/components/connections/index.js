@@ -20,6 +20,7 @@ import {
   Tabs,
   Tab,
   MenuItem,
+  Box,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -36,8 +37,8 @@ import SearchBar from '../../utils/custom-search';
 import ResponsiveDataTable from '../../utils/data-table';
 import useStyles from '../../assets/styles/general/tool.styles';
 import Modal from '../Modal';
-import { iconMedium } from '../../css/icons.styles';
-import PromptComponent from '../PromptComponent';
+import { iconMedium, iconSmall } from '../../css/icons.styles';
+import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
 import resetDatabase from '../graphql/queries/ResetDatabaseQuery';
 import changeOperatorState from '../graphql/mutations/OperatorStatusMutation';
 import fetchMesheryOperatorStatus from '../graphql/queries/OperatorStatusQuery';
@@ -47,13 +48,17 @@ import MeshSyncTable from './MeshsyncTable';
 import ConnectionIcon from '../../assets/icons/Connection';
 import MeshsyncIcon from '../../assets/icons/Meshsync';
 import classNames from 'classnames';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import ExploreIcon from '@mui/icons-material/Explore';
+// import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+// import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import SyncIcon from '@mui/icons-material/Sync';
+// import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+// import ExploreIcon from '@mui/icons-material/Explore';
 import { CONNECTION_STATES } from '../../utils/Enum';
 import { FormatConnectionMetadata } from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
+import theme from '../../themes/app';
+import { ConnectionStateChip } from './ConnectionChip';
+import InfoIcon from '@material-ui/icons/Info';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -155,17 +160,18 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
   const meshSyncResetRef = useRef(null);
   const { notify } = useNotification();
   const StyleClass = useStyles();
+  const url = `https://docs.meshery.io/concepts/connections`;
 
-  const icons = {
-    [CONNECTION_STATES.IGNORED]: () => <RemoveCircleIcon />,
-    [CONNECTION_STATES.CONNECTED]: () => <CheckCircleIcon />,
-    [CONNECTION_STATES.REGISTERED]: () => <AssignmentTurnedInIcon />,
-    [CONNECTION_STATES.DISCOVERED]: () => <ExploreIcon />,
-    [CONNECTION_STATES.DELETED]: () => <DeleteForeverIcon />,
-    [CONNECTION_STATES.MAINTENANCE]: () => <ExploreIcon />,
-    [CONNECTION_STATES.DISCONNECTED]: () => <ExploreIcon />,
-    [CONNECTION_STATES.NOTFOUND]: () => <ExploreIcon />,
-  };
+  // const icons = {
+  //   [CONNECTION_STATES.IGNORED]: () => <RemoveCircleIcon />,
+  //   [CONNECTION_STATES.CONNECTED]: () => <CheckCircleIcon />,
+  //   [CONNECTION_STATES.REGISTERED]: () => <AssignmentTurnedInIcon />,
+  //   [CONNECTION_STATES.DISCOVERED]: () => <ExploreIcon />,
+  //   [CONNECTION_STATES.DELETED]: () => <DeleteForeverIcon />,
+  //   [CONNECTION_STATES.MAINTENANCE]: () => <ExploreIcon />,
+  //   [CONNECTION_STATES.DISCONNECTED]: () => <ExploreIcon />,
+  //   [CONNECTION_STATES.NOTFOUND]: () => <ExploreIcon />,
+  // };
 
   const columns = [
     {
@@ -354,14 +360,23 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
       options: {
         sort: true,
         sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+        customHeadRender: function CustomHead({ index, ...column }) {
           return (
-            <SortableTableCell
-              index={index}
-              columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
-            />
+            <TableCell key={index}>
+              <Tooltip title="Click to know about connection and status" placement="top">
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <b>{column.label}</b>
+                  <InfoIcon
+                    color={theme.palette.secondary.iconMain}
+                    style={iconSmall}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(url, '_blank');
+                    }}
+                  />
+                </div>
+              </Tooltip>
+            </TableCell>
           );
         },
         customBodyRender: function CustomBody(value, tableMeta) {
@@ -394,11 +409,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
                 >
                   {Object.keys(CONNECTION_STATES).map((s) => (
                     <MenuItem value={CONNECTION_STATES[s]}>
-                      <Chip
-                        className={classNames(classes.statusChip, classes[CONNECTION_STATES[s]])}
-                        avatar={icons[CONNECTION_STATES[s]]()}
-                        label={CONNECTION_STATES[s]}
-                      />
+                      <ConnectionStateChip status={CONNECTION_STATES[s]} />
                     </MenuItem>
                   ))}
                 </Select>
@@ -523,22 +534,11 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
             <TableContainer className={classes.innerTableContainer}>
               <Table>
                 <TableRow className={classes.noGutter}>
-                  <TableCell style={{ padding: '20px 0' }}>
+                  <TableCell style={{ padding: '20px 0', overflowX: 'hidden' }}>
                     <Grid container spacing={1} style={{ textTransform: 'lowercase' }}>
                       <Grid item xs={12} md={12} className={classes.contentContainer}>
                         <Grid container spacing={1}>
-                          <Grid
-                            item
-                            xs={12}
-                            md={12}
-                            style={{
-                              display: 'flex',
-                              flexWrap: 'wrap',
-                              padding: '0 20px',
-                              gap: 30,
-                            }}
-                            className={classes.contentContainer}
-                          >
+                          <Grid item xs={12} md={12} className={classes.contentContainer}>
                             <FormatConnectionMetadata connection={connection} />
                           </Grid>
                         </Grid>
@@ -622,6 +622,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
         title: `Delete Connections`,
         subtitle: `Are you sure that you want to delete connections"?`,
         options: ['Delete', 'No'],
+        variant: PROMPT_VARIANTS.DANGER,
       });
       if (response === 'Delete') {
         selected.data.map(({ index }) => {
@@ -637,6 +638,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
         title: `Delete Connection`,
         subtitle: `Are you sure that you want to delete connection"?`,
         options: ['Delete', 'No'],
+        variant: PROMPT_VARIANTS.DANGER,
       });
       if (response === 'Delete') {
         deleteConnection(id);
@@ -676,6 +678,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
         title: `Flush MeshSync data for ${connections[index].metadata?.name} ?`,
         subtitle: `Are you sure to Flush MeshSync data for “${connections[index].metadata?.name}”? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.`,
         options: ['PROCEED', 'CANCEL'],
+        variant: PROMPT_VARIANTS.WARNING,
       });
       if (response === 'PROCEED') {
         updateProgress({ showProgress: true });
@@ -803,7 +806,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
               className={classes.tab}
               label={
                 <div className={classes.iconText}>
-                  <span style={{ marginRight: '0.3rem' }}>Meshsync</span>
+                  <span style={{ marginRight: '0.3rem' }}>MeshSync</span>
                   <MeshsyncIcon width="20" height="20" />
                 </div>
               }
@@ -877,27 +880,35 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
           }}
         >
           <Grid style={{ margin: '10px' }}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              size="large"
-              onClick={handleFlushMeshSync(rowData.rowIndex)}
-              className={classes.FlushBtn}
-              data-cy="btnResetDatabase"
-            >
-              <Typography> Flush MeshSync </Typography>
-            </Button>
-            <Typography>
-              <Switch
-                defaultChecked={getOperatorStatus(rowData.rowIndex)?.operatorState}
-                onClick={(e) => handleOperatorSwitch(rowData.rowIndex, e.target.checked)}
-                name="OperatorSwitch"
-                color="primary"
-                className={classes.OperatorSwitch}
-              />
-              Operator
-            </Typography>
+            <div className={classNames(classes.list, classes.listButton)}>
+              <Box className={classes.listItem} sx={{ width: '100%' }}>
+                <Button
+                  type="submit"
+                  onClick={handleFlushMeshSync(rowData.rowIndex)}
+                  data-cy="btnResetDatabase"
+                  className={classes.button}
+                >
+                  <SyncIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
+                  <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
+                    Flush MeshSync
+                  </Typography>
+                </Button>
+              </Box>
+            </div>
+            <div className={classes.list}>
+              <Box className={classes.listItem} sx={{ width: '100%' }}>
+                <div className={classes.listContainer}>
+                  <Switch
+                    defaultChecked={getOperatorStatus(rowData.rowIndex)?.operatorState}
+                    onClick={(e) => handleOperatorSwitch(rowData.rowIndex, e.target.checked)}
+                    name="OperatorSwitch"
+                    color="primary"
+                    className={classes.OperatorSwitch}
+                  />
+                  <Typography variant="body1">Operator</Typography>
+                </div>
+              </Box>
+            </div>
           </Grid>
         </Popover>
         <PromptComponent ref={meshSyncResetRef} />

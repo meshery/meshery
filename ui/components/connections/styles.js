@@ -1,4 +1,6 @@
+import { alpha } from '@material-ui/core';
 import { Colors } from '../../themes/app';
+import { CONNECTION_STATES } from '../../utils/Enum';
 
 const styles = (theme) => ({
   grid: { padding: theme.spacing(2) },
@@ -14,9 +16,6 @@ const styles = (theme) => ({
   statusSelect: {
     '& .MuiSelect-select.MuiSelect-select': {
       padding: '0 2px',
-    },
-    '& .MuiSelect-icon': {
-      display: 'none',
     },
   },
   createButton: {
@@ -34,7 +33,7 @@ const styles = (theme) => ({
     minWidth: '100%',
   },
   statusChip: {
-    minWidth: '130px !important',
+    minWidth: '145px !important',
     maxWidth: '100% !important',
     display: 'flex !important',
     justifyContent: 'flex-start !important',
@@ -156,10 +155,6 @@ const styles = (theme) => ({
     width: 'calc(100% - 23px)',
     border: 'none',
   },
-  listItem: {
-    paddingTop: '0',
-    paddingBottom: '0',
-  },
   noGutter: {
     padding: '0',
   },
@@ -195,6 +190,49 @@ const styles = (theme) => ({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  list: {
+    display: 'flex',
+    flexDirection: 'column',
+    gridGap: '0.5rem',
+    marginBlock: '0.5rem',
+    borderRadius: '0.25rem',
+    backgroundColor: theme.palette.secondary.honeyComb,
+  },
+  listButton: {
+    '&:hover': {
+      backgroundColor: alpha(theme.palette.secondary.link2, 0.25),
+    },
+  },
+  listItem: {
+    display: 'flex',
+    gridGap: '0.5rem',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  button: {
+    width: '100%',
+    justifyContent: 'flex-start',
+    '&:hover': {
+      backgroundColor: 'transparent',
+    },
+  },
+  listContainer: {
+    width: '100%',
+    justifyContent: 'flex-start',
+    display: 'flex',
+    alignItems: 'center',
+  },
 });
 
 export default styles;
+
+export const CONNECTION_STATE_COLORS = {
+  [CONNECTION_STATES.CONNECTED]: '#00B39F',
+  [CONNECTION_STATES.REGISTERED]: '#00B39F',
+  [CONNECTION_STATES.DISCOVERED]: '#FFC107',
+  [CONNECTION_STATES.IGNORED]: '#FFC107',
+  [CONNECTION_STATES.DELETED]: '#FF1744',
+  [CONNECTION_STATES.MAINTENANCE]: '#FFC107',
+  [CONNECTION_STATES.DISCONNECTED]: '#FFC107',
+  [CONNECTION_STATES.NOTFOUND]: '#FFC107',
+};

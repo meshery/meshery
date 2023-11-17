@@ -11,7 +11,7 @@ To set the environment variable in your system, run the below command.
 
 Usage:
 To run the script execute following command 
-`CRED=$CRED go run main.go https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system meshery ../../server/meshmodel `
+`CRED=$CRED go run main.go 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --system meshery ../../server/meshmodel `
 
 2. Component Updater
 Uses a spreadsheet, which contains centralized information about MeshModel components and their metadata like color, icon, and so on. The script is used to update components metadata (svgs, icons etc) for Meshery, Websites (Layer5.io, Meshery.io), and Remote Provider.

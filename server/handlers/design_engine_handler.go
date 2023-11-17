@@ -53,7 +53,7 @@ func (h *Handler) PatternFileHandler(
 
 	var payload struct {
 		PatternFile string `json:"pattern_file"`
-		PatternID  string       `json:"pattern_id"`
+		PatternID   string `json:"pattern_id"`
 	}
 	var patternFileByte []byte
 
