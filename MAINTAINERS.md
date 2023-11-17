@@ -15,6 +15,7 @@
 | Uzair Shaikh        | MUzairS15              | Layer5      |
 | Nikhil Ladha        | Nikhil-Ladha           | Red Hat     |
 | Antonette Caldwell  | acald-creator          | Acquia      |
+| Aabid Sofi          | aabidsofi19            | Layer5      |
 
 ### Adapter Maintainers
 
@@ -43,6 +44,7 @@
 | ----------------- | --------------- | ----------- |
 | Adithya Krishna   | adithyaakrishna | Red Hat     |
 | Lee Calcote       | leecalcote      | Layer5      |
+| Vishal Vivek      | vishalvivekm    | Layer5      |
 
 
 ### Site Maintainers
