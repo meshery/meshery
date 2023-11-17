@@ -61,9 +61,10 @@ func(ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}) (ma
 	}
 
 	k8sContexts := []models.K8sContext{machinectx.K8sContext}
-	machinectx.MesheryCtrlsHelper.UpdateCtxControllerHandlers(k8sContexts).
+	ctrlHelper := machinectx.MesheryCtrlsHelper.UpdateCtxControllerHandlers(k8sContexts).
 	UpdateOperatorsStatusMap(machinectx.OperatorTracker).DeployUndeployedOperators(machinectx.OperatorTracker)
-	
+		ctrlHelper.UpdateMeshsynDataHandlers()
+
 	// context.WithValue(ctx, models.MesheryControllerHandlersKey, machinectx. MesheryCtrlsHelper.GetControllerHandlersForEachContext())
 
 	return machines.NoOp, eventBuilder.Build(), nil

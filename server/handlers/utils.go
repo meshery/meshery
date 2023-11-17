@@ -49,17 +49,27 @@ func InitializeMachineWithContext(
 	connectionID uuid.UUID, 
 	smInstanceTracker *ConnectionToStateMachineInstanceTracker, 
 	log logger.Handler, 
-	event machines.EventType) error {
+	event machines.EventType,
+	reset bool,
+	) error {
 	inst, ok := smInstanceTracker.ConnectToInstanceMap[connectionID]
 	if !ok {
 		var err error
 
-		inst, err = kubernetes.NewK8SMachine(machineCtx, log)
+		inst, err = kubernetes.NewK8SMachine(connectionID.String(), log)
 		if err != nil {
 			log.Error(err)
 			return err
 		}
+		_, err = inst.Start(ctx, machineCtx, log, kubernetes.AssignInitialCtx)
 		smInstanceTracker.ConnectToInstanceMap[connectionID] = inst
+		if err != nil {
+			return err
+		}
+	} else {
+		if reset {
+			inst.ResetState()
+		}
 	}
 	err := inst.SendEvent(ctx, event, nil)
 	if err != nil {

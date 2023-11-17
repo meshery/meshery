@@ -268,14 +268,16 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 			OperatorTracker: h.config.OperatorTracker,
 			Provider: provider,
 			K8scontextChannel: h.config.K8scontextChannel,
+			EventBroadcaster: h.config.EventBroadcaster,
+			RegistryManager: h.registryManager,
 		}
 		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
 		smInstanceTracker.mx.Lock()
-		err := InitializeMachineWithContext(machineCtx, ctx, connectionUUID, smInstanceTracker, h.log, machines.Connect)
+		err := InitializeMachineWithContext(machineCtx, ctx, connectionUUID, smInstanceTracker, h.log, machines.Discovery, true)
 		if err != nil {
 			event := events.NewEvent().FromSystem(*h.SystemID).ActedUpon(connectionUUID).FromUser(userUUID).WithAction("management").WithCategory("system").WithSeverity(events.Critical).WithMetadata(map[string]interface{}{
 				"error": err,
-			}).WithDescription(fmt.Sprintf("Unable to transition to %s", machines.Connect)).Build()
+			}).WithDescription(fmt.Sprintf("Unable to transition to %s", machines.DISCOVERED)).Build()
 				_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
 		}
@@ -290,14 +292,16 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 			OperatorTracker: h.config.OperatorTracker,
 			Provider: provider,
 			K8scontextChannel: h.config.K8scontextChannel,
+			EventBroadcaster: h.config.EventBroadcaster,
+			RegistryManager: h.registryManager,
 		}
 		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
 		smInstanceTracker.mx.Lock()
-		err := InitializeMachineWithContext(machineCtx, ctx, connectionUUID, smInstanceTracker, h.log, machines.Discovery) 
+		err := InitializeMachineWithContext(machineCtx, ctx, connectionUUID, smInstanceTracker, h.log, machines.Discovery, true) 
 		if err != nil {
 			event := events.NewEvent().FromSystem(*h.SystemID).ActedUpon(connectionUUID).FromUser(userUUID).WithAction("management").WithCategory("system").WithSeverity(events.Critical).WithMetadata(map[string]interface{}{
 				"error": err,
-			}).WithDescription(fmt.Sprintf("Unable to transition to %s", machines.Connect)).Build()
+			}).WithDescription(fmt.Sprintf("Unable to transition to %s", machines.DISCOVERED)).Build()
 				_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
 		}

@@ -249,6 +249,8 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 			OperatorTracker: h.config.OperatorTracker,
 			Provider: provider,
 			K8scontextChannel: h.config.K8scontextChannel,
+			EventBroadcaster: h.config.EventBroadcaster,
+			RegistryManager: h.registryManager,
 		}
 
 		err = InitializeMachineWithContext(
@@ -258,12 +260,17 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 			smInstanceTracker,
 			h.log,
 			machines.StatusToEvent(status),
+			false,
 		)
 
 		if err != nil {
 			eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)).WithMetadata(map[string]interface{}{
 				"error": err,
 			})
+		}
+
+		if status == connections.DELETED {
+			delete(smInstanceTracker.ConnectToInstanceMap, id)
 		}
 		// updatedConnection, statusCode, err = provider.UpdateConnectionStatusByID(token, id, status)
 		// if err != nil {

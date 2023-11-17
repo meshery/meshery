@@ -109,6 +109,8 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		OperatorTracker: h.config.OperatorTracker,
 		Provider: provider,
 		K8scontextChannel: h.config.K8scontextChannel,
+		EventBroadcaster: h.config.EventBroadcaster,
+		RegistryManager: h.registryManager,
 	}
 	smInstanceTracker.mx.Lock()
 	err = InitializeMachineWithContext(
@@ -118,6 +120,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		smInstanceTracker,
 		h.log,
 		machines.StatusToEvent(connections.DELETED),
+		false,
 	)
 	smInstanceTracker.mx.Unlock()
 

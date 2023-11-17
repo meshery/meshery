@@ -1,11 +1,16 @@
 package kubernetes
 
 import (
+	"context"
+
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/utils/kubernetes"
+	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
+
 )
 
 // One FSM per connection
@@ -39,7 +44,6 @@ func Connected(log logger.Handler) machines.State {
 	return machines.State{
 		Events: machines.Events{
 			machines.Disconnect: machines.DISCONNECTED,
-			machines.Delete: machines.DELETED,
 			machines.NotFound: machines.NOTFOUND,
 		},
 		Action: &ConnectAction{},
@@ -107,26 +111,26 @@ type MachineCtx struct {
 	Provider           models.Provider
 	OperatorTracker    *models.OperatorTracker
 	K8scontextChannel  *models.K8scontextChan
+	RegistryManager   *meshmodel.RegistryManager
 }
 
 const (
 	machineName = "kubernetes"
 )
 
-func NewK8SMachine(machineCtx *MachineCtx, log logger.Handler) (*machines.StateMachine, error) {
-	connectionID, err := uuid.FromString(machineCtx.K8sContext.ConnectionID)
+func NewK8SMachine(ID string, log logger.Handler) (*machines.StateMachine, error) {
+	connectionID, err := uuid.FromString(ID)
 	log.Info("initialising K8s machine for connetion Id", connectionID)
 	if err != nil {
 		return nil, machines.ErrInititalizeK8sMachine(err)
 	}
-	machineCtx.log = log
+
 	return &machines.StateMachine{
 		ID: connectionID,
 		Name: machineName,
 		PreviousState: machines.DefaultState,
 		InitialState: machines.InitialState,
 		CurrentState: machines.InitialState,
-		Context: machineCtx,
 		Log: log,
 		States: machines.States{
 			machines.DISCOVERED: Discovered(log), 
@@ -137,12 +141,24 @@ func NewK8SMachine(machineCtx *MachineCtx, log logger.Handler) (*machines.StateM
 			machines.DELETED: Delete(log),
 			machines.NOTFOUND: NotFound(log),
 			machines.InitialState: Initial(log),
-			// machines.InitialState: Registered(log),
-			// machines.InitialState: Connected(log),
-			// machines.InitialState: Disconnected(log),
-			// machines.InitialState: Ignored(log),
-			// machines.InitialState: Delete(log),
-
 		},
 	}, nil
+}
+
+func AssignInitialCtx(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error) {
+	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
+	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	userUUID := uuid.FromStringOrNil(user.ID)
+	
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromUser(userUUID) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
+	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
+	if err != nil {
+		return nil, eventBuilder.Build(), err
+	}
+	err = AssignClientSetToContext(machinectx, eventBuilder)
+	if err != nil {
+		return nil, eventBuilder.Build(), err
+	}
+	machinectx.log = log
+	return machinectx, nil, nil
 }

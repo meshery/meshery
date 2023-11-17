@@ -90,11 +90,27 @@ type StateMachine struct {
 	Log logger.Handler
 }
 
+type initFunc func(ctx context.Context,  machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error)
+
+func (sm *StateMachine) Start(ctx context.Context, machinectx interface{}, log logger.Handler, init  initFunc) (*events.Event, error) {
+	var mCtx interface{}
+	var event *events.Event
+	var err error
+	if init != nil {
+		mCtx, event, err = init(ctx, machinectx, log)
+		if err != nil {
+			return event, err
+		}
+	}
+	sm.Context = mCtx
+	return nil, nil
+}
+
 func (sm *StateMachine) ResetState() {
 	sm.mx.Lock()
 	defer sm.mx.Unlock()
 
-	sm.CurrentState = DISCOVERED
+	sm.CurrentState = InitialState
 }
 
 func (sm *StateMachine) getNextState(event EventType) (StateType, error) {

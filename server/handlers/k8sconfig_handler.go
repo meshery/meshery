@@ -128,6 +128,8 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				OperatorTracker: h.config.OperatorTracker,
 				Provider: provider,
 				K8scontextChannel: h.config.K8scontextChannel,
+				EventBroadcaster: h.config.EventBroadcaster,
+				RegistryManager: h.registryManager,
 			}
 
 			if status == connections.CONNECTED {
@@ -149,6 +151,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				smInstanceTracker,
 				h.log,
 				machines.StatusToEvent(status),
+				false,
 			)
 			if err != nil {
 				event := eventBuilder.FromSystem(*h.SystemID).ActedUpon(connection.ID).FromUser(userID).WithAction("management").WithCategory("system").WithSeverity(events.Critical).WithMetadata(map[string]interface{}{
