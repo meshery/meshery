@@ -112,7 +112,6 @@ function Value({ value }) {
 
 export default function NameValueTable(props) {
   const classes = useStyles();
-  console.log('inside namevalue', props);
   const { rows, valueCellProps: globalValueCellProps } = props;
 
   const visibleRows = React.useMemo(

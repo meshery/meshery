@@ -47,7 +47,7 @@ const Nodes = ({ classes, updateProgress, k8sConfig }) => {
     if (!search) search = '';
     if (!sortOrder) sortOrder = '';
     dataFetch(
-      `/api/system/meshsync/resources?kind=Node&status=true&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
+      `/api/system/meshsync/resources?kind=Node&status=true&annotations=true&labels=true&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
         search,
       )}&order=${encodeURIComponent(sortOrder)}`,
       {

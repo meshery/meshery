@@ -9,8 +9,7 @@ import ResponsiveDataTable from '../../utils/data-table';
 
 const View = (props) => {
   const { type, setView, resource, classes } = props;
-  console.log(type, setView, resource);
-  console.log('inside view component');
+  console.log(type, setView);
 
   // TODO: handle the condition for images
   function RenderDynamicTable(key, value) {
@@ -29,6 +28,7 @@ const View = (props) => {
       options: {
         filter: false,
         sort: false,
+        display: key == 'id' ? false : true,
       },
     }));
 
@@ -100,7 +100,7 @@ const View = (props) => {
       }
 
       React.useEffect(() => {
-        console.log(processObj(obj));
+        processObj(obj);
       }, [obj]);
 
       return (
@@ -144,8 +144,8 @@ const View = (props) => {
 
     return (
       <>
-        {processObjForKeyDataTable(obj)}
         {processObjForKeyValTable(obj)}
+        {processObjForKeyDataTable(obj)}
       </>
     );
   };
