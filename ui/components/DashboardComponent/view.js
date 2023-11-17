@@ -9,9 +9,8 @@ import ResponsiveDataTable from '../../utils/data-table';
 
 const View = (props) => {
   const { type, setView, resource, classes } = props;
-  console.log(type, setView);
 
-  // TODO: handle the condition for images
+  console.log(type, setView, resource, classes);
   function RenderDynamicTable(key, value) {
     const allKeys = value.reduce((keys, obj) => {
       Object.keys(obj).forEach((key) => {
@@ -29,6 +28,9 @@ const View = (props) => {
         filter: false,
         sort: false,
         display: key == 'id' ? false : true,
+        customBodyRender: function CustomBody(value) {
+          return <>{typeof value === 'object' && value !== null ? JSON.stringify(value) : value}</>;
+        },
       },
     }));
 
