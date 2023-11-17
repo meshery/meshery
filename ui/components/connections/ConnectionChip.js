@@ -15,7 +15,7 @@ import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
 
 const useChipStyles = makeStyles(() => ({
   Chip: {
-    width: '12.8rem',
+    width: '9rem',
     textAlign: 'center',
     cursor: 'pointer',
     '& .MuiChip-label': {
