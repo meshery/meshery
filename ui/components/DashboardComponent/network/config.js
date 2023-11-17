@@ -23,8 +23,8 @@ export const NetworkTypes = {
     name: 'Service',
     columns: [],
   },
-  Endpoint: {
-    name: 'Endpoint',
+  Endpoints: {
+    name: 'Endpoints',
     columns: [],
   },
   Ingress: {
@@ -104,6 +104,117 @@ const StandardNetworkTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
+          },
+        },
+        {
+          name: 'spec.attribute',
+          label: 'Type',
+          options: {
+            sort: false,
+            customBodyRender: function CustomBody(val) {
+              let attribute = JSON.parse(val);
+              let type = attribute.type;
+              return <>{type}</>;
+            },
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
+          },
+        },
+        {
+          name: 'spec.attribute',
+          label: 'Cluster IP',
+          options: {
+            sort: false,
+            customBodyRender: function CustomBody(val) {
+              let attribute = JSON.parse(val);
+              let clusterIP = attribute.clusterIP;
+              return <>{clusterIP}</>;
+            },
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
+          },
+        },
+        {
+          name: 'status.attribute',
+          label: 'External IP',
+          options: {
+            sort: false,
+            customBodyRender: function CustomBody(val) {
+              let attribute = JSON.parse(val);
+              let loadbalancer = attribute?.loadbalancer;
+              let ingresses = loadbalancer?.ingress;
+              return (
+                <>
+                  {ingresses?.map((ingress, i) => {
+                    return (
+                      <>
+                        {ingress.hostname}
+                        {i < ingresses.length - 1 && ','}
+                      </>
+                    );
+                  })}
+                </>
+              );
+            },
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
+          },
+        },
+        {
+          name: 'spec.attribute',
+          label: 'Ports',
+          options: {
+            sort: false,
+            customBodyRender: function CustomBody(val) {
+              let attribute = JSON.parse(val);
+              let ports = attribute?.ports;
+              return (
+                <>
+                  {ports?.map((p, i) => {
+                    return (
+                      <>
+                        {`${p.port}/${p.targetPort}:${p.protocol}`}
+                        {i < ports.length - 1 && ','}
+                      </>
+                    );
+                  })}
+                </>
+              );
+            },
             customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
               return (
                 <SortableTableCell
@@ -205,8 +316,8 @@ const StandardNetworkTable = (props) => {
         },
       ],
     },
-    Endpoint: {
-      name: 'Endpoint',
+    Endpoints: {
+      name: 'Endpoints',
       columns: [
         {
           name: 'id',
@@ -403,6 +514,39 @@ const StandardNetworkTable = (props) => {
           },
         },
         {
+          name: 'spec.attribute',
+          label: 'Rules',
+          options: {
+            sort: false,
+            customBodyRender: function CustomBody(val) {
+              let attribute = JSON.parse(val);
+              let ingressRules = attribute?.ingressRule;
+              return (
+                <>
+                  {ingressRules?.map((rule, i) => {
+                    return (
+                      <>
+                        {`${rule.host}`}
+                        {i < ingressRules.length - 1 && ','}
+                      </>
+                    );
+                  })}
+                </>
+              );
+            },
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
+          },
+        },
+        {
           name: 'metadata.namespace',
           label: 'Namespace',
           options: {
@@ -546,6 +690,28 @@ const StandardNetworkTable = (props) => {
           },
         },
         {
+          name: 'spec.attribute',
+          label: 'Controller',
+          options: {
+            sort: false,
+            customBodyRender: function CustomBody(val) {
+              let attribute = JSON.parse(val);
+              let controller = attribute?.controller;
+              return <>{controller}</>;
+            },
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
+          },
+        },
+        {
           name: 'metadata.namespace',
           label: 'Namespace',
           options: {
@@ -676,6 +842,39 @@ const StandardNetworkTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
+          },
+        },
+        {
+          name: 'spec.attribute',
+          label: 'Ports',
+          options: {
+            sort: false,
+            customBodyRender: function CustomBody(val) {
+              let attribute = JSON.parse(val);
+              let policyTypes = attribute?.policyTypes;
+              return (
+                <>
+                  {policyTypes?.map((policy, i) => {
+                    return (
+                      <>
+                        {`${policy}`}
+                        {i < policyTypes.length - 1 && ','}
+                      </>
+                    );
+                  })}
+                </>
+              );
+            },
             customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
               return (
                 <SortableTableCell
