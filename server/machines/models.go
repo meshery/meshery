@@ -2,7 +2,6 @@ package machines
 
 import (
 	"context"
-	"fmt"
 	"sync"
 
 	"github.com/gofrs/uuid"
@@ -64,10 +63,10 @@ var DefaultState StateType = ""
 var InitialState StateType = "initialized"
 
 type StateMachine struct {
-	// ID to trace the events originated from the machine, also used in Logs
+	// ID to trace the events originated from the machine, also used in logs
 	ID uuid.UUID
 
-	// Given name for the machine, used in Logs to track issues
+	// Given name for the machine, used in logs to track issues
 	Name string
 
 	// Configuration of states managed by the machine
@@ -100,7 +99,7 @@ func (sm *StateMachine) ResetState() {
 
 func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 	state, ok := sm.States[sm.CurrentState]
-	fmt.Println("inside getNextStaet: ", state.Events, ok)
+	sm.Log.Info("inside getNextState: ", event, ok)
 	if ok {
 		events := state.Events
 		if events != nil {
@@ -111,7 +110,7 @@ func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 			}
 		}
 	}
-	return DefaultState, ErrInvalidTransition
+	return DefaultState, ErrInvalidTransitionEvent(sm.CurrentState, event)
 }
 
 // This should handle error and event publishing . THis should return the events.Event and error and the func in which SendEvent is called should publish the event.
@@ -120,8 +119,13 @@ func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payload interface{}) error {
 	sm.mx.Lock()
 	defer sm.mx.Unlock()
-	sm.Log.Info("inside send event line 123")
+	sm.Log.Info("inside send event entering loop")
 	for {
+		var nextEventTransition EventType
+		if nextEventTransition == NoOp {
+			break
+		}
+		
 		nextState, err := sm.getNextState(eventType)
 		if err != nil {
 			sm.Log.Error(err)
@@ -132,7 +136,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		// next state to transition
 		state, ok := sm.States[nextState]
 		if !ok || state.Action == nil {
-			return ErrInvalidTransition
+			return ErrInvalidTransition(sm.CurrentState, nextState)
 		}
 
 		// Execute exit actions before entreing new state.
@@ -141,12 +145,12 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			action.ExecuteOnExit(ctx, sm.Context)
 		}
 
-		var nextEventTransition EventType
+		
 		if state.Action != nil {
 
 			// Execute entry actions for the state entered.
 			et, event, err := state.Action.ExecuteOnEntry(ctx, sm.Context)
-			fmt.Println("inside models line 150---------------", event, et)
+			sm.Log.Info("inside models.go entry action executed event emiited", et, "events.Event", event)
 
 			if err != nil {
 				sm.Log.Error(err)
@@ -155,29 +159,17 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 				nextEventTransition = et
 				
 			} else {	
-				nextEventTransition, event, err := state.Action.Execute(ctx, sm.Context)
-				fmt.Println("inside models line 160---------------", nextEventTransition)
+				nextEventTransition, event, err = state.Action.Execute(ctx, sm.Context)
+				sm.Log.Info("inside models.go action executed, nextEventTransition: ", nextEventTransition)
 				if err != nil {
 					sm.Log.Error(err)
 					// event publishing
 					sm.Log.Info(event)
-				}
-			
-
-				et, event, err = state.Action.ExecuteOnExit(ctx, sm.Context)
-				fmt.Println("inside models line 169---------------", event, et)
-				if err != nil {
-					sm.Log.Error(err)
-					// event publishing
-					sm.Log.Info(event)
-					
 				}
 			}
 			
 			if nextEventTransition != NoOp {
 				eventType = nextEventTransition
-			} else {
-				break
 			}
 		}
 

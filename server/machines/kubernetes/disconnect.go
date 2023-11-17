@@ -2,7 +2,6 @@ package kubernetes
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -15,7 +14,11 @@ import (
 type DisconnectAction struct {}
 
 func(da *DisconnectAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
-	eventBuilder := events.NewEvent().ActedUpon(uuid.Nil).WithCategory("connection").WithAction("register").FromSystem(uuid.Nil).FromUser(uuid.Nil) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
+	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
+	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	userUUID := uuid.FromStringOrNil(user.ID)
+
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromUser(userUUID) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
 		return machines.NoOp, eventBuilder.Build(), err
@@ -30,7 +33,11 @@ func(da *DisconnectAction) ExecuteOnEntry(ctx context.Context, machineCtx interf
 
 }
 func(da *DisconnectAction) Execute(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error)  {
-	eventBuilder := events.NewEvent().ActedUpon(uuid.Nil).WithCategory("connection").WithAction("register").FromSystem(uuid.Nil).FromUser(uuid.Nil) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
+	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
+	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	userUUID := uuid.FromStringOrNil(user.ID)
+
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromUser(userUUID) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
 		return machines.NoOp, eventBuilder.Build(), err
@@ -54,7 +61,8 @@ func(da *DisconnectAction) Execute(ctx context.Context, machineCtx interface{}) 
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
-	fmt.Println("connection inside disconnect.go", connection, statusCode)
+	machinectx.log.Debug("HTTP status:", statusCode, "updated status for connection", connection.ID)
+	machinectx.log.Debug("exiting execute func from disconnected state", connection)
 
 	return machines.NoOp, eventBuilder.Build(), nil
 }

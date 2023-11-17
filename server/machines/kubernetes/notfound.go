@@ -10,13 +10,13 @@ import (
 	"github.com/layer5io/meshkit/models/events"
 )
 
-type IgnoreAction struct {}
+type NotFoundAction struct {}
 
-func(ia *IgnoreAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
+func(ia *NotFoundAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
 
 	return machines.NoOp, nil, nil
 }
-func(ia *IgnoreAction) Execute(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
+func(ia *NotFoundAction) Execute(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
 	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
 	userUUID := uuid.FromStringOrNil(user.ID)
@@ -28,7 +28,7 @@ func(ia *IgnoreAction) Execute(ctx context.Context, machineCtx interface{}) (mac
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
-	connection, statusCode, err := machinectx.Provider.UpdateConnectionStatusByID(token, uuid.FromStringOrNil(machinectx.K8sContext.ConnectionID), connections.IGNORED)
+	connection, statusCode, err := machinectx.Provider.UpdateConnectionStatusByID(token, uuid.FromStringOrNil(machinectx.K8sContext.ConnectionID), connections.NOTFOUND)
 
 	// peform error handling and event publishing
 	if err != nil {
@@ -36,11 +36,11 @@ func(ia *IgnoreAction) Execute(ctx context.Context, machineCtx interface{}) (mac
 	}
 
 	machinectx.log.Debug("HTTP status:", statusCode, "updated status for connection", connection.ID)
-	machinectx.log.Debug("exiting execute func from ignored state", connection)
+	machinectx.log.Debug("exiting execute func from notfound state", connection)
 
 	return machines.NoOp, eventBuilder.Build(), err
 }
 
-func(ia *IgnoreAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
+func(ia *NotFoundAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
 	return machines.NoOp, nil, nil
 }

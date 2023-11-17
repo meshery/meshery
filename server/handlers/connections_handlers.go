@@ -9,6 +9,8 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/server/machines"
+	"github.com/layer5io/meshery/server/machines/kubernetes"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/models/events"
@@ -229,33 +231,57 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
-	var statusCode int
+	smInstanceTracker := &h.ConnectionToStateMachineInstanceTracker
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
+	smInstanceTracker.mx.Lock()
 	for id, status := range *connectionStatusPayload {
 		eventBuilder.ActedUpon(id)
-		var updatedConnection *connections.Connection
-		var err error
-		token, ok := req.Context().Value(models.TokenCtxKey).(string)
-		if !ok {
-			err := ErrRetrieveUserToken(fmt.Errorf("failed to retrieve user token"))
-			h.log.Error(err)
-			return
-		}
-		updatedConnection, statusCode, err = provider.UpdateConnectionStatusByID(token, id, status)
+		k8scontext, err := provider.GetK8sContext(token, id.String())
 		if err != nil {
 			eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)).WithMetadata(map[string]interface{}{
 				"error": err,
 			})
-			// Get the connection name as id doesn't convey much to the user.
-		} else {
-			eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Connection \"%s\" status updated to %s for %s", updatedConnection.Name, status, id))
-			go h.config.K8scontextChannel.PublishContext()
 		}
+		machineCtx := &kubernetes.MachineCtx{
+			K8sContext: k8scontext,
+			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
+			K8sCompRegHelper: h.K8sCompRegHelper,
+			OperatorTracker: h.config.OperatorTracker,
+			Provider: provider,
+			K8scontextChannel: h.config.K8scontextChannel,
+		}
+
+		err = InitializeMachineWithContext(
+			machineCtx,
+			req.Context(),
+			id,
+			smInstanceTracker,
+			h.log,
+			machines.StatusToEvent(status),
+		)
+
+		if err != nil {
+			eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)).WithMetadata(map[string]interface{}{
+				"error": err,
+			})
+		}
+		// updatedConnection, statusCode, err = provider.UpdateConnectionStatusByID(token, id, status)
+		// if err != nil {
+		// 	eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)).WithMetadata(map[string]interface{}{
+		// 		"error": err,
+		// 	})
+		// 	// Get the connection name as id doesn't convey much to the user.
+		// } else {
+		// 	eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Connection \"%s\" status updated to %s for %s", updatedConnection.Name, status, id))
+		// 	go h.config.K8scontextChannel.PublishContext()
+		// }
 
 		event := eventBuilder.Build()
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
 	}
-	w.WriteHeader(statusCode)
+	smInstanceTracker.mx.Unlock()
+	w.WriteHeader(http.StatusAccepted)
 }
 
 // swagger:route PUT /api/integrations/connections/{connectionKind} PutConnection idPutConnection
@@ -399,3 +425,4 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	h.log.Info("connection deleted successfully")
 	w.WriteHeader(http.StatusOK)
 }
+

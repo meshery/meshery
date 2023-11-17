@@ -204,7 +204,9 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		ctx = context.WithValue(ctx, models.UserCtxKey, user)
 		ctx = context.WithValue(ctx, models.RegistryManagerKey, h.registryManager)
 		ctx = context.WithValue(ctx, models.HandlerKey, h)
+		ctx = context.WithValue(ctx, models.SystemIDKey, h.SystemID)
 		req1 := req.WithContext(ctx)
+
 		next(w, req1, prefObj, user, provider)
 	})
 }
@@ -287,30 +289,4 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 		smInstanceTracker.mx.Unlock()
 	}
 	return ctx, nil
-
-	// TO BE DONE IN "REGISTERED" STATE
-	// register kubernetes components
-
-	// h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{RegisterK8sMeshModelComponents}, h.registryManager, h.config.EventBroadcaster, provider, user.ID, true)
-	// go h.config.MeshModelSummaryChannel.Publish()
 }
-
-
-// func MesheryControllersMiddleware(ctx context.Context, h *Handler) (context.Context, error) {
-
-// // TO BE DONE IN "REGISTERED" STATE
-	
-// 	mk8sContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
-// 	if !ok || len(mk8sContexts) == 0 {
-// 		return ctx, ErrInvalidK8SConfigNil
-// 	}
-
-// 	// 1. get the status of controller deployments for each cluster and make sure that all the contexts have meshery controllers deployed
-// 	ctrlHlpr := h.MesheryCtrlsHelper.UpdateCtxControllerHandlers(mk8sContexts).UpdateOperatorsStatusMap(h.config.OperatorTracker).DeployUndeployedOperators(h.config.OperatorTracker)
-// 	ctx = context.WithValue(ctx, models.MesheryControllerHandlersKey, h.MesheryCtrlsHelper.GetControllerHandlersForEachContext())
-
-// 	// 2. make sure that the data from meshsync for all the clusters are persisted properly
-// 	ctrlHlpr.UpdateMeshsynDataHandlers()
-// 	ctx = context.WithValue(ctx, models.MeshSyncDataHandlersKey, h.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext())
-// 	return ctx, nil
-// }

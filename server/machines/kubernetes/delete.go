@@ -2,7 +2,6 @@ package kubernetes
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -19,7 +18,11 @@ func(da *DeleteAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{
 }
 
 func(da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
-	eventBuilder := events.NewEvent().ActedUpon(uuid.Nil).WithCategory("connection").WithAction("register").FromSystem(uuid.Nil).FromUser(uuid.Nil) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
+	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
+	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+
+	eventBuilder := events.NewEvent().ActedUpon(uuid.FromStringOrNil(user.ID)).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromUser(uuid.Nil)
+	
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
 		return machines.NoOp, eventBuilder.Build(), err
@@ -35,6 +38,7 @@ func(da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}) (mac
 	})
 
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
+	
 	connection, statusCode, err := machinectx.Provider.UpdateConnectionStatusByID(token, uuid.FromStringOrNil(machinectx.K8sContext.ConnectionID), connections.DELETED)
 
 	// peform error handling and event publishing
@@ -42,10 +46,11 @@ func(da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}) (mac
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
-	fmt.Println("connection inside delete.go", connection, statusCode)
+	go models.FlushMeshSyncData(ctx, machinectx.K8sContext, machinectx.Provider, machinectx.EventBroadcaster, user.ID, sysID)
 
-	// ctx = context.WithValue(ctx, models.MesheryControllerHandlersKey, machinectx. MesheryCtrlsHelper.GetControllerHandlersForEachContext()) // not required verify once
+	machinectx.log.Debug("deleted connection: ", connection, "HTTP status", statusCode)
 
+	// ctx = context.WithValue(ctx, models.MesheryControllerHandlersKey, machinectx. MesheryCtrlsHelper.GetControllerHandlersForEachContext())
 	return machines.NoOp, eventBuilder.Build(), nil
 }
 

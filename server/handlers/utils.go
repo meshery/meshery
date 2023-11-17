@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -50,21 +49,22 @@ func InitializeMachineWithContext(
 	connectionID uuid.UUID, 
 	smInstanceTracker *ConnectionToStateMachineInstanceTracker, 
 	log logger.Handler, 
-	event machines.EventType) {
+	event machines.EventType) error {
 	inst, ok := smInstanceTracker.ConnectToInstanceMap[connectionID]
-	fmt.Println("test---------------")
 	if !ok {
 		var err error
 
 		inst, err = kubernetes.NewK8SMachine(machineCtx, log)
 		if err != nil {
 			log.Error(err)
-			return
+			return err
 		}
 		smInstanceTracker.ConnectToInstanceMap[connectionID] = inst
 	}
 	err := inst.SendEvent(ctx, event, nil)
 	if err != nil {
 		log.Error(err)
+		return err
 	}
+	return nil
 }

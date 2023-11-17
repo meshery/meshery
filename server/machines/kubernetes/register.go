@@ -2,7 +2,6 @@ package kubernetes
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/machines"
@@ -15,8 +14,11 @@ type RegisterAction struct {}
 
 // Execute On Entry and Exit should not return next eventtype i suppose, look again.
 func(ra *RegisterAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
+	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
+	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	userUUID := uuid.FromStringOrNil(user.ID)
 	
-	eventBuilder := events.NewEvent().ActedUpon(uuid.Nil).WithCategory("connection").WithAction("register").FromSystem(uuid.Nil).FromUser(uuid.Nil) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromUser(userUUID) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
 		return machines.NoOp, eventBuilder.Build(), err
@@ -40,13 +42,11 @@ func(ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}) (m
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 	
-	fmt.Println("inside register line 43---------------", machineCtx)
+	machinectx.log.Debug("executing ping test for connection", machinectx.K8sContext.ConnectionID)
 	err = machinectx.K8sContext.PingTest()
-	fmt.Println("inside register line 45---------------", err)
+	
 	if err != nil {
-		// machinectx.log.Error(err)
-		fmt.Println("inside register line 48---------------", err)
-		
+		machinectx.log.Error(err)	
 		// peform error handling and event publishing
 		return machines.NotFound, nil, err
 	}
@@ -59,7 +59,8 @@ func(ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}) (m
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
-	fmt.Println("connection inside register.go", connection, statusCode)
+	machinectx.log.Debug("HTTP status:", statusCode, "updated status for connection", connection.ID)
+	machinectx.log.Debug("exiting execute func from registered state", connection)
 
 	return machines.Connect, nil, nil
 }

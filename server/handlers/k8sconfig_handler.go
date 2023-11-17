@@ -106,20 +106,11 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	len := len(contexts)
 
 	smInstanceTracker := &h.ConnectionToStateMachineInstanceTracker
-
+	smInstanceTracker.mx.Lock()
 	for idx, ctx := range contexts {
 		metadata := map[string]interface{}{}
 		metadata["context"] = models.RedactCredentialsForContext(ctx)
 		metadata["description"] = fmt.Sprintf("Connection established with context \"%s\" at %s", ctx.Name, ctx.Server)
-
-		machineCtx := &kubernetes.MachineCtx{
-			K8sContext: *ctx,
-			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
-			K8sCompRegHelper: h.K8sCompRegHelper,
-			OperatorTracker: h.config.OperatorTracker,
-			Provider: provider,
-			K8scontextChannel: h.config.K8scontextChannel,
-		}
 
 		connection, err := provider.SaveK8sContext(token, *ctx)
 		if err != nil {
@@ -127,33 +118,45 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", ctx.Name, ctx.Server)
 			metadata["error"] = err
 		} else {
-			var et machines.EventType
-			eventBuilder.ActedUpon(connection.ID)
 			ctx.ConnectionID = connection.ID.String()
+			eventBuilder.ActedUpon(connection.ID)
 			status := connection.Status
+			machineCtx := &kubernetes.MachineCtx{
+				K8sContext: *ctx,
+				MesheryCtrlsHelper: h.MesheryCtrlsHelper,
+				K8sCompRegHelper: h.K8sCompRegHelper,
+				OperatorTracker: h.config.OperatorTracker,
+				Provider: provider,
+				K8scontextChannel: h.config.K8scontextChannel,
+			}
+
 			if status == connections.CONNECTED {
-				et = machines.Connect
 				saveK8sContextResponse.ConnectedContexts = append(saveK8sContextResponse.ConnectedContexts, *ctx)
 				metadata["description"] = fmt.Sprintf("Connection already exists with Kubernetes context \"%s\" at %s", ctx.Name, ctx.Server)
 			} else if status == connections.IGNORED {
-				et = machines.Ignore
 				saveK8sContextResponse.IgnoredContexts = append(saveK8sContextResponse.IgnoredContexts, *ctx)
 				metadata["description"] = fmt.Sprintf("Kubernetes context \"%s\" is set to ignored state.", ctx.Name)
 			} else if status == connections.DISCOVERED {
-				et = machines.Discovery
 				fmt.Println("test;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;")
 				saveK8sContextResponse.RegisteredContexts = append(saveK8sContextResponse.RegisteredContexts, *ctx)
 				metadata["description"] = fmt.Sprintf("Connection registered with kubernetes context \"%s\" at %s.", ctx.Name, ctx.Server)
 			}
 
-			InitializeMachineWithContext(
+			err := InitializeMachineWithContext(
 				machineCtx,
 				req.Context(),
 				connection.ID,
 				smInstanceTracker,
 				h.log,
-				et,
+				machines.StatusToEvent(status),
 			)
+			if err != nil {
+				event := eventBuilder.FromSystem(*h.SystemID).ActedUpon(connection.ID).FromUser(userID).WithAction("management").WithCategory("system").WithSeverity(events.Critical).WithMetadata(map[string]interface{}{
+					"error": err,
+				}).WithDescription(fmt.Sprintf("Unable to transition to %s", status)).Build()
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
+			}
 		}
 
 		eventMetadata[ctx.Name] = metadata
@@ -162,6 +165,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			h.config.K8scontextChannel.PublishContext()
 		}
 	}
+	smInstanceTracker.mx.Unlock()
 
 	event := eventBuilder.WithMetadata(eventMetadata).Build()
 	_ = provider.PersistEvent(event)
@@ -364,6 +368,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 		// 	return contexts, err
 		// }
 		// h.config.K8scontextChannel.PublishContext()
+		cc.ConnectionID = conn.ID.String()
 		contexts = append(contexts, cc)
 		metadata["context"] = models.RedactCredentialsForContext(cc)
 		eventMetadata["in-cluster"] = metadata
@@ -395,6 +400,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 			metadata["error"] = err
 			continue
 		}
+		ctx.ConnectionID = conn.ID.String()
 		h.log.Debug(conn)
 		// updatedConnection, statusCode, err := prov.UpdateConnectionStatusByID(token, conn.ID, connections.CONNECTED)
 		// if err != nil || statusCode != http.StatusOK {

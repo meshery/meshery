@@ -2,7 +2,6 @@ package kubernetes
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/machines"
@@ -15,8 +14,11 @@ type ConnectAction struct {}
 
 // Execute On Entry and Exit should not return next eventtype i suppose, look again.
 func(ca *ConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
-	fmt.Println("inside connect OnEntry.")
-	eventBuilder := events.NewEvent().ActedUpon(uuid.Nil).WithCategory("connection").WithAction("register").FromSystem(uuid.Nil).FromUser(uuid.Nil) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
+	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
+	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	userUUID := uuid.FromStringOrNil(user.ID)
+	
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromUser(*sysID)
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
 		return machines.NoOp, eventBuilder.Build(), err
@@ -26,12 +28,11 @@ func(ca *ConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx interface
 	if err != nil {
 		return machines.NoOp, eventBuilder.Build(), err
 	}
+
+	machinectx.log.Debug("executing ping test for connection", machinectx.K8sContext.ID)
 	err = machinectx.K8sContext.PingTest()
-	fmt.Println("inside connect line 30 after ping test", err)
 	if err != nil {
-		// machinectx.log.Error(err)
-		fmt.Println("inside connect line 30 after ping test err block", err)
-		// peform error handling and event publishing
+		machinectx.log.Error(err)
 		return machines.NotFound, nil, err
 	}
 
@@ -42,14 +43,18 @@ func(ca *ConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx interface
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
-	fmt.Println("connection inside connect.go updated connection status", connection, statusCode)
+	machinectx.log.Debug("HTTP status:", statusCode, "updated status for connection", connection.ID)
+	machinectx.log.Debug("exiting execute func from connected state", connection)
 
 	return machines.NoOp, eventBuilder.Build(), nil
-
 }
+
 func(ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
-	fmt.Println("inside connect Execute mch")
-	eventBuilder := events.NewEvent().ActedUpon(uuid.Nil).WithCategory("connection").WithAction("register").FromSystem(uuid.Nil).FromUser(uuid.Nil) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
+	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
+	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	userUUID := uuid.FromStringOrNil(user.ID)
+
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromUser(userUUID) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
 		return machines.NoOp, eventBuilder.Build(), err

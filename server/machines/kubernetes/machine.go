@@ -1,8 +1,6 @@
 package kubernetes
 
 import (
-	"fmt"
-
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/models"
@@ -73,7 +71,7 @@ func NotFound(log logger.Handler) machines.State {
 		Events: machines.Events{
 			machines.Discovery: machines.DISCOVERED,
 		},
-		Action: nil,
+		Action: &NotFoundAction{},
 	}
 }
 
@@ -87,6 +85,7 @@ func Delete(log logger.Handler) machines.State {
 func Initial(log logger.Handler) machines.State {
 	return machines.State{
 		Events: machines.Events{
+			machines.Discovery: machines.DISCOVERED,
 			machines.Register: machines.REGISTERED,
 			machines.Connect: machines.CONNECTED,
 			machines.Disconnect: machines.DISCONNECTED,
@@ -116,10 +115,11 @@ const (
 
 func NewK8SMachine(machineCtx *MachineCtx, log logger.Handler) (*machines.StateMachine, error) {
 	connectionID, err := uuid.FromString(machineCtx.K8sContext.ConnectionID)
-	fmt.Println("test---------------////////////////////////")
+	log.Info("initialising K8s machine for connetion Id", connectionID)
 	if err != nil {
 		return nil, machines.ErrInititalizeK8sMachine(err)
 	}
+	machineCtx.log = log
 	return &machines.StateMachine{
 		ID: connectionID,
 		Name: machineName,
@@ -135,6 +135,7 @@ func NewK8SMachine(machineCtx *MachineCtx, log logger.Handler) (*machines.StateM
 			machines.DISCONNECTED: Disconnected(log),
 			machines.IGNORED: Ignored(log),
 			machines.DELETED: Delete(log),
+			machines.NOTFOUND: NotFound(log),
 			machines.InitialState: Initial(log),
 			// machines.InitialState: Registered(log),
 			// machines.InitialState: Connected(log),
