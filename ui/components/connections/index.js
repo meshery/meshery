@@ -1,36 +1,34 @@
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   NoSsr,
   TableCell,
   Button,
   Tooltip,
-  Link,
+  FormControl,
+  Select,
   TableContainer,
   Table,
-  Paper,
   Grid,
-  List,
-  ListItem,
-  ListItemText,
   TableRow,
+  TableSortLabel,
+  Chip,
+  IconButton,
+  Typography,
+  Switch,
+  Popover,
+  AppBar,
+  Tabs,
+  Tab,
+  MenuItem,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-// import EditIcon from "@material-ui/icons/Edit";
-// import YoutubeSearchedForIcon from '@mui/icons-material/YoutubeSearchedFor';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import React, { useEffect, useRef, useState } from 'react';
 import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { updateProgress } from '../../lib/store';
-import { /* Avatar, */ Chip /* FormControl, */ } from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import ExploreIcon from '@mui/icons-material/Explore';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import classNames from 'classnames';
-// import ReactSelectWrapper from "../ReactSelectWrapper";
 import dataFetch from '../../lib/data-fetch';
-import LaunchIcon from '@mui/icons-material/Launch';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import CustomColumnVisibilityControl from '../../utils/custom-column';
@@ -38,113 +36,43 @@ import SearchBar from '../../utils/custom-search';
 import ResponsiveDataTable from '../../utils/data-table';
 import useStyles from '../../assets/styles/general/tool.styles';
 import Modal from '../Modal';
-
-const styles = (theme) => ({
-  grid: { padding: theme.spacing(2) },
-  tableHeader: {
-    fontWeight: 'bolder',
-    fontSize: 18,
-  },
-  muiRow: {
-    '& .MuiTableRow-root': {
-      cursor: 'pointer',
-    },
-    '& .MuiTableCell-root': {
-      textTransform: 'capitalize',
-    },
-  },
-  createButton: {
-    display: 'flex',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    whiteSpace: 'nowrap',
-  },
-  viewSwitchButton: {
-    justifySelf: 'flex-end',
-    marginLeft: 'auto',
-    paddingLeft: '1rem',
-  },
-  statusCip: {
-    minWidth: '120px !important',
-    maxWidth: 'max-content !important',
-    display: 'flex !important',
-    justifyContent: 'flex-start !important',
-    textTransform: 'capitalize',
-    borderRadius: '3px !important',
-    padding: '6px 8px',
-    '& .MuiChip-label': {
-      paddingTop: '3px',
-      fontWeight: '400',
-    },
-    '&:hover': {
-      boxShadow: '0px 1px 2px 0px rgba(0, 0, 0, 0.25)',
-    },
-  },
-  capitalize: {
-    textTransform: 'capitalize',
-  },
-  ignored: {
-    '& .MuiChip-label': {
-      color: `${theme.palette.secondary.default}`,
-    },
-    background: `${theme.palette.secondary.default}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.default} !important`,
-    },
-  },
-  connected: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.success,
-    },
-    background: `${theme.palette.secondary.success}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.success} !important`,
-    },
-  },
-  registered: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.primary,
-    },
-    background: `${theme.palette.secondary.primary}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.primary} !important`,
-    },
-  },
-  discovered: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.warning,
-    },
-    background: `${theme.palette.secondary.warning}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.warning} !important`,
-    },
-  },
-  deleted: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.error,
-    },
-    background: `${theme.palette.secondary.lightError}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.error} !important`,
-    },
-  },
-  expandedRows: {
-    background: `${theme.palette.secondary.default}10`,
-  },
-  contentContainer: {
-    [theme.breakpoints.down(1050)]: {
-      flexDirection: 'column',
-    },
-    flexWrap: 'noWrap',
-  },
-});
+import { iconMedium } from '../../css/icons.styles';
+import PromptComponent from '../PromptComponent';
+import resetDatabase from '../graphql/queries/ResetDatabaseQuery';
+import changeOperatorState from '../graphql/mutations/OperatorStatusMutation';
+import fetchMesheryOperatorStatus from '../graphql/queries/OperatorStatusQuery';
+import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
+import styles from './styles';
+import MeshSyncTable from './MeshsyncTable';
+import ConnectionIcon from '../../assets/icons/Connection';
+import MeshsyncIcon from '../../assets/icons/Meshsync';
+import classNames from 'classnames';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+import ExploreIcon from '@mui/icons-material/Explore';
+import { CONNECTION_STATES } from '../../utils/Enum';
+import { FormatConnectionMetadata } from './metadata';
+import useKubernetesHook from '../hooks/useKubernetesHook';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
     name: 'FETCH_CONNECTIONS',
     error_msg: 'Failed to fetch connections',
   },
+  UPDATE_CONNECTION: {
+    name: 'UPDATE_CONNECTION',
+    error_msg: 'Failed to update connection',
+  },
+  DELETE_CONNECTION: {
+    name: 'DELETE_CONNECTION',
+    error_msg: 'Failed to delete connection',
+  },
 };
+
+const ENABLED = 'ENABLED';
+const DISABLED = 'DISABLED';
+const KUBERNETES = 'kubernetes';
 
 /**
  * Parent Component for Connection Component
@@ -199,74 +127,44 @@ function ConnectionManagementPage(props) {
           handleSubmit={handleCreateConnectionSubmit}
           title="Connect Helm Repository"
           submitBtnText="Connect"
-          // leftHeaderIcon={ }
-          // submitBtnIcon={<PublishIcon  className={classes.addIcon} data-cy="import-button"/>}
         />
       )}
     </>
   );
 }
-
-function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
+function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/ operatorState }) {
+  const modalRef = useRef(null);
   const [page, setPage] = useState(0);
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(0);
   const [connections, setConnections] = useState([]);
   const [search, setSearch] = useState('');
+  const [sortOrder, setSortOrder] = useState('');
+  const [showMore, setShowMore] = useState(false);
+  const [rowsExpanded, setRowsExpanded] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [rowData, setSelectedRowData] = useState({});
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [_operatorState, _setOperatorState] = useState(operatorState || []);
+  const [tab, setTab] = useState(0);
+  const ping = useKubernetesHook();
+
+  const open = Boolean(anchorEl);
+  const _operatorStateRef = useRef(_operatorState);
+  _operatorStateRef.current = _operatorState;
+  const meshSyncResetRef = useRef(null);
   const { notify } = useNotification();
   const StyleClass = useStyles();
 
-  const searchTimeout = useRef(null);
-
-  const handleCreateConnectionModalOpen = () => {
-    onOpenCreateConnectionModal();
-  };
-
-  const status = (value) => {
-    switch (value) {
-      case 'ignored':
-        return (
-          <Chip
-            className={classNames(classes.statusCip, classes.ignored)}
-            avatar={<RemoveCircleIcon />}
-            label={value}
-          />
-        );
-      case 'connected':
-        return (
-          <Chip
-            className={classNames(classes.statusCip, classes.connected)}
-            avatar={<CheckCircleIcon />}
-            label={value}
-          />
-        );
-      case 'REGISTERED':
-        return (
-          <Chip
-            className={classNames(classes.statusCip, classes.registered)}
-            avatar={<AssignmentTurnedInIcon />}
-            label={value.toLowerCase()}
-          />
-        );
-      case 'discovered':
-        return (
-          <Chip
-            className={classNames(classes.statusCip, classes.discovered)}
-            avatar={<ExploreIcon />}
-            label={value}
-          />
-        );
-      case 'deleted':
-        return (
-          <Chip
-            className={classNames(classes.statusCip, classes.deleted)}
-            avatar={<DeleteForeverIcon />}
-            label={value}
-          />
-        );
-      default:
-        return '-';
-    }
+  const icons = {
+    [CONNECTION_STATES.IGNORED]: () => <RemoveCircleIcon />,
+    [CONNECTION_STATES.CONNECTED]: () => <CheckCircleIcon />,
+    [CONNECTION_STATES.REGISTERED]: () => <AssignmentTurnedInIcon />,
+    [CONNECTION_STATES.DISCOVERED]: () => <ExploreIcon />,
+    [CONNECTION_STATES.DELETED]: () => <DeleteForeverIcon />,
+    [CONNECTION_STATES.MAINTENANCE]: () => <ExploreIcon />,
+    [CONNECTION_STATES.DISCONNECTED]: () => <ExploreIcon />,
+    [CONNECTION_STATES.NOTFOUND]: () => <ExploreIcon />,
   };
 
   const columns = [
@@ -285,79 +183,99 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
       },
     },
     {
-      name: 'name',
-      label: 'Element',
+      name: 'metadata.server',
+      label: 'Server Location',
       options: {
-        customHeadRender: function CustomHead({ index, ...column }) {
+        display: false,
+      },
+    },
+    {
+      name: 'name',
+      label: 'Name',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
         customBodyRender: (value, tableMeta) => {
           return (
-            <Tooltip title={tableMeta.rowData[1]} placement="top">
-              <Link href={tableMeta.rowData[1]} target="_blank">
-                {value}
-                <sup>
-                  <LaunchIcon sx={{ fontSize: '12px' }} />
-                </sup>
-              </Link>
+            <Tooltip title={value} placement="top">
+              <Chip
+                variant="outlined"
+                label={value}
+                style={{ maxWidth: '120px' }}
+                onDelete={() => handleDeleteConnection(tableMeta.rowData[0])}
+                //perform onclick on a condition
+                onClick={() => {
+                  console.log('metadata:', tableMeta.rowData);
+                  if (tableMeta.rowData[4] === KUBERNETES) {
+                    ping(tableMeta.rowData[3], tableMeta.rowData[2], tableMeta.rowData[0]);
+                  }
+                }}
+              />
             </Tooltip>
           );
         },
       },
     },
     {
-      name: 'type',
-      label: 'Type',
+      name: 'kind',
+      label: 'Kind',
       options: {
-        customHeadRender: function CustomHead({ index, ...column }) {
+        sort: true,
+        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
-        // customBodyRender : function CustomBody(value) {
-        //   return (
-        //     <FormControl sx={{ m : 1, minWidth : 200, maxWidth : 200 }} size="small">
-        //       <ReactSelectWrapper
-        //         onChange={handleChange}
-        //         options={[{ value : "environment 1", label : "environment 1" }, { value : "environment 2", label : "environment 2" }]}
-        //         value={{ value : value, label : value }}
-        //       />
-        //     </FormControl>
-        //   );
-        // },
+      },
+    },
+    {
+      name: 'type',
+      label: 'Category',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
+        },
       },
     },
     {
       name: 'sub_type',
-      label: 'Sub Type',
+      label: 'Sub Category',
       options: {
-        customHeadRender: function CustomHead({ index, ...column }) {
+        sort: true,
+        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
-            </TableCell>
-          );
-        },
-        // customBodyRender : function CustomBody(value) {
-        //   return <Chip avatar={<Avatar>M</Avatar>} label={value} />;
-        // },
-      },
-    },
-    {
-      name: 'kind',
-      label: 'Kind',
-      options: {
-        customHeadRender: function CustomHead({ index, ...column }) {
-          return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
       },
@@ -366,11 +284,16 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
       name: 'updated_at',
       label: 'Updated At',
       options: {
-        customHeadRender: function CustomHead({ index, ...column }) {
+        sort: true,
+        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
         customBodyRender: function CustomBody(value) {
@@ -392,14 +315,19 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
       },
     },
     {
-      name: 'discoverd_at',
+      name: 'created_at',
       label: 'Discovered At',
       options: {
-        customHeadRender: function CustomHead({ index, ...column }) {
+        sort: true,
+        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
         customBodyRender: function CustomBody(value) {
@@ -424,177 +352,226 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
       name: 'status',
       label: 'Status',
       options: {
-        customHeadRender: function CustomHead({ index, ...column }) {
+        sort: true,
+        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index}>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
+        },
+        customBodyRender: function CustomBody(value, tableMeta) {
+          const disabled = value === 'deleted' ? true : false;
+          return (
+            <>
+              <FormControl className={classes.chipFormControl}>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  disabled={disabled}
+                  value={value}
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={(e) =>
+                    handleStatusChange(e, tableMeta.rowData[0], tableMeta.rowData[4])
+                  }
+                  className={classes.statusSelect}
+                  disableUnderline
+                  MenuProps={{
+                    anchorOrigin: {
+                      vertical: 'bottom',
+                      horizontal: 'left',
+                    },
+                    transformOrigin: {
+                      vertical: 'top',
+                      horizontal: 'left',
+                    },
+                    getContentAnchorEl: null,
+                  }}
+                >
+                  {Object.keys(CONNECTION_STATES).map((s) => (
+                    <MenuItem value={CONNECTION_STATES[s]}>
+                      <Chip
+                        className={classNames(classes.statusChip, classes[CONNECTION_STATES[s]])}
+                        avatar={icons[CONNECTION_STATES[s]]()}
+                        label={CONNECTION_STATES[s]}
+                      />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </>
+          );
+        },
+      },
+    },
+    {
+      name: 'Actions',
+      options: {
+        filter: false,
+        sort: false,
+        searchable: false,
+        customHeadRender: function CustomHead({ ...column }) {
+          return (
+            <TableCell>
               <b>{column.label}</b>
             </TableCell>
           );
         },
-        customBodyRender: function CustomBody(value) {
-          return status(value);
+        customBodyRender: function CustomBody(_, tableMeta) {
+          return (
+            <div className={classes.centerContent}>
+              {tableMeta.rowData[4] === KUBERNETES ? (
+                <IconButton
+                  aria-label="more"
+                  id="long-button"
+                  aria-haspopup="true"
+                  onClick={(e) => handleActionMenuOpen(e, tableMeta)}
+                >
+                  <MoreVertIcon style={iconMedium} />
+                </IconButton>
+              ) : (
+                '-'
+              )}
+            </div>
+          );
         },
       },
     },
   ];
 
-  // const handleChange = () => {
-  //   // Select change
-  // }
-
-  const options = {
-    filter: false,
-    viewColumns: false,
-    search: false,
-    responsive: 'standard',
-    resizableColumns: true,
-    serverSide: true,
-    count,
-    rowsPerPage: pageSize,
-    rowsPerPageOptions: [10, 20, 25],
-    fixedHeader: true,
-    page,
-    print: false,
-    download: false,
-    selectableRows: 'none',
-    textLabels: {
-      selectedRows: {
-        text: 'connection(s) selected',
+  const options = useMemo(
+    () => ({
+      filter: false,
+      viewColumns: false,
+      search: false,
+      responsive: 'standard',
+      resizableColumns: true,
+      serverSide: true,
+      count,
+      rowsPerPage: pageSize,
+      rowsPerPageOptions: [10, 20, 30],
+      fixedHeader: true,
+      page,
+      print: false,
+      download: false,
+      textLabels: {
+        selectedRows: {
+          text: 'connection(s) selected',
+        },
       },
-    },
-    selectToolbarPlacement: 'none',
-
-    enableNestedDataAccess: '.',
-    onTableChange: (action, tableState) => {
-      switch (action) {
-        case 'changePage':
-          getConnections(tableState.page.toString(), pageSize.toString(), search);
-          break;
-        case 'changeRowsPerPage':
-          getConnections(page.toString(), tableState.rowsPerPage.toString(), search);
-          break;
-        case 'search':
-          if (searchTimeout.current) {
-            clearTimeout(searchTimeout.current);
-          }
-          searchTimeout.current = setTimeout(() => {
-            if (search !== tableState.searchText) {
-              getConnections(
-                page,
-                pageSize,
-                tableState.searchText !== null ? tableState.searchText : '',
-              );
-              setSearch(tableState.searchText);
-            }
-          }, 500);
-          break;
-      }
-    },
-    expandableRows: true,
-    expandableRowsHeader: false,
-    expandableRowsOnClick: true,
-    isRowExpandable: () => {
-      return true;
-    },
-    renderExpandableRow: (rowData, tableMeta) => {
-      const colSpan = rowData.length;
-      const connection = connections && connections[tableMeta.rowIndex];
-      return (
-        <TableCell
-          colSpan={colSpan}
-          style={{
-            padding: '0 0 0.5rem 2rem',
-            backgroundColor: 'rgba(0, 0, 0, 0.05)',
-          }}
+      customToolbarSelect: (selected) => (
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          // @ts-ignore
+          onClick={() => handleDeleteConnections(selected)}
+          style={{ background: '#8F1F00', marginRight: '10px' }}
         >
-          <TableContainer>
-            <Table>
-              <TableRow>
-                <TableCell>
-                  <Paper>
-                    <div>
-                      <Grid container spacing={1}>
-                        <Grid item xs={12} md={12} className={classes.contentContainer}>
-                          <List>
-                            <ListItem>
-                              <ListItem>
-                                <ListItemText
-                                  primary="Server Version"
-                                  secondary={
-                                    connection ? connection?.metadata?.server_version : '-'
-                                  }
-                                />
-                              </ListItem>
-                              <ListItem>
-                                <ListItemText
-                                  primary="Server Location"
-                                  secondary={
-                                    connection ? connection?.metadata?.server_location : '-'
-                                  }
-                                />
-                              </ListItem>
-                              <ListItem>
-                                <ListItemText
-                                  primary="Server Build SHA"
-                                  secondary={
-                                    connection ? connection?.metadata?.server_build_sha : '-'
-                                  }
-                                />
-                              </ListItem>
-                            </ListItem>
-                          </List>
+          <DeleteForeverIcon style={iconMedium} />
+          Delete
+        </Button>
+      ),
+      enableNestedDataAccess: '.',
+      onTableChange: (action, tableState) => {
+        const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
+        let order = '';
+        if (tableState.activeColumn) {
+          order = `${columns[tableState.activeColumn].name} desc`;
+        }
+        switch (action) {
+          case 'changePage':
+            setPage(tableState.page.toString());
+            break;
+          case 'changeRowsPerPage':
+            setPageSize(tableState.rowsPerPage.toString());
+            break;
+          case 'sort':
+            if (sortInfo.length == 2) {
+              if (sortInfo[1] === 'ascending') {
+                order = `${columns[tableState.activeColumn].name} asc`;
+              } else {
+                order = `${columns[tableState.activeColumn].name} desc`;
+              }
+            }
+            if (order !== sortOrder) {
+              setSortOrder(order);
+            }
+            break;
+        }
+      },
+      expandableRows: true,
+      expandableRowsHeader: false,
+      expandableRowsOnClick: true,
+      rowsExpanded: rowsExpanded,
+      isRowExpandable: () => {
+        return true;
+      },
+      onRowExpansionChange: (_, allRowsExpanded) => {
+        setRowsExpanded(allRowsExpanded.slice(-1).map((item) => item.index));
+        setShowMore(false);
+      },
+      renderExpandableRow: (rowData, tableMeta) => {
+        const colSpan = rowData.length;
+        const connection = connections && connections[tableMeta.rowIndex];
+        return (
+          <TableCell colSpan={colSpan} className={classes.innerTableWrapper}>
+            <TableContainer className={classes.innerTableContainer}>
+              <Table>
+                <TableRow className={classes.noGutter}>
+                  <TableCell style={{ padding: '20px 0' }}>
+                    <Grid container spacing={1} style={{ textTransform: 'lowercase' }}>
+                      <Grid item xs={12} md={12} className={classes.contentContainer}>
+                        <Grid container spacing={1}>
+                          <Grid
+                            item
+                            xs={12}
+                            md={12}
+                            style={{
+                              display: 'flex',
+                              flexWrap: 'wrap',
+                              padding: '0 20px',
+                              gap: 30,
+                            }}
+                            className={classes.contentContainer}
+                          >
+                            <FormatConnectionMetadata connection={connection} />
+                          </Grid>
                         </Grid>
                       </Grid>
-                    </div>
-                  </Paper>
-                </TableCell>
-                <TableCell>
-                  <Paper>
-                    <div>
-                      <Grid container spacing={1}>
-                        <Grid item xs={12} md={12} className={classes.contentContainer}>
-                          <List>
-                            <ListItem>
-                              <ListItem>
-                                <ListItemText
-                                  primary="Connections Type"
-                                  secondary={connection ? connection?.type : '-'}
-                                />
-                              </ListItem>
-                              <ListItem>
-                                <ListItemText
-                                  primary="Connections Sub Type"
-                                  secondary={connection ? connection?.sub_type : '-'}
-                                />
-                              </ListItem>
-                            </ListItem>
-                          </List>
-                        </Grid>
-                      </Grid>
-                    </div>
-                  </Paper>
-                </TableCell>
-              </TableRow>
-            </Table>
-          </TableContainer>
-        </TableCell>
-      );
-    },
-  };
+                    </Grid>
+                  </TableCell>
+                </TableRow>
+              </Table>
+            </TableContainer>
+          </TableCell>
+        );
+      },
+    }),
+    [rowsExpanded, showMore, page, pageSize],
+  );
 
   /**
    * fetch connections when the page loads
    */
   useEffect(() => {
-    getConnections(page, pageSize, search);
-  }, [page, pageSize, search]);
+    if (!loading) {
+      getConnections(page, pageSize, search, sortOrder);
+    }
+  }, [page, pageSize, search, sortOrder]);
 
-  const getConnections = (page, pageSize, search) => {
+  const getConnections = (page, pageSize, search, sortOrder) => {
+    setLoading(true);
     if (!search) search = '';
+    if (!sortOrder) sortOrder = '';
     dataFetch(
       `/api/integrations/connections?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
         search,
-      )}`,
+      )}&order=${encodeURIComponent(sortOrder)}`,
       {
         credentials: 'include',
         method: 'GET',
@@ -604,6 +581,7 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
         setPage(res?.page || 0);
         setCount(res?.total_count || 0);
         setPageSize(res?.page_size || 0);
+        setLoading(false);
       },
       handleError(ACTION_TYPES.FETCH_CONNECTIONS),
     );
@@ -618,7 +596,170 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
     });
   };
 
-  console.log('connection page renders');
+  const handleStatusChange = (e, connectionId, connectionKind) => {
+    e.stopPropagation();
+    const requestBody = JSON.stringify({
+      [connectionId]: e.target.value,
+    });
+    dataFetch(
+      `/api/integrations/connections/${connectionKind}/status`,
+      {
+        method: 'PUT',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: requestBody,
+      },
+      () => {
+        getConnections(page, pageSize, search, sortOrder);
+      },
+      handleError(ACTION_TYPES.UPDATE_CONNECTION),
+    );
+  };
+
+  const handleDeleteConnections = async (selected) => {
+    if (selected) {
+      let response = await modalRef.current.show({
+        title: `Delete Connections`,
+        subtitle: `Are you sure that you want to delete connections"?`,
+        options: ['Delete', 'No'],
+      });
+      if (response === 'Delete') {
+        selected.data.map(({ index }) => {
+          deleteConnection(connections[index].id);
+        });
+      }
+    }
+  };
+
+  const handleDeleteConnection = async (id) => {
+    if (id) {
+      let response = await modalRef.current.show({
+        title: `Delete Connection`,
+        subtitle: `Are you sure that you want to delete connection"?`,
+        options: ['Delete', 'No'],
+      });
+      if (response === 'Delete') {
+        deleteConnection(id);
+      }
+    }
+  };
+
+  const deleteConnection = (connectionId) => {
+    dataFetch(
+      `/api/integrations/connections/${connectionId}`,
+      {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+      },
+      () => {
+        getConnections(page, pageSize, search, sortOrder);
+      },
+      handleError(ACTION_TYPES.DELETE_CONNECTION),
+    );
+  };
+
+  const handleActionMenuOpen = (event, tableMeta) => {
+    event.stopPropagation();
+    setAnchorEl(event.currentTarget);
+    setSelectedRowData(tableMeta);
+  };
+
+  const handleActionMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleFlushMeshSync = (index) => {
+    return async () => {
+      handleActionMenuClose();
+      let response = await meshSyncResetRef.current.show({
+        title: `Flush MeshSync data for ${connections[index].metadata?.name} ?`,
+        subtitle: `Are you sure to Flush MeshSync data for “${connections[index].metadata?.name}”? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.`,
+        options: ['PROCEED', 'CANCEL'],
+      });
+      if (response === 'PROCEED') {
+        updateProgress({ showProgress: true });
+        resetDatabase({
+          selector: {
+            clearDB: 'true',
+            ReSync: 'true',
+            hardReset: 'false',
+          },
+          k8scontextID: connections[index].metadata?.id,
+        }).subscribe({
+          next: (res) => {
+            updateProgress({ showProgress: false });
+            if (res.resetStatus === 'PROCESSING') {
+              notify({ message: `Database reset successful.`, event_type: EVENT_TYPES.SUCCESS });
+            }
+          },
+          error: handleError('Database is not reachable, try restarting server.'),
+        });
+      }
+    };
+  };
+
+  function getOperatorStatus(index) {
+    const ctxId = connections[index]?.metadata?.id;
+    const operator = _operatorState?.find((op) => op.contextID === ctxId);
+    if (!operator) {
+      return {};
+    }
+    const operatorStatus = operator.operatorStatus;
+    return {
+      operatorState: operatorStatus.status === ENABLED,
+      operatorVersion: operatorStatus.version,
+    };
+  }
+
+  const handleOperatorSwitch = (index, checked) => {
+    const contextId = connections[index].metadata?.id;
+    const variables = {
+      status: `${checked ? ENABLED : DISABLED}`,
+      contextID: contextId,
+    };
+
+    updateProgress({ showProgress: true });
+
+    changeOperatorState((response, errors) => {
+      updateProgress({ showProgress: false });
+
+      if (errors !== undefined) {
+        handleError(`Unable to ${!checked ? 'Uni' : 'I'}nstall operator`);
+      }
+      notify({
+        message: `Operator ${response.operatorStatus.toLowerCase()}`,
+        event_type: EVENT_TYPES.SUCCESS,
+      });
+
+      const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID: contextId }).subscribe({
+        next: (res) => {
+          _setOperatorState(updateCtxInfo(contextId, res));
+          tempSubscription.unsubscribe();
+        },
+        error: (err) => console.log('error at operator scan: ' + err),
+      });
+    }, variables);
+  };
+
+  const updateCtxInfo = (ctxId, newInfo) => {
+    if (newInfo.operator.error) {
+      handleError('There is problem With operator')(newInfo.operator.error.description);
+      return;
+    }
+
+    const state = _operatorStateRef.current;
+    const op = state?.find((ctx) => ctx.contextID === ctxId);
+    if (!op) {
+      return [...state, { contextID: ctxId, operatorStatus: newInfo.operator }];
+    }
+
+    let ctx = { ...op };
+    const removeCtx = state?.filter((ctx) => ctx.contextID !== ctxId);
+    ctx.operatorStatus = newInfo.operator;
+    return removeCtx ? [...removeCtx, ctx] : [ctx];
+  };
+
   const [tableCols, updateCols] = useState(columns);
 
   const [columnVisibility, setColumnVisibility] = useState(() => {
@@ -633,91 +774,160 @@ function Connections({ classes, updateProgress, onOpenCreateConnectionModal }) {
   return (
     <>
       <NoSsr>
-        <div className={StyleClass.toolWrapper}>
-          <div className={classes.createButton}>
-            <div>
+        <AppBar position="static" color="default" className={classes.appBar}>
+          <Tabs
+            value={tab}
+            className={classes.tabs}
+            onChange={(e, newTab) => {
+              e.stopPropagation();
+              setTab(newTab);
+            }}
+            indicatorColor="primary"
+            textColor="primary"
+            variant="fullWidth"
+            sx={{
+              height: '10%',
+            }}
+          >
+            <Tab
+              className={classes.tab}
+              label={
+                <div className={classes.iconText}>
+                  <span style={{ marginRight: '0.3rem' }}>Connections</span>
+                  <ConnectionIcon width="20" height="20" />
+                  {/* <img src="/static/img/connection-light.svg" className={classes.icon} /> */}
+                </div>
+              }
+            />
+            <Tab
+              className={classes.tab}
+              label={
+                <div className={classes.iconText}>
+                  <span style={{ marginRight: '0.3rem' }}>Meshsync</span>
+                  <MeshsyncIcon width="20" height="20" />
+                </div>
+              }
+            />
+          </Tabs>
+        </AppBar>
+        {tab === 0 && (
+          <div
+            className={StyleClass.toolWrapper}
+            style={{ marginBottom: '5px', marginTop: '-30px' }}
+          >
+            <div className={classes.createButton}>
+              {/* <div>
               <Button
                 aria-label="Rediscover"
                 variant="contained"
                 color="primary"
                 size="large"
                 // @ts-ignore
-                onClick={handleCreateConnectionModalOpen}
-                style={{ marginRight: '2rem' }}
+                onClick={onOpenCreateConnectionModal}
+                style={{ marginRight: '1rem', borderRadius: '5px' }}
               >
                 Connect Helm Repository
               </Button>
+            </div> */}
+              <MesherySettingsEnvButtons />
+            </div>
+            <div
+              className={classes.searchAndView}
+              style={{
+                display: 'flex',
+                borderRadius: '0.5rem 0.5rem 0 0',
+              }}
+            >
+              <SearchBar
+                onSearch={(value) => {
+                  setSearch(value);
+                }}
+                placeholder="Search connections..."
+              />
+
+              <CustomColumnVisibilityControl
+                columns={columns}
+                customToolsProps={{ columnVisibility, setColumnVisibility }}
+              />
             </div>
           </div>
-          <div
-            className={classes.searchAndView}
-            style={{
-              display: 'flex',
-            }}
-          >
-            {/* <Button
-              aria-label="Edit"
+        )}
+        {tab === 0 && (
+          <ResponsiveDataTable
+            data={connections}
+            columns={columns}
+            options={options}
+            className={classes.muiRow}
+            tableCols={tableCols}
+            updateCols={updateCols}
+            columnVisibility={columnVisibility}
+          />
+        )}
+        {tab === 1 && (
+          <MeshSyncTable classes={classes} updateProgress={updateProgress} search={search} />
+        )}
+        <PromptComponent ref={modalRef} />
+        <Popover
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleActionMenuClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+        >
+          <Grid style={{ margin: '10px' }}>
+            <Button
+              type="submit"
               variant="contained"
               color="primary"
               size="large"
-              // @ts-ignore
-              onClick={() => {}}
-              style={{ marginRight : "0.5rem" }}
+              onClick={handleFlushMeshSync(rowData.rowIndex)}
+              className={classes.FlushBtn}
+              data-cy="btnResetDatabase"
             >
-              <EditIcon style={iconMedium} />
-            </Button> */}
-
-            {/* <Button
-              aria-label="Delete"
-              variant="contained"
-              color="primary"
-              size="large"
-              // @ts-ignore
-              onClick={() => {}}
-              style={{ background : "#8F1F00" }}
-            >
-              <DeleteForeverIcon style={iconMedium} />
-              Delete
-            </Button> */}
-
-            <SearchBar
-              onSearch={(value) => {
-                setSearch(value);
-                getConnections(page, pageSize, value);
-              }}
-              placeholder="Search connections..."
-            />
-
-            <CustomColumnVisibilityControl
-              columns={columns}
-              customToolsProps={{ columnVisibility, setColumnVisibility }}
-            />
-          </div>
-        </div>
-        <ResponsiveDataTable
-          data={connections}
-          columns={columns}
-          // @ts-ignore
-          options={options}
-          className={classes.muiRow}
-          tableCols={tableCols}
-          updateCols={updateCols}
-          columnVisibility={columnVisibility}
-        />
+              <Typography> Flush MeshSync </Typography>
+            </Button>
+            <Typography>
+              <Switch
+                defaultChecked={getOperatorStatus(rowData.rowIndex)?.operatorState}
+                onClick={(e) => handleOperatorSwitch(rowData.rowIndex, e.target.checked)}
+                name="OperatorSwitch"
+                color="primary"
+                className={classes.OperatorSwitch}
+              />
+              Operator
+            </Typography>
+          </Grid>
+        </Popover>
+        <PromptComponent ref={meshSyncResetRef} />
       </NoSsr>
     </>
   );
 }
+
+const SortableTableCell = ({ index, columnData, columnMeta, onSort }) => {
+  return (
+    <TableCell key={index} onClick={onSort}>
+      <TableSortLabel
+        active={columnMeta.name === columnData.name}
+        direction={columnMeta.direction || 'asc'}
+      >
+        <b>{columnData.label}</b>
+      </TableSortLabel>
+    </TableCell>
+  );
+};
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
 const mapStateToProps = (state) => {
-  return {
-    user: state.get('user')?.toObject(),
-    selectedK8sContexts: state.get('selectedK8sContexts'),
-  };
+  const k8sconfig = state.get('k8sConfig');
+  const selectedK8sContexts = state.get('selectedK8sContexts');
+  const operatorState = state.get('operatorState');
+  return { k8sconfig, selectedK8sContexts, operatorState };
 };
 
 // @ts-ignore

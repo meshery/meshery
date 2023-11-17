@@ -3,14 +3,11 @@ layout: default
 title: Meshery Designs 
 description: Get to know what is Design & how its helps in configuring components
 permalink: guides/meshery-design
-type: Guides
+type: guides
 language: en
 ---
 
 
-We know in the world of microservice architecture, service meshes are crucial, and they come with a price (complexity, error-prone, steep learning curve).
-<br>
-We are here to help you out with Designs.
 
 ## WHAT IS IT ?
 Here, we have pre-built configuration YAML files that serve as a blueprint for the configuration of various service mesh components. So that you don't need to bother with writing configuration files for your mesh & make things aggravated. <br>

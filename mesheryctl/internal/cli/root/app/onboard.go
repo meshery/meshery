@@ -123,8 +123,8 @@ mesheryctl app onboard -f ./application.yml -s "Kubernetes Manifest"
 			}
 		} else {
 			// Check if a valid source type is set
-			if !isValidSource(sourceType) {
-				return ErrValidSource(validSourceTypes)
+			if sourceType, err = getFullSourceType(sourceType); err != nil {
+				return ErrInValidSource(sourceType, validSourceTypes)
 			}
 			app, err := importApp(sourceType, file, appURL, !skipSave)
 			if err != nil {

@@ -2,7 +2,7 @@
 jekyll=bundle exec jekyll
 
 docs: install
-	$(jekyll) serve --drafts --livereload --config _config_dev.yml
+	$(jekyll) serve --drafts --incremental --config _config_dev.yml
 
 build: install
 	$(jekyll) build --drafts

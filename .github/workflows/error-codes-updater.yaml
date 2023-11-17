@@ -24,7 +24,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@master
         with:
-          go-version: ${{ secrets.GO_VERSION }}
+          go-version: "1.21"
 
       - name: Build Error Utility
         run: |

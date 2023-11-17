@@ -4,8 +4,8 @@ on:
   schedule:
     - cron: "0 0 * * *"
 jobs:
-  run-script:
-    name: Run Script
+  generate-components:
+    name: Generate Components
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
     steps:
@@ -26,14 +26,14 @@ jobs:
 #           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
 #           restore-keys: |
 #             ${{ runner.os }}-go-
-          
-      - name: Run component generation (Along with spreadsheet updation)
+
+      - name: Pull changes from remote
+        run: git pull origin master
+      - name: Run component generation
         env:
-          CRED: ${{ secrets.INTEGRATION_SPREADSHEET_CRED }}
+           CRED: ${{ secrets.INTEGRATION_SPREADSHEET_CRED }}
         run: |
             cd scripts/component_generation; GOPROXY=https://proxy.golang.org,direct GOSUMDB=off go run main.go 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw
-      - run: |
-            cd scripts/component_updater; go build main.go; ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system meshery ../../server/meshmodel
       - name: Commit changes 
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
@@ -59,3 +59,54 @@ jobs:
           body: |
             The GitHub Actions workflow in ${{ github.repository }} has failed.
             You can find more details in the GitHub Actions log ${{ github.workflow }}.
+
+            
+  update-components:
+    name: Update Components
+    needs: generate-components
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          fetch-depth: 1
+          
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: "1.21"
+      - name: Pull changes from remote
+        run: git pull origin master    
+      - name: Run component Updater
+        env:
+          CRED: ${{ secrets.INTEGRATION_SPREADSHEET_CRED }}
+        run: |
+            cd scripts/component_updater
+            go build main.go
+            ./main https://docs.google.com/spreadsheets/d/e/2PACX-1vSgOXuiqbhUgtC9oNbJlz9PYpOEaFVoGNUFMIk4NZciFfQv1ewZg8ahdrWHKI79GkKK9TbmnZx8CqIe/pub\?gid\=0\&single\=true\&output\=csv --system meshery ../../server/meshmodel
+      
+      - name: Commit changes 
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_user_name: l5io
+          commit_user_email: ci@layer5.io
+          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          commit_options: "--signoff"
+          commit_message: "Meshmodel components updated"
+          branch: master
+      - name: Send Email on Meshmodel Updaters Failure
+        if: failure()
+        uses: dawidd6/action-send-mail@v3.7.1
+        with:
+            server_address: smtp.gmail.com
+            server_port: 465
+            username: ${{ secrets.MAIL_USERNAME }}
+            password: ${{ secrets.MAIL_PASSWORD }}
+            subject: GitHub Actions - Workflow Failure
+            from: |
+              "Meshmodel Updater" <no-reply@meshery.io>
+            to: developers@meshery.io
+            body: |
+              The GitHub Actions workflow in ${{ github.repository }} has failed.
+              You can find more details in the GitHub Actions log ${{ github.workflow }}.

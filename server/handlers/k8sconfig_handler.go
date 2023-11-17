@@ -12,6 +12,7 @@ import (
 
 	mutil "github.com/layer5io/meshery/server/helpers/utils"
 
+	"github.com/layer5io/meshery/server/models/connections"
 	mcore "github.com/layer5io/meshery/server/models/meshmodel/core"
 	meshmodelv1alpha1 "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 
@@ -33,9 +34,10 @@ import (
 
 // SaveK8sContextResponse - struct used as (json marshaled) response to requests for saving k8s contexts
 type SaveK8sContextResponse struct {
-	InsertedContexts []models.K8sContext `json:"inserted_contexts"`
-	UpdatedContexts  []models.K8sContext `json:"updated_contexts"`
-	ErroredContexts  []models.K8sContext `json:"errored_contexts"`
+	RegisteredContexts []models.K8sContext `json:"registered_contexts"`
+	ConnectedContexts  []models.K8sContext `json:"connected_contexts"`
+	IgnoredContexts    []models.K8sContext `json:"ignored_contexts"`
+	ErroredContexts    []models.K8sContext `json:"errored_contexts"`
 }
 
 // K8SConfigHandler is used for persisting kubernetes config and context info
@@ -61,6 +63,9 @@ func (h *Handler) K8SConfigHandler(w http.ResponseWriter, req *http.Request, pre
 // responses:
 // 	200: k8sConfigRespWrapper
 
+// The function is called only when user uploads a kube config.
+// Connections which have state as "registered" are the only new ones, hence the GraphQL K8sContext subscription only sends an update to UI if any connection has registered state.
+// A registered connection might have been regsitered previously and is not required for K8sContext Subscription to notify, but this case is not considered here.
 func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.ResponseWriter, req *http.Request, provider models.Provider) {
 	userID := uuid.FromStringOrNil(user.ID)
 
@@ -86,42 +91,52 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	}
 
 	saveK8sContextResponse := SaveK8sContextResponse{
-		InsertedContexts: make([]models.K8sContext, 0),
-		UpdatedContexts:  make([]models.K8sContext, 0),
-		ErroredContexts:  make([]models.K8sContext, 0),
+		RegisteredContexts: make([]models.K8sContext, 0),
+		ConnectedContexts:  make([]models.K8sContext, 0),
+		IgnoredContexts:    make([]models.K8sContext, 0),
+		ErroredContexts:    make([]models.K8sContext, 0),
 	}
 
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
-
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create").
+		WithDescription("Kubernetes config uploaded.").WithSeverity(events.Informational)
 	contexts := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID)
-	for _, ctx := range contexts {
-		k8sContext, err := provider.SaveK8sContext(token, *ctx) // Ignore errors
+	len := len(contexts)
+
+	for idx, ctx := range contexts {
+		metadata := map[string]interface{}{}
+		connection, err := provider.SaveK8sContext(token, *ctx) // Ignore errors
 		if err != nil {
-			eventBuilder.ActedUpon(uuid.FromStringOrNil(k8sContext.ConnectionID))
-			if err == models.ErrContextAlreadyPersisted {
-				saveK8sContextResponse.UpdatedContexts = append(saveK8sContextResponse.UpdatedContexts, *ctx)
-
-				eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Connection already exist with Kubernetes context %s at %s", k8sContext.Name, k8sContext.Server))
-			} else {
-				saveK8sContextResponse.ErroredContexts = append(saveK8sContextResponse.ErroredContexts, *ctx)
-
-				eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Error creating connection for Kubernetes context %s", ctx.Name)).WithMetadata(map[string]interface{}{
-					"error": err,
-				})
-			}
+			saveK8sContextResponse.ErroredContexts = append(saveK8sContextResponse.ErroredContexts, *ctx)
+			metadata["description"] = fmt.Sprintf("Error creating connection for Kubernetes context \"%s\"", ctx.Name)
+			metadata["error"] = err
 		} else {
-			saveK8sContextResponse.InsertedContexts = append(saveK8sContextResponse.InsertedContexts, *ctx)
-			eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Connection established with Kubernetes context %s at %s", k8sContext.Name, k8sContext.Server))
+			eventBuilder.ActedUpon(connection.ID)
+			ctx.ConnectionID = connection.ID.String()
+			status := connection.Status
+			if status == connections.CONNECTED {
+				saveK8sContextResponse.ConnectedContexts = append(saveK8sContextResponse.ConnectedContexts, *ctx)
+				metadata["description"] = fmt.Sprintf("Connection already exists with Kubernetes context \"%s\" at %s", ctx.Name, ctx.Server)
+			} else if status == connections.IGNORED {
+				saveK8sContextResponse.IgnoredContexts = append(saveK8sContextResponse.IgnoredContexts, *ctx)
+				metadata["description"] = fmt.Sprintf("Kubernetes context \"%s\" is set to ignored state.", ctx.Name)
+			} else if status == connections.REGISTERED {
+				saveK8sContextResponse.RegisteredContexts = append(saveK8sContextResponse.RegisteredContexts, *ctx)
+				metadata["description"] = fmt.Sprintf("Connection registered with kubernetes context \"%s\" at %s.", ctx.Name, ctx.Server)
+			}
 		}
 
-		event := eventBuilder.Build()
-		_ = provider.PersistEvent(event)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		eventBuilder.WithMetadata(map[string]interface{}{
+			ctx.Name: metadata,
+		})
 
+		if idx == len-1 {
+			event := eventBuilder.Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+			h.config.K8scontextChannel.PublishContext()
+		}
 	}
-	if len(saveK8sContextResponse.InsertedContexts) > 0 || len(saveK8sContextResponse.UpdatedContexts) > 0 {
-		h.config.K8scontextChannel.PublishContext()
-	}
+
 	if err := json.NewEncoder(w).Encode(saveK8sContextResponse); err != nil {
 		logrus.Error(models.ErrMarshal(err, "kubeconfig"))
 		http.Error(w, models.ErrMarshal(err, "kubeconfig").Error(), http.StatusInternalServerError)
@@ -283,9 +298,15 @@ func (h *Handler) LoadContextsAndPersist(userID string, token string, prov model
 			return contexts, err
 		}
 		cc.DeploymentType = "in_cluster"
-		_, err = prov.SaveK8sContext(token, *cc)
+		conn, err := prov.SaveK8sContext(token, *cc)
 		if err != nil {
 			logrus.Warn("failed to save the context for incluster: ", err)
+			return contexts, err
+		}
+		updatedConnection, statusCode, err := prov.UpdateConnectionStatusByID(token, conn.ID, connections.CONNECTED)
+		if err != nil || statusCode != http.StatusOK {
+			logrus.Warn("failed to update connection status for connection id", conn.ID, "to", connections.CONNECTED)
+			logrus.Debug("connection: ", updatedConnection)
 			return contexts, err
 		}
 		h.config.K8scontextChannel.PublishContext()
@@ -303,13 +324,22 @@ func (h *Handler) LoadContextsAndPersist(userID string, token string, prov model
 	// Persist the generated contexts
 	for _, ctx := range ctxs {
 		ctx.DeploymentType = "out_of_cluster"
-		_, err := prov.SaveK8sContext(token, *ctx)
+		conn, err := prov.SaveK8sContext(token, *ctx)
 		if err != nil {
 			logrus.Warn("failed to save the context: ", err)
 			continue
 		}
-		h.config.K8scontextChannel.PublishContext()
+		updatedConnection, statusCode, err := prov.UpdateConnectionStatusByID(token, conn.ID, connections.CONNECTED)
+		if err != nil || statusCode != http.StatusOK {
+			logrus.Warn("failed to update connection status for connection id", conn.ID, "to", connections.CONNECTED)
+			logrus.Debug("connection: ", updatedConnection)
+			continue
+		}
+
 		contexts = append(contexts, ctx)
+	}
+	if len(contexts) > 0 {
+		h.config.K8scontextChannel.PublishContext()
 	}
 	return contexts, nil
 }
@@ -334,7 +364,9 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 		}, c)
 		count++
 	}
-	event := events.NewEvent().ActedUpon(connectionUUID).WithCategory("kubernetes_components").WithAction("registration").FromSystem(mesheryInstanceID).FromUser(userUUID).WithSeverity(events.Informational).WithDescription(fmt.Sprintf("%d Kubernetes components registered for %s", count, ctxName)).Build()
+	event := events.NewEvent().ActedUpon(connectionUUID).WithCategory("kubernetes_components").WithAction("registration").FromSystem(mesheryInstanceID).FromUser(userUUID).WithSeverity(events.Informational).WithDescription(fmt.Sprintf("%d Kubernetes components registered for %s", count, ctxName)).WithMetadata(map[string]interface{}{
+		"doc": "https://docs.meshery.io/tasks/lifecycle-management",
+	}).Build()
 
 	_ = (*provider).PersistEvent(event)
 	ec.Publish(userUUID, event)

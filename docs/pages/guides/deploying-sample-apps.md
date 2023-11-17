@@ -3,7 +3,7 @@ layout: default
 title: Deploying Sample Applications
 description: This guide is to help users get a better understanding of sample apps
 permalink: guides/sample-apps
-type: Guides
+type: guides
 language: en
 ---
 

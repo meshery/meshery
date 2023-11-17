@@ -6,26 +6,27 @@ description: Details of Meshery's build and release strategy.
 language: en
 type: project
 category: contributing
+list: include
 ---
 
 Meshery’s build and release system incorporates many tools, organized into different workflows each triggered by different events. Meshery’s build and release system does not run on a schedule, but is event-driven. GitHub Actions are used to define Meshery’s CI workflows. New builds of Meshery and its various components are automatically generated upon push, release, and other similar events, typically in relation to their respective master branches.
 
 ## Artifacts
 
-Today, Meshery and Meshery adapters are released as Docker container images, available on Docker Hub. Meshery adapters are out-of-process adapters (meaning not compiled into the main Meshery binary), and as such, are independent build artifacts and Helm charts.The process of creating Docker images, tagging with the git commit SHA and pushing to Docker Hub is being done automatically using GitHub Actions. And When the contribution includes content of Helm chart of Meshery and Meshery Adapter was lint and merged, it will be pushing and release to [meshery.io](https://github.com/meshery/meshery.io) Github page by GitHub Action automatically.
+Today, Meshery and Meshery adapters are released as Docker container images, available on Docker Hub. Meshery adapters are out-of-process adapters (meaning not compiled into the main Meshery binary), and as such, are independent build artifacts and Helm charts. The Docker images are created and tagged with the git commit SHA, then pushed to Docker Hub automatically using GitHub Actions. Subsequently, when contributions containing content for the Helm charts of Meshery and Meshery Adapter are linted and merged, they will be pushed and released to [meshery.io](https://github.com/meshery/meshery.io) Github page by GitHub Action automatically.
 
 ### Artifact Repositories
 
 Artifacts produced in the build processes are published and persisted in different public repositories and in different formats.
 
-| Location      | Project       | Repository    |
-| ------------- | ------------- | ------------- |
-| Docker Hub    | Meshery       | [https://hub.docker.com/r/layer5/meshery](https://hub.docker.com/r/layer5/meshery) |
-| GitHub        | mesheryctl    | [https://github.com/layer5io/meshery/releases](https://github.com/layer5io/meshery/releases) |
-| Docker Hub    | Meshery Adapter for \<service-mesh\> | https://hub.docker.com/r/layer5/meshery-\<service-mesh\> |
-| Docs          | Meshery Documentation | [https://docs.meshery.io](https://docs.meshery.io) |
-| GitHub        | [Service Mesh Performance](https://smp-spec.io) | [https://github.com/layer5io/service-mesh-performance](https://github.com/layer5io/service-mesh-performance) |
-| Github        | Helm charts   | [https://github.com/meshery/meshery.io/tree/master/charts](https://github.com/meshery/meshery.io/tree/master/charts) |
+| Location   | Project                                         | Repository                                                                                                           |
+| ---------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Docker Hub | Meshery                                         | [https://hub.docker.com/r/layer5/meshery](https://hub.docker.com/r/layer5/meshery)                                   |
+| GitHub     | mesheryctl                                      | [https://github.com/layer5io/meshery/releases](https://github.com/layer5io/meshery/releases)                         |
+| Docker Hub | Meshery Adapter for \<service-mesh\>            | https://hub.docker.com/r/layer5/meshery-\<service-mesh\>                                                             |
+| Docs       | Meshery Documentation                           | [https://docs.meshery.io](https://docs.meshery.io)                                                                   |
+| GitHub     | [Service Mesh Performance](https://smp-spec.io) | [https://github.com/layer5io/service-mesh-performance](https://github.com/layer5io/service-mesh-performance)         |
+| Github     | Helm charts                                     | [https://github.com/meshery/meshery.io/tree/master/charts](https://github.com/meshery/meshery.io/tree/master/charts) |
 
 ## Secrets
 
@@ -42,7 +43,8 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 The Docker Hub user, `mesheryci`, belongs to the "ciusers" team in Docker Hub and acts as the service account under which these automated builds are being pushed. Every time a new Docker Hub repository is created we have to grant “Admin” (in order to update the README in the Docker Hub repository) permissions to the ciusers team.
 
 ## Checks and Tests
-Meshery’s CI workflow incorporates several checks (partial list below) during merges and/or commits to any branches and pull requests to master branch to prevent broken code from being merged into master. 
+
+Meshery’s CI workflow incorporates several checks (partial list below) during merges and/or commits to any branches and pull requests to master branch to prevent broken code from being merged into master.
 
 Collectively, Meshery repositories will generally have CI workflow for commits and pull requests that consist of the following actions:
 
@@ -58,45 +60,47 @@ Collectively, Meshery repositories will generally have CI workflow for commits a
 - Helm charts release, tag and push(stefanprodan/helm-gh-pages@master)
 
 ## Tests for adapters
+
 All Meshery adapters use a central workflow that is referenced in each of their test workflows which get triggered every time a pull request is made. These
-tests in adapters are end-to-end tests and use patternfile. The reusable workflow is present in .github/workflows in Meshery repository with the workflow name "Test for Meshery adapters using patternfile"
+tests in adapters are end-to-end tests and use patternfile. The reusable workflow is present in `.github/workflows` in Meshery repository with the workflow name "Test for Meshery adapters using patternfile"
 
+### Pre-requisite for referencing this workflow
 
-
-### The pre-requisite of referencing this workflow is -
 1. Using actions/upload-artifact@v2 a patternfile has to be uploaded as an artifact with the name as "patternfile".
 2. The name of the uploaded patterfile should be passed in
 
 ---
+
       ...
       with:
           patternfile_name: < name of the patternfile which is uploaded >
 
-
 3. Note: This Job is pre-run to the actual test. This is done in order to create patternfiles dynamically and use them. Therefore name of this jobs has to be passed as
 
 ---
-      ...
-      needs: 
-         < Name of the pre-requisite job >
 
+      ...
+      needs:
+         < Name of the pre-requisite job >
 
 4. There should be an infinite token passed in: (Or else local provider will be used)
 
 ---
+
       ...
       secrets:
         token: ${{ secrets.PROVIDER_TOKEN }}
 
+### Functionality of Central Workflow
 
-### The central workflow functionally does -
 1. Checks out the code of the repository(on the ref of latest commit of branch which made the PR) in which it is referenced.
 2. Starts a minikube cluster
 3. Builds a docker image of the adapter and sets minikube to use docker's registry.
 4. Starts the adapter and meshery server (The url to deployment and service yaml of adapter are configurable).
- NOTE: The service mesh name( whose adapter we are testing ) has to passed in:
+   NOTE: The service mesh name( whose adapter we are testing ) has to passed in:
 
- ---
+---
+
       ...
       with:
          adapter_name: < NAME OF THE SERVICE MESH >
@@ -106,20 +110,23 @@ tests in adapters are end-to-end tests and use patternfile. The reusable workflo
 7. Then the assertion is made that the pods passed in-
 
 ---
+
       ...
       with:
          expected_pods: < pod1,pod2,pod3 >  #comma separated pod names that will be expected to be present after patternfile is deployed
+
 8. And these pods are present in their respective namespaces passed in-
 
---- 
+---
+
       ...
       with:
          expected_pods_namespaces: < pod1ns, pod2ns , pod3ns >
 
-
-### Expected inputs of this workflow 
+### Expected inputs of this workflow
 
 ---
+
     inputs:
       expected_pods:
         required: true
@@ -135,24 +142,26 @@ tests in adapters are end-to-end tests and use patternfile. The reusable workflo
         type: string
       adapter_name:
         required: true
-        type: string   
+        type: string
       patternfile_name:
         required: true
-        type: string   
-      provider: 
+        type: string
+      provider:
         required: false
-        type: string   
+        type: string
     secrets:
       token:
 
 ### Expected outputs of this workflow
- The pods passed in “expected_pods” are running in the subsequent namespaces passed in “expected_pods_namespaces”. If not, the workflow fails
+
+The pods passed in “expected_pods” are running in the subsequent namespaces passed in “expected_pods_namespaces”. If not, the workflow fails
+
 ## Automated Builds
 
 All Meshery GitHub repositories are configured with GitHub Actions. Everytime a pull request is submitted against the master branch of any repository, that repository’s GitHub Actions will be invoked (whether the PR is merged or not). Workflows defined in Meshery repository will generally (but not always) perform the following actions:
 
 1. trigger a Docker build to build a Docker container image
-1. generate two Docker tags: 
+1. generate two Docker tags:
    1. a tag containing the git merge SHA
    1. a tag containing that particular release’s git tag (if one is present)
 1. assign each of these two tags to the new container image as well as the latest tag.
@@ -164,7 +173,7 @@ As a special case, the meshery repository contains an additional artifact produc
 
 ### Releasing `mesheryctl` to GitHub
 
-Only when a git tag containing  a semantic version number is present (is a commit in the master branch) will GoReleaser execute, generate the archives, and also publish the archives to [Meshery’s GitHub releases](https://github.com/layer5io/meshery/releases) automatically. GoReleaser is configured to generate artifacts for the following OS, ARCH combination:
+Only when a git tag containing a semantic version number is present (is a commit in the master branch) will GoReleaser execute, generate the archives, and also publish the archives to [Meshery’s GitHub releases](https://github.com/layer5io/meshery/releases) automatically. GoReleaser is configured to generate artifacts for the following OS, ARCH combination:
 
 - Darwin - i386, x86_64
 - Linux - i386, x86_64
@@ -184,6 +193,7 @@ GoReleaser facilitates the creation of a Scoop app for mesheryctl. The [scoop-bu
 ## Helm Charts Lint Check, Build, and Release
 
 The charts lint check, charts build, and charts release workflows are all triggered by GitHub events. Sometimes this event is the opening, updating, or merging of a branch, or sometimes a manual invocation, or a GitHub release event.
+
 ### Check Helm Charts
 
 Every PR which includes changes to the files under `install/kubernetes/` directory in the `meshery/meshery` will trigger a Github Action to check for any mistakes in Helm charts using the `helm lint` command.
@@ -203,9 +213,9 @@ Meshery and its components follow the commonly used, semantic versioning for its
 
 ### Component Versioning
 
-Meshery comprises a number of components including a server, adapters, UI, and CLI. As an application, Meshery is a composition of these different functional components. While all of Meshery’s components generally deploy as a collective unit (together), each component is versioned independently, so as to allow them to be loosely coupled and iterate on functionality independently.  Some of the components must be upgraded simultaneously, while others may be upgraded independently. See [Upgrading Meshery](/guide/upgrade) for more information.
+Meshery comprises a number of components including a server, adapters, UI, and CLI. As an application, Meshery is a composition of these different functional components. While all of Meshery’s components generally deploy as a collective unit (together), each component is versioned independently, so as to allow them to be loosely coupled and iterate on functionality independently. Some of the components must be upgraded simultaneously, while others may be upgraded independently. See [Upgrading Meshery](/guide/upgrade) for more information.
 
-GitHub release tags will contain a semantic version number. Semantic version numbers will have to be managed manually by tagging a relevant commit in the master branch with a semantic version number (example: v1.2.3). 
+GitHub release tags will contain a semantic version number. Semantic version numbers will have to be managed manually by tagging a relevant commit in the master branch with a semantic version number (example: v1.2.3).
 
 ## Release Process
 
@@ -226,10 +236,11 @@ The following events will trigger one or more workflows:
 
 ### Release Notes
 
-While use of GitHub Actions facilitates automated builds, ReleaseDrafter is helping with facilitating automated release notes and versioning. 
+While use of GitHub Actions facilitates automated builds, ReleaseDrafter is helping with facilitating automated release notes and versioning.
+
 ### Generating Release Notes
 
-ReleaseDrafter generates a GitHub tag and release draft. ReleaseDrafter action will trigger and will automatically draft release notes according to the configuration set-up. ReleaseDrafter drafts releases as soon as a commit is made into master after the previous release. The GitHub Action, ReleaseDrafter, is compatible with semantic releases and is used to auto-increment the semantic version number by looking at the previous release version. 
+ReleaseDrafter generates a GitHub tag and release draft. ReleaseDrafter action will trigger and will automatically draft release notes according to the configuration set-up. ReleaseDrafter drafts releases as soon as a commit is made into master after the previous release. The GitHub Action, ReleaseDrafter, is compatible with semantic releases and is used to auto-increment the semantic version number by looking at the previous release version.
 
 #### Automated Release Notes Publishing
 
@@ -241,11 +252,11 @@ The sending of release notes is now automated as a step in the stable release ch
 
 #### Automated Pull Request Labeler
 
-A GitHub Issue labeler bot is configured to automatically assign labels to issues based on which files have changed in which directories. For example, a pull request with changes to files in the “/docs/**” folder will receive the “area/docs” label. Presence of the “area/docs” label is used to trigger documentation builds and Netlify builds of the Meshery Docs. Similar labels are assigned and used to trigger workflows or used as conditional flags in workflows to determine which workflows or which steps in a workflows to run. 
+A GitHub Issue labeler bot is configured to automatically assign labels to issues based on which files have changed in which directories. For example, a pull request with changes to files in the “/docs/\*\*” folder will receive the “area/docs” label. Presence of the “area/docs” label is used to trigger documentation builds and Netlify builds of the Meshery Docs. Similar labels are assigned and used to trigger workflows or used as conditional flags in workflows to determine which workflows or which steps in a workflows to run.
 
 ## Release Channels
 
-Artifacts of the builds for Meshery and its components are published under two different release channels, so that improved controls may be provided to both Meshery users and Meshery developers. The two release channels are *edge* and *stable* release channels.
+Artifacts of the builds for Meshery and its components are published under two different release channels, so that improved controls may be provided to both Meshery users and Meshery developers. The two release channels are _edge_ and _stable_ release channels.
 
 Relative to stable releases, edge releases occur much more frequently. Edge releases are made with each merge to master, unless that merge to master is for a stable release. Stable releases are made with each merge to master when a GitHub release tag is also present in the workflow.
 
@@ -281,14 +292,13 @@ Stable and edge releases are both published to the same Docker Hub repository. D
 
 - layer5/meshery:edge-324vdgb (sha)
 
-
 ### Switching Between Meshery Release Channels
 
 Users are empowered to switch between release channels at their leisure.
 
 #### Switching Release Channels Using mesheryctl
 
-Users can use mesheryctl to switch between release channels, e.g. `mesheryctl system channel [stable|edge]`.  Alternatively, users can manually switch between channels by updating the docker image tags in their meshery.yaml / Kubernetes manifest files. This command generates a meshery.yml (a docker-compose file) with release channel-appropriate tags for the different Docker container images.
+Users can use mesheryctl to switch between release channels, e.g. `mesheryctl system channel [stable|edge]`. Alternatively, users can manually switch between channels by updating the docker image tags in their meshery.yaml / Kubernetes manifest files. This command generates a meshery.yml (a docker-compose file) with release channel-appropriate tags for the different Docker container images.
 
 #### Viewing Release Channel and Version Information in Meshery UI
 
@@ -304,53 +314,58 @@ General community support and commercial support from Layer5 is available. Separ
 
 #### Pre v1.0
 
-Project focuses on functionality, quality and adoption, while retaining the flexibility for shifts in architecture. 
+Project focuses on functionality, quality and adoption, while retaining the flexibility for shifts in architecture.
 
 #### Post v1.0
 
 Once a 1.0 release has been made, Around once a month or so, the project maintainers will take one of these daily builds and run it through a number of additional qualification tests and tag the build as a Stable release. Around once a quarter or so, the project maintainers take one of these Stable releases, run through a bunch more tests and tag the build as a Long Term Support (LTS) release. Finally, if we find something wrong with an LTS release, we issue patches.
 
-The different types (Daily, Stable, LTS) represent different product quality levels and different levels of support from the Meshery team. In this context, support means that we will produce patch releases for critical issues and offer technical assistance. 
+The different types (Daily, Stable, LTS) represent different product quality levels and different levels of support from the Meshery team. In this context, support means that we will produce patch releases for critical issues and offer technical assistance.
 
-## Versioning Documentation 
+## Versioning Documentation
+
 ### For new major release
 
 The structure which the docs follow right now is, The main `docs` folder has the most recent version of documentation, while there are sub-folders for previous versions, v0.x (x being the last major release).
-On release of a new major version, the static html files for the most recent version is generated and is renamed as the release version (v0.x). 
+On release of a new major version, the static html files for the most recent version is generated and is renamed as the release version (v0.x).
 
 ##### Steps:
+
 After cloning the Meshery repository
+
 1. `cd docs` > `bundle install` > `make docs`
-1. On executing `make docs` a `_site` folder is created which has static html files. 
-1. The `_site` folder is renamed to `v0.x`. 
-1. This `v0.x` folder is now the latest version of docs. 
+1. On executing `make docs` a `_site` folder is created which has static html files.
+1. The `_site` folder is renamed to `v0.x`.
+1. This `v0.x` folder is now the latest version of docs.
 
 ##### _In the `v0.x` folder_
+
 1. Search and replace all the instances where there is a direct path is defined to include the version name in the path, i.e, all paths to intra-page links and images should start with `/v0.x/`.
+
 - Look for `href="/` and replace with `href="/0.x/`
 - Look for `src="/`and replace with `src="/0.x/` <br/><br/>
-<a href="{{ site.baseurl }}/assets/img/versioning-guide/search-and-replace.png">
+  <a href="{{ site.baseurl }}/assets/img/versioning-guide/search-and-replace.png">
   <img src="{{ site.baseurl }}/assets/img/versioning-guide/search-and-replace.png" />
-</a>
-
+  </a>
 
 ### For old release
 
-For older releases we have to travel back in time. Using the `Tags` in github we go to a previous release, `v0.X.x`, the `.x` here should be the latest version of the archived docs. 
+For older releases we have to travel back in time. Using the `Tags` in github we go to a previous release, `v0.X.x`, the `.x` here should be the latest version of the archived docs.
 
-##### Steps: 
+##### Steps:
+
 1. Copy the commit ID for that release. <br/><br/>
-<a href="{{ site.baseurl }}/assets/img/versioning-guide/commit-ID.png">
-  <img src="{{ site.baseurl }}/assets/img/versioning-guide/commit-ID.png" />
-</a>
+   <a href="{{ site.baseurl }}/assets/img/versioning-guide/commit-ID.png">
+   <img src="{{ site.baseurl }}/assets/img/versioning-guide/commit-ID.png" />
+   </a>
 
 1. `git checkout <commit ID>` > `cd docs` > `bundle install` > `make docs`
-1.  On executing `make docs` a `_site` folder is created which has static html files. 
-1.  The `_site` folder is renamed to `v0.X` and is copied into the `docs` folder of the present version. 
+1. On executing `make docs` a `_site` folder is created which has static html files.
+1. The `_site` folder is renamed to `v0.X` and is copied into the `docs` folder of the present version.
 
 ## Bi-Weekly Meetings
 
 If you are passionate about CI/CD pipelines, DevOps, automated testing, managing deployments, or if you want to learn how to use Meshery and its features, you are invited to join the bi-weekly Build and Release meetings. Find meeting details and agenda in the [community calendar](https://meshery.io/calendar) and the [meeting minutes document](https://docs.google.com/document/d/1GrVdGHZAYeu6wHNLLoiaKNqBtk7enXE9XeDRCvdA4bY/edit#). The meetings are open to everyone and recorded for later viewing. We hope to see you there!
 
-These [steps]({{site.baseurl}}/project/build-and-release#in-the-v0x-folder) for replacing all the instances of direct path are to be followed. 
+These [steps]({{site.baseurl}}/project/build-and-release#in-the-v0x-folder) for replacing all the instances of direct path are to be followed.
 

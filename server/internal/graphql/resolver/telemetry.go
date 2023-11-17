@@ -12,7 +12,7 @@ import (
 
 func (r *Resolver) getTelemetryComps(ctx context.Context, provider models.Provider, k8sContextIDs []string) ([]*model.TelemetryComp, error) {
 	query := `
-	SELECT rom.name, rs.attribute, rst.attribute FROM objects o LEFT JOIN resource_object_meta rom on o.id = rom.id INNER JOIN resource_specs rs on o.id = rs.id INNER JOIN resource_statuses rst on o.id = rst.id WHERE o.kind = 'Service' AND o.cluster_id IN (?);
+	SELECT rom.name, rs.attribute, rst.attribute FROM kubernetes_resources kr LEFT JOIN kubernetes_resource_object_meta rom on kr.id = rom.id INNER JOIN resource_specs rs on kr.id = rs.id INNER JOIN resource_statuses rst on kr.id = rst.id WHERE kr.kind = 'Service' AND kr.cluster_id IN (?);
 	`
 	var rows *sql.Rows
 	var err error
