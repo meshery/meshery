@@ -231,7 +231,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
-	smInstanceTracker := &h.ConnectionToStateMachineInstanceTracker
+	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	smInstanceTracker.mx.Lock()
 	for id, status := range *connectionStatusPayload {

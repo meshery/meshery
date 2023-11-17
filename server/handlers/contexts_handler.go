@@ -89,7 +89,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		return
 	}
 
-	smInstanceTracker := &h.ConnectionToStateMachineInstanceTracker
+	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 	k8scontext, err := provider.GetK8sContext(token, contextID)
 	if err != nil {
 		eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to delete connection for %s", k8scontext.Name)).WithMetadata(map[string]interface{}{

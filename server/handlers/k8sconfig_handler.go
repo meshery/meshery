@@ -105,7 +105,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	contexts := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata)
 	len := len(contexts)
 
-	smInstanceTracker := &h.ConnectionToStateMachineInstanceTracker
+	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 	smInstanceTracker.mx.Lock()
 	for idx, ctx := range contexts {
 		metadata := map[string]interface{}{}

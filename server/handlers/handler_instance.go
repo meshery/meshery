@@ -31,7 +31,7 @@ type Handler struct {
 	registryManager    *meshmodel.RegistryManager
 	EventsBuffer       *events.EventStreamer
 	Rego               *policies.Rego
-	ConnectionToStateMachineInstanceTracker ConnectionToStateMachineInstanceTracker
+	ConnectionToStateMachineInstanceTracker *ConnectionToStateMachineInstanceTracker
 }
 
 // NewHandlerInstance returns a Handler instance
@@ -47,7 +47,7 @@ func NewHandlerInstance(
 	regManager *meshmodel.RegistryManager,
 	provider string,
 	rego *policies.Rego,
-	connToInstanceTracker ConnectionToStateMachineInstanceTracker,
+	connToInstanceTracker *ConnectionToStateMachineInstanceTracker,
 ) models.HandlerInterface {
 
 	h := &Handler{

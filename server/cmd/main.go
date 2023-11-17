@@ -280,7 +280,7 @@ func main() {
 	if err != nil {
 		logrus.Warn("error creating rego instance, policies will not be evaluated")
 	}
-	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, viper.GetString("PROVIDER"), rego, connToInstanceTracker)
+	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, viper.GetString("PROVIDER"), rego, &connToInstanceTracker)
 
 	b := broadcast.NewBroadcaster(100)
 	defer b.Close()

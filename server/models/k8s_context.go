@@ -587,7 +587,7 @@ func GenerateK8sClientSet(context *K8sContext, eb *events.EventBuilder, eventMet
 		eb.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Error connecting with kubernetes context at %s, skipping %s", context.Server, context.Name)).WithMetadata(map[string]interface{}{
 			"error": err,
 		})
-
+		logrus.Warn(msg)
 		return nil, err
 	}
 
@@ -596,6 +596,5 @@ func GenerateK8sClientSet(context *K8sContext, eb *events.EventBuilder, eventMet
 	
 	eventMetadata[context.Name] = metadata
 
-	logrus.Warn(msg)
 	return handler, nil
 }

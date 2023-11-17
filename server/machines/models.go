@@ -142,7 +142,11 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		// Execute exit actions before entreing new state.
 		action := sm.States[sm.CurrentState].Action
 		if action != nil {
-			action.ExecuteOnExit(ctx, sm.Context)
+			_, _, err := action.ExecuteOnExit(ctx, sm.Context)
+			if err != nil {
+				sm.Log.Error(err)
+				break
+			}
 		}
 
 		
