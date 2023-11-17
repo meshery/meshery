@@ -29,11 +29,11 @@ const Namespaces = ({ classes, updateProgress, k8sConfig }) => {
   const [pageSize, setPageSize] = useState(0);
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
-  const [selectedNode, setSelectedNode] = useState({});
+  const [selectedResource, setSelectedResource] = useState({});
   const [view, setView] = useState(ALL_NAMESPACE);
 
   const swtichView = (view, resource) => {
-    setSelectedNode(resource);
+    setSelectedResource(resource);
     setView(view);
   };
 
@@ -295,7 +295,7 @@ const Namespaces = ({ classes, updateProgress, k8sConfig }) => {
         </>
       ) : (
         <>
-          <View type="Namespace" setView={setView} resource={selectedNode} classes={classes} />
+          <View type="Namespace" setView={setView} resource={selectedResource} classes={classes} />
         </>
       )}
     </>
