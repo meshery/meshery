@@ -217,7 +217,7 @@ const DashboardComponent = (props) => {
         )}
         {tabVal === 2 && (
           <TabContainer>
-            <Namespaces />
+            <Namespaces updateProgress={updateProgress} classes={classes} k8sConfig={k8sconfig} />
           </TabContainer>
         )}
         {tabVal === 3 && (
