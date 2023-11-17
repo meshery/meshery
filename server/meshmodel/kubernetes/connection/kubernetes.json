@@ -20,7 +20,7 @@
                     "connected", "ignored"
                 ],
                 "connected": [
-                    "disconnected", "maintenance", "deleted", "not found"
+                    "disconnected", "not found"
                 ],
                 "ignored": [
                     "deleted", "registered"
@@ -38,5 +38,5 @@
             }
         }
     },
-    "schema": "$ref:https://raw.githubusercontent.com/meshery/schemas/master/openapi/schemas/k8scontext.yml"
+    "schema": "{\"k8sContext\":{\"type\":\"object\",\"properties\":{\"id\":{\"type\":\"string\",\"format\":\"uuid\"},\"name\":{\"type\":\"string\",\"format\":\"uuid\"},\"cluster\":{\"type\":\"object\",\"additionalProperties\":true},\"server\":{\"type\":\"string\"},\"meshery_instance_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"kubernetes_server_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"deployment_type\":{\"type\":\"string\"},\"updated_at\":{\"type\":\"string\",\"format\":\"date-time\"},\"created_at\":{\"type\":\"string\",\"format\":\"date-time\"}}}}"
 }
