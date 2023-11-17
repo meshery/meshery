@@ -13,7 +13,7 @@ import { iconMedium } from '../../css/icons.styles';
 import Clusters from './clusters';
 import Namespaces from './namespaces';
 import Nodes from './nodes';
-import Workloads from './workloads/workloads';
+import Workloads from './workloads';
 import Storage from './storage';
 import Network from './network';
 import Security from './security';
