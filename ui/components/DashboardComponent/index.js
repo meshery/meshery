@@ -15,7 +15,7 @@ import Namespaces from './namespaces';
 import Nodes from './nodes';
 import Workloads from './workloads';
 import Storage from './storage';
-import Network from './network';
+import Network from './networks';
 import Security from './security';
 import Configuration from './configuration';
 
@@ -231,7 +231,7 @@ const DashboardComponent = (props) => {
         )}
         {tabVal === 5 && (
           <TabContainer>
-            <Network />
+            <Network updateProgress={updateProgress} classes={classes} k8sConfig={k8sconfig} />
           </TabContainer>
         )}
         {tabVal === 6 && (
