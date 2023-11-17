@@ -13,7 +13,7 @@ import { iconMedium } from '../../css/icons.styles';
 import Clusters from './clusters';
 import Namespaces from './namespaces';
 import Nodes from './nodes';
-import Workloads from './workloads';
+import Workloads from './workloads/workloads';
 import Storage from './storage';
 import Network from './network';
 import Security from './security';
@@ -110,7 +110,6 @@ const styles = (theme) => ({
 });
 
 const DashboardComponent = (props) => {
-  console.log('DashboardComponent props: ', props);
   const { classes, k8sconfig } = props;
 
   const [tabVal, setTabVal] = React.useState(0);
@@ -222,7 +221,7 @@ const DashboardComponent = (props) => {
         )}
         {tabVal === 3 && (
           <TabContainer>
-            <Workloads />
+            <Workloads updateProgress={updateProgress} classes={classes} k8sConfig={k8sconfig} />
           </TabContainer>
         )}
         {tabVal === 4 && (
