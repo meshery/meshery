@@ -1472,7 +1472,6 @@ function MesheryPatterns({
         break;
     }
 
-
     dataFetch(
       `/api/pattern/${designType}`,
       { credentials: 'include', method: 'POST', body: requestBody },
