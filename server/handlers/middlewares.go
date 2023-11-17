@@ -12,7 +12,6 @@ import (
 	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/logger"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -125,15 +124,17 @@ func (h *Handler) validateAuth(provider models.Provider, req *http.Request) bool
 
 // MesheryControllersMiddleware is a middleware that is responsible for handling meshery controllers(operator, meshsync and broker) related stuff such as
 // getting status, reconciling their deployments etc.
+
+// SHOULD GO AWAY AS THIS LOGIC WILL BE HANDLED IN THE CONNECTED STATE
 func (h *Handler) MesheryControllersMiddleware(next func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider)) func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider) {
 	return func(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 		ctx := req.Context()
-		ctx, err := MesheryControllersMiddleware(ctx, h)
-		if err != nil {
-			h.log.Error(err)
-			next(w, req, prefObj, user, provider)
-			return
-		}
+		// ctx, err := MesheryControllersMiddleware(ctx, h)
+		// if err != nil {
+		// 	h.log.Error(err)
+		// 	next(w, req, prefObj, user, provider)
+		// 	return
+		// }
 		req1 := req.WithContext(ctx)
 		next(w, req1, prefObj, user, provider)
 	}
@@ -256,47 +257,60 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 	ctx = context.WithValue(ctx, models.KubeClustersKey, k8sContextPassedByUser)
 	ctx = context.WithValue(ctx, models.AllKubeClusterKey, connectedK8sContexts)
 
-	smInstanceTracker.mx.Lock()
 	for _, k8sContext := range connectedK8sContexts {
+		machineCtx := &kubernetes.MachineCtx{
+			K8sContext: *k8sContext,
+			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
+			K8sCompRegHelper: h.K8sCompRegHelper,
+			OperatorTracker: h.config.OperatorTracker,
+			Provider: provider,
+			K8scontextChannel: h.config.K8scontextChannel,
+		}
 		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
-		initializeMachine(connectionUUID, smInstanceTracker, h.log, machines.Register)
+		smInstanceTracker.mx.Lock()
+		InitializeMachineWithContext(machineCtx, ctx, connectionUUID, smInstanceTracker, h.log, machines.Connect)
+		smInstanceTracker.mx.Unlock()
 	}
 	
 	for _, k8sContext := range k8sContextsFromKubeConfig {
+		machineCtx := &kubernetes.MachineCtx{
+			K8sContext: *k8sContext,
+			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
+			K8sCompRegHelper: h.K8sCompRegHelper,
+			OperatorTracker: h.config.OperatorTracker,
+			Provider: provider,
+			K8scontextChannel: h.config.K8scontextChannel,
+		}
 		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
-		initializeMachine(connectionUUID, smInstanceTracker, h.log, machines.Discovery)
+		smInstanceTracker.mx.Lock()
+		InitializeMachineWithContext(machineCtx, ctx, connectionUUID, smInstanceTracker, h.log, machines.Discovery)
+		smInstanceTracker.mx.Unlock()
 	}
-	smInstanceTracker.mx.Unlock()
 	return ctx, nil
+
+	// TO BE DONE IN "REGISTERED" STATE
 	// register kubernetes components
+
 	// h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{RegisterK8sMeshModelComponents}, h.registryManager, h.config.EventBroadcaster, provider, user.ID, true)
 	// go h.config.MeshModelSummaryChannel.Publish()
 }
 
-func initializeMachine(connectionID uuid.UUID, smInstanceTracker *ConnectionToStateMachineInstanceTracker, log logger.Handler, event machines.EventType) {
-	inst, ok := smInstanceTracker.ConnectToInstanceMap[connectionID]
-	if !ok {
-		inst = kubernetes.NewK8SMachine(connectionID, log)
-		smInstanceTracker.ConnectToInstanceMap[connectionID] = inst
-	}
-	err := inst.SendEvent(machines.Register, nil)
-	if err != nil {
-		log.Error(err)
-	}
-}
 
-func MesheryControllersMiddleware(ctx context.Context, h *Handler) (context.Context, error) {
-	mk8sContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
-	if !ok || len(mk8sContexts) == 0 {
-		return ctx, ErrInvalidK8SConfigNil
-	}
+// func MesheryControllersMiddleware(ctx context.Context, h *Handler) (context.Context, error) {
 
-	// 1. get the status of controller deployments for each cluster and make sure that all the contexts have meshery controllers deployed
-	ctrlHlpr := h.MesheryCtrlsHelper.UpdateCtxControllerHandlers(mk8sContexts).UpdateOperatorsStatusMap(h.config.OperatorTracker).DeployUndeployedOperators(h.config.OperatorTracker)
-	ctx = context.WithValue(ctx, models.MesheryControllerHandlersKey, h.MesheryCtrlsHelper.GetControllerHandlersForEachContext())
+// // TO BE DONE IN "REGISTERED" STATE
+	
+// 	mk8sContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
+// 	if !ok || len(mk8sContexts) == 0 {
+// 		return ctx, ErrInvalidK8SConfigNil
+// 	}
 
-	// 2. make sure that the data from meshsync for all the clusters are persisted properly
-	ctrlHlpr.UpdateMeshsynDataHandlers()
-	ctx = context.WithValue(ctx, models.MeshSyncDataHandlersKey, h.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext())
-	return ctx, nil
-}
+// 	// 1. get the status of controller deployments for each cluster and make sure that all the contexts have meshery controllers deployed
+// 	ctrlHlpr := h.MesheryCtrlsHelper.UpdateCtxControllerHandlers(mk8sContexts).UpdateOperatorsStatusMap(h.config.OperatorTracker).DeployUndeployedOperators(h.config.OperatorTracker)
+// 	ctx = context.WithValue(ctx, models.MesheryControllerHandlersKey, h.MesheryCtrlsHelper.GetControllerHandlersForEachContext())
+
+// 	// 2. make sure that the data from meshsync for all the clusters are persisted properly
+// 	ctrlHlpr.UpdateMeshsynDataHandlers()
+// 	ctx = context.WithValue(ctx, models.MeshSyncDataHandlersKey, h.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext())
+// 	return ctx, nil
+// }

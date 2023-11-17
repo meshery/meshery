@@ -11,6 +11,8 @@ import (
 	"path/filepath"
 
 	mutil "github.com/layer5io/meshery/server/helpers/utils"
+	"github.com/layer5io/meshery/server/machines"
+	"github.com/layer5io/meshery/server/machines/kubernetes"
 
 	"github.com/layer5io/meshery/server/models/connections"
 	mcore "github.com/layer5io/meshery/server/models/meshmodel/core"
@@ -103,31 +105,55 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	contexts := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata)
 	len := len(contexts)
 
+	smInstanceTracker := &h.ConnectionToStateMachineInstanceTracker
+
 	for idx, ctx := range contexts {
 		metadata := map[string]interface{}{}
 		metadata["context"] = models.RedactCredentialsForContext(ctx)
 		metadata["description"] = fmt.Sprintf("Connection established with context \"%s\" at %s", ctx.Name, ctx.Server)
 
-		connection, err := provider.SaveK8sContext(token, *ctx)
+		machineCtx := &kubernetes.MachineCtx{
+			K8sContext: *ctx,
+			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
+			K8sCompRegHelper: h.K8sCompRegHelper,
+			OperatorTracker: h.config.OperatorTracker,
+			Provider: provider,
+			K8scontextChannel: h.config.K8scontextChannel,
+		}
 
+		connection, err := provider.SaveK8sContext(token, *ctx)
 		if err != nil {
 			saveK8sContextResponse.ErroredContexts = append(saveK8sContextResponse.ErroredContexts, *ctx)
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", ctx.Name, ctx.Server)
 			metadata["error"] = err
 		} else {
+			var et machines.EventType
 			eventBuilder.ActedUpon(connection.ID)
 			ctx.ConnectionID = connection.ID.String()
 			status := connection.Status
 			if status == connections.CONNECTED {
+				et = machines.Connect
 				saveK8sContextResponse.ConnectedContexts = append(saveK8sContextResponse.ConnectedContexts, *ctx)
 				metadata["description"] = fmt.Sprintf("Connection already exists with Kubernetes context \"%s\" at %s", ctx.Name, ctx.Server)
 			} else if status == connections.IGNORED {
+				et = machines.Ignore
 				saveK8sContextResponse.IgnoredContexts = append(saveK8sContextResponse.IgnoredContexts, *ctx)
 				metadata["description"] = fmt.Sprintf("Kubernetes context \"%s\" is set to ignored state.", ctx.Name)
-			} else if status == connections.REGISTERED {
+			} else if status == connections.DISCOVERED {
+				et = machines.Discovery
+				fmt.Println("test;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;")
 				saveK8sContextResponse.RegisteredContexts = append(saveK8sContextResponse.RegisteredContexts, *ctx)
 				metadata["description"] = fmt.Sprintf("Connection registered with kubernetes context \"%s\" at %s.", ctx.Name, ctx.Server)
 			}
+
+			InitializeMachineWithContext(
+				machineCtx,
+				req.Context(),
+				connection.ID,
+				smInstanceTracker,
+				h.log,
+				et,
+			)
 		}
 
 		eventMetadata[ctx.Name] = metadata
@@ -321,13 +347,14 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 			return contexts, err
 		}
 		cc.DeploymentType = "in_cluster"
-		// conn, err := prov.SaveK8sContext(token, *cc)
-		// if err != nil {
-		// 	metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", cc.Name, cc.Server)
-		// 	metadata["error"] = err
-		// 	logrus.Warn("failed to save the context for incluster: ", err)
-		// 	return contexts, err
-		// }
+		conn, err := prov.SaveK8sContext(token, *cc)
+		if err != nil {
+			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", cc.Name, cc.Server)
+			metadata["error"] = err
+			logrus.Warn("failed to save the context for incluster: ", err)
+			return contexts, err
+		}
+		h.log.Debug(conn)
 		// updatedConnection, statusCode, err := prov.UpdateConnectionStatusByID(token, conn.ID, connections.CONNECTED)
 		// if err != nil || statusCode != http.StatusOK {
 		// 	logrus.Warn("failed to update connection status for connection id", conn.ID, "to", connections.CONNECTED)
@@ -359,15 +386,16 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 		metadata := map[string]interface{}{}
 		metadata["context"] = models.RedactCredentialsForContext(ctx)
 		metadata["description"] = fmt.Sprintf("K8S context \"%s\" discovered with cluster at %s", ctx.Name, ctx.Server)
-		// metadata["description"] = fmt.Sprintf("Connection established with context \"%s\" at %s", ctx.Name, ctx.Server)
-		// ctx.DeploymentType = "out_of_cluster"
-		// conn, err := prov.SaveK8sContext(token, *ctx)
-		// if err != nil {
-		// 	logrus.Warn("failed to save the context: ", err)
-		// 	metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", ctx.Name, ctx.Server)
-		// 	metadata["error"] = err
-		// 	continue
-		// }
+		metadata["description"] = fmt.Sprintf("Connection established with context \"%s\" at %s", ctx.Name, ctx.Server)
+		ctx.DeploymentType = "out_of_cluster"
+		conn, err := prov.SaveK8sContext(token, *ctx)
+		if err != nil {
+			logrus.Warn("failed to save the context: ", err)
+			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", ctx.Name, ctx.Server)
+			metadata["error"] = err
+			continue
+		}
+		h.log.Debug(conn)
 		// updatedConnection, statusCode, err := prov.UpdateConnectionStatusByID(token, conn.ID, connections.CONNECTED)
 		// if err != nil || statusCode != http.StatusOK {
 		// 	logrus.Warn("failed to update connection status for connection id", conn.ID, "to", connections.CONNECTED)

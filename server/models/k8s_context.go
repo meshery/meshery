@@ -172,34 +172,34 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, eventChan *Broa
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
 			eventMetadata[name] = metadata
 
-			// Preventing the publishing of event as the event details would be present in the reciept.
-			// Publishing again would lead to duplicate events and confusion to the user.
-			// _ = provider.PersistEvent(event)
-			// eventChan.Publish(userUUID, event)
+		// 	// Preventing the publishing of event as the event details would be present in the reciept.
+		// 	// Publishing again would lead to duplicate events and confusion to the user.
+		// 	// _ = provider.PersistEvent(event)
+		// 	// eventChan.Publish(userUUID, event)
 
 			logrus.Warnf(msg)
 			continue
 		}
 
-		// Perform Ping test on the cluster
-		if err := kc.PingTest(); err != nil {
-			msg = fmt.Sprintf("unable to ping kubernetes context at %s, skipping context %s %v \n", kc.Server, kc.Name, err)
-			_ = eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to ping kubernetes context at %s, skipping %s", kc.Server, kc.Name)).WithMetadata(map[string]interface{}{
-				"error": err,
-			}).Build()
+		// // Perform Ping test on the cluster
+		// if err := kc.PingTest(); err != nil {
+		// 	msg = fmt.Sprintf("unable to ping kubernetes context at %s, skipping context %s %v \n", kc.Server, kc.Name, err)
+		// 	_ = eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Unable to ping kubernetes context at %s, skipping %s", kc.Server, kc.Name)).WithMetadata(map[string]interface{}{
+		// 		"error": err,
+		// 	}).Build()
 
-			metadata["error"] = err
-			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
-			eventMetadata[name] = metadata
+		// 	metadata["error"] = err
+		// 	metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
+		// 	eventMetadata[name] = metadata
 
-			// Preventing the publishing of event as the event details would be present in the reciept.
-			// Publishing again would lead to duplicate events and confusion to the user.
-			// _ = provider.PersistEvent(event)
-			// eventChan.Publish(userUUID, event)
+		// 	// Preventing the publishing of event as the event details would be present in the reciept.
+		// 	// Publishing again would lead to duplicate events and confusion to the user.
+		// 	// _ = provider.PersistEvent(event)
+		// 	// eventChan.Publish(userUUID, event)
 
-			logrus.Warn(msg)
-			continue
-		}
+		// 	logrus.Warn(msg)
+		// 	continue
+		// }
 
 		if err := kc.AssignServerID(handler); err != nil {
 			msg = fmt.Sprintf("could not retrieve kubernetes cluster ID, skipping context %s: %v", kc.Name, err)
@@ -212,10 +212,10 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, eventChan *Broa
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
 			eventMetadata[name] = metadata
 
-			// Preventing the publishing of event as the event details would be present in the reciept.
-			// Publishing again would lead to duplicate events and confusion to the user.
-			// _ = provider.PersistEvent(event)
-			// eventChan.Publish(userUUID, event)
+		// 	// Preventing the publishing of event as the event details would be present in the reciept.
+		// 	// Publishing again would lead to duplicate events and confusion to the user.
+		// 	// _ = provider.PersistEvent(event)
+		// 	// eventChan.Publish(userUUID, event)
 			logrus.Warn(msg)
 			continue
 		}
@@ -575,4 +575,27 @@ func RedactCredentialsForContext(ctx *K8sContext) (redactedContext K8sContext) {
 	redactedContext.KubernetesServerID = nil
 	redactedContext.MesheryInstanceID = nil
 	return
+}
+
+func GenerateK8sClientSet(context *K8sContext, eb *events.EventBuilder, eventMetadata map[string]interface{}) (*kubernetes.Client, error) {
+	var msg string
+	metadata := map[string]interface{}{}
+
+	handler, err := context.GenerateKubeHandler()
+	if err != nil {
+		msg = fmt.Sprintf("error generating kubernetes handler, skipping context %s: %v", err, context.Name)
+		eb.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Error connecting with kubernetes context at %s, skipping %s", context.Server, context.Name)).WithMetadata(map[string]interface{}{
+			"error": err,
+		})
+
+		return nil, err
+	}
+
+	metadata["error"] = err
+	metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", context.Name, context.Server)
+	
+	eventMetadata[context.Name] = metadata
+
+	logrus.Warn(msg)
+	return handler, nil
 }

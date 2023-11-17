@@ -1,10 +1,13 @@
 package kubernetes
 
 import (
+	"fmt"
+
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/machines"
-	"github.com/layer5io/meshery/server/machines/kubernetes/actions"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/utils/kubernetes"
 )
 
 // One FSM per connection
@@ -12,82 +15,133 @@ import (
 // Mapping b/w Connection and its associated machine is created if not already exist in ConnectionStateMachineMap.
 // Maintenance state is not considered.
 
-var Discovered = machines.State{
-	Events: machines.Events{
-		machines.Register: machines.REGISTERED,
-		machines.NotFound: machines.NOTFOUND,
-		machines.Delete: machines.DELETED,
-	},
-	Action: &actions.DiscoverAction{},
+func Discovered(log logger.Handler) machines.State {
+	return machines.State{
+		Events: machines.Events{
+			machines.Register: machines.REGISTERED,
+			machines.NotFound: machines.NOTFOUND,
+			machines.Delete: machines.DELETED,
+		},
+		Action: &DiscoverAction{},
+	}
 }
 
 
-var Registered = machines.State{
-	Events: machines.Events{
-		machines.Connect: machines.CONNECTED,
-		machines.Ignore: machines.IGNORED,
-	},
-	Action: &actions.RegisterAction{},
+func Registered(log logger.Handler) machines.State {
+	return machines.State{
+		Events: machines.Events{
+			machines.Connect: machines.CONNECTED,
+			machines.Ignore: machines.IGNORED,
+		},
+		Action: &RegisterAction{},
+	}
 }
 
-var Connected = machines.State{
-	Events: machines.Events{
-		machines.Disconnect: machines.DISCONNECTED,
-		machines.Delete: machines.DELETED,
-		machines.NotFound: machines.NOTFOUND,
-	},
-	Action: &actions.ConnectAction{},
+func Connected(log logger.Handler) machines.State {
+	return machines.State{
+		Events: machines.Events{
+			machines.Disconnect: machines.DISCONNECTED,
+			machines.Delete: machines.DELETED,
+			machines.NotFound: machines.NOTFOUND,
+		},
+		Action: &ConnectAction{},
+	}
 }
 
-var Ignored = machines.State{
-	Events: machines.Events{
-		machines.Delete: machines.DELETED,
-		machines.Register: machines.REGISTERED,
-	},
-	Action: &actions.IgnoreAction{},
+func Ignored(log logger.Handler) machines.State {
+	return machines.State{
+		Events: machines.Events{
+			machines.Delete: machines.DELETED,
+			machines.Register: machines.REGISTERED,
+		},
+		Action: &IgnoreAction{},
+	}
 }
 
-var Disconnected = machines.State{
-	Events: machines.Events{
-		machines.Connect: machines.CONNECTED,
-		machines.Delete: machines.DELETED,
-	},
-	Action: &actions.DisconnectAction{},
+func Disconnected(log logger.Handler) machines.State {
+	return machines.State{
+		Events: machines.Events{
+			machines.Connect: machines.CONNECTED,
+			machines.Delete: machines.DELETED,
+		},
+		Action: &DisconnectAction{},
+	}
 }
 
-var NotFound = machines.State{
-	Events: machines.Events{
-		machines.Discovery: machines.DISCOVERED,
-	},
-	Action: nil,
+func NotFound(log logger.Handler) machines.State {
+	return machines.State{
+		Events: machines.Events{
+			machines.Discovery: machines.DISCOVERED,
+		},
+		Action: nil,
+	}
 }
 
-var Delete = machines.State{
-	Events: machines.Events{},
-	Action: &actions.DeleteAction{},
+func Delete(log logger.Handler) machines.State {
+	return machines.State{
+			Events: machines.Events{},
+			Action: &DeleteAction{},
+	}
+}
+
+func Initial(log logger.Handler) machines.State {
+	return machines.State{
+		Events: machines.Events{
+			machines.Register: machines.REGISTERED,
+			machines.Connect: machines.CONNECTED,
+			machines.Disconnect: machines.DISCONNECTED,
+			machines.Ignore: machines.IGNORED,
+			machines.Delete: machines.DELETED,
+			machines.NotFound: machines.NOTFOUND,
+		},
+		Action: nil,
+	}
+}
+
+type MachineCtx struct {
+	K8sContext  models.K8sContext
+	MesheryCtrlsHelper *models.MesheryControllersHelper
+	K8sCompRegHelper   *models.ComponentsRegistrationHelper
+	EventBroadcaster   *models.Broadcast
+	clientset          *kubernetes.Client
+	log                logger.Handler
+	Provider           models.Provider
+	OperatorTracker    *models.OperatorTracker
+	K8scontextChannel  *models.K8scontextChan
 }
 
 const (
 	machineName = "kubernetes"
 )
 
-func NewK8SMachine(connectionID uuid.UUID, log logger.Handler) *machines.StateMachine {
+func NewK8SMachine(machineCtx *MachineCtx, log logger.Handler) (*machines.StateMachine, error) {
+	connectionID, err := uuid.FromString(machineCtx.K8sContext.ConnectionID)
+	fmt.Println("test---------------////////////////////////")
+	if err != nil {
+		return nil, machines.ErrInititalizeK8sMachine(err)
+	}
 	return &machines.StateMachine{
 		ID: connectionID,
 		Name: machineName,
 		PreviousState: machines.DefaultState,
 		InitialState: machines.InitialState,
 		CurrentState: machines.InitialState,
-		Context: nil,
+		Context: machineCtx,
 		Log: log,
 		States: machines.States{
-			machines.DISCOVERED: Discovered, 
-			machines.REGISTERED: Registered,
-			machines.CONNECTED: Connected,
-			machines.DISCONNECTED: Disconnected,
-			machines.IGNORED: Ignored,
-			machines.DELETED: Delete,
+			machines.DISCOVERED: Discovered(log), 
+			machines.REGISTERED: Registered(log),
+			machines.CONNECTED: Connected(log),
+			machines.DISCONNECTED: Disconnected(log),
+			machines.IGNORED: Ignored(log),
+			machines.DELETED: Delete(log),
+			machines.InitialState: Initial(log),
+			// machines.InitialState: Registered(log),
+			// machines.InitialState: Connected(log),
+			// machines.InitialState: Disconnected(log),
+			// machines.InitialState: Ignored(log),
+			// machines.InitialState: Delete(log),
 
 		},
-	}
+	}, nil
 }

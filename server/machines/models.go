@@ -1,20 +1,24 @@
 package machines
 
 import (
+	"context"
+	"fmt"
 	"sync"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/models/events"
 )
 
 const (
-	Discovery EventType = "discovery"
-	Register EventType = "register"
-	Connect EventType = "connect"
+	Discovery  EventType = "discovery"
+	Register   EventType = "register"
+	Connect    EventType = "connect"
 	Disconnect EventType = "disconnect"
-	Ignore EventType = "ignore"
-	NotFound EventType = "not found"
-	Delete EventType = "delete"
+	Ignore     EventType = "ignore"
+	NotFound   EventType = "not found"
+	Delete     EventType = "delete"
+	NoOp       EventType = "noop"
 
 	DISCOVERED   StateType = "discovered"
 	REGISTERED   StateType = "registered"
@@ -36,12 +40,12 @@ type StateType string
 type Action interface {
 
 	// Used as guards/prerequisites checks and actions to be performed when the machine enters a given state.
-	ExecuteOnEntry(ctx interface{}) (EventType, error)
+	ExecuteOnEntry(context context.Context, machinectx interface{}) (EventType, *events.Event, error)
 
-	Execute(ctx interface{}) (State, EventType, error)
+	Execute(context context.Context, machinectx interface{}) (EventType, *events.Event, error)
 
 	// Used for cleanup actions to perform when the machine exits a given state
-	ExecuteOnExit(ctx interface{}) (EventType, error)
+	ExecuteOnExit(context context.Context, machinectx interface{}) (EventType, *events.Event, error)
 }
 
 // Represents the mapping between event and the next state in the event's response
@@ -68,8 +72,8 @@ type StateMachine struct {
 
 	// Configuration of states managed by the machine
 	States States
-	
-	// Represent the previous state of the machine 
+
+	// Represent the previous state of the machine
 	PreviousState StateType
 
 	// The current state of the machine
@@ -79,9 +83,9 @@ type StateMachine struct {
 	InitialState StateType
 
 	// Machine specific parameters/context.
-	// Provided at initialization of the machine. 
-	Context interface{} 
-	
+	// Provided at initialization of the machine.
+	Context interface{}
+
 	mx sync.RWMutex
 
 	Log logger.Handler
@@ -95,10 +99,8 @@ func (sm *StateMachine) ResetState() {
 }
 
 func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
-	sm.mx.RLock()
-	defer sm.mx.RUnlock()
-
 	state, ok := sm.States[sm.CurrentState]
+	fmt.Println("inside getNextStaet: ", state.Events, ok)
 	if ok {
 		events := state.Events
 		if events != nil {
@@ -109,54 +111,82 @@ func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 			}
 		}
 	}
-	return DefaultState, ErrInvalidTransition	
+	return DefaultState, ErrInvalidTransition
 }
 
-func (sm *StateMachine) SendEvent(event EventType, payload interface{}) (error) {
+// This should handle error and event publishing . THis should return the events.Event and error and the func in which SendEvent is called should publish the event.
+// The statusCode for eg: in updateSconnectionStatusById is lost so the func that calls send event will not know the original statuscode, we will be sending 500 only, if possible capture the statuscode inside the event itself.
+
+func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payload interface{}) error {
 	sm.mx.Lock()
 	defer sm.mx.Unlock()
-
-	nextState, err := sm.getNextState(event)
-	if err != nil {
-		sm.Log.Error(err)
-		return err
-	}
-
-	// next state to transition
-	state, ok := sm.States[nextState]
-	if !ok || state.Action == nil {
-		return ErrInvalidTransition
-	}
-
-	// Execute exit actions before entreing new state.
-	action := sm.States[sm.CurrentState].Action
-	if action != nil {
-		action.ExecuteOnExit(sm.Context)
-	} 
-
-	
-	var nextEvent EventType
-	if state.Action != nil {
-
-		// Execute entry actions for the state entered.
-		_, err :=  state.Action.ExecuteOnEntry(sm.Context)
+	sm.Log.Info("inside send event line 123")
+	for {
+		nextState, err := sm.getNextState(eventType)
 		if err != nil {
 			sm.Log.Error(err)
 			return err
 		}
-	
-		_, nextEvent, err = state.Action.Execute(sm.Context)
-		if err != nil {
-			sm.Log.Error(err)
-			return err
-		}
-	}
+		sm.Log.Info("inside models send event line 130: next state", nextState)
 
-	sm.Log.Info(nextEvent)
-	sm.PreviousState = sm.CurrentState
-	sm.CurrentState = nextState
-	sm.Log.Info("previous state for ", sm.Name, " ", sm.States[sm.PreviousState])
-	sm.Log.Info("next state for ", sm.Name, " ", sm.States[sm.CurrentState])
+		// next state to transition
+		state, ok := sm.States[nextState]
+		if !ok || state.Action == nil {
+			return ErrInvalidTransition
+		}
+
+		// Execute exit actions before entreing new state.
+		action := sm.States[sm.CurrentState].Action
+		if action != nil {
+			action.ExecuteOnExit(ctx, sm.Context)
+		}
+
+		var nextEventTransition EventType
+		if state.Action != nil {
+
+			// Execute entry actions for the state entered.
+			et, event, err := state.Action.ExecuteOnEntry(ctx, sm.Context)
+			fmt.Println("inside models line 150---------------", event, et)
+
+			if err != nil {
+				sm.Log.Error(err)
+				// event publishing
+				sm.Log.Info(event)
+				nextEventTransition = et
+				
+			} else {	
+				nextEventTransition, event, err := state.Action.Execute(ctx, sm.Context)
+				fmt.Println("inside models line 160---------------", nextEventTransition)
+				if err != nil {
+					sm.Log.Error(err)
+					// event publishing
+					sm.Log.Info(event)
+				}
+			
+
+				et, event, err = state.Action.ExecuteOnExit(ctx, sm.Context)
+				fmt.Println("inside models line 169---------------", event, et)
+				if err != nil {
+					sm.Log.Error(err)
+					// event publishing
+					sm.Log.Info(event)
+					
+				}
+			}
+			
+			if nextEventTransition != NoOp {
+				eventType = nextEventTransition
+			} else {
+				break
+			}
+		}
+
+		sm.Log.Info(nextEventTransition)
+		sm.PreviousState = sm.CurrentState
+		sm.CurrentState = nextState
+		sm.Log.Info("previous state for ", sm.Name, " ", sm.States[sm.PreviousState])
+		sm.Log.Info("next state for ", sm.Name, " ", sm.States[sm.CurrentState])
+	}
 	return nil
 }
 
