@@ -119,10 +119,9 @@ func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payload interface{}) error {
 	sm.mx.Lock()
 	defer sm.mx.Unlock()
-	sm.Log.Info("inside send event entering loop")
+	sm.Log.Info("entering event loop")
 	for {
-		var nextEventTransition EventType
-		if nextEventTransition == NoOp {
+		if eventType == NoOp {
 			break
 		}
 		
@@ -131,7 +130,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			sm.Log.Error(err)
 			return err
 		}
-		sm.Log.Info("inside models send event line 130: next state", nextState)
+		sm.Log.Info("transitioning to next state: ", nextState)
 
 		// next state to transition
 		state, ok := sm.States[nextState]
@@ -154,52 +153,30 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 
 			// Execute entry actions for the state entered.
 			et, event, err := state.Action.ExecuteOnEntry(ctx, sm.Context)
-			sm.Log.Info("inside models.go entry action executed event emiited", et, "events.Event", event)
+			sm.Log.Info("entry action executed, event emitted ", et)
 
 			if err != nil {
 				sm.Log.Error(err)
 				// event publishing
 				sm.Log.Info(event)
-				nextEventTransition = et
+				eventType = et
 				
 			} else {	
-				nextEventTransition, event, err = state.Action.Execute(ctx, sm.Context)
-				sm.Log.Info("inside models.go action executed, nextEventTransition: ", nextEventTransition)
+				eventType, event, err = state.Action.Execute(ctx, sm.Context)
+				sm.Log.Info("inside action executed, event emitted ", et)
 				if err != nil {
 					sm.Log.Error(err)
 					// event publishing
 					sm.Log.Info(event)
 				}
 			}
-			
-			if nextEventTransition != NoOp {
-				eventType = nextEventTransition
-			}
 		}
 
-		sm.Log.Info(nextEventTransition)
 		sm.PreviousState = sm.CurrentState
 		sm.CurrentState = nextState
-		sm.Log.Info("previous state for ", sm.Name, " ", sm.States[sm.PreviousState])
-		sm.Log.Info("next state for ", sm.Name, " ", sm.States[sm.CurrentState])
+		sm.Log.Info("next event to be emitted ", eventType)
+		sm.Log.Info("previous state for connection id ", sm.ID, sm.PreviousState)
+		sm.Log.Info("current state for state machine type ", sm.Name, sm.CurrentState)
 	}
 	return nil
 }
-
-// var tm = Machine{
-// 	States: States{
-// 		test: State{
-// 			Events: Events{
-// 				event1:test2,
-// 				event2:test3,
-// 			},
-// 		},
-// 	},
-// }
-
-// var event1 EventType = "1"
-// var event2 EventType = "2"
-// var event3 EventType = "2"
-// var test StateType = "test"
-// var test2 StateType = "test"
-// var test3 StateType = "test"
