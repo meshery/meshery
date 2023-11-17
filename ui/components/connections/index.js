@@ -218,7 +218,11 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
               title={value}
               status={tableMeta.rowData[7]}
               onDelete={() => handleDeleteConnection(tableMeta.rowData[0])}
-              handlePing={() => ping(tableMeta.rowData[3], server, tableMeta.rowData[0])}
+              handlePing={() => {
+                if (tableMeta.rowData[4] === KUBERNETES) {
+                  ping(tableMeta.rowData[3], tableMeta.rowData[2], tableMeta.rowData[0]);
+                }
+              }}
               iconSrc={'/static/img/kubernetes.svg'}
               style={{ maxWidth: '120px' }}
             />
