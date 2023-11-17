@@ -663,7 +663,168 @@ const StandardWorkloadTable = (props) => {
     },
     STATEFULSETS: {
       name: 'StatefulSet',
-      columns: [],
+      columns: [
+        {
+          name: 'id',
+          label: 'ID',
+          options: {
+            display: false,
+          },
+        },
+        {
+          name: 'metadata.name',
+          label: 'Name',
+          options: {
+            sort: false,
+            sortThirdClickReset: true,
+            customBodyRender: function CustomBody(value, tableMeta) {
+              return (
+                <>
+                  <div
+                    style={{
+                      color: 'inherit',
+                      textDecorationLine: 'underline',
+                      cursor: 'pointer',
+                      marginBottom: '0.5rem',
+                    }}
+                    onClick={() =>
+                      swtichView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
+                    }
+                  >
+                    {value}
+                  </div>
+                </>
+              );
+            },
+          },
+        },
+        {
+          name: 'apiVersion',
+          label: 'API version',
+          options: {
+            sort: false,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
+          },
+        },
+        {
+          name: 'status.attribute',
+          label: 'Replicas',
+          options: {
+            sort: false,
+            customBodyRender: function CustomBody(val) {
+              let attribute = JSON.parse(val);
+              let replicas = attribute.replicas;
+              return <>{replicas}</>;
+            },
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
+          },
+        },
+        {
+          name: 'metadata.namespace',
+          label: 'Namespace',
+          options: {
+            sort: false,
+            sortThirdClickReset: true,
+            customBodyRender: function CustomBody(value, tableMeta) {
+              return (
+                <>
+                  <div
+                    style={{
+                      color: 'inherit',
+                      textDecorationLine: 'underline',
+                      cursor: 'pointer',
+                      marginBottom: '0.5rem',
+                    }}
+                    onClick={() =>
+                      swtichView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
+                    }
+                  >
+                    {value}
+                  </div>
+                </>
+              );
+            },
+          },
+        },
+        {
+          name: 'cluster_id',
+          label: 'Cluster',
+          options: {
+            sort: false,
+            sortThirdClickReset: true,
+            customBodyRender: function CustomBody(val) {
+              let clusterName = getClusterNameFromClusterId(val, k8sConfig);
+              return (
+                <>
+                  <a
+                    href={'#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: 'inherit',
+                      textDecorationLine: 'underline',
+                      cursor: 'pointer',
+                      marginBottom: '0.5rem',
+                    }}
+                  >
+                    {clusterName}
+                  </a>
+                </>
+              );
+            },
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
+          },
+        },
+        {
+          name: 'metadata.creationTimestamp',
+          label: 'Age',
+          options: {
+            sort: false,
+            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
+            customBodyRender: function CustomBody(value) {
+              let time = timeAgo(value);
+              return <>{time}</>;
+            },
+          },
+        },
+      ],
     },
     REPLICASETS: {
       name: 'ReplicaSet',
