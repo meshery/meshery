@@ -21,7 +21,6 @@ const ACTION_TYPES = {
 const Nodes = ({ classes, updateProgress, k8sConfig }) => {
   const ALL_NODES = 'all';
   const SINGLE_NODE = 'single';
-  // const availableViews = [ALL_NODES, SINGLE_NODE];
 
   const [meshSyncResources, setMeshSyncResources] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -382,10 +381,7 @@ const Nodes = ({ classes, updateProgress, k8sConfig }) => {
 const SortableTableCell = ({ index, columnData, columnMeta, onSort }) => {
   return (
     <TableCell key={index} onClick={onSort}>
-      <TableSortLabel
-        active={columnMeta.name === columnData.name}
-        // direction={columnMeta.direction || 'asc'}
-      >
+      <TableSortLabel active={columnMeta.name === columnData.name}>
         <b>{columnData.label}</b>
       </TableSortLabel>
     </TableCell>
