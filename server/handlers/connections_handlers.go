@@ -219,6 +219,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 
 	userID := uuid.FromStringOrNil(user.ID)
 	eventBuilder := events.NewEvent().FromSystem(*h.SystemID).FromUser(userID).WithCategory("connection").WithAction("update").ActedUpon(userID)
+
 	err := json.NewDecoder(req.Body).Decode(connectionStatusPayload)
 	if err != nil {
 		errUnmarshal := models.ErrUnmarshal(err, "connection status payload")
@@ -237,11 +238,22 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 	for id, status := range *connectionStatusPayload {
 		eventBuilder.ActedUpon(id)
 		k8scontext, err := provider.GetK8sContext(token, id.String())
+		
 		if err != nil {
 			eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)).WithMetadata(map[string]interface{}{
 				"error": err,
 			})
+			_event := eventBuilder.Build()
+			_ = provider.PersistEvent(_event)
+			go h.config.EventBroadcaster.Publish(userID, _event)
+			continue
 		}
+
+		event := eventBuilder.WithSeverity(events.Informational).
+		WithDescription(fmt.Sprintf("Processing status update to \"%s\" for connection %s", status, k8scontext.Name)).Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+		
 		machineCtx := &kubernetes.MachineCtx{
 			K8sContext: k8scontext,
 			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
@@ -272,7 +284,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 			}
 		}
 		
-		event, err := inst.SendEvent(req.Context(), machines.StatusToEvent(status), nil)
+		event, err = inst.SendEvent(req.Context(), machines.StatusToEvent(status), nil)
 		if err != nil {
 			h.log.Error(err)
 			_ = provider.PersistEvent(event)
@@ -284,7 +296,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 			delete(smInstanceTracker.ConnectToInstanceMap, id)
 		}
 
-		event = eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Processing status update to \"%s\" for connection %s", status, k8scontext.Name)).Build()
+		
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
 	}
