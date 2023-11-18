@@ -420,7 +420,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
                   }}
                 >
                   {Object.keys(CONNECTION_STATES).map((s) => (
-                    <MenuItem value={CONNECTION_STATES[s]}>
+                    <MenuItem value={CONNECTION_STATES[s]} key={CONNECTION_STATES[s]}>
                       <ConnectionStateChip status={CONNECTION_STATES[s]} />
                     </MenuItem>
                   ))}
