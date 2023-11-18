@@ -1024,6 +1024,7 @@ const mapStateToProps = (state) => {
   const k8sconfig = state.get('k8sConfig');
   const selectedK8sContexts = state.get('selectedK8sContexts');
   const operatorState = state.get('operatorState');
+  console.log('test: ', operatorState);
   // const MeshSyncState = state.get('meshSyncState'); // disfunctional at this point of time
   return { k8sconfig, selectedK8sContexts, operatorState /*MeshSyncState*/ };
 };

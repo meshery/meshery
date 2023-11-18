@@ -18,7 +18,7 @@ export function isOperatorStateSubscriptionDataUpdated(currentState, newData) {
     return true;
   }
 
-  const oldData = currentState.find((data) => data.contextID === newData.contextID);
+  const oldData = currentState.find((data) => data.contextId === newData.contextId);
   if (!oldData) {
     return true;
   }
