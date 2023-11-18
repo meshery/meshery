@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { useEffect, useState, useRef } from 'react';
-import PromptComponent from '../PromptComponent';
+import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
 import CloseIcon from '@material-ui/icons/Close';
 import PerformanceProfileGrid from './PerformanceProfileGrid';
 import dataFetch from '../../lib/data-fetch';
@@ -202,7 +202,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
       subtitle: `Are you sure you want to delete ${count > 1 ? 'these' : 'this'} ${
         count ? count : ''
       } performance profile${count > 1 ? 's' : ''}?`,
-
+      variant: PROMPT_VARIANTS.DANGER,
       options: ['Yes', 'No'],
     });
     return response;

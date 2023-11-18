@@ -185,7 +185,6 @@ func (h *Handler) handlePatternPOST(
 		}
 
 		if parsedBody.Save {
-			fmt.Println("inside cyto save")
 			resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
 			if err != nil {
 				h.log.Error(ErrSavePattern(err))
@@ -304,7 +303,6 @@ func (h *Handler) handlePatternPOST(
 			}
 			mesheryPattern.PatternFile = string(response)
 		} else {
-			fmt.Printf("inside else")
 			parsedBody.PatternData.Type = sql.NullString{
 				String: string(models.Design),
 				Valid:  true,
@@ -338,7 +336,6 @@ func (h *Handler) handlePatternPOST(
 			mesheryPattern := parsedBody.PatternData
 
 			if parsedBody.Save {
-				fmt.Println("inside 1 save")
 				resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
 				if err != nil {
 					h.log.Error(ErrSavePattern(err))

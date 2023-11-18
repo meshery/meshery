@@ -1,20 +1,68 @@
-import { Chip, MenuItem, Tooltip, makeStyles } from '@material-ui/core';
+import { Chip, MenuItem, Tooltip, makeStyles, Avatar } from '@material-ui/core';
 import classNames from 'classnames';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import HelpIcon from '@material-ui/icons/Help';
-import { iconSmall } from '../../css/icons.styles';
+import HandymanIcon from '@mui/icons-material/Handyman';
+// import HelpIcon from '@material-ui/icons/Help';
+// import { iconSmall } from '../../css/icons.styles';
+import BadgeAvatars from '../CustomAvatar';
+import { notificationColors } from '../../themes';
+import DisconnectIcon from '../../assets/icons/disconnect';
+import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
 
-export const ConnectionChip = ({ handlePing, title, icon }) => (
-  <Chip label={title} onClick={() => handlePing()} icon={icon} variant="outlined" />
-);
+const useChipStyles = makeStyles(() => ({
+  Chip: {
+    width: '9rem',
+    textAlign: 'center',
+    cursor: 'pointer',
+    '& .MuiChip-label': {
+      flexGrow: 1,
+    },
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+  },
+  icon: {
+    width: '1.5rem',
+    height: '1.5rem',
+  },
+}));
+
+export const ConnectionChip = ({ handlePing, onDelete, title, tooltip, iconSrc, status }) => {
+  const classes = useChipStyles();
+  return (
+    <Tooltip title={tooltip || title} placement="bottom">
+      <Chip
+        label={title}
+        onClick={handlePing}
+        onDelete={onDelete}
+        avatar={
+          status ? (
+            <BadgeAvatars>
+              <Avatar
+                src={iconSrc}
+                className={classes.icon}
+                style={status ? {} : { opacity: 0.2 }}
+              />
+            </BadgeAvatars>
+          ) : (
+            <Avatar src={iconSrc} className={classes.icon} style={status ? {} : { opacity: 0.2 }} />
+          )
+        }
+        variant="filled"
+        className={classes.Chip}
+        data-cy="chipContextName"
+      />
+    </Tooltip>
+  );
+};
 
 const styles = makeStyles((theme) => ({
   statusCip: {
-    minWidth: '120px !important',
+    minWidth: '142px !important',
     maxWidth: 'max-content !important',
     display: 'flex !important',
     justifyContent: 'flex-start !important',
@@ -74,11 +122,11 @@ const styles = makeStyles((theme) => ({
   },
   discovered: {
     '& .MuiChip-label': {
-      color: theme.palette.secondary.warning,
+      color: notificationColors.info,
     },
-    background: `${theme.palette.secondary.warning}30 !important`,
+    background: `${notificationColors.info}30 !important`,
     '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.warning} !important`,
+      color: `${notificationColors.info} !important`,
     },
   },
   deleted: {
@@ -88,6 +136,33 @@ const styles = makeStyles((theme) => ({
     background: `${theme.palette.secondary.lightError}30 !important`,
     '& .MuiSvgIcon-root': {
       color: `${theme.palette.secondary.error} !important`,
+    },
+  },
+  maintenance: {
+    '& .MuiChip-label': {
+      color: theme.palette.secondary.warning,
+    },
+    background: `${theme.palette.secondary.warning}30 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${theme.palette.secondary.warning} !important`,
+    },
+  },
+  disconnected: {
+    '& .MuiChip-label': {
+      color: notificationColors.lightwarning,
+    },
+    background: `${notificationColors.lightwarning}30 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${notificationColors.lightwarning} !important`,
+    },
+  },
+  notfound: {
+    '& .MuiChip-label': {
+      color: theme.palette.secondary.text,
+    },
+    background: `${theme.palette.secondary.disableButtonBg}60 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${theme.palette.secondary.iconMain} !important`,
     },
   },
 }));
@@ -100,9 +175,9 @@ const DiscoveredStateChip = ({ value }) => {
         className={classNames(classes.statusCip, classes.discovered)}
         avatar={<ExploreIcon />}
         label={value}
-        helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
+        // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
-      <HelpToolTip classes={classes} value="1-discovered" />
+      {/* <HelpToolTip classes={classes} value="1-discovered" /> */}
     </MenuItem>
   );
 };
@@ -116,9 +191,9 @@ const RegisteredStateChip = ({ value }) => {
         className={classNames(classes.statusCip, classes.registered)}
         avatar={<AssignmentTurnedInIcon />}
         label={value}
-        helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
+        // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
-      <HelpToolTip classes={classes} value="2-registered" />
+      {/* <HelpToolTip classes={classes} value="2-registered" /> */}
     </MenuItem>
   );
 };
@@ -131,9 +206,23 @@ const ConnectedStateChip = ({ value }) => {
         className={classNames(classes.statusCip, classes.connected)}
         avatar={<CheckCircleIcon />}
         label={value}
-        helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
+        // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
-      <HelpToolTip classes={classes} value="3-connected" />
+      {/* <HelpToolTip classes={classes} value="3-connected" /> */}
+    </MenuItem>
+  );
+};
+
+const DisconnectedStateChip = ({ value }) => {
+  const classes = styles();
+  return (
+    <MenuItem value={value}>
+      <Chip
+        className={classNames(classes.statusCip, classes.disconnected)}
+        avatar={<DisconnectIcon fill={notificationColors.lightwarning} width={24} height={24} />}
+        label={value}
+        // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
+      />
     </MenuItem>
   );
 };
@@ -146,8 +235,9 @@ const IgnoredStateChip = ({ value }) => {
         className={classNames(classes.statusCip, classes.ignored)}
         avatar={<RemoveCircleIcon />}
         label={value}
-        helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
+        // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
+      {/* <HelpToolTip classes={classes} value="4-ignored" /> */}
     </MenuItem>
   );
 };
@@ -160,36 +250,72 @@ const DeletedStateChip = ({ value }) => {
         className={classNames(classes.statusCip, classes.deleted)}
         avatar={<DeleteForeverIcon />}
         label={value}
-        helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
+        // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
+      {/* <HelpToolTip classes={classes} value="7-deleted" /> */}
     </MenuItem>
   );
 };
 
-const HelpToolTip = ({ classes, value }) => {
-  const url = `https://docs.meshery.io/concepts/connections#${value}`;
-  const onClick = () => (e) => {
-    e.preventDefault();
-    window.open(url, '_blank');
-  };
+const MaintainanceStateChip = ({ value }) => {
+  const classes = styles();
   return (
-    <Tooltip onClick={onClick()} title={url}>
-      <HelpIcon className={classes.helpIcon} style={{ fontSize: '1.45rem', ...iconSmall }} />
-    </Tooltip>
+    <MenuItem value={value}>
+      <Chip
+        className={classNames(classes.statusCip, classes.maintenance)}
+        avatar={<HandymanIcon />}
+        label={value}
+        // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
+      />
+      {/* <HelpToolTip classes={classes} value="7-deleted" /> */}
+    </MenuItem>
   );
 };
+
+const NotFoundStateChip = ({ value }) => {
+  const classes = styles();
+  return (
+    <MenuItem value={value}>
+      <Chip
+        className={classNames(classes.statusCip, classes.notfound)}
+        avatar={<NotInterestedRoundedIcon />}
+        label={value}
+        // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
+      />
+      {/* <HelpToolTip classes={classes} value="7-deleted" /> */}
+    </MenuItem>
+  );
+};
+
+// const HelpToolTip = ({ classes, value }) => {
+//   const url = `https://docs.meshery.io/concepts/connections#${value}`;
+//   const onClick = () => (e) => {
+//     e.preventDefault();
+//     e.stopPropagation();
+//     window.open(url, '_blank');
+//   };
+//   return (
+//     <Tooltip title={url}>
+//       <IconButton onClick={onClick()} aria-label="help">
+//         <HelpIcon className={classes.helpIcon} style={{ fontSize: '1.45rem', ...iconSmall }} />
+//       </IconButton>
+//     </Tooltip>
+//   );
+// };
 
 const Default = ({ value }) => {
   const classes = styles();
 
-  <MenuItem value={value}>
-    <Chip
-      className={classNames(classes.statusChip, classes.discovered)}
-      value={value}
-      avatar={<ExploreIcon />}
-      label={value}
-    />
-  </MenuItem>;
+  return (
+    <MenuItem value={value}>
+      <Chip
+        className={classNames(classes.statusChip, classes.discovered)}
+        value={value}
+        avatar={<ExploreIcon />}
+        label={value}
+      />
+    </MenuItem>
+  );
 };
 
 function getStatusChip(status) {
@@ -206,6 +332,12 @@ function getStatusChip(status) {
       return <DiscoveredStateChip value={status} />;
     case 'deleted':
       return <DeletedStateChip value={status} />;
+    case 'maintenance':
+      return <MaintainanceStateChip value={status} />;
+    case 'disconnected':
+      return <DisconnectedStateChip value={status} />;
+    case 'not found':
+      return <NotFoundStateChip value={status} />;
     default:
       return <Default value={status} />;
   }

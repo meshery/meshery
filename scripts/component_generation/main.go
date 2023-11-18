@@ -295,8 +295,8 @@ func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, spreadsheet
 					continue
 				}
 				ahPkgs = append(ahPkgs, ap)
+				pkgsChan <- ahPkgs
 			}
-			pkgsChan <- ahPkgs
 		}
 		close(pkgsChan)
 	}()
@@ -381,7 +381,6 @@ func StartPipeline(in chan []artifacthub.AhPackage, csv chan string, spreadsheet
 				helmURL: ap.ChartUrl,
 			}
 		}
-
 	}
 	return nil
 }

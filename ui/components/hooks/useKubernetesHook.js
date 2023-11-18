@@ -133,7 +133,7 @@ export const useGetOperatorInfoQuery = ({ contextID }) => {
     NATSVersion: '',
   });
   const handleError = handleErrorGenerator(dispatch, notify);
-  const handleSuccess = handleSuccessGenerator(dispatch, notify);
+  // const handleSuccess = handleSuccessGenerator(dispatch, notify);
   const handleInfo = handleInfoGenerator(notify);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -144,7 +144,8 @@ export const useGetOperatorInfoQuery = ({ contextID }) => {
     const tempSubscription = fetchMesheryOperatorStatus({ k8scontextID: contextID }).subscribe({
       next: (res) => {
         setIsLoading(false);
-        handleSuccess('Meshery Operator status retrieved');
+
+        dispatch(updateProgress({ showProgress: false }));
         const [isReachable, operatorInfo] = getOperatorStatusFromQueryResult(res);
         setOperatorInfo({
           isReachable,
