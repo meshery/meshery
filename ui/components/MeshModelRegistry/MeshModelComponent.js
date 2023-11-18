@@ -324,16 +324,6 @@ const MeshModelComponent = ({
         >
           <Paper
             elevation={3}
-            className={`${StyleClass.overviewTab} ${animate ? StyleClass.overviewTabAnimate : ''}`}
-            onClick={() => {
-              setConvert(false);
-              setAnimate(false);
-            }}
-          >
-            Overview
-          </Paper>
-          <Paper
-            elevation={3}
             className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''} ${
               view === MODELS && animate ? StyleClass.activeTab : ''
             }`}
