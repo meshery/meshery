@@ -58,6 +58,7 @@ import theme from '../../themes/app';
 import { ConnectionChip, ConnectionStateChip } from './ConnectionChip';
 import InfoIcon from '@material-ui/icons/Info';
 import { SortableTableCell } from './common';
+import { getColumnValue } from '../../utils/utils';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -211,13 +212,20 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
           );
         },
         customBodyRender: (value, tableMeta) => {
-          const server = tableMeta.rowData[2] || tableMeta.rowData[1];
+          const server =
+            getColumnValue(tableMeta.rowData, 'metadata.server', columns) ||
+            getColumnValue(tableMeta.rowData, 'metadata.server_location', columns);
           return (
             <ConnectionChip
               tooltip={'Server: ' + server}
               title={value}
               status={tableMeta.rowData[7]}
-              onDelete={() => handleDeleteConnection(tableMeta.rowData[0], tableMeta.rowData[4])}
+              onDelete={() =>
+                handleDeleteConnection(
+                  getColumnValue(tableMeta.rowData, 'id', columns),
+                  getColumnValue(tableMeta.rowData, 'kind', columns),
+                )
+              }
               handlePing={() => {
                 if (tableMeta.rowData[4] === KUBERNETES) {
                   ping(tableMeta.rowData[3], tableMeta.rowData[2], tableMeta.rowData[0]);
@@ -392,7 +400,11 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
                   value={value}
                   onClick={(e) => e.stopPropagation()}
                   onChange={(e) =>
-                    handleStatusChange(e, tableMeta.rowData[0], tableMeta.rowData[4])
+                    handleStatusChange(
+                      e,
+                      getColumnValue(tableMeta.rowData, 'id', columns),
+                      getColumnValue(tableMeta.rowData, 'kind', columns),
+                    )
                   }
                   className={classes.statusSelect}
                   disableUnderline
@@ -436,7 +448,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
         customBodyRender: function CustomBody(_, tableMeta) {
           return (
             <div className={classes.centerContent}>
-              {tableMeta.rowData[4] === KUBERNETES ? (
+              {getColumnValue(tableMeta.rowData, 'kind', columns) === KUBERNETES ? (
                 <IconButton
                   aria-label="more"
                   id="long-button"
