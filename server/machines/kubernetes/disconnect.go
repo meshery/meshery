@@ -2,6 +2,7 @@ package kubernetes
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -11,35 +12,22 @@ import (
 	"github.com/layer5io/meshkit/models/events"
 )
 
-type DisconnectAction struct {}
+type DisconnectAction struct{}
 
-func(da *DisconnectAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
-	userUUID := uuid.FromStringOrNil(user.ID)
-
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromUser(userUUID) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
-	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
-	if err != nil {
-		return machines.NoOp, eventBuilder.Build(), err
-	}
-	
-	err = AssignClientSetToContext(machinectx, eventBuilder)
-	if err != nil {
-		return machines.NoOp, eventBuilder.Build(), err
-	}
-	
-	return machines.NoOp, eventBuilder.Build(), nil
+func (da *DisconnectAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
+	return machines.NoOp, nil, nil
 
 }
-func(da *DisconnectAction) Execute(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error)  {
+func (da *DisconnectAction) Execute(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
 	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
 	userUUID := uuid.FromStringOrNil(user.ID)
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromUser(userUUID) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
+
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
+		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
@@ -51,14 +39,12 @@ func(da *DisconnectAction) Execute(ctx context.Context, machineCtx interface{}) 
 	context.AfterFunc(_ctx, func() {
 		machinectx.MesheryCtrlsHelper.UpdateCtxControllerHandlers(k8sContexts)
 	})
-	// ctx = context.WithValue(ctx, models.MesheryControllerHandlersKey, machinectx. MesheryCtrlsHelper.GetControllerHandlersForEachContext()) // not required verify once
 
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 	connection, statusCode, err := machinectx.Provider.UpdateConnectionStatusByID(token, uuid.FromStringOrNil(machinectx.K8sContext.ConnectionID), connections.DISCONNECTED)
 
-	// peform error handling and event publishing
 	if err != nil {
-		return machines.NoOp, eventBuilder.Build(), err
+		return machines.NoOp, eventBuilder.WithDescription(fmt.Sprintf("Disconnect operation succeeded but failed to update the record for the connection with context \"%s\" at %s", machinectx.K8sContext.Name, machinectx.K8sContext.Server)).WithMetadata(map[string]interface{}{"error": err}).Build(), err
 	}
 
 	machinectx.log.Debug("HTTP status:", statusCode, "updated status for connection", connection.ID)
@@ -67,6 +53,6 @@ func(da *DisconnectAction) Execute(ctx context.Context, machineCtx interface{}) 
 	return machines.NoOp, eventBuilder.Build(), nil
 }
 
-func(da *DisconnectAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
+func (da *DisconnectAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
 	return machines.NoOp, nil, nil
 }

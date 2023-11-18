@@ -252,38 +252,39 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 			EventBroadcaster: h.config.EventBroadcaster,
 			RegistryManager: h.registryManager,
 		}
-
-		err = InitializeMachineWithContext(
-			machineCtx,
-			req.Context(),
-			id,
-			smInstanceTracker,
-			h.log,
-			machines.StatusToEvent(status),
-			false,
-		)
-
+		
+		inst, ok := smInstanceTracker.ConnectToInstanceMap[id]
+		if !ok {
+			inst, err = InitializeMachineWithContext(
+				machineCtx,
+				req.Context(),
+				id,
+				smInstanceTracker,
+				h.log,
+			)
+			if err != nil {
+				event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)).WithMetadata(map[string]interface{}{
+					"error": err,
+				}).Build()
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
+				continue
+			}
+		}
+		
+		event, err := inst.SendEvent(req.Context(), machines.StatusToEvent(status), nil)
 		if err != nil {
-			eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)).WithMetadata(map[string]interface{}{
-				"error": err,
-			})
+			h.log.Error(err)
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+			continue
 		}
 
 		if status == connections.DELETED {
 			delete(smInstanceTracker.ConnectToInstanceMap, id)
 		}
-		// updatedConnection, statusCode, err = provider.UpdateConnectionStatusByID(token, id, status)
-		// if err != nil {
-		// 	eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)).WithMetadata(map[string]interface{}{
-		// 		"error": err,
-		// 	})
-		// 	// Get the connection name as id doesn't convey much to the user.
-		// } else {
-		// 	eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Connection \"%s\" status updated to %s for %s", updatedConnection.Name, status, id))
-		// 	go h.config.K8scontextChannel.PublishContext()
-		// }
 
-		event := eventBuilder.Build()
+		event = eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Processing status update to \"%s\" for connection %s", status, k8scontext.Name)).Build()
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
 	}

@@ -246,9 +246,9 @@ class DashboardComponent extends React.Component {
     let k8s = self.getK8sClusterIds();
     if (self._isMounted) {
       const mesheryControllersStatusSubscription = subscribeMesheryControllersStatus((res) => {
-        console.log('mcs', res);
+        console.log('mcs results', res);
       }, k8s);
-      console.log(',,,', mesheryControllersStatusSubscription);
+      console.log('mesheryControllersStatusSubscription', mesheryControllersStatusSubscription);
     }
   };
 
@@ -284,7 +284,6 @@ class DashboardComponent extends React.Component {
       this.initDashboardClusterResourcesSubscription();
       this.initNamespaceQuery();
       this.initMesheryControllerStatusSubscription();
-      console.log('test----------------------lll2323232');
     }
   };
 

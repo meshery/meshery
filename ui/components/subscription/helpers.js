@@ -1,4 +1,4 @@
-import subscribeMesheryControllersStatus from '../graphql/subscriptions/MesheryControllersStatusSubscription';
+import subscribeOperatorStatusEvents from '../graphql/subscriptions/OperatorStatusSubscription';
 import { isOperatorStateSubscriptionDataUpdated } from './comparatorFns';
 import { mergeOperatorStateSubscription } from './mergeFns';
 
@@ -15,7 +15,7 @@ export const fnMapping = {
   OPERATOR_EVENT_SUBSCRIPTION: {
     eventName: 'operator',
     comparatorFn: isOperatorStateSubscriptionDataUpdated,
-    subscriptionFn: subscribeMesheryControllersStatus,
+    subscriptionFn: subscribeOperatorStatusEvents,
     mergeFn: mergeOperatorStateSubscription,
   },
 };

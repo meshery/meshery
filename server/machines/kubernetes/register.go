@@ -2,6 +2,7 @@ package kubernetes
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/machines"
@@ -15,33 +16,19 @@ type RegisterAction struct {}
 
 // Execute On Entry and Exit should not return next eventtype i suppose, look again.
 func(ra *RegisterAction) ExecuteOnEntry(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
-	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
-	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
-	userUUID := uuid.FromStringOrNil(user.ID)
-	
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromUser(userUUID) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
-	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
-	if err != nil {
-		return machines.NoOp, eventBuilder.Build(), err
-	}
-	
-	err = AssignClientSetToContext(machinectx, eventBuilder)
-	if err != nil {
-		return machines.NotFound, eventBuilder.Build(), err
-	}
-	
-	return machines.NoOp, eventBuilder.Build(), nil
+	return machines.NoOp, nil, nil
 }
 
 func(ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
 	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
 	userUUID := uuid.FromStringOrNil(user.ID)
-	eventBuilder := events.NewEvent().ActedUpon(uuid.Nil).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromUser(userUUID) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
+	eventBuilder := events.NewEvent().ActedUpon(uuid.Nil).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
 
 	
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
+		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 	
@@ -49,16 +36,22 @@ func(ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}) (m
 	err = machinectx.K8sContext.PingTest()
 	
 	if err != nil {
+		eventBuilder.WithDescription(fmt.Sprintf("Unable to ping kubernetes context %s at %s", machinectx.K8sContext.Name,machinectx.K8sContext.Server)).WithMetadata(map[string]interface{}{"error": err})
 		machinectx.log.Error(err)	
-		// peform error handling and event publishing
-		return machines.NotFound, nil, err
+		return machines.NotFound, eventBuilder.Build(), err
 	}
+
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 	context := []*models.K8sContext{&machinectx.K8sContext}
 
 	connection, statusCode, err := machinectx.Provider.UpdateConnectionStatusByID(token, uuid.FromStringOrNil(machinectx.K8sContext.ConnectionID), connections.REGISTERED)
+
+	if err != nil {
+		return machines.NoOp, eventBuilder.WithDescription(fmt.Sprintf("Failed to register the connection \"%s\" at %s", machinectx.K8sContext.Name, machinectx.K8sContext.Server)).WithMetadata(map[string]interface{}{"error": err}).Build(), err
+	}
+
 	machinectx.K8sCompRegHelper.UpdateContexts(context).RegisterComponents(context, []models.K8sRegistrationFunction{core.RegisterK8sMeshModelComponents}, machinectx.RegistryManager, machinectx.EventBroadcaster, machinectx.Provider, user.ID, true)
-	// peform error handling and event publishing
+	
 	if err != nil {
 		return machines.NoOp, eventBuilder.Build(), err
 	}

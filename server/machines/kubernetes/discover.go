@@ -2,6 +2,7 @@ package kubernetes
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/machines"
@@ -22,10 +23,11 @@ func(da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}) (m
 	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
 	userUUID := uuid.FromStringOrNil(user.ID)
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromUser(userUUID) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.").WithSeverity(events.Error)  
 
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
+		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
@@ -35,7 +37,9 @@ func(da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}) (m
 	err = k8sContext.AssignServerID(handler)
 	// perofmr event publishinh and err handling
 	if err != nil {
-		return machines.NotFound, nil, err
+		return machines.NotFound, eventBuilder.WithDescription(fmt.Sprintf("Could not assign server id, skipping context %s", k8sContext.Name)).WithMetadata(map[string]interface{}{
+				"error": err,
+			}).Build(), err
 	}
 
 	err = k8sContext.AssignVersion(handler)
@@ -48,7 +52,7 @@ func(da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}) (m
 	// peform error handling and event publishing
 	connection, err := machinectx.Provider.SaveK8sContext(token, machinectx.K8sContext)
 	if err != nil {
-		return machines.NoOp, eventBuilder.Build(), err
+		return machines.NoOp, eventBuilder.WithDescription(fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", k8sContext.Name, k8sContext.Server)).WithMetadata(map[string]interface{}{"error": err}).Build(), err
 	}
 	
 	machinectx.log.Debug("exiting execute func from discovered state", connection)

@@ -10,7 +10,6 @@ import (
 	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/models/events"
 )
 
@@ -113,15 +112,23 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 		RegistryManager: h.registryManager,
 	}
 	smInstanceTracker.mx.Lock()
-	err = InitializeMachineWithContext(
-		machineCtx,
-		req.Context(),
-		uuid.FromStringOrNil(contextID),
-		smInstanceTracker,
-		h.log,
-		machines.StatusToEvent(connections.DELETED),
-		false,
-	)
+	connectionUUID := uuid.FromStringOrNil(contextID)
+	inst, ok := smInstanceTracker.ConnectToInstanceMap[connectionUUID]
+	if !ok {
+		inst, err = InitializeMachineWithContext(
+			machineCtx,
+			req.Context(),
+			connectionUUID,
+			smInstanceTracker,
+			h.log,
+		)
+		if err != nil {
+			h.log.Error(err)
+		}
+	}
+	event, err = inst.SendEvent(req.Context(), machines.Delete, nil)
+	h.log.Error(err)
+	h.log.Debug(event)
 	smInstanceTracker.mx.Unlock()
 
 	if err != nil {

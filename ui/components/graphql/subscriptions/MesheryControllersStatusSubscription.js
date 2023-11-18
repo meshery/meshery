@@ -12,7 +12,6 @@ const mesheryControllersStatusSubscription = graphql`
 `;
 
 export default function subscribeMesheryControllersStatus(dataCB, variables) {
-  console.log('sasasda');
   const environment = createRelayEnvironment({});
   return requestSubscription(environment, {
     subscription: mesheryControllersStatusSubscription,

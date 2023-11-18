@@ -2,21 +2,18 @@
 package handlers
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"path/filepath"
 
-	mutil "github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
 
 	"github.com/layer5io/meshery/server/models/connections"
 	mcore "github.com/layer5io/meshery/server/models/meshmodel/core"
-	meshmodelv1alpha1 "github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
+
 
 	// for GKE kube API authentication
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
@@ -25,9 +22,9 @@ import (
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
-	putils "github.com/layer5io/meshery/server/models/pattern/utils"
+
 	"github.com/layer5io/meshkit/models/events"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
+
 	"github.com/layer5io/meshkit/utils"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
@@ -139,24 +136,25 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 				saveK8sContextResponse.IgnoredContexts = append(saveK8sContextResponse.IgnoredContexts, *ctx)
 				metadata["description"] = fmt.Sprintf("Kubernetes context \"%s\" is set to ignored state.", ctx.Name)
 			} else if status == connections.DISCOVERED {
-				fmt.Println("test;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;")
 				saveK8sContextResponse.RegisteredContexts = append(saveK8sContextResponse.RegisteredContexts, *ctx)
 				metadata["description"] = fmt.Sprintf("Connection registered with kubernetes context \"%s\" at %s.", ctx.Name, ctx.Server)
 			}
 
-			err := InitializeMachineWithContext(
-				machineCtx,
-				req.Context(),
-				connection.ID,
-				smInstanceTracker,
-				h.log,
-				machines.StatusToEvent(status),
-				false,
-			)
+			inst, ok := smInstanceTracker.ConnectToInstanceMap[connection.ID]
+			if !ok {
+				inst, err = InitializeMachineWithContext(
+					machineCtx,
+					req.Context(),
+					connection.ID,
+					smInstanceTracker,
+					h.log,
+				)
+				if err != nil {
+					h.log.Error(err)
+				}
+			}
+			event, err := inst.SendEvent(req.Context(), machines.StatusToEvent(status), nil)
 			if err != nil {
-				event := eventBuilder.FromSystem(*h.SystemID).ActedUpon(connection.ID).FromUser(userID).WithAction("management").WithCategory("system").WithSeverity(events.Critical).WithMetadata(map[string]interface{}{
-					"error": err,
-				}).WithDescription(fmt.Sprintf("Unable to transition to %s", status)).Build()
 				_ = provider.PersistEvent(event)
 				go h.config.EventBroadcaster.Publish(userID, event)
 			}
@@ -307,7 +305,7 @@ func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Reques
 	}
 
 	contexts := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, map[string]interface{}{}) // here we are not concerned for the events becuase inside the middleware the contexts would have been verified.
-	h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{RegisterK8sMeshModelComponents}, h.registryManager, h.config.EventBroadcaster, provider, user.ID, false)
+	h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{mcore.RegisterK8sMeshModelComponents}, h.registryManager, h.config.EventBroadcaster, provider, user.ID, false)
 	if _, err = w.Write([]byte(http.StatusText(http.StatusAccepted))); err != nil {
 		logrus.Error(ErrWriteResponse)
 		logrus.Error(err)
@@ -425,77 +423,6 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 	go h.config.EventBroadcaster.Publish(userUUID, event)
 
 	return contexts, nil
-}
-
-func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context, config []byte, ctxID string, connectionID string, userID string, mesheryInstanceID uuid.UUID, reg *meshmodel.RegistryManager, ec *models.Broadcast, ctxName string) (err error) {
-	connectionUUID := uuid.FromStringOrNil(connectionID)
-	userUUID := uuid.FromStringOrNil(userID)
-
-	man, err := mcore.GetK8sMeshModelComponents(config)
-	if err != nil {
-		return ErrCreatingKubernetesComponents(err, ctxID)
-	}
-	if man == nil {
-		return ErrCreatingKubernetesComponents(errors.New("generated components are nil"), ctxID)
-	}
-	count := 0
-	for _, c := range man {
-		writeK8sMetadata(&c, reg)
-		err = reg.RegisterEntity(meshmodel.Host{
-			Hostname: "kubernetes",
-			Metadata: ctxID,
-		}, c)
-		count++
-	}
-	event := events.NewEvent().ActedUpon(connectionUUID).WithCategory("kubernetes_components").WithAction("registration").FromSystem(mesheryInstanceID).FromUser(userUUID).WithSeverity(events.Informational).WithDescription(fmt.Sprintf("%d Kubernetes components registered for %s", count, ctxName)).WithMetadata(map[string]interface{}{
-		"doc": "https://docs.meshery.io/tasks/lifecycle-management",
-	}).Build()
-
-	_ = (*provider).PersistEvent(event)
-	ec.Publish(userUUID, event)
-	return
-}
-
-const k8sMeshModelPath = "../meshmodel/kubernetes/model_template.json"
-
-var k8sMeshModelMetadata = make(map[string]interface{})
-
-func writeK8sMetadata(comp *meshmodelv1alpha1.ComponentDefinition, reg *meshmodel.RegistryManager) {
-	ent, _, _ := reg.GetEntities(&meshmodelv1alpha1.ComponentFilter{
-		Name:       comp.Kind,
-		APIVersion: comp.APIVersion,
-	})
-	//If component was not available in the registry, then use the generic model level metadata
-	if len(ent) == 0 {
-		putils.MergeMaps(comp.Metadata, k8sMeshModelMetadata)
-		mutil.WriteSVGsOnFileSystem(comp)
-	} else {
-		existingComp, ok := ent[0].(meshmodelv1alpha1.ComponentDefinition)
-		if !ok {
-			putils.MergeMaps(comp.Metadata, k8sMeshModelMetadata)
-			return
-		}
-		putils.MergeMaps(comp.Metadata, existingComp.Metadata)
-		comp.Model = existingComp.Model
-	}
-}
-
-// Caches k8sMeshModel metadatas in memory to use at the time of dynamic k8s component generation
-func init() {
-	f, err := os.Open(filepath.Join(k8sMeshModelPath))
-	if err != nil {
-		return
-	}
-	byt, err := io.ReadAll(f)
-	if err != nil {
-		return
-	}
-	m := make(map[string]interface{})
-	err = json.Unmarshal(byt, &m)
-	if err != nil {
-		return
-	}
-	k8sMeshModelMetadata = m
 }
 
 func readK8sConfigFromBody(req *http.Request) (*[]byte, error) {

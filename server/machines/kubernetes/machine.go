@@ -44,6 +44,7 @@ func Connected(log logger.Handler) machines.State {
 	return machines.State{
 		Events: machines.Events{
 			machines.Disconnect: machines.DISCONNECTED,
+			machines.Delete: machines.DELETED,
 			machines.NotFound: machines.NOTFOUND,
 		},
 		Action: &ConnectAction{},

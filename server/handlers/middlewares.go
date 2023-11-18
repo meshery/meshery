@@ -12,7 +12,6 @@ import (
 	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/events"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -273,12 +272,23 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 		}
 		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
 		smInstanceTracker.mx.Lock()
-		err := InitializeMachineWithContext(machineCtx, ctx, connectionUUID, smInstanceTracker, h.log, machines.Discovery, true)
+		inst, ok := smInstanceTracker.ConnectToInstanceMap[connectionUUID]
+		if !ok {
+			inst, err = InitializeMachineWithContext(
+				machineCtx,
+				ctx,
+				connectionUUID,
+				smInstanceTracker,
+				h.log,
+			)
+			if err != nil {
+				h.log.Error(err)
+			}
+		}
+		inst.ResetState()
+		event, err := inst.SendEvent(ctx, machines.Discovery, nil)
 		if err != nil {
-			event := events.NewEvent().FromSystem(*h.SystemID).ActedUpon(connectionUUID).FromUser(userUUID).WithAction("management").WithCategory("system").WithSeverity(events.Critical).WithMetadata(map[string]interface{}{
-				"error": err,
-			}).WithDescription(fmt.Sprintf("Unable to transition to %s", machines.DISCOVERED)).Build()
-				_ = provider.PersistEvent(event)
+			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
 		}
 		smInstanceTracker.mx.Unlock()
@@ -297,12 +307,23 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 		}
 		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
 		smInstanceTracker.mx.Lock()
-		err := InitializeMachineWithContext(machineCtx, ctx, connectionUUID, smInstanceTracker, h.log, machines.Discovery, true) 
+		inst, ok := smInstanceTracker.ConnectToInstanceMap[connectionUUID]
+		if !ok {
+			inst, err = InitializeMachineWithContext(
+				machineCtx,
+				ctx,
+				connectionUUID,
+				smInstanceTracker,
+				h.log,
+			)
+			if err != nil {
+				h.log.Error(err)
+			}
+		}
+		inst.ResetState()
+		event, err := inst.SendEvent(ctx, machines.Discovery, nil)
 		if err != nil {
-			event := events.NewEvent().FromSystem(*h.SystemID).ActedUpon(connectionUUID).FromUser(userUUID).WithAction("management").WithCategory("system").WithSeverity(events.Critical).WithMetadata(map[string]interface{}{
-				"error": err,
-			}).WithDescription(fmt.Sprintf("Unable to transition to %s", machines.DISCOVERED)).Build()
-				_ = provider.PersistEvent(event)
+			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
 		}
 		smInstanceTracker.mx.Unlock()

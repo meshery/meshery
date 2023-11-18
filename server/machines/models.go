@@ -2,9 +2,11 @@ package machines
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
 	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
 )
@@ -129,13 +131,17 @@ func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 	return DefaultState, ErrInvalidTransitionEvent(sm.CurrentState, event)
 }
 
-// This should handle error and event publishing . THis should return the events.Event and error and the func in which SendEvent is called should publish the event.
-// The statusCode for eg: in updateSconnectionStatusById is lost so the func that calls send event will not know the original statuscode, we will be sending 500 only, if possible capture the statuscode inside the event itself.
+// This should handle error and event publishing . This should return the events.Event and error. The func invoking the SendEvent should publish the event.
 
-func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payload interface{}) error {
+func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payload interface{}) (*events.Event, error) {
+	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
+	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	userUUID := uuid.FromStringOrNil(user.ID)
+	
+	defaultEvent := events.NewEvent().WithDescription(fmt.Sprintf("Invalid status change requested for connection type %s.", sm.Name)).ActedUpon(sm.ID).FromUser(userUUID).FromSystem(*sysID).WithSeverity(events.Error)
 	sm.mx.Lock()
 	defer sm.mx.Unlock()
-	sm.Log.Info("entering event loop")
+	var event *events.Event
 	for {
 		if eventType == NoOp {
 			break
@@ -144,55 +150,56 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		nextState, err := sm.getNextState(eventType)
 		if err != nil {
 			sm.Log.Error(err)
-			return err
+			return defaultEvent.WithMetadata(map[string]interface{}{"error": err}).Build(), err
 		}
 		sm.Log.Info("transitioning to next state: ", nextState)
 
 		// next state to transition
 		state, ok := sm.States[nextState]
 		if !ok || state.Action == nil {
-			return ErrInvalidTransition(sm.CurrentState, nextState)
+			return defaultEvent.WithMetadata(map[string]interface{}{"error": ErrInvalidTransition(sm.CurrentState, nextState)}).Build(), ErrInvalidTransition(sm.CurrentState, nextState)
 		}
 
-		// Execute exit actions before entreing new state.
+		// Execute exit actions before entering new state.
 		action := sm.States[sm.CurrentState].Action
 		if action != nil {
-			_, _, err := action.ExecuteOnExit(ctx, sm.Context)
+			_, event, err = action.ExecuteOnExit(ctx, sm.Context)
 			if err != nil {
 				sm.Log.Error(err)
-				break
+				return event, err
 			}
 		}
 
 		
 		if state.Action != nil {
-
+			var et EventType
 			// Execute entry actions for the state entered.
-			et, event, err := state.Action.ExecuteOnEntry(ctx, sm.Context)
+			et, event, err = state.Action.ExecuteOnEntry(ctx, sm.Context)
 			sm.Log.Info("entry action executed, event emitted ", et)
 
 			if err != nil {
 				sm.Log.Error(err)
-				// event publishing
 				sm.Log.Info(event)
-				eventType = et
-				
+				return event, err
 			} else {	
 				eventType, event, err = state.Action.Execute(ctx, sm.Context)
 				sm.Log.Info("inside action executed, event emitted ", et)
 				if err != nil {
 					sm.Log.Error(err)
-					// event publishing
 					sm.Log.Info(event)
+					return event, err
 				}
 			}
 		}
 
 		sm.PreviousState = sm.CurrentState
 		sm.CurrentState = nextState
-		sm.Log.Info("next event to be emitted ", eventType)
-		sm.Log.Info("previous state for connection id ", sm.ID, sm.PreviousState)
-		sm.Log.Info("current state for state machine type ", sm.Name, sm.CurrentState)
 	}
-	return nil
+
+	
+	event = events.NewEvent().WithDescription(fmt.Sprintf("%s connection changed to %s", sm.Name, sm.CurrentState)).FromSystem(*sysID).FromUser(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").WithMetadata(map[string]interface{}{
+		"previous_status": sm.PreviousState,
+		"current_status": sm.CurrentState,
+	}).WithSeverity(events.Informational).Build()
+	return event, nil
 }

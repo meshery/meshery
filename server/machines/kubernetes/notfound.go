@@ -2,6 +2,7 @@ package kubernetes
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/machines"
@@ -21,18 +22,18 @@ func(ia *NotFoundAction) Execute(ctx context.Context, machineCtx interface{}) (m
 	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
 	userUUID := uuid.FromStringOrNil(user.ID)
 	
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromUser(userUUID) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
 
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {
+		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 	connection, statusCode, err := machinectx.Provider.UpdateConnectionStatusByID(token, uuid.FromStringOrNil(machinectx.K8sContext.ConnectionID), connections.NOTFOUND)
 
-	// peform error handling and event publishing
 	if err != nil {
-		return machines.NoOp, eventBuilder.Build(), err
+		return machines.NoOp, eventBuilder.WithDescription(fmt.Sprintf("Connection with the context \"%s\" at \"%s\" is unreachable.", machinectx.K8sContext.Name, machinectx.K8sContext.Server)).Build(), err
 	}
 
 	machinectx.log.Debug("HTTP status:", statusCode, "updated status for connection", connection.ID)
