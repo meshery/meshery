@@ -10,7 +10,6 @@ import {
   Table,
   Grid,
   TableRow,
-  TableSortLabel,
   IconButton,
   Typography,
   Switch,
@@ -58,6 +57,7 @@ import useKubernetesHook from '../hooks/useKubernetesHook';
 import theme from '../../themes/app';
 import { ConnectionChip, ConnectionStateChip } from './ConnectionChip';
 import InfoIcon from '@material-ui/icons/Info';
+import { SortableTableCell } from './common';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -359,23 +359,25 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
       options: {
         sort: true,
         sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ index, ...column }) {
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index}>
-              <Tooltip title="Click to know about connection and status" placement="top">
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <b>{column.label}</b>
-                  <InfoIcon
-                    color={theme.palette.secondary.iconMain}
-                    style={iconSmall}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      window.open(url, '_blank');
-                    }}
-                  />
-                </div>
-              </Tooltip>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+              icon={
+                <InfoIcon
+                  color={theme.palette.secondary.iconMain}
+                  style={iconSmall}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    window.open(url, '_blank');
+                  }}
+                />
+              }
+              tooltip="Click to know about connection and status"
+            />
           );
         },
         customBodyRender: function CustomBody(value, tableMeta) {
@@ -927,19 +929,6 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
     </>
   );
 }
-
-const SortableTableCell = ({ index, columnData, columnMeta, onSort }) => {
-  return (
-    <TableCell key={index} onClick={onSort}>
-      <TableSortLabel
-        active={columnMeta.name === columnData.name}
-        direction={columnMeta.direction || 'asc'}
-      >
-        <b>{columnData.label}</b>
-      </TableSortLabel>
-    </TableCell>
-  );
-};
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
