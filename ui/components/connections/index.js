@@ -211,10 +211,24 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
           );
         },
         customBodyRender: (value, tableMeta) => {
-          const server = tableMeta.rowData[2] || tableMeta.rowData[1];
+          let image;
+
+          switch (tableMeta.rowData[4]) {
+            case 'kubernetes':
+              image = '/static/img/kubernetes.svg';
+              break;
+            case 'meshery':
+              image = '/static/img/all_mesh.svg';
+              break;
+            case 'github':
+              image = '/static/img/github_black.svg';
+              break;
+            default:
+              image = '/static/img/all_mesh.svg'; // Provide a default icon if needed
+          }
           return (
             <ConnectionChip
-              tooltip={'Server: ' + server}
+              tooltip={value}
               title={value}
               status={tableMeta.rowData[7]}
               onDelete={() => handleDeleteConnection(tableMeta.rowData[0])}
@@ -223,8 +237,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
                   ping(tableMeta.rowData[3], tableMeta.rowData[2], tableMeta.rowData[0]);
                 }
               }}
-              iconSrc={'/static/img/kubernetes.svg'}
-              style={{ maxWidth: '120px' }}
+              iconSrc={image}
             />
           );
         },
