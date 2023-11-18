@@ -224,7 +224,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
               image = '/static/img/github_black.svg';
               break;
             default:
-              image = '/static/img/all_mesh.svg'; // Provide a default icon if needed
+              image = '/static/img/all_mesh.svg';
           }
           return (
             <ConnectionChip
