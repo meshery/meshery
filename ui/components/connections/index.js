@@ -217,7 +217,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
               tooltip={'Server: ' + server}
               title={value}
               status={tableMeta.rowData[7]}
-              onDelete={() => handleDeleteConnection(tableMeta.rowData[0])}
+              onDelete={() => handleDeleteConnection(tableMeta.rowData[0], tableMeta.rowData[4])}
               handlePing={() => {
                 if (tableMeta.rowData[4] === KUBERNETES) {
                   ping(tableMeta.rowData[3], tableMeta.rowData[2], tableMeta.rowData[0]);
@@ -595,11 +595,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
     });
   };
 
-  const handleStatusChange = (e, connectionId, connectionKind) => {
-    e.stopPropagation();
-    const requestBody = JSON.stringify({
-      [connectionId]: e.target.value,
-    });
+  const updateConnectionStatus = (connectionKind, requestBody) => {
     dataFetch(
       `/api/integrations/connections/${connectionKind}/status`,
       {
@@ -615,49 +611,65 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
     );
   };
 
+  const handleStatusChange = async (e, connectionId, connectionKind) => {
+    e.stopPropagation();
+    let response = await modalRef.current.show({
+      title: `Connection status transition`,
+      subtitle: `Are you sure that you want to transform the connection status to ${e.target.value.toUpperCase()}?`,
+      options: ['Confirm', 'No'],
+      variant: PROMPT_VARIANTS.CONFIRMATION,
+    });
+    if (response === 'Confirm') {
+      const requestBody = JSON.stringify({
+        [connectionId]: e.target.value,
+      });
+      updateConnectionStatus(connectionKind, requestBody);
+    }
+  };
+
+  const handleDeleteConnection = async (connectionId, connectionKind) => {
+    if (connectionId) {
+      let response = await modalRef.current.show({
+        title: `Delete Connection`,
+        subtitle: `Are you sure that you want to delete the connection?`,
+        options: ['Delete', 'No'],
+        variant: PROMPT_VARIANTS.DANGER,
+      });
+      if (response === 'Delete') {
+        const requestBody = JSON.stringify({
+          [connectionId]: CONNECTION_STATES.DELETED,
+        });
+        updateConnectionStatus(connectionKind, requestBody);
+      }
+    }
+  };
+
   const handleDeleteConnections = async (selected) => {
     if (selected) {
       let response = await modalRef.current.show({
         title: `Delete Connections`,
-        subtitle: `Are you sure that you want to delete connections"?`,
+        subtitle: `Are you sure that you want to delete the connections?`,
         options: ['Delete', 'No'],
         variant: PROMPT_VARIANTS.DANGER,
       });
       if (response === 'Delete') {
+        // let bulkConnections = {}
+        // selected.data.map(({ index }) => {
+        //   bulkConnections = {
+        //     ...bulkConnections,
+        //     [connections[index].id]: CONNECTION_STATES.DELETED
+        //   };
+        // })
+        // const requestBody = JSON.stringify(bulkConnections);
+        // updateConnectionStatus(requestBody);
         selected.data.map(({ index }) => {
-          deleteConnection(connections[index].id);
+          const requestBody = JSON.stringify({
+            [connections[index].id]: CONNECTION_STATES.DELETED,
+          });
+          updateConnectionStatus(connections[index].kind, requestBody);
         });
       }
     }
-  };
-
-  const handleDeleteConnection = async (id) => {
-    if (id) {
-      let response = await modalRef.current.show({
-        title: `Delete Connection`,
-        subtitle: `Are you sure that you want to delete connection"?`,
-        options: ['Delete', 'No'],
-        variant: PROMPT_VARIANTS.DANGER,
-      });
-      if (response === 'Delete') {
-        deleteConnection(id);
-      }
-    }
-  };
-
-  const deleteConnection = (connectionId) => {
-    dataFetch(
-      `/api/integrations/connections/${connectionId}`,
-      {
-        method: 'DELETE',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-      },
-      () => {
-        getConnections(page, pageSize, search, sortOrder);
-      },
-      handleError(ACTION_TYPES.DELETE_CONNECTION),
-    );
   };
 
   const handleActionMenuOpen = (event, tableMeta) => {
