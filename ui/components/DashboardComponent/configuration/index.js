@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import { iconMedium } from '../../../css/icons.styles';
 import { withRouter } from 'next/router';
-import StandardConfigTable, { ConfigTypes } from './config';
+import StandardConfigTable, { ConfigurationConfigTable } from './config';
 import { withNotify } from '../../../utils/hooks/useNotification';
 
 const styles = (theme) => ({
@@ -126,14 +126,14 @@ const Config = (props) => {
             indicatorColor="primary"
             textColor="primary"
           >
-            {Object.keys(ConfigTypes).map((key, index) => {
+            {Object.keys(ConfigurationConfigTable()).map((key, index) => {
               return (
-                <Tooltip title={`${ConfigTypes[key].name}`} placement="top">
+                <Tooltip title={`${ConfigurationConfigTable()[key].name}`} placement="top">
                   <Tab
                     key={index}
                     className={classes.tab}
                     icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
-                    label={ConfigTypes[key].name}
+                    label={ConfigurationConfigTable()[key].name}
                     data-cy="tabServiceMeshes"
                   />
                 </Tooltip>
@@ -141,7 +141,7 @@ const Config = (props) => {
             })}
           </Tabs>
         </Paper>
-        {Object.keys(ConfigTypes).map((key, index) => {
+        {Object.keys(ConfigurationConfigTable()).map((key, index) => {
           return (
             tabVal === index && (
               <TabContainer>

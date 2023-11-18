@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import { iconMedium } from '../../../css/icons.styles';
 import { withRouter } from 'next/router';
-import StandardNetworkTable, { NetworkTypes } from './config';
+import StandardNetworkTable, { NetWorkConfigTable } from './config';
 import { withNotify } from '../../../utils/hooks/useNotification';
 
 const styles = (theme) => ({
@@ -126,14 +126,14 @@ const Network = (props) => {
             indicatorColor="primary"
             textColor="primary"
           >
-            {Object.keys(NetworkTypes).map((key, index) => {
+            {Object.keys(NetWorkConfigTable()).map((key, index) => {
               return (
-                <Tooltip title={`${NetworkTypes[key].name}`} placement="top">
+                <Tooltip title={`${NetWorkConfigTable()[key].name}`} placement="top">
                   <Tab
                     key={index}
                     className={classes.tab}
                     icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
-                    label={NetworkTypes[key].name}
+                    label={NetWorkConfigTable()[key].name}
                     data-cy="tabServiceMeshes"
                   />
                 </Tooltip>
@@ -141,7 +141,7 @@ const Network = (props) => {
             })}
           </Tabs>
         </Paper>
-        {Object.keys(NetworkTypes).map((key, index) => {
+        {Object.keys(NetWorkConfigTable()).map((key, index) => {
           return (
             tabVal === index && (
               <TabContainer>

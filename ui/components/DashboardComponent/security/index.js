@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import { iconMedium } from '../../../css/icons.styles';
 import { withRouter } from 'next/router';
-import StandardSecurityTable, { SecurityTypes } from './config';
+import StandardSecurityTable, { SecurityTypesConfig } from './config';
 import { withNotify } from '../../../utils/hooks/useNotification';
 
 const styles = (theme) => ({
@@ -126,14 +126,14 @@ const Security = (props) => {
             indicatorColor="primary"
             textColor="primary"
           >
-            {Object.keys(SecurityTypes).map((key, index) => {
+            {Object.keys(SecurityTypesConfig()).map((key, index) => {
               return (
-                <Tooltip title={`${SecurityTypes[key].name}`} placement="top">
+                <Tooltip title={`${SecurityTypesConfig()[key].name}`} placement="top">
                   <Tab
                     key={index}
                     className={classes.tab}
                     icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
-                    label={SecurityTypes[key].name}
+                    label={SecurityTypesConfig()[key].name}
                     data-cy="tabServiceMeshes"
                   />
                 </Tooltip>
@@ -141,7 +141,7 @@ const Security = (props) => {
             })}
           </Tabs>
         </Paper>
-        {Object.keys(SecurityTypes).map((key, index) => {
+        {Object.keys(SecurityTypesConfig()).map((key, index) => {
           return (
             tabVal === index && (
               <TabContainer>

@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { TableCell, TableSortLabel } from '@material-ui/core';
 import dataFetch from '../../../lib/data-fetch';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
@@ -18,50 +17,11 @@ const ACTION_TYPES = {
   },
 };
 
-export const NetworkTypes = {
-  Service: {
-    name: 'Service',
-    columns: [],
-  },
-  Endpoints: {
-    name: 'Endpoints',
-    columns: [],
-  },
-  Ingress: {
-    name: 'Ingress',
-    columns: [],
-  },
-  IngressClass: {
-    name: 'IngressClass',
-    columns: [],
-  },
-  NetworkPolicy: {
-    name: 'NetworkPolicy',
-    columns: [],
-  },
-};
+const ALL_SERVICE = 'all';
+const SINGLE_SERVICE = 'single';
 
-const StandardNetworkTable = (props) => {
-  console.log(props);
-  const { classes, updateProgress, k8sConfig, workloadType } = props;
-  const ALL_SERVICE = 'all';
-  const SINGLE_SERVICE = 'single';
-  const [meshSyncResources, setMeshSyncResources] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(0);
-  const [count, setCount] = useState(0);
-  const [pageSize, setPageSize] = useState(0);
-  const [search, setSearch] = useState('');
-  const [sortOrder, setSortOrder] = useState('');
-  const [selectedResource, setSelectedResource] = useState({});
-  const [view, setView] = useState(ALL_SERVICE);
-
-  const swtichView = (view, resource) => {
-    setSelectedResource(resource);
-    setView(view);
-  };
-
-  const networkTypes = {
+export const NetWorkConfigTable = (switchView, meshSyncResources, k8sConfig) => {
+  return {
     Service: {
       name: 'Service',
       columns: [
@@ -89,7 +49,7 @@ const StandardNetworkTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_SERVICE, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_SERVICE, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -104,16 +64,6 @@ const StandardNetworkTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -126,16 +76,6 @@ const StandardNetworkTable = (props) => {
               let type = attribute.type;
               return <>{type}</>;
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -147,16 +87,6 @@ const StandardNetworkTable = (props) => {
               let attribute = JSON.parse(val);
               let clusterIP = attribute.clusterIP;
               return <>{clusterIP}</>;
-            },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
             },
           },
         },
@@ -182,16 +112,6 @@ const StandardNetworkTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -215,16 +135,6 @@ const StandardNetworkTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -244,7 +154,7 @@ const StandardNetworkTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_SERVICE, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_SERVICE, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -280,16 +190,6 @@ const StandardNetworkTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -298,16 +198,6 @@ const StandardNetworkTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -343,7 +233,7 @@ const StandardNetworkTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_SERVICE, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_SERVICE, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -358,16 +248,6 @@ const StandardNetworkTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -387,7 +267,7 @@ const StandardNetworkTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_SERVICE, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_SERVICE, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -423,16 +303,6 @@ const StandardNetworkTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -441,16 +311,6 @@ const StandardNetworkTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -486,7 +346,7 @@ const StandardNetworkTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_SERVICE, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_SERVICE, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -501,16 +361,6 @@ const StandardNetworkTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -534,16 +384,6 @@ const StandardNetworkTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -563,7 +403,7 @@ const StandardNetworkTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_SERVICE, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_SERVICE, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -599,16 +439,6 @@ const StandardNetworkTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -617,16 +447,6 @@ const StandardNetworkTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -662,7 +482,7 @@ const StandardNetworkTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_SERVICE, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_SERVICE, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -677,16 +497,6 @@ const StandardNetworkTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -698,16 +508,6 @@ const StandardNetworkTable = (props) => {
               let attribute = JSON.parse(val);
               let controller = attribute?.controller;
               return <>{controller}</>;
-            },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
             },
           },
         },
@@ -728,7 +528,7 @@ const StandardNetworkTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_SERVICE, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_SERVICE, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -764,16 +564,6 @@ const StandardNetworkTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -782,16 +572,6 @@ const StandardNetworkTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -827,7 +607,7 @@ const StandardNetworkTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_SERVICE, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_SERVICE, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -842,16 +622,6 @@ const StandardNetworkTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -875,16 +645,6 @@ const StandardNetworkTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -904,7 +664,7 @@ const StandardNetworkTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_SERVICE, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_SERVICE, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -940,16 +700,6 @@ const StandardNetworkTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -958,16 +708,6 @@ const StandardNetworkTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -976,6 +716,24 @@ const StandardNetworkTable = (props) => {
         },
       ],
     },
+  };
+};
+
+const StandardNetworkTable = (props) => {
+  const { classes, updateProgress, k8sConfig, workloadType } = props;
+  const [meshSyncResources, setMeshSyncResources] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(0);
+  const [count, setCount] = useState(0);
+  const [pageSize, setPageSize] = useState(0);
+  const [search, setSearch] = useState('');
+  const [sortOrder, setSortOrder] = useState('');
+  const [selectedResource, setSelectedResource] = useState({});
+  const [view, setView] = useState(ALL_SERVICE);
+
+  const switchView = (view, resource) => {
+    setSelectedResource(resource);
+    setView(view);
   };
 
   const StyleClass = useStyles();
@@ -988,7 +746,7 @@ const StandardNetworkTable = (props) => {
     if (!sortOrder) sortOrder = '';
     dataFetch(
       `/api/system/meshsync/resources?kind=${
-        NetworkTypes[workloadType].name
+        NetWorkConfigTable()[workloadType].name
       }&status=true&spec=true&annotations=true&labels=true&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
         search,
       )}&order=${encodeURIComponent(sortOrder)}`,
@@ -1010,7 +768,7 @@ const StandardNetworkTable = (props) => {
   const [tableCols, updateCols] = useState();
 
   useEffect(() => {
-    updateCols(networkTypes[workloadType].columns);
+    updateCols(NetWorkConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType].columns);
     if (!loading) {
       getMeshsyncResources(page, pageSize, search, sortOrder);
     }
@@ -1019,9 +777,11 @@ const StandardNetworkTable = (props) => {
   const [columnVisibility, setColumnVisibility] = useState(() => {
     // Initialize column visibility based on the original columns' visibility
     const initialVisibility = {};
-    networkTypes[workloadType].columns.forEach((col) => {
-      initialVisibility[col.name] = col.options?.display !== false;
-    });
+    NetWorkConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType].columns.forEach(
+      (col) => {
+        initialVisibility[col.name] = col.options?.display !== false;
+      },
+    );
     return initialVisibility;
   });
 
@@ -1042,7 +802,7 @@ const StandardNetworkTable = (props) => {
       download: false,
       textLabels: {
         selectedRows: {
-          text: `${NetworkTypes[workloadType].name}(s) selected`,
+          text: `${NetWorkConfigTable()[workloadType].name}(s) selected`,
         },
       },
       enableNestedDataAccess: '.',
@@ -1050,7 +810,11 @@ const StandardNetworkTable = (props) => {
         const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
         let order = '';
         if (tableState.activeColumn) {
-          order = `${networkTypes[workloadType].columns[tableState.activeColumn].name} desc`;
+          order = `${
+            NetWorkConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType].columns[
+              tableState.activeColumn
+            ].name
+          } desc`;
         }
         switch (action) {
           case 'changePage':
@@ -1062,9 +826,15 @@ const StandardNetworkTable = (props) => {
           case 'sort':
             if (sortInfo.length == 2) {
               if (sortInfo[1] === 'ascending') {
-                order = `${networkTypes[workloadType].columns[tableState.activeColumn].name} asc`;
+                order = `${
+                  NetWorkConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType]
+                    .columns[tableState.activeColumn].name
+                } asc`;
               } else {
-                order = `${networkTypes[workloadType].columns[tableState.activeColumn].name} desc`;
+                order = `${
+                  NetWorkConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType]
+                    .columns[tableState.activeColumn].name
+                } desc`;
               }
             }
             if (order !== sortOrder) {
@@ -1105,18 +875,22 @@ const StandardNetworkTable = (props) => {
                 onSearch={(value) => {
                   setSearch(value);
                 }}
-                placeholder={`Search ${NetworkTypes[workloadType].name}...`}
+                placeholder={`Search ${NetWorkConfigTable()[workloadType].name}...`}
               />
 
               <CustomColumnVisibilityControl
-                columns={networkTypes[workloadType].columns}
+                columns={
+                  NetWorkConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType].columns
+                }
                 customToolsProps={{ columnVisibility, setColumnVisibility }}
               />
             </div>
           </div>
           <ResponsiveDataTable
             data={meshSyncResources}
-            columns={networkTypes[workloadType].columns}
+            columns={
+              NetWorkConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType].columns
+            }
             options={options}
             className={classes.muiRow}
             tableCols={tableCols}
@@ -1127,7 +901,7 @@ const StandardNetworkTable = (props) => {
       ) : (
         <>
           <View
-            type={`${NetworkTypes[workloadType].name}`}
+            type={`${NetWorkConfigTable()[workloadType].name}`}
             setView={setView}
             resource={selectedResource}
             classes={classes}
@@ -1135,16 +909,6 @@ const StandardNetworkTable = (props) => {
         </>
       )}
     </>
-  );
-};
-
-const SortableTableCell = ({ index, columnData, columnMeta, onSort }) => {
-  return (
-    <TableCell key={index} onClick={onSort}>
-      <TableSortLabel active={columnMeta.name === columnData.name}>
-        <b>{columnData.label}</b>
-      </TableSortLabel>
-    </TableCell>
   );
 };
 

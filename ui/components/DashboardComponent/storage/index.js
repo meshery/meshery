@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import { iconMedium } from '../../../css/icons.styles';
 import { withRouter } from 'next/router';
-import StandardStorageTable, { StorageTypes } from './config';
+import StandardStorageTable, { StorageConfigTable } from './config';
 import { withNotify } from '../../../utils/hooks/useNotification';
 
 const styles = (theme) => ({
@@ -126,14 +126,14 @@ const Storage = (props) => {
             indicatorColor="primary"
             textColor="primary"
           >
-            {Object.keys(StorageTypes).map((key, index) => {
+            {Object.keys(StorageConfigTable()).map((key, index) => {
               return (
-                <Tooltip title={`${StorageTypes[key].name}`} placement="top">
+                <Tooltip title={`${StorageConfigTable()[key].name}`} placement="top">
                   <Tab
                     key={index}
                     className={classes.tab}
                     icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
-                    label={StorageTypes[key].name}
+                    label={StorageConfigTable()[key].name}
                     data-cy="tabServiceMeshes"
                   />
                 </Tooltip>
@@ -141,7 +141,7 @@ const Storage = (props) => {
             })}
           </Tabs>
         </Paper>
-        {Object.keys(StorageTypes).map((key, index) => {
+        {Object.keys(StorageConfigTable()).map((key, index) => {
           return (
             tabVal === index && (
               <TabContainer>

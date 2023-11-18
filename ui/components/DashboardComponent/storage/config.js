@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { TableCell, TableSortLabel } from '@material-ui/core';
 import dataFetch from '../../../lib/data-fetch';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
@@ -18,42 +17,11 @@ const ACTION_TYPES = {
   },
 };
 
-export const StorageTypes = {
-  PersistentVolume: {
-    name: 'PersistentVolume',
-    columns: [],
-  },
-  PersistentVolumeClaim: {
-    name: 'PersistentVolumeClaim',
-    columns: [],
-  },
-  StorageClass: {
-    name: 'StorageClass',
-    columns: [],
-  },
-};
+const ALL_STORAGE = 'all';
+const SINGLE_STORAGE = 'single';
 
-const StandardStorageTable = (props) => {
-  console.log(props);
-  const { classes, updateProgress, k8sConfig, workloadType } = props;
-  const ALL_STORAGE = 'all';
-  const SINGLE_STORAGE = 'single';
-  const [meshSyncResources, setMeshSyncResources] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(0);
-  const [count, setCount] = useState(0);
-  const [pageSize, setPageSize] = useState(0);
-  const [search, setSearch] = useState('');
-  const [sortOrder, setSortOrder] = useState('');
-  const [selectedResource, setSelectedResource] = useState({});
-  const [view, setView] = useState(ALL_STORAGE);
-
-  const swtichView = (view, resource) => {
-    setSelectedResource(resource);
-    setView(view);
-  };
-
-  const storageTypes = {
+export const StorageConfigTable = (switchView, meshSyncResources, k8sConfig) => {
+  return {
     PersistentVolume: {
       name: 'PersistentVolume',
       columns: [
@@ -81,7 +49,7 @@ const StandardStorageTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_STORAGE, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_STORAGE, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -96,16 +64,6 @@ const StandardStorageTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -117,16 +75,6 @@ const StandardStorageTable = (props) => {
               let attribute = JSON.parse(val);
               let storageClassName = attribute?.StorageClassName;
               return <>{storageClassName}</>;
-            },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
             },
           },
         },
@@ -141,16 +89,6 @@ const StandardStorageTable = (props) => {
               let storage = capacity?.storage;
               return <>{storage}</>;
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -162,16 +100,6 @@ const StandardStorageTable = (props) => {
               let attribute = JSON.parse(val);
               let phase = attribute?.phase;
               return <>{phase}</>;
-            },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
             },
           },
         },
@@ -201,16 +129,6 @@ const StandardStorageTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -219,16 +137,6 @@ const StandardStorageTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -264,7 +172,7 @@ const StandardStorageTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_STORAGE, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_STORAGE, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -279,16 +187,6 @@ const StandardStorageTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -300,16 +198,6 @@ const StandardStorageTable = (props) => {
               let attribute = JSON.parse(val);
               let storageClassName = attribute?.StorageClassName;
               return <>{storageClassName}</>;
-            },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
             },
           },
         },
@@ -325,16 +213,6 @@ const StandardStorageTable = (props) => {
               let storage = requests?.storage;
               return <>{storage}</>;
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -346,16 +224,6 @@ const StandardStorageTable = (props) => {
               let attribute = JSON.parse(val);
               let phase = attribute?.phase;
               return <>{phase}</>;
-            },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
             },
           },
         },
@@ -376,7 +244,7 @@ const StandardStorageTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_STORAGE, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_STORAGE, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -412,16 +280,6 @@ const StandardStorageTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -430,16 +288,6 @@ const StandardStorageTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -475,7 +323,7 @@ const StandardStorageTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_STORAGE, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_STORAGE, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -490,16 +338,6 @@ const StandardStorageTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -528,16 +366,6 @@ const StandardStorageTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -546,16 +374,6 @@ const StandardStorageTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -564,6 +382,25 @@ const StandardStorageTable = (props) => {
         },
       ],
     },
+  };
+};
+
+const StandardStorageTable = (props) => {
+  const { classes, updateProgress, k8sConfig, workloadType } = props;
+
+  const [meshSyncResources, setMeshSyncResources] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(0);
+  const [count, setCount] = useState(0);
+  const [pageSize, setPageSize] = useState(0);
+  const [search, setSearch] = useState('');
+  const [sortOrder, setSortOrder] = useState('');
+  const [selectedResource, setSelectedResource] = useState({});
+  const [view, setView] = useState(ALL_STORAGE);
+
+  const switchView = (view, resource) => {
+    setSelectedResource(resource);
+    setView(view);
   };
 
   const StyleClass = useStyles();
@@ -576,7 +413,7 @@ const StandardStorageTable = (props) => {
     if (!sortOrder) sortOrder = '';
     dataFetch(
       `/api/system/meshsync/resources?kind=${
-        StorageTypes[workloadType].name
+        StorageConfigTable()[workloadType].name
       }&status=true&spec=true&annotations=true&labels=true&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
         search,
       )}&order=${encodeURIComponent(sortOrder)}`,
@@ -598,7 +435,7 @@ const StandardStorageTable = (props) => {
   const [tableCols, updateCols] = useState();
 
   useEffect(() => {
-    updateCols(storageTypes[workloadType].columns);
+    updateCols(StorageConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType].columns);
     if (!loading) {
       getMeshsyncResources(page, pageSize, search, sortOrder);
     }
@@ -607,9 +444,11 @@ const StandardStorageTable = (props) => {
   const [columnVisibility, setColumnVisibility] = useState(() => {
     // Initialize column visibility based on the original columns' visibility
     const initialVisibility = {};
-    storageTypes[workloadType].columns.forEach((col) => {
-      initialVisibility[col.name] = col.options?.display !== false;
-    });
+    StorageConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType].columns.forEach(
+      (col) => {
+        initialVisibility[col.name] = col.options?.display !== false;
+      },
+    );
     return initialVisibility;
   });
 
@@ -630,7 +469,7 @@ const StandardStorageTable = (props) => {
       download: false,
       textLabels: {
         selectedRows: {
-          text: `${StorageTypes[workloadType].name}(s) selected`,
+          text: `${StorageConfigTable()[workloadType].name}(s) selected`,
         },
       },
       enableNestedDataAccess: '.',
@@ -638,7 +477,11 @@ const StandardStorageTable = (props) => {
         const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
         let order = '';
         if (tableState.activeColumn) {
-          order = `${storageTypes[workloadType].columns[tableState.activeColumn].name} desc`;
+          order = `${
+            StorageConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType].columns[
+              tableState.activeColumn
+            ].name
+          } desc`;
         }
         switch (action) {
           case 'changePage':
@@ -650,9 +493,15 @@ const StandardStorageTable = (props) => {
           case 'sort':
             if (sortInfo.length == 2) {
               if (sortInfo[1] === 'ascending') {
-                order = `${storageTypes[workloadType].columns[tableState.activeColumn].name} asc`;
+                order = `${
+                  StorageConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType]
+                    .columns[tableState.activeColumn].name
+                } asc`;
               } else {
-                order = `${storageTypes[workloadType].columns[tableState.activeColumn].name} desc`;
+                order = `${
+                  StorageConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType]
+                    .columns[tableState.activeColumn].name
+                } desc`;
               }
             }
             if (order !== sortOrder) {
@@ -693,18 +542,22 @@ const StandardStorageTable = (props) => {
                 onSearch={(value) => {
                   setSearch(value);
                 }}
-                placeholder={`Search ${StorageTypes[workloadType].name}...`}
+                placeholder={`Search ${StorageConfigTable()[workloadType].name}...`}
               />
 
               <CustomColumnVisibilityControl
-                columns={storageTypes[workloadType].columns}
+                columns={
+                  StorageConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType].columns
+                }
                 customToolsProps={{ columnVisibility, setColumnVisibility }}
               />
             </div>
           </div>
           <ResponsiveDataTable
             data={meshSyncResources}
-            columns={storageTypes[workloadType].columns}
+            columns={
+              StorageConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType].columns
+            }
             options={options}
             className={classes.muiRow}
             tableCols={tableCols}
@@ -715,7 +568,9 @@ const StandardStorageTable = (props) => {
       ) : (
         <>
           <View
-            type={`${StorageTypes[workloadType].name}`}
+            type={`${
+              StorageConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType].name
+            }`}
             setView={setView}
             resource={selectedResource}
             classes={classes}
@@ -723,16 +578,6 @@ const StandardStorageTable = (props) => {
         </>
       )}
     </>
-  );
-};
-
-const SortableTableCell = ({ index, columnData, columnMeta, onSort }) => {
-  return (
-    <TableCell key={index} onClick={onSort}>
-      <TableSortLabel active={columnMeta.name === columnData.name}>
-        <b>{columnData.label}</b>
-      </TableSortLabel>
-    </TableCell>
   );
 };
 

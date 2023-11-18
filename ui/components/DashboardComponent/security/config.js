@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { TableCell, TableSortLabel } from '@material-ui/core';
 import dataFetch from '../../../lib/data-fetch';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
@@ -18,50 +17,11 @@ const ACTION_TYPES = {
   },
 };
 
-export const SecurityTypes = {
-  ServiceAccount: {
-    name: 'ServiceAccount',
-    columns: [],
-  },
-  ClusterRole: {
-    name: 'ClusterRole',
-    columns: [],
-  },
-  Role: {
-    name: 'Role',
-    columns: [],
-  },
-  ClusterRoleBinding: {
-    name: 'ClusterRoleBinding',
-    columns: [],
-  },
-  RoleBinding: {
-    name: 'RoleBinding',
-    columns: [],
-  },
-};
+const ALL_CONFIG = 'all';
+const SINGLE_CONFIG = 'single';
 
-const StandardSecurityTable = (props) => {
-  console.log(props);
-  const { classes, updateProgress, k8sConfig, workloadType } = props;
-  const ALL_CONFIG = 'all';
-  const SINGLE_CONFIG = 'single';
-  const [meshSyncResources, setMeshSyncResources] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(0);
-  const [count, setCount] = useState(0);
-  const [pageSize, setPageSize] = useState(0);
-  const [search, setSearch] = useState('');
-  const [sortOrder, setSortOrder] = useState('');
-  const [selectedResource, setSelectedResource] = useState({});
-  const [view, setView] = useState(ALL_CONFIG);
-
-  const swtichView = (view, resource) => {
-    setSelectedResource(resource);
-    setView(view);
-  };
-
-  const securityTypes = {
+export const SecurityTypesConfig = (switchView, meshSyncResources, k8sConfig) => {
+  return {
     ServiceAccount: {
       name: 'ServiceAccount',
       columns: [
@@ -88,7 +48,7 @@ const StandardSecurityTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -102,16 +62,6 @@ const StandardSecurityTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -140,16 +90,6 @@ const StandardSecurityTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -158,16 +98,7 @@ const StandardSecurityTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
+
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -202,7 +133,7 @@ const StandardSecurityTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -216,16 +147,6 @@ const StandardSecurityTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -244,7 +165,7 @@ const StandardSecurityTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -279,16 +200,6 @@ const StandardSecurityTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -297,16 +208,7 @@ const StandardSecurityTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
+
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -341,7 +243,7 @@ const StandardSecurityTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -355,16 +257,6 @@ const StandardSecurityTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -393,16 +285,6 @@ const StandardSecurityTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -411,16 +293,7 @@ const StandardSecurityTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
+
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -455,7 +328,7 @@ const StandardSecurityTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -469,16 +342,6 @@ const StandardSecurityTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -507,16 +370,6 @@ const StandardSecurityTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -525,16 +378,7 @@ const StandardSecurityTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
+
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -569,7 +413,7 @@ const StandardSecurityTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -583,16 +427,6 @@ const StandardSecurityTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -621,16 +455,6 @@ const StandardSecurityTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -639,16 +463,7 @@ const StandardSecurityTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
+
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -657,6 +472,24 @@ const StandardSecurityTable = (props) => {
         },
       ],
     },
+  };
+};
+
+const StandardSecurityTable = (props) => {
+  const { classes, updateProgress, k8sConfig, workloadType } = props;
+  const [meshSyncResources, setMeshSyncResources] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(0);
+  const [count, setCount] = useState(0);
+  const [pageSize, setPageSize] = useState(0);
+  const [search, setSearch] = useState('');
+  const [sortOrder, setSortOrder] = useState('');
+  const [selectedResource, setSelectedResource] = useState({});
+  const [view, setView] = useState(ALL_CONFIG);
+
+  const switchView = (view, resource) => {
+    setSelectedResource(resource);
+    setView(view);
   };
 
   const StyleClass = useStyles();
@@ -669,7 +502,7 @@ const StandardSecurityTable = (props) => {
     if (!sortOrder) sortOrder = '';
     dataFetch(
       `/api/system/meshsync/resources?kind=${
-        SecurityTypes[workloadType].name
+        SecurityTypesConfig(switchView, meshSyncResources, k8sConfig)[workloadType].name
       }&status=true&spec=true&annotations=true&labels=true&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
         search,
       )}&order=${encodeURIComponent(sortOrder)}`,
@@ -691,7 +524,7 @@ const StandardSecurityTable = (props) => {
   const [tableCols, updateCols] = useState();
 
   useEffect(() => {
-    updateCols(securityTypes[workloadType].columns);
+    updateCols(SecurityTypesConfig(switchView, meshSyncResources, k8sConfig)[workloadType].columns);
     if (!loading) {
       getMeshsyncResources(page, pageSize, search, sortOrder);
     }
@@ -700,9 +533,11 @@ const StandardSecurityTable = (props) => {
   const [columnVisibility, setColumnVisibility] = useState(() => {
     // Initialize column visibility based on the original columns' visibility
     const initialVisibility = {};
-    securityTypes[workloadType].columns.forEach((col) => {
-      initialVisibility[col.name] = col.options?.display !== false;
-    });
+    SecurityTypesConfig(switchView, meshSyncResources, k8sConfig)[workloadType].columns.forEach(
+      (col) => {
+        initialVisibility[col.name] = col.options?.display !== false;
+      },
+    );
     return initialVisibility;
   });
 
@@ -723,7 +558,7 @@ const StandardSecurityTable = (props) => {
       download: false,
       textLabels: {
         selectedRows: {
-          text: `${SecurityTypes[workloadType].name}(s) selected`,
+          text: `${SecurityTypesConfig()[workloadType].name}(s) selected`,
         },
       },
       enableNestedDataAccess: '.',
@@ -731,7 +566,11 @@ const StandardSecurityTable = (props) => {
         const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
         let order = '';
         if (tableState.activeColumn) {
-          order = `${securityTypes[workloadType].columns[tableState.activeColumn].name} desc`;
+          order = `${
+            SecurityTypesConfig(switchView, meshSyncResources, k8sConfig)[workloadType].columns[
+              tableState.activeColumn
+            ].name
+          } desc`;
         }
         switch (action) {
           case 'changePage':
@@ -743,9 +582,15 @@ const StandardSecurityTable = (props) => {
           case 'sort':
             if (sortInfo.length == 2) {
               if (sortInfo[1] === 'ascending') {
-                order = `${securityTypes[workloadType].columns[tableState.activeColumn].name} asc`;
+                order = `${
+                  SecurityTypesConfig(switchView, meshSyncResources, k8sConfig)[workloadType]
+                    .columns[tableState.activeColumn].name
+                } asc`;
               } else {
-                order = `${securityTypes[workloadType].columns[tableState.activeColumn].name} desc`;
+                order = `${
+                  SecurityTypesConfig(switchView, meshSyncResources, k8sConfig)[workloadType]
+                    .columns[tableState.activeColumn].name
+                } desc`;
               }
             }
             if (order !== sortOrder) {
@@ -786,18 +631,23 @@ const StandardSecurityTable = (props) => {
                 onSearch={(value) => {
                   setSearch(value);
                 }}
-                placeholder={`Search ${SecurityTypes[workloadType].name}...`}
+                placeholder={`Search ${SecurityTypesConfig()[workloadType].name}...`}
               />
 
               <CustomColumnVisibilityControl
-                columns={securityTypes[workloadType].columns}
+                columns={
+                  SecurityTypesConfig(switchView, meshSyncResources, k8sConfig)[workloadType]
+                    .columns
+                }
                 customToolsProps={{ columnVisibility, setColumnVisibility }}
               />
             </div>
           </div>
           <ResponsiveDataTable
             data={meshSyncResources}
-            columns={securityTypes[workloadType].columns}
+            columns={
+              SecurityTypesConfig(switchView, meshSyncResources, k8sConfig)[workloadType].columns
+            }
             options={options}
             className={classes.muiRow}
             tableCols={tableCols}
@@ -808,7 +658,9 @@ const StandardSecurityTable = (props) => {
       ) : (
         <>
           <View
-            type={`${SecurityTypes[workloadType].name}`}
+            type={`${
+              SecurityTypesConfig(switchView, meshSyncResources, k8sConfig)[workloadType].name
+            }`}
             setView={setView}
             resource={selectedResource}
             classes={classes}
@@ -816,16 +668,6 @@ const StandardSecurityTable = (props) => {
         </>
       )}
     </>
-  );
-};
-
-const SortableTableCell = ({ index, columnData, columnMeta, onSort }) => {
-  return (
-    <TableCell key={index} onClick={onSort}>
-      <TableSortLabel active={columnMeta.name === columnData.name}>
-        <b>{columnData.label}</b>
-      </TableSortLabel>
-    </TableCell>
   );
 };
 

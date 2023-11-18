@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { TableCell, TableSortLabel } from '@material-ui/core';
 import dataFetch from '../../../lib/data-fetch';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
@@ -18,62 +17,11 @@ const ACTION_TYPES = {
   },
 };
 
-export const WorkloadsTypes = {
-  PODS: {
-    name: 'Pod',
-    columns: [],
-  },
-  DEPLOYMENT: {
-    name: 'Deployment',
-    columns: [],
-  },
-  DAEMONSETS: {
-    name: 'DaemonSet',
-    columns: [],
-  },
-  STATEFULSETS: {
-    name: 'StatefulSet',
-    columns: [],
-  },
-  REPLICASETS: {
-    name: 'ReplicaSet',
-    columns: [],
-  },
-  REPLICATIONCONTROLLERS: {
-    name: 'ReplicationController',
-    columns: [],
-  },
-  JOBS: {
-    name: 'Job',
-    columns: [],
-  },
-  CRONJOBS: {
-    name: 'CronJob',
-    columns: [],
-  },
-};
+const ALL_WORKLOAD = 'all';
+const SINGLE_WORKLOAD = 'single';
 
-const StandardWorkloadTable = (props) => {
-  console.log(props);
-  const { classes, updateProgress, k8sConfig, workloadType } = props;
-  const ALL_WORKLOAD = 'all';
-  const SINGLE_WORKLOAD = 'single';
-  const [meshSyncResources, setMeshSyncResources] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(0);
-  const [count, setCount] = useState(0);
-  const [pageSize, setPageSize] = useState(0);
-  const [search, setSearch] = useState('');
-  const [sortOrder, setSortOrder] = useState('');
-  const [selectedResource, setSelectedResource] = useState({});
-  const [view, setView] = useState(ALL_WORKLOAD);
-
-  const swtichView = (view, resource) => {
-    setSelectedResource(resource);
-    setView(view);
-  };
-
-  const workloadsTypes = {
+export const WorkloadConfigTable = (switchView, meshSyncResources, k8sConfig) => {
+  return {
     PODS: {
       name: 'Pod',
       columns: [
@@ -101,7 +49,7 @@ const StandardWorkloadTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -116,16 +64,6 @@ const StandardWorkloadTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -137,16 +75,6 @@ const StandardWorkloadTable = (props) => {
               let attribute = JSON.parse(val);
               let phase = attribute.phase;
               return <>{phase}</>;
-            },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
             },
           },
         },
@@ -160,16 +88,6 @@ const StandardWorkloadTable = (props) => {
               let hostIP = attribute.hostIP;
               return <>{hostIP}</>;
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -181,16 +99,6 @@ const StandardWorkloadTable = (props) => {
               let attribute = JSON.parse(val);
               let podIP = attribute.podIP;
               return <>{podIP}</>;
-            },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
             },
           },
         },
@@ -211,7 +119,7 @@ const StandardWorkloadTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -230,16 +138,6 @@ const StandardWorkloadTable = (props) => {
               let attribute = JSON.parse(val);
               let nodeName = attribute.nodeName;
               return <>{nodeName}</>;
-            },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
             },
           },
         },
@@ -269,16 +167,6 @@ const StandardWorkloadTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -287,16 +175,6 @@ const StandardWorkloadTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -332,7 +210,7 @@ const StandardWorkloadTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -347,16 +225,6 @@ const StandardWorkloadTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -368,16 +236,6 @@ const StandardWorkloadTable = (props) => {
               let attribute = JSON.parse(val);
               let replicas = attribute.replicas;
               return <>{replicas}</>;
-            },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
             },
           },
         },
@@ -392,16 +250,6 @@ const StandardWorkloadTable = (props) => {
               let spec = template.spec;
               let restartPolicy = spec.restartPolicy;
               return <>{restartPolicy}</>;
-            },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
             },
           },
         },
@@ -422,7 +270,7 @@ const StandardWorkloadTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -458,16 +306,6 @@ const StandardWorkloadTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -476,16 +314,6 @@ const StandardWorkloadTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -521,7 +349,7 @@ const StandardWorkloadTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -536,16 +364,6 @@ const StandardWorkloadTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -559,16 +377,6 @@ const StandardWorkloadTable = (props) => {
               let spec = template.spec;
               let nodeSelector = spec.nodeSelector;
               return <>{JSON.stringify(nodeSelector)}</>;
-            },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
             },
           },
         },
@@ -589,7 +397,7 @@ const StandardWorkloadTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -625,16 +433,6 @@ const StandardWorkloadTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -643,16 +441,6 @@ const StandardWorkloadTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -688,7 +476,7 @@ const StandardWorkloadTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -703,16 +491,6 @@ const StandardWorkloadTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -724,16 +502,6 @@ const StandardWorkloadTable = (props) => {
               let attribute = JSON.parse(val);
               let replicas = attribute.replicas;
               return <>{replicas}</>;
-            },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
             },
           },
         },
@@ -754,7 +522,7 @@ const StandardWorkloadTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -790,16 +558,6 @@ const StandardWorkloadTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -808,16 +566,6 @@ const StandardWorkloadTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -853,7 +601,7 @@ const StandardWorkloadTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -868,16 +616,6 @@ const StandardWorkloadTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -889,16 +627,6 @@ const StandardWorkloadTable = (props) => {
               let attribute = JSON.parse(val);
               let replicas = attribute.replicas;
               return <>{replicas}</>;
-            },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
             },
           },
         },
@@ -912,16 +640,6 @@ const StandardWorkloadTable = (props) => {
               let replicas = attribute.replicas;
               return <>{replicas}</>;
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -933,16 +651,6 @@ const StandardWorkloadTable = (props) => {
               let attribute = JSON.parse(val);
               let readyReplicas = attribute.readyReplicas;
               return <>{readyReplicas}</>;
-            },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
             },
           },
         },
@@ -963,7 +671,7 @@ const StandardWorkloadTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -999,16 +707,6 @@ const StandardWorkloadTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -1017,16 +715,6 @@ const StandardWorkloadTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -1062,7 +750,7 @@ const StandardWorkloadTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -1077,16 +765,6 @@ const StandardWorkloadTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -1099,16 +777,6 @@ const StandardWorkloadTable = (props) => {
               let replicas = attribute.replicas;
               return <>{replicas}</>;
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -1120,16 +788,6 @@ const StandardWorkloadTable = (props) => {
               let attribute = JSON.parse(val);
               let replicas = attribute.replicas;
               return <>{replicas}</>;
-            },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
             },
           },
         },
@@ -1150,7 +808,7 @@ const StandardWorkloadTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -1186,16 +844,6 @@ const StandardWorkloadTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -1204,16 +852,6 @@ const StandardWorkloadTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -1249,7 +887,7 @@ const StandardWorkloadTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -1264,16 +902,6 @@ const StandardWorkloadTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -1293,7 +921,7 @@ const StandardWorkloadTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -1329,16 +957,6 @@ const StandardWorkloadTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -1347,16 +965,6 @@ const StandardWorkloadTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -1392,7 +1000,7 @@ const StandardWorkloadTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -1407,16 +1015,6 @@ const StandardWorkloadTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -1429,16 +1027,6 @@ const StandardWorkloadTable = (props) => {
               let schedule = attribute.schedule;
               return <>{schedule}</>;
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -1450,16 +1038,6 @@ const StandardWorkloadTable = (props) => {
               let attribute = JSON.parse(val);
               let suspend = attribute.suspend;
               return <>{suspend}</>;
-            },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
             },
           },
         },
@@ -1480,7 +1058,7 @@ const StandardWorkloadTable = (props) => {
                       marginBottom: '0.5rem',
                     }}
                     onClick={() =>
-                      swtichView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
+                      switchView(SINGLE_WORKLOAD, meshSyncResources[tableMeta.rowIndex])
                     }
                   >
                     {value}
@@ -1516,16 +1094,6 @@ const StandardWorkloadTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -1534,16 +1102,6 @@ const StandardWorkloadTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -1552,6 +1110,24 @@ const StandardWorkloadTable = (props) => {
         },
       ],
     },
+  };
+};
+
+const StandardWorkloadTable = (props) => {
+  const { classes, updateProgress, k8sConfig, workloadType } = props;
+  const [meshSyncResources, setMeshSyncResources] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(0);
+  const [count, setCount] = useState(0);
+  const [pageSize, setPageSize] = useState(0);
+  const [search, setSearch] = useState('');
+  const [sortOrder, setSortOrder] = useState('');
+  const [selectedResource, setSelectedResource] = useState({});
+  const [view, setView] = useState(ALL_WORKLOAD);
+
+  const switchView = (view, resource) => {
+    setSelectedResource(resource);
+    setView(view);
   };
 
   const StyleClass = useStyles();
@@ -1564,7 +1140,7 @@ const StandardWorkloadTable = (props) => {
     if (!sortOrder) sortOrder = '';
     dataFetch(
       `/api/system/meshsync/resources?kind=${
-        WorkloadsTypes[workloadType].name
+        WorkloadConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType].name
       }&status=true&spec=true&annotations=true&labels=true&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
         search,
       )}&order=${encodeURIComponent(sortOrder)}`,
@@ -1586,7 +1162,7 @@ const StandardWorkloadTable = (props) => {
   const [tableCols, updateCols] = useState();
 
   useEffect(() => {
-    updateCols(workloadsTypes[workloadType].columns);
+    updateCols(WorkloadConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType].columns);
     if (!loading) {
       getMeshsyncResources(page, pageSize, search, sortOrder);
     }
@@ -1595,9 +1171,11 @@ const StandardWorkloadTable = (props) => {
   const [columnVisibility, setColumnVisibility] = useState(() => {
     // Initialize column visibility based on the original columns' visibility
     const initialVisibility = {};
-    workloadsTypes[workloadType].columns.forEach((col) => {
-      initialVisibility[col.name] = col.options?.display !== false;
-    });
+    WorkloadConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType].columns.forEach(
+      (col) => {
+        initialVisibility[col.name] = col.options?.display !== false;
+      },
+    );
     return initialVisibility;
   });
 
@@ -1618,7 +1196,7 @@ const StandardWorkloadTable = (props) => {
       download: false,
       textLabels: {
         selectedRows: {
-          text: `${WorkloadsTypes[workloadType].name}(s) selected`,
+          text: `${WorkloadConfigTable()[workloadType].name}(s) selected`,
         },
       },
       enableNestedDataAccess: '.',
@@ -1626,7 +1204,11 @@ const StandardWorkloadTable = (props) => {
         const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
         let order = '';
         if (tableState.activeColumn) {
-          order = `${workloadsTypes[workloadType].columns[tableState.activeColumn].name} desc`;
+          order = `${
+            WorkloadConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType].columns[
+              tableState.activeColumn
+            ].name
+          } desc`;
         }
         switch (action) {
           case 'changePage':
@@ -1638,10 +1220,14 @@ const StandardWorkloadTable = (props) => {
           case 'sort':
             if (sortInfo.length == 2) {
               if (sortInfo[1] === 'ascending') {
-                order = `${workloadsTypes[workloadType].columns[tableState.activeColumn].name} asc`;
+                order = `${
+                  WorkloadConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType]
+                    .columns[tableState.activeColumn].name
+                } asc`;
               } else {
                 order = `${
-                  workloadsTypes[workloadType].columns[tableState.activeColumn].name
+                  WorkloadConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType]
+                    .columns[tableState.activeColumn].name
                 } desc`;
               }
             }
@@ -1683,18 +1269,23 @@ const StandardWorkloadTable = (props) => {
                 onSearch={(value) => {
                   setSearch(value);
                 }}
-                placeholder={`Search ${WorkloadsTypes[workloadType].name}...`}
+                placeholder={`Search ${WorkloadConfigTable()[workloadType].name}...`}
               />
 
               <CustomColumnVisibilityControl
-                columns={workloadsTypes[workloadType].columns}
+                columns={
+                  WorkloadConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType]
+                    .columns
+                }
                 customToolsProps={{ columnVisibility, setColumnVisibility }}
               />
             </div>
           </div>
           <ResponsiveDataTable
             data={meshSyncResources}
-            columns={workloadsTypes[workloadType].columns}
+            columns={
+              WorkloadConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType].columns
+            }
             options={options}
             className={classes.muiRow}
             tableCols={tableCols}
@@ -1705,7 +1296,9 @@ const StandardWorkloadTable = (props) => {
       ) : (
         <>
           <View
-            type={`${WorkloadsTypes[workloadType].name}`}
+            type={`${
+              WorkloadConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType].name
+            }`}
             setView={setView}
             resource={selectedResource}
             classes={classes}
@@ -1713,16 +1306,6 @@ const StandardWorkloadTable = (props) => {
         </>
       )}
     </>
-  );
-};
-
-const SortableTableCell = ({ index, columnData, columnMeta, onSort }) => {
-  return (
-    <TableCell key={index} onClick={onSort}>
-      <TableSortLabel active={columnMeta.name === columnData.name}>
-        <b>{columnData.label}</b>
-      </TableSortLabel>
-    </TableCell>
   );
 };
 

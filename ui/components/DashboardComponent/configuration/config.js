@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { TableCell, TableSortLabel } from '@material-ui/core';
 import dataFetch from '../../../lib/data-fetch';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
@@ -18,74 +17,11 @@ const ACTION_TYPES = {
   },
 };
 
-export const ConfigTypes = {
-  ConfigMap: {
-    name: 'ConfigMap',
-    columns: [],
-  },
-  Secrets: {
-    name: 'Secrets',
-    columns: [],
-  },
-  ResourceQuota: {
-    name: 'ResourceQuota',
-    columns: [],
-  },
-  LimitRange: {
-    name: 'LimitRange',
-    columns: [],
-  },
-  HorizontalPodAutoscaler: {
-    name: 'HorizontalPodAutoscaler',
-    columns: [],
-  },
-  VerticalPodAutoscaler: {
-    name: 'VerticalPodAutoscaler',
-    columns: [],
-  },
-  PodDisruptionBudget: {
-    name: 'PodDisruptionBudget',
-    columns: [],
-  },
-  PriorityClass: {
-    name: 'PriorityClass',
-    columns: [],
-  },
-  RuntimeClass: {
-    name: 'RuntimeClass',
-    columns: [],
-  },
-  Leases: {
-    name: 'Leases',
-    columns: [],
-  },
-  MutatingWebhookConfiguration: {
-    name: 'MutatingWebhookConfiguration',
-    columns: [],
-  },
-};
+const ALL_CONFIG = 'all';
+const SINGLE_CONFIG = 'single';
 
-const StandardConfigTable = (props) => {
-  console.log(props);
-  const { classes, updateProgress, k8sConfig, workloadType } = props;
-  const ALL_CONFIG = 'all';
-  const SINGLE_CONFIG = 'single';
-  const [meshSyncResources, setMeshSyncResources] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(0);
-  const [count, setCount] = useState(0);
-  const [pageSize, setPageSize] = useState(0);
-  const [search, setSearch] = useState('');
-  const [sortOrder, setSortOrder] = useState('');
-  const [selectedResource, setSelectedResource] = useState({});
-  const [view, setView] = useState(ALL_CONFIG);
-
-  const swtichView = (view, resource) => {
-    setSelectedResource(resource);
-    setView(view);
-  };
-
-  const configTypes = {
+export const ConfigurationConfigTable = (switchView, meshSyncResources, k8sConfig) => {
+  return {
     ConfigMap: {
       name: 'ConfigMap',
       columns: [
@@ -112,7 +48,7 @@ const StandardConfigTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -126,16 +62,6 @@ const StandardConfigTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -154,7 +80,7 @@ const StandardConfigTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -189,16 +115,6 @@ const StandardConfigTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -207,16 +123,6 @@ const StandardConfigTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -251,7 +157,7 @@ const StandardConfigTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -265,16 +171,6 @@ const StandardConfigTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -282,16 +178,6 @@ const StandardConfigTable = (props) => {
           label: 'Type',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -310,7 +196,7 @@ const StandardConfigTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -345,16 +231,6 @@ const StandardConfigTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -363,16 +239,6 @@ const StandardConfigTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -407,7 +273,7 @@ const StandardConfigTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -421,16 +287,6 @@ const StandardConfigTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -449,7 +305,7 @@ const StandardConfigTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -484,16 +340,6 @@ const StandardConfigTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -502,16 +348,6 @@ const StandardConfigTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -546,7 +382,7 @@ const StandardConfigTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -560,16 +396,6 @@ const StandardConfigTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -588,7 +414,7 @@ const StandardConfigTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -623,16 +449,6 @@ const StandardConfigTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -641,16 +457,7 @@ const StandardConfigTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
+
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -685,7 +492,7 @@ const StandardConfigTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -699,16 +506,6 @@ const StandardConfigTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -720,16 +517,6 @@ const StandardConfigTable = (props) => {
               let attribute = JSON.parse(val);
               let minReplicas = attribute?.minReplicas;
               return <>{minReplicas}</>;
-            },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
             },
           },
         },
@@ -743,16 +530,6 @@ const StandardConfigTable = (props) => {
               let maxReplicas = attribute?.maxReplicas;
               return <>{maxReplicas}</>;
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -764,16 +541,6 @@ const StandardConfigTable = (props) => {
               let attribute = JSON.parse(val);
               let currentReplicas = attribute?.currentReplicas;
               return <>{currentReplicas}</>;
-            },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
             },
           },
         },
@@ -793,7 +560,7 @@ const StandardConfigTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -828,16 +595,6 @@ const StandardConfigTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -846,16 +603,7 @@ const StandardConfigTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
+
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -890,7 +638,7 @@ const StandardConfigTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -904,16 +652,6 @@ const StandardConfigTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -932,7 +670,7 @@ const StandardConfigTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -967,16 +705,6 @@ const StandardConfigTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -985,16 +713,7 @@ const StandardConfigTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
+
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -1029,7 +748,7 @@ const StandardConfigTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -1043,16 +762,6 @@ const StandardConfigTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -1064,16 +773,6 @@ const StandardConfigTable = (props) => {
               let attribute = JSON.parse(val);
               let minAvailable = attribute?.minAvailable;
               return <>{minAvailable}</>;
-            },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
             },
           },
         },
@@ -1087,16 +786,6 @@ const StandardConfigTable = (props) => {
               let maxAvailable = attribute?.maxAvailable;
               return <>{maxAvailable}</>;
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -1109,16 +798,6 @@ const StandardConfigTable = (props) => {
               let currentHealthy = attribute?.currentHealthy;
               return <>{currentHealthy}</>;
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -1130,16 +809,6 @@ const StandardConfigTable = (props) => {
               let attribute = JSON.parse(val);
               let desiredtHealthy = attribute?.desiredtHealthy;
               return <>{desiredtHealthy}</>;
-            },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
             },
           },
         },
@@ -1159,7 +828,7 @@ const StandardConfigTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -1194,16 +863,6 @@ const StandardConfigTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -1212,16 +871,7 @@ const StandardConfigTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
+
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -1256,7 +906,7 @@ const StandardConfigTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -1270,16 +920,6 @@ const StandardConfigTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -1298,7 +938,7 @@ const StandardConfigTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -1333,16 +973,6 @@ const StandardConfigTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -1351,16 +981,7 @@ const StandardConfigTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
+
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -1395,7 +1016,7 @@ const StandardConfigTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -1409,16 +1030,6 @@ const StandardConfigTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -1437,7 +1048,7 @@ const StandardConfigTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -1472,16 +1083,6 @@ const StandardConfigTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -1490,16 +1091,7 @@ const StandardConfigTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
+
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -1534,7 +1126,7 @@ const StandardConfigTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -1548,16 +1140,6 @@ const StandardConfigTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -1569,16 +1151,6 @@ const StandardConfigTable = (props) => {
               let attribute = JSON.parse(val);
               let holderIdentity = attribute?.holderIdentity;
               return <>{holderIdentity}</>;
-            },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
             },
           },
         },
@@ -1598,7 +1170,7 @@ const StandardConfigTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -1633,16 +1205,6 @@ const StandardConfigTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -1651,16 +1213,7 @@ const StandardConfigTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
+
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -1695,7 +1248,7 @@ const StandardConfigTable = (props) => {
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => swtichView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -1709,16 +1262,6 @@ const StandardConfigTable = (props) => {
           label: 'API version',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -1747,16 +1290,6 @@ const StandardConfigTable = (props) => {
                 </>
               );
             },
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
           },
         },
         {
@@ -1765,16 +1298,7 @@ const StandardConfigTable = (props) => {
           options: {
             sort: false,
             sortThirdClickReset: true,
-            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-              return (
-                <SortableTableCell
-                  index={index}
-                  columnData={column}
-                  columnMeta={columnMeta}
-                  onSort={() => sortColumn(index)}
-                />
-              );
-            },
+
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -1783,6 +1307,24 @@ const StandardConfigTable = (props) => {
         },
       ],
     },
+  };
+};
+
+const StandardConfigTable = (props) => {
+  const { classes, updateProgress, k8sConfig, workloadType } = props;
+  const [meshSyncResources, setMeshSyncResources] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(0);
+  const [count, setCount] = useState(0);
+  const [pageSize, setPageSize] = useState(0);
+  const [search, setSearch] = useState('');
+  const [sortOrder, setSortOrder] = useState('');
+  const [selectedResource, setSelectedResource] = useState({});
+  const [view, setView] = useState(ALL_CONFIG);
+
+  const switchView = (view, resource) => {
+    setSelectedResource(resource);
+    setView(view);
   };
 
   const StyleClass = useStyles();
@@ -1795,7 +1337,7 @@ const StandardConfigTable = (props) => {
     if (!sortOrder) sortOrder = '';
     dataFetch(
       `/api/system/meshsync/resources?kind=${
-        ConfigTypes[workloadType].name
+        ConfigurationConfigTable()[workloadType].name
       }&status=true&spec=true&annotations=true&labels=true&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
         search,
       )}&order=${encodeURIComponent(sortOrder)}`,
@@ -1817,7 +1359,9 @@ const StandardConfigTable = (props) => {
   const [tableCols, updateCols] = useState();
 
   useEffect(() => {
-    updateCols(configTypes[workloadType].columns);
+    updateCols(
+      ConfigurationConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType].columns,
+    );
     if (!loading) {
       getMeshsyncResources(page, pageSize, search, sortOrder);
     }
@@ -1826,7 +1370,9 @@ const StandardConfigTable = (props) => {
   const [columnVisibility, setColumnVisibility] = useState(() => {
     // Initialize column visibility based on the original columns' visibility
     const initialVisibility = {};
-    configTypes[workloadType].columns.forEach((col) => {
+    ConfigurationConfigTable(switchView, meshSyncResources, k8sConfig)[
+      workloadType
+    ].columns.forEach((col) => {
       initialVisibility[col.name] = col.options?.display !== false;
     });
     return initialVisibility;
@@ -1849,7 +1395,7 @@ const StandardConfigTable = (props) => {
       download: false,
       textLabels: {
         selectedRows: {
-          text: `${ConfigTypes[workloadType].name}(s) selected`,
+          text: `${ConfigurationConfigTable()[workloadType].name}(s) selected`,
         },
       },
       enableNestedDataAccess: '.',
@@ -1857,7 +1403,10 @@ const StandardConfigTable = (props) => {
         const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
         let order = '';
         if (tableState.activeColumn) {
-          order = `${configTypes[workloadType].columns[tableState.activeColumn].name} desc`;
+          order = `${
+            ConfigurationConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType]
+              .columns[tableState.activeColumn].name
+          } desc`;
         }
         switch (action) {
           case 'changePage':
@@ -1869,9 +1418,15 @@ const StandardConfigTable = (props) => {
           case 'sort':
             if (sortInfo.length == 2) {
               if (sortInfo[1] === 'ascending') {
-                order = `${configTypes[workloadType].columns[tableState.activeColumn].name} asc`;
+                order = `${
+                  ConfigurationConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType]
+                    .columns[tableState.activeColumn].name
+                } asc`;
               } else {
-                order = `${configTypes[workloadType].columns[tableState.activeColumn].name} desc`;
+                order = `${
+                  ConfigurationConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType]
+                    .columns[tableState.activeColumn].name
+                } desc`;
               }
             }
             if (order !== sortOrder) {
@@ -1912,18 +1467,24 @@ const StandardConfigTable = (props) => {
                 onSearch={(value) => {
                   setSearch(value);
                 }}
-                placeholder={`Search ${ConfigTypes[workloadType].name}...`}
+                placeholder={`Search ${ConfigurationConfigTable()[workloadType].name}...`}
               />
 
               <CustomColumnVisibilityControl
-                columns={configTypes[workloadType].columns}
+                columns={
+                  ConfigurationConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType]
+                    .columns
+                }
                 customToolsProps={{ columnVisibility, setColumnVisibility }}
               />
             </div>
           </div>
           <ResponsiveDataTable
             data={meshSyncResources}
-            columns={configTypes[workloadType].columns}
+            columns={
+              ConfigurationConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType]
+                .columns
+            }
             options={options}
             className={classes.muiRow}
             tableCols={tableCols}
@@ -1934,7 +1495,7 @@ const StandardConfigTable = (props) => {
       ) : (
         <>
           <View
-            type={`${ConfigTypes[workloadType].name}`}
+            type={`${ConfigurationConfigTable()[workloadType].name}`}
             setView={setView}
             resource={selectedResource}
             classes={classes}
@@ -1942,16 +1503,6 @@ const StandardConfigTable = (props) => {
         </>
       )}
     </>
-  );
-};
-
-const SortableTableCell = ({ index, columnData, columnMeta, onSort }) => {
-  return (
-    <TableCell key={index} onClick={onSort}>
-      <TableSortLabel active={columnMeta.name === columnData.name}>
-        <b>{columnData.label}</b>
-      </TableSortLabel>
-    </TableCell>
   );
 };
 

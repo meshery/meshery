@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import { iconMedium } from '../../../css/icons.styles';
 import { withRouter } from 'next/router';
-import StandardWorkloadTable, { WorkloadsTypes } from './config';
+import StandardWorkloadTable, { WorkloadConfigTable } from './config';
 import { withNotify } from '../../../utils/hooks/useNotification';
 
 const styles = (theme) => ({
@@ -126,14 +126,14 @@ const Workloads = (props) => {
             indicatorColor="primary"
             textColor="primary"
           >
-            {Object.keys(WorkloadsTypes).map((key, index) => {
+            {Object.keys(WorkloadConfigTable()).map((key, index) => {
               return (
-                <Tooltip title={`${WorkloadsTypes[key].name}`} placement="top">
+                <Tooltip title={`${WorkloadConfigTable()[key].name}`} placement="top">
                   <Tab
                     key={index}
                     className={classes.tab}
                     icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
-                    label={WorkloadsTypes[key].name}
+                    label={WorkloadConfigTable()[key].name}
                     data-cy="tabServiceMeshes"
                   />
                 </Tooltip>
@@ -141,7 +141,7 @@ const Workloads = (props) => {
             })}
           </Tabs>
         </Paper>
-        {Object.keys(WorkloadsTypes).map((key, index) => {
+        {Object.keys(WorkloadConfigTable()).map((key, index) => {
           return (
             tabVal === index && (
               <TabContainer>
