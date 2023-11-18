@@ -6,14 +6,12 @@ import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
-import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
 import Link from 'next/link';
 import SettingsIcon from '@material-ui/icons/Settings';
-import Chip from '@material-ui/core/Chip';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
 import Slide from '@material-ui/core/Slide';
@@ -22,17 +20,12 @@ import { Checkbox, Button } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import { Search } from '@material-ui/icons';
 import { TextField } from '@material-ui/core';
-import Avatar from '@material-ui/core/Avatar';
 import { Paper } from '@material-ui/core';
-import {
-  deleteKubernetesConfig,
-  pingKubernetes,
-} from './ConnectionWizard/helpers/kubernetesHelpers';
+import { deleteKubernetesConfig } from './ConnectionWizard/helpers/kubernetesHelpers';
 import { successHandlerGenerator, errorHandlerGenerator } from './ConnectionWizard/helpers/common';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 import { updateK8SConfig, updateProgress, updateCapabilities } from '../lib/store';
 import { bindActionCreators } from 'redux';
-import BadgeAvatars from './CustomAvatar';
 import { SETTINGS } from '../constants/navigator';
 import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
 import PromptComponent, { PROMPT_VARIANTS } from './PromptComponent';
@@ -43,6 +36,8 @@ import { CapabilitiesRegistry } from '../utils/disabledComponents';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import dataFetch from '../lib/data-fetch';
 import { useNotification, withNotify } from '../utils/hooks/useNotification';
+import { ConnectionChip } from './connections/ConnectionChip';
+import useKubernetesHook from './hooks/useKubernetesHook';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -243,7 +238,6 @@ function K8sContextMenu({
   runningStatus,
   show,
   updateK8SConfig,
-  updateProgress,
 
   setActiveContexts = () => {},
   searchContexts = () => {},
@@ -317,18 +311,18 @@ function K8sContextMenu({
     return STATUS.NOT_CONNECTED;
   };
 
-  const handleKubernetesClick = (name, connectionID) => {
-    updateProgress({ showProgress: true });
-    pingKubernetes(
-      successHandlerGenerator(notify, `Kubernetes pinged: ${name}`, () =>
-        updateProgress({ showProgress: false }),
-      ),
-      errorHandlerGenerator(notify, `Not able to  ping kubernetes: ${name}`, () =>
-        updateProgress({ showProgress: false }),
-      ),
-      connectionID,
-    );
-  };
+  // const handleKubernetesClick = (name, connectionID) => {
+  //   updateProgress({ showProgress: true });
+  //   pingKubernetes(
+  //     successHandlerGenerator(notify, `Kubernetes pinged: ${name}`, () =>
+  //       updateProgress({ showProgress: false }),
+  //     ),
+  //     errorHandlerGenerator(notify, `Not able to  ping kubernetes: ${name}`, () =>
+  //       updateProgress({ showProgress: false }),
+  //     ),
+  //     connectionID,
+  //   );
+  // };
 
   const handleKubernetesDelete = (name, connectionID) => async () => {
     let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
@@ -356,6 +350,8 @@ function K8sContextMenu({
   if (showFullContextMenu) {
     open = showFullContextMenu;
   }
+
+  const ping = useKubernetesHook();
 
   useEffect(() => {
     setTransformProperty(
@@ -476,50 +472,31 @@ function K8sContextMenu({
 
                   return (
                     <div key={`${ctx.uniqueID}-${idx}`} id={ctx.id} className={classes.chip}>
-                      <Tooltip
-                        title={`Server: ${ctx.server},  Operator: ${getStatus(
-                          operStatus,
-                        )}, MeshSync: ${getStatus(meshStatus)}, Broker: ${getStatus(brokerStatus)}`}
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'flex-start',
+                          alignItems: 'center',
+                        }}
                       >
-                        <div
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'flex-start',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <Checkbox
-                            checked={activeContexts.includes(ctx.id)}
-                            onChange={() => setActiveContexts(ctx.id)}
-                            color="primary"
-                          />
-                          <Chip
-                            label={ctx?.name}
-                            onDelete={handleKubernetesDelete(ctx.name, ctx.connection_id)}
-                            onClick={() => handleKubernetesClick(ctx.name, ctx.connection_id)}
-                            avatar={
-                              meshStatus ? (
-                                <BadgeAvatars>
-                                  <Avatar
-                                    src="/static/img/kubernetes.svg"
-                                    className={classes.icon}
-                                    style={operStatus ? {} : { opacity: 0.2 }}
-                                  />
-                                </BadgeAvatars>
-                              ) : (
-                                <Avatar
-                                  src="/static/img/kubernetes.svg"
-                                  className={classes.icon}
-                                  style={operStatus ? {} : { opacity: 0.2 }}
-                                />
-                              )
-                            }
-                            variant="filled"
-                            className={classes.Chip}
-                            data-cy="chipContextName"
-                          />
-                        </div>
-                      </Tooltip>
+                        <Checkbox
+                          checked={activeContexts.includes(ctx.id)}
+                          onChange={() => setActiveContexts(ctx.id)}
+                          color="primary"
+                        />
+                        <ConnectionChip
+                          tooltip={`Name: ${ctx.name}, Server: ${
+                            ctx.server
+                          },  Operator: ${getStatus(operStatus)}, MeshSync: ${getStatus(
+                            meshStatus,
+                          )}, Broker: ${getStatus(brokerStatus)}`}
+                          title={ctx.name}
+                          status={operStatus}
+                          iconSrc="/static/img/kubernetes.svg"
+                          onDelete={handleKubernetesDelete(ctx.name, ctx.id)}
+                          handlePing={() => ping(ctx.name, ctx.server, ctx.id)}
+                        />
+                      </div>
                     </div>
                   );
                 })}
