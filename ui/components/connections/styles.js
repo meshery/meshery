@@ -1,5 +1,6 @@
 import { alpha } from '@material-ui/core';
 import { Colors } from '../../themes/app';
+import { CONNECTION_STATES } from '../../utils/Enum';
 
 const styles = (theme) => ({
   grid: { padding: theme.spacing(2) },
@@ -224,3 +225,14 @@ const styles = (theme) => ({
 });
 
 export default styles;
+
+export const CONNECTION_STATE_COLORS = {
+  [CONNECTION_STATES.CONNECTED]: '#00B39F',
+  [CONNECTION_STATES.REGISTERED]: '#00B39F',
+  [CONNECTION_STATES.DISCOVERED]: '#FFC107',
+  [CONNECTION_STATES.IGNORED]: '#FFC107',
+  [CONNECTION_STATES.DELETED]: '#FF1744',
+  [CONNECTION_STATES.MAINTENANCE]: '#FFC107',
+  [CONNECTION_STATES.DISCONNECTED]: '#FFC107',
+  [CONNECTION_STATES.NOTFOUND]: '#FFC107',
+};
