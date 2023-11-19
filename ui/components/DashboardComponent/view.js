@@ -2,13 +2,14 @@ import React from 'react';
 import { ArrowBack } from '@material-ui/icons';
 import TooltipButton from '../../utils/TooltipButton';
 import { Paper, IconButton } from '@material-ui/core';
-import { useRouter } from 'next/router';
 import NameValueTable from '../DataFormatter/NameValueTable';
 import { ResponsiveDataTable } from '@layer5/sistent-components';
+import { ALL_VIEW } from './resources/config';
 
 const View = (props) => {
   const {
-    // type, setView,
+    // type,
+    setView,
     resource,
     classes,
   } = props;
@@ -182,13 +183,11 @@ const View = (props) => {
     );
   };
 
-  const router = useRouter();
-
   const HeaderComponent = () => {
     return (
       <>
         <TooltipButton title="Back" placement="left">
-          <IconButton onClick={() => router.back()}>
+          <IconButton onClick={() => setView(ALL_VIEW)}>
             <ArrowBack />
           </IconButton>
         </TooltipButton>
