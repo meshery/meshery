@@ -129,8 +129,8 @@
 - title: ⚙️ Tasks (all)
   url: tasks
   links:
-    - title: Application Management
-      url: tasks/application-management
+    - title: Infrastructure Management
+      url: tasks/infrastructure-management
     - title: Filter Management
       url: tasks/filter-management
     - title: Lifecycle Management
