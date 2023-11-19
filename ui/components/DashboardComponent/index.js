@@ -13,6 +13,7 @@ import { iconMedium } from '../../css/icons.styles';
 import { ResourcesConfig } from './resources/config';
 import ResourcesTable from './resources/resources-table';
 import ResourcesSubMenu from './resources/resources-sub-menu';
+import Overview from './overview';
 
 const styles = (theme) => ({
   wrapperClss: {
@@ -133,6 +134,14 @@ const DashboardComponent = (props) => {
             indicatorColor="primary"
             textColor="primary"
           >
+            <Tooltip title={`View Overview`} placement="top">
+              <Tab
+                className={classes.tab}
+                icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
+                label={'Overview'}
+              />
+            </Tooltip>
+
             {Object.keys(ResourcesConfig).map((resource, idx) => {
               return (
                 <Tooltip title={`View ${resource}`} placement="top">
@@ -147,9 +156,14 @@ const DashboardComponent = (props) => {
             })}
           </Tabs>
         </Paper>
+        {tabVal === 0 && (
+          <TabContainer>
+            <Overview />
+          </TabContainer>
+        )}
         {Object.keys(ResourcesConfig).map((resource, idx) => {
           return (
-            tabVal === idx &&
+            tabVal === idx + 1 &&
             (ResourcesConfig[resource].submenu ? (
               <TabContainer>
                 <ResourcesSubMenu
