@@ -2,13 +2,10 @@ import React, { useEffect, useState } from 'react';
 import CloseIcon from '@material-ui/icons/Close';
 import PatternIcon from '../../../assets/icons/Pattern';
 import {
-  Chip,
   Typography,
   IconButton,
   Button,
   Grid,
-  Avatar,
-  Tooltip,
   Box,
   DialogTitle,
   DialogContent,
@@ -31,6 +28,7 @@ import _ from 'lodash';
 import RJSFWrapper from '../../MesheryMeshInterface/PatternService/RJSF_wrapper';
 import { promisifiedDataFetch } from '../../../lib/data-fetch';
 import CircularProgress from '@mui/material/CircularProgress';
+import { ConnectionChip } from '../../connections/ConnectionChip.js';
 
 const APPLICATION_PLURAL = 'applications';
 const FILTER_PLURAL = 'filters';
@@ -255,32 +253,22 @@ const InfoModal = (props) => {
                 <Grid item xs={dataName === APPLICATION_PLURAL ? 12 : 6}>
                   <Typography gutterBottom variant="subtitle1" className={classes.text}>
                     <span style={{ fontWeight: 'bold', paddingRight: '0.2rem' }}>Owner:</span>
-                    <Tooltip
-                      title={`Owner: ${
+                    <ConnectionChip
+                      tooltip={`Owner: ${
                         resourceUserProfile?.first_name + ' ' + resourceUserProfile?.last_name
                       }`}
-                    >
-                      <Chip
-                        avatar={
-                          <Avatar
-                            src={resourceUserProfile?.avatar_url}
-                            className={classes.chipIcon}
-                          />
-                        }
-                        label={
-                          resourceUserProfile ? (
-                            resourceUserProfile?.first_name + ' ' + resourceUserProfile?.last_name
-                          ) : (
-                            <Box sx={{ display: 'flex' }}>
-                              <CircularProgress color="inherit" size="1rem" />
-                            </Box>
-                          )
-                        }
-                        variant="outlined"
-                        data-cy="chipDesignDetails"
-                        className={classes.chip}
-                      />
-                    </Tooltip>
+                      //  status={true}
+                      title={
+                        resourceUserProfile ? (
+                          resourceUserProfile?.first_name + ' ' + resourceUserProfile?.last_name
+                        ) : (
+                          <Box sx={{ display: 'flex' }}>
+                            <CircularProgress color="inherit" size="1rem" />
+                          </Box>
+                        )
+                      }
+                      iconSrc={resourceUserProfile?.avatar_url}
+                    />
                   </Typography>
                 </Grid>
                 <Grid

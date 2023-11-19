@@ -31,7 +31,17 @@ const useChipStyles = makeStyles(() => ({
   },
 }));
 
-export const ConnectionChip = ({ handlePing, onDelete, title, tooltip, iconSrc, status }) => {
+export const ConnectionChip = ({
+  handlePing,
+  onDelete,
+  title,
+  tooltip,
+  iconSrc,
+  status,
+  style,
+  key,
+  color,
+}) => {
   const classes = useChipStyles();
   return (
     <Tooltip title={tooltip || title} placement="bottom">
@@ -41,7 +51,7 @@ export const ConnectionChip = ({ handlePing, onDelete, title, tooltip, iconSrc, 
         onDelete={onDelete}
         avatar={
           status ? (
-            <BadgeAvatars>
+            <BadgeAvatars color={color}>
               <Avatar
                 src={iconSrc}
                 className={classes.icon}
@@ -49,10 +59,12 @@ export const ConnectionChip = ({ handlePing, onDelete, title, tooltip, iconSrc, 
               />
             </BadgeAvatars>
           ) : (
-            <Avatar src={iconSrc} className={classes.icon} style={status ? {} : { opacity: 0.2 }} />
+            <Avatar src={iconSrc} className={classes.icon} />
           )
         }
         variant="filled"
+        style={style}
+        key={key}
         className={classes.Chip}
         data-cy="chipContextName"
       />

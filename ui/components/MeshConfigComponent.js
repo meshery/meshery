@@ -1,5 +1,4 @@
 import {
-  Chip,
   Grid,
   IconButton,
   List,
@@ -8,7 +7,6 @@ import {
   Menu,
   MenuItem,
   Switch,
-  Tooltip,
   Paper,
   NoSsr,
   TableCell,
@@ -38,6 +36,7 @@ import { DEPLOYMENT_TYPE } from '../utils/Enum';
 import { iconMedium } from '../css/icons.styles';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
+import { ConnectionChip } from './connections/ConnectionChip';
 
 const styles = (theme) => ({
   operationButton: {
@@ -436,22 +435,21 @@ function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig 
         },
         customBodyRender: (_, tableMeta) => {
           return (
-            <Tooltip title={`Server: ${tableMeta.rowData[2]}`}>
-              <Chip
-                label={data[tableMeta.rowIndex].context}
-                onDelete={handleConfigDelete(
+            <ConnectionChip
+              tooltip={`Server: ${tableMeta.rowData[2]}`}
+              title={data[tableMeta.rowIndex].context}
+              onDelete={() =>
+                handleConfigDelete(
                   data[tableMeta.rowIndex].connection_id,
                   data[tableMeta.rowIndex].context,
                   tableMeta.rowIndex,
-                )}
-                onClick={() =>
-                  handleKubernetesClick(data[tableMeta.rowIndex].connection_id, tableMeta.rowIndex)
-                }
-                icon={<img src="/static/img/kubernetes.svg" className={classes.icon} />}
-                variant="outlined"
-                data-cy="chipContextName"
-              />
-            </Tooltip>
+                )
+              }
+              handlePing={() =>
+                handleKubernetesClick(data[tableMeta.rowIndex].connection_id, tableMeta.rowIndex)
+              }
+              iconSrc="/static/img/kubernetes.svg"
+            />
           );
         },
       },
@@ -634,25 +632,17 @@ function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig 
                         <Grid item xs={12} md={5} className={classes.operationButton}>
                           <List>
                             <ListItem>
-                              <Tooltip title={`Server: ${contexts[rowMetaData.rowIndex].server}`}>
-                                <Chip
-                                  label={data[rowMetaData.rowIndex].context}
-                                  onClick={() =>
-                                    handleKubernetesClick(
-                                      data[rowMetaData.rowIndex].connection_id,
-                                      rowMetaData.rowIndex,
-                                    )
-                                  }
-                                  icon={
-                                    <img
-                                      src="/static/img/kubernetes.svg"
-                                      className={classes.icon}
-                                    />
-                                  }
-                                  variant="outlined"
-                                  data-cy="chipContextName"
-                                />
-                              </Tooltip>
+                              <ConnectionChip
+                                tooltip={`Server: ${contexts[rowMetaData.rowIndex].server}`}
+                                title={data[rowMetaData.rowIndex].context}
+                                handlePing={() =>
+                                  handleKubernetesClick(
+                                    data[rowMetaData.rowIndex].connection_id,
+                                    rowMetaData.rowIndex,
+                                  )
+                                }
+                                iconSrc="/static/img/kubernetes.svg"
+                              />
                             </ListItem>
                           </List>
                         </Grid>
@@ -713,28 +703,16 @@ function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig 
                         <Grid item xs={12} md={4} className={classes.operationButton}>
                           <List>
                             <ListItem>
-                              <Tooltip
-                                title={
+                              <ConnectionChip
+                                tooltip={
                                   operatorState ? `Version: ${operatorVersion}` : 'Not Available'
                                 }
-                                aria-label="meshSync"
-                              >
-                                <Chip
-                                  // label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
-                                  label={'Operator'}
-                                  style={!operatorState ? { opacity: 0.5 } : {}}
-                                  // onDelete={handleReconfigure}
-                                  onClick={() => handleOperatorClick(rowMetaData.rowIndex)}
-                                  icon={
-                                    <img
-                                      src="/static/img/meshery-operator.svg"
-                                      className={classes.operatorIcon}
-                                    />
-                                  }
-                                  variant="outlined"
-                                  data-cy="chipOperator"
-                                />
-                              </Tooltip>
+                                // label={inClusterConfig?'Using In Cluster Config': contextName + (configuredServer?' - ' + configuredServer:'')}
+                                title={'Operator'}
+                                // onDelete={handleReconfigure}
+                                handlePing={() => handleOperatorClick(rowMetaData.rowIndex)}
+                                icon="/static/img/meshery-operator.svg"
+                              />
                             </ListItem>
                           </List>
                         </Grid>
@@ -744,54 +722,32 @@ function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig 
                             <Grid item xs={12} md={4}>
                               <List>
                                 <ListItem>
-                                  <Tooltip
-                                    title={
+                                  <ConnectionChip
+                                    tooltip={
                                       meshSyncState !== DISABLED ? `Ping MeshSync` : 'Not Available'
                                     }
-                                    aria-label="meshSync"
-                                  >
-                                    <Chip
-                                      label={'MeshSync'}
-                                      style={meshSyncState === DISABLED ? { opacity: 0.5 } : {}}
-                                      onClick={() => handleMeshSyncClick(rowMetaData.rowIndex)}
-                                      icon={
-                                        <img
-                                          src="/static/img/meshsync.svg"
-                                          className={classes.icon}
-                                        />
-                                      }
-                                      variant="outlined"
-                                      data-cy="chipMeshSync"
-                                    />
-                                  </Tooltip>
+                                    title={'MeshSync'}
+                                    style={meshSyncState === DISABLED ? { opacity: 0.5 } : {}}
+                                    handlePing={() => handleMeshSyncClick(rowMetaData.rowIndex)}
+                                    icon="/static/img/meshsync.svg"
+                                  />
                                 </ListItem>
                               </List>
                             </Grid>
                             <Grid item xs={12} md={4}>
                               <List>
                                 <ListItem>
-                                  <Tooltip
-                                    title={
+                                  <ConnectionChip
+                                    tooltip={
                                       natsState === 'Not Active'
                                         ? 'Not Available'
                                         : `Reconnect NATS`
                                     }
-                                    aria-label="nats"
-                                  >
-                                    <Chip
-                                      label={'NATS'}
-                                      onClick={() => handleNATSClick(rowMetaData.rowIndex)}
-                                      style={natsState === 'Not Active' ? { opacity: 0.5 } : {}}
-                                      icon={
-                                        <img
-                                          src="/static/img/nats-icon-color.svg"
-                                          className={classes.icon}
-                                        />
-                                      }
-                                      variant="outlined"
-                                      data-cy="chipNATS"
-                                    />
-                                  </Tooltip>
+                                    label={'NATS'}
+                                    handlePing={() => handleNATSClick(rowMetaData.rowIndex)}
+                                    style={natsState === 'Not Active' ? { opacity: 0.5 } : {}}
+                                    iconSrc="/static/img/nats-icon-color.svg"
+                                  />
                                 </ListItem>
                               </List>
                             </Grid>

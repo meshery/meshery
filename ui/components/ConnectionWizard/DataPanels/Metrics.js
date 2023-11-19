@@ -18,6 +18,7 @@ import {
 } from '../helpers/metrics';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
+import { ConnectionChip } from '../../connections/ConnectionChip';
 
 const styles = (theme) => ({
   infoContainer: {
@@ -62,14 +63,13 @@ const AdapterChip = withStyles(chipStyles)(({
       : '/static/img/prometheus_logo_orange_circle.svg';
   let logoIcon = <img src={image} className={classes.chipIcon} />;
   return (
-    <Chip
-      label={componentName}
-      onClick={handleAdapterClick}
+    <ConnectionChip
+      tooltip={false}
+      title={componentName}
+      handlePing={() => handleAdapterClick}
       onDelete={isConnected ? handleAdapterDelete : null}
-      icon={logoIcon}
-      className={classes.chip}
+      iconSrc={logoIcon}
       key={`adapters-${11}`}
-      variant={isConnected ? 'outlined' : 'default'}
     />
   );
 });

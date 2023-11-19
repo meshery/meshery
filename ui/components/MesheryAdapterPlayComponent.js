@@ -2,7 +2,6 @@ import {
   Card,
   CardActions,
   CardHeader,
-  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -54,6 +53,7 @@ import { ACTIONS } from '../utils/Enum';
 import { getModelByName } from '../api/meshmodel';
 import { EVENT_TYPES } from '../lib/event-types';
 import { withNotify } from '../utils/hooks/useNotification';
+import { ConnectionChip } from './connections/ConnectionChip';
 
 const styles = (theme) => ({
   smWrapper: { backgroundColor: theme.palette.secondary.elevatedComponents2 },
@@ -1253,13 +1253,11 @@ class MesheryAdapterPlayComponent extends React.Component {
     let adapterName = adapter.name.split(' ').join('').toLowerCase();
     let imageSrc = '/static/img/' + adapterName + '.svg';
     let adapterChip = (
-      <Chip
-        label={adapter.adapter_location}
-        data-cy="adapter-chip-ping"
-        onClick={this.handleAdapterClick(adapter.adapter_location)}
-        icon={<img src={imageSrc} className={classes.icon} />}
-        className={classes.chip}
-        variant="outlined"
+      <ConnectionChip
+        title={adapter.adapter_location}
+        handlePing={() => this.handleAdapterClick(adapter.adapter_location)}
+        iconSrc={imageSrc}
+        status={adapter.status}
       />
     );
 

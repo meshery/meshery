@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 
 import Grid from '@material-ui/core/Grid';
-import { NoSsr, Chip, Button, TextField, Tooltip, Avatar, makeStyles } from '@material-ui/core';
+import { NoSsr, Button, TextField, makeStyles } from '@material-ui/core';
 import blue from '@material-ui/core/colors/blue';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -13,7 +13,7 @@ import dataFetch from '../lib/data-fetch';
 import changeAdapterState from './graphql/mutations/AdapterStatusMutation';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
-import BadgeAvatars from './CustomAvatar';
+import { ConnectionChip } from './connections/ConnectionChip';
 
 const useStyles = makeStyles((theme) => ({
   wrapperClass: {
@@ -437,30 +437,20 @@ const MeshAdapterConfigComponent = (props) => {
             }
 
             return (
-              <Tooltip
-                key={adapter.uniqueID}
-                title={`Meshery Adapter for
+              <ConnectionChip
+                tooltip={`Meshery Adapter for
                         ${adapter.name
                           .toLowerCase()
                           .split(' ')
                           .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
                           .join(' ')} (${adapter.version})`}
-              >
-                <Chip
-                  className={classes.chip}
-                  label={adapter.adapter_location}
-                  onDelete={handleDelete(adapter.adapter_location)}
-                  onClick={handleClick(adapter.adapter_location)}
-                  icon={
-                    // logoIcon
-                    <BadgeAvatars color={getStatusColor(adapterStates[adapter.name])}>
-                      <Avatar alt={adapter.name} src={image} className={classes.icon} />
-                    </BadgeAvatars>
-                  }
-                  variant="outlined"
-                  data-cy="chipAdapterLocation"
-                />
-              </Tooltip>
+                color={getStatusColor(adapterStates[adapter.name.toUpperCase()])}
+                title={adapter.adapter_location}
+                onDelete={() => handleDelete(adapter.adapter_location)}
+                handlePing={() => handleClick(adapter.adapter_location)}
+                iconSrc={image}
+                status={adapterStates[adapter.name.toUpperCase()]}
+              />
             );
           })}
         </div>
