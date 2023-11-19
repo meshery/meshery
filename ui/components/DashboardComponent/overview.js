@@ -13,10 +13,10 @@ import {
   updatePrometheusConfig,
   updateTelemetryUrls,
 } from '../../lib/store.js';
-import DashboardMeshModelGraph from '../Dashboard/DashboardMeshModelGraph';
-import ConnectionStatsChart from '../Dashboard/ConnectionCharts';
+import DashboardMeshModelGraph from './charts/DashboardMeshModelGraph.js';
+import ConnectionStatsChart from './charts/ConnectionCharts.js';
 import blue from '@material-ui/core/colors/blue';
-import MesheryConfigurationChart from '../Dashboard/MesheryConfigurationCharts.js';
+import MesheryConfigurationChart from './charts/MesheryConfigurationCharts.js';
 
 const styles = (theme) => ({
   rootClass: { backgroundColor: theme.palette.secondary.elevatedComponents2, marginTop: '1rem' },

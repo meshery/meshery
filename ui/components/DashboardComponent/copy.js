@@ -44,12 +44,12 @@ import {
   configurationTableTheme,
   configurationTableThemeDark,
 } from '../../themes/configurationTableTheme.js';
-import DashboardMeshModelGraph from '../Dashboard/DashboardMeshModelGraph.js';
-import ConnectionStatsChart from '../Dashboard/ConnectionCharts.js';
+import DashboardMeshModelGraph from './charts/DashboardMeshModelGraph.js';
+import ConnectionStatsChart from './charts/ConnectionCharts.js';
 import { EVENT_TYPES } from '../../lib/event-types.js';
 import { withNotify } from '../../utils/hooks/useNotification.js';
 import _ from 'lodash';
-import WorkloadChart from '../Dashboard/WorkloadChart.js';
+import WorkloadChart from './charts/WorkloadChart.js';
 const styles = (theme) => ({
   rootClass: { backgroundColor: theme.palette.secondary.elevatedComponents2 },
   datatable: {

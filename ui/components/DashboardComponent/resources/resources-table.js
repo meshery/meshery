@@ -18,7 +18,6 @@ const ACTION_TYPES = {
 
 const ResourcesTable = (props) => {
   const { classes, updateProgress, k8sConfig, resourceConfig, submenu, workloadType } = props;
-  console.log(props);
   const [meshSyncResources, setMeshSyncResources] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography } from '@material-ui/core';
 import { donut } from 'billboard.js';
-import BBChart from '../BBChart';
-import { dataToColors } from '../../utils/charts';
+import BBChart from '../../BBChart';
+import { dataToColors } from '../../../utils/charts';
 import Link from 'next/link';
-import dataFetch from '../../lib/data-fetch';
-import { useNotification } from '../../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../../lib/event-types';
-import CreateDesignBtn from '../General/CreateDesignBtn';
+import dataFetch from '../../../lib/data-fetch';
+import { useNotification } from '../../../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../../../lib/event-types';
+import CreateDesignBtn from '../../General/CreateDesignBtn';
 
 const ACTION_TYPES = {
   FETCH_PATTERNS: {

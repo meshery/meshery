@@ -1,5 +1,5 @@
 import React from 'react';
-import { AppBar, withStyles } from '@material-ui/core';
+import { withStyles } from '@material-ui/core';
 import { Tooltip, Tabs, Tab, Typography } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
@@ -7,6 +7,8 @@ import { iconSmall } from '../../../css/icons.styles';
 import { withRouter } from 'next/router';
 import { withNotify } from '../../../utils/hooks/useNotification';
 import ResourcesTable from './resources-table';
+import { Paper } from '@material-ui/core';
+import { Box } from '@material-ui/core';
 
 const styles = (theme) => ({
   wrapperClss: {
@@ -117,39 +119,40 @@ const ResourcesSubMenu = (props) => {
   return (
     <>
       <div className={classes.wrapperClss}>
-        <TabContainer>
-          <AppBar position="static" color="default" sx={{ width: '100%' }}>
-            <Tabs
-              value={tabVal}
-              className={classes.tabs}
-              onChange={handleChange()}
-              variant="scrollable"
-              indicatorColor="primary"
-              textColor="primary"
-            >
-              {Object.keys(resource.tableConfig()).map((key, index) => {
-                return (
-                  <Tooltip title={`${resource.tableConfig()[key].name}`} placement="top">
-                    <Tab
-                      key={index}
-                      className={classes.tab}
-                      label={
-                        <div className={classes.iconText}>
-                          {resource.tableConfig()[key].name}
-                          <FontAwesomeIcon
-                            icon={faMendeley}
-                            style={iconSmall}
-                            className={classes.icon}
-                          />
-                        </div>
-                      }
-                    />
-                  </Tooltip>
-                );
-              })}
-            </Tabs>
-          </AppBar>
-        </TabContainer>
+        <Paper className={classes.wrapperClss}>
+          <div style={{ backgroundColor: '#f5f5f5' }}>
+            <Box sx={{ margin: '0 auto', width: '100%', maxWidth: { xs: 320, sm: 880 } }}>
+              <Tabs
+                value={tabVal}
+                className={classes.tabs}
+                onChange={handleChange()}
+                variant="scrollable"
+                indicatorColor="primary"
+                textColor="primary"
+              >
+                {Object.keys(resource.tableConfig()).map((key, index) => {
+                  return (
+                    <Tooltip title={`${resource.tableConfig()[key].name}`} placement="top">
+                      <Tab
+                        key={index}
+                        label={
+                          <div className={classes.iconText}>
+                            {resource.tableConfig()[key].name}
+                            <FontAwesomeIcon
+                              icon={faMendeley}
+                              style={iconSmall}
+                              className={classes.icon}
+                            />
+                          </div>
+                        }
+                      />
+                    </Tooltip>
+                  );
+                })}
+              </Tabs>
+            </Box>
+          </div>
+        </Paper>
         {Object.keys(resource.tableConfig()).map((key, index) => {
           return (
             tabVal === index && (

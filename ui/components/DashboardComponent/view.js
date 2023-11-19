@@ -3,14 +3,16 @@ import { ArrowBack } from '@material-ui/icons';
 import TooltipButton from '../../utils/TooltipButton';
 import { Paper, IconButton } from '@material-ui/core';
 import { useRouter } from 'next/router';
-// import { FormatStructuredData } from '../DataFormatter';
 import NameValueTable from '../DataFormatter/NameValueTable';
 import { ResponsiveDataTable } from '@layer5/sistent-components';
 
 const View = (props) => {
-  const { type, setView, resource, classes } = props;
+  const {
+    // type, setView,
+    resource,
+    classes,
+  } = props;
 
-  console.log(type, setView, resource, classes);
   function RenderDynamicTable(key, value) {
     const allKeys = value.reduce((keys, obj) => {
       Object.keys(obj).forEach((key) => {
