@@ -23,7 +23,7 @@ Meshery facilitates the import of infrastructure in multiple formats, including 
 When a request is made to provision a design, it undergoes the following stages:
 
 1. **Import of Referenced Designs:**
-   Designs support importing remote designs. You can reference a design which will be included at runtime by adding the following annotation `type: $(#use <url-of-remote-pattern>)`. The referenced design will be expanded from the source.
+   A Design may reference any number of other Designs, in essence, a Design may import any number of other Designs.  As an editor of a Design, you can make reference to another Design, while following principles of reusing and DRY (Do Not Repeat Yourself). Any referenced Design will subsequently be imported during the provisioning moment. To reference another design, do so by adding the following annotation `type: $(#use <url-of-remote-pattern>)` in your Design file. The referenced design will be expanded from the source.
 
 2. **Identification:**
    Meshery relies on components registered at boot time. Only registered models and components can be managed with Meshery. Currently, models from the ArtifactHub repository are supported.
