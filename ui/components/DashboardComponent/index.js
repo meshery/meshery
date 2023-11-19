@@ -2,22 +2,18 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
+import { updateGrafanaConfig, updatePrometheusConfig, updateTelemetryUrls } from '../../lib/store';
 import { withStyles } from '@material-ui/core/styles';
 import { withNotify } from '../../utils/hooks/useNotification';
 import { Tooltip, Tabs, Tab, Paper, Typography } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPoll, faDatabase, faFileInvoice } from '@fortawesome/free-solid-svg-icons';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import { updateProgress } from '../../lib/store';
 import { iconMedium } from '../../css/icons.styles';
 import Clusters from './clusters';
-import Namespaces from './namespaces';
-import Nodes from './nodes';
-import Workloads from './workloads';
-import Storage from './storage';
-import Network from './network';
-import Security from './security';
-import Config from './configuration';
+import { ResourcesConfig } from './resources/config';
+import ResourcesTable from './resources/resources-table';
+import ResourcesSubMenu from './resources/resources-sub-menu';
 
 const styles = (theme) => ({
   wrapperClss: {
@@ -146,62 +142,18 @@ const DashboardComponent = (props) => {
                 data-cy="tabServiceMeshes"
               />
             </Tooltip>
-            <Tooltip title="Configure Metrics backends" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={<FontAwesomeIcon icon={faPoll} style={iconMedium} />}
-                label="Nodes"
-                tab="tabMetrics"
-              />
-            </Tooltip>
-            <Tooltip title="Configure Metrics backends" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={<FontAwesomeIcon icon={faPoll} style={iconMedium} />}
-                label="Namespaces"
-                tab="tabMetrics"
-              />
-            </Tooltip>
-            <Tooltip title="Reset System" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
-                label="Workloads"
-                tab="systemReset"
-              />
-            </Tooltip>
-            <Tooltip title="Registry" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
-                label="Storage"
-                tab="registry"
-              />
-            </Tooltip>
-            <Tooltip title="Registry" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
-                label="Network"
-                tab="registry"
-              />
-            </Tooltip>
-            <Tooltip title="Registry" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
-                label="Security"
-                tab="registry"
-              />
-            </Tooltip>
-            <Tooltip title="Registry" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
-                label="Configuration"
-                tab="registry"
-              />
-            </Tooltip>
+            {Object.keys(ResourcesConfig).map((resource, idx) => {
+              return (
+                <Tooltip title={`View ${resource}`} placement="top">
+                  <Tab
+                    key={idx}
+                    className={classes.tab}
+                    icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
+                    label={resource}
+                  />
+                </Tooltip>
+              );
+            })}
           </Tabs>
         </Paper>
         {tabVal === 0 && (
@@ -209,41 +161,34 @@ const DashboardComponent = (props) => {
             <Clusters />
           </TabContainer>
         )}
-        {tabVal === 1 && (
-          <TabContainer>
-            <Nodes updateProgress={updateProgress} classes={classes} k8sConfig={k8sconfig} />
-          </TabContainer>
-        )}
-        {tabVal === 2 && (
-          <TabContainer>
-            <Namespaces updateProgress={updateProgress} classes={classes} k8sConfig={k8sconfig} />
-          </TabContainer>
-        )}
-        {tabVal === 3 && (
-          <TabContainer>
-            <Workloads updateProgress={updateProgress} classes={classes} k8sConfig={k8sconfig} />
-          </TabContainer>
-        )}
-        {tabVal === 4 && (
-          <TabContainer>
-            <Storage updateProgress={updateProgress} classes={classes} k8sConfig={k8sconfig} />
-          </TabContainer>
-        )}
-        {tabVal === 5 && (
-          <TabContainer>
-            <Network updateProgress={updateProgress} classes={classes} k8sConfig={k8sconfig} />
-          </TabContainer>
-        )}
-        {tabVal === 6 && (
-          <TabContainer>
-            <Security updateProgress={updateProgress} classes={classes} k8sConfig={k8sconfig} />
-          </TabContainer>
-        )}
-        {tabVal === 7 && (
-          <TabContainer>
-            <Config updateProgress={updateProgress} classes={classes} k8sConfig={k8sconfig} />
-          </TabContainer>
-        )}
+
+        {Object.keys(ResourcesConfig).map((resource, idx) => {
+          return (
+            tabVal === idx + 1 &&
+            (ResourcesConfig[resource].submenu ? (
+              <TabContainer>
+                <ResourcesSubMenu
+                  key={idx}
+                  resource={ResourcesConfig[resource]}
+                  updateProgress={updateProgress}
+                  classes={classes}
+                  k8sConfig={k8sconfig}
+                />
+              </TabContainer>
+            ) : (
+              <TabContainer>
+                <ResourcesTable
+                  key={idx}
+                  workloadType={resource}
+                  classes={classes}
+                  k8sConfig={k8sconfig}
+                  resourceConfig={ResourcesConfig[resource].tableConfig}
+                  menu={ResourcesConfig[resource].submenu}
+                />
+              </TabContainer>
+            ))
+          );
+        })}
       </div>
     </>
   );
@@ -251,9 +196,9 @@ const DashboardComponent = (props) => {
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
-  // updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
-  // updatePrometheusConfig: bindActionCreators(updatePrometheusConfig, dispatch),
-  // updateTelemetryUrls: bindActionCreators(updateTelemetryUrls, dispatch),
+  updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
+  updatePrometheusConfig: bindActionCreators(updatePrometheusConfig, dispatch),
+  updateTelemetryUrls: bindActionCreators(updateTelemetryUrls, dispatch),
 });
 
 const mapStateToProps = (state) => {

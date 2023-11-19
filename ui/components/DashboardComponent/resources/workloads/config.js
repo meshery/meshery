@@ -1,29 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import dataFetch from '../../../lib/data-fetch';
-import { useNotification } from '../../../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../../../lib/event-types';
-import ResponsiveDataTable from '../../../utils/data-table';
-import CustomColumnVisibilityControl from '../../../utils/custom-column';
-import useStyles from '../../../assets/styles/general/tool.styles';
-import SearchBar from '../../../utils/custom-search';
-import { timeAgo } from '../../../utils/k8s-utils';
-import { getClusterNameFromClusterId } from '../../../utils/multi-ctx';
-import View from '../view';
+import React from 'react';
+import { timeAgo } from '../../../../utils/k8s-utils';
+import { getClusterNameFromClusterId } from '../../../../utils/multi-ctx';
+import { SINGLE_VIEW } from '../config';
 
-const ACTION_TYPES = {
-  FETCH_MESHSYNC_RESOURCES: {
-    name: 'FETCH_MESHSYNC_RESOURCES',
-    error_msg: 'Failed to fetch meshsync resources',
-  },
-};
-
-const ALL_CONFIG = 'all';
-const SINGLE_CONFIG = 'single';
-
-export const ConfigurationConfigTable = (switchView, meshSyncResources, k8sConfig) => {
+export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) => {
   return {
-    ConfigMap: {
-      name: 'ConfigMap',
+    PODS: {
+      name: 'Pod',
       columns: [
         {
           name: 'id',
@@ -48,7 +31,7 @@ export const ConfigurationConfigTable = (switchView, meshSyncResources, k8sConfi
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -62,6 +45,42 @@ export const ConfigurationConfigTable = (switchView, meshSyncResources, k8sConfi
           label: 'API version',
           options: {
             sort: false,
+          },
+        },
+        {
+          name: 'status.attribute',
+          label: 'Phase',
+          options: {
+            sort: false,
+            customBodyRender: function CustomBody(val) {
+              let attribute = JSON.parse(val);
+              let phase = attribute.phase;
+              return <>{phase}</>;
+            },
+          },
+        },
+        {
+          name: 'status.attribute',
+          label: 'Host IP',
+          options: {
+            sort: false,
+            customBodyRender: function CustomBody(val) {
+              let attribute = JSON.parse(val);
+              let hostIP = attribute.hostIP;
+              return <>{hostIP}</>;
+            },
+          },
+        },
+        {
+          name: 'status.attribute',
+          label: 'Pod IP',
+          options: {
+            sort: false,
+            customBodyRender: function CustomBody(val) {
+              let attribute = JSON.parse(val);
+              let podIP = attribute.podIP;
+              return <>{podIP}</>;
+            },
           },
         },
         {
@@ -80,7 +99,154 @@ export const ConfigurationConfigTable = (switchView, meshSyncResources, k8sConfi
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  >
+                    {value}
+                  </div>
+                </>
+              );
+            },
+          },
+        },
+        {
+          name: 'spec.attribute',
+          label: 'Node',
+          options: {
+            sort: false,
+            customBodyRender: function CustomBody(val) {
+              let attribute = JSON.parse(val);
+              let nodeName = attribute.nodeName;
+              return <>{nodeName}</>;
+            },
+          },
+        },
+        {
+          name: 'cluster_id',
+          label: 'Cluster',
+          options: {
+            sort: false,
+            sortThirdClickReset: true,
+            customBodyRender: function CustomBody(val) {
+              let clusterName = getClusterNameFromClusterId(val, k8sConfig);
+              return (
+                <>
+                  <a
+                    href={'#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: 'inherit',
+                      textDecorationLine: 'underline',
+                      cursor: 'pointer',
+                      marginBottom: '0.5rem',
+                    }}
+                  >
+                    {clusterName}
+                  </a>
+                </>
+              );
+            },
+          },
+        },
+        {
+          name: 'metadata.creationTimestamp',
+          label: 'Age',
+          options: {
+            sort: false,
+            sortThirdClickReset: true,
+            customBodyRender: function CustomBody(value) {
+              let time = timeAgo(value);
+              return <>{time}</>;
+            },
+          },
+        },
+      ],
+    },
+    DEPLOYMENT: {
+      name: 'Deployment',
+      columns: [
+        {
+          name: 'id',
+          label: 'ID',
+          options: {
+            display: false,
+          },
+        },
+        {
+          name: 'metadata.name',
+          label: 'Name',
+          options: {
+            sort: false,
+            sortThirdClickReset: true,
+            customBodyRender: function CustomBody(value, tableMeta) {
+              return (
+                <>
+                  <div
+                    style={{
+                      color: 'inherit',
+                      textDecorationLine: 'underline',
+                      cursor: 'pointer',
+                      marginBottom: '0.5rem',
+                    }}
+                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  >
+                    {value}
+                  </div>
+                </>
+              );
+            },
+          },
+        },
+        {
+          name: 'apiVersion',
+          label: 'API version',
+          options: {
+            sort: false,
+          },
+        },
+        {
+          name: 'status.attribute',
+          label: 'Replicas',
+          options: {
+            sort: false,
+            customBodyRender: function CustomBody(val) {
+              let attribute = JSON.parse(val);
+              let replicas = attribute.replicas;
+              return <>{replicas}</>;
+            },
+          },
+        },
+        {
+          name: 'spec.attribute',
+          label: 'Restart Policy',
+          options: {
+            sort: false,
+            customBodyRender: function CustomBody(val) {
+              let attribute = JSON.parse(val);
+              let template = attribute.template;
+              let spec = template.spec;
+              let restartPolicy = spec.restartPolicy;
+              return <>{restartPolicy}</>;
+            },
+          },
+        },
+        {
+          name: 'metadata.namespace',
+          label: 'Namespace',
+          options: {
+            sort: false,
+            sortThirdClickReset: true,
+            customBodyRender: function CustomBody(value, tableMeta) {
+              return (
+                <>
+                  <div
+                    style={{
+                      color: 'inherit',
+                      textDecorationLine: 'underline',
+                      cursor: 'pointer',
+                      marginBottom: '0.5rem',
+                    }}
+                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -131,8 +297,8 @@ export const ConfigurationConfigTable = (switchView, meshSyncResources, k8sConfi
         },
       ],
     },
-    Secrets: {
-      name: 'Secrets',
+    DAEMONSETS: {
+      name: 'DaemonSet',
       columns: [
         {
           name: 'id',
@@ -157,342 +323,7 @@ export const ConfigurationConfigTable = (switchView, meshSyncResources, k8sConfi
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
-          },
-        },
-        {
-          name: 'apiVersion',
-          label: 'API version',
-          options: {
-            sort: false,
-          },
-        },
-        {
-          name: 'type',
-          label: 'Type',
-          options: {
-            sort: false,
-          },
-        },
-        {
-          name: 'metadata.namespace',
-          label: 'Namespace',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
-          },
-        },
-        {
-          name: 'cluster_id',
-          label: 'Cluster',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-            customBodyRender: function CustomBody(val) {
-              let clusterName = getClusterNameFromClusterId(val, k8sConfig);
-              return (
-                <>
-                  <a
-                    href={'#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                  >
-                    {clusterName}
-                  </a>
-                </>
-              );
-            },
-          },
-        },
-        {
-          name: 'metadata.creationTimestamp',
-          label: 'Age',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-            customBodyRender: function CustomBody(value) {
-              let time = timeAgo(value);
-              return <>{time}</>;
-            },
-          },
-        },
-      ],
-    },
-    ResourceQuota: {
-      name: 'ResourceQuota',
-      columns: [
-        {
-          name: 'id',
-          label: 'ID',
-          options: {
-            display: false,
-          },
-        },
-        {
-          name: 'metadata.name',
-          label: 'Name',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
-          },
-        },
-        {
-          name: 'apiVersion',
-          label: 'API version',
-          options: {
-            sort: false,
-          },
-        },
-        {
-          name: 'metadata.namespace',
-          label: 'Namespace',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
-          },
-        },
-        {
-          name: 'cluster_id',
-          label: 'Cluster',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-            customBodyRender: function CustomBody(val) {
-              let clusterName = getClusterNameFromClusterId(val, k8sConfig);
-              return (
-                <>
-                  <a
-                    href={'#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                  >
-                    {clusterName}
-                  </a>
-                </>
-              );
-            },
-          },
-        },
-        {
-          name: 'metadata.creationTimestamp',
-          label: 'Age',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-            customBodyRender: function CustomBody(value) {
-              let time = timeAgo(value);
-              return <>{time}</>;
-            },
-          },
-        },
-      ],
-    },
-    LimitRange: {
-      name: 'LimitRange',
-      columns: [
-        {
-          name: 'id',
-          label: 'ID',
-          options: {
-            display: false,
-          },
-        },
-        {
-          name: 'metadata.name',
-          label: 'Name',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
-          },
-        },
-        {
-          name: 'apiVersion',
-          label: 'API version',
-          options: {
-            sort: false,
-          },
-        },
-        {
-          name: 'metadata.namespace',
-          label: 'Namespace',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
-          },
-        },
-        {
-          name: 'cluster_id',
-          label: 'Cluster',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-            customBodyRender: function CustomBody(val) {
-              let clusterName = getClusterNameFromClusterId(val, k8sConfig);
-              return (
-                <>
-                  <a
-                    href={'#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                  >
-                    {clusterName}
-                  </a>
-                </>
-              );
-            },
-          },
-        },
-        {
-          name: 'metadata.creationTimestamp',
-          label: 'Age',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-
-            customBodyRender: function CustomBody(value) {
-              let time = timeAgo(value);
-              return <>{time}</>;
-            },
-          },
-        },
-      ],
-    },
-    HorizontalPodAutoscaler: {
-      name: 'HorizontalPodAutoscaler',
-      columns: [
-        {
-          name: 'id',
-          label: 'ID',
-          options: {
-            display: false,
-          },
-        },
-        {
-          name: 'metadata.name',
-          label: 'Name',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -510,25 +341,257 @@ export const ConfigurationConfigTable = (switchView, meshSyncResources, k8sConfi
         },
         {
           name: 'spec.attribute',
-          label: 'Min Replicas',
+          label: 'Node Selector',
           options: {
             sort: false,
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let minReplicas = attribute?.minReplicas;
-              return <>{minReplicas}</>;
+              let template = attribute.template;
+              let spec = template.spec;
+              let nodeSelector = spec.nodeSelector;
+              return <>{JSON.stringify(nodeSelector)}</>;
             },
           },
         },
         {
-          name: 'spec.attribute',
-          label: 'Max Replicas',
+          name: 'metadata.namespace',
+          label: 'Namespace',
+          options: {
+            sort: false,
+            sortThirdClickReset: true,
+            customBodyRender: function CustomBody(value, tableMeta) {
+              return (
+                <>
+                  <div
+                    style={{
+                      color: 'inherit',
+                      textDecorationLine: 'underline',
+                      cursor: 'pointer',
+                      marginBottom: '0.5rem',
+                    }}
+                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  >
+                    {value}
+                  </div>
+                </>
+              );
+            },
+          },
+        },
+        {
+          name: 'cluster_id',
+          label: 'Cluster',
+          options: {
+            sort: false,
+            sortThirdClickReset: true,
+            customBodyRender: function CustomBody(val) {
+              let clusterName = getClusterNameFromClusterId(val, k8sConfig);
+              return (
+                <>
+                  <a
+                    href={'#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: 'inherit',
+                      textDecorationLine: 'underline',
+                      cursor: 'pointer',
+                      marginBottom: '0.5rem',
+                    }}
+                  >
+                    {clusterName}
+                  </a>
+                </>
+              );
+            },
+          },
+        },
+        {
+          name: 'metadata.creationTimestamp',
+          label: 'Age',
+          options: {
+            sort: false,
+            sortThirdClickReset: true,
+            customBodyRender: function CustomBody(value) {
+              let time = timeAgo(value);
+              return <>{time}</>;
+            },
+          },
+        },
+      ],
+    },
+    STATEFULSETS: {
+      name: 'StatefulSet',
+      columns: [
+        {
+          name: 'id',
+          label: 'ID',
+          options: {
+            display: false,
+          },
+        },
+        {
+          name: 'metadata.name',
+          label: 'Name',
+          options: {
+            sort: false,
+            sortThirdClickReset: true,
+            customBodyRender: function CustomBody(value, tableMeta) {
+              return (
+                <>
+                  <div
+                    style={{
+                      color: 'inherit',
+                      textDecorationLine: 'underline',
+                      cursor: 'pointer',
+                      marginBottom: '0.5rem',
+                    }}
+                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  >
+                    {value}
+                  </div>
+                </>
+              );
+            },
+          },
+        },
+        {
+          name: 'apiVersion',
+          label: 'API version',
+          options: {
+            sort: false,
+          },
+        },
+        {
+          name: 'status.attribute',
+          label: 'Replicas',
           options: {
             sort: false,
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let maxReplicas = attribute?.maxReplicas;
-              return <>{maxReplicas}</>;
+              let replicas = attribute.replicas;
+              return <>{replicas}</>;
+            },
+          },
+        },
+        {
+          name: 'metadata.namespace',
+          label: 'Namespace',
+          options: {
+            sort: false,
+            sortThirdClickReset: true,
+            customBodyRender: function CustomBody(value, tableMeta) {
+              return (
+                <>
+                  <div
+                    style={{
+                      color: 'inherit',
+                      textDecorationLine: 'underline',
+                      cursor: 'pointer',
+                      marginBottom: '0.5rem',
+                    }}
+                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  >
+                    {value}
+                  </div>
+                </>
+              );
+            },
+          },
+        },
+        {
+          name: 'cluster_id',
+          label: 'Cluster',
+          options: {
+            sort: false,
+            sortThirdClickReset: true,
+            customBodyRender: function CustomBody(val) {
+              let clusterName = getClusterNameFromClusterId(val, k8sConfig);
+              return (
+                <>
+                  <a
+                    href={'#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: 'inherit',
+                      textDecorationLine: 'underline',
+                      cursor: 'pointer',
+                      marginBottom: '0.5rem',
+                    }}
+                  >
+                    {clusterName}
+                  </a>
+                </>
+              );
+            },
+          },
+        },
+        {
+          name: 'metadata.creationTimestamp',
+          label: 'Age',
+          options: {
+            sort: false,
+            sortThirdClickReset: true,
+            customBodyRender: function CustomBody(value) {
+              let time = timeAgo(value);
+              return <>{time}</>;
+            },
+          },
+        },
+      ],
+    },
+    REPLICASETS: {
+      name: 'ReplicaSet',
+      columns: [
+        {
+          name: 'id',
+          label: 'ID',
+          options: {
+            display: false,
+          },
+        },
+        {
+          name: 'metadata.name',
+          label: 'Name',
+          options: {
+            sort: false,
+            sortThirdClickReset: true,
+            customBodyRender: function CustomBody(value, tableMeta) {
+              return (
+                <>
+                  <div
+                    style={{
+                      color: 'inherit',
+                      textDecorationLine: 'underline',
+                      cursor: 'pointer',
+                      marginBottom: '0.5rem',
+                    }}
+                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  >
+                    {value}
+                  </div>
+                </>
+              );
+            },
+          },
+        },
+        {
+          name: 'apiVersion',
+          label: 'API version',
+          options: {
+            sort: false,
+          },
+        },
+        {
+          name: 'spec.attribute',
+          label: 'Desired Replicas',
+          options: {
+            sort: false,
+            customBodyRender: function CustomBody(val) {
+              let attribute = JSON.parse(val);
+              let replicas = attribute.replicas;
+              return <>{replicas}</>;
             },
           },
         },
@@ -539,276 +602,20 @@ export const ConfigurationConfigTable = (switchView, meshSyncResources, k8sConfi
             sort: false,
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let currentReplicas = attribute?.currentReplicas;
-              return <>{currentReplicas}</>;
-            },
-          },
-        },
-        {
-          name: 'metadata.namespace',
-          label: 'Namespace',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
-          },
-        },
-        {
-          name: 'cluster_id',
-          label: 'Cluster',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-            customBodyRender: function CustomBody(val) {
-              let clusterName = getClusterNameFromClusterId(val, k8sConfig);
-              return (
-                <>
-                  <a
-                    href={'#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                  >
-                    {clusterName}
-                  </a>
-                </>
-              );
-            },
-          },
-        },
-        {
-          name: 'metadata.creationTimestamp',
-          label: 'Age',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-
-            customBodyRender: function CustomBody(value) {
-              let time = timeAgo(value);
-              return <>{time}</>;
-            },
-          },
-        },
-      ],
-    },
-    VerticalPodAutoscaler: {
-      name: 'VerticalPodAutoscaler',
-      columns: [
-        {
-          name: 'id',
-          label: 'ID',
-          options: {
-            display: false,
-          },
-        },
-        {
-          name: 'metadata.name',
-          label: 'Name',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
-          },
-        },
-        {
-          name: 'apiVersion',
-          label: 'API version',
-          options: {
-            sort: false,
-          },
-        },
-        {
-          name: 'metadata.namespace',
-          label: 'Namespace',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
-          },
-        },
-        {
-          name: 'cluster_id',
-          label: 'Cluster',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-            customBodyRender: function CustomBody(val) {
-              let clusterName = getClusterNameFromClusterId(val, k8sConfig);
-              return (
-                <>
-                  <a
-                    href={'#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                  >
-                    {clusterName}
-                  </a>
-                </>
-              );
-            },
-          },
-        },
-        {
-          name: 'metadata.creationTimestamp',
-          label: 'Age',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-
-            customBodyRender: function CustomBody(value) {
-              let time = timeAgo(value);
-              return <>{time}</>;
-            },
-          },
-        },
-      ],
-    },
-    PodDisruptionBudget: {
-      name: 'PodDisruptionBudget',
-      columns: [
-        {
-          name: 'id',
-          label: 'ID',
-          options: {
-            display: false,
-          },
-        },
-        {
-          name: 'metadata.name',
-          label: 'Name',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
-          },
-        },
-        {
-          name: 'apiVersion',
-          label: 'API version',
-          options: {
-            sort: false,
-          },
-        },
-        {
-          name: 'spec.attribute',
-          label: 'Min Available',
-          options: {
-            sort: false,
-            customBodyRender: function CustomBody(val) {
-              let attribute = JSON.parse(val);
-              let minAvailable = attribute?.minAvailable;
-              return <>{minAvailable}</>;
-            },
-          },
-        },
-        {
-          name: 'spec.attribute',
-          label: 'Max Available',
-          options: {
-            sort: false,
-            customBodyRender: function CustomBody(val) {
-              let attribute = JSON.parse(val);
-              let maxAvailable = attribute?.maxAvailable;
-              return <>{maxAvailable}</>;
+              let replicas = attribute.replicas;
+              return <>{replicas}</>;
             },
           },
         },
         {
           name: 'status.attribute',
-          label: 'Current Healthy',
+          label: 'Ready Replicas',
           options: {
             sort: false,
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let currentHealthy = attribute?.currentHealthy;
-              return <>{currentHealthy}</>;
-            },
-          },
-        },
-        {
-          name: 'status.attribute',
-          label: 'Desired Healthy',
-          options: {
-            sort: false,
-            customBodyRender: function CustomBody(val) {
-              let attribute = JSON.parse(val);
-              let desiredtHealthy = attribute?.desiredtHealthy;
-              return <>{desiredtHealthy}</>;
+              let readyReplicas = attribute.readyReplicas;
+              return <>{readyReplicas}</>;
             },
           },
         },
@@ -828,7 +635,7 @@ export const ConfigurationConfigTable = (switchView, meshSyncResources, k8sConfi
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -871,7 +678,6 @@ export const ConfigurationConfigTable = (switchView, meshSyncResources, k8sConfi
           options: {
             sort: false,
             sortThirdClickReset: true,
-
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -880,8 +686,8 @@ export const ConfigurationConfigTable = (switchView, meshSyncResources, k8sConfi
         },
       ],
     },
-    PriorityClass: {
-      name: 'PriorityClass',
+    REPLICATIONCONTROLLERS: {
+      name: 'ReplicationController',
       columns: [
         {
           name: 'id',
@@ -906,227 +712,7 @@ export const ConfigurationConfigTable = (switchView, meshSyncResources, k8sConfi
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
-          },
-        },
-        {
-          name: 'apiVersion',
-          label: 'API version',
-          options: {
-            sort: false,
-          },
-        },
-        {
-          name: 'metadata.namespace',
-          label: 'Namespace',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
-          },
-        },
-        {
-          name: 'cluster_id',
-          label: 'Cluster',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-            customBodyRender: function CustomBody(val) {
-              let clusterName = getClusterNameFromClusterId(val, k8sConfig);
-              return (
-                <>
-                  <a
-                    href={'#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                  >
-                    {clusterName}
-                  </a>
-                </>
-              );
-            },
-          },
-        },
-        {
-          name: 'metadata.creationTimestamp',
-          label: 'Age',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-
-            customBodyRender: function CustomBody(value) {
-              let time = timeAgo(value);
-              return <>{time}</>;
-            },
-          },
-        },
-      ],
-    },
-    RuntimeClass: {
-      name: 'RuntimeClass',
-      columns: [
-        {
-          name: 'id',
-          label: 'ID',
-          options: {
-            display: false,
-          },
-        },
-        {
-          name: 'metadata.name',
-          label: 'Name',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
-          },
-        },
-        {
-          name: 'apiVersion',
-          label: 'API version',
-          options: {
-            sort: false,
-          },
-        },
-        {
-          name: 'metadata.namespace',
-          label: 'Namespace',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
-          },
-        },
-        {
-          name: 'cluster_id',
-          label: 'Cluster',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-            customBodyRender: function CustomBody(val) {
-              let clusterName = getClusterNameFromClusterId(val, k8sConfig);
-              return (
-                <>
-                  <a
-                    href={'#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                  >
-                    {clusterName}
-                  </a>
-                </>
-              );
-            },
-          },
-        },
-        {
-          name: 'metadata.creationTimestamp',
-          label: 'Age',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-
-            customBodyRender: function CustomBody(value) {
-              let time = timeAgo(value);
-              return <>{time}</>;
-            },
-          },
-        },
-      ],
-    },
-    Leases: {
-      name: 'Leases',
-      columns: [
-        {
-          name: 'id',
-          label: 'ID',
-          options: {
-            display: false,
-          },
-        },
-        {
-          name: 'metadata.name',
-          label: 'Name',
-          options: {
-            sort: false,
-            sortThirdClickReset: true,
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -1144,13 +730,25 @@ export const ConfigurationConfigTable = (switchView, meshSyncResources, k8sConfi
         },
         {
           name: 'spec.attribute',
-          label: 'Holder Identity',
+          label: 'Desired Replicas',
           options: {
             sort: false,
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let holderIdentity = attribute?.holderIdentity;
-              return <>{holderIdentity}</>;
+              let replicas = attribute.replicas;
+              return <>{replicas}</>;
+            },
+          },
+        },
+        {
+          name: 'status.attribute',
+          label: 'Current Replicas',
+          options: {
+            sort: false,
+            customBodyRender: function CustomBody(val) {
+              let attribute = JSON.parse(val);
+              let replicas = attribute.replicas;
+              return <>{replicas}</>;
             },
           },
         },
@@ -1170,7 +768,7 @@ export const ConfigurationConfigTable = (switchView, meshSyncResources, k8sConfi
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -1213,7 +811,6 @@ export const ConfigurationConfigTable = (switchView, meshSyncResources, k8sConfi
           options: {
             sort: false,
             sortThirdClickReset: true,
-
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -1222,8 +819,8 @@ export const ConfigurationConfigTable = (switchView, meshSyncResources, k8sConfi
         },
       ],
     },
-    MutatingWebhookConfiguration: {
-      name: 'MutatingWebhookConfiguration',
+    JOBS: {
+      name: 'Job',
       columns: [
         {
           name: 'id',
@@ -1248,7 +845,7 @@ export const ConfigurationConfigTable = (switchView, meshSyncResources, k8sConfi
                       cursor: 'pointer',
                       marginBottom: '0.5rem',
                     }}
-                    onClick={() => switchView(SINGLE_CONFIG, meshSyncResources[tableMeta.rowIndex])}
+                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   >
                     {value}
                   </div>
@@ -1262,6 +859,31 @@ export const ConfigurationConfigTable = (switchView, meshSyncResources, k8sConfi
           label: 'API version',
           options: {
             sort: false,
+          },
+        },
+        {
+          name: 'metadata.namespace',
+          label: 'Namespace',
+          options: {
+            sort: false,
+            sortThirdClickReset: true,
+            customBodyRender: function CustomBody(value, tableMeta) {
+              return (
+                <>
+                  <div
+                    style={{
+                      color: 'inherit',
+                      textDecorationLine: 'underline',
+                      cursor: 'pointer',
+                      marginBottom: '0.5rem',
+                    }}
+                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  >
+                    {value}
+                  </div>
+                </>
+              );
+            },
           },
         },
         {
@@ -1298,7 +920,139 @@ export const ConfigurationConfigTable = (switchView, meshSyncResources, k8sConfi
           options: {
             sort: false,
             sortThirdClickReset: true,
-
+            customBodyRender: function CustomBody(value) {
+              let time = timeAgo(value);
+              return <>{time}</>;
+            },
+          },
+        },
+      ],
+    },
+    CRONJOBS: {
+      name: 'CronJob',
+      columns: [
+        {
+          name: 'id',
+          label: 'ID',
+          options: {
+            display: false,
+          },
+        },
+        {
+          name: 'metadata.name',
+          label: 'Name',
+          options: {
+            sort: false,
+            sortThirdClickReset: true,
+            customBodyRender: function CustomBody(value, tableMeta) {
+              return (
+                <>
+                  <div
+                    style={{
+                      color: 'inherit',
+                      textDecorationLine: 'underline',
+                      cursor: 'pointer',
+                      marginBottom: '0.5rem',
+                    }}
+                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  >
+                    {value}
+                  </div>
+                </>
+              );
+            },
+          },
+        },
+        {
+          name: 'apiVersion',
+          label: 'API version',
+          options: {
+            sort: false,
+          },
+        },
+        {
+          name: 'spec.attribute',
+          label: 'Schedule',
+          options: {
+            sort: false,
+            customBodyRender: function CustomBody(val) {
+              let attribute = JSON.parse(val);
+              let schedule = attribute.schedule;
+              return <>{schedule}</>;
+            },
+          },
+        },
+        {
+          name: 'spec.attribute',
+          label: 'Suspend',
+          options: {
+            sort: false,
+            customBodyRender: function CustomBody(val) {
+              let attribute = JSON.parse(val);
+              let suspend = attribute.suspend;
+              return <>{suspend}</>;
+            },
+          },
+        },
+        {
+          name: 'metadata.namespace',
+          label: 'Namespace',
+          options: {
+            sort: false,
+            sortThirdClickReset: true,
+            customBodyRender: function CustomBody(value, tableMeta) {
+              return (
+                <>
+                  <div
+                    style={{
+                      color: 'inherit',
+                      textDecorationLine: 'underline',
+                      cursor: 'pointer',
+                      marginBottom: '0.5rem',
+                    }}
+                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  >
+                    {value}
+                  </div>
+                </>
+              );
+            },
+          },
+        },
+        {
+          name: 'cluster_id',
+          label: 'Cluster',
+          options: {
+            sort: false,
+            sortThirdClickReset: true,
+            customBodyRender: function CustomBody(val) {
+              let clusterName = getClusterNameFromClusterId(val, k8sConfig);
+              return (
+                <>
+                  <a
+                    href={'#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: 'inherit',
+                      textDecorationLine: 'underline',
+                      cursor: 'pointer',
+                      marginBottom: '0.5rem',
+                    }}
+                  >
+                    {clusterName}
+                  </a>
+                </>
+              );
+            },
+          },
+        },
+        {
+          name: 'metadata.creationTimestamp',
+          label: 'Age',
+          options: {
+            sort: false,
+            sortThirdClickReset: true,
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
@@ -1309,201 +1063,3 @@ export const ConfigurationConfigTable = (switchView, meshSyncResources, k8sConfi
     },
   };
 };
-
-const StandardConfigTable = (props) => {
-  const { classes, updateProgress, k8sConfig, workloadType } = props;
-  const [meshSyncResources, setMeshSyncResources] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(0);
-  const [count, setCount] = useState(0);
-  const [pageSize, setPageSize] = useState(0);
-  const [search, setSearch] = useState('');
-  const [sortOrder, setSortOrder] = useState('');
-  const [selectedResource, setSelectedResource] = useState({});
-  const [view, setView] = useState(ALL_CONFIG);
-
-  const switchView = (view, resource) => {
-    setSelectedResource(resource);
-    setView(view);
-  };
-
-  const StyleClass = useStyles();
-
-  const { notify } = useNotification();
-
-  const getMeshsyncResources = (page, pageSize, search, sortOrder) => {
-    setLoading(true);
-    if (!search) search = '';
-    if (!sortOrder) sortOrder = '';
-    dataFetch(
-      `/api/system/meshsync/resources?kind=${
-        ConfigurationConfigTable()[workloadType].name
-      }&status=true&spec=true&annotations=true&labels=true&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
-        search,
-      )}&order=${encodeURIComponent(sortOrder)}`,
-      {
-        credentials: 'include',
-        method: 'GET',
-      },
-      (res) => {
-        setMeshSyncResources(res?.resources || []);
-        setPage(res?.page || 0);
-        setCount(res?.total_count || 0);
-        setPageSize(res?.page_size || 0);
-        setLoading(false);
-      },
-      handleError(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES),
-    );
-  };
-
-  const [tableCols, updateCols] = useState();
-
-  useEffect(() => {
-    updateCols(
-      ConfigurationConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType].columns,
-    );
-    if (!loading) {
-      getMeshsyncResources(page, pageSize, search, sortOrder);
-    }
-  }, [page, pageSize, search, sortOrder]);
-
-  const [columnVisibility, setColumnVisibility] = useState(() => {
-    // Initialize column visibility based on the original columns' visibility
-    const initialVisibility = {};
-    ConfigurationConfigTable(switchView, meshSyncResources, k8sConfig)[
-      workloadType
-    ].columns.forEach((col) => {
-      initialVisibility[col.name] = col.options?.display !== false;
-    });
-    return initialVisibility;
-  });
-
-  const options = useMemo(
-    () => ({
-      filter: false,
-      viewColumns: false,
-      search: false,
-      responsive: 'standard',
-      serverSide: true,
-      selectableRows: false,
-      count,
-      rowsPerPage: pageSize,
-      rowsPerPageOptions: [10, 25, 30],
-      fixedHeader: true,
-      page,
-      print: false,
-      download: false,
-      textLabels: {
-        selectedRows: {
-          text: `${ConfigurationConfigTable()[workloadType].name}(s) selected`,
-        },
-      },
-      enableNestedDataAccess: '.',
-      onTableChange: (action, tableState) => {
-        const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
-        let order = '';
-        if (tableState.activeColumn) {
-          order = `${
-            ConfigurationConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType]
-              .columns[tableState.activeColumn].name
-          } desc`;
-        }
-        switch (action) {
-          case 'changePage':
-            setPage(tableState.page.toString());
-            break;
-          case 'changeRowsPerPage':
-            setPageSize(tableState.rowsPerPage.toString());
-            break;
-          case 'sort':
-            if (sortInfo.length == 2) {
-              if (sortInfo[1] === 'ascending') {
-                order = `${
-                  ConfigurationConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType]
-                    .columns[tableState.activeColumn].name
-                } asc`;
-              } else {
-                order = `${
-                  ConfigurationConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType]
-                    .columns[tableState.activeColumn].name
-                } desc`;
-              }
-            }
-            if (order !== sortOrder) {
-              setSortOrder(order);
-            }
-            break;
-        }
-      },
-    }),
-    [page, pageSize],
-  );
-
-  const handleError = (action) => (error) => {
-    updateProgress({ showProgress: false });
-    notify({
-      message: `${action.error_msg}: ${error}`,
-      event_type: EVENT_TYPES.ERROR,
-      details: error.toString(),
-    });
-  };
-  return (
-    <>
-      {view === ALL_CONFIG ? (
-        <>
-          <div
-            className={StyleClass.toolWrapper}
-            style={{ marginBottom: '5px', marginTop: '1rem' }}
-          >
-            <div className={classes.createButton}>{/* <MesherySettingsEnvButtons /> */}</div>
-            <div
-              className={classes.searchAndView}
-              style={{
-                display: 'flex',
-                borderRadius: '0.5rem 0.5rem 0 0',
-              }}
-            >
-              <SearchBar
-                onSearch={(value) => {
-                  setSearch(value);
-                }}
-                placeholder={`Search ${ConfigurationConfigTable()[workloadType].name}...`}
-              />
-
-              <CustomColumnVisibilityControl
-                columns={
-                  ConfigurationConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType]
-                    .columns
-                }
-                customToolsProps={{ columnVisibility, setColumnVisibility }}
-              />
-            </div>
-          </div>
-          <ResponsiveDataTable
-            data={meshSyncResources}
-            columns={
-              ConfigurationConfigTable(switchView, meshSyncResources, k8sConfig)[workloadType]
-                .columns
-            }
-            options={options}
-            className={classes.muiRow}
-            tableCols={tableCols}
-            updateCols={updateCols}
-            columnVisibility={columnVisibility}
-          />
-        </>
-      ) : (
-        <>
-          <View
-            type={`${ConfigurationConfigTable()[workloadType].name}`}
-            setView={setView}
-            resource={selectedResource}
-            classes={classes}
-          />
-        </>
-      )}
-    </>
-  );
-};
-
-export default StandardConfigTable;

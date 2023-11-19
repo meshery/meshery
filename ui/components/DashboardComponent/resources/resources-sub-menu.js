@@ -5,8 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import { iconMedium } from '../../../css/icons.styles';
 import { withRouter } from 'next/router';
-import StandardNetworkTable, { NetWorkConfigTable } from './config';
 import { withNotify } from '../../../utils/hooks/useNotification';
+import ResourcesTable from './resources-table';
 
 const styles = (theme) => ({
   wrapperClss: {
@@ -98,8 +98,8 @@ const styles = (theme) => ({
   },
 });
 
-const Network = (props) => {
-  const { classes, updateProgress, k8sConfig } = props;
+const ResourcesSubMenu = (props) => {
+  const { classes, updateProgress, k8sConfig, resource } = props;
 
   const [tabVal, setTabVal] = React.useState(0);
 
@@ -126,14 +126,14 @@ const Network = (props) => {
             indicatorColor="primary"
             textColor="primary"
           >
-            {Object.keys(NetWorkConfigTable()).map((key, index) => {
+            {Object.keys(resource.tableConfig()).map((key, index) => {
               return (
-                <Tooltip title={`${NetWorkConfigTable()[key].name}`} placement="top">
+                <Tooltip title={`${resource.tableConfig()[key].name}`} placement="top">
                   <Tab
                     key={index}
                     className={classes.tab}
                     icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
-                    label={NetWorkConfigTable()[key].name}
+                    label={resource.tableConfig()[key].name}
                     data-cy="tabServiceMeshes"
                   />
                 </Tooltip>
@@ -141,15 +141,18 @@ const Network = (props) => {
             })}
           </Tabs>
         </Paper>
-        {Object.keys(NetWorkConfigTable()).map((key, index) => {
+        {Object.keys(resource.tableConfig()).map((key, index) => {
           return (
             tabVal === index && (
               <TabContainer>
-                <StandardNetworkTable
+                <ResourcesTable
+                  key={index}
                   workloadType={key}
                   updateProgress={updateProgress}
                   classes={classes}
                   k8sConfig={k8sConfig}
+                  resourceConfig={resource.tableConfig}
+                  submenu={resource.submenu}
                 />
               </TabContainer>
             )
@@ -160,4 +163,4 @@ const Network = (props) => {
   );
 };
 
-export default withStyles(styles, { withTheme: true })(withRouter(withNotify(Network)));
+export default withStyles(styles, { withTheme: true })(withRouter(withNotify(ResourcesSubMenu)));
