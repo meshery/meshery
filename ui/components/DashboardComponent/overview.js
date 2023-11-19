@@ -18,7 +18,7 @@ import ConnectionStatsChart from '../Dashboard/ConnectionCharts';
 import blue from '@material-ui/core/colors/blue';
 
 const styles = (theme) => ({
-  rootClass: { backgroundColor: theme.palette.secondary.elevatedComponents2 },
+  rootClass: { backgroundColor: theme.palette.secondary.elevatedComponents2, marginTop: '1rem' },
   datatable: {
     boxShadow: 'none',
   },
