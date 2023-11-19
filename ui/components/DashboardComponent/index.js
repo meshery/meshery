@@ -10,7 +10,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import { updateProgress } from '../../lib/store';
 import { iconMedium } from '../../css/icons.styles';
-import Clusters from './clusters';
 import { ResourcesConfig } from './resources/config';
 import ResourcesTable from './resources/resources-table';
 import ResourcesSubMenu from './resources/resources-sub-menu';
@@ -134,14 +133,6 @@ const DashboardComponent = (props) => {
             indicatorColor="primary"
             textColor="primary"
           >
-            <Tooltip title="Connect Meshery Adapters" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
-                label="Clusters"
-                data-cy="tabServiceMeshes"
-              />
-            </Tooltip>
             {Object.keys(ResourcesConfig).map((resource, idx) => {
               return (
                 <Tooltip title={`View ${resource}`} placement="top">
@@ -156,15 +147,9 @@ const DashboardComponent = (props) => {
             })}
           </Tabs>
         </Paper>
-        {tabVal === 0 && (
-          <TabContainer>
-            <Clusters />
-          </TabContainer>
-        )}
-
         {Object.keys(ResourcesConfig).map((resource, idx) => {
           return (
-            tabVal === idx + 1 &&
+            tabVal === idx &&
             (ResourcesConfig[resource].submenu ? (
               <TabContainer>
                 <ResourcesSubMenu
