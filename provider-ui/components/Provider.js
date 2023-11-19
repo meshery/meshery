@@ -2,11 +2,10 @@ import React, { Fragment, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import dataFetch from "../lib/data-fetch";
 import ProviderLayout from "./ProviderLayout"
-import { CustomDiv, CustomDialog, MesheryLogo, MenuProviderDisabled } from "./Provider.style";
+import { CustomDiv, CustomDialog, MesheryLogo, MenuProviderDisabled, CustomDialogActions } from "./Provider.style";
 import Button from "@mui/material/Button"
 import ButtonGroup from "@mui/material/ButtonGroup"
 import Divider from "@mui/material/Divider"
-import DialogActions from "@mui/material/DialogActions"
 import DialogContent from "@mui/material/DialogContent"
 import DialogContentText from "@mui/material/DialogContentText"
 import DialogTitle from "@mui/material/DialogTitle"
@@ -33,8 +32,8 @@ function CustomDialogTitle(props) {
           onClick={onClose}
           sx={{
             position : 'absolute',
-            right : 8,
-            top : 8,
+            right : "1rem",
+            top : "1rem",
             color : (theme) => theme.palette.grey[500],
           }}
         >
@@ -119,7 +118,7 @@ export default function Provider() {
         alt="logo"
       />
       <Typography variant="h6" sx={{ fontWeight : 700 }} gutterBottom>
-                Please choose a
+                Choose your
         <Tooltip
           title="Learn more about providers"
           placement="bottom"
@@ -147,8 +146,8 @@ export default function Provider() {
         disableScrollLock={true}
         data-cy="providers-modal"
       >
-        <CustomDialogTitle id="customized-dialog-title" onClose={handleModalClose}>
-          <b>Choosing a provider</b>
+        <CustomDialogTitle id="customized-dialog-title" onClose={handleModalClose} style={{ background : "#eee" }}>
+          <b>Choosing a Provider</b>
         </CustomDialogTitle>
         <DialogContent dividers>
           <DialogContentText id="customized-dialog-content">
@@ -166,7 +165,7 @@ export default function Provider() {
             })}
             <p style={{ fontWeight : 700 }}>MIT</p>
             <ul>
-              <li>Remote provider for Performance Testing</li>
+              <li>Remote provider for performance testing</li>
               <li>Provides provenence of test results and their persistence</li>
               <li>Adaptive performance analysis - predictive optimization</li>
             </ul>
@@ -182,16 +181,18 @@ export default function Provider() {
             </ul>
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
+        <CustomDialogActions>
+          <div className="learnmore">
+            <a href="https://docs.meshery.io/extensibility/providers">Learn more about Providers</a><img src="/static/img/external-link.svg" width="16px" />
+          </div>
           <Button
             onClick={handleModalClose}
             color="primary"
             data-cy="providers-modal-button-ok"
             variant="contained"
-          >
-                        OK
+          > OK
           </Button>
-        </DialogActions>
+        </CustomDialogActions>
       </CustomDialog>
       <CustomDiv>
         {availableProviders !== '' && (

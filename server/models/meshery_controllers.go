@@ -74,7 +74,7 @@ func NewMesheryControllersHelper(log logger.Handler, operatorDepConfig controlle
 // the meshsync data for that context is properly being handled
 func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControllersHelper {
 	// only checking those contexts whose MesheryConrollers are active
-	go func (mch *MesheryControllersHelper) {
+	go func(mch *MesheryControllersHelper) {
 		mch.mu.Lock()
 		defer mch.mu.Unlock()
 		for ctxID, controllerHandlers := range mch.ctxControllerHandlersMap {
@@ -228,6 +228,24 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 		}
 	}(mch)
 
+	return mch
+}
+
+func (mch *MesheryControllersHelper) UndeployDeployedOperators(ot *OperatorTracker) *MesheryControllersHelper {
+	go func(mch *MesheryControllersHelper) {
+		mch.mu.Lock()
+		defer mch.mu.Unlock()
+		for ctxID, ctrlHandler := range mch.ctxControllerHandlersMap {
+			if oprStatus, ok := mch.ctxOperatorStatusMap[ctxID]; ok {
+				if oprStatus != controllers.Undeployed {
+					err := ctrlHandler[MesheryOperator].Undeploy()
+					if err != nil {
+						mch.log.Error(err)
+					}
+				}
+			}
+		}
+	}(mch)
 	return mch
 }
 

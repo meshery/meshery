@@ -67,11 +67,11 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 
 			r.Log.Info("Dropping Meshery Database")
 			err = dbHandler.Migrator().DropTable(
-				&meshsyncmodel.KeyValue{},
-				&meshsyncmodel.Object{},
-				&meshsyncmodel.ResourceSpec{},
-				&meshsyncmodel.ResourceStatus{},
-				&meshsyncmodel.ResourceObjectMeta{},
+				&meshsyncmodel.KubernetesKeyValue{},
+				&meshsyncmodel.KubernetesResource{},
+				&meshsyncmodel.KubernetesResourceSpec{},
+				&meshsyncmodel.KubernetesResourceStatus{},
+				&meshsyncmodel.KubernetesResourceObjectMeta{},
 				&models.PerformanceProfile{},
 				&models.MesheryResult{},
 				&models.MesheryPattern{},
@@ -90,11 +90,11 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 
 			r.Log.Info("Migrating Meshery Database")
 			err = dbHandler.AutoMigrate(
-				&meshsyncmodel.KeyValue{},
-				&meshsyncmodel.Object{},
-				&meshsyncmodel.ResourceSpec{},
-				&meshsyncmodel.ResourceStatus{},
-				&meshsyncmodel.ResourceObjectMeta{},
+				&meshsyncmodel.KubernetesKeyValue{},
+				&meshsyncmodel.KubernetesResource{},
+				&meshsyncmodel.KubernetesResourceSpec{},
+				&meshsyncmodel.KubernetesResourceStatus{},
+				&meshsyncmodel.KubernetesResourceObjectMeta{},
 				&models.PerformanceProfile{},
 				&models.MesheryResult{},
 				&models.MesheryPattern{},
@@ -129,27 +129,27 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 				return "", model.ErrEmptyHandler
 			}
 
-			err := provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KeyValue{}).Error
+			err := provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("kubernetes_resources").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KubernetesKeyValue{}).Error
 			if err != nil {
 				return "", model.ErrEmptyHandler
 			}
 
-			err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.ResourceSpec{}).Error
+			err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("kubernetes_resources").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KubernetesResourceSpec{}).Error
 			if err != nil {
 				return "", model.ErrEmptyHandler
 			}
 
-			err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.ResourceStatus{}).Error
+			err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("kubernetes_resources").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KubernetesResourceStatus{}).Error
 			if err != nil {
 				return "", model.ErrEmptyHandler
 			}
 
-			err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("objects").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.ResourceObjectMeta{}).Error
+			err = provider.GetGenericPersister().Where("id IN (?)", provider.GetGenericPersister().Table("kubernetes_resources").Select("id").Where("cluster_id=?", sid)).Delete(&meshsyncmodel.KubernetesResourceObjectMeta{}).Error
 			if err != nil {
 				return "", model.ErrEmptyHandler
 			}
 
-			err = provider.GetGenericPersister().Where("cluster_id = ?", sid).Delete(&meshsyncmodel.Object{}).Error
+			err = provider.GetGenericPersister().Where("cluster_id = ?", sid).Delete(&meshsyncmodel.KubernetesResource{}).Error
 			if err != nil {
 				return "", model.ErrEmptyHandler
 			}

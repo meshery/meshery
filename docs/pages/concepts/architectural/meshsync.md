@@ -124,4 +124,4 @@ MeshSync maintains an up-to-date snapshot of your cluster, ensuring you always h
 # Suggested Reading
 
 {% include suggested-reading.html diffName="true" isDiffTag="true" diffTag=tag %}
-{% include related-discussions.html tag="mesheryctl" %}
+{% include related-discussions.html tag="meshery" %}

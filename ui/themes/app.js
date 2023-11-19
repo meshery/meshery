@@ -11,6 +11,22 @@ export const Colors = {
   charcoal: '#3C494F',
 };
 
+export const common = {
+  overrides: {
+    MuiSwitch: {
+      switchBase: {
+        color: '#647881',
+        '&$checked': {
+          color: '#00b39f !important',
+        },
+        '&$checked + $track': {
+          backgroundColor: 'rgba(0,179,159,0.5)',
+        },
+      },
+    },
+  },
+};
+
 export var darkTheme = createTheme({
   typography: {
     useNextVariants: true,
@@ -78,8 +94,10 @@ export var darkTheme = createTheme({
       default: '#9FAFB6',
       success: '#00D3A9',
       primary: '#86B2C6',
+      confirmation: '#86B2C6',
       warning: '#EBC017',
       error: '#F91313',
+      danger: '#F91313',
       lightError: '#B32700',
       penColorPrimary: '#E6E6E6',
       penColorSecondary: '#E6E6E6',
@@ -89,6 +107,15 @@ export var darkTheme = createTheme({
       menuSelectedBg: 'rgba(0, 179, 159, 0.25)',
       menuActionText: '#FBFBFB',
       menuItemBorder: '#979797',
+      pinball: '#222222',
+      innertableBg1: 'rgb(255, 255, 255, 0.1)',
+      innertableBg2: 'rgb(255, 255, 255, 0.05)',
+      tabContainer: '#51636B',
+      card: '#51636B',
+      detailsContainer: '#d9dadb80',
+      tabCard: '#677a84',
+      disableButtonBg: '#666666',
+      disableButton: '#9d9d9d',
     },
   },
   p: {
@@ -108,6 +135,7 @@ export var darkTheme = createTheme({
 darkTheme = {
   ...darkTheme,
   overrides: {
+    ...common.overrides,
     MuiSvgIcon: {
       root: {
         ...iconMedium,
@@ -333,8 +361,10 @@ let theme = createTheme({
       default: '#51636B',
       success: '#00B39F',
       primary: '#477E96',
+      confirmation: '#477E96',
       warning: '#F0A303',
       error: '#8F1F00',
+      danger: '#8F1F00',
       lightError: '#8F1F00',
       penColorPrimary: '#3C494F',
       penColorSecondary: '#677E88',
@@ -345,6 +375,15 @@ let theme = createTheme({
       menuSelectedBg: '#CCC',
       menuActionText: '#FBFBFB',
       menuItemBorder: '#979797',
+      pinball: '#d3d3d3',
+      innertableBg1: '#ffffff',
+      innertableBg2: '#ECECED',
+      tabContainer: '#51636B',
+      card: '#51636B',
+      detailsContainer: '#d9dadb80',
+      tabCard: '#677a84',
+      disableButtonBg: '#e0e0e0',
+      disableButton: '#9d9d9d',
     },
   },
   shape: { borderRadius: 8 },
@@ -362,6 +401,7 @@ let theme = createTheme({
 theme = {
   ...theme,
   overrides: {
+    ...common.overrides,
     MuiSvgIcon: {
       root: {
         ...iconMedium,
@@ -504,6 +544,7 @@ export const notificationColors = {
   success: '#206D24',
   info: '#2196F3',
   darkRed: '#B32700',
+  lightwarning: '#E75225',
 };
 
 export const darkNotificationColors = {

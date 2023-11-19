@@ -219,7 +219,6 @@ class MesheryApp extends App {
     if (isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry)) {
       Router.push(mesheryExtensionRoute);
     }
-    console.log('prevProps.k8sConfig', prevProps.k8sConfig, 'k8sConfig', k8sConfig);
 
     if (!_.isEqual(prevProps.k8sConfig, k8sConfig)) {
       const { operatorSubscription, meshSyncSubscription } = this.state;
@@ -537,8 +536,17 @@ class MesheryApp extends App {
                         ) : (
                           <>
                             {' '}
-                            Built with <FavoriteIcon className={classes.footerIcon} /> by the Layer5
-                            Community
+                            Built with{' '}
+                            <FavoriteIcon
+                              style={{
+                                color:
+                                  this.state.theme === 'dark'
+                                    ? theme.palette.secondary.focused
+                                    : '#00b39f',
+                              }}
+                              className={classes.footerIcon}
+                            />{' '}
+                            by the Layer5 Community
                           </>
                         )}
                       </span>

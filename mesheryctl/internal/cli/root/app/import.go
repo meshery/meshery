@@ -62,8 +62,8 @@ mesheryctl app import -f [file/URL] -s [source-type]
 		appURL := mctlCfg.GetBaseMesheryURL() + "/api/application"
 
 		// If app file is passed via flags
-		if !isValidSource(sourceType) {
-			return ErrValidSource(validSourceTypes)
+		if sourceType, err = getFullSourceType(sourceType); err != nil {
+			return ErrInValidSource(sourceType, validSourceTypes)
 		}
 
 		app, err := importApp(sourceType, file, appURL, true)

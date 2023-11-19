@@ -11,7 +11,7 @@ export const SEVERITY = {
   INFO: 'informational',
   ERROR: 'error',
   WARNING: 'warning',
-  // SUCCESS: "success"
+  SUCCESS: 'success',
 };
 
 // This class is required to add to any svg or button that opens notification center
@@ -22,6 +22,7 @@ export const SEVERITY_TO_NOTIFICATION_TYPE_MAPPING = {
   [SEVERITY.INFO]: 'info',
   [SEVERITY.ERROR]: 'error',
   [SEVERITY.WARNING]: 'warning',
+  [SEVERITY.SUCCESS]: 'success',
 };
 
 export const STATUS = {
@@ -52,6 +53,11 @@ export const SEVERITY_STYLE = {
     icon: AlertIcon,
     color: NOTIFICATIONCOLORS.WARNING,
     darkColor: NOTIFICATIONCOLORS.WARNING,
+  },
+  [SEVERITY.SUCCESS]: {
+    icon: InfoIcon,
+    color: NOTIFICATIONCOLORS.SUCCESS,
+    darkColor: NOTIFICATIONCOLORS.SUCCESS,
   },
 };
 

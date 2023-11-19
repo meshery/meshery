@@ -112,7 +112,7 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 				cg.ctxRegStatusMap[ctxID] = RegistrationComplete
 				cg.mx.Unlock()
 
-				cg.log.Info(ctxName, " components for contextID:", ctxID, " registered")
+				cg.log.Info("components registered for context ", ctxName, " ID:", ctxID)
 			}()
 
 			// start registration

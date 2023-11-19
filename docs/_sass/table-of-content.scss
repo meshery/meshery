@@ -1,5 +1,5 @@
 .content-table-wrapper {
-  padding: 0.5rem;
+  padding: 0rem;
   background: var(--background-grey);
   box-shadow: var(--box-shadow-primary);
   z-index: 9;
@@ -7,7 +7,7 @@
   top: calc(var(--navbar-height) + 5rem);
   position: sticky;
   margin: 0 0 0 auto;
-  margin-right: 5rem;
+  margin-right: 2rem;
   border-radius: 7px;
   width: 90%;
   max-width: 200px;
@@ -16,14 +16,12 @@
 .content-table {
   max-height: calc(100vh - (calc(var(--navbar-height) + 30rem)));
   height: fit-content;
-  padding: 1rem 1.5rem;
+  padding: 1rem 1.25rem;
   transition: all 0.5s ease-in-out;
-  font-size: 1.5rem;
-  // bottom: 5rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  font-size: 1.4rem;
+  font-size: 1.25rem;
   overflow-y: auto;
   overflow-wrap: break-word;
 
@@ -52,12 +50,13 @@
 
   & strong {
     margin-bottom: 8px;
+    text-transform: uppercase;
   }
 
   &__editable {
     display: flex;
     flex-direction: column;
-
+    
     & a:first-of-type {
       margin-bottom: 4px;
     }
@@ -84,6 +83,7 @@
       }
     }
     & ul {
+      font-size: 1.25rem;
       padding-inline-start: 0px;
       margin-bottom: 0;
       & li {

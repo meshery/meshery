@@ -39,6 +39,7 @@ const useStyles = makeStyles((theme) => ({
   rjsfInfoModalForm: {
     marginLeft: '-1rem',
     marginTop: '-1rem',
+    maxWidth: '44rem',
   },
   copyButton: {
     '&:hover': {
@@ -48,6 +49,17 @@ const useStyles = makeStyles((theme) => ({
   submitButton: {
     backgroundColor: theme.palette.secondary.focused,
     color: '#fff',
+  },
+  visibilityGridItem: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  img: {
+    marginLeft: '0.5rem',
+    marginTop: '-0.35rem',
+    filter: theme.palette.secondary.img,
+    height: '2rem',
+    width: '4.44rem',
   },
   chip: {
     padding: '1rem .5rem',

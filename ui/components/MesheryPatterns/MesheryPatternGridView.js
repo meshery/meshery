@@ -154,6 +154,7 @@ function MesheryPatternGrid({
     open: false,
     deploy: false,
     pattern_file: null,
+    pattern_id: '',
     name: '',
     count: 0,
     dryRunComponent: null,
@@ -164,6 +165,7 @@ function MesheryPatternGrid({
       open: false,
       pattern_file: null,
       name: '',
+      pattern_id: '',
       count: 0,
     });
   };
@@ -180,7 +182,10 @@ function MesheryPatternGrid({
 
     const dryRunComponent = (
       <DryRunComponent
-        design={pattern.pattern_file}
+        design={JSON.stringify({
+          pattern_file: pattern.pattern_file,
+          pattern_id: pattern.id,
+        })}
         noOfElements={compCount}
         selectedContexts={selectedK8sContexts}
       />
@@ -190,6 +195,7 @@ function MesheryPatternGrid({
       action: action,
       pattern_file: pattern.pattern_file,
       name: pattern.name,
+      pattern_id: pattern.id,
       count: compCount,
       validationBody: validationBody,
       dryRunComponent: dryRunComponent,
@@ -265,8 +271,9 @@ function MesheryPatternGrid({
         open={modalOpen.open}
         handleClose={handleModalClose}
         submit={{
-          deploy: () => handleDeploy(modalOpen.pattern_file, modalOpen.name),
-          unDeploy: () => handleUnDeploy(modalOpen.pattern_file, modalOpen.name),
+          deploy: () => handleDeploy(modalOpen.pattern_file, modalOpen.pattern_id, modalOpen.name),
+          unDeploy: () =>
+            handleUnDeploy(modalOpen.pattern_file, modalOpen.pattern_id, modalOpen.name),
         }}
         title={modalOpen.name}
         componentCount={modalOpen.count}

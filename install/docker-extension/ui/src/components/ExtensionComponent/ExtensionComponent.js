@@ -1,20 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import { Grid, Box, Button, Switch, Typography, Tooltip } from '@mui/material'
-import ConsulIcon from '../../img/SVGs/consulIcon'
-import IstioIcon from '../../img/SVGs/IstioIcon'
-import KumaIcon from '../../img/SVGs/kumaIcon'
-import Joyride from 'react-joyride'
+import { Typography, Button, Tooltip, Grid } from '@mui/material'
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+// import ConsulIcon from '../../img/SVGs/consulIcon'
+// import IstioIcon from '../../img/SVGs/IstioIcon'
+// import KumaIcon from '../../img/SVGs/kumaIcon'
+// import LinkerdIcon from '../../img/SVGs/linkerdIcon'
 import Tour from '../Walkthrough/Tour'
-import { createTheme } from '@mui/material/styles'
-import LinkerdIcon from '../../img/SVGs/linkerdIcon'
-
+import PublishIcon from '../../assets/design'
 import { Avatar } from '@mui/material'
-
-import NginxIcon from '../../img/SVGs/nginxIcon'
-import OsmIcon from '../../img/SVGs/osmIcon'
-import AppmeshIcon from '../../img/SVGs/appmeshIcon'
-import CiliumIcon from '../../img/SVGs/ciliumIcon'
-import TraefikIcon from '../../img/SVGs/traefikIcon'
+// import NginxIcon from '../../img/SVGs/nginxIcon'
+// import AppmeshIcon from '../../img/SVGs/appmeshIcon'
+// import CiliumIcon from '../../img/SVGs/ciliumIcon'
+// import TraefikIcon from '../../img/SVGs/traefikIcon'
 import Meshery from '../../img/SVGs/meshery'
 import MesheryIcon from '../../img/meshery-logo/CustomMesheryLogo'
 import { DockerMuiThemeProvider } from '@docker/docker-mui-theme'
@@ -22,66 +19,71 @@ import CssBaseline from '@mui/material/CssBaseline'
 import { LoadComp } from '../LoadingComponent/LoadComp'
 import {
   LoadingDiv,
-  StyledDiv,
   AccountDiv,
-  ServiceMeshAdapters,
   ExtensionWrapper,
-  AdapterDiv,
+  LinkButton,
   ComponentWrapper,
   SectionWrapper,
   VersionText,
   LogoutButton,
+  StyledButton,
+  StyledLink,
+  MeshModels,
+  PublishCard,
 } from './styledComponents'
 import { MesheryAnimation } from '../MesheryAnimation/MesheryAnimation'
-import { trueRandom, randomApplicationNameGenerator } from '../../utils'
+import { randomApplicationNameGenerator } from '../../utils'
+import CatalogChart from '../Catalog/Chart'
+import CatalogCard from '../Catalog/CatalogCard';
+import { MESHMAP, mesheryCloudUrl } from '../utils/constants';
 
 const AuthenticatedMsg = 'Authenticated'
 const UnauthenticatedMsg = 'Unauthenticated'
 const proxyUrl = 'http://127.0.0.1:7877'
 const httpDelete = 'DELETE'
 
-const adapters = {
-  APP_MESH: {
-    displayName: 'App Mesh',
-    icon: <AppmeshIcon width={40} height={40} />,
-    name: 'APP_MESH',
-  },
-  CILIUM_SERVICE_MESH: {
-    displayName: 'Cilium',
-    icon: <CiliumIcon width={40} height={40} />,
-    name: 'CILIUM_SERVICE_MESH',
-  },
-  CONSUL: {
-    displayName: 'Consul',
-    icon: <ConsulIcon width={40} height={40} />,
-    name: 'CONSUL',
-  },
-  ISTIO: {
-    displayName: 'Istio',
-    icon: <IstioIcon width={40} height={40} />,
-    name: 'ISTIO',
-  },
-  KUMA: {
-    displayName: 'Kuma',
-    icon: <KumaIcon width={40} height={40} />,
-    name: 'KUMA',
-  },
-  LINKERD: {
-    displayName: 'Linkerd',
-    icon: <LinkerdIcon width={40} height={40} />,
-    name: 'LINKERD',
-  },
-  NGINX_SERVICE_MESH: {
-    displayName: 'NGINX',
-    icon: <NginxIcon width={38} height={40} />,
-    name: 'NGINX_SERVICE_MESH',
-  },
-  TRAEFIK_MESH: {
-    displayName: 'Traefix Mesh',
-    icon: <TraefikIcon width={40} height={40} />,
-    name: 'TRAEFIK_MESH',
-  },
-}
+// const adapters = {
+//   APP_MESH: {
+//     displayName: 'App Mesh',
+//     icon: <AppmeshIcon width={40} height={40} />,
+//     name: 'APP_MESH',
+//   },
+//   CILIUM_SERVICE_MESH: {
+//     displayName: 'Cilium',
+//     icon: <CiliumIcon width={40} height={40} />,
+//     name: 'CILIUM_SERVICE_MESH',
+//   },
+//   CONSUL: {
+//     displayName: 'Consul',
+//     icon: <ConsulIcon width={40} height={40} />,
+//     name: 'CONSUL',
+//   },
+//   ISTIO: {
+//     displayName: 'Istio',
+//     icon: <IstioIcon width={40} height={40} />,
+//     name: 'ISTIO',
+//   },
+//   KUMA: {
+//     displayName: 'Kuma',
+//     icon: <KumaIcon width={40} height={40} />,
+//     name: 'KUMA',
+//   },
+//   LINKERD: {
+//     displayName: 'Linkerd',
+//     icon: <LinkerdIcon width={40} height={40} />,
+//     name: 'LINKERD',
+//   },
+//   NGINX_SERVICE_MESH: {
+//     displayName: 'NGINX',
+//     icon: <NginxIcon width={38} height={40} />,
+//     name: 'NGINX_SERVICE_MESH',
+//   },
+//   TRAEFIK_MESH: {
+//     displayName: 'Traefix Mesh',
+//     icon: <TraefikIcon width={40} height={40} />,
+//     name: 'TRAEFIK_MESH',
+//   },
+// }
 
 const useThemeDetector = () => {
   const getCurrentTheme = () =>
@@ -100,25 +102,28 @@ const useThemeDetector = () => {
 }
 
 const ExtensionsComponent = () => {
-  const [switchesState, setSwitchesState] = useState(null)
+  // const [switchesState, setSwitchesState] = useState(null)
   const [isHovered, setIsHovered] = useState(false)
   const isDarkTheme = useThemeDetector()
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [userName, setUserName] = useState('')
-  const [avatar, setAvatar] = useState('')
+  const [user, setUser] = useState('')
   const [token, setToken] = useState()
   const [changing, isChanging] = useState(false)
-  const [emptystate, isEmptystate] = useState(true)
-  const [meshAdapters, setMeshAdapters] = useState(null)
-  useEffect(() => {
-    if (meshAdapters && meshAdapters.length !== 0) {
-      setSwitchesState(
-        meshAdapters.map((adapter) => ({
-          [adapter.name]: false,
-        })),
-      )
-    }
-  }, [meshAdapters])
+  // const [emptystate, isEmptystate] = useState(true)
+  // const [meshAdapters, setMeshAdapters] = useState(null)
+  const [pattern, setPattern] = useState(null)
+  const [filter, setFilter] = useState(null)
+  const [userDesigns, setUserDesigns] = useState(null)
+
+  // useEffect(() => {
+  //   if (meshAdapters && meshAdapters.length !== 0) {
+  //     setSwitchesState(
+  //       meshAdapters.map((adapter) => ({
+  //         [adapter.name]: false,
+  //       })),
+  //     )
+  //   }
+  // }, [meshAdapters])
   const [mesheryVersion, setMesheryVersion] = useState(null)
 
   const logout = () => {
@@ -149,26 +154,47 @@ const ExtensionsComponent = () => {
           fetch(proxyUrl + '/api/user')
             .then((res) => res.text())
             .then((res) => {
-              setUserName(JSON.parse(res)?.user_id)
-              setAvatar(JSON.parse(res)?.avatar_url)
-              console.log(res)
+              setUser(JSON.parse(res))
             })
             .catch(console.error)
-          fetch(proxyUrl + '/api/system/sync')
-            .then((res) => res.json())
-            .then((data) => {
-              setMeshAdapters(data.meshAdapters)
-              isEmptystate(false)
-            })
-            .catch(console.err)
+          // fetch(proxyUrl + '/api/system/sync')
+          //   .then((res) => res.json())
+          //   .then((data) => {
+          //     setMeshAdapters(data.meshAdapters)
+          //     isEmptystate(false)
+          //   })
+          //   .catch(console.err)
           fetch(proxyUrl + '/api/system/version')
             .then((result) => result.text())
             .then((result) => setMesheryVersion(JSON.parse(result)?.build))
+            .catch(console.error)
+          fetch(`${mesheryCloudUrl}/api/catalog/content/pattern`)
+            .then((result) => result.text())
+            .then((result) => {
+              setPattern(JSON.parse(result))
+            })
+            .catch(console.error)
+          fetch(`${mesheryCloudUrl}/api/catalog/content/filter`)
+            .then((result) => result.text())
+            .then((result) => {
+              setFilter(JSON.parse(result))
+            })
             .catch(console.error)
         }
       })
       .catch(console.error)
   }, [isLoggedIn])
+
+  useEffect(() => {
+    if (user?.id) {
+      fetch(`${mesheryCloudUrl}/api/content/patterns?user_id=${user?.id}`)
+        .then((result) => result.text())
+        .then((result) => {
+          setUserDesigns(JSON.parse(result))
+        })
+        .catch(console.error)
+    }
+  }, [user])
 
   const onMouseOver = (e) => {
     let target = e.target.closest('div')
@@ -188,47 +214,45 @@ const ExtensionsComponent = () => {
     isChanging(true)
     setIsHovered(true)
   }
-  const submitConfig = (mesh, deprovision = false, meshAdapters) => {
-    const targetMesh = meshAdapters.find((msh) => msh.name === mesh)
-    const deployQuery = targetMesh.ops.find((op) => !op.category).key
-    const data = {
-      adapter: targetMesh.adapter_location,
-      query: deployQuery,
-      namespace: 'default',
-      customBody: '',
-      deleteOp: deprovision ? 'on' : '',
-    }
+  // const submitConfig = (mesh, deprovision = false, meshAdapters) => {
+  //   const targetMesh = meshAdapters.find((msh) => msh.name === mesh)
+  //   const deployQuery = targetMesh.ops.find((op) => !op.category).key
+  //   const data = {
+  //     adapter: targetMesh.adapter_location,
+  //     query: deployQuery,
+  //     namespace: 'default',
+  //     customBody: '',
+  //     deleteOp: deprovision ? 'on' : '',
+  //   }
 
-    const params = Object.keys(data)
-      .map(
-        (key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`,
-      )
-      .join('&')
-    fetch(proxyUrl + '/api/system/adapter/operation', {
-      credentials: 'same-origin',
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-      },
-      mode: 'no-cors',
-      body: params,
-    })
-      .then(() => {
-        window.ddClient.desktopUI.toast.success(
-          `Request received. ${
-            deprovision ? 'Deprovisioning' : 'Provisioning'
-          } Service Mesh...`,
-        )
-      })
-      .catch(() => {
-        window.ddClient.desktopUI.toast.error(
-          `Could not ${
-            deprovision ? 'Deprovision' : 'Provision'
-          } the Service Mesh due to some error.`,
-        )
-      })
-  }
+  //   const params = Object.keys(data)
+  //     .map(
+  //       (key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`,
+  //     )
+  //     .join('&')
+  //   fetch(proxyUrl + '/api/system/adapter/operation', {
+  //     credentials: 'same-origin',
+  //     method: 'POST',
+  //     credentials: 'include',
+  //     headers: {
+  //       'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+  //     },
+  //     mode: 'no-cors',
+  //     body: params,
+  //   })
+  //     .then(() => {
+  //       window.ddClient.desktopUI.toast.success(
+  //         `Request received. ${deprovision ? 'Deprovisioning' : 'Provisioning'
+  //         } Service Mesh...`,
+  //       )
+  //     })
+  //     .catch(() => {
+  //       window.ddClient.desktopUI.toast.error(
+  //         `Could not ${deprovision ? 'Deprovision' : 'Provision'
+  //         } the Service Mesh due to some error.`,
+  //       )
+  //     })
+  // }
 
   const handleImport = () => {
     const file = document.getElementById('upload-button').files[0]
@@ -257,7 +281,6 @@ const ExtensionsComponent = () => {
         body,
       })
         .then((res) => {
-          console.log(res)
           window.ddClient.desktopUI.toast.success(
             'Compose file has been uploaded with name: ' + name,
           )
@@ -295,7 +318,110 @@ const ExtensionsComponent = () => {
               extensible management plane, Meshery.
             </Typography>
           </div>
+        </div>
 
+        <SectionWrapper>
+          <ExtensionWrapper
+            className="third-step"
+            sx={{ backgroundColor: isDarkTheme ? '#393F49' : '#D7DADE' }}
+          >
+            <AccountDiv>
+              <div style={{ marginBottom: '0.5rem' }}>
+                <a
+                  style={{ textDecoration: 'none' }}
+                  href={
+                    token &&
+                    'http://localhost:9081/api/user/token?token=' +
+                    token +
+                    '&provider=Meshery'
+                  }
+                >
+                  {isLoggedIn ? (
+                    <div
+                      onMouseEnter={() => setIsHovered(!isHovered)}
+                      onMouseLeave={onMouseOut}
+                      onClick={onClick}
+                      onMouseOver={onMouseOver}
+                    >
+                      {isHovered ? (
+                        <MesheryAnimation height={70} width={72} />
+                      ) : (
+                        <Meshery height={70} width={72} />
+                      )}
+                    </div>
+                  ) : (
+                    <Meshery height={70} width={72} />
+                  )}
+                </a>
+                {isLoggedIn ? (
+                  <LinkButton>
+                    <StyledLink
+                      style={{ textDecoration: 'none', color: "white" }}
+                      href={
+                        token &&
+                        'http://localhost:9081/api/user/token?token=' +
+                        token +
+                        '&provider=Meshery'
+                      }
+                    >
+                      Launch Meshery
+                    </StyledLink>
+                  </LinkButton>
+                ) : ""}
+              </div>
+              {!isLoggedIn ? (
+                <StyledButton
+                  sx={{ marginTop: '0.3rem' }}
+                  variant="contained"
+                  disabled={isLoggedIn}
+                  color="primary"
+                  component="span"
+                  onClick={() => {
+                    window.ddClient.host.openExternal(
+                      'https://meshery.layer5.io?source=aHR0cDovL2xvY2FsaG9zdDo3ODc3L3Rva2VuL3N0b3Jl&provider_version=v0.3.14',
+                    )
+                  }}
+                >
+                  Login
+                </StyledButton>
+              ) : ( <></> )}
+            </AccountDiv>
+          </ExtensionWrapper>
+          {isLoggedIn && (
+            <ExtensionWrapper
+              className="second-step"
+              sx={{ backgroundColor: isDarkTheme ? '#393F49' : '#D7DADE' }}
+            >
+              <AccountDiv>
+                <Typography
+                  sx={{ marginBottom: '2rem', whiteSpace: ' nowrap' }}
+                >
+                  Import Compose App
+                </Typography>
+                <div style={{ paddingBottom: '2rem' }}>
+                  <label htmlFor="upload-button">
+                    <StyledButton
+                      variant="contained"
+                      color="primary"
+                      disabled={!isLoggedIn}
+                      aria-label="Upload Button"
+                      component="span"
+                    >
+                      <input
+                        id="upload-button"
+                        type="file"
+                        accept=".yaml, .yml"
+                        hidden
+                        name="upload-button"
+                        onChange={handleImport}
+                      />
+                      Browse...
+                    </StyledButton>
+                  </label>
+                </div>
+              </AccountDiv>
+            </ExtensionWrapper>
+          )}
           {!isLoggedIn ? (
             <div sx={{ display: 'none' }}></div>
           ) : (
@@ -312,7 +438,7 @@ const ExtensionsComponent = () => {
                       alignItems: 'center',
                     }}
                   >
-                    {userName && (
+                    {user?.user_id && (
                       <Typography
                         sx={{
                           display: 'flex',
@@ -321,9 +447,9 @@ const ExtensionsComponent = () => {
                           marginBottom: '1.5rem',
                         }}
                       >
-                        {userName}
+                        {user?.user_id}
                         <Avatar
-                          src={avatar}
+                          src={user?.avatar_url}
                           sx={{
                             width: '5rem',
                             height: '5rem',
@@ -353,173 +479,78 @@ const ExtensionsComponent = () => {
               </ExtensionWrapper>
             </div>
           )}
-        </div>
+        </SectionWrapper>
+        {isLoggedIn &&
+          (<SectionWrapper>
+            <CatalogChart filter={filter} pattern={pattern} isTheme={isDarkTheme} />
+            <Grid sx={{ backgroundColor: isDarkTheme ? '#666A75' : '#D7DADE', borderRadius: "15px", height: "23rem", display: "flex", justifyContent: "center" }}>
 
-        <SectionWrapper>
-          <ExtensionWrapper
-            className="third-step"
-            sx={{ backgroundColor: isDarkTheme ? '#393F49' : '#D7DADE' }}
-          >
-            <AccountDiv>
-              <Typography sx={{ marginBottom: '1rem', whiteSpace: 'nowrap' }}>
-                Launch Meshery
-              </Typography>
-              <div style={{ marginBottom: '0.5rem' }}>
-                <a
-                  style={{ textDecoration: 'none' }}
-                  href={
-                    token &&
-                    'http://localhost:9081/api/user/token?token=' +
-                      token +
-                      '&provider=Meshery'
-                  }
-                >
-                  {isLoggedIn ? (
-                    <div
-                      onMouseEnter={() => setIsHovered(!isHovered)}
-                      onMouseLeave={onMouseOut}
-                      onClick={onClick}
-                      onMouseOver={onMouseOver}
-                    >
-                      {isHovered ? (
-                        <MesheryAnimation height={70} width={72} />
-                      ) : (
-                        <Meshery height={70} width={72} />
-                      )}
-                    </div>
-                  ) : (
-                    <Meshery height={70} width={72} />
-                  )}
-                </a>
-              </div>
-              {!isLoggedIn ? (
-                <Button
-                  sx={{ marginTop: '0.3rem' }}
-                  variant="contained"
-                  disabled={isLoggedIn}
-                  color="primary"
-                  component="span"
-                  onClick={() => {
-                    window.ddClient.host.openExternal(
-                      'https://meshery.layer5.io?source=aHR0cDovL2xvY2FsaG9zdDo3ODc3L3Rva2VuL3N0b3Jl&provider_version=v0.3.14',
-                    )
+              <div style={{ paddingTop: isLoggedIn ? '1.2rem' : null, margin: "10px 0" }}>
+                <ExtensionWrapper
+                  className="first-step"
+                  sx={{
+                    height: ['22rem', '17rem', '14rem'],
                   }}
                 >
-                  Login
-                </Button>
-              ) : (
-                <div sx={{display: 'none'}}></div>
-              )}
-            </AccountDiv>
-          </ExtensionWrapper>
+                  {userDesigns?.patterns.length > 0 ? (
+                    <div>
+                      <Typography variant="h5" sx={{ padding: '3rem 0 1rem 0', fontWeight: "bold" }}>
+                        Designs
+                      </Typography>
+                      <MeshModels>
+                        {
+                          userDesigns?.patterns?.slice(0, 2).map((pattern, index) => {
+                            let patternType =
+                              pattern.catalog_data && pattern.catalog_data.type && pattern.catalog_data.type !== ""
+                                ? pattern.catalog_data.type
+                                : "deployment";
+                            return (
+                              <CatalogCard
+                                pattern={pattern}
+                                key={`design-${index}`}
+                                patternType={patternType}
+                                catalog={true}
+                              />
+                            )
+                          })
+                        }
+                      </MeshModels>
+                    </div>
+                  ) : (
+                    <div>
+                      <Typography variant="h5" sx={{ padding: '3rem 0 1rem 0', fontWeight: "bold" }}>
+                        Designs
+                      </Typography>
+                      <a href={user?.role_names?.includes(MESHMAP) ? "https://playground.meshery.io/extension/meshmap" : "https://play.meshery.io"} style={{ textDecoration: "none" }}>
+                      <PublishCard>
+                        <PublishIcon width={"60"} height={"60"} />
+                        <h5>Publish your own design</h5>
+                      </PublishCard>
+                      </a>
+                    </div>
+                  )}
+                </ExtensionWrapper>
+              </div>
+            </Grid>
+          </SectionWrapper>)
+        }
 
+        <SectionWrapper>
           {isLoggedIn && (
-            <ExtensionWrapper
-              className="second-step"
-              sx={{ backgroundColor: isDarkTheme ? '#393F49' : '#D7DADE' }}
-            >
-              <AccountDiv>
-                <Typography
-                  sx={{ marginBottom: '2rem', whiteSpace: ' nowrap' }}
-                >
-                  Import Compose App
-                </Typography>
-                <div style={{ paddingBottom: '2rem' }}>
-                  <label htmlFor="upload-button">
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      disabled={!isLoggedIn}
-                      aria-label="Upload Button"
-                      component="span"
-                    >
-                      <input
-                        id="upload-button"
-                        type="file"
-                        accept=".yaml, .yml"
-                        hidden
-                        name="upload-button"
-                        onChange={handleImport}
-                      />
-                      Browse...
-                    </Button>
-                  </label>
-                </div>
-              </AccountDiv>
-            </ExtensionWrapper>
-          )}
-          {!!isLoggedIn && (
             <div style={{ paddingTop: isLoggedIn ? '1.2rem' : null }}>
-              <ExtensionWrapper
-                className="first-step"
-                sx={{
-                  height: ['22rem', '17rem', '14rem'],
-                  backgroundColor: isDarkTheme ? '#393F49' : '#D7DADE',
-                }}
-              >
-                {/* {!emptystate ? (
-                  <div>
-                    <Typography sx={{ marginBottom: '1rem' }}>
-                      Deploy a Service Mesh
-                    </Typography>
-                    <ServiceMeshAdapters>
-                      {meshAdapters &&
-                        switchesState &&
-                        meshAdapters.map((adapter) => (
-                          <StyledDiv>
-                            <AdapterDiv
-                              inactiveAdapter={
-                                switchesState
-                                  ? !switchesState[adapter.name]
-                                  : true
-                              }
-                            >
-                              {adapters[adapter.name].icon}
-                            </AdapterDiv>
-                            <Typography sx={{ whiteSpace: 'nowrap' }}>
-                              {adapters[adapter.name].displayName}
-                            </Typography>
-                            <Switch
-                              checked={
-                                switchesState
-                                  ? switchesState[adapter.name]
-                                  : false
-                              }
-                              disabled={!isLoggedIn}
-                              onChange={() => {
-                                submitConfig(
-                                  adapter.name,
-                                  switchesState[adapter.name],
-                                  meshAdapters,
-                                )
-                                setSwitchesState({
-                                  ...switchesState,
-                                  [adapter.name]: !switchesState[adapter.name],
-                                })
-                              }}
-                              color="primary"
-                            ></Switch>
-                          </StyledDiv>
-                        ))}
-                    </ServiceMeshAdapters>
-                  </div>
-                ) : (
-                  <div>
-                    <Typography sx={{ marginBottom: '1rem' }} variant="h4">
-                      No Meshery Adapters Detected
-                    </Typography>
-                    <i>
-                      Connect one or more Meshery adapters to manage service
-                      meshes
-                    </i>
-                  </div>
-                )} */}
-              </ExtensionWrapper>
               <Tooltip title="Meshery Server version">
-                <VersionText variant="p" component="p" align="end">
+                <VersionText variant="span" component="span" align="end">
                   {mesheryVersion}
                 </VersionText>
               </Tooltip>
+              <a
+                href={`https://docs.meshery.io/project/releases/${mesheryVersion}`}
+                target="_blank"
+                rel="noreferrer"
+                style={{ color: isDarkTheme ? 'white' : 'black' }}
+              >
+                <OpenInNewIcon style={{ width: '0.85rem', verticalAlign: 'middle' }} />
+              </a>
             </div>
           )}
         </SectionWrapper>

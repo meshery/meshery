@@ -97,7 +97,6 @@ const (
 	ErrInvalidKubeConfigCode            = "1102"
 	ErrInvalidKubeHandlerCode           = "1103"
 	ErrInvalidKubeContextCode           = "1104"
-	ErrCreatingKubernetesComponentsCode = "1105"
 	ErrValidateCode                     = "1106"
 	ErrApplicationContentCode           = "1107"
 	ErrRemoteApplicationURL             = "1108"
@@ -124,6 +123,7 @@ const (
 	ErrUnsupportedEventStatusCode       = "1129"
 	ErrBulkUpdateEventCode              = "1537"
 	ErrBulkDeleteEventCode              = "1538"
+	ErrFetchMeshSyncResourcesCode       = "1539"
 )
 
 var (
@@ -148,10 +148,6 @@ func ErrGenerateComponents(err error) error {
 
 func ErrValidate(err error) error {
 	return errors.New(ErrValidateCode, errors.Alert, []string{"failed to validate the given value against the schema"}, []string{err.Error()}, []string{"unable to validate the value against given schema", "either value or schema might not be a valid cue expression"}, []string{"Make sure that the schema and value provided are valid cue values", "Make sure both schema and value are sent", "Make sure appropriate value types are sent"})
-}
-
-func ErrCreatingKubernetesComponents(err error, ctxID string) error {
-	return errors.New(ErrCreatingKubernetesComponentsCode, errors.Alert, []string{"failed to register/create kubernetes components for contextID " + ctxID}, []string{err.Error()}, []string{"component generation was canceled due to deletion or reload of K8s context", "Invalid kubeconfig", "Filters passed incorrectly in config", "Could not fetch API resources from Kubernetes server"}, []string{"If there is the log \"Starting to register ...\" for the same contextID after this error means that for some reason the context was reloaded which caused this run to abort. In that case, this error can be ignored.", "Make sure that the configuration filters passed are in accordance with output from /openapi/v2"})
 }
 
 func ErrPrometheusScan(err error) error {
@@ -538,5 +534,10 @@ func ErrBulkDeleteEvent(err error) error {
 }
 
 func ErrUnsupportedEventStatus(err error, status string) error {
-	return errors.New(ErrUnsupportedEventStatusCode, errors.Alert, []string{fmt.Sprintf("Event status '%s' is not a supported status.", status)}, []string{err.Error()}, []string{"Unsupported event status for your current version of Meshery Server."}, []string{"Confirm that the status you are using is valid and a supported event status. Refer to Meshery Docs for a list of event statuses.", "Check for availability of a new version of Meshery Server. Try upgrading to the latest version." })
+	return errors.New(ErrUnsupportedEventStatusCode, errors.Alert, []string{fmt.Sprintf("Event status '%s' is not a supported status.", status)}, []string{err.Error()}, []string{"Unsupported event status for your current version of Meshery Server."}, []string{"Confirm that the status you are using is valid and a supported event status. Refer to Meshery Docs for a list of event statuses.", "Check for availability of a new version of Meshery Server. Try upgrading to the latest version."})
+}
+
+// ErrFetchMeshSyncResources
+func ErrFetchMeshSyncResources(err error) error {
+	return errors.New(ErrFetchMeshSyncResourcesCode, errors.Alert, []string{"Error fetching MeshSync resources", "DB might be corrupted"}, []string{err.Error()}, []string{"MeshSync might not be reachable from meshery"}, []string{"Make sure meshery has connectivity to MeshSync", "Try restarting Meshery server"})
 }

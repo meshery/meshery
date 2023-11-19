@@ -306,7 +306,7 @@
     }
   function clickIcon(serviceMesh){
     console.log("clicked",serviceMesh);
-    location.href = `{{site.baseurl}}/project/compatibility-matrix/${serviceMesh}-past-results`
+    location.href = `{{site.baseurl}}/installation/compatibility-matrix/${serviceMesh}-past-results`
   }
 
 showCompatability()

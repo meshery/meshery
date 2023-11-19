@@ -49,6 +49,8 @@ import ConnectionStatsChart from './Dashboard/ConnectionCharts.js';
 import { EVENT_TYPES } from '../lib/event-types';
 import { withNotify } from '../utils/hooks/useNotification';
 import _ from 'lodash';
+import WorkloadChart from './Dashboard/WorkloadChart';
+import subscribeMesheryControllersStatus from './graphql/subscriptions/MesheryControllersStatusSubscription.js';
 const styles = (theme) => ({
   rootClass: { backgroundColor: theme.palette.secondary.elevatedComponents2 },
   datatable: {
@@ -239,6 +241,17 @@ class DashboardComponent extends React.Component {
     this.setState({ namespaceQuery });
   };
 
+  initMesheryControllerStatusSubscription = () => {
+    const self = this;
+    let k8s = self.getK8sClusterIds();
+    if (self._isMounted) {
+      const mesheryControllersStatusSubscription = subscribeMesheryControllersStatus((res) => {
+        console.log('mcs results', res);
+      }, k8s);
+      console.log('mesheryControllersStatusSubscription', mesheryControllersStatusSubscription);
+    }
+  };
+
   initDashboardClusterResourcesSubscription = () => {
     const self = this;
     let k8s = self.getK8sClusterIds();
@@ -270,6 +283,7 @@ class DashboardComponent extends React.Component {
       this.initMeshSyncControlPlaneSubscription();
       this.initDashboardClusterResourcesSubscription();
       this.initNamespaceQuery();
+      this.initMesheryControllerStatusSubscription();
     }
   };
 
@@ -437,7 +451,7 @@ class DashboardComponent extends React.Component {
   emptyStateMessageForServiceMeshesInfo = () => {
     const clusters = this.getSelectedK8sContextsNames();
     if (clusters.length === 0) {
-      return 'No Cluster is selected to show the Service Mesh Information';
+      return 'No cluster is selected to display service mesh details.';
     }
     if (clusters.includes('all')) {
       return `No service meshes detected in any of the cluster.`;
@@ -448,10 +462,10 @@ class DashboardComponent extends React.Component {
   emptyStateMessageForClusterResources = () => {
     const clusters = this.getSelectedK8sContextsNames();
     if (clusters.length === 0) {
-      return 'No Cluster is selected to show the discovered resources';
+      return 'No Cluster is selected to display discovered resources';
     }
     if (clusters.includes('all')) {
-      return `No resources detected in any of the cluster.`;
+      return `No resources detected in any cluster`;
     }
     return `No resources detected in the ${clusters.join(', ')} cluster(s).`;
   };
@@ -767,6 +781,11 @@ class DashboardComponent extends React.Component {
     return null;
   };
 
+  handleNamespaceChange = (value) => {
+    const self = this;
+    self.setState({ selectedNamespace: value });
+  };
+
   /**
    * ClusterResourcesCard takes in the cluster related data
    * and renders a table with cluster resources information of
@@ -1057,12 +1076,20 @@ class DashboardComponent extends React.Component {
               <DashboardMeshModelGraph classes={classes} />
             </Grid>
             <Grid item xs={12} md={12}>
-              <div className={classes.dashboardSection} data-test="workloads">
-                <Typography variant="h6" gutterBottom className={classes.chartTitle}>
-                  Workloads
-                </Typography>
-                {showClusterResources}
-              </div>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={7}>
+                  {showClusterResources}
+                </Grid>
+                <Grid item xs={12} md={5}>
+                  <WorkloadChart
+                    resourses={this.state?.clusterResources?.resources}
+                    namespaces={this.state.namespaceList}
+                    handleSetNamespace={this.handleNamespaceChange}
+                    selectedNamespace={this.state.selectedNamespace}
+                    classes={classes}
+                  />
+                </Grid>
+              </Grid>
             </Grid>
 
             <Grid item xs={12}>
