@@ -5,7 +5,7 @@ import { Paper, IconButton } from '@material-ui/core';
 import { useRouter } from 'next/router';
 // import { FormatStructuredData } from '../DataFormatter';
 import NameValueTable from '../DataFormatter/NameValueTable';
-import ResponsiveDataTable from '../../utils/data-table';
+import { ResponsiveDataTable } from '@layer5/sistent-components';
 
 const View = (props) => {
   const { type, setView, resource, classes } = props;
@@ -29,7 +29,33 @@ const View = (props) => {
         sort: false,
         display: key == 'id' ? false : true,
         customBodyRender: function CustomBody(value) {
-          return <>{typeof value === 'object' && value !== null ? JSON.stringify(value) : value}</>;
+          let parentStyle = {
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
+            boxSizing: 'border-box',
+            display: 'block',
+            width: '100%',
+          };
+          let cellStyle = {
+            boxSizing: 'border-box',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          };
+          return (
+            <>
+              <div style={{ position: 'relative', height: '20px' }}>
+                <div style={parentStyle}>
+                  <div style={cellStyle}>
+                    {typeof value === 'object' && value !== null ? JSON.stringify(value) : value}
+                  </div>
+                </div>
+              </div>
+            </>
+          );
         },
       },
     }));
@@ -43,6 +69,8 @@ const View = (props) => {
       selectableRows: 'none',
       pagination: false,
       responsive: 'standard',
+      fixedHeader: true,
+      resizableColumns: true,
     };
 
     return (
