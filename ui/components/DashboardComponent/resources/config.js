@@ -15,6 +15,10 @@ export const ResourcesConfig = {
     tableConfig: NamespaceTableConfig,
     submenu: false,
   },
+  Workload: {
+    tableConfig: WorkloadTableConfig,
+    submenu: true,
+  },
   Configuration: {
     tableConfig: ConfigurationTableConfig,
     submenu: true,
@@ -29,10 +33,6 @@ export const ResourcesConfig = {
   },
   Storage: {
     tableConfig: StorageTableConfig,
-    submenu: true,
-  },
-  Workload: {
-    tableConfig: WorkloadTableConfig,
     submenu: true,
   },
 };
