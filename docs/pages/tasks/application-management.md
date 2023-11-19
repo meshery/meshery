@@ -2,6 +2,7 @@
 layout: default
 title: Infrastructure Management
 permalink: tasks/infrastructure-management
+redirect_from: tasks/application-management
 type: tasks
 language: en
 list: include
