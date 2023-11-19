@@ -16,6 +16,7 @@ import {
 import DashboardMeshModelGraph from '../Dashboard/DashboardMeshModelGraph';
 import ConnectionStatsChart from '../Dashboard/ConnectionCharts';
 import blue from '@material-ui/core/colors/blue';
+import MesheryConfigurationChart from '../Dashboard/MesheryConfigurationCharts.js';
 
 const styles = (theme) => ({
   rootClass: { backgroundColor: theme.palette.secondary.elevatedComponents2, marginTop: '1rem' },
@@ -97,8 +98,11 @@ const Overview = (props) => {
 
           <Grid item xs={12}>
             <Grid container spacing={2}>
-              <Grid item xs={12} md={4}>
+              <Grid item xs={12} md={6}>
                 <ConnectionStatsChart classes={classes} />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <MesheryConfigurationChart classes={classes} />
               </Grid>
             </Grid>
           </Grid>
