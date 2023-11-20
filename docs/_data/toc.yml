@@ -59,7 +59,7 @@
     - title: Contributing ↆ
       url: project/contributing
       children:
-        - title: "- Build & Release (CI)"
+        - title: "Build & Release (CI)"
           url: project/contributing/build-and-release
           grandchildren:
           - title: "- End-to-End Testing"
