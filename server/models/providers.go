@@ -307,6 +307,7 @@ const (
 	RegistryManagerKey ContextKey = "registrymanagerkey"
 
 	HandlerKey               ContextKey = "handlerkey"
+	SystemIDKey              ContextKey = "systemidKey"
 	MesheryServerURL         ContextKey = "mesheryserverurl"
 	MesheryServerCallbackURL ContextKey = "mesheryservercallbackurl"
 )

@@ -10,7 +10,6 @@ import (
 
 var (
 	patterns     *model.PatternPageResult
-	applications *model.ApplicationPage
 	filters      *model.FilterPage
 	conf         *model.ConfigurationPage
 	err          error

@@ -112,7 +112,7 @@ export var darkTheme = createTheme({
       innertableBg2: 'rgb(255, 255, 255, 0.05)',
       tabContainer: '#51636B',
       card: '#51636B',
-      detailsContainer: '#d9dadb80',
+      detailsContainer: '#82828280',
       tabCard: '#677a84',
       disableButtonBg: '#666666',
       disableButton: '#9d9d9d',
@@ -257,40 +257,37 @@ darkTheme = {
       },
     },
     // Global scrollbar and body styles
-    // MuiCssBaseline : {
-    //   "@global" : {
-    //     body : {
-    //       backgroundColor : "#303030",
-    //       scrollbarColor : "#6b6b6b #263238",
-    //       "&::-webkit-scrollbar, & *::-webkit-scrollbar" : {
-    //         backgroundColor : "#263238",
-    //         width : '0.7rem',
-    //       },
-    //       "&::-webkit-scrollbar-track, & *::-webkit-scrollbar-track" : {
-    //         backgroundColor : "#263238",
-    //         width : '0.7rem',
-    //       },
-    //       "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb" : {
-    //         borderRadius : 8,
-    //         backgroundColor : "#6b6b6b",
-    //         minHeight : 24,
-    //         border : "3px solid #263238",
-    //       },
-    //       "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus" : {
-    //         backgroundColor : "#959595",
-    //       },
-    //       "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active" : {
-    //         backgroundColor : "#959595",
-    //       },
-    //       "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover" : {
-    //         backgroundColor : "#959595",
-    //       },
-    //       "&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner" : {
-    //         backgroundColor : "#263238",
-    //       },
-    //     },
-    //   },
-    // },
+    MuiCssBaseline: {
+      '@global': {
+        body: {
+          backgroundColor: '#303030',
+          // scrollbarColor : "#6b6b6b #263238",
+          '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
+            backgroundColor: '#1A1A1A',
+            width: '0.5rem',
+          },
+          '&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb': {
+            backgroundColor: '#6b6b6b',
+            width: '0.5rem',
+          },
+          '&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus': {
+            backgroundColor: '#959595',
+          },
+          '&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active': {
+            backgroundColor: '#959595',
+          },
+          '&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover': {
+            backgroundColor: '#959595',
+          },
+          '&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner': {
+            backgroundColor: '#3d3d3d',
+          },
+          '::-webkit-scrollbar-track, &::-webkit-scrollbar-track': {
+            backgroundColor: '#3d3d3d',
+          },
+        },
+      },
+    },
   },
   props: { MuiTab: { disableRipple: true } },
   mixins: { ...darkTheme.mixins },
@@ -495,42 +492,38 @@ theme = {
       },
     },
     // global style for body throughout meshery-ui
+    // Global scrollbar styles
     MuiCssBaseline: {
       '@global': {
         body: {
-          backgroundColor: '#eaeff1',
+          backgroundColor: '#e9eff1',
+          // scrollbarColor : "#6b6b6b #263238",
+          '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
+            backgroundColor: '#d7d7d7',
+            width: '0.5rem',
+          },
+          '&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb': {
+            backgroundColor: '#d7d7d7',
+            width: '0.5rem',
+          },
+          '&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus': {
+            backgroundColor: '#e3e3e3',
+          },
+          '&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active': {
+            backgroundColor: '#e3e3e3',
+          },
+          '&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover': {
+            backgroundColor: '#e3e3e3',
+          },
+          '&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner': {
+            backgroundColor: '#e9eff1',
+          },
+          '::-webkit-scrollbar-track, &::-webkit-scrollbar-track': {
+            backgroundColor: '#e9eff1',
+          },
         },
       },
     },
-    // Global scrollbar styles
-    // MuiCssBaseline : {
-    //   "@global" : {
-
-    //     body : {
-    //       backgroundColor : "#eaeff1",
-    //       scrollbarColor : "#DDDDDD #FFF",
-    //       "&::-webkit-scrollbar, & *::-webkit-scrollbar" : {
-    //         backgroundColor : "#DDDDDD",
-    //         width : '0.7rem',
-    //       },
-    //       "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb" : {
-    //         borderRadius : 8,
-    //         backgroundColor : "#959595",
-    //         minHeight : 24,
-    //         border : "3px solid #DDDDDD",
-    //       },
-    //       "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus" : {
-    //         backgroundColor : "#959595",
-    //       },
-    //       "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active" : {
-    //         backgroundColor : "#959595",
-    //       },
-    //       "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover" : {
-    //         backgroundColor : "#959595",
-    //       },
-    //     },
-    //   },
-    // },
   },
   props: { MuiTab: { disableRipple: true } },
   mixins: { ...theme.mixins },
