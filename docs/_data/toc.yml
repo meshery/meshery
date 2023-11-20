@@ -52,10 +52,14 @@
   links:
     - title: Community
       url: project/community
+    - title: Releases
+      url: project/releases
+    - title: Vulnerabilities
+      url: project/security-vulnerabilities
     - title: Contributing ↆ
       url: project/contributing
       children:
-        - title: Build & Release (CI)
+        - title: "Build & Release (CI)"
           url: project/contributing/build-and-release
           grandchildren:
           - title: "- End-to-End Testing"
@@ -80,11 +84,6 @@
           url: project/contributing/contributing-ui
         - title: Docker Extension
           url: project/contributing/contributing-docker-extension
-        
-    - title: Releases
-      url: project/releases
-    - title: Vulnerabilities
-      url: project/security-vulnerabilities
 - title: 🧠 Concepts
   url: concepts
   links:

@@ -6,6 +6,7 @@ redirect_from: tasks/application-management
 type: tasks
 language: en
 list: include
+abstract: 'Meshery provides the ability to manage infrastructure for agility, maintainability, diversity, reliability and isolation, security, and speed.'
 ---
 
 ## Using Meshery Designs to Manage Your Infrastructure

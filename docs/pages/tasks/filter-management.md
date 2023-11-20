@@ -5,6 +5,7 @@ permalink: tasks/filter-management
 type: tasks
 language: en
 list: include
+abstract: 'Meshery provides the ability to manage WASM filters for data plane proxies for agility, maintainability, diversity, reliability and isolation, security, and speed.'
 ---
 
 ## Frequently Asked Questions
