@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshsync/pkg/model"
 	"gorm.io/gorm/clause"
@@ -33,7 +34,7 @@ import (
 //
 // ```?status={status}``` status is a boolean value. If true then status is returned
 //
-// ```?clusterId={clusterId}``` clusterId is a string value. If specified then resources for that cluster are returned
+// ```?clusterId={[clusterId]}``` clusterId is array of string values. Required.
 //
 // responses:
 // 200: []meshsyncResourcesResponseWrapper
@@ -65,15 +66,33 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	sort := r.URL.Query().Get("sort")
 	search := r.URL.Query().Get("search")
 	apiVersion := r.URL.Query().Get("apiVersion")
-	clusterId := r.URL.Query().Get("clusterId")
 	spec, _ := strconv.ParseBool(r.URL.Query().Get("spec"))
 	status, _ := strconv.ParseBool(r.URL.Query().Get("status"))
 	isAnnotaion, _ := strconv.ParseBool(r.URL.Query().Get("annotations"))
 	isLabels, _ := strconv.ParseBool(r.URL.Query().Get("labels"))
 	kind := r.URL.Query().Get("kind")
 
+ 	filter := struct {
+ 		ClusterIds []string `json:"clusterIds"`
+ 	}{}
+
+	clusterIds := r.URL.Query().Get("clusterIds")
+ 	if clusterIds != "" {
+ 		err := json.Unmarshal([]byte(clusterIds), &filter.ClusterIds)
+ 		if err != nil {
+ 			h.log.Error(ErrFetchPattern(err))
+ 			http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
+ 			return
+ 		}
+ 	} else {
+		filter.ClusterIds = []string{}
+	}
+
+
 	result := provider.GetGenericPersister().Model(&model.KubernetesResource{}).
-		Preload("KubernetesResourceMeta")
+		Preload("KubernetesResourceMeta").
+		Where("kubernetes_resources.cluster_id IN (?)", filter.ClusterIds)
+
 
 	if kind != "" {
 		result = result.Where(&model.KubernetesResource{Kind: kind})
@@ -96,10 +115,6 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 
 	if status {
 		result = result.Preload("Status")
-	}
-
-	if clusterId != "" {
-		result = result.Where(&model.KubernetesResource{ClusterID: clusterId})
 	}
 
 	if search != "" {
