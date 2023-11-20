@@ -39,7 +39,7 @@ func(ia *NotFoundAction) Execute(ctx context.Context, machineCtx interface{}) (m
 	machinectx.log.Debug("HTTP status:", statusCode, "updated status for connection", connection.ID)
 	machinectx.log.Debug("exiting execute func from notfound state", connection)
 
-	return machines.NoOp, eventBuilder.Build(), err
+	return machines.NoOp, nil, nil
 }
 
 func(ia *NotFoundAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {

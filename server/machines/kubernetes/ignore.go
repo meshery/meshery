@@ -39,7 +39,7 @@ func(ia *IgnoreAction) Execute(ctx context.Context, machineCtx interface{}) (mac
 	machinectx.log.Debug("HTTP status:", statusCode, "updated status for connection", connection.ID)
 	machinectx.log.Debug("exiting execute func from ignored state", connection)
 
-	return machines.NoOp, eventBuilder.Build(), err
+	return machines.NoOp, nil, nil
 }
 
 func(ia *IgnoreAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
