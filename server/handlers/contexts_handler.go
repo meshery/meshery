@@ -121,6 +121,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 			connectionUUID,
 			smInstanceTracker,
 			h.log,
+			provider,
 		)
 		if err != nil {
 			h.log.Error(err)

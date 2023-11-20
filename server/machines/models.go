@@ -7,6 +7,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
 )
@@ -90,6 +91,8 @@ type StateMachine struct {
 	mx sync.RWMutex
 
 	Log logger.Handler
+
+	Provider models.Provider
 }
 
 type initFunc func(ctx context.Context,  machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error)
@@ -195,6 +198,16 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		sm.CurrentState = nextState
 	}
 
+	token, _ := ctx.Value(models.TokenCtxKey).(string)
+	connection, statusCode, err := sm.Provider.UpdateConnectionStatusByID(token, sm.ID, connections.ConnectionStatus(sm.CurrentState))
+
+	if err != nil {
+		// In this case should the current state be again set to previous state i.e. should we rollback. But not only state should be rollback but other actions as well, rn we don't rollback state.
+		return events.NewEvent().WithDescription(fmt.Sprintf("Operation succeeded but failed to update the status of the connection to %s.", sm.CurrentState)).WithMetadata(map[string]interface{}{"error": err}).Build(), err
+	}
+
+	sm.Log.Debug("HTTP status:", statusCode, "updated status for connection", connection.ID)
+	
 	// The action func only emits event when an error occurs.
 	// If "event" is nil, it indicates actions were execeuted successfully, hence send an confirmation that request was processed successsfully.
 	if event == nil {

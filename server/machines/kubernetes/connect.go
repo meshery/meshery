@@ -2,12 +2,10 @@ package kubernetes
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/models/events"
 )
 
@@ -35,16 +33,6 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}) (m
 	ctrlHelper := machinectx.MesheryCtrlsHelper.UpdateCtxControllerHandlers(k8sContexts).
 		UpdateOperatorsStatusMap(machinectx.OperatorTracker).DeployUndeployedOperators(machinectx.OperatorTracker)
 	ctrlHelper.UpdateMeshsynDataHandlers()
-
-	token, _ := ctx.Value(models.TokenCtxKey).(string)
-	connection, statusCode, err := machinectx.Provider.UpdateConnectionStatusByID(token, uuid.FromStringOrNil(machinectx.K8sContext.ConnectionID), connections.CONNECTED)
-
-	if err != nil {
-		return machines.NoOp, eventBuilder.WithDescription(fmt.Sprintf("Connect operation succeeded but failed to update the record for the connection with context \"%s\" at %s", machinectx.K8sContext.Name, machinectx.K8sContext.Server)).WithMetadata(map[string]interface{}{"error": err}).Build(), err
-	}
-
-	machinectx.log.Debug("HTTP status:", statusCode, "updated status for connection", connection.ID)
-	machinectx.log.Debug("exiting execute func from disconnected state", connection)
 	
 	return machines.NoOp, nil, nil
 }

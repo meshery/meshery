@@ -273,6 +273,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 				id,
 				smInstanceTracker,
 				h.log,
+				provider,
 			)
 			if err != nil {
 				event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)).WithMetadata(map[string]interface{}{
