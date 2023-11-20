@@ -136,7 +136,13 @@ function ConnectionManagementPage(props) {
     </>
   );
 }
-function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/ operatorState }) {
+function Connections({
+  classes,
+  updateProgress,
+  /*onOpenCreateConnectionModal,*/ operatorState,
+  selectedK8sContexts,
+  k8sconfig,
+}) {
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);
   const [count, setCount] = useState(0);
@@ -866,7 +872,13 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
           />
         )}
         {tab === 1 && (
-          <MeshSyncTable classes={classes} updateProgress={updateProgress} search={search} />
+          <MeshSyncTable
+            classes={classes}
+            updateProgress={updateProgress}
+            search={search}
+            selectedK8sContexts={selectedK8sContexts}
+            k8sconfig={k8sconfig}
+          />
         )}
         <PromptComponent ref={modalRef} />
         <Popover

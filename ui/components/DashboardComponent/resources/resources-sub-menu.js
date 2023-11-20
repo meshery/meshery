@@ -101,7 +101,7 @@ const styles = (theme) => ({
 });
 
 const ResourcesSubMenu = (props) => {
-  const { classes, updateProgress, k8sConfig, resource } = props;
+  const { classes, updateProgress, k8sConfig, resource, selectedK8sContexts } = props;
 
   const [tabVal, setTabVal] = React.useState(0);
 
@@ -165,6 +165,7 @@ const ResourcesSubMenu = (props) => {
                   k8sConfig={k8sConfig}
                   resourceConfig={resource.tableConfig}
                   submenu={resource.submenu}
+                  selectedK8sContexts={selectedK8sContexts}
                 />
               </TabContainer>
             )

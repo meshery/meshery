@@ -108,7 +108,7 @@ const styles = (theme) => ({
 });
 
 const DashboardComponent = (props) => {
-  const { classes, k8sconfig } = props;
+  const { classes, k8sconfig, selectedK8sContexts, updateProgress } = props;
 
   const [tabVal, setTabVal] = React.useState(0);
 
@@ -174,6 +174,7 @@ const DashboardComponent = (props) => {
                   updateProgress={updateProgress}
                   classes={classes}
                   k8sConfig={k8sconfig}
+                  selectedK8sContexts={selectedK8sContexts}
                 />
               </TabContainer>
             ) : (
@@ -183,8 +184,10 @@ const DashboardComponent = (props) => {
                   workloadType={resource}
                   classes={classes}
                   k8sConfig={k8sconfig}
+                  selectedK8sContexts={selectedK8sContexts}
                   resourceConfig={ResourcesConfig[resource].tableConfig}
                   menu={ResourcesConfig[resource].submenu}
+                  updateProgress={updateProgress}
                 />
               </TabContainer>
             ))

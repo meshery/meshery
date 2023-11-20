@@ -8,6 +8,7 @@ import useStyles from '../../../assets/styles/general/tool.styles';
 import SearchBar from '../../../utils/custom-search';
 import View from '../view';
 import { ALL_VIEW } from './config';
+import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -17,7 +18,15 @@ const ACTION_TYPES = {
 };
 
 const ResourcesTable = (props) => {
-  const { classes, updateProgress, k8sConfig, resourceConfig, submenu, workloadType } = props;
+  const {
+    classes,
+    updateProgress,
+    k8sConfig,
+    resourceConfig,
+    submenu,
+    workloadType,
+    selectedK8sContexts,
+  } = props;
   const [meshSyncResources, setMeshSyncResources] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
@@ -37,7 +46,9 @@ const ResourcesTable = (props) => {
     ? resourceConfig(switchView, meshSyncResources, k8sConfig)[workloadType]
     : resourceConfig(switchView, meshSyncResources, k8sConfig);
 
-  console.log(tableConfig);
+  const clusterIds = encodeURIComponent(
+    JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig)),
+  );
 
   const StyleClass = useStyles();
 
@@ -50,7 +61,7 @@ const ResourcesTable = (props) => {
     dataFetch(
       `/api/system/meshsync/resources?kind=${
         tableConfig.name
-      }&status=true&spec=true&annotations=true&labels=true&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
+      }&status=true&spec=true&annotations=true&labels=true&clusterIds=${clusterIds}&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
         search,
       )}&order=${encodeURIComponent(sortOrder)}`,
       {
