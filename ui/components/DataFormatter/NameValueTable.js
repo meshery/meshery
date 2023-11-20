@@ -153,6 +153,9 @@ export default function NameValueTable(props) {
 
           const hideValueGridItem = withHighlightStyle && !value;
 
+          const parts = name.split('.');
+          const lastPart = parts[parts.length - 1];
+
           return (
             <>
               <Grid
@@ -168,7 +171,7 @@ export default function NameValueTable(props) {
                   withHighlightStyle ? classes.highlightRow : '',
                 )}
               >
-                {name}
+                {lastPart}
               </Grid>
               {!hideValueGridItem && (
                 <Grid

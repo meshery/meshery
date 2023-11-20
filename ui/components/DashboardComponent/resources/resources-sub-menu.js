@@ -120,7 +120,7 @@ const ResourcesSubMenu = (props) => {
     <>
       <div className={classes.wrapperClss}>
         <Paper className={classes.wrapperClss}>
-          <div style={{ backgroundColor: '#f5f5f5' }}>
+          <div className={classes.subMenuTab}>
             <Box sx={{ margin: '0 auto', width: '100%', maxWidth: { xs: 320, sm: 880 } }}>
               <Tabs
                 value={tabVal}

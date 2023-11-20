@@ -29,6 +29,9 @@ const styles = (theme) => ({
       color: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
     },
   },
+  subMenuTab: {
+    backgroundColor: theme.palette.type === 'dark' ? '#212121' : '#f5f5f5',
+  },
   tabs: {
     '& .MuiTabs-indicator': {
       backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
