@@ -148,6 +148,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 					connection.ID,
 					smInstanceTracker,
 					h.log,
+					provider,
 				)
 				if err != nil {
 					h.log.Error(err)
@@ -315,7 +316,7 @@ func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Reques
 
 func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, prov models.Provider) ([]*models.K8sContext, error) {
 	var contexts []*models.K8sContext
-	userUUID := uuid.FromStringOrNil(userID)
+	// userUUID := uuid.FromStringOrNil(userID)
 
 	// Get meshery instance ID
 	mid, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
@@ -330,8 +331,8 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 	kubeconfigSource := fmt.Sprintf("file://%s", filepath.Join(h.config.KubeConfigFolder, "config"))
 	data, err := utils.ReadFileSource(kubeconfigSource)
 	
-	eventBuilder := events.NewEvent().FromUser(userUUID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create").
-		WithDescription(fmt.Sprintf("Kubernetes config imported from %s.", kubeconfigSource)).WithSeverity(events.Informational)
+	// eventBuilder := events.NewEvent().FromUser(userUUID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create").
+		// WithDescription(fmt.Sprintf("Kubernetes config imported from %s.", kubeconfigSource)).WithSeverity(events.Informational)
 	eventMetadata := map[string]interface{}{}
 	metadata := map[string]interface{}{}
 	if err != nil {
@@ -373,9 +374,11 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 		contexts = append(contexts, cc)
 		metadata["context"] = models.RedactCredentialsForContext(cc)
 		eventMetadata["in-cluster"] = metadata
-		event := eventBuilder.WithMetadata(eventMetadata).Build()
-		_ = prov.PersistEvent(event)
-		go h.config.EventBroadcaster.Publish(userUUID, event)
+
+		// No need because if we were able to register the context user will get the notification anyway.
+		// event := eventBuilder.WithMetadata(eventMetadata).Build()
+		// _ = prov.PersistEvent(event)
+		// go h.config.EventBroadcaster.Publish(userUUID, event)
 		return contexts, nil
 	}
 
@@ -418,9 +421,10 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 	// if len(contexts) > 0 {
 	// 	h.config.K8scontextChannel.PublishContext()
 	// }
-	event := eventBuilder.WithMetadata(eventMetadata).Build()
-	_ = prov.PersistEvent(event)
-	go h.config.EventBroadcaster.Publish(userUUID, event)
+	// No need because if we were able to register the context user will get the notification anyway.
+	// event := eventBuilder.WithMetadata(eventMetadata).Build()
+	// _ = prov.PersistEvent(event)
+	// go h.config.EventBroadcaster.Publish(userUUID, event)
 
 	return contexts, nil
 }

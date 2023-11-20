@@ -173,7 +173,6 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 	resChan := make(chan []*model.MesheryControllersStatusListItem)
 	handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
 	controllerHandlersPerContext := handler.MesheryCtrlsHelper.GetControllerHandlersForEachContext()
-	fmt.Println("trst::::::::::::::::", controllerHandlersPerContext)
 	if !ok || len(controllerHandlersPerContext) == 0 || controllerHandlersPerContext == nil {
 		er := model.ErrMesheryControllersStatusSubscription(fmt.Errorf("controller handlers are not configured for any of the contexts"))
 		r.Log.Error(er)

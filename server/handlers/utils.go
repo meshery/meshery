@@ -8,6 +8,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/logger"
 )
 
@@ -49,6 +50,7 @@ func InitializeMachineWithContext(
 	connectionID uuid.UUID, 
 	smInstanceTracker *ConnectionToStateMachineInstanceTracker, 
 	log logger.Handler, 
+	provider models.Provider,
 	) (*machines.StateMachine, error) {
 
 		inst, err := kubernetes.NewK8SMachine(connectionID.String(), log)
@@ -56,6 +58,7 @@ func InitializeMachineWithContext(
 			log.Error(err)
 			return nil, err
 		}
+		inst.Provider = provider
 		_, err = inst.Start(ctx, machineCtx, log, kubernetes.AssignInitialCtx)
 		smInstanceTracker.ConnectToInstanceMap[connectionID] = inst
 		if err != nil {

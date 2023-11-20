@@ -280,6 +280,7 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 				connectionUUID,
 				smInstanceTracker,
 				h.log,
+				provider,
 			)
 			if err != nil {
 				h.log.Error(err)
@@ -315,6 +316,7 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 				connectionUUID,
 				smInstanceTracker,
 				h.log,
+				provider,
 			)
 			if err != nil {
 				h.log.Error(err)
