@@ -117,6 +117,18 @@ export var darkTheme = createTheme({
       disableButtonBg: '#666666',
       disableButton: '#9d9d9d',
     },
+    tables: {
+      head: {
+        background: '#faf9f8',
+        color: '#242424',
+      },
+      body: {
+        background: '#fff',
+      },
+    },
+    shape: {
+      borderRadius: 4,
+    },
   },
   p: {
     color: '#FFF',
@@ -381,6 +393,18 @@ let theme = createTheme({
       tabCard: '#677a84',
       disableButtonBg: '#e0e0e0',
       disableButton: '#9d9d9d',
+    },
+    tables: {
+      head: {
+        background: '#faf9f8',
+        color: '#242424',
+      },
+      body: {
+        background: '#fff',
+      },
+    },
+    shape: {
+      borderRadius: 4,
     },
   },
   shape: { borderRadius: 8 },

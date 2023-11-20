@@ -68,6 +68,10 @@ import {
   PROFILES,
   TOGGLER,
   CONNECTION,
+  // WORKLOAD,
+  // STORAGE,
+  // NETWORK,
+  // SECURITY,
 } from '../constants/navigator';
 import { iconSmall } from '../css/icons.styles';
 
@@ -338,7 +342,49 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
     title: 'Dashboard',
     show: capabilityRegistryObj.isNavigatorComponentEnabled([DASHBOARD]),
     link: true,
-    submenu: false,
+    submenu: true,
+    // children: [
+    //   {
+    //     id: WORKLOAD,
+    //     icon: <DashboardIcon style={drawerIconsStyle} />,
+    //     hovericon: <DashboardIcon style={drawerIconsStyle} />,
+    //     href: '/dashboard/workloads',
+    //     title: 'Workloads',
+    //     link: true,
+    //   },
+    //   {
+    //     id: STORAGE,
+    //     icon: <DashboardIcon style={drawerIconsStyle} />,
+    //     hovericon: <DashboardIcon style={drawerIconsStyle} />,
+    //     href: '/dashboard/storage',
+    //     title: 'Storage',
+    //     link: true,
+    //   },
+    //   {
+    //     id: NETWORK,
+    //     icon: <DashboardIcon style={drawerIconsStyle} />,
+    //     hovericon: <DashboardIcon style={drawerIconsStyle} />,
+    //     href: '/dashboard/network',
+    //     title: 'Network',
+    //     link: true,
+    //   },
+    //   {
+    //     id: SECURITY,
+    //     icon: <DashboardIcon style={drawerIconsStyle} />,
+    //     hovericon: <DashboardIcon style={drawerIconsStyle} />,
+    //     href: '/dashboard/security',
+    //     title: 'Security',
+    //     link: true,
+    //   },
+    //   {
+    //     id: CONFIGURATION,
+    //     icon: <DashboardIcon style={drawerIconsStyle} />,
+    //     hovericon: <DashboardIcon style={drawerIconsStyle} />,
+    //     href: '/dashboard/configuration',
+    //     title: 'Configuration',
+    //     link: true,
+    //   },
+    // ],
   },
   {
     id: LIFECYCLE,

@@ -1,7 +1,7 @@
 import Grid from '@material-ui/core/Grid';
 import React, { useEffect, useMemo, useState } from 'react';
 import { Typography } from '@material-ui/core';
-import BBChart from '../BBChart';
+import BBChart from '../../BBChart';
 import { donut, pie } from 'billboard.js';
 import {
   getAllComponents,
@@ -9,8 +9,8 @@ import {
   getRelationshipsDetail,
   fetchCategories,
   getModelFromCategoryApi,
-} from '../../api/meshmodel';
-import { dataToColors } from '../../utils/charts';
+} from '../../../api/meshmodel';
+import { dataToColors } from '../../../utils/charts';
 import Link from 'next/link';
 
 const useFetchTotal = (fetchr) => {
