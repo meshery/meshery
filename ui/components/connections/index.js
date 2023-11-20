@@ -33,7 +33,7 @@ import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import CustomColumnVisibilityControl from '../../utils/custom-column';
 import SearchBar from '../../utils/custom-search';
-import ResponsiveDataTable from '../../utils/data-table';
+import { ResponsiveDataTable } from '@layer5/sistent-components';
 import useStyles from '../../assets/styles/general/tool.styles';
 import Modal from '../Modal';
 import { iconMedium, iconSmall } from '../../css/icons.styles';
@@ -59,7 +59,7 @@ import theme from '../../themes/app';
 import { ConnectionChip } from './ConnectionChip';
 import InfoIcon from '@material-ui/icons/Info';
 import { SortableTableCell } from './common';
-import { getColumnValue } from '../../utils/utils';
+import { getColumnValue, getVisibilityColums } from '../../utils/utils';
 import HandymanIcon from '@mui/icons-material/Handyman';
 import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
 import DisconnectIcon from '../../assets/icons/disconnect';
@@ -201,7 +201,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
     },
     {
       name: 'metadata.server',
-      label: 'Server Location',
+      label: 'Server',
       options: {
         display: false,
       },
@@ -242,7 +242,11 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
                   ping(tableMeta.rowData[3], tableMeta.rowData[2], tableMeta.rowData[0]);
                 }
               }}
-              iconSrc={'/static/img/kubernetes.svg'}
+              iconSrc={
+                getColumnValue(tableMeta.rowData, 'kind', columns) === CONNECTION_KINDS.MESHERY
+                  ? '/static/img/meshery-logo.png'
+                  : '/static/img/kubernetes.svg'
+              }
               style={{ maxWidth: '120px' }}
             />
           );
@@ -467,6 +471,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
     },
     {
       name: 'Actions',
+      label: 'Actions',
       options: {
         filter: false,
         sort: false,
@@ -943,7 +948,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
               />
 
               <CustomColumnVisibilityControl
-                columns={columns}
+                columns={getVisibilityColums(columns)}
                 customToolsProps={{ columnVisibility, setColumnVisibility }}
               />
             </div>

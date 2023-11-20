@@ -229,3 +229,14 @@ export const getColumnValue = (rowData, columnName, columns) => {
   const columnIndex = columns.findIndex((column) => column.name === columnName);
   return rowData[columnIndex];
 };
+
+/**
+ * Filter the columns to show in visibility switch.
+ *
+ * @param {string} columns - Full list of columns name.
+ *
+ */
+
+export const getVisibilityColums = (columns) => {
+  return columns.filter((col) => col?.options?.display !== false);
+};
