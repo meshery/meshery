@@ -100,6 +100,7 @@ const ResponsiveDataTable = ({
       }
     });
     updateCols([...columns]);
+    console.log(data);
   }, [width, columnVisibility]);
 
   const components = {

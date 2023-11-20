@@ -111,3 +111,4 @@ func FetchKubernetesVersion(kubeconfig []byte, contextName string) (string, erro
 	logrus.Debugf("Kubernetes API Server version: %s", serverVersion.String())
 	return serverVersion.String(), nil
 }
+

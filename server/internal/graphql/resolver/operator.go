@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	"github.com/go-errors/errors"
-	operatorClient "github.com/layer5io/meshery-operator/pkg/client"
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/controllers"
@@ -223,7 +222,6 @@ func (r *Resolver) getOperatorStatus(ctx context.Context, _ models.Provider, ctx
 
 func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provider, connectionID string) (*model.OperatorControllerStatus, error) {
 	var kubeclient *mesherykube.Client
-	var err error
 
 	tokenString := ctx.Value(models.TokenCtxKey).(string)
 
@@ -241,21 +239,13 @@ func (r *Resolver) getMeshsyncStatus(ctx context.Context, provider models.Provid
 	if kubeclient == nil {
 		return nil, model.ErrMesheryClientNil
 	}
-	mesheryclient, err := operatorClient.New(&kubeclient.RestConfig)
-	if err != nil {
-		return nil, err
-	}
 
-	status, err := model.GetMeshSyncInfo(mesheryclient, kubeclient)
-	if err != nil {
-		return &status, err
-	}
+	status := model.GetMeshSyncInfo(kubeclient, nil)
 	return &status, nil
 }
 
 func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider, connectionID string) (*model.OperatorControllerStatus, error) {
 	var kubeclient *mesherykube.Client
-	var err error
 
 	tokenString := ctx.Value(models.TokenCtxKey).(string)
 
@@ -273,15 +263,8 @@ func (r *Resolver) getNatsStatus(ctx context.Context, provider models.Provider, 
 	if kubeclient == nil {
 		return nil, model.ErrMesheryClientNil
 	}
-	mesheryclient, err := operatorClient.New(&kubeclient.RestConfig)
-	if err != nil {
-		return nil, err
-	}
 
-	status, err := model.GetBrokerInfo(mesheryclient, kubeclient, r.BrokerConn)
-	if err != nil {
-		return &status, err
-	}
+	status := model.GetBrokerInfo(kubeclient)
 	return &status, nil
 }
 

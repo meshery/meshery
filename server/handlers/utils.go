@@ -1,8 +1,14 @@
 package handlers
 
 import (
+	"context"
 	"net/http"
 	"strconv"
+
+	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/server/machines"
+	"github.com/layer5io/meshery/server/machines/kubernetes"
+	"github.com/layer5io/meshkit/logger"
 )
 
 const (
@@ -35,4 +41,26 @@ func getPaginationParams(req *http.Request) (page, offset, limit int, search, or
 		sortOnCol = "updated_at"
 	}
 	return
+}
+
+func InitializeMachineWithContext(
+	machineCtx *kubernetes.MachineCtx,
+	ctx context.Context,
+	connectionID uuid.UUID, 
+	smInstanceTracker *ConnectionToStateMachineInstanceTracker, 
+	log logger.Handler, 
+	) (*machines.StateMachine, error) {
+
+		inst, err := kubernetes.NewK8SMachine(connectionID.String(), log)
+		if err != nil {
+			log.Error(err)
+			return nil, err
+		}
+		_, err = inst.Start(ctx, machineCtx, log, kubernetes.AssignInitialCtx)
+		smInstanceTracker.ConnectToInstanceMap[connectionID] = inst
+		if err != nil {
+			return nil, err
+		}
+
+	return inst, nil
 }
