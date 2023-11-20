@@ -11,7 +11,6 @@ import {
   Grid,
   TableRow,
   TableSortLabel,
-  Chip,
   IconButton,
   Typography,
   Switch,
@@ -57,7 +56,7 @@ import { CONNECTION_STATES } from '../../utils/Enum';
 import { FormatConnectionMetadata } from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
 import theme from '../../themes/app';
-import { ConnectionStateChip } from './ConnectionChip';
+import { ConnectionChip, ConnectionStateChip } from './ConnectionChip';
 import InfoIcon from '@material-ui/icons/Info';
 
 const ACTION_TYPES = {
@@ -212,22 +211,21 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
           );
         },
         customBodyRender: (value, tableMeta) => {
+          const server = tableMeta.rowData[2] || tableMeta.rowData[1];
           return (
-            <Tooltip title={value} placement="top">
-              <Chip
-                variant="outlined"
-                label={value}
-                style={{ maxWidth: '120px' }}
-                onDelete={() => handleDeleteConnection(tableMeta.rowData[0])}
-                //perform onclick on a condition
-                onClick={() => {
-                  console.log('metadata:', tableMeta.rowData);
-                  if (tableMeta.rowData[4] === KUBERNETES) {
-                    ping(tableMeta.rowData[3], tableMeta.rowData[2], tableMeta.rowData[0]);
-                  }
-                }}
-              />
-            </Tooltip>
+            <ConnectionChip
+              tooltip={'Server: ' + server}
+              title={value}
+              status={tableMeta.rowData[7]}
+              onDelete={() => handleDeleteConnection(tableMeta.rowData[0])}
+              handlePing={() => {
+                if (tableMeta.rowData[4] === KUBERNETES) {
+                  ping(tableMeta.rowData[3], tableMeta.rowData[2], tableMeta.rowData[0]);
+                }
+              }}
+              iconSrc={'/static/img/kubernetes.svg'}
+              style={{ maxWidth: '120px' }}
+            />
           );
         },
       },
@@ -292,6 +290,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
       options: {
         sort: true,
         sortThirdClickReset: true,
+        display: false,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
             <SortableTableCell
@@ -408,7 +407,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
                   }}
                 >
                   {Object.keys(CONNECTION_STATES).map((s) => (
-                    <MenuItem value={CONNECTION_STATES[s]}>
+                    <MenuItem value={CONNECTION_STATES[s]} key={CONNECTION_STATES[s]}>
                       <ConnectionStateChip status={CONNECTION_STATES[s]} />
                     </MenuItem>
                   ))}
