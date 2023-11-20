@@ -120,7 +120,7 @@ func (sm *StateMachine) ResetState() {
 
 func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 	state, ok := sm.States[sm.CurrentState]
-	sm.Log.Info("inside getNextState: ", event, ok)
+	// sm.Log.Info("inside getNextState: ", event, ok)
 	if ok {
 		events := state.Events
 		if events != nil {
@@ -157,7 +157,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			return defaultEvent.WithMetadata(map[string]interface{}{"error": err}).Build(), err
 		}
 
-		sm.Log.Info("transitioning to next state: ", nextState)
+		// sm.Log.Info("transitioning to next state: ", nextState)
 
 		// next state to transition
 		state, ok := sm.States[nextState]
@@ -179,7 +179,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		if state.Action != nil {
 			// Execute entry actions for the state entered.
 			eventType, event, err = state.Action.ExecuteOnEntry(ctx, sm.Context)
-			sm.Log.Info("entry action executed, event emitted ", eventType)
+			// sm.Log.Info("entry action executed, event emitted ", eventType)
 
 			if err != nil {
 				sm.Log.Error(err)

@@ -47,12 +47,12 @@ func(da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}) (m
 	}
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 
-	connection, err := machinectx.Provider.SaveK8sContext(token, machinectx.K8sContext)
+	_, err = machinectx.Provider.SaveK8sContext(token, machinectx.K8sContext)
 	if err != nil {
 		return machines.NoOp, eventBuilder.WithDescription(fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", k8sContext.Name, k8sContext.Server)).WithMetadata(map[string]interface{}{"error": err}).Build(), err
 	}
 
-	machinectx.log.Debug("exiting execute func from discovered state", connection)
+	// machinectx.log.Debug("exiting execute func from discovered state", connection)
 
 	return machines.Register, nil, nil
 }
