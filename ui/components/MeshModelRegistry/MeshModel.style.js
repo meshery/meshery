@@ -20,9 +20,7 @@ export const StyledTreeItemRoot = styled(TreeItem)(({ theme, root, lineColor }) 
     width: 32,
     left: -34,
     top: 23,
-    borderBottom:
-      // only display if the TreeItem is not root node
-      !root ? `1px dashed ${alpha(lineColor, 0.4)}` : 'none',
+    borderBottom: !root ? `1px dashed ${alpha(lineColor, 0.4)}` : 'none',
   },
 
   [`& .${treeItemClasses.content}`]: {

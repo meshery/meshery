@@ -7,12 +7,14 @@ import SearchBar from '../../utils/custom-search';
 import { StyledTreeItemRoot } from './MeshModel.style';
 import MinusSquare from '../../assets/icons/MinusSquare';
 import PlusSquare from '../../assets/icons/PlusSquare';
-import CloseSquare from '../../assets/icons/CloseSquare';
+import DotSquare from '../../assets/icons/DotSquare';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
   const [checked, setChecked] = useState(false);
   const [hover, setHover] = useState(false);
-  const { check, labelText, root, setSearchText, ...other } = props;
+  const { check, labelText, root, search, setSearchText, ...other } = props;
   const theme = useTheme();
 
   return (
@@ -56,7 +58,7 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
               }}
             />
           )}
-          {root && (
+          {search && (
             <SearchBar
               onSearch={(value) => {
                 setSearchText(value);
@@ -152,12 +154,12 @@ const MesheryTreeView = ({
               flexDirection: 'row',
               justifyContent: 'space-between',
               borderBottom: '1px solid #d2d3d4',
-              marginRight: '0.9rem',
             }}
           >
             <div style={{ display: 'flex', flexDirection: 'row' }}>
               <IconButton onClick={expandAll} size="large">
-                <PlusSquare />
+                {/* <PlusSquare /> */}
+                <KeyboardArrowDownIcon />
               </IconButton>
 
               <IconButton
@@ -165,7 +167,8 @@ const MesheryTreeView = ({
                 style={{ marginRight: '4px' }}
                 size="large"
               >
-                <MinusSquare />
+                {/* <MinusSquare /> */}
+                <KeyboardArrowUpIcon />
               </IconButton>
               <FormControlLabel
                 control={
@@ -194,7 +197,7 @@ const MesheryTreeView = ({
               defaultExpanded={['3']}
               defaultCollapseIcon={<MinusSquare />}
               defaultExpandIcon={<PlusSquare />}
-              defaultEndIcon={<CloseSquare />}
+              defaultEndIcon={<DotSquare />}
               onNodeToggle={handleToggle}
               multiSelect
               expanded={expanded}
@@ -300,12 +303,12 @@ const MesheryTreeView = ({
               flexDirection: 'row',
               justifyContent: 'space-between',
               borderBottom: '1px solid #d2d3d4',
-              marginRight: '0.9rem',
             }}
           >
             <div style={{ display: 'flex', flexDirection: 'row' }}>
               <IconButton onClick={expandAll} size="large">
-                <PlusSquare />
+                {/* <PlusSquare /> */}
+                <KeyboardArrowDownIcon />
               </IconButton>
 
               <IconButton
@@ -313,17 +316,18 @@ const MesheryTreeView = ({
                 style={{ marginRight: '4px' }}
                 size="large"
               >
-                <MinusSquare />
+                {/* <MinusSquare /> */}
+                <KeyboardArrowUpIcon />
               </IconButton>
             </div>
           </div>
-          <div style={{ overflowY: 'auto', height: '27rem' }}>
+          <div style={{ overflowY: 'auto', height: '27rem' }} onScroll={handleScroll(MODELS)}>
             <TreeView
               aria-label="controlled"
               defaultExpanded={['3']}
               defaultCollapseIcon={<MinusSquare />}
               defaultExpandIcon={<PlusSquare />}
-              defaultEndIcon={<CloseSquare />}
+              defaultEndIcon={<DotSquare />}
               onNodeToggle={handleToggle}
               multiSelect
               expanded={expanded}
@@ -336,10 +340,7 @@ const MesheryTreeView = ({
                   labelText={registrant.hostname}
                   onClick={() => setRegi(registrant)}
                 >
-                  <div
-                    style={{ overflowY: 'auto', height: '27rem' }}
-                    onScroll={handleScroll(MODELS)}
-                  >
+                  <div>
                     <StyledTreeItem
                       nodeId={1}
                       labelText={`Models (${registrant?.summary?.models})`}
@@ -460,7 +461,7 @@ const MesheryTreeView = ({
           defaultExpanded={['3']}
           defaultCollapseIcon={<MinusSquare />}
           defaultExpandIcon={<PlusSquare />}
-          defaultEndIcon={<CloseSquare />}
+          defaultEndIcon={<DotSquare />}
           onNodeToggle={handleToggle}
           onNodeSelect={handleSelect}
           multiSelect
@@ -471,6 +472,7 @@ const MesheryTreeView = ({
             nodeId={0}
             top
             root
+            search
             setSearchText={setSearchText}
             labelText={
               comp.model?.name ? `Model: ${comp.model?.displayName}` : 'Select a component node'
@@ -503,7 +505,7 @@ const MesheryTreeView = ({
           defaultExpanded={['3']}
           defaultCollapseIcon={<MinusSquare />}
           defaultExpandIcon={<PlusSquare />}
-          defaultEndIcon={<CloseSquare />}
+          defaultEndIcon={<DotSquare />}
           onNodeToggle={handleToggle}
           onNodeSelect={handleSelect}
           multiSelect

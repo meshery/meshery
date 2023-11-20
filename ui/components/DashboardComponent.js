@@ -50,6 +50,7 @@ import { EVENT_TYPES } from '../lib/event-types';
 import { withNotify } from '../utils/hooks/useNotification';
 import _ from 'lodash';
 import WorkloadChart from './Dashboard/WorkloadChart';
+import subscribeMesheryControllersStatus from './graphql/subscriptions/MesheryControllersStatusSubscription.js';
 const styles = (theme) => ({
   rootClass: { backgroundColor: theme.palette.secondary.elevatedComponents2 },
   datatable: {
@@ -240,6 +241,17 @@ class DashboardComponent extends React.Component {
     this.setState({ namespaceQuery });
   };
 
+  initMesheryControllerStatusSubscription = () => {
+    const self = this;
+    let k8s = self.getK8sClusterIds();
+    if (self._isMounted) {
+      const mesheryControllersStatusSubscription = subscribeMesheryControllersStatus((res) => {
+        console.log('mcs results', res);
+      }, k8s);
+      console.log('mesheryControllersStatusSubscription', mesheryControllersStatusSubscription);
+    }
+  };
+
   initDashboardClusterResourcesSubscription = () => {
     const self = this;
     let k8s = self.getK8sClusterIds();
@@ -271,6 +283,7 @@ class DashboardComponent extends React.Component {
       this.initMeshSyncControlPlaneSubscription();
       this.initDashboardClusterResourcesSubscription();
       this.initNamespaceQuery();
+      this.initMesheryControllerStatusSubscription();
     }
   };
 

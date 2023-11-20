@@ -6,6 +6,7 @@ redirect_from: tasks/pattern-management/
 type: tasks
 language: en
 list: include
+abstract: 'Meshery applies DRY principle when managing the configuration of cloud native infrastructure .'
 ---
 
 {% include alert.html 
