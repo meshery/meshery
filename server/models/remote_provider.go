@@ -3753,7 +3753,7 @@ func (l *RemoteProvider) UpdateConnectionStatusByID(token string, connectionID u
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
 	bf := bytes.NewBuffer([]byte(connectionStatus))
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/status/%s", l.RemoteProviderURL, ep, connectionID))
-	logrus.Debugf("Making request to : %s", remoteProviderURL.String())
+	// logrus.Debugf("Making request to : %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
 
 	resp, err := l.DoRequest(cReq, token)

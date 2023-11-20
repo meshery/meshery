@@ -126,7 +126,7 @@ func (sm *StateMachine) getNextState(event EventType) (StateType, error) {
 		if events != nil {
 			nextState, ok := events[event]
 			if ok {
-				sm.Log.Info("next state: ", nextState)
+				// sm.Log.Info("next state: ", nextState)
 				return nextState, nil
 			}
 		}
@@ -186,7 +186,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 				sm.Log.Info(event)
 			} else {	
 				eventType, event, err = state.Action.Execute(ctx, sm.Context)
-				sm.Log.Info("inside action executed, event emitted ", eventType)
+				// sm.Log.Info("inside action executed, event emitted ", eventType)
 				if err != nil {
 					sm.Log.Error(err)
 					sm.Log.Info(event)
