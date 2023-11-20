@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowBack } from '@material-ui/icons';
 import TooltipButton from '../../utils/TooltipButton';
-import { Paper, IconButton } from '@material-ui/core';
+import { Paper, IconButton, Typography } from '@material-ui/core';
 import NameValueTable from '../DataFormatter/NameValueTable';
 import { ResponsiveDataTable } from '@layer5/sistent-components';
 import { ALL_VIEW } from './resources/config';
@@ -78,17 +78,21 @@ const View = (props) => {
 
     return (
       <>
-        {key}
+        <div style={{ margin: '2rem 0' }}>
+          <Typography style={{ fontSize: '1.2rem', marginBottom: '1rem' }} align="left">
+            {key}
+          </Typography>
 
-        <ResponsiveDataTable
-          classes={classes.muiRow}
-          data={value}
-          columns={columns}
-          options={options}
-          tableCols={columns}
-          updateCols={() => {}}
-          columnVisibility={{}}
-        />
+          <ResponsiveDataTable
+            classes={classes.muiRow}
+            data={value}
+            columns={columns}
+            options={options}
+            tableCols={columns}
+            updateCols={() => {}}
+            columnVisibility={{}}
+          />
+        </div>
       </>
     );
   }
