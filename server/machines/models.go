@@ -142,6 +142,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	sm.mx.Lock()
 	defer sm.mx.Unlock()
 	var event *events.Event
+	var err error
 	for {
 		if eventType == NoOp {
 			break
@@ -152,6 +153,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			sm.Log.Error(err)
 			return defaultEvent.WithMetadata(map[string]interface{}{"error": err}).Build(), err
 		}
+
 		sm.Log.Info("transitioning to next state: ", nextState)
 
 		// next state to transition
@@ -172,22 +174,19 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 
 		
 		if state.Action != nil {
-			var et EventType
 			// Execute entry actions for the state entered.
-			et, event, err = state.Action.ExecuteOnEntry(ctx, sm.Context)
-			sm.Log.Info("entry action executed, event emitted ", et)
+			eventType, event, err = state.Action.ExecuteOnEntry(ctx, sm.Context)
+			sm.Log.Info("entry action executed, event emitted ", eventType)
 
 			if err != nil {
 				sm.Log.Error(err)
 				sm.Log.Info(event)
-				return event, err
 			} else {	
 				eventType, event, err = state.Action.Execute(ctx, sm.Context)
-				sm.Log.Info("inside action executed, event emitted ", et)
+				sm.Log.Info("inside action executed, event emitted ", eventType)
 				if err != nil {
 					sm.Log.Error(err)
 					sm.Log.Info(event)
-					return event, err
 				}
 			}
 		}
@@ -196,10 +195,14 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		sm.CurrentState = nextState
 	}
 
-	
-	event = events.NewEvent().WithDescription(fmt.Sprintf("%s connection changed to %s", sm.Name, sm.CurrentState)).FromSystem(*sysID).FromUser(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").WithMetadata(map[string]interface{}{
-		"previous_status": sm.PreviousState,
-		"current_status": sm.CurrentState,
-	}).WithSeverity(events.Informational).Build()
-	return event, nil
+	// The action func only emits event when an error occurs.
+	// If "event" is nil, it indicates actions were execeuted successfully, hence send an confirmation that request was processed successsfully.
+	if event == nil {
+		event = events.NewEvent().WithDescription(fmt.Sprintf("%s connection changed to %s", sm.Name, sm.CurrentState)).FromSystem(*sysID).FromUser(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").WithMetadata(map[string]interface{}{
+			"previous_status": sm.PreviousState,
+			"current_status": sm.CurrentState,
+		}).WithSeverity(events.Informational).Build()
+	}
+
+	return event, err
 }
