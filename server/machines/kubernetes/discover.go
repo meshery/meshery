@@ -35,7 +35,6 @@ func(da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}) (m
 	handler := machinectx.clientset
 
 	err = k8sContext.AssignServerID(handler)
-	// perofmr event publishinh and err handling
 	if err != nil {
 		return machines.NotFound, eventBuilder.WithDescription(fmt.Sprintf("Could not assign server id, skipping context %s", k8sContext.Name)).WithMetadata(map[string]interface{}{
 				"error": err,
@@ -43,7 +42,6 @@ func(da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}) (m
 	}
 
 	err = k8sContext.AssignVersion(handler)
-	// perofmr event publishinh and err handling
 	if err != nil {
 		machinectx.log.Info("unable to set kubernes server version, continuing without assigning version")
 	}

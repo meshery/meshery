@@ -46,7 +46,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}) (m
 	machinectx.log.Debug("HTTP status:", statusCode, "updated status for connection", connection.ID)
 	machinectx.log.Debug("exiting execute func from disconnected state", connection)
 	
-	return machines.NoOp, eventBuilder.Build(), nil
+	return machines.NoOp, nil, nil
 }
 
 func (ca *ConnectAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {
