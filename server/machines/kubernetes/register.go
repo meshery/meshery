@@ -51,10 +51,6 @@ func(ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}) (m
 	}
 
 	machinectx.K8sCompRegHelper.UpdateContexts(context).RegisterComponents(context, []models.K8sRegistrationFunction{core.RegisterK8sMeshModelComponents}, machinectx.RegistryManager, machinectx.EventBroadcaster, machinectx.Provider, user.ID, true)
-	
-	if err != nil {
-		return machines.NoOp, eventBuilder.Build(), err
-	}
 
 	machinectx.log.Debug("HTTP status:", statusCode, "updated status for connection", connection.ID)
 	machinectx.log.Debug("exiting execute func from registered state", connection)

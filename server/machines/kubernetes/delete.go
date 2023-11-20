@@ -52,7 +52,7 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}) (ma
 
 	machinectx.log.Debug("deleted connection: ", connection, "HTTP status", statusCode)
 
-	return machines.NoOp, eventBuilder.Build(), nil
+	return machines.NoOp, nil, nil
 }
 
 func (da *DeleteAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {

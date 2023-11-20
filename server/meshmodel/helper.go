@@ -72,8 +72,7 @@ func (erh *EntityRegistrationHelper) SeedComponents() {
 				switch entity.Name() {
 				case "relationships":
 					relationships = append(relationships, entityPath)
-				case "policies":
-					break
+				case "policies", "connection", "credential":
 				default:
 					erh.generateComponents(entityPath) // register components first
 				}
