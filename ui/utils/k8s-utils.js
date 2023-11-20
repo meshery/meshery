@@ -1,19 +1,5 @@
 import _ from 'lodash';
 import humanizeDuration from 'humanize-duration';
-import React from 'react';
-// import { matchPath, useHistory } from 'react-router';
-// import helpers from '../helpers';
-// import { filterGeneric, filterResource } from '../redux/filterSlice';
-// import { useTypedSelector } from '../redux/reducers/reducers';
-// import store from '../redux/stores/store';
-// import { ApiError } from './k8s/apiProxy';
-// import { KubeMetrics, KubeObjectInterface, Workload } from './k8s/cluster';
-// import { KubeEvent } from './k8s/event';
-// import Node from './k8s/node';
-// import { parseCpu, parseRam, unparseCpu, unparseRam } from './units';
-
-// Exported to keep compatibility for plugins that may have used them.
-// export { filterGeneric, filterResource };
 
 const humanize = humanizeDuration.humanizer();
 humanize.languages['en-mini'] = {
@@ -28,14 +14,6 @@ humanize.languages['en-mini'] = {
 };
 
 export const CLUSTER_ACTION_GRACE_PERIOD = 5000; // ms
-
-// export type DateParam = string | number | Date;
-
-// export type DateFormatOptions = 'brief' | 'mini';
-
-// export interface TimeAgoOptions {
-//   format?: DateFormatOptions;
-// }
 
 /**
  * Show the time passed since the given date, in the desired format.
@@ -83,23 +61,6 @@ export function formatDuration(duration, options) {
   });
 }
 
-export function localeDate(date) {
-  const options = { timeZoneName: 'short' };
-  let locale = undefined;
-
-  // Force the same conditions under test, so snapshots are the same.
-  if (process.env.UNDER_TEST === 'true') {
-    options.timeZone = 'UTC';
-    options.hour12 = true;
-    locale = 'en-US';
-    return new Date(date).toISOString();
-  } else {
-    options.timeZone = store.getState().config.settings.timezone;
-  }
-
-  return new Date(date).toLocaleString(locale, options);
-}
-
 export function getPercentStr(value, total) {
   if (total === 0) {
     return null;
@@ -116,178 +77,6 @@ export function getReadyReplicas(item) {
 export function getTotalReplicas(item) {
   return item.spec.replicas || item.status.currentNumberScheduled || 0;
 }
-
-// // /**
-// //  * @returns A filter function that can be used to filter a list of items.
-// //  *
-// //  * @param matchCriteria - The JSONPath criteria to match.
-// //  */
-// // export function useFilterFunc<
-// //   T extends { [key: string]: any } | KubeObjectInterface | KubeEvent =
-// //     | KubeObjectInterface
-// //     | KubeEvent
-// // >(matchCriteria?: string[]) {
-// //   const filter = useTypedSelector(state => state.filter);
-
-// //   return (item: T) => {
-// //     if (!!item.metadata) {
-// //       return filterResource(item as KubeObjectInterface | KubeEvent, filter, matchCriteria);
-// //     }
-// //     return filterGeneric<T>(item, filter, matchCriteria);
-// //   };
-// // }
-
-// export function getClusterPrefixedPath(path?: string | null) {
-//   const baseClusterPath = '/c/:cluster';
-//   if (!path) {
-//     return baseClusterPath;
-//   }
-//   return baseClusterPath + (path[0] === '/' ? '' : '/') + path;
-// }
-
-// export function getCluster(): string | null {
-//   const prefix = helpers.getBaseUrl();
-//   const urlPath = helpers.isElectron()
-//     ? window.location.hash.substr(1)
-//     : window.location.pathname.slice(prefix.length);
-
-//   const clusterURLMatch = matchPath<{ cluster?: string }>(urlPath, {
-//     path: getClusterPrefixedPath(),
-//   });
-//   return (!!clusterURLMatch && clusterURLMatch.params.cluster) || null;
-// }
-
-// export function useErrorState(dependentSetter?: (...args: any) => void) {
-//   const [error, setError] = React.useState<ApiError | null>(null);
-
-//   React.useEffect(
-//     () => {
-//       if (!!error && !!dependentSetter) {
-//         dependentSetter(null);
-//       }
-//     },
-//     // eslint-disable-next-line
-//     [error]
-//   );
-
-//   // Adding "as any" here because it was getting difficult to validate the setter type.
-//   return [error, setError as any];
-// }
-
-// type URLStateParams<T> = {
-//   /** The defaultValue for the URL state. */
-//   defaultValue: T;
-//   /** Whether to hide the parameter when the value is the default one (true by default). */
-//   hideDefault?: boolean;
-//   /** The prefix of the URL key to use for this state (a prefix 'my' with a key name 'key' will be used in the URL as 'my.key'). */
-//   prefix?: string;
-// };
-// export function useURLState(
-//   key: string,
-//   defaultValue: number
-// ): [number, React.Dispatch<React.SetStateAction<number>>];
-// export function useURLState(
-//   key: string,
-//   valueOrParams: number | URLStateParams<number>
-// ): [number, React.Dispatch<React.SetStateAction<number>>];
-// /**
-//  * A hook to manage a state variable that is also stored in the URL.
-//  *
-//  * @param key The name of the key in the URL. If empty, then the hook behaves like useState.
-//  * @param paramsOrDefault The default value of the state variable, or the params object.
-//  *
-//  */
-// export function useURLState<T extends string | number | undefined = string>(
-//   key: string,
-//   paramsOrDefault: T | URLStateParams<T>
-// ): [T, React.Dispatch<React.SetStateAction<T>>] {
-//   const params: URLStateParams<T> =
-//     typeof paramsOrDefault === 'object' ? paramsOrDefault : { defaultValue: paramsOrDefault };
-//   const { defaultValue, hideDefault = true, prefix = '' } = params;
-//   const history = useHistory();
-//   // Don't even use the prefix if the key is empty
-//   const fullKey = !key ? '' : !!prefix ? prefix + '.' + key : key;
-
-//   function getURLValue() {
-//     // An empty key means that we don't want to use the state from the URL.
-//     if (fullKey === '') {
-//       return null;
-//     }
-
-//     const urlParams = new URLSearchParams(history.location.search);
-//     const urlValue = urlParams.get(fullKey);
-//     if (urlValue === null) {
-//       return null;
-//     }
-//     let newValue: string | number = urlValue;
-//     if (typeof defaultValue === 'number') {
-//       newValue = Number(urlValue);
-//       if (Number.isNaN(newValue)) {
-//         return null;
-//       }
-//     }
-
-//     return newValue;
-//   }
-
-//   const initialValue = React.useMemo(() => {
-//     const newValue = getURLValue();
-//     if (newValue === null) {
-//       return defaultValue;
-//     }
-//     return newValue;
-//   }, []);
-//   const [value, setValue] = React.useState<T>(initialValue as T);
-
-//   React.useEffect(
-//     () => {
-//       const newValue = getURLValue();
-//       if (newValue === null) {
-//         if (defaultValue !== undefined && defaultValue !== value) {
-//           setValue(defaultValue);
-//         }
-//       } else if (newValue !== value) {
-//         setValue(newValue as T);
-//       }
-//     },
-//     // eslint-disable-next-line
-//     [history]
-//   );
-
-//   React.useEffect(() => {
-//     // An empty key means that we don't want to use the state from the URL.
-//     if (fullKey === '') {
-//       return;
-//     }
-
-//     const urlCurrentValue = getURLValue();
-
-//     if (urlCurrentValue === value) {
-//       return;
-//     }
-
-//     const urlParams = new URLSearchParams(history.location.search);
-//     let shouldUpdateURL = false;
-
-//     if ((value === null || value === defaultValue) && hideDefault) {
-//       if (urlParams.has(fullKey)) {
-//         urlParams.delete(fullKey);
-//         shouldUpdateURL = true;
-//       }
-//     } else if (value !== undefined) {
-//       const urlValue = value as NonNullable<T>;
-
-//       urlParams.set(fullKey, urlValue.toString());
-//       shouldUpdateURL = true;
-//     }
-
-//     if (shouldUpdateURL) {
-//       history.replace({ search: urlParams.toString() });
-//     }
-//   }, [value]);
-
-//   return [value, setValue] as [T, React.Dispatch<React.SetStateAction<T>>];
-// }
 
 // compareUnits compares two units and returns true if they are equal
 export function compareUnits(quantity1, quantity2) {
@@ -374,24 +163,6 @@ export function normalizeUnit(resourceType, quantity) {
   }
   return normalizedQuantity;
 }
-
-/** Creates a unique ID, with the given prefix.
- * If UNDER_TEST is set to true, it will return the same ID every time, so snapshots do not get invalidated.
- */
-export function useId(prefix = '') {
-  const [id] =
-    (React.useState < string) |
-    (undefined >
-      (process.env.UNDER_TEST === 'true'
-        ? prefix + 'id'
-        : prefix + Math.random().toString(16).slice(2)));
-
-  return id;
-}
-
-// // Make units available from here
-// export * as auth from './auth';
-// export * as units from './units';
 
 const RAM_TYPES = ['Bi', 'Ki', 'Mi', 'Gi', 'Ti', 'Pi', 'Ei'];
 const UNITS = ['B', 'K', 'M', 'G', 'T', 'P', 'E'];
