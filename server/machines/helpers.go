@@ -2,8 +2,8 @@ package machines
 
 import "github.com/layer5io/meshery/server/models/connections"
 
-func StatusToEvent(status connections.ConnectionStatus)EventType {
-	switch(status) {
+func StatusToEvent(status connections.ConnectionStatus) EventType {
+	switch status {
 	case connections.DISCOVERED:
 		return Discovery
 	case connections.REGISTERED:

@@ -8,9 +8,8 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/utils/kubernetes"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-
+	"github.com/layer5io/meshkit/utils/kubernetes"
 )
 
 // One FSM per connection
@@ -23,18 +22,17 @@ func Discovered(log logger.Handler) machines.State {
 		Events: machines.Events{
 			machines.Register: machines.REGISTERED,
 			machines.NotFound: machines.NOTFOUND,
-			machines.Delete: machines.DELETED,
+			machines.Delete:   machines.DELETED,
 		},
 		Action: &DiscoverAction{},
 	}
 }
 
-
 func Registered(log logger.Handler) machines.State {
 	return machines.State{
 		Events: machines.Events{
 			machines.Connect: machines.CONNECTED,
-			machines.Ignore: machines.IGNORED,
+			machines.Ignore:  machines.IGNORED,
 		},
 		Action: &RegisterAction{},
 	}
@@ -44,8 +42,8 @@ func Connected(log logger.Handler) machines.State {
 	return machines.State{
 		Events: machines.Events{
 			machines.Disconnect: machines.DISCONNECTED,
-			machines.Delete: machines.DELETED,
-			machines.NotFound: machines.NOTFOUND,
+			machines.Delete:     machines.DELETED,
+			machines.NotFound:   machines.NOTFOUND,
 		},
 		Action: &ConnectAction{},
 	}
@@ -54,7 +52,7 @@ func Connected(log logger.Handler) machines.State {
 func Ignored(log logger.Handler) machines.State {
 	return machines.State{
 		Events: machines.Events{
-			machines.Delete: machines.DELETED,
+			machines.Delete:   machines.DELETED,
 			machines.Register: machines.REGISTERED,
 		},
 		Action: &IgnoreAction{},
@@ -65,7 +63,7 @@ func Disconnected(log logger.Handler) machines.State {
 	return machines.State{
 		Events: machines.Events{
 			machines.Connect: machines.CONNECTED,
-			machines.Delete: machines.DELETED,
+			machines.Delete:  machines.DELETED,
 		},
 		Action: &DisconnectAction{},
 	}
@@ -75,7 +73,7 @@ func NotFound(log logger.Handler) machines.State {
 	return machines.State{
 		Events: machines.Events{
 			machines.Discovery: machines.DISCOVERED,
-			machines.Delete: machines.DELETED,
+			machines.Delete:    machines.DELETED,
 		},
 		Action: &NotFoundAction{},
 	}
@@ -83,28 +81,28 @@ func NotFound(log logger.Handler) machines.State {
 
 func Delete(log logger.Handler) machines.State {
 	return machines.State{
-			Events: machines.Events{},
-			Action: &DeleteAction{},
+		Events: machines.Events{},
+		Action: &DeleteAction{},
 	}
 }
 
 func Initial(log logger.Handler) machines.State {
 	return machines.State{
 		Events: machines.Events{
-			machines.Discovery: machines.DISCOVERED,
-			machines.Register: machines.REGISTERED,
-			machines.Connect: machines.CONNECTED,
+			machines.Discovery:  machines.DISCOVERED,
+			machines.Register:   machines.REGISTERED,
+			machines.Connect:    machines.CONNECTED,
 			machines.Disconnect: machines.DISCONNECTED,
-			machines.Ignore: machines.IGNORED,
-			machines.Delete: machines.DELETED,
-			machines.NotFound: machines.NOTFOUND,
+			machines.Ignore:     machines.IGNORED,
+			machines.Delete:     machines.DELETED,
+			machines.NotFound:   machines.NOTFOUND,
 		},
 		Action: nil,
 	}
 }
 
 type MachineCtx struct {
-	K8sContext  models.K8sContext
+	K8sContext         models.K8sContext
 	MesheryCtrlsHelper *models.MesheryControllersHelper
 	K8sCompRegHelper   *models.ComponentsRegistrationHelper
 	EventBroadcaster   *models.Broadcast
@@ -113,7 +111,7 @@ type MachineCtx struct {
 	Provider           models.Provider
 	OperatorTracker    *models.OperatorTracker
 	K8scontextChannel  *models.K8scontextChan
-	RegistryManager   *meshmodel.RegistryManager
+	RegistryManager    *meshmodel.RegistryManager
 }
 
 const (
@@ -128,20 +126,20 @@ func NewK8SMachine(ID string, log logger.Handler) (*machines.StateMachine, error
 	}
 
 	return &machines.StateMachine{
-		ID: connectionID,
-		Name: machineName,
+		ID:            connectionID,
+		Name:          machineName,
 		PreviousState: machines.DefaultState,
-		InitialState: machines.InitialState,
-		CurrentState: machines.InitialState,
-		Log: log,
+		InitialState:  machines.InitialState,
+		CurrentState:  machines.InitialState,
+		Log:           log,
 		States: machines.States{
-			machines.DISCOVERED: Discovered(log), 
-			machines.REGISTERED: Registered(log),
-			machines.CONNECTED: Connected(log),
+			machines.DISCOVERED:   Discovered(log),
+			machines.REGISTERED:   Registered(log),
+			machines.CONNECTED:    Connected(log),
 			machines.DISCONNECTED: Disconnected(log),
-			machines.IGNORED: Ignored(log),
-			machines.DELETED: Delete(log),
-			machines.NOTFOUND: NotFound(log),
+			machines.IGNORED:      Ignored(log),
+			machines.DELETED:      Delete(log),
+			machines.NOTFOUND:     NotFound(log),
 			machines.InitialState: Initial(log),
 		},
 	}, nil
@@ -151,7 +149,7 @@ func AssignInitialCtx(ctx context.Context, machineCtx interface{}, log logger.Ha
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
 	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
 	userUUID := uuid.FromStringOrNil(user.ID)
-	
+
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("register").FromSystem(*sysID).FromUser(userUUID) // pass userID and systemID in acted upon first pass user id if we can get context then update with connection Id
 	machinectx, err := GetMachineCtx(machineCtx, eventBuilder)
 	if err != nil {

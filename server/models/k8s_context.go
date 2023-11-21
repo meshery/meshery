@@ -172,10 +172,10 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, eventChan *Broa
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
 			eventMetadata[name] = metadata
 
-		// 	// Preventing the publishing of event as the event details would be present in the reciept.
-		// 	// Publishing again would lead to duplicate events and confusion to the user.
-		// 	// _ = provider.PersistEvent(event)
-		// 	// eventChan.Publish(userUUID, event)
+			// 	// Preventing the publishing of event as the event details would be present in the reciept.
+			// 	// Publishing again would lead to duplicate events and confusion to the user.
+			// 	// _ = provider.PersistEvent(event)
+			// 	// eventChan.Publish(userUUID, event)
 
 			logrus.Warnf(msg)
 			continue
@@ -212,10 +212,10 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, eventChan *Broa
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", kc.Name, kc.Server)
 			eventMetadata[name] = metadata
 
-		// 	// Preventing the publishing of event as the event details would be present in the reciept.
-		// 	// Publishing again would lead to duplicate events and confusion to the user.
-		// 	// _ = provider.PersistEvent(event)
-		// 	// eventChan.Publish(userUUID, event)
+			// 	// Preventing the publishing of event as the event details would be present in the reciept.
+			// 	// Publishing again would lead to duplicate events and confusion to the user.
+			// 	// _ = provider.PersistEvent(event)
+			// 	// eventChan.Publish(userUUID, event)
 			logrus.Warn(msg)
 			continue
 		}
@@ -593,7 +593,7 @@ func GenerateK8sClientSet(context *K8sContext, eb *events.EventBuilder, eventMet
 
 	metadata["error"] = err
 	metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", context.Name, context.Server)
-	
+
 	eventMetadata[context.Name] = metadata
 
 	return handler, nil
