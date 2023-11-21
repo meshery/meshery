@@ -447,7 +447,7 @@ const MeshAdapterConfigComponent = (props) => {
                 color={getStatusColor(adapterStates[adapter.name.toUpperCase()])}
                 title={adapter.adapter_location}
                 onDelete={() => handleDelete(adapter.adapter_location)}
-                handlePing={() => handleClick(adapter.adapter_location)}
+                handlePing={handleClick(adapter.adapter_location)}
                 iconSrc={image}
                 status={adapterStates[adapter.name.toUpperCase()]}
               />

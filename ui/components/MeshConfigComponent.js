@@ -743,7 +743,7 @@ function MesherySettingsNew({ classes, updateProgress, operatorState, k8sconfig 
                                         ? 'Not Available'
                                         : `Reconnect NATS`
                                     }
-                                    label={'NATS'}
+                                    label={'Meshery Broker'}
                                     handlePing={() => handleNATSClick(rowMetaData.rowIndex)}
                                     style={natsState === 'Not Active' ? { opacity: 0.5 } : {}}
                                     iconSrc="/static/img/nats-icon-color.svg"
