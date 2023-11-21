@@ -72,6 +72,7 @@
     "glob-parent": "^5.1.2",
     "graphql": "^16.8.1",
     "graphql-ws": "^5.11.2",
+    "humanize-duration": "^3.31.0",
     "isomorphic-unfetch": "^4.0.2",
     "js-yaml": "^4.1.0",
     "jsonlint-mod": "^1.7.6",

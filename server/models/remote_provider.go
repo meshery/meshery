@@ -661,7 +661,7 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (co
 		SubType: "orchestrator",
 		// Eventually the status would depend on other factors like, whether user administratively processed it or not
 		// Is clsuter reachable and other reasons.
-		Status:           connections.CONNECTED,
+		Status:           connections.DISCOVERED,
 		MetaData:         metadata,
 		CredentialSecret: cred,
 	}
@@ -3753,7 +3753,7 @@ func (l *RemoteProvider) UpdateConnectionStatusByID(token string, connectionID u
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
 	bf := bytes.NewBuffer([]byte(connectionStatus))
 	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/status/%s", l.RemoteProviderURL, ep, connectionID))
-	logrus.Debugf("Making request to : %s", remoteProviderURL.String())
+	// logrus.Debugf("Making request to : %s", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
 
 	resp, err := l.DoRequest(cReq, token)

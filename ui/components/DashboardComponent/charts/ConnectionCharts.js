@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Typography } from '@material-ui/core';
 import { donut } from 'billboard.js';
-import BBChart from '../BBChart';
-import { dataToColors, isValidColumnName } from '../../utils/charts';
-import { getConnectionStatusSummary } from '../../api/connections';
-import ConnectClustersBtn from '../General/ConnectClustersBtn';
+import BBChart from '../../BBChart';
+import { dataToColors, isValidColumnName } from '../../../utils/charts';
+import { getConnectionStatusSummary } from '../../../api/connections';
+import ConnectClustersBtn from '../../General/ConnectClustersBtn';
 import Link from 'next/link';
 
 export default function ConnectionStatsChart({ classes }) {

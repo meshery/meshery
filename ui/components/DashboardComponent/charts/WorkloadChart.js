@@ -1,9 +1,9 @@
 import React from 'react';
 import { Box, Typography, MenuItem, Select } from '@material-ui/core';
 import { donut } from 'billboard.js';
-import BBChart from '../BBChart';
-import { dataToColors, isValidColumnName } from '../../utils/charts';
-import ConnectClustersBtn from '../General/ConnectClustersBtn';
+import BBChart from '../../BBChart';
+import { dataToColors, isValidColumnName } from '../../../utils/charts';
+import ConnectClustersBtn from '../../General/ConnectClustersBtn';
 import Link from 'next/link';
 
 export default function WorkloadChart({
@@ -18,7 +18,6 @@ export default function WorkloadChart({
   const chartData = resourses
     .filter((resource) => isValidColumnName(resource?.kind))
     .map((resource) => [resource?.kind, resource?.count]);
-  //   console.log('resourses', resourses);
 
   const chartOptions = {
     data: {

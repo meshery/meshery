@@ -10,6 +10,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/internal/graphql/generated"
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
@@ -170,7 +171,8 @@ func (r *subscriptionResolver) SubscribePerfResults(ctx context.Context, selecto
 // SubscribeMesheryControllersStatus is the resolver for the subscribeMesheryControllersStatus field.
 func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Context, k8scontextIDs []string) (<-chan []*model.MesheryControllersStatusListItem, error) {
 	resChan := make(chan []*model.MesheryControllersStatusListItem)
-	controllerHandlersPerContext, ok := ctx.Value(models.MesheryControllerHandlersKey).(map[string]map[models.MesheryController]controllers.IMesheryController)
+	handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
+	controllerHandlersPerContext := handler.MesheryCtrlsHelper.GetControllerHandlersForEachContext()
 	if !ok || len(controllerHandlersPerContext) == 0 || controllerHandlersPerContext == nil {
 		er := model.ErrMesheryControllersStatusSubscription(fmt.Errorf("controller handlers are not configured for any of the contexts"))
 		r.Log.Error(er)
