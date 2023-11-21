@@ -153,13 +153,13 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 					h.log.Error(err)
 				}
 			}
-			go func(inst *machines.StateMachine, status connections.ConnectionStatus) {
+			go func(inst *machines.StateMachine) {
 				event, err := inst.SendEvent(req.Context(), machines.StatusToEvent(status), nil)
 				if err != nil {
 					_ = provider.PersistEvent(event)
 					go h.config.EventBroadcaster.Publish(userID, event)
 				}
-			}(inst, status)
+			}(inst)
 		}
 
 		eventMetadata[ctx.Name] = metadata
