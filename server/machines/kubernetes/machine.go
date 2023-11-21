@@ -75,6 +75,7 @@ func NotFound(log logger.Handler) machines.State {
 	return machines.State{
 		Events: machines.Events{
 			machines.Discovery: machines.DISCOVERED,
+			machines.Delete: machines.DELETED,
 		},
 		Action: &NotFoundAction{},
 	}

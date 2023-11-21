@@ -287,11 +287,13 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 			}
 		}
 		inst.ResetState()
-		event, err := inst.SendEvent(ctx, machines.Discovery, nil)
-		if err != nil {
-			_ = provider.PersistEvent(event)
-			go h.config.EventBroadcaster.Publish(userUUID, event)
-		}
+		go func(inst *machines.StateMachine) {
+			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
+			if err != nil {
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userUUID, event)
+			}
+		}(inst)
 		smInstanceTracker.mx.Unlock()
 	}
 	
@@ -323,11 +325,13 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 			}
 		}
 		inst.ResetState()
-		event, err := inst.SendEvent(ctx, machines.Discovery, nil)
-		if err != nil {
-			_ = provider.PersistEvent(event)
-			go h.config.EventBroadcaster.Publish(userUUID, event)
-		}
+		go func(inst *machines.StateMachine) {
+			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
+			if err != nil {
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userUUID, event)
+			}
+		}(inst)
 		smInstanceTracker.mx.Unlock()
 	}
 	return ctx, nil
