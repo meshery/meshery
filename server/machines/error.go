@@ -7,16 +7,16 @@ import (
 )
 
 var ErrInvalidTransitionCode = "1541"
-var ErrInvalidTransitionEventCode = "1542"
-var ErrInititalizeK8sMachineCode = "1543"
-var ErrAssetMachineCtxCode = "1544"
+var ErrInititalizeK8sMachineCode = "1542"
+var ErrAssetMachineCtxCode = "1543"
+var ErrInvalidTransitionEventCode = "1544"
 
 func ErrInvalidTransition(from, to StateType) error {
 	return errors.New(ErrInvalidTransitionCode, errors.Alert, []string{fmt.Sprintf("transition restricted from \"%s\" to \"%s\"", from, to)}, []string{}, []string{}, []string{})
 }
 
 func ErrInvalidTransitionEvent(from StateType, event EventType) error {
-	return errors.New(ErrInvalidTransitionCode, errors.Alert, []string{fmt.Sprintf("unsupported transition event received \"%s\" for the state \"%s\"", event, from)}, []string{}, []string{}, []string{})
+	return errors.New(ErrInvalidTransitionEventCode, errors.Alert, []string{fmt.Sprintf("unsupported transition event received \"%s\" for the state \"%s\"", event, from)}, []string{}, []string{}, []string{})
 }
 
 func ErrInititalizeK8sMachine(err error) error {
