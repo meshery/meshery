@@ -1,4 +1,4 @@
-package main
+package meshmodel_policy
 
 group_objects_with_matching_labels[unique_id] {
     input.services[namespace] != null
