@@ -54,7 +54,7 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
             sort: false,
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let type = attribute.type;
+              let type = attribute?.type;
               return <>{type}</>;
             },
           },
@@ -66,7 +66,7 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
             sort: false,
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let clusterIP = attribute.clusterIP;
+              let clusterIP = attribute?.clusterIP;
               return <>{clusterIP}</>;
             },
           },
