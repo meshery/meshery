@@ -11,11 +11,11 @@ const mesheryControllersStatusSubscription = graphql`
   }
 `;
 
-export default function subscribeMesheryControllersStatus(dataCB) {
+export default function subscribeMesheryControllersStatus(dataCB, variables) {
   const environment = createRelayEnvironment({});
   return requestSubscription(environment, {
     subscription: mesheryControllersStatusSubscription,
-    variables: { k8scontextIDs: [''] },
+    variables: { k8scontextIDs: variables },
     onNext: dataCB,
     onError: (error) => console.log(`An error occured:`, error),
   });

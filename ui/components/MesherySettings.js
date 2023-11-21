@@ -8,16 +8,9 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { AppBar, Paper, Tooltip, Typography } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faArrowLeft,
-  faCloud,
-  faPoll,
-  faDatabase,
-  faFileInvoice,
-} from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faPoll, faDatabase, faFileInvoice } from '@fortawesome/free-solid-svg-icons';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import Link from 'next/link';
-import MeshConfigComponent from './MeshConfigComponent';
 import GrafanaComponent from './telemetry/grafana/GrafanaComponent';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
 import PrometheusComponent from './telemetry/prometheus/PrometheusComponent';
@@ -285,19 +278,16 @@ class MesherySettings extends React.Component {
 
         switch (newVal) {
           case 0:
-            newRoute += '#environment';
+            newRoute += '#adapters';
             break;
           case 1:
-            newRoute += '#service-mesh';
-            break;
-          case 2:
             newRoute += '#metrics';
             break;
-          case 3:
-            newRoute += '#system';
-            break;
-          case 4:
+          case 2:
             newRoute += '#registry';
+            break;
+          case 3:
+            newRoute += '#reset';
         }
         if (this.props.router.route != newRoute) this.props.router.push(newRoute);
         self.setState({ tabVal: newVal });
@@ -354,14 +344,6 @@ class MesherySettings extends React.Component {
             indicatorColor="primary"
             textColor="primary"
           >
-            <Tooltip title="Identify your cluster" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={<FontAwesomeIcon icon={faCloud} style={iconMedium} />}
-                label="Environment"
-                data-cy="tabEnvironment"
-              />
-            </Tooltip>
             <Tooltip title="Connect Meshery Adapters" placement="top">
               <Tab
                 className={classes.tab}
@@ -378,14 +360,6 @@ class MesherySettings extends React.Component {
                 tab="tabMetrics"
               />
             </Tooltip>
-            <Tooltip title="Reset System" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
-                label="Reset"
-                tab="systemReset"
-              />
-            </Tooltip>
             <Tooltip title="Registry" placement="top">
               <Tab
                 className={classes.tab}
@@ -394,15 +368,22 @@ class MesherySettings extends React.Component {
                 tab="registry"
               />
             </Tooltip>
+            <Tooltip title="Reset System" placement="top">
+              <Tab
+                className={classes.tab}
+                icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
+                label="Reset"
+                tab="systemReset"
+              />
+            </Tooltip>
           </Tabs>
         </Paper>
-        {tabVal === 0 && <MeshConfigComponent />}
-        {tabVal === 1 && (
+        {tabVal === 0 && (
           <TabContainer>
             <MeshAdapterConfigComponent />
           </TabContainer>
         )}
-        {tabVal === 2 && (
+        {tabVal === 1 && (
           <TabContainer>
             <AppBar position="static" color="default">
               <Tabs
@@ -454,12 +435,7 @@ class MesherySettings extends React.Component {
             )}
           </TabContainer>
         )}
-        {tabVal === 3 && (
-          <TabContainer>
-            <DatabaseSummary promptRef={this.systemResetPromptRef} />
-          </TabContainer>
-        )}
-        {tabVal === 4 && (
+        {tabVal === 2 && (
           <TabContainer>
             <TabContainer>
               <TabContainer>
@@ -472,6 +448,11 @@ class MesherySettings extends React.Component {
               </TabContainer>
             </TabContainer>
             {/* </div> */}
+          </TabContainer>
+        )}
+        {tabVal === 3 && (
+          <TabContainer>
+            <DatabaseSummary promptRef={this.systemResetPromptRef} />
           </TabContainer>
         )}
         {backToPlay}

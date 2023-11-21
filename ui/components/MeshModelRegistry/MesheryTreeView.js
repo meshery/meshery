@@ -1,27 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { TreeView } from '@mui/x-tree-view/TreeView';
-import { Box, Typography, IconButton, FormControlLabel, Switch } from '@material-ui/core';
+import { Box, Typography, IconButton, FormControlLabel, Switch, useTheme } from '@material-ui/core';
 import Checkbox from '@mui/material/Checkbox';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import SearchBar from '../../utils/custom-search';
-import ExpandAllIcon from '../../assets/icons/expand_all';
-import CollapseAllIcon from '../../assets/icons/collapse_all';
-import ExpandMoreIcon from '../../assets/icons/expand_more';
-import ChevronRightIcon from '../../assets/icons/chevron_right';
 import { StyledTreeItemRoot } from './MeshModel.style';
-import useStyles from '../../assets/styles/general/tool.styles';
+import MinusSquare from '../../assets/icons/MinusSquare';
+import PlusSquare from '../../assets/icons/PlusSquare';
+import DotSquare from '../../assets/icons/DotSquare';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
   const [checked, setChecked] = useState(false);
   const [hover, setHover] = useState(false);
-  const StyleClass = useStyles();
-  const { check, labelText, root, top, setSearchText, ...other } = props;
+  const { check, labelText, root, search, setSearchText, ...other } = props;
+  const theme = useTheme();
 
   return (
     <StyledTreeItemRoot
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      className={`${!top ? StyleClass.line : ''}`}
+      root={root}
+      lineColor={theme.palette.secondary.text}
       label={
         <Box
           sx={{
@@ -39,7 +40,7 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
               alignItems: 'center',
             }}
           >
-            <Typography variant={hover || root ? 'body' : 'body2'} style={{ color: `${root}` }}>
+            <Typography variant={'body'} style={{ color: `${root}` }}>
               {labelText}
             </Typography>
           </div>
@@ -57,7 +58,7 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
               }}
             />
           )}
-          {root && (
+          {search && (
             <SearchBar
               onSearch={(value) => {
                 setSearchText(value);
@@ -153,27 +154,21 @@ const MesheryTreeView = ({
               flexDirection: 'row',
               justifyContent: 'space-between',
               borderBottom: '1px solid #d2d3d4',
-              marginRight: '0.9rem',
             }}
           >
             <div style={{ display: 'flex', flexDirection: 'row' }}>
               <IconButton onClick={expandAll} size="large">
-                <ExpandAllIcon />
+                {/* <PlusSquare /> */}
+                <KeyboardArrowDownIcon />
               </IconButton>
-              <div
-                style={{
-                  backgroundColor: '#d2d3d4',
-                  height: '33px',
-                  width: '1px',
-                  margin: '0 2px',
-                }}
-              ></div>
+
               <IconButton
                 onClick={() => setExpanded([])}
                 style={{ marginRight: '4px' }}
                 size="large"
               >
-                <CollapseAllIcon />
+                {/* <MinusSquare /> */}
+                <KeyboardArrowUpIcon />
               </IconButton>
               <FormControlLabel
                 control={
@@ -200,8 +195,9 @@ const MesheryTreeView = ({
             <TreeView
               aria-label="controlled"
               defaultExpanded={['3']}
-              defaultCollapseIcon={<ExpandMoreIcon />}
-              defaultExpandIcon={<ChevronRightIcon />}
+              defaultCollapseIcon={<MinusSquare />}
+              defaultExpandIcon={<PlusSquare />}
+              defaultEndIcon={<DotSquare />}
               onNodeToggle={handleToggle}
               multiSelect
               expanded={expanded}
@@ -307,36 +303,31 @@ const MesheryTreeView = ({
               flexDirection: 'row',
               justifyContent: 'space-between',
               borderBottom: '1px solid #d2d3d4',
-              marginRight: '0.9rem',
             }}
           >
             <div style={{ display: 'flex', flexDirection: 'row' }}>
               <IconButton onClick={expandAll} size="large">
-                <ExpandAllIcon />
+                {/* <PlusSquare /> */}
+                <KeyboardArrowDownIcon />
               </IconButton>
-              <div
-                style={{
-                  backgroundColor: '#d2d3d4',
-                  height: '33px',
-                  width: '1px',
-                  margin: '0 2px',
-                }}
-              ></div>
+
               <IconButton
                 onClick={() => setExpanded([])}
                 style={{ marginRight: '4px' }}
                 size="large"
               >
-                <CollapseAllIcon />
+                {/* <MinusSquare /> */}
+                <KeyboardArrowUpIcon />
               </IconButton>
             </div>
           </div>
-          <div style={{ overflowY: 'auto', height: '27rem' }}>
+          <div style={{ overflowY: 'auto', height: '27rem' }} onScroll={handleScroll(MODELS)}>
             <TreeView
               aria-label="controlled"
               defaultExpanded={['3']}
-              defaultCollapseIcon={<ExpandMoreIcon />}
-              defaultExpandIcon={<ChevronRightIcon />}
+              defaultCollapseIcon={<MinusSquare />}
+              defaultExpandIcon={<PlusSquare />}
+              defaultEndIcon={<DotSquare />}
               onNodeToggle={handleToggle}
               multiSelect
               expanded={expanded}
@@ -349,10 +340,7 @@ const MesheryTreeView = ({
                   labelText={registrant.hostname}
                   onClick={() => setRegi(registrant)}
                 >
-                  <div
-                    style={{ overflowY: 'auto', height: '27rem' }}
-                    onScroll={handleScroll(MODELS)}
-                  >
+                  <div>
                     <StyledTreeItem
                       nodeId={1}
                       labelText={`Models (${registrant?.summary?.models})`}
@@ -471,8 +459,9 @@ const MesheryTreeView = ({
         <TreeView
           aria-label="controlled"
           defaultExpanded={['3']}
-          defaultCollapseIcon={<ExpandMoreIcon />}
-          defaultExpandIcon={<ChevronRightIcon />}
+          defaultCollapseIcon={<MinusSquare />}
+          defaultExpandIcon={<PlusSquare />}
+          defaultEndIcon={<DotSquare />}
           onNodeToggle={handleToggle}
           onNodeSelect={handleSelect}
           multiSelect
@@ -483,6 +472,7 @@ const MesheryTreeView = ({
             nodeId={0}
             top
             root
+            search
             setSearchText={setSearchText}
             labelText={
               comp.model?.name ? `Model: ${comp.model?.displayName}` : 'Select a component node'
@@ -513,8 +503,9 @@ const MesheryTreeView = ({
         <TreeView
           aria-label="controlled"
           defaultExpanded={['3']}
-          defaultCollapseIcon={<ExpandMoreIcon />}
-          defaultExpandIcon={<ChevronRightIcon />}
+          defaultCollapseIcon={<MinusSquare />}
+          defaultExpandIcon={<PlusSquare />}
+          defaultEndIcon={<DotSquare />}
           onNodeToggle={handleToggle}
           onNodeSelect={handleSelect}
           multiSelect

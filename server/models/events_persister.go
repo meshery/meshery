@@ -124,7 +124,7 @@ func (e *EventsPersister) BulkUpdateEventStatus(eventIDs []*uuid.UUID, status st
 	if err != nil {
 		return nil, err
 	}
-	
+
 	updatedEvent := &[]*events.Event{}
 	err = e.DB.Find(updatedEvent, "id IN ?", eventIDs).Error
 	if err != nil {

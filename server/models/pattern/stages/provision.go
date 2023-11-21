@@ -47,7 +47,6 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider) ChainStageFu
 			act.Terminate(fmt.Errorf("failed to generate application configuration: %s", err))
 			return
 		}
-
 		errs := []error{}
 
 		// Execute the plan

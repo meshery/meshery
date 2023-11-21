@@ -43,7 +43,7 @@ import DoneIcon from '@material-ui/icons/Done';
 import PublicIcon from '@material-ui/icons/Public';
 import ConfirmationModal from './ConfirmationModal';
 import PublishIcon from '@material-ui/icons/Publish';
-import PromptComponent from './PromptComponent';
+import PromptComponent, { PROMPT_VARIANTS } from './PromptComponent';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { SchemaContext } from '../utils/context/schemaSet';
 import Validation from './Validation';
@@ -64,13 +64,18 @@ import { getMeshModels } from '../api/meshmodel';
 import { modifyRJSFSchema } from '../utils/utils';
 import SearchBar from '../utils/custom-search';
 import CustomColumnVisibilityControl from '../utils/custom-column';
-import ResponsiveDataTable from '../utils/data-table';
+import { ResponsiveDataTable } from '@layer5/sistent-components';
 import useStyles from '../assets/styles/general/tool.styles';
 import { Edit as EditIcon } from '@material-ui/icons';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
 import InfoModal from './Modals/Information/InfoModal';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+
+const genericClickHandler = (ev, fn) => {
+  ev.stopPropagation();
+  fn(ev);
+};
 
 const styles = (theme) => ({
   grid: {
@@ -352,6 +357,7 @@ function MesheryPatterns({
     errors: {
       validationErrors: 0,
     },
+    patternID: '',
   });
 
   const [importModal, setImportModal] = useState({
@@ -565,7 +571,7 @@ function MesheryPatterns({
       async (result) => {
         try {
           const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName.toUpperCase()));
+          const modelNames = _.uniq(models?.map((model) => model.displayName));
           modelNames.sort();
 
           // Modify the schema using the utility function
@@ -634,12 +640,13 @@ function MesheryPatterns({
     setModalOpen({
       open: false,
       pattern_file: null,
+      patternID: '',
       name: '',
       count: 0,
     });
   };
 
-  const handleModalOpen = (e, pattern_file, name, errors, action) => {
+  const handleModalOpen = (e, pattern_file, name, pattern_id, errors, action) => {
     e.stopPropagation();
     const compCount = getComponentsinFile(pattern_file);
     const validationBody = (
@@ -651,7 +658,10 @@ function MesheryPatterns({
     );
     const dryRunComponent = (
       <DryRunComponent
-        design={pattern_file}
+        design={JSON.stringify({
+          pattern_file: pattern_file,
+          pattern_id: pattern_id,
+        })}
         noOfElements={compCount}
         selectedContexts={selectedK8sContexts}
       />
@@ -661,6 +671,7 @@ function MesheryPatterns({
       action: action,
       pattern_file: pattern_file,
       name: name,
+      patternID: pattern_id,
       count: compCount,
       validationBody: validationBody,
       dryRunComponent: dryRunComponent,
@@ -745,14 +756,17 @@ function MesheryPatterns({
     });
   };
 
-  const handleDeploy = (pattern_file, name) => {
+  const handleDeploy = (pattern_file, pattern_id, name) => {
     updateProgress({ showProgress: true });
     dataFetch(
       ctxUrl(DEPLOY_URL, selectedK8sContexts),
       {
         credentials: 'include',
         method: 'POST',
-        body: pattern_file,
+        body: JSON.stringify({
+          pattern_file: pattern_file,
+          pattern_id: pattern_id,
+        }),
       },
       () => {
         updateProgress({ showProgress: false });
@@ -789,20 +803,23 @@ function MesheryPatterns({
           }
         });
         setPatternErrors((prevErrors) => new Map([...prevErrors, [pattern_id, errors]]));
-        handleModalOpen(e, pattern_file, patterns[0].name, errors, ACTIONS.VERIFY);
+        handleModalOpen(e, pattern_file, patterns[0].name, pattern_id, errors, ACTIONS.VERIFY);
       },
       handleError('Error validating pattern'),
     );
   };
 
-  const handleUnDeploy = (pattern_file, name) => {
+  const handleUnDeploy = (pattern_file, pattern_id, name) => {
     updateProgress({ showProgress: true });
     dataFetch(
       ctxUrl(DEPLOY_URL, selectedK8sContexts),
       {
         credentials: 'include',
         method: 'DELETE',
-        body: pattern_file,
+        body: JSON.stringify({
+          pattern_file: pattern_file,
+          pattern_id: pattern_id,
+        }),
       },
       () => {
         updateProgress({ showProgress: false });
@@ -1188,6 +1205,7 @@ function MesheryPatterns({
                     e,
                     rowData.pattern_file,
                     rowData.name,
+                    rowData.id,
                     patternErrors.get(rowData.id),
                     ACTIONS.UNDEPLOY,
                   )
@@ -1198,15 +1216,17 @@ function MesheryPatterns({
               <TooltipIcon
                 placement="bottom"
                 title="Deploy"
-                onClick={(e) =>
+                onClick={(e) => {
+                  console.log('clicked deploy', rowData);
                   handleModalOpen(
                     e,
                     rowData.pattern_file,
                     rowData.name,
+                    rowData.id,
                     patternErrors.get(rowData.id),
                     ACTIONS.DEPLOY,
-                  )
-                }
+                  );
+                }}
               >
                 <DoneAllIcon data-cy="deploy-button" />
               </TooltipIcon>
@@ -1217,7 +1237,10 @@ function MesheryPatterns({
                 <GetAppIcon data-cy="download-button" />
               </TooltipIcon>
 
-              <TooltipIcon title="Design Information" onClick={() => handleInfoModal(rowData)}>
+              <TooltipIcon
+                title="Design Information"
+                onClick={(ev) => genericClickHandler(ev, handleInfoModal)}
+              >
                 <InfoOutlinedIcon data-cy="information-button" />
               </TooltipIcon>
 
@@ -1268,7 +1291,7 @@ function MesheryPatterns({
       title: `Delete ${count ? count : ''} Design${count > 1 ? 's' : ''}?`,
 
       subtitle: `Are you sure you want to delete the ${patterns} design${count > 1 ? 's' : ''}?`,
-
+      variant: PROMPT_VARIANTS.DANGER,
       options: ['Yes', 'No'],
     });
     return response;
@@ -1419,7 +1442,7 @@ function MesheryPatterns({
    * Gets the data of Import Filter and handles submit operation
    *
    * @param {{
-   * uploadType: ("File Upload"| "URL Upload");
+   * uploadType: ("File Upload"| "URL Import");
    * name: string;
    * url: string;
    * file: string;
@@ -1440,7 +1463,7 @@ function MesheryPatterns({
           },
         });
         break;
-      case 'URL Upload':
+      case 'URL Import':
         requestBody = JSON.stringify({
           save: true,
           url,
@@ -1581,9 +1604,10 @@ function MesheryPatterns({
           open={modalOpen.open}
           handleClose={handleModalClose}
           submit={{
-            deploy: () => handleDeploy(modalOpen.pattern_file, modalOpen.name),
-            unDeploy: () => handleUnDeploy(modalOpen.pattern_file, modalOpen.name),
-            verify: () => handleVerify(modalOpen.pattern_file, modalOpen.name),
+            deploy: () => handleDeploy(modalOpen.pattern_file, modalOpen.patternID, modalOpen.name),
+            unDeploy: () =>
+              handleUnDeploy(modalOpen.pattern_file, modalOpen.patternID, modalOpen.name),
+            verify: () => handleVerify(modalOpen.pattern_file, modalOpen.patternID),
           }}
           title={modalOpen.name}
           componentCount={modalOpen.count}

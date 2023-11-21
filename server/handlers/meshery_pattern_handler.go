@@ -1,32 +1,32 @@
 package handlers
 
 import (
-	"encoding/json"
+	"bytes"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 	"net/url"
 	"path/filepath"
+	"strings"
 	"sync"
-	"bytes"
 
-	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
 	"github.com/gofrs/uuid"
+	guid "github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
+	pCore "github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/layer5io/meshery/server/models/pattern/stages"
 	"github.com/layer5io/meshkit/errors"
 	"github.com/layer5io/meshkit/models/events"
-	pCore "github.com/layer5io/meshery/server/models/pattern/core"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/layer5io/meshery/server/models/pattern/stages"
 	"github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
 	"github.com/layer5io/meshkit/utils/walker"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
-	guid "github.com/google/uuid"
 )
 
 // MesheryPatternRequestBody refers to the type of request body that
@@ -185,7 +185,6 @@ func (h *Handler) handlePatternPOST(
 		}
 
 		if parsedBody.Save {
-			fmt.Println("inside cyto save")
 			resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
 			if err != nil {
 				h.log.Error(ErrSavePattern(err))
@@ -304,7 +303,6 @@ func (h *Handler) handlePatternPOST(
 			}
 			mesheryPattern.PatternFile = string(response)
 		} else {
-			fmt.Printf("inside else")
 			parsedBody.PatternData.Type = sql.NullString{
 				String: string(models.Design),
 				Valid:  true,
@@ -335,11 +333,9 @@ func (h *Handler) handlePatternPOST(
 				parsedBody.PatternData.Name = patternName
 			}
 
-
 			mesheryPattern := parsedBody.PatternData
 
 			if parsedBody.Save {
-				fmt.Println("inside 1 save")
 				resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
 				if err != nil {
 					h.log.Error(ErrSavePattern(err))
@@ -376,7 +372,7 @@ func (h *Handler) handlePatternPOST(
 			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userID, event)
 			return
-	  }
+		}
 	}
 
 	if parsedBody.URL != "" {
@@ -472,7 +468,7 @@ func (h *Handler) handlePatternPOST(
 
 			url := strings.Split(parsedBody.URL, "/")
 			mesheryPattern = &models.MesheryPattern{
-				Name:            strings.TrimSuffix(url[len(url)-1], ".tgz"),
+				Name:        strings.TrimSuffix(url[len(url)-1], ".tgz"),
 				PatternFile: string(response),
 				Type: sql.NullString{
 					String: string(models.HelmChart),
@@ -559,28 +555,28 @@ func (h *Handler) handlePatternPOST(
 			}
 		} else {
 			parsedBody.PatternData.Type = sql.NullString{
-			String: string(models.Design),
-			Valid:  true,
-		}
-		resp, err := provider.RemotePatternFile(r, parsedBody.URL, parsedBody.Path, parsedBody.Save)
+				String: string(models.Design),
+				Valid:  true,
+			}
+			resp, err := provider.RemotePatternFile(r, parsedBody.URL, parsedBody.Path, parsedBody.Save)
 
-		if err != nil {
-			h.log.Error(ErrImportPattern(err))
-			http.Error(rw, ErrImportPattern(err).Error(), http.StatusInternalServerError)
-			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-				"error": ErrImportPattern(err),
-			}).WithDescription(ErrImportPattern(err).Error()).Build()
+			if err != nil {
+				h.log.Error(ErrImportPattern(err))
+				http.Error(rw, ErrImportPattern(err).Error(), http.StatusInternalServerError)
+				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+					"error": ErrImportPattern(err),
+				}).WithDescription(ErrImportPattern(err).Error()).Build()
 
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
+				return
+			}
+
+			h.formatPatternOutput(rw, resp, format, &res, eventBuilder)
+			event := eventBuilder.Build()
 			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userID, event)
 			return
-		}
-
-		h.formatPatternOutput(rw, resp, format, &res, eventBuilder)
-		event := eventBuilder.Build()
-		_ = provider.PersistEvent(event)
-		go h.config.EventBroadcaster.Publish(userID, event)
-		return
 		}
 	}
 
@@ -704,7 +700,7 @@ func githubRepoDesignScan(
 				}
 
 				af := models.MesheryPattern{
-					Name:            strings.TrimSuffix(f.Name, ext),
+					Name:        strings.TrimSuffix(f.Name, ext),
 					PatternFile: string(response),
 					Location: map[string]interface{}{
 						"type":   "github",
@@ -768,7 +764,7 @@ func genericHTTPDesignFile(fileURL, sourceType string, reg *meshmodel.RegistryMa
 
 	url := strings.Split(fileURL, "/")
 	af := models.MesheryPattern{
-		Name:            url[len(url)-1],
+		Name:        url[len(url)-1],
 		PatternFile: string(response),
 		Location: map[string]interface{}{
 			"type":   "http",
@@ -1039,20 +1035,20 @@ func (h *Handler) PublishCatalogPatternHandler(
 
 	userID := uuid.FromStringOrNil(user.ID)
 	eventBuilder := events.NewEvent().
-	FromUser(userID).
-	FromSystem(*h.SystemID).
-	WithCategory("pattern").
-	WithAction("publish").
-	ActedUpon(userID)
+		FromUser(userID).
+		FromSystem(*h.SystemID).
+		WithCategory("pattern").
+		WithAction("publish").
+		ActedUpon(userID)
 
 	var parsedBody *models.MesheryCatalogPatternRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		h.log.Error(ErrRequestBody(err))
 		e := eventBuilder.WithSeverity(events.Error).
-		WithMetadata(map[string]interface{}{
-			"error": ErrRequestBody(err),
-		}).
-		WithDescription("Error parsing design payload.").Build()
+			WithMetadata(map[string]interface{}{
+				"error": ErrRequestBody(err),
+			}).
+			WithDescription("Error parsing design payload.").Build()
 		_ = provider.PersistEvent(e)
 		go h.config.EventBroadcaster.Publish(userID, e)
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
@@ -1062,10 +1058,10 @@ func (h *Handler) PublishCatalogPatternHandler(
 	if err != nil {
 		h.log.Error(ErrPublishCatalogPattern(err))
 		e := eventBuilder.WithSeverity(events.Error).
-		WithMetadata(map[string]interface{}{
-			"error": ErrPublishCatalogPattern(err),
-		}).
-		WithDescription("Error publishing design.").Build()
+			WithMetadata(map[string]interface{}{
+				"error": ErrPublishCatalogPattern(err),
+			}).
+			WithDescription("Error publishing design.").Build()
 		_ = provider.PersistEvent(e)
 		go h.config.EventBroadcaster.Publish(userID, e)
 		http.Error(rw, ErrPublishCatalogPattern(err).Error(), http.StatusInternalServerError)
@@ -1083,7 +1079,6 @@ func (h *Handler) PublishCatalogPatternHandler(
 		go h.config.EventBroadcaster.Publish(userID, e)
 		http.Error(rw, ErrPublishCatalogPattern(err).Error(), http.StatusInternalServerError)
 	}
-
 
 	e := eventBuilder.WithSeverity(events.Informational).ActedUpon(parsedBody.ID).WithDescription(fmt.Sprintf("Request to publish '%s' design submitted with status: %s", respBody.ContentName, respBody.Status)).Build()
 	_ = provider.PersistEvent(e)
@@ -1117,21 +1112,20 @@ func (h *Handler) UnPublishCatalogPatternHandler(
 
 	userID := uuid.FromStringOrNil(user.ID)
 	eventBuilder := events.NewEvent().
-	FromUser(userID).
-	FromSystem(*h.SystemID).
-	WithCategory("pattern").
-	WithAction("unpublish_request").
-	ActedUpon(userID)
-
+		FromUser(userID).
+		FromSystem(*h.SystemID).
+		WithCategory("pattern").
+		WithAction("unpublish_request").
+		ActedUpon(userID)
 
 	var parsedBody *models.MesheryCatalogPatternRequestBody
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		h.log.Error(ErrRequestBody(err))
 		e := eventBuilder.WithSeverity(events.Error).
-		WithMetadata(map[string]interface{}{
-			"error": ErrRequestBody(err),
-		}).
-		WithDescription("Error parsing design payload.").Build()
+			WithMetadata(map[string]interface{}{
+				"error": ErrRequestBody(err),
+			}).
+			WithDescription("Error parsing design payload.").Build()
 		_ = provider.PersistEvent(e)
 		go h.config.EventBroadcaster.Publish(userID, e)
 		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
@@ -1140,17 +1134,16 @@ func (h *Handler) UnPublishCatalogPatternHandler(
 	resp, err := provider.UnPublishCatalogPattern(r, parsedBody)
 	if err != nil {
 		h.log.Error(ErrPublishCatalogPattern(err))
-			e := eventBuilder.WithSeverity(events.Error).
-		WithMetadata(map[string]interface{}{
-			"error": ErrPublishCatalogPattern(err),
-		}).
-		WithDescription("Error publishing design.").Build()
+		e := eventBuilder.WithSeverity(events.Error).
+			WithMetadata(map[string]interface{}{
+				"error": ErrPublishCatalogPattern(err),
+			}).
+			WithDescription("Error publishing design.").Build()
 		_ = provider.PersistEvent(e)
 		go h.config.EventBroadcaster.Publish(userID, e)
 		http.Error(rw, ErrPublishCatalogPattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
-
 
 	var respBody *models.CatalogRequest
 	err = json.Unmarshal(resp, &respBody)
@@ -1164,11 +1157,9 @@ func (h *Handler) UnPublishCatalogPatternHandler(
 		http.Error(rw, ErrPublishCatalogPattern(err).Error(), http.StatusInternalServerError)
 	}
 
-
 	e := eventBuilder.WithSeverity(events.Informational).ActedUpon(parsedBody.ID).WithDescription(fmt.Sprintf("'%s' design unpublished", respBody.ContentName)).Build()
 	_ = provider.PersistEvent(e)
 	go h.config.EventBroadcaster.Publish(userID, e)
-
 
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 	rw.Header().Set("Content-Type", "Pattern/json")
@@ -1339,7 +1330,8 @@ func addMeshkitErr(res *meshes.EventsResponse, err error) {
 //
 // Updates the pattern with the given payload
 // responses:
-//  200: mesheryPatternResponseWrapper
+//
+//	200: mesheryPatternResponseWrapper
 func (h *Handler) handlePatternUpdate(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -1347,7 +1339,7 @@ func (h *Handler) handlePatternUpdate(
 	user *models.User,
 	provider models.Provider,
 ) {
-		defer func() {
+	defer func() {
 		_ = r.Body.Close()
 	}()
 	userID := uuid.FromStringOrNil(user.ID)
@@ -1438,7 +1430,7 @@ func (h *Handler) handlePatternUpdate(
 		}
 
 		mesheryPattern := &models.MesheryPattern{
-			Name:            patternName,
+			Name:        patternName,
 			PatternFile: string(pfByt),
 			Location: map[string]interface{}{
 				"host": "",
@@ -1528,7 +1520,6 @@ func (h *Handler) handlePatternUpdate(
 
 }
 
-
 // swagger:route POST /api/pattern/{sourcetype} PatternsAPI idPostPatternFileRequest
 // Handle POST request for Pattern Files
 //
@@ -1555,7 +1546,6 @@ func (h *Handler) DesignFileRequestHandlerWithSourceType(
 		return
 	}
 }
-
 
 // swagger:route GET /api/pattern/types PatternsAPI typeGetMesheryPatternTypesHandler
 // Handle GET request for Meshery Pattern types
