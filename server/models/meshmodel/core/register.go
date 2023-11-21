@@ -97,7 +97,6 @@ func writeK8sMetadata(comp *v1alpha1.ComponentDefinition, reg *meshmodel.Registr
 	}
 }
 
-
 func RegisterMeshmodelComponentsForCRDS(reg meshmodel.RegistryManager, k8sYaml []byte, contextID string, version string) {
 	//TODO: Replace GenerateComponents in meshkit to natively produce MeshModel components to avoid any interconversion
 	comp, err := manifests.GenerateComponents(context.Background(), string(k8sYaml), manifests.K8s, manifests.Config{
@@ -367,7 +366,6 @@ func getAPIRes(cli *kubernetes.Client) (map[string]v1.APIResource, error) {
 	return apiRes, nil
 }
 
-
 const k8sMeshModelPath = "../meshmodel/kubernetes/model_template.json"
 
 // Caches k8sMeshModel metadatas in memory to use at the time of dynamic k8s component generation
@@ -387,7 +385,6 @@ func init() {
 	}
 	k8sMeshModelMetadata = m
 }
-
 
 // TODO: To be moved in meshkit
 // func getGroupsFromResource(cli *kubernetes.Client) (hgv map[kind][]groupversion, err error) {

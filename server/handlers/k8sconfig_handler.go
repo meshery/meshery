@@ -14,7 +14,6 @@ import (
 	"github.com/layer5io/meshery/server/models/connections"
 	mcore "github.com/layer5io/meshery/server/models/meshmodel/core"
 
-
 	// for GKE kube API authentication
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 
@@ -119,14 +118,14 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			eventBuilder.ActedUpon(connection.ID)
 			status := connection.Status
 			machineCtx := &kubernetes.MachineCtx{
-				K8sContext: *ctx,
+				K8sContext:         *ctx,
 				MesheryCtrlsHelper: h.MesheryCtrlsHelper,
-				K8sCompRegHelper: h.K8sCompRegHelper,
-				OperatorTracker: h.config.OperatorTracker,
-				Provider: provider,
-				K8scontextChannel: h.config.K8scontextChannel,
-				EventBroadcaster: h.config.EventBroadcaster,
-				RegistryManager: h.registryManager,
+				K8sCompRegHelper:   h.K8sCompRegHelper,
+				OperatorTracker:    h.config.OperatorTracker,
+				Provider:           provider,
+				K8scontextChannel:  h.config.K8scontextChannel,
+				EventBroadcaster:   h.config.EventBroadcaster,
+				RegistryManager:    h.registryManager,
 			}
 
 			if status == connections.CONNECTED {
@@ -332,7 +331,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 	}
 	kubeconfigSource := fmt.Sprintf("file://%s", filepath.Join(h.config.KubeConfigFolder, "config"))
 	data, err := utils.ReadFileSource(kubeconfigSource)
-	
+
 	eventMetadata := map[string]interface{}{}
 	metadata := map[string]interface{}{}
 	if err != nil {
@@ -373,7 +372,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 	if err != nil {
 		return contexts, err
 	}
-	
+
 	ctxs := models.K8sContextsFromKubeconfig(prov, userID, h.config.EventBroadcaster, cfg, mid, eventMetadata)
 
 	// Do not persist the generated contexts
