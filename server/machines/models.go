@@ -141,7 +141,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
 	userUUID := uuid.FromStringOrNil(user.ID)
 	
-	defaultEvent := events.NewEvent().WithDescription(fmt.Sprintf("Invalid status change requested for connection type %s.", sm.Name)).ActedUpon(sm.ID).FromUser(userUUID).FromSystem(*sysID).WithSeverity(events.Error)
+	defaultEvent := events.NewEvent().WithDescription(fmt.Sprintf("Invalid status change requested to %s for connection type %s.", eventType, sm.Name)).ActedUpon(sm.ID).FromUser(userUUID).FromSystem(*sysID).WithSeverity(events.Error)
 	sm.mx.Lock()
 	defer sm.mx.Unlock()
 	var event *events.Event
@@ -154,7 +154,9 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		nextState, err := sm.getNextState(eventType)
 		if err != nil {
 			sm.Log.Error(err)
-			return defaultEvent.WithMetadata(map[string]interface{}{"error": err}).Build(), err
+			sm.Log.Info(defaultEvent.WithMetadata(map[string]interface{}{"error": err}).Build())
+			eventType = NoOp
+			break
 		}
 
 		// sm.Log.Info("transitioning to next state: ", nextState)
@@ -162,7 +164,10 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		// next state to transition
 		state, ok := sm.States[nextState]
 		if !ok || state.Action == nil {
-			return defaultEvent.WithMetadata(map[string]interface{}{"error": ErrInvalidTransition(sm.CurrentState, nextState)}).Build(), ErrInvalidTransition(sm.CurrentState, nextState)
+			sm.Log.Error(err)
+			sm.Log.Info(defaultEvent.WithMetadata(map[string]interface{}{"error": ErrInvalidTransition(sm.CurrentState, nextState)}).Build()) 
+			eventType = NoOp
+			break
 		}
 
 		// Execute exit actions before entering new state.
