@@ -1,4 +1,5 @@
 package meshmodel_policy
+# https://play.openpolicyagent.org/p/EApfRBcqPq
 
 group_objects_with_matching_labels[key]{
 	key := {result |
