@@ -5,6 +5,7 @@ description: A Comprehensive Guide to Managing Events with Meshery
 permalink: guides/events-management
 type: guides
 language: en
+abstract: "Meshery tracks operations that you perform on infrastructurees and their workloads. Meshery provides notification of environment issues, application conflicts with infrastructure configuration, and so on."
 ---
 
 # Events Management in Meshery
