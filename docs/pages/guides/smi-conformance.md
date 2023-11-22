@@ -1,10 +1,11 @@
----
+<!-- ---
 layout: default
 title: Running SMI Conformance Tests
 description: This guide is to help users get a better understanding of sample apps
 permalink: guides/smi-conformance
 type: guides
 language: en
+
 ---
 
 This guide will help you run SMI Conformance Tests with Meshery through the [UI](#running-smi-conformance-tests-through-meshery-ui), CLI and a GitHub action for your CI/CD pipelines. To learn more about Meshery and SMI Conformance, see [Meshery and Service Mesh Interface (SMI) Conformance]({{ site.baseurl }}/tasks/service-mesh-interface)
@@ -145,4 +146,4 @@ _Viewing the Results_
 ##### Suggested Reading
 
 - Functionality: [Service Mesh Interface (SMI) Conformance]({{ site.baseurl }}/tasks/service-mesh-interface)
-
+ -->
