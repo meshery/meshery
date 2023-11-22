@@ -95,9 +95,9 @@ type StateMachine struct {
 	Provider models.Provider
 }
 
-type initFunc func(ctx context.Context,  machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error)
+type initFunc func(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error)
 
-func (sm *StateMachine) Start(ctx context.Context, machinectx interface{}, log logger.Handler, init  initFunc) (*events.Event, error) {
+func (sm *StateMachine) Start(ctx context.Context, machinectx interface{}, log logger.Handler, init initFunc) (*events.Event, error) {
 	var mCtx interface{}
 	var event *events.Event
 	var err error
@@ -140,8 +140,8 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
 	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
 	userUUID := uuid.FromStringOrNil(user.ID)
-	
-	defaultEvent := events.NewEvent().WithDescription(fmt.Sprintf("Invalid status change requested for connection type %s.", sm.Name)).ActedUpon(sm.ID).FromUser(userUUID).FromSystem(*sysID).WithSeverity(events.Error)
+
+	defaultEvent := events.NewEvent().WithDescription(fmt.Sprintf("Invalid status change requested to %s for connection type %s.", eventType, sm.Name)).ActedUpon(sm.ID).FromUser(userUUID).FromSystem(*sysID).WithSeverity(events.Error)
 	sm.mx.Lock()
 	defer sm.mx.Unlock()
 	var event *events.Event
@@ -150,11 +150,13 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		if eventType == NoOp {
 			break
 		}
-		
+
 		nextState, err := sm.getNextState(eventType)
 		if err != nil {
 			sm.Log.Error(err)
-			return defaultEvent.WithMetadata(map[string]interface{}{"error": err}).Build(), err
+			sm.Log.Info(defaultEvent.WithMetadata(map[string]interface{}{"error": err}).Build())
+			eventType = NoOp
+			break
 		}
 
 		// sm.Log.Info("transitioning to next state: ", nextState)
@@ -162,7 +164,10 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		// next state to transition
 		state, ok := sm.States[nextState]
 		if !ok || state.Action == nil {
-			return defaultEvent.WithMetadata(map[string]interface{}{"error": ErrInvalidTransition(sm.CurrentState, nextState)}).Build(), ErrInvalidTransition(sm.CurrentState, nextState)
+			sm.Log.Error(err)
+			sm.Log.Info(defaultEvent.WithMetadata(map[string]interface{}{"error": ErrInvalidTransition(sm.CurrentState, nextState)}).Build())
+			eventType = NoOp
+			break
 		}
 
 		// Execute exit actions before entering new state.
@@ -175,7 +180,6 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			}
 		}
 
-		
 		if state.Action != nil {
 			// Execute entry actions for the state entered.
 			eventType, event, err = state.Action.ExecuteOnEntry(ctx, sm.Context)
@@ -184,7 +188,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			if err != nil {
 				sm.Log.Error(err)
 				sm.Log.Info(event)
-			} else {	
+			} else {
 				eventType, event, err = state.Action.Execute(ctx, sm.Context)
 				// sm.Log.Info("inside action executed, event emitted ", eventType)
 				if err != nil {
@@ -203,17 +207,17 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 
 	if err != nil {
 		// In this case should the current state be again set to previous state i.e. should we rollback. But not only state should be rollback but other actions as well, rn we don't rollback state.
-		return events.NewEvent().WithDescription(fmt.Sprintf("Operation succeeded but failed to update the status of the connection to %s.", sm.CurrentState)).WithMetadata(map[string]interface{}{"error": err}).Build(), err
+		return events.NewEvent().WithDescription(fmt.Sprintf("Operation succeeded but failed to update the status of the connection to %s.", sm.CurrentState)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromUser(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
 	}
 
 	sm.Log.Debug("HTTP status:", statusCode, "updated status for connection", connection.ID)
-	
+
 	// The action func only emits event when an error occurs.
 	// If "event" is nil, it indicates actions were execeuted successfully, hence send an confirmation that request was processed successsfully.
 	if event == nil {
 		event = events.NewEvent().WithDescription(fmt.Sprintf("%s connection changed to %s", sm.Name, sm.CurrentState)).FromSystem(*sysID).FromUser(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").WithMetadata(map[string]interface{}{
 			"previous_status": sm.PreviousState,
-			"current_status": sm.CurrentState,
+			"current_status":  sm.CurrentState,
 		}).WithSeverity(events.Informational).Build()
 	}
 

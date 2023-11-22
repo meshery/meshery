@@ -54,7 +54,7 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
             sort: false,
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let phase = attribute.phase;
+              let phase = attribute?.phase;
               return <>{phase}</>;
             },
           },
@@ -66,7 +66,7 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
             sort: false,
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let hostIP = attribute.hostIP;
+              let hostIP = attribute?.hostIP;
               return <>{hostIP}</>;
             },
           },
@@ -78,7 +78,7 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
             sort: false,
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let podIP = attribute.podIP;
+              let podIP = attribute?.podIP;
               return <>{podIP}</>;
             },
           },
@@ -115,7 +115,7 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
             sort: false,
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let nodeName = attribute.nodeName;
+              let nodeName = attribute?.nodeName;
               return <>{nodeName}</>;
             },
           },
@@ -211,7 +211,7 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
             sort: false,
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let replicas = attribute.replicas;
+              let replicas = attribute?.replicas;
               return <>{replicas}</>;
             },
           },
@@ -223,7 +223,7 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
             sort: false,
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let template = attribute.template;
+              let template = attribute?.template;
               let spec = template.spec;
               let restartPolicy = spec.restartPolicy;
               return <>{restartPolicy}</>;
@@ -346,7 +346,7 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
             sort: false,
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let template = attribute.template;
+              let template = attribute?.template;
               let spec = template.spec;
               let nodeSelector = spec.nodeSelector;
               return <>{JSON.stringify(nodeSelector)}</>;
@@ -469,7 +469,7 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
             sort: false,
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let replicas = attribute.replicas;
+              let replicas = attribute?.replicas;
               return <>{replicas}</>;
             },
           },
@@ -590,7 +590,7 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
             sort: false,
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let replicas = attribute.replicas;
+              let replicas = attribute?.replicas;
               return <>{replicas}</>;
             },
           },
@@ -602,7 +602,7 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
             sort: false,
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let replicas = attribute.replicas;
+              let replicas = attribute?.replicas;
               return <>{replicas}</>;
             },
           },
@@ -614,7 +614,7 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
             sort: false,
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let readyReplicas = attribute.readyReplicas;
+              let readyReplicas = attribute?.readyReplicas;
               return <>{readyReplicas}</>;
             },
           },
@@ -735,7 +735,7 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
             sort: false,
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let replicas = attribute.replicas;
+              let replicas = attribute?.replicas;
               return <>{replicas}</>;
             },
           },
@@ -747,7 +747,7 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
             sort: false,
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let replicas = attribute.replicas;
+              let replicas = attribute?.replicas;
               return <>{replicas}</>;
             },
           },
@@ -977,7 +977,7 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
             sort: false,
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let schedule = attribute.schedule;
+              let schedule = attribute?.schedule;
               return <>{schedule}</>;
             },
           },
@@ -989,7 +989,7 @@ export const WorkloadTableConfig = (switchView, meshSyncResources, k8sConfig) =>
             sort: false,
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let suspend = attribute.suspend;
+              let suspend = attribute?.suspend;
               return <>{suspend}</>;
             },
           },

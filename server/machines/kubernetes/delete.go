@@ -38,7 +38,6 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}) (ma
 		machinectx.MesheryCtrlsHelper.UpdateCtxControllerHandlers(k8sContexts)
 	})
 
-
 	go models.FlushMeshSyncData(ctx, machinectx.K8sContext, machinectx.Provider, machinectx.EventBroadcaster, user.ID, sysID)
 
 	return machines.NoOp, nil, nil

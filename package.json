@@ -1,6 +1,5 @@
 {
   "dependencies": {
-    "google-sheet-cli": "^1.6.0",
-    "styled-jsx": "^5.1.2"
+    "google-sheet-cli": "^1.6.0"
   }
 }

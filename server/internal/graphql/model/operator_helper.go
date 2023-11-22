@@ -118,7 +118,7 @@ func GetMeshSyncInfo(mesheryKubeClient *mesherykube.Client, broker controllers.I
 	if broker == nil {
 		broker = controllers.NewMesheryBrokerHandler(mesheryKubeClient)
 	}
-	
+
 	if meshsyncStatus == controllers.Connected.String() {
 		brokerEndpoint, _ := broker.GetPublicEndpoint()
 		meshsyncStatus = fmt.Sprintf("%s %s", meshsyncStatus, brokerEndpoint)

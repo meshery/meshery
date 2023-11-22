@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strconv"
 
-
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshsync/pkg/model"
 	"gorm.io/gorm/clause"
@@ -72,27 +71,25 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	isLabels, _ := strconv.ParseBool(r.URL.Query().Get("labels"))
 	kind := r.URL.Query().Get("kind")
 
- 	filter := struct {
- 		ClusterIds []string `json:"clusterIds"`
- 	}{}
+	filter := struct {
+		ClusterIds []string `json:"clusterIds"`
+	}{}
 
 	clusterIds := r.URL.Query().Get("clusterIds")
- 	if clusterIds != "" {
- 		err := json.Unmarshal([]byte(clusterIds), &filter.ClusterIds)
- 		if err != nil {
- 			h.log.Error(ErrFetchPattern(err))
- 			http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
- 			return
- 		}
- 	} else {
+	if clusterIds != "" {
+		err := json.Unmarshal([]byte(clusterIds), &filter.ClusterIds)
+		if err != nil {
+			h.log.Error(ErrFetchPattern(err))
+			http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
+			return
+		}
+	} else {
 		filter.ClusterIds = []string{}
 	}
-
 
 	result := provider.GetGenericPersister().Model(&model.KubernetesResource{}).
 		Preload("KubernetesResourceMeta").
 		Where("kubernetes_resources.cluster_id IN (?)", filter.ClusterIds)
-
 
 	if kind != "" {
 		result = result.Where(&model.KubernetesResource{Kind: kind})

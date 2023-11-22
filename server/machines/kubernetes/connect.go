@@ -33,7 +33,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}) (m
 	ctrlHelper := machinectx.MesheryCtrlsHelper.UpdateCtxControllerHandlers(k8sContexts).
 		UpdateOperatorsStatusMap(machinectx.OperatorTracker).DeployUndeployedOperators(machinectx.OperatorTracker)
 	ctrlHelper.UpdateMeshsynDataHandlers()
-	
+
 	return machines.NoOp, nil, nil
 }
 
