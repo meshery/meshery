@@ -204,9 +204,9 @@ Though the command page is generated automatically by the Cobra CLI library, the
 
 ## Preserving Manually Added Documentation
 	
-`mesheryctl` uses Cobra CLI and GitHub Actions to automate the generation of command documentation. On occasion, additional documentation beyond that included in the `mesheryctl` Golang files is ideal to capture and include in the CLI reference pages. Contributors are encouraged to add more usage examples, screenshots, video explainers and so forth to any of the CLI reference pages. To protect any manually added content and ensure it remains intact after regeneration, create a separate Jekyll `include` file. Follow file naming scheme outlined below:
+`mesheryctl` uses Cobra CLI library and GitHub Actions to automate the generation of command documentation pages. On occasion, additional documentation beyond that included in the `mesheryctl` Golang files is ideal to capture and include in the CLI reference pages. Contributors are encouraged to add more usage examples, screenshots to any of the CLI reference pages. To protect any manually added content and ensure it remains intact after regeneration, create a separate Jekyll `include` file. Follow file naming scheme outlined below:
 
-If your mesheryctl docs end like this, add the include tag at the end of the file.
+If your mesheryctl docs end like this, add the include tag at the end of the file. An example is given below
 {% capture code_content %}Example:
 
 ## Options inherited from parent commands
@@ -222,10 +222,10 @@ If your mesheryctl docs end like this, add the include tag at the end of the fil
 
 {% raw %}{% include permalink-of-file %}{% endraw %}
 {% endcapture %}
-{% include code.html code=code_content %}
+{% include mesheryctl/code.html code=code_content %}
 
 
-This format should reference an external file where your manual changes are stored. Any content added using this method will not be altered during the documentation generation process, but instead will be included post-auto doc generation. When making new changes or additions, understand that these additional details are positioned at the end their given CLI reference page, so bear this in mind as you organize and present your additional command details.
+This format should reference an external file where your manual changes are stored. These files should be present at the folder path (`_includes/mesheryctl/`). Any content added using this method will not be altered during the documentation generation process, but instead will be included post-auto doc generation. When making new changes or additions, understand that these additional details are positioned at the end their given CLI reference page, so bear this in mind as you organize and present your additional command details.
 
 
 ### References
