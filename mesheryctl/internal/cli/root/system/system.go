@@ -72,7 +72,7 @@ func init() {
 		logoutCmd,
 		tokenCmd,
 		dashboardCmd,
-		modelCmd,
+		// ModelCmd,
 	}
 	// --context flag to temporarily change context. This is global to all system commands
 	SystemCmd.PersistentFlags().StringVarP(&tempContext, "context", "c", "", "(optional) temporarily change the current context.")

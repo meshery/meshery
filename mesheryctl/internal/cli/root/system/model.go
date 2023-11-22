@@ -246,8 +246,8 @@ mesheryctl system model view [model-name]
 	},
 }
 
-// modelCmd represents the `mesheryctl system model` command
-var modelCmd = &cobra.Command{
+// ModelCmd represents the `mesheryctl system model` command
+var ModelCmd = &cobra.Command{
 	Use:   "model",
 	Short: "View list of models and detail of models",
 	Long:  `View list of models and detailed information of a specific model`,
@@ -260,7 +260,7 @@ mesheryctl system model view [model-name]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			return errors.New(utils.SystemModelSubError("please specify a flag or subcommand. Use 'mesheryctl system model --help' to display user guide.\n", "model"))
+			cmd.Help()
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl system model --help' to display usage guide.\n", args[0]), "model"))
@@ -285,7 +285,7 @@ func init() {
 	listModelCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
 	viewModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd}
-	modelCmd.AddCommand(availableSubcommands...)
+	ModelCmd.AddCommand(availableSubcommands...)
 }
 
 // `selectModelPrompt` lets user to select a model if models are more than one
