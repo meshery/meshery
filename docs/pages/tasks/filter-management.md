@@ -96,16 +96,6 @@ Meshery offers WebAssembly-based network traffic management filters in Envoy, br
 
 ## Frequently Asked Questions
 
-### Q: What is Envoy proxy?
-
-An <strong>Envoy</strong> is a high performance, programmable L3/L4 and L7 proxy that a number of service mesh use as their data plane. See the [service mesh landscape](https://layer5.io/service-mesh-landscape) for a complete list. Connection and request handling are at the core of Envoy’s focus. Envoy's has a pluggable filter module that allows the incorporation of WebAssembly filters that provide additional traffic filtering intelligence. Often this includes higher order functions such as access control, transformation, data enrichment, auditing and more.
-
-### Q: What is WASM ?
-
-WebAssembly is a low-level assembly-like language with a compact binary format that runs with near-native performance and provides languages such as C/C++, C# and Rust with a compilation target so that they can run in many different environments, including behind Envoy's Application Binary Interface to extend Envoy with new capabilities. WASM programs are distributed in an efficient portable binary instruction format and embed into isolated execution environments.
-
-<--
-
 ### Q: Why does Meshery provide and manage WASM filters?
 
 Meshery manages WASM filters for data plane proxies for:
@@ -117,7 +107,13 @@ Meshery manages WASM filters for data plane proxies for:
 - <strong>Security</strong> : The WASM filter uses a well defined API to connect with the host i.e envoy proxy which can be modified only a limited number of connections.
 - <strong>Speed</strong> : It is originally used to speed up large web application
 
--->
+### Q: What is Envoy proxy?
+
+An <strong>Envoy</strong> is a high performance, programmable L3/L4 and L7 proxy that a number of service mesh use as their data plane. See the [service mesh landscape](https://layer5.io/service-mesh-landscape) for a complete list. Connection and request handling are at the core of Envoy’s focus. Envoy's has a pluggable filter module that allows the incorporation of WebAssembly filters that provide additional traffic filtering intelligence. Often this includes higher order functions such as access control, transformation, data enrichment, auditing and more.
+
+### Q: What is WASM ?
+
+WebAssembly is a low-level assembly-like language with a compact binary format that runs with near-native performance and provides languages such as C/C++, C# and Rust with a compilation target so that they can run in many different environments, including behind Envoy's Application Binary Interface to extend Envoy with new capabilities. WASM programs are distributed in an efficient portable binary instruction format and embed into isolated execution environments.
 
 ### Q: What are the disadvantages of WASM filters to be taken into consideration?
 
