@@ -1,0 +1,13 @@
+{
+  "name": "spire",
+  "version": "0.12.2",
+  "displayName": "SPIRE",
+  "category": {
+    "name": "Security & Compliance",
+    "metadata": null
+  },
+  "metadata": {
+    "svgColor": "ui/public/static/img/meshmodels/identity-manager/color/workloadidentity-color.svg",
+    "svgWhite": "ui/public/static/img/meshmodels/identity-manager/white/workloadidentity-white.svg"
+  }
+}
