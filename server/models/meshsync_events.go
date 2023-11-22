@@ -1,6 +1,8 @@
 package models
 
 import (
+	"fmt"
+
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
@@ -31,7 +33,7 @@ func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, l
 
 func (mh *MeshsyncDataHandler) Run() error {
 	storeSubscriptionStatusChan := make(chan bool)
-
+fmt.Println("inside run")
 	// this subscription is independent of whether or not the stale data in the database have been cleaned up
 	go mh.subscribeToMeshsyncEvents()
 
