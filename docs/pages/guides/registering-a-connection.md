@@ -1,12 +1,15 @@
 ---
 layout: default
-title: Managing Events with Notification Center
-description: A Comprehensive Guide to Managing Events with Meshery
-permalink: guides/events-management
+title: Registering a Connection
+description: Discovering Components with MeshSync and Registering as a Connection
+permalink: guides/registering-a-connection
 type: guides
 language: en
-abstract: "Meshery tracks operations that you perform on infrastructurees and their workloads. Meshery provides notification of environment issues, application conflicts with infrastructure configuration, and so on."
+abstract: "MeshSync supports both greenfield and brownfield discovery of infrastructure. Greenfield discovery manages infrastructure created and managed entirely by Meshery, while brownfield discovery identifies separately created infrastructure."
+list: include
 ---
+
+{% include alert.html type="info" title="MeshSync" content="Managed by the <a href='/concepts/architecture/operator'>Meshery Operator</a>, MeshSync is a custom Kubernetes controller that provides tiered discovery and continual synchronization with Meshery Server as to the state of the Kubernetes clusters and their workloads. Learn more about <a href='/concepts/architecture/meshsync'>MeshSync</a>." %}
 
 MeshSync is your tool for efficient management and synchronization of Kubernetes clusters! This user guide will walk you through how to establish a connection with any element that Meshery is able to connect to and manage. Use the MeshSync page to register connections, view connection metadata, and perform connectivity tests, as weel as to manage credentials and environments.
 
