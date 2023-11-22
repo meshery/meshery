@@ -14,7 +14,6 @@ group_objects_with_matching_labels[key]{
 			x.labels == labels
 			id := x.traits.meshmap.id
 		}
-		k == labels_map
 		result := {k: {value: comp}}
 	}
 }
