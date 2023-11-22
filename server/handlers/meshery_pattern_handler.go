@@ -317,7 +317,7 @@ func (h *Handler) handlePatternPOST(
 				addMeshkitErr(&res, ErrInvalidPattern(err))
 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 					"error": ErrInvalidPattern(err),
-				}).WithDescription("invalid design file format").Build()
+				}).WithDescription("Invalid design file format").Build()
 
 				_ = provider.PersistEvent(event)
 				go h.EventsBuffer.Publish(&res)
