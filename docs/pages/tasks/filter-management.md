@@ -50,7 +50,7 @@ As of Meshery v0.7, the management of Envoy WASM filters includes:
 - ✅ Deploy/Undeploy Filters: Streamline the deployment and removal of filters with custom configurations.
 - ✅ Enhanced Visibility: View filters within a dedicated panel and seamlessly drop them onto the canvas.
 
-<img src="https://mcusercontent.com/6b50be5aea3dfe1fd4c041d80/images/1e9c2e71-1b3e-a132-4766-8cefdc9861d2.png" width="100px" style="float:left;position:relative;margin: 1rem 1rem 1rem 0rem" />
+<img src="https://mcusercontent.com/6b50be5aea3dfe1fd4c041d80/images/1e9c2e71-1b3e-a132-4766-8cefdc9861d2.png" width="50px" style="float:left;position:relative;margin: 1rem 1rem 1rem 0rem" />
 
 ### Meshery UI Enhancements
 
