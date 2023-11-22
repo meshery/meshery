@@ -25,7 +25,7 @@ type MesheryK8sContextPage struct {
 
 // GetMesheryK8sContexts returns all of the contexts
 func (mkcp *MesheryK8sContextPersister) GetMesheryK8sContexts(search, order string, page, pageSize uint64) ([]byte, error) {
-	order = sanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
+	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 
 	if order == "" {
 		order = "updated_at desc"

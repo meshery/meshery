@@ -215,3 +215,28 @@ export function getSharableCommonHostAndprotocolLink(sharedResource) {
 
   return '';
 }
+
+/**
+ * Retrieves the value of a specified column from a row of data.
+ *
+ * @param {Array} rowData - The array representing the row of data.
+ * @param {string} columnName - The name of the column whose value you want to retrieve.
+ * @param {Array} columns - An array of column definitions.
+ * @returns {*} The value of the specified column in the row, or undefined if not found.
+ */
+
+export const getColumnValue = (rowData, columnName, columns) => {
+  const columnIndex = columns.findIndex((column) => column.name === columnName);
+  return rowData[columnIndex];
+};
+
+/**
+ * Filter the columns to show in visibility switch.
+ *
+ * @param {string} columns - Full list of columns name.
+ *
+ */
+
+export const getVisibilityColums = (columns) => {
+  return columns.filter((col) => col?.options?.display !== false);
+};
