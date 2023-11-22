@@ -35,6 +35,7 @@ import (
 
 	"github.com/go-openapi/strfmt"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/models/events"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	v1 "k8s.io/api/core/v1"
@@ -504,14 +505,14 @@ type mesheryApplicationTypesResponseWrapper struct {
 // swagger:response mesheryConnectionResponseWrapper
 type mesheryConnectionResponseWrapper struct {
 	// in: body
-	Body models.Connection
+	Body connections.Connection
 }
 
 // Returns all connections Status
 // swagger:response mesheryConnectionsStatusPage
 type mesheryConnectionsStatusPage struct {
 	// in: body
-	Body *models.ConnectionsStatusPage
+	Body *connections.ConnectionsStatusPage
 }
 
 // Returns environment
@@ -540,4 +541,10 @@ type eventResponseWrapper struct {
 type eventsResponseWrapper struct {
 	// in: body
 	Body *models.EventsResponse
+}
+
+// swagger:response loadTestPreferencesWrapper
+type possibleTransitions struct {
+	//in: body
+	Body map[string]map[connections.ConnectionStatus][]connections.ConnectionStatus
 }

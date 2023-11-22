@@ -4,7 +4,12 @@ title: Installation
 type: installation
 abstract: Installation procedures for deploying Meshery with mesheryctl.
 permalink: installation
-redirect_from: installation/
+redirect_from: 
+- platforms
+- platforms/
+- installation/
+- installation/platforms
+- installation/platforms/
 language: en
 list: exclude
 ---

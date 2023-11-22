@@ -84,24 +84,17 @@ func GetControllersInfo(mesheryKubeClient *mesherykube.Client, brokerConn broker
 		return controllers, ErrMesheryClient(err)
 	}
 
-	broker, err := GetBrokerInfo(mesheryclient, mesheryKubeClient, brokerConn)
-	if err != nil {
-		return controllers, err
-	}
+	broker := GetBrokerInfo(mesheryKubeClient)
 
 	controllers = append(controllers, &broker)
 
-	meshsync, err := GetMeshSyncInfo(mesheryclient, mesheryKubeClient)
-	if err != nil {
-		return controllers, err
-	}
-
+	meshsync := GetMeshSyncInfo(mesheryKubeClient, nil)
 	controllers = append(controllers, &meshsync)
 
 	return controllers, nil
 }
 
-func GetBrokerInfo(_ operatorClient.Interface, mesheryKubeClient *mesherykube.Client, _ brokerpkg.Handler) (OperatorControllerStatus, error) {
+func GetBrokerInfo(mesheryKubeClient *mesherykube.Client) OperatorControllerStatus {
 	broker := controllers.NewMesheryBrokerHandler(mesheryKubeClient)
 	brokerStatus := broker.GetStatus().String()
 
@@ -116,14 +109,15 @@ func GetBrokerInfo(_ operatorClient.Interface, mesheryKubeClient *mesherykube.Cl
 
 	brokerControllerStatus.Version, _ = broker.GetVersion()
 
-	return brokerControllerStatus, nil
+	return brokerControllerStatus
 }
 
-func GetMeshSyncInfo(_ operatorClient.Interface, mesheryKubeClient *mesherykube.Client) (OperatorControllerStatus, error) {
+func GetMeshSyncInfo(mesheryKubeClient *mesherykube.Client, broker controllers.IMesheryController) OperatorControllerStatus {
 	meshsync := controllers.NewMeshsyncHandler(mesheryKubeClient)
 	meshsyncStatus := meshsync.GetStatus().String()
-
-	broker := controllers.NewMesheryBrokerHandler(mesheryKubeClient)
+	if broker == nil {
+		broker = controllers.NewMesheryBrokerHandler(mesheryKubeClient)
+	}
 
 	if meshsyncStatus == controllers.Connected.String() {
 		brokerEndpoint, _ := broker.GetPublicEndpoint()
@@ -136,7 +130,7 @@ func GetMeshSyncInfo(_ operatorClient.Interface, mesheryKubeClient *mesherykube.
 		Status:  Status(meshsyncStatus),
 	}
 
-	return meshsyncControllerStatus, nil
+	return meshsyncControllerStatus
 }
 
 func SubscribeToBroker(_ models.Provider, mesheryKubeClient *mesherykube.Client, datach chan *brokerpkg.Message, brokerConn brokerpkg.Handler, ct *K8sConnectionTracker) (string, error) {

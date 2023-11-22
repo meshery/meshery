@@ -1,4 +1,7 @@
+import { alpha } from '@material-ui/core';
 import { Colors } from '../../themes/app';
+import { CONNECTION_STATES } from '../../utils/Enum';
+import { notificationColors } from '../../themes';
 
 const styles = (theme) => ({
   grid: { padding: theme.spacing(2) },
@@ -13,10 +16,7 @@ const styles = (theme) => ({
   },
   statusSelect: {
     '& .MuiSelect-select.MuiSelect-select': {
-      padding: '0 2px',
-    },
-    '& .MuiSelect-icon': {
-      display: 'none',
+      padding: '0',
     },
   },
   createButton: {
@@ -32,14 +32,17 @@ const styles = (theme) => ({
   },
   chipFormControl: {
     minWidth: '100%',
+    '& .MuiSelect-icon': {
+      marginRight: '10px !important',
+    },
   },
   statusChip: {
-    minWidth: '130px !important',
-    maxWidth: '100% !important',
+    minWidth: '145px !important',
+    width: '100% !important',
     display: 'flex !important',
     justifyContent: 'flex-start !important',
     textTransform: 'capitalize',
-    borderRadius: '3px !important',
+    borderRadius: '0 !important',
     padding: '6px 8px',
     '& .MuiChip-label': {
       paddingTop: '3px',
@@ -59,6 +62,97 @@ const styles = (theme) => ({
   lowecase: {
     textTransform: 'lowecase',
   },
+  expandedRows: {
+    background: `${theme.palette.secondary.default}10`,
+  },
+  contentContainer: {
+    [theme.breakpoints.down(1050)]: {
+      flexDirection: 'column',
+    },
+    flexWrap: 'noWrap',
+  },
+  innerTableWrapper: {
+    background: `linear-gradient(90deg, ${theme.palette.secondary.innertableBg1} 0.04%, ${theme.palette.secondary.innertableBg2} 100.04%)`,
+    borderRadius: 0,
+    padding: '0',
+  },
+  innerTableContainer: {
+    background: theme.palette.secondary.innertableBg1,
+    margin: '10px 10px 10px 13px',
+    borderLeft: `9px solid ${theme.palette.secondary.pinball}`,
+    borderRadius: '10px 0 0 10px',
+    width: 'calc(100% - 23px)',
+    border: 'none',
+  },
+  noGutter: {
+    padding: '0',
+  },
+  showMore: {
+    color: Colors.keppelGreen,
+    cursor: 'pointer',
+  },
+  bulkAction: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    width: '100%',
+  },
+  centerContent: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  tab: {
+    minWidth: 40,
+    paddingLeft: 0,
+    paddingRight: 0,
+    '&.Mui-selected': {
+      color: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
+    },
+  },
+  tabs: {
+    height: '55px',
+    '& .MuiTabs-indicator': {
+      backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
+    },
+  },
+  iconText: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  list: {
+    display: 'flex',
+    flexDirection: 'column',
+    gridGap: '0.5rem',
+    marginBlock: '0.5rem',
+    borderRadius: '0.25rem',
+    backgroundColor: theme.palette.secondary.honeyComb,
+  },
+  listButton: {
+    '&:hover': {
+      backgroundColor: alpha(theme.palette.secondary.link2, 0.25),
+    },
+  },
+  listItem: {
+    display: 'flex',
+    gridGap: '0.5rem',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  button: {
+    width: '100%',
+    justifyContent: 'flex-start',
+    '&:hover': {
+      backgroundColor: 'transparent',
+    },
+  },
+  listContainer: {
+    width: '100%',
+    justifyContent: 'flex-start',
+    display: 'flex',
+    alignItems: 'center',
+  },
+
+  /** Connection status select colors according to the status */
   ignored: {
     '& .MuiChip-label': {
       color: `${theme.palette.secondary.default}`,
@@ -88,11 +182,11 @@ const styles = (theme) => ({
   },
   discovered: {
     '& .MuiChip-label': {
-      color: theme.palette.secondary.warning,
+      color: notificationColors.info,
     },
-    background: `${theme.palette.secondary.warning}30 !important`,
+    background: `${notificationColors.info}30 !important`,
     '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.warning} !important`,
+      color: `${notificationColors.info} !important`,
     },
   },
   deleted: {
@@ -103,70 +197,45 @@ const styles = (theme) => ({
     '& .MuiSvgIcon-root': {
       color: `${theme.palette.secondary.error} !important`,
     },
-    '&:hover': {
-      cursor: 'initial',
+  },
+  maintenance: {
+    '& .MuiChip-label': {
+      color: theme.palette.secondary.warning,
+    },
+    background: `${theme.palette.secondary.warning}30 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${theme.palette.secondary.warning} !important`,
     },
   },
-  expandedRows: {
-    background: `${theme.palette.secondary.default}10`,
-  },
-  contentContainer: {
-    [theme.breakpoints.down(1050)]: {
-      flexDirection: 'column',
+  disconnected: {
+    '& .MuiChip-label': {
+      color: notificationColors.lightwarning,
     },
-    flexWrap: 'noWrap',
-  },
-  innerTableWrapper: {
-    background: `linear-gradient(90deg, #FFF 0.04%, #ECECED 100.04%)`,
-    borderRadius: 0,
-    padding: '0',
-  },
-  innerTableContainer: {
-    background: theme.palette.secondary.chevron,
-    margin: '10px 10px 10px 13px',
-    borderLeft: `9px solid ${theme.palette.secondary.pinball}`,
-    borderRadius: '10px 0 0 10px',
-    width: 'calc(100% - 23px)',
-    border: 'none',
-  },
-  listItem: {
-    paddingTop: '0',
-    paddingBottom: '0',
-  },
-  noGutter: {
-    padding: '0',
-  },
-  showMore: {
-    color: Colors.keppelGreen,
-    cursor: 'pointer',
-  },
-  bulkAction: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    width: '100%',
-  },
-  centerContent: {
-    display: 'flex',
-    justifyContent: 'center',
-  },
-  tab: {
-    minWidth: 40,
-    paddingLeft: 0,
-    paddingRight: 0,
-    '&.Mui-selected': {
-      color: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
+    background: `${notificationColors.lightwarning}30 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${notificationColors.lightwarning} !important`,
     },
   },
-  tabs: {
-    '& .MuiTabs-indicator': {
-      backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
+  notfound: {
+    '& .MuiChip-label': {
+      color: theme.palette.secondary.text,
     },
-  },
-  iconText: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    background: `${theme.palette.secondary.disableButtonBg}60 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${theme.palette.secondary.iconMain} !important`,
+    },
   },
 });
 
 export default styles;
+
+export const CONNECTION_STATE_COLORS = {
+  [CONNECTION_STATES.CONNECTED]: '#00B39F',
+  [CONNECTION_STATES.REGISTERED]: '#00B39F',
+  [CONNECTION_STATES.DISCOVERED]: '#FFC107',
+  [CONNECTION_STATES.IGNORED]: '#FFC107',
+  [CONNECTION_STATES.DELETED]: '#FF1744',
+  [CONNECTION_STATES.MAINTENANCE]: '#FFC107',
+  [CONNECTION_STATES.DISCONNECTED]: '#FFC107',
+  [CONNECTION_STATES.NOTFOUND]: '#FFC107',
+};

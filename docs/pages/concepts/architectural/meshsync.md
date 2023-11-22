@@ -29,6 +29,7 @@ list: include
 - **Scalable and Performant**: Meshery's event-driven approach ensures speed and scalability. You have control over the depth of object discovery to manage large clusters efficiently. MeshSync's working snapshot of the state of each cluster under management is stored in the Server's local database and continuously refreshed.
 
 ## Discovery
+
 MeshSync supports both greenfield and brownfield discovery of infrastructure. Greenfield discovery manages infrastructure created and managed entirely by Meshery, while brownfield discovery identifies separately created infrastructure.
 
 ### Brownfield: Discovering existing resources

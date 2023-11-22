@@ -4,6 +4,8 @@ title: GKE
 permalink: installation/kubernetes/gke
 type: installation
 category: kubernetes
+redirect_from:
+- installation/platforms/gke
 display-title: "false"
 language: en
 list: include

@@ -13,7 +13,11 @@ import dataFetch from '../../lib/data-fetch';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import ResponsiveDataTable from '../../utils/data-table';
-import { FormattedMetadata } from '../NotificationCenter/metadata';
+import CustomColumnVisibilityControl from '../../utils/custom-column';
+import useStyles from '../../assets/styles/general/tool.styles';
+import SearchBar from '../../utils/custom-search';
+import { MeshSyncDataFormatter } from './metadata';
+import { getK8sClusterIdsFromCtxId } from '../../utils/multi-ctx';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -22,15 +26,22 @@ const ACTION_TYPES = {
   },
 };
 
-export default function MeshSyncTable({ classes, updateProgress, search }) {
+export default function MeshSyncTable(props) {
+  const { classes, updateProgress, selectedK8sContexts, k8sconfig } = props;
   const [page, setPage] = useState(0);
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(0);
+  const [search, setSearch] = useState('');
   const [meshSyncResources, setMeshSyncResources] = useState([]);
   const [sortOrder, setSortOrder] = useState('');
   const [showMore, setShowMore] = useState(false);
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [loading, setLoading] = useState(false);
+  const StyleClass = useStyles();
+
+  const clusterIds = encodeURIComponent(
+    JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig)),
+  );
 
   const { notify } = useNotification();
 
@@ -46,18 +57,8 @@ export default function MeshSyncTable({ classes, updateProgress, search }) {
       name: 'metadata.name',
       label: 'Name',
       options: {
-        sort: true,
+        sort: false,
         sortThirdClickReset: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
-          return (
-            <SortableTableCell
-              index={index}
-              columnData={column}
-              columnMeta={columnMeta}
-              onSort={() => sortColumn(index)}
-            />
-          );
-        },
         customBodyRender: (value) => {
           const maxCharLength = 30;
           const shouldTruncate = value?.length > maxCharLength;
@@ -303,7 +304,7 @@ export default function MeshSyncTable({ classes, updateProgress, search }) {
                             }}
                             className={classes.contentContainer}
                           >
-                            <FormattedMetadata event={meshSyncResourcesMetaData} />
+                            <MeshSyncDataFormatter metadata={meshSyncResourcesMetaData.metadata} />
                           </Grid>
                         </Grid>
                       </Grid>
@@ -333,7 +334,7 @@ export default function MeshSyncTable({ classes, updateProgress, search }) {
     if (!search) search = '';
     if (!sortOrder) sortOrder = '';
     dataFetch(
-      `/api/system/meshsync/resources?page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
+      `/api/system/meshsync/resources?clusterIds=${clusterIds}&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
         search,
       )}&order=${encodeURIComponent(sortOrder)}`,
       {
@@ -362,7 +363,7 @@ export default function MeshSyncTable({ classes, updateProgress, search }) {
 
   const [tableCols, updateCols] = useState(columns);
 
-  const [columnVisibility /*setColumnVisibility*/] = useState(() => {
+  const [columnVisibility, setColumnVisibility] = useState(() => {
     // Initialize column visibility based on the original columns' visibility
     const initialVisibility = {};
     columns.forEach((col) => {
@@ -373,6 +374,28 @@ export default function MeshSyncTable({ classes, updateProgress, search }) {
 
   return (
     <>
+      <div className={StyleClass.toolWrapper} style={{ marginBottom: '5px', marginTop: '-30px' }}>
+        <div className={classes.createButton}>{/* <MesherySettingsEnvButtons /> */}</div>
+        <div
+          className={classes.searchAndView}
+          style={{
+            display: 'flex',
+            borderRadius: '0.5rem 0.5rem 0 0',
+          }}
+        >
+          <SearchBar
+            onSearch={(value) => {
+              setSearch(value);
+            }}
+            placeholder="Search connections..."
+          />
+
+          <CustomColumnVisibilityControl
+            columns={columns}
+            customToolsProps={{ columnVisibility, setColumnVisibility }}
+          />
+        </div>
+      </div>
       <ResponsiveDataTable
         data={meshSyncResources}
         columns={columns}

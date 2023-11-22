@@ -6,13 +6,10 @@ import {
   Tooltip,
   FormControl,
   Select,
-  MenuItem,
   TableContainer,
   Table,
   Grid,
   TableRow,
-  TableSortLabel,
-  Chip,
   IconButton,
   Typography,
   Switch,
@@ -20,6 +17,9 @@ import {
   AppBar,
   Tabs,
   Tab,
+  MenuItem,
+  Box,
+  Chip,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -27,24 +27,17 @@ import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-
 import { updateProgress } from '../../lib/store';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import ExploreIcon from '@mui/icons-material/Explore';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import classNames from 'classnames';
 import dataFetch from '../../lib/data-fetch';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import CustomColumnVisibilityControl from '../../utils/custom-column';
 import SearchBar from '../../utils/custom-search';
-import ResponsiveDataTable from '../../utils/data-table';
+import { ResponsiveDataTable } from '@layer5/sistent-components';
 import useStyles from '../../assets/styles/general/tool.styles';
 import Modal from '../Modal';
-import { iconMedium } from '../../css/icons.styles';
-import PromptComponent from '../PromptComponent';
-import { FormattedMetadata } from '../NotificationCenter/metadata';
+import { iconMedium, iconSmall } from '../../css/icons.styles';
+import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
 import resetDatabase from '../graphql/queries/ResetDatabaseQuery';
 import changeOperatorState from '../graphql/mutations/OperatorStatusMutation';
 import fetchMesheryOperatorStatus from '../graphql/queries/OperatorStatusQuery';
@@ -53,6 +46,23 @@ import styles from './styles';
 import MeshSyncTable from './MeshsyncTable';
 import ConnectionIcon from '../../assets/icons/Connection';
 import MeshsyncIcon from '../../assets/icons/Meshsync';
+import classNames from 'classnames';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import SyncIcon from '@mui/icons-material/Sync';
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+import ExploreIcon from '@mui/icons-material/Explore';
+import { CONNECTION_KINDS, CONNECTION_STATES } from '../../utils/Enum';
+import { FormatConnectionMetadata } from './metadata';
+import useKubernetesHook from '../hooks/useKubernetesHook';
+import theme from '../../themes/app';
+import { ConnectionChip } from './ConnectionChip';
+import InfoIcon from '@material-ui/icons/Info';
+import { SortableTableCell } from './common';
+import { getColumnValue, getVisibilityColums } from '../../utils/utils';
+import HandymanIcon from '@mui/icons-material/Handyman';
+import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
+import DisconnectIcon from '../../assets/icons/disconnect';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -66,6 +76,10 @@ const ACTION_TYPES = {
   DELETE_CONNECTION: {
     name: 'DELETE_CONNECTION',
     error_msg: 'Failed to delete connection',
+  },
+  FETCH_CONNECTION_STATUS_TRANSITIONS: {
+    name: 'FETCH_CONNECTION_STATUS_TRANSITIONS',
+    error_msg: 'Failed to fetch connection transitions',
   },
 };
 
@@ -126,15 +140,18 @@ function ConnectionManagementPage(props) {
           handleSubmit={handleCreateConnectionSubmit}
           title="Connect Helm Repository"
           submitBtnText="Connect"
-          // leftHeaderIcon={ }
-          // submitBtnIcon={<PublishIcon  className={classes.addIcon} data-cy="import-button"/>}
         />
       )}
     </>
   );
 }
-
-function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/ operatorState }) {
+function Connections({
+  classes,
+  updateProgress,
+  /*onOpenCreateConnectionModal,*/ operatorState,
+  selectedK8sContexts,
+  k8sconfig,
+}) {
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);
   const [count, setCount] = useState(0);
@@ -148,7 +165,9 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
   const [rowData, setSelectedRowData] = useState({});
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [_operatorState, _setOperatorState] = useState(operatorState || []);
+  const [connectionStatus, setConnectionStatus] = useState(null);
   const [tab, setTab] = useState(0);
+  const ping = useKubernetesHook();
 
   const open = Boolean(anchorEl);
   const _operatorStateRef = useRef(_operatorState);
@@ -156,77 +175,19 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
   const meshSyncResetRef = useRef(null);
   const { notify } = useNotification();
   const StyleClass = useStyles();
+  const url = `https://docs.meshery.io/concepts/connections`;
 
-  const statuses = ['ignored', 'connected', 'REGISTERED', 'discovered', 'deleted'];
-
-  const status = (value) => {
-    switch (value) {
-      case 'ignored':
-        return (
-          <MenuItem value={value}>
-            <Chip
-              className={classNames(classes.statusChip, classes.ignored)}
-              avatar={<RemoveCircleIcon />}
-              label={value}
-            />
-          </MenuItem>
-        );
-      case 'connected':
-        return (
-          <MenuItem value={value}>
-            <Chip
-              className={classNames(classes.statusChip, classes.connected)}
-              value={value}
-              avatar={<CheckCircleIcon />}
-              label={value}
-            />
-          </MenuItem>
-        );
-      case 'REGISTERED':
-        return (
-          <MenuItem value={value}>
-            <Chip
-              className={classNames(classes.statusChip, classes.registered)}
-              value={value}
-              avatar={<AssignmentTurnedInIcon />}
-              label={value.toLowerCase()}
-            />
-          </MenuItem>
-        );
-      case 'discovered':
-        return (
-          <MenuItem value={value}>
-            <Chip
-              className={classNames(classes.statusChip, classes.discovered)}
-              value={value}
-              avatar={<ExploreIcon />}
-              label={value}
-            />
-          </MenuItem>
-        );
-      case 'deleted':
-        return (
-          <MenuItem value={value}>
-            <Chip
-              className={classNames(classes.statusChip, classes.deleted)}
-              value={value}
-              avatar={<DeleteForeverIcon />}
-              label={value}
-            />
-          </MenuItem>
-        );
-      default:
-        return (
-          <MenuItem value={value}>
-            <Chip
-              className={classNames(classes.statusChip, classes.discovered)}
-              value={value}
-              avatar={<ExploreIcon />}
-              label={value}
-            />
-          </MenuItem>
-        );
-    }
+  const icons = {
+    [CONNECTION_STATES.IGNORED]: () => <RemoveCircleIcon />,
+    [CONNECTION_STATES.CONNECTED]: () => <CheckCircleIcon />,
+    [CONNECTION_STATES.REGISTERED]: () => <AssignmentTurnedInIcon />,
+    [CONNECTION_STATES.DISCOVERED]: () => <ExploreIcon />,
+    [CONNECTION_STATES.DELETED]: () => <DeleteForeverIcon />,
+    [CONNECTION_STATES.MAINTENANCE]: () => <HandymanIcon />,
+    [CONNECTION_STATES.DISCONNECTED]: () => (
+      <DisconnectIcon fill="#E75225" width={24} height={24} />
+    ),
+    [CONNECTION_STATES.NOTFOUND]: () => <NotInterestedRoundedIcon />,
   };
 
   const columns = [
@@ -246,7 +207,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
     },
     {
       name: 'metadata.server',
-      label: 'Server Location',
+      label: 'Server',
       options: {
         display: false,
       },
@@ -268,15 +229,32 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
           );
         },
         customBodyRender: (value, tableMeta) => {
+          const server =
+            getColumnValue(tableMeta.rowData, 'metadata.server', columns) ||
+            getColumnValue(tableMeta.rowData, 'metadata.server_location', columns);
           return (
-            <Tooltip title={value} placement="top">
-              <Chip
-                variant="outlined"
-                label={value}
-                style={{ maxWidth: '120px' }}
-                onDelete={() => handleDeleteConnection(tableMeta.rowData[0])}
-              />
-            </Tooltip>
+            <ConnectionChip
+              tooltip={'Server: ' + server}
+              title={value}
+              status={tableMeta.rowData[7]}
+              onDelete={() =>
+                handleDeleteConnection(
+                  getColumnValue(tableMeta.rowData, 'id', columns),
+                  getColumnValue(tableMeta.rowData, 'kind', columns),
+                )
+              }
+              handlePing={() => {
+                if (tableMeta.rowData[4] === KUBERNETES) {
+                  ping(tableMeta.rowData[3], tableMeta.rowData[2], tableMeta.rowData[0]);
+                }
+              }}
+              iconSrc={
+                getColumnValue(tableMeta.rowData, 'kind', columns) === CONNECTION_KINDS.MESHERY
+                  ? '/static/img/meshery-logo.png'
+                  : '/static/img/kubernetes.svg'
+              }
+              style={{ maxWidth: '120px' }}
+            />
           );
         },
       },
@@ -341,6 +319,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
       options: {
         sort: true,
         sortThirdClickReset: true,
+        display: false,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
             <SortableTableCell
@@ -416,11 +395,31 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
               columnData={column}
               columnMeta={columnMeta}
               onSort={() => sortColumn(index)}
+              icon={
+                <InfoIcon
+                  color={theme.palette.secondary.iconMain}
+                  style={iconSmall}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    window.open(url, '_blank');
+                  }}
+                />
+              }
+              tooltip="Click to know about connection and status"
             />
           );
         },
         customBodyRender: function CustomBody(value, tableMeta) {
-          const disabled = value === 'deleted' ? true : false;
+          const nextStatusCol = getColumnValue(tableMeta.rowData, 'nextStatus', columns);
+          const originalNextStatus = nextStatusCol && nextStatusCol[value];
+          let nextStatus = [];
+          if (originalNextStatus !== undefined) {
+            nextStatus = Object.values(originalNextStatus);
+            nextStatus.push(value);
+          } else {
+            nextStatus.push(value);
+          }
+          const disabled = value === 'deleted' || originalNextStatus === undefined ? true : false;
           return (
             <>
               <FormControl className={classes.chipFormControl}>
@@ -429,8 +428,15 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
                   id="demo-simple-select"
                   disabled={disabled}
                   value={value}
+                  defaultValue={value}
                   onClick={(e) => e.stopPropagation()}
-                  onChange={(e) => handleStatusChange(e, tableMeta.rowData[0])}
+                  onChange={(e) =>
+                    handleStatusChange(
+                      e,
+                      getColumnValue(tableMeta.rowData, 'id', columns),
+                      getColumnValue(tableMeta.rowData, 'kind', columns),
+                    )
+                  }
                   className={classes.statusSelect}
                   disableUnderline
                   MenuProps={{
@@ -443,9 +449,25 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
                       horizontal: 'left',
                     },
                     getContentAnchorEl: null,
+                    MenuListProps: { disablePadding: true },
+                    PaperProps: { square: true },
                   }}
                 >
-                  {statuses.map((s) => status(s))}
+                  {nextStatus &&
+                    nextStatus.map((status) => (
+                      <MenuItem
+                        disabled={status === value ? true : false}
+                        value={status}
+                        key={status}
+                        style={{ padding: '0' }}
+                      >
+                        <Chip
+                          className={classNames(classes.statusChip, classes[status])}
+                          avatar={icons[status]()}
+                          label={status}
+                        />
+                      </MenuItem>
+                    ))}
                 </Select>
               </FormControl>
             </>
@@ -455,6 +477,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
     },
     {
       name: 'Actions',
+      label: 'Actions',
       options: {
         filter: false,
         sort: false,
@@ -466,10 +489,10 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
             </TableCell>
           );
         },
-        customBodyRender: (_, tableMeta) => {
+        customBodyRender: function CustomBody(_, tableMeta) {
           return (
             <div className={classes.centerContent}>
-              {tableMeta.rowData[4] === KUBERNETES ? (
+              {getColumnValue(tableMeta.rowData, 'kind', columns) === KUBERNETES ? (
                 <IconButton
                   aria-label="more"
                   id="long-button"
@@ -484,6 +507,13 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
             </div>
           );
         },
+      },
+    },
+    {
+      name: 'nextStatus',
+      label: 'nextStatus',
+      options: {
+        display: false,
       },
     },
   ];
@@ -563,29 +593,17 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
       renderExpandableRow: (rowData, tableMeta) => {
         const colSpan = rowData.length;
         const connection = connections && connections[tableMeta.rowIndex];
-
         return (
           <TableCell colSpan={colSpan} className={classes.innerTableWrapper}>
             <TableContainer className={classes.innerTableContainer}>
               <Table>
                 <TableRow className={classes.noGutter}>
-                  <TableCell style={{ padding: '20px 0' }}>
+                  <TableCell style={{ padding: '20px 0', overflowX: 'hidden' }}>
                     <Grid container spacing={1} style={{ textTransform: 'lowercase' }}>
                       <Grid item xs={12} md={12} className={classes.contentContainer}>
                         <Grid container spacing={1}>
-                          <Grid
-                            item
-                            xs={12}
-                            md={12}
-                            style={{
-                              display: 'flex',
-                              flexWrap: 'wrap',
-                              padding: '0 20px',
-                              gap: 30,
-                            }}
-                            className={classes.contentContainer}
-                          >
-                            <FormattedMetadata event={connection} />
+                          <Grid item xs={12} md={12} className={classes.contentContainer}>
+                            <FormatConnectionMetadata connection={connection} />
                           </Grid>
                         </Grid>
                       </Grid>
@@ -605,10 +623,16 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
    * fetch connections when the page loads
    */
   useEffect(() => {
-    if (!loading) {
+    if (!loading && connectionStatus) {
       getConnections(page, pageSize, search, sortOrder);
     }
-  }, [page, pageSize, search, sortOrder]);
+  }, [page, pageSize, search, sortOrder, connectionStatus]);
+
+  useEffect(() => {
+    Object.keys(CONNECTION_KINDS).map((kind) => {
+      getConnectionStatus(CONNECTION_KINDS[kind]);
+    });
+  }, []);
 
   const getConnections = (page, pageSize, search, sortOrder) => {
     setLoading(true);
@@ -623,6 +647,9 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
         method: 'GET',
       },
       (res) => {
+        res?.connections.forEach((connection) => {
+          connection.nextStatus = connectionStatus[connection.kind];
+        });
         setConnections(res?.connections || []);
         setPage(res?.page || 0);
         setCount(res?.total_count || 0);
@@ -630,6 +657,26 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
         setLoading(false);
       },
       handleError(ACTION_TYPES.FETCH_CONNECTIONS),
+    );
+  };
+
+  const getConnectionStatus = (connectionKind) => {
+    setLoading(true);
+    dataFetch(
+      `  /api/integrations/connections/${connectionKind}/transitions`,
+      {
+        credentials: 'include',
+        method: 'GET',
+      },
+      (res) => {
+        setConnectionStatus((prevState) => ({
+          ...prevState,
+          [connectionKind]: res,
+        }));
+        setLoading(false);
+      },
+      handleError(ACTION_TYPES.FETCH_CONNECTION_STATUS_TRANSITIONS),
+      setLoading(false),
     );
   };
 
@@ -642,13 +689,9 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
     });
   };
 
-  const handleStatusChange = (e, connectionId) => {
-    e.stopPropagation();
-    const requestBody = JSON.stringify({
-      status: e.target.value,
-    });
+  const updateConnectionStatus = (connectionKind, requestBody) => {
     dataFetch(
-      `/api/integrations/connections/${connectionId}`,
+      `/api/integrations/connections/${connectionKind}/status`,
       {
         method: 'PUT',
         credentials: 'include',
@@ -662,47 +705,65 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
     );
   };
 
+  const handleStatusChange = async (e, connectionId, connectionKind) => {
+    e.stopPropagation();
+    let response = await modalRef.current.show({
+      title: `Connection status transition`,
+      subtitle: `Are you sure that you want to transform the connection status to ${e.target.value.toUpperCase()}?`,
+      options: ['Confirm', 'No'],
+      variant: PROMPT_VARIANTS.CONFIRMATION,
+    });
+    if (response === 'Confirm') {
+      const requestBody = JSON.stringify({
+        [connectionId]: e.target.value,
+      });
+      updateConnectionStatus(connectionKind, requestBody);
+    }
+  };
+
+  const handleDeleteConnection = async (connectionId, connectionKind) => {
+    if (connectionId) {
+      let response = await modalRef.current.show({
+        title: `Delete Connection`,
+        subtitle: `Are you sure that you want to delete the connection?`,
+        options: ['Delete', 'No'],
+        variant: PROMPT_VARIANTS.DANGER,
+      });
+      if (response === 'Delete') {
+        const requestBody = JSON.stringify({
+          [connectionId]: CONNECTION_STATES.DELETED,
+        });
+        updateConnectionStatus(connectionKind, requestBody);
+      }
+    }
+  };
+
   const handleDeleteConnections = async (selected) => {
     if (selected) {
       let response = await modalRef.current.show({
         title: `Delete Connections`,
-        subtitle: `Are you sure that you want to delete connections"?`,
+        subtitle: `Are you sure that you want to delete the connections?`,
         options: ['Delete', 'No'],
+        variant: PROMPT_VARIANTS.DANGER,
       });
       if (response === 'Delete') {
+        // let bulkConnections = {}
+        // selected.data.map(({ index }) => {
+        //   bulkConnections = {
+        //     ...bulkConnections,
+        //     [connections[index].id]: CONNECTION_STATES.DELETED
+        //   };
+        // })
+        // const requestBody = JSON.stringify(bulkConnections);
+        // updateConnectionStatus(requestBody);
         selected.data.map(({ index }) => {
-          deleteConnection(connections[index].id);
+          const requestBody = JSON.stringify({
+            [connections[index].id]: CONNECTION_STATES.DELETED,
+          });
+          updateConnectionStatus(connections[index].kind, requestBody);
         });
       }
     }
-  };
-
-  const handleDeleteConnection = async (id) => {
-    if (id) {
-      let response = await modalRef.current.show({
-        title: `Delete Connection`,
-        subtitle: `Are you sure that you want to delete connection"?`,
-        options: ['Delete', 'No'],
-      });
-      if (response === 'Delete') {
-        deleteConnection(id);
-      }
-    }
-  };
-
-  const deleteConnection = (connectionId) => {
-    dataFetch(
-      `/api/integrations/connections/${connectionId}`,
-      {
-        method: 'DELETE',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-      },
-      () => {
-        getConnections(page, pageSize, search, sortOrder);
-      },
-      handleError(ACTION_TYPES.DELETE_CONNECTION),
-    );
   };
 
   const handleActionMenuOpen = (event, tableMeta) => {
@@ -722,6 +783,7 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
         title: `Flush MeshSync data for ${connections[index].metadata?.name} ?`,
         subtitle: `Are you sure to Flush MeshSync data for “${connections[index].metadata?.name}”? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.`,
         options: ['PROCEED', 'CANCEL'],
+        variant: PROMPT_VARIANTS.WARNING,
       });
       if (response === 'PROCEED') {
         updateProgress({ showProgress: true });
@@ -820,44 +882,6 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
   return (
     <>
       <NoSsr>
-        <div className={StyleClass.toolWrapper} style={{ marginBottom: '0' }}>
-          <div className={classes.createButton}>
-            {/* <div>
-              <Button
-                aria-label="Rediscover"
-                variant="contained"
-                color="primary"
-                size="large"
-                // @ts-ignore
-                onClick={onOpenCreateConnectionModal}
-                style={{ marginRight: '1rem', borderRadius: '5px' }}
-              >
-                Connect Helm Repository
-              </Button>
-            </div> */}
-            <MesherySettingsEnvButtons />
-          </div>
-          <div
-            className={classes.searchAndView}
-            style={{
-              display: 'flex',
-              borderRadius: '0.5rem 0.5rem 0 0',
-            }}
-          >
-            <SearchBar
-              onSearch={(value) => {
-                setSearch(value);
-              }}
-              placeholder="Search connections..."
-            />
-            {tab === 0 && (
-              <CustomColumnVisibilityControl
-                columns={columns}
-                customToolsProps={{ columnVisibility, setColumnVisibility }}
-              />
-            )}
-          </div>
-        </div>
         <AppBar position="static" color="default" className={classes.appBar}>
           <Tabs
             value={tab}
@@ -869,6 +893,9 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
             indicatorColor="primary"
             textColor="primary"
             variant="fullWidth"
+            sx={{
+              height: '10%',
+            }}
           >
             <Tab
               className={classes.tab}
@@ -884,13 +911,55 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
               className={classes.tab}
               label={
                 <div className={classes.iconText}>
-                  <span style={{ marginRight: '0.3rem' }}>Meshsync</span>
+                  <span style={{ marginRight: '0.3rem' }}>MeshSync</span>
                   <MeshsyncIcon width="20" height="20" />
                 </div>
               }
             />
           </Tabs>
         </AppBar>
+        {tab === 0 && (
+          <div
+            className={StyleClass.toolWrapper}
+            style={{ marginBottom: '5px', marginTop: '-30px' }}
+          >
+            <div className={classes.createButton}>
+              {/* <div>
+              <Button
+                aria-label="Rediscover"
+                variant="contained"
+                color="primary"
+                size="large"
+                // @ts-ignore
+                onClick={onOpenCreateConnectionModal}
+                style={{ marginRight: '1rem', borderRadius: '5px' }}
+              >
+                Connect Helm Repository
+              </Button>
+            </div> */}
+              <MesherySettingsEnvButtons />
+            </div>
+            <div
+              className={classes.searchAndView}
+              style={{
+                display: 'flex',
+                borderRadius: '0.5rem 0.5rem 0 0',
+              }}
+            >
+              <SearchBar
+                onSearch={(value) => {
+                  setSearch(value);
+                }}
+                placeholder="Search connections..."
+              />
+
+              <CustomColumnVisibilityControl
+                columns={getVisibilityColums(columns)}
+                customToolsProps={{ columnVisibility, setColumnVisibility }}
+              />
+            </div>
+          </div>
+        )}
         {tab === 0 && (
           <ResponsiveDataTable
             data={connections}
@@ -903,7 +972,13 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
           />
         )}
         {tab === 1 && (
-          <MeshSyncTable classes={classes} updateProgress={updateProgress} search={search} />
+          <MeshSyncTable
+            classes={classes}
+            updateProgress={updateProgress}
+            search={search}
+            selectedK8sContexts={selectedK8sContexts}
+            k8sconfig={k8sconfig}
+          />
         )}
         <PromptComponent ref={modalRef} />
         <Popover
@@ -916,27 +991,35 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
           }}
         >
           <Grid style={{ margin: '10px' }}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              size="large"
-              onClick={handleFlushMeshSync(rowData.rowIndex)}
-              className={classes.FlushBtn}
-              data-cy="btnResetDatabase"
-            >
-              <Typography> Flush MeshSync </Typography>
-            </Button>
-            <Typography>
-              <Switch
-                defaultChecked={getOperatorStatus(rowData.rowIndex)?.operatorState}
-                onClick={(e) => handleOperatorSwitch(rowData.rowIndex, e.target.checked)}
-                name="OperatorSwitch"
-                color="primary"
-                className={classes.OperatorSwitch}
-              />
-              Operator
-            </Typography>
+            <div className={classNames(classes.list, classes.listButton)}>
+              <Box className={classes.listItem} sx={{ width: '100%' }}>
+                <Button
+                  type="submit"
+                  onClick={handleFlushMeshSync(rowData.rowIndex)}
+                  data-cy="btnResetDatabase"
+                  className={classes.button}
+                >
+                  <SyncIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
+                  <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
+                    Flush MeshSync
+                  </Typography>
+                </Button>
+              </Box>
+            </div>
+            <div className={classes.list}>
+              <Box className={classes.listItem} sx={{ width: '100%' }}>
+                <div className={classes.listContainer}>
+                  <Switch
+                    defaultChecked={getOperatorStatus(rowData.rowIndex)?.operatorState}
+                    onClick={(e) => handleOperatorSwitch(rowData.rowIndex, e.target.checked)}
+                    name="OperatorSwitch"
+                    color="primary"
+                    className={classes.OperatorSwitch}
+                  />
+                  <Typography variant="body1">Operator</Typography>
+                </div>
+              </Box>
+            </div>
           </Grid>
         </Popover>
         <PromptComponent ref={meshSyncResetRef} />
@@ -944,19 +1027,6 @@ function Connections({ classes, updateProgress, /*onOpenCreateConnectionModal,*/
     </>
   );
 }
-
-const SortableTableCell = ({ index, columnData, columnMeta, onSort }) => {
-  return (
-    <TableCell key={index} onClick={onSort}>
-      <TableSortLabel
-        active={columnMeta.name === columnData.name}
-        direction={columnMeta.direction || 'asc'}
-      >
-        <b>{columnData.label}</b>
-      </TableSortLabel>
-    </TableCell>
-  );
-};
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),

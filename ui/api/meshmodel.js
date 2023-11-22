@@ -44,6 +44,18 @@ export async function getComponentFromModelApi(model, pageSize = 'all', trim = t
   );
 }
 
+export async function getMeshModelsByRegistrants(page = 1, pageSize = 'all', registrant) {
+  return await promisifiedDataFetch(
+    `${MESHMODEL_ENDPOINT}?page=${page}&pagesize=${pageSize}&registrant=${registrant}`,
+  );
+}
+
+export async function getRelationshipFromModelApi(model, pageSize = 'all', trim = true) {
+  return await promisifiedDataFetch(
+    `${MESHMODEL_ENDPOINT}/${model}/relationships?pagesize=${pageSize}&trim=${trim}`,
+  );
+}
+
 export async function getDuplicateModels(model, version) {
   return await promisifiedDataFetch(`${MESHMODEL_ENDPOINT}/${model}?version=${version}      `);
 }
@@ -53,6 +65,13 @@ export async function getDuplicateComponents(componentKind, apiVersion, modelNam
     `${COMPONENTS_ENDPOINT}/${componentKind}?apiVersion=${apiVersion}&?model=${modelName}`,
   );
 }
+
+export async function getMeshModelRegistrants(page = 1, pageSize = 'all') {
+  return await promisifiedDataFetch(
+    `/api/meshmodels/registrants?page=${page}&pageSize=${pageSize}`,
+  );
+}
+
 export async function getVersionedComponentFromModel(
   model,
   version,

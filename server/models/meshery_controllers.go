@@ -73,11 +73,13 @@ func NewMesheryControllersHelper(log logger.Handler, operatorDepConfig controlle
 // updating the map. The presence of a handler for a context in a map indicate that
 // the meshsync data for that context is properly being handled
 func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControllersHelper {
+	fmt.Println("''''''''''''''ds'", mch.ctxControllerHandlersMap)
 	// only checking those contexts whose MesheryConrollers are active
-	go func (mch *MesheryControllersHelper) {
+	go func(mch *MesheryControllersHelper) {
 		mch.mu.Lock()
 		defer mch.mu.Unlock()
 		for ctxID, controllerHandlers := range mch.ctxControllerHandlersMap {
+			fmt.Println("test-------------2")
 			if _, ok := mch.ctxMeshsyncDataHandlerMap[ctxID]; !ok {
 				// brokerStatus := controllerHandlers[MesheryBroker].GetStatus()
 				// do something if broker is being deployed , maybe try again after sometime
@@ -89,6 +91,7 @@ func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControl
 					mch.log.Info(fmt.Sprintf("Meshery Broker unreachable for Kubernetes context (%v)", ctxID))
 					continue
 				}
+				fmt.Println("test-------------3")
 				mch.log.Info(fmt.Sprintf("Connected to Meshery Broker (%s) for Kubernetes context (%s)", brokerEndpoint, ctxID))
 				brokerHandler, err := nats.New(nats.Options{
 					// URLS: []string{"localhost:4222"},
@@ -99,8 +102,10 @@ func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControl
 					ReconnectWait:  2 * time.Second,
 					MaxReconnect:   60,
 				})
+				fmt.Println("test-------------4")
 				if err != nil {
 					mch.log.Warn(err)
+					fmt.Println("test-------------5")
 					mch.log.Info(fmt.Sprintf("MeshSync not configured for Kubernetes context (%v) due to '%v'", ctxID, err.Error()))
 					continue
 				}
@@ -116,6 +121,7 @@ func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControl
 				mch.log.Info(fmt.Sprintf("MeshSync connected for Kubernetes context (%s)", ctxID))
 			}
 		}
+		fmt.Println("EXIT====================+++++++++++++")
 	}(mch)
 
 	return mch
@@ -125,6 +131,7 @@ func (mch *MesheryControllersHelper) UpdateMeshsynDataHandlers() *MesheryControl
 // 1. the config is valid
 // 2. if it is not already attached
 func (mch *MesheryControllersHelper) UpdateCtxControllerHandlers(ctxs []K8sContext) *MesheryControllersHelper {
+	fmt.Println("test========================................")
 	go func(mch *MesheryControllersHelper) {
 		mch.mu.Lock()
 		defer mch.mu.Unlock()
@@ -154,6 +161,7 @@ func (mch *MesheryControllersHelper) UpdateCtxControllerHandlers(ctxs []K8sConte
 // for whom MesheryControllers are attached
 // should be called after UpdateCtxControllerHandlers
 func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(ot *OperatorTracker) *MesheryControllersHelper {
+	fmt.Println("test========================")
 	go func(mch *MesheryControllersHelper) {
 		mch.mu.Lock()
 		defer mch.mu.Unlock()
@@ -210,6 +218,7 @@ func (ot *OperatorTracker) IsUndeployed(ctxID string) bool {
 // looks at the status of Meshery Operator for each cluster and takes necessary action.
 // it will deploy the operator only when it is in NotDeployed state
 func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTracker) *MesheryControllersHelper {
+	fmt.Println("test========================.//////////////////////")
 	if ot.DisableOperator { //Return true everytime so that operators stay in undeployed state across all contexts
 		return mch
 	}
@@ -228,6 +237,24 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 		}
 	}(mch)
 
+	return mch
+}
+
+func (mch *MesheryControllersHelper) UndeployDeployedOperators(ot *OperatorTracker) *MesheryControllersHelper {
+	go func(mch *MesheryControllersHelper) {
+		mch.mu.Lock()
+		defer mch.mu.Unlock()
+		for ctxID, ctrlHandler := range mch.ctxControllerHandlersMap {
+			if oprStatus, ok := mch.ctxOperatorStatusMap[ctxID]; ok {
+				if oprStatus != controllers.Undeployed {
+					err := ctrlHandler[MesheryOperator].Undeploy()
+					if err != nil {
+						mch.log.Error(err)
+					}
+				}
+			}
+		}
+	}(mch)
 	return mch
 }
 

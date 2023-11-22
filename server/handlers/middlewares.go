@@ -6,13 +6,22 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"sync"
 
+	"github.com/gofrs/uuid"
+	"github.com/layer5io/meshery/server/machines"
+	"github.com/layer5io/meshery/server/machines/kubernetes"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
 const providerQParamName = "provider"
+
+type ConnectionToStateMachineInstanceTracker struct {
+	ConnectToInstanceMap map[uuid.UUID]*machines.StateMachine
+	mx                   sync.RWMutex
+}
 
 // ProviderMiddleware is a middleware to validate if a provider is set
 func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
@@ -115,15 +124,17 @@ func (h *Handler) validateAuth(provider models.Provider, req *http.Request) bool
 
 // MesheryControllersMiddleware is a middleware that is responsible for handling meshery controllers(operator, meshsync and broker) related stuff such as
 // getting status, reconciling their deployments etc.
+
+// SHOULD GO AWAY AS THIS LOGIC WILL BE HANDLED IN THE CONNECTED STATE
 func (h *Handler) MesheryControllersMiddleware(next func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider)) func(http.ResponseWriter, *http.Request, *models.Preference, *models.User, models.Provider) {
 	return func(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 		ctx := req.Context()
-		ctx, err := MesheryControllersMiddleware(ctx, h)
-		if err != nil {
-			h.log.Error(err)
-			next(w, req, prefObj, user, provider)
-			return
-		}
+		// ctx, err := MesheryControllersMiddleware(ctx, h)
+		// if err != nil {
+		// 	h.log.Error(err)
+		// 	next(w, req, prefObj, user, provider)
+		// 	return
+		// }
 		req1 := req.WithContext(ctx)
 		next(w, req1, prefObj, user, provider)
 	}
@@ -193,7 +204,9 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		ctx = context.WithValue(ctx, models.UserCtxKey, user)
 		ctx = context.WithValue(ctx, models.RegistryManagerKey, h.registryManager)
 		ctx = context.WithValue(ctx, models.HandlerKey, h)
+		ctx = context.WithValue(ctx, models.SystemIDKey, h.SystemID)
 		req1 := req.WithContext(ctx)
+
 		next(w, req1, prefObj, user, provider)
 	})
 }
@@ -212,78 +225,114 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 		logrus.Error(err)
 		return nil, err
 	}
+	userUUID := uuid.FromStringOrNil(user.ID)
+	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
+	connectedK8sContexts, err := provider.LoadAllK8sContext(token)
 
-	contexts, err := provider.LoadAllK8sContext(token)
-	if err != nil || len(contexts) == 0 { //Try to load the contexts when there are no contexts available
+	k8sContextPassedByUser := []models.K8sContext{}
+	k8sContextsFromKubeConfig := []*models.K8sContext{}
+
+	if err != nil || len(connectedK8sContexts) == 0 {
 		logrus.Warn("failed to get kubernetes contexts")
-		// only the contexts that are successfully pinged will be persisted
-		contexts, err = h.LoadContextsAndPersist(user.UserID, token, provider)
+		k8sContextsFromKubeConfig, err = h.DiscoverK8SContextFromKubeConfig(user.ID, token, provider)
 		if err != nil {
 			logrus.Warn("failed to load kubernetes contexts: ", err.Error())
 		}
 	}
 
-	// register kubernetes components
-	h.K8sCompRegHelper.UpdateContexts(contexts).RegisterComponents(contexts, []models.K8sRegistrationFunction{RegisterK8sMeshModelComponents}, h.registryManager, h.config.EventBroadcaster, provider, user.ID, true)
-	go h.config.MeshModelSummaryChannel.Publish()
-
-	// Identify custom contexts, if provided
-	// k8sContextIDs := req.URL.Query()["contexts"]
-	k8scontexts := []models.K8sContext{}    //The contexts passed by the user
-	allk8scontexts := []models.K8sContext{} //All contexts to track all the connected clusters
-
-	if len(k8sContextIDs) == 0 { //This is for backwards compabitibility with clients. This will work fine for single cluster.
-		//For multi cluster, it is expected of clients to explicitly pass the k8scontextID.
-		//So for now, randomly one of the contexts from available ones will be pushed to the array to stop anything from breaking in case of no contexts received(with single cluster, the behavior would be as expected).
-		if len(contexts) > 0 && contexts[0] != nil {
-			k8scontexts = append(k8scontexts, *contexts[0])
-		}
-	} else if len(k8sContextIDs) == 1 && k8sContextIDs[0] == "all" {
-		for _, c := range contexts {
+	if len(k8sContextIDs) == 1 && k8sContextIDs[0] == "all" {
+		for _, c := range connectedK8sContexts {
 			if c != nil {
-				k8scontexts = append(k8scontexts, *c)
+				k8sContextPassedByUser = append(k8sContextPassedByUser, *c)
 			}
 		}
 	} else {
 		for _, kctxID := range k8sContextIDs {
-			for _, c := range contexts {
+			for _, c := range connectedK8sContexts {
 				if c != nil && c.ID == kctxID {
-					k8scontexts = append(k8scontexts, *c)
+					k8sContextPassedByUser = append(k8sContextPassedByUser, *c)
 				}
 			}
-			// kctx, err := provider.GetK8sContext(token, kctxID)
-			// if err != nil {
-			// 	logrus.Warn("invalid context ID found")
-			// 	continue
-			// }
-			// k8scontexts = append(k8scontexts, kctx)
-		}
-	}
-	for _, k8scontext := range contexts {
-		if k8scontext != nil {
-			allk8scontexts = append(allk8scontexts, *k8scontext)
 		}
 	}
 
-	ctx = context.WithValue(ctx, models.KubeClustersKey, k8scontexts)
-	ctx = context.WithValue(ctx, models.AllKubeClusterKey, allk8scontexts)
-	return ctx, nil
-	// req1 := req.WithContext(ctx)
-	// next(w, req1, prefObj, user, provider)
-}
+	ctx = context.WithValue(ctx, models.KubeClustersKey, k8sContextPassedByUser)
+	ctx = context.WithValue(ctx, models.AllKubeClusterKey, connectedK8sContexts)
 
-func MesheryControllersMiddleware(ctx context.Context, h *Handler) (context.Context, error) {
-	mk8sContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
-	if !ok || len(mk8sContexts) == 0 {
-		return ctx, ErrInvalidK8SConfigNil
+	for _, k8sContext := range connectedK8sContexts {
+		machineCtx := &kubernetes.MachineCtx{
+			K8sContext:         *k8sContext,
+			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
+			K8sCompRegHelper:   h.K8sCompRegHelper,
+			OperatorTracker:    h.config.OperatorTracker,
+			Provider:           provider,
+			K8scontextChannel:  h.config.K8scontextChannel,
+			EventBroadcaster:   h.config.EventBroadcaster,
+			RegistryManager:    h.registryManager,
+		}
+		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
+		smInstanceTracker.mx.Lock()
+		inst, ok := smInstanceTracker.ConnectToInstanceMap[connectionUUID]
+		if !ok {
+			inst, err = InitializeMachineWithContext(
+				machineCtx,
+				ctx,
+				connectionUUID,
+				smInstanceTracker,
+				h.log,
+				provider,
+			)
+			if err != nil {
+				h.log.Error(err)
+			}
+		}
+		inst.ResetState()
+		go func(inst *machines.StateMachine) {
+			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
+			if err != nil {
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userUUID, event)
+			}
+		}(inst)
+		smInstanceTracker.mx.Unlock()
 	}
 
-	// 1. get the status of controller deployments for each cluster and make sure that all the contexts have meshery controllers deployed
-	ctrlHlpr := h.MesheryCtrlsHelper.UpdateCtxControllerHandlers(mk8sContexts).UpdateOperatorsStatusMap(h.config.OperatorTracker).DeployUndeployedOperators(h.config.OperatorTracker)
-	ctx = context.WithValue(ctx, models.MesheryControllerHandlersKey, h.MesheryCtrlsHelper.GetControllerHandlersForEachContext())
-
-	// 2. make sure that the data from meshsync for all the clusters are persisted properly
-	ctrlHlpr.UpdateMeshsynDataHandlers()
-	ctx = context.WithValue(ctx, models.MeshSyncDataHandlersKey, h.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext())
+	for _, k8sContext := range k8sContextsFromKubeConfig {
+		machineCtx := &kubernetes.MachineCtx{
+			K8sContext:         *k8sContext,
+			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
+			K8sCompRegHelper:   h.K8sCompRegHelper,
+			OperatorTracker:    h.config.OperatorTracker,
+			Provider:           provider,
+			K8scontextChannel:  h.config.K8scontextChannel,
+			EventBroadcaster:   h.config.EventBroadcaster,
+			RegistryManager:    h.registryManager,
+		}
+		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
+		smInstanceTracker.mx.Lock()
+		inst, ok := smInstanceTracker.ConnectToInstanceMap[connectionUUID]
+		if !ok {
+			inst, err = InitializeMachineWithContext(
+				machineCtx,
+				ctx,
+				connectionUUID,
+				smInstanceTracker,
+				h.log,
+				provider,
+			)
+			if err != nil {
+				h.log.Error(err)
+			}
+		}
+		inst.ResetState()
+		go func(inst *machines.StateMachine) {
+			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
+			if err != nil {
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userUUID, event)
+			}
+		}(inst)
+		smInstanceTracker.mx.Unlock()
+	}
 	return ctx, nil
 }

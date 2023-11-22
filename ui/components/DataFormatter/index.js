@@ -1,9 +1,10 @@
 import * as React from 'react';
-import { Typography } from '@material-ui/core';
+import { Tooltip, Typography, Grid, Box, IconButton, useTheme } from '@material-ui/core';
 import { Launch as LaunchIcon } from '@material-ui/icons';
 import _ from 'lodash';
 import { useContext } from 'react';
 import { isEmptyAtAllDepths } from '../../utils/objects';
+import CopyIcon from '../../assets/icons/CopyIcon';
 
 const FormatterContext = React.createContext({
   propertyFormatters: {},
@@ -15,6 +16,81 @@ const Level = ({ children }) => {
   return <LevelContext.Provider value={level + 1}> {children} </LevelContext.Provider>;
 };
 
+export const formatDate = (date) => {
+  const options = { year: 'numeric', month: 'short', day: 'numeric' };
+  const formattedDate = new Date(date).toLocaleDateString('en-US', options);
+  return formattedDate;
+};
+
+export const formatTime = (date) => {
+  const options = { hour: 'numeric', minute: 'numeric', second: 'numeric' };
+  const formattedTime = new Date(date).toLocaleTimeString('en-US', options);
+  return formattedTime;
+};
+
+export const formatDateTime = (date) => {
+  const formattedDate = formatDate(date);
+  const formattedTime = formatTime(date);
+  return `${formattedDate} ${formattedTime || ''}`;
+};
+
+export const FormattedDate = ({ date }) => {
+  return (
+    <Tooltip title={formatDateTime(date)} placement="top">
+      <div>
+        <SectionBody
+          body={formatDate(date)}
+          style={{
+            textTransform: 'capitalize',
+          }}
+        ></SectionBody>
+      </div>
+    </Tooltip>
+  );
+};
+
+export const FormatId = ({ id }) => {
+  const theme = useTheme();
+  // truncates the id to 15 characters and adds an ellipsis and adds a clicpboard copy button
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(id);
+  };
+
+  const truncatedId = _.truncate(id, { length: 15 });
+  return (
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+      <Tooltip title={id} placement="top">
+        <Typography
+          variant="body2"
+          style={{
+            cursor: 'pointer',
+            color: theme.palette.text.secondary,
+          }}
+        >
+          {truncatedId}
+        </Typography>
+      </Tooltip>
+      <Tooltip title="Copy" placement="top">
+        <IconButton onClick={copyToClipboard} style={{ padding: '0.25rem' }}>
+          <CopyIcon width="1rem" height="1rem" />
+        </IconButton>
+      </Tooltip>
+    </Box>
+  );
+};
+
+export const createColumnUiSchema = ({ metadata, numCols }) => {
+  return Object.keys(metadata).reduce((schema, key) => {
+    schema[key] = Object.keys(numCols).reduce(
+      (colSpan, key) => ({
+        ...colSpan,
+        [key]: Math.floor(12 / numCols[key]),
+      }),
+      {},
+    );
+    return schema;
+  }, {});
+};
 export const Link = ({ href, title }) => {
   return (
     <a
@@ -78,21 +154,38 @@ export const TextWithLinks = ({ text, ...typographyProps }) => {
 };
 
 export const KeyValue = ({ Key, Value }) => {
+  const theme = useTheme();
   return (
     <div
       style={{
         display: 'flex',
-        alignItems: 'center',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
         gap: '0.25rem',
         flexWrap: 'wrap',
-        marginBlock: '0.5rem',
+        marginBottom: '1.5rem',
+        fontFamily: 'Qanelas Soft, sans-serif',
       }}
     >
       <SectionBody
-        body={Key.replaceAll('_', ' ') + ':'}
-        style={{ fontWeight: 'bold', textTransform: 'capitalize' }}
-      />{' '}
-      <SectionBody body={Value} />
+        body={Key.replaceAll('_', ' ')}
+        style={{
+          textTransform: 'capitalize',
+          color: theme.palette.text.primary,
+        }}
+      />
+      {React.isValidElement(Value) ? (
+        Value
+      ) : (
+        <SectionBody
+          body={Value}
+          style={{
+            color: theme.palette.text.secondary,
+            textOverflow: 'ellipsis',
+            wordBreak: 'break-all',
+          }}
+        />
+      )}
     </div>
   );
 };
@@ -120,12 +213,13 @@ export const SectionHeading = ({ children, ...props }) => {
 };
 
 export const SectionBody = ({ body, style = {} }) => {
+  const theme = useTheme();
   return (
     <TextWithLinks
       variant="body1"
       style={{
-        // textTransform: 'capitalize',
         wordWrap: 'break-word',
+        color: theme.palette.text.secondary,
         ...style,
       }}
       text={body}
@@ -157,7 +251,7 @@ export function reorderObjectProperties(obj, order) {
   return { ...orderedProperties, ...remainingProperties };
 }
 
-const DynamicFormatter = ({ data }) => {
+const DynamicFormatter = ({ data, uiSchema }) => {
   const { propertyFormatters } = useContext(FormatterContext);
   const level = useContext(LevelContext);
   if (_.isString(data)) {
@@ -173,15 +267,26 @@ const DynamicFormatter = ({ data }) => {
         return null;
       }
       if (propertyFormatters?.[title]) {
-        return propertyFormatters[title](data, data);
+        return (
+          <Grid item key={title} sm={12} {...(uiSchema?.[title] || {})}>
+            {propertyFormatters[title](data, data)}
+          </Grid>
+        );
       }
       if (typeof data == 'string') {
-        return <KeyValue key={title} Key={title} Value={data} />;
+        return (
+          <Grid item key={title} sm={12} {...(uiSchema?.[title] || {})}>
+            <KeyValue key={title} Key={title} Value={data} />
+          </Grid>
+        );
       }
 
       return (
-        <div
+        <Grid
+          item
           key={title}
+          sm={12}
+          {...(uiSchema?.[title] || {})}
           style={{
             marginBlock: '0.25rem',
           }}
@@ -190,7 +295,7 @@ const DynamicFormatter = ({ data }) => {
           <Level>
             <DynamicFormatter level={level + 1} data={data} />
           </Level>
-        </div>
+        </Grid>
       );
     });
   }
@@ -198,7 +303,7 @@ const DynamicFormatter = ({ data }) => {
   return null;
 };
 
-export const FormatStructuredData = ({ propertyFormatters = {}, data }) => {
+export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema }) => {
   if (!data || isEmptyAtAllDepths(data)) {
     return null;
   }
@@ -210,7 +315,9 @@ export const FormatStructuredData = ({ propertyFormatters = {}, data }) => {
           propertyFormatters: propertyFormatters,
         }}
       >
-        <DynamicFormatter data={data} />
+        <Grid container>
+          <DynamicFormatter data={data} uiSchema={uiSchema} />
+        </Grid>
       </FormatterContext.Provider>
     </>
   );
