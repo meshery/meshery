@@ -1,26 +1,26 @@
 ---
 layout: default
-title: mesheryctl-system-provider-view
-permalink: reference/mesheryctl/system/provider/view
-redirect_from: reference/mesheryctl/system/provider/view/
+title: mesheryctl-exp-model-view
+permalink: reference/mesheryctl/exp/model/view
+redirect_from: reference/mesheryctl/exp/model/view/
 type: reference
 display-title: "false"
 language: en
-command: system
-subcommand: provider
+command: exp
+subcommand: model
 ---
 
-# mesheryctl system provider view
+# mesheryctl exp model view
 
-view provider
+view model
 
 ## Synopsis
 
-View provider of context in focus
+view a model queried by its name
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system provider view [flags]
+mesheryctl exp model view [flags]
 
 </div>
 </pre> 
@@ -30,7 +30,7 @@ mesheryctl system provider view [flags]
 View current provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system provider view
+mesheryctl system model view [model-name]
 
 </div>
 </pre> 
@@ -39,8 +39,8 @@ mesheryctl system provider view
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -a, --all    Show provider for all contexts
-  -h, --help   help for view
+  -h, --help                   help for view
+  -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
 
 </div>
 </pre>
@@ -49,10 +49,8 @@ mesheryctl system provider view
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string    path to config file (default "/home/runner/.meshery/config.yaml")
-  -c, --context string   (optional) temporarily change the current context.
-  -v, --verbose          verbose output
-  -y, --yes              (optional) assume yes for user interactive prompts.
+      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+  -v, --verbose         verbose output
 
 </div>
 </pre>

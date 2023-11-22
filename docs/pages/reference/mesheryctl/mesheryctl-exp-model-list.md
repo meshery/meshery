@@ -1,60 +1,44 @@
 ---
 layout: default
-title: mesheryctl-pattern
-permalink: reference/mesheryctl/pattern
-redirect_from: reference/mesheryctl/pattern/
+title: mesheryctl-exp-model-list
+permalink: reference/mesheryctl/exp/model/list
+redirect_from: reference/mesheryctl/exp/model/list/
 type: reference
 display-title: "false"
 language: en
-command: pattern
-subcommand: nil
+command: exp
+subcommand: model
 ---
 
-# mesheryctl pattern
+# mesheryctl exp model list
 
-Cloud Native Patterns Management
+list models
 
 ## Synopsis
 
-Manage service meshes using predefined patterns
+list name of all registered models
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern [flags]
+mesheryctl exp model list [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Apply pattern file
+View list of models
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern apply --file [path to pattern file | URL of the file]
+mesheryctl system model list
 
 </div>
 </pre> 
 
-Delete pattern file
+View list of models with specified page number (25 models per page)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern delete --file [path to pattern file]
-
-</div>
-</pre> 
-
-View pattern file
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl pattern view [pattern name | ID]
-
-</div>
-</pre> 
-
-List all patterns
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl pattern list
+mesheryctl system model list --page 2
 
 </div>
 </pre> 
@@ -63,8 +47,8 @@ mesheryctl pattern list
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help           help for pattern
-  -t, --token string   Path to token file default from current context
+  -h, --help       help for list
+  -p, --page int   (optional) List next set of models with --page (default = 1) (default 1)
 
 </div>
 </pre>
