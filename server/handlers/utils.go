@@ -8,6 +8,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/logger"
 )
 
@@ -46,21 +47,23 @@ func getPaginationParams(req *http.Request) (page, offset, limit int, search, or
 func InitializeMachineWithContext(
 	machineCtx *kubernetes.MachineCtx,
 	ctx context.Context,
-	connectionID uuid.UUID, 
-	smInstanceTracker *ConnectionToStateMachineInstanceTracker, 
-	log logger.Handler, 
-	) (*machines.StateMachine, error) {
+	connectionID uuid.UUID,
+	smInstanceTracker *ConnectionToStateMachineInstanceTracker,
+	log logger.Handler,
+	provider models.Provider,
+) (*machines.StateMachine, error) {
 
-		inst, err := kubernetes.NewK8SMachine(connectionID.String(), log)
-		if err != nil {
-			log.Error(err)
-			return nil, err
-		}
-		_, err = inst.Start(ctx, machineCtx, log, kubernetes.AssignInitialCtx)
-		smInstanceTracker.ConnectToInstanceMap[connectionID] = inst
-		if err != nil {
-			return nil, err
-		}
+	inst, err := kubernetes.NewK8SMachine(connectionID.String(), log)
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+	inst.Provider = provider
+	_, err = inst.Start(ctx, machineCtx, log, kubernetes.AssignInitialCtx)
+	smInstanceTracker.ConnectToInstanceMap[connectionID] = inst
+	if err != nil {
+		return nil, err
+	}
 
 	return inst, nil
 }

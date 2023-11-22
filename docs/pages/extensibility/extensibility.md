@@ -8,9 +8,26 @@ redirect_from:
   - reference/extensibility
   - extensibility/
 language: en
+list: exclude
 ---
 
 Meshery has an extensible architecture with several extension points. Meshery provides several extension points for working with different cloud and cloud native infrastructure via [adapters]({{site.baseurl}}/extensibility/adapters), different [load generators]({{site.baseurl}}/extensibility/load-generators) and different [providers]({{site.baseurl}}/extensibility/providers). Meshery also offers a REST API.
+
+## Extensibility Topics
+
+{% assign sorted = site.pages | sort: "extensibility" %}
+
+<ul>
+    {% for item in sorted %}
+    {% if item.type=="Extensibility" and item.list!="exclude" and item.language !="es"  -%}
+      <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+      {% if item.abstract != " " %}
+              -  {{ item.abstract }}
+            {% endif %}
+            </li>
+            {% endif %}
+    {% endfor %}
+</ul>
 
 **Guiding Principles for Extensibility**
 
@@ -39,3 +56,4 @@ The following points of extension are currently incorporated into Meshery.
 1. [REST API](/extensibility/api#rest)
 1. [UI Plugins](extensibility/ui)
 1. [Integrations](/extensibility/integrations)
+

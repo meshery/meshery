@@ -95,21 +95,21 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 			"error": err,
 		})
 	}
-	
+
 	description := fmt.Sprintf("Delete request received for kubernetes context \"%s\"", k8scontext.Name)
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
 	_ = provider.PersistEvent(event)
 
 	machineCtx := &kubernetes.MachineCtx{
-		K8sContext: k8scontext,
+		K8sContext:         k8scontext,
 		MesheryCtrlsHelper: h.MesheryCtrlsHelper,
-		K8sCompRegHelper: h.K8sCompRegHelper,
-		OperatorTracker: h.config.OperatorTracker,
-		Provider: provider,
-		K8scontextChannel: h.config.K8scontextChannel,
-		EventBroadcaster: h.config.EventBroadcaster,
-		RegistryManager: h.registryManager,
+		K8sCompRegHelper:   h.K8sCompRegHelper,
+		OperatorTracker:    h.config.OperatorTracker,
+		Provider:           provider,
+		K8scontextChannel:  h.config.K8scontextChannel,
+		EventBroadcaster:   h.config.EventBroadcaster,
+		RegistryManager:    h.registryManager,
 	}
 	smInstanceTracker.mx.Lock()
 	connectionUUID := uuid.FromStringOrNil(contextID)
@@ -121,14 +121,17 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 			connectionUUID,
 			smInstanceTracker,
 			h.log,
+			provider,
 		)
 		if err != nil {
 			h.log.Error(err)
 		}
 	}
-	event, err = inst.SendEvent(req.Context(), machines.Delete, nil)
-	h.log.Error(err)
-	h.log.Debug(event)
+	go func(inst *machines.StateMachine) {
+		event, err = inst.SendEvent(req.Context(), machines.Delete, nil)
+		h.log.Error(err)
+		h.log.Debug(event)
+	}(inst)
 	smInstanceTracker.mx.Unlock()
 
 	if err != nil {

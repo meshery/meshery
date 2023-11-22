@@ -14,7 +14,6 @@ import (
 	"github.com/layer5io/meshery/server/models/connections"
 	mcore "github.com/layer5io/meshery/server/models/meshmodel/core"
 
-
 	// for GKE kube API authentication
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 
@@ -119,14 +118,14 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			eventBuilder.ActedUpon(connection.ID)
 			status := connection.Status
 			machineCtx := &kubernetes.MachineCtx{
-				K8sContext: *ctx,
+				K8sContext:         *ctx,
 				MesheryCtrlsHelper: h.MesheryCtrlsHelper,
-				K8sCompRegHelper: h.K8sCompRegHelper,
-				OperatorTracker: h.config.OperatorTracker,
-				Provider: provider,
-				K8scontextChannel: h.config.K8scontextChannel,
-				EventBroadcaster: h.config.EventBroadcaster,
-				RegistryManager: h.registryManager,
+				K8sCompRegHelper:   h.K8sCompRegHelper,
+				OperatorTracker:    h.config.OperatorTracker,
+				Provider:           provider,
+				K8scontextChannel:  h.config.K8scontextChannel,
+				EventBroadcaster:   h.config.EventBroadcaster,
+				RegistryManager:    h.registryManager,
 			}
 
 			if status == connections.CONNECTED {
@@ -148,16 +147,19 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 					connection.ID,
 					smInstanceTracker,
 					h.log,
+					provider,
 				)
 				if err != nil {
 					h.log.Error(err)
 				}
 			}
-			event, err := inst.SendEvent(req.Context(), machines.StatusToEvent(status), nil)
-			if err != nil {
-				_ = provider.PersistEvent(event)
-				go h.config.EventBroadcaster.Publish(userID, event)
-			}
+			go func(inst *machines.StateMachine) {
+				event, err := inst.SendEvent(req.Context(), machines.StatusToEvent(status), nil)
+				if err != nil {
+					_ = provider.PersistEvent(event)
+					go h.config.EventBroadcaster.Publish(userID, event)
+				}
+			}(inst)
 		}
 
 		eventMetadata[ctx.Name] = metadata
@@ -315,7 +317,7 @@ func (h *Handler) K8sRegistrationHandler(w http.ResponseWriter, req *http.Reques
 
 func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, prov models.Provider) ([]*models.K8sContext, error) {
 	var contexts []*models.K8sContext
-	userUUID := uuid.FromStringOrNil(userID)
+	// userUUID := uuid.FromStringOrNil(userID)
 
 	// Get meshery instance ID
 	mid, ok := viper.Get("INSTANCE_ID").(*uuid.UUID)
@@ -329,9 +331,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 	}
 	kubeconfigSource := fmt.Sprintf("file://%s", filepath.Join(h.config.KubeConfigFolder, "config"))
 	data, err := utils.ReadFileSource(kubeconfigSource)
-	
-	eventBuilder := events.NewEvent().FromUser(userUUID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create").
-		WithDescription(fmt.Sprintf("Kubernetes config imported from %s.", kubeconfigSource)).WithSeverity(events.Informational)
+
 	eventMetadata := map[string]interface{}{}
 	metadata := map[string]interface{}{}
 	if err != nil {
@@ -360,22 +360,11 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 			return contexts, err
 		}
 		h.log.Debug(conn)
-		// updatedConnection, statusCode, err := prov.UpdateConnectionStatusByID(token, conn.ID, connections.CONNECTED)
-		// if err != nil || statusCode != http.StatusOK {
-		// 	logrus.Warn("failed to update connection status for connection id", conn.ID, "to", connections.CONNECTED)
-		// 	logrus.Debug("connection: ", updatedConnection)
-		// 	metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", cc.Name, cc.Server)
-		// 	metadata["error"] = err
-		// 	return contexts, err
-		// }
-		// h.config.K8scontextChannel.PublishContext()
+
 		cc.ConnectionID = conn.ID.String()
 		contexts = append(contexts, cc)
 		metadata["context"] = models.RedactCredentialsForContext(cc)
 		eventMetadata["in-cluster"] = metadata
-		event := eventBuilder.WithMetadata(eventMetadata).Build()
-		_ = prov.PersistEvent(event)
-		go h.config.EventBroadcaster.Publish(userUUID, event)
 		return contexts, nil
 	}
 
@@ -383,7 +372,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 	if err != nil {
 		return contexts, err
 	}
-	
+
 	ctxs := models.K8sContextsFromKubeconfig(prov, userID, h.config.EventBroadcaster, cfg, mid, eventMetadata)
 
 	// Do not persist the generated contexts
@@ -403,25 +392,9 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 		}
 		ctx.ConnectionID = conn.ID.String()
 		h.log.Debug(conn)
-		// updatedConnection, statusCode, err := prov.UpdateConnectionStatusByID(token, conn.ID, connections.CONNECTED)
-		// if err != nil || statusCode != http.StatusOK {
-		// 	logrus.Warn("failed to update connection status for connection id", conn.ID, "to", connections.CONNECTED)
-		// 	logrus.Debug("connection: ", updatedConnection)
-
-		// 	metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", ctx.Name, ctx.Server)
-		// 	metadata["error"] = err
-		// 	continue
-		// }
 
 		contexts = append(contexts, ctx)
 	}
-	// if len(contexts) > 0 {
-	// 	h.config.K8scontextChannel.PublishContext()
-	// }
-	event := eventBuilder.WithMetadata(eventMetadata).Build()
-	_ = prov.PersistEvent(event)
-	go h.config.EventBroadcaster.Publish(userUUID, event)
-
 	return contexts, nil
 }
 
@@ -442,34 +415,3 @@ func readK8sConfigFromBody(req *http.Request) (*[]byte, error) {
 	}
 	return &k8sConfigBytes, nil
 }
-
-
-// func buildK8sConnectionFromContext(context models.K8sContext) (conn *connections.Connection) {
-// 	metadata := map[string]string{
-// 		"id":                   context.ID,
-// 		"server":               context.Server,
-// 		"meshery_instance_id":  context.MesheryInstanceID.String(),
-// 		"deployment_type":      context.DeploymentType,
-// 		"version":              context.Version,
-// 		"name":                 context.Name,
-// 		"kubernetes_server_id": "", // assign afterwards
-// 	}
-	
-// 	conn = &connections.Connection{
-		
-// 	}
-
-// }
-// func writeDefK8sOnFileSystem(def string, path string) {
-// 	err := ioutil.WriteFile(path, []byte(def), 0777)
-// 	if err != nil {
-// 		fmt.Println("err def: ", err.Error())
-// 	}
-// }
-
-// func writeSchemaK8sFileSystem(schema string, path string) {
-// 	err := ioutil.WriteFile(path, []byte(schema), 0777)
-// 	if err != nil {
-// 		fmt.Println("err schema: ", err.Error())
-// 	}
-// }

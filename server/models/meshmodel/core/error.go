@@ -3,7 +3,7 @@ package core
 import "github.com/layer5io/meshkit/errors"
 
 const (
-	ErrCreatingKubernetesComponentsCode = "replace_me"
+	ErrCreatingKubernetesComponentsCode = "1545"
 )
 
 func ErrCreatingKubernetesComponents(err error, ctxID string) error {

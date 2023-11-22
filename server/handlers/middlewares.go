@@ -261,14 +261,14 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 
 	for _, k8sContext := range connectedK8sContexts {
 		machineCtx := &kubernetes.MachineCtx{
-			K8sContext: *k8sContext,
+			K8sContext:         *k8sContext,
 			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
-			K8sCompRegHelper: h.K8sCompRegHelper,
-			OperatorTracker: h.config.OperatorTracker,
-			Provider: provider,
-			K8scontextChannel: h.config.K8scontextChannel,
-			EventBroadcaster: h.config.EventBroadcaster,
-			RegistryManager: h.registryManager,
+			K8sCompRegHelper:   h.K8sCompRegHelper,
+			OperatorTracker:    h.config.OperatorTracker,
+			Provider:           provider,
+			K8scontextChannel:  h.config.K8scontextChannel,
+			EventBroadcaster:   h.config.EventBroadcaster,
+			RegistryManager:    h.registryManager,
 		}
 		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
 		smInstanceTracker.mx.Lock()
@@ -280,30 +280,33 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 				connectionUUID,
 				smInstanceTracker,
 				h.log,
+				provider,
 			)
 			if err != nil {
 				h.log.Error(err)
 			}
 		}
 		inst.ResetState()
-		event, err := inst.SendEvent(ctx, machines.Discovery, nil)
-		if err != nil {
-			_ = provider.PersistEvent(event)
-			go h.config.EventBroadcaster.Publish(userUUID, event)
-		}
+		go func(inst *machines.StateMachine) {
+			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
+			if err != nil {
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userUUID, event)
+			}
+		}(inst)
 		smInstanceTracker.mx.Unlock()
 	}
-	
+
 	for _, k8sContext := range k8sContextsFromKubeConfig {
 		machineCtx := &kubernetes.MachineCtx{
-			K8sContext: *k8sContext,
+			K8sContext:         *k8sContext,
 			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
-			K8sCompRegHelper: h.K8sCompRegHelper,
-			OperatorTracker: h.config.OperatorTracker,
-			Provider: provider,
-			K8scontextChannel: h.config.K8scontextChannel,
-			EventBroadcaster: h.config.EventBroadcaster,
-			RegistryManager: h.registryManager,
+			K8sCompRegHelper:   h.K8sCompRegHelper,
+			OperatorTracker:    h.config.OperatorTracker,
+			Provider:           provider,
+			K8scontextChannel:  h.config.K8scontextChannel,
+			EventBroadcaster:   h.config.EventBroadcaster,
+			RegistryManager:    h.registryManager,
 		}
 		connectionUUID := uuid.FromStringOrNil(k8sContext.ConnectionID)
 		smInstanceTracker.mx.Lock()
@@ -315,17 +318,20 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 				connectionUUID,
 				smInstanceTracker,
 				h.log,
+				provider,
 			)
 			if err != nil {
 				h.log.Error(err)
 			}
 		}
 		inst.ResetState()
-		event, err := inst.SendEvent(ctx, machines.Discovery, nil)
-		if err != nil {
-			_ = provider.PersistEvent(event)
-			go h.config.EventBroadcaster.Publish(userUUID, event)
-		}
+		go func(inst *machines.StateMachine) {
+			event, err := inst.SendEvent(ctx, machines.Discovery, nil)
+			if err != nil {
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userUUID, event)
+			}
+		}(inst)
 		smInstanceTracker.mx.Unlock()
 	}
 	return ctx, nil

@@ -11,7 +11,7 @@ Meshery tracks operations that you perform on infrastructurees and their workloa
 
 #### Acknowledging and dismissing notifications
 
-Depending upon the severity of the notification, many notifications are informational and can readily be dismissed after reading. Some notifications include actionable alerts. Learn more in "[Managing Events with Notification Center](managing-notifications)".
+Depending upon the severity of the notification, many notifications are informational and can readily be dismissed after reading. Some notifications include actionable alerts. Learn more in "[Managing Events with Notification Center]({{site.baseurl}}/guides/events-management)".
 
 #### Taking action on alerts
 

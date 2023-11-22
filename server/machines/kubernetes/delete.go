@@ -2,13 +2,11 @@ package kubernetes
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/models/events"
 )
 
@@ -40,19 +38,9 @@ func (da *DeleteAction) Execute(ctx context.Context, machineCtx interface{}) (ma
 		machinectx.MesheryCtrlsHelper.UpdateCtxControllerHandlers(k8sContexts)
 	})
 
-	token, _ := ctx.Value(models.TokenCtxKey).(string)
-
-	connection, statusCode, err := machinectx.Provider.UpdateConnectionStatusByID(token, uuid.FromStringOrNil(machinectx.K8sContext.ConnectionID), connections.DELETED)
-
-	if err != nil {
-		return machines.NoOp, eventBuilder.WithDescription(fmt.Sprintf("Delete operation succeeded but failed to update the record for the connection with context \"%s\" at %s", machinectx.K8sContext.Name, machinectx.K8sContext.Server)).WithMetadata(map[string]interface{}{"error": err}).Build(), err
-	}
-
 	go models.FlushMeshSyncData(ctx, machinectx.K8sContext, machinectx.Provider, machinectx.EventBroadcaster, user.ID, sysID)
 
-	machinectx.log.Debug("deleted connection: ", connection, "HTTP status", statusCode)
-
-	return machines.NoOp, eventBuilder.Build(), nil
+	return machines.NoOp, nil, nil
 }
 
 func (da *DeleteAction) ExecuteOnExit(ctx context.Context, machineCtx interface{}) (machines.EventType, *events.Event, error) {

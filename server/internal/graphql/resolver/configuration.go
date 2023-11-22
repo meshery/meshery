@@ -9,10 +9,10 @@ import (
 )
 
 var (
-	patterns     *model.PatternPageResult
-	filters      *model.FilterPage
-	conf         *model.ConfigurationPage
-	err          error
+	patterns *model.PatternPageResult
+	filters  *model.FilterPage
+	conf     *model.ConfigurationPage
+	err      error
 )
 
 func (r *Resolver) subscribeConfiguration(ctx context.Context, provider models.Provider, user models.User, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error) {
@@ -39,8 +39,6 @@ func (r *Resolver) subscribeConfiguration(ctx context.Context, provider models.P
 					Patterns: patterns,
 				}
 				configuration <- conf
-
-
 
 			case <-chf:
 				filters, err = r.fetchFilters(ctx, provider, filterSelector)

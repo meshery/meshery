@@ -151,7 +151,6 @@ func main() {
 	}
 	defer preferencePersister.ClosePersister()
 
-	// eventsPersister, err := models.
 	dbHandler := models.GetNewDBInstance()
 	regManager, err := meshmodel.NewRegistryManager(dbHandler)
 	if err != nil {
