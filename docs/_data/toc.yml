@@ -125,19 +125,6 @@
             url: concepts/credentials
         - title: "Workspaces"
           url: concepts/workspaces
-- title: ⚙️ Tasks (all)
-  url: tasks
-  links:
-    - title: Infrastructure Management
-      url: tasks/infrastructure-management
-    - title: Filter Management
-      url: tasks/filter-management
-    - title: Lifecycle Management
-      url: tasks/lifecycle-management
-    - title: Pattern Management
-      url: tasks/pattern-management
-    - title: Performance Management
-      url: tasks/performance-management
 #    - title: Meshery and SMI Management
 #      url: tasks/service-mesh-interface  
 # - title: 📑 Features
@@ -213,6 +200,19 @@
           url: guides/mesheryctl/running-system-checks-using-mesheryctl
     - title: Using Multiple Meshery Adapters
       url: guides/multiple-adapters
+- title: ⚙️ Tasks (all)
+  url: tasks
+  links:
+    - title: Infrastructure Management
+      url: tasks/infrastructure-management
+    - title: Filter Management
+      url: tasks/filter-management
+    - title: Lifecycle Management
+      url: tasks/lifecycle-management
+    - title: Pattern Management
+      url: tasks/pattern-management
+    - title: Performance Management
+      url: tasks/performance-management
 - title: 🛠 Extensibility
   url: extensibility
   links:
