@@ -5,9 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
-	"os"
-	"path/filepath"
 	"strings"
 
 	"cuelang.org/go/cue"
@@ -33,7 +30,6 @@ import (
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-var k8sMeshModelMetadata = make(map[string]interface{})
 
 type crd struct {
 	Items []crdhelper `json:"items"`
@@ -84,12 +80,12 @@ func writeK8sMetadata(comp *v1alpha1.ComponentDefinition, reg *meshmodel.Registr
 	})
 	//If component was not available in the registry, then use the generic model level metadata
 	if len(ent) == 0 {
-		putils.MergeMaps(comp.Metadata, k8sMeshModelMetadata)
+		putils.MergeMaps(comp.Metadata, models.K8sMeshModelMetadata)
 		mutil.WriteSVGsOnFileSystem(comp)
 	} else {
 		existingComp, ok := ent[0].(v1alpha1.ComponentDefinition)
 		if !ok {
-			putils.MergeMaps(comp.Metadata, k8sMeshModelMetadata)
+			putils.MergeMaps(comp.Metadata, models.K8sMeshModelMetadata)
 			return
 		}
 		putils.MergeMaps(comp.Metadata, existingComp.Metadata)
@@ -366,25 +362,7 @@ func getAPIRes(cli *kubernetes.Client) (map[string]v1.APIResource, error) {
 	return apiRes, nil
 }
 
-const k8sMeshModelPath = "../meshmodel/kubernetes/model_template.json"
 
-// Caches k8sMeshModel metadatas in memory to use at the time of dynamic k8s component generation
-func init() {
-	f, err := os.Open(filepath.Join(k8sMeshModelPath))
-	if err != nil {
-		return
-	}
-	byt, err := io.ReadAll(f)
-	if err != nil {
-		return
-	}
-	m := make(map[string]interface{})
-	err = json.Unmarshal(byt, &m)
-	if err != nil {
-		return
-	}
-	k8sMeshModelMetadata = m
-}
 
 // TODO: To be moved in meshkit
 // func getGroupsFromResource(cli *kubernetes.Client) (hgv map[kind][]groupversion, err error) {

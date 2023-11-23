@@ -2,7 +2,11 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
+	"os"
+	"path/filepath"
 	"sync"
 
 	"github.com/gofrs/uuid"
@@ -13,6 +17,9 @@ import (
 	"github.com/spf13/viper"
 )
 
+const k8sMeshModelPath = "../meshmodel/kubernetes/model_template.json"
+
+
 type RegistrationStatus int
 
 const (
@@ -20,6 +27,8 @@ const (
 	NotRegistered
 	Registering
 )
+
+var K8sMeshModelMetadata = make(map[string]interface{})
 
 // INstead define a set of actions
 func (rs RegistrationStatus) String() string {
@@ -130,4 +139,22 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 			}
 		}(ctx)
 	}
+}
+
+// Caches k8sMeshModel metadatas in memory to use at the time of dynamic k8s component generation
+func init() {
+	f, err := os.Open(filepath.Join(k8sMeshModelPath))
+	if err != nil {
+		return
+	}
+	byt, err := io.ReadAll(f)
+	if err != nil {
+		return
+	}
+	m := make(map[string]interface{})
+	err = json.Unmarshal(byt, &m)
+	if err != nil {
+		return
+	}
+	K8sMeshModelMetadata = m
 }

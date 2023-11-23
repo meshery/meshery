@@ -6,6 +6,7 @@ import (
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"gorm.io/gorm"
@@ -107,11 +108,8 @@ func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 		objectsSlice := storeUpdate.Object.([]interface{})
 
 		for _, object := range objectsSlice {
-			objectJSON, _ := utils.Marshal(object)
-			obj := meshsyncmodel.KubernetesResource{}
-			err := utils.Unmarshal(objectJSON, &obj)
+			obj, err := mh.Unmarshal(object)
 			if err != nil {
-				mh.log.Error(ErrUnmarshal(err, objectJSON))
 				continue
 			}
 
@@ -124,30 +122,41 @@ func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 	}
 }
 
+func (mh *MeshsyncDataHandler) Unmarshal(object interface{}) (meshsyncmodel.KubernetesResource, error){
+	objectJSON, _ := utils.Marshal(object)
+	obj := meshsyncmodel.KubernetesResource{}
+	err := utils.Unmarshal(objectJSON, &obj)
+	if err != nil {
+		mh.log.Error(ErrUnmarshal(err, objectJSON))
+		return obj, ErrUnmarshal(err, objectJSON)
+	}
+	return obj, nil
+}
+
 // derives the state of the cluster from the events and persists it in the database
 func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) error {
 	mh.dbHandler.Lock()
 	defer mh.dbHandler.Unlock()
 
-	objectJSON, _ := utils.Marshal(event.Object)
-	obj := meshsyncmodel.KubernetesResource{}
-	err := utils.Unmarshal(objectJSON, &obj)
-
+	obj, err := mh.Unmarshal(event.Object)
 	if err != nil {
-		return ErrUnmarshal(err, objectJSON)
+		return err
 	}
 
 	switch event.EventType {
-	case broker.Add, broker.Update:
+	case broker.Add:
+		compMetadata := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
+		obj.ComponentMetadata = compMetadata
 		result := mh.dbHandler.Create(&obj)
 		if result.Error != nil {
-			result = mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&obj)
-			if result.Error != nil {
-				return ErrDBPut(result.Error)
-			}
-			return nil
+			return ErrDBPut(result.Error)
 		}
-
+	case broker.Update:
+		result := mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&obj)
+		if result.Error != nil {
+			return ErrDBPut(result.Error)
+		}
+		return nil
 	case broker.Delete:
 		result := mh.dbHandler.Delete(&obj)
 		if result.Error != nil {
@@ -163,7 +172,8 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.KubernetesResource) error {
 	mh.dbHandler.Lock()
 	defer mh.dbHandler.Unlock()
-
+	compMetadata := mh.getComponentMetadata(object.APIVersion, object.Kind)
+	object.ComponentMetadata = compMetadata
 	result := mh.dbHandler.Create(object)
 	if result.Error != nil {
 		result = mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(object)
@@ -218,4 +228,24 @@ func (mh *MeshsyncDataHandler) requestMeshsyncStore() error {
 		return ErrRequestMeshsyncStore(err)
 	}
 	return nil
+}
+
+// Returns metadata for the component identified by apiVersion and kind.
+// If the component does not exist in the registry, default metadata for k8s component is returned.
+func(mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind string) map[string]interface{} {
+	var metadata map[string]interface{}
+
+	result := mh.dbHandler.Model(v1alpha1.ComponentDefinitionDB{}).Select("metadata").
+	Where("api_version = ? and kind = ?", apiVersion, kind).Scan(&metadata)
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			mh.log.Error(ErrResultNotFound(result.Error))
+			metadata = K8sMeshModelMetadata
+		} else {
+			mh.log.Error(ErrDBRead(result.Error))
+			metadata = K8sMeshModelMetadata
+		}
+	}
+
+	return metadata
 }

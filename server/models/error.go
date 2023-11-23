@@ -99,6 +99,7 @@ const (
 	ErrUnreachableKubeAPICode             = "1534"
 	ErrFlushMeshSyncDataCode              = "1535"
 	ErrUpdateConnectionStatusCode         = "1540"
+	ErrResultNotFoundCode                 = "1546"
 )
 
 var (
@@ -375,4 +376,8 @@ func ErrFlushMeshSyncData(err error, contextName, server string) error {
 
 func ErrUpdateConnectionStatus(err error, statusCode int) error {
 	return errors.New(ErrUpdateConnectionStatusCode, errors.Alert, []string{"Unable to update connection status"}, []string{err.Error()}, []string{"Connection was already deleted", "User might not have necessary privileges"}, []string{"Try refresing, you might be seeing stale data on the dashboard", "Check if the user has necessary privileges"})
+}
+
+func ErrResultNotFound(err error) error {
+	return errors.New(ErrResultNotFoundCode, errors.Alert, []string{err.Error()}, []string{"The record in the database does not exist."}, []string{"The record might have been deleted."}, []string{""})
 }
