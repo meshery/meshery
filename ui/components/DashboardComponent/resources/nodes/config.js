@@ -2,6 +2,7 @@ import React from 'react';
 import { getResourceStr, resourceParsers, timeAgo } from '../../../../utils/k8s-utils';
 import { getClusterNameFromClusterId } from '../../../../utils/multi-ctx';
 import { SINGLE_VIEW } from '../config';
+import { ConnectionChip } from '../../../connections/ConnectionChip';
 
 export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
   return {
@@ -82,19 +83,7 @@ export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
             let clusterName = getClusterNameFromClusterId(val, k8sConfig);
             return (
               <>
-                <a
-                  href={'#'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    color: 'inherit',
-                    textDecorationLine: 'underline',
-                    cursor: 'pointer',
-                    marginBottom: '0.5rem',
-                  }}
-                >
-                  {clusterName}
-                </a>
+                <ConnectionChip title={clusterName} iconSrc="/static/img/kubernetes.svg" />
               </>
             );
           },
