@@ -71,5 +71,5 @@ group_objects_with_matching_field = result {
         }
     } 
     
-    result := {"annotation": annotation_result, "labels": labels_result}
+    result := {"annotations": annotation_result, "labels": labels_result}
 }
