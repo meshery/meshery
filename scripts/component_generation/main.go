@@ -528,6 +528,7 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 }, am map[string][]interface{}, acpm map[string]map[string]bool) {
 	start := time.Now()
 	rangeString := sheetName + COLUMNRANGE
+	appendRange := sheetName + "!A:C"
 	// Get the value of the specified cell.
 	resp, err := srv.Spreadsheets.Values.Get(spreadsheetID, rangeString).Do()
 	if err != nil {
@@ -573,7 +574,7 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 				row := &sheets.ValueRange{
 					Values: values,
 				}
-				response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, rangeString, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
+				response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, appendRange, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
 				values = make([][]interface{}, 0)
 				batchSize = 100
 				if err != nil || response2.HTTPStatusCode != 200 {
@@ -600,7 +601,7 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 			row := &sheets.ValueRange{
 				Values: values,
 			}
-			response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, rangeString, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
+			response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, appendRange, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
 			values = make([][]interface{}, 0)
 			batchSize = 100
 			if err != nil || response2.HTTPStatusCode != 200 {
@@ -613,7 +614,7 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 		row := &sheets.ValueRange{
 			Values: values,
 		}
-		response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, rangeString, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
+		response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, appendRange, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
 		if err != nil || response2.HTTPStatusCode != 200 {
 			fmt.Println(err)
 		}
