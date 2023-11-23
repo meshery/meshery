@@ -1,5 +1,5 @@
 package meshmodel_policy
-# https://play.openpolicyagent.org/p/EApfRBcqPq
+#https://play.openpolicyagent.org/p/YcqqNCLuJx
 
 label_obj[label_key] {
 	some key
@@ -19,8 +19,6 @@ annotation_obj[annotation_key] {
 
 
 group_objects_with_matching_field = result {
-
-
 	labels_result := {labels_map: key |
         some labels_map
         label_obj[labels_map]
