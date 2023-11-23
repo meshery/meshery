@@ -151,6 +151,7 @@ function Connections({
   /*onOpenCreateConnectionModal,*/ operatorState,
   selectedK8sContexts,
   k8sconfig,
+  /*connectionMetadataState,*/
 }) {
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);
@@ -1036,7 +1037,8 @@ const mapStateToProps = (state) => {
   const k8sconfig = state.get('k8sConfig');
   const selectedK8sContexts = state.get('selectedK8sContexts');
   const operatorState = state.get('operatorState');
-  return { k8sconfig, selectedK8sContexts, operatorState };
+  const connectionMetadataState = state.get('connectionMetadataState');
+  return { k8sconfig, selectedK8sContexts, operatorState, connectionMetadataState };
 };
 
 // @ts-ignore

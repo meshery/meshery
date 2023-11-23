@@ -70,6 +70,7 @@ const initialState = fromJS({
   // global gql-subscriptions
   operatorState: null,
   meshSyncState: null,
+  connectionMetadataState: null, // store connection definition metadata for state and connection kind management
 });
 
 export const actionTypes = {
@@ -99,6 +100,7 @@ export const actionTypes = {
   UPDATE_EXTENSION_TYPE: 'UPDATE_EXTENSION_TYPE',
   UPDATE_CAPABILITY_REGISTRY: 'UPDATE_CAPABILITY_REGISTRY',
   UPDATE_TELEMETRY_URLS: 'UPDATE_TELEMETRY_URLS',
+  SET_CONNECTION_METADATA: 'SET_CONNECTION_METADATA',
 };
 
 // REDUCERS
@@ -188,6 +190,9 @@ export const reducer = (state = initialState, action) => {
 
     case actionTypes.UPDATE_TELEMETRY_URLS:
       return state.updateIn(['telemetryURLs'], (val) => fromJS(action.telemetryURLs));
+
+    case actionTypes.SET_CONNECTION_METADATA:
+      return state.mergeDeep({ connectionMetadataState: action.connectionMetadataState });
 
     default:
       return state;
@@ -350,6 +355,12 @@ export const openEventInNotificationCenter =
       type: actionTypes.OPEN_EVENT_IN_NOTIFICATION_CENTER,
       eventId,
     });
+  };
+
+export const setConnectionMetadata =
+  ({ connectionMetadataState }) =>
+  (dispatch) => {
+    return dispatch({ type: actionTypes.SET_CONNECTION_METADATA, connectionMetadataState });
   };
 
 export const makeStore = (initialState, options) => {
