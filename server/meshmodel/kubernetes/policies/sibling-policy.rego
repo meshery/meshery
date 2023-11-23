@@ -26,11 +26,12 @@ group_objects_with_matching_labels = {labels_map: key |
 		some k
 		value = labels[k]
 		k == labels_map
-		result = {name: id |
+		result = {r |
 			some name
 			x := input.services[name]
 			x.labels == labels
 			id := x.traits.meshmap.id
+            r := {"id": id, "name": name}
 		}
 	}
 }
