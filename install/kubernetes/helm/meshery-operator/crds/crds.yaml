@@ -144,6 +144,17 @@ spec:
               size:
                 format: int32
                 type: integer
+              watch-list:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      whitelist:
+                        type: string
+                      blacklist:
+                        type: string
+
             type: object
           status:
             description: MeshSyncStatus defines the observed state of MeshSync

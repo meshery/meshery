@@ -278,19 +278,16 @@ class MesherySettings extends React.Component {
 
         switch (newVal) {
           case 0:
-            newRoute += '#environment';
+            newRoute += '#adapters';
             break;
           case 1:
-            newRoute += '#service-mesh';
-            break;
-          case 2:
             newRoute += '#metrics';
             break;
-          case 3:
-            newRoute += '#system';
-            break;
-          case 4:
+          case 2:
             newRoute += '#registry';
+            break;
+          case 3:
+            newRoute += '#reset';
         }
         if (this.props.router.route != newRoute) this.props.router.push(newRoute);
         self.setState({ tabVal: newVal });
@@ -363,20 +360,20 @@ class MesherySettings extends React.Component {
                 tab="tabMetrics"
               />
             </Tooltip>
-            <Tooltip title="Reset System" placement="top">
-              <Tab
-                className={classes.tab}
-                icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
-                label="Reset"
-                tab="systemReset"
-              />
-            </Tooltip>
             <Tooltip title="Registry" placement="top">
               <Tab
                 className={classes.tab}
                 icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
                 label="Registry"
                 tab="registry"
+              />
+            </Tooltip>
+            <Tooltip title="Reset System" placement="top">
+              <Tab
+                className={classes.tab}
+                icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
+                label="Reset"
+                tab="systemReset"
               />
             </Tooltip>
           </Tabs>
@@ -440,11 +437,6 @@ class MesherySettings extends React.Component {
         )}
         {tabVal === 2 && (
           <TabContainer>
-            <DatabaseSummary promptRef={this.systemResetPromptRef} />
-          </TabContainer>
-        )}
-        {tabVal === 3 && (
-          <TabContainer>
             <TabContainer>
               <TabContainer>
                 <MeshModelComponent
@@ -456,6 +448,11 @@ class MesherySettings extends React.Component {
               </TabContainer>
             </TabContainer>
             {/* </div> */}
+          </TabContainer>
+        )}
+        {tabVal === 3 && (
+          <TabContainer>
+            <DatabaseSummary promptRef={this.systemResetPromptRef} />
           </TabContainer>
         )}
         {backToPlay}

@@ -12,3 +12,11 @@ list: include
 
 [![Meshery Components]({{ site.baseurl }}/assets/img/architecture/meshery-components.svg
 )]({{ site.baseurl }}/assets/img/architecture/meshery-components.svg)
+
+## Component Status
+
+Components have a status that is represented as a `Connection` object. Both the administrative and real-time status of a component is a normalized representation of the connection's state. The status is represented as a `Connection` object because the status of a component is a *connection* to the component. For example, the status of a Kubernetes cluster is a direct reflection of a Meshery Server's connection to the cluster.
+
+Normalizing and extracting the status of a component as a direct property of the component and putting it into a connection allows multiple systems to share the same component with different states. For example, different Meshery Servers can access the same Kubernetes cluster, but each Meshery Server has its own connection to the cluster with its own status.
+
+Learn more about [Connections](/concepts/connections).
