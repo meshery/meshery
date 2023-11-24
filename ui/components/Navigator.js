@@ -338,7 +338,7 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
     title: 'Dashboard',
     show: capabilityRegistryObj.isNavigatorComponentEnabled([DASHBOARD]),
     link: true,
-    submenu: false,
+    submenu: true,
   },
   {
     id: LIFECYCLE,

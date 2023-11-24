@@ -92,3 +92,45 @@ export const getK8sClusterNamesFromCtxId = (selectedContexts, k8sconfig) => {
 
   return clusterNames;
 };
+
+/**
+ *
+ * @param {string} clusterId Kubernetes Cluster ID
+ * @param {Array<Object>} k8sConfig Kubernetes config
+ * @returns {string} Kubernetes cluster name
+ */
+export function getClusterNameFromClusterId(clusterId, k8sConfig) {
+  const cluster = k8sConfig.find((cfg) => cfg.kubernetes_server_id === clusterId);
+  if (!cluster) {
+    return '';
+  }
+  return cluster.name;
+}
+
+/**
+ *
+ * @param {string} connectionId Kubernetes Connection ID
+ * @param {Array<Object>} k8sConfig Kubernetes config
+ * @returns {string} Kubernetes cluster name
+ */
+export function getClusterNameFromConnectionId(connId, k8sConfig) {
+  const cluster = k8sConfig.find((cfg) => cfg.connection_id === connId);
+  if (!cluster) {
+    return '';
+  }
+  return cluster.name;
+}
+
+/**
+ *
+ * @param {string} ctxId Kubernetes context ID
+ * @param {Array<Object>} k8sConfig Kubernetes config
+ * @returns {string} Kubernetes cluster name
+ */
+export function getClusterNameFromCtxId(ctxId, k8sConfig) {
+  const cluster = k8sConfig.find((cfg) => cfg.id === ctxId);
+  if (!cluster) {
+    return '';
+  }
+  return cluster.name;
+}

@@ -104,10 +104,10 @@ const MeshModelComponent = ({
         model.components = components;
         model.relationships = relationships;
       });
-
       await Promise.all(componentPromises);
+      const sortedModels = models.sort((a, b) => a.name.localeCompare(b.name));
       if (!isRequestCancelled && models) {
-        setResourcesDetail((prev) => [...prev, ...models]);
+        setResourcesDetail((prev) => [...prev, ...sortedModels]);
       }
     } catch (error) {
       console.error('Failed to fetch models:', error);
@@ -324,16 +324,6 @@ const MeshModelComponent = ({
         >
           <Paper
             elevation={3}
-            className={`${StyleClass.overviewTab} ${animate ? StyleClass.overviewTabAnimate : ''}`}
-            onClick={() => {
-              setConvert(false);
-              setAnimate(false);
-            }}
-          >
-            Overview
-          </Paper>
-          <Paper
-            elevation={3}
             className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''} ${
               view === MODELS && animate ? StyleClass.activeTab : ''
             }`}
@@ -351,9 +341,7 @@ const MeshModelComponent = ({
               }
               if (!animate) {
                 setAnimate(true);
-                setTimeout(() => {
-                  setConvert(true);
-                }, 1100);
+                setConvert(true);
               }
             }}
           >
@@ -387,9 +375,7 @@ const MeshModelComponent = ({
               }
               if (!animate) {
                 setAnimate(true);
-                setTimeout(() => {
-                  setConvert(true);
-                }, 1100);
+                setConvert(true);
               }
             }}
           >
@@ -423,9 +409,7 @@ const MeshModelComponent = ({
               }
               if (!animate) {
                 setAnimate(true);
-                setTimeout(() => {
-                  setConvert(true);
-                }, 1100);
+                setConvert(true);
               }
             }}
           >
@@ -459,9 +443,7 @@ const MeshModelComponent = ({
               }
               if (!animate) {
                 setAnimate(true);
-                setTimeout(() => {
-                  setConvert(true);
-                }, 1100);
+                setConvert(true);
               }
             }}
           >

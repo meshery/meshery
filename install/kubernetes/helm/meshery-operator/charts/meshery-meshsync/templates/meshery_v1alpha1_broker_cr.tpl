@@ -9,3 +9,6 @@ spec:
     native:
       name: {{ .Values.broker.name }}
       namespace: {{ .Values.broker.namespace }}
+  watch-list:
+    data:
+      whitelist: {{ .Values.watchConfig.whitelist }}

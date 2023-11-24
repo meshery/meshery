@@ -17,8 +17,8 @@ package perf
 import (
 	"fmt"
 
-	"github.com/pkg/errors"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/pkg/errors"
 
 	"github.com/spf13/cobra"
 )

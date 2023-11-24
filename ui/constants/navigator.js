@@ -4,6 +4,12 @@ export const CONFIGURATION = 'configuration';
 export const CONFORMANCE = 'conformance';
 export const PERFORMANCE = 'performance';
 
+export const WORKLOADS = 'workloads';
+export const STORAGE = 'storage';
+export const NETWORK = 'network';
+export const SECURITY = 'security';
+export const CONFIG = 'config';
+
 export const CONNECTION = 'connection';
 export const SERVICE_MESH = 'service_mesh';
 export const ISTIO = 'istio';
