@@ -456,7 +456,7 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 //
-// ```?annotations={[true/false]}``` If true, components having "isAnnotation" property as true are also return, default is false.
+// ```?annotations={[true/false]}``` If true components having "isAnnotation" property as true are "only" returned, default is false i.e. comps with isAnnotation true are also returned.
 // responses:
 // 200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.ResponseWriter, r *http.Request) {
@@ -555,7 +555,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 //
-// ```?annotations={[true/false]}``` If true components having "isAnnotation" property as true are only returned, default is false i.e. comps with isAnnotation true are also returned.
+// ```?annotations={[true/false]}``` If true components having "isAnnotation" property as true are "only" returned, default is false i.e. comps with isAnnotation true are also returned.
 // responses:
 //	200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter, r *http.Request) {
@@ -651,7 +651,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 //
-// ```?annotations={[true/false]}``` If true components having "isAnnotation" property as true are only returned, default is false i.e. comps with isAnnotation true are also returned.
+// ```?annotations={[true/false]}``` If true components having "isAnnotation" property as true are "only" returned, default is false i.e. comps with isAnnotation true are also returned.
 // responses:
 //
 //	200: []meshmodelComponentsDuplicateResponseWrapper
@@ -752,7 +752,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 //
-// ```?annotations={[true/false]}``` If true components having "isAnnotation" property as true are only returned, default is false i.e. comps with isAnnotation true are also returned.
+// ```?annotations={[true/false]}``` If true components having "isAnnotation" property as true are "only" returned, default is false i.e. comps with isAnnotation true are also returned.
 // responses:
 // 200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request) {
@@ -848,7 +848,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 //
-// ```?annotations={[true/false]}``` If true components having "isAnnotation" property as true are only returned, default is false i.e. comps with isAnnotation true are also returned.
+// ```?annotations={[true/false]}``` If true components having "isAnnotation" property as true are "only" returned, default is false i.e. comps with isAnnotation true are also returned.
 // responses:
 // 200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request) {
@@ -944,7 +944,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 //
-// ```?annotations={[true/false]}``` If true components having "isAnnotation" property as true are only returned, default is false i.e. comps with isAnnotation true are also returned.
+// ```?annotations={[true/false]}``` If true components having "isAnnotation" property as true are "only" returned, default is false i.e. comps with isAnnotation true are also returned.
 // responses:
 // 200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter, r *http.Request) {
@@ -1040,7 +1040,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 //
-// ```?annotations={[true/false]}``` If true components having "isAnnotation" property as true are only returned, default is false i.e. comps with isAnnotation true are also returned.
+// ```?annotations={[true/false]}``` If true components having "isAnnotation" property as true are "only" returned, default is false i.e. comps with isAnnotation true are also returned.
 // responses:
 //
 //	200: []meshmodelComponentsDuplicateResponseWrapper
@@ -1135,7 +1135,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 //
-// ```?annotations={[true/false]}``` If true components having "isAnnotation" property as true are only returned, default is false i.e. comps with isAnnotation true are also returned.
+// ```?annotations={[true/false]}``` If true components having "isAnnotation" property as true are "only" returned, default is false i.e. comps with isAnnotation true are also returned.
 // responses:
 //  200: meshmodelComponentsDuplicateResponseWrapper
 
