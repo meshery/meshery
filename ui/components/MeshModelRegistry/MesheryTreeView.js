@@ -29,7 +29,7 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            py: check ? 0.5 : root ? 0.2 : 1.5,
+            py: check ? 0.5 : search ? 0.2 : 1.5,
             px: 0,
           }}
         >
@@ -40,7 +40,7 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
               alignItems: 'center',
             }}
           >
-            <Typography variant={'body'} style={{ color: `${root}` }}>
+            <Typography variant={'body'} style={{}}>
               {labelText}
             </Typography>
           </div>
@@ -110,10 +110,10 @@ const MesheryTreeView = ({
 
   const handleScroll = (scrollingView) => () => {
     const div = event.target;
-    if (div.scrollTop >= div.scrollHeight - div.clientHeight - 2) {
+    if (div.scrollTop >= div.scrollHeight - div.clientHeight - 10) {
       setPage((prevPage) => ({
-        ...prevPage, // Keep the current values for other keys
-        [scrollingView]: prevPage[scrollingView] + 1, // Increment the specific key based on the view
+        ...prevPage,
+        [scrollingView]: prevPage[scrollingView] + 1,
       }));
     }
   };
@@ -145,7 +145,7 @@ const MesheryTreeView = ({
   };
 
   return (
-    <div>
+    <div style={{ width: '100%' }}>
       {view === MODELS && (
         <div>
           <div
@@ -158,7 +158,6 @@ const MesheryTreeView = ({
           >
             <div style={{ display: 'flex', flexDirection: 'row' }}>
               <IconButton onClick={expandAll} size="large">
-                {/* <PlusSquare /> */}
                 <KeyboardArrowDownIcon />
               </IconButton>
 
@@ -167,7 +166,6 @@ const MesheryTreeView = ({
                 style={{ marginRight: '4px' }}
                 size="large"
               >
-                {/* <MinusSquare /> */}
                 <KeyboardArrowUpIcon />
               </IconButton>
               <FormControlLabel
@@ -307,7 +305,6 @@ const MesheryTreeView = ({
           >
             <div style={{ display: 'flex', flexDirection: 'row' }}>
               <IconButton onClick={expandAll} size="large">
-                {/* <PlusSquare /> */}
                 <KeyboardArrowDownIcon />
               </IconButton>
 
@@ -316,7 +313,6 @@ const MesheryTreeView = ({
                 style={{ marginRight: '4px' }}
                 size="large"
               >
-                {/* <MinusSquare /> */}
                 <KeyboardArrowUpIcon />
               </IconButton>
             </div>
@@ -527,7 +523,7 @@ const MesheryTreeView = ({
             }}
           >
             <div
-              style={{ overflowY: 'auto', height: '27rem' }}
+              style={{ overflowY: 'auto', maxHeight: '27rem' }}
               onScroll={handleScroll(RELATIONSHIPS)}
             >
               {data.map((relationship, index) => (

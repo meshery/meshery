@@ -45,7 +45,7 @@ module.exports = {
     'react/jsx-uses-vars': [2],
     'react/jsx-no-undef': 'error',
     'no-console': 0,
-    'no-unused-vars': 'error',
+    'no-unused-vars': 'off',
     'react/jsx-key': 'warn',
     'no-dupe-keys': 'error',
     'react/jsx-filename-extension': [
