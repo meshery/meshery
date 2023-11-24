@@ -240,3 +240,18 @@ export const getColumnValue = (rowData, columnName, columns) => {
 export const getVisibilityColums = (columns) => {
   return columns.filter((col) => col?.options?.display !== false);
 };
+
+export function JsonParse(item, safe = true) {
+  if (typeof item === 'string') {
+    try {
+      return JSON.parse(item || '{}');
+    } catch (e) {
+      if (safe) {
+        return {};
+      }
+      throw e;
+    }
+  }
+
+  return item;
+}
