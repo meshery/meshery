@@ -24,21 +24,21 @@ import (
 )
 
 const dumpFile = "./dump.csv"
-const COLUMNRANGE = "!A:AK3" //Update this on addition of new columns
+const COLUMNRANGE = "!A:AH3" //Update this on addition of new columns
 
 var NameToIndex = map[string]int{ //Update this on addition of new columns
-	"modelDisplayName":   0,
-	"model":              1,
-	"category":           2,
-	"subCategory":        3,
-	"CRDs":               4,
-	"link":               5,
-	"hasSchema?":         6,
-	"component":          7,
-	"shape":              8,
-	"primaryColor":       9,
-	"secondaryColor":     10,
-	"styleOverrides":     11,
+	"modelDisplayName":  0,
+	"model":             1,
+	"category":          2,
+	"subCategory":       3,
+	"CRDs":              4,
+	"link":              5,
+	"hasSchema?":        6,
+	"component":         7,
+	"shape":             8,
+	"primaryColor":      9,
+	"secondaryColor":    10,
+	"styleOverrides":    11,
 	"styles":             12,
 	"shapePolygonPoints": 13,
 	"defaultData":        14,
@@ -48,21 +48,19 @@ var NameToIndex = map[string]int{ //Update this on addition of new columns
 	"svgComplete":        18,
 	"genealogy":          19,
 	"isAnnotation":       20,
-	"Logo Height":        21,
-	"Logo Width":         22,
-	"PublishToRegistry":  23,
-	"About Project":      25,
-	"Page Subtitle":      26,
-	"Docs URL":           27,
-	"Standard Blurb":     28,
-	"Feature 1":          29,
-	"Feature 2":          30,
-	"Feature 3":          31,
-	"howItWorks":         32,
-	"howItWorksDetails":  33,
-	"Screenshots":        34,
-	"Full Page":          35,
-	"Publish?":           36,
+	"PublishToRegistry":  21,
+	"About Project":      22,
+	"Page Subtitle":      23,
+	"Docs URL":           24,
+	"Standard Blurb":     25,
+	"Feature 1":          26,
+	"Feature 2":          27,
+	"Feature 3":          28,
+	"howItWorks":         29,
+	"howItWorksDetails":  30,
+	"Screenshots":        31,
+	"Full Page":          32,
+	"Publish?":           33,
 }
 var (
 	AhSearchEndpoint = artifacthub.AhHelmExporterEndpoint
@@ -527,8 +525,7 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 	helmURL string
 }, am map[string][]interface{}, acpm map[string]map[string]bool) {
 	start := time.Now()
-	rangeString := sheetName + COLUMNRANGE
-	appendRange := sheetName + "!A:C"
+	rangeString := sheetName + "!A4:U4"
 	// Get the value of the specified cell.
 	resp, err := srv.Spreadsheets.Values.Get(spreadsheetID, rangeString).Do()
 	if err != nil {
@@ -574,7 +571,7 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 				row := &sheets.ValueRange{
 					Values: values,
 				}
-				response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, appendRange, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
+				response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, sheetName, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
 				values = make([][]interface{}, 0)
 				batchSize = 100
 				if err != nil || response2.HTTPStatusCode != 200 {
@@ -601,7 +598,7 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 			row := &sheets.ValueRange{
 				Values: values,
 			}
-			response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, appendRange, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
+			response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, sheetName, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
 			values = make([][]interface{}, 0)
 			batchSize = 100
 			if err != nil || response2.HTTPStatusCode != 200 {
@@ -614,7 +611,7 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 		row := &sheets.ValueRange{
 			Values: values,
 		}
-		response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, appendRange, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
+		response2, err := srv.Spreadsheets.Values.Append(spreadsheetID, sheetName, row).ValueInputOption("USER_ENTERED").InsertDataOption("INSERT_ROWS").Context(context.Background()).Do()
 		if err != nil || response2.HTTPStatusCode != 200 {
 			fmt.Println(err)
 		}
