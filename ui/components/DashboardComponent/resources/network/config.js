@@ -2,6 +2,7 @@ import React from 'react';
 import { timeAgo } from '../../../../utils/k8s-utils';
 import { getClusterNameFromClusterId } from '../../../../utils/multi-ctx';
 import { SINGLE_VIEW } from '../config';
+import { ConnectionChip } from '../../../connections/ConnectionChip';
 
 export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => {
   return {
@@ -100,19 +101,37 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
           label: 'Ports',
           options: {
             sort: false,
-            customBodyRender: function CustomBody(val) {
+            customBodyRender: function CustomBody(val, tableMeta) {
               let attribute = JSON.parse(val);
               let ports = attribute?.ports;
+
+              const showViewAll = ports?.length > 2;
               return (
                 <>
-                  {ports?.map((p, i) => {
-                    return (
-                      <>
+                  <div style={{ display: 'flex' }}>
+                    {ports?.slice(0, 2).map((p, i) => (
+                      <div key={i}>
                         {`${p.port}/${p.targetPort}:${p.protocol}`}
-                        {i < ports.length - 1 && ','}
-                      </>
-                    );
-                  })}
+                        {i < 1 && ','}
+                      </div>
+                    ))}
+                    {showViewAll && (
+                      <span
+                        style={{
+                          color: '#3c494f',
+                          textDecorationLine: 'underline',
+                          cursor: 'pointer',
+                          marginLeft: '0.5rem',
+                          width: 'max-content',
+                        }}
+                        onClick={() =>
+                          switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])
+                        }
+                      >
+                        View all
+                      </span>
+                    )}
+                  </div>
                 </>
               );
             },
@@ -153,19 +172,7 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
               return (
                 <>
-                  <a
-                    href={'#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                  >
-                    {clusterName}
-                  </a>
+                  <ConnectionChip title={clusterName} iconSrc="/static/img/kubernetes.svg" />
                 </>
               );
             },
@@ -515,19 +522,7 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
               return (
                 <>
-                  <a
-                    href={'#'}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                  >
-                    {clusterName}
-                  </a>
+                  <ConnectionChip title={clusterName} iconSrc="/static/img/kubernetes.svg" />
                 </>
               );
             },

@@ -5,6 +5,7 @@ import { EVENT_TYPES } from './Enum';
 import _ from 'lodash';
 import { getWebAdress } from './webApis';
 import { APPLICATION, DESIGN, FILTER } from '../constants/navigator';
+import { Tooltip } from '@mui/material';
 
 /**
  * Check if an object is empty
@@ -239,4 +240,34 @@ export const getColumnValue = (rowData, columnName, columns) => {
 
 export const getVisibilityColums = (columns) => {
   return columns.filter((col) => col?.options?.display !== false);
+};
+
+export const ConditionalTooltip = ({ value, maxLength, ...restProps }) => {
+  return value?.length > maxLength ? (
+    <Tooltip title={value} arrow placement="top">
+      <div
+        style={{
+          maxWidth: '15rem',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}
+        {...restProps}
+      >
+        {`${value.slice(0, maxLength)}...`}
+      </div>
+    </Tooltip>
+  ) : (
+    <div
+      style={{
+        maxWidth: '15rem',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+      }}
+      {...restProps}
+    >
+      {value}
+    </div>
+  );
 };
