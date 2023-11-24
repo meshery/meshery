@@ -86,7 +86,12 @@ export const GetHelpButton = () => {
 
   return (
     <>
-      <Button variant="contained" color="primary" onClick={handleGetHelpClick}>
+      <Button
+        variant="contained"
+        color="primary"
+        style={{ marginLeft: '2px' }}
+        onClick={handleGetHelpClick}
+      >
         Get Help
       </Button>
 
@@ -106,7 +111,7 @@ export const GetHelpButton = () => {
             <CloseIcon className={classes.closing} />
           </IconButton>
         </DialogTitle>
-        <DialogContent>
+        <DialogContent style={{ textAlign: 'center' }}>
           <SupportForm />
         </DialogContent>
         <DialogActions></DialogActions>

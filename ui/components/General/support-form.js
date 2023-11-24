@@ -5,7 +5,7 @@ import { Paper, TextField } from '@mui/material';
 import { SubmitButton, DescriptionModal } from './styles';
 import { Formik } from 'formik';
 import * as yup from 'yup';
-import axios from 'axios';
+// import axios from 'axios';
 import { Field, Form } from 'formik';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -14,10 +14,32 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import theme from '../../themes/app';
 // import ResponseIcon from '../../assets/icons/support/response';
+import dataFetch from '../../lib/data-fetch';
 
-const SupportForm = (props) => {
+const SupportForm = () => {
   const [submit, setSubmit] = useState(false);
-  const { user } = props;
+  //   const { user } = props;
+  const [user, setUser] = useState('');
+
+  const fetchUserPrefs = () => {
+    dataFetch(
+      '/api/user',
+      {
+        method: 'GET',
+        credentials: 'include',
+      },
+      (result) => {
+        if (result) {
+          setUser(result);
+        }
+      },
+      (err) => console.error(err),
+    );
+  };
+  useEffect(() => {
+    fetchUserPrefs();
+  }, []);
+
   console.log('user', user);
   const [memberFormOne, setmemberFormOne] = useState({
     firstname: '',
@@ -43,36 +65,49 @@ const SupportForm = (props) => {
   };
 
   useEffect(() => {
-    if (user) {
+    if (user && submit) {
       const { first_name, last_name, email } = user;
-      setmemberFormOne((prevForm) => ({
-        ...prevForm,
-        firstname: first_name,
-        lastname: last_name,
-        email: email,
-      }));
-    }
-    if (submit) {
-      axios.post('https://hook.us1.make.com/r5qgpjel5tlhtyndcgjvkrdkoc65417y', {
+      console.log('userinthe', user);
+      console.log('userinthe', first_name);
+
+      const payload = {
         memberFormOne: {
-          ...memberFormOne,
-          firstname: memberFormOne.firstname,
-          lastname: memberFormOne.lastname,
-          email: memberFormOne.email,
+          first_name: first_name,
+          last_name: last_name,
+          email: email,
           subject: memberFormOne.subject,
           message: memberFormOne.message,
         },
-      });
+      };
+
+      dataFetch(
+        'https://hook.us1.make.com/r5qgpjel5tlhtyndcgjvkrdkoc65417y',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        },
+        (result) => {
+          console.log('Success:', result);
+          setmemberFormOne({
+            firstname: '',
+            lastname: '',
+            email: '',
+            subject: '',
+            message: '',
+            scope: '',
+            form: 'contact',
+          });
+        },
+        (error) => {
+          // Handle error
+          console.error('Error:', error);
+        },
+      );
     }
-  }, [
-    user,
-    submit,
-    memberFormOne.email,
-    memberFormOne.firstname,
-    memberFormOne.lastname,
-    memberFormOne.subject,
-    memberFormOne.message,
-  ]);
+  }, [user, submit, memberFormOne.subject, memberFormOne.message]);
 
   if (submit) {
     return (
@@ -112,6 +147,7 @@ const SupportForm = (props) => {
         onSubmit={(values) => {
           setmemberFormOne(values);
           setSubmit(true);
+          console.log('values', values);
         }}
         validationSchema={FormSchema}
       >
