@@ -83,6 +83,7 @@ const styles = (theme) => ({
     borderRadius: '10px 0 0 10px',
     width: 'calc(100% - 23px)',
     border: 'none',
+    overflowX: 'hidden',
   },
   noGutter: {
     padding: '0',
