@@ -101,13 +101,6 @@ function FiltersCard_({
               </div>
             </div>
           </div>
-          <Link
-            className={classes.avatarLink}
-            href={`${MESHERY_CLOUD_PROD}/user/${ownerId}`}
-            target="_blank"
-          >
-            <Avatar alt="profile-avatar" src={owner?.avatar_url} />
-          </Link>
           <div className={classes.bottomPart}>
             <div className={classes.cardButtons}>
               {canPublishFilter && visibility !== VISIBILITY.PUBLISHED ? (
@@ -175,24 +168,28 @@ function FiltersCard_({
             alignContent="space-between"
             alignItems="center"
           >
-            <Grid item xs={8} className={classes.yamlDialogTitle}>
+            <Grid item xs={12} className={classes.yamlDialogTitle}>
               <Typography variant="h6" className={classes.yamlDialogTitleText}>
                 {name}
               </Typography>
-              <Tooltip title="Enter Fullscreen" arrow interactive placement="top">
-                <IconButton
-                  onClick={(ev) =>
-                    genericClickHandler(ev, () => {
-                      {
-                        toggleFullScreen();
-                      }
-                    })
-                  }
-                  className={classes.maximizeButton}
-                >
-                  {fullScreen ? <FullscreenExit /> : <Fullscreen />}
-                </IconButton>
-              </Tooltip>
+              <div className={classes.cardHeaderRight}>
+                <Link href={`${MESHERY_CLOUD_PROD}/user/${ownerId}`} target="_blank">
+                  <Avatar alt="profile-avatar" src={owner?.avatar_url} />
+                </Link>
+                <Tooltip title="Enter Fullscreen" arrow interactive placement="top">
+                  <IconButton
+                    onClick={(ev) =>
+                      genericClickHandler(ev, () => {
+                        {
+                          toggleFullScreen();
+                        }
+                      })
+                    }
+                  >
+                    {fullScreen ? <FullscreenExit /> : <Fullscreen />}
+                  </IconButton>
+                </Tooltip>
+              </div>
             </Grid>
             <Grid item xs={12} onClick={(ev) => genericClickHandler(ev, () => {})}>
               <Divider variant="fullWidth" light />
