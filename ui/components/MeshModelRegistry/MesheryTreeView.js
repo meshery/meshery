@@ -10,6 +10,7 @@ import PlusSquare from '../../assets/icons/PlusSquare';
 import DotSquare from '../../assets/icons/DotSquare';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import useStyles from '../../assets/styles/general/tool.styles';
 
 const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
   const [checked, setChecked] = useState(false);
@@ -90,6 +91,7 @@ const MesheryTreeView = ({
 }) => {
   const [expanded, setExpanded] = React.useState([]);
   const [selected, setSelected] = React.useState([]);
+  const StyleClass = useStyles();
 
   useEffect(() => {
     setSelected([]);
@@ -148,14 +150,7 @@ const MesheryTreeView = ({
     <div style={{ width: '100%' }}>
       {view === MODELS && (
         <div>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              borderBottom: '1px solid #d2d3d4',
-            }}
-          >
+          <div className={StyleClass.searchContainer}>
             <div style={{ display: 'flex', flexDirection: 'row' }}>
               <IconButton onClick={expandAll} size="large">
                 <KeyboardArrowDownIcon />

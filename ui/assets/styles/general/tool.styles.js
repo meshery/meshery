@@ -45,9 +45,15 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     position: 'relative',
     marginTop: '1rem',
+    [theme.breakpoints.down('sm')]: {
+      height: '47rem',
+    },
   },
   mainContainerAnimate: {
     height: '36rem',
+    [theme.breakpoints.down('sm')]: {
+      height: '80rem',
+    },
   },
   innerContainer: {
     display: 'flex',
@@ -56,6 +62,9 @@ const useStyles = makeStyles((theme) => ({
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+    },
   },
   innerContainerAnimate: {
     width: '100%',
@@ -66,6 +75,11 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'center',
     left: '0%',
     backgroundColor: theme.palette.secondary.tabContainer,
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'row',
+      paddingLeft: '1rem',
+      overflowX: 'auto',
+    },
   },
   tabs: {
     backgroundColor:
@@ -84,12 +98,15 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     top: '3.7rem',
     opacity: '0',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column-reverse',
+    },
   },
   treeWrapperAnimate: {
     opacity: '1',
   },
   cardbg: {
-    backgroundColor: 'white'
+    backgroundColor: 'white',
   },
   cardStyle: {
     background: theme.palette.secondary.card,
@@ -102,6 +119,10 @@ const useStyles = makeStyles((theme) => ({
     margin: '0rem 0.7rem',
     flexDirection: 'column',
     cursor: 'pointer',
+    [theme.breakpoints.down('sm')]: {
+      marginTop: '0.7rem',
+      marginRight: '0.5rem',
+    },
   },
   cardStyleAnimate: {
     marginTop: '0.7rem',
@@ -112,6 +133,12 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '8px 8px 0px 0px',
     paddingTop: '0.2rem',
     backgroundColor: theme.palette.secondary.tabCard,
+    [theme.breakpoints.down('sm')]: {
+      padding: '0.1rem',
+      flexDirection: 'column',
+      margin: '0rem 0.2rem',
+      width: '10rem',
+    },
   },
   detailsContainer: {
     height: '30rem',
@@ -122,6 +149,11 @@ const useStyles = makeStyles((theme) => ({
     padding: '2.5rem',
     overflowY: 'auto',
     boxShadow: 'inset 0 0 6px 2px rgba(0, 0, 0,0.4)',
+    [theme.breakpoints.down('sm')]: {
+      width: '90%',
+      padding: '0.5rem',
+      height: '40rem',
+    },
   },
   emptyDetailsContainer: {
     height: '30rem',
@@ -135,18 +167,41 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    [theme.breakpoints.down('sm')]: {
+      width: '90%',
+      padding: '0.5rem',
+      height: '40rem',
+    },
   },
   activeTab: {
     backgroundColor:
       theme.palette.type === 'dark'
         ? theme.palette.secondary.toolbarBg2
         : theme.palette.secondary.toolbarBg1,
-    color: theme.palette.secondary.text
+    color: theme.palette.secondary.text,
   },
   line: {
-    borderLeft: `1px dashed ${theme.palette.secondary.text}`
-
-  }
+    borderLeft: `1px dashed ${theme.palette.secondary.text}`,
+  },
+  treeContainer: {
+    height: '30rem',
+    width: '50%',
+    margin: '1rem',
+    display: 'flex',
+    justifyContent: 'center',
+    [theme.breakpoints.down('sm')]: {
+      width: '90%',
+    },
+  },
+  searchContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderBottom: '1px solid #d2d3d4',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+    },
+  },
   // Define other styles as needed
 }));
 
