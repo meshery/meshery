@@ -271,3 +271,14 @@ export const ConditionalTooltip = ({ value, maxLength, ...restProps }) => {
     </div>
   );
 };
+
+/**
+ * Add underscore to camal case variable name.
+ *
+ * @param {string} value - An array of column definitions.
+ *
+ */
+
+export const camelcaseToSnakecase = (value) => {
+  return value?.replace(/[A-Z]/g, (match) => `_${match.toLowerCase()}`);
+};
