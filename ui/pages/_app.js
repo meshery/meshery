@@ -62,6 +62,8 @@ import { NotificationCenterProvider } from '../components/NotificationCenter';
 import { getMeshModelComponent } from '../api/meshmodel';
 import { CONNECTION_KINDS } from '../utils/Enum';
 
+import subscribeMesheryControllersStatus from '../components/graphql/subscriptions/MesheryControllersStatusSubscription';
+
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
   require('codemirror/mode/javascript/javascript');
@@ -273,6 +275,10 @@ class MesheryApp extends App {
   }
 
   initSubscriptions = (contexts) => {
+    subscribeMesheryControllersStatus((data) => {
+      console.log(data);
+    }, contexts);
+
     const operatorCallback = (data) => {
       this.props.store.dispatch({
         type: actionTypes.SET_OPERATOR_SUBSCRIPTION,

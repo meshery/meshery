@@ -550,6 +550,10 @@ const (
 	MesheryControllerStatusNotdeployed MesheryControllerStatus = "NOTDEPLOYED"
 	MesheryControllerStatusDeploying   MesheryControllerStatus = "DEPLOYING"
 	MesheryControllerStatusUnkown      MesheryControllerStatus = "UNKOWN"
+	MesheryControllerStatusUndeployed  MesheryControllerStatus = "UNDEPLOYED"
+	MesheryControllerStatusEnabled     MesheryControllerStatus = "ENABLED"
+	MesheryControllerStatusRunning     MesheryControllerStatus = "RUNNING"
+	MesheryControllerStatusConnected   MesheryControllerStatus = "CONNECTED"
 )
 
 var AllMesheryControllerStatus = []MesheryControllerStatus{
@@ -557,11 +561,15 @@ var AllMesheryControllerStatus = []MesheryControllerStatus{
 	MesheryControllerStatusNotdeployed,
 	MesheryControllerStatusDeploying,
 	MesheryControllerStatusUnkown,
+	MesheryControllerStatusUndeployed,
+	MesheryControllerStatusEnabled,
+	MesheryControllerStatusRunning,
+	MesheryControllerStatusConnected,
 }
 
 func (e MesheryControllerStatus) IsValid() bool {
 	switch e {
-	case MesheryControllerStatusDeployed, MesheryControllerStatusNotdeployed, MesheryControllerStatusDeploying, MesheryControllerStatusUnkown:
+	case MesheryControllerStatusDeployed, MesheryControllerStatusNotdeployed, MesheryControllerStatusDeploying, MesheryControllerStatusUnkown, MesheryControllerStatusUndeployed, MesheryControllerStatusEnabled, MesheryControllerStatusRunning, MesheryControllerStatusConnected:
 		return true
 	}
 	return false
