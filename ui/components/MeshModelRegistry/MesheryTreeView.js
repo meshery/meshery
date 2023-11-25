@@ -112,8 +112,8 @@ const MesheryTreeView = ({
     const div = event.target;
     if (div.scrollTop >= div.scrollHeight - div.clientHeight - 10) {
       setPage((prevPage) => ({
-        ...prevPage,
-        [scrollingView]: prevPage[scrollingView] + 1,
+        ...prevPage, // Keep the current values for other keys
+        [scrollingView]: prevPage[scrollingView] + 1, // Increment the specific key based on the view
       }));
     }
   };
