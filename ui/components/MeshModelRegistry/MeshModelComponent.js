@@ -99,7 +99,6 @@ const MeshModelComponent = ({
 
   const getModels = async (page) => {
     try {
-
       const { models } = await getMeshModels(page?.Models + 1, rowsPerPage);
 
       if (!isRequestCancelled && models) {
@@ -115,7 +114,6 @@ const MeshModelComponent = ({
 
         setResourcesDetail((prev) =>
           [...prev, ...updatedModels].sort((a, b) => a.displayName.localeCompare(b.displayName)),
-
         );
       }
     } catch (error) {
