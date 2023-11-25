@@ -1,25 +1,25 @@
 ---
 layout: default
-title: Jfrog Distribution
-permalink: integrations/jfrog-distribution
+title: Argo CD Applications
+permalink: integrations/argo-cd-applications
 type: installation
 category: integrations
 display-title: "false"
 language: en
 list: include
-image: /assets/img/integrations/jfrog-distribution.svg
+image: /assets/img/integrations/argo-cd-applications.svg
 ---
 
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: distribution -->
+ #### Category: argo-cd -->
 
 ### Overview & Features:
-1. The toolkit to pack, ship, store, and deliver container content
+1. Workflow engine for Kubernetes
 
-2. Managed release binary distribution with JFrog distribution
+2. Collaborative and visual infrastructure as code for Argo CD Applications
 
 4. 
     Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
@@ -30,13 +30,13 @@ image: /assets/img/integrations/jfrog-distribution.svg
 
 
 
-5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
+5. Gain mastery over Argo as a workflow engine for Kubernetes
 
-6. Provide high performance traffic serving that can scale to millions of requests per second.
+6. Design application definitions using the intuitive, context-aware visual designer, MeshMap.
 
-7. Supports IP address targeting mode for Network Load Balancers.
+7. Visualize your declarative, GitOps continuous delivery tool for Kubernetes.
 
 8. Collaborative Infrastructure as Code
 
-9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
+9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 

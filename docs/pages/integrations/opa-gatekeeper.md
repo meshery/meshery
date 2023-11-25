@@ -19,7 +19,7 @@ image: /assets/img/integrations/opa-gatekeeper.svg
 ### Overview & Features:
 1. Compared to using OPA with its sidecar kube-mgmt (aka Gatekeeper v1.0), Gatekeeper introduces the following functionality:
 
-2. Collaborative and visual infrastructure as code for OPA Gatekeeper
+2. Collaborative and visual infrastructure as code for Frinx Machine
 
 4. 
     Connect GitHub with Meshery and import selectively import your existing Helm Charts, Docker Compose applications, and Kubernetes manifests.Visually configure and customize your cloud native infrastructure.

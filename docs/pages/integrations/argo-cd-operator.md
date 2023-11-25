@@ -1,25 +1,23 @@
 ---
 layout: default
-title: Jfrog Distribution
-permalink: integrations/jfrog-distribution
+title: Argo CD Operator
+permalink: integrations/argo-cd-operator
 type: installation
 category: integrations
 display-title: "false"
 language: en
 list: include
-image: /assets/img/integrations/jfrog-distribution.svg
+image: /assets/img/integrations/argo-cd-operator.svg
 ---
 
 <h1>{{ page.title }} <img src="{{ page.image }}" style="width: 35px; height: 35px;" /></h1>
 
 
 <!-- This needs replaced with the Category property, not the sub-category.
- #### Category: distribution -->
+ #### Category: argocd-operator -->
 
 ### Overview & Features:
-1. The toolkit to pack, ship, store, and deliver container content
-
-2. Managed release binary distribution with JFrog distribution
+2. Collaborative and visual infrastructure as code for Argo CD Operator
 
 4. 
     Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
@@ -30,13 +28,13 @@ image: /assets/img/integrations/jfrog-distribution.svg
 
 
 
-5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
+5. Declarative continuous delivery with a fully-loaded UI.
 
-6. Provide high performance traffic serving that can scale to millions of requests per second.
+6. Application definitions, configurations, and environments can be declarative and version controlled.
 
-7. Supports IP address targeting mode for Network Load Balancers.
+7. Application deployment and lifecycle management can be automated, auditable, and easy to understand.
 
 8. Collaborative Infrastructure as Code
 
-9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
+9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
 
