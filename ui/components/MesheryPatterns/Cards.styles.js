@@ -12,6 +12,7 @@ const useStyles = makeStyles((theme) => ({
   cardButtons: {
     display: 'flex',
     flexWrap: 'wrap',
+    marginTop: '50px',
     height: '100%',
     gap: '.5rem',
   },
@@ -54,13 +55,6 @@ const useStyles = makeStyles((theme) => ({
       width: '100%',
     },
   },
-  maximizeButton: {
-    width: 'fit-content',
-    margin: '0 0 0 auto',
-    position: 'absolute',
-    right: 0,
-    top: 0,
-  },
   noOfResultsContainer: {
     margin: '0 0 1rem',
     '& div': {
@@ -77,9 +71,9 @@ const useStyles = makeStyles((theme) => ({
   lastRunText: {
     marginRight: '0.5rem',
   },
-  avatarLink: {
-    display: 'block',
-    marginTop: '2.4rem',
+  cardHeaderRight: {
+    display: 'flex',
+    alignItems: 'center',
   },
   iconPatt: {
     width: '24px',
