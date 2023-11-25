@@ -30,13 +30,13 @@ image: /assets/img/integrations/cloudevents.svg
 
 
 
-5. Provides SDKs for Go, JavaScript, Java, C#, Ruby, PHP, PowerShell, Rust, and Python that can be used to build event routers, tracing systems, and other tools.
+5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
 
-6. Simplifies event declaration and delivery across services, platforms, and beyond.
+6. Provide high performance traffic serving that can scale to millions of requests per second.
 
-7. Provides interoperability across services, platforms and systems.
+7. Supports IP address targeting mode for Network Load Balancers.
 
 8. Collaborative Infrastructure as Code
 
-9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
+9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
 

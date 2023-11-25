@@ -30,13 +30,13 @@ image: /assets/img/integrations/consul.svg
 
 
 
-5. Visualize the topology of your Consul service mesh deployment
+5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
 
-6. Analyze Consul Connects configuration
+6. Provide high performance traffic serving that can scale to millions of requests per second.
 
-7. Explore Consuls Service Splitter
+7. Supports IP address targeting mode for Network Load Balancers.
 
 8. Collaborative Infrastructure as Code
 
-9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
+9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
 

@@ -52,7 +52,7 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import SyncIcon from '@mui/icons-material/Sync';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
-import { CONNECTION_KINDS, CONNECTION_STATES } from '../../utils/Enum';
+import { CONNECTION_STATES } from '../../utils/Enum';
 import { FormatConnectionMetadata } from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
 import theme from '../../themes/app';
@@ -151,6 +151,7 @@ function Connections({
   /*onOpenCreateConnectionModal,*/ operatorState,
   selectedK8sContexts,
   k8sconfig,
+  connectionMetadataState,
 }) {
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);
@@ -165,7 +166,6 @@ function Connections({
   const [rowData, setSelectedRowData] = useState({});
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [_operatorState, _setOperatorState] = useState(operatorState || []);
-  const [connectionStatus, setConnectionStatus] = useState(null);
   const [tab, setTab] = useState(0);
   const ping = useKubernetesHook();
 
@@ -229,22 +229,6 @@ function Connections({
           );
         },
         customBodyRender: (value, tableMeta) => {
-          let image;
-
-          switch (tableMeta.rowData[4]) {
-            case 'kubernetes':
-              image = '/static/img/kubernetes.svg';
-              break;
-            case 'meshery':
-              image = '/static/img/all_mesh.svg';
-              break;
-            case 'github':
-              image = '/static/img/github_black.svg';
-              break;
-            default:
-              image = '/static/img/all_mesh.svg';
-          }
-
           const server =
             getColumnValue(tableMeta.rowData, 'metadata.server', columns) ||
             getColumnValue(tableMeta.rowData, 'metadata.server_location', columns);
@@ -265,7 +249,10 @@ function Connections({
                   ping(tableMeta.rowData[3], tableMeta.rowData[2], tableMeta.rowData[0]);
                 }
               }}
-              iconSrc={image}
+              iconSrc={
+                getColumnValue(tableMeta.rowData, 'kindLogo', columns).colorIcon.split('public')[1]
+              }
+              style={{ maxWidth: '120px' }}
             />
           );
         },
@@ -431,7 +418,7 @@ function Connections({
           } else {
             nextStatus.push(value);
           }
-          const disabled = value === 'deleted' || originalNextStatus === undefined ? true : false;
+          const disabled = value === 'deleted' ? true : false;
           return (
             <>
               <FormControl className={classes.chipFormControl}>
@@ -524,6 +511,13 @@ function Connections({
     {
       name: 'nextStatus',
       label: 'nextStatus',
+      options: {
+        display: false,
+      },
+    },
+    {
+      name: 'kindLogo',
+      label: 'kindLogo',
       options: {
         display: false,
       },
@@ -635,16 +629,10 @@ function Connections({
    * fetch connections when the page loads
    */
   useEffect(() => {
-    if (!loading && connectionStatus) {
+    if (!loading && connectionMetadataState) {
       getConnections(page, pageSize, search, sortOrder);
     }
-  }, [page, pageSize, search, sortOrder, connectionStatus]);
-
-  useEffect(() => {
-    Object.keys(CONNECTION_KINDS).map((kind) => {
-      getConnectionStatus(CONNECTION_KINDS[kind]);
-    });
-  }, []);
+  }, [page, pageSize, search, sortOrder, connectionMetadataState]);
 
   const getConnections = (page, pageSize, search, sortOrder) => {
     setLoading(true);
@@ -660,7 +648,11 @@ function Connections({
       },
       (res) => {
         res?.connections.forEach((connection) => {
-          connection.nextStatus = connectionStatus[connection.kind];
+          (connection.nextStatus =
+            connection.nextStatus === undefined &&
+            connectionMetadataState[connection.kind].transitions),
+            (connection.kindLogo =
+              connection.kindLogo === undefined && connectionMetadataState[connection.kind].icon);
         });
         setConnections(res?.connections || []);
         setPage(res?.page || 0);
@@ -669,26 +661,6 @@ function Connections({
         setLoading(false);
       },
       handleError(ACTION_TYPES.FETCH_CONNECTIONS),
-    );
-  };
-
-  const getConnectionStatus = (connectionKind) => {
-    setLoading(true);
-    dataFetch(
-      `  /api/integrations/connections/${connectionKind}/transitions`,
-      {
-        credentials: 'include',
-        method: 'GET',
-      },
-      (res) => {
-        setConnectionStatus((prevState) => ({
-          ...prevState,
-          [connectionKind]: res,
-        }));
-        setLoading(false);
-      },
-      handleError(ACTION_TYPES.FETCH_CONNECTION_STATUS_TRANSITIONS),
-      setLoading(false),
     );
   };
 
@@ -1048,7 +1020,8 @@ const mapStateToProps = (state) => {
   const k8sconfig = state.get('k8sConfig');
   const selectedK8sContexts = state.get('selectedK8sContexts');
   const operatorState = state.get('operatorState');
-  return { k8sconfig, selectedK8sContexts, operatorState };
+  const connectionMetadataState = state.get('connectionMetadataState');
+  return { k8sconfig, selectedK8sContexts, operatorState, connectionMetadataState };
 };
 
 // @ts-ignore

@@ -125,19 +125,6 @@
             url: concepts/credentials
         - title: "Workspaces"
           url: concepts/workspaces
-- title: ⚙️ Tasks (all)
-  url: tasks
-  links:
-    - title: Infrastructure Management
-      url: tasks/infrastructure-management
-    - title: Filter Management
-      url: tasks/filter-management
-    - title: Lifecycle Management
-      url: tasks/lifecycle-management
-    - title: Pattern Management
-      url: tasks/pattern-management
-    - title: Performance Management
-      url: tasks/performance-management
 #    - title: Meshery and SMI Management
 #      url: tasks/service-mesh-interface  
 # - title: 📑 Features
@@ -186,6 +173,10 @@
       # url: guides/smi-conformance
     - title: Configuring Kubernetes Infrastructure
       url: guides/configuration-management
+    - title: Creating a Meshery Design
+      url: guides/creating-a-meshery-design
+    - title: Managing Events with Notification Center
+      url: guides/events-management
     - title: Integrating Prometheus and Grafana
       url: guides/meshery-metrics
     - title: Importing Applications
@@ -194,10 +185,6 @@
       url: guides/pipelining-service-mesh-specifications
     - title: Performance Management with Meshery
       url: guides/performance-management
-    - title: Troubleshooting Guide
-      url: guides/troubleshooting
-    - title: Upgrading Meshery
-      url: guides/upgrade
     - title: Using mesheryctl ↆ
       url: guides/mesheryctl
       children:
@@ -213,6 +200,23 @@
           url: guides/mesheryctl/running-system-checks-using-mesheryctl
     - title: Using Multiple Meshery Adapters
       url: guides/multiple-adapters
+    - title: Troubleshooting Guide
+      url: guides/troubleshooting
+    - title: Upgrading Meshery
+      url: guides/upgrade
+- title: ⚙️ Tasks (all)
+  url: tasks
+  links:
+    - title: Infrastructure Management
+      url: tasks/infrastructure-management
+    - title: Filter Management
+      url: tasks/filter-management
+    - title: Lifecycle Management
+      url: tasks/lifecycle-management
+    - title: Pattern Management
+      url: tasks/pattern-management
+    - title: Performance Management
+      url: tasks/performance-management
 - title: 🛠 Extensibility
   url: extensibility
   links:

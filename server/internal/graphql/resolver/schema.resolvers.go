@@ -234,8 +234,9 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, k8sc
 	isSubscriptionFlushed := false
 	brokerEventTypes := model.GetMesheryBrokerEventTypesFromArray(eventTypes)
 
-	meshSyncDataHandlers, ok := ctx.Value(models.MeshSyncDataHandlersKey).(map[string]models.MeshsyncDataHandler)
-	if !ok || len(meshSyncDataHandlers) == 0 || meshSyncDataHandlers == nil {
+	handler, _ := ctx.Value(models.HandlerKey).(*handlers.Handler)
+	meshSyncDataHandlers := handler.MesheryCtrlsHelper.GetMeshSyncDataHandlersForEachContext()
+	if len(meshSyncDataHandlers) == 0 || meshSyncDataHandlers == nil {
 		er := model.ErrMeshSyncEventsSubscription(fmt.Errorf("meshsync data handlers are not configured for any of the contexts"))
 		r.Log.Error(er)
 		return nil, er

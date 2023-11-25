@@ -30,13 +30,13 @@ image: /assets/img/integrations/cd-pipeline-operator.svg
 
 
 
-5. Provides a pre-defined set of CI/CD patterns and tools.
+5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
 
-6. Allows shortening the time that is passed before an active development.
+6. Provide high performance traffic serving that can scale to millions of requests per second.
 
-7. Security covers authentication, authorization, and SSO for platform services.
+7. Supports IP address targeting mode for Network Load Balancers.
 
 8. Collaborative Infrastructure as Code
 
-9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
+9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
 

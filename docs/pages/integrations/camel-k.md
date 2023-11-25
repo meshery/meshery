@@ -21,10 +21,7 @@ image: /assets/img/integrations/camel-k.svg
 
 2. Collaborative and visual infrastructure as code for Camel K
 
-4. Apache Camel K is a lightweight integration framework built from Apache Camel that runs natively on Kubernetes and is specifically designed for serverless and microservice architectures.
-Users of Camel K can instantly run integration code written in Camel DSL on their preferred cloud (Kubernetes or OpenShift).
-
-
+4. 
     Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
 
 
@@ -33,13 +30,13 @@ Users of Camel K can instantly run integration code written in Camel DSL on thei
 
 
 
-5. Define routing and mediation rules in a variety of domain-specific languages.
+5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
 
-6. Enables easier integration with all kinds of transport or messaging models.
+6. Provide high performance traffic serving that can scale to millions of requests per second.
 
-7. Minimal dependencies for easy embedding in any Java application.
+7. Supports IP address targeting mode for Network Load Balancers.
 
 8. Collaborative Infrastructure as Code
 
-9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
+9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
 

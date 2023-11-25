@@ -104,10 +104,11 @@ const MeshModelComponent = ({
         model.components = components;
         model.relationships = relationships;
       });
-
       await Promise.all(componentPromises);
       if (!isRequestCancelled && models) {
-        setResourcesDetail((prev) => [...prev, ...models]);
+        setResourcesDetail((prev) =>
+          [...prev, ...models].sort((a, b) => a.displayName.localeCompare(b.displayName)),
+        );
       }
     } catch (error) {
       console.error('Failed to fetch models:', error);
