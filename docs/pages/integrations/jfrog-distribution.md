@@ -30,13 +30,13 @@ image: /assets/img/integrations/jfrog-distribution.svg
 
 
 
-5. JFrog Distribution is a centralized platform that lets you provision software release distribution
+5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
 
-6. Structured platform to distribute release binaries as a single coherent release bundle.
+6. Provide high performance traffic serving that can scale to millions of requests per second.
 
-7. Efficient network utilization by optimizing replication, dramatically reducing network load and release bundle synchronization time from source Artifactory to target instance or Edge node.
+7. Supports IP address targeting mode for Network Load Balancers.
 
 8. Collaborative Infrastructure as Code
 
-9. Efficient network utilization by optimizing replication, dramatically reducing network load and release bundle synchronization time from source Artifactory to target instance or Edge node.
+9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
 

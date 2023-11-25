@@ -14,6 +14,7 @@ import { ResourcesConfig } from './resources/config';
 import ResourcesTable from './resources/resources-table';
 import ResourcesSubMenu from './resources/resources-sub-menu';
 import Overview from './overview';
+import KubernetesIcon from '../../assets/icons/technology/kubernetes';
 
 const styles = (theme) => ({
   wrapperClss: {
@@ -150,7 +151,7 @@ const DashboardComponent = (props) => {
                   <Tab
                     key={idx}
                     className={classes.tab}
-                    icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
+                    icon={<KubernetesIcon style={{ width: '1rem', height: '1rem' }} />}
                     label={resource}
                   />
                 </Tooltip>

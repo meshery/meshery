@@ -30,13 +30,13 @@ image: /assets/img/integrations/confidential-containers.svg
 
 
 
-5. Allows cloud native application owners to enforce application security requirements.
+5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
 
-6. Transparent deployment of unmodified containers.
+6. Provide high performance traffic serving that can scale to millions of requests per second.
 
-7. Support for multiple TEE and hardware platforms.
+7. Supports IP address targeting mode for Network Load Balancers.
 
 8. Collaborative Infrastructure as Code
 
-9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
+9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
 
