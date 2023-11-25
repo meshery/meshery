@@ -12,6 +12,7 @@ import { MeshSyncDataFormatter } from './metadata';
 import { getK8sClusterIdsFromCtxId } from '../../utils/multi-ctx';
 import { DefaultTableCell, SortableTableCell } from './common';
 import { camelcaseToSnakecase } from '../../utils/utils';
+import RegisterConnectionModal from './registerConnModal';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -32,6 +33,9 @@ export default function MeshSyncTable(props) {
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [loading, setLoading] = useState(false);
   const StyleClass = useStyles();
+  const [registerConnectionModal, setRegisterConnectionModal] = useState({
+    open: false,
+  });
 
   const clusterIds = encodeURIComponent(
     JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig)),
@@ -353,6 +357,18 @@ export default function MeshSyncTable(props) {
     return initialVisibility;
   });
 
+  const handleRegisterConnectionModalClose = () => {
+    setRegisterConnectionModal({
+      open: false,
+    });
+  };
+
+  const handleRegisterConnectionModal = () => {
+    setRegisterConnectionModal({
+      open: true,
+    });
+  };
+
   return (
     <>
       <div className={StyleClass.toolWrapper} style={{ marginBottom: '5px', marginTop: '-30px' }}>
@@ -377,6 +393,7 @@ export default function MeshSyncTable(props) {
           />
         </div>
       </div>
+      <button onClick={() => handleRegisterConnectionModal()}>Open modal</button>
       <ResponsiveDataTable
         data={meshSyncResources}
         columns={columns}
@@ -386,6 +403,12 @@ export default function MeshSyncTable(props) {
         updateCols={updateCols}
         columnVisibility={columnVisibility}
       />
+      {registerConnectionModal.open && (
+        <RegisterConnectionModal
+          registerConnectionModalOpen={true}
+          handleRegisterConnectionModalClose={handleRegisterConnectionModalClose}
+        />
+      )}
     </>
   );
 }
