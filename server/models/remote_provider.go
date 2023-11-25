@@ -666,7 +666,7 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (co
 		CredentialSecret: cred,
 	}
 
-	connection, err := l.SaveConnection(nil, conn, token, true)
+	connection, err := l.SaveConnection(conn, token, true)
 	if err != nil {
 		logrus.Errorf(err.Error())
 		return connections.Connection{}, err
@@ -3298,7 +3298,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 			CredentialSecret: cred,
 		}
 
-		_, err := l.SaveConnection(r, conn, tokenString, true)
+		_, err := l.SaveConnection(conn, tokenString, true)
 		if err != nil {
 			logrus.Errorf("unable to save Meshery connection: %v", err)
 		}
@@ -3584,7 +3584,7 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 	return nil, ErrFetch(fmt.Errorf("failed to request to remote provider"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
-func (l *RemoteProvider) SaveConnection(req *http.Request, conn *ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error) {
+func (l *RemoteProvider) SaveConnection(conn *ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistConnection", l.ProviderName)
@@ -3599,16 +3599,9 @@ func (l *RemoteProvider) SaveConnection(req *http.Request, conn *ConnectionPaylo
 
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
-	tokenString := token
-	if !skipTokenCheck {
-		tokenString, err = l.GetToken(req)
-		if err != nil {
-			logrus.Error("error getting token: ", err)
-			return nil, err
-		}
-	}
+
 	logrus.Infof("attempting to save %s connection %s to remote provider with status %s", conn.Name, conn.Kind, conn.Status)
-	resp, err := l.DoRequest(cReq, tokenString)
+	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
 		if resp == nil {
 			return nil, ErrUnreachableRemoteProvider(err)
@@ -4060,42 +4053,42 @@ func (l *RemoteProvider) GetKubeClient() *mesherykube.Client {
 }
 
 // SaveCredential - to save a creadential for an integration
-func (l *RemoteProvider) SaveUserCredential(req *http.Request, credential *Credential) error {
+func (l *RemoteProvider) SaveUserCredential(token string, credential *Credential) (*Credential, error) {
+	var createdCredential *Credential
 	if !l.Capabilities.IsSupported(PersistCredentials) {
 		logrus.Error("operation not available")
-		return ErrInvalidCapability("PersistCredentials", l.ProviderName)
+		return nil, ErrInvalidCapability("PersistCredentials", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistCredentials)
 	_creds, err := json.Marshal(credential)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	bf := bytes.NewBuffer(_creds)
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
-	tokenString, _ := l.GetToken(req)
-	if err != nil {
-		logrus.Error("error getting token: ", err)
-		return err
-	}
 
-	resp, err := l.DoRequest(cReq, tokenString)
+	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
-		return ErrFetch(err, "Save Credential", resp.StatusCode)
+		return nil, ErrFetch(err, "Save Credential", resp.StatusCode)
 	}
 	defer resp.Body.Close()
 
 	bdr, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return ErrDataRead(err, "Save Credential")
+		return nil, ErrDataRead(err, "Save Credential")
 	}
 
 	if resp.StatusCode == http.StatusCreated {
-		return nil
+		err := json.Unmarshal(bdr, createdCredential)
+		if err != nil {
+			return nil, ErrUnmarshal(err, "created credential")
+		}
+		return createdCredential, nil
 	}
 
-	return ErrFetch(fmt.Errorf("failed to save the credential"), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("failed to save the credential"), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 // GetCredentials - to get saved credentials

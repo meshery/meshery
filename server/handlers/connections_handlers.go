@@ -45,7 +45,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 
 	eventBuilder := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
 
-	_, err = provider.SaveConnection(req, &connection, "", false)
+	_, err = provider.SaveConnection(&connection, "", false)
 	if err != nil {
 		_err := ErrFailToSave(err, obj)
 		metadata := map[string]interface{}{
@@ -234,7 +234,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 	}
 
 	connKind := mux.Vars(req)["connectionKind"]
-	if connKind == "kubernetes" {		
+	if connKind == "kubernetes" {
 		smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 		token, _ := req.Context().Value(models.TokenCtxKey).(string)
 		smInstanceTracker.mx.Lock()
@@ -309,7 +309,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 		token, _ := req.Context().Value(models.TokenCtxKey).(string)
 		for id, status := range *connectionStatusPayload {
 			connection, statusCode, err := provider.UpdateConnectionStatusByID(token, id, status)
-	
+
 			if err != nil {
 				event := events.NewEvent().WithDescription(fmt.Sprintf("Unable to update connection status to %s", status)).WithMetadata(map[string]interface{}{"error": err}).Build()
 				_ = provider.PersistEvent(event)
@@ -318,9 +318,9 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 				continue
 			}
 			eb := events.NewEvent()
-			eb.WithDescription(fmt.Sprintf("Connection \"%s\" status updated to %s",  connection.Name, connection.Status)).WithStatus("update")
+			eb.WithDescription(fmt.Sprintf("Connection \"%s\" status updated to %s", connection.Name, connection.Status)).WithStatus("update")
 			if status == connections.DELETED {
-				eb.WithDescription(fmt.Sprintf("Connection \"%s\" deleted",  connection.Name)).WithAction("delete")
+				eb.WithDescription(fmt.Sprintf("Connection \"%s\" deleted", connection.Name)).WithAction("delete")
 			}
 			event := events.NewEvent().WithCategory("connection").WithSeverity(events.Success).FromUser(userID).FromSystem(*h.SystemID).ActedUpon(id).Build()
 			_ = provider.PersistEvent(event)
@@ -328,7 +328,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 
 			h.log.Debug("connection", connection, statusCode)
 		}
-		
+
 	}
 	w.WriteHeader(http.StatusAccepted)
 }

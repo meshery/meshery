@@ -962,7 +962,7 @@ func (l *DefaultLocalProvider) ExtensionProxy(_ *http.Request) (*ExtensionProxyR
 	return nil, ErrLocalProviderSupport
 }
 
-func (l *DefaultLocalProvider) SaveConnection(_ *http.Request, _ *ConnectionPayload, _ string, _ bool) (*connections.Connection, error) {
+func (l *DefaultLocalProvider) SaveConnection(_ *ConnectionPayload, _ string, _ bool) (*connections.Connection, error) {
 	return nil, ErrLocalProviderSupport
 }
 
@@ -1130,12 +1130,12 @@ func (l *DefaultLocalProvider) Cleanup() error {
 	return l.MesheryK8sContextPersister.DB.Migrator().DropTable(&MesheryFilter{})
 }
 
-func (l *DefaultLocalProvider) SaveUserCredential(_ *http.Request, credential *Credential) error {
+func (l *DefaultLocalProvider) SaveUserCredential(token string, credential *Credential) (*Credential, error) {
 	result := l.GetGenericPersister().Table("credentials").Create(&credential)
 	if result.Error != nil {
-		return fmt.Errorf("error saving user credentials: %v", result.Error)
+		return nil, fmt.Errorf("error saving user credentials: %v", result.Error)
 	}
-	return nil
+	return nil, nil
 }
 
 func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error) {

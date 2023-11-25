@@ -100,6 +100,8 @@ const (
 	ErrFlushMeshSyncDataCode              = "1535"
 	ErrUpdateConnectionStatusCode         = "1540"
 	ErrResultNotFoundCode                 = "1546"
+	ErrPersistCredentialCode              = "replace_me"
+	ErrPersistConnectionCode              = "replace_me"
 )
 
 var (
@@ -380,4 +382,12 @@ func ErrUpdateConnectionStatus(err error, statusCode int) error {
 
 func ErrResultNotFound(err error) error {
 	return errors.New(ErrResultNotFoundCode, errors.Alert, []string{err.Error()}, []string{"The record in the database does not exist."}, []string{"The record might have been deleted."}, []string{""})
+}
+
+func ErrPersistCredential(err error) error {
+	return errors.New(ErrPersistCredentialCode, errors.Alert, []string{}, []string{}, []string{}, []string{})
+}
+
+func ErrPersistConnection(err error) error {
+	return errors.New(ErrPersistConnectionCode, errors.Alert, []string{}, []string{}, []string{}, []string{})
 }

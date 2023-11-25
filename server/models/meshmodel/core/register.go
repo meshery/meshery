@@ -30,7 +30,6 @@ import (
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-
 type crd struct {
 	Items []crdhelper `json:"items"`
 }
@@ -361,8 +360,6 @@ func getAPIRes(cli *kubernetes.Client) (map[string]v1.APIResource, error) {
 	}
 	return apiRes, nil
 }
-
-
 
 // TODO: To be moved in meshkit
 // func getGroupsFromResource(cli *kubernetes.Client) (hgv map[kind][]groupversion, err error) {

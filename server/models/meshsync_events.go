@@ -1,8 +1,6 @@
 package models
 
 import (
-	"fmt"
-
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
@@ -34,7 +32,6 @@ func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, l
 
 func (mh *MeshsyncDataHandler) Run() error {
 	storeSubscriptionStatusChan := make(chan bool)
-fmt.Println("inside run")
 	// this subscription is independent of whether or not the stale data in the database have been cleaned up
 	go mh.subscribeToMeshsyncEvents()
 
@@ -122,7 +119,7 @@ func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 	}
 }
 
-func (mh *MeshsyncDataHandler) Unmarshal(object interface{}) (meshsyncmodel.KubernetesResource, error){
+func (mh *MeshsyncDataHandler) Unmarshal(object interface{}) (meshsyncmodel.KubernetesResource, error) {
 	objectJSON, _ := utils.Marshal(object)
 	obj := meshsyncmodel.KubernetesResource{}
 	err := utils.Unmarshal(objectJSON, &obj)
@@ -232,11 +229,11 @@ func (mh *MeshsyncDataHandler) requestMeshsyncStore() error {
 
 // Returns metadata for the component identified by apiVersion and kind.
 // If the component does not exist in the registry, default metadata for k8s component is returned.
-func(mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind string) map[string]interface{} {
+func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind string) map[string]interface{} {
 	var metadata map[string]interface{}
 
 	result := mh.dbHandler.Model(v1alpha1.ComponentDefinitionDB{}).Select("metadata").
-	Where("api_version = ? and kind = ?", apiVersion, kind).Scan(&metadata)
+		Where("api_version = ? and kind = ?", apiVersion, kind).Scan(&metadata)
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			mh.log.Error(ErrResultNotFound(result.Error))

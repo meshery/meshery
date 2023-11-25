@@ -19,7 +19,6 @@ import (
 
 const k8sMeshModelPath = "../meshmodel/kubernetes/model_template.json"
 
-
 type RegistrationStatus int
 
 const (
