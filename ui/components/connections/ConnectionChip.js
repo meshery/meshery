@@ -15,7 +15,7 @@ import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
 
 const useChipStyles = makeStyles(() => ({
   Chip: {
-    width: '12.8rem',
+    width: '9rem',
     textAlign: 'center',
     cursor: 'pointer',
     '& .MuiChip-label': {
@@ -49,7 +49,7 @@ export const ConnectionChip = ({ handlePing, onDelete, title, tooltip, iconSrc, 
               />
             </BadgeAvatars>
           ) : (
-            <Avatar src={iconSrc} className={classes.icon} style={status ? {} : { opacity: 0.2 }} />
+            <Avatar src={iconSrc} className={classes.icon} />
           )
         }
         variant="filled"

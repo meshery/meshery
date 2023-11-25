@@ -5,6 +5,7 @@ import { EVENT_TYPES } from './Enum';
 import _ from 'lodash';
 import { getWebAdress } from './webApis';
 import { APPLICATION, DESIGN, FILTER } from '../constants/navigator';
+import { Tooltip } from '@mui/material';
 
 /**
  * Check if an object is empty
@@ -215,3 +216,58 @@ export function getSharableCommonHostAndprotocolLink(sharedResource) {
 
   return '';
 }
+
+/**
+ * Retrieves the value of a specified column from a row of data.
+ *
+ * @param {Array} rowData - The array representing the row of data.
+ * @param {string} columnName - The name of the column whose value you want to retrieve.
+ * @param {Array} columns - An array of column definitions.
+ * @returns {*} The value of the specified column in the row, or undefined if not found.
+ */
+
+export const getColumnValue = (rowData, columnName, columns) => {
+  const columnIndex = columns.findIndex((column) => column.name === columnName);
+  return rowData[columnIndex];
+};
+
+/**
+ * Filter the columns to show in visibility switch.
+ *
+ * @param {string} columns - Full list of columns name.
+ *
+ */
+
+export const getVisibilityColums = (columns) => {
+  return columns.filter((col) => col?.options?.display !== false);
+};
+
+export const ConditionalTooltip = ({ value, maxLength, ...restProps }) => {
+  return value?.length > maxLength ? (
+    <Tooltip title={value} arrow placement="top">
+      <div
+        style={{
+          maxWidth: '15rem',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+        }}
+        {...restProps}
+      >
+        {`${value.slice(0, maxLength)}...`}
+      </div>
+    </Tooltip>
+  ) : (
+    <div
+      style={{
+        maxWidth: '15rem',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+      }}
+      {...restProps}
+    >
+      {value}
+    </div>
+  );
+};

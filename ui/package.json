@@ -72,6 +72,7 @@
     "glob-parent": "^5.1.2",
     "graphql": "^16.8.1",
     "graphql-ws": "^5.11.2",
+    "humanize-duration": "^3.31.0",
     "isomorphic-unfetch": "^4.0.2",
     "js-yaml": "^4.1.0",
     "jsonlint-mod": "^1.7.6",
@@ -109,7 +110,7 @@
     "redux-thunk": "^2.4.0",
     "relay-runtime": "^15.0.0",
     "set-value": "^4.0.1",
-    "styled-jsx": "^4.0.1",
+    "styled-jsx": "^5.1.2",
     "tar": "^6.1.15",
     "universal-cookie": "^4.0.4",
     "uuid": "^9.0.0"

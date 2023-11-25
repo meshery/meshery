@@ -17,7 +17,7 @@ image: /assets/img/integrations/gitlab-controller.svg
  #### Category: gitlab-controller -->
 
 ### Overview & Features:
-1. GitOps your infrastructure with Meshery and GitLab
+1. GitOps your infrastructure with Meshery and GitHub
 
 2. Collaborative and visual infrastructure as code for Gitlab Controller
 

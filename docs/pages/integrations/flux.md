@@ -21,26 +21,22 @@ image: /assets/img/integrations/flux.svg
 
 2. Collaborative and visual infrastructure as code for Flux
 
-4.  is a Continuous Delivery solution for Kubernetes. Flux is constructed with the , a set of composable APIs and specialized tools for keeping Kubernetes clusters in sync with sources of configuration (like Git & Helm repositories), and automating updates to configuration when there is new code to deploy.
+4. 
+    Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
 
 
 
-    Connect GitHub with Meshery and import selectively import your existing Helm Charts, Docker Compose applications, and Kubernetes manifests.Visually configure and customize your cloud native infrastructure.
-    Save and share your design patterns to GitHub using either public or private repositories.
+    Looking for best practice cloud native design and deployment best practices? Choose from thousands of pre-built components in MeshMap. Choose from hundreds of ready-made design patterns by importing templates from Meshery Catalog or use our low code designer, MeshMap, to create and deploy your own cloud native infrastructure designs.
 
 
 
-    Learn more about <a href="/blog/service-mesh-specifications/pipelining-service-mesh-specifications">pipelining service mesh specifications</a> and using Service Mesh Interface and Service Mesh Performance specs on your CI/CD pipelines with Meshery's GitHub Actions.
+5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
 
+6. Provide high performance traffic serving that can scale to millions of requests per second.
 
-
-5. Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.
-
-6. Invite anyone to review and make changes to your private designs.
-
-7. Ongoing synchronization of Kubernetes configuration and changes across any number of clusters.
+7. Supports IP address targeting mode for Network Load Balancers.
 
 8. Collaborative Infrastructure as Code
 
-9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
+9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
 

@@ -1,16 +1,17 @@
 ---
 layout: default
-title: Install Meshery CLI with Scoop
+title: Scoop
 permalink: installation/windows/scoop
 type: installation
 category: mesheryctl
 redirect_from:
 - installation/platforms/scoop
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/platforms/scoop.png
 ---
+# Install Meshery CLI with Scoop
 
 {% include mesheryctl/installation-scoop.md %}
 

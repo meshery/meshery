@@ -30,13 +30,13 @@ image: /assets/img/integrations/devfile.svg
 
 
 
-5. Development environments are quick to create, can be thrown away at will, and can be easily re-created when needed.
+5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
 
-6. Mechanism for teams to share configurations across projects, and provide a single source of truth throughout the application lifecycle.
+6. Provide high performance traffic serving that can scale to millions of requests per second.
 
-7. Central location management so updates can be applied once and be properly aligned across development teams.
+7. Supports IP address targeting mode for Network Load Balancers.
 
 8. Collaborative Infrastructure as Code
 
-9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
+9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
 

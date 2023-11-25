@@ -1,6 +1,7 @@
 import { alpha } from '@material-ui/core';
 import { Colors } from '../../themes/app';
 import { CONNECTION_STATES } from '../../utils/Enum';
+import { notificationColors } from '../../themes';
 
 const styles = (theme) => ({
   grid: { padding: theme.spacing(2) },
@@ -15,7 +16,7 @@ const styles = (theme) => ({
   },
   statusSelect: {
     '& .MuiSelect-select.MuiSelect-select': {
-      padding: '0 2px',
+      padding: '0',
     },
   },
   createButton: {
@@ -31,14 +32,17 @@ const styles = (theme) => ({
   },
   chipFormControl: {
     minWidth: '100%',
+    '& .MuiSelect-icon': {
+      marginRight: '10px !important',
+    },
   },
   statusChip: {
     minWidth: '145px !important',
-    maxWidth: '100% !important',
+    width: '100% !important',
     display: 'flex !important',
     justifyContent: 'flex-start !important',
     textTransform: 'capitalize',
-    borderRadius: '3px !important',
+    borderRadius: '0 !important',
     padding: '6px 8px',
     '& .MuiChip-label': {
       paddingTop: '3px',
@@ -57,81 +61,6 @@ const styles = (theme) => ({
   },
   lowecase: {
     textTransform: 'lowecase',
-  },
-  ignored: {
-    '& .MuiChip-label': {
-      color: `${theme.palette.secondary.default}`,
-    },
-    background: `${theme.palette.secondary.default}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.default} !important`,
-    },
-  },
-  connected: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.success,
-    },
-    background: `${theme.palette.secondary.success}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.success} !important`,
-    },
-  },
-  registered: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.primary,
-    },
-    background: `${theme.palette.secondary.primary}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.primary} !important`,
-    },
-  },
-  discovered: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.warning,
-    },
-    background: `${theme.palette.secondary.warning}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.warning} !important`,
-    },
-  },
-  deleted: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.error,
-    },
-    background: `${theme.palette.secondary.lightError}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.error} !important`,
-    },
-    '&:hover': {
-      cursor: 'initial',
-    },
-  },
-  maintenance: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.warning,
-    },
-    background: `${theme.palette.secondary.warning}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.warning} !important`,
-    },
-  },
-  disconnected: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.warning,
-    },
-    background: `${theme.palette.secondary.warning}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.warning} !important`,
-    },
-  },
-  notfound: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.warning,
-    },
-    background: `${theme.palette.secondary.warning}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.warning} !important`,
-    },
   },
   expandedRows: {
     background: `${theme.palette.secondary.default}10`,
@@ -154,6 +83,7 @@ const styles = (theme) => ({
     borderRadius: '10px 0 0 10px',
     width: 'calc(100% - 23px)',
     border: 'none',
+    overflowX: 'hidden',
   },
   noGutter: {
     padding: '0',
@@ -221,6 +151,80 @@ const styles = (theme) => ({
     justifyContent: 'flex-start',
     display: 'flex',
     alignItems: 'center',
+  },
+
+  /** Connection status select colors according to the status */
+  ignored: {
+    '& .MuiChip-label': {
+      color: `${theme.palette.secondary.default}`,
+    },
+    background: `${theme.palette.secondary.default}30 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${theme.palette.secondary.default} !important`,
+    },
+  },
+  connected: {
+    '& .MuiChip-label': {
+      color: theme.palette.secondary.success,
+    },
+    background: `${theme.palette.secondary.success}30 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${theme.palette.secondary.success} !important`,
+    },
+  },
+  registered: {
+    '& .MuiChip-label': {
+      color: theme.palette.secondary.primary,
+    },
+    background: `${theme.palette.secondary.primary}30 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${theme.palette.secondary.primary} !important`,
+    },
+  },
+  discovered: {
+    '& .MuiChip-label': {
+      color: notificationColors.info,
+    },
+    background: `${notificationColors.info}30 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${notificationColors.info} !important`,
+    },
+  },
+  deleted: {
+    '& .MuiChip-label': {
+      color: theme.palette.secondary.error,
+    },
+    background: `${theme.palette.secondary.lightError}30 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${theme.palette.secondary.error} !important`,
+    },
+  },
+  maintenance: {
+    '& .MuiChip-label': {
+      color: theme.palette.secondary.warning,
+    },
+    background: `${theme.palette.secondary.warning}30 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${theme.palette.secondary.warning} !important`,
+    },
+  },
+  disconnected: {
+    '& .MuiChip-label': {
+      color: notificationColors.lightwarning,
+    },
+    background: `${notificationColors.lightwarning}30 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${notificationColors.lightwarning} !important`,
+    },
+  },
+  notfound: {
+    '& .MuiChip-label': {
+      color: theme.palette.secondary.text,
+    },
+    background: `${theme.palette.secondary.disableButtonBg}60 !important`,
+    '& .MuiSvgIcon-root': {
+      color: `${theme.palette.secondary.iconMain} !important`,
+    },
   },
 });
 
