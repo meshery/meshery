@@ -41,6 +41,7 @@ const Title = ({ title }) => (
 );
 
 const ModelContents = ({ model }) => {
+  const StyleClass = useStyles();
   const PropertyFormattersLeft = {
     version: (value) => <KeyValue property="API Version" value={value} />,
     hostname: (value) => <KeyValue property="Registrant" value={value} />,
@@ -73,17 +74,12 @@ const ModelContents = ({ model }) => {
 
   return (
     <>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-        }}
-      >
+      <div className={StyleClass.segment}>
         <div
+          className={StyleClass.fullWidth}
           style={{
             display: 'flex',
             flexDirection: 'column',
-            width: '50%',
             paddingRight: '1rem',
           }}
         >
@@ -94,7 +90,7 @@ const ModelContents = ({ model }) => {
           />
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
+        <div className={StyleClass.fullWidth} style={{ display: 'flex', flexDirection: 'column' }}>
           <FormatStructuredData
             data={orderdMetadataRight}
             propertyFormatters={PropertyFormattersRight}
@@ -132,6 +128,7 @@ const ChildTitle = ({ title }) => (
 );
 
 const ComponentsContents = ({ components }) => {
+  const StyleClass = useStyles();
   return (
     <div>
       {components.map((component, index) => {
@@ -165,12 +162,7 @@ const ComponentsContents = ({ components }) => {
             }}
           >
             <ChildTitle title={component.displayName} />
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-              }}
-            >
+            <div className={StyleClass.segment}>
               <div
                 style={{
                   display: 'flex',
@@ -200,6 +192,7 @@ const ComponentsContents = ({ components }) => {
 };
 
 const ComponentContents = ({ component }) => {
+  const StyleClass = useStyles();
   const PropertyFormattersLeft = {
     version: (value) => <KeyValue property="API Version" value={value} />,
     modelName: (value) => <KeyValue property="Model Name" value={value} />,
@@ -230,17 +223,12 @@ const ComponentContents = ({ component }) => {
 
   return (
     <>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-        }}
-      >
+      <div className={StyleClass.segment}>
         <div
+          className={StyleClass.fullWidth}
           style={{
             display: 'flex',
             flexDirection: 'column',
-            width: '50%',
             paddingRight: '1rem',
           }}
         >
@@ -251,7 +239,7 @@ const ComponentContents = ({ component }) => {
           />
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
+        <div className={StyleClass.fullWidth} style={{ display: 'flex', flexDirection: 'column' }}>
           <FormatStructuredData
             data={orderdMetadataRight}
             propertyFormatters={PropertyFormattersRight}
@@ -264,6 +252,7 @@ const ComponentContents = ({ component }) => {
 };
 
 const RelationshipContents = ({ relationship }) => {
+  const StyleClass = useStyles();
   const PropertyFormattersLeft = {
     version: (value) => <KeyValue property="API Version" value={value} />,
     modelName: (value) => <KeyValue property="Model Name" value={value} />,
@@ -294,10 +283,9 @@ const RelationshipContents = ({ relationship }) => {
   return (
     <>
       <div
+        className={StyleClass.segment}
         style={{
-          display: 'flex',
           marginTop: '12px',
-          flexDirection: 'row',
         }}
       >
         <div
@@ -327,70 +315,68 @@ const RelationshipContents = ({ relationship }) => {
   );
 };
 
-const RelationshipsContents = ({ relationships }) => (
-  <div>
-    {relationships.map((rela, index) => {
-      const PropertyFormattersLeft = {
-        version: (value) => <KeyValue property="API Version" value={value} />,
-      };
+const RelationshipsContents = ({ relationships }) => {
+  const StyleClass = useStyles();
+  return (
+    <div>
+      {relationships.map((rela, index) => {
+        const PropertyFormattersLeft = {
+          version: (value) => <KeyValue property="API Version" value={value} />,
+        };
 
-      const metaDataLeft = {
-        version: rela.apiVersion,
-      };
+        const metaDataLeft = {
+          version: rela.apiVersion,
+        };
 
-      const orderLeft = ['version'];
-      const orderdMetadataLeft = reorderObjectProperties(metaDataLeft, orderLeft);
+        const orderLeft = ['version'];
+        const orderdMetadataLeft = reorderObjectProperties(metaDataLeft, orderLeft);
 
-      const PropertyFormattersRight = {
-        subType: (value) => <KeyValue property="Sub Category" value={value} />,
-      };
+        const PropertyFormattersRight = {
+          subType: (value) => <KeyValue property="Sub Category" value={value} />,
+        };
 
-      const metaDataRight = {
-        subType: rela.subType,
-      };
+        const metaDataRight = {
+          subType: rela.subType,
+        };
 
-      const orderRight = ['subType'];
-      const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
-      return (
-        <div
-          key={index}
-          style={{
-            margin: '0.9rem 0',
-          }}
-        >
-          <ChildTitle title={rela.kind} />
+        const orderRight = ['subType'];
+        const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
+        return (
           <div
+            key={index}
             style={{
-              display: 'flex',
-              flexDirection: 'row',
+              margin: '0.9rem 0',
             }}
           >
-            <div
-              style={{
-                display: 'flex',
-                width: '50%',
-                paddingRight: '1rem',
-              }}
-            >
-              <FormatStructuredData
-                data={orderdMetadataLeft}
-                propertyFormatters={PropertyFormattersLeft}
-                order={orderLeft}
-              />
-            </div>
-            <div style={{ display: 'flex', width: '50%' }}>
-              <FormatStructuredData
-                data={orderdMetadataRight}
-                propertyFormatters={PropertyFormattersRight}
-                order={orderRight}
-              />
+            <ChildTitle title={rela.kind} />
+            <div className={StyleClass.segment}>
+              <div
+                style={{
+                  display: 'flex',
+                  width: '50%',
+                  paddingRight: '1rem',
+                }}
+              >
+                <FormatStructuredData
+                  data={orderdMetadataLeft}
+                  propertyFormatters={PropertyFormattersLeft}
+                  order={orderLeft}
+                />
+              </div>
+              <div style={{ display: 'flex', width: '50%' }}>
+                <FormatStructuredData
+                  data={orderdMetadataRight}
+                  propertyFormatters={PropertyFormattersRight}
+                  order={orderRight}
+                />
+              </div>
             </div>
           </div>
-        </div>
-      );
-    })}
-  </div>
-);
+        );
+      })}
+    </div>
+  );
+};
 
 const RegistrantContent = ({ registrant }) => {
   const PropertyFormattersLeft = {
@@ -468,12 +454,7 @@ const MeshModelDetails = ({ view, show, rela, regi, comp }) => {
       {view === REGISTRANTS && regi.hostname && (
         <div>
           <Title title={regi.hostname} />
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-            }}
-          >
+          <div className={StyleClass.segment}>
             <RegistrantContent registrant={regi} />
           </div>
           {show.model.displayName && <hr style={{ margin: '1rem 0' }} />}

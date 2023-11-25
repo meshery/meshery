@@ -91,6 +91,7 @@ const MesheryTreeView = ({
 }) => {
   const [expanded, setExpanded] = React.useState([]);
   const [selected, setSelected] = React.useState([]);
+  const [searchExpanded, setSearchExpanded] = React.useState(false);
   const StyleClass = useStyles();
 
   useEffect(() => {
@@ -151,35 +152,39 @@ const MesheryTreeView = ({
       {view === MODELS && (
         <div>
           <div className={StyleClass.searchContainer}>
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
-              <IconButton onClick={expandAll} size="large">
-                <KeyboardArrowDownIcon />
-              </IconButton>
+            {!searchExpanded && (
+              <div style={{ display: 'flex', flexDirection: 'row' }}>
+                <IconButton onClick={expandAll} size="large">
+                  <KeyboardArrowDownIcon />
+                </IconButton>
 
-              <IconButton
-                onClick={() => setExpanded([])}
-                style={{ marginRight: '4px' }}
-                size="large"
-              >
-                <KeyboardArrowUpIcon />
-              </IconButton>
-              <FormControlLabel
-                control={
-                  <Switch
-                    color="primary"
-                    checked={checked}
-                    onClick={handleChecked}
-                    inputProps={{ 'aria-label': 'controlled' }}
-                  />
-                }
-                label="Duplicates"
-              />
-            </div>
+                <IconButton
+                  onClick={() => setExpanded([])}
+                  style={{ marginRight: '2px' }}
+                  size="large"
+                >
+                  <KeyboardArrowUpIcon />
+                </IconButton>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      color="primary"
+                      checked={checked}
+                      onClick={handleChecked}
+                      inputProps={{ 'aria-label': 'controlled' }}
+                    />
+                  }
+                  label="Duplicates"
+                />
+              </div>
+            )}
             <div style={{ display: 'flex' }}>
               <SearchBar
                 onSearch={(value) => {
                   setSearchText(value);
                 }}
+                expanded={searchExpanded}
+                setExpanded={setSearchExpanded}
                 placeholder="Search"
               />
             </div>
@@ -526,7 +531,7 @@ const MesheryTreeView = ({
                   key={index}
                   nodeId={index + 1}
                   check
-                  labelText={relationship.kind}
+                  labelText={relationship.subType}
                   onClick={() => {
                     setRela(relationship);
                   }}

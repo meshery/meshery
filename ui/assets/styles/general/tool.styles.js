@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
   mainContainerAnimate: {
     height: '36rem',
     [theme.breakpoints.down('sm')]: {
-      height: '80rem',
+      height: '73rem',
     },
   },
   innerContainer: {
@@ -79,6 +79,7 @@ const useStyles = makeStyles((theme) => ({
       flexDirection: 'row',
       paddingLeft: '1rem',
       overflowX: 'auto',
+      padding: '0.4rem'
     },
   },
   tabs: {
@@ -119,7 +120,12 @@ const useStyles = makeStyles((theme) => ({
     margin: '0rem 0.7rem',
     flexDirection: 'column',
     cursor: 'pointer',
+    [theme.breakpoints.down('md')]: {
+      height: '10rem',
+      width: '8.5rem'
+    },
     [theme.breakpoints.down('sm')]: {
+      width: '13rem',
       marginTop: '0.7rem',
       marginRight: '0.5rem',
     },
@@ -151,8 +157,8 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: 'inset 0 0 6px 2px rgba(0, 0, 0,0.4)',
     [theme.breakpoints.down('sm')]: {
       width: '90%',
-      padding: '0.5rem',
-      height: '40rem',
+      padding: '1rem',
+      height: '35rem',
     },
   },
   emptyDetailsContainer: {
@@ -170,7 +176,7 @@ const useStyles = makeStyles((theme) => ({
     [theme.breakpoints.down('sm')]: {
       width: '90%',
       padding: '0.5rem',
-      height: '40rem',
+      height: '35rem',
     },
   },
   activeTab: {
@@ -198,10 +204,20 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderBottom: '1px solid #d2d3d4',
+  },
+  segment: {
+    display: 'flex',
+    flexDirection: 'row',
     [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column',
+      flexDirection: 'column'
     },
   },
+  fullWidth: {
+    width: '50%',
+    [theme.breakpoints.down('sm')]: {
+      width: '70%'
+    },
+  }
   // Define other styles as needed
 }));
 
