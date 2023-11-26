@@ -1,0 +1,37 @@
+{
+    "kind":"Thinkbox Krakatoa",
+    "apiVersion": "core.meshery.io/v1alpha1",
+    "displayName": "Thinkbox Krakatoa",
+    "format": "JSON",
+    "metadata": {
+        "genealogy": "",
+        "isAnnotation": "true",
+        "isNamespaced": "false",
+        "logoURL": "",
+        "model": "aws",
+        "modelDisplayName": "AWS Thinkbox Krakatoa",
+        "primaryColor": "#ED7100",
+        "published": "FALSE",
+        "secondaryColor": "",
+        "shape": "rectangle",
+        "styleOverrides": "",
+        "subCategory": "Compute",
+        "svgColor": "",
+        "svgComplete": "",
+        "svgWhite": ""
+    },
+    "model": {
+        "name": "aws",
+        "version": "1.0.0",
+        "displayName": "AWS Thinkbox Krakatoa",
+        "category": {
+            "name": "Compute",
+            "metadata": null
+        },
+        "metadata": {
+            "svgColor": "",
+            "svgWhite": ""
+        },
+        "schema": "{\"$id\":\"https://meshery.layer5.io/system/models/definition/Uitlity/Comments\",\"$schema\": \"http://json-schema.org/draft-07/schema\",\"title\": \"Shape\",\"type\": \"object\",\"description\": \"Use this shape to customize your designs. The presence of this shape in your design has no semantic relationship to the infrastructure under management. Convert this shape to a Component in order for Meshery to orchestrate representative infrastructure.\"}"
+    }
+}

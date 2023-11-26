@@ -1,0 +1,37 @@
+{
+    "kind":"Health Dashboard",
+    "apiVersion": "core.meshery.io/v1alpha1",
+    "displayName": "Health Dashboard",
+    "format": "JSON",
+    "metadata": {
+        "genealogy": "",
+        "isAnnotation": "true",
+        "isNamespaced": "false",
+        "logoURL": "",
+        "model": "aws",
+        "modelDisplayName": "AWS Health Dashboard",
+        "primaryColor": "#E7157B",
+        "published": "FALSE",
+        "secondaryColor": "",
+        "shape": "rectangle",
+        "styleOverrides": "",
+        "subCategory": "Management Governance",
+        "svgColor": "",
+        "svgComplete": "",
+        "svgWhite": ""
+    },
+    "model": {
+        "name": "aws",
+        "version": "1.0.0",
+        "displayName": "AWS Health Dashboard",
+        "category": {
+            "name": "Management Governance",
+            "metadata": null
+        },
+        "metadata": {
+            "svgColor": "",
+            "svgWhite": ""
+        },
+        "schema": "{\"$id\":\"https://meshery.layer5.io/system/models/definition/Uitlity/Comments\",\"$schema\": \"http://json-schema.org/draft-07/schema\",\"title\": \"Shape\",\"type\": \"object\",\"description\": \"Use this shape to customize your designs. The presence of this shape in your design has no semantic relationship to the infrastructure under management. Convert this shape to a Component in order for Meshery to orchestrate representative infrastructure.\"}"
+    }
+}
