@@ -22,6 +22,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/eiannone/keyboard"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
@@ -128,10 +129,40 @@ mesheryctl system model list --page 2
 		}
 
 		if len(rows) == 0 {
-			// if no model is found
 			utils.Log.Info("No model(s) found")
-		} else {
+			return nil
+		}
+
+		if cmd.Flags().Changed("page") {
 			utils.PrintToTable(header, rows)
+		} else {
+			paginator := utils.NewPaginator(header, rows)
+			paginator.Render()
+			keysEvents, err := keyboard.GetKeys(10)
+			if err != nil {
+				panic(err)
+			}
+			defer func() {
+				_ = keyboard.Close()
+			}()
+
+			for {
+				event := <-keysEvents
+				if event.Err != nil {
+					utils.Log.Error(fmt.Errorf("Unable to capture keyboard events"))
+					break
+				}
+				if event.Key == keyboard.KeyEsc || event.Key == keyboard.KeyCtrlC {
+					break
+				}
+				if event.Key == keyboard.KeyArrowDown || event.Key == keyboard.KeyEnter {
+					isLastLine := paginator.AddLine()
+					if isLastLine {
+						break
+					}
+				}
+			}
+			utils.ClearLine()
 		}
 
 		return nil

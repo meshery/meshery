@@ -14,6 +14,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -535,6 +536,15 @@ func PrintToTableWithFooter(header []string, data [][]string, footer []string) {
 	table.AppendBulk(data) // The data in the table
 	table.SetFooter(footer)
 	table.Render() // Render the table
+}
+
+// ClearLine clear last line from output
+func ClearLine() {
+	if runtime.GOOS == "windows" {
+		fmt.Print("\r")
+	} else {
+		fmt.Print("\r\033[K")
+	}
 }
 
 // StringContainedInSlice returns the index in which a string is a substring in a list of strings
