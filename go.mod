@@ -37,7 +37,7 @@ require (
 	github.com/layer5io/gowrk2 v0.6.1
 	github.com/layer5io/meshery-operator v0.6.15
 	github.com/layer5io/meshkit v0.6.85
-	github.com/layer5io/meshsync v0.6.22
+	github.com/layer5io/meshsync v0.6.24
 	github.com/layer5io/nighthawk-go v1.0.3
 	github.com/layer5io/service-mesh-performance v0.3.4
 	github.com/lib/pq v1.10.9
