@@ -38,6 +38,7 @@ export default function MeshSyncTable(props) {
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [loading, setLoading] = useState(false);
   const StyleClass = useStyles();
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const clusterIds = encodeURIComponent(
     JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig)),
@@ -387,6 +388,8 @@ export default function MeshSyncTable(props) {
             onSearch={(value) => {
               setSearch(value);
             }}
+            expanded={isSearchExpanded}
+            setExpanded={setIsSearchExpanded}
             placeholder="Search connections..."
           />
 

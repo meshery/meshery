@@ -10,12 +10,15 @@ import PlusSquare from '../../assets/icons/PlusSquare';
 import DotSquare from '../../assets/icons/DotSquare';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { useWindowDimensions } from '../../utils/dimension';
 
 const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
   const [checked, setChecked] = useState(false);
   const [hover, setHover] = useState(false);
   const { check, labelText, root, search, setSearchText, ...other } = props;
   const theme = useTheme();
+  const { width } = useWindowDimensions();
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   return (
     <StyledTreeItemRoot
@@ -33,17 +36,20 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
             px: 0,
           }}
         >
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
-          >
-            <Typography variant={'body'} style={{ color: `${root}` }}>
-              {labelText}
-            </Typography>
-          </div>
+          {width < 900 && isSearchExpanded ? null : (
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}
+            >
+              <Typography variant={'body'} style={{ color: `${root}` }}>
+                {labelText}
+              </Typography>
+            </div>
+          )}
+
           {check && (
             <Checkbox
               onClick={() => setChecked((prevcheck) => !prevcheck)}
@@ -63,6 +69,8 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
               onSearch={(value) => {
                 setSearchText(value);
               }}
+              expanded={isSearchExpanded}
+              setExpanded={setIsSearchExpanded}
               placeholder="Search"
             />
           )}
@@ -90,6 +98,8 @@ const MesheryTreeView = ({
 }) => {
   const [expanded, setExpanded] = React.useState([]);
   const [selected, setSelected] = React.useState([]);
+  const { width } = useWindowDimensions();
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   useEffect(() => {
     setSelected([]);
@@ -156,37 +166,41 @@ const MesheryTreeView = ({
               borderBottom: '1px solid #d2d3d4',
             }}
           >
-            <div style={{ display: 'flex', flexDirection: 'row' }}>
-              <IconButton onClick={expandAll} size="large">
-                {/* <PlusSquare /> */}
-                <KeyboardArrowDownIcon />
-              </IconButton>
+            {width < 900 && isSearchExpanded ? null : (
+              <div style={{ display: 'flex', flexDirection: 'row' }}>
+                <IconButton onClick={expandAll} size="large">
+                  {/* <PlusSquare /> */}
+                  <KeyboardArrowDownIcon />
+                </IconButton>
 
-              <IconButton
-                onClick={() => setExpanded([])}
-                style={{ marginRight: '4px' }}
-                size="large"
-              >
-                {/* <MinusSquare /> */}
-                <KeyboardArrowUpIcon />
-              </IconButton>
-              <FormControlLabel
-                control={
-                  <Switch
-                    color="primary"
-                    checked={checked}
-                    onClick={handleChecked}
-                    inputProps={{ 'aria-label': 'controlled' }}
-                  />
-                }
-                label="Duplicates"
-              />
-            </div>
+                <IconButton
+                  onClick={() => setExpanded([])}
+                  style={{ marginRight: '4px' }}
+                  size="large"
+                >
+                  {/* <MinusSquare /> */}
+                  <KeyboardArrowUpIcon />
+                </IconButton>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      color="primary"
+                      checked={checked}
+                      onClick={handleChecked}
+                      inputProps={{ 'aria-label': 'controlled' }}
+                    />
+                  }
+                  label="Duplicates"
+                />
+              </div>
+            )}
             <div style={{ display: 'flex' }}>
               <SearchBar
                 onSearch={(value) => {
                   setSearchText(value);
                 }}
+                expanded={isSearchExpanded}
+                setExpanded={setIsSearchExpanded}
                 placeholder="Search"
               />
             </div>

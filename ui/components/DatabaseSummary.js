@@ -53,6 +53,7 @@ const DatabaseSummary = (props) => {
   const [searchText, setSearchText] = useState('');
   const { notify } = useNotification();
   const StyleClass = useStyles();
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const handleError = (msg) => (error) => {
     props.updateProgress({ showProgress: false });
@@ -196,6 +197,8 @@ const DatabaseSummary = (props) => {
             onSearch={(value) => {
               setSearchText(value);
             }}
+            expanded={isSearchExpanded}
+            setExpanded={setIsSearchExpanded}
             placeholder="Search"
           />
         </div>
