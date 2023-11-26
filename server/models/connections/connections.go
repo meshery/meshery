@@ -21,6 +21,18 @@ const (
 	NOTFOUND     ConnectionStatus = "not found"
 )
 
+type ConnectionRegisterPayload struct {
+	EventType string
+	// It is different from connection id, this is used to track the registration process for the connection.
+	// Connection ID is generated after the registration process is completed.
+	ID        uuid.UUID
+	Model     string	
+	// The concrete type depends on the type of connection and the corresponding connection definition.
+	Connection struct {
+		ConnMetadata interface{}
+		CredMetadata interface{}
+	}
+}
 // swagger:response Connection
 type Connection struct {
 	ID           uuid.UUID              `json:"id,omitempty" db:"id"`

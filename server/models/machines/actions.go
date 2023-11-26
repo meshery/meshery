@@ -64,7 +64,7 @@ func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interfac
 		Status:       connections.CONNECTED,
 		Name:         payload.Connection.Name,
 		MetaData:     payload.Connection.Metadata,
-		CredentialID: credential.ID,
+		CredentialID: &credential.ID,
 	}, token, false)
 	if err != nil {
 		_err := models.ErrPersistConnection(err)

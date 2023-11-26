@@ -15,7 +15,7 @@ import (
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/internal/graphql"
 	"github.com/layer5io/meshery/server/internal/store"
-	"github.com/layer5io/meshery/server/machines"
+	"github.com/layer5io/meshery/server/models/machines"
 	meshmodelhelper "github.com/layer5io/meshery/server/meshmodel"
 	"github.com/layer5io/meshery/server/models"
 	mesherymeshmodel "github.com/layer5io/meshery/server/models/meshmodel"

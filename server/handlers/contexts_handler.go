@@ -7,7 +7,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/server/machines"
+	"github.com/layer5io/meshery/server/models/machines"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/models/events"
@@ -122,6 +122,8 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 			smInstanceTracker,
 			h.log,
 			provider,
+			machines.InitialState,
+			"kubernetes",
 		)
 		if err != nil {
 			h.log.Error(err)

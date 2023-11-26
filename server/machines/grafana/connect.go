@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/machines"
+	"github.com/layer5io/meshery/server/models/machines"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/models/events"
@@ -61,7 +61,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 			"name": grafanaConn.Name,
 			"url":  grafanaConn.URL,
 		},
-		CredentialID: credential.ID,
+		CredentialID: &credential.ID,
 	}, token, false)
 	if err != nil {
 		_err := models.ErrPersistConnection(err)

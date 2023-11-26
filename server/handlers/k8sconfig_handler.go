@@ -8,7 +8,8 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/layer5io/meshery/server/machines"
+	"github.com/layer5io/meshery/server/models/machines"
+	mhelpers "github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
 
 	"github.com/layer5io/meshery/server/models/connections"
@@ -148,13 +149,15 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 					smInstanceTracker,
 					h.log,
 					provider,
+					machines.DefaultState,
+					"kubernetes",
 				)
 				if err != nil {
 					h.log.Error(err)
 				}
 			}
 			go func(inst *machines.StateMachine) {
-				event, err := inst.SendEvent(req.Context(), machines.StatusToEvent(status), nil)
+				event, err := inst.SendEvent(req.Context(), mhelpers.StatusToEvent(status), nil)
 				if err != nil {
 					_ = provider.PersistEvent(event)
 					go h.config.EventBroadcaster.Publish(userID, event)

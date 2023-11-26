@@ -1,25 +1,45 @@
 package machines
 
 import (
+	"fmt"
+
+	"github.com/layer5io/meshery/server/machines/grafana"
+	"github.com/layer5io/meshery/server/machines/kubernetes"
+	"github.com/layer5io/meshery/server/machines/prometheus"
 	"github.com/layer5io/meshery/server/models/connections"
+	"github.com/layer5io/meshery/server/models/machines"
+	"github.com/layer5io/meshkit/logger"
 )
 
-func StatusToEvent(status connections.ConnectionStatus) EventType {
+func StatusToEvent(status connections.ConnectionStatus) machines.EventType {
 	switch status {
 	case connections.DISCOVERED:
-		return Discovery
+		return machines.Discovery
 	case connections.REGISTERED:
-		return Register
+		return machines.Register
 	case connections.CONNECTED:
-		return Connect
+		return machines.Connect
 	case connections.DISCONNECTED:
-		return Disconnect
+		return machines.Disconnect
 	case connections.IGNORED:
-		return Ignore
+		return machines.Ignore
 	case connections.DELETED:
-		return Delete
+		return machines.Delete
 	case connections.NOTFOUND:
-		return NotFound
+		return machines.NotFound
 	}
-	return EventType(DefaultState)
+	return machines.EventType(machines.DefaultState)
+}
+
+
+func GetMachine(initialState machines.StateType, mtype, id string, log logger.Handler) (*machines.StateMachine, error) {
+	switch mtype {
+		case "kubernetes":
+			return kubernetes.New(id, log)
+		case "grafana":
+			return grafana.New(initialState, id, log)
+		case "prometheus":
+			return prometheus.New(initialState, id, log)
+	}
+	return nil, machines.ErrInvalidType(fmt.Errorf("invlaid type requested"))
 }

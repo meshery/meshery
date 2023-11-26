@@ -30,6 +30,8 @@ const (
 	DISCONNECTED StateType = "disconnected"
 	DELETED      StateType = "deleted"
 	NOTFOUND     StateType = "not found"
+
+	Init      EventType = "initialize"
 )
 
 var (
@@ -171,7 +173,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 				sm.Log.Error(err)
 				sm.Log.Info(event)
 			} else {
-				eventType, event, err = state.Action.Execute(ctx, sm.Context, nil)
+				eventType, event, err = state.Action.Execute(ctx, sm.Context, payload)
 				sm.Log.Info("inside action executed, event emitted ", eventType)
 				if err != nil {
 					sm.Log.Error(err)

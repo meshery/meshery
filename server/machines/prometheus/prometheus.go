@@ -2,7 +2,7 @@ package prometheus
 
 import (
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/machines"
+	"github.com/layer5io/meshery/server/models/machines"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/logger"
 )
@@ -65,7 +65,7 @@ type MachineCtx struct {
 	provider   models.Provider
 }
 
-func NewPrometheus(initialState machines.StateType, ID string, log logger.Handler) (*machines.StateMachine, error) {
+func New(initialState machines.StateType, ID string, log logger.Handler) (*machines.StateMachine, error) {
 	connectionID, err := uuid.FromString(ID)
 	log.Info("initialising prometheus machine for connection Id", connectionID)
 	if err != nil {

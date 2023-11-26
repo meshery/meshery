@@ -102,6 +102,8 @@ const (
 	ErrResultNotFoundCode                 = "1546"
 	ErrPersistCredentialCode              = "replace_me"
 	ErrPersistConnectionCode              = "replace_me"
+	ErrPrometheusScanCode                 = "replace_me"
+	ErrGrafanaScanCode                    = "replace_me"
 )
 
 var (
@@ -390,4 +392,12 @@ func ErrPersistCredential(err error) error {
 
 func ErrPersistConnection(err error) error {
 	return errors.New(ErrPersistConnectionCode, errors.Alert, []string{}, []string{}, []string{}, []string{})
+}
+
+func ErrGrafanaScan(err error) error {
+	return errors.New(ErrGrafanaScanCode, errors.Alert, []string{"Unable to connect to grafana"}, []string{err.Error()}, []string{"Grafana endpoint might not be reachable from meshery", "Grafana endpoint is incorrect"}, []string{"Check if your Grafana Endpoint is correct", "Connect to Grafana from the settings page in the UI"})
+}
+
+func ErrPrometheusScan(err error) error {
+	return errors.New(ErrPrometheusScanCode, errors.Alert, []string{"Unable to connect to prometheus"}, []string{err.Error()}, []string{"Prometheus endpoint might not be reachable from meshery", "Prometheus endpoint is incorrect"}, []string{"Check if your Prometheus and Grafana Endpoint are correct", "Connect to Prometheus and Grafana from the settings page in the UI"})
 }
