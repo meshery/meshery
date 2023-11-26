@@ -1,17 +1,17 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { TableCell, Tooltip, TableContainer, Table, Grid, TableRow } from '@material-ui/core';
 import Moment from 'react-moment';
-import dataFetch from '../../lib/data-fetch';
-import { useNotification } from '../../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../../lib/event-types';
+import dataFetch from '../../../lib/data-fetch';
+import { useNotification } from '../../../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../../../lib/event-types';
 import { ResponsiveDataTable } from '@layer5/sistent-components';
-import CustomColumnVisibilityControl from '../../utils/custom-column';
-import useStyles from '../../assets/styles/general/tool.styles';
-import SearchBar from '../../utils/custom-search';
-import { MeshSyncDataFormatter } from './metadata';
-import { getK8sClusterIdsFromCtxId } from '../../utils/multi-ctx';
-import { DefaultTableCell, SortableTableCell } from './common';
-import { camelcaseToSnakecase } from '../../utils/utils';
+import CustomColumnVisibilityControl from '../../../utils/custom-column';
+import useStyles from '../../../assets/styles/general/tool.styles';
+import SearchBar from '../../../utils/custom-search';
+import { MeshSyncDataFormatter } from '../metadata';
+import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
+import { DefaultTableCell, SortableTableCell } from '../common';
+import { camelcaseToSnakecase } from '../../../utils/utils';
 import RegisterConnectionModal from './registerConnModal';
 
 const ACTION_TYPES = {
