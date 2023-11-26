@@ -118,7 +118,7 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
                     {showViewAll && (
                       <span
                         style={{
-                          color: '#3c494f',
+                          color: 'inherit',
                           textDecorationLine: 'underline',
                           cursor: 'pointer',
                           marginLeft: '0.5rem',
