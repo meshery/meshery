@@ -1,0 +1,37 @@
+{
+    "kind":"Standard Network Tier",
+    "apiVersion": "core.meshery.io/v1alpha1",
+    "displayName": "Standard Network Tier",
+    "format": "JSON",
+    "metadata": {
+        "genealogy": "",
+        "isAnnotation": "TRUE",
+        "isNamespaced": "false",
+        "logoURL": "",
+        "model": "gcp",
+        "modelDisplayName": "GCP Standard Network Tier",
+        "primaryColor": "#4285F4",
+        "published": "TRUE",
+        "secondaryColor": "",
+        "shape": "circle",
+        "styleOverrides": "",
+        "subCategory": "Cloud Provider",
+        "svgColor": "",
+        "svgComplete": "",
+        "svgWhite": ""
+    },
+    "model": {
+        "name": "gcp",
+        "version": "1.0.0",
+        "displayName": "GCP Standard Network Tier",
+        "category": {
+            "name": "Provisioning",
+            "metadata": null
+        },
+        "metadata": {
+            "svgColor": "",
+            "svgWhite": ""
+        },
+        "schema": "{\"$id\":\"https://meshery.layer5.io/system/models/definition/Uitlity/Comments\",\"$schema\": \"http://json-schema.org/draft-07/schema\",\"properties\": { \"title\": \"Label\", \"type\": \"String\", \"description\": \"Phrase displayed as a caption to the component.\" },\"title\": \"Shape\",\"type\": \"object\",\"description\": \"Use this shape to customize your designs. The presence of this shape in your design has no semantic relationship to the infrastructure under management. Convert this shape to a Component in order for Meshery to orchestrate representative infrastructure.\"}"
+    }
+}
