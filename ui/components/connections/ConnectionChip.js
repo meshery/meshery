@@ -49,7 +49,7 @@ export const ConnectionChip = ({ handlePing, onDelete, title, tooltip, iconSrc, 
               />
             </BadgeAvatars>
           ) : (
-            <Avatar src={iconSrc} className={classes.icon} style={status ? {} : { opacity: 0.2 }} />
+            <Avatar src={iconSrc} className={classes.icon} />
           )
         }
         variant="filled"

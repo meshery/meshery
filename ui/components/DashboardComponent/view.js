@@ -221,7 +221,7 @@ const View = (props) => {
       >
         <Paper>
           <HeaderComponent />
-          <div style={{ margin: '1rem 7rem' }}>
+          <div style={{ margin: '1rem 7rem', paddingBottom: '1rem' }}>
             <ResourceMetrics />
             <RenderObject obj={resource} />
           </div>

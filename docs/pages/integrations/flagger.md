@@ -22,22 +22,21 @@ image: /assets/img/integrations/flagger.svg
 2. Collaborative and visual infrastructure as code for Flagger
 
 4. 
-    Connect GitHub with Meshery and import selectively import your existing Helm Charts, Docker Compose applications, and Kubernetes manifests.Visually configure and customize your cloud native infrastructure.
-    Save and share your design patterns to GitHub using either public or private repositories.
+    Collaboratively and visually diagram your cloud native infrastructure with GitOps-style pipeline integration. Design, test, and manage configuration your Kubernetes-based, containerized applications as a visual topology.
 
 
 
-    Learn more about <a href="/blog/service-mesh-specifications/pipelining-service-mesh-specifications">pipelining service mesh specifications</a> and using Service Mesh Interface and Service Mesh Performance specs on your CI/CD pipelines with Meshery's GitHub Actions.
+    Looking for best practice cloud native design and deployment best practices? Choose from thousands of pre-built components in MeshMap. Choose from hundreds of ready-made design patterns by importing templates from Meshery Catalog or use our low code designer, MeshMap, to create and deploy your own cloud native infrastructure designs.
 
 
 
-5. Canary (progressive traffic shifting), A/B Testing (HTTP headers and cookies traffic routing), Blue/Green (traffic switching and mirroring)
+5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
 
-6. Flagger was designed to give developers confidence in automating production releases with progressive delivery techniques.
+6. Provide high performance traffic serving that can scale to millions of requests per second.
 
-7. Reduce the risk of introducing a new software version in production by gradually shifting traffic to the new version while measuring metrics like HTTP/gRPC request success rate and latency.
+7. Supports IP address targeting mode for Network Load Balancers.
 
 8. Collaborative Infrastructure as Code
 
-9. Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs.
+9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
 

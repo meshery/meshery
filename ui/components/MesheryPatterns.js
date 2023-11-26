@@ -338,7 +338,7 @@ function MesheryPatterns({
     ownerID: '',
     selectedResource: {},
   });
-
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [viewType, setViewType] = useState('grid');
   const { notify } = useNotification();
   const StyleClass = useStyles();
@@ -1500,53 +1500,57 @@ function MesheryPatterns({
           />
         )}
         <div className={StyleClass.toolWrapper}>
-          <div style={{ display: 'flex' }}>
-            {!selectedPattern.show && (patterns.length > 0 || viewType === 'table') && (
-              <div className={classes.createButton}>
-                <div style={{ display: 'flex', order: '1' }}>
-                  <Button
-                    aria-label="Add Pattern"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    // @ts-ignore
-                    onClick={() => router.push('designs/configurator')}
-                    style={{ display: 'flex', marginRight: '2rem' }}
-                  >
-                    <AddIcon className={classes.addIcon} />
-                    <span className={classes.btnText}> Create Design </span>
-                  </Button>
-                  <Button
-                    aria-label="Add Pattern"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    // @ts-ignore
-                    onClick={handleUploadImport}
-                    style={{ display: 'flex', marginRight: '2rem', marginLeft: '-0.6rem' }}
-                  >
-                    <PublishIcon className={classes.addIcon} />
-                    <span className={classes.btnText}> Import Design </span>
-                  </Button>
+          {width < 600 && isSearchExpanded ? null : (
+            <div style={{ display: 'flex' }}>
+              {!selectedPattern.show && (patterns.length > 0 || viewType === 'table') && (
+                <div className={classes.createButton}>
+                  <div style={{ display: 'flex', order: '1' }}>
+                    <Button
+                      aria-label="Add Pattern"
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      // @ts-ignore
+                      onClick={() => router.push('designs/configurator')}
+                      style={{ display: 'flex', marginRight: '2rem' }}
+                    >
+                      <AddIcon className={classes.addIcon} />
+                      <span className={classes.btnText}> Create Design </span>
+                    </Button>
+                    <Button
+                      aria-label="Add Pattern"
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      // @ts-ignore
+                      onClick={handleUploadImport}
+                      style={{ display: 'flex', marginRight: '2rem', marginLeft: '-0.6rem' }}
+                    >
+                      <PublishIcon className={classes.addIcon} />
+                      <span className={classes.btnText}> Import Design </span>
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            )}
-            {!selectedPattern.show && (
-              <div className={classes.catalogFilter} style={{ display: 'flex' }}>
-                <CatalogFilter
-                  catalogVisibility={catalogVisibility}
-                  handleCatalogVisibility={handleCatalogVisibility}
-                  classes={classes}
-                />
-              </div>
-            )}
-          </div>
+              )}
+              {!selectedPattern.show && (
+                <div className={classes.catalogFilter} style={{ display: 'flex' }}>
+                  <CatalogFilter
+                    catalogVisibility={catalogVisibility}
+                    handleCatalogVisibility={handleCatalogVisibility}
+                    classes={classes}
+                  />
+                </div>
+              )}
+            </div>
+          )}
           <div className={classes.searchWrapper} style={{ display: 'flex' }}>
             <SearchBar
               onSearch={(value) => {
                 setSearch(value);
                 initPatternsSubscription(page.toString(), pageSize.toString(), value, sortOrder);
               }}
+              expanded={isSearchExpanded}
+              setExpanded={setIsSearchExpanded}
               placeholder="Search designs..."
             />
             {viewType === 'table' && (

@@ -30,13 +30,13 @@ image: /assets/img/integrations/cdk-for-kubernetes-(cdk8s).svg
 
 
 
-5. Defines Kubernetes applications and reusable abstractions using familiar programming languages.
+5. Manage AWS Elastic Load Balancers for a Kubernetes cluster.
 
-6. Simplify application workflows.
+6. Provide high performance traffic serving that can scale to millions of requests per second.
 
-7. Compose and share reusable components through code libraries.
+7. Supports IP address targeting mode for Network Load Balancers.
 
-8. Deploy through GitOps
+8. Collaborative Infrastructure as Code
 
-9. cdk8s is an open-source software development framework for defining Kubernetes applications and reusable abstractions using familiar programming languages and rich object-oriented APIs. cdk8s apps synthesize into standard Kubernetes manifests which can be applied to any Kubernetes cluster.
+9. Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs).
 

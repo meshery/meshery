@@ -42,6 +42,12 @@ const styles = (theme) => ({
     color: '#fff',
     flexGrow: 1,
   },
+  btnText: {
+    display: 'block',
+    '@media (max-width: 1450px)': {
+      display: 'none',
+    },
+  },
   dialogHeader: {
     backgroundColor:
       theme.palette.type === 'dark'
@@ -124,6 +130,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
   const [profileForModal, setProfileForModal] = useState();
   const { notify } = useNotification();
   const { width } = useWindowDimensions();
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   // const [loading, setLoading] = useState(false);
   /**
    * fetch performance profiles when the page loads
@@ -531,19 +538,23 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
     <>
       <div className={classes.pageContainer}>
         <div className={StyleClass.toolWrapper}>
-          {(testProfiles.length > 0 || viewType == 'table') && (
-            <div className={classes.addButton}>
-              <Button
-                aria-label="Add Performance Profile"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={() => setProfileForModal({})}
-              >
-                <AddIcon style={iconMedium} className={classes.addIcon} />
-                Add Performance Profile
-              </Button>
-            </div>
+          {width < 550 && isSearchExpanded ? null : (
+            <>
+              {(testProfiles.length > 0 || viewType == 'table') && (
+                <div className={classes.addButton}>
+                  <Button
+                    aria-label="Add Performance Profile"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={() => setProfileForModal({})}
+                  >
+                    <AddIcon style={iconMedium} className={classes.addIcon} />
+                    <span className={classes.btnText}> Add Performance Profile </span>
+                  </Button>
+                </div>
+              )}
+            </>
           )}
           <div className={classes.viewSwitchButton}>
             <SearchBar
@@ -551,6 +562,8 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
                 setSearch(value);
                 fetchTestProfiles(page, pageSize, value, sortOrder);
               }}
+              expanded={isSearchExpanded}
+              setExpanded={setIsSearchExpanded}
               placeholder="Search Profiles..."
             />
             <CustomColumnVisibilityControl

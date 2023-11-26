@@ -12,7 +12,7 @@ import Moment from 'react-moment';
 import dataFetch from '../../lib/data-fetch';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
-import ResponsiveDataTable from '../../utils/data-table';
+import { ResponsiveDataTable } from '@layer5/sistent-components';
 import CustomColumnVisibilityControl from '../../utils/custom-column';
 import useStyles from '../../assets/styles/general/tool.styles';
 import SearchBar from '../../utils/custom-search';
@@ -38,6 +38,7 @@ export default function MeshSyncTable(props) {
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [loading, setLoading] = useState(false);
   const StyleClass = useStyles();
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const clusterIds = encodeURIComponent(
     JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig)),
@@ -387,6 +388,8 @@ export default function MeshSyncTable(props) {
             onSearch={(value) => {
               setSearch(value);
             }}
+            expanded={isSearchExpanded}
+            setExpanded={setIsSearchExpanded}
             placeholder="Search connections..."
           />
 
