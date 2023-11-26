@@ -190,7 +190,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 
 	if req.Method == http.MethodPost {
 		promURL := req.FormValue("prometheusURL")
-		if err := h.config.PrometheusClient.Validate(req.Context(), promURL); err != nil {
+		if err := h.config.PrometheusClient.Validate(req.Context(), promURL, ""); err != nil {
 			h.log.Error(ErrPrometheusScan(err))
 			http.Error(w, ErrPrometheusScan(err).Error(), http.StatusInternalServerError)
 			return
@@ -242,7 +242,7 @@ func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request
 		return
 	}
 
-	if err := h.config.PrometheusClient.Validate(req.Context(), prefObj.Prometheus.PrometheusURL); err != nil {
+	if err := h.config.PrometheusClient.Validate(req.Context(), prefObj.Prometheus.PrometheusURL, ""); err != nil {
 		h.log.Error(ErrPrometheusScan(err))
 		http.Error(w, ErrPrometheusScan(err).Error(), http.StatusInternalServerError)
 		return

@@ -283,6 +283,7 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 				provider,
 				machines.DefaultState,
 				"kubernetes",
+				kubernetes.AssignInitialCtx,
 			)
 			if err != nil {
 				h.log.Error(err)
@@ -323,6 +324,7 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 				provider,
 				machines.DefaultState,
 				"kubernetes",
+				kubernetes.AssignInitialCtx,
 			)
 			if err != nil {
 				h.log.Error(err)

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/gofrs/uuid"
+	mutils "github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/machines"
 	"github.com/layer5io/meshkit/models/events"
@@ -17,10 +18,11 @@ func (ra *RegisterAction) ExecuteOnEntry(ctx context.Context, machineCtx interfa
 }
 
 func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (machines.EventType, *events.Event, error) {
-	sysID := uuid.Nil
-	userUUID := uuid.Nil
+	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
+	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	userUUID := uuid.FromStringOrNil(user.ID)
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
 
 	connPayload, err := utils.Cast[models.ConnectionPayload](data)
 	if err != nil {
@@ -28,22 +30,28 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
-	grafanaConn, err := utils.Cast[GrafanaConn](connPayload.MetaData)
+	metadata, err := utils.Cast[map[string]interface{}](connPayload.MetaData)
 	if err != nil {
 		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
-	grafanaCred, err := utils.Cast[GrafanaCred](connPayload.CredentialSecret)
+	grafanaConn, err := mutils.MarshalAndUnmarshal[map[string]interface{}, GrafanaConn](metadata)
+	if err != nil {
+		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
+		return machines.NoOp, eventBuilder.Build(), err
+	}
+
+	grafanaCred, err := mutils.MarshalAndUnmarshal[map[string]interface{}, GrafanaCred](connPayload.CredentialSecret)
 	if err != nil {
 		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
 	grafanaClient := models.NewGrafanaClient()
-	err = grafanaClient.Validate(ctx, grafanaConn.URL, grafanaCred.APIKey)
+	err = grafanaClient.Validate(ctx, grafanaConn.URL, grafanaCred.APIKeyOrBasicAuth)
 	if err != nil {
-		return machines.NoOp, eventBuilder.WithMetadata(map[string]interface{}{"error": models.ErrGrafanaScan(err)}).Build(), nil
+		return machines.NoOp, eventBuilder.WithMetadata(map[string]interface{}{"error": models.ErrGrafanaScan(err)}).Build(), models.ErrGrafanaScan(err)
 	}
 	return machines.NoOp, nil, nil
 }

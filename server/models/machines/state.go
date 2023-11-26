@@ -12,6 +12,9 @@ type State struct {
 type States map[StateType]State
 
 func (s *State) RegisterEvent(eventType EventType, stateType StateType) *State {
+	if s.Events == nil {
+		s.Events = make(Events)
+	}
 	s.Events[eventType] = stateType
 	return s
 }

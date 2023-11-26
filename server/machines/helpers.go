@@ -9,6 +9,7 @@ import (
 	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshery/server/models/machines"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/utils"
 )
 
 func StatusToEvent(status connections.ConnectionStatus) machines.EventType {
@@ -31,7 +32,6 @@ func StatusToEvent(status connections.ConnectionStatus) machines.EventType {
 	return machines.EventType(machines.DefaultState)
 }
 
-
 func GetMachine(initialState machines.StateType, mtype, id string, log logger.Handler) (*machines.StateMachine, error) {
 	switch mtype {
 		case "kubernetes":
@@ -39,7 +39,22 @@ func GetMachine(initialState machines.StateType, mtype, id string, log logger.Ha
 		case "grafana":
 			return grafana.New(initialState, id, log)
 		case "prometheus":
-			return prometheus.New(initialState, id, log)
+			t, err := prometheus.New(initialState, id, log)
+			fmt.Println("inside GetMachine", t)
+			return t, err
 	}
 	return nil, machines.ErrInvalidType(fmt.Errorf("invlaid type requested"))
+}
+
+func MarshalAndUnmarshal[k any, v any](val k) (unmarshalledvalue v, err error){
+	data, err := utils.Marshal(val)
+	if err != nil {
+		return
+	}
+
+	err = utils.Unmarshal(data, &unmarshalledvalue)
+	if err != nil {
+		return
+	}
+	return
 }

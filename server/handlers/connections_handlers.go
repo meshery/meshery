@@ -48,9 +48,10 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 				connectionRegisterPayload.ID,
 				smInstanceTracker,
 				h.log,
-				provider,
+				nil,
 				machines.DISCOVERED,
 				strings.ToLower(connectionRegisterPayload.Kind),
+				nil,
 			)
 			if err != nil {
 				event := eventBuilder.WithSeverity(events.Error).WithDescription("Unable to perisit the \"%s\" connection details").WithMetadata(map[string]interface{}{
@@ -60,7 +61,7 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 				go h.config.EventBroadcaster.Publish(userUUID, event)
 			}
 		}
-	
+		fmt.Println("test instance: ", inst)
 		event, err := inst.SendEvent(req.Context(),  helpers.StatusToEvent(connectionRegisterPayload.Status), connectionRegisterPayload)
 		if err != nil {
 			h.log.Error(err)
@@ -95,7 +96,8 @@ func(h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.Re
 	}
 	// id act as a connection registration process tracker.
 	// The clients should always include this "id" in the subsequent API calls until the process is completed or terminated.
-	schema["id"], _ = uuid.NewV4()
+	id, _ := uuid.NewV4()
+	schema["id"] = id
 
 	err := json.NewEncoder(w).Encode(&schema)
 	if err != nil {
@@ -363,6 +365,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 					provider,
 					machines.InitialState,
 					"kubernetes",
+					kubernetes.AssignInitialCtx,
 				)
 				if err != nil {
 					event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)).WithMetadata(map[string]interface{}{

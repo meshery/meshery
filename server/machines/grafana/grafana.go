@@ -15,11 +15,9 @@ type GrafanaConn struct {
 }
 
 type GrafanaCred struct {
-	Name string
-	// Default strategy
-	APIKey string
-	// formatted as username:password
-	BasicAuth string
+	Name string `json:"name,omitempty"`
+	// If Basic then it should be formatted as username:password
+	APIKeyOrBasicAuth string `json:"credential,omitempty"`
 }
 
 type GrafanaPayload struct {
@@ -67,10 +65,10 @@ type MachineCtx struct {
 
 func New(initialState machines.StateType, ID string, log logger.Handler) (*machines.StateMachine, error) {
 	connectionID, err := uuid.FromString(ID)
-	log.Info("initialising grafana machine for connetion Id", connectionID)
 	if err != nil {
 		return nil, machines.ErrInititalizeK8sMachine(err)
 	}
+	log.Info("initialising grafana machine for connetion Id", connectionID)
 
 	return &machines.StateMachine{
 		ID:            connectionID,

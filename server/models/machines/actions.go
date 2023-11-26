@@ -31,44 +31,46 @@ func (da *DefaultConnectAction) ExecuteOnEntry(ctx context.Context, machineCtx i
 }
 
 func (da *DefaultConnectAction) Execute(ctx context.Context, machineCtx interface{}, data interface{}) (EventType, *events.Event, error) {
-	sysID := uuid.Nil
-	userUUID := uuid.Nil
+	user, _ := ctx.Value(models.UserCtxKey).(*models.User)
+	sysID, _ := ctx.Value(models.SystemIDKey).(*uuid.UUID)
+	userUUID := uuid.FromStringOrNil(user.ID)
+
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 
-	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
+	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
 
 	provider, _ := ctx.Value(models.ProviderCtxKey).(models.Provider)
 
-	payload, err := utils.Cast[Payload](data)
+	payload, err := utils.Cast[models.ConnectionPayload](data)
 	if err != nil {
 		return NoOp, eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).Build(), err
 	}
 
 	credential, err := provider.SaveUserCredential(token, &models.Credential{
-		Name:   payload.Credential.Name,
-		UserID: payload.Credential.UserID,
-		Type:   payload.Credential.Type,
-		Secret: payload.Credential.Secret,
+		Name:   payload.Name,
+		UserID: &userUUID,
+		Type:   payload.Type,
+		Secret: payload.CredentialSecret,
 	})
 
 	if err != nil {
 		_err := models.ErrPersistCredential(err)
-		return NoOp, eventBuilder.WithDescription(fmt.Sprintf("Unable to persist credential information for the connection %s", payload.Credential.Name)).
+		return NoOp, eventBuilder.WithDescription(fmt.Sprintf("Unable to persist credential information for the connection %s", payload.Name)).
 			WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": err}).Build(), _err
 	}
 
 	connection, err := provider.SaveConnection(&models.ConnectionPayload{
-		Kind:         payload.Connection.Kind,
-		Type:         payload.Connection.Type,
-		SubType:      payload.Connection.SubType,
+		Kind:         payload.Kind,
+		Type:         payload.Type,
+		SubType:      payload.SubType,
 		Status:       connections.CONNECTED,
-		Name:         payload.Connection.Name,
-		MetaData:     payload.Connection.Metadata,
+		Name:         payload.Name,
+		MetaData:     payload.MetaData,
 		CredentialID: &credential.ID,
 	}, token, false)
 	if err != nil {
 		_err := models.ErrPersistConnection(err)
-		return NoOp, eventBuilder.WithDescription(fmt.Sprintf("Unable to perisit the \"%s\" connection details", payload.Connection.Name)).WithMetadata(map[string]interface{}{"error": _err}).Build(), _err
+		return NoOp, eventBuilder.WithDescription(fmt.Sprintf("Unable to perisit the \"%s\" connection details", payload.Name)).WithMetadata(map[string]interface{}{"error": _err}).Build(), _err
 	}
 	logrus.Debug(connection, "grafana connected connection")
 	return NoOp, nil, nil

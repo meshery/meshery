@@ -151,6 +151,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 					provider,
 					machines.DefaultState,
 					"kubernetes",
+					kubernetes.AssignInitialCtx,
 				)
 				if err != nil {
 					h.log.Error(err)

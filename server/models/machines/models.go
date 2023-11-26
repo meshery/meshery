@@ -80,9 +80,7 @@ type StateMachine struct {
 	Provider models.Provider
 }
 
-type initFunc func(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error)
-
-func (sm *StateMachine) Start(ctx context.Context, machinectx interface{}, log logger.Handler, init initFunc) (*events.Event, error) {
+func (sm *StateMachine) Start(ctx context.Context, machinectx interface{}, log logger.Handler, init models.InitFunc) (*events.Event, error) {
 	var mCtx interface{}
 	var event *events.Event
 	var err error
@@ -138,6 +136,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		nextState, err := sm.getNextState(eventType)
 		if err != nil {
 			sm.Log.Error(err)
+			event = defaultEvent.WithMetadata(map[string]interface{}{"error": err}).Build()
 			sm.Log.Info(defaultEvent.WithMetadata(map[string]interface{}{"error": err}).Build())
 			eventType = NoOp
 			break
@@ -149,7 +148,9 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		state, ok := sm.States[nextState]
 		if !ok || state.Action == nil {
 			sm.Log.Error(err)
-			sm.Log.Info(defaultEvent.WithMetadata(map[string]interface{}{"error": ErrInvalidTransition(sm.CurrentState, nextState)}).Build())
+			
+				event = defaultEvent.WithMetadata(map[string]interface{}{"error": ErrInvalidTransition(sm.CurrentState, nextState)}).Build()
+			
 			eventType = NoOp
 			break
 		}
@@ -172,12 +173,14 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			if err != nil {
 				sm.Log.Error(err)
 				sm.Log.Info(event)
+				return event, err
 			} else {
 				eventType, event, err = state.Action.Execute(ctx, sm.Context, payload)
 				sm.Log.Info("inside action executed, event emitted ", eventType)
 				if err != nil {
 					sm.Log.Error(err)
 					sm.Log.Info(event)
+					return event, err
 				}
 			}
 		}

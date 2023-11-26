@@ -124,6 +124,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 			provider,
 			machines.InitialState,
 			"kubernetes",
+			kubernetes.AssignInitialCtx,
 		)
 		if err != nil {
 			h.log.Error(err)

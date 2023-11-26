@@ -4054,7 +4054,7 @@ func (l *RemoteProvider) GetKubeClient() *mesherykube.Client {
 
 // SaveCredential - to save a creadential for an integration
 func (l *RemoteProvider) SaveUserCredential(token string, credential *Credential) (*Credential, error) {
-	var createdCredential *Credential
+	var createdCredential Credential
 	if !l.Capabilities.IsSupported(PersistCredentials) {
 		logrus.Error("operation not available")
 		return nil, ErrInvalidCapability("PersistCredentials", l.ProviderName)
@@ -4081,11 +4081,11 @@ func (l *RemoteProvider) SaveUserCredential(token string, credential *Credential
 	}
 
 	if resp.StatusCode == http.StatusCreated {
-		err := json.Unmarshal(bdr, createdCredential)
+		err := json.Unmarshal(bdr, &createdCredential)
 		if err != nil {
 			return nil, ErrUnmarshal(err, "created credential")
 		}
-		return createdCredential, nil
+		return &createdCredential, nil
 	}
 
 	return nil, ErrFetch(fmt.Errorf("failed to save the credential"), fmt.Sprint(bdr), resp.StatusCode)

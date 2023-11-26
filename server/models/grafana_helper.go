@@ -67,14 +67,22 @@ func (g *GrafanaClient) Validate(ctx context.Context, BaseURL, APIKey string) er
 	}
 	return nil
 }
-func (g *GrafanaClient) makeRequest(_ context.Context, queryURL, APIKey string) ([]byte, error) {
+func (g *GrafanaClient) makeRequest(_ context.Context, queryURL, apiKeyOrBasicAuth string) ([]byte, error) {
 	req, err := http.NewRequest(http.MethodGet, queryURL, nil)
 	if err != nil {
 		return nil, err
 	}
-	if !g.promMode {
-		req.Header.Set("Authorization", "Bearer "+APIKey)
-	}
+	
+	if apiKeyOrBasicAuth != "" {
+		basicAuth := strings.Contains(apiKeyOrBasicAuth, ":")
+		if !basicAuth {
+			req.Header.Set("Authorization", "Bearer "+apiKeyOrBasicAuth)
+		} else {
+			parts := strings.SplitN(apiKeyOrBasicAuth, ":", 2)
+			req.SetBasicAuth(parts[0], parts[1])
+		}
+	} 
+	
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("User-Agent", "autograf")

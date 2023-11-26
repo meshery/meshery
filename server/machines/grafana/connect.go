@@ -37,7 +37,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 
 	grafanaConn := machinectx.GrafanaConn
 	secret := make(map[string]interface{}, 0)
-	secret["auth"] = machinectx.GrafanaCred.APIKey
+	secret["auth"] = machinectx.GrafanaCred.APIKeyOrBasicAuth
 	credential, err := machinectx.provider.SaveUserCredential(token, &models.Credential{
 		Name:   machinectx.GrafanaCred.Name,
 		UserID: &userUUID,

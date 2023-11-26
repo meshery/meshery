@@ -37,7 +37,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 
 	promConn := machinectx.PromConn
 	secret := make(map[string]interface{}, 0)
-	secret["auth"] = machinectx.PromCred.APIKey
+	secret["auth"] = machinectx.PromCred.APIKeyOrBasicAuth
 	credential, err := machinectx.provider.SaveUserCredential(token, &models.Credential{
 		Name:   machinectx.PromCred.Name,
 		UserID: &userUUID,

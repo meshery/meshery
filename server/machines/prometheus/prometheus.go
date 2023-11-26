@@ -15,11 +15,9 @@ type PromConn struct {
 }
 
 type PromCred struct {
-	Name string
-	// Default strategy
-	APIKey string
-	// formatted as username:password
-	BasicAuth string
+	Name string `json:"name,omitempty"`
+	// If Basic then it should be formatted as username:password
+	APIKeyOrBasicAuth string `json:"credential,omitempty"`
 }
 
 type PrometheusPayload struct {
@@ -38,7 +36,7 @@ func Discovered() machines.State {
 func Registered() machines.State {
 	state := &machines.State{}
 	return *state.
-		RegisterEvent(machines.Connect, machines.REGISTERED).
+		RegisterEvent(machines.Connect, machines.CONNECTED).
 		RegisterEvent(machines.Ignore, machines.IGNORED).
 		RegisterAction(&RegisterAction{})
 }
@@ -67,7 +65,6 @@ type MachineCtx struct {
 
 func New(initialState machines.StateType, ID string, log logger.Handler) (*machines.StateMachine, error) {
 	connectionID, err := uuid.FromString(ID)
-	log.Info("initialising prometheus machine for connection Id", connectionID)
 	if err != nil {
 		return nil, machines.ErrInititalizeK8sMachine(err)
 	}
