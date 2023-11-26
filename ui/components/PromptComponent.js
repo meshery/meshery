@@ -64,11 +64,11 @@ const styles = (theme) => ({
   },
 });
 
-const PromptActionButton = styled(Button)(({ theme, promptVariant }) => ({
+const PromptActionButton = styled(Button)(({ theme }) => ({
   margin: theme.spacing(0.5),
   padding: theme.spacing(1),
   borderRadius: 5,
-  backgroundColor: theme.palette.secondary[promptVariant || 'primary'],
+  backgroundColor: theme.palette.secondary.focused,
   color: '#fff',
   '&:hover': {
     backgroundColor: theme.palette.secondary.focused,
