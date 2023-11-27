@@ -32,6 +32,7 @@ import SearchBar from '../../utils/custom-search';
 import useStyles from '../../assets/styles/general/tool.styles';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
+import { ConditionalTooltip } from '../../utils/utils';
 
 const MESHERY_PERFORMANCE_URL = '/api/user/performance/profiles';
 const styles = (theme) => ({
@@ -298,6 +299,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
             </TableCell>
           );
         },
+        customBodyRender: (value) => <ConditionalTooltip value={value} maxLength={20} />,
       },
     },
     {
@@ -388,7 +390,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
         },
         customBodyRender: function CustomBody(_, tableMeta) {
           return (
-            <div>
+            <div style={{ display: 'flex' }}>
               <ReusableTooltip title="Edit">
                 <IconButton
                   style={iconMedium}
@@ -566,11 +568,13 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
               setExpanded={setIsSearchExpanded}
               placeholder="Search Profiles..."
             />
-            <CustomColumnVisibilityControl
-              classes={classes}
-              columns={columns}
-              customToolsProps={{ columnVisibility, setColumnVisibility }}
-            />
+            {viewType === 'table' && (
+              <CustomColumnVisibilityControl
+                classes={classes}
+                columns={columns}
+                customToolsProps={{ columnVisibility, setColumnVisibility }}
+              />
+            )}
             <ViewSwitch view={viewType} changeView={setViewType} />
           </div>
         </div>
