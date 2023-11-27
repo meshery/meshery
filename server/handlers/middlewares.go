@@ -9,9 +9,9 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/models/machines"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/machines"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )

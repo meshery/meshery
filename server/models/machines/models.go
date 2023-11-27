@@ -31,7 +31,7 @@ const (
 	DELETED      StateType = "deleted"
 	NOTFOUND     StateType = "not found"
 
-	Init      EventType = "initialize"
+	Init EventType = "initialize"
 )
 
 var (
@@ -138,7 +138,6 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			sm.Log.Error(err)
 			event = defaultEvent.WithMetadata(map[string]interface{}{"error": err}).Build()
 			sm.Log.Info(defaultEvent.WithMetadata(map[string]interface{}{"error": err}).Build())
-			eventType = NoOp
 			break
 		}
 
@@ -148,10 +147,9 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		state, ok := sm.States[nextState]
 		if !ok || state.Action == nil {
 			sm.Log.Error(err)
-			
-				event = defaultEvent.WithMetadata(map[string]interface{}{"error": ErrInvalidTransition(sm.CurrentState, nextState)}).Build()
-			
-			eventType = NoOp
+
+			event = defaultEvent.WithMetadata(map[string]interface{}{"error": ErrInvalidTransition(sm.CurrentState, nextState)}).Build()
+
 			break
 		}
 
@@ -173,14 +171,18 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			if err != nil {
 				sm.Log.Error(err)
 				sm.Log.Info(event)
-				return event, err
+				if eventType == NoOp {
+					return event, err
+				}
 			} else {
 				eventType, event, err = state.Action.Execute(ctx, sm.Context, payload)
 				sm.Log.Info("inside action executed, event emitted ", eventType)
 				if err != nil {
 					sm.Log.Error(err)
 					sm.Log.Info(event)
-					return event, err
+					if eventType == NoOp {
+						return event, err
+					}
 				}
 			}
 		}

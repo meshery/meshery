@@ -487,17 +487,17 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 	}
 	offset := (page - 1) * limit
 	returnAnnotationComp := queryParams.Get("annotations") == "true"
-	entities, count, _  := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		Name:         name,
-		CategoryName: cat,
-		ModelName:    typ,
-		APIVersion:   queryParams.Get("apiVersion"),
-		Version:      v,
-		Offset:       offset,
-		Greedy:       greedy,
-		Limit:        limit,
-		OrderOn:      queryParams.Get("order"),
-		Sort:         queryParams.Get("sort"),
+	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+		Name:              name,
+		CategoryName:      cat,
+		ModelName:         typ,
+		APIVersion:        queryParams.Get("apiVersion"),
+		Version:           v,
+		Offset:            offset,
+		Greedy:            greedy,
+		Limit:             limit,
+		OrderOn:           queryParams.Get("order"),
+		Sort:              queryParams.Get("sort"),
 		ReturnAnnotations: returnAnnotationComp,
 	})
 	var comps []v1alpha1.ComponentDefinition
@@ -557,6 +557,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 //
 // ```?annotations={[true/false]}``` If true components having "isAnnotation" property as true are "only" returned, default is false i.e. comps with isAnnotation true are also returned.
 // responses:
+//
 //	200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
@@ -586,16 +587,16 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 	returnAnnotationComp := queryParams.Get("annotations") == "true"
 
 	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		Name:         name,
-		ModelName:    queryParams.Get("model"),
-		CategoryName: cat,
-		APIVersion:   queryParams.Get("apiVersion"),
-		Version:      v,
-		Offset:       offset,
-		Limit:        limit,
-		Greedy:       greedy,
-		OrderOn:      queryParams.Get("order"),
-		Sort:         queryParams.Get("sort"),
+		Name:              name,
+		ModelName:         queryParams.Get("model"),
+		CategoryName:      cat,
+		APIVersion:        queryParams.Get("apiVersion"),
+		Version:           v,
+		Offset:            offset,
+		Limit:             limit,
+		Greedy:            greedy,
+		OrderOn:           queryParams.Get("order"),
+		Sort:              queryParams.Get("sort"),
 		ReturnAnnotations: returnAnnotationComp,
 	})
 	var comps []v1alpha1.ComponentDefinition
@@ -684,15 +685,15 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 	returnAnnotationComp := queryParams.Get("annotations") == "true"
 
 	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		Name:       name,
-		ModelName:  typ,
-		APIVersion: queryParams.Get("apiVersion"),
-		Version:    v,
-		Offset:     offset,
-		Greedy:     greedy,
-		Limit:      limit,
-		OrderOn:    queryParams.Get("order"),
-		Sort:       queryParams.Get("sort"),
+		Name:              name,
+		ModelName:         typ,
+		APIVersion:        queryParams.Get("apiVersion"),
+		Version:           v,
+		Offset:            offset,
+		Greedy:            greedy,
+		Limit:             limit,
+		OrderOn:           queryParams.Get("order"),
+		Sort:              queryParams.Get("sort"),
 		ReturnAnnotations: returnAnnotationComp,
 	})
 	var comps []v1alpha1.ComponentDefinition
@@ -781,16 +782,16 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 	offset := (page - 1) * limit
 	returnAnnotationComp := queryParams.Get("annotations") == "true"
 	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		Name:       name,
-		Trim:       queryParams.Get("trim") == "true",
-		APIVersion: queryParams.Get("apiVersion"),
-		Version:    v,
-		ModelName:  queryParams.Get("model"),
-		Offset:     offset,
-		Limit:      limit,
-		Greedy:     greedy,
-		OrderOn:    queryParams.Get("order"),
-		Sort:       queryParams.Get("sort"),
+		Name:              name,
+		Trim:              queryParams.Get("trim") == "true",
+		APIVersion:        queryParams.Get("apiVersion"),
+		Version:           v,
+		ModelName:         queryParams.Get("model"),
+		Offset:            offset,
+		Limit:             limit,
+		Greedy:            greedy,
+		OrderOn:           queryParams.Get("order"),
+		Sort:              queryParams.Get("sort"),
 		ReturnAnnotations: returnAnnotationComp,
 	})
 	var comps []v1alpha1.ComponentDefinition
@@ -873,14 +874,14 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	offset := (page - 1) * limit
 	returnAnnotationComp := queryParams.Get("annotations") == "true"
 	filter := &v1alpha1.ComponentFilter{
-		ModelName:  typ,
-		Version:    v,
-		Trim:       queryParams.Get("trim") == "true",
-		APIVersion: queryParams.Get("apiVersion"),
-		Limit:      limit,
-		Offset:     offset,
-		OrderOn:    queryParams.Get("order"),
-		Sort:       queryParams.Get("sort"),
+		ModelName:         typ,
+		Version:           v,
+		Trim:              queryParams.Get("trim") == "true",
+		APIVersion:        queryParams.Get("apiVersion"),
+		Limit:             limit,
+		Offset:            offset,
+		OrderOn:           queryParams.Get("order"),
+		Sort:              queryParams.Get("sort"),
 		ReturnAnnotations: returnAnnotationComp,
 	}
 	if queryParams.Get("search") != "" {
@@ -970,15 +971,15 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	offset := (page - 1) * limit
 	returnAnnotationComp := queryParams.Get("annotations") == "true"
 	filter := &v1alpha1.ComponentFilter{
-		CategoryName: cat,
-		ModelName:    typ,
-		Version:      v,
-		Trim:         queryParams.Get("trim") == "true",
-		APIVersion:   queryParams.Get("apiVersion"),
-		Limit:        limit,
-		Offset:       offset,
-		OrderOn:      queryParams.Get("order"),
-		Sort:         queryParams.Get("sort"),
+		CategoryName:      cat,
+		ModelName:         typ,
+		Version:           v,
+		Trim:              queryParams.Get("trim") == "true",
+		APIVersion:        queryParams.Get("apiVersion"),
+		Limit:             limit,
+		Offset:            offset,
+		OrderOn:           queryParams.Get("order"),
+		Sort:              queryParams.Get("sort"),
 		ReturnAnnotations: returnAnnotationComp,
 	}
 	if queryParams.Get("search") != "" {
@@ -1066,14 +1067,14 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	offset := (page - 1) * limit
 	returnAnnotationComp := queryParams.Get("annotations") == "true"
 	filter := &v1alpha1.ComponentFilter{
-		CategoryName: cat,
-		Version:      v,
-		Trim:         queryParams.Get("trim") == "true",
-		APIVersion:   queryParams.Get("apiVersion"),
-		Limit:        limit,
-		Offset:       offset,
-		OrderOn:      queryParams.Get("order"),
-		Sort:         queryParams.Get("sort"),
+		CategoryName:      cat,
+		Version:           v,
+		Trim:              queryParams.Get("trim") == "true",
+		APIVersion:        queryParams.Get("apiVersion"),
+		Limit:             limit,
+		Offset:            offset,
+		OrderOn:           queryParams.Get("order"),
+		Sort:              queryParams.Get("sort"),
 		ReturnAnnotations: returnAnnotationComp,
 	}
 	if queryParams.Get("search") != "" {
@@ -1161,13 +1162,13 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	offset := (page - 1) * limit
 	returnAnnotationComp := queryParams.Get("annotations") == "true"
 	filter := &v1alpha1.ComponentFilter{
-		Version:    v,
-		Trim:       queryParams.Get("trim") == "true",
-		APIVersion: queryParams.Get("apiVersion"),
-		Limit:      limit,
-		Offset:     offset,
-		OrderOn:    queryParams.Get("order"),
-		Sort:       queryParams.Get("sort"),
+		Version:           v,
+		Trim:              queryParams.Get("trim") == "true",
+		APIVersion:        queryParams.Get("apiVersion"),
+		Limit:             limit,
+		Offset:            offset,
+		OrderOn:           queryParams.Get("order"),
+		Sort:              queryParams.Get("sort"),
 		ReturnAnnotations: returnAnnotationComp,
 	}
 	if queryParams.Get("search") != "" {

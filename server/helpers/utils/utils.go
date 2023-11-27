@@ -341,7 +341,7 @@ func FormatK8sMessage(message string) string {
 	return message[:index[0]]
 }
 
-func MarshalAndUnmarshal[k any, v any](val k) (unmarshalledvalue v, err error){
+func MarshalAndUnmarshal[k any, v any](val k) (unmarshalledvalue v, err error) {
 	data, err := utils.Marshal(val)
 	if err != nil {
 		return

@@ -969,6 +969,9 @@ func (l *DefaultLocalProvider) SaveConnection(_ *ConnectionPayload, _ string, _ 
 func (l *DefaultLocalProvider) GetConnections(_ *http.Request, _ string, _, _ int, _, _ string) (*connections.ConnectionPage, error) {
 	return nil, ErrLocalProviderSupport
 }
+func (l *DefaultLocalProvider) GetConnectionByID(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error) {
+	return nil, http.StatusForbidden, ErrLocalProviderSupport
+}
 
 func (l *DefaultLocalProvider) GetConnectionsByKind(_ *http.Request, _ string, _, _ int, _, _, _ string) (*map[string]interface{}, error) {
 	return nil, ErrLocalProviderSupport
@@ -1136,6 +1139,10 @@ func (l *DefaultLocalProvider) SaveUserCredential(token string, credential *Cred
 		return nil, fmt.Errorf("error saving user credentials: %v", result.Error)
 	}
 	return nil, nil
+}
+
+func (l *DefaultLocalProvider) GetCredentialByID(token string, credentialID uuid.UUID) (*Credential, int, error) {
+	return nil, http.StatusForbidden, ErrLocalProviderSupport
 }
 
 func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error) {

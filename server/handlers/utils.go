@@ -70,4 +70,3 @@ func InitializeMachineWithContext(
 
 	return inst, nil
 }
-

@@ -8,6 +8,7 @@ replace (
 	github.com/kubernetes/kompose => github.com/meshery/kompose v1.26.2-0.20230425025309-3bb778d54007
 	k8s.io/client-go => k8s.io/client-go v0.28.3
 	k8s.io/kubectl => k8s.io/kubectl v0.28.3
+	oras.land/oras-go v1.2.4 => oras.land/oras-go v1.2.3
 )
 
 require (
@@ -289,3 +290,5 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.3.0 // indirect
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
+
+replace github.com/layer5io/meshkit => /Users/shabana/Documents/OpenSource/meshkit

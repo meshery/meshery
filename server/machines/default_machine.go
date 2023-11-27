@@ -1,29 +1,10 @@
-package grafana
+package machines
 
 import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/machines"
-	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/logger"
 )
-
-const grafana = "grafana"
-
-type GrafanaConn struct {
-	URL  string
-	Name string
-}
-
-type GrafanaCred struct {
-	Name string `json:"name,omitempty"`
-	// If Basic then it should be formatted as username:password
-	APIKeyOrBasicAuth string `json:"credential,omitempty"`
-}
-
-type GrafanaPayload struct {
-	GrafanaConn
-	GrafanaCred
-}
 
 func Discovered() machines.State {
 	state := &machines.State{}
@@ -36,16 +17,14 @@ func Discovered() machines.State {
 func Registered() machines.State {
 	state := &machines.State{}
 	return *state.
-		RegisterEvent(machines.Connect, machines.REGISTERED).
-		RegisterEvent(machines.Ignore, machines.IGNORED).
-		RegisterAction(&RegisterAction{})
+		RegisterEvent(machines.Connect, machines.CONNECTED).
+		RegisterEvent(machines.Ignore, machines.IGNORED)
 }
 
 func Connected() machines.State {
 	state := &machines.State{}
 	return *state.
-		RegisterEvent(machines.Disconnect, machines.DISCONNECTED).
-		RegisterAction(&RegisterAction{})
+		RegisterEvent(machines.Disconnect, machines.DISCONNECTED)
 }
 
 func Initial() machines.State {
@@ -56,23 +35,15 @@ func Initial() machines.State {
 		RegisterEvent(machines.Connect, machines.CONNECTED)
 }
 
-type MachineCtx struct {
-	GrafanaClient *models.GrafanaClient
-	GrafanaConn   GrafanaConn
-	GrafanaCred   GrafanaCred
-	provider      models.Provider
-}
-
-func New(initialState machines.StateType, ID string, log logger.Handler) (*machines.StateMachine, error) {
+func New(initialState machines.StateType, ID string, log logger.Handler, mtype string) (*machines.StateMachine, error) {
 	connectionID, err := uuid.FromString(ID)
 	if err != nil {
 		return nil, machines.ErrInititalizeK8sMachine(err)
 	}
-	log.Info("initialising grafana machine for connetion Id", connectionID)
 
 	return &machines.StateMachine{
 		ID:            connectionID,
-		Name:          grafana,
+		Name:          mtype,
 		PreviousState: machines.DefaultState,
 		InitialState:  initialState,
 		CurrentState:  initialState,

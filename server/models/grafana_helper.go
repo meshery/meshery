@@ -72,7 +72,7 @@ func (g *GrafanaClient) makeRequest(_ context.Context, queryURL, apiKeyOrBasicAu
 	if err != nil {
 		return nil, err
 	}
-	
+
 	if apiKeyOrBasicAuth != "" {
 		basicAuth := strings.Contains(apiKeyOrBasicAuth, ":")
 		if !basicAuth {
@@ -81,8 +81,8 @@ func (g *GrafanaClient) makeRequest(_ context.Context, queryURL, apiKeyOrBasicAu
 			parts := strings.SplitN(apiKeyOrBasicAuth, ":", 2)
 			req.SetBasicAuth(parts[0], parts[1])
 		}
-	} 
-	
+	}
+
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("User-Agent", "autograf")

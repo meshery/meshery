@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/models/machines"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/machines"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"

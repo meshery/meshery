@@ -3706,6 +3706,42 @@ func (l *RemoteProvider) GetConnectionsByKind(req *http.Request, _ string, page,
 	return &res, nil
 }
 
+func (l *RemoteProvider) GetConnectionByID(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error) {
+	if !l.Capabilities.IsSupported(PersistConnection) {
+		logrus.Error("operation not available")
+		return nil, http.StatusForbidden, ErrInvalidCapability("PersistConnection", l.ProviderName)
+	}
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistConnection)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s/%s", l.RemoteProviderURL, ep, kind, connectionID))
+
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		l.Log.Error(err)
+		statusCode := http.StatusInternalServerError
+		if resp != nil {
+			statusCode = resp.StatusCode
+		}
+		return nil, http.StatusInternalServerError, ErrFetch(err, "connection", statusCode)
+	}
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, http.StatusInternalServerError, ErrDataRead(err, "Update Connection")
+	}
+	if resp.StatusCode == http.StatusOK {
+		var conn connections.Connection
+		if err = json.Unmarshal(bdr, &conn); err != nil {
+			return nil, http.StatusInternalServerError, ErrUnmarshal(err, "connection")
+		}
+		return &conn, resp.StatusCode, nil
+	}
+
+	l.Log.Debug(string(bdr))
+	return nil, resp.StatusCode, ErrFetch(fmt.Errorf("unable to update connection with id %s", connectionID), "connection", resp.StatusCode)
+}
+
 func (l *RemoteProvider) GetConnectionsStatus(req *http.Request, userID string) (*connections.ConnectionsStatusPage, error) {
 	if !l.Capabilities.IsSupported(PersistConnection) {
 		logrus.Error("operation not available")
@@ -3722,7 +3758,11 @@ func (l *RemoteProvider) GetConnectionsStatus(req *http.Request, userID string) 
 	}
 	resp, err := l.DoRequest(cReq, tokenString)
 	if err != nil {
-		return nil, ErrFetch(err, "Connections Status Page", resp.StatusCode)
+		statusCode := http.StatusInternalServerError
+		if resp != nil {
+			statusCode = resp.StatusCode
+		}
+		return nil, ErrFetch(err, "Connections Status Page", statusCode)
 	}
 	defer resp.Body.Close()
 
@@ -4129,6 +4169,38 @@ func (l *RemoteProvider) GetUserCredentials(req *http.Request, _ string, page, p
 		return nil, ErrFetch(err, "Unmarshal Credentials Page", resp.StatusCode)
 	}
 	return &cp, nil
+}
+
+func (l *RemoteProvider) GetCredentialByID(token string, credentialID uuid.UUID) (*Credential, int, error) {
+	if !l.Capabilities.IsSupported(PersistCredentials) {
+		logrus.Error("operation not available")
+		return nil, http.StatusForbidden, ErrInvalidCapability("PersistCredentials", l.ProviderName)
+	}
+	ep, _ := l.Capabilities.GetEndpointForFeature(PersistCredentials)
+
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s%s/%s", l.RemoteProviderURL, ep, credentialID))
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		statusCode := http.StatusInternalServerError
+		if resp != nil {
+			statusCode = resp.StatusCode
+		}
+		return nil, statusCode, ErrFetch(err, "Credentials Page", resp.StatusCode)
+	}
+	defer resp.Body.Close()
+
+	bdr, _ := io.ReadAll(resp.Body)
+	if resp.StatusCode != http.StatusOK {
+		return nil, resp.StatusCode, ErrFetch(fmt.Errorf("could not retrieve credential with id %s: %d", credentialID, resp.StatusCode), fmt.Sprint(bdr), resp.StatusCode)
+	}
+
+	var cp Credential
+	if err = json.Unmarshal(bdr, &cp); err != nil {
+		return nil, http.StatusInternalServerError, ErrFetch(err, "Unmarshal Credentials Page", resp.StatusCode)
+	}
+	return &cp, resp.StatusCode, nil
 }
 
 // UpdateUserCredential - to update an existing credential

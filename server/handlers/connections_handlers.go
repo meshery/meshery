@@ -62,7 +62,7 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 			}
 		}
 		fmt.Println("test instance: ", inst)
-		event, err := inst.SendEvent(req.Context(),  helpers.StatusToEvent(connectionRegisterPayload.Status), connectionRegisterPayload)
+		event, err := inst.SendEvent(req.Context(), helpers.StatusToEvent(connectionRegisterPayload.Status), connectionRegisterPayload)
 		if err != nil {
 			h.log.Error(err)
 			_ = provider.PersistEvent(event)
@@ -71,11 +71,11 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 	}
 }
 
-func(h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.Request, payload *models.ConnectionPayload) {
+func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.Request, payload *models.ConnectionPayload) {
 	compFilter := &v1alpha1.ComponentFilter{
-		Name: "Connection",
+		Name:      "Connection",
 		ModelName: payload.Model,
-		Limit: 1,
+		Limit:     1,
 	}
 	schema := make(map[string]interface{}, 1)
 	component, _, _ := h.registryManager.GetEntities(compFilter)
@@ -86,11 +86,11 @@ func(h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.Re
 
 	schema["component"] = component[0]
 	credential, _, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		Name: "Credential",
+		Name:      "Credential",
 		ModelName: payload.Model,
-		Limit: 1,
+		Limit:     1,
 	})
-	
+
 	if len(credential) > 0 {
 		schema["credential"] = credential[0]
 	}

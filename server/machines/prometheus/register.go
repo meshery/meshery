@@ -5,7 +5,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models"
-	mutils "github.com/layer5io/meshery/server/helpers/utils"
+	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshery/server/models/machines"
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/utils"
@@ -35,14 +35,14 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
 		return machines.NoOp, eventBuilder.Build(), err
 	}
-	
-	promConn, err := mutils.MarshalAndUnmarshal[map[string]interface{}, PromConn](metadata)
+
+	promConn, err := utils.MarshalAndUnmarshal[map[string]interface{}, connections.PromConn](metadata)
 	if err != nil {
 		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
-	promCred, err := mutils.MarshalAndUnmarshal[map[string]interface{}, PromCred](connPayload.CredentialSecret)
+	promCred, err := utils.MarshalAndUnmarshal[map[string]interface{}, connections.PromCred](connPayload.CredentialSecret)
 	if err != nil {
 		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
 		return machines.NoOp, eventBuilder.Build(), err

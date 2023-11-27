@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/gofrs/uuid"
-	mutils "github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshery/server/models/machines"
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/utils"
@@ -36,13 +36,13 @@ func (ra *RegisterAction) Execute(ctx context.Context, machineCtx interface{}, d
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
-	grafanaConn, err := mutils.MarshalAndUnmarshal[map[string]interface{}, GrafanaConn](metadata)
+	grafanaConn, err := utils.MarshalAndUnmarshal[map[string]interface{}, connections.GrafanaConn](metadata)
 	if err != nil {
 		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
-	grafanaCred, err := mutils.MarshalAndUnmarshal[map[string]interface{}, GrafanaCred](connPayload.CredentialSecret)
+	grafanaCred, err := utils.MarshalAndUnmarshal[map[string]interface{}, connections.GrafanaCred](connPayload.CredentialSecret)
 	if err != nil {
 		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
 		return machines.NoOp, eventBuilder.Build(), err
