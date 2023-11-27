@@ -46,7 +46,7 @@ type Paginator struct {
 	data                 []string
 	lastVisibleItemIndex int
 	whiteBgPrinter       *color.Color
-	userMsg             string
+	userMsg              string
 }
 
 func NewPaginator(header []string, rows [][]string) *Paginator {
@@ -54,7 +54,7 @@ func NewPaginator(header []string, rows [][]string) *Paginator {
 	renderedTableString := writeTableToBuffer(&buf, header, rows)
 	lastVisibleItemIndex := 26
 	data := strings.Split(renderedTableString, "\n")
-	userMsg := "Press ↓ to load more items, esc and Ctrl+C to quit"
+	userMsg := "Press spacebar (⎵) to load more. Press ESC or Ctrl+C to stop."
 	extraSpace := len(data[0]) - len(userMsg)
 	if extraSpace > 0 {
 		userMsg += strings.Repeat(" ", extraSpace+2)
@@ -64,7 +64,7 @@ func NewPaginator(header []string, rows [][]string) *Paginator {
 		data:                 data,
 		lastVisibleItemIndex: lastVisibleItemIndex,
 		whiteBgPrinter:       whiteBgPrinter,
-		userMsg:             userMsg,
+		userMsg:              userMsg,
 	}
 }
 
