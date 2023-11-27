@@ -242,6 +242,21 @@ export const getVisibilityColums = (columns) => {
   return columns.filter((col) => col?.options?.display !== false);
 };
 
+export function JsonParse(item, safe = true) {
+  if (typeof item === 'string') {
+    try {
+      return JSON.parse(item || '{}');
+    } catch (e) {
+      if (safe) {
+        return {};
+      }
+      throw e;
+    }
+  }
+
+  return item;
+}
+
 export const ConditionalTooltip = ({ value, maxLength, ...restProps }) => {
   return value?.length > maxLength ? (
     <Tooltip title={value} arrow placement="top">
