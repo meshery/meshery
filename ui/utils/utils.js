@@ -278,11 +278,12 @@ export const ConditionalTooltip = ({ value, maxLength, ...restProps }) => {
  * @param {string} scrollingView - The view identifier for which scrolling is handled
  * @param {function} setPage - The function to set the page state
  * @param {object} scrollRef - Reference to the scroll element
+ * @param {number} buffer - The buffer value for infinite scrolling
  * @returns {function} - Scroll event handler function
  */
-export const createScrollHandler = (scrollingView, setPage, scrollRef) => (event) => {
+export const createScrollHandler = (scrollingView, setPage, scrollRef, buffer) => (event) => {
   const div = event.target;
-  if (div.scrollTop >= div.scrollHeight - div.clientHeight - 10) {
+  if (div.scrollTop >= div.scrollHeight - div.clientHeight - buffer) {
     setPage((prevPage) => ({
       ...prevPage,
       [scrollingView]: prevPage[scrollingView] + 1,
