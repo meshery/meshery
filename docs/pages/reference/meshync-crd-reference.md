@@ -63,15 +63,15 @@ The following section outlines the fields and their descriptions
 * **spec** 
 The specification section defines the desired state of our custom resource that Kubernetes can then use to take corrective measures to bring the cluster to.
   * **size**: The size is an integer value denoting the number of Meshsync instances that that should be in one cluster, currently only one instance of Meshsync is supported.
-    * **broker**:
-    This section contains the configuration for [Meshery-Broker](https://docs.meshery.io/concepts/architecture/broker) 
-      * **native**:
-      Configuration instruction for a broker instance in the cluster.
-        * **name**: 
-        The name of the broker application to be deployed.
-        * **namespace**: 
-        The namespace that the broker would run in.        
-    * **custom**:
+  * **broker**:
+  This section contains the configuration for [Meshery-Broker](https://docs.meshery.io/concepts/architecture/broker) 
+    * **native**:
+    Configuration instruction for a broker instance in the cluster.
+      * **name**: 
+      The name of the broker application to be deployed.
+      * **namespace**: 
+      The namespace that the broker would run in.        
+  * **custom**:
     Alternatively, one can supply the url to an already running instance of the broker.
         * **url**:  The URL to the external broker instance.  
   * **watch-list**:
