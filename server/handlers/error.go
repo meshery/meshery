@@ -13,8 +13,6 @@ import (
 const (
 	ErrInvalidK8SConfigNilCode    = "1014"
 	ErrNilClientCode              = "1015"
-	ErrPrometheusScanCode         = "1016"
-	ErrGrafanaScanCode            = "1017"
 	ErrRecordPreferencesCode      = "1018"
 	ErrGrafanaConfigCode          = "1019"
 	ErrPrometheusConfigCode       = "1020"
@@ -148,14 +146,6 @@ func ErrGenerateComponents(err error) error {
 
 func ErrValidate(err error) error {
 	return errors.New(ErrValidateCode, errors.Alert, []string{"failed to validate the given value against the schema"}, []string{err.Error()}, []string{"unable to validate the value against given schema", "either value or schema might not be a valid cue expression"}, []string{"Make sure that the schema and value provided are valid cue values", "Make sure both schema and value are sent", "Make sure appropriate value types are sent"})
-}
-
-func ErrPrometheusScan(err error) error {
-	return errors.New(ErrPrometheusScanCode, errors.Alert, []string{"Unable to connect to prometheus"}, []string{err.Error()}, []string{"Prometheus endpoint might not be reachable from meshery", "Prometheus endpoint is incorrect"}, []string{"Check if your Prometheus and Grafana Endpoint are correct", "Connect to Prometheus and Grafana from the settings page in the UI"})
-}
-
-func ErrGrafanaScan(err error) error {
-	return errors.New(ErrGrafanaScanCode, errors.Alert, []string{"Unable to connect to grafana"}, []string{err.Error()}, []string{"Grafana endpoint might not be reachable from meshery", "Grafana endpoint is incorrect"}, []string{"Check if your Grafana Endpoint is correct", "Connect to Grafana from the settings page in the UI"})
 }
 
 func ErrPrometheusQuery(err error) error {

@@ -260,7 +260,7 @@ mesheryctl system model view [model-name]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			cmd.Help()
+			_ = cmd.Help()
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl system model --help' to display usage guide.\n", args[0]), "model"))
