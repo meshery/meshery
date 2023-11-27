@@ -14,6 +14,7 @@ const useStyles = makeStyles((theme) => ({
     padding: '0.68rem',
     borderRadius: '0.5rem',
     position: 'relative',
+    zIndex: '101',
   },
   meshModelToolbar: {
     display: 'flex',
