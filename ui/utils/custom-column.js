@@ -19,8 +19,11 @@ const styles = (theme) => ({
       color: theme.palette.secondary.textMain,
     },
     padding: '1rem',
-    boxShadow:
-      '0px 4px 0px -2px rgb(0 179 159 / 10%), 0px 4px 0px -2px rgb(0 179 159 / 10%), 0px 4px 0px -2px rgb(0 179 159 / 10%)',
+    boxShadow: `0px 4px 8px ${
+      theme.palette.type === 'light'
+        ? theme.palette.secondary.disabledIcon
+        : '0px 4px 5px 0px rgba(0,0,0,0.14)'
+    }`,
   },
   icon: {
     color: theme.palette.secondary.iconMain,
@@ -62,7 +65,7 @@ const CustomColumnVisibilityControl = ({ columns, customToolsProps, classes }) =
 
       <Box sx={{ overflow: 'hidden' }}>
         <Popper
-          style={{ zIndex: 120 }}
+          style={{ zIndex: 100 }}
           open={Boolean(anchorEl)}
           anchorEl={anchorEl}
           placement="bottom-start"
