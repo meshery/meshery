@@ -456,7 +456,7 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 //
-// ```?annotations={[true/false]}``` If true components having "isAnnotation" property as true are "only" returned, default is false i.e. comps with isAnnotation true are also returned.
+// ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
 // responses:
 // 200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.ResponseWriter, r *http.Request) {
@@ -486,19 +486,19 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 		page = 1
 	}
 	offset := (page - 1) * limit
-	returnAnnotationComp := queryParams.Get("annotations") == "true"
-	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		Name:              name,
-		CategoryName:      cat,
-		ModelName:         typ,
-		APIVersion:        queryParams.Get("apiVersion"),
-		Version:           v,
-		Offset:            offset,
-		Greedy:            greedy,
-		Limit:             limit,
-		OrderOn:           queryParams.Get("order"),
-		Sort:              queryParams.Get("sort"),
-		ReturnAnnotations: returnAnnotationComp,
+	returnAnnotationComp := queryParams.Get("annotations")
+	entities, count, _  := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
+		Name:         name,
+		CategoryName: cat,
+		ModelName:    typ,
+		APIVersion:   queryParams.Get("apiVersion"),
+		Version:      v,
+		Offset:       offset,
+		Greedy:       greedy,
+		Limit:        limit,
+		OrderOn:      queryParams.Get("order"),
+		Sort:         queryParams.Get("sort"),
+		Annotations: returnAnnotationComp,
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
@@ -555,7 +555,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 //
-// ```?annotations={[true/false]}``` If true components having "isAnnotation" property as true are "only" returned, default is false i.e. comps with isAnnotation true are also returned.
+// ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
 // responses:
 //
 //	200: []meshmodelComponentsDuplicateResponseWrapper
@@ -584,20 +584,20 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 		page = 1
 	}
 	offset := (page - 1) * limit
-	returnAnnotationComp := queryParams.Get("annotations") == "true"
+	returnAnnotationComp := queryParams.Get("annotations")
 
 	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		Name:              name,
-		ModelName:         queryParams.Get("model"),
-		CategoryName:      cat,
-		APIVersion:        queryParams.Get("apiVersion"),
-		Version:           v,
-		Offset:            offset,
-		Limit:             limit,
-		Greedy:            greedy,
-		OrderOn:           queryParams.Get("order"),
-		Sort:              queryParams.Get("sort"),
-		ReturnAnnotations: returnAnnotationComp,
+		Name:         name,
+		ModelName:    queryParams.Get("model"),
+		CategoryName: cat,
+		APIVersion:   queryParams.Get("apiVersion"),
+		Version:      v,
+		Offset:       offset,
+		Limit:        limit,
+		Greedy:       greedy,
+		OrderOn:      queryParams.Get("order"),
+		Sort:         queryParams.Get("sort"),
+		Annotations: returnAnnotationComp,
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
@@ -652,7 +652,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 //
-// ```?annotations={[true/false]}``` If true components having "isAnnotation" property as true are "only" returned, default is false i.e. comps with isAnnotation true are also returned.
+// ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned. returned.
 // responses:
 //
 //	200: []meshmodelComponentsDuplicateResponseWrapper
@@ -682,19 +682,19 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 		page = 1
 	}
 	offset := (page - 1) * limit
-	returnAnnotationComp := queryParams.Get("annotations") == "true"
+	returnAnnotationComp := queryParams.Get("annotations")
 
 	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		Name:              name,
-		ModelName:         typ,
-		APIVersion:        queryParams.Get("apiVersion"),
-		Version:           v,
-		Offset:            offset,
-		Greedy:            greedy,
-		Limit:             limit,
-		OrderOn:           queryParams.Get("order"),
-		Sort:              queryParams.Get("sort"),
-		ReturnAnnotations: returnAnnotationComp,
+		Name:       name,
+		ModelName:  typ,
+		APIVersion: queryParams.Get("apiVersion"),
+		Version:    v,
+		Offset:     offset,
+		Greedy:     greedy,
+		Limit:      limit,
+		OrderOn:    queryParams.Get("order"),
+		Sort:       queryParams.Get("sort"),
+		Annotations: returnAnnotationComp,
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
@@ -753,7 +753,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 //
-// ```?annotations={[true/false]}``` If true components having "isAnnotation" property as true are "only" returned, default is false i.e. comps with isAnnotation true are also returned.
+// ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
 // responses:
 // 200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *http.Request) {
@@ -780,19 +780,19 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 		page = 1
 	}
 	offset := (page - 1) * limit
-	returnAnnotationComp := queryParams.Get("annotations") == "true"
+	returnAnnotationComp := queryParams.Get("annotations")
 	entities, count, _ := h.registryManager.GetEntities(&v1alpha1.ComponentFilter{
-		Name:              name,
-		Trim:              queryParams.Get("trim") == "true",
-		APIVersion:        queryParams.Get("apiVersion"),
-		Version:           v,
-		ModelName:         queryParams.Get("model"),
-		Offset:            offset,
-		Limit:             limit,
-		Greedy:            greedy,
-		OrderOn:           queryParams.Get("order"),
-		Sort:              queryParams.Get("sort"),
-		ReturnAnnotations: returnAnnotationComp,
+		Name:       name,
+		Trim:       queryParams.Get("trim") == "true",
+		APIVersion: queryParams.Get("apiVersion"),
+		Version:    v,
+		ModelName:  queryParams.Get("model"),
+		Offset:     offset,
+		Limit:      limit,
+		Greedy:     greedy,
+		OrderOn:    queryParams.Get("order"),
+		Sort:       queryParams.Get("sort"),
+		Annotations: returnAnnotationComp,
 	})
 	var comps []v1alpha1.ComponentDefinition
 	for _, r := range entities {
@@ -849,7 +849,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 //
-// ```?annotations={[true/false]}``` If true components having "isAnnotation" property as true are "only" returned, default is false i.e. comps with isAnnotation true are also returned.
+// ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
 // responses:
 // 200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request) {
@@ -872,17 +872,17 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		page = 1
 	}
 	offset := (page - 1) * limit
-	returnAnnotationComp := queryParams.Get("annotations") == "true"
+	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &v1alpha1.ComponentFilter{
-		ModelName:         typ,
-		Version:           v,
-		Trim:              queryParams.Get("trim") == "true",
-		APIVersion:        queryParams.Get("apiVersion"),
-		Limit:             limit,
-		Offset:            offset,
-		OrderOn:           queryParams.Get("order"),
-		Sort:              queryParams.Get("sort"),
-		ReturnAnnotations: returnAnnotationComp,
+		ModelName:  typ,
+		Version:    v,
+		Trim:       queryParams.Get("trim") == "true",
+		APIVersion: queryParams.Get("apiVersion"),
+		Limit:      limit,
+		Offset:     offset,
+		OrderOn:    queryParams.Get("order"),
+		Sort:       queryParams.Get("sort"),
+		Annotations: returnAnnotationComp,
 	}
 	if queryParams.Get("search") != "" {
 		filter.Greedy = true
@@ -945,7 +945,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 //
-// ```?annotations={[true/false]}``` If true components having "isAnnotation" property as true are "only" returned, default is false i.e. comps with isAnnotation true are also returned.
+// ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
 // responses:
 // 200: []meshmodelComponentsDuplicateResponseWrapper
 func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter, r *http.Request) {
@@ -969,18 +969,18 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		page = 1
 	}
 	offset := (page - 1) * limit
-	returnAnnotationComp := queryParams.Get("annotations") == "true"
+	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &v1alpha1.ComponentFilter{
-		CategoryName:      cat,
-		ModelName:         typ,
-		Version:           v,
-		Trim:              queryParams.Get("trim") == "true",
-		APIVersion:        queryParams.Get("apiVersion"),
-		Limit:             limit,
-		Offset:            offset,
-		OrderOn:           queryParams.Get("order"),
-		Sort:              queryParams.Get("sort"),
-		ReturnAnnotations: returnAnnotationComp,
+		CategoryName: cat,
+		ModelName:    typ,
+		Version:      v,
+		Trim:         queryParams.Get("trim") == "true",
+		APIVersion:   queryParams.Get("apiVersion"),
+		Limit:        limit,
+		Offset:       offset,
+		OrderOn:      queryParams.Get("order"),
+		Sort:         queryParams.Get("sort"),
+		Annotations: returnAnnotationComp,
 	}
 	if queryParams.Get("search") != "" {
 		filter.Greedy = true
@@ -1041,7 +1041,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 //
-// ```?annotations={[true/false]}``` If true components having "isAnnotation" property as true are "only" returned, default is false i.e. comps with isAnnotation true are also returned.
+// ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
 // responses:
 //
 //	200: []meshmodelComponentsDuplicateResponseWrapper
@@ -1065,17 +1065,17 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		page = 1
 	}
 	offset := (page - 1) * limit
-	returnAnnotationComp := queryParams.Get("annotations") == "true"
+	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &v1alpha1.ComponentFilter{
-		CategoryName:      cat,
-		Version:           v,
-		Trim:              queryParams.Get("trim") == "true",
-		APIVersion:        queryParams.Get("apiVersion"),
-		Limit:             limit,
-		Offset:            offset,
-		OrderOn:           queryParams.Get("order"),
-		Sort:              queryParams.Get("sort"),
-		ReturnAnnotations: returnAnnotationComp,
+		CategoryName: cat,
+		Version:      v,
+		Trim:         queryParams.Get("trim") == "true",
+		APIVersion:   queryParams.Get("apiVersion"),
+		Limit:        limit,
+		Offset:       offset,
+		OrderOn:      queryParams.Get("order"),
+		Sort:         queryParams.Get("sort"),
+		Annotations: returnAnnotationComp,
 	}
 	if queryParams.Get("search") != "" {
 		filter.Greedy = true
@@ -1136,7 +1136,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 //
 // ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
 //
-// ```?annotations={[true/false]}``` If true components having "isAnnotation" property as true are "only" returned, default is false i.e. comps with isAnnotation true are also returned.
+// ```?annotations={["true"/"false"/]}``` If "true" components having "isAnnotation" property as true are "only" returned, If false all components except "annotations" are returned. Any other value of the query parameter results in both annoations as well as non-annotation components being returned.
 // responses:
 //  200: meshmodelComponentsDuplicateResponseWrapper
 
@@ -1160,16 +1160,16 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 		page = 1
 	}
 	offset := (page - 1) * limit
-	returnAnnotationComp := queryParams.Get("annotations") == "true"
+	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &v1alpha1.ComponentFilter{
-		Version:           v,
-		Trim:              queryParams.Get("trim") == "true",
-		APIVersion:        queryParams.Get("apiVersion"),
-		Limit:             limit,
-		Offset:            offset,
-		OrderOn:           queryParams.Get("order"),
-		Sort:              queryParams.Get("sort"),
-		ReturnAnnotations: returnAnnotationComp,
+		Version:    v,
+		Trim:       queryParams.Get("trim") == "true",
+		APIVersion: queryParams.Get("apiVersion"),
+		Limit:      limit,
+		Offset:     offset,
+		OrderOn:    queryParams.Get("order"),
+		Sort:       queryParams.Get("sort"),
+		Annotations: returnAnnotationComp,
 	}
 	if queryParams.Get("search") != "" {
 		filter.Greedy = true
