@@ -321,17 +321,6 @@ func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request
 
 // GrafanaBoardImportForPrometheusHandler accepts a Grafana board json, parses it and returns the list of panels
 func (h *Handler) GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, _ models.Provider) {
-	// if req.Method != http.MethodPost {
-	// 	w.WriteHeader(http.StatusNotFound)
-	// 	return
-	// }
-
-	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
-		h.log.Error(ErrPrometheusConfig)
-		http.Error(w, ErrPrometheusConfig.Error(), http.StatusBadRequest)
-		return
-	}
-
 	defer func() {
 		_ = req.Body.Close()
 	}()
@@ -425,16 +414,16 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 // 	200: prometheusStaticBoardRespWrapper
 
 // PrometheusStaticBoardHandler returns the static board
-func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, _ models.Provider) {
-	// if req.Method != http.MethodGet {
-	// 	w.WriteHeader(http.StatusNotFound)
-	// 	return
-	// }
+func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, provider models.Provider) {
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
+	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
 
-	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
-		_, _ = w.Write([]byte("{}"))
+	connection, statusCode, err := provider.GetConnectionByID(token, connectionID, "prometheus")
+	if err != nil {
+		http.Error(w, err.Error(), statusCode)
 		return
 	}
+	url, _ := connection.Metadata["url"].(string)
 
 	result := map[string]*models.GrafanaBoard{}
 	resultLock := &sync.Mutex{}
@@ -450,7 +439,7 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 		go func(k string, bfun func(context.Context, string) (*models.GrafanaBoard, error)) {
 			defer resultWG.Done()
 
-			board, err := bfun(req.Context(), prefObj.Prometheus.PrometheusURL)
+			board, err := bfun(req.Context(), url)
 			if err != nil {
 				// error is already logged
 				return
@@ -468,7 +457,7 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 		return
 	}
 
-	err := json.NewEncoder(w).Encode(result)
+	err = json.NewEncoder(w).Encode(result)
 	if err != nil {
 		obj := "board instance"
 		h.log.Error(models.ErrMarshal(err, obj))
@@ -477,7 +466,7 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 	}
 }
 
-// swagger:route POST /api/telemetry/metrics/boards PrometheusAPI idPostPrometheusBoard
+// swagger:route POST /api/telemetry/metrics/boards/{connectionID} PrometheusAPI idPostPrometheusBoard
 // Handle POST request for Prometheus board
 //
 // Used to persist selected board and panels
@@ -486,20 +475,6 @@ func (h *Handler) PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.
 
 // SaveSelectedPrometheusBoardsHandler persists selected board and panels
 func (h *Handler) SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
-	// if req.Method != http.MethodPost {
-	// 	w.WriteHeader(http.StatusNotFound)
-	// 	return
-	// }
-
-	if prefObj.Prometheus == nil || prefObj.Prometheus.PrometheusURL == "" {
-		h.log.Error(ErrPrometheusConfig)
-		http.Error(w, ErrPrometheusConfig.Error(), http.StatusBadRequest)
-		return
-	}
-
-	// if prefObj.Prometheus.SelectedPrometheusBoardsConfigs == nil {
-	// 	prefObj.Prometheus.SelectedPrometheusBoardsConfigs = []*models.GrafanaBoard{}
-	// }
 
 	defer func() {
 		_ = req.Body.Close()

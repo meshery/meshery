@@ -22,6 +22,11 @@ import (
 type connectionStatusPayload map[uuid.UUID]connections.ConnectionStatus
 
 func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+	if req.Method == http.MethodDelete {
+		h.handleProcessTermination(w, req)
+		return
+	}
+
 	connectionRegisterPayload := models.ConnectionPayload{}
 	userUUID := uuid.FromStringOrNil(user.ID)
 	err := json.NewDecoder(req.Body).Decode(&connectionRegisterPayload)
@@ -68,6 +73,25 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
 		}
+	}
+}
+
+func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Request) {
+	body := make(map[string]string, 0)
+	err := json.NewDecoder(req.Body).Decode(&body)
+	if err != nil {
+		_err := models.ErrUnmarshal(err, "request body")
+		h.log.Error(_err)
+		http.Error(w, _err.Error(), http.StatusInternalServerError)
+		return
+	}
+	smInstancetracker := h.ConnectionToStateMachineInstanceTracker
+	
+	smInstancetracker.mx.Lock()
+	defer smInstancetracker.mx.Unlock()
+	id, ok := body["id"]
+	if ok {
+		delete(smInstancetracker.ConnectToInstanceMap, uuid.FromStringOrNil(id))
 	}
 }
 
