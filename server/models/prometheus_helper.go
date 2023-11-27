@@ -37,8 +37,8 @@ func NewPrometheusClientWithHTTPClient(client *http.Client) *PrometheusClient {
 }
 
 // Validate - helps validate the connection
-func (p *PrometheusClient) Validate(ctx context.Context, promURL string) error {
-	_, err := p.grafanaClient.makeRequest(ctx, promURL+"/api/v1/status/config", "")
+func (p *PrometheusClient) Validate(ctx context.Context, promURL, apiKeyOrBasicAuth string) error {
+	_, err := p.grafanaClient.makeRequest(ctx, promURL+"/api/v1/status/config", apiKeyOrBasicAuth)
 	if err != nil {
 		return err
 	}
