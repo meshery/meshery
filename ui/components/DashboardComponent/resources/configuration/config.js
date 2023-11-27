@@ -6,7 +6,6 @@ import { Title } from '../../view';
 
 import { ConnectionChip } from '../../../connections/ConnectionChip';
 
-
 export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfig) => {
   console.log('meshSyncResources: ', meshSyncResources);
   return {

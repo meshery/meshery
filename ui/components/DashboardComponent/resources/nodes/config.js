@@ -9,7 +9,6 @@ import { JsonParse } from '../../../../utils/utils';
 
 import { ConnectionChip } from '../../../connections/ConnectionChip';
 
-
 export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
   return {
     name: 'Node',

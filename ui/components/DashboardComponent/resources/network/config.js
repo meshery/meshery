@@ -7,7 +7,6 @@ import { Title } from '../../view';
 
 import { ConnectionChip } from '../../../connections/ConnectionChip';
 
-
 export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => {
   return {
     Service: {

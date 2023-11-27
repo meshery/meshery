@@ -8,7 +8,6 @@ import { Title } from '../../view';
 import { ConnectionChip } from '../../../connections/ConnectionChip';
 import { ConditionalTooltip } from '../../../../utils/utils';
 
-
 export const NamespaceTableConfig = (switchView, meshSyncResources, k8sConfig) => {
   return {
     name: 'Namespace',

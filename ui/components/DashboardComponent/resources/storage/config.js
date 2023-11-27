@@ -6,7 +6,6 @@ import { Title } from '../../view';
 
 import { ConnectionChip } from '../../../connections/ConnectionChip';
 
-
 export const StorageTableConfig = (switchView, meshSyncResources, k8sConfig) => {
   return {
     PersistentVolume: {
