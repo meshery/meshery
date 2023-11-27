@@ -10,13 +10,16 @@ import PlusSquare from '../../assets/icons/PlusSquare';
 import DotSquare from '../../assets/icons/DotSquare';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import useStyles from '../../assets/styles/general/tool.styles';
+import useStyles from '../../assets/styles/general/tool.style;
+import { useWindowDimensions } from '../../utils/dimension';
 
 const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
   const [checked, setChecked] = useState(false);
   const [hover, setHover] = useState(false);
   const { check, labelText, root, search, setSearchText, ...other } = props;
   const theme = useTheme();
+  const { width } = useWindowDimensions();
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   return (
     <StyledTreeItemRoot
@@ -34,17 +37,22 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
             px: 0,
           }}
         >
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-            }}
-          >
-            <Typography variant={'body'} style={{}}>
-              {labelText}
-            </Typography>
-          </div>
+
+          {width < 900 && isSearchExpanded ? null : (
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}
+            >
+              <Typography variant={'body'} style={{ color: `${root}` }}>
+                {labelText}
+              </Typography>
+            </div>
+          )}
+
+
           {check && (
             <Checkbox
               onClick={() => setChecked((prevcheck) => !prevcheck)}
@@ -64,6 +72,8 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
               onSearch={(value) => {
                 setSearchText(value);
               }}
+              expanded={isSearchExpanded}
+              setExpanded={setIsSearchExpanded}
               placeholder="Search"
             />
           )}
@@ -91,8 +101,10 @@ const MesheryTreeView = ({
 }) => {
   const [expanded, setExpanded] = React.useState([]);
   const [selected, setSelected] = React.useState([]);
-  const [searchExpanded, setSearchExpanded] = React.useState(false);
-  const StyleClass = useStyles();
+
+  const { width } = useWindowDimensions();
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+
 
   useEffect(() => {
     setSelected([]);
@@ -151,18 +163,22 @@ const MesheryTreeView = ({
     <div style={{ width: '100%' }}>
       {view === MODELS && (
         <div>
+
           <div className={StyleClass.searchContainer}>
             {!searchExpanded && (
               <div style={{ display: 'flex', flexDirection: 'row' }}>
                 <IconButton onClick={expandAll} size="large">
+
                   <KeyboardArrowDownIcon />
                 </IconButton>
 
                 <IconButton
                   onClick={() => setExpanded([])}
-                  style={{ marginRight: '2px' }}
+
+                  style={{ marginRight: '4px' }}
                   size="large"
                 >
+                  {/* <MinusSquare /> */}
                   <KeyboardArrowUpIcon />
                 </IconButton>
                 <FormControlLabel
@@ -183,8 +199,9 @@ const MesheryTreeView = ({
                 onSearch={(value) => {
                   setSearchText(value);
                 }}
-                expanded={searchExpanded}
-                setExpanded={setSearchExpanded}
+
+                expanded={isSearchExpanded}
+                setExpanded={setIsSearchExpanded}
                 placeholder="Search"
               />
             </div>

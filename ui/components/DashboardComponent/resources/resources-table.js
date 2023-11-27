@@ -36,6 +36,7 @@ const ResourcesTable = (props) => {
   const [sortOrder, setSortOrder] = useState('');
   const [selectedResource, setSelectedResource] = useState({});
   const [view, setView] = useState(ALL_VIEW);
+  const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const switchView = (view, resource) => {
     setSelectedResource(resource);
@@ -177,6 +178,8 @@ const ResourcesTable = (props) => {
                 onSearch={(value) => {
                   setSearch(value);
                 }}
+                expanded={isSearchExpanded}
+                setExpanded={setIsSearchExpanded}
                 placeholder={`Search ${tableConfig.name}...`}
               />
 
