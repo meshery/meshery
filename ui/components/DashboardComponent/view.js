@@ -240,15 +240,18 @@ export const Title = ({ onClick, data, value }) => {
         color: 'inherit',
         textDecorationLine: 'underline',
         cursor: 'pointer',
-        marginBottom: '0.5rem',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-around',
+        justifyContent: 'space-between',
       }}
       onClick={onClick}
     >
-      <GetNodeIcon metadata={JsonParse(data)} />
-      <Typography variant="body2">{value}</Typography>
+      <div style={{ display: 'inherit', alignItems: 'center' }}>
+        <GetNodeIcon metadata={JsonParse(data)} />
+        <Typography style={{ marginLeft: '0.25rem' }} variant="body2">
+          {value}
+        </Typography>
+      </div>
     </div>
   );
 };
