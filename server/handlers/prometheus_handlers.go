@@ -217,8 +217,8 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 		}
 
 		if err := h.config.PrometheusClient.Validate(req.Context(), promURL, promKey); err != nil {
-			h.log.Error(ErrPrometheusScan(err))
-			http.Error(w, ErrPrometheusScan(err).Error(), http.StatusInternalServerError)
+			h.log.Error(models.ErrPrometheusScan(err))
+			http.Error(w, models.ErrPrometheusScan(err).Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -304,8 +304,8 @@ func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request
 	apiKeyOrBasicAuth, _ := cred.Secret["credential"].(string)
 
 	if err := h.config.PrometheusClient.Validate(req.Context(), url, apiKeyOrBasicAuth); err != nil {
-		h.log.Error(ErrPrometheusScan(err))
-		http.Error(w, ErrPrometheusScan(err).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrPrometheusScan(err))
+		http.Error(w, models.ErrPrometheusScan(err).Error(), http.StatusInternalServerError)
 		return
 	}
 

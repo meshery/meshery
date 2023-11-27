@@ -79,8 +79,8 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 		}
 
 		if err := h.config.GrafanaClient.Validate(req.Context(), grafanaURL, grafanaAPIKey); err != nil {
-			h.log.Error(ErrGrafanaScan(err))
-			http.Error(w, ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
+			h.log.Error(models.ErrGrafanaScan(err))
+			http.Error(w, models.ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
 			return
 		}
 
@@ -159,8 +159,8 @@ func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, p
 	}
 	apiKeyOrBasicAuth, _ := cred.Secret["credential"].(string)
 	if err := h.config.GrafanaClient.Validate(req.Context(), url, apiKeyOrBasicAuth); err != nil {
-		h.log.Error(ErrGrafanaScan(err))
-		http.Error(w, ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrGrafanaScan(err))
+		http.Error(w,models.ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -196,8 +196,8 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 	}
 	apiKeyOrBasicAuth, _ := cred.Secret["credential"].(string)
 	if err := h.config.GrafanaClient.Validate(req.Context(), url, apiKeyOrBasicAuth); err != nil {
-		h.log.Error(ErrGrafanaScan(err))
-		http.Error(w, ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrGrafanaScan(err))
+		http.Error(w, models.ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -244,8 +244,8 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, 
 	}
 	apiKeyOrBasicAuth, _ := cred.Secret["credential"].(string)
 	if err := h.config.GrafanaClient.Validate(req.Context(), url, apiKeyOrBasicAuth); err != nil {
-		h.log.Error(ErrGrafanaScan(err))
-		http.Error(w, ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrGrafanaScan(err))
+		http.Error(w, models.ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -278,8 +278,8 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 	}
 	apiKeyOrBasicAuth, _ := cred.Secret["credential"].(string)
 	if err := h.config.GrafanaClient.Validate(req.Context(), url, apiKeyOrBasicAuth); err != nil {
-		h.log.Error(ErrGrafanaScan(err))
-		http.Error(w, ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
+		h.log.Error(models.ErrGrafanaScan(err))
+		http.Error(w, models.ErrGrafanaScan(err).Error(), http.StatusInternalServerError)
 		return
 	}
 

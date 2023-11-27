@@ -100,10 +100,10 @@ const (
 	ErrFlushMeshSyncDataCode              = "1535"
 	ErrUpdateConnectionStatusCode         = "1540"
 	ErrResultNotFoundCode                 = "1546"
-	ErrPersistCredentialCode              = "replace_me"
-	ErrPersistConnectionCode              = "replace_me"
-	ErrPrometheusScanCode                 = "replace_me"
-	ErrGrafanaScanCode                    = "replace_me"
+	ErrPersistCredentialCode              = "1547"
+	ErrPersistConnectionCode              = "1548"
+	ErrPrometheusScanCode                 = "1549"
+	ErrGrafanaScanCode                    = "1550"
 )
 
 var (
@@ -387,11 +387,11 @@ func ErrResultNotFound(err error) error {
 }
 
 func ErrPersistCredential(err error) error {
-	return errors.New(ErrPersistCredentialCode, errors.Alert, []string{}, []string{}, []string{}, []string{})
+	return errors.New(ErrPersistCredentialCode, errors.Alert, []string{"unable to persist credential details"}, []string{err.Error()}, []string{"The credential object is not valid"}, []string{"Ensure all the required fields are provided"})
 }
 
 func ErrPersistConnection(err error) error {
-	return errors.New(ErrPersistConnectionCode, errors.Alert, []string{}, []string{}, []string{}, []string{})
+	return errors.New(ErrPersistConnectionCode, errors.Alert, []string{"unable to persist connection details"}, []string{err.Error()}, []string{"The connection object is not valid"}, []string{"Ensure all the required fields are provided"})
 }
 
 func ErrGrafanaScan(err error) error {
