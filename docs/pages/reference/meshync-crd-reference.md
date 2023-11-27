@@ -71,7 +71,7 @@ The specification section defines the desired state of our custom resource that 
       The name of the broker application to be deployed.
       * **namespace**: 
       The namespace that the broker would run in.        
-  * **custom**:
+    * **custom**:
     Alternatively, one can supply the url to an already running instance of the broker.
         * **url**:  The URL to the external broker instance.  
   * **watch-list**:
