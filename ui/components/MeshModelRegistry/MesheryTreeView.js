@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import { Box, Typography, IconButton, FormControlLabel, Switch, useTheme } from '@material-ui/core';
 import Checkbox from '@mui/material/Checkbox';
@@ -32,7 +32,7 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            py: check ? 0.5 : root ? 0.2 : 1.5,
+            py: check ? 0.5 : search ? 0.2 : 1.5,
             px: 0,
           }}
         >
@@ -118,15 +118,26 @@ const MesheryTreeView = ({
     });
   }, [view]);
 
-  const handleScroll = (scrollingView) => () => {
+  const scrollRef = useRef();
+
+  const handleScroll = (scrollingView) => (event) => {
     const div = event.target;
-    if (div.scrollTop >= div.scrollHeight - div.clientHeight - 2) {
+    if (div.scrollTop >= div.scrollHeight - div.clientHeight - 10) {
       setPage((prevPage) => ({
         ...prevPage, // Keep the current values for other keys
         [scrollingView]: prevPage[scrollingView] + 1, // Increment the specific key based on the view
       }));
     }
+
+    scrollRef.current = div.scrollTop;
   };
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      const div = document.getElementById('scrollElement');
+      div.scrollTop = scrollRef.current;
+    }
+  }, [data]);
 
   const handleChecked = () => {
     setChecked(!checked);
@@ -155,7 +166,7 @@ const MesheryTreeView = ({
   };
 
   return (
-    <div>
+    <div style={{ width: '100%' }}>
       {view === MODELS && (
         <div>
           <div
@@ -205,7 +216,11 @@ const MesheryTreeView = ({
               />
             </div>
           </div>
-          <div style={{ overflowY: 'auto', height: '27rem' }} onScroll={handleScroll(MODELS)}>
+          <div
+            id="scrollElement"
+            style={{ overflowY: 'auto', height: '27rem' }}
+            onScroll={handleScroll(MODELS)}
+          >
             <TreeView
               aria-label="controlled"
               defaultExpanded={['3']}
@@ -541,7 +556,7 @@ const MesheryTreeView = ({
             }}
           >
             <div
-              style={{ overflowY: 'auto', height: '27rem' }}
+              style={{ overflowY: 'auto', maxHeight: '27rem' }}
               onScroll={handleScroll(RELATIONSHIPS)}
             >
               {data.map((relationship, index) => (
@@ -549,7 +564,7 @@ const MesheryTreeView = ({
                   key={index}
                   nodeId={index + 1}
                   check
-                  labelText={relationship.kind}
+                  labelText={relationship.subType}
                   onClick={() => {
                     setRela(relationship);
                   }}
