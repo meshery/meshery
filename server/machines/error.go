@@ -16,7 +16,7 @@ func ErrInvalidTransition(from, to StateType) error {
 }
 
 func ErrInvalidTransitionEvent(from StateType, event EventType) error {
-	return errors.New(ErrInvalidTransitionCode, errors.Alert, []string{fmt.Sprintf("unsupported transition event received \"%s\" for the state \"%s\"", event, from)}, []string{}, []string{}, []string{})
+	return errors.New(ErrInvalidTransitionEventCode, errors.Alert, []string{fmt.Sprintf("unsupported transition event received \"%s\" for the state \"%s\"", event, from)}, []string{}, []string{}, []string{})
 }
 
 func ErrInititalizeK8sMachine(err error) error {
