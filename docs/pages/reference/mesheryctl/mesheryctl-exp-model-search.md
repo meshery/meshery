@@ -1,8 +1,8 @@
 ---
 layout: default
-title: mesheryctl-exp-model
-permalink: reference/mesheryctl/exp/model
-redirect_from: reference/mesheryctl/exp/model/
+title: mesheryctl-exp-model-search
+permalink: reference/mesheryctl/exp/model/search
+redirect_from: reference/mesheryctl/exp/model/search/
 type: reference
 display-title: "false"
 language: en
@@ -10,35 +10,27 @@ command: exp
 subcommand: model
 ---
 
-# mesheryctl exp model
+# mesheryctl exp model search
 
-View list of models and detail of models
+search models
 
 ## Synopsis
 
-View list of models and detailed information of a specific model
+search a models by search string
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp model [flags]
+mesheryctl exp model search [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-To view list of components
+View current provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp model list
-
-</div>
-</pre> 
-
-To view a specific model
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl exp model view [model-name]
+mesheryctl exp model search [query-text]
 
 </div>
 </pre> 
@@ -47,7 +39,7 @@ mesheryctl exp model view [model-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help   help for model
+  -h, --help   help for search
 
 </div>
 </pre>
