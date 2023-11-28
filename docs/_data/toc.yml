@@ -173,19 +173,24 @@
       # url: guides/smi-conformance
     - title: Configuring Kubernetes Infrastructure
       url: guides/configuration-management
-    - title: Creating a Meshery Design
-      url: guides/creating-a-meshery-design
+      children:
+      - title: Creating a Meshery Design
+        url: guides/creating-a-meshery-design
+      - title: Importing Applications
+        url: guides/importing-apps
     - title: Managing Events with Notification Center
       url: guides/events-management
-    - title: Integrating Prometheus and Grafana
-      url: guides/meshery-metrics
-    - title: Importing Applications
-      url: guides/importing-apps
+    - title: Using Multiple Meshery Adapters
+      url: guides/multiple-adapters
+
     - title: Pipelining service mesh specifications
       url: guides/pipelining-service-mesh-specifications
     - title: Performance Management with Meshery
-      url: guides/performance-management
-    - title: Using mesheryctl ↆ
+      url: guides/performance-management ↆ
+      children:
+        - title: Integrating Prometheus and Grafana
+          url: guides/meshery-metrics
+    - title: Meshery CLI Guides ↆ
       url: guides/mesheryctl
       children:
         - title: Using mesheryctl
@@ -196,14 +201,12 @@
           url: guides/mesheryctl/authenticate-with-meshery-via-cli
         - title: Running system checks using Meshery CLI
           url: guides/mesheryctl/running-system-checks-using-mesheryctl
-    - title: Using Multiple Meshery Adapters
-      url: guides/multiple-adapters
-    - title: Troubleshooting Guide
+    - title: Troubleshooting Guides ↆ
       url: guides/troubleshooting
       children:
-        - title: Troubleshooting Guide
+        - title: Meshery Operator Troubleshooting Guide
           url: guides/troubleshooting/meshery-operator-meshsync
-    - title: Upgrading Meshery
+    - title: Upgrading Meshery ↆ
       url: guides/upgrade
       children:
         - title: Upgrading Meshery CLI
