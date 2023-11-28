@@ -9,7 +9,7 @@ language: en
 ---
 
 # MeshSync CRD
-The MeshSync CRD is used as a configuration tool the the Meshsync service. The CRD is used to control the replica count for Meshsync instances, broker configuration and the resources that Meshsync watches and listens to in a cluster. 
+The MeshSync CRD is used as a configuration tool the  [MeshSync](https://docs.meshery.io/concepts/architecture/MeshSync). The CRD is used to control the replica count for MeshSync instances, [Broker](https://docs.meshery.io/concepts/architecture/broker) configuration and the resources that MeshSync watches and listens to in a cluster. 
 
 ## YAML synopsis
 
@@ -50,7 +50,7 @@ The following section outlines the fields and their descriptions
 * **kind** – Resource type. Must be set to **MeshSync**, also helps in quering for custom resources in the cluster using its plural form **meshsyncs**
 
 * **metadata** - The metadata section allows us to pass data that uniquely identifies a specific custom resource. For MeshSync, the following metadata is required
-    * **name** - The name of this custom resource 
+    * **name** : The name of this custom resource 
 
     * **namespace**: The namespace that this custom resource will live in, usually **meshery** namespace
     * **labels**: labels are used to organize kubernetes objects and can be used to filter for objects either by kubectl or the Kubernetes API
@@ -62,9 +62,9 @@ The following section outlines the fields and their descriptions
 
 * **spec** 
 The specification section defines the desired state of our custom resource that Kubernetes can then use to take corrective measures to bring the cluster to.
-  * **size**: The size is an integer value denoting the number of Meshsync instances that that should be in one cluster, currently only one instance of Meshsync is supported.
+  * **size**: The size is an integer value denoting the number of MeshSync instances that that should be in one cluster, currently only one instance of MeshSync is supported.
   * **broker**:
-  This section contains the configuration for [Meshery-Broker](https://docs.meshery.io/concepts/architecture/broker) 
+  This section contains the configuration for [Broker](https://docs.meshery.io/concepts/architecture/broker) 
     * **native**:
     Configuration instruction for a broker instance in the cluster.
       * **name**: 
@@ -76,26 +76,35 @@ The specification section defines the desired state of our custom resource that 
         * **url**:  The URL to the external broker instance.  
   * **watch-list**:
   The watchlist is a configMap that is used to set the resources e.g. pods,deployments and event types e.g. ADDED, MODIFIED... that Meshync tracks or ignores in the Kubernetes cluster. 
-    * **whitelist**: Whitelisted resources are resources that Meshsync should track and is an array of the format
-    ```yaml
-    [
-      #Name of the resource eg replicasets.v1.apps in resource.version.group format
-      Resource string
-      #Events to track, Either ADDED, MODIFIED or DELETED
-      Events   []string   
-    ]
-    ```
-    The string should be json enconded
+    * **whitelist**: Whitelisted resources are resources that MeshSync should track and is an array of the format
+      ```yaml
+      [
+        #Name of the resource eg replicasets.v1.apps in resource.version.group format
+        Resource string
+        #Events to track, Either ADDED, MODIFIED or DELETED
+        Events   []string   
+      ]
+      ```
+      The string should be json enconded for example
+      ```yaml
+      "[{\"Resource\":\"namespaces.v1.\",\"Events\":[\"ADDED\",\"MODIFIED\",\"DELETED\"]}]"
+      ```
+    * **blacklist**:
+    Alternatively one can use the blacklist field to define resources that should be ingored by MeshSync. The resources and their respective events will not be tracked. 
+    The blacklist is an array of resources of the format ***resource.version.group*** format
+      ```yaml
+      "[\"namespaces.v1.\",\"configmaps.v1.\"]"
+      ```
 # Usage
 The following section defines the usage for this Custom Resource
 
-The Custom Resource is used to configure the [broker](https://docs.meshery.io/concepts/architecture/broker) and Events to be tracked by [Meshysync](https://docs.meshery.io/concepts/architecture/meshsync) 
+The Custom Resource is used to configure the [broker](https://docs.meshery.io/concepts/architecture/broker) and Events to be tracked by [MeshSync](https://docs.meshery.io/concepts/architecture/MeshSync) 
 ## Example Use
 ```yaml
 apiVersion: meshery.layer5.io/v1alpha1
 kind: MeshSync
 metadata:
-  name: meshery-meshsync
+  name: meshery-MeshSync
   namespace: meshery
   labels:
     app: meshery
