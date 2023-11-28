@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/machines"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
@@ -17,7 +17,7 @@ import (
 // Mapping b/w Connection and its associated machine is created if not already exist in ConnectionStateMachineMap.
 // Maintenance state is not considered.
 
-func Discovered(log logger.Handler) machines.State {
+func Discovered() machines.State {
 	return machines.State{
 		Events: machines.Events{
 			machines.Register: machines.REGISTERED,
@@ -28,7 +28,7 @@ func Discovered(log logger.Handler) machines.State {
 	}
 }
 
-func Registered(log logger.Handler) machines.State {
+func Registered() machines.State {
 	return machines.State{
 		Events: machines.Events{
 			machines.Connect: machines.CONNECTED,
@@ -38,7 +38,7 @@ func Registered(log logger.Handler) machines.State {
 	}
 }
 
-func Connected(log logger.Handler) machines.State {
+func Connected() machines.State {
 	return machines.State{
 		Events: machines.Events{
 			machines.Disconnect: machines.DISCONNECTED,
@@ -49,7 +49,7 @@ func Connected(log logger.Handler) machines.State {
 	}
 }
 
-func Ignored(log logger.Handler) machines.State {
+func Ignored() machines.State {
 	return machines.State{
 		Events: machines.Events{
 			machines.Delete:   machines.DELETED,
@@ -59,7 +59,7 @@ func Ignored(log logger.Handler) machines.State {
 	}
 }
 
-func Disconnected(log logger.Handler) machines.State {
+func Disconnected() machines.State {
 	return machines.State{
 		Events: machines.Events{
 			machines.Connect: machines.CONNECTED,
@@ -69,7 +69,7 @@ func Disconnected(log logger.Handler) machines.State {
 	}
 }
 
-func NotFound(log logger.Handler) machines.State {
+func NotFound() machines.State {
 	return machines.State{
 		Events: machines.Events{
 			machines.Discovery: machines.DISCOVERED,
@@ -79,14 +79,14 @@ func NotFound(log logger.Handler) machines.State {
 	}
 }
 
-func Delete(log logger.Handler) machines.State {
+func Delete() machines.State {
 	return machines.State{
 		Events: machines.Events{},
 		Action: &DeleteAction{},
 	}
 }
 
-func Initial(log logger.Handler) machines.State {
+func Initial() machines.State {
 	return machines.State{
 		Events: machines.Events{
 			machines.Discovery:  machines.DISCOVERED,
@@ -118,7 +118,7 @@ const (
 	machineName = "kubernetes"
 )
 
-func NewK8SMachine(ID string, log logger.Handler) (*machines.StateMachine, error) {
+func New(ID string, log logger.Handler) (*machines.StateMachine, error) {
 	connectionID, err := uuid.FromString(ID)
 	log.Info("initialising K8s machine for connetion Id", connectionID)
 	if err != nil {
@@ -133,14 +133,14 @@ func NewK8SMachine(ID string, log logger.Handler) (*machines.StateMachine, error
 		CurrentState:  machines.InitialState,
 		Log:           log,
 		States: machines.States{
-			machines.DISCOVERED:   Discovered(log),
-			machines.REGISTERED:   Registered(log),
-			machines.CONNECTED:    Connected(log),
-			machines.DISCONNECTED: Disconnected(log),
-			machines.IGNORED:      Ignored(log),
-			machines.DELETED:      Delete(log),
-			machines.NOTFOUND:     NotFound(log),
-			machines.InitialState: Initial(log),
+			machines.DISCOVERED:   Discovered(),
+			machines.REGISTERED:   Registered(),
+			machines.CONNECTED:    Connected(),
+			machines.DISCONNECTED: Disconnected(),
+			machines.IGNORED:      Ignored(),
+			machines.DELETED:      Delete(),
+			machines.NOTFOUND:     NotFound(),
+			machines.InitialState: Initial(),
 		},
 	}, nil
 }

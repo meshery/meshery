@@ -42,17 +42,17 @@ var (
 	outFormatFlag string
 )
 
-// represents the `mesheryctl system model list` subcommand.
+// represents the `mesheryctl exp model list` subcommand.
 var listModelCmd = &cobra.Command{
 	Use:   "list",
 	Short: "list models",
 	Long:  "list name of all registered models",
 	Example: `
 // View list of models
-mesheryctl system model list
+mesheryctl exp model list
 
 // View list of models with specified page number (25 models per page)
-mesheryctl system model list --page 2
+mesheryctl exp model list --page 2
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -169,14 +169,14 @@ mesheryctl system model list --page 2
 	},
 }
 
-// represents the `mesheryctl system model view [model-name]` subcommand.
+// represents the `mesheryctl exp model view [model-name]` subcommand.
 var viewModelCmd = &cobra.Command{
 	Use:   "view",
 	Short: "view model",
 	Long:  "view a model queried by its name",
 	Example: `
 // View current provider
-mesheryctl system model view [model-name]
+mesheryctl exp model view [model-name]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -200,7 +200,7 @@ mesheryctl system model view [model-name]
 		return nil
 	},
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl system model view [model-name]\nRun 'mesheryctl system model view --help' to see detailed help message"
+		const errMsg = "Usage: mesheryctl exp model view [model-name]\nRun 'mesheryctl exp model view --help' to see detailed help message"
 		if len(args) == 0 {
 			return fmt.Errorf("model name isn't specified\n\n%v", errMsg)
 		} else if len(args) > 1 {
@@ -277,24 +277,119 @@ mesheryctl system model view [model-name]
 	},
 }
 
-// ModelCmd represents the `mesheryctl system model` command
+// represents the `mesheryctl exp model search [query-text]` subcommand.
+var searchModelCmd = &cobra.Command{
+	Use:   "search",
+	Short: "search models",
+	Long:  "search a models by search string",
+	Example: `
+// View current provider
+mesheryctl exp model search [query-text]
+	`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		//Check prerequisite
+
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return err
+		}
+		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
+		if err != nil {
+			return err
+		}
+		ctx, err := mctlCfg.GetCurrentContext()
+		if err != nil {
+			return err
+		}
+		err = ctx.ValidateVersion()
+		if err != nil {
+			return err
+		}
+		return nil
+	},
+	Args: func(_ *cobra.Command, args []string) error {
+		const errMsg = "Usage: mesheryctl exp model search [query-text]\nRun 'mesheryctl exp model search --help' to see detailed help message"
+		if len(args) == 0 {
+			return fmt.Errorf("Search term is missing\n\n%v", errMsg)
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			log.Fatalln(err, "error processing config")
+		}
+
+		baseUrl := mctlCfg.GetBaseMesheryURL()
+		queryText := args[0]
+
+		url := fmt.Sprintf("%s/api/meshmodels/models?search=%s&pagesize=all", baseUrl, queryText)
+		req, err := utils.NewRequest(http.MethodGet, url, nil)
+		if err != nil {
+			utils.Log.Error(err)
+			return err
+		}
+
+		resp, err := utils.MakeRequest(req)
+		if err != nil {
+			utils.Log.Error(err)
+			return err
+		}
+
+		// defers the closing of the response body after its use, ensuring that the resources are properly released.
+		defer resp.Body.Close()
+
+		data, err := io.ReadAll(resp.Body)
+		if err != nil {
+			utils.Log.Error(err)
+			return err
+		}
+
+		modelsResponse := &models.MeshmodelsAPIResponse{}
+		err = json.Unmarshal(data, modelsResponse)
+		if err != nil {
+			utils.Log.Error(err)
+			return err
+		}
+
+		header := []string{"Category", "Model", "Version"}
+		rows := [][]string{}
+
+		for _, model := range modelsResponse.Models {
+			if len(model.DisplayName) > 0 {
+				rows = append(rows, []string{model.Category.Name, model.Name, model.Version})
+			}
+		}
+
+		if len(rows) == 0 {
+			// if no model is found
+			utils.Log.Info("No model(s) found")
+		} else {
+			utils.PrintToTable(header, rows)
+		}
+
+		return nil
+	},
+}
+
+// ModelCmd represents the `mesheryctl exp model` command
 var ModelCmd = &cobra.Command{
 	Use:   "model",
 	Short: "View list of models and detail of models",
 	Long:  `View list of models and detailed information of a specific model`,
 	Example: `
 // To view list of components
-mesheryctl system model list
+mesheryctl exp model list
 
 // To view a specific model
-mesheryctl system model view [model-name]
+mesheryctl exp model view [model-name]
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			cmd.Help()
+			_ = cmd.Help()
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl system model --help' to display usage guide.\n", args[0]), "model"))
+			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl exp model --help' to display usage guide.\n", args[0]), "model"))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -315,7 +410,7 @@ mesheryctl system model view [model-name]
 func init() {
 	listModelCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
 	viewModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
-	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd}
+	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd}
 	ModelCmd.AddCommand(availableSubcommands...)
 }
 

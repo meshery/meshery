@@ -9,9 +9,9 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/machines"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
@@ -281,6 +281,9 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 				smInstanceTracker,
 				h.log,
 				provider,
+				machines.DefaultState,
+				"kubernetes",
+				kubernetes.AssignInitialCtx,
 			)
 			if err != nil {
 				h.log.Error(err)
@@ -319,6 +322,9 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 				smInstanceTracker,
 				h.log,
 				provider,
+				machines.DefaultState,
+				"kubernetes",
+				kubernetes.AssignInitialCtx,
 			)
 			if err != nil {
 				h.log.Error(err)

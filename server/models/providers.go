@@ -205,6 +205,7 @@ type K8sContextPersistResponse struct {
 }
 
 type ConnectionPayload struct {
+	ID               uuid.UUID                    `json:"id,omitempty"`
 	Kind             string                       `json:"kind,omitempty"`
 	SubType          string                       `json:"sub_type,omitempty"`
 	Type             string                       `json:"type,omitempty"`
@@ -212,6 +213,8 @@ type ConnectionPayload struct {
 	Status           connections.ConnectionStatus `json:"status,omitempty"`
 	CredentialSecret map[string]interface{}       `json:"credential_secret,omitempty"`
 	Name             string                       `json:"name,omitempty"`
+	CredentialID     *uuid.UUID                   `json:"credential_id,omitempty"`
+	Model            string                       `json:"model,omitempty"`
 }
 
 type EnvironmentPayload struct {
@@ -446,8 +449,9 @@ type Provider interface {
 
 	ExtensionProxy(req *http.Request) (*ExtensionProxyResponse, error)
 
-	SaveConnection(req *http.Request, conn *ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error)
+	SaveConnection(conn *ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error)
 	GetConnections(req *http.Request, userID string, page, pageSize int, search, order string) (*connections.ConnectionPage, error)
+	GetConnectionByID(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error)
 	GetConnectionsByKind(req *http.Request, userID string, page, pageSize int, search, order, connectionKind string) (*map[string]interface{}, error)
 	GetConnectionsStatus(req *http.Request, userID string) (*connections.ConnectionsStatusPage, error)
 	UpdateConnection(req *http.Request, conn *connections.Connection) (*connections.Connection, error)
@@ -456,8 +460,9 @@ type Provider interface {
 	DeleteConnection(req *http.Request, connID uuid.UUID) (*connections.Connection, error)
 	DeleteMesheryConnection() error
 
-	SaveUserCredential(req *http.Request, credential *Credential) error
+	SaveUserCredential(token string, credential *Credential) (*Credential, error)
 	GetUserCredentials(req *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error)
+	GetCredentialByID(token string, credentialID uuid.UUID) (*Credential, int, error)
 	UpdateUserCredential(req *http.Request, credential *Credential) (*Credential, error)
 	DeleteUserCredential(req *http.Request, credentialID uuid.UUID) (*Credential, error)
 
