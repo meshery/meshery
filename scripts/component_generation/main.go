@@ -525,7 +525,7 @@ func Spreadsheet(srv *sheets.Service, sheetName string, spreadsheet chan struct 
 }, am map[string][]interface{}, acpm map[string]map[string]bool) {
 	start := time.Now()
 	rangeString := sheetName + APPENDRANGE
-	appendRange := sheetName + "!A:C"
+	appendRange := sheetName + "!A4:AV4"
 	// Get the value of the specified cell.
 	resp, err := srv.Spreadsheets.Values.Get(spreadsheetID, rangeString).Do()
 	if err != nil {
