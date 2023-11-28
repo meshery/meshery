@@ -30,7 +30,7 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   data={
                     meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex].component_metadata.metadata
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
                       : {}
                   }
                   value={value}
@@ -123,7 +123,7 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   data={
                     meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex].component_metadata.metadata
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
                       : {}
                   }
                   value={value}
@@ -235,7 +235,7 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   data={
                     meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex].component_metadata.metadata
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
                       : {}
                   }
                   value={value}
@@ -340,7 +340,7 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   data={
                     meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex].component_metadata.metadata
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
                       : {}
                   }
                   value={value}
@@ -446,7 +446,7 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   data={
                     meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex].component_metadata.metadata
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
                       : {}
                   }
                   value={value}
@@ -588,7 +588,7 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   data={
                     meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex].component_metadata.metadata
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
                       : {}
                   }
                   value={value}
@@ -694,7 +694,7 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   data={
                     meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex].component_metadata.metadata
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
                       : {}
                   }
                   value={value}
@@ -848,7 +848,7 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   data={
                     meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex].component_metadata.metadata
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
                       : {}
                   }
                   value={value}
@@ -954,7 +954,7 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   data={
                     meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex].component_metadata.metadata
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
                       : {}
                   }
                   value={value}
@@ -1060,7 +1060,7 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   data={
                     meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex].component_metadata.metadata
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
                       : {}
                   }
                   value={value}
@@ -1178,7 +1178,7 @@ export const ConfigurationTableConfig = (switchView, meshSyncResources, k8sConfi
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   data={
                     meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex].component_metadata.metadata
+                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
                       : {}
                   }
                   value={value}

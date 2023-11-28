@@ -39,7 +39,7 @@ export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
                 onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                 data={
                   meshSyncResources[tableMeta.rowIndex]
-                    ? meshSyncResources[tableMeta.rowIndex].component_metadata.metadata
+                    ? meshSyncResources[tableMeta.rowIndex]?.component_metadata?.metadata
                     : {}
                 }
                 value={value}
