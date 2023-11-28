@@ -46,7 +46,7 @@ def add_capabilities(component_path:pathlib.Path, capabilities):
         return
     data_json = json.loads(data)
     data_json['metadata']['capabilities'] = merge(data_json.get('capabilities') or {}, capabilities)
-    component_path.write_text(json.dumps(data_json, indent=2, sort_keys=True), encoding='utf-8')
+    component_path.write_text(json.dumps(data_json), encoding='utf-8')
 
 
 
