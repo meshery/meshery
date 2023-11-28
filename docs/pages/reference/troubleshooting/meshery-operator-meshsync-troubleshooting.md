@@ -10,33 +10,56 @@ category: troubleshooting
 
 There are common issues Meshery users may face whiile operating the [Meshery Operator]({{site.baseurl}}/concepts/architecture/operator/) and its custom controllers, [MeshSync]({{site.baseurl}}/concepts/architecture/meshsync) and [Broker]({{site.baseurl}}/concepts/architecture/broker), that can be resolved by performing specific actions. This documentation aims to empower users by providing a set of troubleshooting tools and actions.
 
+## Status of MeshSync and Meshery Broker
+
+The following table describes the various states of MeshSync and Meshery Broker and their implications.
+
+**MeshSync:**
+
+- **NOT ACTIVE:** Custom Resource not present.
+- **ENABLED:** Custom Resource present. MeshSync Controller is not connected to Broker.
+- **DEPLOYED:** Custom Resource present. MeshSync Controller present and healthy (what does healthy mean)?
+- **RUNNING:** MeshSync pod present and in a running state.
+- **CONNECTED:** Deployed and connected to Broker.
+- **NOT ACTIVE:** Custom Resource not deployed or no NATS connection.
+- **UNDEPLOYED:** Custom Resource not present.
+
+**Meshery Broker:**
+
+- **DEPLOYED:** Custom Resource deployed, External IP exposed.
+- **UNDEPLOYED:** Custom Resource deployed or External IP not exposed.
+- **CONNECTED:** Deployed, sending data to Meshery Server.
+
+
+## Deployment Scenarios
+
+Because Meshery is versatile in its deployment models, there are a number of scenarios in which you may need to troubleshoot the health of the operator. The following sections describe the various scenarios and the steps you can take to troubleshoot them.
+
+### In-Cluster Deployment
+
+Meshery Operator, MeshSync, and Broker are deployed in the same cluster as Meshery Server. This is the default deployment scenario when using `mesheryctl system start` or `make run-local`.
+
+### Out-of-Cluster Deployment
+
+1. Meshery Server is deployed on any Docker host (- Meshery Server is deployed on a Docker host, and Meshery Operator is deployed on a Kubernetes cluster).
+_or_
+2. Meshery is managing multiple clusters, some of which are not the cluster unto which Meshery Server is deployed.
+
+
+## Fault Scenarios
+
+Common failure situations that Meshery users might face are described below.
+
+1. No deployment of Meshery Operator, MeshSync, and Broker.
+    1. Probable cause: Meshery Server cannot connect to Kubernetes cluster; cluster unreachable or kubeconfig without proper permissions needed to deploy Meshery Operator; Kubernetes config initialization issues.
+1. Meshery Operator with MeshSync and Broker deployed, but Meshery Server is not receiving data from MeshSync or data the [Meshery Database]({{site.baseurl}}/concepts/architecture/database) is stale.
+    1. Probable cause: Meshery Server lost subscription to Meshery Broker; Broker server not expoerting external IP; MeshSync not connected to Broker; MeshSync not running; Meshery Database is stale.
+    2. The SQL database in Meshery serves as a cache for cluster state. A single button allows users to dump/reset the Meshery Database.
+1. Orphaned MeshSync and Broker controllers - Meshery Operator is not present, but MeshSync and Broker controllers are running.
+
 ## Operating Meshery without Meshery Operator
 
-Meshery Operator, MeshSync, and Broker are crucial components in a Meshery deployment. Meshery can function without them, but some functions of Meshery will be disable / unusable. Whether Meshery Operator is initially deployed via `mesheryctl` command or via Meshery Server, you can monitor the health of the Meshery Operator deployment using either the CLI or UI clients. 
-
-### Scenarios in which Meshery Operator is not deployed
-
-## Concepts
-
-### Operator, MeshSync, and Broker
-
-Meshery's architecture involves the following scenarios during startup:
-
-**Single Cluster Deployment:**
-
-- Meshery Operator with MeshSync and Broker deployed.
-- Meshery Operator not deployed, but MeshSync and Broker are.
-- Orphaned MeshSync and Broker controllers.
-- No deployment of Meshery Operator, MeshSync, and Broker.
-
-**Multiple Cluster Scenarios:**
-- Meshery Operator, MeshSync, and Broker are crucial components.
-- Meshery can function without them but has limited use cases.
-- Meshery Server ensures health even if mesheryctl initiates provisioning.
-
-## SQL Database (Cache)
-
-The SQL database in Meshery serves as a cache for cluster state. A single button allows users to dump/reset the Meshery Database.
+Meshery Operator, MeshSync, and Broker are crucial components in a Meshery deployment. Meshery can function without them, but some functions of Meshery will be disable / unusable. Whether Meshery Operator is initially deployed via `mesheryctl` command or via Meshery Server, you can monitor the health of the Meshery Operator deployment using either the CLI or UI clients.
 
 ## Meshery Extension
 
@@ -48,42 +71,25 @@ Upon Meshery extension's first load, a GET request initializes the MeshMap plugi
 
 GraphQL queries fetch header data and view data for the Visualizer canvas. Checks ensure data types and properties are correct, enabling canvas display. If no clusters are connected, a modal prompts the user to select one.
 
-## Status of MeshSync and Meshery Broker
 
-### Present Scenario:
+## Synthetic Test for Ensuring Change in Cluster State
 
-**MeshSync:**
-- **ENABLED:** Custom Resource deployed.
-- **NOT ACTIVE:** Custom Resource not deployed.
+Initiate a synthetic check to verify a fully functional Operator deployment, testing MeshSync/Broker connectivity.
 
-**MesheryBroker:**
-- **CONNECTED:** Custom Resource deployed, NATS connection established.
-- **NOT ACTIVE:** Custom Resource not deployed or no NATS connection.
 
-### Proposed:
+## Troubleshooting using Meshery CLI
 
-**MeshSync:**
-- **ENABLED:** Custom Resource present, MeshSync may/may not be connected.
-- **DEPLOYED:** MeshSync pod present and healthy.
-- **RUNNING:** MeshSync pod present and in a running state.
-- **CONNECTED:** Deployed and connected to Broker.
-- **UNDEPLOYED:** Custom Resource not present.
+The following commands are available to troubleshoot Meshery Operator, MeshSync, and Broker.
 
-**Meshery Broker:**
-- **DEPLOYED:** Custom Resource deployed, External IP exposed.
-- **UNDEPLOYED:** Custom Resource deployed or External IP not exposed.
-- **CONNECTED:** Deployed, sending data to Meshery Server.
+### Meshery Server and Adapters
 
-## Fault Scenarios
+- `mesheryctl system status` - Displays the status of Meshery Server and Meshery Adapters.
 
-Common issues Meshery users face frequently, requiring tooling exposure in the UI:
+### Meshery Operator, MeshSync, and Broker
 
-1. Not receiving data from MeshSync.
-2. Stale data in the Meshery Database.
-3. Operator, Broker, and/or MeshSync not deployed.
-4. Kubernetes Config initialization issues.
+- `mesheryctl system check` - Displays the status of Meshery Operator, MeshSync, and Broker.
 
-## Troubleshooting Toolkit in Meshery UI
+## Troubleshooting using Meshery UI
 
 Based on discussed scenarios, the UI exposes tools to perform the following actions:
 
@@ -95,11 +101,16 @@ Based on discussed scenarios, the UI exposes tools to perform the following acti
 - Ad hoc Connectivity Test for Kubernetes context.
 - Rediscover kubeconfig, delete, (re)upload kubeconfig.
 
-## Synthetic Test for Ensuring Change in Cluster State
 
-Initiate a synthetic check to verify a fully functional Operator deployment, testing MeshSync/Broker connectivity.
+## Desired Behavior
 
-## Fault Scenarios Explained for MeshMap Extension
+- Empty database shows the main-cluster node.
+- Corrupt database triggers an error snackbar with a link to the Settings screen.
+- Disconnected Kubernetes displays MeshSync logo pulsating when data is received.
+- NATS/MeshSync not running prompts a review of available operations in the Settings panel.
+
+
+<!-- ## Fault Scenarios Explained for MeshMap Extension
 
 ### 1. MISSING PLUGIN
 
@@ -135,19 +146,10 @@ Initiate a synthetic check to verify a fully functional Operator deployment, tes
 
 - **MODE STATE:** Visualizer and Designer: Active, Interactable.
 - **CAUSED WHEN:** Meshery and MeshMap version mismatches.
-- **REMEDIATION:** Pull/build the latest MeshMap, update Mesheryctl and Meshery.
+- **REMEDIATION:** Pull/build the latest MeshMap, update Mesheryctl and Meshery. -->
 
-## Desired Behavior
-
-- Empty database shows the main-cluster node.
-- Corrupt database triggers an error snackbar with a link to the Settings screen.
-- Disconnected Kubernetes displays MeshSync logo pulsating when data is received.
-- NATS/MeshSync not running prompts a review of available operations in the Settings panel.
-
----
 
 This documentation provides comprehensive guidance on troubleshooting in Meshery, ensuring users can address common issues efficiently.
-
 
 #### See Also
 
