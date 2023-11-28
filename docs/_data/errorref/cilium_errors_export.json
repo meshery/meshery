@@ -281,6 +281,15 @@
         "short_description": "Could not get latest version",
         "probable_cause": "Latest version could not be found at the specified url",
         "suggested_remediation": "Verify network connectivity.\nEnsure github.com is reachable.\nTry retrying the operation."
+      },
+      "1031": {
+        "name": "ErrFetchCiliumVersionsCode",
+        "code": "1031",
+        "severity": "Alert",
+        "long_description": "versions for cilium could not be fetched",
+        "short_description": "could not get any cilium versions",
+        "probable_cause": "could not reach github.com/cilium/cilium/releases\nno versions could be fetched from cilium release page",
+        "suggested_remediation": "make sure adapter is reachable"
       }
     }
   }

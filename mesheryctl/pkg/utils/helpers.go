@@ -82,6 +82,9 @@ const (
 	providerResetURL  = docsBaseURL + "reference/mesheryctl/system/provider/reset"
 	providerSwitchURL = docsBaseURL + "reference/mesheryctl/system/provider/switch"
 	tokenUsageURL     = docsBaseURL + "reference/mesheryctl/system/token"
+	modelUsageURL     = docsBaseURL + "reference/mesheryctl/system/model"
+	modelListURL      = docsBaseURL + "reference/mesheryctl/system/model/list"
+	modelViewURL      = docsBaseURL + "reference/mesheryctl/system/model/view"
 
 	// Meshery Server Location
 	EndpointProtocol = "http"
@@ -124,6 +127,9 @@ const (
 	cmdProviderList   cmdType = "provider list"
 	cmdProviderReset  cmdType = "provider reset"
 	cmdToken          cmdType = "token"
+	cmdModel          cmdType = "model"
+	cmdModelList      cmdType = "model list"
+	cmdModelView      cmdType = "model view"
 )
 
 const (
@@ -212,6 +218,75 @@ var TemplateContext = config.Context{
 	Channel:    "stable",
 	Version:    "latest",
 	Provider:   "Meshery",
+}
+
+var Services = map[string]Service{
+	"meshery": {
+		Image:  "layer5/meshery:stable-latest",
+		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
+		Environment: []string{
+			"PROVIDER_BASE_URLS=https://meshery.layer5.io",
+			"ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-osm:10009 meshery-traefik-mesh:10006 meshery-nginx-sm:10010 meshery-cilium:10012",
+			"EVENT=mesheryLocal",
+			"PORT=9081",
+		},
+		Volumes: []string{"$HOME/.kube:/home/appuser/.kube:ro", "$HOME/.minikube:$HOME/.minikube:ro"},
+		Ports:   []string{"9081:9081"},
+	},
+	"meshery-istio": {
+		Image:  "layer5/meshery-istio:stable-latest",
+		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
+		Ports:  []string{"10000:10000"},
+	},
+	"meshery-linkerd": {
+		Image:  "layer5/meshery-linkerd:stable-latest",
+		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
+		Ports:  []string{"10001:10001"},
+	},
+	"meshery-consul": {
+		Image:  "layer5/meshery-consul:stable-latest",
+		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
+		Ports:  []string{"10002:10002"},
+	},
+	"meshery-nsm": {
+		Image:  "layer5/meshery-nsm:stable-latest",
+		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
+		Ports:  []string{"10004:10004"},
+	},
+	"meshery-app-mesh": {
+		Image:  "layer5/meshery-app-mesh:stable-latest",
+		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
+		Ports:  []string{"10005:10005"},
+	},
+	"meshery-traefik-mesh": {
+		Image:  "layer5/meshery-traefik-mesh:stable-latest",
+		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
+		Ports:  []string{"10006:10006"},
+	},
+	"meshery-kuma": {
+		Image:  "layer5/meshery-kuma:stable-latest",
+		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
+		Ports:  []string{"10007:10007"},
+	},
+	"meshery-osm": {
+		Image:  "layer5/meshery-osm:stable-latest",
+		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
+		Ports:  []string{"10009:10009"},
+	},
+	"meshery-nginx-sm": {
+		Image:  "layer5/meshery-nginx-sm:stable-latest",
+		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
+		Ports:  []string{"10010:10010"},
+	},
+	"meshery-cilium": {
+		Image:  "layer5/meshery-cilium:stable-latest",
+		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
+		Ports:  []string{"10012:10012"},
+	},
+	"watchtower": {
+		Image:  "containrrr/watchtower",
+		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
+	},
 }
 
 // TemplateToken is the template token provided when creating a config file

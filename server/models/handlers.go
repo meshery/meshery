@@ -81,7 +81,7 @@ type HandlerInterface interface {
 	GrafanaConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Request)
+	GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GrafanaPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
@@ -91,7 +91,7 @@ type HandlerInterface interface {
 	PrometheusConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GrafanaBoardImportForPrometheusHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	PrometheusQueryHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.Request)
+	PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	PrometheusPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	PrometheusStaticBoardHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	SaveSelectedPrometheusBoardsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -121,6 +121,8 @@ type HandlerInterface interface {
 	GetMeshmodelModels(rw http.ResponseWriter, r *http.Request)
 	RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Request)
 
+	GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Request)
+
 	HandleResourceSchemas(rw http.ResponseWriter, r *http.Request)
 
 	GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request)
@@ -146,6 +148,9 @@ type HandlerInterface interface {
 	PublishCatalogPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	UnPublishCatalogPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetMesheryPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	DesignFileRequestHandlerWithSourceType(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetMesheryDesignTypesHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetMesheryPatternSourceHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	FilterFileHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetMesheryFilterFileHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -185,12 +190,14 @@ type HandlerInterface interface {
 
 	SaveConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetConnections(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetPossibleTransitionsByKind(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetConnectionsByKind(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetConnectionsStatus(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	UpdateConnectionStatus(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	UpdateConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	UpdateConnectionById(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-
+	ProcessConnectionRegistration(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetRegoPolicyForDesignFile(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	GetEnvironments(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -200,6 +207,8 @@ type HandlerInterface interface {
 	UpdateEnvironmentHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	AddConnectionToEnvironmentHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	RemoveConnectionFromEnvironmentHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+
+	GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 }
 
 // HandlerConfig holds all the config pieces needed by handler methods

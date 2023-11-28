@@ -140,6 +140,8 @@ const RJSFWrapperComponentDefault =
  * @param {string} props.submitBtnText - The text for the submit button.
  * @param {Object} props.uiSchema - The UI schema for the form fields.
  */
+
+// Meshery extensions also uses this modal
 function Modal(props) {
   const {
     open,

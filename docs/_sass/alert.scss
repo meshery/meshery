@@ -16,6 +16,7 @@
 .alert-info {
   border-style: solid;
   border-color: #479de7;
+  background-color: #479de722;
   border-width: 0 0 0 4px;
   font-size: 1.4rem;
   & .alert-heading > *,
@@ -28,6 +29,7 @@
 .alert-warning {
   border-style: solid;
   border-color: #f7820a;
+  background-color:#f7820a22; 
   border-width: 0 0 0 4px;
   font-size: 1.4rem;
   & .alert-heading > *,
@@ -41,6 +43,7 @@
 .alert-dark {
   border-style: solid;
   border-color: var(--color-grey-dark);
+  background-color: var(--color-grey-dark-alpha);
   border-width: 0 0 0 4px;
   font-size: 1.4rem;
   & .alert-heading > *,

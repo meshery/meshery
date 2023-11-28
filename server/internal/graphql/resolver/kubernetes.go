@@ -123,14 +123,14 @@ func (r *Resolver) subscribeClusterResources(ctx context.Context, provider model
 func (r *Resolver) getClusterResources(ctx context.Context, provider models.Provider, k8scontextIDs []string, namespace string) (*model.ClusterResources, error) {
 	var cids []string
 	query := `
-		SELECT count(kind) as count, kind FROM objects o LEFT JOIN resource_object_meta rom on o.id = rom.id 
-			WHERE o.kind <> 'Namespace' AND rom.namespace = '' AND o.cluster_id IN (?) GROUP BY kind
+		SELECT count(kind) as count, kind FROM kubernetes_resources kr LEFT JOIN kubernetes_resource_object_meta rom on kr.id = rom.id 
+			WHERE kr.kind <> 'Namespace' AND rom.namespace = '' AND kr.cluster_id IN (?) GROUP BY kind
 				UNION 
-		SELECT count(kind) as count, kind FROM objects o LEFT JOIN resource_object_meta rom on o.id = rom.id 
-			WHERE rom.namespace IN (?) AND o.cluster_id IN (?) GROUP BY kind 
+		SELECT count(kind) as count, kind FROM kubernetes_resources kr LEFT JOIN kubernetes_resource_object_meta rom on kr.id = rom.id 
+			WHERE rom.namespace IN (?) AND kr.cluster_id IN (?) GROUP BY kind 
 				UNION			
-		SELECT count(kind) as count, kind FROM objects o 
-			WHERE o.kind = 'Namespace' AND o.cluster_id IN (?) GROUP BY kind`
+		SELECT count(kind) as count, kind FROM kubernetes_resources kr 
+			WHERE kr.kind = 'Namespace' AND kr.cluster_id IN (?) GROUP BY kind`
 
 	var rows *sql.Rows
 	var err error
@@ -194,7 +194,8 @@ func (r *Resolver) subscribeK8sContexts(ctx context.Context, provider models.Pro
 
 func (r *Resolver) getK8sContexts(ctx context.Context, provider models.Provider, selector model.PageFilter) (*model.K8sContextsPage, error) {
 	tokenString := ctx.Value(models.TokenCtxKey).(string)
-	resp, err := provider.GetK8sContexts(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order, false)
+	// If the data from this subscriotion will be only used to manage then retrieve connected conns only. Right now in the settings page we need all avaliable contexts hence retireving conns of all statuses.
+	resp, err := provider.GetK8sContexts(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order, "", false)
 	if err != nil {
 		return nil, err
 	}

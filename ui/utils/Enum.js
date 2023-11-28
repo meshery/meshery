@@ -39,6 +39,22 @@ export const EXTENSIONS = {
   MESHMAP: 'meshmap',
 };
 
+export const CONNECTION_STATES = {
+  DISCOVERED: 'discovered',
+  REGISTERED: 'registered',
+  CONNECTED: 'connected',
+  IGNORED: 'ignored',
+  MAINTENANCE: 'maintenance',
+  DISCONNECTED: 'disconnected',
+  DELETED: 'deleted',
+  NOTFOUND: 'not found',
+};
+
 export const MesheryPatternsCatalog = 'meshery-patterns-catalog';
 
 export const MesheryFiltersCatalog = 'meshery-filters-catalog';
+
+export const CONNECTION_KINDS = {
+  MESHERY: 'meshery',
+  KUBERNETES: 'kubernetes',
+};

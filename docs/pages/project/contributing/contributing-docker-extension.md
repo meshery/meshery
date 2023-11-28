@@ -7,6 +7,7 @@ description: How to contribute to Meshery Docker Extension
 language: en
 type: project
 category: contributing
+list: include
 ---
 
 ## Prerequisites

@@ -4,7 +4,7 @@ title: Meshery CLI Guides
 permalink: guides/mesheryctl
 redirect_from: guides/mesheryctl/
 language: en
-type: Guides
+type: guides
 category: mesheryctl
 list: exclude
 ---
@@ -15,7 +15,7 @@ Guides to using Meshery's various features and components.
 
 <ul>
   {% for item in sorted_guides %}
-  {% if item.type=="Guides" and item.category=="mesheryctl" and item.list!="exclude" and item.language=="en" -%}
+  {% if item.type=="guides" and item.category=="mesheryctl" and item.list!="exclude" and item.language=="en" -%}
     <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
     </li>
     {% endif %}
