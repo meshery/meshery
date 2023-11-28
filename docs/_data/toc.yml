@@ -194,16 +194,20 @@
           url: guides/mesheryctl/configuring-autocompletion-for-mesheryctl
         - title: Authenticate via Meshery CLI
           url: guides/mesheryctl/authenticate-with-meshery-via-cli
-        - title: Upgrading Meshery CLI
-          url: guides/upgrade#upgrading-meshery-cli
         - title: Running system checks using Meshery CLI
           url: guides/mesheryctl/running-system-checks-using-mesheryctl
     - title: Using Multiple Meshery Adapters
       url: guides/multiple-adapters
     - title: Troubleshooting Guide
       url: guides/troubleshooting
+      children:
+        - title: Troubleshooting Guide
+          url: guides/troubleshooting/meshery-operator-meshsync
     - title: Upgrading Meshery
       url: guides/upgrade
+      children:
+        - title: Upgrading Meshery CLI
+          url: guides/upgrade#upgrading-meshery-cli
 - title: ⚙️ Tasks (all)
   url: tasks
   links:
