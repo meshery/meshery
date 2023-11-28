@@ -5,6 +5,8 @@ import { Paper, IconButton, Typography } from '@material-ui/core';
 import NameValueTable from '../DataFormatter/NameValueTable';
 import { ResponsiveDataTable } from '@layer5/sistent-components';
 import { ALL_VIEW } from './resources/config';
+import GetNodeIcon from '../configuratorComponents/MeshModel/NodeIcon';
+import { JsonParse } from '../../utils/utils';
 
 const View = (props) => {
   const {
@@ -230,3 +232,26 @@ const View = (props) => {
 };
 
 export default View;
+
+export const Title = ({ onClick, data, value }) => {
+  return (
+    <div
+      style={{
+        color: 'inherit',
+        textDecorationLine: 'underline',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+      }}
+      onClick={onClick}
+    >
+      <div style={{ display: 'inherit', alignItems: 'center' }}>
+        <GetNodeIcon metadata={JsonParse(data)} />
+        <Typography style={{ marginLeft: '0.25rem' }} variant="body2">
+          {value}
+        </Typography>
+      </div>
+    </div>
+  );
+};
