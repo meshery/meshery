@@ -91,7 +91,7 @@ func sortOnVerified(pkgs []artifacthub.AhPackage) (verified []artifacthub.AhPack
 }
 func main() {
 	if len(os.Args) > 1 {
-		spreadsheetID = os.Args[1]
+		spreadsheetID = "1gkdLPgexlo4djN6CipbK5C63VGFqwDUxqAGMZ_shu98"
 	}
 	if _, err := os.Stat(OutputDirectoryPath); err != nil {
 		err := os.Mkdir(OutputDirectoryPath, 0744)
