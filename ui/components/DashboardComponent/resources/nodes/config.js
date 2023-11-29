@@ -5,8 +5,6 @@ import { SINGLE_VIEW } from '../config';
 
 import { Title } from '../../view';
 
-import { JsonParse } from '../../../../utils/utils';
-
 import { ConnectionChip } from '../../../connections/ConnectionChip';
 
 export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
@@ -27,12 +25,8 @@ export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
           sort: false,
           sortThirdClickReset: true,
           customBodyRender: function CustomBody(value, tableMeta) {
-            console.log('TEST: ', meshSyncResources);
             if (!!meshSyncResources && !!meshSyncResources[tableMeta.rowIndex]) {
-              console.log(
-                JsonParse(meshSyncResources[tableMeta.rowIndex].component_metadata.metadata),
-                ';;;;;;;;',
-              );
+              return <div></div>;
             }
             return (
               <Title
@@ -105,9 +99,9 @@ export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
           sortThirdClickReset: true,
           customBodyRender: function CustomBody(val) {
             let attribute = JSON.parse(val);
-            let addresses = attribute?.addresses;
+            let addresses = attribute?.addresses || [];
             let internalIP =
-              addresses.find((address) => address.type === 'InternalIP')?.address || '';
+              addresses?.find((address) => address.type === 'InternalIP')?.address || '';
             return <>{internalIP}</>;
           },
         },
@@ -120,9 +114,9 @@ export const NodeTableConfig = (switchView, meshSyncResources, k8sConfig) => {
           sortThirdClickReset: true,
           customBodyRender: function CustomBody(val) {
             let attribute = JSON.parse(val);
-            let addresses = attribute?.addresses;
+            let addresses = attribute?.addresses || [];
             let externalIP =
-              addresses.find((address) => address.type === 'ExternalIP')?.address || '';
+              addresses?.find((address) => address.type === 'ExternalIP')?.address || '';
             return <>{externalIP}</>;
           },
         },

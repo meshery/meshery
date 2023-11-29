@@ -182,7 +182,6 @@
       url: guides/events-management
     - title: Using Multiple Meshery Adapters
       url: guides/multiple-adapters
-
     - title: Pipelining service mesh specifications
       url: guides/pipelining-service-mesh-specifications
     - title: Performance Management with Meshery
