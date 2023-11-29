@@ -30,7 +30,7 @@ mesheryctl exp model list [flags]
 View list of models
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system model list
+mesheryctl exp model list
 
 </div>
 </pre> 
@@ -38,7 +38,7 @@ mesheryctl system model list
 View list of models with specified page number (25 models per page)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl system model list --page 2
+mesheryctl exp model list --page 2
 
 </div>
 </pre> 

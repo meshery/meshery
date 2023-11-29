@@ -5,6 +5,7 @@ description: Get to know what is Design & how its helps in configuring component
 permalink: guides/creating-a-meshery-design
 type: guides
 language: en
+published: false
 ---
 
 
