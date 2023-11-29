@@ -44,6 +44,7 @@ main
 
 # Meshery
 cmd/meshery
+scripts/component_updater/*.csv
 
 # scripts
 scripts/component_generation/main
