@@ -236,8 +236,10 @@
 - title: 📖 Reference
   url: reference
   links:
-    - title: Meshery CLI
+    - title: "Meshery CLI"
       url: reference/mesheryctl
+    - title: "Meshery Operator CRDs"
+      url: reference/reference/meshery-operator-crds
     - title: Error Codes
       url: reference/error-codes
     - title: "REST & GraphQL APIs ↆ"

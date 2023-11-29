@@ -2,17 +2,17 @@
 layout: default
 title: Meshery Operator CRD Reference
 abstract: "Details for the Custom Resource Definitions included in Meshery Operator and used by it's custom controllers."
-permalink: reference/meshync-crd
+permalink: reference/meshery-operator-crds
 redirect_from: reference/
 type: Reference
 language: en
 ---
 
-Included in Meshery Operator are a couple of Kubernetes Custom Resource Definitions (CRDs) and a ConfigMap.
+Included in [Meshery Operator]({{site.baseurl}}/concepts/architecture/operator) are a couple of Kubernetes Custom Resource Definitions (CRDs) and a ConfigMap.
 
 ## Broker CRD
 
-The Broker CRD is used as a configuration tool for the [Broker](https://docs.meshery.io/concepts/architecture/broker). The CRD is used to control the replica count for Broker instances, [Broker](https://docs.meshery.io/concepts/architecture/broker) configuration and the resources that Broker watches and listens to in a cluster.
+The CRD is used to control the replica count for Broker instances, [Broker]({{site.baseurl}}/concepts/architecture/broker) configuration and the resources that Broker watches and listens to in a cluster.
 
 ## YAML synopsis
 
