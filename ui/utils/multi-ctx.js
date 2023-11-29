@@ -127,7 +127,7 @@ export function getClusterNameFromConnectionId(connId, k8sConfig) {
  * @param {Array<Object>} k8sConfig Kubernetes config
  * @returns {string} Kubernetes connection ID
  */
-export function getConnectionIdFromClusterName(clusterId, k8sConfig) {
+export function getConnectionIdFromClusterId(clusterId, k8sConfig) {
   const cluster = k8sConfig.find((cfg) => cfg.kubernetes_server_id === clusterId);
   if (!cluster) {
     return '';

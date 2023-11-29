@@ -2,7 +2,7 @@ import React from 'react';
 import { timeAgo } from '../../../../utils/k8s-utils';
 import {
   getClusterNameFromClusterId,
-  getConnectionIdFromClusterName,
+  getConnectionIdFromClusterId,
 } from '../../../../utils/multi-ctx';
 import { SINGLE_VIEW } from '../config';
 
@@ -174,13 +174,13 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
             sortThirdClickReset: true,
             customBodyRender: function CustomBody(val) {
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
-              let connectionId = getConnectionIdFromClusterName(val, k8sConfig);
+              let connectionId = getConnectionIdFromClusterId(val, k8sConfig);
               return (
                 <>
                   <ConnectionChip
                     title={clusterName}
                     iconSrc="/static/img/kubernetes.svg"
-                    handlePing={() => ping('', '', connectionId)}
+                    handlePing={() => ping(clusterName, val, connectionId)}
                   />
                 </>
               );
@@ -517,13 +517,13 @@ export const NetWorkTableConfig = (switchView, meshSyncResources, k8sConfig) => 
             sortThirdClickReset: true,
             customBodyRender: function CustomBody(val) {
               let clusterName = getClusterNameFromClusterId(val, k8sConfig);
-              let connectionId = getConnectionIdFromClusterName(clusterName, k8sConfig);
+              let connectionId = getConnectionIdFromClusterId(val, k8sConfig);
               return (
                 <>
                   <ConnectionChip
                     title={clusterName}
                     iconSrc="/static/img/kubernetes.svg"
-                    handlePing={() => ping('', '', connectionId)}
+                    handlePing={() => ping(clusterName, val, connectionId)}
                   />
                 </>
               );

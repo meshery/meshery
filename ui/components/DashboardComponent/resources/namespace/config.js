@@ -1,14 +1,19 @@
 import React from 'react';
 import { timeAgo } from '../../../../utils/k8s-utils';
-import { getClusterNameFromClusterId } from '../../../../utils/multi-ctx';
+import {
+  getClusterNameFromClusterId,
+  getConnectionIdFromClusterId,
+} from '../../../../utils/multi-ctx';
 import { SINGLE_VIEW } from '../config';
 
 import { Title } from '../../view';
 
 import { ConnectionChip } from '../../../connections/ConnectionChip';
 import { ConditionalTooltip } from '../../../../utils/utils';
+import useKubernetesHook from '../../../hooks/useKubernetesHook';
 
 export const NamespaceTableConfig = (switchView, meshSyncResources, k8sConfig) => {
+  const ping = useKubernetesHook();
   return {
     name: 'Namespace',
     columns: [
@@ -56,9 +61,14 @@ export const NamespaceTableConfig = (switchView, meshSyncResources, k8sConfig) =
           sortThirdClickReset: true,
           customBodyRender: function CustomBody(val) {
             let clusterName = getClusterNameFromClusterId(val, k8sConfig);
+            let connectionId = getConnectionIdFromClusterId(val, k8sConfig);
             return (
               <>
-                <ConnectionChip title={clusterName} iconSrc="/static/img/kubernetes.svg" />
+                <ConnectionChip
+                  title={clusterName}
+                  iconSrc="/static/img/kubernetes.svg"
+                  handlePing={() => ping(clusterName, val, connectionId)}
+                />
               </>
             );
           },
