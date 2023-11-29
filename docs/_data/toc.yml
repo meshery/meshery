@@ -28,14 +28,14 @@
               url: installation/kubernetes/minikube
         - title: KubeSphere
           url: installation/kubesphere
-        - title: Linux or macOS
+        - title: Linux or macOS ↆ
           url: installation/linux-mac
           grandchildren: 
             - title: "- Bash"
               url: installation/linux-mac/bash
             - title: "- Brew"
               url: installation/linux-mac/brew
-        - title: Windows
+        - title: Windows ↆ
           url: installation/windows 
           grandchildren: 
             - title: "- Scoop"
@@ -59,21 +59,21 @@
     - title: Contributing ↆ
       url: project/contributing
       children:
-        - title: "Build & Release (CI)"
+        - title: "Build & Release (CI) ↆ"
           url: project/contributing/build-and-release
           grandchildren:
           - title: "- End-to-End Testing"
             url: project/contributing/contributing-cypress
         - title: Adapters
           url: project/contributing/contributing-adapters
-        - title: CLI
+        - title: CLI ↆ
           url: project/contributing/contributing-cli
           grandchildren:
           - title: "- Design Principles"
             url: project/contributing/contributing-cli-guide
         - title: Docs
           url: project/contributing/contributing-docs
-        - title: Server
+        - title: Server ↆ
           url: project/contributing/contributing-server
           grandchildren:
           - title: "- Server Events"
@@ -94,7 +94,7 @@
           url: concepts/architecture/adapters
         - title: Database
           url: concepts/architecture/database  
-        - title: "Operator"
+        - title: "Operator ↆ"
           url: concepts/architecture/operator
           grandchildren:
           - title: "- Broker"
@@ -110,7 +110,7 @@
           url: concepts/environments
         - title: "Filters"
           url: concepts/filters          
-        - title: "Models"
+        - title: "Models ↆ"
           url: concepts/models
           grandchildren: 
           - title: "- Components"
@@ -184,8 +184,8 @@
       url: guides/multiple-adapters
     - title: Pipelining service mesh specifications
       url: guides/pipelining-service-mesh-specifications
-    - title: Performance Management with Meshery
-      url: guides/performance-management ↆ
+    - title: Using Metrics in Meshery ↆ
+      url: guides/performance-management
       children:
         - title: Integrating Prometheus and Grafana
           url: guides/meshery-metrics
@@ -203,12 +203,16 @@
     - title: Troubleshooting Guides ↆ
       url: guides/troubleshooting
       children:
-        - title: Meshery Operator Troubleshooting Guide
+        - title: Installation
+          url: guides/troubleshooting/installation
+        - title: Meshery Operator 
           url: guides/troubleshooting/meshery-operator-meshsync
+        - title: Meshery Server 
+          url: guides/troubleshooting/meshery-server
     - title: Upgrading Meshery ↆ
       url: guides/upgrade
       children:
-        - title: Upgrading Meshery CLI
+        - title: Meshery CLI
           url: guides/upgrade#upgrading-meshery-cli
 - title: ⚙️ Tasks (all)
   url: tasks
@@ -230,7 +234,7 @@
       url: extensibility/adapters
     - title: "Load Generators"
       url: extensibility/load-generators
-    - title: "Providers"
+    - title: "Providers ↆ"
       url: extensibility/providers
       children:
       - title: Building a Remote Provider
@@ -242,8 +246,10 @@
 - title: 📖 Reference
   url: reference
   links:
-    - title: Meshery CLI
+    - title: "Meshery CLI"
       url: reference/mesheryctl
+    - title: "Meshery Operator CRDs"
+      url: reference/reference/meshery-operator-crds
     - title: Error Codes
       url: reference/error-codes
     - title: "REST & GraphQL APIs ↆ"

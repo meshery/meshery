@@ -43,7 +43,7 @@ import changeOperatorState from '../graphql/mutations/OperatorStatusMutation';
 import fetchMesheryOperatorStatus from '../graphql/queries/OperatorStatusQuery';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import styles from './styles';
-import MeshSyncTable from './MeshsyncTable';
+import MeshSyncTable from './meshSync';
 import ConnectionIcon from '../../assets/icons/Connection';
 import MeshsyncIcon from '../../assets/icons/Meshsync';
 import classNames from 'classnames';
@@ -249,7 +249,7 @@ function Connections({
                 }
               }}
               iconSrc={
-                getColumnValue(tableMeta.rowData, 'kindLogo', columns).colorIcon.split('public')[1]
+                getColumnValue(tableMeta.rowData, 'kindLogo', columns)?.colorIcon.split('public')[1]
               }
               style={{ maxWidth: '120px' }}
             />
@@ -461,7 +461,7 @@ function Connections({
                       >
                         <Chip
                           className={classNames(classes.statusChip, classes[status])}
-                          avatar={icons[status]()}
+                          avatar={icons[status] ? icons[status]() : ''}
                           label={status}
                         />
                       </MenuItem>
@@ -649,9 +649,9 @@ function Connections({
         res?.connections.forEach((connection) => {
           (connection.nextStatus =
             connection.nextStatus === undefined &&
-            connectionMetadataState[connection.kind].transitions),
+            connectionMetadataState[connection.kind]?.transitions),
             (connection.kindLogo =
-              connection.kindLogo === undefined && connectionMetadataState[connection.kind].icon);
+              connection.kindLogo === undefined && connectionMetadataState[connection.kind]?.icon);
         });
         setConnections(res?.connections || []);
         setPage(res?.page || 0);
