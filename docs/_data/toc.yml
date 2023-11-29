@@ -203,8 +203,12 @@
     - title: Troubleshooting Guides ↆ
       url: guides/troubleshooting
       children:
-        - title: Meshery Operator Troubleshooting Guide
+        - title: Installation
+          url: guides/troubleshooting/installation
+        - title: Meshery Operator 
           url: guides/troubleshooting/meshery-operator-meshsync
+        - title: Meshery Server 
+          url: guides/troubleshooting/meshery-server
     - title: Upgrading Meshery ↆ
       url: guides/upgrade
       children:
