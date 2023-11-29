@@ -79,6 +79,12 @@ const SearchBar = ({ onSearch, placeholder, expanded, setExpanded }) => {
     }
   };
 
+  const width = window.innerWidth;
+  let searchWidth = '200px';
+  if (width <= 750) {
+    searchWidth = '120px';
+  }
+
   return (
     <div>
       <TextField
@@ -90,7 +96,7 @@ const SearchBar = ({ onSearch, placeholder, expanded, setExpanded }) => {
         inputRef={searchRef}
         placeholder={placeholder}
         style={{
-          width: expanded ? '200px' : '0',
+          width: expanded ? searchWidth : '0',
           opacity: expanded ? 1 : 0,
           transition: 'width 0.3s ease, opacity 0.3s ease',
         }}

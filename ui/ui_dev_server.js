@@ -25,7 +25,8 @@ app.prepare().then(() => {
       pathname.startsWith('/api') ||
       pathname.startsWith('/user/logout') ||
       pathname.startsWith('/user/login') ||
-      pathname.startsWith('/provider')
+      pathname.startsWith('/provider') ||
+      pathname.startsWith('/ui/public/static/img/meshmodels')
     ) {
       proxy.web(req, res);
     } else {

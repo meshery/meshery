@@ -20,7 +20,7 @@
       "from": [
         {
           "kind": "Section",
-          "model": "meshery"
+          "model": "meshery-shapes"
         }
       ],
       "to": [

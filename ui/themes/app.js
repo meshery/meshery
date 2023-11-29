@@ -116,6 +116,7 @@ export var darkTheme = createTheme({
       tabCard: '#677a84',
       disableButtonBg: '#666666',
       disableButton: '#9d9d9d',
+      listItemHover: 'rgb(0, 187, 166, 0.5)',
     },
     tables: {
       head: {
@@ -393,6 +394,7 @@ let theme = createTheme({
       tabCard: '#677a84',
       disableButtonBg: '#e0e0e0',
       disableButton: '#9d9d9d',
+      listItemHover: '#f9f9f9',
     },
     tables: {
       head: {
