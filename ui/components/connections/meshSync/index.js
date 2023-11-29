@@ -12,7 +12,6 @@ import { MeshSyncDataFormatter } from '../metadata';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { DefaultTableCell, SortableTableCell } from '../common';
 import { camelcaseToSnakecase } from '../../../utils/utils';
-import RegisterConnectionModal from './registerConnModal';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -33,9 +32,6 @@ export default function MeshSyncTable(props) {
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [loading, setLoading] = useState(false);
   const StyleClass = useStyles();
-  const [registerConnectionModal, setRegisterConnectionModal] = useState({
-    open: false,
-  });
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const clusterIds = encodeURIComponent(
@@ -358,12 +354,6 @@ export default function MeshSyncTable(props) {
     return initialVisibility;
   });
 
-  const handleRegisterConnectionModalClose = () => {
-    setRegisterConnectionModal({
-      open: false,
-    });
-  };
-
   return (
     <>
       <div className={StyleClass.toolWrapper} style={{ marginBottom: '5px', marginTop: '-30px' }}>
@@ -399,12 +389,6 @@ export default function MeshSyncTable(props) {
         updateCols={updateCols}
         columnVisibility={columnVisibility}
       />
-      {registerConnectionModal.open && (
-        <RegisterConnectionModal
-          registerConnectionModalOpen={true}
-          handleRegisterConnectionModalClose={handleRegisterConnectionModalClose}
-        />
-      )}
     </>
   );
 }
