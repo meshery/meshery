@@ -364,12 +364,6 @@ export default function MeshSyncTable(props) {
     });
   };
 
-  const handleRegisterConnectionModal = () => {
-    setRegisterConnectionModal({
-      open: true,
-    });
-  };
-
   return (
     <>
       <div className={StyleClass.toolWrapper} style={{ marginBottom: '5px', marginTop: '-30px' }}>
@@ -396,7 +390,6 @@ export default function MeshSyncTable(props) {
           />
         </div>
       </div>
-      <button onClick={() => handleRegisterConnectionModal()}>Open modal</button>
       <ResponsiveDataTable
         data={meshSyncResources}
         columns={columns}
