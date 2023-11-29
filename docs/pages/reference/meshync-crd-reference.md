@@ -12,7 +12,7 @@ Included in [Meshery Operator]({{site.baseurl}}/concepts/architecture/operator) 
 
 ## Broker CRD
 
-The CRD is used to control the replica count for Broker instances, [Broker]({{site.baseurl}}/concepts/architecture/broker) configuration and the resources that Broker watches and listens to in a cluster.
+The CRD is used to control the replica count for [Broker]({{site.baseurl}}/concepts/architecture/broker) instances in a cluster.
 
 ## YAML synopsis
 
@@ -31,10 +31,7 @@ metadata:
   annotations:
     meshery/component-type:
 spec:
-..........
-..........
-..........
-..........
+  size:
 ```
 
 ### Broker CRD Properties
@@ -52,10 +49,11 @@ The following section outlines the fields and their descriptions
     - **version**: The current version of the meshery application as from its release
   - **annotations**: Annotations are used to provide non-indentifying attributes of a resource i.e cannot be used in filtration, but are informational attributes of an object
     - **meshery/component-type**: The component type pf this custom resource with respect to meshery design, for this case **management-plane**
+- **size**- The number of broker instances in the cluster.
 
 ### Usage
 
-The following section defines the usage for this Custom Resource
+The following section defines the usage for this Custom Resource.
 
 ### Example Use
 
@@ -72,12 +70,8 @@ metadata:
   annotations:
     meshery/component-type: management-plane
 spec:
-..........
-..........
-..........
-..........
+  size: 1
 ```
-
 ## MeshSync CRD
 
 The MeshSync CRD is used as a configuration tool the [MeshSync](https://docs.meshery.io/concepts/architecture/MeshSync). The CRD is used to control the replica count for MeshSync instances, [Broker](https://docs.meshery.io/concepts/architecture/broker) configuration and the resources that MeshSync watches and listens to in a cluster.
@@ -170,7 +164,7 @@ The following section outlines the fields and their descriptions
 
 The following section defines the usage for this Custom Resource
 
-The Custom Resource is used to configure the [broker](https://docs.meshery.io/concepts/architecture/broker) and Events to be tracked by [MeshSync](https://docs.meshery.io/concepts/architecture/MeshSync)
+The Custom Resource is used to configure the [Broker](https://docs.meshery.io/concepts/architecture/broker) and Events to be tracked by [MeshSync](https://docs.meshery.io/concepts/architecture/MeshSync)
 
 #### Example Use
 
