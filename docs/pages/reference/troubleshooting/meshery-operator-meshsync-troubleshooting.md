@@ -10,7 +10,7 @@ category: troubleshooting
 
 {% include alert.html type="dark" title="Meshery Error Code Reference" content="Have specific error with an error code? See the <a href='/reference/error-codes'>Meshery Error Code Reference</a> for probable cause and suggested remediations." %}
 
-There are common issues Meshery users may face whiile operating the [Meshery Operator]({{site.baseurl}}/concepts/architecture/operator/) and its custom controllers, [MeshSync]({{site.baseurl}}/concepts/architecture/meshsync) and [Broker]({{site.baseurl}}/concepts/architecture/broker), that can be resolved by performing specific actions. This documentation aims to empower users by providing a set of troubleshooting tools and actions.
+There are common issues Meshery users may face while operating the [Meshery Operator]({{site.baseurl}}/concepts/architecture/operator/) and its custom controllers, [MeshSync]({{site.baseurl}}/concepts/architecture/meshsync) and [Broker]({{site.baseurl}}/concepts/architecture/broker), that can be resolved by performing specific actions. This documentation aims to empower users by providing a set of troubleshooting tools and actions.
 
 ## Understanding the Status of Meshery Operator, MeshSync, and Meshery Broker
 
