@@ -28,14 +28,14 @@
               url: installation/kubernetes/minikube
         - title: KubeSphere
           url: installation/kubesphere
-        - title: Linux or macOS
+        - title: Linux or macOS ↆ
           url: installation/linux-mac
           grandchildren: 
             - title: "- Bash"
               url: installation/linux-mac/bash
             - title: "- Brew"
               url: installation/linux-mac/brew
-        - title: Windows
+        - title: Windows ↆ
           url: installation/windows 
           grandchildren: 
             - title: "- Scoop"
@@ -59,21 +59,21 @@
     - title: Contributing ↆ
       url: project/contributing
       children:
-        - title: "Build & Release (CI)"
+        - title: "Build & Release (CI) ↆ"
           url: project/contributing/build-and-release
           grandchildren:
           - title: "- End-to-End Testing"
             url: project/contributing/contributing-cypress
         - title: Adapters
           url: project/contributing/contributing-adapters
-        - title: CLI
+        - title: CLI ↆ
           url: project/contributing/contributing-cli
           grandchildren:
           - title: "- Design Principles"
             url: project/contributing/contributing-cli-guide
         - title: Docs
           url: project/contributing/contributing-docs
-        - title: Server
+        - title: Server ↆ
           url: project/contributing/contributing-server
           grandchildren:
           - title: "- Server Events"
@@ -94,7 +94,7 @@
           url: concepts/architecture/adapters
         - title: Database
           url: concepts/architecture/database  
-        - title: "Operator"
+        - title: "Operator ↆ"
           url: concepts/architecture/operator
           grandchildren:
           - title: "- Broker"
@@ -110,7 +110,7 @@
           url: concepts/environments
         - title: "Filters"
           url: concepts/filters          
-        - title: "Models"
+        - title: "Models ↆ"
           url: concepts/models
           grandchildren: 
           - title: "- Components"
@@ -173,19 +173,23 @@
       # url: guides/smi-conformance
     - title: Configuring Kubernetes Infrastructure
       url: guides/configuration-management
-    - title: Creating a Meshery Design
-      url: guides/creating-a-meshery-design
+      children:
+      - title: Creating a Meshery Design
+        url: guides/creating-a-meshery-design
+      - title: Importing Applications
+        url: guides/importing-apps
     - title: Managing Events with Notification Center
       url: guides/events-management
-    - title: Integrating Prometheus and Grafana
-      url: guides/meshery-metrics
-    - title: Importing Applications
-      url: guides/importing-apps
+    - title: Using Multiple Meshery Adapters
+      url: guides/multiple-adapters
     - title: Pipelining service mesh specifications
       url: guides/pipelining-service-mesh-specifications
-    - title: Performance Management with Meshery
+    - title: Using Metrics in Meshery ↆ
       url: guides/performance-management
-    - title: Using mesheryctl ↆ
+      children:
+        - title: Integrating Prometheus and Grafana
+          url: guides/meshery-metrics
+    - title: Meshery CLI Guides ↆ
       url: guides/mesheryctl
       children:
         - title: Using mesheryctl
@@ -194,16 +198,22 @@
           url: guides/mesheryctl/configuring-autocompletion-for-mesheryctl
         - title: Authenticate via Meshery CLI
           url: guides/mesheryctl/authenticate-with-meshery-via-cli
-        - title: Upgrading Meshery CLI
-          url: guides/upgrade#upgrading-meshery-cli
         - title: Running system checks using Meshery CLI
           url: guides/mesheryctl/running-system-checks-using-mesheryctl
-    - title: Using Multiple Meshery Adapters
-      url: guides/multiple-adapters
-    - title: Troubleshooting Guide
+    - title: Troubleshooting Guides ↆ
       url: guides/troubleshooting
-    - title: Upgrading Meshery
+      children:
+        - title: Installation
+          url: guides/troubleshooting/installation
+        - title: Meshery Operator 
+          url: guides/troubleshooting/meshery-operator-meshsync
+        - title: Meshery Server 
+          url: guides/troubleshooting/meshery-server
+    - title: Upgrading Meshery ↆ
       url: guides/upgrade
+      children:
+        - title: Meshery CLI
+          url: guides/upgrade#upgrading-meshery-cli
 - title: ⚙️ Tasks (all)
   url: tasks
   links:
@@ -224,7 +234,7 @@
       url: extensibility/adapters
     - title: "Load Generators"
       url: extensibility/load-generators
-    - title: "Providers"
+    - title: "Providers ↆ"
       url: extensibility/providers
       children:
       - title: Building a Remote Provider
