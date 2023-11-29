@@ -11,7 +11,7 @@ list: exclude
 ---
 
 <div class="wrapper">
-  <a href="community"><div class="overview">Community</div></a>
+  <div class="overview">Community</div>
 </div>
 
 {% assign sorted_pages = site.pages | sort: "name" | alphabetical %}
@@ -26,7 +26,7 @@ list: exclude
 </ul>
 
 <div class="wrapper"> 
-  <a href="contributing"><div class="overview">Contributing</div></a>
+  <div class="overview">Contributing</div>
 </div>
 
 {% assign sorted_index = site.pages | sort: "name" | alphabetical %}
