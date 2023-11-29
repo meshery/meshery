@@ -12,7 +12,7 @@ Included in [Meshery Operator]({{site.baseurl}}/concepts/architecture/operator) 
 
 ## Broker CRD
 
-The CRD is used to control the replica count for [Broker]({{site.baseurl}}/concepts/architecture/broker) instances in a cluster.
+The CRD is used to configure [Broker]({{site.baseurl}}/concepts/architecture/broker) instances in a cluster.
 
 ## YAML synopsis
 
@@ -49,7 +49,9 @@ The following section outlines the fields and their descriptions
     - **version**: The current version of the meshery application as from its release
   - **annotations**: Annotations are used to provide non-indentifying attributes of a resource i.e cannot be used in filtration, but are informational attributes of an object
     - **meshery/component-type**: The component type pf this custom resource with respect to meshery design, for this case **management-plane**
-- **size**- The number of broker instances in the cluster.
+- **spec**
+  The specification section defines the desired state of our custom resource that Kubernetes can then use to take corrective measures to bring the cluster to.
+  - **size**: The size is an integer value denoting the number of Broker instances that that should be in one cluster, currently it is adviced to have one Broker instance in a cluster but that can be scaled vertically up or down depending on load.
 
 ### Usage
 
